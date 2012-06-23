@@ -47,25 +47,27 @@ namespace TvDatabase
 
     /// <summary> 
     /// Create an object from an existing row of data. This will be used by Gentle to 
-    /// construct objects from retrieved rows. 
+    /// construct objects from retrieved rows.
     /// </summary> 
-    public Timespan(int idTimespan, int idKeyword, DateTime startTime, DateTime endTime)
+    public Timespan(int idTimespan, int idKeyword, DateTime startTime, DateTime endTime, DayOfWeek dayOfWeek)
     {
       this.idTimespan = idTimespan;
       this.idKeyword = idKeyword;
-      StartTime = startTime;
-      EndTime = endTime;
+      this.startTime = startTime;
+      this.endTime = endTime;
+      this.dayOfWeek = dayOfWeek;
     }
 
     /// <summary> 
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
     /// </summary> 
-    public Timespan(int idKeyword, DateTime startTime, DateTime endTime)
+    public Timespan(int idKeyword, DateTime startTime, DateTime endTime, DayOfWeek dayOfWeek)
     {
       isChanged = true;
       this.idKeyword = idKeyword;
-      StartTime = startTime;
-      EndTime = endTime;
+      this.startTime = startTime;
+      this.endTime = endTime;
+      this.dayOfWeek = dayOfWeek;
     }
 
     #endregion

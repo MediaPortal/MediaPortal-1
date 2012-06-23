@@ -109,7 +109,7 @@ namespace SetupTv.Dialogs
       {
         _newChannel = true;
         _channel = new Channel(false, true, 0, Schedule.MinSchedule, true, Schedule.MinSchedule, 10000, true, "",
-                               "");
+                               "", false);
       }
       textBoxName.Text = _channel.DisplayName;
       checkBoxVisibleInTvGuide.Checked = _channel.VisibleInGuide;

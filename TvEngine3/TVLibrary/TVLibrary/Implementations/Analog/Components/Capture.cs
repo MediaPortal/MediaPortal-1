@@ -1129,7 +1129,7 @@ namespace TvLibrary.Implementations.Analog.Components
     {
       if (_analogVideoDecoder != null && analogChannel.IsTv)
       {
-        _analogVideoDecoder.put_VCRHorizontalLocking(analogChannel.IsVCRSignal);
+        _analogVideoDecoder.put_VCRHorizontalLocking(analogChannel.IsVcrSignal);
       }
     }
 

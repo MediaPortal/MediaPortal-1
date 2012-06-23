@@ -45,6 +45,6 @@ namespace TvLibrary.Interfaces.Device
     /// <param name="modulation">The current multiplex/transponder modulation scheme.</param>
     /// <param name="forceEnable">Set this parameter to <c>true</c> to force the filter to be enabled.</param>
     /// <returns><c>true</c> if the PID filter is configured successfully, otherwise <c>false</c></returns>
-    bool SetFilterPids(List<UInt16> pids, ModulationType modulation, bool forceEnable);
+    bool SetFilterPids(HashSet<UInt16> pids, ModulationType modulation, bool forceEnable);
   }
 }

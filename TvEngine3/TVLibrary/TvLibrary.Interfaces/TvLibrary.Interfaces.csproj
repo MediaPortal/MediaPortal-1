@@ -91,12 +91,13 @@
     <Compile Include="Interfaces\Device\IConditionalAccessProvider.cs" />
     <Compile Include="Interfaces\Device\ICustomDevice.cs" />
     <Compile Include="Interfaces\Device\ICustomTuner.cs" />
-    <Compile Include="Interfaces\Device\IDiseqcController.cs" />
+    <Compile Include="Interfaces\Device\IDiseqcDevice.cs" />
     <Compile Include="Interfaces\Device\IPidFilterController.cs" />
     <Compile Include="Interfaces\Device\IPowerDevice.cs" />
     <Compile Include="Interfaces\ICiMenuActions.cs" />
     <Compile Include="Interfaces\ICiMenuCallbacks.cs" />
-    <Compile Include="Interfaces\IDiSEqCMotor.cs" />
+    <Compile Include="Interfaces\Device\IDiseqcController.cs" />
+    <Compile Include="Interfaces\ILnbType.cs" />
     <Compile Include="Interfaces\ITVChannelLinkage.cs" />
     <Compile Include="Interfaces\ITvSubChannel.cs" />
     <Compile Include="Interfaces\IVideoStream.cs" />

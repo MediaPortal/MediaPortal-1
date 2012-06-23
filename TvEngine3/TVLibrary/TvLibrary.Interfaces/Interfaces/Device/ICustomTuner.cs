@@ -37,8 +37,7 @@ namespace TvLibrary.Interfaces.Device
     /// Tune to a given channel using the specialised tuning method.
     /// </summary>
     /// <param name="channel">The channel to tune.</param>
-    /// <param name="parameters">Tuning time restriction settings.</param>
     /// <returns><c>true</c> if the channel is successfully tuned, otherwise <c>false</c></returns>
-    bool Tune(IChannel channel, ScanParameters parameters);
+    bool Tune(IChannel channel);
   }
 }

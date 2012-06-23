@@ -104,7 +104,7 @@
     <Compile Include="Implementations\Analog\Graphs\Analog\TvCardAnalog.cs" />
     <Compile Include="Implementations\Analog\Graphs\HDPVR\TVCardHDPVR.cs" />
     <Compile Include="Implementations\BaseSubChannel.cs" />
-    <Compile Include="Implementations\DVB\DisEqC\DiSEqCMotor.cs" />
+    <Compile Include="Implementations\DVB\DiseqcController.cs" />
     <Compile Include="Implementations\DVB\Graphs\DvbBaseScanning.cs" />
     <Compile Include="Implementations\DVB\Graphs\DVBIP\DVBIPScanning.cs" />
     <Compile Include="Implementations\DVB\Graphs\DVBIP\TvCardDVBIP.cs" />
@@ -175,6 +175,10 @@
     <Compile Include="TimeShiftingEPGGrabber.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
+      <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
+      <Name>Common.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>

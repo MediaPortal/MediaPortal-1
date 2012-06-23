@@ -58,17 +58,18 @@ namespace SetupTv.Dialogs
       this.label15 = new System.Windows.Forms.Label();
       this.label16 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
+      this.label2 = new System.Windows.Forms.Label();
       this.SuspendLayout();
       // 
       // mpButtonCancel
       // 
       this.mpButtonCancel.Location = new System.Drawing.Point(362, 262);
-      this.mpButtonCancel.TabIndex = 16;
+      this.mpButtonCancel.TabIndex = 33;
       // 
       // mpButtonOk
       // 
       this.mpButtonOk.Location = new System.Drawing.Point(263, 262);
-      this.mpButtonOk.TabIndex = 15;
+      this.mpButtonOk.TabIndex = 32;
       this.mpButtonOk.Click += new System.EventHandler(this.mpButtonOk_Click);
       // 
       // checkBoxDVBSfta
@@ -77,7 +78,7 @@ namespace SetupTv.Dialogs
       this.checkBoxDVBSfta.Location = new System.Drawing.Point(335, 144);
       this.checkBoxDVBSfta.Name = "checkBoxDVBSfta";
       this.checkBoxDVBSfta.Size = new System.Drawing.Size(78, 17);
-      this.checkBoxDVBSfta.TabIndex = 14;
+      this.checkBoxDVBSfta.TabIndex = 31;
       this.checkBoxDVBSfta.Text = "Free To Air";
       this.checkBoxDVBSfta.TextAlign = System.Drawing.ContentAlignment.TopRight;
       this.checkBoxDVBSfta.UseVisualStyleBackColor = true;
@@ -88,7 +89,7 @@ namespace SetupTv.Dialogs
       this.label27.Location = new System.Drawing.Point(260, 119);
       this.label27.Name = "label27";
       this.label27.Size = new System.Drawing.Size(49, 13);
-      this.label27.TabIndex = 106;
+      this.label27.TabIndex = 29;
       this.label27.Text = "Provider:";
       // 
       // textBoxDVBSProvider
@@ -96,14 +97,14 @@ namespace SetupTv.Dialogs
       this.textBoxDVBSProvider.Location = new System.Drawing.Point(335, 116);
       this.textBoxDVBSProvider.Name = "textBoxDVBSProvider";
       this.textBoxDVBSProvider.Size = new System.Drawing.Size(95, 20);
-      this.textBoxDVBSProvider.TabIndex = 13;
+      this.textBoxDVBSProvider.TabIndex = 30;
       // 
       // textBoxDVBSPmt
       // 
       this.textBoxDVBSPmt.Location = new System.Drawing.Point(335, 90);
       this.textBoxDVBSPmt.Name = "textBoxDVBSPmt";
       this.textBoxDVBSPmt.Size = new System.Drawing.Size(95, 20);
-      this.textBoxDVBSPmt.TabIndex = 12;
+      this.textBoxDVBSPmt.TabIndex = 28;
       this.textBoxDVBSPmt.Text = "-1";
       // 
       // textBoxDVBSChannel
@@ -111,7 +112,7 @@ namespace SetupTv.Dialogs
       this.textBoxDVBSChannel.Location = new System.Drawing.Point(92, 12);
       this.textBoxDVBSChannel.Name = "textBoxDVBSChannel";
       this.textBoxDVBSChannel.Size = new System.Drawing.Size(130, 20);
-      this.textBoxDVBSChannel.TabIndex = 0;
+      this.textBoxDVBSChannel.TabIndex = 2;
       this.textBoxDVBSChannel.Text = "0";
       // 
       // textBoxSymbolRate
@@ -119,7 +120,7 @@ namespace SetupTv.Dialogs
       this.textBoxSymbolRate.Location = new System.Drawing.Point(93, 91);
       this.textBoxSymbolRate.Name = "textBoxSymbolRate";
       this.textBoxSymbolRate.Size = new System.Drawing.Size(130, 20);
-      this.textBoxSymbolRate.TabIndex = 3;
+      this.textBoxSymbolRate.TabIndex = 9;
       this.textBoxSymbolRate.Text = "22000";
       // 
       // textBoxServiceId
@@ -127,7 +128,7 @@ namespace SetupTv.Dialogs
       this.textBoxServiceId.Location = new System.Drawing.Point(335, 64);
       this.textBoxServiceId.Name = "textBoxServiceId";
       this.textBoxServiceId.Size = new System.Drawing.Size(95, 20);
-      this.textBoxServiceId.TabIndex = 11;
+      this.textBoxServiceId.TabIndex = 26;
       this.textBoxServiceId.Text = "-1";
       // 
       // textBoxTransportId
@@ -135,7 +136,7 @@ namespace SetupTv.Dialogs
       this.textBoxTransportId.Location = new System.Drawing.Point(335, 38);
       this.textBoxTransportId.Name = "textBoxTransportId";
       this.textBoxTransportId.Size = new System.Drawing.Size(95, 20);
-      this.textBoxTransportId.TabIndex = 10;
+      this.textBoxTransportId.TabIndex = 24;
       this.textBoxTransportId.Text = "-1";
       // 
       // textBoxNetworkId
@@ -143,7 +144,7 @@ namespace SetupTv.Dialogs
       this.textBoxNetworkId.Location = new System.Drawing.Point(335, 12);
       this.textBoxNetworkId.Name = "textBoxNetworkId";
       this.textBoxNetworkId.Size = new System.Drawing.Size(95, 20);
-      this.textBoxNetworkId.TabIndex = 9;
+      this.textBoxNetworkId.TabIndex = 22;
       this.textBoxNetworkId.Text = "-1";
       // 
       // textBoxFrequency
@@ -151,7 +152,7 @@ namespace SetupTv.Dialogs
       this.textBoxFrequency.Location = new System.Drawing.Point(93, 65);
       this.textBoxFrequency.Name = "textBoxFrequency";
       this.textBoxFrequency.Size = new System.Drawing.Size(130, 20);
-      this.textBoxFrequency.TabIndex = 2;
+      this.textBoxFrequency.TabIndex = 6;
       this.textBoxFrequency.Text = "11097000";
       // 
       // label34
@@ -160,7 +161,7 @@ namespace SetupTv.Dialogs
       this.label34.Location = new System.Drawing.Point(260, 93);
       this.label34.Name = "label34";
       this.label34.Size = new System.Drawing.Size(54, 13);
-      this.label34.TabIndex = 103;
+      this.label34.TabIndex = 27;
       this.label34.Text = "PMT PID:";
       // 
       // label47
@@ -169,7 +170,7 @@ namespace SetupTv.Dialogs
       this.label47.Location = new System.Drawing.Point(10, 15);
       this.label47.Name = "label47";
       this.label47.Size = new System.Drawing.Size(49, 13);
-      this.label47.TabIndex = 102;
+      this.label47.TabIndex = 1;
       this.label47.Text = "Channel:";
       // 
       // comboBoxRollOff
@@ -185,7 +186,7 @@ namespace SetupTv.Dialogs
       this.comboBoxRollOff.Location = new System.Drawing.Point(93, 225);
       this.comboBoxRollOff.Name = "comboBoxRollOff";
       this.comboBoxRollOff.Size = new System.Drawing.Size(129, 21);
-      this.comboBoxRollOff.TabIndex = 8;
+      this.comboBoxRollOff.TabIndex = 20;
       // 
       // label36
       // 
@@ -193,7 +194,7 @@ namespace SetupTv.Dialogs
       this.label36.Location = new System.Drawing.Point(11, 228);
       this.label36.Name = "label36";
       this.label36.Size = new System.Drawing.Size(45, 13);
-      this.label36.TabIndex = 100;
+      this.label36.TabIndex = 19;
       this.label36.Text = "Roll-Off:";
       // 
       // comboBoxPilot
@@ -208,7 +209,7 @@ namespace SetupTv.Dialogs
       this.comboBoxPilot.Location = new System.Drawing.Point(93, 198);
       this.comboBoxPilot.Name = "comboBoxPilot";
       this.comboBoxPilot.Size = new System.Drawing.Size(129, 21);
-      this.comboBoxPilot.TabIndex = 7;
+      this.comboBoxPilot.TabIndex = 18;
       // 
       // label35
       // 
@@ -216,7 +217,7 @@ namespace SetupTv.Dialogs
       this.label35.Location = new System.Drawing.Point(11, 201);
       this.label35.Name = "label35";
       this.label35.Size = new System.Drawing.Size(30, 13);
-      this.label35.TabIndex = 98;
+      this.label35.TabIndex = 17;
       this.label35.Text = "Pilot:";
       // 
       // comboBoxInnerFecRate
@@ -243,7 +244,7 @@ namespace SetupTv.Dialogs
       this.comboBoxInnerFecRate.Location = new System.Drawing.Point(93, 171);
       this.comboBoxInnerFecRate.Name = "comboBoxInnerFecRate";
       this.comboBoxInnerFecRate.Size = new System.Drawing.Size(129, 21);
-      this.comboBoxInnerFecRate.TabIndex = 6;
+      this.comboBoxInnerFecRate.TabIndex = 16;
       // 
       // label33
       // 
@@ -251,7 +252,7 @@ namespace SetupTv.Dialogs
       this.label33.Location = new System.Drawing.Point(11, 174);
       this.label33.Name = "label33";
       this.label33.Size = new System.Drawing.Size(83, 13);
-      this.label33.TabIndex = 96;
+      this.label33.TabIndex = 15;
       this.label33.Text = "Inner FEC Rate:";
       // 
       // comboBoxModulation
@@ -297,7 +298,7 @@ namespace SetupTv.Dialogs
       this.comboBoxModulation.Location = new System.Drawing.Point(93, 144);
       this.comboBoxModulation.Name = "comboBoxModulation";
       this.comboBoxModulation.Size = new System.Drawing.Size(129, 21);
-      this.comboBoxModulation.TabIndex = 5;
+      this.comboBoxModulation.TabIndex = 14;
       // 
       // label32
       // 
@@ -305,7 +306,7 @@ namespace SetupTv.Dialogs
       this.label32.Location = new System.Drawing.Point(11, 147);
       this.label32.Name = "label32";
       this.label32.Size = new System.Drawing.Size(62, 13);
-      this.label32.TabIndex = 95;
+      this.label32.TabIndex = 13;
       this.label32.Text = "Modulation:";
       // 
       // comboBoxDiseqc
@@ -314,15 +315,12 @@ namespace SetupTv.Dialogs
       this.comboBoxDiseqc.FormattingEnabled = true;
       this.comboBoxDiseqc.Items.AddRange(new object[] {
             "None",
-            // Simple DiSEqC (burst)
             "Simple A (tone burst)",
             "Simple B (data burst)",
-            // DiSEqC 1.0
             "Port A (option A, position A)",
             "Port B (option A, position B)",
             "Port C (option B, position A)",
             "Port D (option B, position B)",
-            // DiSEqC 1.1+
             "Port 1",
             "Port 2",
             "Port 3",
@@ -340,9 +338,9 @@ namespace SetupTv.Dialogs
             "Port 15",
             "Port 16"});
       this.comboBoxDiseqc.Location = new System.Drawing.Point(93, 38);
-      this.comboBoxDiseqc.Name = "comboBoxDisEqc";
+      this.comboBoxDiseqc.Name = "comboBoxDiseqc";
       this.comboBoxDiseqc.Size = new System.Drawing.Size(129, 21);
-      this.comboBoxDiseqc.TabIndex = 1;
+      this.comboBoxDiseqc.TabIndex = 4;
       // 
       // label10
       // 
@@ -350,7 +348,7 @@ namespace SetupTv.Dialogs
       this.label10.Location = new System.Drawing.Point(11, 41);
       this.label10.Name = "label10";
       this.label10.Size = new System.Drawing.Size(47, 13);
-      this.label10.TabIndex = 93;
+      this.label10.TabIndex = 3;
       this.label10.Text = "DiSEqC:";
       // 
       // comboBoxPol
@@ -367,7 +365,7 @@ namespace SetupTv.Dialogs
       this.comboBoxPol.Location = new System.Drawing.Point(93, 117);
       this.comboBoxPol.Name = "comboBoxPol";
       this.comboBoxPol.Size = new System.Drawing.Size(129, 21);
-      this.comboBoxPol.TabIndex = 4;
+      this.comboBoxPol.TabIndex = 12;
       // 
       // label11
       // 
@@ -375,7 +373,7 @@ namespace SetupTv.Dialogs
       this.label11.Location = new System.Drawing.Point(11, 120);
       this.label11.Name = "label11";
       this.label11.Size = new System.Drawing.Size(64, 13);
-      this.label11.TabIndex = 92;
+      this.label11.TabIndex = 11;
       this.label11.Text = "Polarisation:";
       // 
       // label12
@@ -384,7 +382,7 @@ namespace SetupTv.Dialogs
       this.label12.Location = new System.Drawing.Point(11, 94);
       this.label12.Name = "label12";
       this.label12.Size = new System.Drawing.Size(70, 13);
-      this.label12.TabIndex = 91;
+      this.label12.TabIndex = 8;
       this.label12.Text = "Symbol Rate:";
       // 
       // label13
@@ -393,7 +391,7 @@ namespace SetupTv.Dialogs
       this.label13.Location = new System.Drawing.Point(260, 41);
       this.label13.Name = "label13";
       this.label13.Size = new System.Drawing.Size(69, 13);
-      this.label13.TabIndex = 90;
+      this.label13.TabIndex = 23;
       this.label13.Text = "Transport ID:";
       // 
       // label14
@@ -402,7 +400,7 @@ namespace SetupTv.Dialogs
       this.label14.Location = new System.Drawing.Point(260, 68);
       this.label14.Name = "label14";
       this.label14.Size = new System.Drawing.Size(60, 13);
-      this.label14.TabIndex = 89;
+      this.label14.TabIndex = 25;
       this.label14.Text = "Service ID:";
       // 
       // label15
@@ -411,7 +409,7 @@ namespace SetupTv.Dialogs
       this.label15.Location = new System.Drawing.Point(260, 15);
       this.label15.Name = "label15";
       this.label15.Size = new System.Drawing.Size(64, 13);
-      this.label15.TabIndex = 88;
+      this.label15.TabIndex = 21;
       this.label15.Text = "Network ID:";
       // 
       // label16
@@ -420,7 +418,7 @@ namespace SetupTv.Dialogs
       this.label16.Location = new System.Drawing.Point(11, 69);
       this.label16.Name = "label16";
       this.label16.Size = new System.Drawing.Size(60, 13);
-      this.label16.TabIndex = 87;
+      this.label16.TabIndex = 5;
       this.label16.Text = "Frequency:";
       // 
       // label1
@@ -429,13 +427,23 @@ namespace SetupTv.Dialogs
       this.label1.Location = new System.Drawing.Point(223, 68);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(26, 13);
-      this.label1.TabIndex = 118;
+      this.label1.TabIndex = 7;
       this.label1.Text = "kHz";
+      // 
+      // label2
+      // 
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(223, 94);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(28, 13);
+      this.label2.TabIndex = 10;
+      this.label2.Text = "ks/s";
       // 
       // FormDVBSTuningDetail
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.ClientSize = new System.Drawing.Size(449, 297);
+      this.Controls.Add(this.label2);
       this.Controls.Add(this.label1);
       this.Controls.Add(this.checkBoxDVBSfta);
       this.Controls.Add(this.label27);
@@ -501,6 +509,7 @@ namespace SetupTv.Dialogs
       this.Controls.SetChildIndex(this.label27, 0);
       this.Controls.SetChildIndex(this.checkBoxDVBSfta, 0);
       this.Controls.SetChildIndex(this.label1, 0);
+      this.Controls.SetChildIndex(this.label2, 0);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -538,5 +547,6 @@ namespace SetupTv.Dialogs
     private System.Windows.Forms.Label label15;
     private System.Windows.Forms.Label label16;
     private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Label label2;
   }
 }

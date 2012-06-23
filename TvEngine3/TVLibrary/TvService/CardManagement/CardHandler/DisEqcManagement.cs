@@ -19,6 +19,7 @@
 #endregion
 
 using TvLibrary.Interfaces;
+using TvLibrary.Interfaces.Device;
 
 
 namespace TvService
@@ -54,10 +55,10 @@ namespace TvService
         return;
       }
 
-      IDiSEqCMotor motor = _cardHandler.Card.DiSEqCMotor;
-      if (motor == null)
+      IDiseqcController controller = _cardHandler.Card.DiseqcController;
+      if (controller == null)
         return;
-      motor.GetPosition(out satellitePosition, out stepsAzimuth, out stepsElevation);
+      controller.GetPosition(out satellitePosition, out stepsAzimuth, out stepsElevation);
     }
 
     /// <summary>
@@ -70,10 +71,10 @@ namespace TvService
         return;
       }
 
-      IDiSEqCMotor motor = _cardHandler.Card.DiSEqCMotor;
-      if (motor == null)
+      IDiseqcController controller = _cardHandler.Card.DiseqcController;
+      if (controller == null)
         return;
-      motor.Reset();
+      controller.Reset();
     }
 
     /// <summary>
@@ -86,10 +87,10 @@ namespace TvService
         return;
       }
 
-      IDiSEqCMotor motor = _cardHandler.Card.DiSEqCMotor;
-      if (motor == null)
+      IDiseqcController controller = _cardHandler.Card.DiseqcController;
+      if (controller == null)
         return;
-      motor.StopMotor();
+      controller.Stop();
     }
 
     /// <summary>
@@ -102,10 +103,10 @@ namespace TvService
         return;
       }
 
-      IDiSEqCMotor motor = _cardHandler.Card.DiSEqCMotor;
-      if (motor == null)
+      IDiseqcController controller = _cardHandler.Card.DiseqcController;
+      if (controller == null)
         return;
-      motor.SetEastLimit();
+      controller.SetEastLimit();
     }
 
     /// <summary>
@@ -118,10 +119,10 @@ namespace TvService
         return;
       }
 
-      IDiSEqCMotor motor = _cardHandler.Card.DiSEqCMotor;
-      if (motor == null)
+      IDiseqcController controller = _cardHandler.Card.DiseqcController;
+      if (controller == null)
         return;
-      motor.SetWestLimit();
+      controller.SetWestLimit();
     }
 
     /// <summary>
@@ -135,10 +136,10 @@ namespace TvService
         return;
       }
 
-      IDiSEqCMotor motor = _cardHandler.Card.DiSEqCMotor;
-      if (motor == null)
+      IDiseqcController controller = _cardHandler.Card.DiseqcController;
+      if (controller == null)
         return;
-      motor.ForceLimits = onOff;
+      controller.ForceLimits = onOff;
     }
 
     /// <summary>
@@ -146,17 +147,17 @@ namespace TvService
     /// </summary>
     /// <param name="direction">The direction.</param>
     /// <param name="numberOfSteps">The number of steps.</param>
-    public void DriveMotor(DiSEqCDirection direction, byte numberOfSteps)
+    public void DriveMotor(DiseqcDirection direction, byte numberOfSteps)
     {
       if (_cardHandler.IsLocal == false)
       {
         return;
       }
 
-      IDiSEqCMotor motor = _cardHandler.Card.DiSEqCMotor;
-      if (motor == null)
+      IDiseqcController controller = _cardHandler.Card.DiseqcController;
+      if (controller == null)
         return;
-      motor.DriveMotor(direction, numberOfSteps);
+      controller.DriveMotor(direction, numberOfSteps);
     }
 
     /// <summary>
@@ -170,10 +171,10 @@ namespace TvService
         return;
       }
 
-      IDiSEqCMotor motor = _cardHandler.Card.DiSEqCMotor;
-      if (motor == null)
+      IDiseqcController controller = _cardHandler.Card.DiseqcController;
+      if (controller == null)
         return;
-      motor.StorePosition(position);
+      controller.StorePosition(position);
     }
 
     /// <summary>
@@ -186,10 +187,10 @@ namespace TvService
         return;
       }
 
-      IDiSEqCMotor motor = _cardHandler.Card.DiSEqCMotor;
-      if (motor == null)
+      IDiseqcController controller = _cardHandler.Card.DiseqcController;
+      if (controller == null)
         return;
-      motor.GotoReferencePosition();
+      controller.GotoReferencePosition();
     }
 
     /// <summary>
@@ -203,10 +204,10 @@ namespace TvService
         return;
       }
 
-      IDiSEqCMotor motor = _cardHandler.Card.DiSEqCMotor;
-      if (motor == null)
+      IDiseqcController controller = _cardHandler.Card.DiseqcController;
+      if (controller == null)
         return;
-      motor.GotoPosition(position);
+      controller.GotoPosition(position);
     }
 
     #endregion

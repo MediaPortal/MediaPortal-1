@@ -32,6 +32,7 @@ using TvLibrary;
 using TvLibrary.Log;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces;
+using TvLibrary.Interfaces.Device;
 using DirectShowLib.BDA;
 using System.Xml.Serialization;
 using MediaPortal.UserInterface.Controls;
@@ -588,8 +589,8 @@ namespace SetupTv.Sections
                                        "RF",
                                        "16 APSK",
                                        "32 APSK",
-                                       "QPSK2 (DVB-S2)",
-                                       "8 PSK2 (DVB-S2)",
+                                       "QPSK (DVB-S2)",
+                                       "8 PSK (DVB-S2)",
                                        "DirectTV"
                                      });
       mpComboBoxMod.SelectedIndex = 0;
@@ -637,6 +638,10 @@ namespace SetupTv.Sections
 
       //List<SimpleFileName> satellites = fileFilters.AllFiles;
       List<SatelliteContext> satellites = LoadSatellites();
+      IList<LnbType> tempLnbTypes = LnbType.ListAll();
+      LnbType[] lnbTypes = new LnbType[tempLnbTypes.Count];
+      tempLnbTypes.CopyTo(lnbTypes, 0);
+
       MPComboBox[] mpTrans = new MPComboBox[] {mpTransponder1, mpTransponder2, mpTransponder3, mpTransponder4};
       MPComboBox[] mpComboDiseqc = new MPComboBox[] {mpComboDiseqc1, mpComboDiseqc2, mpComboDiseqc3, mpComboDiseqc4};
       MPComboBox[] mpComboLnbType = new MPComboBox[] {mpComboLnbType1, mpComboLnbType2, mpComboLnbType3, mpComboLnbType4};
@@ -696,22 +701,7 @@ namespace SetupTv.Sections
 
         curBox = mpComboLnbType[ctlIndex];
         curBox.Items.Clear();
-        curBox.Items.AddRange(new object[] {
-            "Ku-Linear (Universal)",
-            "Ku-Circular",
-            "C-Band",
-            "DP Bandstacked High (DBS)",
-            "DP Bandstacked Low (FSS)",
-            "NA Bandstacked High (DBS)",
-            "NA Bandstacked Low (FSS)",
-            "Bandstacked C",
-            "Sadoun Bandstacked (FSS)",
-            "10750 MHz, 22 kHz off",
-            "10750 MHz, 22 kHz on",
-            "11250 MHz, 22 kHz off (Legacy)",
-            "11250 MHz, 22 kHz on (Legacy)",
-            "11300 MHz, 22 kHz off",
-            "11300 MHz, 22 kHz on"});
+        curBox.Items.AddRange((object[])lnbTypes);
         curBox.SelectedIndex =
           Int32.Parse(layer.GetSetting(String.Format("dvbs{0}band{1}", _cardNumber, idx), "0").Value);
 
@@ -723,12 +713,6 @@ namespace SetupTv.Sections
       mpLNB2_CheckedChanged(null, null);
       mpLNB3_CheckedChanged(null, null);
       mpLNB4_CheckedChanged(null, null);
-
-      chkOverrideLNB.Checked = (layer.GetSetting("lnbDefault", "true").Value != "true");
-      textBoxLNBLo.Text = layer.GetSetting("LnbLowFrequency", "0").Value;
-      textBoxLNBHi.Text = layer.GetSetting("LnbHighFrequency", "0").Value;
-      textBoxLNBSwitch.Text = layer.GetSetting("LnbSwitchFrequency", "0").Value;
-      chkOverrideLNB_CheckedChanged(null, null);
 
       checkBoxCreateGroups.Checked = (layer.GetSetting("dvbs" + _cardNumber + "creategroups", "false").Value == "true");
       checkBoxCreateGroupsSat.Checked = (layer.GetSetting("dvbs" + _cardNumber + "creategroupssat", "false").Value ==
@@ -742,7 +726,6 @@ namespace SetupTv.Sections
       mpLNB1_CheckedChanged(null, null);
 
       checkBoxAdvancedTuning.Checked = false;
-      //grpManualScan.Enabled = false;
       checkBoxAdvancedTuning.Enabled = true;
 
       checkBoxCreateSignalGroup.Text = "\"" + TvConstants.TvGroupNames.DVBS + "\"";
@@ -832,36 +815,6 @@ namespace SetupTv.Sections
       setting = layer.GetSetting("dvbs" + _cardNumber + "enabledvbs2", "false");
       setting.Value = checkBoxEnableDVBS2.Checked ? "true" : "false";
       setting.Persist();
-
-      bool restart = false;
-      setting = layer.GetSetting("lnbDefault", "true");
-      if (setting.Value != (chkOverrideLNB.Checked ? "false" : "true"))
-        restart = true;
-      setting.Value = chkOverrideLNB.Checked ? "false" : "true";
-      setting.Persist();
-
-      setting = layer.GetSetting("LnbLowFrequency", "0");
-      if (setting.Value != textBoxLNBLo.Text)
-        restart = true;
-      setting.Value = textBoxLNBLo.Text;
-      setting.Persist();
-
-      setting = layer.GetSetting("LnbHighFrequency", "0");
-      if (setting.Value != textBoxLNBHi.Text)
-        restart = true;
-      setting.Value = textBoxLNBHi.Text;
-      setting.Persist();
-
-      setting = layer.GetSetting("LnbSwitchFrequency", "0");
-      if (setting.Value != textBoxLNBSwitch.Text)
-        restart = true;
-      setting.Value = textBoxLNBSwitch.Text;
-      setting.Persist();
-      if (restart)
-      {
-        RemoteControl.Instance.ClearCache();
-        RemoteControl.Instance.Restart();
-      }
     }
 
     private void UpdateStatus()
@@ -959,25 +912,25 @@ namespace SetupTv.Sections
         _radioChannelsUpdated = 0;
 
         if (mpLNB1.Checked)
-          Scan(1, (LnbType)mpComboLnbType1.SelectedIndex, (DiseqcPort)mpComboDiseqc1.SelectedIndex,
+          Scan(1, (LnbType)mpComboLnbType1.SelectedItem, (DiseqcPort)mpComboDiseqc1.SelectedIndex,
                (SatelliteContext)mpTransponder1.SelectedItem);
         if (scanState == ScanState.Cancel)
           return;
 
         if (mpLNB2.Checked)
-          Scan(2, (LnbType)mpComboLnbType2.SelectedIndex, (DiseqcPort)mpComboDiseqc2.SelectedIndex,
+          Scan(2, (LnbType)mpComboLnbType2.SelectedItem, (DiseqcPort)mpComboDiseqc2.SelectedIndex,
                (SatelliteContext)mpTransponder2.SelectedItem);
         if (scanState == ScanState.Cancel)
           return;
 
         if (mpLNB3.Checked)
-          Scan(3, (LnbType)mpComboLnbType3.SelectedIndex, (DiseqcPort)mpComboDiseqc3.SelectedIndex,
+          Scan(3, (LnbType)mpComboLnbType3.SelectedItem, (DiseqcPort)mpComboDiseqc3.SelectedIndex,
                (SatelliteContext)mpTransponder3.SelectedItem);
         if (scanState == ScanState.Cancel)
           return;
 
         if (mpLNB4.Checked)
-          Scan(4, (LnbType)mpComboLnbType4.SelectedIndex, (DiseqcPort)mpComboDiseqc4.SelectedIndex,
+          Scan(4, (LnbType)mpComboLnbType4.SelectedItem, (DiseqcPort)mpComboDiseqc4.SelectedIndex,
                (SatelliteContext)mpTransponder4.SelectedItem);
 
         listViewStatus.Items.Add(
@@ -1342,7 +1295,7 @@ namespace SetupTv.Sections
       if (checkBox1.Checked == false)
         return;
       //move motor west
-      RemoteControl.Instance.DiSEqCDriveMotor(_cardNumber, DiSEqCDirection.West,
+      RemoteControl.Instance.DiSEqCDriveMotor(_cardNumber, DiseqcDirection.West,
                                               (byte)(1 + comboBoxStepSize.SelectedIndex));
       comboBox1_SelectedIndexChanged(null, null); //tune..;
     }
@@ -1423,7 +1376,7 @@ namespace SetupTv.Sections
       if (checkBox1.Checked == false)
         return;
       //move motor east
-      RemoteControl.Instance.DiSEqCDriveMotor(_cardNumber, DiSEqCDirection.East,
+      RemoteControl.Instance.DiSEqCDriveMotor(_cardNumber, DiseqcDirection.East,
                                               (byte)(1 + comboBoxStepSize.SelectedIndex));
       comboBox1_SelectedIndexChanged(null, null); //tune..
     }
@@ -1529,10 +1482,9 @@ namespace SetupTv.Sections
       tuneChannel.Pilot = transponder.Pilot;
       tuneChannel.RollOff = transponder.Rolloff;
       tuneChannel.InnerFecRate = transponder.InnerFecRate;
-      tuneChannel.LnbType = LnbType.Universal;
       tuneChannel.Diseqc = DiseqcPort.None;
       if (mpComboLnbType1.SelectedIndex >= 0)
-        tuneChannel.LnbType = (LnbType)mpComboLnbType1.SelectedIndex;
+        tuneChannel.LnbType = (LnbType)mpComboLnbType1.SelectedItem;
       if (mpComboDiseqc1.SelectedIndex >= 0)
         tuneChannel.Diseqc = (DiseqcPort)mpComboDiseqc1.SelectedIndex;
       _user.CardId = _cardNumber;
@@ -1573,7 +1525,7 @@ namespace SetupTv.Sections
       if (checkBox1.Checked == false)
         return;
       //move motor up
-      RemoteControl.Instance.DiSEqCDriveMotor(_cardNumber, DiSEqCDirection.Up,
+      RemoteControl.Instance.DiSEqCDriveMotor(_cardNumber, DiseqcDirection.Up,
                                               (byte)(1 + comboBoxStepSize.SelectedIndex));
     }
 
@@ -1584,7 +1536,7 @@ namespace SetupTv.Sections
       if (checkBox1.Checked == false)
         return;
       //move motor up
-      RemoteControl.Instance.DiSEqCDriveMotor(_cardNumber, DiSEqCDirection.Down,
+      RemoteControl.Instance.DiSEqCDriveMotor(_cardNumber, DiseqcDirection.Down,
                                               (byte)(1 + comboBoxStepSize.SelectedIndex));
     }
 
@@ -1709,13 +1661,6 @@ namespace SetupTv.Sections
 
     #region LNB selection tab
 
-    private void chkOverrideLNB_CheckedChanged(object sender, EventArgs e)
-    {
-      textBoxLNBLo.Enabled = chkOverrideLNB.Checked;
-      textBoxLNBHi.Enabled = chkOverrideLNB.Checked;
-      textBoxLNBSwitch.Enabled = chkOverrideLNB.Checked;
-    }
-
     private void mpLNB1_CheckedChanged(object sender, EventArgs e)
     {
       mpTransponder1.Visible = mpComboLnbType1.Visible = mpComboDiseqc1.Visible = mpLNB1.Checked;
@@ -1734,20 +1679,6 @@ namespace SetupTv.Sections
     private void mpLNB4_CheckedChanged(object sender, EventArgs e)
     {
       mpTransponder4.Visible = mpComboLnbType4.Visible = mpComboDiseqc4.Visible = mpLNB4.Checked;
-    }
-
-    private void mpComboLnbType1_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      if (_enableEvents == false)
-        return;
-      if (chkOverrideLNB.Checked)
-        return;
-      uint lof1, lof2, sw;
-      ScanParameters p = new ScanParameters();
-      BandTypeConverter.GetDefaultLnbSetup(p, (LnbType)mpComboLnbType1.SelectedIndex, out lof1, out lof2, out sw);
-      textBoxLNBLo.Text = lof1.ToString();
-      textBoxLNBHi.Text = lof2.ToString();
-      textBoxLNBSwitch.Text = sw.ToString();
     }
 
     private void checkEnableDVBS2_CheckedChanged(object sender, EventArgs e)

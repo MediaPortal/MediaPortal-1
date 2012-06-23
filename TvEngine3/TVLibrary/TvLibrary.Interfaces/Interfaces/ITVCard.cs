@@ -21,6 +21,7 @@
 using System.Collections.Generic;
 using TvLibrary.ChannelLinkage;
 using TvLibrary.Epg;
+using TvLibrary.Interfaces.Device;
 
 namespace TvLibrary.Interfaces
 {
@@ -53,12 +54,6 @@ namespace TvLibrary.Interfaces
     bool SupportsSubChannels { get; }
 
     /// <summary>
-    /// Gets wether or not card supports pausing the graph.
-    /// </summary>
-    bool SupportsPauseGraph { get; }
-
-
-    /// <summary>
     /// Gets or sets the timeout parameters.
     /// </summary>
     /// <value>The parameters.</value>
@@ -86,16 +81,9 @@ namespace TvLibrary.Interfaces
     bool CanTune(IChannel channel);
 
     /// <summary>
-    /// Stops the current graph
+    /// Stop the card.
     /// </summary>
-    /// <returns></returns>
-    void StopGraph();
-
-    /// <summary>
-    /// Pauses the current graph
-    /// </summary>
-    /// <returns></returns>
-    void PauseGraph();
+    void Stop();
 
     /// <summary>
     /// returns the min. channel number for analog cards
@@ -120,22 +108,31 @@ namespace TvLibrary.Interfaces
     CardType CardType { get; }
 
     /// <summary>
-    /// Gets the interface for controlling the diseqc motor
+    /// Get the device's DiSEqC control interface. This interface is only applicable for satellite tuners.
+    /// It is used for controlling switch, positioner and LNB settings.
     /// </summary>
-    /// <value>Theinterface for controlling the diseqc motor.</value>
-    IDiSEqCMotor DiSEqCMotor { get; }
+    /// <value><c>null</c> if the tuner is not a satellite tuner or the tuner does not support sending/receiving
+    /// DiSEqC commands</value>
+    IDiseqcController DiseqcController { get; }
 
     /// <summary>
-    /// Gets the number of channels the card is currently decrypting.
+    /// Does the device support conditional access?
     /// </summary>
-    /// <value>The number of channels decrypting.</value>
+    /// <value><c>true</c> if the device supports conditional access, otherwise <c>false</c></value>
+    bool IsConditionalAccessSupported { get; }
+
+    /// <summary>
+    /// Get the device's conditional access menu interaction interface. This interface is only applicable if
+    /// conditional access is supported.
+    /// </summary>
+    /// <value><c>null</c> if the device does not support conditional access</value>
+    ICiMenuActions CaMenuInterface { get; }
+
+    /// <summary>
+    /// Get a count of the number of services that the device is currently decrypting.
+    /// </summary>
+    /// <value>The number of services currently being decrypted.</value>
     int NumberOfChannelsDecrypting { get; }
-
-    /// <summary>
-    /// Does the card have a CA module.
-    /// </summary>
-    /// <value>The number of channels decrypting.</value>
-    bool HasCA { get; }
 
     #endregion
 

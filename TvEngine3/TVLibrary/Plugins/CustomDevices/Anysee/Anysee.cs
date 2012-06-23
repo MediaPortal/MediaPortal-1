@@ -35,7 +35,7 @@ namespace TvEngine
   /// A class for handling conditional access and DiSEqC for Anysee tuners. Smart card slots are not
   /// supported.
   /// </summary>
-  public class Anysee : BaseCustomDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcController 
+  public class Anysee : BaseCustomDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice 
   {
     #region enums
 
@@ -1178,18 +1178,20 @@ namespace TvEngine
 
     #endregion
 
-    /// <summary>
-    /// Attempt to read the device information from the tuner.
-    /// </summary>
-    private void ReadDeviceInfo()
-    {
-      Log.Debug("Anysee: read device information");
+    #region hardware/software information
 
-      Log.Debug("Anysee: reading NIM configuration");
+    /// <summary>
+    /// Attempt to read the NIM configuration information from the tuner.
+    /// </summary>
+    private void ReadNimConfig()
+    {
+      Log.Debug("Anysee: read NIM configuration");
+
       for (int i = 0; i < NimConfigSize; i++)
       {
         Marshal.WriteByte(_generalBuffer, i, 0);
       }
+
       int returnedByteCount;
       int hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.NimConfig,
         _generalBuffer, NimConfigSize,
@@ -1200,28 +1202,35 @@ namespace TvEngine
       {
         Log.Debug("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
-      else
-      {
-        // Most of the info here is not very relevant.
-        NimConfig info = (NimConfig)Marshal.PtrToStructure(_generalBuffer, typeof(NimConfig));
-        /*Log.Debug("  symbol rate      = {0} s/s", info.SymbolRate);
-        Log.Debug("  sweep rate       = {0} Hz/s", info.SweepRate);
-        Log.Debug("  frequency        = {0} kHz", info.Frequency);
-        Log.Debug("  carrier offset   = {0} kHz", info.CarrierOffset);
-        Log.Debug("  bandwidth        = {0} MHz", info.Bandwidth);*/
-        Log.Debug("  NIM type         = {0}", info.NimType);
-        /*Log.Debug("  analog mode      = {0}", info.AnalogNimMode);
-        Log.Debug("  digital mode     = {0}", info.DigitalNimMode);
-        Log.Debug("  inversion        = {0}", info.SignalInversion);
-        Log.Debug("  scan direction   = {0}", info.ScanDirection);*/
-      }
 
-      Log.Debug("Anysee: reading driver version");
+      // Most of the info here is not very relevant.
+      NimConfig info = (NimConfig)Marshal.PtrToStructure(_generalBuffer, typeof(NimConfig));
+      Log.Debug("  symbol rate      = {0} s/s", info.SymbolRate);
+      Log.Debug("  sweep rate       = {0} Hz/s", info.SweepRate);
+      Log.Debug("  frequency        = {0} kHz", info.Frequency);
+      Log.Debug("  carrier offset   = {0} kHz", info.CarrierOffset);
+      Log.Debug("  bandwidth        = {0} MHz", info.Bandwidth);
+      Log.Debug("  NIM type         = {0}", info.NimType);
+      Log.Debug("  analog mode      = {0}", info.AnalogNimMode);
+      Log.Debug("  digital mode     = {0}", info.DigitalNimMode);
+      Log.Debug("  inversion        = {0}", info.SignalInversion);
+      Log.Debug("  scan direction   = {0}", info.ScanDirection);
+    }
+
+    /// <summary>
+    /// Attempt to read the driver information from the tuner.
+    /// </summary>
+    private void ReadDriverVersion()
+    {
+      Log.Debug("Anysee: read driver version");
+
       for (int i = 0; i < DriverVersionSize; i++)
       {
         Marshal.WriteByte(_generalBuffer, i, 0);
       }
-      hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.DriverVersion,
+
+      int returnedByteCount;
+      int hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.DriverVersion,
         _generalBuffer, DriverVersionSize,
         _generalBuffer, DriverVersionSize,
         out returnedByteCount
@@ -1229,19 +1238,27 @@ namespace TvEngine
       if (hr != 0 || returnedByteCount != DriverVersionSize)
       {
         Log.Debug("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      }
-      else
-      {
-        DriverVersion version = (DriverVersion)Marshal.PtrToStructure(_generalBuffer, typeof(DriverVersion));
-        Log.Debug("  version          = {0:x}.{1:x}.{2:x}.{3:x}", version.Version[3], version.Version[2], version.Version[1], version.Version[0]);
+        return;
       }
 
-      Log.Debug("Anysee: reading platform information");
+      DriverVersion version = (DriverVersion)Marshal.PtrToStructure(_generalBuffer, typeof(DriverVersion));
+      Log.Debug("  version          = {0:x}.{1:x}.{2:x}.{3:x}", version.Version[3], version.Version[2], version.Version[1], version.Version[0]);
+    }
+
+    /// <summary>
+    /// Attempt to read the platform (chipset/product) information from the tuner.
+    /// </summary>
+    private void ReadPlatformInfo()
+    {
+      Log.Debug("Anysee: read platform information");
+
       for (int i = 0; i < PlatformInfoSize; i++)
       {
         Marshal.WriteByte(_generalBuffer, i, 0);
       }
-      hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.PlatformInfo,
+
+      int returnedByteCount;
+      int hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.PlatformInfo,
         _generalBuffer, PlatformInfoSize,
         _generalBuffer, PlatformInfoSize,
         out returnedByteCount
@@ -1249,30 +1266,38 @@ namespace TvEngine
       if (hr != 0 || returnedByteCount != PlatformInfoSize)
       {
         Log.Debug("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return;
       }
-      else
+
+      PlatformInfo info = (PlatformInfo)Marshal.PtrToStructure(_generalBuffer, typeof(PlatformInfo));
+      Log.Debug("  platform         = {0}", info.Platform);
+      Log.Debug("  firmware version = {0}.{1}", info.FirmwareVersion[1], info.FirmwareVersion[0]);
+
+      if (info.Platform == AnyseePlatform.Pcb508S2 ||
+        info.Platform == AnyseePlatform.Pcb508TC ||
+        info.Platform == AnyseePlatform.Pcb508T2C ||
+        info.Platform == AnyseePlatform.Pcb508PS2 ||
+        info.Platform == AnyseePlatform.Pcb508PTC ||
+        info.Platform == AnyseePlatform.Pcb508PT2C)
       {
-        PlatformInfo info = (PlatformInfo)Marshal.PtrToStructure(_generalBuffer, typeof(PlatformInfo));
-        Log.Debug("  platform         = {0}", info.Platform);
-        Log.Debug("  firmware version = {0}.{1}", info.FirmwareVersion[1], info.FirmwareVersion[0]);
-
-        if (info.Platform == AnyseePlatform.Pcb508S2 ||
-          info.Platform == AnyseePlatform.Pcb508TC ||
-          info.Platform == AnyseePlatform.Pcb508T2C ||
-          info.Platform == AnyseePlatform.Pcb508PS2 ||
-          info.Platform == AnyseePlatform.Pcb508PTC ||
-          info.Platform == AnyseePlatform.Pcb508PT2C)
-        {
-          _isCiSlotPresent = true;
-        }
+        _isCiSlotPresent = true;
       }
+    }
 
-      Log.Debug("Anysee: reading board information");
+    /// <summary>
+    /// Attempt to read the board (USB etc.) information from the tuner.
+    /// </summary>
+    private void ReadBoardInfo()
+    {
+      Log.Debug("Anysee: read board information");
+
       for (int i = 0; i < BoardInfoSize; i++)
       {
         Marshal.WriteByte(_generalBuffer, i, 0);
       }
-      hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.BoardInfo,
+
+      int returnedByteCount;
+      int hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.BoardInfo,
         _generalBuffer, BoardInfoSize,
         _generalBuffer, BoardInfoSize,
         out returnedByteCount
@@ -1280,23 +1305,31 @@ namespace TvEngine
       if (hr != 0 || returnedByteCount != BoardInfoSize)
       {
         Log.Debug("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      }
-      else
-      {
-        DVB_MMI.DumpBinary(_generalBuffer, 0, BoardInfoSize);
-        BoardInfo info = (BoardInfo)Marshal.PtrToStructure(_generalBuffer, typeof(BoardInfo));
-        Log.Debug("  bus type         = {0}", info.BusType);
-        Log.Debug("  board type       = {0}", info.BoardType);
-        Log.Debug("  board properties = {0}", info.BoardProperties.ToString());
-        Log.Debug("  board mode       = {0}", info.BoardMode);
+        return;
       }
 
-      Log.Debug("Anysee: reading capabilities");
+      DVB_MMI.DumpBinary(_generalBuffer, 0, BoardInfoSize);
+      BoardInfo info = (BoardInfo)Marshal.PtrToStructure(_generalBuffer, typeof(BoardInfo));
+      Log.Debug("  bus type         = {0}", info.BusType);
+      Log.Debug("  board type       = {0}", info.BoardType);
+      Log.Debug("  board properties = {0}", info.BoardProperties.ToString());
+      Log.Debug("  board mode       = {0}", info.BoardMode);
+    }
+
+    /// <summary>
+    /// Attempt to read the tuner capabilities.
+    /// </summary>
+    private void ReadCapabilities()
+    {
+      Log.Debug("Anysee: read capabilities");
+
       for (int i = 0; i < CapabilitiesSize; i++)
       {
         Marshal.WriteByte(_generalBuffer, i, 0);
       }
-      hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.Capabilities,
+
+      int returnedByteCount;
+      int hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.Capabilities,
         _generalBuffer, CapabilitiesSize,
         _generalBuffer, CapabilitiesSize,
         out returnedByteCount
@@ -1304,20 +1337,21 @@ namespace TvEngine
       if (hr != 0 || returnedByteCount != CapabilitiesSize)
       {
         Log.Debug("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return;
       }
-      else
-      {
-        Capabilities capabilities = (Capabilities)Marshal.PtrToStructure(_generalBuffer, typeof(Capabilities));
-        Log.Debug("  min frequency    = {0} kHz", capabilities.MinFrequency);
-        Log.Debug("  max frequency    = {0} kHz", capabilities.MaxFrequency);
-        Log.Debug("  min symbol rate  = {0} s/s", capabilities.MinSymbolRate);
-        Log.Debug("  max symbol rate  = {0} s/s", capabilities.MaxSymbolRate);
-        Log.Debug("  min search step  = {0} Hz", capabilities.MinSearchStep);
-        Log.Debug("  max search step  = {0} Hz", capabilities.MaxSearchStep);
-        Log.Debug("  capabilities     = {0}", capabilities.NimCapabilities.ToString());
-        Log.Debug("  broadcast system = {0}", capabilities.PrimaryBroadcastSystem);
-      }
+
+      Capabilities capabilities = (Capabilities)Marshal.PtrToStructure(_generalBuffer, typeof(Capabilities));
+      Log.Debug("  min frequency    = {0} kHz", capabilities.MinFrequency);
+      Log.Debug("  max frequency    = {0} kHz", capabilities.MaxFrequency);
+      Log.Debug("  min symbol rate  = {0} s/s", capabilities.MinSymbolRate);
+      Log.Debug("  max symbol rate  = {0} s/s", capabilities.MaxSymbolRate);
+      Log.Debug("  min search step  = {0} Hz", capabilities.MinSearchStep);
+      Log.Debug("  max search step  = {0} Hz", capabilities.MaxSearchStep);
+      Log.Debug("  capabilities     = {0}", capabilities.NimCapabilities.ToString());
+      Log.Debug("  broadcast system = {0}", capabilities.PrimaryBroadcastSystem);
     }
+
+    #endregion
 
     /// <summary>
     /// Send key press event information to the CAM. This is the mechanism that
@@ -1520,7 +1554,7 @@ namespace TvEngine
 
     /// <summary>
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed.
+    /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -1597,6 +1631,12 @@ namespace TvEngine
       _isAnysee = true;
       _tunerDevicePath = tunerDevicePath;
       _generalBuffer = Marshal.AllocCoTaskMem(NimConfigSize);
+
+      ReadNimConfig();
+      ReadDriverVersion();
+      ReadPlatformInfo();
+      ReadBoardInfo();
+      ReadCapabilities();
       return true;
     }
 
@@ -1625,7 +1665,7 @@ namespace TvEngine
       }
 
       // Is a CI slot present? If not, there is no point in opening the interface.
-      ReadDeviceInfo();
+      ReadPlatformInfo();
       if (!_isCiSlotPresent)
       {
         Log.Debug("Anysee: CI slot not present");
@@ -1860,12 +1900,12 @@ namespace TvEngine
         if (esType == AnyseeEsType.Unknown)
         {
           // Nope.
-          Log.Debug("  excluding PID {0} (0x{1:x}), stream type = {2})", es.Pid, es.Pid, es.StreamType);
+          Log.Debug("  excluding PID {0} (0x{0:x}), stream type = {1})", es.Pid, es.StreamType);
           continue;
         }
 
         // Yes!!!
-        Log.Debug("  including PID {0} (0x{1:x}), stream type = {2}, category = {3}", es.Pid, es.Pid, es.StreamType, esType);
+        Log.Debug("  including PID {0} (0x{0:x}), stream type = {1}, category = {2}", es.Pid, es.StreamType, esType);
         EsPmtData esToKeep = new EsPmtData();
         esToKeep.Pid = es.Pid;
         esToKeep.EsType = esType;
@@ -1879,7 +1919,7 @@ namespace TvEngine
           byte[] descriptorData = d.GetRawData();
           if (offset + descriptorData.Length >= MaxDescriptorDataLength)
           {
-            Log.Debug("Anysee: PMT elementary stream {0} (0x{1:x}) CA data is too long", es.Pid, es.Pid);
+            Log.Debug("Anysee: PMT elementary stream {0} (0x{0:x}) CA data is too long", es.Pid);
             return false;
           }
           Buffer.BlockCopy(descriptorData, 0, esToKeep.DescriptorData, offset, descriptorData.Length);
@@ -2012,7 +2052,7 @@ namespace TvEngine
 
     #endregion
 
-    #region IDiseqcController members
+    #region IDiseqcDevice members
 
     /// <summary>
     /// Send a tone/data burst command, and then set the 22 kHz continuous tone state.

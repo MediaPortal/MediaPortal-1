@@ -125,9 +125,6 @@ namespace SetupTv.Sections
       // 
       // mpGrpAdvancedTuning
       // 
-      this.mpGrpAdvancedTuning.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGrpAdvancedTuning.Controls.Add(this.mpLabel2);
       this.mpGrpAdvancedTuning.Controls.Add(this.groupBox2);
       this.mpGrpAdvancedTuning.Controls.Add(this.mpLabel5);
@@ -139,7 +136,7 @@ namespace SetupTv.Sections
       this.mpGrpAdvancedTuning.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGrpAdvancedTuning.Location = new System.Drawing.Point(2, 257);
       this.mpGrpAdvancedTuning.Name = "mpGrpAdvancedTuning";
-      this.mpGrpAdvancedTuning.Size = new System.Drawing.Size(542, 123);
+      this.mpGrpAdvancedTuning.Size = new System.Drawing.Size(441, 122);
       this.mpGrpAdvancedTuning.TabIndex = 8;
       this.mpGrpAdvancedTuning.TabStop = false;
       this.mpGrpAdvancedTuning.Text = "Advanced tuning options";
@@ -159,7 +156,7 @@ namespace SetupTv.Sections
       this.groupBox2.Controls.Add(this.scanNIT);
       this.groupBox2.Controls.Add(this.scanSingleTransponder);
       this.groupBox2.Controls.Add(this.scanPredefProvider);
-      this.groupBox2.Location = new System.Drawing.Point(267, 16);
+      this.groupBox2.Location = new System.Drawing.Point(249, 19);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(174, 89);
       this.groupBox2.TabIndex = 16;
@@ -233,41 +230,44 @@ namespace SetupTv.Sections
       this.mpComboBoxMod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxMod.FormattingEnabled = true;
       this.mpComboBoxMod.ItemHeight = 13;
-      this.mpComboBoxMod.Items.AddRange(new object[] {
-            "Not Defined ",
-            "16 QAM ",
-            "32 QAM",
-            "64 QAM",
-            "80 QAM",
-            "96 QAM",
-            "112 QAM",
-            "128 QAM",
-            "160 QAM",
-            "192 QAM",
-            "224 QAM",
-            "256 QAM",
-            "320 QAM",
-            "384 QAM",
-            "448 QAM",
-            "512 QAM",
-            "640 QAM",
-            "768 QAM",
-            "896 QAM",
-            "1024 QAM",
-            "Qpsk",
-            "Bpsk",
-            "Oqpsk ",
-            "8Vsb ",
-            "16Vsb ",
-            "AnalogAmplitude ",
-            "AnalogFrequency ",
-            "8psk ",
-            "Rf ",
-            "16Apsk ",
-            "32Apsk",
-            "Qpsk2 ",
-            "8psk2 ",
-            "DirectTV  "});
+      this.mpComboBoxMod.Items.AddRange(new object[]
+                                          {
+                                            "Not Set",
+                                            "Not Defined",
+                                            "16 QAM",
+                                            "32 QAM",
+                                            "64 QAM",
+                                            "80 QAM",
+                                            "96 QAM",
+                                            "112 QAM",
+                                            "128 QAM",
+                                            "160 QAM",
+                                            "192 QAM",
+                                            "224 QAM",
+                                            "256 QAM",
+                                            "320 QAM",
+                                            "384 QAM",
+                                            "448 QAM",
+                                            "512 QAM",
+                                            "640 QAM",
+                                            "768 QAM",
+                                            "896 QAM",
+                                            "1024 QAM",
+                                            "QPSK",
+                                            "BPSK",
+                                            "OQPSK",
+                                            "8 VSB",
+                                            "16 VSB",
+                                            "Analog Amplitude",
+                                            "Analog Frequency",
+                                            "8 PSK",
+                                            "RF",
+                                            "16 APSK",
+                                            "32 APSK",
+                                            "QPSK (DVB-S2)",
+                                            "8 PSK (DVB-S2)",
+                                            "DirectTV"
+                                          });
       this.mpComboBoxMod.Location = new System.Drawing.Point(98, 77);
       this.mpComboBoxMod.Name = "mpComboBoxMod";
       this.mpComboBoxMod.Size = new System.Drawing.Size(92, 21);

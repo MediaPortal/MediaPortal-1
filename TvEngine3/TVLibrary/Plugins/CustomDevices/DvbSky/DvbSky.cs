@@ -105,7 +105,7 @@ namespace TvEngine
 
     /// <summary>
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed.
+    /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -152,7 +152,7 @@ namespace TvEngine
 
     #endregion
 
-    #region IDiseqcController members
+    #region IDiseqcDevice members
 
     /// <summary>
     /// Control whether tone/data burst and 22 kHz legacy tone are used.

@@ -53,7 +53,6 @@ namespace TvDatabase
     [TableColumn("polarisation", NotNull = true)] private int polarisation;
     [TableColumn("symbolrate", NotNull = true)] private int symbolrate;
     [TableColumn("diseqc", NotNull = true)] private int diseqc;
-    [TableColumn("switchingFrequency", NotNull = true)] private int switchingFrequency;
     [TableColumn("bandwidth", NotNull = true)] private int bandwidth;
     [TableColumn("majorChannel", NotNull = true)] private int majorChannel;
     [TableColumn("minorChannel", NotNull = true)] private int minorChannel;
@@ -61,7 +60,7 @@ namespace TvDatabase
     [TableColumn("audioSource", NotNull = true)] private int audioSource;
     [TableColumn("isVCRSignal", NotNull = true)] private bool isVCRSignal;
     [TableColumn("tuningSource", NotNull = true)] private int tuningSource;
-    [TableColumn("band", NotNull = true)] private int band;
+    [TableColumn("idLnbType", NotNull = true), ForeignKey("LnbType", "idLnbType")] private int idLnbType;
     [TableColumn("satIndex", NotNull = true)] private int satIndex;
     [TableColumn("innerFecRate", NotNull = true)] private int innerFecRate;
     [TableColumn("pilot", NotNull = true)] private int pilot;
@@ -79,10 +78,9 @@ namespace TvDatabase
     public TuningDetail(int idChannel, string name, string provider, int channelType, int channelNumber, int frequency,
                         int countryId, bool isRadio, bool isTv, int networkId, int transportId, int serviceId,
                         int pmtPid, bool freeToAir, int modulation, int polarisation, int symbolrate, int diseqc,
-                        int switchingFrequency, int bandwidth, int majorChannel, int minorChannel,
-                        int videoSource, int audioSource, bool isVCRSignal, int tuningSource,
-                        int band,
-                        int satIndex, int innerFecRate, int pilot, int rollOff, string url, int bitrate)
+                        int bandwidth, int majorChannel, int minorChannel, int videoSource, int audioSource,
+                        bool isVCRSignal, int tuningSource, int idLnbType, int satIndex, int innerFecRate,
+                        int pilot, int rollOff, string url, int bitrate)
     {
       isChanged = true;
       this.idChannel = idChannel;
@@ -103,7 +101,6 @@ namespace TvDatabase
       this.polarisation = polarisation;
       this.symbolrate = symbolrate;
       this.diseqc = diseqc;
-      this.switchingFrequency = switchingFrequency;
       this.bandwidth = bandwidth;
       this.majorChannel = majorChannel;
       this.minorChannel = minorChannel;
@@ -111,7 +108,7 @@ namespace TvDatabase
       this.audioSource = audioSource;
       this.isVCRSignal = isVCRSignal;
       this.tuningSource = tuningSource;
-      this.band = band;
+      this.idLnbType = idLnbType;
       this.satIndex = satIndex;
       this.innerFecRate = innerFecRate;
       this.pilot = pilot;
@@ -122,15 +119,15 @@ namespace TvDatabase
 
     /// <summary> 
     /// Create an object from an existing row of data. This will be used by Gentle to 
-    /// construct objects from retrieved rows. 
+    /// construct objects from retrieved rows.
     /// </summary> 
     public TuningDetail(int idTuning, int idChannel, string name, string provider, int channelType, int channelNumber,
                         int frequency, int countryId, bool isRadio, bool isTv, int networkId, int transportId,
                         int serviceId, int pmtPid, bool freeToAir, int modulation, int polarisation, int symbolrate,
-                        int diseqc, int switchingFrequency, int bandwidth, int majorChannel, int minorChannel,
-                        int pcrPid, int videoSource, int audioSource, bool isVCRSignal, int tuningSource, int videoPid,
-                        int audioPid,
-                        int band, int satIndex, int innerFecRate, int pilot, int rollOff, string url, int bitrate)
+                        int diseqc, int bandwidth, int majorChannel, int minorChannel, int pcrPid, int videoSource,
+                        int audioSource, bool isVCRSignal, int tuningSource, int videoPid, int audioPid,
+                        int idLnbType, int satIndex, int innerFecRate, int pilot, int rollOff, string url,
+                        int bitrate)
     {
       this.idTuning = idTuning;
       this.idChannel = idChannel;
@@ -151,7 +148,6 @@ namespace TvDatabase
       this.polarisation = polarisation;
       this.symbolrate = symbolrate;
       this.diseqc = diseqc;
-      this.switchingFrequency = switchingFrequency;
       this.bandwidth = bandwidth;
       this.majorChannel = majorChannel;
       this.minorChannel = minorChannel;
@@ -159,7 +155,7 @@ namespace TvDatabase
       this.audioSource = audioSource;
       this.isVCRSignal = isVCRSignal;
       this.tuningSource = tuningSource;
-      this.band = band;
+      this.idLnbType = idLnbType;
       this.satIndex = satIndex;
       this.innerFecRate = innerFecRate;
       this.pilot = pilot;
@@ -449,19 +445,6 @@ namespace TvDatabase
     }
 
     /// <summary>
-    /// Property relating to database column switchingFrequency
-    /// </summary>
-    public int SwitchingFrequency
-    {
-      get { return switchingFrequency; }
-      set
-      {
-        isChanged |= switchingFrequency != value;
-        switchingFrequency = value;
-      }
-    }
-
-    /// <summary>
     /// Property relating to database column bandwidth
     /// </summary>
     public int Bandwidth
@@ -554,15 +537,15 @@ namespace TvDatabase
 
 
     /// <summary>
-    /// Property relating to database column band
+    /// Property relating to database column idLnbType
     /// </summary>
-    public int Band
+    public int IdLnbType
     {
-      get { return band; }
+      get { return idLnbType; }
       set
       {
-        isChanged |= band != value;
-        band = value;
+        isChanged |= idLnbType != value;
+        idLnbType = value;
       }
     }
 

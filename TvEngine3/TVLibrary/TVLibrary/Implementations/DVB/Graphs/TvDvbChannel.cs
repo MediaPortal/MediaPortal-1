@@ -210,7 +210,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if PMT was found, otherwise <c>false</c></returns>
     protected bool WaitForPmt(int serviceId, int pmtPid)
     {
-      Log.Log.Debug("TvDvbChannel: subchannel {0} wait for PMT, service ID = {1} (0x{2:x}), PMT PID = {3} (0x{4:x})", _subChannelId, serviceId, serviceId, pmtPid, pmtPid);
+      Log.Log.Debug("TvDvbChannel: subchannel {0} wait for PMT, service ID = {1} (0x{1:x}), PMT PID = {2} (0x{2:x})", _subChannelId, serviceId, pmtPid);
       // There are 3 classes of PMT PID settings:
       // -1 = Scanning behaviour, where we don't care about PMT.
       // 0 = We don't know the correct/current PMT PID, so we ask TsWriter to determine what it should be,
@@ -240,7 +240,7 @@ namespace TvLibrary.Implementations.DVB
         {
           Log.Log.Debug("TvDvbChannel: search for updated PMT PID in PAT");
         }
-        Log.Log.Debug("TvDvbChannel: configure PMT grabber, PMT PID = {0} (0x{1:x})", pmtPidToSearchFor, pmtPidToSearchFor);
+        Log.Log.Debug("TvDvbChannel: configure PMT grabber, PMT PID = {0} (0x{0:x})", pmtPidToSearchFor);
         _tsFilterInterface.PmtSetCallBack(_subChannelIndex, this);
         _tsFilterInterface.PmtSetPmtPid(_subChannelIndex, pmtPidToSearchFor, serviceId);
 
@@ -844,9 +844,7 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         byte[] rawPmt = _pmt.GetRawPmt();
-        //_tsFilterInterface.TimeShiftPause(_subChannelIndex, 1);
         _tsFilterInterface.TimeShiftSetPmtPid(_subChannelIndex, _pmtPid, _pmt.ProgramNumber, rawPmt, rawPmt.Length);
-        //_tsFilterInterface.TimeShiftPause(_subChannelIndex, 0);
       }
       catch (Exception ex)
       {
@@ -897,8 +895,8 @@ namespace TvLibrary.Implementations.DVB
             return false;
           }
 
-          Log.Log.Debug("TvDvbChannel: SID = {1} (0x{2:x}), PMT PID = {3} (0x{4:X}), version = {5}",
-                          pmt.ProgramNumber, pmt.ProgramNumber, _pmtPid, _pmtPid, pmt.Version);
+          Log.Log.Debug("TvDvbChannel: SID = {0} (0x{0:x}), PMT PID = {1} (0x{1:x}), version = {2}",
+                          pmt.ProgramNumber, _pmtPid, pmt.Version);
 
           // Have we already seen this PMT? If yes, then stop processing here. Theoretically this is a
           // redundant check as TsWriter should only pass us new PMT when the version changes.
@@ -1044,7 +1042,7 @@ namespace TvLibrary.Implementations.DVB
       // TsWriter calls this PMT callback delegate when the PMT version changes. Check if the PMT that
       // TsWriter has just received was requested. If it wasn't requested, we have to ensure that it gets
       // handled appropriately.
-      Log.Log.Debug("TvDvbChannel: subchannel {0} OnPMTReceived(), PMT PID = {1} (0x{2:x}), dynamic = {3}", _subChannelId, pmtPid, _pmt != null);
+      Log.Log.Debug("TvDvbChannel: subchannel {0} OnPMTReceived(), PMT PID = {1} (0x{1:x}), dynamic = {2}", _subChannelId, pmtPid, _pmt != null);
       _pmtPid = pmtPid;
       if (_eventPmt != null)
       {
@@ -1092,17 +1090,17 @@ namespace TvLibrary.Implementations.DVB
             int oldPid = currentDetail.PmtPid;
             currentDetail.PmtPid = pmtPid;
             currentDetail.Persist();
-            Log.Log.Debug("TvDvbChannel: updated PMT PID for service {0} (0x{1:x}) from {2} (0x{3:x}) to {4} (0x{5:x})",
-                            dvbService.ServiceId, dvbService.ServiceId, oldPid, oldPid, pmtPid, pmtPid);
+            Log.Log.Debug("TvDvbChannel: updated PMT PID for service {0} (0x{0:x}) from {1} (0x{1:x}) to {2} (0x{2:x})",
+                            dvbService.ServiceId, oldPid, pmtPid);
           }
           catch (Exception ex)
           {
-            Log.Log.Debug("TvDvbChannel: failed to persist new PMT PID for service {0} (0x{1:x})\r\n{2}", dvbService.ServiceId, dvbService.ServiceId, ex.ToString());
+            Log.Log.Debug("TvDvbChannel: failed to persist new PMT PID for service {0} (0x{0:x})\r\n{1}", dvbService.ServiceId, ex.ToString());
           }
         }
         else
         {
-          Log.Log.Debug("TvDvbChannel: unable to persist new PMT PID for service {0} (0x{1:x})", dvbService.ServiceId, dvbService.ServiceId);
+          Log.Log.Debug("TvDvbChannel: unable to persist new PMT PID for service {0} (0x{0:x})", dvbService.ServiceId);
         }
       }
     }

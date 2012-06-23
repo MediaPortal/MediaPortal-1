@@ -112,21 +112,21 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="tipsLabel.Text" xml:space="preserve">
-    <value>- It is only possible to have one WinTV-CI connected to each computer (this is a driver limitation).
-- The WinTV-CI can only be used with one DVB tuner at any given time (this is a driver limitation).
+    <value>- It is only possible to have one WinTV-CI connected to each computer (driver limitation).
+- The WinTV-CI can only be used with one DVB tuner at any given time (driver limitation).
 - A TV Server restart is required to link the WinTV-CI with a different tuner.
 - Non-Hauppauge tuners will almost certainly not work with the WinTV-CI.
 - The BDA driver is required; the WDM driver is not supported.
 - Driver version 1.3607.26137.0 or later is recommended.
 - Disconnecting the WinTV-CI while TV Server is running will cause a system crash.</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="tunerSelectionPicture.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         R0lGODlhIQAXAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwE9lfYOZsV8/P38/P58/P78/P98/P/8/

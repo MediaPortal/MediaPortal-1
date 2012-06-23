@@ -393,7 +393,7 @@ namespace TvService
 
           _subchannel = subchannel;
 
-          Log.Write("card: CAM enabled : {0}", _cardHandler.HasCA);
+          Log.Write("card: conditional access interface available = {0}", _cardHandler.IsConditionalAccessSupported);
 
           if (subchannel is BaseSubChannel)
           {
@@ -519,7 +519,7 @@ namespace TvService
 
           if (_cardHandler.IsIdle)
           {
-            _cardHandler.PauseCard(user);
+            _cardHandler.StopCard(user);
           }
           else
           {
@@ -613,9 +613,9 @@ if (!WaitForUnScrambledSignal(ref user))
       //lets check if stream is initially scrambled, if it is and the card has no CA, then we are unable to decrypt stream.
       if (_cardHandler.IsScrambled(ref user))
       {
-        if (!_cardHandler.HasCA)
+        if (!_cardHandler.IsConditionalAccessSupported)
         {
-          Log.Write("card: WaitForTimeShiftFile - return scrambled, since card has no CAM.");
+          Log.Write("card: WaitForTimeShiftFile - return scrambled, since the device does not support conditional access");
           scrambled = true;
           return false;
         }

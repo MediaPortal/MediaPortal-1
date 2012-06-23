@@ -55,7 +55,7 @@ namespace TvLibrary.Implementations.RadioWebStream
       _isHybrid = false;
       _isScanning = false;
       _epgGrabbing = false;
-      _cardType = CardType.RadioWebStream;
+      _tunerType = CardType.RadioWebStream;
       _stopGraph = true;  // Pause graph not supported.
     }
 
@@ -81,22 +81,25 @@ namespace TvLibrary.Implementations.RadioWebStream
     #region tuning & recording
 
     /// <summary>
-    /// Method to check if card can tune to the channel specified
+    /// Check if the tuner can tune to a specific channel.
     /// </summary>
-    /// <returns>true if card can tune to the channel otherwise false</returns>
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public override bool CanTune(IChannel channel)
     {
-      if (!channel.IsRadio) return false;
-      if ((channel as RadioWebStreamChannel) == null) return false;
-      return true;
+      if (channel is RadioWebStreamChannel && channel.IsRadio)
+      {
+        return true;
+      }
+      return false;
     }
 
     /// <summary>
-    /// Tunes the specified channel.
+    /// Tune to a specific channel.
     /// </summary>
-    /// <param name="subChannelId">The sub channel id</param>
-    /// <param name="channel">The channel.</param>
-    /// <returns></returns>
+    /// <param name="subChannelId">The subchannel ID for the channel that is being tuned.</param>
+    /// <param name="channel">The channel to tune to.</param>
+    /// <returns>the subchannel associated with the tuned channel</returns>
     public override ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
       Log.Log.WriteFile("RadioWebStream:  Tune:{0}", channel);
@@ -104,15 +107,34 @@ namespace TvLibrary.Implementations.RadioWebStream
     }
 
     /// <summary>
-    /// Scans the specified channel.
+    /// Scan a specific channel.
     /// </summary>
-    /// <param name="subChannelId">The sub channel id</param>
-    /// <param name="channel">The channel.</param>
-    /// <returns></returns>
+    /// <param name="subChannelId">The subchannel ID for the channel that is being scanned.</param>
+    /// <param name="channel">The channel to scan.</param>
+    /// <returns>the subchannel associated with the scanned channel</returns>
     public override ITvSubChannel Scan(int subChannelId, IChannel channel)
     {
       Log.Log.WriteFile("RadioWebStream:  Scan:{0}", channel);
       return null;
+    }
+
+    /// <summary>
+    /// Actually tune to a channel.
+    /// </summary>
+    /// <param name="channel">The channel to tune to.</param>
+    protected override void PerformTuning(IChannel channel)
+    {
+      Log.Log.WriteFile("RadioWebStream: perform tuning");
+    }
+
+    /// <summary>
+    /// Allocate a new subchannel instance.
+    /// </summary>
+    /// <param name="channel">The service or channel to associate with the subchannel.</param>
+    /// <returns>a handle for the subchannel</returns>
+    protected override int CreateNewSubChannel(IChannel channel)
+    {
+      return -1;
     }
 
     #endregion
@@ -123,24 +145,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// Stops the current graph
     /// </summary>
     /// <returns></returns>
-    public override void StopGraph()
-    {
-      if (!CheckThreadId()) return;
-    }
-
-    /// <summary>
-    /// Gets wether or not card supports pausing the graph.
-    /// </summary>
-    public override bool SupportsPauseGraph
-    {
-      get { return false; }
-    }
-
-    /// <summary>
-    /// Pause the current graph
-    /// </summary>
-    /// <returns></returns>
-    public override void PauseGraph()
+    public override void Stop()
     {
       if (!CheckThreadId()) return;
     }

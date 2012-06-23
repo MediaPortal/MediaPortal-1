@@ -499,9 +499,9 @@ namespace TvService
       //lets check if stream is initially scrambled, if it is and the card has no CA, then we are unable to decrypt stream.
       if (_cardHandler.IsScrambled(ref user))
       {
-        if (!_cardHandler.HasCA)
+        if (!_cardHandler.IsConditionalAccessSupported)
         {
-          Log.Write("card: WaitForRecordingFile - return scrambled, since card has no CAM.");
+          Log.Write("card: WaitForRecordingFile - return scrambled, since the device does not support conditional access");
           scrambled = true;
           return false;
         }

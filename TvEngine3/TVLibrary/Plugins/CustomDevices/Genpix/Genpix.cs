@@ -33,7 +33,7 @@ namespace TvEngine
   /// <summary>
   /// A class for handling DiSEqC for Genpix tuners using the standard BDA driver.
   /// </summary>
-  public class Genpix : BaseCustomDevice, ICustomTuner, IDiseqcController
+  public class Genpix : BaseCustomDevice, ICustomTuner, IDiseqcDevice
   {
     #region enums
 
@@ -152,7 +152,7 @@ namespace TvEngine
 
     /// <summary>
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed.
+    /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -221,20 +221,45 @@ namespace TvEngine
         return;
       }
 
-      // Genpix tuners support modulation types that many other tuners do not. The DSS packet format (which
-      // is completely different to MPEG 2) is not currently supported by TsWriter or TsReader. DC II is
-      // more similar to MPEG 2 but I'm unsure if TsWriter and TsReader support it.
+      // Genpix tuners support modulation types that many other tuners do not. Aparently there are some Twinhan
+      // and DVB World tuners that also support some of the turbo schemes. However their SDKs don't specify the
+      // details. The TeVii SDK does specify modulation mappings for turbo schemes, but I don't know if the
+      // hardware actually supports them.
+      // We don't specifically support turbo modulation schemes in our tuning details, but we at least try to
+      // use a common mapping in the Genpix and TeVii plugin code.
+
+      // Genpix driver mappings are as follows:
       // QPSK    => DVB-S QPSK
-      // 16 QAM  => Turbo FEC QPSK
-      // 8 PSK   => Turbo FEC 8 PSK
+      // 16 QAM  => turbo FEC QPSK
+      // 8 PSK   => turbo FEC 8 PSK
       // DirecTV => DSS QPSK
-      // 32 QAM  => DC II Combo
-      // 64 QAM  => DC II Split (I)
-      // 80 QAM  => DC II Split (Q)
-      // 96 QAM  => DC II OQPSK
+      // 32 QAM  => DC II combo
+      // 64 QAM  => DC II split (I)
+      // 80 QAM  => DC II split (Q)
+      // 96 QAM  => DC II offset QPSK
+
+      // MediaPortal mappings are as follows:
+      // not set => DVB-S QPSK
+      // QPSK    => non-backwards compatible DVB-S2 QPSK
+      // 8 PSK   => non-backwards compatible DVB-S2 8 PSK
+      // O-QPSK  => turbo FEC QPSK
+      // 80 QAM  => turbo FEC 8 PSK
+      // 160 QAM => turbo FEC 16 PSK
+
+      // Note: the DSS packet format used by North American DirecTV uses a packet format which is completely
+      // different from MPEG. It is not currently supported by TsWriter or TsReader. DC II is more similar to
+      // MPEG 2 but I'm unsure if TsWriter and TsReader fully support it.
       if (ch.ModulationType == ModulationType.ModNotSet)
       {
         ch.ModulationType = ModulationType.ModQpsk;
+      }
+      else if (ch.ModulationType == ModulationType.ModOqpsk)
+      {
+        ch.ModulationType = ModulationType.Mod16Qam;
+      }
+      else if (ch.ModulationType == ModulationType.Mod80Qam)
+      {
+        ch.ModulationType = ModulationType.Mod8Psk;
       }
       Log.Debug("  modulation = {0}", ch.ModulationType);
     }
@@ -252,7 +277,7 @@ namespace TvEngine
     /// <returns><c>true</c> if the device supports specialised tuning for the channel, otherwise <c>false</c></returns>
     public bool CanTuneChannel(IChannel channel)
     {
-      // Tuning is only supported for satellite channels.
+      // This plugin only supports satellite tuners. As such, tuning is only supported for satellite channels.
       if (channel is DVBSChannel)
       {
         return true;
@@ -264,9 +289,8 @@ namespace TvEngine
     /// Tune to a given channel using the specialised tuning method.
     /// </summary>
     /// <param name="channel">The channel to tune.</param>
-    /// <param name="parameters">Tuning time restriction settings.</param>
     /// <returns><c>true</c> if the channel is successfully tuned, otherwise <c>false</c></returns>
-    public bool Tune(IChannel channel, ScanParameters parameters)
+    public bool Tune(IChannel channel)
     {
       Log.Debug("Genpix: tune to channel");
 
@@ -277,19 +301,22 @@ namespace TvEngine
       }
       if (!CanTuneChannel(channel))
       {
-        Log.Debug("Genpix: tuning not supported for this channel");
+        Log.Debug("Genpix: tuning is not supported for this channel");
         return false;
       }
 
       DVBSChannel dvbsChannel = channel as DVBSChannel;
       BdaExtensionParams command = new BdaExtensionParams();
 
-      BandTypeConverter.GetLnbTuningParameters(dvbsChannel, parameters, out command.LnbLowBandLof,
-              out command.LnbSwitchFrequency, out command.Polarisation
-      );
+      uint lnbLof;
+      uint lnbSwitchFrequency;
+      LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLof, out lnbSwitchFrequency, out command.Polarisation);
+      lnbLof /= 1000;
 
       command.Frequency = (uint)dvbsChannel.Frequency / 1000;
-      command.LnbHighBandLof = command.LnbLowBandLof;
+      command.LnbLowBandLof = lnbLof;
+      command.LnbHighBandLof = lnbLof;
+      command.LnbSwitchFrequency = lnbSwitchFrequency / 1000;
       command.SymbolRate = (uint)dvbsChannel.SymbolRate;
       command.Modulation = dvbsChannel.ModulationType;
       command.InnerFecRate = dvbsChannel.InnerFecRate;
@@ -315,7 +342,7 @@ namespace TvEngine
 
     #endregion
 
-    #region IDiseqcController members
+    #region IDiseqcDevice members
 
     /// <summary>
     /// Control whether tone/data burst and 22 kHz legacy tone are used.
@@ -337,7 +364,7 @@ namespace TvEngine
         return false;
       }
 
-      if (toneBurstState == ToneBurst.Off)
+      if (toneBurstState == ToneBurst.None)
       {
         Log.Debug("Genpix: result = success");
         return true;

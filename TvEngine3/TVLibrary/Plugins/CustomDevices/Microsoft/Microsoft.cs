@@ -33,7 +33,7 @@ namespace TvEngine
   /// This class provides a base implementation of DiSEqC and clear QAM tuning support for devices that
   /// support Microsoft BDA interfaces and de-facto standards.
   /// </summary>
-  public class Microsoft : BaseCustomDevice, IDiseqcController
+  public class Microsoft : BaseCustomDevice, IDiseqcDevice
   {
     #region IBDA_DiseqCommand interface
 
@@ -252,7 +252,7 @@ namespace TvEngine
 
     /// <summary>
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed.
+    /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -410,7 +410,7 @@ namespace TvEngine
 
     #endregion
 
-    #region IDiseqcController members
+    #region IDiseqcDevice members
 
     /// <summary>
     /// Send a tone/data burst command, and then set the 22 kHz continuous tone state.
@@ -439,7 +439,7 @@ namespace TvEngine
       int hr;
       try
       {
-        if (toneBurstState != ToneBurst.Off)
+        if (toneBurstState != ToneBurst.None)
         {
           // First enable tone burst commands.
           hr = _w7Interface.put_DiseqUseToneBurst(1);
@@ -517,7 +517,11 @@ namespace TvEngine
       {
         // This interface only supports DiSEqC 1.0 switch commands. We have to attempt
         // to translate the raw command back into a supported command.
-        if (command.Length != 4 || command[0] != 0xe0 || command[1] != 0x10 || command[2] != 0x38)
+        if (command.Length != 4 ||
+          (command[0] != (byte)DiseqcFrame.CommandFirstTransmissionNoReply &&
+          command[0] != (byte)DiseqcFrame.CommandRepeatTransmissionNoReply) ||
+          command[1] != (byte)DiseqcAddress.AnySwitch ||
+          command[2] != (byte)DiseqcCommand.WriteN0)
         {
           Log.Debug("Microsoft: command not supported");
           return false;

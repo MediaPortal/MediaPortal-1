@@ -45,19 +45,22 @@ namespace SetupControls
     protected static TuningDetail CreateInitialTuningDetail()
     {
       string channelName = "";
-      long channelFrequency = 0;
+      int channelFrequency = 0;
       int channelNumber = 0;
       int country = 31;
+      bool isRadio = false;
+      bool isTv = false;
       int tunerSource = 0;
       int videoInputType = 0;
       int audioInputType = 0;
+      bool isVcrSignal = false;
       int symbolRate = 0;
-      int modulation = 0;
-      int polarisation = 0;
-      int switchFrequency = 0;
+      int modulation = (int)ModulationType.ModNotSet;
+      int polarisation = (int)Polarisation.NotSet;
       int diseqc = 0;
       int bandwidth = 8;
       int pmtPid = -1;
+      bool freeToAir = true;
       int networkId = -1;
       int serviceId = -1;
       int transportId = -1;
@@ -65,20 +68,19 @@ namespace SetupControls
       int majorChannel = -1;
       string provider = "";
       int channelType = 0;
-      int band = 0;
+      int idLnbType = 0;
       int satIndex = -1;
       var innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
       var pilot = (int)Pilot.NotSet;
       var rollOff = (int)RollOff.NotSet;
       string url = "";
+      int bitrate = 0;
       return new TuningDetail(-1, channelName, provider,
-                              channelType, channelNumber, (int)channelFrequency, country, false, false,
-                              networkId, transportId, serviceId, pmtPid, true,
-                              modulation, polarisation, symbolRate, diseqc, switchFrequency,
-                              bandwidth, majorChannel, minorChannel, videoInputType,
-                              audioInputType, false, tunerSource, band,
-                              satIndex,
-                              innerFecRate, pilot, rollOff, url, 0);
+                              channelType, channelNumber, channelFrequency, country, isRadio, isTv,
+                              networkId, transportId, serviceId, pmtPid, freeToAir, modulation,
+                              polarisation, symbolRate, diseqc, bandwidth, majorChannel, minorChannel,
+                              videoInputType, audioInputType, isVcrSignal, tunerSource, idLnbType,
+                              satIndex, innerFecRate, pilot, rollOff, url, bitrate);
     }
   }
 }

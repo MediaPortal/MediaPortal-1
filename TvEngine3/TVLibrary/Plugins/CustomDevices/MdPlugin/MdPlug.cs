@@ -700,7 +700,7 @@ namespace TvEngine
 
     /// <summary>
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed.
+    /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -850,22 +850,16 @@ namespace TvEngine
     /// Insert and connect the device's additional filter(s) into the BDA graph.
     /// [network provider]->[tuner]->[capture]->[...device filter(s)]->[infinite tee]->[MPEG 2 demultiplexer]->[transport information filter]->[transport stream writer]
     /// </summary>
-    /// <param name="graphBuilder">The graph builder to use to insert the device filter(s).</param>
     /// <param name="lastFilter">The source filter (usually either a tuner or capture/receiver filter) to
     ///   connect the [first] device filter to.</param>
     /// <returns><c>true</c> if the device was successfully added to the graph, otherwise <c>false</c></returns>
-    public bool AddToGraph(ICaptureGraphBuilder2 graphBuilder, ref IBaseFilter lastFilter)
+    public bool AddToGraph(ref IBaseFilter lastFilter)
     {
       Log.Debug("MD Plugin: add to graph");
 
       if (!_isMdPlugin)
       {
         Log.Debug("MD Plugin: device not initialised or interface not supported");
-        return false;
-      }
-      if (graphBuilder == null)
-      {
-        Log.Debug("MD Plugin: graph builder is null");
         return false;
       }
       if (lastFilter == null)
@@ -879,43 +873,44 @@ namespace TvEngine
         return true;
       }
 
-      // We need a reference to the graph builder's graph.
-      IGraphBuilder tmpGraph = null;
-      int hr = graphBuilder.GetFiltergraph(out tmpGraph);
+      // We need a reference to the graph.
+      FilterInfo filterInfo;
+      int hr = lastFilter.QueryFilterInfo(out filterInfo);
       if (hr != 0)
       {
-        Log.Debug("MD Plugin: failed to get graph reference, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        Log.Debug("MD Plugin: failed to get filter info, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
-      _graph = tmpGraph as IFilterGraph2;
+      _graph = filterInfo.pGraph as IFilterGraph2;
       if (_graph == null)
       {
         Log.Debug("MD Plugin: failed to get graph reference");
         return false;
       }
 
-      // Add an inf tee after the tuner/capture filter.
+      // Add an infinite tee after the tuner/capture filter.
       _infTee = (IBaseFilter)new InfTee();
       hr = _graph.AddFilter(_infTee, "MD Plugin Infinite Tee");
       if (hr != 0)
       {
-        Log.Debug("MD Plugin: failed to add inf tee to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        Log.Debug("MD Plugin: failed to add the inf tee to the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
-      hr = graphBuilder.RenderStream(null, null, lastFilter, null, _infTee);
+      IPin outputPin = DsFindPin.ByDirection(lastFilter, PinDirection.Output, 0);
+      IPin inputPin = DsFindPin.ByDirection(_infTee, PinDirection.Input, 0);
+      hr = _graph.Connect(outputPin, inputPin);
+      DsUtils.ReleaseComObject(outputPin);
+      outputPin = null;
+      DsUtils.ReleaseComObject(inputPin);
+      inputPin = null;
       if (hr != 0)
       {
-        Log.Debug("MD Plugin: failed to render stream through inf tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        _graph.RemoveFilter(_infTee);
-        DsUtils.ReleaseComObject(_infTee);
-        _infTee = null;
+        Log.Debug("MD Plugin: failed to connect the inf tee into the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
       lastFilter = _infTee;
 
       // Add one filter for each decoding slot.
-      IPin outputPin;
-      IPin inputPin;
       for (int i = 0; i < _slots.Count; i++)
       {
         DecodeSlot slot = new DecodeSlot();
@@ -926,7 +921,7 @@ namespace TvEngine
         hr = _graph.AddFilter(slot.Filter, "MDAPI Filter " + i);
         if (hr != 0)
         {
-          Log.Debug("MD Plugin: failed to add MD plugin filter {0} to graph, hr = 0x{1:x} ({2})", i + 1, hr, HResult.GetDXErrorString(hr));
+          Log.Debug("MD Plugin: failed to add MD plugin filter {0} to the graph, hr = 0x{1:x} ({2})", i + 1, hr, HResult.GetDXErrorString(hr));
           return false;
         }
 
@@ -964,6 +959,7 @@ namespace TvEngine
         }
       }
 
+      // Note all cleanup is done in Dispose(), which should be called immediately if we return false.
       return true;
     }
 
@@ -1185,38 +1181,23 @@ namespace TvEngine
       // a TV or radio service.
       programToDecode.ServiceType = (byte)(dvbChannel.IsTv ? DvbServiceType.DigitalTelevision : DvbServiceType.DigitalRadio);
 
-      Log.Debug("MD Plugin: TSID = {0} (0x{1:x}), SID = {2} (0x{3:x}), PMT PID = {4} (0x{5:x}), PCR PID = {6} (0x{7:x}), service type = {8}, " +
-                        "video PID = {9} (0x{10:x}), audio PID = {11} (0x{12:x}), AC3 PID = {13} (0x{14:x}), teletext PID = {15} (0x{16:x})",
-          programToDecode.TransportStreamId, programToDecode.TransportStreamId,
-          programToDecode.ServiceId, programToDecode.ServiceId,
-          programToDecode.PmtPid, programToDecode.PmtPid,
-          programToDecode.PcrPid, programToDecode.PcrPid,
-          programToDecode.ServiceType,
-          programToDecode.VideoPid, programToDecode.VideoPid,
-          programToDecode.AudioPid, programToDecode.AudioPid,
-          programToDecode.Ac3AudioPid, programToDecode.Ac3AudioPid,
-          programToDecode.TeletextPid, programToDecode.TeletextPid);
+      Log.Debug("MD Plugin: TSID = {0} (0x{0:x}), SID = {1} (0x{1:x}), PMT PID = {2} (0x{2:x}), PCR PID = {3} (0x{3:x}), service type = {4}, " +
+                        "video PID = {5} (0x{5:x}), audio PID = {6} (0x{6:x}), AC3 PID = {7} (0x{7:x}), teletext PID = {8} (0x{8:x})",
+          programToDecode.TransportStreamId, programToDecode.ServiceId, programToDecode.PmtPid, programToDecode.PcrPid,
+          programToDecode.ServiceType, programToDecode.VideoPid, programToDecode.AudioPid, programToDecode.Ac3AudioPid, programToDecode.TeletextPid
+      );
 
       programToDecode.CaSystemCount = RegisterEcmAndEmmPids(pmt, cat, ref programToDecode);
       SetPreferredCaSystemIndex(ref programToDecode);
 
-      Log.Debug("MD Plugin: ECM PID = {0} (0x{1:x}, CA system count = {2}, CA index = {3}",
-                    programToDecode.EcmPid,
-                    programToDecode.EcmPid,
-                    programToDecode.CaSystemCount,
-                    programToDecode.CaId);
+      Log.Debug("MD Plugin: ECM PID = {0} (0x{0:x}, CA system count = {1}, CA index = {2}",
+                    programToDecode.EcmPid, programToDecode.CaSystemCount, programToDecode.CaId
+      );
       for (byte i = 0; i < programToDecode.CaSystemCount; i++)
       {
-        Log.Debug("MD Plugin: #{0} CA type = {1} (0x{2:x}), ECM PID = {3} (0x{4:x}), EMM PID = {5} (0x{6:x}), provider = {7} (0x{8:x})",
-                      i + 1,
-                      programToDecode.CaSystems[i].CaType,
-                      programToDecode.CaSystems[i].CaType,
-                      programToDecode.CaSystems[i].EcmPid,
-                      programToDecode.CaSystems[i].EcmPid,
-                      programToDecode.CaSystems[i].EmmPid,
-                      programToDecode.CaSystems[i].EmmPid,
-                      programToDecode.CaSystems[i].ProviderId,
-                      programToDecode.CaSystems[i].ProviderId);
+        Log.Debug("MD Plugin: #{0} CA type = {1} (0x{1:x}), ECM PID = {2} (0x{2:x}), EMM PID = {3} (0x{3:x}), provider = {4} (0x{4:x})",
+                      i + 1, programToDecode.CaSystems[i].CaType, programToDecode.CaSystems[i].EcmPid, programToDecode.CaSystems[i].EmmPid, programToDecode.CaSystems[i].ProviderId
+        );
       }
 
       // Instruct the MD filter to decrypt the service.

@@ -36,7 +36,7 @@ namespace TvEngine
   /// seem to still support the original Conexant, NXP and Cyprus interfaces/structures. However, it is
   /// simpler and probably more future-proof to stick with the information in the published SDK.
   /// </summary>
-  public class Turbosight : BaseCustomDevice, IPowerDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcController
+  public class Turbosight : BaseCustomDevice, IPowerDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
   {
     #region enums
 
@@ -275,6 +275,7 @@ namespace TvEngine
     /// </summary>
     /// <param name="handle">The handle allocated to this device.</param>
     [DllImport("Resources\\TbsCIapi.dll", CallingConvention = CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.I1)]
     private static extern bool Camavailable(IntPtr handle);
 
     /// <summary>
@@ -300,7 +301,8 @@ namespace TvEngine
     /// </summary>
     /// <param name="handle">The handle allocated to this device.</param>
     [DllImport("Resources\\TbsCIapi.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern void On_Exit_CI(IntPtr handle);
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool On_Exit_CI(IntPtr handle);
 
     #endregion
 
@@ -566,6 +568,7 @@ namespace TvEngine
           }
 
           Log.Debug("Turbosight: response length = {0}", length);
+          //DVB_MMI.DumpBinary(_mmiResponseBuffer, 0, length + 7);
           byte[] responseBytes = new byte[length];
           int j = 7;
           for (int i = 0; i < length; i++)
@@ -638,12 +641,10 @@ namespace TvEngine
         return;
       }
       MmiApplicationType type = (MmiApplicationType)content[0];
-      int manufacturer = (content[1] << 8) | content[2];
-      int code = (content[3] << 8) | content[4];
-      String title = DVB_MMI.BytesToString(content, 5, length - 5);
+      String title = System.Text.Encoding.ASCII.GetString(content, 5, length - 5);
       Log.Debug("  type         = {0}", type);
-      Log.Debug("  manufacturer = 0x{0:x}", manufacturer);
-      Log.Debug("  code         = 0x{0:x}", code);
+      Log.Debug("  manufacturer = 0x{0:x}{1:x}", content[1], content[2]);
+      Log.Debug("  code         = 0x{0:x}{1:x}", content[3], content[4]);
       Log.Debug("  menu title   = {0}", title);
     }
 
@@ -668,7 +669,7 @@ namespace TvEngine
       if (length != ((numCasIds * 2) + 1))
       {
         Log.Debug("Turbosight: error, unexpected numCasIds");
-        //DVB_MMI.DumpBinary(_mmiResponseBuffer, 0, length);
+        DVB_MMI.DumpBinary(_mmiResponseBuffer, 0, length);
       }
     }
 
@@ -769,7 +770,7 @@ namespace TvEngine
       }
       bool blind = (content[0] != 0);
       uint answerLength = content[1];
-      String text = DVB_MMI.BytesToString(content, 2, length - 2);
+      String text = System.Text.Encoding.ASCII.GetString(content, 2, length - 2);
       Log.Debug("  text   = {0}", text);
       Log.Debug("  length = {0}", answerLength);
       Log.Debug("  blind  = {0}", blind);
@@ -828,7 +829,7 @@ namespace TvEngine
 
     /// <summary>
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed.
+    /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -1479,7 +1480,7 @@ namespace TvEngine
 
     #endregion
 
-    #region IDiseqcController members
+    #region IDiseqcDevice members
 
     /// <summary>
     /// Send a tone/data burst command, and then set the 22 kHz continuous tone state.
@@ -1503,7 +1504,7 @@ namespace TvEngine
       int hr;
 
       // Send the burst command first.
-      if (toneBurstState != ToneBurst.Off)
+      if (toneBurstState != ToneBurst.None)
       {
         accessParams.Tone = TbsTone.BurstUnmodulated;
         if (toneBurstState == ToneBurst.DataBurst)

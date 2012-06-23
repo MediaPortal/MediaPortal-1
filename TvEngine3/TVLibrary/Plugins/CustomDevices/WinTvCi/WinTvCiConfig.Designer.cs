@@ -50,14 +50,13 @@
       this.groupBox2.Controls.Add(this.tipHeadingLabel);
       this.groupBox2.Location = new System.Drawing.Point(3, 3);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(477, 444);
+      this.groupBox2.Size = new System.Drawing.Size(446, 246);
       this.groupBox2.TabIndex = 40;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "WinTV-CI Configuration";
       // 
       // installStateLabel
       // 
-      this.installStateLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.installStateLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.installStateLabel.ForeColor = System.Drawing.Color.Orange;
       this.installStateLabel.Location = new System.Drawing.Point(6, 29);
@@ -68,12 +67,11 @@
       // 
       // tipsLabel
       // 
-      this.tipsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.tipsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.tipsLabel.ForeColor = System.Drawing.Color.Black;
       this.tipsLabel.Location = new System.Drawing.Point(6, 137);
       this.tipsLabel.Name = "tipsLabel";
-      this.tipsLabel.Size = new System.Drawing.Size(465, 102);
+      this.tipsLabel.Size = new System.Drawing.Size(438, 96);
       this.tipsLabel.TabIndex = 5;
       this.tipsLabel.Text = resources.GetString("tipsLabel.Text");
       // 
@@ -97,7 +95,6 @@
       // 
       // tunerSelectionLabel
       // 
-      this.tunerSelectionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.tunerSelectionLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.tunerSelectionLabel.Location = new System.Drawing.Point(6, 59);
       this.tunerSelectionLabel.Name = "tunerSelectionLabel";
@@ -107,7 +104,6 @@
       // 
       // tipHeadingLabel
       // 
-      this.tipHeadingLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.tipHeadingLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.tipHeadingLabel.ForeColor = System.Drawing.Color.Black;
       this.tipHeadingLabel.Location = new System.Drawing.Point(6, 121);

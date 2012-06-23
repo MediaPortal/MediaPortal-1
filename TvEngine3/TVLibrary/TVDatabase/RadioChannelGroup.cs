@@ -54,25 +54,13 @@ namespace TvDatabase
 
     /// <summary> 
     /// Create an object from an existing row of data. This will be used by Gentle to 
-    /// construct objects from retrieved rows. 
+    /// construct objects from retrieved rows.
     /// </summary> 
-    public RadioChannelGroup(int idGroup, string groupName)
+    public RadioChannelGroup(int idGroup, string groupName, int sortOrder)
     {
       this.idGroup = idGroup;
       this.groupName = groupName;
-    }
-
-    /// <summary>
-    /// Property relating to database column sortOrder
-    /// </summary>
-    public int SortOrder
-    {
-      get { return sortOrder; }
-      set
-      {
-        isChanged |= sortOrder != value;
-        sortOrder = value;
-      }
+      this.sortOrder = sortOrder;
     }
 
     #endregion
@@ -105,6 +93,19 @@ namespace TvDatabase
       {
         isChanged |= groupName != value;
         groupName = value;
+      }
+    }
+
+    /// <summary>
+    /// Property relating to database column sortOrder
+    /// </summary>
+    public int SortOrder
+    {
+      get { return sortOrder; }
+      set
+      {
+        isChanged |= sortOrder != value;
+        sortOrder = value;
       }
     }
 

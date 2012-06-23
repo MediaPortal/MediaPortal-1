@@ -262,7 +262,7 @@ namespace TvEngine
 
     /// <summary>
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed.
+    /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -381,9 +381,8 @@ namespace TvEngine
     /// Tune to a given channel using the specialised tuning method.
     /// </summary>
     /// <param name="channel">The channel to tune.</param>
-    /// <param name="parameters">Tuning time restriction settings.</param>
     /// <returns><c>true</c> if the channel is successfully tuned, otherwise <c>false</c></returns>
-    public bool Tune(IChannel channel, ScanParameters parameters)
+    public bool Tune(IChannel channel)
     {
       Log.Debug("Prof (USB): tune to channel");
 
@@ -394,7 +393,7 @@ namespace TvEngine
       }
       if (!CanTuneChannel(channel))
       {
-        Log.Debug("Prof (USB): tuning not supported for this channel");
+        Log.Debug("Prof (USB): tuning is not supported for this channel");
         return false;
       }
 
@@ -402,7 +401,7 @@ namespace TvEngine
       uint lnbLof;
       uint lnbSwitchFrequency;
       Polarisation polarisation;
-      BandTypeConverter.GetLnbTuningParameters(dvbsChannel, parameters, out lnbLof, out lnbSwitchFrequency, out polarisation);
+      LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLof, out lnbSwitchFrequency, out polarisation);
 
       ProfPolarisation profPolarisation = ProfPolarisation.Horizontal;
       if (polarisation == Polarisation.LinearV || polarisation == Polarisation.CircularR)
@@ -411,7 +410,7 @@ namespace TvEngine
       }
 
       Prof22k tone22k = Prof22k.Off;
-      if (BandTypeConverter.IsHighBand(dvbsChannel, parameters))
+      if (dvbsChannel.Frequency > lnbSwitchFrequency)
       {
         tone22k = Prof22k.On;
       }
@@ -426,6 +425,7 @@ namespace TvEngine
         toneBurst = ProfToneBurst.DataBurst;
       }
 
+      lnbLof /= 1000;
       BdaExtensionParams tuningParams = new BdaExtensionParams();
       tuningParams.Frequency = (uint)dvbsChannel.Frequency / 1000;
       tuningParams.LnbLowBandLof = lnbLof;
@@ -460,7 +460,7 @@ namespace TvEngine
 
     #endregion
 
-    #region IDiseqcController members
+    #region IDiseqcDevice members
 
     /// <summary>
     /// Control whether tone/data burst and 22 kHz legacy tone are used.

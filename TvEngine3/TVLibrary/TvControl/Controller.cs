@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using TvLibrary.Interfaces;
+using TvLibrary.Interfaces.Device;
 using TvLibrary.Streaming;
 
 namespace TvControl
@@ -432,7 +433,7 @@ namespace TvControl
     /// <param name="cardId">card id</param>
     /// <param name="direction">direction</param>
     /// <param name="numberOfSteps">Number of steps</param>
-    void DiSEqCDriveMotor(int cardId, DiSEqCDirection direction, byte numberOfSteps);
+    void DiSEqCDriveMotor(int cardId, DiseqcDirection direction, byte numberOfSteps);
 
     /// <summary>
     /// Stores the current DiSEqC position for the given card
@@ -732,13 +733,6 @@ namespace TvControl
     void StopCard(IUser user);
 
     /// <summary>
-    /// Pauses the card.
-    /// </summary>
-    /// <param name="user">The user.</param>
-    void PauseCard(IUser user);
-
-
-    /// <summary>
     /// Query what card would be used for timeshifting on any given channel
     /// </summary>
     /// <param name="user">user credentials.</param>
@@ -906,18 +900,18 @@ namespace TvControl
     void HeartBeat(IUser user);
 
     /// <summary>
-    /// Gets the number of channels decrypting.
+    /// Does the card support conditional access?
     /// </summary>
-    /// <param name="cardId">The card id.</param>
-    /// <returns></returns>
-    /// <value>The number of channels decrypting.</value>
-    int NumberOfChannelsDecrypting(int cardId);
+    /// <param name="cardId">The ID of the card to check.</param>
+    /// <return><c>true</c> if the card supports conditional access, otherwise <c>false</c></return>
+    bool IsConditionalAccessSupported(int cardId);
 
     /// <summary>
-    /// Does the card have a CA module.
+    /// Get a count of the number of services that the card is currently decrypting.
     /// </summary>
-    /// <value>The number of channels decrypting.</value>
-    bool HasCA(int cardId);
+    /// <param name="cardId">The ID of the card to check.</param>
+    /// <returns>the number of services currently being decrypted.</returns>
+    int NumberOfChannelsDecrypting(int cardId);
 
     #endregion
 

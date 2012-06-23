@@ -473,10 +473,10 @@ namespace TvService
 
 
     /// <summary>
-    /// Method to check if card can tune to the channel specified
+    /// Check if the tuner can tune to a specific channel.
     /// </summary>
-    /// <param name="channel">channel.</param>
-    /// <returns>true if card can tune to the channel otherwise false</returns>
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public bool CanTune(IChannel channel)
     {
       try

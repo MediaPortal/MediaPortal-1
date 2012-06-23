@@ -33,7 +33,7 @@ namespace TvEngine
   /// <summary>
   /// A class for handling conditional access and DiSEqC for NetUP devices.
   /// </summary>
-  public class NetUp : BaseCustomDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcController
+  public class NetUp : BaseCustomDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
   {
     #region enums
 
@@ -717,7 +717,7 @@ namespace TvEngine
 
     /// <summary>
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed.
+    /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -751,20 +751,109 @@ namespace TvEngine
         return false;
       }
 
-      KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, 0, out support);
-      if (hr != 0 || (support & KSPropertySupport.Set) == 0)
+      // The NetUP property set is found on the tuner filter output pin. Since current NetUP tuners are
+      // implemented as a combined filter, the filter output pin is normally going to be unconnected when this
+      // function is called. That is a problem because a pin won't correctly report whether it supports a property
+      // set unless it is connected to a filter. If this filter pin is currently unconnected, we temporarily
+      // connect an infinite tee so that we can check if the pin supports the property set.
+      IPin connected;
+      int hr = pin.ConnectedTo(out connected);
+      if (hr == 0 && connected != null)
       {
-        Log.Debug("NetUP: device does not support the NetUP property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        DsUtils.ReleaseComObject(pin);
-        pin = null;
-        return false;
+        // We don't need to connect the infinite tee in this case.
+        KSPropertySupport support;
+        hr = _propertySet.QuerySupported(BdaExtensionPropertySet, 0, out support);
+        if (hr != 0 || (support & KSPropertySupport.Set) == 0)
+        {
+          Log.Debug("NetUP: device does not support the NetUP property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          return false;
+        }
+        Log.Debug("NetUP: supported device detected");
+        _isNetUp = true;
+        _generalBuffer = Marshal.AllocCoTaskMem(MaxDiseqcMessageLength);
+        return true;
       }
 
-      Log.Debug("NetUP: supported device detected");
-      _isNetUp = true;
-      _generalBuffer = Marshal.AllocCoTaskMem(MaxDiseqcMessageLength);
-      return true;
+      try
+      {
+        // Get a reference to the filter graph.
+        FilterInfo filterInfo;
+        hr = tunerFilter.QueryFilterInfo(out filterInfo);
+        if (hr != 0)
+        {
+          Log.Debug("NetUP: failed to get filter info, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          return false;
+        }
+        IFilterGraph2 graph = filterInfo.pGraph as IFilterGraph2;
+        if (graph == null)
+        {
+          Log.Debug("NetUP: filter info graph is null");
+          return false;
+        }
+
+        // Add an infinite tee.
+        IBaseFilter infTee = (IBaseFilter)new InfTee();
+        IPin infTeeInputPin = null;
+        try
+        {
+          hr = graph.AddFilter(infTee, "Temp Infinite Tee");
+          if (hr != 0)
+          {
+            Log.Debug("NetUP: failed to add inf tee to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            return false;
+          }
+
+          // Connect the infinite tee to the filter.
+          infTeeInputPin = DsFindPin.ByDirection(infTee, PinDirection.Input, 0);
+          if (infTeeInputPin == null)
+          {
+            Log.Debug("NetUP: failed to find the inf tee input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            return false;
+          }
+          hr = graph.Connect(pin, infTeeInputPin);
+          if (hr != 0)
+          {
+            Log.Debug("NetUP: failed to connect pins, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            return false;
+          }
+
+          // Check if the NetUP property set is supported.
+          KSPropertySupport support;
+          hr = _propertySet.QuerySupported(BdaExtensionPropertySet, 0, out support);
+          if (hr != 0 || (support & KSPropertySupport.Set) == 0)
+          {
+            Log.Debug("NetUP: device does not support the NetUP property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            return false;
+          }
+
+          Log.Debug("NetUP: supported device detected");
+          _isNetUp = true;
+          _generalBuffer = Marshal.AllocCoTaskMem(MaxDiseqcMessageLength);
+          return true;
+        }
+        finally
+        {
+          pin.Disconnect();
+          if (infTeeInputPin != null)
+          {
+            DsUtils.ReleaseComObject(infTeeInputPin);
+            infTeeInputPin = null;
+          }
+          graph.RemoveFilter(infTee);
+          DsUtils.ReleaseComObject(infTee);
+          infTee = null;
+          DsUtils.ReleaseComObject(graph);
+          graph = null;
+        }
+      }
+      finally
+      {
+        if (!_isNetUp)
+        {
+          DsUtils.ReleaseComObject(pin);
+          pin = null;
+        }
+      }
     }
 
     #region graph state change callbacks
@@ -1164,7 +1253,7 @@ namespace TvEngine
 
     #endregion
 
-    #region IDiseqcController members
+    #region IDiseqcDevice members
 
     /// <summary>
     /// Send a tone/data burst command, and then set the 22 kHz continuous tone state.

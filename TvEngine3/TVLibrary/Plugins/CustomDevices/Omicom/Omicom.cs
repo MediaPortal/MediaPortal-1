@@ -34,7 +34,7 @@ namespace TvEngine
   /// <summary>
   /// A class for handling DiSEqC for Omicom devices.
   /// </summary>
-  public class Omicom : BaseCustomDevice, IDiseqcController
+  public class Omicom : BaseCustomDevice, IDiseqcDevice
   {
     #region enums
 
@@ -81,7 +81,7 @@ namespace TvEngine
 
     /// <summary>
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed.
+    /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -161,7 +161,7 @@ namespace TvEngine
 
     #endregion
 
-    #region IDiseqcController members
+    #region IDiseqcDevice members
 
     /// <summary>
     /// Send a tone/data burst command, and then set the 22 kHz continuous tone state.

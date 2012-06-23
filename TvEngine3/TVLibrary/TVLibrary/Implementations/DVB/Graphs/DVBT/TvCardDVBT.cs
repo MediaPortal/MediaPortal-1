@@ -58,7 +58,7 @@ namespace TvLibrary.Implementations.DVB
     public TvCardDVBT(IEpgEvents epgEvents, DsDevice device)
       : base(epgEvents, device)
     {
-      _cardType = CardType.DvbT;
+      _tunerType = CardType.DvbT;
     }
 
     #endregion
@@ -229,17 +229,17 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     /// <summary>
-    /// Check if the tuner can tune to a given channel.
+    /// Check if the tuner can tune to a specific channel.
     /// </summary>
     /// <param name="channel">The channel to check.</param>
     /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public override bool CanTune(IChannel channel)
     {
-      if ((channel as DVBTChannel) == null)
+      if (channel is DVBTChannel)
       {
-        return false;
+        return true;
       }
-      return true;
+      return false;
     }
 
     protected override DVBBaseChannel CreateChannel(int networkid, int transportid, int serviceid, string name)

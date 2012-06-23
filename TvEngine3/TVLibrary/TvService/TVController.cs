@@ -32,6 +32,7 @@ using TvLibrary.Channels;
 using TvLibrary.Implementations;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Interfaces;
+using TvLibrary.Interfaces.Device;
 using TvLibrary.Implementations.Analog;
 using TvLibrary.Implementations.Hybrid;
 using TvLibrary.Epg;
@@ -107,18 +108,32 @@ namespace TvService
         Log.Debug("InitConditionalAccess: ValidateTvControllerParams failed");
         return false;
       }
-      ITVCard unknownCard = _cards[cardId].Card;
 
-      TvCardBase card = unknownCard as TvCardBase;
-      if (card != null)
+      // Note: this is *far* from ideal. We have no way to actually tell whether the tuner supports
+      // conditional access unless the tuner graph is initialised. We also have no way to tell if the
+      // tuner graph is initialised. If we try to initialise the graph and it is already initialised
+      // then we'll get an exception. We do the best that we can, but we can't guarantee that this
+      // will work for hybrid tuners - we don't want to interrupt timeshifting and recording.
+      ITVCard card = _cards[cardId].Card;
+      if (card.IsConditionalAccessSupported)
       {
-        if (card.CaInterface == null)
-        {
-          card.BuildGraph();
-        }
         return true;
       }
-      return false;
+      TvCardBase baseCard = card as TvCardBase;
+      if (baseCard == null)
+      {
+        // Non-initialised HybridCard instances exit here.
+        return false;
+      }
+      try
+      {
+        baseCard.BuildGraph();
+      }
+      catch (Exception)
+      {
+        // If we get here, we assume the graph is already built - not a problem.
+      }
+      return card.IsConditionalAccessSupported;
     }
 
     private Dictionary<int, ITvCardHandler> _cards;
@@ -218,8 +233,9 @@ namespace TvService
         Log.Debug("ValidateTvControllerParams failed");
         return false;
       }
-      Log.Debug("CiMenuSupported card {0} supported: {1}", _cards[cardId].CardName, _cards[cardId].CiMenuSupported);
-      return _cards[cardId].CiMenuSupported;
+      bool result = _cards[cardId].CiMenuSupported;
+      Log.Debug("CiMenuSupported card {0} supported: {1}", _cards[cardId].CardName, result);
+      return result;
     }
 
     /// <summary>
@@ -1578,22 +1594,22 @@ namespace TvService
     }
 
     /// <summary>
-    /// Does the card have a CA module.
+    /// Does the card support conditional access?
     /// </summary>
-    /// <value>The number of channels decrypting.</value>
-    public bool HasCA(int cardId)
+    /// <param name="cardId">The ID of the card to check.</param>
+    /// <return><c>true</c> if the card supports conditional access, otherwise <c>false</c></return>
+    public bool IsConditionalAccessSupported(int cardId)
     {
       if (ValidateTvControllerParams(cardId))
         return false;
-      return _cards[cardId].HasCA;
+      return _cards[cardId].IsConditionalAccessSupported;
     }
 
     /// <summary>
-    /// Gets the number of channels decrypting.
+    /// Get a count of the number of services that the card is currently decrypting.
     /// </summary>
-    /// <param name="cardId">The card id.</param>
-    /// <returns></returns>
-    /// <value>The number of channels decrypting.</value>
+    /// <param name="cardId">The ID of the card to check.</param>
+    /// <returns>the number of services currently being decrypted.</returns>
     public int NumberOfChannelsDecrypting(int cardId)
     {
       if (ValidateTvControllerParams(cardId))
@@ -1894,13 +1910,6 @@ namespace TvService
       _cards[user.CardId].StopCard(user);
     }
 
-    public void PauseCard(IUser user)
-    {
-      if (ValidateTvControllerParams(user))
-        return;
-      _cards[user.CardId].PauseCard(user);
-    }
-
     public bool StopTimeShifting(ref IUser user, TvStoppedReason reason)
     {
       if (ValidateTvControllerParams(user))
@@ -2096,7 +2105,6 @@ namespace TvService
       ScanParameters settings = new ScanParameters();
       TvBusinessLayer layer = new TvBusinessLayer();
       settings.TimeOutTune = Int32.Parse(layer.GetSetting("timeoutTune", "2").Value);
-      settings.TimeOutPAT = Int32.Parse(layer.GetSetting("timeoutPAT", "5").Value);
       settings.TimeOutCAT = Int32.Parse(layer.GetSetting("timeoutCAT", "5").Value);
       settings.TimeOutPMT = Int32.Parse(layer.GetSetting("timeoutPMT", "10").Value);
       settings.TimeOutSDT = Int32.Parse(layer.GetSetting("timeoutSDT", "20").Value);
@@ -3157,7 +3165,7 @@ namespace TvService
       _cards[cardId].DisEqC.EnableEastWestLimits(onOff);
     }
 
-    public void DiSEqCDriveMotor(int cardId, DiSEqCDirection direction, byte numberOfSteps)
+    public void DiSEqCDriveMotor(int cardId, DiseqcDirection direction, byte numberOfSteps)
     {
       if (ValidateTvControllerParams(cardId))
         return;

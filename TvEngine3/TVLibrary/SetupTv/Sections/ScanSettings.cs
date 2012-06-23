@@ -112,7 +112,6 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
 
       numericUpDownTune.Value = Convert.ToDecimal(layer.GetSetting("timeoutTune", "2").Value);
-      numericUpDownPAT.Value = Convert.ToDecimal(layer.GetSetting("timeoutPAT", "5").Value);
       numericUpDownCAT.Value = Convert.ToDecimal(layer.GetSetting("timeoutCAT", "5").Value);
       numericUpDownPMT.Value = Convert.ToDecimal(layer.GetSetting("timeoutPMT", "10").Value);
       numericUpDownSDT.Value = Convert.ToDecimal(layer.GetSetting("timeoutSDT", "20").Value);
@@ -150,10 +149,6 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting s = layer.GetSetting("timeoutTune", "2");
       s.Value = numericUpDownTune.Value.ToString();
-      s.Persist();
-
-      s = layer.GetSetting("timeoutPAT", "5");
-      s.Value = numericUpDownPAT.Value.ToString();
       s.Persist();
 
       s = layer.GetSetting("timeoutCAT", "5");

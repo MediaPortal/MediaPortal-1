@@ -41,6 +41,7 @@ using TvLibrary;
 using TvLibrary.Channels;
 using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
+using TvLibrary.Interfaces.Device;
 using TvLibrary.Log;
 using StatementType = Gentle.Framework.StatementType;
 using ThreadState = System.Threading.ThreadState;
@@ -186,7 +187,7 @@ namespace TvDatabase
     public Channel AddNewChannel(string name)
     {
       Channel newChannel = new Channel(false, false, 0, new DateTime(2000, 1, 1), false, new DateTime(2000, 1, 1),
-                                       -1, true, "", name);
+                                       -1, true, "", name, false);
       return newChannel;
     }
 
@@ -668,7 +669,7 @@ namespace TvDatabase
           dvbsChannel.ServiceId = detail.ServiceId;
           dvbsChannel.SymbolRate = detail.Symbolrate;
           dvbsChannel.TransportId = detail.TransportId;
-          dvbsChannel.LnbType = (LnbType)detail.Band;
+          dvbsChannel.LnbType = LnbType.Retrieve(detail.IdLnbType);
           dvbsChannel.SatelliteIndex = detail.SatIndex;
           dvbsChannel.ModulationType = (ModulationType)detail.Modulation;
           dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)detail.InnerFecRate;
@@ -791,7 +792,6 @@ namespace TvDatabase
       int symbolRate = 0;
       int modulation = 0;
       int polarisation = 0;
-      int switchFrequency = 0;
       int diseqc = 0;
       int bandwidth = 8;
       bool freeToAir = true;
@@ -803,12 +803,13 @@ namespace TvDatabase
       int majorChannel = -1;
       string provider = "";
       int channelType = 0;
-      int band = 0;
+      int idLnbType = 0;
       int satIndex = -1;
       int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
       int pilot = (int)Pilot.NotSet;
       int rollOff = (int)RollOff.NotSet;
       string url = "";
+      int bitrate = 0;
 
       AnalogChannel analogChannel = tvChannel as AnalogChannel;
       if (analogChannel != null)
@@ -822,7 +823,7 @@ namespace TvDatabase
         tunerSource = (int)analogChannel.TunerSource;
         videoInputType = (int)analogChannel.VideoSource;
         audioInputType = (int)analogChannel.AudioSource;
-        isVCRSignal = analogChannel.IsVCRSignal;
+        isVCRSignal = analogChannel.IsVcrSignal;
         channelType = 0;
       }
 
@@ -851,7 +852,7 @@ namespace TvDatabase
         symbolRate = dvbsChannel.SymbolRate;
         polarisation = (int)dvbsChannel.Polarisation;
         diseqc = (int)dvbsChannel.Diseqc;
-        band = (int)dvbsChannel.LnbType;
+        idLnbType = ((LnbType)dvbsChannel.LnbType).IdLnbType;
         satIndex = dvbsChannel.SatelliteIndex;
         modulation = (int)dvbsChannel.ModulationType;
         innerFecRate = (int)dvbsChannel.InnerFecRate;
@@ -893,13 +894,12 @@ namespace TvDatabase
       }
 
       TuningDetail detail = new TuningDetail(channel.IdChannel, channelName, provider,
-                                             channelType, channelNumber, (int)channelFrequency, country, isRadio, isTv,
-                                             networkId, transportId, serviceId, pmtPid, freeToAir,
-                                             modulation, polarisation, symbolRate, diseqc, switchFrequency,
+                                             channelType, channelNumber, (int)channelFrequency, country,
+                                             isRadio, isTv, networkId, transportId, serviceId, pmtPid,
+                                             freeToAir, modulation, polarisation, symbolRate, diseqc,
                                              bandwidth, majorChannel, minorChannel, videoInputType,
-                                             audioInputType, isVCRSignal, tunerSource, band,
-                                             satIndex,
-                                             innerFecRate, pilot, rollOff, url, 0);
+                                             audioInputType, isVCRSignal, tunerSource, idLnbType,
+                                             satIndex, innerFecRate, pilot, rollOff, url, bitrate);
       detail.Persist();
       return detail;
     }
@@ -919,7 +919,6 @@ namespace TvDatabase
       int symbolRate = 0;
       int modulation = 0;
       int polarisation = 0;
-      int switchFrequency = 0;
       int diseqc = 0;
       int bandwidth = 8;
       bool freeToAir = true;
@@ -931,7 +930,7 @@ namespace TvDatabase
       int majorChannel = -1;
       string provider = "";
       int channelType = 0;
-      int band = 0;
+      int idLnbType = 0;
       int satIndex = -1;
       int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
       int pilot = (int)Pilot.NotSet;
@@ -950,7 +949,7 @@ namespace TvDatabase
         tunerSource = (int)analogChannel.TunerSource;
         videoInputType = (int)analogChannel.VideoSource;
         audioInputType = (int)analogChannel.AudioSource;
-        isVCRSignal = analogChannel.IsVCRSignal;
+        isVCRSignal = analogChannel.IsVcrSignal;
         channelType = 0;
       }
       ATSCChannel atscChannel = tvChannel as ATSCChannel;
@@ -978,7 +977,7 @@ namespace TvDatabase
         symbolRate = dvbsChannel.SymbolRate;
         polarisation = (int)dvbsChannel.Polarisation;
         diseqc = (int)dvbsChannel.Diseqc;
-        band = (int)dvbsChannel.LnbType;
+        idLnbType = ((LnbType)dvbsChannel.LnbType).IdLnbType;
         satIndex = dvbsChannel.SatelliteIndex;
         modulation = (int)dvbsChannel.ModulationType;
         innerFecRate = (int)dvbsChannel.InnerFecRate;
@@ -1036,7 +1035,6 @@ namespace TvDatabase
       detail.Polarisation = polarisation;
       detail.Symbolrate = symbolRate;
       detail.Diseqc = diseqc;
-      detail.SwitchingFrequency = switchFrequency;
       detail.Bandwidth = bandwidth;
       detail.MajorChannel = majorChannel;
       detail.MinorChannel = minorChannel;
@@ -1044,7 +1042,7 @@ namespace TvDatabase
       detail.AudioSource = audioInputType;
       detail.IsVCRSignal = isVCRSignal;
       detail.TuningSource = tunerSource;
-      detail.Band = band;
+      detail.IdLnbType = idLnbType;
       detail.SatIndex = satIndex;
       detail.InnerFecRate = innerFecRate;
       detail.Pilot = pilot;
@@ -1066,10 +1064,9 @@ namespace TvDatabase
       const int audioInputType = 0;
       const bool isVCRSignal = false;
       const int symbolRate = 0;
-      const int modulation = 0;
-      const int polarisation = 0;
-      const int switchFrequency = 0;
-      const int diseqc = 0;
+      const int modulation = (int)ModulationType.ModNotSet;
+      const int polarisation = (int)Polarisation.NotSet;
+      const int diseqc = (int)DiseqcPort.None;
       const int bandwidth = 8;
       const bool freeToAir = true;
       const int pmtPid = -1;
@@ -1080,7 +1077,7 @@ namespace TvDatabase
       const int majorChannel = -1;
       const string provider = "";
       const int channelType = 5;
-      const int band = 0;
+      const int idLnbType = 0;
       const int satIndex = -1;
       const int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
       const int pilot = (int)Pilot.NotSet;
@@ -1090,13 +1087,12 @@ namespace TvDatabase
         url = "";
       }
       TuningDetail detail = new TuningDetail(channel.IdChannel, channelName, provider,
-                                             channelType, channelNumber, (int)channelFrequency, country, isRadio, isTv,
-                                             networkId, transportId, serviceId, pmtPid, freeToAir,
-                                             modulation, polarisation, symbolRate, diseqc, switchFrequency,
+                                             channelType, channelNumber, (int)channelFrequency, country,
+                                             isRadio, isTv, networkId, transportId, serviceId, pmtPid,
+                                             freeToAir, modulation, polarisation, symbolRate, diseqc,
                                              bandwidth, majorChannel, minorChannel, videoInputType,
-                                             audioInputType, isVCRSignal, tunerSource, band,
-                                             satIndex,
-                                             innerFecRate, pilot, rollOff, url, bitrate);
+                                             audioInputType, isVCRSignal, tunerSource, idLnbType,
+                                             satIndex, innerFecRate, pilot, rollOff, url, bitrate);
       detail.Persist();
       return detail;
     }

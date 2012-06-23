@@ -21,212 +21,14 @@
 using System;
 using DirectShowLib.BDA;
 using TvLibrary.Interfaces;
+using TvLibrary.Interfaces.Device;
 
 namespace TvLibrary.Channels
 {
-  #region enums
-
-  /// <summary>
-  /// enum describing the DVBS band
-  /// </summary>
-  public enum LnbType
-  {
-    /// <summary>
-    /// Ku-Linear - LOF1 9750, LOF2 10600, SW 11700
-    /// "Universal" LNB, common in Europe.
-    /// </summary>
-    Universal = 0,
-    /// <summary>
-    /// Ku-Circular - LOF1 10750
-    /// </summary>
-    Circular = 1,
-    /// <summary>
-    /// C-Band - LOF1 5150
-    /// </summary>
-    CBand = 2,
-    /// <summary>
-    /// DishPro Ku High (DBS) - LOF1 11250, LOF2 14350
-    /// </summary>
-    DpBandStackedHigh = 3,
-    /// <summary>
-    /// DishPro Ku Low (FSS) - LOF1 10750, LOF2 13850
-    /// </summary>
-    DpBandStackedLow = 4,
-    /// <summary>
-    /// North American Bandstacked Ku High (DBS) - LOF1 11250, LOF2 10675
-    /// </summary>
-    NaBandStackedHigh = 5,
-    /// <summary>
-    /// North American Bandstacked Ku Low (FSS) - LOF1 10750, LOF2 10175
-    /// </summary>
-    NaBandStackedLow = 6,
-    /// <summary>
-    /// Bandstacked C-Band LOF1 5150, LOF2 5750
-    /// http://www.sadoun.com/Sat/Products/Eagle-Aspen/B1-SAT-Stack-C-Band-LNBF.htm
-    /// </summary>
-    BandStackedC = 7,
-    /// <summary>
-    /// Sadoun Bandstacked Ku Low (FSS) - LOF1 10100, LOF2 10750
-    /// http://www.sadoun.com/Sat/Products/S/KBSL1-Sadoun-Bandstacked-Single-LNBF.htm
-    /// </summary>
-    SadounBandstackedLow = 8,
-    /// <summary>
-    /// Single oscillator 10750 MHz - LOF1 10750
-    /// </summary>
-    Lnb10750ToneOff = 9,
-    /// <summary>
-    /// Single oscillator 10750 MHz, 22 kHz tone on - LOF1 10750, LOF2 10750, SW 11700
-    /// </summary>
-    Lnb10750ToneOn = 10,
-    /// <summary>
-    /// Single oscillator 11250 MHz - LOF1 11250
-    /// </summary>
-    Lnb11250ToneOff = 11,
-    /// <summary>
-    /// Single oscillator 11250 MHz ("Legacy"), 22 kHz tone on - LOF1 11250, LOF2 11250, SW 12200
-    /// </summary>
-    Lnb11250ToneOn = 12,
-    /// <summary>
-    /// Single oscillator 11300 MHz - LOF1 11300
-    /// </summary>
-    Lnb11300ToneOff = 13,
-    /// <summary>
-    /// Single oscillator 11300 MHz, 22 kHz tone on - LOF1 11300, LOF2 11300, SW 12250
-    /// </summary>
-    Lnb11300ToneOn = 14
-  }
-
-  /// <summary>
-  /// Enum listing DiSEqC switch commands for DiSEqC 1.0 and 1.1 compatible switches.
-  /// </summary>
-  public enum DiseqcPort
-  {
-    /// <summary>
-    /// DiSEqC not used.
-    /// </summary>
-    None = 0,
-    /// <summary>
-    /// Simple A (tone burst).
-    /// </summary>
-    SimpleA = 1,
-    /// <summary>
-    /// Simple B (data burst).
-    /// </summary>
-    SimpleB = 2,
-    /// <summary>
-    /// DiSEqC 1.0 port A (option A, position A)
-    /// </summary>
-    PortA = 3,
-    /// <summary>
-    /// DiSEqC 1.0 port B (option A, position B)
-    /// </summary>
-    PortB = 4,
-    /// <summary>
-    /// DiSEqC 1.0 port C (option B, position A)
-    /// </summary>
-    PortC = 5,
-    /// <summary>
-    /// DiSEqC 1.0 port D (option B, position B)
-    /// </summary>
-    PortD = 6,
-    /// <summary>
-    /// DiSEqC 1.1 port 1
-    /// </summary>
-    Port1 = 7,
-    /// <summary>
-    /// DiSEqC 1.1 port 2
-    /// </summary>
-    Port2 = 8,
-    /// <summary>
-    /// DiSEqC 1.1 port 3
-    /// </summary>
-    Port3 = 9,
-    /// <summary>
-    /// DiSEqC 1.1 port 4
-    /// </summary>
-    Port4 = 10,
-    /// <summary>
-    /// DiSEqC 1.1 port 5
-    /// </summary>
-    Port5 = 11,
-    /// <summary>
-    /// DiSEqC 1.1 port 6
-    /// </summary>
-    Port6 = 12,
-    /// <summary>
-    /// DiSEqC 1.1 port 7
-    /// </summary>
-    Port7 = 13,
-    /// <summary>
-    /// DiSEqC 1.1 port 8
-    /// </summary>
-    Port8 = 14,
-    /// <summary>
-    /// DiSEqC 1.1 port 9
-    /// </summary>
-    Port9 = 15,
-    /// <summary>
-    /// DiSEqC 1.1 port 10
-    /// </summary>
-    Port10 = 16,
-    /// <summary>
-    /// DiSEqC 1.1 port 11
-    /// </summary>
-    Port11 = 17,
-    /// <summary>
-    /// DiSEqC 1.1 port 12
-    /// </summary>
-    Port12 = 18,
-    /// <summary>
-    /// DiSEqC 1.1 port 13
-    /// </summary>
-    Port13 = 19,
-    /// <summary>
-    /// DiSEqC 1.1 port 14
-    /// </summary>
-    Port14 = 20,
-    /// <summary>
-    /// DiSEqC 1.1 port 15
-    /// </summary>
-    Port15 = 21,
-    /// <summary>
-    /// DiSEqC 1.1 port 16
-    /// </summary>
-    Port16 = 22
-  }
-
-  /// <summary>
-  /// Enum listing tone burst (simple DiSEqC) states.
-  /// </summary>
-  public enum ToneBurst
-  {
-    /// Off
-    Off = 0,
-    /// Tone burst AKA unmodulated, simple A
-    ToneBurst,
-    /// Data burst AKA modulated, simple B
-    DataBurst
-  }
-
-  /// <summary>
-  /// Enum listing 22 kHz oscillator logical states.
-  /// </summary>
-  public enum Tone22k
-  {
-    /// Off
-    Off = 0,
-    /// On
-    On,
-    /// Auto - controlled by LNB frequency parameters.
-    Auto
-  }
-
-  #endregion
-
   /// <summary>
   /// Helper class for dealing with various aspects of LNB settings.
   /// </summary>
-  public class BandTypeConverter
+  public class LnbTypeConverter
   {
     /// <summary>
     /// Get the switch port number (or LNB number) for a given DiSEqC switch command.
@@ -257,178 +59,41 @@ namespace TvLibrary.Channels
     }
 
     /// <summary>
-    /// Determine if tuning a given channel requires the LNB to be in low (22 kHz off) or high (22 kHz on)
-    /// band mode.
-    /// </summary>
-    /// <param name="channel">Tuning details for the channel.</param>
-    /// <param name="parameters">Manually defined LNB oscillator frequency parameters.</param>
-    /// <returns><c>true</c> if the channel is broadcast from a high band transponder, otherwise <c>false</c></returns>
-    public static bool IsHighBand(DVBSChannel channel, ScanParameters parameters)
-    {
-      uint lof1, lof2, sw;
-      GetDefaultLnbSetup(parameters, channel.LnbType, out lof1, out lof2, out sw);
-
-      if (sw == 0)
-      {
-        return false;
-      }
-      return channel.Frequency >= (sw * 1000);
-    }
-
-    /// <summary>
-    /// Get the local oscillator frequencies corresponding with a particular LNB type. This function also
-    /// considers the case when the frequencies are overriden.
-    /// </summary>
-    /// <param name="parameters">Manually defined LNB oscillator frequency parameters.</param>
-    /// <param name="lnbType">The LNB type.</param>
-    /// <param name="lof1">The LNB low local oscillator frequency in MHz.</param>
-    /// <param name="lof2">The LNB high local oscillator frequency in MHz.</param>
-    /// <param name="sw">The LNB switch frequency in MHz.</param>
-    public static void GetDefaultLnbSetup(ScanParameters parameters, LnbType lnbType, out uint lof1, out uint lof2,
-                                          out uint sw)
-    {
-      lof1 = lof2 = sw = 0;
-      if (parameters.UseDefaultLnbFrequencies == false)
-      {
-        lof1 = (uint)parameters.LnbLowFrequency;
-        lof2 = (uint)parameters.LnbHighFrequency;
-        sw = (uint)parameters.LnbSwitchFrequency;
-        return;
-      }
-      switch (lnbType)
-      {
-        case LnbType.Universal:
-          lof1 = 9750;
-          lof2 = 10600;
-          sw = 11700;
-          break;
-        case LnbType.Circular:
-          lof1 = 10750;
-          lof2 = 0;
-          sw = 0;
-          break;
-        case LnbType.CBand:
-          lof1 = 5150;
-          lof2 = 0;
-          sw = 0;
-          break;
-        case LnbType.DpBandStackedHigh:
-          lof1 = 11250;
-          lof2 = 14350;
-          sw = 0;
-          break;
-        case LnbType.DpBandStackedLow:
-          lof1 = 10750;
-          lof2 = 13850;
-          sw = 0;
-          break;
-        case LnbType.NaBandStackedHigh:
-          lof1 = 11250;
-          lof2 = 10675;
-          sw = 0;
-          break;
-        case LnbType.NaBandStackedLow:
-          lof1 = 10750;
-          lof2 = 10175;
-          sw = 0;
-          break;
-        case LnbType.BandStackedC:
-          lof1 = 5150;
-          lof2 = 5750;
-          sw = 0;
-          break;
-        case LnbType.SadounBandstackedLow:
-          lof1 = 10100;
-          lof2 = 10750;
-          sw = 0;
-          break;
-        case LnbType.Lnb10750ToneOff:
-          lof1 = 10750;
-          lof2 = 0;
-          sw = 0;
-          break;
-        case LnbType.Lnb10750ToneOn:
-          lof1 = 10750;
-          lof2 = 10750;
-          sw = 11700;
-          break;
-        case LnbType.Lnb11250ToneOff:
-          lof1 = 11250;
-          lof2 = 0;
-          sw = 0;
-          break;
-        case LnbType.Lnb11250ToneOn:
-          lof1 = 11250;
-          lof2 = 11250;
-          sw = 12200;
-          break;
-        case LnbType.Lnb11300ToneOff:
-          lof1 = 11300;
-          lof2 = 0;
-          sw = 0;
-          break;
-        case LnbType.Lnb11300ToneOn:
-          lof1 = 11300;
-          lof2 = 11300;
-          sw = 12250;
-          break;
-      }
-    }
-
-    /// <summary>
-    /// Determine whether a particular type of LNB is bandstacked.
-    /// </summary>
-    /// <remarks>
-    /// Unlike regular LNBs, bandstacked LNBs pass all transponders in a single cable at all times. This is
-    /// as opposed with a regular LNB which only passes the transponders with a particular polarity, depending
-    /// on the voltage supplied. Bandstacking greatly improves the ability to split the signal to more than
-    /// one receiver without complicated or expensive switch equipement. The cost is that the LNB is not able
-    /// to receive as wide a range of transponders as a regular LNB. This is due to the fact that the LNB
-    /// shifts the frequencies of each transponder in such a way that they don't overlap... but this
-    /// requires the use of bandwidth that would otherwise be used for receiving a wider frequency range.
-    /// The net result is that all the transponders of a particular polarity (usually vertical or circular
-    /// right) end up with a lower frequency than the other transponders.
-    /// </remarks>
-    /// <param name="lnbType">The type of LNB to check.</param>
-    /// <returns><c>true</c> if the LNB type is a bandstacked type, otherwise <c>false</c></returns>
-    public static bool IsBandstackedLnb(LnbType lnbType)
-    {
-      if (lnbType == LnbType.BandStackedC || lnbType == LnbType.DpBandStackedHigh ||
-        lnbType == LnbType.DpBandStackedLow || lnbType == LnbType.NaBandStackedHigh ||
-        lnbType == LnbType.NaBandStackedLow || lnbType == LnbType.SadounBandstackedLow)
-      {
-        return true;
-      }
-      return false;
-    }
-
-    /// <summary>
     /// Get the appropriate LNB settings parameters to tune a given channel.
     /// </summary>
     /// <param name="channel">The channel to tune.</param>
-    /// <param name="parameters">Manually defined LNB oscillator frequency parameters.</param>
-    /// <param name="lnbLof">The LNB local oscillator frequency to use in MHz.</param>
-    /// <param name="lnbSwitchFrequency">The LNB switch frequency to use in MHz.</param>
+    /// <param name="lnbLof">The LNB local oscillator frequency to use in kHz.</param>
+    /// <param name="lnbSwitchFrequency">The LNB switch frequency to use in kHz.</param>
     /// <param name="polarisation">The LNB voltage (signal polarity) to set.</param>
-    public static void GetLnbTuningParameters(DVBSChannel channel, ScanParameters parameters,
-                          out uint lnbLof, out uint lnbSwitchFrequency, out Polarisation polarisation
-    )
+    public static void GetLnbTuningParameters(DVBSChannel channel, out uint lnbLof, out uint lnbSwitchFrequency, out Polarisation polarisation)
     {
       // 1: Get the default frequency settings for the LNB.
-      uint lowLof;
-      uint highLof;
-      BandTypeConverter.GetDefaultLnbSetup(parameters, channel.LnbType, out lowLof, out highLof, out lnbSwitchFrequency);
-      Log.Log.Debug("TvCardDvbS: LNB settings, low = {0} MHz, high = {1} MHz, switch = {2} MHz, polarisation = {3}", lowLof, highLof, lnbSwitchFrequency, channel.Polarisation);
+      Log.Log.Debug("TvCardDvbS: LNB settings, low = {0} kHz, high = {1} kHz, switch = {2} kHz, bandstacked = {3}, toroidal = {4}, polarisation = {5}",
+          channel.LnbType.LowBandFrequency, channel.LnbType.HighBandFrequency, channel.LnbType.SwitchFrequency,
+          channel.LnbType.IsBandStacked, channel.LnbType.IsToroidal, channel.Polarisation);
 
       // 2: Switch frequency adjustment.
       // Setting the switch frequency to zero is the equivalent of saying that the switch frequency is
       // irrelevant - that the 22 kHz tone state shouldn't depend on the transponder frequency.
+      lnbSwitchFrequency = (uint)channel.LnbType.SwitchFrequency;
       if (lnbSwitchFrequency == 0)
       {
-        lnbSwitchFrequency = 18000;
+        lnbSwitchFrequency = 18000000;
       }
 
-      // 3: Local oscillator frequency selection and other miscellenaeous settings.
+      // 3: Toroidal LNB handling.
+      // LNBs mounted on a toroidal dish require circular polarities to be inverted.
+      polarisation = channel.Polarisation;
+      if (channel.Polarisation == Polarisation.CircularL)
+      {
+        polarisation = Polarisation.CircularR;
+      }
+      else if (channel.Polarisation == Polarisation.CircularR)
+      {
+        polarisation = Polarisation.CircularL;
+      }
+
+      // 4: Local oscillator frequency selection and other miscellenaeous settings.
       // Some tuners (eg. Prof USB series) don't handle multiple LOFs correctly. We need to pass either
       // the low or high frequency with the switch frequency. How do we select the correct local oscillator
       // frequency? Well first assume that we should use the low frequency, then:
@@ -437,25 +102,23 @@ namespace TvLibrary.Channels
       // 2. For bandstacked LNBs, if the transponder polarisation is horizontal or circular left then we
       //    should use the high oscillator frequency.
       // In addition, we should always supply bandstacked LNBs with 18 V.
-      lnbLof = lowLof;
-      polarisation = channel.Polarisation;
-      bool isBandstackedLnb = BandTypeConverter.IsBandstackedLnb(channel.LnbType);
-      if (!isBandstackedLnb)
+      lnbLof = (uint)channel.LnbType.LowBandFrequency;
+      if (!channel.LnbType.IsBandStacked)
       {
         if (channel.Frequency > (lnbSwitchFrequency * 1000))
         {
-          lnbLof = highLof;
+          lnbLof = (uint)channel.LnbType.HighBandFrequency;
         }
       }
       else
       {
         if (channel.Polarisation == Polarisation.LinearH || channel.Polarisation == Polarisation.CircularL)
         {
-          lnbLof = highLof;
+          lnbLof = (uint)channel.LnbType.HighBandFrequency;
         }
         polarisation = Polarisation.LinearH;
       }
-      Log.Log.Debug("TvCardDvbS: LNB translated settings, oscillator = {0} MHz, switch = {1} MHz, polarisation = {2}", lnbLof, lnbSwitchFrequency, polarisation);
+      Log.Log.Debug("TvCardDvbS: LNB translated settings, oscillator = {0} kHz, switch = {1} kHz, polarisation = {2}", lnbLof, lnbSwitchFrequency, polarisation);
     }
   }
 
@@ -468,7 +131,7 @@ namespace TvLibrary.Channels
     #region variables
 
     private DiseqcPort _diseqc = DiseqcPort.None;
-    private LnbType _lnbType = LnbType.Universal;
+    private ILnbType _lnbType = null;
     private int _satelliteIndex = -1;
     private Polarisation _polarisation = Polarisation.NotSet;
     private int _symbolRate = -1;
@@ -488,7 +151,7 @@ namespace TvLibrary.Channels
       : base()
     {
       _diseqc = DiseqcPort.None;
-      _lnbType = LnbType.Universal;
+      _lnbType = null;
       _satelliteIndex = -1;
       _polarisation = DirectShowLib.BDA.Polarisation.NotSet;
       _symbolRate = -1;
@@ -532,7 +195,7 @@ namespace TvLibrary.Channels
     /// <summary>
     /// Get/set the type of LNB used to receive the channel.
     /// </summary>
-    public LnbType LnbType
+    public ILnbType LnbType
     {
       get { return _lnbType; }
       set { _lnbType = value; }

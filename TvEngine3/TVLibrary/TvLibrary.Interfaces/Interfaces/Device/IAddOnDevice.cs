@@ -37,10 +37,9 @@ namespace TvLibrary.Interfaces.Device
     /// ensure that the caller can successfully finish building the graph. Usually that would mean pointing
     /// the reference at the [last] device filter that was successfully connected into the graph.
     /// </remarks>
-    /// <param name="graphBuilder">The graph builder to use to insert the device filter(s).</param>
     /// <param name="lastFilter">The source filter (usually either a tuner or capture/receiver filter) to
     ///   connect the [first] device filter to.</param>
     /// <returns><c>true</c> if the device was successfully added to the graph, otherwise <c>false</c></returns>
-    bool AddToGraph(ICaptureGraphBuilder2 graphBuilder, ref IBaseFilter lastFilter);
+    bool AddToGraph(ref IBaseFilter lastFilter);
   }
 }

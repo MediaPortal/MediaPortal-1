@@ -112,10 +112,30 @@ namespace TvLibrary.Interfaces
   }
 
   /// <summary>
+  /// DVB MMI close MMI command types.
+  /// </summary>
+  public enum MmiCloseType : byte
+  {
+    /// <summary>
+    /// The MMI dialog should be closed immediately.
+    /// </summary>
+    Immediate = 0,
+    /// <summary>
+    /// The MMI dialog should be closed after a [short] delay.
+    /// </summary>
+    Delayed
+  }
+
+  /// <summary>
   /// DVB MMI message tags.
   /// </summary>
   public enum MmiTag
   {
+    /// <summary>
+    /// Unknown tag.
+    /// </summary>
+    Unknown = 0,
+
     /// <summary>
     /// Profile enquiry.
     /// </summary>
@@ -188,7 +208,7 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// Close man-machine interface.
     /// </summary>
-    CloseMmi = 0x9F8800,
+    CloseMmi = 0x9f8800,
     /// <summary>
     /// Display control.
     /// </summary>
@@ -1592,7 +1612,7 @@ namespace TvLibrary.Interfaces
         int endEsDescriptors = offset + es.EsInfoLength;
         if (endEsDescriptors > endEsData)
         {
-          Log.Log.Debug("PMT: elementary stream info length for PID {0} (0x{1:x}) is invalid", es.Pid, es.Pid);
+          Log.Log.Debug("PMT: elementary stream info length for PID {0} (0x{0:x}) is invalid", es.Pid);
           return null;
         }
         es.Descriptors = new List<Descriptor>();
@@ -1602,7 +1622,7 @@ namespace TvLibrary.Interfaces
           Descriptor d = Descriptor.Decode(data, offset);
           if (d == null)
           {
-            Log.Log.Debug("PMT: elementary stream descriptor {0} for PID {1} (0x{2:x}) is invalid", es.Descriptors.Count + es.CaDescriptors.Count + 1, es.Pid, es.Pid);
+            Log.Log.Debug("PMT: elementary stream descriptor {0} for PID {1} (0x{1:x}) is invalid", es.Descriptors.Count + es.CaDescriptors.Count + 1, es.Pid);
             return null;
           }
           offset += d.Length + 2;
@@ -1805,12 +1825,12 @@ namespace TvLibrary.Interfaces
       Log.Log.Debug("  table ID                 = {0}", _tableId);
       Log.Log.Debug("  section syntax indicator = {0}", _sectionSyntaxIndicator);
       Log.Log.Debug("  section length           = {0}", _sectionLength);
-      Log.Log.Debug("  program number           = {0} (0x{1:x})", _programNumber, _programNumber);
+      Log.Log.Debug("  program number           = {0} (0x{0:x})", _programNumber);
       Log.Log.Debug("  version                  = {0}", _version);
       Log.Log.Debug("  current next indicator   = {0}", _currentNextIndicator);
       Log.Log.Debug("  section number           = {0}", _sectionNumber);
       Log.Log.Debug("  last section number      = {0}", _lastSectionNumber);
-      Log.Log.Debug("  PCR PID                  = {0} (0x{1:x})", _pcrPid, _pcrPid);
+      Log.Log.Debug("  PCR PID                  = {0} (0x{0:x})", _pcrPid);
       Log.Log.Debug("  program info length      = {0}", _programInfoLength);
       Log.Log.Debug("  CRC                      = 0x{0:x}{1:x}{2:x}{3:x}", _crc[0], _crc[1], _crc[2], _crc[3]);
       Log.Log.Debug("  {0} descriptor(s)...", _programDescriptors.Count + _programCaDescriptors.Count);
@@ -1945,7 +1965,7 @@ namespace TvLibrary.Interfaces
     {
       Log.Log.Debug("Elementary Stream: dump...");
       Log.Log.Debug("  stream type = {0}", _streamType);
-      Log.Log.Debug("  PID         = {0} (0x{1:x})", _pid, _pid);
+      Log.Log.Debug("  PID         = {0} (0x{0:x})", _pid);
       Log.Log.Debug("  length      = {0}", _esInfoLength);
       Log.Log.Debug("  main tag    = {0}", _primaryDescriptorTag);
       Log.Log.Debug("  {0} descriptor(s)...", _descriptors.Count + _caDescriptors.Count);
@@ -2214,8 +2234,8 @@ namespace TvLibrary.Interfaces
             d._pids.TryGetValue(pid, out oldProviderId);
             if (oldProviderId != 0)
             {
-              Log.Log.Debug("CA Descriptor: overwriting provider ID {0} (0x{1:x}) for PID {2} (0x{3:x}) with value {4} (0x{5:x})",
-                      oldProviderId, oldProviderId, pid, pid, providerId, providerId);
+              Log.Log.Debug("CA Descriptor: overwriting provider ID {0} (0x{0:x}) for PID {1} (0x{1:x}) with value {2} (0x{2:x})",
+                      oldProviderId, pid, providerId);
               d._pids[pid] = providerId;
             }
             else
@@ -2268,175 +2288,478 @@ namespace TvLibrary.Interfaces
       Log.Log.Debug("CA Descriptor: dump...");
       Log.Log.Debug("  tag          = {0}", _tag);
       Log.Log.Debug("  length       = {0}", _length);
-      Log.Log.Debug("  CA system ID = {0} (0x{1:x})", _caSystemId, _caSystemId);
-      Log.Log.Debug("  CA PID       = {0} (0x{1:x})", _caPid, _caPid);
+      Log.Log.Debug("  CA system ID = {0} (0x{0:x})", _caSystemId);
+      Log.Log.Debug("  CA PID       = {0} (0x{0:x})", _caPid);
       foreach (UInt16 pid in _pids.Keys)
       {
-        Log.Log.Debug("  PID = {0} (0x{1:x}), provider = {2} (0x{3:x})", pid, pid, _pids[pid], _pids[pid]);
+        Log.Log.Debug("  PID = {0} (0x{0:x}), provider = {1} (0x{1:x})", pid, _pids[pid]);
       }
       DVB_MMI.DumpBinary(_data, 0, _data.Length);
     }
   }
 
   /// <summary>
-  /// This class parses DVB MMI APDU objects, performing callbacks appropriately. It is compatible with any
-  /// conditional access interface that provides access to DVB compliant APDU objects.
+  /// This class parses DVB EN 50221 compliant MMI APDU objects, performing CAM menu callbacks appropriately.
+  /// It is compatible with any conditional access interface that provides access to "raw" DVB compliant APDU
+  /// objects.
   /// </summary>
   public class DvbMmiHandler
   {
-    #region variables
+    #region MMI/APDU interpretation
 
-    private ICiMenuCallbacks _ciMenuCallbacks;
-    private String _deviceName;
+    /// <summary>
+    /// Handle raw MMI data which contains one or more APDU objects, performing CAM menu callbacks appropriately.
+    /// </summary>
+    /// <param name="mmi">The MMI data.</param>
+    /// <param name="ciMenuHandler">A set of callback handler functions.</param>
+    public static void HandleMmiData(byte[] mmi, ref ICiMenuCallbacks ciMenuHandler)
+    {
+      Log.Log.Debug("DvbMmiHandler: handle MMI data");
+      if (mmi == null || mmi.Length < 4)
+      {
+        Log.Log.Debug("DvbMmiHandler: data not supplied or too short");
+      }
+
+      //DVB_MMI.DumpBinary(mmi, 0, mmi.Length);
+
+      // The first 3 bytes contains an MMI tag to tell us which APDUs we should expect to encounter.
+      MmiTag tag = DvbMmiHandler.ReadMmiTag(mmi, 0);
+      int countLengthBytes;
+      int apduLength = ReadLength(mmi, 3, out countLengthBytes);
+      Log.Log.Debug("DvbMmiHandler: data length = {0}, first APDU tag = {1}, length = {2}", mmi.Length, tag, apduLength);
+      int offset = 3 + countLengthBytes;
+      if (apduLength < 0 || offset + apduLength != mmi.Length)
+      {
+        Log.Log.Debug("DvbMmiHandler: APDU length is invalid");
+        DVB_MMI.DumpBinary(mmi, 0, mmi.Length);
+        return;
+      }
+
+      if (tag == MmiTag.CloseMmi)
+      {
+        // The CAM is requesting that we close the menu.
+        HandleClose(mmi, offset, apduLength, ref ciMenuHandler);
+      }
+      else if (tag == MmiTag.Enquiry)
+      {
+        // The CAM wants input from the user.
+        HandleEnquiry(mmi, offset, apduLength, ref ciMenuHandler);
+      }
+      else if (tag == MmiTag.ListLast || tag == MmiTag.MenuLast ||
+          tag == MmiTag.MenuMore || tag == MmiTag.ListMore)
+      {
+        // The CAM is providing a menu or list to present to the user.
+        HandleMenu(mmi, offset, apduLength, ref ciMenuHandler);
+      }
+      else
+      {
+        Log.Log.Debug("DvbMmiHandler: unexpected MMI tag {0}", tag);
+        DVB_MMI.DumpBinary(mmi, 0, mmi.Length);
+      }
+    }
+
+    private static void HandleClose(byte[] apdu, int offset, int apduLength, ref ICiMenuCallbacks ciMenuHandler)
+    {
+      Log.Log.Debug("DvbMmiHandler: handle close");
+
+      if (offset >= apdu.Length)
+      {
+        Log.Log.Debug("DvbMmiHandler: invalid APDU");
+        return;
+      }
+
+      MmiCloseType command = (MmiCloseType)apdu[offset++];
+      int delay = 0;
+      if (command == MmiCloseType.Delayed)
+      {
+        if (offset >= apdu.Length)
+        {
+          Log.Log.Debug("DvbMmiHandler: invalid APDU (delayed close)");
+          return;
+        }
+        delay = apdu[offset];
+      }
+
+      Log.Log.Debug("  command = {0}", command);
+      Log.Log.Debug("  delay   = {0} s", delay);
+
+      if (ciMenuHandler != null)
+      {
+        try
+        {
+          ciMenuHandler.OnCiCloseDisplay(delay);
+        }
+        catch (Exception ex)
+        {
+          Log.Log.Debug("DvbMmiHandler: close menu callback exception\r\n{0}", ex.ToString());
+        }
+      }
+      else
+      {
+        Log.Log.Debug("DvbMmiHandler: menu callbacks are not set");
+      }
+    }
+
+    private static void HandleEnquiry(byte[] apdu, int offset, int apduLength, ref ICiMenuCallbacks ciMenuHandler)
+    {
+      Log.Log.Debug("DvbMmiHandler: handle enquiry");
+
+      if (offset + 4 >= apdu.Length)
+      {
+        Log.Log.Debug("DvbMmiHandler: invalid APDU");
+        return;
+      }
+
+      bool passwordMode = (apdu[offset++] & 0x01) != 0;
+      byte expectedAnswerLength = apdu[offset++];
+      // Note: there are 2 other bytes before text starts.
+      String prompt = System.Text.Encoding.ASCII.GetString(apdu, offset + 2, apdu.Length - offset - 2);
+
+      Log.Log.Debug("  text   = {0}", prompt);
+      Log.Log.Debug("  length = {0}", expectedAnswerLength);
+      Log.Log.Debug("  blind  = {0}", passwordMode);
+
+      if (ciMenuHandler != null)
+      {
+        try
+        {
+          ciMenuHandler.OnCiRequest(passwordMode, expectedAnswerLength, prompt);
+        }
+        catch (Exception ex)
+        {
+          Log.Log.Debug("DvbMmiHandler: request callback exception\r\n{0}", ex.ToString());
+        }
+      }
+      else
+      {
+        Log.Log.Debug("DvbMmiHandler: menu callbacks are not set");
+      }
+    }
+
+    private static void HandleMenu(byte[] apdu, int offset, int apduLength, ref ICiMenuCallbacks ciMenuHandler)
+    {
+      Log.Log.Debug("DvbMmiHandler: handle menu");
+
+      byte entryCount = apdu[offset++];
+      List<String> entries = new List<String>();
+
+      // Read the menu entries into the entries list.
+      while (entryCount > 0 && offset < apdu.Length)
+      {
+        if (apdu[offset] != 0x9f)
+        {
+          Log.Log.Debug("DvbMmiHandler: unexpected APDU format, expected MMI tag at offset {0}", offset);
+          DVB_MMI.DumpBinary(apdu, 0, apdu.Length);
+          return;
+        }
+        int bytesRead;
+        String entry = ReadText(apdu, offset, out bytesRead);
+        if (entry == null)
+        {
+          Log.Log.Debug("DvbMmiHandler: unexpected APDU format, null entry at offset {0}", offset);
+          DVB_MMI.DumpBinary(apdu, 0, apdu.Length);
+          return;
+        }
+        entries.Add(entry);
+        offset += bytesRead;
+      }
+      if (entries.Count < 3)
+      {
+        Log.Log.Debug("DvbMmiHandler: unexpected MMI format, less than 3 entries");
+        DVB_MMI.DumpBinary(apdu, 0, apdu.Length);
+        return;
+      }
+
+      if (ciMenuHandler == null)
+      {
+        Log.Log.Debug("DvbMmiHandler: menu callbacks are not set");
+      }
+
+      entryCount = (byte)(entries.Count - 3);
+      Log.Log.Debug("  title     = {0}", entries[0]);
+      Log.Log.Debug("  sub-title = {0}", entries[1]);
+      Log.Log.Debug("  footer    = {0}", entries[2]);
+      Log.Log.Debug("  # entries = {0}", entryCount);
+      if (ciMenuHandler != null)
+      {
+        try
+        {
+          ciMenuHandler.OnCiMenu(entries[0], entries[1], entries[2], entryCount);
+        }
+        catch (Exception ex)
+        {
+          Log.Log.Debug("DvbMmiHandler: menu callback exception\r\n{0}", ex.ToString());
+        }
+      }
+
+      for (byte i = 0; i < entryCount; i++)
+      {
+        if (ciMenuHandler != null)
+        {
+          Log.Log.Debug("  entry {0,-2}  = {1}", i + 1, entries[i + 3]);
+          try
+          {
+            ciMenuHandler.OnCiMenuChoice(i, entries[i + 3]);
+          }
+          catch (Exception ex)
+          {
+            Log.Log.Debug("DvbMmiHandler: menu entry callback exception\r\n{0}", ex.ToString());
+          }
+        }
+      }
+    }
 
     #endregion
 
+    #region helpers
+
     /// <summary>
-    /// Constructor for an APDU based MMI parser.
+    /// Interpret an MMI tag.
     /// </summary>
-    /// <param name="deviceName">The name of the device that will own the handler instance.</param>
-    public DvbMmiHandler(String deviceName)
+    /// <param name="sourceData">An MMI data array containing the tag.</param>
+    /// <param name="offset">The offset of the tag in sourceData.</param>
+    /// <returns>the tag</returns>
+    public static MmiTag ReadMmiTag(byte[] sourceData, int offset)
     {
-      _deviceName = deviceName;
+      if (offset + 2 >= sourceData.Length)
+      {
+        return MmiTag.Unknown;
+      }
+      return (MmiTag)
+        ((sourceData[offset] << 16) | (sourceData[offset + 1] << 8) | (sourceData[offset + 2]));
     }
 
     /// <summary>
-    /// Set the CAM callback handler functions.
+    /// Write an MMI tag.
     /// </summary>
-    /// <param name="ciMenuHandler">A set of callback handler functions.</param>
-    /// <returns><c>true</c> if the handlers are set, otherwise <c>false</c></returns>
-    public bool SetCiMenuHandler(ref ICiMenuCallbacks ciMenuHandler)
+    /// <param name="tag">The tag to write.</param>
+    /// <param name="outputData">The MMI data array to write the tag into.</param>
+    /// <param name="offset">The offset of the tag in outputData.</param>
+    public static void WriteMmiTag(MmiTag tag, ref byte[] outputData, int offset)
     {
-      if (ciMenuHandler != null)
+      if (outputData == null || offset + 2 >= outputData.Length)
       {
-        _ciMenuCallbacks = ciMenuHandler;
-        return true;
+        Log.Log.Debug("DvbMmiHandler: failed to write tag");
+        return;
       }
-      return false;
+      outputData[offset++] = (byte)(((int)tag >> 16) & 0xff);
+      outputData[offset++] = (byte)(((int)tag >> 8) & 0xff);
+      outputData[offset++] = (byte)((int)tag & 0xff);
     }
 
     /// <summary>
-    /// Handles APDU (MMI) objects and perform callbacks
+    /// Interpret a DVB MMI APDU length field, which is encoded using ASN.1 length encoding rules.
     /// </summary>
-    /// <param name="MMI">MMI byte[]</param>
-    public void HandleMMI(byte[] MMI)
+    /// <remarks>
+    /// The value is encoded in a variable number of bytes as follows:
+    /// - if the most significant bit in the first byte is set, it means that the first byte contains the number
+    /// of byte(s) in which the length is encoded - the following byte(s) contain the length value
+    /// - if the most significant bit in the first byte is *not* set, the first byte is the length value
+    /// </remarks>
+    /// <param name="sourceData">An MMI data array containing the length field.</param>
+    /// <param name="offset">The offset of the length field in sourceData.</param>
+    /// <param name="bytesRead">The number of bytes in the length field.</param>
+    /// <returns>the value encoded in the length field, otherwise <c>-1</c> if the length is not valid</returns>
+    public static int ReadLength(byte[] sourceData, int offset, out int bytesRead)
     {
-      // parse starting 3 bytes == tag
-      MmiTag uMMITag = DVB_MMI.ToMMITag(MMI, 0);
+      bytesRead = -1;
 
-      // dumping binary APDU
-      DVB_MMI.DumpBinary(MMI, 0, MMI.Length);
-
-
-      // calculate length and offset
-      int countLengthBytes;
-      int mmiLength = DVB_MMI.GetLength(MMI, 3 /* bytes for mmi_tag */, out countLengthBytes);
-      int mmiOffset = 3 + countLengthBytes; // 3 bytes mmi tag + 1 byte length field ?
-
-      Log.Log.Debug("{0}: MMITag:{1}, MMIObjectLength: {2} ({2:X2}), mmiOffset: {3}", _deviceName, uMMITag, mmiLength,
-                    mmiOffset);
-
-      int offset = 0; // starting with 0; reading whole struct from start
-      if (uMMITag == MmiTag.CloseMmi)
+      if (sourceData == null || offset >= sourceData.Length)
       {
-        // Close menu
-        byte nDelay = 0;
-        byte CloseCmd = MMI[mmiOffset + 0];
-        if (CloseCmd != 0)
+        Log.Log.Debug("DvbMmiHandler: offset is out of range");
+        return -1;
+      }
+
+      byte byte1 = sourceData[offset++];
+
+      // When the MSB of the first byte is not set, the first byte contains the length value.
+      if ((byte1 & 0x80) == 0)
+      {
+        bytesRead = 1;
+        return byte1;
+      }
+
+      // Multi-byte length field.
+      bytesRead = byte1 & 0x7f;
+      if (bytesRead > 4)
+      {
+        Log.Log.Debug("DvbMmiHandler: length encoded in {0} bytes, can't be interpretted", bytesRead);
+        return -1;
+      }
+      if (offset + bytesRead >= sourceData.Length)
+      {
+        Log.Log.Debug("DvbMmiHandler: number of length bytes is invalid", bytesRead);
+        return -1;
+      }
+
+      Int32 value = sourceData[offset++];
+      for (byte i = 1; i < bytesRead; i++)
+      {
+        value = (value << 8) + sourceData[offset++];
+      }
+      bytesRead++;    // (for the first byte read into byte1)
+      return value;
+    }
+
+    /// <summary>
+    /// Write a DVB MMI APDU length field using ASN.1 length encoding rules.
+    /// </summary>
+    /// <remarks>
+    /// The value is encoded in a variable number of bytes as follows:
+    /// - if the most significant bit in the first byte is set, it means that the first byte contains the number
+    /// of byte(s) in which the length is encoded - the following byte(s) contain the length value
+    /// - if the most significant bit in the first byte is *not* set, the first byte is the length value
+    /// </remarks>
+    /// <param name="length">The length to write.</param>
+    /// <param name="outputData">The MMI data array to write the length field into.</param>
+    /// <param name="offset">The offset of the field in outputData.</param>
+    /// <param name="bytesWritten">The number of bytes used to encode the length field.</param>
+    public static void WriteLength(int length, ref byte[] outputData, int offset, out int bytesWritten)
+    {
+      bytesWritten = 1;
+
+      // Figure out how many bytes we're going to need to encode the length.
+      if (length > 127)
+      {
+        int tempLength = length;
+        while (tempLength > 255)
         {
-          nDelay = MMI[mmiOffset + 1];
-        }
-        if (_ciMenuCallbacks != null)
-        {
-          Log.Log.Debug("{0}: OnCiClose()", _deviceName);
-          _ciMenuCallbacks.OnCiCloseDisplay(nDelay);
-        }
-        else
-        {
-          Log.Log.Debug("{0}: OnCiCloseDisplay: cannot do callback!", _deviceName);
+          tempLength = tempLength >> 8;
+          bytesWritten++;
         }
       }
-      if (uMMITag == MmiTag.Enquiry)
+
+      if (outputData == null || offset + bytesWritten >= outputData.Length)
       {
-        // request input
-        bool bPasswordMode = false;
-        byte answer_text_length = MMI[mmiOffset + 1];
-        string strText = "";
-
-        if ((MMI[mmiOffset + 0] & 0x01) != 0)
-        {
-          bPasswordMode = true;
-        }
-
-        // mmioffset +4 because there a 2 other bytes before text starts
-        // length is these 2 bytes shorter 
-        strText = DVB_MMI.BytesToString(MMI, mmiOffset + 4, mmiLength - mmiOffset - 2);
-        if (_ciMenuCallbacks != null)
-        {
-          Log.Log.Debug("{0}: OnCiRequest: bPasswordMode:{1}, answer_text_length:{2}, strText:{3}", _deviceName,
-                        bPasswordMode, answer_text_length, strText);
-          _ciMenuCallbacks.OnCiRequest(bPasswordMode, answer_text_length, strText);
-        }
-        else
-        {
-          Log.Log.Debug("{0}: OnCiRequest: cannot do callback!", _deviceName);
-        }
+        Log.Log.Debug("DvbMmiHandler: failed to write length");
+        return;
       }
-      if (uMMITag == MmiTag.ListLast || uMMITag == MmiTag.MenuLast ||
-          uMMITag == MmiTag.MenuMore || uMMITag == MmiTag.ListMore)
+
+      // One byte length.
+      if (length < 128)
       {
-        // step forward; begin with offset+1; stop when 0x9F reached
-        // should be modified to offset + mmioffset+1 ?
-        offset++;
-        while (MMI[offset] != (byte)0x9F)
-        {
-          //Log.Log.Debug("Skip to offset {0} value {1:X2}", offset, MMI[offset]);
-          offset++;
-        }
-        uMMITag = DVB_MMI.ToMMITag(MMI, offset); // get next MMI tag
-        Log.Log.Debug("{0}: _mmiHandler Parse: Got MENU_LAST, skipped to next block on index: {1}; new Tag {2}", _deviceName,
-                      offset, uMMITag);
+        outputData[offset] = (byte)length;
+        return;
+      }
 
-        int nChoices = 0;
-        List<string> Choices = new List<string>();
-        // Always three line with menu info (DVB Standard)
-        // Title Text
-        offset += DVB_MMI.GetCIText(MMI, offset, ref Choices);
-        // Subtitle Text
-        offset += DVB_MMI.GetCIText(MMI, offset, ref Choices);
-        // Bottom Text
-        offset += DVB_MMI.GetCIText(MMI, offset, ref Choices);
-
-        // first step through the choices, to get info and count them
-        int max = 20;
-        while (max-- > 0)
-        {
-          // if the offset gets to mmi object length then end here
-          if (offset >= mmiLength - 1)
-            break;
-
-          offset += DVB_MMI.GetCIText(MMI, offset, ref Choices);
-          nChoices++;
-        }
-        // when title and choices are ready now, send to client
-        for (int c = 0; c < Choices.Count; c++)
-        {
-          Log.Log.Debug("{0}: {1} : {2}", _deviceName, c, Choices[c]);
-        }
-        if (_ciMenuCallbacks != null)
-        {
-          _ciMenuCallbacks.OnCiMenu(Choices[0], Choices[1], Choices[2], nChoices);
-          for (int c = 3; c < Choices.Count; c++)
-          {
-            _ciMenuCallbacks.OnCiMenuChoice(c - 3, Choices[c]);
-          }
-        }
-        else
-        {
-          Log.Log.Debug("{0}: OnCiMenu: cannot do callback!", _deviceName);
-        }
+      // Multi-byte length.
+      outputData[offset] = (byte)(bytesWritten-- | 0x80);
+      while (bytesWritten > 0)
+      {
+        outputData[offset + bytesWritten--] = (byte)(length & 0xff);
+        length = length >> 8;
       }
     }
+
+    /// <summary>
+    /// Intepret an MMI text APDU.
+    /// </summary>
+    /// <param name="sourceData">An MMI data array containing the text APDU.</param>
+    /// <param name="offset">The offset of the APDU in sourceData.</param>
+    /// <param name="bytesRead">The number of bytes in the APDU field.</param>
+    /// <returns>the string encoded in the text APDU, otherwise <c>null</c></returns>
+    public static String ReadText(byte[] sourceData, int offset, out int bytesRead)
+    {
+      bytesRead = -1;
+
+      MmiTag tag = ReadMmiTag(sourceData, offset);
+      if (tag != MmiTag.TextMore && tag != MmiTag.TextLast)
+      {
+        Log.Log.Debug("DvbMmiHandler: invalid text tag {0}", tag);
+        return null;
+      }
+
+      int lengthByteCount;
+      int length = ReadLength(sourceData, offset + 3, out lengthByteCount);
+      if (length == -1)
+      {
+        return null;
+      }
+
+      bytesRead = 3 + lengthByteCount;
+      if (length > 0)
+      {
+        bytesRead += length;
+        return System.Text.Encoding.ASCII.GetString(sourceData, offset + 3 + lengthByteCount, length);
+      }
+      else
+      {
+        return String.Empty;
+      }
+    }
+
+    #endregion
+
+    #region MMI/APDU encoding
+
+    /// <summary>
+    /// Create a "close_mmi" APDU, used to close an MMI dialog.
+    /// </summary>
+    /// <param name="delay">The delay before the host should close the MMI dialog.</param>
+    /// <returns>the APDU</returns>
+    public static byte[] CreateMmiClose(byte delay)
+    {
+      byte[] apdu;
+      if (delay > 0)
+      {
+        apdu = new byte[6];
+        apdu[3] = 2;    // length
+        apdu[4] = (byte)MmiCloseType.Delayed;
+        apdu[5] = delay;
+      }
+      else
+      {
+        apdu = new byte[5];
+        apdu[3] = 1;    // length
+        apdu[4] = (byte)MmiCloseType.Immediate;
+      }
+      WriteMmiTag(MmiTag.CloseMmi, ref apdu, 0);
+      return apdu;
+    }
+
+    /// <summary>
+    /// Create a "menu_answ" APDU, used to select an entry in an MMI menu.
+    /// </summary>
+    /// <param name="choice">The elected index (0 means back)</param>
+    /// <returns>the APDU</returns>
+    public static byte[] CreateMmiMenuAnswer(byte choice)
+    {
+      byte[] apdu = new byte[5];
+      WriteMmiTag(MmiTag.MenuAnswer, ref apdu, 0);
+      apdu[3] = 1;    // length
+      apdu[4] = choice;
+      return apdu;
+    }
+
+    /// <summary>
+    /// Create an enquiry "answ" APDU, used to respond to an enquiry from the host.
+    /// </summary>
+    /// <param name="responseType">The response type.</param>
+    /// <param name="answer">The answer.</param>
+    /// <returns>the APDU</returns>
+    public static byte[] CreateMmiEnquiryAnswer(MmiResponseType responseType, String answer)
+    {
+      if (answer == null)
+      {
+        answer = String.Empty;
+      }
+      char[] answerChars = answer.ToCharArray();
+
+      // Encode the length into a temporary array so we know how many bytes are required for the APDU.
+      byte[] length = new byte[5];  // max possible bytes for length field
+      int lengthByteCount;
+      WriteLength(answerChars.Length + 1, ref length, 0, out lengthByteCount);  // + 1 for response type
+
+      // Encode the APDU.
+      byte[] apdu = new byte[answerChars.Length + lengthByteCount + 4]; // + 4 = 3 for MMI tag, 1 for response type
+      WriteMmiTag(MmiTag.Answer, ref apdu, 0);
+      Buffer.BlockCopy(length, 0, apdu, 3, lengthByteCount);
+      apdu[3 + lengthByteCount] = (byte)responseType;
+      Buffer.BlockCopy(answerChars, 0, apdu, 4 + lengthByteCount, answerChars.Length);
+      return apdu;
+    }
+
+    #endregion
   }
 
   /// <summary>
@@ -2444,199 +2767,6 @@ namespace TvLibrary.Interfaces
   /// </summary>
   public static class DVB_MMI
   {
-    /// <summary>
-    /// interpretes parts of an byte[] as status int
-    /// </summary>
-    /// <param name="sourceData"></param>
-    /// <param name="offset"></param>
-    /// <returns></returns>
-    public static MmiTag ToMMITag(byte[] sourceData, int offset)
-    {
-      return
-        (MmiTag)
-        (((Int32)sourceData[offset] << 16) | ((Int32)sourceData[offset + 1] << 8) | ((Int32)sourceData[offset + 2]));
-    }
-
-    /// <summary>
-    /// interpretes length() info which can be of different size
-    /// </summary>
-    /// <param name="sourceData">source byte array</param>
-    /// <param name="offset">index to start</param>
-    /// <param name="bytesRead">returns the number of bytes interpreted</param>
-    /// <returns>length of following object</returns>
-    public static int GetLength(byte[] sourceData, int offset, out int bytesRead)
-    {
-      byte bLen = sourceData[offset];
-      // if highest bit set, it means there are > 127 bytes
-      if ((bLen & 0x80) == 0)
-      {
-        bytesRead = 1;
-        return bLen;
-      }
-      else
-      {
-        bLen &= 0x7f;
-        // clear 8th bit; remaining 7 bit tell the number of following bytes to interpret (most probably 2)
-        bytesRead = 1 + bLen;
-        Int32 shiftBy;
-        Int32 iLen = 0;
-        for (Int32 p = 0; p < bLen; p++)
-        {
-          shiftBy = (Int32)(bLen - p - 1) * 8; // number of bits to shift up, i.e. 2 bytes -> 1st byte <<8, 2nd byte <<0
-          iLen = iLen | (sourceData[offset + 1 + p] << shiftBy);
-          // shift byte to right position, concat by "or" operation
-        }
-        return iLen;
-      }
-    }
-
-    /// <summary>
-    /// Converts bytes to String
-    /// </summary>
-    /// <param name="sourceData">source byte[]</param>
-    /// <param name="offset">starting offset</param>
-    /// <param name="length">length</param>
-    /// <returns>String</returns>
-    public static String BytesToString(byte[] sourceData, int offset, int length)
-    {
-      StringBuilder StringEntry = new StringBuilder();
-      for (int l = offset; l < offset + length; l++)
-      {
-        StringEntry.Append((char)sourceData[l]);
-      }
-      return StringEntry.ToString();
-    }
-
-    /// <summary>
-    /// intepretes string for ci menu entries
-    /// </summary>
-    /// <param name="sourceData">source byte array</param>
-    /// <param name="offset">index to start</param>
-    /// <param name="menuEntries">reference to target string list</param>
-    /// <returns>offset for further readings</returns>
-    public static int GetCIText(byte[] sourceData, int offset, ref List<String> menuEntries)
-    {
-      byte Length; // We assume that text Length is smaller 127
-      MmiTag Tag;
-
-      Tag = ToMMITag(sourceData, offset);
-      if ((Tag != MmiTag.TextMore) && (Tag != MmiTag.TextLast))
-      {
-        return -1;
-      }
-
-      Length = sourceData[offset + 3];
-
-      // Check if our assumption is TRUE
-      if (Length > 127)
-        return -1; // Length is > 127
-
-      if (Length > 0)
-      {
-        // Create string from byte array 
-        String menuEntry = BytesToString(sourceData, offset + 4, Length);
-        //Log.Log.Debug("FireDTV: MMI Parse GetCIText: {0}", menuEntry.ToString());
-        menuEntries.Add(menuEntry.ToString());
-      }
-      else
-      {
-        // empty String ? add to keep correct index positions
-        menuEntries.Add("");
-      }
-      return (Length + 4);
-    }
-
-    /// <summary>
-    /// Creates a "CloseMMI" data set
-    /// </summary>
-    /// <returns>a CloseMmi APDU</returns>
-    public static byte[] CreateMMIClose()
-    {
-      // MMI tag
-      byte[] uData = new byte[5];
-      uData[0] = 0x9F;
-      uData[1] = 0x88;
-      uData[2] = 0x00;
-      uData[3] = 0x01; // length field
-      uData[4] = 0x00; // close_mmi_cmd_id (immediately)
-      return uData;
-    }
-
-    /// <summary>
-    /// Creates a "SelectMenuChoice" data set
-    /// </summary>
-    /// <param name="choice">selected index (0 means back)</param>
-    /// <returns>a MenuAnswer APDU</returns>
-    public static byte[] CreateMMISelect(byte choice)
-    {
-      // MMI tag
-      byte[] uData = new byte[5];
-      uData[0] = 0x9F;
-      uData[1] = 0x88;
-      uData[2] = 0x0B; // send choice
-      uData[3] = 0x01; // length field
-      uData[4] = choice; // choice
-      return uData;
-    }
-
-    /// <summary>
-    /// Creates an CI Menu Answer package
-    /// </summary>
-    /// <param name="responseType">The DVB MMI response type.</param>
-    /// <param name="answer">answer string</param>
-    /// <returns>an Answer APDU</returns>
-    public static byte[] CreateMMIAnswer(MmiResponseType responseType, String answer)
-    {
-      char[] answerChars = answer.ToCharArray();
-
-      // Calculate the number of bytes that are needed to encode the
-      // length value.
-      int lengthToEncode = answerChars.Length + 1;
-      int byteCount = 1;
-      if (lengthToEncode > 127)
-      {
-        int tempLength = lengthToEncode;
-        while (tempLength > 255)
-        {
-          tempLength = tempLength / 256;
-          byteCount++;
-        }
-      }
-
-      // MMI tag
-      byte[] uData = new byte[4 + byteCount + answerChars.Length];
-      uData[0] = 0x9F;
-      uData[1] = 0x88;
-      uData[2] = 0x08; // send enquiry answer
-
-      uData[3 + byteCount] = (byte)responseType;
-
-      // answer string
-      int offset = 4 + byteCount;
-      for (int p = 0; p < answerChars.Length; p++)
-      {
-        uData[offset + p] = (byte)answerChars[p];
-      }
-
-      // length field
-      if (byteCount == 1)
-      {
-        uData[3] = (byte)lengthToEncode;
-      }
-      else
-      {
-        uData[3] = (byte)(byteCount | 0x80);
-        while (lengthToEncode > 1)
-        {
-          uData[2 + byteCount] = (byte)(lengthToEncode % 256);
-          lengthToEncode = lengthToEncode / 256;
-          byteCount--;
-        }
-      }
-
-      return uData;
-    }
-
     /// <summary>
     /// returns a safe "printable" character or _
     /// </summary>

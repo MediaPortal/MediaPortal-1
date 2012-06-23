@@ -1,16 +1,17 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using MediaPortal.Common.Utils;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("NetUp")]
+[assembly: AssemblyTitle("NetUP")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("NetUp")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2012")]
+[assembly: AssemblyCompany("Team MediaPortal")]
+[assembly: AssemblyProduct("NetUP")]
+[assembly: AssemblyCopyright("Copyright © Team MediaPortal 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -34,3 +35,11 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
+
+// MediaPortal TV Server plugin compatibility.
+[assembly: CompatibleVersion("1.2.3.0", "1.2.3.0")]
+[assembly: UsesSubsystem("TVE.DirectShow")]
+[assembly: UsesSubsystem("TVE.Plugins.CustomDevice")]
+[assembly: UsesSubsystem("TVE.Plugins.CustomDevice.ConditionalAccess")]
+[assembly: UsesSubsystem("TVE.Plugins.CustomDevice.ConditionalAccessMenu")]
+[assembly: UsesSubsystem("TVE.Plugins.CustomDevice.Diseqc")]

@@ -166,9 +166,9 @@ namespace TvEngine
 
     #region variables
 
-    // We use this list to keep track of common interface filters that are already in use across all
+    // We use this hash to keep track of common interface filters that are already in use across all
     // DigitalDevices instances.
-    private static List<String> _devicesInUse = new List<String>();
+    private static HashSet<String> _devicesInUse = new HashSet<String>();
 
     private bool _isDigitalDevices = false;
     private String _name = "Digital Devices";
@@ -430,7 +430,7 @@ namespace TvEngine
 
     /// <summary>
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed.
+    /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -510,22 +510,16 @@ namespace TvEngine
     /// Insert and connect the device's additional filter(s) into the BDA graph.
     /// [network provider]->[tuner]->[capture]->[...device filter(s)]->[infinite tee]->[MPEG 2 demultiplexer]->[transport information filter]->[transport stream writer]
     /// </summary>
-    /// <param name="graphBuilder">The graph builder to use to insert the device filter(s).</param>
     /// <param name="lastFilter">The source filter (usually either a tuner or capture/receiver filter) to
     ///   connect the [first] device filter to.</param>
     /// <returns><c>true</c> if the device was successfully added to the graph, otherwise <c>false</c></returns>
-    public bool AddToGraph(ICaptureGraphBuilder2 graphBuilder, ref IBaseFilter lastFilter)
+    public bool AddToGraph(ref IBaseFilter lastFilter)
     {
       Log.Debug("Digital Devices: add to graph");
 
       if (!_isDigitalDevices)
       {
         Log.Debug("Digital Devices: device not initialised or interface not supported");
-        return false;
-      }
-      if (graphBuilder == null)
-      {
-        Log.Debug("Digital Devices: graph builder is null");
         return false;
       }
       if (lastFilter == null)
@@ -539,15 +533,15 @@ namespace TvEngine
         return true;
       }
 
-      // We need a reference to the graph builder's graph.
-      IGraphBuilder tmpGraph = null;
-      int hr = graphBuilder.GetFiltergraph(out tmpGraph);
+      // We need a reference to the filter graph.
+      FilterInfo filterInfo;
+      int hr = lastFilter.QueryFilterInfo(out filterInfo);
       if (hr != 0)
       {
-        Log.Debug("Digital Devices: failed to get graph reference, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        Log.Debug("Digital Devices: failed to get filter info, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
-      _graph = tmpGraph as IFilterGraph2;
+      _graph = filterInfo.pGraph as IFilterGraph2;
       if (_graph == null)
       {
         Log.Debug("Digital Devices: failed to get graph reference");
@@ -556,156 +550,156 @@ namespace TvEngine
 
       // We need a demux filter to test whether we can add any further CI filters
       // to the graph.
+      IPin demuxInputPin = null;
       IBaseFilter tmpDemux = (IBaseFilter)new MPEG2Demultiplexer();
-      hr = _graph.AddFilter(tmpDemux, "Temp MPEG2 Demultiplexer");
-      if (hr != 0)
+      try
       {
-        Log.Debug("Digital Devices: failed to add test demux to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        DsUtils.ReleaseComObject(tmpDemux);
-        return false;
+        hr = _graph.AddFilter(tmpDemux, "Temp MPEG2 Demultiplexer");
+        if (hr != 0)
+        {
+          Log.Debug("Digital Devices: failed to add test demux to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          return false;
+        }
+        demuxInputPin = DsFindPin.ByDirection(tmpDemux, PinDirection.Input, 0);
+        if (demuxInputPin == null)
+        {
+          Log.Debug("Digital Devices: failed to find the demux input pin");
+          return false;
+        }
+
+        // We start our work with the last filter in the graph, which we expect to be
+        // either a tuner or capture filter. We need the output pin...
+        IPin lastFilterOutputPin = DsFindPin.ByDirection(lastFilter, PinDirection.Output, 0);
+        if (lastFilterOutputPin == null)
+        {
+          Log.Debug("Digital Devices: upstream filter doesn't have an output pin");
+          return false;
+        }
+
+        // This will be our list of CI contexts.
+        _ciContexts = new List<CiContext>();
+        _isCiSlotPresent = false;
+
+        DsDevice[] captureDevices = DsDevice.GetDevicesOfCat(FilterCategory.BDAReceiverComponentsCategory);
+        while (true)
+        {
+          // Stage 1: if connection to a demux is possible then no [further] CI slots are configured
+          // for this tuner. This test removes a 30 to 45 second delay when the graphbuilder tries
+          // to render [capture]->[CI]->[demux].
+          if (_graph.Connect(lastFilterOutputPin, demuxInputPin) == 0)
+          {
+            Log.WriteFile("Digital Devices: no [more] CI filters available or configured for this tuner");
+            lastFilterOutputPin.Disconnect();
+            break;
+          }
+
+          // Stage 2: see if there are any more CI filters that we can add to the graph. We re-loop
+          // over all capture devices because the CI filters have to be connected in a specific order
+          // which is not guaranteed to be the same as the capture device array order.
+          bool addedFilter = false;
+          foreach (DsDevice captureDevice in captureDevices)
+          {
+            // We're looking for a Digital Devices common interface device that is not
+            // already in use in any graph.
+            if (captureDevice.DevicePath == null ||
+              captureDevice.Name == null ||
+              !captureDevice.DevicePath.ToLowerInvariant().Contains(CommonDevicePathSection) ||
+              !captureDevice.Name.ToLowerInvariant().Contains("common interface"))
+            {
+              continue;
+            }
+            lock (_devicesInUse)
+            {
+              if (_devicesInUse.Contains(captureDevice.DevicePath))
+              {
+                continue;
+              }
+
+              // Stage 3: okay, we've got a CI filter device. Let's try and connect it into the graph.
+              Log.Debug("Digital Devices: adding filter for device \"{0}\"", captureDevice.Name);
+              IBaseFilter tmpCiFilter = null;
+              hr = _graph.AddSourceFilterForMoniker(captureDevice.Mon, null, captureDevice.Name, out tmpCiFilter);
+              if (hr != 0 || tmpCiFilter == null)
+              {
+                Log.Debug("Digital Devices: failed to add the filter to the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+                continue;
+              }
+
+              // Now we've got a filter in the graph. Ensure that the filter has input and output pins (really
+              // just a formality) and check if it can be connected to our upstream filter.
+              IPin tmpFilterInputPin = DsFindPin.ByDirection(tmpCiFilter, PinDirection.Input, 0);
+              IPin tmpFilterOutputPin = DsFindPin.ByDirection(tmpCiFilter, PinDirection.Output, 0);
+              hr = 1;
+              try
+              {
+                if (tmpFilterInputPin == null || tmpFilterOutputPin == null)
+                {
+                  Log.Debug("Digital Devices: the filter doesn't have required pin(s)");
+                  continue;
+                }
+                hr = _graph.Connect(lastFilterOutputPin, tmpFilterInputPin);
+                if (hr != 0)
+                {
+                  Log.Debug("Digital Devices: failed to connect the filter into the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+                  continue;
+                }
+              }
+              finally
+              {
+                if (tmpFilterInputPin != null)
+                {
+                  DsUtils.ReleaseComObject(tmpFilterInputPin);
+                  tmpFilterInputPin = null;
+                }
+                if (hr != 0)
+                {
+                  if (tmpFilterOutputPin != null)
+                  {
+                    DsUtils.ReleaseComObject(tmpFilterOutputPin);
+                    tmpFilterOutputPin = null;
+                  }
+                  _graph.RemoveFilter(tmpCiFilter);
+                  DsUtils.ReleaseComObject(tmpCiFilter);
+                  tmpCiFilter = null;
+                }
+              }
+
+              DsUtils.ReleaseComObject(lastFilterOutputPin);
+              lastFilterOutputPin = tmpFilterOutputPin;
+
+              // Excellent - CI filter successfully added!
+              _ciContexts.Add(new CiContext(tmpCiFilter, captureDevice));
+              _devicesInUse.Add(captureDevice.DevicePath);
+              Log.Debug("Digital Devices: total of {0} CI filter(s) in the graph", _ciContexts.Count);
+              lastFilter = tmpCiFilter;
+              addedFilter = true;
+              _isCiSlotPresent = true;
+            }
+          }
+
+          // Insurance: we don't want to get stuck in an endless loop.
+          if (!addedFilter)
+          {
+            break;
+          }
+        }
+
+        DsUtils.ReleaseComObject(lastFilterOutputPin);
+        lastFilterOutputPin = null;
       }
-      IPin demuxInputPin = DsFindPin.ByDirection(tmpDemux, PinDirection.Input, 0);
-      if (demuxInputPin == null)
+      finally
       {
-        Log.Debug("Digital Devices: failed to find the demux input pin");
+        // Clean up the demuxer. Anything else is handled in Dispose().
+        if (demuxInputPin != null)
+        {
+          DsUtils.ReleaseComObject(demuxInputPin);
+          demuxInputPin = null;
+        }
         _graph.RemoveFilter(tmpDemux);
         DsUtils.ReleaseComObject(tmpDemux);
         tmpDemux = null;
-        return false;
       }
 
-      // We start our work with the last filter in the graph, which we expect to be
-      // either a tuner or capture filter. We need the output pin...
-      IPin lastFilterOutputPin = DsFindPin.ByDirection(lastFilter, PinDirection.Output, 0);
-      if (lastFilterOutputPin == null)
-      {
-        Log.Debug("Digital Devices: upstream filter doesn't have an output pin");
-        DsUtils.ReleaseComObject(demuxInputPin);
-        _graph.RemoveFilter(tmpDemux);
-        DsUtils.ReleaseComObject(tmpDemux);
-        tmpDemux = null;
-        return false;
-      }
-
-      // This will be our list of CI contexts.
-      _ciContexts = new List<CiContext>();
-
-      DsDevice[] captureDevices = DsDevice.GetDevicesOfCat(FilterCategory.BDAReceiverComponentsCategory);
-      while (true)
-      {
-        // Stage 1: if connection to a demux is possible then no [further] CI slots are configured
-        // for this tuner. This test removes a 30 to 45 second delay when the graphbuilder tries
-        // to render [capture]->[CI]->[demux].
-        if (_graph.Connect(lastFilterOutputPin, demuxInputPin) == 0)
-        {
-          Log.WriteFile("Digital Devices: no [more] CI filters available or configured for this tuner");
-          lastFilterOutputPin.Disconnect();
-          break;
-        }
-
-        // Stage 2: see if there are any more CI filters that we can add to the graph. We re-loop
-        // over all capture devices because the CI filters have to be connected in a specific order
-        // which is not guaranteed to be the same as the capture device array order.
-        bool addedFilter = false;
-        foreach (DsDevice captureDevice in captureDevices)
-        {
-          // We're looking for a Digital Devices common interface device that is not
-          // already in the graph.
-          if (captureDevice.DevicePath == null ||
-            captureDevice.Name == null ||
-            !captureDevice.DevicePath.ToLowerInvariant().Contains(CommonDevicePathSection) ||
-            !captureDevice.Name.ToLowerInvariant().Contains("common interface"))
-          {
-            continue;
-          }
-          lock (_devicesInUse)
-          {
-            List<String>.Enumerator en = _devicesInUse.GetEnumerator();
-            bool found = false;
-            while (en.MoveNext())
-            {
-              if (en.Current.Equals(captureDevice.DevicePath))
-              {
-                found = true;
-                break;
-              }
-            }
-            if (found)
-            {
-              continue;
-            }
-            _devicesInUse.Add(captureDevice.DevicePath);
-          }
-
-          // Stage 3: okay, we've got a CI filter device. Let's try and connect it into the graph.
-          Log.Debug("Digital Devices: adding filter for device \"{0}\"", captureDevice.Name);
-          IBaseFilter tmpCiFilter = null;
-          try
-          {
-            hr = _graph.AddSourceFilterForMoniker(captureDevice.Mon, null, captureDevice.Name, out tmpCiFilter);
-            if (hr != 0 || tmpCiFilter == null)
-            {
-              Log.Debug("Digital Devices: failed to add filter to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-              continue;
-            }
-
-            // Now we've got a filter in the graph. Let's see if it will connect.
-            hr = graphBuilder.RenderStream(null, null, lastFilter, null, tmpCiFilter);
-            if (hr != 0)
-            {
-              Log.Debug("Digital Devices: failed to render stream through filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-              _graph.RemoveFilter(tmpCiFilter);
-              DsUtils.ReleaseComObject(tmpCiFilter);
-              tmpCiFilter = null;
-              continue;
-            }
-
-            // Ensure that the filter has an output pin.
-            IPin tmpFilterOutputPin = DsFindPin.ByDirection(tmpCiFilter, PinDirection.Output, 0);
-            if (tmpFilterOutputPin == null)
-            {
-              Log.Debug("Digital Devices: filter doesn't have an output pin");
-              _graph.RemoveFilter(tmpCiFilter);
-              DsUtils.ReleaseComObject(tmpCiFilter);
-              tmpCiFilter = null;
-              continue;
-            }
-            DsUtils.ReleaseComObject(lastFilterOutputPin);
-            lastFilterOutputPin = tmpFilterOutputPin;
-          }
-          finally
-          {
-            if (tmpCiFilter == null)
-            {
-              lock (_devicesInUse)
-              {
-                _devicesInUse.Remove(captureDevice.DevicePath);
-              }
-            }
-          }
-
-          // Excellent - CI filter successfully added!
-          _ciContexts.Add(new CiContext(tmpCiFilter, captureDevice));
-          Log.Debug("Digital Devices: total of {0} CI filter(s) in the graph", _ciContexts.Count);
-          lastFilter = tmpCiFilter;
-          addedFilter = true;
-          _isCiSlotPresent = true;
-        }
-
-        // Insurance: we don't want to get stuck in an endless loop.
-        if (!addedFilter)
-        {
-          break;
-        }
-      }
-
-      DsUtils.ReleaseComObject(lastFilterOutputPin);
-      lastFilterOutputPin = null;
-      DsUtils.ReleaseComObject(demuxInputPin);
-      demuxInputPin = null;
-      _graph.RemoveFilter(tmpDemux);
-      DsUtils.ReleaseComObject(tmpDemux);
-      tmpDemux = null;
       return _isCiSlotPresent;
     }
 
@@ -908,7 +902,7 @@ namespace TvEngine
         return true;
       }
 
-      Log.Debug("Digital Devices: service ID is {0} (0x{1:x})", pmt.ProgramNumber, pmt.ProgramNumber);
+      Log.Debug("Digital Devices: service ID is {0} (0x{0:x})", pmt.ProgramNumber);
 
       // Disable messages from the CAM for the next 10 seconds. We do this to
       // avoid showing MMI messages which the driver tries to use unsuccessfully.
@@ -1248,13 +1242,20 @@ namespace TvEngine
           }
           if (context.PropertySet != null)
           {
-            _graph.RemoveFilter(context.PropertySet as IBaseFilter);
+            if (_graph != null)
+            {
+              _graph.RemoveFilter(context.PropertySet as IBaseFilter);
+            }
             DsUtils.ReleaseComObject(context.PropertySet);
             context.PropertySet = null;
           }
         }
       }
-      _graph = null;
+      if (_graph != null)
+      {
+        DsUtils.ReleaseComObject(_graph);
+        _graph = null;
+      }
       _isDigitalDevices = false;
     }
 

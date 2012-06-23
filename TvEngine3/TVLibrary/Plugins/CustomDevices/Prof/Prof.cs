@@ -34,7 +34,7 @@ namespace TvEngine
   /// was originally a customised Conexant interface created by Turbosight, however Turbosight have
   /// implemented a new unified interface for their products.
   /// </summary>
-  public class Prof : BaseCustomDevice, IPowerDevice, IDiseqcController
+  public class Prof : BaseCustomDevice, IPowerDevice, IDiseqcDevice
   {
     #region enums
 
@@ -229,7 +229,7 @@ namespace TvEngine
 
     /// <summary>
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed.
+    /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -295,9 +295,6 @@ namespace TvEngine
         Log.Debug("Prof: device not initialised or interface not supported");
         return;
       }
-
-      // For Prof tuners, the power needs to be turned on before the tune request is applied.
-      SetPowerState(true);
 
       DVBSChannel ch = channel as DVBSChannel;
       if (ch == null)
@@ -434,7 +431,7 @@ namespace TvEngine
 
     #endregion
 
-    #region IDiseqcController members
+    #region IDiseqcDevice members
 
     /// <summary>
     /// Control whether tone/data burst and 22 kHz legacy tone are used.

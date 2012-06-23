@@ -33,7 +33,7 @@ namespace TvEngine
   /// A base class for handling DiSEqC for various Conexant-based devices including Hauppauge, Geniatech
   /// and DVBSky.
   /// </summary>
-  public class Conexant : BaseCustomDevice, IDiseqcController
+  public class Conexant : BaseCustomDevice, IDiseqcDevice
   {
     #region enums
 
@@ -138,9 +138,11 @@ namespace TvEngine
       public UInt32 DiseqcTransmitMessageLength;
       public UInt32 DiseqcReceiveMessageLength;
       public UInt32 AmplitudeAttenuation;       // range = 3 (max amplitude) - 63 (min amplitude)
+      [MarshalAs(UnmanagedType.Bool)]
       public bool IsToneBurstModulated;
       public CxDiseqcVersion DiseqcVersion;
       public CxDiseqcReceiveMode DiseqcReceiveMode;
+      [MarshalAs(UnmanagedType.Bool)]
       public bool IsLastMessage;
     }
 
@@ -256,7 +258,7 @@ namespace TvEngine
 
     /// <summary>
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed.
+    /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -302,7 +304,7 @@ namespace TvEngine
 
     #endregion
 
-    #region IDiseqcController members
+    #region IDiseqcDevice members
 
     /// <summary>
     /// Control whether tone/data burst and 22 kHz legacy tone are used.
@@ -324,7 +326,7 @@ namespace TvEngine
         return false;
       }
 
-      if (toneBurstState == ToneBurst.Off)
+      if (toneBurstState == ToneBurst.None)
       {
         Log.Debug("Conexant: result = success");
         return true;
@@ -399,8 +401,8 @@ namespace TvEngine
       message.AmplitudeAttenuation = 3;
       // We have no choice about sending a tone burst command. If this is a switch command for port A then
       // send a tone burst command ("simple A"), otherwise send a data burst command ("simple B").
-      if (length == 4 && ((command[2] == 0x38 && (command[3] | 0x0c) == 0) ||
-        (command[2] == 0x39 && (command[3] | 0x0f) == 0)))
+      if (length == 4 && ((command[2] == (byte)DiseqcCommand.WriteN0 && (command[3] | 0x0c) == 0) ||
+        (command[2] == (byte)DiseqcCommand.WriteN1 && (command[3] | 0x0f) == 0)))
       {
         message.IsToneBurstModulated = false;
       }
@@ -413,7 +415,7 @@ namespace TvEngine
       message.IsLastMessage = true;
 
       Marshal.StructureToPtr(message, _paramBuffer, true);
-      DVB_MMI.DumpBinary(_paramBuffer, 0, DiseqcMessageParamsSize);
+      //DVB_MMI.DumpBinary(_paramBuffer, 0, DiseqcMessageParamsSize);
 
       int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcMessage,
         _instanceBuffer, InstanceSize,

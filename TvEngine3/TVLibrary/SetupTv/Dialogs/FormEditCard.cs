@@ -95,7 +95,7 @@ namespace SetupTv.Sections
         // Generic Network provider is available, so add it to selection box.
         comboBoxNetProvider.Items.Add((TvDatabase.DbNetworkProvider.Generic));
       }
-      comboBoxNetProvider.SelectedItem = (TvDatabase.DbNetworkProvider)_card.netProvider;
+      comboBoxNetProvider.SelectedItem = (TvDatabase.DbNetworkProvider)_card.NetProvider;
     }
 
     private void mpButtonSave_Click(object sender, EventArgs e)
@@ -110,7 +110,7 @@ namespace SetupTv.Sections
       _card.StopGraph = radioStopCard.Checked;
 
       _card.CAM = checkBoxCAMenabled.Checked;
-      _card.netProvider = (int)comboBoxNetProvider.SelectedItem;
+      _card.NetProvider = (int)comboBoxNetProvider.SelectedItem;
       Close();
     }
 

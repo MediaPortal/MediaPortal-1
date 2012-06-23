@@ -67,7 +67,6 @@ namespace TvLibrary.Implementations.Analog
     private IBaseFilter _filterEncoder;
     private IBaseFilter _filterTsWriter;
     private Configuration _configuration;
-    private AnalogChannel _previousChannel;
     private IQuality _qualityControl;
 
     /// <summary>
@@ -115,7 +114,7 @@ namespace TvLibrary.Implementations.Analog
       }
 
       _supportsSubChannels = true;
-      _cardType = CardType.Analog;
+      _tunerType = CardType.Analog;
       _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
       Configuration.writeConfiguration(_configuration);
     }
@@ -125,135 +124,19 @@ namespace TvLibrary.Implementations.Analog
     #region public methods
 
     /// <summary>
-    /// Method to check if card can tune to the channel specified
+    /// Check if the tuner can tune to a specific channel.
     /// </summary>
-    /// <returns>true if card can tune to the channel otherwise false</returns>
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public override bool CanTune(IChannel channel)
     {
-      if ((channel as AnalogChannel) == null || channel.IsRadio)
+      // My understanding is that the HD-PVR and Colossus are not able to capture audio-only streams. The
+      // driver doesn't seem to create PMT if a video stream is not detected.
+      if (channel is AnalogChannel && !channel.IsRadio)
       {
-        return false;
+        return true;
       }
       return true;
-    }
-
-    /// <summary>
-    /// Stops the current graph
-    /// </summary>
-    /// <returns></returns>
-    public override void PauseGraph()
-    {
-      FreeAllSubChannels();
-      FilterState state;
-      if (_graphBuilder == null)
-        return;
-      IMediaControl mediaCtl = (_graphBuilder as IMediaControl);
-      if (mediaCtl == null)
-      {
-        throw new TvException("Can not convert graphBuilder to IMediaControl");
-      }
-      mediaCtl.GetState(10, out state);
-      Log.Log.WriteFile("HDPVR: PauseGraph state:{0}", state);
-      _isScanning = false;
-      if (state != FilterState.Running)
-      {
-        _graphState = GraphState.Created;
-        return;
-      }
-      int hr = mediaCtl.Pause();
-      if (hr < 0 || hr > 1)
-      {
-        Log.Log.WriteFile("HDPVR: PauseGraph returns:0x{0:X}", hr);
-        throw new TvException("Unable to pause graph");
-      }
-      Log.Log.WriteFile("HDPVR: Graph paused");
-    }
-
-    /// <summary>
-    /// Stops the current graph
-    /// </summary>
-    /// <returns></returns>
-    public override void StopGraph()
-    {
-      FreeAllSubChannels();
-      FilterState state;
-      if (_graphBuilder == null)
-        return;
-      IMediaControl mediaCtl = (_graphBuilder as IMediaControl);
-      if (mediaCtl == null)
-      {
-        throw new TvException("Can not convert graphBuilder to IMediaControl");
-      }
-      mediaCtl.GetState(10, out state);
-      Log.Log.WriteFile("HDPVR: StopGraph state:{0}", state);
-      _isScanning = false;
-      if (state == FilterState.Stopped)
-      {
-        _graphState = GraphState.Created;
-        return;
-      }
-      int hr = mediaCtl.Stop();
-      if (hr < 0 || hr > 1)
-      {
-        Log.Log.WriteFile("HDPVR: StopGraph returns:0x{0:X}", hr);
-        throw new TvException("Unable to stop graph");
-      }
-      Log.Log.WriteFile("HDPVR: Graph stopped");
-    }
-
-    #endregion
-
-    #region tuning & recording
-
-    /// <summary>
-    /// Scans the specified channel.
-    /// </summary>
-    /// <param name="subChannelId">The sub channel id.</param>
-    /// <param name="channel">The channel.</param>
-    /// <returns>true if succeeded else false</returns>
-    public override ITvSubChannel Scan(int subChannelId, IChannel channel)
-    {
-      return Tune(subChannelId, channel);
-    }
-
-    /// <summary>
-    /// Tunes the specified channel.
-    /// </summary>
-    /// <param name="subChannelId">The sub channel id.</param>
-    /// <param name="channel">The channel.</param>
-    /// <returns>true if succeeded else false</returns>
-    public override ITvSubChannel Tune(int subChannelId, IChannel channel)
-    {
-      Log.Log.WriteFile("HDPVR: Tune:{0}, {1}", subChannelId, channel);
-      if (_graphState == GraphState.Idle)
-      {
-        BuildGraph();
-      }
-      BaseSubChannel subChannel;
-      if (_mapSubChannels.ContainsKey(subChannelId))
-      {
-        subChannel = _mapSubChannels[subChannelId];
-      }
-      else
-      {
-        subChannelId = GetNewSubChannel(channel);
-        subChannel = _mapSubChannels[subChannelId];
-      }
-      subChannel.CurrentChannel = channel;
-      subChannel.OnBeforeTune();
-      PerformTuning(channel);
-      subChannel.OnAfterTune();
-      try
-      {
-        RunGraph(subChannelId);
-      }
-      catch (Exception)
-      {
-        FreeSubChannel(subChannelId);
-        throw;
-      }
-
-      return subChannel;
     }
 
     #endregion
@@ -261,13 +144,14 @@ namespace TvLibrary.Implementations.Analog
     #region subchannel management
 
     /// <summary>
-    /// Allocates a new instance of HDPVRChannel which handles the new subchannel
+    /// Allocate a new subchannel instance.
     /// </summary>
-    /// <returns>handle for to the subchannel</returns>
-    private Int32 GetNewSubChannel(IChannel channel)
+    /// <param name="channel">The service or channel to associate with the subchannel.</param>
+    /// <returns>a handle for the subchannel</returns>
+    protected override int CreateNewSubChannel(IChannel channel)
     {
       int id = _subChannelId++;
-      Log.Log.Info("HDPVR: GetNewSubChannel:{0} #{1}", _mapSubChannels.Count, id);
+      Log.Log.Info("TvCardHdPvr: new subchannel, ID = {0}, subchannel count = {1}", id, _mapSubChannels.Count);
       HDPVRChannel subChannel = new HDPVRChannel(id, this, _filterTsWriter);
       subChannel.Parameters = Parameters;
       subChannel.CurrentChannel = channel;
@@ -339,20 +223,6 @@ namespace TvLibrary.Implementations.Analog
       }
     }
 
-    /// <summary>
-    /// Gets or sets the unique id of this card
-    /// </summary>
-    public override int CardId
-    {
-      get { return _cardId; }
-      set
-      {
-        _cardId = value;
-        _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
-        Configuration.writeConfiguration(_configuration);
-      }
-    }
-
     #endregion
 
     #region Disposable
@@ -368,7 +238,7 @@ namespace TvLibrary.Implementations.Analog
       if (_graphState == GraphState.TimeShifting || _graphState == GraphState.Recording)
       {
         // Stop the graph first. To ensure that the timeshift files are no longer blocked
-        StopGraph();
+        Stop();
       }
       FreeAllSubChannels();
       // Decompose the graph
@@ -379,6 +249,9 @@ namespace TvLibrary.Implementations.Analog
       }
       // Decompose the graph
       mediaCtl.Stop();
+
+      base.Dispose();
+
       FilterGraphTools.RemoveAllFilters(_graphBuilder);
       Log.Log.WriteFile("HDPVR:  All filters removed");
       if (_filterCrossBar != null)
@@ -729,11 +602,20 @@ namespace TvLibrary.Implementations.Analog
 
     #region private helper
 
-    private void PerformTuning(IChannel channel)
+    /// <summary>
+    /// Actually tune to a channel.
+    /// </summary>
+    /// <param name="channel">The channel to tune to.</param>
+    protected override void PerformTuning(IChannel channel)
     {
       Log.Log.WriteFile("HDPVR: Tune");
       AnalogChannel analogChannel = channel as AnalogChannel;
       if (analogChannel == null)
+      {
+        throw new NullReferenceException();
+      }
+      AnalogChannel previousChannel = _previousChannel as AnalogChannel;
+      if (_previousChannel != null && previousChannel == null)
       {
         throw new NullReferenceException();
       }
@@ -742,7 +624,7 @@ namespace TvLibrary.Implementations.Analog
       IAMCrossbar crossBarFilter = _filterCrossBar as IAMCrossbar;
 
       // Video
-      if ((_previousChannel == null || _previousChannel.VideoSource != analogChannel.VideoSource) &&
+      if ((_previousChannel == null || previousChannel.VideoSource != analogChannel.VideoSource) &&
         _videoPinMap.ContainsKey(analogChannel.VideoSource))
       {
         Log.Log.WriteFile("HDPVR:   video input -> {0}", analogChannel.VideoSource);
@@ -758,7 +640,7 @@ namespace TvLibrary.Implementations.Analog
           crossBarFilter.Route(_audioOutPinIndex, _videoPinRelatedAudioMap[analogChannel.VideoSource]);
         }
       }
-      else if ((_previousChannel == null || _previousChannel.AudioSource != analogChannel.AudioSource) &&
+      else if ((_previousChannel == null || previousChannel.AudioSource != analogChannel.AudioSource) &&
         _audioPinMap.ContainsKey(analogChannel.AudioSource))
       {
         Log.Log.WriteFile("HDPVR:   audio input -> {0}", analogChannel.AudioSource);

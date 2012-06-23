@@ -37,7 +37,7 @@ namespace TvEngine
   /// A class for handling conditional access and DiSEqC for Twinhan devices, including clones from TerraTec,
   /// TechniSat and Digital Rise.
   /// </summary>
-  public class Twinhan : BaseCustomDevice, /*IAddOnDevice, ICustomTuner,*/ IPowerDevice, IPidFilterController, IConditionalAccessProvider, ICiMenuActions, IDiseqcController
+  public class Twinhan : BaseCustomDevice, /*IAddOnDevice, ICustomTuner,*/ IPowerDevice, IPidFilterController, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
   {
     #region enums
 
@@ -1603,7 +1603,7 @@ namespace TvEngine
 
     /// <summary>
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed.
+    /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -1944,7 +1944,7 @@ namespace TvEngine
     /// <param name="channel">The channel to tune.</param>
     /// <param name="parameters">Tuning time restriction settings.</param>
     /// <returns><c>true</c> if the channel is successfully tuned, otherwise <c>false</c></returns>
-    public bool Tune(IChannel channel, ScanParameters parameters)
+    public bool Tune(IChannel channel)
     {
       Log.Debug("Twinhan: tune to channel");
 
@@ -1970,16 +1970,16 @@ namespace TvEngine
         uint lnbLof;
         uint lnbSwitchFrequency;
         Polarisation polarisation;
-        BandTypeConverter.GetLnbTuningParameters(ch, parameters, out lnbLof, out lnbSwitchFrequency, out polarisation);
+        LnbTypeConverter.GetLnbTuningParameters(ch, out lnbLof, out lnbSwitchFrequency, out polarisation);
 
         LnbParams lnbParams = new LnbParams();
         lnbParams.PowerOn = true;
         lnbParams.ToneBurst = TwinhanToneBurst.Off;
-        lnbParams.LowBandLof = lnbLof * 1000;
-        lnbParams.HighBandLof = lnbLof * 1000;
-        lnbParams.SwitchFrequency = lnbSwitchFrequency * 1000;
+        lnbParams.LowBandLof = lnbLof;
+        lnbParams.HighBandLof = lnbLof;
+        lnbParams.SwitchFrequency = lnbSwitchFrequency;
         lnbParams.Tone22k = Twinhan22k.Off;
-        if (ch.Frequency > lnbSwitchFrequency * 1000)
+        if (ch.Frequency > lnbSwitchFrequency)
         {
           lnbParams.Tone22k = Twinhan22k.On;
         }
@@ -2073,7 +2073,7 @@ namespace TvEngine
     /// <param name="modulation">The current multiplex/transponder modulation scheme.</param>
     /// <param name="forceEnable">Set this parameter to <c>true</c> to force the filter to be enabled.</param>
     /// <returns><c>true</c> if the PID filter is configured successfully, otherwise <c>false</c></returns>
-    public bool SetFilterPids(List<UInt16> pids, ModulationType modulation, bool forceEnable)
+    public bool SetFilterPids(HashSet<UInt16> pids, ModulationType modulation, bool forceEnable)
     {
       Log.Debug("Twinhan: set PID filter PIDs, modulation = {0}, force enable = {1}", modulation, forceEnable);
 
@@ -2120,10 +2120,11 @@ namespace TvEngine
         if (pidFilterParams.FilterMode != TwinhanPidFilterMode.Disabled)
         {
           Log.Debug("Twinhan: enabling PID filter");
-          for (int i = 0; i < pids.Count && i < _maxPidFilterPids; i++)
+          HashSet<UInt16>.Enumerator en = pids.GetEnumerator();
+          byte pidCount = 0;
+          while (en.MoveNext() && pidCount < _maxPidFilterPids)
           {
-            Log.Debug("  {0,-2} = 0x{1:x}", i + 1, pids[i]);
-            pidFilterParams.FilterPids[i] = pids[i];
+            pidFilterParams.FilterPids[pidCount++] = en.Current;
             pidFilterParams.ValidPidMask = (pidFilterParams.ValidPidMask << 1) | 0x01;
           }
         }
@@ -2531,7 +2532,7 @@ namespace TvEngine
 
     #endregion
 
-    #region IDiseqcController members
+    #region IDiseqcDevice members
 
     /// <summary>
     /// Send a tone/data burst command, and then set the 22 kHz continuous tone state.

@@ -35,7 +35,7 @@ namespace TvEngine
   /// <summary>
   /// A class for handling DiSEqC and tuning for TeVii devices.
   /// </summary>
-  public class TeVii : BaseCustomDevice, ICustomTuner, IDiseqcController
+  public class TeVii : BaseCustomDevice, ICustomTuner, IDiseqcDevice
   {
     #region enums
 
@@ -114,25 +114,25 @@ namespace TvEngine
     /// Get the friendly name for a specific TeVii device.
     /// </summary>
     /// <remarks>
-    /// Do not modify or free the memory associated with the returned pointer!
+    /// The returned pointer is a pointer to an ANSI NULL terminated string (UnmanagedType.LPStr). We don't use
+    /// automatic marshaling because we are not meant to modify or free the memory associated with the pointer.
     /// </remarks>
     /// <param name="idx">The zero-based device index (0 &lt;= idx &lt; FindDevices()).</param>
     /// <returns>a pointer to a NULL terminated buffer containing the device name, otherwise <c>IntPtr.Zero</c></returns>
-    [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    [return: MarshalAs(UnmanagedType.LPStr)]
-    private static extern String GetDeviceName(Int32 idx);
+    [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern IntPtr GetDeviceName(Int32 idx);
 
     /// <summary>
     /// Get the device path for a specific TeVii device.
     /// </summary>
     /// <remarks>
-    /// Do not modify or free the memory associated with the returned pointer!
+    /// The returned pointer is a pointer to an ANSI NULL terminated string (UnmanagedType.LPStr). We don't use
+    /// automatic marshaling because we are not meant to modify or free the memory associated with the pointer.
     /// </remarks>
     /// <param name="idx">The zero-based device index (0 &lt;= idx &lt; FindDevices()).</param>
     /// <returns>a pointer to a NULL terminated buffer containing the device path, otherwise <c>IntPtr.Zero</c></returns>
-    [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    [return: MarshalAs(UnmanagedType.LPStr)]
-    private static extern String GetDevicePath(Int32 idx);
+    [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern IntPtr GetDevicePath(Int32 idx);
 
     #endregion
 
@@ -159,6 +159,7 @@ namespace TvEngine
     /// <param name="idx">The zero-based device index (0 &lt;= idx &lt; FindDevices()).</param>
     /// <returns><c>true</c> if the device access is successfully closed, otherwise <c>false</c></returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool CloseDevice(Int32 idx);
 
     /// <summary>
@@ -174,8 +175,9 @@ namespace TvEngine
     /// <param name="fecRate">The transponder FEC rate. Note that it's better to avoid using <c>TeViiFecRate.Auto</c> for DVB-S2 transponders to minimise lock time.</param>
     /// <returns><c>true</c> if the tuner successfully locks on the transponder, otherwise <c>false</c></returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool TuneTransponder(Int32 idx, Int32 frequency, Int32 symbolRate, Int32 lnbLof, TeViiPolarisation polarisation,
-                                               bool toneOn, TeViiModulation modulation, TeViiFecRate fecRate);
+                                               [MarshalAs(UnmanagedType.Bool)] bool toneOn, TeViiModulation modulation, TeViiFecRate fecRate);
 
     /// <summary>
     /// Get the current signal status for a specific TeVii tuner device.
@@ -186,7 +188,7 @@ namespace TvEngine
     /// <param name="quality">A signal quality rating ranging between 0 (low quality) and 100 (high quality).</param>
     /// <returns><c>true</c> if the signal status is successfully retrieved, otherwise <c>false</c></returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool GetSignalStatus(Int32 idx, out bool isLocked, out Int32 strength, out Int32 quality);
+    private static extern bool GetSignalStatus(Int32 idx, [Out, MarshalAs(UnmanagedType.Bool)] out bool isLocked, out Int32 strength, out Int32 quality);
 
     /// <summary>
     /// Send an arbitrary DiSEqC message.
@@ -198,7 +200,8 @@ namespace TvEngine
     /// <param name="repeatFlag"><c>True</c> to set the first byte in the message to 0xe1 if/when the message is resent.</param>
     /// <returns><c>true</c> if the message is successfully sent, otherwise <c>false</c></returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool SendDiSEqC(Int32 idx, byte[] message, Int32 length, Int32 repeatCount, bool repeatFlag);
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool SendDiSEqC(Int32 idx, byte[] message, Int32 length, Int32 repeatCount, [MarshalAs(UnmanagedType.Bool)] bool repeatFlag);
 
     /// <summary>
     /// Set the remote control receiver callback function.
@@ -208,7 +211,8 @@ namespace TvEngine
     /// <param name="context">An optional pointer that will be passed as a paramter to the remote key callback.</param>
     /// <returns><c>true</c> if the callback function is successfully set, otherwise <c>false</c></returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern Int32 SetRemoteControl(Int32 idx, IntPtr remoteKeyCallback, IntPtr context);
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool SetRemoteControl(Int32 idx, IntPtr remoteKeyCallback, IntPtr context);
 
     #endregion
 
@@ -260,20 +264,36 @@ namespace TvEngine
         case ModulationType.Mod8Vsb:
           return TeViiModulation.Vsb8;
 
-        // DVB-S/S2
-        case ModulationType.ModQpsk:
-          return TeViiModulation.TurboQPsk;
+        // DVB-S
+        // Modulation is not set for regular DVB-S QPSK.
+        case ModulationType.ModNotSet:
+          return TeViiModulation.Qpsk;
         case ModulationType.ModBpsk:
           return TeViiModulation.Bpsk;
-        case ModulationType.Mod8Psk:
-          return TeViiModulation.Turbo8Psk;
-        case ModulationType.Mod16Apsk:
-          return TeViiModulation.Turbo16Psk;
-        case ModulationType.ModNbcQpsk:
-          return TeViiModulation.Dvbs2_Qpsk;
-        case ModulationType.ModNbc8Psk:
-          return TeViiModulation.Dvbs2_8Psk;
 
+        // DVB-S2
+        // Modulation is either QPSK or 8 PSK for NBC DVB-S2 QPSK and 8 PSK.
+        case ModulationType.ModQpsk:
+          return TeViiModulation.Dvbs2_Qpsk;
+        case ModulationType.Mod8Psk:
+          return TeViiModulation.Dvbs2_8Psk;
+        // Higher DVB-S2 modulation schemes aren't handled by most "DVB-S2" tuners. We don't handle them
+        // explicitly in tuning details.
+        case ModulationType.Mod16Apsk:
+          return TeViiModulation.Dvbs2_16Apsk;
+        case ModulationType.Mod32Apsk:
+          return TeViiModulation.Dvbs2_32Apsk;
+
+        // Turbo *PSK
+        // Please see the Genpix plugin for more detailed comments.
+        case ModulationType.ModOqpsk:
+          return TeViiModulation.TurboQPsk;
+        case ModulationType.Mod80Qam:
+          return TeViiModulation.Turbo8Psk;
+        case ModulationType.Mod160Qam:
+          return TeViiModulation.Turbo16Psk;
+
+        // Default: only use auto as a last resort as it is slower.
         default:
           return TeViiModulation.Auto;
       }
@@ -339,7 +359,7 @@ namespace TvEngine
 
     /// <summary>
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed.
+    /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -372,19 +392,19 @@ namespace TvEngine
       String devicePath = String.Empty;
       for (int deviceIdx = 0; deviceIdx < deviceCount; deviceIdx++)
       {
-        deviceName = GetDeviceName(deviceIdx);
-        devicePath = GetDevicePath(deviceIdx);
+        deviceName = Marshal.PtrToStringAnsi(GetDeviceName(deviceIdx));
+        devicePath = Marshal.PtrToStringAnsi(GetDevicePath(deviceIdx));
 
         //Log.Debug("TeVii: compare to {0} {1}", deviceName, devicePath);
         if (devicePath.Equals(tunerDevicePath))
         {
-          Log.Debug("TeVii: device recognised, index = {0}, name = {1}, API version = {2}", _deviceIndex, deviceName, GetAPIVersion());
+          Log.Debug("TeVii: device recognised, index = {0}, name = {1}, API version = {2}", deviceIdx, deviceName, GetAPIVersion());
           _deviceIndex = deviceIdx;
           break;
         }
       }
 
-      if (_deviceIndex != -1)
+      if (_deviceIndex == -1)
       {
         Log.Debug("TeVii: device not recognised as a TeVii device");
         return false;
@@ -424,9 +444,8 @@ namespace TvEngine
     /// Tune to a given channel using the specialised tuning method.
     /// </summary>
     /// <param name="channel">The channel to tune.</param>
-    /// <param name="parameters">Tuning time restriction settings.</param>
     /// <returns><c>true</c> if the channel is successfully tuned, otherwise <c>false</c></returns>
-    public bool Tune(IChannel channel, ScanParameters parameters)
+    public bool Tune(IChannel channel)
     {
       Log.Debug("TeVii: tune to channel");
 
@@ -437,7 +456,7 @@ namespace TvEngine
       }
       if (!CanTuneChannel(channel))
       {
-        Log.Debug("TeVii: tuning not supported for this channel");
+        Log.Debug("TeVii: tuning is not supported for this channel");
         return false;
       }
 
@@ -445,10 +464,10 @@ namespace TvEngine
       uint lnbLof;
       uint lnbSwitchFrequency;
       Polarisation polarisation;
-      BandTypeConverter.GetLnbTuningParameters(ch, parameters, out lnbLof, out lnbSwitchFrequency, out polarisation);
+      LnbTypeConverter.GetLnbTuningParameters(ch, out lnbLof, out lnbSwitchFrequency, out polarisation);
 
       bool toneOn = false;
-      if (BandTypeConverter.IsHighBand(ch, parameters))
+      if (ch.Frequency > lnbSwitchFrequency)
       {
         toneOn = true;
       }
@@ -463,7 +482,7 @@ namespace TvEngine
         toneOn = true;
       }
 
-      bool result = TuneTransponder(_deviceIndex, (int)ch.Frequency, ch.SymbolRate * 1000, (int)(lnbLof * 1000),
+      bool result = TuneTransponder(_deviceIndex, (int)ch.Frequency, ch.SymbolRate * 1000, (int)lnbLof,
         Translate(polarisation), toneOn, Translate(ch.ModulationType), Translate(ch.InnerFecRate));
       if (result)
       {
@@ -481,7 +500,7 @@ namespace TvEngine
 
     #endregion
 
-    #region IDiseqcController members
+    #region IDiseqcDevice members
 
     /// <summary>
     /// Send a tone/data burst command, and then set the 22 kHz continuous tone state.

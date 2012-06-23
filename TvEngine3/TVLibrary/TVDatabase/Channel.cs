@@ -61,7 +61,7 @@ namespace TvDatabase
     /// </summary> 
     public Channel(bool isRadio, bool isTv, int timesWatched, DateTime totalTimeWatched, bool grabEpg,
                    DateTime lastGrabTime, int sortOrder, bool visibleInGuide, string externalId,
-                   string displayName)
+                   string displayName, bool epgHasGaps)
     {
       isChanged = true;
       this.isRadio = isRadio;
@@ -74,16 +74,16 @@ namespace TvDatabase
       this.visibleInGuide = visibleInGuide;
       this.externalId = externalId;
       this.displayName = displayName;
-      epgHasGaps = false;
+      this.epgHasGaps = epgHasGaps;
     }
 
     /// <summary> 
     /// Create an object from an existing row of data. This will be used by Gentle to 
-    /// construct objects from retrieved rows. 
+    /// construct objects from retrieved rows.
     /// </summary> 
     public Channel(int idChannel, bool isRadio, bool isTv, int timesWatched, DateTime totalTimeWatched,
                    bool grabEpg, DateTime lastGrabTime, int sortOrder, bool visibleInGuide, string externalId,
-                   string displayName)
+                   string displayName, bool epgHasGaps)
     {
       this.idChannel = idChannel;
       this.isRadio = isRadio;
@@ -96,7 +96,7 @@ namespace TvDatabase
       this.visibleInGuide = visibleInGuide;
       this.externalId = externalId;
       this.displayName = displayName;
-      epgHasGaps = false;
+      this.epgHasGaps = epgHasGaps;
     }
 
     #endregion

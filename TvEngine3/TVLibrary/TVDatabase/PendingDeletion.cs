@@ -50,9 +50,19 @@ namespace TvDatabase
       this._fileName = fileName;
     }
 
+    /// <summary> 
+    /// Create an object from an existing row of data. This will be used by Gentle to 
+    /// construct objects from retrieved rows.
+    /// </summary> 
+    public PendingDeletion(int idPendingDeletion, string fileName)
+    {
+      _idPendingDeletion = idPendingDeletion;
+      _fileName = fileName;
+    }
+
     #endregion
 
-    #region Public Properties    
+    #region Public Properties
 
     /// <summary>
     /// Indicates whether the entity is changed and requires saving or not.

@@ -36,7 +36,7 @@ namespace TvEngine
   /// <summary>
   /// A class for handling conditional access and DiSEqC for TechnoTrend Budget and Connect series devices.
   /// </summary>
-  public class TechnoTrend : BaseCustomDevice, ICustomTuner, IPowerDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcController
+  public class TechnoTrend : BaseCustomDevice, ICustomTuner, IPowerDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
   {
     #region enums
 
@@ -509,7 +509,7 @@ namespace TvEngine
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiSetDVBTAutoOffsetMode(IntPtr device, bool autoOffsetModeOn);
+    private static extern TtApiResult bdaapiSetDVBTAutoOffsetMode(IntPtr device, [MarshalAs(UnmanagedType.Bool)] bool autoOffsetModeOn);
 
     /// <summary>
     /// Determine whether automatic 125/166 kHz offset scanning is on or off.
@@ -519,7 +519,7 @@ namespace TvEngine
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiGetDVBTAutoOffsetMode(IntPtr device, ref bool autoOffsetModeOn);
+    private static extern TtApiResult bdaapiGetDVBTAutoOffsetMode(IntPtr device, [MarshalAs(UnmanagedType.Bool)] ref bool autoOffsetModeOn);
 
     #endregion
 
@@ -547,7 +547,7 @@ namespace TvEngine
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiSetVideoport(IntPtr device, bool useCiVideoPort, ref bool effectiveCiVideoPort);
+    private static extern TtApiResult bdaapiSetVideoport(IntPtr device, [MarshalAs(UnmanagedType.Bool)] bool useCiVideoPort, [MarshalAs(UnmanagedType.Bool)] ref bool effectiveCiVideoPort);
 
     #region antenna power
 
@@ -559,7 +559,7 @@ namespace TvEngine
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiSetDVBTAntPwr(IntPtr device, bool antennaPowerOn);
+    private static extern TtApiResult bdaapiSetDVBTAntPwr(IntPtr device, [MarshalAs(UnmanagedType.Bool)] bool antennaPowerOn);
 
     /// <summary>
     /// Determine whether the DVB-T antenna 5 volt power supply is on or off.
@@ -569,7 +569,7 @@ namespace TvEngine
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiGetDVBTAntPwr(IntPtr device, ref bool antennaPowerOn);
+    private static extern TtApiResult bdaapiGetDVBTAntPwr(IntPtr device, [MarshalAs(UnmanagedType.Bool)] ref bool antennaPowerOn);
 
     #endregion
 
@@ -620,7 +620,7 @@ namespace TvEngine
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiGetUSBHighspeedMode(IntPtr device, ref bool usbHighSpeedSupported);
+    private static extern TtApiResult bdaapiGetUSBHighspeedMode(IntPtr device, [MarshalAs(UnmanagedType.Bool)] ref bool usbHighSpeedSupported);
 
     /// <summary>
     /// Retrieve details about the device filters and front end.
@@ -651,7 +651,7 @@ namespace TvEngine
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiGetDevicePath(IntPtr device, [MarshalAs(UnmanagedType.LPStr)] String devicePath, ref Int32 devicePathLength);
+    private static extern TtApiResult bdaapiGetDevicePath(IntPtr device, [MarshalAs(UnmanagedType.LPStr)] StringBuilder devicePath, ref Int32 devicePathLength);
 
     /// <summary>
     /// Get the product seller identifier.
@@ -878,7 +878,7 @@ namespace TvEngine
     /// <param name="answerLength">The expected answer length.</param>
     /// <param name="keyMask"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private delegate void OnTtInputRequest(IntPtr context, byte slotIndex, bool blind, byte answerLength, Int16 keyMask);
+    private delegate void OnTtInputRequest(IntPtr context, byte slotIndex, [MarshalAs(UnmanagedType.Bool)] bool blind, byte answerLength, Int16 keyMask);
 
     /// <summary>
     /// Called by the tuner driver when a message is received from the CAM. This delegate receives the raw
@@ -1596,7 +1596,7 @@ namespace TvEngine
 
     /// <summary>
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed.
+    /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -1744,9 +1744,8 @@ namespace TvEngine
     /// Tune to a given channel using the specialised tuning method.
     /// </summary>
     /// <param name="channel">The channel to tune.</param>
-    /// <param name="parameters">Tuning time restriction settings.</param>
     /// <returns><c>true</c> if the channel is successfully tuned, otherwise <c>false</c></returns>
-    public bool Tune(IChannel channel, ScanParameters parameters)
+    public bool Tune(IChannel channel)
     {
       Log.Debug("TechnoTrend: tune to channel");
 
@@ -1756,59 +1755,65 @@ namespace TvEngine
         return false;
       }
 
-      if (channel is DVBCChannel && _tunerType == CardType.DvbC)
+      DVBCChannel dvbcChannel = channel as DVBCChannel;
+      if (dvbcChannel != null && _tunerType == CardType.DvbC)
       {
-        DVBCChannel ch = channel as DVBCChannel;
         TtDvbcTuneRequest tuneRequest = new TtDvbcTuneRequest();
         tuneRequest.DeviceType = TtDeviceType.DvbC;
-        tuneRequest.Frequency = (uint)ch.Frequency;
-        tuneRequest.Modulation = ch.ModulationType;
-        tuneRequest.SymbolRate = (uint)ch.SymbolRate;
+        tuneRequest.Frequency = (uint)dvbcChannel.Frequency;
+        tuneRequest.Modulation = dvbcChannel.ModulationType;
+        tuneRequest.SymbolRate = (uint)dvbcChannel.SymbolRate;
         tuneRequest.SpectralInversion = SpectralInversion.Automatic;
-      }
-      else if (channel is DVBSChannel && _tunerType == CardType.DvbS)
-      {
-        DVBSChannel ch = channel as DVBSChannel;
-        TtDvbsTuneRequest tuneRequest = new TtDvbsTuneRequest();
-        tuneRequest.DeviceType = TtDeviceType.DvbS;
-        // Frequency is already specified in kHz (the base unit) so the
-        // multiplier is set to 1.
-        tuneRequest.Frequency = (uint)ch.Frequency;
-        tuneRequest.FrequencyMultiplier = 1;
-        tuneRequest.Diseqc = TtDiseqcPort.Null;
-        tuneRequest.UseToneBurst = false;
-        tuneRequest.Modulation = ch.ModulationType;
-        tuneRequest.SymbolRate = (uint)ch.SymbolRate;
-        tuneRequest.SpectralInversion = SpectralInversion.Automatic;
-
-        uint lnbLof;
-        uint lnbSwitchFrequency;
-        BandTypeConverter.GetLnbTuningParameters(ch, parameters, out lnbLof, out lnbSwitchFrequency, out tuneRequest.Polarisation);
-        tuneRequest.LnbHighBandLof = 1000 * lnbLof;
-        tuneRequest.LnbLowBandLof = 1000 * lnbLof;
-        tuneRequest.LnbSwitchFrequency = 1000 * lnbSwitchFrequency;
-
-        Marshal.StructureToPtr(tuneRequest, _generalBuffer, true);
-      }
-      else if (channel is DVBTChannel && _tunerType == CardType.DvbT)
-      {
-        DVBTChannel ch = channel as DVBTChannel;
-        TtDvbtTuneRequest tuneRequest = new TtDvbtTuneRequest();
-        tuneRequest.DeviceType = TtDeviceType.DvbT;
-        tuneRequest.Frequency = (uint)ch.Frequency;
-        // Frequency is already specified in kHz (the base unit) so the
-        // multiplier is set to 1.
-        tuneRequest.FrequencyMultiplier = 1;
-        tuneRequest.Bandwidth = (uint)(1000 * ch.Bandwidth);
-        tuneRequest.Modulation = ModulationType.ModNotSet;
-        tuneRequest.SpectralInversion = SpectralInversion.Automatic;
-
-        Marshal.StructureToPtr(tuneRequest, _generalBuffer, true);
       }
       else
       {
-        Log.Debug("TechnoTrend: tuning not supported for this channel");
-        return false;
+        DVBSChannel dvbsChannel = channel as DVBSChannel;
+        if (dvbsChannel != null && _tunerType == CardType.DvbS)
+        {
+          TtDvbsTuneRequest tuneRequest = new TtDvbsTuneRequest();
+          tuneRequest.DeviceType = TtDeviceType.DvbS;
+          // Frequency is already specified in kHz (the base unit) so the
+          // multiplier is set to 1.
+          tuneRequest.Frequency = (uint)dvbsChannel.Frequency;
+          tuneRequest.FrequencyMultiplier = 1;
+          tuneRequest.Diseqc = TtDiseqcPort.Null;
+          tuneRequest.UseToneBurst = false;
+          tuneRequest.Modulation = dvbsChannel.ModulationType;
+          tuneRequest.SymbolRate = (uint)dvbsChannel.SymbolRate;
+          tuneRequest.SpectralInversion = SpectralInversion.Automatic;
+
+          uint lnbLof;
+          uint lnbSwitchFrequency;
+          LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLof, out lnbSwitchFrequency, out tuneRequest.Polarisation);
+          tuneRequest.LnbHighBandLof = lnbLof;
+          tuneRequest.LnbLowBandLof = lnbLof;
+          tuneRequest.LnbSwitchFrequency = lnbSwitchFrequency;
+
+          Marshal.StructureToPtr(tuneRequest, _generalBuffer, true);
+        }
+        else
+        {
+          DVBTChannel dvbtChannel = channel as DVBTChannel;
+          if (dvbtChannel != null && _tunerType == CardType.DvbT)
+          {
+            TtDvbtTuneRequest tuneRequest = new TtDvbtTuneRequest();
+            tuneRequest.DeviceType = TtDeviceType.DvbT;
+            tuneRequest.Frequency = (uint)dvbtChannel.Frequency;
+            // Frequency is already specified in kHz (the base unit) so the
+            // multiplier is set to 1.
+            tuneRequest.FrequencyMultiplier = 1;
+            tuneRequest.Bandwidth = (uint)(1000 * dvbtChannel.Bandwidth);
+            tuneRequest.Modulation = ModulationType.ModNotSet;
+            tuneRequest.SpectralInversion = SpectralInversion.Automatic;
+
+            Marshal.StructureToPtr(tuneRequest, _generalBuffer, true);
+          }
+          else
+          {
+            Log.Debug("TechnoTrend: tuning is not supported for this channel");
+            return false;
+          }
+        }
       }
 
       //DVB_MMI.DumpBinary(_generalBuffer, 0, TuneRequestSize);
@@ -1980,7 +1985,7 @@ namespace TvEngine
         return true;
       }
 
-      Log.Debug("TechnoTrend: service ID is {0} (0x{1:x})", pmt.ProgramNumber, pmt.ProgramNumber);
+      Log.Debug("TechnoTrend: service ID is {0} (0x{0:x})", pmt.ProgramNumber);
       if (pmt.ProgramNumber == 0)
       {
         Log.Debug("TechnoTrend: service 0 cannot be descrambled");
@@ -2152,7 +2157,7 @@ namespace TvEngine
 
     #endregion
 
-    #region IDiseqcController members
+    #region IDiseqcDevice members
 
     /// <summary>
     /// Send a tone/data burst command, and then set the 22 kHz continuous tone state.

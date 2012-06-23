@@ -61,40 +61,12 @@ namespace TvDatabase
     [TableColumn("decryptLimit", NotNull = true)] private int decryptLimit;
     [TableColumn("preload", NotNull = true)] private bool preloadCard;
     [TableColumn("stopgraph", NotNull = true)] private bool stopGraph;
-
     [TableColumn("CAM", NotNull = true)] private bool caModule;
-    [TableColumn("NetProvider", NotNull = true)] private int NetProvider;
+    [TableColumn("NetProvider", NotNull = true)] private int netProvider;
 
     #endregion
 
     #region Constructors
-
-    /// <summary>
-    /// For backwards compatibility: do *not* use.
-    /// </summary>
-    [System.Obsolete("Use the constructor that provides access to all parameters.")]
-    public Card(string devicePath, string name, int priority, bool grabEPG, DateTime lastEpgGrab, string recordingFolder,
-                int idServer, bool enabled, int camType, string timeshiftingFolder, int recordingFormat,
-                int decryptLimit, int netProvider)
-    {
-      isChanged = true;
-      this.devicePath = devicePath;
-      this.name = name;
-      this.priority = priority;
-      this.grabEPG = grabEPG;
-      this.lastEpgGrab = lastEpgGrab;
-      this.recordingFolder = recordingFolder;
-      this.idServer = idServer;
-      this.enabled = enabled;
-      this.camType = camType;
-      this.timeshiftingFolder = timeshiftingFolder;
-      this.recordingFormat = recordingFormat;
-      this.decryptLimit = decryptLimit;
-      this.preloadCard = false;
-      this.stopGraph = true;
-      this.caModule = false;
-      this.NetProvider = netProvider;
-    }
 
     /// <summary> 
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
@@ -119,12 +91,12 @@ namespace TvDatabase
       this.preloadCard = preloadCard;
       this.stopGraph = stopGraph;
       this.caModule = caModule;
-      this.NetProvider = netProvider;
+      this.netProvider = netProvider;
     }
 
     /// <summary> 
     /// Create an object from an existing row of data. This will be used by Gentle to 
-    /// construct objects from retrieved rows. 
+    /// construct objects from retrieved rows.
     /// </summary> 
     public Card(int idCard, string devicePath, string name, int priority, bool grabEPG, DateTime lastEpgGrab,
                 string recordingFolder, int idServer, bool enabled, int camType, string timeshiftingFolder,
@@ -146,7 +118,7 @@ namespace TvDatabase
       this.preloadCard = preloadCard;
       this.stopGraph = stopGraph;
       this.caModule = caModule;
-      this.NetProvider = netProvider;
+      this.netProvider = netProvider;
     }
 
     #endregion
@@ -194,7 +166,6 @@ namespace TvDatabase
     {
       get { return idCard; }
     }
-
 
     /// <summary>
     /// Property relating to database column idCard
@@ -373,13 +344,16 @@ namespace TvDatabase
       get { return supportsSubChannels(); }
     }
 
-    public int netProvider
+    /// <summary>
+    /// Property relating to database column netProvider.
+    /// </summary>
+    public int NetProvider
     {
-      get { return NetProvider; }
+      get { return netProvider; }
       set
       {
-        isChanged |= NetProvider != value;
-        NetProvider = value;
+        isChanged |= netProvider != value;
+        netProvider = value;
       }
     }
 

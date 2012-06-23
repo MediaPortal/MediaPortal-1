@@ -25,6 +25,7 @@ using System.Text;
 using System.Threading;
 using DirectShowLib;
 using DirectShowLib.BDA;
+using TvLibrary;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Device;
@@ -35,7 +36,7 @@ namespace TvEngine
   /// <summary>
   /// A class for handling conditional access, DiSEqC and PID filtering for Digital Everywhere devices.
   /// </summary>
-  public class DigitalEverywhere : BaseCustomDevice, IPowerDevice, IPidFilterController, IConditionalAccessProvider, ICiMenuActions, IDiseqcController
+  public class DigitalEverywhere : BaseCustomDevice, IPowerDevice, IPidFilterController, ICustomTuner, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
   {
     #region enums
 
@@ -61,8 +62,8 @@ namespace TvEngine
       FirmwareUpdate,
       FirmwareUpdateStatus,
       CiReset,
-      CiWriteTdpu,
-      CiReadTdpu,
+      CiWriteTpdu,
+      CiReadTpdu,
       MmiHostToCam,
       MmiCamToHost,
       Temperature,
@@ -70,7 +71,8 @@ namespace TvEngine
       RemoteControlRegister,
       RemoteControlCancel,
       CiStatus,
-      TestInterface
+      TestInterface,
+      CheckTuningFlag
     }
 
     private enum DeCiMessageTag : byte
@@ -82,7 +84,8 @@ namespace TvEngine
       DateTime,
       Mmi,
       DebugError,
-      EnterMenu
+      EnterMenu,
+      SendServiceId
     }
 
     private enum DeLnbPower : byte
@@ -135,15 +138,6 @@ namespace TvEngine
       Undefined = 0xff,
       ToneBurst = 0,
       DataBurst = 1
-    }
-
-    private enum DeDiseqcPort : byte
-    {
-      Null = 0xff,
-      PortA = 0,
-      PortB,
-      PortC,
-      PortD
     }
 
     private enum DeOfdmConstellation : byte
@@ -264,19 +258,23 @@ namespace TvEngine
     {
       public UInt32 Frequency;            // unit = kHz, range = 9750000 - 12750000
       public UInt32 SymbolRate;           // unit = ks/s, range = 1000 - 40000
+
       public DeFecRate InnerFecRate;
       public DePolarisation Polarisation;
-      public DeDiseqcPort Diseqc;
+      public byte Lnb;                    // index (0..3) of the LNB parameters set with SetLnbParams
       private byte Padding;
     }
 
     [StructLayout(LayoutKind.Sequential)]
     private struct DvbsServiceParams
     {
+      [MarshalAs(UnmanagedType.Bool)]
       public bool CurrentTransponder;
-      public DeDiseqcPort Diseqc;
+      public UInt32 Lnb;                  // index (0..3) of the LNB parameters set with SetLnbParams
+
       public UInt32 Frequency;            // unit = kHz, range = 9750000 - 12750000
       public UInt32 SymbolRate;           // unit = ks/s, range = 1000 - 40000
+
       public DeFecRate InnerFecRate;
       public DePolarisation Polarisation;
       private UInt16 Padding;
@@ -294,16 +292,22 @@ namespace TvEngine
     [StructLayout(LayoutKind.Sequential)]
     private struct DvbsPidFilterParams
     {
+      [MarshalAs(UnmanagedType.Bool)]
       public bool CurrentTransponder;
+      [MarshalAs(UnmanagedType.Bool)]
       public bool FullTransponder;
-      public DeDiseqcPort Diseqc;
+
+      public byte Lnb;                    // index (0..3) of the LNB parameters set with SetLnbParams
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
       private byte[] Padding1;
+
       public UInt32 Frequency;            // unit = kHz, range = 9750000 - 12750000
       public UInt32 SymbolRate;           // unit = ks/s, range = 1000 - 40000
+
       public DeFecRate InnerFecRate;
       public DePolarisation Polarisation;
       private UInt16 Padding2;
+
       public byte NumberOfValidPids;
       private byte Padding3;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxPidFilterPids)]
@@ -328,9 +332,13 @@ namespace TvEngine
     [StructLayout(LayoutKind.Sequential)]
     private struct DvbtPidFilterParams
     {
+      [MarshalAs(UnmanagedType.Bool)]
       public bool CurrentTransponder;
+      [MarshalAs(UnmanagedType.Bool)]
       public bool FullTransponder;
+
       public DvbtMultiplexParams MultiplexParams;
+
       public byte NumberOfValidPids;
       private byte Padding1;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxPidFilterPids)]
@@ -354,20 +362,22 @@ namespace TvEngine
     [StructLayout(LayoutKind.Sequential)]
     private struct FrontEndStatusInfo
     {
-      public UInt32 Frequency;            // unit = kHz
+      public UInt32 Frequency;            // unit = kHz, intermediate frequency for DVB-S/2
       public UInt32 BitErrorRate;
+
       public byte SignalStrength;         // range = 0 - 100%
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
       private byte[] Padding1;
+      [MarshalAs(UnmanagedType.Bool)]
       public bool IsLocked;
 
       public UInt16 CarrierToNoiseRatio;
       public byte AutomaticGainControl;
       private byte Value;                 // ???
 
-      public byte FrontEndState;          // (DeFrontEndState)
+      public DeFrontEndState FrontEndState;
       private byte Padding2;
-      public UInt16 CiState;              // (DeCiState)
+      public DeCiState CiState;
 
       public byte SupplyVoltage;
       public byte AntennaVoltage;
@@ -382,6 +392,8 @@ namespace TvEngine
       public DeAntennaType AntennaType;
       public DeBroadcastSystem BroadcastSystem;
       public DeTransportType TransportType;
+
+      [MarshalAs(UnmanagedType.Bool)]
       public bool Lists;                  // ???
     }
 
@@ -400,6 +412,7 @@ namespace TvEngine
       public De22k Tone22k;
       public DeToneBurst ToneBurst;
       public byte NumberOfMessages;
+
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDiseqcMessageCount)]
       public DiseqcMessage[] DiseqcMessages;
     }
@@ -407,8 +420,10 @@ namespace TvEngine
     [StructLayout(LayoutKind.Sequential)]
     private struct LnbParams
     {
-      public byte AntennaNumber;
-      public byte IsEast;
+      public UInt32 AntennaNumber;
+      [MarshalAs(UnmanagedType.Bool)]
+      public bool IsEast;
+
       public UInt16 OrbitalPosition;
       public UInt16 LowBandLof;           // unit = MHz
       public UInt16 SwitchFrequency;      // unit = MHz
@@ -418,7 +433,7 @@ namespace TvEngine
     [StructLayout(LayoutKind.Sequential)]
     private struct LnbParamInfo
     {
-      public byte NumberOfAntennas;       // range = 0 - 3
+      public Int32 NumberOfAntennas;       // range = 0 - 3
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxLnbParamCount)]
       public LnbParams[] LnbParams;
     }
@@ -427,9 +442,12 @@ namespace TvEngine
     private struct QpskTuneParams
     {
       public UInt32 Frequency;            // unit = kHz, range = 950000 - 2150000
+
       public UInt16 SymbolRate;           // unit = ks/s, range = 1000 - 40000
       public DeFecRate InnerFecRate;
       public DePolarisation Polarisation;
+
+      [MarshalAs(UnmanagedType.Bool)]
       public bool IsHighBand;
     }
 
@@ -448,7 +466,10 @@ namespace TvEngine
       public byte Slot;
       public DeCiMessageTag Tag;
       private UInt16 Padding1;
+
+      [MarshalAs(UnmanagedType.Bool)]
       public bool More;
+
       public UInt16 DataLength;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxPmtLength)]
       public byte[] Data;
@@ -486,12 +507,14 @@ namespace TvEngine
     private const int MaxDiseqcMessageLength = 6;
     private const int LnbCommandSize = 25;
     private const int MaxDiseqcMessageCount = 3;
-    private const int LnbParamsSize = 42;
+    private const int LnbParamsSize = 16;
+    private const int LnbParamInfoSize = 68;
     private const int MaxLnbParamCount = 4;
+    private const int QpskTuneParamsSize = 12;
     private const int CiErrorDebugMessageLength = 258;
     private const int MaxCiErrorDebugMessageLength = 256;
     private const int CaDataSize = 1036;
-    private const int DriverVersionInfoSize = 64;
+    private const int DriverVersionInfoSize = 32;
     private const int TemperatureInfoSize = 4;
 
     private const int MmiHandlerThreadSleepTime = 500;    // unit = ms
@@ -516,7 +539,6 @@ namespace TvEngine
     private Thread _mmiHandlerThread = null;
     private bool _stopMmiHandlerThread = false;
     private ICiMenuCallbacks _ciMenuCallbacks = null;
-    private DvbMmiHandler _mmiHandler = null;
 
     #endregion
 
@@ -604,18 +626,19 @@ namespace TvEngine
         Marshal.WriteByte(_generalBuffer, i, 0);
       }
       int returnedByteCount;
-      int hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.FirmwareVersion,
+      int hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.DriverVersion,
         _generalBuffer, DriverVersionInfoSize,
         _generalBuffer, DriverVersionInfoSize,
         out returnedByteCount
       );
-      if (hr != 0)
+      if (hr != 0 || returnedByteCount != DriverVersionInfoSize)
       {
         Log.Debug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return;
       }
 
-      Log.Debug("  driver version   = {0}", Marshal.PtrToStringAuto(_generalBuffer));
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, returnedByteCount);
+      Log.Debug("  driver version   = {0}", Marshal.PtrToStringAnsi(_generalBuffer));
     }
 
     /// <summary>
@@ -669,8 +692,11 @@ namespace TvEngine
         return;
       }
 
-      // No idea what the output looks like at this stage...
-      // TODO
+      // The output is all-zeroes for my FloppyDTV-S2 with the following details:
+      //   driver version   = 5.0 (6201-3000) x64
+      //   hardware version = 1.24.04
+      //   firmware version = 1.5.02
+      //   firmware build # = 30740
       DVB_MMI.DumpBinary(_generalBuffer, 0, TemperatureInfoSize);
     }
 
@@ -696,10 +722,20 @@ namespace TvEngine
         return;
       }
 
-      // No idea whether this will work at this stage...
-      // TODO
-      DVB_MMI.DumpBinary(_generalBuffer, 0, FrontEndStatusInfoSize);
-      //FrontEndStatusInfo status = (FrontEndStatusInfo)Marshal.PtrToStructure(_generalBuffer, typeof(FrontEndStatusInfo));
+      // Most of this info is not very useful.
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, FrontEndStatusInfoSize);
+      FrontEndStatusInfo status = (FrontEndStatusInfo)Marshal.PtrToStructure(_generalBuffer, typeof(FrontEndStatusInfo));
+      Log.Debug("  frequency        = {0} kHz", status.Frequency);
+      Log.Debug("  bit error rate   = {0}", status.BitErrorRate);
+      Log.Debug("  signal strength  = {0}", status.SignalStrength);
+      Log.Debug("  is locked        = {0}", status.IsLocked);
+      Log.Debug("  CNR              = {0}", status.CarrierToNoiseRatio);
+      Log.Debug("  auto gain ctrl   = {0}", status.AutomaticGainControl);
+      Log.Debug("  front end state  = {0}", status.FrontEndState.ToString());
+      Log.Debug("  CI state         = {0}", status.CiState.ToString());
+      Log.Debug("  supply voltage   = {0}", status.SupplyVoltage);
+      Log.Debug("  antenna voltage  = {0}", status.AntennaVoltage);
+      Log.Debug("  bus voltage      = {0}", status.BusVoltage);
     }
 
     /// <summary>
@@ -738,9 +774,9 @@ namespace TvEngine
       }
 
       data = (CaData)Marshal.PtrToStructure(_generalBuffer, typeof(CaData));
-      Log.Debug("  manufacturer = 0x{0:x}", BitConverter.ToInt16(data.Data, 0));
-      Log.Debug("  code         = 0x{0:x}", BitConverter.ToInt16(data.Data, 2));
-      Log.Debug("  menu title   = {0}", DVB_MMI.BytesToString(data.Data, 5, data.Data[4]));
+      Log.Debug("  manufacturer = 0x{0:x}{1:x}", data.Data[0], data.Data[1]);
+      Log.Debug("  code         = 0x{0:x}{1:x}", data.Data[2], data.Data[3]);
+      Log.Debug("  menu title   = {0}", System.Text.Encoding.ASCII.GetString(data.Data, 5, data.Data[4]));
     }
 
     #endregion
@@ -838,7 +874,7 @@ namespace TvEngine
           // Check for MMI responses and requests.
           if ((ciState & DeCiState.MmiRequest) != 0)
           {
-            Log.Debug("Digital Everywhere: MMI object available, requesting object");
+            Log.Debug("Digital Everywhere: MMI data available, sending request");
             CaData data = new CaData(DeCiMessageTag.Mmi);
             Marshal.StructureToPtr(data, _mmiBuffer, true);
             hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.MmiCamToHost,
@@ -847,11 +883,11 @@ namespace TvEngine
             );
             if (hr != 0)
             {
-              Log.Debug("Digital Everywhere: failed to request object, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+              Log.Debug("Digital Everywhere: request failed, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
               continue;
             }
 
-            Log.Debug("Digital Everywhere: retrieving object");
+            Log.Debug("Digital Everywhere: retrieving data");
             for (int i = 0; i < CaDataSize; i++)
             {
               Marshal.WriteByte(_mmiBuffer, i, 0);
@@ -864,15 +900,15 @@ namespace TvEngine
             );
             if (hr != 0)
             {
-              Log.Debug("Digital Everywhere: failed to retrieve object, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+              Log.Debug("Digital Everywhere: failed to retrieve data, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
               continue;
             }
 
-            Log.Debug("Digital Everywhere: handling object");
+            Log.Debug("Digital Everywhere: handling data");
             data = (CaData)Marshal.PtrToStructure(_mmiBuffer, typeof(CaData));
             byte[] objectData = new byte[data.DataLength];
             Array.Copy(data.Data, objectData, data.DataLength);
-            _mmiHandler.HandleMMI(objectData);
+            DvbMmiHandler.HandleMmiData(objectData, ref _ciMenuCallbacks);
           }
         }
       }
@@ -904,7 +940,7 @@ namespace TvEngine
 
     /// <summary>
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed.
+    /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -1019,7 +1055,7 @@ namespace TvEngine
         }
         else if (ch.RollOff == RollOff.ThirtyFive)
         {
-          rate = 48;
+          rate += 48;
         }
         ch.InnerFecRate = (BinaryConvolutionCodeRate)rate;
       }
@@ -1059,9 +1095,9 @@ namespace TvEngine
         return false;
       }
 
-      // The FloppyDTV and FireDTV S and S2 should support this function. Apparently
-      // the FireDTV T also supports active antennas but it is unclear whether and how
-      // that power supply might be turned on or off.
+      // The FloppyDTV and FireDTV S and S2 support this function; the other Digital Everywhere tuners do not.
+      // Apparently the FireDTV T also supports active antennas but it is unclear whether and how that power
+      // supply might be turned on or off.
       KSPropertySupport support;
       int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.LnbPower, out support);
       if (hr != 0 || (support & KSPropertySupport.Set) == 0)
@@ -1103,7 +1139,7 @@ namespace TvEngine
     /// <param name="modulation">The current multiplex/transponder modulation scheme.</param>
     /// <param name="forceEnable">Set this parameter to <c>true</c> to force the filter to be enabled.</param>
     /// <returns><c>true</c> if the PID filter is configured successfully, otherwise <c>false</c></returns>
-    public bool SetFilterPids(List<UInt16> pids, ModulationType modulation, bool forceEnable)
+    public bool SetFilterPids(HashSet<UInt16> pids, ModulationType modulation, bool forceEnable)
     {
       Log.Debug("Digital Everywhere: set PID filter PIDs, modulation = {0}, force enable = {1}", modulation, forceEnable);
 
@@ -1153,12 +1189,12 @@ namespace TvEngine
         if (!fullTransponder)
         {
           Log.Debug("Digital Everywhere: enabling PID filter");
+
           fullTransponder = false;
-          for (int i = 0; i < pids.Count && i < MaxPidFilterPids; i++)
+          HashSet<UInt16>.Enumerator en = pids.GetEnumerator();
+          while (en.MoveNext() && validPidCount < MaxPidFilterPids)
           {
-            Log.Debug("  {0,-2} = 0x{1:x}", i + 1, pids[i]);
-            filterPids[i] = pids[i];
-            validPidCount++;
+            filterPids[validPidCount++] = en.Current;
           }
         }
       }
@@ -1186,12 +1222,175 @@ namespace TvEngine
         Marshal.StructureToPtr(filter, _generalBuffer, true);
       }
 
-      DVB_MMI.DumpBinary(_generalBuffer, 0, bufferSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, bufferSize);
 
       int hr = _propertySet.Set(BdaExtensionPropertySet, (int)property,
         _generalBuffer, bufferSize,
         _generalBuffer, bufferSize
       );
+      if (hr == 0)
+      {
+        Log.Debug("Digital Everywhere: result = success");
+        return true;
+      }
+
+      Log.Debug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      return false;
+    }
+
+    #endregion
+
+    #region ICustomTuner members
+
+    /// <summary>
+    /// Check if the device implements specialised tuning for a given channel.
+    /// </summary>
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>true</c> if the device supports specialised tuning for the channel, otherwise <c>false</c></returns>
+    public bool CanTuneChannel(IChannel channel)
+    {
+      // Tuning of DVB-S/2 and DVB-T/2 channels is supported with an appropriate tuner. DVB-C tuning may also be
+      // supported but documentation is missing.
+      if ((channel is DVBSChannel && _tunerType == CardType.DvbS) || (channel is DVBTChannel && _tunerType == CardType.DvbT))
+      {
+        return true;
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Tune to a given channel using the specialised tuning method.
+    /// </summary>
+    /// <param name="channel">The channel to tune.</param>
+    /// <returns><c>true</c> if the channel is successfully tuned, otherwise <c>false</c></returns>
+    public bool Tune(IChannel channel)
+    {
+      Log.Debug("Digital Everywhere: tune to channel");
+
+      if (!_isDigitalEverywhere || _propertySet == null)
+      {
+        Log.Debug("Digital Everywhere: device not initialised or interface not supported");
+        return false;
+      }
+
+      int hr;
+
+      DVBSChannel dvbsChannel = channel as DVBSChannel;
+      if (dvbsChannel != null && _tunerType == CardType.DvbS)
+      {
+        // LNB settings must be applied.
+        uint lnbLof;
+        uint lnbSwitchFrequency;
+        Polarisation polarisation;
+        LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLof, out lnbSwitchFrequency, out polarisation);
+        lnbLof /= 1000;
+        LnbParamInfo lnbParams = new LnbParamInfo();
+        lnbParams.NumberOfAntennas = 1;
+        lnbParams.LnbParams = new LnbParams[MaxLnbParamCount];
+        lnbParams.LnbParams[0].AntennaNumber = 0;
+        lnbParams.LnbParams[0].IsEast = true;
+        lnbParams.LnbParams[0].OrbitalPosition = 160;
+        lnbParams.LnbParams[0].LowBandLof = (UInt16)lnbLof;
+        lnbParams.LnbParams[0].SwitchFrequency = (UInt16)(lnbSwitchFrequency / 1000);
+        lnbParams.LnbParams[0].HighBandLof = (UInt16)lnbLof;
+
+        Marshal.StructureToPtr(lnbParams, _generalBuffer, true);
+        //DVB_MMI.DumpBinary(_generalBuffer, 0, LnbParamInfoSize);
+
+        hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.SetLnbParams,
+          _generalBuffer, LnbParamInfoSize,
+          _generalBuffer, LnbParamInfoSize
+        );
+        if (hr != 0)
+        {
+          Log.Debug("Digital Everywhere: failed to apply LNB settings, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        }
+
+        DvbsMultiplexParams tuneRequest = new DvbsMultiplexParams();
+        tuneRequest.Frequency = (UInt32)dvbsChannel.Frequency;
+        tuneRequest.SymbolRate = (UInt32)dvbsChannel.SymbolRate;
+        tuneRequest.Lnb = 0;    // To match the AntennaNumber value above.
+
+        // OnBeforeTune() mixed pilot and roll-off settings into the top four bits of the least significant
+        // inner FEC rate byte. It seemms that this custom tuning method doesn't support setting pilot and
+        // roll-off in this way, so we throw the bits away.
+        BinaryConvolutionCodeRate rate = (BinaryConvolutionCodeRate)((int)dvbsChannel.InnerFecRate & 0xf);
+        if (rate == BinaryConvolutionCodeRate.Rate1_2)
+        {
+          tuneRequest.InnerFecRate = DeFecRate.Rate1_2;
+        }
+        else if (rate == BinaryConvolutionCodeRate.Rate2_3)
+        {
+          tuneRequest.InnerFecRate = DeFecRate.Rate2_3;
+        }
+        else if (rate == BinaryConvolutionCodeRate.Rate3_4)
+        {
+          tuneRequest.InnerFecRate = DeFecRate.Rate3_4;
+        }
+        else if (rate == BinaryConvolutionCodeRate.Rate5_6)
+        {
+          tuneRequest.InnerFecRate = DeFecRate.Rate5_6;
+        }
+        else if (rate == BinaryConvolutionCodeRate.Rate7_8)
+        {
+          tuneRequest.InnerFecRate = DeFecRate.Rate7_8;
+        }
+        else
+        {
+          tuneRequest.InnerFecRate = DeFecRate.Auto;
+        }
+
+        tuneRequest.Polarisation = DePolarisation.Vertical;
+        if (polarisation == Polarisation.LinearH || polarisation == Polarisation.CircularL)
+        {
+          tuneRequest.Polarisation = DePolarisation.Horizontal;
+        }
+
+        Marshal.StructureToPtr(tuneRequest, _generalBuffer, true);
+        //DVB_MMI.DumpBinary(_generalBuffer, 0, DvbsMultiplexParamsSize);
+
+        hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.SelectMultiplexDvbS,
+          _generalBuffer, DvbsMultiplexParamsSize,
+          _generalBuffer, DvbsMultiplexParamsSize
+        );
+      }
+      else
+      {
+        DVBTChannel dvbtChannel = channel as DVBTChannel;
+        if (dvbtChannel is DVBTChannel && _tunerType == CardType.DvbT)
+        {
+          DvbtMultiplexParams tuneRequest = new DvbtMultiplexParams();
+          tuneRequest.Frequency = (UInt32)dvbtChannel.Frequency;
+          tuneRequest.Bandwidth = DeOfdmBandwidth.Bandwidth8;
+          if (dvbtChannel.Bandwidth == 7)
+          {
+            tuneRequest.Bandwidth = DeOfdmBandwidth.Bandwidth7;
+          }
+          else if (dvbtChannel.Bandwidth == 6)
+          {
+            tuneRequest.Bandwidth = DeOfdmBandwidth.Bandwidth6;
+          }
+          tuneRequest.Constellation = DeOfdmConstellation.Auto;
+          tuneRequest.CodeRateHp = DeOfdmCodeRate.Auto;
+          tuneRequest.CodeRateLp = DeOfdmCodeRate.Auto;
+          tuneRequest.GuardInterval = DeOfdmGuardInterval.Auto;
+          tuneRequest.TransmissionMode = DeOfdmTransmissionMode.Auto;
+          tuneRequest.Hierarchy = DeOfdmHierarchy.Auto;
+
+          Marshal.StructureToPtr(tuneRequest, _generalBuffer, true);
+          DVB_MMI.DumpBinary(_generalBuffer, 0, DvbtMultiplexParamsSize);
+          hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.SelectMultiplexDvbT,
+            _generalBuffer, DvbtMultiplexParamsSize,
+            _generalBuffer, DvbtMultiplexParamsSize
+          );
+        }
+        else
+        {
+          Log.Debug("Digital Everywhere: tuning is not supported for this channel");
+          return false;
+        }
+      }
+
       if (hr == 0)
       {
         Log.Debug("Digital Everywhere: result = success");
@@ -1234,7 +1433,6 @@ namespace TvEngine
         ReadApplicationInformation();
       }
 
-      _mmiHandler = new DvbMmiHandler("Digital Everywhere");
       StartMmiHandlerThread();
 
       Log.Debug("Digital Everywhere: result = success");
@@ -1256,7 +1454,6 @@ namespace TvEngine
         Thread.Sleep(MmiHandlerThreadSleepTime * 2);
         _mmiHandlerThread = null;
       }
-      _mmiHandler = null;
 
       _isCamReady = false;
       if (_mmiBuffer != IntPtr.Zero)
@@ -1299,7 +1496,7 @@ namespace TvEngine
       data.Data[0] = (byte)DeResetType.ForcedHardwareReset;
 
       Marshal.StructureToPtr(data, _generalBuffer, true);
-      DVB_MMI.DumpBinary(_generalBuffer, 0, CaDataSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, CaDataSize);
 
       int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.MmiHostToCam,
         _generalBuffer, CaDataSize,
@@ -1396,7 +1593,7 @@ namespace TvEngine
       lock (this)
       {
         Marshal.StructureToPtr(data, _pmtBuffer, true);
-        DVB_MMI.DumpBinary(_pmtBuffer, 0, CaDataSize);
+        //DVB_MMI.DumpBinary(_pmtBuffer, 0, CaDataSize);
 
         hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.MmiHostToCam,
           _pmtBuffer, CaDataSize,
@@ -1429,7 +1626,6 @@ namespace TvEngine
       if (ciMenuHandler != null)
       {
         _ciMenuCallbacks = ciMenuHandler;
-        _mmiHandler.SetCiMenuHandler(ref _ciMenuCallbacks);
         StartMmiHandlerThread();
         return true;
       }
@@ -1455,7 +1651,7 @@ namespace TvEngine
     {
       Log.Debug("Digital Everywhere: close menu");
       CaData data = new CaData(DeCiMessageTag.Mmi);
-      byte[] apdu = DVB_MMI.CreateMMIClose();
+      byte[] apdu = DvbMmiHandler.CreateMmiClose(0);
       data.DataLength = (UInt16)apdu.Length;
       Buffer.BlockCopy(apdu, 0, data.Data, 0, apdu.Length);
       return SendMmi(data);
@@ -1470,7 +1666,7 @@ namespace TvEngine
     {
       Log.Debug("Digital Everywhere: select menu entry, choice = {0}", choice);
       CaData data = new CaData(DeCiMessageTag.Mmi);
-      byte[] apdu = DVB_MMI.CreateMMISelect(choice);
+      byte[] apdu = DvbMmiHandler.CreateMmiMenuAnswer(choice);
       data.DataLength = (UInt16)apdu.Length;
       Buffer.BlockCopy(apdu, 0, data.Data, 0, apdu.Length);
       return SendMmi(data);
@@ -1496,7 +1692,7 @@ namespace TvEngine
       {
         responseType = MmiResponseType.Cancel;
       }
-      byte[] apdu = DVB_MMI.CreateMMIAnswer(responseType, answer);
+      byte[] apdu = DvbMmiHandler.CreateMmiEnquiryAnswer(responseType, answer);
       data.DataLength = (UInt16)apdu.Length;
       Buffer.BlockCopy(apdu, 0, data.Data, 0, apdu.Length);
       return SendMmi(data);
@@ -1504,7 +1700,7 @@ namespace TvEngine
 
     #endregion
 
-    #region IDiseqcController members
+    #region IDiseqcDevice members
 
     /// <summary>
     /// Send a tone/data burst command, and then set the 22 kHz continuous tone state.
@@ -1543,7 +1739,7 @@ namespace TvEngine
       lnbCommand.NumberOfMessages = 0;
 
       Marshal.StructureToPtr(lnbCommand, _generalBuffer, true);
-      DVB_MMI.DumpBinary(_generalBuffer, 0, LnbCommandSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, LnbCommandSize);
 
       int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.LnbControl,
         _generalBuffer, LnbCommandSize,
@@ -1595,7 +1791,7 @@ namespace TvEngine
       Buffer.BlockCopy(command, 0, lnbCommand.DiseqcMessages[0].Message, 0, command.Length);
 
       Marshal.StructureToPtr(lnbCommand, _generalBuffer, true);
-      DVB_MMI.DumpBinary(_generalBuffer, 0, LnbCommandSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, LnbCommandSize);
 
       int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.LnbControl,
         _generalBuffer, LnbCommandSize,

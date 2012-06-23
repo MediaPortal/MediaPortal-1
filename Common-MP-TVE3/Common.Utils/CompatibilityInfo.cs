@@ -83,6 +83,7 @@ using MediaPortal.Common.Utils;
 [assembly: SubsystemVersion("TVE.DB", "1.1.6.27644")]
 [assembly: SubsystemVersion("TVE.Controller", "1.1.6.27644")]
 [assembly: SubsystemVersion("TVE.Scheduler", "1.1.6.27644")]
+[assembly: SubsystemVersion("TVE.DirectShow", "1.1.6.27644")]
 [assembly: SubsystemVersion("TVE.Config", "1.1.6.27644")]
 [assembly: SubsystemVersion("TVE.Config.Controls", "1.1.6.27644")]
 
@@ -92,3 +93,15 @@ using MediaPortal.Common.Utils;
 [assembly: SubsystemVersion("TVE.Plugins.WebEPG", "1.1.6.27644")]
 [assembly: SubsystemVersion("TVE.Plugins.TvMoview", "1.1.6.27644")]
 [assembly: SubsystemVersion("TVE.Plugins.ServerBlaster", "1.1.6.27644")]
+
+// ICustomDevice interface extensions.
+// A new subsystem should be added for each new interface which is created. This allows fine-grained control for
+// future interface changes. Plugins should register as compatible with each individual subsystem/interface.
+[assembly: SubsystemVersion("TVE.Plugins.CustomDevice", "1.2.3.0")]
+[assembly: SubsystemVersion("TVE.Plugins.CustomDevice.AddOn", "1.2.3.0")]                   // IAddOnDevice
+[assembly: SubsystemVersion("TVE.Plugins.CustomDevice.ConditionalAccess", "1.2.3.0")]       // IConditionalAccessProvider
+[assembly: SubsystemVersion("TVE.Plugins.CustomDevice.ConditionalAccessMenu", "1.2.3.0")]   // ICiMenuActions
+[assembly: SubsystemVersion("TVE.Plugins.CustomDevice.Diseqc", "1.2.3.0")]                  // IDiseqcDevice
+[assembly: SubsystemVersion("TVE.Plugins.CustomDevice.PidFilter", "1.2.3.0")]               // IPidFilterController
+[assembly: SubsystemVersion("TVE.Plugins.CustomDevice.Power", "1.2.3.0")]                   // IPowerDevice
+[assembly: SubsystemVersion("TVE.Plugins.CustomDevice.Tuner", "1.2.3.0")]                   // ICustomTuner

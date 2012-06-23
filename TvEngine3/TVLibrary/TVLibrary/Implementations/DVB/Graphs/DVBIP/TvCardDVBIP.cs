@@ -60,7 +60,7 @@ namespace TvLibrary.Implementations.DVB
     public TvCardDVBIP(IEpgEvents epgEvents, DsDevice device, int sequenceNumber)
       : base(epgEvents, device)
     {
-      _cardType = CardType.DvbIP;
+      _tunerType = CardType.DvbIP;
       _defaultUrl = "udp://@0.0.0.0:1234";
       _sourceFilterGuid = new Guid(0xd3dd4c59, 0xd3a7, 0x4b82, 0x97, 0x27, 0x7b, 0x92, 0x03, 0xeb, 0x67, 0xc0);
       _stopGraph = true;  // Pause graph not supported.
@@ -106,12 +106,16 @@ namespace TvLibrary.Implementations.DVB
         IBaseFilter lastFilter = _filterStreamSource;
 
         // Check for and load plugins, adding any additional device filters to the graph.
-        LoadPlugins(_filterStreamSource, _capBuilder, ref lastFilter);
+        LoadPlugins(_filterStreamSource, ref lastFilter);
 
         if (!ConnectTsWriter(lastFilter))
         {
           throw new TvExceptionGraphBuildingFailed("Failed to connect TS writer filter.");
         }
+
+        // Open any plugins we found. This is separated from loading because some plugins can't be opened
+        // until the graph has finished being built.
+        OpenPlugins();
 
         _graphState = GraphState.Created;
 
@@ -188,10 +192,10 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Start the BDA filter graph (subject to a few conditions).
+    /// Start the DirectShow filter graph.
     /// </summary>
     /// <param name="subChannelId">The subchannel ID for the channel that is being started.</param>
-    public override void RunGraph(int subChannelId)
+    protected override void RunGraph(int subChannelId)
     {
       // DVB-IP "tuning" (if there is such a thing) occurs during this stage of the process. We stop the
       // graph, then replace the stream source filter with a new filter that is configured to stream from
@@ -267,7 +271,7 @@ namespace TvLibrary.Implementations.DVB
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    protected override void Tune(IChannel channel)
+    protected override void PerformTuning(IChannel channel)
     {
       foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
       {
@@ -275,7 +279,7 @@ namespace TvLibrary.Implementations.DVB
         if (customTuner != null && customTuner.CanTuneChannel(channel))
         {
           Log.Log.Debug("TvCardDvbIp: using custom tuning");
-          if (!customTuner.Tune(channel, _parameters))
+          if (!customTuner.Tune(channel))
           {
             throw new TvException("TvCardDvbIp: failed to tune to channel");
           }
@@ -287,17 +291,17 @@ namespace TvLibrary.Implementations.DVB
     #region ITVCard members
 
     /// <summary>
-    /// Check if the tuner can tune to a given channel.
+    /// Check if the tuner can tune to a specific channel.
     /// </summary>
     /// <param name="channel">The channel to check.</param>
     /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public override bool CanTune(IChannel channel)
     {
-      if ((channel as DVBIPChannel) == null)
+      if (channel is DVBIPChannel)
       {
-        return false;
+        return true;
       }
-      return true;
+      return false;
     }
 
     /// <summary>
@@ -324,12 +328,15 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Stop the BDA filter graph (subject to a few conditions).
+    /// Stop the device. The actual result of this function depends on device configuration:
+    /// - graph stop
+    /// - graph pause
+    /// TODO graph destroy
     /// </summary>
-    public override void StopGraph()
+    public override void Stop()
     {
-      base.StopGraph();
-      //FIXME: this logic should be checked (removing and adding filters in stopgraph?) (morpheus_xx)
+      base.Stop();
+      // TODO: fix me. This logic should be checked (removing and adding filters in stop?) (morpheus_xx)
       if (_graphState == GraphState.Created)
       {
         RemoveStreamSourceFilter();

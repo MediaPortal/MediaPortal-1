@@ -33,7 +33,7 @@ namespace TvLibrary.Implementations
     #region enums
 
     /// <summary>
-    /// Video input type
+    /// Video input type.
     /// </summary>
     public enum VideoInputType
     {
@@ -104,7 +104,7 @@ namespace TvLibrary.Implementations
     }
 
     /// <summary>
-    /// Audio input type
+    /// Audio input type.
     /// </summary>
     public enum AudioInputType
     {
@@ -158,34 +158,58 @@ namespace TvLibrary.Implementations
 
     #region variables
 
-    private string _channelName;
-    private long _channelFrequency;
-    private int _channelNumber;
+    private string _channelName = String.Empty;
+    private long _channelFrequency = -1;  // Used for FM radio; analog TV is usually tuned by channel number.
+    private int _channelNumber = -1;
     private Country _country;
-    private bool _isRadio;
-    private TunerInputType _tunerSource;
-    private VideoInputType _videoInputType;
-    private AudioInputType _audioInputType;
-    private bool _vcrSginal;
+    private TunerInputType _tunerSource = TunerInputType.Cable;
+    private VideoInputType _videoInputType = VideoInputType.Tuner;
+    private AudioInputType _audioInputType = AudioInputType.Tuner;
+    private bool _isVcrSignal;
+    private bool _isTv = true;
+    private bool _isRadio = false;
+    private bool _freeToAir = true;
 
     #endregion
 
     #region ctor
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AnalogChannel"/> class.
+    /// Initialise a new instance of the <see cref="AnalogChannel"/> class.
     /// </summary>
     public AnalogChannel()
     {
-      CountryCollection collection = new CountryCollection();
-      _country = collection.GetTunerCountryFromID(31);
-      TunerSource = TunerInputType.Cable;
-      _videoInputType = VideoInputType.Tuner;
-      _audioInputType = AudioInputType.Automatic;
+      _channelName = String.Empty;
+      _channelFrequency = -1;
       _channelNumber = 4;
+      CountryCollection collection = new CountryCollection();
+      _country = collection.GetTunerCountryFromID(31);  // The Netherlands.
+      _tunerSource = TunerInputType.Cable;
+      _videoInputType = VideoInputType.Tuner;
+      _audioInputType = AudioInputType.Tuner;
+      _isVcrSignal = false;
+      _isTv = true;
       _isRadio = false;
-      _vcrSginal = false;
-      Name = String.Empty;
+      _freeToAir = true;
+    }
+
+    /// <summary>
+    /// Initialise a new instance of the <see cref="AnalogChannel"/> class using an existing instance.
+    /// </summary>
+    /// <param name="channel">The existing channel instance.</param>
+    public AnalogChannel(AnalogChannel channel)
+    {
+      _channelName = channel.Name;
+      _channelFrequency = channel.Frequency;
+      _channelNumber = channel.ChannelNumber;
+      _country = channel.Country;
+      _tunerSource = channel.TunerSource;
+      _videoInputType = channel.VideoSource;
+      _audioInputType = channel.AudioSource;
+      _isVcrSignal = channel.IsVcrSignal;
+      _isTv = channel.IsTv;
+      _isRadio = channel.IsRadio;
+      _freeToAir = channel.FreeToAir;
     }
 
     #endregion
@@ -193,27 +217,46 @@ namespace TvLibrary.Implementations
     #region properties
 
     /// <summary>
-    /// Gets or sets the video source.
+    /// Get/set the channel's name.
     /// </summary>
-    /// <value>The video source.</value>
-    public VideoInputType VideoSource
+    public string Name
     {
-      get { return _videoInputType; }
-      set { _videoInputType = value; }
+      get { return _channelName; }
+      set { _channelName = value; }
     }
 
     /// <summary>
-    /// Gets or sets the audio source.
+    /// Get/set the carrier frequency for the channel. The frequency unit is kHz.
     /// </summary>
-    /// <value>The audio source.</value>
-    public AudioInputType AudioSource
+    public long Frequency
     {
-      get { return _audioInputType; }
-      set { _audioInputType = value; }
+      get { return _channelFrequency; }
+      set { _channelFrequency = value; }
     }
 
     /// <summary>
-    /// Gets or sets the tuner source.
+    /// Get/set the channel number associated with the channel. This is converted to a frequency using per-country
+    /// frequency-channel mappings.
+    /// </summary>
+    public int ChannelNumber
+    {
+      get { return _channelNumber; }
+      set { _channelNumber = value; }
+    }
+
+    /// <summary>
+    /// Get/set the country that the channel is broadcast in. This is used to convert the channel number to a
+    /// frequency using per-country frequency-channel mappings.
+    /// </summary>
+    public Country Country
+    {
+      get { return _country; }
+      set { _country = value; }
+    }
+
+    /// <summary>
+    /// Get/set the tuner source type. This type is applied when the channel video source is set to
+    /// <c>VideoSource.Tuner</c>.
     /// </summary>
     /// <value>The tuner source.</value>
     public TunerInputType TunerSource
@@ -223,43 +266,43 @@ namespace TvLibrary.Implementations
     }
 
     /// <summary>
-    /// gets/sets the country
+    /// Get/set the channel video input or source.
     /// </summary>
-    public Country Country
+    public VideoInputType VideoSource
     {
-      get { return _country; }
-      set { _country = value; }
+      get { return _videoInputType; }
+      set { _videoInputType = value; }
     }
 
     /// <summary>
-    /// gets/sets the channel name
+    /// Get/set the channel audio input or source.
     /// </summary>
-    public string Name
+    public AudioInputType AudioSource
     {
-      get { return _channelName; }
-      set { _channelName = value; }
+      get { return _audioInputType; }
+      set { _audioInputType = value; }
     }
 
     /// <summary>
-    /// gets/sets the frequency
+    /// Get/set whether the channel is sourced from a VCR.
     /// </summary>
-    public long Frequency
+    public bool IsVcrSignal
     {
-      get { return _channelFrequency; }
-      set { _channelFrequency = value; }
+      get { return _isVcrSignal; }
+      set { _isVcrSignal = value; }
     }
 
     /// <summary>
-    /// gets/sets the channel number
+    /// Get/set whether the channel is a television channel.
     /// </summary>
-    public int ChannelNumber
+    public bool IsTv
     {
-      get { return _channelNumber; }
-      set { _channelNumber = value; }
+      get { return _isTv; }
+      set { _isTv = value; }
     }
 
     /// <summary>
-    /// boolean indicating if this is a radio channel
+    /// Get/set whether the channel is a radio channel.
     /// </summary>
     public bool IsRadio
     {
@@ -268,21 +311,12 @@ namespace TvLibrary.Implementations
     }
 
     /// <summary>
-    /// boolean indicating if this is a tv channel
+    /// Get/set whether the channel is a free-to-air or encrypted channel.
     /// </summary>
-    public bool IsTv
+    public bool FreeToAir
     {
-      get { return !_isRadio; }
-      set { _isRadio = !value; }
-    }
-
-    /// <summary>
-    /// boolean indicating if this is channel provides a vcr signal
-    /// </summary>
-    public bool IsVCRSignal
-    {
-      get { return _vcrSginal; }
-      set { _vcrSginal = value; }
+      get { return _freeToAir; }
+      set { _freeToAir = value; }
     }
 
     #endregion
@@ -290,10 +324,10 @@ namespace TvLibrary.Implementations
     #region overrides
 
     /// <summary>
-    /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// Get a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
     /// </summary>
     /// <returns>
-    /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>
     /// </returns>
     public override string ToString()
     {
@@ -304,59 +338,67 @@ namespace TvLibrary.Implementations
     }
 
     /// <summary>
-    /// Determines whether the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>.
+    /// Determine whether the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>.
     /// </summary>
     /// <param name="obj">The <see cref="T:System.Object"></see> to compare with the current <see cref="T:System.Object"></see>.</param>
     /// <returns>
-    /// true if the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>; otherwise, false.
+    /// <c>true</c> if the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>, otherwise <c>false</c>
     /// </returns>
     public override bool Equals(object obj)
     {
-      if ((obj as AnalogChannel) == null)
-      {
-        return false;
-      }
       AnalogChannel ch = obj as AnalogChannel;
-      if (ch.VideoSource != VideoSource)
+      if (ch == null)
       {
         return false;
       }
-      if (ch.AudioSource != AudioSource)
+
+      if (!ch.Name.Equals(_channelName))
       {
         return false;
       }
-      if (ch.TunerSource != TunerSource)
+      if (ch.Frequency != _channelFrequency)
       {
         return false;
       }
-      if (ch.Country.Id != Country.Id)
+      if (ch.ChannelNumber != _channelNumber)
       {
         return false;
       }
-      if (ch.Name != Name)
+      if ((ch.Country == null && _country != null) ||
+        (ch.Country != null && _country == null) ||
+        (ch.Country != null && _country != null && ch.Country.Id != _country.Id))
       {
         return false;
       }
-      if (ch.Frequency != Frequency)
+      if (ch.TunerSource != _tunerSource)
       {
         return false;
       }
-      if (ch.ChannelNumber != ChannelNumber)
+      if (ch.VideoSource != _videoInputType)
       {
         return false;
       }
-      if (ch.IsRadio != IsRadio)
+      if (ch.AudioSource != _audioInputType)
       {
         return false;
       }
-      if (ch.IsTv != IsTv)
+      if (ch.IsVcrSignal != _isVcrSignal)
       {
         return false;
       }
-      if (ch.IsVCRSignal != IsVCRSignal)
+      if (ch.IsRadio != _isRadio)
       {
         return false;
       }
+      if (ch.IsTv != _isTv)
+      {
+        return false;
+      }
+      if (ch.FreeToAir != _freeToAir)
+      {
+        return false;
+      }
+
       return true;
     }
 
@@ -371,7 +413,7 @@ namespace TvLibrary.Implementations
       return base.GetHashCode() ^ _channelName.GetHashCode() ^ _channelFrequency.GetHashCode() ^
              _channelNumber.GetHashCode() ^ _country.GetHashCode() ^ _isRadio.GetHashCode() ^
              _tunerSource.GetHashCode() ^ _videoInputType.GetHashCode() ^ _audioInputType.GetHashCode() ^
-             _vcrSginal.GetHashCode();
+             _isVcrSignal.GetHashCode();
     }
 
     #endregion
@@ -395,15 +437,6 @@ namespace TvLibrary.Implementations
              analogChannel.TunerSource != TunerSource ||
              analogChannel.ChannelNumber != ChannelNumber ||
              analogChannel.Frequency != Frequency;
-    }
-
-    /// <summary>
-    /// Get/set whether the channel is a free-to-air or encrypted channel.
-    /// </summary>
-    public bool FreeToAir
-    {
-      get { return true; }
-      set { }
     }
   }
 }

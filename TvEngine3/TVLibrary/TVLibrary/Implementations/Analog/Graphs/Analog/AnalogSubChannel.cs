@@ -303,6 +303,8 @@ namespace TvLibrary.Implementations.Analog
     {
       if (_mpRecord != null)
       {
+        _mpRecord.StopTimeShifting(_subChannelId);
+        _mpRecord.StopRecord(_subChannelId);
         _mpRecord.DeleteChannel(_subChannelId);
       }
     }

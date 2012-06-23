@@ -113,9 +113,9 @@ namespace TvDatabase
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
     /// </summary> 
     public Schedule(int idChannel, int idParentSchedule, int scheduleType, string programName, DateTime startTime,
-                    DateTime endTime,
-                    int maxAirings, int priority, string directory, int quality, int keepMethod, DateTime keepDate,
-                    int preRecordInterval, int postRecordInterval, DateTime canceled)
+                    DateTime endTime, int maxAirings, int priority, string directory, int quality, int keepMethod,
+                    DateTime keepDate, int preRecordInterval, int postRecordInterval, int recommendedCard,
+                    DateTime canceled, bool series)
     {
       isChanged = true;
       this.idChannel = idChannel;
@@ -132,9 +132,9 @@ namespace TvDatabase
       this.keepDate = keepDate;
       this.preRecordInterval = preRecordInterval;
       this.postRecordInterval = postRecordInterval;
+      this.recommendedCard = recommendedCard;
       this.canceled = canceled;
-      this.series = (scheduleType > 0);
-      recommendedCard = -1;
+      this.series = series;
     }
 
     /// <summary> 
@@ -159,17 +159,17 @@ namespace TvDatabase
       postRecordInterval = schedule.postRecordInterval;
       canceled = schedule.canceled;
       series = schedule.Series;
-      recommendedCard = -1;
+      recommendedCard = schedule.RecommendedCard;
     }
 
     /// <summary> 
     /// Create an object from an existing row of data. This will be used by Gentle to 
-    /// construct objects from retrieved rows. 
+    /// construct objects from retrieved rows.
     /// </summary> 
     public Schedule(int idSchedule, int idParentSchedule, int idChannel, int scheduleType, string programName,
-                    DateTime startTime,
-                    DateTime endTime, int maxAirings, int priority, string directory, int quality, int keepMethod,
-                    DateTime keepDate, int preRecordInterval, int postRecordInterval, DateTime canceled)
+                    DateTime startTime, DateTime endTime, int maxAirings, int priority, string directory,
+                    int quality, int keepMethod, DateTime keepDate, int preRecordInterval,
+                    int postRecordInterval, int recommendedCard, DateTime canceled, bool series)
     {
       this.idSchedule = idSchedule;
       this.idParentSchedule = idParentSchedule;
@@ -186,9 +186,9 @@ namespace TvDatabase
       this.keepDate = keepDate;
       this.preRecordInterval = preRecordInterval;
       this.postRecordInterval = postRecordInterval;
+      this.recommendedCard = recommendedCard;
       this.canceled = canceled;
-      this.series = (scheduleType > 0);
-      recommendedCard = -1;
+      this.series = series;
     }
 
     #endregion
@@ -1337,12 +1337,7 @@ namespace TvDatabase
 
     public Schedule Clone()
     {
-      Schedule schedule = new Schedule(IdChannel, idParentSchedule, scheduleType, ProgramName, StartTime, EndTime,
-                                       MaxAirings, Priority,
-                                       Directory, Quality, KeepMethod, KeepDate, PreRecordInterval, PostRecordInterval,
-                                       Canceled);
-
-      schedule.series = series;
+      Schedule schedule = new Schedule(this);
       schedule.idSchedule = idSchedule;
       schedule.isChanged = false;
       return schedule;

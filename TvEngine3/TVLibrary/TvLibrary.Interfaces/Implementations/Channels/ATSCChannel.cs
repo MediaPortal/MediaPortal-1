@@ -32,7 +32,7 @@ namespace TvLibrary.Channels
   {
     #region variables
 
-    private int _physicalChannel = -1;
+    private int _physicalChannel = -1;  // Only used for ATSC; QAM channels are tuned by frequency.
     private int _majorChannel = -1;
     private int _minorChannel = -1;
     private ModulationType _modulation = ModulationType.ModNotSet;

@@ -27,6 +27,7 @@ using TvLibrary.Log;
 using TvLibrary.Implementations;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Interfaces;
+using TvLibrary.Interfaces.Device;
 
 namespace TvService
 {
@@ -79,11 +80,15 @@ namespace TvService
     {
       get
       {
-        TvCardBase device = _card as TvCardBase;
-        ICiMenuActions menuSupport = device.CaInterface as ICiMenuActions;
-        if (menuSupport != null && device.CaInterface.IsInterfaceReady())
+        ICiMenuActions menuInterface = _card.CaMenuInterface;
+        if (menuInterface == null)
         {
-          _ciMenu = menuSupport;
+          return false;
+        }
+        IConditionalAccessProvider caProvider = menuInterface as IConditionalAccessProvider;
+        if (caProvider.IsInterfaceReady())
+        {
+          _ciMenu = menuInterface;
           return true;
         }
         return false;
@@ -234,10 +239,10 @@ namespace TvService
     }
 
     /// <summary>
-    /// Does the card have a CA module.
+    /// Does the device support conditional access?
     /// </summary>
-    /// <value>The number of channels decrypting.</value>
-    public bool HasCA
+    /// <value><c>true</c> if the device supports conditional access, otherwise <c>false</c></value>
+    public bool IsConditionalAccessSupported
     {
       get
       {
@@ -246,7 +251,7 @@ namespace TvService
           try
           {
             RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
-            return RemoteControl.Instance.HasCA(_dbsCard.IdCard);
+            return RemoteControl.Instance.IsConditionalAccessSupported(_dbsCard.IdCard);
           }
           catch (Exception)
           {
@@ -254,15 +259,14 @@ namespace TvService
             return false;
           }
         }
-        return _card.HasCA;
+        return _card.IsConditionalAccessSupported;
       }
     }
 
-
     /// <summary>
-    /// Returns the number of channels the card is currently decrypting
+    /// Get a count of the number of services that the device is currently decrypting.
     /// </summary>
-    /// <value>The number of channels decrypting.</value>
+    /// <value>The number of services currently being decrypted.</value>
     public int NumberOfChannelsDecrypting
     {
       get
@@ -283,7 +287,6 @@ namespace TvService
         return _card.NumberOfChannelsDecrypting;
       }
     }
-
 
     /// <summary>
     /// Gets the type of card.
@@ -609,15 +612,10 @@ namespace TvService
       ScanParameters settings = new ScanParameters();
       TvBusinessLayer layer = new TvBusinessLayer();
       settings.TimeOutTune = Int32.Parse(layer.GetSetting("timeoutTune", "2").Value);
-      settings.TimeOutPAT = Int32.Parse(layer.GetSetting("timeoutPAT", "5").Value);
       settings.TimeOutCAT = Int32.Parse(layer.GetSetting("timeoutCAT", "5").Value);
       settings.TimeOutPMT = Int32.Parse(layer.GetSetting("timeoutPMT", "10").Value);
       settings.TimeOutSDT = Int32.Parse(layer.GetSetting("timeoutSDT", "20").Value);
       settings.TimeOutAnalog = Int32.Parse(layer.GetSetting("timeoutAnalog", "20").Value);
-      settings.UseDefaultLnbFrequencies = (layer.GetSetting("lnbDefault", "true").Value == "true");
-      settings.LnbLowFrequency = Int32.Parse(layer.GetSetting("LnbLowFrequency", "0").Value);
-      settings.LnbHighFrequency = Int32.Parse(layer.GetSetting("LnbHighFrequency", "0").Value);
-      settings.LnbSwitchFrequency = Int32.Parse(layer.GetSetting("LnbSwitchFrequency", "0").Value);
       settings.MinimumFiles = Int32.Parse(layer.GetSetting("timeshiftMinFiles", "6").Value);
       settings.MaximumFiles = Int32.Parse(layer.GetSetting("timeshiftMaxFiles", "20").Value);
       settings.MaximumFileSize = UInt32.Parse(layer.GetSetting("timeshiftMaxFileSize", "256").Value);
@@ -785,60 +783,6 @@ namespace TvService
       }
     }
 
-
-    /// <summary>
-    /// Pauses the card.
-    /// </summary>
-    public void PauseCard(IUser user)
-    {
-      try
-      {
-        if (_dbsCard.Enabled == false)
-          return;
-        if (IsLocal == false)
-        {
-          try
-          {
-            RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
-            RemoteControl.Instance.PauseCard(user);
-            return;
-          }
-          catch (Exception)
-          {
-            Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
-            return;
-          }
-        }
-        Log.Info("Pausecard");
-
-        //remove all subchannels, except for this user...
-        ITvSubChannel[] channels = _card.SubChannels;
-        for (int i = 0; i < channels.Length; ++i)
-        {
-          _card.FreeSubChannel(channels[i].SubChannelId);
-        }
-
-        ITvCardContext context = _card.Context as ITvCardContext;
-        if (context != null)
-        {
-          context.Clear();
-        }
-
-        if (_card.SupportsPauseGraph)
-        {
-          _card.PauseGraph();
-        }
-        else
-        {
-          _card.StopGraph();
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Write(ex);
-      }
-    }
-
     /// <summary>
     /// Stops the card.
     /// </summary>
@@ -876,7 +820,7 @@ namespace TvService
         {
           context.Clear();
         }
-        _card.StopGraph();
+        _card.Stop();
       }
       catch (Exception ex)
       {

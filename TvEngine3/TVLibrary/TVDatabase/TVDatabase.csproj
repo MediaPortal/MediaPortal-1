@@ -82,6 +82,7 @@
     <Compile Include="ChannelLinkageMap.cs" />
     <Compile Include="ChannelMap.cs" />
     <Compile Include="Conflict.cs" />
+    <Compile Include="LnbType.cs" />
     <Compile Include="PendingDeletion.cs" />
     <Compile Include="EpisodeFormatter.cs" />
     <Compile Include="SoftwareEncoder.cs" />

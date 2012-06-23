@@ -35,7 +35,7 @@ namespace TvEngine
   /// A class for handling conditional access and DiSEqC for KNC One devices, including compatible models
   /// from Mystique and Satelco.
   /// </summary>
-  public class Knc : BaseCustomDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcController
+  public class Knc : BaseCustomDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
   {
     #region enums
 
@@ -76,6 +76,7 @@ namespace TvEngine
     /// <param name="callbacks">Callback structure pointer.</param>
     /// <returns><c>true</c> if the interface is successfully enabled, otherwise <c>false</c></returns>
     [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool KNCBDA_CI_Enable(Int32 deviceIndex, IGraphBuilder graphBuilder, IBaseFilter filter, IntPtr callbacks);
 
     /// <summary>
@@ -84,6 +85,7 @@ namespace TvEngine
     /// <param name="deviceIndex">Device index 0..n.</param>
     /// <returns><c>true</c> if the interface is successfully disabled, otherwise <c>false</c></returns>
     [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool KNCBDA_CI_Disable(Int32 deviceIndex);
 
     /// <summary>
@@ -92,6 +94,7 @@ namespace TvEngine
     /// <param name="deviceIndex">Device index 0..n.</param>
     /// <returns><c>true</c> if a CI slot is connected with a CAM inserted, otherwise <c>false</c></returns>
     [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool KNCBDA_CI_IsAvailable(Int32 deviceIndex);
 
     /// <summary>
@@ -100,6 +103,7 @@ namespace TvEngine
     /// <param name="deviceIndex">Device index 0..n.</param>
     /// <returns><c>true</c> if the CAM is ready, otherwise <c>false</c></returns>
     [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool KNCBDA_CI_IsReady(Int32 deviceIndex);
 
     /// <summary>
@@ -109,17 +113,19 @@ namespace TvEngine
     /// <param name="param"><c>True</c> to enable the CI slot; <c>false</c>to disable the CI slot.</param>
     /// <returns>???</returns>
     [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool KNCBDA_CI_HW_Enable(Int32 deviceIndex, bool param);
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool KNCBDA_CI_HW_Enable(Int32 deviceIndex, [MarshalAs(UnmanagedType.Bool)] bool param);
 
     /// <summary>
     /// Get the name/brand/type of the CAM inserted in the CI slot. This string is likely
-	/// to be the root menu entry from the CA information.
+    /// to be the root menu entry from the CA information.
     /// </summary>
     /// <param name="deviceIndex">Device index 0..n.</param>
     /// <param name="name">A buffer to hold the CAM name.</param>
     /// <param name="bufferSize">The size of the CAM name buffer in bytes.</param>
     /// <returns>the name/brand/type of the CAM</returns>
     [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool KNCBDA_CI_GetName(Int32 deviceIndex, [MarshalAs(UnmanagedType.LPStr)] StringBuilder name,
                                                 UInt32 bufferSize);
 
@@ -131,6 +137,7 @@ namespace TvEngine
     /// <param name="caPmtLength">The length of the CA PMT buffer in bytes.</param>
     /// <returns><c>true</c> if the CA PMT is successfully passed to the CAM, otherwise <c>false</c></returns>
     [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool KNCBDA_CI_SendPMTCommand(Int32 deviceIndex, IntPtr caPmt, UInt32 caPmtLength);
 
     /// <summary>
@@ -140,6 +147,7 @@ namespace TvEngine
     /// <param name="slotIndex">The index (0..n) of the CI slot that the CAM is inserted in.</param>
     /// <returns>???</returns>
     [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool KNCBDA_CI_EnterMenu(Int32 deviceIndex, byte slotIndex);
 
     /// <summary>
@@ -150,6 +158,7 @@ namespace TvEngine
     /// <param name="choice">The index (0..n) of the menu choice selected by the user.</param>
     /// <returns>???</returns>
     [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool KNCBDA_CI_SelectMenu(Int32 deviceIndex, byte slotIndex, byte choice);
 
     /// <summary>
@@ -159,6 +168,7 @@ namespace TvEngine
     /// <param name="slotIndex">The index (0..n) of the CI slot that the CAM is inserted in.</param>
     /// <returns>???</returns>
     [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool KNCBDA_CI_CloseMenu(Int32 deviceIndex, byte slotIndex);
 
     /// <summary>
@@ -170,7 +180,8 @@ namespace TvEngine
     /// <param name="menuAnswer">The user's response.</param>
     /// <returns>???</returns>
     [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private static extern bool KNCBDA_CI_SendMenuAnswer(Int32 deviceIndex, byte slotIndex, bool cancel,
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool KNCBDA_CI_SendMenuAnswer(Int32 deviceIndex, byte slotIndex, [MarshalAs(UnmanagedType.Bool)] bool cancel,
                                                        [In, MarshalAs(UnmanagedType.LPStr)] String menuAnswer);
 
     /// <summary>
@@ -180,6 +191,7 @@ namespace TvEngine
     /// <param name="filter">The filter which supports the proprietary property sets. This is the tuner filter for PCI devices and the capture filter for PCI-e devices.</param>
     /// <returns><c>true</c> if the hardware interfaces are successfully initialised, otherwise <c>false</c></returns>
     [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool KNCBDA_HW_Enable(Int32 deviceIndex, IBaseFilter filter);
 
     /// <summary>
@@ -191,6 +203,7 @@ namespace TvEngine
     /// <param name="repeatCount">The number of times to resend the command.</param>
     /// <returns><c>true</c> if the tuner successfully sent the command, otherwise <c>false</c></returns>
     [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool KNCBDA_HW_DiSEqCWrite(Int32 deviceIndex, IntPtr command, UInt32 commandLength, UInt32 repeatCount);
 
     /// <summary>
@@ -219,6 +232,7 @@ namespace TvEngine
     /// <param name="mainDeviceIndex">Main device index 0..n.</param>
     /// <returns><c>true</c> if the device is successfully opened, otherwise <c>false</c></returns>
     [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool PCIE_OpenMainDevice(Int32 mainDeviceIndex);
 
     /// <summary>
@@ -236,6 +250,7 @@ namespace TvEngine
     /// <param name="dataLength">The length of the property value in bytes.</param>
     /// <returns><c>true</c> if the value of the property is set successfully, otherwise <c>false</c></returns>
     [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool PCIE_SetProperty(Guid propertySet, UInt32 propertyIndex, IntPtr data, UInt32 dataLength);
 
     /// <summary>
@@ -247,6 +262,7 @@ namespace TvEngine
     /// <param name="dataLength">The length of the property value in bytes.</param>
     /// <returns><c>true</c> if the value of the property is retrieved successfully, otherwise <c>false</c></returns>
     [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool PCIE_GetProperty(Guid propertySet, UInt32 propertyIndex, IntPtr data, out UInt32 dataLength);
 
     /// <summary>
@@ -256,7 +272,8 @@ namespace TvEngine
     /// <param name="swap"><c>True</c> to swap CI slot/CAM inputs.</param>
     /// <returns><c>true</c> if the CI slot/CAM inputs on the device are successfully swapped, otherwise <c>false</c></returns>
     [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool PCIE_SwapCAMInput(bool swap);
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool PCIE_SwapCAMInput([MarshalAs(UnmanagedType.Bool)] bool swap);
 
     #endregion
 
@@ -732,7 +749,7 @@ namespace TvEngine
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     private void OnCiCloseDisplay(byte slotIndex, UInt32 delay, IntPtr context)
     {
-      Log.Debug("KNC: device {0} request callback, slot = {1}, delay = {2}", _deviceIndex, slotIndex, delay);
+      Log.Debug("KNC: device {0} close menu callback, slot = {1}, delay = {2}", _deviceIndex, slotIndex, delay);
       if (_ciMenuCallbacks != null)
       {
         try
@@ -783,7 +800,7 @@ namespace TvEngine
 
     /// <summary>
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed.
+    /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -931,7 +948,22 @@ namespace TvEngine
 
       if (ch.ModulationType == ModulationType.ModQpsk || ch.ModulationType == ModulationType.Mod8Psk)
       {
-        ch.ModulationType = ModulationType.Mod8Psk;
+        // The KNC PCIe tuner driver behaves differently to the PCI tuner driver.
+        if (_isPcie)
+        {
+          if (ch.ModulationType == ModulationType.ModQpsk)
+          {
+            ch.ModulationType = ModulationType.ModNbcQpsk;
+          }
+          else
+          {
+            ch.ModulationType = ModulationType.ModNbc8Psk;
+          }
+        }
+        else
+        {
+          ch.ModulationType = ModulationType.Mod8Psk;
+        }
       }
       Log.Debug("  modulation = {0}", ch.ModulationType);
     }
@@ -1241,7 +1273,7 @@ namespace TvEngine
 
     #endregion
 
-    #region IDiseqcController members
+    #region IDiseqcDevice members
 
     /// <summary>
     /// Send a tone/data burst command, and then set the 22 kHz continuous tone state.

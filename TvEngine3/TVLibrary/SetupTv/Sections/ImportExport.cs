@@ -32,6 +32,7 @@ using TvDatabase;
 using TvLibrary;
 using TvLibrary.Log;
 using TvLibrary.Interfaces;
+using TvLibrary.Interfaces.Device;
 using TvLibrary.Implementations;
 using TvLibrary.Channels;
 using MediaPortal.UserInterface.Controls;
@@ -174,7 +175,6 @@ namespace SetupTv.Sections
           AddAttribute(nodeTune, "Polarisation", detail.Polarisation);
           AddAttribute(nodeTune, "Provider", detail.Provider);
           AddAttribute(nodeTune, "ServiceId", detail.ServiceId);
-          AddAttribute(nodeTune, "SwitchingFrequency", detail.SwitchingFrequency);
           AddAttribute(nodeTune, "Symbolrate", detail.Symbolrate);
           AddAttribute(nodeTune, "TransportId", detail.TransportId);
           AddAttribute(nodeTune, "TuningSource", detail.TuningSource);
@@ -183,7 +183,7 @@ namespace SetupTv.Sections
           AddAttribute(nodeTune, "IsVCRSignal", detail.IsVCRSignal);
           AddAttribute(nodeTune, "SatIndex", detail.SatIndex);
           AddAttribute(nodeTune, "InnerFecRate", detail.InnerFecRate);
-          AddAttribute(nodeTune, "Band", detail.Band);
+          AddAttribute(nodeTune, "IdLnbType", detail.IdLnbType);
           AddAttribute(nodeTune, "Pilot", detail.Pilot);
           AddAttribute(nodeTune, "RollOff", detail.RollOff);
           AddAttribute(nodeTune, "Url", detail.Url);
@@ -442,7 +442,7 @@ namespace SetupTv.Sections
                 bool isVCRSignal = (GetNodeAttribute(nodeChannel, "IsVCRSignal", "False") == "True");
                 int SatIndex = Int32.Parse(GetNodeAttribute(nodeTune, "SatIndex", "-1"));
                 int InnerFecRate = Int32.Parse(GetNodeAttribute(nodeTune, "InnerFecRate", "-1"));
-                int band = Int32.Parse(GetNodeAttribute(nodeTune, "Band", "0"));
+                int idLnbType = Int32.Parse(GetNodeAttribute(nodeTune, "IdLnbType", "0"));
                 int pilot = Int32.Parse(GetNodeAttribute(nodeTune, "Pilot", "-1"));
                 int rollOff = Int32.Parse(GetNodeAttribute(nodeTune, "RollOff", "-1"));
                 string url = GetNodeAttribute(nodeTune, "Url", "");
@@ -461,7 +461,7 @@ namespace SetupTv.Sections
                     analogChannel.TunerSource = (TunerInputType)tuningSource;
                     analogChannel.AudioSource = (AnalogChannel.AudioInputType)audioSource;
                     analogChannel.VideoSource = (AnalogChannel.VideoInputType)videoSource;
-                    analogChannel.IsVCRSignal = isVCRSignal;
+                    analogChannel.IsVcrSignal = isVCRSignal;
                     layer.AddTuningDetails(dbChannel, analogChannel);
                     Log.Info("TvChannels: Added tuning details for analog channel: {0} number: {1}", name, channelNumber);
                     break;
@@ -521,7 +521,7 @@ namespace SetupTv.Sections
                     dvbsChannel.SatelliteIndex = SatIndex;
                     dvbsChannel.ModulationType = (ModulationType)modulation;
                     dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)InnerFecRate;
-                    dvbsChannel.LnbType = (LnbType)band;
+                    dvbsChannel.LnbType = LnbType.Retrieve(idLnbType);
                     dvbsChannel.Pilot = (Pilot)pilot;
                     dvbsChannel.RollOff = (RollOff)rollOff;
                     dvbsChannel.LogicalChannelNumber = channelNumber;

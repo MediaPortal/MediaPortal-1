@@ -23,6 +23,7 @@ using TvLibrary.Interfaces;
 using TvLibrary.Epg;
 using TvLibrary.ChannelLinkage;
 using System;
+using TvLibrary.Interfaces.Device;
 
 namespace TvLibrary.Implementations.Hybrid
 {
@@ -92,15 +93,6 @@ namespace TvLibrary.Implementations.Hybrid
     }
 
     /// <summary>
-    /// Gets whether or not card supports pausing the graph.
-    /// </summary>
-    /// <value><c>true</c> if the card supports pausing the graph, otherwise <c>false</c></value>
-    public bool SupportsPauseGraph
-    {
-      get { return _internalCard.SupportsPauseGraph; }
-    }
-
-    /// <summary>
     /// returns true if card is currently present
     /// </summary>
     public bool CardPresent
@@ -110,18 +102,28 @@ namespace TvLibrary.Implementations.Hybrid
     }
 
     /// <summary>
-    /// Does the card have a CA module.
+    /// Does the device support conditional access?
     /// </summary>
-    /// <value><c>true</c> if the card supports conditional access, otherwise <c>false</c></value>
-    public bool HasCA
+    /// <value><c>true</c> if the device supports conditional access, otherwise <c>false</c></value>
+    public bool IsConditionalAccessSupported
     {
-      get { return _internalCard.HasCA; }
+      get { return _internalCard.IsConditionalAccessSupported; }
     }
 
     /// <summary>
-    /// Gets the number of channels the card is currently decrypting.
+    /// Get the device's conditional access menu interaction interface. This interface is only applicable if
+    /// conditional access is supported.
     /// </summary>
-    /// <value>The number of channels decrypting.</value>
+    /// <value><c>null</c> if the device does not support conditional access</value>
+    public ICiMenuActions CaMenuInterface
+    {
+      get { return _internalCard.CaMenuInterface; }
+    }
+
+    /// <summary>
+    /// Get a count of the number of services that the device is currently decrypting.
+    /// </summary>
+    /// <value>The number of services currently being decrypted.</value>
     public int NumberOfChannelsDecrypting
     {
       get { return _internalCard.NumberOfChannelsDecrypting; }
@@ -180,33 +182,22 @@ namespace TvLibrary.Implementations.Hybrid
 
 
     /// <summary>
-    /// Method to check if card can tune to the channel specified
+    /// Check if the tuner can tune to a specific channel.
     /// </summary>
-    /// <param name="channel"></param>
-    /// <returns>
-    /// true if card can tune to the channel otherwise false
-    /// </returns>
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public bool CanTune(IChannel channel)
     {
       return _internalCard.CanTune(channel);
     }
 
     /// <summary>
-    /// Stops the current graph
+    /// Stops the device.
     /// </summary>
-    public void StopGraph()
+    public void Stop()
     {
-      _group.StopGraph();
+      _group.Stop();
     }
-
-    /// <summary>
-    /// Pauses the current graph
-    /// </summary>
-    public void PauseGraph()
-    {
-      _group.PauseGraph();
-    }
-
 
     /// <summary>
     /// returns true if card is currently grabbing the epg
@@ -269,9 +260,9 @@ namespace TvLibrary.Implementations.Hybrid
     /// Gets the interface for controlling the diseqc motor
     /// </summary>
     /// <value>Theinterface for controlling the diseqc motor.</value>
-    public IDiSEqCMotor DiSEqCMotor
+    public IDiseqcController DiseqcController
     {
-      get { return _internalCard.DiSEqCMotor; }
+      get { return _internalCard.DiseqcController; }
     }
 
     /// <summary>

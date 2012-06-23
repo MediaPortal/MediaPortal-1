@@ -159,10 +159,11 @@ namespace TvEngine
 
     #region variables
 
-    // We use this list to keep track of whether the WinTV-CI is already in use.
-    private static List<String> _devicesInUse = new List<string>();
+    // We use this hash to keep track of whether the WinTV-CI is already in use.
+    private static HashSet<String> _devicesInUse = new HashSet<string>();
 
     private bool _isWinTvCi = false;
+    private bool _isCaInterfaceOpen = false;
     #pragma warning disable 0414
     private bool _isCamPresent = false;
     #pragma warning restore 0414
@@ -180,7 +181,6 @@ namespace TvEngine
     private OnWinTvCiCloseMmi _closeMmiCallback;
 
     private ICiMenuCallbacks _ciMenuCallbacks;
-    private DvbMmiHandler _mmiHandler;
 
     #endregion
 
@@ -251,7 +251,7 @@ namespace TvEngine
       //DVB_MMI.DumpBinary(apdu, 0, apduLength);
       byte[] apduBytes = new byte[apduLength];
       Marshal.Copy(apdu, apduBytes, 0, apduLength);
-      _mmiHandler.HandleMMI(apduBytes);
+      DvbMmiHandler.HandleMmiData(apduBytes, ref _ciMenuCallbacks);
       return 0;
     }
 
@@ -287,7 +287,7 @@ namespace TvEngine
 
     /// <summary>
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed.
+    /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -338,22 +338,16 @@ namespace TvEngine
     /// Insert and connect the device's additional filter(s) into the BDA graph.
     /// [network provider]->[tuner]->[capture]->[...device filter(s)]->[infinite tee]->[MPEG 2 demultiplexer]->[transport information filter]->[transport stream writer]
     /// </summary>
-    /// <param name="graphBuilder">The graph builder to use to insert the device filter(s).</param>
     /// <param name="lastFilter">The source filter (usually either a tuner or capture/receiver filter) to
     ///   connect the [first] device filter to.</param>
     /// <returns><c>true</c> if the device was successfully added to the graph, otherwise <c>false</c></returns>
-    public bool AddToGraph(ICaptureGraphBuilder2 graphBuilder, ref IBaseFilter lastFilter)
+    public bool AddToGraph(ref IBaseFilter lastFilter)
     {
       Log.Debug("WinTV-CI: add to graph");
 
       if (!_isWinTvCi)
       {
         Log.Debug("WinTV-CI: device not initialised or interface not supported");
-        return false;
-      }
-      if (graphBuilder == null)
-      {
-        Log.Debug("WinTV-CI: graph builder is null");
         return false;
       }
       if (lastFilter == null)
@@ -367,85 +361,90 @@ namespace TvEngine
         return true;
       }
 
-      // Check if the WinTV-CI is actually installed in this system.
-      DsDevice[] captureDevices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture);
-      foreach (DsDevice captureDevice in captureDevices)
+      lock (_devicesInUse)
       {
-        if (captureDevice.Name != null && captureDevice.Name.ToLowerInvariant().Equals("wintvciusbbda source"))
+        // Check if the WinTV-CI is actually installed in this system.
+        DsDevice[] captureDevices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture);
+        foreach (DsDevice captureDevice in captureDevices)
         {
-          lock (_devicesInUse)
+          if (captureDevice.Name != null && captureDevice.Name.ToLowerInvariant().Equals("wintvciusbbda source"))
           {
-            List<String>.Enumerator en = _devicesInUse.GetEnumerator();
-            while (en.MoveNext())
+            if (_devicesInUse.Contains(captureDevice.DevicePath))
             {
-              if (en.Current.Equals(captureDevice.DevicePath))
-              {
-                Log.Debug("WinTV-CI: the WinTV-CI is already in use");
-                return false;
-              }
+              Log.Debug("WinTV-CI: the WinTV-CI is already in use");
+              return false;
             }
-            _devicesInUse.Add(captureDevice.DevicePath);
+            Log.Debug("WinTV-CI: found WinTV-CI device");
+            _winTvCiDevice = captureDevice;
+            break;
           }
-          Log.Debug("WinTV-CI: found WinTV-CI device");
-          _winTvCiDevice = captureDevice;
-          break;
         }
-      }
-      if (_winTvCiDevice == null)
-      {
-        Log.Info("WinTV-CI: WinTV-CI device not found");
-        return false;
-      }
-
-      // We found the device. Now we need a reference to the graph builder's graph.
-      bool success = false;
-      try
-      {
-        IGraphBuilder tmpGraph = null;
-        int hr = graphBuilder.GetFiltergraph(out tmpGraph);
-        if (hr != 0)
+        if (_winTvCiDevice == null)
         {
-          Log.Debug("WinTV-CI: failed to get graph reference, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          return false;
-        }
-        _graph = tmpGraph as IFilterGraph2;
-        if (_graph == null)
-        {
-          Log.Debug("WinTV-CI: failed to get graph reference");
+          Log.Info("WinTV-CI: WinTV-CI device not found");
           return false;
         }
 
-        // Add the WinTV-CI filter to the graph.
-        hr = _graph.AddSourceFilterForMoniker(_winTvCiDevice.Mon, null, _winTvCiDevice.Name, out _winTvCiFilter);
-        if (hr != 0)
+        bool success = false;
+        try
         {
-          Log.Debug("WinTV-CI: failed to add filter to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          return false;
-        }
-
-        // Connect the filter into the graph.
-        hr = graphBuilder.RenderStream(null, null, lastFilter, null, _winTvCiFilter);
-        if (hr != 0)
-        {
-          Log.Debug("WinTV-CI: failed to render stream through filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          return false;
-        }
-
-        success = true;
-      }
-      finally
-      {
-        if (!success)
-        {
-          if (_winTvCiFilter != null)
+          // We found the device. Now we need a reference to the graph.
+          FilterInfo filterInfo;
+          int hr = lastFilter.QueryFilterInfo(out filterInfo);
+          if (hr != 0)
           {
-            _graph.RemoveFilter(_winTvCiFilter);
-            DsUtils.ReleaseComObject(_winTvCiFilter);
-            _winTvCiFilter = null;
+            Log.Debug("WinTV-CI: failed to get filter info, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            return false;
           }
-          lock (_devicesInUse)
+          _graph = filterInfo.pGraph as IFilterGraph2;
+          if (_graph == null)
           {
-            _devicesInUse.Remove(_winTvCiDevice.DevicePath);
+            Log.Debug("WinTV-CI: failed to get graph reference");
+            return false;
+          }
+
+          // Add the WinTV-CI filter to the graph.
+          hr = _graph.AddSourceFilterForMoniker(_winTvCiDevice.Mon, null, _winTvCiDevice.Name, out _winTvCiFilter);
+          if (hr != 0)
+          {
+            Log.Debug("WinTV-CI: failed to add the filter to the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            return false;
+          }
+
+          // Connect the filter into the graph.
+          IPin tmpOutputPin = DsFindPin.ByDirection(lastFilter, PinDirection.Output, 0);
+          IPin tmpInputPin = DsFindPin.ByDirection(_winTvCiFilter, PinDirection.Input, 0);
+          if (tmpInputPin == null || tmpOutputPin == null)
+          {
+            Log.Debug("WinTV-CI: failed to locate required pins");
+            return false;
+          }
+          hr = _graph.Connect(tmpOutputPin, tmpInputPin);
+          DsUtils.ReleaseComObject(tmpOutputPin);
+          tmpOutputPin = null;
+          DsUtils.ReleaseComObject(tmpInputPin);
+          tmpInputPin = null;
+          if (hr != 0)
+          {
+            Log.Debug("WinTV-CI: failed to connect the WinTV-CI filter into the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            return false;
+          }
+
+          success = true;
+          _devicesInUse.Add(_winTvCiDevice.DevicePath);
+        }
+        finally
+        {
+          if (!success)
+          {
+            // We're not too worried about cleanup here as Dispose() will be called shortly. We just want to make
+            // sure that we don't leave the WinTV-CI filter in the graph if it can't be used.
+            if (_winTvCiFilter != null)
+            {
+              _graph.RemoveFilter(_winTvCiFilter);
+              DsUtils.ReleaseComObject(_winTvCiFilter);
+              _winTvCiFilter = null;
+            }
             _winTvCiDevice = null;
           }
         }
@@ -555,16 +554,14 @@ namespace TvEngine
         Log.Debug("WinTV-CI: device filter not added to the BDA filter graph");
         return false;
       }
-      if (_mmiHandler != null)
+      if (_isCaInterfaceOpen)
       {
         Log.Debug("WinTV-CI: interface is already open");
         return false;
       }
 
-      // This handler will deal with MMI messages from the CAM.
-      _mmiHandler = new DvbMmiHandler("WinTV-CI");
-
       // Set up callbacks and open the interface.
+      _isCaInterfaceOpen = true;
       _ciStateCallback = new OnWinTvCiState(OnCiState);
       _camInfoCallback = new OnWinTvCiCamInfo(OnCamInfo);
       _apduCallback = new OnWinTvCiApdu(OnApdu);
@@ -588,7 +585,7 @@ namespace TvEngine
     {
       Log.Debug("WinTV-CI: close conditional access interface");
 
-      if (_winTvCiFilter != null && _mmiHandler != null)
+      if (_winTvCiFilter != null && _isCaInterfaceOpen)
       {
         int hr = WinTVCI_Shutdown(_winTvCiFilter);
         if (hr != 0)
@@ -597,8 +594,8 @@ namespace TvEngine
           return false;
         }
       }
+      _isCaInterfaceOpen = false;
       _isCamReady = false;
-      _mmiHandler = null;
       _ciStateCallback = null;
       _camInfoCallback = null;
       _apduCallback = null;
@@ -658,6 +655,11 @@ namespace TvEngine
         Log.Debug("WinTV-CI: device filter not added to the BDA filter graph");
         return false;
       }
+      if (!_isCaInterfaceOpen)
+      {
+        Log.Debug("WinTV-CI: CA interface is not open");
+        return false;
+      }
       if (command == CaPmtCommand.OkMmi || command == CaPmtCommand.Query)
       {
         Log.Debug("WinTV-CI: command type {0} is not supported", command);
@@ -707,7 +709,6 @@ namespace TvEngine
       if (ciMenuHandler != null)
       {
         _ciMenuCallbacks = ciMenuHandler;
-        _mmiHandler.SetCiMenuHandler(ref _ciMenuCallbacks);
         return true;
       }
       return false;
@@ -772,7 +773,7 @@ namespace TvEngine
         return false;
       }
 
-      byte[] apdu = DVB_MMI.CreateMMIClose();
+      byte[] apdu = DvbMmiHandler.CreateMmiClose(0);
       int hr = WinTVCI_SendAPDU(_winTvCiFilter, apdu, apdu.Length);
       if (hr == 0)
       {
@@ -809,7 +810,7 @@ namespace TvEngine
         return false;
       }
 
-      byte[] apdu = DVB_MMI.CreateMMISelect(choice);
+      byte[] apdu = DvbMmiHandler.CreateMmiMenuAnswer(choice);
       int hr = WinTVCI_SendAPDU(_winTvCiFilter, apdu, apdu.Length);
       if (hr == 0)
       {
@@ -856,7 +857,7 @@ namespace TvEngine
       {
         responseType = MmiResponseType.Cancel;
       }
-      byte[] apdu = DVB_MMI.CreateMMIAnswer(responseType, answer);
+      byte[] apdu = DvbMmiHandler.CreateMmiEnquiryAnswer(responseType, answer);
       int hr = WinTVCI_SendAPDU(_winTvCiFilter, apdu, apdu.Length);
       if (hr == 0)
       {
@@ -880,7 +881,10 @@ namespace TvEngine
       CloseInterface();
       if (_winTvCiFilter != null)
       {
-        _graph.RemoveFilter(_winTvCiFilter);
+        if (_graph != null)
+        {
+          _graph.RemoveFilter(_winTvCiFilter);
+        }
         DsUtils.ReleaseComObject(_winTvCiFilter);
         _winTvCiFilter = null;
       }

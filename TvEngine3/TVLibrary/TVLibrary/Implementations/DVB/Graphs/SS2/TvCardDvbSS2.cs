@@ -34,20 +34,22 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles the SkyStar 2 DVB-S card
   /// </summary>
-  public class TvCardDvbSS2 : TvCardDvbBase, IDisposable, ITVCard, IDiseqcController
+  public class TvCardDvbSS2 : TvCardDvbBase, ICustomDevice, IPidFilterController, IDiseqcDevice
   {
     #region enums
 
-    /*private enum SkyStarError
+    private enum SkyStarError
     {
+      NotLockedOnSignal = -1878982377,    // [0x90010115]
+
       // For AddPIDsToPin() or AddPIDs()...
       AlreadyExists = 0x10011000,         // PID already registered.
-      PidError = (int)0x90011001,
-      AlreadyFull,                        // Max PID count exceeded.
+      PidError = -1878978558,             // [0x90011001]
+      AlreadyFull = -1878978557,          // Max PID count exceeded. [0x90011002]
 
       // General...
-      CreateInterface = (int)0x90020001,  // Not all interfaces could be created correctly.
-      UnsupportedDevice,                  // The given device is not B2C2-compatible (Linux).
+      CreateInterface = -1878917118,      // Not all interfaces could be created correctly. [0x90020001]
+      UnsupportedDevice = -1878917117,    // The given device is not B2C2-compatible (Linux). [0x90020002]
       NotInitialised,                     // Initialize() needs to be called.
 
       // (B2C2MPEG2AdapterWin.cpp code...)
@@ -65,10 +67,10 @@ namespace TvLibrary.Implementations.DVB
       DeletePidFixedKey,
       PurgeFixedKey,
 
-      DiseqcInProgress,
+      DiseqcInProgress = 1878917105,      // [0x9002000f]
       Diseqc12NotSupported,
       NoDeviceAvailable
-    }*/
+    }
 
     private enum SkyStarTunerType
     {
@@ -183,9 +185,9 @@ namespace TvLibrary.Implementations.DVB
 
     private enum SkyStarTableId
     {
-      Dvb = 0x3E,
-      Atsc = 0x3F,
-      Auto = 0xFF
+      Dvb = 0x3e,
+      Atsc = 0x3f,
+      Auto = 0xff
     }
 
     private enum SkyStarKeyType
@@ -241,65 +243,13 @@ namespace TvLibrary.Implementations.DVB
     #region tuner control
 
     [ComVisible(true), ComImport,
-      Guid("d875d4a9-0749-4fe8-adb9-cc13f9b3dd45"),
+      Guid("61a9051f-04c4-435e-8742-9edd2c543ce9"),
       InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    private interface IB2C2MPEG2TunerCtrl
+    private interface IB2C2MPEG2TunerCtrl4
     {
-      /// <summary>
-      /// Initialise the tuner control interface.
-      /// </summary>
-      /// <returns>an HRESULT indicating whether the interface was successfully initialised</returns>
-      [PreserveSig]
-      Int32 Initialize();
+      #region IB2C2MPEG2TunerCtrl
 
-      /// <summary>
-      /// Get the tuner capabilities.
-      /// </summary>
-      /// <param name="capabilities">A pointer to a tuner capabilities structure.</param>
-      /// <param name="size">The size of the capabilities structure.</param>
-      /// <returns>an HRESULT indicating whether the capabilities were successfully retrieved</returns>
-      [PreserveSig]
-      Int32 GetTunerCapabilities(IntPtr capabilities, [Out] out Int32 size);
-
-      /// <summary>
-      /// Check the lock status of the tuner.
-      /// </summary>
-      /// <returns>an HRESULT indicating whether the tuner is locked or not</returns>
-      [PreserveSig]
-      Int32 CheckLock();
-
-      /// <summary>
-      /// Apply previously set tuning parameter values.
-      /// </summary>
-      /// <returns>an HRESULT indicating whether the tuner is locked on signal</returns>
-      [PreserveSig]
-      Int32 SetTunerStatus();
-
-      #region get/set tuning parameters
-
-      /// <summary>
-      /// Get the tuned channel number. Only applicable for ATSC tuners.
-      /// </summary>
-      /// <param name="channel">The channel number.</param>
-      /// <returns>an HRESULT indicating whether the channel number was successfully retrieved</returns>
-      [PreserveSig]
-      Int32 GetChannel([Out] out Int32 channel);
-
-      /// <summary>
-      /// Set the tuner channel number. Only applicable for ATSC tuners.
-      /// </summary>
-      /// <param name="channel">The channel number.</param>
-      /// <returns>an HRESULT indicating whether the channel number was successfully set</returns>
-      [PreserveSig]
-      Int32 SetChannel(Int32 channel);
-
-      /// <summary>
-      /// Get the tuned multiplex frequency. Only applicable for ATSC tuners.
-      /// </summary>
-      /// <param name="frequency">The multiplex frequency in MHz.</param>
-      /// <returns>an HRESULT indicating whether the multiplex frequency was successfully retrieved</returns>
-      [PreserveSig]
-      Int32 GetFrequency([Out] out Int32 frequency);
+      #region setters
 
       /// <summary>
       /// Set the multiplex frequency.
@@ -310,30 +260,6 @@ namespace TvLibrary.Implementations.DVB
       Int32 SetFrequency(Int32 frequency);
 
       /// <summary>
-      /// Get the modulation scheme for the tuned multiplex. Only applicable for ATSC tuners.
-      /// </summary>
-      /// <param name="modulation">The multiplex modulation scheme.</param>
-      /// <returns>an HRESULT indicating whether the multiplex modulation scheme was successfully retrieved</returns>
-      [PreserveSig]
-      Int32 GetModulation([Out] out SkyStarModulation modulation);
-
-      /// <summary>
-      /// Set the multiplex modulation scheme. Only applicable for DVB-C tuners.
-      /// </summary>
-      /// <param name="modulation">The modulation scheme.</param>
-      /// <returns>an HRESULT indicating whether the modulation scheme was successfully set</returns>
-      [PreserveSig]
-      Int32 SetModulation(SkyStarModulation modulation);
-
-      /// <summary>
-      /// Get the tuned multiplex symbol rate in ks/s. Only applicable for ATSC tuners.
-      /// </summary>
-      /// <param name="symbolRate">The multiplex symbol rate in ks/s.</param>
-      /// <returns>an HRESULT indicating whether the multiplex symbol rate was successfully retrieved</returns>
-      [PreserveSig]
-      Int32 GetSymbolRate([Out] out Int32 symbolRate);
-
-      /// <summary>
       /// Set the multiplex symbol rate. Only applicable for DVB-S and DVB-C tuners.
       /// </summary>
       /// <param name="symbolRate">The symbol rate in ks/s.</param>
@@ -342,12 +268,12 @@ namespace TvLibrary.Implementations.DVB
       Int32 SetSymbolRate(Int32 symbolRate);
 
       /// <summary>
-      /// Set the multiplex polarisation. Only applicable for DVB-S tuners.
+      /// Set the LNB local oscillator frequency. Only applicable for DVB-S tuners.
       /// </summary>
-      /// <param name="polarisation">The polarisation.</param>
-      /// <returns>an HRESULT indicating whether the polarisation was successfully set</returns>
+      /// <param name="lnbFrequency">The local oscillator frequency in MHz.</param>
+      /// <returns>an HRESULT indicating whether the local oscillator frequency was successfully set</returns>
       [PreserveSig]
-      Int32 SetPolarity(SkyStarPolarisation polarisation);
+      Int32 SetLnbFrequency(Int32 lnbFrequency);
 
       /// <summary>
       /// Set the multiplex FEC rate. Only applicable for DVB-S tuners.
@@ -358,12 +284,12 @@ namespace TvLibrary.Implementations.DVB
       Int32 SetFec(SkyStarFecRate fecRate);
 
       /// <summary>
-      /// Set the LNB local oscillator frequency. Only applicable for DVB-S tuners.
+      /// Set the multiplex polarisation. Only applicable for DVB-S tuners.
       /// </summary>
-      /// <param name="lnbFrequency">The local oscillator frequency in MHz.</param>
-      /// <returns>an HRESULT indicating whether the local oscillator frequency was successfully set</returns>
+      /// <param name="polarisation">The polarisation.</param>
+      /// <returns>an HRESULT indicating whether the polarisation was successfully set</returns>
       [PreserveSig]
-      Int32 SetLnbFrequency(Int32 lnbFrequency);
+      Int32 SetPolarity(SkyStarPolarisation polarisation);
 
       /// <summary>
       /// Set the satellite/LNB/band selection tone state. Only applicable for DVB-S tuners.
@@ -381,25 +307,75 @@ namespace TvLibrary.Implementations.DVB
       [PreserveSig]
       Int32 SetDiseqc(SkyStarDiseqcPort diseqcPort);
 
+      /// <summary>
+      /// Set the multiplex modulation scheme. Only applicable for DVB-C tuners.
+      /// </summary>
+      /// <param name="modulation">The modulation scheme.</param>
+      /// <returns>an HRESULT indicating whether the modulation scheme was successfully set</returns>
+      [PreserveSig]
+      Int32 SetModulation(SkyStarModulation modulation);
+
+      #endregion
+
+      /// <summary>
+      /// Initialise the tuner control interface.
+      /// </summary>
+      /// <returns>an HRESULT indicating whether the interface was successfully initialised</returns>
+      [PreserveSig]
+      Int32 Initialize();
+
+      /// <summary>
+      /// Apply previously set tuning parameter values.
+      /// </summary>
+      /// <returns>an HRESULT indicating whether the tuner is locked on signal</returns>
+      [PreserveSig]
+      Int32 SetTunerStatus();
+
+      /// <summary>
+      /// Check the lock status of the tuner.
+      /// </summary>
+      /// <returns>an HRESULT indicating whether the tuner is locked or not</returns>
+      [PreserveSig]
+      Int32 CheckLock();
+
+      /// <summary>
+      /// Get the tuner capabilities.
+      /// </summary>
+      /// <param name="capabilities">A pointer to a tuner capabilities structure.</param>
+      /// <param name="size">The size of the capabilities structure.</param>
+      /// <returns>an HRESULT indicating whether the capabilities were successfully retrieved</returns>
+      [PreserveSig]
+      Int32 GetTunerCapabilities(IntPtr capabilities, [In, Out] ref Int32 size);
+
+      #region getters
+
+      /// <summary>
+      /// Get the tuned multiplex frequency. Only applicable for ATSC tuners.
+      /// </summary>
+      /// <param name="frequency">The multiplex frequency in MHz.</param>
+      /// <returns>an HRESULT indicating whether the multiplex frequency was successfully retrieved</returns>
+      [PreserveSig]
+      Int32 GetFrequency([Out] out Int32 frequency);
+
+      /// <summary>
+      /// Get the tuned multiplex symbol rate in ks/s. Only applicable for ATSC tuners.
+      /// </summary>
+      /// <param name="symbolRate">The multiplex symbol rate in ks/s.</param>
+      /// <returns>an HRESULT indicating whether the multiplex symbol rate was successfully retrieved</returns>
+      [PreserveSig]
+      Int32 GetSymbolRate([Out] out Int32 symbolRate);
+
+      /// <summary>
+      /// Get the modulation scheme for the tuned multiplex. Only applicable for ATSC tuners.
+      /// </summary>
+      /// <param name="modulation">The multiplex modulation scheme.</param>
+      /// <returns>an HRESULT indicating whether the multiplex modulation scheme was successfully retrieved</returns>
+      [PreserveSig]
+      Int32 GetModulation([Out] out SkyStarModulation modulation);
+
       #endregion
 
       #region signal strength/quality metrics
-
-      /// <summary>
-      /// Obsolete. Use GetSignalStrength() or GetSignalQuality() instead.
-      /// </summary>
-      /// <param name="signalLevel">The signal level in dBm.</param>
-      /// <returns>an HRESULT indicating whether the signal level was successfully retrieved</returns>
-      [PreserveSig]
-      Int32 GetSignalLevel([Out] out float signalLevel);
-
-      /// <summary>
-      /// Get the tuner/demodulator signal quality statistic.
-      /// </summary>
-      /// <param name="signalQuality">The signal quality as a percentage.</param>
-      /// <returns>an HRESULT indicating whether the signal quality was successfully retrieved</returns>
-      [PreserveSig]
-      Int32 GetSignalQuality([Out] out Int32 signalQuality);
 
       /// <summary>
       /// Get the tuner/demodulator signal strength statistic.
@@ -408,6 +384,14 @@ namespace TvLibrary.Implementations.DVB
       /// <returns>an HRESULT indicating whether the signal strength was successfully retrieved</returns>
       [PreserveSig]
       Int32 GetSignalStrength([Out] out Int32 signalStrength);
+
+      /// <summary>
+      /// Obsolete. Use GetSignalStrength() or GetSignalQuality() instead.
+      /// </summary>
+      /// <param name="signalLevel">The signal level in dBm.</param>
+      /// <returns>an HRESULT indicating whether the signal level was successfully retrieved</returns>
+      [PreserveSig]
+      Int32 GetSignalLevel([Out] out float signalLevel);
 
       /// <summary>
       /// Get the tuner/demodulator signal to noise ratio (SNR) statistic. Only applicable for ATSC tuners.
@@ -427,14 +411,6 @@ namespace TvLibrary.Implementations.DVB
       Int32 GetPreErrorCorrectionBER([Out] out float ber, bool wait);
 
       /// <summary>
-      /// Get the total block count since the last call to this function. Only applicable for ATSC tuners.
-      /// </summary>
-      /// <param name="blockCount">The block count.</param>
-      /// <returns>an HRESULT indicating whether the block count was successfully retrieved</returns>
-      [PreserveSig]
-      Int32 GetTotalBlocks([Out] out Int32 blockCount);
-
-      /// <summary>
       /// Get the uncorrected block count since the last call to this function. Only applicable for ATSC tuners.
       /// </summary>
       /// <param name="blockCount">The block count.</param>
@@ -442,14 +418,36 @@ namespace TvLibrary.Implementations.DVB
       [PreserveSig]
       Int32 GetUncorrectedBlocks([Out] out Int32 blockCount);
 
-      #endregion
-    }
+      /// <summary>
+      /// Get the total block count since the last call to this function. Only applicable for ATSC tuners.
+      /// </summary>
+      /// <param name="blockCount">The block count.</param>
+      /// <returns>an HRESULT indicating whether the block count was successfully retrieved</returns>
+      [PreserveSig]
+      Int32 GetTotalBlocks([Out] out Int32 blockCount);
 
-    [ComVisible(true), ComImport,
-      Guid("cd900832-50df-4f8f-882d-1c358f90b3f2"),
-      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    private interface IB2C2MPEG2TunerCtrl2 : IB2C2MPEG2TunerCtrl
-    {
+      #endregion
+
+      /// <summary>
+      /// Get the tuned channel number. Only applicable for ATSC tuners.
+      /// </summary>
+      /// <param name="channel">The channel number.</param>
+      /// <returns>an HRESULT indicating whether the channel number was successfully retrieved</returns>
+      [PreserveSig]
+      Int32 GetChannel([Out] out Int32 channel);
+
+      /// <summary>
+      /// Set the tuner channel number. Only applicable for ATSC tuners.
+      /// </summary>
+      /// <param name="channel">The channel number.</param>
+      /// <returns>an HRESULT indicating whether the channel number was successfully set</returns>
+      [PreserveSig]
+      Int32 SetChannel(Int32 channel);
+
+      #endregion
+
+      #region IB2C2MPEG2TunerCtrl2
+
       /// <summary>
       /// Apply previously set tuning parameter values.
       /// </summary>
@@ -470,14 +468,6 @@ namespace TvLibrary.Implementations.DVB
       Int32 SetFrequencyKHz(Int32 frequency);
 
       /// <summary>
-      /// Get the multiplex guard interval. Only applicable for DVB-T tuners.
-      /// </summary>
-      /// <param name="interval">The guard interval.</param>
-      /// <returns>an HRESULT indicating whether the guard interval was successfully retrieved</returns>
-      [PreserveSig]
-      Int32 GetGuardInterval([Out] out SkyStarGuardInterval interval);
-
-      /// <summary>
       /// Set the multiplex guard interval. Only applicable for DVB-T tuners.
       /// </summary>
       /// <param name="interval">The guard interval.</param>
@@ -486,12 +476,12 @@ namespace TvLibrary.Implementations.DVB
       Int32 SetGuardInterval(SkyStarGuardInterval interval);
 
       /// <summary>
-      /// Get the multiplex polarisation. Only applicable for DVB-S tuners.
+      /// Get the multiplex guard interval. Only applicable for DVB-T tuners.
       /// </summary>
-      /// <param name="polarisation">The polarisation.</param>
-      /// <returns>an HRESULT indicating whether the polarisation was successfully retrieved</returns>
+      /// <param name="interval">The guard interval.</param>
+      /// <returns>an HRESULT indicating whether the guard interval was successfully retrieved</returns>
       [PreserveSig]
-      Int32 GetPolarity([Out] out SkyStarPolarisation polarisation);
+      Int32 GetGuardInterval([Out] out SkyStarGuardInterval interval);
 
       /// <summary>
       /// Get the multiplex FEC rate. Only applicable for DVB-S tuners.
@@ -502,12 +492,20 @@ namespace TvLibrary.Implementations.DVB
       Int32 GetFec([Out] out SkyStarFecRate fecRate);
 
       /// <summary>
-      /// Get the LNB local oscillator frequency. Only applicable for DVB-S tuners.
+      /// Get the multiplex polarisation. Only applicable for DVB-S tuners.
       /// </summary>
-      /// <param name="lnbFrequency">The local oscillator frequency in MHz.</param>
-      /// <returns>an HRESULT indicating whether the local oscillator frequency was successfully retrieved</returns>
+      /// <param name="polarisation">The polarisation.</param>
+      /// <returns>an HRESULT indicating whether the polarisation was successfully retrieved</returns>
       [PreserveSig]
-      Int32 GetLnbFrequency([Out] out Int32 lnbFrequency);
+      Int32 GetPolarity([Out] out SkyStarPolarisation polarisation);
+
+      /// <summary>
+      /// Get the currenly selected satellite. Only applicable for DVB-S tuners.
+      /// </summary>
+      /// <param name="diseqcPort">The DiSEqC switch port associated with the satellite.</param>
+      /// <returns>an HRESULT indicating whether the setting was successfully retrieved</returns>
+      [PreserveSig]
+      Int32 GetDiseqc([Out] out SkyStarDiseqcPort diseqcPort);
 
       /// <summary>
       /// Get the satellite/LNB/band selection tone state. Only applicable for DVB-S tuners.
@@ -518,12 +516,12 @@ namespace TvLibrary.Implementations.DVB
       Int32 GetLnbKHz([Out] out SkyStarTone toneState);
 
       /// <summary>
-      /// Get the currenly selected satellite. Only applicable for DVB-S tuners.
+      /// Get the LNB local oscillator frequency. Only applicable for DVB-S tuners.
       /// </summary>
-      /// <param name="diseqcPort">The DiSEqC switch port associated with the satellite.</param>
-      /// <returns>an HRESULT indicating whether the setting was successfully retrieved</returns>
+      /// <param name="lnbFrequency">The local oscillator frequency in MHz.</param>
+      /// <returns>an HRESULT indicating whether the local oscillator frequency was successfully retrieved</returns>
       [PreserveSig]
-      Int32 GetDiseqc([Out] out SkyStarDiseqcPort diseqcPort);
+      Int32 GetLnbFrequency([Out] out Int32 lnbFrequency);
 
       #endregion
 
@@ -534,20 +532,18 @@ namespace TvLibrary.Implementations.DVB
       /// <returns>an HRESULT indicating whether the block count was successfully retrieved</returns>
       [PreserveSig]
       Int32 GetCorrectedBlocks([Out] out Int32 blockCount);
-    }
 
-    [ComVisible(true), ComImport,
-      Guid("4b39eb78-d3cd-4223-b682-46ae66968118"),
-      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    private interface IB2C2MPEG2TunerCtrl3 : IB2C2MPEG2TunerCtrl2
-    {
       /// <summary>
-      /// Get the multiplex bandwidth. Only applicable for DVB-T tuners.
+      /// Get the tuner/demodulator signal quality statistic.
       /// </summary>
-      /// <param name="bandwidth">The bandwidth in MHz, expected to be 6, 7 or 8.</param>
-      /// <returns>an HRESULT indicating whether the bandwidth was successfully retrieved</returns>
+      /// <param name="signalQuality">The signal quality as a percentage.</param>
+      /// <returns>an HRESULT indicating whether the signal quality was successfully retrieved</returns>
       [PreserveSig]
-      Int32 GetBandwidth([Out] out Int32 bandwidth);
+      Int32 GetSignalQuality([Out] out Int32 signalQuality);
+
+      #endregion
+
+      #region IB2C2MPEG2TunerCtrl3
 
       /// <summary>
       /// Set the multiplex bandwidth. Only applicable for DVB-T tuners.
@@ -556,13 +552,19 @@ namespace TvLibrary.Implementations.DVB
       /// <returns>an HRESULT indicating whether the bandwidth was successfully set</returns>
       [PreserveSig]
       Int32 SetBandwidth(Int32 bandwidth);
-    }
 
-    [ComVisible(true), ComImport,
-      Guid("61a9051f-04c4-435e-8742-9edd2c543ce9"),
-      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    private interface IB2C2MPEG2TunerCtrl4 : IB2C2MPEG2TunerCtrl3
-    {
+      /// <summary>
+      /// Get the multiplex bandwidth. Only applicable for DVB-T tuners.
+      /// </summary>
+      /// <param name="bandwidth">The bandwidth in MHz, expected to be 6, 7 or 8.</param>
+      /// <returns>an HRESULT indicating whether the bandwidth was successfully retrieved</returns>
+      [PreserveSig]
+      Int32 GetBandwidth([Out] out Int32 bandwidth);
+
+      #endregion
+
+      #region IB2C2MPEG2TunerCtrl4
+
       /// <summary>
       /// Send a raw DiSEqC command.
       /// </summary>
@@ -570,6 +572,8 @@ namespace TvLibrary.Implementations.DVB
       /// <param name="command">The command.</param>
       /// <returns>an HRESULT indicating whether the command was successfully sent</returns>
       Int32 SendDiSEqCCommand(Int32 length, IntPtr command);
+
+      #endregion
     }
 
     #endregion
@@ -577,41 +581,51 @@ namespace TvLibrary.Implementations.DVB
     #region data control
 
     [ComVisible(true), ComImport,
-      Guid("7f35c560-08b9-11d5-a469-00d0d7b2c2d7"),
+      Guid("a12a4531-72d2-40fc-b17d-8f9b0004444f"),
       InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    private interface IB2C2MPEG2DataCtrl
+    private interface IB2C2MPEG2DataCtrl6
     {
-      #region all PIDs
+      #region IB2C2MPEG2DataCtrl
+
+      #region transport stream PIDs
 
       /// <summary>
-      /// Get the list of PIDs of all classes that are currently registered with the interface.
-      /// </summary>
-      /// <param name="pidCount">The number of PIDs registered.</param>
-      /// <param name="pids">The registered PIDs.</param>
-      /// <returns>an HRESULT indicating whether the PIDs were successfully retrieved</returns>
-      [PreserveSig]
-      Int32 GetGlobalPIDs([Out] out Int32 pidCount,
-                [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] out Int32[] pids
-      );
-
-      /// <summary>
-      /// Get the maximum number of PIDs of any class that may be registered at any given time.
+      /// Get the maximum number of transport stream class PIDs that may be registered at any given time.
       /// </summary>
       /// <param name="maxPidCount">The maximum number of PIDs that may be registered.</param>
       /// <returns>an HRESULT indicating whether the maximum PID count was successfully retrieved</returns>
       [PreserveSig]
-      Int32 GetMaxGlobalPIDCount([Out] out Int32 maxPidCount);
+      Int32 GetMaxPIDCount([Out] out Int32 maxPidCount);
 
       /// <summary>
-      /// Deregister all PIDs currently registered with the interface.
+      /// Obsolete. Use AddPIDsToPin() or AddTsPIDs() instead.
       /// </summary>
+      /// <param name="pidCount">The number of PIDs to register.</param>
+      /// <param name="pids">The PIDs to register.</param>
+      /// <returns>an HRESULT indicating whether the PIDs were successfully registered</returns>
+      [PreserveSig]
+      Int32 AddPIDs(Int32 pidCount, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] Int32[] pids);
+
+      /// <summary>
+      /// Obsolete. Use DeletePIDsFromPin() or DeleteTsPIDs() instead.
+      /// </summary>
+      /// <param name="pidCount">The number of PIDs to deregister.</param>
+      /// <param name="pids">The PIDs to deregister.</param>
       /// <returns>an HRESULT indicating whether the PIDs were successfully deregistered</returns>
       [PreserveSig]
-      Int32 PurgeGlobalPIDs();
+      Int32 DeletePIDs(Int32 pidCount, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] Int32[] pids);
 
       #endregion
 
       #region IP PIDs
+
+      /// <summary>
+      /// Get the maximum number of IP class PIDs that may be registered at any given time.
+      /// </summary>
+      /// <param name="maxPidCount">The maximum number of PIDs that may be registered.</param>
+      /// <returns>an HRESULT indicating whether the maximum PID count was successfully retrieved</returns>
+      [PreserveSig]
+      Int32 GetMaxIpPIDCount([Out] out Int32 maxPidCount);
 
       /// <summary>
       /// Register IP class PID(s) that are of interest to the application. Packets marked with these PIDs
@@ -644,45 +658,44 @@ namespace TvLibrary.Implementations.DVB
                 [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] out Int32[] pids
       );
 
-      /// <summary>
-      /// Get the maximum number of IP class PIDs that may be registered at any given time.
-      /// </summary>
-      /// <param name="maxPidCount">The maximum number of PIDs that may be registered.</param>
-      /// <returns>an HRESULT indicating whether the maximum PID count was successfully retrieved</returns>
-      [PreserveSig]
-      Int32 GetMaxIpPIDCount([Out] out Int32 maxPidCount);
-
       #endregion
 
-      #region transport stream PIDs
+      #region all PIDs
 
       /// <summary>
-      /// Obsolete. Use AddPIDsToPin() or AddTsPIDs() instead.
+      /// Deregister all PIDs currently registered with the interface.
       /// </summary>
-      /// <param name="pidCount">The number of PIDs to register.</param>
-      /// <param name="pids">The PIDs to register.</param>
-      /// <returns>an HRESULT indicating whether the PIDs were successfully registered</returns>
-      [PreserveSig]
-      Int32 AddPIDs(Int32 pidCount, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] Int32[] pids);
-
-      /// <summary>
-      /// Obsolete. Use DeletePIDsFromPin() or DeleteTsPIDs() instead.
-      /// </summary>
-      /// <param name="pidCount">The number of PIDs to deregister.</param>
-      /// <param name="pids">The PIDs to deregister.</param>
       /// <returns>an HRESULT indicating whether the PIDs were successfully deregistered</returns>
       [PreserveSig]
-      Int32 DeletePIDs(Int32 pidCount, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] Int32[] pids);
+      Int32 PurgeGlobalPIDs();
 
       /// <summary>
-      /// Get the maximum number of transport stream class PIDs that may be registered at any given time.
+      /// Get the maximum number of PIDs of any class that may be registered at any given time.
       /// </summary>
       /// <param name="maxPidCount">The maximum number of PIDs that may be registered.</param>
       /// <returns>an HRESULT indicating whether the maximum PID count was successfully retrieved</returns>
       [PreserveSig]
-      Int32 GetMaxPIDCount([Out] out Int32 maxPidCount);
+      Int32 GetMaxGlobalPIDCount([Out] out Int32 maxPidCount);
+
+      /// <summary>
+      /// Get the list of PIDs of all classes that are currently registered with the interface.
+      /// </summary>
+      /// <param name="pidCount">The number of PIDs registered.</param>
+      /// <param name="pids">The registered PIDs.</param>
+      /// <returns>an HRESULT indicating whether the PIDs were successfully retrieved</returns>
+      [PreserveSig]
+      Int32 GetGlobalPIDs([Out] out Int32 pidCount,
+                [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] out Int32[] pids
+      );
 
       #endregion
+
+      /// <summary>
+      /// Reset the values of the statistics retrieved by GetDataReceptionStats().
+      /// </summary>
+      /// <returns>an HRESULT indicating whether the statistics were successfully reset</returns>
+      [PreserveSig]
+      Int32 ResetDataReceptionStats();
 
       /// <summary>
       /// Get the current values of statistics that can be used for monitoring signal quality. The statistics
@@ -694,19 +707,10 @@ namespace TvLibrary.Implementations.DVB
       [PreserveSig]
       Int32 GetDataReceptionStats([Out] out Int32 ipRatio, [Out] out Int32 tsRatio);
 
-      /// <summary>
-      /// Reset the values of the statistics retrieved by GetDataReceptionStats().
-      /// </summary>
-      /// <returns>an HRESULT indicating whether the statistics were successfully reset</returns>
-      [PreserveSig]
-      Int32 ResetDataReceptionStats();
-    }
+      #endregion
 
-    [ComVisible(true), ComImport,
-      Guid("b0666b7c-8c7d-4c20-bb9b-4a7fe0f313a8"),
-      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    private interface IB2C2MPEG2DataCtrl2 : IB2C2MPEG2DataCtrl
-    {
+      #region IB2C2MPEG2DataCtrl2
+
       /// <summary>
       /// Register transport stream class PID(s) that are of interest to the application. Packets marked
       /// with these PIDs will be passed on the corrresponding B2C2 filter data output pin.
@@ -732,40 +736,10 @@ namespace TvLibrary.Implementations.DVB
       [PreserveSig]
       Int32 DeletePIDsFromPin(Int32 pidCount,
                 [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] Int32[] pids, Int32 pidIndex);
-    }
-
-    [ComVisible(true), ComImport,
-      Guid("e2857b5b-84e7-48b7-b842-4ef5e175f315"),
-      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    private interface IB2C2MPEG2DataCtrl3 : IB2C2MPEG2DataCtrl2
-    {
-      #region IP PIDs
-
-      /// <summary>
-      /// Get the details of IP class PIDs that are registered with the interface.
-      /// </summary>
-      /// <param name="openPidCount">The number of registered PIDs.</param>
-      /// <param name="runningPidCount">The number of PIDs that are currently running.</param>
-      /// <param name="pidCount">As an input, the number of PIDs to retrieve; as an output, the number of
-      ///   PIDs actually retrieved.</param>
-      /// <param name="pidList">The list of registered PIDs.</param>
-      /// <returns>an HRESULT indicating whether the state information was successfully retrieved</returns>
-      [PreserveSig]
-      Int32 GetIpState([Out] out Int32 openPidCount, [Out] out Int32 runningPidCount,
-              [In, Out] ref Int32 pidCount,
-              [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] out Int32[] pidList
-      );
-
-      /// <summary>
-      /// Get the number of IP class PID bytes and packets that have been received.
-      /// </summary>
-      /// <param name="byteCount">The number of bytes received.</param>
-      /// <param name="packetCount">The number of packets received.</param>
-      /// <returns>an HRESULT indicating whether the statistics were successfully retrieved</returns>
-      [PreserveSig]
-      Int32 GetReceivedDataIp(Int64 byteCount, Int64 packetCount);
 
       #endregion
+
+      #region IB2C2MPEG2DataCtrl3
 
       #region transport stream PIDs
 
@@ -801,8 +775,36 @@ namespace TvLibrary.Implementations.DVB
       /// <returns>an HRESULT indicating whether the state information was successfully retrieved</returns>
       [PreserveSig]
       Int32 GetTsState([Out] out Int32 openPidCount, [Out] out Int32 runningPidCount,
-              [In, Out] ref Int32 pidCount, [Out] out Int32[] pidList
+              [In, Out] ref Int32 pidCount, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 3)] Int32[] pidList
       );
+
+      #endregion
+
+      #region IP PIDs
+
+      /// <summary>
+      /// Get the details of IP class PIDs that are registered with the interface.
+      /// </summary>
+      /// <param name="openPidCount">The number of registered PIDs.</param>
+      /// <param name="runningPidCount">The number of PIDs that are currently running.</param>
+      /// <param name="pidCount">As an input, the number of PIDs to retrieve; as an output, the number of
+      ///   PIDs actually retrieved.</param>
+      /// <param name="pidList">The list of registered PIDs.</param>
+      /// <returns>an HRESULT indicating whether the state information was successfully retrieved</returns>
+      [PreserveSig]
+      Int32 GetIpState([Out] out Int32 openPidCount, [Out] out Int32 runningPidCount,
+              [In, Out] ref Int32 pidCount,
+              [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] out Int32[] pidList
+      );
+
+      /// <summary>
+      /// Get the number of IP class PID bytes and packets that have been received.
+      /// </summary>
+      /// <param name="byteCount">The number of bytes received.</param>
+      /// <param name="packetCount">The number of packets received.</param>
+      /// <returns>an HRESULT indicating whether the statistics were successfully retrieved</returns>
+      [PreserveSig]
+      Int32 GetReceivedDataIp(Int64 byteCount, Int64 packetCount);
 
       #endregion
 
@@ -820,6 +822,14 @@ namespace TvLibrary.Implementations.DVB
       Int32 AddMulticastMacAddress(MacAddressList addressList);
 
       /// <summary>
+      /// Get the list of multicast MAC addresses that are registered with the interface.
+      /// </summary>
+      /// <param name="addressList">The list of addresses.</param>
+      /// <returns>an HRESULT indicating whether the address list was successfully retrieved</returns>
+      [PreserveSig]
+      Int32 GetMulticastMacAddressList([Out] out MacAddressList addressList);
+
+      /// <summary>
       /// Deregister the given multicast MAC addresses from the interface.
       /// </summary>
       /// <remarks>
@@ -830,25 +840,9 @@ namespace TvLibrary.Implementations.DVB
       [PreserveSig]
       Int32 DeleteMulticastMacAddress(MacAddressList addressList);
 
-      /// <summary>
-      /// Get the list of multicast MAC addresses that are registered with the interface.
-      /// </summary>
-      /// <param name="addressList">The list of addresses.</param>
-      /// <returns>an HRESULT indicating whether the address list was successfully retrieved</returns>
-      [PreserveSig]
-      Int32 GetMulticastMacAddressList([Out] out MacAddressList addressList);
-
       #endregion
 
       #region unicast
-
-      /// <summary>
-      /// Get the device's current unicast MAC address.
-      /// </summary>
-      /// <param name="address">The current address.</param>
-      /// <returns>an HRESULT indicating whether the address was successfully retrieved</returns>
-      [PreserveSig]
-      Int32 GetUnicastMacAddress([Out] out MacAddress address);
 
       /// <summary>
       /// Set the device's unicast MAC address.
@@ -859,6 +853,14 @@ namespace TvLibrary.Implementations.DVB
       Int32 SetUnicastMacAddress(MacAddress address);
 
       /// <summary>
+      /// Get the device's current unicast MAC address.
+      /// </summary>
+      /// <param name="address">The current address.</param>
+      /// <returns>an HRESULT indicating whether the address was successfully retrieved</returns>
+      [PreserveSig]
+      Int32 GetUnicastMacAddress([Out] out MacAddress address);
+
+      /// <summary>
       /// Restore the unicast MAC address to the default address for the device.
       /// </summary>
       /// <returns>an HRESULT indicating whether the address was successfully restored</returns>
@@ -866,20 +868,18 @@ namespace TvLibrary.Implementations.DVB
       Int32 RestoreUnicastMacAddress();
 
       #endregion
-    }
 
-    [ComVisible(true), ComImport,
-      Guid("5927db1c-b2ac-441f-89a7-c61194d15392"),
-      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    private interface IB2C2MPEG2DataCtrl4 : IB2C2MPEG2DataCtrl3
-    {
+      #endregion
+
+      #region IB2C2MPEG2DataCtrl4
+
       /// <summary>
       /// Get the device's MAC address.
       /// </summary>
       /// <param name="macAddress">The MAC address.</param>
       /// <returns>an HRESULT indicating whether the MAC address was successfully retrieved</returns>
       [PreserveSig]
-      Int32 GetHardwareMacAddress(MacAddress macAddress);
+      Int32 GetHardwareMacAddress(IntPtr macAddress);
 
       [PreserveSig]
       Int32 SetTableId(Int32 tableId);
@@ -888,6 +888,27 @@ namespace TvLibrary.Implementations.DVB
       Int32 GetTableId([Out] out Int32 tableId);
 
       #region decrypt keys
+
+      /// <summary>
+      /// Get counts of each of the types of keys that are registered with the interface.
+      /// </summary>
+      /// <param name="totalKeyCount">The total number of registered keys.</param>
+      /// <param name="pidTscKeyCount">The number of PID-specific keys registered.</param>
+      /// <param name="pidKeyCount">The number of fallback PID keys registered.</param>
+      /// <param name="globalKeyCount">The number of global keys registered.</param>
+      /// <returns>an HRESULT indicating whether the key counts were successfully retrieved</returns>
+      [PreserveSig]
+      Int32 GetKeyCount([Out] out Int32 totalKeyCount, [Out] out Int32 pidTscKeyCount, [Out] out Int32 pidKeyCount, [Out] out Int32 globalKeyCount);
+
+      /// <summary>
+      /// Get the details for the keys that are registered with and being used by the interface.
+      /// </summary>
+      /// <param name="keyCount">The number of keys in use.</param>
+      /// <param name="keyTypes">A pointer to an array listing the type of each key.</param>
+      /// <param name="pids">A pointer to an array listing the PID associated with each key.</param>
+      /// <returns>an HRESULT indicating whether the key details were successfully retrieved</returns>
+      [PreserveSig]
+      Int32 GetKeysInUse([Out] out Int32 keyCount, [Out] out IntPtr keyTypes, [Out] out IntPtr pids);
 
       /// <summary>
       /// Register a decryption key with the interface.
@@ -910,27 +931,6 @@ namespace TvLibrary.Implementations.DVB
       Int32 DeleteKey(SkyStarKeyType keyType, UInt32 pid);
 
       /// <summary>
-      /// Get the details for the keys that are registered with and being used by the interface.
-      /// </summary>
-      /// <param name="keyCount">The number of keys in use.</param>
-      /// <param name="keyTypes">A pointer to an array listing the type of each key.</param>
-      /// <param name="pids">A pointer to an array listing the PID associated with each key.</param>
-      /// <returns>an HRESULT indicating whether the key details were successfully retrieved</returns>
-      [PreserveSig]
-      Int32 GetKeysInUse([Out] out Int32 keyCount, [Out] out IntPtr keyTypes, [Out] out IntPtr pids);
-
-      /// <summary>
-      /// Get counts of each of the types of keys that are registered with the interface.
-      /// </summary>
-      /// <param name="totalKeyCount">The total number of registered keys.</param>
-      /// <param name="pidTscKeyCount">The number of PID-specific keys registered.</param>
-      /// <param name="pidKeyCount">The number of fallback PID keys registered.</param>
-      /// <param name="globalKeyCount">The number of global keys registered.</param>
-      /// <returns>an HRESULT indicating whether the key counts were successfully retrieved</returns>
-      [PreserveSig]
-      Int32 GetKeyCount([Out] out Int32 totalKeyCount, [Out] out Int32 pidTscKeyCount, [Out] out Int32 pidKeyCount, [Out] out Int32 globalKeyCount);
-
-      /// <summary>
       /// Deregister all decryption keys.
       /// </summary>
       /// <returns>an HRESULT indicating whether the keys were successfully deregistered</returns>
@@ -938,13 +938,11 @@ namespace TvLibrary.Implementations.DVB
       Int32 PurgeKeys();
 
       #endregion
-    }
 
-    [ComVisible(true), ComImport,
-      Guid("b5afa7f3-2fbc-4d66-ad9c-ff8616141c26"),
-      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    private interface IB2C2MPEG2DataCtrl5 : IB2C2MPEG2DataCtrl4
-    {
+      #endregion
+
+      #region IB2C2MPEG2DataCtrl5
+
       /// <summary>
       /// Register a callback delegate that the interface can use to pass raw transport stream packets
       /// directly to the application. The packets passed correspond with the transport stream class PIDs
@@ -954,13 +952,11 @@ namespace TvLibrary.Implementations.DVB
       /// <returns>an HRESULT indicating whether the callback delegate was successfully registered</returns>
       [PreserveSig]
       Int32 SetCallbackForTransportStream(OnSkyStarTsData callback);
-    }
 
-    [ComVisible(true), ComImport,
-      Guid("a12a4531-72d2-40fc-b17d-8f9b0004444f"),
-      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    private interface IB2C2MPEG2DataCtrl6 : IB2C2MPEG2DataCtrl5
-    {
+      #endregion
+
+      #region IB2C2MPEG2DataCtrl6
+
       /// <summary>
       /// Get information about the B2C2 compatible devices installed in the system.
       /// </summary>
@@ -970,7 +966,7 @@ namespace TvLibrary.Implementations.DVB
       ///   output, the number of devices installed in the system.</param>
       /// <returns>an HRESULT indicating whether the device information was successfully retrieved</returns>
       [PreserveSig]
-      Int32 GetDeviceList(IntPtr deviceInfo, [In, Out] ref Int32 infoSize, [In, Out] ref Int32 deviceCount);
+      int GetDeviceList(IntPtr deviceInfo, [In, Out] ref Int32 infoSize, [In, Out] ref Int32 deviceCount);
 
       /// <summary>
       /// Select (activate) a specific B2C2 device.
@@ -979,6 +975,8 @@ namespace TvLibrary.Implementations.DVB
       /// <returns>an HRESULT indicating whether the device was successfully selected</returns>
       [PreserveSig]
       Int32 SelectDevice(UInt32 deviceId);
+
+      #endregion
     }
 
     #endregion
@@ -986,10 +984,12 @@ namespace TvLibrary.Implementations.DVB
     #region AV control
 
     [ComVisible(true), ComImport,
-      Guid("295950b0-696d-4a04-9ee3-c031a0bfbede"),
+      Guid("3ca933bb-4378-4e03-8abd-02450169aa5e"),
       InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    private interface IB2C2MPEG2AVCtrl
+    private interface IB2C2MPEG2AVCtrl3
     {
+      #region IB2C2MPEG2AVCtrl
+
       /// <summary>
       /// Register the audio and/or video PID(s) that are of interest to the application. Packets marked
       /// with these PIDs will be passed on B2C2 filter audio and video output pins.
@@ -999,13 +999,20 @@ namespace TvLibrary.Implementations.DVB
       /// <returns>an HRESULT indicating whether the PIDs were successfully registered</returns>
       [PreserveSig]
       Int32 SetAudioVideoPIDs(Int32 audioPid, Int32 videoPid);
-    }
 
-    [ComVisible(true), ComImport,
-      Guid("9c0563ce-2ef7-4568-a297-88c7bb824075"),
-      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    private interface IB2C2MPEG2AVCtrl2 : IB2C2MPEG2AVCtrl
-    {
+      #endregion
+
+      #region IB2C2MPEG2AVCtrl2
+
+      /// <summary>
+      /// Register a callback delegate that the interface can use to notify the application about video
+      /// stream information.
+      /// </summary>
+      /// <param name="callback">A pointer to the callback delegate.</param>
+      /// <returns>an HRESULT indicating whether the callback delegate was successfully registered</returns>
+      [PreserveSig]
+      Int32 SetCallbackForVideoMode(OnSkyStarVideoInfo callback);
+
       /// <summary>
       /// Deregister the current audio and/or video PID(s) when they are no longer of interest to the
       /// application. Packets marked with the previously registered PIDs will no longer be passed on the
@@ -1033,21 +1040,10 @@ namespace TvLibrary.Implementations.DVB
             [Out] out Int32 audioPid, [Out] out Int32 videoPid
       );
 
-      /// <summary>
-      /// Register a callback delegate that the interface can use to notify the application about video
-      /// stream information.
-      /// </summary>
-      /// <param name="callback">A pointer to the callback delegate.</param>
-      /// <returns>an HRESULT indicating whether the callback delegate was successfully registered</returns>
-      [PreserveSig]
-      Int32 SetCallbackForVideoMode(OnSkyStarVideoInfo callback);
-    }
+      #endregion
 
-    [ComVisible(true), ComImport,
-      Guid("3ca933bb-4378-4e03-8abd-02450169aa5e"),
-      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    private interface IB2C2MPEG2AVCtrl3 : IB2C2MPEG2AVCtrl2
-    {
+      #region IB2C2MPEG2AVCtrl3
+
       /// <summary>
       /// Get IR data from the interface. The size of each code is two bytes, and up to 4 codes may be
       /// retrieved in one call.
@@ -1058,6 +1054,8 @@ namespace TvLibrary.Implementations.DVB
       /// <returns>an HRESULT indicating whether the IR data was successfully retrieved</returns>
       [PreserveSig]
       Int32 GetIRData([Out] out IntPtr dataBuffer, [In, Out] ref Int32 bufferCapacity);
+
+      #endregion
     }
 
     #endregion
@@ -1069,6 +1067,38 @@ namespace TvLibrary.Implementations.DVB
       InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface IB2C2MPEG2TimeshiftCtrl
     {
+      /// <summary>
+      /// Set the name of the file to use for timeshifting. Default is C:\Timeshift.ts.
+      /// </summary>
+      /// <param name="fileName">The name of the timeshifting file.</param>
+      /// <returns>an HRESULT indicating whether the file name was successfully set</returns>
+      [PreserveSig]
+      Int32 SetFilename([MarshalAs(UnmanagedType.LPWStr)] String fileName);
+
+      /// <summary>
+      /// Get the name of the file configured for use for timeshifting.
+      /// </summary>
+      /// <param name="fileName">The name of the timeshifting file.</param>
+      /// <returns>an HRESULT indicating whether the file name was successfully retrieved</returns>
+      [PreserveSig]
+      Int32 GetFilename([Out, MarshalAs(UnmanagedType.LPWStr)] out String fileName);
+
+      /// <summary>
+      /// Start recording during live streaming. Recording is usually only started when live streaming is
+      /// paused.
+      /// </summary>
+      /// <returns>an HRESULT indicating whether recording was successfully started</returns>
+      [PreserveSig]
+      Int32 StartRecord();
+
+      /// <summary>
+      /// Stop recording immediately. Recording is usually stopped when timeshifting catches up with the
+      /// live position.
+      /// </summary>
+      /// <returns>an HRESULT indicating whether recording was successfully stopped</returns>
+      [PreserveSig]
+      Int32 StopRecord();
+
       /// <summary>
       /// Enable the timeshifting capability.
       /// </summary>
@@ -1084,28 +1114,22 @@ namespace TvLibrary.Implementations.DVB
       Int32 Disable();
 
       /// <summary>
-      /// Get the name of the file configured for use for timeshifting.
+      /// Set the value of one of the timeshifting interface options.
       /// </summary>
-      /// <param name="fileName">The name of the timeshifting file.</param>
-      /// <returns>an HRESULT indicating whether the file name was successfully retrieved</returns>
+      /// <param name="option">The option to set.</param>
+      /// <param name="value">The option value to set.</param>
+      /// <returns>an HRESULT indicating whether the option value was successfully set</returns>
       [PreserveSig]
-      Int32 GetFilename([Out, MarshalAs(UnmanagedType.LPWStr)] out String fileName);
+      Int32 SetOption(SkyStarPvrOption option, Int32 value);
 
       /// <summary>
-      /// Set the name of the file to use for timeshifting. Default is C:\Timeshift.ts.
+      /// Get the value of one of the timeshifting interface options.
       /// </summary>
-      /// <param name="fileName">The name of the timeshifting file.</param>
-      /// <returns>an HRESULT indicating whether the file name was successfully set</returns>
+      /// <param name="option">The option to get.</param>
+      /// <param name="value">The option value.</param>
+      /// <returns>an HRESULT indicating whether the option value was successfully retrieved</returns>
       [PreserveSig]
-      Int32 SetFilename([MarshalAs(UnmanagedType.LPWStr)] String fileName);
-
-      /// <summary>
-      /// Get the playback marker position within the timeshifting file.
-      /// </summary>
-      /// <param name="filePosition">The playback marker position.</param>
-      /// <returns>an HRESULT indicating whether the marker position was successfully retrieved</returns>
-      [PreserveSig]
-      Int32 GetFilePosition([Out] out Int64 filePosition);
+      Int32 GetOption(SkyStarPvrOption option, [Out] out Int32 value);
 
       /// <summary>
       /// Set the playback marker position within the timeshifting file.
@@ -1124,38 +1148,12 @@ namespace TvLibrary.Implementations.DVB
       Int32 GetFileSize([Out] out Int64 fileSize);
 
       /// <summary>
-      /// Get the value of one of the timeshifting interface options.
+      /// Get the playback marker position within the timeshifting file.
       /// </summary>
-      /// <param name="option">The option to get.</param>
-      /// <param name="value">The option value.</param>
-      /// <returns>an HRESULT indicating whether the option value was successfully retrieved</returns>
+      /// <param name="filePosition">The playback marker position.</param>
+      /// <returns>an HRESULT indicating whether the marker position was successfully retrieved</returns>
       [PreserveSig]
-      Int32 GetOption(SkyStarPvrOption option, [Out] out Int32 value);
-
-      /// <summary>
-      /// Set the value of one of the timeshifting interface options.
-      /// </summary>
-      /// <param name="option">The option to set.</param>
-      /// <param name="value">The option value to set.</param>
-      /// <returns>an HRESULT indicating whether the option value was successfully set</returns>
-      [PreserveSig]
-      Int32 SetOption(SkyStarPvrOption option, Int32 value);
-
-      /// <summary>
-      /// Start recording during live streaming. Recording is usually only started when live streaming is
-      /// paused.
-      /// </summary>
-      /// <returns>an HRESULT indicating whether recording was successfully started</returns>
-      [PreserveSig]
-      Int32 StartRecord();
-
-      /// <summary>
-      /// Stop recording immediately. Recording is usually stopped when timeshifting catches up with the
-      /// live position.
-      /// </summary>
-      /// <returns>an HRESULT indicating whether recording was successfully stopped</returns>
-      [PreserveSig]
-      Int32 StopRecord();
+      Int32 GetFilePosition([Out] out Int64 filePosition);
 
       /// <summary>
       /// Register a callback delegate that the interface can use to notify the application about critical
@@ -1192,22 +1190,6 @@ namespace TvLibrary.Implementations.DVB
       Int32 Disable();
 
       /// <summary>
-      /// Get the network interface configured for use for multicast operations.
-      /// </summary>
-      /// <param name="address">The IPv4 network interface address (eg. 192.168.1.1).</param>
-      /// <returns>an HRESULT indicating whether the address was successfully retrieved</returns>
-      [PreserveSig]
-      Int32 GetNetworkInterface([Out, MarshalAs(UnmanagedType.LPStr)] out String address);
-
-      /// <summary>
-      /// Set the network interface to use for multicast operations.
-      /// </summary>
-      /// <param name="address">The IPv4 network interface address (eg. 192.168.1.1).</param>
-      /// <returns>an HRESULT indicating whether the address was successfully set</returns>
-      [PreserveSig]
-      Int32 SetNetworkInterface([MarshalAs(UnmanagedType.LPStr)] String address);
-
-      /// <summary>
       /// Start multicasting the content from a specific set of PIDs on a specific network interface.
       /// </summary>
       /// <param name="address">The IPv4 network interface address (eg. 192.168.1.1) to multicast on.</param>
@@ -1226,6 +1208,22 @@ namespace TvLibrary.Implementations.DVB
       /// <returns>an HRESULT indicating whether the multicast was successfully stopped</returns>
       [PreserveSig]
       Int32 StopMulticast([MarshalAs(UnmanagedType.LPStr)] String address, UInt16 port);
+
+      /// <summary>
+      /// Set the network interface to use for multicast operations.
+      /// </summary>
+      /// <param name="address">The IPv4 network interface address (eg. 192.168.1.1).</param>
+      /// <returns>an HRESULT indicating whether the address was successfully set</returns>
+      [PreserveSig]
+      Int32 SetNetworkInterface([MarshalAs(UnmanagedType.LPStr)] String address);
+
+      /// <summary>
+      /// Get the network interface configured for use for multicast operations.
+      /// </summary>
+      /// <param name="address">The IPv4 network interface address (eg. 192.168.1.1).</param>
+      /// <returns>an HRESULT indicating whether the address was successfully retrieved</returns>
+      [PreserveSig]
+      Int32 GetNetworkInterface([Out, MarshalAs(UnmanagedType.LPStr)] out String address);
     }
 
     #endregion
@@ -1237,8 +1235,10 @@ namespace TvLibrary.Implementations.DVB
     private struct TunerCapabilities
     {
       public SkyStarTunerType TunerType;
-      public UInt32 ConstellationSupported;       // Is SetModulation() supported?
-      public UInt32 FecSupported;                 // Is SetFec() suppoted?
+      [MarshalAs(UnmanagedType.Bool)]
+      public bool ConstellationSupported;         // Is SetModulation() supported?
+      [MarshalAs(UnmanagedType.Bool)]
+      public bool FecSupported;                   // Is SetFec() suppoted?
       public UInt32 MinTransponderFrequency;      // unit = kHz
       public UInt32 MaxTransponderFrequency;      // unit = kHz
       public UInt32 MinTunerFrequency;            // unit = kHz
@@ -1254,18 +1254,21 @@ namespace TvLibrary.Implementations.DVB
 
     private struct MacAddress
     {
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MacAddressLength)]
       public byte[] Address;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode), ComVisible(true)]
     private struct DeviceInfo
     {
       public UInt32 DeviceId;
       public MacAddress MacAddress;
-      public SkyStarModulation Modulation;
+      private UInt16 Padding1;
+      public SkyStarTunerType TunerType;
       public SkyStarBusType BusInterface;
-      public UInt16 InUse;
+      [MarshalAs(UnmanagedType.I1)]
+      public bool IsInUse;
+      private byte Padding2;
       public UInt32 ProductId;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 31)]
       public String ProductName;
@@ -1330,38 +1333,27 @@ namespace TvLibrary.Implementations.DVB
 
     #region constants
 
-    private static readonly Guid B2C2AdapterClass = new Guid(0xe82536a0, 0x94da, 0x11d2, 0xa4, 0x63, 0x00, 0xa0, 0xc9, 0x5d, 0x30, 0x8d);
+    private static readonly Guid B2c2AdapterClass = new Guid(0xe82536a0, 0x94da, 0x11d2, 0xa4, 0x63, 0x00, 0xa0, 0xc9, 0x5d, 0x30, 0x8d);
 
     private const int MaxDeviceCount = 16;
+    private const int MacAddressLength = 6;
     private const int MaxMacAddressCount = 32;
+    private const int DeviceInfoSize = 416;
     private const int TunerCapabilitiesSize = 56;
 
     #endregion
 
-
-
-
     #region variables
 
-    private IBaseFilter _filterB2C2Adapter;
+    private IBaseFilter _filterB2c2Adapter;
     private IB2C2MPEG2DataCtrl6 _dataInterface;
     private IB2C2MPEG2TunerCtrl4 _tunerInterface;
-    private readonly IntPtr _ptrDisEqc;
-    private readonly DiSEqCMotor _diseqcMotor;
-    private readonly bool _useDISEqCMotor;
-
-    #endregion
-
-    #region imports
-
-    /*[DllImport("dvblib.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern int SetPidToPin(IB2C2MPEG2DataCtrl3 dataCtrl, UInt16 pin, UInt16 pid);
-
-    [DllImport("dvblib.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern bool DeleteAllPIDs(IB2C2MPEG2DataCtrl3 dataCtrl, UInt16 pin);
-
-    [DllImport("dvblib.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern int GetSNR(IB2C2MPEG2TunerCtrl2 tunerCtrl, [Out] out int a, [Out] out int b);*/
+    private IntPtr _generalBuffer;
+    private DiseqcController _diseqcController;
+    private bool _isRawDiseqcSupported = false;
+    private int _maxPidCount = 0;
+    private HashSet<Int32> _filterPids = new HashSet<Int32>();
+    private uint _deviceId = 0;
 
     #endregion
 
@@ -1375,459 +1367,368 @@ namespace TvLibrary.Implementations.DVB
     public TvCardDvbSS2(IEpgEvents epgEvents, DsDevice device)
       : base(epgEvents, device)
     {
-      _useDISEqCMotor = false;
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Card card = layer.GetCardByDevicePath(device.DevicePath);
-      if (card != null)
+      Log.Log.Debug("TvCardDvbSs2: creating filter instance");
+      _filterB2c2Adapter = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(B2c2AdapterClass, false));
+      _tunerInterface = _filterB2c2Adapter as IB2C2MPEG2TunerCtrl4;
+      _dataInterface = _filterB2c2Adapter as IB2C2MPEG2DataCtrl6;
+      if (_tunerInterface == null || _dataInterface == null)
       {
-        Setting setting = layer.GetSetting("dvbs" + card.IdCard + "motorEnabled", "no");
-        if (setting.Value == "yes")
-          _useDISEqCMotor = true;
+        Log.Log.Debug("TvCardDvbSs2: failed to locate B2C2 interfaces");
       }
-
-
-      _ptrDisEqc = Marshal.AllocCoTaskMem(20);
-      _diseqcMotor = new DiSEqCMotor(this);
-      GetTunerCapabilities();
+      
+      _generalBuffer = Marshal.AllocCoTaskMem(DeviceInfoSize * MaxDeviceCount);
+      _diseqcController = new DiseqcController(this);
+      ReadTunerCapabilities();
+      Release.ComObject(_filterB2c2Adapter);
     }
 
     #endregion
 
-    #region tuning & recording
+    /// <summary>
+    /// Update the tuner signal status statistics.
+    /// </summary>
+    /// <param name="force"><c>True</c> to force the status to be updated (status information may be cached).</param>
+    protected override void UpdateSignalStatus(bool force)
+    {
+      if (!force)
+      {
+        TimeSpan ts = DateTime.Now - _lastSignalUpdate;
+        if (ts.TotalMilliseconds < 5000)
+        {
+          return;
+        }
+      }
+      if (!GraphRunning() ||
+        CurrentChannel == null ||
+        _tunerInterface == null)
+      {
+        _tunerLocked = false;
+        _signalPresent = false;
+        _signalLevel = 0;
+        _signalQuality = 0;
+        return;
+      }
+
+      int level, quality;
+      _tunerLocked = (_tunerInterface.CheckLock() == 0);
+      _tunerInterface.GetSignalStrength(out level);
+      _tunerInterface.GetSignalQuality(out quality);
+      if (level < 0)
+      {
+        level = 0;
+      }
+      else if (level > 100)
+      {
+        level = 100;
+      }
+      if (quality < 0)
+      {
+        quality = 0;
+      }
+      else if (quality > 100)
+      {
+        quality = 100;
+      }
+      _signalQuality = quality;
+      _signalLevel = level;
+      _lastSignalUpdate = DateTime.Now;
+    }
+
+    #region tuning
 
     /// <summary>
-    /// Tunes the specified channel.
+    /// Check if the tuner can tune to a specific channel.
     /// </summary>
-    /// <param name="subChannelId">The subchannel id</param>
-    /// <param name="channel">The channel.</param>
-    /// <returns>true if succeeded else false</returns>
-    public override ITvSubChannel Scan(int subChannelId, IChannel channel)
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
+    public override bool CanTune(IChannel channel)
     {
-      Log.Log.WriteFile("dvbs ss2: Scan:{0}", channel);
-
-      try
+      if (_tunerType == CardType.DvbS)
       {
-        if (!BeforeTune(ref subChannelId, channel))
+        if (channel is DVBSChannel)
         {
-          return null;
+          return true;
         }
-        if (!DoTune())
+      }
+      else if (_tunerType == CardType.DvbT)
+      {
+        if (channel is DVBTChannel)
         {
-          return null;
+          return true;
         }
-        AfterTune(subChannelId, true);
-
-        Log.Log.WriteFile("ss2:scan done");
-        return _mapSubChannels[subChannelId];
       }
-      catch (TvExceptionNoSignal)
+      else if (_tunerType == CardType.DvbC)
       {
-        throw;
+        if (channel is DVBCChannel)
+        {
+          return true;
+        }
       }
-      catch (TvExceptionNoPMT)
+      else if (_tunerType == CardType.Atsc)
       {
-        throw;
+        if (channel is ATSCChannel)
+        {
+          return true;
+        }
       }
-      catch (Exception ex)
-      {
-        Log.Log.Write(ex);
-        throw;
-      }
+      return false;
     }
 
     /// <summary>
-    /// Tunes the specified channel.
+    /// Actually tune to a channel.
     /// </summary>
-    /// <param name="subChannelId">The subchannel id</param>
-    /// <param name="channel">The channel.</param>
-    /// <returns>true if succeeded else false</returns>
-    public override ITvSubChannel Tune(int subChannelId, IChannel channel)
+    /// <param name="channel">The channel to tune to.</param>
+    protected override void PerformTuning(IChannel channel)
     {
-      Log.Log.WriteFile("dvbs ss2: Tune:{0}", channel);
-
-      try
+      Log.Log.Debug("TvCardDvbSs2: set tuning parameters");
+      bool result = false;
+      switch (_tunerType)
       {
-        if (!BeforeTune(ref subChannelId, channel))
-        {
-          return null;
-        }
-        if (!DoTune())
-        {
-          return null;
-        }
-        AfterTune(subChannelId, false);
-
-        Log.Log.WriteFile("ss2:tune done");
-        return _mapSubChannels[subChannelId];
-      }
-      catch (Exception)
-      {
-        if (subChannelId > -1)
-        {
-          FreeSubChannel(subChannelId);
-        }
-        throw;
-      }
-    }
-
-    private void AfterTune(int subChannelId, bool ignorePMT)
-    {
-      _tunerInterface.CheckLock();
-      _lastSignalUpdate = DateTime.MinValue;
-      SendHwPids(new List<ushort>());
-      _mapSubChannels[subChannelId].OnAfterTune();
-      try
-      {
-        try
-        {
-          RunGraph(subChannelId);
-        }
-        catch (TvExceptionNoPMT)
-        {
-          if (!ignorePMT)
-          {
-            throw;
-          }
-        }
-      }
-      catch (Exception)
-      {
-        FreeSubChannel(subChannelId);
-        throw;
-      }
-    }
-
-    private bool DoTune()
-    {
-      int hr = -1;
-      int lockRetries = 0;
-      while
-        (((uint)hr == 0x90010115 || hr == -1) && lockRetries < 5)
-      {
-        hr = _tunerInterface.SetTunerStatus();
-        _tunerInterface.CheckLock();
-        if (((uint)hr) == 0x90010115)
-        {
-          Log.Log.Info("ss2:could not lock tuner...sleep 20ms");
-          System.Threading.Thread.Sleep(20);
-          lockRetries++;
-        }
+        case CardType.DvbS:
+          result = PerformTuneDvbS(channel);
+          break;
+        case CardType.DvbT:
+          result = PerformTuneDvbT(channel);
+          break;
+        case CardType.DvbC:
+          result = PerformTuneDvbC(channel);
+          break;
+        case CardType.Atsc:
+          result = PerformTuneAtsc(channel);
+          break;
       }
 
-      if (((uint)hr) == 0x90010115)
+      if (!result)
       {
-        Log.Log.Info("ss2:could not lock tuner after {0} attempts", lockRetries);
-        throw new TvExceptionNoSignal("Unable to tune to channel - no signal");
-      }
-      if (lockRetries > 0)
-      {
-        Log.Log.Info("ss2:locked tuner after {0} attempts", lockRetries);
+        throw new TvException("TvCardDvbSs2: failed to set tuning parameters");
       }
 
+      Log.Log.Debug("TvCardDvbSs2: apply tuning parameters");
+      int hr = _tunerInterface.SetTunerStatus();
       if (hr != 0)
       {
-        hr = _tunerInterface.SetTunerStatus();
-        if (hr != 0)
-          hr = _tunerInterface.SetTunerStatus();
-        if (hr != 0)
-        {
-          //Log.Log.Error("ss2:SetTunerStatus failed:0x{0:X}", hr);
-          throw new TvExceptionGraphBuildingFailed("Graph building failed");
-        }
+        throw new TvException("TvCardDvbSs2: failed to apply tuning parameters");
       }
+    }
+
+    private bool PerformTuneDvbS(IChannel channel)
+    {
+      DVBSChannel dvbsChannel = channel as DVBSChannel;
+      if (dvbsChannel == null)
+      {
+        Log.Log.Debug("TvCardDvbSs2: channel is not a DVB-S channel!!! {0}", channel.GetType().ToString());
+        return false;
+      }
+
+      int hr = _tunerInterface.SetFrequency((Int32)dvbsChannel.Frequency / 1000);
+      if (hr != 0)
+      {
+        Log.Log.Error("TvCardDvbSs2: failed to set frequency, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+
+      hr = _tunerInterface.SetSymbolRate(dvbsChannel.SymbolRate);
+      if (hr != 0)
+      {
+        Log.Log.Debug("TvCardDvbSs2: failed to set symbol rate, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+
+      SkyStarFecRate fec = SkyStarFecRate.Auto;
+      switch (dvbsChannel.InnerFecRate)
+      {
+        case BinaryConvolutionCodeRate.Rate1_2:
+          fec = SkyStarFecRate.Rate1_2;
+          break;
+        case BinaryConvolutionCodeRate.Rate2_3:
+          fec = SkyStarFecRate.Rate2_3;
+          break;
+        case BinaryConvolutionCodeRate.Rate3_4:
+          fec = SkyStarFecRate.Rate3_4;
+          break;
+        case BinaryConvolutionCodeRate.Rate5_6:
+          fec = SkyStarFecRate.Rate5_6;
+          break;
+        case BinaryConvolutionCodeRate.Rate7_8:
+          fec = SkyStarFecRate.Rate7_8;
+          break;
+      }
+      hr = _tunerInterface.SetFec(fec);
+      if (hr != 0)
+      {
+        Log.Log.Debug("TvCardDvbSs2: failed to set FEC rate, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+
+      uint lnbLof;
+      uint lnbSwitchFrequency;
+      Polarisation polarisation;
+      LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLof, out lnbSwitchFrequency, out polarisation);
+
+      SkyStarPolarisation ss2Polarisation = SkyStarPolarisation.Horizontal;
+      if (polarisation == Polarisation.LinearV || polarisation == Polarisation.CircularR)
+      {
+        ss2Polarisation = SkyStarPolarisation.Vertical;
+      }
+      hr = _tunerInterface.SetPolarity(ss2Polarisation);
+      if (hr != 0)
+      {
+        Log.Log.Debug("TvCardDvbSs2: failed to set polarisation, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+
+      _diseqcController.SwitchToChannel(dvbsChannel);
+
+      hr = _tunerInterface.SetLnbFrequency((Int32)lnbLof / 1000);
+      if (hr != 0)
+      {
+        Log.Log.Debug("TvCardDvbSs2: failed to set LNB LOF frequency, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+
       return true;
     }
 
-    private bool BeforeTune(ref int subChannelId, IChannel channel)
+    private bool PerformTuneDvbT(IChannel channel)
     {
-      Log.Log.WriteFile("ss2:Tune({0})", channel);
-      if (_epgGrabbing)
+      DVBTChannel dvbtChannel = channel as DVBTChannel;
+      if (dvbtChannel == null)
       {
-        _epgGrabbing = false;
-        if (_epgGrabberCallback != null && _epgGrabbing)
+        Log.Log.Debug("TvCardDvbSs2: channel is not a DVB-T channel!!! {0}", channel.GetType().ToString());
+        return false;
+      }
+
+      int hr = _tunerInterface.SetFrequency((Int32)dvbtChannel.Frequency / 1000);
+      if (hr != 0)
+      {
+        Log.Log.Error("TvCardDvbSs2: failed to set frequency, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+
+      hr = _tunerInterface.SetBandwidth(dvbtChannel.Bandwidth);
+      if (hr != 0)
+      {
+        Log.Log.Debug("TvCardDvbSs2: failed to set bandwidth, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+
+      // Note: it is not guaranteed that guard interval auto detection is supported, but if it isn't
+      // then we can't tune - we have no idea what the actual value should be.
+      hr = _tunerInterface.SetGuardInterval(SkyStarGuardInterval.Auto);
+      if (hr != 0)
+      {
+        Log.Log.Debug("TvCardDvbSs2: failed to use automatic guard interval detection, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+
+      return true;
+    }
+
+    private bool PerformTuneDvbC(IChannel channel)
+    {
+      DVBCChannel dvbcChannel = channel as DVBCChannel;
+      if (dvbcChannel == null)
+      {
+        Log.Log.Debug("TvCardDvbSs2: channel is not a DVB-C channel!!! {0}", channel.GetType().ToString());
+        return false;
+      }
+
+      int hr = _tunerInterface.SetFrequency((Int32)dvbcChannel.Frequency / 1000);
+      if (hr != 0)
+      {
+        Log.Log.Error("TvCardDvbSs2: failed to set frequency, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+
+      hr = _tunerInterface.SetSymbolRate(dvbcChannel.SymbolRate);
+      if (hr != 0)
+      {
+        Log.Log.Debug("TvCardDvbSs2: failed to set symbol rate, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+
+      SkyStarModulation modulation = SkyStarModulation.Qam64;
+      switch (dvbcChannel.ModulationType)
+      {
+        case ModulationType.Mod16Qam:
+          modulation = SkyStarModulation.Qam16;
+          break;
+        case ModulationType.Mod32Qam:
+          modulation = SkyStarModulation.Qam32;
+          break;
+        case ModulationType.Mod128Qam:
+          modulation = SkyStarModulation.Qam128;
+          break;
+        case ModulationType.Mod256Qam:
+          modulation = SkyStarModulation.Qam256;
+          break;
+      }
+      hr = _tunerInterface.SetModulation(modulation);
+      if (hr != 0)
+      {
+        Log.Log.Debug("TvCardDvbSs2: failed to set modulation, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+
+      return true;
+    }
+
+    private bool PerformTuneAtsc(IChannel channel)
+    {
+      ATSCChannel atscChannel = channel as ATSCChannel;
+      if (atscChannel == null)
+      {
+        Log.Log.Debug("TvCardDvbSs2: channel is not an ATSC channel!!! {0}", channel.GetType().ToString());
+        return false;
+      }
+
+      // If the channel modulation scheme is 8 VSB then it is an over-the-air ATSC channel, otherwise
+      // it is a cable (QAM annex B) channel.
+      int frequency;
+      SkyStarModulation modulation = SkyStarModulation.Vsb8;
+      if (atscChannel.ModulationType == ModulationType.Mod8Vsb)
+      {
+        // We normally tune ATSC channels by physical channel number, however we have to tune them by
+        // frequency with the SkyStar tuners. This code is a conversion between channel number and
+        // frequency (in MHz), probably for the US only.
+        if (atscChannel.PhysicalChannel <= 6)
         {
-          _epgGrabberCallback.OnEpgCancelled();
+          frequency = 45 + (atscChannel.PhysicalChannel * 6);
+        }
+        else if (atscChannel.PhysicalChannel >= 7 && atscChannel.PhysicalChannel <= 13)
+        {
+          frequency = 177 + ((atscChannel.PhysicalChannel - 7) * 6);
+        }
+        else
+        {
+          frequency = 473 + ((atscChannel.PhysicalChannel - 14) * 6);
+        }
+        Log.Log.Debug("TvCardDvbSs2: translated ATSC physical channel number {0} to {1} MHz", atscChannel.PhysicalChannel, frequency);
+      }
+      else
+      {
+        frequency = (Int32)atscChannel.Frequency / 1000;
+        modulation = SkyStarModulation.Qam256AnnexB;
+        if (atscChannel.ModulationType == ModulationType.Mod64Qam)
+        {
+          modulation = SkyStarModulation.Qam64AnnexB;
         }
       }
 
-
-      long frequency = 0;
-      SkyStarModulation modulation = SkyStarModulation.Qam64;
-      int hr;
-      switch (_cardType)
-      {
-        case CardType.DvbS:
-          DVBSChannel dvbsChannel = channel as DVBSChannel;
-          if (dvbsChannel == null)
-          {
-            Log.Log.Debug("TvCardDvbSs2: channel is not a DVB-S channel!!! {0}", channel.GetType().ToString());
-            return false;
-          }
-
-          uint lnbLof;
-          uint lnbSwitchFrequency;
-          Polarisation polarisation;
-          BandTypeConverter.GetLnbTuningParameters(dvbsChannel, _parameters, out lnbLof, out lnbSwitchFrequency, out polarisation);
-
-          frequency = dvbsChannel.Frequency;
-          SkyStarPolarisation ss2Polarisation = SkyStarPolarisation.Horizontal;
-          if (polarisation == Polarisation.LinearV || polarisation == Polarisation.CircularR)
-          {
-            ss2Polarisation = SkyStarPolarisation.Vertical;
-          }
-          hr = _tunerInterface.SetPolarity(ss2Polarisation);
-          if (hr != 0)
-          {
-            Log.Log.Debug("TvCardDvbSs2: failed to set polarisation, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            return false;
-          }
-
-          hr = _tunerInterface.SetSymbolRate(dvbsChannel.SymbolRate);
-          if (hr != 0)
-          {
-            Log.Log.Debug("TvCardDvbSs2: failed to set symbol rate, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            return false;
-          }
-
-          SkyStarFecRate fec = SkyStarFecRate.Auto;
-          switch (dvbsChannel.InnerFecRate)
-          {
-            case BinaryConvolutionCodeRate.Rate1_2:
-              fec = SkyStarFecRate.Rate1_2;
-              break;
-            case BinaryConvolutionCodeRate.Rate2_3:
-              fec = SkyStarFecRate.Rate2_3;
-              break;
-            case BinaryConvolutionCodeRate.Rate3_4:
-              fec = SkyStarFecRate.Rate3_4;
-              break;
-            case BinaryConvolutionCodeRate.Rate5_6:
-              fec = SkyStarFecRate.Rate5_6;
-              break;
-            case BinaryConvolutionCodeRate.Rate7_8:
-              fec = SkyStarFecRate.Rate7_8;
-              break;
-          }
-          hr = _tunerInterface.SetFec(fec);
-          if (hr != 0)
-          {
-            Log.Log.Debug("TvCardDvbSs2: failed to set FEC rate, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            return false;
-          }
-
-          SkyStarTone toneState = SkyStarTone.Off;
-          bool highBand = BandTypeConverter.IsHighBand(dvbsChannel, _parameters);
-          if (highBand)
-          {
-            toneState = SkyStarTone.Tone22k;
-          }
-          hr = _tunerInterface.SetLnbKHz(toneState);
-          if (hr != 0)
-          {
-            Log.Log.Debug("TvCardDvbSs2: failed to set tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            return false;
-          }
-
-          hr = _tunerInterface.SetLnbFrequency((int)lnbLof);
-          if (hr != 0)
-          {
-            Log.Log.Debug("TvCardDvbSs2: failed to set LNB LOF frequency, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            return false;
-          }
-
-          /*satelliteIndex = dvbsChannel.SatelliteIndex;
-          SkyStarDiseqcPort
-          switch (dvbsChannel.Diseqc)
-          {
-            case DiseqcPort.None:
-              disType = SkyStarDiseqcPort.None;
-              break;
-            case DiseqcPort.SimpleA:
-              disType = SkyStarDiseqcPort.SimpleA;
-              break;
-            case DiseqcPort.SimpleB:
-              disType = SkyStarDiseqcPort.SimpleB;
-              break;
-            case DiseqcPort.PortA:
-              disType = SkyStarDiseqcPort.PortA;
-              break;
-            case DiseqcPort.PortB:
-              disType = SkyStarDiseqcPort.PortB;
-              break;
-            case DiseqcPort.PortC:
-              disType = SkyStarDiseqcPort.PortC;
-              break;
-            case DiseqcPort.PortD:
-              disType = SkyStarDiseqcPort.PortD;
-              break;
-          }
-          DVBSChannel dvbsChannel = channel as DVBSChannel;
-          ToneBurst toneBurst = ToneBurst.Off;
-          if (dvbsChannel.Diseqc == DiseqcPort.SimpleA)
-          {
-            toneBurst = ToneBurst.ToneBurst;
-          }
-          else if (dvbsChannel.Diseqc == DiseqcPort.SimpleB)
-          {
-            toneBurst = ToneBurst.DataBurst;
-          }
-          Tone22k tone22k = Tone22k.Off;
-          if (BandTypeConverter.IsHighBand(dvbsChannel, _parameters))
-          {
-            tone22k = Tone22k.On;
-          }
-
-          //SendCommand();
-          SetToneState(toneBurst, tone22k);
-
-          Log.Log.WriteFile("ss2:  Diseqc:{0} {1}", disType, disType);
-          hr = _tunerInterface.SetDiseqc((int)disType);
-          if (hr != 0)
-          {
-            Log.Log.Error("ss2:SetDiseqc() failed:0x{0:X}", hr);
-            return false;
-          }
-          if (_useDISEqCMotor)
-          {
-            if (satelliteIndex > 0)
-            {
-              DisEqcGotoPosition((byte)satelliteIndex);
-            }
-          }*/
-
-          break;
-        case CardType.DvbT:
-          DVBTChannel dvbtChannel = channel as DVBTChannel;
-          if (dvbtChannel == null)
-          {
-            Log.Log.Debug("TvCardDvbSs2: channel is not a DVB-T channel!!! {0}", channel.GetType().ToString());
-            return false;
-          }
-
-          frequency = dvbtChannel.Frequency;
-          hr = _tunerInterface.SetBandwidth(dvbtChannel.Bandwidth);
-          if (hr != 0)
-          {
-            Log.Log.Debug("TvCardDvbSs2: failed to set bandwidth, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            return false;
-          }
-          // Note: it is not guaranteed that guard interval auto detection is supported, but if it isn't
-          // then we can't tune - we have no idea what the actual value should be.
-          hr = _tunerInterface.SetGuardInterval(SkyStarGuardInterval.Auto);
-          if (hr != 0)
-          {
-            Log.Log.Debug("TvCardDvbSs2: failed to use automatic guard interval detection, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            return false;
-          }
-          break;
-        case CardType.DvbC:
-          DVBCChannel dvbcChannel = channel as DVBCChannel;
-          if (dvbcChannel == null)
-          {
-            Log.Log.Debug("TvCardDvbSs2: channel is not a DVB-C channel!!! {0}", channel.GetType().ToString());
-            return false;
-          }
-
-          frequency = dvbcChannel.Frequency;
-          hr = _tunerInterface.SetSymbolRate(dvbcChannel.SymbolRate);
-          if (hr != 0)
-          {
-            Log.Log.Debug("TvCardDvbSs2: failed to set symbol rate, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            return false;
-          }
-
-          modulation = SkyStarModulation.Qam64;
-          switch (dvbcChannel.ModulationType)
-          {
-            case ModulationType.Mod16Qam:
-              modulation = SkyStarModulation.Qam16;
-              break;
-            case ModulationType.Mod32Qam:
-              modulation = SkyStarModulation.Qam32;
-              break;
-            case ModulationType.Mod128Qam:
-              modulation = SkyStarModulation.Qam128;
-              break;
-            case ModulationType.Mod256Qam:
-              modulation = SkyStarModulation.Qam256;
-              break;
-          }
-          hr = _tunerInterface.SetModulation(modulation);
-          if (hr != 0)
-          {
-            Log.Log.Debug("TvCardDvbSs2: failed to set modulation, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            return false;
-          }
-          break;
-        case CardType.Atsc:
-          ATSCChannel atscChannel = channel as ATSCChannel;
-          if (atscChannel == null)
-          {
-            Log.Log.Debug("TvCardDvbSs2: channel is not an ATSC channel!!! {0}", channel.GetType().ToString());
-            return false;
-          }
-
-          // If the channel modulation scheme is 8 VSB then it is an over-the-air ATSC channel, otherwise
-          // it is a cable (QAM annex B) channel.
-          modulation = SkyStarModulation.Vsb8;
-          if (atscChannel.ModulationType == ModulationType.Mod8Vsb)
-          {
-            // We normally tune ATSC channels by physical channel number, however we have to tune them by
-            // frequency with the SkyStar.
-            if (atscChannel.PhysicalChannel <= 6)
-            {
-              frequency = 45 + (atscChannel.PhysicalChannel * 6);
-            }
-            else if (atscChannel.PhysicalChannel >= 7 && atscChannel.PhysicalChannel <= 13)
-            {
-              frequency = 177 + ((atscChannel.PhysicalChannel - 7) * 6);
-            }
-            else
-            {
-              frequency = 473 + ((atscChannel.PhysicalChannel - 14) * 6);
-            }
-            Log.Log.Debug("TvCardDvbSs2: translated ATSC physical channel number {0} to {1} MHz", atscChannel.PhysicalChannel, frequency);
-          }
-          else
-          {
-            frequency = atscChannel.Frequency;
-            modulation = SkyStarModulation.Qam256AnnexB;
-            if (atscChannel.ModulationType == ModulationType.Mod64Qam)
-            {
-              modulation = SkyStarModulation.Qam64AnnexB;
-            }
-          }
-          hr = _tunerInterface.SetModulation(modulation);
-          if (hr != 0)
-          {
-            Log.Log.Debug("TvCardDvbSs2: failed to set modulation, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            return false;
-          }
-          break;
-      }
-      if (_graphState == GraphState.Idle)
-      {
-        BuildGraph();
-      }
-      if (_mapSubChannels.ContainsKey(subChannelId) == false)
-      {
-        subChannelId = GetNewSubChannel(channel);
-      }
-      _mapSubChannels[subChannelId].CurrentChannel = channel;
-      _mapSubChannels[subChannelId].OnBeforeTune();
-      if (_interfaceEpgGrabber != null)
-      {
-        _interfaceEpgGrabber.Reset();
-      }
-      if (frequency > 13000)
-        frequency /= 1000;
-      Log.Log.WriteFile("ss2:  Transponder Frequency:{0} MHz", frequency);
-      hr = _tunerInterface.SetFrequency((int)frequency);
+      int hr = _tunerInterface.SetFrequency(frequency);
       if (hr != 0)
       {
-        Log.Log.Error("ss2:SetFrequencyKHz() failed:0x{0:X}", hr);
+        Log.Log.Error("TvCardDvbSs2: failed to set frequency, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
+
+      hr = _tunerInterface.SetModulation(modulation);
+      if (hr != 0)
+      {
+        Log.Log.Debug("TvCardDvbSs2: failed to set modulation, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+
       return true;
     }
 
@@ -1844,7 +1745,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (!CheckThreadId())
           return null;
-        switch (CardType)
+        switch (_tunerType)
         {
           case CardType.DvbT:
             return new DVBTScanning(this);
@@ -1861,87 +1762,7 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
-    /// <summary>
-    /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
-    /// </summary>
-    /// <returns>
-    /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
-    /// </returns>
-    public override string ToString()
-    {
-      return _tunerDevice.Name;
-    }
-
-    /// <summary>
-    /// Method to check if card can tune to the channel specified
-    /// </summary>
-    /// <returns>true if card can tune to the channel otherwise false</returns>
-    public override bool CanTune(IChannel channel)
-    {
-      if (_cardType == CardType.DvbS)
-      {
-        if ((channel as DVBSChannel) == null)
-          return false;
-        return true;
-      }
-      if (_cardType == CardType.DvbT)
-      {
-        if ((channel as DVBTChannel) == null)
-          return false;
-        return true;
-      }
-      if (_cardType == CardType.DvbC)
-      {
-        if ((channel as DVBCChannel) == null)
-          return false;
-        return true;
-      }
-      if (_cardType == CardType.Atsc)
-      {
-        if ((channel as ATSCChannel) == null)
-          return false;
-        return true;
-      }
-      return false;
-    }
-
     #region SS2 specific
-
-    ///<summary>
-    /// Checks if the tuner is locked in and a sginal is present
-    ///</summary>
-    ///<returns>true, when the tuner is locked and a signal is present</returns>
-    public override bool LockedInOnSignal()
-    {
-      bool isLocked = false;
-      DateTime timeStart = DateTime.Now;
-      TimeSpan ts = timeStart - timeStart;
-      while (!isLocked && ts.TotalSeconds < _parameters.TimeOutTune)
-      {
-        int hr = _tunerInterface.SetTunerStatus();
-        _tunerInterface.CheckLock();
-        if (((uint)hr) == 0x90010115)
-        {
-          ts = DateTime.Now - timeStart;
-          Log.Log.WriteFile("dvb-s ss2:  LockedInOnSignal waiting 20ms");
-          System.Threading.Thread.Sleep(20);
-        }
-        else
-        {
-          isLocked = true;
-        }
-      }
-
-      if (!isLocked)
-      {
-        Log.Log.WriteFile("dvb-s ss2:  LockedInOnSignal could not lock onto channel - no signal or bad signal");
-      }
-      else
-      {
-        Log.Log.WriteFile("dvb-s ss2:  LockedInOnSignal ok");
-      }
-      return isLocked;
-    }
 
     /// <summary>
     /// Builds the graph.
@@ -1966,16 +1787,16 @@ namespace TvLibrary.Implementations.DVB
         // add the skystar 2 specific filters
         //=========================================================================================================
         Log.Log.WriteFile("ss2:CreateGraph() create B2C2 adapter");
-        _filterB2C2Adapter =
-          (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(B2C2AdapterClass, false));
-        if (_filterB2C2Adapter == null)
+        _filterB2c2Adapter =
+          (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(B2c2AdapterClass, false));
+        if (_filterB2c2Adapter == null)
         {
           Log.Log.Error("ss2:creategraph() _filterB2C2Adapter not found");
           DevicesInUse.Instance.Remove(_tunerDevice);
           return;
         }
         Log.Log.WriteFile("ss2:creategraph() add filters to graph");
-        int hr = _graphBuilder.AddFilter(_filterB2C2Adapter, "B2C2-Source");
+        int hr = _graphBuilder.AddFilter(_filterB2c2Adapter, "B2C2-Source");
         if (hr != 0)
         {
           Log.Log.Error("ss2: FAILED to add B2C2-Adapter");
@@ -1983,14 +1804,14 @@ namespace TvLibrary.Implementations.DVB
           return;
         }
         // get interfaces
-        _dataInterface = _filterB2C2Adapter as IB2C2MPEG2DataCtrl6;
+        _dataInterface = _filterB2c2Adapter as IB2C2MPEG2DataCtrl6;
         if (_dataInterface == null)
         {
           Log.Log.Error("ss2: cannot get IB2C2MPEG2DataCtrl6");
           DevicesInUse.Instance.Remove(_tunerDevice);
           return;
         }
-        _tunerInterface = _filterB2C2Adapter as IB2C2MPEG2TunerCtrl4;
+        _tunerInterface = _filterB2c2Adapter as IB2C2MPEG2TunerCtrl4;
         if (_tunerInterface == null)
         {
           Log.Log.Error("ss2: cannot get IB2C2MPEG2TunerCtrl4");
@@ -2026,25 +1847,6 @@ namespace TvLibrary.Implementations.DVB
 
           DevicesInUse.Instance.Remove(_tunerDevice);
 
-          /*
-          if (initResetTries == 0)
-          {
-            Log.Log.Error("ss2: resetting driver");
-            HardwareHelperLib.HH_Lib hwHelper = new HardwareHelperLib.HH_Lib();
-            string[] deviceDriverName = new string[1];
-            deviceDriverName[0] = DEVICE_DRIVER_NAME;
-            hwHelper.SetDeviceState(deviceDriverName, false);
-            hwHelper.SetDeviceState(deviceDriverName, true);
-            initResetTries++;          
-
-            BuildGraph();
-          }
-          else
-          {
-            Log.Log.Error("ss2: resetting driver did not help");          
-            CardPresent = false;
-          }    
-          */
           CardPresent = false;
           return;
         }
@@ -2055,12 +1857,13 @@ namespace TvLibrary.Implementations.DVB
         ConnectInfTeeToSS2(out lastFilter);
 
         // TODO: ICustomDevice loading goes here.
+        _customDeviceInterfaces.Add(this);
 
         if (!ConnectTsWriter(lastFilter))
         {
           throw new TvExceptionGraphBuildingFailed("Graph building failed");
         }
-        SendHwPids(new List<ushort>());
+        SetFilterPids(new HashSet<UInt16>(), ModulationType.ModNotSet, false);
         _graphState = GraphState.Created;
       }
       catch (Exception ex)
@@ -2087,7 +1890,7 @@ namespace TvLibrary.Implementations.DVB
       }
 
       Log.Log.WriteFile("ss2:ConnectMainTee()");
-      IPin pinOut = DsFindPin.ByDirection(_filterB2C2Adapter, PinDirection.Output, 2);
+      IPin pinOut = DsFindPin.ByDirection(_filterB2c2Adapter, PinDirection.Output, 2);
       IPin pinIn = DsFindPin.ByDirection(_infTee, PinDirection.Input, 0);
       if (pinOut == null)
       {
@@ -2110,197 +1913,125 @@ namespace TvLibrary.Implementations.DVB
       lastFilter = _infTee;
     }
 
-    /// <summary>
-    /// Sends the HW pidSet.
-    /// </summary>
-    /// <param name="pidSet">The pidSet.</param>
-    private void SendHwPids(List<ushort> pids)
+    private void ReadTunerCapabilities()
     {
-      const int PID_CAPTURE_ALL_INCLUDING_NULLS = 0x2000;
-      //Enables reception of all PIDs in the transport stream including the NULL PID
-      //const int PID_CAPTURE_ALL_EXCLUDING_NULLS = 0x2001;//Enables reception of all PIDs in the transport stream excluding the NULL PID.
-
-      // Delete all PIDs.
-      /*do
+      Log.Log.Debug("TvCardDvbSs2: reading device list");
+      int size = DeviceInfoSize * MaxDeviceCount;
+      int deviceCount = MaxDeviceCount;
+      for (int i = 0; i < size; i++)
       {
-        int hr = _dataInterface->GetTsState(NULL, NULL, &pidCount, pidSet);
-        if (SUCCEEDED(hr))
-        {
-          hr = pB2C2FilterDataCtrl->DeletePIDsFromPin(pidCount, pidSet, pin);
-        }
-        else
-        {
-          Log.Log.Error("ss2:DeleteAllPIDs() failed pid:0x2000");
-        }
-      } while (pidCount > 0);
-
-      //if (pidSet.Count == 0 || true)
+        Marshal.WriteByte(_generalBuffer, i, 0);
+      }
+      int hr = _dataInterface.GetDeviceList(_generalBuffer, ref size, ref deviceCount);
+      if (hr != 0)
       {
-        Log.Log.WriteFile("ss2:hw pidSet:all");
-        //int added = SetPidToPin(_interfaceB2C2DataCtrl, 0, PID_CAPTURE_ALL_INCLUDING_NULLS);
-	long	count=1;
-	long	pidSet[2];
-	HRESULT hr;
-
-	pidSet[0]=pid;
-
-	if(pB2C2FilterDataCtrl)
-	{
-		hr=pB2C2FilterDataCtrl->AddPIDsToPin(&count,pidSet,pin);
-		if(SUCCEEDED(hr))
-			return count;
-	}
-	return 0;
-        if (added != 1)
-        {
-          Log.Log.Error("ss2:SetPidToPin() failed pid:0x2000");
-        }
-      }*/
-      /* unreachable
+        Log.Log.Debug("TvCardDvbSs2: failed to get device list, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      }
       else
       {
-        int maxPids;
-        _interfaceB2C2DataCtrl.GetMaxPIDCount(out maxPids);
-        for (int i = 0; i < pidSet.Count && i < maxPids; ++i)
+        //DVB_MMI.DumpBinary(_generalBuffer, 0, size);
+        Log.Log.Debug("TvCardDvbSs2: device count = {0}", deviceCount);
+        Int64 structurePtr = _generalBuffer.ToInt64();
+        for (int i = 0; i < deviceCount; i++)
         {
-          ushort pid = (ushort)pidSet[i];
-          Log.Log.WriteFile("ss2:hw pidSet:0x{0:X}", pid);
-          SetPidToPin(_interfaceB2C2DataCtrl, 0, pid);
+          Log.Log.Debug("TvCardDvbSs2: device {0}", i + 1);
+          DeviceInfo d = (DeviceInfo)Marshal.PtrToStructure(new IntPtr(structurePtr), typeof(DeviceInfo));
+          Log.Log.Debug("  device ID           = {0}", d.DeviceId);
+          Log.Log.Debug("  MAC address         = {0}", BitConverter.ToString(d.MacAddress.Address).ToLowerInvariant());
+          Log.Log.Debug("  tuner type          = {0}", d.TunerType);
+          Log.Log.Debug("  bus interface       = {0}", d.BusInterface);
+          Log.Log.Debug("  is in use?          = {0}", d.IsInUse);
+          Log.Log.Debug("  product ID          = {0}", d.ProductId);
+          Log.Log.Debug("  product name        = {0}", d.ProductName);
+          Log.Log.Debug("  product description = {0}", d.ProductDescription);
+          Log.Log.Debug("  product revision    = {0}", d.ProductRevision);
+          Log.Log.Debug("  product front end   = {0}", d.ProductFrontEnd);
+          structurePtr += DeviceInfoSize;
         }
       }
-      */
-    }
 
-    /// <summary>
-    /// Update the tuner signal status statistics.
-    /// </summary>
-    /// <param name="force"><c>True</c> to force the status to be updated (status information may be cached).</param>
-    protected override void UpdateSignalStatus(bool force)
-    {
-      if (!force)
+      //TODO remove this hack
+      _deviceId = (uint)Marshal.ReadInt32(_generalBuffer, 0);
+      hr = _dataInterface.SelectDevice(_deviceId);
+
+      Log.Log.Debug("TvCardDvbSs2: reading capabilities");
+      for (int i = 0; i < TunerCapabilitiesSize; i++)
       {
-        TimeSpan ts = DateTime.Now - _lastSignalUpdate;
-        if (ts.TotalMilliseconds < 5000)
+        Marshal.WriteByte(_generalBuffer, i, 0);
+      }
+      int returnedByteCount = TunerCapabilitiesSize;
+      hr = _tunerInterface.GetTunerCapabilities(_generalBuffer, ref returnedByteCount);
+      if (hr != 0)
+      {
+        Log.Log.Debug("TvCardDvbSs2: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      }
+      else
+      {
+        //DVB_MMI.DumpBinary(_generalBuffer, 0, returnedByteCount);
+        TunerCapabilities capabilities = (TunerCapabilities)Marshal.PtrToStructure(_generalBuffer, typeof(TunerCapabilities));
+        Log.Log.Debug("  tuner type                = {0}", capabilities.TunerType);
+        Log.Log.Debug("  set constellation?        = {0}", capabilities.ConstellationSupported);
+        Log.Log.Debug("  set FEC rate?             = {0}", capabilities.FecSupported);
+        Log.Log.Debug("  min transponder frequency = {0} kHz", capabilities.MinTransponderFrequency);
+        Log.Log.Debug("  max transponder frequency = {0} kHz", capabilities.MaxTransponderFrequency);
+        Log.Log.Debug("  min tuner frequency       = {0} kHz", capabilities.MinTunerFrequency);
+        Log.Log.Debug("  max tuner frequency       = {0} kHz", capabilities.MaxTunerFrequency);
+        Log.Log.Debug("  min symbol rate           = {0} baud", capabilities.MinSymbolRate);
+        Log.Log.Debug("  max symbol rate           = {0} baud", capabilities.MaxSymbolRate);
+        Log.Log.Debug("  performance monitoring    = {0}", capabilities.PerformanceMonitoringCapabilities.ToString());
+        Log.Log.Debug("  lock time                 = {0} ms", capabilities.LockTime);
+        Log.Log.Debug("  max symbol rate           = {0} ms", capabilities.KernelLockTime);
+        Log.Log.Debug("  acquisition capabilities  = {0}", capabilities.AcquisitionCapabilities);
+        _isRawDiseqcSupported = (capabilities.AcquisitionCapabilities & SkyStarAcquisionCapability.RawDiseqc) != 0;
+        switch (capabilities.TunerType)
         {
-          return;
+          case SkyStarTunerType.Satellite:
+            _tunerType = CardType.DvbS;
+            break;
+          case SkyStarTunerType.Cable:
+            _tunerType = CardType.DvbC;
+            break;
+          case SkyStarTunerType.Terrestrial:
+            _tunerType = CardType.DvbT;
+            break;
+          case SkyStarTunerType.Atsc:
+            _tunerType = CardType.Atsc;
+            break;
+          case SkyStarTunerType.Unknown:
+            _tunerType = CardType.Unknown;
+            break;
         }
       }
-      if (!GraphRunning() ||
-        CurrentChannel == null ||
-        _tunerInterface == null)
-      {
-        _tunerLocked = false;
-        _signalLevel = 0;
-        _signalPresent = false;
-        _signalQuality = 0;
-        return;
-      }
 
-      int level, quality;
-      _tunerLocked = (_tunerInterface.CheckLock() == 0);
-      _tunerInterface.GetSignalStrength(out level);
-      _tunerInterface.GetSignalQuality(out quality);
-      if (level < 0)
-        level = 0;
-      if (level > 100)
-        level = 100;
-      if (quality < 0)
-        quality = 0;
-      if (quality > 100)
-        quality = 100;
-      _signalQuality = quality;
-      _signalLevel = level;
-      _lastSignalUpdate = DateTime.Now;
-    }
-
-    private void GetTunerCapabilities()
-    {
-      Log.Log.WriteFile("ss2: GetTunerCapabilities");
-      _graphBuilder = (IFilterGraph2)new FilterGraph();
-      _rotEntry = new DsROTEntry(_graphBuilder);
-      _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
-      _capBuilder.SetFiltergraph(_graphBuilder);
-      //=========================================================================================================
-      // add the skystar 2 specific filters
-      //=========================================================================================================
-      Log.Log.WriteFile("ss2:GetTunerCapabilities() create B2C2 adapter");
-      _filterB2C2Adapter =
-        (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(B2C2AdapterClass, false));
-      if (_filterB2C2Adapter == null)
+      Log.Log.Debug("TvCardDvbSs2: reading max PID counts");
+      int count = 0;
+      hr = _dataInterface.GetMaxGlobalPIDCount(out count);
+      if (hr == 0)
       {
-        Log.Log.Error("ss2:GetTunerCapabilities() _filterB2C2Adapter not found");
-        return;
+        Log.Log.Debug("  global max                = {0}", count);
       }
-      _tunerInterface = _filterB2C2Adapter as IB2C2MPEG2TunerCtrl4;
-      if (_tunerInterface == null)
+      else
       {
-        Log.Log.Error("ss2: cannot get IB2C2MPEG2TunerCtrl4");
-        return;
+        Log.Log.Debug("TvCardDvbSs2: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
-      //=========================================================================================================
-      // initialize skystar 2 tuner
-      //=========================================================================================================
-      /* Not necessary for query-only application
-       
-      Log.Log.WriteFile("ss2: Initialize Tuner()");
-      hr = _interfaceB2C2TunerCtrl.Initialize();
-      if (hr != 0)
+      hr = _dataInterface.GetMaxIpPIDCount(out count);
+      if (hr == 0)
       {
-        Log.Log.Error("ss2: Tuner initialize failed:0x{0:X}", hr);
-        //return;
-      }*/
-      //=========================================================================================================
-      // Get tuner type (DVBS, DVBC, DVBT, ATSC)
-      //=========================================================================================================
-      IntPtr ptCaps = Marshal.AllocHGlobal(TunerCapabilitiesSize);
-      int byteCount;
-      int hr = _tunerInterface.GetTunerCapabilities(ptCaps, out byteCount);
-      if (hr != 0)
-      {
-        Log.Log.Error("ss2: Tuner Type failed:0x{0:X}", hr);
-        return;
+        Log.Log.Debug("  IP max                    = {0}", count);
       }
-      TunerCapabilities tc = (TunerCapabilities)Marshal.PtrToStructure(ptCaps, typeof(TunerCapabilities));
-      switch (tc.TunerType)
+      else
       {
-        case SkyStarTunerType.Satellite:
-          Log.Log.WriteFile("ss2: Card type = DVBS");
-          _cardType = CardType.DvbS;
-          break;
-        case SkyStarTunerType.Cable:
-          Log.Log.WriteFile("ss2: Card type = DVBC");
-          _cardType = CardType.DvbC;
-          break;
-        case SkyStarTunerType.Terrestrial:
-          Log.Log.WriteFile("ss2: Card type = DVBT");
-          _cardType = CardType.DvbT;
-          break;
-        case SkyStarTunerType.Atsc:
-          Log.Log.WriteFile("ss2: Card type = ATSC");
-          _cardType = CardType.Atsc;
-          break;
-        case SkyStarTunerType.Unknown:
-          Log.Log.WriteFile("ss2: Card type = unknown?");
-          _cardType = CardType.Unknown;
-          break;
+        Log.Log.Debug("TvCardDvbSs2: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
-      Marshal.FreeHGlobal(ptCaps);
-      // Release all used object
-      if (_filterB2C2Adapter != null)
+      hr = _dataInterface.GetMaxPIDCount(out count);
+      if (hr == 0)
       {
-        Release.ComObject("tuner filter", _filterB2C2Adapter);
-        _filterB2C2Adapter = null;
+        Log.Log.Debug("  TS max                    = {0}", count);
+        _maxPidCount = count;
       }
-      _rotEntry.Dispose();
-      if (_capBuilder != null)
+      else
       {
-        Release.ComObject("capture builder", _capBuilder);
-        _capBuilder = null;
-      }
-      if (_graphBuilder != null)
-      {
-        Release.ComObject("graph builder", _graphBuilder);
-        _graphBuilder = null;
+        Log.Log.Debug("TvCardDvbSs2: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
     }
 
@@ -2314,33 +2045,36 @@ namespace TvLibrary.Implementations.DVB
       if (!CheckThreadId())
         return;
 
-      base.Dispose();
-
       Log.Log.WriteFile("ss2:Decompose");
+
+      // DO NOT call this as you create a recursive loop that never ends!
+      //base.Dispose();
 
       _dataInterface = null;
       _tunerInterface = null;
-
-      if (_filterB2C2Adapter != null)
+      if (_generalBuffer != IntPtr.Zero)
       {
-        Release.ComObject("tuner filter", _filterB2C2Adapter);
-        _filterB2C2Adapter = null;
+        Marshal.FreeCoTaskMem(_generalBuffer);
+      }
+
+      if (_filterB2c2Adapter != null)
+      {
+        Release.ComObject("tuner filter", _filterB2c2Adapter);
+        _filterB2c2Adapter = null;
       }
     }
 
     #endregion
 
-    private void DisEqcGotoPosition(byte position)
-    {
-      _diseqcMotor.GotoPosition(position);
-    }
-
     /// <summary>
-    /// Handles DiSEqC motor operations
+    /// Get the device's DiSEqC control interface. This interface is only applicable for satellite tuners.
+    /// It is used for controlling switch, positioner and LNB settings.
     /// </summary>
-    public override IDiSEqCMotor DiSEqCMotor
+    /// <value><c>null</c> if the tuner is not a satellite tuner or the tuner does not support sending/receiving
+    /// DiSEqC commands</value>
+    public override IDiseqcController DiseqcController
     {
-      get { return _diseqcMotor; }
+      get { return _diseqcController; }
     }
 
     #region ICustomDevice members
@@ -2358,7 +2092,7 @@ namespace TvLibrary.Implementations.DVB
 
     /// <summary>
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed.
+    /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -2440,7 +2174,148 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
-    #region IDiseqcController members
+    #region IPidFilterController
+
+    /// <summary>
+    /// Configure the PID filter.
+    /// </summary>
+    /// <param name="pids">The PIDs to allow through the filter.</param>
+    /// <param name="modulation">The current multiplex/transponder modulation scheme.</param>
+    /// <param name="forceEnable">Set this parameter to <c>true</c> to force the filter to be enabled.</param>
+    /// <returns><c>true</c> if the PID filter is configured successfully, otherwise <c>false</c></returns>
+    public bool SetFilterPids(HashSet<UInt16> pids, ModulationType modulation, bool forceEnable)
+    {
+      bool fullTransponder = true;
+      bool success = true;
+
+      if (pids == null || pids.Count == 0 || (modulation != ModulationType.ModQpsk && modulation != ModulationType.Mod8Psk && !forceEnable))
+      {
+        Log.Log.Debug("TvCardDvbSs2: disabling PID filter");
+      }
+      else
+      {
+        // If we get to here then the default approach is to enable the filter, but
+        // there is one other constraint that applies: the filter PID limit.
+        fullTransponder = false;
+        if (pids.Count > _maxPidCount)
+        {
+          Log.Log.Debug("TvCardDvbSs2: too many PIDs, hardware limit = {0}, actual count = {1}", _maxPidCount, pids.Count);
+          // When the forceEnable flag is set, we just set as many PIDs as possible.
+          if (!forceEnable)
+          {
+            Log.Log.Debug("TvCardDvbSs2: disabling PID filter");
+            fullTransponder = true;
+          }
+        }
+
+        if (!fullTransponder)
+        {
+          Log.Log.Debug("TvCardDvbSs2: enabling PID filter");
+          fullTransponder = false;
+        }
+      }
+
+      int openPidCount;
+      int runningPidCount;
+      int pidCount = _maxPidCount;
+      int[] currentPids = new int[_maxPidCount];
+      int availablePidCount = 0;
+      int hr = _dataInterface.GetTsState(out openPidCount, out runningPidCount, ref pidCount, currentPids);
+      if (hr != 0)
+      {
+        Log.Log.Debug("TvCardDvbSs2: failed to retrieve current PIDs, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        fullTransponder = true;
+        success = false;
+      }
+      else
+      {
+        Log.Log.Debug("TvCardDvbSs2: current PID details");
+        Log.Log.Debug("  open count     = {0}", openPidCount);
+        Log.Log.Debug("  running count  = {0}", runningPidCount);
+        Log.Log.Debug("  returned count = {0}", pidCount);
+        if (currentPids != null)
+        {
+          for (int i = 0; i < pidCount; i++)
+          {
+            Log.Log.Debug("  {0,-2}             = {1} (0x{1:x})", i + 1, currentPids[i]);
+          }
+        }
+        availablePidCount = _maxPidCount - pidCount;
+      }
+
+      if (!fullTransponder)
+      {
+        // Remove the PIDs that are no longer needed.
+        //TODO why is deleting not working???
+        for (byte i = 0; i < pidCount; i++)
+        {
+          if (currentPids != null && !pids.Contains((UInt16)currentPids[i]))
+          {
+            hr = _dataInterface.DeletePIDsFromPin(1, new int[1] { currentPids[i] }, 0);
+            if (hr != 0)
+            {
+              Log.Log.Debug("TvCardDvbSs2: failed to remove PID {0} (0x{0:x}), hr = 0x{1:x} ({2})", currentPids[i], hr, HResult.GetDXErrorString(hr));
+              success = false;
+            }
+            else
+            {
+              availablePidCount++;
+            }
+          }
+        }
+        // Add the new PIDs.
+        if (pids != null)
+        {
+          HashSet<Int32> currentPidsAsHash = new HashSet<Int32>(currentPids);
+          HashSet<UInt16>.Enumerator en = pids.GetEnumerator();
+          while (en.MoveNext() && availablePidCount > 0)
+          {
+            if (currentPidsAsHash != null && !currentPidsAsHash.Contains(en.Current))
+            {
+              hr = _dataInterface.AddPIDsToPin(1, new int[1] { en.Current }, 0);
+              if (hr != 0)
+              {
+                Log.Log.Debug("TvCardDvbSs2: failed to add PID {0} (0x{0:x}), hr = 0x{1:x} ({2})", en.Current, hr, HResult.GetDXErrorString(hr));
+                success = false;
+              }
+              else
+              {
+                availablePidCount--;
+              }
+            }
+          }
+        }
+      }
+      else
+      {
+        // Remove all current PIDs.
+        if (currentPids != null)
+        {
+          for (byte i = 0; i < pidCount; i++)
+          {
+            hr = _dataInterface.DeletePIDsFromPin(1, new int[1] { currentPids[i] }, 0);
+            if (hr != 0)
+            {
+              Log.Log.Debug("TvCardDvbSs2: failed to remove PID {0} (0x{0:x}), hr = 0x{1:x} ({2})", currentPids[i], hr, HResult.GetDXErrorString(hr));
+              success = false;
+            }
+          }
+        }
+        // Allow all PIDs.
+        hr = _dataInterface.AddPIDsToPin(1, new int[1] { (int)SkyStarPidFilterMode.AllExcludingNull }, 0);
+        if (hr != 0)
+        {
+          Log.Log.Debug("TvCardDvbSs2: failed to enable all PIDs, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          success = false;
+        }
+      }
+
+      return success;
+    }
+
+    #endregion
+
+    #region IDiseqcDevice members
 
     /// <summary>
     /// Send a tone/data burst command, and then set the 22 kHz continuous tone state.
@@ -2450,9 +2325,14 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
     public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
     {
-      Log.Log.Debug("SS2: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
+      Log.Log.Debug("TvCardDvbSs2: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
+      if (_tunerInterface == null)
+      {
+        Log.Log.Debug("TvCardDvbSs2: device not initialised or interface not supported");
+      }
+
       bool success = true;
-      int hr;
+      int hr = 0;
 
       SkyStarDiseqcPort burst = SkyStarDiseqcPort.None;
       if (toneBurstState == ToneBurst.ToneBurst)
@@ -2466,9 +2346,13 @@ namespace TvLibrary.Implementations.DVB
       if (burst != SkyStarDiseqcPort.None)
       {
         hr = _tunerInterface.SetDiseqc(burst);
-        if (hr != 0)
+        if (hr == 0)
         {
-          Log.Log.Error("SS2: set burst failed, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          Log.Log.Debug("TvCardDvbSs2: burst result = success");
+        }
+        else
+        {
+          Log.Log.Debug("TvCardDvbSs2: burst result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           success = false;
         }
       }
@@ -2479,11 +2363,16 @@ namespace TvLibrary.Implementations.DVB
         tone = SkyStarTone.Tone22k;
       }
       hr = _tunerInterface.SetLnbKHz(tone);
-      if (hr != 0)
+      if (hr == 0)
       {
-        Log.Log.Error("SS2: set 22k failed, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        Log.Log.Debug("TvCardDvbSs2: 22 kHz result = success");
+      }
+      else
+      {
+        Log.Log.Debug("TvCardDvbSs2: 22 kHz result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         success = false;
       }
+
       return success;
     }
 
@@ -2494,14 +2383,69 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
     public bool SendCommand(byte[] command)
     {
-      IB2C2MPEG2TunerCtrl4 tuner4 = _filterB2C2Adapter as IB2C2MPEG2TunerCtrl4;
-      if (tuner4 == null || command == null)
+      Log.Log.Debug("TvCardDvbSs2: send DiSEqC command");
+
+      if (_tunerInterface == null)
       {
+        Log.Log.Debug("TvCardDvbSs2: device not initialised or interface not supported");
+      }
+      if (command == null || command.Length == 0)
+      {
+        Log.Log.Debug("TvCardDvbSs2: command not supplied");
+        return true;
+      }
+
+      Marshal.Copy(command, 0, _generalBuffer, command.Length);
+      int hr = 0;
+      if (_isRawDiseqcSupported)
+      {
+        try
+        {
+          hr = _tunerInterface.SendDiSEqCCommand(command.Length, _generalBuffer);
+          if (hr == 0)
+          {
+            Log.Log.Debug("TvCardDvbSs2: result = success");
+            return true;
+          }
+        }
+        catch (COMException ex)
+        {
+          if ((SkyStarError)ex.ErrorCode == SkyStarError.Diseqc12NotSupported)
+          {
+            // DiSEqC 1.2 commands not supported. This is a little unexpected given that the
+            // driver previously reported that it supports them.
+            Log.Log.Debug("TvCardDvbSs2: raw DiSEqC commands not supported");
+          }
+          else
+          {
+            Log.Log.Debug("TvCardDvbSs2: failed to send raw DiSEqC command, hr = 0x{0:x}\r\n{1}", ex.ErrorCode, ex.StackTrace);
+          }
+        }
+      }
+
+      // If we get to here then the driver/hardware doesn't support raw commands. We'll attempt to send
+      // non-raw commands if the command is a DiSEqC 1.0 switch command.
+      if (command.Length != 4 ||
+        (command[0] != (byte)DiseqcFrame.CommandFirstTransmissionNoReply &&
+        command[0] != (byte)DiseqcFrame.CommandRepeatTransmissionNoReply) ||
+        command[1] != (byte)DiseqcAddress.AnySwitch ||
+        command[2] != (byte)DiseqcCommand.WriteN0)
+      {
+        Log.Log.Debug("TvCardDvbSs2: command not supported");
         return false;
       }
-      Marshal.Copy(command, 0, _ptrDisEqc, command.Length);
-      tuner4.SendDiSEqCCommand(command.Length, _ptrDisEqc);
-      return true;
+
+      // Port A = 3, Port B = 4 etc.
+      SkyStarDiseqcPort port = (SkyStarDiseqcPort)((command[3] & 0xc) >> 2) + 3;
+      hr = _tunerInterface.SetDiseqc(port);
+      if (hr == 0)
+      {
+        Log.Log.Debug("TvCardDvbSs2: result = success");
+        return true;
+      }
+
+      Log.Log.Debug("TvCardDvbSs2: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      return false;
     }
 
     /// <summary>
@@ -2527,6 +2471,23 @@ namespace TvLibrary.Implementations.DVB
       channel.ServiceId = serviceid;
       channel.Name = name;
       return channel;
+    }
+
+    /// <summary>
+    /// Stop the device. The actual result of this function depends on device configuration:
+    /// - graph stop
+    /// - graph pause
+    /// TODO graph destroy
+    /// </summary>
+    public override void Stop()
+    {
+      base.Stop();
+      // Force the DiSEqC controller to forget the previously tuned channel. This guarantees that the
+      // next call to SwitchToChannel() will actually cause commands to be sent.
+      if (_diseqcController != null)
+      {
+        _diseqcController.SwitchToChannel(null);
+      }
     }
   }
 }

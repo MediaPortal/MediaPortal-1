@@ -54,7 +54,7 @@ namespace TvDatabase
 
     /// <summary> 
     /// Create an object from an existing row of data. This will be used by Gentle to 
-    /// construct objects from retrieved rows. 
+    /// construct objects from retrieved rows.
     /// </summary> 
     public Satellite(int idSatellite, string satelliteName, string transponderFileName)
     {

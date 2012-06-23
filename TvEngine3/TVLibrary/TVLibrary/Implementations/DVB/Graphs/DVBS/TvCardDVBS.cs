@@ -43,14 +43,9 @@ namespace TvLibrary.Implementations.DVB
     private IDVBSTuningSpace _tuningSpace = null;
 
     /// <summary>
-    /// The DiSEqC command interface for the tuner.
+    /// The DiSEqC control interface for the tuner.
     /// </summary>
     private IDiseqcController _diseqcController = null;
-
-    /// <summary>
-    /// The DiSEqC motor control interface for the tuner.
-    /// </summary>
-    private IDiSEqCMotor _diseqcMotor = null;
 
     #endregion
 
@@ -64,7 +59,7 @@ namespace TvLibrary.Implementations.DVB
     public TvCardDVBS(IEpgEvents epgEvents, DsDevice device)
       : base(epgEvents, device)
     {
-      _cardType = CardType.DvbS;
+      _tunerType = CardType.DvbS;
     }
 
     #endregion
@@ -82,11 +77,11 @@ namespace TvLibrary.Implementations.DVB
       // Check if one of the supported interfaces is capable of sending DiSEqC commands.
       foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
       {
-        _diseqcController = deviceInterface as IDiseqcController;
-        if (_diseqcController != null)
+        IDiseqcDevice diseqcDevice = deviceInterface as IDiseqcDevice;
+        if (diseqcDevice != null)
         {
           Log.Log.Debug("TvCardDvbS: found DiSEqC command interface");
-          _diseqcMotor = new DiSEqCMotor(_diseqcController);
+          _diseqcController = new DiseqcController(diseqcDevice);
           break;
         }
       }
@@ -187,12 +182,15 @@ namespace TvLibrary.Implementations.DVB
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    protected override void Tune(IChannel channel)
+    protected override void PerformTuning(IChannel channel)
     {
       // Send DiSEqC commands (if necessary) before actually tuning in case the driver applies the commands
       // during the tuning process.
-      SendDiseqcCommands(channel as DVBSChannel);
-      base.Tune(channel);
+      if (_diseqcController != null)
+      {
+        _diseqcController.SwitchToChannel(channel as DVBSChannel);
+      }
+      base.PerformTuning(channel);
     }
 
     /// <summary>
@@ -212,11 +210,10 @@ namespace TvLibrary.Implementations.DVB
       uint lnbLof;
       uint lnbSwitchFrequency;
       Polarisation polarisation;
-      BandTypeConverter.GetLnbTuningParameters(dvbsChannel, _parameters, out lnbLof, out lnbSwitchFrequency, out polarisation);
-      lnbLof *= 1000;
+      LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLof, out lnbSwitchFrequency, out polarisation);
       _tuningSpace.put_LowOscillator((int)lnbLof);
       _tuningSpace.put_HighOscillator((int)lnbLof);
-      _tuningSpace.put_LNBSwitch((int)lnbSwitchFrequency * 1000);
+      _tuningSpace.put_LNBSwitch((int)lnbSwitchFrequency);
 
       ILocator locator;
       _tuningSpace.get_DefaultLocator(out locator);
@@ -236,140 +233,6 @@ namespace TvLibrary.Implementations.DVB
       tuneRequest.put_Locator(locator);
 
       return tuneRequest;
-    }
-
-    /// <summary>
-    /// Send the required switch and motor DiSEqC command(s) to tune a given channel.
-    /// </summary>
-    /// <param name="channel">The channel to tune.</param>
-    /// <returns><c>true</c> if the command(s) are sent successfully, otherwise <c>false</c></returns>
-    private bool SendDiseqcCommands(DVBSChannel channel)
-    {
-      Log.Log.Debug("TvCardDvbS: send switch and motor DiSEqC commands");
-      if (channel == null)
-      {
-        Log.Log.Debug("TvCardDvbS: channel is null");
-        return true;
-      }
-      if (_diseqcController == null)
-      {
-        Log.Log.Debug("TvCardDvbS: DiSEqC not supported");
-        return false;
-      }
-
-      bool success = true;
-      bool alwaysSendCommands = false;
-      DVBSChannel previousChannel = _previousChannel as DVBSChannel;
-      bool isHighBand = BandTypeConverter.IsHighBand(channel, _parameters);
-      bool wasHighBand = !isHighBand;
-      if (previousChannel != null)
-      {
-        wasHighBand = BandTypeConverter.IsHighBand(previousChannel, _parameters);
-      }
-
-      // There is a well defined order in which commands may be sent:
-      // "raw" DiSEqC commands -> DiSEqC 1.0 (committed) -> tone burst (simple DiSEqC) -> 22 kHz tone on/off
-
-      // Switch command.
-      bool sendCommand = channel.Diseqc != DiseqcPort.None &&
-        channel.Diseqc != DiseqcPort.SimpleA &&
-        channel.Diseqc != DiseqcPort.SimpleB;
-      if (sendCommand)
-      {
-        // If we get to here then there is a valid command to send, but we might not need/want to send it.
-        if (!alwaysSendCommands &&
-          previousChannel != null &&
-          previousChannel.Diseqc == channel.Diseqc &&
-          (
-            (channel.Diseqc != DiseqcPort.PortA &&
-            channel.Diseqc != DiseqcPort.PortB &&
-            channel.Diseqc != DiseqcPort.PortC &&
-            channel.Diseqc != DiseqcPort.PortD)
-            ||
-            (previousChannel.Polarisation == channel.Polarisation &&
-            wasHighBand == isHighBand)
-          )
-        )
-        {
-          sendCommand = false;
-        }
-      }
-      if (!sendCommand)
-      {
-        Log.Log.Debug("TvCardDvbS: no need to send switch command");
-      }
-      else
-      {
-        byte command = 0xf0;
-        int portNumber = BandTypeConverter.GetPortNumber(channel.Diseqc);
-        if (channel.Diseqc == DiseqcPort.PortA ||
-          channel.Diseqc == DiseqcPort.PortB ||
-          channel.Diseqc == DiseqcPort.PortC ||
-          channel.Diseqc == DiseqcPort.PortD)
-        {
-          Log.Log.Debug("TvCardDvbS: DiSEqC 1.0 switch command");
-          bool isHorizontal = channel.Polarisation == Polarisation.LinearH || channel.Polarisation == Polarisation.CircularL;
-          command |= (byte)(isHighBand ? 1 : 0);
-          command |= (byte)((isHorizontal) ? 2 : 0);
-          command |= (byte)((portNumber - 1) << 2);
-          if (!_diseqcController.SendCommand(new byte[4] { 0xe0, 0x10, 0x38, command }))
-          {
-            success = false;
-          }
-        }
-        else
-        {
-          Log.Log.Debug("TvCardDvbS: DiSEqC 1.1 switch command");
-          command |= (byte)(portNumber - 1);
-          if (!_diseqcController.SendCommand(new byte[4] { 0xe0, 0x10, 0x39, command }))
-          {
-            success = false;
-          }
-        }
-      }
-
-      // Motor movement.
-      sendCommand = channel.SatelliteIndex > 0;
-      if (sendCommand)
-      {
-        if (!alwaysSendCommands &&
-          previousChannel != null &&
-          previousChannel.SatelliteIndex == channel.SatelliteIndex)
-        {
-          sendCommand = false;
-        }
-      }
-      if (!sendCommand)
-      {
-        Log.Log.Debug("TvCardDvbS: no need to send motor command");
-      }
-      else
-      {
-        Log.Log.Debug("TvCardDvbS: motor command(s)");
-        _diseqcMotor.GotoPosition((byte)channel.SatelliteIndex);
-      }
-
-      // Tone burst and final state.
-      ToneBurst toneBurst = ToneBurst.Off;
-      if (channel.Diseqc == DiseqcPort.SimpleA)
-      {
-        toneBurst = ToneBurst.ToneBurst;
-      }
-      else if (channel.Diseqc == DiseqcPort.SimpleB)
-      {
-        toneBurst = ToneBurst.DataBurst;
-      }
-      Tone22k tone22k = Tone22k.Off;
-      if (isHighBand)
-      {
-        tone22k = Tone22k.On;
-      }
-      if (!_diseqcController.SetToneState(toneBurst, tone22k))
-      {
-        success = false;
-      }
-
-      return success;
     }
 
     #endregion
@@ -429,17 +292,17 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     /// <summary>
-    /// Check if the tuner can tune to a given channel.
+    /// Check if the tuner can tune to a specific channel.
     /// </summary>
     /// <param name="channel">The channel to check.</param>
     /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public override bool CanTune(IChannel channel)
     {
-      if ((channel as DVBSChannel) == null)
+      if (channel is DVBSChannel)
       {
-        return false;
+        return true;
       }
-      return true;
+      return false;
     }
 
     protected override DVBBaseChannel CreateChannel(int networkid, int transportid, int serviceid, string name)
@@ -453,17 +316,33 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Gets the interface for controlling the DiSEqC satellite dish motor.
+    /// Get the device's DiSEqC control interface. This interface is only applicable for satellite tuners.
+    /// It is used for controlling switch, positioner and LNB settings.
     /// </summary>
-    /// <value>
-    /// <c>null</c> if the tuner is not a satellite tuner or the tuner doesn't support controlling a motor,
-    /// otherwise the interface for controlling the motor
-    /// </value>
-    public override IDiSEqCMotor DiSEqCMotor
+    /// <value><c>null</c> if the tuner is not a satellite tuner or the tuner does not support sending/receiving
+    /// DiSEqC commands</value>
+    public override IDiseqcController DiseqcController
     {
       get
       {
-        return _diseqcMotor;
+        return _diseqcController;
+      }
+    }
+
+    /// <summary>
+    /// Stop the device. The actual result of this function depends on device configuration:
+    /// - graph stop
+    /// - graph pause
+    /// TODO graph destroy
+    /// </summary>
+    public override void Stop()
+    {
+      base.Stop();
+      // Force the DiSEqC controller to forget the previously tuned channel. This guarantees that the
+      // next call to SwitchToChannel() will actually cause commands to be sent.
+      if (_diseqcController != null)
+      {
+        _diseqcController.SwitchToChannel(null);
       }
     }
   }

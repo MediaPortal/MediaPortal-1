@@ -70,7 +70,7 @@ namespace TvDatabase
 
     /// <summary> 
     /// Create an object from an existing row of data. This will be used by Gentle to 
-    /// construct objects from retrieved rows. 
+    /// construct objects from retrieved rows.
     /// </summary> 
     public History(int idHistory, int idChannel, DateTime startTime, DateTime endTime, string title, string description,
                    string genre, bool recorded, int watched)
