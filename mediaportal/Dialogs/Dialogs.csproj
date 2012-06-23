@@ -151,6 +151,7 @@
     <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Dialogs\GUIDialogMenuExtended.cs" />
     <Compile Include="Dialogs\GUIDialogPlayStop.cs" />
     <Compile Include="Dialogs\GUIDialogCIMenu.cs" />
     <Compile Include="Dialogs\GUIDialogIncompatiblePlugins.cs" />

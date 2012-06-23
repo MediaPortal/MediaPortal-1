@@ -408,7 +408,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
                   case 938: // View this channel
                     {
-                      TVHome.ViewChannelAndCheck(_currentProgram.Entity.Channel);
+                      TVHome.ViewChannelAndCheck(_currentProgram.Entity.Channel, 0);
                       if (g_Player.Playing)
                       {
                         g_Player.ShowFullScreenWindow();
@@ -425,7 +425,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
               if (string.IsNullOrEmpty(fileName))
               {
-                TVHome.ViewChannelAndCheck(_currentProgram.Entity.Channel);
+                TVHome.ViewChannelAndCheck(_currentProgram.Entity.Channel, 0);
                 if (g_Player.Playing)
                 {
                   g_Player.ShowFullScreenWindow();
@@ -465,7 +465,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
                   case 938:
                     Log.Debug("TVGuide: switch currently running show to fullscreen");
                     GUIWaitCursor.Show();
-                    TVHome.ViewChannelAndCheck(_currentProgram.Entity.Channel);
+                    TVHome.ViewChannelAndCheck(_currentProgram.Entity.Channel, 0);
                     GUIWaitCursor.Hide();
                     if (g_Player.Playing)
                     {
@@ -485,7 +485,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
                 TVHome.UserChannelChanged = true;
                 // fixing mantis 1874: TV doesn't start when from other playing media to TVGuide & select program
                 GUIWaitCursor.Show();
-                TVHome.ViewChannelAndCheck(_currentProgram.Entity.Channel);
+                TVHome.ViewChannelAndCheck(_currentProgram.Entity.Channel, 0);
                 GUIWaitCursor.Hide();
                 if (g_Player.Playing)
                 {
@@ -663,7 +663,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
             Log.Debug("viewch channel:{0}", _currentChannel);
             if (_currentProgram != null) 
             {
-              TVHome.ViewChannelAndCheck(_currentProgram.Entity.Channel);
+              TVHome.ViewChannelAndCheck(_currentProgram.Entity.Channel, 0);
               if (TVHome.Card.IsTimeShifting && TVHome.Card.IdChannel == _currentProgram.Entity.idChannel)
               {
                 g_Player.ShowFullScreenWindow();

@@ -460,11 +460,11 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
                     ScheduleManagement.DeleteSchedule(schedule.id_Schedule);
                   }
                 }
-                else
-                {
-                  FreeAllTimeshiftingSubChannels(ref user);                    
+                //else
+                //{
+                //  FreeAllTimeshiftingSubChannels(ref user);                    
                   //context.RemoveUser(user1);
-                }
+                //}
               }
               i++;
             }

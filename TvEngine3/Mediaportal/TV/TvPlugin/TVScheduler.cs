@@ -993,7 +993,7 @@ namespace Mediaportal.TV.TvPlugin
 
         case 980: // Play recording from live point
           {
-            TVHome.ViewChannelAndCheck(rec.Entity.Channel);
+            TVHome.ViewChannelAndCheck(rec.Entity.Channel, 0);
             if (g_Player.Playing)
             {
               g_Player.ShowFullScreenWindow();

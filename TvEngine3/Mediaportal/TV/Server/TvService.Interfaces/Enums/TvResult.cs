@@ -96,6 +96,8 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.Enums
     /// <summary>
     /// A tune operation was cancelled
     /// </summary>
-    TuneCancelled
+    TuneCancelled,
+    UsersBlocking,
+    AlreadyParked
   }
 }

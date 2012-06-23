@@ -850,7 +850,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
             return;
           }
         }
-        TVHome.ViewChannelAndCheck(_currentChannel);
+        TVHome.ViewChannelAndCheck(_currentChannel, 0);
       }
     }
 

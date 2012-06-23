@@ -485,7 +485,6 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
 
     private bool ShouldRecordEpisode(int scheduleType, RecordingDetail newRecording)
     {
-      System.Diagnostics.Debugger.Launch();
       string currentEpisodeTitle = "";
       bool shouldRecordEpisode = true;
 

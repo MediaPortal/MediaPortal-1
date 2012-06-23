@@ -287,24 +287,22 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Impleme
 
                   if (isDiffTS)
                   {
-                    activeUsers.Add(actualUser);
-                  }
-                  else
+                    activeUsers.Add(actualUser); 
+                  }                                    
+                  else if (!isOwner)
                   {
-                    if (!isOwner)
+                    bool isUserOnSameChannel = CardReservationHelper.IsUserOnSameChannel(tuningDetail, userDVBchannel);
+                    if (isUserOnSameChannel)
                     {
-                      bool isUserOnSameChannel = CardReservationHelper.IsUserOnSameChannel(tuningDetail, userDVBchannel);
-                      if (isUserOnSameChannel)
+                      numberOfOtherUsersOnSameChannel++;
+                      //we do not want to hook up on schedulers existing subchannel
+                      if (actualUser.UserType != UserType.Scheduler)
                       {
-                        numberOfOtherUsersOnSameChannel++;
-                        //we do not want to hook up on schedulers existing subchannel
-                        if (actualUser.UserType != UserType.Scheduler)
-                        {
-                          ownerSubchannel = subchannel;
-                        }
+                        ownerSubchannel = subchannel;
                       }
                     }
                   }
+                  
                 }
               }
 

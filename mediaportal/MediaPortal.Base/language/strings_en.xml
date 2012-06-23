@@ -1289,6 +1289,8 @@
     <String id="2555">Unpark channel by [{0}]</String>
     <String id="2556">Unpark and resume channel?</String>
     <String id="2557">If not you will watch TV from live point.</String>    
+    <String id="2558">Kick user(s) from card?</String>
+    <String id="2559">card</String>
     <String id="2599">Undetermined</String>
     <String id="2600">English</String>
     <String id="2601">German</String>

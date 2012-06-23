@@ -2626,16 +2626,18 @@ namespace Mediaportal.TV.Server.TVService
     /// </summary>
     /// <param name="user">user credentials.</param>
     /// <param name="idChannel">The id channel.</param>
+    /// <param name="kickCardId"> </param>
     /// <param name="card">returns card for which timeshifting is started</param>
+    /// <param name="kickableCards"> </param>
     /// <param name="forceCardId">Indicated, if the card should be forced</param>
     /// <param name="cardChanged">indicates if card was changed</param>
     /// <returns>
     /// TvResult indicating whether method succeeded
-    /// </returns>
-    public TvResult StartTimeShifting(ref IUser user, int idChannel, out IVirtualCard card, bool forceCardId)
-    {
+    /// </returns>    
+    public TvResult StartTimeShifting(ref IUser user, int idChannel, int? kickCardId, out IVirtualCard card, out Dictionary<int, List<IUser>> kickableCards, bool forceCardId)
+    {      
       bool cardChanged = false;
-      return StartTimeShifting(ref user, idChannel, out card, forceCardId, out cardChanged);
+      return StartTimeShifting(ref user, idChannel, kickCardId, out card, out kickableCards, forceCardId, out cardChanged);
     }
 
     /// <summary>
@@ -2643,16 +2645,18 @@ namespace Mediaportal.TV.Server.TVService
     /// </summary>
     /// <param name="user">user credentials.</param>
     /// <param name="idChannel">The id channel.</param>
+    /// <param name="kickCardId"> </param>
     /// <param name="card">returns card for which timeshifting is started</param>
+    /// <param name="kickableCards"> </param>
     /// <param name="forceCardId">Indicated, if the card should be forced</param>
     /// <param name="cardChanged">indicates if card was changed</param>
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
-    private TvResult StartTimeShifting(ref IUser user, int idChannel, out IVirtualCard card, bool forceCardId,
-                                      out bool cardChanged)
+    private TvResult StartTimeShifting(ref IUser user, int idChannel, int? kickCardId, out IVirtualCard card, out Dictionary<int, List<IUser>> kickableCards, bool forceCardId, out bool cardChanged)
     {
       TvResult result = TvResult.UnknownError;
+      kickableCards = null;
       card = null;
       cardChanged = false;
       RefreshTimeshiftingUserFromAnyContext(ref user);
@@ -2675,6 +2679,8 @@ namespace Mediaportal.TV.Server.TVService
               channel,
               forceCardId,
               freeCardsForReservation,
+              kickCardId,
+              out kickableCards,
               out cardChanged, ref result, ref card);
           }
           else
@@ -2702,8 +2708,9 @@ namespace Mediaportal.TV.Server.TVService
 
    
 
-    private ICollection<ICardTuneReservationTicket> IterateCardsUntilTimeshifting(ref IUser user, Channel channel, bool forceCardId, ICollection<CardDetail> freeCardsForReservation, out bool cardChanged, ref TvResult result, ref IVirtualCard card)
-    {      
+    private ICollection<ICardTuneReservationTicket> IterateCardsUntilTimeshifting(ref IUser user, Channel channel, bool forceCardId, ICollection<CardDetail> freeCardsForReservation, int? kickCardId, out Dictionary<int, List<IUser>> kickableCards, out bool cardChanged, ref TvResult result, ref IVirtualCard card)
+    {
+      kickableCards = null;
       cardChanged = false;
       VirtualCard initialCard = GetValidVirtualCard(user); //todo fix
       string intialTimeshiftingFilename = GetIntialTimeshiftingFilename(initialCard);
@@ -2737,7 +2744,10 @@ namespace Mediaportal.TV.Server.TVService
               cardResImpl,
               intialTimeshiftingFilename,
               freeCards,
-              maxCards, ref card, ref result, ref cardsIterated, out cardChanged);
+              maxCards,
+              kickCardId,
+              out kickableCards,
+              ref card, ref result, ref cardsIterated, out cardChanged);
           }
           else
           {
@@ -2752,6 +2762,7 @@ namespace Mediaportal.TV.Server.TVService
           moreCardsAvailable = false;
         }
       } //end of while             
+      
       return tickets;
     }
 
@@ -2768,8 +2779,9 @@ namespace Mediaportal.TV.Server.TVService
       return freeCardsIterated;
     }
 
-    private bool IterateTicketsUntilTimeshifting(ref IUser userBefore, Channel channel, ICollection<ICardTuneReservationTicket> tickets, CardReservationTimeshifting cardResImpl, string intialTimeshiftingFilename, ICollection<CardDetail> freeCards, int maxCards, ref IVirtualCard card, ref TvResult result, ref int cardsIterated, out bool cardChanged)
+    private bool IterateTicketsUntilTimeshifting(ref IUser userBefore, Channel channel, ICollection<ICardTuneReservationTicket> tickets, CardReservationTimeshifting cardResImpl, string intialTimeshiftingFilename, ICollection<CardDetail> freeCards, int maxCards, int? kickCardId, out Dictionary<int, List<IUser>> kickableCards, ref IVirtualCard card, ref TvResult result, ref int cardsIterated, out bool cardChanged)
     {
+      kickableCards = null;
       cardChanged = false;
       int failedCardId = -1;
       bool moreCardsAvailable = true;
@@ -2816,12 +2828,15 @@ namespace Mediaportal.TV.Server.TVService
                 if (ticket.OwnerSubchannel.TvUsage == TvUsage.Parked)
                 {
                   //todo: ideally, ask the client if its ok to either : 1) unpark channel or .. 2) cancel park and watch live
+                  result = TvResult.AlreadyParked;
+                  break;
+                  /*
                   tvCardHandler.ParkedUserManagement.CancelParkedUserBySubChannelId(userBefore.Name, ticket.OwnerSubchannel.Id);
                   ISubChannel subch = tvCardHandler.UserManagement.GetSubChannel(userBefore.Name, ticket.OwnerSubchannel.Id);
                   if (subch != null)
                   {
                     subch.TvUsage = TvUsage.Timeshifting;                    
-                  }
+                  }*/
                 }
                 else
                 {
@@ -2831,9 +2846,17 @@ namespace Mediaportal.TV.Server.TVService
             }
             else
             {              
-              if (!IsTransponderAvailable(maxCards, ticket, tvcard, cardInfo, cardIteration, channel.idChannel))
+              if (!TransponderAcquired(maxCards, ticket, tvcard, cardIteration, channel.idChannel, kickCardId, ref kickableCards))
               {
-                HandleAllCardsBusy(tickets, out result, out failedCardId, cardInfo, tvcard);
+                if (kickableCards != null && kickableCards.Count > 0)
+                {
+                  result = TvResult.UsersBlocking;
+                  HandleTvException(tickets, out failedCardId, cardInfo, tvcard);
+                }
+                else
+                {
+                  HandleAllCardsBusy(tickets, out result, out failedCardId, cardInfo, tvcard); 
+                }                
                 continue;
               }              
             }            
@@ -2894,11 +2917,12 @@ namespace Mediaportal.TV.Server.TVService
           }
           else
           {
+            kickableCards = null;
             cardChanged = HasCardChanged(card, intialTimeshiftingFilename);
           }
         }
         break; //if we made it to the bottom, then we have a successful timeshifting.          
-      } //end of foreach      
+      } //end of foreach            
       return moreCardsAvailable;
     }
 
@@ -2952,8 +2976,8 @@ namespace Mediaportal.TV.Server.TVService
       return tickets.FirstOrDefault(t => t.CardId == cardInfo.Id);
     }
 
-    private bool IsTransponderAvailable(int maxCards, ICardTuneReservationTicket ticket, ITvCardHandler tvcard, CardDetail cardInfo, int cardIteration, int idChannel)
-    {
+    private bool TransponderAcquired(int maxCards, ICardTuneReservationTicket ticket, ITvCardHandler tvcard, int cardIteration, int idChannel, int? kickCardId, ref Dictionary<int, List<IUser>> kickableCards)
+    {      
       bool isTransponderAvailable = false;
       bool foundAnyUsersOnCard = FoundAnyUsersOnCard(ticket);
       if (foundAnyUsersOnCard)
@@ -2961,16 +2985,32 @@ namespace Mediaportal.TV.Server.TVService
         bool foundCandidateForKicking = FoundCandidateForKicking(ticket);
         if (foundCandidateForKicking)
         {
-          bool kickLeechingUsersIfNoMoreCardsAvail = KickLeechingUsersIfNoMoreCardsAvail(tvcard, cardInfo, ticket,
-                                                                                          cardIteration,
-                                                                                          maxCards, idChannel);
-          bool cardsAvailable = ((cardIteration + 1) < maxCards);
-          if (!kickLeechingUsersIfNoMoreCardsAvail && cardsAvailable)
+          if (!kickCardId.HasValue || (kickCardId.Value == tvcard.DataBaseCard.idCard))
           {
-            Log.Write(
-              "Controller: skipping card:{0} since other users are present on the same channel and there are still cards available.",
-              cardInfo.Card.idCard);
-            //TODO: what if the following cards fail, should we then try and kick the leech user, in order to make room for a tune ?            
+            bool usersKicked = KickLeechingUsersIfNoMoreCardsAvail(tvcard, ticket, cardIteration, maxCards, idChannel);
+            bool cardsAvailable = ((cardIteration + 1) < maxCards);       
+            if (!usersKicked && cardsAvailable)
+            {
+              Log.Write(
+                "Controller: skipping card:{0} since other users are present on the same channel and there are still cards available.",
+                tvcard.DataBaseCard.idCard);
+              //TODO: what if the following cards fail, should we then try and kick the leech user, in order to make room for a tune ?            
+            }
+            else
+            {
+              isTransponderAvailable = true;
+            }
+          }
+          else if ((cardIteration + 1) == maxCards)
+          {
+            // kicking not allowed on card, lets report back to client - but only if this is the last card to choose from            
+            if (kickableCards == null)
+            {
+              kickableCards = new Dictionary<int, List<IUser>>();
+            }
+            kickableCards[tvcard.DataBaseCard.idCard] = ticket.ActiveUsers.ToList();
+            Log.Write("Controller: not allowed to kick users on card:{0}, politely asking client...",
+            tvcard.DataBaseCard.idCard);
           }
           else
           {
@@ -2980,14 +3020,14 @@ namespace Mediaportal.TV.Server.TVService
         else
         {
           Log.Write(
-            "Controller: skipping card:{0} since is it busy (users present with higher priority).",
-            cardInfo.Card.idCard);
+            "Controller: skipping card:{0} since it is busy (user(s) present with higher priority).",
+            tvcard.DataBaseCard.idCard);
         }
       }
       else
       {
         isTransponderAvailable = true;
-      }
+      }      
       return isTransponderAvailable;
     }
     
@@ -3031,7 +3071,7 @@ namespace Mediaportal.TV.Server.TVService
       return (ticket.OwnerSubchannel != null);
     }
 
-    private bool KickLeechingUsersIfNoMoreCardsAvail(ITvCardHandler tvcard, CardDetail cardInfo, ICardTuneReservationTicket ticket, int cardIteration, int maxCards, int idChannel)
+    private bool KickLeechingUsersIfNoMoreCardsAvail(ITvCardHandler tvcard, ICardTuneReservationTicket ticket, int cardIteration, int maxCards, int idChannel)
     {
       bool kickLeechingUsersIfNoMoreCardsAvail = false;
 
@@ -3058,7 +3098,7 @@ namespace Mediaportal.TV.Server.TVService
                 "Controller: kicking leech user '{0}' with prio={1} off card={2} on channel={3} (subchannel #{4}) since owner '{5}' with prio={6} (subchannel #{7}) changed transponder and there are no more cards available",
                 activeUser.Name,
                 activeUser.Priority,
-                cardInfo.Card.name,
+                tvcard.DataBaseCard.name,
                 channelInfo,
                 subchannel.Id,
                 user.Name,
@@ -3195,7 +3235,8 @@ namespace Mediaportal.TV.Server.TVService
     public TvResult StartTimeShifting(ref IUser user, int idChannel, out IVirtualCard card)
     {
       bool cardChanged;
-      return StartTimeShifting(ref user, idChannel, out card, false, out cardChanged);
+      Dictionary<int, List<IUser>> kickableCards;
+      return StartTimeShifting(ref user, idChannel, null, out card, out kickableCards, false, out cardChanged);
     }
 
     /// <summary>
@@ -3203,14 +3244,16 @@ namespace Mediaportal.TV.Server.TVService
     /// </summary>
     /// <param name="user">user credentials.</param>
     /// <param name="idChannel">The id channel.</param>
+    /// <param name="kickCardId"> </param>
     /// <param name="card">returns card for which timeshifting is started</param>
+    /// <param name="kickableCards"> </param>
     /// <param name="cardChanged">indicates if card was changed</param>
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
-    public TvResult StartTimeShifting(ref IUser user, int idChannel, out IVirtualCard card, out bool cardChanged)
+    public TvResult StartTimeShifting(ref IUser user, int idChannel, int? kickCardId, out IVirtualCard card, out Dictionary<int, List<IUser>> kickableCards, out bool cardChanged)
     {
-      return StartTimeShifting(ref user, idChannel, out card, false, out cardChanged);
+      return StartTimeShifting(ref user, idChannel, kickCardId, out card, out kickableCards, false, out cardChanged);
     }
 
     /// <summary>

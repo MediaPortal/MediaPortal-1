@@ -834,14 +834,16 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </summary>
     /// <param name="user">user credentials.</param>
     /// <param name="idChannel">The id channel.</param>
+    /// <param name="kickCardId"> </param>
     /// <param name="card">returns on which card timeshifting is started</param>
+    /// <param name="kickableCards"> </param>
     /// <param name="forceCardId">Indicated, if the card should be forced</param>
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>        
-    public TvResult StartTimeShifting(ref IUser user, int idChannel, out IVirtualCard card, bool forceCardId)
+    public TvResult StartTimeShifting(ref IUser user, int idChannel, int? kickCardId, out IVirtualCard card, out Dictionary<int, List<IUser>> kickableCards, bool forceCardId)
     {
-      return Service.StartTimeShifting(ref user, idChannel, out card, forceCardId);
+      return Service.StartTimeShifting(ref user, idChannel, kickCardId, out card, out kickableCards, forceCardId);
     }
 
     /// <summary>
@@ -849,14 +851,16 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </summary>
     /// <param name="user">user credentials.</param>
     /// <param name="idChannel">The id channel.</param>
+    /// <param name="kickCardId"> </param>
     /// <param name="card">returns on which card timeshifting is started</param>
+    /// <param name="kickableCards"> </param>
     /// <param name="cardChanged">indicates if card was changed</param>
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
-    public TvResult StartTimeShifting(ref IUser user, int idChannel, out IVirtualCard card, out bool cardChanged)
+    public TvResult StartTimeShifting(ref IUser user, int idChannel, int? kickCardId, out IVirtualCard card, out Dictionary<int, List<IUser>> kickableCards, out bool cardChanged)
     {
-      return Service.StartTimeShifting(ref user, idChannel, out card, out cardChanged);
+      return Service.StartTimeShifting(ref user, idChannel, kickCardId, out card, out kickableCards, out cardChanged);
     }
 
     /// <summary>
