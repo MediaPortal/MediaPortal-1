@@ -253,6 +253,7 @@ namespace MediaPortal.GUI.Video
 
     protected override void OnPageLoad()
     {
+      base.OnPageLoad();
       int previousWindow = GUIWindowManager.GetPreviousActiveWindow();
       
       // Reset parameters if previous window is not one of video windows
@@ -279,8 +280,12 @@ namespace MediaPortal.GUI.Video
       handler.CurrentView = view;
       // Resume view lvl position (back from VideoInfo window)
       handler.CurrentLevel = _currentLevel;
-      
-      base.OnPageLoad();
+
+      // Set views
+      if (btnViews != null)
+      {
+        InitViewSelections();
+      }
 
       LoadDirectory(currentFolder);
       GetProtectedShares(ref _protectedShares);
