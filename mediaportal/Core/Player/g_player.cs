@@ -1796,6 +1796,14 @@ namespace MediaPortal.Player
         return _chaptersname;
       }
     }
+    
+    public static double[] JumpPoints
+    {
+      get
+      {
+        return _jumpPoints;
+      }
+    }
 
     public static int Width
     {
@@ -2199,10 +2207,10 @@ namespace MediaPortal.Player
             StepNow();
           }
         }
-        else if (_autoComSkip && _jumpPoints != null && _player.Speed == 1)
+        else if (_autoComSkip && JumpPoints != null && _player.Speed == 1)
         {
           double currentPos = _player.CurrentPosition;
-          foreach (double jumpFrom in _jumpPoints)
+          foreach (double jumpFrom in JumpPoints)
           {
             if (jumpFrom != 0 && currentPos <= jumpFrom + 1.0 && currentPos >= jumpFrom - 0.1)
             {
