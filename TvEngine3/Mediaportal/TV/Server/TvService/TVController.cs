@@ -1921,7 +1921,8 @@ namespace Mediaportal.TV.Server.TVService
             else
             {
               UpdateChannelStatesForUsers();
-            }            
+            }
+            StopTimeShiftingAllChannelsExcept(user, idChannel);
             result = true;            
           } 
         }
@@ -2637,7 +2638,8 @@ namespace Mediaportal.TV.Server.TVService
     public TvResult StartTimeShifting(ref IUser user, int idChannel, int? kickCardId, out IVirtualCard card, out Dictionary<int, List<IUser>> kickableCards, bool forceCardId)
     {      
       bool cardChanged = false;
-      return StartTimeShifting(ref user, idChannel, kickCardId, out card, out kickableCards, forceCardId, out cardChanged);
+      double? parkedDuration;
+      return StartTimeShifting(ref user, idChannel, kickCardId, out card, out kickableCards, forceCardId, out cardChanged, out parkedDuration);
     }
 
     /// <summary>
@@ -2650,18 +2652,23 @@ namespace Mediaportal.TV.Server.TVService
     /// <param name="kickableCards"> </param>
     /// <param name="forceCardId">Indicated, if the card should be forced</param>
     /// <param name="cardChanged">indicates if card was changed</param>
+    /// <param name="parkedDuration"> </param>
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
-    private TvResult StartTimeShifting(ref IUser user, int idChannel, int? kickCardId, out IVirtualCard card, out Dictionary<int, List<IUser>> kickableCards, bool forceCardId, out bool cardChanged)
+    private TvResult StartTimeShifting(ref IUser user, int idChannel, int? kickCardId, out IVirtualCard card, out Dictionary<int, List<IUser>> kickableCards, bool forceCardId, out bool cardChanged, out double? parkedDuration)
     {
+      parkedDuration = null;
       TvResult result = TvResult.UnknownError;
       kickableCards = null;
       card = null;
       cardChanged = false;
+      int oldCardId = -1;
       RefreshTimeshiftingUserFromAnyContext(ref user);
       if (user != null)
       {
+        oldCardId = user.CardId;
+        string initialTimeshiftingFile = TimeShiftFileName(user.Name, user.CardId);
         user.Priority = UserFactory.GetDefaultPriority(user.Name, user.Priority);
         Channel channel = ChannelManagement.GetChannel(idChannel);
         Log.Write("Controller: StartTimeShifting {0} {1}", channel.displayName, channel.idChannel);
@@ -2681,7 +2688,7 @@ namespace Mediaportal.TV.Server.TVService
               freeCardsForReservation,
               kickCardId,
               out kickableCards,
-              out cardChanged, ref result, ref card);
+              out cardChanged, ref result, ref card, ref parkedDuration);
           }
           else
           {
@@ -2701,19 +2708,26 @@ namespace Mediaportal.TV.Server.TVService
           {
             StartEPGgrabber();
           }
+          else if (!cardChanged)
+          {
+            cardChanged = card.Id != oldCardId;
+            if (!cardChanged)
+            {
+              cardChanged = initialTimeshiftingFile != card.TimeShiftFileName;
+            }
+          }
         }
       }
+      
       return result;
     }
 
    
 
-    private ICollection<ICardTuneReservationTicket> IterateCardsUntilTimeshifting(ref IUser user, Channel channel, bool forceCardId, ICollection<CardDetail> freeCardsForReservation, int? kickCardId, out Dictionary<int, List<IUser>> kickableCards, out bool cardChanged, ref TvResult result, ref IVirtualCard card)
+    private ICollection<ICardTuneReservationTicket> IterateCardsUntilTimeshifting(ref IUser user, Channel channel, bool forceCardId, ICollection<CardDetail> freeCardsForReservation, int? kickCardId, out Dictionary<int, List<IUser>> kickableCards, out bool cardChanged, ref TvResult result, ref IVirtualCard card, ref double? parkedDuration)
     {
       kickableCards = null;
-      cardChanged = false;
-      VirtualCard initialCard = GetValidVirtualCard(user); //todo fix
-      string intialTimeshiftingFilename = GetIntialTimeshiftingFilename(initialCard);
+      cardChanged = false;      
       var cardResImpl = new CardReservationTimeshifting();
       ICollection<ICardTuneReservationTicket> tickets = null;
       ICollection<int> freeCardsIterated = UpdateCardsIteratedBasedOnForceCardId(user, forceCardId);
@@ -2741,13 +2755,12 @@ namespace Mediaportal.TV.Server.TVService
               ref user,
               channel,
               tickets,
-              cardResImpl,
-              intialTimeshiftingFilename,
+              cardResImpl,              
               freeCards,
               maxCards,
               kickCardId,
               out kickableCards,
-              ref card, ref result, ref cardsIterated, out cardChanged);
+              ref card, ref result, ref cardsIterated, out cardChanged, ref parkedDuration);
           }
           else
           {
@@ -2779,8 +2792,8 @@ namespace Mediaportal.TV.Server.TVService
       return freeCardsIterated;
     }
 
-    private bool IterateTicketsUntilTimeshifting(ref IUser userBefore, Channel channel, ICollection<ICardTuneReservationTicket> tickets, CardReservationTimeshifting cardResImpl, string intialTimeshiftingFilename, ICollection<CardDetail> freeCards, int maxCards, int? kickCardId, out Dictionary<int, List<IUser>> kickableCards, ref IVirtualCard card, ref TvResult result, ref int cardsIterated, out bool cardChanged)
-    {
+    private bool IterateTicketsUntilTimeshifting(ref IUser userBefore, Channel channel, ICollection<ICardTuneReservationTicket> tickets, CardReservationTimeshifting cardResImpl, ICollection<CardDetail> freeCards, int maxCards, int? kickCardId, out Dictionary<int, List<IUser>> kickableCards, ref IVirtualCard card, ref TvResult result, ref int cardsIterated, out bool cardChanged, ref double? parkedDuration)
+    {      
       kickableCards = null;
       cardChanged = false;
       int failedCardId = -1;
@@ -2828,6 +2841,17 @@ namespace Mediaportal.TV.Server.TVService
                 if (ticket.OwnerSubchannel.TvUsage == TvUsage.Parked)
                 {
                   //todo: ideally, ask the client if its ok to either : 1) unpark channel or .. 2) cancel park and watch live
+                  DateTime parkedAt;
+                  double parkedDurationFound;
+                  bool hasParkedUser = tvcard.ParkedUserManagement.IsUserParkedOnChannel(userNow.Name,
+                                                                    ticket.OwnerSubchannel.
+                                                                      IdChannel, out parkedDurationFound,
+                                                                    out parkedAt);
+                  if (hasParkedUser)
+                  {
+                    parkedDuration = parkedDurationFound;
+                  }
+
                   result = TvResult.AlreadyParked;
                   break;
                   /*
@@ -2881,11 +2905,8 @@ namespace Mediaportal.TV.Server.TVService
           Log.Info("control2:{0} {1} {2}", userNow.Name, userNow.CardId, tvcard.UserManagement.GetSubChannelIdByChannelId(userNow.Name, channel.idChannel));
           card = GetVirtualCard(userNow);
           card.NrOfOtherUsersTimeshiftingOnCard = ticket.NumberOfOtherUsersOnSameChannel;
-          var currentCardId = userBefore.CardId;
-          if (currentCardId > 0 && currentCardId != newCardId)
-          {
-            RemoveUserFromOtherCards(userNow.Name, currentCardId); 
-          }          
+
+          StopTimeShiftingAllChannelsExcept(userNow, channel.idChannel);
           UpdateChannelStatesForUsers();
         }
         catch (Exception)
@@ -2917,8 +2938,7 @@ namespace Mediaportal.TV.Server.TVService
           }
           else
           {
-            kickableCards = null;
-            cardChanged = HasCardChanged(card, intialTimeshiftingFilename);
+            kickableCards = null;            
           }
         }
         break; //if we made it to the bottom, then we have a successful timeshifting.          
@@ -3076,7 +3096,8 @@ namespace Mediaportal.TV.Server.TVService
       bool kickLeechingUsersIfNoMoreCardsAvail = false;
 
       if ((cardIteration + 1) == maxCards) // only kick users if we have no more cards to choose from
-      {
+      {        
+        IDictionary<string, List<int>> kickChannelsList = new Dictionary<string, List<int>>();
         IUser user = ticket.User;
         GetUser(tvcard, ref user);
         for (int j = ticket.ActiveUsers.Count - 1; j > -1; j--)
@@ -3105,12 +3126,35 @@ namespace Mediaportal.TV.Server.TVService
                 user.Priority,
                 tvcard.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel));
 
-              StopTimeShifting(ref activeUser, TvStoppedReason.OwnerChangedTS, subchannel.IdChannel);
+
+              List<int> idChannelList;
+              bool hasUser = kickChannelsList.TryGetValue(activeUser.Name, out idChannelList);
+              if (!hasUser)
+              {
+                idChannelList = new List<int>();  
+              }
+              idChannelList.Add(subchannel.IdChannel);
+              kickChannelsList[activeUser.Name] = idChannelList;                                          
               kickLeechingUsersIfNoMoreCardsAvail = true;
             }
           }          
         }
+
+        //done in order to avoid threading issues.
+        foreach (KeyValuePair<string, List<int>> userKvp in kickChannelsList)
+        {
+          string userName = userKvp.Key;
+          List<int> channelIdList = userKvp.Value;
+          foreach (int channelId in channelIdList)
+          {
+            IUser activeUser = tvcard.UserManagement.GetUser(userName);
+            StopTimeShifting(ref activeUser, TvStoppedReason.OwnerChangedTS, channelId); 
+          }
+        }        
       }
+
+      
+
       return kickLeechingUsersIfNoMoreCardsAvail;
     }
 
@@ -3236,7 +3280,8 @@ namespace Mediaportal.TV.Server.TVService
     {
       bool cardChanged;
       Dictionary<int, List<IUser>> kickableCards;
-      return StartTimeShifting(ref user, idChannel, null, out card, out kickableCards, false, out cardChanged);
+      double? parkedDuration;
+      return StartTimeShifting(ref user, idChannel, null, out card, out kickableCards, false, out cardChanged, out parkedDuration);
     }
 
     /// <summary>
@@ -3248,12 +3293,13 @@ namespace Mediaportal.TV.Server.TVService
     /// <param name="card">returns card for which timeshifting is started</param>
     /// <param name="kickableCards"> </param>
     /// <param name="cardChanged">indicates if card was changed</param>
+    /// <param name="parkedDuration"> </param>
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
-    public TvResult StartTimeShifting(ref IUser user, int idChannel, int? kickCardId, out IVirtualCard card, out Dictionary<int, List<IUser>> kickableCards, out bool cardChanged)
+    public TvResult StartTimeShifting(ref IUser user, int idChannel, int? kickCardId, out IVirtualCard card, out Dictionary<int, List<IUser>> kickableCards, out bool cardChanged, out double? parkedDuration)
     {
-      return StartTimeShifting(ref user, idChannel, kickCardId, out card, out kickableCards, false, out cardChanged);
+      return StartTimeShifting(ref user, idChannel, kickCardId, out card, out kickableCards, false, out cardChanged, out parkedDuration);
     }
 
     /// <summary>
@@ -4065,22 +4111,31 @@ namespace Mediaportal.TV.Server.TVService
       return _cards[cardId].UserManagement.IsOwner(user.Name);
     }
 
-    /// <summary>
-    /// Removes the user from other cards then the one specified
-    /// </summary>
-    /// <param name="userName"> </param>
-    /// <param name="newCardId">The card id.</param>    
-    /// <param name="currentCardId"> </param>
-    public void RemoveUserFromOtherCards(string userName, int currentCardId)
+
+    //string userName, int cardId, int channelId
+    private void StopTimeShiftingAllChannelsExcept(IUser user, int idChannel)
     {
-      var tvCardHandler = CardCollection[currentCardId];      
-      IUser user = tvCardHandler.UserManagement.GetUser(userName);
-      if (user != null)
+      var channelIdsRemoveList = new List<int>();
+      foreach (ITvCardHandler cardHandler in CardCollection.Values)
       {
-        Log.Debug("RemoveUserFromOtherCards : {0} - {1}", user.Name, user.CardId);
-        int timeshiftingChannelId = tvCardHandler.UserManagement.GetTimeshiftingChannelId(user.Name);
-        StopTimeShifting(ref user, timeshiftingChannelId);
+        IUser existingUser = cardHandler.UserManagement.GetUser(user.Name);
+        if (existingUser != null)
+        {          
+          foreach (ISubChannel subchannel in existingUser.SubChannels.Values)
+          {
+            if (subchannel.TvUsage == TvUsage.Timeshifting && subchannel.IdChannel != idChannel)
+            {
+              channelIdsRemoveList.Add(subchannel.IdChannel);
+            }
+          }
+        }
       }
+
+      foreach (int channelId2Remove in channelIdsRemoveList)
+      {
+        Log.Debug("StopTimeShiftingAllChannelsExcept : {0} - {1} - {2}", user.Name, user.CardId, idChannel);
+        StopTimeShifting(ref user, channelId2Remove); 
+      }     
     }
 
     public bool SupportsSubChannels(int cardId)

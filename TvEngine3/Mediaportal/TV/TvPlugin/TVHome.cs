@@ -1468,20 +1468,18 @@ namespace Mediaportal.TV.TvPlugin
         UpdateProgressPercentageBar();
         UpdateRecordingIndicator();
       }
-      
-#if DEBUG
-      ThreadPool.QueueUserWorkItem(delegate { StopServerMonitor(); });
-#endif
     }
 
     private void OnServerDisconnected()
     {
+#if !DEBUG
       if (Connected)
       {
         Log.Info("TVHome: OnServerDisconnected");
       }
       Connected = false;
       HandleServerNotConnected();
+#endif
     }
 
     private void Application_ApplicationExit(object sender, EventArgs e)
@@ -2296,38 +2294,45 @@ namespace Mediaportal.TV.TvPlugin
           if (dlg.SelectedLabel >= 0)
           {
             StreamPresentation streamingChannel = streamingChannels[dlg.SelectedLabel];
-
             if (streamingChannel.IsParked)
             {
-              GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-              if (dlgYesNo != null)
+              bool unPark = ShowUnParkDialogue(streamingChannel.User.Name);
+              if (unPark)
               {
-                dlgYesNo.SetHeading(GUILocalizeStrings.Get(2555, new[] {streamingChannel.User.Name})); //"Unpark channel by [" + streamingChannel.User.Name + "] ?"
-                dlgYesNo.SetLine(1, GUILocalizeStrings.Get(2556)); //"Unpark and resume channel?"
-                dlgYesNo.SetLine(2, GUILocalizeStrings.Get(2557)); //"If not you will watch TV from live point."
-                dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732));  //are you sure
-                dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-                if (dlgYesNo.IsConfirmed)
-                {
-                  ViewParkedChannel(streamingChannel);
-                  return;
-                }
-              }          
-            }            
-
+                ViewParkedChannel(streamingChannel);
+                return;
+              }
+            }
             ViewChannel(streamingChannel.Channel);
           }
         }
       }
     }
 
+
+    private static bool ShowUnParkDialogue(string userName)
+    {
+      var dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+      if (dlgYesNo != null)
+      {
+        dlgYesNo.SetHeading(GUILocalizeStrings.Get(2555, new[] { userName }));
+          //"Unpark channel by [" + streamingChannel.User.Name + "] ?"
+        dlgYesNo.SetLine(1, GUILocalizeStrings.Get(2556)); //"Unpark and resume channel?"
+        dlgYesNo.SetLine(2, GUILocalizeStrings.Get(2557)); //"If not you will watch TV from live point."
+        dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732)); //are you sure
+        dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+        return dlgYesNo.IsConfirmed;
+      }
+      return false;
+    }
+
     private static void ViewParkedChannel(StreamPresentation streamingChannel)
     {                 
-      ViewParkedChannelAndCheck(streamingChannel.Channel, streamingChannel.ParkedDuration, streamingChannel.User.CardId);
+      ViewParkedChannelAndCheck(streamingChannel.Channel, streamingChannel.ParkedDuration, streamingChannel.User.CardId, false);
       UpdateProgressPercentageBar();
     }
 
-    public static bool ViewParkedChannelAndCheck(Channel channel, double parkedDuration, int newCardId)
+    public static bool ViewParkedChannelAndCheck(Channel channel, double parkedDuration, int newCardId, bool watchFromLivePoint)
     {
       if (!Connected)
       {
@@ -2402,7 +2407,7 @@ namespace Mediaportal.TV.TvPlugin
                                                                                        channel.idChannel,
                                                                                        out card);
 
-        bool cardChanged = card.Id != Card.Id;
+        bool cardChanged = true;// card.Id != Card.Id;
 
         if (_status.IsSet(LiveTvStatus.WasPlaying))
         {
@@ -2450,16 +2455,17 @@ namespace Mediaportal.TV.TvPlugin
         Log.Info("succeeded:{0} {1}", succeeded, card);
         Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
 
-
-        if (parkedDuration > 0)
+        if (!watchFromLivePoint)
         {
-          Seek(true, parkedDuration);
+          if (parkedDuration > 0)
+          {
+            Seek(true, parkedDuration);
+          }
+          else
+          {
+            Seek(true, 0);
+          }
         }
-        else
-        {
-          Seek(true, 0);          
-        }
-        
 
         // continue graph
         g_Player.ContinueGraph();
@@ -2474,9 +2480,15 @@ namespace Mediaportal.TV.TvPlugin
             g_Player.SeekAbsolute(dTime);
           }
         }
+
+        if (watchFromLivePoint)
+        {
+          g_Player.SeekAbsolute(g_Player.Duration - 1);
+          SeekToEnd(true);          
+        }
+
         try
         {
-
           TvTimeShiftPositionWatcher.SetNewChannel(channel.idChannel);
         }
         catch
@@ -3524,10 +3536,10 @@ namespace Mediaportal.TV.TvPlugin
       {
         return false;
       }
+      double? parkedDuration = null;
       TvResult succeeded = TvResult.UnknownError;
       Dictionary<int, List<IUser>> kickableCards = null;
-      _status.Clear();
-
+      _status.Clear();      
       _doingChannelChange = false;
 
       try
@@ -3592,8 +3604,8 @@ namespace Mediaportal.TV.TvPlugin
         {
           g_Player.OnZapping(0x80); // Setup Zapping for TsReader, requesting new PAT from stream
         }
-        bool cardChanged;                
-        succeeded = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(ref user, channel.idChannel, kickCardId, out card, out kickableCards, out cardChanged);
+        bool cardChanged;
+        succeeded = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(ref user, channel.idChannel, kickCardId, out card, out kickableCards, out cardChanged, out parkedDuration);
         
         if (_status.IsSet(LiveTvStatus.WasPlaying))
         {
@@ -3604,7 +3616,7 @@ namespace Mediaportal.TV.TvPlugin
         }
 
 
-        if (succeeded != TvResult.Succeeded && succeeded != TvResult.UsersBlocking)
+        if (succeeded != TvResult.Succeeded && succeeded != TvResult.UsersBlocking && succeeded != TvResult.AlreadyParked)
         {                    
           //timeshifting new channel failed. 
           g_Player.Stop();
@@ -3652,6 +3664,9 @@ namespace Mediaportal.TV.TvPlugin
           SeekToEnd(true);
         }
 
+
+        // CardChange refactor it, so it reacts to changes in timeshifting path / URL.
+
         // continue graph
         g_Player.ContinueGraph();
         if (!g_Player.Playing || _status.IsSet(LiveTvStatus.CardChange) || (g_Player.Playing && !(g_Player.IsTV || g_Player.IsRadio)))
@@ -3690,9 +3705,7 @@ namespace Mediaportal.TV.TvPlugin
       finally
       {
         StopRenderBlackImage();        
-        _userChannelChanged = false;
-        FireOnChannelChangedEvent();
-        Navigator.UpdateCurrentChannel();
+        _userChannelChanged = false;        
 
         if (succeeded == TvResult.UsersBlocking)
         {          
@@ -3700,8 +3713,18 @@ namespace Mediaportal.TV.TvPlugin
           if (cardId > 0)
           {
             ViewChannelAndCheck(channel, cardId);
-          }
-          //recursivecall to viewchannelandcheck
+          }          
+        }
+        else if (succeeded == TvResult.AlreadyParked)
+        {
+          bool dlgYesNo = ShowUnParkDialogue(Card.User.Name);          
+          bool watchFromLivePoint = !dlgYesNo;
+          ViewParkedChannelAndCheck(channel, parkedDuration.GetValueOrDefault(0), Card.User.CardId, watchFromLivePoint);
+        }
+        else
+        {
+          FireOnChannelChangedEvent();
+          Navigator.UpdateCurrentChannel();
         }
       }
     }
@@ -3846,12 +3869,6 @@ namespace Mediaportal.TV.TvPlugin
         }
       }
     }
-
-    /*public static bool ParkChannel
-    {
-      get { return _parkChannel; }
-      set { _parkChannel = value; }
-    }*/
 
     private static void StartPlay()
     {

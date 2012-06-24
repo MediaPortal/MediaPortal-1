@@ -52,9 +52,10 @@ namespace MediaPortal.Dialogs
               m_bParked = true;              
               PageDestroy();              
               return true;
-            }           
+            }
+            m_bParked = false;
           }
-          break;
+          break;        
       }
 
       return base.OnMessage(message);

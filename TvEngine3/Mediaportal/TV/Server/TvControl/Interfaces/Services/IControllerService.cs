@@ -734,11 +734,12 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <param name="card">returns on which card timeshifting is started</param>
     /// <param name="kickableCards"> </param>
     /// <param name="cardChanged">indicates if card was changed</param>
+    /// <param name="parkedDuration"> </param>
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
     [OperationContract(Name = "StartTimeShiftingGetCardChanged")]
-    TvResult StartTimeShifting(ref IUser user, int idChannel, int? kickCardId, out IVirtualCard card, out Dictionary<int, List<IUser>> kickableCards, out bool cardChanged);
+    TvResult StartTimeShifting(ref IUser user, int idChannel, int? kickCardId, out IVirtualCard card, out Dictionary<int, List<IUser>> kickableCards, out bool cardChanged, out double? parkedDuration);
 
     /// <summary>
     /// Start timeshifting on a specific channel

@@ -855,12 +855,13 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <param name="card">returns on which card timeshifting is started</param>
     /// <param name="kickableCards"> </param>
     /// <param name="cardChanged">indicates if card was changed</param>
+    /// <param name="parkedDuration"> </param>
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
-    public TvResult StartTimeShifting(ref IUser user, int idChannel, int? kickCardId, out IVirtualCard card, out Dictionary<int, List<IUser>> kickableCards, out bool cardChanged)
+    public TvResult StartTimeShifting(ref IUser user, int idChannel, int? kickCardId, out IVirtualCard card, out Dictionary<int, List<IUser>> kickableCards, out bool cardChanged, out double? parkedDuration)
     {
-      return Service.StartTimeShifting(ref user, idChannel, kickCardId, out card, out kickableCards, out cardChanged);
+      return Service.StartTimeShifting(ref user, idChannel, kickCardId, out card, out kickableCards, out cardChanged, out parkedDuration);
     }
 
     /// <summary>

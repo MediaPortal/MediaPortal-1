@@ -53,7 +53,6 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     {
       _cardHandler = cardHandler;      
     }
-   
 
     public IUser GetUser(string name)
     {
