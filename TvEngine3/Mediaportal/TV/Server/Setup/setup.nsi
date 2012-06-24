@@ -413,6 +413,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_TVServer}\Server\SetupControls\bin\${BUILD_TYPE}\Mediaportal.TV.Server.SetupControls.dll"
   File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Utils.dll"
   File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
+  File "${git_TVServer}\Server\TVDatabase\Presentation\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
 
   ; 3rd party assemblys
   File "${TVSERVER.BASE}\hauppauge.dll"
@@ -467,6 +468,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_TVServer}\Server\SetupControls\bin\${BUILD_TYPE}\Mediaportal.TV.Server.SetupControls.dll"
   File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Utils.dll"
   File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
+  File "${git_TVServer}\Server\TVDatabase\Presentation\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
   
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION   for TVServer
@@ -593,6 +595,7 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\Mediaportal.TV.Server.SetupControls.dll"
   Delete "$INSTDIR\EntityFramework.dll"
   Delete "$INSTDIR\EntityFramework.xml"
+  Delete "$INSTDIR\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
 
   ; 3rd party assemblys
   Delete "$INSTDIR\dxerr9.dll"
@@ -652,6 +655,7 @@ ${MementoSectionEnd}
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVService.ServiceAgents.dll"
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.RuleBasedScheduler.dll"
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.SetupControls.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
   Delete "${SETUP_TV_FOLDER}\Interop.SHDocVw.dll"
 
   ; remove Start Menu shortcuts
@@ -722,7 +726,8 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File "${git_TVServer}\Server\ServiceAgents\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVService.ServiceAgents.dll"
   File "${git_TVServer}\Server\RuleBasedScheduler\bin\${BUILD_TYPE}\Mediaportal.TV.Server.RuleBasedScheduler.dll"
   File "${git_TVServer}\Server\Plugins\PluginBase\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.Base.dll"
-  File "${git_TVServer}\Server\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.TvBusinessLayer.dll" 
+  File "${git_TVServer}\Server\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.TvBusinessLayer.dll"
+  File "${git_TVServer}\Server\TVDatabase\Presentation\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
   File "${EXTBIN}\log4net.dll"
   File "${EXTBIN}\MySql.Data.dll"
   File "${EXTBIN}\MySql.Data.Entity.dll"
@@ -753,6 +758,7 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File "${git_TVServer}\Server\SetupControls\bin\${BUILD_TYPE}\Mediaportal.TV.Server.SetupControls.dll"
   File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Utils.dll"
   File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
+  File "${git_TVServer}\Server\TVDatabase\Presentation\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
   
   ; The Plugin Directory
   SetOutPath "${SETUP_TV_FOLDER}\Plugins"
@@ -814,6 +820,7 @@ ${MementoSectionEnd}
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.RuleBasedScheduler.dll"
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.Plugins.Base.dll"
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.TvBusinessLayer.dll" 
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
   Delete "${SETUP_TV_FOLDER}\log4net.dll"
   Delete "${SETUP_TV_FOLDER}\MySql.Data.dll"
   Delete "${SETUP_TV_FOLDER}\MySql.Data.Entity.dll"
@@ -864,6 +871,7 @@ ${MementoSectionEnd}
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.RuleBasedScheduler.dll"
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.SetupControls.dll"
   Delete "${SETUP_TV_FOLDER}\Interop.SHDocVw.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
 
   ; remove Start Menu shortcuts
   Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"
