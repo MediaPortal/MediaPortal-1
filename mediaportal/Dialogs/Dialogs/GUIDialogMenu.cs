@@ -29,7 +29,7 @@ namespace MediaPortal.Dialogs
   /// <summary>
   /// 
   /// </summary>
-  public class GUIDialogMenu : GUIDialogWindow, IDialogbox, IRenderLayer
+  public class GUIDialogMenu : GUIDialogWindow, IDialogbox2, IRenderLayer
   {
     [SkinControl(2)] protected GUIButtonControl btnClose = null;
     [SkinControl(3)] protected GUIListControl listView = null;
