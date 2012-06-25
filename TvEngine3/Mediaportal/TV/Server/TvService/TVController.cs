@@ -4726,28 +4726,27 @@ namespace Mediaportal.TV.Server.TVService
       foreach (Card card in cards)
       {
         ITvCardHandler cardHandler;
-        bool hasCard = _cards.TryGetValue(card.idCard, out cardHandler);
+        bool isAvailable = _cards.TryGetValue(card.idCard, out cardHandler);
+        bool isEnabled = false;
 
-        if (!hasCard)
+        if (isAvailable)
         {
-          continue;          
+          isEnabled = card.enabled;
+          isAvailable = IsCardPresent(card.idCard);  
         }
-
-        bool isEnabled = card.enabled;
-        bool isAvailable = IsCardPresent(card.idCard);
-                
-        if (!isEnabled)
-        {
-          string cardType = Type(card.idCard).ToString();
-          var cardPresentation = new CardPresentation(cardType, card.idCard, card.name)
-                                   {SubChannelsCountOk = true, SubChannels = 0, State = "disabled"};
-          cardPresentations.Add(cardPresentation);
-        }
-        else if (!isAvailable)
+                                
+        if (!isAvailable)
         {
           var cardPresentation = new CardPresentation("n/a", card.idCard, card.name) { SubChannelsCountOk = true, SubChannels = 0, State = "n/a" };          
           cardPresentations.Add(cardPresentation);
         }
+        else if (!isEnabled)
+        {
+          string cardType = Type(card.idCard).ToString();
+          var cardPresentation = new CardPresentation(cardType, card.idCard, card.name) { SubChannelsCountOk = true, SubChannels = 0, State = "disabled" };
+          cardPresentations.Add(cardPresentation);
+        }
+
         else
         {
           string cardType = Type(card.idCard).ToString();          
