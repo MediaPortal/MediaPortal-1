@@ -31,7 +31,7 @@
       <description>BG</description>
       <type>image</type>
       <id>0</id>
-      <texture>background.jpg</texture>
+      <texture>background.png</texture>
       <width>1280</width>
       <height>720</height>
     </control>

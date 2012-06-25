@@ -15,7 +15,7 @@
       <id>1</id>
       <width>1280</width>
       <height>720</height>
-      <texture>background.jpg</texture>
+      <texture>background.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
     </control>
     <import>WorldWeatherNormalCondition.xml</import>

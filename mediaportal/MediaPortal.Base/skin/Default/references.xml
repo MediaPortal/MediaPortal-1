@@ -43,7 +43,7 @@
     <id>0</id>
     <posX>0</posX>
     <posY>0</posY>
-    <texture>background.jpg</texture>
+    <texture>background.png</texture>
     <colorkey>0</colorkey>
     <colordiffuse>ffffffff</colordiffuse>
     <filtered>yes</filtered>
