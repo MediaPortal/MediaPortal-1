@@ -766,7 +766,7 @@ HRESULT AudioRendererSettings::GetAvailableAudioDevices(IMMDeviceCollection** pp
       if (hDialog)
       {
         SendDlgItemMessage(hDialog, IDC_AUDIO_DEVICE, CB_ADDSTRING, 0, (LPARAM)W2T(varName.pwszVal));
-        if (wcscmp(pwszID, m_wWASAPIPreferredDeviceId) == 0)
+        if (m_wWASAPIPreferredDeviceId && wcscmp(pwszID, m_wWASAPIPreferredDeviceId) == 0)
           SendDlgItemMessage(hDialog, IDC_AUDIO_DEVICE, CB_SETCURSEL, i, 0);
       }
 
