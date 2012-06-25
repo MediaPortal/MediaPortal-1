@@ -2850,10 +2850,9 @@ namespace Mediaportal.TV.Server.TVService
                   if (hasParkedUser)
                   {
                     parkedDuration = parkedDurationFound;
-                  }
-
-                  result = TvResult.AlreadyParked;
-                  break;
+                    result = TvResult.AlreadyParked;
+                    break;
+                  }                
                   /*
                   tvCardHandler.ParkedUserManagement.CancelParkedUserBySubChannelId(userBefore.Name, ticket.OwnerSubchannel.Id);
                   ISubChannel subch = tvCardHandler.UserManagement.GetSubChannel(userBefore.Name, ticket.OwnerSubchannel.Id);
@@ -2862,10 +2861,8 @@ namespace Mediaportal.TV.Server.TVService
                     subch.TvUsage = TvUsage.Timeshifting;                    
                   }*/
                 }
-                else
-                {
-                  tvCardHandler.UserManagement.AddSubChannelOrUser(userNow, ticket.OwnerSubchannel.IdChannel, ticket.OwnerSubchannel.Id); 
-                }                
+                
+                tvCardHandler.UserManagement.AddSubChannelOrUser(userNow, ticket.OwnerSubchannel.IdChannel, ticket.OwnerSubchannel.Id); 
               }
             }
             else
