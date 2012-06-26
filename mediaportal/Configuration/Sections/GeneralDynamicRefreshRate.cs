@@ -478,7 +478,7 @@ namespace MediaPortal.Configuration.Sections
       defaultHz.Items.Add(p[0]);
 
       p = new String[4];
-      p[0] = "TV";
+      p[0] = "PAL";
       p[1] = "25"; // fps
       p[2] = "50"; //hz
       p[3] = ""; //action
