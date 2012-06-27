@@ -27,7 +27,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
   /// class holding all tuning details for DVBIP
   /// </summary>
   [DataContract]
-  [Serializable]
   public class DVBIPChannel : DVBBaseChannel
   {
     #region variables

@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.Serialization;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
@@ -15,6 +16,10 @@ namespace Mediaportal.TV.Server.TVControl
 
     [DataMember]
     private TvUsage _tvUsage;
+
+    public SubChannel()
+    {     
+    }
 
     public SubChannel(int id, int idChannel, TvUsage tvUsage)
     {

@@ -145,7 +145,7 @@ namespace Mediaportal.TV.TvPlugin
 
       if (_enableRecNotification)
       {
-        EventServiceAgent.RegisterTvServerEventCallbacks(this);        
+        ServiceAgents.Instance.EventServiceAgent.RegisterTvServerEventCallbacks(this);        
       }
       _timer.Start();
     }    
@@ -156,7 +156,7 @@ namespace Mediaportal.TV.TvPlugin
 
       if (_enableRecNotification)
       {
-        EventServiceAgent.UnRegisterTvServerEventCallbacks(this);
+        ServiceAgents.Instance.EventServiceAgent.UnRegisterTvServerEventCallbacks(this);        
       }
       _timer.Stop();
     }

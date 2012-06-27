@@ -181,14 +181,7 @@ namespace Mediaportal.TV.Server.TVService
         }
 
         _tvServiceThread = new TvServiceThread();
-        _tvServiceThread.Start();
-
-        
-
-        /*while (!TvServiceThread.Started)
-        {
-          Thread.Sleep(20);
-        }*/
+        _tvServiceThread.Start();        
       }      
     }    
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.ServiceModel;
+using System.Threading;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Events;
@@ -12,8 +13,14 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 namespace Mediaportal.TV.Server.TVService.ServiceAgents
 {
   public interface IEventServiceAgent : IEventService, IServerEventCallback
-  {    
+  {
     IEventService Channel { get; }
+    void RegisterCiMenuCallbacks(ICiMenuEventCallback handler);
+    void UnRegisterCiMenuCallbacks(ICiMenuEventCallback handler);
+    void RegisterHeartbeatCallbacks(IHeartbeatEventCallback handler);
+    void UnRegisterHeartbeatCallbacks(IHeartbeatEventCallback handler);
+    void RegisterTvServerEventCallbacks(ITvServerEventCallback handler);
+    void UnRegisterTvServerEventCallbacks(ITvServerEventCallback handler);
   }
 
   public class EventServiceAgent : IEventServiceAgent
@@ -139,7 +146,7 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
 
     private static void RegisterEventServiceIfNeeded()
     {
-      if (AreAnyEventHandlersInUse())
+      if (AreAnyEventHandlersInUse())      
       {
         ServiceAgents.Instance.EventServiceAgent.Subscribe(_hostname);
       }
@@ -147,84 +154,167 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
 
     private static void UnRegisterEventServiceIfNeeded()
     {
-      if (!AreAnyEventHandlersInUse())
+      if (OnCiMenuCallbackReceived == null && OnHeartbeatRequestReceived == null && OnTvServerEventReceived == null)      
       {
         ServiceAgents.Instance.EventServiceAgent.Unsubscribe(_hostname);
       }
     }
     
-
-    public static void RegisterCiMenuCallbacks(ICiMenuEventCallback handler)
+    private int _isRunningRegisterCiMenuCallbacks;
+    public void RegisterCiMenuCallbacks(ICiMenuEventCallback handler)
     {
-      Log.Info("EventServiceAgent: RegisterCiMenuCallbacks");
+      if (Interlocked.Exchange(ref _isRunningRegisterCiMenuCallbacks, 1) == 1)
+      {
+        return;
+      }      
       try
       {
-        RegisterEventServiceIfNeeded();
-        ServiceAgents.Instance.ControllerServiceAgent.RegisterUserForCiMenu(_hostname);
-        OnCiMenuCallbackReceived -= new CiMenuCallbackDelegate(handler.CiMenuCallback);
-        OnCiMenuCallbackReceived += new CiMenuCallbackDelegate(handler.CiMenuCallback);
+        if (OnCiMenuCallbackReceived == null)
+        {
+          Log.Info("EventServiceAgent: RegisterCiMenuCallbacks");          
+          OnCiMenuCallbackReceived += new CiMenuCallbackDelegate(handler.CiMenuCallback);
+          RegisterEventServiceIfNeeded();
+          ServiceAgents.Instance.ControllerServiceAgent.RegisterUserForCiMenu(_hostname);          
+        }
       }
       catch (Exception ex)
       {
+        OnCiMenuCallbackReceived = null;
         Log.Error("EventServiceAgent: RegisterCiMenuCallbacks exception = {0}", ex);
       }
+      finally
+      {
+        Interlocked.Exchange(ref _isRunningRegisterCiMenuCallbacks, 0);
+      }
     }
 
-
-    public static void UnRegisterCiMenuCallbacks(ICiMenuEventCallback handler)
+    private int _isRunningUnRegisterCiMenuCallbacks;
+    public void UnRegisterCiMenuCallbacks(ICiMenuEventCallback handler)
     {
-      Log.Info("EventServiceAgent: UnRegisterCiMenuCallbacks");
-      ServiceAgents.Instance.ControllerServiceAgent.UnRegisterUserForCiMenu(_hostname);
-      OnCiMenuCallbackReceived -= new CiMenuCallbackDelegate(handler.CiMenuCallback);
-      UnRegisterEventServiceIfNeeded();
-    }
-
-    public static void RegisterHeartbeatCallbacks(IHeartbeatEventCallback handler)
-    {
-      Log.Info("EventServiceAgent: RegisterHeartbeatCallbacks");
+      if (Interlocked.Exchange(ref _isRunningUnRegisterCiMenuCallbacks, 1) == 1)
+      {
+        return;
+      }
       try
       {
-        RegisterEventServiceIfNeeded();
-        ServiceAgents.Instance.ControllerServiceAgent.RegisterUserForHeartbeatMonitoring(_hostname);
-        OnHeartbeatRequestReceived -= new HeartbeatRequestReceivedDelegate(handler.HeartbeatRequestReceived);
-        OnHeartbeatRequestReceived += new HeartbeatRequestReceivedDelegate(handler.HeartbeatRequestReceived);
+        if (OnCiMenuCallbackReceived != null)
+        {
+          Log.Info("EventServiceAgent: UnRegisterCiMenuCallbacks");
+          OnCiMenuCallbackReceived -= new CiMenuCallbackDelegate(handler.CiMenuCallback);
+          ServiceAgents.Instance.ControllerServiceAgent.UnRegisterUserForCiMenu(_hostname);
+          UnRegisterEventServiceIfNeeded();          
+        }
+
+      }      
+      finally
+      {
+        Interlocked.Exchange(ref _isRunningUnRegisterCiMenuCallbacks, 0);
+      }
+
+    }
+    
+    private int _isRunningRegisterHeartbeatCallbacks;
+    public void RegisterHeartbeatCallbacks(IHeartbeatEventCallback handler)
+    {
+      if (Interlocked.Exchange(ref _isRunningRegisterHeartbeatCallbacks, 1) == 1)
+      {
+        return;
+      }
+      try
+      {
+        if (OnHeartbeatRequestReceived == null)
+        {          
+          OnHeartbeatRequestReceived += new HeartbeatRequestReceivedDelegate(handler.HeartbeatRequestReceived);
+          Log.Info("EventServiceAgent: RegisterHeartbeatCallbacks");
+          RegisterEventServiceIfNeeded();
+          ServiceAgents.Instance.ControllerServiceAgent.RegisterUserForHeartbeatMonitoring(_hostname);          
+        }
       }
       catch (Exception ex)
       {
+        OnHeartbeatRequestReceived = null;
         Log.Error("EventServiceAgent: RegisterHeartbeatCallbacks exception = {0}", ex);
       }
+      finally
+      {
+        Interlocked.Exchange(ref _isRunningRegisterHeartbeatCallbacks, 0);
+      }
     }
 
-    public static void UnRegisterHeartbeatCallbacks(IHeartbeatEventCallback handler)
+    private int _isRunningUnRegisterHeartbeatCallbacks;
+    public void UnRegisterHeartbeatCallbacks(IHeartbeatEventCallback handler)
     {
-      Log.Info("EventServiceAgent: UnRegisterHeartbeatCallbacks");
-      ServiceAgents.Instance.ControllerServiceAgent.UnRegisterUserForHeartbeatMonitoring(_hostname);
-      OnHeartbeatRequestReceived -= new HeartbeatRequestReceivedDelegate(handler.HeartbeatRequestReceived);
-      UnRegisterEventServiceIfNeeded();
-    }
-
-    public static void RegisterTvServerEventCallbacks(ITvServerEventCallback handler)
-    {
-      Log.Info("EventServiceAgent: RegisterTvServerEventCallbacks");
+      if (Interlocked.Exchange(ref _isRunningUnRegisterHeartbeatCallbacks, 1) == 1)
+      {
+        return;
+      }
       try
       {
-        RegisterEventServiceIfNeeded();
-        ServiceAgents.Instance.ControllerServiceAgent.RegisterUserForTvServerEvents(_hostname);
-        OnTvServerEventReceived -= new TvServerEventReceivedDelegate(handler.CallbackTvServerEvent);
-        OnTvServerEventReceived += new TvServerEventReceivedDelegate(handler.CallbackTvServerEvent);        
+        if (OnHeartbeatRequestReceived != null)
+        {
+          Log.Info("EventServiceAgent: UnRegisterHeartbeatCallbacks");
+          OnHeartbeatRequestReceived -= new HeartbeatRequestReceivedDelegate(handler.HeartbeatRequestReceived);
+          ServiceAgents.Instance.ControllerServiceAgent.UnRegisterUserForHeartbeatMonitoring(_hostname);
+          UnRegisterEventServiceIfNeeded();          
+        }        
+      }
+      finally
+      {
+        Interlocked.Exchange(ref _isRunningUnRegisterHeartbeatCallbacks, 0);
+      }
+
+    }
+
+    private int _isRunningRegisterTvServerEventCallbacks;    
+    public void RegisterTvServerEventCallbacks(ITvServerEventCallback handler)
+    {
+      if (Interlocked.Exchange(ref _isRunningRegisterTvServerEventCallbacks, 1) == 1)
+      {
+        return;
+      }     
+      try
+      {
+        if (OnTvServerEventReceived == null)
+        {
+          //System.Diagnostics.Debugger.Launch();
+          Log.Info("EventServiceAgent: RegisterTvServerEventCallbacks");          
+          OnTvServerEventReceived += new TvServerEventReceivedDelegate(handler.CallbackTvServerEvent);
+          RegisterEventServiceIfNeeded();
+          ServiceAgents.Instance.ControllerServiceAgent.RegisterUserForTvServerEvents(_hostname);          
+        }
       }
       catch (Exception ex)
       {
+        OnTvServerEventReceived -= new TvServerEventReceivedDelegate(handler.CallbackTvServerEvent);
         Log.Error("EventServiceAgent: RegisterTvServerEventCallbacks exception = {0}", ex);
+      }
+      finally
+      {
+        Interlocked.Exchange(ref _isRunningRegisterTvServerEventCallbacks, 0);
       }
     }
 
-    public static void UnRegisterTvServerEventCallbacks(ITvServerEventCallback handler)
+    private int _isRunningUnRegisterTvServerEventCallbacks;
+    public void UnRegisterTvServerEventCallbacks(ITvServerEventCallback handler)
     {
-      Log.Info("EventServiceAgent: UnRegisterTvServerEventCallbacks");
-      ServiceAgents.Instance.ControllerServiceAgent.UnRegisterUserForTvServerEvents(_hostname);
-      OnTvServerEventReceived -= new TvServerEventReceivedDelegate(handler.CallbackTvServerEvent);
-      UnRegisterEventServiceIfNeeded();
+      if (Interlocked.Exchange(ref _isRunningUnRegisterTvServerEventCallbacks, 1) == 1)
+      {
+        return;
+      }
+      try
+      {
+        if (OnTvServerEventReceived != null)
+        {
+          Log.Info("EventServiceAgent: UnRegisterTvServerEventCallbacks");
+          OnTvServerEventReceived -= new TvServerEventReceivedDelegate(handler.CallbackTvServerEvent);
+          ServiceAgents.Instance.ControllerServiceAgent.UnRegisterUserForTvServerEvents(_hostname);
+          UnRegisterEventServiceIfNeeded();
+        }
+      } 
+      finally
+      {
+        Interlocked.Exchange(ref _isRunningUnRegisterTvServerEventCallbacks, 0);
+      }      
     }
   }
 

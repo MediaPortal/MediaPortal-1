@@ -269,9 +269,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         IUser user = UserFactory.CreateBasicUser(GetUserName(cardId, id), cardId);        
         
         IHeartbeatEventCallback handler = new HeartbeatEventCallback();
-        EventServiceAgent.RegisterHeartbeatCallbacks(handler);
+        ServiceAgents.Instance.EventServiceAgent.RegisterHeartbeatCallbacks(handler);
         ICiMenuEventCallback menuHandler = new CiMenuEventCallback();
-        EventServiceAgent.UnRegisterCiMenuCallbacks(menuHandler);
+        ServiceAgents.Instance.EventServiceAgent.UnRegisterCiMenuCallbacks(menuHandler);
 
         
 

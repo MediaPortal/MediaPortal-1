@@ -94,6 +94,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.Services
     object Clone();
 
     [DataMember]
-    SortedDictionary<int, ISubChannel> SubChannels { get; set; }        
+    IDictionary<int, ISubChannel> SubChannels { get; set; }        
   }
 }

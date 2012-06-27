@@ -629,8 +629,8 @@ namespace Mediaportal.TV.Server.TVService
         _scheduler = new Scheduler.Scheduler();
         _scheduler.Start();
 
-        SetupHeartbeatManager();
-        SetupTvServerEventDispatcher();
+        StartHeartbeatManager();
+        StartTvServerEventDispatcher();
 
         ExecutePendingDeletions();
 
@@ -649,12 +649,12 @@ namespace Mediaportal.TV.Server.TVService
       Log.Info("Controller: initalized");      
     }
 
-    private void SetupTvServerEventDispatcher()
+    private void StartTvServerEventDispatcher()
     {
       _tvServerEventDispatcher.Start();
     }
 
-    private void SetupHeartbeatManager()
+    private void StartHeartbeatManager()
     {      
       _heartbeatManager.Start();
     }
@@ -4503,7 +4503,8 @@ namespace Mediaportal.TV.Server.TVService
       if (!_onResumeDone)
       {
         Log.Info("TvController.OnResume()");
-        SetupHeartbeatManager();
+        StartHeartbeatManager();
+        StartTvServerEventDispatcher();
 
         if (_scheduler != null)
         {

@@ -370,8 +370,8 @@ namespace Mediaportal.TV.TvPlugin
     }
 
     private void SubscribeToEventService()
-    {      
-      EventServiceAgent.RegisterTvServerEventCallbacks(this);
+    {
+      ServiceAgents.Instance.EventServiceAgent.RegisterTvServerEventCallbacks(this);              
     }
 
     
@@ -1509,7 +1509,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private void UnsubscribeFromEventService()
     {
-      EventServiceAgent.UnRegisterHeartbeatCallbacks(_heartbeatEventHandler);              
+      ServiceAgents.Instance.EventServiceAgent.UnRegisterHeartbeatCallbacks(_heartbeatEventHandler);                    
       ServiceAgents.Instance.EventServiceAgent.Unsubscribe(Dns.GetHostName());      
     }
 
@@ -2539,7 +2539,7 @@ namespace Mediaportal.TV.TvPlugin
       bool isTimeShifting = Card.IsTimeShifting;
 
       //are we recording a tv program?      
-      if (Navigator.Channel.Entity != null && Card != null)
+      if (Navigator.Channel != null && Navigator.Channel.Entity != null && Card != null)
       {
         string label;
         
@@ -2642,7 +2642,7 @@ namespace Mediaportal.TV.TvPlugin
     private static void UpdateTvProperties()
     {
       // No channel -> no EPG
-      if (Navigator.Channel.Entity != null && !g_Player.IsRadio)
+      if (Navigator.Channel != null && Navigator.Channel.Entity != null && !g_Player.IsRadio)
       {
         ChannelBLL infoChannel;
         if (Navigator.Channel.Entity.mediaType == (int)MediaTypeEnum.TV)
@@ -3991,7 +3991,7 @@ namespace Mediaportal.TV.TvPlugin
       if (newCardId != -1 && ServiceAgents.Instance.ControllerServiceAgent.CiMenuSupported(newCardId))
       {
         // opens remoting and attach local eventhandler to server event, call only once        
-        EventServiceAgent.RegisterCiMenuCallbacks(_ciMenuEventEventHandler);        
+        ServiceAgents.Instance.EventServiceAgent.RegisterCiMenuCallbacks(_ciMenuEventEventHandler);                            
 
         // Enable CI menu handling in card
         ServiceAgents.Instance.ControllerServiceAgent.SetCiMenuHandler(newCardId, null);

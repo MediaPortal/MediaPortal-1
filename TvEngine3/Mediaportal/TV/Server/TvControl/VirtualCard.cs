@@ -41,7 +41,6 @@ namespace Mediaportal.TV.Server.TVControl
   /// The class will handle the communication and control with the
   /// tv service backend
   /// </summary>
-  [Serializable]
   [DataContract]
   public class VirtualCard : IVirtualCard
   {

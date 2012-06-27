@@ -31,7 +31,6 @@ namespace Mediaportal.TV.Server.TVControl
   /// <summary>
   /// 
   /// </summary>
-  [Serializable]
   [DataContract]
   public class User : ICloneable, IUser
   {
@@ -62,7 +61,7 @@ namespace Mediaportal.TV.Server.TVControl
     private int? _priority;
 
     [DataMember]
-    private SortedDictionary<int, ISubChannel> _subChannels; //key is subChannelId
+    private IDictionary<int, ISubChannel> _subChannels; //key is subChannelId
 
     #endregion
 
@@ -189,7 +188,7 @@ namespace Mediaportal.TV.Server.TVControl
       set { _timeshiftStoppedReason = value; }
     }
 
-    public SortedDictionary<int, ISubChannel> SubChannels
+    public IDictionary<int, ISubChannel> SubChannels
     {
       get { return _subChannels; }
       set { _subChannels = value; }

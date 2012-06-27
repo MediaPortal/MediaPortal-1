@@ -30,8 +30,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
   /// <summary>
   /// class holding all tuning details for analog channels
   /// </summary>
-  [Serializable]
-  [DataContract]
+  [DataContract]  
   public class AnalogChannel : IChannel
   {
     #region enums

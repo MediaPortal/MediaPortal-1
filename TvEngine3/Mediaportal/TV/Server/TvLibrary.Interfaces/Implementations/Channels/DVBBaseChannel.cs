@@ -33,8 +33,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
   [KnownType(typeof(DVBCChannel))]
   [KnownType(typeof(DVBSChannel))]
   [KnownType(typeof(DVBIPChannel))]
-  [KnownType(typeof(ATSCChannel))]
-  [Serializable]
+  [KnownType(typeof(ATSCChannel))]  
   public abstract class DVBBaseChannel : IChannel
   {
     #region variables

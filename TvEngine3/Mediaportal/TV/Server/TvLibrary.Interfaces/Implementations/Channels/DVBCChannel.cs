@@ -73,7 +73,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
   /// class holding all tuning details for DVBC
   /// </summary>
   [DataContract]  
-  [Serializable]
   public class DVBCChannel : DVBBaseChannel
   {
     #region variables

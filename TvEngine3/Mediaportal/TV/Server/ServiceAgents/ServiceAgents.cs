@@ -328,11 +328,12 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
 
     private void RemoveService(object sender)
     {
-      ((ICommunicationObject)sender).Abort();
-      ((ICommunicationObject)sender).Close();
+      var communicationObject = ((ICommunicationObject) sender);
+      communicationObject.Abort();
+      communicationObject.Close();
 
-      ((ICommunicationObject)sender).Faulted -= new EventHandler(ServiceAgents_Faulted);
-      ((ICommunicationObject)sender).Closed -= new EventHandler(ServiceAgents_Closed);
+      communicationObject.Faulted -= new EventHandler(ServiceAgents_Faulted);
+      communicationObject.Closed -= new EventHandler(ServiceAgents_Closed);
 
       Type type = sender.GetType();
       if (type == typeof(IEventService))

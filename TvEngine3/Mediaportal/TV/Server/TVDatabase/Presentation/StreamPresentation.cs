@@ -4,8 +4,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
 namespace Mediaportal.TV.Server.TVDatabase.Presentation
-{
-  [Serializable]
+{  
   [DataContract]
   public class StreamPresentation
   {
