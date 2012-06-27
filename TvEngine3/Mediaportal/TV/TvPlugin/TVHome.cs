@@ -1687,7 +1687,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           ServiceAgents.Instance.ControllerServiceAgent.RegisterUserForHeartbeatMonitoring(Dns.GetHostName());
           _heartbeatEventHandler = new HeartbeatEventHandler();
-          EventServiceAgent.RegisterHeartbeatCallbacks(_heartbeatEventHandler);        
+          ServiceAgents.Instance.EventServiceAgent.RegisterHeartbeatCallbacks(_heartbeatEventHandler);        
         }
         catch (Exception ex)
         {
