@@ -740,6 +740,13 @@ HRESULT AudioRendererSettings::GetAvailableAudioDevices(IMMDeviceCollection** pp
 
   if (pLog || hDialog)
   {
+    if (hDialog)
+    {
+      LPSTR defaultDevice = "<OS default audio device>";
+      SendDlgItemMessage(hDialog, IDC_AUDIO_DEVICE, CB_ADDSTRING, 0, (LPARAM)defaultDevice);
+      SendDlgItemMessage(hDialog, IDC_AUDIO_DEVICE, CB_SETCURSEL, 0, 0);
+    }
+
     for (UINT i = 0; i < count; i++)
     {
       if ((*ppMMDevices)->Item(i, &pEndpoint) != S_OK)
@@ -767,7 +774,7 @@ HRESULT AudioRendererSettings::GetAvailableAudioDevices(IMMDeviceCollection** pp
       {
         SendDlgItemMessage(hDialog, IDC_AUDIO_DEVICE, CB_ADDSTRING, 0, (LPARAM)W2T(varName.pwszVal));
         if (wcscmp(pwszID, m_wWASAPIPreferredDeviceId) == 0)
-          SendDlgItemMessage(hDialog, IDC_AUDIO_DEVICE, CB_SETCURSEL, i, 0);
+          SendDlgItemMessage(hDialog, IDC_AUDIO_DEVICE, CB_SETCURSEL, i + 1, 0);
       }
 
       if (pLog)
@@ -814,7 +821,12 @@ void AudioRendererSettings::SetAudioDevice(int setting)
     return;
   }
 
-  if (GetAvailableAudioDevices(&devices, NULL, false) == S_OK)
+  if (setting == 0) // default audio device
+  {
+    WCHAR empty[1] = {0};
+    wcsncpy(m_wWASAPIPreferredDeviceId, empty, MAX_REG_LENGTH);
+  }
+  else if (GetAvailableAudioDevices(&devices, NULL, false) == S_OK)
   {
     UINT count = 0;
     hr = devices->GetCount(&count);
@@ -822,7 +834,7 @@ void AudioRendererSettings::SetAudioDevice(int setting)
     IMMDevice* pEndpoint = NULL;
     LPWSTR pwszID = NULL;
 
-    hr = devices->Item(setting, &pEndpoint);
+    hr = devices->Item(setting - 1, &pEndpoint);
     if (SUCCEEDED(hr))
     {
       hr = pEndpoint->GetId(&pwszID);
