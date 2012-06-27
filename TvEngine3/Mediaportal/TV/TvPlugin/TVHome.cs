@@ -2302,6 +2302,11 @@ namespace Mediaportal.TV.TvPlugin
                 ViewParkedChannel(streamingChannel);
                 return;
               }
+              if (Card != null && streamingChannel.User.Name.Equals(Card.User.Name))
+              {
+                ViewParkedChannelAndCheck(streamingChannel.Channel, streamingChannel.ParkedDuration, streamingChannel.User.CardId, true);
+                return;
+              }
             }
             ViewChannel(streamingChannel.Channel);
           }
@@ -2455,18 +2460,6 @@ namespace Mediaportal.TV.TvPlugin
         Log.Info("succeeded:{0} {1}", succeeded, card);
         Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
 
-        if (!watchFromLivePoint)
-        {
-          if (parkedDuration > 0)
-          {
-            Seek(true, parkedDuration);
-          }
-          else
-          {
-            Seek(true, 0);
-          }
-        }
-
         // continue graph
         g_Player.ContinueGraph();
         if (!g_Player.Playing || _status.IsSet(LiveTvStatus.CardChange) || (g_Player.Playing && !(g_Player.IsTV || g_Player.IsRadio)))
@@ -2485,6 +2478,17 @@ namespace Mediaportal.TV.TvPlugin
         {
           g_Player.SeekAbsolute(g_Player.Duration - 1);
           SeekToEnd(true);          
+        }
+        else
+        {
+          if (parkedDuration > 0)
+          {
+            Seek(true, parkedDuration);
+          }
+          else
+          {
+            Seek(true, 0);
+          }
         }
 
         try
