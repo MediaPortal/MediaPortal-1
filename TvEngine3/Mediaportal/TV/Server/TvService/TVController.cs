@@ -2663,12 +2663,16 @@ namespace Mediaportal.TV.Server.TVService
       kickableCards = null;
       card = null;
       cardChanged = false;
-      int oldCardId = -1;
       RefreshTimeshiftingUserFromAnyContext(ref user);
       if (user != null)
       {
-        oldCardId = user.CardId;
-        string initialTimeshiftingFile = TimeShiftFileName(user.Name, user.CardId);
+        int oldCardId = user.CardId;
+        string initialTimeshiftingFile = "";
+        if (oldCardId > 0)
+        {
+          initialTimeshiftingFile = TimeShiftFileName(user.Name, user.CardId);  
+        }
+        
         user.Priority = UserFactory.GetDefaultPriority(user.Name, user.Priority);
         Channel channel = ChannelManagement.GetChannel(idChannel);
         Log.Write("Controller: StartTimeShifting {0} {1}", channel.displayName, channel.idChannel);
@@ -4776,7 +4780,7 @@ namespace Mediaportal.TV.Server.TVService
               if (user.CardId == card.idCard)
               {
                 bool isOwner = IsOwner(user.CardId, user);
-                foreach (ISubChannel subchannel in user.SubChannels.Values)
+                foreach (ISubChannel subchannel in new List<ISubChannel>(user.SubChannels.Values)) //avoid threading issues, make a copy.
                 {
 
                   if (!subchannelsInUse.Contains(subchannel.Id))
