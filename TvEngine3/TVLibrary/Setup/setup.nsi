@@ -396,6 +396,31 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_TVServer}\Plugins\WebEPG\WebEPG\bin\${BUILD_TYPE}\WebEPG.dll"
   File "${git_TVServer}\Plugins\WebEPG\WebEPGPlugin\bin\${BUILD_TYPE}\WebEPGImport.dll"
 
+  ; The Plugin CustomDevices Directory
+  SetOutPath "$INSTDIR\Plugins\CustomDevices"
+  File "${git_TVServer}\Plugins\CustomDevices\Anysee\bin\${BUILD_TYPE}\Anysee.dll" 
+  File "${git_TVServer}\Plugins\CustomDevices\Conexant\bin\${BUILD_TYPE}\Conexant.dll"
+  File "${git_TVServer}\Plugins\CustomDevices\DigitalDevices\bin\${BUILD_TYPE}\DigitalDevices.dll"
+  File "${git_TVServer}\Plugins\CustomDevices\DigitalEverywhere\bin\${BUILD_TYPE}\DigitalEverywhere.dll"
+  File "${git_TVServer}\Plugins\CustomDevices\DvbSky\bin\${BUILD_TYPE}\DvbSky.dll"
+  File "${git_TVServer}\Plugins\CustomDevices\Geniatech\bin\${BUILD_TYPE}\Geniatech.dll"
+  File "${git_TVServer}\Plugins\CustomDevices\Genpix\bin\${BUILD_TYPE}\Genpix.dll"
+  File "${git_TVServer}\Plugins\CustomDevices\GenpixOpenSource\bin\${BUILD_TYPE}\GenpixOpenSource.dll"
+  File "${git_TVServer}\Plugins\CustomDevices\Hauppauge\bin\${BUILD_TYPE}\Hauppauge.dll"
+  File "${git_TVServer}\Plugins\CustomDevices\Knc\bin\${BUILD_TYPE}\Knc.dll"
+  File "${git_TVServer}\Plugins\CustomDevices\MdPlugin\bin\${BUILD_TYPE}\MdPlugin.dll"
+  File "${git_TVServer}\Plugins\CustomDevices\Microsoft\bin\${BUILD_TYPE}\Microsoft.dll"
+  File "${git_TVServer}\Plugins\CustomDevices\NetUp\bin\${BUILD_TYPE}\NetUp.dll"
+  File "${git_TVServer}\Plugins\CustomDevices\Omicom\bin\${BUILD_TYPE}\Omicom.dll"
+  File "${git_TVServer}\Plugins\CustomDevices\Prof\bin\${BUILD_TYPE}\Prof.dll"
+  File "${git_TVServer}\Plugins\CustomDevices\ProfUsb\bin\${BUILD_TYPE}\ProfUsb.dll"
+  File "${git_TVServer}\Plugins\CustomDevices\TechnoTrend\bin\${BUILD_TYPE}\TechnoTrend.dll"
+  File "${git_TVServer}\Plugins\CustomDevices\TeVii\bin\${BUILD_TYPE}\TeVii.dll"
+  File "${git_TVServer}\Plugins\CustomDevices\Turbosight\bin\${BUILD_TYPE}\Turbosight.dll"
+  File "${git_TVServer}\Plugins\CustomDevices\Twinhan\bin\${BUILD_TYPE}\Twinhan.dll"
+  File "${git_TVServer}\Plugins\CustomDevices\ViXS\bin\${BUILD_TYPE}\ViXS.dll"
+  File "${git_TVServer}\Plugins\CustomDevices\WinTvCi\bin\${BUILD_TYPE}\WinTvCi.dll"
+
   ; Rest of Files
   SetOutPath "$INSTDIR"
   File "${git_Common_MP_TVE3}\DirectShowLib\bin\${BUILD_TYPE}\DirectShowLib.dll"
@@ -423,19 +448,22 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_TVServer}\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
 
   ; 3rd party assemblys
-  File "${TVSERVER.BASE}\hauppauge.dll"
-  File "${TVSERVER.BASE}\hcwWinTVCI.dll"
-  File "${TVSERVER.BASE}\KNCBDACTRL.dll"
-  File "${TVSERVER.BASE}\ttBdaDrvApi_Dll.dll"
-  File "${TVSERVER.BASE}\ttdvbacc.dll"
-  File "${TVSERVER.BASE}\tevii.dll"
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
+  File "${TVSERVER.BASE}\hauppauge.dll"  
 
   File "${git_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
   
   File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\dxerr9.dll"
-  ; binary used for skystar2 support
-  File "${git_DirectShowFilters}\dvblib\bin\${BUILD_TYPE}\dvblib.dll"
+  
+  ; 3rd party CustomDevices Resources assemblys
+  SetOutPath "$INSTDIR\Plugins\CustomDevices\Resources"
+  File "${TVSERVER.BASE}\CIAPI.dll"
+  File "${TVSERVER.BASE}\hcwWinTVCI.dll"
+  File "${TVSERVER.BASE}\KNCBDACTRL.dll"
+  File "${TVSERVER.BASE}\TbsCIapi.dll"
+  File "${TVSERVER.BASE}\tevii.dll"
+  File "${TVSERVER.BASE}\ttBdaDrvApi_Dll.dll"
+  File "${TVSERVER.BASE}\ttdvbacc.dll"
 
   ; Common App Data Files
   SetOutPath "${COMMON_APPDATA}"
@@ -549,14 +577,34 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\Plugins\WebEPG.dll"
   Delete "$INSTDIR\Plugins\WebEPGImport.dll"
   Delete "$INSTDIR\Plugins\XmlTvImport.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Anysee.dll" 
+  Delete "$INSTDIR\Plugins\CustomDevices\Conexant.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\DigitalDevices.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\DigitalEverywhere.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\DvbSky.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Geniatech.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Genpix.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\GenpixOpenSource.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Hauppauge.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Knc.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\MdPlugin.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Microsoft.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\NetUp.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Omicom.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Prof.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\ProfUsb.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\TechnoTrend.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\TeVii.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Turbosight.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Twinhan.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\ViXS.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\WinTvCi.dll"
   RMDir "$INSTDIR\Plugins"
 
   ; And finally remove all the files installed
   ; Leave the directory in place, as it might contain user modified files
   Delete "$INSTDIR\DirectShowLib.dll"
   Delete "$INSTDIR\Common.Utils.dll"
-  ; binary used for skystar2 support
-  Delete "$INSTDIR\dvblib.dll"
   Delete "$INSTDIR\PluginBase.dll"
   Delete "$INSTDIR\PowerScheduler.Interfaces.DLL"
   Delete "$INSTDIR\Blaster.exe"
@@ -589,6 +637,8 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\tevii.dll"
   Delete "$INSTDIR\Ionic.Zip.dll"
   Delete "$INSTDIR\Interop.SHDocVw.dll"
+  Delete "$INSTDIR\CIAPI.dll"
+  Delete "$INSTDIR\TbsCIapi.dll"
 
   ; remove Start Menu shortcuts
   Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"

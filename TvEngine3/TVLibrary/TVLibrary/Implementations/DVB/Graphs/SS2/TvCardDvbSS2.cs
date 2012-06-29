@@ -2221,6 +2221,7 @@ namespace TvLibrary.Implementations.DVB
       int[] currentPids = new int[_maxPidCount];
       int availablePidCount = 0;
       int hr = _dataInterface.GetTsState(out openPidCount, out runningPidCount, ref pidCount, currentPids);
+      int AddPidCount = 1;
       if (hr != 0)
       {
         Log.Log.Debug("TvCardDvbSs2: failed to retrieve current PIDs, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -2272,7 +2273,7 @@ namespace TvLibrary.Implementations.DVB
           {
             if (currentPidsAsHash != null && !currentPidsAsHash.Contains(en.Current))
             {
-              hr = _dataInterface.AddPIDsToPin(1, new int[1] { en.Current }, 0);
+              hr = _dataInterface.AddPIDsToPin(ref AddPidCount, new int[1] { en.Current }, 0);
               if (hr != 0)
               {
                 Log.Log.Debug("TvCardDvbSs2: failed to add PID {0} (0x{0:x}), hr = 0x{1:x} ({2})", en.Current, hr, HResult.GetDXErrorString(hr));
@@ -2291,9 +2292,10 @@ namespace TvLibrary.Implementations.DVB
         // Remove all current PIDs.
         if (currentPids != null)
         {
+          int DeletePidCount = 1;
           for (byte i = 0; i < pidCount; i++)
           {
-            hr = _dataInterface.DeletePIDsFromPin(1, new int[1] { currentPids[i] }, 0);
+            hr = _dataInterface.DeletePIDsFromPin(DeletePidCount, new int[1] { currentPids[i] }, 0);
             if (hr != 0)
             {
               Log.Log.Debug("TvCardDvbSs2: failed to remove PID {0} (0x{0:x}), hr = 0x{1:x} ({2})", currentPids[i], hr, HResult.GetDXErrorString(hr));
@@ -2302,7 +2304,7 @@ namespace TvLibrary.Implementations.DVB
           }
         }
         // Allow all PIDs.
-        hr = _dataInterface.AddPIDsToPin(1, new int[1] { (int)SkyStarPidFilterMode.AllExcludingNull }, 0);
+        hr = _dataInterface.AddPIDsToPin(ref AddPidCount, new int[1] { (int)SkyStarPidFilterMode.AllExcludingNull }, 0);
         if (hr != 0)
         {
           Log.Log.Debug("TvCardDvbSs2: failed to enable all PIDs, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
