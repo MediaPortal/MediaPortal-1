@@ -629,16 +629,18 @@ ${MementoSectionEnd}
   ; 3rd party assemblys
   Delete "$INSTDIR\dxerr9.dll"
   Delete "$INSTDIR\hauppauge.dll"
-  Delete "$INSTDIR\hcwWinTVCI.dll"
-  Delete "$INSTDIR\KNCBDACTRL.dll"
   Delete "$INSTDIR\StreamingServer.dll"
-  Delete "$INSTDIR\ttBdaDrvApi_Dll.dll"
-  Delete "$INSTDIR\ttdvbacc.dll"
-  Delete "$INSTDIR\tevii.dll"
   Delete "$INSTDIR\Ionic.Zip.dll"
   Delete "$INSTDIR\Interop.SHDocVw.dll"
-  Delete "$INSTDIR\CIAPI.dll"
-  Delete "$INSTDIR\TbsCIapi.dll"
+  
+  ; 3rd party CustomDevices Resources assemblys
+  Delete "$INSTDIR\Plugins\CustomDevices\Resources\CIAPI.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Resources\hcwWinTVCI.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Resources\KNCBDACTRL.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Resources\TbsCIapi.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Resources\tevii.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Resources\ttBdaDrvApi_Dll.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Resources\ttdvbacc.dll"
 
   ; remove Start Menu shortcuts
   Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"
