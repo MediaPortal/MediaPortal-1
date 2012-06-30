@@ -950,6 +950,7 @@ namespace TvEngine
         try
         {
           temp.SetPluginsDirectory(_configurationFolderPrefix + i);
+          Log.Debug("MD Plugin: plugins directory is \"{0}{1}\"", _configurationFolderPrefix + i);
         }
         catch (Exception ex)
         {
@@ -1112,7 +1113,7 @@ namespace TvEngine
       }
 
       // Find a free slot to decode this service. If this is the first or only service in the list then we
-      // can reset our slots. This may not be ideal in some cases
+      // can reset our slots. This may not be ideal in some cases (like if we're already decoding the service).
       DecodeSlot freeSlot = null;
       if (command == CaPmtCommand.OkDescrambling && (listAction == CaPmtListManagementAction.First || listAction == CaPmtListManagementAction.Only))
       {
@@ -1142,9 +1143,11 @@ namespace TvEngine
             {
               Log.Debug("MD Plugin: updating slot decrypting channel \"{0}\"", slot.CurrentChannel.Name);
               freeSlot = slot;
+              // No need to continue looping - this is the optimal situation where we reuse the existing slot.
+              break;
             }
           }
-          else if (currentService != null && freeSlot == null)
+          else if (currentService == null && freeSlot == null)
           {
             freeSlot = slot;
           }
