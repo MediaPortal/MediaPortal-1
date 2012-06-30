@@ -64,9 +64,6 @@ namespace TvEngine
       int SetPluginsDirectory([MarshalAs(UnmanagedType.LPWStr)] String directory);
     }
 
-    /// <summary>
-    /// IChangeChannel_Ex interface
-    /// </summary>
     [ComVisible(true), ComImport,
      Guid("e98b70ee-f5a1-4f46-b8b8-a1324ba92f5f"),
      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -727,7 +724,7 @@ namespace TvEngine
       }
 
       // If there is no MD configuration folder then there is no softCAM plugin.
-      if (Directory.Exists("MDPLUGINS") == false)
+      if (!Directory.Exists("MDPLUGINS"))
       {
         Log.Debug("MD Plugin: plugin not configured");
         return false;
@@ -757,7 +754,7 @@ namespace TvEngine
         XmlNode tunerNode = null;
         if (File.Exists(configFile))
         {
-          Log.Debug("MD Plugin: searching for device configuration");
+          Log.Debug("MD Plugin: searching for device configuration, device path = {0}", tunerDevicePath);
           doc.Load(configFile);
           rootNode = doc.SelectSingleNode("/cards");
           if (rootNode != null)
@@ -765,11 +762,13 @@ namespace TvEngine
             XmlNodeList tunerList = doc.SelectNodes("/cards/card");
             if (tunerList != null)
             {
+              Log.Debug("MD Plugin: found {0} device configuration(s)", tunerList.Count);
               foreach (XmlNode node in tunerList)
               {
-                // We found the configuration for the tuner.
-                if (tunerNode.Attributes["DevicePath"].Value.Equals(tunerDevicePath))
+                if (node.Attributes["DevicePath"].Value.Equals(tunerDevicePath))
                 {
+                  // We found the configuration for the tuner.
+                  Log.Debug("MD Plugin: found configuration");
                   tunerNode = node;
                   break;
                 }
@@ -889,6 +888,7 @@ namespace TvEngine
       }
 
       // Add an infinite tee after the tuner/capture filter.
+      Log.Debug("MD Plugin: adding infinite tee");
       _infTee = (IBaseFilter)new InfTee();
       hr = _graph.AddFilter(_infTee, "MD Plugin Infinite Tee");
       if (hr != 0)
@@ -910,8 +910,9 @@ namespace TvEngine
       }
       lastFilter = _infTee;
 
-      // Add one filter for each decoding slot.
-      for (int i = 0; i < _slots.Count; i++)
+      // Add one filter for each decoding slot. Note that we preset the capacity in Initialise().
+      Log.Debug("MD Plugin: adding {0} decoding filter(s)", _slots.Capacity);
+      for (int i = 0; i < _slots.Capacity; i++)
       {
         DecodeSlot slot = new DecodeSlot();
         slot.Filter = (IBaseFilter)new MDAPIFilter();
@@ -939,7 +940,7 @@ namespace TvEngine
           return false;
         }
         lastFilter = slot.Filter;
-        _slots[i] = slot;
+        _slots.Add(slot);
 
         // Check whether the plugin supports extended capabilities.
         IChangeChannel temp = slot.Filter as IChangeChannel;
@@ -955,7 +956,11 @@ namespace TvEngine
         IChangeChannel_Ex temp2 = slot.Filter as IChangeChannel_Ex;
         if (temp2 != null)
         {
-          Log.Debug("MD Plugin: extended capabilities supported");
+          Log.Debug("  filter {0}, extended capabilities supported", i + 1);
+        }
+        else
+        {
+          Log.Debug("  filter {0}, extended capabilities not supported", i + 1);
         }
       }
 
