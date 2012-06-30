@@ -62,9 +62,9 @@ namespace TvLibrary.Channels
     /// Get the appropriate LNB settings parameters to tune a given channel.
     /// </summary>
     /// <param name="channel">The channel to tune.</param>
-    /// <param name="lnbLof">The LNB local oscillator frequency to use in kHz.</param>
-    /// <param name="lnbSwitchFrequency">The LNB switch frequency to use in kHz.</param>
-    /// <param name="polarisation">The LNB voltage (signal polarity) to set.</param>
+    /// <param name="lnbLof">The LNB local oscillator frequency (in kHz) to use.</param>
+    /// <param name="lnbSwitchFrequency">The LNB switch frequency (in kHz) to use.</param>
+    /// <param name="polarisation">The LNB voltage (signal polarity) to use.</param>
     public static void GetLnbTuningParameters(DVBSChannel channel, out uint lnbLof, out uint lnbSwitchFrequency, out Polarisation polarisation)
     {
       // 1: Get the default frequency settings for the LNB.
@@ -84,13 +84,16 @@ namespace TvLibrary.Channels
       // 3: Toroidal LNB handling.
       // LNBs mounted on a toroidal dish require circular polarities to be inverted.
       polarisation = channel.Polarisation;
-      if (channel.Polarisation == Polarisation.CircularL)
+      if (channel.LnbType.IsToroidal)
       {
-        polarisation = Polarisation.CircularR;
-      }
-      else if (channel.Polarisation == Polarisation.CircularR)
-      {
-        polarisation = Polarisation.CircularL;
+        if (channel.Polarisation == Polarisation.CircularL)
+        {
+          polarisation = Polarisation.CircularR;
+        }
+        else if (channel.Polarisation == Polarisation.CircularR)
+        {
+          polarisation = Polarisation.CircularL;
+        }
       }
 
       // 4: Local oscillator frequency selection and other miscellenaeous settings.
@@ -105,7 +108,7 @@ namespace TvLibrary.Channels
       lnbLof = (uint)channel.LnbType.LowBandFrequency;
       if (!channel.LnbType.IsBandStacked)
       {
-        if (channel.Frequency > (lnbSwitchFrequency * 1000))
+        if (channel.Frequency > lnbSwitchFrequency)
         {
           lnbLof = (uint)channel.LnbType.HighBandFrequency;
         }
