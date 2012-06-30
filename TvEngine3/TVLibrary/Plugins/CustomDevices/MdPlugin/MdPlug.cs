@@ -210,6 +210,7 @@ namespace TvEngine
       Log.Debug("MD Plugin: registering video and audio PIDs");
       programToDecode = new Program82();
       pidsToDecode = new PidsToDecode();
+      pidsToDecode.Pids = new UInt16[MaxPidCount];
 
       programToDecode.ServiceId = pmt.ProgramNumber;
       programToDecode.PcrPid = pmt.PcrPid;
@@ -296,14 +297,14 @@ namespace TvEngine
 
       // First get ECMs from the PMT program CA descriptors.
       Log.Debug("MD Plugin: PMT program CA descriptors...");
-      List<Descriptor>.Enumerator descEn = pmt.ProgramCaDescriptors.GetEnumerator();
+      List<IDescriptor>.Enumerator descEn = pmt.ProgramCaDescriptors.GetEnumerator();
       while (descEn.MoveNext() && count < 32)
       {
-        ConditionalAccessDescriptor cad = ConditionalAccessDescriptor.Decode(descEn.Current.GetRawData(), 0);
+        ConditionalAccessDescriptor cad = ConditionalAccessDescriptor.Decode(descEn.Current);
         if (cad == null)
         {
           Log.Debug("MD Plugin: invalid descriptor");
-          byte[] rawDescriptor = descEn.Current.GetRawData();
+          byte[] rawDescriptor = descEn.Current.GetRawDataCopy();
           DVB_MMI.DumpBinary(rawDescriptor, 0, rawDescriptor.Length);
           continue;
         }
@@ -311,10 +312,10 @@ namespace TvEngine
         while (pidEn.MoveNext() && count < 32)
         {
           UInt16 pid = pidEn.Current;
-          Log.Debug("MD Plugin: ECM #{0} CA system ID = 0x{1:x}, PID = 0x{2:x}, provider = 0x{3:x}", i++, cad.CaSystemId, pid, cad.Pids[pid]);
+          Log.Debug("  ECM #{0} CA system ID = 0x{1:x}, PID = 0x{2:x}, provider = 0x{3:x}", i++, cad.CaSystemId, pid, cad.Pids[pid]);
           if (!seenEcmPids.Contains(pid))
           {
-            Log.Debug("MD Plugin:   adding");
+            Log.Debug("    adding");
             programToDecode.CaSystems[count].CaType = cad.CaSystemId;
             programToDecode.CaSystems[count].EcmPid = pid;
             programToDecode.CaSystems[count].ProviderId = cad.Pids[pid];
@@ -327,7 +328,7 @@ namespace TvEngine
           }
           else
           {
-            Log.Debug("MD Plugin:   already seen");
+            Log.Debug("    already seen");
           }
         }
       }
@@ -340,11 +341,11 @@ namespace TvEngine
         descEn = esEn.Current.CaDescriptors.GetEnumerator();
         while (descEn.MoveNext() && count < 32)
         {
-          ConditionalAccessDescriptor cad = ConditionalAccessDescriptor.Decode(descEn.Current.GetRawData(), 0);
+          ConditionalAccessDescriptor cad = ConditionalAccessDescriptor.Decode(descEn.Current);
           if (cad == null)
           {
             Log.Debug("MD Plugin: invalid descriptor");
-            byte[] rawDescriptor = descEn.Current.GetRawData();
+            byte[] rawDescriptor = descEn.Current.GetRawDataCopy();
             DVB_MMI.DumpBinary(rawDescriptor, 0, rawDescriptor.Length);
             continue;
           }
@@ -352,10 +353,10 @@ namespace TvEngine
           while (pidEn.MoveNext() && count < 32)
           {
             UInt16 pid = pidEn.Current;
-            Log.Debug("MD Plugin: ECM #{0} CA system ID = 0x{1:x}, PID = 0x{2:x}, provider = 0x{3:x}", i++, cad.CaSystemId, pid, cad.Pids[pid]);
+            Log.Debug("  ECM #{0} CA system ID = 0x{1:x}, PID = 0x{2:x}, provider = 0x{3:x}", i++, cad.CaSystemId, pid, cad.Pids[pid]);
             if (!seenEcmPids.Contains(pid))
             {
-              Log.Debug("MD Plugin:   adding");
+              Log.Debug("    adding");
               programToDecode.CaSystems[count].CaType = cad.CaSystemId;
               programToDecode.CaSystems[count].EcmPid = pid;
               programToDecode.CaSystems[count].ProviderId = cad.Pids[pid];
@@ -368,7 +369,7 @@ namespace TvEngine
             }
             else
             {
-              Log.Debug("MD Plugin:   already seen");
+              Log.Debug("    already seen");
             }
           }
         }
@@ -376,14 +377,15 @@ namespace TvEngine
 
       // Finally get EMMs from the CAT descriptors.
       Log.Debug("MD Plugin: CAT CA descriptors...");
+      i = 1;
       descEn = cat.CaDescriptors.GetEnumerator();
       while (descEn.MoveNext())
       {
-        ConditionalAccessDescriptor cad = ConditionalAccessDescriptor.Decode(descEn.Current.GetRawData(), 0);
+        ConditionalAccessDescriptor cad = ConditionalAccessDescriptor.Decode(descEn.Current);
         if (cad == null)
         {
           Log.Debug("MD Plugin: invalid descriptor");
-          byte[] rawDescriptor = descEn.Current.GetRawData();
+          byte[] rawDescriptor = descEn.Current.GetRawDataCopy();
           DVB_MMI.DumpBinary(rawDescriptor, 0, rawDescriptor.Length);
           continue;
         }
@@ -392,7 +394,7 @@ namespace TvEngine
         while (pidEn.MoveNext())
         {
           UInt16 pid = pidEn.Current;
-          Log.Debug("MD Plugin: EMM #{0} CA system ID = 0x{1:x}, PID = 0x{2:x}, provider = 0x{3:x}", i++, cad.CaSystemId, pid, cad.Pids[pid]);
+          Log.Debug("  EMM #{0} CA system ID = 0x{1:x}, PID = 0x{2:x}, provider = 0x{3:x}", i++, cad.CaSystemId, pid, cad.Pids[pid]);
 
           // Check if this EMM PID is linked to an ECM PID.          
           bool found = false;
@@ -400,7 +402,7 @@ namespace TvEngine
           {
             if (programToDecode.CaSystems[j].CaType == cad.CaSystemId && programToDecode.CaSystems[j].ProviderId == cad.Pids[pid])
             {
-              Log.Debug("MD Plugin:   linking to ECM 0x{1:x}", programToDecode.CaSystems[j].EcmPid);
+              Log.Debug("    linking to ECM 0x{0:x}", programToDecode.CaSystems[j].EcmPid);
               found = true;
               programToDecode.CaSystems[j].EmmPid = pid;
               break;
@@ -408,7 +410,7 @@ namespace TvEngine
           }
           if (!found && count < 32)
           {
-            Log.Debug("MD Plugin:   adding");
+            Log.Debug("    adding");
             programToDecode.CaSystems[count].CaType = cad.CaSystemId;
             programToDecode.CaSystems[count].EmmPid = pid;
             programToDecode.CaSystems[count].ProviderId = cad.Pids[pid];
@@ -552,6 +554,7 @@ namespace TvEngine
             if (mainNode == null)
             {
               mainNode = doc.CreateElement("mdapi");
+              doc.AppendChild(mainNode);
             }
             XmlAttribute fillOutAttribute = doc.CreateAttribute("fillout");
             fillOutAttribute.Value = fillOutConfig.ToString();
@@ -565,7 +568,7 @@ namespace TvEngine
 
           if (fillOutConfig)
           {
-            Log.Info("MD Plugin: attempting to add entries to MDAPIProvID.xml");
+            Log.Debug("MD Plugin: attempting to add entries to MDAPIProvID.xml");
 
             // Channel configuration stub.
             XmlNode node = doc.CreateElement("channel");
@@ -1062,7 +1065,7 @@ namespace TvEngine
       }
 
       // As far as we know, the interface is always ready as long as it is open.
-      Log.Debug("Turbosight: result = {0}", _slots.Count > 0);
+      Log.Debug("MD Plugin: result = {0}", _slots.Count > 0);
       return (_slots.Count > 0);
     }
 
@@ -1195,7 +1198,7 @@ namespace TvEngine
       programToDecode.CaSystemCount = RegisterEcmAndEmmPids(pmt, cat, ref programToDecode);
       SetPreferredCaSystemIndex(ref programToDecode);
 
-      Log.Debug("MD Plugin: ECM PID = {0} (0x{0:x}, CA system count = {1}, CA index = {2}",
+      Log.Debug("MD Plugin: ECM PID = {0} (0x{0:x}), CA system count = {1}, CA index = {2}",
                     programToDecode.EcmPid, programToDecode.CaSystemCount, programToDecode.CaId
       );
       for (byte i = 0; i < programToDecode.CaSystemCount; i++)

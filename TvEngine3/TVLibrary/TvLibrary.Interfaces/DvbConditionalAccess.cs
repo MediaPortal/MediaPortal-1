@@ -1049,8 +1049,8 @@ namespace TvLibrary.Interfaces
     private byte _currentNextIndicator;
     private byte _sectionNumber;
     private byte _lastSectionNumber;
-    private List<Descriptor> _descriptors;
-    private List<Descriptor> _caDescriptors;
+    private List<IDescriptor> _descriptors;
+    private List<IDescriptor> _caDescriptors;
     private byte[] _crc;
 
     private byte[] _rawCat;
@@ -1149,7 +1149,7 @@ namespace TvLibrary.Interfaces
     /// The descriptors for the service described by the conditional access table. Conditional access
     /// descriptors are not included.
     /// </summary>
-    public List<Descriptor> Descriptors
+    public List<IDescriptor> Descriptors
     {
       get
       {
@@ -1160,7 +1160,7 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// The conditional access descriptors for the service described by the conditional access table.
     /// </summary>
-    public List<Descriptor> CaDescriptors
+    public List<IDescriptor> CaDescriptors
     {
       get
       {
@@ -1229,11 +1229,11 @@ namespace TvLibrary.Interfaces
       // Descriptors.
       int offset = 8;
       int endDescriptors = data.Length - 4;
-      cat._descriptors = new List<Descriptor>();
-      cat._caDescriptors = new List<Descriptor>();
+      cat._descriptors = new List<IDescriptor>();
+      cat._caDescriptors = new List<IDescriptor>();
       while (offset + 1 < endDescriptors)
       {
-        Descriptor d = Descriptor.Decode(data, offset);
+        IDescriptor d = Descriptor.Decode(data, offset);
         if (d == null)
         {
           Log.Log.Debug("CAT: descriptor {0} is invalid", cat._descriptors.Count + cat._caDescriptors.Count + 1);
@@ -1269,13 +1269,12 @@ namespace TvLibrary.Interfaces
     }
 
     /// <summary>
-    /// Retrieve the original conditional access section data that was decoded to create this Cat instance.
+    /// Retrieve a copy of the original conditional access section data that was decoded to create this Cat instance.
     /// </summary>
-    /// <returns>the raw conditional access section data</returns>
-    public byte[] GetRawCat()
+    /// <returns>a copy of the raw conditional access section data</returns>
+    public byte[] GetRawCatCopy()
     {
-      // Make a copy of our raw CAT for the caller. We copy so that subsequent changes made by the caller
-      // have no effect on our reference/copy.
+      // Make a copy of our raw CAT for the caller.
       byte[] outputCat = new byte[_rawCat.Length];
       Buffer.BlockCopy(_rawCat, 0, outputCat, 0, _rawCat.Length);
       return outputCat;
@@ -1297,11 +1296,11 @@ namespace TvLibrary.Interfaces
       Log.Log.Debug("  last section number      = {0}", _lastSectionNumber);
       Log.Log.Debug("  CRC                      = 0x{0:x}{1:x}{2:x}{3:x}", _crc[0], _crc[1], _crc[2], _crc[3]);
       Log.Log.Debug("  {0} descriptor(s)...", _descriptors.Count + _caDescriptors.Count);
-      foreach (Descriptor d in _descriptors)
+      foreach (IDescriptor d in _descriptors)
       {
         d.Dump();
       }
-      foreach (Descriptor cad in _caDescriptors)
+      foreach (IDescriptor cad in _caDescriptors)
       {
         cad.Dump();
       }
@@ -1325,8 +1324,8 @@ namespace TvLibrary.Interfaces
     private byte _lastSectionNumber;
     private UInt16 _pcrPid;
     private UInt16 _programInfoLength;
-    private List<Descriptor> _programDescriptors;
-    private List<Descriptor> _programCaDescriptors;
+    private List<IDescriptor> _programDescriptors;
+    private List<IDescriptor> _programCaDescriptors;
     private List<PmtElementaryStream> _elementaryStreams;
     private byte[] _crc;
 
@@ -1459,7 +1458,7 @@ namespace TvLibrary.Interfaces
     /// The descriptors for the service described by the program map. Conditional access descriptors are not
     /// included.
     /// </summary>
-    public List<Descriptor> ProgramDescriptors
+    public List<IDescriptor> ProgramDescriptors
     {
       get
       {
@@ -1470,7 +1469,7 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// The conditional access descriptors for the service described by the program map.
     /// </summary>
-    public List<Descriptor> ProgramCaDescriptors
+    public List<IDescriptor> ProgramCaDescriptors
     {
       get
       {
@@ -1569,11 +1568,11 @@ namespace TvLibrary.Interfaces
       // Program descriptors.
       int offset = 12;
       int endProgramDescriptors = offset + pmt._programInfoLength;
-      pmt._programDescriptors = new List<Descriptor>();
-      pmt._programCaDescriptors = new List<Descriptor>();
+      pmt._programDescriptors = new List<IDescriptor>();
+      pmt._programCaDescriptors = new List<IDescriptor>();
       while (offset + 1 < endProgramDescriptors)
       {
-        Descriptor d = Descriptor.Decode(data, offset);
+        IDescriptor d = Descriptor.Decode(data, offset);
         if (d == null)
         {
           Log.Log.Debug("PMT: program descriptor {0} is invalid", pmt._programDescriptors.Count + pmt._programCaDescriptors.Count + 1);
@@ -1615,11 +1614,11 @@ namespace TvLibrary.Interfaces
           Log.Log.Debug("PMT: elementary stream info length for PID {0} (0x{0:x}) is invalid", es.Pid);
           return null;
         }
-        es.Descriptors = new List<Descriptor>();
-        es.CaDescriptors = new List<Descriptor>();
+        es.Descriptors = new List<IDescriptor>();
+        es.CaDescriptors = new List<IDescriptor>();
         while (offset + 1 < endEsDescriptors)
         {
-          Descriptor d = Descriptor.Decode(data, offset);
+          IDescriptor d = Descriptor.Decode(data, offset);
           if (d == null)
           {
             Log.Log.Debug("PMT: elementary stream descriptor {0} for PID {1} (0x{1:x}) is invalid", es.Descriptors.Count + es.CaDescriptors.Count + 1, es.Pid);
@@ -1696,13 +1695,12 @@ namespace TvLibrary.Interfaces
     }
 
     /// <summary>
-    /// Retrieve the original program map section data that was decoded to create this Pmt instance.
+    /// Retrieve a copy of the original program map section data that was decoded to create this Pmt instance.
     /// </summary>
-    /// <returns>the raw program map section data</returns>
-    public byte[] GetRawPmt()
+    /// <returns>a copy of the raw program map section data</returns>
+    public byte[] GetRawPmtCopy()
     {
-      // Make a copy of our raw PMT for the caller. We copy so that subsequent changes made by the caller
-      // have no effect on our reference/copy.
+      // Make a copy of our raw PMT for the caller.
       byte[] outputPmt = new byte[_rawPmt.Length];
       Buffer.BlockCopy(_rawPmt, 0, outputPmt, 0, _rawPmt.Length);
       return outputPmt;
@@ -1728,14 +1726,14 @@ namespace TvLibrary.Interfaces
       // Program descriptors. As per EN 50221, we only add conditional access descriptors to the CA PMT.
       int offset = 6;
       int programInfoLength = 0;
-      foreach (Descriptor d in _programCaDescriptors)
+      foreach (IDescriptor d in _programCaDescriptors)
       {
         if (programInfoLength == 0)
         {
           tempCaPmt[offset++] = (byte)command;
           programInfoLength++;
         }
-        byte[] descriptorData = d.GetRawData();
+        byte[] descriptorData = d.GetRawDataCopy();
         Buffer.BlockCopy(descriptorData, 0, tempCaPmt, offset, descriptorData.Length);
         offset += descriptorData.Length;
         programInfoLength += descriptorData.Length;
@@ -1786,14 +1784,14 @@ namespace TvLibrary.Interfaces
 
           // As per EN 50221, we only add conditional access descriptors to the CA PMT.
           int esInfoLength = 0;
-          foreach (Descriptor d in es.CaDescriptors)
+          foreach (IDescriptor d in es.CaDescriptors)
           {
             if (esInfoLength == 0)
             {
               tempCaPmt[offset++] = (byte)command;
               esInfoLength++;
             }
-            byte[] descriptorData = d.GetRawData();
+            byte[] descriptorData = d.GetRawDataCopy();
             Buffer.BlockCopy(descriptorData, 0, tempCaPmt, offset, descriptorData.Length);
             offset += descriptorData.Length;
             esInfoLength += descriptorData.Length;
@@ -1834,11 +1832,11 @@ namespace TvLibrary.Interfaces
       Log.Log.Debug("  program info length      = {0}", _programInfoLength);
       Log.Log.Debug("  CRC                      = 0x{0:x}{1:x}{2:x}{3:x}", _crc[0], _crc[1], _crc[2], _crc[3]);
       Log.Log.Debug("  {0} descriptor(s)...", _programDescriptors.Count + _programCaDescriptors.Count);
-      foreach (Descriptor d in _programDescriptors)
+      foreach (IDescriptor d in _programDescriptors)
       {
         d.Dump();
       }
-      foreach (Descriptor cad in _programCaDescriptors)
+      foreach (IDescriptor cad in _programCaDescriptors)
       {
         cad.Dump();
       }
@@ -1855,13 +1853,17 @@ namespace TvLibrary.Interfaces
   /// </summary>
   public class PmtElementaryStream
   {
+    #region variables
+
     private StreamType _streamType;
     private UInt16 _pid;
     private UInt16 _esInfoLength;
-    private List<Descriptor> _descriptors;
-    private List<Descriptor> _caDescriptors;
+    private List<IDescriptor> _descriptors;
+    private List<IDescriptor> _caDescriptors;
 
     private DescriptorTag _primaryDescriptorTag;
+
+    #endregion
 
     #region properties
 
@@ -1913,7 +1915,7 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// The elementary stream's descriptors. Conditional access descriptors are not included.
     /// </summary>
-    public List<Descriptor> Descriptors
+    public List<IDescriptor> Descriptors
     {
       get
       {
@@ -1928,7 +1930,7 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// The elementary stream's conditional access descriptors.
     /// </summary>
-    public List<Descriptor> CaDescriptors
+    public List<IDescriptor> CaDescriptors
     {
       get
       {
@@ -1969,11 +1971,11 @@ namespace TvLibrary.Interfaces
       Log.Log.Debug("  length      = {0}", _esInfoLength);
       Log.Log.Debug("  main tag    = {0}", _primaryDescriptorTag);
       Log.Log.Debug("  {0} descriptor(s)...", _descriptors.Count + _caDescriptors.Count);
-      foreach (Descriptor d in _descriptors)
+      foreach (IDescriptor d in _descriptors)
       {
         d.Dump();
       }
-      foreach (Descriptor cad in _caDescriptors)
+      foreach (IDescriptor cad in _caDescriptors)
       {
         cad.Dump();
       }
@@ -1981,9 +1983,45 @@ namespace TvLibrary.Interfaces
   }
 
   /// <summary>
-  /// A class that models the descriptor structure defined in ISO/IEC 13818-1.
+  /// An interface that models the descriptor structure defined in ISO/IEC 13818-1.
   /// </summary>
-  public class Descriptor
+  public interface IDescriptor
+  {
+    /// <summary>
+    /// The descriptor's tag.
+    /// </summary>
+    DescriptorTag Tag { get; }
+
+    /// <summary>
+    /// The descriptor data length.
+    /// </summary>
+    byte Length { get; }
+
+    /// <summary>
+    /// The descriptor data.
+    /// </summary>
+    byte[] Data { get; }
+
+    /// <summary>
+    /// Retrieve a copy of the original data that was decoded to create a descriptor instance.
+    /// </summary>
+    /// <remarks>
+    /// The copy includes tag and length bytes.
+    /// </remarks>
+    /// <returns>a copy of the raw descriptor data</returns>
+    byte[] GetRawDataCopy();
+
+    /// <summary>
+    /// Write the descriptor fields to the log file. Useful for debugging.
+    /// </summary>
+    void Dump();
+  }
+
+  /// <summary>
+  /// A base class that implements the <see cref="IDescriptor"/> interface, modelling the basic descriptor
+  /// structure defined in ISO/IEC 13818-1.
+  /// </summary>
+  public class Descriptor : IDescriptor
   {
     #region variables
 
@@ -2009,10 +2047,16 @@ namespace TvLibrary.Interfaces
 
     /// <summary>
     /// Constructor. Protected to ensure instances can only be created by derived classes or by calling
-    /// Decode().
+    /// Decode(). This should ensure the safety of the parameters, which is why we don't check them.
     /// </summary>
-    protected Descriptor()
+    /// <param name="tag">The descriptor's tag.</param>
+    /// <param name="length">The descriptor data length.</param>
+    /// <param name="data">The descriptor data.</param>
+    protected Descriptor(DescriptorTag tag, byte length, byte[] data)
     {
+      _tag = tag;
+      _length = length;
+      _data = data;
     }
 
     #region properties
@@ -2057,39 +2101,41 @@ namespace TvLibrary.Interfaces
     /// </summary>
     /// <param name="data">The raw descriptor data.</param>
     /// <param name="offset">The offset in the data array at which the descriptor starts.</param>
-    /// <returns>a fully populated Descriptor instance</returns>
-    public static Descriptor Decode(byte[] data, int offset)
+    /// <returns>an IDescriptor instance</returns>
+    public static IDescriptor Decode(byte[] data, int offset)
     {
+      // Parse the base descriptor fields. Return null if they're not valid for any reason.
       if (offset + 1 >= data.Length)
       {
         return null;
       }
-      Descriptor d = new Descriptor();
-      d._tag = (DescriptorTag)data[offset];
-      d._length = data[offset + 1];
-      if (offset + 2 + d._length >= data.Length)
+      DescriptorTag tag = (DescriptorTag)data[offset];
+      byte length = data[offset + 1];
+      if (offset + 2 + length >= data.Length)
       {
         return null;
       }
-      d._data = new byte[d._length];
-      Buffer.BlockCopy(data, offset + 2, d._data, 0, d._length);
+
+      // If we get to here, the descriptor data seems to be valid. Instantiate a descriptor.
+      byte[] descData = new byte[length];
+      Buffer.BlockCopy(data, offset + 2, descData, 0, length);
+      Descriptor d = new Descriptor(tag, length, descData);
 
       // Make a copy of the entire descriptor so that changes made by the caller on the original array have
       // no effect on our reference/copy.
       d._rawData = new byte[2 + d._length];
-      Buffer.BlockCopy(data, offset, d._rawData, 0, 2 + d._length);
+      Buffer.BlockCopy(data, offset, d._rawData, 0, 2 + length);
 
       return d;
     }
 
     /// <summary>
-    /// Retrieve the original descriptor data that was decoded to create this Descriptor instance.
+    /// Retrieve a copy of the original data that was decoded to create this Descriptor instance.
     /// </summary>
-    /// <returns>the raw program map section data</returns>
-    public byte[] GetRawData()
+    /// <returns>a copy of the raw descriptor data</returns>
+    public byte[] GetRawDataCopy()
     {
-      // Make a copy of our raw data for the caller. We copy so that subsequent changes made by the caller
-      // have no effect on our reference/copy.
+      // Make a copy of our raw data for the caller.
       byte[] outputDescriptor = new byte[_rawData.Length];
       Buffer.BlockCopy(_rawData, 0, outputDescriptor, 0, _rawData.Length);
       return outputDescriptor;
@@ -2110,7 +2156,7 @@ namespace TvLibrary.Interfaces
   /// <summary>
   /// A class that models the conditional access descriptor structure defined in ISO/IEC 13818-1.
   /// </summary>
-  public class ConditionalAccessDescriptor : Descriptor
+  public class ConditionalAccessDescriptor : Descriptor, IDescriptor
   {
     #region variables
 
@@ -2120,6 +2166,16 @@ namespace TvLibrary.Interfaces
     private Dictionary<UInt16, UInt32> _pids;
 
     #endregion
+
+    /// <summary>
+    /// Constructor. Protected to ensure instances can only be created by derived classes or by calling
+    /// Decode().
+    /// </summary>
+    /// <param name="descriptor">The base descriptor to use to instantiate this descriptor.</param>
+    protected ConditionalAccessDescriptor(IDescriptor descriptor)
+      : base(descriptor.Tag, descriptor.Length, descriptor.Data)
+    {
+    }
 
     #region properties
 
@@ -2172,26 +2228,27 @@ namespace TvLibrary.Interfaces
     #endregion
 
     /// <summary>
-    /// Decode raw descriptor data.
+    /// Attempt to decode an arbitrary descriptor as a conditional access descriptor.
     /// </summary>
-    /// <param name="data">The raw descriptor data.</param>
-    /// <param name="offset">The offset in the data array at which the descriptor starts.</param>
-    /// <returns>a fully populated ConditionalAccessDescriptor instance</returns>
-    public static new ConditionalAccessDescriptor Decode(byte[] data, int offset)
+    /// <param name="descriptor">The descriptor to decode.</param>
+    /// <returns>a fully populated ConditionalAccessDescriptor instance if decoding is successful, otherwise <c>null</c></returns>
+    public static ConditionalAccessDescriptor Decode(IDescriptor descriptor)
     {
-      ConditionalAccessDescriptor d = (ConditionalAccessDescriptor)Descriptor.Decode(data, offset);
-      if (d == null || d._length < 4)
+      if (descriptor.Tag != DescriptorTag.ConditionalAccess || descriptor.Length < 4 ||
+        descriptor.Data == null || descriptor.Data.Length < 4)
       {
         return null;
       }
-      offset = 2;
-      d._caSystemId = (UInt16)((data[offset] << 8) + data[offset + 1]);
+      ConditionalAccessDescriptor d = new ConditionalAccessDescriptor(descriptor);
+
+      byte offset = 0;
+      d._caSystemId = (UInt16)((descriptor.Data[offset] << 8) + descriptor.Data[offset + 1]);
       offset += 2;
-      d._caPid = (UInt16)(((data[offset] & 0x1f) << 8) + data[offset + 1]);
+      d._caPid = (UInt16)(((descriptor.Data[offset] & 0x1f) << 8) + descriptor.Data[offset + 1]);
       offset += 2;
 
       d._privateData = new byte[d._length - 4];
-      Buffer.BlockCopy(data, offset, d._privateData, 0, d._length - 4);
+      Buffer.BlockCopy(descriptor.Data, offset, d._privateData, 0, d._length - 4);
 
       // Canal Plus...
       UInt32 providerId;
@@ -2756,6 +2813,34 @@ namespace TvLibrary.Interfaces
       Buffer.BlockCopy(length, 0, apdu, 3, lengthByteCount);
       apdu[3 + lengthByteCount] = (byte)responseType;
       Buffer.BlockCopy(answerChars, 0, apdu, 4 + lengthByteCount, answerChars.Length);
+      return apdu;
+    }
+
+    /// <summary>
+    /// Create a "ca_pmt" APDU, used to query or manage a host's capabilities and actions in relation to a
+    /// particular service.
+    /// </summary>
+    /// <param name="caPmt">A CA PMT structure encoded according to EN 50221, describing the service and
+    ///   associated elementary streams.</param>
+    /// <returns>the APDU</returns>
+    public static byte[] CreateCaPmtRequest(byte[] caPmt)
+    {
+      if (caPmt == null || caPmt.Length == 0)
+      {
+        // This is bad!
+        throw new ArgumentException("DvbMmiHandler: CA PMT passed to CreateCaPmtRequest() is not set!");
+      }
+
+      // Encode the length into a temporary array so we know how many bytes are required for the APDU.
+      byte[] length = new byte[5];  // max possible bytes for length field
+      int lengthByteCount;
+      WriteLength(caPmt.Length, ref length, 0, out lengthByteCount);
+
+      // Encode the APDU.
+      byte[] apdu = new byte[caPmt.Length + lengthByteCount + 3]; // + 3 for MMI tag
+      WriteMmiTag(MmiTag.ConditionalAccessPmt, ref apdu, 0);
+      Buffer.BlockCopy(length, 0, apdu, 3, lengthByteCount);
+      Buffer.BlockCopy(caPmt, 0, apdu, 3 + lengthByteCount, caPmt.Length);
       return apdu;
     }
 

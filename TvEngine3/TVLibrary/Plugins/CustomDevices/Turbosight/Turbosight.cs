@@ -1280,7 +1280,7 @@ namespace TvEngine
         return true;
       }
 
-      byte[] rawPmt = pmt.GetRawPmt();
+      byte[] rawPmt = pmt.GetRawPmtCopy();
       if (rawPmt.Length > MaxPmtLength - 2)
       {
         Log.Debug("Turbosight: buffer capacity too small");

@@ -1823,9 +1823,9 @@ namespace TvEngine
       // Program CA descriptor data.
       int offset = 2;   // 2 bytes reserved for the data length
       pmtData.ProgramCaDescriptorData = new byte[MaxDescriptorDataLength];
-      foreach (Descriptor d in pmt.ProgramCaDescriptors)
+      foreach (IDescriptor d in pmt.ProgramCaDescriptors)
       {
-        byte[] descriptorData = d.GetRawData();
+        byte[] descriptorData = d.GetRawDataCopy();
         if (offset + descriptorData.Length >= MaxDescriptorDataLength)
         {
           Log.Debug("Anysee: PMT program CA descriptor data is too long");
@@ -1914,9 +1914,9 @@ namespace TvEngine
         // Elementary stream CA descriptor data.
         offset = 2;   // 2 bytes reserved for the data length
         esToKeep.DescriptorData = new byte[MaxDescriptorDataLength];
-        foreach (Descriptor d in es.CaDescriptors)
+        foreach (IDescriptor d in es.CaDescriptors)
         {
-          byte[] descriptorData = d.GetRawData();
+          byte[] descriptorData = d.GetRawDataCopy();
           if (offset + descriptorData.Length >= MaxDescriptorDataLength)
           {
             Log.Debug("Anysee: PMT elementary stream {0} (0x{0:x}) CA data is too long", es.Pid);

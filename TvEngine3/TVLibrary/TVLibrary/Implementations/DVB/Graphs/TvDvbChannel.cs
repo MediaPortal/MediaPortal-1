@@ -843,7 +843,7 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
-        byte[] rawPmt = _pmt.GetRawPmt();
+        byte[] rawPmt = _pmt.GetRawPmtCopy();
         _tsFilterInterface.TimeShiftSetPmtPid(_subChannelIndex, _pmtPid, _pmt.ProgramNumber, rawPmt, rawPmt.Length);
       }
       catch (Exception ex)
@@ -859,7 +859,7 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
-        byte[] rawPmt = _pmt.GetRawPmt();
+        byte[] rawPmt = _pmt.GetRawPmtCopy();
         _tsFilterInterface.RecordSetPmtPid(_subChannelIndex, _pmtPid, _pmt.ProgramNumber, rawPmt, rawPmt.Length);
       }
       catch (Exception ex)

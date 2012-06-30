@@ -963,7 +963,7 @@ namespace TvLibrary.Implementations
     ///   subchannel has changed, or <c>last</c> if the subchannel is being disposed.</param>
     protected void UpdateDecryptList(int subChannelId, CaPmtListManagementAction updateAction)
     {
-      Log.Log.Debug("TvCardBase: subchannel {0} start decrypting, mode = {1}, update action = {2}", subChannelId, _multiDecryptMode, updateAction);
+      Log.Log.Debug("TvCardBase: subchannel {0} update decrypt list, mode = {1}, update action = {2}", subChannelId, _multiDecryptMode, updateAction);
 
       if (_mapSubChannels == null || _mapSubChannels.Count == 0 || !_mapSubChannels.ContainsKey(subChannelId))
       {
@@ -981,7 +981,7 @@ namespace TvLibrary.Implementations
       List<BaseSubChannel> distinctServices = new List<BaseSubChannel>();
       if (_multiDecryptMode == CaPmtListManagementAction.Only || _multiDecryptMode == CaPmtListManagementAction.Add)
       {
-        // We only manage the service associated with the subchannel.
+        // We only send one command relating to the service associated with the subchannel.
         distinctServices.Add(_mapSubChannels[subChannelId]);
       }
       else
@@ -1027,9 +1027,9 @@ namespace TvLibrary.Implementations
             }
           }
           // If this service is the service that is causing this update and the action is "last" (meaning "remove"
-          // or "no need to decrypt") then don't add it to the list because we don't need to keep decrypting it...
-          // at least not for this subchannel.
-          if (!exists && updateAction != CaPmtListManagementAction.Last && subChannelId == en.Current.SubChannelId)
+          // or "no need to decrypt") then don't add the service to the list because we don't need to keep decrypting
+          // it... at least not for this subchannel.
+          if (!exists || subChannelId != en.Current.SubChannelId || updateAction != CaPmtListManagementAction.Last)
           {
             distinctServices.Add(en.Current);
           }
@@ -1105,10 +1105,12 @@ namespace TvLibrary.Implementations
               {
                 if (_multiDecryptMode == CaPmtListManagementAction.Add)
                 {
+                  // Remove a service...
                   if (updateAction == CaPmtListManagementAction.Last)
                   {
                     action = CaPmtListManagementAction.Only;
                   }
+                  // Add or update a service...
                   else
                   {
                     action = updateAction;

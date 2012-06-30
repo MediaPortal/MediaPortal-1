@@ -1074,7 +1074,7 @@ namespace TvEngine
     // GUID_THBDA_CMD
     private static readonly Guid CommandGuid = new Guid(0x255e0082, 0x2017, 0x4b03, 0x90, 0xf8, 0x85, 0x6a, 0x62, 0xcb, 0x3d, 0x67);
 
-    private const int InstanceSize = 32;    // The size of a property instance (KspNode) parameter.
+    private const int InstanceSize = 32;    // The size of a property instance (KSP_NODE) parameter.
     private const int CommandSize = 40;
 
     private const int DeviceInfoSize = 240;

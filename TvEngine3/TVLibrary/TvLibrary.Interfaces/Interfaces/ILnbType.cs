@@ -22,6 +22,9 @@ using System;
 
 namespace TvLibrary.Interfaces
 {
+  /// <summary>
+  /// This interface describes the properties of a satellite dish low noise block down-converter.
+  /// </summary>
   public interface ILnbType
   {
     /// <summary>
@@ -48,13 +51,13 @@ namespace TvLibrary.Interfaces
     /// Get/set whether the LNB type is a band-stacked LNB type.
     /// </summary>
     /// <remarks>
-    /// Unlike regular LNBs, bandstacked LNBs pass all transponders in a single cable at all times. This is
-    /// as opposed with a regular LNB which only passes the transponders with a particular polarity, depending
-    /// on the voltage supplied. Bandstacking greatly improves the ability to split the signal to more than
-    /// one receiver without complicated or expensive switch equipement. The cost is that the LNB is not able
-    /// to receive as wide a range of transponders as a regular LNB. This is due to the fact that the LNB
-    /// shifts the frequencies of each transponder in such a way that they don't overlap... but this
-    /// requires the use of bandwidth that would otherwise be used for receiving a wider frequency range.
+    /// Unlike regular LNBs, bandstacked LNBs pass all transponder streams in a single cable at all times. This
+    /// is a distinct advantage over regular LNBs which only pass the transponder stream with a particular
+    /// polarity, depending on the voltage supplied. Bandstacking greatly improves the ability to split the
+    /// signal to multiple receivers without complicated or expensive switch equipement. The trade-off is that
+    /// bandstacked LNBs are not able to receive as wide a frequency range as a regular LNB. This is due to the
+    /// fact that the LNB shifts the frequencies of each transponder in such a way that they don't overlap...
+    /// but this requires the use of bandwidth that would otherwise be used for receiving other transponders.
     /// The net result is that all the transponders of a particular polarity (usually vertical or circular
     /// right) end up with a lower frequency than the other transponders.
     /// </remarks>
@@ -69,9 +72,9 @@ namespace TvLibrary.Interfaces
     /// - a sub-reflector which catches the signals from the main reflector and bounces them back towards the main
     ///   dish, spreading them in the process
     /// The spreading makes it significantly easier to receive signals from a large number of satellites with just
-    /// one satellite dish. The only side-effect is that the signal polarisation is inverted by the second reflector.
-    /// For circularly polarised signals, this completely reverses the polarity; for linearly polarised signals it
-    /// doesn't particularly matter.
+    /// one satellite dish. The signal is slightly weakened by the second reflector, and the signal polarisation
+    /// is also inverted. For circularly polarised signals, the inversion completely reverses the polarity; for
+    /// linearly polarised signals it doesn't particularly matter.
     /// </remarks>
     bool IsToroidal { get; set; }
   }

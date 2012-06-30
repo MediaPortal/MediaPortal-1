@@ -343,7 +343,7 @@ namespace TvEngine
 
     private static readonly Guid NetUpBdaExtensionPropertySet = new Guid(0x5aa642f2, 0xbf94, 0x4199, 0xa9, 0x8c, 0xc2, 0x22, 0x20, 0x91, 0xe3, 0xc3);
 
-    private const int InstanceSize = 32;    // The size of a property instance (KspNode) parameter.
+    private const int InstanceSize = 32;    // The size of a property instance (KSP_NODE) parameter.
     private const int CommandSize = 48;
     private const int ApplicationInfoSize = 6 + MaxStringLength;
     private const int CiStateInfoSize = 8 + MaxStringLength;
@@ -1038,7 +1038,7 @@ namespace TvEngine
       }
 
       // The NetUP driver accepts standard PMT and converts it to CA PMT internally.
-      byte[] rawPmt = pmt.GetRawPmt();
+      byte[] rawPmt = pmt.GetRawPmtCopy();
       NetUpIoControl code = (NetUpIoControl)((uint)NetUpIoControl.PmtListChange | ((byte)listAction << 8) | (uint)command);
       IntPtr buffer = Marshal.AllocCoTaskMem(rawPmt.Length);
       Marshal.Copy(rawPmt, 0, buffer, rawPmt.Length);
