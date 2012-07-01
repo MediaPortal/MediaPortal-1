@@ -81,7 +81,7 @@ namespace MediaPortal.Dialogs
         keySelection += key;
         if (keySelection.Length == listItems.Count.ToString().Length)
         {
-          SelectOption(keySelection);
+          selectOption(keySelection);
           keySelection = string.Empty;
           return;
         }
@@ -92,7 +92,7 @@ namespace MediaPortal.Dialogs
       base.OnAction(action);
     }
 
-    public void SelectOption(string keySelected)
+    public void selectOption(string keySelected)
     {
       int selected;
       try
@@ -121,7 +121,7 @@ namespace MediaPortal.Dialogs
       {
         string keySelectionCopy = keySelection;
         keySelection = string.Empty;
-        SelectOption(keySelectionCopy);
+        selectOption(keySelectionCopy);
       }
     }
 

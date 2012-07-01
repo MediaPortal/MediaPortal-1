@@ -22,7 +22,7 @@ namespace MediaPortal.GUI.Library
 {
   public interface IDialogbox2 : IDialogbox 
   {
-    void SelectOption(string keySelected);
+    void selectOption(string keySelected);
     bool ShowQuickNumbers { get; set; }
   }
 }
