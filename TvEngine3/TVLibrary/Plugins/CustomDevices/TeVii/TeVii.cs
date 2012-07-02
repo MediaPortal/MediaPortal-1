@@ -244,49 +244,58 @@ namespace TvEngine
       }
     }
 
-    private TeViiModulation Translate(ModulationType mod)
+    private TeViiModulation Translate(bool isSatellite, ModulationType mod)
     {
+      if (!isSatellite)
+      {
+        switch (mod)
+        {
+          // DVB-C, DVB-T and North American cable
+          case ModulationType.Mod16Qam:
+            return TeViiModulation.Qam16;
+          case ModulationType.Mod32Qam:
+            return TeViiModulation.Qam32;
+          case ModulationType.Mod64Qam:
+            return TeViiModulation.Qam64;
+          case ModulationType.Mod128Qam:
+            return TeViiModulation.Qam128;
+          case ModulationType.Mod256Qam:
+            return TeViiModulation.Qam256;
+
+          // ATSC
+          case ModulationType.Mod8Vsb:
+            return TeViiModulation.Vsb8;
+
+          // Default: only use auto as a last resort as it is slower.
+          default:
+            return TeViiModulation.Auto;
+        }
+      }
+
+      // Satellite schemes.
+      // See OnBeforeTune() in the Genpix plugin for more detailed comments about mapping.
       switch (mod)
       {
-        // DVB-C, DVB-T and North American cable
-        case ModulationType.Mod16Qam:
-          return TeViiModulation.Qam16;
-        case ModulationType.Mod32Qam:
-          return TeViiModulation.Qam32;
-        case ModulationType.Mod64Qam:
-          return TeViiModulation.Qam64;
-        case ModulationType.Mod128Qam:
-          return TeViiModulation.Qam128;
-        case ModulationType.Mod256Qam:
-          return TeViiModulation.Qam256;
-
-        // ATSC
-        case ModulationType.Mod8Vsb:
-          return TeViiModulation.Vsb8;
-
         // DVB-S
-        // Modulation is not set for regular DVB-S QPSK.
         case ModulationType.ModNotSet:
           return TeViiModulation.Qpsk;
+
+        // DVB-SNG
         case ModulationType.ModBpsk:
           return TeViiModulation.Bpsk;
 
         // DVB-S2
-        // Modulation is either QPSK or 8 PSK for NBC DVB-S2 QPSK and 8 PSK.
         case ModulationType.ModQpsk:
           return TeViiModulation.Dvbs2_Qpsk;
         case ModulationType.Mod8Psk:
           return TeViiModulation.Dvbs2_8Psk;
-        // Higher DVB-S2 modulation schemes aren't handled by most "DVB-S2" tuners. We don't handle them
-        // explicitly in tuning details.
         case ModulationType.Mod16Apsk:
           return TeViiModulation.Dvbs2_16Apsk;
         case ModulationType.Mod32Apsk:
           return TeViiModulation.Dvbs2_32Apsk;
 
         // Turbo *PSK
-        // Please see the Genpix plugin for more detailed comments.
-        case ModulationType.ModOqpsk:
+        case ModulationType.Mod64Qam:
           return TeViiModulation.TurboQPsk;
         case ModulationType.Mod80Qam:
           return TeViiModulation.Turbo8Psk;
@@ -483,7 +492,7 @@ namespace TvEngine
       }
 
       bool result = TuneTransponder(_deviceIndex, (int)ch.Frequency, ch.SymbolRate * 1000, (int)lnbLof,
-        Translate(polarisation), toneOn, Translate(ch.ModulationType), Translate(ch.InnerFecRate));
+        Translate(polarisation), toneOn, Translate(true, ch.ModulationType), Translate(ch.InnerFecRate));
       if (result)
       {
         Log.Debug("TeVii: result = success");

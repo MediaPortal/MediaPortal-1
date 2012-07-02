@@ -6,11 +6,11 @@ using MediaPortal.Common.Utils;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("WinTV-CI")]
+[assembly: AssemblyTitle("SmarDTV USB CI")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Team-MediaPortal")]
-[assembly: AssemblyProduct("WinTV-CI")]
+[assembly: AssemblyProduct("SmarDTV USB CI")]
 [assembly: AssemblyCopyright("Copyright © Team MediaPortal 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

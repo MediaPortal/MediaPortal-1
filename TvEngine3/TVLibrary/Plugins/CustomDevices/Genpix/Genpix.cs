@@ -132,7 +132,7 @@ namespace TvEngine
 
     private static readonly Guid BdaExtensionPropertySet = new Guid(0xdf981009, 0x0d8a, 0x430e, 0xa8, 0x03, 0x17, 0xc5, 0x14, 0xdc, 0x8e, 0xc0);
 
-    private const int InstanceSize = 32;    // The size of a property instance (KspNode) parameter.
+    private const int InstanceSize = 32;    // The size of a property instance (KSP_NODE) parameter.
 
     private const int BdaExtensionParamsSize = 68;
     private const int MaxDiseqcMessageLength = 8;
@@ -221,45 +221,89 @@ namespace TvEngine
         return;
       }
 
-      // Genpix tuners support modulation types that many other tuners do not. Aparently there are some Twinhan
-      // and DVB World tuners that also support some of the turbo schemes. However their SDKs don't specify the
+      // Genpix tuners support modulation types that many other tuners do not. Their support of DC II  makes them very attractive
+      // for North American people trying to receive Dish TV on HTPCs. Aparently there are some Twinhan and DVB
+      // World tuners that also support some of the turbo schemes. However their SDKs don't specify the
       // details. The TeVii SDK does specify modulation mappings for turbo schemes, but I don't know if the
-      // hardware actually supports them.
-      // We don't specifically support turbo modulation schemes in our tuning details, but we at least try to
-      // use a common mapping in the Genpix and TeVii plugin code.
+      // hardware actually supports them. The Conexant SDK also specifies support for some DC II modulation and
+      // FEC schemes.
+      // We don't specifically support turbo or DC II modulation schemes in our tuning details, but we at least
+      // try to use a common mapping in our plugin code. However, we won't enforce mapping conversions in plugins
+      // to allow as much user flexibility as possible for
+      // hardware that is not known to support 
 
-      // Genpix driver mappings are as follows:
-      // QPSK    => DVB-S QPSK
-      // 16 QAM  => turbo FEC QPSK
-      // 8 PSK   => turbo FEC 8 PSK
-      // DirecTV => DSS QPSK
-      // 32 QAM  => DC II combo
-      // 64 QAM  => DC II split (I)
-      // 80 QAM  => DC II split (Q)
-      // 96 QAM  => DC II offset QPSK
+      // Genpix driver mappings are as follows [BDA ModulationType => hardware/driver modulation]:
+      // QPSK     => DVB-S QPSK
+      // 16 QAM   => turbo FEC QPSK
+      // 8 PSK    => turbo FEC 8 PSK
+      // DirecTV  => DSS QPSK
+      // 32 QAM   => DC II combo
+      // 64 QAM   => DC II split (I)
+      // 80 QAM   => DC II split (Q)
+      // 96 QAM   => DC II offset QPSK
 
-      // MediaPortal mappings are as follows:
-      // not set => DVB-S QPSK
-      // QPSK    => non-backwards compatible DVB-S2 QPSK
-      // 8 PSK   => non-backwards compatible DVB-S2 8 PSK
-      // O-QPSK  => turbo FEC QPSK
+      // MediaPortal TV Server mappings in the context of satellite tuning details are as follows:
+      // DVB-S
+      //-------
+      // not set  => default, DVB-S QPSK
+
+      // DVB-SNG
+      //---------
+      // BPSK     => DVB-SNG BPSK
+      // 16 QAM   => DVB-SNG 16 QAM
+      // 32 QAM   => DVB-SNG 8 PSK
+
+      // DVB-S2
+      //--------
+      // QPSK     => non-backwards compatible DVB-S2 QPSK
+      // 8 PSK    => non-backwards compatible DVB-S2 8 PSK
+      // 16 APSK  => DVB-S2 16 APSK
+      // 32 APSK  => DVB-S2 32 APSK
+
+      // DSS (DirecTV)
+      //---------------
+      // DirecTV  => DSS QPSK
+
+      // DC II
+      //-------
+      // 768 QAM  => DC II combo
+      // 896 QAM  => DC II split (I)
+      // 1024 QAM => DC II split (Q)
+      // O-QPSK   => DC II offset QPSK
+
+      // Turbo FEC
+      //-----------
+      // 64 QAM  => turbo FEC QPSK
       // 80 QAM  => turbo FEC 8 PSK
       // 160 QAM => turbo FEC 16 PSK
 
       // Note: the DSS packet format used by North American DirecTV uses a packet format which is completely
       // different from MPEG. It is not currently supported by TsWriter or TsReader. DC II is more similar to
       // MPEG 2 but I'm unsure if TsWriter and TsReader fully support it.
-      if (ch.ModulationType == ModulationType.ModNotSet)
-      {
-        ch.ModulationType = ModulationType.ModQpsk;
-      }
-      else if (ch.ModulationType == ModulationType.ModOqpsk)
+
+      if (ch.ModulationType == ModulationType.Mod64Qam)
       {
         ch.ModulationType = ModulationType.Mod16Qam;
       }
       else if (ch.ModulationType == ModulationType.Mod80Qam)
       {
         ch.ModulationType = ModulationType.Mod8Psk;
+      }
+      else if (ch.ModulationType == ModulationType.Mod768Qam)
+      {
+        ch.ModulationType = ModulationType.Mod32Qam;
+      }
+      else if (ch.ModulationType == ModulationType.Mod896Qam)
+      {
+        ch.ModulationType = ModulationType.Mod64Qam;
+      }
+      else if (ch.ModulationType == ModulationType.Mod1024Qam)
+      {
+        ch.ModulationType = ModulationType.Mod80Qam;
+      }
+      else if (ch.ModulationType == ModulationType.ModOqpsk)
+      {
+        ch.ModulationType = ModulationType.Mod96Qam;
       }
       Log.Debug("  modulation = {0}", ch.ModulationType);
     }

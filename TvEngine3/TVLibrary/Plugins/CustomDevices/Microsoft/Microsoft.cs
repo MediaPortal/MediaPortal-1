@@ -26,6 +26,7 @@ using TvLibrary.Channels;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Device;
 using TvLibrary.Log;
+using System.Collections.Generic;
 
 namespace TvEngine
 {
@@ -35,38 +36,82 @@ namespace TvEngine
   /// </summary>
   public class Microsoft : BaseCustomDevice, IDiseqcDevice
   {
+    #region enums
+
+    private enum BdaDiseqcProperty
+    {
+      Enable = 0,
+      LnbSource,
+      UseToneBurst,
+      Repeats,
+      Send,
+      Response
+    }
+
+    private enum BdaDemodulatorProperty
+    {
+      ModulationType = 0,
+      InnerFecType,
+      InnerFecRate,
+      OuterFecType,
+      OuterFecRate,
+      SymbolRate,
+      SpectralInversion,
+      TransmissionMode,
+      RollOff,
+      Pilot,
+      SignalTimeouts,
+      PlpNumber               // physical layer pipe - for DVB-S2 and DVB-T2
+    }
+
+    #endregion
+
+    #region structs
+
+    private struct BdaDiseqcMessage
+    {
+      public UInt32 RequestId;
+      public UInt32 PacketLength;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDiseqcMessageLength)]
+      public byte[] PacketData;
+    }
+
+    #endregion
+
     #region IBDA_DiseqCommand interface
 
     [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-    Guid("f84e2ab0-3c6b-45e3-a0fc-8669d4b81f11"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+      Guid("f84e2ab0-3c6b-45e3-a0fc-8669d4b81f11"),
+      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface IBDA_DiseqCommand
     {
       [PreserveSig]
-      int put_EnableDiseqCommands([In] byte bEnable);
+      int put_EnableDiseqCommands([In, MarshalAs(UnmanagedType.I1)] bool bEnable);
 
       [PreserveSig]
-      int put_DiseqLNBSource([In] int ulLNBSource);
+      int put_DiseqLNBSource([In] UInt32 ulLNBSource);
 
       [PreserveSig]
-      int put_DiseqUseToneBurst([In] byte bUseToneBurst);
+      int put_DiseqUseToneBurst([In, MarshalAs(UnmanagedType.I1)] bool bUseToneBurst);
 
       [PreserveSig]
-      int put_DiseqRepeats([In] int ulRepeats);
+      int put_DiseqRepeats([In] UInt32 ulRepeats);
 
       [PreserveSig]
-      int put_DiseqSendCommand([In] int ulRequestId, [In] int ulcbCommandLen, [In] ref byte pbCommand);
+      int put_DiseqSendCommand([In] UInt32 ulRequestId, [In] UInt32 ulcbCommandLen, [In] ref byte pbCommand);
 
       [PreserveSig]
-      int get_DiseqResponse([In] int ulRequestId, [In, Out] ref int pulcbResponseLen, [In, Out] ref byte pbResponse);
+      int get_DiseqResponse([In] UInt32 ulRequestId, [In, Out] ref int pulcbResponseLen, [In, Out] ref byte pbResponse);
     }
 
     #endregion
 
     #region constants
 
-    private const int InstanceSize = 32;    // The size of a property instance (KspNode) parameter.
-    private const int ParamSize = 4;
+    private const int InstanceSize = 32;    // The size of a property instance (KSP_NODE) parameter.
+    private const int ParamSize = 4;        // The size of a demodulator property value, usually ULONG.
+    private const int BdaDiseqcMessageSize = 16;
+    private const int MaxDiseqcMessageLength = 8;
 
     #endregion
 
@@ -74,13 +119,17 @@ namespace TvEngine
 
     private bool _isMicrosoft = false;
 
-    private IBDA_DiseqCommand _w7Interface = null;
-    private int _requestId = 0;
-
-    private IBDA_FrequencyFilter _oldInterface = null;
+    // DiSEqC
+    private IKsPropertySet _diseqcPropertySet = null;           // IBDA_DiseqCommand
+    private uint _requestId = 1;                                // Unique request ID for raw DiSEqC commands.
+    private IBDA_FrequencyFilter _oldDiseqcInterface = null;    // IBDA_FrequencyFilter
     private IBDA_DeviceControl _deviceControl = null;
+    private List<byte[]> _commands = new List<byte[]>();        // A cache of commands.
+    private bool _useToneBurst = false;
 
-    private IKsPropertySet _propertySet = null;
+    // Annex C QAM (North American cable)
+    private IKsPropertySet _qamPropertySet = null;
+
     private IntPtr _instanceBuffer = IntPtr.Zero;
     private IntPtr _paramBuffer = IntPtr.Zero;
 
@@ -101,91 +150,57 @@ namespace TvEngine
     /// Determine if a filter supports the IBDA_DiseqCommand interface.
     /// </summary>
     /// <remarks>
-    /// The IBDA_DiseqCommand is only supported on Windows 7 or higher, and only by some tuners.
-    /// We can identify the tuners by searching for a node within the filter topology which implements
-    /// the interface.
+    /// The IBDA_DiseqCommand was introduced in Windows 7. It is only supported by some tuners. We prefer to use
+    /// this interface [over IBDA_FrequencyFilter.put_Range()] if it is available because it has capability to
+    /// support sending and receiving raw messages.
     /// </remarks>
     /// <param name="filter">The filter to check.</param>
-    /// <returns>a control node that supports the IBDA_DiseqCommand interface if successful, otherwise <c>null</c></returns>
-    private object CheckBdaDiseqcInterface(IBaseFilter filter)
+    /// <returns>a property set that supports the IBDA_DiseqCommand interface if successful, otherwise <c>null</c></returns>
+    private IKsPropertySet CheckBdaDiseqcSupport(IBaseFilter filter)
     {
-      Log.Debug("Microsoft: check for IBDA_DiseqCommand interface");
+      Log.Debug("Microsoft: check for IBDA_DiseqCommand DiSEqC support");
 
-      IBDA_Topology topology = filter as IBDA_Topology;
-      if (topology == null)
+      IPin pin = DsFindPin.ByDirection(filter, PinDirection.Input, 0);
+      if (pin == null)
       {
-        Log.Debug("Microsoft: tuner filter is not a topology");
+        Log.Debug("Microsoft: failed to find input pin");
         return null;
       }
 
-      // Get the node types in the filter topology.
-      int nodeTypeCount;
-      int[] nodeTypes = new int[32];
-      int hr = topology.GetNodeTypes(out nodeTypeCount, 32, nodeTypes);
-      if (hr != 0)
+      IKsPropertySet ps = pin as IKsPropertySet;
+      if (ps == null)
       {
-        Log.Debug("Microsoft: failed to get topology node types, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return null;
-      }
-      else if (nodeTypeCount == 0)
-      {
-        Log.Debug("Microsoft: no node types in the topology");
+        Log.Debug("Microsoft: input pin is not a property set");
+        DsUtils.ReleaseComObject(pin);
+        pin = null;
         return null;
       }
 
-      // Check the interface GUIDs on each node.
-      Guid[] interfaceGuids = new Guid[32];
-      for (int i = 0; i < nodeTypeCount; ++i)
+      KSPropertySupport support;
+      int hr = ps.QuerySupported(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.LnbSource, out support);
+      if (hr != 0 || (support & KSPropertySupport.Set) == 0)
       {
-        int interfaceCount;
-        hr = topology.GetNodeInterfaces(nodeTypes[i], out interfaceCount, 32, interfaceGuids);
-        if (hr != 0)
-        {
-          Log.Debug("Microsoft: failed to get interfaces for node {0}, hr = 0x{1:x} ({2})", i + 1, hr, HResult.GetDXErrorString(hr));
-          continue;
-        }
-
-        // For each interface implemented by the node...
-        for (int j = 0; j < interfaceCount; j++)
-        {
-          if (interfaceGuids[j].Equals(typeof(IBDA_DiseqCommand).GUID))
-          {
-            // Found the interface. Now attempt to get a reference.
-            Log.Debug("Microsoft: found node that implements the interface");
-            object controlNode;
-            hr = topology.GetControlNode(0, 1, nodeTypes[i], out controlNode);
-            if (hr == 0 && controlNode is IBDA_DiseqCommand)
-            {
-              return controlNode;
-            }
-
-            Log.Debug("Microsoft: failed to get the control interface for node {0}, hr = 0x{1:x} ({2})", i + 1, hr, HResult.GetDXErrorString(hr));
-            if (controlNode != null)
-            {
-              DsUtils.ReleaseComObject(controlNode);
-              controlNode = null;
-            }
-            // If we get to here then we have determined that the node does not actually
-            // support the interface, so we move on to the next node.
-            break;
-          }
-        }
+        Log.Debug("Microsoft: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        DsUtils.ReleaseComObject(pin);
+        pin = null;
+        return null;
       }
-      return null;
+
+      return ps;
     }
 
     /// <summary>
     /// Determine if a filter supports the IBDA_FrequencyFilter interface.
     /// </summary>
     /// <remarks>
-    /// The IBDA_FrequencyFilter.put_Range() function was the de-facto "BDA" standard for DiSEqC prior
-    /// to the introduction of IBDA_DiseqCommand.
+    /// The IBDA_FrequencyFilter.put_Range() function was the de-facto "BDA" standard for DiSEqC 1.0 prior
+    /// to the introduction of IBDA_DiseqCommand in Windows 7.
     /// </remarks>
     /// <param name="filter">The filter to check.</param>
     /// <returns>a control node that supports the IBDA_FrequencyFilter interface if successful, otherwise <c>null</c></returns>
-    private object CheckFrequencyFilterInterface(IBaseFilter filter)
+    private object CheckPutRangeDiseqcSupport(IBaseFilter filter)
     {
-      Log.Debug("Microsoft: check for IBDA_FrequencyFilter interface");
+      Log.Debug("Microsoft: check for IBDA_FrequencyFilter.put_Range() DiSEqC 1.0 support");
 
       IBDA_Topology topology = filter as IBDA_Topology;
       if (topology == null)
@@ -211,6 +226,51 @@ namespace TvEngine
       return null;
     }
 
+    /// <summary>
+    /// Determine if a filter supports tuning annex C QAM (North American cable). This requires the ability to
+    /// manually set the modulation type for the demodulator.
+    /// </summary>
+    /// <remarks>
+    /// We need to be able to set the modulation manually to support QAM tuning on [at least] Windows XP.
+    /// </remarks>
+    /// <param name="filter">The filter to check.</param>
+    /// <returns>a property set that supports a modulation property if successful, otherwise <c>null</c></returns>
+    private IKsPropertySet CheckQamTuningSupport(IBaseFilter filter)
+    {
+      Log.Debug("Microsoft: check for QAM tuning support");
+
+      IPin pin = DsFindPin.ByDirection(filter, PinDirection.Output, 0);
+      if (pin == null)
+      {
+        Log.Debug("Microsoft: failed to find output pin");
+        return null;
+      }
+
+      IKsPropertySet ps = pin as IKsPropertySet;
+      if (ps == null)
+      {
+        Log.Debug("Microsoft: output pin is not a property set");
+        DsUtils.ReleaseComObject(pin);
+        pin = null;
+        return null;
+      }
+      // Note: the below code could be problematic for single tuner/capture filter implementations. Some drivers
+      // will not report whether a property set is supported unless the pin is connected. It is okay when we're
+      // checking a tuner filter which has a capture filter connected, but if the tuner filter is also the capture
+      // filter then the output pin(s) won't be connected yet.
+      KSPropertySupport support;
+      int hr = ps.QuerySupported(ModulationPropertyClass, (int)BdaDemodulatorProperty.ModulationType, out support);
+      if (hr != 0 || (support & KSPropertySupport.Set) == 0)
+      {
+        Log.Debug("Microsoft: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        DsUtils.ReleaseComObject(pin);
+        pin = null;
+        return null;
+      }
+
+      return ps;
+    }
+
     #region ICustomDevice members
 
     /// <summary>
@@ -234,15 +294,15 @@ namespace TvEngine
     {
       get
       {
-        if (_w7Interface != null)
+        if (_diseqcPropertySet != null)
         {
           return "Microsoft (BDA DiSEqC)";
         }
-        if (_oldInterface != null)
+        if (_oldDiseqcInterface != null)
         {
           return "Microsoft (generic DiSEqC)";
         }
-        if (_propertySet != null)
+        if (_qamPropertySet != null)
         {
           return "Microsoft (generic ATSC/QAM)";
         }
@@ -272,79 +332,68 @@ namespace TvEngine
         return true;
       }
 
-      // First, a check for DVB-S tuners: does the tuner support the IBDA_DiseqCommand interface?
-      int hr;
+      // First, checks for DVB-S tuners: does the tuner support sending DiSEqC commands?
       if (tunerType == CardType.DvbS)
       {
-        OperatingSystem os = Environment.OSVersion;
-        if (os.Platform == PlatformID.Win32NT && (os.Version.Major > 6 || (os.Version.Major == 6 && os.Version.Minor >= 1)))
+        // We prefer the IBDA_DiseqCommand interface.
+        _diseqcPropertySet = CheckBdaDiseqcSupport(tunerFilter);
+        if (_diseqcPropertySet == null)
         {
-          _w7Interface = (IBDA_DiseqCommand)CheckBdaDiseqcInterface(tunerFilter);
-          if (_w7Interface != null)
+          // Fallback to IBDA_FrequencyFilter.put_Range().
+          _oldDiseqcInterface = (IBDA_FrequencyFilter)CheckPutRangeDiseqcSupport(tunerFilter);
+          if (_oldDiseqcInterface == null)
           {
-            Log.Debug("Microsoft: supported device detected (IBDA_DiseqCommand interface)");
-            _isMicrosoft = true;
-            hr = _w7Interface.put_EnableDiseqCommands(1);
-            if (hr != 0)
-            {
-              Log.Debug("Microsoft: failed to enable DiSEqC commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            }
-            hr = _w7Interface.put_DiseqRepeats(0);
-            if (hr != 0)
-            {
-              Log.Debug("Microsoft: failed to disable DiSEqC command repeats, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            }
-            return true;
+            return false;
           }
+          Log.Debug("Microsoft: supported device detected (IBDA_FrequencyFilter.put_Range() DiSEqC)");
         }
       }
-
-      // Now a common check: the remaining two interfaces supported by this class require that the
-      // tuner filter supports a particular property set.
-      IPin pin = DsFindPin.ByName(tunerFilter, "MPEG2 Transport");
-      if (pin == null)
+      else
       {
-        Log.Debug("Microsoft: failed to find transport pin");
-        return false;
+        _qamPropertySet = CheckQamTuningSupport(tunerFilter);
+        if (_qamPropertySet == null)
+        {
+          return false;
+        }
+        Log.Debug("Microsoft: supported device detected (QAM tuning)");
       }
 
-      _propertySet = pin as IKsPropertySet;
-      if (_propertySet == null)
+      _isMicrosoft = true;
+      _deviceControl = tunerFilter as IBDA_DeviceControl;
+      _paramBuffer = Marshal.AllocCoTaskMem(InstanceSize);
+      _instanceBuffer = Marshal.AllocCoTaskMem(InstanceSize);
+      if (_diseqcPropertySet == null)
       {
-        Log.Debug("Microsoft: pin is not a property set");
-        return false;
-      }
-      KSPropertySupport support;
-      hr = _propertySet.QuerySupported(ModulationPropertyClass, 0, out support);
-      if (hr != 0 || (support & KSPropertySupport.Set) == 0)
-      {
-        Log.Debug("Microsoft: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        DsUtils.ReleaseComObject(_propertySet);
-        _propertySet = null;
-        return false;
-      }
-
-      // No further checks required for ATSC tuners.
-      if (tunerType == CardType.Atsc)
-      {
-        Log.Debug("Microsoft: supported device detected (ATSC/QAM)");
-        _isMicrosoft = true;
-        _instanceBuffer = Marshal.AllocCoTaskMem(InstanceSize);
-        _paramBuffer = Marshal.AllocCoTaskMem(ParamSize);
         return true;
       }
 
-      // One further check for DVB-S tuners: does the tuner support the IBDA_FrequencyFilter interface?
-      _oldInterface = (IBDA_FrequencyFilter)CheckFrequencyFilterInterface(tunerFilter);
-      if (_oldInterface != null)
+      // For the IBDA_DiseqCommand interface: disable automatic command repetition for optimal performance.
+      Log.Debug("Microsoft: supported device detected (IBDA_DiseqCommand DiSEqC)");
+      int hr = _deviceControl.StartChanges();
+      if (hr != 0)
       {
-        Log.Debug("Microsoft: supported device detected (IBDA_FrequencyFilter interface)");
-        _isMicrosoft = true;
-        _deviceControl = tunerFilter as IBDA_DeviceControl;
-        return true;
+        Log.Debug("Microsoft: failed to start device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
 
-      return false;
+      Marshal.WriteInt32(_paramBuffer, 0, 0);
+      hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Repeats, _instanceBuffer, InstanceSize, _paramBuffer, 4);
+      if (hr != 0)
+      {
+        Log.Debug("Microsoft: failed to disable DiSEqC command repeats, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      }
+
+      hr = _deviceControl.CheckChanges();
+      if (hr != 0)
+      {
+        Log.Debug("Microsoft: failed to check device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      }
+      hr = _deviceControl.CommitChanges();
+      if (hr != 0)
+      {
+        Log.Debug("Microsoft: failed to commit device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      }
+
+      return true;
     }
 
     #region graph state change callbacks
@@ -386,14 +435,14 @@ namespace TvEngine
         Log.Debug("  modulation = {0}", dvbsChannel.ModulationType);
       }
 
-      // When tuning a clear QAM channel, we need to set the modulation directly.
+      // When tuning a clear QAM channel, we need to set the modulation directly for compatibility with Windows XP.
       ATSCChannel atscChannel = channel as ATSCChannel;
-      if (atscChannel != null && _propertySet != null)
+      if (atscChannel != null && _qamPropertySet != null)
       {
         if (atscChannel.ModulationType == ModulationType.Mod64Qam || atscChannel.ModulationType == ModulationType.Mod256Qam)
         {
           Marshal.WriteInt32(_paramBuffer, (Int32)atscChannel.ModulationType);
-          int hr = _propertySet.Set(ModulationPropertyClass, 0, _instanceBuffer, InstanceSize, _paramBuffer, ParamSize);
+          int hr = _qamPropertySet.Set(ModulationPropertyClass, (int)BdaDemodulatorProperty.ModulationType, _instanceBuffer, InstanceSize, _paramBuffer, ParamSize);
           if (hr != 0)
           {
             Log.Debug("Microsoft: failed to set QAM modulation, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -404,6 +453,16 @@ namespace TvEngine
           }
         }
       }
+    }
+
+    /// <summary>
+    /// This callback is invoked after a tune request is submitted but before the device's BDA graph is started.
+    /// </summary>
+    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
+    public override void OnAfterTune(ITVCard tuner, IChannel currentChannel)
+    {
+      SendDeferredCommands();
     }
 
     #endregion
@@ -430,52 +489,15 @@ namespace TvEngine
         Log.Debug("Microsoft: device not initialised or interface not supported");
         return false;
       }
-      if (_w7Interface == null)
+      if (_diseqcPropertySet == null)
       {
         Log.Debug("Microsoft: the interface does not support setting the tone state");
         return false;
       }
 
-      int hr;
-      try
-      {
-        if (toneBurstState != ToneBurst.None)
-        {
-          // First enable tone burst commands.
-          hr = _w7Interface.put_DiseqUseToneBurst(1);
-          if (hr != 0)
-          {
-            Log.Debug("Microsoft: failed to enable tone burst commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            return false;
-          }
-
-          int portNumber = 0;
-          if (toneBurstState == ToneBurst.DataBurst)
-          {
-            portNumber = 1;
-          }
-
-          // Send a DiSEqC command which sends the appropriate tone burst
-          // command as well.
-          hr = _w7Interface.put_DiseqLNBSource(portNumber);
-          if (hr != 0)
-          {
-            Log.Debug("Microsoft: failed to send tone burst command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            return false;
-          }
-        }
-        Log.Debug("Microsoft: result = success");
-        return true;
-      }
-      finally
-      {
-        // Finally, disable tone burst commands again.
-        hr = _w7Interface.put_DiseqUseToneBurst(0);
-        if (hr != 0)
-        {
-          Log.Debug("Microsoft: failed to disable tone burst commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        }
-      }
+      _useToneBurst = toneBurstState != ToneBurst.None;
+      Log.Debug("Microsoft: result = success");
+      return true;
     }
 
     /// <summary>
@@ -497,76 +519,141 @@ namespace TvEngine
         Log.Debug("Microsoft: command not supplied");
         return true;
       }
-
-      // IBDA_DiseqCommand interface
-      if (_w7Interface != null)
+      if (command.Length > MaxDiseqcMessageLength)
       {
-        int hr = _w7Interface.put_DiseqSendCommand(_requestId, command.Length, ref command[0]);
-        if (hr == 0)
-        {
-          Log.Debug("Microsoft: result = success");
-          _requestId++;
-          return true;
-        }
-
-        Log.Debug("Microsoft: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        Log.Debug("Microsoft: command too long, length = {0}", command.Length);
         return false;
       }
-      // IBDA_FrequencyFilter interface
-      else if (_oldInterface != null)
+
+      // Most tuners can only successfully send commands after the tune request is submitted and/or the graph is
+      // running. Here we only save the command for sending later.
+      byte[] commandCopy = new byte[command.Length];
+      Buffer.BlockCopy(command, 0, commandCopy, 0, command.Length);
+      _commands.Add(commandCopy);
+      Log.Debug("Microsoft: result = success");
+      return true;
+    }
+
+    private void SendDeferredCommands()
+    {
+      if (_commands.Count == 0)
       {
-        // This interface only supports DiSEqC 1.0 switch commands. We have to attempt
-        // to translate the raw command back into a supported command.
-        if (command.Length != 4 ||
-          (command[0] != (byte)DiseqcFrame.CommandFirstTransmissionNoReply &&
-          command[0] != (byte)DiseqcFrame.CommandRepeatTransmissionNoReply) ||
-          command[1] != (byte)DiseqcAddress.AnySwitch ||
-          command[2] != (byte)DiseqcCommand.WriteN0)
+        return;
+      }
+      Log.Debug("Microsoft: send {0} deferred DiSEqC command(s)", _commands.Count);
+
+      bool isFirstCommand = true;
+      for (byte i = 0; i < _commands.Count; i++)
+      {
+        byte[] command = _commands[i];
+        // Attempt to translate the raw command back into a DiSEqC 1.0 command. The old interface only supports
+        // DiSEqC 1.0 switch commands, and some drivers don't implement support for raw commands using the
+        // IBDA_DiseqCommand interface (so we want to use the simpler LNB source property if possible).
+        int portNumber = -1;
+        if (command.Length == 4 &&
+          (command[0] == (byte)DiseqcFrame.CommandFirstTransmissionNoReply ||
+          command[0] == (byte)DiseqcFrame.CommandRepeatTransmissionNoReply) &&
+          command[1] == (byte)DiseqcAddress.AnySwitch &&
+          command[2] == (byte)DiseqcCommand.WriteN0)
+        {
+          portNumber = (command[3] & 0xc) >> 2;
+          Log.Debug("Microsoft: DiSEqC 1.0 command recognised for port {0}", portNumber);
+        }
+        if (_oldDiseqcInterface != null && portNumber == -1)
         {
           Log.Debug("Microsoft: command not supported");
-          return false;
-        }
-        ulong portNumber = (ulong)((command[3] & 0xc) >> 2);
-        if (portNumber > 1)
-        {
-          portNumber -= 2;
-          portNumber |= 0x4;
+          continue;
         }
 
+        // If we get to here, then we're going to attempt to send a command.
         int hr = _deviceControl.StartChanges();
         if (hr != 0)
         {
           Log.Debug("Microsoft: failed to start device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          return false;
         }
 
-        hr = _oldInterface.put_Range(portNumber);
-        if (hr != 0)
+        // IBDA_DiseqCommand interface
+        if (_diseqcPropertySet != null)
         {
-          Log.Debug("Microsoft: failed to put range, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          return false;
+          // This property has to be set for each command sent for some tuners (eg. TBS).
+          Marshal.WriteInt32(_paramBuffer, 0, 1);
+          hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Enable, _instanceBuffer, InstanceSize, _paramBuffer, 4);
+          if (hr != 0)
+          {
+            Log.Debug("Microsoft: failed to enable DiSEqC commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          }
+
+          // Enable or disable tone burst messages for this set of commands.
+          if (isFirstCommand)
+          {
+            Log.Debug("Microsoft: use tone burst = {0}", _useToneBurst);
+            Marshal.WriteInt32(_paramBuffer, 0, _useToneBurst ? 1 : 0);
+            hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.UseToneBurst, _instanceBuffer, InstanceSize, _paramBuffer, 4);
+            if (hr != 0)
+            {
+              Log.Debug("Microsoft: failed to enable/disable tone burst commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            }
+            isFirstCommand = false;
+          }
+
+          portNumber++;   // range needs to be 1..4, not 0..3
+          if (portNumber > 0)
+          {
+            Marshal.WriteInt32(_paramBuffer, 0, portNumber);
+            hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.LnbSource, _instanceBuffer, InstanceSize, _paramBuffer, 4);
+            if (hr != 0)
+            {
+              Log.Debug("Microsoft: failed to set LNB source, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            }
+          }
+          else
+          {
+            BdaDiseqcMessage message = new BdaDiseqcMessage();
+            message.RequestId = _requestId;
+            message.PacketLength = (uint)command.Length;
+            message.PacketData = new byte[MaxDiseqcMessageLength];
+            Buffer.BlockCopy(command, 0, message.PacketData, 0, command.Length);
+            Marshal.StructureToPtr(message, _paramBuffer, true);
+            //DVB_MMI.DumpBinary(_paramBuffer, 0, BdaDiseqcMessageSize);
+            hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Send, _instanceBuffer, InstanceSize, _paramBuffer, BdaDiseqcMessageSize);
+            if (hr != 0)
+            {
+              Log.Debug("Microsoft: failed to send command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            }
+          }
+        }
+        // IBDA_FrequencyFilter interface
+        else if (_oldDiseqcInterface != null)
+        {
+          // The two rightmost bytes encode option and position respectively.
+          if (portNumber > 1)
+          {
+            portNumber -= 2;
+            portNumber |= 0x100;
+          }
+          Log.Debug("Microsoft: range = 0x{0:x4}", portNumber);
+          hr = _oldDiseqcInterface.put_Range((ulong)portNumber);
+          if (hr != 0)
+          {
+            Log.Debug("Microsoft: failed to put range, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          }
         }
 
+        // Finalise (send) the command.
         hr = _deviceControl.CheckChanges();
         if (hr != 0)
         {
-          Log.Debug("Microsoft: device control check chanages failed, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          return false;
+          Log.Debug("Microsoft: failed to check device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         }
-
         hr = _deviceControl.CommitChanges();
         if (hr != 0)
         {
-          Log.Debug("Microsoft: failed to commit device control chanages, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          return false;
+          Log.Debug("Microsoft: failed to commit device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         }
-
-        Log.Debug("Microsoft: result = success");
-        return true;
       }
 
-      Log.Debug("Microsoft: the interface does not support sending DiSEqC commands");
-      return false;
+      // Don't forget - now that we've sent the commands we need to clear the command cache.
+      _commands.Clear();
     }
 
     /// <summary>
@@ -585,25 +672,34 @@ namespace TvEngine
         Log.Debug("Microsoft: device not initialised or interface not supported");
         return false;
       }
-      if (_w7Interface == null)
+      if (_diseqcPropertySet == null)
       {
         Log.Debug("Microsoft: the interface does not support reading DiSEqC responses");
         return false;
       }
 
-      int responseLength = 0;
-      byte[] tempResponse = new byte[32];
-      int hr = _w7Interface.get_DiseqResponse(_requestId, ref responseLength, ref tempResponse[0]);
-      if (hr == 0 && responseLength > 0 && responseLength < 33)
+      for (int i = 0; i < BdaDiseqcMessageSize; i++)
       {
-        Log.Debug("Microsoft: result = success");
+        Marshal.WriteInt32(_paramBuffer, 0, 0);
+      }
+      int returnedByteCount;
+      int hr = _diseqcPropertySet.Get(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Response, _paramBuffer, InstanceSize, _paramBuffer, BdaDiseqcMessageSize, out returnedByteCount);
+      if (hr == 0 && returnedByteCount == BdaDiseqcMessageSize)
+      {
         // Copy the response into the return array.
-        response = new byte[responseLength];
-        Buffer.BlockCopy(tempResponse, 0, response, 0, responseLength);
+        BdaDiseqcMessage message = (BdaDiseqcMessage)Marshal.PtrToStructure(_paramBuffer, typeof(BdaDiseqcMessage));
+        if (message.PacketLength > MaxDiseqcMessageLength)
+        {
+          Log.Debug("Microsoft: response length is out of bounds, response length = {0}", message.PacketLength);
+          return false;
+        }
+        Log.Debug("Microsoft: result = success");
+        response = new byte[message.PacketLength];
+        Buffer.BlockCopy(message.PacketData, 0, response, 0, (int)message.PacketLength);
         return true;
       }
 
-      Log.Debug("Microsoft: result = failure, response length = {0}, hr = 0x{1:x} ({2})", responseLength, hr, HResult.GetDXErrorString(hr));
+      Log.Debug("Microsoft: result = failure, response length = {0}, hr = 0x{1:x} ({2})", returnedByteCount, hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -616,21 +712,21 @@ namespace TvEngine
     /// </summary>
     public override void Dispose()
     {
-      if (_w7Interface != null)
+      if (_diseqcPropertySet != null)
       {
-        DsUtils.ReleaseComObject(_w7Interface);
-        _w7Interface = null;
+        DsUtils.ReleaseComObject(_diseqcPropertySet);
+        _diseqcPropertySet = null;
       }
-      if (_oldInterface != null)
+      if (_oldDiseqcInterface != null)
       {
-        DsUtils.ReleaseComObject(_oldInterface);
-        _oldInterface = null;
+        DsUtils.ReleaseComObject(_oldDiseqcInterface);
+        _oldDiseqcInterface = null;
       }
       _deviceControl = null;
-      if (_propertySet != null)
+      if (_qamPropertySet != null)
       {
-        DsUtils.ReleaseComObject(_propertySet);
-        _propertySet = null;
+        DsUtils.ReleaseComObject(_qamPropertySet);
+        _qamPropertySet = null;
       }
       if (_instanceBuffer != IntPtr.Zero)
       {
