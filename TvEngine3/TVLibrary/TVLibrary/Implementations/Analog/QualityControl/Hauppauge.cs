@@ -22,7 +22,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using DirectShowLib;
-
+using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.Analog
 {

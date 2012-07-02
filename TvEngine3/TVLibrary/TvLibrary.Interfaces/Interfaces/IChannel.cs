@@ -18,12 +18,13 @@
 
 #endregion
 
+using System;
 namespace TvLibrary.Interfaces
 {
   /// <summary>
   /// interface which describes a tv/radio channel
   /// </summary>
-  public interface IChannel
+  public interface IChannel : ICloneable
   {
     /// <summary>
     /// gets/sets the channel name

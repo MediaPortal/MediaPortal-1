@@ -22,7 +22,6 @@ using System;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using TvLibrary.Channels;
-using TvLibrary.Implementations.Helper;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Interfaces.Device;
@@ -82,7 +81,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Debug("TvCardDvbIp: BuildGraph()");
       try
       {
-        if (_graphState != GraphState.Idle)
+        if (_isGraphBuilt)
         {
           Log.Log.Error("TvCardDvbIp: the graph is already built");
           throw new TvException("The graph is already built.");
@@ -117,7 +116,7 @@ namespace TvLibrary.Implementations.DVB
         // until the graph has finished being built.
         OpenPlugins();
 
-        _graphState = GraphState.Created;
+        _isGraphBuilt = true;
 
         bool startGraph = false;
         foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
@@ -138,7 +137,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.Write(ex);
         Dispose();
-        _graphState = GraphState.Idle;
+        _isGraphBuilt = false;
         throw new TvExceptionGraphBuildingFailed("Graph building failed.", ex);
       }
     }
@@ -267,6 +266,8 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
+    #region tuning & scanning
+
     /// <summary>
     /// Actually tune to a channel.
     /// </summary>
@@ -288,8 +289,6 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    #region ITVCard members
-
     /// <summary>
     /// Check if the tuner can tune to a specific channel.
     /// </summary>
@@ -305,13 +304,16 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// ScanningInterface
+    /// Get the device's channel scanning interface.
     /// </summary>
     public override ITVScanning ScanningInterface
     {
       get
       {
-        if (!CheckThreadId()) return null;
+        if (!CheckThreadId())
+        {
+          return null;
+        }
         return new DVBIPScanning(this);
       }
     }
@@ -337,7 +339,7 @@ namespace TvLibrary.Implementations.DVB
     {
       base.Stop();
       // TODO: fix me. This logic should be checked (removing and adding filters in stop?) (morpheus_xx)
-      if (_graphState == GraphState.Created)
+      if (_isGraphBuilt)
       {
         RemoveStreamSourceFilter();
         AddStreamSourceFilter(_defaultUrl);
@@ -379,16 +381,6 @@ namespace TvLibrary.Implementations.DVB
         }
         return base.DevicePath + "(" + _sequenceNumber + ")";
       }
-    }
-
-    protected override DVBBaseChannel CreateChannel(int networkid, int transportid, int serviceid, string name)
-    {
-      DVBIPChannel channel = new DVBIPChannel();
-      channel.NetworkId = networkid;
-      channel.TransportId = transportid;
-      channel.ServiceId = serviceid;
-      channel.Name = name;
-      return channel;
     }
   }
 }

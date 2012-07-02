@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Xml;
@@ -297,15 +298,15 @@ namespace TvEngine
 
       // First get ECMs from the PMT program CA descriptors.
       Log.Debug("MD Plugin: PMT program CA descriptors...");
-      List<IDescriptor>.Enumerator descEn = pmt.ProgramCaDescriptors.GetEnumerator();
+      IEnumerator<IDescriptor> descEn = pmt.ProgramCaDescriptors.GetEnumerator();
       while (descEn.MoveNext() && count < 32)
       {
         ConditionalAccessDescriptor cad = ConditionalAccessDescriptor.Decode(descEn.Current);
         if (cad == null)
         {
           Log.Debug("MD Plugin: invalid descriptor");
-          byte[] rawDescriptor = descEn.Current.GetRawDataCopy();
-          DVB_MMI.DumpBinary(rawDescriptor, 0, rawDescriptor.Length);
+          ReadOnlyCollection<byte> rawDescriptor = descEn.Current.GetRawData();
+          DVB_MMI.DumpBinary(rawDescriptor, 0, rawDescriptor.Count);
           continue;
         }
         pidEn = cad.Pids.Keys.GetEnumerator();
@@ -335,7 +336,7 @@ namespace TvEngine
 
       // Now get ECMs from the PMT elementary stream CA descriptors.
       Log.Debug("MD Plugin: PMT elementary stream CA descriptors...");
-      List<PmtElementaryStream>.Enumerator esEn = pmt.ElementaryStreams.GetEnumerator();
+      IEnumerator<PmtElementaryStream> esEn = pmt.ElementaryStreams.GetEnumerator();
       while (esEn.MoveNext() && count < 32)
       {
         descEn = esEn.Current.CaDescriptors.GetEnumerator();
@@ -345,8 +346,8 @@ namespace TvEngine
           if (cad == null)
           {
             Log.Debug("MD Plugin: invalid descriptor");
-            byte[] rawDescriptor = descEn.Current.GetRawDataCopy();
-            DVB_MMI.DumpBinary(rawDescriptor, 0, rawDescriptor.Length);
+            ReadOnlyCollection<byte> rawDescriptor = descEn.Current.GetRawData();
+            DVB_MMI.DumpBinary(rawDescriptor, 0, rawDescriptor.Count);
             continue;
           }
           pidEn = cad.Pids.Keys.GetEnumerator();
@@ -385,8 +386,8 @@ namespace TvEngine
         if (cad == null)
         {
           Log.Debug("MD Plugin: invalid descriptor");
-          byte[] rawDescriptor = descEn.Current.GetRawDataCopy();
-          DVB_MMI.DumpBinary(rawDescriptor, 0, rawDescriptor.Length);
+          ReadOnlyCollection<byte> rawDescriptor = descEn.Current.GetRawData();
+          DVB_MMI.DumpBinary(rawDescriptor, 0, rawDescriptor.Count);
           continue;
         }
 

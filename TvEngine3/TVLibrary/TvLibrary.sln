@@ -118,7 +118,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalDevices", "Plugins\C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalEverywhere", "Plugins\CustomDevices\DigitalEverywhere\DigitalEverywhere.csproj", "{055B591F-DD8D-4E13-BF56-41A8515CE738}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinTvCi", "Plugins\CustomDevices\WinTvCi\WinTvCi.csproj", "{CFB19A12-1A20-4B09-99D5-2BF157E5FA94}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmarDtvUsbCi", "Plugins\CustomDevices\SmarDtvUsbCi\SmarDtvUsbCi.csproj", "{CFB19A12-1A20-4B09-99D5-2BF157E5FA94}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Knc", "Plugins\CustomDevices\Knc\Knc.csproj", "{441E49F8-4CA1-4D81-9AE8-ED6A41542C88}"
 EndProject

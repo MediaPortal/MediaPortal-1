@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
@@ -32,9 +33,9 @@ using TvLibrary.Log;
 namespace TvEngine
 {
   /// <summary>
-  /// A class for handling conditional access and DiSEqC for Turbosight tuners. Note that Turbosight drivers
+  /// A class for handling conditional access and DiSEqC for Turbosight tuners. Note that some Turbosight drivers
   /// seem to still support the original Conexant, NXP and Cyprus interfaces/structures. However, it is
-  /// simpler and probably more future-proof to stick with the information in the published SDK.
+  /// simpler and definitely more future-proof to stick with the information in the published SDK.
   /// </summary>
   public class Turbosight : BaseCustomDevice, IPowerDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
   {
@@ -46,6 +47,7 @@ namespace TvEngine
       Reserved = 0,
       NbcParams = 10,     // Property for setting DVB-S2 parameters that could not initially be set through BDA interfaces.
       BlindScan = 11,     // Property for accessing and controlling the hardware blind scan capabilities.
+      CiAccess = 18,      // Property for interacting with the CI slot.
       TbsAccess = 21      // TBS property for enabling control of the common properties in the BdaExtensionCommand enum.
     }
 
@@ -54,6 +56,7 @@ namespace TvEngine
     {
       Reserved = 0,
       Ir = 1,             // Property for retrieving IR codes from the device's IR receiver.
+      CiAccess = 8,       // Property for interacting with the CI slot.
       BlindScan = 9,      // Property for accessing and controlling the hardware blind scan capabilities.
       TbsAccess = 18      // TBS property for enabling control of the common properties in the TbsAccessMode enum.
     }
@@ -322,20 +325,6 @@ namespace TvEngine
 
     private const int MmiHandlerThreadSleepTime = 2000;   // unit = ms
 
-    private static readonly string[] DevicesWithCiSlots = new string[]
-    {
-      "TBS 5880 DVBC Tuner",
-      "TBS 5880 DVB-T/T2 Tuner",
-      "TBS 5980 CI Tuner",            // DVB-S2 single USB
-      "TBS 6618 BDA DVBC Tuner",
-      "TBS 6928 DVBS/S2 Tuner",       // DVB-S2 single PCIe
-      "TBS 6991 DVBS/S2 Tuner A",     // DVB-S2 dual PCIe
-      "TBS 6991 DVBS/S2 Tuner B",
-      "TBS 6992 DVBS/S2 Tuner A",     // DVB-S2 dual PCIe
-      "TBS 6992 DVBS/S2 Tuner B",
-      "TBS DVBC Tuner"
-    };
-
     #endregion
 
     #region variables
@@ -584,7 +573,7 @@ namespace TvEngine
           {
             HandleCaInformation(responseBytes, length);
           }
-          else if (response == TbsMmiMessageType.Menu)
+          else if (response == TbsMmiMessageType.Menu || response == TbsMmiMessageType.List)
           {
             HandleMenu(responseBytes, length);
           }
@@ -1119,23 +1108,23 @@ namespace TvEngine
         return false;
       }
 
-      // It does not seem to be possible determine whether a CI slot is actually present. All that we can
-      // check is whether the corresponding product has a CI slot.
+      // Check whether a CI slot is present.
       _isCiSlotPresent = false;
-      foreach (String deviceName in DevicesWithCiSlots)
+      int ciAccessProperty = (int)BdaExtensionProperty.CiAccess;
+      if (_isUsb)
       {
-        if (_tunerFilterName.Equals(deviceName))
-        {
-          _isCiSlotPresent = true;
-          break;
-        }
+        ciAccessProperty = (int)UsbBdaExtensionProperty.CiAccess;
       }
-      if (!_isCiSlotPresent)
+      KSPropertySupport support;
+      int hr = _propertySet.QuerySupported(_propertySetGuid, ciAccessProperty, out support);
+      if (hr != 0 || support == 0)
       {
         Log.Debug("Turbosight: device doesn't have a CI slot");
         return false;
       }
+      _isCiSlotPresent = true;
 
+      // Attempt to initialise the interface.
       _ciHandle = On_Start_CI(_tunerFilter, _tunerFilterName);
       if (_ciHandle == IntPtr.Zero)
       {
@@ -1280,8 +1269,8 @@ namespace TvEngine
         return true;
       }
 
-      byte[] rawPmt = pmt.GetRawPmtCopy();
-      if (rawPmt.Length > MaxPmtLength - 2)
+      ReadOnlyCollection<byte> rawPmt = pmt.GetRawPmt();
+      if (rawPmt.Count > MaxPmtLength - 2)
       {
         Log.Debug("Turbosight: buffer capacity too small");
         return false;
@@ -1291,14 +1280,14 @@ namespace TvEngine
       Marshal.WriteByte(_pmtBuffer, 0, (byte)listAction);
       Marshal.WriteByte(_pmtBuffer, 1, (byte)command);
       int offset = 2;
-      for (int i = 0; i < rawPmt.Length; i++)
+      for (int i = 0; i < rawPmt.Count; i++)
       {
         Marshal.WriteByte(_pmtBuffer, offset++, rawPmt[i]);
       }
 
-      //DVB_MMI.DumpBinary(_pmtBuffer, 0, 2 + rawPmt.Length);
+      //DVB_MMI.DumpBinary(_pmtBuffer, 0, 2 + rawPmt.Count);
 
-      TBS_ci_SendPmt(_ciHandle, _pmtBuffer, (ushort)(rawPmt.Length + 2));
+      TBS_ci_SendPmt(_ciHandle, _pmtBuffer, (ushort)(rawPmt.Count + 2));
 
       Log.Debug("Turbosight: result = success");
       return true;

@@ -23,10 +23,9 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using TvLibrary.Interfaces;
-using TvLibrary.Channels;
-using TvLibrary.Implementations.Helper;
 using TvDatabase;
+using TvLibrary.Channels;
+using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Device;
 
 namespace TvLibrary.Implementations.DVB
@@ -1737,26 +1736,21 @@ namespace TvLibrary.Implementations.DVB
     #region epg & scanning
 
     /// <summary>
-    /// returns the ITVScanning interface used for scanning channels
+    /// Get the device's channel scanning interface.
     /// </summary>
     public override ITVScanning ScanningInterface
     {
       get
       {
         if (!CheckThreadId())
-          return null;
-        switch (_tunerType)
         {
-          case CardType.DvbT:
-            return new DVBTScanning(this);
-          case CardType.DvbS:
-            return new DVBSScanning(this);
-          case CardType.DvbC:
-            return new DVBCScanning(this);
-          case CardType.Atsc:
-            return new ATSCScanning(this);
+          return null;
         }
-        return null;
+        if (_tunerType == CardType.Atsc)
+        {
+          return new ATSCScanning(this);
+        }
+        return new DvbBaseScanning(this);
       }
     }
 
@@ -1772,7 +1766,7 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         Log.Log.WriteFile("ss2: build graph");
-        if (_graphState != GraphState.Idle)
+        if (_isGraphBuilt)
         {
           Log.Log.Error("ss2: Graph already built");
           throw new TvException("Graph already built");
@@ -1864,13 +1858,13 @@ namespace TvLibrary.Implementations.DVB
           throw new TvExceptionGraphBuildingFailed("Graph building failed");
         }
         SetFilterPids(new HashSet<UInt16>(), ModulationType.ModNotSet, false);
-        _graphState = GraphState.Created;
+        _isGraphBuilt = true;
       }
       catch (Exception ex)
       {
         Log.Log.Write(ex);
         Dispose();
-        _graphState = GraphState.Idle;
+        _isGraphBuilt = false;
         throw new TvExceptionGraphBuildingFailed("Graph building failed", ex);
       }
     }
@@ -2464,16 +2458,6 @@ namespace TvLibrary.Implementations.DVB
     }
 
     #endregion
-
-    protected override DVBBaseChannel CreateChannel(int networkid, int transportid, int serviceid, string name)
-    {
-      DVBSChannel channel = new DVBSChannel();
-      channel.NetworkId = networkid;
-      channel.TransportId = transportid;
-      channel.ServiceId = serviceid;
-      channel.Name = name;
-      return channel;
-    }
 
     /// <summary>
     /// Stop the device. The actual result of this function depends on device configuration:

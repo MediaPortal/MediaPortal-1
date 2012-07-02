@@ -21,20 +21,18 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
-using TvLibrary.Channels;
-using TvLibrary.Implementations.DVB.Structures;
 using DirectShowLib;
 using DirectShowLib.BDA;
-
+using TvLibrary.Channels;
+using TvLibrary.Interfaces;
+using TvLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.DVB
 {
   /// <summary>
-  /// base class for scanning DVB tv/radio channels
+  /// A base class which implements TV and radio service scanning for digital tuners with BDA drivers.
   /// </summary>
-  public abstract class DvbBaseScanning : IChannelScanCallback, ITVScanning
+  public class DvbBaseScanning : IChannelScanCallback, ITVScanning
   {
     #region variables
 
@@ -43,21 +41,22 @@ namespace TvLibrary.Implementations.DVB
     private ManualResetEvent _event;
 
     /// <summary>
-    /// Enable wait for VCT indicator
+    /// Enable wait for VCT indicator. VCT is the virtual channel table, only relevant for ATSC/QAM streams.
     /// </summary>
-    protected bool _enableWaitForVCT;
+    protected bool _enableWaitForVct;
 
     #endregion
 
     #region ctor
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DvbBaseScanning"/> class.
+    /// Initialise a new instance of the <see cref="DvbBaseScanning"/> class.
     /// </summary>
-    /// <param name="card">The card.</param>
-    public DvbBaseScanning(TvCardDvbBase card)
+    /// <param name="tuner">The tuner associated with this scanner.</param>
+    public DvbBaseScanning(TvCardDvbBase tuner)
     {
-      _card = card;
+      _card = tuner;
+      _enableWaitForVct = false;
     }
 
     #endregion
@@ -71,48 +70,10 @@ namespace TvLibrary.Implementations.DVB
       get { return _card; }
     }
 
-    #region virtual members
-
-    /// <summary>
-    /// Gets the pin analyzer SI.
-    /// </summary>
-    /// <value>The pin analyzer SI.</value>
-    protected virtual IPin PinAnalyzerSI
-    {
-      get { return null; }
-    }
-
-    /// <summary>
-    /// Creates the new channel.
-    /// </summary>
-    /// <param name="channel">The high level tuning detail.</param>
-    /// <param name="info">The subchannel detail.</param>
-    /// <returns>The new channel.</returns>
-    protected abstract IChannel CreateNewChannel(IChannel channel, ChannelInfo info);
-
-    /// <summary>
-    /// Gets the analyzer.
-    /// </summary>
-    /// <returns></returns>
-    protected virtual ITsChannelScan GetAnalyzer()
-    {
-      return _card.StreamAnalyzer;
-    }
-
-    /// <summary>
-    /// Resets the signal update.
-    /// </summary>
-    protected virtual void ResetSignalUpdate()
-    {
-      _card.ResetSignalUpdate();
-    }
-
     /// <summary>
     /// Resets this instance.
     /// </summary>
     public void Reset() {}
-
-    #endregion
 
     #region IDisposable
 
@@ -142,17 +103,17 @@ namespace TvLibrary.Implementations.DVB
       {
         _card.IsScanning = true;
         _card.Scan(0, channel);
-        _analyzer = GetAnalyzer();
+        _analyzer = _card.StreamAnalyzer;
         if (_analyzer == null)
         {
           Log.Log.WriteFile("Scan: no analyzer interface available");
           return new List<IChannel>();
         }
-        ResetSignalUpdate();
+        _card.ResetSignalUpdate();
         if (_card.IsTunerLocked == false)
         {
           Thread.Sleep(settings.TimeOutTune * 1000);
-          ResetSignalUpdate();
+          _card.ResetSignalUpdate();
         }
         Log.Log.WriteFile("Scan: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel,
                           _card.SignalQuality);
@@ -162,7 +123,7 @@ namespace TvLibrary.Implementations.DVB
           {
             _event = new ManualResetEvent(false);
             _analyzer.SetCallBack(this);
-            _analyzer.Start(_enableWaitForVCT);
+            _analyzer.Start(_enableWaitForVct);
             _event.WaitOne(settings.TimeOutSDT * 1000, true);
 
             int found = 0;
@@ -181,8 +142,8 @@ namespace TvLibrary.Implementations.DVB
               short freeCAMode;
               short serviceType;
               short modulation;
-              IntPtr providerName;
-              IntPtr serviceName;
+              IntPtr providerNamePtr;
+              IntPtr serviceNamePtr;
               short pmtPid;
               short hasVideo;
               short hasAudio;
@@ -191,48 +152,62 @@ namespace TvLibrary.Implementations.DVB
               _analyzer.GetChannel((short)i,
                                    out networkId, out transportId, out serviceId, out majorChannel, out minorChannel,
                                    out frequency, out lcn, out freeCAMode, out serviceType, out modulation,
-                                   out providerName, out serviceName,
+                                   out providerNamePtr, out serviceNamePtr,
                                    out pmtPid, out hasVideo, out hasAudio, out hasCaDescriptor);
 
-              string name = DvbTextConverter.Convert(serviceName, "");
-              Log.Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} type:{6:X}", i, networkId, transportId, serviceId,
-                            pmtPid, name, serviceType);
+              string serviceName = DvbTextConverter.Convert(serviceNamePtr, "");
+              string providerName = DvbTextConverter.Convert(providerNamePtr, "");
+              Log.Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} type:{6:X}", i + 1, networkId, transportId, serviceId,
+                            pmtPid, serviceName, serviceType);
 
               found++;
-              ChannelInfo info = new ChannelInfo();
-              info.networkID = networkId;
-              info.transportStreamID = transportId;
-              info.serviceID = serviceId;
-              info.majorChannel = majorChannel;
-              info.minorChannel = minorChannel;
-              info.freq = frequency;
-              info.LCN = lcn;
-              info.serviceType = serviceType;
-              info.modulation = modulation;
-              info.service_provider_name = DvbTextConverter.Convert(providerName, "");
-              info.service_name = DvbTextConverter.Convert(serviceName, "");
-              info.scrambled = (freeCAMode != 0 || hasCaDescriptor != 0);
-              info.network_pmt_PID = (UInt16)pmtPid;
 
-              if (IsValidChannel(info, hasAudio, hasVideo))
-              {
-                if (info.service_name.Length == 0)
-                {
-                  SetNameForUnknownChannel(channel, info);
-                }
-                IChannel result = CreateNewChannel(channel, info);
-                if (result != null)
-                {
-                  channelsFound.Add(result);
-                }
-              }
-              else
+              // The SDT service type is unfortunately not sufficient for service type identification. Many DVB-IP
+              // and some ATSC and annex-C broadcasters in particular do not comply with specifications. Well, either
+              // that, or we do not fully/properly implement the specifications (which is true for DVB-IP at present)!
+              // In any case we want to err on the side of caution and pick up any channels that TsWriter says have
+              // video and/or audio streams until we can find a better way to properly identify TV and radio services.
+              serviceType = SetMissingServiceType(serviceType, hasVideo, hasAudio);
+
+              if (!IsKnownServiceType(serviceType))
               {
                 Log.Log.Write(
                   "Found Unknown: {0} {1} type:{2} onid:{3:X} tsid:{4:X} sid:{5:X} pmt:{6:X} hasVideo:{7} hasAudio:{8}",
-                  info.service_provider_name, info.service_name, info.serviceType, info.networkID,
-                  info.transportStreamID, info.serviceID, info.network_pmt_PID, hasVideo, hasAudio);
+                  providerName, serviceName, serviceType, networkId, transportId, serviceId, pmtPid, hasVideo, hasAudio
+                );
+                continue;
               }
+
+              DVBBaseChannel newChannel = (DVBBaseChannel)channel.Clone();
+
+              // Set non-tuning parameters (ie. parameters determined by scanning).
+              newChannel.Name = serviceName;
+              newChannel.Provider = providerName;
+              newChannel.NetworkId = networkId;
+              newChannel.TransportId = transportId;
+              newChannel.ServiceId = serviceId;
+              newChannel.PmtPid = pmtPid;
+              newChannel.IsTv = IsTvService(serviceType);
+              newChannel.IsRadio = IsRadioService(serviceType);
+              newChannel.LogicalChannelNumber = lcn;
+              newChannel.FreeToAir = (freeCAMode == 0 && hasCaDescriptor == 0);
+
+              // There are a couple of ATSC-specific parameters that are not tuning parameters and not
+              // available as properties on DVBBaseChannel...
+              ATSCChannel atscChannel = newChannel as ATSCChannel;
+              if (atscChannel != null)
+              {
+                atscChannel.MajorChannel = majorChannel;
+                atscChannel.MinorChannel = minorChannel;
+                newChannel = atscChannel;
+              }
+
+              if (serviceName.Length == 0)
+              {
+                SetMissingServiceName(channel);
+              }
+              Log.Log.Write("Found: {0}", newChannel);
+              channelsFound.Add(newChannel);
             }
 
             Log.Log.Write("Scan Got {0} from {1} channels", found, channelCount);
@@ -290,7 +265,7 @@ namespace TvLibrary.Implementations.DVB
       {
         _card.IsScanning = true;
         _card.Scan(0, channel);
-        _analyzer = GetAnalyzer();
+        _analyzer = _card.StreamAnalyzer;
         if (_analyzer == null)
         {
           Log.Log.WriteFile("Scan: no analyzer interface available");
@@ -298,14 +273,18 @@ namespace TvLibrary.Implementations.DVB
         }
         _analyzer.SetCallBack(null);
         _analyzer.ScanNIT();
+        // TODO: what is this sleep for? The tuner is already tuned at this stage. Surely it can only be to give
+        // TsWriter enough time to find NIT... in which case we should use the SDT timeout, or even better, add
+        // an NIT timeout.
         Thread.Sleep(settings.TimeOutTune * 1000);
-        ResetSignalUpdate();
+        _card.ResetSignalUpdate();
         Log.Log.WriteFile("ScanNIT: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel,
                           _card.SignalQuality);
         if (_card.IsTunerLocked || _card.SignalLevel > 0 || _card.SignalQuality > 0)
         {
           int count;
 
+          // TODO: this should *definitely* not be hard-coded!
           _event = new ManualResetEvent(false);
           _event.WaitOne(16000, true);
           _event.Close();
@@ -324,6 +303,8 @@ namespace TvLibrary.Implementations.DVB
               ch.Name = name;
               ch.Frequency = freq;
               Log.Log.Debug("{0},{1},{2},{3}", freq, mod, pol, symbolrate);
+              // TODO: this logic seriously needs looking at! ModQpsk is used for DVB-S2 QPSK throughout the rest
+              // of the code, so why is it commented out here?
               switch (mod)
               {
                 default:
@@ -385,41 +366,47 @@ namespace TvLibrary.Implementations.DVB
 
     #region Helpers
 
-    protected virtual bool IsValidChannel(ChannelInfo info, short hasAudio, short hasVideo)
+    /// <summary>
+    /// Set the service type for services which do not supply a service type.
+    /// </summary>
+    /// <param name="serviceType">The service type to check/update.</param>
+    /// <param name="hasVideo">Non-zero if the corresponding service has at least one video stream.</param>
+    /// <param name="hasAudio">Non-zero if the corresponding service has at least one audio stream.</param>
+    /// <returns>the updated service type</returns>
+    protected virtual short SetMissingServiceType(short serviceType, short hasVideo, short hasAudio)
     {
-      // DVB/ATSC compliant distinctServices will be picked up here.
-      if (IsKnownServiceType(info.serviceType))
+      if (serviceType <= 0)
       {
-        return true;
+        if (hasVideo != 0)
+        {
+          return (short)DvbServiceType.DigitalTelevision;
+        }
+        else if (hasAudio != 0)
+        {
+          return (short)DvbServiceType.DigitalRadio;
+        }
       }
-
-      // The SDT service type is unfortunately not sufficient for service type
-      // identification. DVB-IP and some ATSC broadcasters in particular
-      // do not comply with specifications. Well, either that, or we do not
-      // fully/properly implement the specifications! In any case we need
-      // to err on the side of caution and pick up any channels that TsWriter
-      // says have video and/or audio streams until we can find a better
-      // way to properly identify TV and radio distinctServices.
-      if (hasVideo != 0)
-      {
-        info.serviceType = (int)DvbServiceType.DigitalTelevision;
-      }
-      else if (hasAudio != 0)
-      {
-        info.serviceType = (int)DvbServiceType.DigitalRadio;
-      }
-      return IsKnownServiceType(info.serviceType);
+      return serviceType;
     }
 
+    /// <summary>
+    /// Determine whether a service type is a known service type.
+    /// </summary>
+    /// <remarks>
+    /// Known service types are the types that TV Server is able to manage. At present only television and
+    /// radio service types are supported.
+    /// </remarks>
+    /// <param name="serviceType">The service type to check.</param>
+    /// <returns><c>true</c> if the service type is a known service type, otherwise <c>false</c></returns>
     protected virtual bool IsKnownServiceType(int serviceType)
     {
       return IsRadioService(serviceType) || IsTvService(serviceType);
     }
 
     /// <summary>
-    /// Determines whether a DVB service type is a radio service.
+    /// Determine whether a service type is a radio service type.
     /// </summary>
-    /// <param name="serviceType">the service</param>
+    /// <param name="serviceType">The service type to check.</param>
     /// <returns><c>true</c> if the service type is a radio service type, otherwise <c>false</c></returns>
     protected virtual bool IsRadioService(int serviceType)
     {
@@ -434,9 +421,9 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Determines whether a DVB service type is a television service.
+    /// Determine whether a service type is a television service type.
     /// </summary>
-    /// <param name="serviceType">the service</param>
+    /// <param name="serviceType">The service type to check.</param>
     /// <returns><c>true</c> if the service type is a television service type, otherwise <c>false</c></returns>
     protected virtual bool IsTvService(int serviceType)
     {
@@ -452,10 +439,20 @@ namespace TvLibrary.Implementations.DVB
       return false;
     }
 
-
-    protected virtual void SetNameForUnknownChannel(IChannel channel, ChannelInfo info)
+    /// <summary>
+    /// Set the name for services which do not supply a name.
+    /// </summary>
+    /// <param name="channel">The service details.</param>
+    protected virtual void SetMissingServiceName(IChannel channel)
     {
-      info.service_name = String.Format("Unknown {0:X}", info.serviceID);
+      DVBBaseChannel dvbChannel = channel as DVBBaseChannel;
+      if (dvbChannel == null)
+      {
+        return;
+      }
+      // Default: use "Unknown <frequency>-<service ID>". At least that way people can often tell which transponder
+      // the service came from.
+      dvbChannel.Name = "Unknown " + dvbChannel.Frequency + "-" + dvbChannel.ServiceId;
     }
 
     #endregion

@@ -24,13 +24,12 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 using TvLibrary.ChannelLinkage;
 using TvLibrary.Epg;
-using TvLibrary.Implementations.Analog.GraphComponents;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Implementations.Analog.Components;
+using TvLibrary.Implementations.Analog.GraphComponents;
 using TvLibrary.Implementations.Analog.QualityControl;
 using TvLibrary.Implementations.DVB;
-using TvLibrary.Implementations.Helper;
+using TvLibrary.Interfaces;
+using TvLibrary.Interfaces.Analyzer;
 using Capture = TvLibrary.Implementations.Analog.Components.Capture;
 using Crossbar = TvLibrary.Implementations.Analog.Components.Crossbar;
 using Tuner = TvLibrary.Implementations.Analog.Components.Tuner;
@@ -117,7 +116,7 @@ namespace TvLibrary.Implementations.Analog
     #region scanning
 
     /// <summary>
-    /// returns the ITVScanning interface used for scanning channels
+    /// Get the device's channel scanning interface.
     /// </summary>
     public override ITVScanning ScanningInterface
     {
@@ -189,7 +188,7 @@ namespace TvLibrary.Implementations.Analog
     {
       get
       {
-        if (_graphState == GraphState.Idle)
+        if (!_isGraphBuilt)
         {
           BuildGraph();
         }
@@ -274,11 +273,6 @@ namespace TvLibrary.Implementations.Analog
       if (!CheckThreadId())
         return;
 
-      if (_graphState == GraphState.TimeShifting || _graphState == GraphState.Recording)
-      {
-        // Stop the graph first. To ensure that the timeshift files are no longer blocked
-        Stop();
-      }
       FreeAllSubChannels();
       IMediaControl mediaCtl = (_graphBuilder as IMediaControl);
       if (mediaCtl == null)
@@ -332,7 +326,7 @@ namespace TvLibrary.Implementations.Analog
       _rotEntry = null;
       Release.ComObject("Graphbuilder", _graphBuilder);
       _graphBuilder = null;
-      _graphState = GraphState.Idle;
+      _isGraphBuilt = false;
       Log.Log.WriteFile("analog: dispose completed");
     }
 
@@ -355,7 +349,7 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("analog: build graph");
       try
       {
-        if (_graphState != GraphState.Idle)
+        if (_isGraphBuilt)
         {
           Log.Log.WriteFile("analog: Graph already build");
           throw new TvException("Graph already build");
@@ -447,20 +441,20 @@ namespace TvLibrary.Implementations.Analog
         Log.Log.WriteFile("analog: Graph is built");
         FilterGraphTools.SaveGraphFile(_graphBuilder, "analog.grf");
         ReloadCardConfiguration();
-        _graphState = GraphState.Created;
+        _isGraphBuilt = true;
       }
       catch (TvExceptionSWEncoderMissing ex)
       {
         Log.Log.Write(ex);
         Dispose();
-        _graphState = GraphState.Idle;
+        _isGraphBuilt = false;
         throw;
       }
       catch (Exception ex)
       {
         Log.Log.Write(ex);
         Dispose();
-        _graphState = GraphState.Idle;
+        _isGraphBuilt = false;
         throw new TvExceptionGraphBuildingFailed("Graph building failed", ex);
       }
     }
@@ -531,8 +525,6 @@ namespace TvLibrary.Implementations.Analog
       _crossbar.PerformTune(analogChannel);
       _capture.PerformTune(analogChannel);
       _lastSignalUpdate = DateTime.MinValue;
-      if (_graphState == GraphState.Idle)
-        _graphState = GraphState.Created;
       UpdateSignalStatus(true);
       _lastSignalUpdate = DateTime.MinValue;
     }

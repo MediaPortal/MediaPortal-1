@@ -25,7 +25,7 @@ namespace TvLibrary.Interfaces
   /// <summary>
   /// This interface describes the properties of a satellite dish low noise block down-converter.
   /// </summary>
-  public interface ILnbType
+  public interface ILnbType : ICloneable
   {
     /// <summary>
     /// Get/set the LNB type's name.

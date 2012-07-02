@@ -20,22 +20,21 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
+using System.Collections.ObjectModel;
 //using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Threading;
 using DirectShowLib;
+using TvDatabase;
+using TvLibrary.Channels;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
-using TvLibrary.Channels;
-using TvLibrary.Implementations.DVB.Structures;
-using TvLibrary.Implementations.Helper;
 using TvLibrary.Teletext;
-using System.Threading;
-using TvDatabase;
 
 namespace TvLibrary.Implementations.DVB
 {
   ///<summary>
-  /// Base class for all dvb channels
+  /// A base class for digital services ("subchannels").
   ///</summary>
   public class TvDvbChannel : BaseSubChannel, ITeletextCallBack, IPMTCallback, ICACallback, ITvSubChannel,
                               IVideoAudioObserver
@@ -99,11 +98,12 @@ namespace TvLibrary.Implementations.DVB
     #region ctor
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="TvDvbChannel"/> class.
+    /// Initialise a new instance of the <see cref="TvDvbChannel"/> class.
     /// </summary>
-    /// <param name="subChannelId">The subchannel id</param>
-    /// <param name="tsWriter">The ts writer filter.</param>
-    /// <param name="tif">The tif filter.</param>
+    /// <param name="subChannelId">The subchannel ID to associate with this instance.</param>
+    /// <param name="tuner">The tuner that this instance is associated with.</param>
+    /// <param name="tsWriter">The TsWriter filter instance, used to handle timeshifting and recording.</param>
+    /// <param name="tif">The transport information filter.</param>
     public TvDvbChannel(int subChannelId, TvCardBase tuner, IBaseFilter tsWriter, IBaseFilter tif)
       : base(subChannelId)
     {
@@ -801,7 +801,7 @@ namespace TvLibrary.Implementations.DVB
         {
           _pids.Add(_pmt.PcrPid);
         }
-
+        // TODO: fix this so that tuners with PID filtering can use MDAPI.
         /*if (_mdplugs != null)
         {
           // MDPlugins Active.. 
@@ -843,7 +843,9 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
-        byte[] rawPmt = _pmt.GetRawPmtCopy();
+        ReadOnlyCollection<byte> readOnlyPmt = _pmt.GetRawPmt();
+        byte[] rawPmt = new byte[readOnlyPmt.Count];
+        readOnlyPmt.CopyTo(rawPmt, 0);
         _tsFilterInterface.TimeShiftSetPmtPid(_subChannelIndex, _pmtPid, _pmt.ProgramNumber, rawPmt, rawPmt.Length);
       }
       catch (Exception ex)
@@ -859,7 +861,9 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
-        byte[] rawPmt = _pmt.GetRawPmtCopy();
+        ReadOnlyCollection<byte> readOnlyPmt = _pmt.GetRawPmt();
+        byte[] rawPmt = new byte[readOnlyPmt.Count];
+        readOnlyPmt.CopyTo(rawPmt, 0);
         _tsFilterInterface.RecordSetPmtPid(_subChannelIndex, _pmtPid, _pmt.ProgramNumber, rawPmt, rawPmt.Length);
       }
       catch (Exception ex)

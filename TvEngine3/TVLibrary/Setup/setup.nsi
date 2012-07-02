@@ -396,7 +396,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_TVServer}\Plugins\WebEPG\WebEPG\bin\${BUILD_TYPE}\WebEPG.dll"
   File "${git_TVServer}\Plugins\WebEPG\WebEPGPlugin\bin\${BUILD_TYPE}\WebEPGImport.dll"
 
-  ; The Plugin CustomDevices Directory
+  ; CustomDevice Plugin Directory
   SetOutPath "$INSTDIR\Plugins\CustomDevices"
   File "${git_TVServer}\Plugins\CustomDevices\Anysee\bin\${BUILD_TYPE}\Anysee.dll" 
   File "${git_TVServer}\Plugins\CustomDevices\Conexant\bin\${BUILD_TYPE}\Conexant.dll"
@@ -414,12 +414,12 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_TVServer}\Plugins\CustomDevices\Omicom\bin\${BUILD_TYPE}\Omicom.dll"
   File "${git_TVServer}\Plugins\CustomDevices\Prof\bin\${BUILD_TYPE}\Prof.dll"
   File "${git_TVServer}\Plugins\CustomDevices\ProfUsb\bin\${BUILD_TYPE}\ProfUsb.dll"
+  File "${git_TVServer}\Plugins\CustomDevices\SmarDtvUsbCi\bin\${BUILD_TYPE}\SmarDtvUsbCi.dll"
   File "${git_TVServer}\Plugins\CustomDevices\TechnoTrend\bin\${BUILD_TYPE}\TechnoTrend.dll"
   File "${git_TVServer}\Plugins\CustomDevices\TeVii\bin\${BUILD_TYPE}\TeVii.dll"
   File "${git_TVServer}\Plugins\CustomDevices\Turbosight\bin\${BUILD_TYPE}\Turbosight.dll"
   File "${git_TVServer}\Plugins\CustomDevices\Twinhan\bin\${BUILD_TYPE}\Twinhan.dll"
   File "${git_TVServer}\Plugins\CustomDevices\ViXS\bin\${BUILD_TYPE}\ViXS.dll"
-  File "${git_TVServer}\Plugins\CustomDevices\WinTvCi\bin\${BUILD_TYPE}\WinTvCi.dll"
 
   ; Rest of Files
   SetOutPath "$INSTDIR"
@@ -447,7 +447,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_TVServer}\TVLibrary.Utils\bin\${BUILD_TYPE}\TVLibrary.Utils.dll"
   File "${git_TVServer}\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
 
-  ; 3rd party assemblys
+  ; 3rd party assemblies
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
   File "${TVSERVER.BASE}\hauppauge.dll"  
 
@@ -455,10 +455,9 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   
   File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\dxerr9.dll"
   
-  ; 3rd party CustomDevices Resources assemblys
+  ; CustomDevice plugin 3rd party resource assemblies
   SetOutPath "$INSTDIR\Plugins\CustomDevices\Resources"
   File "${TVSERVER.BASE}\CIAPI.dll"
-  File "${TVSERVER.BASE}\hcwWinTVCI.dll"
   File "${TVSERVER.BASE}\KNCBDACTRL.dll"
   File "${TVSERVER.BASE}\TbsCIapi.dll"
   File "${TVSERVER.BASE}\tevii.dll"
@@ -568,6 +567,15 @@ ${MementoSectionEnd}
   ; Remove XMLTV data dir
   Delete "${COMMON_APPDATA}\xmltv\xmltv.dtd"
 
+  ; Remove CustomDevice plugin 3rd party resource assemblies
+  Delete "$INSTDIR\Plugins\CustomDevices\Resources\CIAPI.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Resources\KNCBDACTRL.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Resources\TbsCIapi.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Resources\tevii.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Resources\ttBdaDrvApi_Dll.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Resources\ttdvbacc.dll"
+  RMDir "$INSTDIR\Plugins\CustomDevices\Resources"
+
   ; Remove Plugins
   Delete "$INSTDIR\Plugins\ComSkipLauncher.dll"
   Delete "$INSTDIR\Plugins\ConflictsManager.dll"
@@ -593,12 +601,13 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\Plugins\CustomDevices\Omicom.dll"
   Delete "$INSTDIR\Plugins\CustomDevices\Prof.dll"
   Delete "$INSTDIR\Plugins\CustomDevices\ProfUsb.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\SmarDtvUsbCi.dll"
   Delete "$INSTDIR\Plugins\CustomDevices\TechnoTrend.dll"
   Delete "$INSTDIR\Plugins\CustomDevices\TeVii.dll"
   Delete "$INSTDIR\Plugins\CustomDevices\Turbosight.dll"
   Delete "$INSTDIR\Plugins\CustomDevices\Twinhan.dll"
   Delete "$INSTDIR\Plugins\CustomDevices\ViXS.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\WinTvCi.dll"
+  RMDir "$INSTDIR\Plugins\CustomDevices"
   RMDir "$INSTDIR\Plugins"
 
   ; And finally remove all the files installed
@@ -626,22 +635,13 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\TvService.exe.config"
   Delete "$INSTDIR\SetupControls.dll"
 
-  ; 3rd party assemblys
+  ; 3rd party assembliess
   Delete "$INSTDIR\dxerr9.dll"
   Delete "$INSTDIR\hauppauge.dll"
   Delete "$INSTDIR\StreamingServer.dll"
   Delete "$INSTDIR\Ionic.Zip.dll"
   Delete "$INSTDIR\Interop.SHDocVw.dll"
   
-  ; 3rd party CustomDevices Resources assemblys
-  Delete "$INSTDIR\Plugins\CustomDevices\Resources\CIAPI.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\Resources\hcwWinTVCI.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\Resources\KNCBDACTRL.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\Resources\TbsCIapi.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\Resources\tevii.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\Resources\ttBdaDrvApi_Dll.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\Resources\ttdvbacc.dll"
-
   ; remove Start Menu shortcuts
   Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"
   Delete "${STARTMENU_GROUP}\TV-Server Log-Files.lnk"

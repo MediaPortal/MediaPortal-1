@@ -321,7 +321,7 @@ namespace TvLibrary.Implementations
 
     #endregion
 
-    #region overrides
+    #region object overrides
 
     /// <summary>
     /// Get a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
@@ -414,6 +414,19 @@ namespace TvLibrary.Implementations
              _channelNumber.GetHashCode() ^ _country.GetHashCode() ^ _isRadio.GetHashCode() ^
              _tunerSource.GetHashCode() ^ _videoInputType.GetHashCode() ^ _audioInputType.GetHashCode() ^
              _isVcrSignal.GetHashCode();
+    }
+
+    #endregion
+
+    #region ICloneable member
+
+    /// <summary>
+    /// Clone the channel instance.
+    /// </summary>
+    /// <returns>a shallow clone of the channel instance</returns>
+    public object Clone()
+    {
+      return this.MemberwiseClone();
     }
 
     #endregion

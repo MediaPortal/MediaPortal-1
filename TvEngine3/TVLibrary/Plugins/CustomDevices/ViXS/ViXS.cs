@@ -26,7 +26,8 @@ using TvLibrary.Log;
 namespace TvEngine
 {
   /// <summary>
-  /// This class provides clear QAM tuning support for ViXS/Asus ATSC/QAM devices.
+  /// This class provides clear QAM tuning support for ATSC/QAM devices that use ViXS chipsets/demodulators, such
+  /// as Saber (DA-1N1-E, DA-1N1-I), VistaView and Asus tuners.
   /// </summary>
   public class ViXS : Microsoft
   {

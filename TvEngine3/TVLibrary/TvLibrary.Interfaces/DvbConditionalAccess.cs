@@ -19,9 +19,10 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Collections.Generic;
 
 namespace TvLibrary.Interfaces
 {
@@ -1149,33 +1150,33 @@ namespace TvLibrary.Interfaces
     /// The descriptors for the service described by the conditional access table. Conditional access
     /// descriptors are not included.
     /// </summary>
-    public List<IDescriptor> Descriptors
+    public ReadOnlyCollection<IDescriptor> Descriptors
     {
       get
       {
-        return _descriptors;
+        return new ReadOnlyCollection<IDescriptor>(_descriptors);
       }
     }
 
     /// <summary>
     /// The conditional access descriptors for the service described by the conditional access table.
     /// </summary>
-    public List<IDescriptor> CaDescriptors
+    public ReadOnlyCollection<IDescriptor> CaDescriptors
     {
       get
       {
-        return _caDescriptors;
+        return new ReadOnlyCollection<IDescriptor>(_caDescriptors);
       }
     }
 
     /// <summary>
     /// Cyclic redundancy check bytes for confirming the integrity of the conditional access section data.
     /// </summary>
-    public byte[] Crc
+    public ReadOnlyCollection<byte> Crc
     {
       get
       {
-        return _crc;
+        return new ReadOnlyCollection<byte>(_crc);
       }
     }
 
@@ -1269,15 +1270,12 @@ namespace TvLibrary.Interfaces
     }
 
     /// <summary>
-    /// Retrieve a copy of the original conditional access section data that was decoded to create this Cat instance.
+    /// Retrieve a read-only copy of the original conditional access section data that was decoded to create this Cat instance.
     /// </summary>
     /// <returns>a copy of the raw conditional access section data</returns>
-    public byte[] GetRawCatCopy()
+    public ReadOnlyCollection<byte> GetRawCat()
     {
-      // Make a copy of our raw CAT for the caller.
-      byte[] outputCat = new byte[_rawCat.Length];
-      Buffer.BlockCopy(_rawCat, 0, outputCat, 0, _rawCat.Length);
-      return outputCat;
+      return new ReadOnlyCollection<byte>(_rawCat);
     }
 
     /// <summary>
@@ -1458,44 +1456,44 @@ namespace TvLibrary.Interfaces
     /// The descriptors for the service described by the program map. Conditional access descriptors are not
     /// included.
     /// </summary>
-    public List<IDescriptor> ProgramDescriptors
+    public ReadOnlyCollection<IDescriptor> ProgramDescriptors
     {
       get
       {
-        return _programDescriptors;
+        return new ReadOnlyCollection<IDescriptor>(_programDescriptors);
       }
     }
 
     /// <summary>
     /// The conditional access descriptors for the service described by the program map.
     /// </summary>
-    public List<IDescriptor> ProgramCaDescriptors
+    public ReadOnlyCollection<IDescriptor> ProgramCaDescriptors
     {
       get
       {
-        return _programCaDescriptors;
+        return new ReadOnlyCollection<IDescriptor>(_programCaDescriptors);
       }
     }
 
     /// <summary>
     /// The elementary streams described in the program map.
     /// </summary>
-    public List<PmtElementaryStream> ElementaryStreams
+    public ReadOnlyCollection<PmtElementaryStream> ElementaryStreams
     {
       get
       {
-        return _elementaryStreams;
+        return new ReadOnlyCollection<PmtElementaryStream>(_elementaryStreams);
       }
     }
 
     /// <summary>
     /// Cyclic redundancy check bytes for confirming the integrity of the program map section data.
     /// </summary>
-    public byte[] Crc
+    public ReadOnlyCollection<byte> Crc
     {
       get
       {
-        return _crc;
+        return new ReadOnlyCollection<byte>(_crc);
       }
     }
 
@@ -1657,7 +1655,7 @@ namespace TvLibrary.Interfaces
           return null;
         }
 
-        pmt.ElementaryStreams.Add(es);
+        pmt._elementaryStreams.Add(es);
       }
       if (offset != endEsData)
       {
@@ -1695,15 +1693,12 @@ namespace TvLibrary.Interfaces
     }
 
     /// <summary>
-    /// Retrieve a copy of the original program map section data that was decoded to create this Pmt instance.
+    /// Retrieve a read-only copy of the original program map section data that was decoded to create this Pmt instance.
     /// </summary>
     /// <returns>a copy of the raw program map section data</returns>
-    public byte[] GetRawPmtCopy()
+    public ReadOnlyCollection<byte> GetRawPmt()
     {
-      // Make a copy of our raw PMT for the caller.
-      byte[] outputPmt = new byte[_rawPmt.Length];
-      Buffer.BlockCopy(_rawPmt, 0, outputPmt, 0, _rawPmt.Length);
-      return outputPmt;
+      return new ReadOnlyCollection<byte>(_rawPmt);
     }
 
     /// <summary>
@@ -1717,7 +1712,7 @@ namespace TvLibrary.Interfaces
     public byte[] GetCaPmt(CaPmtListManagementAction listAction, CaPmtCommand command)
     {
       Log.Log.Debug("PMT: get CA PMT, list action = {0}, command = {1}", listAction, command);
-      byte[] tempCaPmt = new byte[4096];
+      byte[] tempCaPmt = new byte[4096];  // Max PMT length is 1024, and since CA PMT is a cut-down version of PMT this should be very safe.
       tempCaPmt[0] = (byte)listAction;
       tempCaPmt[1] = _rawPmt[3];
       tempCaPmt[2] = _rawPmt[4];
@@ -1733,10 +1728,10 @@ namespace TvLibrary.Interfaces
           tempCaPmt[offset++] = (byte)command;
           programInfoLength++;
         }
-        byte[] descriptorData = d.GetRawDataCopy();
-        Buffer.BlockCopy(descriptorData, 0, tempCaPmt, offset, descriptorData.Length);
-        offset += descriptorData.Length;
-        programInfoLength += descriptorData.Length;
+        ReadOnlyCollection<byte> descriptorData = d.GetRawData();
+        descriptorData.CopyTo(tempCaPmt, offset);
+        offset += descriptorData.Count;
+        programInfoLength += descriptorData.Count;
       }
 
       // Set the program_info_length now that we know what the length is.
@@ -1791,10 +1786,10 @@ namespace TvLibrary.Interfaces
               tempCaPmt[offset++] = (byte)command;
               esInfoLength++;
             }
-            byte[] descriptorData = d.GetRawDataCopy();
-            Buffer.BlockCopy(descriptorData, 0, tempCaPmt, offset, descriptorData.Length);
-            offset += descriptorData.Length;
-            esInfoLength += descriptorData.Length;
+            ReadOnlyCollection<byte> descriptorData = d.GetRawData();
+            descriptorData.CopyTo(tempCaPmt, offset);
+            offset += descriptorData.Count;
+            esInfoLength += descriptorData.Count;
           }
 
           // Set the ES_info_length now that we know what the length is.
@@ -1851,6 +1846,9 @@ namespace TvLibrary.Interfaces
   /// <summary>
   /// A class capable of holding elementary stream information for one stream in a program map.
   /// </summary>
+  /// <remarks>
+  /// Ideally this class should be made read-only like <see cref="Cat"/> and <see cref="Pmt"/>.
+  /// </remarks>
   public class PmtElementaryStream
   {
     #region variables
@@ -2000,16 +1998,16 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// The descriptor data.
     /// </summary>
-    byte[] Data { get; }
+    ReadOnlyCollection<byte> Data { get; }
 
     /// <summary>
-    /// Retrieve a copy of the original data that was decoded to create a descriptor instance.
+    /// Retrieve a read-only copy of the original data that was decoded to create a descriptor instance.
     /// </summary>
     /// <remarks>
     /// The copy includes tag and length bytes.
     /// </remarks>
     /// <returns>a copy of the raw descriptor data</returns>
-    byte[] GetRawDataCopy();
+    ReadOnlyCollection<byte> GetRawData();
 
     /// <summary>
     /// Write the descriptor fields to the log file. Useful for debugging.
@@ -2045,6 +2043,8 @@ namespace TvLibrary.Interfaces
 
     #endregion
 
+    #region constructor
+
     /// <summary>
     /// Constructor. Protected to ensure instances can only be created by derived classes or by calling
     /// Decode(). This should ensure the safety of the parameters, which is why we don't check them.
@@ -2056,8 +2056,26 @@ namespace TvLibrary.Interfaces
     {
       _tag = tag;
       _length = length;
-      _data = data;
+      // Make a copy of the data array so that changes in the caller's array don't affect our data.
+      _data = new byte[data.Length];
+      Buffer.BlockCopy(data, 0, _data, 0, data.Length);
     }
+
+    /// <summary>
+    /// Copy-constructor. Protected to ensure instances can only be created by derived classes or by calling
+    /// Decode(). This should ensure the safety of the parameters, which is why we don't check them.
+    /// </summary>
+    /// <param name="descriptor">The descriptor to copy.</param>
+    protected Descriptor(IDescriptor descriptor)
+    {
+      _tag = descriptor.Tag;
+      _length = descriptor.Length;
+      // Make a copy of the data array so that changes in the original descriptor data don't affect our data.
+      _data = new byte[descriptor.Data.Count];
+      descriptor.Data.CopyTo(_data, 0);
+    }
+
+    #endregion
 
     #region properties
 
@@ -2086,11 +2104,11 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// The descriptor data.
     /// </summary>
-    public byte[] Data
+    public ReadOnlyCollection<byte> Data
     {
       get
       {
-        return _data;
+        return new ReadOnlyCollection<byte>(_data);
       }
     }
 
@@ -2130,15 +2148,12 @@ namespace TvLibrary.Interfaces
     }
 
     /// <summary>
-    /// Retrieve a copy of the original data that was decoded to create this Descriptor instance.
+    /// Retrieve a read-only copy of the original data that was decoded to create this Descriptor instance.
     /// </summary>
     /// <returns>a copy of the raw descriptor data</returns>
-    public byte[] GetRawDataCopy()
+    public ReadOnlyCollection<byte> GetRawData()
     {
-      // Make a copy of our raw data for the caller.
-      byte[] outputDescriptor = new byte[_rawData.Length];
-      Buffer.BlockCopy(_rawData, 0, outputDescriptor, 0, _rawData.Length);
-      return outputDescriptor;
+      return new ReadOnlyCollection<byte>(_rawData);
     }
 
     /// <summary>
@@ -2173,7 +2188,7 @@ namespace TvLibrary.Interfaces
     /// </summary>
     /// <param name="descriptor">The base descriptor to use to instantiate this descriptor.</param>
     protected ConditionalAccessDescriptor(IDescriptor descriptor)
-      : base(descriptor.Tag, descriptor.Length, descriptor.Data)
+      : base(descriptor)
     {
     }
 
@@ -2235,7 +2250,7 @@ namespace TvLibrary.Interfaces
     public static ConditionalAccessDescriptor Decode(IDescriptor descriptor)
     {
       if (descriptor.Tag != DescriptorTag.ConditionalAccess || descriptor.Length < 4 ||
-        descriptor.Data == null || descriptor.Data.Length < 4)
+        descriptor.Data == null || descriptor.Data.Count < 4)
       {
         return null;
       }
@@ -2248,7 +2263,7 @@ namespace TvLibrary.Interfaces
       offset += 2;
 
       d._privateData = new byte[d._length - 4];
-      Buffer.BlockCopy(descriptor.Data, offset, d._privateData, 0, d._length - 4);
+      Buffer.BlockCopy(d._data, offset, d._privateData, 0, d._length - 4);
 
       // Canal Plus...
       UInt32 providerId;
@@ -2869,10 +2884,10 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// Output binary buffer to log for debugging
     /// </summary>
-    /// <param name="sourceData">source byte[]</param>
+    /// <param name="sourceData">source byte collection</param>
     /// <param name="offset">starting offset</param>
     /// <param name="length">total length</param>
-    public static void DumpBinary(byte[] sourceData, int offset, int length)
+    public static void DumpBinary(ReadOnlyCollection<byte> sourceData, int offset, int length)
     {
       StringBuilder row = new StringBuilder();
       StringBuilder rowText = new StringBuilder();
@@ -2898,6 +2913,17 @@ namespace TvLibrary.Interfaces
         Log.Log.WriteFile(String.Format("{0}|{1}", row.ToString().PadRight(55, ' '),
                                         rowText.ToString().PadRight(16, ' ')));
       }
+    }
+
+    /// <summary>
+    /// Output binary buffer to log for debugging
+    /// </summary>
+    /// <param name="sourceData">source byte[]</param>
+    /// <param name="offset">starting offset</param>
+    /// <param name="length">total length</param>
+    public static void DumpBinary(byte[] sourceData, int offset, int length)
+    {
+      DumpBinary(new ReadOnlyCollection<byte>(sourceData), offset, length);
     }
 
     /// <summary>

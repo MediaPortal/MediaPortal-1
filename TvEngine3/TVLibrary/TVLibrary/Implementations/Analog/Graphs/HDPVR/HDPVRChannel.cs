@@ -23,12 +23,10 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
-using TvLibrary.Interfaces;
-using TvLibrary.Implementations.Helper;
-using TvLibrary.Interfaces.Analyzer;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Channels;
+using TvLibrary.Implementations.DVB;
+using TvLibrary.Interfaces;
+using TvLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.Analog
 {

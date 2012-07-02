@@ -20,14 +20,11 @@
 
 using System;
 using System.Collections.Generic;
+using TvLibrary.Implementations.Analog;
+using TvLibrary.Implementations.DVB;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Teletext;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Implementations.DVB.Structures;
-using TvLibrary.Implementations.Helper;
-using TvLibrary.Implementations.Analog;
-
 
 namespace TvLibrary.Implementations
 {

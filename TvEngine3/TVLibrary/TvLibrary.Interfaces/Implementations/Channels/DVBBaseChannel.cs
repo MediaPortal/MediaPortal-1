@@ -190,6 +190,8 @@ namespace TvLibrary.Channels
 
     #endregion
 
+    #region object overrides
+
     /// <summary>
     /// Get a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
     /// </summary>
@@ -279,6 +281,21 @@ namespace TvLibrary.Channels
             _serviceId.GetHashCode() ^ _pmtPid.GetHashCode() ^ _lcn.GetHashCode() ^ _isTv.GetHashCode() ^
             _isRadio.GetHashCode() ^ _freeToAir.GetHashCode();
     }
+
+    #endregion
+
+    #region ICloneable member
+
+    /// <summary>
+    /// Clone the channel instance.
+    /// </summary>
+    /// <returns>a shallow clone of the channel instance</returns>
+    public virtual object Clone()
+    {
+      return this.MemberwiseClone();
+    }
+
+    #endregion
 
     /// <summary>
     /// Check if the given channel and this instance are on different transponders.

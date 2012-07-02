@@ -66,7 +66,7 @@ namespace TvEngine
 
     private static readonly Guid BdaExtensionPropertySet = new Guid(0x0b5221eb, 0xf4c4, 0x4976, 0xb9, 0x59, 0xef, 0x74, 0x42, 0x74, 0x64, 0xd9);
 
-    private const int InstanceSize = 32;    // The size of a property instance (KspNode) parameter.
+    private const int InstanceSize = 32;    // The size of a property instance (KSP_NODE) parameter.
 
     private const int DiseqcMessageSize = 7;
     private const int MaxDiseqcMessageLength = 6;

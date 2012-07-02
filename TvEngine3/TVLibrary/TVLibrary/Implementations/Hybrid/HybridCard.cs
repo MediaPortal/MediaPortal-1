@@ -324,9 +324,8 @@ namespace TvLibrary.Implementations.Hybrid
     }
 
     /// <summary>
-    /// returns the ITVScanning interface used for scanning channels
+    /// Get the device's channel scanning interface.
     /// </summary>
-    /// <value></value>
     public ITVScanning ScanningInterface
     {
       get { return _internalCard.ScanningInterface; }

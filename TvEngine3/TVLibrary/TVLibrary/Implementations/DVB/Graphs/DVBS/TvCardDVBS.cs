@@ -24,7 +24,6 @@ using DirectShowLib.BDA;
 using TvDatabase;
 using TvLibrary.Channels;
 using TvLibrary.Epg;
-using TvLibrary.Implementations.Helper;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Device;
 
@@ -176,7 +175,7 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
-    #region tuning & recording
+    #region tuning & scanning
 
     /// <summary>
     /// Actually tune to a channel.
@@ -235,62 +234,6 @@ namespace TvLibrary.Implementations.DVB
       return tuneRequest;
     }
 
-    #endregion
-
-    #region epg & scanning
-    
-    /// <summary>
-    /// checks if a received EPGChannel should be filtered from the resultlist
-    /// </summary>
-    /// <value></value>
-    protected override bool FilterOutEPGChannel(EpgChannel epgChannel)
-    {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      if (layer.GetSetting("generalGrapOnlyForSameTransponder", "no").Value == "yes")
-      {
-        DVBBaseChannel chan = epgChannel.Channel as DVBBaseChannel;
-        Channel dbchannel = layer.GetChannelByTuningDetail(chan.NetworkId, chan.TransportId, chan.ServiceId);
-        DVBSChannel dvbschannel = new DVBSChannel();
-        if (dbchannel == null)
-        {
-          return false;
-        }
-        foreach (TuningDetail detail in dbchannel.ReferringTuningDetail())
-        {
-          if (detail.ChannelType == 3)
-          {
-            dvbschannel.Frequency = detail.Frequency;
-            dvbschannel.Polarisation = (Polarisation)detail.Polarisation;
-            dvbschannel.ModulationType = (ModulationType)detail.Modulation;
-            dvbschannel.SatelliteIndex = detail.SatIndex;
-            dvbschannel.InnerFecRate = (BinaryConvolutionCodeRate)detail.InnerFecRate;
-            dvbschannel.Pilot = (Pilot)detail.Pilot;
-            dvbschannel.RollOff = (RollOff)detail.RollOff;
-            dvbschannel.Diseqc = (DiseqcPort)detail.Diseqc;
-          }
-        }
-        return this.CurrentChannel.IsDifferentTransponder(dvbschannel);
-      }
-      else
-        return false;  
-    }
-
-    /// <summary>
-    /// returns the ITVScanning interface used for scanning channels
-    /// </summary>
-    /// <value></value>
-    public override ITVScanning ScanningInterface
-    {
-      get
-      {
-        if (!CheckThreadId())
-          return null;
-        return new DVBSScanning(this);
-      }
-    }
-
-    #endregion
-
     /// <summary>
     /// Check if the tuner can tune to a specific channel.
     /// </summary>
@@ -305,15 +248,7 @@ namespace TvLibrary.Implementations.DVB
       return false;
     }
 
-    protected override DVBBaseChannel CreateChannel(int networkid, int transportid, int serviceid, string name)
-    {
-      DVBSChannel channel = new DVBSChannel();
-      channel.NetworkId = networkid;
-      channel.TransportId = transportid;
-      channel.ServiceId = serviceid;
-      channel.Name = name;
-      return channel;
-    }
+    #endregion
 
     /// <summary>
     /// Get the device's DiSEqC control interface. This interface is only applicable for satellite tuners.

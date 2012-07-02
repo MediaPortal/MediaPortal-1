@@ -30,7 +30,6 @@ using TvLibrary.ChannelLinkage;
 using TvLibrary.Channels;
 using TvLibrary.Epg;
 using TvLibrary.Implementations.DVB;
-using TvLibrary.Implementations.Helper;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Device;
 
@@ -136,7 +135,7 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// State of the graph
     /// </summary>
-    protected GraphState _graphState = GraphState.Idle;
+    protected bool _isGraphBuilt = false;
 
     /// <summary>
     /// The graph builder
@@ -273,7 +272,7 @@ namespace TvLibrary.Implementations
     ///<param name="device">Base DS device</param>
     protected TvCardBase(DsDevice device)
     {
-      _graphState = GraphState.Idle;
+      _isGraphBuilt = false;
       _mapSubChannels = new Dictionary<int, BaseSubChannel>();
       _lastSignalUpdate = DateTime.MinValue;
       _parameters = new ScanParameters();
@@ -1255,7 +1254,7 @@ namespace TvLibrary.Implementations
     }
 
     /// <summary>
-    /// Get the device's ITVScanning interface, used for finding channels.
+    /// Get the device's channel scanning interface.
     /// </summary>
     public virtual ITVScanning ScanningInterface
     {
@@ -1367,10 +1366,6 @@ namespace TvLibrary.Implementations
         {
           RunGraph(-1);
         }
-        else
-        {
-          _graphState = GraphState.Created;
-        }
 
         // Turn off the device power.
         foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
@@ -1458,7 +1453,7 @@ namespace TvLibrary.Implementations
       try
       {
         // The DirectShow/BDA graph needs to be assembled before the channel can be tuned.
-        if (_graphState == GraphState.Idle)
+        if (!_isGraphBuilt)
         {
           BuildGraph();
         }
@@ -1490,7 +1485,7 @@ namespace TvLibrary.Implementations
           // When we call ICustomDevice.OnBeforeTune(), the ICustomDevice may modify the tuning parameters.
           // However, the original channel object *must not* be modified otherwise IsDifferentTransponder()
           // will sometimes returns true when it shouldn't. See mantis 0002979.
-          IChannel tuneChannel = CloneChannel(channel);
+          IChannel tuneChannel = (IChannel)channel.Clone();
 
           bool graphStarted = false;
           foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
@@ -1602,52 +1597,6 @@ namespace TvLibrary.Implementations
     /// <param name="channel">The service or channel to associate with the subchannel.</param>
     /// <returns>a handle for the subchannel</returns>
     protected abstract int CreateNewSubChannel(IChannel channel);
-
-    /// <summary>
-    /// Clone a channel instance.
-    /// </summary>
-    /// <param name="channel">The channel to clone.</param>
-    /// <returns>the clone of the channel parameter</returns>
-    private IChannel CloneChannel(IChannel channel)
-    {
-      DVBSChannel dvbsChannel = channel as DVBSChannel;
-      if (dvbsChannel != null)
-      {
-        return new DVBSChannel(dvbsChannel);
-      }
-
-      DVBTChannel dvbtChannel = channel as DVBTChannel;
-      if (dvbtChannel != null)
-      {
-        return new DVBTChannel(dvbtChannel);
-      }
-
-      DVBCChannel dvbcChannel = channel as DVBCChannel;
-      if (dvbcChannel != null)
-      {
-        return new DVBCChannel(dvbcChannel);
-      }
-
-      ATSCChannel atscChannel = channel as ATSCChannel;
-      if (atscChannel != null)
-      {
-        return new ATSCChannel(atscChannel);
-      }
-
-      DVBIPChannel dvbipChannel = channel as DVBIPChannel;
-      if (dvbipChannel != null)
-      {
-        return new DVBIPChannel(dvbipChannel);
-      }
-
-      AnalogChannel analogChannel = channel as AnalogChannel;
-      if (analogChannel != null)
-      {
-        return new AnalogChannel(analogChannel);
-      }
-
-      throw new TvException("TvCardBase: channel type not recognised, not able to clone\r\n" + channel.ToString());
-    }
 
     #endregion
 

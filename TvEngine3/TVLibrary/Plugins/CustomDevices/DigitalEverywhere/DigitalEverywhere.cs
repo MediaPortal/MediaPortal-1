@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -1576,18 +1577,19 @@ namespace TvEngine
         return true;
       }
 
-      byte[] rawPmt = pmt.GetRawPmtCopy();
-      if (rawPmt.Length > MaxPmtLength - 2)
+      ReadOnlyCollection<byte> rawPmt = pmt.GetRawPmt();
+      if (rawPmt.Count > MaxPmtLength - 2)
       {
         Log.Debug("Digital Everywhere: buffer capacity too small");
         return false;
       }
 
       CaData data = new CaData(DeCiMessageTag.Pmt);
-      data.DataLength = (ushort)(rawPmt.Length + 2);
+      data.DataLength = (ushort)(rawPmt.Count + 2);
       data.Data[0] = (byte)listAction;
       data.Data[1] = (byte)command;
-      Buffer.BlockCopy(rawPmt, 0, data.Data, 2, rawPmt.Length);
+
+      rawPmt.CopyTo(data.Data, 2);
 
       int hr;
       lock (this)

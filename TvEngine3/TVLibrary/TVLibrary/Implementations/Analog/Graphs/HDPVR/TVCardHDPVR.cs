@@ -27,9 +27,8 @@ using TvLibrary.ChannelLinkage;
 using TvLibrary.Channels;
 using TvLibrary.Epg;
 using TvLibrary.Implementations.Analog.QualityControl;
-using TvLibrary.Interfaces;
 using TvLibrary.Implementations.DVB;
-using TvLibrary.Implementations.Helper;
+using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.Analog
 {
@@ -178,7 +177,7 @@ namespace TvLibrary.Implementations.Analog
     {
       get
       {
-        if (_graphState == GraphState.Idle)
+        if (!_isGraphBuilt)
         {
           BuildGraph();
         }
@@ -209,7 +208,7 @@ namespace TvLibrary.Implementations.Analog
     /// <param name="force"><c>True</c> to force the status to be updated (status information may be cached).</param>
     protected override void UpdateSignalStatus(bool force)
     {
-      if (_graphState == GraphState.Idle)
+      if (!_isGraphBuilt)
       {
         _tunerLocked = false;
         _signalLevel = 0;
@@ -235,11 +234,7 @@ namespace TvLibrary.Implementations.Analog
       if (_graphBuilder == null)
         return;
       Log.Log.WriteFile("HDPVR:  Dispose()");
-      if (_graphState == GraphState.TimeShifting || _graphState == GraphState.Recording)
-      {
-        // Stop the graph first. To ensure that the timeshift files are no longer blocked
-        Stop();
-      }
+
       FreeAllSubChannels();
       // Decompose the graph
       IMediaControl mediaCtl = (_graphBuilder as IMediaControl);
@@ -278,7 +273,6 @@ namespace TvLibrary.Implementations.Analog
       Release.ComObject("Graphbuilder", _graphBuilder);
       _graphBuilder = null;
       DevicesInUse.Instance.Remove(_tunerDevice);
-      _graphState = GraphState.Idle;
       if (_crossBarDevice != null)
       {
         DevicesInUse.Instance.Remove(_crossBarDevice);
@@ -294,7 +288,7 @@ namespace TvLibrary.Implementations.Analog
         DevicesInUse.Instance.Remove(_encoderDevice);
         _encoderDevice = null;
       }
-      _graphState = GraphState.Idle;
+      _isGraphBuilt = false;
       Log.Log.WriteFile("HDPVR:  dispose completed");
     }
 
@@ -318,7 +312,7 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("HDPVR: build graph");
       try
       {
-        if (_graphState != GraphState.Idle)
+        if (_isGraphBuilt)
         {
           Log.Log.WriteFile("HDPVR: graph already built!");
           throw new TvException("Graph already built");
@@ -338,7 +332,7 @@ namespace TvLibrary.Implementations.Analog
           Log.Log.WriteFile("HDPVR: No quality control support found");
         }
 
-        _graphState = GraphState.Created;
+        _isGraphBuilt = true;
         _configuration.Graph.Crossbar.Name = _crossBarDevice.Name;
         _configuration.Graph.Crossbar.VideoPinMap = _videoPinMap;
         _configuration.Graph.Crossbar.AudioPinMap = _audioPinMap;
@@ -355,7 +349,7 @@ namespace TvLibrary.Implementations.Analog
       {
         Log.Log.Write(ex);
         Dispose();
-        _graphState = GraphState.Idle;
+        _isGraphBuilt = false;
         throw;
       }
     }
@@ -651,10 +645,7 @@ namespace TvLibrary.Implementations.Analog
       _tunerLocked = false;
       _previousChannel = analogChannel;
       Log.Log.WriteFile("HDPVR: Tuned to channel {0}", channel.Name);
-      if (_graphState == GraphState.Idle)
-      {
-        _graphState = GraphState.Created;
-      }
+
       _lastSignalUpdate = DateTime.MinValue;
     }
 

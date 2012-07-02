@@ -19,84 +19,128 @@
 #endregion
 
 using System;
+using TvLibrary.Channels;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
-using TvLibrary.Channels;
-using TvLibrary.Implementations.DVB.Structures;
 
 namespace TvLibrary.Implementations.DVB
 {
   /// <summary>
-  /// Class which implements scanning for tv/radio channels for ATSC BDA cards
+  /// A class which implements TV and radio service scanning for ATSC and annex-C (North American cable)
+  /// tuners with BDA drivers.
   /// </summary>
   public class ATSCScanning : DvbBaseScanning
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="ATSCScanning"/> class.
+    /// Initialise a new instance of the <see cref="ATSCScanning"/> class.
     /// </summary>
-    /// <param name="card">The card.</param>
-    public ATSCScanning(TvCardDvbBase card)
-      : base(card)
+    /// <param name="tuner">The tuner associated with this scanner.</param>
+    public ATSCScanning(TvCardDvbBase tuner)
+      : base(tuner)
     {
-      _enableWaitForVCT = true;
+      _enableWaitForVct = true;
     }
 
     /// <summary>
-    /// Creates the new channel.
+    /// Set the service type for services which do not supply a service type.
     /// </summary>
-    /// <param name="channel">The high level tuning detail.</param>
-    /// <param name="info">The subchannel detail.</param>
-    /// <returns>The new channel.</returns>
-    protected override IChannel CreateNewChannel(IChannel channel, ChannelInfo info)
+    /// <param name="serviceType">The service type to check/update.</param>
+    /// <param name="hasVideo">Non-zero if the corresponding service has at least one video stream.</param>
+    /// <param name="hasAudio">Non-zero if the corresponding service has at least one audio stream.</param>
+    /// <returns>the updated service type</returns>
+    protected override short SetMissingServiceType(short serviceType, short hasVideo, short hasAudio)
     {
-      ATSCChannel tuningChannel = (ATSCChannel)channel;
-      ATSCChannel atscChannel = new ATSCChannel();
-      atscChannel.Name = info.service_name;
-      atscChannel.LogicalChannelNumber = info.LCN;
-      atscChannel.Provider = info.service_provider_name;
-      atscChannel.ModulationType = tuningChannel.ModulationType;
-      atscChannel.Frequency = tuningChannel.Frequency;
-      atscChannel.PhysicalChannel = tuningChannel.PhysicalChannel;
-      atscChannel.MajorChannel = info.majorChannel;
-      atscChannel.MinorChannel = info.minorChannel;
-      atscChannel.IsTv = IsTvService(info.serviceType);
-      atscChannel.IsRadio = IsRadioService(info.serviceType);
-      atscChannel.NetworkId = info.networkID;
-      atscChannel.ServiceId = info.serviceID;
-      atscChannel.TransportId = info.transportStreamID;
-      atscChannel.PmtPid = info.network_pmt_PID;
-      atscChannel.FreeToAir = !info.scrambled;
-      Log.Log.Write("atsc:Found: {0}", atscChannel);
-      return atscChannel;
+      if (serviceType <= 0)
+      {
+        if (hasVideo != 0)
+        {
+          return (short)AtscServiceType.DigitalTelevision;
+        }
+        else if (hasAudio != 0)
+        {
+          return (short)AtscServiceType.Audio;
+        }
+      }
+      return serviceType;
     }
 
-    protected override void SetNameForUnknownChannel(IChannel channel, ChannelInfo info)
-    {
-      if (((ATSCChannel)channel).Frequency > 0)
-      {
-        Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}",
-                     ((ATSCChannel)channel).Frequency, info.serviceID);
-        info.service_name = String.Format("Unknown {0}-{1:X}", ((ATSCChannel)channel).Frequency,
-                                          info.serviceID);
-      }
-      else
-      {
-        Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}",
-                     ((ATSCChannel)channel).PhysicalChannel, info.serviceID);
-        info.service_name = String.Format("Unknown {0}-{1:X}", ((ATSCChannel)channel).PhysicalChannel,
-                                          info.serviceID);
-      }
-    }
-
+    /// <summary>
+    /// Determine whether a service type is a radio service type.
+    /// </summary>
+    /// <param name="serviceType">The service type to check.</param>
+    /// <returns><c>true</c> if the service type is a radio service type, otherwise <c>false</c></returns>
     protected override bool IsRadioService(int serviceType)
     {
       return serviceType == (int)AtscServiceType.Audio;
     }
 
+    /// <summary>
+    /// Determine whether a service type is a television service type.
+    /// </summary>
+    /// <param name="serviceType">The service type to check.</param>
+    /// <returns><c>true</c> if the service type is a television service type, otherwise <c>false</c></returns>
     protected override bool IsTvService(int serviceType)
     {
       return serviceType == (int)AtscServiceType.AnalogTelevision ||
              serviceType == (int)AtscServiceType.DigitalTelevision;
+    }
+
+    /// <summary>
+    /// Set the name for services which do not supply a name.
+    /// </summary>
+    /// <param name="channel">The service details.</param>
+    protected override void SetMissingServiceName(IChannel channel)
+    {
+      ATSCChannel atscChannel = channel as ATSCChannel;
+      if (atscChannel == null)
+      {
+        return;
+      }
+
+      // North America has strange service naming conventions. Services have a callsign (eg. WXYZ) and/or name,
+      // and a virtual channel number (eg. 21-2). The callsign is a historical thing - if available, it is usually
+      // found in the short name field in the VCT. Virtual channel numbers were introduced in the analog (NTSC)
+      // switch-off. They don't necessarily have any relationship to the physical channel number (6 MHz frequency
+      // slot - in TV Server, ATSCChannel.PhysicalChannel) that the service is transmitted in.
+
+      // If possible we use <major channel>-<minor channel> labelling.
+      int majorChannel = atscChannel.MajorChannel;
+      int minorChannel = atscChannel.MinorChannel;
+      if (atscChannel.MajorChannel > 0)
+      {
+        Log.Log.Debug("AtscScanning: service name not set, translated with VCT info to {0}", atscChannel.Name);
+      }
+      else
+      {
+        // If we don't have the major and minor channel numbers or the name then use the physical channel number or
+        // frequency for the major channel substitute.
+        Log.Log.Debug("AtscScanning: service name not set, translated with other info to {0}", atscChannel.Name);
+        if (atscChannel.PhysicalChannel > 0)
+        {
+          majorChannel = atscChannel.PhysicalChannel;
+        }
+        else
+        {
+          majorChannel = (int)atscChannel.Frequency;
+        }
+
+        // For minor channel number, use the SID or PMT PID. It is strange, but broadcasters seem to treat
+        // SID/PMT PID 0x10 as service X.1, PID 0x20 as X.2, PID 0x30 as X.3... etc.
+        if (atscChannel.PmtPid % 16 == 0)
+        {
+          minorChannel = atscChannel.PmtPid / 16;
+        }
+        else if (atscChannel.ServiceId % 16 == 0)
+        {
+          minorChannel = atscChannel.ServiceId / 16;
+        }
+        else
+        {
+          minorChannel = atscChannel.ServiceId;
+        }
+      }
+
+      atscChannel.Name = majorChannel + "-" + minorChannel;
     }
   }
 }

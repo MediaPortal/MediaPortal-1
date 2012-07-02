@@ -156,7 +156,7 @@ namespace TvLibrary.Channels
       _diseqc = DiseqcPort.None;
       _lnbType = null;
       _satelliteIndex = -1;
-      _polarisation = DirectShowLib.BDA.Polarisation.NotSet;
+      _polarisation = Polarisation.NotSet;
       _symbolRate = -1;
       _modulation = ModulationType.ModQpsk;
       _innerFecRate = BinaryConvolutionCodeRate.RateNotSet;
@@ -269,6 +269,8 @@ namespace TvLibrary.Channels
 
     #endregion
 
+    #region object overrides
+
     /// <summary>
     /// Get a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
     /// </summary>
@@ -355,6 +357,23 @@ namespace TvLibrary.Channels
             _rollOff.GetHashCode();
     }
 
+    #endregion
+
+    #region ICloneable member
+
+    /// <summary>
+    /// Clone the channel instance.
+    /// </summary>
+    /// <returns>a shallow clone of the channel instance</returns>
+    public override object Clone()
+    {
+      DVBSChannel ch = (DVBSChannel)this.MemberwiseClone();
+      ch.LnbType = (ILnbType)ch.LnbType.Clone();
+      return ch;
+    }
+
+    #endregion
+
     /// <summary>
     /// Check if the given channel and this instance are on different transponders.
     /// </summary>
@@ -368,6 +387,7 @@ namespace TvLibrary.Channels
         return true;
       }
       return dvbsChannel.Diseqc != _diseqc ||
+             dvbsChannel.LnbType != _lnbType ||
              dvbsChannel.SatelliteIndex != _satelliteIndex ||
              dvbsChannel.Frequency != Frequency ||
              dvbsChannel.Polarisation != _polarisation ||

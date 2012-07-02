@@ -19,64 +19,36 @@
 #endregion
 
 using TvLibrary.Channels;
-using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.DVB
 {
   /// <summary>
-  /// Class for DVBIP scanning
+  /// A class which implements TV and radio service scanning for DVB-IP tuners.
   /// </summary>
   public class DVBIPScanning : DvbBaseScanning
   {
     /// <summary>
-    /// Constructor
+    /// Initialise a new instance of the <see cref="DVBIPScanning"/> class.
     /// </summary>
-    /// <param name="card"></param>
-    public DVBIPScanning(TvCardDVBIP card) : base(card) {}
+    /// <param name="tuner">The tuner associated with this scanner.</param>
+    public DVBIPScanning(TvCardDVBIP tuner) : base(tuner) {}
 
     /// <summary>
-    /// CreateNewChannel
+    /// Set the name for services which do not supply a name.
     /// </summary>
-    /// <param name="channel">The high level tuning detail.</param>
-    /// <param name="info">The subchannel detail.</param>
-    /// <returns>The new channel.</returns>
-    protected override IChannel CreateNewChannel(IChannel channel, ChannelInfo info)
+    /// <param name="channel">The service details.</param>
+    protected override void SetMissingServiceName(IChannel channel)
     {
-      DVBIPChannel tuningChannel = (DVBIPChannel)channel;
-      DVBIPChannel dvbipChannel = new DVBIPChannel();
-      dvbipChannel.Name = info.service_name;
-      dvbipChannel.LogicalChannelNumber = info.LCN;
-      dvbipChannel.Provider = info.service_provider_name;
-      dvbipChannel.Url = tuningChannel.Url;
-      dvbipChannel.IsTv = IsTvService(info.serviceType);
-      dvbipChannel.IsRadio = IsRadioService(info.serviceType);
-      dvbipChannel.NetworkId = info.networkID;
-      dvbipChannel.ServiceId = info.serviceID;
-      dvbipChannel.TransportId = info.transportStreamID;
-      dvbipChannel.PmtPid = info.network_pmt_PID;
-      dvbipChannel.FreeToAir = !info.scrambled;
-      Log.Log.Write("Found: {0}", dvbipChannel);
-      return dvbipChannel;
-    }
-
-    protected override bool IsValidChannel(ChannelInfo info, short hasAudio, short hasVideo)
-    {
-      //In DVB-IP there are several ways to describe a channel. It is possible that no service type is given. 
-      //Until we can fully implement DVB-IP support we check if video or audio is available to determine the channel type.
-      if (info.serviceType <= 0)
+      DVBIPChannel dvbipChannel = channel as DVBIPChannel;
+      if (dvbipChannel == null)
       {
-        if (hasVideo != 0)
-        {
-          info.serviceType = (int)DvbServiceType.DigitalTelevision;
-        }
-        else if (hasAudio != 0)
-        {
-          info.serviceType = (int)DvbServiceType.DigitalRadio;
-        }
-      } 
-      return base.IsValidChannel(info, hasAudio, hasVideo);
+        return;
+      }
+
+      // DVB-IP channels often don't have meaningful PSI. Just use the URL in those cases.
+      dvbipChannel.Name = dvbipChannel.Url;
     }
   }
 }

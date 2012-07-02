@@ -248,21 +248,7 @@ namespace TvDatabase
       Remove();
     }
 
-    #region IComparable Member
-
-    /// <summary>
-    /// Compare LNB types by their ID.
-    /// </summary>
-    /// <param name="obj">LNB type to compare with.</param>
-    /// <returns>Result</returns>
-    public int CompareTo(object obj)
-    {
-      if (obj == null)
-      {
-        return 1;
-      }
-      return idLnbType.CompareTo(((LnbType)obj).idLnbType);
-    }
+    #region object overrides
 
     /// <summary>
     /// Get a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
@@ -325,6 +311,37 @@ namespace TvDatabase
       return base.GetHashCode() ^ idLnbType.GetHashCode() ^ name.GetHashCode() ^ lowBandFrequency.GetHashCode() ^
               highBandFrequency.GetHashCode() ^ switchFrequency.GetHashCode() ^ isBandStacked.GetHashCode() ^
               isToroidal.GetHashCode();
+    }
+
+    #endregion
+
+    #region IComparable Member
+
+    /// <summary>
+    /// Compare LNB types by their ID.
+    /// </summary>
+    /// <param name="obj">LNB type to compare with.</param>
+    /// <returns>Result</returns>
+    public int CompareTo(object obj)
+    {
+      if (obj == null)
+      {
+        return 1;
+      }
+      return idLnbType.CompareTo(((LnbType)obj).idLnbType);
+    }
+
+    #endregion
+
+    #region ICloneable member
+
+    /// <summary>
+    /// Clone the LNB type instance.
+    /// </summary>
+    /// <returns>a shallow clone of the LNB type instance</returns>
+    public object Clone()
+    {
+      return this.MemberwiseClone();
     }
 
     #endregion

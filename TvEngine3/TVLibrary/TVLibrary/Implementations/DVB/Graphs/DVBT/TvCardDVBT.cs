@@ -24,7 +24,6 @@ using DirectShowLib.BDA;
 using TvDatabase;
 using TvLibrary.Channels;
 using TvLibrary.Epg;
-using TvLibrary.Implementations.Helper;
 using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.DVB
@@ -147,7 +146,7 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
-    #region tuning & recording
+    #region tuning & scanning
 
     /// <summary>
     /// Assemble a BDA tune request for a given channel.
@@ -177,57 +176,6 @@ namespace TvLibrary.Implementations.DVB
       return _tuneRequest;
     }
 
-    #endregion
-
-    #region epg & scanning
-
-    /// <summary>
-    /// checks if a received EPGChannel should be filtered from the resultlist
-    /// </summary>
-    /// <value></value>
-    protected override bool FilterOutEPGChannel(EpgChannel epgChannel)
-    {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      if (layer.GetSetting("generalGrapOnlyForSameTransponder", "no").Value == "yes")
-      {
-        DVBBaseChannel chan = epgChannel.Channel as DVBBaseChannel;
-        Channel dbchannel = layer.GetChannelByTuningDetail(chan.NetworkId, chan.TransportId, chan.ServiceId);
-        DVBTChannel dvbtchannel = new DVBTChannel();
-        if (dbchannel == null)
-        {
-          return false;
-        }
-        foreach (TuningDetail detail in dbchannel.ReferringTuningDetail())
-        {
-          if (detail.ChannelType == 4)
-          {
-            dvbtchannel.Frequency = detail.Frequency;
-            dvbtchannel.Bandwidth = detail.Bandwidth;
-          }
-        }
-        return this.CurrentChannel.IsDifferentTransponder(dvbtchannel);
-      }
-      else
-        return false;
-
-    }
-
-    /// <summary>
-    /// returns the ITVScanning interface used for scanning channels
-    /// </summary>
-    /// <value></value>
-    public override ITVScanning ScanningInterface
-    {
-      get
-      {
-        if (!CheckThreadId())
-          return null;
-        return new DVBTScanning(this);
-      }
-    }
-
-    #endregion
-
     /// <summary>
     /// Check if the tuner can tune to a specific channel.
     /// </summary>
@@ -242,14 +190,6 @@ namespace TvLibrary.Implementations.DVB
       return false;
     }
 
-    protected override DVBBaseChannel CreateChannel(int networkid, int transportid, int serviceid, string name)
-    {
-      DVBTChannel channel = new DVBTChannel();
-      channel.NetworkId = networkid;
-      channel.TransportId = transportid;
-      channel.ServiceId = serviceid;
-      channel.Name = name;
-      return channel;
-    }
+    #endregion
   }
 }

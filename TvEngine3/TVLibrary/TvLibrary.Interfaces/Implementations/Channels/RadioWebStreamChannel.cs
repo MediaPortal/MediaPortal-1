@@ -98,6 +98,8 @@ namespace TvLibrary.Implementations
 
     #endregion
 
+    #region object overrides
+
     /// <summary>
     /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
     /// </summary>
@@ -146,6 +148,21 @@ namespace TvLibrary.Implementations
     {
       return base.GetHashCode() ^ _channelName.GetHashCode() ^ _url.GetHashCode();
     }
+
+    #endregion
+
+    #region ICloneable member
+
+    /// <summary>
+    /// Clone the channel instance.
+    /// </summary>
+    /// <returns>a shallow clone of the channel instance</returns>
+    public object Clone()
+    {
+      return this.MemberwiseClone();
+    }
+
+    #endregion
 
     /// <summary>
     /// Check if the given channel and this instance are on different transponders.

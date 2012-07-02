@@ -180,7 +180,7 @@ namespace TvLibrary.Interfaces
     List<EpgChannel> Epg { get; }
 
     /// <summary>
-    /// returns the ITVScanning interface used for scanning channels
+    /// Get the device's channel scanning interface.
     /// </summary>
     ITVScanning ScanningInterface { get; }
 

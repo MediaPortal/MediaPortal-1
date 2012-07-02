@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -1825,14 +1826,14 @@ namespace TvEngine
       pmtData.ProgramCaDescriptorData = new byte[MaxDescriptorDataLength];
       foreach (IDescriptor d in pmt.ProgramCaDescriptors)
       {
-        byte[] descriptorData = d.GetRawDataCopy();
-        if (offset + descriptorData.Length >= MaxDescriptorDataLength)
+        ReadOnlyCollection<byte> descriptorData = d.GetRawData();
+        if (offset + descriptorData.Count >= MaxDescriptorDataLength)
         {
           Log.Debug("Anysee: PMT program CA descriptor data is too long");
           return false;
         }
-        Buffer.BlockCopy(descriptorData, 0, pmtData.ProgramCaDescriptorData, offset, descriptorData.Length);
-        offset += descriptorData.Length;
+        descriptorData.CopyTo(pmtData.ProgramCaDescriptorData, offset);
+        offset += descriptorData.Count;
       }
       pmtData.ProgramCaDescriptorData[0] = (byte)((offset - 2) & 0xff);
       pmtData.ProgramCaDescriptorData[1] = (byte)(((offset - 2) >> 8) & 0xff);
@@ -1916,14 +1917,14 @@ namespace TvEngine
         esToKeep.DescriptorData = new byte[MaxDescriptorDataLength];
         foreach (IDescriptor d in es.CaDescriptors)
         {
-          byte[] descriptorData = d.GetRawDataCopy();
-          if (offset + descriptorData.Length >= MaxDescriptorDataLength)
+          ReadOnlyCollection<byte> descriptorData = d.GetRawData();
+          if (offset + descriptorData.Count >= MaxDescriptorDataLength)
           {
             Log.Debug("Anysee: PMT elementary stream {0} (0x{0:x}) CA data is too long", es.Pid);
             return false;
           }
-          Buffer.BlockCopy(descriptorData, 0, esToKeep.DescriptorData, offset, descriptorData.Length);
-          offset += descriptorData.Length;
+          descriptorData.CopyTo(esToKeep.DescriptorData, offset);
+          offset += descriptorData.Count;
         }
         esToKeep.DescriptorData[0] = (byte)((offset - 2) & 0xff);
         esToKeep.DescriptorData[1] = (byte)(((offset - 2) >> 8) & 0xff);

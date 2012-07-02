@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -1038,12 +1039,15 @@ namespace TvEngine
       }
 
       // The NetUP driver accepts standard PMT and converts it to CA PMT internally.
-      byte[] rawPmt = pmt.GetRawPmtCopy();
+      ReadOnlyCollection<byte> rawPmt = pmt.GetRawPmt();
       NetUpIoControl code = (NetUpIoControl)((uint)NetUpIoControl.PmtListChange | ((byte)listAction << 8) | (uint)command);
-      IntPtr buffer = Marshal.AllocCoTaskMem(rawPmt.Length);
-      Marshal.Copy(rawPmt, 0, buffer, rawPmt.Length);
-      //DVB_MMI.DumpBinary(buffer, 0, pmt.Length);
-      NetUpCommand ncommand = new NetUpCommand(code, buffer, rawPmt.Length, IntPtr.Zero, 0);
+      IntPtr buffer = Marshal.AllocCoTaskMem(rawPmt.Count);
+      for (int i = 0; i < rawPmt.Count; i++)
+      {
+        Marshal.WriteByte(buffer, i, rawPmt[i]);
+      }
+      //DVB_MMI.DumpBinary(buffer, 0, rawPmt.Count);
+      NetUpCommand ncommand = new NetUpCommand(code, buffer, rawPmt.Count, IntPtr.Zero, 0);
       int returnedByteCount;
       int hr = ncommand.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
       Marshal.FreeCoTaskMem(buffer);
