@@ -290,16 +290,14 @@ namespace TvEngine
     private UInt16 RegisterEcmAndEmmPids(Pmt pmt, Cat cat, ref Program82 programToDecode)
     {
       Log.Debug("MD Plugin: registering ECM and EMM details");
-      UInt16 count = 0;   // This variable will be used to count the number of distinct ECM/EMM PID combinations.
-      programToDecode.CaSystems = new CaSystem82[MaxCaSystemCount];
-      HashSet<UInt16> seenEcmPids = new HashSet<UInt16>();
-      Dictionary<UInt16, UInt32>.KeyCollection.Enumerator pidEn;
-      int i = 1;
+
+      // Build a dictionary of CA system -> { ECM PID } -> { provider ID } from the PMT.
+      Dictionary<UInt16, Dictionary<UInt16, HashSet<UInt32>>> seenEcmPids = new Dictionary<UInt16, Dictionary<UInt16, HashSet<UInt32>>>();
 
       // First get ECMs from the PMT program CA descriptors.
-      Log.Debug("MD Plugin: PMT program CA descriptors...");
+      Log.Debug("MD Plugin: reading PMT program CA descriptors...");
       IEnumerator<IDescriptor> descEn = pmt.ProgramCaDescriptors.GetEnumerator();
-      while (descEn.MoveNext() && count < 32)
+      while (descEn.MoveNext())
       {
         ConditionalAccessDescriptor cad = ConditionalAccessDescriptor.Decode(descEn.Current);
         if (cad == null)
@@ -309,38 +307,33 @@ namespace TvEngine
           DVB_MMI.DumpBinary(rawDescriptor, 0, rawDescriptor.Count);
           continue;
         }
-        pidEn = cad.Pids.Keys.GetEnumerator();
-        while (pidEn.MoveNext() && count < 32)
+        if (!seenEcmPids.ContainsKey(cad.CaSystemId))
         {
-          UInt16 pid = pidEn.Current;
-          Log.Debug("  ECM #{0} CA system ID = 0x{1:x}, PID = 0x{2:x}, provider = 0x{3:x}", i++, cad.CaSystemId, pid, cad.Pids[pid]);
-          if (!seenEcmPids.Contains(pid))
+          seenEcmPids.Add(cad.CaSystemId, cad.Pids);
+        }
+        else
+        {
+          foreach (UInt16 pid in cad.Pids.Keys)
           {
-            Log.Debug("    adding");
-            programToDecode.CaSystems[count].CaType = cad.CaSystemId;
-            programToDecode.CaSystems[count].EcmPid = pid;
-            programToDecode.CaSystems[count].ProviderId = cad.Pids[pid];
-            seenEcmPids.Add(pid);
-            if (count == 0)
+            if (seenEcmPids[cad.CaSystemId].ContainsKey(pid))
             {
-              programToDecode.EcmPid = pid;   // Default...
+              seenEcmPids[cad.CaSystemId][pid].UnionWith(cad.Pids[pid]);
             }
-            count++;
-          }
-          else
-          {
-            Log.Debug("    already seen");
+            else
+            {
+              seenEcmPids[cad.CaSystemId].Add(pid, cad.Pids[pid]);
+            }
           }
         }
       }
 
-      // Now get ECMs from the PMT elementary stream CA descriptors.
-      Log.Debug("MD Plugin: PMT elementary stream CA descriptors...");
+      // Add the ECMs from the PMT elementary stream CA descriptors.
+      Log.Debug("MD Plugin: merging PMT elementary stream CA descriptors...");
       IEnumerator<PmtElementaryStream> esEn = pmt.ElementaryStreams.GetEnumerator();
-      while (esEn.MoveNext() && count < 32)
+      while (esEn.MoveNext())
       {
         descEn = esEn.Current.CaDescriptors.GetEnumerator();
-        while (descEn.MoveNext() && count < 32)
+        while (descEn.MoveNext())
         {
           ConditionalAccessDescriptor cad = ConditionalAccessDescriptor.Decode(descEn.Current);
           if (cad == null)
@@ -350,35 +343,30 @@ namespace TvEngine
             DVB_MMI.DumpBinary(rawDescriptor, 0, rawDescriptor.Count);
             continue;
           }
-          pidEn = cad.Pids.Keys.GetEnumerator();
-          while (pidEn.MoveNext() && count < 32)
+          if (!seenEcmPids.ContainsKey(cad.CaSystemId))
           {
-            UInt16 pid = pidEn.Current;
-            Log.Debug("  ECM #{0} CA system ID = 0x{1:x}, PID = 0x{2:x}, provider = 0x{3:x}", i++, cad.CaSystemId, pid, cad.Pids[pid]);
-            if (!seenEcmPids.Contains(pid))
+            seenEcmPids.Add(cad.CaSystemId, cad.Pids);
+          }
+          else
+          {
+            foreach (UInt16 pid in cad.Pids.Keys)
             {
-              Log.Debug("    adding");
-              programToDecode.CaSystems[count].CaType = cad.CaSystemId;
-              programToDecode.CaSystems[count].EcmPid = pid;
-              programToDecode.CaSystems[count].ProviderId = cad.Pids[pid];
-              seenEcmPids.Add(pid);
-              if (count == 0)
+              if (seenEcmPids[cad.CaSystemId].ContainsKey(pid))
               {
-                programToDecode.EcmPid = pid;   // Default...
+                seenEcmPids[cad.CaSystemId][pid].UnionWith(cad.Pids[pid]);
               }
-              count++;
-            }
-            else
-            {
-              Log.Debug("    already seen");
+              else
+              {
+                seenEcmPids[cad.CaSystemId].Add(pid, cad.Pids[pid]);
+              }
             }
           }
         }
       }
 
-      // Finally get EMMs from the CAT descriptors.
-      Log.Debug("MD Plugin: CAT CA descriptors...");
-      i = 1;
+      // Build a dictionary of CA system -> { EMM PID } -> { provider ID } from the CAT.
+      Dictionary<UInt16, Dictionary<UInt16, HashSet<UInt32>>> seenEmmPids = new Dictionary<UInt16, Dictionary<UInt16, HashSet<UInt32>>>();
+      Log.Debug("MD Plugin: reading CAT CA descriptors...");
       descEn = cat.CaDescriptors.GetEnumerator();
       while (descEn.MoveNext())
       {
@@ -390,38 +378,120 @@ namespace TvEngine
           DVB_MMI.DumpBinary(rawDescriptor, 0, rawDescriptor.Count);
           continue;
         }
-
-        pidEn = cad.Pids.Keys.GetEnumerator();
-        while (pidEn.MoveNext())
+        if (!seenEmmPids.ContainsKey(cad.CaSystemId))
         {
-          UInt16 pid = pidEn.Current;
-          Log.Debug("  EMM #{0} CA system ID = 0x{1:x}, PID = 0x{2:x}, provider = 0x{3:x}", i++, cad.CaSystemId, pid, cad.Pids[pid]);
-
-          // Check if this EMM PID is linked to an ECM PID.          
-          bool found = false;
-          for (int j = 0; j < count; j++)
+          seenEmmPids.Add(cad.CaSystemId, cad.Pids);
+        }
+        else
+        {
+          foreach (UInt16 pid in cad.Pids.Keys)
           {
-            if (programToDecode.CaSystems[j].CaType == cad.CaSystemId && programToDecode.CaSystems[j].ProviderId == cad.Pids[pid])
+            if (seenEmmPids[cad.CaSystemId].ContainsKey(pid))
             {
-              Log.Debug("    linking to ECM 0x{0:x}", programToDecode.CaSystems[j].EcmPid);
-              found = true;
-              programToDecode.CaSystems[j].EmmPid = pid;
-              break;
+              seenEmmPids[cad.CaSystemId][pid].UnionWith(cad.Pids[pid]);
             }
-          }
-          if (!found && count < 32)
-          {
-            Log.Debug("    adding");
-            programToDecode.CaSystems[count].CaType = cad.CaSystemId;
-            programToDecode.CaSystems[count].EmmPid = pid;
-            programToDecode.CaSystems[count].ProviderId = cad.Pids[pid];
-            count++;
+            else
+            {
+              seenEmmPids[cad.CaSystemId].Add(pid, cad.Pids[pid]);
+            }
           }
         }
       }
-      if (count == 32)
+
+      // Merge the dictionaries and assemble the details to pass to the MD plugin.
+      UInt16 count = 0;   // This variable will be used to count the number of distinct CA system-ECM-EMM combinations.
+      programToDecode.CaSystems = new CaSystem82[MaxCaSystemCount];
+      IEnumerator<UInt32> en;
+      foreach (UInt16 caSystemId in seenEcmPids.Keys)
       {
-        Log.Debug("MD Plugin: unable to register all PIDs");
+        // Register each ECM PID and attempt to it with an EMM PID.
+        foreach (UInt16 ecmPid in seenEcmPids[caSystemId].Keys)
+        {
+          programToDecode.CaSystems[count].CaType = caSystemId;
+          programToDecode.CaSystems[count].EcmPid = ecmPid;
+          programToDecode.CaSystems[count].EmmPid = 0;
+          programToDecode.CaSystems[count].ProviderId = 0;
+
+          // Do we have EMM PIDs that we could link to the ECM PIDs for this CA system?
+          UInt32 providerId = 0;
+          UInt16 emmPid = 0;
+          if (seenEmmPids.ContainsKey(caSystemId))
+          {
+            foreach (UInt16 emm in seenEmmPids[caSystemId].Keys)
+            {
+              // Take a "backup" of the ECM PID provider IDs - we might need to restore them if the match with this
+              // EMM PID doesn't work out.
+              UInt32[] ecmProviderIds = new UInt32[seenEcmPids[caSystemId][ecmPid].Count];
+              seenEcmPids[caSystemId][ecmPid].CopyTo(ecmProviderIds);
+              seenEcmPids[caSystemId][ecmPid].IntersectWith(seenEmmPids[caSystemId][emm]);
+              if (seenEcmPids[caSystemId][ecmPid].Count > 0)
+              {
+                // We have a match! Pick the first common provider ID.
+                en = seenEcmPids[caSystemId][ecmPid].GetEnumerator();
+                en.MoveNext();
+                emmPid = emm;
+                providerId = en.Current;
+                break;
+              }
+              else
+              {
+                // Restore the ECM PID provider IDs for the test with the next EMM PID...
+                seenEcmPids[caSystemId][ecmPid].UnionWith(ecmProviderIds);
+              }
+            }
+          }
+
+          // Have we set the provider ID yet?
+          if (emmPid == 0)
+          {
+            // No - we didn't find an EMM PID match, so just pick the first ECM PID provider ID.
+            en = seenEcmPids[caSystemId][ecmPid].GetEnumerator();
+            if (en.MoveNext())
+            {
+              providerId = en.Current;
+            }
+          }
+          else
+          {
+            // We matched an EMM PID - that EMM PID shouldn't be reused again.
+            seenEmmPids[caSystemId].Remove(emmPid);
+          }
+          programToDecode.CaSystems[count].EmmPid = emmPid;
+          programToDecode.CaSystems[count].ProviderId = providerId;
+
+          if (count == 0)
+          {
+            programToDecode.EcmPid = ecmPid;
+          }
+          count++;
+          if (count == 32)
+          {
+            Log.Debug("MD Plugin: unable to register all PIDs");
+            return count;
+          }
+        }
+
+        // Having gone through the ECM PIDs, any remaining EMM PIDs for this CA system should be registered
+        // unconditionally.
+        foreach (UInt16 emmPid in seenEmmPids[caSystemId].Keys)
+        {
+          programToDecode.CaSystems[count].CaType = caSystemId;
+          programToDecode.CaSystems[count].EcmPid = 0;
+          programToDecode.CaSystems[count].EmmPid = emmPid;
+          UInt32 providerId = 0;
+          en = seenEmmPids[caSystemId][emmPid].GetEnumerator();
+          if (en.MoveNext())
+          {
+            providerId = en.Current;
+          }
+          programToDecode.CaSystems[count].ProviderId = providerId;
+          count++;
+          if (count == 32)
+          {
+            Log.Debug("MD Plugin: unable to register all PIDs");
+            return count;
+          }
+        }
       }
 
       return count;
