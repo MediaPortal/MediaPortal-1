@@ -496,6 +496,10 @@ namespace TvEngine
         // Having gone through the ECM PIDs, any remaining EMM PIDs for this CA system should be registered
         // unconditionally.
         Log.Debug("debug: loop remaining EMMs for CAS 0x{0:x}", caSystemId);
+        if (!seenEmmPids.ContainsKey(caSystemId))
+        {
+          continue;
+        }
         foreach (UInt16 emmPid in seenEmmPids[caSystemId].Keys)
         {
           Log.Debug("debug:   EMM 0x{0:x}", emmPid);
@@ -514,6 +518,34 @@ namespace TvEngine
           if (count == 32)
           {
             Log.Debug("MD Plugin: unable to register all PIDs");
+            return count;
+          }
+        }
+        seenEmmPids.Remove(caSystemId);
+      }
+
+      // Having gone through the CA systems for ECM PIDs, any remaining EMM PIDs for other CA systems should
+      // be registered unconditionally.
+      Log.Debug("debug: loop EMMs for remaining CASs");
+      foreach (UInt16 caSystemId in seenEmmPids.Keys)
+      {
+        Log.Debug("debug: loop EMMs for CAS 0x{0:x}", caSystemId);
+        foreach (UInt16 emmPid in seenEmmPids[caSystemId].Keys)
+        {
+          Log.Debug("debug:   EMM 0x{0:x}", emmPid);
+          programToDecode.CaSystems[count].CaType = caSystemId;
+          programToDecode.CaSystems[count].EcmPid = 0;
+          programToDecode.CaSystems[count].EmmPid = emmPid;
+          UInt32 providerId = 0;
+          en = seenEmmPids[caSystemId][emmPid].GetEnumerator();
+          if (en.MoveNext())
+          {
+            providerId = en.Current;
+          }
+          programToDecode.CaSystems[count].ProviderId = providerId;
+          count++;
+          if (count == 32)
+          {
             return count;
           }
         }
