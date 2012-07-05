@@ -1270,9 +1270,6 @@ namespace TvEngine
         return false;
       }
 
-      pmt.Dump();
-      cat.Dump();
-
       // If we get to here then we need to try to start decrypting the service.
       Program82 programToDecode;
       PidsToDecode pidsToDecode;
@@ -1315,18 +1312,15 @@ namespace TvEngine
       }
 
       // Instruct the MD filter to decrypt the service.
-      Log.Debug("debug: marshaling program");
       Marshal.StructureToPtr(programToDecode, _programmeBuffer, true);
-      DVB_MMI.DumpBinary(_programmeBuffer, 0, Program82Size);
-      Log.Debug("debug: marshaling PIDs");
+      //DVB_MMI.DumpBinary(_programmeBuffer, 0, Program82Size);
       Marshal.StructureToPtr(pidsToDecode, _pidBuffer, true);
-      DVB_MMI.DumpBinary(_pidBuffer, 0, PidsToDecodeSize);
+      //DVB_MMI.DumpBinary(_pidBuffer, 0, PidsToDecodeSize);
       try
       {
         IChangeChannel_Ex changeEx = freeSlot.Filter as IChangeChannel_Ex;
         if (changeEx != null)
         {
-          Log.Debug("debug: change channel ex");
           changeEx.ChangeChannelTP82_Ex(_programmeBuffer, _pidBuffer);
         }
         else
@@ -1334,16 +1328,13 @@ namespace TvEngine
           IChangeChannel change = freeSlot.Filter as IChangeChannel;
           if (change != null)
           {
-            Log.Debug("debug: change channel std");
             change.ChangeChannelTP82(_programmeBuffer);
           }
           else
           {
-            Log.Debug("debug: failed to acquire interface");
             throw new Exception("Failed to acquire interface on filter.");
           }
         }
-        Log.Debug("debug: done");
         freeSlot.CurrentChannel = channel;
       }
       catch (Exception ex)
