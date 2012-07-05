@@ -292,7 +292,7 @@ namespace TvEngine
             {
               if (schedule.IsOverlapping(assignedShedule))
               {
-                if (!(schedule.isSameTransponder(assignedShedule) && card.supportSubChannels))
+                if (!schedule.isSameTransponder(assignedShedule))
                 {
                   free = false;
                   //_overlap = true;

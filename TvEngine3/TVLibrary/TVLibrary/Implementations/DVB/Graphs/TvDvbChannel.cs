@@ -192,7 +192,10 @@ namespace TvLibrary.Implementations.DVB
       _pids.Add(0x1);    // CAT - for conditional access info when the service needs to be decrypted
       _pids.Add(0x10);   // DVB NIT - for service info
       _pids.Add(0x11);   // DVB SDT - for service info
-      _pids.Add(0x1ffb); // ATSC VCT - for service info
+      if (_currentChannel is ATSCChannel)
+      {
+        _pids.Add(0x1ffb); // ATSC VCT - for service info
+      }
 
       // If we can, also pass the PMT PID. We don't know what the PMT PID is when scanning.
       DVBBaseChannel ch = (DVBBaseChannel)_currentChannel;
@@ -250,6 +253,7 @@ namespace TvLibrary.Implementations.DVB
         // when we start waiting for PMT will cause us to miss or mess up the PMT handling.
         _pmtPid = -1;
         _pmt = null;
+        _cat = null;
         _eventPmt.Reset();
         DateTime dtStartWait = DateTime.Now;
         pmtFound = _eventPmt.WaitOne(_parameters.TimeOutPMT * 1000, true);
@@ -712,10 +716,17 @@ namespace TvLibrary.Implementations.DVB
         }
 
         _pids = new List<ushort>();
+        _pids.Add(0x0);             // PAT - for PMT monitoring
         _pids.Add(0x1);             // CAT - for conditional access info when the service needs to be decrypted
         _pids.Add(0x12);            // DVB EIT - for EPG info
-        _pids.Add(0x1ffb);          // ATSC VCT - for EPG info
-        _pids.Add((UInt16)_pmtPid); // PMT - for elementary stream and conditional access changes
+        if (_currentChannel is ATSCChannel)
+        {
+          _pids.Add(0x1ffb);        // ATSC VCT - for EPG info
+        }
+        if (_pmtPid != 0)
+        {
+          _pids.Add((UInt16)_pmtPid); // PMT - for elementary stream and conditional access changes
+        }
 
         _hasTeletext = false;
         _currentAudioStream = null;
@@ -911,14 +922,10 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Debug("TvDvbChannel: new PMT version");
           _pmt = pmt;
 
-          bool serviceFreeToAir = pmt.ProgramCaDescriptors.Count == 0;
-          if (serviceFreeToAir != _currentChannel.FreeToAir)
-          {
-            _currentChannel.FreeToAir = serviceFreeToAir;
-            Log.Log.Debug("TvDvbChannel: service FTA status changed to {0} according to descriptors in PMT", serviceFreeToAir);
-          }
-          // Attempt to grab the CAT if the service is encrypted.
-          if (!serviceFreeToAir)
+          // Attempt to grab the CAT if the service is encrypted. Note that we trust the setting on the
+          // channel because we are not currently able to detect elementary stream level encryption. Better
+          // to allow the user to do what they want - "user knows best".
+          if (!_currentChannel.FreeToAir)
           {
             GrabCat();
           }

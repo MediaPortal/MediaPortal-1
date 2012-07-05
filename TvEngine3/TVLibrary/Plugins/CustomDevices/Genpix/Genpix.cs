@@ -195,7 +195,7 @@ namespace TvEngine
       return true;
     }
 
-    #region graph state change callbacks
+    #region device state change callbacks
 
     /// <summary>
     /// This callback is invoked before a tune request is assembled.
@@ -203,11 +203,11 @@ namespace TvEngine
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
-    /// <param name="forceGraphStart">Ensure that the tuner's BDA graph is running when the tune request is submitted.</param>
-    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out bool forceGraphStart)
+    /// <param name="action">The action to take, if any.</param>
+    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out DeviceAction action)
     {
       Log.Debug("Genpix: on before tune callback");
-      forceGraphStart = false;
+      action = DeviceAction.Default;
 
       if (!_isGenpix)
       {
@@ -228,9 +228,8 @@ namespace TvEngine
       // hardware actually supports them. The Conexant SDK also specifies support for some DC II modulation and
       // FEC schemes.
       // We don't specifically support turbo or DC II modulation schemes in our tuning details, but we at least
-      // try to use a common mapping in our plugin code. However, we won't enforce mapping conversions in plugins
-      // to allow as much user flexibility as possible for
-      // hardware that is not known to support 
+      // try to use a common mapping in our plugin code. We won't enforce mapping conversions in plugins to allow
+      // as much user flexibility as possible.
 
       // Genpix driver mappings are as follows [BDA ModulationType => hardware/driver modulation]:
       // QPSK     => DVB-S QPSK
@@ -278,8 +277,8 @@ namespace TvEngine
       // 160 QAM => turbo FEC 16 PSK
 
       // Note: the DSS packet format used by North American DirecTV uses a packet format which is completely
-      // different from MPEG. It is not currently supported by TsWriter or TsReader. DC II is more similar to
-      // MPEG 2 but I'm unsure if TsWriter and TsReader fully support it.
+      // different from ISO MPEG 2. It is not currently supported by TsWriter or TsReader. DC II is more similar
+      // to MPEG 2 but I'm unsure if TsWriter and TsReader fully support it.
 
       if (ch.ModulationType == ModulationType.Mod64Qam)
       {

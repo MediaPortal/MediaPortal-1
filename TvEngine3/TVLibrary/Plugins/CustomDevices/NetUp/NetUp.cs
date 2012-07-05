@@ -857,15 +857,15 @@ namespace TvEngine
       }
     }
 
-    #region graph state change callbacks
+    #region device state change callbacks
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted, when the device's BDA graph is running
-    /// but before signal lock is checked.
+    /// This callback is invoked after a tune request is submitted, when the device is running but before
+    /// signal lock is checked.
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is tuned to.</param>
-    public override void OnGraphRunning(ITVCard tuner, IChannel currentChannel)
+    public override void OnRunning(ITVCard tuner, IChannel currentChannel)
     {
       // Ensure the MMI handler thread is always running when the graph is running.
       StartMmiHandlerThread();

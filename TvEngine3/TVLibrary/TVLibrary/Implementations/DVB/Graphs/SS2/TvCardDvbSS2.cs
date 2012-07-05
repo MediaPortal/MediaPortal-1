@@ -1354,6 +1354,24 @@ namespace TvLibrary.Implementations.DVB
     private HashSet<Int32> _filterPids = new HashSet<Int32>();
     private uint _deviceId = 0;
 
+    /// <summary>
+    /// Enable or disable always sending DiSEqC commands.
+    /// </summary>
+    /// <remarks>
+    /// DiSEqC commands are usually only sent when changing to a channel on a different switch port or at a
+    /// different positioner location. Enabling this option will cause DiSEqC commands to be sent on each
+    /// channel change.
+    /// </remarks>
+    private bool _alwaysSendDiseqcCommands = false;
+
+    /// <summary>
+    /// The number of times to repeat DiSEqC commands.
+    /// </summary>
+    /// <remarks>
+    /// When set to zero, commands are sent once; when set to one, commands are sent twice... etc.
+    /// </remarks>
+    private ushort _diseqcCommandRepeatCount = 0;
+
     #endregion
 
     #region ctor
@@ -1374,9 +1392,25 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.Debug("TvCardDvbSs2: failed to locate B2C2 interfaces");
       }
-      
+
+      if (_devicePath != null)
+      {
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Card c = layer.GetCardByDevicePath(_devicePath);
+        if (c != null)
+        {
+          _alwaysSendDiseqcCommands = c.AlwaysSendDiseqcCommands;
+          _diseqcCommandRepeatCount = (ushort)c.DiseqcCommandRepeatCount;
+          if (_diseqcCommandRepeatCount > 5)
+          {
+            // It would be rare that commands would need to be repeated more than twice. Five times
+            // is a more than reasonable practical limit.
+            _diseqcCommandRepeatCount = 5;
+          }
+        }
+      }
       _generalBuffer = Marshal.AllocCoTaskMem(DeviceInfoSize * MaxDeviceCount);
-      _diseqcController = new DiseqcController(this);
+      _diseqcController = new DiseqcController(this, _alwaysSendDiseqcCommands, _diseqcCommandRepeatCount);
       ReadTunerCapabilities();
       Release.ComObject(_filterB2c2Adapter);
     }
@@ -1766,7 +1800,7 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         Log.Log.WriteFile("ss2: build graph");
-        if (_isGraphBuilt)
+        if (_isDeviceInitialised)
         {
           Log.Log.Error("ss2: Graph already built");
           throw new TvException("Graph already built");
@@ -1858,13 +1892,13 @@ namespace TvLibrary.Implementations.DVB
           throw new TvExceptionGraphBuildingFailed("Graph building failed");
         }
         SetFilterPids(new HashSet<UInt16>(), ModulationType.ModNotSet, false);
-        _isGraphBuilt = true;
+        _isDeviceInitialised = true;
       }
       catch (Exception ex)
       {
         Log.Log.Write(ex);
         Dispose();
-        _isGraphBuilt = false;
+        _isDeviceInitialised = false;
         throw new TvExceptionGraphBuildingFailed("Graph building failed", ex);
       }
     }
@@ -2097,16 +2131,16 @@ namespace TvLibrary.Implementations.DVB
       return false;
     }
 
-    #region graph state change callbacks
+    #region device state change callbacks
 
     /// <summary>
-    /// This callback is invoked when the device BDA graph construction is complete.
+    /// This callback is invoked when device initialisation is complete.
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
-    /// <param name="startGraphImmediately">Ensure that the tuner's BDA graph is started immediately.</param>
-    public virtual void OnGraphBuilt(ITVCard tuner, out bool startGraphImmediately)
+    /// <param name="action">The action to take, if any.</param>
+    public virtual void OnInitialised(ITVCard tuner, out DeviceAction action)
     {
-      startGraphImmediately = false;
+      action = DeviceAction.Default;
     }
 
     /// <summary>
@@ -2115,14 +2149,14 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
-    /// <param name="forceGraphStart">Ensure that the tuner's BDA graph is running when the tune request is submitted.</param>
-    public virtual void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out bool forceGraphStart)
+    /// <param name="action">The action to take, if any.</param>
+    public virtual void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out DeviceAction action)
     {
-      forceGraphStart = false;
+      action = DeviceAction.Default;
     }
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted but before the device's BDA graph is started.
+    /// This callback is invoked after a tune request is submitted but before the device is started.
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
@@ -2131,37 +2165,22 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted, when the device's BDA graph is running
-    /// but before signal lock is checked.
+    /// This callback is invoked after a tune request is submitted, when the device is running but before
+    /// signal lock is checked.
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is tuned to.</param>
-    public virtual void OnGraphRunning(ITVCard tuner, IChannel currentChannel)
+    public virtual void OnRunning(ITVCard tuner, IChannel currentChannel)
     {
     }
 
     /// <summary>
-    /// This callback is invoked before the device's BDA graph is stopped.
+    /// This callback is invoked before the device is stopped.
     /// </summary>
     /// <param name="tuner">The device instance that this device instance is associated with.</param>
-    /// <param name="preventGraphStop">Prevent the device's BDA graph from being stopped.</param>
-    /// <param name="restartGraph">Allow the device's BDA graph to be stopped, but then restart it immediately.</param>
-    public virtual void OnGraphStop(ITVCard tuner, out bool preventGraphStop, out bool restartGraph)
+    /// <param name="action">As an input, the action that TV Server wants to take; as an output, the action to take.</param>
+    public virtual void OnStop(ITVCard tuner, ref DeviceAction action)
     {
-      preventGraphStop = false;
-      restartGraph = false;
-    }
-
-    /// <summary>
-    /// This callback is invoked before the device's BDA graph is paused.
-    /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
-    /// <param name="preventGraphPause">Prevent the device's BDA graph from being paused.</param>
-    /// <param name="restartGraph">Stop the device's BDA graph, and then restart it immediately.</param>
-    public virtual void OnGraphPause(ITVCard tuner, out bool preventGraphPause, out bool restartGraph)
-    {
-      preventGraphPause = false;
-      restartGraph = false;
     }
 
     #endregion
@@ -2461,9 +2480,6 @@ namespace TvLibrary.Implementations.DVB
 
     /// <summary>
     /// Stop the device. The actual result of this function depends on device configuration:
-    /// - graph stop
-    /// - graph pause
-    /// TODO graph destroy
     /// </summary>
     public override void Stop()
     {

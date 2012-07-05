@@ -35,7 +35,12 @@ namespace TvLibrary.Implementations.DVB
 
     private IDiseqcDevice _device = null;
     private DVBSChannel _previousChannel = null;
-    private int _currentPosition = -1;
+    // My experiments with a wide variety of tuners suggest that only TeVii tuners require this setting to be
+    // enabled.
+    private bool _alwaysSendCommands = false;
+    private ushort _repeatCount = 0;
+    private ushort _commandDelay = 100;
+    private int _currentPosition = -1;  // Ensure that we always send motor commands on first tune.
     private int _currentStepsAzimuth;
     private int _currentStepsElevation;
 
@@ -45,13 +50,18 @@ namespace TvLibrary.Implementations.DVB
     /// Initialise a new instance of the <see cref="DiseqcController"/> class.
     /// </summary>
     /// <param name="device">A device's DiSEqC control interface.</param>
-    public DiseqcController(IDiseqcDevice device)
+    /// <param name="alwaysSendCommands">Set <c>true</c> to always send commands when changing channel, even when
+    ///   the switch and/or positioner are thought to be configured correctly.</param>
+    /// <param name="repeatCount">The number of times to repeat each command.</param>
+    public DiseqcController(IDiseqcDevice device, bool alwaysSendCommands, ushort repeatCount)
     {
       _device = device;
       if (device == null)
       {
         throw new ArgumentException("DiSEqC Controller: device is null");
       }
+      _alwaysSendCommands = alwaysSendCommands;
+      _repeatCount = repeatCount;
     }
 
     /// <summary>
@@ -68,28 +78,28 @@ namespace TvLibrary.Implementations.DVB
       cmd[1] = (byte)DiseqcAddress.AnySwitch;
       cmd[2] = (byte)DiseqcCommand.ClearReset;
       _device.SendCommand(cmd);
-      System.Threading.Thread.Sleep(100);
+      System.Threading.Thread.Sleep(_commandDelay);
 
       Log.Log.Debug("DiSEqC Controller: power on");
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AnySwitch;
       cmd[2] = (byte)DiseqcCommand.PowerOn;
       _device.SendCommand(cmd);
-      System.Threading.Thread.Sleep(100);
+      System.Threading.Thread.Sleep(_commandDelay);
 
       Log.Log.Debug("DiSEqC Controller: reset");
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AnySwitch;
       cmd[2] = (byte)DiseqcCommand.Reset;
       _device.SendCommand(cmd);
-      System.Threading.Thread.Sleep(100);
+      System.Threading.Thread.Sleep(_commandDelay);
 
       Log.Log.Debug("DiSEqC Controller: clear reset");
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AnySwitch;
       cmd[2] = (byte)DiseqcCommand.ClearReset;
       _device.SendCommand(cmd);
-      System.Threading.Thread.Sleep(100);
+      System.Threading.Thread.Sleep(_commandDelay);
 
       Log.Log.Debug("DiSEqC Controller: power on");
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
@@ -113,10 +123,6 @@ namespace TvLibrary.Implementations.DVB
       }
 
       Log.Log.Debug("DiSEqC Controller: switch to channel");
-
-      // TODO - make this a user controlable setting. So far it seems TeVii tuners are the only tuners that require
-      // it to be enabled.
-      bool alwaysSendCommands = false;
       bool isHighBand = channel.Frequency > channel.LnbType.SwitchFrequency && channel.LnbType.SwitchFrequency > 0;
       bool wasHighBand = !isHighBand;
       if (_previousChannel != null)
@@ -134,7 +140,7 @@ namespace TvLibrary.Implementations.DVB
       if (sendCommand)
       {
         // If we get to here then there is a valid command to send, but we might not need/want to send it.
-        if (!alwaysSendCommands &&
+        if (!_alwaysSendCommands &&
           _previousChannel != null &&
           _previousChannel.Diseqc == channel.Diseqc &&
           (
@@ -173,24 +179,25 @@ namespace TvLibrary.Implementations.DVB
           command[3] |= (byte)(isHighBand ? 1 : 0);
           command[3] |= (byte)((isHorizontal) ? 2 : 0);
           command[3] |= (byte)((portNumber - 1) << 2);
-          _device.SendCommand(command);
         }
         else
         {
           Log.Log.Debug("DiSEqC Controller: DiSEqC 1.1 switch command");
           command[2] = (byte)DiseqcCommand.WriteN1;
           command[3] |= (byte)(portNumber - 1);
-          _device.SendCommand(command);
         }
+        _device.SendCommand(command);
+        Repeat(command);
       }
 
       // Positioner movement.
       sendCommand = channel.SatelliteIndex > 0;
       if (sendCommand)
       {
-        if (!alwaysSendCommands &&
-          _previousChannel != null &&
-          _previousChannel.SatelliteIndex == channel.SatelliteIndex)
+        if (!_alwaysSendCommands &&
+          _currentStepsAzimuth == 0 &&
+          _currentStepsElevation == 0 &&
+          channel.SatelliteIndex == _currentPosition)
         {
           sendCommand = false;
         }
@@ -225,6 +232,21 @@ namespace TvLibrary.Implementations.DVB
       _previousChannel = channel;
     }
 
+    /// <summary>
+    /// Repeat a given command for the configured number of repeats with the configured command delay.
+    /// </summary>
+    /// <param name="command">The command to repeat.</param>
+    private void Repeat(byte[] command)
+    {
+      command[0] = (byte)DiseqcFrame.CommandRepeatTransmissionNoReply;
+      for (int i = 0; i < _repeatCount; i++)
+      {
+        System.Threading.Thread.Sleep(_commandDelay);
+        Log.Log.Debug("  repeat {0}...", i + 1);
+        _device.SendCommand(command);
+      }
+    }
+
     #region positioner (motor) control
 
     /// <summary>
@@ -238,7 +260,7 @@ namespace TvLibrary.Implementations.DVB
       cmd[1] = (byte)DiseqcAddress.AnyPositioner;
       cmd[2] = (byte)DiseqcCommand.Halt;
       _device.SendCommand(cmd);
-      System.Threading.Thread.Sleep(100);
+      Repeat(cmd);
     }
 
     /// <summary>
@@ -252,7 +274,7 @@ namespace TvLibrary.Implementations.DVB
       cmd[1] = (byte)DiseqcAddress.AzimuthPositioner;
       cmd[2] = (byte)DiseqcCommand.LimitEast;
       _device.SendCommand(cmd);
-      System.Threading.Thread.Sleep(100);
+      Repeat(cmd);
     }
 
     /// <summary>
@@ -266,7 +288,7 @@ namespace TvLibrary.Implementations.DVB
       cmd[1] = (byte)DiseqcAddress.AzimuthPositioner;
       cmd[2] = (byte)DiseqcCommand.LimitWest;
       _device.SendCommand(cmd);
-      System.Threading.Thread.Sleep(100);
+      Repeat(cmd);
     }
 
     /// <summary>
@@ -285,7 +307,7 @@ namespace TvLibrary.Implementations.DVB
           cmd[2] = (byte)DiseqcCommand.StorePosition;
           cmd[3] = 0;
           _device.SendCommand(cmd);
-          System.Threading.Thread.Sleep(100);
+          Repeat(cmd);
         }
         else
         {
@@ -295,7 +317,7 @@ namespace TvLibrary.Implementations.DVB
           cmd[1] = (byte)DiseqcAddress.AzimuthPositioner;
           cmd[2] = (byte)DiseqcCommand.LimitsOff;
           _device.SendCommand(cmd);
-          System.Threading.Thread.Sleep(100);
+          Repeat(cmd);
         }
       }
     }
@@ -342,7 +364,7 @@ namespace TvLibrary.Implementations.DVB
       }
       cmd[3] = (byte)(0x100 - steps);
       _device.SendCommand(cmd);
-      System.Threading.Thread.Sleep(100);
+      Repeat(cmd);
       //System.Threading.Thread.Sleep(1000*steps);
       //StopMotor();
     }
@@ -365,12 +387,7 @@ namespace TvLibrary.Implementations.DVB
       cmd[2] = (byte)DiseqcCommand.StorePosition;
       cmd[3] = position;
       _device.SendCommand(cmd);
-      System.Threading.Thread.Sleep(100);
-
-      // Repeat the command.
-      cmd[0] = (byte)DiseqcFrame.CommandRepeatTransmissionNoReply;
-      _device.SendCommand(cmd);
-      System.Threading.Thread.Sleep(100);
+      Repeat(cmd);
 
       // The current position becomes our reference.
       _currentPosition = position;
@@ -391,12 +408,7 @@ namespace TvLibrary.Implementations.DVB
       cmd[2] = (byte)DiseqcCommand.GotoPosition;
       cmd[3] = 0;
       _device.SendCommand(cmd);
-      System.Threading.Thread.Sleep(100);
-
-      // Repeat the command.
-      cmd[0] = (byte)DiseqcFrame.CommandRepeatTransmissionNoReply;
-      _device.SendCommand(cmd);
-      System.Threading.Thread.Sleep(100);
+      Repeat(cmd);
 
       // The current position becomes our reference.
       _currentPosition = 0;
@@ -415,11 +427,6 @@ namespace TvLibrary.Implementations.DVB
       {
         throw new ArgumentException("DiSEqC Controller: position cannot be less than or equal to zero");
       }
-      if (_currentStepsAzimuth == 0 && _currentStepsElevation == 0 && position == _currentPosition)
-      {
-        Log.Log.Debug("DiSEqC Controller: already at the required position");
-        return;
-      }
 
       byte[] cmd = new byte[4];
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
@@ -427,12 +434,7 @@ namespace TvLibrary.Implementations.DVB
       cmd[2] = (byte)DiseqcCommand.GotoPosition;
       cmd[3] = position;
       _device.SendCommand(cmd);
-      System.Threading.Thread.Sleep(100);
-
-      // Repeat the command.
-      cmd[0] = (byte)DiseqcFrame.CommandRepeatTransmissionNoReply;
-      _device.SendCommand(cmd);
-      System.Threading.Thread.Sleep(100);
+      Repeat(cmd);
 
       // The current position becomes our reference.
       _currentPosition = position;

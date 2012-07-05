@@ -56,7 +56,7 @@ namespace TvLibrary.Implementations.RadioWebStream
       _isScanning = false;
       _epgGrabbing = false;
       _tunerType = CardType.RadioWebStream;
-      _stopGraph = true;  // Pause graph not supported.
+      _idleMode = DeviceIdleMode.Stop;
     }
 
     #endregion

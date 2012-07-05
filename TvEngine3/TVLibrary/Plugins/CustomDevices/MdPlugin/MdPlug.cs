@@ -378,30 +378,24 @@ namespace TvEngine
           DVB_MMI.DumpBinary(rawDescriptor, 0, rawDescriptor.Count);
           continue;
         }
-        Log.Debug("debug: check EMMs for CAS 0x{0:x}", cad.CaSystemId);
         if (!seenEmmPids.ContainsKey(cad.CaSystemId))
         {
-          Log.Debug("debug: add CAS");
           seenEmmPids.Add(cad.CaSystemId, cad.Pids);
         }
         else
         {
           foreach (UInt16 pid in cad.Pids.Keys)
           {
-            Log.Debug("debug: check EMM CAS for PID 0x{0:x}", pid);
             if (seenEmmPids[cad.CaSystemId].ContainsKey(pid))
             {
-              Log.Debug("debug: union");
               seenEmmPids[cad.CaSystemId][pid].UnionWith(cad.Pids[pid]);
             }
             else
             {
-              Log.Debug("debug: add");
               seenEmmPids[cad.CaSystemId].Add(pid, cad.Pids[pid]);
             }
           }
         }
-        Log.Debug("debug: loop");
       }
 
       // Merge the dictionaries and assemble the details to pass to the MD plugin.
@@ -412,10 +406,8 @@ namespace TvEngine
       foreach (UInt16 caSystemId in seenEcmPids.Keys)
       {
         // Register each ECM PID and attempt to link it with an EMM PID.
-        Log.Debug("debug: loop ECMs for CAS 0x{0:x}", caSystemId);
         foreach (UInt16 ecmPid in seenEcmPids[caSystemId].Keys)
         {
-          Log.Debug("debug:   ECM 0x{0:x}", ecmPid);
           programToDecode.CaSystems[count].CaType = caSystemId;
           programToDecode.CaSystems[count].EcmPid = ecmPid;
           programToDecode.CaSystems[count].EmmPid = 0;
@@ -424,37 +416,28 @@ namespace TvEngine
           // Do we have EMM PIDs that we could link to the ECM PIDs for this CA system?
           UInt32 providerId = 0;
           UInt16 emmPid = 0;
-          Log.Debug("debug: check EMMs for CAS 0x{0:x}", caSystemId);
           if (seenEmmPids.ContainsKey(caSystemId))
           {
-            Log.Debug("debug: loop EMMs for CAS 0x{0:x}", caSystemId);
             foreach (UInt16 emm in seenEmmPids[caSystemId].Keys)
             {
-              Log.Debug("debug:   EMM 0x{0:x}", emm);
               // Take a "backup" of the ECM PID provider IDs - we might need to restore them if the match with this
               // EMM PID doesn't work out.
               UInt32[] ecmProviderIds = new UInt32[seenEcmPids[caSystemId][ecmPid].Count];
               seenEcmPids[caSystemId][ecmPid].CopyTo(ecmProviderIds);
-              Log.Debug("debug: intersect...");
               seenEcmPids[caSystemId][ecmPid].IntersectWith(seenEmmPids[caSystemId][emm]);
-              Log.Debug("debug: intersected");
               if (seenEcmPids[caSystemId][ecmPid].Count > 0)
               {
                 // We have a match! Pick the first common provider ID.
-                Log.Debug("debug: got match");
                 en = seenEcmPids[caSystemId][ecmPid].GetEnumerator();
                 en.MoveNext();
                 emmPid = emm;
                 providerId = en.Current;
-                Log.Debug("debug: choose provider 0x{0:x}", providerId);
                 break;
               }
               else
               {
-                Log.Debug("debug: no match");
                 // Restore the ECM PID provider IDs for the test with the next EMM PID...
                 seenEcmPids[caSystemId][ecmPid].UnionWith(ecmProviderIds);
-                Log.Debug("debug: restored");
               }
             }
           }
@@ -462,21 +445,17 @@ namespace TvEngine
           // Have we set the provider ID yet?
           if (emmPid == 0)
           {
-            Log.Debug("debug: choosing ECM provider...");
             // No - we didn't find an EMM PID match, so just pick the first ECM PID provider ID.
             en = seenEcmPids[caSystemId][ecmPid].GetEnumerator();
             if (en.MoveNext())
             {
               providerId = en.Current;
             }
-            Log.Debug("debug: choose provider 0x{0:x}", providerId);
           }
           else
           {
             // We matched an EMM PID - that EMM PID shouldn't be reused again.
-            Log.Debug("debug: removing EMM PID 0x{0:x}", emmPid);
             seenEmmPids[caSystemId].Remove(emmPid);
-            Log.Debug("debug: removed");
           }
           programToDecode.CaSystems[count].EmmPid = emmPid;
           programToDecode.CaSystems[count].ProviderId = providerId;
@@ -495,14 +474,12 @@ namespace TvEngine
 
         // Having gone through the ECM PIDs, any remaining EMM PIDs for this CA system should be registered
         // unconditionally.
-        Log.Debug("debug: loop remaining EMMs for CAS 0x{0:x}", caSystemId);
         if (!seenEmmPids.ContainsKey(caSystemId))
         {
           continue;
         }
         foreach (UInt16 emmPid in seenEmmPids[caSystemId].Keys)
         {
-          Log.Debug("debug:   EMM 0x{0:x}", emmPid);
           programToDecode.CaSystems[count].CaType = caSystemId;
           programToDecode.CaSystems[count].EcmPid = 0;
           programToDecode.CaSystems[count].EmmPid = emmPid;
@@ -513,11 +490,9 @@ namespace TvEngine
             providerId = en.Current;
           }
           programToDecode.CaSystems[count].ProviderId = providerId;
-          Log.Debug("debug: choose provider 0x{0:x}", providerId);
           count++;
           if (count == 32)
           {
-            Log.Debug("MD Plugin: unable to register all PIDs");
             return count;
           }
         }
@@ -526,13 +501,10 @@ namespace TvEngine
 
       // Having gone through the CA systems for ECM PIDs, any remaining EMM PIDs for other CA systems should
       // be registered unconditionally.
-      Log.Debug("debug: loop EMMs for remaining CASs");
       foreach (UInt16 caSystemId in seenEmmPids.Keys)
       {
-        Log.Debug("debug: loop EMMs for CAS 0x{0:x}", caSystemId);
         foreach (UInt16 emmPid in seenEmmPids[caSystemId].Keys)
         {
-          Log.Debug("debug:   EMM 0x{0:x}", emmPid);
           programToDecode.CaSystems[count].CaType = caSystemId;
           programToDecode.CaSystems[count].EcmPid = 0;
           programToDecode.CaSystems[count].EmmPid = emmPid;

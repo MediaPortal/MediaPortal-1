@@ -177,7 +177,7 @@ namespace SetupTv.Sections
           //CAM and CAM limit don't apply to non-digital cards
           if (cardType.ToUpperInvariant().Contains("DVB") || cardType.ToUpperInvariant().Contains("ATSC"))
           {
-            if (card.CAM)
+            if (card.UseConditionalAccess)
             {
               item.SubItems.Add("Yes");
             }

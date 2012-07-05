@@ -990,7 +990,7 @@ namespace TvEngine
       return true;
     }
 
-    #region graph state change callbacks
+    #region device state change callbacks
 
     /// <summary>
     /// This callback is invoked before a tune request is assembled.
@@ -998,11 +998,11 @@ namespace TvEngine
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
-    /// <param name="forceGraphStart">Ensure that the tuner's BDA graph is running when the tune request is submitted.</param>
-    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out bool forceGraphStart)
+    /// <param name="action">The action to take, if any.</param>
+    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out DeviceAction action)
     {
       Log.Debug("Digital Everywhere: on before tune callback");
-      forceGraphStart = false;
+      action = DeviceAction.Default;
 
       if (!_isDigitalEverywhere)
       {
@@ -1064,12 +1064,12 @@ namespace TvEngine
     }
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted, when the device's BDA graph is running
-    /// but before signal lock is checked.
+    /// This callback is invoked after a tune request is submitted, when the device is running but before
+    /// signal lock is checked.
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is tuned to.</param>
-    public override void OnGraphRunning(ITVCard tuner, IChannel currentChannel)
+    public override void OnRunning(ITVCard tuner, IChannel currentChannel)
     {
       // Ensure the MMI handler thread is always running when the graph is running.
       StartMmiHandlerThread();

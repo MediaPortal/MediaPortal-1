@@ -36,20 +36,20 @@ namespace SetupTv.Dialogs
       this.label25 = new System.Windows.Forms.Label();
       this.mpButtonCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
-      this.id = new System.Windows.Forms.ColumnHeader();
-      this.name = new System.Windows.Forms.ColumnHeader();
-      this.provider = new System.Windows.Forms.ColumnHeader();
-      this.type = new System.Windows.Forms.ColumnHeader();
-      this.details = new System.Windows.Forms.ColumnHeader();
+      this.id = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.name = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.provider = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.type = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.details = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.tuningDetailContextMenu = new MediaPortal.UserInterface.Controls.MPContextMenuStrip();
       this.menuButtonAdd = new System.Windows.Forms.ToolStripMenuItem();
       this.menuButtonEdit = new System.Windows.Forms.ToolStripMenuItem();
       this.menuButtonRemove = new System.Windows.Forms.ToolStripMenuItem();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.gbTuningdetails = new System.Windows.Forms.GroupBox();
-      this.btnAddTuningDetail = new System.Windows.Forms.Button();
-      this.btnEditTuningDetail = new System.Windows.Forms.Button();
       this.btnRemoveTuningDetail = new System.Windows.Forms.Button();
+      this.btnEditTuningDetail = new System.Windows.Forms.Button();
+      this.btnAddTuningDetail = new System.Windows.Forms.Button();
       this.tuningDetailContextMenu.SuspendLayout();
       this.gbTuningdetails.SuspendLayout();
       this.SuspendLayout();
@@ -69,9 +69,9 @@ namespace SetupTv.Dialogs
       this.checkBoxVisibleInTvGuide.AutoSize = true;
       this.checkBoxVisibleInTvGuide.Location = new System.Drawing.Point(31, 38);
       this.checkBoxVisibleInTvGuide.Name = "checkBoxVisibleInTvGuide";
-      this.checkBoxVisibleInTvGuide.Size = new System.Drawing.Size(108, 17);
+      this.checkBoxVisibleInTvGuide.Size = new System.Drawing.Size(96, 17);
       this.checkBoxVisibleInTvGuide.TabIndex = 1;
-      this.checkBoxVisibleInTvGuide.Text = "Visible in tv guide";
+      this.checkBoxVisibleInTvGuide.Text = "Visible in guide";
       this.checkBoxVisibleInTvGuide.TextAlign = System.Drawing.ContentAlignment.TopRight;
       this.checkBoxVisibleInTvGuide.UseVisualStyleBackColor = true;
       // 
@@ -124,8 +124,8 @@ namespace SetupTv.Dialogs
       this.mpListView1.TabIndex = 51;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
-      this.mpListView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mpListView1_MouseDoubleClick);
       this.mpListView1.SelectedIndexChanged += new System.EventHandler(this.mpListView1_SelectedIndexChanged);
+      this.mpListView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mpListView1_MouseDoubleClick);
       // 
       // id
       // 
@@ -202,15 +202,16 @@ namespace SetupTv.Dialogs
       this.gbTuningdetails.TabStop = false;
       this.gbTuningdetails.Text = "Tuningdetails";
       // 
-      // btnAddTuningDetail
+      // btnRemoveTuningDetail
       // 
-      this.btnAddTuningDetail.Location = new System.Drawing.Point(6, 231);
-      this.btnAddTuningDetail.Name = "btnAddTuningDetail";
-      this.btnAddTuningDetail.Size = new System.Drawing.Size(75, 23);
-      this.btnAddTuningDetail.TabIndex = 52;
-      this.btnAddTuningDetail.Text = "Add";
-      this.btnAddTuningDetail.UseVisualStyleBackColor = true;
-      this.btnAddTuningDetail.Click += new System.EventHandler(this.menuButtonAdd_Click);
+      this.btnRemoveTuningDetail.Enabled = false;
+      this.btnRemoveTuningDetail.Location = new System.Drawing.Point(168, 231);
+      this.btnRemoveTuningDetail.Name = "btnRemoveTuningDetail";
+      this.btnRemoveTuningDetail.Size = new System.Drawing.Size(75, 23);
+      this.btnRemoveTuningDetail.TabIndex = 54;
+      this.btnRemoveTuningDetail.Text = "Remove";
+      this.btnRemoveTuningDetail.UseVisualStyleBackColor = true;
+      this.btnRemoveTuningDetail.Click += new System.EventHandler(this.menuButtonRemove_Click);
       // 
       // btnEditTuningDetail
       // 
@@ -223,16 +224,15 @@ namespace SetupTv.Dialogs
       this.btnEditTuningDetail.UseVisualStyleBackColor = true;
       this.btnEditTuningDetail.Click += new System.EventHandler(this.menuButtonEdit_Click);
       // 
-      // btnRemoveTuningDetail
+      // btnAddTuningDetail
       // 
-      this.btnRemoveTuningDetail.Enabled = false;
-      this.btnRemoveTuningDetail.Location = new System.Drawing.Point(168, 231);
-      this.btnRemoveTuningDetail.Name = "btnRemoveTuningDetail";
-      this.btnRemoveTuningDetail.Size = new System.Drawing.Size(75, 23);
-      this.btnRemoveTuningDetail.TabIndex = 54;
-      this.btnRemoveTuningDetail.Text = "Remove";
-      this.btnRemoveTuningDetail.UseVisualStyleBackColor = true;
-      this.btnRemoveTuningDetail.Click += new System.EventHandler(this.menuButtonRemove_Click);
+      this.btnAddTuningDetail.Location = new System.Drawing.Point(6, 231);
+      this.btnAddTuningDetail.Name = "btnAddTuningDetail";
+      this.btnAddTuningDetail.Size = new System.Drawing.Size(75, 23);
+      this.btnAddTuningDetail.TabIndex = 52;
+      this.btnAddTuningDetail.Text = "Add";
+      this.btnAddTuningDetail.UseVisualStyleBackColor = true;
+      this.btnAddTuningDetail.Click += new System.EventHandler(this.menuButtonAdd_Click);
       // 
       // FormEditChannel
       // 

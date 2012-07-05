@@ -198,7 +198,7 @@ namespace SetupTv.Sections
       InitializeComponent();
       //insert complete ci menu dialog to tab
       Card dbCard = Card.Retrieve(_cardNumber);
-      if (dbCard.CAM == true)
+      if (dbCard.UseConditionalAccess == true)
       {
         ciMenuDialog = new CI_Menu_Dialog(_cardNumber);
         this.tabPageCIMenu.Controls.Add(ciMenuDialog);
@@ -1911,6 +1911,11 @@ namespace SetupTv.Sections
     {
       mpGrpAdvancedTuning.Visible = checkBoxAdvancedTuning.Checked;
       SetControlStates();
+    }
+
+    private void mpCombo_MouseHover(object sender, EventArgs e)
+    {
+      toolTip1.SetToolTip((Control)sender, ((MPComboBox)sender).SelectedItem.ToString());
     }
   }
 }

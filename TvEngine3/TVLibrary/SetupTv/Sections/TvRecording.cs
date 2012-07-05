@@ -39,25 +39,6 @@ namespace SetupTv.Sections
 {
   public partial class TvRecording : SectionSettings
   {
-    #region CardInfo class
-
-    public class CardInfo
-    {
-      public Card card;
-
-      public CardInfo(Card newcard)
-      {
-        card = newcard;
-      }
-
-      public override string ToString()
-      {
-        return card.Name;
-      }
-    }
-
-    #endregion
-
     #region Example Format class
 
     private readonly int[] _formatIndex = new int[2];
@@ -361,8 +342,7 @@ namespace SetupTv.Sections
 
     private void comboBoxCards_SelectedIndexChanged(object sender, EventArgs e)
     {
-      CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
-      textBoxFolder.Text = info.card.RecordingFolder;
+      textBoxFolder.Text = ((Card)comboBoxCards.SelectedItem).RecordingFolder;
       if (String.IsNullOrEmpty(textBoxFolder.Text))
       {
         string recPath =
@@ -384,19 +364,6 @@ namespace SetupTv.Sections
         textBoxFolder.Text = recPath;
         _needRestart = true;
       }
-      /*
-       * Mantis #0001991: disable mpg recording  (part I: force TS recording format)
-       * 
-      switch (info.card.RecordingFormat)
-      {
-        case 0:
-          comboBoxRecordingFormat.SelectedIndex = 0;
-          break;
-        case 1:
-          comboBoxRecordingFormat.SelectedIndex = 1;
-          break;
-      }
-      */
     }
 
     // Browse Recording folder
@@ -409,12 +376,12 @@ namespace SetupTv.Sections
       if (dlg.ShowDialog(this) == DialogResult.OK)
       {
         textBoxFolder.Text = dlg.SelectedPath;
-        CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
-        if (info.card.RecordingFolder != textBoxFolder.Text)
+        Card card = (Card)comboBoxCards.SelectedItem;
+        if (card.RecordingFolder != textBoxFolder.Text)
         {
           _needRestart = true;
-          info.card.RecordingFolder = textBoxFolder.Text;
-          info.card.Persist();
+          card.RecordingFolder = textBoxFolder.Text;
+          card.Persist();
           LoadComboBoxDrive();
         }
       }
@@ -429,7 +396,7 @@ namespace SetupTv.Sections
       IList<Card> cards = Card.ListAll();
       foreach (Card card in cards)
       {
-        comboBoxCards.Items.Add(new CardInfo(card));
+        comboBoxCards.Items.Add(card);
       }
       if (comboBoxCards.Items.Count > 0)
         comboBoxCards.SelectedIndex = 0;
@@ -464,11 +431,11 @@ namespace SetupTv.Sections
 
     private void textBoxFolder_TextChanged(object sender, EventArgs e)
     {
-      CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
-      if (info.card.RecordingFolder != textBoxFolder.Text)
+      Card card = (Card)comboBoxCards.SelectedItem;
+      if (card.RecordingFolder != textBoxFolder.Text)
       {
-        info.card.RecordingFolder = textBoxFolder.Text;
-        info.card.Persist();
+        card.RecordingFolder = textBoxFolder.Text;
+        card.Persist();
         _needRestart = true;
         LoadComboBoxDrive();
       }
@@ -480,11 +447,11 @@ namespace SetupTv.Sections
       // Change RecordingFolder for all cards
       for (int iIndex = 0; iIndex < comboBoxCards.Items.Count; iIndex++)
       {
-        CardInfo info = (CardInfo)comboBoxCards.Items[iIndex];
-        if (info.card.RecordingFolder != textBoxFolder.Text)
+        Card card = (Card)comboBoxCards.Items[iIndex];
+        if (card.RecordingFolder != textBoxFolder.Text)
         {
-          info.card.RecordingFolder = textBoxFolder.Text;
-          info.card.Persist();
+          card.RecordingFolder = textBoxFolder.Text;
+          card.Persist();
           if (!_needRestart)
           {
             _needRestart = true;
@@ -492,21 +459,6 @@ namespace SetupTv.Sections
         }
       }
     }
-
-    /*
-     * Mantis #0001991: disable mpg recording  (part I: force TS recording format)
-     * 
-    private void comboBox1_SelectedIndexChanged_1(object sender, EventArgs e)
-    {
-      CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
-      if (info.card.RecordingFormat != comboBoxRecordingFormat.SelectedIndex)
-      {
-        info.card.RecordingFormat = comboBoxRecordingFormat.SelectedIndex;
-        info.card.Persist();
-        _needRestart = true;
-      }
-    }
-    */
 
     private void mpNumericTextBoxDiskQuota_Leave(object sender, EventArgs e)
     {

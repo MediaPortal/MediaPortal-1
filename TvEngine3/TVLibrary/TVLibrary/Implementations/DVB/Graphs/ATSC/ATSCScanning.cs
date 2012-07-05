@@ -124,9 +124,12 @@ namespace TvLibrary.Implementations.DVB
           majorChannel = (int)atscChannel.Frequency;
         }
 
-        // For minor channel number, use the SID or PMT PID. It is strange, but broadcasters seem to treat
-        // SID/PMT PID 0x10 as service X.1, PID 0x20 as X.2, PID 0x30 as X.3... etc.
-        if (atscChannel.PmtPid % 16 == 0)
+        // For minor channel number, use the SID or PMT PID. These are sometimes used in strange ways...
+        if (atscChannel.ServiceId < 16)
+        {
+          minorChannel = atscChannel.ServiceId;
+        }
+        else if (atscChannel.PmtPid % 16 == 0)
         {
           minorChannel = atscChannel.PmtPid / 16;
         }

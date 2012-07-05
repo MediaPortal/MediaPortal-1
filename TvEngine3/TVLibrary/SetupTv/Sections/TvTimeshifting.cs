@@ -33,25 +33,6 @@ namespace SetupTv.Sections
 {
   public partial class TvTimeshifting : SectionSettings
   {
-    #region CardInfo class
-
-    public class CardInfo
-    {
-      public Card card;
-
-      public CardInfo(Card newcard)
-      {
-        card = newcard;
-      }
-
-      public override string ToString()
-      {
-        return card.Name;
-      }
-    }
-
-    #endregion
-
     #region Vars
 
     private bool _needRestart;
@@ -125,8 +106,7 @@ namespace SetupTv.Sections
 
     private void comboBoxCards_SelectedIndexChanged(object sender, EventArgs e)
     {
-      CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
-      textBoxTimeShiftFolder.Text = info.card.TimeShiftFolder;
+      textBoxTimeShiftFolder.Text = ((Card)comboBoxCards.SelectedItem).TimeShiftFolder;
 
       if (String.IsNullOrEmpty(textBoxTimeShiftFolder.Text))
       {
@@ -148,7 +128,7 @@ namespace SetupTv.Sections
       IList<Card> cards = Card.ListAll();
       foreach (Card card in cards)
       {
-        comboBoxCards.Items.Add(new CardInfo(card));
+        comboBoxCards.Items.Add(card);
       }
 
       if (comboBoxCards.Items.Count > 0)
@@ -189,11 +169,11 @@ namespace SetupTv.Sections
     // When TimeShift folder has been changed
     private void textBoxTimeShiftFolder_TextChanged(object sender, EventArgs e)
     {
-      CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
-      if (info.card.TimeShiftFolder != textBoxTimeShiftFolder.Text)
+      Card card = (Card)comboBoxCards.SelectedItem;
+      if (card.TimeShiftFolder != textBoxTimeShiftFolder.Text)
       {
-        info.card.TimeShiftFolder = textBoxTimeShiftFolder.Text;
-        info.card.Persist();
+        card.TimeShiftFolder = textBoxTimeShiftFolder.Text;
+        card.Persist();
         _needRestart = true;
       }
     }
@@ -204,11 +184,11 @@ namespace SetupTv.Sections
       // Change timeshiftFolder for all cards
       for (int iIndex = 0; iIndex < comboBoxCards.Items.Count; iIndex++)
       {
-        CardInfo info = (CardInfo)comboBoxCards.Items[iIndex];
-        if (info.card.TimeShiftFolder != textBoxTimeShiftFolder.Text)
+        Card card = (Card)comboBoxCards.SelectedItem;
+        if (card.TimeShiftFolder != textBoxTimeShiftFolder.Text)
         {
-          info.card.TimeShiftFolder = textBoxTimeShiftFolder.Text;
-          info.card.Persist();
+          card.TimeShiftFolder = textBoxTimeShiftFolder.Text;
+          card.Persist();
           if (!_needRestart)
           {
             _needRestart = true;

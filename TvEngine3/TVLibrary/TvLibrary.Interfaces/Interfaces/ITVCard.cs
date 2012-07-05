@@ -26,21 +26,6 @@ using TvLibrary.Interfaces.Device;
 namespace TvLibrary.Interfaces
 {
   /// <summary>
-  /// cam types
-  /// </summary>
-  public enum CamType
-  {
-    /// <summary>
-    /// Default
-    /// </summary>
-    Default = 0,
-    /// <summary>
-    /// Astoncrypt 2 cam
-    /// </summary>
-    Astoncrypt2 = 1
-  }
-
-  /// <summary>
   /// interface for a tv card
   /// </summary>
   public interface ITVCard

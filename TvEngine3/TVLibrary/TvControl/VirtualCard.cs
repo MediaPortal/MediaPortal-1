@@ -40,28 +40,12 @@ namespace TvControl
     private string _server;
     private string _recordingFolder;
     private string _timeShiftFolder;
-    private int _recordingFormat;
     private IUser _user;
     public static readonly int CommandTimeOut = 3000;
 
     #endregion
 
     #region ctor
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="VirtualCard"/> class.
-    /// </summary>
-    /// <param name="user">The user.</param>
-    /// <param name="server">The server.</param>
-    /// <param name="recordingFormat">The recording format.</param>
-    public VirtualCard(User user, string server, int recordingFormat)
-    {
-      _user = user;
-      _server = server;
-      _recordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings",
-                                       Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-      _recordingFormat = recordingFormat;
-    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="VirtualCard"/> class.
@@ -146,15 +130,6 @@ namespace TvControl
     {
       get { return _server; }
       set { _server = value; }
-    }
-
-    ///<summary>
-    /// Gets/Set the recording format
-    ///</summary>
-    public int RecordingFormat
-    {
-      get { return _recordingFormat; }
-      set { _recordingFormat = value; }
     }
 
     /// <summary>

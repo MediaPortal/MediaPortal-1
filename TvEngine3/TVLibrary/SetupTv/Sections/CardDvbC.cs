@@ -104,7 +104,7 @@ namespace SetupTv.Sections
       InitializeComponent();
       //insert complete ci menu dialog to tab
       Card dbCard = Card.Retrieve(_cardNumber);
-      if (dbCard.CAM == true)
+      if (dbCard.UseConditionalAccess)
       {
         ciMenuDialog = new CI_Menu_Dialog(_cardNumber);
         this.tabPageCIMenu.Controls.Add(ciMenuDialog);

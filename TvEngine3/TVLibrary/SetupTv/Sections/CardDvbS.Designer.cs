@@ -356,6 +356,7 @@ namespace SetupTv.Sections
       this.mpTransponder4.Name = "mpTransponder4";
       this.mpTransponder4.Size = new System.Drawing.Size(160, 21);
       this.mpTransponder4.TabIndex = 20;
+      this.mpTransponder4.MouseHover += new System.EventHandler(this.mpCombo_MouseHover);
       // 
       // mpTransponder3
       // 
@@ -365,6 +366,7 @@ namespace SetupTv.Sections
       this.mpTransponder3.Name = "mpTransponder3";
       this.mpTransponder3.Size = new System.Drawing.Size(160, 21);
       this.mpTransponder3.TabIndex = 16;
+      this.mpTransponder3.MouseHover += new System.EventHandler(this.mpCombo_MouseHover);
       // 
       // mpTransponder2
       // 
@@ -374,6 +376,7 @@ namespace SetupTv.Sections
       this.mpTransponder2.Name = "mpTransponder2";
       this.mpTransponder2.Size = new System.Drawing.Size(160, 21);
       this.mpTransponder2.TabIndex = 12;
+      this.mpTransponder2.MouseHover += new System.EventHandler(this.mpCombo_MouseHover);
       // 
       // mpTransponder1
       // 
@@ -383,6 +386,7 @@ namespace SetupTv.Sections
       this.mpTransponder1.Name = "mpTransponder1";
       this.mpTransponder1.Size = new System.Drawing.Size(160, 21);
       this.mpTransponder1.TabIndex = 8;
+      this.mpTransponder1.MouseHover += new System.EventHandler(this.mpCombo_MouseHover);
       // 
       // mpComboDiseqc4
       // 
@@ -392,6 +396,7 @@ namespace SetupTv.Sections
       this.mpComboDiseqc4.Name = "mpComboDiseqc4";
       this.mpComboDiseqc4.Size = new System.Drawing.Size(77, 21);
       this.mpComboDiseqc4.TabIndex = 18;
+      this.mpComboDiseqc4.MouseHover += new System.EventHandler(this.mpCombo_MouseHover);
       // 
       // mpComboDiseqc3
       // 
@@ -401,6 +406,7 @@ namespace SetupTv.Sections
       this.mpComboDiseqc3.Name = "mpComboDiseqc3";
       this.mpComboDiseqc3.Size = new System.Drawing.Size(77, 21);
       this.mpComboDiseqc3.TabIndex = 14;
+      this.mpComboDiseqc3.MouseHover += new System.EventHandler(this.mpCombo_MouseHover);
       // 
       // mpComboDiseqc2
       // 
@@ -410,6 +416,7 @@ namespace SetupTv.Sections
       this.mpComboDiseqc2.Name = "mpComboDiseqc2";
       this.mpComboDiseqc2.Size = new System.Drawing.Size(77, 21);
       this.mpComboDiseqc2.TabIndex = 10;
+      this.mpComboDiseqc2.MouseHover += new System.EventHandler(this.mpCombo_MouseHover);
       // 
       // mpComboDiseqc1
       // 
@@ -419,6 +426,7 @@ namespace SetupTv.Sections
       this.mpComboDiseqc1.Name = "mpComboDiseqc1";
       this.mpComboDiseqc1.Size = new System.Drawing.Size(77, 21);
       this.mpComboDiseqc1.TabIndex = 6;
+      this.mpComboDiseqc1.MouseHover += new System.EventHandler(this.mpCombo_MouseHover);
       // 
       // mpComboLnbType4
       // 
@@ -621,7 +629,7 @@ namespace SetupTv.Sections
       this.mpComboBoxInnerFecRate.FormattingEnabled = true;
       this.mpComboBoxInnerFecRate.Location = new System.Drawing.Point(112, 133);
       this.mpComboBoxInnerFecRate.Name = "mpComboBoxInnerFecRate";
-      this.mpComboBoxInnerFecRate.Size = new System.Drawing.Size(92, 21);
+      this.mpComboBoxInnerFecRate.Size = new System.Drawing.Size(105, 21);
       this.mpComboBoxInnerFecRate.TabIndex = 42;
       // 
       // mpLabel19
@@ -637,9 +645,9 @@ namespace SetupTv.Sections
       // 
       this.mpComboBoxRollOff.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxRollOff.FormattingEnabled = true;
-      this.mpComboBoxRollOff.Location = new System.Drawing.Point(323, 133);
+      this.mpComboBoxRollOff.Location = new System.Drawing.Point(316, 133);
       this.mpComboBoxRollOff.Name = "mpComboBoxRollOff";
-      this.mpComboBoxRollOff.Size = new System.Drawing.Size(92, 21);
+      this.mpComboBoxRollOff.Size = new System.Drawing.Size(108, 21);
       this.mpComboBoxRollOff.TabIndex = 46;
       // 
       // mpLabel18
@@ -655,9 +663,9 @@ namespace SetupTv.Sections
       // 
       this.mpComboBoxPilot.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxPilot.FormattingEnabled = true;
-      this.mpComboBoxPilot.Location = new System.Drawing.Point(323, 106);
+      this.mpComboBoxPilot.Location = new System.Drawing.Point(316, 106);
       this.mpComboBoxPilot.Name = "mpComboBoxPilot";
-      this.mpComboBoxPilot.Size = new System.Drawing.Size(92, 21);
+      this.mpComboBoxPilot.Size = new System.Drawing.Size(108, 21);
       this.mpComboBoxPilot.TabIndex = 44;
       // 
       // mpLabel14
@@ -733,7 +741,7 @@ namespace SetupTv.Sections
       this.mpComboBoxMod.FormattingEnabled = true;
       this.mpComboBoxMod.Location = new System.Drawing.Point(112, 106);
       this.mpComboBoxMod.Name = "mpComboBoxMod";
-      this.mpComboBoxMod.Size = new System.Drawing.Size(92, 21);
+      this.mpComboBoxMod.Size = new System.Drawing.Size(105, 21);
       this.mpComboBoxMod.TabIndex = 40;
       // 
       // mpLabel7
@@ -769,7 +777,7 @@ namespace SetupTv.Sections
       this.mpComboBoxPolarisation.FormattingEnabled = true;
       this.mpComboBoxPolarisation.Location = new System.Drawing.Point(112, 79);
       this.mpComboBoxPolarisation.Name = "mpComboBoxPolarisation";
-      this.mpComboBoxPolarisation.Size = new System.Drawing.Size(92, 21);
+      this.mpComboBoxPolarisation.Size = new System.Drawing.Size(105, 21);
       this.mpComboBoxPolarisation.TabIndex = 38;
       // 
       // mpLabel15

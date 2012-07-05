@@ -37,26 +37,6 @@ namespace SetupTv.Sections
 {
   public partial class RadioChannels : SectionSettings
   {
-    public class CardInfo
-    {
-      protected Card _card;
-
-      public Card Card
-      {
-        get { return _card; }
-      }
-
-      public CardInfo(Card card)
-      {
-        _card = card;
-      }
-
-      public override string ToString()
-      {
-        return _card.Name;
-      }
-    }
-
     private readonly MPListViewStringColumnSorter lvwColumnSorter;
     private readonly MPListViewStringColumnSorter lvwColumnSorter2;
     private ChannelListViewHandler _lvChannelHandler;

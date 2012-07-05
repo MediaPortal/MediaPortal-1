@@ -33,26 +33,6 @@ namespace SetupTv.Sections
 {
   public partial class RadioCombinations : SectionSettings
   {
-    public class CardInfo
-    {
-      protected Card _card;
-
-      public Card Card
-      {
-        get { return _card; }
-      }
-
-      public CardInfo(Card card)
-      {
-        _card = card;
-      }
-
-      public override string ToString()
-      {
-        return _card.Name;
-      }
-    }
-
     private readonly MPListViewStringColumnSorter lvwColumnSorter2;
     private readonly MPListViewStringColumnSorter lvwColumnSorter3;
 
@@ -91,7 +71,7 @@ namespace SetupTv.Sections
         if (!RemoteControl.Instance.CardPresent(card.IdCard))
           continue;
         cards[card.IdCard] = RemoteControl.Instance.Type(card.IdCard);
-        mpComboBoxCard.Items.Add(new CardInfo(card));
+        mpComboBoxCard.Items.Add(card);
       }
       mpComboBoxCard.SelectedIndex = 0;
       base.OnSectionActivated();
@@ -110,12 +90,10 @@ namespace SetupTv.Sections
 
         SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
         sb.AddOrderByField(true, "sortOrder");
-        CardInfo cardInfo = (CardInfo)mpComboBoxCard.SelectedItem;
 
-        Card card = cardInfo.Card;
+        Card card = (Card)mpComboBoxCard.SelectedItem;
         CardType cardType = cards[card.IdCard];
         IList<ChannelMap> maps = card.ReferringChannelMap();
-
 
         List<ListViewItem> items = new List<ListViewItem>();
         foreach (ChannelMap map in maps)
@@ -157,7 +135,7 @@ namespace SetupTv.Sections
           return;
         if (mpListViewChannels.SelectedIndices.Count != 1)
           return;
-        Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
+        Card card = (Card)mpComboBoxCard.SelectedItem;
         ListViewItem selectedItem = mpListViewChannels.Items[mpListViewChannels.SelectedIndices[0]];
         Channel selectedChannel = (Channel)selectedItem.Tag;
         IList<Channel> allChannels = Channel.ListAll();

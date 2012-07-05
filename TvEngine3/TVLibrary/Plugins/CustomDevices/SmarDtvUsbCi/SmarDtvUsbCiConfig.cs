@@ -30,44 +30,14 @@ using DirectShowLib;
 using MediaPortal.UserInterface.Controls;
 using SetupTv;
 using SmarDtvUsbCi;
+using TvControl;
 using TvDatabase;
+using TvLibrary.Interfaces;
 
 namespace SetupTv.Sections
 {
   public partial class SmarDtvUsbCiConfig : SectionSettings
   {
-    // A private class for use with the tuner selection combos.
-    private class TunerInfo
-    {
-      private Card _tuner = null;
-
-      private TunerInfo()
-      {
-      }
-
-      public TunerInfo(Card tuner)
-      {
-        _tuner = tuner;
-      }
-
-      public Card Tuner
-      {
-        get
-        {
-          return _tuner;
-        }
-      }
-
-      public override string ToString()
-      {
-        if (_tuner != null)
-        {
-          return _tuner.Name;
-        }
- 	      return base.ToString();
-      }
-    }
-
     private ReadOnlyCollection<SmarDtvUsbCiProduct> _products = null;
     private MPComboBox[] _tunerSelections = null;
     private Label[] _installStateLabels = null;
@@ -87,12 +57,12 @@ namespace SetupTv.Sections
     {
       for (int i = 0; i < _products.Count; i++)
       {
-        TunerInfo selectedTuner = (TunerInfo)_tunerSelections[i].SelectedItem;
+        Card selectedTuner = (Card)_tunerSelections[i].SelectedItem;
         if (_tunerSelections[i].Enabled && selectedTuner != null)
         {
           TvBusinessLayer layer = new TvBusinessLayer();
           Setting setting = layer.GetSetting(_products[i].DbSettingName, "-1");
-          setting.Value = selectedTuner.Tuner.IdCard.ToString();
+          setting.Value = selectedTuner.IdCard.ToString();
           setting.Persist();
         }
       }
@@ -114,11 +84,15 @@ namespace SetupTv.Sections
 
         foreach (Card tuner in dbTuners)
         {
-          TunerInfo info = new TunerInfo(tuner);
-          _tunerSelections[i].Items.Add(info);
+          CardType tunerType = RemoteControl.Instance.Type(tuner.IdCard);
+          if (tunerType == CardType.Analog || tunerType == CardType.RadioWebStream || tunerType == CardType.Unknown)
+          {
+            continue;
+          }
+          _tunerSelections[i].Items.Add(tuner);
           if (tuner.IdCard.ToString().Equals(setting.Value))
           {
-            _tunerSelections[i].SelectedItem = info;
+            _tunerSelections[i].SelectedItem = tuner;
           }
         }
 

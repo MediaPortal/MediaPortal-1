@@ -126,10 +126,15 @@ namespace TvDatabase
         return card;
       }
       //
-      // Card(devicePath, name, priority, grabEPG, lastEpgGrab, recordingFolder, idServer, enabled, camType, timeshiftingFolder, recordingFormat, decryptLimit)
+      // Card(devicePath, name, priority, grabEPG, lastEpgGrab, recordingFolder, idServer, enabled, camType,
+      //      timeshiftingFolder, decryptLimit, preloadCard, netProvider, idleMode, multiChannelDecryptMode,
+      //      alwaysSendDiseqcCommands, diseqcCommandRepeatCount, pidFilterMode, useCustomTuning,
+      //      useConditionalAccess)
       //
-      Card newCard = new Card(devicePath, name, 1, true, new DateTime(2000, 1, 1), "", server.IdServer, true, 0, "", 0,
-                              0, false, true, false, (int)TvDatabase.DbNetworkProvider.Generic);
+      Card newCard = new Card(devicePath, name, 1, true, new DateTime(2000, 1, 1), "", server.IdServer, true,
+                              (int)CamType.Default, "", 0, false, (int)TvDatabase.DbNetworkProvider.Generic,
+                              (int)DeviceIdleMode.Stop, (int)MultiChannelDecryptMode.Disabled, false, 0,
+                              (int)PidFilterMode.Auto, false, false);
       newCard.Persist();
       return newCard;
     }
@@ -2821,7 +2826,7 @@ namespace TvDatabase
             Log.Info("AssignSchedulesToCard: card {0}, ID = {1} has schedule = " + assignedSchedule, count, card.IdCard);
             if (schedule.IsOverlapping(assignedSchedule))
             {
-              if (!(schedule.isSameTransponder(assignedSchedule) && card.supportSubChannels))
+              if (!schedule.isSameTransponder(assignedSchedule))
               {
                 overlappingSchedules.Add(assignedSchedule);
                 Log.Info("AssignSchedulesToCard: overlapping with " + assignedSchedule + " on card {0}, ID = {1}", count,

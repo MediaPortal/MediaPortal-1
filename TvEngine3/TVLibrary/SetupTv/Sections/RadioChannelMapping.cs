@@ -32,26 +32,6 @@ namespace SetupTv.Sections
 {
   public partial class RadioChannelMapping : SectionSettings
   {
-    public class CardInfo
-    {
-      protected Card _card;
-
-      public Card Card
-      {
-        get { return _card; }
-      }
-
-      public CardInfo(Card card)
-      {
-        _card = card;
-      }
-
-      public override string ToString()
-      {
-        return _card.IdCard + " - " + _card.Name;
-      }
-    }
-
     private readonly MPListViewStringColumnSorter lvwColumnSorter1;
     private readonly MPListViewStringColumnSorter lvwColumnSorter2;
 
@@ -83,7 +63,7 @@ namespace SetupTv.Sections
           continue;
         if (!RemoteControl.Instance.CardPresent(card.IdCard))
           continue;
-        mpComboBoxCard.Items.Add(new CardInfo(card));
+        mpComboBoxCard.Items.Add(card);
       }
       if (mpComboBoxCard.Items.Count > 0)
         mpComboBoxCard.SelectedIndex = 0;
@@ -96,7 +76,7 @@ namespace SetupTv.Sections
                                       "This can take some time\n\nPlease be patient...");
       dlg.Show(this);
       dlg.WaitForDisplay();
-      Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
+      Card card = (Card)mpComboBoxCard.SelectedItem;
       mpListViewChannels.BeginUpdate();
       mpListViewMapped.BeginUpdate();
       try
@@ -168,7 +148,7 @@ namespace SetupTv.Sections
         SqlStatement stmt = sb.GetStatement(true);
         IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
 
-        Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
+        Card card = (Card)mpComboBoxCard.SelectedItem;
         IList<ChannelMap> maps = card.ReferringChannelMap();
 
         // get cardtype, dvb, analogue etc.		

@@ -46,6 +46,24 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     private IDiseqcController _diseqcController = null;
 
+    /// <summary>
+    /// Enable or disable always sending DiSEqC commands.
+    /// </summary>
+    /// <remarks>
+    /// DiSEqC commands are usually only sent when changing to a channel on a different switch port or at a
+    /// different positioner location. Enabling this option will cause DiSEqC commands to be sent on each
+    /// channel change.
+    /// </remarks>
+    private bool _alwaysSendDiseqcCommands = false;
+
+    /// <summary>
+    /// The number of times to repeat DiSEqC commands.
+    /// </summary>
+    /// <remarks>
+    /// When set to zero, commands are sent once; when set to one, commands are sent twice... etc.
+    /// </remarks>
+    private ushort _diseqcCommandRepeatCount = 0;
+
     #endregion
 
     #region ctor
@@ -59,6 +77,22 @@ namespace TvLibrary.Implementations.DVB
       : base(epgEvents, device)
     {
       _tunerType = CardType.DvbS;
+      if (_devicePath != null)
+      {
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Card c = layer.GetCardByDevicePath(_devicePath);
+        if (c != null)
+        {
+          _alwaysSendDiseqcCommands = c.AlwaysSendDiseqcCommands;
+          _diseqcCommandRepeatCount = (ushort)c.DiseqcCommandRepeatCount;
+          if (_diseqcCommandRepeatCount > 5)
+          {
+            // It would be rare that commands would need to be repeated more than twice. Five times
+            // is a more than reasonable practical limit.
+            _diseqcCommandRepeatCount = 5;
+          }
+        }
+      }
     }
 
     #endregion
@@ -80,7 +114,7 @@ namespace TvLibrary.Implementations.DVB
         if (diseqcDevice != null)
         {
           Log.Log.Debug("TvCardDvbS: found DiSEqC command interface");
-          _diseqcController = new DiseqcController(diseqcDevice);
+          _diseqcController = new DiseqcController(diseqcDevice, _alwaysSendDiseqcCommands, _diseqcCommandRepeatCount);
           break;
         }
       }
@@ -266,9 +300,6 @@ namespace TvLibrary.Implementations.DVB
 
     /// <summary>
     /// Stop the device. The actual result of this function depends on device configuration:
-    /// - graph stop
-    /// - graph pause
-    /// TODO graph destroy
     /// </summary>
     public override void Stop()
     {

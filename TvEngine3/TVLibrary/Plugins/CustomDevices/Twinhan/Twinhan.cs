@@ -1681,21 +1681,21 @@ namespace TvEngine
       return true;
     }
 
-    #region graph state change callbacks
+    #region device state change callbacks
 
     /// <summary>
-    /// This callback is invoked when the device BDA graph construction is complete.
+    /// This callback is invoked when device initialisation is complete.
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
-    /// <param name="startGraphImmediately">Ensure that the tuner's BDA graph is started immediately.</param>
-    public override void OnGraphBuilt(ITVCard tuner, out bool startGraphImmediately)
+    /// <param name="action">The action to take, if any.</param>
+    public override void OnInitialised(ITVCard tuner, out DeviceAction action)
     {
       // The TerraTec H7 and TechniSat CableStar Combo HD CI require *very* careful graph management. If the graph
       // is left idle for any length of time (a few minutes) they will fail to (re)start streaming. In addition,
       // they require the graph to be restarted if tuning fails, otherwise they don't seem to behave properly in
       // subsequent tune requests.
       // We start the graph immediately to prevent the graph from being left idle.
-      startGraphImmediately = true;
+      action = DeviceAction.Start;
     }
 
     /// <summary>
@@ -1704,11 +1704,11 @@ namespace TvEngine
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
-    /// <param name="forceGraphStart">Ensure that the tuner's BDA graph is running when the tune request is submitted.</param>
-    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out bool forceGraphStart)
+    /// <param name="action">The action to take, if any.</param>
+    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out DeviceAction action)
     {
       Log.Debug("Twinhan: on before tune callback");
-      forceGraphStart = false;
+      action = DeviceAction.Default;
 
       if (!_isTwinhan)
       {
@@ -1741,49 +1741,32 @@ namespace TvEngine
     }
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted, when the device's BDA graph is running
-    /// but before signal lock is checked.
+    /// This callback is invoked after a tune request is submitted, when the device is running but before
+    /// signal lock is checked.
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is tuned to.</param>
-    public override void OnGraphRunning(ITVCard tuner, IChannel currentChannel)
+    public override void OnRunning(ITVCard tuner, IChannel currentChannel)
     {
       // Ensure the MMI handler thread is always running when the graph is running.
       StartMmiHandlerThread();
     }
 
     /// <summary>
-    /// This callback is invoked before the device's BDA graph is stopped.
+    /// This callback is invoked before the device is stopped.
     /// </summary>
     /// <param name="tuner">The device instance that this device instance is associated with.</param>
-    /// <param name="preventGraphStop">Prevent the device's BDA graph from being stopped.</param>
-    /// <param name="restartGraph">Allow the device's BDA graph to be stopped, but then restart it immediately.</param>
-    public override void OnGraphStop(ITVCard tuner, out bool preventGraphStop, out bool restartGraph)
+    /// <param name="action">As an input, the action that TV Server wants to take; as an output, the action to take.</param>
+    public override void OnStop(ITVCard tuner, ref DeviceAction action)
     {
       // The TerraTec H7 and TechniSat CableStar Combo HD CI require *very* careful graph management. If the graph
       // is left idle for any length of time (a few minutes) they will fail to (re)start streaming. In addition,
       // they require the graph to be restarted if tuning fails, otherwise they don't seem to behave properly in
       // subsequent tune requests.
-      // We restart the graph to avoid tuning issues.
-      preventGraphStop = false;
-      restartGraph = true;
-    }
-
-    /// <summary>
-    /// This callback is invoked before the device's BDA graph is paused.
-    /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
-    /// <param name="preventGraphPause">Prevent the device's BDA graph from being paused.</param>
-    /// <param name="restartGraph">Stop the device's BDA graph, and then restart it immediately.</param>
-    public override void OnGraphPause(ITVCard tuner, out bool preventGraphPause, out bool restartGraph)
-    {
-      // The TerraTec H7 and TechniSat CableStar Combo HD CI require *very* careful graph management. If the graph
-      // is left idle for any length of time (a few minutes) they will fail to (re)start streaming. In addition,
-      // they require the graph to be restarted if tuning fails, otherwise they don't seem to behave properly in
-      // subsequent tune requests.
-      // We restart the graph to avoid tuning issues.
-      preventGraphPause = false;
-      restartGraph = true;
+      if (action == DeviceAction.Stop || action == DeviceAction.Pause)
+      {
+        action = DeviceAction.Restart;
+      }
     }
 
     #endregion

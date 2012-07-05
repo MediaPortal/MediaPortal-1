@@ -24,6 +24,8 @@ using System.Windows.Forms;
 using DirectShowLib;
 using TvDatabase;
 using TvLibrary.Implementations.DVB;
+using TvLibrary.Interfaces;
+using TvLibrary.Log;
 
 namespace SetupTv.Sections
 {
@@ -50,67 +52,110 @@ namespace SetupTv.Sections
 
     private void FormEditCard_Load(object sender, EventArgs e)
     {
-      if (_cardType.Equals("Analog")) //analog does not have these settings
+      mpTextBoxDeviceName.Text = _card.Name;
+
+      // Analog tuners and capture devices don't have many of these settings.
+      bool isAnalogDevice = _cardType.Equals("Analog");
+      checkBoxAllowEpgGrab.Enabled = !isAnalogDevice;
+      checkBoxConditionalAccessEnabled.Enabled = !isAnalogDevice;
+      numericUpDownDecryptLimit.Enabled = !isAnalogDevice;
+      mpComboBoxMultiChannelDecryptMode.Enabled = !isAnalogDevice;
+      mpComboBoxCamType.Enabled = !isAnalogDevice;
+      if (_cardType.Equals("DvbS"))
       {
-        checkBoxCAMenabled.Enabled = false;
-        numericUpDownDecryptLimit.Value = 0;
-        numericUpDownDecryptLimit.Enabled = false;
-        checkBoxAllowEpgGrab.Checked = false;
-        checkBoxAllowEpgGrab.Enabled = false;
+        checkBoxAlwaysSendDiseqcCommands.Enabled = true;
+        numericUpDownDiseqcCommandRepeatCount.Enabled = true;
       }
       else
       {
-        ComboBoxCamType.SelectedIndex = _card.CamType;
-        numericUpDownDecryptLimit.Value = _card.DecryptLimit;
-        numericUpDownDecryptLimit.Enabled = true;
-        checkBoxAllowEpgGrab.Checked = _card.GrabEPG;
-        checkBoxAllowEpgGrab.Enabled = true;
+        checkBoxAlwaysSendDiseqcCommands.Enabled = false;
+        numericUpDownDiseqcCommandRepeatCount.Enabled = false;
       }
+      mpComboBoxPidFilterMode.Enabled = !isAnalogDevice;
+      if (isAnalogDevice)
+      {
+        checkBoxAllowEpgGrab.Checked = false;
+        checkBoxConditionalAccessEnabled.Checked = false;
+        numericUpDownDecryptLimit.Value = 0;
+        checkBoxAlwaysSendDiseqcCommands.Checked = false;
+        numericUpDownDiseqcCommandRepeatCount.Value = 0;
+      }
+      else
+      {
+        checkBoxAllowEpgGrab.Checked = _card.GrabEPG;
+        checkBoxConditionalAccessEnabled.Checked = _card.UseConditionalAccess;
+        numericUpDownDecryptLimit.Value = _card.DecryptLimit;
+        mpComboBoxMultiChannelDecryptMode.SelectedItem = ((MultiChannelDecryptMode)_card.MultiChannelDecryptMode).ToString();
+        mpComboBoxCamType.SelectedItem = ((CamType)_card.CamType).ToString();
+        checkBoxAlwaysSendDiseqcCommands.Checked = _card.AlwaysSendDiseqcCommands;
+        numericUpDownDiseqcCommandRepeatCount.Value = _card.DiseqcCommandRepeatCount;
+        mpComboBoxPidFilterMode.SelectedItem = ((PidFilterMode)_card.PidFilterMode).ToString();
+      }
+      mpComboBoxIdleMode.SelectedItem = ((DeviceIdleMode)_card.IdleMode).ToString();
+      setConditionalAccessFieldVisibility();
 
-      IList<CardGroupMap> GrpList = _card.ReferringCardGroupMap();
-      if (GrpList.Count != 0)
+      // Devices can't be preloaded if they're part of a hybrid group.
+      IList<CardGroupMap> groupList = _card.ReferringCardGroupMap();
+      if (groupList.Count != 0)
       {
         checkBoxPreloadCard.Enabled = false;
         _card.PreloadCard = false;
       }
-
       checkBoxPreloadCard.Checked = _card.PreloadCard;
-      checkBoxCAMenabled.Checked = _card.CAM;
 
-      radioStopCard.Checked = _card.StopGraph;
-      radioPauseCard.Checked = !radioStopCard.Checked;
+      checkBoxUseCustomTuning.Checked = _card.UseCustomTuning;
 
-      setCAMLimitVisibility();
-      Text += " " + _card.Name;
-
-      // Add Network provider based on card type into combobox
-      if (_cardType == "DvbT") comboBoxNetProvider.Items.Add((TvDatabase.DbNetworkProvider.DVBT));
-      if (_cardType == "DvbS") comboBoxNetProvider.Items.Add((TvDatabase.DbNetworkProvider.DVBS));
-      if (_cardType == "DvbC") comboBoxNetProvider.Items.Add((TvDatabase.DbNetworkProvider.DVBC));
-      if (_cardType == "Atsc") comboBoxNetProvider.Items.Add((TvDatabase.DbNetworkProvider.ATSC));
-
-      // First test if the Generic Network Provider is available (only on Xp MCE 2005 + Update Rollup 2 & Vista Home Premium and Ultimate & Windows 7 Home Premium, Ultimate, Professional, and Enterprise)
-      if (FilterGraphTools.IsThisComObjectInstalled(typeof(NetworkProvider).GUID))
+      if (isAnalogDevice || _cardType.Equals("DvbIP"))
       {
-        // Generic Network provider is available, so add it to selection box.
-        comboBoxNetProvider.Items.Add((TvDatabase.DbNetworkProvider.Generic));
+        comboBoxNetworkProvider.Enabled = false;
       }
-      comboBoxNetProvider.SelectedItem = (TvDatabase.DbNetworkProvider)_card.NetProvider;
+      else
+      {
+        comboBoxNetworkProvider.Enabled = true;
+
+        // Add available network providers based on device type and operating system.
+        comboBoxNetworkProvider.Items.Add(Enum.Parse(typeof(DbNetworkProvider), _cardType));
+        // The generic network provider is available only on XP MCE 2005 + Update Rollup 2,
+        // Windows Vista [Home Premium and Ultimate], and Windows 7 [Home Premium, Ultimate,
+        // Professional, and Enterprise]
+        if (FilterGraphTools.IsThisComObjectInstalled(typeof(NetworkProvider).GUID))
+        {
+          comboBoxNetworkProvider.Items.Add(DbNetworkProvider.Generic);
+        }
+        comboBoxNetworkProvider.SelectedItem = (DbNetworkProvider)_card.NetProvider;
+      }
     }
 
     private void mpButtonSave_Click(object sender, EventArgs e)
     {
-      if (!_cardType.Equals("Analog")) //analog does not have these settings
+      if (mpTextBoxDeviceName.Text.Trim().Length == 0)
       {
-        _card.CamType = ComboBoxCamType.SelectedIndex;
-        _card.DecryptLimit = Convert.ToInt32(numericUpDownDecryptLimit.Value);
-        _card.GrabEPG = checkBoxAllowEpgGrab.Checked;
+        MessageBox.Show("Please enter a name for the device.");
+        return;
+      }
+
+      _card.Name = mpTextBoxDeviceName.Text;
+      _card.GrabEPG = checkBoxAllowEpgGrab.Checked;
+      _card.UseConditionalAccess = checkBoxConditionalAccessEnabled.Checked;
+      _card.DecryptLimit = (int)numericUpDownDecryptLimit.Value;
+      _card.AlwaysSendDiseqcCommands = checkBoxAlwaysSendDiseqcCommands.Checked;
+      _card.DiseqcCommandRepeatCount = (int)numericUpDownDiseqcCommandRepeatCount.Value;
+      _card.IdleMode = (int)Enum.Parse(typeof(DeviceIdleMode), (String)mpComboBoxIdleMode.SelectedItem);
+
+      // Careful here! The selected items will be null for certain device types.
+      if (!_cardType.Equals("Analog"))
+      {
+        _card.MultiChannelDecryptMode = (int)Enum.Parse(typeof(MultiChannelDecryptMode), (String)mpComboBoxMultiChannelDecryptMode.SelectedItem);
+        _card.CamType = (int)Enum.Parse(typeof(CamType), (String)mpComboBoxCamType.SelectedItem);
+        _card.PidFilterMode = (int)Enum.Parse(typeof(PidFilterMode), (String)mpComboBoxPidFilterMode.SelectedItem);
+        if (!_cardType.Equals("DvbIP"))
+        {
+          _card.NetProvider = (int)(DbNetworkProvider)comboBoxNetworkProvider.SelectedItem;
+        }
       }
       _card.PreloadCard = checkBoxPreloadCard.Checked;
-      _card.StopGraph = radioStopCard.Checked;
+      _card.UseCustomTuning = checkBoxUseCustomTuning.Checked;
 
-      _card.CAM = checkBoxCAMenabled.Checked;
-      _card.NetProvider = (int)comboBoxNetProvider.SelectedItem;
       Close();
     }
 
@@ -119,19 +164,21 @@ namespace SetupTv.Sections
       Close();
     }
 
-    private void setCAMLimitVisibility()
+    private void setConditionalAccessFieldVisibility()
     {
-      label1.Visible = checkBoxCAMenabled.Checked;
-      label3.Visible = checkBoxCAMenabled.Checked;
-      numericUpDownDecryptLimit.Visible = checkBoxCAMenabled.Checked;
-      label4.Visible = checkBoxCAMenabled.Checked;
-      ComboBoxCamType.Visible = checkBoxCAMenabled.Checked;
-      label5.Visible = checkBoxCAMenabled.Checked;
+      label1.Visible = checkBoxConditionalAccessEnabled.Checked;
+      label3.Visible = checkBoxConditionalAccessEnabled.Checked;
+      numericUpDownDecryptLimit.Visible = checkBoxConditionalAccessEnabled.Checked;
+      label4.Visible = checkBoxConditionalAccessEnabled.Checked;
+      mpLabel3.Visible = checkBoxConditionalAccessEnabled.Checked;
+      mpComboBoxMultiChannelDecryptMode.Visible = checkBoxConditionalAccessEnabled.Checked;
+      label5.Visible = checkBoxConditionalAccessEnabled.Checked;
+      mpComboBoxCamType.Visible = checkBoxConditionalAccessEnabled.Checked;
     }
 
     private void checkBoxCAMenabled_CheckedChanged(object sender, EventArgs e)
     {
-      setCAMLimitVisibility();
+      setConditionalAccessFieldVisibility();
     }
   }
 }

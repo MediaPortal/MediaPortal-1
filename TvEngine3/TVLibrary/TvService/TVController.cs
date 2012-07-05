@@ -4003,7 +4003,6 @@ namespace TvService
       }
 
       VirtualCard card = new VirtualCard(user);
-      card.RecordingFormat = _cards[user.CardId].DataBaseCard.RecordingFormat;
       card.RecordingFolder = _cards[user.CardId].DataBaseCard.RecordingFolder;
       card.TimeshiftFolder = _cards[user.CardId].DataBaseCard.TimeShiftFolder;
       card.RemoteServer = Dns.GetHostName();

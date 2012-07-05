@@ -867,7 +867,6 @@ namespace TvService
     public VirtualCard GetVirtualCard(IUser user)
     {
       VirtualCard card = new VirtualCard(user);
-      card.RecordingFormat = _dbsCard.RecordingFormat;
       card.RecordingFolder = _dbsCard.RecordingFolder;
       card.TimeshiftFolder = _dbsCard.TimeShiftFolder;
       card.RemoteServer = Dns.GetHostName();

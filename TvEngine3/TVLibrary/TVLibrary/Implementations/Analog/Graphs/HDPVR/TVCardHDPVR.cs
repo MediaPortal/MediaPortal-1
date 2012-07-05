@@ -177,7 +177,7 @@ namespace TvLibrary.Implementations.Analog
     {
       get
       {
-        if (!_isGraphBuilt)
+        if (!_isDeviceInitialised)
         {
           BuildGraph();
         }
@@ -208,7 +208,7 @@ namespace TvLibrary.Implementations.Analog
     /// <param name="force"><c>True</c> to force the status to be updated (status information may be cached).</param>
     protected override void UpdateSignalStatus(bool force)
     {
-      if (!_isGraphBuilt)
+      if (!_isDeviceInitialised)
       {
         _tunerLocked = false;
         _signalLevel = 0;
@@ -288,7 +288,7 @@ namespace TvLibrary.Implementations.Analog
         DevicesInUse.Instance.Remove(_encoderDevice);
         _encoderDevice = null;
       }
-      _isGraphBuilt = false;
+      _isDeviceInitialised = false;
       Log.Log.WriteFile("HDPVR:  dispose completed");
     }
 
@@ -312,7 +312,7 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("HDPVR: build graph");
       try
       {
-        if (_isGraphBuilt)
+        if (_isDeviceInitialised)
         {
           Log.Log.WriteFile("HDPVR: graph already built!");
           throw new TvException("Graph already built");
@@ -332,7 +332,7 @@ namespace TvLibrary.Implementations.Analog
           Log.Log.WriteFile("HDPVR: No quality control support found");
         }
 
-        _isGraphBuilt = true;
+        _isDeviceInitialised = true;
         _configuration.Graph.Crossbar.Name = _crossBarDevice.Name;
         _configuration.Graph.Crossbar.VideoPinMap = _videoPinMap;
         _configuration.Graph.Crossbar.AudioPinMap = _audioPinMap;
@@ -349,7 +349,7 @@ namespace TvLibrary.Implementations.Analog
       {
         Log.Log.Write(ex);
         Dispose();
-        _isGraphBuilt = false;
+        _isDeviceInitialised = false;
         throw;
       }
     }

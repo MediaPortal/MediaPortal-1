@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Windows.Forms;
 using DirectShowLib.BDA;
 using TvDatabase;
@@ -51,6 +52,16 @@ namespace SetupTv.Dialogs
         comboBoxPilot.SelectedIndex = TuningDetail.Pilot + 1;
         comboBoxRollOff.SelectedIndex = TuningDetail.RollOff + 1;
         comboBoxDiseqc.SelectedIndex = TuningDetail.Diseqc;
+        IEnumerator en = comboBoxLnbType.Items.GetEnumerator();
+        while (en.MoveNext())
+        {
+          LnbType lnbType = (LnbType)en.Current;
+          if (lnbType != null && lnbType.IdLnbType == TuningDetail.IdLnbType)
+          {
+            comboBoxLnbType.SelectedItem = en.Current;
+            break;
+          }
+        }
       }
       else
       {
@@ -69,6 +80,7 @@ namespace SetupTv.Dialogs
         comboBoxPilot.SelectedIndex = -1;
         comboBoxRollOff.SelectedIndex = -1;
         comboBoxDiseqc.SelectedIndex = -1;
+        comboBoxLnbType.SelectedIndex = -1;
       }
     }
 
@@ -104,6 +116,8 @@ namespace SetupTv.Dialogs
       TuningDetail.Provider = textBoxDVBSProvider.Text;
       TuningDetail.FreeToAir = checkBoxDVBSfta.Checked;
       TuningDetail.Diseqc = comboBoxDiseqc.SelectedIndex;
+      // This should be safe because we've validated the selection in ValidateInput().
+      TuningDetail.IdLnbType = ((LnbType)comboBoxLnbType.SelectedItem).IdLnbType;
     }
 
     private bool ValidateInput()
@@ -122,6 +136,11 @@ namespace SetupTv.Dialogs
       if (comboBoxDiseqc.SelectedIndex < 0)
       {
         MessageBox.Show(this, "Please select a valid DiSEqC port!", "Incorrect input");
+        return false;
+      }
+      if (comboBoxLnbType.SelectedIndex < 0)
+      {
+        MessageBox.Show(this, "Please select a valid LNB type!", "Incorrect input");
         return false;
       }
       if (textBoxFrequency.Text.Length == 0)

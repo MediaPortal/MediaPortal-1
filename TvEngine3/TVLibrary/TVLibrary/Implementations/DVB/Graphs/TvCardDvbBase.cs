@@ -183,17 +183,20 @@ namespace TvLibrary.Implementations.DVB
         return;
       }
 
-      foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
+      if (_useCustomTuning)
       {
-        ICustomTuner customTuner = deviceInterface as ICustomTuner;
-        if (customTuner != null && customTuner.CanTuneChannel(channel))
+        foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
         {
-          Log.Log.Debug("TvCardDvbBase: using custom tuning");
-          if (!customTuner.Tune(channel))
+          ICustomTuner customTuner = deviceInterface as ICustomTuner;
+          if (customTuner != null && customTuner.CanTuneChannel(channel))
           {
-            throw new TvException("TvCardDvbBase: failed to tune to channel");
+            Log.Log.Debug("TvCardDvbBase: using custom tuning");
+            if (!customTuner.Tune(channel))
+            {
+              throw new TvException("TvCardDvbBase: failed to tune to channel");
+            }
+            return;
           }
-          return;
         }
       }
 
@@ -460,7 +463,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Debug("TvCardDvbBase: BuildGraph()");
       try
       {
-        if (_isGraphBuilt)
+        if (_isDeviceInitialised)
         {
           Log.Log.Error("TvCardDvbBase: the graph is already built");
           throw new TvException("The graph is already built.");
@@ -481,28 +484,51 @@ namespace TvLibrary.Implementations.DVB
         AddAndConnectBdaBoardFilters(_device);
         FilterGraphTools.SaveGraphFile(_graphBuilder, _device.Name + " - " + _tunerType + " Graph.grf");
         GetTunerSignalStatistics();
-        _isGraphBuilt = true;
+        _isDeviceInitialised = true;
 
-        bool startGraph = false;
+        // Plugins can request to pause or start the device - other actions don't make sense here. The running
+        // state is considered more compatible than the paused state, so start takes precedence.
+        DeviceAction actualAction = DeviceAction.Default;
         foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
         {
-          bool start;
-          deviceInterface.OnGraphBuilt(this, out start);
-          if (start)
+          DeviceAction action;
+          deviceInterface.OnInitialised(this, out action);
+          if (action == DeviceAction.Pause)
           {
-            startGraph = true;
+            if (actualAction == DeviceAction.Default)
+            {
+              Log.Log.Debug("TvCardDvbBase: plugin \"{0}\" will cause device pause", deviceInterface.Name);
+              actualAction = DeviceAction.Pause;
+            }
+            else
+            {
+              Log.Log.Debug("TvCardDvbBase: plugin \"{0}\" wants to pause the device, overriden", deviceInterface.Name);
+            }
+          }
+          else if (action == DeviceAction.Start)
+          {
+            Log.Log.Debug("TvCardDvbBase: plugin \"{0}\" will cause device start", deviceInterface.Name);
+            actualAction = action;
+          }
+          else if (action != DeviceAction.Default)
+          {
+            Log.Log.Debug("TvCardDvbBase: plugin \"{0}\" wants unsupported action {1}", deviceInterface.Name, action);
           }
         }
-        if (startGraph)
+        if (actualAction == DeviceAction.Start)
         {
-          RunGraph(-1);
+          SetGraphState(FilterState.Running);
+        }
+        else if (actualAction == DeviceAction.Pause)
+        {
+          SetGraphState(FilterState.Paused);
         }
       }
       catch (Exception ex)
       {
         Log.Log.Write(ex);
         Dispose();
-        _isGraphBuilt = false;
+        _isDeviceInitialised = false;
         throw new TvExceptionGraphBuildingFailed("Graph building failed.", ex);
       }
     }
@@ -551,19 +577,19 @@ namespace TvLibrary.Implementations.DVB
           // The generic network provider is not installed. Fall back...
           if (_tunerType == CardType.DvbT)
           {
-            c.NetProvider = (int)TvDatabase.DbNetworkProvider.DVBT;
+            c.NetProvider = (int)TvDatabase.DbNetworkProvider.DvbT;
           }
           else if (_tunerType == CardType.DvbS)
           {
-            c.NetProvider = (int)TvDatabase.DbNetworkProvider.DVBS;
+            c.NetProvider = (int)TvDatabase.DbNetworkProvider.DvbS;
           }
           else if (_tunerType == CardType.Atsc)
           {
-            c.NetProvider = (int)TvDatabase.DbNetworkProvider.ATSC;
+            c.NetProvider = (int)TvDatabase.DbNetworkProvider.Atsc;
           }
           else if (_tunerType == CardType.DvbC)
           {
-            c.NetProvider = (int)TvDatabase.DbNetworkProvider.DVBC;
+            c.NetProvider = (int)TvDatabase.DbNetworkProvider.DvbC;
           }
           c.Persist();
         }
@@ -573,19 +599,19 @@ namespace TvLibrary.Implementations.DVB
       Guid networkProviderClsId;
       switch ((TvDatabase.DbNetworkProvider)c.NetProvider)
       {
-        case DbNetworkProvider.DVBT:
+        case DbNetworkProvider.DvbT:
           networkProviderName = "DVBT Network Provider";
           networkProviderClsId = typeof(DVBTNetworkProvider).GUID;
           break;
-        case DbNetworkProvider.DVBS:
+        case DbNetworkProvider.DvbS:
           networkProviderName = "DVBS Network Provider";
           networkProviderClsId = typeof(DVBSNetworkProvider).GUID;
           break;
-        case DbNetworkProvider.DVBC:
+        case DbNetworkProvider.DvbC:
           networkProviderName = "DVBC Network Provider";
           networkProviderClsId = typeof(DVBCNetworkProvider).GUID;
           break;
-        case DbNetworkProvider.ATSC:
+        case DbNetworkProvider.Atsc:
           networkProviderName = "ATSC Network Provider";
           networkProviderClsId = typeof(ATSCNetworkProvider).GUID;
           break;
@@ -1235,7 +1261,7 @@ namespace TvLibrary.Implementations.DVB
         _tunerStatistics.Clear();
       }
       Log.Log.WriteFile("  decompose done...");
-      _isGraphBuilt = false;
+      _isDeviceInitialised = false;
     }
 
     #endregion

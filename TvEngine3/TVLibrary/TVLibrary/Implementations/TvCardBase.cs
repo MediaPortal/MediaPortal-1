@@ -73,11 +73,6 @@ namespace TvLibrary.Implementations
     protected bool _preloadCard;
 
     /// <summary>
-    /// Indicates if the card supports pausegraph, otherwise stopgraph will be used when card is idle.
-    /// </summary>
-    protected bool _stopGraph;
-
-    /// <summary>
     /// Scanning Paramters
     /// </summary>
     protected ScanParameters _parameters;
@@ -133,11 +128,6 @@ namespace TvLibrary.Implementations
     protected bool _isScanning;
 
     /// <summary>
-    /// State of the graph
-    /// </summary>
-    protected bool _isGraphBuilt = false;
-
-    /// <summary>
     /// The graph builder
     /// </summary>
     protected IFilterGraph2 _graphBuilder;
@@ -189,10 +179,21 @@ namespace TvLibrary.Implementations
 
 
     /// <summary>
+    /// The action that will be taken when a device is no longer being actively used.
+    /// </summary>
+    protected DeviceIdleMode _idleMode = DeviceIdleMode.Stop;
+
+    /// <summary>
+    /// An indicator: has the device been initialised? For most devices this indicates whether the DirectShow/BDA
+    /// filter graph has been built.
+    /// </summary>
+    protected bool _isDeviceInitialised = false;
+
+    /// <summary>
     /// A list containing the custom device interfaces supported by this device. The list is ordered by
     /// interface priority.
     /// </summary>
-    protected List<ICustomDevice> _customDeviceInterfaces;
+    protected List<ICustomDevice> _customDeviceInterfaces = null;
 
     /// <summary>
     /// Enable or disable the use of conditional access interface(s).
@@ -202,10 +203,13 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// The type of conditional access module available to the conditional access interface.
     /// </summary>
+    /// <remarks>
+    /// Certain conditional access modules require specific handling to ensure compatibility.
+    /// </remarks>
     protected CamType _camType = CamType.Default;
 
     /// <summary>
-    /// The numer of channels that the device is capable of or permitted to decrypt simultaneously. Zero means
+    /// The number of channels that the device is capable of or permitted to decrypt simultaneously. Zero means
     /// there is no limit.
     /// </summary>
     protected int _decryptLimit = 0;
@@ -215,16 +219,18 @@ namespace TvLibrary.Implementations
     /// interface needs to manage.
     /// </summary>
     /// <remarks>
-    /// First = Explicit management using Only, First, More and Last. This is the most widely supported set
-    ///         of commands, however they are not suitable for some interfaces (such as the Digital Devices
-    ///         interface).
-    /// Only = Always send Only. In most cases this will result in only one channel being decrypted. If other
+    /// Multi-channel decrypt is *not* the same as Digital Devices' multi-transponder decrypt (MTD). MCD is a
+    /// implmented using standard CA PMT commands; MTD is implemented in the Digital Devices drivers.
+    /// Disabled = Always send Only. In most cases this will result in only one channel being decrypted. If other
     ///         methods are not working reliably then this one should at least allow decrypting one channel
     ///         reliably.
-    /// Add = Use Add, Update and Remove to pass changes to the interface. The full channel list is never
+    /// List = Explicit management using Only, First, More and Last. This is the most widely supported set
+    ///         of commands, however they are not suitable for some interfaces (such as the Digital Devices
+    ///         interface).
+    /// Changes = Use Add, Update and Remove to pass changes to the interface. The full channel list is never
     ///         passed. Most interfaces don't support these commands.
     /// </remarks>
-    protected CaPmtListManagementAction _multiDecryptMode = CaPmtListManagementAction.First;
+    protected MultiChannelDecryptMode _multiChannelDecryptMode = MultiChannelDecryptMode.List;
 
     /// <summary>
     /// Enable or disable waiting for the conditional interface to be ready before sending commands.
@@ -243,24 +249,29 @@ namespace TvLibrary.Implementations
     protected int _decryptFailureRetryCount = 2;
 
     /// <summary>
-    /// Force the device PID filter(s) to be enabled even when the tuning context (DVB-S vs. DVB-S2 etc.)
-    /// would not normally require them to be enabled. Enabling this setting also forces the filter to
-    /// remain active when the filter controller is not capable of passing all of the required PIDs. It is
-    /// recommended to disable this setting.
+    /// The mode to use for controlling device PID filter(s).
     /// </summary>
-    protected bool _forceEnablePidFilter = true;
-
-    /// <summary>
-    /// Force the device PID filter(s) to be disabled even when the tuning context (DVB-S vs. DVB-S2 etc.)
-    /// would normally require them to be enabled. It is recommended to disable this setting.
-    /// </summary>
-    protected bool _forceDisablePidFilter = false;
+    /// <remarks>
+    /// This setting can be used to enable or disable the device's PID filter even when the tuning context
+    /// (for example, DVB-S vs. DVB-S2) would usually result in different behaviour. Note that it is usually
+    /// not ideal to have to manually enable or disable a PID filter as it can affect tuning reliability.
+    /// </remarks>
+    protected PidFilterMode _pidFilterMode = PidFilterMode.Auto;
 
     /// <summary>
     /// The previous channel that the device was tuned to. This variable is reset each time the DirectShow
-    /// graph is stopped or paused.
+    /// graph is stopped, paused or rebuilt.
     /// </summary>
-    protected IChannel _previousChannel;
+    protected IChannel _previousChannel = null;
+
+    /// <summary>
+    /// Enable or disable the use of custom device interfaces for tuning.
+    /// </summary>
+    /// <remarks>
+    /// Custom/direct tuning may be faster or more reliable than regular tuning methods. Equally, it can
+    /// also be slower (eg. TeVii) or more limiting (eg. Digital Everywhere) than regular tuning methods.
+    /// </remarks>
+    protected bool _useCustomTuning = false;
 
     #endregion
 
@@ -272,7 +283,7 @@ namespace TvLibrary.Implementations
     ///<param name="device">Base DS device</param>
     protected TvCardBase(DsDevice device)
     {
-      _isGraphBuilt = false;
+      _isDeviceInitialised = false;
       _mapSubChannels = new Dictionary<int, BaseSubChannel>();
       _lastSignalUpdate = DateTime.MinValue;
       _parameters = new ScanParameters();
@@ -295,10 +306,15 @@ namespace TvLibrary.Implementations
         {
           _cardId = c.IdCard;
           _preloadCard = c.PreloadCard;
-          _stopGraph = c.StopGraph;
-          _useConditionalAccessInterace = c.CAM;
+          _idleMode = (DeviceIdleMode)c.IdleMode;
+          _pidFilterMode = (PidFilterMode)c.PidFilterMode;
+          _useCustomTuning = c.UseCustomTuning;
+
+          // Conditional access...
+          _useConditionalAccessInterace = c.UseConditionalAccess;
           _camType = (CamType)c.CamType;
           _decryptLimit = c.DecryptLimit;
+          _multiChannelDecryptMode = (MultiChannelDecryptMode)c.MultiChannelDecryptMode;
         }
       }
     }
@@ -862,7 +878,7 @@ namespace TvLibrary.Implementations
     /// </summary>
     protected void ConfigurePidFilter()
     {
-      Log.Log.Debug("TvCardBase: configure PID filter");
+      Log.Log.Debug("TvCardBase: configure PID filter, mode = {0}", _pidFilterMode);
 
       if (_tunerType == CardType.Analog || _tunerType == CardType.RadioWebStream || _tunerType == CardType.Unknown)
       {
@@ -875,15 +891,6 @@ namespace TvLibrary.Implementations
         return;
       }
 
-      if (_forceDisablePidFilter)
-      {
-        Log.Log.Debug("TvCardBase: filtering is force-disabled");
-      }
-      else if (_forceEnablePidFilter)
-      {
-        Log.Log.Debug("TvCardBase: filtering is force-enabled");
-      }
-
       HashSet<UInt16> pidSet = null;
       ModulationType modulation = ModulationType.ModNotDefined;
       bool checkedModulation = false;
@@ -894,7 +901,7 @@ namespace TvLibrary.Implementations
         {
           Log.Log.Debug("TvCardBase: found PID filter controller interface");
 
-          if (_forceDisablePidFilter)
+          if (_pidFilterMode == PidFilterMode.Disabled)
           {
             filter.SetFilterPids(null, modulation, false);
             continue;
@@ -949,7 +956,7 @@ namespace TvLibrary.Implementations
               }
             }
           }
-          filter.SetFilterPids(pidSet, modulation, _forceEnablePidFilter);
+          filter.SetFilterPids(pidSet, modulation, _pidFilterMode == PidFilterMode.Enabled);
         }
       }
     }
@@ -962,7 +969,7 @@ namespace TvLibrary.Implementations
     ///   subchannel has changed, or <c>last</c> if the subchannel is being disposed.</param>
     protected void UpdateDecryptList(int subChannelId, CaPmtListManagementAction updateAction)
     {
-      Log.Log.Debug("TvCardBase: subchannel {0} update decrypt list, mode = {1}, update action = {2}", subChannelId, _multiDecryptMode, updateAction);
+      Log.Log.Debug("TvCardBase: subchannel {0} update decrypt list, mode = {1}, update action = {2}", subChannelId, _multiChannelDecryptMode, updateAction);
 
       if (_mapSubChannels == null || _mapSubChannels.Count == 0 || !_mapSubChannels.ContainsKey(subChannelId))
       {
@@ -978,7 +985,7 @@ namespace TvLibrary.Implementations
       // First build a distinct list of the services that we need to handle.
       Log.Log.Debug("TvCardBase: assembling service list");
       List<BaseSubChannel> distinctServices = new List<BaseSubChannel>();
-      if (_multiDecryptMode == CaPmtListManagementAction.Only || _multiDecryptMode == CaPmtListManagementAction.Add)
+      if (_multiChannelDecryptMode == MultiChannelDecryptMode.Disabled || _multiChannelDecryptMode == MultiChannelDecryptMode.Changes)
       {
         // We only send one command relating to the service associated with the subchannel.
         distinctServices.Add(_mapSubChannels[subChannelId]);
@@ -1035,7 +1042,9 @@ namespace TvLibrary.Implementations
         }
       }
 
-      // This should never happen, regardless of the action that is being performed.
+      // This should never happen, regardless of the action that is being performed. Note that this is just a
+      // sanity check. It is expected that the service will manage decrypt limit logic. This check does not work
+      // for "changes" mode.
       if (_decryptLimit > 0 && distinctServices.Count > _decryptLimit)
       {
         Log.Log.Debug("TvCardBase: decrypt limit exceeded");
@@ -1049,7 +1058,7 @@ namespace TvLibrary.Implementations
 
       // Identify the conditional access interface(s) and send the service list.
       bool foundCaProvider = false;
-      for (int attempt = 1; attempt <= 3; attempt++)
+      for (int attempt = 1; attempt <= _decryptFailureRetryCount + 1; attempt++)
       {
         if (attempt > 1)
         {
@@ -1090,9 +1099,9 @@ namespace TvLibrary.Implementations
           TvDvbChannel digitalService;
           CaPmtListManagementAction action = CaPmtListManagementAction.More;
 
-          // The command is "start/continue descrambling", unless we're in "add" mode and removing a service.
+          // The command is "start/continue descrambling", unless we're in "changes" mode and removing a service.
           CaPmtCommand command = CaPmtCommand.OkDescrambling;
-          if (updateAction == CaPmtListManagementAction.Last && _multiDecryptMode == CaPmtListManagementAction.Add)
+          if (updateAction == CaPmtListManagementAction.Last && _multiChannelDecryptMode == MultiChannelDecryptMode.Changes)
           {
             command = CaPmtCommand.NotSelected;
           }
@@ -1102,7 +1111,7 @@ namespace TvLibrary.Implementations
             {
               if (distinctServices.Count == 1)
               {
-                if (_multiDecryptMode == CaPmtListManagementAction.Add)
+                if (_multiChannelDecryptMode == MultiChannelDecryptMode.Changes)
                 {
                   // Remove a service...
                   if (updateAction == CaPmtListManagementAction.Last)
@@ -1283,89 +1292,48 @@ namespace TvLibrary.Implementations
     protected abstract void UpdateSignalStatus(bool force);
 
     /// <summary>
-    /// Stop the device. The actual result of this function depends on device configuration:
-    /// - graph stop
-    /// - graph pause
-    /// TODO graph destroy
+    /// Stop the device. The actual result of this function depends on device configuration.
     /// </summary>
     public virtual void Stop()
     {
-      Log.Log.Debug("TvCardBase: stop");
-
-      if (_stopGraph)
-      {
-        Log.Log.Debug("  action        = stop");
-      }
-      else
-      {
-        Log.Log.Debug("  action        = pause");
-      }
-
+      Log.Log.Debug("TvCardBase: stop, idle mode = {0}", _idleMode);
       try
       {
-        if (_graphBuilder == null)
-        {
-          Log.Log.Debug("TvCardBase: graphbuilder is null");
-          return;
-        }
-
         UpdateEpgGrabber(false);  // Stop grabbing EPG.
         _isScanning = false;
         FreeAllSubChannels();
 
+        DeviceAction action = DeviceAction.Stop;
+        switch (_idleMode)
+        {
+          case DeviceIdleMode.Pause:
+            action = DeviceAction.Pause;
+            break;
+          case DeviceIdleMode.Unload:
+            action = DeviceAction.Unload;
+            break;
+          case DeviceIdleMode.AlwaysOn:
+            action = DeviceAction.Start;
+            break;
+        }
+
         // Plugins may want to prevent or direct actions to ensure compatibility and smooth device operation.
-        bool restartGraph = false;
+        DeviceAction pluginAction = action;
         foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
         {
-          bool preventAction = false;
-          bool restart = false;
-          if (_stopGraph)
+          deviceInterface.OnStop(this, ref pluginAction);
+          if (pluginAction > action)
           {
-            deviceInterface.OnGraphStop(this, out preventAction, out restart);
+            Log.Log.Debug("TvCardBase: plugin \"{0}\" overrides action {1} with {2}", deviceInterface.Name, action, pluginAction);
+            action = pluginAction;
           }
-          else
+          else if (action != pluginAction)
           {
-            deviceInterface.OnGraphPause(this, out preventAction, out restart);
-          }
-          // Preventing the graph from stopping/pausing takes precedence over restarting the graph.
-          if (preventAction)
-          {
-            Log.Log.Debug("TvCardBase: plugin \"{0}\" prevents action", deviceInterface.Name);
-            return;
-          }
-          if (restart)
-          {
-            Log.Log.Debug("TvCardBase: plugin \"{0}\" wants to restart the graph", deviceInterface.Name);
-            restartGraph = true;
+            Log.Log.Debug("TvCardBase: plugin \"{0}\" wants to perform action {1}, overriden", deviceInterface.Name, pluginAction);
           }
         }
 
-        // Perform action.
-        FilterState state;
-        ((IMediaControl)_graphBuilder).GetState(10, out state);
-        Log.Log.Debug("  current state = {0}", state);
-        int hr = 0;
-        if (_stopGraph && state != FilterState.Stopped)
-        {
-          Log.Log.Debug("TvCardBase: stopping graph");
-          hr = ((IMediaControl)_graphBuilder).Stop();
-        }
-        else if (!_stopGraph && state == FilterState.Running)
-        {
-          Log.Log.Debug("TvCardBase: pausing graph");
-          hr = ((IMediaControl)_graphBuilder).Pause();
-        }
-        if (hr < 0 || hr > 1)
-        {
-          Log.Log.Error("TvCardBase: failed to perform action, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          throw new TvException("TvCardBase: failed to stop device");
-        }
-
-        // Restart the graph if one of the plugins required this.
-        if (restartGraph)
-        {
-          RunGraph(-1);
-        }
+        PerformDeviceAction(action);
 
         // Turn off the device power.
         foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
@@ -1387,26 +1355,95 @@ namespace TvLibrary.Implementations
     }
 
     /// <summary>
-    /// Start the DirectShow filter graph.
+    /// Perform a specific device action. For example, stop the device.
     /// </summary>
-    /// <param name="subChannelId">The subchannel ID for the channel that is being started.</param>
-    protected virtual void RunGraph(int subChannelId)
+    /// <param name="action">The action to perform with the device.</param>
+    protected virtual void PerformDeviceAction(DeviceAction action)
     {
-      Log.Log.Debug("TvCardBase: RunGraph()");
-
-      if (GraphRunning())
+      Log.Log.Debug("TvCardBase: perform device action, action = {0}", action);
+      try
       {
-        Log.Log.Debug("TvCardBase: graph already running");
+        if (_graphBuilder == null)
+        {
+          Log.Log.Debug("TvCardBase: graphbuilder is null");
+          return;
+        }
+
+        if (action == DeviceAction.Pause)
+        {
+          SetGraphState(FilterState.Paused);
+        }
+        else if (action == DeviceAction.Stop)
+        {
+          SetGraphState(FilterState.Stopped);
+        }
+        else if (action == DeviceAction.Start)
+        {
+          SetGraphState(FilterState.Running);
+        }
+        else if (action == DeviceAction.Restart)
+        {
+          SetGraphState(FilterState.Stopped);
+          SetGraphState(FilterState.Running);
+        }
+        else if (action == DeviceAction.Reset)
+        {
+          // TODO: this should work, but it would be better to have Dispose() as final and Decompose() or
+          // some other alternative for resetting.
+          Dispose();
+          BuildGraph();
+        }
+        else if (action == DeviceAction.Unload)
+        {
+          Dispose();
+        }
+        else
+        {
+          Log.Log.Debug("TvCardBase: unhandled action");
+          return;
+        }
+        Log.Log.Debug("TvCardBase: action succeeded");
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Debug("TvCardBase: action failed\r\n" + ex.ToString());
+      }
+    }
+
+    /// <summary>
+    /// Set the state of the DirectShow/BDA filter graph.
+    /// </summary>
+    /// <param name="state">The state to put the filter graph in.</param>
+    protected virtual void SetGraphState(FilterState state)
+    {
+      Log.Log.Debug("TvCardBase: set graph state, state = {0}", state);
+
+      // Get current state.
+      FilterState currentState;
+      ((IMediaControl)_graphBuilder).GetState(10, out currentState);
+      Log.Log.Debug("  current state = {0}", currentState);
+      if (state == currentState)
+      {
+        Log.Log.Debug("TvCardBase: graph already in required state");
+        return;
+      }
+      int hr = 0;
+      if (state == FilterState.Stopped)
+      {
+        hr = ((IMediaControl)_graphBuilder).Stop();
+      }
+      else if (state == FilterState.Paused)
+      {
+        hr = ((IMediaControl)_graphBuilder).Pause();
       }
       else
       {
-        Log.Log.Debug("TvCardBase: start graph");
-        int hr = ((IMediaControl)_graphBuilder).Run();
-        if (hr < 0 || hr > 1)
-        {
-          Log.Log.Debug("TvCardBase: failed to start graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          throw new TvException("TvCardBase: failed to start graph");
-        }
+        hr = ((IMediaControl)_graphBuilder).Run();
+      }
+      if (hr < 0 || hr > 1)
+      {
+        Log.Log.Error("TvCardBase: failed to perform action, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        throw new TvException("TvCardBase: failed to set graph state");
       }
     }
 
@@ -1453,7 +1490,7 @@ namespace TvLibrary.Implementations
       try
       {
         // The DirectShow/BDA graph needs to be assembled before the channel can be tuned.
-        if (!_isGraphBuilt)
+        if (!_isDeviceInitialised)
         {
           BuildGraph();
         }
@@ -1487,16 +1524,24 @@ namespace TvLibrary.Implementations
           // will sometimes returns true when it shouldn't. See mantis 0002979.
           IChannel tuneChannel = (IChannel)channel.Clone();
 
-          bool graphStarted = false;
+          // Plugin OnBeforeTune().
+          DeviceAction action = DeviceAction.Default;
           foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
           {
-            // Plugin OnBeforeTune().
-            bool forceGraphStart = false;
-            deviceInterface.OnBeforeTune(this, _previousChannel, ref tuneChannel, out forceGraphStart);
-            if (forceGraphStart && !graphStarted)
+            DeviceAction pluginAction;
+            deviceInterface.OnBeforeTune(this, _previousChannel, ref tuneChannel, out pluginAction);
+            if (pluginAction != DeviceAction.Unload && pluginAction != DeviceAction.Default)
             {
-              RunGraph(-1);
-              graphStarted = true;
+              // Valid action requested...
+              if (pluginAction > action)
+              {
+                Log.Log.Debug("TvCardBase: plugin \"{0}\" overrides action {1} with {2}", deviceInterface.Name, action, pluginAction);
+                action = pluginAction;
+              }
+              else if (pluginAction != action)
+              {
+                Log.Log.Debug("TvCardBase: plugin \"{0}\" wants to perform action {1}, overriden", deviceInterface.Name, pluginAction);
+              }
             }
 
             // Turn on device power. This usually needs to happen before tuning.
@@ -1505,6 +1550,10 @@ namespace TvLibrary.Implementations
             {
               powerDevice.SetPowerState(true);
             }
+          }
+          if (action != DeviceAction.Default)
+          {
+            PerformDeviceAction(action);
           }
 
           // Perform tuning.
@@ -1539,16 +1588,16 @@ namespace TvLibrary.Implementations
       try
       {
         // Start the DirectShow/BDA graph if it is not already running.
-        RunGraph(subChannelId);
+        SetGraphState(FilterState.Running);
 
         // Ensure that data/streams which are required to detect the service will pass through the device's
         // PID filter.
         ConfigurePidFilter();
 
-        // Plugin OnGraphRunning().
+        // Plugin OnRunning().
         foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
         {
-          deviceInterface.OnGraphRunning(this, _mapSubChannels[subChannelId].CurrentChannel);
+          deviceInterface.OnRunning(this, _mapSubChannels[subChannelId].CurrentChannel);
         }
 
         // Check signal lock.

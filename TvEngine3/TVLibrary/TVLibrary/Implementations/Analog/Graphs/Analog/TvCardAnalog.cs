@@ -188,7 +188,7 @@ namespace TvLibrary.Implementations.Analog
     {
       get
       {
-        if (!_isGraphBuilt)
+        if (!_isDeviceInitialised)
         {
           BuildGraph();
         }
@@ -326,7 +326,7 @@ namespace TvLibrary.Implementations.Analog
       _rotEntry = null;
       Release.ComObject("Graphbuilder", _graphBuilder);
       _graphBuilder = null;
-      _isGraphBuilt = false;
+      _isDeviceInitialised = false;
       Log.Log.WriteFile("analog: dispose completed");
     }
 
@@ -349,7 +349,7 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("analog: build graph");
       try
       {
-        if (_isGraphBuilt)
+        if (_isDeviceInitialised)
         {
           Log.Log.WriteFile("analog: Graph already build");
           throw new TvException("Graph already build");
@@ -441,20 +441,20 @@ namespace TvLibrary.Implementations.Analog
         Log.Log.WriteFile("analog: Graph is built");
         FilterGraphTools.SaveGraphFile(_graphBuilder, "analog.grf");
         ReloadCardConfiguration();
-        _isGraphBuilt = true;
+        _isDeviceInitialised = true;
       }
       catch (TvExceptionSWEncoderMissing ex)
       {
         Log.Log.Write(ex);
         Dispose();
-        _isGraphBuilt = false;
+        _isDeviceInitialised = false;
         throw;
       }
       catch (Exception ex)
       {
         Log.Log.Write(ex);
         Dispose();
-        _isGraphBuilt = false;
+        _isDeviceInitialised = false;
         throw new TvExceptionGraphBuildingFailed("Graph building failed", ex);
       }
     }

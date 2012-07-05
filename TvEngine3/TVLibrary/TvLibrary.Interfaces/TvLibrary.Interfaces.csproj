@@ -71,7 +71,7 @@
     <Compile Include="..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="CardType.cs" />
+    <Compile Include="TvEnums.cs" />
     <Compile Include="ChannelLinkage\LinkedChannel.cs" />
     <Compile Include="ChannelLinkage\PortalChannel.cs" />
     <Compile Include="DvbConditionalAccess.cs" />

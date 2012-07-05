@@ -297,18 +297,6 @@ namespace SetupTv
         }
       }
 
-      // Mantis #0001991: disable mpg recording  (part I: force TS recording format)
-      IList<Card> TvCards = Card.ListAll();
-      foreach (Card card in TvCards)
-      {
-        if (card.RecordingFormat != 0)
-        {
-          card.RecordingFormat = 0;
-          Log.Info("Card {0} switched from .MPG to .TS format", card.Name);
-          card.Persist();
-        }
-      }
-
       // Mantis #0002138: impossible to configure TVGroups 
       TvBusinessLayer layer = new TvBusinessLayer();
       layer.CreateGroup(TvConstants.TvGroupNames.AllChannels);

@@ -282,9 +282,9 @@ namespace TvService
     {
       bool canCardDecodeChannel = true;
       int cardId = cardHandler.DataBaseCard.IdCard;
-      if (!tuningDetail.FreeToAir && !cardHandler.DataBaseCard.CAM)
+      if (!tuningDetail.FreeToAir && !cardHandler.DataBaseCard.UseConditionalAccess)
       {
-        Log.Info("Controller:    card:{0} type:{1} channel is encrypted but card has no CAM", cardId, cardHandler.Type);
+        Log.Info("Controller:    card:{0} type:{1} channel is encrypted but conditional access is disabled for device", cardId, cardHandler.Type);
         canCardDecodeChannel = false;
       }
       return canCardDecodeChannel;

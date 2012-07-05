@@ -31,10 +31,10 @@ namespace TvDatabase
   public enum DbNetworkProvider
   {
     Generic,
-    DVBT,
-    DVBS,
-    DVBC,
-    ATSC
+    DvbT,
+    DvbS,
+    DvbC,
+    Atsc
   }
 
   /// <summary>
@@ -57,12 +57,16 @@ namespace TvDatabase
     [TableColumn("enabled", NotNull = true)] private bool enabled;
     [TableColumn("camType", NotNull = true)] private int camType;
     [TableColumn("timeshiftingFolder", NotNull = true)] private string timeshiftingFolder;
-    [TableColumn("recordingFormat", NotNull = true)] private int recordingFormat;
     [TableColumn("decryptLimit", NotNull = true)] private int decryptLimit;
     [TableColumn("preload", NotNull = true)] private bool preloadCard;
-    [TableColumn("stopgraph", NotNull = true)] private bool stopGraph;
-    [TableColumn("CAM", NotNull = true)] private bool caModule;
     [TableColumn("NetProvider", NotNull = true)] private int netProvider;
+    [TableColumn("idleMode", NotNull = true)] private int idleMode;
+    [TableColumn("multiChannelDecryptMode", NotNull = true)] private int multiChannelDecryptMode;
+    [TableColumn("alwaysSendDiseqcCommands", NotNull = true)] private bool alwaysSendDiseqcCommands;
+    [TableColumn("diseqcCommandRepeatCount", NotNull = true)] private int diseqcCommandRepeatCount;
+    [TableColumn("pidFilterMode", NotNull = true)] private int pidFilterMode;
+    [TableColumn("useCustomTuning", NotNull = true)] private bool useCustomTuning;
+    [TableColumn("useConditionalAccess", NotNull = true)] private bool useConditionalAccess;
 
     #endregion
 
@@ -72,8 +76,10 @@ namespace TvDatabase
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
     /// </summary> 
     public Card(string devicePath, string name, int priority, bool grabEPG, DateTime lastEpgGrab, string recordingFolder,
-                int idServer, bool enabled, int camType, string timeshiftingFolder, int recordingFormat,
-                int decryptLimit, bool preloadCard, bool stopGraph, bool caModule, int netProvider)
+                int idServer, bool enabled, int camType, string timeshiftingFolder, int decryptLimit,
+                bool preloadCard, int netProvider, int idleMode, int multiChannelDecryptMode,
+                bool alwaysSendDiseqcCommands, int diseqcCommandRepeatCount, int pidFilterMode,
+                bool useCustomTuning, bool useConditionalAccess)
     {
       isChanged = true;
       this.devicePath = devicePath;
@@ -86,12 +92,16 @@ namespace TvDatabase
       this.enabled = enabled;
       this.camType = camType;
       this.timeshiftingFolder = timeshiftingFolder;
-      this.recordingFormat = recordingFormat;
       this.decryptLimit = decryptLimit;
       this.preloadCard = preloadCard;
-      this.stopGraph = stopGraph;
-      this.caModule = caModule;
       this.netProvider = netProvider;
+      this.idleMode = idleMode;
+      this.multiChannelDecryptMode = multiChannelDecryptMode;
+      this.alwaysSendDiseqcCommands = alwaysSendDiseqcCommands;
+      this.diseqcCommandRepeatCount = diseqcCommandRepeatCount;
+      this.pidFilterMode = pidFilterMode;
+      this.useCustomTuning = useCustomTuning;
+      this.useConditionalAccess = useConditionalAccess;
     }
 
     /// <summary> 
@@ -100,7 +110,9 @@ namespace TvDatabase
     /// </summary> 
     public Card(int idCard, string devicePath, string name, int priority, bool grabEPG, DateTime lastEpgGrab,
                 string recordingFolder, int idServer, bool enabled, int camType, string timeshiftingFolder,
-                int recordingFormat, int decryptLimit, bool preloadCard, bool stopGraph, bool caModule, int netProvider)
+                int decryptLimit, bool preloadCard, int netProvider, int idleMode, int multiChannelDecryptMode,
+                bool alwaysSendDiseqcCommands, int diseqcCommandRepeatCount, int pidFilterMode,
+                bool useCustomTuning, bool useConditionalAccess)
     {
       this.idCard = idCard;
       this.devicePath = devicePath;
@@ -113,12 +125,16 @@ namespace TvDatabase
       this.enabled = enabled;
       this.camType = camType;
       this.timeshiftingFolder = timeshiftingFolder;
-      this.recordingFormat = recordingFormat;
       this.decryptLimit = decryptLimit;
       this.preloadCard = preloadCard;
-      this.stopGraph = stopGraph;
-      this.caModule = caModule;
       this.netProvider = netProvider;
+      this.idleMode = idleMode;
+      this.multiChannelDecryptMode = multiChannelDecryptMode;
+      this.alwaysSendDiseqcCommands = alwaysSendDiseqcCommands;
+      this.diseqcCommandRepeatCount = diseqcCommandRepeatCount;
+      this.pidFilterMode = pidFilterMode;
+      this.useCustomTuning = useCustomTuning;
+      this.useConditionalAccess = useConditionalAccess;
     }
 
     #endregion
@@ -134,76 +150,11 @@ namespace TvDatabase
     }
 
     /// <summary>
-    /// Property relating to database column preload
-    /// </summary>
-    public bool PreloadCard
-    {
-      get { return preloadCard; }
-      set
-      {
-        isChanged |= preloadCard != value;
-        preloadCard = value;
-      }
-    }
-
-    /// <summary>
-    /// Property relating to database column stopGraph
-    /// </summary>
-    public bool StopGraph
-    {
-      get { return stopGraph; }
-      set
-      {
-        isChanged |= stopGraph != value;
-        stopGraph = value;
-      }
-    }
-
-    /// <summary>
     /// Property relating to database column idCard
     /// </summary>
     public int IdCard
     {
       get { return idCard; }
-    }
-
-    /// <summary>
-    /// Property relating to database column idCard
-    /// </summary>
-    public int DecryptLimit
-    {
-      get { return decryptLimit; }
-      set
-      {
-        isChanged |= decryptLimit != value;
-        decryptLimit = value;
-      }
-    }
-
-    /// <summary>
-    /// Property relating to database column CAM
-    /// </summary>
-    public bool CAM
-    {
-      get { return caModule; }
-      set
-      {
-        isChanged |= caModule != value;
-        caModule = value;
-      }
-    }
-
-    /// <summary>
-    /// Property relating to database column recordingFormat
-    /// </summary>
-    public int RecordingFormat
-    {
-      get { return recordingFormat; }
-      set
-      {
-        isChanged |= recordingFormat != value;
-        recordingFormat = value;
-      }
     }
 
     /// <summary>
@@ -337,11 +288,29 @@ namespace TvDatabase
     }
 
     /// <summary>
-    /// Read Only property indicating if a card can record multiple stream from a same transponder 
+    /// Property relating to database column decryptLimit
     /// </summary>
-    public bool supportSubChannels
+    public int DecryptLimit
     {
-      get { return supportsSubChannels(); }
+      get { return decryptLimit; }
+      set
+      {
+        isChanged |= decryptLimit != value;
+        decryptLimit = value;
+      }
+    }
+
+    /// <summary>
+    /// Property relating to database column preload
+    /// </summary>
+    public bool PreloadCard
+    {
+      get { return preloadCard; }
+      set
+      {
+        isChanged |= preloadCard != value;
+        preloadCard = value;
+      }
     }
 
     /// <summary>
@@ -354,6 +323,97 @@ namespace TvDatabase
       {
         isChanged |= netProvider != value;
         netProvider = value;
+      }
+    }
+
+    /// <summary>
+    /// Property relating to database column idleMode
+    /// </summary>
+    public int IdleMode
+    {
+      get { return idleMode; }
+      set
+      {
+        isChanged |= idleMode != value;
+        idleMode = value;
+      }
+    }
+
+    /// <summary>
+    /// Property relating to database column multiChannelDecryptMode
+    /// </summary>
+    public int MultiChannelDecryptMode
+    {
+      get { return multiChannelDecryptMode; }
+      set
+      {
+        isChanged |= multiChannelDecryptMode != value;
+        multiChannelDecryptMode = value;
+      }
+    }
+
+    /// <summary>
+    /// Property relating to database column alwaysSendDiseqcCommands
+    /// </summary>
+    public bool AlwaysSendDiseqcCommands
+    {
+      get { return alwaysSendDiseqcCommands; }
+      set
+      {
+        isChanged |= alwaysSendDiseqcCommands != value;
+        alwaysSendDiseqcCommands = value;
+      }
+    }
+
+    /// <summary>
+    /// Property relating to database column diseqcCommandRepeatCount
+    /// </summary>
+    public int DiseqcCommandRepeatCount
+    {
+      get { return diseqcCommandRepeatCount; }
+      set
+      {
+        isChanged |= diseqcCommandRepeatCount != value;
+        diseqcCommandRepeatCount = value;
+      }
+    }
+
+    /// <summary>
+    /// Property relating to database column pidFilterMode
+    /// </summary>
+    public int PidFilterMode
+    {
+      get { return pidFilterMode; }
+      set
+      {
+        isChanged |= pidFilterMode != value;
+        pidFilterMode = value;
+      }
+    }
+
+    /// <summary>
+    /// Property relating to database column useCustomTuning
+    /// </summary>
+    public bool UseCustomTuning
+    {
+      get { return useCustomTuning; }
+      set
+      {
+        isChanged |= useCustomTuning != value;
+        useCustomTuning = value;
+      }
+    }
+
+    /// <summary>
+    /// Property relating to database column useConditionalAccess
+    /// </summary>
+    public bool UseConditionalAccess
+    {
+      get { return useConditionalAccess; }
+      set
+      {
+        isChanged |= useConditionalAccess != value;
+        useConditionalAccess = value;
       }
     }
 
@@ -457,12 +517,14 @@ namespace TvDatabase
     }
 
     /// <summary>
-    /// Checks if a card can view multiple channels from a same transponder
+    /// Get a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
     /// </summary>
-    /// <returns>true/false</returns>
-    public bool supportsSubChannels()
+    /// <returns>
+    /// a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>
+    /// </returns>
+    public override string ToString()
     {
-      return true;
+      return name;
     }
 
     #endregion

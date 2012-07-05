@@ -33,7 +33,7 @@ namespace TvEngine
   /// A base class for handling DiSEqC for various Conexant-based devices including Hauppauge, Geniatech
   /// and DVBSky.
   /// </summary>
-  public class Conexant : BaseCustomDevice/*, ICustomTuner*/, IDiseqcDevice
+  public class Conexant : BaseCustomDevice, IDiseqcDevice
   {
     #region enums
 
@@ -68,63 +68,6 @@ namespace TvEngine
       NoReply,              // Expecting no response.
     }
 
-    private enum CxModulation
-    {
-      Undefined = 0,
-      DvbsQpsk,
-      DvbsBpsk,
-      // Digicipher II (Dish TV)
-      DciiQpskMux,
-      DciiQpskSplitI,
-      DciiQpskSplitQ
-    }
-
-    [Flags]
-    private enum CxFecRate
-    {
-      None = 0,
-      Rate1_2 = 1,
-      Rate2_3 = 2,
-      Rate3_4 = 4,
-      Rate4_5 = 8,
-      Rate5_6 = 16,
-      Rate6_7 = 32,
-      Rate7_8 = 64,
-      Rate5_11 = 128,       // DC II
-      Rate3_5 = 256         // DC II
-    }
-
-    private enum CxSpectralInversion
-    {
-      Undefined = 0,
-      Off,                  // Uninverted, check only nominal inversion.
-      On,                   // Inverted, check only nominal inversion.
-      OnBoth,               // Uninverted, check both inversions.
-      OffBoth               // Inverted, check both inversions.
-    }
-
-    private enum CxSampleFrequency
-    {
-      Undefined = 0,
-      Nominal,
-      DciiNominal,
-      External
-    }
-
-    private enum CxPolarisation
-    {
-      Undefined = 0,
-      High,                 // 18 V = linear horizontal or circular left
-      Low                   // 13 V = linear vertical or circular right
-    }
-
-    private enum CxTone22k
-    {
-      Undefined = 0,
-      On,
-      Off
-    }
-
     #endregion
 
     #region structs
@@ -147,20 +90,6 @@ namespace TvEngine
       public bool IsLastMessage;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    private struct ChannelParams
-    {
-      public UInt32 Frequency;
-      public CxModulation Modulation;
-      public CxFecRate FecRate;
-      public UInt32 SymbolRate;
-      public CxSpectralInversion SpectralInversion;
-      public CxSampleFrequency SampleRate;
-      public CxPolarisation Polarisation;
-      public CxTone22k Tone22k;
-      public UInt32 FecRates;                   // CxFecRate values OR'd together.
-    }
-
     #endregion
 
     #region constants
@@ -175,7 +104,6 @@ namespace TvEngine
     private const int DiseqcMessageParamsSize = 188;
     private const int MaxDiseqcTxMessageLength = 151;   // 3 bytes per message * 50 messages, plus NULL termination
     private const int MaxDiseqcRxMessageLength = 9;     // reply first-in-first-out buffer size (hardware limited)
-    private const int ChannelParamsSize = 36;
 
     #endregion
 
@@ -302,158 +230,6 @@ namespace TvEngine
       _instanceBuffer = Marshal.AllocCoTaskMem(InstanceSize);
       _paramBuffer = Marshal.AllocCoTaskMem(DiseqcMessageParamsSize);
       return true;
-    }
-
-    #endregion
-
-    #region ICustomTuner members
-
-    /// <summary>
-    /// Check if the device implements specialised tuning for a given channel.
-    /// </summary>
-    /// <param name="channel">The channel to check.</param>
-    /// <returns><c>true</c> if the device supports specialised tuning for the channel, otherwise <c>false</c></returns>
-    public bool CanTuneChannel(IChannel channel)
-    {
-      if (channel is DVBSChannel)
-      {
-        return true;
-      }
-      return false;
-    }
-
-    /// <summary>
-    /// Tune to a given channel using the specialised tuning method.
-    /// </summary>
-    /// <param name="channel">The channel to tune.</param>
-    /// <returns><c>true</c> if the channel is successfully tuned, otherwise <c>false</c></returns>
-    public bool Tune(IChannel channel)
-    {
-      Log.Debug("Conexant: tune to channel");
-
-      if (!_isConexant || _propertySet == null)
-      {
-        Log.Debug("Conexant: device not initialised or interface not supported");
-        return false;
-      }
-      if (!CanTuneChannel(channel))
-      {
-        Log.Debug("Conexant: tuning is not supported for this channel");
-        return false;
-      }
-
-      DVBSChannel dvbsChannel = channel as DVBSChannel;
-      ChannelParams tuningParams = new ChannelParams();
-
-      // See OnBeforeTune() in the Genpix plugin for more details about these mappings.
-      bool isDigicipher = false;
-      CxModulation modulation = CxModulation.Undefined;
-      switch (dvbsChannel.ModulationType)
-      {
-        case ModulationType.ModNotSet:
-          modulation = CxModulation.DvbsQpsk;
-          break;
-        case ModulationType.ModBpsk:
-          modulation = CxModulation.DvbsBpsk;
-          break;
-        case ModulationType.Mod768Qam:
-          modulation = CxModulation.DciiQpskMux;
-          isDigicipher = true;
-          break;
-        case ModulationType.Mod896Qam:
-          modulation = CxModulation.DciiQpskSplitI;
-          isDigicipher = true;
-          break;
-        case ModulationType.Mod1024Qam:
-          modulation = CxModulation.DciiQpskSplitQ;
-          isDigicipher = true;
-          break;
-      }
-      tuningParams.Modulation = modulation;
-
-      CxFecRate fecRate = CxFecRate.None;
-      switch (dvbsChannel.InnerFecRate)
-      {
-        case BinaryConvolutionCodeRate.Rate1_2:
-          fecRate = CxFecRate.Rate1_2;
-          break;
-        case BinaryConvolutionCodeRate.Rate2_3:
-          fecRate = CxFecRate.Rate2_3;
-          break;
-        case BinaryConvolutionCodeRate.Rate3_4:
-          fecRate = CxFecRate.Rate3_4;
-          break;
-        case BinaryConvolutionCodeRate.Rate4_5:
-          fecRate = CxFecRate.Rate4_5;
-          break;
-        case BinaryConvolutionCodeRate.Rate5_6:
-          fecRate = CxFecRate.Rate5_6;
-          break;
-        // Probably DC II only.
-        case BinaryConvolutionCodeRate.Rate6_7:
-          fecRate = CxFecRate.Rate6_7;
-          break;
-        case BinaryConvolutionCodeRate.Rate7_8:
-          fecRate = CxFecRate.Rate7_8;
-          break;
-        // DC II, not DVB-S2.
-        case BinaryConvolutionCodeRate.Rate5_11:
-          fecRate = CxFecRate.Rate5_11;
-          break;
-        // DC II, not DVB-S2.
-        case BinaryConvolutionCodeRate.Rate3_5:
-          fecRate = CxFecRate.Rate3_5;
-          break;
-      }
-      tuningParams.FecRate = fecRate;
-      tuningParams.SymbolRate = (UInt32)dvbsChannel.SymbolRate;
-      tuningParams.SpectralInversion = CxSpectralInversion.OffBoth;   // Not sure what should be used here.
-      if (isDigicipher)
-      {
-        tuningParams.SampleRate = CxSampleFrequency.DciiNominal;
-      }
-      else
-      {
-        tuningParams.SampleRate = CxSampleFrequency.Nominal;
-      }
-      if (dvbsChannel.Polarisation == Polarisation.LinearH || dvbsChannel.Polarisation == Polarisation.CircularL)
-      {
-        tuningParams.Polarisation = CxPolarisation.High;
-      }
-      else
-      {
-        tuningParams.Polarisation = CxPolarisation.Low;
-      }
-
-      uint lnbLof;
-      uint lnbSwitchFrequency;
-      Polarisation polarisation;
-      LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLof, out lnbSwitchFrequency, out polarisation);
-
-      // Convert to intermediate frequency in kHz.
-      tuningParams.Frequency = (UInt32)dvbsChannel.Frequency - lnbLof;
-
-      tuningParams.Tone22k = CxTone22k.Off;
-      if (dvbsChannel.Frequency > lnbSwitchFrequency)
-      {
-        tuningParams.Tone22k = CxTone22k.On;
-      }
-
-      Marshal.StructureToPtr(tuningParams, _paramBuffer, true);
-      DVB_MMI.DumpBinary(_paramBuffer, 0, ChannelParamsSize);
-
-      int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.ChannelChange,
-        _instanceBuffer, InstanceSize,
-        _paramBuffer, ChannelParamsSize + 16
-      );
-      if (hr == 0)
-      {
-        Log.Debug("Conexant: result = success");
-        return true;
-      }
-
-      Log.Debug("Conexant: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      return false;
     }
 
     #endregion
