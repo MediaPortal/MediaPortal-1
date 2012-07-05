@@ -1363,30 +1363,7 @@ namespace TvLibrary.Implementations
       Log.Log.Debug("TvCardBase: perform device action, action = {0}", action);
       try
       {
-        if (_graphBuilder == null)
-        {
-          Log.Log.Debug("TvCardBase: graphbuilder is null");
-          return;
-        }
-
-        if (action == DeviceAction.Pause)
-        {
-          SetGraphState(FilterState.Paused);
-        }
-        else if (action == DeviceAction.Stop)
-        {
-          SetGraphState(FilterState.Stopped);
-        }
-        else if (action == DeviceAction.Start)
-        {
-          SetGraphState(FilterState.Running);
-        }
-        else if (action == DeviceAction.Restart)
-        {
-          SetGraphState(FilterState.Stopped);
-          SetGraphState(FilterState.Running);
-        }
-        else if (action == DeviceAction.Reset)
+        if (action == DeviceAction.Reset)
         {
           // TODO: this should work, but it would be better to have Dispose() as final and Decompose() or
           // some other alternative for resetting.
@@ -1399,9 +1376,36 @@ namespace TvLibrary.Implementations
         }
         else
         {
-          Log.Log.Debug("TvCardBase: unhandled action");
-          return;
+          if (_graphBuilder == null)
+          {
+            Log.Log.Debug("TvCardBase: graphbuilder is null");
+            return;
+          }
+
+          if (action == DeviceAction.Pause)
+          {
+            SetGraphState(FilterState.Paused);
+          }
+          else if (action == DeviceAction.Stop)
+          {
+            SetGraphState(FilterState.Stopped);
+          }
+          else if (action == DeviceAction.Start)
+          {
+            SetGraphState(FilterState.Running);
+          }
+          else if (action == DeviceAction.Restart)
+          {
+            SetGraphState(FilterState.Stopped);
+            SetGraphState(FilterState.Running);
+          }
+          else
+          {
+            Log.Log.Debug("TvCardBase: unhandled action");
+            return;
+          }
         }
+
         Log.Log.Debug("TvCardBase: action succeeded");
       }
       catch (Exception ex)
@@ -1769,8 +1773,8 @@ namespace TvLibrary.Implementations
         {
           device.Dispose();
         }
-        _customDeviceInterfaces = null;
       }
+      _customDeviceInterfaces = new List<ICustomDevice>();
     }
 
     #endregion

@@ -297,9 +297,6 @@ namespace TvLibrary.Implementations.DVB
 
     /// <summary>
     /// Stop the device. The actual result of this function depends on device configuration:
-    /// - graph stop
-    /// - graph pause
-    /// TODO graph destroy
     /// </summary>
     public override void Stop()
     {
