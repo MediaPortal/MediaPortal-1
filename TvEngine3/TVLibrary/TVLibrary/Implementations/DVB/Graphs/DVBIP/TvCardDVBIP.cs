@@ -62,7 +62,11 @@ namespace TvLibrary.Implementations.DVB
       _tunerType = CardType.DvbIP;
       _defaultUrl = "udp://@0.0.0.0:1234";
       _sourceFilterGuid = new Guid(0xd3dd4c59, 0xd3a7, 0x4b82, 0x97, 0x27, 0x7b, 0x92, 0x03, 0xeb, 0x67, 0xc0);
-      _idleMode = DeviceIdleMode.Stop;  // Pause graph not supported.
+      // Pause graph not supported.
+      if (_idleMode == DeviceIdleMode.Pause)
+      {
+        _idleMode = DeviceIdleMode.Stop;
+      }
 
       _sequenceNumber = sequenceNumber;
       if (_sequenceNumber > 0)
@@ -78,7 +82,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public override void BuildGraph()
     {
-      Log.Log.Debug("TvCardDvbIp: BuildGraph()");
+      Log.Log.Debug("TvCardDvbIp: build graph");
       try
       {
         if (_isDeviceInitialised)
@@ -97,7 +101,7 @@ namespace TvLibrary.Implementations.DVB
         if (hr != 0)
         {
           Log.Log.Error("TvCardDvbIp: failed to add infinite tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          throw new TvException("Failed to add infinite tee.");
+          throw new TvException("TvCardDvbIp: failed to add infinite tee");
         }
 
         AddTsWriterFilterToGraph();
@@ -107,10 +111,8 @@ namespace TvLibrary.Implementations.DVB
         // Check for and load plugins, adding any additional device filters to the graph.
         LoadPlugins(_filterStreamSource, ref lastFilter);
 
-        if (!ConnectTsWriter(lastFilter))
-        {
-          throw new TvExceptionGraphBuildingFailed("Failed to connect TS writer filter.");
-        }
+        // Complete the graph.
+        ConnectTsWriterIntoGraph(lastFilter);
 
         // Open any plugins we found. This is separated from loading because some plugins can't be opened
         // until the graph has finished being built.
@@ -129,22 +131,22 @@ namespace TvLibrary.Implementations.DVB
           {
             if (actualAction == DeviceAction.Default)
             {
-              Log.Log.Debug("TvCardDvbBase: plugin \"{0}\" will cause device pause", deviceInterface.Name);
+              Log.Log.Debug("TvCardDvbIp: plugin \"{0}\" will cause device pause", deviceInterface.Name);
               actualAction = DeviceAction.Pause;
             }
             else
             {
-              Log.Log.Debug("TvCardDvbBase: plugin \"{0}\" wants to pause the device, overriden", deviceInterface.Name);
+              Log.Log.Debug("TvCardDvbIp: plugin \"{0}\" wants to pause the device, overriden", deviceInterface.Name);
             }
           }
           else if (action == DeviceAction.Start)
           {
-            Log.Log.Debug("TvCardDvbBase: plugin \"{0}\" will cause device start", deviceInterface.Name);
+            Log.Log.Debug("TvCardDvbIp: plugin \"{0}\" will cause device start", deviceInterface.Name);
             actualAction = action;
           }
           else if (action != DeviceAction.Default)
           {
-            Log.Log.Debug("TvCardDvbBase: plugin \"{0}\" wants unsupported action {1}", deviceInterface.Name, action);
+            Log.Log.Debug("TvCardDvbIp: plugin \"{0}\" wants unsupported action {1}", deviceInterface.Name, action);
           }
         }
         if (actualAction == DeviceAction.Start)
@@ -161,7 +163,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Write(ex);
         Dispose();
         _isDeviceInitialised = false;
-        throw new TvExceptionGraphBuildingFailed("Graph building failed.", ex);
+        throw new TvExceptionGraphBuildingFailed("TvCardDvbIp: graph building failed", ex);
       }
     }
 
@@ -192,7 +194,7 @@ namespace TvLibrary.Implementations.DVB
       if (hr != 0)
       {
         Log.Log.Error("TvCardDvbIp: failed to render stream, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvException("Failed to render stream.");
+        throw new TvException("TvCardDvbIp: failed to render stream");
       }
     }
 
@@ -276,10 +278,6 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        if (!CheckThreadId())
-        {
-          return null;
-        }
         return new DVBIPScanning(this);
       }
     }
@@ -316,8 +314,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (GraphRunning() == false ||
         CurrentChannel == null ||
-        _filterStreamSource == null ||
-        !CheckThreadId())
+        _filterStreamSource == null)
       {
         _tunerLocked = false;
         _signalLevel = 0;

@@ -61,23 +61,6 @@ namespace TvLibrary.Implementations.RadioWebStream
 
     #endregion
 
-     /// <summary>
-    /// Checks the thread id.
-    /// </summary>
-    /// <returns></returns>
-    protected static bool CheckThreadId()
-    {
-      return true;
-      /* unreachable 
-      if (_managedThreadId != System.Threading.Thread.CurrentThread.ManagedThreadId)
-      {
-        Log.Log.WriteFile("RadioWebStream:Invalid thread id!!!");
-        return false;
-      }
-      return true;
-      */
-    }
-
     #region tuning & recording
 
     /// <summary>
@@ -147,7 +130,6 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <returns></returns>
     public override void Stop()
     {
-      if (!CheckThreadId()) return;
     }
 
     /// <summary>
@@ -171,7 +153,6 @@ namespace TvLibrary.Implementations.RadioWebStream
     public override void Dispose()
     {
       Log.Log.WriteFile("RadioWebStream:Dispose()");
-      if (!CheckThreadId()) return;
     }
 
     #endregion

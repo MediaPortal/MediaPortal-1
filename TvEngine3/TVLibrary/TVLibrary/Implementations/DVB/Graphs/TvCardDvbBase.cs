@@ -110,11 +110,6 @@ namespace TvLibrary.Implementations.DVB
     protected IBaseFilter _filterTsWriter;
 
     /// <summary>
-    /// Managed Thread id
-    /// </summary>
-    protected int _managedThreadId = -1;
-
-    /// <summary>
     /// EPG Grabber interface
     /// </summary>
     protected ITsEpgScanner _interfaceEpgGrabber;
@@ -158,15 +153,6 @@ namespace TvLibrary.Implementations.DVB
     }
 
     #endregion
-
-    /// <summary>
-    /// Checks the thread id.
-    /// </summary>
-    /// <returns></returns>
-    protected static bool CheckThreadId()
-    {
-      return true;
-    }
 
     #region tuning & scanning
 
@@ -460,7 +446,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public override void BuildGraph()
     {
-      Log.Log.Debug("TvCardDvbBase: BuildGraph()");
+      Log.Log.Debug("TvCardDvbBase: build graph");
       try
       {
         if (_isDeviceInitialised)
@@ -546,7 +532,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     private void AddNetworkProviderFilter()
     {
-      Log.Log.Debug("TvCardDvbBase: AddNetworkProviderFilter()");
+      Log.Log.Debug("TvCardDvbBase: add network provider");
 
       string networkProviderName = String.Empty;
       if (_useInternalNetworkProvider)
@@ -562,8 +548,6 @@ namespace TvLibrary.Implementations.DVB
                                                    LogLevelOption.Debug);
         return;
       }
-
-      _managedThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
 
       // If the generic network provider is preferred for this tuner then check if it is installed. The
       // generic NP is set as default, however it is only available on MCE 2005 Update Rollup 2 and newer.
@@ -639,8 +623,6 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="device">Tuner device</param>
     protected void AddAndConnectBdaBoardFilters(DsDevice device)
     {
-      if (!CheckThreadId())
-        return;
       Log.Log.WriteFile("dvb:AddAndConnectBDABoardFilters");
       _rotEntry = new DsROTEntry(_graphBuilder);
       Log.Log.WriteFile("dvb: find bda tuner");
@@ -723,15 +705,13 @@ namespace TvLibrary.Implementations.DVB
       if (!_useInternalNetworkProvider)
       {
         // Connect the inf tee and demux to the last filter (saves one inf tee)
-        ConnectMpeg2DemuxToInfTee(ref lastFilter);
+        AddInfiniteTeeToGraph(ref lastFilter);
+        ConnectMpeg2DemuxerIntoGraph(ref lastFilter);
         // Connect and add the filters to the demux
-        AddBdaTransportFiltersToGraph();
+        AddTransportInformationFilterToGraph();
       }
       // Render the last filter with the tswriter
-      if (!ConnectTsWriter(lastFilter))
-      {
-        throw new TvExceptionGraphBuildingFailed("Graph building of DVB card failed");
-      }
+      ConnectTsWriterIntoGraph(lastFilter);
 
       // Open any plugins we found. This is separated from loading because some plugins can't be opened
       // until the graph has finished being built.
@@ -819,19 +799,6 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Connects the ts writer to the last given filter
-    /// </summary>
-    /// <param name="lastFilter">Last filter in the graph</param>
-    /// <returns>true, if successful ; false otherwise</returns>
-    protected bool ConnectTsWriter(IBaseFilter lastFilter)
-    {
-      int hr;
-      Log.Log.Info("dvb:  Render ..->[TsWriter]");
-      hr = _capBuilder.RenderStream(null, null, lastFilter, null, _filterTsWriter);
-      return (hr == 0);
-    }
-
-    /// <summary>
     /// adds the BDA renderer filter to the graph by elimination
     /// then tries to match tuner &amp; render filters if successful then connects them.
     /// </summary>
@@ -840,8 +807,6 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="matchDevicePath">If <c>true</c> only attempt to use renderer filters on the same physical device as the tuner device.</param>
     protected void AddBDARendererToGraph(DsDevice device, ref IBaseFilter currentLastFilter, bool matchDevicePath)
     {
-      if (!CheckThreadId())
-        return;
       if (_filterCapture != null)
         return;
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDAReceiverComponentsCategory);
@@ -914,39 +879,54 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// adds the mpeg-2 demultiplexer filter and inftee filter to the graph
+    /// Add an MPEG 2 demultiplexer filter to the BDA filter graph.
     /// </summary>
     protected void AddMpeg2DemuxerToGraph()
     {
-      if (!CheckThreadId())
-        return;
-      if (_filterMpeg2DemuxTif != null)
-        return;
-      Log.Log.WriteFile("dvb:Add MPEG2 Demultiplexer filter");
+      Log.Log.Debug("TvCardDvbBase: add MPEG 2 demultiplexer filter");
       _filterMpeg2DemuxTif = (IBaseFilter)new MPEG2Demultiplexer();
-      int hr = _graphBuilder.AddFilter(_filterMpeg2DemuxTif, "MPEG2-Demultiplexer");
+      int hr = _graphBuilder.AddFilter(_filterMpeg2DemuxTif, "MPEG 2 Demultiplexer");
       if (hr != 0)
       {
-        Log.Log.WriteFile("dvb:AddMpeg2DemuxerTif returns:0x{0:X}", hr);
-        throw new TvException("Unable to add MPEG2 demultiplexer for tif");
+        Log.Log.Error("TvCardDvbBase: failed to add MPEG 2 demultiplexer, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        throw new TvExceptionGraphBuildingFailed("TvCardDvbBase: failed to add MPEG 2 demultiplexer");
       }
     }
 
     /// <summary>
-    /// Connects the mpeg2 demuxers to the inf tee filter.
+    /// Connect the MPEG 2 demultiplexer into the BDA filter graph.
     /// </summary>
-    protected void ConnectMpeg2DemuxToInfTee(ref IBaseFilter lastFilter)
+    /// <param name="lastFilter">The filter in the filter chain that the demultiplexer should be connected to.</param>
+    protected void ConnectMpeg2DemuxerIntoGraph(ref IBaseFilter lastFilter)
     {
-      // Add the infinite tee first.
+      Log.Log.Debug("TvCardDvbBase: connect MPEG 2 demultiplexer filter");
+      IPin infTeeOut = DsFindPin.ByDirection(_infTee, PinDirection.Output, 0);
+      IPin demuxPinIn = DsFindPin.ByDirection(_filterMpeg2DemuxTif, PinDirection.Input, 0);
+      int hr = _graphBuilder.Connect(infTeeOut, demuxPinIn);
+      Release.ComObject("Infinite tee output pin", infTeeOut);
+      Release.ComObject("MPEG 2 demux input pin", demuxPinIn);
+      if (hr != 0)
+      {
+        Log.Log.Error("TvCardDvbBase: failed to connect MPEG 2 demultiplexer, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        throw new TvExceptionGraphBuildingFailed("TvCardDvbBase: failed to connect MPEG 2 demultiplexer");
+      }
+    }
+
+    /// <summary>
+    /// Add and connect an infinite tee into the BDA filter graph.
+    /// </summary>
+    /// <param name="lastFilter">The filter in the filter chain that the infinite tee should be connected to.</param>
+    protected void AddInfiniteTeeToGraph(ref IBaseFilter lastFilter)
+    {
       Log.Log.Debug("TvCardDvbBase: add infinite tee filter");
       _infTee = (IBaseFilter)new InfTee();
       int hr = _graphBuilder.AddFilter(_infTee, "Infinite Tee");
       if (hr != 0)
       {
         Log.Log.Error("TvCardDvbBase: failed to add infinite tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvException("TvCardDvbBase: failed to add infinite tee");
+        throw new TvExceptionGraphBuildingFailed("TvCardDvbBase: failed to add infinite tee");
       }
-      Log.Log.Debug("TvCardDvbBase:   render ...->[inf tee]");
+      Log.Log.Debug("TvCardDvbBase:   render...->[inf tee]");
       hr = _capBuilder.RenderStream(null, null, lastFilter, null, _infTee);
       if (hr != 0)
       {
@@ -954,172 +934,162 @@ namespace TvLibrary.Implementations.DVB
         throw new TvExceptionGraphBuildingFailed("TvCardDvbBase: failed to render stream through the infinite tee");
       }
       lastFilter = _infTee;
-
-      // Now connect the infinite tee to the MPEG2 demultiplexer.
-      Log.Log.Debug("TvCardDvbBase:   render [inf tee]->[demux]");
-      IPin infTeeOut = DsFindPin.ByDirection(_infTee, PinDirection.Output, 0);
-      IPin demuxPinIn = DsFindPin.ByDirection(_filterMpeg2DemuxTif, PinDirection.Input, 0);
-      hr = _graphBuilder.Connect(infTeeOut, demuxPinIn);
-      Release.ComObject("inf tee pin output pin", infTeeOut);
-      Release.ComObject("MPEG 2 demux input pin", demuxPinIn);
-      if (hr != 0)
-      {
-        Log.Log.Error("TvCardDvbBase: failed to connect infinite tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvException("TvCardDvbBase: failed to connect infinite tee");
-      }
     }
 
     /// <summary>
-    /// Gets the video audio pins.
+    /// Add the MediaPortal TS writer/analyser filter to the BDA filter graph.
     /// </summary>
     protected void AddTsWriterFilterToGraph()
     {
-      if (_filterTsWriter == null)
+      Log.Log.Debug("TvCardDvbBase: add Mediaportal TsWriter filter");
+      _filterTsWriter = (IBaseFilter)new MpTsAnalyzer();
+      int hr = _graphBuilder.AddFilter(_filterTsWriter, "MediaPortal TS Analyzer");
+      if (hr != 0)
       {
-        Log.Log.WriteFile("dvb:  Add Mediaportal TsWriter filter");
-        _filterTsWriter = (IBaseFilter)new MpTsAnalyzer();
-        int hr = _graphBuilder.AddFilter(_filterTsWriter, "MediaPortal Ts Analyzer");
-        if (hr != 0)
-        {
-          Log.Log.Error("dvb:  Add main Ts Analyzer returns:0x{0:X}", hr);
-          throw new TvException("Unable to add Ts Analyzer filter");
-        }
-        _interfaceChannelScan = (ITsChannelScan)_filterTsWriter;
-        _interfaceEpgGrabber = (ITsEpgScanner)_filterTsWriter;
-        _interfaceChannelLinkageScanner = (ITsChannelLinkageScanner)_filterTsWriter;
+        Log.Log.Error("TvCardDvbBase: failed to add TsWriter filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        throw new TvExceptionGraphBuildingFailed("TvCardDvbBase: failed to add TsWriter filter");
+      }
+      _interfaceChannelScan = (ITsChannelScan)_filterTsWriter;
+      _interfaceEpgGrabber = (ITsEpgScanner)_filterTsWriter;
+      _interfaceChannelLinkageScanner = (ITsChannelLinkageScanner)_filterTsWriter;
+    }
+
+    /// <summary>
+    /// Connect the MediaPortal TS writer/analyser filter into the BDA filter graph, completing the graph.
+    /// </summary>
+    /// <param name="lastFilter">The filter in the filter chain that the TsWriter filter should be connected to.</param>
+    protected void ConnectTsWriterIntoGraph(IBaseFilter lastFilter)
+    {
+      Log.Log.Debug("TvCardDvbBase: connect Mediaportal TsWriter filter");
+      Log.Log.Debug("TvCardDvbBase:   render...->[TsWriter]");
+      int hr = _capBuilder.RenderStream(null, null, lastFilter, null, _filterTsWriter);
+      if (hr != 0)
+      {
+        Log.Log.Error("TvCardDvbBase: failed to render stream into the TsWriter filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        throw new TvExceptionGraphBuildingFailed("TvCardDvbBase: failed to render stream into the TsWriter filter");
       }
     }
 
     /// <summary>
-    /// adds the BDA Transport Information Filter  and the
-    /// MPEG-2 sections and tables filter to the graph 
+    /// Add and connect a transport information filter into the BDA filter graph.
     /// </summary>
-    protected void AddBdaTransportFiltersToGraph()
+    protected void AddTransportInformationFilterToGraph()
     {
-      if (!CheckThreadId())
+      Log.Log.Debug("TvCardDvbBase: add transport information filter");
+      // No point bothering with anything if the demuxer is not present to connect to.
+      if (_filterMpeg2DemuxTif == null)
+      {
+        Log.Log.Error("TvCardDvbBase: MPEG 2 demultiplexer is null");
         return;
-      Log.Log.WriteFile("dvb:  AddTransportStreamFiltersToGraph");
-      int hr;
-      // Add two filters needed in a BDA graph
+      }
+
+      // Add the filter to the graph.
+      int hr = 1;
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDATransportInformationRenderersCategory);
       for (int i = 0; i < devices.Length; i++)
       {
         if (String.Compare(devices[i].Name, "BDA MPEG2 Transport Information Filter", true) == 0)
         {
-          Log.Log.Write("    add BDA MPEG2 Transport Information Filter filter");
           try
           {
             hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out _filterTIF);
-            if (hr != 0)
+            if (hr == 0)
             {
-              Log.Log.Error("    unable to add BDA MPEG2 Transport Information Filter filter:0x{0:X}", hr);
-              return;
+              break;  // Success!
             }
           }
           catch (Exception)
           {
-            Log.Log.Error("    unable to add BDA MPEG2 Transport Information Filter filter");
           }
-          continue;
+          Log.Log.Error("TvCardDvbBase: failed to add transport information filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          return; // Not a critical error...
         }
       }
       if (_filterTIF == null)
       {
-        Log.Log.Error("BDA MPEG2 Transport Information Filter not found");
+        Log.Log.Error("TvCardDvbBase: transport information filter not found");
         return;
       }
+
+      // Connect the filter into the graph.
       IPin pinInTif = DsFindPin.ByDirection(_filterTIF, PinDirection.Input, 0);
       if (pinInTif == null)
       {
-        Log.Log.Error("    unable to find input pin of TIF");
-        return;
-      }
-      if (_filterMpeg2DemuxTif == null)
-      {
-        Log.Log.Error("   _filterMpeg2DemuxTif==null");
-        return;
-      }
-      //IPin pinInSec = DsFindPin.ByDirection(_filterSectionsAndTables, PinDirection.Input, 0);
-      Log.Log.WriteFile("    pinTif:{0}", FilterGraphTools.LogPinInfo(pinInTif));
-      //Log.Log.WriteFile("    pinSec:{0}", FilterGraphTools.LogPinInfo(pinInSec));
-      //connect tif
-      Log.Log.WriteFile("    Connect tif and mpeg2 sections and tables");
-      IEnumPins enumPins;
-      _filterMpeg2DemuxTif.EnumPins(out enumPins);
-      if (enumPins == null)
-      {
-        Log.Log.Error("   _filterMpeg2DemuxTif.enumpins returned null");
+        Log.Log.Error("TvCardDvbBase: failed to find transport information filter input pin");
         return;
       }
       bool tifConnected = false;
-      //bool mpeg2SectionsConnected = false;
-      int pinNr = 0;
-      while (true)
+      try
       {
-        pinNr++;
-        PinDirection pinDir;
-        AMMediaType[] mediaTypes = new AMMediaType[2];
-        IPin[] pins = new IPin[2];
-        int fetched;
-        enumPins.Next(1, pins, out fetched);
-        if (fetched != 1)
-          break;
-        if (pins[0] == null)
-          break;
-        pins[0].QueryDirection(out pinDir);
-        if (pinDir == PinDirection.Input)
+        IEnumPins enumPins;
+        _filterMpeg2DemuxTif.EnumPins(out enumPins);
+        if (enumPins == null)
         {
-          Release.ComObject("mpeg2 demux pin" + pinNr, pins[0]);
-          continue;
+          Log.Log.Error("TvCardDvbBase: MPEG 2 demultiplexer has not sprouted pins");
+          return;
         }
-        IEnumMediaTypes enumMedia;
-        pins[0].EnumMediaTypes(out enumMedia);
-        if (enumMedia != null)
+        int pinNr = 0;
+        while (true)
         {
-          enumMedia.Next(1, mediaTypes, out fetched);
-          Release.ComObject("IEnumMedia", enumMedia);
-          if (fetched == 1 && mediaTypes[0] != null)
+          pinNr++;
+          PinDirection pinDir;
+          AMMediaType[] mediaTypes = new AMMediaType[2];
+          IPin[] pins = new IPin[2];
+          int fetched;
+          enumPins.Next(1, pins, out fetched);
+          if (fetched != 1 || pins[0] == null)
           {
-            if (mediaTypes[0].majorType == MediaType.Audio || mediaTypes[0].majorType == MediaType.Video)
-            {
-              //skip audio/video pins
-              DsUtils.FreeAMMediaType(mediaTypes[0]);
-              Release.ComObject("mpeg2 demux pin" + pinNr, pins[0]);
-              continue;
-            }
+            break;
           }
-          DsUtils.FreeAMMediaType(mediaTypes[0]);
-        }
-        if (tifConnected == false)
-        {
+          pins[0].QueryDirection(out pinDir);
+          if (pinDir == PinDirection.Input)
+          {
+            Release.ComObject("MPEG 2 demux input pin " + pinNr, pins[0]);
+            continue;
+          }
+          IEnumMediaTypes enumMedia;
+          pins[0].EnumMediaTypes(out enumMedia);
+          if (enumMedia != null)
+          {
+            enumMedia.Next(1, mediaTypes, out fetched);
+            Release.ComObject("MPEG 2 demux output pin media type enum", enumMedia);
+            if (fetched == 1 && mediaTypes[0] != null)
+            {
+              if (mediaTypes[0].majorType == MediaType.Audio || mediaTypes[0].majorType == MediaType.Video)
+              {
+                // We're not interested in audio or video pins.
+                DsUtils.FreeAMMediaType(mediaTypes[0]);
+                Release.ComObject("MPEG 2 demux output pin " + pinNr, pins[0]);
+                continue;
+              }
+            }
+            DsUtils.FreeAMMediaType(mediaTypes[0]);
+          }
           try
           {
-            Log.Log.WriteFile("dvb:try tif:{0}", FilterGraphTools.LogPinInfo(pins[0]));
             hr = _graphBuilder.Connect(pins[0], pinInTif);
             if (hr == 0)
             {
-              Log.Log.WriteFile("    tif connected");
               tifConnected = true;
-              Release.ComObject("mpeg2 demux pin" + pinNr, pins[0]);
-              continue;
+              break;
             }
-            Log.Log.WriteFile("    tif not connected:0x{0:X}", hr);
           }
           catch (Exception ex)
           {
-            Log.Log.WriteFile("Error while connecting TIF filter: {0}", ex);
+            Log.Log.Error("TvCardDvbBase: exception on connect attempt\r\n", ex.ToString());
+          }
+          finally
+          {
+            Release.ComObject("MPEG 2 demux output pin " + pinNr, pins[0]);
           }
         }
-        Release.ComObject("mpeg2 demux pin" + pinNr, pins[0]);
+        Release.ComObject("MPEG 2 demux pin enum", enumPins);
       }
-      Release.ComObject("IEnumMedia", enumPins);
-      Release.ComObject("TIF pin in", pinInTif);
-      // Release.ComObject("mpeg2 sections&tables pin in", pinInSec);
-      if (tifConnected == false)
+      finally
       {
-        Log.Log.Error("    unable to connect transport information filter");
-        //throw new TvException("unable to connect transport information filter");
+        Release.ComObject("TIF input pin", pinInTif);
       }
+      Log.Log.Debug("TvCardDvbBase: result = {0}", tifConnected);
     }
 
     #endregion
@@ -1139,7 +1109,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected void Decompose()
     {
-      if (_graphBuilder == null || !CheckThreadId())
+      if (_graphBuilder == null)
         return;
 
       Log.Log.WriteFile("dvb:Decompose");
@@ -1274,8 +1244,6 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected void GetTunerSignalStatistics()
     {
-      if (!CheckThreadId())
-        return;
       Log.Log.WriteFile("dvb: GetTunerSignalStatistics()");
       //no tuner filter? then return;
       _tunerStatistics = new List<IBDA_SignalStatistics>();
@@ -1355,7 +1323,6 @@ namespace TvLibrary.Implementations.DVB
       {
         if (!GraphRunning() ||
           CurrentChannel == null ||
-          !CheckThreadId() ||
           _tunerStatistics == null ||
           _tunerStatistics.Count == 0)
         {
@@ -1464,7 +1431,7 @@ namespace TvLibrary.Implementations.DVB
 
     private static bool SameAsPortalChannel(PortalChannel pChannel, LinkedChannel lChannel)
     {
-      return ((pChannel.NetworkId == lChannel.NetworkId) && (pChannel.TransportId == lChannel.NetworkId) &&
+      return ((pChannel.NetworkId == lChannel.NetworkId) && (pChannel.TransportId == lChannel.TransportId) &&
               (pChannel.ServiceId == lChannel.ServiceId));
     }
 
@@ -1488,9 +1455,6 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public override void StartLinkageScanner(BaseChannelLinkageScanner callback)
     {
-      if (!CheckThreadId())
-        return;
-
       _interfaceChannelLinkageScanner.SetCallBack(callback);
       _interfaceChannelLinkageScanner.Start();
     }
@@ -1570,8 +1534,6 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public override void GrabEpg(BaseEpgGrabber callback)
     {
-      if (!CheckThreadId())
-        return;
       _epgGrabberCallback = callback;
       Log.Log.Write("dvb:grab epg...");
       if (_interfaceEpgGrabber == null)

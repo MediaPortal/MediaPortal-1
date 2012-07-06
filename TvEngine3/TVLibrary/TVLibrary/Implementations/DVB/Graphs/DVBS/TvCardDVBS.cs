@@ -104,7 +104,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public override void BuildGraph()
     {
-      Log.Log.Debug("TvCardDvbS: BuildGraph()");
+      Log.Log.Debug("TvCardDvbS: build graph");
       base.BuildGraph();
 
       // Check if one of the supported interfaces is capable of sending DiSEqC commands.
@@ -125,7 +125,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected override void CreateTuningSpace()
     {
-      Log.Log.Debug("TvCardDvbS: CreateTuningSpace()");
+      Log.Log.Debug("TvCardDvbS: create tuning space");
 
       // Check if the system already has an appropriate tuning space.
       SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();

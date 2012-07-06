@@ -69,7 +69,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected override void CreateTuningSpace()
     {
-      Log.Log.Debug("TvCardDvbC: CreateTuningSpace()");
+      Log.Log.Debug("TvCardDvbC: create tuning space");
 
       // Check if the system already has an appropriate tuning space.
       SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();

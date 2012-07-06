@@ -31,13 +31,13 @@ using TvLibrary.Interfaces.Device;
 namespace TvLibrary.Implementations.DVB
 {
   /// <summary>
-  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles the SkyStar 2 DVB-S card
+  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles B2C2 based TechniSat tuners.
   /// </summary>
   public class TvCardDvbSS2 : TvCardDvbBase, ICustomDevice, IPidFilterController, IDiseqcDevice
   {
     #region enums
 
-    private enum SkyStarError
+    private enum B2c2Error
     {
       NotLockedOnSignal = -1878982377,    // [0x90010115]
 
@@ -71,7 +71,7 @@ namespace TvLibrary.Implementations.DVB
       NoDeviceAvailable
     }
 
-    private enum SkyStarTunerType
+    private enum B2c2TunerType
     {
       Unknown = -1,
       Satellite,
@@ -80,14 +80,14 @@ namespace TvLibrary.Implementations.DVB
       Atsc
     }
 
-    private enum SkyStarBusType
+    private enum B2c2BusType
     {
       Pci = 0,
       Usb1 = 1    // USB 1.1
     }
 
     [Flags]
-    private enum SkyStarPerformanceMonitoringCapability
+    private enum B2c2PerformanceMonitoringCapability
     {
       None = 0,
       BitErrorRate = 1,           // BER reporting via GetPreErrorCorrectionBER().
@@ -100,7 +100,7 @@ namespace TvLibrary.Implementations.DVB
     }
 
     [Flags]
-    private enum SkyStarAcquisionCapability
+    private enum B2c2AcquisionCapability
     {
       None = 0,
       AutoSymbolRate = 1,       // DVB-S automatic symbol rate detection support.
@@ -114,7 +114,7 @@ namespace TvLibrary.Implementations.DVB
       IrInput = 256             // IR remote input support.
     }
 
-    private enum SkyStarModulation
+    private enum B2c2Modulation
     {
       Unknown = -1,
       Qam4 = 2,
@@ -129,14 +129,14 @@ namespace TvLibrary.Implementations.DVB
       Vsb16
     }
 
-    private enum SkyStarPolarisation
+    private enum B2c2Polarisation
     {
       Horizontal = 0,   // 18 V - also use for circular left.
       Vertical,         // 13 V - also use for circular right.
       PowerOff = 10     // Turn the power supply to the LNB completely off.
     }
 
-    private enum SkyStarFecRate
+    private enum B2c2FecRate
     {
       Rate1_2 = 1,
       Rate2_3,
@@ -146,7 +146,7 @@ namespace TvLibrary.Implementations.DVB
       Auto
     }
 
-    private enum SkyStarTone
+    private enum B2c2Tone
     {
       Off = 0,
       Tone22k,
@@ -154,7 +154,7 @@ namespace TvLibrary.Implementations.DVB
       Tone44k
     }
 
-    private enum SkyStarDiseqcPort
+    private enum B2c2DiseqcPort
     {
       None = 0,
       // Simple DiSEqC (tone burst).
@@ -167,7 +167,7 @@ namespace TvLibrary.Implementations.DVB
       PortD
     }
 
-    private enum SkyStarGuardInterval
+    private enum B2c2GuardInterval
     {
       Guard1_32 = 0,
       Guard1_16,
@@ -176,20 +176,20 @@ namespace TvLibrary.Implementations.DVB
       Auto
     }
 
-    private enum SkyStarPidFilterMode
+    private enum B2c2PidFilterMode
     {
       AllIncludingNull = 0x2000,
       AllExcludingNull = 0x2001
     }
 
-    private enum SkyStarTableId
+    private enum B2c2TableId
     {
       Dvb = 0x3e,
       Atsc = 0x3f,
       Auto = 0xff
     }
 
-    private enum SkyStarKeyType
+    private enum B2c2KeyType
     {
       // PID TSC Keys. Up to 7 Keys possible; highest priority used.
       PidTscReserved = 1,   // Key is used if the PID matches and the scrambling control bits are '01' (reserved).
@@ -201,19 +201,19 @@ namespace TvLibrary.Implementations.DVB
       Global,               // Key is used if no other key matches.
     }
 
-    private enum SkyStarPvrOption
+    private enum B2c2PvrOption
     {
       AutoDeleteRecordFile = 0,
       AutoRecordWithPlay
     }
 
-    private enum SkyStarPvrCallbackState
+    private enum B2c2PvrCallbackState
     {
       EndOfFile = 0,
       FileError       // Indicates file access or disk space issues.
     }
 
-    private enum SkyStarVideoAspectRatio : byte
+    private enum B2c2VideoAspectRatio : byte
     {
       Invalid = 0,
       Square,
@@ -222,7 +222,7 @@ namespace TvLibrary.Implementations.DVB
       Other
     }
 
-    private enum SkyStarVideoFrameRate : byte
+    private enum B2c2VideoFrameRate : byte
     {
       Forbidden = 0,
       Rate23_97,
@@ -280,7 +280,7 @@ namespace TvLibrary.Implementations.DVB
       /// <param name="fecRate">The FEC rate.</param>
       /// <returns>an HRESULT indicating whether the FEC rate was successfully set</returns>
       [PreserveSig]
-      Int32 SetFec(SkyStarFecRate fecRate);
+      Int32 SetFec(B2c2FecRate fecRate);
 
       /// <summary>
       /// Set the multiplex polarisation. Only applicable for DVB-S tuners.
@@ -288,7 +288,7 @@ namespace TvLibrary.Implementations.DVB
       /// <param name="polarisation">The polarisation.</param>
       /// <returns>an HRESULT indicating whether the polarisation was successfully set</returns>
       [PreserveSig]
-      Int32 SetPolarity(SkyStarPolarisation polarisation);
+      Int32 SetPolarity(B2c2Polarisation polarisation);
 
       /// <summary>
       /// Set the satellite/LNB/band selection tone state. Only applicable for DVB-S tuners.
@@ -296,7 +296,7 @@ namespace TvLibrary.Implementations.DVB
       /// <param name="toneState">The tone state.</param>
       /// <returns>an HRESULT indicating whether the tone state was successfully set</returns>
       [PreserveSig]
-      Int32 SetLnbKHz(SkyStarTone toneState);
+      Int32 SetLnbKHz(B2c2Tone toneState);
 
       /// <summary>
       /// Switch to a specific satellite. Only applicable for DVB-S tuners.
@@ -304,7 +304,7 @@ namespace TvLibrary.Implementations.DVB
       /// <param name="diseqcPort">The DiSEqC switch port associated with the satellite.</param>
       /// <returns>an HRESULT indicating whether the DiSEqC command was successfully sent</returns>
       [PreserveSig]
-      Int32 SetDiseqc(SkyStarDiseqcPort diseqcPort);
+      Int32 SetDiseqc(B2c2DiseqcPort diseqcPort);
 
       /// <summary>
       /// Set the multiplex modulation scheme. Only applicable for DVB-C tuners.
@@ -312,7 +312,7 @@ namespace TvLibrary.Implementations.DVB
       /// <param name="modulation">The modulation scheme.</param>
       /// <returns>an HRESULT indicating whether the modulation scheme was successfully set</returns>
       [PreserveSig]
-      Int32 SetModulation(SkyStarModulation modulation);
+      Int32 SetModulation(B2c2Modulation modulation);
 
       #endregion
 
@@ -370,7 +370,7 @@ namespace TvLibrary.Implementations.DVB
       /// <param name="modulation">The multiplex modulation scheme.</param>
       /// <returns>an HRESULT indicating whether the multiplex modulation scheme was successfully retrieved</returns>
       [PreserveSig]
-      Int32 GetModulation([Out] out SkyStarModulation modulation);
+      Int32 GetModulation([Out] out B2c2Modulation modulation);
 
       #endregion
 
@@ -472,7 +472,7 @@ namespace TvLibrary.Implementations.DVB
       /// <param name="interval">The guard interval.</param>
       /// <returns>an HRESULT indicating whether the guard interval was successfully set</returns>
       [PreserveSig]
-      Int32 SetGuardInterval(SkyStarGuardInterval interval);
+      Int32 SetGuardInterval(B2c2GuardInterval interval);
 
       /// <summary>
       /// Get the multiplex guard interval. Only applicable for DVB-T tuners.
@@ -480,7 +480,7 @@ namespace TvLibrary.Implementations.DVB
       /// <param name="interval">The guard interval.</param>
       /// <returns>an HRESULT indicating whether the guard interval was successfully retrieved</returns>
       [PreserveSig]
-      Int32 GetGuardInterval([Out] out SkyStarGuardInterval interval);
+      Int32 GetGuardInterval([Out] out B2c2GuardInterval interval);
 
       /// <summary>
       /// Get the multiplex FEC rate. Only applicable for DVB-S tuners.
@@ -488,7 +488,7 @@ namespace TvLibrary.Implementations.DVB
       /// <param name="fecRate">The FEC rate.</param>
       /// <returns>an HRESULT indicating whether the FEC rate was successfully retrieved</returns>
       [PreserveSig]
-      Int32 GetFec([Out] out SkyStarFecRate fecRate);
+      Int32 GetFec([Out] out B2c2FecRate fecRate);
 
       /// <summary>
       /// Get the multiplex polarisation. Only applicable for DVB-S tuners.
@@ -496,7 +496,7 @@ namespace TvLibrary.Implementations.DVB
       /// <param name="polarisation">The polarisation.</param>
       /// <returns>an HRESULT indicating whether the polarisation was successfully retrieved</returns>
       [PreserveSig]
-      Int32 GetPolarity([Out] out SkyStarPolarisation polarisation);
+      Int32 GetPolarity([Out] out B2c2Polarisation polarisation);
 
       /// <summary>
       /// Get the currenly selected satellite. Only applicable for DVB-S tuners.
@@ -504,7 +504,7 @@ namespace TvLibrary.Implementations.DVB
       /// <param name="diseqcPort">The DiSEqC switch port associated with the satellite.</param>
       /// <returns>an HRESULT indicating whether the setting was successfully retrieved</returns>
       [PreserveSig]
-      Int32 GetDiseqc([Out] out SkyStarDiseqcPort diseqcPort);
+      Int32 GetDiseqc([Out] out B2c2DiseqcPort diseqcPort);
 
       /// <summary>
       /// Get the satellite/LNB/band selection tone state. Only applicable for DVB-S tuners.
@@ -512,7 +512,7 @@ namespace TvLibrary.Implementations.DVB
       /// <param name="toneState">The tone state.</param>
       /// <returns>an HRESULT indicating whether the tone state was successfully retrieved</returns>
       [PreserveSig]
-      Int32 GetLnbKHz([Out] out SkyStarTone toneState);
+      Int32 GetLnbKHz([Out] out B2c2Tone toneState);
 
       /// <summary>
       /// Get the LNB local oscillator frequency. Only applicable for DVB-S tuners.
@@ -918,7 +918,7 @@ namespace TvLibrary.Implementations.DVB
       /// <param name="keyLength">The length of the key.</param>
       /// <returns>an HRESULT indicating whether the key was successfully registered</returns>
       [PreserveSig]
-      Int32 AddKey(SkyStarKeyType keyType, UInt32 pid, IntPtr key, Int32 keyLength);
+      Int32 AddKey(B2c2KeyType keyType, UInt32 pid, IntPtr key, Int32 keyLength);
 
       /// <summary>
       /// Deregister a decryption key.
@@ -927,7 +927,7 @@ namespace TvLibrary.Implementations.DVB
       /// <param name="pid">The PID that the key is associated with.</param>
       /// <returns>an HRESULT indicating whether the key was successfully deregistered</returns>
       [PreserveSig]
-      Int32 DeleteKey(SkyStarKeyType keyType, UInt32 pid);
+      Int32 DeleteKey(B2c2KeyType keyType, UInt32 pid);
 
       /// <summary>
       /// Deregister all decryption keys.
@@ -950,7 +950,7 @@ namespace TvLibrary.Implementations.DVB
       /// <param name="callback">A pointer to the callback delegate.</param>
       /// <returns>an HRESULT indicating whether the callback delegate was successfully registered</returns>
       [PreserveSig]
-      Int32 SetCallbackForTransportStream(OnSkyStarTsData callback);
+      Int32 SetCallbackForTransportStream(OnB2c2TsData callback);
 
       #endregion
 
@@ -1010,7 +1010,7 @@ namespace TvLibrary.Implementations.DVB
       /// <param name="callback">A pointer to the callback delegate.</param>
       /// <returns>an HRESULT indicating whether the callback delegate was successfully registered</returns>
       [PreserveSig]
-      Int32 SetCallbackForVideoMode(OnSkyStarVideoInfo callback);
+      Int32 SetCallbackForVideoMode(OnB2c2VideoInfo callback);
 
       /// <summary>
       /// Deregister the current audio and/or video PID(s) when they are no longer of interest to the
@@ -1119,7 +1119,7 @@ namespace TvLibrary.Implementations.DVB
       /// <param name="value">The option value to set.</param>
       /// <returns>an HRESULT indicating whether the option value was successfully set</returns>
       [PreserveSig]
-      Int32 SetOption(SkyStarPvrOption option, Int32 value);
+      Int32 SetOption(B2c2PvrOption option, Int32 value);
 
       /// <summary>
       /// Get the value of one of the timeshifting interface options.
@@ -1128,7 +1128,7 @@ namespace TvLibrary.Implementations.DVB
       /// <param name="value">The option value.</param>
       /// <returns>an HRESULT indicating whether the option value was successfully retrieved</returns>
       [PreserveSig]
-      Int32 GetOption(SkyStarPvrOption option, [Out] out Int32 value);
+      Int32 GetOption(B2c2PvrOption option, [Out] out Int32 value);
 
       /// <summary>
       /// Set the playback marker position within the timeshifting file.
@@ -1161,7 +1161,7 @@ namespace TvLibrary.Implementations.DVB
       /// <param name="callback">A pointer to the callback delegate.</param>
       /// <returns>an HRESULT indicating whether the callback delegate was successfully registered</returns>
       [PreserveSig]
-      Int32 SetCallback(OnSkyStarTimeShiftState callback);
+      Int32 SetCallback(OnB2c2TimeShiftState callback);
     }
 
     #endregion
@@ -1233,7 +1233,7 @@ namespace TvLibrary.Implementations.DVB
 
     private struct TunerCapabilities
     {
-      public SkyStarTunerType TunerType;
+      public B2c2TunerType TunerType;
       [MarshalAs(UnmanagedType.Bool)]
       public bool ConstellationSupported;         // Is SetModulation() supported?
       [MarshalAs(UnmanagedType.Bool)]
@@ -1245,10 +1245,10 @@ namespace TvLibrary.Implementations.DVB
       public UInt32 MinSymbolRate;                // unit = Baud
       public UInt32 MaxSymbolRate;                // unit = Baud
       private UInt32 AutoSymbolRate;              // Obsolete		
-      public SkyStarPerformanceMonitoringCapability PerformanceMonitoringCapabilities;
+      public B2c2PerformanceMonitoringCapability PerformanceMonitoringCapabilities;
       public UInt32 LockTime;                     // unit = ms
       public UInt32 KernelLockTime;               // unit = ms
-      public SkyStarAcquisionCapability AcquisitionCapabilities;
+      public B2c2AcquisionCapability AcquisitionCapabilities;
     }
 
     private struct MacAddress
@@ -1263,8 +1263,8 @@ namespace TvLibrary.Implementations.DVB
       public UInt32 DeviceId;
       public MacAddress MacAddress;
       private UInt16 Padding1;
-      public SkyStarTunerType TunerType;
-      public SkyStarBusType BusInterface;
+      public B2c2TunerType TunerType;
+      public B2c2BusType BusInterface;
       [MarshalAs(UnmanagedType.I1)]
       public bool IsInUse;
       private byte Padding2;
@@ -1290,8 +1290,8 @@ namespace TvLibrary.Implementations.DVB
     {
       public UInt16 HorizontalResolution;
       public UInt16 VerticalResolution;
-      public SkyStarVideoAspectRatio AspectRatio;
-      public SkyStarVideoFrameRate FrameRate;
+      public B2c2VideoAspectRatio AspectRatio;
+      public B2c2VideoFrameRate FrameRate;
     }
 
     #endregion
@@ -1308,7 +1308,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="data">The packet.</param>
     /// <returns>???</returns>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private delegate UInt32 OnSkyStarTsData(UInt16 pid, IntPtr data);
+    private delegate UInt32 OnB2c2TsData(UInt16 pid, IntPtr data);
 
     /// <summary>
     /// Called by the AV interface when the interface wants to notify the controlling application about the
@@ -1317,7 +1317,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="info">The video stream information.</param>
     /// <returns>???</returns>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private delegate UInt32 OnSkyStarVideoInfo(VideoInfo info);
+    private delegate UInt32 OnB2c2VideoInfo(VideoInfo info);
 
     /// <summary>
     /// Called by the timeshifting interface when the interface needs to notify the controlling application
@@ -1326,7 +1326,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="state">The current timeshifting interface state.</param>
     /// <returns>???</returns>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private delegate UInt32 OnSkyStarTimeShiftState(SkyStarPvrCallbackState state);
+    private delegate UInt32 OnB2c2TimeShiftState(B2c2PvrCallbackState state);
 
     #endregion
 
@@ -1467,7 +1467,7 @@ namespace TvLibrary.Implementations.DVB
       _lastSignalUpdate = DateTime.Now;
     }
 
-    #region tuning
+    #region tuning & scanning
 
     /// <summary>
     /// Check if the tuner can tune to a specific channel.
@@ -1567,23 +1567,23 @@ namespace TvLibrary.Implementations.DVB
         return false;
       }
 
-      SkyStarFecRate fec = SkyStarFecRate.Auto;
+      B2c2FecRate fec = B2c2FecRate.Auto;
       switch (dvbsChannel.InnerFecRate)
       {
         case BinaryConvolutionCodeRate.Rate1_2:
-          fec = SkyStarFecRate.Rate1_2;
+          fec = B2c2FecRate.Rate1_2;
           break;
         case BinaryConvolutionCodeRate.Rate2_3:
-          fec = SkyStarFecRate.Rate2_3;
+          fec = B2c2FecRate.Rate2_3;
           break;
         case BinaryConvolutionCodeRate.Rate3_4:
-          fec = SkyStarFecRate.Rate3_4;
+          fec = B2c2FecRate.Rate3_4;
           break;
         case BinaryConvolutionCodeRate.Rate5_6:
-          fec = SkyStarFecRate.Rate5_6;
+          fec = B2c2FecRate.Rate5_6;
           break;
         case BinaryConvolutionCodeRate.Rate7_8:
-          fec = SkyStarFecRate.Rate7_8;
+          fec = B2c2FecRate.Rate7_8;
           break;
       }
       hr = _tunerInterface.SetFec(fec);
@@ -1598,10 +1598,10 @@ namespace TvLibrary.Implementations.DVB
       Polarisation polarisation;
       LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLof, out lnbSwitchFrequency, out polarisation);
 
-      SkyStarPolarisation ss2Polarisation = SkyStarPolarisation.Horizontal;
+      B2c2Polarisation ss2Polarisation = B2c2Polarisation.Horizontal;
       if (polarisation == Polarisation.LinearV || polarisation == Polarisation.CircularR)
       {
-        ss2Polarisation = SkyStarPolarisation.Vertical;
+        ss2Polarisation = B2c2Polarisation.Vertical;
       }
       hr = _tunerInterface.SetPolarity(ss2Polarisation);
       if (hr != 0)
@@ -1647,7 +1647,7 @@ namespace TvLibrary.Implementations.DVB
 
       // Note: it is not guaranteed that guard interval auto detection is supported, but if it isn't
       // then we can't tune - we have no idea what the actual value should be.
-      hr = _tunerInterface.SetGuardInterval(SkyStarGuardInterval.Auto);
+      hr = _tunerInterface.SetGuardInterval(B2c2GuardInterval.Auto);
       if (hr != 0)
       {
         Log.Log.Debug("TvCardDvbSs2: failed to use automatic guard interval detection, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -1680,20 +1680,20 @@ namespace TvLibrary.Implementations.DVB
         return false;
       }
 
-      SkyStarModulation modulation = SkyStarModulation.Qam64;
+      B2c2Modulation modulation = B2c2Modulation.Qam64;
       switch (dvbcChannel.ModulationType)
       {
         case ModulationType.Mod16Qam:
-          modulation = SkyStarModulation.Qam16;
+          modulation = B2c2Modulation.Qam16;
           break;
         case ModulationType.Mod32Qam:
-          modulation = SkyStarModulation.Qam32;
+          modulation = B2c2Modulation.Qam32;
           break;
         case ModulationType.Mod128Qam:
-          modulation = SkyStarModulation.Qam128;
+          modulation = B2c2Modulation.Qam128;
           break;
         case ModulationType.Mod256Qam:
-          modulation = SkyStarModulation.Qam256;
+          modulation = B2c2Modulation.Qam256;
           break;
       }
       hr = _tunerInterface.SetModulation(modulation);
@@ -1718,7 +1718,7 @@ namespace TvLibrary.Implementations.DVB
       // If the channel modulation scheme is 8 VSB then it is an over-the-air ATSC channel, otherwise
       // it is a cable (QAM annex B) channel.
       int frequency;
-      SkyStarModulation modulation = SkyStarModulation.Vsb8;
+      B2c2Modulation modulation = B2c2Modulation.Vsb8;
       if (atscChannel.ModulationType == ModulationType.Mod8Vsb)
       {
         // We normally tune ATSC channels by physical channel number, however we have to tune them by
@@ -1741,10 +1741,10 @@ namespace TvLibrary.Implementations.DVB
       else
       {
         frequency = (Int32)atscChannel.Frequency / 1000;
-        modulation = SkyStarModulation.Qam256AnnexB;
+        modulation = B2c2Modulation.Qam256AnnexB;
         if (atscChannel.ModulationType == ModulationType.Mod64Qam)
         {
-          modulation = SkyStarModulation.Qam64AnnexB;
+          modulation = B2c2Modulation.Qam64AnnexB;
         }
       }
 
@@ -1765,10 +1765,6 @@ namespace TvLibrary.Implementations.DVB
       return true;
     }
 
-    #endregion
-
-    #region epg & scanning
-
     /// <summary>
     /// Get the device's channel scanning interface.
     /// </summary>
@@ -1776,10 +1772,6 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        if (!CheckThreadId())
-        {
-          return null;
-        }
         if (_tunerType == CardType.Atsc)
         {
           return new ATSCScanning(this);
@@ -1793,20 +1785,20 @@ namespace TvLibrary.Implementations.DVB
     #region SS2 specific
 
     /// <summary>
-    /// Builds the graph.
+    /// Build the DirectShow filter graph.
     /// </summary>
     public override void BuildGraph()
     {
       try
       {
-        Log.Log.WriteFile("ss2: build graph");
+        Log.Log.WriteFile("TvCardDvbSs2: build graph");
         if (_isDeviceInitialised)
         {
-          Log.Log.Error("ss2: Graph already built");
-          throw new TvException("Graph already built");
+          Log.Log.Error("TvCardDvbSs2: the graph is already built");
+          throw new TvException("The graph is already built.");
         }
+
         DevicesInUse.Instance.Add(_tunerDevice);
-        _managedThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
         _graphBuilder = (IFilterGraph2)new FilterGraph();
         _rotEntry = new DsROTEntry(_graphBuilder);
         _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
@@ -1887,10 +1879,7 @@ namespace TvLibrary.Implementations.DVB
         // TODO: ICustomDevice loading goes here.
         _customDeviceInterfaces.Add(this);
 
-        if (!ConnectTsWriter(lastFilter))
-        {
-          throw new TvExceptionGraphBuildingFailed("Graph building failed");
-        }
+        ConnectTsWriterIntoGraph(lastFilter);
         SetFilterPids(new HashSet<UInt16>(), ModulationType.ModNotSet, false);
         _isDeviceInitialised = true;
       }
@@ -2010,22 +1999,22 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Debug("  lock time                 = {0} ms", capabilities.LockTime);
         Log.Log.Debug("  max symbol rate           = {0} ms", capabilities.KernelLockTime);
         Log.Log.Debug("  acquisition capabilities  = {0}", capabilities.AcquisitionCapabilities);
-        _isRawDiseqcSupported = (capabilities.AcquisitionCapabilities & SkyStarAcquisionCapability.RawDiseqc) != 0;
+        _isRawDiseqcSupported = (capabilities.AcquisitionCapabilities & B2c2AcquisionCapability.RawDiseqc) != 0;
         switch (capabilities.TunerType)
         {
-          case SkyStarTunerType.Satellite:
+          case B2c2TunerType.Satellite:
             _tunerType = CardType.DvbS;
             break;
-          case SkyStarTunerType.Cable:
+          case B2c2TunerType.Cable:
             _tunerType = CardType.DvbC;
             break;
-          case SkyStarTunerType.Terrestrial:
+          case B2c2TunerType.Terrestrial:
             _tunerType = CardType.DvbT;
             break;
-          case SkyStarTunerType.Atsc:
+          case B2c2TunerType.Atsc:
             _tunerType = CardType.Atsc;
             break;
-          case SkyStarTunerType.Unknown:
+          case B2c2TunerType.Unknown:
             _tunerType = CardType.Unknown;
             break;
         }
@@ -2069,8 +2058,6 @@ namespace TvLibrary.Implementations.DVB
     public override void Dispose()
     {
       if (_graphBuilder == null)
-        return;
-      if (!CheckThreadId())
         return;
 
       Log.Log.WriteFile("ss2:Decompose");
@@ -2243,7 +2230,7 @@ namespace TvLibrary.Implementations.DVB
       }
       else
       {
-        Log.Log.Debug("TvCardDvbSs2: current PID details");
+        Log.Log.Debug("TvCardDvbSs2: current PID details (before update)");
         Log.Log.Debug("  open count     = {0}", openPidCount);
         Log.Log.Debug("  running count  = {0}", runningPidCount);
         Log.Log.Debug("  returned count = {0}", pidCount);
@@ -2260,7 +2247,6 @@ namespace TvLibrary.Implementations.DVB
       if (!fullTransponder)
       {
         // Remove the PIDs that are no longer needed.
-        //TODO why is deleting not working???
         for (byte i = 0; i < pidCount; i++)
         {
           if (currentPids != null && !pids.Contains((UInt16)currentPids[i]))
@@ -2273,6 +2259,7 @@ namespace TvLibrary.Implementations.DVB
             }
             else
             {
+              Log.Log.Debug("  delete PID {0} (0x{0:x})...", currentPids[i]);
               availablePidCount++;
             }
           }
@@ -2294,6 +2281,7 @@ namespace TvLibrary.Implementations.DVB
               }
               else
               {
+                Log.Log.Debug("  add PID {0} (0x{0:x})...", en.Current);
                 availablePidCount--;
               }
             }
@@ -2314,15 +2302,28 @@ namespace TvLibrary.Implementations.DVB
               Log.Log.Debug("TvCardDvbSs2: failed to remove PID {0} (0x{0:x}), hr = 0x{1:x} ({2})", currentPids[i], hr, HResult.GetDXErrorString(hr));
               success = false;
             }
+            else
+            {
+              Log.Log.Debug("  delete all PIDs...");
+            }
           }
         }
         // Allow all PIDs.
-        hr = _dataInterface.AddPIDsToPin(ref AddPidCount, new int[1] { (int)SkyStarPidFilterMode.AllExcludingNull }, 0);
+        hr = _dataInterface.AddPIDsToPin(ref AddPidCount, new int[1] { (int)B2c2PidFilterMode.AllExcludingNull }, 0);
         if (hr != 0)
         {
           Log.Log.Debug("TvCardDvbSs2: failed to enable all PIDs, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           success = false;
         }
+        else
+        {
+          Log.Log.Debug("  allow all excluding NULL...");
+        }
+      }
+
+      if (success)
+      {
+        Log.Log.Debug("TvCardDvbSs2: updates complete, result = success");
       }
 
       return success;
@@ -2349,16 +2350,16 @@ namespace TvLibrary.Implementations.DVB
       bool success = true;
       int hr = 0;
 
-      SkyStarDiseqcPort burst = SkyStarDiseqcPort.None;
+      B2c2DiseqcPort burst = B2c2DiseqcPort.None;
       if (toneBurstState == ToneBurst.ToneBurst)
       {
-        burst = SkyStarDiseqcPort.SimpleA;
+        burst = B2c2DiseqcPort.SimpleA;
       }
       else if (toneBurstState == ToneBurst.DataBurst)
       {
-        burst = SkyStarDiseqcPort.SimpleB;
+        burst = B2c2DiseqcPort.SimpleB;
       }
-      if (burst != SkyStarDiseqcPort.None)
+      if (burst != B2c2DiseqcPort.None)
       {
         hr = _tunerInterface.SetDiseqc(burst);
         if (hr == 0)
@@ -2372,10 +2373,10 @@ namespace TvLibrary.Implementations.DVB
         }
       }
 
-      SkyStarTone tone = SkyStarTone.Off;
+      B2c2Tone tone = B2c2Tone.Off;
       if (tone22kState == Tone22k.On)
       {
-        tone = SkyStarTone.Tone22k;
+        tone = B2c2Tone.Tone22k;
       }
       hr = _tunerInterface.SetLnbKHz(tone);
       if (hr == 0)
@@ -2425,7 +2426,7 @@ namespace TvLibrary.Implementations.DVB
         }
         catch (COMException ex)
         {
-          if ((SkyStarError)ex.ErrorCode == SkyStarError.Diseqc12NotSupported)
+          if ((B2c2Error)ex.ErrorCode == B2c2Error.Diseqc12NotSupported)
           {
             // DiSEqC 1.2 commands not supported. This is a little unexpected given that the
             // driver previously reported that it supports them.
@@ -2451,7 +2452,7 @@ namespace TvLibrary.Implementations.DVB
       }
 
       // Port A = 3, Port B = 4 etc.
-      SkyStarDiseqcPort port = (SkyStarDiseqcPort)((command[3] & 0xc) >> 2) + 3;
+      B2c2DiseqcPort port = (B2c2DiseqcPort)((command[3] & 0xc) >> 2) + 3;
       hr = _tunerInterface.SetDiseqc(port);
       if (hr == 0)
       {

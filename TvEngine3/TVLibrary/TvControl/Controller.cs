@@ -250,9 +250,9 @@ namespace TvControl
     bool IsRecordingSchedule(int idSchedule, out VirtualCard card);
 
     /// <summary>
-    /// Determines whether the specified channel name is recording.
+    /// Determines whether the specified channel is recording.
     /// </summary>
-    /// <param name="channelName">Name of the channel.</param>
+    /// <param name="idChannel">The ID of the channel.</param>
     /// <param name="card">The vcard.</param>
     /// <returns>
     /// 	<c>true</c> if the specified channel name is recording; otherwise, <c>false</c>.

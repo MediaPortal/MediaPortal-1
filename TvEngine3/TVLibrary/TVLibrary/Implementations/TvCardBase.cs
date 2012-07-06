@@ -964,6 +964,13 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// Update the list of services being decrypted by the device's conditional access interfaces(s).
     /// </summary>
+    /// <remarks>
+    /// The strategy here is usually to only send commands to the CAM when we need an *additional* service
+    /// to be decrypted. The *only* exception is when we have to stop decrypting services in "changes" mode.
+    /// We don't send "not selected" commands for "list" or "only" mode because this can disrupt the other
+    /// services that still need to be decrypted. We also don't send "keep decrypting" commands (alternative
+    /// to "not selected") because that will almost certainly cause glitches in streams.
+    /// </remarks>
     /// <param name="subChannelId">The ID of the subchannel causing this update.</param>
     /// <param name="updateAction"><c>Add</c> if the subchannel is being tuned, <c>update</c> if the PMT for the
     ///   subchannel has changed, or <c>last</c> if the subchannel is being disposed.</param>
@@ -981,28 +988,61 @@ namespace TvLibrary.Implementations
         Log.Log.Debug("TvCardBase: service is not encrypted");
         return;
       }
+      if (updateAction == CaPmtListManagementAction.Last && _multiChannelDecryptMode != MultiChannelDecryptMode.Changes)
+      {
+        Log.Log.Debug("TvCardBase: \"not selected\" command acknowledged, no action required");
+        return;
+      }
 
       // First build a distinct list of the services that we need to handle.
       Log.Log.Debug("TvCardBase: assembling service list");
       List<BaseSubChannel> distinctServices = new List<BaseSubChannel>();
-      if (_multiChannelDecryptMode == MultiChannelDecryptMode.Disabled || _multiChannelDecryptMode == MultiChannelDecryptMode.Changes)
+      Dictionary<int, BaseSubChannel>.ValueCollection.Enumerator en = _mapSubChannels.Values.GetEnumerator();
+      DVBBaseChannel updatedDigitalService = _mapSubChannels[subChannelId].CurrentChannel as DVBBaseChannel;
+      AnalogChannel updatedAnalogService = _mapSubChannels[subChannelId].CurrentChannel as AnalogChannel;
+      while (en.MoveNext())
       {
-        // We only send one command relating to the service associated with the subchannel.
-        distinctServices.Add(_mapSubChannels[subChannelId]);
-      }
-      else
-      {
-        // We send one command for each service that still needs to be decrypted.
-        Dictionary<int, BaseSubChannel>.ValueCollection.Enumerator en = _mapSubChannels.Values.GetEnumerator();
-        while (en.MoveNext())
+        IChannel service = en.Current.CurrentChannel;
+        // We don't care about FTA services here.
+        if (service.FreeToAir)
         {
-          IChannel service = en.Current.CurrentChannel;
-          // We don't need to decrypt free-to-air channels.
-          if (service.FreeToAir)
-          {
-            continue;
-          }
+          continue;
+        }
 
+        // Keep an eye out - if there is another subchannel accessing the same service as the subchannel that
+        // is being updated then we always do *nothing*. If we were to stop decrypting the service in that
+        // situation it would be wrong; if we were to start decrypting the service in that situation it would
+        // be unnecessary and possibly cause stream interruptions.
+        if (en.Current.SubChannelId != subChannelId)
+        {
+          if (updatedDigitalService != null)
+          {
+            DVBBaseChannel digitalService = service as DVBBaseChannel;
+            if (digitalService != null && digitalService.ServiceId == updatedDigitalService.ServiceId)
+            {
+              Log.Log.Debug("TvCardBase: the service for this subchannel is a duplicate, no action required");
+              return;
+            }
+          }
+          else if (updatedAnalogService != null)
+          {
+            AnalogChannel analogService = service as AnalogChannel;
+            if (analogService != null && analogService.Frequency == updatedAnalogService.Frequency && analogService.ChannelNumber == updatedAnalogService.ChannelNumber)
+            {
+              Log.Log.Debug("TvCardBase: the service for this subchannel is a duplicate, no action required");
+              return;
+            }
+          }
+          else
+          {
+            throw new TvException("TvCardBase: service type not recognised, unable to assemble decrypt service list\r\n" + service.ToString());
+          }
+        }
+
+        if (_multiChannelDecryptMode == MultiChannelDecryptMode.List)
+        {
+          // Check for "list" mode: have we already go this service in our distinct list? If so, don't add it
+          // again...
           bool exists = false;
           foreach (BaseSubChannel serviceToDecrypt in distinctServices)
           {
@@ -1033,13 +1073,15 @@ namespace TvLibrary.Implementations
               }
             }
           }
-          // If this service is the service that is causing this update and the action is "last" (meaning "remove"
-          // or "no need to decrypt") then don't add the service to the list because we don't need to keep decrypting
-          // it... at least not for this subchannel.
-          if (!exists && (subChannelId != en.Current.SubChannelId || updateAction != CaPmtListManagementAction.Last))
+          if (!exists)
           {
             distinctServices.Add(en.Current);
           }
+        }
+        else if (en.Current.SubChannelId == subChannelId)
+        {
+          // For "changes" and "only" modes: we only send one command and that relates to the service being updated.
+          distinctServices.Add(en.Current);
         }
       }
 
@@ -1825,53 +1867,54 @@ namespace TvLibrary.Implementations
     /// <param name="continueGraph">Indicates, if the graph should be continued or stopped</param>
     private void FreeSubChannel(int id, bool continueGraph)
     {
-      Log.Log.Info("tvcard:FreeSubChannel: subchannels count {0} subch#{1} keep graph={2}", _mapSubChannels.Count, id,
-                   continueGraph);
+      Log.Log.Debug("TvCardBase: free subchannel, ID = {0}, subchannel count = {1}, stop device = {2}", id, _mapSubChannels.Count, id, !continueGraph);
       if (_mapSubChannels.ContainsKey(id))
       {
         if (_mapSubChannels[id].IsTimeShifting)
         {
-          Log.Log.Info("tvcard:FreeSubChannel :{0} - is timeshifting (skipped)", id);
+          Log.Log.Debug("TvCardBase: subchannel is still timeshifting!");
           return;
         }
-
         if (_mapSubChannels[id].IsRecording)
         {
-          Log.Log.Info("tvcard:FreeSubChannel :{0} - is recording (skipped)", id);
+          Log.Log.Debug("TvCardBase: subchannel is still recording!");
           return;
         }
 
         try
         {
           UpdateDecryptList(id, CaPmtListManagementAction.Last);
-          ConfigurePidFilter();
           _mapSubChannels[id].Decompose();
         }
         finally
         {
           _mapSubChannels.Remove(id);
         }
+        // PID filters are configured according to the PIDs that need to be passed, so reconfigure the PID
+        // filter *after* we removed the subchannel (otherwise PIDs for the subchannel that we're freeing
+        // won't be removed).
+        ConfigurePidFilter();
       }
       else
       {
-        Log.Log.Info("tvcard:FreeSubChannel :{0} - sub channel not found", id);
+        Log.Log.Debug("TvCardBase: subchannel not found!");
       }
       if (_mapSubChannels.Count == 0)
       {
         _subChannelId = 0;
         if (!continueGraph)
         {
-          Log.Log.Info("tvcard:FreeSubChannel : no subchannels present, stopping device");
+          Log.Log.Debug("TvCardBase: stopping device");
           Stop();
         }
         else
         {
-          Log.Log.Info("tvcard:FreeSubChannel : no subchannels present, continuing graph");
+          Log.Log.Debug("TvCardBase: leave device running");
         }
       }
       else
       {
-        Log.Log.Info("tvcard:FreeSubChannel : subchannels STILL present {}, continuing graph", _mapSubChannels.Count);
+        Log.Log.Debug("TvCardBase: leave device running, subchannels still present");
       }
     }
 

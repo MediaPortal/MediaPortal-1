@@ -335,9 +335,13 @@ namespace TvEngine
       // First, checks for DVB-S tuners: does the tuner support sending DiSEqC commands?
       if (tunerType == CardType.DvbS)
       {
-        // We prefer the IBDA_DiseqCommand interface.
+        // We prefer the IBDA_DiseqCommand interface because it has the potential to support raw commands.
         _diseqcPropertySet = CheckBdaDiseqcSupport(tunerFilter);
-        if (_diseqcPropertySet == null)
+        if (_diseqcPropertySet != null)
+        {
+          Log.Debug("Microsoft: supported device detected (IBDA_DiseqCommand DiSEqC)");
+        }
+        else
         {
           // Fallback to IBDA_FrequencyFilter.put_Range().
           _oldDiseqcInterface = (IBDA_FrequencyFilter)CheckPutRangeDiseqcSupport(tunerFilter);
@@ -362,37 +366,6 @@ namespace TvEngine
       _deviceControl = tunerFilter as IBDA_DeviceControl;
       _paramBuffer = Marshal.AllocCoTaskMem(InstanceSize);
       _instanceBuffer = Marshal.AllocCoTaskMem(InstanceSize);
-      if (_diseqcPropertySet == null)
-      {
-        return true;
-      }
-
-      // For the IBDA_DiseqCommand interface: disable automatic command repetition for optimal performance.
-      Log.Debug("Microsoft: supported device detected (IBDA_DiseqCommand DiSEqC)");
-      int hr = _deviceControl.StartChanges();
-      if (hr != 0)
-      {
-        Log.Debug("Microsoft: failed to start device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      }
-
-      Marshal.WriteInt32(_paramBuffer, 0, 0);
-      hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Repeats, _instanceBuffer, InstanceSize, _paramBuffer, 4);
-      if (hr != 0)
-      {
-        Log.Debug("Microsoft: failed to disable DiSEqC command repeats, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      }
-
-      hr = _deviceControl.CheckChanges();
-      if (hr != 0)
-      {
-        Log.Debug("Microsoft: failed to check device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      }
-      hr = _deviceControl.CommitChanges();
-      if (hr != 0)
-      {
-        Log.Debug("Microsoft: failed to commit device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      }
-
       return true;
     }
 
@@ -462,6 +435,22 @@ namespace TvEngine
     /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
     public override void OnAfterTune(ITVCard tuner, IChannel currentChannel)
     {
+      // We defer DiSEqC commands until after tuning is complete because of annecdotal notes about the MS
+      // network providers messing up the put_Range() method when attempting to send commands before the
+      // tune request. In practise, I have observed the following:
+
+      // Must send commands before tuning
+      //----------------------------------
+      // - Anysee (E7 S2)
+
+      // Must send commands after tuning
+      //---------------------------------
+      // - TBS (5980 CI)
+
+      // Doesn't matter
+      //----------------
+      // - Hauppauge (HVR-4400)
+
       SendDeferredCommands();
     }
 
@@ -545,7 +534,9 @@ namespace TvEngine
       bool isFirstCommand = true;
       for (byte i = 0; i < _commands.Count; i++)
       {
+        Log.Debug("Microsoft: command {0}...", i + 1);
         byte[] command = _commands[i];
+
         // Attempt to translate the raw command back into a DiSEqC 1.0 command. The old interface only supports
         // DiSEqC 1.0 switch commands, and some drivers don't implement support for raw commands using the
         // IBDA_DiseqCommand interface (so we want to use the simpler LNB source property if possible).
@@ -583,6 +574,16 @@ namespace TvEngine
             Log.Debug("Microsoft: failed to enable DiSEqC commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           }
 
+          // Disable command repeats for optimal performance. We set this for each command for "safety",
+          // assuming that if DiSEqC must be enabled for enabled for each command then the same may apply
+          // to repeats.
+          Marshal.WriteInt32(_paramBuffer, 0, 0);
+          hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Repeats, _instanceBuffer, InstanceSize, _paramBuffer, 4);
+          if (hr != 0)
+          {
+            Log.Debug("Microsoft: failed to disable DiSEqC command repeats, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          }
+
           // Enable or disable tone burst messages for this set of commands.
           if (isFirstCommand)
           {
@@ -596,7 +597,7 @@ namespace TvEngine
             isFirstCommand = false;
           }
 
-          portNumber++;   // range needs to be 1..4, not 0..3
+          portNumber++;   // Range needs to be 1..4, not 0..3 - Microsoft documentation has been ignored... again!
           if (portNumber > 0)
           {
             Marshal.WriteInt32(_paramBuffer, 0, portNumber);
