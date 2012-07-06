@@ -978,7 +978,7 @@ namespace TvLibrary.Implementations
       }
       if (_mapSubChannels[subChannelId].CurrentChannel.FreeToAir)
       {
-        Log.Log.Debug("TvCardBase: current service is not encrypted");
+        Log.Log.Debug("TvCardBase: service is not encrypted");
         return;
       }
 
@@ -992,6 +992,7 @@ namespace TvLibrary.Implementations
       }
       else
       {
+        // We send one command for each service that still needs to be decrypted.
         Dictionary<int, BaseSubChannel>.ValueCollection.Enumerator en = _mapSubChannels.Values.GetEnumerator();
         while (en.MoveNext())
         {
@@ -1035,7 +1036,7 @@ namespace TvLibrary.Implementations
           // If this service is the service that is causing this update and the action is "last" (meaning "remove"
           // or "no need to decrypt") then don't add the service to the list because we don't need to keep decrypting
           // it... at least not for this subchannel.
-          if (!exists || subChannelId != en.Current.SubChannelId || updateAction != CaPmtListManagementAction.Last)
+          if (!exists && (subChannelId != en.Current.SubChannelId || updateAction != CaPmtListManagementAction.Last))
           {
             distinctServices.Add(en.Current);
           }
@@ -1065,9 +1066,9 @@ namespace TvLibrary.Implementations
           Log.Log.Debug("TvCardBase: attempt {0}...", attempt);
         }
 
-        foreach (ICustomDevice d in _customDeviceInterfaces)
+        foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
         {
-          IConditionalAccessProvider caProvider = d as IConditionalAccessProvider;
+          IConditionalAccessProvider caProvider = deviceInterface as IConditionalAccessProvider;
           if (caProvider == null)
           {
             continue;
@@ -1097,11 +1098,12 @@ namespace TvLibrary.Implementations
           Log.Log.Debug("TvCardBase: sending command(s)");
           bool success = true;
           TvDvbChannel digitalService;
+          // The default action is "more" - this will be changed below if necessary.
           CaPmtListManagementAction action = CaPmtListManagementAction.More;
 
-          // The command is "start/continue descrambling", unless we're in "changes" mode and removing a service.
+          // The command is "start/continue descrambling" unless we're removing services.
           CaPmtCommand command = CaPmtCommand.OkDescrambling;
-          if (updateAction == CaPmtListManagementAction.Last && _multiChannelDecryptMode == MultiChannelDecryptMode.Changes)
+          if (updateAction == CaPmtListManagementAction.Last)
           {
             command = CaPmtCommand.NotSelected;
           }
@@ -1509,6 +1511,12 @@ namespace TvLibrary.Implementations
         else
         {
           Log.Log.Debug("TvCardBase: using existing subchannel");
+          // If reusing a subchannel and our multi-channel decrypt mode is "changes", tell the plugin to stop
+          // decrypting the previous service before we lose access to the PMT and CAT.
+          if (_multiChannelDecryptMode == MultiChannelDecryptMode.Changes)
+          {
+            UpdateDecryptList(subChannelId, CaPmtListManagementAction.Last);
+          }
         }
         Log.Log.Info("TvCardBase: subchannel ID = {0}, subchannel count = {1}", subChannelId, _mapSubChannels.Count);
         _mapSubChannels[subChannelId].CurrentChannel = channel;

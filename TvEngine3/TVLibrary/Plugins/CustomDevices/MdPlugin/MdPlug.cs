@@ -420,18 +420,38 @@ namespace TvEngine
           {
             foreach (UInt16 emm in seenEmmPids[caSystemId].Keys)
             {
-              // Take a "backup" of the ECM PID provider IDs - we might need to restore them if the match with this
-              // EMM PID doesn't work out.
+              // Prepare to attempt to link. Take a "backup" of the ECM PID provider IDs - we might need to
+              // restore them if the match with this EMM PID doesn't work out.
               UInt32[] ecmProviderIds = new UInt32[seenEcmPids[caSystemId][ecmPid].Count];
               seenEcmPids[caSystemId][ecmPid].CopyTo(ecmProviderIds);
               seenEcmPids[caSystemId][ecmPid].IntersectWith(seenEmmPids[caSystemId][emm]);
-              if (seenEcmPids[caSystemId][ecmPid].Count > 0)
+
+              // The attempt to match here considers 3 situations:
+              // - there is at least one common provider ID
+              // - the ECM PID provider ID is not known
+              // - the EMM PID provider ID is not known
+              // In the first case, we choose one of the common provider IDs. In the last two cases we pick one
+              // of the known provider IDs and assume it applies to both ECMs and EMMs.
+              if (seenEcmPids[caSystemId][ecmPid].Count > 0 || seenEcmPids[caSystemId][ecmPid].Count == 0 || seenEmmPids[caSystemId][emm].Count == 0)
               {
                 // We have a match! Pick the first common provider ID.
-                en = seenEcmPids[caSystemId][ecmPid].GetEnumerator();
-                en.MoveNext();
+                if (seenEcmPids[caSystemId][ecmPid].Count == 0)
+                {
+                  en = seenEmmPids[caSystemId][emm].GetEnumerator();
+                }
+                else
+                {
+                  en = seenEcmPids[caSystemId][ecmPid].GetEnumerator();
+                }
+                if (en.MoveNext())
+                {
+                  providerId = en.Current;
+                }
+                else
+                {
+                  providerId = 0;
+                }
                 emmPid = emm;
-                providerId = en.Current;
                 break;
               }
               else
@@ -1213,7 +1233,8 @@ namespace TvEngine
       }
 
       // Find a free slot to decode this service. If this is the first or only service in the list then we
-      // can reset our slots. This may not be ideal in some cases (like if we're already decoding the service).
+      // can reset our slots. This could be optimised to cache the new list until "last"/"only" action and
+      // reuse slots where possible.
       DecodeSlot freeSlot = null;
       if (command == CaPmtCommand.OkDescrambling && (listAction == CaPmtListManagementAction.First || listAction == CaPmtListManagementAction.Only))
       {
@@ -1241,15 +1262,23 @@ namespace TvEngine
             // the service that is fine - this is an update.
             else if (command == CaPmtCommand.OkDescrambling)
             {
-              Log.Debug("MD Plugin: updating slot decrypting channel \"{0}\"", slot.CurrentChannel.Name);
+              Log.Debug("MD Plugin: found existing slot decrypting channel \"{0}\", sending update", currentService.Name);
               freeSlot = slot;
               // No need to continue looping - this is the optimal situation where we reuse the existing slot.
               break;
             }
           }
-          else if (currentService == null && freeSlot == null)
+          else if (currentService == null)
           {
-            freeSlot = slot;
+            Log.Debug("  <free slot>...");
+            if (freeSlot == null)
+            {
+              freeSlot = slot;
+            }
+          }
+          else if (currentService != null)
+          {
+            Log.Debug("  \"{0}\"...", currentService.Name);
           }
         }
       }

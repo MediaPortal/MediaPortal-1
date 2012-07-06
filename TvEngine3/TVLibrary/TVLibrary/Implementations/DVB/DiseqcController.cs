@@ -122,16 +122,25 @@ namespace TvLibrary.Implementations.DVB
         return;
       }
 
-      Log.Log.Debug("DiSEqC Controller: switch to channel");
-      bool isHighBand = channel.Frequency > channel.LnbType.SwitchFrequency && channel.LnbType.SwitchFrequency > 0;
-      bool wasHighBand = !isHighBand;
-      if (_previousChannel != null)
-      {
-        wasHighBand = _previousChannel.Frequency > _previousChannel.LnbType.SwitchFrequency && _previousChannel.LnbType.SwitchFrequency > 0;
-      }
-
       // There is a well defined order in which commands may be sent:
       // "raw" DiSEqC commands -> DiSEqC 1.0 (committed) -> tone burst (simple DiSEqC) -> 22 kHz tone on/off
+      Log.Log.Debug("DiSEqC Controller: switch to channel");
+
+      // We send a "power on" command before anything else if the previous channel is not set. This is
+      // sometimes necessary to wake the switch.
+      if (_previousChannel == null)
+      {
+        Log.Log.Debug("DiSEqC Controller: power on");
+        byte[] command = new byte[3];
+        command[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
+        command[1] = (byte)DiseqcAddress.Any;
+        command[2] = (byte)DiseqcCommand.PowerOn;
+        _device.SendCommand(command);
+        // Give DiSEqC devices time to boot up.
+        System.Threading.Thread.Sleep(_commandDelay);
+      }
+
+      bool isHighBand = channel.Frequency > channel.LnbType.SwitchFrequency && channel.LnbType.SwitchFrequency > 0;
 
       // Switch command.
       bool sendCommand = channel.Diseqc != DiseqcPort.None &&
@@ -139,6 +148,12 @@ namespace TvLibrary.Implementations.DVB
         channel.Diseqc != DiseqcPort.SimpleB;
       if (sendCommand)
       {
+        bool wasHighBand = !isHighBand;
+        if (_previousChannel != null)
+        {
+          wasHighBand = _previousChannel.Frequency > _previousChannel.LnbType.SwitchFrequency && _previousChannel.LnbType.SwitchFrequency > 0;
+        }
+
         // If we get to here then there is a valid command to send, but we might not need/want to send it.
         if (!_alwaysSendCommands &&
           _previousChannel != null &&
