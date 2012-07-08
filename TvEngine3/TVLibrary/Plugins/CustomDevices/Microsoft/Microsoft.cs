@@ -441,17 +441,18 @@ namespace TvEngine
 
       // Must send commands before tuning
       //----------------------------------
-      // - Anysee (E7 S2)
+      // - Anysee (E7 S2 - IBDADiseqCommand)
 
       // Must send commands after tuning
       //---------------------------------
-      // - TBS (5980 CI)
+      // - TBS (5980 CI - IBDADiseqCommand)
 
       // Doesn't matter
       //----------------
-      // - Hauppauge (HVR-4400)
+      // - Hauppauge (HVR-4400 - IBDADiseqCommand)
+      // - TechniSat SkyStar 2 r2.6d BDA driver (IBDADiseqCommand/IFrequencyFilter)
 
-      SendDeferredCommands();
+      //SendDeferredCommands();
     }
 
     #endregion
@@ -520,6 +521,7 @@ namespace TvEngine
       Buffer.BlockCopy(command, 0, commandCopy, 0, command.Length);
       _commands.Add(commandCopy);
       Log.Debug("Microsoft: result = success");
+      SendDeferredCommands();
       return true;
     }
 

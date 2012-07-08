@@ -204,7 +204,7 @@ namespace TvLibrary.Implementations.DVB
 
               if (serviceName.Length == 0)
               {
-                SetMissingServiceName(channel);
+                SetMissingServiceName(newChannel);
               }
               Log.Log.Write("Found: {0}", newChannel);
               channelsFound.Add(newChannel);
@@ -452,7 +452,7 @@ namespace TvLibrary.Implementations.DVB
       }
       // Default: use "Unknown <frequency>-<service ID>". At least that way people can often tell which transponder
       // the service came from.
-      dvbChannel.Name = "Unknown " + dvbChannel.Frequency + "-" + dvbChannel.ServiceId;
+      dvbChannel.Name = "Unknown " + (dvbChannel.Frequency / 1000) + "-" + dvbChannel.ServiceId;
     }
 
     #endregion

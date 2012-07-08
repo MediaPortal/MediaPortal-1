@@ -355,6 +355,7 @@ namespace TvEngine
     private enum AnyseeCiCommand : uint   // CI_CONTROL_COMMAND
     {
       GetDeviceIndex = 1100,    // CI_CONTROL_GET_DEVICE_NUM - get the Anysee device index
+      SetPmtOld = 1101,         // Send PMT to the CAM using old PMT format (PMTInfo).
       IsOpen = 1104,            // CI_CONTROL_IS_OPEN - check whether the CI API is open
       SetKey = 1105,            // CI_CONTROL_SET_KEY - send a key press to the CAM
       SetTdt = 1106,            // CI_CONTROL_SET_TDT - send TDT to the CAM

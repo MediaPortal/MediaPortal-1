@@ -351,14 +351,14 @@ namespace TvEngine
       DVBSChannel dvbsChannel = channel as DVBSChannel;
       BdaExtensionParams command = new BdaExtensionParams();
 
-      uint lnbLof;
+      uint lnbLowLof;
+      uint lnbHighLof;
       uint lnbSwitchFrequency;
-      LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLof, out lnbSwitchFrequency, out command.Polarisation);
-      lnbLof /= 1000;
+      LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLowLof, out lnbHighLof, out lnbSwitchFrequency, out command.Polarisation);
 
       command.Frequency = (uint)dvbsChannel.Frequency / 1000;
-      command.LnbLowBandLof = lnbLof;
-      command.LnbHighBandLof = lnbLof;
+      command.LnbLowBandLof = lnbLowLof / 1000;
+      command.LnbHighBandLof = lnbHighLof / 1000;
       command.LnbSwitchFrequency = lnbSwitchFrequency / 1000;
       command.SymbolRate = (uint)dvbsChannel.SymbolRate;
       command.Modulation = dvbsChannel.ModulationType;

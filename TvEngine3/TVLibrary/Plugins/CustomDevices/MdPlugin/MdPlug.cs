@@ -1255,6 +1255,7 @@ namespace TvEngine
             // "Not selected" means stop decrypting the service.
             if (command == CaPmtCommand.NotSelected)
             {
+              Log.Debug("MD Plugin: found existing slot decrypting channel \"{0}\", freeing", currentService.Name);
               slot.CurrentChannel = null;
               return true;
             }

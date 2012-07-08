@@ -398,10 +398,11 @@ namespace TvEngine
       }
 
       DVBSChannel dvbsChannel = channel as DVBSChannel;
-      uint lnbLof;
+      uint lnbLowLof;
+      uint lnbHighLof;
       uint lnbSwitchFrequency;
       Polarisation polarisation;
-      LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLof, out lnbSwitchFrequency, out polarisation);
+      LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLowLof, out lnbHighLof, out lnbSwitchFrequency, out polarisation);
 
       ProfPolarisation profPolarisation = ProfPolarisation.Horizontal;
       if (polarisation == Polarisation.LinearV || polarisation == Polarisation.CircularR)
@@ -410,8 +411,10 @@ namespace TvEngine
       }
 
       Prof22k tone22k = Prof22k.Off;
+      UInt32 lnbLof = lnbLowLof / 1000;
       if (dvbsChannel.Frequency > lnbSwitchFrequency)
       {
+        lnbLof = lnbHighLof / 1000;
         tone22k = Prof22k.On;
       }
 
@@ -425,7 +428,6 @@ namespace TvEngine
         toneBurst = ProfToneBurst.DataBurst;
       }
 
-      lnbLof /= 1000;
       BdaExtensionParams tuningParams = new BdaExtensionParams();
       tuningParams.Frequency = (uint)dvbsChannel.Frequency / 1000;
       tuningParams.LnbLowBandLof = lnbLof;

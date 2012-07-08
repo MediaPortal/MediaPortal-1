@@ -243,10 +243,11 @@ namespace TvLibrary.Implementations.DVB
         {
           dvbsChannel.ModulationType = ModulationType.ModQpsk;
         }
-        uint lnbLof;
+        uint lnbLowLof;
+        uint lnbHighLof;
         uint lnbSwitchFrequency;
         Polarisation polarisation;
-        LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLof, out lnbSwitchFrequency, out polarisation);
+        LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLowLof, out lnbHighLof, out lnbSwitchFrequency, out polarisation);
         FrequencySettings fSettings = new FrequencySettings
         {
           Multiplier = 1000,
@@ -271,8 +272,8 @@ namespace TvLibrary.Implementations.DVB
         LnbInfoSettings lSettings = new LnbInfoSettings
         {
           LnbSwitchFrequency = lnbSwitchFrequency,
-          LowOscillator = lnbLof,
-          HighOscillator = lnbLof
+          LowOscillator = lnbLowLof,
+          HighOscillator = lnbHighLof
         };
         DiseqcSatelliteSettings sSettings = new DiseqcSatelliteSettings
         {
@@ -916,7 +917,7 @@ namespace TvLibrary.Implementations.DVB
     /// Add and connect an infinite tee into the BDA filter graph.
     /// </summary>
     /// <param name="lastFilter">The filter in the filter chain that the infinite tee should be connected to.</param>
-    protected void AddInfiniteTeeToGraph(ref IBaseFilter lastFilter)
+    protected virtual void AddInfiniteTeeToGraph(ref IBaseFilter lastFilter)
     {
       Log.Log.Debug("TvCardDvbBase: add infinite tee filter");
       _infTee = (IBaseFilter)new InfTee();

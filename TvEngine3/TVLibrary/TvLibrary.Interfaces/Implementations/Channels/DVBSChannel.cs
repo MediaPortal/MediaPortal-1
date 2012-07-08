@@ -62,26 +62,18 @@ namespace TvLibrary.Channels
     /// Get the appropriate LNB settings parameters to tune a given channel.
     /// </summary>
     /// <param name="channel">The channel to tune.</param>
-    /// <param name="lnbLof">The LNB local oscillator frequency (in kHz) to use.</param>
+    /// <param name="lnbLowLof">The LNB low band local oscillator frequency (in kHz) to use.</param>
+    /// <param name="lnbHighLof">The LNB high band local oscillator frequency (in kHz) to use.</param>
     /// <param name="lnbSwitchFrequency">The LNB switch frequency (in kHz) to use.</param>
     /// <param name="polarisation">The LNB voltage (signal polarity) to use.</param>
-    public static void GetLnbTuningParameters(DVBSChannel channel, out uint lnbLof, out uint lnbSwitchFrequency, out Polarisation polarisation)
+    public static void GetLnbTuningParameters(DVBSChannel channel, out uint lnbLowLof, out uint lnbHighLof, out uint lnbSwitchFrequency, out Polarisation polarisation)
     {
-      // 1: Get the default frequency settings for the LNB.
-      Log.Log.Debug("TvCardDvbS: LNB settings, low = {0} kHz, high = {1} kHz, switch = {2} kHz, bandstacked = {3}, toroidal = {4}, polarisation = {5}",
+      // 1: Log the default frequency settings for the LNB.
+      Log.Log.Debug("DvbsChannel: LNB settings, low = {0} kHz, high = {1} kHz, switch = {2} kHz, bandstacked = {3}, toroidal = {4}, polarisation = {5}",
           channel.LnbType.LowBandFrequency, channel.LnbType.HighBandFrequency, channel.LnbType.SwitchFrequency,
           channel.LnbType.IsBandStacked, channel.LnbType.IsToroidal, channel.Polarisation);
 
-      // 2: Switch frequency adjustment.
-      // Setting the switch frequency to zero is the equivalent of saying that the switch frequency is
-      // irrelevant - that the 22 kHz tone state shouldn't depend on the transponder frequency.
-      lnbSwitchFrequency = (uint)channel.LnbType.SwitchFrequency;
-      if (lnbSwitchFrequency == 0)
-      {
-        lnbSwitchFrequency = 18000000;
-      }
-
-      // 3: Toroidal LNB handling.
+      // 2: Toroidal LNB handling.
       // LNBs mounted on a toroidal dish require circular polarities to be inverted.
       polarisation = channel.Polarisation;
       if (channel.LnbType.IsToroidal)
@@ -96,32 +88,69 @@ namespace TvLibrary.Channels
         }
       }
 
-      // 4: Local oscillator frequency selection and other miscellenaeous settings.
-      // Some tuners (eg. Prof USB series) don't handle multiple LOFs correctly. We need to pass either
-      // the low or high frequency with the switch frequency. How do we select the correct local oscillator
-      // frequency? Well first assume that we should use the low frequency, then:
-      // 1. For non-bandstacked LNBs, if the transponder frequency is higher than the switch frequency then
-      //    we should use the high oscillator frequency.
-      // 2. For bandstacked LNBs, if the transponder polarisation is horizontal or circular left then we
-      //    should use the high oscillator frequency.
-      // In addition, we should always supply bandstacked LNBs with 18 V.
-      lnbLof = (uint)channel.LnbType.LowBandFrequency;
-      if (!channel.LnbType.IsBandStacked)
+      // 2: Switch frequency adjustment.
+      // Setting the switch frequency to zero is the equivalent of saying that the switch frequency is
+      // irrelevant - that the 22 kHz tone state shouldn't depend on the transponder frequency.
+      lnbSwitchFrequency = (uint)channel.LnbType.SwitchFrequency;
+      if (lnbSwitchFrequency == 0)
       {
+        // Note: do not think this is random! Some drivers such as the Genpix SkyWalker driver will treat
+        // 20 GHz as a signal to always use high voltage (useful for bandstacked LNBs).
+        lnbSwitchFrequency = 18000000;
+      }
+
+      // 3: Local oscillator frequency selection and polarisation.
+      // Drivers are frustrating! Most tuners rely on the LNB frequency settings to determine the intermediate
+      // frequency (the frequency in the cable that the tuner should tune to) and whether the 22 kHz tone
+      // should be on or off. Some tuner drivers (eg. Prof USB) don't seem to understand what to do with the
+      // three frequencies; others (eg. Anysee E7, SkyStar 2 [BDA]) don't turn the 22 kHz tone on (or off!)
+      // unless the low and high LOFs are different; others can't handle negative intermediate frequencies
+      // which are standard for C-band LNB calculations.
+      // Our approach is to:
+      // - calculate the actual intermediate frequency, then back-calculate a "safe" LOF from that
+      // - always ensure that the low and high LOF values are different (drivers that can't handle this
+      //   should be handled with plugins)
+      long lof = channel.LnbType.LowBandFrequency;
+      bool toneOn = false;
+      if (channel.LnbType.IsBandStacked)
+      {
+        // For bandstacked LNBs, if the transponder polarisation is horizontal or circular left then we
+        // should use the nominal high oscillator frequency. In addition, we should always supply
+        // bandstacked LNBs with 18 V.
+        if (channel.Polarisation == Polarisation.LinearH || channel.Polarisation == Polarisation.CircularL)
+        {
+          lof = channel.LnbType.HighBandFrequency;
+        }
+        polarisation = Polarisation.LinearH;
         if (channel.Frequency > lnbSwitchFrequency)
         {
-          lnbLof = (uint)channel.LnbType.HighBandFrequency;
+          toneOn = true;
         }
       }
       else
       {
-        if (channel.Polarisation == Polarisation.LinearH || channel.Polarisation == Polarisation.CircularL)
+        if (channel.Frequency > lnbSwitchFrequency)
         {
-          lnbLof = (uint)channel.LnbType.HighBandFrequency;
+          lof = channel.LnbType.HighBandFrequency;
+          toneOn = true;
         }
-        polarisation = Polarisation.LinearH;
       }
-      Log.Log.Debug("TvCardDvbS: LNB translated settings, oscillator = {0} kHz, switch = {1} kHz, polarisation = {2}", lnbLof, lnbSwitchFrequency, polarisation);
+
+      long intermediateFrequency = Math.Abs(channel.Frequency - lof);
+      lof = channel.Frequency - intermediateFrequency;
+      if (toneOn)
+      {
+        lnbLowLof = (uint)lof - 500000;
+        lnbHighLof = (uint)lof;
+      }
+      else
+      {
+        lnbLowLof = (uint)lof;
+        lnbHighLof = (uint)lof + 500000;
+      }
+
+      Log.Log.Debug("DvbsChannel: translated LNB settings, low = {0} kHz, high = {1} kHz, switch = {2} kHz, polarisation = {3}",
+          lnbLowLof, lnbHighLof, lnbSwitchFrequency, polarisation);
     }
   }
 

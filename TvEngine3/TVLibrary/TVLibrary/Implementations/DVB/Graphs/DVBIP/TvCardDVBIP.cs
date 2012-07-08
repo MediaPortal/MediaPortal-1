@@ -35,8 +35,20 @@ namespace TvLibrary.Implementations.DVB
   {
     #region variables
 
+    /// <summary>
+    /// The DVB-IP source filter.
+    /// </summary>
     private IBaseFilter _filterStreamSource = null;
+
+    /// <summary>
+    /// The instance number of this DVB-IP tuner.
+    /// </summary>
     private int _sequenceNumber = -1;
+
+    /// <summary>
+    /// The input pin for the first filter connected to the source filter.
+    /// </summary>
+    private IPin _firstFilterInputPin = null;
 
     /// <summary>
     /// The source filter's default URL.
@@ -96,23 +108,35 @@ namespace TvLibrary.Implementations.DVB
         _capBuilder.SetFiltergraph(_graphBuilder);
         _rotEntry = new DsROTEntry(_graphBuilder);
 
-        _infTee = (IBaseFilter)new InfTee();
-        int hr = _graphBuilder.AddFilter(_infTee, "Inf Tee");
-        if (hr != 0)
-        {
-          Log.Log.Error("TvCardDvbIp: failed to add infinite tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          throw new TvException("TvCardDvbIp: failed to add infinite tee");
-        }
-
         AddTsWriterFilterToGraph();
-        AddStreamSourceFilter(_defaultUrl);
+        _filterStreamSource = FilterGraphTools.AddFilterFromClsid(_graphBuilder, _sourceFilterGuid,
+                                                          "DVB-IP Source Filter");
         IBaseFilter lastFilter = _filterStreamSource;
 
         // Check for and load plugins, adding any additional device filters to the graph.
         LoadPlugins(_filterStreamSource, ref lastFilter);
 
         // Complete the graph.
+        AddInfiniteTeeToGraph(ref lastFilter);
         ConnectTsWriterIntoGraph(lastFilter);
+
+        // Now that the graph is complete, find the input pin of the first filter connected
+        // downstream from the source filter. This is usually an infinite tee.
+        Log.Log.Debug("TvCardDvbIp: finding first downstream filter input pin");
+        IPin sourceOutputPin = DsFindPin.ByDirection(_filterStreamSource, PinDirection.Output, 0);
+        if (sourceOutputPin == null)
+        {
+          Log.Log.Error("TvCardDvbIp: failed to find source filter output pin");
+          throw new TvExceptionGraphBuildingFailed("TvCardDvbIp: failed to find source filter output pin");
+        }
+        int hr = sourceOutputPin.ConnectedTo(out _firstFilterInputPin);
+        Release.ComObject("DVB-IP Source Filter output pin", sourceOutputPin);
+        if (hr != 0 || _firstFilterInputPin == null)
+        {
+          Log.Log.Error("TvCardDvbIp: failed to find first filter input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          throw new TvExceptionGraphBuildingFailed("TvCardDvbIp: failed to find find first filter input pin");
+        }
+        Log.Log.Debug("TvCardDvbIp: result = success");
 
         // Open any plugins we found. This is separated from loading because some plugins can't be opened
         // until the graph has finished being built.
@@ -170,12 +194,12 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Add the DVB-IP stream source filter to the BDA graph.
     /// </summary>
-    /// <param name="url">url</param>
+    /// <param name="url">The URL to </param>
     protected virtual void AddStreamSourceFilter(string url)
     {
       Log.Log.WriteFile("TvCardDvbIp: add source filter");
       _filterStreamSource = FilterGraphTools.AddFilterFromClsid(_graphBuilder, _sourceFilterGuid,
-                                                                "DVB-IP Source Filter");
+                                                                  "DVB-IP Source Filter");
       AMMediaType mpeg2ProgramStream = new AMMediaType();
       mpeg2ProgramStream.majorType = MediaType.Stream;
       mpeg2ProgramStream.subType = MediaSubType.Mpeg2Transport;
@@ -188,14 +212,21 @@ namespace TvLibrary.Implementations.DVB
       mpeg2ProgramStream.formatPtr = IntPtr.Zero;
       ((IFileSourceFilter)_filterStreamSource).Load(url, mpeg2ProgramStream);
 
-      // Connect the source filter to the infinite tee.
-      Log.Log.WriteFile("TvCardDvbIp: render [source]->[inf tee]");
-      int hr = _capBuilder.RenderStream(null, null, _filterStreamSource, null, _infTee);
+      // (Re)connect the source filter to the first filter in the chain.
+      IPin sourceOutputPin = DsFindPin.ByDirection(_filterStreamSource, PinDirection.Output, 0);
+      if (sourceOutputPin == null)
+      {
+        Log.Log.Error("TvCardDvbIp: failed to find source filter output pin");
+        throw new TvException("TvCardDvbIp: failed to find source filter output pin");
+      }
+      int hr = _graphBuilder.Connect(sourceOutputPin, _firstFilterInputPin);
+      Release.ComObject("DVB-IP Source Filter output pin", sourceOutputPin);
       if (hr != 0)
       {
-        Log.Log.Error("TvCardDvbIp: failed to render stream, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvException("TvCardDvbIp: failed to render stream");
+        Log.Log.Error("TvCardDvbIp: failed to connect source filter into graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        throw new TvExceptionGraphBuildingFailed("TvCardDvbIp: failed to connect source filter into graph");
       }
+      Log.Log.Debug("TvCardDvbIp: result = success");
     }
 
     /// <summary>
@@ -310,9 +341,18 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Update the tuner signal status statistics.
     /// </summary>
-    protected override void UpdateSignalStatus()
+    /// <param name="force"><c>True</c> to force the status to be updated (status information may be cached).</param>
+    protected override void UpdateSignalStatus(bool force)
     {
-      if (GraphRunning() == false ||
+      if (!force)
+      {
+        TimeSpan ts = DateTime.Now - _lastSignalUpdate;
+        if (ts.TotalMilliseconds < 5000)
+        {
+          return;
+        }
+      }
+      if (!GraphRunning() ||
         CurrentChannel == null ||
         _filterStreamSource == null)
       {

@@ -88,10 +88,15 @@ namespace TvLibrary.Implementations
       {
         if (String.Compare(devices[i].Name, "B2C2 MPEG-2 Source", true) == 0)
         {
-          Log.Log.WriteFile("Detected SkyStar 2 card");
-          TvCardDvbSS2 card = new TvCardDvbSS2(_epgEvents, devices[i]);
-          _cards.Add(card);
-          //break;  maybe more than one B2C2 card ?
+          Log.Log.WriteFile("Detected B2C2 source filter");
+          object[] deviceContexts = TvCardDvbSS2.DetectDevices();
+          if (deviceContexts != null)
+          {
+            foreach (object context in deviceContexts)
+            {
+              _cards.Add(new TvCardDvbSS2(_epgEvents, devices[i], context));
+            }
+          }
         }
         else if (String.Compare(devices[i].Name, "Elecard NWSource-Plus", true) == 0)
         {

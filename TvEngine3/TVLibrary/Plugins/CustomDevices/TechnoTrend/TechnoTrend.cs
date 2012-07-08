@@ -1782,12 +1782,8 @@ namespace TvEngine
           tuneRequest.SymbolRate = (uint)dvbsChannel.SymbolRate;
           tuneRequest.SpectralInversion = SpectralInversion.Automatic;
 
-          uint lnbLof;
-          uint lnbSwitchFrequency;
-          LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLof, out lnbSwitchFrequency, out tuneRequest.Polarisation);
-          tuneRequest.LnbHighBandLof = lnbLof;
-          tuneRequest.LnbLowBandLof = lnbLof;
-          tuneRequest.LnbSwitchFrequency = lnbSwitchFrequency;
+          LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out tuneRequest.LnbLowBandLof,
+              out tuneRequest.LnbHighBandLof, out tuneRequest.LnbSwitchFrequency, out tuneRequest.Polarisation);
 
           Marshal.StructureToPtr(tuneRequest, _generalBuffer, true);
         }

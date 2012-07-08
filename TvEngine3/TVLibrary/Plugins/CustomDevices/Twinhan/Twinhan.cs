@@ -1949,20 +1949,21 @@ namespace TvEngine
       }
       else if (channel is DVBSChannel)
       {
-        DVBSChannel ch = channel as DVBSChannel;
-        uint lnbLof;
+        DVBSChannel dvbsChannel = channel as DVBSChannel;
+        uint lnbLowLof;
+        uint lnbHighLof;
         uint lnbSwitchFrequency;
         Polarisation polarisation;
-        LnbTypeConverter.GetLnbTuningParameters(ch, out lnbLof, out lnbSwitchFrequency, out polarisation);
+        LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLowLof, out lnbHighLof, out lnbSwitchFrequency, out polarisation);
 
         LnbParams lnbParams = new LnbParams();
         lnbParams.PowerOn = true;
         lnbParams.ToneBurst = TwinhanToneBurst.Off;
-        lnbParams.LowBandLof = lnbLof;
-        lnbParams.HighBandLof = lnbLof;
+        lnbParams.LowBandLof = lnbLowLof;
+        lnbParams.HighBandLof = lnbHighLof;
         lnbParams.SwitchFrequency = lnbSwitchFrequency;
         lnbParams.Tone22k = Twinhan22k.Off;
-        if (ch.Frequency > lnbSwitchFrequency)
+        if (dvbsChannel.Frequency > lnbSwitchFrequency)
         {
           lnbParams.Tone22k = Twinhan22k.On;
         }
@@ -1980,8 +1981,8 @@ namespace TvEngine
           Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         }
 
-        tuningParams.Frequency = (UInt32)ch.Frequency;
-        tuningParams.SymbolRate = (UInt32)ch.SymbolRate;
+        tuningParams.Frequency = (UInt32)dvbsChannel.Frequency;
+        tuningParams.SymbolRate = (UInt32)dvbsChannel.SymbolRate;
         tuningParams.Modulation = (ModulationType)1;
       }
       else if (channel is DVBTChannel)

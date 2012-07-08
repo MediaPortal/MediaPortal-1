@@ -240,12 +240,13 @@ namespace TvLibrary.Implementations.DVB
         return null;
       }
 
-      uint lnbLof;
+      uint lnbLowLof;
+      uint lnbHighLof;
       uint lnbSwitchFrequency;
       Polarisation polarisation;
-      LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLof, out lnbSwitchFrequency, out polarisation);
-      _tuningSpace.put_LowOscillator((int)lnbLof);
-      _tuningSpace.put_HighOscillator((int)lnbLof);
+      LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLowLof, out lnbHighLof, out lnbSwitchFrequency, out polarisation);
+      _tuningSpace.put_LowOscillator((int)lnbLowLof);
+      _tuningSpace.put_HighOscillator((int)lnbHighLof);
       _tuningSpace.put_LNBSwitch((int)lnbSwitchFrequency);
 
       ILocator locator;

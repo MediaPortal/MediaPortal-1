@@ -36,7 +36,7 @@ using TvLibrary.Interfaces.Device;
 namespace TvLibrary.Implementations
 {
   /// <summary>
-  /// Base class for all tv cards
+  /// Base class for all devices.
   /// </summary>
   public abstract class TvCardBase : ITVCard
   {
@@ -305,6 +305,7 @@ namespace TvLibrary.Implementations
         if (c != null)
         {
           _cardId = c.IdCard;
+          _name = c.Name;   // We prefer to use the name that can be set in TV Server configuration for more readable logs...
           _preloadCard = c.PreloadCard;
           _idleMode = (DeviceIdleMode)c.IdleMode;
           _pidFilterMode = (PidFilterMode)c.PidFilterMode;
@@ -353,7 +354,7 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// Gets or sets the parameters.
     /// </summary>
-    /// <value>A set of timeout and LNB parameters used for tuning and scanning.</value>
+    /// <value>A set of timeout parameters used for tuning and scanning.</value>
     public ScanParameters Parameters
     {
       get { return _parameters; }
@@ -695,9 +696,9 @@ namespace TvLibrary.Implementations
     #endregion
 
     /// <summary>
-    /// Checks if the graph is running
+    /// Check if the BDA filter graph is running.
     /// </summary>
-    /// <returns>true, if the graph is running; false otherwise</returns>
+    /// <returns><c>true</c> if the graph is running, otherwise <c>false</c></returns>
     protected bool GraphRunning()
     {
       bool graphRunning = false;
@@ -1010,10 +1011,10 @@ namespace TvLibrary.Implementations
         }
 
         // Keep an eye out - if there is another subchannel accessing the same service as the subchannel that
-        // is being updated then we always do *nothing*. If we were to stop decrypting the service in that
-        // situation it would be wrong; if we were to start decrypting the service in that situation it would
-        // be unnecessary and possibly cause stream interruptions.
-        if (en.Current.SubChannelId != subChannelId)
+        // is being updated then we always do *nothing* unless this is specifically an update request. In any other
+        // situation, if we were to stop decrypting the service it would be wrong; if we were to start decrypting
+        // the service it would be unnecessary and possibly cause stream interruptions.
+        if (en.Current.SubChannelId != subChannelId && updateAction != CaPmtListManagementAction.Update)
         {
           if (updatedDigitalService != null)
           {
@@ -1238,6 +1239,10 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// Gets or sets the current channel.
     /// </summary>
+    /// <remarks>
+    /// This property should *never* be used or thought of at a service level. Rather, it is only useful for
+    /// transponder/multiplex tuning details such as frequency and modulation that are common to all subchannels.
+    /// </remarks>
     /// <value>The current channel.</value>
     public IChannel CurrentChannel
     {
@@ -1260,7 +1265,7 @@ namespace TvLibrary.Implementations
 
     #endregion
 
-    #region virtual methods
+    #region abstract and virtual methods
 
     /// <summary>
     /// Builds the graph.
@@ -1316,10 +1321,6 @@ namespace TvLibrary.Implementations
         return null;
       }
     }
-
-    #endregion
-
-    #region abstract methods
 
     /// <summary>
     /// Update the tuner signal status statistics.
@@ -1819,9 +1820,13 @@ namespace TvLibrary.Implementations
       // Dispose plugins.
       if (_customDeviceInterfaces != null)
       {
-        foreach (ICustomDevice device in _customDeviceInterfaces)
+        foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
         {
-          device.Dispose();
+          // Avoid recursive loop for ITVCard implementations that also implement ICustomDevice... like TvCardDvbSs2.
+          if (!(deviceInterface is TvCardBase))
+          {
+            deviceInterface.Dispose();
+          }
         }
       }
       _customDeviceInterfaces = new List<ICustomDevice>();

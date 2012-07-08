@@ -470,14 +470,17 @@ namespace TvEngine
       }
 
       DVBSChannel ch = channel as DVBSChannel;
-      uint lnbLof;
+      uint lnbLowLof;
+      uint lnbHighLof;
       uint lnbSwitchFrequency;
       Polarisation polarisation;
-      LnbTypeConverter.GetLnbTuningParameters(ch, out lnbLof, out lnbSwitchFrequency, out polarisation);
+      LnbTypeConverter.GetLnbTuningParameters(ch, out lnbLowLof, out lnbHighLof, out lnbSwitchFrequency, out polarisation);
 
       bool toneOn = false;
+      int lnbLof = (int)lnbLowLof;
       if (ch.Frequency > lnbSwitchFrequency)
       {
+        lnbLof = (int)lnbHighLof;
         toneOn = true;
       }
 
@@ -491,7 +494,7 @@ namespace TvEngine
         toneOn = true;
       }
 
-      bool result = TuneTransponder(_deviceIndex, (int)ch.Frequency, ch.SymbolRate * 1000, (int)lnbLof,
+      bool result = TuneTransponder(_deviceIndex, (int)ch.Frequency, ch.SymbolRate * 1000, lnbLof,
         Translate(polarisation), toneOn, Translate(true, ch.ModulationType), Translate(ch.InnerFecRate));
       if (result)
       {

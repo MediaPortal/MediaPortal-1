@@ -30,6 +30,11 @@ namespace TvLibrary
   /// </summary>
   public class Release
   {
+    /// <summary>
+    /// Release the resources associated with a COM object.
+    /// </summary>
+    /// <param name="o">The object to release.</param>
+    /// <returns>an HRESULT indicating whether the object was successfully released</returns>
     public static int ComObject(object o)
     {
       int hr = 0;
