@@ -441,16 +441,21 @@ namespace TvEngine
 
       // Must send commands before tuning
       //----------------------------------
-      // - Anysee (E7 S2 - IBDADiseqCommand)
+      // - Anysee (E7 S2 - IBDA_DiseqCommand)
+      // - Pinnacle (PCTV 7010ix - IBDA_DiseqCommand)
+      // - TechniSat SkyStar HD2 (IBDA_DiseqCommand)
 
       // Must send commands after tuning
       //---------------------------------
-      // - TBS (5980 CI - IBDADiseqCommand)
+      // - TBS (5980 CI - IBDA_DiseqCommand)
 
       // Doesn't matter
       //----------------
-      // - Hauppauge (HVR-4400 - IBDADiseqCommand)
-      // - TechniSat SkyStar 2 r2.6d BDA driver (IBDADiseqCommand/IFrequencyFilter)
+      // - Hauppauge (HVR-4400 - IBDA_DiseqCommand)
+      // - TechniSat SkyStar 2 r2.6d BDA driver (IBDA_DiseqCommand)
+      // - TeVii (S480 - IBDA_DiseqCommand)
+      // - Digital Everywhere (FloppyDTV S2 - IBDA_DiseqCommand)
+      // - TechnoTrend (Budget S2-3200 - IBDA_FrequencyFilter)
 
       //SendDeferredCommands();
     }

@@ -939,7 +939,7 @@ namespace TvEngine
         return;
       }
 
-      // We only need to tweak the modulation for DVB-S2 channels.
+      // We only need to tweak the modulation for DVB-S/S2 channels.
       DVBSChannel ch = channel as DVBSChannel;
       if (ch == null)
       {
@@ -964,6 +964,10 @@ namespace TvEngine
         {
           ch.ModulationType = ModulationType.Mod8Psk;
         }
+      }
+      else if (ch.ModulationType == ModulationType.ModNotSet)
+      {
+        ch.ModulationType = ModulationType.ModQpsk;
       }
       Log.Debug("  modulation = {0}", ch.ModulationType);
     }

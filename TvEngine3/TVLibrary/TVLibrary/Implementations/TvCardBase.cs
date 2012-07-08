@@ -930,7 +930,7 @@ namespace TvLibrary.Implementations
                   else
                   {
                     DVBSChannel dvbsChannel = dvbChannel.CurrentChannel as DVBSChannel;
-                    if (dvbChannel != null)
+                    if (dvbsChannel != null)
                     {
                       modulation = dvbsChannel.ModulationType;
                     }

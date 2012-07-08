@@ -1919,10 +1919,10 @@ namespace TvEngine
     /// Tune to a given channel using the specialised tuning method.
     /// </summary>
     /// <remarks>
-    /// This interface has only been tested for satellite tuning. It does not return an error, however it
-    /// appears to have absolutely no effect (meaning tuner lock is not achieved). It is possible that the
-    /// IOCTLs are only implemented for certain models or that lock and signal strength/quality must be
-    /// tested using the IOCTL interface in order to trigger the driver to apply the tune request.
+    /// This interface has been tested unsuccessfully for satellite and terrestrial tuning with a
+    /// DigitalNow Quattro S-T (OEM 6090 2xDVB-S + 2xDVB-T/analog). It returned HRESULT 0x8007001f for the
+    /// THBDA_IOCTL_LOCK_TUNER call, probably indicating that the driver does not support does not support
+    /// this IOCTL. It is possible that the IOCTLs are only implemented for certain models.
     /// </remarks>
     /// <param name="channel">The channel to tune.</param>
     /// <param name="parameters">Tuning time restriction settings.</param>

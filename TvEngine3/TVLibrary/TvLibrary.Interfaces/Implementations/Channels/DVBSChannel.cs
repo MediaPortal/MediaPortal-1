@@ -103,13 +103,13 @@ namespace TvLibrary.Channels
       // Drivers are frustrating! Most tuners rely on the LNB frequency settings to determine the intermediate
       // frequency (the frequency in the cable that the tuner should tune to) and whether the 22 kHz tone
       // should be on or off. Some tuner drivers (eg. Prof USB) don't seem to understand what to do with the
-      // three frequencies; others (eg. Anysee E7, SkyStar 2 [BDA]) don't turn the 22 kHz tone on (or off!)
-      // unless the low and high LOFs are different; others can't handle negative intermediate frequencies
-      // which are standard for C-band LNB calculations.
+      // three frequencies; others (eg. Anysee E7, SkyStar 2 [BDA], KNC PCI) don't turn the 22 kHz tone on or
+      // or off unless certain conditions are met; others can't handle negative intermediate frequencies which
+      // are standard for C-band LNB calculations.
       // Our approach is to:
-      // - calculate the actual intermediate frequency, then back-calculate a "safe" LOF from that
-      // - always ensure that the low and high LOF values are different (drivers that can't handle this
-      //   should be handled with plugins)
+      // - calculate the actual intermediate frequency, then back-calculate a "safe" positive LOF from that
+      // - always ensure that the low and high LOF values are different when the 22 kHz tone should be on, and
+      //   the same when the 22 kHz tone should be off
       long lof = channel.LnbType.LowBandFrequency;
       bool toneOn = false;
       if (channel.LnbType.IsBandStacked)
@@ -146,7 +146,7 @@ namespace TvLibrary.Channels
       else
       {
         lnbLowLof = (uint)lof;
-        lnbHighLof = (uint)lof + 500000;
+        lnbHighLof = (uint)lof;
       }
 
       Log.Log.Debug("DvbsChannel: translated LNB settings, low = {0} kHz, high = {1} kHz, switch = {2} kHz, polarisation = {3}",
