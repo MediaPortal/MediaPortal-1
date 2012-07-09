@@ -146,8 +146,8 @@ namespace SetupTv.Sections
       // 
       // progressBarQuality
       // 
-      this.progressBarQuality.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBarQuality.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBarQuality.Location = new System.Drawing.Point(106, 39);
       this.progressBarQuality.Name = "progressBarQuality";
       this.progressBarQuality.Size = new System.Drawing.Size(328, 10);
@@ -155,8 +155,8 @@ namespace SetupTv.Sections
       // 
       // progressBarLevel
       // 
-      this.progressBarLevel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBarLevel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBarLevel.Location = new System.Drawing.Point(106, 19);
       this.progressBarLevel.Name = "progressBarLevel";
       this.progressBarLevel.Size = new System.Drawing.Size(328, 10);
@@ -182,8 +182,8 @@ namespace SetupTv.Sections
       // 
       // progressBar1
       // 
-      this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBar1.Location = new System.Drawing.Point(19, 58);
       this.progressBar1.Name = "progressBar1";
       this.progressBar1.Size = new System.Drawing.Size(415, 10);
@@ -212,14 +212,14 @@ namespace SetupTv.Sections
       // 
       // listViewStatus
       // 
-      this.listViewStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.listViewStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewStatus.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
       this.listViewStatus.Location = new System.Drawing.Point(19, 79);
       this.listViewStatus.Name = "listViewStatus";
-      this.listViewStatus.Size = new System.Drawing.Size(415, 133);
+      this.listViewStatus.Size = new System.Drawing.Size(415, 130);
       this.listViewStatus.TabIndex = 67;
       this.listViewStatus.UseCompatibleStateImageBehavior = false;
       this.listViewStatus.View = System.Windows.Forms.View.Details;
@@ -241,16 +241,16 @@ namespace SetupTv.Sections
       // 
       // tabControl1
       // 
-      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tabPage1);
       this.tabControl1.Controls.Add(this.tabPage2);
       this.tabControl1.Controls.Add(this.tabPageCIMenu);
       this.tabControl1.Location = new System.Drawing.Point(3, 3);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(477, 453);
+      this.tabControl1.Size = new System.Drawing.Size(477, 450);
       this.tabControl1.TabIndex = 69;
       this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
@@ -291,7 +291,7 @@ namespace SetupTv.Sections
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(469, 427);
+      this.tabPage1.Size = new System.Drawing.Size(469, 424);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Scanning";
       // 
@@ -350,6 +350,7 @@ namespace SetupTv.Sections
       // 
       // mpTransponder4
       // 
+      this.mpTransponder4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.mpTransponder4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpTransponder4.FormattingEnabled = true;
       this.mpTransponder4.Location = new System.Drawing.Point(284, 87);
@@ -360,6 +361,7 @@ namespace SetupTv.Sections
       // 
       // mpTransponder3
       // 
+      this.mpTransponder3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.mpTransponder3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpTransponder3.FormattingEnabled = true;
       this.mpTransponder3.Location = new System.Drawing.Point(284, 64);
@@ -370,6 +372,7 @@ namespace SetupTv.Sections
       // 
       // mpTransponder2
       // 
+      this.mpTransponder2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.mpTransponder2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpTransponder2.FormattingEnabled = true;
       this.mpTransponder2.Location = new System.Drawing.Point(284, 41);
@@ -380,6 +383,7 @@ namespace SetupTv.Sections
       // 
       // mpTransponder1
       // 
+      this.mpTransponder1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.mpTransponder1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpTransponder1.FormattingEnabled = true;
       this.mpTransponder1.Location = new System.Drawing.Point(284, 18);
@@ -390,6 +394,8 @@ namespace SetupTv.Sections
       // 
       // mpComboDiseqc4
       // 
+      this.mpComboDiseqc4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpComboDiseqc4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboDiseqc4.FormattingEnabled = true;
       this.mpComboDiseqc4.Location = new System.Drawing.Point(47, 87);
@@ -400,6 +406,8 @@ namespace SetupTv.Sections
       // 
       // mpComboDiseqc3
       // 
+      this.mpComboDiseqc3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpComboDiseqc3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboDiseqc3.FormattingEnabled = true;
       this.mpComboDiseqc3.Location = new System.Drawing.Point(47, 64);
@@ -410,6 +418,8 @@ namespace SetupTv.Sections
       // 
       // mpComboDiseqc2
       // 
+      this.mpComboDiseqc2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpComboDiseqc2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboDiseqc2.FormattingEnabled = true;
       this.mpComboDiseqc2.Location = new System.Drawing.Point(47, 41);
@@ -420,6 +430,8 @@ namespace SetupTv.Sections
       // 
       // mpComboDiseqc1
       // 
+      this.mpComboDiseqc1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpComboDiseqc1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboDiseqc1.FormattingEnabled = true;
       this.mpComboDiseqc1.Location = new System.Drawing.Point(47, 18);
@@ -430,6 +442,7 @@ namespace SetupTv.Sections
       // 
       // mpComboLnbType4
       // 
+      this.mpComboLnbType4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.mpComboLnbType4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboLnbType4.FormattingEnabled = true;
       this.mpComboLnbType4.Location = new System.Drawing.Point(128, 87);
@@ -439,6 +452,7 @@ namespace SetupTv.Sections
       // 
       // mpComboLnbType3
       // 
+      this.mpComboLnbType3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.mpComboLnbType3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboLnbType3.FormattingEnabled = true;
       this.mpComboLnbType3.Location = new System.Drawing.Point(128, 64);
@@ -448,6 +462,7 @@ namespace SetupTv.Sections
       // 
       // mpComboLnbType2
       // 
+      this.mpComboLnbType2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.mpComboLnbType2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboLnbType2.FormattingEnabled = true;
       this.mpComboLnbType2.Location = new System.Drawing.Point(128, 41);
@@ -457,6 +472,7 @@ namespace SetupTv.Sections
       // 
       // mpComboLnbType1
       // 
+      this.mpComboLnbType1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.mpComboLnbType1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboLnbType1.FormattingEnabled = true;
       this.mpComboLnbType1.Location = new System.Drawing.Point(128, 18);
@@ -466,6 +482,8 @@ namespace SetupTv.Sections
       // 
       // mpLabel3
       // 
+      this.mpLabel3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpLabel3.AutoSize = true;
       this.mpLabel3.Location = new System.Drawing.Point(125, 3);
       this.mpLabel3.Name = "mpLabel3";
@@ -511,6 +529,8 @@ namespace SetupTv.Sections
       // 
       // mpLabel5
       // 
+      this.mpLabel5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpLabel5.AutoSize = true;
       this.mpLabel5.Location = new System.Drawing.Point(281, 3);
       this.mpLabel5.Name = "mpLabel5";
@@ -625,6 +645,8 @@ namespace SetupTv.Sections
       // 
       // mpComboBoxInnerFecRate
       // 
+      this.mpComboBoxInnerFecRate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpComboBoxInnerFecRate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxInnerFecRate.FormattingEnabled = true;
       this.mpComboBoxInnerFecRate.Location = new System.Drawing.Point(112, 133);
@@ -643,6 +665,8 @@ namespace SetupTv.Sections
       // 
       // mpComboBoxRollOff
       // 
+      this.mpComboBoxRollOff.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpComboBoxRollOff.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxRollOff.FormattingEnabled = true;
       this.mpComboBoxRollOff.Location = new System.Drawing.Point(316, 133);
@@ -661,6 +685,8 @@ namespace SetupTv.Sections
       // 
       // mpComboBoxPilot
       // 
+      this.mpComboBoxPilot.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpComboBoxPilot.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxPilot.FormattingEnabled = true;
       this.mpComboBoxPilot.Location = new System.Drawing.Point(316, 106);
@@ -737,6 +763,8 @@ namespace SetupTv.Sections
       // 
       // mpComboBoxMod
       // 
+      this.mpComboBoxMod.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpComboBoxMod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxMod.FormattingEnabled = true;
       this.mpComboBoxMod.Location = new System.Drawing.Point(112, 106);
@@ -773,6 +801,8 @@ namespace SetupTv.Sections
       // 
       // mpComboBoxPolarisation
       // 
+      this.mpComboBoxPolarisation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpComboBoxPolarisation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxPolarisation.FormattingEnabled = true;
       this.mpComboBoxPolarisation.Location = new System.Drawing.Point(112, 79);
@@ -791,9 +821,9 @@ namespace SetupTv.Sections
       // 
       // mpGrpScanProgress
       // 
-      this.mpGrpScanProgress.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGrpScanProgress.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGrpScanProgress.Controls.Add(this.label1);
       this.mpGrpScanProgress.Controls.Add(this.label2);
       this.mpGrpScanProgress.Controls.Add(this.progressBarLevel);
@@ -803,7 +833,7 @@ namespace SetupTv.Sections
       this.mpGrpScanProgress.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGrpScanProgress.Location = new System.Drawing.Point(6, 203);
       this.mpGrpScanProgress.Name = "mpGrpScanProgress";
-      this.mpGrpScanProgress.Size = new System.Drawing.Size(443, 218);
+      this.mpGrpScanProgress.Size = new System.Drawing.Size(443, 215);
       this.mpGrpScanProgress.TabIndex = 114;
       this.mpGrpScanProgress.TabStop = false;
       this.mpGrpScanProgress.Text = "Scan progress";
@@ -846,7 +876,7 @@ namespace SetupTv.Sections
       this.tabPage2.Location = new System.Drawing.Point(4, 22);
       this.tabPage2.Name = "tabPage2";
       this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage2.Size = new System.Drawing.Size(469, 427);
+      this.tabPage2.Size = new System.Drawing.Size(472, 424);
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "DiSEqC Motor";
       this.tabPage2.UseVisualStyleBackColor = true;
@@ -989,7 +1019,7 @@ namespace SetupTv.Sections
       this.label8.Size = new System.Drawing.Size(414, 13);
       this.label8.TabIndex = 87;
       this.label8.Text = "TV card which can deliver at least 500mA for the motor. If your TV card cannot su" +
-          "pply ";
+    "pply ";
       // 
       // label7
       // 
@@ -1000,7 +1030,7 @@ namespace SetupTv.Sections
       this.label7.Size = new System.Drawing.Size(409, 13);
       this.label7.TabIndex = 86;
       this.label7.Text = "WARNING!!! This screen not only requires a DiSEqC 1.2 compatible motor but also a" +
-          " ";
+    " ";
       // 
       // comboBox1
       // 
@@ -1160,7 +1190,7 @@ namespace SetupTv.Sections
       this.tabPageCIMenu.BackColor = System.Drawing.Color.Transparent;
       this.tabPageCIMenu.Location = new System.Drawing.Point(4, 22);
       this.tabPageCIMenu.Name = "tabPageCIMenu";
-      this.tabPageCIMenu.Size = new System.Drawing.Size(469, 427);
+      this.tabPageCIMenu.Size = new System.Drawing.Size(472, 424);
       this.tabPageCIMenu.TabIndex = 3;
       this.tabPageCIMenu.Text = "CI Menu";
       this.tabPageCIMenu.UseVisualStyleBackColor = true;
