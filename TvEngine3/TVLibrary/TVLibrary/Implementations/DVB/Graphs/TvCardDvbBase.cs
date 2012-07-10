@@ -243,17 +243,12 @@ namespace TvLibrary.Implementations.DVB
         {
           dvbsChannel.ModulationType = ModulationType.ModQpsk;
         }
-        uint lnbLowLof;
-        uint lnbHighLof;
-        uint lnbSwitchFrequency;
-        Polarisation polarisation;
-        LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLowLof, out lnbHighLof, out lnbSwitchFrequency, out polarisation);
         FrequencySettings fSettings = new FrequencySettings
         {
           Multiplier = 1000,
           Frequency = (uint)dvbsChannel.Frequency,
           Bandwidth = (uint)undefinedValue,
-          Polarity = polarisation,
+          Polarity = dvbsChannel.Polarisation,
           Range = (uint)undefinedValue
         };
         DigitalDemodulator2Settings dSettings = new DigitalDemodulator2Settings
@@ -271,9 +266,9 @@ namespace TvLibrary.Implementations.DVB
         };
         LnbInfoSettings lSettings = new LnbInfoSettings
         {
-          LnbSwitchFrequency = lnbSwitchFrequency,
-          LowOscillator = lnbLowLof,
-          HighOscillator = lnbHighLof
+          LnbSwitchFrequency = (uint)dvbsChannel.LnbType.SwitchFrequency,
+          LowOscillator = (uint)dvbsChannel.LnbType.LowBandFrequency,
+          HighOscillator = (uint)dvbsChannel.LnbType.HighBandFrequency
         };
         DiseqcSatelliteSettings sSettings = new DiseqcSatelliteSettings
         {

@@ -218,5 +218,22 @@ namespace TvLibrary.Channels
              dvbtChannel.Bandwidth != _bandwidth ||
              dvbtChannel.Offset != _offset;
     }
+
+    /// <summary>
+    /// Get a channel instance with properties set to enable tuning of this channel.
+    /// </summary>
+    /// <returns>a channel instance with parameters adjusted as necessary</returns>
+    public override IChannel GetTuningChannel()
+    {
+      IChannel clone = (IChannel)this.Clone();
+      DVBTChannel dvbtChannel = clone as DVBTChannel;
+      if (dvbtChannel == null)
+      {
+        return clone;
+      }
+      dvbtChannel.Frequency += dvbtChannel.Offset;
+      dvbtChannel.Offset = 0;
+      return dvbtChannel;
+    }
   }
 }

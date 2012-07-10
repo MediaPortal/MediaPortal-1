@@ -1280,20 +1280,15 @@ namespace TvEngine
       if (dvbsChannel != null && _tunerType == CardType.DvbS)
       {
         // LNB settings must be applied.
-        uint lnbLowLof;
-        uint lnbHighLof;
-        uint lnbSwitchFrequency;
-        Polarisation polarisation;
-        LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLowLof, out lnbHighLof, out lnbSwitchFrequency, out polarisation);
         LnbParamInfo lnbParams = new LnbParamInfo();
         lnbParams.NumberOfAntennas = 1;
         lnbParams.LnbParams = new LnbParams[MaxLnbParamCount];
         lnbParams.LnbParams[0].AntennaNumber = 0;
         lnbParams.LnbParams[0].IsEast = true;
         lnbParams.LnbParams[0].OrbitalPosition = 160;
-        lnbParams.LnbParams[0].LowBandLof = (UInt16)(lnbLowLof / 1000);
-        lnbParams.LnbParams[0].SwitchFrequency = (UInt16)(lnbSwitchFrequency / 1000);
-        lnbParams.LnbParams[0].HighBandLof = (UInt16)(lnbHighLof / 1000);
+        lnbParams.LnbParams[0].LowBandLof = (UInt16)(dvbsChannel.LnbType.LowBandFrequency / 1000);
+        lnbParams.LnbParams[0].SwitchFrequency = (UInt16)(dvbsChannel.LnbType.SwitchFrequency / 1000);
+        lnbParams.LnbParams[0].HighBandLof = (UInt16)(dvbsChannel.LnbType.HighBandFrequency / 1000);
 
         Marshal.StructureToPtr(lnbParams, _generalBuffer, true);
         //DVB_MMI.DumpBinary(_generalBuffer, 0, LnbParamInfoSize);
@@ -1342,7 +1337,7 @@ namespace TvEngine
         }
 
         tuneRequest.Polarisation = DePolarisation.Vertical;
-        if (polarisation == Polarisation.LinearH || polarisation == Polarisation.CircularL)
+        if (dvbsChannel.Polarisation == Polarisation.LinearH || dvbsChannel.Polarisation == Polarisation.CircularL)
         {
           tuneRequest.Polarisation = DePolarisation.Horizontal;
         }

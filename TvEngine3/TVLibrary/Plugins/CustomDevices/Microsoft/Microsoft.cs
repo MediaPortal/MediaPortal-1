@@ -428,38 +428,6 @@ namespace TvEngine
       }
     }
 
-    /// <summary>
-    /// This callback is invoked after a tune request is submitted but before the device's BDA graph is started.
-    /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
-    /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
-    public override void OnAfterTune(ITVCard tuner, IChannel currentChannel)
-    {
-      // We defer DiSEqC commands until after tuning is complete because of annecdotal notes about the MS
-      // network providers messing up the put_Range() method when attempting to send commands before the
-      // tune request. In practise, I have observed the following:
-
-      // Must send commands before tuning
-      //----------------------------------
-      // - Anysee (E7 S2 - IBDA_DiseqCommand)
-      // - Pinnacle (PCTV 7010ix - IBDA_DiseqCommand)
-      // - TechniSat SkyStar HD2 (IBDA_DiseqCommand)
-
-      // Must send commands after tuning
-      //---------------------------------
-      // - TBS (5980 CI - IBDA_DiseqCommand)
-
-      // Doesn't matter
-      //----------------
-      // - Hauppauge (HVR-4400 - IBDA_DiseqCommand)
-      // - TechniSat SkyStar 2 r2.6d BDA driver (IBDA_DiseqCommand)
-      // - TeVii (S480 - IBDA_DiseqCommand)
-      // - Digital Everywhere (FloppyDTV S2 - IBDA_DiseqCommand)
-      // - TechnoTrend (Budget S2-3200 - IBDA_FrequencyFilter)
-
-      //SendDeferredCommands();
-    }
-
     #endregion
 
     #endregion
@@ -498,6 +466,33 @@ namespace TvEngine
     /// <summary>
     /// Send an arbitrary DiSEqC command.
     /// </summary>
+    /// <remarks>
+    /// Drivers don't all behave the same. There are notes about MS network providers messing up the put_Range()
+    /// method when attempting to send commands before the tune request (http://www.dvbdream.org/forum/viewtopic.php?f=1&t=608&start=15).
+    /// In practise, I have observed the following behaviour with the tuners that I have tested:
+    ///
+    /// Must send commands before tuning
+    ///----------------------------------
+    /// - Anysee (E7 S2 - IBDA_DiseqCommand)
+    /// - Pinnacle (PCTV 7010ix - IBDA_DiseqCommand)
+    /// - TechniSat SkyStar HD2 (IBDA_DiseqCommand)
+    /// - AVerMedia (Satellite Trinity - IBDA_DiseqCommand)
+    ///
+    /// Must send commands after tuning
+    ///---------------------------------
+    /// - TBS (5980 CI - IBDA_DiseqCommand)
+    ///
+    /// Doesn't matter
+    ///----------------
+    /// - Hauppauge (HVR-4400 - IBDA_DiseqCommand)
+    /// - TechniSat SkyStar 2 r2.6d BDA driver (IBDA_DiseqCommand)
+    /// - TeVii (S480 - IBDA_DiseqCommand)
+    /// - Digital Everywhere (FloppyDTV S2 - IBDA_DiseqCommand)
+    /// - TechnoTrend (Budget S2-3200 - IBDA_FrequencyFilter)
+    /// 
+    /// Since the list for "before" is longer than the list for "after" (and because we have specific DiSEqC
+    /// support for Turbosight but not for AVerMedia and Pinnacle), we send commands before the tune request.
+    /// </remarks>
     /// <param name="command">The command to send.</param>
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
     public bool SendCommand(byte[] command)
@@ -520,148 +515,129 @@ namespace TvEngine
         return false;
       }
 
-      // Most tuners can only successfully send commands after the tune request is submitted and/or the graph is
-      // running. Here we only save the command for sending later.
-      byte[] commandCopy = new byte[command.Length];
-      Buffer.BlockCopy(command, 0, commandCopy, 0, command.Length);
-      _commands.Add(commandCopy);
-      Log.Debug("Microsoft: result = success");
-      SendDeferredCommands();
-      return true;
-    }
-
-    private void SendDeferredCommands()
-    {
-      if (_commands.Count == 0)
+      // Attempt to translate the raw command back into a DiSEqC 1.0 command. The old interface only supports
+      // DiSEqC 1.0 switch commands, and some drivers don't implement support for raw commands using the
+      // IBDA_DiseqCommand interface (so we want to use the simpler LNB source property if possible).
+      int portNumber = -1;
+      if (command.Length == 4 &&
+        (command[0] == (byte)DiseqcFrame.CommandFirstTransmissionNoReply ||
+        command[0] == (byte)DiseqcFrame.CommandRepeatTransmissionNoReply) &&
+        command[1] == (byte)DiseqcAddress.AnySwitch &&
+        command[2] == (byte)DiseqcCommand.WriteN0)
       {
-        return;
+        portNumber = (command[3] & 0xc) >> 2;
+        Log.Debug("Microsoft: DiSEqC 1.0 command recognised for port {0}", portNumber);
       }
-      Log.Debug("Microsoft: send {0} deferred DiSEqC command(s)", _commands.Count);
-
-      bool isFirstCommand = true;
-      for (byte i = 0; i < _commands.Count; i++)
+      if (_oldDiseqcInterface != null && portNumber == -1)
       {
-        Log.Debug("Microsoft: command {0}...", i + 1);
-        byte[] command = _commands[i];
+        Log.Debug("Microsoft: command not supported");
+        return false;
+      }
 
-        // Attempt to translate the raw command back into a DiSEqC 1.0 command. The old interface only supports
-        // DiSEqC 1.0 switch commands, and some drivers don't implement support for raw commands using the
-        // IBDA_DiseqCommand interface (so we want to use the simpler LNB source property if possible).
-        int portNumber = -1;
-        if (command.Length == 4 &&
-          (command[0] == (byte)DiseqcFrame.CommandFirstTransmissionNoReply ||
-          command[0] == (byte)DiseqcFrame.CommandRepeatTransmissionNoReply) &&
-          command[1] == (byte)DiseqcAddress.AnySwitch &&
-          command[2] == (byte)DiseqcCommand.WriteN0)
-        {
-          portNumber = (command[3] & 0xc) >> 2;
-          Log.Debug("Microsoft: DiSEqC 1.0 command recognised for port {0}", portNumber);
-        }
-        if (_oldDiseqcInterface != null && portNumber == -1)
-        {
-          Log.Debug("Microsoft: command not supported");
-          continue;
-        }
+      // If we get to here, then we're going to attempt to send a command.
+      bool success = true;
+      int hr = _deviceControl.StartChanges();
+      if (hr != 0)
+      {
+        Log.Debug("Microsoft: failed to start device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        success = false;
+      }
 
-        // If we get to here, then we're going to attempt to send a command.
-        int hr = _deviceControl.StartChanges();
+      // IBDA_DiseqCommand interface
+      if (_diseqcPropertySet != null)
+      {
+        // This property has to be set for each command sent for some tuners (eg. TBS).
+        Marshal.WriteInt32(_paramBuffer, 0, 1);
+        hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Enable, _instanceBuffer, InstanceSize, _paramBuffer, 4);
         if (hr != 0)
         {
-          Log.Debug("Microsoft: failed to start device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          Log.Debug("Microsoft: failed to enable DiSEqC commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          success = false;
         }
 
-        // IBDA_DiseqCommand interface
-        if (_diseqcPropertySet != null)
-        {
-          // This property has to be set for each command sent for some tuners (eg. TBS).
-          Marshal.WriteInt32(_paramBuffer, 0, 1);
-          hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Enable, _instanceBuffer, InstanceSize, _paramBuffer, 4);
-          if (hr != 0)
-          {
-            Log.Debug("Microsoft: failed to enable DiSEqC commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          }
-
-          // Disable command repeats for optimal performance. We set this for each command for "safety",
-          // assuming that if DiSEqC must be enabled for enabled for each command then the same may apply
-          // to repeats.
-          Marshal.WriteInt32(_paramBuffer, 0, 0);
-          hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Repeats, _instanceBuffer, InstanceSize, _paramBuffer, 4);
-          if (hr != 0)
-          {
-            Log.Debug("Microsoft: failed to disable DiSEqC command repeats, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          }
-
-          // Enable or disable tone burst messages for this set of commands.
-          if (isFirstCommand)
-          {
-            Log.Debug("Microsoft: use tone burst = {0}", _useToneBurst);
-            Marshal.WriteInt32(_paramBuffer, 0, _useToneBurst ? 1 : 0);
-            hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.UseToneBurst, _instanceBuffer, InstanceSize, _paramBuffer, 4);
-            if (hr != 0)
-            {
-              Log.Debug("Microsoft: failed to enable/disable tone burst commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            }
-            isFirstCommand = false;
-          }
-
-          portNumber++;   // Range needs to be 1..4, not 0..3 - Microsoft documentation has been ignored... again!
-          if (portNumber > 0)
-          {
-            Marshal.WriteInt32(_paramBuffer, 0, portNumber);
-            hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.LnbSource, _instanceBuffer, InstanceSize, _paramBuffer, 4);
-            if (hr != 0)
-            {
-              Log.Debug("Microsoft: failed to set LNB source, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            }
-          }
-          else
-          {
-            BdaDiseqcMessage message = new BdaDiseqcMessage();
-            message.RequestId = _requestId;
-            message.PacketLength = (uint)command.Length;
-            message.PacketData = new byte[MaxDiseqcMessageLength];
-            Buffer.BlockCopy(command, 0, message.PacketData, 0, command.Length);
-            Marshal.StructureToPtr(message, _paramBuffer, true);
-            //DVB_MMI.DumpBinary(_paramBuffer, 0, BdaDiseqcMessageSize);
-            hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Send, _instanceBuffer, InstanceSize, _paramBuffer, BdaDiseqcMessageSize);
-            if (hr != 0)
-            {
-              Log.Debug("Microsoft: failed to send command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            }
-          }
-        }
-        // IBDA_FrequencyFilter interface
-        else if (_oldDiseqcInterface != null)
-        {
-          // The two rightmost bytes encode option and position respectively.
-          if (portNumber > 1)
-          {
-            portNumber -= 2;
-            portNumber |= 0x100;
-          }
-          Log.Debug("Microsoft: range = 0x{0:x4}", portNumber);
-          hr = _oldDiseqcInterface.put_Range((ulong)portNumber);
-          if (hr != 0)
-          {
-            Log.Debug("Microsoft: failed to put range, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          }
-        }
-
-        // Finalise (send) the command.
-        hr = _deviceControl.CheckChanges();
+        // Disable command repeats for optimal performance. We set this for each command for "safety",
+        // assuming that if DiSEqC must be enabled for enabled for each command then the same may apply
+        // to repeats.
+        Marshal.WriteInt32(_paramBuffer, 0, 0);
+        hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Repeats, _instanceBuffer, InstanceSize, _paramBuffer, 4);
         if (hr != 0)
         {
-          Log.Debug("Microsoft: failed to check device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          Log.Debug("Microsoft: failed to disable DiSEqC command repeats, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          success = false;
         }
-        hr = _deviceControl.CommitChanges();
+
+        // Disable tone burst messages - it seems that many drivers don't support them, and setting the correct
+        // tone state is inconvenient with the IBDA_DiseqCommand implementation.
+        Marshal.WriteInt32(_paramBuffer, 0, 0);
+        hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.UseToneBurst, _instanceBuffer, InstanceSize, _paramBuffer, 4);
         if (hr != 0)
         {
-          Log.Debug("Microsoft: failed to commit device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          Log.Debug("Microsoft: failed to disable tone burst commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          success = false;
+        }
+
+        portNumber++;   // Range needs to be 1..4, not 0..3 - Microsoft documentation has been ignored... again!
+        if (portNumber > 0)
+        {
+          Marshal.WriteInt32(_paramBuffer, 0, portNumber);
+          hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.LnbSource, _instanceBuffer, InstanceSize, _paramBuffer, 4);
+          if (hr != 0)
+          {
+            Log.Debug("Microsoft: failed to set LNB source, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            success = false;
+          }
+        }
+        else
+        {
+          BdaDiseqcMessage message = new BdaDiseqcMessage();
+          message.RequestId = _requestId;
+          message.PacketLength = (uint)command.Length;
+          message.PacketData = new byte[MaxDiseqcMessageLength];
+          Buffer.BlockCopy(command, 0, message.PacketData, 0, command.Length);
+          Marshal.StructureToPtr(message, _paramBuffer, true);
+          //DVB_MMI.DumpBinary(_paramBuffer, 0, BdaDiseqcMessageSize);
+          hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Send, _instanceBuffer, InstanceSize, _paramBuffer, BdaDiseqcMessageSize);
+          if (hr != 0)
+          {
+            Log.Debug("Microsoft: failed to send command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            success = false;
+          }
+        }
+      }
+      // IBDA_FrequencyFilter interface
+      else if (_oldDiseqcInterface != null)
+      {
+        // The two rightmost bytes encode option and position respectively.
+        if (portNumber > 1)
+        {
+          portNumber -= 2;
+          portNumber |= 0x100;
+        }
+        Log.Debug("Microsoft: range = 0x{0:x4}", portNumber);
+        hr = _oldDiseqcInterface.put_Range((ulong)portNumber);
+        if (hr != 0)
+        {
+          Log.Debug("Microsoft: failed to put range, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          success = false;
         }
       }
 
-      // Don't forget - now that we've sent the commands we need to clear the command cache.
-      _commands.Clear();
+      // Finalise (send) the command.
+      hr = _deviceControl.CheckChanges();
+      if (hr != 0)
+      {
+        Log.Debug("Microsoft: failed to check device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        success = false;
+      }
+      hr = _deviceControl.CommitChanges();
+      if (hr != 0)
+      {
+        Log.Debug("Microsoft: failed to commit device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        success = false;
+      }
+
+      Log.Debug("Microsoft: result = {0}", success);
+      return success;
     }
 
     /// <summary>

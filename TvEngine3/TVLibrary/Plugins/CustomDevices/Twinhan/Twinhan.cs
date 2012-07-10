@@ -1950,20 +1950,14 @@ namespace TvEngine
       else if (channel is DVBSChannel)
       {
         DVBSChannel dvbsChannel = channel as DVBSChannel;
-        uint lnbLowLof;
-        uint lnbHighLof;
-        uint lnbSwitchFrequency;
-        Polarisation polarisation;
-        LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLowLof, out lnbHighLof, out lnbSwitchFrequency, out polarisation);
-
         LnbParams lnbParams = new LnbParams();
         lnbParams.PowerOn = true;
         lnbParams.ToneBurst = TwinhanToneBurst.Off;
-        lnbParams.LowBandLof = lnbLowLof;
-        lnbParams.HighBandLof = lnbHighLof;
-        lnbParams.SwitchFrequency = lnbSwitchFrequency;
+        lnbParams.LowBandLof = (UInt32)dvbsChannel.LnbType.LowBandFrequency;
+        lnbParams.HighBandLof = (UInt32)dvbsChannel.LnbType.HighBandFrequency;
+        lnbParams.SwitchFrequency = (UInt32)dvbsChannel.LnbType.SwitchFrequency;
         lnbParams.Tone22k = Twinhan22k.Off;
-        if (dvbsChannel.Frequency > lnbSwitchFrequency)
+        if (dvbsChannel.Frequency > dvbsChannel.LnbType.SwitchFrequency)
         {
           lnbParams.Tone22k = Twinhan22k.On;
         }

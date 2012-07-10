@@ -306,5 +306,15 @@ namespace TvLibrary.Channels
     {
       return true;
     }
+
+    /// <summary>
+    /// Get a channel instance with properties set to enable tuning of this channel.
+    /// </summary>
+    /// <returns>a channel instance with parameters adjusted as necessary</returns>
+    public virtual IChannel GetTuningChannel()
+    {
+      // No adjustments required.
+      return (IChannel)this.Clone();
+    }
   }
 }

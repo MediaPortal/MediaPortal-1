@@ -939,11 +939,22 @@ namespace TvEngine
         return;
       }
 
-      // We only need to tweak the modulation for DVB-S/S2 channels.
+      // We only need to tweak parameters for DVB-S/S2 channels.
       DVBSChannel ch = channel as DVBSChannel;
       if (ch == null)
       {
         return;
+      }
+
+      // The KNC TV-Station DVB-S2 seems to have trouble working out which local oscillator frequency to use (and
+      // hence, whether to turn the 22 kHz tone on or off) for some LNB settings. This could be to do with the use
+      // of 18000000 kHz for the LNB switch frequency for single oscillator LNBs. The workaround is to set the two
+      // LOFs to the single, correct LOF value when we want the 22 kHz tone to be turned off.
+      if (ch.Frequency <= ch.LnbType.SwitchFrequency)
+      {
+        // Note: this logic does handle bandstacked LNBs properly.
+        ch.LnbType.HighBandFrequency = ch.LnbType.LowBandFrequency;
+        Log.Debug("  LNB LOF    = {0}", ch.LnbType.LowBandFrequency);
       }
 
       if (ch.ModulationType == ModulationType.ModQpsk || ch.ModulationType == ModulationType.Mod8Psk)

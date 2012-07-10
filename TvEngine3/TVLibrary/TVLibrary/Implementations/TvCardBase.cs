@@ -1577,7 +1577,7 @@ namespace TvLibrary.Implementations
           // When we call ICustomDevice.OnBeforeTune(), the ICustomDevice may modify the tuning parameters.
           // However, the original channel object *must not* be modified otherwise IsDifferentTransponder()
           // will sometimes returns true when it shouldn't. See mantis 0002979.
-          IChannel tuneChannel = (IChannel)channel.Clone();
+          IChannel tuneChannel = channel.GetTuningChannel();
 
           // Plugin OnBeforeTune().
           DeviceAction action = DeviceAction.Default;

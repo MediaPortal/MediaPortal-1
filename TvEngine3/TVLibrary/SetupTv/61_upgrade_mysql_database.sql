@@ -14,16 +14,16 @@ CREATE TABLE "LnbType"
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('Universal', 9750000, 10600000, 11700000, 0, 0);
-INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('C-Band', 5150000, 0, 0, 0, 0);
-INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('10750 MHz', 10750000, 0, 0, 0, 0);
-INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('11250 MHz (NA Legacy)', 11250000, 0, 0, 0, 0);
-INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('11300 MHz', 11300000, 0, 0, 0, 0);
-INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('DishPro Band Stacked FSS', 10750000, 13850000, 0, 1, 0);
-INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('DishPro Band Stacked DBS', 11250000, 14350000, 0, 1, 0);
-INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('NA Band Stacked FSS', 10750000, 10175000, 0, 1, 0);
-INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('NA Band Stacked DBS', 11250000, 10675000, 0, 1, 0);
-INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('Sadoun Band Stacked', 10100000, 10750000, 0, 1, 0);
-INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('C-Band Band Stacked', 5150000, 5750000, 0, 1, 0);
+INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('C-Band', 5150000, 5650000, 18000000, 0, 0);
+INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('10750 MHz', 10750000, 11250000, 18000000, 0, 0);
+INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('11250 MHz (NA Legacy)', 11250000, 11750000, 18000000, 0, 0);
+INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('11300 MHz', 11300000, 11800000, 18000000, 0, 0);
+INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('DishPro Band Stacked FSS', 10750000, 13850000, 18000000, 1, 0);
+INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('DishPro Band Stacked DBS', 11250000, 14350000, 18000000, 1, 0);
+INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('NA Band Stacked FSS', 10750000, 10175000, 18000000, 1, 0);
+INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('NA Band Stacked DBS', 11250000, 10675000, 18000000, 1, 0);
+INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('Sadoun Band Stacked', 10100000, 10750000, 18000000, 1, 0);
+INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('C-Band Band Stacked', 5150000, 5750000, 18000000, 1, 0);
 
 ALTER TABLE "TuningDetail" CHANGE COLUMN "band" "idLnbType" INT(11) NOT NULL;
 ALTER TABLE "TuningDetail" DROP COLUMN "switchingFrequency";

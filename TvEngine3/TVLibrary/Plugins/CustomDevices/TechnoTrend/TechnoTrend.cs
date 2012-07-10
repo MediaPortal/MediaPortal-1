@@ -1768,6 +1768,8 @@ namespace TvEngine
         tuneRequest.Modulation = dvbcChannel.ModulationType;
         tuneRequest.SymbolRate = (uint)dvbcChannel.SymbolRate;
         tuneRequest.SpectralInversion = SpectralInversion.Automatic;
+
+        Marshal.StructureToPtr(tuneRequest, _generalBuffer, true);
       }
       else
       {
@@ -1780,14 +1782,15 @@ namespace TvEngine
           // multiplier is set to 1.
           tuneRequest.Frequency = (uint)dvbsChannel.Frequency;
           tuneRequest.FrequencyMultiplier = 1;
+          tuneRequest.Polarisation = dvbsChannel.Polarisation;
           tuneRequest.Diseqc = TtDiseqcPort.Null;
           tuneRequest.UseToneBurst = false;
           tuneRequest.Modulation = dvbsChannel.ModulationType;
           tuneRequest.SymbolRate = (uint)dvbsChannel.SymbolRate;
           tuneRequest.SpectralInversion = SpectralInversion.Automatic;
-
-          LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out tuneRequest.LnbLowBandLof,
-              out tuneRequest.LnbHighBandLof, out tuneRequest.LnbSwitchFrequency, out tuneRequest.Polarisation);
+          tuneRequest.LnbLowBandLof = (uint)dvbsChannel.LnbType.LowBandFrequency;
+          tuneRequest.LnbHighBandLof = (uint)dvbsChannel.LnbType.HighBandFrequency;
+          tuneRequest.LnbSwitchFrequency = (uint)dvbsChannel.LnbType.SwitchFrequency;
 
           Marshal.StructureToPtr(tuneRequest, _generalBuffer, true);
         }

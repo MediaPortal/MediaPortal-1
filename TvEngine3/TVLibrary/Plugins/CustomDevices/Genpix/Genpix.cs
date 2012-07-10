@@ -350,17 +350,12 @@ namespace TvEngine
 
       DVBSChannel dvbsChannel = channel as DVBSChannel;
       BdaExtensionParams command = new BdaExtensionParams();
-
-      uint lnbLowLof;
-      uint lnbHighLof;
-      uint lnbSwitchFrequency;
-      LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLowLof, out lnbHighLof, out lnbSwitchFrequency, out command.Polarisation);
-
-      command.Frequency = (uint)dvbsChannel.Frequency / 1000;
-      command.LnbLowBandLof = lnbLowLof / 1000;
-      command.LnbHighBandLof = lnbHighLof / 1000;
-      command.LnbSwitchFrequency = lnbSwitchFrequency / 1000;
-      command.SymbolRate = (uint)dvbsChannel.SymbolRate;
+      command.Frequency = (UInt32)dvbsChannel.Frequency / 1000;
+      command.LnbLowBandLof = (UInt32)dvbsChannel.LnbType.LowBandFrequency / 1000;
+      command.LnbHighBandLof = (UInt32)dvbsChannel.LnbType.HighBandFrequency / 1000;
+      command.LnbSwitchFrequency = (UInt32)dvbsChannel.LnbType.SwitchFrequency / 1000;
+      command.SymbolRate = (UInt32)dvbsChannel.SymbolRate;
+      command.Polarisation = dvbsChannel.Polarisation;
       command.Modulation = dvbsChannel.ModulationType;
       command.InnerFecRate = dvbsChannel.InnerFecRate;
       command.SwitchPort = GenpixSwitchPort.None;

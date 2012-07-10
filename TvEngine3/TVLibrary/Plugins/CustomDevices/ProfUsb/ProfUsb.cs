@@ -305,6 +305,48 @@ namespace TvEngine
       return true;
     }
 
+    #region device state change callbacks
+
+    /// <summary>
+    /// This callback is invoked before a tune request is assembled.
+    /// </summary>
+    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
+    /// <param name="channel">The channel that the tuner will been tuned to.</param>
+    /// <param name="action">The action to take, if any.</param>
+    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out DeviceAction action)
+    {
+      Log.Debug("Prof (USB): on before tune callback");
+      action = DeviceAction.Default;
+
+      if (!_isProfUsb || _propertySet == null)
+      {
+        Log.Debug("Prof (USB): device not initialised or interface not supported");
+        return;
+      }
+
+      // We only need to tweak the modulation for DVB-S/S2 channels.
+      DVBSChannel ch = channel as DVBSChannel;
+      if (ch == null)
+      {
+        return;
+      }
+
+      if (ch.Frequency > ch.LnbType.SwitchFrequency)
+      {
+        ch.LnbType.LowBandFrequency = ch.LnbType.HighBandFrequency;
+      }
+      else
+      {
+        ch.LnbType.HighBandFrequency = ch.LnbType.LowBandFrequency;
+      }
+      Log.Debug("  LNB LOF    = {0}", ch.LnbType.LowBandFrequency);
+
+      base.OnBeforeTune(tuner, currentChannel, ref channel, out action);
+    }
+
+    #endregion
+
     #endregion
 
     #region IPowerDevice member
@@ -398,23 +440,16 @@ namespace TvEngine
       }
 
       DVBSChannel dvbsChannel = channel as DVBSChannel;
-      uint lnbLowLof;
-      uint lnbHighLof;
-      uint lnbSwitchFrequency;
-      Polarisation polarisation;
-      LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLowLof, out lnbHighLof, out lnbSwitchFrequency, out polarisation);
 
       ProfPolarisation profPolarisation = ProfPolarisation.Horizontal;
-      if (polarisation == Polarisation.LinearV || polarisation == Polarisation.CircularR)
+      if (dvbsChannel.Polarisation == Polarisation.LinearV || dvbsChannel.Polarisation == Polarisation.CircularR)
       {
         profPolarisation = ProfPolarisation.Vertical;
       }
 
       Prof22k tone22k = Prof22k.Off;
-      UInt32 lnbLof = lnbLowLof / 1000;
-      if (dvbsChannel.Frequency > lnbSwitchFrequency)
+      if (dvbsChannel.Frequency > dvbsChannel.LnbType.SwitchFrequency)
       {
-        lnbLof = lnbHighLof / 1000;
         tone22k = Prof22k.On;
       }
 
@@ -430,6 +465,9 @@ namespace TvEngine
 
       BdaExtensionParams tuningParams = new BdaExtensionParams();
       tuningParams.Frequency = (uint)dvbsChannel.Frequency / 1000;
+      // See the notes for the struct to understand why we do this. Note that OnBeforeTune() ensures that the low LOF
+      // is set appropriately.
+      UInt32 lnbLof = (UInt32)dvbsChannel.LnbType.LowBandFrequency / 1000;
       tuningParams.LnbLowBandLof = lnbLof;
       tuningParams.LnbHighBandLof = lnbLof;
       tuningParams.SymbolRate = (uint)dvbsChannel.SymbolRate;

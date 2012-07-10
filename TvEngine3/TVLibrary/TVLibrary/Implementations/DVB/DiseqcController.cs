@@ -182,7 +182,7 @@ namespace TvLibrary.Implementations.DVB
         command[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
         command[1] = (byte)DiseqcAddress.AnySwitch;
         command[3] = 0xf0;
-        int portNumber = LnbTypeConverter.GetPortNumber(channel.Diseqc);
+        int portNumber = GetPortNumber(channel.Diseqc);
         if (channel.Diseqc == DiseqcPort.PortA ||
           channel.Diseqc == DiseqcPort.PortB ||
           channel.Diseqc == DiseqcPort.PortC ||
@@ -245,6 +245,34 @@ namespace TvLibrary.Implementations.DVB
       _device.SetToneState(toneBurst, tone22k);
 
       _previousChannel = channel;
+    }
+
+    /// <summary>
+    /// Get the switch port number (or LNB number) for a given DiSEqC switch command.
+    /// </summary>
+    /// <param name="command">The DiSEqC switch command.</param>
+    /// <returns>the switch port number associated with the command</returns>
+    public static int GetPortNumber(DiseqcPort command)
+    {
+      switch (command)
+      {
+        case DiseqcPort.None:
+          return 0;   // no DiSEqC
+        case DiseqcPort.SimpleA:
+          return 1;
+        case DiseqcPort.SimpleB:
+          return 2;
+        case DiseqcPort.PortA:
+          return 1;
+        case DiseqcPort.PortB:
+          return 2;
+        case DiseqcPort.PortC:
+          return 3;
+        case DiseqcPort.PortD:
+          return 4;
+      }
+      // DiSEqC 1.1 commands...
+      return ((int)command - 6);
     }
 
     /// <summary>

@@ -217,6 +217,9 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="channel">The channel to tune to.</param>
     protected override void PerformTuning(IChannel channel)
     {
+      // Tweak LNB local oscillator frequencies to ensure successful tuning. We do this here so that plugins
+      // can update the frequencies if necessary.
+
       // Send DiSEqC commands (if necessary) before actually tuning in case the driver applies the commands
       // during the tuning process.
       if (_diseqcController != null)
@@ -240,21 +243,16 @@ namespace TvLibrary.Implementations.DVB
         return null;
       }
 
-      uint lnbLowLof;
-      uint lnbHighLof;
-      uint lnbSwitchFrequency;
-      Polarisation polarisation;
-      LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLowLof, out lnbHighLof, out lnbSwitchFrequency, out polarisation);
-      _tuningSpace.put_LowOscillator((int)lnbLowLof);
-      _tuningSpace.put_HighOscillator((int)lnbHighLof);
-      _tuningSpace.put_LNBSwitch((int)lnbSwitchFrequency);
+      _tuningSpace.put_LowOscillator(dvbsChannel.LnbType.LowBandFrequency);
+      _tuningSpace.put_HighOscillator(dvbsChannel.LnbType.HighBandFrequency);
+      _tuningSpace.put_LNBSwitch(dvbsChannel.LnbType.SwitchFrequency);
 
       ILocator locator;
       _tuningSpace.get_DefaultLocator(out locator);
       IDVBSLocator dvbsLocator = (IDVBSLocator)locator;
       dvbsLocator.put_CarrierFrequency((int)dvbsChannel.Frequency);
       dvbsLocator.put_SymbolRate(dvbsChannel.SymbolRate);
-      dvbsLocator.put_SignalPolarisation(polarisation);
+      dvbsLocator.put_SignalPolarisation(dvbsChannel.Polarisation);
       dvbsLocator.put_Modulation(dvbsChannel.ModulationType);
       dvbsLocator.put_InnerFECRate(dvbsChannel.InnerFecRate);
 

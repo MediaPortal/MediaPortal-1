@@ -1619,14 +1619,8 @@ namespace TvLibrary.Implementations.DVB
         return false;
       }
 
-      uint lnbLowLof;
-      uint lnbHighLof;
-      uint lnbSwitchFrequency;
-      Polarisation polarisation;
-      LnbTypeConverter.GetLnbTuningParameters(dvbsChannel, out lnbLowLof, out lnbHighLof, out lnbSwitchFrequency, out polarisation);
-
       B2c2Polarisation b2c2Polarisation = B2c2Polarisation.Horizontal;
-      if (polarisation == Polarisation.LinearV || polarisation == Polarisation.CircularR)
+      if (dvbsChannel.Polarisation == Polarisation.LinearV || dvbsChannel.Polarisation == Polarisation.CircularR)
       {
         b2c2Polarisation = B2c2Polarisation.Vertical;
       }
@@ -1639,13 +1633,13 @@ namespace TvLibrary.Implementations.DVB
 
       _diseqcController.SwitchToChannel(dvbsChannel);
 
-      if (dvbsChannel.Frequency > lnbSwitchFrequency)
+      if (dvbsChannel.Frequency > dvbsChannel.LnbType.SwitchFrequency)
       {
-        hr = _tunerInterface.SetLnbFrequency((Int32)lnbHighLof / 1000);
+        hr = _tunerInterface.SetLnbFrequency(dvbsChannel.LnbType.HighBandFrequency / 1000);
       }
       else
       {
-        hr = _tunerInterface.SetLnbFrequency((Int32)lnbLowLof / 1000);
+        hr = _tunerInterface.SetLnbFrequency(dvbsChannel.LnbType.LowBandFrequency / 1000);
       }
       if (hr != 0)
       {

@@ -432,10 +432,10 @@ namespace TvLibrary.Implementations
     #endregion
 
     /// <summary>
-    /// Checks if the given channel and this instance are on the different transponder
+    /// Check if the given channel and this instance are on different transponders.
     /// </summary>
-    /// <param name="channel">Channel to check</param>
-    /// <returns>true, if the channels are on the same transponder</returns>
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>false</c> if the channels are on the same transponder, otherwise <c>true</c></returns>
     public bool IsDifferentTransponder(IChannel channel)
     {
       AnalogChannel analogChannel = channel as AnalogChannel;
@@ -450,6 +450,16 @@ namespace TvLibrary.Implementations
              analogChannel.TunerSource != TunerSource ||
              analogChannel.ChannelNumber != ChannelNumber ||
              analogChannel.Frequency != Frequency;
+    }
+
+    /// <summary>
+    /// Get a channel instance with properties set to enable tuning of this channel.
+    /// </summary>
+    /// <returns>a channel instance with parameters adjusted as necessary</returns>
+    public IChannel GetTuningChannel()
+    {
+      // No adjustments required.
+      return (IChannel)this.Clone();
     }
   }
 }

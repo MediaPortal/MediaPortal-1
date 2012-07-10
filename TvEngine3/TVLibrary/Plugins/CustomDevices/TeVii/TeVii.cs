@@ -470,17 +470,11 @@ namespace TvEngine
       }
 
       DVBSChannel ch = channel as DVBSChannel;
-      uint lnbLowLof;
-      uint lnbHighLof;
-      uint lnbSwitchFrequency;
-      Polarisation polarisation;
-      LnbTypeConverter.GetLnbTuningParameters(ch, out lnbLowLof, out lnbHighLof, out lnbSwitchFrequency, out polarisation);
-
       bool toneOn = false;
-      int lnbLof = (int)lnbLowLof;
-      if (ch.Frequency > lnbSwitchFrequency)
+      int lnbLof = ch.LnbType.LowBandFrequency;
+      if (ch.Frequency > ch.LnbType.SwitchFrequency)
       {
-        lnbLof = (int)lnbHighLof;
+        lnbLof = ch.LnbType.HighBandFrequency;
         toneOn = true;
       }
 
@@ -495,7 +489,7 @@ namespace TvEngine
       }
 
       bool result = TuneTransponder(_deviceIndex, (int)ch.Frequency, ch.SymbolRate * 1000, lnbLof,
-        Translate(polarisation), toneOn, Translate(true, ch.ModulationType), Translate(ch.InnerFecRate));
+        Translate(ch.Polarisation), toneOn, Translate(true, ch.ModulationType), Translate(ch.InnerFecRate));
       if (result)
       {
         Log.Debug("TeVii: result = success");

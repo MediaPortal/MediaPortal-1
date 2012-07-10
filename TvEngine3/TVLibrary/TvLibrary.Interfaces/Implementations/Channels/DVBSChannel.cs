@@ -26,135 +26,6 @@ using TvLibrary.Interfaces.Device;
 namespace TvLibrary.Channels
 {
   /// <summary>
-  /// Helper class for dealing with various aspects of LNB settings.
-  /// </summary>
-  public class LnbTypeConverter
-  {
-    /// <summary>
-    /// Get the switch port number (or LNB number) for a given DiSEqC switch command.
-    /// </summary>
-    /// <param name="command">The DiSEqC switch command.</param>
-    /// <returns>the switch port number associated with the command</returns>
-    public static int GetPortNumber(DiseqcPort command)
-    {
-      switch (command)
-      {
-        case DiseqcPort.None:
-          return 0;   // no DiSEqC
-        case DiseqcPort.SimpleA:
-          return 1;
-        case DiseqcPort.SimpleB:
-          return 2;
-        case DiseqcPort.PortA:
-          return 1;
-        case DiseqcPort.PortB:
-          return 2;
-        case DiseqcPort.PortC:
-          return 3;
-        case DiseqcPort.PortD:
-          return 4;
-      }
-      // DiSEqC 1.1 commands...
-      return ((int)command - 6);
-    }
-
-    /// <summary>
-    /// Get the appropriate LNB settings parameters to tune a given channel.
-    /// </summary>
-    /// <param name="channel">The channel to tune.</param>
-    /// <param name="lnbLowLof">The LNB low band local oscillator frequency (in kHz) to use.</param>
-    /// <param name="lnbHighLof">The LNB high band local oscillator frequency (in kHz) to use.</param>
-    /// <param name="lnbSwitchFrequency">The LNB switch frequency (in kHz) to use.</param>
-    /// <param name="polarisation">The LNB voltage (signal polarity) to use.</param>
-    public static void GetLnbTuningParameters(DVBSChannel channel, out uint lnbLowLof, out uint lnbHighLof, out uint lnbSwitchFrequency, out Polarisation polarisation)
-    {
-      // 1: Log the default frequency settings for the LNB.
-      Log.Log.Debug("DvbsChannel: LNB settings, low = {0} kHz, high = {1} kHz, switch = {2} kHz, bandstacked = {3}, toroidal = {4}, polarisation = {5}",
-          channel.LnbType.LowBandFrequency, channel.LnbType.HighBandFrequency, channel.LnbType.SwitchFrequency,
-          channel.LnbType.IsBandStacked, channel.LnbType.IsToroidal, channel.Polarisation);
-
-      // 2: Toroidal LNB handling.
-      // LNBs mounted on a toroidal dish require circular polarities to be inverted.
-      polarisation = channel.Polarisation;
-      if (channel.LnbType.IsToroidal)
-      {
-        if (channel.Polarisation == Polarisation.CircularL)
-        {
-          polarisation = Polarisation.CircularR;
-        }
-        else if (channel.Polarisation == Polarisation.CircularR)
-        {
-          polarisation = Polarisation.CircularL;
-        }
-      }
-
-      // 2: Switch frequency adjustment.
-      // Setting the switch frequency to zero is the equivalent of saying that the switch frequency is
-      // irrelevant - that the 22 kHz tone state shouldn't depend on the transponder frequency.
-      lnbSwitchFrequency = (uint)channel.LnbType.SwitchFrequency;
-      if (lnbSwitchFrequency == 0)
-      {
-        // Note: do not think this is random! Some drivers such as the Genpix SkyWalker driver will treat
-        // 20 GHz as a signal to always use high voltage (useful for bandstacked LNBs).
-        lnbSwitchFrequency = 18000000;
-      }
-
-      // 3: Local oscillator frequency selection and polarisation.
-      // Drivers are frustrating! Most tuners rely on the LNB frequency settings to determine the intermediate
-      // frequency (the frequency in the cable that the tuner should tune to) and whether the 22 kHz tone
-      // should be on or off. Some tuner drivers (eg. Prof USB) don't seem to understand what to do with the
-      // three frequencies; others (eg. Anysee E7, SkyStar 2 [BDA], KNC PCI) don't turn the 22 kHz tone on or
-      // or off unless certain conditions are met; others can't handle negative intermediate frequencies which
-      // are standard for C-band LNB calculations.
-      // Our approach is to:
-      // - calculate the actual intermediate frequency, then back-calculate a "safe" positive LOF from that
-      // - always ensure that the low and high LOF values are different when the 22 kHz tone should be on, and
-      //   the same when the 22 kHz tone should be off
-      long lof = channel.LnbType.LowBandFrequency;
-      bool toneOn = false;
-      if (channel.LnbType.IsBandStacked)
-      {
-        // For bandstacked LNBs, if the transponder polarisation is horizontal or circular left then we
-        // should use the nominal high oscillator frequency. In addition, we should always supply
-        // bandstacked LNBs with 18 V.
-        if (channel.Polarisation == Polarisation.LinearH || channel.Polarisation == Polarisation.CircularL)
-        {
-          lof = channel.LnbType.HighBandFrequency;
-        }
-        polarisation = Polarisation.LinearH;
-        if (channel.Frequency > lnbSwitchFrequency)
-        {
-          toneOn = true;
-        }
-      }
-      else
-      {
-        if (channel.Frequency > lnbSwitchFrequency)
-        {
-          lof = channel.LnbType.HighBandFrequency;
-          toneOn = true;
-        }
-      }
-
-      long intermediateFrequency = Math.Abs(channel.Frequency - lof);
-      lof = channel.Frequency - intermediateFrequency;
-      if (toneOn)
-      {
-        lnbLowLof = (uint)lof - 500000;
-        lnbHighLof = (uint)lof;
-      }
-      else
-      {
-        lnbLowLof = (uint)lof;
-        lnbHighLof = (uint)lof;
-      }
-
-      Log.Log.Debug("DvbsChannel: translated LNB settings, low = {0} kHz, high = {1} kHz, switch = {2} kHz, polarisation = {3}",
-          lnbLowLof, lnbHighLof, lnbSwitchFrequency, polarisation);
-    }
-  }
-
-  /// <summary>
   /// A class capable of holding the tuning parameter details required to tune a DVB-S or DVB-S2 channel.
   /// </summary>
   [Serializable]
@@ -425,6 +296,81 @@ namespace TvLibrary.Channels
              dvbsChannel.InnerFecRate != _innerFecRate ||
              dvbsChannel.Pilot != _pilot ||
              dvbsChannel.RollOff != _rollOff;             
+    }
+
+    /// <summary>
+    /// Get a channel instance with properties set to enable tuning of this channel.
+    /// </summary>
+    /// <returns>a channel instance with parameters adjusted as necessary</returns>
+    public override IChannel GetTuningChannel()
+    {
+      IChannel clone = (IChannel)this.Clone();
+      DVBSChannel dvbsChannel = clone as DVBSChannel;
+      if (dvbsChannel == null)
+      {
+        return clone;
+      }
+
+      // 1: Log the default frequency settings for the LNB.
+      Log.Log.Debug("DvbsChannel: LNB settings, low = {0} kHz, high = {1} kHz, switch = {2} kHz, bandstacked = {3}, toroidal = {4}, polarisation = {5}",
+          dvbsChannel.LnbType.LowBandFrequency, dvbsChannel.LnbType.HighBandFrequency, dvbsChannel.LnbType.SwitchFrequency,
+          dvbsChannel.LnbType.IsBandStacked, dvbsChannel.LnbType.IsToroidal, dvbsChannel.Polarisation);
+
+      // 2: Toroidal LNB handling.
+      // LNBs mounted on a toroidal dish require circular polarities to be inverted. Note that it is important to do
+      // this before the bandstacked LNB logic.
+      if (dvbsChannel.LnbType.IsToroidal)
+      {
+        if (dvbsChannel.Polarisation == Polarisation.CircularL)
+        {
+          dvbsChannel.Polarisation = Polarisation.CircularR;
+        }
+        else if (dvbsChannel.Polarisation == Polarisation.CircularR)
+        {
+          dvbsChannel.Polarisation = Polarisation.CircularL;
+        }
+      }
+
+      // 3: Bandstacked LNB handling.
+      // For bandstacked LNBs, if the transponder polarisation is horizontal or circular left then we
+      // should use the nominal high oscillator frequency. In addition, we should always supply bandstacked
+      // LNBs with 18 V for reliable operation.
+      if (dvbsChannel.LnbType.IsBandStacked)
+      {
+        if (dvbsChannel.Polarisation == Polarisation.LinearH || dvbsChannel.Polarisation == Polarisation.CircularL)
+        {
+          dvbsChannel.LnbType.LowBandFrequency = dvbsChannel.LnbType.HighBandFrequency;
+        }
+        dvbsChannel.LnbType.HighBandFrequency = dvbsChannel.LnbType.LowBandFrequency + 500000;
+        dvbsChannel.Polarisation = Polarisation.LinearH;
+      }
+
+      // A note about LNB settings...
+      // The LNB settings in the database have been set *very* intentionally based on the following assumptions and
+      // information.
+      // Golden rule: you should never pass zero to a BDA tuner driver for any LNB frequency setting.
+      // Very often people who don't know any better will set the high oscillator frequency and/or switch frequency
+      // for single oscillator LNBs to zero to indicate that they are irrelevant. Driver behaviour with respect to
+      // the 22 kHz tone should be considered undefined in that situation. In some cases the driver behaviour wouldn't
+      // matter, however consider:
+      // - some single oscillator LNBs have been known to respond to the 22 kHz tone
+      // - the tone may degrade the signal quality
+      // - the 22 kHz tone state is still important in an environment with mixed LNB types or 22 kHz tone switches
+      // 
+      // In the database, we set the high oscillator frequency to [low LOF] + 500000 kHz for single oscillator LNBs.
+      // Our intention is to ensure that the low and high oscillator frequencies are different as some drivers (for
+      // example Anysee E7, SkyStar 2 [BDA]) don't turn the 22 kHz tone on or off (!!!) if the frequencies are not
+      // different. Other drivers (for example KNC TV-Station PCI) require that the frequencies be the same in order
+      // to turn the 22 kHz tone off - these drivers should be handled with plugins. Note that the 500000 kHz value
+      // is arbitrary.
+      // In the database, we also set the switch frequency to 18000000 kHz when the 22 kHz tone should be turned off.
+      // This value is *not* arbitrary. Some drivers (for example Genpix SkyWalker) will treat 20 GHz as a signal to
+      // always use high voltage (useful for bandstacked LNBs).
+
+      Log.Log.Debug("DvbsChannel: translated LNB settings, low = {0} kHz, high = {1} kHz, switch = {2} kHz, polarisation = {3}",
+          dvbsChannel.LnbType.LowBandFrequency, dvbsChannel.LnbType.HighBandFrequency, dvbsChannel.LnbType.SwitchFrequency,
+          dvbsChannel.Polarisation);
+      return dvbsChannel;
     }
   }
 }
