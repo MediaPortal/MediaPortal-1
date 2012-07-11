@@ -306,6 +306,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading MediaPad...");
       }
+      list.Add(new FutabaMDM166A());
+      if (this.ExtensiveLogging)
+      {
+        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading MediaPad...");
+      }    
       list.Add(new MediaPad());
       if (this.ExtensiveLogging)
       {
