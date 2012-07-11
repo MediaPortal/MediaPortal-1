@@ -79,9 +79,9 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// Returns if the channel to which the card is currently tuned
     /// has teletext or not
     /// </summary>
-    /// <param name="user">User</param>
+    /// <param name="userName"> </param>
     /// <returns>yes if channel has teletext otherwise false</returns>
-    public bool HasTeletext(IUser user)
+    public bool HasTeletext(string userName)
     {
       bool hasTeletext = false;
       if (_cardHandler.DataBaseCard.enabled == false)
@@ -89,15 +89,11 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
         return false;
       }
       
-      _cardHandler.UserManagement.RefreshUser(ref user);
-
-
-      ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(_cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
+      ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(_cardHandler.UserManagement.GetTimeshiftingSubChannel(userName));
       if (subchannel != null)
       {
         hasTeletext = subchannel.HasTeletext;
       }          
-      
 
       return hasTeletext;
     }
@@ -105,21 +101,19 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// <summary>
     /// Returns the rotation time for a specific teletext page
     /// </summary>
-    /// <param name="user">User</param>
+    /// <param name="userName"> </param>
     /// <param name="pageNumber">The pagenumber (0x100-0x899)</param>
     /// <returns>timespan containing the rotation time</returns>
-    public TimeSpan TeletextRotation(IUser user, int pageNumber)
+    public TimeSpan TeletextRotation(string userName, int pageNumber)
     {
       try
       {
         if (_cardHandler.DataBaseCard.enabled == false)
         {
           return new TimeSpan(0, 0, 0, 15);
-        }       
-        
-        _cardHandler.UserManagement.RefreshUser(ref user);
+        }                       
 
-        int subchannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, _cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
+        int subchannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(userName, _cardHandler.UserManagement.GetTimeshiftingSubChannel(userName));
         ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(subchannelId);
         if (subchannel == null)
           return new TimeSpan(0, 0, 0, 15);
@@ -135,9 +129,9 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// <summary>
     /// turn on/off teletext grabbing
     /// </summary>
-    /// <param name="user">User</param>
+    /// <param name="userName"> </param>
     /// <param name="onOff">turn on/off teletext grabbing</param>
-    public void GrabTeletext(IUser user, bool onOff)
+    public void GrabTeletext(string userName, bool onOff)
     {
       try
       {
@@ -145,9 +139,8 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
         {
           return;
         }       
-        
-        _cardHandler.UserManagement.RefreshUser(ref user);
-        int subchannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, _cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
+                
+        int subchannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(userName, _cardHandler.UserManagement.GetTimeshiftingSubChannel(userName));
         ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(subchannelId);
         if (subchannel == null)
           return;
@@ -163,11 +156,11 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// <summary>
     /// Gets the teletext page.
     /// </summary>
-    /// <param name="user">User</param>
+    /// <param name="userName"> </param>
     /// <param name="pageNumber">The page number.</param>
     /// <param name="subPageNumber">The sub page number.</param>
     /// <returns></returns>
-    public byte[] GetTeletextPage(IUser user, int pageNumber, int subPageNumber)
+    public byte[] GetTeletextPage(string userName, int pageNumber, int subPageNumber)
     {
       try
       {
@@ -176,9 +169,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
           return new byte[] {1};
         }      
         
-        _cardHandler.UserManagement.RefreshUser(ref user);
-
-        int subchannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, _cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
+        int subchannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(userName, _cardHandler.UserManagement.GetTimeshiftingSubChannel(userName));
         ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(subchannelId);
         if (subchannel == null)
           return new byte[] {1};
@@ -196,10 +187,10 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// <summary>
     /// Gets the number of subpages for a teletext page.
     /// </summary>
-    /// <param name="user">User</param>
+    /// <param name="userName"> </param>
     /// <param name="pageNumber">The page number.</param>
     /// <returns></returns>
-    public int SubPageCount(IUser user, int pageNumber)
+    public int SubPageCount(string userName, int pageNumber)
     {
       try
       {
@@ -208,8 +199,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
           return -1;
         }
                 
-        _cardHandler.UserManagement.RefreshUser(ref user);
-        int subchannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, _cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
+        int subchannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(userName, _cardHandler.UserManagement.GetTimeshiftingSubChannel(userName));
         ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(subchannelId);
         if (subchannel == null)
           return -1;
@@ -227,9 +217,9 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// <summary>
     /// Gets the teletext pagenumber for the red button
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>Teletext pagenumber for the red button</returns>
-    public int GetTeletextRedPageNumber(IUser user)
+    public int GetTeletextRedPageNumber(string userName)
     {
       try
       {
@@ -238,8 +228,8 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
           return -1;
         }
                
-        _cardHandler.UserManagement.RefreshUser(ref user);
-        int subchannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, _cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
+
+        int subchannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(userName, _cardHandler.UserManagement.GetTimeshiftingSubChannel(userName));
         ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(subchannelId);
         if (subchannel == null)
           return -1;
@@ -257,9 +247,9 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// <summary>
     /// Gets the teletext pagenumber for the green button
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>Teletext pagenumber for the green button</returns>
-    public int GetTeletextGreenPageNumber(IUser user)
+    public int GetTeletextGreenPageNumber(string userName)
     {
       try
       {
@@ -267,9 +257,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
         {
           return -1;
         }
-                
-        _cardHandler.UserManagement.RefreshUser(ref user);
-        int subchannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, _cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
+        int subchannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(userName, _cardHandler.UserManagement.GetTimeshiftingSubChannel(userName));
         ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(subchannelId);
         if (subchannel == null)
           return -1;
@@ -287,9 +275,9 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// <summary>
     /// Gets the teletext pagenumber for the yellow button
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>Teletext pagenumber for the yellow button</returns>
-    public int GetTeletextYellowPageNumber(IUser user)
+    public int GetTeletextYellowPageNumber(string userName)
     {
       try
       {
@@ -298,8 +286,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
           return -1;
         }
         
-        _cardHandler.UserManagement.RefreshUser(ref user);
-        int subchannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, _cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
+        int subchannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(userName, _cardHandler.UserManagement.GetTimeshiftingSubChannel(userName));
         ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(subchannelId);
         if (subchannel == null)
           return -1;
@@ -317,9 +304,9 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// <summary>
     /// Gets the teletext pagenumber for the blue button
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>Teletext pagenumber for the blue button</returns>
-    public int GetTeletextBluePageNumber(IUser user)
+    public int GetTeletextBluePageNumber(string userName)
     {
       try
       {
@@ -327,9 +314,8 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
         {
           return -1;
         }
-              
-        _cardHandler.UserManagement.RefreshUser(ref user);
-        int subchannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, _cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
+                      
+        int subchannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(userName, _cardHandler.UserManagement.GetTimeshiftingSubChannel(userName));
         ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(subchannelId);
         if (subchannel == null)
           return -1;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
@@ -9,7 +10,7 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
   {
 
 
-    IUser GetUser(string name);
+    IUser GetUserCopy(string name);
 
     /// <summary>
     /// Removes the user from this card
@@ -24,7 +25,7 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     /// Gets the users for this card.
     /// </summary>
     /// <returns></returns>
-    IDictionary<string, IUser> Users { get; }
+    //IDictionary<string, IUser> Users { get; }
 
     bool HasEqualOrHigherPriority(IUser user);
     bool HasHighestPriority(IUser user);
@@ -97,20 +98,20 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     /// </summary>
     /// <param name = "subChannelId">The sub channel idChannel.</param>
     /// <param name = "user">The user.</param>
-    IUser GetUser(int subChannelId);
+    IUser GetUserCopy(int subChannelId);
 
     /// <summary>
     ///   Sets the timeshifting stopped reason.
     /// </summary>
-    /// <param name = "user">user.</param>
+    /// <param name="userName"> </param>
     /// <param name = "reason">TvStoppedReason.</param>
-    void SetTimeshiftStoppedReason(IUser user, TvStoppedReason reason);
+    void SetTimeshiftStoppedReason(string userName, TvStoppedReason reason);
 
     /// <summary>
     ///   Gets the timeshifting stopped reason.
     /// </summary>
-    /// <param name = "user">user.</param>
-    TvStoppedReason GetTimeshiftStoppedReason(IUser user);
+    /// <param name="userName"> </param>
+    TvStoppedReason GetTimeshiftStoppedReason(string userName);
 
     int GetNextAvailableSubchannel(string userName);
     bool HasUserEqualOrHigherPriority(IUser user);
@@ -138,9 +139,26 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     /// </summary>
     /// <param name = "subChannelId">The sub channel idChannel.</param>
     /// <param name = "user">The user.</param>
-    ISubChannel GetSubChannel(string name, int subChannelId);
+    ISubChannel GetSubChannel(string userName, int subChannelId);
 
-    ISubChannel GetSubChannelByChannelId(string name, int idChannel);
-    void SetOwnerSubChannel(int subChannelId, string userName);
+    ISubChannel GetSubChannelByChannelId(string userName, int idChannel);
+    void SetOwnerSubChannel(int subChannelId, string userName);    
+    int NumberOfOtherUsers(string name);
+    int GetNumberOfUsersOnChannel(int currentChannelId);
+    bool IsAnyUserTimeShiftingOrRecording();
+    bool IsAnyUserOnTuningDetail(IChannel tuningDetail);
+    IList<IUser> GetActiveUsersCopy();
+    void SetChannelStates(string name, Dictionary<int, ChannelState> channelStates);
+    bool IsAnyUserTimeShifting();
+    int UsersCount();
+    bool IsAnyUserLockedOnChannel(int channelId, TvUsage tvUsage);
+    IEnumerable<int> GetAllSubChannelForChannel(int channelId, TvUsage tvUsage);
+    IDictionary<int, ChannelState> GetAllTimeShiftingAndRecordingChannelIds();
+    IDictionary<string, IUser> UsersCopy { get; }
+    IUser GetUserRecordingChannel(int idChannel);
+
+    IEnumerable<IUser> GetUsersCopy(UserType? userType = null);
+    IList<IUser> GetAllRecordingUsersCopy();
+    int GetChannelId(string userName, TvUsage tvUsage);
   }
 }

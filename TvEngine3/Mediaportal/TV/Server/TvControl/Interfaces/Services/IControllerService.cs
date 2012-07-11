@@ -285,7 +285,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <summary>
     /// Determines if any card is currently busy recording or timeshifting
     /// </summary>
-    /// <param name="userTS">timeshifting user</param>
+    /// <param name="userName"> </param>
     /// <param name="isUserTS">true if the specified user is timeshifting</param>
     /// <param name="isAnyUserTS">true if any user (except for the userTS) is timeshifting</param>
     /// <param name="isRec">true if recording</param>
@@ -293,7 +293,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// 	<c>true</c> if a card is recording or timeshifting; otherwise, <c>false</c>.
     /// </returns>
     [OperationContract]
-    bool IsAnyCardRecordingOrTimeshifting(IUser userTS, out bool isUserTS, out bool isAnyUserTS, out bool isRec);
+    bool IsAnyCardRecordingOrTimeshifting(string userName, out bool isUserTS, out bool isAnyUserTS, out bool isRec);
 
     /// <summary>
     /// Stops recording the Schedule specified
@@ -336,18 +336,18 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <summary>
     /// Fetches all channel states for a specific user (cached - faster)
     /// </summary>
-    /// <param name="user"></param>
+    /// <param name="userName"> </param>
     [OperationContract]
-    IDictionary<int, ChannelState> GetAllChannelStatesCached(IUser user);
+    IDictionary<int, ChannelState> GetAllChannelStatesCached(string userName);
 
     /// <summary>
     /// Finds out whether a channel is currently tuneable or not
     /// </summary>
     /// <param name="idChannel">The channel id</param>
-    /// <param name="user">User</param>
+    /// <param name="userName"> </param>
     /// <returns>an enum indicating tunable/timeshifting/recording</returns>
     [OperationContract]
-    ChannelState GetChannelState(int idChannel, IUser user);
+    ChannelState GetChannelState(int idChannel, string userName);
 
     /// <summary>
     /// Returns a list of all ip adresses on the server.
@@ -473,12 +473,12 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// Returns the URL for the RTSP stream on which the client can find the
     /// stream for the selected card
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>
     /// URL containing the RTSP adress on which the card transmits its stream
     /// </returns>
     [OperationContract]
-    string GetStreamingUrl(IUser user);
+    string GetStreamingUrl(string userName);
 
     /// <summary>
     /// Returns the current filename used for recording
@@ -488,43 +488,43 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// filename of the recording or null when not recording
     /// </returns>
     [OperationContract]
-    string RecordingFileName(ref IUser user);
+    string RecordingFileName(string user);
 
     /// <summary>
     /// Gets the tv/radio channel on which the card is currently tuned
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <param name="idChannel"> </param>
     /// <returns>IChannel</returns>
     [OperationContract]
-    IChannel CurrentChannel(ref IUser user, int idChannel);
+    IChannel CurrentChannel(string userName, int idChannel);
 
     /// <summary>
     /// returns the id of the current channel.
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns></returns>
     [OperationContract]
-    int CurrentDbChannel(ref IUser user);
+    int CurrentDbChannel(string userName);
 
     /// <summary>
     /// Gets the name of the tv/radio channel on which the card is currently tuned
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>channel name</returns>
     [OperationContract]
-    string CurrentChannelName(ref IUser user);
+    string CurrentChannelName(string userName);
 
     /// <summary>
     /// Returns whether the channel to which the card is tuned is
     /// scrambled or not.
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>
     /// yes if channel is scrambled and CI/CAM cannot decode it, otherwise false
     /// </returns>
     [OperationContract]
-    bool IsScrambled(ref IUser user);
+    bool IsScrambled(string userName);
 
     /// <summary>
     /// Returns the current filename used for timeshifting
@@ -540,105 +540,103 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <summary>
     /// Returns the position in the current timeshift file and the id of the current timeshift file
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
     [OperationContract]
-    bool TimeShiftGetCurrentFilePosition(ref IUser user, ref long position, ref long bufferId);
+    bool TimeShiftGetCurrentFilePosition(string userName, ref long position, ref long bufferId);
 
     /// <summary>
     /// Returns if the card is currently timeshifting or not
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>true when card is timeshifting otherwise false</returns>
     [OperationContract]
-    bool IsTimeShifting(ref IUser user);
-
-
+    bool IsTimeShifting(string userName);
 
 
     /// <summary>
     /// Returns the rotation time for a specific teletext page
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <param name="pageNumber">The pagenumber (0x100-0x899)</param>
     /// <returns>timespan containing the rotation time</returns>
     [OperationContract]
-    TimeSpan TeletextRotation(IUser user, int pageNumber);
+    TimeSpan TeletextRotation(string userName, int pageNumber);
 
     /// <summary>
     /// Returns if the channel to which the card is currently tuned
     /// has teletext or not
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>
     /// yes if channel has teletext otherwise false
     /// </returns>
     [OperationContract]
-    bool HasTeletext(IUser user);
+    bool HasTeletext(string userName);
 
     /// <summary>
     /// turn on/off teletext grabbing for a card
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <param name="onOff">boolean indicating if teletext grabbing should be enabled or not</param>
     [OperationContract]
-    void GrabTeletext(IUser user, bool onOff);
+    void GrabTeletext(string userName, bool onOff);
 
     /// <summary>
     /// Gets a raw teletext page.
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <param name="pageNumber">The page number. (0x100-0x899)</param>
     /// <param name="subPageNumber">The sub page number.(0x0-0x79)</param>
     /// <returns>
     /// byte[] array containing the raw teletext page or null if page is not found
     /// </returns>
     [OperationContract]
-    byte[] GetTeletextPage(IUser user, int pageNumber, int subPageNumber);
+    byte[] GetTeletextPage(string userName, int pageNumber, int subPageNumber);
 
     /// <summary>
     /// Gets the number of subpages for a teletext page.
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <param name="pageNumber">The page number (0x100-0x899)</param>
     /// <returns>
     /// number of teletext subpages for the pagenumber
     /// </returns>
     [OperationContract]
-    int SubPageCount(IUser user, int pageNumber);
+    int SubPageCount(string userName, int pageNumber);
 
     /// <summary>
     /// Gets the teletext pagenumber for the red button
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>Teletext pagenumber for the red button</returns>
     [OperationContract]
-    int GetTeletextRedPageNumber(IUser user);
+    int GetTeletextRedPageNumber(string userName);
 
     /// <summary>
     /// Gets the teletext pagenumber for the green button
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>Teletext pagenumber for the green button</returns>
     [OperationContract]
-    int GetTeletextGreenPageNumber(IUser user);
+    int GetTeletextGreenPageNumber(string userName);
 
     /// <summary>
     /// Gets the teletext pagenumber for the yellow button
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>Teletext pagenumber for the yellow button</returns>
     [OperationContract]
-    int GetTeletextYellowPageNumber(IUser user);
+    int GetTeletextYellowPageNumber(string userName);
 
     /// <summary>
     /// Gets the teletext pagenumber for the blue button
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>Teletext pagenumber for the blue button</returns>
     [OperationContract]
-    int GetTeletextBluePageNumber(IUser user);
+    int GetTeletextBluePageNumber(string userName);
 
     /// <summary>
     /// 
@@ -657,158 +655,174 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <summary>
     /// returns the list of available audio streams for the card specified
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>List containing all audio streams</returns>
     [OperationContract]
-    IList<IAudioStream> AvailableAudioStreams(IUser user);
+    IList<IAudioStream> AvailableAudioStreams(string userName);
 
     #endregion
 
     /// <summary>
     /// returns the current video stream on the virtual card. 
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>List containing all audio streams</returns>
     [OperationContract]
-    IVideoStream GetCurrentVideoStream(IUser user);
+    IVideoStream GetCurrentVideoStream(string userName);
 
     /// <summary>
     /// Stops the card.
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="idCard"> </param>
     [OperationContract]
-    void StopCard(IUser user);
+    void StopCard(int idCard);
 
     /// <summary>
     /// Park timeshifting for the user supplied
     /// </summary>
-    /// <param name="user"></param>
+    /// <param name="userName"> </param>
     /// <param name="duration"> </param>
     /// <param name="idChannel"></param>
+    /// <param name="user"></param>
     /// <returns></returns>
     [OperationContract]
-    bool ParkTimeShifting(ref IUser user, double duration, int idChannel);
+    bool ParkTimeShifting(string userName, double duration, int idChannel, out IUser user);
 
     /// <summary>
     /// UnPark timeshifting for the user supplied
     /// </summary>
-    /// <param name="user"></param>
+    /// <param name="userName"> </param>
     /// <param name="duration"> </param>
     /// <param name="idChannel"></param>
+    /// <param name="user"></param>
+    /// <param name="card"> </param>
     /// <returns></returns>
     [OperationContract]
-    bool UnParkTimeShifting(ref IUser user, double duration, int idChannel, out IVirtualCard card);
+    bool UnParkTimeShifting(string userName, double duration, int idChannel, out IUser user, out IVirtualCard card);
 
     /// <summary>
     /// Query what card would be used for timeshifting on any given channel
     /// </summary>
-    /// <param name="user">user credentials.</param>
+    /// <param name="userName"> </param>
     /// <param name="idChannel">The id channel.</param>
     /// <returns>
     /// returns card id which would be used when doing the actual timeshifting.
     /// </returns>
     [OperationContract]
-    int TimeShiftingWouldUseCard(ref IUser user, int idChannel);
+    int TimeShiftingWouldUseCard(string userName, int idChannel);
 
     /// <summary>
     /// Start timeshifting on a specific channel
     /// </summary>
-    /// <param name="user">user credentials.</param>
+    /// <param name="userName"> </param>
     /// <param name="idChannel">The id channel.</param>
     /// <param name="kickCardId"> </param>
     /// <param name="card">returns on which card timeshifting is started</param>
     /// <param name="kickableCards"> </param>
     /// <param name="forceCardId">Indicated, if the card should be forced</param>
+    /// <param name="user">user credentials.</param>
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>    
     [OperationContract(Name = "StartTimeShiftingForceCardId")]    
-    TvResult StartTimeShifting(ref IUser user, int idChannel, int? kickCardId, out IVirtualCard card, out Dictionary<int, List<IUser>> kickableCards, bool forceCardId);
+    TvResult StartTimeShifting(string userName, int idChannel, int? kickCardId, out IVirtualCard card, out Dictionary<int, List<IUser>> kickableCards, bool forceCardId, out IUser user);
 
     /// <summary>
     /// Start timeshifting on a specific channel
     /// </summary>
-    /// <param name="user">user credentials.</param>
+    /// <param name="userName"> </param>
     /// <param name="idChannel">The id channel.</param>
     /// <param name="kickCardId"> </param>
     /// <param name="card">returns on which card timeshifting is started</param>
     /// <param name="kickableCards"> </param>
     /// <param name="cardChanged">indicates if card was changed</param>
     /// <param name="parkedDuration"> </param>
+    /// <param name="user">user credentials.</param>
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
     [OperationContract(Name = "StartTimeShiftingGetCardChanged")]
-    TvResult StartTimeShifting(ref IUser user, int idChannel, int? kickCardId, out IVirtualCard card, out Dictionary<int, List<IUser>> kickableCards, out bool cardChanged, out double? parkedDuration);
+    TvResult StartTimeShifting(string userName, int idChannel, int? kickCardId, out IVirtualCard card, out Dictionary<int, List<IUser>> kickableCards, out bool cardChanged, out double? parkedDuration, out IUser user);
 
     /// <summary>
     /// Start timeshifting on a specific channel
     /// </summary>
-    /// <param name="user">user credentials.</param>
+    /// <param name="userName"> </param>
     /// <param name="idChannel">The id channel.</param>
     /// <param name="card">returns on which card timeshifting is started</param>
+    /// <param name="user">user credentials.</param>
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
     [OperationContract(Name = "StartTimeShiftingGetCard")]
-    TvResult StartTimeShifting(ref IUser user, int idChannel, out IVirtualCard card);
+    TvResult StartTimeShifting(string userName, int idChannel, out IVirtualCard card, out IUser user);
 
 
     /// <summary>
     /// Stops the time shifting.
     /// </summary>
+    /// <param name="userName"> </param>
     /// <param name="user">user credentials.</param>
     /// <param name="reason">reason why timeshifting is stopped.</param>
     /// <returns>true if success otherwise false</returns>
     [OperationContract(Name = "StopTimeShiftingGetReason")]
-    bool StopTimeShifting(ref IUser user, TvStoppedReason reason);
+    bool StopTimeShifting(string userName, out IUser user, TvStoppedReason reason);
 
     /// <summary>
     /// Stops the time shifting.
     /// </summary>
+    /// <param name="userName"> </param>
     /// <param name="user">user credentials.</param>
     /// <param name="channelId"> </param>
     /// <returns>true if success otherwise false</returns>
     [OperationContract]
-    bool StopTimeShifting(ref IUser user);
+    bool StopTimeShifting(string userName, out IUser user);
 
     /// <summary>
     /// Starts recording.
     /// </summary>
+    /// <param name="userName"> </param>
+    /// <param name="cardId"> </param>
     /// <param name="user">The user.</param>
     /// <param name="fileName">Name of the recording file.</param>
     /// <returns>true if success otherwise false</returns>
     [OperationContract]
-    TvResult StartRecording(ref IUser user, ref string fileName);
+    TvResult StartRecording(string userName, int cardId, out IUser user, ref string fileName);
 
     /// <summary>
     /// Stops recording.
     /// </summary>
+    /// <param name="userName"> </param>
+    /// <param name="idCard"> </param>
     /// <param name="user">The user.</param>
     /// <returns>true if success otherwise false</returns>
     [OperationContract]
-    bool StopRecording(ref IUser user);
+    bool StopRecording(string userName, int idCard, out IUser user);
 
     /// <summary>
     /// Scan the specified card to the channel.
     /// </summary>
+    /// <param name="userName"> </param>
+    /// <param name="idCard"> </param>
     /// <param name="user">The user.</param>
     /// <param name="channel">The channel.</param>
     /// <param name="idChannel">The id channel.</param>
     /// <returns>true if succeeded</returns>
     [OperationContract(Name = "ScanByUser")]
-    TvResult Scan(ref IUser user, IChannel channel, int idChannel);
+    TvResult Scan(string userName, int idCard, out IUser user, IChannel channel, int idChannel);
 
 
     /// <summary>
     /// Tunes the the specified card to the channel.
     /// </summary>
+    /// <param name="userName"> </param>
+    /// <param name="idCard"> </param>
     /// <param name="user">The user.</param>
     /// <param name="channel">The channel.</param>
     /// <param name="idChannel">The id channel.</param>
     /// <returns>true if succeeded</returns>
     [OperationContract]
-    TvResult Tune(ref IUser user, IChannel channel, int idChannel);
+    TvResult Tune(string userName, int idCard, out IUser user, IChannel channel, int idChannel);
 
 
     /// <summary>
@@ -823,12 +837,12 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// Determines whether the the user is the owner of the card
     /// </summary>
     /// <param name="cardId">The card id.</param>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>
     /// 	<c>true</c> if the specified user is the card owner; otherwise, <c>false</c>.
     /// </returns>
     [OperationContract]
-    bool IsOwner(int cardId, IUser user);
+    bool IsOwner(int cardId, string userName);
 
 
 
@@ -973,12 +987,12 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <summary>
     /// Fetches the stream quality information
     /// </summary>
-    /// <param name="user">user</param>
+    /// <param name="userName"> </param>
     /// <param name="totalTSpackets">Amount of packets processed</param>
     /// <param name="discontinuityCounter">Number of stream discontinuities</param>
     /// <returns></returns>
     [OperationContract]
-    void GetStreamQualityCounters(IUser user, out int totalTSpackets, out int discontinuityCounter);
+    void GetStreamQualityCounters(string userName, out int totalTSpackets, out int discontinuityCounter);
 
     #endregion
 
@@ -1005,9 +1019,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
 
     [OperationContract]    
     IList<StreamPresentation> ListAllStreamingChannels();
-
-    [OperationContract]    
-    bool CanUserParkTimeshifting(IUser user);
 
     [OperationContract]
     bool IsAnyCardParkedByUser(string userName);

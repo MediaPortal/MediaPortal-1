@@ -473,7 +473,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
           if (index == 0)
           {
-            ServiceAgents.Instance.ControllerServiceAgent.Scan(ref user, tuneChannel, -1);
+            ServiceAgents.Instance.ControllerServiceAgent.Scan(user.Name, user.CardId, out user, tuneChannel, -1);
           }
 
           IChannel[] channels = ServiceAgents.Instance.ControllerServiceAgent.Scan(_cardNumber, tuneChannel);
@@ -625,7 +625,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       finally
       {
-        ServiceAgents.Instance.ControllerServiceAgent.StopCard(user);
+        ServiceAgents.Instance.ControllerServiceAgent.StopCard(user.CardId);
         ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
         progressBar1.Value = 100;
 

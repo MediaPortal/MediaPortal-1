@@ -295,6 +295,8 @@ namespace Mediaportal.TV.TvPlugin
 
     public override void OnAdded()
     {
+      ServiceAgents.Instance.OnServiceAgentRemovedEvent +=new ServiceAgents.ServiceAgentRemovedDelegate(OnServiceAgentRemovedEvent);
+
       //System.Diagnostics.Debugger.Launch();
       Log.Info("TVHome:OnAdded");
 
@@ -359,6 +361,19 @@ namespace Mediaportal.TV.TvPlugin
       }      
     }
 
+    private void OnServiceAgentRemovedEvent(Type service)
+    {
+      if (service == typeof(IEventServiceAgent))
+      {
+        SubscribeToEventService();
+        RegisterUserForHeartbeatMonitoring();
+        if (Card != null && Card.Id > 0)
+        {
+          RegisterCiMenu(Card.Id);
+        }
+      }
+    }
+
     private void StartServerMonitor()
     {
 
@@ -371,7 +386,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private void SubscribeToEventService()
     {
-      ServiceAgents.Instance.EventServiceAgent.RegisterTvServerEventCallbacks(this);              
+      ServiceAgents.Instance.EventServiceAgent.RegisterTvServerEventCallbacks(this);      
     }
 
     
@@ -448,7 +463,7 @@ namespace Mediaportal.TV.TvPlugin
     {
       lock (_channelStatesLock)
       {
-        _tvChannelStatesList = ServiceAgents.Instance.ControllerServiceAgent.GetAllChannelStatesCached(Card.User);
+        _tvChannelStatesList = ServiceAgents.Instance.ControllerServiceAgent.GetAllChannelStatesCached(Card.User.Name);
       }
     }
 
@@ -1966,11 +1981,7 @@ namespace Mediaportal.TV.TvPlugin
       Log.Info("TVHome:turn tv off");
       SaveSettings();
       Card.User.Name = new User().Name;
-      Card.StopTimeShifting();
-      
-
-      Card.StopTimeShifting();
-
+      Card.StopTimeShifting();            
       _recoverTV = false;
       _playbackStopped = true;
     }
@@ -2356,13 +2367,7 @@ namespace Mediaportal.TV.TvPlugin
           return checkResult;
 
         _doingChannelChange = true;
-
-
-        IUser user = new User();
-        if (Card != null)
-        {
-          user.CardId = Card.Id;
-        }
+        IUser user = new User();        
 
         if ((g_Player.Playing && g_Player.IsTimeShifting && !g_Player.Stopped) && (g_Player.IsTV || g_Player.IsRadio))
         {
@@ -2407,10 +2412,10 @@ namespace Mediaportal.TV.TvPlugin
           g_Player.OnZapping(0x80); // Setup Zapping for TsReader, requesting new PAT from stream
         }
 
-        bool succeeded = ServiceAgents.Instance.ControllerServiceAgent.UnParkTimeShifting(ref user,
+        bool succeeded = ServiceAgents.Instance.ControllerServiceAgent.UnParkTimeShifting(user.Name,
                                                                                        parkedDuration,
                                                                                        channel.idChannel,
-                                                                                       out card);
+                                                                                       out user, out card);
 
         bool cardChanged = true;// card.Id != Card.Id;
 
@@ -3556,11 +3561,7 @@ namespace Mediaportal.TV.TvPlugin
         _doingChannelChange = true;
 
 
-        IUser user = new User();
-        if (Card != null)
-        {
-          user.CardId = Card.Id;
-        }
+        IUser user = new User();        
 
         if ((g_Player.Playing && g_Player.IsTimeShifting && !g_Player.Stopped) && (g_Player.IsTV || g_Player.IsRadio))
         {
@@ -3573,7 +3574,7 @@ namespace Mediaportal.TV.TvPlugin
         int newCardId = -1;
 
         // check which card will be used
-        newCardId = ServiceAgents.Instance.ControllerServiceAgent.TimeShiftingWouldUseCard(ref user, channel.idChannel);
+        newCardId = ServiceAgents.Instance.ControllerServiceAgent.TimeShiftingWouldUseCard(user.Name, channel.idChannel);
 
         //Added by joboehl - If any major related to the timeshifting changed during the start, restart the player.           
         if (newCardId != -1 && Card.Id != newCardId)
@@ -3609,7 +3610,7 @@ namespace Mediaportal.TV.TvPlugin
           g_Player.OnZapping(0x80); // Setup Zapping for TsReader, requesting new PAT from stream
         }
         bool cardChanged;
-        succeeded = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(ref user, channel.idChannel, kickCardId, out card, out kickableCards, out cardChanged, out parkedDuration);
+        succeeded = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, channel.idChannel, kickCardId, out card, out kickableCards, out cardChanged, out parkedDuration, out user);
         
         if (_status.IsSet(LiveTvStatus.WasPlaying))
         {

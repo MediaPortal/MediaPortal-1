@@ -229,7 +229,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             break;
         }
 
-        bool res = ServiceAgents.Instance.ControllerServiceAgent.StopTimeShifting(ref user, TvStoppedReason.KickedByAdmin);
+        bool res = ServiceAgents.Instance.ControllerServiceAgent.StopTimeShifting(user.Name, out user, TvStoppedReason.KickedByAdmin);
 
         if (res)
         {

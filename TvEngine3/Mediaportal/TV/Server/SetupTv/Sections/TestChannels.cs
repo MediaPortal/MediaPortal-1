@@ -309,13 +309,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             lock (_lock)
             {
               UpdateDiscontinuityCounter(user, nextRowIndexForDiscUpdate);
-              ServiceAgents.Instance.ControllerServiceAgent.StopTimeShifting(ref user);
+              ServiceAgents.Instance.ControllerServiceAgent.StopTimeShifting(user.Name, out user);
             }
           }
           else
           {
             UpdateDiscontinuityCounter(user, nextRowIndexForDiscUpdate);
-            ServiceAgents.Instance.ControllerServiceAgent.StopTimeShifting(ref user);
+            ServiceAgents.Instance.ControllerServiceAgent.StopTimeShifting(user.Name, out user);
           }
         }
         catch (Exception) {}
@@ -444,8 +444,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                                     out TvResult result, out IVirtualCard card)
     {
       Stopwatch sw = Stopwatch.StartNew();
-      UpdateDiscontinuityCounter(user, nextRowIndexForDiscUpdate);      
-      result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(ref user, channel.idChannel, out card);
+      UpdateDiscontinuityCounter(user, nextRowIndexForDiscUpdate);
+      result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, channel.idChannel, out card, out user);
       mSecsElapsed = sw.ElapsedMilliseconds;
       _avg += mSecsElapsed;
       return user;
@@ -530,7 +530,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         {
           int discCounter = 0;
           int totalBytes = 0;
-          ServiceAgents.Instance.ControllerServiceAgent.GetStreamQualityCounters(user, out totalBytes, out discCounter);
+          ServiceAgents.Instance.ControllerServiceAgent.GetStreamQualityCounters(user.Name, out totalBytes, out discCounter);
           item.SubItems[7].Text = Convert.ToString(discCounter);
 
           txtDisc.Value += discCounter;
@@ -815,14 +815,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IUser low = UserFactory.CreateBasicUser("dr1", 1);
       IUser low2 = UserFactory.CreateBasicUser("dr2", 1);
 
-      TvResult tvresult = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(ref low, dr1.idChannel, out card);
+      TvResult tvresult = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(low.Name, dr1.idChannel, out card, out low);
       low.CardId = card.Id;
       Thread.Sleep(2000);
-      
-      result = ServiceAgents.Instance.ControllerServiceAgent.ParkTimeShifting(ref low, 0, dr1.idChannel);      
+
+      result = ServiceAgents.Instance.ControllerServiceAgent.ParkTimeShifting(low.Name, 0, dr1.idChannel, out low);      
 
       Thread.Sleep(1000);
-      tvresult = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(ref low, dr2.idChannel, out card);
+      tvresult = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(low.Name, dr2.idChannel, out card, out low);
       low.CardId = card.Id;
 
       //StartTimeshifting(tv3, low, 0, out mSecsElapsed, out result, out card);      

@@ -139,14 +139,14 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation
       return numberOfOtherUsersOnCurrentCard;
     }
 
-    public static bool IsRecordingUser(ITvCardHandler tvcard, IUser user, ref IUser u)
+    public static bool IsRecordingUser(ITvCardHandler tvcard, UserType userType, string userName)
     {
       bool isRecordingAnyUser = false;
-      if (user.UserType == UserType.Scheduler)
+      if (userType == UserType.Scheduler)
       {
-        if (tvcard.CurrentChannelName(ref u, tvcard.UserManagement.GetTimeshiftingChannelId(u.Name)) != null)
+        if (tvcard.CurrentChannelName(userName, tvcard.UserManagement.GetTimeshiftingChannelId(userName)) != null)
         {
-          isRecordingAnyUser = tvcard.Recorder.IsRecording(ref u);
+          isRecordingAnyUser = tvcard.Recorder.IsRecording(userName);
         }
       }
       return isRecordingAnyUser;
@@ -154,7 +154,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation
 
     public static void AddUserIfTimeshifting(ITvCardHandler tvcard, ref IUser u, List<IUser> tsUsers)
     {
-      bool isUserTS = tvcard.TimeShifter.IsTimeShifting(ref u);
+      bool isUserTS = tvcard.TimeShifter.IsTimeShifting(u);
 
       if (isUserTS)
       {
@@ -228,13 +228,13 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation
       }
     }
 
-    public static void AddUserIfRecording(ITvCardHandler tvcard, ref IUser u, List<IUser> recUsers)
+    public static void AddUserIfRecording(ITvCardHandler tvcard, IUser user, List<IUser> recUsers)
     {
-      bool isUserRec = tvcard.Recorder.IsRecording(ref u);
+      bool isUserRec = tvcard.Recorder.IsRecording(user.Name);
 
       if (isUserRec)
       {
-        recUsers.Add(u);
+        recUsers.Add(user);
       }
     }
 
@@ -269,9 +269,9 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation
       return isUserOnSameChannel;
     }
 
-    public static bool IsFreeToAir(ITvCardHandler tvcard, IUser user, int idChannel)
+    public static bool IsFreeToAir(ITvCardHandler tvcard, string userName, int idChannel)
     {
-      IChannel currentUserCh = tvcard.CurrentChannel(ref user, idChannel);
+      IChannel currentUserCh = tvcard.CurrentChannel(userName, idChannel);
       return (currentUserCh != null && currentUserCh.FreeToAir);
     }
 

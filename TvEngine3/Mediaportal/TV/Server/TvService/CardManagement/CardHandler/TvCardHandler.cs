@@ -217,8 +217,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     {
       get
       {
-        IDictionary<string, IUser> users = UserManagement.Users;
-        if (users.Count == 0)
+        if (UserManagement.UsersCount() == 0)
         {
           return true;
         }
@@ -526,10 +525,10 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// <summary>
     /// Gets the current channel.
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <param name="idChannel"> </param>
     /// <returns>channel</returns>
-    public IChannel CurrentChannel(ref IUser user, int idChannel)
+    public IChannel CurrentChannel(string userName, int idChannel)
     {
       try
       {
@@ -542,8 +541,8 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
         {
           return null;
         }
-        _userManagement.RefreshUser(ref user);
-        ITvSubChannel subchannel = _card.GetSubChannel(_userManagement.GetSubChannelIdByChannelId(user.Name, idChannel));
+        
+        ITvSubChannel subchannel = _card.GetSubChannel(_userManagement.GetSubChannelIdByChannelId(userName, idChannel));
         if (subchannel == null)
         {
           return null;
@@ -564,17 +563,18 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// <summary>
     /// Gets the current channel.
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>id of database channel</returns>
-    public int CurrentDbChannel(ref IUser user)
+    public int CurrentDbChannel(string userName)
     {
       try
       {
         if (_dbsCard.enabled == false)
+        {
           return -1;
-
-        _userManagement.RefreshUser(ref user);
-        return _userManagement.GetTimeshiftingChannelId(user.Name);
+        }
+        
+        return _userManagement.GetTimeshiftingChannelId(userName);
       }
       catch (ThreadAbortException)
       {
@@ -595,10 +595,10 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// <summary>
     /// Gets the current channel name.
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <param name="idChannel"> </param>
     /// <returns>channel</returns>
-    public string CurrentChannelName(ref IUser user, int idChannel)
+    public string CurrentChannelName(string userName, int idChannel)
     {
       try
       {
@@ -608,13 +608,19 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
         }
         
         if (Context == null)
+        {
           return "";
-        _userManagement.RefreshUser(ref user);
-        ITvSubChannel subchannel = _card.GetSubChannel(_userManagement.GetSubChannelIdByChannelId(user.Name, idChannel));
+        }
+        
+        ITvSubChannel subchannel = _card.GetSubChannel(_userManagement.GetSubChannelIdByChannelId(userName, idChannel));
         if (subchannel == null)
+        {
           return "";
+        }
         if (subchannel.CurrentChannel == null)
+        {
           return "";
+        }
         return subchannel.CurrentChannel.Name;
       }
       catch (ThreadAbortException)
@@ -633,22 +639,24 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// scrambled or not.
     /// </summary>
     /// <returns>yes if channel is scrambled and CI/CAM cannot decode it, otherwise false</returns>
-    public bool IsScrambled(ref IUser user)
+    public bool IsScrambled(string userName)
     {
       try
       {
         if (_dbsCard.enabled == false)
         {
           return true;
-        }
-               
+        }               
         if (Context == null)
+        {
           return false;
-        _userManagement.RefreshUser(ref user);
-        ITvSubChannel subchannel = _card.GetSubChannel(_userManagement.GetTimeshiftingSubChannel(user.Name));
+        }        
+        ITvSubChannel subchannel = _card.GetSubChannel(_userManagement.GetTimeshiftingSubChannel(userName));
         if (subchannel == null)
+        {
           return false;
-        return (false == subchannel.IsReceivingAudioVideo);
+        }
+        return (!subchannel.IsReceivingAudioVideo);
       }
       catch (ThreadAbortException)
       {
@@ -789,7 +797,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// Gets the current video stream.
     /// </summary>
     /// <returns></returns>
-    public IVideoStream GetCurrentVideoStream(IUser user)
+    public IVideoStream GetCurrentVideoStream(string userName)
     {
       if (_dbsCard.enabled == false)
       {
@@ -800,10 +808,12 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
       {
         return null;
       }
-      _userManagement.RefreshUser(ref user);
-      ITvSubChannel subchannel = _card.GetSubChannel(_userManagement.GetTimeshiftingSubChannel(user.Name));
+      
+      ITvSubChannel subchannel = _card.GetSubChannel(_userManagement.GetTimeshiftingSubChannel(userName));
       if (subchannel == null)
+      {
         return null;
+      }
       return subchannel.GetCurrentVideoStream;
     }
   }

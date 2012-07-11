@@ -73,13 +73,8 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
 
     protected virtual int NumberOfOtherUsersOnCurrentCard(ITvCardHandler card, IUser user)
     {
-      //determine how many other users are using this card
-      int nrOfOtherUsers = 0;
-      IDictionary<string, IUser> users = card.UserManagement.Users;
-      if (users.Count > 0)
-      {
-        nrOfOtherUsers = users.Count(t => t.Value.Name != user.Name && !t.Value.Name.Equals("epg"));
-      }
+      //determine how many other users are using this card            
+      int nrOfOtherUsers = card.UserManagement.NumberOfOtherUsers(user.Name);
 
       if (LogEnabled)
       {
@@ -98,11 +93,10 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
     /// List is sorted.
     /// </summary>
     /// <returns>list containg all free cards which can receive the channel</returns>
-    public List<CardDetail> GetFreeCardsForChannel(IDictionary<int, ITvCardHandler> cards, Channel dbChannel,
-                                                   ref IUser user)
+    public List<CardDetail> GetFreeCardsForChannel(IDictionary<int, ITvCardHandler> cards, Channel dbChannel, IUser user)
      {
        TvResult result;
-       return GetFreeCardsForChannel(cards, dbChannel, ref user, out result);
+       return GetFreeCardsForChannel(cards, dbChannel, user, out result);
      }
 
     /// <summary>
@@ -110,8 +104,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
     /// List is sorted.
     /// </summary>
     /// <returns>list containg all free cards which can receive the channel</returns>
-    public List<CardDetail> GetFreeCardsForChannel(IDictionary<int, ITvCardHandler> cards, Channel dbChannel,
-                                                   ref IUser user, out TvResult result)
+    public List<CardDetail> GetFreeCardsForChannel(IDictionary<int, ITvCardHandler> cards, Channel dbChannel, IUser user, out TvResult result)
     {
       Stopwatch stopwatch = Stopwatch.StartNew();
       try
@@ -125,7 +118,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
         var cardsAvailable = new List<CardDetail>();
 
         IDictionary<int, TvResult> cardsUnAvailable;
-        List<CardDetail> cardDetails = GetAvailableCardsForChannel(cards, dbChannel, ref user, out cardsUnAvailable);
+        List<CardDetail> cardDetails = GetAvailableCardsForChannel(cards, dbChannel, user, out cardsUnAvailable);
         foreach (CardDetail cardDetail in cardDetails)
         {
           ITvCardHandler tvCardHandler = cards[cardDetail.Card.idCard];
@@ -190,7 +183,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
                                                         ref IUser user)
     {
       IDictionary<int, TvResult> cardsUnAvailable;
-      return GetAvailableCardsForChannel(cards, dbChannel, ref user, out cardsUnAvailable);
+      return GetAvailableCardsForChannel(cards, dbChannel, user, out cardsUnAvailable);
     }
 
     /// <summary>
@@ -198,7 +191,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
     /// List is sorted.
     /// </summary>
     /// <returns>list containg all cards which can receive the channel</returns>
-    public List<CardDetail> GetAvailableCardsForChannel(IDictionary<int, ITvCardHandler> cards, Channel dbChannel, ref IUser user, out IDictionary<int, TvResult> cardsUnAvailable)
+    public List<CardDetail> GetAvailableCardsForChannel(IDictionary<int, ITvCardHandler> cards, Channel dbChannel, IUser user, out IDictionary<int, TvResult> cardsUnAvailable)
     {      
       Stopwatch stopwatch = Stopwatch.StartNew();
       cardsUnAvailable = new Dictionary<int, TvResult>();

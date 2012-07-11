@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using Mediaportal.TV.Server.TVControl;
@@ -439,34 +440,28 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
 
             //remove all subchannels, except for this user...
             int i = 0;
-            IDictionary<string, IUser> users = _cardHandler.UserManagement.Users;
-            foreach (IUser existingUser in users.Values)
-            {              
-              if (existingUser.Name != user.Name)
-              {
-                Log.Debug("  stop subchannel: {0} user: {1}", i, existingUser.Name);
-                //fix for b2b mantis; http://mantis.team-mediaportal.com/view.php?id=1112
-                if (existingUser.UserType == UserType.Scheduler)
-                  // if we are stopping an on-going recording/schedule (=admin), we have to make sure that we remove the schedule also.
-                {
-                  Log.Debug("user is scheduler: {0}", existingUser.Name);
-                  int recScheduleId = ServiceManager.Instance.InternalControllerService.GetRecordingSchedule(existingUser.CardId, existingUser.Name);
+            IEnumerable<IUser> usersRec = _cardHandler.UserManagement.GetUsersCopy(UserType.Scheduler);
 
-                  if (recScheduleId > 0)
-                  {
-                    Schedule schedule = ScheduleManagement.GetSchedule(recScheduleId);
-                    Log.Info("removing schedule with id: {0}", schedule.id_Schedule);                    
-                    ServiceManager.Instance.InternalControllerService.StopRecordingSchedule(schedule.id_Schedule);                    
-                    ScheduleManagement.DeleteSchedule(schedule.id_Schedule);
-                  }
+            foreach (IUser recUser in usersRec)
+            {
+              if (recUser.Name != user.Name)
+              {
+                Log.Debug("  stop subchannel: {0} user: {1}", i, recUser.Name);
+                //fix for b2b mantis; http://mantis.team-mediaportal.com/view.php?id=1112
+                
+                // if we are stopping an on-going recording/schedule (=admin), we have to make sure that we remove the schedule also.                
+                Log.Debug("user is scheduler: {0}", recUser.Name);
+                int recScheduleId = ServiceManager.Instance.InternalControllerService.GetRecordingSchedule(recUser.CardId, recUser.Name);
+
+                if (recScheduleId > 0)
+                {
+                  Schedule schedule = ScheduleManagement.GetSchedule(recScheduleId);
+                  Log.Info("removing schedule with id: {0}", schedule.id_Schedule);
+                  ServiceManager.Instance.InternalControllerService.StopRecordingSchedule(schedule.id_Schedule);
+                  ScheduleManagement.DeleteSchedule(schedule.id_Schedule);
                 }
-                //else
-                //{
-                //  FreeAllTimeshiftingSubChannels(ref user);                    
-                  //context.RemoveUser(user1);
-                //}
+                i++;
               }
-              i++;
             }
             //iterate all timesh. subchannels, and remove those.                            
             FreeAllTimeshiftingSubChannels(ref user);              
@@ -547,7 +542,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
         TvResult result;
         Log.WriteFile("card: CardTune {0} {1} {2}:{3}:{4}", _cardHandler.DataBaseCard.idCard, channel.Name, user.Name,
                       user.CardId, _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, dbChannel.idChannel));
-        if (_cardHandler.IsScrambled(ref user))
+        if (_cardHandler.IsScrambled(user.Name))
         {
           result = Tune(ref user, channel, dbChannel.idChannel);
           Log.Info("card2:{0} {1} {2}", user.Name, user.CardId, _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, dbChannel.idChannel));
@@ -563,7 +558,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
           }
         }
 
-        if (cardActive && _cardHandler.CurrentDbChannel(ref user) == dbChannel.idChannel && dbChannel.idChannel >= 0)
+        if (cardActive && _cardHandler.CurrentDbChannel(user.Name) == dbChannel.idChannel && dbChannel.idChannel >= 0)
         {
           return TvResult.Succeeded;
         }

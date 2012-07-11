@@ -23,7 +23,7 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     void UnRegisterTvServerEventCallbacks(ITvServerEventCallback handler);
   }
 
-  public class EventServiceAgent : IEventServiceAgent
+  public class EventServiceAgent : ServiceAgent<IEventService>, IEventServiceAgent
   {
     #region events & delegates
 
@@ -31,16 +31,16 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     private delegate void TvServerEventReceivedDelegate(TvServerEventArgs eventArgs);
     private delegate void CiMenuCallbackDelegate(CiMenu menu);
 
-    private static event HeartbeatRequestReceivedDelegate OnHeartbeatRequestReceived;
-    private static event TvServerEventReceivedDelegate OnTvServerEventReceived;
-    private static event CiMenuCallbackDelegate OnCiMenuCallbackReceived;
+    private event HeartbeatRequestReceivedDelegate OnHeartbeatRequestReceived;
+    private event TvServerEventReceivedDelegate OnTvServerEventReceived;
+    private event CiMenuCallbackDelegate OnCiMenuCallbackReceived;
 
     #endregion
 
     #region private members
 
     private readonly DuplexChannelFactory<IEventService> _channelFactory;
-    private readonly IEventService _channel;
+    //private readonly IEventService _channel;
     private static string _hostname;
 
     #endregion
@@ -49,7 +49,7 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     /// <summary>
     /// EventServiceAgent
     /// </summary>
-    public EventServiceAgent(string hostname)
+    public EventServiceAgent(string hostname) 
     {
       _hostname = hostname;
       NetTcpBinding binding = ServiceHelper.GetTcpBinding();
@@ -137,26 +137,26 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     #endregion
 
 
-    private static bool AreAnyEventHandlersInUse ()
+    private bool AreAnyEventHandlersInUse ()
     {
       return (OnCiMenuCallbackReceived != null ||
               OnHeartbeatRequestReceived != null ||
               OnTvServerEventReceived != null);
     }    
 
-    private static void RegisterEventServiceIfNeeded()
+    private void RegisterEventServiceIfNeeded()
     {
       if (AreAnyEventHandlersInUse())      
       {
-        ServiceAgents.Instance.EventServiceAgent.Subscribe(_hostname);
+        Subscribe(_hostname);
       }
     }
 
-    private static void UnRegisterEventServiceIfNeeded()
+    private void UnRegisterEventServiceIfNeeded()
     {
       if (OnCiMenuCallbackReceived == null && OnHeartbeatRequestReceived == null && OnTvServerEventReceived == null)      
       {
-        ServiceAgents.Instance.EventServiceAgent.Unsubscribe(_hostname);
+        Unsubscribe(_hostname);
       }
     }
     

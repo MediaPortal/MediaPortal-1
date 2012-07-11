@@ -9,13 +9,19 @@ using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 
 namespace Mediaportal.TV.Server.TVService.ServiceAgents
-{
+{ 
   public abstract class ServiceAgent<T> : IDisposable
   {
     protected T _channel;
 
+    public event EventHandler ServiceAgentRemoved;
     public event EventHandler ServiceAgentFaulted;
     public event EventHandler ServiceAgentClosed;
+
+    protected ServiceAgent ()
+    {
+      
+    }
 
     protected ServiceAgent (string hostname)
     {
@@ -64,5 +70,8 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
         ServiceAgentFaulted(sender, e);
       }
     }
+    
   }
+
+  
 }

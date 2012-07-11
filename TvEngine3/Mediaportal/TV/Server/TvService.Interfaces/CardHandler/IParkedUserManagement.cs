@@ -18,7 +18,7 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     bool HasAnyParkedUsers();    
     bool IsAnyUserParkedOnChannel(int idChannel);
     void Dispose();
-    bool HasParkedUserWithDuration(int subchannelId, double duration);
+    bool HasParkedUserWithDuration(int channelId, double duration);
     void CancelParkedUserBySubChannelId(string name, int subchannelId);
   }
 }

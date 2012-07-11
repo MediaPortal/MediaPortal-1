@@ -1116,7 +1116,7 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
     private void StartRecordOnFreeCard(RecordingDetail recDetail, ref IUser user)
         {
       var cardAllocationStatic = new AdvancedCardAllocationStatic();
-      List<CardDetail> freeCardsForReservation = cardAllocationStatic.GetFreeCardsForChannel(ServiceManager.Instance.InternalControllerService.CardCollection, recDetail.Channel, ref user);
+      List<CardDetail> freeCardsForReservation = cardAllocationStatic.GetFreeCardsForChannel(ServiceManager.Instance.InternalControllerService.CardCollection, recDetail.Channel, user);
       StartRecordOnCard(recDetail, ref user, freeCardsForReservation);
         }
     
@@ -1278,7 +1278,7 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
 
         if (recording.CardInfo != null && ServiceManager.Instance.InternalControllerService.SupportsSubChannels(recording.CardInfo.Id) == false)
         {
-          ServiceManager.Instance.InternalControllerService.StopTimeShifting(ref user);          
+          ServiceManager.Instance.InternalControllerService.StopTimeShifting(user.Name, out user);          
         }
 
         Log.Write("Scheduler: stop failed record {0} {1}-{2} {3}", recording.Channel.displayName,
@@ -1287,7 +1287,7 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
 
         if (ServiceManager.Instance.InternalControllerService.IsRecording(ref user))
         {
-          if (ServiceManager.Instance.InternalControllerService.StopRecording(ref user))
+          if (ServiceManager.Instance.InternalControllerService.StopRecording(user.Name, user.CardId, out user))
           {
             ResetRecordingStateOnProgram(recording);
             if (recording.Recording != null)
@@ -1577,14 +1577,14 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
 
         if (ServiceManager.Instance.InternalControllerService.SupportsSubChannels(recording.CardInfo.Id) == false)
         {
-          ServiceManager.Instance.InternalControllerService.StopTimeShifting(ref user);
+          ServiceManager.Instance.InternalControllerService.StopTimeShifting(user.Name, out user);
         }
 
         Log.Write("Scheduler: stop record {0} {1}-{2} {3}", recording.Channel.displayName,
                   recording.RecordingStartDateTime,
                   recording.EndTime, recording.Schedule.Entity.programName);
 
-        if (ServiceManager.Instance.InternalControllerService.StopRecording(ref user))
+        if (ServiceManager.Instance.InternalControllerService.StopRecording(user.Name, user.CardId, out user))
         {
           ResetRecordingState(recording);
           ResetRecordingStateOnProgram(recording);

@@ -297,7 +297,7 @@ namespace Mediaportal.TV.Server.SetupTV
       bool isAnyUserTS;
       bool isRec;
       bool isUserTS;
-      bool isRecOrTS = ServiceAgents.Instance.ControllerServiceAgent.IsAnyCardRecordingOrTimeshifting(new User(), out isUserTS, out isAnyUserTS,
+      bool isRecOrTS = ServiceAgents.Instance.ControllerServiceAgent.IsAnyCardRecordingOrTimeshifting(new User().Name, out isUserTS, out isAnyUserTS,
                                                                                out isRec);
 
       if (!isAnyUserTS && !isRec && !isRecOrTS && !isUserTS)

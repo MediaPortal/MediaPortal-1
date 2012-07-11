@@ -15,10 +15,10 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     /// <summary>
     /// Returns the position in the current timeshift file and the id of the current timeshift file
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
-    bool GetCurrentFilePosition(ref IUser user, ref Int64 position, ref long bufferId);
+    bool GetCurrentFilePosition(string userName, ref long position, ref long bufferId);
 
     /// <summary>
     /// Gets a value indicating whether this card is recording.
@@ -32,13 +32,13 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     /// Returns if the card is timeshifting or not
     /// </summary>
     /// <returns>true when card is timeshifting otherwise false</returns>
-    bool IsTimeShifting(ref IUser user);
+    bool IsTimeShifting(IUser user);
 
     /// <summary>
     /// returns the date/time when timeshifting has been started for the card specified
     /// </summary>
     /// <returns>DateTime containg the date/time when timeshifting was started</returns>
-    DateTime TimeShiftStarted(IUser user, int idChannel);
+    DateTime TimeShiftStarted(string userName, int idChannel);
 
     /// <summary>
     /// Start timeshifting.
@@ -58,12 +58,12 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
 
     /// <summary>
     /// Fetches the stream quality information
-    /// </summary>   
-    /// <param name="user">user</param>    
-    /// <param name="totalTSpackets">Amount of packets processed</param>    
+    /// </summary>
+    /// <param name="userName"> </param>
+    /// <param name="totalTSpackets">Amount of packets processed</param>
     /// <param name="discontinuityCounter">Number of stream discontinuities</param>
     /// <returns></returns>
-    void GetStreamQualityCounters(IUser user, out int totalTSpackets, out int discontinuityCounter);
+    void GetStreamQualityCounters(string userName, out int totalTSpackets, out int discontinuityCounter);
 
     void OnBeforeTune();
     void OnAfterTune();

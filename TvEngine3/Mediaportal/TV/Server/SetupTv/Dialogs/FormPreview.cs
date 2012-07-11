@@ -56,7 +56,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       Text = "Preview " + _channel.displayName;
       
       IUser user = UserFactory.CreateBasicUser("setuptv");
-      TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(ref user, _channel.idChannel, out _card);
+      TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, _channel.idChannel, out _card, out user);
       if (result != TvResult.Succeeded)
       {
         MessageBox.Show("Preview failed:" + result);

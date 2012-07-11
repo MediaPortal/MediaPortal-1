@@ -183,7 +183,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
                   if (subchannel.IdChannel == idChannel && subchannel.TvUsage == TvUsage.Parked)
                   {
                     hasParkedUser = true;
-                    IUser userUpdated = _cardHandler.UserManagement.GetUser(user.Name);
+                    IUser userUpdated = _cardHandler.UserManagement.GetUserCopy(user.Name);
                     if (userUpdated != null && user.Name == parkedUser.Name)
                     {
                       SetTimeShiftingStatusToIdenticalUser(idChannel, userUpdated);
@@ -472,30 +472,34 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
       CancelAllParkedUsers();
     }
 
-    public bool HasParkedUserWithDuration(int subchannelId, double duration)
+    public bool HasParkedUserWithDuration(int channelId, double duration)
     {
       bool hasParkedUserWithDuration = false;
-
-      lock (_parkedUsersLock)
+      IEnumerable<int>  subchannelIds =_cardHandler.UserManagement.GetAllSubChannelForChannel(channelId, TvUsage.Parked);
+      foreach (int subchannelId in subchannelIds)
       {
-        foreach (ParkedUser parkedUser in Context.ParkedUsers.Values)
+        lock (_parkedUsersLock)
         {
-          double durationFound;
-          bool hasDuration = parkedUser.ParkedDurations.TryGetValue(subchannelId, out durationFound);
-          if (hasDuration && durationFound.Equals(duration))
+          foreach (ParkedUser parkedUser in Context.ParkedUsers.Values)
           {
-            ISubChannel parkedSubchannel;
-            if (parkedUser.SubChannels.TryGetValue(subchannelId, out parkedSubchannel))
+            double durationFound;
+            bool hasDuration = parkedUser.ParkedDurations.TryGetValue(subchannelId, out durationFound);
+            if (hasDuration && durationFound.Equals(duration))
             {
-              if (parkedSubchannel.TvUsage == TvUsage.Parked)
+              ISubChannel parkedSubchannel;
+              if (parkedUser.SubChannels.TryGetValue(subchannelId, out parkedSubchannel))
               {
-                hasParkedUserWithDuration = true;
-                break;
+                if (parkedSubchannel.TvUsage == TvUsage.Parked)
+                {
+                  hasParkedUserWithDuration = true;
+                  break;
+                }
               }
             }
           }
         }
       }
+      
       return hasParkedUserWithDuration;
     }
 

@@ -685,7 +685,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                         _channel.displayName, item.Index + 1, mpListView1.Items.Count));
         Application.DoEvents();
         IVirtualCard _card;
-        TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(ref _user, _channel.idChannel, out _card);
+        TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(_user.Name, _channel.idChannel, out _card, out _user);
         if (result == TvResult.Succeeded)
         {
           _card.StopTimeShifting();

@@ -100,7 +100,7 @@ namespace Mediaportal.TV.TvPlugin
         return;
       }
       long bufferId = 0;
-      if (!ServiceAgents.Instance.ControllerServiceAgent.TimeShiftGetCurrentFilePosition(ref u, ref snapshotBuferPosition, ref bufferId))
+      if (!ServiceAgents.Instance.ControllerServiceAgent.TimeShiftGetCurrentFilePosition(u.Name, ref snapshotBuferPosition, ref bufferId))
       {
         Log.Error("TvTimeShiftPositionWatcher: TimeShiftGetCurrentFilePosition failed.");
         return;
@@ -166,7 +166,7 @@ namespace Mediaportal.TV.TvPlugin
         IUser u = TVHome.Card.User;
         long bufferId = 0;
         Int64 currentPosition = -1;
-        if (ServiceAgents.Instance.ControllerServiceAgent.TimeShiftGetCurrentFilePosition(ref u, ref currentPosition, ref bufferId))
+        if (ServiceAgents.Instance.ControllerServiceAgent.TimeShiftGetCurrentFilePosition(u.Name, ref currentPosition, ref bufferId))
         {
           string currentFile = ServiceAgents.Instance.ControllerServiceAgent.TimeShiftFileName(u.Name, u.CardId) + bufferId.ToString() + ".ts";
           Log.Info("**");

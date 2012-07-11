@@ -78,7 +78,7 @@ namespace Mediaportal.TV.Server.TVControl
     /// <param name="server">The server.</param>
     /// <param name="recordingFormat">The recording format.</param>
     public VirtualCard(User user, string server, int recordingFormat)
-    {
+    {      
       _user = user;
       _server = server;
       _recordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings",
@@ -257,7 +257,7 @@ namespace Mediaportal.TV.Server.TVControl
             return "";
           }
           RemoteControl.HostName = _server;
-          return GlobalServiceProvider.Get<IControllerService>().RecordingFileName(ref _user);
+          return GlobalServiceProvider.Get<IControllerService>().RecordingFileName(_user.Name);
         }
         catch (Exception)
         {
@@ -282,7 +282,7 @@ namespace Mediaportal.TV.Server.TVControl
         try
         {
           RemoteControl.HostName = _server;
-          return GlobalServiceProvider.Get<IControllerService>().AvailableAudioStreams(User);
+          return GlobalServiceProvider.Get<IControllerService>().AvailableAudioStreams(User.Name);
         }
         catch (Exception)
         {
@@ -306,7 +306,7 @@ namespace Mediaportal.TV.Server.TVControl
       try
       {
         RemoteControl.HostName = _server;
-        return GlobalServiceProvider.Get<IControllerService>().GetCurrentVideoStream(user);
+        return GlobalServiceProvider.Get<IControllerService>().GetCurrentVideoStream(user.Name);
       }
       catch (Exception)
       {
@@ -358,7 +358,7 @@ namespace Mediaportal.TV.Server.TVControl
             return "";
           }
           RemoteControl.HostName = _server;
-          return GlobalServiceProvider.Get<IControllerService>().GetStreamingUrl(User);
+          return GlobalServiceProvider.Get<IControllerService>().GetStreamingUrl(User.Name);
         }
         catch (Exception)
         {
@@ -385,7 +385,7 @@ namespace Mediaportal.TV.Server.TVControl
             return;
           }
           RemoteControl.HostName = _server;
-          GlobalServiceProvider.Get<IControllerService>().GrabTeletext(User, value);
+          GlobalServiceProvider.Get<IControllerService>().GrabTeletext(User.Name, value);
         }
         catch (Exception)
         {
@@ -410,7 +410,7 @@ namespace Mediaportal.TV.Server.TVControl
             return false;
           }
           RemoteControl.HostName = _server;
-          return GlobalServiceProvider.Get<IControllerService>().HasTeletext(User);
+          return GlobalServiceProvider.Get<IControllerService>().HasTeletext(User.Name);
         }
         catch (Exception)
         {
@@ -514,7 +514,7 @@ namespace Mediaportal.TV.Server.TVControl
             return false;
           }
           RemoteControl.HostName = _server;
-          return GlobalServiceProvider.Get<IControllerService>().IsScrambled(ref _user);
+          return GlobalServiceProvider.Get<IControllerService>().IsScrambled(_user.Name);
         }
         catch (Exception)
         {
@@ -540,7 +540,7 @@ namespace Mediaportal.TV.Server.TVControl
             return false;
           }
           RemoteControl.HostName = _server;
-          return WaitFor<bool>.Run(CommandTimeOut, () => GlobalServiceProvider.Get<IControllerService>().IsTimeShifting(ref _user));
+          return WaitFor<bool>.Run(CommandTimeOut, () => GlobalServiceProvider.Get<IControllerService>().IsTimeShifting(_user.Name));
         }
         catch (Exception)
         {
@@ -618,7 +618,7 @@ namespace Mediaportal.TV.Server.TVControl
             return "";
           }
           RemoteControl.HostName = _server;
-          return GlobalServiceProvider.Get<IControllerService>().CurrentChannelName(ref _user);
+          return GlobalServiceProvider.Get<IControllerService>().CurrentChannelName(_user.Name);
         }
         catch (Exception)
         {
@@ -650,7 +650,7 @@ namespace Mediaportal.TV.Server.TVControl
           {
             if (subchannel.TvUsage == TvUsage.Timeshifting)
             {
-              return GlobalServiceProvider.Get<IControllerService>().CurrentChannel(ref _user, subchannel.IdChannel);
+              return GlobalServiceProvider.Get<IControllerService>().CurrentChannel(_user.Name, subchannel.IdChannel);
             }
           }          
         }
@@ -678,7 +678,7 @@ namespace Mediaportal.TV.Server.TVControl
             return -1;
           }
           RemoteControl.HostName = _server;
-          return GlobalServiceProvider.Get<IControllerService>().CurrentDbChannel(ref _user);
+          return GlobalServiceProvider.Get<IControllerService>().CurrentDbChannel(_user.Name);
         }
         catch (Exception)
         {
@@ -704,7 +704,7 @@ namespace Mediaportal.TV.Server.TVControl
         if (User.CardId > 0)
         {
           RemoteControl.HostName = _server;
-          GlobalServiceProvider.Get<IControllerService>().GetStreamQualityCounters(User, out totalTSpackets, out discontinuityCounter);
+          GlobalServiceProvider.Get<IControllerService>().GetStreamQualityCounters(User.Name, out totalTSpackets, out discontinuityCounter);
         }
       }
       catch (Exception)
@@ -785,7 +785,7 @@ namespace Mediaportal.TV.Server.TVControl
           return new byte[] {1};
         }
         RemoteControl.HostName = _server;
-        return GlobalServiceProvider.Get<IControllerService>().GetTeletextPage(User, pageNumber, subPageNumber);
+        return GlobalServiceProvider.Get<IControllerService>().GetTeletextPage(User.Name, pageNumber, subPageNumber);
       }
       catch (Exception)
       {
@@ -812,7 +812,13 @@ namespace Mediaportal.TV.Server.TVControl
           return;
         }
         RemoteControl.HostName = _server;
-        GlobalServiceProvider.Get<IControllerService>().StopTimeShifting(ref _user);
+        IUser userResult;
+        GlobalServiceProvider.Get<IControllerService>().StopTimeShifting(_user.Name, out userResult);
+
+        if (userResult != null)
+        {
+          _user = userResult;
+        }        
       }
       catch (Exception)
       {
@@ -833,7 +839,12 @@ namespace Mediaportal.TV.Server.TVControl
           return;
         }
         RemoteControl.HostName = _server;
-        GlobalServiceProvider.Get<IControllerService>().StopRecording(ref _user);
+        IUser userResult;
+        GlobalServiceProvider.Get<IControllerService>().StopRecording(_user.Name, _user.CardId, out userResult);
+        if (userResult != null)
+        {
+          _user = userResult;
+        }        
       }
       catch (Exception)
       {
@@ -855,7 +866,15 @@ namespace Mediaportal.TV.Server.TVControl
           return TvResult.UnknownError;
         }
         RemoteControl.HostName = _server;
-        return GlobalServiceProvider.Get<IControllerService>().StartRecording(ref _user, ref fileName);
+        IUser userResult;
+        TvResult startRecording = GlobalServiceProvider.Get<IControllerService>().StartRecording(_user.Name, _user.CardId, out userResult, ref fileName);
+
+        if (userResult != null)
+        {
+          _user = userResult;
+        }     
+
+        return startRecording;
       }
       catch (Exception)
       {
@@ -878,7 +897,7 @@ namespace Mediaportal.TV.Server.TVControl
           return -1;
         }
         RemoteControl.HostName = _server;
-        return GlobalServiceProvider.Get<IControllerService>().SubPageCount(User, pageNumber);
+        return GlobalServiceProvider.Get<IControllerService>().SubPageCount(User.Name, pageNumber);
       }
       catch (Exception)
       {
@@ -900,7 +919,7 @@ namespace Mediaportal.TV.Server.TVControl
           return -1;
         }
         RemoteControl.HostName = _server;
-        return GlobalServiceProvider.Get<IControllerService>().GetTeletextRedPageNumber(User);
+        return GlobalServiceProvider.Get<IControllerService>().GetTeletextRedPageNumber(User.Name);
       }
       catch (Exception)
       {
@@ -922,7 +941,7 @@ namespace Mediaportal.TV.Server.TVControl
           return -1;
         }
         RemoteControl.HostName = _server;
-        return GlobalServiceProvider.Get<IControllerService>().GetTeletextGreenPageNumber(User);
+        return GlobalServiceProvider.Get<IControllerService>().GetTeletextGreenPageNumber(User.Name);
       }
       catch (Exception)
       {
@@ -944,7 +963,7 @@ namespace Mediaportal.TV.Server.TVControl
           return -1;
         }
         RemoteControl.HostName = _server;
-        return GlobalServiceProvider.Get<IControllerService>().GetTeletextYellowPageNumber(User);
+        return GlobalServiceProvider.Get<IControllerService>().GetTeletextYellowPageNumber(User.Name);
       }
       catch (Exception)
       {
@@ -966,7 +985,7 @@ namespace Mediaportal.TV.Server.TVControl
           return -1;
         }
         RemoteControl.HostName = _server;
-        return GlobalServiceProvider.Get<IControllerService>().GetTeletextBluePageNumber(User);
+        return GlobalServiceProvider.Get<IControllerService>().GetTeletextBluePageNumber(User.Name);
       }
       catch (Exception)
       {
@@ -989,7 +1008,7 @@ namespace Mediaportal.TV.Server.TVControl
           return new TimeSpan(0, 0, 0, 15);
         }
         RemoteControl.HostName = _server;
-        return GlobalServiceProvider.Get<IControllerService>().TeletextRotation(User, pageNumber);
+        return GlobalServiceProvider.Get<IControllerService>().TeletextRotation(User.Name, pageNumber);
       }
       catch (Exception)
       {
@@ -1015,7 +1034,7 @@ namespace Mediaportal.TV.Server.TVControl
           return false;
         }
         RemoteControl.HostName = _server;
-        return GlobalServiceProvider.Get<IControllerService>().IsOwner(User.CardId, User);
+        return GlobalServiceProvider.Get<IControllerService>().IsOwner(User.CardId, User.Name);
       }
       catch (Exception)
       {

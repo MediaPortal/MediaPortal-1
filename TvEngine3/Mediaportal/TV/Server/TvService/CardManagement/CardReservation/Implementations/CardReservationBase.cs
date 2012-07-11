@@ -143,7 +143,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Impleme
             if (OnStartCardTune != null)
             {
               var subChannelByChannelId = tvcard.UserManagement.GetSubChannelIdByChannelId(user.Name, dbChannel.idChannel);
-              if (!ServiceManager.Instance.InternalControllerService.IsTimeShifting(ref user))
+              if (!ServiceManager.Instance.InternalControllerService.IsTimeShifting(user.Name))
               {
                 CleanTimeShiftFiles(tvcard.DataBaseCard.timeshiftingFolder,
                                     String.Format("live{0}-{1}.ts", user.CardId, subChannelByChannelId));
@@ -230,7 +230,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Impleme
           bool isAnySubChannelTimeshifting = tvcard.TimeShifter.IsAnySubChannelTimeshifting;
           bool isOwner = IsOwner(tvcard, user, idChannel);
 
-          List<KeyValuePair<string, IUser>> users = new Dictionary<string, IUser>(tvcard.UserManagement.Users).ToList();
+          List<KeyValuePair<string, IUser>> users = new Dictionary<string, IUser>(tvcard.UserManagement.UsersCopy).ToList();
           var inactiveUsers = new List<IUser>();
           var activeUsers = new List<IUser>();
           var recUsers = new List<IUser>();
@@ -242,13 +242,13 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Impleme
           hasUserEqualOrHigherPriority = tvcard.UserManagement.HasUserEqualOrHigherPriority(user);
                     
 
-          int currentChannelId = tvcard.CurrentDbChannel(ref user);          
+          int currentChannelId = tvcard.CurrentDbChannel(user.Name);          
           int subChannelId = tvcard.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel);          
 
           for (int i = users.Count - 1; i > -1; i--)
           {
             IUser actualUser = users[i].Value;
-            CardReservationHelper.AddUserIfRecording(tvcard, ref actualUser, recUsers);
+            CardReservationHelper.AddUserIfRecording(tvcard, actualUser, recUsers);
             CardReservationHelper.AddUserIfTimeshifting(tvcard, ref actualUser, tsUsers);
 
             bool isCurrentUser = user.Name.Equals(actualUser.Name);
@@ -256,14 +256,14 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Impleme
             foreach (ISubChannel subchannel in actualUser.SubChannels.Values)
             {
               bool isParked = subchannel != null && subchannel.TvUsage == TvUsage.Parked;
-              IChannel userChannel = tvcard.CurrentChannel(ref actualUser, subchannel.IdChannel);
+              IChannel userChannel = tvcard.CurrentChannel(actualUser.Name, subchannel.IdChannel);
               var userDVBchannel = userChannel as DVBBaseChannel;
 
               if (!isCurrentUser || (isCurrentUser && isParked))
               {
                 if (!isRecordingAnyUser)
                 {
-                  isRecordingAnyUser = CardReservationHelper.IsRecordingUser(tvcard, user, ref actualUser);
+                  isRecordingAnyUser = CardReservationHelper.IsRecordingUser(tvcard, user.UserType, actualUser.Name);
                 }
 
                 if (idChannel > 0 && actualUser.SubChannels.ContainsKey(subChannelId))
@@ -319,7 +319,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Impleme
             }
           }
 
-          bool isFreeToAir = CardReservationHelper.IsFreeToAir(tvcard, user, idChannel);
+          bool isFreeToAir = CardReservationHelper.IsFreeToAir(tvcard, user.Name, idChannel);
 
           cardTuneReservationTicket = new CardTuneReservationTicket
               (                

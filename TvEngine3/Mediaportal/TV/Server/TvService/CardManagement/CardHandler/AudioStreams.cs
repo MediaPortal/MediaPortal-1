@@ -48,13 +48,12 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// Gets the available audio streams.
     /// </summary>
     /// <value>The available audio streams.</value>
-    public IAudioStream[] Streams(IUser user, int idChannel)
+    public IAudioStream[] Streams(string userName, int idChannel)
     {
       var audioStreams = new List<IAudioStream>().ToArray();
       if (_cardHandler.DataBaseCard.enabled)
-      {
-        _cardHandler.UserManagement.RefreshUser(ref user);
-        int subChannelIdByChannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel);
+      {        
+        int subChannelIdByChannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(userName, idChannel);
         if (subChannelIdByChannelId > -1)
         {
           ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(subChannelIdByChannelId);

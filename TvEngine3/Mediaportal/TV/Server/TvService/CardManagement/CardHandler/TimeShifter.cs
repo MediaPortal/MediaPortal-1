@@ -96,8 +96,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
         {
           return "";
         }
-        
-        _cardHandler.UserManagement.RefreshUser(ref user);
+                
         ITvSubChannel subchannel = GetSubChannel(_cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
         if (subchannel == null)
           return null;
@@ -113,10 +112,10 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// <summary>
     /// Returns the position in the current timeshift file and the id of the current timeshift file
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
-    public bool GetCurrentFilePosition(ref IUser user, ref Int64 position, ref long bufferId)
+    public bool GetCurrentFilePosition(string userName, ref long position, ref long bufferId)
     {
       try
       {
@@ -124,9 +123,8 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
         {
           return false;
         }
-        
-        _cardHandler.UserManagement.RefreshUser(ref user);
-        ITvSubChannel subchannel = GetSubChannel(_cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
+                
+        ITvSubChannel subchannel = GetSubChannel(_cardHandler.UserManagement.GetTimeshiftingSubChannel(userName));
         if (subchannel == null)
           return false;
         subchannel.TimeShiftGetCurrentFilePosition(ref position, ref bufferId);
@@ -149,12 +147,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     {
       get
       {
-        IDictionary<string, IUser> users = _cardHandler.UserManagement.Users;
-        if (users.Values.Select(user => (IUser) user.Clone()).Any(userCopy => IsTimeShifting(ref userCopy)))
-        {
-          return true;
-        }
-        return false;
+        return _cardHandler.UserManagement.IsAnyUserTimeShifting();        
       }
     }
 
@@ -162,14 +155,14 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// Returns if the card is timeshifting or not
     /// </summary>
     /// <returns>true when card is timeshifting otherwise false</returns>
-    public bool IsTimeShifting(ref IUser user)
+    public bool IsTimeShifting(IUser user)
     {
       bool isTimeShifting = false;
       try
       {
         foreach (ISubChannel subch in user.SubChannels.Values)
         {
-          ITvSubChannel subchannel = GetSubChannel(ref user, subch.IdChannel);
+          ITvSubChannel subchannel = GetSubChannel(user.Name, subch.IdChannel);
           if (subchannel != null)
           {
             isTimeShifting = subchannel.IsTimeShifting;
@@ -192,12 +185,12 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// returns the date/time when timeshifting has been started for the card specified
     /// </summary>
     /// <returns>DateTime containg the date/time when timeshifting was started</returns>
-    public DateTime TimeShiftStarted(IUser user, int idChannel)
+    public DateTime TimeShiftStarted(string userName, int idChannel)
     {
       DateTime timeShiftStarted = DateTime.MinValue;
       try
       {
-        ITvSubChannel subchannel = GetSubChannel(ref user, idChannel);
+        ITvSubChannel subchannel = GetSubChannel(userName, idChannel);
         if (subchannel != null)
         {
           timeShiftStarted = subchannel.StartOfTimeShift;
@@ -240,7 +233,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
         if (_cardHandler.DataBaseCard.enabled)
         {
           // Let's verify if hard disk drive has enough free space before we start time shifting. The function automatically handles both local and UNC paths
-          if (!IsTimeShifting(ref user) && !HasFreeDiskSpace(fileName))
+          if (!IsTimeShifting(user) && !HasFreeDiskSpace(fileName))
           {
             result = TvResult.NoFreeDiskSpace;
           }
@@ -337,19 +330,17 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
 
     /// <summary>
     /// Fetches the stream quality information
-    /// </summary>   
-    /// <param name="user">user</param>    
-    /// <param name="totalTSpackets">Amount of packets processed</param>    
+    /// </summary>
+    /// <param name="userName"> </param>
+    /// <param name="totalTSpackets">Amount of packets processed</param>
     /// <param name="discontinuityCounter">Number of stream discontinuities</param>
     /// <returns></returns>
-    public void GetStreamQualityCounters(IUser user, out int totalTSpackets, out int discontinuityCounter)
+    public void GetStreamQualityCounters(string userName, out int totalTSpackets, out int discontinuityCounter)
     {
       totalTSpackets = 0;
       discontinuityCounter = 0;
-      
-      _cardHandler.UserManagement.RefreshUser(ref user);        
-      
-      ITvSubChannel subchannel = GetSubChannel(_cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
+
+      ITvSubChannel subchannel = GetSubChannel(_cardHandler.UserManagement.GetTimeshiftingSubChannel(userName));
 
       var dvbSubchannel = subchannel as TvDvbChannel;
       if (dvbSubchannel != null)

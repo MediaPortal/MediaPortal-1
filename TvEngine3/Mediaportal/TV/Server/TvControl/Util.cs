@@ -70,11 +70,11 @@ namespace Mediaportal.TV.Server.TVControl
                                    if (!isCompleted)
                                    {
                                      Monitor.Wait(sync, _timeout);
-                                   }
-                                   if (!isCompleted)
-                                   {
-                                     watchedThread.Abort();
-                                   }
+                                   }                                   
+                                 }
+                                 if (!isCompleted)
+                                 {
+                                   watchedThread.Abort();
                                  }
                                };
       try

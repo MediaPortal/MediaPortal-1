@@ -927,16 +927,8 @@ namespace Mediaportal.TV.TvPlugin
                 {
                   Log.Debug("TVFullscreen: IsParkConfirmed");
                   var userCopy = TVHome.Card.User.Clone() as IUser;
-                  ServiceAgents.Instance.ControllerServiceAgent.ParkTimeShifting(ref userCopy, g_Player.CurrentPosition, TVHome.Card.IdChannel);
-                  try
-                  {
-                    //TVHome.ParkChannel = true;
-                    g_Player.Stop();
-                  }
-                  finally
-                  {
-                    //TVHome.ParkChannel = false;              
-                  }                  
+                  ServiceAgents.Instance.ControllerServiceAgent.ParkTimeShifting(userCopy.Name, g_Player.CurrentPosition, TVHome.Card.IdChannel, out userCopy);                 
+                  g_Player.Stop();                              
                 }
                 else if (dlgPlayStopPark.IsStopConfirmed)
                 {

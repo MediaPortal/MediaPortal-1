@@ -70,7 +70,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Impleme
         _recDetail.CardInfo = _cardInfo;
         Log.Write("Scheduler : record to {0}", _recDetail.FileName);
         string fileName = _recDetail.FileName;
-        startRecordingOnDisc = (TvResult.Succeeded == ServiceManager.Instance.InternalControllerService.StartRecording(ref user, ref fileName));
+        startRecordingOnDisc = (TvResult.Succeeded == ServiceManager.Instance.InternalControllerService.StartRecording(user.Name, user.CardId, out user, ref fileName));
 
         if (startRecordingOnDisc)
         {

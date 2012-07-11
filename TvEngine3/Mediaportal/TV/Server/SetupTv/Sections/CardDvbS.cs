@@ -928,7 +928,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         IUser user = new User();
         user.CardId = _cardNumber;
-        ServiceAgents.Instance.ControllerServiceAgent.StopCard(user);
+        ServiceAgents.Instance.ControllerServiceAgent.StopCard(user.CardId);
         ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
         progressBar1.Value = 100;
         scanState = ScanState.Done;
@@ -939,7 +939,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void Scan(int lnb, BandType bandType, DisEqcType diseqc, SatelliteContext context)
     {
       // all transponders to scan
-      List<DVBSChannel> _channels = new List<DVBSChannel>();
+      var dvbsChannels = new List<DVBSChannel>();
 
       // get default sat position from DB
       
@@ -967,7 +967,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           foreach (Transponder t in _transponders)
           {
             DVBSChannel curChannel = t.toDVBSChannel;
-            _channels.Add(curChannel);
+            dvbsChannels.Add(curChannel);
           }
           break;
 
@@ -991,7 +991,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             for (int i = 0; i < channels.Length; ++i)
             {
               DVBSChannel curChannel = (DVBSChannel)channels[i];
-              _channels.Add(curChannel);
+              dvbsChannels.Add(curChannel);
               item = listViewStatus.Items.Add(new ListViewItem(curChannel.ToString()));
               item.EnsureVisible();
             }
@@ -999,30 +999,30 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
           ListViewItem lastItem =
             listViewStatus.Items.Add(
-              new ListViewItem(String.Format("Scan done, found {0} transponders...", _channels.Count)));
+              new ListViewItem(String.Format("Scan done, found {0} transponders...", dvbsChannels.Count)));
           lastItem.EnsureVisible();
           break;
 
           // scan only single TP
         case ScanTypes.SingleTransponder:
-          _channels.Add(GetManualTuning());
+          dvbsChannels.Add(GetManualTuning());
           break;
       }
 
       // no channels
-      if (_channels.Count == 0)
+      if (dvbsChannels.Count == 0)
         return;
 
       IUser user = new User();
       user.CardId = _cardNumber;
       int scanIndex = 0; // count of really scanned TPs (S2 skipped)
-      for (int index = 0; index < _channels.Count; ++index)
+      for (int index = 0; index < dvbsChannels.Count; ++index)
       {
         if (scanState == ScanState.Cancel)
           return;
 
-        DVBSChannel tuneChannel = _channels[index];
-        float percent = ((float)(index)) / _channels.Count;
+        DVBSChannel tuneChannel = dvbsChannels[index];
+        float percent = ((float)(index)) / dvbsChannels.Count;
         percent *= 100f;
         if (percent > 100f)
           percent = 100f;
@@ -1059,7 +1059,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
         if (scanIndex == 1) // first scanned
         {
-          ServiceAgents.Instance.ControllerServiceAgent.Scan(ref user, tuneChannel, -1);
+          ServiceAgents.Instance.ControllerServiceAgent.Scan(user.Name, user.CardId, out user, tuneChannel, -1);
         }
         UpdateStatus();
 
@@ -1477,9 +1477,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (mpDisEqc1.SelectedIndex >= 0)
         tuneChannel.DisEqc = (DisEqcType)mpDisEqc1.SelectedIndex;
       _user.CardId = _cardNumber;
-      ServiceAgents.Instance.ControllerServiceAgent.StopCard(_user);
+      ServiceAgents.Instance.ControllerServiceAgent.StopCard(_user.CardId);
       _user.CardId = _cardNumber;
-      ServiceAgents.Instance.ControllerServiceAgent.Tune(ref _user, tuneChannel, -1);
+      ServiceAgents.Instance.ControllerServiceAgent.Tune(_user.Name, _user.CardId, out _user, tuneChannel, -1);
       progressBarLevel.Value = 1;
       progressBarQuality.Value = 1;
       progressBarSatLevel.Value = 1;

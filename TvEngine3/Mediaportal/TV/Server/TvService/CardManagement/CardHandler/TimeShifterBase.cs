@@ -82,17 +82,17 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
       return _cancelled;
     }
 
-    protected ITvSubChannel GetSubChannel(ref IUser user, int idChannel)
+    protected ITvSubChannel GetSubChannel(string userName, int idChannel)
     {
       ITvSubChannel subchannel = null;
       if (_cardHandler.DataBaseCard.enabled)
       {
-        bool userExists;       
-        _cardHandler.UserManagement.RefreshUser(ref user, out userExists);
-          
+           
+        //_cardHandler.UserManagement.RefreshUser(ref user, out userExists);
+        bool userExists = _cardHandler.UserManagement.DoesUserExist(userName);
         if (userExists)
-        {            
-          subchannel = GetSubChannel(_cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel));
+        {
+          subchannel = GetSubChannel(_cardHandler.UserManagement.GetSubChannelIdByChannelId(userName, idChannel));
         }          
       }
       
@@ -103,7 +103,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     {
       bool isScrambled = false;
       //lets check if stream is initially scrambled, if it is and the card has no CA, then we are unable to decrypt stream.
-      if (_cardHandler.IsScrambled(ref user))
+      if (_cardHandler.IsScrambled(user.Name))
       {
         if (!_cardHandler.HasCA)
         {
@@ -165,7 +165,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
         {
           TimeSpan ts = DateTime.Now - timeStart;
           Log.Write("card: WaitForRecordingFile - no audio was found after {0} seconds", ts.TotalSeconds);
-          if (_cardHandler.IsScrambled(ref user))
+          if (_cardHandler.IsScrambled(user.Name))
           {
             Log.Write("card: WaitForFile - audio stream is scrambled");
             scrambled = true;
@@ -199,7 +199,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
             TimeSpan ts = DateTime.Now - timeStart;
             Log.Write("card: WaitForFile - video was found, but audio was not found after {0} seconds",
                       ts.TotalSeconds);
-            if (_cardHandler.IsScrambled(ref user))
+            if (_cardHandler.IsScrambled(user.Name))
             {
               Log.Write("card: WaitForFile - audio stream is scrambled");
               scrambled = true;
@@ -210,7 +210,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
         {
           TimeSpan ts = DateTime.Now - timeStart;
           Log.Write("card: WaitForFile - no audio was found after {0} seconds", ts.TotalSeconds);
-          if (_cardHandler.IsScrambled(ref user))
+          if (_cardHandler.IsScrambled(user.Name))
           {
             Log.Write("card: WaitForFile - audio and video stream is scrambled");
             scrambled = true;

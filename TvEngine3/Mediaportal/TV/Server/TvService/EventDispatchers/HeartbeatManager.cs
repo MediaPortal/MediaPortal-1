@@ -129,8 +129,8 @@ namespace Mediaportal.TV.Server.TVService.EventDispatchers
                 Log.Write("HeartbeatManager: idle user found: {0}", username);
                 IDictionary<int, ITvCardHandler> cards = ServiceManager.Instance.InternalControllerService.CardCollection;
                 foreach (ITvCardHandler card in cards.Values)
-                {
-                  IDictionary<string, IUser> users = card.UserManagement.Users;
+                {                  
+                  IDictionary<string, IUser> users = card.UserManagement.UsersCopy;
                   IUser tmpUser;
                   bool foundUser = users.TryGetValue(username, out tmpUser);
                   if (foundUser)

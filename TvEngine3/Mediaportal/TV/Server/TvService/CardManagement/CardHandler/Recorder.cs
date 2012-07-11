@@ -248,13 +248,13 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     {
       bool stop = false;
       var recentSubChannelId = _cardHandler.UserManagement.GetRecentSubChannelId(user.Name);
-      user = _cardHandler.UserManagement.GetUser(recentSubChannelId);
+      user = _cardHandler.UserManagement.GetUserCopy(recentSubChannelId);
       ITvSubChannel subchannel = GetSubChannel(recentSubChannelId);
       if (subchannel != null)
       {
         subchannel.StopRecording();
         _cardHandler.Card.FreeSubChannel(recentSubChannelId);
-        if (subchannel.IsTimeShifting == false || _cardHandler.UserManagement.Users.Count <= 1)
+        if (subchannel.IsTimeShifting == false || _cardHandler.UserManagement.UsersCount() <= 1)
         {
           _cardHandler.UserManagement.RemoveUser(user, _cardHandler.UserManagement.GetTimeshiftingChannelId(user.Name));
         }
@@ -297,8 +297,8 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     {
       get
       {
-        IDictionary<string, IUser> users = _cardHandler.UserManagement.Users;
-        if (users.Values.Select(user => (IUser) user.Clone()).Any(userCopy => IsRecording(ref userCopy)))
+        IDictionary<string, IUser> users = _cardHandler.UserManagement.UsersCopy;
+        if (users.Values.Select(user => (IUser) user.Clone()).Any(userCopy => IsRecording(userCopy.Name)))
         {
           return true;
         }
@@ -309,14 +309,14 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// <summary>
     /// Returns if the card is recording or not
     /// </summary>
-    /// <param name="user">User</param>
+    /// <param name="userName"> </param>
     /// <returns>true when card is recording otherwise false</returns>
-    public bool IsRecording(ref IUser user)
+    public bool IsRecording(string userName)
     {
       bool isRecording = false;
       try
       {
-        var subchannel = GetSubChannel(ref user, _cardHandler.UserManagement.GetRecentChannelId(user.Name));
+        var subchannel = GetSubChannel(userName, _cardHandler.UserManagement.GetRecentChannelId(userName));
         if (subchannel != null)
         {
           isRecording = subchannel.IsRecording;
@@ -332,14 +332,14 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// <summary>
     /// Returns the current filename used for recording
     /// </summary>
-    /// <param name="user">User</param>
+    /// <param name="userName"> </param>
     /// <returns>filename or null when not recording</returns>
-    public string FileName(ref IUser user)
+    public string FileName(string userName)
     {
       string recordingFileName = "";
       try
       {        
-        ITvSubChannel subchannel = GetSubChannel(ref user, _cardHandler.UserManagement.GetRecentChannelId(user.Name));
+        ITvSubChannel subchannel = GetSubChannel(userName, _cardHandler.UserManagement.GetRecentChannelId(userName));
         if (subchannel != null)
         {
           recordingFileName = subchannel.RecordingFileName;
@@ -355,14 +355,14 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// <summary>
     /// returns the date/time when recording has been started for the card specified
     /// </summary>
-    /// <param name="user">User</param>
+    /// <param name="userName"> </param>
     /// <returns>DateTime containg the date/time when recording was started</returns>
-    public DateTime RecordingStarted(IUser user)
+    public DateTime RecordingStarted(string userName)
     {
       DateTime recordingStarted = DateTime.MinValue;
       try
       {
-        ITvSubChannel subchannel = GetSubChannel(ref user, _cardHandler.UserManagement.GetRecentChannelId(user.Name));
+        ITvSubChannel subchannel = GetSubChannel(userName, _cardHandler.UserManagement.GetRecentChannelId(userName));
         if (subchannel != null)
         {
           recordingStarted = subchannel.RecordingStarted;

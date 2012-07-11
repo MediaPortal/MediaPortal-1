@@ -627,7 +627,7 @@ namespace Mediaportal.TV.Server.TVService.Epg
       user.CardId = cardId;
       if (ServiceManager.Instance.InternalControllerService.IsRecording(ref user))
         return false;
-      if (ServiceManager.Instance.InternalControllerService.IsTimeShifting(ref user))
+      if (ServiceManager.Instance.InternalControllerService.IsTimeShifting(user.Name))
         return false;
       if (ServiceManager.Instance.InternalControllerService.IsScanning(user.CardId))
         return false;
@@ -658,7 +658,7 @@ namespace Mediaportal.TV.Server.TVService.Epg
         return false;
       if (ServiceManager.Instance.InternalControllerService.IsRecording(ref _user))
         return false;
-      if (ServiceManager.Instance.InternalControllerService.IsTimeShifting(ref _user))
+      if (ServiceManager.Instance.InternalControllerService.IsTimeShifting(_user.Name))
         return false;
       if (ServiceManager.Instance.InternalControllerService.IsScanning(user.CardId))
         return false;

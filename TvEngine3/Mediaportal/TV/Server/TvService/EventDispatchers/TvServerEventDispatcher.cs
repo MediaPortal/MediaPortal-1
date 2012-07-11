@@ -33,9 +33,17 @@ namespace Mediaportal.TV.Server.TVService.EventDispatchers
           foreach (string username in usersCopy.Keys)
           {
             //todo channel states for idle users should ideally only be pushed out to idle users and not all users.
-            if (tvEvent.User.Name.Equals(username) || tvEvent.User.Name.Equals("idle"))
+            if (tvEvent.User.Name.Equals(username))
             {
               EventService.CallbackTvServerEvent(username, tvEvent);
+            }
+            else if ( tvEvent.User.Name.Equals("idle"))
+            {
+              bool isTimeShifting = ServiceManager.Instance.InternalControllerService.IsTimeShifting(username);
+              if (!isTimeShifting)
+              {
+                EventService.CallbackTvServerEvent(username, tvEvent);
+              }
             }
           }
         }

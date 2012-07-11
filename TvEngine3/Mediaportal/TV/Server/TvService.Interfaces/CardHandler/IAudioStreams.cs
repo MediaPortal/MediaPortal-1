@@ -9,7 +9,7 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     /// Gets the available audio streams.
     /// </summary>
     /// <value>The available audio streams.</value>
-    IAudioStream[] Streams(IUser user, int idChannel);
+    IAudioStream[] Streams(string userName, int idChannel);
 
     /// <summary>
     /// Gets the current audio stream.

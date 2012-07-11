@@ -328,16 +328,16 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <summary>
     /// Determines if any card is currently busy recording or timeshifting
     /// </summary>
-    /// <param name="userTS">timeshifting user</param>
+    /// <param name="userName"> </param>
     /// <param name="isUserTS">true if the specified user is timeshifting</param>
     /// <param name="isAnyUserTS">true if any user (except for the userTS) is timeshifting</param>
     /// <param name="isRec">true if recording</param>
     /// <returns>
     /// 	<c>true</c> if a card is recording or timeshifting; otherwise, <c>false</c>.
     /// </returns>
-    public bool IsAnyCardRecordingOrTimeshifting(IUser userTS, out bool isUserTS, out bool isAnyUserTS, out bool isRec)
+    public bool IsAnyCardRecordingOrTimeshifting(string userName, out bool isUserTS, out bool isAnyUserTS, out bool isRec)
     {
-      return Service.IsAnyCardRecordingOrTimeshifting(userTS, out isUserTS, out isAnyUserTS, out isRec);
+      return Service.IsAnyCardRecordingOrTimeshifting(userName, out isUserTS, out isAnyUserTS, out isRec);
     }
 
     /// <summary>
@@ -392,21 +392,21 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <summary>
     /// Fetches all channel states for a specific user (cached - faster)
     /// </summary>
-    /// <param name="user"></param>
-    public IDictionary<int, ChannelState> GetAllChannelStatesCached(IUser user)
+    /// <param name="userName"> </param>
+    public IDictionary<int, ChannelState> GetAllChannelStatesCached(string userName)
     {
-      return Service.GetAllChannelStatesCached(user);
+      return Service.GetAllChannelStatesCached(userName);
     }
 
     /// <summary>
     /// Finds out whether a channel is currently tuneable or not
     /// </summary>
     /// <param name="idChannel">The channel id</param>
-    /// <param name="user">User</param>
+    /// <param name="userName"> </param>
     /// <returns>an enum indicating tunable/timeshifting/recording</returns>
-    public ChannelState GetChannelState(int idChannel, IUser user)
+    public ChannelState GetChannelState(int idChannel, string userName)
     {
-      return Service.GetChannelState(idChannel, user);
+      return Service.GetChannelState(idChannel, userName);
     }
 
     /// <summary>
@@ -564,13 +564,13 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// Returns the URL for the RTSP stream on which the client can find the
     /// stream for the selected card
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>
     /// URL containing the RTSP adress on which the card transmits its stream
     /// </returns>
-    public string GetStreamingUrl(IUser user)
+    public string GetStreamingUrl(string userName)
     {
-      return Service.GetStreamingUrl(user);
+      return Service.GetStreamingUrl(userName);
     }
 
     /// <summary>
@@ -580,53 +580,53 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>
     /// filename of the recording or null when not recording
     /// </returns>
-    public string RecordingFileName(ref IUser user)
+    public string RecordingFileName(string user)
     {
-      return Service.RecordingFileName(ref user);
+      return Service.RecordingFileName(user);
     }
 
     /// <summary>
     /// Gets the tv/radio channel on which the card is currently tuned
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <param name="idChannel"> </param>
     /// <returns>IChannel</returns>
-    public IChannel CurrentChannel(ref IUser user, int idChannel)
+    public IChannel CurrentChannel(string userName, int idChannel)
     {
-      return Service.CurrentChannel(ref user, idChannel);
+      return Service.CurrentChannel(userName, idChannel);
     }
 
     /// <summary>
     /// returns the id of the current channel.
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns></returns>
-    public int CurrentDbChannel(ref IUser user)
+    public int CurrentDbChannel(string userName)
     {
-      return Service.CurrentDbChannel(ref user);
+      return Service.CurrentDbChannel(userName);
     }
 
     /// <summary>
     /// Gets the name of the tv/radio channel on which the card is currently tuned
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>channel name</returns>
-    public string CurrentChannelName(ref IUser user)
+    public string CurrentChannelName(string userName)
     {
-      return Service.CurrentChannelName(ref user);
+      return Service.CurrentChannelName(userName);
     }
 
     /// <summary>
     /// Returns whether the channel to which the card is tuned is
     /// scrambled or not.
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>
     /// yes if channel is scrambled and CI/CAM cannot decode it, otherwise false
     /// </returns>
-    public bool IsScrambled(ref IUser user)
+    public bool IsScrambled(string userName)
     {
-      return Service.IsScrambled(ref user);
+      return Service.IsScrambled(userName);
     }
 
     /// <summary>
@@ -645,123 +645,123 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <summary>
     /// Returns the position in the current timeshift file and the id of the current timeshift file
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
-    public bool TimeShiftGetCurrentFilePosition(ref IUser user, ref long position, ref long bufferId)
+    public bool TimeShiftGetCurrentFilePosition(string userName, ref long position, ref long bufferId)
     {
-      return Service.TimeShiftGetCurrentFilePosition(ref user, ref position, ref bufferId);
+      return Service.TimeShiftGetCurrentFilePosition(userName, ref position, ref bufferId);
     }
 
     /// <summary>
     /// Returns if the card is currently timeshifting or not
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>true when card is timeshifting otherwise false</returns>
-    public bool IsTimeShifting(ref IUser user)
+    public bool IsTimeShifting(string userName)
     {
-      return Service.IsTimeShifting(ref user);
+      return Service.IsTimeShifting(userName);
     }
 
     /// <summary>
     /// Returns the rotation time for a specific teletext page
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <param name="pageNumber">The pagenumber (0x100-0x899)</param>
     /// <returns>timespan containing the rotation time</returns>
-    public TimeSpan TeletextRotation(IUser user, int pageNumber)
+    public TimeSpan TeletextRotation(string userName, int pageNumber)
     {
-      return Service.TeletextRotation(user, pageNumber);
+      return Service.TeletextRotation(userName, pageNumber);
     }
 
     /// <summary>
     /// Returns if the channel to which the card is currently tuned
     /// has teletext or not
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>
     /// yes if channel has teletext otherwise false
     /// </returns>
-    public bool HasTeletext(IUser user)
+    public bool HasTeletext(string userName)
     {
-      return Service.HasTeletext(user);
+      return Service.HasTeletext(userName);
     }
 
     /// <summary>
     /// turn on/off teletext grabbing for a card
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <param name="onOff">boolean indicating if teletext grabbing should be enabled or not</param>
-    public void GrabTeletext(IUser user, bool onOff)
+    public void GrabTeletext(string userName, bool onOff)
     {
-      Service.GrabTeletext(user, onOff);
+      Service.GrabTeletext(userName, onOff);
     }
 
     /// <summary>
     /// Gets a raw teletext page.
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <param name="pageNumber">The page number. (0x100-0x899)</param>
     /// <param name="subPageNumber">The sub page number.(0x0-0x79)</param>
     /// <returns>
     /// byte[] array containing the raw teletext page or null if page is not found
     /// </returns>
-    public byte[] GetTeletextPage(IUser user, int pageNumber, int subPageNumber)
+    public byte[] GetTeletextPage(string userName, int pageNumber, int subPageNumber)
     {
-      return Service.GetTeletextPage(user, pageNumber, subPageNumber);
+      return Service.GetTeletextPage(userName, pageNumber, subPageNumber);
     }
 
     /// <summary>
     /// Gets the number of subpages for a teletext page.
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <param name="pageNumber">The page number (0x100-0x899)</param>
     /// <returns>
     /// number of teletext subpages for the pagenumber
     /// </returns>
-    public int SubPageCount(IUser user, int pageNumber)
+    public int SubPageCount(string userName, int pageNumber)
     {
-      return Service.SubPageCount(user, pageNumber);
+      return Service.SubPageCount(userName, pageNumber);
     }
 
     /// <summary>
     /// Gets the teletext pagenumber for the red button
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>Teletext pagenumber for the red button</returns>
-    public int GetTeletextRedPageNumber(IUser user)
+    public int GetTeletextRedPageNumber(string userName)
     {
-      return Service.GetTeletextRedPageNumber(user);
+      return Service.GetTeletextRedPageNumber(userName);
     }
 
     /// <summary>
     /// Gets the teletext pagenumber for the green button
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>Teletext pagenumber for the green button</returns>
-    public int GetTeletextGreenPageNumber(IUser user)
+    public int GetTeletextGreenPageNumber(string userName)
     {
-      return Service.GetTeletextGreenPageNumber(user);
+      return Service.GetTeletextGreenPageNumber(userName);
     }
 
     /// <summary>
     /// Gets the teletext pagenumber for the yellow button
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>Teletext pagenumber for the yellow button</returns>
-    public int GetTeletextYellowPageNumber(IUser user)
+    public int GetTeletextYellowPageNumber(string userName)
     {
-      return Service.GetTeletextYellowPageNumber(user);
+      return Service.GetTeletextYellowPageNumber(userName);
     }
 
     /// <summary>
     /// Gets the teletext pagenumber for the blue button
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>Teletext pagenumber for the blue button</returns>
-    public int GetTeletextBluePageNumber(IUser user)
+    public int GetTeletextBluePageNumber(string userName)
     {
-      return Service.GetTeletextBluePageNumber(user);
+      return Service.GetTeletextBluePageNumber(userName);
     }
 
     /// <summary>
@@ -780,169 +780,182 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <summary>
     /// returns the list of available audio streams for the card specified
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>List containing all audio streams</returns>
-    public IList<IAudioStream> AvailableAudioStreams(IUser user)
+    public IList<IAudioStream> AvailableAudioStreams(string userName)
     {
-      return Service.AvailableAudioStreams(user);
+      return Service.AvailableAudioStreams(userName);
     }
 
     /// <summary>
     /// returns the current video stream on the virtual card. 
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>List containing all audio streams</returns>
-    public IVideoStream GetCurrentVideoStream(IUser user)
+    public IVideoStream GetCurrentVideoStream(string userName)
     {
-      return Service.GetCurrentVideoStream(user);
+      return Service.GetCurrentVideoStream(userName);
     }
 
     /// <summary>
     /// Stops the card.
     /// </summary>
-    /// <param name="user">The user.</param>
-    public void StopCard(IUser user)
+    /// <param name="idCard"> </param>
+    public void StopCard(int idCard)
     {
-      Service.StopCard(user);
+      Service.StopCard(idCard);
     }
 
-    public bool ParkTimeShifting(ref IUser user, double duration, int idChannel)
+    public bool ParkTimeShifting(string userName, double duration, int idChannel, out IUser user)
     {
-      return Service.ParkTimeShifting(ref user, duration, idChannel);
+      return Service.ParkTimeShifting(userName, duration, idChannel, out user);
     }
 
-    public bool UnParkTimeShifting(ref IUser user, double duration, int idChannel, out IVirtualCard card)
+    public bool UnParkTimeShifting(string userName, double duration, int idChannel, out IUser user, out IVirtualCard card)
     {
-      return Service.UnParkTimeShifting(ref user, duration, idChannel, out card);
+      return Service.UnParkTimeShifting(userName, duration, idChannel, out user, out card);
     }
 
     /// <summary>
     /// Query what card would be used for timeshifting on any given channel
     /// </summary>
-    /// <param name="user">user credentials.</param>
+    /// <param name="userName"> </param>
     /// <param name="idChannel">The id channel.</param>
     /// <returns>
     /// returns card id which would be used when doing the actual timeshifting.
     /// </returns>
-    public int TimeShiftingWouldUseCard(ref IUser user, int idChannel)
+    public int TimeShiftingWouldUseCard(string userName, int idChannel)
     {
-      return Service.TimeShiftingWouldUseCard(ref user, idChannel);
+      return Service.TimeShiftingWouldUseCard(userName, idChannel);
     }
 
     /// <summary>
     /// Start timeshifting on a specific channel
     /// </summary>
-    /// <param name="user">user credentials.</param>
+    /// <param name="userName"> </param>
     /// <param name="idChannel">The id channel.</param>
     /// <param name="kickCardId"> </param>
     /// <param name="card">returns on which card timeshifting is started</param>
     /// <param name="kickableCards"> </param>
     /// <param name="forceCardId">Indicated, if the card should be forced</param>
+    /// <param name="user">user credentials.</param>
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>        
-    public TvResult StartTimeShifting(ref IUser user, int idChannel, int? kickCardId, out IVirtualCard card, out Dictionary<int, List<IUser>> kickableCards, bool forceCardId)
+    public TvResult StartTimeShifting(string userName, int idChannel, int? kickCardId, out IVirtualCard card, out Dictionary<int, List<IUser>> kickableCards, bool forceCardId, out IUser user)
     {
-      return Service.StartTimeShifting(ref user, idChannel, kickCardId, out card, out kickableCards, forceCardId);
+      return Service.StartTimeShifting(userName, idChannel, kickCardId, out card, out kickableCards, forceCardId, out user);
     }
 
     /// <summary>
     /// Start timeshifting on a specific channel
     /// </summary>
-    /// <param name="user">user credentials.</param>
+    /// <param name="userName"> </param>
     /// <param name="idChannel">The id channel.</param>
     /// <param name="kickCardId"> </param>
     /// <param name="card">returns on which card timeshifting is started</param>
     /// <param name="kickableCards"> </param>
     /// <param name="cardChanged">indicates if card was changed</param>
     /// <param name="parkedDuration"> </param>
+    /// <param name="user">user credentials.</param>
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
-    public TvResult StartTimeShifting(ref IUser user, int idChannel, int? kickCardId, out IVirtualCard card, out Dictionary<int, List<IUser>> kickableCards, out bool cardChanged, out double? parkedDuration)
+    public TvResult StartTimeShifting(string userName, int idChannel, int? kickCardId, out IVirtualCard card, out Dictionary<int, List<IUser>> kickableCards, out bool cardChanged, out double? parkedDuration, out IUser user)
     {
-      return Service.StartTimeShifting(ref user, idChannel, kickCardId, out card, out kickableCards, out cardChanged, out parkedDuration);
+      return Service.StartTimeShifting(userName, idChannel, kickCardId, out card, out kickableCards, out cardChanged, out parkedDuration, out user);
     }
 
     /// <summary>
     /// Start timeshifting on a specific channel
     /// </summary>
-    /// <param name="user">user credentials.</param>
+    /// <param name="userName"> </param>
     /// <param name="idChannel">The id channel.</param>
     /// <param name="card">returns on which card timeshifting is started</param>
+    /// <param name="user">user credentials.</param>
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
-    public TvResult StartTimeShifting(ref IUser user, int idChannel, out IVirtualCard card)
+    public TvResult StartTimeShifting(string userName, int idChannel, out IVirtualCard card, out IUser user)
     {
-      return Service.StartTimeShifting(ref user, idChannel, out card);
+      return Service.StartTimeShifting(userName, idChannel, out card, out user);
     }
 
     /// <summary>
     /// Stops the time shifting.
     /// </summary>
+    /// <param name="userName"> </param>
     /// <param name="user">user credentials.</param>
     /// <param name="reason">reason why timeshifting is stopped.</param>
     /// <returns>true if success otherwise false</returns>
-    public bool StopTimeShifting(ref IUser user, TvStoppedReason reason)
+    public bool StopTimeShifting(string userName, out IUser user, TvStoppedReason reason)
     {
-      return Service.StopTimeShifting(ref user, reason);
+      return Service.StopTimeShifting(userName, out user, reason);
     }
 
     /// <summary>
     /// Stops the time shifting.
     /// </summary>
+    /// <param name="userName"> </param>
     /// <param name="user">user credentials.</param>
     /// <param name="channelId"> </param>
     /// <returns>true if success otherwise false</returns>
-    public bool StopTimeShifting(ref IUser user)
+    public bool StopTimeShifting(string userName, out IUser user)
     {
-      return Service.StopTimeShifting(ref user);
+      return Service.StopTimeShifting(userName, out user);
     }
 
     /// <summary>
     /// Starts recording.
     /// </summary>
+    /// <param name="userName"> </param>
+    /// <param name="cardId"> </param>
     /// <param name="user">The user.</param>
     /// <param name="fileName">Name of the recording file.</param>
     /// <returns>true if success otherwise false</returns>
-    public TvResult StartRecording(ref IUser user, ref string fileName)
+    public TvResult StartRecording(string userName, int cardId, out IUser user, ref string fileName)
     {
-      return Service.StartRecording(ref user, ref fileName);
+      return Service.StartRecording(userName, cardId, out user, ref fileName);
     }
 
     /// <summary>
     /// Stops recording.
     /// </summary>
+    /// <param name="userName"> </param>
+    /// <param name="idCard"> </param>
     /// <param name="user">The user.</param>
     /// <returns>true if success otherwise false</returns>
-    public bool StopRecording(ref IUser user)
+    public bool StopRecording(string userName, int idCard, out IUser user)
     {
-      return Service.StopRecording(ref user);
+      return Service.StopRecording(userName, idCard, out user);
     }
 
     /// <summary>
     /// Scan the specified card to the channel.
     /// </summary>
+    /// <param name="userName"> </param>
+    /// <param name="idCard"> </param>
     /// <param name="user">The user.</param>
     /// <param name="channel">The channel.</param>
     /// <param name="idChannel">The id channel.</param>
     /// <returns>true if succeeded</returns>
-    public TvResult Scan(ref IUser user, IChannel channel, int idChannel)
+    public TvResult Scan(string userName, int idCard, out IUser user, IChannel channel, int idChannel)
     {
-      return Service.Scan(ref user, channel, idChannel);
+      return Service.Scan(userName, idCard, out user, channel, idChannel);
     }
 
     /// <summary>
     /// Tunes the the specified card to the channel.
     /// </summary>
+    /// <param name="userName"> </param>
+    /// <param name="idCard"> </param>
     /// <param name="user">The user.</param>
     /// <param name="channel">The channel.</param>
     /// <param name="idChannel">The id channel.</param>
     /// <returns>true if succeeded</returns>
-    public TvResult Tune(ref IUser user, IChannel channel, int idChannel)
+    public TvResult Tune(string userName, int idCard, out IUser user, IChannel channel, int idChannel)
     {
-      return Service.Tune(ref user, channel, idChannel);
+      return Service.Tune(userName, idCard, out user, channel, idChannel);
     }
 
     /// <summary>
@@ -959,13 +972,13 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// Determines whether the the user is the owner of the card
     /// </summary>
     /// <param name="cardId">The card id.</param>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
     /// <returns>
     /// 	<c>true</c> if the specified user is the card owner; otherwise, <c>false</c>.
     /// </returns>
-    public bool IsOwner(int cardId, IUser user)
+    public bool IsOwner(int cardId, string userName)
     {
-      return Service.IsOwner(cardId, user);
+      return Service.IsOwner(cardId, userName);
     }
 
     /// <summary>
@@ -1126,13 +1139,13 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <summary>
     /// Fetches the stream quality information
     /// </summary>
-    /// <param name="user">user</param>
+    /// <param name="userName"> </param>
     /// <param name="totalTSpackets">Amount of packets processed</param>
     /// <param name="discontinuityCounter">Number of stream discontinuities</param>
     /// <returns></returns>
-    public void GetStreamQualityCounters(IUser user, out int totalTSpackets, out int discontinuityCounter)
+    public void GetStreamQualityCounters(string userName, out int totalTSpackets, out int discontinuityCounter)
     {
-      Service.GetStreamQualityCounters(user, out totalTSpackets, out discontinuityCounter);
+      Service.GetStreamQualityCounters(userName, out totalTSpackets, out discontinuityCounter);
     }
 
     public void RegisterUserForHeartbeatMonitoring (string username)
@@ -1175,10 +1188,7 @@ namespace Mediaportal.TV.Server.TVService.Services
       return Service.ListAllStreamingChannels();
     }
 
-    public bool CanUserParkTimeshifting(IUser user)
-    {
-      return Service.CanUserParkTimeshifting(user);
-    }
+   
 
     public bool IsAnyCardParkedByUser(string userName)
     {

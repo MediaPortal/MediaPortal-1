@@ -464,17 +464,17 @@ namespace Mediaportal.TV.TvPlugin
 
       for (int i = 0; i < tvChannelList.Count; i++)
       {
-        Server.TVDatabase.Entities.Channel currentChan = tvChannelList[i];
+        Channel currentChan = tvChannelList[i];
 
         if (currentChan.visibleInGuide)
         {
-          ChannelState CurrentChanState = ChannelState.tunable;
+          ChannelState currentChanState = ChannelState.tunable;
           channelID = currentChan.idChannel;
           if (TVHome.ShowChannelStateIcons())
           {
-            if (!tvChannelStatesList.TryGetValue(channelID, out CurrentChanState))
+            if (!tvChannelStatesList.TryGetValue(channelID, out currentChanState))
             {
-              CurrentChanState = ChannelState.tunable;
+              currentChanState = ChannelState.tunable;
             }
           }
 
@@ -510,7 +510,7 @@ namespace Mediaportal.TV.TvPlugin
           {
             bool showChannelStateIcons = (TVHome.ShowChannelStateIcons() && lstChannelsWithStateIcons != null);
 
-            switch (CurrentChanState)
+            switch (currentChanState)
             {
               case ChannelState.nottunable:
                 item.IsPlayed = true;

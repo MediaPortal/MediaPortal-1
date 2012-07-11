@@ -248,8 +248,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           user.Name = txtUsername.Text;
           user.SubChannels.Clear();
         }
-          
-        ServiceAgents.Instance.ControllerServiceAgent.StopTimeShifting(ref user);
+
+        ServiceAgents.Instance.ControllerServiceAgent.StopTimeShifting(user.Name, out user);
 
         //card.StopTimeShifting();
         mpButtonRec.Enabled = false;
@@ -273,9 +273,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         ICiMenuEventCallback menuHandler = new CiMenuEventCallback();
         ServiceAgents.Instance.EventServiceAgent.UnRegisterCiMenuCallbacks(menuHandler);
 
-        
 
-        TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(ref user, id, out card);
+
+        TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, id, out card, out user);
         if (result != TvResult.Succeeded)
         {
           switch (result)
@@ -460,7 +460,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
           int bytes = 0;
           int disc = 0;
-          ServiceAgents.Instance.ControllerServiceAgent.GetStreamQualityCounters(card.User, out bytes, out disc);
+          ServiceAgents.Instance.ControllerServiceAgent.GetStreamQualityCounters(card.User.Name, out bytes, out disc);
           txtBytes.Value = bytes;
           txtDisc.Value = disc;
 
@@ -768,7 +768,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         double duration = 0;
         double.TryParse(txtDuration.Text, out duration);
         IUser user = new User(txtUsername.Text, UserType.Normal);
-        bool result = ServiceAgents.Instance.ControllerServiceAgent.ParkTimeShifting(ref user, duration, id);
+        bool result = ServiceAgents.Instance.ControllerServiceAgent.ParkTimeShifting(user.Name, duration, id, out user);
       }      
     }
 
@@ -785,7 +785,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       double duration = 0;
       double.TryParse(txtDuration.Text, out duration);
       IVirtualCard card;
-      bool result = ServiceAgents.Instance.ControllerServiceAgent.UnParkTimeShifting(ref user, duration, id, out card);
+      bool result = ServiceAgents.Instance.ControllerServiceAgent.UnParkTimeShifting(user.Name, duration, id, out user, out card);
     }
 
     private void mpButtonAdvStartTimeshift_Click(object sender, EventArgs e)
@@ -797,7 +797,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       IUser user = new User(txtUsername.Text, UserType.Normal);
       IVirtualCard card;
-      TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(ref user, id, out card);
+      TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, id, out card, out user);
     }
 
     private void mpButtonAdvStopTimeshift_Click(object sender, EventArgs e)
@@ -807,8 +807,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       string channel = mpComboBoxChannels.SelectedItem.ToString();
       int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
 
-      IUser user = new User(txtUsername.Text, UserType.Normal);      
-      bool result = ServiceAgents.Instance.ControllerServiceAgent.StopTimeShifting(ref user);
+      IUser user = new User(txtUsername.Text, UserType.Normal);
+      bool result = ServiceAgents.Instance.ControllerServiceAgent.StopTimeShifting(user.Name, out user);
     }
 
     private void mpCheckBoxAdvMode_CheckedChanged(object sender, EventArgs e)

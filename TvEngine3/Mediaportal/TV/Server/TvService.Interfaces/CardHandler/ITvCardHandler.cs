@@ -59,11 +59,11 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     int MinChannel { get; }
     int MaxChannel { get; }
 
-    IChannel CurrentChannel(ref IUser user, int idChannel);
-    int CurrentDbChannel(ref IUser user);
-    string CurrentChannelName(ref IUser user, int idChannel);
-    IVideoStream GetCurrentVideoStream(IUser user);
-    bool IsScrambled(ref IUser user);
+    IChannel CurrentChannel(string userName, int idChannel);
+    int CurrentDbChannel(string userName);
+    string CurrentChannelName(string userName, int idChannel);
+    IVideoStream GetCurrentVideoStream(string userName);
+    bool IsScrambled(string userName);
     bool IsScrambled(int subchannel);
 
     void StopCard();

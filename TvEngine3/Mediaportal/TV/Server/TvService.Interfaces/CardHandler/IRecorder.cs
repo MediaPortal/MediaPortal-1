@@ -32,22 +32,22 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     /// <summary>
     /// Returns if the card is recording or not
     /// </summary>
-    /// <param name="user">User</param>
+    /// <param name="userName"> </param>
     /// <returns>true when card is recording otherwise false</returns>
-    bool IsRecording(ref IUser user);
+    bool IsRecording(string userName);
 
     /// <summary>
     /// Returns the current filename used for recording
     /// </summary>
-    /// <param name="user">User</param>
+    /// <param name="userName"> </param>
     /// <returns>filename or null when not recording</returns>
-    string FileName(ref IUser user);
+    string FileName(string userName);
 
     /// <summary>
     /// returns the date/time when recording has been started for the card specified
     /// </summary>
-    /// <param name="user">User</param>
+    /// <param name="userName"> </param>
     /// <returns>DateTime containg the date/time when recording was started</returns>
-    DateTime RecordingStarted(IUser user);
+    DateTime RecordingStarted(string userName);
   }
 }

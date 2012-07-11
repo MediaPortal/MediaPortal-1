@@ -862,7 +862,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         temp.Country = countries.Countries[mpComboBoxCountry.SelectedIndex];
         
         temp.MediaType = MediaTypeEnum.TV;
-        TvResult tuneResult = ServiceAgents.Instance.ControllerServiceAgent.Tune(ref user, temp, -1);
+        TvResult tuneResult = ServiceAgents.Instance.ControllerServiceAgent.Tune(user.Name, user.CardId, out user, temp, -1);
         if (tuneResult == TvResult.SWEncoderMissing)
         {
           Log.Error("analog: DoTvScan error (missing software encoder)");
@@ -1026,7 +1026,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         IUser user = new User();
         user.CardId = _cardNumber;
-        ServiceAgents.Instance.ControllerServiceAgent.StopCard(user);
+        ServiceAgents.Instance.ControllerServiceAgent.StopCard(user.CardId);
         ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
         mpButtonScanTv.Text = buttonText;
         progressBar1.Value = 100;
@@ -1175,7 +1175,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           item.EnsureVisible();
           IUser user = new User();
           user.CardId = _cardNumber;
-          TvResult tuneResult = ServiceAgents.Instance.ControllerServiceAgent.Tune(ref user, channel, -1);
+          TvResult tuneResult = ServiceAgents.Instance.ControllerServiceAgent.Tune(user.Name, user.CardId, out user, channel, -1);
           if (tuneResult == TvResult.SWEncoderMissing)
           {
             Log.Error("analog: DoTvScan error (missing software encoder)");
@@ -1247,7 +1247,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         checkButton.Enabled = true;
         IUser user = new User();
         user.CardId = _cardNumber;
-        ServiceAgents.Instance.ControllerServiceAgent.StopCard(user);
+        ServiceAgents.Instance.ControllerServiceAgent.StopCard(user.CardId);
         ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
         mpButtonScanRadio.Text = buttonText;
         progressBar1.Value = 100;
@@ -1279,7 +1279,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         temp.AudioSource = AnalogChannel.AudioInputType.Tuner;
         
         temp.MediaType = MediaTypeEnum.TV;
-        ServiceAgents.Instance.ControllerServiceAgent.Tune(ref user, temp, -1);
+        ServiceAgents.Instance.ControllerServiceAgent.Tune(user.Name, user.CardId, out user, temp, -1);
         _configuration = Configuration.readConfiguration(_cardNumber, _cardName, _devicePath);
         if (string.IsNullOrEmpty(_configuration.Graph.Crossbar.Name))
         {
@@ -1702,7 +1702,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         temp.AudioSource = AnalogChannel.AudioInputType.Tuner;
         
         temp.MediaType = MediaTypeEnum.TV;
-        ServiceAgents.Instance.ControllerServiceAgent.Tune(ref user, temp, -1);
+        ServiceAgents.Instance.ControllerServiceAgent.Tune(user.Name, user.CardId, out user, temp, -1);
         if (ServiceAgents.Instance.ControllerServiceAgent.SupportsQualityControl(_cardNumber))
         {
           _cardName = ServiceAgents.Instance.ControllerServiceAgent.CardName(_cardNumber);
@@ -1755,7 +1755,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         user = new User();
         user.CardId = _cardNumber;
-        ServiceAgents.Instance.ControllerServiceAgent.StopCard(user);
+        ServiceAgents.Instance.ControllerServiceAgent.StopCard(user.CardId);
       }
     }
 

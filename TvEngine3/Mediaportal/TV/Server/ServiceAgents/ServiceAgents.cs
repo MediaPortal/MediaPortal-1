@@ -15,6 +15,9 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
 
   public class ServiceAgents : Singleton<ServiceAgents>, IDisposable
   {
+    public delegate void ServiceAgentRemovedDelegate(Type service);
+    public event ServiceAgentRemovedDelegate OnServiceAgentRemovedEvent;
+
     private static string _hostname = Dns.GetHostName();
 
     private ServiceAgents()
@@ -350,6 +353,11 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
       if (found)
       {
         GlobalServiceProvider.Remove(type);
+      }
+
+      if (OnServiceAgentRemovedEvent != null)
+      {
+        OnServiceAgentRemovedEvent(type);
       }
     }
 
