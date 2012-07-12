@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Threading;
 using DirectShowLib;
 using TvLibrary.Interfaces;
@@ -42,7 +43,7 @@ namespace TvEngine
       CamMenuTitle,
     }
 
-    private enum CamControlProperty
+    private enum CamControlMethod
     {
       Reset = 0,
       EnterMenu,
@@ -112,7 +113,7 @@ namespace TvEngine
 
     private class CiContext
     {
-      public IKsPropertySet PropertySet;
+      public IBaseFilter Filter;
       public DsDevice Device;
       public String FilterName;
       public String CamMenuTitle;
@@ -120,11 +121,11 @@ namespace TvEngine
 
       public CiContext(IBaseFilter filter, DsDevice device)
       {
-        PropertySet = filter as IKsPropertySet;
+        Filter = filter;
         Device = device;
         CamMenuId = 0;
 
-        // Get the filter name.
+        // Get the filter name and use it as the default CAM menu title.
         FilterInfo filterInfo;
         int hr = filter.QueryFilterInfo(out filterInfo);
         if (filterInfo.pGraph != null)
@@ -146,6 +147,68 @@ namespace TvEngine
 
     #endregion
 
+    #region COM interfaces
+    // Note: this is a generic interface. Ideally it should be in the DirectShow.NET project, however it should
+    // be mixed with DirectShow.NET code to avoid maintenance issues.
+
+    [ComImport, SuppressUnmanagedCodeSecurity,
+     Guid("28f54685-06fd-11d2-b27a-00a0c9223196"),
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    private interface IKsControl
+    {
+      [PreserveSig]
+      int KsProperty(
+        [In] ref KsMethod Property,
+        [In] Int32 PropertyLength,
+        [In, Out] IntPtr PropertyData,
+        [In] Int32 DataLength,
+        [In, Out] ref Int32 BytesReturned
+      );
+
+      [PreserveSig]
+      int KsMethod(
+        [In] ref KsMethod Method,
+        [In] Int32 MethodLength,
+        [In, Out] IntPtr MethodData,
+        [In] Int32 DataLength,
+        [In, Out] ref Int32 BytesReturned
+      );
+
+      [PreserveSig]
+      int KsEvent(
+        [In, Optional] ref KsMethod Event,
+        [In] Int32 EventLength,
+        [In, Out] IntPtr EventData,
+        [In] Int32 DataLength,
+        [In, Out] ref Int32 BytesReturned
+      );
+    }
+
+    private struct KsMethod
+    {
+      public Guid Set;
+      public Int32 Id;
+      public Int32 Flags;
+
+      public KsMethod(Guid set, Int32 id, Int32 flags)
+      {
+        Set = set;
+        Id = id;
+        Flags = flags;
+      }
+    }
+
+    [Flags]
+    private enum KsMethodFlag
+    {
+      Send = 1,
+      SetSupport = 256,
+      BasicSupport = 512,
+      Topology = 0x10000000
+    }
+
+    #endregion
+
     #region constants
 
     private static readonly string[] ValidDeviceNamePrefixes = new string[]
@@ -155,12 +218,13 @@ namespace TvEngine
     };
 
     private static readonly Guid CommonInterfacePropertySet = new Guid(0x0aa8a501, 0xa240, 0x11de, 0xb1, 0x30, 0x00, 0x00, 0x00, 0x00, 0x4d, 0x56);
-    private static readonly Guid CamControlPropertySet = new Guid(0x0aa8a511, 0xa240, 0x11de, 0xb1, 0x30, 0x00, 0x00, 0x00, 0x00, 0x4d, 0x56);
+    private static readonly Guid CamControlMethodSet = new Guid(0x0aa8a511, 0xa240, 0x11de, 0xb1, 0x30, 0x00, 0x00, 0x00, 0x00, 0x4d, 0x56);
 
     private const String CommonDevicePathSection = "fbca-11de-b16f-000000004d56";
     private const int MenuDataSize = 2048;  // This is arbitrary - an estimate of the buffer size needed to hold the largest menu.
     private const int MenuChoiceSize = 8;
     private const int MmiHandlerThreadSleepTime = 500;   // unit = ms
+    private const int KsMethodSize = 24;
 
     #endregion
 
@@ -206,7 +270,7 @@ namespace TvEngine
       }
 
       int returnedByteCount;
-      int hr = _ciContexts[slot].PropertySet.Get(CommonInterfacePropertySet, (int)CommonInterfaceProperty.CamMenuTitle,
+      int hr = ((IKsPropertySet)_ciContexts[slot].Filter).Get(CommonInterfacePropertySet, (int)CommonInterfaceProperty.CamMenuTitle,
         _mmiBuffer, MenuDataSize,
         _mmiBuffer, MenuDataSize,
         out returnedByteCount
@@ -359,12 +423,9 @@ namespace TvEngine
         Marshal.WriteByte(_mmiBuffer, i, 0);
       }
 
-      int returnedByteCount;
-      int hr = _ciContexts[slot].PropertySet.Get(CamControlPropertySet, (int)CamControlProperty.GetMenu,
-        _mmiBuffer, MenuDataSize,
-        _mmiBuffer, MenuDataSize,
-        out returnedByteCount
-      );
+      KsMethod method = new KsMethod(CamControlMethodSet, (int)CamControlMethod.GetMenu, (int)KsMethodFlag.Send);
+      int returnedByteCount = 0;
+      int hr = ((IKsControl)_ciContexts[slot].Filter).KsMethod(ref method, KsMethodSize, _mmiBuffer, MenuDataSize, ref returnedByteCount);
       if (hr != 0)
       {
         Log.Debug("Digital Devices: read MMI failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -680,6 +741,7 @@ namespace TvEngine
           // Insurance: we don't want to get stuck in an endless loop.
           if (!addedFilter)
           {
+            Log.Debug("Digital Devices: filter not added, exiting loop");
             break;
           }
         }
@@ -816,15 +878,12 @@ namespace TvEngine
       _menuContext = -1;
 
       // We reset all the CI filters in the graph.
-      int returnedByteCount;
+      int returnedByteCount = 0;
       for (int i = 0; i < _ciContexts.Count; i++)
       {
         Log.Debug("Digital Devices: reset slot {0} \"{1}\"", i + 1, _ciContexts[i].FilterName);
-        int hr = _ciContexts[i].PropertySet.Get(CamControlPropertySet, (int)CamControlProperty.Reset,
-          IntPtr.Zero, 0,
-          IntPtr.Zero, 0,
-          out returnedByteCount
-        );
+        KsMethod method = new KsMethod(CamControlMethodSet, (int)CamControlMethod.Reset, (int)KsMethodFlag.Send);
+        int hr = ((IKsControl)_ciContexts[i].Filter).KsMethod(ref method, KsMethodSize, IntPtr.Zero, 0, ref returnedByteCount);
         if (hr == 0)
         {
           Log.Debug("Digital Devices: result = success");
@@ -922,7 +981,7 @@ namespace TvEngine
       int paramSize = sizeof(Int32);
       IntPtr buffer = Marshal.AllocCoTaskMem(paramSize);
       Marshal.WriteInt32(buffer, pmt.ProgramNumber | (int)DecryptChainingRestriction.None);
-      int hr = _ciContexts[0].PropertySet.Set(CommonInterfacePropertySet, (int)CommonInterfaceProperty.DecryptProgram,
+      int hr = ((IKsPropertySet)_ciContexts[0].Filter).Set(CommonInterfacePropertySet, (int)CommonInterfaceProperty.DecryptProgram,
         buffer, paramSize,
         buffer, paramSize
       );
@@ -1035,12 +1094,9 @@ namespace TvEngine
         return true;
       }
 
-      int returnedByteCount;
-      int hr = _ciContexts[slot].PropertySet.Get(CamControlPropertySet, (int)CamControlProperty.EnterMenu,
-        IntPtr.Zero, 0,
-        IntPtr.Zero, 0,
-        out returnedByteCount
-      );
+      KsMethod method = new KsMethod(CamControlMethodSet, (int)CamControlMethod.EnterMenu, (int)KsMethodFlag.Send);
+      int returnedByteCount = 0;
+      int hr = ((IKsControl)_ciContexts[slot].Filter).KsMethod(ref method, KsMethodSize, IntPtr.Zero, 0, ref returnedByteCount);
       if (hr == 0)
       {
         Log.Debug("Digital Devices: result = success");
@@ -1075,12 +1131,9 @@ namespace TvEngine
         return true;
       }
 
-      int returnedByteCount;
-      int hr = _ciContexts[_menuContext].PropertySet.Get(CamControlPropertySet, (int)CamControlProperty.CloseMenu,
-        IntPtr.Zero, 0,
-        IntPtr.Zero, 0,
-        out returnedByteCount
-      );
+      KsMethod method = new KsMethod(CamControlMethodSet, (int)CamControlMethod.CloseMenu, (int)KsMethodFlag.Send);
+      int returnedByteCount = 0;
+      int hr = ((IKsControl)_ciContexts[_menuContext].Filter).KsMethod(ref method, KsMethodSize, IntPtr.Zero, 0, ref returnedByteCount);
       if (hr == 0)
       {
         Log.WriteFile("Digital Devices: result = success");
@@ -1147,12 +1200,9 @@ namespace TvEngine
       reply.Choice = choice;
       Marshal.StructureToPtr(reply, _mmiBuffer, true);
 
-      int returnedByteCount;
-      int hr = _ciContexts[_menuContext].PropertySet.Get(CamControlPropertySet, (int)CamControlProperty.MenuReply,
-        _mmiBuffer, MenuChoiceSize,
-        _mmiBuffer, MenuChoiceSize,
-        out returnedByteCount
-      );
+      KsMethod method = new KsMethod(CamControlMethodSet, (int)CamControlMethod.MenuReply, (int)KsMethodFlag.Send);
+      int returnedByteCount = 0;
+      int hr = ((IKsControl)_ciContexts[_menuContext].Filter).KsMethod(ref method, KsMethodSize, _mmiBuffer, MenuChoiceSize, ref returnedByteCount);
       if (hr == 0)
       {
         Log.WriteFile("Digital Devices: result = success");
@@ -1202,12 +1252,9 @@ namespace TvEngine
       int bufferSize = 8 + Math.Max(4, answer.Length + 1);
       DVB_MMI.DumpBinary(_mmiBuffer, 0, bufferSize);
 
-      int returnedByteCount;
-      int hr = _ciContexts[_menuContext].PropertySet.Get(CamControlPropertySet, (int)CamControlProperty.CamAnswer,
-        _mmiBuffer, bufferSize,
-        _mmiBuffer, bufferSize,
-        out returnedByteCount
-      );
+      KsMethod method = new KsMethod(CamControlMethodSet, (int)CamControlMethod.CamAnswer, (int)KsMethodFlag.Send);
+      int returnedByteCount = 0;
+      int hr = ((IKsControl)_ciContexts[_menuContext].Filter).KsMethod(ref method, KsMethodSize, _mmiBuffer, bufferSize, ref returnedByteCount);
       if (hr == 0)
       {
         Log.WriteFile("Digital Devices: result = success");
@@ -1240,14 +1287,14 @@ namespace TvEngine
             }
             context.Device = null;
           }
-          if (context.PropertySet != null)
+          if (context.Filter != null)
           {
             if (_graph != null)
             {
-              _graph.RemoveFilter(context.PropertySet as IBaseFilter);
+              _graph.RemoveFilter(context.Filter as IBaseFilter);
             }
-            DsUtils.ReleaseComObject(context.PropertySet);
-            context.PropertySet = null;
+            DsUtils.ReleaseComObject(context.Filter);
+            context.Filter = null;
           }
         }
       }
