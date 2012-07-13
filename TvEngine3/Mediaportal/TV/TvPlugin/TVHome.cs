@@ -60,6 +60,7 @@ using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 using Mediaportal.TV.Server.TVService.ServiceAgents;
+using Mediaportal.TV.Server.TVService.ServiceAgents.Interfaces;
 using Mediaportal.TV.TvPlugin.EventHandlers;
 using Mediaportal.TV.TvPlugin.Helper;
 using Action = MediaPortal.GUI.Library.Action;
@@ -72,7 +73,7 @@ namespace Mediaportal.TV.TvPlugin
   /// TV Home screen.
   /// </summary>
   [PluginIcons("Resources\\TvPlugin.TVPlugin.gif", "Resources\\TvPlugin.TVPluginDisabled.gif")]
-  public class TVHome : GUIInternalWindow, ISetupForm, IShowPlugin, IPluginReceiver, ITvServerEventCallback
+  public class TVHome : GUIInternalWindow, ISetupForm, IShowPlugin, IPluginReceiver, ITvServerEventCallbackClient
   {
     #region constants
 
@@ -178,9 +179,7 @@ namespace Mediaportal.TV.TvPlugin
     }
 
     public static ChannelErrorInfo _lastError = new ChannelErrorInfo();
-
-    private static HeartbeatEventHandler _heartbeatEventHandler;
-    private static TvServerEventHandler _tvServerEventHandler;
+    private static HeartbeatEventHandler _heartbeatEventHandler;    
 
     // CI Menu
     private static CiMenuEventEventHandler _ciMenuEventEventHandler;
@@ -294,9 +293,7 @@ namespace Mediaportal.TV.TvPlugin
     }
 
     public override void OnAdded()
-    {
-      ServiceAgents.Instance.OnServiceAgentRemovedEvent +=new ServiceAgents.ServiceAgentRemovedDelegate(OnServiceAgentRemovedEvent);
-
+    {      
       //System.Diagnostics.Debugger.Launch();
       Log.Info("TVHome:OnAdded");
 
@@ -359,20 +356,7 @@ namespace Mediaportal.TV.TvPlugin
       {
         _notifyManager.Start(); 
       }      
-    }
-
-    private void OnServiceAgentRemovedEvent(Type service)
-    {
-      if (service == typeof(IEventServiceAgent))
-      {
-        SubscribeToEventService();
-        RegisterUserForHeartbeatMonitoring();
-        if (Card != null && Card.Id > 0)
-        {
-          RegisterCiMenu(Card.Id);
-        }
-      }
-    }
+    }    
 
     private void StartServerMonitor()
     {
@@ -387,6 +371,11 @@ namespace Mediaportal.TV.TvPlugin
     private void SubscribeToEventService()
     {
       ServiceAgents.Instance.EventServiceAgent.RegisterTvServerEventCallbacks(this);      
+    }
+
+    private void UnSubscribeFromEventService()
+    {
+      ServiceAgents.Instance.EventServiceAgent.UnRegisterTvServerEventCallbacks(this, !Connected);
     }
 
     
@@ -1458,12 +1447,13 @@ namespace Mediaportal.TV.TvPlugin
       {
         Log.Info("TVHome: OnServerConnected, recovered from a disconnection");
         recovered = true;
-      }
-
-      SubscribeToEventService();
-      RegisterUserForHeartbeatMonitoring();
+      }      
+      
+      ServiceAgents.Instance.ReConnect();
+      ServiceAgents.Instance.EventServiceAgent.ReConnect();
 
       Connected = true;
+
       _ServerNotConnectedHandled = false;
       if (_recoverTV)
       {
@@ -1487,14 +1477,19 @@ namespace Mediaportal.TV.TvPlugin
 
     private void OnServerDisconnected()
     {
-#if !DEBUG
+//#if !DEBUG
       if (Connected)
       {
         Log.Info("TVHome: OnServerDisconnected");
       }
       Connected = false;
+
+      ServiceAgents.Instance.EventServiceAgent.Disconnect();
+      ServiceAgents.Instance.Disconnect();
+      
+
       HandleServerNotConnected();
-#endif
+//#endif
     }
 
     private void Application_ApplicationExit(object sender, EventArgs e)
@@ -1504,6 +1499,8 @@ namespace Mediaportal.TV.TvPlugin
         _notifyManager.Stop();
         StopServerMonitor();
         UnsubscribeFromEventService();
+        UnRegisterUserForHeartbeatMonitoring();
+        UnRegisterCiMenu();
 
         if (Card.IsTimeShifting)
         {
@@ -1524,8 +1521,8 @@ namespace Mediaportal.TV.TvPlugin
 
     private void UnsubscribeFromEventService()
     {
-      ServiceAgents.Instance.EventServiceAgent.UnRegisterHeartbeatCallbacks(_heartbeatEventHandler);                    
-      ServiceAgents.Instance.EventServiceAgent.Unsubscribe(Dns.GetHostName());      
+      ServiceAgents.Instance.EventServiceAgent.UnRegisterHeartbeatCallbacks(_heartbeatEventHandler, !Connected);                    
+      //ServiceAgents.Instance.EventServiceAgent.Unsubscribe(Dns.GetHostName());      
     }
 
     /// <summary>
@@ -1651,7 +1648,8 @@ namespace Mediaportal.TV.TvPlugin
           Card.StopTimeShifting();
         }
         _notifyManager.Stop();
-        UnsubscribeFromEventService();
+        UnsubscribeFromEventService();        
+        UnRegisterCiMenu();
         StopServerMonitor();
         //Connected = false;
         _ServerNotConnectedHandled = false;
@@ -1695,7 +1693,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private void RegisterUserForHeartbeatMonitoring()
     {
-#if !DEBUG
+//#if !DEBUG
       if (_heartbeatEventHandler == null)
       {
         try
@@ -1710,7 +1708,33 @@ namespace Mediaportal.TV.TvPlugin
           
         }        
       }
-#endif
+//#endif
+    }
+
+    private void UnRegisterUserForHeartbeatMonitoring()
+    {
+//#if !DEBUG
+      if (_heartbeatEventHandler != null)
+      {
+        try
+        {
+          ServiceAgents.Instance.ControllerServiceAgent.UnRegisterUserForHeartbeatMonitoring(Dns.GetHostName());
+        }
+        catch (Exception)
+        {            
+          //ignore 
+        }    
+
+        try
+        {
+          ServiceAgents.Instance.EventServiceAgent.UnRegisterHeartbeatCallbacks(_heartbeatEventHandler, !Connected);        
+        }
+        catch (Exception ex)
+        {
+          Log.Error("TvHome.UnRegisterUserForHeartbeatMonitoring exception = {0}", ex);          
+        }        
+      }
+//#endif
     }
 
     public void Start()
@@ -2416,18 +2440,7 @@ namespace Mediaportal.TV.TvPlugin
                                                                                        parkedDuration,
                                                                                        channel.idChannel,
                                                                                        out user, out card);
-
-        bool cardChanged = true;// card.Id != Card.Id;
-
-        if (_status.IsSet(LiveTvStatus.WasPlaying))
-        {
-          if (card != null)
-            g_Player.OnZapping((int)card.Type);
-          else
-            g_Player.OnZapping(-1);
-        }
-
-
+        
         if (!succeeded)
         {
           //timeshifting new channel failed. 
@@ -2439,22 +2452,21 @@ namespace Mediaportal.TV.TvPlugin
           _doingChannelChange = true; // keep fullscreen false;
           return true; // "success"
         }
-
-        if (cardChanged)
+        
+        if (_status.IsSet(LiveTvStatus.WasPlaying))
         {
-          _status.Set(LiveTvStatus.CardChange);
           if (card != null)
-          {
-            RegisterCiMenu(card.Id);
-          }
-          _status.Reset(LiveTvStatus.WasPlaying);
+            g_Player.OnZapping((int)card.Type);
+          else
+            g_Player.OnZapping(-1);
         }
-        else
+
+        _status.Set(LiveTvStatus.CardChange);
+        if (card != null)
         {
-          _status.Reset(LiveTvStatus.CardChange);
-          _status.Set(LiveTvStatus.SeekToEnd);
+          RegisterCiMenu(card.Id);
         }
-            
+        _status.Reset(LiveTvStatus.WasPlaying);
 
         // Update channel navigator
         if (Navigator.Channel.Entity != null &&
@@ -4001,6 +4013,14 @@ namespace Mediaportal.TV.TvPlugin
         // Enable CI menu handling in card
         ServiceAgents.Instance.ControllerServiceAgent.SetCiMenuHandler(newCardId, null);
         Log.Debug("TvPlugin: CiMenuHandler attached to new card {0}", newCardId);
+      }
+    }
+
+    public static void UnRegisterCiMenu()
+    {
+      if (_ciMenuEventEventHandler != null)
+      {
+        ServiceAgents.Instance.EventServiceAgent.UnRegisterCiMenuCallbacks(_ciMenuEventEventHandler, !Connected);        
       }
     }
 

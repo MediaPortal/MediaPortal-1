@@ -18,12 +18,13 @@
 
 #endregion
 
+using System.ServiceModel;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 
 namespace Mediaportal.TV.Server.TVControl.Interfaces.Events
 {
-  
 
+  [ServiceContract]
   public interface ITvServerEvent
   {
     event TvServerEventHandler OnTvServerEvent;

@@ -8,6 +8,8 @@ using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.ServiceAgents.Interfaces;
 
 
 namespace Mediaportal.TV.Server.TVService.ServiceAgents
@@ -15,9 +17,7 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
 
   public class ServiceAgents : Singleton<ServiceAgents>, IDisposable
   {
-    public delegate void ServiceAgentRemovedDelegate(Type service);
-    public event ServiceAgentRemovedDelegate OnServiceAgentRemovedEvent;
-
+    public delegate void ServiceAgentRemovedDelegate(Type service);    
     private static string _hostname = Dns.GetHostName();
 
     private ServiceAgents()
@@ -30,24 +30,31 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
       Dispose();
     }
 
-    private void AddServices()
+    private void ReconnectServices()
     {
-      //System.Diagnostics.Debugger.Launch();
+      GetOrCreateServiceAgent<ISettingService>();
+      GetOrCreateServiceAgent<IControllerService>();
+      GetOrCreateServiceAgent<IProgramCategoryService>();
 
-      /*
-      AddGenericService<ICardService>();
-      AddGenericService<IProgramService>();
-      AddGenericService<IRecordingService>();
-      AddGenericService<IChannelGroupService>();
-      AddGenericService<ISettingService>();
-      AddGenericService<IChannelService>();      
-      AddGenericService<IScheduleService>();
-      AddGenericService<ICanceledScheduleService>();
-      AddGenericService<IConflictService>();
-      AddGenericService<IProgramCategoryService>();
-      AddGenericService<IControllerService>();
-      */
+      // most WCF agents have a specific agent that does additional stuff like stripping away unneeded data before sending it over the wire.
+      // this is often done on save related methods.
 
+      GetOrCreateCustomServiceAgent<ICardService, CardServiceAgent>();
+      GetOrCreateCustomServiceAgent<IProgramService, ProgramServiceAgent>();
+      GetOrCreateCustomServiceAgent<IRecordingService, RecordingServiceAgent>();
+      GetOrCreateCustomServiceAgent<IChannelGroupService, ChannelGroupServiceAgent>();
+      GetOrCreateCustomServiceAgent<IChannelService, ChannelServiceAgent>();
+      GetOrCreateCustomServiceAgent<IScheduleService, ScheduleServiceAgent>();
+      GetOrCreateCustomServiceAgent<ICanceledScheduleService, CanceledScheduleServiceAgent>();
+      GetOrCreateCustomServiceAgent<IConflictService, ConflictServiceAgent>();
+
+      GetOrCreateEventServiceAgent();
+      GetOrCreateDiscovererServiceAgent();      
+      
+    }
+
+    private void AddServices()
+    {     
       AddGenericService<ISettingService>();
       AddGenericService<IControllerService>();
       AddGenericService<IProgramCategoryService>();
@@ -97,44 +104,69 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     }
 
 
+    private TServiceInterface GetOrCreateCustomServiceAgent<TServiceInterface, TServiceImpl>()
+      where TServiceImpl : ServiceAgent<TServiceInterface>, TServiceInterface
+      where TServiceInterface : class
+    {
+      var customServiceAgent = GlobalServiceProvider.Get<TServiceInterface>();
+      if (customServiceAgent == null)
+      {
+        AddCustomService<TServiceInterface, TServiceImpl>();
+        customServiceAgent = GlobalServiceProvider.Get<TServiceInterface>();
+      }
+      return customServiceAgent;
+    }
+
+
+
     private T GetOrCreateServiceAgent<T>() where T : class
     {
-      var discoverServiceAgent = GlobalServiceProvider.Get<T>();
-      if (discoverServiceAgent == null)
+      var serviceAgent = GlobalServiceProvider.Get<T>();
+      if (serviceAgent == null)
       {
         AddGenericService<T>();
-        discoverServiceAgent = GlobalServiceProvider.Get<T>();
+        serviceAgent = GlobalServiceProvider.Get<T>();
       }
-      return discoverServiceAgent;
+      return serviceAgent;
     }
 
     public IEventServiceAgent EventServiceAgent
     {
-      get
+      get 
       {
-        var eventServiceAgent = GlobalServiceProvider.Get<IEventServiceAgent>();
-        if (eventServiceAgent == null)
-        {
-          AddEventService();
-          eventServiceAgent = GlobalServiceProvider.Get<IEventServiceAgent>();
-        }
-        return eventServiceAgent;
+        return GetOrCreateEventServiceAgent();
       }
+    }
+
+    private IEventServiceAgent GetOrCreateEventServiceAgent ()
+    {
+      var eventServiceAgent = GlobalServiceProvider.Get<IEventServiceAgent>();
+      if (eventServiceAgent == null)
+      {
+        AddEventService();
+        eventServiceAgent = GlobalServiceProvider.Get<IEventServiceAgent>();
+      }
+      return eventServiceAgent;
     }
 
     public IDiscoverServiceAgent DiscoverServiceAgent
     {
-      get
+      get 
       {
-        var discoverServiceAgent = GlobalServiceProvider.Get<IDiscoverServiceAgent>();
-        if (discoverServiceAgent == null)
-        {
-          AddDiscoveryService();
-          discoverServiceAgent = GlobalServiceProvider.Get<IDiscoverServiceAgent>();
-        }
-
-        return discoverServiceAgent;
+        return GetOrCreateDiscovererServiceAgent();
       }
+    }
+
+    private IDiscoverServiceAgent GetOrCreateDiscovererServiceAgent()
+    {
+      var discoverServiceAgent = GlobalServiceProvider.Get<IDiscoverServiceAgent>();
+      if (discoverServiceAgent == null)
+      {
+        AddDiscoveryService();
+        discoverServiceAgent = GlobalServiceProvider.Get<IDiscoverServiceAgent>();
+      }
+
+      return discoverServiceAgent;
     }
 
     public IControllerService ControllerServiceAgent
@@ -149,15 +181,15 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     {
       get
       {
-        return GetOrCreateServiceAgent<IProgramService>();
+        return GetOrCreateCustomServiceAgent<IProgramService,ProgramServiceAgent>();
       }
     }
-
+    
     public IRecordingService RecordingServiceAgent
     {
       get
       {
-        return GetOrCreateServiceAgent<IRecordingService>();
+        return GetOrCreateCustomServiceAgent<IRecordingService, RecordingServiceAgent>();
       }
     }
 
@@ -165,7 +197,7 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     {
       get
       {
-        return GetOrCreateServiceAgent<IChannelGroupService>();
+        return GetOrCreateCustomServiceAgent<IChannelGroupService, ChannelGroupServiceAgent>();
       }
     }
 
@@ -181,7 +213,7 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     {
       get
       {
-        return GetOrCreateServiceAgent<IChannelService>();
+        return GetOrCreateCustomServiceAgent<IChannelService, ChannelServiceAgent>();
       }
     }
 
@@ -189,7 +221,7 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     {
       get
       {
-        return GetOrCreateServiceAgent<IScheduleService>();
+        return GetOrCreateCustomServiceAgent<IScheduleService, ScheduleServiceAgent>();
       }
     }
 
@@ -197,7 +229,7 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     {
       get
       {
-        return GetOrCreateServiceAgent<ICardService>();
+        return GetOrCreateCustomServiceAgent<ICardService, CardServiceAgent>();
       }
     }
 
@@ -205,7 +237,7 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     {
       get
       {
-        return GetOrCreateServiceAgent<ICanceledScheduleService>();
+        return GetOrCreateCustomServiceAgent<ICanceledScheduleService, CanceledScheduleServiceAgent>();
       }
     }
 
@@ -213,7 +245,7 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     {
       get
       {
-        return GetOrCreateServiceAgent<IConflictService>();
+        return GetOrCreateCustomServiceAgent<IConflictService, ConflictServiceAgent>();
       }
     }
 
@@ -272,10 +304,10 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
       bool found = GlobalServiceProvider.IsRegistered<IEventServiceAgent>();
       if (!String.IsNullOrEmpty(_hostname))
       {
-        IEventServiceAgent eventserviceagent = new EventServiceAgent(_hostname);
+        IEventServiceAgent eventserviceagent = new EventServiceClient(_hostname);
 
-        ((IClientChannel)eventserviceagent.Channel).Faulted += new EventHandler(ServiceAgents_Faulted);
-        ((IClientChannel)eventserviceagent.Channel).Closed += new EventHandler(ServiceAgents_Closed);
+        //((IClientChannel)eventserviceagent.Channel).Faulted += new EventHandler(ServiceAgents_Faulted);
+        //((IClientChannel)eventserviceagent.Channel).Closed += new EventHandler(ServiceAgents_Closed);
 
         if (found)
         {
@@ -326,6 +358,7 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
 
     private void ServiceAgents_Closed(object sender, EventArgs e)
     {
+      Log.Debug("ServiceAgents.ServiceAgents_Closed: {0}", sender.GetType());
       RemoveService(sender);
     }
 
@@ -355,20 +388,40 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
         GlobalServiceProvider.Remove(type);
       }
 
-      if (OnServiceAgentRemovedEvent != null)
-      {
-        OnServiceAgentRemovedEvent(type);
-      }
+      Log.Debug("ServiceAgents.RemoveService: removed service:{0}", type);      
     }
 
     private void ServiceAgents_Faulted(object sender, EventArgs e)
     {
+      Log.Debug("ServiceAgents.ServiceAgents_Faulted: {0}", sender.GetType());
       RemoveService(sender);
     }
 
     public I PluginService<I>()
     {
       return GlobalServiceProvider.Get<I>();
+    }
+
+    public void ReConnect()
+    {
+      ReconnectServices();
+    }
+
+    public void Disconnect ()
+    {
+      DisposeCustomServiceProxy<ICardService>();
+      DisposeCustomServiceProxy<ICardService>();
+      DisposeCustomServiceProxy<IProgramService>();
+      DisposeCustomServiceProxy<IRecordingService>();
+      DisposeCustomServiceProxy<IChannelGroupService>();
+      DisposeCustomServiceProxy<IChannelService>();
+      DisposeCustomServiceProxy<IScheduleService>();
+      DisposeCustomServiceProxy<ICanceledScheduleService>();
+      DisposeCustomServiceProxy<IConflictService>();
+      DisposeGenericServiceProxy<IProgramCategoryService>();
+      DisposeGenericServiceProxy<ISettingService>();
+      DisposeGenericServiceProxy<IControllerService>();
+      
     }
 
     #region Implementation of IDisposable
@@ -379,45 +432,14 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     /// <filterpriority>2</filterpriority>
     public void Dispose()
     {
-      /*
-      DisposeGenericServiceProxy<ICardService>();
-      DisposeGenericServiceProxy<ICardService>();
-      DisposeGenericServiceProxy<IProgramService>();
-      DisposeGenericServiceProxy<IRecordingService>();
-      DisposeGenericServiceProxy<IChannelGroupService>();
-      DisposeGenericServiceProxy<ISettingService>();
-      DisposeGenericServiceProxy<IChannelService>();      
-      DisposeGenericServiceProxy<IScheduleService>();
-      DisposeGenericServiceProxy<ICanceledScheduleService>();
-      DisposeGenericServiceProxy<IConflictService>();
-      DisposeGenericServiceProxy<IProgramCategoryService>();
-      DisposeGenericServiceProxy<IControllerService>();
+      Disconnect();
       DisposeGenericServiceProxy<IEventService>();
-      DisposeGenericServiceProxy<IDiscoverService>();
-      */
-
-      DisposeCustomServiceProxy<ICardService>();
-      DisposeCustomServiceProxy<ICardService>();
-      DisposeCustomServiceProxy<IProgramService>();
-      DisposeCustomServiceProxy<IRecordingService>();
-      DisposeCustomServiceProxy<IChannelGroupService>();      
-      DisposeCustomServiceProxy<IChannelService>();
-      DisposeCustomServiceProxy<IScheduleService>();
-      DisposeCustomServiceProxy<ICanceledScheduleService>();
-      DisposeCustomServiceProxy<IConflictService>();
-
-      DisposeGenericServiceProxy<IProgramCategoryService>();
-      DisposeGenericServiceProxy<ISettingService>();
-      DisposeGenericServiceProxy<IControllerService>();
-      DisposeGenericServiceProxy<IEventService>();
-      DisposeGenericServiceProxy<IDiscoverService>();
-
-      
+      DisposeGenericServiceProxy<IDiscoverService>(); // we cant get rid of IDiscoverService, when calling disconnect as we depend on this to re-discover a server connection-
     }
 
     private void DisposeCustomServiceProxy<TServiceInterface>() where TServiceInterface : class
     {
-      TServiceInterface service = GlobalServiceProvider.Get<TServiceInterface>();
+      var service = GlobalServiceProvider.Get<TServiceInterface>();
       if (service != null)
       {
         var serviceAgent = service as ServiceAgent<TServiceInterface>;
@@ -427,7 +449,7 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
           serviceAgent.ServiceAgentClosed -= new EventHandler(ServiceAgents_Closed);
         }
         ((IDisposable) service).Dispose();
-        GlobalServiceProvider.Remove<TServiceInterface>();
+        GlobalServiceProvider.Remove<TServiceInterface>();        
       }
     }
 

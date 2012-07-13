@@ -269,8 +269,9 @@ namespace Mediaportal.TV.Server.TVService.Services
       Log.Debug("closing WCF service.");
       try
       {
+        Services.EventService.CleanUp();
         foreach (ServiceHost host in _serviceHosts.Values)
-        {
+        {          
           if (host != null)
           {
             host.Close();            

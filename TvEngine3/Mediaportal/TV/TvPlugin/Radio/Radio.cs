@@ -295,8 +295,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
     private static void LoadChannelGroups()
     {
       Settings xmlreader = new MPSettings();
-      string currentchannelName = xmlreader.GetValueAsString("myradio", "channel", String.Empty);
-
+      string currentchannelName = xmlreader.GetValueAsString("myradio", "channel", String.Empty);      
       IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.GetChannelsByName(currentchannelName); 
       if (channels != null && channels.Count > 0)
       {

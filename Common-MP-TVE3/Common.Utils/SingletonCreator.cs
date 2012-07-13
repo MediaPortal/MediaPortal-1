@@ -23,7 +23,21 @@ namespace MediaPortal.Common.Utils
 
     public static T Instance
     {
-      get { return SingletonCreator.Instance; }
+      get
+      {
+        try
+        {
+          return SingletonCreator.Instance;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+          System.Diagnostics.Debugger.Launch();
+#endif
+          //TODO gibman: log here once log4net is introduced                    
+        }
+        return null;
+      }
     }
   }
 

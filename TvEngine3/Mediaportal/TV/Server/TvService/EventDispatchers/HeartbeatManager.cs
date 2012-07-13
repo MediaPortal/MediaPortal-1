@@ -46,8 +46,7 @@ namespace Mediaportal.TV.Server.TVService.EventDispatchers
     public override void Start()
     {
       Log.Info("HeartbeatManager: start");
-      SetupHeartbeatThreads();
-      EventService.UserDisconnectedFromService -= UserDisconnectedFromService;
+      SetupHeartbeatThreads();      
       EventService.UserDisconnectedFromService += UserDisconnectedFromService;
     }
 
@@ -178,8 +177,8 @@ namespace Mediaportal.TV.Server.TVService.EventDispatchers
           {
             if (EventService.CallbackRequestHeartbeat(heartbeatuser.Key))
             {
-              updateUsers.Add(heartbeatuser.Key);              
-            }              
+              updateUsers.Add(heartbeatuser.Key);
+            }            
           }                    
         }
         catch(Exception ex)

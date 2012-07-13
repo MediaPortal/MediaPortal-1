@@ -2308,6 +2308,8 @@ namespace Mediaportal.TV.Server.TVService
             
             Log.Write("Controller: UnParkTimeShifting {0}", cardHandler.DataBaseCard.idCard);
             cardHandler.ParkedUserManagement.UnParkUser(ref user, duration, idChannel);
+            StopTimeShiftingAllChannelsExcept(user, idChannel);
+
             VirtualCard virtualCard = GetVirtualCard(user);
             card = virtualCard;
 
@@ -2316,7 +2318,6 @@ namespace Mediaportal.TV.Server.TVService
             {              
               UpdateChannelStatesForUsers();
             }
-            StopTimeShiftingAllChannelsExcept(user, idChannel);
             result = true;            
           } 
         }

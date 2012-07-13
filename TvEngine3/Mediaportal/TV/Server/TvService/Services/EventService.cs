@@ -7,6 +7,7 @@ using Mediaportal.TV.Server.TVControl.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
 namespace Mediaportal.TV.Server.TVService.Services
@@ -17,11 +18,11 @@ namespace Mediaportal.TV.Server.TVService.Services
     public IServerEventCallback ServerEventCallback { get; set; }
   }
 
-  [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession)]
+  [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, ConcurrencyMode = ConcurrencyMode.Multiple)]
   public class EventService : IEventService, IDisposable
   {
+    private static readonly IDictionary<string, Subscriber> _subscribers = new ConcurrentDictionary<string, Subscriber>();
     private static readonly object _subscribersLock = new object();
-    private static readonly IDictionary<string, Subscriber> _subscribers = new ConcurrentDictionary<string, Subscriber>();       
 
     public delegate void UserDisconnectedFromServiceDelegate(string userName);
     public static UserDisconnectedFromServiceDelegate UserDisconnectedFromService;
@@ -33,34 +34,38 @@ namespace Mediaportal.TV.Server.TVService.Services
       Dispose();
     }
 
+    public static void CleanUp ()
+    {
+      lock (_subscribersLock)
+      {
+        foreach (Subscriber subscriber in _subscribers.Values)
+        {
+          IServerEventCallback eventCallback = subscriber.ServerEventCallback;
+          var obj = eventCallback as ICommunicationObject;
+          if (obj != null)
+          {
+            obj.Abort();
+            obj.Close();            
+          }
+        }
+        _subscribers.Clear();
+      }
+    }
+
     /// <summary>
     /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
     /// </summary>
     /// <filterpriority>2</filterpriority>
     public void Dispose()
     {
-      //if (OperationContext.Current != null)
-      {
-        lock (_subscribersLock)
-        {
-          foreach (Subscriber subscriber in _subscribers.Values)
-          {
-            IServerEventCallback eventCallback = subscriber.ServerEventCallback;
-            var obj = eventCallback as ICommunicationObject;
-            if (obj != null)
-            {
-              obj.Close();
-            }
-          }
-          _subscribers.Clear();
-        }
-      }  
+      Log.Debug("EventService.Dispose");
     }
 
     #endregion
 
     public void Subscribe(string username)
     {
+      Log.Debug("EventService.Subscribe user:{0}", username);
       bool alreadySubscribed;
       lock (_subscribersLock)
       {
@@ -69,24 +74,33 @@ namespace Mediaportal.TV.Server.TVService.Services
 
       if (!alreadySubscribed)
       {
-        var eventCallback = OperationContext.Current.GetCallbackChannel<IServerEventCallback>();
-
-        var obj = eventCallback as ICommunicationObject;
-        if (obj != null)
-        {          
-          obj.Faulted += EventService_Faulted;
-          obj.Closed += EventService_Closed;
-        }
-        var subscriber = new Subscriber { UserName = username, ServerEventCallback = eventCallback/*, ServerEventEnum = eventEnum*/ };
-        lock (_subscribersLock)
+        try
         {
-          _subscribers[username] = subscriber;
+          var eventCallback = OperationContext.Current.GetCallbackChannel<IServerEventCallback>();
+
+          var obj = eventCallback as ICommunicationObject;
+          if (obj != null)
+          {
+            obj.Faulted += EventService_Faulted;
+            obj.Closed += EventService_Closed;
+          }
+          var subscriber = new Subscriber { UserName = username, ServerEventCallback = eventCallback };
+          lock (_subscribersLock)
+          {
+            _subscribers[username] = subscriber;
+          }
+          
+        }
+        catch (Exception e)
+        {
+          Log.Error("EventService.Subscribe failed for user '{0}' with ex '{1}'", username, e);
         }
       }      
     }
 
     public void Unsubscribe(string username)
     {
+      Log.Debug("EventService.Unsubscribe user:{0}", username);
       Subscriber subscriber;
       bool found;
       lock (_subscribersLock)
@@ -94,33 +108,27 @@ namespace Mediaportal.TV.Server.TVService.Services
         found = _subscribers.TryGetValue(username, out subscriber);
       }
       if (found)
-      {
+      {        
         FireUserDisconnectedFromService(subscriber.ServerEventCallback);
       }
-      lock (_subscribersLock)
-      {
-        if (_subscribers.ContainsKey(username))
-        {
-          _subscribers.Remove(username);
-        }
-      }
     }
 
-    private void EventService_Faulted(object sender, EventArgs e)
+    private static void EventService_Faulted(object sender, EventArgs e)
     {
+      Log.Debug("EventService.EventService_Faulted");
       FireUserDisconnectedFromService(sender as IServerEventCallback);
     }
 
-    private void EventService_Closed(object sender, EventArgs e)
+    private static void EventService_Closed(object sender, EventArgs e)
     {
+      Log.Debug("EventService.EventService_Closed");
       FireUserDisconnectedFromService(sender as IServerEventCallback);
     }
 
-    private void FireUserDisconnectedFromService(IServerEventCallback eventCallback)
+    private static void FireUserDisconnectedFromService(IServerEventCallback eventCallback)
     {      
       if (eventCallback != null)
       {
-        if (UserDisconnectedFromService != null)
         {
           Subscriber subscriber;
           lock (_subscribersLock)
@@ -129,12 +137,26 @@ namespace Mediaportal.TV.Server.TVService.Services
           }
           if (subscriber != null)
           {
-            string username = subscriber.UserName;            
-            UserDisconnectedFromService(username);
+            string username = subscriber.UserName;
+
+            var obj = eventCallback as ICommunicationObject;
+            if (obj != null)
+            {
+              obj.Faulted -= EventService_Faulted;
+              obj.Closed -= EventService_Closed;
+              obj.Abort();
+              obj.Close();
+            }
+
+            if (UserDisconnectedFromService != null)
+            {
+              UserDisconnectedFromService(username);
+            }
             lock (_subscribersLock)
             {
               if (_subscribers.ContainsKey(username))
               {
+                Log.Debug("EventService.FireUserDisconnectedFromService user:{0}", username);
                 _subscribers.Remove(username);
               }
             }
@@ -159,18 +181,25 @@ namespace Mediaportal.TV.Server.TVService.Services
       {
         userFound = _subscribers.TryGetValue(username, out subscriber);
       }
-      //foreach (Subscriber subscriber in _subscribers.Values)
+      try
       {
-        //bool isTvServerEventEnum = (subscriber.ServerEventEnum & ServerEventEnum.TvServerEventEnum) == ServerEventEnum.TvServerEventEnum;
-        //if (isTvServerEventEnum)
         if (userFound)
         {
           if (IsConnectionReady(subscriber.ServerEventCallback as ICommunicationObject))
           {
-            subscriber.ServerEventCallback.CallbackTvServerEvent(eventArgs);
+            IServerEventCallback callback = subscriber.ServerEventCallback;
+            callback.BeginOnCallbackTvServerEvent(eventArgs, callback.EndOnCallbackTvServerEvent, null);
           }
-        }
+          else
+          {
+            FireUserDisconnectedFromService(subscriber.ServerEventCallback);
+          }
+        }    
       }
+      catch (Exception ex)
+      {
+        Log.Error("EventService.CallbackTvServerEvent failed for user:{0} ex:{1}", username, ex);
+      }      
     }
 
     public static void CallbackCiMenuEvent(string username, CiMenu eventArgs)
@@ -181,19 +210,26 @@ namespace Mediaportal.TV.Server.TVService.Services
       {
         userFound = _subscribers.TryGetValue(username, out subscriber);
       }
-
-      //foreach (Subscriber subscriber in _subscribers.Values)
+     
+      try
       {
-        //bool isCiMenuEventEnum = (subscriber.ServerEventEnum & ServerEventEnum.CiMenuEventEnum) == ServerEventEnum.CiMenuEventEnum;
-        //if (isCiMenuEventEnum)
         if (userFound)
         {
           if (IsConnectionReady(subscriber.ServerEventCallback as ICommunicationObject))
           {
-            subscriber.ServerEventCallback.CiMenuCallback(eventArgs);
+            var callback = subscriber.ServerEventCallback;
+            callback.BeginOnCallbackCiMenuEvent(eventArgs, callback.EndOnCallbackCiMenuEvent, null);            
+          }
+          else
+          {
+            FireUserDisconnectedFromService(subscriber.ServerEventCallback);
           }
         }
       }
+      catch (Exception ex)
+      {
+        Log.Error("EventService.CallbackCiMenuEvent failed for user:{0} ex:{1}", username, ex);
+      }   
     }
 
     public static bool CallbackRequestHeartbeat(string username)
@@ -206,20 +242,28 @@ namespace Mediaportal.TV.Server.TVService.Services
         userFound = _subscribers.TryGetValue(username, out subscriber);
       }
 
-      //foreach (Subscriber subscriber in _subscribers.Values)
+      try
       {
-        //bool isHeartbeatEventEnum = (subscriber.ServerEventEnum & ServerEventEnum.HeartbeatEventEnum) == ServerEventEnum.HeartbeatEventEnum;
-        //if (isHeartbeatEventEnum)
         if (userFound)
         {
           if (IsConnectionReady(subscriber.ServerEventCallback as ICommunicationObject))
           {
-            subscriber.ServerEventCallback.HeartbeatRequestReceived();
+            var callback = subscriber.ServerEventCallback;
+            callback.BeginOnCallbackHeartBeatEvent(callback.EndOnCallbackHeartBeatEvent, null);            
             heartbeatSent = true;
           }
+          else
+          {
+            FireUserDisconnectedFromService(subscriber.ServerEventCallback);
+          }
         }
-        return heartbeatSent;
       }
+      catch (Exception ex)
+      {
+        Log.Error("EventService.CallbackRequestHeartbeat failed for user:{0} ex:{1}", username, ex);                
+      }
+      
+      return heartbeatSent;
     }
 
     #endregion

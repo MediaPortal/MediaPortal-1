@@ -100,10 +100,8 @@
     <Compile Include="Events\ServerEventEnum.cs" />
     <Compile Include="Events\TvServerEventArgs.cs" />
     <Compile Include="Events\TvServerEventArgsTranslator.cs" />
-    <Compile Include="Interfaces\Events\IHeartbeatEventCallback.cs" />
     <Compile Include="Interfaces\Events\ITvServerEvent.cs" />
     <Compile Include="Interfaces\Events\IServerEventCallback.cs" />
-    <Compile Include="Interfaces\Events\ITvServerEventCallback.cs" />
     <Compile Include="Interfaces\Services\ICanceledScheduleService.cs" />
     <Compile Include="Interfaces\Services\ICardService.cs" />
     <Compile Include="Interfaces\Services\IChannelGroupService.cs" />

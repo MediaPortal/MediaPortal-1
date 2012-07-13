@@ -56,6 +56,10 @@
     <Compile Include="ConflictServiceAgent.cs" />
     <Compile Include="DiscoverServiceAgent.cs" />
     <Compile Include="EventServiceAgent.cs" />
+    <Compile Include="EventServiceClient.cs" />
+    <Compile Include="Interfaces\IEventServiceAgent.cs" />
+    <Compile Include="Interfaces\IHeartbeatEventCallbackClient.cs" />
+    <Compile Include="Interfaces\ITvServerEventCallbackClient.cs" />
     <Compile Include="MappingHelper.cs" />
     <Compile Include="ProgramServiceAgent.cs" />
     <Compile Include="RecordingServiceAgent.cs" />

@@ -47,12 +47,48 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
       }
     }    
 
-    public void Dispose()
+    public virtual void Dispose()
     {
-      ((IClientChannel)_channel).Dispose();
-      ((IClientChannel)_channel).Faulted -= new EventHandler(ServiceAgent_Faulted);
-      ((IClientChannel)_channel).Closed -= new EventHandler(ServiceAgent_Closed);
-      ((IClientChannel)_channel).Close();
+      var clientChannel = _channel as IClientChannel;            
+      if (clientChannel == null)
+      {
+        return;
+      }
+
+      clientChannel.Faulted -= new EventHandler(ServiceAgent_Faulted);
+      clientChannel.Closed -= new EventHandler(ServiceAgent_Closed);
+
+      try
+      {
+        if (clientChannel.State != CommunicationState.Faulted)
+        {
+          // we need this timeout, otherwise the call to 'Close' will block until any ongoing parallel WCF calls are still active          
+          // so instead of having to wait for the default timeout of 1min, we instead wait 1 sec, before giving up and instead calls 'Abort'
+          var timeout = new TimeSpan(0,0,0,1); 
+          clientChannel.Close(timeout);
+        }
+        else
+        {
+          clientChannel.Abort();
+        }
+      }
+      catch (CommunicationException ce)
+      {
+        clientChannel.Abort();
+      }
+      catch (TimeoutException toe)
+      {
+        clientChannel.Abort();
+      }
+      catch (Exception e)
+      {
+        clientChannel.Abort();        
+      }
+      finally
+      {
+        clientChannel.Dispose();
+        clientChannel = null;
+      }
     }
 
     private void ServiceAgent_Closed(object sender, EventArgs e)

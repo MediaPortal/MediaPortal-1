@@ -41,6 +41,7 @@ using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 using Mediaportal.TV.Server.TVService.ServiceAgents;
+using Mediaportal.TV.Server.TVService.ServiceAgents.Interfaces;
 
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
@@ -268,7 +269,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
         IUser user = UserFactory.CreateBasicUser(GetUserName(cardId, id), cardId);        
         
-        IHeartbeatEventCallback handler = new HeartbeatEventCallback();
+        IHeartbeatEventCallbackClient handler = new HeartbeatEventCallback();
         ServiceAgents.Instance.EventServiceAgent.RegisterHeartbeatCallbacks(handler);
         ICiMenuEventCallback menuHandler = new CiMenuEventCallback();
         ServiceAgents.Instance.EventServiceAgent.UnRegisterCiMenuCallbacks(menuHandler);
@@ -852,7 +853,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     #endregion
   }
 
-  internal class HeartbeatEventCallback : IHeartbeatEventCallback
+  internal class HeartbeatEventCallback : IHeartbeatEventCallbackClient
   {
     #region Implementation of IHeartbeatEventCallback
 

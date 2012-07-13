@@ -33,13 +33,14 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVService.ServiceAgents;
+using Mediaportal.TV.Server.TVService.ServiceAgents.Interfaces;
 using Mediaportal.TV.TvPlugin.Helper;
 using Channel = Mediaportal.TV.Server.TVDatabase.Entities.Channel;
 using Recording = Mediaportal.TV.Server.TVDatabase.Entities.Recording;
 
 namespace Mediaportal.TV.TvPlugin
 {
-  public class TvNotifyManager : ITvServerEventCallback
+  public class TvNotifyManager : ITvServerEventCallbackClient
   {
     private readonly Timer _timer;
     // flag indicating that notifies have been added/changed/removed
@@ -156,7 +157,7 @@ namespace Mediaportal.TV.TvPlugin
 
       if (_enableRecNotification)
       {
-        ServiceAgents.Instance.EventServiceAgent.UnRegisterTvServerEventCallbacks(this);        
+        ServiceAgents.Instance.EventServiceAgent.UnRegisterTvServerEventCallbacks(this, !TVHome.Connected);        
       }
       _timer.Stop();
     }
