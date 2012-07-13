@@ -372,7 +372,7 @@ namespace TvEngine
 
                   for (int j = 0; j < menu.EntryCount; j++)
                   {
-                    String entry = Marshal.PtrToStringAnsi(_mmiBuffer);
+                    String entry = menu.Entries[j];
                     Log.Debug("  entry {0,-2}  = {1}", j + 1, entry);
                     if (_ciMenuCallbacks != null && !_camMessagesDisabled)
                     {
