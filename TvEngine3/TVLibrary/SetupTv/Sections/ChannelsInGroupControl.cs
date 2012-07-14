@@ -137,12 +137,7 @@ namespace SetupTv.Sections
 
       item.Checked = channel.VisibleInGuide;
       item.Tag = map;
-
-      IList<TuningDetail> details = channel.ReferringTuningDetail();
-      if (details.Count > 0)
-      {
-        item.SubItems.Add(details[0].ChannelNumber.ToString());
-      }
+      item.SubItems.Add(channel.ChannelNumber.ToString());
       return item;
     }
 

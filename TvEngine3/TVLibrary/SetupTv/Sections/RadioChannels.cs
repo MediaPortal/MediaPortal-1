@@ -591,7 +591,7 @@ namespace SetupTv.Sections
         if (string.IsNullOrEmpty(item.Description))
           item.Description = item.FileName;
         Channel channel = new Channel(true, false, 0, Schedule.MinSchedule, false,
-                                      Schedule.MinSchedule, 10000, true, "", item.Description);
+                                      Schedule.MinSchedule, 10000, true, "", item.Description, 0);
         channel.Persist();
         layer.AddWebStreamTuningDetails(channel, item.FileName, 0);
         layer.AddChannelToRadioGroup(channel, TvConstants.RadioGroupNames.AllChannels);
