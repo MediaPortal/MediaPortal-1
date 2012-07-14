@@ -75,6 +75,8 @@ namespace TvPlugin
 
     #region Private members
 
+    private List<Channel> _channelList = new List<Channel>();
+
     private List<ChannelGroup> m_groups = new List<ChannelGroup>();
     // Contains all channel groups (including an "all channels" group)
 
@@ -552,6 +554,46 @@ namespace TvPlugin
       RaiseOnZapChannelEvent();
     }
 
+    private void GetChannels(bool refresh)
+    {
+      if (refresh)
+      {
+        _channelList = new List<Channel>();
+      }
+      if (_channelList == null)
+      {
+        _channelList = new List<Channel>();
+      }
+      if (_channelList.Count == 0)
+      {
+        try
+        {
+          if (TVHome.Navigator.CurrentGroup != null)
+          {
+            foreach (GroupMap chan in TVHome.Navigator.CurrentGroup.ReferringGroupMap())
+            {
+              Channel ch = chan.ReferencedChannel();
+              if (ch.VisibleInGuide && ch.IsTv)
+              {
+                _channelList.Add(ch);
+              }
+            }
+          }
+        }
+        catch {}
+
+        if (_channelList.Count == 0)
+        {
+          Channel newChannel = new Channel(false, true, 0, DateTime.MinValue, false,
+                                           DateTime.MinValue, 0, true, "", GUILocalizeStrings.Get(911), 0);
+          for (int i = 0; i < 10; ++i)
+          {
+            _channelList.Add(newChannel);
+          }
+        }
+      }
+    }
+
     /// <summary>
     /// Changes the current channel (based on channel number) after a specified delay.
     /// </summary>
@@ -567,6 +609,7 @@ namespace TvPlugin
         bool found = false;
         int iCounter = 0;
         Channel chan;
+        GetChannels(true);
         while (iCounter < channels.Count && found == false)
         {
           chan = ((GroupMap)channels[iCounter]).ReferencedChannel();
@@ -574,17 +617,12 @@ namespace TvPlugin
           Log.Debug("chan {0}", chan.DisplayName);
           if (chan.VisibleInGuide)
           {
-            foreach (TuningDetail detail in chan.ReferringTuningDetail())
+            if (chan.ChannelNumber == channelNr)
             {
-              Log.Debug("detail nr {0} id{1}", detail.ChannelNumber, detail.IdChannel);
-
-              if (detail.ChannelNumber == channelNr)
-              {
-                Log.Debug("find channel: iCounter {0}, detail.ChannelNumber {1}, detail.name {2}, channels.Count {3}",
-                          iCounter, detail.ChannelNumber, detail.Name, channels.Count);
-                found = true;
-                ZapToChannel(iCounter + 1, useZapDelay);
-              }
+              Log.Debug("find channel: iCounter {0}, chan.ChannelNumber {1}, chan.DisplayName {2}, channels.Count {3}",
+                        iCounter, chan.ChannelNumber, chan.DisplayName, channels.Count);
+              found = true;
+              ZapToChannel(iCounter + 1, useZapDelay);
             }
           }
           iCounter++;
