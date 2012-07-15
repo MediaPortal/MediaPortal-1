@@ -22,8 +22,8 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     private event CiMenuCallbackDelegate OnCiMenuCallbackReceived;
 
     #endregion
- 
 
+    private static bool _serverDown = false;
     private readonly string _hostname;
     private EventServiceAgent _eventServiceAgent;
 
@@ -66,6 +66,10 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     {
       RemoveEventHandlers();
       _eventServiceAgent = null;
+      if (!_serverDown)
+      {
+        ReConnect();
+      }
     }
 
     private void RemoveEventHandlers()
@@ -171,6 +175,7 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     private int _isRunningUnRegisterCiMenuCallbacks;
     public void UnRegisterCiMenuCallbacks(ICiMenuEventCallback handler, bool serverDown)
     {
+      _serverDown = serverDown;
       if (Interlocked.Exchange(ref _isRunningUnRegisterCiMenuCallbacks, 1) == 1)
       {
         return;
@@ -225,6 +230,7 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     private int _isRunningUnRegisterHeartbeatCallbacks;
     public void UnRegisterHeartbeatCallbacks(IHeartbeatEventCallbackClient handler, bool serverDown)
     {
+      _serverDown = serverDown;
       if (Interlocked.Exchange(ref _isRunningUnRegisterHeartbeatCallbacks, 1) == 1)
       {
         return;
@@ -280,6 +286,7 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     private int _isRunningUnRegisterTvServerEventCallbacks;
     public void UnRegisterTvServerEventCallbacks(ITvServerEventCallbackClient handler, bool serverDown)
     {
+      _serverDown = serverDown;
       if (Interlocked.Exchange(ref _isRunningUnRegisterTvServerEventCallbacks, 1) == 1)
       {
         return;

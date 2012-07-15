@@ -78,7 +78,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
     public override void OnSectionDeActivated()
     {
       // remove local eventhandler from server event      
-      ServiceAgents.Instance.EventServiceAgent.UnRegisterCiMenuCallbacks(_ciMenuEventHandler);      
+      ServiceAgents.Instance.EventServiceAgent.UnRegisterCiMenuCallbacks(_ciMenuEventHandler, false);      
     }
 
     private void InitMenu()

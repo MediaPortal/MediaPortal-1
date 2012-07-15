@@ -886,8 +886,7 @@ namespace Mediaportal.TV.TvPlugin
         dlg.AddLocalizedString(982); //Delete this entire recording
         dlg.AddLocalizedString(888); //Episodes management
       }
-      IVirtualCard card;
-      
+
 
       bool isRec = ServiceAgents.Instance.ScheduleServiceAgent.IsScheduleRecording(rec.Entity.id_Schedule); //TVHome.IsRecordingSchedule(rec, null, out card);
 
@@ -915,6 +914,7 @@ namespace Mediaportal.TV.TvPlugin
       string fileName = "";
       if (isSchedRec)
       {
+        IVirtualCard card;
         bool isCardRec = ServiceAgents.Instance.ControllerServiceAgent.IsRecording(rec.Entity.idChannel, out card);
         if (isCardRec && card != null)
         {

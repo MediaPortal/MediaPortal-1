@@ -84,12 +84,11 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
           return;
         }
         _cardHandler.Card.AbortGrabbing();
-        return;
+        _cardHandler.Card.IsEpgGrabbing = false;
       }
       catch (Exception ex)
       {
         Log.Write(ex);
-        return;
       }
     }
 

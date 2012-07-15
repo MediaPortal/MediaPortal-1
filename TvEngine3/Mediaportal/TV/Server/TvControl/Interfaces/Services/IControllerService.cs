@@ -274,6 +274,15 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     bool IsRecording(int idChannel, out IVirtualCard card);
 
     /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="idChannel"></param>
+    /// <param name="idCard"></param>
+    /// <returns></returns>
+    [OperationContract(Name = "IsRecordingCard")]        
+    bool IsRecording(int idChannel, int idCard);
+
+    /// <summary>
     /// Determines if any card is currently busy recording
     /// </summary>
     /// <returns>

@@ -54,42 +54,57 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
       set { _entity = value; }
     }
 
+    private bool _updateNowAndNextRun = false;
+    private DateTime _updateNowAndNextLastRun = DateTime.MinValue;
     private void UpdateNowAndNext()
     {
-      if (_currentProgram != null)
+      try
       {
-        if (DateTime.Now >= _currentProgram.startTime && DateTime.Now <= _currentProgram.endTime)
+        if (_currentProgram != null)
+        {
+          if (DateTime.Now >= _currentProgram.startTime && DateTime.Now <= _currentProgram.endTime)
+          {
+            return;
+          }
+        }
+        else if (_updateNowAndNextRun) //non EPG channels will cause excessive server calls, lets limit the calls to once a minute.         
+        {
+          TimeSpan ts = DateTime.Now - _updateNowAndNextLastRun;
+          if (ts.TotalSeconds < 60)
+          {
+            return;
+          }          
+        }
+
+        _currentProgram = null;
+        _nextProgram = null;
+
+        DateTime date = DateTime.Now;
+
+        IList<Program> programs = GlobalServiceProvider.Instance.Get<IProgramService>().GetNowAndNextProgramsForChannel(_entity.idChannel).ToList();
+        if (programs.Count == 0)
         {
           return;
         }
-      }
-
-      _currentProgram = null;
-      _nextProgram = null;
-      
-      DateTime date = DateTime.Now;
-
-      IList<Program> programs = GlobalServiceProvider.Instance.Get<IProgramService>().GetNowAndNextProgramsForChannel(_entity.idChannel).ToList();      
-      if (programs.Count == 0)
-      {
-        return;
-      }
-      _currentProgram = programs[0];
-      if (_currentProgram.startTime >= date)
-      {
-        _nextProgram = _currentProgram;
-        _currentProgram = null;
-      }
-      else
-      {
-        if (programs.Count == 2)
+        _currentProgram = programs[0];
+        if (_currentProgram.startTime >= date)
         {
-          _nextProgram = programs[1];
+          _nextProgram = _currentProgram;
+          _currentProgram = null;
+        }
+        else
+        {
+          if (programs.Count == 2)
+          {
+            _nextProgram = programs[1];
+          }
         }
       }
+      finally
+      {
+        _updateNowAndNextRun = true;
+        _updateNowAndNextLastRun = DateTime.Now;
+      }
     }
-
-
-    
   }
 }

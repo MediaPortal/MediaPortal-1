@@ -93,7 +93,7 @@ namespace Mediaportal.TV.Server.TVService.Epg
     /// </summary>
     /// <param name="card">The card</param>
     public EpgCard(Card card)
-    {
+    {      
       _card = card;
       _user = UserFactory.CreateEpgUser();
 
@@ -253,7 +253,7 @@ namespace Mediaportal.TV.Server.TVService.Epg
 
       _state = EpgState.Idle;
       _isRunning = true;
-      _user = UserFactory.CreateEpgUser();
+      _user = UserFactory.CreateEpgUser();      
       if (GrabEpgForChannel(channel, _currentTransponder.Tuning, _card))
       {
         Log.Epg("EpgCard: card: {0} starting to grab {1}", _user.CardId, _currentTransponder.Tuning.ToString());
@@ -514,7 +514,7 @@ namespace Mediaportal.TV.Server.TVService.Epg
                                                                               ticket);
               if (result == TvResult.Succeeded)
               {
-                if (!_isRunning || false == ServiceManager.Instance.InternalControllerService.GrabEpg(this, card.idCard))
+                if (!_isRunning || false == ServiceManager.Instance.InternalControllerService.GrabEpg(this, _user))
                 {
                   if (!_isRunning)
                     Log.Epg("Tuning finished but EpgGrabber no longer enabled");

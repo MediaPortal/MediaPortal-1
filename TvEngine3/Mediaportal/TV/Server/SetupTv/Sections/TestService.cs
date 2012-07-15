@@ -272,7 +272,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         IHeartbeatEventCallbackClient handler = new HeartbeatEventCallback();
         ServiceAgents.Instance.EventServiceAgent.RegisterHeartbeatCallbacks(handler);
         ICiMenuEventCallback menuHandler = new CiMenuEventCallback();
-        ServiceAgents.Instance.EventServiceAgent.UnRegisterCiMenuCallbacks(menuHandler);
+        ServiceAgents.Instance.EventServiceAgent.UnRegisterCiMenuCallbacks(menuHandler, false);
 
 
 
@@ -452,9 +452,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           progressBarQuality.Value = Math.Min(100, card.SignalQuality);
           mpLabelSignalQuality.Text = card.SignalQuality.ToString();
 
-          if (card.Channel != null)
+          if (!string.IsNullOrWhiteSpace(card.ChannelName))
           {
-            mpLabelChannel.Text = card.Channel.ToString();
+            mpLabelChannel.Text = card.ChannelName;
           }
           mpLabelRecording.Text = card.RecordingFileName;
           mpLabelTimeShift.Text = card.TimeShiftFileName;

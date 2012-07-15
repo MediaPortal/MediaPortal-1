@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
+using System.ServiceModel.Channels;
 using System.Text;
 using System.Xml;
 
@@ -22,8 +23,18 @@ namespace Mediaportal.TV.Server.TVControl
     private const BasicHttpSecurityMode HttpSecurityMode = BasicHttpSecurityMode.None;
     private const string NetTcpBindingName = "netTcpBinding";
     private const string DefaultBasicHttpBindingName = "defaultBasicHttpBinding";
-    private const int ReceiveTimeout = 60;//seconds
-    private const int SendTimeout = 60;//seconds
+
+    private static readonly TimeSpan TcpReceiveTimeout = new TimeSpan(0, 0, 0, 60);
+    private static readonly TimeSpan TcpSendTimeout = new TimeSpan(0, 0, 0, 60);
+    private static readonly TimeSpan TcpCloseTimeout = new TimeSpan(0, 0, 0, 60);
+    private static readonly TimeSpan TcpOpenTimeout = new TimeSpan(0, 0, 0, 60);
+    private static readonly TimeSpan TcpInactivityTimeout = new TimeSpan(0, 0, 0, 60);
+
+    private static readonly TimeSpan HttpReceiveTimeout = new TimeSpan(0, 0, 0, 60);
+    private static readonly TimeSpan HttpSendTimeout = new TimeSpan(0, 0, 0, 60);
+    private static readonly TimeSpan HttpCloseTimeout = new TimeSpan(0, 0, 0, 60);
+    private static readonly TimeSpan HttpOpenTimeout = new TimeSpan(0, 0, 0, 60);
+    private static readonly TimeSpan HttpInactivityTimeout = new TimeSpan(0, 0, 0, 60);
 
     /// <summary>
     /// 
@@ -36,9 +47,17 @@ namespace Mediaportal.TV.Server.TVControl
         Name = NetTcpBindingName,
         MaxBufferSize = MaxBufferSize,
         MaxReceivedMessageSize = MaxReceivedMessageSize,
-        ReceiveTimeout = new TimeSpan(0, 0, 0, ReceiveTimeout),
-        SendTimeout = new TimeSpan(0, 0, 0, SendTimeout),   
+        ReceiveTimeout = TcpReceiveTimeout,
+        SendTimeout = TcpSendTimeout,   
+        //TransactionFlow = false,
+        CloseTimeout = TcpCloseTimeout,
+        OpenTimeout = TcpOpenTimeout
       };
+
+      /*netTcpBinding.ReliableSession.Enabled = true;
+      netTcpBinding.ReliableSession.Ordered = true;
+      netTcpBinding.ReliableSession.InactivityTimeout = TcpInactivityTimeout;*/
+
       SetReaderQuotas(netTcpBinding.ReaderQuotas);
       return netTcpBinding;
     }
@@ -50,8 +69,8 @@ namespace Mediaportal.TV.Server.TVControl
         Name = DefaultBasicHttpBindingName,
         MaxBufferSize = MaxBufferSize,
         MaxReceivedMessageSize = MaxReceivedMessageSize,
-        ReceiveTimeout = new TimeSpan(0, 0, 0, ReceiveTimeout),
-        SendTimeout = new TimeSpan(0, 0, 0, SendTimeout),   
+        ReceiveTimeout = HttpReceiveTimeout,
+        SendTimeout = HttpSendTimeout,   
         Security =
           {
             Mode = HttpSecurityMode,

@@ -44,6 +44,7 @@ namespace Mediaportal.TV.Server.TVService.EventDispatchers
             }
             else
             {
+              //todo : filter out any events raised by the same user.. eg. user1 doesnt care about events caused by user1. like timeshiftingstarted etc.
               foreach (string username in usersCopy.Keys)
               {
                 EventService.CallbackTvServerEvent(username, tvEvent);

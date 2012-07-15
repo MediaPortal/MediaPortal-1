@@ -20,122 +20,56 @@
 
 using System;
 using System.Collections.Generic;
-using Mediaportal.TV.Server.TVControl.Interfaces;
+using System.Runtime.Serialization;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVService.Interfaces;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
 namespace Mediaportal.TV.Server.TVControl.Events
 {
   /// <summary>
-  /// Enum for the different event types
+  /// 
   /// </summary>
-  [Serializable]
-  public enum TvServerEventType
-  {
-    /// <summary>
-    /// Event indicating that the tvserver is going to zap to a different channel
-    /// </summary>
-    StartZapChannel,
-    /// <summary>
-    /// Event indicating that the tvserver is has zapped to a different channel
-    /// </summary>
-    EndZapChannel,
-    /// <summary>
-    /// Event indicating that the tvserver is going to start timeshifting
-    /// </summary>
-    StartTimeShifting,
-    /// <summary>
-    /// Event indicating that the tvserver is going to start timeshifting
-    /// </summary>
-    EndTimeShifting,
-    /// <summary>
-    /// Event indicating that the tvserver has forcefully stopped timeshifting
-    /// </summary>
-    ForcefullyStoppedTimeShifting,
-    /// <summary>
-    /// Event indicating that the tvserver is going to stop timeshifting
-    /// </summary>
-    StartRecording,
-    /// <summary>
-    /// Event indicating that the tvserver is recording has begun
-    /// </summary>
-    RecordingStarted,
-    /// <summary>
-    /// Event indicating that the tvserver is recording has stopped
-    /// </summary>
-    RecordingFailed,
-    /// <summary>
-    /// Event indicating that the tvserver recording failed
-    /// </summary>
-    RecordingEnded,
-    /// <summary>
-    /// Event indicating that a new schedule has been added
-    /// </summary>
-    ScheduledAdded,
-    /// <summary>
-    /// Event indicating that a  schedule has been deleted
-    /// </summary>
-    ScheduleDeleted,
-    /// <summary>
-    /// Event indicating that a new conflict has been added
-    /// </summary>
-    ConflictAdded,
-    /// <summary>
-    /// Event indicating that a  conflict has been deleted
-    /// </summary>
-    ConflictDeleted,
-    /// <summary>
-    /// Event indicating that the program db was updated
-    /// </summary>
-    ProgramUpdated,
-    /// <summary>
-    /// Event indicating that new EPG data is about to be imported
-    /// </summary>
-    ImportEpgPrograms,
-    /// <summary>
-    /// Event indicating that new channelstate data is available
-    /// </summary>
-    ChannelStatesChanged,
-    /// <summary>
-    /// Event indicating that timeshifting was parked by user
-    /// </summary>
-    TimeShiftingParked,
-    /// <summary>
-    /// Event indicating that timeshifting was unparked by user
-    /// </summary>
-    TimeShiftingUnParked
-  } ;
-
-  [Serializable]
+  [DataContract]
   public class TvServerEventArgs : EventArgs
   {
     #region variables
+    
+    [DataMember]
+    private readonly IUser _user;
 
-    private readonly User _user;
-
-    [NonSerialized]
-    private readonly VirtualCard _card;
+    [DataMember] 
+    private readonly IVirtualCard _card;
 
     [NonSerialized]
     private readonly IChannel _channel;
 
-    [NonSerialized]
-    private readonly IControllerService _controller = null;
-    //Channel _databaseChannel = null;
-    //TuningDetail _tuningDetail = null;
-
+    [DataMember] 
     private readonly int _schedule;
+
+    [DataMember] 
     private readonly int _recording;
+
+    [DataMember] 
     private int _conflict;
+
     // Added by Broce for exchanges between TVPlugin & ConflictsManager
+    [DataMember] 
     private IList<int> _schedules;
+
+    [DataMember] 
     private IList<int> _conflicts;
+
+    [DataMember] 
     private object _argsUpdatedState;
 
     [NonSerialized]
     private EpgChannel _epgChannel;
-    //
+
+    [DataMember] 
     private readonly TvServerEventType _eventType;
 
     #endregion
@@ -246,20 +180,10 @@ namespace Mediaportal.TV.Server.TVControl.Events
     #region properties
 
     /// <summary>
-    /// Gets the controller.
-    /// </summary>
-    /// <value>The controller.</value>
-    [System.Xml.Serialization.XmlIgnore]
-    public IControllerService Controller
-    {
-      get { return _controller; }
-    }
-
-    /// <summary>
     /// Gets the user.
     /// </summary>
     /// <value>The user.</value>
-    public User User
+    public IUser User
     {
       get { return _user; }
     }
@@ -267,9 +191,8 @@ namespace Mediaportal.TV.Server.TVControl.Events
     /// <summary>
     /// Gets the card.
     /// </summary>
-    /// <value>The card.</value>
-    [System.Xml.Serialization.XmlIgnore]
-    public VirtualCard Card
+    /// <value>The card.</value>    
+    public IVirtualCard Card
     {
       get { return _card; }
     }
@@ -277,8 +200,7 @@ namespace Mediaportal.TV.Server.TVControl.Events
     /// <summary>
     /// Gets the channel.
     /// </summary>
-    /// <value>The channel.</value>
-    [System.Xml.Serialization.XmlIgnore]
+    /// <value>The channel.</value>    
     public IChannel channel
     {
       get { return _channel; }
@@ -349,7 +271,7 @@ namespace Mediaportal.TV.Server.TVControl.Events
     public TvServerEventType EventType
     {
       get { return _eventType; }
-    }
+    }    
 
     #endregion
   }

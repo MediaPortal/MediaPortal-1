@@ -100,6 +100,7 @@
     <Compile Include="Events\ServerEventEnum.cs" />
     <Compile Include="Events\TvServerEventArgs.cs" />
     <Compile Include="Events\TvServerEventArgsTranslator.cs" />
+    <Compile Include="Events\TvServerEventTypeEnum.cs" />
     <Compile Include="Interfaces\Events\ITvServerEvent.cs" />
     <Compile Include="Interfaces\Events\IServerEventCallback.cs" />
     <Compile Include="Interfaces\Services\ICanceledScheduleService.cs" />

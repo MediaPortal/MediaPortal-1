@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
+using System.Threading;
 using Mediaportal.TV.Server.TVControl.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
@@ -188,7 +189,30 @@ namespace Mediaportal.TV.Server.TVService.Services
           if (IsConnectionReady(subscriber.ServerEventCallback as ICommunicationObject))
           {
             IServerEventCallback callback = subscriber.ServerEventCallback;
-            callback.BeginOnCallbackTvServerEvent(eventArgs, callback.EndOnCallbackTvServerEvent, null);
+            ThreadPool.QueueUserWorkItem(
+              delegate
+                {
+                  try
+                  {
+                    callback.BeginOnCallbackTvServerEvent(eventArgs, delegate(IAsyncResult result)
+                    {
+                      try
+                      {
+                        callback.EndOnCallbackTvServerEvent(result);
+                      }
+                      catch (Exception ex)
+                      {
+                        Log.Error("EventService.EndOnCallbackTvServerEvent failed for user:{0} ex:{1}", username, ex);
+                      }
+                    },
+                    null);
+                  }
+                  catch (Exception ex)
+                  {
+                    Log.Error("EventService.BeginOnCallbackTvServerEvent failed for user:{0} ex:{1}", username, ex);        
+                  }
+                }
+              );             
           }
           else
           {
@@ -217,8 +241,34 @@ namespace Mediaportal.TV.Server.TVService.Services
         {
           if (IsConnectionReady(subscriber.ServerEventCallback as ICommunicationObject))
           {
-            var callback = subscriber.ServerEventCallback;
-            callback.BeginOnCallbackCiMenuEvent(eventArgs, callback.EndOnCallbackCiMenuEvent, null);            
+            var callback = subscriber.ServerEventCallback;            
+            ThreadPool.QueueUserWorkItem(
+              delegate
+              {
+                try
+                {
+                  callback.BeginOnCallbackCiMenuEvent(eventArgs,
+                                                      delegate(IAsyncResult result)
+                                                        {
+                                                          try
+                                                          {
+                                                            callback.EndOnCallbackCiMenuEvent(result);
+                                                          }
+                                                          catch (Exception ex)
+                                                          {
+                                                            Log.Error(
+                                                              "EventService.EndOnCallbackCiMenuEvent failed for user:{0} ex:{1}",
+                                                              username, ex);
+                                                          }
+                                                        },
+                                                      null);                
+                }
+                catch (Exception ex)
+                {                  
+                  Log.Error("EventService.BeginOnCallbackCiMenuEvent failed for user:{0} ex:{1}", username, ex);
+                }
+              }
+             ); 
           }
           else
           {
@@ -249,7 +299,34 @@ namespace Mediaportal.TV.Server.TVService.Services
           if (IsConnectionReady(subscriber.ServerEventCallback as ICommunicationObject))
           {
             var callback = subscriber.ServerEventCallback;
-            callback.BeginOnCallbackHeartBeatEvent(callback.EndOnCallbackHeartBeatEvent, null);            
+            ThreadPool.QueueUserWorkItem(
+              delegate
+              {
+                try
+                {
+                  callback.BeginOnCallbackHeartBeatEvent(
+                                                      delegate(IAsyncResult result)
+                                                      {
+                                                        try
+                                                        {
+                                                          callback.EndOnCallbackHeartBeatEvent(result);
+                                                        }
+                                                        catch (Exception ex)
+                                                        {
+                                                          Log.Error(
+                                                            "EventService.EndOnCallbackHeartBeatEvent failed for user:{0} ex:{1}",
+                                                            username, ex);
+                                                        }
+                                                      },
+                                                      null);
+                }
+                catch (Exception ex)
+                {
+                  Log.Error("EventService.BeginOnCallbackHeartBeatEvent failed for user:{0} ex:{1}", username, ex);
+                }
+              }
+             ); 
+
             heartbeatSent = true;
           }
           else

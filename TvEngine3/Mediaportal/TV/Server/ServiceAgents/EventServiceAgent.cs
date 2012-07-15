@@ -6,6 +6,7 @@ using Mediaportal.TV.Server.TVControl.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVService.ServiceAgents
 {
@@ -129,36 +130,71 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     {      
       Action<TvServerEventArgs> act = (tvServerEventArgs) =>
                                         {
-                                          if (OnTvServerEventReceived != null)
+                                          try
                                           {
-                                            OnTvServerEventReceived(eventArgs);
-                                          }                                          
-                                        };        
-      return act.BeginInvoke(eventArgs, callback, asyncState); 
+                                            if (OnTvServerEventReceived != null)
+                                            {
+                                              OnTvServerEventReceived(eventArgs);
+                                            } 
+                                          }
+                                          catch (Exception ex)
+                                          {
+                                            Log.Error("BeginOnCallbackTvServerEvent exception : {0}", ex);
+                                          }                
+                                        };
+      try
+      {
+        return act.BeginInvoke(eventArgs, callback, asyncState); 
+      }
+      catch (Exception)
+      {
+        return null;
+      }      
     }
 
     public void EndOnCallbackTvServerEvent(IAsyncResult result)
     {
-      var act = (Action<TvServerEventArgs>)((System.Runtime.Remoting.Messaging.AsyncResult)result).AsyncDelegate;
-      act.EndInvoke(result);
+      try
+      {
+        var act = (Action<TvServerEventArgs>)((System.Runtime.Remoting.Messaging.AsyncResult)result).AsyncDelegate;
+        act.EndInvoke(result);        
+      }
+      catch (Exception ex)
+      {
+        Log.Error("EndOnCallbackTvServerEvent exception : {0}", ex);
+      }              
     }
 
     public IAsyncResult BeginOnCallbackCiMenuEvent(CiMenu menu, AsyncCallback callback, object asyncState)
     {
       Action<CiMenu> act = (ciMenu) =>
       {
-        if (OnCiMenuCallbackReceived != null)
+        try
         {
-          OnCiMenuCallbackReceived(ciMenu);
+          if (OnCiMenuCallbackReceived != null)
+          {
+            OnCiMenuCallbackReceived(ciMenu);
+          }
         }
+        catch (Exception ex)
+        {
+          Log.Error("BeginOnCallbackCiMenuEvent exception : {0}", ex);
+        }        
       };
       return act.BeginInvoke(menu, callback, asyncState); 
     }
 
     public void EndOnCallbackCiMenuEvent(IAsyncResult result)
     {
-      var act = (Action<CiMenu>)((System.Runtime.Remoting.Messaging.AsyncResult)result).AsyncDelegate;
-      act.EndInvoke(result);
+      try
+      {
+        var act = (Action<CiMenu>)((System.Runtime.Remoting.Messaging.AsyncResult)result).AsyncDelegate;
+        act.EndInvoke(result);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("EndOnCallbackCiMenuEvent exception : {0}", ex);
+      }        
     }
 
     public IAsyncResult BeginOnCallbackHeartBeatEvent(AsyncCallback callback, object asyncState)
@@ -167,7 +203,14 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
       {
         if (OnHeartbeatRequestReceived != null)
         {
-          OnHeartbeatRequestReceived();
+          try
+          {
+            OnHeartbeatRequestReceived();
+          }
+          catch (Exception ex)
+          {
+            Log.Error("BeginOnCallbackHeartBeatEvent exception : {0}", ex);
+          }          
         }
       };
       return act.BeginInvoke(callback, asyncState); 
@@ -175,8 +218,15 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
 
     public void EndOnCallbackHeartBeatEvent(IAsyncResult result)
     {
-      var act = (Action)((System.Runtime.Remoting.Messaging.AsyncResult)result).AsyncDelegate;
-      act.EndInvoke(result);
+      try
+      {
+        var act = (Action)((System.Runtime.Remoting.Messaging.AsyncResult)result).AsyncDelegate;
+        act.EndInvoke(result);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("EndOnCallbackHeartBeatEvent exception : {0}", ex);
+      }                
     }
 
     #endregion    

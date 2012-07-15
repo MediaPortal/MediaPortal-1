@@ -93,10 +93,10 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <summary>
     /// grabs the epg.
     /// </summary>
-    /// <param name="grabber">EPG grabber</param>
-    /// <param name="cardId">id of the card.</param>
+    /// <param name="grabber">EPG grabber</param>    
+    /// <param name="user"> </param>
     /// <returns></returns>
-    bool GrabEpg(BaseEpgGrabber grabber, int cardId);
+    bool GrabEpg(BaseEpgGrabber grabber, IUser user);
 
     /// <summary>
     /// Aborts grabbing the epg. This also triggers the OnEpgReceived callback.
@@ -124,14 +124,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-    void Fire(object sender, EventArgs args);
-
-    void RegisterUserForHeartbeatMonitoring (string username);
-    void RegisterUserForCiMenu(string username);
-    void UnRegisterUserForHeartbeatMonitoring(string username);
-    void UnRegisterUserForCiMenu(string username);
-    void RegisterUserForTvServerEvents(string username);
-    void UnRegisterUserForTvServerEvents(string username);
+    void Fire(object sender, EventArgs args);    
     bool StopTimeShifting(ref IUser user, TvStoppedReason reason, int channelId);
     bool StopTimeShifting(ref IUser user, int channelId);
     bool IsScrambled(int cardId, int subChannel);

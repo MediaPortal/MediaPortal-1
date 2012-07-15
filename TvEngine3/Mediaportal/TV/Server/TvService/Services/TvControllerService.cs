@@ -314,6 +314,11 @@ namespace Mediaportal.TV.Server.TVService.Services
       return Service.IsRecording(idChannel, out card);
     }
 
+    public bool IsRecording(int idChannel, int idCard)
+    {
+      return Service.IsRecording(idChannel, idCard);      
+    }
+
     /// <summary>
     /// Determines if any card is currently busy recording
     /// </summary>

@@ -136,22 +136,30 @@ namespace Mediaportal.TV.Server.TVLibrary
 
     private void UpdateDatabaseThread()
     {
-      if (_epg == null)
-        return;
-
-      _updateThreadRunning = true;
-      Thread.CurrentThread.Priority = ThreadPriority.Lowest;
-      _dbUpdater.ReloadConfig();
-      foreach (EpgChannel epgChannel in _epg)
+      try
       {
-        _dbUpdater.UpdateEpgForChannel(epgChannel);
+        if (_epg == null)
+        {
+          return;
+        }
+        _card.IsEpgGrabbing = true;
+        _updateThreadRunning = true;
+        Thread.CurrentThread.Priority = ThreadPriority.Lowest;
+        _dbUpdater.ReloadConfig();
+        foreach (EpgChannel epgChannel in _epg)
+        {
+          _dbUpdater.UpdateEpgForChannel(epgChannel);
+        }
+        ProgramManagement.SynchProgramStatesForAllSchedules(ScheduleManagement.ListAllSchedules());
+        Log.Epg("TimeshiftingEpgGrabber: Finished updating the database.");
+        _epg.Clear();
+        _epg = null;
       }
-      ProgramManagement.SynchProgramStatesForAllSchedules(ScheduleManagement.ListAllSchedules());      
-      Log.Epg("TimeshiftingEpgGrabber: Finished updating the database.");
-      _epg.Clear();
-      _epg = null;
-      _card.IsEpgGrabbing = false;
-      _updateThreadRunning = false;
+      finally
+      {
+        _card.IsEpgGrabbing = false;
+        _updateThreadRunning = false;         
+      }            
     }
 
     #endregion

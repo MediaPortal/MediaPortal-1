@@ -5,8 +5,10 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
 namespace Mediaportal.TV.Server.TVControl.Interfaces.Events
-{      
+{
+  [ServiceKnownType(typeof(VirtualCard))]
   [ServiceKnownType(typeof(SubChannel))]
+  [ServiceKnownType(typeof(User))]
   public interface IServerEventCallback
   {
     [OperationContract(AsyncPattern = true)]

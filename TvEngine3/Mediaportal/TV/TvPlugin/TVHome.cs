@@ -1477,7 +1477,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private void OnServerDisconnected()
     {
-//#if !DEBUG
+#if !DEBUG
       if (Connected)
       {
         Log.Info("TVHome: OnServerDisconnected");
@@ -1489,7 +1489,7 @@ namespace Mediaportal.TV.TvPlugin
       
 
       HandleServerNotConnected();
-//#endif
+#endif
     }
 
     private void Application_ApplicationExit(object sender, EventArgs e)
@@ -1693,7 +1693,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private void RegisterUserForHeartbeatMonitoring()
     {
-//#if !DEBUG
+#if !DEBUG
       if (_heartbeatEventHandler == null)
       {
         try
@@ -1708,12 +1708,12 @@ namespace Mediaportal.TV.TvPlugin
           
         }        
       }
-//#endif
+#endif
     }
 
     private void UnRegisterUserForHeartbeatMonitoring()
     {
-//#if !DEBUG
+#if !DEBUG
       if (_heartbeatEventHandler != null)
       {
         try
@@ -1734,7 +1734,7 @@ namespace Mediaportal.TV.TvPlugin
           Log.Error("TvHome.UnRegisterUserForHeartbeatMonitoring exception = {0}", ex);          
         }        
       }
-//#endif
+#endif
     }
 
     public void Start()
@@ -2872,7 +2872,7 @@ namespace Mediaportal.TV.TvPlugin
       GUIPropertyManager.SetProperty("#TV.Record.percent3", "0");
       GUIPropertyManager.SetProperty("#TV.View.remaining", String.Empty);
     }
-
+    
     private static void UpdateNextEpgProperties(ChannelBLL ch)
     {
       Program next = null;
@@ -3905,14 +3905,14 @@ namespace Mediaportal.TV.TvPlugin
       string timeshiftFileName = Card.TimeShiftFileName;
       Log.Info("tvhome:file:{0}", timeshiftFileName);
 
-      IChannel channel = Card.Channel;
-      if (channel == null)
+      MediaTypeEnum? mediaTypeCard = Card.MediaType;      
+      if (!mediaTypeCard.HasValue)
       {
         Log.Info("tvhome:startplay channel=null");
         return;
       }
       g_Player.MediaType mediaType = g_Player.MediaType.TV;
-      if (channel.MediaType == MediaTypeEnum.Radio)
+      if (mediaTypeCard.Value == MediaTypeEnum.Radio)
       {
         mediaType = g_Player.MediaType.Radio;
       }      
@@ -4192,13 +4192,51 @@ namespace Mediaportal.TV.TvPlugin
           break;
 
         case TvServerEventType.RecordingEnded:
+          if (eventArgs.Recording == Card.IdChannel)
+          {
+            Card.IsRecording = false;
+          }
           OnRecordingEnded(eventArgs.Recording);
           break;
 
         case TvServerEventType.RecordingStarted:
+          if (eventArgs.Recording == Card.IdChannel)
+          {
+            Card.IsRecording = true;
+          }
           OnRecordingStarted(eventArgs.Recording);
           break;
+
+        case TvServerEventType.EpgGrabbingStarted:
+          if (eventArgs.Card.Id == Card.Id)
+          {
+            Card.IsGrabbingEpg = true;
+          }          
+          break;
+        case TvServerEventType.EpgGrabbingStopped:
+          if (eventArgs.Card.Id == Card.Id)
+          {
+            Card.IsGrabbingEpg = false;
+          }          
+          break;
+
+        case TvServerEventType.ScanningStarted:
+          if (eventArgs.Card.Id == Card.Id)
+          {
+            Card.IsScanning = true;
+          }          
+          break;
+        case TvServerEventType.ScanningStopped:
+          if (eventArgs.Card.Id == Card.Id)
+          {
+            Card.IsScanning = false;
+          }          
+          break;        
       }
+            
+      //todo : gibman, maybe handle scrambled state as well ?
+      //TVHome.Card.IsScrambled
+
     }
 
     #endregion
