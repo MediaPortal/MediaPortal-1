@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Xml;
 using DirectShowLib;
 using TvLibrary.Channels;
@@ -44,18 +45,18 @@ namespace TvEngine
     private class MDAPIFilter { };
 
     [ComVisible(true), ComImport,
-     Guid("c3f5aa0d-c475-401b-8fc9-e33fb749cd85"),
-     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+      Guid("c3f5aa0d-c475-401b-8fc9-e33fb749cd85"),
+      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface IChangeChannel
     {
       /// <summary>
-      /// Instruct the softCAM plugin filter to decode a different channel using specific parameters.
+      /// Instruct the softCAM plugin filter to decode a different service using specific parameters.
       /// </summary>
       [PreserveSig]
       int ChangeChannel(int frequency, int bandwidth, int polarity, int videoPid, int audioPid, int ecmPid, int caId, int providerId);
 
       /// <summary>
-      /// Instruct the softCAM plugin filter to decode a different channel using a Program82 structure.
+      /// Instruct the softCAM plugin filter to decode a different service using a Program82 structure.
       /// </summary>
       int ChangeChannelTP82(IntPtr program82);
 
@@ -66,15 +67,27 @@ namespace TvEngine
     }
 
     [ComVisible(true), ComImport,
-     Guid("e98b70ee-f5a1-4f46-b8b8-a1324ba92f5f"),
-     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+      Guid("e98b70ee-f5a1-4f46-b8b8-a1324ba92f5f"),
+      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface IChangeChannel_Ex
     {
       /// <summary>
-      /// Instruct the softCAM plugin filter to decode a different channel using Program82 and PidsToDecode structures.
+      /// Instruct the softCAM plugin filter to decode a different service using Program82 and PidsToDecode structures.
       /// </summary>
       [PreserveSig]
       int ChangeChannelTP82_Ex(IntPtr program82, IntPtr pidsToDecode);
+    }
+
+    [ComVisible(true), ComImport,
+      Guid("D0EACAB1-3211-414B-B58B-E1157AC4D93A"),
+      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    private interface IChangeChannel_Clear
+    {
+      /// <summary>
+      /// Inform the softCAM plugin that it no longer needs to decrypt a service.
+      /// </summary>
+      [PreserveSig]
+      int ClearChannel();
     }
 
     #endregion
@@ -191,6 +204,7 @@ namespace TvEngine
     #region variables
 
     private bool _isMdPlugin = false;
+    private HashSet<String> _providers = new HashSet<String>();
     private String _configurationFolderPrefix = String.Empty;
     private IFilterGraph2 _graph = null;
     private IBaseFilter _infTee = null;
@@ -872,6 +886,7 @@ namespace TvEngine
         // Look for a configuration file.
         String configFile = AppDomain.CurrentDomain.BaseDirectory + "MDPLUGINS\\MDAPICards.xml";
         int slotCount = 1;
+        String providerList = "all";
         XmlDocument doc = new XmlDocument();
         XmlNode rootNode = null;
         XmlNode tunerNode = null;
@@ -923,6 +938,11 @@ namespace TvEngine
           attr.InnerText = slotCount.ToString();
           tunerNode.Attributes.Append(attr);
 
+          // Default: the plugin can decrypt any service from any provider.
+          attr = doc.CreateAttribute("Provider");
+          attr.InnerText = "all";
+          tunerNode.Attributes.Append(attr);
+
           rootNode.AppendChild(tunerNode);
           doc.AppendChild(rootNode);
           doc.Save(configFile);
@@ -944,6 +964,26 @@ namespace TvEngine
             tunerNode.Attributes["EnableMdapi"].Value = slotCount.ToString();
             doc.Save(configFile);
           }
+          try
+          {
+            providerList = tunerNode.Attributes["Provider"].Value.ToLowerInvariant();
+            if (!providerList.Equals("all"))
+            {
+              _providers = new HashSet<String>(Regex.Split(providerList.Trim(), @"\s*,\s*"));
+            }
+          }
+          catch (Exception)
+          {
+            // Assume that the plugin can decrypt any service.
+            XmlAttribute providerListNode = tunerNode.Attributes["Provider"];
+            if (providerListNode == null)
+            {
+              providerListNode = doc.CreateAttribute("Provider"); 
+              tunerNode.Attributes.Append(providerListNode);
+            }
+            providerListNode.InnerText = "all";
+            doc.Save(configFile);
+          }
         }
 
         if (slotCount > 0)
@@ -951,6 +991,14 @@ namespace TvEngine
           Log.Debug("MD Plugin: plugin is enabled for {0} decoding slot(s)", slotCount);
           _isMdPlugin = true;
           _slots = new List<DecodeSlot>(slotCount);
+          if (_providers.Count == 0)
+          {
+            Log.Debug("MD Plugin: plugin can decrypt services from any provider");
+          }
+          else
+          {
+            Log.Debug("MD Plugin: plugin can decrypt services from provider(s) \"{0}\"", providerList);
+          }
           return true;
         }
 
@@ -1085,6 +1133,15 @@ namespace TvEngine
         else
         {
           Log.Debug("  filter {0}, extended capabilities not supported", i + 1);
+        }
+        IChangeChannel_Clear temp3 = slot.Filter as IChangeChannel_Clear;
+        if (temp3 != null)
+        {
+          Log.Debug("  filter {0}, channel clearing capabilities supported", i + 1);
+        }
+        else
+        {
+          Log.Debug("  filter {0}, channel clearing capabilities not supported", i + 1);
         }
       }
 
@@ -1231,6 +1288,11 @@ namespace TvEngine
         Log.Debug("MD Plugin: channel is not a DVB channel");
         return true;
       }
+      if (_providers.Count != 0 && !_providers.Contains(dvbChannel.Provider))
+      {
+        Log.Debug("MD Plugin: plugin not configured to decrypt services for provider \"{0}\"", dvbChannel.Provider);
+        return false;
+      }
 
       // Find a free slot to decode this service. If this is the first or only service in the list then we
       // can reset our slots. This could be optimised to cache the new list until "last"/"only" action and
@@ -1242,6 +1304,11 @@ namespace TvEngine
         foreach (DecodeSlot slot in _slots)
         {
           slot.CurrentChannel = null;
+          IChangeChannel_Clear clear = slot.Filter as IChangeChannel_Clear;
+          if (clear != null)
+          {
+            clear.ClearChannel();
+          }
         }
         freeSlot = _slots[0];
       }
@@ -1257,6 +1324,11 @@ namespace TvEngine
             {
               Log.Debug("MD Plugin: found existing slot decrypting channel \"{0}\", freeing", currentService.Name);
               slot.CurrentChannel = null;
+              IChangeChannel_Clear clear = slot.Filter as IChangeChannel_Clear;
+              if (clear != null)
+              {
+                clear.ClearChannel();
+              }
               return true;
             }
             // "Ok descrambling" means start or continue decrypting the service. If we're already decrypting

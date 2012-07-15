@@ -91,7 +91,7 @@ namespace SmarDtvUsbCi
     private interface ITerraTecCinergyCiUsb
     {
       /// <summary>
-      /// Initialise the WinTV-CI interface. The callback delegate parameters are all optional.
+      /// Initialise the CI interface. The callback delegate parameters are all optional.
       /// </summary>
       /// <param name="callbacks">A buffer containing a SmarDtvUsbCiCallbacks structure instance.</param>
       /// <returns>an HRESULT indicating whether the interface was successfully initialised</returns>

@@ -23,7 +23,10 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Threading;
+using DigitalDevices;
 using DirectShowLib;
+using TvControl;
+using TvLibrary.Channels;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Device;
 using TvLibrary.Log;
@@ -33,15 +36,9 @@ namespace TvEngine
   /// <summary>
   /// A class for handling conditional access for Digital Devices devices.
   /// </summary>
-  public class DigitalDevices : BaseCustomDevice, IAddOnDevice, IConditionalAccessProvider, ICiMenuActions
+  public class DigitalDevices : BaseCustomDevice, IAddOnDevice, IConditionalAccessProvider, ICiMenuActions, ITvServerPlugin
   {
     #region enums
-
-    private enum CommonInterfaceProperty
-    {
-      DecryptProgram = 0,
-      CamMenuTitle,
-    }
 
     private enum CamControlMethod
     {
@@ -217,10 +214,8 @@ namespace TvEngine
       "Mystique SaTiX-S2 Dual"
     };
 
-    private static readonly Guid CommonInterfacePropertySet = new Guid(0x0aa8a501, 0xa240, 0x11de, 0xb1, 0x30, 0x00, 0x00, 0x00, 0x00, 0x4d, 0x56);
     private static readonly Guid CamControlMethodSet = new Guid(0x0aa8a511, 0xa240, 0x11de, 0xb1, 0x30, 0x00, 0x00, 0x00, 0x00, 0x4d, 0x56);
 
-    private const String CommonDevicePathSection = "fbca-11de-b16f-000000004d56";
     private const int MenuDataSize = 2048;  // This is arbitrary - an estimate of the buffer size needed to hold the largest menu.
     private const int MenuChoiceSize = 8;
     private const int MmiHandlerThreadSleepTime = 500;   // unit = ms
@@ -234,8 +229,17 @@ namespace TvEngine
     // DigitalDevices instances.
     private static HashSet<String> _devicesInUse = new HashSet<String>();
 
+    // We use these global CI settings to apply decrypt limits and commands to each CI slot/CAM.
+    private static List<DigitalDevicesCiSlot> _ciSlotSettings = null;
+
+    // Indicates whether one or more CI slots have global configuration (ie. that the user has actually
+    // filled in the configuration). If there is no configuration, we can't apply decrypt limits
+    // properly.
+    private bool _ciSlotsConfigured = false;
+
     private bool _isDigitalDevices = false;
     private String _name = "Digital Devices";
+    private String _tunerDevicePath = String.Empty;
     private bool _isCiSlotPresent = false;
 
     private List<CiContext> _ciContexts = null;
@@ -252,40 +256,6 @@ namespace TvEngine
     private Thread _mmiHandlerThread = null;
 
     #endregion
-
-    /// <summary>
-    /// Read the CAM menu title from the CAM in a specific CI slot.
-    /// </summary>
-    /// <param name="slot">The index of the CI context structure for the slot containing the CAM.</param>
-    /// <param name="title">The CAM menu title.</param>
-    /// <returns><c>true</c> if the CAM title is read successfully, otherwise <c>false</c></returns>
-    private bool GetMenuTitle(int slot, out String title)
-    {
-      Log.WriteFile("Digital Devices: slot {0} read CAM title", slot);
-      title = String.Empty;
-
-      for (int i = 0; i < MenuDataSize; i++)
-      {
-        Marshal.WriteByte(_mmiBuffer, i, 0);
-      }
-
-      int returnedByteCount;
-      int hr = ((IKsPropertySet)_ciContexts[slot].Filter).Get(CommonInterfacePropertySet, (int)CommonInterfaceProperty.CamMenuTitle,
-        _mmiBuffer, MenuDataSize,
-        _mmiBuffer, MenuDataSize,
-        out returnedByteCount
-      );
-      if (hr == 0)
-      {
-        title = Marshal.PtrToStringAnsi(_mmiBuffer, returnedByteCount).TrimEnd();
-        Log.WriteFile("  title = {0}", title);
-        Log.WriteFile("Digital Devices: result = success");
-        return true;
-      }
-
-      Log.Debug("Digital Devices: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      return false;
-    }
 
     #region MMI handler thread
 
@@ -481,11 +451,15 @@ namespace TvEngine
     /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
     /// name/number.
     /// </summary>
-    public override String Name
+    public override string Name
     {
       get
       {
-        return _name;
+        if (_name != null && !_name.Equals(String.Empty))
+        {
+          return _name;
+        }
+        return "Digital Devices";
       }
     }
 
@@ -513,7 +487,7 @@ namespace TvEngine
         return true;
       }
 
-      if (!tunerDevicePath.ToLowerInvariant().Contains(CommonDevicePathSection))
+      if (!tunerDevicePath.ToLowerInvariant().Contains(DigitalDevicesCiSlots.CommonDevicePathSection))
       {
         Log.Debug("Digital Devices: device path does not contain the Digital Devices common section");
         return false;
@@ -521,6 +495,7 @@ namespace TvEngine
 
       Log.Debug("Digital Devices: supported device detected");
       _isDigitalDevices = true;
+      _tunerDevicePath = tunerDevicePath;
       FilterInfo tunerFilterInfo;
       int hr = tunerFilter.QueryFilterInfo(out tunerFilterInfo);
       if (tunerFilterInfo.pGraph != null)
@@ -649,7 +624,7 @@ namespace TvEngine
           // to render [capture]->[CI]->[demux].
           if (_graph.Connect(lastFilterOutputPin, demuxInputPin) == 0)
           {
-            Log.WriteFile("Digital Devices: no [more] CI filters available or configured for this tuner");
+            Log.Debug("Digital Devices: no [more] CI filters available or configured for this tuner");
             lastFilterOutputPin.Disconnect();
             break;
           }
@@ -662,10 +637,7 @@ namespace TvEngine
           {
             // We're looking for a Digital Devices common interface device that is not
             // already in use in any graph.
-            if (captureDevice.DevicePath == null ||
-              captureDevice.Name == null ||
-              !captureDevice.DevicePath.ToLowerInvariant().Contains(CommonDevicePathSection) ||
-              !captureDevice.Name.ToLowerInvariant().Contains("common interface"))
+            if (!DigitalDevicesCiSlots.IsDigitalDevicesCiDevice(captureDevice))
             {
               continue;
             }
@@ -767,6 +739,69 @@ namespace TvEngine
 
     #endregion
 
+    #region ITvServerPlugin members
+
+    /// <summary>
+    /// The version of this TV Server plugin.
+    /// </summary>
+    public string Version
+    {
+      get
+      {
+        return "1.0.0.0";
+      }
+    }
+
+    /// <summary>
+    /// The author of this TV Server plugin.
+    /// </summary>
+    public string Author
+    {
+      get
+      {
+        return "mm1352000";
+      }
+    }
+
+    /// <summary>
+    /// Determine whether this TV Server plugin should only run on the master server, or if it can also
+    /// run on slave servers.
+    /// </summary>
+    /// <remarks>
+    /// This property is obsolete. Master-slave configurations are not supported.
+    /// </remarks>
+    public bool MasterOnly
+    {
+      get
+      {
+        return true;
+      }
+    }
+
+    /// <summary>
+    /// Get an instance of the configuration section for use in TV Server configuration (SetupTv).
+    /// </summary>
+    public SetupTv.SectionSettings Setup
+    {
+      get { return new SetupTv.Sections.DigitalDevicesConfig(); }
+    }
+
+    /// <summary>
+    /// Start this TV Server plugin.
+    /// </summary>
+    public void Start(IController controller)
+    {
+    }
+
+    /// <summary>
+    /// Stop this TV Server plugin.
+    /// </summary>
+    public void Stop()
+    {
+    }
+
+    #endregion
+
     #region IConditionalAccessProvider members
 
     /// <summary>
@@ -805,13 +840,35 @@ namespace TvEngine
       String menuTitle;
       for (byte i = 0; i < _ciContexts.Count; i++)
       {
-        if (GetMenuTitle(i, out menuTitle))
+        Log.Debug("Digital Devices: slot {0} read CAM menu title", i);
+        int hr = DigitalDevicesCiSlots.GetMenuTitle(_ciContexts[i].Filter, out menuTitle);
+        if (hr == 0)
         {
+          Log.Debug("  title = {0}", menuTitle);
+          Log.Debug("Digital Devices: result = success");
           _ciContexts[i].CamMenuTitle = "CI #" + (i + 1) + ": " + menuTitle;
         }
         else
         {
+          Log.Debug("Digital Devices: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           _ciContexts[i].CamMenuTitle = "CI #" + (i + 1);
+        }
+      }
+
+      // Read the global CI settings from the database.
+      if (_ciSlotSettings == null)
+      {
+        _ciSlotSettings = DigitalDevicesCiSlots.GetDatabaseSettings();
+      }
+      // Check: are the global settings configured?
+      _ciSlotsConfigured = false;
+      foreach (DigitalDevicesCiSlot globalSlot in _ciSlotSettings)
+      {
+        if (globalSlot.Providers.Count != 0)
+        {
+          Log.Debug("Digital Devices: CI slots have configuration");
+          _ciSlotsConfigured = true;
+          break;
         }
       }
 
@@ -954,34 +1011,94 @@ namespace TvEngine
         return true;
       }
 
-      // "Not selected" commands do nothing.
+      // "Not selected" commands remove all decrypt entries for this tuner.
       if (command == CaPmtCommand.NotSelected)
       {
+        foreach (DigitalDevicesCiSlot slot in _ciSlotSettings)
+        {
+          if (slot.CurrentTunerSet.Contains(_tunerDevicePath))
+          {
+            slot.CurrentTunerSet.Remove(_tunerDevicePath);
+          }
+        }
         Log.Debug("Digital Devices: result = success");
         return true;
       }
 
-      Log.Debug("Digital Devices: service ID is {0} (0x{0:x})", pmt.ProgramNumber);
-
-      // Disable messages from the CAM for the next 10 seconds. We do this to
-      // avoid showing MMI messages which the driver tries to use unsuccessfully.
-      // A better solution would be to apply requests to the CAM(s) that are able
-      // to decrypt the service, however unfortunately the interface doesn't provide
-      // any way to query the CAM or determine whether a decrypt command will
-      // or has succeeded.
-      if (_ciContexts.Count > 1)
+      String provider = String.Empty;
+      DVBBaseChannel dvbChannel = channel as DVBBaseChannel;
+      UInt32 serviceId = pmt.ProgramNumber;
+      if (dvbChannel != null)
       {
-        _camMessagesDisabled = true;
-        _camMessageEnableTs = DateTime.Now.AddSeconds(10);
+        provider = dvbChannel.Provider;
+      }
+      Log.Debug("Digital Devices: service ID = {0} (0x{0:x}), provider = {1}", serviceId, provider);
+
+      // Find the CI slot (context) that we should use.
+      int context = -1;
+      if (_ciContexts.Count == 1 || !_ciSlotsConfigured)
+      {
+        Log.Debug("Digital Devices: chaining restrictions not applied");
+        context = 0;
+        serviceId |= (uint)DecryptChainingRestriction.None;
+
+        // Disable messages from the CAM for the next 10 seconds. We do this to
+        // avoid showing MMI messages which the driver tries to use unsuccessfully.
+        // A better solution would be to apply requests to the CAM(s) that are able
+        // to decrypt the service, but we don't have configuration...
+        if (_ciContexts.Count > 1)
+        {
+          _camMessagesDisabled = true;
+          _camMessageEnableTs = DateTime.Now.AddSeconds(10);
+        }
+      }
+      else
+      {
+        // In this case we always select a specific slot. If the provider is not set, we look for a
+        // slot that has the provider not set. Otherwise look for a slot that can decrypt services
+        // for the provider. The slot must also have decrypt limit "headroom".
+        Log.Debug("Digital Devices: chaining restrictions applied");
+        serviceId |= (uint)DecryptChainingRestriction.NoBackwardChaining | (uint)DecryptChainingRestriction.NoForwardChaining;
+        lock (_ciSlotSettings)
+        {
+          foreach (DigitalDevicesCiSlot globalSlot in _ciSlotSettings)
+          {
+            Log.Debug("  {0}: {1}/{2}", globalSlot.CamRootMenuTitle, globalSlot.CurrentTunerSet.Count, globalSlot.DecryptLimit);
+            if (((provider.Equals(String.Empty) && globalSlot.Providers.Count == 0) || globalSlot.Providers.Contains(provider)) &&
+              (globalSlot.DecryptLimit == 0 || globalSlot.CurrentTunerSet.Count < globalSlot.DecryptLimit))
+            {
+              Log.Debug("  slot is capable, checking for tuner link...");
+              // Now find the context that is associated with the slot. There may not be one if the slot
+              // is not linked to this tuner.
+              for (int i = 0; i < _ciContexts.Count; i++)
+              {
+                if (_ciContexts[i].Device.DevicePath.Equals(globalSlot.DevicePath))
+                {
+                  Log.Debug("  link found to slot {0}", i + 1);
+                  context = i;
+                  globalSlot.CurrentTunerSet.Add(_tunerDevicePath);
+                  break;
+                }
+              }
+            }
+            if (context != -1)
+            {
+              break;
+            }
+          }
+          if (context == -1)
+          {
+            Log.Debug("Digital Devices: no slots available");
+            return true;   // Don't bother retrying.
+          }
+        }
       }
 
-      // We apply the request to the first CI filter in the graph and the
-      // driver will automatically try all of filters to see if any of them
-      // can decrypt the service.
       int paramSize = sizeof(Int32);
       IntPtr buffer = Marshal.AllocCoTaskMem(paramSize);
-      Marshal.WriteInt32(buffer, pmt.ProgramNumber | (int)DecryptChainingRestriction.None);
-      int hr = ((IKsPropertySet)_ciContexts[0].Filter).Set(CommonInterfacePropertySet, (int)CommonInterfaceProperty.DecryptProgram,
+      Marshal.WriteInt32(buffer, (int)serviceId);
+      DVB_MMI.DumpBinary(buffer, 0, paramSize);
+      int hr = ((IKsPropertySet)_ciContexts[context].Filter).Set(DigitalDevicesCiSlots.CommonInterfacePropertySet, (int)CommonInterfaceProperty.DecryptProgram,
         buffer, paramSize,
         buffer, paramSize
       );
@@ -1060,9 +1177,9 @@ namespace TvEngine
         for (int i = 0; i < _ciContexts.Count; i++)
         {
           _ciMenuCallbacks.OnCiMenuChoice(i, _ciContexts[i].CamMenuTitle);
-          Log.Debug("  {0} = {1}", _ciContexts[i].CamMenuTitle);
+          Log.Debug("  {0} = {1}", i + 1, _ciContexts[i].CamMenuTitle);
         }
-        _menuContext = -1;
+        _menuContext = -1;  // Reset the CAM context - the user will choose which CAM to use.
         Log.Debug("Digital Devices: result = success");
         return true;
       }
@@ -1080,7 +1197,7 @@ namespace TvEngine
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     private bool EnterMenu(int slot)
     {
-      Log.Debug("Digital Devices: slot {0} enter menu", slot);
+      Log.Debug("Digital Devices: slot {0} enter menu", slot + 1);
 
       if (!_isDigitalDevices)
       {
@@ -1117,7 +1234,7 @@ namespace TvEngine
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool CloseCIMenu()
     {
-      Log.Debug("Digital Devices: slot {0} close menu", _menuContext);
+      Log.Debug("Digital Devices: slot {0} close menu", _menuContext + 1);
 
       if (!_isDigitalDevices)
       {
@@ -1181,7 +1298,7 @@ namespace TvEngine
         }
       }
 
-      Log.Debug("Digital Devices: slot {0} select menu entry, choice = {1}", _menuContext, choice);
+      Log.Debug("Digital Devices: slot {0} select menu entry, choice = {1}", _menuContext + 1, choice);
 
       if (!_isDigitalDevices)
       {
@@ -1225,7 +1342,7 @@ namespace TvEngine
       {
         answer = String.Empty;
       }
-      Log.Debug("Digital Devices: slot {0} send menu answer, answer = {1}, cancel = {2}", _menuContext, answer, cancel);
+      Log.Debug("Digital Devices: slot {0} send menu answer, answer = {1}, cancel = {2}", _menuContext + 1, answer, cancel);
 
       if (!_isDigitalDevices)
       {

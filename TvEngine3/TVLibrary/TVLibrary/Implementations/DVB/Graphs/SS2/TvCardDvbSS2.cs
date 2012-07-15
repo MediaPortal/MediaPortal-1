@@ -1930,7 +1930,7 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Debug("TvCardDvbBase: plugin \"{0}\" wants unsupported action {1}", deviceInterface.Name, action);
           }
         }
-        if (actualAction == DeviceAction.Start)
+        if (actualAction == DeviceAction.Start || _idleMode == DeviceIdleMode.AlwaysOn)
         {
           SetGraphState(FilterState.Running);
         }

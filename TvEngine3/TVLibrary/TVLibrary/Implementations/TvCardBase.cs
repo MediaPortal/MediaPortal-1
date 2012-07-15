@@ -1139,7 +1139,7 @@ namespace TvLibrary.Implementations
 
           // Ready or not, we send commands now.
           Log.Log.Debug("TvCardBase: sending command(s)");
-          bool success = true;
+          bool success = false;
           TvDvbChannel digitalService;
           // The default action is "more" - this will be changed below if necessary.
           CaPmtListManagementAction action = CaPmtListManagementAction.More;
@@ -1192,11 +1192,16 @@ namespace TvLibrary.Implementations
             digitalService = distinctServices[i] as TvDvbChannel;
             if (digitalService == null)
             {
-              success &= caProvider.SendCommand(distinctServices[i].CurrentChannel, action, command, null, null);
+              success = caProvider.SendCommand(distinctServices[i].CurrentChannel, action, command, null, null);
             }
             else
             {
-              success &= caProvider.SendCommand(distinctServices[i].CurrentChannel, action, command, digitalService.Pmt, digitalService.Cat);
+              success = caProvider.SendCommand(distinctServices[i].CurrentChannel, action, command, digitalService.Pmt, digitalService.Cat);
+            }
+            // Are we done?
+            if (success)
+            {
+              return;
             }
           }
 
