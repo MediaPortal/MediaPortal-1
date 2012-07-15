@@ -31,10 +31,10 @@ using System.Collections.Generic;
 namespace TvEngine
 {
   /// <summary>
-  /// This class provides a base implementation of DiSEqC and clear QAM tuning support for devices that
-  /// support Microsoft BDA interfaces and de-facto standards.
+  /// This class provides a base implementation of PID filtering, DiSEqC and clear QAM tuning support
+  /// for devices that support Microsoft BDA interfaces and de-facto standards.
   /// </summary>
-  public class Microsoft : BaseCustomDevice, IDiseqcDevice
+  public class Microsoft : BaseCustomDevice, IPidFilterController, IDiseqcDevice
   {
     #region enums
 
@@ -130,6 +130,10 @@ namespace TvEngine
     // Annex C QAM (North American cable)
     private IKsPropertySet _qamPropertySet = null;
 
+    // PID filter
+    private IMPEG2PIDMap _pidFilterInterface = null;
+    private HashSet<UInt16> _currentPids = new HashSet<UInt16>();
+
     private IntPtr _instanceBuffer = IntPtr.Zero;
     private IntPtr _paramBuffer = IntPtr.Zero;
 
@@ -198,7 +202,7 @@ namespace TvEngine
     /// </remarks>
     /// <param name="filter">The filter to check.</param>
     /// <returns>a control node that supports the IBDA_FrequencyFilter interface if successful, otherwise <c>null</c></returns>
-    private object CheckPutRangeDiseqcSupport(IBaseFilter filter)
+    private IBDA_FrequencyFilter CheckPutRangeDiseqcSupport(IBaseFilter filter)
     {
       Log.Debug("Microsoft: check for IBDA_FrequencyFilter.put_Range() DiSEqC 1.0 support");
 
@@ -211,13 +215,13 @@ namespace TvEngine
 
       object controlNode;
       int hr = topology.GetControlNode(0, 1, 0, out controlNode);
-      if (hr == 0 && controlNode is IBDA_FrequencyFilter)
+      IBDA_FrequencyFilter frequencyFilterInterface = controlNode as IBDA_FrequencyFilter;
+      if (hr == 0 && frequencyFilterInterface != null)
       {
-        Log.Debug("Microsoft: found node that implements the interface");
-        return controlNode;
+        return frequencyFilterInterface;
       }
 
-      Log.Debug("Microsoft: failed to get the control interface, hr = 0x{1:x} ({2})", hr, HResult.GetDXErrorString(hr));
+      Log.Debug("Microsoft: failed to get the control interface, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       if (controlNode != null)
       {
         DsUtils.ReleaseComObject(controlNode);
@@ -271,6 +275,25 @@ namespace TvEngine
       return ps;
     }
 
+    /// <summary>
+    /// Determine if a filter supports PID filtering.
+    /// </summary>
+    /// <param name="filter">The filter to check.</param>
+    /// <returns>an implementation of the IMPEG2PIDMap interace if successful, otherwise <c>null</c></returns>
+    private IMPEG2PIDMap CheckBdaPidFilterSupport(IBaseFilter filter)
+    {
+      Log.Debug("Microsoft: check for IMPEG2PIDMap PID filtering support");
+
+      IMPEG2PIDMap pidFilterInterface = filter as IMPEG2PIDMap;
+      if (pidFilterInterface != null)
+      {
+        return pidFilterInterface;
+      }
+
+      Log.Debug("Microsoft: tuner does not implement the interface");
+      return null;
+    }
+
     #region ICustomDevice members
 
     /// <summary>
@@ -302,6 +325,10 @@ namespace TvEngine
         {
           return "Microsoft (generic DiSEqC)";
         }
+        if (_pidFilterInterface != null)
+        {
+          return "Microsoft (PID filter)";
+        }
         if (_qamPropertySet != null)
         {
           return "Microsoft (generic ATSC/QAM)";
@@ -321,11 +348,7 @@ namespace TvEngine
     public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
     {
       Log.Debug("Microsoft: initialising device");
-      if (tunerType != CardType.DvbS && tunerType != CardType.Atsc)
-      {
-        Log.Debug("Microsoft: tuner type {0} is not supported", tunerType);
-        return false;
-      }
+
       if (_isMicrosoft)
       {
         Log.Debug("Microsoft: device is already initialised");
@@ -340,29 +363,44 @@ namespace TvEngine
         if (_diseqcPropertySet != null)
         {
           Log.Debug("Microsoft: supported device detected (IBDA_DiseqCommand DiSEqC)");
+          _isMicrosoft = true;
         }
         else
         {
           // Fallback to IBDA_FrequencyFilter.put_Range().
           _oldDiseqcInterface = (IBDA_FrequencyFilter)CheckPutRangeDiseqcSupport(tunerFilter);
-          if (_oldDiseqcInterface == null)
+          if (_oldDiseqcInterface != null)
           {
-            return false;
+            Log.Debug("Microsoft: supported device detected (IBDA_FrequencyFilter.put_Range() DiSEqC)");
+            _isMicrosoft = true;
           }
-          Log.Debug("Microsoft: supported device detected (IBDA_FrequencyFilter.put_Range() DiSEqC)");
         }
       }
-      else
+      // For ATSC tuners: check if clear QAM tuning is supported.
+      else if (tunerType == CardType.Atsc)
       {
         _qamPropertySet = CheckQamTuningSupport(tunerFilter);
-        if (_qamPropertySet == null)
+        if (_qamPropertySet != null)
         {
-          return false;
+          Log.Debug("Microsoft: supported device detected (QAM tuning)");
+          _isMicrosoft = true;
         }
-        Log.Debug("Microsoft: supported device detected (QAM tuning)");
       }
 
-      _isMicrosoft = true;
+      // Any type of tuner can support PID filtering.
+      _pidFilterInterface = CheckBdaPidFilterSupport(tunerFilter);
+      if (_pidFilterInterface != null)
+      {
+        Log.Debug("Microsoft: supported device detected (PID filtering)");
+        _isMicrosoft = true;
+      }
+
+      if (!_isMicrosoft)
+      {
+        Log.Debug("Microsoft: no interfaces supported");
+        return false;
+      }
+
       _deviceControl = tunerFilter as IBDA_DeviceControl;
       _paramBuffer = Marshal.AllocCoTaskMem(InstanceSize);
       _instanceBuffer = Marshal.AllocCoTaskMem(InstanceSize);
@@ -429,6 +467,112 @@ namespace TvEngine
     }
 
     #endregion
+
+    #endregion
+
+    #region IPidFilterController
+
+    /// <summary>
+    /// Configure the PID filter.
+    /// </summary>
+    /// <param name="pids">The PIDs to allow through the filter.</param>
+    /// <param name="modulation">The current multiplex/transponder modulation scheme.</param>
+    /// <param name="forceEnable">Set this parameter to <c>true</c> to force the filter to be enabled.</param>
+    /// <returns><c>true</c> if the PID filter is configured successfully, otherwise <c>false</c></returns>
+    public bool SetFilterPids(HashSet<UInt16> pids, ModulationType modulation, bool forceEnable)
+    {
+      Log.Debug("Microsoft: set PID filter PIDs, modulation = {0}, force enable = {1}", modulation, forceEnable);
+
+      if (!_isMicrosoft || _pidFilterInterface == null)
+      {
+        Log.Debug("Microsoft: device not initialised or interface not supported");
+        return false;
+      }
+
+      if (pids == null || pids.Count == 0)
+      {
+        Log.Debug("Microsoft: disabling PID filter");
+        // As far as I am aware, the PID filter is disabled by default after each retune. Assuming
+        // that is the case, there is nothing to do here. Even if that assumption is wrong, there
+        // is no obvious way to disable the PID filter and we have no PIDs we can't do anything.
+        return true;
+      }
+
+      // If we get to here then we enable the filter by mapping the PIDs. The hardware probably has
+      // a limit to the number of PIDs that it can handle, however we have no way to get that information
+      // so we proceed as if there is no limit. Note also that attempting to call EnumPIDMap to
+      // get the current list of PIDs from the hardware will fail... so we just assume that we can
+      // add and remove PIDs on top of whatever PIDs are already mapped.
+      bool success = true;
+      Log.Debug("Microsoft: current PID details (before update)");
+      Log.Debug("  count = {0}", _currentPids.Count);
+      IEnumerator<UInt16> en = _currentPids.GetEnumerator();
+      HashSet<UInt16> toRemove = new HashSet<UInt16>();
+      byte i = 1;
+      while (en.MoveNext())
+      {
+        Log.Debug("  {0,-2}    = {1} (0x{1:x})", i, en.Current);
+        i++;
+        if (!pids.Contains(en.Current))
+        {
+          toRemove.Add(en.Current);
+        }
+      }
+
+      // Remove the PIDs that are no longer needed.
+      int hr;
+      if (toRemove.Count > 0)
+      {
+        Log.Debug("Microsoft: removing...");
+        en = toRemove.GetEnumerator();
+        i = 1;
+        while (en.MoveNext())
+        {
+          hr = _pidFilterInterface.UnmapPID(1, new int[1] { en.Current });
+          if (hr != 0)
+          {
+            Log.Debug("Microsoft: failed to remove PID {0} (0x{0:x}), hr = 0x{1:x} ({2})", en.Current, hr, HResult.GetDXErrorString(hr));
+            success = false;
+          }
+          else
+          {
+            Log.Debug("  {0,-2}    = {1} (0x{1:x})", i, en.Current);
+            _currentPids.Remove(en.Current);
+          }
+          i++;
+        }
+      }
+
+      // Add the new PIDs.
+      Log.Debug("Microsoft: adding...");
+      en = pids.GetEnumerator();
+      i = 1;
+      while (en.MoveNext())
+      {
+        if (_currentPids.Contains(en.Current))
+        {
+          continue;
+        }
+        hr = _pidFilterInterface.MapPID(1, new int[1] { en.Current }, MediaSampleContent.ElementaryStream);
+        if (hr != 0)
+        {
+          Log.Debug("Microsoft: failed to add PID {0} (0x{0:x}), hr = 0x{1:x} ({2})", en.Current, hr, HResult.GetDXErrorString(hr));
+          success = false;
+        }
+        else
+        {
+          Log.Debug("  {0,-2}    = {1} (0x{1:x})", i, en.Current);
+        }
+        i++;
+      }
+
+      if (success)
+      {
+        Log.Debug("Microsoft: updates complete, result = success");
+      }
+
+      return success;
+    }
 
     #endregion
 
@@ -556,8 +700,7 @@ namespace TvEngine
         }
 
         // Disable command repeats for optimal performance. We set this for each command for "safety",
-        // assuming that if DiSEqC must be enabled for enabled for each command then the same may apply
-        // to repeats.
+        // assuming that if DiSEqC must be enabled for each command then the same may apply to repeats.
         Marshal.WriteInt32(_paramBuffer, 0, 0);
         hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Repeats, _instanceBuffer, InstanceSize, _paramBuffer, 4);
         if (hr != 0)
