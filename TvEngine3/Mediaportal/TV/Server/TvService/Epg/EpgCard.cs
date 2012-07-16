@@ -593,7 +593,14 @@ namespace Mediaportal.TV.Server.TVService.Epg
       {
         if (timeOut == false)
         {
-          _currentTransponder.OnTimeOut();
+          try
+          {
+            _currentTransponder.OnTimeOut();
+          }
+          catch (Exception ex)
+          {
+            Log.Write(ex);
+          }          
         }
         if (_state != EpgState.Idle && _user.CardId >= 0)
         {
