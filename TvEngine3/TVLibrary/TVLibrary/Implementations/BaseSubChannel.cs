@@ -81,7 +81,7 @@ namespace TvLibrary.Implementations
 
     #endregion
 
-    #region variables    
+    #region variables
 
     /// <summary>
     /// Indicates, if the channel has teletext
@@ -133,6 +133,11 @@ namespace TvLibrary.Implementations
     /// </summary>
     protected ScanParameters _parameters;
 
+    /// <summary>
+    /// A flag used by the TV service as a signal to abort the tuning process before it is completed.
+    /// </summary>
+    protected bool _cancelTune;
+
     #endregion
 
     #region ctor
@@ -142,6 +147,7 @@ namespace TvLibrary.Implementations
     /// </summary>
     protected BaseSubChannel(int subChannelId)
     {
+      _cancelTune = false;
       _subChannelId = subChannelId;
       _teletextDecoder = new DVBTeletext();
       _timeshiftFileName = String.Empty;
@@ -356,6 +362,26 @@ namespace TvLibrary.Implementations
     public void TimeShiftGetCurrentFilePosition(ref Int64 position, ref long bufferId)
     {
       OnGetTimeShiftFilePosition(ref position, ref bufferId);
+    }
+
+    /// <summary>
+    /// Cancel the current tuning process.
+    /// </summary>
+    public virtual void CancelTune()
+    {
+      Log.Log.Debug("BaseSubChannel: subchannel {0} cancel tune", _subChannelId);
+      _cancelTune = true;
+    }
+
+    /// <summary>
+    /// Check if the current tuning process has been cancelled and throw and exception if it has.
+    /// </summary>
+    protected void ThrowExceptionIfTuneCancelled()
+    {
+      if (_cancelTune)
+      {
+        throw new TvExceptionTuneCancelled();
+      }
     }
 
     #endregion

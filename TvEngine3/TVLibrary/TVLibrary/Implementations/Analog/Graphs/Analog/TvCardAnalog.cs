@@ -122,8 +122,6 @@ namespace TvLibrary.Implementations.Analog
     {
       get
       {
-        if (!CheckThreadId())
-          return null;
         return new AnalogScanning(this);
       }
     }
@@ -166,6 +164,7 @@ namespace TvLibrary.Implementations.Analog
       subChannel.Parameters = Parameters;
       subChannel.CurrentChannel = channel;
       _mapSubChannels[id] = subChannel;
+      FireNewSubChannelEvent(id);
       return id;
     }
 
@@ -270,8 +269,6 @@ namespace TvLibrary.Implementations.Analog
       if (_graphBuilder == null)
         return;
       Log.Log.WriteFile("analog:Dispose()");
-      if (!CheckThreadId())
-        return;
 
       FreeAllSubChannels();
       IMediaControl mediaCtl = (_graphBuilder as IMediaControl);
@@ -467,8 +464,6 @@ namespace TvLibrary.Implementations.Analog
     /// <returns></returns>
     private bool AddTsFileSink()
     {
-      if (!CheckThreadId())
-        return false;
       Log.Log.WriteFile("analog:AddTsFileSink");
       _tsFileSink = (IBaseFilter)new MpFileWriter();
       int hr = _graphBuilder.AddFilter(_tsFileSink, "TsFileSink");
@@ -504,15 +499,6 @@ namespace TvLibrary.Implementations.Analog
     #region private helper
 
     /// <summary>
-    /// Checks the thread id.
-    /// </summary>
-    /// <returns></returns>
-    private static bool CheckThreadId()
-    {
-      return true;
-    }
-
-    /// <summary>
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
@@ -524,9 +510,6 @@ namespace TvLibrary.Implementations.Analog
       _maxChannel = _tuner.MaxChannel;
       _crossbar.PerformTune(analogChannel);
       _capture.PerformTune(analogChannel);
-      _lastSignalUpdate = DateTime.MinValue;
-      UpdateSignalStatus(true);
-      _lastSignalUpdate = DateTime.MinValue;
     }
 
     #endregion

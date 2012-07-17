@@ -21,7 +21,6 @@
 #region usings
 
 using System;
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
@@ -50,8 +49,6 @@ namespace TvPlugin
   {
     #region constants
 
-    // Start for numbering IDs of automaticaly generated TVguide components for channels and programs
-
     private int _loopDelay = 100; // wait at the last item this amount of msec until loop to the first item
 
     private const string _skinPropertyPrefix = "#TV";
@@ -63,47 +60,9 @@ namespace TvPlugin
       get { return _skinPropertyPrefix; }
     }
 
-    #region enums
-
-    private enum Controls
-    {
-      PANEL_BACKGROUND = 2,
-      SPINCONTROL_DAY = 6,
-      SPINCONTROL_TIME_INTERVAL = 8,
-      CHANNEL_IMAGE_TEMPLATE = 7,
-      CHANNEL_LABEL_TEMPLATE = 18,
-      LABEL_GENRE_TEMPLATE = 23,
-      LABEL_TITLE_TEMPLATE = 24,
-      VERTICAL_LINE = 25,
-      LABEL_TITLE_DARK_TEMPLATE = 26,
-      LABEL_GENRE_DARK_TEMPLATE = 30,
-      CHANNEL_TEMPLATE = 20, // Channel rectangle and row height
-
-      HORZ_SCROLLBAR = 28,
-      VERT_SCROLLBAR = 29,
-      LABEL_TIME1 = 40, // first and template
-      IMG_CHAN1 = 50,
-      IMG_CHAN1_LABEL = 70,
-      IMG_TIME1 = 90, // first and template
-      IMG_REC_PIN = 31,
-      SINGLE_CHANNEL_LABEL = 32,
-      SINGLE_CHANNEL_IMAGE = 33,
-      LABEL_KEYED_CHANNEL = 34,
-      BUTTON_PROGRAM_RUNNING = 35,
-      BUTTON_PROGRAM_NOT_RUNNING = 36,
-      BUTTON_PROGRAM_NOTIFY = 37,
-      BUTTON_PROGRAM_RECORD = 38,
-      BUTTON_PROGRAM_PARTIAL_RECORD = 39,
-
-      CHANNEL_GROUP_BUTTON = 100
-    } ;
-
-    #endregion
-
     #region variables
 
-    private readonly object _recordingsExpectedLock = new object();
-    private readonly List<Channel> _recordingsExpected = new List<Channel>();
+    private Channel _recordingExpected = null;
     private DateTime _updateTimerRecExpected = DateTime.Now;
     private IList<Schedule> _recordingList = new List<Schedule>();
     private Dictionary<int, GUIButton3PartControl> _controls = new Dictionary<int, GUIButton3PartControl>();
@@ -116,7 +75,6 @@ namespace TvPlugin
     private Program _currentProgram = null;
     private bool _needUpdate = false;
     private DateTime m_dtStartTime = DateTime.Now;
-    private ArrayList _colorList = new ArrayList();
     private int _programOffset = 0;
     private int _totalProgramCount = 0;
     private TvServer _server = null;
@@ -154,7 +112,7 @@ namespace TvPlugin
       get
       {
         // show/hide channel group button
-        GUIButtonControl btnChannelGroup = GetControl((int)Controls.CHANNEL_GROUP_BUTTON) as GUIButtonControl;
+        GUIControl btnChannelGroup = GetControl((int)Controls.CHANNEL_GROUP_BUTTON) as GUIControl;
 
         // visible only if more than one group? and not in single channel, and button exists in skin!
         return (TVHome.Navigator.Groups.Count > 1 && !_singleChannelView && btnChannelGroup != null);
@@ -167,36 +125,6 @@ namespace TvPlugin
 
     public TvGuideBase()
     {
-      _colorList.Add(Color.Red);
-      _colorList.Add(Color.Green);
-      _colorList.Add(Color.Blue);
-      _colorList.Add(Color.Cyan);
-      _colorList.Add(Color.Magenta);
-      _colorList.Add(Color.DarkBlue);
-      _colorList.Add(Color.Brown);
-      _colorList.Add(Color.Fuchsia);
-      _colorList.Add(Color.Khaki);
-      _colorList.Add(Color.SteelBlue);
-      _colorList.Add(Color.SaddleBrown);
-      _colorList.Add(Color.Chocolate);
-      _colorList.Add(Color.DarkMagenta);
-      _colorList.Add(Color.DarkSeaGreen);
-      _colorList.Add(Color.Coral);
-      _colorList.Add(Color.DarkGray);
-      _colorList.Add(Color.DarkOliveGreen);
-      _colorList.Add(Color.DarkOrange);
-      _colorList.Add(Color.ForestGreen);
-      _colorList.Add(Color.Honeydew);
-      _colorList.Add(Color.Gray);
-      _colorList.Add(Color.Tan);
-      _colorList.Add(Color.Silver);
-      _colorList.Add(Color.SeaShell);
-      _colorList.Add(Color.RosyBrown);
-      _colorList.Add(Color.Peru);
-      _colorList.Add(Color.OldLace);
-      _colorList.Add(Color.PowderBlue);
-      _colorList.Add(Color.SpringGreen);
-      _colorList.Add(Color.LightSalmon);
     }
 
     #endregion
@@ -207,15 +135,15 @@ namespace TvPlugin
     {
       using (Settings xmlreader = new MPSettings())
       {
-        String channelName = xmlreader.GetValueAsString("tvguide", "channel", String.Empty);
+        String channelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
         TvBusinessLayer layer = new TvBusinessLayer();
         IList<Channel> channels = layer.GetChannelsByName(channelName);
         if (channels != null && channels.Count > 0)
         {
           _currentChannel = channels[0];
         }
-        _cursorX = xmlreader.GetValueAsInt("tvguide", "ypos", 0);
-        ChannelOffset = xmlreader.GetValueAsInt("tvguide", "yoffset", 0);
+        PositionGuideCursorToCurrentChannel();
+
         _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
         _showChannelNumber = xmlreader.GetValueAsBool("mytv", "showchannelnumber", false);
         _channelNumberMaxLength = xmlreader.GetValueAsInt("mytv", "channelnumbermaxlength", 3);
@@ -223,24 +151,166 @@ namespace TvPlugin
         _hdtvProgramText = xmlreader.GetValueAsString("mytv", "hdtvProgramText", "(HDTV)");
         _guideContinuousScroll = xmlreader.GetValueAsBool("mytv", "continuousScrollGuide", false);
         _loopDelay = xmlreader.GetValueAsInt("gui", "listLoopDelay", 0);
+
+        // Load the genre map.
+        if (_genreMap.Count == 0)
+        {
+          LoadGenreMap(xmlreader);
+        }
+
+        // Special genre rules.
+        _specifyMpaaRatedAsMovie = xmlreader.GetValueAsBool("genreoptions", "specifympaaratedasmovie", false);
       }
+
+      // Load settings defined by the skin.
+      LoadSkinSettings();
+
+      // Load genre colors.
+      // If guide colors have not been loaded then attempt to load guide colors.
+      if (!_guideColorsLoaded)
+      {
+        using (Settings xmlreader = new SKSettings())
+        {
+          _guideColorsLoaded = LoadGuideColors(xmlreader);
+        }
+      }
+
       _useNewRecordingButtonColor =
-        Utils.FileExistsInCache(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_recButton_Focus_middle.png"));
+        Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile(@"\media\tvguide_recButton_Focus_middle.png"));
       _useNewPartialRecordingButtonColor =
-        Utils.FileExistsInCache(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_partRecButton_Focus_middle.png"));
+        Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile(@"\media\tvguide_partRecButton_Focus_middle.png"));
       _useNewNotifyButtonColor =
-        Utils.FileExistsInCache(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_notifyButton_Focus_middle.png"));
+        Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile(@"\media\tvguide_notifyButton_Focus_middle.png"));
       _useHdProgramIcon =
-        Utils.FileExistsInCache(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_hd_program.png"));
+        Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile(@"\media\tvguide_hd_program.png"));
+    }
+
+    protected override void LoadSkinSettings()
+    {
+      String temp;
+
+      // Guide coloring options are defined by each skin (and may not be present).  Read the settings from skin properties.
+      _useColorsForButtons = false;
+      temp = GUIPropertyManager.GetProperty("#skin.tvguide.usecolorsforbuttons");
+      if (temp != null && temp.Length != 0)
+      {
+        _useColorsForButtons = bool.Parse(temp);
+      }
+
+      _useBorderHighlight = false;
+      temp = GUIPropertyManager.GetProperty("#skin.tvguide.useborderhighlight");
+      if (temp != null && temp.Length != 0)
+      {
+        _useBorderHighlight = bool.Parse(temp);
+      }
+
+      _useColorsForGenres = false;
+      temp = GUIPropertyManager.GetProperty("#skin.tvguide.usecolorsforgenre");
+      if (temp != null && temp.Length != 0)
+      {
+        _useColorsForGenres = bool.Parse(temp);
+      }
+    }
+
+    private bool LoadGenreMap(Settings xmlreader)
+    {
+      int genreId;
+      string genre;
+      List<string> programGenres;
+      IDictionary<string, string> allGenres = xmlreader.GetSection<string>("genremap");
+
+      // Each genre map entry is a '{' delimited list of "program" genre names (those that may be compared with the genre from the program listings).
+      // It is an error if a single "program" genre is mapped to more than one genre color category; behavior is undefined for this condition.
+      foreach (var genreMapEntry in allGenres)
+      {
+        genreId = int.Parse(genreMapEntry.Key);
+        genre = GUILocalizeStrings.Get(LOCALIZED_GENRE_STRING_BASE + genreId);
+        _genreList.Add(genre);
+
+        programGenres = new List<string>(genreMapEntry.Value.Split(new char[] { '{' }, StringSplitOptions.RemoveEmptyEntries));
+
+        foreach (string programGenre in programGenres)
+        {
+          try
+          {
+            _genreMap.Add(programGenre, genre);
+          }
+          catch (ArgumentException)
+          {
+            Log.Warn("TvGuideBase.cs: The following genre name appears more than once in the genre map: {0}", programGenre);
+          }
+        }
+      }
+
+      return _genreMap.Count > 0;
+    }
+
+    private bool LoadGuideColors(Settings xmlreader)
+    {
+      List<string> temp;
+
+      // Load supporting guide colors.
+      _guideColorChannelButton = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorchannelbutton", "ff0e517b"));
+      _guideColorChannelButtonSelected = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorchannelbuttonselected", "Green"));
+      _guideColorGroupButton = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorgroupbutton", "ff0e517b"));
+      _guideColorGroupButtonSelected = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorgroupbuttonselected", "Green"));
+      _guideColorProgramSelected = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorprogramselected", "Green"));
+      _guideColorProgramEnded = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorprogramended", "Gray"));
+      _guideColorBorderHighlight = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorborderhighlight", "99ffffff"));
+
+      // Load the default genre colors.
+      temp = new List<string>((xmlreader.GetValueAsString("tvguidecolors", "defaultgenre", String.Empty)).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+      if (temp.Count == 2)
+      {
+        _defaultGenreColorOnNow = GetColorFromString(temp[0]);
+        _defaultGenreColorOnLater = GetColorFromString(temp[1]);
+      }
+      else if (temp.Count == 1)
+      {
+        _defaultGenreColorOnNow = GetColorFromString(temp[0]);
+        _defaultGenreColorOnLater = _defaultGenreColorOnNow;
+      }
+      else
+      {
+        _defaultGenreColorOnNow = 0xff1d355b; // Dark blue
+        _defaultGenreColorOnLater = 0xff0e517b; // Light blue
+      }
+
+      // Each genre color entry is a csv list.  The first value is the color for program "on now", the second value is for program "on later".
+      // If only one value is provided then that value is used for both.
+      long color0;
+      long color1;
+
+      for (int i = 0; i < _genreList.Count; i++)
+      {
+        temp = new List<string>((xmlreader.GetValueAsString("tvguidecolors", i.ToString(), String.Empty)).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+
+        if (temp.Count > 0)
+        {
+          color0 = GetColorFromString(temp[0]);
+          color1 = color0;
+          if (temp.Count == 2)
+          {
+            color1 = GetColorFromString(temp[1]);
+            _genreColorsOnNow.Add(_genreList[i], color0);
+            _genreColorsOnLater.Add(_genreList[i], color1);
+          }
+          else if (temp.Count == 1)
+          {
+            _genreColorsOnNow.Add(_genreList[i], color0);
+            _genreColorsOnLater.Add(_genreList[i], color1);
+          }
+        }
+      }
+
+      return _genreColorsOnNow.Count > 0;
     }
 
     private void SaveSettings()
     {
       using (Settings xmlwriter = new MPSettings())
       {
-        xmlwriter.SetValue("tvguide", "channel", _currentChannel);
-        xmlwriter.SetValue("tvguide", "ypos", _cursorX.ToString());
-        xmlwriter.SetValue("tvguide", "yoffset", ChannelOffset.ToString());
+        xmlwriter.SetValue("mytv", "channel", _currentChannel.DisplayName);
         xmlwriter.SetValue("tvguide", "timeperblock", _timePerBlock);
       }
     }
@@ -459,7 +529,7 @@ namespace TvPlugin
             }
             return;
           }
-        //break;
+          //break;
         case Action.ActionType.ACTION_SHOW_INFO:
           {
             ShowContextMenu();
@@ -521,7 +591,7 @@ namespace TvPlugin
         case Action.ActionType.ACTION_TVGUIDE_DECREASE_DAY:
           OnPreviousDay();
           break;
-        // TV group changing actions
+          // TV group changing actions
         case Action.ActionType.ACTION_TVGUIDE_NEXT_GROUP:
           OnChangeChannelGroup(1);
           break;
@@ -589,11 +659,8 @@ namespace TvPlugin
         TVHome.Navigator.SetCurrentGroup(newIndex);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
 
-        _cursorY = 1; // cursor should be on the program guide item
-        ChannelOffset = 0;
-        // reset to top; otherwise focus could be out of screen if new group has less then old position
-        _cursorX = 0; // first channel
         GetChannels(true);
+        PositionGuideCursorToCurrentChannel();
         Update(false);
         SetFocus();
         GUIWaitCursor.Hide();
@@ -667,6 +734,13 @@ namespace TvPlugin
             }
             break;
 
+          case GUIMessage.MessageType.GUI_MSG_SKIN_CHANGED:
+            {
+              base.OnMessage(message);
+              _guideColorsLoaded = false;
+              return true;
+            }
+
           case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
             {
               base.OnMessage(message);
@@ -723,50 +797,41 @@ namespace TvPlugin
               GUIGraphicsContext.AutoHideTopBar = _autoHideTopbar;
               GUIGraphicsContext.TopBarHidden = _autoHideTopbar;
               GUIGraphicsContext.DisableTopBar = _disableTopBar;
-              LoadSettings();
               UpdateChannelCount();
 
-              bool isPreviousWindowTvGuideRelated = (message.Param1 == (int)Window.WINDOW_TV_PROGRAM_INFO ||
-                                                     message.Param1 == (int)Window.WINDOW_VIDEO_INFO);
+              // Loading tvguide settings will overwrite the guide cursor position.  If we are coming back from the program info window (where
+              // recording selections are made) we would like to reposition the cursor to the program from which we invoked the
+              // program info window; the user comes back to where they started.  To do this we need to save and restore the cursor
+              // position after loading tvguide settings.
+              _backupCursorX = _cursorX;
+              _backupCursorY = _cursorY;
+              _backupChannelOffset = ChannelOffset;
 
-              if (!isPreviousWindowTvGuideRelated)
+              LoadSettings();
+
+              if (message.Param1 == (int)Window.WINDOW_TV_PROGRAM_INFO)
               {
-                UnFocus();
+                _cursorX = _backupCursorX;
+                _cursorY = _backupCursorY;
+                ChannelOffset = _backupChannelOffset;
               }
 
-              GetChannels(true);
               LoadSchedules(true);
               _currentProgram = null;
-              if (!isPreviousWindowTvGuideRelated)
+              if (message.Param1 != (int)Window.WINDOW_TV_PROGRAM_INFO)
               {
                 _viewingTime = DateTime.Now;
-                _cursorY = 0;
-                _cursorX = 0;
-                ChannelOffset = 0;
                 _singleChannelView = false;
                 _showChannelLogos = false;
                 if (TVHome.Card.IsTimeShifting)
                 {
                   _currentChannel = TVHome.Navigator.Channel;
-                  for (int i = 0; i < _channelList.Count; i++)
-                  {
-                    Channel chan = ((GuideChannel)_channelList[i]).channel;
-                    if (chan.IdChannel == _currentChannel.IdChannel)
-                    {
-                      _cursorX = i;
-                      break;
-                    }
-                  }
+                  PositionGuideCursorToCurrentChannel();
                 }
-              }
-              while (_cursorX >= _channelCount)
-              {
-                _cursorX -= _channelCount;
-                ChannelOffset += _channelCount;
               }
               // Mantis 3579: the above lines can lead to too large channeloffset. 
               // Now we check if the offset is too large, and if it is, we reduce it and increase the cursor position accordingly
-              if (!_guideContinuousScroll && (ChannelOffset > _channelList.Count - _channelCount) && (_channelList.Count - _channelCount > 0))
+              if (!_guideContinuousScroll && (ChannelOffset > _channelList.Count - _channelCount))
               {
                 _cursorX += ChannelOffset - (_channelList.Count - _channelCount);
                 ChannelOffset = _channelList.Count - _channelCount;
@@ -829,7 +894,7 @@ namespace TvPlugin
                 Log.Debug("TvGuideBase: SpinControl cntlTimeInterval is null!");
               }
 
-              if (!isPreviousWindowTvGuideRelated)
+              if (message.Param1 != (int)Window.WINDOW_TV_PROGRAM_INFO)
               {
                 Update(true);
               }
@@ -845,10 +910,9 @@ namespace TvPlugin
                 m_dtStartTime = _currentProgram.StartTime;
               }
               UpdateCurrentProgram();
-
               return true;
             }
-          //break;
+            //break;
 
           case GUIMessage.MessageType.GUI_MSG_CLICKED:
             int iControl = message.SenderControlId;
@@ -886,9 +950,14 @@ namespace TvPlugin
             }
             if (iControl >= GUIDE_COMPONENTID_START)
             {
-              OnSelectItem(true);
-              Update(false);
-              SetFocus();
+              if (OnSelectItem(true))
+              {
+                // Tuning a channel was attempted.  Save the channel setting to ensure that the guide channel selection is in sync
+                // with the desired (the channel may not be playing) channel selection.
+                SaveSettings();
+                Update(false);
+                SetFocus();
+              }
             }
             else if (_cursorY == 0)
             {
@@ -920,20 +989,43 @@ namespace TvPlugin
         if (prevGroup != TVHome.Navigator.CurrentGroup.IdGroup)
         {
           GUIWaitCursor.Show();
-          // button focus should be on tvgroup, so change back to channel name
-          //if (_cursorY == -1)
-          //	_cursorY = 0;
-          _cursorY = 1; // cursor should be on the program guide item
-          ChannelOffset = 0;
-          // reset to top; otherwise focus could be out of screen if new group has less then old position
-          _cursorX = 0; // set to top, otherwise index could be out of range in new group
 
           // group has been changed
           GetChannels(true);
+          PositionGuideCursorToCurrentChannel();
           Update(false);
 
           SetFocus();
           GUIWaitCursor.Hide();
+        }
+      }
+    }
+
+    private void PositionGuideCursorToCurrentChannel()
+    {
+      _cursorX = 0;
+      _cursorY = 1; // cursor should be on the program guide item
+      ChannelOffset = 0;
+
+      // Attempt to position to the current channel in the new list of channels.  If the channel is not in
+      // the group then the first channel in the group is selected.
+      bool channelInGroup = false;
+      for (int i = 0; i < _channelList.Count; i++)
+      {
+        Channel chan = ((GuideChannel)_channelList[i]).channel;
+        if (chan.IdChannel == _currentChannel.IdChannel)
+        {
+          _cursorX = i;
+          channelInGroup = true;
+          break;
+        }
+      }
+      if (channelInGroup)
+      {
+        while (_cursorX >= _channelCount)
+        {
+          _cursorX -= _channelCount;
+          ChannelOffset += _channelCount;
         }
       }
     }
@@ -943,7 +1035,24 @@ namespace TvPlugin
       TVHome.UpdateProgressPercentageBar();
 
       OnKeyTimeout();
-      UpdateRecStateOnExpectedRecordings();
+
+      //if we did a manual rec. on the tvguide directly, then we have to wait for it to start and the update the GUI.
+      if (_recordingExpected != null)
+      {
+        TimeSpan ts = DateTime.Now - _updateTimerRecExpected;
+        if (ts.TotalMilliseconds > 1000)
+        {
+          _updateTimerRecExpected = DateTime.Now;
+          VirtualCard card;
+          if (_server.IsRecording(_recordingExpected.IdChannel, out card))
+          {
+            _recordingExpected = null;
+            GetChannels(true);
+            LoadSchedules(true);
+            _needUpdate = true;
+          }
+        }
+      }
 
       if (_needUpdate)
       {
@@ -1014,42 +1123,6 @@ namespace TvPlugin
             vertLine.IsVisible = false;
           }
         }
-      }
-    }
-
-    private void UpdateRecStateOnExpectedRecordings() 
-    {
-      //if we did a manual rec. on the tvguide directly, then we have to wait for it to start and the update the GUI.
-      bool wasAnyRecordingExpectedStarted = false;
-      lock (_recordingsExpectedLock)
-      {
-        if (_recordingsExpected.Count > 0)
-        {
-          TimeSpan ts = DateTime.Now - _updateTimerRecExpected;
-          if (ts.TotalMilliseconds > 1000)
-          {
-            _updateTimerRecExpected = DateTime.Now;
-            var recordingsExpectedToRemove = new List<Channel>();
-            foreach (Channel recordingExpected in _recordingsExpected)
-            {
-              VirtualCard card;
-              if (_server.IsRecording(recordingExpected.IdChannel, out card))
-              {
-                wasAnyRecordingExpectedStarted = true;
-                recordingsExpectedToRemove.Add(recordingExpected);
-              }
-            }
-
-            _recordingsExpected.RemoveAll(recordingsExpectedToRemove.Contains);
-          }
-        }
-      }
-
-      if (wasAnyRecordingExpectedStarted)
-      {        
-        GetChannels(true);
-        LoadSchedules(true);
-        _needUpdate = true;
       }
     }
 
@@ -1273,6 +1346,11 @@ namespace TvPlugin
             img.Label1 = tvChan.DisplayName;
             img.Data = tvChan;
             img.IsVisible = true;
+
+            if (_useColorsForButtons)
+            {
+              img.ColourDiffuse = _guideColorChannelButton;
+            }
           }
         }
         chan++;
@@ -1466,6 +1544,13 @@ namespace TvPlugin
             img.TileFillTNFM = buttonTemplate.TileFillTNFM;
             img.TileFillTFR = buttonTemplate.TileFillTFR;
             img.TileFillTNFR = buttonTemplate.TileFillTNFR;
+
+            img.OverlayFileNameTFL = buttonTemplate.OverlayFileNameTFL;
+            img.OverlayFileNameTNFL = buttonTemplate.OverlayFileNameTNFL;
+            img.OverlayFileNameTFM = buttonTemplate.OverlayFileNameTFM;
+            img.OverlayFileNameTNFM = buttonTemplate.OverlayFileNameTNFM;
+            img.OverlayFileNameTFR = buttonTemplate.OverlayFileNameTFR;
+            img.OverlayFileNameTNFR = buttonTemplate.OverlayFileNameTNFR;
           }
           else
           {
@@ -1479,7 +1564,6 @@ namespace TvPlugin
                                             String.Empty);
           }
           img.AllocResources();
-          img.ColourDiffuse = GetColorForGenre(program.Genre);
           GUIControl cntl = (GUIControl)img;
           Add(ref cntl);
         }
@@ -1494,12 +1578,20 @@ namespace TvPlugin
             img.TexutureNoFocusLeftName = buttonTemplate.TexutureNoFocusLeftName;
             img.TexutureNoFocusMidName = buttonTemplate.TexutureNoFocusMidName;
             img.TexutureNoFocusRightName = buttonTemplate.TexutureNoFocusRightName;
+
             img.TileFillTFL = buttonTemplate.TileFillTFL;
             img.TileFillTNFL = buttonTemplate.TileFillTNFL;
             img.TileFillTFM = buttonTemplate.TileFillTFM;
             img.TileFillTNFM = buttonTemplate.TileFillTNFM;
             img.TileFillTFR = buttonTemplate.TileFillTFR;
             img.TileFillTNFR = buttonTemplate.TileFillTNFR;
+
+            img.OverlayFileNameTFL = buttonTemplate.OverlayFileNameTFL;
+            img.OverlayFileNameTNFL = buttonTemplate.OverlayFileNameTNFL;
+            img.OverlayFileNameTFM = buttonTemplate.OverlayFileNameTFM;
+            img.OverlayFileNameTNFM = buttonTemplate.OverlayFileNameTNFM;
+            img.OverlayFileNameTFR = buttonTemplate.OverlayFileNameTFR;
+            img.OverlayFileNameTNFR = buttonTemplate.OverlayFileNameTNFR;
           }
           else
           {
@@ -1513,19 +1605,18 @@ namespace TvPlugin
           img.Focus = false;
           img.SetPosition(iStartXPos, ypos);
           img.Width = iTotalWidth;
-          img.ColourDiffuse = GetColorForGenre(program.Genre);
           img.IsVisible = true;
           img.DoUpdate();
         }
         img.RenderLeft = false;
         img.RenderRight = false;
+        img.StretchIfNotRendered = true;
 
         bool bSeries = (program.IsRecordingSeries || program.IsRecordingSeriesPending || program.IsPartialRecordingSeriesPending);
         bool bConflict = program.HasConflict;
         bool bRecording = bSeries || (program.IsRecording || program.IsRecordingOncePending);
 
         img.Data = program;
-        img.ColourDiffuse = GetColorForGenre(program.Genre);
         height = height - 10;
         height /= 2;
         int iWidth = iTotalWidth;
@@ -1607,18 +1698,27 @@ namespace TvPlugin
           if (buttonRunningTemplate != null)
           {
             buttonRunningTemplate.IsVisible = false;
+
             img.TexutureFocusLeftName = buttonRunningTemplate.TexutureFocusLeftName;
             img.TexutureFocusMidName = buttonRunningTemplate.TexutureFocusMidName;
             img.TexutureFocusRightName = buttonRunningTemplate.TexutureFocusRightName;
             img.TexutureNoFocusLeftName = buttonRunningTemplate.TexutureNoFocusLeftName;
             img.TexutureNoFocusMidName = buttonRunningTemplate.TexutureNoFocusMidName;
             img.TexutureNoFocusRightName = buttonRunningTemplate.TexutureNoFocusRightName;
+
             img.TileFillTFL = buttonRunningTemplate.TileFillTFL;
             img.TileFillTNFL = buttonRunningTemplate.TileFillTNFL;
             img.TileFillTFM = buttonRunningTemplate.TileFillTFM;
             img.TileFillTNFM = buttonRunningTemplate.TileFillTNFM;
             img.TileFillTFR = buttonRunningTemplate.TileFillTFR;
             img.TileFillTNFR = buttonRunningTemplate.TileFillTNFR;
+
+            img.OverlayFileNameTFL = buttonTemplate.OverlayFileNameTFL;
+            img.OverlayFileNameTNFL = buttonTemplate.OverlayFileNameTNFL;
+            img.OverlayFileNameTFM = buttonTemplate.OverlayFileNameTFM;
+            img.OverlayFileNameTNFM = buttonTemplate.OverlayFileNameTNFM;
+            img.OverlayFileNameTFR = buttonTemplate.OverlayFileNameTFR;
+            img.OverlayFileNameTNFR = buttonTemplate.OverlayFileNameTNFR;
           }
           else
           {
@@ -1640,18 +1740,27 @@ namespace TvPlugin
           if (buttonNotifyTemplate != null)
           {
             buttonNotifyTemplate.IsVisible = false;
+
             img.TexutureFocusLeftName = buttonNotifyTemplate.TexutureFocusLeftName;
             img.TexutureFocusMidName = buttonNotifyTemplate.TexutureFocusMidName;
             img.TexutureFocusRightName = buttonNotifyTemplate.TexutureFocusRightName;
             img.TexutureNoFocusLeftName = buttonNotifyTemplate.TexutureNoFocusLeftName;
             img.TexutureNoFocusMidName = buttonNotifyTemplate.TexutureNoFocusMidName;
             img.TexutureNoFocusRightName = buttonNotifyTemplate.TexutureNoFocusRightName;
+
             img.TileFillTFL = buttonNotifyTemplate.TileFillTFL;
             img.TileFillTNFL = buttonNotifyTemplate.TileFillTNFL;
             img.TileFillTFM = buttonNotifyTemplate.TileFillTFM;
             img.TileFillTNFM = buttonNotifyTemplate.TileFillTNFM;
             img.TileFillTFR = buttonNotifyTemplate.TileFillTFR;
             img.TileFillTNFR = buttonNotifyTemplate.TileFillTNFR;
+
+            img.OverlayFileNameTFL = buttonTemplate.OverlayFileNameTFL;
+            img.OverlayFileNameTNFL = buttonTemplate.OverlayFileNameTNFL;
+            img.OverlayFileNameTFM = buttonTemplate.OverlayFileNameTFM;
+            img.OverlayFileNameTNFM = buttonTemplate.OverlayFileNameTNFM;
+            img.OverlayFileNameTFR = buttonTemplate.OverlayFileNameTFR;
+            img.OverlayFileNameTNFR = buttonTemplate.OverlayFileNameTNFR;
 
             // Use of the button template control implies use of the icon.  Use a blank image if the icon is not desired.
             img.TexutureIcon = Thumbs.TvNotifyIcon;
@@ -1692,12 +1801,14 @@ namespace TvPlugin
           if (buttonRecordTemplate != null)
           {
             buttonRecordTemplate.IsVisible = false;
+
             img.TexutureFocusLeftName = buttonRecordTemplate.TexutureFocusLeftName;
             img.TexutureFocusMidName = buttonRecordTemplate.TexutureFocusMidName;
             img.TexutureFocusRightName = buttonRecordTemplate.TexutureFocusRightName;
             img.TexutureNoFocusLeftName = buttonRecordTemplate.TexutureNoFocusLeftName;
             img.TexutureNoFocusMidName = buttonRecordTemplate.TexutureNoFocusMidName;
             img.TexutureNoFocusRightName = buttonRecordTemplate.TexutureNoFocusRightName;
+
             img.TileFillTFL = buttonRecordTemplate.TileFillTFL;
             img.TileFillTNFL = buttonRecordTemplate.TileFillTNFL;
             img.TileFillTFM = buttonRecordTemplate.TileFillTFM;
@@ -1705,30 +1816,25 @@ namespace TvPlugin
             img.TileFillTFR = buttonRecordTemplate.TileFillTFR;
             img.TileFillTNFR = buttonRecordTemplate.TileFillTNFR;
 
+            img.OverlayFileNameTFL = buttonTemplate.OverlayFileNameTFL;
+            img.OverlayFileNameTNFL = buttonTemplate.OverlayFileNameTNFL;
+            img.OverlayFileNameTFM = buttonTemplate.OverlayFileNameTFM;
+            img.OverlayFileNameTNFM = buttonTemplate.OverlayFileNameTNFM;
+            img.OverlayFileNameTFR = buttonTemplate.OverlayFileNameTFR;
+            img.OverlayFileNameTNFR = buttonTemplate.OverlayFileNameTNFR;
+
             // Use of the button template control implies use of the icon.  Use a blank image if the icon is not desired.
             if (bConflict)
             {
-              img.TexutureFocusLeftName = "tvguide_recButton_Focus_left.png";
-              img.TexutureFocusMidName = "tvguide_recButton_Focus_middle.png";
-              img.TexutureFocusRightName = "tvguide_recButton_Focus_right.png";
-              img.TexutureNoFocusLeftName = "tvguide_recButton_noFocus_left.png";
-              img.TexutureNoFocusMidName = "tvguide_recButton_noFocus_middle.png";
-              img.TexutureNoFocusRightName = "tvguide_recButton_noFocus_right.png";
+              img.TexutureIcon = Thumbs.TvConflictRecordingIcon;
+            }
+            else if (bSeries)
+            {
+              img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;
             }
             else
             {
-              if (bConflict)
-              {
-                img.TexutureIcon = Thumbs.TvConflictRecordingIcon;
-              }
-              else if (bSeries)
-              {
-                img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;
-              }
-              else
-              {
-                img.TexutureIcon = Thumbs.TvRecordingIcon;
-              }
+              img.TexutureIcon = Thumbs.TvRecordingIcon;
             }
             img.IconOffsetX = buttonRecordTemplate.IconOffsetX;
             img.IconOffsetY = buttonRecordTemplate.IconOffsetY;
@@ -1774,6 +1880,22 @@ namespace TvPlugin
                 }
               }
             }
+          }
+        }
+
+        if (_useColorsForButtons)
+        {
+          if (program.IsRunningAt(DateTime.Now))
+          {
+            img.ColourDiffuse = GetColorForProgram(program, true);
+          }
+          else if (program.EndedBefore(DateTime.Now))
+          {
+            img.ColourDiffuse = _guideColorProgramEnded;
+          }
+          else
+          {
+            img.ColourDiffuse = GetColorForProgram(program, false);
           }
         }
       }
@@ -1826,6 +1948,11 @@ namespace TvPlugin
         }
         img.Data = channel;
         img.IsVisible = true;
+
+        if (_useColorsForButtons)
+        {
+          img.ColourDiffuse = _guideColorChannelButton;
+        }
       }
 
 
@@ -1866,7 +1993,7 @@ namespace TvPlugin
       {
         height = GetControl((int)Controls.IMG_CHAN1).Height;
       }
-      
+
 
       foreach (Program program in programs)
       {
@@ -1895,7 +2022,7 @@ namespace TvPlugin
 
         bConflict = program.HasConflict;
         bSeries = (program.IsRecordingSeries || program.IsRecordingSeriesPending);
-        bRecording = bSeries || (program.IsRecording || program.IsRecordingOncePending || program.IsPartialRecordingSeriesPending);
+        bRecording = bSeries || (program.IsRecording || program.IsRecordingOncePending);
         bPartialRecording = program.IsPartialRecordingSeriesPending;
         bool bManual = program.IsRecordingManual;
 
@@ -1992,21 +2119,37 @@ namespace TvPlugin
           bool TileFillTFR = false;
           bool TileFillTNFR = false;
 
+          string OverlayFileNameTFL = "";
+          string OverlayFileNameTNFL = "";
+          string OverlayFileNameTFM = "";
+          string OverlayFileNameTNFM = "";
+          string OverlayFileNameTFR = "";
+          string OverlayFileNameTNFR = "";
+
           if (_programNotRunningTemplate != null)
           {
             _programNotRunningTemplate.IsVisible = false;
+
             TexutureFocusLeftName = _programNotRunningTemplate.TexutureFocusLeftName;
             TexutureFocusMidName = _programNotRunningTemplate.TexutureFocusMidName;
             TexutureFocusRightName = _programNotRunningTemplate.TexutureFocusRightName;
             TexutureNoFocusLeftName = _programNotRunningTemplate.TexutureNoFocusLeftName;
             TexutureNoFocusMidName = _programNotRunningTemplate.TexutureNoFocusMidName;
             TexutureNoFocusRightName = _programNotRunningTemplate.TexutureNoFocusRightName;
+
             TileFillTFL = _programNotRunningTemplate.TileFillTFL;
             TileFillTNFL = _programNotRunningTemplate.TileFillTNFL;
             TileFillTFM = _programNotRunningTemplate.TileFillTFM;
             TileFillTNFM = _programNotRunningTemplate.TileFillTNFM;
             TileFillTFR = _programNotRunningTemplate.TileFillTFR;
             TileFillTNFR = _programNotRunningTemplate.TileFillTNFR;
+
+            OverlayFileNameTFL = _programNotRunningTemplate.OverlayFileNameTFL;
+            OverlayFileNameTNFL = _programNotRunningTemplate.OverlayFileNameTNFL;
+            OverlayFileNameTFM = _programNotRunningTemplate.OverlayFileNameTFM;
+            OverlayFileNameTNFM = _programNotRunningTemplate.OverlayFileNameTNFM;
+            OverlayFileNameTFR = _programNotRunningTemplate.OverlayFileNameTFR;
+            OverlayFileNameTNFR = _programNotRunningTemplate.OverlayFileNameTNFR;
           }
 
           bool isNew = false;
@@ -2035,6 +2178,7 @@ namespace TvPlugin
 
           img.RenderLeft = false;
           img.RenderRight = false;
+          img.StretchIfNotRendered = true;
 
           img.TexutureIcon = String.Empty;
           if (program.Notify)
@@ -2042,18 +2186,27 @@ namespace TvPlugin
             if (_programNotifyTemplate != null)
             {
               _programNotifyTemplate.IsVisible = false;
+
               TexutureFocusLeftName = _programNotifyTemplate.TexutureFocusLeftName;
               TexutureFocusMidName = _programNotifyTemplate.TexutureFocusMidName;
               TexutureFocusRightName = _programNotifyTemplate.TexutureFocusRightName;
               TexutureNoFocusLeftName = _programNotifyTemplate.TexutureNoFocusLeftName;
               TexutureNoFocusMidName = _programNotifyTemplate.TexutureNoFocusMidName;
               TexutureNoFocusRightName = _programNotifyTemplate.TexutureNoFocusRightName;
+
               TileFillTFL = _programNotifyTemplate.TileFillTFL;
               TileFillTNFL = _programNotifyTemplate.TileFillTNFL;
               TileFillTFM = _programNotifyTemplate.TileFillTFM;
               TileFillTNFM = _programNotifyTemplate.TileFillTNFM;
               TileFillTFR = _programNotifyTemplate.TileFillTFR;
               TileFillTNFR = _programNotifyTemplate.TileFillTNFR;
+
+              OverlayFileNameTFL = _programNotifyTemplate.OverlayFileNameTFL;
+              OverlayFileNameTNFL = _programNotifyTemplate.OverlayFileNameTNFL;
+              OverlayFileNameTFM = _programNotifyTemplate.OverlayFileNameTFM;
+              OverlayFileNameTNFM = _programNotifyTemplate.OverlayFileNameTNFM;
+              OverlayFileNameTFR = _programNotifyTemplate.OverlayFileNameTFR;
+              OverlayFileNameTNFR = _programNotifyTemplate.OverlayFileNameTNFR;
 
               // Use of the button template control implies use of the icon.  Use a blank image if the icon is not desired.
               img.TexutureIcon = Thumbs.TvNotifyIcon;
@@ -2093,12 +2246,14 @@ namespace TvPlugin
             if (buttonRecordTemplate != null)
             {
               buttonRecordTemplate.IsVisible = false;
+
               TexutureFocusLeftName = buttonRecordTemplate.TexutureFocusLeftName;
               TexutureFocusMidName = buttonRecordTemplate.TexutureFocusMidName;
               TexutureFocusRightName = buttonRecordTemplate.TexutureFocusRightName;
               TexutureNoFocusLeftName = buttonRecordTemplate.TexutureNoFocusLeftName;
               TexutureNoFocusMidName = buttonRecordTemplate.TexutureNoFocusMidName;
               TexutureNoFocusRightName = buttonRecordTemplate.TexutureNoFocusRightName;
+
               TileFillTFL = buttonRecordTemplate.TileFillTFL;
               TileFillTNFL = buttonRecordTemplate.TileFillTNFL;
               TileFillTFM = buttonRecordTemplate.TileFillTFM;
@@ -2106,30 +2261,25 @@ namespace TvPlugin
               TileFillTFR = buttonRecordTemplate.TileFillTFR;
               TileFillTNFR = buttonRecordTemplate.TileFillTNFR;
 
+              OverlayFileNameTFL = buttonRecordTemplate.OverlayFileNameTFL;
+              OverlayFileNameTNFL = buttonRecordTemplate.OverlayFileNameTNFL;
+              OverlayFileNameTFM = buttonRecordTemplate.OverlayFileNameTFM;
+              OverlayFileNameTNFM = buttonRecordTemplate.OverlayFileNameTNFM;
+              OverlayFileNameTFR = buttonRecordTemplate.OverlayFileNameTFR;
+              OverlayFileNameTNFR = buttonRecordTemplate.OverlayFileNameTNFR;
+
               // Use of the button template control implies use of the icon.  Use a blank image if the icon is not desired.
               if (bConflict)
               {
-                TexutureFocusLeftName = "tvguide_recButton_Focus_left.png";
-                TexutureFocusMidName = "tvguide_recButton_Focus_middle.png";
-                TexutureFocusRightName = "tvguide_recButton_Focus_right.png";
-                TexutureNoFocusLeftName = "tvguide_recButton_noFocus_left.png";
-                TexutureNoFocusMidName = "tvguide_recButton_noFocus_middle.png";
-                TexutureNoFocusRightName = "tvguide_recButton_noFocus_right.png";
+                img.TexutureIcon = Thumbs.TvConflictRecordingIcon;
+              }
+              else if (bSeries)
+              {
+                img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;
               }
               else
               {
-                if (bConflict)
-                {
-                  img.TexutureIcon = Thumbs.TvConflictRecordingIcon;
-                }
-                else if (bSeries)
-                {
-                  img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;
-                }
-                else
-                {
-                  img.TexutureIcon = Thumbs.TvRecordingIcon;
-                }
+                img.TexutureIcon = Thumbs.TvRecordingIcon;
               }
               img.IconOffsetX = buttonRecordTemplate.IconOffsetX;
               img.IconOffsetY = buttonRecordTemplate.IconOffsetY;
@@ -2178,27 +2328,43 @@ namespace TvPlugin
             }
           }
 
+          DateTime dt = DateTime.Now;
+
           img.TexutureIcon2 = String.Empty;
           if (bProgramIsHD)
           {
-            if (_programNotRunningTemplate != null)
+            if (program.IsRunningAt(dt) && _programRunningTemplate != null)
+            {
+              img.TexutureIcon2 = _programRunningTemplate.TexutureIcon2;
+              img.Icon2Align = _programRunningTemplate.Icon2Align;
+              img.Icon2VAlign = _programRunningTemplate.Icon2VAlign;
+              img.Icon2OffsetX = _programRunningTemplate.Icon2OffsetX;
+              img.Icon2OffsetY = _programRunningTemplate.Icon2OffsetY;
+              img.Icon2InlineLabel1 = _programRunningTemplate.Icon2InlineLabel1;
+            }
+            else if (!program.IsRunningAt(dt) && _programNotRunningTemplate != null)
             {
               img.TexutureIcon2 = _programNotRunningTemplate.TexutureIcon2;
+              img.Icon2Align = _programNotRunningTemplate.Icon2Align;
+              img.Icon2VAlign = _programNotRunningTemplate.Icon2VAlign;
+              img.Icon2OffsetX = _programNotRunningTemplate.Icon2OffsetX;
+              img.Icon2OffsetY = _programNotRunningTemplate.Icon2OffsetY;
+              img.Icon2InlineLabel1 = _programNotRunningTemplate.Icon2InlineLabel1;
             }
             else
             {
               if (_useHdProgramIcon)
               {
                 img.TexutureIcon2 = "tvguide_hd_program.png";
+                img.Icon2Align = GUIControl.Alignment.ALIGN_LEFT;
+                img.Icon2VAlign = GUIControl.VAlignment.ALIGN_MIDDLE;
+                img.Icon2OffsetX = 5;
+                img.Icon2OffsetY = 0;
+                img.Icon2InlineLabel1 = true;
               }
             }
-            img.Icon2InlineLabel1 = true;
-            img.Icon2VAlign = GUIControl.VAlignment.ALIGN_MIDDLE;
-            img.Icon2OffsetX = 5;
           }
           img.Data = program.Clone();
-          img.ColourDiffuse = GetColorForGenre(program.Genre);
-
           iWidth = iEndXPos - iStartXPos;
           if (iWidth > 10)
           {
@@ -2208,8 +2374,6 @@ namespace TvPlugin
           {
             iWidth = 1;
           }
-
-          DateTime dt = DateTime.Now;
 
           img.TextOffsetX1 = 5;
           img.TextOffsetY1 = 5;
@@ -2260,6 +2424,7 @@ namespace TvPlugin
           {
             labelTemplate = _genreTemplate;
           }
+
           if (labelTemplate != null)
           {
             img.FontName2 = labelTemplate.FontName;
@@ -2288,18 +2453,27 @@ namespace TvPlugin
             if (!bRecording && !bPartialRecording && buttonRunningTemplate != null)
             {
               buttonRunningTemplate.IsVisible = false;
+
               TexutureFocusLeftName = buttonRunningTemplate.TexutureFocusLeftName;
               TexutureFocusMidName = buttonRunningTemplate.TexutureFocusMidName;
               TexutureFocusRightName = buttonRunningTemplate.TexutureFocusRightName;
               TexutureNoFocusLeftName = buttonRunningTemplate.TexutureNoFocusLeftName;
               TexutureNoFocusMidName = buttonRunningTemplate.TexutureNoFocusMidName;
               TexutureNoFocusRightName = buttonRunningTemplate.TexutureNoFocusRightName;
+
               TileFillTFL = buttonRunningTemplate.TileFillTFL;
               TileFillTNFL = buttonRunningTemplate.TileFillTNFL;
               TileFillTFM = buttonRunningTemplate.TileFillTFM;
               TileFillTNFM = buttonRunningTemplate.TileFillTNFM;
               TileFillTFR = buttonRunningTemplate.TileFillTFR;
               TileFillTNFR = buttonRunningTemplate.TileFillTNFR;
+
+              OverlayFileNameTFL = buttonRunningTemplate.OverlayFileNameTFL;
+              OverlayFileNameTNFL = buttonRunningTemplate.OverlayFileNameTNFL;
+              OverlayFileNameTFM = buttonRunningTemplate.OverlayFileNameTFM;
+              OverlayFileNameTNFM = buttonRunningTemplate.OverlayFileNameTNFM;
+              OverlayFileNameTFR = buttonRunningTemplate.OverlayFileNameTFR;
+              OverlayFileNameTNFR = buttonRunningTemplate.OverlayFileNameTNFR;
             }
             else if (bRecording && _useNewRecordingButtonColor)
             {
@@ -2332,9 +2506,15 @@ namespace TvPlugin
           {
             img.RenderRight = true;
 
-            TexutureFocusRightName = "tvguide_arrow_selected_right.png";
-            TexutureNoFocusRightName = "tvguide_arrow_light_right.png";
-            if (program.IsRunningAt(dt))
+            // If no template found then use default texture names.
+            // Texture names already set if using template.
+            if (_programNotRunningTemplate == null)
+            {
+              TexutureFocusRightName = "tvguide_arrow_selected_right.png";
+              TexutureNoFocusRightName = "tvguide_arrow_light_right.png";
+            }
+
+            if (program.IsRunningAt(dt) && _programRunningTemplate == null)
             {
               TexutureNoFocusRightName = "tvguide_arrow_right.png";
             }
@@ -2342,11 +2522,32 @@ namespace TvPlugin
           if (bStartsBefore)
           {
             img.RenderLeft = true;
-            TexutureFocusLeftName = "tvguide_arrow_selected_left.png";
-            TexutureNoFocusLeftName = "tvguide_arrow_light_left.png";
-            if (program.IsRunningAt(dt))
+
+            if (_programNotRunningTemplate == null)
+            {
+              TexutureFocusLeftName = "tvguide_arrow_selected_left.png";
+              TexutureNoFocusLeftName = "tvguide_arrow_light_left.png";
+            }
+
+            if (program.IsRunningAt(dt) && _programRunningTemplate == null)
             {
               TexutureNoFocusLeftName = "tvguide_arrow_left.png";
+            }
+          }
+
+          if (_useColorsForButtons)
+          {
+            if (program.IsRunningAt(DateTime.Now))
+            {
+              img.ColourDiffuse = GetColorForProgram(program, true);
+            }
+            else if (program.EndedBefore(DateTime.Now))
+            {
+              img.ColourDiffuse = _guideColorProgramEnded;
+            }
+            else
+            {
+              img.ColourDiffuse = GetColorForProgram(program, false);
             }
           }
 
@@ -2363,6 +2564,13 @@ namespace TvPlugin
           img.TileFillTNFM = TileFillTNFM;
           img.TileFillTFR = TileFillTFR;
           img.TileFillTNFR = TileFillTNFR;
+
+          img.OverlayFileNameTFL = OverlayFileNameTFL;
+          img.OverlayFileNameTNFL = OverlayFileNameTNFL;
+          img.OverlayFileNameTFM = OverlayFileNameTFM;
+          img.OverlayFileNameTNFM = OverlayFileNameTNFM;
+          img.OverlayFileNameTFR = OverlayFileNameTFR;
+          img.OverlayFileNameTNFR = OverlayFileNameTNFR;
 
           if (isNew)
           {
@@ -2871,7 +3079,7 @@ namespace TvPlugin
       String GroupButtonText = " ";
 
       // show/hide tvgroup button
-      GUIButtonControl btnTvGroup = GetControl((int)Controls.CHANNEL_GROUP_BUTTON) as GUIButtonControl;
+      GUIControl btnTvGroup = GetControl((int)Controls.CHANNEL_GROUP_BUTTON) as GUIControl;
 
       if (btnTvGroup != null)
         btnTvGroup.Visible = GroupButtonAvail;
@@ -2963,19 +3171,53 @@ namespace TvPlugin
       }
       if (_cursorY == 0 || _cursorY == MinYIndex) // either channel or group button
       {
-        int controlid = (int)Controls.IMG_CHAN1 + _cursorX;
+        // Handle the tv channel buttons (the left column of buttons).
+        int controlid;
+        if (_cursorY == -1)
+          controlid = (int)Controls.CHANNEL_GROUP_BUTTON;
+        else
+          controlid = (int)Controls.IMG_CHAN1 + _cursorX;
+
+        GUIButton3PartControl img = GetControl(controlid) as GUIButton3PartControl;
+        if (null != img && img.IsVisible)
+        {
+          if (_useColorsForButtons)
+          {
+            if (_cursorY == 0)
+            {
+              img.ColourDiffuse = _guideColorChannelButton;
+            }
+            else
+            {
+              img.ColourDiffuse = _guideColorGroupButton;
+            }
+          }
+        }
+
         GUIControl.UnfocusControl(GetID, controlid);
       }
       else
       {
+        // Handle the main guide buttons (all but the left column of buttons).
         Correct();
         int iControlId = GUIDE_COMPONENTID_START + _cursorX * RowID + (_cursorY - 1) * ColID;
         GUIButton3PartControl img = GetControl(iControlId) as GUIButton3PartControl;
         if (null != img && img.IsVisible)
         {
-          if (_currentProgram != null)
+          if (_useColorsForButtons && _currentProgram != null)
           {
-            img.ColourDiffuse = GetColorForGenre(_currentProgram.Genre);
+            if (_currentProgram.IsRunningAt(DateTime.Now))
+            {
+              img.ColourDiffuse = GetColorForProgram(_currentProgram, true);
+            }
+            else if (_currentProgram.EndedBefore(DateTime.Now))
+            {
+              img.ColourDiffuse = _guideColorProgramEnded;
+            }
+            else
+            {
+              img.ColourDiffuse = GetColorForProgram(_currentProgram, false);
+            }
           }
         }
         GUIControl.UnfocusControl(GetID, iControlId);
@@ -2990,6 +3232,7 @@ namespace TvPlugin
       }
       if (_cursorY == 0 || _cursorY == MinYIndex) // either channel or group button
       {
+        // Handle the tv channel buttons (the left column of buttons).
         int controlid;
         GUIControl.UnfocusControl(GetID, (int)Controls.SPINCONTROL_DAY);
         GUIControl.UnfocusControl(GetID, (int)Controls.SPINCONTROL_TIME_INTERVAL);
@@ -2999,20 +3242,84 @@ namespace TvPlugin
         else
           controlid = (int)Controls.IMG_CHAN1 + _cursorX;
 
+        GUIButton3PartControl img = GetControl(controlid) as GUIButton3PartControl;
+        if (null != img && img.IsVisible)
+        {
+          if (_useBorderHighlight)
+          {
+            SetFocusBorder(ref img);
+          }
+          else if (_useColorsForButtons)
+          {
+            if (_cursorY == -1)
+            {
+              img.ColourDiffuse = _guideColorGroupButtonSelected;
+            }
+            else
+            {
+              img.ColourDiffuse = _guideColorChannelButtonSelected;
+            }
+          }
+        }
+
         GUIControl.FocusControl(GetID, controlid);
       }
       else
       {
+        // Handle the main guide buttons (all but the left column of buttons).
         Correct();
         int iControlId = GUIDE_COMPONENTID_START + _cursorX * RowID + (_cursorY - 1) * ColID;
         GUIButton3PartControl img = GetControl(iControlId) as GUIButton3PartControl;
         if (null != img && img.IsVisible)
         {
-          img.ColourDiffuse = 0xffffffff;
+          if (_useBorderHighlight)
+          {
+            SetFocusBorder(ref img);
+          }
+          else if (_useColorsForButtons)
+          {
+            img.ColourDiffuse = _guideColorProgramSelected;
+          }
+
           _currentProgram = img.Data as Program;
           SetProperties();
         }
         GUIControl.FocusControl(GetID, iControlId);
+      }
+    }
+
+    private void SetFocusBorder(ref GUIButton3PartControl button)
+    {
+      // Setup the highlight border for the specified button control.
+      // The focus overlay needs to have an outline border to highlight the selected button.
+      // To get the border to render on top of everything else we need to move the selected
+      // control to the end of the windows list of children controls.
+      GUIControl ctrl = (GUIControl)button;
+      SendToFront(ref ctrl);
+
+      if (button.RenderLeft && button.RenderRight)
+      {
+        button.SetBorderTFM("0,0,6,6", GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE, false, false, "tvguide_highlight_border.png", _guideColorBorderHighlight, true, true);
+        button.SetBorderTFL("6,0,6,6", GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE, false, false, "tvguide_highlight_border.png", _guideColorBorderHighlight, true, true);
+        button.SetBorderTFR("0,6,6,6", GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE, false, false, "tvguide_highlight_border.png", _guideColorBorderHighlight, true, true);
+      }
+      else if (button.RenderLeft && !button.RenderRight)
+      {
+        button.SetBorderTFM("0,6,6,6", GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE, false, false, "tvguide_highlight_border.png", _guideColorBorderHighlight, true, true);
+        button.SetBorderTFL("6,0,6,6", GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE, false, false, "tvguide_highlight_border.png", _guideColorBorderHighlight, true, true);
+        button.SetBorderTFR("0", GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE, false, false, "tvguide_highlight_border.png", _guideColorBorderHighlight, true, true);
+      }
+      else if (!button.RenderLeft && button.RenderRight)
+      {
+        button.SetBorderTFM("6,0,6,6", GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE, false, false, "tvguide_highlight_border.png", _guideColorBorderHighlight, true, true);
+        button.SetBorderTFL("0", GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE, false, false, "tvguide_highlight_border.png", _guideColorBorderHighlight, true, true);
+        button.SetBorderTFR("0,6,6,6", GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE, false, false, "tvguide_highlight_border.png", _guideColorBorderHighlight, true, true);
+      }
+      else
+      {
+        button.SetBorderTFM("6,6,6,6", GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE, false, false, "tvguide_highlight_border.png", _guideColorBorderHighlight, true, true);
+        button.SetBorderTFL("0", GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE, false, false, "tvguide_highlight_border.png", _guideColorBorderHighlight, true, true);
+        button.SetBorderTFR("0", GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE, false, false, "tvguide_highlight_border.png", _guideColorBorderHighlight, true, true);
       }
     }
 
@@ -3185,7 +3492,7 @@ namespace TvPlugin
             {
               TVHome.StartRecordingSchedule(_currentProgram.ReferencedChannel(), true);
               _currentProgram.IsRecordingOncePending = true;
-              Update(true); //add RED marker
+              Update(true); //remove RED marker
             }
             else
             {
@@ -3226,7 +3533,6 @@ namespace TvPlugin
       {
         return;
       }
-
       TVProgramInfo.CurrentProgram = _currentProgram;
       GUIWindowManager.ActivateWindow((int)Window.WINDOW_TV_PROGRAM_INFO);
     }
@@ -3261,11 +3567,18 @@ namespace TvPlugin
       }
     }
 
-    private void OnSelectItem(bool isItemSelected)
-    {      
+    /// <summary>
+    /// Handle the selection of a guide entry.
+    /// </summary>
+    /// <param name="isItemSelected"></param>
+    /// <returns>true if a channel was attempted to be tuned; that the channel is or is not playing is not indicated</returns>
+    private bool OnSelectItem(bool isItemSelected)
+    {
+      bool tuneAttempted = false;
+      TVHome.Navigator.UpdateCurrentChannel();
       if (_currentProgram == null)
       {
-        return;
+        return tuneAttempted;
       }
       if (isItemSelected)
       {
@@ -3299,7 +3612,7 @@ namespace TvPlugin
               GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
               if (dlg == null)
               {
-                return;
+                return tuneAttempted;
               }
 
               dlg.Reset();
@@ -3310,7 +3623,7 @@ namespace TvPlugin
 
               if (dlg.SelectedLabel == -1)
               {
-                return;
+                return tuneAttempted;
               }
               if (_recordingList != null)
               {
@@ -3325,7 +3638,7 @@ namespace TvPlugin
                         TVUtil.PlayRecording(recDB);
                       }
                     }
-                    return;
+                    return tuneAttempted;
 
                   case 938: // View this channel
                     {
@@ -3335,7 +3648,8 @@ namespace TvPlugin
                         g_Player.ShowFullScreenWindow();
                       }
                     }
-                    return;
+                    tuneAttempted = true;
+                    return tuneAttempted;
                 }
               }
               else
@@ -3351,6 +3665,7 @@ namespace TvPlugin
                 {
                   g_Player.ShowFullScreenWindow();
                 }
+                tuneAttempted = true;
               }
             }
             else //not recording
@@ -3362,7 +3677,7 @@ namespace TvPlugin
                 GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
                 if (dlg == null)
                 {
-                  return;
+                  return tuneAttempted;
                 }
 
                 dlg.Reset();
@@ -3373,7 +3688,7 @@ namespace TvPlugin
 
                 if (dlg.SelectedLabel == -1)
                 {
-                  return;
+                  return tuneAttempted;
                 }
 
                 switch (dlg.SelectedId)
@@ -3395,6 +3710,7 @@ namespace TvPlugin
                     {
                       Log.Debug("TVGuide: no show currently running to switch to fullscreen");
                     }
+                    tuneAttempted = true;
                     break;
                 }
               }
@@ -3412,6 +3728,7 @@ namespace TvPlugin
                   if (isPlayingTV) GUIWindowManager.CloseCurrentWindow();
                   g_Player.ShowFullScreenWindow();
                 }
+                tuneAttempted = true;
               }
             } //end of not recording
           }
@@ -3423,15 +3740,16 @@ namespace TvPlugin
             }
           }
 
-          return;
+          return tuneAttempted;
         }
         ShowProgramInfo();
-        return;
+        return tuneAttempted;
       }
       else
       {
         ShowProgramInfo();
       }
+      return tuneAttempted;
     }
 
     /// <summary>
@@ -3452,26 +3770,11 @@ namespace TvPlugin
         {
           //tvHome.OnAction(new Action(Action.ActionType.ACTION_RECORD, 0, 0));
           bool didRecStart = TVHome.ManualRecord(_currentProgram.ReferencedChannel(), GetID);
-          _currentProgram.IsRecordingOncePending = didRecStart;          
           //refresh view.
           if (didRecStart)
           {
-            lock (_recordingsExpectedLock)
-            {
-              _recordingsExpected.Add(_currentProgram.ReferencedChannel());
-            }            
+            _recordingExpected = _currentProgram.ReferencedChannel();
           }
-          else
-          {
-            lock (_recordingsExpectedLock)
-            {
-              if (_recordingsExpected.Contains(_currentProgram.ReferencedChannel()))
-              {
-                _recordingsExpected.Remove(_currentProgram.ReferencedChannel());
-              }
-            }
-          }
-          _needUpdate = true;
         }
       }
       else
@@ -3583,26 +3886,74 @@ namespace TvPlugin
       SetFocus();
     }
 
-    private long GetColorForGenre(string genre)
+    private long GetColorForProgram(Program program, bool onNow)
     {
-      ///@
-      /*
-      if (!_useColorsForGenres) return Color.White.ToArgb();
-      List<string> genres = new List<string>();
-      TVDatabase.GetGenres(ref genres);
-
-      genre = genre.ToLower();
-      for (int i = 0; i < genres.Count; ++i)
+      // Set the default color in case the genre color is not defined.
+      long defaultColor = _defaultGenreColorOnLater;
+      if (onNow)
       {
-        if (String.Compare(genre, (string)genres[i], true) == 0)
+        defaultColor = _defaultGenreColorOnNow;
+      }
+
+      if (!_useColorsForGenres)
+      {
+        return defaultColor;
+      }
+
+      // Lookup the category genre for the specified program genre.
+      string genre = "";
+      if (_specifyMpaaRatedAsMovie && IsMPAA(program.Classification))
+      {
+        genre = GUILocalizeStrings.Get(LOCALIZED_GENRE_STRING_MOVIE);
+      }
+      else
+      {
+        if (!_genreMap.TryGetValue(program.Genre, out genre))
         {
-          Color col = (Color)_colorList[i % _colorList.Count];
-          return col.ToArgb();
+          return defaultColor;
         }
-      }*/
-      return Color.White.ToArgb();
+      }
+
+      // Return a valid default color if the specified genre does not have a color association.
+      long color = defaultColor;
+      bool found = false;
+      if (onNow)
+      {
+        found = _genreColorsOnNow.TryGetValue(genre, out color);
+      }
+      else
+      {
+        found = _genreColorsOnLater.TryGetValue(genre, out color);
+      }
+
+      if (!found)
+      {
+        color = defaultColor;
+      }
+
+      return color;
     }
 
+    private long GetColorFromString(string strColor)
+    {
+      long result = 0xFFFFFFFF;
+
+      if (long.TryParse(strColor, System.Globalization.NumberStyles.HexNumber, null, out result))
+      {
+        // Result set in out param
+      }
+      else if (Color.FromName(strColor).IsKnownColor)
+      {
+        result = Color.FromName(strColor).ToArgb();
+      }
+
+      return result;
+    }
+
+    private bool IsMPAA(string classification)
+    {
+      return ",G,PG,PG-13,R,NC-17,AO,NR,".Contains("," + classification.Trim() + ",");
+    }
 
     private void OnKeyTimeout()
     {
@@ -3723,8 +4074,8 @@ namespace TvPlugin
 
         // Last page adjust (To get a full page channel listing)
         if (iChannelNr > _channelList.Count - Math.Min(_channelList.Count, _channelCount) + 1)
-        // minimum of available channel/max visible channels
         {
+          // minimum of available channel/max visible channels
           ChannelOffset = _channelList.Count - _channelCount;
           iChannelNr = iChannelNr - ChannelOffset;
         }
@@ -3749,7 +4100,7 @@ namespace TvPlugin
       }
     }
 
-    
+
 
     protected override void GetChannels(bool refresh)
     {
@@ -4411,6 +4762,19 @@ namespace TvPlugin
     public bool OnActorsEnd(IMDBFetcher fetcher)
     {
       // won't occure
+      return true;
+    }
+
+    public bool OnActorInfoStarting(IMDBFetcher fetcher)
+    {
+      // won't occure
+      return true;
+    }
+
+    public bool OnSelectActor(IMDBFetcher fetcher, out int selected)
+    {
+      // won't occure
+      selected = 0;
       return true;
     }
 

@@ -80,7 +80,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <summary>
     /// Tune to a specific channel.
     /// </summary>
-    /// <param name="subChannelId">The subchannel ID for the channel that is being tuned.</param>
+    /// <param name="subChannelId">The ID of the subchannel associated with the channel that is being tuned.</param>
     /// <param name="channel">The channel to tune to.</param>
     /// <returns>the subchannel associated with the tuned channel</returns>
     public override ITvSubChannel Tune(int subChannelId, IChannel channel)
@@ -92,7 +92,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <summary>
     /// Scan a specific channel.
     /// </summary>
-    /// <param name="subChannelId">The subchannel ID for the channel that is being scanned.</param>
+    /// <param name="subChannelId">The ID of the subchannel associated with the channel that is being scanned.</param>
     /// <param name="channel">The channel to scan.</param>
     /// <returns>the subchannel associated with the scanned channel</returns>
     public override ITvSubChannel Scan(int subChannelId, IChannel channel)

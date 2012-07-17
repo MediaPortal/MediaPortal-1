@@ -2824,7 +2824,8 @@ namespace TvDatabase
           foreach (Schedule assignedSchedule in cardSchedules[count])
           {
             Log.Info("AssignSchedulesToCard: card {0}, ID = {1} has schedule = " + assignedSchedule, count, card.IdCard);
-            if (schedule.IsOverlapping(assignedSchedule))
+            bool hasOverlappingSchedule = schedule.IsOverlapping(assignedSchedule);
+            if (hasOverlappingSchedule)
             {
               if (!schedule.isSameTransponder(assignedSchedule))
               {
@@ -2839,17 +2840,7 @@ namespace TvDatabase
           if (free)
           {
             Log.Info("AssignSchedulesToCard: free on card {0}, ID = {1}", count, card.IdCard);
-            cardSchedules[count].Add(schedule);
-            int recommendedCard = schedule.RecommendedCard;
-            if (recommendedCard != card.IdCard)
-            {
-              schedule.RecommendedCard = card.IdCard;
-              //Only update, do not insert
-              if (schedule.IsPersisted)
-              {
-                schedule.Persist();
-              }
-            }
+            cardSchedules[count].Add(schedule);                                                
             assigned = true;
             break;
           }

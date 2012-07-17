@@ -33,27 +33,27 @@ namespace TvLibrary.Channels
     /// CTOR
     /// </summary>
     /// <param name="p_Frequency">Frequency</param>
-    /// <param name="p_BandWidth">BandWidth</param>
+    /// <param name="p_Bandwidth">Bandwidth</param>
     /// <param name="p_Offset">Offset</param>
-    public DVBTTuning(long p_Frequency, int p_BandWidth, int p_Offset)
+    public DVBTTuning(long p_Frequency, int p_Bandwidth, int p_Offset)
     {
       Frequency = p_Frequency;
-      BandWidth = p_BandWidth;
+      Bandwidth = p_Bandwidth;
       Offset = p_Offset;
     }
 
     /// <summary>
-    /// Frequency
+    /// Frequency, in kHz.
     /// </summary>
     public long Frequency;
 
     /// <summary>
-    /// BandWidth
+    /// Bandwidth, in MHz.
     /// </summary>
-    public int BandWidth;
+    public int Bandwidth;
 
     /// <summary>
-    /// Offset
+    /// Offset, in kHz.
     /// </summary>
     public int Offset;
 
@@ -63,7 +63,7 @@ namespace TvLibrary.Channels
     /// <returns></returns>
     public override string ToString()
     {
-      return String.Format("freq:{0}/{2} bandwidth:{1}", Frequency, BandWidth, Offset);
+      return String.Format("freq:{0}/{2} bandwidth:{1}", Frequency, Bandwidth, Offset);
     }
   }
 
@@ -76,7 +76,6 @@ namespace TvLibrary.Channels
     #region variables
 
     private int _bandwidth = 8;
-    private int _offset = 0;
 
     #endregion
 
@@ -99,7 +98,6 @@ namespace TvLibrary.Channels
       : base(channel)
     {
       _bandwidth = channel.Bandwidth;
-      _offset = channel.Offset;
     }
 
     /// <summary>
@@ -126,25 +124,15 @@ namespace TvLibrary.Channels
     }
 
     /// <summary>
-    /// Get/set the frequency offset for this channel's transmitter. The offset unit is kHz.
-    /// </summary>
-    public int Offset
-    {
-      get { return _offset; }
-      set { _offset = value; }
-    }
-
-    /// <summary>
     /// Get/set the core tuning parameters for the channel's transmitter.
     /// </summary>
     public DVBTTuning TuningInfo
     {
-      get { return new DVBTTuning(Frequency, _bandwidth, _offset); }
+      get { return new DVBTTuning(Frequency, _bandwidth, 0); }
       set
       {
         Frequency = value.Frequency;
-        _bandwidth = value.BandWidth;
-        _offset = value.Offset;
+        _bandwidth = value.Bandwidth;
       }
     }
 
@@ -185,10 +173,6 @@ namespace TvLibrary.Channels
       {
         return false;
       }
-      if (ch.Offset != _offset)
-      {
-        return false;
-      }
 
       return true;
     }
@@ -199,7 +183,7 @@ namespace TvLibrary.Channels
     /// <returns>a hash code for the current <see cref="T:System.Object"></see></returns>
     public override int GetHashCode()
     {
-      return base.GetHashCode() ^ _bandwidth.GetHashCode() ^ _offset.GetHashCode();
+      return base.GetHashCode() ^ _bandwidth.GetHashCode();
     }
 
     /// <summary>
@@ -215,25 +199,7 @@ namespace TvLibrary.Channels
         return true;
       }
       return dvbtChannel.Frequency != Frequency ||
-             dvbtChannel.Bandwidth != _bandwidth ||
-             dvbtChannel.Offset != _offset;
-    }
-
-    /// <summary>
-    /// Get a channel instance with properties set to enable tuning of this channel.
-    /// </summary>
-    /// <returns>a channel instance with parameters adjusted as necessary</returns>
-    public override IChannel GetTuningChannel()
-    {
-      IChannel clone = (IChannel)this.Clone();
-      DVBTChannel dvbtChannel = clone as DVBTChannel;
-      if (dvbtChannel == null)
-      {
-        return clone;
-      }
-      dvbtChannel.Frequency += dvbtChannel.Offset;
-      dvbtChannel.Offset = 0;
-      return dvbtChannel;
+             dvbtChannel.Bandwidth != _bandwidth;
     }
   }
 }

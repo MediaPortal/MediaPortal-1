@@ -1,0 +1,509 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="WatchTV_labelSectionHeader" xml:space="preserve">
+    <value>你要使用MediaPortal观看电视吗？</value>
+  </data>
+  <data name="WatchTV_on" xml:space="preserve">
+    <value>是 - 我将使用MediaPortal观看电视。</value>
+  </data>
+  <data name="WatchTV_off" xml:space="preserve">
+    <value>不 - 我不使用MediaPortal观看电视。</value>
+  </data>
+  <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
+    <value>所有所选的应用将被安装到默认位置并使用默认设置。</value>
+  </data>
+  <data name="BaseInstallationNoTvEngine_labelAdvancedDesc" xml:space="preserve">
+    <value>高级安装允许你指定安装位置及其它设置</value>
+  </data>
+  <data name="BaseInstallation_labelAdvancedCaption" xml:space="preserve">
+    <value>高级安装</value>
+  </data>
+  <data name="BaseInstallation_labelAdvancedDesc" xml:space="preserve">
+    <value>高级安装允许安装Server/Client并指定安装位置和其它设置</value>
+  </data>
+  <data name="BaseInstallation_labelOneClickCaption" xml:space="preserve">
+    <value>一键安装</value>
+  </data>
+  <data name="BaseInstallation_labelOneClickDesc" xml:space="preserve">
+    <value>所有所选的应用将使用默认的设置安装到默认位置。数据库密码是“MediaPortal”。</value>
+  </data>
+  <data name="BaseInstallation_rbAdvanced" xml:space="preserve">
+    <value>执行高级安装</value>
+  </data>
+  <data name="BaseInstallation_rbOneClick" xml:space="preserve">
+    <value>执行一键安装</value>
+  </data>
+  <data name="CustomInstallation_labelSectionHeader" xml:space="preserve">
+    <value>请选择安装方式：</value>
+  </data>
+  <data name="CustomInstallation_rbClient" xml:space="preserve">
+    <value>MediaPortal客户端</value>
+  </data>
+  <data name="CustomInstallation_labelClient" xml:space="preserve">
+    <value>客户端安装仅安装MediaPortal。要观看电视MediaPortal需连接到本地网络中的一个专用TV-Server服务器。</value>
+  </data>
+  <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
+    <value>单一位置安装</value>
+  </data>
+  <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
+    <value>如果电视卡是与MediaPortal安装在同一台电脑上，你要使用MediaPortal并在MediaPortal上观看电视，单一位置安装就是你正确的安装方式。</value>
+  </data>
+  <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
+    <value>专用TV-Server(主服务器）</value>
+  </data>
+  <data name="CustomInstallation_labelMaster" xml:space="preserve">
+    <value>主服务器安装仅在这台电脑上安装MediaPortal TV-Server服务器。
+这台电脑将扮演专用TV-Server服务器给你局域网的其它电脑提供电视服务（需要安装数据库）</value>
+  </data>
+  <data name="MainWindow_browseButton" xml:space="preserve">
+    <value>浏览</value>
+  </data>
+  <data name="DBMSSettings_checkBoxFirewall" xml:space="preserve">
+    <value>配置Windows防火墙允许外界访问数据库服务器</value>
+  </data>
+  <data name="DBMSSettings_errInvalidInstallationPath" xml:space="preserve">
+    <value>你必须为SQL-Server提供一个合法的安装路径。</value>
+  </data>
+  <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
+    <value>你必须为SQL-Server的管理员用户提供一个密码。</value>
+  </data>
+  <data name="DBMSSettings_labelHeading" xml:space="preserve">
+    <value>请为SQL-Server安装设置必须的选项：</value>
+  </data>
+  <data name="DBMSSettings_labelInstDir" xml:space="preserve">
+    <value>安装目录</value>
+  </data>
+  <data name="DBMSSettings_labelPassword" xml:space="preserve">
+    <value>SQL Server管理员用户密码</value>
+  </data>
+  <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
+    <value>选择安装SQL-Server的文件夹</value>
+  </data>
+  <data name="DBMSType_labelHeading" xml:space="preserve">
+    <value>请选择你要使用的SQL-Server：</value>
+  </data>
+  <data name="DBMSType_rbMSSQL" xml:space="preserve">
+    <value>Microsoft SQL-Server Express 2005</value>
+  </data>
+  <data name="DBMSType_rbMySQL" xml:space="preserve">
+    <value>MySQL 5</value>
+  </data>
+  <data name="DBMSType_rbDBAlreadyInstalled" xml:space="preserve">
+    <value>SQL服务器已存在并将用于TV-Server</value>
+  </data>
+  <data name="Finished_labelHeading1" xml:space="preserve">
+    <value>恭喜！</value>
+  </data>
+  <data name="Finished_labelHeading2_install" xml:space="preserve">
+    <value>你已成功完成MediaPortal的安装</value>
+  </data>
+  <data name="Finished_labelHeading3_install" xml:space="preserve">
+    <value>以下一些可用链接将有助于你开始使用MediaPortal</value>
+  </data>
+  <data name="Finished_linkForum" xml:space="preserve">
+    <value>MediaPortal论坛</value>
+  </data>
+  <data name="Finished_linkHomepage" xml:space="preserve">
+    <value>MediaPortal首页</value>
+  </data>
+  <data name="Finished_linkWiki" xml:space="preserve">
+    <value>MediaPortal维基</value>
+  </data>
+  <data name="HTTPDownload_buttonCancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="HTTPDownload_errDownloadFailed" xml:space="preserve">
+    <value>下载所需文件出错</value>
+  </data>
+  <data name="HTTPDownload_labelSourceURL" xml:space="preserve">
+    <value>下载URL地址：</value>
+  </data>
+  <data name="HTTPDownload_labelTargetFile" xml:space="preserve">
+    <value>目标：</value>
+  </data>
+  <data name="HTTPDownload_msgCanceledByUser" xml:space="preserve">
+    <value>下载已被用户取消</value>
+  </data>
+  <data name="HTTPDownload_Title" xml:space="preserve">
+    <value>下载文件......</value>
+  </data>
+  <data name="Install_actionDownloadInstall" xml:space="preserve">
+    <value>下载-&gt;安装</value>
+  </data>
+  <data name="Install_actionInstall" xml:space="preserve">
+    <value>安装</value>
+  </data>
+  <data name="Install_actionNothing" xml:space="preserve">
+    <value>&lt;没有活动&gt;</value>
+  </data>
+  <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
+    <value>卸载以前版本-&gt;下载-&gt;安装</value>
+  </data>
+  <data name="Install_actionUninstallInstall" xml:space="preserve">
+    <value>卸载以前版本-&gt;安装</value>
+  </data>
+  <data name="Install_buttonInstall" xml:space="preserve">
+    <value>安装</value>
+  </data>
+  <data name="Install_colAction" xml:space="preserve">
+    <value>活动</value>
+  </data>
+  <data name="Install_colApplication" xml:space="preserve">
+    <value>应用</value>
+  </data>
+  <data name="Install_colState" xml:space="preserve">
+    <value>状态</value>
+  </data>
+  <data name="Install_errAppsMissing" xml:space="preserve">
+    <value>不是所有的应用已被安装。</value>
+  </data>
+  <data name="Install_errDownloadFailed" xml:space="preserve">
+    <value>不能下载应用 [{0}]</value>
+  </data>
+  <data name="Install_errInstallFailed" xml:space="preserve">
+    <value>不能安装应用 [{0}]</value>
+  </data>
+  <data name="Install_labelHeadingInstall" xml:space="preserve">
+    <value>点击“安装”按钮执行所有必需的活动来安装你的设置</value>
+  </data>
+  <data name="Install_msgDownloading" xml:space="preserve">
+    <value>下载......</value>
+  </data>
+  <data name="Install_msgInstalling" xml:space="preserve">
+    <value>安装......</value>
+  </data>
+  <data name="Install_msgUninstalling" xml:space="preserve">
+    <value>卸载......</value>
+  </data>
+  <data name="Install_stateInstalled" xml:space="preserve">
+    <value>已安装</value>
+  </data>
+  <data name="Install_stateNotInstalled" xml:space="preserve">
+    <value>没有安装</value>
+  </data>
+  <data name="Install_stateVersionMismatch" xml:space="preserve">
+    <value>已经安装了其它版本</value>
+  </data>
+  <data name="MainWindow_AppName" xml:space="preserve">
+    <value>MediaPortal安装工具</value>
+  </data>
+  <data name="MainWindow_backButton" xml:space="preserve">
+    <value>上一步</value>
+  </data>
+  <data name="MainWindow_buttonClose" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="MainWindow_labelAppHeading" xml:space="preserve">
+    <value>此应用程序将全程指导你MediaPortal和所有需求组件的安装。</value>
+  </data>
+  <data name="MainWindow_nextButton" xml:space="preserve">
+    <value>下一步</value>
+  </data>
+  <data name="ManualDownload_buttonContinue" xml:space="preserve">
+    <value>继续</value>
+  </data>
+  <data name="ManualDownload_errFileNotFound" xml:space="preserve">
+    <value>文件 {0} 仍然不存在。请浏览你的磁盘
+（文件名应该与推荐的文件名相似）。</value>
+  </data>
+  <data name="ManualDownload_labelDesc" xml:space="preserve">
+    <value>点击“继续”当你完成下载所需文件时。</value>
+  </data>
+  <data name="ManualDownload_labelHeading" xml:space="preserve">
+    <value>你必须手动下载以下文件：</value>
+  </data>
+  <data name="ManualDownload_linkDir" xml:space="preserve">
+    <value>打开目录</value>
+  </data>
+  <data name="ManualDownload_linkURL" xml:space="preserve">
+    <value>下载链接</value>
+  </data>
+  <data name="ManualDownload_Title" xml:space="preserve">
+    <value>手动下载</value>
+  </data>
+  <data name="MPSettings_errInvalidPath" xml:space="preserve">
+    <value>你必须为MediaPortal提供一个合法的安装路径。</value>
+  </data>
+  <data name="MPSettings_labelHeading" xml:space="preserve">
+    <value>请为MediaPortal安装设置必要的选项：</value>
+  </data>
+  <data name="MPSettings_labelInstDir" xml:space="preserve">
+    <value>MediaPortal安装目录：</value>
+  </data>
+  <data name="MPSettings_msgSelectDir" xml:space="preserve">
+    <value>选择安装MediaPortal的文件夹</value>
+  </data>
+  <data name="TvServerSettings_checkBoxFirewall" xml:space="preserve">
+    <value>配置Windows防火墙允许外界访问TV-Server</value>
+  </data>
+  <data name="TvServerSettings_errInvalidPath" xml:space="preserve">
+    <value>你必须为TV-Server提供一个合法的安装路径。</value>
+  </data>
+  <data name="TvServerSettings_labelHeading" xml:space="preserve">
+    <value>请为TV-Server安装设置必要的选项：</value>
+  </data>
+  <data name="TvServerSettings_labelInstDir" xml:space="preserve">
+    <value>TV-Server安装目录：</value>
+  </data>
+  <data name="TvServerSettings_msgSelectDir" xml:space="preserve">
+    <value>选择安装TV-Server的文件夹</value>
+  </data>
+  <data name="Welcome_labelHeading1" xml:space="preserve">
+    <value>感谢你选用MediaPortal...免费开源的媒体中心！</value>
+  </data>
+  <data name="Welcome_labelHeading2" xml:space="preserve">
+    <value>此工具将全程指导你安装过程</value>
+  </data>
+  <data name="Welcome_labelHeading3" xml:space="preserve">
+    <value>在你继续前，请选择你使用的语言</value>
+  </data>
+  <data name="Finished_labelEbay" xml:space="preserve">
+    <value>MediaPortal是免费的 - 如果你是在ebay网上购买的它，你就是一个傻瓜！</value>
+  </data>
+  <data name="Install_actionConfigure" xml:space="preserve">
+    <value>配置</value>
+  </data>
+  <data name="Install_actionRemove" xml:space="preserve">
+    <value>移除</value>
+  </data>
+  <data name="Install_errConfigureFailed" xml:space="preserve">
+    <value>配置出错</value>
+  </data>
+  <data name="Install_errRemoveFailed" xml:space="preserve">
+    <value>卸载出错</value>
+  </data>
+  <data name="Install_msgConfiguring" xml:space="preserve">
+    <value>配置......</value>
+  </data>
+  <data name="Install_stateConfigured" xml:space="preserve">
+    <value>已配置</value>
+  </data>
+  <data name="Install_stateNotConfigured" xml:space="preserve">
+    <value>没有配置</value>
+  </data>
+  <data name="Install_stateRemoved" xml:space="preserve">
+    <value>已移除</value>
+  </data>
+  <data name="Install_stateUninstall" xml:space="preserve">
+    <value>卸载</value>
+  </data>
+  <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
+    <value>安装进程需要互联网连接。
+现在需要启动安装进程或仅下载需要的组件稍后再执行安装吗？
+（可能在一个没有互联网连接的电脑上）</value>
+  </data>
+  <data name="DownloadOnly_no" xml:space="preserve">
+    <value>仅下载所需的组件</value>
+  </data>
+  <data name="DownloadOnly_yes" xml:space="preserve">
+    <value>现在开始下载</value>
+  </data>
+  <data name="Install_buttonDownload" xml:space="preserve">
+    <value>下载</value>
+  </data>
+  <data name="Install_stateDownloaded" xml:space="preserve">
+    <value>已下载</value>
+  </data>
+  <data name="Install_actionDownload" xml:space="preserve">
+    <value>下载</value>
+  </data>
+  <data name="Install_stateNotDownloaded" xml:space="preserve">
+    <value>没有下载</value>
+  </data>
+  <data name="Finished_labelHeading2_download" xml:space="preserve">
+    <value>你已成功下载所有MediaPortal组件</value>
+  </data>
+  <data name="Install_labelHeadingDownload" xml:space="preserve">
+    <value>点击“下载”按钮执行下载所有必需的组件</value>
+  </data>
+  <data name="OS_Support" xml:space="preserve">
+    <value>对不起，MediaPortal目前不支持你的操作系统！</value>
+  </data>
+  <data name="OS_Warning" xml:space="preserve">
+    <value>你的操作系统不被支持是因为微软没有为MediaPortal发布几个必需的补丁。继续安装风险自担！</value>
+  </data>
+  <data name="DownloadSettings_failed" xml:space="preserve">
+    <value>下载安装文件失败。
+请查看一下Internet Explorer的配置然后再试一次。
+如果找到一个损坏的配置文件，立即将其删除。</value>
+  </data>
+  <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
+    <value>配置Windows防火墙允许外界访问MediaPortal</value>
+  </data>
+  <data name="OS_Beta" xml:space="preserve">
+    <value>检测到一个测试版本的服务补丁，你的系统不被支持.....继续安装风险自担！</value>
+  </data>
+  <data name="Finished_labelHeading3_download" xml:space="preserve">
+    <value>此应用程序现在即将被关闭并打开“MediaPortal Installation”文件夹。
+在你的HTPC上转换到这个文件夹。通过运行“MediaPortal.DeployTool.exe”开始安装。</value>
+  </data>
+  <data name="Install_stateSkipped" xml:space="preserve">
+    <value>已跳过</value>
+  </data>
+  <data name="Exit_Installation" xml:space="preserve">
+    <value>你确实要放弃安装MediaPortal吗？</value>
+  </data>
+  <data name="DownloadOnly_CurrentSettings" xml:space="preserve">
+    <value>目前下载的设置：lang={0}，arch={1}</value>
+  </data>
+  <data name="DownloadSettings_labelSectionHeader" xml:space="preserve">
+    <value>请选择要下载的设置：</value>
+  </data>
+  <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
+    <value>没有找到互联网连接！要继续安装必须有一个活动的互联网连接。</value>
+  </data>
+  <data name="DiskSpace_Error" xml:space="preserve">
+    <value>在指定的驱动器上没有足够的剩余空间！要安装MediaPortal至少需要 {0} MB空闲磁盘空间。</value>
+  </data>
+  <data name="Upgrade_labelSectionHeader" xml:space="preserve">
+    <value>检测到MediaPortal {0}。</value>
+  </data>
+  <data name="Upgrade_labelSectionHeader_SVN" xml:space="preserve">
+    <value>检测到MediaPortal {0} (build {1})。</value>
+  </data>
+  <data name="Upgrade_no" xml:space="preserve">
+    <value>更新安装</value>
+  </data>
+  <data name="Upgrade_yes" xml:space="preserve">
+    <value>更新目前安装到 {0}</value>
+  </data>
+  <data name="Upgrade_note" xml:space="preserve">
+    <value>注意：不能从一个已存在的SVN build更新，
+          SVN build是仅供测试所用的。</value>
+  </data>
+  <data name="Install_actionUpgradeInstall" xml:space="preserve">
+    <value>更新-&gt;安装</value>
+  </data>
+  <data name="DBMSType_lbMSSQL_disabled" xml:space="preserve">
+    <value>（这里学习为什么）</value>
+  </data>
+  <data name="DBMSType_rbMSSQL_disabled" xml:space="preserve">
+    <value>Microsoft SQL-Server Express 2005已禁用</value>
+  </data>
+  <data name="AeroThemeMissing" xml:space="preserve">
+    <value>Windows AERO目前禁用。
+请注意为消除画面撕裂及声音断续启用AERO是必须的。
+启用AERO还能减少CPU占有率，从而使你的HPTC运行时更加冷却和安静。</value>
+  </data>
+  <data name="Reboot_Required" xml:space="preserve">
+    <value>一个Mcirosoft组件要求重启电脑。
+在继续MediaPortal安装以前请重启电脑。</value>
+  </data>
+</root>

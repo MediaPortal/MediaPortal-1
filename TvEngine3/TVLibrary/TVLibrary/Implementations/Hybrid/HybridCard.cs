@@ -77,20 +77,46 @@ namespace TvLibrary.Implementations.Hybrid
 
     #endregion
 
-    #region properties
+    #region events
 
     /// <summary>
-    /// Sets the after tune event listener on the internal card.
+    /// Set the device's new subchannel event handler.
     /// </summary>
     /// <value>the delegate</value>
-    public TvCardBase.OnAfterTuneDelegate AfterTuneEvent
+    public OnNewSubChannelDelegate OnNewSubChannelEvent
     {
       set
       {
-        (_internalCard as TvCardBase).AfterTuneEvent -= value;
-        (_internalCard as TvCardBase).AfterTuneEvent += value;
+        TvCardBase internalDevice = _internalCard as TvCardBase;
+        if (internalDevice == null)
+        {
+          throw new TvException("HybridCard: failed to set new subchannel event handler for device type " + _internalCard.CardType);
+        }
+        internalDevice.NewSubChannelEvent += value;
       }
     }
+
+    /// <summary>
+    /// Set the device's after tune event handler.
+    /// </summary>
+    /// <value>the delegate</value>
+    public OnAfterTuneDelegate OnAfterTuneEvent
+    {
+      set
+      {
+        TvCardBase internalDevice = _internalCard as TvCardBase;
+        if (internalDevice == null)
+        {
+          throw new TvException("HybridCard: failed to set after tune event handler for device type " + _internalCard.CardType);
+        }
+        internalDevice.AfterTuneEvent -= value;
+        internalDevice.AfterTuneEvent += value;
+      }
+    }
+
+    #endregion
+
+    #region properties
 
     /// <summary>
     /// returns true if card is currently present
@@ -332,26 +358,34 @@ namespace TvLibrary.Implementations.Hybrid
     }
 
     /// <summary>
-    /// Tunes the specified channel.
+    /// Tune to a specific channel.
     /// </summary>
-    /// <param name="subChannelId">The sub channel id</param>
-    /// <param name="channel">The channel.</param>
-    /// <returns>true if succeeded else false</returns>
+    /// <param name="subChannelId">The ID of the subchannel associated with the channel that is being tuned.</param>
+    /// <param name="channel">The channel to tune to.</param>
+    /// <returns>the subchannel associated with the tuned channel</returns>
     public ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
       return _group.Tune(subChannelId, channel);
     }
 
-
     /// <summary>
-    /// Scans the specified channel.
+    /// Scan a specific channel.
     /// </summary>
-    /// <param name="subChannelId">The sub channel id</param>
-    /// <param name="channel">The channel.</param>
-    /// <returns>true if succeeded else false</returns>
+    /// <param name="subChannelId">The ID of the subchannel associated with the channel that is being scanned.</param>
+    /// <param name="channel">The channel to scan.</param>
+    /// <returns>the subchannel associated with the scanned channel</returns>
     public ITvSubChannel Scan(int subChannelId, IChannel channel)
     {
       return _group.Scan(subChannelId, channel);
+    }
+
+    /// <summary>
+    /// Cancel the current tuning process.
+    /// </summary>
+    /// <param name="subChannelId">The ID of the subchannel associated with the channel that is being cancelled.</param>
+    public void CancelTune(int subChannelId)
+    {
+      _internalCard.CancelTune(subChannelId);
     }
 
     /// <summary>
@@ -450,25 +484,6 @@ namespace TvLibrary.Implementations.Hybrid
     /// </summary>
     /// <param name="id">The id.</param>
     public void FreeSubChannel(int id)
-    {
-      _group.FreeSubChannel(id);
-    }
-
-    /// <summary>
-    /// Frees the sub channel.
-    /// </summary>
-    /// <param name="id">The id.</param>
-    /// <param name="subchannelBusy">is the subcannel busy with other users.</param>
-    public void FreeSubChannelContinueGraph(int id, bool subchannelBusy)
-    {
-      FreeSubChannelContinueGraph(id);
-    }
-
-    /// <summary>
-    /// Frees the sub channel.
-    /// </summary>
-    /// <param name="id">The id.</param>
-    public void FreeSubChannelContinueGraph(int id)
     {
       _group.FreeSubChannel(id);
     }

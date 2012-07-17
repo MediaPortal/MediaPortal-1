@@ -29,7 +29,7 @@ namespace MediaPortal.Dialogs
   /// <summary>
   /// 
   /// </summary>
-  public class GUIDialogMenu : GUIDialogWindow, IDialogbox, IRenderLayer
+  public class GUIDialogMenu : GUIDialogWindow, IDialogbox2, IRenderLayer
   {
     [SkinControl(2)] protected GUIButtonControl btnClose = null;
     [SkinControl(3)] protected GUIListControl listView = null;
@@ -51,7 +51,7 @@ namespace MediaPortal.Dialogs
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\DialogMenu.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\DialogMenu.xml"));
     }
 
     public override void OnAction(Action action)
@@ -106,12 +106,7 @@ namespace MediaPortal.Dialogs
       if (selected >= 0 && selected < listItems.Count)
       {
         // Select dialog item
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, listView.GetID, 0, 0, null);
-        OnMessage(msg);
-        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0, listView.GetID, selected, 0, null);
-        OnMessage(msg);
-        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, listView.GetID, 0, 0, 0, null);
-        OnMessage(msg);
+        selectedItemIndex = selected;
       }
     }
 

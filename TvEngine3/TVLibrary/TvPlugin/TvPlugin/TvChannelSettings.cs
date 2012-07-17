@@ -50,7 +50,7 @@ namespace TvPlugin
        * <type>updownlistcontrol</type> 
        * <!-- type>playlistcontrol</type-->
        */
-      return Load(GUIGraphicsContext.Skin + @"\settings_tvSort.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\settings_tvSort.xml"));
     }
 
     protected override void OnPageLoad()

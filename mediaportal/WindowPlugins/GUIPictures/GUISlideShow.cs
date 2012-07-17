@@ -314,7 +314,7 @@ namespace MediaPortal.GUI.Pictures
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\slideshow.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\slideshow.xml"));
     }
 
     public override bool OnMessage(GUIMessage message)

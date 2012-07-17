@@ -37,7 +37,7 @@ namespace WindowPlugins.home
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\BasicHome.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\BasicHome.xml"));
     }
 
     protected override void OnPageLoad()

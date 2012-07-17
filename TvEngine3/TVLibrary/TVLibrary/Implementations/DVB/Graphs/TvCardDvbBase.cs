@@ -136,6 +136,8 @@ namespace TvLibrary.Implementations.DVB
 
     private readonly TimeShiftingEPGGrabber _timeshiftingEPGGrabber;
 
+    protected bool _cancelTune;
+
     #endregion
 
     #region ctor
@@ -385,32 +387,6 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Frees the sub channel.
     /// </summary>
-    /// <param name="id">The id.</param>
-    /// <param name="subchannelBusy">is the subcannel busy with other users.</param>
-    public override void FreeSubChannelContinueGraph(int id, bool subchannelBusy)
-    {
-      if (subchannelBusy)
-      {
-        base.FreeSubChannelContinueGraph(id);
-      }
-      else
-      {
-        FreeSubChannelContinueGraph(id);
-      }
-    }
-
-    /// <summary>
-    /// Frees the sub channel. but keeps the graph running.
-    /// </summary>
-    /// <param name="id">Handle to the subchannel.</param>
-    public override void FreeSubChannelContinueGraph(int id)
-    {
-      base.FreeSubChannelContinueGraph(id);
-    }
-
-    /// <summary>
-    /// Frees the sub channel.
-    /// </summary>
     /// <param name="id">Handle to the subchannel.</param>
     public override void FreeSubChannel(int id)
     {
@@ -430,6 +406,7 @@ namespace TvLibrary.Implementations.DVB
       subChannel.Parameters = Parameters;
       subChannel.CurrentChannel = channel;
       _mapSubChannels[id] = subChannel;
+      FireNewSubChannelEvent(id);
       return id;
     }
 
@@ -1599,7 +1576,6 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        //if (!CheckThreadId()) return null;
         try
         {
           bool dvbReady, mhwReady;

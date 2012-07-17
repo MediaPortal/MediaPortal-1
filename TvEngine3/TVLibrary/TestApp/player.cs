@@ -22,6 +22,7 @@ using System;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using TvLibrary.Log;
+using TvLibrary;
 using System.Windows.Forms;
 
 namespace TestApp

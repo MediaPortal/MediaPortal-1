@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <profile>
   <section name="ChannelInfo">
-    <entry name="TotalChannels">1452</entry>
+    <entry name="TotalChannels">1461</entry>
   </section>
   <section name="0">
     <entry name="ChannelID">1@betv.be</entry>
@@ -2021,7 +2021,7 @@
   </section>
   <section name="504">
     <entry name="ChannelID">history@viasat.no</entry>
-    <entry name="FullName">History</entry>
+    <entry name="FullName">Viasat History</entry>
   </section>
   <section name="505">
     <entry name="ChannelID">history@viasat.se</entry>
@@ -3985,7 +3985,7 @@
   </section>
   <section name="995">
     <entry name="ChannelID">sport@viasatsport.no</entry>
-    <entry name="FullName">Viasat Sport 1</entry>
+    <entry name="FullName">Viasat Fotball</entry>
   </section>
   <section name="996">
     <entry name="ChannelID">sport@viasatsport.se</entry>
@@ -4021,7 +4021,7 @@
   </section>
   <section name="1004">
     <entry name="ChannelID">sport3@viasatsport.no</entry>
-    <entry name="FullName">Viasat Sport 3</entry>
+    <entry name="FullName">Viasat Motor</entry>
   </section>
   <section name="1005">
     <entry name="ChannelID">sport3@viasatsport.se</entry>
@@ -5509,7 +5509,7 @@
   </section>
     <section name="1376">
     <entry name="ChannelID">vianatcrime@viasat.no</entry>
-    <entry name="FullName">Viasat Nature</entry>
+    <entry name="FullName">Viasat Nature/Crime</entry>
   </section>
     <section name="1377">
     <entry name="ChannelID">viaspohd@viasat.no</entry>
@@ -5810,6 +5810,42 @@
   <section name="1451">
     <entry name="ChannelID">news@tv4.se</entry>
     <entry name="FullName">TV4 News</entry>
+  </section>
+  <section name="1452">
+    <entry name="ChannelID">animalplanethd.com</entry>
+    <entry name="FullName">Animal Planet HD</entry>
+  </section>
+  <section name="1453">
+    <entry name="ChannelID">canal9.no</entry>
+    <entry name="FullName">Canal 9</entry>
+  </section>
+  <section name="1454">
+    <entry name="ChannelID">canplsfk@canalplus.no</entry>
+    <entry name="FullName">Canal+ SF</entry>
+  </section>
+  <section name="1455">
+    <entry name="ChannelID">foxcrime@fox.com</entry>
+    <entry name="FullName">Fox Crime</entry>
+  </section>
+  <section name="1456">
+    <entry name="ChannelID">seven.com</entry>
+    <entry name="FullName">TNT7</entry>
+  </section>
+  <section name="1457">
+    <entry name="ChannelID">tv2prem@tv2.no</entry>
+    <entry name="FullName">TV2 Premium League 1</entry>
+  </section>
+  <section name="1458">
+    <entry name="ChannelID">tv2prelg2@tv2.no</entry>
+    <entry name="FullName">TV2 Premium League 2</entry>
+  </section>
+  <section name="1459">
+    <entry name="ChannelID">tv2prelg3@tv2.no</entry>
+    <entry name="FullName">TV2 Premium League 3</entry>
+  </section>
+  <section name="1460">
+    <entry name="ChannelID">sport3@canalplus.no</entry>
+    <entry name="FullName">Canal+ Sport 3</entry>
   </section>
   <section name=".svn">
     <entry name="TotalChannels">0</entry>

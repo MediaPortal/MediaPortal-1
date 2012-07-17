@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -35,7 +36,6 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
-using System.Text.RegularExpressions;
 
 #pragma warning disable 108
 
@@ -157,7 +157,7 @@ namespace MediaPortal.Configuration.Sections
     // Last used file extension filter (Fileopen dialog when adding video file manually)
     private int _lastExt;
     // Folder name as movie title
-    private bool _useFolderAsTitle;
+    //private bool _useFolderAsTitle;
     // Cover upgrade
     private bool _coversUpgraded;
     private bool _settingsLoaded;
@@ -168,7 +168,10 @@ namespace MediaPortal.Configuration.Sections
     // Refresh images backgroundworker state
     private bool _isRefreshing;
 
+    private ArrayList _nfoFiles = new ArrayList();
+
     private ArrayList _conflictFiles = new ArrayList();
+    private ArrayList notFoundMovie = new ArrayList();
 
     private List<BaseShares.ShareData> _sharesData = null;
 
@@ -210,7 +213,7 @@ namespace MediaPortal.Configuration.Sections
       //
       // Clear any existing entries
       //
-      sharesListBox.Items.Clear();
+      dgShares.Rows.Clear();
 
       //
       // Load selected shares
@@ -220,18 +223,21 @@ namespace MediaPortal.Configuration.Sections
       if (section != null)
       {
         _sharesData = (List<BaseShares.ShareData>)section.GetSetting("sharesdata");
+        int dgRows = 0;
+        
         foreach (BaseShares.ShareData share in _sharesData)
         {
-          //
-          // Add to share to list box and default to selected
-          //
-          sharesListBox.Items.Add(share.Folder, share.ScanShare);
+          // Add to share to shareDatagrid
+          dgShares.Rows.Add();
+          dgShares.Rows[dgRows].Cells[0].Value = share.Name;
+          dgShares.Rows[dgRows].Cells[1].Value = share.Folder;
+          dgShares.Rows[dgRows].Cells[2].Value = share.ScanShare;
+          dgShares.Rows[dgRows].Cells[3].Value = share.EachFolderIsMovie;
+          dgRows++;
         }
       }
-
       // Movie Folders
       // Fetch extensions
-      //
       section = GetSection("Video Extensions");
 
       if (section != null)
@@ -242,44 +248,59 @@ namespace MediaPortal.Configuration.Sections
 
       UpdateControlStatus();
       LoadMovies(0);
+      
       if (cbTitle.Items.Count > 0)
       {
         cbTitle.SelectedIndex = 0;
+      }
+
+      string parserIndexFile = Config.GetFile(Config.Dir.Config, "scripts\\VDBParserStrings.xml");
+      
+      if (!File.Exists(parserIndexFile))
+      {
+        string parserIndexFileBase = Config.GetFile(Config.Dir.Base, "VDBParserStrings.xml");
+
+        if (File.Exists(parserIndexFileBase))
+        {
+          File.Copy(parserIndexFileBase, parserIndexFile, true);
+        }
       }
     }
 
     #region Scan tab
 
-    private void sharesListBox_ItemCheck(object sender, ItemCheckEventArgs e)
+    private void dgShares_CellContentClick(object sender, DataGridViewCellEventArgs e)
     {
-      BaseShares.ShareData share = _sharesData[e.Index];
-      share.ScanShare = e.NewValue == CheckState.Checked ? true : false;
-      UpdateControlStatus();
-    }
+      dgShares.EndEdit();
+      
+      if (e.ColumnIndex == 2)
+      {
+        BaseShares.ShareData share = _sharesData[e.RowIndex];
+        share.ScanShare = Convert.ToBoolean(dgShares[e.ColumnIndex, e.RowIndex].Value.ToString());
+        UpdateControlStatus();
+      }
 
-    /// <summary>
-    /// 
-    /// </summary>
+      if (e.ColumnIndex == 3)
+      {
+        BaseShares.ShareData share = _sharesData[e.RowIndex];
+        share.EachFolderIsMovie = Convert.ToBoolean(dgShares[e.ColumnIndex, e.RowIndex].Value.ToString());
+        UpdateControlStatus();
+      }
+    }
+    
     private void UpdateControlStatus()
     {
-      startButton.Enabled = sharesListBox.CheckedItems.Count > 0;
+      foreach (BaseShares.ShareData share in _sharesData)
+      {
+        if (share.ScanShare)
+        {
+          startButton.Enabled = true;
+          return;
+        }
+      }
+      startButton.Enabled = false;
     }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void sharesListBox_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      UpdateControlStatus();
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
+    
     private void startButton_Click(object sender, EventArgs e)
     {
       groupBox1.Enabled = false;
@@ -287,44 +308,24 @@ namespace MediaPortal.Configuration.Sections
       groupBox1.Enabled = true;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
     private void RebuildDatabase()
     {
       ArrayList availablePaths = new ArrayList();
-      for (int index = 0; index < sharesListBox.CheckedIndices.Count; index++)
+      foreach (BaseShares.ShareData share in _sharesData)
       {
-        string path = sharesListBox.Items[sharesListBox.CheckedIndices[index]].ToString();
-        availablePaths.Add(path);
-      }
-      // Clean covers and fanarts (only if refresh cb is checked)
-      if (refreshdbCheckBox.Checked)
-      {
-        for (int i = 0; i < cbTitle.Items.Count - 1; i++)
+        if (share.ScanShare)
         {
-          cbTitle.SelectedIndex = i;
-          ComboBoxItemMovie item = (ComboBoxItemMovie)cbTitle.SelectedItem;
-          CurrentMovie.ID = item.Movie.ID;
-          string strFilenameAndPath = string.Empty;
-
-          if (listViewFiles.Items.Count > 0)
-          {
-            strFilenameAndPath = listViewFiles.Items[0].Text;
-          }
-          // Delete covers
-          FanArt.DeleteCovers(CurrentMovie.Title, CurrentMovie.ID);
-          // Delete fanarts
-          FanArt.DeleteFanarts(strFilenameAndPath, CurrentMovie.Title);
+          string path = share.Folder;
+          availablePaths.Add(path);
         }
       }
+      
       _conflictFiles = new ArrayList();
-      IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, skipCheckBox.Checked, actorsCheckBox.Checked,
+      IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, skipCheckBox.Checked, true,
                            refreshdbCheckBox.Checked);
       LoadMovies(0);
     }
 
-    // Changed - Fanart delete files
     private void clearButton_Click(object sender, EventArgs e)
     {
       DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete the entire video database?",
@@ -338,8 +339,15 @@ namespace MediaPortal.Configuration.Sections
           try
           {
             File.Delete(database);
+            // Delete covers
+            string files = @"*.jpg"; // Only delete jpg files
+            string configDir = Config.GetFolder(Config.Dir.Thumbs) + @"\Videos\Title\";
+            DeleteVideoThumbs(files, configDir);
+            // Delete actor images
+            configDir = Config.GetFolder(Config.Dir.Thumbs) + @"\Videos\Actors\";
+            DeleteVideoThumbs(files, configDir);
+            
             // FanArt delete all files
-            string configDir;
             FanArt.GetFanArtFolder(out configDir);
             if (useFanartCheckBox.CheckState == CheckState.Checked)
             {
@@ -350,12 +358,15 @@ namespace MediaPortal.Configuration.Sections
                                                                 MessageBoxIcon.Question);
               if (dialogResultFanart == DialogResult.Yes)
               {
-                string files = @"*.jpg"; // Only delete jpg files
-                string[] fileList = Directory.GetFiles(configDir, files);
-                foreach (string file in fileList)
+                try
                 {
-                  File.Delete(file);
+                  string[] fileList = Directory.GetFiles(configDir, files);
+                  foreach (string file in fileList)
+                  {
+                    File.Delete(file);
+                  }
                 }
+                catch(Exception){}
               }
             }
           }
@@ -385,13 +396,32 @@ namespace MediaPortal.Configuration.Sections
           pictureBoxActor.Image = null;
         }
         // Clear Actors listboxes
-        listViewAllActors.Items.Clear();
+        //listViewAllActors.Items.Clear();
         listViewMovieActors.Items.Clear();
         // Clear Genres listboxes
         listViewAllGenres.Items.Clear();
         listViewGenres.Items.Clear();
+        //Cleat Groups listboxes
+        lvUserGroups.Items.Clear();
+        lvMovieUserGroups.Items.Clear();
         MessageBox.Show("Video database has been cleared", "Video Database", MessageBoxButtons.OK,
                         MessageBoxIcon.Exclamation);
+      }
+    }
+
+    private static void DeleteVideoThumbs(string files, string configDir)
+    {
+      try
+      {
+        string[] fileList = Directory.GetFiles(configDir, files);
+
+        foreach (string file in fileList)
+        {
+          File.Delete(file);
+        }
+      }
+      catch (Exception)
+      {
       }
     }
 
@@ -494,9 +524,19 @@ namespace MediaPortal.Configuration.Sections
     public bool OnActorsStarting(IMDBFetcher fetcher)
     {
       _progressDialog.ResetProgress();
+      _progressDialog.SetHeading("Downloading Actors and roles...");
+      _progressDialog.SetLine1("Downloading Actors and roles...");
+      _progressDialog.SetLine2(fetcher.MovieName);
+      _progressDialog.Instance = fetcher;
+      return true;
+    }
+
+    public bool OnActorInfoStarting(IMDBFetcher fetcher)
+    {
+      _progressDialog.ResetProgress();
       _progressDialog.SetHeading("Downloading Actor info...");
       _progressDialog.SetLine1("Downloading Actor info...");
-      _progressDialog.SetLine2(fetcher.MovieName);
+      _progressDialog.SetLine2(fetcher.ActorName);
       _progressDialog.Instance = fetcher;
       return true;
     }
@@ -572,6 +612,38 @@ namespace MediaPortal.Configuration.Sections
       return true;
     }
 
+    public bool OnSelectActor(IMDBFetcher fetcher, out int selectedActor)
+    {
+      //selectedActor = -1;
+      //return false;
+      if (_scanning)
+      {
+        _conflictFiles.Add(fetcher.ActorName);
+        selectedActor = -1;
+        return false;
+      }
+      DlgMovieList dlg = new DlgMovieList();
+      dlg.Filename = fetcher.MovieName;
+      for (int i = 0; i < fetcher.Count; ++i)
+      {
+        dlg.AddMovie(fetcher[i].Title);
+      }
+      DialogResult result = dlg.ShowDialog(this);
+      Update();
+      if (result == DialogResult.Cancel)
+      {
+        selectedActor = -1;
+        return false;
+      }
+      selectedActor = dlg.SelectedItem;
+      if (dlg.IsNewFind)
+      {
+        _newMovieToFind = dlg.NewTitleToFind;
+        selectedActor = -1;
+      }
+      return true;
+    }
+
     public bool OnScanStart(int total)
     {
       _scanning = true;
@@ -588,9 +660,9 @@ namespace MediaPortal.Configuration.Sections
         for (int i = 0; i < _conflictFiles.Count; ++i)
         {
           if (_conflictFiles[i] == null)
-		  {
+          {
             continue;
-		  }
+          }
           IMDBMovie currentMovie = (IMDBMovie)_conflictFiles[i];
           string strFileName = string.Empty;
           string path = currentMovie.Path;
@@ -651,6 +723,7 @@ namespace MediaPortal.Configuration.Sections
       movies.Sort(new MovieTitleComparer());
       int i = 0;
       int index = 0;
+      
       foreach (IMDBMovie movie in movies)
       {
         ComboBoxItemMovie newItem = new ComboBoxItemMovie(movie.Title, movie);
@@ -676,7 +749,8 @@ namespace MediaPortal.Configuration.Sections
       listViewMovieActors.BeginUpdate();
       listViewGenres.BeginUpdate();
       listViewAllGenres.BeginUpdate();
-      listViewAllActors.BeginUpdate();
+      lvUserGroups.BeginUpdate();
+      lvMovieUserGroups.BeginUpdate();
       listViewFiles.BeginUpdate();
 
       tbDiscNr.Text = (movie.DVDLabel.Length > 4
@@ -688,12 +762,19 @@ namespace MediaPortal.Configuration.Sections
       tbVotes.Text = movie.Votes;
       tbRating.Text = movie.Rating.ToString();
       tbDirector.Text = movie.Director;
+      tbDirectorId.Text = movie.DirectorID.ToString();
       tbWritingCredits.Text = movie.WritingCredits;
       _idMovie = movie.ID;
       tbMovieID.Text = _idMovie.ToString();
       tbSummary.Text = movie.Plot;
       tbReview.Text = movie.UserReview; // New dbcolumn for movie details
       tbIMDBNr.Text = movie.IMDBNumber; // Needed for cover search
+      tbStudio.Text = movie.Studios;
+      tbLanguage.Text = movie.Language;
+      tbCountry.Text = movie.Country;
+      DateTime added;
+      DateTime.TryParseExact(movie.DateAdded, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out added);
+      tbAdded.Text = "Added: " + added;
       //
       // Images (cover and fanart)
       //
@@ -731,26 +812,36 @@ namespace MediaPortal.Configuration.Sections
       {
         cbWatched.Checked = false;
       }
-
+      // Movie cover picture
       if (pictureBoxCover.Image != null)
       {
         pictureBoxCover.Image.Dispose();
         pictureBoxCover.Image = null;
       }
-
-      foreach (ListViewItem item in listViewMovieActors.Items)
-      {
-        listViewAllActors.Items.Add(item.Text);
-      }
-
+      // Genres
       foreach (ListViewItem item in listViewGenres.Items)
       {
         listViewAllGenres.Items.Add(item.Text);
       }
+      // User groups
+      lvUserGroups.Items.Clear();
+      ArrayList userGroups = new ArrayList();
+      VideoDatabase.GetUserGroups(userGroups);
+
+      foreach (string userGroup in userGroups)
+      {
+        ListViewItem item = new ListViewItem();
+        item.Text = userGroup;
+        lvUserGroups.Items.Add(item);
+      }
+
+      lvUserGroups.Sort();
 
       listViewMovieActors.Items.Clear();
       listViewGenres.Items.Clear();
+      lvMovieUserGroups.Items.Clear();
       listViewFiles.Items.Clear();
+
       if (_clearListBox)
       {
         coversListBox.Items.Clear();
@@ -779,42 +870,7 @@ namespace MediaPortal.Configuration.Sections
           }
         }
 
-        char[] splitter = {'\n', ','};
-        string[] actors = movie.Cast.Split(splitter);
-
-        if (actors.Length > 0)
-        {
-          for (int i = 0; i < actors.Length; ++i)
-          {
-            string actor;
-            string role = string.Empty;
-            int pos = actors[i].IndexOf(" as ");
-
-            if (pos >= 0)
-            {
-              actor = actors[i].Substring(0, pos);
-              role = actors[i].Substring(pos + 4);
-            }
-            else
-            {
-              actor = actors[i];
-            }
-
-            actor = actor.Trim();
-            ListViewItem item = new ListViewItem(actor);
-            item.SubItems.Add(role);
-            listViewMovieActors.Items.Add(item);
-
-            for (int actorIndex = listViewAllActors.Items.Count - 1; actorIndex >= 0; --actorIndex)
-            {
-              if (listViewAllActors.Items[actorIndex].Text == actor)
-              {
-                listViewAllActors.Items.RemoveAt(actorIndex);
-                break;
-              }
-            }
-          }
-        }
+        UpdateActorsList(movie);
 
         listViewMovieActors.Sort();
 
@@ -852,10 +908,29 @@ namespace MediaPortal.Configuration.Sections
             }
           }
         }
+        // Movie user groups
+        ArrayList movieGroups = new ArrayList();
+        VideoDatabase.GetMovieUserGroups(movie.ID, movieGroups);
+        
+        foreach (string strGroup in movieGroups)
+        {
+          String strCurrentUserGroup = strGroup.Trim();
+          lvMovieUserGroups.Items.Add(strCurrentUserGroup);
+
+          for (int i = lvUserGroups.Items.Count - 1; i >= 0; --i)
+          {
+            if (lvUserGroups.Items[i].Text == strCurrentUserGroup)
+            {
+              lvUserGroups.Items.RemoveAt(i);
+              break;
+            }
+          }
+        }
 
         listViewGenres.Sort();
+        lvMovieUserGroups.Sort();
         ArrayList filenames = new ArrayList();
-        VideoDatabase.GetFiles(movie.ID, ref filenames);
+        VideoDatabase.GetFilesForMovie(movie.ID, ref filenames);
         foreach (string filename in filenames)
         {
           listViewFiles.Items.Add(filename);
@@ -886,38 +961,41 @@ namespace MediaPortal.Configuration.Sections
 
         listViewAllGenres.Sort();
       }
-
-      if (listViewAllActors.Items.Count == 0)
-      {
-        ArrayList listActors = new ArrayList();
-        VideoDatabase.GetActors(listActors);
-
-        foreach (string actor in listActors)
-        {
-          bool add = true;
-
-          foreach (ListViewItem item in listViewMovieActors.Items)
-          {
-            if (item.Text == actor)
-            {
-              add = false;
-              break;
-            }
-          }
-
-          if (add)
-          {
-            listViewAllActors.Items.Add(actor);
-          }
-        }
-
-        listViewAllActors.Sort();
-      }
+      
       listViewMovieActors.EndUpdate();
       listViewGenres.EndUpdate();
       listViewAllGenres.EndUpdate();
-      listViewAllActors.EndUpdate();
+      lvMovieUserGroups.EndUpdate();
+      lvUserGroups.EndUpdate();
       listViewFiles.EndUpdate();
+    }
+
+    private void UpdateActorsList(IMDBMovie movie)
+    {
+      // 0->idActor, 1->stringActor, 2->IMDBactorId, 3->Role, separator "|"
+      ArrayList mActors = new ArrayList();
+      VideoDatabase.GetActorsByMovieID(movie.ID, ref mActors);
+
+      listViewMovieActors.Items.Clear();
+
+      if (mActors.Count > 0)
+      {
+        char[] splitter = { '|' };
+          
+        foreach (string mActor in mActors)
+        {
+          string[] actors = mActor.Split(splitter);
+          string id = actors[0];
+          string actor = actors[1];
+          string role = actors[3];
+
+          actor = actor.Trim();
+          ListViewItem item = new ListViewItem(actor);
+          item.SubItems.Add(role);
+          item.Tag = id;
+          listViewMovieActors.Items.Add(item);
+        }
+      }
     }
 
     private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -961,41 +1039,7 @@ namespace MediaPortal.Configuration.Sections
         listViewGenres.Items.Remove(listItem);
       }
     }
-
-    private void buttonMapActors_Click(object sender, EventArgs e)
-    {
-      for (int i = 0; i < listViewAllActors.SelectedItems.Count; ++i)
-      {
-        ListViewItem listItem = listViewAllActors.SelectedItems[i];
-
-        ListViewItem newItem = new ListViewItem(listItem.Text);
-        newItem.SubItems.Add("");
-        listViewMovieActors.Items.Add(newItem);
-      }
-
-      for (int i = listViewAllActors.SelectedItems.Count - 1; i >= 0; i--)
-      {
-        ListViewItem listItem = listViewAllActors.SelectedItems[i];
-
-        listViewAllActors.Items.Remove(listItem);
-      }
-    }
-
-    private void buttonUnmapActors_Click(object sender, EventArgs e)
-    {
-      for (int i = 0; i < listViewMovieActors.SelectedItems.Count; ++i)
-      {
-        ListViewItem listItem = listViewMovieActors.SelectedItems[i];
-        listViewAllActors.Items.Add(listItem.Text);
-      }
-
-      for (int i = listViewMovieActors.SelectedItems.Count - 1; i >= 0; --i)
-      {
-        ListViewItem listItem = listViewMovieActors.SelectedItems[i];
-        listViewMovieActors.Items.Remove(listItem);
-      }
-    }
-
+    
     // Changed - media types added, tbtitle = file
     private void buttonAddFile_Click(object sender, EventArgs e)
     {
@@ -1072,26 +1116,23 @@ namespace MediaPortal.Configuration.Sections
     private void buttonDeleteActor_Click(object sender, EventArgs e)
     {
       if (
-        MessageBox.Show("Are you sure you want to delete the selected actors?", "Are you sure?", MessageBoxButtons.YesNo) ==
+        MessageBox.Show("Are you sure you want to remove selected actors?", "Are you sure?", MessageBoxButtons.YesNo) ==
         DialogResult.Yes)
       {
-        for (int i = listViewAllActors.SelectedItems.Count - 1; i >= 0; --i)
+        for (int i = listViewMovieActors.SelectedItems.Count - 1; i >= 0; --i)
         {
-          ListViewItem listItem = listViewAllActors.SelectedItems[i];
-          VideoDatabase.DeleteActor(listItem.Text);
-          listViewAllActors.Items.Remove(listItem);
-          string file = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, listItem.Text);
-          if (File.Exists(file))
+          ListViewItem listItem = listViewMovieActors.SelectedItems[i];
+          
+          try
           {
-            File.Delete(file);
+            VideoDatabase.DeleteActorFromMovie(CurrentMovie.ID, Convert.ToInt32(listItem.Tag));
           }
-          file = Util.Utils.GetCoverArtName(Thumbs.MovieActors, listItem.Text);
-          if (File.Exists(file))
-          {
-            File.Delete(file);
-          }
+          catch (Exception){}
+
+          listViewMovieActors.Items.Remove(listItem);
         }
-        // Actor details
+        // Refresh Actor details
+        UpdateActorsList(CurrentMovie);
         ActorsTableRefresh(Int32.Parse(tbMovieID.Text));
         PopulateActorInfo();
       }
@@ -1099,17 +1140,29 @@ namespace MediaPortal.Configuration.Sections
 
     private void buttonNewActor_Click(object sender, EventArgs e)
     {
-      if (textBoxNewActor.Text.Length == 0)
+      if (tbNewActor.Text.Length == 0)
       {
+        MessageBox.Show("Please enter actor name.");
         return;
       }
-      VideoDatabase.AddActor(textBoxNewActor.Text);
-      listViewAllActors.Items.Add(textBoxNewActor.Text);
-      // Sort listview
-      listViewAllActors.Sort();
-      // Actor details
+
+      tbNewActorImdbId.Text = tbNewActorImdbId.Text.Trim();
+
+      string nmId = string.Empty;
+      if (VideoDatabase.CheckActorImdbId(tbNewActorImdbId.Text))
+      {
+        nmId = tbNewActorImdbId.Text;
+      }
+
+      int actId = VideoDatabase.AddActor(nmId ,tbNewActor.Text.Trim());
+      VideoDatabase.AddActorToMovie(Int32.Parse(tbMovieID.Text), actId, tbNewActorRole.Text);
+      UpdateActorsList(CurrentMovie);
       ActorsTableRefresh(Int32.Parse(tbMovieID.Text));
       PopulateActorInfo();
+
+      tbNewActor.Text = string.Empty;
+      tbNewActorImdbId.Text = string.Empty;
+      tbNewActorRole.Text = string.Empty;
     }
 
     private void btnDeleteGenre_Click(object sender, EventArgs e)
@@ -1124,6 +1177,7 @@ namespace MediaPortal.Configuration.Sections
           VideoDatabase.DeleteGenre(listItem.Text);
           listViewAllGenres.Items.Remove(listItem);
         }
+        pbGenreImage.ImageLocation = string.Empty;
       }
     }
 
@@ -1133,18 +1187,91 @@ namespace MediaPortal.Configuration.Sections
       {
         return;
       }
+
+      foreach (ListViewItem item in listViewAllGenres.Items)
+      {
+        if (item.Text.ToUpperInvariant() == textBoxNewGenre.Text.ToUpperInvariant())
+        {
+          textBoxNewGenre.Text = string.Empty;
+          return;
+        }
+      }
+
       VideoDatabase.AddGenre(textBoxNewGenre.Text);
       listViewAllGenres.Items.Add(textBoxNewGenre.Text);
+      textBoxNewGenre.Text = string.Empty;
     }
 
-    /*
-        private void buttonNewMovie_Click(object sender, EventArgs e)
+    private void btAddUserGroup_Click(object sender, EventArgs e)
+    {
+      if (tbUserGroup.Text.Length == 0)
+      {
+        tbUserGroup.Text = string.Empty;
+        return;
+      }
+
+      foreach (ListViewItem item in lvUserGroups.Items)
+      {
+        if (item.Text.ToUpperInvariant() == tbUserGroup.Text.ToUpperInvariant())
         {
-          cbTitle.SelectedItem = null;
-          IMDBMovie details = new IMDBMovie();
-          UpdateEdit(details);
+          return;
         }
-    */
+      }
+
+      VideoDatabase.AddUserGroup(tbUserGroup.Text);
+      lvUserGroups.Items.Add(tbUserGroup.Text);
+      tbUserGroup.Text = string.Empty;
+    }
+
+    private void btRemoveUserGroup_Click(object sender, EventArgs e)
+    {
+      if (
+        MessageBox.Show("Are you sure you want to delete the selected groups?", "Are you sure?", MessageBoxButtons.YesNo) ==
+        DialogResult.Yes)
+      {
+        for (int i = lvUserGroups.SelectedItems.Count - 1; i >= 0; --i)
+        {
+          ListViewItem listItem = lvUserGroups.SelectedItems[i];
+          VideoDatabase.DeleteUserGroup(listItem.Text);
+          lvUserGroups.Items.Remove(listItem);
+        }
+        pbUserGroupImage.ImageLocation = string.Empty;
+      }
+    }
+
+    private void btAddUserGroupToMovie_Click(object sender, EventArgs e)
+    {
+      for (int i = 0; i < lvUserGroups.SelectedItems.Count; ++i)
+      {
+        ListViewItem listItem = lvUserGroups.SelectedItems[i];
+        lvMovieUserGroups.Items.Add(listItem.Text);
+        int iGroup = VideoDatabase.AddUserGroup(listItem.Text);
+        VideoDatabase.AddUserGroupToMovie(CurrentMovie.ID, iGroup);
+      }
+
+      for (int i = lvUserGroups.SelectedItems.Count - 1; i >= 0; i--)
+      {
+        ListViewItem listItem = lvUserGroups.SelectedItems[i];
+        lvUserGroups.Items.Remove(listItem);
+      }
+    }
+
+    private void btRemoveUserGroupFromMovie_Click(object sender, EventArgs e)
+    {
+      for (int i = 0; i < lvMovieUserGroups.SelectedItems.Count; ++i)
+      {
+        ListViewItem listItem = lvMovieUserGroups.SelectedItems[i];
+        lvUserGroups.Items.Add(listItem.Text);
+        int iGroup = VideoDatabase.AddUserGroup(listItem.Text);
+        VideoDatabase.RemoveUserGroupFromMovie(CurrentMovie.ID, iGroup);
+      }
+
+      for (int i = lvMovieUserGroups.SelectedItems.Count - 1; i >= 0; --i)
+      {
+        ListViewItem listItem = lvMovieUserGroups.SelectedItems[i];
+        lvMovieUserGroups.Items.Remove(listItem);
+      }
+    }
 
     // Changed - FanArt - refresh movie by tt number
     private void buttonLookupMovie_Click(object sender, EventArgs e)
@@ -1155,7 +1282,7 @@ namespace MediaPortal.Configuration.Sections
         return;
       }
       // Check IMDBid
-      if (_refreshByImdBid && CheckImdbId(tbIMDBNr.Text) == false)
+      if (_refreshByImdBid && !VideoDatabase.CheckMovieImdbId(tbIMDBNr.Text))
       {
         MessageBox.Show("Incorrect IMDB ID. ID must be like (tt1234567).", "Information", MessageBoxButtons.OK,
                         MessageBoxIcon.Exclamation);
@@ -1166,12 +1293,8 @@ namespace MediaPortal.Configuration.Sections
       {
         strFilenameAndPath = listViewFiles.Items[0].Text;
       }
-      // Cover delete
+      
       string title = cbTitle.Items[cbTitle.SelectedIndex].ToString();
-      FanArt.DeleteCovers(title, CurrentMovie.ID);
-      // Fanart delete
-      FanArt.DeleteFanarts(strFilenameAndPath, title);
-
       buttonLookupMovie.Enabled = false;
       btnSave.Enabled = false;
       tabControl2.Enabled = false; // Subtab options for main
@@ -1185,20 +1308,26 @@ namespace MediaPortal.Configuration.Sections
       {
         file = listViewFiles.Items[0].Text;
       }
+      
       if (file == string.Empty)
       {
         file = tbTitle.Text;
       }
+      
       string path, filename;
       Util.Utils.Split(file, out path, out filename);
       movieDetails.Path = path;
       movieDetails.File = filename;
+      
       // Search by IMDB ID number 
       if (_refreshByImdBid == false)
       {
         // Clean old actors info
         if (CurrentMovie.ID > 0)
+        {
           VideoDatabase.RemoveActorsForMovie(CurrentMovie.ID);
+        }
+
         movieDetails.IMDBNumber = string.Empty;
         movieDetails.SearchString = tbTitle.Text;
         GetInfoFromIMDB(ref movieDetails, false);
@@ -1211,7 +1340,7 @@ namespace MediaPortal.Configuration.Sections
 
       // Fanart
       string fileArtMovie = string.Empty;
-      FanArt.GetFanArtfilename(movieDetails.Title, 0, out fileArtMovie);
+      FanArt.GetFanArtfilename(movieDetails.ID, 0, out fileArtMovie);
       pictureBoxFanArt.ImageLocation = fileArtMovie;
       // End fanart
 
@@ -1226,6 +1355,7 @@ namespace MediaPortal.Configuration.Sections
       string file;
       string path = movieDetails.Path;
       string filename = movieDetails.File;
+      
       if (path != string.Empty)
       {
         if (path.EndsWith(@"\"))
@@ -1233,11 +1363,13 @@ namespace MediaPortal.Configuration.Sections
           path = path.Substring(0, path.Length - 1);
           movieDetails.Path = path;
         }
+        
         if (filename.StartsWith(@"\"))
         {
           filename = filename.Substring(1);
           movieDetails.File = filename;
         }
+        
         file = path + Path.DirectorySeparatorChar + filename;
       }
       else
@@ -1246,6 +1378,7 @@ namespace MediaPortal.Configuration.Sections
       }
 
       int id = movieDetails.ID;
+      
       if (id < 0)
       {
         Log.Info("Adding file:{0}", file);
@@ -1253,6 +1386,7 @@ namespace MediaPortal.Configuration.Sections
         VirtualDirectory dir = new VirtualDirectory();
         dir.SetExtensions(Util.Utils.VideoExtensions);
         List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
+        
         foreach (GUIListItem item in items)
         {
           if (item.IsFolder)
@@ -1262,7 +1396,6 @@ namespace MediaPortal.Configuration.Sections
           if (Util.Utils.ShouldStack(item.Path, file) && item.Path != file)
           {
             string strPath, strFileName;
-
             DatabaseUtility.Split(item.Path, out strPath, out strFileName);
             DatabaseUtility.RemoveInvalidChars(ref strPath);
             DatabaseUtility.RemoveInvalidChars(ref strFileName);
@@ -1270,12 +1403,14 @@ namespace MediaPortal.Configuration.Sections
             VideoDatabase.AddFile(id, pathId, strFileName);
           }
         }
+
         movieDetails.ID = id;
         string searchString = movieDetails.SearchString;
-        VideoDatabase.SetMovieInfoById(movieDetails.ID, ref movieDetails);
+        VideoDatabase.SetMovieInfoById(movieDetails.ID, ref movieDetails, true);
         movieDetails.SearchString = searchString;
       }
-      if (IMDBFetcher.RefreshIMDB(this, ref movieDetails, fuzzyMatch, actorsCheckBox.Checked, true))
+      
+      if (IMDBFetcher.RefreshIMDB(this, ref movieDetails, fuzzyMatch, true, true))
       {
         if (movieDetails != null)
         {
@@ -1305,24 +1440,15 @@ namespace MediaPortal.Configuration.Sections
       if (resultFloat == 0)
         tbRating.Text = "0";
       // IMDB id
-      if ((tbIMDBNr.Text.Length < 9 | tbIMDBNr.Text.Length > 9) && !tbIMDBNr.Text.StartsWith("tt"))
+      if (!VideoDatabase.CheckMovieImdbId(tbIMDBNr.Text))
       {
         tbIMDBNr.Text = string.Empty;
-      }
-      else
-      {
-        Match ttNo = Regex.Match(tbIMDBNr.Text, @"tt[\d]{7}?");
-        if (ttNo.Success == false)
-        {
-          tbIMDBNr.Text = string.Empty;
-        }
       }
       
       IMDBMovie details = CurrentMovie;
       if (details.ID >= 0)
       {
         VideoDatabase.RemoveGenresForMovie(details.ID);
-        VideoDatabase.RemoveActorsForMovie(details.ID);
         VideoDatabase.RemoveFilesForMovie(details.ID);
       }
       else
@@ -1355,7 +1481,7 @@ namespace MediaPortal.Configuration.Sections
       //
       details.IMDBNumber = tbIMDBNr.Text;
 
-      VideoDatabase.SetMovieInfoById(details.ID, ref details);
+      VideoDatabase.SetMovieInfoById(details.ID, ref details, true);
       // Add files to movie
       string strPath = string.Empty;
       foreach (ListViewItem item in listViewFiles.Items)
@@ -1442,8 +1568,12 @@ namespace MediaPortal.Configuration.Sections
       // Local images
       string strFilename = string.Empty;
       string strPath = string.Empty;
-      Util.Utils.Split(listViewFiles.Items[0].Text, out strPath, out strFilename);
-
+      try
+      {
+        Util.Utils.Split(listViewFiles.Items[0].Text, out strPath, out strFilename);
+      }
+      catch (Exception){}
+      
       if (Directory.Exists(strPath))
       {
         max++;
@@ -1587,10 +1717,6 @@ namespace MediaPortal.Configuration.Sections
         }
         // Delete movie
         VideoDatabase.DeleteMovieInfoById(CurrentMovie.ID);
-        // Delete covers
-        FanArt.DeleteCovers(CurrentMovie.Title, CurrentMovie.ID);
-        // Delete fanarts
-        FanArt.DeleteFanarts(strFilenameAndPath, CurrentMovie.Title);
         // When delete movie from the database do not back to index 0
         {
           int currentIndex = cbTitle.SelectedIndex;
@@ -1603,158 +1729,7 @@ namespace MediaPortal.Configuration.Sections
         }
       }
     }
-
-    private void buttonImport_Click(object sender, EventArgs e)
-    {
-      int id = 0;
-      OpenFileDialog find_file = new OpenFileDialog();
-      find_file.RestoreDirectory = true;
-      find_file.DefaultExt = "xml";
-      find_file.Filter = "DVD Profile|*.xml";
-      find_file.InitialDirectory = ".";
-      find_file.Title = "Select DVD Profiler database" + tbTitle.Text;
-      if (find_file.ShowDialog(this) != DialogResult.OK)
-      {
-        return;
-      }
-      XmlDocument doc = new XmlDocument();
-      doc.Load(find_file.FileName);
-      XmlNodeList dvdList = doc.DocumentElement.SelectNodes("/Collection/DVD");
-      foreach (XmlNode nodeDVD in dvdList)
-      {
-        XmlNode nodeTitle = nodeDVD.SelectSingleNode("Title");
-        XmlNode nodeRating = nodeDVD.SelectSingleNode("Rating");
-        XmlNode nodeYear = nodeDVD.SelectSingleNode("ProductionYear");
-        XmlNode nodeDuration = nodeDVD.SelectSingleNode("RunningTime");
-        XmlNode nodeOverview = nodeDVD.SelectSingleNode("Overview");
-
-        string genre = string.Empty;
-        XmlNodeList genreList = nodeDVD.SelectNodes("Genres/Genre");
-        foreach (XmlNode nodeGenre in genreList)
-        {
-          // added check to see if nodeGenre was valid
-          if (nodeGenre != null && nodeGenre.InnerText != null)
-          {
-            if (genre.Length > 0)
-            {
-              genre += " / ";
-            }
-            genre += nodeGenre.InnerText;
-          }
-        }
-        string cast = "Cast overview:";
-        XmlNodeList actorsList = nodeDVD.SelectNodes("Actors/Actor");
-        foreach (XmlNode nodeActor in actorsList)
-        {
-          string firstname = string.Empty;
-          string lastname = string.Empty;
-          string role = string.Empty;
-          XmlNode nodeFirstName = nodeActor.SelectSingleNode("FirstName");
-          XmlNode nodeLastName = nodeActor.SelectSingleNode("LastName");
-          XmlNode nodeRole = nodeActor.SelectSingleNode("Role");
-          if (nodeFirstName != null && nodeFirstName.InnerText != null)
-          {
-            firstname = nodeFirstName.InnerText;
-          }
-          if (nodeLastName != null && nodeLastName.InnerText != null)
-          {
-            lastname = nodeLastName.InnerText;
-          }
-          if (nodeRole != null && nodeRole.InnerText != null)
-          {
-            role = nodeRole.InnerText;
-          }
-          string line = String.Format("{0} {1} as {2}\n", firstname, lastname, role);
-          cast += line;
-        }
-
-
-        string credits = string.Empty;
-        XmlNodeList creditsList = nodeDVD.SelectNodes("Credits/Credit");
-        foreach (XmlNode nodeCredit in creditsList)
-        {
-          // Added check for firstname, lastname valid
-          string firstname = string.Empty;
-          string lastname = string.Empty;
-          XmlNode nodeFirstName = nodeCredit.SelectSingleNode("FirstName");
-          XmlNode nodeLastName = nodeCredit.SelectSingleNode("LastName");
-          if (nodeFirstName != null && nodeFirstName.InnerText != null)
-          {
-            firstname = nodeFirstName.InnerText;
-          }
-          if (nodeLastName != null && nodeLastName.InnerText != null)
-          {
-            lastname = nodeLastName.InnerText;
-          }
-          if (credits.Length > 0)
-          {
-            credits += " / ";
-          }
-          credits += String.Format("{0} {1}", firstname, lastname);
-        }
-
-        IMDBMovie movie = new IMDBMovie();
-        movie.Cast = cast;
-        movie.CDLabel = string.Empty;
-        movie.Director = string.Empty;
-        movie.DVDLabel = string.Empty;
-        movie.File = string.Empty;
-        movie.Genre = genre;
-        movie.IMDBNumber = string.Empty;
-        // Added check to validate rating
-        if (nodeRating != null)
-        {
-          movie.MPARating = nodeRating.InnerText;
-        }
-        else
-        {
-          movie.MPARating = "NR";
-        }
-        movie.Path = string.Empty;
-        // Added check to validate overview and duration
-        if (nodeOverview != null)
-        {
-          movie.Plot = nodeOverview.InnerText;
-        }
-        else
-        {
-          movie.Plot = string.Empty;
-        }
-        movie.PlotOutline = string.Empty;
-        movie.Rating = 0;
-        if (nodeDuration != null)
-        {
-          movie.RunTime = Int32.Parse(nodeDuration.InnerText);
-        }
-        else
-        {
-          movie.RunTime = 0;
-        }
-        movie.SearchString = string.Empty;
-        movie.TagLine = string.Empty;
-        movie.ThumbURL = string.Empty;
-        movie.Title = nodeTitle.InnerText;
-        movie.Top250 = 0;
-        movie.Votes = string.Empty;
-        movie.Watched = 0;
-        movie.WritingCredits = credits;
-        // Added check to validate year
-        if (nodeYear != null)
-        {
-          movie.Year = Int32.Parse(nodeYear.InnerText);
-        }
-        else
-        {
-          movie.Year = 0;
-        }
-        id = VideoDatabase.AddMovie(movie.Title, true);
-        movie.ID = id;
-        VideoDatabase.SetMovieInfoById(id, ref movie);
-        Application.DoEvents();
-      }
-      LoadMovies(id);
-    }
-
+    
     // Changed
     private IMDBMovie CurrentMovie
     {
@@ -1768,15 +1743,7 @@ namespace MediaPortal.Configuration.Sections
           // Needed for IMDB Covers search Deda 30.4.2010
           movie.IMDBNumber = cbMovie.Movie.IMDBNumber;
         }
-        //movie.File=
-        //movie.Path=
-        //movie.Top250=
-        //movie.WritingCredits=
-        //movie.CDLabel=
-        //movie.Database=
-        //movie.DVDLabel=
-        //movie.IMDBNumber=
-        //movie.SearchString=
+        
         unchecked
         {
           if (cbWatched.Checked)
@@ -1789,10 +1756,15 @@ namespace MediaPortal.Configuration.Sections
           }
 
           movie.Title = tbTitle.Text;
+          //if (movie.DirectorID <= 0)
           movie.Director = tbDirector.Text;
+          movie.DirectorID = Convert.ToInt32(tbDirectorId.Text);
           movie.MPARating = tbMPAARating.Text;
           movie.RunTime = Int32.Parse(tbDuration.Text);
           movie.WritingCredits = tbWritingCredits.Text;
+          movie.Studios = tbStudio.Text;
+          movie.Language = tbLanguage.Text;
+          movie.Country = tbCountry.Text;
           movie.Plot = tbSummary.Text;
           movie.UserReview = tbReview.Text; // Added review         
           movie.Rating = (float)Double.Parse(tbRating.Text);
@@ -1803,6 +1775,7 @@ namespace MediaPortal.Configuration.Sections
           movie.Votes = tbVotes.Text;
           movie.PlotOutline = tbPlotOutline.Text;
         }
+        
         foreach (ListViewItem item in listViewGenres.Items)
         {
           if (movie.Genre == string.Empty)
@@ -1814,7 +1787,7 @@ namespace MediaPortal.Configuration.Sections
             movie.Genre += " / " + item.Text;
           }
         }
-
+        
         foreach (ListViewItem item in listViewMovieActors.Items)
         {
           string actor = item.SubItems[0].Text;
@@ -1845,7 +1818,7 @@ namespace MediaPortal.Configuration.Sections
       SaveSettings();
     }
 
-    #region Persistance
+    #region Serialization
 
     public override void LoadSettings() {}
 
@@ -1885,37 +1858,42 @@ namespace MediaPortal.Configuration.Sections
         }
         useFanartCheckBox.Checked = _useFanArt;
         fanartQ.Value = xmlreader.GetValueAsInt("moviedatabase", "fanartnumber", 1);
-        chbFanartShare.Checked = xmlreader.GetValueAsBool("moviedatabase", "usefanartshare", true);
-
+        
         if (_useFanArt)
         {
           fanartQ.Enabled = true;
-          chbFanartShare.Enabled = true;
         }
         else
         {
           fanartQ.Enabled = false;
-          chbFanartShare.Enabled = false;
         }
         SetFanartFileIndexLabel(0);
 
-        // Folder movie title
-        _useFolderAsTitle = xmlreader.GetValueAsBool("moviedatabase", "usefolderastitle", false);
-        useFoldernameCheckBox.Checked = _useFolderAsTitle;
-        if (_useFolderAsTitle)
-        {
-          preferFileNameCheckBox.Visible = true;
-        }
         preferFileNameCheckBox.Checked = xmlreader.GetValueAsBool("moviedatabase", "preferfilenameforsearch", false);
+        
+        // Movie info before play
+        chbShowMovieInfoOnPlay.Checked = xmlreader.GetValueAsBool("moviedatabase", "movieinfobeforeplay", false);
+        chbMovieInfoOnShares.Checked = xmlreader.GetValueAsBool("moviedatabase", "movieinfoshareview", false);
+
+        if (chbShowMovieInfoOnPlay.Checked)
+        {
+          chbMovieInfoOnShares.Enabled = true;
+        }
+        else
+        {
+          chbMovieInfoOnShares.Enabled = false;
+        }
 
         // Strip movie title prefix
         checkBoxStripTitlePrefix.Checked = xmlreader.GetValueAsBool("moviedatabase", "striptitleprefixes", false);
         tbTitlePrefixes.Text = xmlreader.GetValueAsString("moviedatabase", "titleprefixes", "The, Les, Die");
 
         // Load activated databases-Changed 
-        skipCheckBox.Checked = true; // xmlreader.GetValueAsBool("moviedatabase", "scanskipexisting", false);
-        actorsCheckBox.Checked = xmlreader.GetValueAsBool("moviedatabase", "getactors", true);
+        skipCheckBox.Checked = true;
 
+        // Actors list fetch size
+        cbActorsListFetchSize.SelectedItem= xmlreader.GetValueAsString("moviedatabase", "actorslistsize", "Short");
+        
         int iNumber = xmlreader.GetValueAsInt("moviedatabase", "number", 0);
         if (iNumber > 0)
         {
@@ -1959,11 +1937,13 @@ namespace MediaPortal.Configuration.Sections
         // FanArt
         xmlwriter.SetValueAsBool("moviedatabase", "usefanart", _useFanArt);
         xmlwriter.SetValue("moviedatabase", "fanartnumber", (int)fanartQ.Value);
-        xmlwriter.SetValueAsBool("moviedatabase", "usefanartshare", chbFanartShare.Checked);
-
+        
         // Folder movie title
-        xmlwriter.SetValueAsBool("moviedatabase", "usefolderastitle", _useFolderAsTitle);
         xmlwriter.SetValueAsBool("moviedatabase", "preferfilenameforsearch", preferFileNameCheckBox.Checked);
+
+        // Movie info before play
+        xmlwriter.SetValueAsBool("moviedatabase", "movieinfobeforeplay", chbShowMovieInfoOnPlay.Checked);
+        xmlwriter.SetValueAsBool("moviedatabase", "movieinfoshareview", chbMovieInfoOnShares.Checked);
 
         // Strip movie title prefix
         xmlwriter.SetValueAsBool("moviedatabase", "striptitleprefixes", checkBoxStripTitlePrefix.Checked);
@@ -1971,7 +1951,10 @@ namespace MediaPortal.Configuration.Sections
 
         // Database
         xmlwriter.SetValueAsBool("moviedatabase", "scanskipexisting", skipCheckBox.Checked);
-        xmlwriter.SetValueAsBool("moviedatabase", "getactors", actorsCheckBox.Checked);
+        xmlwriter.SetValueAsBool("moviedatabase", "getactors", true);
+
+        // Actors list size
+        xmlwriter.SetValue("moviedatabase", "actorslistsize", cbActorsListFetchSize.SelectedItem);
 
         xmlwriter.SetValue("moviedatabase", "number", lvDatabase.Items.Count);
         for (int i = 0; i < lvDatabase.Items.Count; i++)
@@ -2193,6 +2176,9 @@ namespace MediaPortal.Configuration.Sections
         return;
       }
 
+      string parserIndexFile = Config.GetFile(Config.Dir.Config, "scripts\\VDBParserStrings.xml");
+      string parserIndexUrl = @"http://install.team-mediaportal.com/MP1/VDBParserStrings.xml";
+
       _progressDialog = new DlgProgress();
       _progressDialog.SetHeading("Updating MovieInfo grabber scripts...");
       _progressDialog.TopMost = true;
@@ -2204,6 +2190,17 @@ namespace MediaPortal.Configuration.Sections
       _progressDialog.Count = 1;
       _progressDialog.Show();
       if (DownloadFile(_grabberIndexFile, GrabberIndexUrl) == false)
+      {
+        _progressDialog.CloseProgress();
+        return;
+      }
+
+      _progressDialog.SetLine1("Downloading the VDBparser file...");
+      _progressDialog.SetLine2("Downloading...");
+      _progressDialog.Total = 1;
+      _progressDialog.Count = 1;
+      _progressDialog.Show();
+      if (DownloadFile(parserIndexFile, parserIndexUrl) == false)
       {
         _progressDialog.CloseProgress();
         return;
@@ -2517,11 +2514,11 @@ namespace MediaPortal.Configuration.Sections
         }
         else
         {
-          tbFanartLocation.Text = FanArt.SetFanArtFileName(item.Movie.Title, _fanartImgIndex);
+          tbFanartLocation.Text = FanArt.SetFanArtFileName(item.Movie.ID, _fanartImgIndex);
         }
         if (!_isRefreshing)
         {
-          pictureBoxFanArt.ImageLocation = FanArt.SetFanArtFileName(item.Movie.Title, _fanartImgIndex);
+          pictureBoxFanArt.ImageLocation = FanArt.SetFanArtFileName(item.Movie.ID, _fanartImgIndex);
           // Update cover search string
           tbCoverSearchStr.Text = tbTitle.Text;
           // FanArt Picture
@@ -2534,6 +2531,9 @@ namespace MediaPortal.Configuration.Sections
         }
         // Fanart tab fields show/hide
         ShowHide();
+
+        pbGenreImage.ImageLocation = string.Empty;
+        pbUserGroupImage.ImageLocation = string.Empty;
       }
     }
 
@@ -2657,7 +2657,7 @@ namespace MediaPortal.Configuration.Sections
         string path, filename;
         Util.Utils.Split(fileDVD, out path, out filename);
 
-        if (filename.ToUpper() == "VIDEO_TS.IFO")
+        if (filename.ToUpper() == "VIDEO_TS.IFO" || filename.ToUpper() == "INDEX.BDMV")
         {
           string directoryDVD = path.Substring(0, path.LastIndexOf("\\"));
           if (Directory.Exists(directoryDVD))
@@ -2798,7 +2798,7 @@ namespace MediaPortal.Configuration.Sections
         _progressDialog.SetLine1("Downloading cover for: " + movie.Title);
 
         // Skip no IMDBid movie (better than fetch wrong cover)
-        if (CheckImdbId(movie.IMDBNumber) == false)
+        if (!VideoDatabase.CheckMovieImdbId(movie.IMDBNumber))
         {
           if (_progressDialog.Count < movies.Count - 1)
             _progressDialog.Count++;
@@ -2864,20 +2864,18 @@ namespace MediaPortal.Configuration.Sections
         Util.Utils.Split(listViewFiles.Items[0].Text, out strPath, out strFile);
         if (strFile != string.Empty & strPath != string.Empty)
         {
-          FanArt.DeleteFanarts(listViewFiles.Items[0].Text, CurrentMovie.Title);
+          //FanArt.DeleteFanarts(CurrentMovie.ID);
           // Download fanarts
           FanArt fanartSearch = new FanArt();
           if (!tbFASearchString.Enabled)
           {
             fanartSearch.GetTmdbFanartByApi
-              (strPath, strFile, CurrentMovie.IMDBNumber, CurrentMovie.Title, false, (int)fanartQ.Value,
-               chbFanartShare.Checked, string.Empty);
+              (CurrentMovie.ID, CurrentMovie.IMDBNumber, CurrentMovie.Title, false, (int)fanartQ.Value, string.Empty);
           }
           else
           {
             fanartSearch.GetTmdbFanartByApi
-              (strPath, strFile, CurrentMovie.IMDBNumber, CurrentMovie.Title, false, (int)fanartQ.Value,
-               chbFanartShare.Checked, tbFASearchString.Text);
+              (CurrentMovie.ID, CurrentMovie.IMDBNumber, CurrentMovie.Title, false, (int)fanartQ.Value, tbFASearchString.Text);
           }
           // Update database
           VideoDatabase.SetFanartURL(CurrentMovie.ID, fanartSearch.DefaultFanartUrl);
@@ -2940,8 +2938,8 @@ namespace MediaPortal.Configuration.Sections
           {
             FanArt fanartSearch = new FanArt();
             fanartSearch.GetTmdbFanartByUrl
-              (strPath, strFile, CurrentMovie.Title, fanart.Url, _fanartImgIndex, chbFanartShare.Checked);
-            FanArt.GetFanArtfilename(CurrentMovie.Title, _fanartImgIndex, out strFile);
+              (CurrentMovie.ID, fanart.Url, _fanartImgIndex);
+            FanArt.GetFanArtfilename(CurrentMovie.ID, _fanartImgIndex, out strFile);
             pictureBoxFanArt.ImageLocation = strFile;
             VideoDatabase.SetFanartURL(CurrentMovie.ID, fanart.Url);
             tbFanartLocation.Text = strFile;
@@ -3047,27 +3045,27 @@ namespace MediaPortal.Configuration.Sections
         _progressDialog.SetLine1("Downloading fanart for: " + movie.Title);
 
         // Skip no IMDBid movie (better than fetch wrong art)
-        if (CheckImdbId(movie.IMDBNumber) == false)
+        if (!VideoDatabase.CheckMovieImdbId(movie.IMDBNumber))
         {
           if (_progressDialog.Count < movies.Count - 1)
             _progressDialog.Count++;
           continue;
         }
-        VideoDatabase.GetFiles(movie.ID, ref movieFiles);
+        VideoDatabase.GetFilesForMovie(movie.ID, ref movieFiles);
         string strFile = string.Empty;
         string strPath = string.Empty;
 
         DatabaseUtility.Split((string)movieFiles[0], out strPath, out strFile);
 
         // Clean old fanarts
-        FanArt.DeleteFanarts((string)movieFiles[0], movie.Title);
+        //FanArt.DeleteFanarts(movie.ID);
 
         if (strFile != string.Empty & strPath != string.Empty)
         {
           // Find fanart
           FanArt fanartSearch = new FanArt();
           fanartSearch.GetTmdbFanartByApi
-            (strPath, strFile, movie.IMDBNumber, movie.Title, true, (int)fanartQ.Value, chbFanartShare.Checked, string.Empty);
+            (movie.ID, movie.IMDBNumber, movie.Title, true, (int)fanartQ.Value, string.Empty);
 
           // Update fanart URL in vdb
           VideoDatabase.SetFanartURL(movie.ID, fanartSearch.DefaultFanartUrl);
@@ -3109,7 +3107,7 @@ namespace MediaPortal.Configuration.Sections
           {
             FanArt fanartSearch = new FanArt();
             fanartSearch.GetLocalFanart
-              (strPath, strFile, CurrentMovie.Title, fanartFile, _fanartImgIndex, chbFanartShare.Checked);
+              (CurrentMovie.ID, fanartFile, _fanartImgIndex);
             fanartListBox.Items.Clear();
             // Clear previous image in fanart picturebox
             if (pictureBoxFanArt.Image != null)
@@ -3169,9 +3167,16 @@ namespace MediaPortal.Configuration.Sections
         pictureBoxFanArt.Image = null;
       }
       string strFile = string.Empty;
-      FanArt.GetFanArtfilename(CurrentMovie.Title, index, out strFile);
+      FanArt.GetFanArtfilename(CurrentMovie.ID, index, out strFile);
       pictureBoxFanArt.ImageLocation = strFile;
       tbFanartLocation.Text = strFile;
+    }
+
+    private void btFADelete_Click(object sender, EventArgs e)
+    {
+      FanArt.DeleteFanart(CurrentMovie.ID, _fanartImgIndex);
+      pictureBoxFanArt.ImageLocation = string.Empty;
+      tbFanartLocation.Text = string.Empty;
     }
 
     #endregion
@@ -3188,20 +3193,20 @@ namespace MediaPortal.Configuration.Sections
     }
 
     // Folder as movie title checkbox
-    private void useFoldername_CheckedChanged(object sender, EventArgs e)
-    {
-      _useFolderAsTitle = ((CheckBox)sender).Checked;
-      if (_useFolderAsTitle)
-      {
-        preferFileNameCheckBox.Visible = true;
-      }
-      else
-      {
-        preferFileNameCheckBox.Visible = false;
-        preferFileNameCheckBox.Checked = false;
-      }
-      SaveSettings();
-    }
+    //private void useFoldername_CheckedChanged(object sender, EventArgs e)
+    //{
+    //  _useFolderAsTitle = ((CheckBox)sender).Checked;
+    //  if (_useFolderAsTitle)
+    //  {
+    //    preferFileNameCheckBox.Visible = true;
+    //  }
+    //  else
+    //  {
+    //    preferFileNameCheckBox.Visible = false;
+    //    preferFileNameCheckBox.Checked = false;
+    //  }
+    //  SaveSettings();
+    //}
 
     // Prefer filename rather than folder name
     private void preferFileNameCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -3252,12 +3257,10 @@ namespace MediaPortal.Configuration.Sections
         if (_useFanArt)
         {
           fanartQ.Enabled = true;
-          chbFanartShare.Enabled = true;
         }
         else
         {
           fanartQ.Enabled = false;
-          chbFanartShare.Enabled = false;
         }
       }
       else
@@ -3268,7 +3271,6 @@ namespace MediaPortal.Configuration.Sections
           useFanartCheckBox.CheckState = CheckState.Unchecked;
           _useFanArt = false;
           fanartQ.Enabled = false;
-          chbFanartShare.Enabled = false;
           SaveSettings();
         }
       }
@@ -3305,6 +3307,8 @@ namespace MediaPortal.Configuration.Sections
         // Clear previous infos
         tbBirthDate.Text = string.Empty;
         tbBirthPlace.Text = string.Empty;
+        tbDeathDate.Text = string.Empty;
+        tbDeathPlace.Text = string.Empty;
         tbMiniBiography.Text = string.Empty;
         tbBiography.Text = string.Empty;
         tbThumbLoc.Text = string.Empty;
@@ -3320,14 +3324,18 @@ namespace MediaPortal.Configuration.Sections
           int actorID = int.Parse((string)cbActor.SelectedValue);
           IMDBActor actdetail = new IMDBActor();
           actdetail = VideoDatabase.GetActorInfo(actorID);
-
-          // Populate new infos for selected actor
-          tbBirthDate.Text = actdetail.DateOfBirth;
-          tbBirthPlace.Text = actdetail.PlaceOfBirth;
-          tbMiniBiography.Text = actdetail.MiniBiography;
-          tbBiography.Text = actdetail.Biography;
-          tbThumbLoc.Text = actdetail.ThumbnailUrl;
-          pictureBoxActor.ImageLocation = actdetail.ThumbnailUrl;
+          if (actdetail != null)
+          {
+            // Populate new infos for selected actor
+            tbBirthDate.Text = actdetail.DateOfBirth;
+            tbBirthPlace.Text = actdetail.PlaceOfBirth;
+            tbDeathDate.Text = actdetail.DateOfDeath;
+            tbDeathPlace.Text = actdetail.PlaceOfDeath;
+            tbMiniBiography.Text = actdetail.MiniBiography;
+            tbBiography.Text = actdetail.Biography;
+            tbThumbLoc.Text = actdetail.ThumbnailUrl;
+          }
+          pictureBoxActor.ImageLocation = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, cbActor.SelectedValue.ToString());
         }
       }
       catch (Exception) {}
@@ -3338,47 +3346,9 @@ namespace MediaPortal.Configuration.Sections
     {
       try
       {
-        if (Int32.Parse(cbActor.SelectedValue.ToString()) > 1)
+        if (Int32.Parse(cbActor.SelectedValue.ToString()) > 0)
         {
-          IMDBActor imdbActor = new IMDBActor();
-          imdbActor.id = Int32.Parse(cbActor.SelectedValue.ToString());
-          imdbActor.Name = cbActor.Text.Replace(" - Director", ""); // Remove director suffix from the name
-          imdbActor.MiniBiography = tbMiniBiography.Text;
-          imdbActor.Biography = tbBiography.Text;
-          imdbActor.DateOfBirth = tbBirthDate.Text;
-          imdbActor.PlaceOfBirth = tbBirthPlace.Text;
-
-          bool isUrl = (tbThumbLoc.Text.Substring(0, 7) == @"http://");
-          if (isUrl)
-          {
-            imdbActor.ThumbnailUrl = tbThumbLoc.Text;
-          }
-          else
-          {
-            imdbActor.ThumbnailUrl = string.Empty;
-            tbThumbLoc.Text = string.Empty;
-          }
-          // Update actor info
-          VideoDatabase.SetActorInfo(imdbActor.id, imdbActor);
-          // Update actor thumb
-          if (imdbActor.ThumbnailUrl != string.Empty)
-          {
-            string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, imdbActor.Name);
-            string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieActors, imdbActor.Name);
-            // Delete old thumbs
-            Util.Utils.FileDelete(largeCoverArt);
-            Util.Utils.FileDelete(coverArt);
-            // Save new thumbs
-            IMDBFetcher.DownloadCoverArt(Thumbs.MovieActors, imdbActor.ThumbnailUrl, imdbActor.Name);
-            // Clear old image from picture box
-            if (pictureBoxActor.Image != null)
-            {
-              pictureBoxActor.Image.Dispose();
-              pictureBoxActor.Image = null;
-            }
-            // Set new image into pbox
-            pictureBoxActor.ImageLocation = imdbActor.ThumbnailUrl;
-          }
+          SaveActorInfo();
           MessageBox.Show("Actor info saved.");
         }
       }
@@ -3388,16 +3358,70 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    // Refresh Movie actors info
-    private void btnRefreshActors_Click(object sender, EventArgs e)
+    private void SaveActorInfo()
+    {
+      IMDBActor imdbActor = new IMDBActor();
+      imdbActor.ID = Int32.Parse(cbActor.SelectedValue.ToString());
+      imdbActor.Name = cbActor.Text.Replace(" - Director", ""); // Remove director suffix from the name
+      imdbActor.MiniBiography = tbMiniBiography.Text;
+      imdbActor.Biography = tbBiography.Text;
+      imdbActor.DateOfBirth = tbBirthDate.Text;
+      imdbActor.PlaceOfBirth = tbBirthPlace.Text;
+      imdbActor.DateOfDeath = tbDeathDate.Text;
+      imdbActor.PlaceOfDeath = tbDeathPlace.Text;
+
+      if (tbThumbLoc.Text != string.Empty && tbThumbLoc.Text.Length >= 7)
+      {
+        bool isUrl = (tbThumbLoc.Text.Substring(0, 7) == @"http://" || tbThumbLoc.Text.Substring(0, 7) == @"file://");
+        if (isUrl)
+        {
+          imdbActor.ThumbnailUrl = tbThumbLoc.Text;
+        }
+      }
+      else
+      {
+        imdbActor.ThumbnailUrl = string.Empty;
+        tbThumbLoc.Text = string.Empty;
+      }
+      // Update actor info
+      VideoDatabase.SetActorInfo(imdbActor.ID, imdbActor);
+      // Update actor thumb
+      if (imdbActor.ThumbnailUrl != string.Empty)
+      {
+        string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, imdbActor.ID.ToString());
+        string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieActors, imdbActor.ID.ToString());
+        // Delete old thumbs
+        Util.Utils.FileDelete(largeCoverArt);
+        Util.Utils.FileDelete(coverArt);
+        // Save new thumbs
+        IMDBFetcher.DownloadCoverArt(Thumbs.MovieActors, imdbActor.ThumbnailUrl, imdbActor.ID.ToString());
+        // Clear old image from picture box
+        if (pictureBoxActor.Image != null)
+        {
+          pictureBoxActor.Image.Dispose();
+          pictureBoxActor.Image = null;
+        }
+        // Set new image into pbox
+        pictureBoxActor.ImageLocation = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, imdbActor.ID.ToString());
+      }
+    }
+
+    // Refresh Movie actors
+    private void btnRefreshActors_Click(object sender, EventArgs e) 
     {
       _progressDialog.Total = 1;
       _progressDialog.Count = 1;
+      
       // Start fetch
       if (IMDBFetcher.FetchMovieActors(this, CurrentMovie))
       {
+        IMDBMovie movie = new IMDBMovie();
+        VideoDatabase.GetMovieInfoById(CurrentMovie.ID, ref movie);
+        tbDirectorId.Text = movie.DirectorID.ToString();
+        tbDirector.Text = movie.Director;
         ActorsTableRefresh(CurrentMovie.ID);
         cbActor.SelectedIndex = 0;
+        UpdateActorsList(CurrentMovie);
       }
       else
       {
@@ -3465,16 +3489,20 @@ namespace MediaPortal.Configuration.Sections
           {
             tbBirthDate.Text = actdetail.DateOfBirth;
             tbBirthPlace.Text = actdetail.PlaceOfBirth;
+            tbDeathDate.Text = actdetail.DateOfDeath;
+            tbDeathPlace.Text = actdetail.PlaceOfDeath;
             tbMiniBiography.Text = actdetail.MiniBiography;
             tbBiography.Text = actdetail.Biography;
             tbThumbLoc.Text = actdetail.ThumbnailUrl;
-            pictureBoxActor.ImageLocation = actdetail.ThumbnailUrl;
+            pictureBoxActor.ImageLocation = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, actdetail.ID.ToString());
           }
         }
         else
         {
           tbBirthDate.Text = string.Empty;
           tbBirthPlace.Text = string.Empty;
+          tbDeathDate.Text = string.Empty;
+          tbDeathPlace.Text = string.Empty;
           tbMiniBiography.Text = string.Empty;
           tbBiography.Text = string.Empty;
           tbThumbLoc.Text = string.Empty;
@@ -3525,16 +3553,16 @@ namespace MediaPortal.Configuration.Sections
           dgActorMovies.Rows.Add();
           dgActorMovies.Rows[i].Cells[0].Value = actdetail[i].Year.ToString();
           dgActorMovies.Rows[i].Cells[1].Value = actdetail[i].MovieTitle;
-          dgActorMovies.Rows[i].Cells[1].ToolTipText = "http://www.imdb.com/title/" + actdetail[i].imdbID;
+          dgActorMovies.Rows[i].Cells[1].ToolTipText = "http://www.imdb.com/title/" + actdetail[i].MovieImdbID;
           dgActorMovies.Rows[i].Cells[2].Value = actdetail[i].Role;
-          dgActorMovies.Rows[i].Cells[3].Value = actdetail[i].imdbID;
+          dgActorMovies.Rows[i].Cells[3].Value = actdetail[i].MovieImdbID;
 
           // Mark movie in our collection
           // This can maybe slow down initialization with huge movie list (leave as test)
           // Changed method 08.08.2010, reported it works fast with 500+ movies in collection
           ArrayList movies = new ArrayList();
-          string sql = "SELECT * FROM movieinfo WHERE IMDBID = '" + actdetail[i].imdbID + "'";
-          VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false);
+          string sql = "SELECT * FROM movieinfo WHERE IMDBID = '" + actdetail[i].MovieImdbID + "'";
+          VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false, false);
 
           if (movies.Count > 0)
           {
@@ -3576,7 +3604,7 @@ namespace MediaPortal.Configuration.Sections
       finally {}
     }
 
-    // Refresh actors info for all movies
+    // Refresh actors for all movies
     private void buttonRefreshAllActors_Click(object sender, EventArgs e)
     {
       int movieCollection = cbTitle.Items.Count - 1;
@@ -3604,6 +3632,521 @@ namespace MediaPortal.Configuration.Sections
       cbTitle.SelectedIndex = cbIndex;
     }
 
+    // Refresh actor info
+    private void btnRefreshActorInfo_Click(object sender, EventArgs e)
+    {
+      try
+      {
+        _progressDialog.Total = 1;
+        _progressDialog.Count = 1;
+        // Start fetch
+        if (cbActor.SelectedIndex != -1)
+        {
+          string actorId = cbActorMovies.SelectedValue.ToString();
+          string actorImdbId = VideoDatabase.GetActorImdbId(Convert.ToInt32(actorId));
+          string actor = cbActor.Text;
+
+          if (VideoDatabase.CheckActorImdbId(actorImdbId))
+          {
+            actor = actorImdbId;
+          }
+
+          IMDBFetcher.FetchMovieActor(this, CurrentMovie, actor,
+                                      Convert.ToInt32(cbActor.SelectedValue.ToString()));
+          int index = cbActor.SelectedIndex;
+          ActorsTableRefresh(CurrentMovie.ID);
+          cbActor.SelectedIndex = index;
+        }
+      }
+      catch (Exception){}
+    }
+
+    private void btnRefreshActorsInfo_Click(object sender, EventArgs e)
+    {
+      int countActors = cbActor.Items.Count;
+
+      if (countActors > 0)
+      {
+        _progressDialog.Total = countActors;
+        _progressDialog.Count = 1;
+
+        for (int i = 0; i < countActors; ++i)
+        {
+          cbActor.SelectedIndex = i;
+          // Fetch actor info
+          string value = cbActorMovies.SelectedValue.ToString();
+          string actorImdbId = VideoDatabase.GetActorImdbId(Convert.ToInt32(value));
+          string actor = cbActor.Text;
+
+          if (VideoDatabase.CheckActorImdbId(actorImdbId))
+          {
+            actor = actorImdbId;
+          }
+
+          IMDBFetcher.FetchMovieActor(this, CurrentMovie, actor,
+                                      Convert.ToInt32(cbActor.SelectedValue.ToString()));
+
+          if (_progressDialog.CancelScan)
+          {
+            break;
+          }
+
+          if (_progressDialog.Count < countActors)
+            _progressDialog.Count++;
+        }
+        cbActor.SelectedIndex = 0;
+      }
+    }
+
+    private void btAddActorImage_Click(object sender, EventArgs e)
+    {
+      string actorId = cbActorMovies.SelectedValue.ToString();
+      IMDBActor actor = VideoDatabase.GetActorInfo(Convert.ToInt32(actorId));
+      OpenFileDialog dlg = new OpenFileDialog();
+      dlg.AddExtension = true;
+      dlg.Filter = "JPEG Image (*.jpg,*.jpeg)|*.jpg;*.jpeg|All files (*.*)|*.*";
+      dlg.RestoreDirectory = false;
+      string fileName = string.Empty;
+      
+      // open dialog
+      if (dlg.ShowDialog(this) == DialogResult.OK)
+      {
+        fileName = dlg.FileName;
+
+        if (!string.IsNullOrEmpty(fileName))
+        {
+          tbThumbLoc.Text = "file://" + fileName;
+          SaveActorInfo();
+          
+          if (actor != null)
+          {
+            int index = cbActor.SelectedIndex;
+            ActorsTableRefresh(CurrentMovie.ID);
+            cbActor.SelectedIndex = index;
+          }
+        }
+      }
+    }
+
+    #endregion
+
+    #region UserGroups
+    
+    private void cbUserGroups_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (cbUserGroups.SelectedIndex == -1)
+      {
+        return;
+      }
+
+      cbUserGroupFieldName.Items.Clear();
+      cbUserGroupFieldValues.Items.Clear();
+      cbUserGroupFieldOperand.Items.Clear();
+      tbUserGroupFieldValue.Text = string.Empty;
+      tbUserGroupRuleSyntax.Text = VideoDatabase.GetUserGroupRule(cbUserGroups.SelectedItem.ToString());
+      cbUserGroupType.Items.Clear();
+      cbUserGroupType.Items.Add("MediaInfo");
+      cbUserGroupType.Items.Add("MovieInfo");
+      cbUserGroupType.Items.Add("Actor");
+      cbUserGroupType.Items.Add("Folder");
+      pbUserGroupImage.ImageLocation = string.Empty;
+      pbUserGroupImage.ImageLocation = Util.Utils.GetLargeCoverArtName(Thumbs.MovieUserGroups,
+                                                                       cbUserGroups.SelectedItem.ToString());
+    }
+
+    private void cbGroupType_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (cbUserGroupType.SelectedIndex == -1)
+      {
+        return;
+      }
+
+      cbUserGroupFieldName.Items.Clear();
+
+      switch (cbUserGroupType.SelectedItem.ToString())
+      {
+        case "MediaInfo":
+          cbUserGroupFieldName.Items.Add("videoCodec");
+          cbUserGroupFieldName.Items.Add("videoResolution");
+          cbUserGroupFieldName.Items.Add("aspectRatio");
+          cbUserGroupFieldName.Items.Add("audioCodec");
+          cbUserGroupFieldName.Items.Add("audioChannels");
+          break;
+
+        case "MovieInfo":
+          cbUserGroupFieldName.Items.Add("strTitle");
+          cbUserGroupFieldName.Items.Add("strDirector");
+          break;
+
+        case "Actor":
+          cbUserGroupFieldName.Items.Add("strActor");
+          break;
+
+        case "Folder":
+          cbUserGroupFieldName.Items.Add("strPath");
+          break;
+      }
+    }
+
+    private void cbGroupFieldName_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (cbUserGroupFieldName.SelectedIndex == -1)
+      {
+        return;
+      }
+
+      cbUserGroupFieldOperand.Items.Clear();
+      cbUserGroupFieldValues.Items.Clear();
+
+      switch (cbUserGroupType.SelectedItem.ToString())
+      {
+        case "MediaInfo":
+          cbUserGroupFieldOperand.Items.Add("equals");
+          cbUserGroupFieldOperand.Items.Add("not equals");
+          cbUserGroupFieldOperand.Items.Add("contains");
+          break;
+
+        case "MovieInfo":
+          cbUserGroupFieldOperand.Items.Add("equals");
+          cbUserGroupFieldOperand.Items.Add("not equals");
+          cbUserGroupFieldOperand.Items.Add("contains");
+          cbUserGroupFieldOperand.Items.Add("starts with");
+          cbUserGroupFieldOperand.Items.Add("ends with");
+          break;
+
+        case "Actor":
+          cbUserGroupFieldOperand.Items.Add("equals");
+          cbUserGroupFieldOperand.Items.Add("not equals");
+          cbUserGroupFieldOperand.Items.Add("contains");
+          cbUserGroupFieldOperand.Items.Add("starts with");
+          cbUserGroupFieldOperand.Items.Add("ends with");
+          break;
+
+        case "Folder":
+          cbUserGroupFieldOperand.Items.Add("equals");
+          cbUserGroupFieldOperand.Items.Add("not equals");
+          cbUserGroupFieldOperand.Items.Add("contains");
+          cbUserGroupFieldOperand.Items.Add("starts with");
+          break;
+      }
+
+      ArrayList values = new ArrayList();
+      bool error = false;
+      string fieldName = cbUserGroupFieldName.SelectedItem.ToString();
+      string sql = string.Empty;
+
+      switch (fieldName)
+      {
+        case "videoCodec":
+        case "videoResolution":
+        case "aspectRatio":
+        case "audioCodec":
+        case "audioChannels":
+
+          sql = "SELECT DISTINCT " + fieldName + " FROM filesmediainfo";
+          values = VideoDatabase.ExecuteRuleSql(sql, fieldName, out error);
+
+          foreach (string value in values)
+          {
+            cbUserGroupFieldValues.Items.Add(value);
+          }
+          break;
+
+        case "strTitle":
+        case "strDirector":
+          sql = "SELECT DISTINCT " + fieldName + " FROM movieinfo";
+          values = VideoDatabase.ExecuteRuleSql(sql, fieldName, out error);
+
+          foreach (string value in values)
+          {
+            cbUserGroupFieldValues.Items.Add(value);
+          }
+          break;
+
+        case "strPath":
+          sql = "SELECT DISTINCT " + fieldName + " FROM path";
+          values = VideoDatabase.ExecuteRuleSql(sql, fieldName, out error);
+
+          foreach (string value in values)
+          {
+            cbUserGroupFieldValues.Items.Add(value);
+          }
+          break;
+      }
+    }
+
+    private void cbUserGroupFieldValues_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (cbUserGroupFieldValues.SelectedIndex == -1)
+      {
+        return;
+      }
+
+      tbUserGroupFieldValue.Text = cbUserGroupFieldValues.SelectedItem.ToString();
+    }
+
+    // Generate rule syntax
+    private void btGenerateRuleSyntax_Click(object sender, EventArgs e)
+    {
+      string operand = string.Empty;
+      string sql = string.Empty;
+      string fieldName = cbUserGroupFieldName.SelectedItem.ToString();
+
+      switch (cbUserGroupFieldOperand.SelectedItem.ToString())
+      {
+        case "equals":
+          operand = " = '" + tbUserGroupFieldValue.Text + "'";
+          break;
+
+        case "not equals":
+          operand = " <> '" + tbUserGroupFieldValue.Text + "'";
+          break;
+
+        case "contains":
+          operand = " LIKE '%" + tbUserGroupFieldValue.Text + "%'";
+          break;
+
+        case "starts with":
+          operand = " LIKE '" + tbUserGroupFieldValue.Text + "%'";
+          break;
+
+        case "ends with":
+          operand = " LIKE '%" + tbUserGroupFieldValue.Text + "'";
+          break;
+      }
+
+      switch (cbUserGroupType.SelectedItem.ToString())
+      {
+        case "MediaInfo":
+          sql =
+              "SELECT movieinfo.idMovie FROM filesmediainfo INNER JOIN files ON filesmediainfo.idFile = files.idFile INNER JOIN movieinfo ON files.idMovie = movieinfo.idMovie where " + fieldName + operand;
+
+          tbUserGroupRuleSyntax.Text = sql;
+          break;
+
+        case "MovieInfo":
+          sql = "SELECT movieinfo.idMovie FROM movieinfo where " + fieldName + operand;
+          tbUserGroupRuleSyntax.Text = sql;
+          break;
+
+        case "Actor":
+          sql = "SELECT DISTINCT movieinfo.idMovie FROM actors , movieinfo INNER JOIN actorlinkmovie ON actors.idActor = actorlinkmovie.idActor AND actorlinkmovie.idMovie = movieinfo.idMovie WHERE " + fieldName + operand; ;
+          tbUserGroupRuleSyntax.Text = sql;
+          break;
+
+        case "Folder":
+          sql = "SELECT DISTINCT movieinfo.idMovie FROM path INNER JOIN files ON files.idPath = path.idPath INNER JOIN movieinfo ON files.idMovie = movieinfo.idMovie where " + fieldName + operand;
+          tbUserGroupRuleSyntax.Text = sql;
+          break;
+      }
+    }
+
+    // Check rule syntax
+    private void btUserGroupCheckSyntax_Click(object sender, EventArgs e)
+    {
+      bool error = false;
+
+      if (!string.IsNullOrEmpty(tbUserGroupRuleSyntax.Text))
+      {
+        VideoDatabase.ExecuteSql(tbUserGroupRuleSyntax.Text, out error);
+      }
+      else
+      {
+        error = true;
+      }
+
+      if (!error)
+      {
+        MessageBox.Show("Rule syntax OK!");
+      }
+      else
+      {
+        MessageBox.Show("Error in rule syntax!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
+    }
+
+    // Save and execute rule
+    private void btUserGroupRuleSave_Click(object sender, EventArgs e)
+    {
+      try
+      {
+        string userGroup = cbUserGroups.SelectedItem.ToString();
+        ArrayList values = new ArrayList();
+        bool error = false;
+
+        if (!string.IsNullOrEmpty(tbUserGroupRuleSyntax.Text))
+        {
+          values = VideoDatabase.ExecuteRuleSql(tbUserGroupRuleSyntax.Text, "movieinfo.idMovie", out error);
+        }
+        else
+        {
+          error = true;
+        }
+
+        if (error)
+        {
+          MessageBox.Show("Error in rule syntax!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          return;
+        }
+
+        VideoDatabase.AddUserGroupRuleByGroupName(cbUserGroups.SelectedItem.ToString(), tbUserGroupRuleSyntax.Text);
+
+        if (values.Count > 0)
+        {
+          foreach (string movieId in values)
+          {
+            VideoDatabase.AddUserGroupToMovie(Convert.ToInt32(movieId), VideoDatabase.AddUserGroup(userGroup));
+          }
+
+          if (cbTitle.SelectedItem != null)
+          {
+            ComboBoxItemMovie item = (ComboBoxItemMovie)cbTitle.SelectedItem;
+            UpdateEdit(item.Movie);
+          }
+
+          if (values.Count == 1)
+          {
+            MessageBox.Show(values.Count + " movie added into group: " + userGroup);
+          }
+          else
+          {
+            MessageBox.Show(values.Count + " movies added into group: " + userGroup);
+          }
+        }
+      }
+      catch (Exception) { }
+    }
+
+    // Delete rule
+    private void btUserGroupRuleRemove_Click(object sender, EventArgs e)
+    {
+      ArrayList values = new ArrayList();
+      bool error = false;
+
+      if (!string.IsNullOrEmpty(tbUserGroupRuleSyntax.Text))
+      {
+        values = VideoDatabase.ExecuteRuleSql(tbUserGroupRuleSyntax.Text, "movieinfo.idMovie", out error);
+      }
+      else
+      {
+        error = true;
+      }
+
+      if (error)
+      {
+        MessageBox.Show("Error in rule syntax!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        return;
+      }
+
+      if (values.Count > 0)
+      {
+        foreach (string movieId in values)
+        {
+          VideoDatabase.RemoveUserGroupsForMovie(Convert.ToInt32(movieId));
+        }
+
+        if (cbTitle.SelectedItem != null)
+        {
+          ComboBoxItemMovie item = (ComboBoxItemMovie)cbTitle.SelectedItem;
+          UpdateEdit(item.Movie);
+        }
+      }
+
+      VideoDatabase.RemoveUserGroupRule(cbUserGroups.SelectedItem.ToString());
+      tbUserGroupRuleSyntax.Text = string.Empty;
+    }
+
+    // Add group image
+    private void btAddUserGroupImage_Click(object sender, EventArgs e)
+    {
+      if (lvUserGroups.SelectedItems.Count == 1)
+      {
+        AddThumbImage(lvUserGroups, Thumbs.MovieUserGroups, pbUserGroupImage);
+      }
+      if (lvMovieUserGroups.SelectedItems.Count == 1)
+      {
+        AddThumbImage(lvMovieUserGroups, Thumbs.MovieUserGroups, pbUserGroupImage);
+      }
+    }
+
+    // Add genre image
+    private void btAddGenreImage_Click(object sender, EventArgs e)
+    {
+      if (listViewAllGenres.SelectedItems.Count == 1)
+      {
+        AddThumbImage(listViewAllGenres, Thumbs.MovieGenre, pbGenreImage);
+      }
+      if (listViewGenres.SelectedItems.Count == 1)
+      {
+        AddThumbImage(listViewGenres, Thumbs.MovieGenre, pbGenreImage);
+      }
+    }
+
+    private void AddThumbImage(ListView lView, string thumbFolder, PictureBox pBox)
+    {
+      try
+      {
+        OpenFileDialog dlg = new OpenFileDialog();
+        string smallThumb = string.Empty;
+        string largeThumb = string.Empty;
+        dlg.AddExtension = true;
+        dlg.Filter = "JPEG Image (*.jpg,*.jpeg)|*.jpg;*.jpeg|All files (*.*)|*.*";
+        dlg.RestoreDirectory = false;
+        int selectedGroupIndex = -1;
+
+        string strFilename = lView.SelectedItems[0].Text;
+        selectedGroupIndex = lView.SelectedItems[0].Index;
+        smallThumb = Util.Utils.GetCoverArtName(thumbFolder, strFilename);
+        largeThumb = Util.Utils.GetLargeCoverArtName(thumbFolder, strFilename);
+        // open dialog
+        if (dlg.ShowDialog(this) == DialogResult.OK)
+        {
+          if (Util.Picture.CreateThumbnail(dlg.FileName, smallThumb, (int)Thumbs.ThumbResolution,
+                                           (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+          {
+            Util.Picture.CreateThumbnail(dlg.FileName, largeThumb, (int)Thumbs.ThumbLargeResolution,
+                                         (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
+          }
+          pBox.ImageLocation = largeThumb;
+          lView.Select();
+          lView.Items[selectedGroupIndex].Selected = true;
+        }
+      }
+      catch (Exception)
+      {
+      }
+    }
+
+    private void lvUserGroups_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      GetThumb(lvUserGroups, Thumbs.MovieUserGroups, pbUserGroupImage);
+    }
+
+    private void listViewAllGenres_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      GetThumb(listViewAllGenres, Thumbs.MovieGenre, pbGenreImage);
+    }
+
+    private void lvMovieUserGroups_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      GetThumb(lvMovieUserGroups, Thumbs.MovieUserGroups, pbUserGroupImage);
+    }
+
+    private void listViewGenres_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      GetThumb(listViewGenres, Thumbs.MovieGenre, pbGenreImage);
+    }
+
+    private void GetThumb(ListView lView, string thumbsFolder, PictureBox pBox)
+    {
+      if (lView.SelectedItems.Count > 0)
+      {
+        string strFilename = lView.SelectedItems[0].Text;
+        string largeThumb = Util.Utils.GetLargeCoverArtName(thumbsFolder, strFilename);
+        pBox.ImageLocation = largeThumb;
+      }
+    }
+
     #endregion
 
     #region Tools
@@ -3613,6 +4156,8 @@ namespace MediaPortal.Configuration.Sections
     {
       ArrayList listActors = new ArrayList();
       VideoDatabase.GetActors(listActors);
+      char[] splitter = { '|' };
+      string[] sActor;
 
       int actorsCount = listActors.Count;
       int deleted = 0;
@@ -3624,9 +4169,10 @@ namespace MediaPortal.Configuration.Sections
 
       foreach (string actor in listActors)
       {
-        if (actor == "unknown" | actor.StartsWith("nm"))
+        sActor = actor.Split(splitter);
+        if (sActor[1] == "unknown" | sActor[1].StartsWith("nm"))
         {
-          VideoDatabase.DeleteActor(actor);
+          VideoDatabase.DeleteActor(sActor[2]);
           deleted++;
         }
         //
@@ -3636,18 +4182,19 @@ namespace MediaPortal.Configuration.Sections
       }
       pbTools.Value = 0;
       // Refresh actors list view
-      listViewAllActors.Items.Clear();
-      listViewAllActors.BeginUpdate();
+      //listViewAllActors.Items.Clear();
+      //listViewAllActors.BeginUpdate();
       listActors = new ArrayList();
       VideoDatabase.GetActors(listActors);
 
       foreach (string actor in listActors)
       {
         bool add = true;
+        sActor = actor.Split(splitter);
 
         foreach (ListViewItem item in listViewMovieActors.Items)
         {
-          if (item.Text == actor)
+          if (item.Text == sActor[1])
           {
             add = false;
             break;
@@ -3656,10 +4203,10 @@ namespace MediaPortal.Configuration.Sections
 
         if (add)
         {
-          listViewAllActors.Items.Add(actor);
+          //listViewAllActors.Items.Add(sActor[1]);
         }
       }
-      listViewAllActors.EndUpdate();
+      //listViewAllActors.EndUpdate();
       // Actor details
       ActorsTableRefresh(Int32.Parse(tbMovieID.Text));
       PopulateActorInfo();
@@ -3798,8 +4345,204 @@ namespace MediaPortal.Configuration.Sections
 
       Cursor = Cursors.Default;
     }
-    
 
+    // Upgrade actor thumbs
+    private void btnUpgActorThumbs_Click(object sender, EventArgs e)
+    {
+      ArrayList actors = new ArrayList();
+      VideoDatabase.GetActors(actors);
+      char[] splitter = { '|' };
+      string[] sActor;
+
+      // Progress bar initialization
+      pbTools.Maximum = actors.Count;
+      pbTools.Minimum = 0;
+      pbTools.Value = 0;
+
+      foreach (string actor in actors)
+      {
+        sActor = actor.Split(splitter);
+        // Update actor thumb
+        string lThumb = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, sActor[1]);
+        string sThumb = Util.Utils.GetCoverArtName(Thumbs.MovieActors, sActor[1]);
+        string lThumbNew = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, sActor[0]);
+        string sThumbNew = Util.Utils.GetCoverArtName(Thumbs.MovieActors, sActor[0]);
+
+        // Copy old thumb into new
+        if (File.Exists(lThumb))
+        {
+          File.Copy(lThumb, lThumbNew, true);
+          Util.Utils.FileDelete(lThumb);
+        }
+
+        if (File.Exists(sThumb))
+        {
+          File.Copy(sThumb, sThumbNew, true);
+          Util.Utils.FileDelete(sThumb);
+        }
+
+        ProgressBarAdvance(ref pbTools, string.Empty, false);
+      }
+      pbTools.Value = 0;
+    }
+
+    // Import nfo xml
+    private void buttonImportNfo_Click(object sender, EventArgs e)
+    {
+      FolderBrowserDialog fBrowser = new FolderBrowserDialog();
+
+      if (fBrowser.ShowDialog(this) != DialogResult.OK)
+      {
+        return;
+      }
+
+      _nfoFiles = new ArrayList();
+      GetNfoFiles(fBrowser.SelectedPath, ref _nfoFiles);
+      notFoundMovie = new ArrayList();
+
+      // Set refresh status for background worker
+      _isRefreshing = true;
+      // Freeze current panel (do not mess up while refreshing)
+      this.Enabled = false;
+      // Progress setup
+      _progressDialog = new DlgProgress();
+      _progressDialog.SetHeading("Importing movies");
+      _progressDialog.TopMost = true;
+      _progressDialog.DisableCancel();
+      _progressDialog.SetLine1("Movie:");
+      _progressDialog.SetLine2("Importing...");
+      _progressDialog.SetPercentage(100);
+      _progressDialog.Total = _nfoFiles.Count;
+      _progressDialog.Count = 1;
+      _progressDialog.Show();
+      // Set backgroundworker
+      BackgroundWorker bgwNfo = new BackgroundWorker();
+      bgwNfo.WorkerSupportsCancellation = true;
+      bgwNfo.WorkerReportsProgress = false;
+      bgwNfo.DoWork += new DoWorkEventHandler(ImportNfo);
+      bgwNfo.RunWorkerCompleted += new RunWorkerCompletedEventHandler(CancelNfoWorker);
+      // Start worker by passing parameter moviecollection
+      bgwNfo.RunWorkerAsync();
+
+      while (_isRefreshing)
+      {
+        if (!_progressDialog.CancelScan)
+        {
+          Application.DoEvents();
+        }
+        else
+        {
+          _isRefreshing = false;
+          bgwNfo.CancelAsync();
+          return;
+        }
+      }
+    }
+
+    // Import nfos DoWork event handler
+    private void ImportNfo(object sender, DoWorkEventArgs e)
+    {
+      foreach (string nfoFile in _nfoFiles)
+      {
+        if (!_isRefreshing)
+        {
+          e.Cancel = true;
+          break;
+        }
+
+        _progressDialog.SetLine1("Importing: " + nfoFile);
+
+        VideoDatabase.ImportNfo(nfoFile);
+
+        // Update progress
+        if (_progressDialog.Count < _nfoFiles.Count)
+          _progressDialog.Count++;
+      }
+      _isRefreshing = false;
+    }
+
+    // Export movies
+    private void buttonExportNfo_Click(object sender, EventArgs e)
+    {
+      // Set refresh status for background worker
+      _isRefreshing = true;
+      // Freeze current panel (do not mess up while refreshing)
+      this.Enabled = false;
+      // Progress setup
+      _progressDialog = new DlgProgress();
+      _progressDialog.SetHeading("Exporting movies");
+      _progressDialog.TopMost = true;
+      _progressDialog.DisableCancel();
+      _progressDialog.SetLine1("Movie:");
+      _progressDialog.SetLine2("Exporting...");
+      _progressDialog.SetPercentage(100);
+      _progressDialog.Total = cbTitle.Items.Count - 1;
+      _progressDialog.Count = 1;
+      _progressDialog.Show();
+      // Set backgroundworker
+      BackgroundWorker bgwNfo = new BackgroundWorker();
+      bgwNfo.WorkerSupportsCancellation = true;
+      bgwNfo.WorkerReportsProgress = false;
+      bgwNfo.DoWork += new DoWorkEventHandler(ExportNfo);
+      bgwNfo.RunWorkerCompleted += new RunWorkerCompletedEventHandler(CancelNfoWorker);
+      // Start worker by passing parameter moviecollection
+      bgwNfo.RunWorkerAsync();
+
+      while (_isRefreshing)
+      {
+        if (!_progressDialog.CancelScan)
+        {
+          Application.DoEvents();
+        }
+        else
+        {
+          _isRefreshing = false;
+          bgwNfo.CancelAsync();
+          return;
+        }
+      }
+    }
+
+    // Export movies DoWork event handler
+    private void ExportNfo(object sender, DoWorkEventArgs e)
+    {
+      ArrayList movies = new ArrayList();
+      VideoDatabase.GetMovies(ref movies);
+
+      foreach (IMDBMovie movie in movies)
+      {
+        if (!_isRefreshing)
+        {
+          e.Cancel = true;
+          break;
+        }
+
+        _progressDialog.SetLine1("Exporting: " + movie.Title);
+
+         if(!VideoDatabase.MakeNfo(movie.ID))
+         {
+           // Movie filenot found
+           notFoundMovie.Add(movie.Title + "\n");
+           Log.Info("Nfo export error: Video file not exists for movie {0}.", movie.Title);
+          }
+
+        // Update progress
+        if (_progressDialog.Count < movies.Count)
+          _progressDialog.Count++;
+      }
+      _isRefreshing = false;
+    }
+
+    private void GetNfoFiles(string path, ref ArrayList availableFiles)
+    {
+      string[] files = Directory.GetFiles(path, "*.nfo", SearchOption.AllDirectories);
+
+      foreach (string file in files)
+      {
+        availableFiles.Add(file);
+      }
+    }
+    
     #endregion
 
     #region Other
@@ -3818,6 +4561,27 @@ namespace MediaPortal.Configuration.Sections
     private void tabControl2_SelectedIndexChanged(object sender, EventArgs e)
     {
       ShowHide();
+      pbGenreImage.ImageLocation = string.Empty;
+      pbUserGroupImage.ImageLocation = string.Empty;
+
+      if (tabControl2.SelectedTab == tabPageUserGroupRules)
+      {
+        ArrayList userGroups = new ArrayList();
+        VideoDatabase.GetUserGroups(userGroups);
+        cbUserGroups.Items.Clear();
+        cbUserGroupFieldName.Items.Clear();
+        cbUserGroupFieldValues.Items.Clear();
+        cbUserGroupType.Items.Clear();
+        cbUserGroupFieldOperand.Items.Clear();
+        tbUserGroupFieldValue.Text = string.Empty;
+        tbUserGroupRuleSyntax.Text = string.Empty;
+        
+        
+        foreach (string userGroup in userGroups)
+        {
+          cbUserGroups.Items.Add(userGroup);
+        }
+      }
     }
 
     // Progress bar advance
@@ -3870,10 +4634,46 @@ namespace MediaPortal.Configuration.Sections
       this.Enabled = true;
     }
 
+    private void CancelNfoWorker(object sender, RunWorkerCompletedEventArgs e)
+    {
+      BackgroundWorker bgw = (BackgroundWorker)sender;
+      _progressDialog.CloseProgress();
+      // Show message
+      if (e.Cancelled)
+      {
+        MessageBox.Show("Canceled !");
+      }
+      else if (e.Error != null)
+      {
+        MessageBox.Show("Error: " + e.Error.Message);
+      }
+      else if (notFoundMovie.Count > 0)
+      {
+        string notFoundMovies = string.Empty;
+
+        foreach (string movie in notFoundMovie)
+        {
+          notFoundMovies = notFoundMovies + movie;
+        }
+
+        MessageBox.Show("Some of movies can't be exported (movie file not exist):\n" +  notFoundMovies);
+      }
+      else
+      {
+        MessageBox.Show("Done!");
+      }
+      bgw.Dispose();
+      notFoundMovie.Clear();
+      // Refresh all movies
+      LoadMovies(0);
+      cbTitle.SelectedIndex = 0;
+      this.Enabled = true;
+    }
+
     // Show-hide some of the controls
     private void ShowHide()
     {
-      if (CheckImdbId(tbIMDBNr.Text))
+      if (VideoDatabase.CheckMovieImdbId(tbIMDBNr.Text))
       {
         labelFASearchString.Visible = false;
         tbFASearchString.Visible = false;
@@ -3894,24 +4694,7 @@ namespace MediaPortal.Configuration.Sections
         chbImpAwCoverSource.Checked = false;
       }
     }
-
-    // Check if IMDBtt number is valid
-    private bool CheckImdbId(string id)
-    {
-      // IMDBtt search check tt number, must be exactly 9 chars with leading zeros if needed
-      if (id.Length < 9 | id.Length > 9)
-      {
-        return false;
-      }
-      // Final IMDBtt check
-      Match ttNo = Regex.Match(id, @"tt[\d]{7}?");
-      if (!ttNo.Success)
-      {
-        return false;
-      }
-      return true;
-    }
-
+    
     // Movie refresh (only selected)
     private void RefreshMovie(int movieIndex, int cbSlectedIndex)
     {
@@ -3928,6 +4711,24 @@ namespace MediaPortal.Configuration.Sections
       cbTitle.SelectedIndex = count;
       tabControl2.SelectedIndex = 2;
       AddFile();
+    }
+
+    // Movie info checkbox checked
+    private void chbShowMovieInfoOnPlay_CheckedChanged(object sender, EventArgs e)
+    {
+      if (chbShowMovieInfoOnPlay.Checked)
+      {
+        chbMovieInfoOnShares.Enabled = true;
+      }
+      else
+      {
+        chbMovieInfoOnShares.Enabled = false;
+      }
+    }
+
+    private void cbActorsListFetchSize_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      SaveSettings();
     }
 
     #endregion

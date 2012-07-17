@@ -31,12 +31,14 @@ namespace MediaPortal.GUI.Library
   {
     [XMLSkinElement("textureFocus")] protected string _focusedTextureName = "";
     [XMLSkinElement("textureNoFocus")] protected string _nonFocusedTextureName = "";
+    [XMLSkinElement("onclick")] protected string _onclick = "";
     [XMLSkinElement("font")] protected string _fontName;
     [XMLSkinElement("label")] protected string _label = "";
     [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
     [XMLSkinElement("textcolorNoFocus")] protected long _textColorNoFocus = 0xFFFFFFFF;
     [XMLSkinElement("disabledcolor")] protected long _disabledColor = 0xFF606060;
     [XMLSkinElement("textXOff")] protected int _textOffsetX = 0;
+    [XMLSkin("textXOff", "hasMargin")] protected bool _textOffsetXHasMargin = true;
     [XMLSkinElement("textYOff")] protected int _textOffsetY = 0;
     [XMLSkinElement("textureUp")] protected string _upTextureName;
     [XMLSkinElement("textureDown")] protected string _downTextureName;
@@ -317,7 +319,12 @@ namespace MediaPortal.GUI.Library
       }
 
       // Compute with of label so that the text does not overlap the spin controls.
-      int labelWidth = _width - (2 * _textOffsetX) - (2 * _spinWidth) - _textOffsetX;
+      int labelWidth = _width - (2 * _spinWidth) - _textOffsetX;
+      if (_textOffsetXHasMargin)
+      {
+        labelWidth = _width - (2 * _textOffsetX) - (2 * _spinWidth) - _textOffsetX;
+      }
+
       if (labelWidth <= 0)
       {
         base.Render(timePassed);
@@ -431,6 +438,12 @@ namespace MediaPortal.GUI.Library
           // send a message to anyone interested 
           message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
           GUIGraphicsContext.SendMessage(message);
+
+          // If this button has a click setting then execute the setting.
+          if (_onclick.Length != 0)
+          {
+            GUIPropertyManager.Parse(_onclick, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
+          }
         }
       }
 

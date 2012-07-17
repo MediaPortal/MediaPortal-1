@@ -44,7 +44,7 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\settings_recording.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\settings_recording.xml"));
     }
 
     protected override void OnPageLoad()

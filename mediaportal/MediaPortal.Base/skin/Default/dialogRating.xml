@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2013</id>
   <defaultcontrol>10</defaultcontrol>
@@ -21,8 +21,6 @@
       <width>435</width>
       <height>245</height>
       <texture>dialog_background.png</texture>
-      
-      
     </control>
     <control>
       <description>dialog Heading</description>
@@ -33,8 +31,6 @@
       <label>934</label>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
-      
-      
     </control>
     <control>
       <description>Rating label</description>
@@ -45,8 +41,6 @@
       <label>204</label>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
-      
-      
     </control>
     <control>
       <description>right button</description>
@@ -62,8 +56,6 @@
       <onright>10</onright>
       <onup>13</onup>
       <ondown>13</ondown>
-      
-      
     </control>
     <control>
       <description>left button</description>
@@ -79,17 +71,15 @@
       <onright>10</onright>
       <onup>13</onup>
       <ondown>13</ondown>
-      
-      
     </control>
     <control>
       <description>OK button</description>
       <type>button</type>
       <id>12</id>
-      <posX>534</posX>
+      <posX>542</posX>
       <posY>221</posY>
       <textYOff>6</textYOff>
-      <width>46</width>
+      <width>38</width>
       <height>46</height>
       <textureFocus>dialogue_ok_focus.png</textureFocus>
       <textureNoFocus>dialogue_ok_nofocus.png</textureNoFocus>
@@ -98,8 +88,6 @@
       <onright>10</onright>
       <onup>10</onup>
       <ondown>10</ondown>
-      
-      
     </control>
     <control>
       <description>next item</description>
@@ -115,8 +103,6 @@
       <onright>12</onright>
       <onup>10</onup>
       <ondown>10</ondown>
-      
-      
     </control>
     <control>
       <description>Play</description>
@@ -134,8 +120,6 @@
       <onright>13</onright>
       <onup>10</onup>
       <ondown>10</ondown>
-      
-      
     </control>
     <control>
       <description>previous item</description>
@@ -151,8 +135,6 @@
       <onright>14</onright>
       <onup>10</onup>
       <ondown>10</ondown>
-      
-      
     </control>
     <control>
       <description>Title</description>
@@ -161,11 +143,8 @@
       <posX>214</posX>
       <posY>334</posY>
       <label>204</label>
-      <width>360</width>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
-      
-      
     </control>
     <control>
       <type>image</type>
@@ -173,8 +152,6 @@
       <posX>274</posX>
       <posY>296</posY>
       <texture>stargood.png</texture>
-      
-      
     </control>
     <control>
       <type>image</type>
@@ -182,8 +159,6 @@
       <posX>315</posX>
       <posY>296</posY>
       <texture>stargood.png</texture>
-      
-      
     </control>
     <control>
       <type>image</type>
@@ -191,8 +166,6 @@
       <posX>354</posX>
       <posY>296</posY>
       <texture>stargood.png</texture>
-      
-      
     </control>
     <control>
       <type>image</type>
@@ -200,8 +173,6 @@
       <posX>394</posX>
       <posY>296</posY>
       <texture>stargood.png</texture>
-      
-      
     </control>
     <control>
       <type>image</type>
@@ -209,8 +180,6 @@
       <posX>434</posX>
       <posY>296</posY>
       <texture>stargood.png</texture>
-      
-      
     </control>
   </controls>
 </window>

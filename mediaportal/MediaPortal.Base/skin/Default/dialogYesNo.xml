@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>100</id>
   <defaultcontrol>10</defaultcontrol>
@@ -23,8 +23,6 @@
       <onright>11</onright>
       <onup>10</onup>
       <ondown>10</ondown>
-      
-      
     </control>
     <control>
       <description>Yes button</description>
@@ -43,8 +41,6 @@
       <onright>10</onright>
       <onup>11</onup>
       <ondown>11</ondown>
-      
-      
     </control>
   </controls>
 </window>

@@ -58,5 +58,40 @@ namespace MediaPortal.ExtensionMethods
         dictionaryInterface.Clear();
       }
     }
+
+    /// <summary>
+    /// Merge two dictionaries.  Collisions are replaced; the value in 'this' dictionary is overwritten.
+    /// Example: 
+    ///   result = dictA.Merge(dictB)
+    /// </summary>
+    public static IDictionary<TKey, TVal> Merge<TKey, TVal>(this IDictionary<TKey, TVal> dictA, IDictionary<TKey, TVal> dictB)
+    {
+      return dictA.Merge(dictB, true);
+    }
+
+    /// <summary>
+    /// Merge two dictionaries.  If replace is true then collisions are replaced; the value in 'this' dictionary is overwritten
+    /// by the value in dictB.  If replace is false then collisions are ignored; the value in 'this' dictionary is retained.
+    /// Example:
+    ///   result = dictA.Merge(dictB, true)
+    /// </summary>
+    public static IDictionary<TKey, TVal> Merge<TKey, TVal>(this IDictionary<TKey, TVal> dictA, IDictionary<TKey, TVal> dictB, bool replace)
+    {
+      foreach (KeyValuePair<TKey, TVal> pair in dictB)
+      {
+        // Check for collisions
+        if (!dictA.ContainsKey(pair.Key))
+        {
+          dictA.Add(pair.Key, pair.Value);
+        }
+        else if (replace)
+        {
+          // On collision, replace the existing value with the new value if requested.
+          dictA.Remove(pair.Key);
+          dictA.Add(pair.Key, pair.Value);
+        }
+      }
+      return dictA;
+    }
   }
 }

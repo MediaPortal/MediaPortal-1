@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2017</id>
   <defaultcontrol>11</defaultcontrol>
@@ -13,8 +13,6 @@
       <width>499</width>
       <height>489</height>
       <texture>context_background.png</texture>
-      
-      
     </control>
     <control>
       <description>Heading text label</description>
@@ -24,8 +22,6 @@
       <posY>112</posY>
       <font>font16</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>options listcontrol</description>
@@ -43,8 +39,8 @@
       <IconYOff>4</IconYOff>
       <itemWidth>36</itemWidth>
       <itemHeight>52</itemHeight>
-      <textureFocus>album_background_focus.png</textureFocus>
-      <textureNoFocus>album_background_nofocus.png</textureNoFocus>
+      <textureFocus>list_sub_focus.png</textureFocus>
+      <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
       <spaceBetweenItems>2</spaceBetweenItems>
       <textureHeight>64</textureHeight>
       <keepaspectratio>no</keepaspectratio>
@@ -74,8 +70,8 @@
       <spinPosY>410</spinPosY>
       <itemWidth>62</itemWidth>
       <itemHeight>43</itemHeight>
-      <textureFocus>album_background_focus.png</textureFocus>
-      <textureNoFocus>album_background_nofocus.png</textureNoFocus>
+      <textureFocus>list_sub_focus.png</textureFocus>
+      <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
       <spaceBetweenItems>8</spaceBetweenItems>
       <textureHeight>62</textureHeight>
       <keepaspectratio>no</keepaspectratio>

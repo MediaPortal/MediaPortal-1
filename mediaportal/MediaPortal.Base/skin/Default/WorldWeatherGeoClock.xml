@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <!-- *** GeoClock *** -->
+    <control>
+      <description>Location label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>16</posX>
+      <posY>8</posY>
+      <width>337</width>
+      <label>#(L(8))  #(L(19100))</label>
+      <font>font14</font>
+      <align>left</align>
+      <textcolor>white</textcolor>
+      <visible>string.equals(#WorldWeather.View,GeoClock)</visible>
+    </control>
+    <control>
+      <description>GeoClock image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>120</posY>
+      <width>720</width>
+      <height>405</height>
+      <texture>#WorldWeather.ImageGeoClock</texture>
+      <visible>string.equals(#WorldWeather.View,GeoClock)</visible>
+    </control>
+  </controls>
+</window>

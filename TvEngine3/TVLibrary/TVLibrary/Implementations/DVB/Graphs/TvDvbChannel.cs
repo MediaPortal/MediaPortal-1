@@ -69,7 +69,7 @@ namespace TvLibrary.Implementations.DVB
     private Pmt _pmt;
     private Cat _cat;
     private List<UInt16> _pids;
-    private TvCardBase _tuner;
+    private ITVCard _tuner;
 
     #endregion
 
@@ -104,7 +104,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="tuner">The tuner that this instance is associated with.</param>
     /// <param name="tsWriter">The TsWriter filter instance, used to handle timeshifting and recording.</param>
     /// <param name="tif">The transport information filter.</param>
-    public TvDvbChannel(int subChannelId, TvCardBase tuner, IBaseFilter tsWriter, IBaseFilter tif)
+    public TvDvbChannel(int subChannelId, ITVCard tuner, IBaseFilter tsWriter, IBaseFilter tif)
       : base(subChannelId)
     {
       _eventPmt = new ManualResetEvent(false);
@@ -213,6 +213,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if PMT was found, otherwise <c>false</c></returns>
     protected bool WaitForPmt(int serviceId, int pmtPid)
     {
+      ThrowExceptionIfTuneCancelled();
       Log.Log.Debug("TvDvbChannel: subchannel {0} wait for PMT, service ID = {1} (0x{1:x}), PMT PID = {2} (0x{2:x})", _subChannelId, serviceId, pmtPid);
       // There are 3 classes of PMT PID settings:
       // -1 = Scanning behaviour, where we don't care about PMT.
@@ -256,7 +257,9 @@ namespace TvLibrary.Implementations.DVB
         _cat = null;
         _eventPmt.Reset();
         DateTime dtStartWait = DateTime.Now;
+        ThrowExceptionIfTuneCancelled();
         pmtFound = _eventPmt.WaitOne(_parameters.TimeOutPMT * 1000, true);
+        ThrowExceptionIfTuneCancelled();
         waitLength = DateTime.Now - dtStartWait;
         if (!pmtFound)
         {
@@ -458,6 +461,24 @@ namespace TvLibrary.Implementations.DVB
     protected override void OnGetTimeShiftFilePosition(ref Int64 position, ref long bufferId)
     {
       _tsFilterInterface.TimeShiftGetCurrentFilePosition(_subChannelId, out position, out bufferId);
+    }
+
+    /// <summary>
+    /// Cancel the current tuning process.
+    /// </summary>
+    public override void CancelTune()
+    {
+      Log.Log.Debug("TvDvbChannel: subchannel {0} cancel tune", _subChannelId);
+      _cancelTune = true;
+      _cancelTune = true;
+      if (_eventCa != null)
+      {
+        _eventCa.Set();
+      }
+      if (_eventPmt != null)
+      {
+        _eventPmt.Set();
+      }
     }
 
     #endregion
@@ -708,6 +729,7 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
+        ThrowExceptionIfTuneCancelled();
         Log.Log.Debug("TvDvbChannel: subchannel {0} build PID list", _subChannelId);
         if (_pmt == null)
         {
@@ -888,6 +910,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     private bool HandlePmt()
     {
+      ThrowExceptionIfTuneCancelled();
       Log.Log.Debug("TvDvbChannel: subchannel {0} handle PMT", _subChannelId);
       lock (this)
       {
@@ -951,6 +974,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     private void GrabCat()
     {
+      ThrowExceptionIfTuneCancelled();
       Log.Log.Debug("TvDvbChannel: subchannel {0} grab CAT", _subChannelId);
       IntPtr catBuffer = Marshal.AllocCoTaskMem(4096);
       try
@@ -960,6 +984,7 @@ namespace TvLibrary.Implementations.DVB
         _tsFilterInterface.CaSetCallBack(_subChannelIndex, this);
         _tsFilterInterface.CaReset(_subChannelIndex);
         bool found = _eventCa.WaitOne(_parameters.TimeOutCAT * 1000, true);
+        ThrowExceptionIfTuneCancelled();
         TimeSpan ts = DateTime.Now - dtNow;
         if (!found)
         {

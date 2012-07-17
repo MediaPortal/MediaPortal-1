@@ -60,6 +60,14 @@ namespace MediaPortal.GUI.Library
                                                                   float voff2,
                                                                   float umax2, float vmax2);
 
+    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern unsafe void FontEngineDrawTexture2(int textureNo1, float x, float y, float nw, float nh,
+                                                             float uoff, float voff, float umax, float vmax,
+                                                             int color,
+                                                             float[,] matrix, int textureNo2, float uoff2,
+                                                             float voff2,
+                                                             float umax2, float vmax2,
+                                                             GUIImage.FontEngineBlendMode blendMode);
     #endregion
 
     #region events / delegates
@@ -271,6 +279,18 @@ namespace MediaPortal.GUI.Library
         get { return _textureNumber; }
       }
 
+      /// <summary>
+      /// Draw a texture.
+      /// </summary>
+      /// <param name="x"></param>
+      /// <param name="y"></param>
+      /// <param name="nw"></param>
+      /// <param name="nh"></param>
+      /// <param name="uoff"></param>
+      /// <param name="voff"></param>
+      /// <param name="umax"></param>
+      /// <param name="vmax"></param>
+      /// <param name="color"></param>
       public void Draw(float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color)
       {
         //string logline=String.Format("draw:#{0} {1} {2} {3} {4}",_textureNumber,x,y,nw,nh);
@@ -289,6 +309,19 @@ namespace MediaPortal.GUI.Library
         }
       }
 
+      /// <summary>
+      /// Draw a texture rotated around (x,y).
+      /// </summary>
+      /// <param name="x"></param>
+      /// <param name="y"></param>
+      /// <param name="nw"></param>
+      /// <param name="nh"></param>
+      /// <param name="zrot"></param>
+      /// <param name="uoff"></param>
+      /// <param name="voff"></param>
+      /// <param name="umax"></param>
+      /// <param name="vmax"></param>
+      /// <param name="color"></param>
       public void Draw(float x, float y, float nw, float nh, float zrot, float uoff, float voff, float umax, float vmax,
                        int color)
       {
@@ -311,8 +344,69 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      public void Draw(float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax,
-                       int color, int maskTextureNo, float uoffm, float voffm, float umaxm, float vmaxm)
+      /// <summary>
+      /// Draw a texture rotated around (x,y) blended with a diffuse texture.
+      /// </summary>
+      /// <param name="x"></param>
+      /// <param name="y"></param>
+      /// <param name="nw"></param>
+      /// <param name="nh"></param>
+      /// <param name="zrot"></param>
+      /// <param name="uoff"></param>
+      /// <param name="voff"></param>
+      /// <param name="umax"></param>
+      /// <param name="vmax"></param>
+      /// <param name="color"></param>
+      /// <param name="diffuseTextureNo"></param>
+      /// <param name="uoffd"></param>
+      /// <param name="voffd"></param>
+      /// <param name="umaxd"></param>
+      /// <param name="vmaxd"></param>
+      public void Draw(float x, float y, float nw, float nh, float zrot, float uoff, float voff, float umax, float vmax,
+                       int color, int blendableTextureNo, float uoffd, float voffd, float umaxd, float vmaxd,
+                       GUIImage.FontEngineBlendMode blendMode)
+      {
+        if (_textureNumber >= 0)
+        {
+          // Rotate around the x,y point of the specified rectangle; maintain aspect ratio (1.0f)
+          TransformMatrix localTransform = new TransformMatrix();
+          localTransform.SetZRotation(zrot, x, y, 1.0f);
+          TransformMatrix finalTransform = GUIGraphicsContext.GetFinalTransform();
+          localTransform = finalTransform.multiply(localTransform);
+
+          FontEngineDrawTexture2(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax,
+                                 color, localTransform.Matrix,
+                                 blendableTextureNo, uoffd, voffd, umaxd, vmaxd,
+                                 blendMode);
+        }
+        else
+        {
+          if (logTextures)
+          {
+            Log.Info("fontengine:Draw() ERROR. Texture is disposed:{0} {1}", _textureNumber.ToString(), _imageName);
+          }
+        }
+      }
+
+      /// <summary>
+      /// Draw a masked texture.
+      /// </summary>
+      /// <param name="x"></param>
+      /// <param name="y"></param>
+      /// <param name="nw"></param>
+      /// <param name="nh"></param>
+      /// <param name="uoff"></param>
+      /// <param name="voff"></param>
+      /// <param name="umax"></param>
+      /// <param name="vmax"></param>
+      /// <param name="color"></param>
+      /// <param name="maskTextureNo"></param>
+      /// <param name="uoffm"></param>
+      /// <param name="voffm"></param>
+      /// <param name="umaxm"></param>
+      /// <param name="vmaxm"></param>
+      public void DrawMasked(float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax,
+                             int color, int maskTextureNo, float uoffm, float voffm, float umaxm, float vmaxm)
       {
         if (_textureNumber >= 0)
         {

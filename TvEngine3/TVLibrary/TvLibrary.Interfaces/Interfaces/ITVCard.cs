@@ -25,11 +25,41 @@ using TvLibrary.Interfaces.Device;
 
 namespace TvLibrary.Interfaces
 {
+  #region event delegates
+
+  /// <summary>
+  /// Delegate for the new subchannel event.
+  /// </summary>
+  /// <param name="subChannelId">The ID of the new subchannel.</param>
+  public delegate void OnNewSubChannelDelegate(int subChannelId);
+
+  /// <summary>
+  /// Delegate for the after tune event.
+  /// </summary>
+  public delegate void OnAfterTuneDelegate();
+
+  #endregion
+
   /// <summary>
   /// interface for a tv card
   /// </summary>
   public interface ITVCard
   {
+    #region events
+    // Note: events are handled as set-only properties to enable clean hybrid tuner handling.
+
+    /// <summary>
+    /// Set the device's new subchannel event handler.
+    /// </summary>
+    OnNewSubChannelDelegate OnNewSubChannelEvent { set; }
+
+    /// <summary>
+    /// Set the device's after tune event handler.
+    /// </summary>
+    OnAfterTuneDelegate OnAfterTuneEvent { set; }
+
+    #endregion
+
     #region properties
 
     /// <summary>
@@ -171,23 +201,29 @@ namespace TvLibrary.Interfaces
 
     #endregion
 
-    #region tuning & recording
+    #region tuning & scanning
 
     /// <summary>
-    /// Tunes the specified channel.
+    /// Tune to a specific channel.
     /// </summary>
-    /// <param name="subChannelId">The sub channel id.</param>
-    /// <param name="channel">The channel.</param>
-    /// <returns>true if succeeded else false</returns>
+    /// <param name="subChannelId">The ID of the subchannel associated with the channel that is being tuned.</param>
+    /// <param name="channel">The channel to tune to.</param>
+    /// <returns>the subchannel associated with the tuned channel</returns>
     ITvSubChannel Tune(int subChannelId, IChannel channel);
 
     /// <summary>
-    /// Scans the specified channel.
+    /// Scan a specific channel.
     /// </summary>
-    /// <param name="subChannelId">The sub channel id.</param>
-    /// <param name="channel">The channel.</param>
-    /// <returns>true if succeeded else false</returns>
+    /// <param name="subChannelId">The ID of the subchannel associated with the channel that is being scanned.</param>
+    /// <param name="channel">The channel to scan.</param>
+    /// <returns>the subchannel associated with the scanned channel</returns>
     ITvSubChannel Scan(int subChannelId, IChannel channel);
+
+    /// <summary>
+    /// Cancel the current tuning process.
+    /// </summary>
+    /// <param name="subChannelId">The ID of the subchannel associated with the channel that is being cancelled.</param>
+    void CancelTune(int subChannelId);
 
     #endregion
 
@@ -280,19 +316,6 @@ namespace TvLibrary.Interfaces
     /// <returns></returns>
     ITvSubChannel GetSubChannel(int id);
 
-    /// <summary>
-    /// Frees the sub channel.
-    /// </summary>
-    /// <param name="id">The id.</param>
-    void FreeSubChannelContinueGraph(int id);
-
-
-    /// <summary>
-    /// Frees the sub channel.
-    /// </summary>
-    /// <param name="id">The id.</param>
-    /// <param name="subchannelBusy">is the subcannel busy with other users.</param>
-    void FreeSubChannelContinueGraph(int id, bool subchannelBusy);
 
     /// <summary>
     /// Frees the sub channel.

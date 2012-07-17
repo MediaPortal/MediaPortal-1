@@ -115,6 +115,7 @@ namespace MediaPortal.Util
     public Share DefaultShare
     {
       get { return defaultshare; }
+      set { defaultshare = value; }
     }
 
     public string CurrentShare

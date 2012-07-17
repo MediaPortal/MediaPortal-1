@@ -79,6 +79,8 @@ namespace MediaPortal.GUI.Library
       _properties["#mpaarating"] = string.Empty; // imdb movie MPAA rating
       _properties["#runtime"] = string.Empty; // imdb movie runtime 
       _properties["#iswatched"] = string.Empty; // boolean indication movie has been watched
+      _properties["#watchedpercent"] = string.Empty; // videofile watched percentage
+      
       _properties["#music.title"] = string.Empty;
       _properties["#music.artist"] = string.Empty;
       _properties["#music.rating"] = string.Empty;
@@ -255,7 +257,8 @@ namespace MediaPortal.GUI.Library
       _properties["#Play.Current.Runtime"] = string.Empty;
       _properties["#Play.Current.MPAARating"] = string.Empty;
       _properties["#Play.Current.IsWatched"] = string.Empty;
-
+      _properties["#Play.Current.WatchedPercent"] = string.Empty;
+      
       _properties["#Play.Current.ArtistThumb"] = string.Empty;
       _properties["#Play.Current.Lastfm.TrackTags"] = string.Empty;
       _properties["#Play.Current.Lastfm.SimilarArtists"] = string.Empty;
@@ -440,6 +443,16 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Returns true if the specified property is defined, otherwise false.
+    /// </summary>
+    /// <param name="tag"></param>
+    /// <returns></returns>
+    public static bool PropertyIsDefined(string tag)
+    {
+      return _properties.ContainsKey(tag);
+    }
+
+    /// <summary>
     /// Removes the player properties from the hashtable.
     /// </summary>
     public static void RemovePlayerProperties()
@@ -470,6 +483,7 @@ namespace MediaPortal.GUI.Library
       SetProperty("#Play.Current.Runtime", string.Empty);
       SetProperty("#Play.Current.MPAARating", string.Empty);
       SetProperty("#Play.Current.IsWatched", string.Empty);
+      SetProperty("#Play.Current.watchedpercent", string.Empty);
       SetProperty("#Play.Current.AlbumArtist", string.Empty);
       SetProperty("#Play.Current.BitRate", string.Empty);
       SetProperty("#Play.Current.Comment", string.Empty);
@@ -541,12 +555,23 @@ namespace MediaPortal.GUI.Library
     /// <returns>The value of the property.</returns>
     public static string Parse(string line)
     {
+      return Parse(line, GUIExpressionManager.ExpressionOptions.NONE);
+    }
+
+    /// <summary>
+    /// Parses a property request.
+    /// </summary>
+    /// <param name="line">The identification of the propertie (e.g.,#title).</param>
+    /// <param name="options">Expresson manager processing options.</param>
+    /// <returns>The value of the property.</returns>
+    public static string Parse(string line, GUIExpressionManager.ExpressionOptions options)
+    {
       if (line == null)
       {
         return string.Empty;
       }
 
-      line = GUIExpressionManager.Parse(line);
+      line = GUIExpressionManager.Parse(line, options);
 
       if (line.IndexOf('#') > -1)
       {
@@ -589,6 +614,22 @@ namespace MediaPortal.GUI.Library
       }
 
       return property;
+    }
+
+    /// <summary>
+    /// Removes the specified property from the property set.
+    /// </summary>
+    /// <param name="tag">name of the property</param>
+    public static void RemoveProperty(string tag)
+    {
+      string property = string.Empty;
+      if (tag != null && tag.IndexOf('#') > -1 && _properties.ContainsKey(tag))
+      {
+        lock (_properties)
+        {
+          _properties.Remove(tag);
+        }
+      }
     }
   }
 }

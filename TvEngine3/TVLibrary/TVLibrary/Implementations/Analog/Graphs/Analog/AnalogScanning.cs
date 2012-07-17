@@ -33,7 +33,6 @@ namespace TvLibrary.Implementations.Analog
   {
     private readonly TvCardAnalog _card;
     private long _previousFrequency;
-    private int _radioSensitivity = 1;
     private ManualResetEvent _event;
     private IAnalogChanelScan _scanner;
 
@@ -47,35 +46,11 @@ namespace TvLibrary.Implementations.Analog
     }
 
     /// <summary>
-    /// returns the tv card used
-    /// </summary>
-    /// <value></value>
-    public ITVCard TvCard
-    {
-      get { return _card; }
-    }
-
-    /// <summary>
-    /// Disposes this instance.
-    /// </summary>
-    public void Dispose() {}
-
-    /// <summary>
     /// resets the scanner
     /// </summary>
     public void Reset()
     {
       _previousFrequency = 0;
-    }
-
-    /// <summary>
-    /// Property to set Radio tuning sensitivity.
-    /// sensitivity range from 1MHz for value 1 to 0.1MHZ for value 10
-    /// </summary>
-    public int RadioSensitivity
-    {
-      get { return _radioSensitivity; }
-      set { _radioSensitivity = value; }
     }
 
     /// <summary>

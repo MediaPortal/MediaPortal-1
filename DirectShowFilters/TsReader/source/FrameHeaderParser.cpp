@@ -42,6 +42,24 @@ extern void LogDebug(const char *fmt, ...) ;
 #define countof(array) (sizeof(array)/sizeof(array[0]))
 #define DNew new
 
+//AVC Profile IDC definitions
+#define AVC_PROF_BASELINE  66      
+#define AVC_PROF_MAIN      77      
+#define AVC_PROF_EXTENDED  88      
+#define AVC_PROF_HP        100      
+#define AVC_PROF_Hi10P     110      
+#define AVC_PROF_Hi422     122      
+#define AVC_PROF_Hi444     244      
+#define AVC_PROF_CAVLC444  44      
+#define AVC_PROF_83        83      
+#define AVC_PROF_86        86     
+
+//AVC Chroma format IDC definitions
+#define YUV400  0     
+#define YUV420  1     
+#define YUV422  2     
+#define YUV444  3     
+
 int CFrameHeaderParser::MakeAACInitData(BYTE* pData, int profile, int freq, int channels)
 {
 	int srate_idx;
@@ -402,16 +420,24 @@ bool CFrameHeaderParser::Read(seqhdr& h, int len, CMediaType* pmt, bool reset)
 	{
 		pmt->subtype = MEDIASUBTYPE_MPEG1Payload;
 		pmt->formattype = FORMAT_MPEGVideo;
+		pmt->bTemporalCompression = TRUE;
 		int len = FIELD_OFFSET(MPEG1VIDEOINFO, bSequenceHeader) + shlen + shextlen;
 		MPEG1VIDEOINFO* vi = (MPEG1VIDEOINFO*)DNew BYTE[len];
 		memset(vi, 0, len);
 		vi->hdr.dwBitRate = h.bitrate;
 		vi->hdr.AvgTimePerFrame = h.ifps;
-		vi->hdr.bmiHeader.biSize = sizeof(vi->hdr.bmiHeader);
 		vi->hdr.bmiHeader.biWidth = h.width;
 		vi->hdr.bmiHeader.biHeight = h.height;
-		//vi->hdr.bmiHeader.biXPelsPerMeter = h.width * h.ary;
-		//vi->hdr.bmiHeader.biYPelsPerMeter = h.height * h.arx;
+    vi->hdr.rcSource.right = h.width;
+    vi->hdr.rcSource.bottom = h.height;
+    vi->hdr.rcTarget.right = h.width;
+    vi->hdr.rcTarget.bottom = h.height;
+		vi->hdr.bmiHeader.biCompression = '1GPM';
+		vi->hdr.bmiHeader.biPlanes=1;
+		vi->hdr.bmiHeader.biBitCount=12;
+		vi->hdr.bmiHeader.biClrUsed=0;
+    vi->hdr.bmiHeader.biSizeImage = DIBSIZE(vi->hdr.bmiHeader);
+		vi->hdr.bmiHeader.biSize = sizeof(vi->hdr.bmiHeader);
 		vi->cbSequenceHeader = shlen + shextlen;
 		Seek(shpos);
 		ByteRead((BYTE*)&vi->bSequenceHeader[0], shlen);
@@ -424,6 +450,7 @@ bool CFrameHeaderParser::Read(seqhdr& h, int len, CMediaType* pmt, bool reset)
 	{
 		pmt->subtype = MEDIASUBTYPE_MPEG2_VIDEO;
 		pmt->formattype = FORMAT_MPEG2_VIDEO;
+		pmt->bTemporalCompression = TRUE;
 		int len = FIELD_OFFSET(MPEG2VIDEOINFO, dwSequenceHeader) + shlen + shextlen;
 		MPEG2VIDEOINFO* vi = (MPEG2VIDEOINFO*)pmt->AllocFormatBuffer(len);
 		memset(vi, 0, len);
@@ -431,12 +458,18 @@ bool CFrameHeaderParser::Read(seqhdr& h, int len, CMediaType* pmt, bool reset)
 		vi->hdr.AvgTimePerFrame = h.ifps;
 		vi->hdr.dwPictAspectRatioX = h.arx;
 		vi->hdr.dwPictAspectRatioY = h.ary;
-		vi->hdr.bmiHeader.biSize = sizeof(vi->hdr.bmiHeader);
+    vi->hdr.rcSource.right = h.width;
+    vi->hdr.rcSource.bottom = h.height;
+    vi->hdr.rcTarget.right = h.width;
+    vi->hdr.rcTarget.bottom = h.height;
 		vi->hdr.bmiHeader.biWidth = h.width; 
 		vi->hdr.bmiHeader.biHeight = h.height;
-		//vi->hdr.bmiHeader.biXPelsPerMeter = h.width * h.arx;
-		//vi->hdr.bmiHeader.biYPelsPerMeter = h.height * h.ary;
 		vi->hdr.bmiHeader.biCompression = '2GPM';
+		vi->hdr.bmiHeader.biPlanes=1;
+		vi->hdr.bmiHeader.biBitCount=12;
+		vi->hdr.bmiHeader.biClrUsed=0;
+    vi->hdr.bmiHeader.biSizeImage = DIBSIZE(vi->hdr.bmiHeader);
+		vi->hdr.bmiHeader.biSize = sizeof(vi->hdr.bmiHeader);
 		vi->dwProfile = h.profile;
 		vi->dwLevel = h.level;
 		vi->cbSequenceHeader = shlen + shextlen;
@@ -1201,83 +1234,75 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
     h.AvgTimePerFrame=0;
   }
   
-	while(GetRemaining()>4 && (h.spslen==0 || h.ppslen==0 || h.height<100 || h.width<100 || h.AvgTimePerFrame<=0))
+	if (len > 4)
 	{
-		//// check for NALU startcode
-		//DWORD dwStartCode=BitRead(24,true);
-		//if (dwStartCode!=0x00000001)
-		//{
-		//	BitRead(8);
-		//	continue;
-		//}
-		//
-		//// skip the startcode
-		//BitRead(24);
 		int nal_len = BitRead(32);
 		INT64 next_nal = GetPos()+nal_len;
-		int id=BitRead(8);
-		int nal_type=id & 0x9f;
+		BYTE id=BitRead(8);
+		BYTE nal_type=id & 0x9f;
 
-		//if(h.spspos != 0 && h.spslen == 0)
-		//{
-		//	INT64 curpos=GetPos();
-		//	h.spslen = curpos - h.spspos;
-		//}
-		//if(h.ppspos != 0 && h.ppslen == 0) 
-		//{
-		//	INT64 curpos=GetPos();
-		//	h.ppslen = curpos - h.ppspos;
-		//}
+	  //LogDebug("nal_len = %d, next_nal = %d", nal_len, next_nal);
 
 		// we only want pic param and sequence param sets
-		if (nal_type!=0x7 && nal_type!=0x8 || id & 0x60 == 0)
+		if ((nal_type!=0x7 && nal_type!=0x8) || ((id & 0x60) == 0))
 		{
-			Seek(next_nal);
-			continue;
+		  return(false);
 		}
 
 		if(nal_type==0x7)
 		{
 			//LogDebug("SPS found");
-
-			__int64			num_units_in_tick;
-			__int64			time_scale;
-			__int64			pos;
-			long			fixed_frame_rate_flag;
+			
+		  h.spsid = id;
+			__int64			pos = GetPos(); //Start of NAL data (excluding ID byte)
+			
+			double			num_units_in_tick;
+			double			time_scale;
+			bool			fixed_frame_rate_flag;			
 
 			// Copy the full SPS packet in case the PPS is not found in the same packet,
 			// but make sure we don't change the current position in the buffer.
-			pos = GetPos() - 5;
-			if (h.spslen != 0)
+			
+			if (h.sps != NULL)
 			{
 				free(h.sps);
 			}
-			h.spslen = next_nal - pos;
-			h.sps = (BYTE*) malloc(h.spslen - 4);
-			ByteRead(h.sps, h.spslen - 4);
-			Seek(pos + 5);
+			h.spslen = next_nal - pos; //length excluding length and ID bytes
+			if ((h.spslen <= 0) || (h.spslen > 65534)) return(false); //Sanity check
+			h.sps = (BYTE*) malloc(h.spslen);
+			if (h.sps == NULL) return(false); //malloc error...
+			ByteRead(h.sps, h.spslen);
+			Seek(pos);
+	    //LogDebug("h.spslen = %d, bytes = %x %x %x %x, last byte = %x", h.spslen, *h.sps, *(h.sps+1), *(h.sps+2), *(h.sps+3), *(h.sps+(h.spslen-1)));
 
 			// Manage H264 escape codes (see "remove escapes (very rare 1:2^22)" in ffmpeg h264.c file)
 			//ByteRead((BYTE*)SPSTemp, min(MAX_SPS, GetRemaining()));
-			BYTE* buff = (BYTE*) malloc(h.spslen - 4);
-			CGolombBuffer	gb (buff, h.spslen - 4);
-			RemoveMpegEscapeCode (buff, h.sps, h.spslen - 4);
+			BYTE* buff = (BYTE*) malloc(h.spslen);
+			if (buff == NULL) return(false); //malloc error...
+			CGolombBuffer	gb (buff, h.spslen);
+			RemoveMpegEscapeCode (buff, h.sps, h.spslen);
 
 			h.profile = (BYTE)gb.BitRead(8);
 			gb.BitRead(8);
 			h.level = (BYTE)gb.BitRead(8);
 
 			gb.UExpGolombRead(); // seq_parameter_set_id
+			
+			//Initialise to normal values
+		  h.chromaFormat = YUV420;
+			h.lumaDepth = 8; // bit_depth_luma_minus8
+			h.chromaDepth = 8; // bit_depth_chroma_minus8
 
-			if(h.profile >= 100) // high profile
+			if(h.profile >= AVC_PROF_HP || h.profile==AVC_PROF_CAVLC444 || h.profile==AVC_PROF_83 || h.profile==AVC_PROF_86) // high profile etc
 			{
-				if(gb.UExpGolombRead() == 3) // chroma_format_idc
+			  h.chromaFormat = gb.UExpGolombRead();
+				if(h.chromaFormat == YUV444) // chroma_format_idc
 				{
 					gb.BitRead(1); // residue_transform_flag
 				}
 
-				gb.UExpGolombRead(); // bit_depth_luma_minus8
-				gb.UExpGolombRead(); // bit_depth_chroma_minus8
+				h.lumaDepth = (WORD)gb.UExpGolombRead() + 8; // bit_depth_luma_minus8
+				h.chromaDepth = (WORD)gb.UExpGolombRead() + 8; // bit_depth_chroma_minus8
 
 				gb.BitRead(1); // qpprime_y_zero_transform_bypass_flag
 
@@ -1365,28 +1390,19 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 				}
 				if (gb.BitRead(1))						// timing_info_present_flag
 				{
-					num_units_in_tick		= gb.BitRead(32);
-					time_scale				= gb.BitRead(32);
-					fixed_frame_rate_flag	= gb.BitRead(1);
+					num_units_in_tick		  = (double)gb.BitRead(32);
+					time_scale				    = (double)gb.BitRead(32);
+					fixed_frame_rate_flag	= (bool)gb.BitRead(1);
 
-					// Trick for weird parameters (10x to Madshi)!
-					if ((num_units_in_tick < 1000) || (num_units_in_tick > 1001))
+					if ((time_scale > 0) && fixed_frame_rate_flag)
 					{
-						if  ((time_scale % num_units_in_tick != 0) && ((time_scale*1001) % num_units_in_tick == 0))
-						{
-							time_scale			= (time_scale * 1001) / num_units_in_tick;
-							num_units_in_tick	= 1001;
-						}
-						else
-						{
-							time_scale			= (time_scale * 1000) / num_units_in_tick;
-							num_units_in_tick	= 1000;
-						}
-					}
-					time_scale = time_scale / 2;	// VUI consider fields even for progressive stream : divide by 2!
-
-					if (time_scale)
-						h.AvgTimePerFrame = (10000000I64*num_units_in_tick)/time_scale;
+						// VUI consider fields even for progressive stream : multiply num_units_in_tick by 2
+						h.AvgTimePerFrame = (REFERENCE_TIME)((20000000.0 * num_units_in_tick)/time_scale);
+				  }
+				  else //variable frame rate, so guess ?
+				  {
+						h.AvgTimePerFrame = 370000; // lets go for 27Hz :-)
+				  }
 				}
 			}
 
@@ -1395,32 +1411,42 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 		}
 		else if(nal_type==0x8)
 		{
-			__int64 pos = GetPos() - 5;
-			if (h.ppslen != 0)
+			//LogDebug("PPS found");
+			
+		  h.ppsid = id;
+			__int64 pos = GetPos();
+			if (h.pps != NULL)
 			{
 				free(h.pps);
 			}
-			h.ppslen = next_nal - pos;
-			h.pps = (BYTE*) malloc(h.ppslen - 4);
-			ByteRead(h.pps, h.ppslen - 4);
+			h.ppslen = next_nal - pos; //length excluding length and ID bytes
+			if ((h.ppslen <= 0) || (h.ppslen > 65534)) return(false); //Sanity check
+			h.pps = (BYTE*) malloc(h.ppslen);
+			if (h.pps == NULL) return(false); //malloc error...
+			ByteRead(h.pps, h.ppslen);
+	    //LogDebug("h.ppslen = %d, bytes = %x %x %x %x, last byte = %x", h.ppslen, *h.pps, *(h.pps+1), *(h.pps+2), *(h.pps+3), *(h.pps+h.ppslen-1));
 		}
 
-		BitByteAlign();
+		//BitByteAlign();
 
-		Seek(next_nal);
-	} // end while main
+		//Seek(next_nal);
+	}
 
-	if(!h.spslen || !h.ppslen || h.height<100 || h.width<100 || h.AvgTimePerFrame<=0) 
+	if(h.spslen<=0 || h.ppslen<=0 || h.height<100 || h.width<100 || h.AvgTimePerFrame<=0) 
 		return(false);
 
-	if(!pmt) return(true);
-
+	if(!pmt) 
 	{
-		int extra = 2+h.spslen-4 + 2+h.ppslen-4;
+	  return(true);
+	}
+  else
+	{
+		int extra = 2+1+h.spslen + 2+1+h.ppslen;
 		pmt->SetType(&MEDIATYPE_Video);
 		//pmt->SetSubtype(&MEDIASUBTYPE_H264);
 		pmt->SetSubtype(&MPG4_SubType);
 		pmt->formattype = FORMAT_MPEG2_VIDEO;
+		pmt->bTemporalCompression = TRUE;
 
 		int len = FIELD_OFFSET(MPEG2VIDEOINFO, dwSequenceHeader) + extra;
 		MPEG2VIDEOINFO* vi = (MPEG2VIDEOINFO*)pmt->AllocFormatBuffer(len);
@@ -1432,7 +1458,7 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 		struct {DWORD x, y;} ar[] = {{h.width,h.height},{4,3},{16,9},{221,100},{h.width,h.height}};
 		int i = min(max(h.ar, 1), 5)-1;
 		*/
-		struct {DWORD x, y;} ar[] = {{1,1},{1,1},{12,11},{10,11},{16,11},{40,33},{24,11},{20,11},{32,11},{80,33},{18,11},{15,11},{64,33},{160,99},{1,1},{1,1}};
+		struct {DWORD x, y;} ar[] = {{0,0},{1,1},{12,11},{10,11},{16,11},{40,33},{24,11},{20,11},{32,11},{80,33},{18,11},{15,11},{64,33},{160,99},{4,3},{3,2},{2,1}};
 		if(h.ar == 255)
 		{
 			// make sure that both are 0 or none
@@ -1441,7 +1467,7 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 
 			// h.arx and h.ary now contain sample aspect ratio
 		}
-		else if(h.ar < 1 || h.ar > 13)
+		else if(h.ar < 1 || h.ar > 16)
 		{
 			// aspect ratio unspecified or reserved
 			h.ar = 0;
@@ -1462,14 +1488,37 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 		if(b) h.arx /= b, h.ary /= b;
 		vi->hdr.dwPictAspectRatioX = h.arx;
 		vi->hdr.dwPictAspectRatioY = h.ary;
-		vi->hdr.bmiHeader.biSize = sizeof(vi->hdr.bmiHeader);
+    vi->hdr.rcSource.right = h.width;
+    vi->hdr.rcSource.bottom = h.height;
+    vi->hdr.rcTarget.right = h.width;
+    vi->hdr.rcTarget.bottom = h.height;
 		vi->hdr.bmiHeader.biWidth = h.width;
 		vi->hdr.bmiHeader.biHeight = h.height;
 		//vi->hdr.bmiHeader.biCompression = '462h';
 		vi->hdr.bmiHeader.biCompression = '1CVA';
 		vi->hdr.bmiHeader.biPlanes=1;
-		vi->hdr.bmiHeader.biBitCount=24;
+
+    switch (h.chromaFormat)
+    {
+      case YUV420 :
+  		  vi->hdr.bmiHeader.biBitCount = h.lumaDepth + (h.chromaDepth/2);
+        break;
+      case YUV422 :
+  		  vi->hdr.bmiHeader.biBitCount = h.lumaDepth + h.chromaDepth;
+        break;
+      case YUV444 :
+  		  vi->hdr.bmiHeader.biBitCount = h.lumaDepth + (2*h.chromaDepth);
+        break;
+      case YUV400 : //Monochrome
+		    vi->hdr.bmiHeader.biBitCount = h.lumaDepth;
+        break;
+      default :
+  		  vi->hdr.bmiHeader.biBitCount = h.lumaDepth + (h.chromaDepth/2);
+    }
+
 		vi->hdr.bmiHeader.biClrUsed=0;
+    vi->hdr.bmiHeader.biSizeImage = DIBSIZE(vi->hdr.bmiHeader);
+		vi->hdr.bmiHeader.biSize = sizeof(vi->hdr.bmiHeader);
 		vi->dwProfile = h.profile;
 		vi->dwFlags = 4; // ?
 		vi->dwLevel = h.level;
@@ -1477,14 +1526,19 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 		vi->dwStartTimeCode=0;
 		
 		BYTE* p = (BYTE*)&vi->dwSequenceHeader[0];
-		*p++ = (h.spslen-4) >> 8;
-		*p++ = (h.spslen-4) & 0xff;
-		memcpy(p, h.sps, h.spslen-4);
-		p += h.spslen-4;
-		*p++ = (h.ppslen-4) >> 8;
-		*p++ = (h.ppslen-4) & 0xff;
-		memcpy(p, h.pps, h.ppslen-4);
-		p += h.ppslen-4;
+
+		*p++ = (h.spslen+1) >> 8;
+		*p++ = (h.spslen+1) & 0xff;
+		*p++ = h.spsid;
+		memcpy(p, h.sps, h.spslen);
+		p += h.spslen;
+		
+		*p++ = (h.ppslen+1) >> 8;
+		*p++ = (h.ppslen+1) & 0xff;
+		*p++ = h.ppsid;
+		memcpy(p, h.pps, h.ppslen);
+		//p += h.ppslen;		
+		
 		pmt->SetFormat((BYTE*)vi, len);
 	}
 
@@ -1615,16 +1669,25 @@ bool CFrameHeaderParser::Read(vc1hdr& h, int len, CMediaType* pmt)
 		pmt->majortype = MEDIATYPE_Video;
 		pmt->subtype = FOURCCMap('1CVW');
 		pmt->formattype = FORMAT_VIDEOINFO2;
+		pmt->bTemporalCompression = TRUE;
 		int len = sizeof(VIDEOINFOHEADER2) + extralen + 1;
 		VIDEOINFOHEADER2* vi = (VIDEOINFOHEADER2*)DNew BYTE[len];
 		memset(vi, 0, len);
 		vi->AvgTimePerFrame = (10000000I64*nFrameRateNum)/nFrameRateDen;
 		vi->dwPictAspectRatioX = h.width;
 		vi->dwPictAspectRatioY = h.height;
-		vi->bmiHeader.biSize = sizeof(vi->bmiHeader);
+    vi->rcSource.right = h.width;
+    vi->rcSource.bottom = h.height;
+    vi->rcTarget.right = h.width;
+    vi->rcTarget.bottom = h.height;
 		vi->bmiHeader.biWidth = h.width;
 		vi->bmiHeader.biHeight = h.height;
 		vi->bmiHeader.biCompression = '1CVW';
+		vi->bmiHeader.biPlanes=1;
+		vi->bmiHeader.biBitCount=24;
+		vi->bmiHeader.biClrUsed=0;
+    vi->bmiHeader.biSizeImage = DIBSIZE(vi->bmiHeader);
+		vi->bmiHeader.biSize = sizeof(vi->bmiHeader);
 		BYTE* p = (BYTE*)vi + sizeof(VIDEOINFOHEADER2);
 		*p++ = 0;
 		Seek(extrapos);
@@ -1669,6 +1732,9 @@ void CFrameHeaderParser::DumpAvcHeader(avchdr h)
 	LogDebug("profile: %i",h.profile);
 	LogDebug("PPS len: %i",h.ppslen);
 	LogDebug("SPS len: %i",h.spslen);
+	LogDebug("chromaFormat: %i",h.chromaFormat);
+	LogDebug("lumaDepth: %i",h.lumaDepth);
+	LogDebug("chromaDepth: %i",h.chromaDepth);
 	LogDebug("=================================");
 }
 

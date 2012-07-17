@@ -88,19 +88,6 @@ namespace TvLibrary.Implementations.Analog
     }
 
     /// <summary>
-    /// Stop timeshifting
-    /// </summary>
-    /// <returns></returns>
-    protected override void OnStopTimeShifting()
-    {
-      base.OnStopTimeShifting();
-      if (_card.SupportsQualityControl && IsRecording)
-      {
-        _card.Quality.StartRecord();
-      }
-    }
-
-    /// <summary>
     /// Start recording
     /// </summary>
     /// <param name="fileName">recording filename</param>

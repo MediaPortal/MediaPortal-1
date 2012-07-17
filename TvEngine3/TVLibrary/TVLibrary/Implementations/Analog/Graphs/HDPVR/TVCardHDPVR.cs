@@ -155,6 +155,7 @@ namespace TvLibrary.Implementations.Analog
       subChannel.Parameters = Parameters;
       subChannel.CurrentChannel = channel;
       _mapSubChannels[id] = subChannel;
+      FireNewSubChannelEvent(id);
       return id;
     }
 
@@ -617,36 +618,37 @@ namespace TvLibrary.Implementations.Analog
       // Set up the crossbar.
       IAMCrossbar crossBarFilter = _filterCrossBar as IAMCrossbar;
 
-      // Video
-      if ((_previousChannel == null || previousChannel.VideoSource != analogChannel.VideoSource) &&
-        _videoPinMap.ContainsKey(analogChannel.VideoSource))
+      if (_previousChannel == null || previousChannel.VideoSource != analogChannel.VideoSource)
       {
-        Log.Log.WriteFile("HDPVR:   video input -> {0}", analogChannel.VideoSource);
-        crossBarFilter.Route(_videoOutPinIndex, _videoPinMap[analogChannel.VideoSource]);
+        // Video
+        if (_videoPinMap.ContainsKey(analogChannel.VideoSource))
+        {
+          Log.Log.WriteFile("HDPVR:   video input -> {0}", analogChannel.VideoSource);
+          crossBarFilter.Route(_videoOutPinIndex, _videoPinMap[analogChannel.VideoSource]);
+        }
+
+        // Automatic Audio
+        if (analogChannel.AudioSource == AnalogChannel.AudioInputType.Automatic)
+        {
+          if (_videoPinRelatedAudioMap.ContainsKey(analogChannel.VideoSource))
+          {
+            Log.Log.WriteFile("HDPVR:   audio input -> (auto)");
+            crossBarFilter.Route(_audioOutPinIndex, _videoPinRelatedAudioMap[analogChannel.VideoSource]);
+          }
+        }
       }
 
       // Audio
-      if (analogChannel.AudioSource == AnalogChannel.AudioInputType.Automatic)
-      {
-        if (_videoPinRelatedAudioMap.ContainsKey(analogChannel.VideoSource))
-        {
-          Log.Log.WriteFile("HDPVR:   audio input -> (auto)");
-          crossBarFilter.Route(_audioOutPinIndex, _videoPinRelatedAudioMap[analogChannel.VideoSource]);
-        }
-      }
-      else if ((_previousChannel == null || previousChannel.AudioSource != analogChannel.AudioSource) &&
+      if ((_previousChannel == null || previousChannel.AudioSource != analogChannel.AudioSource) &&
+        analogChannel.AudioSource != AnalogChannel.AudioInputType.Automatic &&
         _audioPinMap.ContainsKey(analogChannel.AudioSource))
       {
         Log.Log.WriteFile("HDPVR:   audio input -> {0}", analogChannel.AudioSource);
         crossBarFilter.Route(_audioOutPinIndex, _audioPinMap[analogChannel.AudioSource]);
       }
 
-      _lastSignalUpdate = DateTime.MinValue;
-      _tunerLocked = false;
       _previousChannel = analogChannel;
       Log.Log.WriteFile("HDPVR: Tuned to channel {0}", channel.Name);
-
-      _lastSignalUpdate = DateTime.MinValue;
     }
 
     /// <summary>

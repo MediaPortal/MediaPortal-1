@@ -63,6 +63,7 @@ namespace MediaPortal.GUI.Library
     protected int _hyperLinkWindowId = -1;
     protected int _actionId = -1;
     protected string _scriptAction = "";
+    [XMLSkinElement("onclick")] protected string _onclick = "";
     [XMLSkinElement("textOffsetX1")] protected int _textOffsetX1 = 10;
     [XMLSkinElement("textOffsetY1")] protected int _textOffsetY1 = 2;
     [XMLSkinElement("textOffsetX2")] protected int _textOffsetX2 = 10;
@@ -97,100 +98,96 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("shadowAngle2")] protected int _shadowAngle2 = 0;
     [XMLSkinElement("shadowDistance2")] protected int _shadowDistance2 = 0;
     [XMLSkinElement("shadowColor2")] protected long _shadowColor2 = 0xFF000000;
+
     [XMLSkin("textureFocusedLeft", "border")] protected string _strBorderTFL = "";
-
-    [XMLSkin("textureFocusedLeft", "position")] protected GUIImage.BorderPosition _borderPositionTFL =
-      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
-
+    [XMLSkin("textureFocusedLeft", "position")] protected GUIImage.BorderPosition _borderPositionTFL = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
     [XMLSkin("textureFocusedLeft", "textureRepeat")] protected bool _borderTextureRepeatTFL = false;
     [XMLSkin("textureFocusedLeft", "textureRotate")] protected bool _borderTextureRotateTFL = false;
     [XMLSkin("textureFocusedLeft", "texture")] protected string _borderTextureFileNameTFL = "image_border.png";
     [XMLSkin("textureFocusedLeft", "colorKey")] protected long _borderColorKeyTFL = 0xFFFFFFFF;
     [XMLSkin("textureFocusedLeft", "corners")] protected bool _borderHasCornersTFL = false;
     [XMLSkin("textureFocusedLeft", "cornerRotate")] protected bool _borderCornerTextureRotateTFL = true;
+    [XMLSkin("textureFocusedLeft", "tileFill")] protected bool _textureFocusedLeftTileFill = false;
+    [XMLSkin("textureFocusedLeft", "overlay")] protected string _overlayTFL = "";
+    [XMLSkin("textureFocusedLeft", "colordiffuse")] protected long _diffuseColorTFL = 0xFFFFFFFF;
+
     [XMLSkin("textureNonFocusedLeft", "border")] protected string _strBorderTNFL = "";
-
-    [XMLSkin("textureNonFocusedLeft", "position")] protected GUIImage.BorderPosition _borderPositionTNFL =
-      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
-
+    [XMLSkin("textureNonFocusedLeft", "position")] protected GUIImage.BorderPosition _borderPositionTNFL = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
     [XMLSkin("textureNonFocusedLeft", "textureRepeat")] protected bool _borderTextureRepeatTNFL = false;
     [XMLSkin("textureNonFocusedLeft", "textureRotate")] protected bool _borderTextureRotateTNFL = false;
     [XMLSkin("textureNonFocusedLeft", "texture")] protected string _borderTextureFileNameTNFL = "image_border.png";
     [XMLSkin("textureNonFocusedLeft", "colorKey")] protected long _borderColorKeyTNFL = 0xFFFFFFFF;
     [XMLSkin("textureNonFocusedLeft", "corners")] protected bool _borderHasCornersTNFL = false;
     [XMLSkin("textureNonFocusedLeft", "cornerRotate")] protected bool _borderCornerTextureRotateTNFL = true;
+    [XMLSkin("textureNonFocusedLeft", "tileFill")] protected bool _textureNonFocusedLeftTileFill = false;
+    [XMLSkin("textureNonFocusedLeft", "overlay")] protected string _overlayTNFL = "";
+    [XMLSkin("textureNonFocusedLeft", "colordiffuse")] protected long _diffuseColorTNFL = 0xFFFFFFFF;
+
     [XMLSkin("textureFocusedMid", "border")] protected string _strBorderTFM = "";
-
-    [XMLSkin("textureFocusedMid", "position")] protected GUIImage.BorderPosition _borderPositionTFM =
-      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
-
+    [XMLSkin("textureFocusedMid", "position")] protected GUIImage.BorderPosition _borderPositionTFM = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
     [XMLSkin("textureFocusedMid", "textureRepeat")] protected bool _borderTextureRepeatTFM = false;
     [XMLSkin("textureFocusedMid", "textureRotate")] protected bool _borderTextureRotateTFM = false;
     [XMLSkin("textureFocusedMid", "texture")] protected string _borderTextureFileNameTFM = "image_border.png";
     [XMLSkin("textureFocusedMid", "colorKey")] protected long _borderColorKeyTFM = 0xFFFFFFFF;
     [XMLSkin("textureFocusedMid", "corners")] protected bool _borderHasCornersTFM = false;
     [XMLSkin("textureFocusedMid", "cornerRotate")] protected bool _borderCornerTextureRotateTFM = true;
+    [XMLSkin("textureFocusedMid", "tileFill")] protected bool _textureFocusedMidTileFill = false;
+    [XMLSkin("textureFocusedMid", "overlay")] protected string _overlayTFM = "";
+    [XMLSkin("textureFocusedMid", "colordiffuse")] protected long _diffuseColorTFM = 0xFFFFFFFF;
+
     [XMLSkin("textureNonFocusedMid", "border")] protected string _strBorderTNFM = "";
-
-    [XMLSkin("textureNonFocusedMid", "position")] protected GUIImage.BorderPosition _borderPositionTNFM =
-      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
-
+    [XMLSkin("textureNonFocusedMid", "position")] protected GUIImage.BorderPosition _borderPositionTNFM = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
     [XMLSkin("textureNonFocusedMid", "textureRepeat")] protected bool _borderTextureRepeatTNFM = false;
     [XMLSkin("textureNonFocusedMid", "textureRotate")] protected bool _borderTextureRotateTNFM = false;
     [XMLSkin("textureNonFocusedMid", "texture")] protected string _borderTextureFileNameTNFM = "image_border.png";
     [XMLSkin("textureNonFocusedMid", "colorKey")] protected long _borderColorKeyTNFM = 0xFFFFFFFF;
     [XMLSkin("textureNonFocusedMid", "corners")] protected bool _borderHasCornersTNFM = false;
     [XMLSkin("textureNonFocusedMid", "cornerRotate")] protected bool _borderCornerTextureRotateTNFM = true;
+    [XMLSkin("textureNonFocusedMid", "tileFill")] protected bool _textureNonFocusedMidTileFill = false;
+    [XMLSkin("textureNonFocusedMid", "overlay")] protected string _overlayTNFM = "";
+    [XMLSkin("textureNonFocusedMid", "colordiffuse")] protected long _diffuseColorTNFM = 0xFFFFFFFF;
+
     [XMLSkin("textureFocusedRight", "border")] protected string _strBorderTFR = "";
-
-    [XMLSkin("textureFocusedRight", "position")] protected GUIImage.BorderPosition _borderPositionTFR =
-      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
-
+    [XMLSkin("textureFocusedRight", "position")] protected GUIImage.BorderPosition _borderPositionTFR = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
     [XMLSkin("textureFocusedRight", "textureRepeat")] protected bool _borderTextureRepeatTFR = false;
     [XMLSkin("textureFocusedRight", "textureRotate")] protected bool _borderTextureRotateTFR = false;
     [XMLSkin("textureFocusedRight", "texture")] protected string _borderTextureFileNameTFR = "image_border.png";
     [XMLSkin("textureFocusedRight", "colorKey")] protected long _borderColorKeyTFR = 0xFFFFFFFF;
     [XMLSkin("textureFocusedRight", "corners")] protected bool _borderHasCornersTFR = false;
     [XMLSkin("textureFocusedRight", "cornerRotate")] protected bool _borderCornerTextureRotateTFR = true;
+    [XMLSkin("textureFocusedRight", "tileFill")] protected bool _textureFocusedRightTileFill = false;
+    [XMLSkin("textureFocusedRight", "overlay")] protected string _overlayTFR = "";
+    [XMLSkin("textureFocusedRight", "colordiffuse")] protected long _diffuseColorTFR = 0xFFFFFFFF;
+
     [XMLSkin("textureNonFocusedRight", "border")] protected string _strBorderTNFR = "";
-
-    [XMLSkin("textureNonFocusedRight", "position")] protected GUIImage.BorderPosition _borderPositionTNFR =
-      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
-
+    [XMLSkin("textureNonFocusedRight", "position")] protected GUIImage.BorderPosition _borderPositionTNFR = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
     [XMLSkin("textureNonFocusedRight", "textureRepeat")] protected bool _borderTextureRepeatTNFR = false;
     [XMLSkin("textureNonFocusedRight", "textureRotate")] protected bool _borderTextureRotateTNFR = false;
     [XMLSkin("textureNonFocusedRight", "texture")] protected string _borderTextureFileNameTNFR = "image_border.png";
     [XMLSkin("textureNonFocusedRight", "colorKey")] protected long _borderColorKeyTNFR = 0xFFFFFFFF;
     [XMLSkin("textureNonFocusedRight", "corners")] protected bool _borderHasCornersTNFR = false;
     [XMLSkin("textureNonFocusedRight", "cornerRotate")] protected bool _borderCornerTextureRotateTNFR = true;
+    [XMLSkin("textureNonFocusedRight", "tileFill")] protected bool _textureNonFocusedRightTileFill = false;
+    [XMLSkin("textureNonFocusedRight", "overlay")] protected string _overlayTNFR = "";
+    [XMLSkin("textureNonFocusedRight", "colordiffuse")] protected long _diffuseColorTNFR = 0xFFFFFFFF;
+
     [XMLSkin("textureIcon", "border")] protected string _strBorderTI = "";
-
-    [XMLSkin("textureIcon", "position")] protected GUIImage.BorderPosition _borderPositionTI =
-      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
-
+    [XMLSkin("textureIcon", "position")] protected GUIImage.BorderPosition _borderPositionTI = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
     [XMLSkin("textureIcon", "textureRepeat")] protected bool _borderTextureRepeatTI = false;
     [XMLSkin("textureIcon", "textureRotate")] protected bool _borderTextureRotateTI = false;
     [XMLSkin("textureIcon", "texture")] protected string _borderTextureFileNameTI = "image_border.png";
     [XMLSkin("textureIcon", "colorKey")] protected long _borderColorKeyTI = 0xFFFFFFFF;
     [XMLSkin("textureIcon", "corners")] protected bool _borderHasCornersTI = false;
     [XMLSkin("textureIcon", "cornerRotate")] protected bool _borderCornerTextureRotateTI = true;
+
     [XMLSkin("textureIcon2", "border")] protected string _strBorderTI2 = "";
-
-    [XMLSkin("textureIcon2", "position")] protected GUIImage.BorderPosition _borderPositionTI2 =
-      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
-
+    [XMLSkin("textureIcon2", "position")] protected GUIImage.BorderPosition _borderPositionTI2 = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
     [XMLSkin("textureIcon2", "textureRepeat")] protected bool _borderTextureRepeatTI2 = false;
     [XMLSkin("textureIcon2", "textureRotate")] protected bool _borderTextureRotateTI2 = false;
     [XMLSkin("textureIcon2", "texture")] protected string _borderTextureFileNameTI2 = "image_border.png";
     [XMLSkin("textureIcon2", "colorKey")] protected long _borderColorKeyTI2 = 0xFFFFFFFF;
     [XMLSkin("textureIcon2", "corners")] protected bool _borderHasCornersTI2 = false;
     [XMLSkin("textureIcon2", "cornerRotate")] protected bool _borderCornerTextureRotateTI2 = true;
-    [XMLSkin("textureFocusedLeft", "tileFill")] protected bool _textureFocusedLeftTileFill = false;
-    [XMLSkin("textureNonFocusedLeft", "tileFill")] protected bool _textureNonFocusedLeftTileFill = false;
-    [XMLSkin("textureFocusedMid", "tileFill")] protected bool _textureFocusedMidTileFill = false;
-    [XMLSkin("textureNonFocusedMid", "tileFill")] protected bool _textureNonFocusedMidTileFill = false;
-    [XMLSkin("textureFocusedRight", "tileFill")] protected bool _textureFocusedRightTileFill = false;
-    [XMLSkin("textureNonFocusedRight", "tileFill")] protected bool _textureNonFocusedRightTileFill = false;
 
     private GUILabelControl _labelControl1 = null;
     private GUILabelControl _labelControl2 = null;
@@ -198,6 +195,7 @@ namespace MediaPortal.GUI.Library
     private bool _containsProperty2 = false;
     private bool renderLeftPart = true;
     private bool renderRightPart = true;
+    private bool stretchIfNotRendered = false;
     //Sprite                           sprite=null;
     private bool _property1Changed = false;
     private bool _property2Changed = false;
@@ -284,6 +282,13 @@ namespace MediaPortal.GUI.Library
       _imageIcon2.DimColor = DimColor;
       _labelControl1.DimColor = DimColor;
       _labelControl2.DimColor = DimColor;
+
+      _imageFocusedLeft.OverlayFileName = _overlayTFL;
+      _imageFocusedMid.OverlayFileName = _overlayTFM;
+      _imageFocusedRight.OverlayFileName = _overlayTFR;
+      _imageNonFocusedLeft.OverlayFileName = _overlayTNFL;
+      _imageNonFocusedMid.OverlayFileName = _overlayTNFM;
+      _imageNonFocusedRight.OverlayFileName = _overlayTNFR;
 
       _imageIcon2.Visible = false; // Constructor creates icon2 as a copy of icon1.
     }
@@ -420,13 +425,22 @@ namespace MediaPortal.GUI.Library
       {
         //render the focused images
         //if (_imageIcon!=null) GUIFontManager.Present();//TODO:not nice. but needed for the tvguide
+
         if (renderLeftPart)
         {
+          _imageFocusedLeft.ColourDiffuse = ColourDiffuseTFL;
+          _imageFocusedLeft.OverlayFileName = OverlayFileNameTFL;
           _imageFocusedLeft.Render(timePassed);
         }
+
+        _imageFocusedMid.ColourDiffuse = ColourDiffuseTFM;
+        _imageFocusedMid.OverlayFileName = OverlayFileNameTFM;
         _imageFocusedMid.Render(timePassed);
+
         if (renderRightPart)
         {
+          _imageFocusedRight.ColourDiffuse = ColourDiffuseTFR;
+          _imageFocusedRight.OverlayFileName = OverlayFileNameTFR;
           _imageFocusedRight.Render(timePassed);
         }
         GUIPropertyManager.SetProperty("#highlightedbutton", _cachedTextLabel1);
@@ -435,13 +449,22 @@ namespace MediaPortal.GUI.Library
       {
         //else render the non-focus images
         //if (_imageIcon!=null) GUIFontManager.Present();//TODO:not nice. but needed for the tvguide
+
         if (renderLeftPart)
         {
+          _imageNonFocusedLeft.ColourDiffuse = ColourDiffuseTNFL;
+          _imageNonFocusedLeft.OverlayFileName = OverlayFileNameTNFL;
           _imageNonFocusedLeft.Render(timePassed);
         }
+
+        _imageNonFocusedMid.ColourDiffuse = ColourDiffuseTNFM;
+        _imageNonFocusedMid.OverlayFileName = OverlayFileNameTNFM;
         _imageNonFocusedMid.Render(timePassed);
+
         if (renderRightPart)
         {
+          _imageNonFocusedRight.ColourDiffuse = ColourDiffuseTNFR;
+          _imageNonFocusedRight.OverlayFileName = OverlayFileNameTNFR;
           _imageNonFocusedRight.Render(timePassed);
         }
       }
@@ -462,8 +485,11 @@ namespace MediaPortal.GUI.Library
       // render the 1st line of text on the button
       if (_imageNonFocusedMid.IsVisible && _cachedTextLabel1.Length > 0)
       {
-        int widthLeft =
-          (int)((float)_imageFocusedLeft.TextureWidth * ((float)_height / (float)_imageFocusedLeft.TextureHeight));
+        int widthLeft = 0;
+        if (RenderLeft)
+        {
+          widthLeft = (int)((float)_imageFocusedLeft.TextureWidth * ((float)_height / (float)_imageFocusedLeft.TextureHeight));
+        }
         int xoff = _textOffsetX1 + widthLeft;
 
         if (Disabled)
@@ -585,7 +611,12 @@ namespace MediaPortal.GUI.Library
         //is the button clicked?
         if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_SELECT_ITEM)
         {
-          // yes,
+          // If this button has a click setting then execute the setting.
+          if (_onclick.Length != 0)
+          {
+            GUIPropertyManager.Parse(_onclick, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
+          }
+
           //If this button contains scriptactions call the scriptactions.
           if (_application.Length != 0)
           {
@@ -739,7 +770,7 @@ namespace MediaPortal.GUI.Library
       _imageNonFocusedMid.SafeDispose();
       _imageNonFocusedRight.SafeDispose();
       _imageIcon.SafeDispose();
-      _imageIcon2.Dispose();
+      _imageIcon2.SafeDispose();
 
       _labelControl1.SafeDispose();
       _labelControl2.SafeDispose();
@@ -1179,14 +1210,6 @@ namespace MediaPortal.GUI.Library
     {
       _reCalculate = false;
 
-      _imageFocusedLeft.ColourDiffuse = ColourDiffuse;
-      _imageFocusedMid.ColourDiffuse = ColourDiffuse;
-      _imageFocusedRight.ColourDiffuse = ColourDiffuse;
-
-      _imageNonFocusedLeft.ColourDiffuse = ColourDiffuse;
-      _imageNonFocusedMid.ColourDiffuse = ColourDiffuse;
-      _imageNonFocusedRight.ColourDiffuse = ColourDiffuse;
-
       _imageFocusedLeft.Height = _height;
       _imageFocusedMid.Height = _height;
       _imageFocusedRight.Height = _height;
@@ -1229,6 +1252,22 @@ namespace MediaPortal.GUI.Library
         else
         {
           break;
+        }
+      }
+
+      // If either the left or right (or both) parts are not to be rendered then stretching allows for the middle part
+      // to stretch into the left or right parts space.
+      if (stretchIfNotRendered)
+      {
+        if (!RenderLeft)
+        {
+          widthMid += widthLeft;
+          widthLeft = 0;
+        }
+        if (!RenderRight)
+        {
+          widthMid += widthRight;
+          widthRight = 0;
         }
       }
 
@@ -1296,11 +1335,9 @@ namespace MediaPortal.GUI.Library
       _imageFocusedMid.SetPosition(_positionX + widthLeft, _positionY);
       _imageFocusedRight.SetPosition(_positionX + _width - widthRight, _positionY);
 
-
       _imageNonFocusedLeft.SetPosition(_positionX, _positionY);
       _imageNonFocusedMid.SetPosition(_positionX + widthLeft, _positionY);
       _imageNonFocusedRight.SetPosition(_positionX + _width - widthRight, _positionY);
-
 
       if (_imageIcon != null)
       {
@@ -1813,6 +1850,12 @@ namespace MediaPortal.GUI.Library
       set { renderRightPart = value; }
     }
 
+    public bool StretchIfNotRendered
+    {
+      get { return stretchIfNotRendered; }
+      set { stretchIfNotRendered = value; }
+    }
+    
     public override int Width
     {
       get { return base.Width; }
@@ -1841,14 +1884,87 @@ namespace MediaPortal.GUI.Library
 
     public override long ColourDiffuse
     {
-      get { return base.ColourDiffuse; }
+      get { return ColourDiffuseTNF; }
       set
       {
-        if (base.ColourDiffuse != value)
-        {
-          base.ColourDiffuse = value;
-          _reCalculate = true;
-        }
+        ColourDiffuseTF = value;
+        ColourDiffuseTNF = value;
+      }
+    }
+
+    public long ColourDiffuseTF
+    {
+      get { return ColourDiffuseTFM; }
+      set
+      {
+        ColourDiffuseTFM = value;
+        ColourDiffuseTFR = value;
+        ColourDiffuseTFL = value;
+      }
+    }
+
+    public long ColourDiffuseTNF
+    {
+      get { return ColourDiffuseTNFM; }
+      set
+      {
+        ColourDiffuseTNFM = value;
+        ColourDiffuseTNFR = value;
+        ColourDiffuseTNFL = value;
+      }
+    }
+
+    public long ColourDiffuseTFM
+    {
+      get { return _diffuseColorTFM; }
+      set
+      {
+        _diffuseColorTFM = value;
+      }
+    }
+
+    public long ColourDiffuseTNFM
+    {
+      get { return _diffuseColorTNFM; }
+      set
+      {
+        _diffuseColorTNFM = value;
+      }
+    }
+
+    public long ColourDiffuseTFR
+    {
+      get { return _diffuseColorTFR; }
+      set
+      {
+        _diffuseColorTFR = value;
+      }
+    }
+
+    public long ColourDiffuseTNFR
+    {
+      get { return _diffuseColorTNFR; }
+      set
+      {
+        _diffuseColorTNFR = value;
+      }
+    }
+
+    public long ColourDiffuseTFL
+    {
+      get { return _diffuseColorTFL; }
+      set
+      {
+        _diffuseColorTFL = value;
+      }
+    }
+
+    public long ColourDiffuseTNFL
+    {
+      get { return _diffuseColorTNFL; }
+      set
+      {
+        _diffuseColorTNFL = value;
       }
     }
 
@@ -2093,6 +2209,84 @@ namespace MediaPortal.GUI.Library
     {
       get { return _imageNonFocusedRight.TileFill; }
       set { _imageNonFocusedRight.TileFill = value; }
+    }
+
+    public string OverlayFileNameTFL
+    {
+      get { return _overlayTFL; }
+      set
+      {
+        if (_overlayTFL == value)
+        {
+          return;
+        }
+        _overlayTFL = value;
+      }
+    }
+
+    public string OverlayFileNameTNFL
+    {
+      get { return _overlayTNFL; }
+      set
+      {
+        if (_overlayTNFL == value)
+        {
+          return;
+        }
+        _overlayTNFL = value;
+      }
+    }
+
+    public string OverlayFileNameTFM
+    {
+      get { return _overlayTFM; }
+      set
+      {
+        if (_overlayTFM == value)
+        {
+          return;
+        }
+        _overlayTFM = value;
+      }
+    }
+
+    public string OverlayFileNameTNFM
+    {
+      get { return _overlayTNFM; }
+      set
+      {
+        if (_overlayTNFM == value)
+        {
+          return;
+        }
+        _overlayTNFM = value;
+      }
+    }
+
+    public string OverlayFileNameTFR
+    {
+      get { return _overlayTFR; }
+      set
+      {
+        if (_overlayTFR == value)
+        {
+          return;
+        }
+        _overlayTFR = value;
+      }
+    }
+
+    public string OverlayFileNameTNFR
+    {
+      get { return _overlayTNFR; }
+      set
+      {
+        if (_overlayTNFR == value)
+        {
+          return;
+        }
+        _overlayTNFR = value;
+      }
     }
   }
 }

@@ -1206,8 +1206,11 @@ namespace SetupTv.Sections
             dbChannel.IsRadio = channel.IsRadio;
             dbChannel.Persist();
 
-            layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.AllChannels);
-            if (checkBoxCreateSignalGroup.Checked)
+            if (dbChannel.IsTv)
+            {
+              layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.Analog);
+            }
+            if (dbChannel.IsRadio)
             {
               layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.Analog);
             }

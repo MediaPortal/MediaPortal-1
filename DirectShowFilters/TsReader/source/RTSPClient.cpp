@@ -4,6 +4,7 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <streams.h>
+#include "tsreader.h"
 #include "rtspclient.h"
 #include "MemorySink.h"
 
@@ -11,6 +12,7 @@
 #include "..\..\alloctracing.h"
 
 extern void LogDebug(const char *fmt, ...) ;
+extern DWORD m_tGTStartTime;
 
 CRTSPClient::CRTSPClient(CMemoryBuffer& buffer)
 :m_buffer(buffer)
@@ -480,11 +482,11 @@ long CRTSPClient::Duration()
 void CRTSPClient::FillBuffer(DWORD byteCount)
 {	
   LogDebug("CRTSPClient::Fillbuffer...%d\n",byteCount);
-  DWORD tickCount=GetTickCount();
+  DWORD tickCount=GET_TIME_NOW();
   while ( IsRunning() && m_buffer.Size() < byteCount)
   {
     Sleep(5);
-    if (GetTickCount()-tickCount > 3000) break;
+    if (GET_TIME_NOW()-tickCount > 3000) break;
   }
   LogDebug("CRTSPClient::Fillbuffer...%d/%d\n",byteCount,m_buffer.Size() );
 }

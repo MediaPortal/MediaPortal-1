@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2018</id>
   <defaultcontrol>3</defaultcontrol>
@@ -21,8 +21,6 @@
       <width>545</width>
       <height>365</height>
       <texture>cimenu_background.png</texture>
-      
-      
     </control>
     <control>
       <description>Heading text label</description>
@@ -33,8 +31,6 @@
       <label />
       <font>font14</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>Subtitle text label</description>
@@ -46,8 +42,6 @@
       <label />
       <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>bottom text label</description>
@@ -59,16 +53,14 @@
       <label />
       <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>Exit button</description>
       <type>button</type>
       <id>2</id>
-      <posX>590</posX>
+      <posX>599</posX>
       <posY>76</posY>
-      <width>47</width>
+      <width>38</width>
       <height>47</height>
       <textureFocus>dialogue_shutdown_focus.png</textureFocus>
       <textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
@@ -77,8 +69,6 @@
       <onright>3</onright>
       <onup>3</onup>
       <ondown>3</ondown>
-      
-      
     </control>
     <control>
       <description>options listcontrol</description>
@@ -97,8 +87,6 @@
       <PinIconYOff>10</PinIconYOff>
       <PinIconWidth>40</PinIconWidth>
       <PinIconHeight>25</PinIconHeight>
-      
-      
       <keepaspectratio>yes</keepaspectratio>
       <itemHeight>27</itemHeight>
       <itemWidth>29</itemWidth>

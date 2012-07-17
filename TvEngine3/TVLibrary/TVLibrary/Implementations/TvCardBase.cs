@@ -43,19 +43,56 @@ namespace TvLibrary.Implementations
     #region events
 
     /// <summary>
-    /// Delegate for the after tune event.
+    /// New subchannel observer event, fired when a new subchannel is created.
     /// </summary>
-    public delegate void OnAfterTuneDelegate();
+    public event OnNewSubChannelDelegate NewSubChannelEvent;
 
     /// <summary>
-    /// After tune observer event.
+    /// Set the device's new subchannel event handler.
+    /// </summary>
+    /// <value>the delegate</value>
+    public OnNewSubChannelDelegate OnNewSubChannelEvent
+    {
+      set
+      {
+        NewSubChannelEvent += value;
+      }
+    }
+
+    /// <summary>
+    /// Fire the new subchannel observer event.
+    /// </summary>
+    /// <param name="subChannelId">The ID of the new subchannel.</param>
+    protected void FireNewSubChannelEvent(int subChannelId)
+    {
+      if (NewSubChannelEvent != null)
+      {
+        NewSubChannelEvent(subChannelId);
+      }
+    }
+
+    /// <summary>
+    /// After tune observer event, fired after tuning is complete.
     /// </summary>
     public event OnAfterTuneDelegate AfterTuneEvent;
 
     /// <summary>
-    /// Handles the after tune observer event.
+    /// Set the device's after tune event handler.
     /// </summary>
-    protected void TvCardBase_OnAfterTuneEvent()
+    /// <value>the delegate</value>
+    public OnAfterTuneDelegate OnAfterTuneEvent
+    {
+      set
+      {
+        AfterTuneEvent -= value;
+        AfterTuneEvent += value;
+      }
+    }
+
+    /// <summary>
+    /// Fire the after tune observer event.
+    /// </summary>
+    private void FireAfterTuneEvent()
     {
       if (AfterTuneEvent != null)
       {
@@ -179,7 +216,7 @@ namespace TvLibrary.Implementations
 
 
     /// <summary>
-    /// The action that will be taken when a device is no longer being actively used.
+    /// The action that will be taken when the device is no longer being actively used.
     /// </summary>
     protected DeviceIdleMode _idleMode = DeviceIdleMode.Stop;
 
@@ -259,8 +296,8 @@ namespace TvLibrary.Implementations
     protected PidFilterMode _pidFilterMode = PidFilterMode.Auto;
 
     /// <summary>
-    /// The previous channel that the device was tuned to. This variable is reset each time the DirectShow
-    /// graph is stopped, paused or rebuilt.
+    /// The previous channel that the device was tuned to. This variable is reset each time the device
+    /// is stopped, paused or reset.
     /// </summary>
     protected IChannel _previousChannel = null;
 
@@ -272,6 +309,11 @@ namespace TvLibrary.Implementations
     /// also be slower (eg. TeVii) or more limiting (eg. Digital Everywhere) than regular tuning methods.
     /// </remarks>
     protected bool _useCustomTuning = false;
+
+    /// <summary>
+    /// A flag used by the TV service as a signal to abort the tuning process before it is completed.
+    /// </summary>
+    protected bool _cancelTune = false;
 
     #endregion
 
@@ -709,7 +751,6 @@ namespace TvLibrary.Implementations
         ((IMediaControl)_graphBuilder).GetState(10, out state);
         graphRunning = (state == FilterState.Running);
       }
-      //Log.Log.WriteFile("subch:{0} GraphRunning: {1}", _subChannelId, graphRunning);
       return graphRunning;
     }
 
@@ -1104,6 +1145,7 @@ namespace TvLibrary.Implementations
       bool foundCaProvider = false;
       for (int attempt = 1; attempt <= _decryptFailureRetryCount + 1; attempt++)
       {
+        ThrowExceptionIfTuneCancelled();
         if (attempt > 1)
         {
           Log.Log.Debug("TvCardBase: attempt {0}...", attempt);
@@ -1127,6 +1169,7 @@ namespace TvLibrary.Implementations
             TimeSpan waitTime = new TimeSpan(0);
             while (waitTime.TotalMilliseconds < 15000)
             {
+              ThrowExceptionIfTuneCancelled();
               System.Threading.Thread.Sleep(200);
               waitTime = DateTime.Now - startWait;
               if (caProvider.IsInterfaceReady())
@@ -1152,6 +1195,7 @@ namespace TvLibrary.Implementations
           }
           for (int i = 0; i < distinctServices.Count; i++)
           {
+            ThrowExceptionIfTuneCancelled();
             if (i == 0)
             {
               if (distinctServices.Count == 1)
@@ -1278,17 +1322,17 @@ namespace TvLibrary.Implementations
     public virtual void BuildGraph() {}
 
     /// <summary>
-    /// Check if the tuner has acquired signal lock.
+    /// Wait for the tuner to acquire signal lock.
     /// </summary>
-    /// <returns><c>true</c> if the tuner has locked in on signal, otherwise <c>false</c></returns>
-    public virtual bool LockedInOnSignal()
+    public void LockInOnSignal()
     {
-      Log.Log.Debug("TvCardBase: check for signal lock");
+      Log.Log.Debug("TvCardBase: lock in on signal");
       _tunerLocked = false;
       DateTime timeStart = DateTime.Now;
       TimeSpan ts = timeStart - timeStart;
       while (!_tunerLocked && ts.TotalSeconds < _parameters.TimeOutTune)
       {
+        ThrowExceptionIfTuneCancelled();
         UpdateSignalStatus(true);
         if (!_tunerLocked)
         {
@@ -1300,13 +1344,10 @@ namespace TvLibrary.Implementations
 
       if (!_tunerLocked)
       {
-        Log.Log.Debug("TvCardBase: failed to lock signal");
+        throw new TvExceptionNoSignal("TvCardBase: failed to lock signal");
       }
-      else
-      {
-        Log.Log.Debug("TvCardBase: locked");
-      }
-      return _tunerLocked;
+
+      Log.Log.Debug("TvCardBase: locked");
     }
 
     /// <summary>
@@ -1501,14 +1542,6 @@ namespace TvLibrary.Implementations
       }
     }
 
-    /// <summary>
-    /// A derrived class may activate / deactivate the epg grabber
-    /// </summary>
-    /// <param name="value">Mode</param>
-    protected virtual void UpdateEpgGrabber(bool value)
-    {
-    }
-
     #endregion
 
     #region scan/tune
@@ -1523,7 +1556,7 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// Scan a specific channel.
     /// </summary>
-    /// <param name="subChannelId">The subchannel ID for the channel that is being scanned.</param>
+    /// <param name="subChannelId">The ID of the subchannel associated with the channel that is being scanned.</param>
     /// <param name="channel">The channel to scan.</param>
     /// <returns>the subchannel associated with the scanned channel</returns>
     public virtual ITvSubChannel Scan(int subChannelId, IChannel channel)
@@ -1534,26 +1567,25 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// Tune to a specific channel.
     /// </summary>
-    /// <param name="subChannelId">The subchannel ID for the channel that is being tuned.</param>
+    /// <param name="subChannelId">The ID of the subchannel associated with the channel that is being tuned.</param>
     /// <param name="channel">The channel to tune to.</param>
     /// <returns>the subchannel associated with the tuned channel</returns>
     public virtual ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
       Log.Log.Debug("TvCardBase: tune channel, {0}", channel);
-      bool newSubChannel = false;
       try
       {
         // The DirectShow/BDA graph needs to be assembled before the channel can be tuned.
         if (!_isDeviceInitialised)
         {
           BuildGraph();
+          ThrowExceptionIfTuneCancelled();
         }
 
         // Get a subchannel for the service.
         if (!_mapSubChannels.ContainsKey(subChannelId))
         {
           Log.Log.Debug("TvCardBase: creating new subchannel");
-          newSubChannel = true;
           subChannelId = CreateNewSubChannel(channel);
         }
         else
@@ -1611,13 +1643,16 @@ namespace TvLibrary.Implementations
               powerDevice.SetPowerState(true);
             }
           }
+          ThrowExceptionIfTuneCancelled();
           if (action != DeviceAction.Default)
           {
             PerformDeviceAction(action);
           }
 
-          // Perform tuning.
+          // Apply tuning parameters to the device.
+          ThrowExceptionIfTuneCancelled();
           PerformTuning(tuneChannel);
+          ThrowExceptionIfTuneCancelled();
 
           // Plugin OnAfterTune().
           foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
@@ -1629,30 +1664,18 @@ namespace TvLibrary.Implementations
         // Subchannel OnAfterTune().
         _lastSignalUpdate = DateTime.MinValue;
         _mapSubChannels[subChannelId].OnAfterTune();
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Debug("TvCardBase: tuning failed\r\n{0}", ex.ToString());
-        if (newSubChannel)
-        {
-          Log.Log.Debug("TvCardBase: removing subchannel {0}", subChannelId);
-          _mapSubChannels.Remove(subChannelId);
-          // analog had: FreeSubChannel(subChannel.SubChannelId);
-        }
-        // We always want to force a retune on the next tune request in this situation.
-        _previousChannel = null;
-        throw;
-      }
 
-      _previousChannel = channel;
-      try
-      {
+        _previousChannel = channel;
+
         // Start the DirectShow/BDA graph if it is not already running.
+        ThrowExceptionIfTuneCancelled();
         SetGraphState(FilterState.Running);
+        ThrowExceptionIfTuneCancelled();
 
         // Ensure that data/streams which are required to detect the service will pass through the device's
         // PID filter.
         ConfigurePidFilter();
+        ThrowExceptionIfTuneCancelled();
 
         // Plugin OnRunning().
         foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
@@ -1660,19 +1683,26 @@ namespace TvLibrary.Implementations
           deviceInterface.OnRunning(this, _mapSubChannels[subChannelId].CurrentChannel);
         }
 
-        // Check signal lock.
-        if (!LockedInOnSignal())
-        {
-          throw new TvExceptionNoSignal("TvCardBase: failed to lock in on signal");
-        }
+        LockInOnSignal();
 
         // Subchannel OnGraphRunning().
-        _mapSubChannels[subChannelId].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(TvCardBase_OnAfterTuneEvent);
-        _mapSubChannels[subChannelId].AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(TvCardBase_OnAfterTuneEvent);
+        _mapSubChannels[subChannelId].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(FireAfterTuneEvent);
+        _mapSubChannels[subChannelId].AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(FireAfterTuneEvent);
         _mapSubChannels[subChannelId].OnGraphRunning();
+
+        // At this point we should know which data/streams form the service(s) that are being accessed. We need to
+        // ensure those streams will pass through the device's PID filter.
+        ThrowExceptionIfTuneCancelled();
+        ConfigurePidFilter();
+        ThrowExceptionIfTuneCancelled();
+
+        // If the service is encrypted, start decrypting it.
+        UpdateDecryptList(subChannelId, CaPmtListManagementAction.Add);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Log.Write(ex);
+
         // One potential reason for getting here is that signal could not be locked, and the reason for
         // that may be that tuning failed. We always want to force a retune on the next tune request in
         // this situation.
@@ -1683,15 +1713,37 @@ namespace TvLibrary.Implementations
         }
         throw;
       }
-
-      // At this point we should know which data/streams form the service(s) that are being accessed. We need to
-      // ensure those streams will pass through the device's PID filter.
-      ConfigurePidFilter();
-
-      // If the service is encrypted, start decrypting it.
-      UpdateDecryptList(subChannelId, CaPmtListManagementAction.Add);
+      finally
+      {
+        _cancelTune = false;
+      }
 
       return _mapSubChannels[subChannelId];
+    }
+
+    /// <summary>
+    /// Cancel the current tuning process.
+    /// </summary>
+    /// <param name="subChannelId">The ID of the subchannel associated with the channel that is being cancelled.</param>
+    public void CancelTune(int subChannelId)
+    {
+      Log.Log.Debug("TvCardBase: subchannel {0} cancel tune", subChannelId);
+      _cancelTune = true;
+      if (_mapSubChannels.ContainsKey(subChannelId))
+      {
+        _mapSubChannels[subChannelId].CancelTune();
+      }
+    }
+
+    /// <summary>
+    /// Check if the current tuning process has been cancelled and throw and exception if it has.
+    /// </summary>
+    protected void ThrowExceptionIfTuneCancelled()
+    {
+      if (_cancelTune)
+      {
+        throw new TvExceptionTuneCancelled();
+      }
     }
 
     /// <summary>
@@ -1699,13 +1751,6 @@ namespace TvLibrary.Implementations
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
     protected abstract void PerformTuning(IChannel channel);
-
-    /// <summary>
-    /// Allocate a new subchannel instance.
-    /// </summary>
-    /// <param name="channel">The service or channel to associate with the subchannel.</param>
-    /// <returns>a handle for the subchannel</returns>
-    protected abstract int CreateNewSubChannel(IChannel channel);
 
     #endregion
 
@@ -1739,7 +1784,7 @@ namespace TvLibrary.Implementations
     #region EPG
 
     /// <summary>
-    /// Get the device's ITVEPG interface, used for grabbing electronic program guide data.
+    /// Get the device's ITVEPG interface, used for grabbing electronic programme guide data.
     /// </summary>
     public virtual ITVEPG EpgInterface
     {
@@ -1750,14 +1795,14 @@ namespace TvLibrary.Implementations
     }
 
     /// <summary>
-    /// Abort grabbing electronic program guide data.
+    /// Abort grabbing electronic programme guide data.
     /// </summary>
     public virtual void AbortGrabbing()
     {
     }
 
     /// <summary>
-    /// Get the electronic program guide data found in a grab session.
+    /// Get the electronic programme guide data found in a grab session.
     /// </summary>
     /// <value>EPG data if the device supports EPG grabbing and grabbing is complete, otherwise <c>null</c></value>
     public virtual List<EpgChannel> Epg
@@ -1769,7 +1814,7 @@ namespace TvLibrary.Implementations
     }
 
     /// <summary>
-    /// Start grabbing electronic program guide data (idle EPG grabber).
+    /// Start grabbing electronic programme guide data (idle EPG grabber).
     /// </summary>
     /// <param name="callback">The delegate to call when grabbing is complete or canceled.</param>
     public virtual void GrabEpg(BaseEpgGrabber callback)
@@ -1777,9 +1822,17 @@ namespace TvLibrary.Implementations
     }
 
     /// <summary>
-    /// Start grabbing electronic program guide data (timeshifting/recording EPG grabber).
+    /// Start grabbing electronic programme guide data (timeshifting/recording EPG grabber).
     /// </summary>
     public virtual void GrabEpg()
+    {
+    }
+
+    /// <summary>
+    /// Activate or deactivate the EPG grabber.
+    /// </summary>
+    /// <param name="value"><c>True</c> to enable EPG grabbing.</param>
+    protected virtual void UpdateEpgGrabber(bool value)
     {
     }
 
@@ -1839,45 +1892,22 @@ namespace TvLibrary.Implementations
 
     #endregion
 
-
     #region subchannel management
 
     /// <summary>
-    /// Frees the sub channel.
+    /// Allocate a new subchannel instance.
     /// </summary>
-    /// <param name="id">The id.</param>
-    /// <param name="subchannelBusy">is the subcannel busy with other users.</param>
-    public virtual void FreeSubChannelContinueGraph(int id, bool subchannelBusy)
-    {
-      FreeSubChannel(id, true);
-    }
+    /// <param name="channel">The service or channel to associate with the subchannel.</param>
+    /// <returns>the ID of the new subchannel</returns>
+    protected abstract int CreateNewSubChannel(IChannel channel);
 
     /// <summary>
-    /// Frees the sub channel. but keeps the graph running.
+    /// Free a subchannel.
     /// </summary>
-    /// <param name="id">Handle to the subchannel.</param>
-    public virtual void FreeSubChannelContinueGraph(int id)
-    {
-      FreeSubChannel(id, true);
-    }
-
-    /// <summary>
-    /// Frees the sub channel.
-    /// </summary>
-    /// <param name="id">Handle to the subchannel.</param>
+    /// <param name="id">The ID of the subchannel.</param>
     public virtual void FreeSubChannel(int id)
     {
-      FreeSubChannel(id, false);
-    }
-
-    /// <summary>
-    /// Frees the sub channel.
-    /// </summary>
-    /// <param name="id">Handle to the subchannel.</param>
-    /// <param name="continueGraph">Indicates, if the graph should be continued or stopped</param>
-    private void FreeSubChannel(int id, bool continueGraph)
-    {
-      Log.Log.Debug("TvCardBase: free subchannel, ID = {0}, subchannel count = {1}, stop device = {2}", id, _mapSubChannels.Count, id, !continueGraph);
+      Log.Log.Debug("TvCardBase: free subchannel, ID = {0}, subchannel count = {1}", id, _mapSubChannels.Count);
       if (_mapSubChannels.ContainsKey(id))
       {
         if (_mapSubChannels[id].IsTimeShifting)
@@ -1912,24 +1942,17 @@ namespace TvLibrary.Implementations
       if (_mapSubChannels.Count == 0)
       {
         _subChannelId = 0;
-        if (!continueGraph)
-        {
-          Log.Log.Debug("TvCardBase: stopping device");
-          Stop();
-        }
-        else
-        {
-          Log.Log.Debug("TvCardBase: leave device running");
-        }
+        Log.Log.Debug("TvCardBase: no subchannels present, stopping device");
+        Stop();
       }
       else
       {
-        Log.Log.Debug("TvCardBase: leave device running, subchannels still present");
+        Log.Log.Debug("TvCardBase: subchannels still present, leave device running");
       }
     }
 
     /// <summary>
-    /// Frees all sub channels.
+    /// Free all subchannels.
     /// </summary>
     protected void FreeAllSubChannels()
     {
@@ -1944,9 +1967,9 @@ namespace TvLibrary.Implementations
     }
 
     /// <summary>
-    /// Gets the sub channel.
+    /// Get a specific subchannel.
     /// </summary>
-    /// <param name="id">The id.</param>
+    /// <param name="id">The ID of the subchannel.</param>
     /// <returns></returns>
     public ITvSubChannel GetSubChannel(int id)
     {
@@ -1958,9 +1981,9 @@ namespace TvLibrary.Implementations
     }
 
     /// <summary>
-    /// Gets the sub channels.
+    /// Get the devices' subchannels.
     /// </summary>
-    /// <value>The sub channels.</value>
+    /// <value>An array containing the subchannels.</value>
     public ITvSubChannel[] SubChannels
     {
       get

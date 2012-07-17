@@ -126,45 +126,48 @@ namespace TvLibrary.Interfaces.Analyzer
     [PreserveSig]
     int SetCallBack(IChannelScanCallback callback);
 
+    #region network information table scanning
 
     /// <summary>
-    /// Start the nit scan
+    /// Start an NIT scan.
     /// </summary>
     /// <returns></returns>
     [PreserveSig]
     int ScanNIT();
 
     /// <summary>
-    /// Stops the nit scan
+    /// Stop an NIT scan.
     /// </summary>
     /// <returns></returns>
     [PreserveSig]
     int StopNIT();
 
     /// <summary>
-    /// Gets the number of nit transponders
+    /// Get the number of transponder details found by an NIT scan.
     /// </summary>
-    /// <param name="transponderCount">Number of transponders</param>
+    /// <param name="transponderCount">The number of transponder details found.</param>
     /// <returns></returns>
     [PreserveSig]
     int GetNITCount(out int transponderCount);
 
     /// <summary>
-    /// Gets the nit channel
+    /// Get the details for a single transponder found by an NIT scan.
     /// </summary>
-    /// <param name="channel">The channel id</param>
-    /// <param name="chType">The channel type</param>
-    /// <param name="frequency">The frequence</param>
-    /// <param name="polarisation">The polarisation</param>
-    /// <param name="modulation">The modulation</param>
-    /// <param name="symbolrate">The symbolrate</param>
-    /// <param name="bandwidth">The bandwith</param>
-    /// <param name="fecInner">The fec inner</param>
-    /// <param name="networkName">The network names</param>
-    /// <param name="rollOff">rolloff (S2 specific)</param>
+    /// <param name="channel">The transponder index (zero based).</param>
+    /// <param name="chType">The transponder type.</param>
+    /// <param name="frequency">The transponder frequency, in kHz.</param>
+    /// <param name="polarisation">The transponder polarisation. Only applicable for DVB-S/2 transponders.</param>
+    /// <param name="modulation">The transponder modulation scheme. Only applicable for DVB-S/2 and DVB-C transponders.</param>
+    /// <param name="symbolRate">The transponder symbol rate, in ks/s. Only applicable for DVB-S/2 and DVB-C transponders.</param>
+    /// <param name="bandwidth">The transponder bandwith, in MHz. Only applicable for DVB-T transponders.</param>
+    /// <param name="innerFecRate">The transponder inner FEC rate. Only applicable for DVB-S/2 transponders.</param>
+    /// <param name="rollOff">The transponder roll-off parameter. Only applicable for DVB-S2 transponders.</param>
+    /// <param name="networkName">The name of the network that the transponder is associated with.</param>
     /// <returns></returns>
     [PreserveSig]
     int GetNITChannel(int channel, out int chType, out int frequency, out int polarisation, out int modulation,
-                      out int symbolrate, out int bandwidth, out int fecInner, out int rollOff, out IntPtr networkName);
+                      out int symbolRate, out int bandwidth, out int innerFecRate, out int rollOff, out IntPtr networkName);
+
+    #endregion
   }
 }

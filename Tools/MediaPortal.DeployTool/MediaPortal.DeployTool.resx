@@ -513,4 +513,7 @@ Enabling AERO will also reduce CPU usage, thus making your HTPC run cooler and q
     <value>A reboot is needed by a Microsoft component.
 Please proceed with it before continuing with MediaPortal installation.</value>
   </data>
+  <data name="MPSettings_checkBoxLAV" xml:space="preserve">
+    <value>Install LAV Filters to enable playback of many common audio and video formats</value>
+  </data>
 </root>

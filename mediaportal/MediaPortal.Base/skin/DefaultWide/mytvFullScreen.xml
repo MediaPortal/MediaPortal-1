@@ -60,7 +60,7 @@
       <fillbgxoff>0</fillbgxoff>
       <fillbgyoff>0</fillbgyoff>
       <filltexture1>osd_progress_mid_red.png</filltexture1>
-      <filltexture2>osd_progress_mid.png</filltexture2>
+      <filltexture2>osd_progress_mid_green.png</filltexture2>
       <filltexture3>osd_progress_mid_orange.png</filltexture3>
       <fillheight>20</fillheight>
       <label>#TV.Record.percent1</label>
@@ -106,7 +106,7 @@
       <width>300</width>
       <label>-</label>
       <font>font14</font>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>no</visible>
       <animation effect="zoom" start="100,100" end="120,120" time="0" >visible</animation>
     </control>
@@ -119,7 +119,7 @@
       <width>300</width>
       <label>-</label>
       <font>font14</font>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>no</visible>
       <animation effect="zoom" start="100,100" end="120,120" time="0" >visible</animation>
     </control>
@@ -132,7 +132,7 @@
       <width>300</width>
       <label>-</label>
       <font>font14</font>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>no</visible>
       <animation effect="zoom" start="100,100" end="120,120" time="0" >visible</animation>
     </control>

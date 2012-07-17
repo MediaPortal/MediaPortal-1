@@ -1142,6 +1142,21 @@ namespace TvDatabase
       return bRunningAt;
     }
 
+    /// <summary>
+    /// Checks if the program ended prior to the specified date/time
+    /// </summary>
+    /// <param name="tCurTime">date and time</param>
+    /// <returns>true if program ended prior to tCurTime</returns>
+    public bool EndedBefore(DateTime tCurTime)
+    {
+      bool bEndedBefore = false;
+      if (EndTime <= tCurTime)
+      {
+        bEndedBefore = true;
+      }
+      return bEndedBefore;
+    }
+
     public Program Clone()
     {
       Program p = new Program(idProgram, idChannel, StartTime, EndTime, Title, Description, Genre, (ProgramState)state,

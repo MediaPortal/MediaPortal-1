@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2010 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2010 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -20,13 +20,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
-using TvLibrary.Interfaces;
+using System.Text;
 
 namespace TvControl
 {
   /// <summary>
-  /// Class holding user credentials
+  /// 
   /// </summary>
   [Serializable]
   public class User : ICloneable, IUser
@@ -39,14 +40,17 @@ namespace TvControl
     private int _idChannel;
     private TvStoppedReason _timeshiftStoppedReason;
     private DateTime _lastHeartBeat;
-    [NonSerialized] private object _history;
+    [NonSerialized]
+    private object _history;
     private Dictionary<int, ChannelState> _channelStates; //used primarily for miniepg.
+    private int? _priority;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="User"/> class.
     /// </summary>
     public User()
     {
+      _priority = null;
       _hostName = Dns.GetHostName();
       _isAdmin = false;
       _cardId = -1;
@@ -65,6 +69,7 @@ namespace TvControl
     /// <param name="isAdmin">if set to <c>true</c> [is admin].</param>
     public User(string name, bool isAdmin)
     {
+      _priority = null;
       _hostName = name;
       _isAdmin = isAdmin;
       _cardId = -1;
@@ -80,11 +85,39 @@ namespace TvControl
     /// <param name="cardId">The card id.</param>
     public User(string name, bool isAdmin, int cardId)
     {
+      _priority = null;
       _hostName = name;
       _isAdmin = isAdmin;
       _cardId = cardId;
       _subChannel = -1;
       _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="User"/> class.
+    /// </summary>
+    /// <param name="name">The name.</param>
+    /// <param name="isAdmin">if set to <c>true</c> [is admin].</param>
+    /// <param name="cardId">The card id.</param>
+    /// <param name="priority">card lock priority</param>
+    public User(string name, bool isAdmin, int cardId, int priority)
+    {
+      _hostName = name;
+      _isAdmin = isAdmin;
+      _cardId = cardId;
+      _subChannel = -1;
+      _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
+      _priority = priority;
+    }
+
+    /// <summary>
+    /// Gets an integer defining the user's card lock priority (higher number=higher priority)
+    /// </summary>    
+    /// <returns>user priority</returns>
+    public int? Priority
+    {
+      get { return _priority; }
+      set { _priority = value; }
     }
 
     /// <summary>
@@ -202,6 +235,7 @@ namespace TvControl
       user._subChannel = _subChannel;
       user._idChannel = _idChannel;
       user._timeshiftStoppedReason = _timeshiftStoppedReason;
+      user._priority = _priority;
       return user;
     }
 

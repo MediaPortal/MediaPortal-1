@@ -480,14 +480,14 @@ namespace SetupTv.Sections
           if (channels == null || channels.Length == 0)
           {
             /// try frequency - offset
-            tuneChannel.Offset = -curTuning.Offset;
-            item.Text = String.Format("{0}tp- {1} {2}MHz ", 1 + index, tuneChannel.Frequency - tuneChannel.Offset, tuneChannel.Bandwidth);
+            tuneChannel.Frequency = curTuning.Frequency - curTuning.Offset;
+            item.Text = String.Format("{0}tp- {1} {2}MHz ", 1 + index, tuneChannel.Frequency, tuneChannel.Bandwidth);
             channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
             if (channels == null || channels.Length == 0)
             {
               /// try frequency + offset
-              tuneChannel.Offset = curTuning.Offset;
-              item.Text = String.Format("{0}tp- {1} {2}MHz ", 1 + index, tuneChannel.Frequency + tuneChannel.Offset, tuneChannel.Bandwidth);
+              tuneChannel.Frequency = curTuning.Frequency + curTuning.Offset;
+              item.Text = String.Format("{0}tp- {1} {2}MHz ", 1 + index, tuneChannel.Frequency, tuneChannel.Bandwidth);
               channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
             }
           }

@@ -183,6 +183,7 @@ namespace MediaPortal.GUI.Library
       ACTION_NEXT_BOOKMARK = 141,
       ACTION_LASTFM_LOVE = 800,
       ACTION_LASTFM_BAN = 801,
+      ACTION_BD_POPUP_MENU = 1700,
       ACTION_REMOTE_RED_BUTTON = 9975,
       ACTION_REMOTE_GREEN_BUTTON = 9976,
       ACTION_REMOTE_YELLOW_BUTTON = 9977,
@@ -208,7 +209,8 @@ namespace MediaPortal.GUI.Library
       ACTION_TVGUIDE_PREV_GROUP = 9996, // switch to the previous tv group in guide
       ACTION_ROTATE_PICTURE_180 = 9997, // rotate current picture 180 during slideshow.
       ACTION_ROTATE_PICTURE_270 = 9998, // rotate current picture 270 during slideshow.
-      ACTION_NEXT_EDITION = 134 // Switch to next edition
+      ACTION_NEXT_EDITION = 134, // Switch to next edition
+      ACTION_NEXT_VIDEO = 135 // Switch to next video stream
     } ;
 
     #endregion

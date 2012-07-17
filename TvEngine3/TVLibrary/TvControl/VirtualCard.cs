@@ -1054,10 +1054,8 @@ namespace TvControl
     /// Starts recording.
     /// </summary>
     /// <param name="fileName">Name of the recording file.</param>
-    /// <param name="contentRecording">not used</param>
-    /// <param name="startTime">not used</param>
     /// <returns>true if success otherwise false</returns>
-    public TvResult StartRecording(ref string fileName, bool contentRecording, long startTime)
+    public TvResult StartRecording(ref string fileName)
     {
       try
       {
@@ -1066,7 +1064,7 @@ namespace TvControl
           return TvResult.UnknownError;
         }
         RemoteControl.HostName = _server;
-        return RemoteControl.Instance.StartRecording(ref _user, ref fileName, contentRecording, startTime);
+        return RemoteControl.Instance.StartRecording(ref _user, ref fileName);
       }
       catch (Exception)
       {

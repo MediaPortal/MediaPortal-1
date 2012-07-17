@@ -8,12 +8,25 @@
       <description>rec logo</description>
       <type>image</type>
       <id>4</id>
-      <posX>10</posX>
-      <posY>25</posY>
+      <posX>620</posX>
+      <posY>10</posY>
       <width>40</width>
       <height>40</height>
       <texture>rec.png</texture>
       <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
+      <visible>!window.isvisible(0)+!window.isvisible(34)</visible>
+    </control>
+    <control>
+      <description>rec logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>780</posX>
+      <posY>10</posY>
+      <width>40</width>
+      <height>40</height>
+      <texture>rec.png</texture>
+      <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
+      <visible>window.isvisible(0)|window.isvisible(34)</visible>
     </control>
   </controls>
 </window>

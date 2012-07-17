@@ -392,6 +392,11 @@ namespace MediaPortal.Player
         _state = PlayState.Stopped;
         VMR9Util.g_vmr9.EVRSetDVDMenuState(false);
 
+        if (_vmr9 != null)
+        {
+          _vmr9.Enable(false);
+        }
+
         _visible = false;
         _mediaEvt = null;
         _dvdCtrl = null;
@@ -426,15 +431,6 @@ namespace MediaPortal.Player
           _line21Decoder = null;
         }
 
-        PostProcessingEngine.GetInstance().FreePostProcess();
-
-        if (_vmr9 != null)
-        {
-          _vmr9.Enable(false);
-          _vmr9.SafeDispose();
-          _vmr9 = null;
-        }
-
         if (_graphBuilder != null)
         {
           DirectShowUtil.RemoveFilters(_graphBuilder);
@@ -447,6 +443,12 @@ namespace MediaPortal.Player
           }
           while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;
           _graphBuilder = null;
+        }
+
+        if (_vmr9 != null)
+        {
+          _vmr9.SafeDispose();
+          _vmr9 = null;
         }
 
         _state = PlayState.Init;

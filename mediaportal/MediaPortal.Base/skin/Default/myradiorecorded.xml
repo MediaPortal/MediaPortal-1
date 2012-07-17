@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>763</id>
   <defaultcontrol>50</defaultcontrol>
@@ -24,7 +25,7 @@
       <height>110</height>
       <texture>#selectedthumb</texture>
       <visible>[facadeview.list|facadeview.album]+Control.HasFocus(50)</visible>
-      <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
+      <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
     </control>
     <control>
       <type>image</type>
@@ -65,14 +66,18 @@
       <posY>96</posY>
       <layout>StackLayout</layout>
       <control>
-        <type>button</type>
+        <type>menubutton</type>
         <description>View-As button</description>
         <id>2</id>
         <onleft>2</onleft>
         <onright>50</onright>
         <onup>17</onup>
         <ondown>3</ondown>
-        <label>100</label>
+        <label></label>
+        <mode>dialoglist</mode>
+        <dialogTitle>792</dialogTitle>
+        <valueTextInButton>yes</valueTextInButton>
+        <valuePrefixText>95</valuePrefixText>
       </control>
       <control>
         <type>sortbutton</type>
@@ -84,14 +89,18 @@
         <label>620</label>
       </control>
       <control>
-        <type>button</type>
+        <type>menubutton</type>
         <description>All,Genre,Channel button</description>
         <id>5</id>
         <onleft>5</onleft>
         <onright>50</onright>
         <onup>3</onup>
         <ondown>6</ondown>
-        <label>457</label>
+        <label></label>
+        <mode>dialoglist</mode>
+        <dialogTitle>499</dialogTitle>
+        <valueTextInButton>yes</valueTextInButton>
+        <valuePrefixText>97</valuePrefixText>
       </control>
       <control>
         <type>button</type>
@@ -123,7 +132,7 @@
       <posY>373</posY>
       <align>left</align>
       <width>379</width>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
       <label>#Radio.Recorded.Channel</label>
       <font>font12</font>
     </control>
@@ -137,7 +146,7 @@
       <label>#Radio.Recorded.Time</label>
       <align>left</align>
       <font>font12</font>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Current program genre</description>

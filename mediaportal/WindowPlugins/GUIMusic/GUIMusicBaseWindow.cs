@@ -78,7 +78,7 @@ namespace MediaPortal.GUI.Music
     private static readonly string[] _sortModes = {
                                                     "Name", "Date", "Size", "Track", "Duration", "Title", "Artist",
                                                     "Album", "Filename",
-                                                    "Rating", "Album Artist", "Year", "DiscID", "Composer"
+                                                    "Rating", "Album Artist", "Year", "DiscID", "Composer", "Times Played"
                                                   };
 
     private static readonly string[] _defaultSortTags1 = {
@@ -88,7 +88,7 @@ namespace MediaPortal.GUI.Music
                                                            defaultTrackTag,
                                                            defaultTrackTag, defaultTrackTag, defaultTrackTag,
                                                            defaultTrackTag,
-                                                           defaultTrackTag, defaultTrackTag
+                                                           defaultTrackTag, defaultTrackTag, defaultTrackTag
                                                          };
 
     private static readonly string[] _defaultSortTags2 = {
@@ -96,7 +96,7 @@ namespace MediaPortal.GUI.Music
                                                            "%duration%",
                                                            "%duration%", "%duration%", "%duration%", "%filesize%",
                                                            "%rating%",
-                                                           "%duration%", "%year%", "%disc#%", "%duration%"
+                                                           "%duration%", "%year%", "%disc#%", "%duration%", "%timesplayed%"
                                                          };
 
     private static string[] _sortTags1 = new string[20];
@@ -295,6 +295,8 @@ namespace MediaPortal.GUI.Music
           return MusicSort.SortMethod.DiscID;
         case "composer":
           return MusicSort.SortMethod.Composer;
+        case "timesplayed":
+          return MusicSort.SortMethod.TimesPlayed;
       }
       if (!string.IsNullOrEmpty(s))
       {
@@ -455,11 +457,14 @@ namespace MediaPortal.GUI.Music
         case MusicSort.SortMethod.Composer:
           strLine = GUILocalizeStrings.Get(1208);
           break;
+        case MusicSort.SortMethod.TimesPlayed:
+          strLine = GUILocalizeStrings.Get(1209);
+          break;
       }
 
       if (btnSortBy != null)
       {
-        btnSortBy.Label = strLine;
+        btnSortBy.Label = GUILocalizeStrings.Get(96) + strLine;
       }
 
       if (null != facadeLayout)
@@ -746,6 +751,7 @@ namespace MediaPortal.GUI.Music
       string rating = tag.Rating.ToString();
       string discID = tag.DiscID > 0 ? tag.DiscID.ToString() : string.Empty;
       string date = tag.DateTimeModified.ToShortDateString();
+      string timesPlayed = tag.TimesPlayed.ToString(); // 0 is ok here as it is possible song never played
 
       string line1, line2;
       if (CurrentSortMethod == MusicSort.SortMethod.AlbumArtist)
@@ -782,8 +788,10 @@ namespace MediaPortal.GUI.Music
       line2 = Util.Utils.ReplaceTag(line2, "%date%", date);
       line1 = Util.Utils.ReplaceTag(line1, "%disc#%", discID);
       line2 = Util.Utils.ReplaceTag(line2, "%disc#%", discID);
-      line1 = Util.Utils.ReplaceTag(line1, "%composer%", tag.Composer);
-      line2 = Util.Utils.ReplaceTag(line2, "%composer%", tag.Composer);
+      line1 = Util.Utils.ReplaceTag(line1, "%timesplayed%", timesPlayed);
+      line2 = Util.Utils.ReplaceTag(line2, "%timesplayed%", timesPlayed);
+      line1 = Util.Utils.ReplaceTag(line1, "%timesplayed%", timesPlayed);
+      line2 = Util.Utils.ReplaceTag(line2, "%timesplayed%", timesPlayed);
       item.Label = line1;
       item.Label2 = line2;
 
@@ -899,12 +907,42 @@ namespace MediaPortal.GUI.Music
       dlg.AddLocalizedString(104); // date
       dlg.AddLocalizedString(1205); // disc#
       dlg.AddLocalizedString(1208); // composer
+      dlg.AddLocalizedString(1209); // times played
 
-      // !!! this does not work yet, because we need to change
-      //       the order of MusicSort.SortMethod items OR
-      //       the order which the methods are added to the dialog above
-      // set the focus to currently used sort method
-      //dlg.SelectedLabel = (int)CurrentSortMethod;
+      switch (CurrentSortMethod)
+      {
+        case MusicSort.SortMethod.Name:
+          dlg.SelectedLabel = 0;  // Value is the order in which the option was added to the menu above.
+          break;
+        case MusicSort.SortMethod.Artist:
+        case MusicSort.SortMethod.AlbumArtist:
+          dlg.SelectedLabel = 1;
+          break;
+        case MusicSort.SortMethod.Album:
+          dlg.SelectedLabel = 2;
+          break;
+        case MusicSort.SortMethod.Track:
+          dlg.SelectedLabel = 3;
+          break;
+        case MusicSort.SortMethod.Title:
+          dlg.SelectedLabel = 4;
+          break;
+        case MusicSort.SortMethod.Filename:
+          dlg.SelectedLabel = 5;
+          break;
+        case MusicSort.SortMethod.Rating:
+          dlg.SelectedLabel = 6;
+          break;
+        case MusicSort.SortMethod.Duration:
+          dlg.SelectedLabel = 7;
+          break;
+        case MusicSort.SortMethod.Size:
+          dlg.SelectedLabel = 8;
+          break;
+        case MusicSort.SortMethod.Date:
+          dlg.SelectedLabel = 9;
+          break;
+      }
 
       // show dialog and wait for result
       dlg.DoModal(GetID);
@@ -953,6 +991,9 @@ namespace MediaPortal.GUI.Music
           break;
         case 1208:
           CurrentSortMethod = MusicSort.SortMethod.Composer;
+          break;
+        case 1209:
+          CurrentSortMethod = MusicSort.SortMethod.TimesPlayed;
           break;
         default:
           CurrentSortMethod = MusicSort.SortMethod.Name;

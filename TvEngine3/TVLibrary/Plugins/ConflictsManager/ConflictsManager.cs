@@ -306,11 +306,6 @@ namespace TvEngine
             {
               cardSchedules[cardno[card.IdCard]].Add(schedule);
               assigned = true;
-              if (overlap)
-              {
-                schedule.RecommendedCard = card.IdCard;
-                schedule.Persist();
-              }
               break;
             }
           }

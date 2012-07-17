@@ -43,7 +43,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     public FiltersPowerDVDDecoder10()
-      : this("PowerDVD Video 10/11") {}
+      : this("PowerDVD Video 10+") {}
 
     /// <summary>
     /// 
@@ -102,7 +102,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.Size = new System.Drawing.Size(462, 221);
       this.mpGroupBox3.TabIndex = 4;
       this.mpGroupBox3.TabStop = false;
-      this.mpGroupBox3.Text = "H.264/VC-1/MPEG Video Decoder Settings (PDVD10/11)";
+      this.mpGroupBox3.Text = "H.264/VC-1/MPEG Video Decoder Settings (PDVD10+)";
       // 
       // checkBoxUIUseSW
       // 
@@ -160,7 +160,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel5.Size = new System.Drawing.Size(256, 26);
       this.mpLabel5.TabIndex = 4;
       this.mpLabel5.Text = "Recommended to reduce CPU utilization. If selected De-Interlace options are contr" +
-          "olled by VMR9.";
+    "olled by VMR9.";
       // 
       // checkBoxUIUseH264HVA
       // 

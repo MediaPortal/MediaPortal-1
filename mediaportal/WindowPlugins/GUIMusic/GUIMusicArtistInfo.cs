@@ -73,7 +73,7 @@ namespace MediaPortal.GUI.Music
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\DialogArtistInfo.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\DialogArtistInfo.xml"));
     }
 
     //public override void PreInit() {}

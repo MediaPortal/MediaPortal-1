@@ -1,0 +1,269 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{D0620EF4-1313-40D5-9069-A82F6FE26994}</ProjectGuid>
+    <RootNamespace>AudioRenderer</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <UseOfAtl>false</UseOfAtl>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="common.props" />
+    <Import Project="debug.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="common.props" />
+    <Import Project="debug.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\bin\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\obj\Debug\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\bin\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\obj\Release\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>$(DSHOW_BASE);$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;SoundTouch\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_USRDLL;FLOAT_SAMPLES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <AssemblerListingLocation>.\bin\Debug/</AssemblerListingLocation>
+      <ObjectFileName>.\bin\Debug/</ObjectFileName>
+      <ProgramDataBaseFileName>.\bin\Debug/</ProgramDataBaseFileName>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ShowIncludes>false</ShowIncludes>
+    </ClCompile>
+    <Link>
+      <RegisterOutput>false</RegisterOutput>
+      <AdditionalDependencies>strmbasd.lib;Winmm.lib;dsound.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ShowProgress>LinkVerboseLib</ShowProgress>
+      <OutputFile>bin\Debug/mpaudiorenderer.ax</OutputFile>
+      <AdditionalLibraryDirectories>$(DSHOW_BASE)Debug_MBCS; $(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>libcmtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ModuleDefinitionFile>.\source\MpAudioRenderer.def</ModuleDefinitionFile>
+      <SubSystem>Windows</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Full</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <AdditionalIncludeDirectories>$(DSHOW_BASE);$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;SoundTouch\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_USRDLL;FLOAT_SAMPLES;MULTICHANNEL_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <AssemblerListingLocation>.\bin\Release/</AssemblerListingLocation>
+      <ObjectFileName>.\bin\Release/</ObjectFileName>
+      <ProgramDataBaseFileName>.\bin\Release/</ProgramDataBaseFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <ResourceOutputFileName>$(IntDir)%(Filename).res</ResourceOutputFileName>
+    </ResourceCompile>
+    <Link>
+      <AdditionalOptions>/FORCE:MULTIPLE %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>strmbase.lib;Winmm.lib;dsound.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ShowProgress>LinkVerboseLib</ShowProgress>
+      <OutputFile>bin\Release/mpaudiorenderer.ax</OutputFile>
+      <AdditionalLibraryDirectories>$(DSHOW_BASE)Release_MBCS; $(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ModuleDefinitionFile>.\source\MpAudioRenderer.def</ModuleDefinitionFile>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <LargeAddressAware>true</LargeAddressAware>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>true</DataExecutionPrevention>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="libresample\src\samplerate.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="libresample\src\src_linear.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="libresample\src\src_sinc.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="libresample\src\src_zoh.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="AE_mixer\AEChannelInfo.cpp" />
+    <ClCompile Include="AE_mixer\AERemap.cpp" />
+    <ClCompile Include="source\AC3EncoderFilter.cpp" />
+    <ClCompile Include="source\BaseAudioSink.cpp" />
+    <ClCompile Include="source\BitDepthAdapter.cpp" />
+    <ClCompile Include="source\ChannelMixer.cpp" />
+    <ClCompile Include="source\DirectSoundRenderer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="source\dllmain.cpp" />
+    <ClCompile Include="source\dllsetup.cpp" />
+    <ClCompile Include="source\FilterApp.cpp" />
+    <ClCompile Include="source\Globals.cpp" />
+    <ClCompile Include="source\MediaSeeking.cpp" />
+    <ClCompile Include="source\MpAudioRenderer.cpp" />
+    <ClCompile Include="source\MultiSoundTouch.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="source\QueuedAudioSink.cpp" />
+    <ClCompile Include="source\SampleRateConverterFilter.cpp" />
+    <ClCompile Include="source\Settings.cpp" />
+    <ClCompile Include="source\SettingsProp.cpp" />
+    <ClCompile Include="source\SoundTouchEx.cpp" />
+    <ClCompile Include="source\StreamSanitizerFilter.cpp" />
+    <ClCompile Include="source\SyncClock.cpp" />
+    <ClCompile Include="source\ThreadDecouplingFilter.cpp" />
+    <ClCompile Include="source\TimeSource.cpp" />
+    <ClCompile Include="source\TimeStretchFilter.cpp" />
+    <ClCompile Include="source\VolumeHandler.cpp" />
+    <ClCompile Include="source\WaitableState.cpp" />
+    <ClCompile Include="source\WASAPIRenderer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="SoundTouch\source\3dnow_win.cpp">
+    </ClCompile>
+    <ClCompile Include="SoundTouch\source\AAFilter.cpp" />
+    <ClCompile Include="SoundTouch\source\BPMDetect.cpp" />
+    <ClCompile Include="SoundTouch\source\cpu_detect_x86_win.cpp">
+    </ClCompile>
+    <ClCompile Include="SoundTouch\source\FIFOSampleBuffer.cpp" />
+    <ClCompile Include="SoundTouch\source\FIRFilter.cpp" />
+    <ClCompile Include="SoundTouch\source\mmx_optimized.cpp" />
+    <ClCompile Include="SoundTouch\source\PeakFinder.cpp" />
+    <ClCompile Include="SoundTouch\source\RateTransposer.cpp" />
+    <ClCompile Include="SoundTouch\source\SoundTouch.cpp" />
+    <ClCompile Include="SoundTouch\source\sse_optimized.cpp" />
+    <ClCompile Include="SoundTouch\source\TDStretch.cpp" />
+    <ClCompile Include="AC3_encoder\ac3enc.cpp" />
+    <ClCompile Include="AC3_encoder\bits.cpp" />
+    <ClCompile Include="source\AudioClockTracker.cpp" />
+    <ClCompile Include="source\ClockAdjuster.cpp" />
+    <ClCompile Include="source\SynchCorrection.cpp" />
+    <ClCompile Include="source\WASAPIRenderFilter.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="source\MpAudioRenderer.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="libresample\src\samplerate.h" />
+    <ClInclude Include="AE_mixer\AEAudioFormat.h" />
+    <ClInclude Include="AE_mixer\AEChannelInfo.h" />
+    <ClInclude Include="AE_mixer\AERemap.h" />
+    <ClInclude Include="AE_mixer\StdString.h" />
+    <ClInclude Include="source\AC3EncoderFilter.h" />
+    <ClInclude Include="source\BaseAudioSink.h" />
+    <ClInclude Include="source\BitDepthAdapter.h" />
+    <ClInclude Include="source\ChannelMixer.h" />
+    <ClInclude Include="source\DirectSoundRenderer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="source\dllsetup.h" />
+    <ClInclude Include="source\FilterApp.h" />
+    <ClInclude Include="source\Globals.h" />
+    <ClInclude Include="source\IAudioSink.h" />
+    <ClInclude Include="source\IAVSyncClock.h" />
+    <ClInclude Include="source\IRenderDevice.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="source\IRenderFilter.h" />
+    <ClInclude Include="source\ITimeStretch.h" />
+    <ClInclude Include="source\MpAudioRenderer.h" />
+    <ClInclude Include="source\MultiSoundTouch.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="source\QueuedAudioSink.h" />
+    <ClInclude Include="source\resource.h" />
+    <ClInclude Include="source\SampleRateConverterFilter.h" />
+    <ClInclude Include="source\Settings.h" />
+    <ClInclude Include="source\SettingsProp.h" />
+    <ClInclude Include="source\SharedInclude.h" />
+    <ClInclude Include="source\SoundTouchEx.h" />
+    <ClInclude Include="source\stdafx.h" />
+    <ClInclude Include="source\StreamSanitizerFilter.h" />
+    <ClInclude Include="source\SyncClock.h" />
+    <ClInclude Include="source\ThreadDecouplingFilter.h" />
+    <ClInclude Include="source\TimeSource.h" />
+    <ClInclude Include="source\TimeStretchFilter.h" />
+    <ClInclude Include="source\VolumeHandler.h" />
+    <ClInclude Include="source\WaitableState.h" />
+    <ClInclude Include="source\WASAPIRenderer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="SoundTouch\include\BPMDetect.h" />
+    <ClInclude Include="SoundTouch\include\FIFOSampleBuffer.h" />
+    <ClInclude Include="SoundTouch\include\FIFOSamplePipe.h" />
+    <ClInclude Include="SoundTouch\include\SoundTouch.h" />
+    <ClInclude Include="SoundTouch\include\STTypes.h" />
+    <ClInclude Include="SoundTouch\source\AAFilter.h" />
+    <ClInclude Include="SoundTouch\source\cpu_detect.h" />
+    <ClInclude Include="SoundTouch\source\FIRFilter.h" />
+    <ClInclude Include="SoundTouch\source\PeakFinder.h" />
+    <ClInclude Include="SoundTouch\source\RateTransposer.h" />
+    <ClInclude Include="SoundTouch\source\TDStretch.h" />
+    <ClInclude Include="AC3_encoder\ac3enc.h" />
+    <ClInclude Include="AC3_encoder\bits.h" />
+    <ClInclude Include="source\AudioClockTracker.h" />
+    <ClInclude Include="source\ClockAdjuster.h" />
+    <ClInclude Include="source\SynchCorrection.h" />
+    <ClInclude Include="source\WASAPIRenderFilter.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="source\MpAudioRenderer.rc">
+    </ResourceCompile>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties DevPartner_IsInstrumented="0" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

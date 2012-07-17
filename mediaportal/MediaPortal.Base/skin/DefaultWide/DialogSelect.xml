@@ -4,72 +4,75 @@
   <defaultcontrol>3</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
+  
     <control>
-      <description>background image</description>
-      <type>image</type>
-      <id>1</id>
-      <width>1280</width>
-      <height>720</height>
-    </control>
-    <control>
-      <type>image</type>
-      <id>1</id>
-      <posX>106</posX>
-      <posY>25</posY>
-      <texture>select_logo.png</texture>
-      
-      
-    </control>
+			<type>image</type>
+			<id>0</id>
+			<width>1280</width>
+			<height>720</height>
+			<texture>black.png</texture>
+			<colordiffuse>60ffffff</colordiffuse>
+		</control>
+		<control>
+			<type>image</type>
+			<id>0</id>
+			<posX>206</posX>
+			<posY>80</posY>
+			<width>970</width>
+			<height>530</height>
+			<texture>context_background.png</texture>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
+		</control>
     <control>
       <description>Select text label</description>
       <type>label</type>
       <id>4</id>
-      <posX>444</posX>
-      <posY>87</posY>
+      <posX>270</posX>
+			<posY>110</posY>
+			<width>426</width>
       <label>181</label>
       <font>font16</font>
-      <align>right</align>
+      <align>left</align>
       <textcolor>ffffffff</textcolor>
-      
-      
     </control>
     <control>
       <description>Selected item Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>1173</posX>
-      <posY>87</posY>
+      <posX>630</posX>
+			<posY>116</posY>
       <label>#selecteditem</label>
       <font>font13</font>
-      <align>right</align>
+      <width>480</width>
+      <align>left</align>
       <textcolor>ffffffff</textcolor>
-      
-      
     </control>
     <control>
       <description>albums listcontrol</description>
       <type>listcontrol</type>
       <id>3</id>
+      <posX>284</posX>
+			<posY>187</posY>
+			<width>800</width>
+			<height>325</height>
       <onleft>5</onleft>
       <onright>5</onright>
-      <onup>5</onup>
-      <ondown>5</ondown>
-      
       
     </control>
     <control>
       <description>IMDB</description>
       <type>button</type>
       <id>5</id>
-      <posX>71</posX>
-      <posY>121</posY>
+      <textalign>center</textalign>
+			<textYOff>0</textYOff>
+			<posX>570</posX>
+			<posY>515</posY>
       <label>368</label>
       <onleft>3</onleft>
       <onright>3</onright>
-      <onup>21</onup>
+      <onup>3</onup>
       <ondown>3</ondown>
-      
-      
     </control>
   </controls>
 </window>

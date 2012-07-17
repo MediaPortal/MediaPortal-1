@@ -40,7 +40,7 @@ namespace MediaPortal.GUI.Video
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\videoOverlayTop.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\videoOverlayTop.xml"));
       GetID = (int)Window.WINDOW_VIDEO_OVERLAY_TOP;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.TopOverlay);
       return bResult;

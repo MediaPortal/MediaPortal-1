@@ -75,7 +75,6 @@ namespace TvLibrary.Interfaces
     /// </summary>
     bool IsTimeShifting { get; }
 
-
     /// <summary>
     /// returns the IChannel to which the card is currently tuned
     /// </summary>
@@ -143,6 +142,11 @@ namespace TvLibrary.Interfaces
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
     void TimeShiftGetCurrentFilePosition(ref Int64 position, ref long bufferId);
+
+    /// <summary>
+    /// Cancel the current tuning process.
+    /// </summary>
+    void CancelTune();
 
     #endregion
 
