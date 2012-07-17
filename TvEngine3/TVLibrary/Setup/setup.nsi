@@ -692,13 +692,8 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   # FILTER REGISTRATION       for TVClient
   #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
   #---------------------------------------------------------------------------
-<<<<<<< HEAD
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\DVBSubtitle2\bin\${BUILD_TYPE}\DVBSub2.ax" "$MPdir.Base\DVBSub2.ax"  "$MPdir.Base"
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin\Release\mmaacd.ax"                     "$MPdir.Base\mmaacd.ax"   "$MPdir.Base"
-=======
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\DVBSubtitle3\bin\${BUILD_TYPE}\DVBSub3.ax" "$MPdir.Base\DVBSub3.ax"  "$MPdir.Base"
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin\Release\mmaacd.ax"                     "$MPdir.Base\mmaacd.ax"   "$MPdir.Base"
->>>>>>> master
 ${MementoSectionEnd}
 !macro Remove_${SecClient}
   ${LOG_TEXT} "INFO" "Uninstalling MediaPortal TV Client plugin..."
