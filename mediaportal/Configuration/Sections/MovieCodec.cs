@@ -60,16 +60,16 @@ namespace MediaPortal.Configuration.Sections
         // Fetch available audio and video renderers
         ArrayList availableAudioRenderers = FilterHelper.GetAudioRenderers();
         // Populate video and audio codecs
-        ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
+        ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.Mpeg2Video);
         ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
         ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
-        ArrayList availableVC1VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.VC1);
-        ArrayList availableVC1IVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.VC1);
-        ArrayList availableXVIDVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.XVID);
-        ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.AAC);
+        ArrayList availableVC1VideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.VC1);
+        ArrayList availableVC1IVideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.VC1);
+        ArrayList availableXVIDVideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.XVID);
+        ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MpMediaSubType.AAC);
         ArrayList availableFileSyncFilters = FilterHelper.GetFilters(MediaType.Stream, MediaSubType.Null);
-        ArrayList availableVC1CyberlinkVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.CyberlinkVC1);
-        ArrayList availableVC1ICyberlinkVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.CyberlinkVC1);
+        ArrayList availableVC1CyberlinkVideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.CyberlinkVC1);
+        ArrayList availableVC1ICyberlinkVideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.CyberlinkVC1);
         ArrayList availableSourcesFilters = FilterHelper.GetFilterSource();
         //Remove Cyberlink Muxer from the list to avoid newbie user confusion.
         while (availableVideoFilters.Contains("CyberLink MPEG Muxer"))
@@ -205,7 +205,7 @@ namespace MediaPortal.Configuration.Sections
 
         if (videoCodec == string.Empty)
         {
-          ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
+          ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.Mpeg2Video);
           videoCodec = SetCodecBox(availableVideoFilters, "LAV Video Decoder", "DScaler Mpeg2 Video Decoder", "");
         }
         if (h264videoCodec == string.Empty)
@@ -215,17 +215,17 @@ namespace MediaPortal.Configuration.Sections
         }
         if (vc1videoCodec == string.Empty)
         {
-          ArrayList availableVC1VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.VC1);
+          ArrayList availableVC1VideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.VC1);
           vc1videoCodec = SetCodecBox(availableVC1VideoFilters, "LAV Video Decoder", "", "");
         }
         if (vc1ivideoCodec == string.Empty)
         {
-          ArrayList availableVC1VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.VC1);
+          ArrayList availableVC1VideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.VC1);
           vc1ivideoCodec = SetCodecBox(availableVC1VideoFilters, "LAV Video Decoder", "", "");
         }
         if (xvidvideoCodec == string.Empty)
         {
-          ArrayList availableXVIDVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.XVID);
+          ArrayList availableXVIDVideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.XVID);
           xvidvideoCodec = SetCodecBox(availableXVIDVideoFilters, "LAV Video Decoder", "DivX Decoder Filter", "");
         }
         if (audioCodec == string.Empty)
@@ -235,7 +235,7 @@ namespace MediaPortal.Configuration.Sections
         }
         if (aacaudioCodec == string.Empty)
         {
-          ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.AAC);
+          ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MpMediaSubType.AAC);
           aacaudioCodec = SetCodecBox(availableAACAudioFilters, "LAV Audio Decoder", "MONOGRAM ACC Decoder", "ffdshow Audio Decoder");
         }
         if (splitterFilter == string.Empty)

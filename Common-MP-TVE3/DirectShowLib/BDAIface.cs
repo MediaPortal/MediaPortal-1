@@ -261,6 +261,9 @@ namespace DirectShowLib.BDA
     int Stop();
   }
 
+  /*
+   * Interface redefined in MediaPortalCustomisations.
+   * 
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("afb6c2a2-2c41-11d3-8a60-0000f81e0e4a"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -270,7 +273,7 @@ namespace DirectShowLib.BDA
     int Next(
       [In] int cRequest,
       [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0, ArraySubType = UnmanagedType.Struct)] PIDMap[] pPIDMap,
-      [Out] out int pcReceived
+      [Out] out IntPtr pcReceived
       );
 
     [PreserveSig]
@@ -281,7 +284,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
     int Clone([Out] out IEnumPIDMap ppIEnumPIDMap);
-  }
+  }*/
 
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("0DED49D5-A8B7-4d5d-97A1-12B0C195874D"),
@@ -689,6 +692,9 @@ namespace DirectShowLib.BDA
       out MulticastMode pulModeMask);
   }
 
+  /*
+   * Interface redefined in MediaPortalCustomisations.
+   * 
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("71985F47-1CA1-11d3-9CC8-00C04F7971E0"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -713,10 +719,10 @@ namespace DirectShowLib.BDA
     int get_Polarity([Out] out Polarisation pPolarity);
 
     [PreserveSig]
-    int put_Range([In] ulong ulRange); //int ulRange);
+    int put_Range([In] int ulRange);
 
     [PreserveSig]
-    int get_Range([Out] out ulong pulRange); //int pulRange);
+    int get_Range([Out] out int pulRange);
 
     [PreserveSig]
     int put_Bandwidth([In] int ulBandwidth);
@@ -729,7 +735,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
     int get_FrequencyMultiplier([Out] out int pulMultiplier);
-  }
+  }*/
 
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("3F4DC8E2-4050-11d3-8F4B-00C04F7971E2"),

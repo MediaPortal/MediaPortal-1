@@ -1696,7 +1696,7 @@ namespace TvLibrary.Implementations.DVB
     {
       AMMediaType mediaAac = new AMMediaType();
       mediaAac.majorType = MediaType.Audio;
-      mediaAac.subType = MediaSubType.AAC;
+      mediaAac.subType = MpMediaSubType.AAC;
       mediaAac.formatType = FormatType.WaveEx;
       mediaAac.unkPtr = IntPtr.Zero;
       mediaAac.sampleSize = 1;
@@ -1716,7 +1716,7 @@ namespace TvLibrary.Implementations.DVB
     {
       AMMediaType mediaLATMAAC = new AMMediaType();
       mediaLATMAAC.majorType = MediaType.Audio;
-      mediaLATMAAC.subType = MediaSubType.LATMAAC;
+      mediaLATMAAC.subType = MpMediaSubType.LATMAAC;
       mediaLATMAAC.formatType = FormatType.WaveEx;
       mediaLATMAAC.unkPtr = IntPtr.Zero;
       mediaLATMAAC.sampleSize = 1;
@@ -1736,7 +1736,7 @@ namespace TvLibrary.Implementations.DVB
     {
       AMMediaType mediaLPCM = new AMMediaType();
       mediaLPCM.majorType = MediaType.Audio;
-      mediaLPCM.subType = MediaSubType.DVD_LPCM_AUDIO;
+      mediaLPCM.subType = MpMediaSubType.DVD_LPCM_AUDIO;
       mediaLPCM.formatType = FormatType.WaveEx;
       mediaLPCM.unkPtr = IntPtr.Zero;
       mediaLPCM.sampleSize = 1;

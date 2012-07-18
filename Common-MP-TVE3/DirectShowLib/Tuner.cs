@@ -1356,6 +1356,9 @@ namespace DirectShowLib.BDA
     int put_NetworkID([In] int NetworkID);
   }
 
+  /*
+   * Interface redefined in MediaPortalCustomisations.
+   * 
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("8B8EB248-FC2B-11d2-9D8C-00C04F72D980"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -1364,7 +1367,7 @@ namespace DirectShowLib.BDA
     int Next(
       [In] int celt,
       [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] ITuningSpace[] rgelt,
-      [Out] out int pceltFetched
+      [Out] out IntPtr pceltFetched
       );
 
     int Skip([In] int celt);
@@ -1372,7 +1375,7 @@ namespace DirectShowLib.BDA
     int Reset();
 
     int Clone([Out] out IEnumTuningSpaces ppEnum);
-  }
+  }*/
 
   [ComImport, SuppressUnmanagedCodeSecurity,
    CLSCompliant(false), // because of _TuningSpacesForCLSID

@@ -289,7 +289,7 @@ namespace MediaPortal.Configuration
           splashScreen.SetInformation("Adding audio filters...");
         }
 
-        ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.LATMAAC);
+        ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MpMediaSubType.LATMAAC);
         if (availableAACAudioFilters.Count > 0)
         {
           foreach (string filter in availableAACAudioFilters)
@@ -332,7 +332,7 @@ namespace MediaPortal.Configuration
         }
       }
       //Look for Video Decoders, if exist assume decoders are installed & present config option
-      ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
+      ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.Mpeg2Video);
       if (availableVideoFilters.Count > 0)
       {
         if (splashScreen != null)

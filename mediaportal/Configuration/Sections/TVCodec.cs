@@ -58,7 +58,7 @@ namespace MediaPortal.Configuration.Sections
         //
         // Populate video and audio codecs
         //
-        ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
+        ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.Mpeg2Video);
         //Remove Muxer's from the Video decoder list to avoid confusion.
         while (availableVideoFilters.Contains("CyberLink MPEG Muxer"))
         {
@@ -98,9 +98,9 @@ namespace MediaPortal.Configuration.Sections
           availableAudioFilters.Remove("Nero Mpeg2 Encoder");
         }
         availableAudioFilters.Sort();
-        ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.LATMAAC);
+        ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MpMediaSubType.LATMAAC);
         availableAACAudioFilters.Sort();
-        ArrayList availableDDPLUSAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.DDPLUS);
+        ArrayList availableDDPLUSAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MpMediaSubType.DDPLUS);
         availableDDPLUSAudioFilters.Sort();
         ArrayList availableAudioRenderers = FilterHelper.GetAudioRenderers();
         availableAudioRenderers.Sort();
@@ -136,7 +136,7 @@ namespace MediaPortal.Configuration.Sections
 
         if (videoCodec == string.Empty)
         {
-          ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
+          ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.Mpeg2Video);
           videoCodec = SetCodecBox(availableVideoFilters, "LAV Video Decoder", "DScaler Mpeg2 Video Decoder", "");
         }
         if (h264videoCodec == string.Empty)
@@ -151,12 +151,12 @@ namespace MediaPortal.Configuration.Sections
         }
         if (aacaudioCodec == string.Empty)
         {
-          ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.AAC);
+          ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MpMediaSubType.AAC);
           aacaudioCodec = SetCodecBox(availableAACAudioFilters, "LAV Audio Decoder", "MONOGRAM ACC Decoder", "ffdshow Audio Decoder");
         }
         if (ddplusaudioCodec == string.Empty)
         {
-          ArrayList availableDDPLUSAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.DDPLUS);
+          ArrayList availableDDPLUSAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MpMediaSubType.DDPLUS);
           ddplusaudioCodec =SetCodecBox(availableDDPLUSAudioFilters, "LAV Audio Decoder", "ffdshow Audio Decoder", "");
         }
 

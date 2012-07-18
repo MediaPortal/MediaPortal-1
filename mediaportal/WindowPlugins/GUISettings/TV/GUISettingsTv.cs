@@ -98,7 +98,7 @@ namespace WindowPlugins.GUISettings.TV
       {
         strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
       }
-      ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
+      ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.Mpeg2Video);
       //Remove Muxer's from the list to avoid confusion.
       while (availableVideoFilters.Contains("CyberLink MPEG Muxer"))
       {
@@ -245,7 +245,7 @@ namespace WindowPlugins.GUISettings.TV
       {
         strAACAudioCodec = xmlreader.GetValueAsString("mytv", "aacaudiocodec", "");
       }
-      ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.LATMAAC);
+      ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MpMediaSubType.LATMAAC);
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {

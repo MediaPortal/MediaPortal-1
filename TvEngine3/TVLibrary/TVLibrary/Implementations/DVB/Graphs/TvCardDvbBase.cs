@@ -721,7 +721,7 @@ namespace TvLibrary.Implementations.DVB
           {
             for (int i = 0; i < fetched; ++i)
             {
-              if (mediaTypes[i].majorType == MediaType.Stream && mediaTypes[i].subType == MediaSubType.BdaMpeg2Transport &&
+              if (mediaTypes[i].majorType == MediaType.Stream && mediaTypes[i].subType == MpMediaSubType.BdaMpeg2Transport &&
                   mediaTypes[i].formatType == FormatType.None)
               {
                 Log.Log.WriteFile("dvb:  tuner filter has capture filter output");

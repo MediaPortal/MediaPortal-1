@@ -300,7 +300,7 @@ namespace MediaPortal
       bool MPEG2CodecsInstalled = false;
       bool FFDShowInstalled = false;
       bool VobSubInstalled = false;
-      ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
+      ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.Mpeg2Video);
       ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
 
       if (availableVideoFilters.Count > 0 && availableAudioFilters.Count > 0)

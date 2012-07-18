@@ -180,7 +180,7 @@ namespace TvLibrary.Implementations.Analog.Components
         //Look for VBI Codec for Vista users as Vista doesn't use WST Codec anymore
         if (_filterWstDecoder == null)
         {
-          devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSMULTIVBICodec);
+          devices = DsDevice.GetDevicesOfCat(MediaPortalGuid.AMKSMULTIVBICodec);
           foreach (DsDevice device in devices)
             if (device.Name != null && device.Name.IndexOf("VBI") >= 0)
             {
@@ -199,7 +199,7 @@ namespace TvLibrary.Implementations.Analog.Components
                 return false;
               }
               graph.Teletext.Name = device.Name;
-              graph.Teletext.Category = FilterCategory.AMKSMULTIVBICodec;
+              graph.Teletext.Category = MediaPortalGuid.AMKSMULTIVBICodec;
               break;
             }
         }

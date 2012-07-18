@@ -2204,6 +2204,9 @@ namespace DirectShowLib
       );
   }
 
+  /*
+   * Interface redefined in MediaPortalCustomisations.
+   * 
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("70423839-6ACC-4b23-B079-21DBF08156A5"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -2248,10 +2251,13 @@ namespace DirectShowLib
     [PreserveSig]
     int SetValue(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-      [In] ref object Value
+      [In] object Value
       );
-  }
+  }*/
 
+  /*
+   * Interface redefined in MediaPortalCustomisations.
+   * 
   [ComImport, SuppressUnmanagedCodeSecurity,
   Guid("02997C3B-8E1B-460e-9270-545E0DE9563E"),
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -2295,11 +2301,11 @@ namespace DirectShowLib
     [PreserveSig]
     new int SetValue(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-      [In] ref object Value
+      [In] object Value
         );
 
     #endregion
-  }
+  }*/
 
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("6feded3e-0ff1-4901-a2f1-43f7012c8515"),
