@@ -31,6 +31,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
+using System.Security;
 using System.Text;
 using DirectShowLib.Dvd;
 #if !USING_NET11
@@ -130,8 +131,8 @@ namespace DirectShowLib
 
       for (int i = 0; i < this.cElems; i++)
       {
-        IntPtr ptr = new IntPtr(this.pElems.ToInt64() + (Marshal.SizeOf(typeof (Guid))*i));
-        retval[i] = (Guid) Marshal.PtrToStructure(ptr, typeof (Guid));
+        IntPtr ptr = new IntPtr(this.pElems.ToInt64() + (Marshal.SizeOf(typeof(Guid))*i));
+        retval[i] = (Guid)Marshal.PtrToStructure(ptr, typeof(Guid));
       }
 
       return retval;
@@ -610,6 +611,25 @@ namespace DirectShowLib
              this.bottom.GetHashCode();
     }
 
+    public override bool Equals(object obj)
+    {
+      if (obj is DsRect)
+      {
+        DsRect cmp = (DsRect)obj;
+
+        return right == cmp.right && bottom == cmp.bottom && left == cmp.left && top == cmp.top;
+      }
+
+      if (obj is Rectangle)
+      {
+        Rectangle cmp = (Rectangle)obj;
+
+        return right == cmp.Right && bottom == cmp.Bottom && left == cmp.Left && top == cmp.Top;
+      }
+
+      return false;
+    }
+
     /// <summary>
     /// Define implicit cast between DirectShowLib.DsRect and System.Drawing.Rectangle for languages supporting this feature.
     /// VB.Net doesn't support implicit cast. <see cref="DirectShowLib.DsRect.ToRectangle"/> for similar functionality.
@@ -752,13 +772,8 @@ namespace DirectShowLib
 
   #region Utility Classes
 
-  public sealed class DsResults
+  public static class DsResults
   {
-    private DsResults()
-    {
-      // Prevent people from trying to instantiate this class
-    }
-
     public const int E_InvalidMediaType = unchecked((int) 0x80040200);
     public const int E_InvalidSubType = unchecked((int) 0x80040201);
     public const int E_NeedOwner = unchecked((int) 0x80040202);
@@ -905,14 +920,10 @@ namespace DirectShowLib
   }
 
 
-  public sealed class DsError
+  public static class DsError
   {
-    private DsError()
-    {
-      // Prevent people from trying to instantiate this class
-    }
-
-    [DllImport("quartz.dll", CharSet = CharSet.Auto)]
+    [DllImport("quartz.dll", CharSet = CharSet.Unicode, ExactSpelling = true, EntryPoint = "AMGetErrorTextW"),
+     SuppressUnmanagedCodeSecurity]
     public static extern int AMGetErrorText(int hr, StringBuilder buf, int max);
 
     /// <summary>
@@ -966,13 +977,8 @@ namespace DirectShowLib
   }
 
 
-  public sealed class DsUtils
+  public static class DsUtils
   {
-    private DsUtils()
-    {
-      // Prevent people from trying to instantiate this class
-    }
-
     /// <summary>
     /// Returns the PinCategory of the specified pin.  Usually a member of PinCategory.  Not all pins have a category.
     /// </summary>
@@ -983,7 +989,7 @@ namespace DirectShowLib
       Guid guidRet = Guid.Empty;
 
       // Memory to hold the returned guid
-      int iSize = Marshal.SizeOf(typeof (Guid));
+      int iSize = Marshal.SizeOf(typeof(Guid));
       IntPtr ipOut = Marshal.AllocCoTaskMem(iSize);
 
       try
@@ -998,11 +1004,11 @@ namespace DirectShowLib
         if (pKs != null)
         {
           // Query for the Category
-          hr = pKs.Get(g, (int) AMPropertyPin.Category, IntPtr.Zero, 0, ipOut, iSize, out cbBytes);
+          hr = pKs.Get(g, (int)AMPropertyPin.Category, IntPtr.Zero, 0, ipOut, iSize, out cbBytes);
           DsError.ThrowExceptionForHR(hr);
 
           // Marshal it to the return variable
-          guidRet = (Guid) Marshal.PtrToStructure(ipOut, typeof (Guid));
+          guidRet = (Guid)Marshal.PtrToStructure(ipOut, typeof(Guid));
         }
       }
       finally
@@ -1076,14 +1082,14 @@ namespace DirectShowLib
 
     #region APIs
 
-    [DllImport("ole32.dll", ExactSpelling = true)]
+    [DllImport("ole32.dll", ExactSpelling = true), SuppressUnmanagedCodeSecurity]
 #if USING_NET11
         private static extern int GetRunningObjectTable(int r, out UCOMIRunningObjectTable pprot);
 #else
     private static extern int GetRunningObjectTable(int r, out IRunningObjectTable pprot);
 #endif
 
-    [DllImport("ole32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+    [DllImport("ole32.dll", CharSet = CharSet.Unicode, ExactSpelling = true), SuppressUnmanagedCodeSecurity]
 #if USING_NET11
         private static extern int CreateItemMoniker(string delim, string item, out UCOMIMoniker ppmk);
 #else
@@ -1111,9 +1117,20 @@ namespace DirectShowLib
         // Build up the object to add to the table
         int id = Process.GetCurrentProcess().Id;
         IntPtr iuPtr = Marshal.GetIUnknownForObject(graph);
-        int iuInt = (int) iuPtr;
-        Marshal.Release(iuPtr);
-        string item = string.Format("FilterGraph {0} pid {1}", iuInt.ToString("x8"), id.ToString("x8"));
+        string s;
+        try
+        {
+          s = iuPtr.ToString("x");
+        }
+        catch
+        {
+          s = "";
+        }
+        finally
+        {
+          Marshal.Release(iuPtr);
+        }
+        string item = string.Format("FilterGraph {0} pid {1}", s, id.ToString("x8"));
         hr = CreateItemMoniker("!", item, out mk);
         DsError.ThrowExceptionForHR(hr);
 
@@ -1209,7 +1226,7 @@ namespace DirectShowLib
       {
         if (m_Name == null)
         {
-          m_Name = GetFriendlyName();
+          m_Name = GetPropBagValue("FriendlyName");
         }
         return m_Name;
       }
@@ -1233,6 +1250,21 @@ namespace DirectShowLib
         }
 
         return s;
+      }
+    }
+
+    /// <summary>
+    /// Returns the ClassID for a device
+    /// </summary>
+    public Guid ClassID
+    {
+      get
+      {
+        Guid g;
+
+        m_Mon.GetClassID(out g);
+
+        return g;
       }
     }
 
@@ -1318,10 +1350,11 @@ namespace DirectShowLib
     }
 
     /// <summary>
-    /// Get the FriendlyName for a moniker
+    /// Get a specific PropertyBag value from a moniker
     /// </summary>
+    /// <param name="sPropName">The name of the value to retrieve</param>
     /// <returns>String or null on error</returns>
-    private string GetFriendlyName()
+    public string GetPropBagValue(string sPropName)
     {
       IPropertyBag bag = null;
       string ret = null;
@@ -1330,12 +1363,12 @@ namespace DirectShowLib
 
       try
       {
-        Guid bagId = typeof (IPropertyBag).GUID;
+        Guid bagId = typeof(IPropertyBag).GUID;
         m_Mon.BindToStorage(null, null, ref bagId, out bagObj);
 
-        bag = (IPropertyBag) bagObj;
+        bag = (IPropertyBag)bagObj;
 
-        int hr = bag.Read("FriendlyName", out val, null);
+        int hr = bag.Read(sPropName, out val, null);
         DsError.ThrowExceptionForHR(hr);
 
         ret = val as string;
@@ -1363,20 +1396,14 @@ namespace DirectShowLib
       {
         DsUtils.ReleaseComObject(Mon);
         m_Mon = null;
-        GC.SuppressFinalize(this);
       }
       m_Name = null;
     }
   }
 
 
-  public sealed class DsFindPin
+  public static class DsFindPin
   {
-    private DsFindPin()
-    {
-      // Prevent people from trying to instantiate this class
-    }
-
     /// <summary>
     /// Scans a filter's pins looking for a pin in the specified direction
     /// </summary>
@@ -1605,13 +1632,8 @@ namespace DirectShowLib
   }
 
 
-  public sealed class DsToString
+  public static class DsToString
   {
-    private DsToString()
-    {
-      // Prevent people from trying to instantiate this class
-    }
-
     /// <summary>
     /// Produces a usable string that describes the MediaType object
     /// </summary>
@@ -1634,7 +1656,7 @@ namespace DirectShowLib
     public static string MediaTypeToString(Guid guid)
     {
       // Walk the MediaSubType class looking for a match
-      return WalkClass(typeof (MediaType), guid);
+      return WalkClass(typeof(MediaType), guid);
     }
 
     /// <summary>
@@ -1644,7 +1666,7 @@ namespace DirectShowLib
     public static string MediaSubTypeToString(Guid guid)
     {
       // Walk the MediaSubType class looking for a match
-      string s = WalkClass(typeof (MediaSubType), guid);
+      string s = WalkClass(typeof(MediaSubType), guid);
 
       // There is a special set of Guids that contain the FourCC code
       // as part of the Guid.  Check to see if it is one of those.
@@ -1670,7 +1692,7 @@ namespace DirectShowLib
     public static string MediaFormatTypeToString(Guid guid)
     {
       // Walk the FormatType class looking for a match
-      return WalkClass(typeof (FormatType), guid);
+      return WalkClass(typeof(FormatType), guid);
     }
 
     /// <summary>
@@ -1741,9 +1763,9 @@ namespace DirectShowLib
       int iSize = GetNativeDataSize() + 3;
       IntPtr p = Marshal.AllocCoTaskMem(iSize);
 
-      for (int x = 0; x < iSize/4; x++)
+      for (int x = 0; x < iSize / 4; x++)
       {
-        Marshal.WriteInt32(p, x*4, 0);
+        Marshal.WriteInt32(p, x * 4, 0);
       }
 
       return p;
@@ -1800,10 +1822,10 @@ namespace DirectShowLib
       for (int x = 0; x < emt.Length; x++)
       {
         // Copy in the value, and advance the pointer
-        IntPtr p = Marshal.ReadIntPtr(pNativeData, x*IntPtr.Size);
+        IntPtr p = Marshal.ReadIntPtr(pNativeData, x * IntPtr.Size);
         if (p != IntPtr.Zero)
         {
-          emt[x] = (AMMediaType) Marshal.PtrToStructure(p, typeof (AMMediaType));
+          emt[x] = (AMMediaType)Marshal.PtrToStructure(p, typeof(AMMediaType));
         }
         else
         {
@@ -1861,24 +1883,24 @@ namespace DirectShowLib
       DvdTitleAttributes dta = m_obj as DvdTitleAttributes;
 
       // Copy in the value, and advance the pointer
-      dta.AppMode = (DvdTitleAppMode) Marshal.ReadInt32(pNativeData);
-      pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (int)));
+      dta.AppMode = (DvdTitleAppMode)Marshal.ReadInt32(pNativeData);
+      pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(int)));
 
       // Copy in the value, and advance the pointer
-      dta.VideoAttributes = (DvdVideoAttributes) Marshal.PtrToStructure(pNativeData, typeof (DvdVideoAttributes));
-      pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (DvdVideoAttributes)));
+      dta.VideoAttributes = (DvdVideoAttributes)Marshal.PtrToStructure(pNativeData, typeof(DvdVideoAttributes));
+      pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(DvdVideoAttributes)));
 
       // Copy in the value, and advance the pointer
-      dta.ulNumberOfAudioStreams = (int) Marshal.ReadInt32(pNativeData);
-      pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (int)));
+      dta.ulNumberOfAudioStreams = Marshal.ReadInt32(pNativeData);
+      pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(int)));
 
       // Allocate a large enough array to hold all the returned structs.
       dta.AudioAttributes = new DvdAudioAttributes[8];
       for (int x = 0; x < 8; x++)
       {
         // Copy in the value, and advance the pointer
-        dta.AudioAttributes[x] = (DvdAudioAttributes) Marshal.PtrToStructure(pNativeData, typeof (DvdAudioAttributes));
-        pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (DvdAudioAttributes)));
+        dta.AudioAttributes[x] = (DvdAudioAttributes)Marshal.PtrToStructure(pNativeData, typeof(DvdAudioAttributes));
+        pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(DvdAudioAttributes)));
       }
 
       // Allocate a large enough array to hold all the returned structs.
@@ -1893,8 +1915,8 @@ namespace DirectShowLib
         {
           // Copy in the value, and advance the pointer
           dta.MultichannelAudioAttributes[x].Info[y] =
-            (DvdMUAMixingInfo) Marshal.PtrToStructure(pNativeData, typeof (DvdMUAMixingInfo));
-          pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (DvdMUAMixingInfo)));
+            (DvdMUAMixingInfo)Marshal.PtrToStructure(pNativeData, typeof(DvdMUAMixingInfo));
+          pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(DvdMUAMixingInfo)));
         }
 
         dta.MultichannelAudioAttributes[x].Coeff = new DvdMUACoeff[8];
@@ -1903,17 +1925,17 @@ namespace DirectShowLib
         {
           // Copy in the value, and advance the pointer
           dta.MultichannelAudioAttributes[x].Coeff[y] =
-            (DvdMUACoeff) Marshal.PtrToStructure(pNativeData, typeof (DvdMUACoeff));
-          pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (DvdMUACoeff)));
+            (DvdMUACoeff)Marshal.PtrToStructure(pNativeData, typeof(DvdMUACoeff));
+          pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(DvdMUACoeff)));
         }
       }
 
       // The DvdMultichannelAudioAttributes needs to be 16 byte aligned
-      pNativeData = (IntPtr) (pNativeData.ToInt64() + 4);
+      pNativeData = (IntPtr)(pNativeData.ToInt64() + 4);
 
       // Copy in the value, and advance the pointer
-      dta.ulNumberOfSubpictureStreams = (int) Marshal.ReadInt32(pNativeData);
-      pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (int)));
+      dta.ulNumberOfSubpictureStreams = Marshal.ReadInt32(pNativeData);
+      pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(int)));
 
       // Allocate a large enough array to hold all the returned structs.
       dta.SubpictureAttributes = new DvdSubpictureAttributes[32];
@@ -1921,8 +1943,8 @@ namespace DirectShowLib
       {
         // Copy in the value, and advance the pointer
         dta.SubpictureAttributes[x] =
-          (DvdSubpictureAttributes) Marshal.PtrToStructure(pNativeData, typeof (DvdSubpictureAttributes));
-        pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (DvdSubpictureAttributes)));
+          (DvdSubpictureAttributes)Marshal.PtrToStructure(pNativeData, typeof(DvdSubpictureAttributes));
+        pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(DvdSubpictureAttributes)));
       }
 
       // Note that 4 bytes (more alignment) are unused at the end
@@ -1962,35 +1984,35 @@ namespace DirectShowLib
       DvdKaraokeAttributes dka = m_obj as DvdKaraokeAttributes;
 
       // Copy in the value, and advance the pointer
-      dka.bVersion = (byte) Marshal.ReadByte(pNativeData);
-      pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (byte)));
+      dka.bVersion = (byte)Marshal.ReadByte(pNativeData);
+      pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(byte)));
 
       // DWORD Align
-      pNativeData = (IntPtr) (pNativeData.ToInt64() + 3);
+      pNativeData = (IntPtr)(pNativeData.ToInt64() + 3);
 
       // Copy in the value, and advance the pointer
       dka.fMasterOfCeremoniesInGuideVocal1 = Marshal.ReadInt32(pNativeData) != 0;
-      pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (bool)));
+      pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(bool)));
 
       // Copy in the value, and advance the pointer
       dka.fDuet = Marshal.ReadInt32(pNativeData) != 0;
-      pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (bool)));
+      pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(bool)));
 
       // Copy in the value, and advance the pointer
-      dka.ChannelAssignment = (DvdKaraokeAssignment) Marshal.ReadInt32(pNativeData);
+      dka.ChannelAssignment = (DvdKaraokeAssignment)Marshal.ReadInt32(pNativeData);
       pNativeData =
         (IntPtr)
-        (pNativeData.ToInt64() + Marshal.SizeOf(DvdKaraokeAssignment.GetUnderlyingType(typeof (DvdKaraokeAssignment))));
+        (pNativeData.ToInt64() + Marshal.SizeOf(DvdKaraokeAssignment.GetUnderlyingType(typeof(DvdKaraokeAssignment))));
 
       // Allocate a large enough array to hold all the returned structs.
       dka.wChannelContents = new DvdKaraokeContents[8];
       for (int x = 0; x < 8; x++)
       {
         // Copy in the value, and advance the pointer
-        dka.wChannelContents[x] = (DvdKaraokeContents) Marshal.ReadInt16(pNativeData);
+        dka.wChannelContents[x] = (DvdKaraokeContents)Marshal.ReadInt16(pNativeData);
         pNativeData =
           (IntPtr)
-          (pNativeData.ToInt64() + Marshal.SizeOf(DvdKaraokeContents.GetUnderlyingType(typeof (DvdKaraokeContents))));
+          (pNativeData.ToInt64() + Marshal.SizeOf(DvdKaraokeContents.GetUnderlyingType(typeof(DvdKaraokeContents))));
       }
 
       return null;

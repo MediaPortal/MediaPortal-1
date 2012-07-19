@@ -78,34 +78,6 @@ namespace TvEngine
 
     #endregion
 
-    #region IBDA_DiseqCommand interface
-
-    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-      Guid("f84e2ab0-3c6b-45e3-a0fc-8669d4b81f11"),
-      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    private interface IBDA_DiseqCommand
-    {
-      [PreserveSig]
-      int put_EnableDiseqCommands([In, MarshalAs(UnmanagedType.I1)] bool bEnable);
-
-      [PreserveSig]
-      int put_DiseqLNBSource([In] UInt32 ulLNBSource);
-
-      [PreserveSig]
-      int put_DiseqUseToneBurst([In, MarshalAs(UnmanagedType.I1)] bool bUseToneBurst);
-
-      [PreserveSig]
-      int put_DiseqRepeats([In] UInt32 ulRepeats);
-
-      [PreserveSig]
-      int put_DiseqSendCommand([In] UInt32 ulRequestId, [In] UInt32 ulcbCommandLen, [In] ref byte pbCommand);
-
-      [PreserveSig]
-      int get_DiseqResponse([In] UInt32 ulRequestId, [In, Out] ref int pulcbResponseLen, [In, Out] ref byte pbResponse);
-    }
-
-    #endregion
-
     #region constants
 
     private const int InstanceSize = 32;    // The size of a property instance (KSP_NODE) parameter.

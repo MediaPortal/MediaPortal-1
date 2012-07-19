@@ -80,17 +80,6 @@ namespace TvLibrary.Interfaces.Analyzer
     IsdbS = 0x400
   }
 
-  public enum LNB_Source
-  {
-    LNBSourceNotSet = -1,
-    LNBSourceNotDefined = 0,
-    LNBSourceA = 1,
-    LNBSourceB = 2,
-    LNBSourceC = 3,
-    LNBSourceD = 4,
-    LNBSourceMax,
-  } ;
-
   public enum DiseqC11Switches
   {
     Switch_NOT_SET = -1,

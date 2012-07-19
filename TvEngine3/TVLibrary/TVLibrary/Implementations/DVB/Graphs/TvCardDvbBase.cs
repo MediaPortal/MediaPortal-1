@@ -275,7 +275,7 @@ namespace TvLibrary.Implementations.DVB
         DiseqcSatelliteSettings sSettings = new DiseqcSatelliteSettings
         {
           ToneBurstEnabled = 0,
-          Diseq10Selection = LNB_Source.LNBSourceNotSet,
+          Diseq10Selection = LNB_Source.NOT_SET,
           Diseq11Selection = DiseqC11Switches.Switch_NOT_SET,
           Enabled = 0
         };

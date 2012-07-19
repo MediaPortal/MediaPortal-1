@@ -32,7 +32,7 @@ using System.Security.Permissions;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Team MediaPortal")]
 [assembly: Guid("6D0386CE-37E6-4f77-B678-07C584105DC6")]
-[assembly: AssemblyVersion("2.0.0.0")]
+[assembly: AssemblyVersion("2.1.0.*")]
 #if DEBUG
 
 [assembly: AssemblyProduct("Debug Version")]
@@ -54,4 +54,4 @@ using System.Security.Permissions;
 [assembly: ComVisible(false)]
 [assembly: CLSCompliant(true)]
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, UnmanagedCode = true)]
-[assembly: AssemblyFileVersion("2.0.0.0")]
+[assembly: AssemblyFileVersion("2.1.0.*")]

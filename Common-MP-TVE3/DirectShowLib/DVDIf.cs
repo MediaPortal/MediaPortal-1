@@ -34,6 +34,17 @@ namespace DirectShowLib.Dvd
   #region Declarations
 
   /// <summary>
+  /// From DVD_NavCmdType
+  /// </summary>
+  public enum DVD_NavCmdType
+  {
+    Pre = 1,
+    Post = 2,
+    Cell = 3,
+    Button = 4
+  }
+
+  /// <summary>
   /// From DVD_ATR
   /// </summary>
   [StructLayout(LayoutKind.Sequential)]
@@ -145,7 +156,7 @@ namespace DirectShowLib.Dvd
     FPS25 = 0x00000001,
     FPS30 = 0x00000002,
     DropFrame = 0x00000004,
-    Interpolated = 0x00000008,
+    Interpolated = 0x00000008
   }
 
   /// <summary>
@@ -193,7 +204,7 @@ namespace DirectShowLib.Dvd
     SendEvents = 0x00000002,
     Block = 0x00000004,
     StartWhenRendered = 0x00000008,
-    EndAfterRendered = 0x00000010,
+    EndAfterRendered = 0x00000010
   }
 
   /// <summary>
@@ -209,6 +220,15 @@ namespace DirectShowLib.Dvd
     CacheSizeInMB = 6,
     EnablePortableBookmarks = 7,
     EnableExtendedCopyProtectErrors = 8,
+    NotifyPositionChange = 9,
+    IncreaseOutputControl = 10,
+    EnableStreaming = 11,
+    EnableESOutput = 12,
+    EnableTitleLength = 13,
+    DisableStillThrottle = 14,
+    EnableLoggingEvents = 15,
+    MaxReadBurstInKB = 16,
+    ReadBurstPeriodInMS = 17
   }
 
   /// <summary>
@@ -248,7 +268,7 @@ namespace DirectShowLib.Dvd
     Captions = 1,
     VisuallyImpaired = 2,
     DirectorComments1 = 3,
-    DirectorComments2 = 4,
+    DirectorComments2 = 4
   }
 
   /// <summary>
@@ -266,7 +286,7 @@ namespace DirectShowLib.Dvd
     Forced = 9,
     DirectorCommentsNormal = 13,
     DirectorCommentsBig = 14,
-    DirectorCommentsChildren = 15,
+    DirectorCommentsChildren = 15
   }
 
   /// <summary>
@@ -277,7 +297,7 @@ namespace DirectShowLib.Dvd
     None = 0,
     Karaoke = 1,
     Surround = 2,
-    Other = 3,
+    Other = 3
   }
 
   /// <summary>
@@ -316,7 +336,7 @@ namespace DirectShowLib.Dvd
     Mix_3to1 = 0x0800,
     Mix_4to1 = 0x1000,
     Mix_Lto1 = 0x2000,
-    Mix_Rto1 = 0x4000,
+    Mix_Rto1 = 0x4000
   }
 
   /// <summary>
@@ -368,7 +388,7 @@ namespace DirectShowLib.Dvd
   {
     NotSpecified = 0,
     Language = 1,
-    Other = 2,
+    Other = 2
   }
 
   /// <summary>
@@ -378,7 +398,7 @@ namespace DirectShowLib.Dvd
   {
     RunLength = 0,
     Extended = 1,
-    Other = 2,
+    Other = 2
   }
 
   /// <summary>
@@ -388,7 +408,7 @@ namespace DirectShowLib.Dvd
   {
     NotSpecified = 0,
     Karaoke = 1,
-    Other = 3,
+    Other = 3
   }
 
   /// <summary>
@@ -427,7 +447,7 @@ namespace DirectShowLib.Dvd
     DVD_Title_Orig_Other = 0x4f,
     DVD_Other_Scene = 0x50,
     DVD_Other_Cut = 0x51,
-    DVD_Other_Take = 0x52,
+    DVD_Other_Take = 0x52
   }
 
   /// <summary>
@@ -453,7 +473,7 @@ namespace DirectShowLib.Dvd
     MPEG2 = 0x00000002,
     LPCM = 0x00000004,
     DTS = 0x00000008,
-    SDDS = 0x00000010,
+    SDDS = 0x00000010
   }
 
   /// <summary>
@@ -470,7 +490,11 @@ namespace DirectShowLib.Dvd
     NoVPE = 0x100,
     DoNotClear = 0x200,
     VMR9Only = 0x800,
-    EvrOnly = 0x1000,
+    EVROnly = 0x1000,   // only use EVR (otherwise fail) for rendering
+    EVRQOS = 0x2000,   // Enabled EVR Dynamic QoS
+    AdaptGraph = 0x4000,   // Adapt graph building to machine capbilities
+
+    Mask = 0xffff   // only lower WORD is used/allowed
   }
 
   /// <summary>
@@ -1353,7 +1377,7 @@ namespace DirectShowLib.Dvd
     int GetTitleAttributes(
       [In] int ulTitle,
       [Out] out DvdMenuAttributes pMenu,
-      [In, Out, MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (DTAMarshaler))] DvdTitleAttributes
+      [In, Out, MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(DTAMarshaler))] DvdTitleAttributes
         pTitle
       );
 
@@ -1372,7 +1396,7 @@ namespace DirectShowLib.Dvd
     [PreserveSig]
     int GetKaraokeAttributes(
       [In] int ulStream,
-      [In, Out, MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (DKAMarshaler))] DvdKaraokeAttributes
+      [In, Out, MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(DKAMarshaler))] DvdKaraokeAttributes
         pAttributes
       );
 
