@@ -593,4 +593,51 @@ namespace DirectShowLib
     /// <summary> MEDIASUBTYPE_LATM_AAC_LAVF_SPLITTER </summary>
     public static readonly Guid LATMAACLAVF = new Guid(0x53544441, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71);
   }
+
+  #region IBDA_DiseqCommand
+
+  /// <summary>
+  /// KS properties for IBDA_DiseqCommand property set. Defined in bdamedia.h.
+  /// </summary>
+  public enum BdaDiseqcProperty
+  {
+    Enable = 0,
+    LnbSource,
+    UseToneBurst,
+    Repeats,
+    Send,
+    Response
+  }
+
+  /// <summary>
+  /// Struct for IBDA_DiseqCommand.Send property. Defined in bdamedia.h.
+  /// </summary>
+  public struct BdaDiseqcMessage
+  {
+    public UInt32 RequestId;
+    public UInt32 PacketLength;
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+    public byte[] PacketData;
+  }
+
+  #endregion
+
+  /// <summary>
+  /// KS properties for IBDA_DigitalDemodulator property set. Defined in bdamedia.h.
+  /// </summary>
+  public enum BdaDemodulatorProperty
+  {
+    ModulationType = 0,
+    InnerFecType,
+    InnerFecRate,
+    OuterFecType,
+    OuterFecRate,
+    SymbolRate,
+    SpectralInversion,
+    TransmissionMode,
+    RollOff,
+    Pilot,
+    SignalTimeouts,
+    PlpNumber               // physical layer pipe - for DVB-S2 and DVB-T2
+  }
 }

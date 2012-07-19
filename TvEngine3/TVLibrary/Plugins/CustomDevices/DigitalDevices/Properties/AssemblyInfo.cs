@@ -38,7 +38,9 @@ using MediaPortal.Common.Utils;
 
 // MediaPortal TV Server plugin compatibility.
 [assembly: CompatibleVersion("1.2.3.0", "1.2.3.0")]
+[assembly: UsesSubsystem("TVE.DB")]
 [assembly: UsesSubsystem("TVE.DirectShow")]
+[assembly: UsesSubsystem("TVE.Plugins")]
 [assembly: UsesSubsystem("TVE.Plugins.CustomDevice")]
 [assembly: UsesSubsystem("TVE.Plugins.CustomDevice.AddOn")]
 [assembly: UsesSubsystem("TVE.Plugins.CustomDevice.ConditionalAccess")]

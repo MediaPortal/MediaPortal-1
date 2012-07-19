@@ -1293,7 +1293,8 @@ namespace TvEngine
     /// <summary>
     /// Send a tone/data burst command, and then set the 22 kHz continuous tone state.
     /// </summary>
-    /// <remarks>The KNC interface does not support sending tone burst commands, and the 22 kHz tone state
+    /// <remarks>
+    /// The KNC interface does not support sending tone burst commands, and the 22 kHz tone state
     /// cannot be set directly. The tuning request LNB frequency parameters can be used to manipulate the
     /// tone state appropriately.
     /// </remarks>

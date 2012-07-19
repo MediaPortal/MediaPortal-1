@@ -36,48 +36,6 @@ namespace TvEngine
   /// </summary>
   public class Microsoft : BaseCustomDevice, IPidFilterController, IDiseqcDevice
   {
-    #region enums
-
-    private enum BdaDiseqcProperty
-    {
-      Enable = 0,
-      LnbSource,
-      UseToneBurst,
-      Repeats,
-      Send,
-      Response
-    }
-
-    private enum BdaDemodulatorProperty
-    {
-      ModulationType = 0,
-      InnerFecType,
-      InnerFecRate,
-      OuterFecType,
-      OuterFecRate,
-      SymbolRate,
-      SpectralInversion,
-      TransmissionMode,
-      RollOff,
-      Pilot,
-      SignalTimeouts,
-      PlpNumber               // physical layer pipe - for DVB-S2 and DVB-T2
-    }
-
-    #endregion
-
-    #region structs
-
-    private struct BdaDiseqcMessage
-    {
-      public UInt32 RequestId;
-      public UInt32 PacketLength;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDiseqcMessageLength)]
-      public byte[] PacketData;
-    }
-
-    #endregion
-
     #region constants
 
     private const int InstanceSize = 32;    // The size of a property instance (KSP_NODE) parameter.
@@ -553,7 +511,8 @@ namespace TvEngine
     /// <summary>
     /// Send a tone/data burst command, and then set the 22 kHz continuous tone state.
     /// </summary>
-    /// <remarks>The Microsoft interface does not support directly setting the 22 kHz tone state. The tuning
+    /// <remarks>
+    /// The Microsoft interface does not support directly setting the 22 kHz tone state. The tuning
     /// request LNB frequency parameters can be used to manipulate the tone state appropriately.
     /// </remarks>
     /// <param name="toneBurstState">The tone/data burst command to send, if any.</param>
@@ -615,7 +574,7 @@ namespace TvEngine
     {
       Log.Debug("Microsoft: send DiSEqC command");
 
-      if (!_isMicrosoft)
+      if (!_isMicrosoft || _deviceControl == null || (_diseqcPropertySet == null && _oldDiseqcInterface == null))
       {
         Log.Debug("Microsoft: device not initialised or interface not supported");
         return false;
@@ -705,7 +664,7 @@ namespace TvEngine
         else
         {
           BdaDiseqcMessage message = new BdaDiseqcMessage();
-          message.RequestId = _requestId;
+          message.RequestId = _requestId++;
           message.PacketLength = (uint)command.Length;
           message.PacketData = new byte[MaxDiseqcMessageLength];
           Buffer.BlockCopy(command, 0, message.PacketData, 0, command.Length);

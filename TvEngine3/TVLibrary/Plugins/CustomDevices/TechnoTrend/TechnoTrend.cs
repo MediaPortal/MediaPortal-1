@@ -2165,7 +2165,8 @@ namespace TvEngine
     /// <summary>
     /// Send a tone/data burst command, and then set the 22 kHz continuous tone state.
     /// </summary>
-    /// <remarks>The TechnoTrend interface does not support directly setting the 22 kHz tone state. The
+    /// <remarks>
+    /// The TechnoTrend interface does not support directly setting the 22 kHz tone state. The
     /// tuning request LNB frequency parameters can be used to manipulate the tone state appropriately.
     /// </remarks>
     /// <param name="toneBurstState">The tone/data burst command to send, if any.</param>

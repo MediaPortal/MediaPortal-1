@@ -30,13 +30,14 @@ using TvLibrary.Channels;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Device;
 using TvLibrary.Log;
+using DirectShowLib.BDA;
 
 namespace TvEngine
 {
   /// <summary>
-  /// A class for handling conditional access for Digital Devices devices.
+  /// A class for handling conditional access and DiSEqC for Digital Devices devices (and clones from Mystique).
   /// </summary>
-  public class DigitalDevices : BaseCustomDevice, IAddOnDevice, IConditionalAccessProvider, ICiMenuActions, ITvServerPlugin
+  public class DigitalDevices : BaseCustomDevice, IAddOnDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice, ITvServerPlugin
   {
     #region enums
 
@@ -220,6 +221,9 @@ namespace TvEngine
     private const int MenuChoiceSize = 8;
     private const int MmiHandlerThreadSleepTime = 500;   // unit = ms
     private const int KsMethodSize = 24;
+    private const int InstanceSize = 32;    // The size of a property instance (KSP_NODE) parameter.
+    private const int BdaDiseqcMessageSize = 16;
+    private const int MaxDiseqcMessageLength = 8;
 
     #endregion
 
@@ -242,6 +246,7 @@ namespace TvEngine
     private String _tunerDevicePath = String.Empty;
     private bool _isCiSlotPresent = false;
 
+    // For CI/CAM interaction.
     private List<CiContext> _ciContexts = null;
     private IFilterGraph2 _graph = null;
     private int _menuContext = -1;
@@ -255,7 +260,52 @@ namespace TvEngine
     private bool _stopMmiHandlerThread = false;
     private Thread _mmiHandlerThread = null;
 
+    // For DiSEqC support only.
+    private IKsPropertySet _propertySet = null;
+    private IBDA_DeviceControl _deviceControl = null;
+    private uint _requestId = 1;
+    private IntPtr _instanceBuffer = IntPtr.Zero;
+    private IntPtr _paramBuffer = IntPtr.Zero;
+
     #endregion
+
+    /// <summary>
+    /// Determine if the tuner supports sending DiSEqC commands.
+    /// </summary>
+    /// <param name="filter">The filter to check.</param>
+    /// <returns>a property set that supports the IBDA_DiseqCommand interface if successful, otherwise <c>null</c></returns>
+    private IKsPropertySet CheckDiseqcSupport(IBaseFilter filter)
+    {
+      Log.Debug("Digital Devices: check for IBDA_DiseqCommand DiSEqC support");
+
+      IPin pin = DsFindPin.ByDirection(filter, PinDirection.Input, 0);
+      if (pin == null)
+      {
+        Log.Debug("Digital Devices: failed to find input pin");
+        return null;
+      }
+
+      IKsPropertySet ps = pin as IKsPropertySet;
+      if (ps == null)
+      {
+        Log.Debug("Digital Devices: input pin is not a property set");
+        DsUtils.ReleaseComObject(pin);
+        pin = null;
+        return null;
+      }
+
+      KSPropertySupport support;
+      int hr = ps.QuerySupported(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Send, out support);
+      if (hr != 0 || (support & KSPropertySupport.Set) == 0)
+      {
+        Log.Debug("Digital Devices: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        DsUtils.ReleaseComObject(pin);
+        pin = null;
+        return null;
+      }
+
+      return ps;
+    }
 
     #region MMI handler thread
 
@@ -496,6 +546,8 @@ namespace TvEngine
       Log.Debug("Digital Devices: supported device detected");
       _isDigitalDevices = true;
       _tunerDevicePath = tunerDevicePath;
+
+      // Read the tuner filter name.
       FilterInfo tunerFilterInfo;
       int hr = tunerFilter.QueryFilterInfo(out tunerFilterInfo);
       if (tunerFilterInfo.pGraph != null)
@@ -519,6 +571,20 @@ namespace TvEngine
           }
         }
       }
+
+      // Check if DiSEqC is supported (only relevant for satellite tuners).
+      if (tunerType == CardType.DvbS)
+      {
+        _propertySet = CheckDiseqcSupport(tunerFilter);
+        if (_propertySet != null)
+        {
+          Log.Debug("Digital Devices: DiSEqC support detected");
+          _deviceControl = tunerFilter as IBDA_DeviceControl;
+          _instanceBuffer = Marshal.AllocCoTaskMem(InstanceSize);
+          _paramBuffer = Marshal.AllocCoTaskMem(BdaDiseqcMessageSize);
+        }
+      }
+
       return true;
     }
 
@@ -1384,6 +1450,151 @@ namespace TvEngine
 
     #endregion
 
+    #region IDiseqcDevice members
+
+    /// <summary>
+    /// Send a tone/data burst command, and then set the 22 kHz continuous tone state.
+    /// </summary>
+    /// <remarks>
+    /// UseToneBurst is not supported. The 22 kHz tone state should be set by manipulating the
+    /// tuning request LNB frequency parameters.
+    /// </remarks>
+    /// <param name="toneBurstState">The tone/data burst command to send, if any.</param>
+    /// <param name="tone22kState">The 22 kHz continuous tone state to set.</param>
+    /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
+    public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
+    {
+      // Not supported.
+      return false;
+    }
+
+    /// <summary>
+    /// Send an arbitrary DiSEqC command.
+    /// </summary>
+    /// <remarks>
+    /// This implementation uses the standard IBDA_DiseqCommand interface, however there are a few
+    /// subtle but critical implementation quirks that made me decide to reimplement the interface here:
+    /// - LnbSource, Repeats and UseToneBurst are not supported
+    /// - DiSEqC commands should be *disabled* (yes, you read that correctly) in order for commands to be sent
+    ///   successfully
+    /// </remarks>
+    /// <param name="command">The command to send.</param>
+    /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
+    public bool SendCommand(byte[] command)
+    {
+      Log.Debug("Digital Devices: send DiSEqC command");
+
+      if (!_isDigitalDevices || _propertySet == null || _deviceControl == null)
+      {
+        Log.Debug("Digital Devices: device not initialised or interface not supported");
+        return false;
+      }
+      if (command == null || command.Length == 0)
+      {
+        Log.Debug("Digital Devices: command not supplied");
+        return true;
+      }
+      if (command.Length > MaxDiseqcMessageLength)
+      {
+        Log.Debug("Digital Devices: command too long, length = {0}", command.Length);
+        return false;
+      }
+
+      // I'm not certain whether start/check/commit changes are required. Apparently they are not required for the "Send",
+      // but I don't know about the "Enable".
+      bool success = true;
+      int hr = _deviceControl.StartChanges();
+      if (hr != 0)
+      {
+        Log.Debug("Digital Devices: failed to start device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        success = false;
+      }
+
+      // I'm not certain whether this property has to be set for each command sent, but we do it for safety.
+      Marshal.WriteInt32(_paramBuffer, 0, 0);
+      hr = _propertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Enable, _instanceBuffer, InstanceSize, _paramBuffer, 4);
+      if (hr != 0)
+      {
+        Log.Debug("Digital Devices: failed to enable DiSEqC commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        success = false;
+      }
+
+      BdaDiseqcMessage message = new BdaDiseqcMessage();
+      message.RequestId = _requestId++;
+      message.PacketLength = (uint)command.Length;
+      message.PacketData = new byte[MaxDiseqcMessageLength];
+      Buffer.BlockCopy(command, 0, message.PacketData, 0, command.Length);
+      Marshal.StructureToPtr(message, _paramBuffer, true);
+      //DVB_MMI.DumpBinary(_paramBuffer, 0, BdaDiseqcMessageSize);
+      hr = _propertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Send, _instanceBuffer, InstanceSize, _paramBuffer, BdaDiseqcMessageSize);
+      if (hr != 0)
+      {
+        Log.Debug("Digital Devices: failed to send command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        success = false;
+      }
+
+      // Finalise (send) the command.
+      hr = _deviceControl.CheckChanges();
+      if (hr != 0)
+      {
+        Log.Debug("Digital Devices: failed to check device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        success = false;
+      }
+      hr = _deviceControl.CommitChanges();
+      if (hr != 0)
+      {
+        Log.Debug("Digital Devices: failed to commit device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        success = false;
+      }
+
+      Log.Debug("Digital Devices: result = {0}", success);
+      return success;
+    }
+
+    /// <summary>
+    /// Retrieve the response to a previously sent DiSEqC command (or alternatively, check for a command
+    /// intended for this tuner).
+    /// </summary>
+    /// <param name="response">The response (or command).</param>
+    /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
+    public bool ReadResponse(out byte[] response)
+    {
+      Log.Debug("Digital Devices: read DiSEqC response");
+      response = null;
+
+      if (!_isDigitalDevices || _propertySet == null)
+      {
+        Log.Debug("Digital Devices: device not initialised or interface not supported");
+        return false;
+      }
+
+      for (int i = 0; i < BdaDiseqcMessageSize; i++)
+      {
+        Marshal.WriteInt32(_paramBuffer, 0, 0);
+      }
+      int returnedByteCount;
+      int hr = _propertySet.Get(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Response, _paramBuffer, InstanceSize, _paramBuffer, BdaDiseqcMessageSize, out returnedByteCount);
+      if (hr == 0 && returnedByteCount == BdaDiseqcMessageSize)
+      {
+        // Copy the response into the return array.
+        BdaDiseqcMessage message = (BdaDiseqcMessage)Marshal.PtrToStructure(_paramBuffer, typeof(BdaDiseqcMessage));
+        if (message.PacketLength > MaxDiseqcMessageLength)
+        {
+          Log.Debug("Digital Devices: response length is out of bounds, response length = {0}", message.PacketLength);
+          return false;
+        }
+        Log.Debug("Digital Devices: result = success");
+        response = new byte[message.PacketLength];
+        Buffer.BlockCopy(message.PacketData, 0, response, 0, (int)message.PacketLength);
+        return true;
+      }
+
+      Log.Debug("Digital Devices: result = failure, response length = {0}, hr = 0x{1:x} ({2})", returnedByteCount, hr, HResult.GetDXErrorString(hr));
+      return false;
+    }
+
+    #endregion
+
     #region IDisposable member
 
     /// <summary>
@@ -1420,6 +1631,22 @@ namespace TvEngine
         DsUtils.ReleaseComObject(_graph);
         _graph = null;
       }
+      if (_instanceBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_instanceBuffer);
+        _instanceBuffer = IntPtr.Zero;
+      }
+      if (_paramBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_paramBuffer);
+        _paramBuffer = IntPtr.Zero;
+      }
+      if (_propertySet != null)
+      {
+        DsUtils.ReleaseComObject(_propertySet);
+        _propertySet = null;
+      }
+      _deviceControl = null;
       _isDigitalDevices = false;
     }
 

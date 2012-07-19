@@ -534,7 +534,7 @@ namespace TvEngine
     private IntPtr _mmiBuffer = IntPtr.Zero;
     private IntPtr _pmtBuffer = IntPtr.Zero;
 
-    private IKsPropertySet _propertySet;
+    private IKsPropertySet _propertySet = null;
     private CardType _tunerType = CardType.Unknown;
 
     private Thread _mmiHandlerThread = null;
