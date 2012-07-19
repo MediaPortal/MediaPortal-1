@@ -787,6 +787,7 @@ namespace MediaPortal.GUI.Library
             {
               Log.Debug("Window: LoadDefines() - failed to parse define attribute value for 'property'; {0} is not a boolean value", node.Attributes["property"].Value);
             }
+          }
 
           // Determine if the define should be evaluated now.
           evaluateNow = false;
