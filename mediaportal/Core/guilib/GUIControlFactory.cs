@@ -369,12 +369,23 @@ namespace MediaPortal.GUI.Library
         return ParseLayout(valueText);
       }
 
-      // much of the above could be changed to use the following, needs time for thorough testing though
-      //TypeConverter converter = TypeDescriptor.GetConverter(type);
-      TypeConverter converter = convCache.TryGetOrAdd(type, t => TypeDescriptor.GetConverter(t));
-      if (converter.CanConvertFrom(typeof (string)))
+      try
       {
-        return converter.ConvertFromString(null, CultureInfo.InvariantCulture, valueText);
+        // much of the above could be changed to use the following, needs time for thorough testing though
+        //TypeConverter converter = TypeDescriptor.GetConverter(type);
+        TypeConverter converter = convCache.TryGetOrAdd(type, t => TypeDescriptor.GetConverter(t));
+        if (converter.CanConvertFrom(typeof(string)))
+        {
+          return converter.ConvertFromString(null, CultureInfo.InvariantCulture, valueText);
+        }
+      }
+      catch (Exception e)
+      {
+        // Something is wrong with the skin xml for this control.
+        // Log the error but re-throw the exception in order to abort control creation.
+        Log.Info("GUIControlFactory.ConvertXmlStringToObject: failed to convert text to type {0}; value name: '{1}', value text {2}",
+          type.ToString(), valueName, valueText);
+        throw e;
       }
 
       return null;
@@ -479,8 +490,11 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception e)
       {
+        // Something is wrong with the skin xml for this control.
+        // Log the error but re-throw the exception in order to abort control creation.
         Log.Info("GUIControlFactory.Create: {0}\r\n\r\n{1}\r\n\r\n", e.Message, e.StackTrace);
         Log.Info("Parent: {0} Id: {1}", dwParentId, control.GetID);
+        throw e;
       }
 
       return control;
