@@ -2047,7 +2047,15 @@ namespace TvLibrary.Implementations.DVB
       object[] contexts = null;
 
       // Instanciate a data interface so we can check how many tuners are installed.
-      IBaseFilter b2c2Source = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(B2c2AdapterClass, false));
+      IBaseFilter b2c2Source = null;
+      try
+      {
+        b2c2Source = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(B2c2AdapterClass, false));
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Debug("TvCardDvbSs2: failed to instanciate source filter\r\n{0}", ex.ToString());
+      }
       IB2C2MPEG2DataCtrl6 dataInterface = b2c2Source as IB2C2MPEG2DataCtrl6;
       if (dataInterface == null)
       {
