@@ -26,21 +26,21 @@ using DirectShowLib.Dvd;
 using System.Drawing;
 using System.Text;
 
-namespace DirectShowLib
-{
-  /// <summary>
-  /// This file holds the MediaPortal and TV Server interface customisations
-  /// of the DirectShow.NET library. We keep customisations separate
-  /// from the original library code wherever possible to reduce maintenance
-  /// and merging issues when it comes to upgrading the DirectShow.NET library.
-  /// </summary>
+/// <summary>
+/// This file holds the MediaPortal and TV Server interface customisations
+/// of the DirectShow.NET library. We keep customisations separate
+/// from the original library code wherever possible to reduce maintenance
+/// and merging issues when it comes to upgrading the DirectShow.NET library.
+/// </summary>
 
   #region AXExtend.cs
 
+namespace DirectShowLib
+{
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("70423839-6ACC-4b23-B079-21DBF08156A5"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-   [Obsolete("This interface is deprecated and is maintained for backward compatibility only. New applications and drivers should use the ICodecAPI interface.")]
+  [Obsolete("This interface is deprecated and is maintained for backward compatibility only. New applications and drivers should use the ICodecAPI interface.")]
   public interface IEncoderAPI
   {
     [PreserveSig]
@@ -131,11 +131,14 @@ namespace DirectShowLib
 
     #endregion
   }
+}
 
   #endregion
 
   #region BDAIface.cs
 
+namespace DirectShowLib.BDA
+{
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("afb6c2a2-2c41-11d3-8a60-0000f81e0e4a"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -199,11 +202,14 @@ namespace DirectShowLib
     [PreserveSig]
     int get_FrequencyMultiplier([Out] out int pulMultiplier);
   }
+}
 
   #endregion
 
   #region Control.cs
 
+namespace DirectShowLib
+{
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("56a868c0-0ad4-11ce-b03a-0020af0ba770"),
    InterfaceType(ComInterfaceType.InterfaceIsDual)]
@@ -256,6 +262,7 @@ namespace DirectShowLib
     [PreserveSig]
     int GetNotifyFlags([Out] out NotifyFlags lplNoNotifyFlags);
   }
+}
 
   #endregion
 
@@ -277,6 +284,8 @@ namespace DirectShowLib
 
   #region DVDIf.cs
 
+namespace DirectShowLib.Dvd
+{
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("34151510-EEC0-11D2-8201-00A0C9D74842"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -501,11 +510,14 @@ namespace DirectShowLib
       [Out, MarshalAs(UnmanagedType.Bool)] out bool pbEnabled
       );
   }
+}
 
   #endregion
 
   #region Tuner.cs
 
+namespace DirectShowLib.BDA
+{
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("8B8EB248-FC2B-11d2-9D8C-00C04F72D980"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -523,9 +535,12 @@ namespace DirectShowLib
 
     int Clone([Out] out IEnumTuningSpaces ppEnum);
   }
+}
 
   #endregion
 
+namespace DirectShowLib
+{
   /// <summary>
   /// CLSID_EnhancedVideoRenderer
   /// </summary>
@@ -593,7 +608,10 @@ namespace DirectShowLib
     /// <summary> MEDIASUBTYPE_LATM_AAC_LAVF_SPLITTER </summary>
     public static readonly Guid LATMAACLAVF = new Guid(0x53544441, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71);
   }
+}
 
+namespace DirectShowLib.BDA
+{
   #region IBDA_DiseqCommand
 
   /// <summary>
