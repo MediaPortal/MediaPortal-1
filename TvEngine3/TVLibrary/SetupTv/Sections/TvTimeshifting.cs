@@ -184,15 +184,12 @@ namespace SetupTv.Sections
       // Change timeshiftFolder for all cards
       for (int iIndex = 0; iIndex < comboBoxCards.Items.Count; iIndex++)
       {
-        Card card = (Card)comboBoxCards.SelectedItem;
-        if (card.TimeShiftFolder != textBoxTimeShiftFolder.Text)
+        Card card = (Card)comboBoxCards.Items[iIndex];
+        if (card != null && card.TimeShiftFolder != textBoxTimeShiftFolder.Text)
         {
           card.TimeShiftFolder = textBoxTimeShiftFolder.Text;
           card.Persist();
-          if (!_needRestart)
-          {
-            _needRestart = true;
-          }
+          _needRestart = true;
         }
       }
     }
