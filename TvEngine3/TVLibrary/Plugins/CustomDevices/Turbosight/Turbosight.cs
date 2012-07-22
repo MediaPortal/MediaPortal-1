@@ -1126,7 +1126,7 @@ namespace TvEngine
 
       // Attempt to initialise the interface.
       _ciHandle = On_Start_CI(_tunerFilter, _tunerFilterName);
-      if (_ciHandle == IntPtr.Zero)
+      if (_ciHandle == IntPtr.Zero || _ciHandle.ToInt64() == 0)
       {
         Log.Debug("Turbosight: interface handle is null");
         _isCiSlotPresent = false;
@@ -1164,13 +1164,15 @@ namespace TvEngine
 
       if (_ciHandle != IntPtr.Zero)
       {
+        String handleAddress = String.Format("0x{0:x}", _ciHandle.ToInt64());
         try
         {
           On_Exit_CI(_ciHandle);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
           // On_Exit_CI() can throw an access violation exception.
+          Log.Debug("Turbosight: On_Exit_CI threw exception, handle address = {0}\r\n{1}", handleAddress, ex.ToString());
         }
         _ciHandle = IntPtr.Zero;
       }

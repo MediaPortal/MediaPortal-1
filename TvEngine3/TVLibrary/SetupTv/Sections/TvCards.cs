@@ -414,10 +414,14 @@ namespace SetupTv.Sections
       FormEditCard dlg = new FormEditCard();
       dlg.Card = (Card)item.Tag;
       dlg.CardType = cardTypes[((Card)item.Tag).DevicePath].ToString();
-      dlg.ShowDialog();
-      dlg.Card.Persist();
-      _needRestart = true;
-      UpdateList();
+      if (dlg.ShowDialog() == DialogResult.OK)
+      {
+        // User clicked save...
+        Log.Debug("Saving settings for device {0}...", dlg.Card.Name);
+        dlg.Card.Persist();
+        _needRestart = true;
+        UpdateList();
+      }
     }
 
     private void buttonRemove_Click(object sender, EventArgs e)

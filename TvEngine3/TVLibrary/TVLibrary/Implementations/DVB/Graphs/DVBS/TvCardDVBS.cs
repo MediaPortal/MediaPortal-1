@@ -217,9 +217,6 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="channel">The channel to tune to.</param>
     protected override void PerformTuning(IChannel channel)
     {
-      // Tweak LNB local oscillator frequencies to ensure successful tuning. We do this here so that plugins
-      // can update the frequencies if necessary.
-
       // Send DiSEqC commands (if necessary) before actually tuning in case the driver applies the commands
       // during the tuning process.
       if (_diseqcController != null)

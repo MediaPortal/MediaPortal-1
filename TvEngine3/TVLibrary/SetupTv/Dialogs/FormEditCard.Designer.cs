@@ -99,6 +99,7 @@ namespace SetupTv.Sections
       // mpButtonSave
       // 
       this.mpButtonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonSave.DialogResult = System.Windows.Forms.DialogResult.OK;
       this.mpButtonSave.Location = new System.Drawing.Point(249, 521);
       this.mpButtonSave.Name = "mpButtonSave";
       this.mpButtonSave.Size = new System.Drawing.Size(75, 23);
@@ -163,7 +164,10 @@ namespace SetupTv.Sections
       // 
       this.mpComboBoxMultiChannelDecryptMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxMultiChannelDecryptMode.FormattingEnabled = true;
-      this.mpComboBoxMultiChannelDecryptMode.Items.AddRange(Enum.GetNames(typeof(MultiChannelDecryptMode)));
+      this.mpComboBoxMultiChannelDecryptMode.Items.AddRange(new object[] {
+            "Disabled",
+            "List",
+            "Changes"});
       this.mpComboBoxMultiChannelDecryptMode.Location = new System.Drawing.Point(159, 107);
       this.mpComboBoxMultiChannelDecryptMode.Name = "mpComboBoxMultiChannelDecryptMode";
       this.mpComboBoxMultiChannelDecryptMode.Size = new System.Drawing.Size(103, 21);
@@ -182,7 +186,9 @@ namespace SetupTv.Sections
       // 
       this.mpComboBoxCamType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxCamType.FormattingEnabled = true;
-      this.mpComboBoxCamType.Items.AddRange(Enum.GetNames(typeof(CamType)));
+      this.mpComboBoxCamType.Items.AddRange(new object[] {
+            "Default",
+            "Astoncrypt2"});
       this.mpComboBoxCamType.Location = new System.Drawing.Point(159, 134);
       this.mpComboBoxCamType.Name = "mpComboBoxCamType";
       this.mpComboBoxCamType.Size = new System.Drawing.Size(103, 21);
@@ -282,7 +288,10 @@ namespace SetupTv.Sections
       // 
       this.mpComboBoxPidFilterMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxPidFilterMode.FormattingEnabled = true;
-      this.mpComboBoxPidFilterMode.Items.AddRange(Enum.GetNames(typeof(PidFilterMode)));
+      this.mpComboBoxPidFilterMode.Items.AddRange(new object[] {
+            "Disabled",
+            "Enabled",
+            "Auto"});
       this.mpComboBoxPidFilterMode.Location = new System.Drawing.Point(158, 94);
       this.mpComboBoxPidFilterMode.Name = "mpComboBoxPidFilterMode";
       this.mpComboBoxPidFilterMode.Size = new System.Drawing.Size(103, 21);
@@ -301,7 +310,11 @@ namespace SetupTv.Sections
       // 
       this.mpComboBoxIdleMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxIdleMode.FormattingEnabled = true;
-      this.mpComboBoxIdleMode.Items.AddRange(Enum.GetNames(typeof(DeviceIdleMode)));
+      this.mpComboBoxIdleMode.Items.AddRange(new object[] {
+            "Pause",
+            "Stop",
+            "Unload",
+            "AlwaysOn"});
       this.mpComboBoxIdleMode.Location = new System.Drawing.Point(158, 40);
       this.mpComboBoxIdleMode.Name = "mpComboBoxIdleMode";
       this.mpComboBoxIdleMode.Size = new System.Drawing.Size(103, 21);
