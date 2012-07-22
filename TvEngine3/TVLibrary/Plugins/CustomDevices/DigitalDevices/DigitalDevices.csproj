@@ -38,9 +38,6 @@
     <Reference Include="Gentle.Framework">
       <HintPath>..\..\..\TVDatabase\references\Gentle.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="SetupControls">
-      <HintPath>..\..\..\SetupControls\obj\Release\SetupControls.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -67,6 +64,10 @@
     <ProjectReference Include="..\..\..\..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\SetupControls\SetupControls.csproj">
+      <Project>{A2792D3C-04C1-4A92-9383-A33D59C54D8D}</Project>
+      <Name>SetupControls</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\TvControl\TvControl.csproj">
       <Project>{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}</Project>

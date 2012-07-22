@@ -120,9 +120,6 @@
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="TvLibrary.Utils">
-      <HintPath>..\..\TvLibrary.Utils\bin\Release\TvLibrary.Utils.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
@@ -153,6 +150,10 @@
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
       <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TvLibrary.Utils\TvLibrary.Utils.csproj">
+      <Project>{954F9929-7FDA-4F59-88E3-FD2B9A7B6E6E}</Project>
+      <Name>TvLibrary.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\TVLibrary\TVLibrary.csproj">
       <Project>{59C2EBC8-0FEA-4B2E-B5D1-476347332331}</Project>

@@ -115,6 +115,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViXS", "Plugins\CustomDevices\ViXS\ViXS.csproj", "{D27D51F7-F01E-45FD-864A-8A0E334179CF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalDevices", "Plugins\CustomDevices\DigitalDevices\DigitalDevices.csproj", "{6603395A-4BCE-487E-8FD8-C1BCA56C1149}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A2792D3C-04C1-4A92-9383-A33D59C54D8D} = {A2792D3C-04C1-4A92-9383-A33D59C54D8D}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalEverywhere", "Plugins\CustomDevices\DigitalEverywhere\DigitalEverywhere.csproj", "{055B591F-DD8D-4E13-BF56-41A8515CE738}"
 EndProject
