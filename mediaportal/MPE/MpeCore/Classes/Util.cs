@@ -102,6 +102,11 @@ namespace MpeCore.Classes
       }
       catch (BadImageFormatException)
       {
+        //return false;
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show(string.Format("Error adding plugin depdendency for {0}.\nException message: {1}", pluginFile, ex.Message));
         return false;
       }
       if (pluginAssembly != null)
