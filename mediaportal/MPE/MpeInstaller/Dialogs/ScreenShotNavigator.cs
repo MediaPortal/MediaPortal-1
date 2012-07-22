@@ -46,6 +46,8 @@ namespace MpeInstaller.Dialogs
     private void pictureBox_LoadCompleted(object sender, AsyncCompletedEventArgs e)
     {
       progressBar1.Visible = false;
+      lblIndex.Text = string.Format("{0} / {1}", Index + 1, Urls.Count);
+      lblIndex.Visible = true;
     }
 
     private void pictureBox_LoadProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -56,7 +58,6 @@ namespace MpeInstaller.Dialogs
     public void Set(PackageClass pak)
     {
       Index = 0;
-      Text = string.Format("{0} Screen Shots ({1})", pak.GeneralInfo.Name, Urls.Count);
       pictureBox.ImageLocation = "";
       progressBar1.Visible = false;
       Urls.Clear();
@@ -65,6 +66,7 @@ namespace MpeInstaller.Dialogs
       {
         Urls.Add(s);
       }
+      Text = string.Format("{0} Screen Shots ({1})", pak.GeneralInfo.Name, Urls.Count);
       SetButton();
       LoadImage();
     }
@@ -96,6 +98,7 @@ namespace MpeInstaller.Dialogs
     private void LoadImage()
     {
       pictureBox.LoadAsync(Urls[Index]);
+      lblIndex.Visible = false;
       progressBar1.Value = 0;
       progressBar1.Visible = true;
     }

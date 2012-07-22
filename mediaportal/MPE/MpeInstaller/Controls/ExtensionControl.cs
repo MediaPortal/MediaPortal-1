@@ -74,7 +74,7 @@ namespace MpeInstaller.Controls
         catch (Exception) {}
       }
 
-      btn_screenshot.Enabled =
+      btn_screenshot.Visible =
         !string.IsNullOrEmpty(packageClass.GeneralInfo.Params[ParamNamesConst.ONLINE_SCREENSHOT].Value);
 
       Package = MpeCore.MpeInstaller.InstalledExtensions.Get(packageClass);
@@ -85,12 +85,15 @@ namespace MpeInstaller.Controls
         btn_update.Visible = false;
         btn_uninstall.Visible = false;
       }
+      else
+      {
+        btn_conf.Visible = !string.IsNullOrEmpty(Package.GeneralInfo.Params[ParamNamesConst.CONFIG].GetValueAsPath());
+      }
 
       btn_home.Visible = !string.IsNullOrEmpty(Package.GeneralInfo.HomePage);
       btn_forum.Visible = !string.IsNullOrEmpty(Package.GeneralInfo.ForumPage);
 
       PopulateInstallBtn();
-      btn_conf.Enabled = !string.IsNullOrEmpty(Package.GeneralInfo.Params[ParamNamesConst.CONFIG].GetValueAsPath());
 
       if (!Package.CheckDependency(true))
       {
@@ -200,7 +203,7 @@ namespace MpeInstaller.Controls
       lbl_version.ForeColor = _selected ? Color.Blue : Color.Black;
       AutoSize = false;
       if (!animate)
-        Height = _selected ? 123 : 23;
+        Height = _selected ? PreferredSize.Height : 23;
       timer1.Enabled = animate;
 
       if (Parent == null)
@@ -336,18 +339,18 @@ namespace MpeInstaller.Controls
     {
       if (Selected)
       {
-        if (Height < 120)
+        if (Height + 20 < PreferredSize.Height)
           Height += 20;
         else
         {
-          Height = 123;
+          Height = PreferredSize.Height;
           AutoSize = true;
           timer1.Enabled = false;
         }
       }
       else
       {
-        if (Height > 23)
+        if (Height - 20 > 23)
           Height -= 20;
         else
         {

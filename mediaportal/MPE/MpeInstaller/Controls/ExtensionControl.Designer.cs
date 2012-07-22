@@ -48,12 +48,14 @@
       this.timer1 = new System.Windows.Forms.Timer(this.components);
       this.btn_screenshot = new System.Windows.Forms.Button();
       this.chk_ignore = new System.Windows.Forms.CheckBox();
+      this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
       ((System.ComponentModel.ISupportInitialize)(this.img_dep)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.img_update)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.img_update1)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.img_dep1)).BeginInit();
       this.toolStrip1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.img_logo)).BeginInit();
+      this.flowLayoutPanel1.SuspendLayout();
       this.SuspendLayout();
       // 
       // lbl_name
@@ -73,7 +75,7 @@
       this.btn_uninstall.BackColor = System.Drawing.SystemColors.ButtonFace;
       this.btn_uninstall.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btn_uninstall.ForeColor = System.Drawing.SystemColors.ControlText;
-      this.btn_uninstall.Location = new System.Drawing.Point(153, 91);
+      this.btn_uninstall.Location = new System.Drawing.Point(84, 3);
       this.btn_uninstall.Name = "btn_uninstall";
       this.btn_uninstall.Size = new System.Drawing.Size(75, 23);
       this.btn_uninstall.TabIndex = 1;
@@ -188,7 +190,7 @@
       this.btn_update.BackColor = System.Drawing.SystemColors.ButtonFace;
       this.btn_update.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btn_update.ForeColor = System.Drawing.SystemColors.ControlText;
-      this.btn_update.Location = new System.Drawing.Point(72, 91);
+      this.btn_update.Location = new System.Drawing.Point(165, 3);
       this.btn_update.Name = "btn_update";
       this.btn_update.Size = new System.Drawing.Size(75, 23);
       this.btn_update.TabIndex = 6;
@@ -199,7 +201,7 @@
       // btn_conf
       // 
       this.btn_conf.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btn_conf.Location = new System.Drawing.Point(232, 91);
+      this.btn_conf.Location = new System.Drawing.Point(246, 3);
       this.btn_conf.Name = "btn_conf";
       this.btn_conf.Size = new System.Drawing.Size(75, 23);
       this.btn_conf.TabIndex = 9;
@@ -250,7 +252,7 @@
       // btn_screenshot
       // 
       this.btn_screenshot.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btn_screenshot.Location = new System.Drawing.Point(313, 91);
+      this.btn_screenshot.Location = new System.Drawing.Point(3, 3);
       this.btn_screenshot.Name = "btn_screenshot";
       this.btn_screenshot.Size = new System.Drawing.Size(75, 23);
       this.btn_screenshot.TabIndex = 13;
@@ -260,6 +262,7 @@
       // 
       // chk_ignore
       // 
+      this.chk_ignore.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.chk_ignore.AutoSize = true;
       this.chk_ignore.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.chk_ignore.ForeColor = System.Drawing.SystemColors.ControlText;
@@ -271,26 +274,37 @@
       this.chk_ignore.UseVisualStyleBackColor = true;
       this.chk_ignore.CheckedChanged += new System.EventHandler(this.chk_ignore_CheckedChanged);
       // 
+      // flowLayoutPanel1
+      // 
+      this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.flowLayoutPanel1.AutoSize = true;
+      this.flowLayoutPanel1.Controls.Add(this.btn_screenshot);
+      this.flowLayoutPanel1.Controls.Add(this.btn_uninstall);
+      this.flowLayoutPanel1.Controls.Add(this.btn_update);
+      this.flowLayoutPanel1.Controls.Add(this.btn_conf);
+      this.flowLayoutPanel1.Location = new System.Drawing.Point(75, 88);
+      this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+      this.flowLayoutPanel1.Size = new System.Drawing.Size(329, 34);
+      this.flowLayoutPanel1.TabIndex = 36;
+      // 
       // ExtensionControl
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
       this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+      this.Controls.Add(this.flowLayoutPanel1);
       this.Controls.Add(this.chk_ignore);
       this.Controls.Add(this.img_dep1);
       this.Controls.Add(this.img_update1);
-      this.Controls.Add(this.btn_screenshot);
       this.Controls.Add(this.btn_home);
       this.Controls.Add(this.btn_forum);
       this.Controls.Add(this.toolStrip1);
-      this.Controls.Add(this.btn_conf);
       this.Controls.Add(this.img_dep);
-      this.Controls.Add(this.btn_update);
       this.Controls.Add(this.img_update);
       this.Controls.Add(this.lbl_version);
       this.Controls.Add(this.lbl_description);
       this.Controls.Add(this.img_logo);
-      this.Controls.Add(this.btn_uninstall);
       this.Controls.Add(this.lbl_name);
       this.ForeColor = System.Drawing.SystemColors.ButtonFace;
       this.Margin = new System.Windows.Forms.Padding(1);
@@ -305,6 +319,7 @@
       this.toolStrip1.ResumeLayout(false);
       this.toolStrip1.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.img_logo)).EndInit();
+      this.flowLayoutPanel1.ResumeLayout(false);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -331,5 +346,6 @@
         private System.Windows.Forms.PictureBox img_update1;
         private System.Windows.Forms.PictureBox img_dep1;
         private System.Windows.Forms.CheckBox chk_ignore;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
     }
 }
