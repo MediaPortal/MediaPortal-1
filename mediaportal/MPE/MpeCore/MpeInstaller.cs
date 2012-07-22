@@ -86,6 +86,7 @@ namespace MpeCore
       AddActionProvider(new Script());
 
       AddVersion(new MediaPortalVersion());
+      AddVersion(new SkinVersion());
       AddVersion(new TvServerVersion());
       AddVersion(new ExtensionVersion());
       AddVersion(new InstallerVersion());

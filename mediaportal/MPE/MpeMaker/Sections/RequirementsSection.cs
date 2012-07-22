@@ -163,7 +163,7 @@ namespace MpeMaker.Sections
         return;
       if (SelectedItem == null)
         return;
-      if (MessageBox.Show("Do you want to dependency " + SelectedItem.Name, "", MessageBoxButtons.YesNo) !=
+      if (MessageBox.Show("Do you want to remove dependency " + SelectedItem.Name, "", MessageBoxButtons.YesNo) !=
           DialogResult.Yes)
         return;
       Package.Dependencies.Items.Remove(SelectedItem);

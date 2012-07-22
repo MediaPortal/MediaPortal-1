@@ -55,7 +55,6 @@ namespace MpeInstaller.Controls
     {
       InitializeComponent();
       SelectedItem = null;
-      flowLayoutPanel1.VerticalScroll.Visible = true;
       TagList = new Dictionary<string, int>();
     }
 
@@ -80,6 +79,7 @@ namespace MpeInstaller.Controls
         if (tagList.Value > 1)
           comboBox1.Items.Add(tagList.Key);
       }
+      flowLayoutPanel1_SizeChanged(this, EventArgs.Empty);
     }
 
     private void AddTags(TagCollection tags)
@@ -127,6 +127,7 @@ namespace MpeInstaller.Controls
 
     public void Filter(string filter, string tag)
     {
+      flowLayoutPanel1.SuspendLayout();
       foreach (var control in flowLayoutPanel1.Controls)
       {
         var cnt = control as ExtensionControl;
@@ -135,6 +136,7 @@ namespace MpeInstaller.Controls
           cnt.Visible = cnt.Filter(filter, tag);
         }
       }
+      flowLayoutPanel1.ResumeLayout();
     }
 
     private void textBox1_TextChanged(object sender, EventArgs e)
@@ -147,16 +149,23 @@ namespace MpeInstaller.Controls
       Filter(textBox1.Text, comboBox1.Text);
     }
 
-    private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e) {}
-
-    private void label1_Click(object sender, EventArgs e) {}
-
     private void flowLayoutPanel1_SizeChanged(object sender, EventArgs e)
     {
-      if (flowLayoutPanel1.Controls.Count > 1 && flowLayoutPanel1.Size.Width > flowLayoutPanel1.Controls[0].Width + 30)
+      // when the panel resizes, resize all children to fill the available width
+      // use the ClientSize with an extra 4 pixel 
+      // to make sure no horizontal scrollbar will show even when a vertical scrollbar is visible
+      if (flowLayoutPanel1.Controls.Count > 0 && flowLayoutPanel1.Controls[0].Width != flowLayoutPanel1.ClientSize.Width - 4)
+      {
+        foreach (Control control in flowLayoutPanel1.Controls)
+        {
+          control.Width = flowLayoutPanel1.ClientSize.Width - 4;
+        }
+      }
+      
+      /*if (flowLayoutPanel1.Controls.Count > 1 && flowLayoutPanel1.Size.Width > flowLayoutPanel1.Controls[0].Width + 30)
         flowLayoutPanel1.WrapContents = true;
       else
-        flowLayoutPanel1.WrapContents = false;
+        flowLayoutPanel1.WrapContents = false;*/
     }
   }
 }

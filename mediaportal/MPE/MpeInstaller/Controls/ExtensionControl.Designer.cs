@@ -132,6 +132,7 @@
       // 
       // btn_home
       // 
+      this.btn_home.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btn_home.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.btn_home.Image = global::MpeInstaller.Properties.Resources.internet_web_browser;
       this.btn_home.Location = new System.Drawing.Point(513, 59);
@@ -144,6 +145,7 @@
       // 
       // btn_forum
       // 
+      this.btn_forum.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btn_forum.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.btn_forum.Image = global::MpeInstaller.Properties.Resources.internet_group_chat;
       this.btn_forum.Location = new System.Drawing.Point(513, 21);

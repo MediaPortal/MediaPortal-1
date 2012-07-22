@@ -103,7 +103,7 @@ namespace MpeInstaller.Controls
         img_dep1.Visible = false;
       }
       Selected = false;
-      SelectControl();
+      SelectControl(false);
       SetButtonState();
     }
 
@@ -166,7 +166,7 @@ namespace MpeInstaller.Controls
         if (_selected != value)
         {
           _selected = value;
-          SelectControl();
+          SelectControl(false);
         }
       }
     }
@@ -191,19 +191,17 @@ namespace MpeInstaller.Controls
       }
     }
 
-    private void SelectControl()
+    private void SelectControl(bool animate = true)
     {
       BackColor = _selected ? SystemColors.GradientInactiveCaption : Color.White;
       BorderStyle = _selected ? BorderStyle.FixedSingle : BorderStyle.FixedSingle;
       lbl_description.ForeColor = _selected ? Color.Blue : Color.Black;
       lbl_name.ForeColor = _selected ? Color.Blue : Color.Black;
       lbl_version.ForeColor = _selected ? Color.Blue : Color.Black;
-      if (!_selected)
-        AutoSize = false;
-      //
-      //Height = _selected ? 123 : 90;
-      Height = 23;
-      timer1.Enabled = _selected;
+      AutoSize = false;
+      if (!animate)
+        Height = _selected ? 123 : 23;
+      timer1.Enabled = animate;
 
       if (Parent == null)
         return;
@@ -336,12 +334,26 @@ namespace MpeInstaller.Controls
 
     private void timer1_Tick(object sender, EventArgs e)
     {
-      if (Height < 120)
-        Height = Height + 3;
+      if (Selected)
+      {
+        if (Height < 120)
+          Height += 20;
+        else
+        {
+          Height = 123;
+          AutoSize = true;
+          timer1.Enabled = false;
+        }
+      }
       else
       {
-        AutoSize = true;
-        timer1.Enabled = false;
+        if (Height > 23)
+          Height -= 20;
+        else
+        {
+          Height = 23;
+          timer1.Enabled = false;
+        }
       }
     }
 
