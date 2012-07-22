@@ -93,8 +93,6 @@ namespace MpeInstaller.Controls
       }
     }
 
-    private void flowLayoutPanel1_Click(object sender, EventArgs e) {}
-
     public void OnUninstallExtension(ExtensionControl control)
     {
       if (UnInstallExtension != null)
@@ -166,6 +164,11 @@ namespace MpeInstaller.Controls
         flowLayoutPanel1.WrapContents = true;
       else
         flowLayoutPanel1.WrapContents = false;*/
+    }
+
+    private void flowLayoutPanel1_MouseEnter(object sender, EventArgs e)
+    {
+      if (!flowLayoutPanel1.Focused) flowLayoutPanel1.Focus();
     }
   }
 }
