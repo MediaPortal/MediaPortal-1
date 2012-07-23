@@ -301,36 +301,27 @@ namespace TvService
               {
                 _subchannel = subchannel;
                 Log.Write("card: CAM enabled : {0}", _cardHandler.HasCA);
-                bool pmtReceived = IsPMTreceived(subchannel);
-                if (pmtReceived)
+
+                AttachAudioVideoEventHandler(subchannel);
+                if (subchannel.IsTimeShifting)
                 {
-                  AttachAudioVideoEventHandler(subchannel);
-                  bool isScrambled;
-                  if (subchannel.IsTimeShifting)
-                  {
-                    result = GetTvResultFromTimeshiftingSubchannel(ref user, context);                    
-                  }
-                  else
-                  {
-                    bool tsStarted = subchannel.StartTimeShifting(fileName);
-                    if (tsStarted)
-                    {
-                      fileName += ".tsbuffer";
-                      result = GetTvResultFromTimeshiftingSubchannel(ref user, context);
-                    }
-                    else
-                    {                      
-                      result = TvResult.UnableToStartGraph; 
-                    }                    
-                  }
+                  result = GetTvResultFromTimeshiftingSubchannel(ref user, context);                    
                 }
                 else
                 {
-                  Log.Info("start subch:{0} No PMT received. Timeshifting failed", subchannel.SubChannelId);
-                  result = TvResult.UnableToStartGraph;
+                  bool tsStarted = subchannel.StartTimeShifting(fileName);
+                  if (tsStarted)
+                  {
+                    fileName += ".tsbuffer";
+                    result = GetTvResultFromTimeshiftingSubchannel(ref user, context);
+                  }
+                  else
+                  {
+                    result = TvResult.UnableToStartGraph; 
+                  }
                 }
-              }              
-            }            
+              }
+            }
           }
         }
         else
@@ -341,7 +332,7 @@ namespace TvService
       catch (Exception ex)
       {
         Log.Write(ex);
-        result = TvResult.UnknownError;        
+        result = TvResult.UnknownError;
       }
       finally
       {
@@ -379,13 +370,6 @@ namespace TvService
       {
         _cardHandler.Card.StartLinkageScanner(_linkageGrabber);
       }
-    }
-
-    private static bool IsPMTreceived(ITvSubChannel subchannel)
-    {
-      var tvDvbChannel = subchannel as TvDvbChannel;
-      bool pmtReceived = (tvDvbChannel != null && tvDvbChannel.PMTreceived);
-      return pmtReceived;
     }
 
     private static bool HasFreeDiskSpace(string fileName)
