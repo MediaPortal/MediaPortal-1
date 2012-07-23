@@ -107,8 +107,6 @@ namespace MediaPortal.Dialogs
       {
         // Select dialog item
         selectedItemIndex = selected;
-        listView.Focus = true;
-        GUIControl.SelectItemControl(GetID, listView.GetID, selectedItemIndex);
       }
     }
 
