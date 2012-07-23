@@ -1573,6 +1573,7 @@ namespace MediaPortal.GUI.Video
             mInfo.SetMediaInfoProperties(file, true);
             mInfo.SetDurationProperty(movieId);
             IMDBMovie.SetMovieData(item);
+            SelectCurrentItem();
           }
           break;
       }
