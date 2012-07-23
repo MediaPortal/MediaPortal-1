@@ -41,7 +41,7 @@ namespace MediaPortal.Video.Database
   public class IMDB : IEnumerable
   {
     public static string ScriptDirectory = Config.GetSubFolder(Config.Dir.Config, "scripts\\MovieInfo");
-    public const string DEFAULT_DATABASE = "IMDB";
+    public const string DEFAULT_DATABASE = "IMDB_MP13x";
     public const int DEFAULT_SEARCH_LIMIT = 25;
 
     #region interfaces and classes
@@ -407,10 +407,17 @@ namespace MediaPortal.Video.Database
     {
       string strUrl = strMovie;
       strUrl = strUrl.Trim();
-      Regex rx = new Regex(@"(([\(\{\[]|\b)((576|720|1080)[pi]|dir(ectors )?cut|dvd([r59]|rip|scr(eener)?)|(avc)?hd|wmv|ntsc|pal|mpeg|dsr|r[1-5]|bd[59]|dts|ac3|blu(-)?ray|[hp]dtv|stv|hddvd|xvid|divx|x264|dxva|(?-i)FEST[Ii]VAL|L[iI]M[iI]TED|[WF]S|PROPER|REPACK|RER[Ii]P|REAL|RETA[Ii]L|EXTENDED|REMASTERED|UNRATED|CHRONO|THEATR[Ii]CAL|DC|SE|UNCUT|[Ii]NTERNAL|V\d{1}|BR[Rr]ip|[DS]UBBED)([\]\)\}]|\b)(-[^\s]+$)?)", RegexOptions.IgnoreCase);
-      strUrl = rx.Replace(strUrl, "")
-                 .Replace(".", " ")
-                 .Replace("_", " ").Trim();
+      string[] vdbParserStr = VdbParserStringCleaner();
+
+      if (vdbParserStr == null || vdbParserStr.Length != 1)
+      {
+        return strUrl;
+      }
+
+      Regex rx = new Regex(vdbParserStr[0], RegexOptions.IgnoreCase);
+      strUrl = rx.Replace(strUrl, "");
+      strUrl = strUrl.Replace(".", " ");
+      strUrl = strUrl.Replace("_", " ").Trim();
       return strUrl;
     }
 
@@ -1267,6 +1274,13 @@ namespace MediaPortal.Video.Database
     }
 
     #endregion
+
+    // Get actor search parser strings
+    private string[] VdbParserStringCleaner()
+    {
+      string[] vdbParserStr = VideoDatabaseParserStrings.GetParserStrings("CleanFilter");
+      return vdbParserStr;
+    }
   }
 
   /// <summary>

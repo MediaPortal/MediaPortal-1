@@ -883,14 +883,17 @@ namespace MediaPortal.Video.Database
         OnProgress(line1, line2, line3, -1);
         DownloadCoverArt(Thumbs.MovieActors, _imdbActor.ThumbnailUrl, _actorId.ToString());
       }
-      //else
-      //{
-      //  // Sometimes we can have wrong actor pic (wrong actor selected in list before) so delete it
-      //  string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, _actorId.ToString());
-      //  string coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieActors, _actorId.ToString());
-      //  Util.Utils.FileDelete(largeCoverArtImage);
-      //  Util.Utils.FileDelete(coverArtImage);
-      //}
+      else
+      {
+        if (!userActorImage)
+        {
+          // Sometimes we can have wrong actor pic (wrong actor selected in list before) so delete it
+          string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, _actorId.ToString());
+          string coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieActors, _actorId.ToString());
+          Util.Utils.FileDelete(largeCoverArtImage);
+          Util.Utils.FileDelete(coverArtImage);
+        }
+      }
       _imdbActor = VideoDatabase.GetActorInfo(_actorId);
     }
 
@@ -1565,6 +1568,77 @@ namespace MediaPortal.Video.Database
           success = false;
           break;
         }
+      }
+
+      if (progress != null)
+      {
+        progress.OnScanEnd();
+      }
+      return success;
+    }
+
+    /// <summary>
+    /// Download IMDB info for videofile (file must be with full path)
+    /// </summary>
+    /// <param name="progress"></param>
+    /// <param name="file"></param>
+    /// <param name="fuzzyMatching"></param>
+    /// <param name="skipExisting"></param>
+    /// <param name="getActors"></param>
+    /// <param name="refreshDBonly"></param>
+    /// <returns></returns>
+    public static bool ScanIMDB(IMDB.IProgress progress, string file, bool fuzzyMatching, bool skipExisting,
+                                bool getActors, bool refreshDBonly)
+    {
+      bool success = true;
+      
+      if (progress != null)
+      {
+        progress.OnScanStart(1);
+      }
+
+      int digit = 0; // Only first file in set will proceed (cd1, part1, dvd1...)
+
+      var pattern = Util.Utils.StackExpression();
+
+      for (int i = 0; i < pattern.Length; i++)
+      {
+        if (pattern[i].IsMatch(file))
+        {
+          digit = Convert.ToInt16(pattern[i].Match(file).Groups["digit"].Value);
+        }
+      }
+      try
+      {
+        IMDBMovie movieDetails = new IMDBMovie();
+        int id = VideoDatabase.GetMovieInfo(file, ref movieDetails);
+
+        if (refreshDBonly && id != -1 && digit < 2)
+        {
+          string path, filename;
+          Util.Utils.Split(file, out path, out filename);
+          movieDetails.Path = path;
+          movieDetails.File = filename;
+          // Caution - Thumb creation spam no2 starts in GetInfoFromIMDB
+          GetInfoFromIMDB(progress, ref movieDetails, fuzzyMatching, getActors);
+        }
+        else
+        {
+          if ((!skipExisting || id == -1) && refreshDBonly == false && digit < 2)
+          {
+            string path, filename;
+            Util.Utils.Split(file, out path, out filename);
+            movieDetails.Path = path;
+            movieDetails.File = filename;
+            // Caution - Thumb creation spam no2 starts in GetInfoFromIMDB
+            GetInfoFromIMDB(progress, ref movieDetails, fuzzyMatching, getActors);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Scan IMDB err:{0} src:{1}, stack:{2}, ", ex.Message, ex.Source, ex.StackTrace);
+        success = false;
       }
 
       if (progress != null)

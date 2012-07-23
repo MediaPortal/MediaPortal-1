@@ -236,6 +236,8 @@ namespace MediaPortal.GUI.Video
           pItem = (GUIListItem)items[x];
           string file = string.Empty;
           bool isFolderPinProtected = (pItem.IsFolder && IsFolderPinProtected(pItem.Path));
+          IMDBMovie.SetMovieData(pItem);
+          movieDetails = (IMDBMovie) pItem.AlbumInfoTag;
           
           // Skip DVD & BD backup folder
           if (pItem.IsFolder && !pItem.IsBdDvdFolder)
@@ -314,7 +316,7 @@ namespace MediaPortal.GUI.Video
 
           if (!string.IsNullOrEmpty(file))
           {
-            int id = VideoDatabase.GetMovieInfo(file, ref movieDetails);
+            int id = movieDetails.ID;
             
             // Set thumb for movies
             if (id >= 0)
@@ -375,7 +377,7 @@ namespace MediaPortal.GUI.Video
       }
       catch (Exception){}
     }
-
+    
     public bool IsDvdDirectory(string path)
     {
       if (File.Exists(path + @"\VIDEO_TS\VIDEO_TS.IFO"))
@@ -463,5 +465,6 @@ namespace MediaPortal.GUI.Video
       }
       return string.Empty;
     }
+    
   }
 }

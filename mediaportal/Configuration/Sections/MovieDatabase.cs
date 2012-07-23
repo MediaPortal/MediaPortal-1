@@ -757,6 +757,7 @@ namespace MediaPortal.Configuration.Sections
                          ? Convert.ToString(Convert.ToInt16(movie.DVDLabel.Substring(4)))
                          : string.Empty);
       tbTitle.Text = movie.Title;
+      tbSortTitle.Text = movie.SortTitle;
       tbTagline.Text = movie.TagLine;
       tbYear.Text = movie.Year.ToString();
       tbVotes.Text = movie.Votes;
@@ -1756,6 +1757,7 @@ namespace MediaPortal.Configuration.Sections
           }
 
           movie.Title = tbTitle.Text;
+          movie.SortTitle = tbSortTitle.Text;
           //if (movie.DirectorID <= 0)
           movie.Director = tbDirector.Text;
           movie.DirectorID = Convert.ToInt32(tbDirectorId.Text);
@@ -1845,6 +1847,9 @@ namespace MediaPortal.Configuration.Sections
 
         _fuzzyMatchingCheckBox.Checked = _isFuzzyMatching;
 
+        // Sort by "Sort title" db field
+        chbUseSortTitle.Checked = xmlreader.GetValueAsBool("moviedatabase", "usesorttitle", false);
+
         // FanArt setting
         string configDir;
         FanArt.GetFanArtFolder(out configDir);
@@ -1932,6 +1937,9 @@ namespace MediaPortal.Configuration.Sections
       {
         // Cover upgrade
         xmlwriter.SetValueAsBool("moviedatabase", "coversupgraded", _coversUpgraded);
+
+        // SortTitle
+        xmlwriter.SetValueAsBool("moviedatabase", "usesorttitle", chbUseSortTitle.Checked);
 
         xmlwriter.SetValueAsBool("movies", "fuzzyMatching", _isFuzzyMatching);
         // FanArt

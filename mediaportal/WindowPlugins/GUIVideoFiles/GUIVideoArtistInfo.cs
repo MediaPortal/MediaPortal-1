@@ -975,7 +975,7 @@ namespace MediaPortal.GUI.Video
       {
         return string.Empty;
       }
-
+      
       //string strUrl = String.Format("http://m.imdb.com/title/{0}", ListItemMovieInfo(item).MovieImdbID);
       string strUrl = String.Format(_vdbParserStr[0], ListItemMovieInfo(item).MovieImdbID);
       //string regex = @"<h1>Plot\sSummary</h1>\s+<p>(?<moviePlot>.+?)</p>";
@@ -983,6 +983,14 @@ namespace MediaPortal.GUI.Video
 
       _strBody = string.Empty;
       string shortPlot = GetPlot(strUrl, regex, ref _strBody);
+
+      string pageNotFound = @"<h1>Page not found</h1>";
+
+      if (Regex.Match(_strBody, pageNotFound, RegexOptions.Singleline).Success)
+      {
+        Log.Warn("GUIVideoArtistInfo-Actor movielist update Page not found: {0}", strUrl);
+        return string.Empty;
+      }
 
       // Full plot
       //strUrl = String.Format("http://m.imdb.com/title/{0}/plotsummary", ListItemMovieInfo(item).MovieImdbID);
@@ -992,10 +1000,12 @@ namespace MediaPortal.GUI.Video
       
       string plotBody = string.Empty;
       string fullPlot = GetPlot(strUrl, regex, ref plotBody);
-      
+
       if (fullPlot != string.Empty)
+      {
         shortPlot = fullPlot;
-      
+      }
+
       // Director, actors, rating....
       GetExtraDataImdb(item);
       
