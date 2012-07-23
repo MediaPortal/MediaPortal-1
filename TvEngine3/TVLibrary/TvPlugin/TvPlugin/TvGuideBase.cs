@@ -3883,7 +3883,7 @@ namespace TvPlugin
 
             case ScheduleRecordingType.SeriesLink:
               //  Record series
-              scheduleDescription = GUILocalizeStrings.Get(200095);
+              scheduleDescription = GUILocalizeStrings.Get(200099);
               break;
 
             case ScheduleRecordingType.Weekends:

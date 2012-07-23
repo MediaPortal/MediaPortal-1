@@ -2061,9 +2061,9 @@
     <String id="200093">Disc mount time out reached!</String>
     <String id="200094">Keep trying for further 60 seconds?</String>
     <String id="200095">Video Stream</String>
-    <String id="200095">Record series</String>
     <String id="200096">Quick record</String>
     <String id="200097">Programme info</String>
     <String id="200098">Series link on {0}</String>
+    <String id="200099">Record series</String>
   </Section>
 </Language>

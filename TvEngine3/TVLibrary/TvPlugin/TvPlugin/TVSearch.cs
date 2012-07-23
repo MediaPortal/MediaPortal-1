@@ -1205,7 +1205,7 @@ namespace TvPlugin
         bool seriesLinkAvailable = (program.SeriesId != 0);
 
         if (seriesLinkAvailable)
-          dlg.Add(GUILocalizeStrings.Get(200095));  // 200095=Series link
+          dlg.Add(GUILocalizeStrings.Get(200099));  // 200099=Series link
 
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel == -1)
