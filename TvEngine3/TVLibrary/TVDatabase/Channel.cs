@@ -691,6 +691,23 @@ namespace TvDatabase
       return programs[0];
     }
 
+    public Program GetNextProgram(DateTime date, int tt, int seriesId)
+    {
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+        sb.AddConstraint(Operator.Equals, "idChannel", IdChannel);
+        sb.AddConstraint(Operator.Equals, "seriesId", seriesId);
+        sb.AddConstraint(Operator.GreaterThan, "startTime", date);
+        sb.AddOrderByField(true, "startTime");
+        sb.SetRowLimit(1);
+        SqlStatement stmt = sb.GetStatement(true);
+        IList<Program> programs = ObjectFactory.GetCollection<Program>(stmt.Execute());
+        if (programs.Count == 0)
+        {
+            return null;
+        }
+        return programs[0];
+    } 
+
     private void UpdateNowAndNext()
     {
       if (_currentProgram != null)

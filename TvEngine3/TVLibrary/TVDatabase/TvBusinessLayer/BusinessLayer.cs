@@ -3036,6 +3036,35 @@ namespace TvDatabase
         return recordings;
       }
 
+      if (rec.ScheduleType == (int)ScheduleRecordingType.SeriesLink)
+      {
+          Channel scheduleChannel = rec.ReferencedChannel();
+          if (scheduleChannel == null)
+              return recordings;
+          if (rec.SeriesId == 0)
+              return recordings;
+
+          TvDatabase.Program currentProgram = scheduleChannel.GetNextProgram(dtDay, 0, rec.SeriesId);
+
+          if (currentProgram == null)
+              return recordings;
+          Schedule recNew = rec.Clone();
+          recNew.ScheduleType = (int)ScheduleRecordingType.Once;
+          recNew.StartTime = new DateTime(currentProgram.StartTime.Year, currentProgram.StartTime.Month, currentProgram.StartTime.Day, currentProgram.StartTime.Hour, currentProgram.StartTime.Minute,
+                                          0);
+          recNew.EndTime = new DateTime(currentProgram.EndTime.Year, currentProgram.EndTime.Month, currentProgram.EndTime.Day, currentProgram.EndTime.Hour, currentProgram.EndTime.Minute, 0);
+          recNew.Series = true;
+          if (recNew.StartTime >= DateTime.Now)
+          {
+              if (rec.IsSerieIsCanceled(recNew.StartTime))
+              {
+                  recNew.Canceled = recNew.StartTime;
+              }
+              recordings.Add(recNew);
+          }
+          return recordings;
+      }
+
       programs = rec.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel
                    ? layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName,
                                                  rec.ReferencedChannel())
