@@ -10,7 +10,7 @@
       <type>image</type>
       <width>720</width>
       <height>576</height>
-      <texture>background.jpg</texture>
+      <texture>background.png</texture>
     </control>
     <control>
       <type>label</type>

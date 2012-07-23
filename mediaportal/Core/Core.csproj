@@ -344,6 +344,7 @@
     <Compile Include="guilib\GUIMenuButton.cs" />
     <Compile Include="guilib\GUISpinButton.cs" />
     <Compile Include="guilib\GUIStandardKeyboard.cs" />
+    <Compile Include="guilib\IDialogbox2.cs" />
     <Compile Include="guilib\IStandardKeyboard.cs" />
     <Compile Include="guilib\GUIThemeManager.cs" />
     <Compile Include="guilib\ViewHandler.cs" />

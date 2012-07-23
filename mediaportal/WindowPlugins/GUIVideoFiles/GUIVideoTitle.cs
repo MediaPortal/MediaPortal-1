@@ -253,6 +253,7 @@ namespace MediaPortal.GUI.Video
 
     protected override void OnPageLoad()
     {
+      base.OnPageLoad();
       int previousWindow = GUIWindowManager.GetPreviousActiveWindow();
       
       // Reset parameters if previous window is not one of video windows
@@ -279,8 +280,12 @@ namespace MediaPortal.GUI.Video
       handler.CurrentView = view;
       // Resume view lvl position (back from VideoInfo window)
       handler.CurrentLevel = _currentLevel;
-      
-      base.OnPageLoad();
+
+      // Set views
+      if (btnViews != null)
+      {
+        InitViewSelections();
+      }
 
       LoadDirectory(currentFolder);
       GetProtectedShares(ref _protectedShares);
@@ -769,6 +774,9 @@ namespace MediaPortal.GUI.Video
         movies = ((VideoViewHandler)handler).Execute();
       }
 
+      GUIControl.ClearControl(GetID, facadeLayout.GetID);
+      SwitchLayout();
+
       if (handler.CurrentLevel > 0)
       {
         GUIListItem listItem = new GUIListItem("..");
@@ -838,16 +846,14 @@ namespace MediaPortal.GUI.Video
         facadeLayout.Add(item);
         itemlist.Add(item);
       }
-      
-      int itemIndex = 0;
-      string viewFolder = SetItemViewHistory();
-      string selectedItemLabel = m_history.Get(viewFolder);
 
       // Sort
       facadeLayout.Sort(new VideoSort(CurrentSortMethod, CurrentSortAsc));
-      UpdateButtonStates();
-      SelectCurrentItem();
 
+      int itemIndex = 0;
+      string viewFolder = SetItemViewHistory();
+      string selectedItemLabel = m_history.Get(viewFolder);
+      
       if (string.IsNullOrEmpty(selectedItemLabel) && facadeLayout.SelectedListItem != null)
       {
         selectedItemLabel = facadeLayout.SelectedListItem.Label;
@@ -879,70 +885,81 @@ namespace MediaPortal.GUI.Video
         itemlist.Add(item);
         facadeLayout.Add(item);
       }
-      
-      SwitchLayout();
-      UpdateButtonStates();
 
+      bool itemSelected = false;
+      
       if (handler.CurrentLevel < handler.MaxLevels)
       {
         for (int i = 0; i < facadeLayout.Count; ++i)
         {
           GUIListItem item = facadeLayout[itemIndex];
+          
           if (item.Label == selectedItemLabel)
           {
             currentSelectedItem = itemIndex;
-            SelectItem();
+            itemSelected = true;
             break;
           }
+
           itemIndex++;
         }
-      }
-      // Set thumbs - also do a Item select
-      if (handler.CurrentLevel < handler.MaxLevels)
-      {
-        if (handler.CurrentLevelWhere.ToLower() == "genre")
+        
+        switch (handler.CurrentLevelWhere.ToLower())
         {
-          SetGenreThumbs(itemlist);
-          SelectItem();
-        }
-        else if (handler.CurrentLevelWhere.ToLower() == "user groups")
-        {
-          SetUserGroupsThumbs(itemlist);
-          SelectItem();
-        }
-        else if (handler.CurrentLevelWhere.ToLower() == "actor" || handler.CurrentLevelWhere.ToLower() == "director")
-        {
-          SetActorThumbs(itemlist);
-        }
-        else if (handler.CurrentLevelWhere.ToLower() == "year")
-        {
-          SetYearThumbs(itemlist);
-          SelectItem();
-        }
-        else if (handler.CurrentLevelWhere.ToLower() == "actorindex" ||
-                 handler.CurrentLevelWhere.ToLower() == "directorindex" ||
-                 handler.CurrentLevelWhere.ToLower() == "titleindex")
-        {
-          foreach (GUIListItem itemAbc in itemlist)
-          {
-            itemAbc.IconImageBig = @"alpha\" + itemAbc.Label + ".png";
-            itemAbc.IconImage = @"alpha\" + itemAbc.Label + ".png";
-            itemAbc.ThumbnailImage = @"alpha\" + itemAbc.Label + ".png";
-          }
-          SelectItem();
-        }
-        else
-        {
-          // Assign thumbnails also for the custom views. Bugfix for Mantis 0001471: 
-          // Cover image thumbs missing in My Videos when view Selection is by "watched"
-          SetIMDBThumbs(itemlist);
+          case "genre":
+            SetGenreThumbs(itemlist);
+            //SelectItem();
+            break;
+
+          case "user groups":
+            SetUserGroupsThumbs(itemlist);
+            //SelectItem();
+            break;
+
+          case "actor":
+          case "director":
+            SetActorThumbs(itemlist);
+            break;
+
+          case "year":
+            SetYearThumbs(itemlist);
+            //SelectItem();
+            break;
+
+          case "actorindex":
+          case "directorindex":
+          case "titleindex":
+            foreach (GUIListItem itemAbc in itemlist)
+            {
+              itemAbc.IconImageBig = @"alpha\" + itemAbc.Label + ".png";
+              itemAbc.IconImage = @"alpha\" + itemAbc.Label + ".png";
+              itemAbc.ThumbnailImage = @"alpha\" + itemAbc.Label + ".png";
+            }
+            //SelectItem();
+            break;
+
+          default:
+            // Assign thumbnails also for the custom views. Bugfix for Mantis 0001471: 
+            // Cover image thumbs missing in My Videos when view Selection is by "watched"
+            SetIMDBThumbs(itemlist);
+            break;
         }
       }
       else
       {
         SetIMDBThumbs(itemlist);
       }
-      
+
+      if (itemSelected)
+      {
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, currentSelectedItem);
+      }
+      else
+      {
+        SelectCurrentItem();
+      }
+
+      UpdateButtonStates();
       GUIWaitCursor.Hide();
     }
     
@@ -1535,37 +1552,47 @@ namespace MediaPortal.GUI.Video
     private void OnItemSelected(GUIListItem item, GUIControl parent)
     {
       GUIPropertyManager.SetProperty("#groupmovielist", string.Empty);
+      string strView = string.Empty;
+      int currentViewlvl = 0;
       
-      if (handler.CurrentLevel > 0)
+      if (handler != null)
       {
-        FilterDefinition defCurrent = (FilterDefinition)handler.View.Filters[handler.CurrentLevel - 1];
-        string selectedValue = defCurrent.SelectedValue;
+        strView = handler.CurrentLevelWhere.ToLower();
+        currentViewlvl = handler.CurrentLevel;
 
-        if (Regex.Match(selectedValue, @"[\d]*").Success)
+        if (handler.CurrentLevel > 0)
         {
-          if (defCurrent.Where == "actor" || defCurrent.Where == "director")
+          FilterDefinition defCurrent = (FilterDefinition) handler.View.Filters[handler.CurrentLevel - 1];
+          string selectedValue = defCurrent.SelectedValue;
+          Int32 iSelectedValue;
+          
+          if (Int32.TryParse(selectedValue, out iSelectedValue))
           {
-            selectedValue = VideoDatabase.GetActorNameById(Convert.ToInt32(defCurrent.SelectedValue));
-          }
+            if (strView == "actor" || strView == "director")
+            {
+              selectedValue = VideoDatabase.GetActorNameById(iSelectedValue);
+            }
 
-          if (defCurrent.Where == "genre")
-          {
-            selectedValue = VideoDatabase.GetGenreById(Convert.ToInt32(defCurrent.SelectedValue));
-          }
+            if (strView == "genre")
+            {
+              selectedValue = VideoDatabase.GetGenreById(iSelectedValue);
+            }
 
-          if (defCurrent.Where == "user groups")
-          {
-            selectedValue = VideoDatabase.GetUserGroupById(Convert.ToInt32(defCurrent.SelectedValue));
+            if (strView == "user groups")
+            {
+              selectedValue = VideoDatabase.GetUserGroupById(iSelectedValue);
+            }
           }
+          GUIPropertyManager.SetProperty("#currentmodule",
+                                         String.Format("{0}/{1} - {2}", GUILocalizeStrings.Get(100006),
+                                                       handler.LocalizedCurrentView, selectedValue));
         }
-        GUIPropertyManager.SetProperty("#currentmodule",
-                                       String.Format("{0}/{1} - {2}", GUILocalizeStrings.Get(100006),
-                                                     handler.LocalizedCurrentView, selectedValue));
       }
-      
+
       if (item.Label == "..")
       {
         IMDBMovie notMovie = new IMDBMovie();
+        notMovie.IsEmpty = true;
         notMovie.SetProperties(true, string.Empty);
         IMDBActor notActor = new IMDBActor();
         notActor.SetProperties();
@@ -1595,8 +1622,19 @@ namespace MediaPortal.GUI.Video
       }
       else
       {
-        movie.SetProperties(false, string.Empty);
-
+        switch (strView)
+        {
+          case "actorindex":
+          case "directorindex":
+          case "titleindex":
+            movie.IsEmpty = true;
+            movie.SetProperties(false, string.Empty);
+            break;
+          default:
+            movie.SetProperties(false, string.Empty);
+            break;
+        }
+        
         // Set title properties for other views (year, genres..)
         if (!string.IsNullOrEmpty(item.Label))
         {
@@ -1640,9 +1678,8 @@ namespace MediaPortal.GUI.Video
       }
       
       // Random movieId by view (for FA) for selected groups
-      string view = handler.CurrentLevelWhere;
       ArrayList mList = new ArrayList();
-      GetItemViewHistory(view, mList);
+      GetItemViewHistory(strView, mList, currentViewlvl);
     }
 
     // Set property value for #groupmovielist
@@ -2299,78 +2336,80 @@ namespace MediaPortal.GUI.Video
 
     // Restore selected item postion on current view (if user was been here and switched view)
     // Set random movieId for group view (FA handler can use that)
-    private void GetItemViewHistory(string view, ArrayList mList)
+    private void GetItemViewHistory(string view, ArrayList mList, int currentLvl)
     {
-      if (facadeLayout.SelectedListItem != null)
+      if (facadeLayout.SelectedListItem != null && !string.IsNullOrEmpty(facadeLayout.SelectedListItem.Label))
       {
-        if (!string.IsNullOrEmpty(facadeLayout.SelectedListItem.Label) && !string.IsNullOrEmpty(view))
+        string selectedLabel = facadeLayout.SelectedListItem.Label;
+
+        if (!string.IsNullOrEmpty(view))
         {
           switch (view)
           {
             case "genre":
-              m_history.Set(facadeLayout.SelectedListItem.Label, view);
-              VideoDatabase.GetMoviesByGenre(facadeLayout.SelectedListItem.Label, ref mList);
+              m_history.Set(selectedLabel, view);
+              VideoDatabase.GetMoviesByGenre(selectedLabel, ref mList);
               SetRandomMovieId(mList);
               break;
 
             case "user groups":
-              m_history.Set(facadeLayout.SelectedListItem.Label, view);
+              m_history.Set(selectedLabel, view);
               IMDBMovie movie = facadeLayout.SelectedListItem.AlbumInfoTag as IMDBMovie;
               if (movie == null || movie.ID == -1)
               {
-                VideoDatabase.GetMoviesByUserGroup(facadeLayout.SelectedListItem.Label, ref mList);
+                VideoDatabase.GetMoviesByUserGroup(selectedLabel, ref mList);
                 SetRandomMovieId(mList);
               }
               break;
 
             case "actor":
             case "director":
-              m_history.Set(facadeLayout.SelectedListItem.Label, view);
-              VideoDatabase.GetMoviesByActor(facadeLayout.SelectedListItem.Label, ref mList);
+              m_history.Set(selectedLabel, view);
+              VideoDatabase.GetMoviesByActor(selectedLabel, ref mList);
               SetRandomMovieId(mList);
               break;
 
             case "year":
-              m_history.Set(facadeLayout.SelectedListItem.Label, view);
-              VideoDatabase.GetMoviesByYear(facadeLayout.SelectedListItem.Label, ref mList);
+              m_history.Set(selectedLabel, view);
+              VideoDatabase.GetMoviesByYear(selectedLabel, ref mList);
               SetRandomMovieId(mList);
               break;
 
             case "recently added":
-              if (handler.CurrentLevel == 0)
-                m_history.Set(facadeLayout.SelectedListItem.Label, view);
+              if (currentLvl == 0)
+                m_history.Set(selectedLabel, view);
               break;
 
             case "recently watched":
-              if (handler.CurrentLevel == 0)
-                m_history.Set(facadeLayout.SelectedListItem.Label, view);
+              if (currentLvl == 0)
+                m_history.Set(selectedLabel, view);
               break;
 
             case "watched":
-              if (handler.CurrentLevel == 0)
-                m_history.Set(facadeLayout.SelectedListItem.Label, view);
+              if (currentLvl == 0)
+                m_history.Set(selectedLabel, view);
               break;
 
             case "unwatched":
-              if (handler.CurrentLevel == 0)
-                m_history.Set(facadeLayout.SelectedListItem.Label, view);
+              if (currentLvl == 0)
+                m_history.Set(selectedLabel, view);
               break;
 
             case "titleindex":
-              if (handler.CurrentLevel == 0)
+              if (currentLvl == 0)
               {
-                string where = SetWhere(facadeLayout.SelectedListItem.Label, "strTitle");
+                string where = SetWhere(selectedLabel, "strTitle");
                 string sql = "SELECT * FROM movieinfo " + where +
                              "GROUP BY strTitle ORDER BY strTitle ASC ";
 
                 VideoDatabase.GetMoviesByFilter(sql, out mList, false, true, false, false);
                 SetRandomMovieId(mList);
-                m_history.Set(facadeLayout.SelectedListItem.Label, view);
+                m_history.Set(selectedLabel, view);
               }
               break;
 
             default:
-              m_history.Set(facadeLayout.SelectedListItem.Label, view);
+              m_history.Set(selectedLabel, view);
               break;
           }
         }

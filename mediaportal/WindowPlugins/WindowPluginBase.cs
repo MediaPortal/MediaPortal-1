@@ -221,8 +221,14 @@ namespace WindowPlugins
         {
           // Set the new view.
           SetView(btnViews.SelectedItemValue);
-          SelectCurrentItem();
-
+          
+          // View can switch screen (ie. in my vids from shares to dbviews) so we need to check that 
+          // because selectitem will be done on old screen and that can cause a trouble
+          if (GUIWindowManager.ActiveWindow == GetID)
+          {
+            SelectCurrentItem();  
+          }
+          
           // Refocus on the view button control.
           GUIControl.FocusControl(GetID, message.TargetControlId);
 

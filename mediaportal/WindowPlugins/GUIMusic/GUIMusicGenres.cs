@@ -378,6 +378,12 @@ namespace MediaPortal.GUI.Music
       }
 
 
+      // Set views
+      if (btnViews != null)
+      {
+        InitViewSelections();
+      }
+
       LoadDirectory("db_view");
 
       if (facadeLayout.Count <= 0)

@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -20,18 +20,9 @@
 
 namespace MediaPortal.GUI.Library
 {
-  public interface IDialogbox
+  public interface IDialogbox2 : IDialogbox 
   {
-    void Add(string strLabel);
-    void Add(GUIListItem pItem);
-    void AddLocalizedString(int iLocalizedString);
-    void SetHeading(int iString);
-    void SetHeading(string strLine);
-    void DoModal(int dwParentId);
-    void Reset();
-
-    string SelectedLabelText { get; }
-    int SelectedId { get; }
-    int SelectedLabel { get; }
+    void selectOption(string keySelected);
+    bool ShowQuickNumbers { get; set; }
   }
 }

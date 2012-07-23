@@ -1604,7 +1604,7 @@ namespace MediaPortal.GUI.Library
       if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_SELECT_ITEM)
       {
         // Construct and present the menu as a dialog window.
-        IDialogbox dialogItemSelect = (IDialogbox)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+        IDialogbox2 dialogItemSelect = (IDialogbox2)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
         if (dialogItemSelect != null)
         {
           dialogItemSelect.Reset();
@@ -1616,7 +1616,7 @@ namespace MediaPortal.GUI.Library
             dialogItemSelect.Add(_listMenuLabels[i] + ""); // Convert to string since menu item may not be a string (e.g., int).
             if (_listMenuLabels[_listSelected] == _listMenuLabels[i])
             {
-              dialogItemSelect.SelectOption("" + (_listSelected + 1));  // The dialog list is 1-based, our array is 0-based.
+              dialogItemSelect.selectOption("" + (_listSelected + 1));  // The dialog list is 1-based, our array is 0-based.
             }
           }
           dialogItemSelect.DoModal(ParentID);
