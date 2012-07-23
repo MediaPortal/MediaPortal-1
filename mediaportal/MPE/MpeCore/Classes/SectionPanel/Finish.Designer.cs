@@ -53,24 +53,23 @@
       // 
       // pictureBox1
       // 
-      this.pictureBox1.Size = new System.Drawing.Size(168, 306);
+      this.pictureBox1.Image = global::MpeCore.Properties.Resources.left;
       // 
       // button_back
       // 
-      this.button_back.Location = new System.Drawing.Point(238, 321);
+      this.button_back.Location = new System.Drawing.Point(236, 319);
       this.button_back.Name = "button_back";
-      this.button_back.Size = new System.Drawing.Size(75, 23);
+      this.button_back.Size = new System.Drawing.Size(72, 23);
       this.button_back.TabIndex = 10;
       this.button_back.Text = "< Back";
       this.button_back.UseVisualStyleBackColor = true;
-      this.button_back.Visible = true;
       this.button_back.Click += new System.EventHandler(this.button_back_Click);
       // 
       // button_next
       // 
-      this.button_next.Location = new System.Drawing.Point(319, 321);
+      this.button_next.Location = new System.Drawing.Point(317, 319);
       this.button_next.Name = "button_next";
-      this.button_next.Size = new System.Drawing.Size(75, 23);
+      this.button_next.Size = new System.Drawing.Size(72, 23);
       this.button_next.TabIndex = 11;
       this.button_next.Text = "Next >";
       this.button_next.UseVisualStyleBackColor = true;
@@ -78,9 +77,9 @@
       // 
       // button_cancel
       // 
-      this.button_cancel.Location = new System.Drawing.Point(414, 321);
+      this.button_cancel.Location = new System.Drawing.Point(412, 319);
       this.button_cancel.Name = "button_cancel";
-      this.button_cancel.Size = new System.Drawing.Size(75, 23);
+      this.button_cancel.Size = new System.Drawing.Size(72, 23);
       this.button_cancel.TabIndex = 12;
       this.button_cancel.Text = "Cancel";
       this.button_cancel.UseVisualStyleBackColor = true;
@@ -245,9 +244,9 @@
       // 
       // Finish
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(497, 352);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+      this.ClientSize = new System.Drawing.Size(494, 350);
       this.Controls.Add(this.radioButton7);
       this.Controls.Add(this.radioButton6);
       this.Controls.Add(this.radioButton5);
