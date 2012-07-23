@@ -106,6 +106,12 @@ namespace MediaPortal.Dialogs
       if (selected >= 0 && selected < listItems.Count)
       {
         // Select dialog item
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, listView.GetID, 0, 0, null);
+        OnMessage(msg);
+        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0, listView.GetID, selected, 0, null);
+        OnMessage(msg);
+        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, listView.GetID, 0, 0, 0, null);
+        OnMessage(msg);
         selectedItemIndex = selected;
         listView.Focus = true;
         GUIControl.SelectItemControl(GetID, listView.GetID, selectedItemIndex);
