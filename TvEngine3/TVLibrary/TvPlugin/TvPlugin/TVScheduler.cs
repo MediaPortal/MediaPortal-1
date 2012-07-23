@@ -136,7 +136,7 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvschedulerserver.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\mytvschedulerserver.xml"));
       LoadSettings();
       return bResult;
     }

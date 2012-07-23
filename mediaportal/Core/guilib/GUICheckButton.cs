@@ -38,7 +38,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("disabledcolor")] protected long _disabledColor = 0xFF606060;
     [XMLSkinElement("hyperlink")] protected int _hyperLinkWindowId = -1;
     [XMLSkinElement("action")] protected int _actionId = -1;
-    [XMLSkinElement("script")] protected string _scriptAction = "";
+//    [XMLSkinElement("script")] protected string _scriptAction = "";
+    [XMLSkinElement("onclick")] protected string _onclick = "";
+    [XMLSkinElement("selected")] protected string _selected = "";
     [XMLSkinElement("textXOff")] protected int _textOffsetX = 0;
     [XMLSkinElement("textYOff")] protected int _textOffsetY = 0;
     [XMLSkinElement("application")] protected string _application = "";
@@ -157,7 +159,7 @@ namespace MediaPortal.GUI.Library
 
       checkMark = new GUICheckMarkControl(0, 0, _positionX + _width - _checkMarkWidth, _positionY, _checkMarkWidth,
                                           _checkMarkHeight, _checkMarkFocusTextureName, _checkMarkNoFocusTextureName,
-                                          _checkMarkWidth, _checkMarkWidth, Alignment.ALIGN_LEFT);
+                                          _checkMarkWidth, _checkMarkHeight, Alignment.ALIGN_LEFT);
       checkMark.ParentControl = this;
       checkMark.DimColor = DimColor;
     }
@@ -235,6 +237,19 @@ namespace MediaPortal.GUI.Library
         {
           base.Render(timePassed);
           return;
+        }
+      }
+
+      // Set the selection based on the user specified condition.
+      if (_selected.Length != 0)
+      {
+        try
+        {
+          Selected = bool.Parse(GUIPropertyManager.Parse(_selected, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS));
+        }
+        catch (System.Exception)
+        {
+          Log.Debug("GUICheckButton: id={0} <selected> expression does not return a boolean value", GetID);
         }
       }
 
@@ -352,12 +367,22 @@ namespace MediaPortal.GUI.Library
       {
         if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_SELECT_ITEM)
         {
-          // Send a message that the checkbox was clicked.
-          Selected = !Selected;
+          // If this button does not have a "selected" setting then toggle the value.  The value of _selected (when used) is
+          // determined and set in each render pass based on a condition (value of a property or skin setting).
+          if (_selected.Length == 0)
+          {
+            Selected = !Selected;
+          }
 
           // send a message to anyone interested 
           message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
           GUIGraphicsContext.SendMessage(message);
+          
+          // If this button has a click setting then execute the setting.
+          if (_onclick.Length != 0)
+          {
+            GUIPropertyManager.Parse(_onclick, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
+          }
 
           // If this button contains scriptactions call the scriptactions.
           if (_application.Length != 0)
@@ -609,6 +634,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Get/set the scriptaction that needs to be performed when the button is clicked.
     /// </summary>
+/*
     public string ScriptAction
     {
       get { return _scriptAction; }
@@ -621,6 +647,7 @@ namespace MediaPortal.GUI.Library
         _scriptAction = value;
       }
     }
+*/
 
     /// <summary>
     /// Get/set the action ID that corresponds to this button.

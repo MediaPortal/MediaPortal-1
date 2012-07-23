@@ -49,8 +49,8 @@ namespace MediaPortal.InputDevices
     private string[] layerList = new string[] {"all", "1", "2"};
     private string[] fullScreenList = new string[] {"Fullscreen", "No Fullscreen"};
 
-    private string[] nativePlayerList = new string[] {"TV", "DVD", "MEDIA"};
-    private string[] playerList = new string[] {"TV is running", "DVD is playing", "Media is playing"};
+    private string[] nativePlayerList = new string[] {"TV", "DVD", "MEDIA", "MUSIC"};
+    private string[] playerList = new string[] {"TV is running", "DVD is playing", "Media is playing", "Music is playing"};
 
     private string[] nativePowerList = new string[] {"EXIT", "REBOOT", "SHUTDOWN", "STANDBY", "HIBERNATE"};
 

@@ -202,7 +202,6 @@ namespace SetupTv.Sections
       comboBoxEpisodeKey.SelectedIndex = Convert.ToInt32(layer.GetSetting("EpisodeKey", "0").Value);
       // default EpisodeName
       //checkBoxCreateTagInfoXML.Checked = true; // (layer.GetSetting("createtaginfoxml", "yes").Value == "yes");
-      checkboxSchedulerPriority.Checked = (layer.GetSetting("scheduleroverlivetv", "yes").Value == "yes");
 
       numericUpDownPreRec.Value = int.Parse(layer.GetSetting("preRecordInterval", "7").Value);
       numericUpDownPostRec.Value = int.Parse(layer.GetSetting("postRecordInterval", "10").Value);
@@ -290,10 +289,6 @@ namespace SetupTv.Sections
       //setting = layer.GetSetting("createtaginfoxml", "yes");
       //setting.Value = checkBoxCreateTagInfoXML.Checked ? "yes" : "no";
       //setting.Persist();
-
-      setting = layer.GetSetting("scheduleroverlivetv", "yes");
-      setting.Value = checkboxSchedulerPriority.Checked ? "yes" : "no";
-      setting.Persist();
 
       setting = layer.GetSetting("PreventDuplicates", "no");
       setting.Value = checkBoxPreventDupes.Checked ? "yes" : "no";

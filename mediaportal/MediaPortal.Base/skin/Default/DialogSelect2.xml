@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2009</id>
   <defaultcontrol>3</defaultcontrol>
@@ -21,8 +21,6 @@
       <width>408</width>
       <height>201</height>
       <texture>dialog_background.png</texture>
-      
-      
     </control>
     <control>
       <type>image</type>
@@ -32,8 +30,6 @@
       <width>408</width>
       <height>201</height>
       <texture>dialog_background.png</texture>
-      
-      
     </control>
     <control>
       <description>Heading text label</description>
@@ -44,8 +40,6 @@
       <label>181</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>options listcontrol</description>
@@ -61,8 +55,6 @@
       <ondown>5</ondown>
       <spinPosX>450</spinPosX>
       <spinPosY>369</spinPosY>
-      
-      
     </control>
   </controls>
 </window>

@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>759</id>
   <defaultcontrol>2</defaultcontrol>
@@ -34,7 +34,7 @@
       <width>556</width>
       <label>#TV.RecordedTV.Title</label>
       <font>font14</font>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
     </control>
     <control>
       <description>Current program time</description>
@@ -45,7 +45,7 @@
       <label>#TV.RecordedTV.Time</label>
       <font>font12</font>
       <align>left</align>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Description1</description>
@@ -69,7 +69,7 @@
       <label>#TV.RecordedTV.Genre</label>
       <font>font10</font>
       <align>right</align>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
   </controls>
 </window>

@@ -913,5 +913,47 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
+    public int ScrollStartDelay
+    {
+      get { return _scrollStartDelay; }
+      set { _scrollStartDelay = value; }
+    }
+
+    public int ShadowAngle
+    {
+      get { return _shadowAngle; }
+      set { _shadowAngle = value; }
+    }
+
+    public int ShadowDistance
+    {
+      get { return _shadowDistance; }
+      set { _shadowDistance = value; }
+    }
+
+    public long ShadowColor
+    {
+      get { return _shadowColor; }
+      set { _shadowColor = value; }
+    }
+
+    /// <summary>
+    /// Returns the width of the current text
+    /// </summary>
+    public int TextWidth
+    {
+      get
+      {
+        float width = 0f;
+        float height = 0f;
+        if (_font == null)
+        {
+          return 0;
+        }
+        _font.GetTextExtent(_label, ref width, ref height);
+        return (int)width;
+      }
+    }
   }
 }

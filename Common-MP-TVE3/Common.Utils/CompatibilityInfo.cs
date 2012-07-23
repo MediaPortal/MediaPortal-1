@@ -27,7 +27,7 @@ using MediaPortal.Common.Utils;
 // MediaPortal subsystems' breaking versions
 [assembly: SubsystemVersion("MP", "1.1.6.27644")]
 
-[assembly: SubsystemVersion("MP.SkinEngine", "1.1.6.27644")]
+[assembly: SubsystemVersion("MP.SkinEngine", "1.2.100.0")] // MP 1.3.0 Alpha 1
 [assembly: SubsystemVersion("MP.SkinEngine.Core", "1.1.6.27644")]
 [assembly: SubsystemVersion("MP.SkinEngine.Controls", "1.1.6.27644")]
 [assembly: SubsystemVersion("MP.SkinEngine.Dialogs", "1.1.6.27644")]
@@ -45,7 +45,7 @@ using MediaPortal.Common.Utils;
 
 [assembly: SubsystemVersion("MP.DB", "1.1.6.27644")]
 [assembly: SubsystemVersion("MP.DB.Music", "1.1.6.27644")]
-[assembly: SubsystemVersion("MP.DB.Videos", "1.1.6.27644")]
+[assembly: SubsystemVersion("MP.DB.Videos", "1.2.100.0")] // MP 1.3.0 Alpha 1
 [assembly: SubsystemVersion("MP.DB.Pictures", "1.1.6.27644")]
 
 [assembly: SubsystemVersion("MP.Filters", "1.1.6.27644")]
@@ -67,7 +67,7 @@ using MediaPortal.Common.Utils;
 
 [assembly: SubsystemVersion("MP.Plugins", "1.1.6.27644")]             // reserved for plugin defined subsystems
 [assembly: SubsystemVersion("MP.Plugins.Music", "1.1.6.27644")]
-[assembly: SubsystemVersion("MP.Plugins.Videos", "1.1.6.27644")]
+[assembly: SubsystemVersion("MP.Plugins.Videos", "1.2.100.0")] // MP 1.3.0 Alpha 1
 [assembly: SubsystemVersion("MP.Plugins.Pictures", "1.1.6.27644")]
 [assembly: SubsystemVersion("MP.Plugins.Weather", "1.1.6.27644")]
 [assembly: SubsystemVersion("MP.Plugins.PowerScheduler", "1.1.6.27644")]

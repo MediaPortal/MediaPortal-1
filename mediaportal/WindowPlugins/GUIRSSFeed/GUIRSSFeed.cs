@@ -106,7 +106,7 @@ namespace MediaPortal.GUI.RSS
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\myrss.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\myrss.xml"));
     }
 
     public override void OnAction(Action action)

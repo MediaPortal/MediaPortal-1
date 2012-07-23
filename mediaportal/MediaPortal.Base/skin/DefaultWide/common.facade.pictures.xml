@@ -5,8 +5,8 @@
       <description>group element</description>
       <type>group</type>
       <visible>!Control.HasFocus(50)</visible>
-      <animation effect="slide" time="70" start="0,-300">WindowOpen</animation>
-      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <control>
         <description>composite control consisting of a list control and a thumbnail panel</description>
         <type>facadeview</type>
@@ -26,27 +26,28 @@
           <type>thumbnailpanel</type>
           <dimColor>90ffffff</dimColor>
           <id>50</id>
-          <posX>80</posX>
+          <posX>60</posX>
           <posY>140</posY>
-          <width>1200</width>
+          <width>1220</width>
           <height>548</height>
           <scrollOffset>1</scrollOffset>
           <onleft>2</onleft>
           <onright>2</onright>
-          <itemWidth>170</itemWidth>
-          <itemHeight>180</itemHeight>
-          <textureWidth>157</textureWidth>
-          <textureHeight>120</textureHeight>
-          <thumbWidth>156</thumbWidth>
-          <thumbHeight>119</thumbHeight>
+          <itemWidth>145</itemWidth>
+          <itemHeight>135</itemHeight>
+          <textureWidth>130</textureWidth>
+          <textureHeight>90</textureHeight>
+          <thumbWidth>130</thumbWidth>
+          <thumbHeight>90</thumbHeight>
           <thumbPosX>0</thumbPosX>
           <thumbPosY>0</thumbPosY>
-          <itemWidthBig>235</itemWidthBig>
-          <itemHeightBig>240</itemHeightBig>
-          <thumbWidthBig>219</thumbWidthBig>
-          <thumbHeightBig>165</thumbHeightBig>
-          <textureWidthBig>219</textureWidthBig>
-          <textureHeightBig>167</textureHeightBig>
+          <keepaspectratio>yes</keepaspectratio>
+          <itemWidthBig>200</itemWidthBig>
+          <itemHeightBig>180</itemHeightBig>
+          <textureWidthBig>190</textureWidthBig>
+          <textureHeightBig>135</textureHeightBig>
+          <thumbWidthBig>190</thumbWidthBig>
+          <thumbHeightBig>135</thumbHeightBig>
           <thumbPosXBig>0</thumbPosXBig>
           <thumbPosYBig>0</thumbPosYBig>
           <zoomXPixels>50</zoomXPixels>
@@ -72,20 +73,20 @@
           <dimColor>90ffffff</dimColor>
           <id>50</id>
           <scrollOffset>2</scrollOffset>
-          <posX>80</posX>
-          <posY>255</posY>
-          <width>1300</width>
+          <posX>60</posX>
+          <posY>340</posY>
+          <width>1200</width>
           <height>720</height>
           <onup>2</onup>
           <onleft>2</onleft>
-          <thumbWidth>217</thumbWidth>
-          <thumbHeight>159</thumbHeight>
-          <thumbPosX>4</thumbPosX>
-          <thumbPosY>5</thumbPosY>
-          <itemWidth>238</itemWidth>
-          <itemHeight>231</itemHeight>
-          <textureWidth>217</textureWidth>
-          <textureHeight>159</textureHeight>
+          <itemWidth>190</itemWidth>
+          <itemHeight>168</itemHeight>
+          <textureWidth>190</textureWidth>
+          <textureHeight>130</textureHeight>
+          <thumbWidth>192</thumbWidth>
+          <thumbHeight>130</thumbHeight>
+          <thumbPosX>0</thumbPosX>
+          <thumbPosY>0</thumbPosY>
           <imageFolder>Picturethumbframe.png</imageFolder>
           <imageFolderFocus>Picturethumbframe.png</imageFolderFocus>
           <frame>Picturethumbframe.png</frame>
@@ -93,130 +94,130 @@
           <textureMask>Picturethumbmask.png</textureMask>
           <thumbs mask="Picturethumbmask.png"></thumbs>
           <background>emtpy.png</background>
-          <InfoImage flipY="true" diffuse="Thumb_Mask.png"></InfoImage>
+          <InfoImage></InfoImage>
           <showFrame>yes</showFrame>
           <showFolder>no</showFolder>
           <showBackGround>no</showBackGround>
           <showInfoImage>no</showInfoImage>
-          <keepaspectratio>no</keepaspectratio>
+          <keepaspectratio>yes</keepaspectratio>
           <dimColor>80ffffff</dimColor>
-          <thumbAnimation effect="zoom" start="100,100" end="130,130" time="70">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="130,130" end="100,100" time="70">unfocus</thumbAnimation>
+          <spinPosX>-800</spinPosX>
+          <scrollbarBackground>bar_hor.png</scrollbarBackground>
+          <scrollbarLeft>mouse_left_horizontal.png</scrollbarLeft>
+          <scrollbarRight>mouse_right_horizontal.png</scrollbarRight>
+          <scrollbarYOff>220</scrollbarYOff>
+          <showScrollbar>yes</showScrollbar>
+          <thumbAnimation effect="zoom" start="100,100" end="180,180" time="200" tween="circle" ease="inout">focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="180,180" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
         </control>
         <control>
           <description>Cover Flow view</description>
           <type>coverflow</type>
-          <colordiffuse>90ffffff</colordiffuse>
           <dimColor>90ffffff</dimColor>
           <id>50</id>
           <posX>0</posX>
-          <posY>200</posY>
-          <width>1280</width>
-          <height>720</height>
-          <onup>2</onup>
+          <posY>260</posY>
+          <width>1366</width>
+          <height>768</height>
           <onleft>2</onleft>
+          <onright>2</onright>
+          <onup>2</onup>
+          <ondown>2</ondown>
           <selectedCard>0</selectedCard>
-          <cardWidth>500</cardWidth>
-          <cardHeight>350</cardHeight>
+          <cardWidth>450</cardWidth>
+          <cardHeight>300</cardHeight>
           <angle>65</angle>
           <sideShift>500</sideShift>
           <sideGap>100</sideGap>
           <sideDepth>700</sideDepth>
           <offsetY>0</offsetY>
-          <selectedOffsetY>0</selectedOffsetY>
+          <selectedOffsetY>20</selectedOffsetY>
           <speed>8</speed>
-          <backgroundHeight>250</backgroundHeight>
-          <backgroundWidth>1280</backgroundWidth>
+          <backgroundColor>000000FF</backgroundColor>
+          <backgroundHeight>100</backgroundHeight>
+          <backgroundWidth>1366</backgroundWidth>
           <backgroundX>0</backgroundX>
-          <backgroundY>470</backgroundY>
-          <backgroundDiffuse>FF000000</backgroundDiffuse>
-          <background>background2.png</background>
+          <backgroundY>395</backgroundY>
+          <backgroundDiffuse>60000000</backgroundDiffuse>
+          <background>roof.png</background>
           <showBackground>yes</showBackground>
-          <foregroundHeight>720</foregroundHeight>
-          <foregroundWidth>1280</foregroundWidth>
-          <foregroundX>0</foregroundX>
-          <foregroundY>0</foregroundY>
-          <foregroundDiffuse>FF000000</foregroundDiffuse>
-          <foreground>coverflow_foreground.png</foreground>
-          <showForeground>no</showForeground>
           <showFrame>yes</showFrame>
-          <frame>Picture_cover2.png</frame>
-          <frameFocus>Picture_cover2.png</frameFocus>
-          <frameWidth>500</frameWidth>
-          <frameHeight>350</frameHeight>
+          <frame>picturethumbframe.png</frame>
+          <frameFocus>picturethumbframe.png</frameFocus>
+          <frameWidth>450</frameWidth>
+          <frameHeight>300</frameHeight>
           <spinSpeed>8</spinSpeed>
           <unfocusedAlpha>FF</unfocusedAlpha>
-          <folderPrefix>[</folderPrefix>
-          <folderSuffix>]</folderSuffix>
+          <folderPrefix></folderPrefix>
+          <folderSuffix></folderSuffix>
           <font1>font13</font1>
           <font2>font10</font2>
-          <label1>#selecteditem</label1>
-          <label2>#selecteditem2</label2>
+          <label1></label1>
+          <label2></label2>
+          <keepaspectratio>no</keepaspectratio>
           <textColor>FFFFFFFF</textColor>
           <remoteColor>FFFF0000</remoteColor>
           <playedColor>FFA0D0FF</playedColor>
           <downloadColor>FF00FF00</downloadColor>
           <selectedColor>FFFFFFFF</selectedColor>
-          <shadowAngle>45</shadowAngle>
-          <shadowDistance>0</shadowDistance>
-          <shadowColor>FF000000</shadowColor>
-          <label1YOff>405</label1YOff>
-          <label2YOff>430</label2YOff>
-          <pageSize>5</pageSize>
+          <shadowDistance>1</shadowDistance>
+          <label1YOff>380</label1YOff>
+          <label2YOff>390</label2YOff>
+          <pageSize>100</pageSize>
           <scrollbarBackground>bar_hor.png</scrollbarBackground>
           <scrollbarLeft>mouse_left_horizontal.png</scrollbarLeft>
           <scrollbarRight>mouse_right_horizontal.png</scrollbarRight>
-          <scrollbarYOff>455</scrollbarYOff>
+          <scrollbarYOff>370</scrollbarYOff>
           <showScrollbar>yes</showScrollbar>
-          <cards flipY="yes" diffuse="Thumb_Mask.png" mask="Picturethumbmask.png">Picturethumbmask.png</cards>
+          <cards mask="picturethumbmask.png">black.png</cards>
           <subitems>
             <subitem>
-              <![CDATA[                 <controls>
+              <![CDATA[                                <controls>
               <control>
                 <description>background</description>
                 <type>image</type>
                 <posX>0</posX>
                 <posY>0</posY>
-                <width>500</width>
-                <height>350</height>
-                <texture flipY="yes" diffuse="Thumb_Mask.png" mask="Picturethumbmask.png">Picturethumbmask.png</texture>
+                <width>450</width>
+                <height>300</height>
+                <texture mask="picturethumbmask.png">blue.png</texture>
               </control>
               <!--control>
-              <description>Movie Details</description>
+              <description>Info Header</description>
               <type>label</type>
-              <posX>0</posX>
-              <posY>10</posY>
-              <width>480</width>
-              <label>Picture Details</label>
-              <font>font12</font>
-              <textcolor>gainsboro</textcolor>
+              <posX>10</posX>
+              <posY>30</posY>
+              <width>400</width>
+              <label>Details</label>
+              <font>Label</font>
               <align>center</align>
+              <textcolor>ivory</textcolor>
               <shadowAngle>0</shadowAngle>
               <shadowDistance>0</shadowDistance>
             </control-->
             <control>
-              <description>genre</description>
+              <description>General Info</description>
               <type>label</type>
-              <posX>0</posX>
-              <posY>45</posY>
-              <width>480</width>
+              <posX>10</posX>
+              <posY>60</posY>
+              <width>400</width>
               <label>#selecteditem</label>
               <font>font12</font>
-              <textcolor>gainsboro</textcolor>
               <align>center</align>
+              <textcolor>ivory</textcolor>
               <shadowAngle>0</shadowAngle>
               <shadowDistance>0</shadowDistance>
             </control>
             <control>
-              <description>year</description>
+              <description>Picture size</description>
               <type>label</type>
-              <posX>0</posX>
-              <posY>70</posY>
-              <width>480</width>
+              <posX>10</posX>
+              <posY>90</posY>
+              <width>400</width>
               <label>#selecteditem2</label>
               <font>font12</font>
-              <textcolor>gainsboro</textcolor>
               <align>center</align>
+              <textcolor>ivory</textcolor>
               <shadowAngle>0</shadowAngle>
               <shadowDistance>0</shadowDistance>
             </control>

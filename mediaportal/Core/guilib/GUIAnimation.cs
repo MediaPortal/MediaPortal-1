@@ -70,6 +70,7 @@ namespace MediaPortal.GUI.Library
     protected bool _flipY = false;
     protected string _diffuseFileName = "";
     protected string _maskFileName = "";
+    protected string _overlayFileName = "";
     private string _strBorder = "";
     private GUIImage.BorderPosition _borderPosition = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
     private bool _borderTextureRepeat = false;
@@ -260,7 +261,7 @@ namespace MediaPortal.GUI.Library
         {
           if (filename.IndexOfAny(new char[] {'?', '*'}) != -1)
           {
-            foreach (string match in Directory.GetFiles(GUIGraphicsContext.Skin + @"\media\", filename))
+            foreach (string match in Directory.GetFiles(GUIGraphicsContext.GetThemedSkinFile(@"\media\" + filename)))
             {
               _filenames.Add(Path.GetFileName(match));
             }
@@ -289,7 +290,8 @@ namespace MediaPortal.GUI.Library
         _images[index].RepeatBehavior = _repeatBehavior;
         _images[index].DiffuseFileName = _diffuseFileName;
         _images[index].MaskFileName = _maskFileName;
-        _images[index].FlipY = _flipX;
+        _images[index].OverlayFileName = _overlayFileName;
+        _images[index].FlipX = _flipX;
         _images[index].FlipY = _flipY;
         _images[index].SetBorder(_strBorder, _borderPosition, _borderTextureRepeat,
                                  _borderTextureRotate, _borderTextureFileName, _borderColorKey, _borderHasCorners,
@@ -401,6 +403,12 @@ namespace MediaPortal.GUI.Library
     {
       get { return _tileFill; }
       set { _tileFill = value; }
+    }
+
+    public string OverlayFileName
+    {
+      get { return _overlayFileName; }
+      set { _overlayFileName = value; }
     }
 
     public override int Width

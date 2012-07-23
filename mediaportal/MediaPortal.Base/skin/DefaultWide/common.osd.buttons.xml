@@ -41,7 +41,7 @@
       <label>Show Info</label>
       <font>font11</font>
       <align>left</align>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>Control.HasFocus(213)</visible>
     </control>
     <control>
@@ -53,7 +53,7 @@
       <label>Main Menu</label>
       <font>font11</font>
       <align>left</align>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>Control.HasFocus(997)</visible>
     </control>
     <control>
@@ -65,7 +65,7 @@
       <label>Subtitle</label>
       <font>font11</font>
       <align>left</align>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>Control.HasFocus(218)</visible>
     </control>
     <control>
@@ -77,7 +77,7 @@
       <label>Videoposition</label>
       <font>font11</font>
       <align>left</align>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>Control.HasFocus(220)</visible>
     </control>
     <control>
@@ -89,7 +89,7 @@
       <label>Mute</label>
       <font>font11</font>
       <align>left</align>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>Control.HasFocus(998)</visible>
     </control>
     <control>

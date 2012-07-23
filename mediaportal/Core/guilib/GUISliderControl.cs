@@ -29,14 +29,21 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUISliderControl : GUIControl
   {
-    [XMLSkinElement("textureSliderBar")] protected string _backgroundTextureName;
-    [XMLSkinElement("textureSliderNib")] protected string _sliderTextureName;
-    [XMLSkinElement("textureSliderNibFocus")] protected string _sliderFocusTextureName;
-    [XMLSkinElement("font")] protected string _valueFont = "";
-    [XMLSkinElement("showrange")] protected bool _showValue = true;
-    [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textureSliderBar")]
+    protected string _backgroundTextureName;
+    [XMLSkinElement("textureSliderNib")]
+    protected string _sliderTextureName;
+    [XMLSkinElement("textureSliderNibFocus")]
+    protected string _sliderFocusTextureName;
+    [XMLSkinElement("font")]
+    protected string _valueFont = "";
+    [XMLSkinElement("showrange")]
+    protected bool _showValue = true;
+    [XMLSkinElement("textcolor")]
+    protected long _textColor = 0xFFFFFFFF;
 
-    [XMLSkinElement("spintype")] private GUISpinControl.SpinType _spinType =
+    [XMLSkinElement("spintype")]
+    private GUISpinControl.SpinType _spinType =
       GUISpinControl.SpinType.SPIN_CONTROL_TYPE_TEXT;
 
     protected int _percentage = 0;
@@ -52,7 +59,7 @@ namespace MediaPortal.GUI.Library
     protected GUIAnimation _imageMidFocus = null;
 
     public GUISliderControl(int dwParentID)
-      : base(dwParentID) {}
+      : base(dwParentID) { }
 
     /// <summary>
     /// The constructor of the GUISliderControl.
@@ -120,7 +127,7 @@ namespace MediaPortal.GUI.Library
       GUIFont _font = GUIFontManager.GetFont(_valueFont);
       switch (_spinType)
       {
-          // Float based slider
+        // Float based slider
         case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT:
           if (null != _font && _showValue)
           {
@@ -137,7 +144,7 @@ namespace MediaPortal.GUI.Library
           _percentage = (int)fPercent;
           break;
 
-          // Integer based slider
+        // Integer based slider
         case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT:
           if (null != _font && _showValue)
           {
@@ -154,13 +161,34 @@ namespace MediaPortal.GUI.Library
           break;
       }
 
-      //int iHeight=25;
-      _imageBackGround.Render(timePassed);
-      //_imageBackGround.SetHeight(iHeight);
-      //_height = _imageBackGround.Height;
-      //_width = _imageBackGround.Width + (int)fTextWidth + 10;
+      int iWidthBackGround = _imageBackGround.TextureWidth;
+      int iWidthMidFocus = _imageMidFocus.TextureWidth;
+      int iWidthMid = _imageMid.TextureWidth;
 
-      float fWidth = (float)(_imageBackGround.TextureWidth - _imageMid.TextureWidth); //-20.0f;
+      int iHeightBackGround = _imageBackGround.TextureHeight;
+      int iHeightMidFocus = _imageMidFocus.TextureHeight;
+      int iHeightMid = _imageMid.TextureHeight;
+
+      GUIGraphicsContext.ScaleHorizontal(ref iWidthBackGround);
+      GUIGraphicsContext.ScaleHorizontal(ref iWidthMidFocus);
+      GUIGraphicsContext.ScaleHorizontal(ref iWidthMid);
+
+      GUIGraphicsContext.ScaleVertical(ref iHeightBackGround);
+      GUIGraphicsContext.ScaleVertical(ref iHeightMidFocus);
+      GUIGraphicsContext.ScaleVertical(ref iHeightMid);
+
+      _imageBackGround.Width = iWidthBackGround;
+      _imageBackGround.Height = iHeightBackGround;
+
+      _imageMidFocus.Width = iWidthMidFocus;
+      _imageMidFocus.Height = iHeightMidFocus;
+
+      _imageMid.Width = iWidthMid;
+      _imageMid.Height = iHeightMid;
+
+      _imageBackGround.Render(timePassed);
+
+      float fWidth = (float)(_imageBackGround.Width - _imageMid.Width); //-20.0f;
 
       fPos = (float)_percentage;
       fPos /= 100.0f;
@@ -195,47 +223,47 @@ namespace MediaPortal.GUI.Library
 
       switch (action.wID)
       {
-          /* mouse handling not working
-        case Action.ActionType.ACTION_MOUSE_CLICK:
-          float x = (float)action.fAmount1 - _imageBackGround.XPosition;
-          if (x < 0)
-          {
-            x = 0;
-          }
-          if (x > _imageBackGround.RenderWidth)
-          {
-            x = _imageBackGround.RenderWidth;
-          }
-          x /= (float)_imageBackGround.RenderWidth;
-          float total, pos;
-          switch (_spinType)
-          {
-            case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT:
-              total = _floatEndValue - _floatStartValue;
-              pos = (x * total);
-              _floatValue = _floatStartValue + pos;
-              _floatValue = (float)Math.Round(_floatValue, 1);
-              break;
+        /* mouse handling not working
+      case Action.ActionType.ACTION_MOUSE_CLICK:
+        float x = (float)action.fAmount1 - _imageBackGround.XPosition;
+        if (x < 0)
+        {
+          x = 0;
+        }
+        if (x > _imageBackGround.RenderWidth)
+        {
+          x = _imageBackGround.RenderWidth;
+        }
+        x /= (float)_imageBackGround.RenderWidth;
+        float total, pos;
+        switch (_spinType)
+        {
+          case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT:
+            total = _floatEndValue - _floatStartValue;
+            pos = (x * total);
+            _floatValue = _floatStartValue + pos;
+            _floatValue = (float)Math.Round(_floatValue, 1);
+            break;
 
-            case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT:
-              float start = _intStartValue;
-              float end = _intEndValue;
-              total = end - start;
-              pos = (x * total);
-              _intValue = _intStartValue + (int)pos;
-              break;
+          case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT:
+            float start = _intStartValue;
+            float end = _intEndValue;
+            total = end - start;
+            pos = (x * total);
+            _intValue = _intStartValue + (int)pos;
+            break;
 
-            default:
-              _percentage = (int)(100f * x);
-              break;
-          }
-          _floatValue = (float)Math.Round(_floatValue, 1);
-          message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
-          GUIGraphicsContext.SendMessage(message);
-          break;
-        */
+          default:
+            _percentage = (int)(100f * x);
+            break;
+        }
+        _floatValue = (float)Math.Round(_floatValue, 1);
+        message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
+        GUIGraphicsContext.SendMessage(message);
+        break;
+      */
 
-          // decrease the slider value
+        // decrease the slider value
         case Action.ActionType.ACTION_MOVE_LEFT:
           switch (_spinType)
           {
@@ -265,7 +293,7 @@ namespace MediaPortal.GUI.Library
           GUIGraphicsContext.SendMessage(message);
           break;
 
-          // increase the slider value
+        // increase the slider value
         case Action.ActionType.ACTION_MOVE_RIGHT:
           switch (_spinType)
           {
@@ -314,12 +342,12 @@ namespace MediaPortal.GUI.Library
       {
         switch (message.Message)
         {
-            // Move the slider to a certain position
+          // Move the slider to a certain position
           case GUIMessage.MessageType.GUI_MSG_ITEM_SELECT:
             Percentage = message.Param1;
             return true;
 
-            // Reset the slider
+          // Reset the slider
           case GUIMessage.MessageType.GUI_MSG_LABEL_RESET:
             {
               Percentage = 0;
@@ -360,9 +388,9 @@ namespace MediaPortal.GUI.Library
     public override bool InControl(int x, int y, out int iControlId)
     {
       iControlId = GetID;
-      if (x >= _imageBackGround.XPosition && x <= _imageBackGround.XPosition + _imageBackGround.TextureWidth)
+      if (x >= _imageBackGround.XPosition && x <= _imageBackGround.XPosition + _imageBackGround.Width)
       {
-        if (y >= _imageBackGround.YPosition && y <= _imageBackGround.YPosition + _imageBackGround.TextureHeight)
+        if (y >= _imageBackGround.YPosition && y <= _imageBackGround.YPosition + _imageBackGround.Height)
         {
           return true;
         }
@@ -374,9 +402,9 @@ namespace MediaPortal.GUI.Library
     {
       controlID = GetID;
       focused = Focus;
-      if (x >= _imageBackGround.XPosition && x <= _imageBackGround.XPosition + _imageBackGround.TextureWidth)
+      if (x >= _imageBackGround.XPosition && x <= _imageBackGround.XPosition + _imageBackGround.Width)
       {
-        if (y >= _imageBackGround.YPosition && y <= _imageBackGround.YPosition + _imageBackGround.TextureHeight)
+        if (y >= _imageBackGround.YPosition && y <= _imageBackGround.YPosition + _imageBackGround.Height)
         {
           return true;
         }

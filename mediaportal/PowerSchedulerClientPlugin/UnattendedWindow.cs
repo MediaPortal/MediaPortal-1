@@ -33,7 +33,7 @@ namespace MediaPortal.Plugins.Process
     {
       Log.Info("PSClientPlugin.UnattendedWindow.Init");
 
-      return Load(GUIGraphicsContext.Skin + @"\psclientplugin_unattended.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\psclientplugin_unattended.xml"));
     }
   }
 }

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2014</id>
@@ -55,7 +55,7 @@
       <width>264</width>
       <label>-</label>
       <font>font14</font>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
     </control>
     <control>
       <description>Dimensions txt</description>
@@ -64,7 +64,7 @@
       <posX>115</posX>
       <posY>48</posY>
       <label>9000</label>
-      <font>font12</font>
+      <font>font10</font>
       <textcolor>ffa9d0f7</textcolor>
     </control>
     <control>
@@ -74,7 +74,7 @@
       <posX>115</posX>
       <posY>88</posY>
       <label>9001</label>
-      <font>font12</font>
+      <font>font10</font>
       <textcolor>ffa9d0f7</textcolor>
     </control>
     <control>
@@ -84,7 +84,7 @@
       <posX>115</posX>
       <posY>128</posY>
       <label>9002</label>
-      <font>font12</font>
+      <font>font10</font>
       <textcolor>ffa9d0f7</textcolor>
     </control>
     <control>
@@ -94,7 +94,7 @@
       <posX>115</posX>
       <posY>168</posY>
       <label>9003</label>
-      <font>font12</font>
+      <font>font10</font>
       <textcolor>ffa9d0f7</textcolor>
     </control>
     <control>
@@ -104,7 +104,7 @@
       <posX>115</posX>
       <posY>208</posY>
       <label>9004</label>
-      <font>font12</font>
+      <font>font10</font>
       <textcolor>ffa9d0f7</textcolor>
     </control>
     <control>
@@ -114,7 +114,7 @@
       <posX>115</posX>
       <posY>248</posY>
       <label>9005</label>
-      <font>font12</font>
+      <font>font10</font>
       <textcolor>ffa9d0f7</textcolor>
     </control>
     <control>
@@ -124,7 +124,7 @@
       <posX>115</posX>
       <posY>288</posY>
       <label>9006</label>
-      <font>font12</font>
+      <font>font10</font>
       <textcolor>ffa9d0f7</textcolor>
     </control>
     <control>
@@ -134,7 +134,7 @@
       <posX>115</posX>
       <posY>328</posY>
       <label>9007</label>
-      <font>font12</font>
+      <font>font10</font>
       <textcolor>ffa9d0f7</textcolor>
     </control>
     <control>
@@ -144,7 +144,7 @@
       <posX>115</posX>
       <posY>368</posY>
       <label>9008</label>
-      <font>font12</font>
+      <font>font10</font>
       <textcolor>ffa9d0f7</textcolor>
     </control>
     <control>
@@ -154,7 +154,7 @@
       <posX>115</posX>
       <posY>408</posY>
       <label>9009</label>
-      <font>font12</font>
+      <font>font10</font>
       <textcolor>ffa9d0f7</textcolor>
     </control>
     <control>
@@ -164,7 +164,7 @@
       <posX>115</posX>
       <posY>448</posY>
       <label>9010</label>
-      <font>font12</font>
+      <font>font10</font>
       <textcolor>ffa9d0f7</textcolor>
     </control>
     <control>
@@ -174,16 +174,16 @@
       <posX>115</posX>
       <posY>488</posY>
       <label>9011</label>
-      <font>font12</font>
+      <font>font10</font>
       <textcolor>ffa9d0f7</textcolor>
     </control>
     <control>
       <description>Image Dimensions value</description>
       <type>label</type>
       <id>21</id>
-      <posX>128</posX>
-      <posY>69</posY>
-      <width>220</width>
+      <posX>123</posX>
+      <posY>65</posY>
+      <width>230</width>
       <label>-</label>
       <font>font12</font>
       <textcolor>ivory</textcolor>
@@ -192,9 +192,9 @@
       <description>Resolutions value</description>
       <type>label</type>
       <id>22</id>
-      <posX>128</posX>
-      <posY>109</posY>
-      <width>220</width>
+      <posX>123</posX>
+      <posY>105</posY>
+      <width>230</width>
       <label>-</label>
       <font>font12</font>
       <textcolor>ivory</textcolor>
@@ -203,10 +203,10 @@
       <description>Flash value</description>
       <type>fadelabel</type>
       <id>23</id>
-      <posX>128</posX>
-      <posY>149</posY>
+      <posX>123</posX>
+      <posY>145</posY>
       <width>97</width>
-      <width>220</width>
+      <width>230</width>
       <label>-</label>
       <font>font12</font>
       <textcolor>ivory</textcolor>
@@ -215,9 +215,9 @@
       <description>Metering Mode value</description>
       <type>fadelabel</type>
       <id>24</id>
-      <posX>128</posX>
-      <posY>189</posY>
-      <width>220</width>
+      <posX>123</posX>
+      <posY>185</posY>
+      <width>230</width>
       <label>-</label>
       <font>font12</font>
       <textcolor>ivory</textcolor>
@@ -226,9 +226,9 @@
       <description>Exposure Compensation value</description>
       <type>fadelabel</type>
       <id>25</id>
-      <posX>128</posX>
-      <posY>229</posY>
-      <width>220</width>
+      <posX>123</posX>
+      <posY>225</posY>
+      <width>230</width>
       <label>-</label>
       <font>font12</font>
       <textcolor>ivory</textcolor>
@@ -237,9 +237,9 @@
       <description>Shutter Speed value</description>
       <type>fadelabel</type>
       <id>26</id>
-      <posX>128</posX>
-      <posY>269</posY>
-      <width>220</width>
+      <posX>123</posX>
+      <posY>265</posY>
+      <width>230</width>
       <label>-</label>
       <font>font12</font>
       <textcolor>ivory</textcolor>
@@ -248,9 +248,9 @@
       <description>Date Taken value</description>
       <type>label</type>
       <id>27</id>
-      <posX>128</posX>
-      <posY>309</posY>
-      <width>220</width>
+      <posX>123</posX>
+      <posY>305</posY>
+      <width>230</width>
       <label>-</label>
       <font>font12</font>
       <textcolor>ivory</textcolor>
@@ -259,9 +259,9 @@
       <description>Fstop value</description>
       <type>label</type>
       <id>28</id>
-      <posX>128</posX>
-      <posY>349</posY>
-      <width>220</width>
+      <posX>123</posX>
+      <posY>345</posY>
+      <width>230</width>
       <label>-</label>
       <font>font12</font>
       <textcolor>ivory</textcolor>
@@ -270,9 +270,9 @@
       <description>Exposure Time value</description>
       <type>label</type>
       <id>29</id>
-      <posX>128</posX>
-      <posY>389</posY>
-      <width>220</width>
+      <posX>123</posX>
+      <posY>385</posY>
+      <width>230</width>
       <label>-</label>
       <font>font12</font>
       <textcolor>ivory</textcolor>
@@ -281,8 +281,8 @@
       <description>Camera Model value</description>
       <type>fadelabel</type>
       <id>30</id>
-      <posX>128</posX>
-      <posY>429</posY>
+      <posX>123</posX>
+      <posY>425</posY>
       <width>315</width>
       <label>-</label>
       <font>font12</font>
@@ -292,8 +292,8 @@
       <description>Equipment Make value</description>
       <type>fadelabel</type>
       <id>31</id>
-      <posX>128</posX>
-      <posY>469</posY>
+      <posX>123</posX>
+      <posY>465</posY>
       <width>315</width>
       <label>-</label>
       <font>font12</font>
@@ -303,8 +303,8 @@
       <description>View Comments value</description>
       <type>label</type>
       <id>32</id>
-      <posX>128</posX>
-      <posY>509</posY>
+      <posX>123</posX>
+      <posY>505</posY>
       <width>315</width>
       <label>-</label>
       <font>font12</font>
@@ -317,9 +317,10 @@
       <posX>945</posX>
       <posY>144</posY>
       <width>264</width>
-      <height>236</height>
+      <height>336</height>
       <texture>-</texture>
       <keepaspectratio>yes</keepaspectratio>
+      <align>center</align>
     </control>
     <control>
       <description>Image</description>
@@ -328,9 +329,10 @@
       <posX>382</posX>
       <posY>144</posY>
       <width>264</width>
-      <height>236</height>
+      <height>336</height>
       <texture mask="picturethumbmask.png">#selectedthumb</texture>
       <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
     </control>
     <control>
       <type>image</type>
@@ -338,8 +340,8 @@
       <posX>382</posX>
       <posY>144</posY>
       <width>264</width>
-      <height>236</height>
-      <texture mask="Picturethumbmask.png">Picturethumbframe.png</texture>
+      <height>336</height>
+      <texture>Picturethumbframe.png</texture>
     </control>
   </controls>
 </window>

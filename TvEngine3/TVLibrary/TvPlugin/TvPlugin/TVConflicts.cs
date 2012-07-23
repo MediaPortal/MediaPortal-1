@@ -51,7 +51,7 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvconflicts.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\mytvconflicts.xml"));
       return bResult;
     }
 

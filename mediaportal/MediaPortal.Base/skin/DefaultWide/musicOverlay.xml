@@ -7,18 +7,18 @@
       <description>rectangle image</description>
       <type>image</type>
       <id>0</id>
-      <posX>65</posX>
+      <posX>30</posX>
       <posY>547</posY>
       <width>360</width>
       <height>180</height>
       <texture mask="picturethumbmask.png">blue.png</texture>
-      <colordiffuse>80ffffff</colordiffuse>
+      <colordiffuse>90ffffff</colordiffuse>
     </control>
     <control>
       <description>play time label</description>
       <type>label</type>
       <id>2</id>
-      <posX>321</posX>
+      <posX>286</posX>
       <posY>585</posY>
       <label>#currentplaytime</label>
       <align>left</align>
@@ -29,7 +29,7 @@
       <description>music logo</description>
       <type>image</type>
       <id>1</id>
-      <posX>120</posX>
+      <posX>85</posX>
       <posY>558</posY>
       <width>115</width>
       <height>115</height>
@@ -42,7 +42,7 @@
       <description>music logo</description>
       <type>image</type>
       <id>87</id>
-      <posX>120</posX>
+      <posX>85</posX>
       <posY>558</posY>
       <width>115</width>
       <height>115</height>
@@ -54,7 +54,7 @@
       <description>music logo</description>
       <type>image</type>
       <id>86</id>
-      <posX>120</posX>
+      <posX>85</posX>
       <posY>558</posY>
       <width>115</width>
       <height>115</height>
@@ -67,18 +67,18 @@
       <description>music rectangle</description>
       <type>image</type>
       <id>0</id>
-      <posX>120</posX>
+      <posX>85</posX>
       <posY>558</posY>
       <width>115</width>
       <height>115</height>
-      <texture mask="picturethumbmask.png">picturethumbframe.png</texture>
+      <texture>picturethumbframe.png</texture>
       <centered>yes</centered>
     </control>
     <control>
       <description>play logo</description>
       <type>image</type>
       <id>3</id>
-      <posX>251</posX>
+      <posX>216</posX>
       <posY>580</posY>
       <width>52</width>
       <height>52</height>
@@ -88,7 +88,7 @@
       <description>Pause logo</description>
       <type>image</type>
       <id>4</id>
-      <posX>251</posX>
+      <posX>216</posX>
       <posY>580</posY>
       <width>52</width>
       <height>52</height>
@@ -98,7 +98,7 @@
       <description>FF logo</description>
       <type>image</type>
       <id>7</id>
-      <posX>251</posX>
+      <posX>216</posX>
       <posY>580</posY>
       <width>52</width>
       <height>52</height>
@@ -108,7 +108,7 @@
       <description>RW logo</description>
       <type>image</type>
       <id>8</id>
-      <posX>251</posX>
+      <posX>216</posX>
       <posY>580</posY>
       <width>52</width>
       <height>52</height>
@@ -118,7 +118,7 @@
       <description>Gap / Normal Icon</description>
       <type>image</type>
       <id>10</id>
-      <posX>265</posX>
+      <posX>230</posX>
       <posY>638</posY>
       <width>43</width>
       <height>27</height>
@@ -129,7 +129,7 @@
       <description>Gapless Icon</description>
       <type>image</type>
       <id>11</id>
-      <posX>265</posX>
+      <posX>230</posX>
       <posY>638</posY>
       <width>43</width>
       <height>27</height>
@@ -140,7 +140,7 @@
       <description>Crossfade Icon</description>
       <type>image</type>
       <id>12</id>
-      <posX>265</posX>
+      <posX>230</posX>
       <posY>638</posY>
       <width>43</width>
       <height>27</height>
@@ -152,9 +152,9 @@
       <type>fadelabel</type>
       <id>5</id>
       <height>37</height>
-      <posX>78</posX>
+      <posX>43</posX>
       <posY>675</posY>
-      <width>310</width>
+      <width>335</width>
       <font>font12</font>
       <label>#(L(179)): #Play.Current.Title\r#(L(171)) #Play.Current.Artist\r#(L(170)) #Play.Current.Album\r#(L(435)) #Play.Current.Track\r#(L(436)) #Play.Current.Year</label>
       <textcolor>EFFFFFFF</textcolor>

@@ -153,6 +153,7 @@
     <Compile Include="ServiceImplementations\LogImpl.cs" />
     <Compile Include="Services\GlobalServiceProvider.cs" />
     <Compile Include="Services\ILog.cs" />
+    <Compile Include="Services\ISelectBDHandler.cs" />
     <Compile Include="Services\ISelectDVDHandler.cs" />
     <Compile Include="Services\IVideoThumbBlacklist.cs" />
     <Compile Include="Services\Level.cs" />

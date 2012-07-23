@@ -243,11 +243,11 @@ namespace MediaPortal.Dialogs
     #endregion
   }
 
-  public class StandardKeyboard : VirtualKeyboard
+  public class StandardKeyboard : VirtualKeyboard, IStandardKeyboard
   {
     public StandardKeyboard() : base()
     {
-      if (Load(GUIGraphicsContext.Skin + @"\stdKeyboard.xml"))
+      if (Load(GUIGraphicsContext.GetThemedSkinFile(@"\stdKeyboard.xml")))
       {
         GetID = (int)Window.WINDOW_VIRTUAL_KEYBOARD;
         _keyboard.InitializeInstance();

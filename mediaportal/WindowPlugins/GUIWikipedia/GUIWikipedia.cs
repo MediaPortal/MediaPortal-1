@@ -150,7 +150,7 @@ namespace Wikipedia
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\wikipedia.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\wikipedia.xml"));
     }
 
     protected override void OnPageLoad()

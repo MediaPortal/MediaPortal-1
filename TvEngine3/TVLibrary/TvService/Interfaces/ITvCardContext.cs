@@ -144,5 +144,7 @@ namespace TvService
     void OnStopUser(IUser user);
     void OnZap(IUser user);
     void UserNextAvailableSubchannel(IUser user);
+    bool HasUserEqualOrHigherPriority(IUser user);
+    bool HasUserHighestPriority(IUser user);
   }
 }

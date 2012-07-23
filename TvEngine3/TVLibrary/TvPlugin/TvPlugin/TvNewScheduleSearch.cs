@@ -73,7 +73,7 @@ namespace TvPlugin
     public override bool Init()
     {
       Log.Info("newsearch init");
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvschedulerserverSearch.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\mytvschedulerserverSearch.xml"));
 
       Log.Info("newsearch init result:{0}", bResult);
       return bResult;

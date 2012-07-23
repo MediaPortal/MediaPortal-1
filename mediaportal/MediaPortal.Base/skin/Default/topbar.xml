@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>3005</id>
   <defaultcontrol>21</defaultcontrol>
@@ -10,15 +10,15 @@
       <type>image</type>
       <id>1</id>
       <texture>topbar_background.png</texture>
-      <posX>160</posX>
+      <posX>106</posX>
       <posY>-1</posY>
-      <width>432</width>
-      <height>46</height>
+      <width>500</width>
+      <height>56</height>
     </control>
     <control>
       <description>group element</description>
       <type>group</type>
-      <posX>170</posX>
+      <posX>120</posX>
       <posY>4</posY>
       <layout>StackLayout(2, Horizontal)</layout>
       <control>
@@ -27,8 +27,8 @@
         <id>21</id>
         <posX>45</posX>
         <posY>4</posY>
-        <width>35</width>
-        <height>35</height>
+        <width>41</width>
+        <height>41</height>
         <textureFocus>back_enabled.png</textureFocus>
         <textureNoFocus>back_disabled.png</textureNoFocus>
         <action>10</action>
@@ -45,8 +45,8 @@
         <id>26</id>
         <posX>96</posX>
         <posY>4</posY>
-        <width>35</width>
-        <height>35</height>
+        <width>41</width>
+        <height>41</height>
         <textureFocus>nav_refresh_focus.png</textureFocus>
         <textureNoFocus>nav_refresh_nofocus.png</textureNoFocus>
         <label>-</label>
@@ -62,8 +62,8 @@
         <id>22</id>
         <posX>180</posX>
         <posY>4</posY>
-        <width>35</width>
-        <height>35</height>
+        <width>41</width>
+        <height>41</height>
         <textureFocus>skipback_enabled.png</textureFocus>
         <textureNoFocus>skipback_disabled.png</textureNoFocus>
         <action>15</action>
@@ -79,8 +79,8 @@
         <id>23</id>
         <posX>229</posX>
         <posY>4</posY>
-        <width>35</width>
-        <height>35</height>
+        <width>41</width>
+        <height>41</height>
         <textureFocus>rew_enabled.png</textureFocus>
         <textureNoFocus>rew_disabled.png</textureNoFocus>
         <action>78</action>
@@ -96,8 +96,8 @@
         <id>24</id>
         <posX>279</posX>
         <posY>4</posY>
-        <width>35</width>
-        <height>35</height>
+        <width>41</width>
+        <height>41</height>
         <textureFocus>play_enabled.png</textureFocus>
         <textureNoFocus>play_disabled.png</textureNoFocus>
         <action>79</action>
@@ -113,8 +113,8 @@
         <id>25</id>
         <posX>329</posX>
         <posY>4</posY>
-        <width>35</width>
-        <height>35</height>
+        <width>41</width>
+        <height>41</height>
         <textureFocus>pause_enabled.png</textureFocus>
         <textureNoFocus>pause_disabled.png</textureNoFocus>
         <action>12</action>
@@ -130,8 +130,8 @@
         <id>27</id>
         <posX>379</posX>
         <posY>4</posY>
-        <width>35</width>
-        <height>35</height>
+        <width>41</width>
+        <height>41</height>
         <textureFocus>stop_enabled.png</textureFocus>
         <textureNoFocus>stop_disabled.png</textureNoFocus>
         <action>13</action>
@@ -147,8 +147,8 @@
         <id>28</id>
         <posX>429</posX>
         <posY>4</posY>
-        <width>35</width>
-        <height>35</height>
+        <width>41</width>
+        <height>41</height>
         <textureFocus>fastforward_enabled.png</textureFocus>
         <textureNoFocus>fastforward_disabled.png</textureNoFocus>
         <action>77</action>
@@ -164,8 +164,8 @@
         <id>29</id>
         <posX>479</posX>
         <posY>4</posY>
-        <width>35</width>
-        <height>35</height>
+        <width>41</width>
+        <height>41</height>
         <textureFocus>skipforward_enabled.png</textureFocus>
         <textureNoFocus>skipforward_disabled.png</textureNoFocus>
         <action>14</action>
@@ -181,8 +181,8 @@
         <id>30</id>
         <posX>590</posX>
         <posY>4</posY>
-        <width>35</width>
-        <height>35</height>
+        <width>41</width>
+        <height>41</height>
         <textureFocus>minimize_enabled.png</textureFocus>
         <textureNoFocus>minimize_disabled.png</textureNoFocus>
         <label>-</label>
@@ -198,8 +198,8 @@
         <id>31</id>
         <posX>640</posX>
         <posY>4</posY>
-        <width>35</width>
-        <height>35</height>
+        <width>41</width>
+        <height>41</height>
         <textureFocus>exit_enabled.png</textureFocus>
         <textureNoFocus>exit_disabled.png</textureNoFocus>
         <action>97</action>

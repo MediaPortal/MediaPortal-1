@@ -53,13 +53,66 @@ void CPacketSync::OnRawData(byte* pData, int nDataLen)
     m_tempBufferPos = 0;
   }
 
-  while (syncOffset + TS_PACKET_LEN < nDataLen)
+  while ((syncOffset + TS_PACKET_LEN) < nDataLen)
   {
     if ((pData[syncOffset] == TS_PACKET_SYNC) &&
         (pData[syncOffset + TS_PACKET_LEN]==TS_PACKET_SYNC))
     {
       OnTsPacket( &pData[syncOffset] );
       syncOffset += TS_PACKET_LEN;
+    }
+    else
+      syncOffset++;
+  }
+
+  // Here we have less than 188+1 bytes
+  while (syncOffset < nDataLen)
+  {
+    if (pData[syncOffset] == TS_PACKET_SYNC)
+    {
+      m_tempBufferPos= nDataLen - syncOffset;
+      memcpy( m_tempBuffer, &pData[syncOffset], m_tempBufferPos );
+      return ;
+    }
+    else
+      syncOffset++;
+  }
+
+  m_tempBufferPos=0 ;
+}
+
+// Ambass : Now, need to have 2 consecutive TS_PACKET_SYNC to try avoiding bad synchronisation.  
+//          In case of data flow change ( Seek, tv Zap .... ) Reset() should be called first to flush buffer.
+// Owlsroost : This version will abandon a buffer if it fails to sync within 8 * TSpacket lengths
+void CPacketSync::OnRawData2(byte* pData, int nDataLen)
+{
+  int syncOffset=0;
+  bool goodPacket = false;
+  if (m_tempBufferPos > 0 )
+  {
+    if (pData[TS_PACKET_LEN - m_tempBufferPos]==TS_PACKET_SYNC)
+    {
+      syncOffset = TS_PACKET_LEN - m_tempBufferPos;
+      if (syncOffset) memcpy(&m_tempBuffer[m_tempBufferPos], pData, syncOffset);
+      OnTsPacket(m_tempBuffer);
+    }
+    m_tempBufferPos = 0;
+  }
+
+  while ((syncOffset + TS_PACKET_LEN) < nDataLen)
+  {
+    if (!goodPacket && (syncOffset > (TS_PACKET_LEN * 8)) )
+    {
+      //No sync - abandon the buffer
+      m_tempBufferPos = -1;
+      return;
+    }
+    if ((pData[syncOffset] == TS_PACKET_SYNC) &&
+        (pData[syncOffset + TS_PACKET_LEN]==TS_PACKET_SYNC))
+    {
+      OnTsPacket( &pData[syncOffset] );
+      syncOffset += TS_PACKET_LEN;
+      goodPacket = true;
     }
     else
       syncOffset++;

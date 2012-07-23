@@ -25,6 +25,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -33,6 +34,7 @@ using TvControl;
 using TvDatabase;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
+using TvService;
 
 #endregion
 
@@ -40,8 +42,7 @@ namespace SetupTv.Sections
 {
   public partial class TestChannels : SectionSettings
   {
-    private readonly object _lastTuneLock = new object();
-    private readonly Dictionary<string, DateTime> _lastTunesList = new Dictionary<string, DateTime>();
+    private DateTime _lastTune;
     private readonly Dictionary<string, bool> _users = new Dictionary<string, bool>();
     private double _avg;
     private IList<Card> _cards;
@@ -49,7 +50,7 @@ namespace SetupTv.Sections
     private int _concurrentTunes;
     private int _failed;
     private int _firstFail;
-    private object _lock = new object();
+    private readonly object _lock = new object();
     private bool _repeat = true;
     private int _rndFrom;
     private int _rndTo;
@@ -59,8 +60,9 @@ namespace SetupTv.Sections
     private int _total;
     private int _tunedelay;
     private bool _usersShareChannels;
+    private readonly object _listViewLock = new object();
+    private bool _rndPrio;
 
-    //Player _player;
     public TestChannels()
       : this("TestChannels") {}
 
@@ -104,6 +106,8 @@ namespace SetupTv.Sections
 
       _rndFrom = txtRndFrom.Value;
       _rndTo = txtRndTo.Value;
+
+      _rndPrio = chkRndPrio.Checked;
     }
 
     public override void OnSectionDeActivated()
@@ -121,16 +125,17 @@ namespace SetupTv.Sections
     /// </summary>
     /// <typeparam name = "T"></typeparam>
     /// <param name = "list">The list to be chunked.</param>
+    /// <param name="source"></param>
     /// <param name = "chunkSize">The size of each chunk.</param>
     /// <returns>A list of chunks.</returns>
-    public static List<List<T>> SplitIntoChunks<T>(List<T> source, int chunkSize)
+    private static List<List<T>> SplitIntoChunks<T>(List<T> source, int chunkSize)
     {
       if (chunkSize <= 0)
       {
         throw new ArgumentException("chunkSize must be greater than 0.");
       }
 
-      List<List<T>> retVal = new List<List<T>>();
+      var retVal = new List<List<T>>();
       int index = 0;
       while (index < source.Count)
       {
@@ -145,7 +150,7 @@ namespace SetupTv.Sections
 
     private void ChannelTestThread(List<Channel> channelsO)
     {
-      Random rnd = new Random();
+      var rnd = new Random();
 
       while (_running)
       {
@@ -174,15 +179,14 @@ namespace SetupTv.Sections
               IEnumerable<Channel> channelsForUser = channelChunks[i];
               channelsForUser = channelsForUser.Randomize();
 
-              IUser user = new User();
-              user.Name = "stress-" + Convert.ToString(rnd.Next(1, 500));
+              int priority = GetUserPriority();
+              string name = "stress-" + Convert.ToString(rnd.Next(1, 500)) + " [" + priority + "]";
+              IUser user = UserFactory.CreateBasicUser(name, priority);              
 
               while (_users.ContainsKey(user.Name))
               {
-                user.Name = "stress-" + Convert.ToString(rnd.Next(1, 500));
-              }
-
-              user.IsAdmin = false;
+                user.Name = "stress-" + Convert.ToString(rnd.Next(1, 500)) + " [" + priority + "]";
+              }              
 
               _users.Add(user.Name, true);
               ThreadPool.QueueUserWorkItem(delegate { TuneChannelsForUser(user, channelsForUser); });
@@ -222,6 +226,21 @@ namespace SetupTv.Sections
       }
     }
 
+    private int GetUserPriority()
+    {
+      int rndPrio;
+      if (_rndPrio)
+      {
+        var rnd = new Random();
+        rndPrio = rnd.Next(1, 10);
+      }
+      else
+      {
+        rndPrio = UserFactory.USER_PRIORITY;  
+      }
+      return rndPrio;
+    }
+
     private void mpButtonTimeShift_Click(object sender, EventArgs e)
     {
       if (ServiceHelper.IsStopped) return;
@@ -254,14 +273,7 @@ namespace SetupTv.Sections
         channelTestThread.IsBackground = true;
         channelTestThread.Priority = ThreadPriority.Lowest;
         channelsO = channels as List<Channel>;
-        foreach (GroupMap map in maps)
-        {
-          Channel ch = map.ReferencedChannel();
-          if (ch.IsTv)
-          {
-            channelsO.Add(ch);
-          }
-        }
+        channelsO.AddRange(maps.Select(map => map.ReferencedChannel()).Where(ch => ch.IsTv));
         _usersShareChannels = chkShareChannels.Checked;
         _tunedelay = txtTuneDelay.Value;
         _concurrentTunes = txtConcurrentTunes.Value;
@@ -326,10 +338,9 @@ namespace SetupTv.Sections
         return;
       }
 
-      Random rnd = new Random();
+      var rnd = new Random();
       if (channel != null)
       {
-        TvResult result;
         long mSecsElapsed = 0;
         try
         {
@@ -337,13 +348,10 @@ namespace SetupTv.Sections
           {
             while (true)
             {
-              DateTime lastTune = DateTime.MinValue;
-              _lastTunesList.TryGetValue(user.Name, out lastTune);
-              TimeSpan ts = DateTime.Now - lastTune;
+              TimeSpan ts = DateTime.Now - _lastTune;
 
               if (ts.TotalMilliseconds < _tunedelay)
               {
-                //Log.Debug("tune delay");
                 Thread.Sleep(100);
               }
               else
@@ -352,7 +360,11 @@ namespace SetupTv.Sections
               }
             }
           }
+
+          _lastTune = DateTime.Now;
+
           VirtualCard card = null;
+          TvResult result;
           if (chkSynch.Checked)
           {
             lock (_lock)
@@ -379,7 +391,8 @@ namespace SetupTv.Sections
           else if (result == TvResult.CardIsDisabled ||
                    result == TvResult.AllCardsBusy ||
                    result == TvResult.CardIsDisabled ||
-                   result == TvResult.ChannelNotMappedToAnyCard
+                   result == TvResult.ChannelNotMappedToAnyCard ||
+                   result == TvResult.TuneCancelled
             )
           {
             string err = GetErrMsgFromTVResult(result);
@@ -417,10 +430,7 @@ namespace SetupTv.Sections
             _total++;
           }
           UpdateCounters();
-          lock (_lastTuneLock)
-          {
-            _lastTunesList[user.Name] = DateTime.Now;
-          }
+          
           Thread.Sleep(rnd.Next(_rndFrom, _rndTo));
         }
       }
@@ -490,6 +500,9 @@ namespace SetupTv.Sections
         case TvResult.NoFreeDiskSpace:
           err = "No free disk space";
           break;
+        case TvResult.TuneCancelled:
+          err = "Tune cancelled";
+          break;
       }
       return err;
     }
@@ -523,9 +536,7 @@ namespace SetupTv.Sections
           item.SubItems[7].Text = "N/A";
         }
       }
-    }
-
-    private object _listViewLock = new object();
+    }    
 
     private int Add2Log(string state, string channel, double msec, string name, string card, string details)
     {
@@ -820,7 +831,7 @@ namespace SetupTv.Sections
 
     private void mpButton1_Click(object sender, EventArgs e)
     {
-      StringBuilder buffer = new StringBuilder();
+      var buffer = new StringBuilder();
 
       buffer.Append(lblSucceeded.Text + txtSucceded.Text);
       buffer.Append(Environment.NewLine);
@@ -844,6 +855,9 @@ namespace SetupTv.Sections
       buffer.Append(Environment.NewLine);
 
       buffer.Append(lblNrOfConcurrentUsers.Text + txtConcurrentTunes.Text);
+      buffer.Append(Environment.NewLine);
+
+      buffer.Append(chkRndPrio.Text + ":" + chkRndPrio.Checked);
       buffer.Append(Environment.NewLine);
 
       buffer.Append(lblTuneDelayMsec.Text + txtTuneDelay.Text + " msec");
@@ -897,7 +911,7 @@ namespace SetupTv.Sections
         return;
       }
 
-      ListView listView = mpListViewLog as ListView;
+      var listView = mpListViewLog as ListView;
 
       if (listView == null)
       {
@@ -915,11 +929,6 @@ namespace SetupTv.Sections
         Sorter = (ListViewSorter)listView.ListViewItemSorter;
       }
 
-
-      if (!(listView.ListViewItemSorter is ListViewSorter))
-      {
-        return;
-      }
 
       if (Sorter.LastSort == e.Column)
       {
@@ -951,6 +960,45 @@ namespace SetupTv.Sections
     private delegate void UpdateDiscontinuityCounterDelegate(User user, int nextRowIndexForDiscUpdate);
 
     #endregion
+
+    private void chkRndPrio_CheckedChanged(object sender, EventArgs e)
+    {
+      _rndPrio = chkRndPrio.Checked;
+    }
+
+    private void btnCustom_Click(object sender, EventArgs e)
+    {
+      TvResult result;
+      long mSecsElapsed;
+      VirtualCard card;      
+
+      Channel tv3_plus = Channel.Retrieve(9);
+      Channel tv3 = Channel.Retrieve(125);
+
+      Channel nosignal = Channel.Retrieve(5651);
+
+      IUser low = UserFactory.CreateBasicUser("low", 1);
+      IUser low2 = UserFactory.CreateBasicUser("low2", 1);
+      IUser high = UserFactory.CreateBasicUser("high", 5);
+
+      //StartTimeshifting(tv3, low, 0, out mSecsElapsed, out result, out card);      
+
+
+      //ThreadPool.QueueUserWorkItem(delegate { StartTimeshifting(nosignal, low, 0, out mSecsElapsed, out result, out card); });            
+
+      //Thread.Sleep(1000);
+
+      //ThreadPool.QueueUserWorkItem(delegate { StartTimeshifting(nosignal, low, 0, out mSecsElapsed, out result, out card); });
+
+
+      //StartTimeshifting(tv3_plus, low2, 0, out mSecsElapsed, out result, out card);      
+
+      StartTimeshifting(tv3, high, 0, out mSecsElapsed, out result, out card);
+
+      //Thread.Sleep(3000);
+
+      //StartTimeshifting(tv3_plus, high, 0, out mSecsElapsed, out result, out card);
+    }
   }
 
   public class ListViewSorter : IComparer

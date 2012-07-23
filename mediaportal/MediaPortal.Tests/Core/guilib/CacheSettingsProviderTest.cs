@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using MediaPortal.Profile;
 using MediaPortal.Services;
 using MediaPortal.Tests.MockObjects;
@@ -35,6 +36,7 @@ namespace MediaPortal.Tests.Core.Profile
     private int removeEntryHits;
     private int setValueHits;
     public object getValueReturns;
+    public IDictionary<string, object> getSectionValueReturns;
 
     #region ISettingsPrefetchable Members
 
@@ -58,6 +60,19 @@ namespace MediaPortal.Tests.Core.Profile
       this.entry = entry;
       getValueHits++;
       return getValueReturns;
+    }
+
+    public bool HasSection<T>(string section)
+    {
+      return true;
+    }
+
+    public IDictionary<string, T> GetSection<T>(string section)
+    {
+      this.section = section;
+      this.entry = "";
+      getValueHits++;
+      return (IDictionary<string, T>)getSectionValueReturns;
     }
 
     public void RemoveEntry(string section, string entry)

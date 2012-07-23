@@ -619,6 +619,23 @@ namespace TvControl
       }
     }
 
+    /// <summary>
+    /// Returns an ordered, distinct list of all program genres.
+    /// </summary>
+    /// <returns></returns>
+    public IList<string> GetGenres()
+    {
+      try
+      {
+        return RemoteControl.Instance.GetGenres();
+      }
+      catch (Exception)
+      {
+        HandleFailure();
+      }
+      return new List<string>();
+    }
+
     #endregion
   }
 }

@@ -91,7 +91,7 @@ namespace TvService
     public EpgCard(TVController controller, Card card)
     {
       _card = card;
-      _user = new User("epg", false, -1);
+      _user = UserFactory.CreateEpgUser();
 
       _tvController = controller;
       _grabStartTime = DateTime.MinValue;
@@ -268,7 +268,7 @@ namespace TvService
 
       _state = EpgState.Idle;
       _isRunning = true;
-      _user = new User("epg", false, -1);
+      _user = UserFactory.CreateEpgUser();
       if (GrabEpgForChannel(channel, _currentTransponder.Tuning, _card))
       {
         Log.Epg("EpgCard: card: {0} starting to grab {1}", _user.CardId, _currentTransponder.Tuning.ToString());
@@ -655,7 +655,7 @@ namespace TvService
         return false;
       }
 
-      TvResult result;
+      TvResult result = TvResult.UnknownError;
       //handle ATSC
       ATSCChannel atscChannel = tuning as ATSCChannel;
       if (atscChannel != null)
@@ -667,38 +667,7 @@ namespace TvService
             Log.Epg("Epg: card:{0} atsc card is not idle", card.IdCard);
             return false; //card is busy
           }
-          try
-          {
-            IUser cardUser;
-            if (_tvController.IsCardInUse(card.IdCard, out cardUser) == false)
-            {
-              _user.CardId = card.IdCard;
-              result = RemoteControl.Instance.Tune(ref _user, tuning, channel.IdChannel);
-              if (result == TvResult.Succeeded)
-              {
-                if (!_isRunning || false == _tvController.GrabEpg(this, card.IdCard))
-                {
-                  if (!_isRunning)
-                    Log.Epg("Tuning finished but EpgGrabber no longer enabled");
-                  _tvController.StopGrabbingEpg(_user);
-                  _user.CardId = -1;
-                  Log.Epg("Epg: card:{0} could not start atsc epg grabbing", card.IdCard);
-                  return false;
-                }
-                _user.CardId = card.IdCard;
-                return true;
-              }
-              _user.CardId = -1;
-              Log.Epg("Epg: card:{0} could not tune to channel:{1}", card.IdCard, result.ToString());
-              return false;
-            }
-          }
-          catch (Exception ex)
-          {
-            Log.Write(ex);
-            throw;
-          }
-          return false;
+          return TuneEPGgrabber(channel, tuning, card, result);   
         }
         Log.Epg("Epg: card:{0} could not tune to atsc channel:{1}", card.IdCard, tuning.ToString());
         return false;
@@ -715,34 +684,7 @@ namespace TvService
             Log.Epg("Epg: card:{0} dvbc card is not idle", card.IdCard);
             return false; //card is busy
           }
-          try
-          {
-            _user.CardId = card.IdCard;
-            result = RemoteControl.Instance.Tune(ref _user, tuning, channel.IdChannel);
-            if (result == TvResult.Succeeded)
-            {
-              if (!_isRunning || false == _tvController.GrabEpg(this, card.IdCard))
-              {
-                if (!_isRunning)
-                  Log.Epg("Tuning finished but EpgGrabber no longer enabled");
-                _tvController.StopGrabbingEpg(_user);
-                _user.CardId = -1;
-                Log.Epg("Epg: card:{0} could not start dvbc epg grabbing", card.IdCard);
-                return false;
-              }
-              _user.CardId = card.IdCard;
-              return true;
-            }
-            _user.CardId = -1;
-            Log.Epg("Epg: card:{0} could not tune to channel:{1}", card.IdCard, result.ToString());
-            return false;
-          }
-          catch (Exception ex)
-          {
-            Log.Write(ex);
-            throw;
-          }
-          //unreachable return false;
+          return TuneEPGgrabber(channel, tuning, card, result);   
         }
         Log.Epg("Epg: card:{0} could not tune to dvbc channel:{1}", card.IdCard, tuning.ToString());
         return false;
@@ -759,34 +701,7 @@ namespace TvService
             Log.Epg("Epg: card:{0} dvbs card is not idle", card.IdCard);
             return false; //card is busy
           }
-          try
-          {
-            _user.CardId = card.IdCard;
-            result = RemoteControl.Instance.Tune(ref _user, tuning, channel.IdChannel);
-            if (result == TvResult.Succeeded)
-            {
-              if (!_isRunning || false == _tvController.GrabEpg(this, card.IdCard))
-              {
-                if (!_isRunning)
-                  Log.Epg("Tuning finished but EpgGrabber no longer enabled");
-                _tvController.StopGrabbingEpg(_user);
-                _user.CardId = -1;
-                Log.Epg("Epg: card:{0} could not start dvbs epg grabbing", card.IdCard);
-                return false;
-              }
-              _user.CardId = card.IdCard;
-              return true;
-            }
-            _user.CardId = -1;
-            Log.Epg("Epg: card:{0} could not tune to channel:{1}", card.IdCard, result.ToString());
-            return false;
-          }
-          catch (Exception ex)
-          {
-            Log.Write(ex);
-            throw;
-          }
-          //unreachable return false;
+          return TuneEPGgrabber(channel, tuning, card, result);   
         }
         Log.Epg("Epg: card:{0} could not tune to dvbs channel:{1}", card.IdCard, tuning.ToString());
         return false;
@@ -803,34 +718,8 @@ namespace TvService
             Log.Epg("Epg: card:{0} dvbt card is not idle", card.IdCard);
             return false; //card is busy
           }
-          try
-          {
-            _user.CardId = card.IdCard;
-            result = RemoteControl.Instance.Tune(ref _user, tuning, channel.IdChannel);
-            if (result == TvResult.Succeeded)
-            {
-              if (!_isRunning || false == _tvController.GrabEpg(this, card.IdCard))
-              {
-                if (!_isRunning)
-                  Log.Epg("Tuning finished but EpgGrabber no longer enabled");
-                _tvController.StopGrabbingEpg(_user);
-                _user.CardId = -1;
-                Log.Epg("Epg: card:{0} could not start dvbt grabbing", card.IdCard);
-                return false;
-              }
-              _user.CardId = card.IdCard;
-              return true;
-            }
-            _user.CardId = -1;
-            Log.Epg("Epg: card:{0} could not tune to channel:{1}", card.IdCard, result.ToString());
-            return false;
-          }
-          catch (Exception ex)
-          {
-            Log.Write(ex);
-            throw;
-          }
-          //unreachable return false;
+
+          return TuneEPGgrabber(channel, tuning, card, result);          
         }
         Log.Epg("Epg: card:{0} could not tune to dvbt channel:{1}", card.IdCard, tuning.ToString());
         return false;
@@ -847,37 +736,7 @@ namespace TvService
             Log.Epg("Epg: card:{0} dvbip card is not idle", card.IdCard);
             return false; //card is busy
           }
-          try
-          {
-            _user.CardId = card.IdCard;
-            result = RemoteControl.Instance.Tune(ref _user, tuning, channel.IdChannel);
-            if (result == TvResult.Succeeded)
-            {
-              if (!_isRunning || false == _tvController.GrabEpg(this, card.IdCard))
-              {
-                if (!_isRunning)
-                  Log.Epg("Tuning finished but EpgGrabber no longer enabled");
-                _tvController.StopGrabbingEpg(_user);
-                _user.CardId = -1;
-                Log.Epg("Epg: card:{0} could not start dvbip grabbing", card.IdCard);
-                return false;
-              }
-              _user.CardId = card.IdCard;
-              return true;
-            }
-            else
-            {
-              _user.CardId = -1;
-              Log.Epg("Epg: card:{0} could not tune to channel:{1}", card.IdCard, result.ToString());
-              return false;
-            }
-          }
-          catch (Exception ex)
-          {
-            Log.Write(ex);
-            throw ex;
-          }
-          //unreachable return false;
+          return TuneEPGgrabber(channel, tuning, card, result);   
         }
         else
         {
@@ -887,6 +746,57 @@ namespace TvService
       }
       Log.Epg("Epg: card:{0} could not tune to channel:{1}", card.IdCard, tuning.ToString());
       return false;
+    }
+
+    private bool TuneEPGgrabber(Channel channel, IChannel tuning, Card card, TvResult result)
+    {
+      try
+      {
+        _user.CardId = card.IdCard;
+        ITvCardHandler cardHandler;
+        if (_tvController.CardCollection.TryGetValue(card.IdCard, out cardHandler))
+        {
+          ICardTuneReservationTicket ticket = null;
+          try
+          {
+            ICardReservation cardReservationImpl = new CardReservationTimeshifting(_tvController);
+            ticket = cardReservationImpl.RequestCardTuneReservation(cardHandler, tuning, _user);
+
+            if (ticket != null)
+            {
+              result = _tvController.Tune(ref _user, tuning, channel.IdChannel, ticket);
+              if (result == TvResult.Succeeded)
+              {
+                if (!_isRunning || false == _tvController.GrabEpg(this, card.IdCard))
+                {
+                  if (!_isRunning)
+                    Log.Epg("Tuning finished but EpgGrabber no longer enabled");
+                  _tvController.StopGrabbingEpg(_user);
+                  _user.CardId = -1;
+                  Log.Epg("Epg: card:{0} could not start dvbt grabbing", card.IdCard);
+                  return false;
+                }
+                _user.CardId = card.IdCard;
+                return true;
+              }
+            } 
+          }
+          catch (Exception)
+          {
+            CardReservationHelper.CancelCardReservation(cardHandler, ticket);
+            throw;
+          }
+                       
+        }            
+        _user.CardId = -1;
+        Log.Epg("Epg: card:{0} could not tune to channel:{1}", card.IdCard, result.ToString());
+        return false;
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);        
+        throw;
+      }
     }
 
     #region database update routines

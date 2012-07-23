@@ -31,6 +31,18 @@
     <String id="30">Octobre</String>
     <String id="31">Novembre</String>
     <String id="32">Décembre</String>
+    <String id="33">Jan</String>
+    <String id="34">Fev</String>
+    <String id="35">Mar</String>
+    <String id="36">Avr</String>
+    <String id="37">Mai</String>
+    <String id="38">Jun</String>
+    <String id="39">Jul</String>
+    <String id="40">Aoû</String>
+    <String id="41">Sep</String>
+    <String id="42">Oct</String>
+    <String id="43">Nov</String>
+    <String id="44">Déc</String>
     <String id="50" prefix="Mes ">DVD</String>
     <String id="51">Lecture disque</String>
     <String id="60">Attente du démarrage du service télé...</String>
@@ -45,12 +57,17 @@
     <String id="69">Chargement du skin ({0})...</String>
     <String id="70">Chargement des plugins interactifs...</String>
     <String id="71">Initialisation du gestionnaire de fenêtres...</String>
-    <String id="100">Vue : Icônes</String>
-    <String id="101">Vue : Liste</String>
+    <String id="90">Choix du Theme</String>
+    <String id="94">Theme: </String>
+    <String id="95">Mise en page: </String>
+    <String id="96">Trier par: </String>
+    <String id="97">Vue par: </String>
+    <String id="100">Icônes</String>
+    <String id="101">Liste</String>
     <String id="102">Analyser</String>
-    <String id="103">Trier par Nom</String>
-    <String id="104">Trier par Date</String>
-    <String id="105">Trier par Taille</String>
+    <String id="103">Nom</String>
+    <String id="104">Date</String>
+    <String id="105">Taille</String>
     <String id="106">Non</String>
     <String id="107">Oui</String>
     <String id="108">Diaporama</String>
@@ -210,17 +227,17 @@
     <String id="263">Serveur HTTP :</String>
     <String id="264">Enregistrer</String>
     <String id="265">Arrêter Enreg.</String>
-    <String id="266">Trier par Piste</String>
-    <String id="267">Trier par Durée</String>
-    <String id="268">Trier par Titre</String>
-    <String id="269">Trier par Artiste</String>
-    <String id="270">Trier par Album</String>
+    <String id="266">Piste</String>
+    <String id="267">Durée</String>
+    <String id="268">Titre</String>
+    <String id="269">Artiste</String>
+    <String id="270">Album</String>
     <String id="271">Top 100</String>
     <String id="272">Compensation de l'overscan haut gauche</String>
     <String id="273">Compensation de l'overscan bas droite</String>
     <String id="274">Position des sous-titres</String>
     <String id="275">Adaptation des proportions</String>
-    <String id="276">Attention ! Laissez 0,0 pour une meilleure qualité, Déplacez la flèche pour changer l'overscan</String>
+    <String id="276">Attention ! Laissez 0.0 pour une meilleure qualité, Déplacez la flèche pour changer l'overscan</String>
     <String id="277">Déplacez la barre pour positionner les sous-titres</String>
     <String id="278">-Important !- pour une meilleure qualité, modifiez le rectangle pour qu'il soit un carré parfait</String>
     <String id="279">Impossible de charger les réglages</String>
@@ -307,11 +324,11 @@
     <String id="360">Economiseur d'écran</String>
     <String id="361">Diap. sous-dossiers</String>
     <String id="362">Taux d'affaiblissement de l'économiseur d'écran (%)</String>
-    <String id="363">Trier par Fichier</String>
+    <String id="363">Fichier</String>
     <String id="364">Laisser passer le DD/DTS multi-canal</String>
-    <String id="365">Trier par Nom</String>
-    <String id="366">Trier par Année</String>
-    <String id="367">Trier par Classement</String>
+    <String id="365">Nom</String>
+    <String id="366">Année</String>
+    <String id="367">Classement</String>
     <String id="368">FRDB</String>
     <String id="369">Titre</String>
     <String id="370">Orages</String>
@@ -361,7 +378,7 @@
     <String id="414">Pas de critiques pour cet album</String>
     <String id="415">Téléchargement des vignettes...</String>
     <String id="416">Indisponible</String>
-    <String id="417">Vue : Grandes icônes</String>
+    <String id="417">Grandes icônes</String>
     <String id="418" prefix="Mes ">Vidéos/Genres</String>
     <String id="419" prefix="Mes ">Vidéos/Acteurs</String>
     <String id="420" prefix="Mes ">Vidéos/Années</String>
@@ -374,7 +391,7 @@
     <String id="427">Disque :</String>
     <String id="428">Insérez le CD/DVD attendu</String>
     <String id="429">Insérez ce CD/DVD</String>
-    <String id="430">Trier par n° de DVD</String>
+    <String id="430">DVD</String>
     <String id="431">Pas de cache</String>
     <String id="432">Supprimer le film de la BD</String>
     <String id="433">Supprimer réellement</String>
@@ -464,13 +481,14 @@
     <String id="518">Effacer ce morceau ?</String>
     <String id="519">Sous-titres off</String>
     <String id="520">Lieux non trouvé</String>
+    <String id="521">N'est pas un entier valide</String>
     <String id="522">Valeur positive seulement!</String>
     <String id="523">Zéro non autorisé</String>
     <String id="524">Saut de 3 heures maximum !</String>
     <String id="525">Ignorer l'étape déjà définie</String>
-    <String id="527">Trier par Visionné</String>
+    <String id="527">Visionné</String>
     <String id="528">Album Artistes</String>
-    <String id="529">Vue: Grande liste d'icône</String>
+    <String id="529">Grande liste d'icône</String>
     <String id="530">Disque de Photo inséré, voulez-vous l'ouvrir ?</String>
     <String id="531">Disque vidéo inséré, voulez-vous l'ouvrir ?</String>
     <String id="532">Disque audio inséré, voulez-vous l'ouvrir ?</String>
@@ -538,10 +556,10 @@
     <String id="617">Nouveau</String>
     <String id="618">Effacer</String>
     <String id="619">Changer Date/Heure</String>
-    <String id="620">Trier par Chaîne</String>
-    <String id="621">Trier par Date</String>
-    <String id="622">Trier par Nom</String>
-    <String id="623">Trier par Type</String>
+    <String id="620">Chaîne</String>
+    <String id="621">Date</String>
+    <String id="622">Nom</String>
+    <String id="623">Type</String>
     <String id="624">Nettoyer</String>
     <String id="625">Programmations effacées :</String>
     <String id="626">Changer le type</String>
@@ -586,24 +604,24 @@
     <String id="665" prefix="Ma ">Radio</String>
     <String id="666">Stations</String>
     <String id="667">Recherche auto.</String>
-    <String id="668">Trier par Type</String>
-    <String id="669">Trier par Genre</String>
-    <String id="670">Trier par Qualité</String>
-    <String id="671">Trier par Visionné</String>
+    <String id="668">Type</String>
+    <String id="669">Genre</String>
+    <String id="670">Qualité</String>
+    <String id="671">Visionné</String>
     <String id="672">Enreg. Lun-Ven</String>
     <String id="673">Vitesse de défilement</String>
     <String id="674">Réglages IHM</String>
     <String id="675">Exemple :</String>
     <String id="676">Effacer les enregistrements visionnés ?</String>
     <String id="677">fois</String>
-    <String id="678">Trier par Genre</String>
+    <String id="678">Genre</String>
     <String id="679">Hebdomadaire</String>
     <String id="680">Lun-Ven</String>
     <String id="681">En Attente</String>
     <String id="682">Enregistre</String>
     <String id="683">Terminé</String>
     <String id="684">Annulé</String>
-    <String id="685">Trier par Statut</String>
+    <String id="685">Statut</String>
     <String id="686">Né(e) le</String>
     <String id="687">Années d'activité</String>
     <String id="688">Instruments</String>
@@ -645,7 +663,7 @@
     <String id="730">Cette programmation est en cours d'enregistrement.</String>
     <String id="731">Si vous la supprimez, l'enregistrement s'arrêtera.</String>
     <String id="732">Etes-vous sûr(e) ?</String>
-    <String id="733">Vue: Pellicule</String>
+    <String id="733">Pellicule</String>
     <String id="734">Image:</String>
     <String id="735">Rotation 90°</String>
     <String id="736">Pas de données disponibles pour le GuideTV</String>
@@ -698,7 +716,8 @@
     <String id="784">Rotation 270°</String>
     <String id="789">Maintenant : </String>
     <String id="790">Suivant : </String>
-    <String id="791">Vue : Cover Flow</String>
+    <String id="791">Cover Flow</String>
+    <String id="792">Menu Vue</String>
     <String id="798">bas</String>
     <String id="799">haut</String>
     <String id="800">Commence par</String>
@@ -882,7 +901,7 @@
     <String id="1014">M'alerter lorsque le programme débute</String>
     <String id="1015">Ne pas m'alerter lorsque le programme débute</String>
     <String id="1016">Le programme commence dans 5 minutes</String>
-    <String id="1017">Trier par Durée</String>
+    <String id="1017">Durée</String>
     <String id="1018">Débuts du programme dans {0} minutes</String>
     <String id="1019">Le programme est sur le point de commencer</String>
     <String id="1020">Information</String>
@@ -922,10 +941,6 @@
     <String id="1054">(enregistre)</String>
     <String id="1055">(timeshifting)</String>
     <String id="1056">(indisponible)</String>
-    <String id="1057">Enreg. Dim-Jeu</String>
-    <String id="1058">Enreg Ven-Sam</String>
-    <String id="1059">Dim-Jeu</String>
-    <String id="1060">Ven-Sam</String>
     <String id="1061">Amovible</String>
     <String id="1062">Objet</String>
     <String id="1064">Favoris</String>
@@ -979,9 +994,88 @@
     <String id="1198">Navigateur DVD</String>
     <String id="1200">Installation rapide</String>
     <String id="1201">Lire la vidéo depuis le début</String>
-    <String id="1202">Trier par : Auto</String>
+    <String id="1202">Auto</String>
+    <String id="1203">Épisodes à venir (Active: {0})</String>
+    <String id="1204">Lire toutes les vidéos dans le dossier sélectionné</String>
+    <String id="1205">Disque</String>
+    <String id="1206">Le programme est demarré pour {0} minutes</String>
+    <String id="1207">Basculer vers {0} maintenant ?</String>
+    <String id="1208">Composer</String>
+    <String id="1209">Parties lu</String>
     <String id="1211">Reprendre la lecture depuis {0}</String>
+    <String id="1212">Annuler rappel</String>
+    <String id="1213">Écouter cette station</String>
+    <String id="1214">Compositeurs</String>
+    <String id="1215">Conducteurs</String>
+    <String id="1216">Disques</String>
+    <String id="1217">Titres de l'Artiste</String>
+    <String id="1218">Albums par Age</String>
+    <String id="1219">Album Artistes (Index)</String>
+    <String id="1220">Date de Creation</String>
+    <String id="1221">Date de Modification</String>
+    <String id="1222">Groupes</String>
+    <String id="1223">Playlist Existante Detectée</String>
+    <String id="1224">Voulez-vous effacer la playlist courante?</String>
+    <String id="1225">Ajouter la selection</String>
+    <String id="1226">Ajouter toutes la selection</String>
+    <String id="1230">Date Ajouter:</String>
+    <String id="1231">Dernier joué:</String>
+    <String id="1240">Verrouiller le contenu</String>
+    <String id="1241">Déverrouiller le contenu</String>
+    <String id="1246">Activer la couleur des boutons dans TV EPG</String>
+    <String id="1247">Activer la couleur des genres dans TV EPG</String>
+    <String id="1248">Selection de la limite du programme dans TV EPG</String>
+    <String id="1249">Montrer la palette de couleur des genres dans TV EPG</String>
+    <String id="1250">Documentaire</String>
+    <String id="1251">Enfants</String>
+    <String id="1252">Film</String>
+    <String id="1253">Musique</String>
+    <String id="1254">News</String>
+    <String id="1255">Speciale</String>
+    <String id="1256">Sportif</String>
+    <String id="1260">Définir comme vu</String>
+    <String id="1261">Pas de GrabberIndexFile trouvé.</String>
+    <String id="1262">Mise à jour des scripts Grabber</String>
+    <String id="1263">Définir Grabber script par défaut</String>
+    <String id="1264">Mise à jour des médias info</String>
+    <String id="1265">Groupes d'utilisateurs</String>
+    <String id="1266">Vue</String>
+    <String id="1267">Non Vue</String>
+    <String id="1268">Recherche réalisateur</String>
+    <String id="1269">Réalisateur</String>
+    <String id="1270">Ajouter le film au groupe de l'utilisateur</String>
+    <String id="1271">Retirez le film choisi du groupe utilisateur</String>
+    <String id="1272">Ajouter nouveau groupe d'utilisateurs</String>
+    <String id="1273">Retirez le groupe d'utilisateurs sélectionné</String>
+    <String id="1274">Studio:</String>
+    <String id="1275">Langage:</String>
+    <String id="1276">Pays:</String>
+    <String id="1277">Decedé:</String>
+    <String id="1278">Compteur deja vu:</String>
+    <String id="1279">Derniere MAJ:</String>
+    <String id="1280">Scanner à l'aide des fichiers nfo</String>
+    <String id="1281">Par titre de Film</String>
+    <String id="1282">Par Nom du Réalisateur</String>
+    <String id="1283">Par Nom de l'Acteur</String>
+    <String id="1284">Par Roles d'Acteur</String>
+    <String id="1285">Par Année</String>
+    <String id="1286">Par Certification (MPAA classement)</String>
+    <String id="1287">Index des titres</String>
+    <String id="1288">Index acteurs</String>
+    <String id="1289">Index réalisateur</String>
+    <String id="1290">Actualiser le film sélectionné</String>
+    <String id="1291">L'Actualisation auto est active.</String>
+    <String id="1292">S'il vous plaît attendre la finalisation.</String>
+    <String id="1293">Recherche film</String>
+    <String id="1294">Réinitialiser la recherche</String>
+    <String id="1295">Recherche acteur</String>
+    <String id="1296">Actualiser tous les acteurs du film</String>
+    <String id="1297">Actualiser les infos de l'acteur sélectionné</String>
+    <String id="1298">Actualiser Fanart</String>
+    <String id="1299">Actualiser le dossier courant</String>
     <String id="1300" prefix="Mes ">fichiers TV</String>
+    <String id="1301">Télécharger des infos acteurs</String>
+    <String id="1302">Téléchargement acteurs de cinéma et des rôles</String>
     <String id="1440" prefix="Mon ">Télétexte</String>
     <String id="1441">Télétexte</String>
     <String id="1442">Vitesse de défilement (hor.)</String>
@@ -994,6 +1088,7 @@
     <String id="1449">Arrêter l'enregistrement</String>
     <String id="1450">Etes-vous sûr(e) de vouloir arrêter l'enregistrement ?</String>
     <String id="1451">Impossible de lire</String>
+    <String id="1498">Programme/Chaîne non trouvée</String>
     <String id="1499">Pas de signal</String>
     <String id="1500">Pas de timeshifting</String>
     <String id="1501">Carte désactivée</String>
@@ -1022,6 +1117,25 @@
     <String id="1600">Voulez-vous arrêter ?</String>
     <String id="1601">Voulez-vous mettre en veille ?</String>
     <String id="1602">Voulez-vous mettre en veille prolongée ?</String>
+    <String id="1650">Ajouter un emplacement</String>
+    <String id="1651">Enlever un emplacement</String>
+    <String id="1652">Emplacement par défaut</String>
+    <String id="1653">Unités de Température</String>
+    <String id="1654">Unités de vitesse du vent</String>
+    <String id="1655">intervalle de rafraîchissement</String>
+    <String id="1656">mins</String>
+    <String id="1900">Skin obsolète</String>
+    <String id="1901">Votre skin actuellement sélectionné ({0}) est obsolète. Cela pourrait causer des problèmes lors de l'utilisation de MediaPortal. Pour cette raison, MediaPortal a temporairement appliqué le skin par défaut. Si toutefois vous souhaitez essayer d'utiliser le skin obsolète, appuyez sur le bouton "Ignorer et essayer", mais rappelez-vous: NE PAS déposer un rapport de bug en utilisant ce skin!
+(Pour ignorez cet avertissement soit attendre jusqu'à la fermeture automatiquement ou appuyez sur Retour/ESC de votre télécommande)</String>
+    <String id="1902">Ne plus afficher ce message</String>
+    <String id="1903">Ignorer et essayez ({0})...</String>
+    <String id="1910">Plugins Incompatible</String>
+    <String id="1911">Les plugins suivants sont incompatibles avec cette version de MediaPortal et ont été automatiquement désactivée:</String>
+    <String id="1912">Continue|Continue ({0})...|Continue ({0})...</String>
+    <String id="1700">Menu BD contextuel</String>
+    <String id="1701">Choix du mode de lecture</String>
+    <String id="1702">Titre: #{0} - chapitre: {1}, durée: {2}</String>
+    <String id="1703">Sélection parmis tous les titres</String>
     <String id="1950" prefix="Mon ">Etat</String>
     <String id="1951">Disque dur</String>
     <String id="1952">Ventilateur</String>
@@ -1106,7 +1220,7 @@
     <String id="2057">Qualité Audio</String>
     <String id="2058">Résolution</String>
     <String id="2059">Config saut pub trouvé,</String>
-    <String id="2060"> voulez-vous l'utiliser ?</String>
+    <String id="2060">voulez-vous l'utiliser ?</String>
     <String id="2061">Fichier config incompatible</String>
     <String id="2062">bas</String>
     <String id="2063">moyen</String>
@@ -1295,7 +1409,7 @@
     <String id="4503">Récupération du nombre d'albums. Veuillez patienter...</String>
     <String id="4504">{0}% - {1} de {2}</String>
     <String id="4505">Recherche {0}...</String>
-    <String id="4506">[Blank]</String>
+    <String id="4506">[Vide]</String>
     <String id="4507">Récupération annulée par l'utilisateur</String>
     <String id="4508">Récupération accomplie avec succès</String>
     <String id="4509">Récupération accomplie avec des erreurs</String>
@@ -1324,6 +1438,7 @@
     <String id="4555">Playlist actuelle</String>
     <String id="4557">Ajouter tout à playlist</String>
     <String id="4558">Ajouté récemment</String>
+    <String id="4559">Vu récemment</String>
     <String id="5900" prefix="Mes ">Bandes Annonces</String>
     <String id="5901">Voir les bandes annonces</String>
     <String id="5902">Quelles bandes annonces ?</String>
@@ -1366,7 +1481,7 @@
     <String id="6013">xmltv Manuel</String>
     <String id="6014">Configuration TV</String>
     <String id="6015">Configuration DVD</String>
-    <String id="6016">Suprimer automatiquement l'enregistrement après la visualisation</String>
+    <String id="6016">Suprimer automatiquement l'enregistrement après l'avoir vu</String>
     <String id="6017">Ajouter les enregistrements à la base de données de film</String>
     <String id="6018">minutes avant le début des programmes</String>
     <String id="6019">minutes après la fin des programmes</String>
@@ -1392,6 +1507,7 @@
     <String id="6039">Codec audio LATM AAC</String>
     <String id="6040">Hier</String>
     <String id="6041">2 jours avant</String>
+    <String id="6042">Entrer un saut d'étape en secondes</String>
     <String id="6050">Semaine en cours</String>
     <String id="6060">Mois en cours</String>
     <String id="6070">Année en cours</String>
@@ -1489,8 +1605,8 @@
     <String id="9148">Affectation des touches de la télécommande</String>
     <String id="9149">Normal</String>
     <String id="9150">Stéréo</String>
-    <String id="9151">VU mètre</String>
-    <String id="9152">VU mètre 2</String>
+    <String id="9151">VU-mètre</String>
+    <String id="9152">VU-mètre 2</String>
     <String id="9997">Secondes:</String>
     <String id="9998">Minutes:</String>
     <String id="9999">Heures:</String>
@@ -1522,9 +1638,9 @@
     <String id="13013">Chargement de la vidéo, patientez</String>
     <String id="13014">Analyse du répertoire</String>
     <String id="13015">Importation du fichier gamebase</String>
-    <String id="13016">Trier par Lancements</String>
-    <String id="13017">Trier par Récents</String>
-    <String id="13018">Trier par Note</String>
+    <String id="13016">Lancements</String>
+    <String id="13017">Récents</String>
+    <String id="13018">Note</String>
     <String id="13031">Fabricant</String>
     <String id="13032">Les plus lancés</String>
     <String id="13033">Les lancés récemment</String>
@@ -1545,8 +1661,8 @@
     <String id="14013">Voulez-vous continuer ?</String>
     <String id="14014">Mise à jour infos en ligne</String>
     <String id="14015">Mises à jour</String>
-    <String id="14016">Tri par: Téléchargement</String>
-    <String id="14017">Tri par: Classement</String>
+    <String id="14016">Téléchargement</String>
+    <String id="14017">Classement</String>
     <String id="14018">Installer Mise à jour</String>
     <String id="16001">Au hasard</String>
     <String id="19001" prefix="Mon ">Tetris</String>
@@ -1738,6 +1854,7 @@
     <String id="100509">Musique/Consult/Progression</String>
     <String id="100510">Musique/Joué maintenant</String>
     <String id="100511">Musique/Plein écran</String>
+    <String id="100512">LastFM Love/Ban</String>
     <String id="100600">TV/Guide</String>
     <String id="100601">TV/Programmation</String>
     <String id="100602">TV/Pleinécran</String>
@@ -1798,6 +1915,7 @@
     <String id="100760">Graveur</String>
     <String id="100761">Guide télé</String>
     <String id="100762">Guide radio</String>
+    <String id="100763">Radio enregistrée</String>
     <String id="100800" prefix="Mes ">Extensions</String>
     <String id="101000">Clavier</String>
     <String id="101002">Clavier virtuel</String>
@@ -1820,6 +1938,7 @@
     <String id="102014">Info sur l'image</String>
     <String id="102015">Mini menu</String>
     <String id="102016">Notification</String>
+    <String id="102017">Conflit d'enregistrement</String>
     <String id="102018">Menu CI</String>
     <String id="102600" prefix="Ma ">Météo</String>
     <String id="102700" prefix="Mes ">Informations</String>
@@ -1840,6 +1959,7 @@
     <String id="107776" prefix="Mon">Tetris</String>
     <String id="107777" prefix="Mon ">Sudoku</String>
     <String id="107890" prefix="Ma ">Last.fm radio</String>
+    <String id="107900">Boite de Dialogue</String>
     <String id="108888">Menu Musique</String>
     <String id="109000">Mini écran - Configuration</String>
     <String id="109001">Mini écran - Configuration - Retro-éclairage</String>
@@ -1848,6 +1968,7 @@
     <String id="109004">Mini écran - Configuration - Egaliseur</String>
     <String id="109005">Mini écran - Configuration - Pavé numérique</String>
     <String id="109006">Mini écran - Configuration - Télécommande</String>
+    <String id="102019">TV notification</String>
     <String id="200000">Sélectionnez le logiciel de récupération des programmes TV. Note : Si votre pays n'est</String>
     <String id="200001">pas dans la liste, il vous faudra remplir manuellement le fichier tvguide.xml.</String>
     <String id="200002">Vous pouvez maintenant lier vos programmes TV à vos chaînes TV.</String>
@@ -1919,9 +2040,26 @@
     <String id="200070">Veuillez vérifier la configuration du pare-feu</String>
     <String id="200071">Supprimer ce dossier et ses sous-dossiers ?</String>
     <String id="200072">Episodes suivants</String>
+    <String id="200073">Post-traitement</String>
+    <String id="200074">post-traitement de l'image</String>
+    <String id="200075">Redimenssioner</String>
+    <String id="200076">Fichier sous-titres</String>
+    <String id="200077">Désentrelacer</String>
+    <String id="200078">Recadrer</String>
+    <String id="200079">Recadrage Vertical</String>
+    <String id="200080">Recadrage Horizontal</String>
+    <String id="200081">MENU VIDEO</String>
+    <String id="200082">MENU AUDIO</String>
+    <String id="200083">MENU SOUS-TITRES</String>
+    <String id="200084">Menu Vidéo</String>
+    <String id="200085">Menu Audio</String>
+    <String id="200086">MENU PRINCIPAL</String>
+    <String id="200087">Sourdine</String>
+    <String id="200090">Edition</String>
     <String id="200091">Chapitre</String>
     <String id="200092">Forcés Seulement</String>
     <String id="200093">Montage Disque/ISO (Temps d'attente atteint)!</String>
     <String id="200094">Essayer pendant encore 60 secondes?</String>
+    <String id="200095">Flux Video</String>
   </Section>
 </Language>

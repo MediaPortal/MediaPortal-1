@@ -31,6 +31,7 @@ public:
 public:
   virtual ~CPacketSync(void);
   void OnRawData(byte* pData, int nDataLen);
+  void OnRawData2(byte* pData, int nDataLen);
   virtual void OnTsPacket(byte* tsPacket);
   void Reset(void);
 

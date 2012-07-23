@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
     <control>
@@ -18,8 +18,6 @@
       <width>403</width>
       <height>232</height>
       <texture>dialog_background.png</texture>
-      
-      
     </control>
     <control>
       <description>dialog Heading</description>
@@ -31,8 +29,6 @@
       <label>0</label>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
-      
-      
     </control>
     <control>
       <description>dialog line 1</description>
@@ -43,8 +39,6 @@
       <width>294</width>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
-      
-      
     </control>
     <control>
       <description>dialog line 2</description>
@@ -56,8 +50,6 @@
       <width>294</width>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
-      
-      
     </control>
     <control>
       <description>dialog line 3</description>
@@ -69,8 +61,6 @@
       <width>294</width>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
-      
-      
     </control>
     <control>
       <description>dialog line 4</description>
@@ -82,8 +72,6 @@
       <width>294</width>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
-      
-      
     </control>
   </controls>
 </window>

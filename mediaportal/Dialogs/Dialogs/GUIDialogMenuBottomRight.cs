@@ -42,7 +42,7 @@ namespace MediaPortal.Dialogs
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\DialogMenuBottomRight.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\DialogMenuBottomRight.xml"));
     }
 
     #region Base Dialog Members

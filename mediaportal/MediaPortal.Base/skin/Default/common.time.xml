@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
     <control>
@@ -7,13 +7,11 @@
       <type>label</type>
       <id>0</id>
       <posX>699</posX>
-      <posY>21</posY>
+      <posY>8</posY>
       <label>#date | #time</label>
       <align>right</align>
-      <font>font13</font>
-      <textcolor>ffa9d0f7</textcolor>
-      
-      
+      <font>font11</font>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
   </controls>
 </window>

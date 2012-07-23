@@ -57,7 +57,7 @@ namespace MediaPortal.GUI.Settings
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\SettingsSlideShow.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\SettingsSlideShow.xml"));
     }
 
     public override void OnAction(Action action)

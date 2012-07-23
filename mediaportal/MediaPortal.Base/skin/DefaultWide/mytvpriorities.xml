@@ -131,8 +131,8 @@
         <spinPosY>522</spinPosY>
         <itemWidth>62</itemWidth>
         <itemHeight>43</itemHeight>
-        <textureFocus>album_background_focus.png</textureFocus>
-        <textureNoFocus>album_background_nofocus.png</textureNoFocus>
+        <textureFocus>list_sub_focus.png</textureFocus>
+        <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
         <spaceBetweenItems>8</spaceBetweenItems>
         <textureHeight>62</textureHeight>
         <keepaspectratio>no</keepaspectratio>
@@ -166,7 +166,7 @@
       <label>#TV.Scheduled.Time</label>
       <align>left</align>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
       
       
     </control>
@@ -193,7 +193,7 @@
       <label>#TV.Scheduled.Genre</label>
       <align>right</align>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
       
       
     </control>

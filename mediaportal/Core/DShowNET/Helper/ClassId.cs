@@ -76,6 +76,8 @@ namespace DShowNET.Helper
     public static readonly Guid Line21_1 = new Guid("6E8D4A20-310C-11D0-B79A-00AA003767A7");
     public static readonly Guid Line21_2 = new Guid("E4206432-01A1-4BEE-B3E1-3702C8EDC574");
 
+    public static readonly Guid FilesyncSource = new Guid("E436EBB5-524F-11CE-9F53-0020AF0BA770");
+
     /// <summary>Creates an instance of a COM object by class ID.</summary>
     /// <param name="id">The class ID of the component to instantiate.</param>
     /// <returns>A new instance of the class.</returns>

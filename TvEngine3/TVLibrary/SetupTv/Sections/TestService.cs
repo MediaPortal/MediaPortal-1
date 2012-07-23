@@ -28,7 +28,7 @@ using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using Gentle.Framework;
 using SetupControls;
-using TvLibrary.Implementations.Helper.Providers;
+using TvService;
 
 namespace SetupTv.Sections
 {
@@ -126,10 +126,9 @@ namespace SetupTv.Sections
             break; // Keep the first card enabled selected only
           }
         }
-        IUser user = new User();
-        user.Name = "setuptv-" + id + "-" + cardId;
-        user.IsAdmin = true;
-        user.CardId = cardId;
+        IUser user = UserFactory.CreateSchedulerUser();
+        user.Name = "setuptv-" + id + "-" + cardId;        
+        user.CardId = cardId;        
 
         TvResult result = server.StartTimeShifting(ref user, id, out card, cardId != -1);
         if (result != TvResult.Succeeded)
@@ -184,6 +183,9 @@ namespace SetupTv.Sections
             case TvResult.NoFreeDiskSpace:
               MessageBox.Show(this, "No free disk space");
               break;
+            case TvResult.TuneCancelled:
+              MessageBox.Show(this, "Tune cancelled");
+              break;
           }
         }
         else
@@ -212,7 +214,7 @@ namespace SetupTv.Sections
         if (card != null)
         {
           string fileName = String.Format(@"{0}\{1}.mpg", card.RecordingFolder, Utils.MakeFileName(channel));
-          card.StartRecording(ref fileName, true, 0);
+          card.StartRecording(ref fileName);
           mpButtonTimeShift.Enabled = false;
         }
       }
@@ -535,10 +537,6 @@ namespace SetupTv.Sections
         ch.LastGrabTime = Schedule.MinSchedule;
         ch.Persist();
       }
-
-      //  Reset provider last grab time
-      SkyUK.Instance.LastEPGGrabTime = DateTime.MinValue;
-      SkyItaly.Instance.LastEPGGrabTime = DateTime.MinValue;
 
       RemoteControl.Instance.EpgGrabberEnabled = true;
       MessageBox.Show("EPG grabber will restart in a few seconds..");

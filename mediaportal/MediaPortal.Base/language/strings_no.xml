@@ -57,6 +57,11 @@
     <String id="69">Laster skinn ({0})...</String>
     <String id="70">Laster grafiske tillegg...</String>
     <String id="71">Laster tilleggsbehandleren</String>
+    <String id="90">Velg Tema</String>
+    <String id="94">Tema:</String>
+    <String id="95">Utseende:</String>
+    <String id="96">Sorter etter:</String>
+    <String id="97">Vis som:</String>
     <String id="100">Vis: Ikoner</String>
     <String id="101">Vis: Liste</String>
     <String id="102">Skann</String>
@@ -996,6 +1001,7 @@
     <String id="1206">Programmet kjører for {0} minutter</String>
     <String id="1207">Bytte til {0} nå?</String>
     <String id="1208">Sorter etter: Komponist</String>
+    <String id="1209">Antall ganger spilt</String>
     <String id="1211">Gjenoppta avspilling fra {0}</String>
     <String id="1212">Avbryt påminnelse</String>
     <String id="1213">Lytt til denne kanalen</String>
@@ -1016,7 +1022,56 @@
     <String id="1231">Sist avspilt</String>
     <String id="1240">Lås innhold</String>
     <String id="1241">Lås opp innhold</String>
+    <String id="1250">Dokumentar</String>
+    <String id="1251">Barn</String>
+    <String id="1252">Film</String>
+    <String id="1253">Musikk</String>
+    <String id="1254">Nyheter</String>
+    <String id="1255">Spesiell</String>
+    <String id="1256">Sport</String>
+    <String id="1260">Endre set status</String>
+    <String id="1261">Ingen GrabberIndexFile funnet</String>
+    <String id="1262">Oppdater Grabber skriptene</String>
+    <String id="1263">Endre standard skript for Grabber</String>
+    <String id="1264">Oppdater media informasjon</String>
+    <String id="1265">Bruker grupper</String>
+    <String id="1266">Sett</String>
+    <String id="1267">Usett</String>
+    <String id="1268">Søk etter regissør</String>
+    <String id="1269">Regissør</String>
+    <String id="1270">Legg til filmen i bruker gruppen</String>
+    <String id="1271">Fjern valgte film fra bruker gruppe</String>
+    <String id="1272">Legg til en ny bruker gruppe</String>
+    <String id="1273">Fjern valgte bruker gruppe</String>
+    <String id="1274">Studio:</String>
+    <String id="1275">Språk:</String>
+    <String id="1276">Land:</String>
+    <String id="1277">Døde:</String>
+    <String id="1278">Sett antall ganger:</String>
+    <String id="1279">Sist oppdatert:</String>
+    <String id="1280">Skann ved bruk av nfo filer</String>
+    <String id="1281">Etter film tittel</String>
+    <String id="1282">Etter regissørens navn</String>
+    <String id="1283">Etter skuespillerens navn</String>
+    <String id="1284">Etter skuespillerens rolle</String>
+    <String id="1285">Etter år</String>
+    <String id="1286">Etter sertifisering (MPAA måling)</String>
+    <String id="1287">Tittel oversikt</String>
+    <String id="1288">Oversikt over skuespillere</String>
+    <String id="1289">Regissørens oversikt</String>
+    <String id="1290">Oppdater valgte film</String>
+    <String id="1291">Auto-oppdater er aktiv.</String>
+    <String id="1292">Vennligst vent til den er ferdig.</String>
+    <String id="1293">Søk etter film</String>
+    <String id="1294">Nullstill søk</String>
+    <String id="1295">Søk etter skuespiller</String>
+    <String id="1296">Oppdater alle skuespillerene i filmene</String>
+    <String id="1297">Oppdater valgte skuespillers informasjon</String>
+    <String id="1298">Oppdater fanart</String>
+    <String id="1299">Oppdater gjeldende mappe</String>
     <String id="1300" prefix="Mine ">TV Serier</String>
+    <String id="1301">Laster ned skuespillere og roller</String>
+    <String id="1302">Laster ned informasjon om skuespiller</String>
     <String id="1440" prefix="Min ">Tekst-TV</String>
     <String id="1441">Tekst-TV</String>
     <String id="1442">Rullehastighet (horisontal)</String>
@@ -1058,6 +1113,13 @@
     <String id="1600">Vil du slå av PCen?</String>
     <String id="1601">Vil du sette PCen i hvilemodus?</String>
     <String id="1602">Vil du sette PCen i dvalemodus?</String>
+    <String id="1650">Legg til et sted</String>
+    <String id="1651">Fjern et sted</String>
+    <String id="1652">Standard sted</String>
+    <String id="1653">Temperaturenhet</String>
+    <String id="1654">Enhet for vindhastighet</String>
+    <String id="1655">Intervall for oppdatering</String>
+    <String id="1656">minutter</String>
     <String id="1900">Utdatert skinn funnet</String>
     <String id="1901">Det valgte skinnet ({0}) er utdatert. Dette kan medføre problemer når du bruker MediaPortal. På grunn av dette har MediaPortal midlertidig byttet til standard skinn. Hvis du allikevel vil prøve å bruke det utdaterte skinnet, klikk på 'ignorer og prøv' knappen, men husk: IKKE lag en bug/feilmelding når dette skinnet brukes!
 (for å fjerne denne meldingen, enten vent til den avsluttes automatisk eller trykk Tilbake/ESC på fjernkontrollen)</String>
@@ -1066,6 +1128,10 @@
     <String id="1910">Inkompatibel tillegg oppdaget</String>
     <String id="1911">Følgende tillegget er inkompatibel med denne versjonen av MediaPortal og ble automatisk deaktivert:</String>
     <String id="1912">Fortsetter|Fortsetter ({0})...|Fortsetter ({0})...</String>
+    <String id="1700">Pop-up meny</String>
+    <String id="1701">Velg avspilling modus</String>
+    <String id="1702">Tittel: #{0} - kapittel: {1}, lengde: {2}</String>
+    <String id="1703">Velg fra alle titlene</String>
     <String id="1950" prefix="Min ">Status</String>
     <String id="1951">Harddisk</String>
     <String id="1952">Vifte</String>
@@ -1368,6 +1434,7 @@
     <String id="4555">Gjeldende spilleliste</String>
     <String id="4557">Legg til alle i spillelisten</String>
     <String id="4558">Nylig lagt til</String>
+    <String id="4559">Nylig sett</String>
     <String id="5900" prefix="Mine ">Trailere</String>
     <String id="5901">Vis filmer</String>
     <String id="5902">Vis hvilke filmer?</String>
@@ -1986,5 +2053,9 @@
     <String id="200087">Stille</String>
     <String id="200090">Utgave</String>
     <String id="200091">Kapittel</String>
+    <String id="200092">Tving igjennom</String>
+    <String id="200093">Lang monteringstid for disk!</String>
+    <String id="200094">Prøve i 60 sekunder til?</String>
+    <String id="200095">Video strøm</String>
   </Section>
 </Language>

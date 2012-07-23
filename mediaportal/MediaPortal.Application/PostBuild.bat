@@ -21,6 +21,7 @@ xcopy %1\MediaPortal.Support\bin\%2\MediaPortal.Support.* . /Y /D
 REM Configuration
 xcopy %1\Configuration\Wizards\*.* Wizards\ /Y /D
 xcopy %1\Configuration\bin\%2\Configuration.* . /Y /D
+xcopy %1\Configuration\WinCustomControls\bin\%2\WinCustomControls.* . /Y /D
 
 REM Core
 xcopy %1\core\bin\%2\DirectShowLib.* . /Y /D

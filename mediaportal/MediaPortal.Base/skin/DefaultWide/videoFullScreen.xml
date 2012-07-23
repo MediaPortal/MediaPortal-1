@@ -89,7 +89,7 @@
       <width>300</width>
       <label>-</label>
       <font>font14</font>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>no</visible>
       <animation effect="zoom" start="100,100" end="120,120" time="0" >visible</animation>
     </control>
@@ -102,7 +102,7 @@
       <width>300</width>
       <label>-</label>
       <font>font14</font>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>no</visible>
       <animation effect="zoom" start="100,100" end="120,120" time="0" >visible</animation>
     </control>
@@ -115,7 +115,7 @@
       <width>300</width>
       <label>-</label>
       <font>font14</font>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>no</visible>
       <animation effect="zoom" start="100,100" end="120,120" time="0" >visible</animation>
     </control>
@@ -276,8 +276,8 @@
       <posY>635</posY>
       <label>#time</label>
       <align>right</align>
-      <font>font13</font>
-      <textcolor>ffa9d0f7</textcolor>
+      <font>font12</font>
+      <textcolor>ff6FAFE1</textcolor>
       <visible>control.isVisible(111)|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)</visible>
     </control>
   </controls>
