@@ -4363,7 +4363,7 @@ namespace MediaPortal.Video.Database
 
             #region Genre
 
-            XmlNodeList genres = nodeMovie.SelectNodes("genres/genre");
+            XmlNodeList genres = nodeMovie.SelectNodes("genre");
             
             foreach (XmlNode nodeGenre in genres)
             {
@@ -4377,17 +4377,6 @@ namespace MediaPortal.Video.Database
               }
             }
 
-            if (string.IsNullOrEmpty(genre))
-            {
-              XmlNode nodeGenre = nodeMovie.SelectSingleNode("genre");
-              
-              if (nodeGenre != null)
-              {
-                genre = nodeGenre.InnerText;
-              }
-            }
-
-            // Genre
             movie.Genre = genre;
             
             #endregion
@@ -5137,7 +5126,7 @@ namespace MediaPortal.Video.Database
 
             #region UserGroups
 
-            XmlNodeList userGroups = nodeMovie.SelectNodes("usergroups/usergroup");
+            XmlNodeList userGroups = nodeMovie.SelectNodes("set");
             
             foreach (XmlNode nodeUserGroup in userGroups)
             {
@@ -5154,38 +5143,6 @@ namespace MediaPortal.Video.Database
                 }
               }
             }
-
-            // Add groups with rules
-            //ArrayList groups = new ArrayList();
-            //VideoDatabase.GetUserGroups(groups);
-
-            //foreach (string group in groups)
-            //{
-            //  string rule = VideoDatabase.GetUserGroupRule(group);
-
-            //  if (!string.IsNullOrEmpty(rule))
-            //  {
-            //    try
-            //    {
-            //      ArrayList values = new ArrayList();
-            //      bool error = false;
-            //      values = VideoDatabase.ExecuteRuleSql(rule, "movieinfo.idMovie", out error);
-
-            //      if (error)
-            //      {
-            //        continue;
-            //      }
-
-            //      if (values.Count > 0 && values.Contains(movie.ID.ToString()))
-            //      {
-            //        VideoDatabase.AddUserGroupToMovie(movie.ID, VideoDatabase.AddUserGroup(group));
-            //      }
-            //    }
-            //    catch (Exception)
-            //    {
-            //    }
-            //  }
-            //}
 
             #endregion
 
@@ -5251,6 +5208,12 @@ namespace MediaPortal.Video.Database
 
       #region Movie fields
 
+      // Filenames
+      foreach (string strMovieFile in movieFiles)
+      {
+        CreateXmlNode(mainNode, doc, "filenameandpath", strMovieFile);
+      }
+      
       // Title
       CreateXmlNode(mainNode, doc, "title", movieDetails.Title);
       // Sort Title
@@ -5262,6 +5225,7 @@ namespace MediaPortal.Video.Database
       {
         CreateXmlNode(mainNode, doc, "sorttitle", movieDetails.Title);
       }
+      
       //  movie IMDB number
       CreateXmlNode(mainNode, doc, "imdb", movieDetails.IMDBNumber);
       //  Language
@@ -5352,19 +5316,12 @@ namespace MediaPortal.Video.Database
       
       if (szGenres.IndexOf("/") >= 0)
       {
-        subNode = doc.CreateElement("genres");
         Tokens f = new Tokens(szGenres, new[] { '/' });
         
         foreach (string strGenre in f)
         {
-          CreateXmlNode(subNode, doc, "genre", strGenre.Trim());
+          CreateXmlNode(mainNode, doc, "genre", strGenre.Trim());
         }
-        
-        mainNode.AppendChild(subNode);
-      }
-      else
-      {
-        CreateXmlNode(mainNode, doc, "genre", szGenres.Trim());
       }
       
       // Cast
@@ -5404,16 +5361,15 @@ namespace MediaPortal.Video.Database
 
       if (userGroups.Count > 0)
       {
-        subNode = doc.CreateElement("usergroups");
-        
         foreach (string userGroup in userGroups)
         {
-          CreateXmlNode(subNode, doc, "usergroup", userGroup);
+          CreateXmlNode(mainNode, doc, "set", userGroup);
         }
-
-        mainNode.AppendChild(subNode);
       }
       
+      // Trailer
+      CreateXmlNode(mainNode, doc, "trailer", string.Empty);
+
       #endregion
 
       // End and save
