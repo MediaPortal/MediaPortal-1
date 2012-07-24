@@ -201,7 +201,6 @@ namespace MpeInstaller
       chk_stable.Checked = _settings.ShowOnlyStable;
       chk_dependency.Checked = _settings.ShowOnlyCompatible;
       numeric_Days.Value = _settings.UpdateDays;
-      FilterList();
       chk_update_CheckedChanged(null, null);
       _loading = false;
       extensionListControl.UnInstallExtension += extensionListControl_UnInstallExtension;
@@ -484,6 +483,7 @@ namespace MpeInstaller
 
     private void MainForm_Load(object sender, EventArgs e)
     {
+      FilterList();
       RefreshLists();
     }
 
@@ -763,14 +763,16 @@ namespace MpeInstaller
         RefreshLists();
       }
     }
+
     private void chk_dependency_CheckedChanged(object sender, EventArgs e)
     {
-      chk_update_CheckedChanged(null, null);
-      FilterList();
-      RefreshLists();
+      if (!_loading)
+      {
+        chk_update_CheckedChanged(null, null);
+        FilterList();
+        RefreshLists();
+      }
     }
-
-
 
   }
 }

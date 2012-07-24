@@ -39,24 +39,35 @@ namespace MpeCore.Classes
     public List<string> IgnoredUpdates { get; set; }
 
     /// <summary>
-    /// Gets the unique list of extensions with hightess version
+    /// Gets the unique list of extensions with highest version
     /// </summary>
     /// <returns></returns>
     public ExtensionCollection GetUniqueList()
     {
-      List<string> ids = new List<string>();
+      Dictionary<string, PackageClass> ids = new Dictionary<string, PackageClass>();
+      
       foreach (PackageClass item in Items)
       {
         if (item.IsHiden)
           continue;
-        if (!ids.Contains(item.GeneralInfo.Id))
-          ids.Add(item.GeneralInfo.Id);
+
+        PackageClass currentVersion = null;
+        if (!ids.TryGetValue(item.GeneralInfo.Id, out currentVersion))
+        {
+          ids.Add(item.GeneralInfo.Id, item);
+        }
+        else
+        {
+          // overwrite if has a higher version
+          if (item.GeneralInfo.Version.CompareTo(currentVersion.GeneralInfo.Version) > 0)
+          {
+            ids[item.GeneralInfo.Id] = item;
+          }
+        }
       }
+
       var collection = new ExtensionCollection();
-      foreach (string id in ids)
-      {
-        collection.Add(Get(id));
-      }
+      foreach (var package in ids.Values) collection.Add(package);
       return collection;
     }
 

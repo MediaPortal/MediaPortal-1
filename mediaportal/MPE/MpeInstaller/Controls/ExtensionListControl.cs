@@ -62,6 +62,7 @@ namespace MpeInstaller.Controls
 
     public void Set(ExtensionCollection collection)
     {
+      flowLayoutPanel1.SuspendLayout();
       collection.Sort();
       comboBox1.Items.Clear();
       comboBox1.Items.Add("All");
@@ -79,6 +80,7 @@ namespace MpeInstaller.Controls
         if (tagList.Value > 1)
           comboBox1.Items.Add(tagList.Key);
       }
+      flowLayoutPanel1.ResumeLayout();
       flowLayoutPanel1_SizeChanged(this, EventArgs.Empty);
     }
 
