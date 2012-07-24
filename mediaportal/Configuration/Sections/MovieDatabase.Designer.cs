@@ -2993,6 +2993,7 @@ namespace MediaPortal.Configuration.Sections
       this.chbUseNfoScraperOnly.Text = "Use internal nfo scraper only";
       this.toolTipMPvdb.SetToolTip(this.chbUseNfoScraperOnly, resources.GetString("chbUseNfoScraperOnly.ToolTip"));
       this.chbUseNfoScraperOnly.UseVisualStyleBackColor = true;
+      this.chbUseNfoScraperOnly.CheckedChanged += new System.EventHandler(this.chbUseNfoScraperOnly_CheckedChanged);
       // 
       // tabControl1
       // 

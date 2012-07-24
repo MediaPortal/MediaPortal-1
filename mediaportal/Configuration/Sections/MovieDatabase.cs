@@ -1310,7 +1310,6 @@ namespace MediaPortal.Configuration.Sections
         strFilenameAndPath = listViewFiles.Items[0].Text;
       }
       
-      string title = cbTitle.Items[cbTitle.SelectedIndex].ToString();
       buttonLookupMovie.Enabled = false;
       btnSave.Enabled = false;
       tabControl2.Enabled = false; // Subtab options for main
@@ -1335,8 +1334,14 @@ namespace MediaPortal.Configuration.Sections
       movieDetails.Path = path;
       movieDetails.File = filename;
       
+      if (chbUseNfoScraperOnly.Checked)
+      {
+        VideoDatabase.ImportNfoUsingVideoFile(strFilenameAndPath);
+        VideoDatabase.GetMovieInfoById(movieDetails.ID, ref movieDetails);
+        MessageBox.Show("Nfo file imported");
+      }
       // Search by IMDB ID number 
-      if (_refreshByImdBid == false)
+      else if (_refreshByImdBid == false)
       {
         // Clean old actors info
         if (CurrentMovie.ID > 0)
@@ -1364,6 +1369,9 @@ namespace MediaPortal.Configuration.Sections
       btnSave.Enabled = true;
       tabControl2.Enabled = true; // Subtab options for main
       tabControl1.Enabled = true; // Main tab (settings, scan, editor)
+
+      UpdateActiveMovieImageAndThumbs(tbImageLocation.Text, CurrentMovie.ID, CurrentMovie.Title);
+      RefreshMovie(movieDetails.ID, cbTitle.SelectedIndex);
     }
 
     private void GetInfoFromIMDB(ref IMDBMovie movieDetails, bool fuzzyMatch)
@@ -1545,6 +1553,9 @@ namespace MediaPortal.Configuration.Sections
         MessageBox.Show("Disc # is invalid and has not been stored. Enter an integer between 0 and 999", "Information",
                         MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
+
+      MessageBox.Show("Movie info saved");
+
       // Refresh movies if new is added manualy
       if (cbTitle.SelectedIndex == cbTitle.Items.Count - 1)
       {
@@ -4771,8 +4782,37 @@ namespace MediaPortal.Configuration.Sections
       SaveSettings();
     }
 
-    #endregion
+    private void chbUseNfoScraperOnly_CheckedChanged(object sender, EventArgs e)
+    {
+      DisableScraperControls();
+    }
 
+    private void DisableScraperControls()
+    {
+      if (!chbUseNfoScraperOnly.Checked)
+      {
+        lvDatabase.Enabled = true;
+        bDatabaseUp.Enabled = true;
+        bDatabaseDown.Enabled = true;
+        mpNumericUpDownLimit.Enabled = true;
+        mpDeleteGrabber.Enabled = true;
+        mpComboBoxAvailableDatabases.Enabled = true;
+        mpButtonAddGrabber.Enabled = true;
+      }
+      else
+      {
+        lvDatabase.Enabled = false;
+        bDatabaseUp.Enabled = false;
+        bDatabaseDown.Enabled = false;
+        mpNumericUpDownLimit.Enabled = false;
+        mpDeleteGrabber.Enabled = false;
+        mpComboBoxAvailableDatabases.Enabled = false;
+        mpButtonAddGrabber.Enabled = false;
+      }
+    }
+
+    #endregion
+    
     #endregion
   }
 }

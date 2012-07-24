@@ -349,13 +349,10 @@ namespace MediaPortal.GUI.Video
             _currentFolder = lastFolder;
           }
         }
-        _switchRemovableDrives = xmlreader.GetValueAsBool("movies", "SwitchRemovableDrives", true);
-        
-        // Don't sort by sorttitle
-        _useSortTitle = xmlreader.GetValueAsBool("moviedatabase", "usesorttitle", false);
-        xmlreader.SetValueAsBool("moviedatabase", "usesorttitle", false);
 
+        _switchRemovableDrives = xmlreader.GetValueAsBool("movies", "SwitchRemovableDrives", true);
         _useOnlyNfoScraper = xmlreader.GetValueAsBool("moviedatabase", "useonlynfoscraper", false);
+
       }
 
       if (_currentFolder.Length > 0 && _currentFolder == _virtualStartDirectory)
@@ -424,6 +421,16 @@ namespace MediaPortal.GUI.Video
     {
       base.OnPageLoad();
 
+      base.LoadSettings();
+      
+      // This can't be in LoadSettings beacuse settings are loaded on MP start and it will disable SortTitle setting always
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
+      {
+        // Don't sort by sorttitle
+        _useSortTitle = xmlreader.GetValueAsBool("moviedatabase", "usesorttitle", false);
+        xmlreader.SetValueAsBool("moviedatabase", "usesorttitle", false);
+      }
+      
       if (!KeepVirtualDirectory(PreviousWindowId))
       {
         Reset();
