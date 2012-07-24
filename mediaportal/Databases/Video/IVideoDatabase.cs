@@ -157,6 +157,7 @@ namespace MediaPortal.Video.Database
     bool CheckActorImdbId(string id);
     void ImportNfo(string nfoFile);
     bool MakeNfo(int movieId);
+    void ImportNfoUsingVideoFile(string videoFile);
     void GetVideoFiles(string path, ref ArrayList availableFiles);
   }
 }

@@ -91,6 +91,8 @@ namespace MediaPortal.GUI.Video
     private Thread _imageSearchThread;
     private Thread _fanartRefreshThread;
 
+    private bool _useOnlyNfoScraper = false;
+
     #endregion
 
     public GUIVideoInfo()
@@ -111,6 +113,11 @@ namespace MediaPortal.GUI.Video
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
+
+      using (Profile.Settings xmlreader = new MPSettings())
+      {
+        _useOnlyNfoScraper = xmlreader.GetValueAsBool("moviedatabase", "useonlynfoscraper", false);
+      }
 
       this._isOverlayAllowed = true;
       GUIVideoOverlay videoOverlay = (GUIVideoOverlay)GUIWindowManager.GetWindow((int)Window.WINDOW_VIDEO_OVERLAY);
@@ -322,28 +329,15 @@ namespace MediaPortal.GUI.Video
         }
         // Movie info active, refresh movie
         
-        if (IMDBFetcher.RefreshIMDB(this, ref _currentMovie, false, false, true))
+        if (_useOnlyNfoScraper)
         {
-          if ((_imageSearchThread != null) && (_imageSearchThread.IsAlive))
-          {
-            _imageSearchThread.Abort();
-            _imageSearchThread = null;
-          }
-
-          _imdbCoverArtUrl = _currentMovie.ThumbURL;
-          _coverArtUrls = new string[1];
-          _coverArtUrls[0] = _imdbCoverArtUrl;
-          
-          ResetSpinControl();
-
-          Refresh(false);
-          SetActorGUIListItems();
-          Update();
-          // Start images search thread
-          SearchImages();
-          // Send global message that movie is refreshed/scanned
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
-          GUIWindowManager.SendMessage(msg);
+          VideoDatabase.ImportNfoUsingVideoFile(_currentMovie.VideoFileName);
+          VideoDatabase.GetMovieInfo(_currentMovie.VideoFileName, ref _currentMovie);
+          UpdateMovieAfterRefresh();
+        }
+        else if (IMDBFetcher.RefreshIMDB(this, ref _currentMovie, false, false, true))
+        {
+          UpdateMovieAfterRefresh();
         }
         return;
       }
@@ -486,7 +480,7 @@ namespace MediaPortal.GUI.Video
         RenameTitle();
       }
     }
-
+    
     protected override void OnShowContextMenu()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
@@ -1844,6 +1838,30 @@ namespace MediaPortal.GUI.Video
         if (listActors != null)
           xmlwriter.SetValue("VideoInfo", "itemid", listActors.SelectedListItemIndex);
       }
+    }
+
+    private void UpdateMovieAfterRefresh()
+    {
+      if ((_imageSearchThread != null) && (_imageSearchThread.IsAlive))
+      {
+        _imageSearchThread.Abort();
+        _imageSearchThread = null;
+      }
+
+      _imdbCoverArtUrl = _currentMovie.ThumbURL;
+      _coverArtUrls = new string[1];
+      _coverArtUrls[0] = _imdbCoverArtUrl;
+
+      ResetSpinControl();
+
+      Refresh(false);
+      SetActorGUIListItems();
+      Update();
+      // Start images search thread
+      SearchImages();
+      // Send global message that movie is refreshed/scanned
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
+      GUIWindowManager.SendMessage(msg);
     }
 
   }

@@ -1032,9 +1032,12 @@ namespace MediaPortal.GUI.Video
     {
       int maximumShares = 128;
       ArrayList availablePaths = new ArrayList();
+      bool _useOnlyNfoScraper = false;
 
       using (Profile.Settings xmlreader = new MPSettings())
       {
+        _useOnlyNfoScraper = xmlreader.GetValueAsBool("moviedatabase", "useonlynfoscraper", false);
+
         for (int index = 0; index < maximumShares; index++)
         {
           string sharePath = String.Format("sharepath{0}", index);
@@ -1048,7 +1051,22 @@ namespace MediaPortal.GUI.Video
           }
         }
 
-        IMDBFetcher.ScanIMDB(this, availablePaths, true, true, true, false);
+        if (!_useOnlyNfoScraper)
+        {
+          IMDBFetcher.ScanIMDB(this, availablePaths, true, true, true, false);
+        }
+        else
+        {
+          ArrayList nfoFiles = new ArrayList();
+          
+          foreach (string availablePath in availablePaths)
+          {
+            GetNfoFiles(availablePath, ref nfoFiles);
+          }
+          
+          IMDBFetcher fetcher = new IMDBFetcher(this);
+          fetcher.FetchNfo(nfoFiles);
+        }
         // Send global message that movie is refreshed/scanned
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendMessage(msg);
@@ -2658,6 +2676,16 @@ namespace MediaPortal.GUI.Video
               break;
           }
         }
+      }
+    }
+
+    private void GetNfoFiles(string path, ref ArrayList nfoFiles)
+    {
+      string[] files = Directory.GetFiles(path, "*.nfo", SearchOption.AllDirectories);
+
+      foreach (string file in files)
+      {
+        nfoFiles.Add(file);
       }
     }
     

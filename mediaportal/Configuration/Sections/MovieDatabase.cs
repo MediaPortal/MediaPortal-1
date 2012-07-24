@@ -320,9 +320,24 @@ namespace MediaPortal.Configuration.Sections
         }
       }
       
-      _conflictFiles = new ArrayList();
-      IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, skipCheckBox.Checked, true,
-                           refreshdbCheckBox.Checked);
+      if (chbUseNfoScraperOnly.Checked)
+      {
+        _nfoFiles = new ArrayList();
+
+        foreach (string availablePath in availablePaths)
+        {
+          GetNfoFiles(availablePath, ref _nfoFiles);
+        }
+        
+        ImportNfo();
+      }
+      else
+      {
+        _conflictFiles = new ArrayList();
+        IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, skipCheckBox.Checked, true,
+                             refreshdbCheckBox.Checked);
+      }
+      
       LoadMovies(0);
     }
 
@@ -1483,8 +1498,10 @@ namespace MediaPortal.Configuration.Sections
       details.IMDBNumber = tbIMDBNr.Text;
 
       VideoDatabase.SetMovieInfoById(details.ID, ref details, true);
+      
       // Add files to movie
       string strPath = string.Empty;
+      
       foreach (ListViewItem item in listViewFiles.Items)
       {
         string strFileName;
@@ -1492,11 +1509,17 @@ namespace MediaPortal.Configuration.Sections
         DatabaseUtility.Split(item.Text, out strPath, out strFileName);
         DatabaseUtility.RemoveInvalidChars(ref strPath);
         DatabaseUtility.RemoveInvalidChars(ref strFileName);
-
         int pathId = VideoDatabase.AddPath(strPath);
         VideoDatabase.AddFile(details.ID, pathId, strFileName);
       }
+
+      if (chbUseNfoScraperOnly.Checked)
+      {
+        VideoDatabase.MakeNfo(details.ID);
+      }
+
       string dvdLabel = string.Empty;
+
       if (GetValidatedDVDLabel(ref dvdLabel))
       {
         if (dvdLabel.Length > 0)
@@ -1849,6 +1872,8 @@ namespace MediaPortal.Configuration.Sections
 
         // Sort by "Sort title" db field
         chbUseSortTitle.Checked = xmlreader.GetValueAsBool("moviedatabase", "usesorttitle", false);
+        // Use only nfo scrapper
+        chbUseNfoScraperOnly.Checked = xmlreader.GetValueAsBool("moviedatabase", "useonlynfoscraper", false);
 
         // FanArt setting
         string configDir;
@@ -1940,7 +1965,9 @@ namespace MediaPortal.Configuration.Sections
 
         // SortTitle
         xmlwriter.SetValueAsBool("moviedatabase", "usesorttitle", chbUseSortTitle.Checked);
-
+        // nfo scraper only
+        xmlwriter.SetValueAsBool("moviedatabase", "useonlynfoscraper", chbUseNfoScraperOnly.Checked);
+        
         xmlwriter.SetValueAsBool("movies", "fuzzyMatching", _isFuzzyMatching);
         // FanArt
         xmlwriter.SetValueAsBool("moviedatabase", "usefanart", _useFanArt);
@@ -4406,6 +4433,11 @@ namespace MediaPortal.Configuration.Sections
 
       _nfoFiles = new ArrayList();
       GetNfoFiles(fBrowser.SelectedPath, ref _nfoFiles);
+      ImportNfo();
+    }
+
+    private void ImportNfo()
+    {
       notFoundMovie = new ArrayList();
 
       // Set refresh status for background worker

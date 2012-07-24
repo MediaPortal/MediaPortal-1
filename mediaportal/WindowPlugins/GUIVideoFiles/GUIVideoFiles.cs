@@ -169,6 +169,7 @@ namespace MediaPortal.GUI.Video
     private string _selectedFilename = string.Empty;
 
     private bool _useSortTitle = false;
+    private bool _useOnlyNfoScraper = false;
 
     #endregion
 
@@ -243,7 +244,23 @@ namespace MediaPortal.GUI.Video
           }
         }
 
-        IMDBFetcher.ScanIMDB(this, availablePaths, true, true, true, false);
+        if (!_useOnlyNfoScraper)
+        {
+          IMDBFetcher.ScanIMDB(this, availablePaths, true, true, true, false);
+        }
+        else
+        {
+          ArrayList nfoFiles = new ArrayList();
+
+          foreach (string availablePath in availablePaths)
+          {
+            GetNfoFiles(availablePath, ref nfoFiles);
+          }
+
+          IMDBFetcher fetcher = new IMDBFetcher(this);
+          fetcher.FetchNfo(nfoFiles);
+        }
+        
         // Send global message that movie is refreshed/scanned
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendMessage(msg);
@@ -337,6 +354,8 @@ namespace MediaPortal.GUI.Video
         // Don't sort by sorttitle
         _useSortTitle = xmlreader.GetValueAsBool("moviedatabase", "usesorttitle", false);
         xmlreader.SetValueAsBool("moviedatabase", "usesorttitle", false);
+
+        _useOnlyNfoScraper = xmlreader.GetValueAsBool("moviedatabase", "useonlynfoscraper", false);
       }
 
       if (_currentFolder.Length > 0 && _currentFolder == _virtualStartDirectory)
@@ -1056,6 +1075,19 @@ namespace MediaPortal.GUI.Video
         }
         else
         {
+          if (_useOnlyNfoScraper)
+          {
+            // Notify user that new fanart are downloaded
+            GUIDialogNotify dlgNotify =
+              (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
+            if (null != dlgNotify)
+            {
+              dlgNotify.SetHeading(GUILocalizeStrings.Get(1020)); //Information
+              dlgNotify.SetText(string.Format("Use only nfo import is active and no nfo file found for {0}", pItem.Label));
+              dlgNotify.DoModal(GetID);
+            }
+            return;
+          }
           // Check Internet connection
           if (!Win32API.IsConnectedToInternet())
           {

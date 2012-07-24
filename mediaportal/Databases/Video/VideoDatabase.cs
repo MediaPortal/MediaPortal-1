@@ -590,6 +590,11 @@ namespace MediaPortal.Video.Database
       return _database.MakeNfo(movieId);
     }
 
+    public static void ImportNfoUsingVideoFile(string videoFile)
+    {
+      _database.ImportNfoUsingVideoFile(videoFile);
+    }
+
     #endregion
 
     public static SQLiteResultSet GetResults(string sql)

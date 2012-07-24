@@ -4260,6 +4260,53 @@ namespace MediaPortal.Video.Database
       return true;
     }
 
+    public void ImportNfoUsingVideoFile(string videoFile)
+    {
+      try
+      {
+        string nfoFile = string.Empty;
+        string path = string.Empty;
+
+        if (videoFile.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase) >= 0)
+        {
+          //DVD folder
+          path = videoFile.Substring(0, videoFile.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase));
+        }
+        else if (videoFile.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV", StringComparison.InvariantCultureIgnoreCase) >= 0)
+        {
+          //BD folder
+          path = videoFile.Substring(0, videoFile.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV", StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        if (videoFile.ToUpperInvariant().Contains("VIDEO_TS.IFO") || videoFile.ToUpperInvariant().Contains("INDEX.BDMV"))
+        {
+          nfoFile = path + @"\" + Path.GetFileNameWithoutExtension(videoFile) + ".nfo";
+
+          if (!File.Exists(nfoFile))
+          {
+            nfoFile = path + @"\" + Path.GetFileNameWithoutExtension(path) + ".nfo";
+          }
+        }
+        else
+        {
+          nfoFile = Path.ChangeExtension(videoFile, ".nfo");
+        }
+
+        Util.Utils.RemoveStackEndings(ref nfoFile);
+
+        if (!File.Exists(nfoFile))
+        {
+          return;
+        }
+
+        ImportNfo(nfoFile);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Error importing nfo for file {0}:{1} ", videoFile, ex);
+      }
+    }
+
     public void ImportNfo(string nfoFile)
     {
       IMDBMovie movie = new IMDBMovie();
@@ -5107,7 +5154,39 @@ namespace MediaPortal.Video.Database
                 }
               }
             }
-            
+
+            // Add groups with rules
+            //ArrayList groups = new ArrayList();
+            //VideoDatabase.GetUserGroups(groups);
+
+            //foreach (string group in groups)
+            //{
+            //  string rule = VideoDatabase.GetUserGroupRule(group);
+
+            //  if (!string.IsNullOrEmpty(rule))
+            //  {
+            //    try
+            //    {
+            //      ArrayList values = new ArrayList();
+            //      bool error = false;
+            //      values = VideoDatabase.ExecuteRuleSql(rule, "movieinfo.idMovie", out error);
+
+            //      if (error)
+            //      {
+            //        continue;
+            //      }
+
+            //      if (values.Count > 0 && values.Contains(movie.ID.ToString()))
+            //      {
+            //        VideoDatabase.AddUserGroupToMovie(movie.ID, VideoDatabase.AddUserGroup(group));
+            //      }
+            //    }
+            //    catch (Exception)
+            //    {
+            //    }
+            //  }
+            //}
+
             #endregion
 
             VideoDatabase.SetMovieInfoById(id, ref movie, true);
@@ -5116,7 +5195,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        Log.Error("Error importing nfo file {0}:{1} ", nfoFile, ex);
+        Log.Error("videodatabase exception error importing nfo file {0}:{1} ", nfoFile, ex);
       }
     }
 

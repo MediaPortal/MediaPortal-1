@@ -24,12 +24,13 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MovieDatabase));
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
       this.toolTipMPvdb = new System.Windows.Forms.ToolTip(this.components);
       this.useFanartCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this._fuzzyMatchingCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -245,6 +246,8 @@ namespace MediaPortal.Configuration.Sections
       this.mpTextBox14 = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.preferFileNameCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbActorsListFetchSize = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.chbUseSortTitle = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.chbUseNfoScraperOnly = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageSettings = new System.Windows.Forms.TabPage();
       this.groupBoxActiveGrabbers = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -306,7 +309,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel12 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel13 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel14 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.chbUseSortTitle = new MediaPortal.UserInterface.Controls.MPCheckBox();
       ((System.ComponentModel.ISupportInitialize)(this.fanartQ)).BeginInit();
       this.tabControl2.SuspendLayout();
       this.tabPageTitle.SuspendLayout();
@@ -1852,14 +1854,14 @@ namespace MediaPortal.Configuration.Sections
       this.dgActorMovies.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
       this.dgActorMovies.BackgroundColor = System.Drawing.SystemColors.Window;
       this.dgActorMovies.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-      dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-      dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-      dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.dgActorMovies.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
+      dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+      dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+      dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.dgActorMovies.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
       this.dgActorMovies.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.dgActorMovies.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Year,
@@ -1879,8 +1881,8 @@ namespace MediaPortal.Configuration.Sections
       // Year
       // 
       this.Year.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-      dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-      this.Year.DefaultCellStyle = dataGridViewCellStyle8;
+      dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+      this.Year.DefaultCellStyle = dataGridViewCellStyle2;
       this.Year.HeaderText = "Year";
       this.Year.MinimumWidth = 60;
       this.Year.Name = "Year";
@@ -1889,8 +1891,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // Title
       // 
-      dataGridViewCellStyle9.SelectionForeColor = System.Drawing.Color.White;
-      this.Title.DefaultCellStyle = dataGridViewCellStyle9;
+      dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.White;
+      this.Title.DefaultCellStyle = dataGridViewCellStyle3;
       this.Title.HeaderText = "Title";
       this.Title.MinimumWidth = 220;
       this.Title.Name = "Title";
@@ -2963,6 +2965,35 @@ namespace MediaPortal.Configuration.Sections
         "\r\n");
       this.cbActorsListFetchSize.SelectedIndexChanged += new System.EventHandler(this.cbActorsListFetchSize_SelectedIndexChanged);
       // 
+      // chbUseSortTitle
+      // 
+      this.chbUseSortTitle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.chbUseSortTitle.AutoSize = true;
+      this.chbUseSortTitle.Checked = true;
+      this.chbUseSortTitle.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.chbUseSortTitle.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.chbUseSortTitle.Location = new System.Drawing.Point(15, 216);
+      this.chbUseSortTitle.Name = "chbUseSortTitle";
+      this.chbUseSortTitle.Size = new System.Drawing.Size(225, 17);
+      this.chbUseSortTitle.TabIndex = 51;
+      this.chbUseSortTitle.Text = "Use \"Sort title\" for sorting in GUI title views";
+      this.toolTipMPvdb.SetToolTip(this.chbUseSortTitle, "Use this option if you want to sort movies  in Media Portal\r\nby using \"Sort title" +
+        "\" instead of \"Title\" in any database view\r\nwhere movies are displayed by Title.");
+      this.chbUseSortTitle.UseVisualStyleBackColor = true;
+      // 
+      // chbUseNfoScraperOnly
+      // 
+      this.chbUseNfoScraperOnly.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.chbUseNfoScraperOnly.AutoSize = true;
+      this.chbUseNfoScraperOnly.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.chbUseNfoScraperOnly.Location = new System.Drawing.Point(14, 239);
+      this.chbUseNfoScraperOnly.Name = "chbUseNfoScraperOnly";
+      this.chbUseNfoScraperOnly.Size = new System.Drawing.Size(158, 17);
+      this.chbUseNfoScraperOnly.TabIndex = 52;
+      this.chbUseNfoScraperOnly.Text = "Use internal nfo scraper only";
+      this.toolTipMPvdb.SetToolTip(this.chbUseNfoScraperOnly, resources.GetString("chbUseNfoScraperOnly.ToolTip"));
+      this.chbUseNfoScraperOnly.UseVisualStyleBackColor = true;
+      // 
       // tabControl1
       // 
       this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -2993,6 +3024,7 @@ namespace MediaPortal.Configuration.Sections
       // groupBoxActiveGrabbers
       // 
       this.groupBoxActiveGrabbers.BackColor = System.Drawing.Color.Transparent;
+      this.groupBoxActiveGrabbers.Controls.Add(this.chbUseNfoScraperOnly);
       this.groupBoxActiveGrabbers.Controls.Add(this.chbUseSortTitle);
       this.groupBoxActiveGrabbers.Controls.Add(this.chbMovieInfoOnShares);
       this.groupBoxActiveGrabbers.Controls.Add(this.chbShowMovieInfoOnPlay);
@@ -3232,14 +3264,14 @@ namespace MediaPortal.Configuration.Sections
       this.dgShares.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
       this.dgShares.BackgroundColor = System.Drawing.SystemColors.Window;
       this.dgShares.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-      dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-      dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-      dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.dgShares.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
+      dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+      dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+      dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.dgShares.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
       this.dgShares.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.dgShares.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.shareName,
@@ -3258,8 +3290,8 @@ namespace MediaPortal.Configuration.Sections
       // shareName
       // 
       this.shareName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-      dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      this.shareName.DefaultCellStyle = dataGridViewCellStyle11;
+      dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      this.shareName.DefaultCellStyle = dataGridViewCellStyle5;
       this.shareName.HeaderText = "Name";
       this.shareName.Name = "shareName";
       this.shareName.ReadOnly = true;
@@ -3268,8 +3300,8 @@ namespace MediaPortal.Configuration.Sections
       // sharePath
       // 
       this.sharePath.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-      dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      this.sharePath.DefaultCellStyle = dataGridViewCellStyle12;
+      dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      this.sharePath.DefaultCellStyle = dataGridViewCellStyle6;
       this.sharePath.HeaderText = "Folder";
       this.sharePath.MinimumWidth = 50;
       this.sharePath.Name = "sharePath";
@@ -3693,22 +3725,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel14.TabIndex = 21;
       this.mpLabel14.Text = "MPAA Rating:";
       // 
-      // chbUseSortTitle
-      // 
-      this.chbUseSortTitle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.chbUseSortTitle.AutoSize = true;
-      this.chbUseSortTitle.Checked = true;
-      this.chbUseSortTitle.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.chbUseSortTitle.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.chbUseSortTitle.Location = new System.Drawing.Point(15, 216);
-      this.chbUseSortTitle.Name = "chbUseSortTitle";
-      this.chbUseSortTitle.Size = new System.Drawing.Size(225, 17);
-      this.chbUseSortTitle.TabIndex = 51;
-      this.chbUseSortTitle.Text = "Use \"Sort title\" for sorting in GUI title views";
-      this.toolTipMPvdb.SetToolTip(this.chbUseSortTitle, "Use this option if you want to sort movies  in Media Portal\r\nby using \"Sort title" +
-        "\" instead of \"Title\" in any database view\r\nwhere movies are displayed by Title.");
-      this.chbUseSortTitle.UseVisualStyleBackColor = true;
-      // 
       // MovieDatabase
       // 
       this.AutoSize = true;
@@ -4063,5 +4079,6 @@ namespace MediaPortal.Configuration.Sections
     private UserInterface.Controls.MPLabel mpLabel41;
     private UserInterface.Controls.MPTextBox tbSortTitle;
     private UserInterface.Controls.MPCheckBox chbUseSortTitle;
+    private UserInterface.Controls.MPCheckBox chbUseNfoScraperOnly;
   }
 }
