@@ -257,6 +257,16 @@ namespace MediaPortal.GUI.Video
       }
 
       SaveState();
+      
+      // Delete cover for fake movie
+      if (!_addToDatabase)
+      {
+        string titleExt = _currentMovie.Title + "{" + _currentMovie.ID + "}";
+        string coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
+        string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+        Util.Utils.FileDelete(coverArtImage);
+        Util.Utils.FileDelete(largeCoverArtImage);
+      }
       _addToDatabase = true;
 
       // Reset currentMovie variable if we go to windows which initialize that variable
@@ -372,15 +382,7 @@ namespace MediaPortal.GUI.Video
         string titleExt = string.Empty;
         
         // Title suffix for problem with covers and movie with the same name
-        if (!_addToDatabase)
-        {
-          titleExt = "MPFakeMovie" + "{" + _currentMovie.ID + "}";
-        }
-        else
-        {
-          titleExt = _currentMovie.Title + "{" + _currentMovie.ID + "}";
-        }
-        
+        titleExt = _currentMovie.Title + "{" + _currentMovie.ID + "}";
         string coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
         string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
         Util.Utils.FileDelete(coverArtImage);
@@ -430,6 +432,7 @@ namespace MediaPortal.GUI.Video
       {
         if (!_addToDatabase)
         {
+          btnWatched.Selected = false;
           return;
         }
 
@@ -790,15 +793,7 @@ namespace MediaPortal.GUI.Video
 
         if (imageUrl.Length > 0)
         {
-          if (!_addToDatabase)
-          {
-            titleExt = "MPFakeMovie" + "{" + _currentMovie.ID + "}";
-          }
-          else
-          {
-            titleExt = _currentMovie.Title + "{" + _currentMovie.ID + "}";
-          }
-          
+          titleExt = _currentMovie.Title + "{" + _currentMovie.ID + "}";
           coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
           largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
           //added by BoelShit
@@ -859,6 +854,7 @@ namespace MediaPortal.GUI.Video
           {
             int idMovie = _currentMovie.ID;
             System.Collections.ArrayList movies = new System.Collections.ArrayList();
+
             VideoDatabase.GetFilesForMovie(idMovie, ref movies);
             
             if (movies.Count > 0)
@@ -1557,11 +1553,6 @@ namespace MediaPortal.GUI.Video
     // Fanart refresh thread
     private void OnFanartRefresh()
     {
-      if (!_addToDatabase)
-      {
-        return;
-      }
-
       if (_currentMovie != null && Win32API.IsConnectedToInternet())
       {
         if ((_fanartRefreshThread != null) && (_fanartRefreshThread.IsAlive))
