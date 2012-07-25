@@ -24,6 +24,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using TvControl;
 using TvDatabase;
+using TvLibrary.Implementations.Helper.Providers;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using Gentle.Framework;
@@ -537,6 +538,8 @@ namespace SetupTv.Sections
         ch.LastGrabTime = Schedule.MinSchedule;
         ch.Persist();
       }
+      SkyUK.Instance.LastEPGGrabTime = DateTime.MinValue;
+      SkyItaly.Instance.LastEPGGrabTime = DateTime.MinValue;
 
       RemoteControl.Instance.EpgGrabberEnabled = true;
       MessageBox.Show("EPG grabber will restart in a few seconds..");
