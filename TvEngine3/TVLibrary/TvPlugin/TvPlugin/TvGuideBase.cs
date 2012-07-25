@@ -3551,7 +3551,7 @@ namespace TvPlugin
         {
           Program prog = (Program)progs[0];
           prog.Description = movieDetails.Plot;
-          prog.Genre = movieDetails.Genre;
+          // prog.Genre = movieDetails.Genre;
           prog.StarRating = (int)movieDetails.Rating;
           prog.Persist();
         }
