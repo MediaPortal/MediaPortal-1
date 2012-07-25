@@ -140,6 +140,7 @@ namespace MediaPortal.GUI.Video
       if (_currentMovie.ID == -1)
       {
         _addToDatabase = false;
+        _currentMovie.LastUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
       }
       
       // Refresh data in case that we open movie info after scan (some details missing)
