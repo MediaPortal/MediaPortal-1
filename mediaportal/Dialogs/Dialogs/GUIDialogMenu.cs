@@ -113,8 +113,6 @@ namespace MediaPortal.Dialogs
         msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, listView.GetID, 0, 0, 0, null);
         OnMessage(msg);
         selectedItemIndex = selected;
-        listView.Focus = true;
-        GUIControl.SelectItemControl(GetID, listView.GetID, selectedItemIndex);
       } 
     }
 
