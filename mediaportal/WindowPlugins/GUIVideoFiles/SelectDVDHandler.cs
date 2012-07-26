@@ -375,7 +375,10 @@ namespace MediaPortal.GUI.Video
           } // <-- file == empty
         } // of for (int x = 0; x < items.Count; ++x)
       }
-      catch (Exception){}
+      catch (Exception ex)
+      {
+        Log.Error("SelectDVDHandler: SetIMDbThumbs: {0}", ex.Message);
+      }
     }
     
     public bool IsDvdDirectory(string path)

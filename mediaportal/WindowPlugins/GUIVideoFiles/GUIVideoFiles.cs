@@ -404,7 +404,7 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
-      if (action.wID == Action.ActionType.ACTION_DELETE_ITEM)
+      if (action.wID == Action.ActionType.ACTION_DELETE_ITEM && _fileMenuEnabled)
       {
         ShowFileMenu(true);
       }
@@ -1677,8 +1677,9 @@ namespace MediaPortal.GUI.Video
         // Set movie duration
         VideoDatabase.SetMovieDuration(VideoDatabase.GetMovieId(files[0].ToString()), TotalMovieDuration);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("GUIVideoFiles: Movie duration exception: {0}", ex.Message);
       }
 
       return TotalMovieDuration;
@@ -2673,8 +2674,22 @@ namespace MediaPortal.GUI.Video
             {
               item.IsPlayed = played;
             }
-
-            if (!item.IsBdDvdFolder)
+            if (item.IsBdDvdFolder)
+            {
+              if (selectDvdHandler.IsDvdDirectory(item.Path))
+              {
+                item.Label3 = "DVD";
+              }
+              else
+              {
+                item.Label3 = "BD";
+              }
+            }
+            else if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
+            {
+              item.Label3 = "ISO";
+            }
+            else
             {
               item.Label3 = percentWatched + "% #" + timesWatched;
             }
@@ -2781,7 +2796,22 @@ namespace MediaPortal.GUI.Video
                   item.IsPlayed = played;
                 }
 
-                if (!item.IsBdDvdFolder)
+                if (item.IsBdDvdFolder)
+                {
+                  if (sDvd.IsDvdDirectory(item.Path))
+                  {
+                    item.Label3 = "DVD";
+                  }
+                  else
+                  {
+                    item.Label3 = "BD";
+                  }
+                }
+                else if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
+                {
+                  item.Label3 = "ISO";
+                }
+                else
                 {
                   item.Label3 = percentWatched + "% #" + timesWatched;
                 }
@@ -3492,14 +3522,14 @@ namespace MediaPortal.GUI.Video
       {
         if (item.IsFolder && (sDvd.IsDvdDirectory(item.Path) || sBd.IsBDDirectory(item.Path)))
         {
-          if (sDvd.IsDvdDirectory(item.Path))
-          {
-            item.Label2 = "DVD";
-          }
-          else
-          {
-            item.Label2 = "BD";
-          }
+          //if (sDvd.IsDvdDirectory(item.Path))
+          //{
+          //  item.Label2 = "DVD";
+          //}
+          //else
+          //{
+          //  item.Label2 = "BD";
+          //}
         }
         else
         {
@@ -3514,14 +3544,14 @@ namespace MediaPortal.GUI.Video
       {
         if (item.IsFolder && (sDvd.IsDvdDirectory(item.Path) || sBd.IsBDDirectory(item.Path)))
         {
-          if (sDvd.IsDvdDirectory(item.Path))
-          {
-            item.Label2 = "DVD";
-          }
-          else
-          {
-            item.Label2 = "BD";
-          }
+          //if (sDvd.IsDvdDirectory(item.Path))
+          //{
+          //  item.Label2 = "DVD";
+          //}
+          //else
+          //{
+          //  item.Label2 = "BD";
+          //}
         }
         else
         {

@@ -417,12 +417,19 @@ namespace MediaPortal.GUI.Video
 
     protected virtual void SetLabels()
     {
+      bool isHareView = false;
+      
+      if(GUIWindowManager.ActiveWindow == (int)Window.WINDOW_VIDEOS)
+      {
+        isHareView = true;
+      }
+
       for (int i = 0; i < facadeLayout.Count; ++i)
       {
         GUIListItem item = facadeLayout[i];
         IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
 
-        if (movie != null && movie.ID > 0 && !item.IsFolder)
+        if (movie != null && movie.ID > 0 && !item.IsFolder && !isHareView)
         {
           if (CurrentSortMethod == VideoSort.SortMethod.Name)
           {
@@ -496,16 +503,9 @@ namespace MediaPortal.GUI.Video
           }
           if (CurrentSortMethod == VideoSort.SortMethod.Name)
           {
-            if (item.IsFolder && (sDvd.IsDvdDirectory(item.Path) || sBd.IsBDDirectory(item.Path)))
+            if (item.IsFolder)
             {
-              if (sDvd.IsDvdDirectory(item.Path))
-              {
-                item.Label2 = "DVD";
-              }
-              else
-              {
-                item.Label2 = "BD";
-              }
+              item.Label2 = string.Empty;
             }
             else
             {
@@ -518,16 +518,9 @@ namespace MediaPortal.GUI.Video
           }
           else
           {
-            if (item.IsFolder && (sDvd.IsDvdDirectory(item.Path) || sBd.IsBDDirectory(item.Path)))
+            if (item.IsFolder)
             {
-              if (sDvd.IsDvdDirectory(item.Path))
-              {
-                item.Label2 = "DVD";
-              }
-              else
-              {
-                item.Label2 = "BD";
-              }
+              item.Label2 = string.Empty;
             }
             else
             {

@@ -904,7 +904,28 @@ namespace MediaPortal.GUI.Video
         item.DVDLabel = movie.DVDLabel;
         item.Rating = movie.Rating;
         item.IsPlayed = movie.Watched > 0;
-        item.Label3 = movie.WatchedPercent + "% #" + movie.WatchedCount;
+
+        try
+        {
+          if (item.Path.ToUpperInvariant().Contains(@"\VIDEO_TS"))
+          {
+            item.Label3 = "DVD" + " #" + movie.WatchedCount;;
+          }
+          else if (item.Path.ToUpperInvariant().Contains(@"\BDMV"))
+          {
+            item.Label3 = "BD" + " #" + movie.WatchedCount;
+          }
+          else if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
+          {
+            item.Label3 = "ISO" + " #" + movie.WatchedCount;;
+          }
+          else
+          {
+            item.Label3 = movie.WatchedPercent + "% #" + movie.WatchedCount;
+          }
+        }
+        catch (Exception ex){}
+        
         item.OnItemSelected += OnItemSelected;
         SetLabel(item);
         ((VideoViewHandler)handler).SetLabel(item.AlbumInfoTag as IMDBMovie, ref item);
