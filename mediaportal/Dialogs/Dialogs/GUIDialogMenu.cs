@@ -135,7 +135,7 @@ namespace MediaPortal.Dialogs
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
-      if (control == listView)
+      if (control == listView && listView.SelectedListItem != null)
       {
         selectedItemIndex = listView.SelectedListItemIndex;
         selectedItemLabel = listView.SelectedListItem.Label;
