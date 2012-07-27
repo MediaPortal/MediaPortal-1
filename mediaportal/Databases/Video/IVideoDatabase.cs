@@ -159,5 +159,8 @@ namespace MediaPortal.Video.Database
     bool MakeNfo(int movieId);
     void ImportNfoUsingVideoFile(string videoFile);
     void GetVideoFiles(string path, ref ArrayList availableFiles);
+    void FlushTransactionsToDisk();
+    void RevertFlushTransactionsToDisk();
+
   }
 }

@@ -652,5 +652,15 @@ namespace MediaPortal.Video.Database
         @"'1','2','3','4','5','6','7','8','9','''','(',')','[',']','{','}','""','!','#','$','%','&','/','+','-','<','>','.',',',':',';','§','|','_','\','@','€','~','^','ˇ','½','*'";
       return characters;
     }
+
+    public static void FlushTransactionsToDisk()
+    {
+      _database.FlushTransactionsToDisk();
+    }
+
+    public static void RevertFlushTransactionsToDisk()
+    {
+      _database.RevertFlushTransactionsToDisk();
+    }
   }
 }

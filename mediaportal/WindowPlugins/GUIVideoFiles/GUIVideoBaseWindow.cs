@@ -338,7 +338,7 @@ namespace MediaPortal.GUI.Video
         case VideoSort.SortMethod.Label:
           strLine = GUILocalizeStrings.Get(430);
           break;
-        case VideoSort.SortMethod.Unwatched:
+        case VideoSort.SortMethod.Watched:
           strLine = GUILocalizeStrings.Get(527);
           break;
         case VideoSort.SortMethod.Created:
@@ -538,35 +538,60 @@ namespace MediaPortal.GUI.Video
       {
         return;
       }
+
+      // Sorry for all the fuss with dlg selected index but there is a huge problem with it beacuse
+      // sort methods are in enums and they are not separate per view. Because some sort methods are not
+      // valid for share view we have problem with enums and dlg item index. I sorted out this by two
+      // variables maxCommonSortIndex and dbSortCount but they are need to implement manually on every new
+      // sort added. If there is a better way to handle this (with not meesing too much in code :)) I will
+      // appreciate fix.
+      
       dlg.Reset();
       dlg.SetHeading(495); // Sort options
-
-      // Watch for enums in VideoSort.cs - must be exactly as the enum order
-      dlg.AddLocalizedString(365); // name
-      dlg.AddLocalizedString(104); // date created (date)
-      dlg.AddLocalizedString(105); // size
+      int maxCommonSortIndex = -1; // Inrease by 1 when adding new common sort label(sort valid in share and db views))
+      int dbSortCount = 0; // increase by one when adding new database sort label
       
+      // Watch for enums in VideoSort.cs - must be exactly as the enum order
+
+      // Common sorts - group 1
+      dlg.AddLocalizedString(365); // 0 name
+      maxCommonSortIndex++;
+      dlg.AddLocalizedString(104); // 1 date created (date)
+      maxCommonSortIndex++;
+      dlg.AddLocalizedString(105); // 2 size
+      maxCommonSortIndex++;
+      dlg.AddLocalizedString(527); // 3 watched
+      maxCommonSortIndex++;
+      
+      // Database sorts - group 2
       if (GUIWindowManager.ActiveWindow != (int)Window.WINDOW_VIDEOS)
       {
-        dlg.AddLocalizedString(366); // year
-        dlg.AddLocalizedString(367); // rating
+        dlg.AddLocalizedString(366); // 4 year
+        dbSortCount++;
+        dlg.AddLocalizedString(367); // 5 rating
+        dbSortCount++;
       }
 
+      // Share sorts - group 3
       if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_VIDEOS)
       {
-        dlg.AddLocalizedString(430); // CD label
-      }
-
-      dlg.AddLocalizedString(527); // unwatched
-      
-      if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_VIDEOS)
-      {
-        dlg.AddLocalizedString(1221); // date modified
-        dlg.AddLocalizedString(1220); // date created
+        dlg.AddLocalizedString(430);  // 6 CD label
+        dlg.AddLocalizedString(1221); // 7 date modified
+        dlg.AddLocalizedString(1220); // 8 date created
       }
       
       // set the focus to currently used sort method
-      dlg.SelectedLabel = (int)CurrentSortMethod;
+
+      // we need to correct index only if sort method enum is greater then max common sort index in share view
+      if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_VIDEOS  // must be share view
+          && (int)CurrentSortMethod > maxCommonSortIndex) 
+      {
+        dlg.SelectedLabel = (int)CurrentSortMethod - dbSortCount;
+      }
+      else
+      {
+        dlg.SelectedLabel = (int)CurrentSortMethod;
+      }
 
       // show dialog and wait for result
       dlg.DoModal(GetID);
@@ -606,7 +631,7 @@ namespace MediaPortal.GUI.Video
           CurrentSortMethod = VideoSort.SortMethod.Label;
           break;
         case 527:
-          CurrentSortMethod = VideoSort.SortMethod.Unwatched;
+          CurrentSortMethod = VideoSort.SortMethod.Watched;
           break;
         default:
           CurrentSortMethod = VideoSort.SortMethod.Name;

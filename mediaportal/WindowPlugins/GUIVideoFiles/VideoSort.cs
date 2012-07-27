@@ -39,10 +39,10 @@ namespace MediaPortal.GUI.Video
       Name = 0,
       Date = 1,
       Size = 2,
-      Year = 3,
-      Rating = 4,
-      Label = 5,
-      Unwatched = 6,
+      Watched = 3,
+      Year = 4,
+      Rating = 5,
+      Label = 6,
       Modified = 7,
       Created = 8,
     }
@@ -339,7 +339,7 @@ namespace MediaPortal.GUI.Video
             return DateTime.Compare(item2.FileInfo.ModificationTime, item1.FileInfo.ModificationTime);
           }
         
-        case SortMethod.Unwatched:
+        case SortMethod.Watched:
           {
             int ret = 0;
             

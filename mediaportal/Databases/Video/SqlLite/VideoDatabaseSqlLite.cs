@@ -5672,5 +5672,16 @@ namespace MediaPortal.Video.Database
         return "";
       }
     }
+
+    public void FlushTransactionsToDisk ()
+    {
+      m_db.Execute("PRAGMA synchronous='FULL'");
+    }
+
+    public void RevertFlushTransactionsToDisk()
+    {
+      m_db.Execute("PRAGMA synchronous='OFF'");
+      
+    }
   }
 }
