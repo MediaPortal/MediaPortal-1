@@ -35,7 +35,7 @@ namespace MpeInstaller.Dialogs
   {
     private string Source;
     private string Dest;
-    public WebClient Client = new WebClient();
+    public CompressionWebClient Client = new CompressionWebClient();
 
     public DownloadFile()
     {

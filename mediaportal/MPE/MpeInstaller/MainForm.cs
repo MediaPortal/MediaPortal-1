@@ -470,8 +470,8 @@ namespace MpeInstaller
     private void RefreshLists()
     {
       lbl_lastupdate.Text = "Last update " + _settings.LastUpdate.ToString();
-      extensionListControl.Set(MpeCore.MpeInstaller.InstalledExtensions);
-      extensionListContro_all.Set(MpeCore.MpeInstaller.KnownExtensions.GetUniqueList());
+      extensionListControl.Set(MpeCore.MpeInstaller.InstalledExtensions, true);
+      extensionListContro_all.Set(MpeCore.MpeInstaller.KnownExtensions.GetUniqueList(), false);
     }
 
     private void extensionListControl_UnInstallExtension(object sender, PackageClass packageClass)
@@ -483,6 +483,20 @@ namespace MpeInstaller
 
     private void MainForm_Load(object sender, EventArgs e)
     {
+      // The default connection limit is 2 in .Net on most platforms! This means downloading two files will block all other WebRequests.
+      System.Net.ServicePointManager.DefaultConnectionLimit = 100;
+
+      // the first time a WebClient is used to download data, it will do a proxy discovery which can be slow (10 seconds)
+      // do this on startup in a background thread to have the discovery ready when before the UI might block
+      new Thread(() => 
+      { 
+        System.Net.WebRequest.DefaultWebProxy.GetProxy(new Uri("http://www.google.com")); 
+      }) 
+      { 
+        IsBackground = true, 
+        Name = "ProxyPrecacheDiscovery" 
+      }.Start();
+      
       FilterList();
       RefreshLists();
     }
@@ -719,6 +733,7 @@ namespace MpeInstaller
 
         indexUrls.Add(line.Split(';')[0]);
       }
+      File.Delete(tempUpdateIndex);
       MpeCore.MpeInstaller.SetInitialUrlIndex(indexUrls);
     }
 

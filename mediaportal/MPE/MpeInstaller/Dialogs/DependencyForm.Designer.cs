@@ -201,6 +201,7 @@ namespace MpeInstaller.Dialogs
       this.MinimumSize = new System.Drawing.Size(455, 263);
       this.Name = "DependencyForm";
       this.ShowIcon = false;
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "Dependencies";
       this.panel1.ResumeLayout(false);
       this.panel3.ResumeLayout(false);

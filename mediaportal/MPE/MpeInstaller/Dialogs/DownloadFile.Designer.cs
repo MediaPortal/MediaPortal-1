@@ -31,27 +31,24 @@
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
       this.button1 = new System.Windows.Forms.Button();
       this.label1 = new System.Windows.Forms.Label();
-      this.panel1 = new System.Windows.Forms.Panel();
-      this.panel2 = new System.Windows.Forms.Panel();
-      this.panel1.SuspendLayout();
-      this.panel2.SuspendLayout();
+      this.panelBottom = new System.Windows.Forms.Panel();
+      this.panelTop = new System.Windows.Forms.Panel();
+      this.panelBottom.SuspendLayout();
+      this.panelTop.SuspendLayout();
       this.SuspendLayout();
       // 
       // progressBar1
       // 
-      this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.progressBar1.Location = new System.Drawing.Point(6, 24);
+      this.progressBar1.Dock = System.Windows.Forms.DockStyle.Bottom;
+      this.progressBar1.Location = new System.Drawing.Point(3, 27);
+      this.progressBar1.MinimumSize = new System.Drawing.Size(0, 23);
       this.progressBar1.Name = "progressBar1";
-      this.progressBar1.Size = new System.Drawing.Size(496, 23);
+      this.progressBar1.Size = new System.Drawing.Size(514, 23);
       this.progressBar1.TabIndex = 0;
       // 
       // button1
       // 
-      this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.button1.AutoSize = true;
       this.button1.Location = new System.Drawing.Point(219, 6);
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(75, 23);
@@ -62,31 +59,39 @@
       // 
       // label1
       // 
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(3, 8);
+      this.label1.BackColor = System.Drawing.SystemColors.Control;
+      this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.label1.Location = new System.Drawing.Point(3, 3);
+      this.label1.MinimumSize = new System.Drawing.Size(0, 24);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(107, 13);
+      this.label1.Size = new System.Drawing.Size(514, 24);
       this.label1.TabIndex = 2;
       this.label1.Text = "Download starting ....";
+      this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
-      // panel1
+      // panelBottom
       // 
-      this.panel1.Controls.Add(this.button1);
-      this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-      this.panel1.Location = new System.Drawing.Point(0, 53);
-      this.panel1.Name = "panel1";
-      this.panel1.Size = new System.Drawing.Size(520, 34);
-      this.panel1.TabIndex = 3;
+      this.panelBottom.AutoSize = true;
+      this.panelBottom.Controls.Add(this.button1);
+      this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
+      this.panelBottom.Location = new System.Drawing.Point(0, 53);
+      this.panelBottom.MinimumSize = new System.Drawing.Size(0, 34);
+      this.panelBottom.Name = "panelBottom";
+      this.panelBottom.Size = new System.Drawing.Size(520, 34);
+      this.panelBottom.TabIndex = 3;
       // 
-      // panel2
+      // panelTop
       // 
-      this.panel2.Controls.Add(this.progressBar1);
-      this.panel2.Controls.Add(this.label1);
-      this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.panel2.Location = new System.Drawing.Point(0, 0);
-      this.panel2.Name = "panel2";
-      this.panel2.Size = new System.Drawing.Size(520, 53);
-      this.panel2.TabIndex = 4;
+      this.panelTop.AutoSize = true;
+      this.panelTop.Controls.Add(this.label1);
+      this.panelTop.Controls.Add(this.progressBar1);
+      this.panelTop.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.panelTop.Location = new System.Drawing.Point(0, 0);
+      this.panelTop.MinimumSize = new System.Drawing.Size(0, 53);
+      this.panelTop.Name = "panelTop";
+      this.panelTop.Padding = new System.Windows.Forms.Padding(3);
+      this.panelTop.Size = new System.Drawing.Size(520, 53);
+      this.panelTop.TabIndex = 4;
       // 
       // DownloadFile
       // 
@@ -95,19 +100,20 @@
       this.AutoSize = true;
       this.ClientSize = new System.Drawing.Size(520, 87);
       this.ControlBox = false;
-      this.Controls.Add(this.panel2);
-      this.Controls.Add(this.panel1);
+      this.Controls.Add(this.panelTop);
+      this.Controls.Add(this.panelBottom);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.MaximizeBox = false;
       this.MinimizeBox = false;
       this.Name = "DownloadFile";
-      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "Download";
       this.Shown += new System.EventHandler(this.DownloadFile_Shown);
-      this.panel1.ResumeLayout(false);
-      this.panel2.ResumeLayout(false);
-      this.panel2.PerformLayout();
+      this.panelBottom.ResumeLayout(false);
+      this.panelBottom.PerformLayout();
+      this.panelTop.ResumeLayout(false);
       this.ResumeLayout(false);
+      this.PerformLayout();
 
         }
 
@@ -116,7 +122,7 @@
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel panelBottom;
+        private System.Windows.Forms.Panel panelTop;
     }
 }

@@ -58,9 +58,9 @@ namespace MpeInstaller.Controls
       TagList = new Dictionary<string, int>();
     }
 
-    public ExtensionControl SelectedItem { get; set; }
+    public ExtensionControlHost SelectedItem { get; set; }
 
-    public void Set(ExtensionCollection collection)
+    public void Set(ExtensionCollection collection, bool isListOfInstalledExtensions)
     {
       flowLayoutPanel1.SuspendLayout();
       collection.Sort();
@@ -70,7 +70,9 @@ namespace MpeInstaller.Controls
       flowLayoutPanel1.Controls.Clear();
       foreach (PackageClass item in collection.Items)
       {
-        flowLayoutPanel1.Controls.Add(new ExtensionControl(item));
+        var extHostCtrl = new ExtensionControlHost();
+        extHostCtrl.Initialize(item, isListOfInstalledExtensions);
+        flowLayoutPanel1.Controls.Add(extHostCtrl);
         AddTags(item.GeneralInfo.TagList);
       }
       comboBox1.Text = "All";
@@ -95,31 +97,31 @@ namespace MpeInstaller.Controls
       }
     }
 
-    public void OnUninstallExtension(ExtensionControl control)
+    public void OnUninstallExtension(ExtensionControlExpanded control)
     {
       if (UnInstallExtension != null)
         UnInstallExtension(control, control.Package);
     }
 
-    public void OnUpdateExtension(ExtensionControl control)
+    public void OnUpdateExtension(ExtensionControlExpanded control)
     {
       if (UpdateExtension != null)
         UpdateExtension(control, control.Package, control.UpdatePackage);
     }
 
-    public void OnConfigureExtension(ExtensionControl control)
+    public void OnConfigureExtension(ExtensionControlExpanded control)
     {
       if (ConfigureExtension != null)
         ConfigureExtension(control, control.Package);
     }
 
-    public void OnInstallExtension(ExtensionControl control, PackageClass pak)
+    public void OnInstallExtension(ExtensionControlExpanded control, PackageClass pak)
     {
       if (InstallExtension != null)
         InstallExtension(control, pak);
     }
 
-    public void OnShowScreenShot(ExtensionControl control, PackageClass pak)
+    public void OnShowScreenShot(ExtensionControlExpanded control, PackageClass pak)
     {
       if (ShowScreenShot != null)
         ShowScreenShot(control, pak);
@@ -130,7 +132,7 @@ namespace MpeInstaller.Controls
       flowLayoutPanel1.SuspendLayout();
       foreach (var control in flowLayoutPanel1.Controls)
       {
-        var cnt = control as ExtensionControl;
+        var cnt = control as ExtensionControlHost;
         if (cnt != null)
         {
           cnt.Visible = cnt.Filter(filter, tag);

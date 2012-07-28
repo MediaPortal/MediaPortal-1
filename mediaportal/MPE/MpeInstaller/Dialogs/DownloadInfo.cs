@@ -20,12 +20,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Net;
-using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using MpeCore.Classes;
 
@@ -33,48 +30,14 @@ namespace MpeInstaller.Dialogs
 {
   public partial class DownloadInfo : Form
   {
-    public WebClient Client = new WebClient();
     public bool silent = false;
     private int counter = 0;
-    private string tempFile = "";
     private List<string> onlineFiles = new List<string>();
+    int runningThreads = 0;
 
     public DownloadInfo()
     {
       InitializeComponent();
-      Client.DownloadProgressChanged += Client_DownloadProgressChanged;
-      Client.DownloadFileCompleted += Client_DownloadFileCompleted;
-    }
-
-    private void Client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
-    {
-      if (e.Error == null)
-      {
-        try
-        {
-          MpeCore.MpeInstaller.KnownExtensions.Add(ExtensionCollection.Load(tempFile));
-          File.Delete(tempFile);
-        }
-        catch (Exception)
-        {
-          listBox1.Items.Add("Error to download");
-        }
-      }
-      counter++;
-
-      if (counter >= onlineFiles.Count)
-      {
-        MpeCore.MpeInstaller.Save();
-        Close();
-        return;
-      }
-      NextItem();
-    }
-
-    private void Client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-    {
-      progressBar2.Value = e.ProgressPercentage;
-      label1.Text = string.Format("{0} kb/{1} kb", e.BytesReceived / 1024, e.TotalBytesToReceive / 1024);
     }
 
     private void DownloadInfo_Shown(object sender, EventArgs e)
@@ -90,28 +53,68 @@ namespace MpeInstaller.Dialogs
         Close();
         return;
       }
-      progressBar1.Maximum = onlineFiles.Count + 2;
-      NextItem();
+      progressBar1.Maximum = onlineFiles.Count;
+      runningThreads = 0;
+      for (int i = 1; i <= 5; i++)
+      {
+        new Thread(DownloadThread).Start();
+      }
     }
 
-    private void NextItem()
+    void DownloadThread()
     {
+      lock (this) { runningThreads++; }
       try
       {
-        string onlineFile = onlineFiles[counter];
-        tempFile = Path.GetTempFileName();
-        listBox1.Items.Add(onlineFile);
-        progressBar1.Value++;
-        progressBar1.Update();
-        listBox1.Update();
-        Update();
-        Client.DownloadFileAsync(new Uri(onlineFile), tempFile);
+        string tempFile = Path.GetTempFileName();
+        CompressionWebClient client = new CompressionWebClient();
+        int index = -1;
+        while (index < onlineFiles.Count)
+        {
+          lock (this)
+          {
+            counter++;
+            index = counter;
+          }
+          if (index >= onlineFiles.Count)
+            return;
+          string onlineFile = onlineFiles[index];
+          bool success = false;
+          try
+          {
+            client.DownloadFile(onlineFile, tempFile);
+            MpeCore.MpeInstaller.KnownExtensions.Add(ExtensionCollection.Load(tempFile));
+            success = true;
+          }
+          catch (Exception ex)
+          {
+            System.Diagnostics.Debug.WriteLine(string.Format("Error downloading '{0}': {1}", onlineFile, ex.Message));
+          }
+          Invoke((Action)(() =>
+          {
+            progressBar1.Value++;
+            listBox1.Items.Add(string.Format("{0}{1}", success ? "+" : "-", onlineFile));
+            listBox1.SelectedIndex = listBox1.Items.Count - 1;
+            listBox1.SelectedIndex = -1;
+          }));
+          if (File.Exists(tempFile)) File.Delete(tempFile);
+        }
       }
-      catch (Exception ex)
+      catch { }
+      finally
       {
-        if (!silent)
-          MessageBox.Show("Error :" + ex.Message);
-        listBox1.Items.Add("Error download");
+        lock (this) 
+        { 
+          runningThreads--;
+          if (runningThreads <= 0)
+          {
+            MpeCore.MpeInstaller.Save();
+            Invoke((Action)(() =>
+            {
+              Close();
+            }));
+          }
+        }
       }
     }
   }

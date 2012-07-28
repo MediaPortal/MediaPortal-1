@@ -71,12 +71,27 @@
     <Compile Include="..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Classes\CompressionWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Classes\ProgramArguments.cs" />
-    <Compile Include="Controls\ExtensionControl.cs">
+    <Compile Include="Controls\ExtensionControlExpanded.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\ExtensionControl.Designer.cs">
-      <DependentUpon>ExtensionControl.cs</DependentUpon>
+    <Compile Include="Controls\ExtensionControlExpanded.Designer.cs">
+      <DependentUpon>ExtensionControlExpanded.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ExtensionControlCollapsed.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ExtensionControlCollapsed.Designer.cs">
+      <DependentUpon>ExtensionControlCollapsed.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ExtensionControlHost.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ExtensionControlHost.Designer.cs">
+      <DependentUpon>ExtensionControlHost.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\ExtensionListControl.cs">
       <SubType>UserControl</SubType>
@@ -134,9 +149,15 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Controls\ExtensionControl.resx">
-      <DependentUpon>ExtensionControl.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\ExtensionControlExpanded.resx">
+      <DependentUpon>ExtensionControlExpanded.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ExtensionControlCollapsed.resx">
+      <DependentUpon>ExtensionControlCollapsed.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ExtensionControlHost.resx">
+      <DependentUpon>ExtensionControlHost.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ExtensionListControl.resx">
       <DependentUpon>ExtensionListControl.cs</DependentUpon>
