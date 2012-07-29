@@ -67,13 +67,17 @@ namespace MpeInstaller.Controls
     {
       this.Package = package;
       this.isInstalled = isInstalled;
+      this.meetsAllDependencies = !package.CheckDependency(true);
 
-      string name = string.Format("{0} - {1}", package.GeneralInfo.Name, package.GeneralInfo.Author);
-      string version = package.GeneralInfo.Version.ToString();
-      meetsAllDependencies = !package.CheckDependency(true);
       if (isInstalled) UpdatePackage = MpeCore.MpeInstaller.KnownExtensions.GetUpdate(package);
 
-      extensionControlCollapsed.Initialize(name, version, meetsAllDependencies, UpdatePackage != null ? UpdatePackage.GeneralInfo.Version.ToString() : null, CollapsedItemClicked);
+      extensionControlCollapsed.Initialize(
+        package.GeneralInfo.Name, 
+        package.GeneralInfo.Author, 
+        package.GeneralInfo.Version.ToString(), 
+        meetsAllDependencies, 
+        UpdatePackage != null ? UpdatePackage.GeneralInfo.Version.ToString() : null, 
+        CollapsedItemClicked);
 
       Height = extensionControlCollapsed.PreferredSize.Height + Margin.Top + Margin.Bottom;
     }

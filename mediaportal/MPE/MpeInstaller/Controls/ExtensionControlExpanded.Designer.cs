@@ -49,8 +49,10 @@
       this.panelTop = new System.Windows.Forms.Panel();
       this.panelBottom = new System.Windows.Forms.Panel();
       this.panelMiddle = new System.Windows.Forms.Panel();
-      this.panelMiddleRight = new System.Windows.Forms.Panel();
       this.panelMiddleLeft = new System.Windows.Forms.Panel();
+      this.panelMiddleRight = new System.Windows.Forms.Panel();
+      this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
+      this.lblAuthors = new System.Windows.Forms.Label();
       ((System.ComponentModel.ISupportInitialize)(this.img_dep)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.img_update)).BeginInit();
       this.toolStrip1.SuspendLayout();
@@ -59,21 +61,24 @@
       this.panelTop.SuspendLayout();
       this.panelBottom.SuspendLayout();
       this.panelMiddle.SuspendLayout();
-      this.panelMiddleRight.SuspendLayout();
       this.panelMiddleLeft.SuspendLayout();
+      this.panelMiddleRight.SuspendLayout();
+      this.flowLayoutPanel2.SuspendLayout();
       this.SuspendLayout();
       // 
       // lbl_name
       // 
       this.lbl_name.AutoEllipsis = true;
-      this.lbl_name.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.lbl_name.AutoSize = true;
       this.lbl_name.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.lbl_name.ForeColor = System.Drawing.Color.Blue;
-      this.lbl_name.Location = new System.Drawing.Point(0, 0);
+      this.lbl_name.Location = new System.Drawing.Point(0, 2);
+      this.lbl_name.Margin = new System.Windows.Forms.Padding(0, 2, 0, 0);
       this.lbl_name.Name = "lbl_name";
-      this.lbl_name.Size = new System.Drawing.Size(448, 20);
+      this.lbl_name.Padding = new System.Windows.Forms.Padding(1, 3, 0, 0);
+      this.lbl_name.Size = new System.Drawing.Size(99, 16);
       this.lbl_name.TabIndex = 0;
-      this.lbl_name.Text = "Extension Name - Author";
+      this.lbl_name.Text = "Extension Name";
       this.lbl_name.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // btn_uninstall
@@ -109,7 +114,7 @@
       this.lbl_version.MaximumSize = new System.Drawing.Size(100, 0);
       this.lbl_version.MinimumSize = new System.Drawing.Size(100, 0);
       this.lbl_version.Name = "lbl_version";
-      this.lbl_version.Size = new System.Drawing.Size(100, 0);
+      this.lbl_version.Size = new System.Drawing.Size(100, 20);
       this.lbl_version.TabIndex = 4;
       this.lbl_version.Text = "3.2.55.2365";
       this.lbl_version.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -263,7 +268,7 @@
       // 
       // panelTop
       // 
-      this.panelTop.Controls.Add(this.lbl_name);
+      this.panelTop.Controls.Add(this.flowLayoutPanel2);
       this.panelTop.Controls.Add(this.lbl_version);
       this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
       this.panelTop.Location = new System.Drawing.Point(1, 1);
@@ -293,6 +298,17 @@
       this.panelMiddle.Size = new System.Drawing.Size(548, 73);
       this.panelMiddle.TabIndex = 39;
       // 
+      // panelMiddleLeft
+      // 
+      this.panelMiddleLeft.Controls.Add(this.img_update);
+      this.panelMiddleLeft.Controls.Add(this.img_dep);
+      this.panelMiddleLeft.Controls.Add(this.img_logo);
+      this.panelMiddleLeft.Dock = System.Windows.Forms.DockStyle.Left;
+      this.panelMiddleLeft.Location = new System.Drawing.Point(0, 0);
+      this.panelMiddleLeft.Name = "panelMiddleLeft";
+      this.panelMiddleLeft.Size = new System.Drawing.Size(110, 73);
+      this.panelMiddleLeft.TabIndex = 1;
+      // 
       // panelMiddleRight
       // 
       this.panelMiddleRight.Controls.Add(this.btn_home);
@@ -304,16 +320,32 @@
       this.panelMiddleRight.Size = new System.Drawing.Size(36, 73);
       this.panelMiddleRight.TabIndex = 0;
       // 
-      // panelMiddleLeft
+      // flowLayoutPanel2
       // 
-      this.panelMiddleLeft.Controls.Add(this.img_update);
-      this.panelMiddleLeft.Controls.Add(this.img_dep);
-      this.panelMiddleLeft.Controls.Add(this.img_logo);
-      this.panelMiddleLeft.Dock = System.Windows.Forms.DockStyle.Left;
-      this.panelMiddleLeft.Location = new System.Drawing.Point(0, 0);
-      this.panelMiddleLeft.Name = "panelMiddleLeft";
-      this.panelMiddleLeft.Size = new System.Drawing.Size(110, 73);
-      this.panelMiddleLeft.TabIndex = 1;
+      this.flowLayoutPanel2.Controls.Add(this.lbl_name);
+      this.flowLayoutPanel2.Controls.Add(this.lblAuthors);
+      this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.flowLayoutPanel2.Location = new System.Drawing.Point(0, 0);
+      this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
+      this.flowLayoutPanel2.Name = "flowLayoutPanel2";
+      this.flowLayoutPanel2.Size = new System.Drawing.Size(448, 20);
+      this.flowLayoutPanel2.TabIndex = 5;
+      this.flowLayoutPanel2.WrapContents = false;
+      // 
+      // lblAuthors
+      // 
+      this.lblAuthors.AutoEllipsis = true;
+      this.lblAuthors.AutoSize = true;
+      this.lblAuthors.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.lblAuthors.ForeColor = System.Drawing.Color.RoyalBlue;
+      this.lblAuthors.Location = new System.Drawing.Point(99, 2);
+      this.lblAuthors.Margin = new System.Windows.Forms.Padding(0, 2, 0, 0);
+      this.lblAuthors.Name = "lblAuthors";
+      this.lblAuthors.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
+      this.lblAuthors.Size = new System.Drawing.Size(42, 16);
+      this.lblAuthors.TabIndex = 45;
+      this.lblAuthors.Text = "authors";
+      this.lblAuthors.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
       // 
       // ExtensionControlExpanded
       // 
@@ -339,8 +371,10 @@
       this.panelBottom.ResumeLayout(false);
       this.panelBottom.PerformLayout();
       this.panelMiddle.ResumeLayout(false);
-      this.panelMiddleRight.ResumeLayout(false);
       this.panelMiddleLeft.ResumeLayout(false);
+      this.panelMiddleRight.ResumeLayout(false);
+      this.flowLayoutPanel2.ResumeLayout(false);
+      this.flowLayoutPanel2.PerformLayout();
       this.ResumeLayout(false);
 
         }
@@ -369,5 +403,7 @@
         private System.Windows.Forms.Panel panelMiddle;
         private System.Windows.Forms.Panel panelMiddleLeft;
         private System.Windows.Forms.Panel panelMiddleRight;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
+        private System.Windows.Forms.Label lblAuthors;
     }
 }

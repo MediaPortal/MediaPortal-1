@@ -35,9 +35,12 @@
       this.img_update = new System.Windows.Forms.PictureBox();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
       this.panel1 = new System.Windows.Forms.Panel();
+      this.lblAuthors = new System.Windows.Forms.Label();
+      this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
       ((System.ComponentModel.ISupportInitialize)(this.img_dep)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.img_update)).BeginInit();
       this.panel1.SuspendLayout();
+      this.flowLayoutPanel1.SuspendLayout();
       this.SuspendLayout();
       // 
       // lbl_version
@@ -57,14 +60,16 @@
       // lbl_name
       // 
       this.lbl_name.AutoEllipsis = true;
-      this.lbl_name.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.lbl_name.AutoSize = true;
       this.lbl_name.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.lbl_name.ForeColor = System.Drawing.SystemColors.ControlText;
-      this.lbl_name.Location = new System.Drawing.Point(1, 1);
+      this.lbl_name.Location = new System.Drawing.Point(0, 2);
+      this.lbl_name.Margin = new System.Windows.Forms.Padding(0, 2, 0, 0);
       this.lbl_name.Name = "lbl_name";
-      this.lbl_name.Size = new System.Drawing.Size(398, 20);
+      this.lbl_name.Padding = new System.Windows.Forms.Padding(1, 3, 0, 0);
+      this.lbl_name.Size = new System.Drawing.Size(99, 16);
       this.lbl_name.TabIndex = 0;
-      this.lbl_name.Text = "Extension Name - Author";
+      this.lbl_name.Text = "Extension Name";
       this.lbl_name.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       this.lbl_name.Click += new System.EventHandler(this.ExtensionControlCollapsed_Click);
       // 
@@ -114,12 +119,41 @@
       this.panel1.Size = new System.Drawing.Size(150, 20);
       this.panel1.TabIndex = 43;
       // 
+      // lblAuthors
+      // 
+      this.lblAuthors.AutoEllipsis = true;
+      this.lblAuthors.AutoSize = true;
+      this.lblAuthors.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.lblAuthors.ForeColor = System.Drawing.Color.DimGray;
+      this.lblAuthors.Location = new System.Drawing.Point(99, 2);
+      this.lblAuthors.Margin = new System.Windows.Forms.Padding(0, 2, 0, 0);
+      this.lblAuthors.Name = "lblAuthors";
+      this.lblAuthors.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
+      this.lblAuthors.Size = new System.Drawing.Size(42, 16);
+      this.lblAuthors.TabIndex = 44;
+      this.lblAuthors.Text = "authors";
+      this.lblAuthors.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+      this.lblAuthors.Click += new System.EventHandler(this.ExtensionControlCollapsed_Click);
+      // 
+      // flowLayoutPanel1
+      // 
+      this.flowLayoutPanel1.Controls.Add(this.lbl_name);
+      this.flowLayoutPanel1.Controls.Add(this.lblAuthors);
+      this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.flowLayoutPanel1.Location = new System.Drawing.Point(1, 1);
+      this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
+      this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+      this.flowLayoutPanel1.Size = new System.Drawing.Size(398, 20);
+      this.flowLayoutPanel1.TabIndex = 45;
+      this.flowLayoutPanel1.WrapContents = false;
+      this.flowLayoutPanel1.Click += new System.EventHandler(this.ExtensionControlCollapsed_Click);
+      // 
       // ExtensionControlCollapsed
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
       this.AutoSize = true;
-      this.Controls.Add(this.lbl_name);
+      this.Controls.Add(this.flowLayoutPanel1);
       this.Controls.Add(this.panel1);
       this.MinimumSize = new System.Drawing.Size(0, 22);
       this.Name = "ExtensionControlCollapsed";
@@ -129,6 +163,8 @@
       ((System.ComponentModel.ISupportInitialize)(this.img_dep)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.img_update)).EndInit();
       this.panel1.ResumeLayout(false);
+      this.flowLayoutPanel1.ResumeLayout(false);
+      this.flowLayoutPanel1.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -141,5 +177,7 @@
     private System.Windows.Forms.Label lbl_name;
     private System.Windows.Forms.ToolTip toolTip1;
     private System.Windows.Forms.Panel panel1;
+    private System.Windows.Forms.Label lblAuthors;
+    private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
   }
 }

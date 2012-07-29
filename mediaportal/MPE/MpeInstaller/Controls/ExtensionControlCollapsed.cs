@@ -40,9 +40,10 @@ namespace MpeInstaller.Controls
       InitializeComponent();
     }
 
-    public void Initialize(string name, string version, bool meetsAllDependencies, string updateVersion, Action<ExtensionControlCollapsed> onClick)
+    public void Initialize(string name, string authors, string version, bool meetsAllDependencies, string updateVersion, Action<ExtensionControlCollapsed> onClick)
     {
       lbl_name.Text = name;
+      lblAuthors.Text = string.Format("[{0}]", authors);
       lbl_version.Text = version;
       img_dep.Visible = meetsAllDependencies;
 

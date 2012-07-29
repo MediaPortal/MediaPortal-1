@@ -67,11 +67,11 @@
       // label1
       // 
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(285, 6);
+      this.label1.Location = new System.Drawing.Point(299, 8);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(41, 13);
+      this.label1.Size = new System.Drawing.Size(29, 13);
       this.label1.TabIndex = 2;
-      this.label1.Text = "Search";
+      this.label1.Text = "Filter";
       // 
       // comboBox1
       // 
@@ -86,7 +86,7 @@
       // label2
       // 
       this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(3, 6);
+      this.label2.Location = new System.Drawing.Point(3, 8);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(31, 13);
       this.label2.TabIndex = 4;
