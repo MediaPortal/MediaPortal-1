@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml.Serialization;
 
 namespace MpeCore.Classes
@@ -42,13 +43,15 @@ namespace MpeCore.Classes
     /// Gets the unique list of extensions with highest version
     /// </summary>
     /// <returns></returns>
-    public ExtensionCollection GetUniqueList()
+    public ExtensionCollection GetUniqueList(ExtensionCollection exlude = null)
     {
+      HashSet<string> exludedIds = new HashSet<string>();
+      if (exlude != null) exlude.Items.ForEach(p => exludedIds.Add(p.GeneralInfo.Id));
       Dictionary<string, PackageClass> ids = new Dictionary<string, PackageClass>();
       
       foreach (PackageClass item in Items)
       {
-        if (item.IsHiden)
+        if (item.IsHiden || exludedIds.Contains(item.GeneralInfo.Id))
           continue;
 
         PackageClass currentVersion = null;

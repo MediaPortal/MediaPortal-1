@@ -203,16 +203,16 @@ namespace MpeInstaller
       numeric_Days.Value = _settings.UpdateDays;
       chk_update_CheckedChanged(null, null);
       _loading = false;
-      extensionListControl.UnInstallExtension += extensionListControl_UnInstallExtension;
-      extensionListControl.UpdateExtension += extensionListControl_UpdateExtension;
-      extensionListControl.ConfigureExtension += extensionListControl_ConfigureExtension;
-      extensionListControl.InstallExtension += extensionListControl_InstallExtension;
-      extensionListControl.ShowScreenShot += extensionListControl_ShowScreenShot;
-      extensionListContro_all.UnInstallExtension += extensionListControl_UnInstallExtension;
-      extensionListContro_all.UpdateExtension += extensionListControl_UpdateExtension;
-      extensionListContro_all.ConfigureExtension += extensionListControl_ConfigureExtension;
-      extensionListContro_all.InstallExtension += extensionListControl_InstallExtension;
-      extensionListContro_all.ShowScreenShot += extensionListControl_ShowScreenShot;
+      extensionListControlInstalled.UnInstallExtension += extensionListControl_UnInstallExtension;
+      extensionListControlInstalled.UpdateExtension += extensionListControl_UpdateExtension;
+      extensionListControlInstalled.ConfigureExtension += extensionListControl_ConfigureExtension;
+      extensionListControlInstalled.InstallExtension += extensionListControl_InstallExtension;
+      extensionListControlInstalled.ShowScreenShot += extensionListControl_ShowScreenShot;
+      extensionListControlKnown.UnInstallExtension += extensionListControl_UnInstallExtension;
+      extensionListControlKnown.UpdateExtension += extensionListControl_UpdateExtension;
+      extensionListControlKnown.ConfigureExtension += extensionListControl_ConfigureExtension;
+      extensionListControlKnown.InstallExtension += extensionListControl_InstallExtension;
+      extensionListControlKnown.ShowScreenShot += extensionListControl_ShowScreenShot;
     }
 
     private void extensionListControl_ShowScreenShot(object sender, PackageClass packageClass)
@@ -470,8 +470,8 @@ namespace MpeInstaller
     private void RefreshLists()
     {
       lbl_lastupdate.Text = "Last update " + _settings.LastUpdate.ToString();
-      extensionListControl.Set(MpeCore.MpeInstaller.InstalledExtensions, true);
-      extensionListContro_all.Set(MpeCore.MpeInstaller.KnownExtensions.GetUniqueList(), false);
+      extensionListControlInstalled.Set(MpeCore.MpeInstaller.InstalledExtensions, true);
+      extensionListControlKnown.Set(MpeCore.MpeInstaller.KnownExtensions.GetUniqueList(MpeCore.MpeInstaller.InstalledExtensions), false);
     }
 
     private void extensionListControl_UnInstallExtension(object sender, PackageClass packageClass)
