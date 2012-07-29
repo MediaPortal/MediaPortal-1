@@ -183,9 +183,16 @@ namespace MpeInstaller
       //}
       MpeCore.MpeInstaller.KnownExtensions.Hide(_settings.ShowOnlyStable, _settings.ShowOnlyCompatible);
       if (MpeCore.MpeInstaller.KnownExtensions.GetHiddenExtensionCount() > 0)
-        lbl_warn.Visible = true;
+      {
+        toolStripLabelWarn.Visible = true;
+        string infoText = "";
+        if (_settings.ShowOnlyStable) infoText += "unstable ";
+        if (_settings.ShowOnlyCompatible) infoText += (_settings.ShowOnlyStable ? "and " : "") + "incompatible ";
+        infoText += "extensions are hidden";
+        toolStripLabelWarn.Text = infoText;
+      }
       else
-        lbl_warn.Visible = false;
+        toolStripLabelWarn.Visible = false;
     }
 
     public void Init()
@@ -196,11 +203,8 @@ namespace MpeInstaller
       MpeCore.MpeInstaller.InstalledExtensions.IgnoredUpdates = _settings.IgnoredUpdates;
       MpeCore.MpeInstaller.KnownExtensions.IgnoredUpdates = _settings.IgnoredUpdates;
       _loading = true;
-      chk_update.Checked = _settings.DoUpdateInStartUp;
-      chk_updateExtension.Checked = _settings.UpdateAll;
-      chk_stable.Checked = _settings.ShowOnlyStable;
-      chk_dependency.Checked = _settings.ShowOnlyCompatible;
-      numeric_Days.Value = _settings.UpdateDays;
+      onlyStableToolStripMenuItem.Checked = _settings.ShowOnlyStable;
+      onlyCompatibleToolStripMenuItem.Checked = _settings.ShowOnlyCompatible;
       chk_update_CheckedChanged(null, null);
       _loading = false;
       extensionListControlInstalled.UnInstallExtension += extensionListControl_UnInstallExtension;
@@ -469,7 +473,7 @@ namespace MpeInstaller
 
     private void RefreshLists()
     {
-      lbl_lastupdate.Text = "Last update " + _settings.LastUpdate.ToString();
+      toolStripLastUpdate.Text = "Last update: " + _settings.LastUpdate.ToString("g");
       extensionListControlInstalled.Set(MpeCore.MpeInstaller.InstalledExtensions, true);
       extensionListControlKnown.Set(MpeCore.MpeInstaller.KnownExtensions.GetUniqueList(MpeCore.MpeInstaller.InstalledExtensions), false);
     }
@@ -496,12 +500,12 @@ namespace MpeInstaller
         IsBackground = true, 
         Name = "ProxyPrecacheDiscovery" 
       }.Start();
-      
+
       FilterList();
       RefreshLists();
     }
 
-    private void button1_Click(object sender, EventArgs e)
+    private void FileOpen_Click(object sender, EventArgs e)
     {
       OpenFileDialog dialog = new OpenFileDialog
                                 {
@@ -607,7 +611,7 @@ namespace MpeInstaller
       }
     }
 
-    private void btn_online_update_Click(object sender, EventArgs e)
+    private void RefreshUpdateInfo_Click(object sender, EventArgs e)
     {
       UpdateList(false);
       RefreshLists();
@@ -633,7 +637,7 @@ namespace MpeInstaller
           MessageBox.Show("Do you want to update the extension list ?", "Update", MessageBoxButtons.YesNo,
                           MessageBoxIcon.Question) == DialogResult.Yes)
       {
-        btn_online_update_Click(sender, e);
+        RefreshUpdateInfo_Click(sender, e);
         if (_settings.UpdateAll)
           DoUpdateAll();
       }
@@ -661,26 +665,13 @@ namespace MpeInstaller
     private void chk_update_CheckedChanged(object sender, EventArgs e)
     {
       if (!_loading)
-      {
-        _settings.DoUpdateInStartUp = chk_update.Checked;
-        _settings.UpdateAll = chk_updateExtension.Checked;
-        _settings.UpdateDays = (int)numeric_Days.Value;
-        _settings.ShowOnlyStable = chk_stable.Checked;
-        _settings.ShowOnlyCompatible = chk_dependency.Checked;
-      }
-      if (!_settings.DoUpdateInStartUp)
-      {
-        numeric_Days.Enabled = false;
-        chk_updateExtension.Enabled = false;
-      }
-      else
-      {
-        numeric_Days.Enabled = true;
-        chk_updateExtension.Enabled = true;
+      { 
+        _settings.ShowOnlyStable = onlyStableToolStripMenuItem.Checked;
+        _settings.ShowOnlyCompatible = onlyCompatibleToolStripMenuItem.Checked;
       }
     }
 
-    private void button2_Click(object sender, EventArgs e)
+    private void UpdateAll_Click(object sender, EventArgs e)
     {
       DoUpdateAll();
     }
@@ -746,9 +737,9 @@ namespace MpeInstaller
       RefreshLists();
     }
 
-    private void btn_clean_Click(object sender, EventArgs e)
+    private void CleanCache_Click(object sender, EventArgs e)
     {
-      if (MessageBox.Show("Do you want to clear all unused data ?\nYou need to redownload update info .", "Cleanup",
+      if (MessageBox.Show("Do you want to clear all unused data ?\nYou need to redownload update info.", "Cleanup",
                           MessageBoxButtons.YesNo,
                           MessageBoxIcon.Question) == DialogResult.Yes)
       {
@@ -786,6 +777,29 @@ namespace MpeInstaller
         chk_update_CheckedChanged(null, null);
         FilterList();
         RefreshLists();
+      }
+    }
+
+    private void wikiToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      try
+      {
+        Process.Start("http://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/17_Extensions/1_Installer_(MPEI)");
+      }
+      catch (Exception) { }
+    }
+
+    private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      SettingsForm dlg = new SettingsForm();
+      dlg.chk_update.Checked = _settings.DoUpdateInStartUp;
+      dlg.chk_updateExtension.Checked = _settings.UpdateAll;
+      dlg.numeric_Days.Value = _settings.UpdateDays;
+      if (dlg.ShowDialog() == DialogResult.OK)
+      {
+        _settings.DoUpdateInStartUp = dlg.chk_update.Checked;
+        _settings.UpdateAll = dlg.chk_updateExtension.Checked;
+        _settings.UpdateDays = (int)dlg.numeric_Days.Value;
       }
     }
 
