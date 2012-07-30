@@ -1389,6 +1389,13 @@ namespace MediaPortal.Video.Database
           {
             if (fetcher.Count > 0)
             {
+              // EPG - one result, get movie without ask
+              if (fetcher.Count == 1 && !addToDatabase)
+              {
+                selectedMovie = 0;
+                break;
+              }
+              
               int iMoviesFound = fetcher.Count;
               //GEMX 28.03.08: There should always be a choice to enter the movie manually 
               //               in case the 1 and only found name is wrong
@@ -1398,12 +1405,15 @@ namespace MediaPortal.Video.Database
                 {
                   return false;
                 }
+                
                 if (selectedMovie < 0)
                 {
+                  
                   if (!fetcher.OnRequestMovieTitle(fetcher, out strMovieName))
                   {
                     return false;
                   }
+                  
                   if (strMovieName == string.Empty)
                   {
                     return false;
@@ -1417,10 +1427,12 @@ namespace MediaPortal.Video.Database
               {
                 return false;
               }
+              
               if (!fetcher.OnRequestMovieTitle(fetcher, out strMovieName))
               {
                 return false;
               }
+              
               if (strMovieName == string.Empty)
               {
                 return false;
@@ -1445,10 +1457,12 @@ namespace MediaPortal.Video.Database
           currentMovie = movieDetails;
           return true;
         }
+        
         if (fetcher.Movie == null)
         {
           fetcher.Movie = currentMovie;
         }
+        
         return fetcher.OnDetailsNotFound(fetcher);
       }
       return false;
