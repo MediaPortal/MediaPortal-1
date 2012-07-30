@@ -1942,9 +1942,18 @@ namespace TvLibrary.Implementations.Analog.Components
         }
         _pinVideoConnected = true;
         Log.Log.WriteFile("analog: connected pinvideo->mpeg muxer");
+
+
+        //----------------------------------------------------------------
+        // Adaptec hack removed for information gathering purposes in
+        // 1.3a. If somebody complains about an Adaptec tuner not working
+        // then we will finally have the chance to find out which hardware
+        // is affected and fix it properly.
+        // --mm1352000
+        //----------------------------------------------------------------
         // Some Adaptec devices use the LPCM pin for audio so we check this can connect if applicable.
         // Note that this does *not* apply to the Adaptec AVC-3610.
-        bool isAdaptec = false;
+        /*bool isAdaptec = false;
         if (!_capture.VideoCaptureDevicePath.ToLower().StartsWith(@"@device:pnp:\\?\usb#vid_03f3&pid_0091#") && // Adaptec AVC-3610 tuner 1
             !_capture.VideoCaptureDevicePath.ToLower().StartsWith(@"@device:pnp:\\?\usb#vid_03f3&pid_0093#") && // Adaptec AVC-3610 tuner 2
             (
@@ -1968,7 +1977,7 @@ namespace TvLibrary.Implementations.Analog.Components
           Log.Log.WriteFile("analog: AddMpegMuxer, connected pinLPCM->mpeg muxer");
         }
         else
-        {
+        {*/
           Log.Log.WriteFile("analog:connect pinaudio {0} ->mpeg muxer", FilterGraphTools.LogPinInfo(_pinAudio));
           if (!FilterGraphTools.ConnectPin(_graphBuilder, _pinAudio, _filterMpegMuxer, 1))
           {
@@ -1976,7 +1985,7 @@ namespace TvLibrary.Implementations.Analog.Components
             throw new TvException("Unable to connect pins");
           }
           Log.Log.WriteFile("analog:AddMpegMuxer, connected pinaudio->mpeg muxer");
-        }
+        //}
         return true;
       }
       catch (Exception ex)

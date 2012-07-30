@@ -1,11 +1,10 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>3012</id>
   <defaultcontrol>99</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
-    <import>common.window.xml</import>
-    <import>common.time.xml</import>
     <control>
       <description>BG</description>
       <type>image</type>
@@ -13,6 +12,8 @@
       <width>720</width>
       <height>576</height>
     </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
     <control>
       <description>Channel name</description>
       <type>label</type>
@@ -230,7 +231,7 @@
       <posX>33</posX>
       <posY>350</posY>
       <width>227</width>
-      <height>20</height>
+      <height>16</height>
       <texture>osd_progress_background.png</texture>
     </control>
     <control>
@@ -238,11 +239,11 @@
       <type>progress</type>
       <id>25</id>
       <posX>34</posX>
-      <posY>353</posY>
+      <posY>352</posY>
       <width>225</width>
       <offset>0</offset>
-      <height>16</height>
-      <innerheight>20</innerheight>
+      <height>12</height>
+      <innerheight>16</innerheight>
       <texturebg>-</texturebg>
       <lefttexture>-</lefttexture>
       <midtexture>osd_progress_mid.png</midtexture>
@@ -267,7 +268,7 @@
       <posX>421</posX>
       <posY>350</posY>
       <width>227</width>
-      <height>20</height>
+      <height>16</height>
       <texture>osd_progress_background.png</texture>
     </control>
     <control>
@@ -278,8 +279,8 @@
       <posY>353</posY>
       <width>225</width>
       <offset>0</offset>
-      <height>16</height>
-      <innerheight>20</innerheight>
+      <height>12</height>
+      <innerheight>16</innerheight>
       <texturebg>-</texturebg>
       <lefttexture>-</lefttexture>
       <midtexture>osd_progress_mid.png</midtexture>
@@ -288,13 +289,23 @@
       <visible>yes</visible>
     </control>
     <control>
+      <description>TV preview window Background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>34</posX>
+      <posY>392</posY>
+      <width>191</width>
+      <height>160</height>
+      <texture>LCD.png</texture>
+    </control>
+    <control>
       <description>TV preview window</description>
       <type>videowindow</type>
       <id>99</id>
-      <posX>64</posX>
-      <posY>424</posY>
-      <width>160</width>
-      <height>90</height>
+      <posX>40</posX>
+      <posY>400</posY>
+      <width>180</width>
+      <height>144</height>
       <action>18</action>
       <textureFocus>tv_green_border.png</textureFocus>
     </control>

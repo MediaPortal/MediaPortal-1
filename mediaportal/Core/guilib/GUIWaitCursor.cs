@@ -100,9 +100,11 @@ namespace MediaPortal.GUI.Library
       {
         _animation = new GUIAnimation();
 
+        string themedFilename;
         foreach (string filename in Directory.GetFiles(GUIGraphicsContext.Skin + @"\media\", "common.waiting.*.png"))
         {
-          _animation.Filenames.Add(Path.GetFileName(filename));
+          themedFilename = GUIGraphicsContext.GetThemedSkinFile(filename);
+          _animation.Filenames.Add(Path.GetFileName(themedFilename));
         }
 
         // dirty hack because the files are 96x96 - unfortunately no property gives the correct size at runtime when init is called :S

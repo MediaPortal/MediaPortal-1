@@ -8,63 +8,80 @@
   <controls>
     <import>common.settings.xml</import>
     <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>435</posX>
+      <posY>120</posY>
+      <height>520</height>
+      <width>435</width>
+      <texture>backslide.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
       <description>buttons</description>
       <type>group</type>
-      
-      
-      <animation effect="slide" time="70" start="800,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
-      <posX>99</posX>
-      <posY>188</posY>
-      <layout>GridLayout(0, 6, 52, 8, 1)</layout>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <posX>465</posX>
+      <posY>160</posY>
+      <layout>StackLayout(0, Vertical, true)</layout>
       <control>
         <description>DVD Navigators</description>
         <type>button</type>
         <id>21</id>
         <label>1198</label>
         <onup>17</onup>
+        <width>350</width>
       </control>
       <control>
         <description>Video Codecs</description>
         <type>button</type>
         <id>24</id>
         <label>6000</label>
+        <width>350</width>
       </control>
       <control>
         <description>Audio Codecs</description>
         <type>button</type>
         <id>25</id>
         <label>6001</label>
+        <width>350</width>
       </control>
       <control>
         <description>Audio Renderer</description>
         <type>button</type>
         <id>27</id>
         <label>6002</label>
+        <width>350</width>
       </control>
       <control>
         <description>Apect Ratio</description>
         <type>button</type>
         <id>28</id>
         <label>6004</label>
+        <width>350</width>
       </control>
       <control>
         <description>Enable Subtitles</description>
         <type>togglebutton</type>
         <id>22</id>
         <label>1196</label>
+        <width>350</width>
       </control>
       <control>
         <description>Subtitle Language</description>
         <type>button</type>
         <id>29</id>
         <label>1029</label>
+        <width>350</width>
       </control>
       <control>
         <description>Audio Language</description>
         <type>button</type>
         <id>30</id>
         <label>492</label>
+        <width>350</width>
       </control>
       <control>
         <description>Turn Off DXVA</description>
@@ -72,6 +89,7 @@
         <id>23</id>
         <label>1197</label>
         <ondown>99</ondown>
+        <width>350</width>
       </control>
     </control>
   </controls>

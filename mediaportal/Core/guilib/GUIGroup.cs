@@ -40,6 +40,13 @@ namespace MediaPortal.GUI.Library
     public GUIGroup(int parentId)
       : base(parentId) {}
 
+    public override void FinalizeConstruction()
+    {
+      HasCamera = _hasCamera;
+      Camera = new System.Drawing.Point(_cameraXPos, _cameraYPos);
+      base.FinalizeConstruction();
+    }
+
     #endregion Constructors
 
     #region Methods
@@ -445,6 +452,10 @@ namespace MediaPortal.GUI.Library
 
     [XMLSkinElement("animation")] private Animator.AnimationType _animatorType = Animator.AnimationType.None;
 
+    [XMLSkinElement("camera")] private bool _hasCamera = false;
+    [XMLSkin("camera", "xpos")] protected int _cameraXPos = 0;
+    [XMLSkin("camera", "ypos")] protected int _cameraYPos = 0;
+
     private bool _startAnimation;
 
     #endregion Fields
@@ -625,12 +636,9 @@ namespace MediaPortal.GUI.Library
     {
       int spacing = Spacing(System.Windows.Controls.Orientation.Vertical);
 
-      for (int i = index; i < Children.Count; i++)
+      for (int i = index + 1; i < Children.Count; i++)
       {
-        if (i + 1 < Children.Count)
-        {
-          Children[i + 1].YPosition -= (Children[i].Height + spacing);
-        }
+        Children[i].YPosition -= (Children[index].Height + spacing);
       }
     }
 
@@ -638,12 +646,9 @@ namespace MediaPortal.GUI.Library
     {
       int spacing = Spacing(System.Windows.Controls.Orientation.Vertical);
 
-      for (int i = index; i < Children.Count; i++)
+      for (int i = index + 1; i < Children.Count; i++)
       {
-        if (i + 1 < Children.Count)
-        {
-          Children[i + 1].YPosition += (Children[i].Height + spacing);
-        }
+        Children[i].YPosition += (Children[index].Height + spacing);
       }
     }
 
@@ -651,12 +656,9 @@ namespace MediaPortal.GUI.Library
     {
       int spacing = Spacing(System.Windows.Controls.Orientation.Horizontal);
 
-      for (int i = index; i < Children.Count; i++)
+      for (int i = index + 1; i < Children.Count; i++)
       {
-        if (i + 1 < Children.Count)
-        {
-          Children[i + 1].XPosition += (Children[i].Width + spacing);
-        }
+        Children[i].XPosition += (Children[index].Width + spacing);
       }
     }
 
@@ -664,12 +666,9 @@ namespace MediaPortal.GUI.Library
     {
       int spacing = Spacing(System.Windows.Controls.Orientation.Horizontal);
 
-      for (int i = index; i < Children.Count; i++)
+      for (int i = index + 1; i < Children.Count; i++)
       {
-        if (i + 1 < Children.Count)
-        {
-          Children[i + 1].XPosition -= (Children[i].Width + spacing);
-        }
+        Children[i].XPosition -= (Children[index].Width + spacing);
       }
     }
 

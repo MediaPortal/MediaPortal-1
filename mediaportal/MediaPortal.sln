@@ -96,6 +96,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectShowLib", "..\Common-
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Utils", "..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj", "{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinCustomControls", "Configuration\WinCustomControls\WinCustomControls.csproj", "{49DFF256-09FD-4598-A3E8-855753E2A1FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -310,6 +312,12 @@ Global
 		{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}.UseCaptureCardDefinitions|x86.Build.0 = Release|x86
 		{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|x86
 		{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}.UseCaptureDefintionsRelease|x86.Build.0 = Release|x86
+		{49DFF256-09FD-4598-A3E8-855753E2A1FC}.Debug|x86.ActiveCfg = Debug|x86
+		{49DFF256-09FD-4598-A3E8-855753E2A1FC}.Debug|x86.Build.0 = Debug|x86
+		{49DFF256-09FD-4598-A3E8-855753E2A1FC}.Release|x86.ActiveCfg = Release|x86
+		{49DFF256-09FD-4598-A3E8-855753E2A1FC}.Release|x86.Build.0 = Release|x86
+		{49DFF256-09FD-4598-A3E8-855753E2A1FC}.UseCaptureCardDefinitions|x86.ActiveCfg = Release|x86
+		{49DFF256-09FD-4598-A3E8-855753E2A1FC}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

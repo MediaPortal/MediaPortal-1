@@ -1,0 +1,205 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="source\AC3EncoderFilter.cpp" />
+    <ClCompile Include="source\BaseAudioSink.cpp" />
+    <ClCompile Include="source\BitDepthAdapter.cpp" />
+    <ClCompile Include="source\DirectSoundRenderer.cpp" />
+    <ClCompile Include="source\dllmain.cpp" />
+    <ClCompile Include="source\dllsetup.cpp" />
+    <ClCompile Include="source\FilterApp.cpp" />
+    <ClCompile Include="source\MediaSeeking.cpp" />
+    <ClCompile Include="source\MpAudioRenderer.cpp" />
+    <ClCompile Include="source\MultiSoundTouch.cpp" />
+    <ClCompile Include="source\QueuedAudioSink.cpp" />
+    <ClCompile Include="source\SampleRateConverterFilter.cpp" />
+    <ClCompile Include="source\Settings.cpp" />
+    <ClCompile Include="source\SoundTouchEx.cpp" />
+    <ClCompile Include="source\SyncClock.cpp" />
+    <ClCompile Include="source\ThreadDecouplingFilter.cpp" />
+    <ClCompile Include="source\TimeSource.cpp" />
+    <ClCompile Include="source\TimeStretchFilter.cpp" />
+    <ClCompile Include="source\VolumeHandler.cpp" />
+    <ClCompile Include="source\WaitableState.cpp" />
+    <ClCompile Include="source\WASAPIRenderer.cpp" />
+    <ClCompile Include="source\AudioClockTracker.cpp" />
+    <ClCompile Include="source\ClockAdjuster.cpp" />
+    <ClCompile Include="source\SynchCorrection.cpp" />
+    <ClCompile Include="source\WASAPIRenderFilter.cpp" />
+    <ClCompile Include="libresample\src\src_linear.c">
+      <Filter>libsamplerate</Filter>
+    </ClCompile>
+    <ClCompile Include="libresample\src\src_zoh.c">
+      <Filter>libsamplerate</Filter>
+    </ClCompile>
+    <ClCompile Include="libresample\src\samplerate.c">
+      <Filter>libsamplerate</Filter>
+    </ClCompile>
+    <ClCompile Include="libresample\src\src_sinc.c">
+      <Filter>libsamplerate</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Globals.cpp" />
+    <ClCompile Include="source\ChannelMixer.cpp" />
+    <ClCompile Include="AE_mixer\AEChannelInfo.cpp">
+      <Filter>AE Mixer</Filter>
+    </ClCompile>
+    <ClCompile Include="AE_mixer\AERemap.cpp">
+      <Filter>AE Mixer</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundTouch\source\3dnow_win.cpp">
+      <Filter>SoundTouch</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundTouch\source\AAFilter.cpp">
+      <Filter>SoundTouch</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundTouch\source\BPMDetect.cpp">
+      <Filter>SoundTouch</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundTouch\source\cpu_detect_x86_win.cpp">
+      <Filter>SoundTouch</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundTouch\source\FIFOSampleBuffer.cpp">
+      <Filter>SoundTouch</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundTouch\source\FIRFilter.cpp">
+      <Filter>SoundTouch</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundTouch\source\TDStretch.cpp">
+      <Filter>SoundTouch</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundTouch\source\SoundTouch.cpp">
+      <Filter>SoundTouch</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundTouch\source\RateTransposer.cpp">
+      <Filter>SoundTouch</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundTouch\source\PeakFinder.cpp">
+      <Filter>SoundTouch</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundTouch\source\mmx_optimized.cpp">
+      <Filter>SoundTouch</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundTouch\source\sse_optimized.cpp">
+      <Filter>SoundTouch</Filter>
+    </ClCompile>
+    <ClCompile Include="AC3_encoder\ac3enc.cpp">
+      <Filter>AC3_encoder</Filter>
+    </ClCompile>
+    <ClCompile Include="AC3_encoder\bits.cpp">
+      <Filter>AC3_encoder</Filter>
+    </ClCompile>
+    <ClCompile Include="source\StreamSanitizerFilter.cpp" />
+    <ClCompile Include="source\SettingsProp.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\AC3EncoderFilter.h" />
+    <ClInclude Include="source\BaseAudioSink.h" />
+    <ClInclude Include="source\BitDepthAdapter.h" />
+    <ClInclude Include="source\DirectSoundRenderer.h" />
+    <ClInclude Include="source\dllsetup.h" />
+    <ClInclude Include="source\FilterApp.h" />
+    <ClInclude Include="source\IAudioSink.h" />
+    <ClInclude Include="source\IAVSyncClock.h" />
+    <ClInclude Include="source\IRenderDevice.h" />
+    <ClInclude Include="source\IRenderFilter.h" />
+    <ClInclude Include="source\ITimeStretch.h" />
+    <ClInclude Include="source\MpAudioRenderer.h" />
+    <ClInclude Include="source\MultiSoundTouch.h" />
+    <ClInclude Include="source\QueuedAudioSink.h" />
+    <ClInclude Include="source\resource.h" />
+    <ClInclude Include="source\SampleRateConverterFilter.h" />
+    <ClInclude Include="source\Settings.h" />
+    <ClInclude Include="source\SharedInclude.h" />
+    <ClInclude Include="source\SoundTouchEx.h" />
+    <ClInclude Include="source\stdafx.h" />
+    <ClInclude Include="source\SyncClock.h" />
+    <ClInclude Include="source\ThreadDecouplingFilter.h" />
+    <ClInclude Include="source\TimeSource.h" />
+    <ClInclude Include="source\TimeStretchFilter.h" />
+    <ClInclude Include="source\VolumeHandler.h" />
+    <ClInclude Include="source\WaitableState.h" />
+    <ClInclude Include="source\WASAPIRenderer.h" />
+    <ClInclude Include="source\AudioClockTracker.h" />
+    <ClInclude Include="source\ClockAdjuster.h" />
+    <ClInclude Include="source\SynchCorrection.h" />
+    <ClInclude Include="source\WASAPIRenderFilter.h" />
+    <ClInclude Include="libresample\src\samplerate.h">
+      <Filter>libsamplerate</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Globals.h" />
+    <ClInclude Include="source\ChannelMixer.h" />
+    <ClInclude Include="AE_mixer\AEAudioFormat.h">
+      <Filter>AE Mixer</Filter>
+    </ClInclude>
+    <ClInclude Include="AE_mixer\AEChannelInfo.h">
+      <Filter>AE Mixer</Filter>
+    </ClInclude>
+    <ClInclude Include="AE_mixer\AERemap.h">
+      <Filter>AE Mixer</Filter>
+    </ClInclude>
+    <ClInclude Include="AE_mixer\StdString.h">
+      <Filter>AE Mixer</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundTouch\source\AAFilter.h">
+      <Filter>SoundTouch</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundTouch\include\BPMDetect.h">
+      <Filter>SoundTouch</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundTouch\source\cpu_detect.h">
+      <Filter>SoundTouch</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundTouch\include\FIFOSamplePipe.h">
+      <Filter>SoundTouch</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundTouch\include\FIFOSampleBuffer.h">
+      <Filter>SoundTouch</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundTouch\source\FIRFilter.h">
+      <Filter>SoundTouch</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundTouch\source\TDStretch.h">
+      <Filter>SoundTouch</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundTouch\include\STTypes.h">
+      <Filter>SoundTouch</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundTouch\include\SoundTouch.h">
+      <Filter>SoundTouch</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundTouch\source\RateTransposer.h">
+      <Filter>SoundTouch</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundTouch\source\PeakFinder.h">
+      <Filter>SoundTouch</Filter>
+    </ClInclude>
+    <ClInclude Include="AC3_encoder\ac3enc.h">
+      <Filter>AC3_encoder</Filter>
+    </ClInclude>
+    <ClInclude Include="AC3_encoder\bits.h">
+      <Filter>AC3_encoder</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StreamSanitizerFilter.h" />
+    <ClInclude Include="source\SettingsProp.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="source\MpAudioRenderer.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="source\MpAudioRenderer.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="libsamplerate">
+      <UniqueIdentifier>{c3308725-5e02-47b7-bf02-7405fc07ac36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AE Mixer">
+      <UniqueIdentifier>{0a4b0027-dc20-4b7c-aef5-49e5ba1bbfc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SoundTouch">
+      <UniqueIdentifier>{378dd32b-d3f5-455c-beee-34f0ee1c42e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AC3_encoder">
+      <UniqueIdentifier>{c3c8d455-8c72-4d60-af16-01d8b87474ed}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

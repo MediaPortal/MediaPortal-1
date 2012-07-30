@@ -108,11 +108,18 @@
       <Name>System.Data</Name>
     </Reference>
     <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\Common-MP-TVE3\OsInfo\OSInfo.cs">
+      <Link>OSInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common-MP-TVE3\OsInfo\OSPrerequisites.cs">
+      <Link>OSPrerequisites.cs</Link>
+    </Compile>
     <Compile Include="..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>

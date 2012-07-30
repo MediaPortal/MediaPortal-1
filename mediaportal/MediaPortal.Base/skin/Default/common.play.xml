@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
     <!-- **************************** PAUSE, REWIND ETC. FOR NORMAL VIDEO OSD ********************************** -->
@@ -12,7 +12,7 @@
       <visible>player.paused+!control.hasfocus(1237)</visible>
       <texture>video-pause.png</texture>
       <colorkey>0</colorkey>
-      <colordiffuse>white</colordiffuse>
+      <colordiffuse>ivory</colordiffuse>
     </control>
     <control>
       <description>2x image</description>
@@ -23,7 +23,7 @@
       <visible>player.forwarding2x+!control.hasfocus(1237)</visible>
       <texture>video+2x.png</texture>
       <colorkey>0</colorkey>
-      <colordiffuse>white</colordiffuse>
+      <colordiffuse>ivory</colordiffuse>
     </control>
     <control>
       <description>4x image</description>
@@ -34,7 +34,7 @@
       <visible>player.forwarding4x+!control.hasfocus(1237)</visible>
       <texture>video+4x.png</texture>
       <colorkey>0</colorkey>
-      <colordiffuse>white</colordiffuse>
+      <colordiffuse>ivory</colordiffuse>
     </control>
     <control>
       <description>8x image</description>
@@ -45,7 +45,7 @@
       <visible>player.forwarding8x+!control.hasfocus(1237)</visible>
       <texture>video+8x.png</texture>
       <colorkey>0</colorkey>
-      <colordiffuse>white</colordiffuse>
+      <colordiffuse>ivory</colordiffuse>
     </control>
     <control>
       <description>16x image</description>
@@ -56,7 +56,7 @@
       <visible>player.forwarding16x+!control.hasfocus(1237)</visible>
       <texture>video+16x.png</texture>
       <colorkey>0</colorkey>
-      <colordiffuse>white</colordiffuse>
+      <colordiffuse>ivory</colordiffuse>
     </control>
     <control>
       <description>32x image</description>
@@ -67,7 +67,7 @@
       <visible>player.forwarding32x+!control.hasfocus(1237)</visible>
       <texture>video+32x.png</texture>
       <colorkey>0</colorkey>
-      <colordiffuse>white</colordiffuse>
+      <colordiffuse>ivory</colordiffuse>
     </control>
     <control>
       <description>- 2x image</description>
@@ -78,7 +78,7 @@
       <visible>player.rewinding2x+!control.hasfocus(1237)</visible>
       <texture>video-2x.png</texture>
       <colorkey>0</colorkey>
-      <colordiffuse>white</colordiffuse>
+      <colordiffuse>ivory</colordiffuse>
     </control>
     <control>
       <description>- 4x image</description>
@@ -89,7 +89,7 @@
       <visible>player.rewinding4x+!control.hasfocus(1237)</visible>
       <texture>video-4x.png</texture>
       <colorkey>0</colorkey>
-      <colordiffuse>white</colordiffuse>
+      <colordiffuse>ivory</colordiffuse>
     </control>
     <control>
       <description>- 8x image</description>
@@ -100,7 +100,7 @@
       <visible>player.rewinding8x+!control.hasfocus(1237)</visible>
       <texture>video-8x.png</texture>
       <colorkey>0</colorkey>
-      <colordiffuse>white</colordiffuse>
+      <colordiffuse>ivory</colordiffuse>
     </control>
     <control>
       <description>- 16x image</description>
@@ -111,7 +111,7 @@
       <visible>player.rewinding16x+!control.hasfocus(1237)</visible>
       <texture>video-16x.png</texture>
       <colorkey>0</colorkey>
-      <colordiffuse>white</colordiffuse>
+      <colordiffuse>ivory</colordiffuse>
     </control>
     <control>
       <description>- 32x image</description>
@@ -122,7 +122,7 @@
       <visible>player.rewinding32x+!control.hasfocus(1237)</visible>
       <texture>video-32x.png</texture>
       <colorkey>0</colorkey>
-      <colordiffuse>white</colordiffuse>
+      <colordiffuse>ivory</colordiffuse>
     </control>
     <!-- **************************** PAUSE, REWIND ETC. FOR EXPANDED VIDEO OSD ********************************** -->
     <control>
@@ -134,7 +134,7 @@
       <visible>player.paused+control.hasfocus(1237)</visible>
       <texture>video-pause.png</texture>
       <colorkey>0</colorkey>
-      <colordiffuse>white</colordiffuse>
+      <colordiffuse>ivory</colordiffuse>
     </control>
     <control>
       <description>2x image</description>
@@ -145,7 +145,7 @@
       <visible>player.forwarding2x+control.hasfocus(1237)</visible>
       <texture>video+2x.png</texture>
       <colorkey>0</colorkey>
-      <colordiffuse>white</colordiffuse>
+      <colordiffuse>ivory</colordiffuse>
     </control>
     <control>
       <description>4x image</description>
@@ -156,7 +156,7 @@
       <visible>player.forwarding4x+control.hasfocus(1237)</visible>
       <texture>video+4x.png</texture>
       <colorkey>0</colorkey>
-      <colordiffuse>white</colordiffuse>
+      <colordiffuse>ivory</colordiffuse>
     </control>
     <control>
       <description>8x image</description>
@@ -167,7 +167,7 @@
       <visible>player.forwarding8x+control.hasfocus(1237)</visible>
       <texture>video+8x.png</texture>
       <colorkey>0</colorkey>
-      <colordiffuse>white</colordiffuse>
+      <colordiffuse>ivory</colordiffuse>
     </control>
     <control>
       <description>16x image</description>
@@ -178,7 +178,7 @@
       <visible>player.forwarding16x+control.hasfocus(1237)</visible>
       <texture>video+16x.png</texture>
       <colorkey>0</colorkey>
-      <colordiffuse>white</colordiffuse>
+      <colordiffuse>ivory</colordiffuse>
     </control>
     <control>
       <description>32x image</description>
@@ -189,7 +189,7 @@
       <visible>player.forwarding32x+control.hasfocus(1237)</visible>
       <texture>video+32x.png</texture>
       <colorkey>0</colorkey>
-      <colordiffuse>white</colordiffuse>
+      <colordiffuse>ivory</colordiffuse>
     </control>
     <control>
       <description>- 2x image</description>
@@ -200,7 +200,7 @@
       <visible>player.rewinding2x+control.hasfocus(1237)</visible>
       <texture>video-2x.png</texture>
       <colorkey>0</colorkey>
-      <colordiffuse>white</colordiffuse>
+      <colordiffuse>ivory</colordiffuse>
     </control>
     <control>
       <description>- 4x image</description>
@@ -211,7 +211,7 @@
       <visible>player.rewinding4x+control.hasfocus(1237)</visible>
       <texture>video-4x.png</texture>
       <colorkey>0</colorkey>
-      <colordiffuse>white</colordiffuse>
+      <colordiffuse>ivory</colordiffuse>
     </control>
     <control>
       <description>- 8x image</description>
@@ -222,7 +222,7 @@
       <visible>player.rewinding8x+control.hasfocus(1237)</visible>
       <texture>video-8x.png</texture>
       <colorkey>0</colorkey>
-      <colordiffuse>white</colordiffuse>
+      <colordiffuse>ivory</colordiffuse>
     </control>
     <control>
       <description>- 16x image</description>
@@ -233,7 +233,7 @@
       <visible>player.rewinding16x+control.hasfocus(1237)</visible>
       <texture>video-16x.png</texture>
       <colorkey>0</colorkey>
-      <colordiffuse>white</colordiffuse>
+      <colordiffuse>ivory</colordiffuse>
     </control>
     <control>
       <description>- 32x image</description>
@@ -244,7 +244,7 @@
       <visible>player.rewinding32x+control.hasfocus(1237)</visible>
       <texture>video-32x.png</texture>
       <colorkey>0</colorkey>
-      <colordiffuse>white</colordiffuse>
+      <colordiffuse>ivory</colordiffuse>
     </control>
   </controls>
 </window>

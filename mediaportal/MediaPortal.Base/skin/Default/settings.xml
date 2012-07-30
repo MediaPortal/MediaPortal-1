@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>4</id>
   <defaultcontrol>4</defaultcontrol>
@@ -9,15 +9,24 @@
     <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>244</posX>
+      <posY>96</posY>
+      <height>416</height>
+      <width>244</width>
+      <texture>backslide.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
       <description>buttons</description>
       <type>group</type>
-      
-      
-      <animation effect="slide" time="150" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="150" end="-300,0">WindowClose</animation>
-      <posX>279</posX>
-      <posY>164</posY>
-      <layout>StackLayout</layout>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <posX>261</posX>
+      <posY>128</posY>
+      <layout>StackLayout(0, Vertical, true)</layout>
       <control>
         <description>General</description>
         <type>button</type>
@@ -82,7 +91,7 @@
         <width>196</width>
         <label>9100</label>
         <hyperlink>9000</hyperlink>
-        <ondown>99</ondown>
+        <ondown>4</ondown>
       </control>
     </control>
   </controls>

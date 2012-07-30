@@ -60,6 +60,28 @@ namespace TvPlugin
     protected Channel _currentChannel = null;
     protected int _numberOfBlocks = 4;
 
+    protected const int LOCALIZED_GENRE_STRING_BASE = 1250;
+    protected const int LOCALIZED_GENRE_STRING_MOVIE = 1252;
+
+    protected bool _useBorderHighlight = false;
+    protected bool _useColorsForButtons = false;
+    protected bool _useColorsForGenres = false;
+    protected bool _specifyMpaaRatedAsMovie = false;
+    protected bool _guideColorsLoaded = false;
+    protected long _defaultGenreColorOnNow = 0;
+    protected long _defaultGenreColorOnLater = 0;
+    protected long _guideColorChannelButton = 0;
+    protected long _guideColorChannelButtonSelected = 0;
+    protected long _guideColorGroupButton = 0;
+    protected long _guideColorGroupButtonSelected = 0;
+    protected long _guideColorProgramEnded = 0;
+    protected long _guideColorProgramSelected = 0;
+    protected long _guideColorBorderHighlight = 0;
+    protected List<string> _genreList = new List<string>();
+    protected Dictionary<string, string> _genreMap = new Dictionary<string, string>();
+    protected Dictionary<string, long> _genreColorsOnNow = new Dictionary<string, long>();
+    protected Dictionary<string, long> _genreColorsOnLater = new Dictionary<string, long>();
+
     protected int ChannelOffset
     {
       get { return _channelOffset; }
@@ -73,6 +95,73 @@ namespace TvPlugin
       }
     }
 
+    protected void RenderGenreKey()
+    {
+      GUIImage imgGenreColor = (GUIImage)GetControl((int)Controls.GENRE_COLOR_KEY_PAIR);
+      GUIFadeLabel labelGenreName = (GUIFadeLabel)GetControl((int)Controls.GENRE_COLOR_KEY_PAIR + 1);
+
+      // Do not render the key if not required or the template controls are not present or are specified as not visible.
+      if (imgGenreColor == null || labelGenreName == null || !imgGenreColor.Visible)
+      {
+        return;
+      }
+
+      int xpos, i = 0;
+      int xoffset = 0;
+
+      var genreKeys = _genreColorsOnLater.Keys.ToList();
+      genreKeys.Sort();
+
+      // Loop through genre names.
+      foreach (var genreName in genreKeys)
+	    {
+        xpos = imgGenreColor.XPosition + xoffset;
+
+        GUIImage img = GetControl((int)Controls.GENRE_COLOR_KEY_PAIR + (2 * i)) as GUIImage;
+        if (img == null)
+        {
+          img = new GUIImage(GetID, (int)Controls.GENRE_COLOR_KEY_PAIR + (2 * i), xpos, imgGenreColor.YPosition, imgGenreColor.Width,
+                             imgGenreColor.Height, imgGenreColor.FileName, 0x0);
+          img.AllocResources();
+          GUIControl cntl = (GUIControl)img;
+          Add(ref cntl);
+        }
+        img.IsVisible = true;
+        img.ColourDiffuse = _genreColorsOnLater[genreName];
+        img.OverlayFileName = imgGenreColor.OverlayFileName;
+        img.SetPosition(xpos, imgGenreColor.YPosition);
+        img.DoUpdate();
+
+        GUIFadeLabel label = GetControl(((int)Controls.GENRE_COLOR_KEY_PAIR + 1) + (2 * i)) as GUIFadeLabel;
+        if (label == null)
+        {
+          label = new GUIFadeLabel(GetID, ((int)Controls.GENRE_COLOR_KEY_PAIR + 1) + (2 * i), 0, 0, labelGenreName.Width,
+                                   labelGenreName.Height, labelGenreName.FontName,
+                                   labelGenreName.TextColor, labelGenreName.TextAlignment, labelGenreName.TextVAlignment,
+                                   labelGenreName.ShadowAngle, labelGenreName.ShadowDistance, labelGenreName.ShadowColor,
+                                   string.Empty);
+
+          label.AllocResources();
+          GUIControl cntl = (GUIControl)label;
+          this.Add(ref cntl);
+        }
+        label.Label = genreName;
+        label.SetPosition(xpos + imgGenreColor.Width + 10, labelGenreName.YPosition);
+        label.ScrollStartDelay = labelGenreName.ScrollStartDelay;
+        label.IsVisible = true;
+
+        // Compute position of the next key.
+        int w = label.Width;
+        if (label.TextWidth < label.Width)
+        {
+          w = label.TextWidth;
+        }
+
+        xoffset += (int)(imgGenreColor.Width * 2.3 + w);
+        i++;
+      }
+    }
+
     protected void Update(bool selectCurrentShow)
     {
       lock (this)
@@ -82,8 +171,20 @@ namespace TvPlugin
           return;
         }
 
+        // Skin settings may have changed via the MP GUI, reload them.
+        LoadSkinSettings();
+
         // sets button visible state
         UpdateGroupButton();
+
+        GUIButton3PartControl cntlChannelGroup = GetControl((int)Controls.CHANNEL_GROUP_BUTTON) as GUIButton3PartControl;
+        cntlChannelGroup.RenderLeft = false;
+        cntlChannelGroup.RenderRight = false;
+        cntlChannelGroup.StretchIfNotRendered = true;
+        if (_useColorsForButtons)
+        {
+          cntlChannelGroup.ColourDiffuse = _guideColorGroupButton;
+        }
 
         _updateTimer = DateTime.Now;
         GUISpinControl cntlDay = GetControl((int)Controls.SPINCONTROL_DAY) as GUISpinControl;
@@ -189,10 +290,11 @@ namespace TvPlugin
           label.SetPosition(xpos, ypos);
         }
 
-        // add channels...        
-        int iItemHeight = cntlChannelTemplate.Height;        
-        UpdateChannelCount();
+        // add channels...
+        int iHeight = cntlPanel.Height + cntlPanel.YPosition - cntlChannelTemplate.YPosition;
+        int iItemHeight = cntlChannelTemplate.Height;
 
+        _channelCount = (int)(((float)iHeight) / ((float)iItemHeight));
         for (int iChan = 0; iChan < _channelCount; ++iChan)
         {
           xpos = cntlChannelTemplate.XPosition;
@@ -229,6 +331,13 @@ namespace TvPlugin
               imgBut.TileFillTNFM = buttonTemplate.TileFillTNFM;
               imgBut.TileFillTFR = buttonTemplate.TileFillTFR;
               imgBut.TileFillTNFR = buttonTemplate.TileFillTNFR;
+
+              imgBut.OverlayFileNameTFL = buttonTemplate.OverlayFileNameTFL;
+              imgBut.OverlayFileNameTNFL = buttonTemplate.OverlayFileNameTNFL;
+              imgBut.OverlayFileNameTFM = buttonTemplate.OverlayFileNameTFM;
+              imgBut.OverlayFileNameTNFM = buttonTemplate.OverlayFileNameTNFM;
+              imgBut.OverlayFileNameTFR = buttonTemplate.OverlayFileNameTFR;
+              imgBut.OverlayFileNameTNFR = buttonTemplate.OverlayFileNameTNFR;
             }
             else
             {
@@ -255,6 +364,7 @@ namespace TvPlugin
           imgBut.Label1 = String.Empty;
           imgBut.RenderLeft = false;
           imgBut.RenderRight = false;
+          imgBut.StretchIfNotRendered = true;
           imgBut.SetShadow1(cntlChannelLabel.ShadowAngle, cntlChannelLabel.ShadowDistance, cntlChannelLabel.ShadowColor);
 
           if (_showChannelLogos)
@@ -265,12 +375,11 @@ namespace TvPlugin
             imgBut.IconWidth = cntlChannelImg.RenderWidth;
             imgBut.IconHeight = cntlChannelImg.RenderHeight;
             imgBut.IconKeepAspectRatio = cntlChannelImg.KeepAspectRatio;
-            imgBut.IconCentered = cntlChannelImg.Centered;
+            imgBut.IconCentered = (cntlChannelImg.ImageAlignment == GUIControl.Alignment.ALIGN_CENTER);
             imgBut.IconZoom = cntlChannelImg.Zoom;
           }
           imgBut.TextOffsetX1 = cntlChannelLabel.XPosition;
           imgBut.TextOffsetY1 = cntlChannelLabel.YPosition;
-          imgBut.ColourDiffuse = 0xffffffff;
           imgBut.DoUpdate();
         }
 
@@ -331,16 +440,16 @@ namespace TvPlugin
 
         LoadSchedules(false);
 
-        if (ChannelOffset > _channelList.Count)
+        if (_channelOffset > _channelList.Count)
         {
-          ChannelOffset = 0;
+          _channelOffset = 0;
           _cursorX = 0;
         }
 
         for (int i = 0; i < controlList.Count; ++i)
         {
           GUIControl cntl = (GUIControl)controlList[i];
-          if (cntl.GetID >= RadioGuideBase.GUIDE_COMPONENTID_START)
+          if (cntl.GetID >= GUIDE_COMPONENTID_START)
           {
             cntl.IsVisible = false;
           }
@@ -366,10 +475,10 @@ namespace TvPlugin
 
           List<Channel> visibleChannels = new List<Channel>();
 
-          int chan = ChannelOffset;
+          int chan = _channelOffset;
           for (int iChannel = 0; iChannel < _channelCount; iChannel++)
           {
-            if (chan >= 0 && chan < _channelList.Count)
+            if (chan < _channelList.Count)
             {
               visibleChannels.Add(_channelList[chan].channel);
             }
@@ -385,7 +494,7 @@ namespace TvPlugin
           // make sure the TV Guide heading is visiable and the single channel labels are not.
           setGuideHeadingVisibility(true);
           setSingleChannelLabelVisibility(false);
-          chan = ChannelOffset;
+          chan = _channelOffset;
 
           int firstButtonYPos = 0;
           int lastButtonYPos = 0;
@@ -398,7 +507,7 @@ namespace TvPlugin
 
           for (int iChannel = 0; iChannel < channelCount; iChannel++)
           {
-            if (chan >= 0 && chan < _channelList.Count)
+            if (chan < _channelList.Count)
             {
               GuideChannel tvGuideChannel = (GuideChannel)_channelList[chan];
               RenderChannel(ref programs, iChannel, tvGuideChannel, iStart, iEnd, selectCurrentShow);
@@ -434,7 +543,7 @@ namespace TvPlugin
             vertLine.Height = lastButtonYPos - vertLine.YPosition + (firstButtonYPos - vertLine.YPosition);
           }
           // update selected channel
-          _singleChannelNumber = _cursorX + ChannelOffset;
+          _singleChannelNumber = _cursorX + _channelOffset;
           if (_singleChannelNumber >= _channelList.Count)
           {
             _singleChannelNumber -= _channelList.Count;
@@ -448,6 +557,7 @@ namespace TvPlugin
           }
         }
         UpdateVerticalScrollbar();
+        RenderGenreKey();
       }
     }
 
@@ -456,6 +566,8 @@ namespace TvPlugin
     protected abstract void GetChannels(bool b);
 
     protected abstract void LoadSchedules(bool b);
+
+    protected abstract void LoadSkinSettings();
 
     protected abstract void RenderSingleChannel(Channel channel);
 
@@ -510,7 +622,8 @@ namespace TvPlugin
       BUTTON_PROGRAM_RECORD = 38,
       BUTTON_PROGRAM_PARTIAL_RECORD = 39,
 
-      CHANNEL_GROUP_BUTTON = 100
+      CHANNEL_GROUP_BUTTON = 100,
+      GENRE_COLOR_KEY_PAIR = 110 // first of collection of pairs; image=110, label=111, ...
     } ;
 
     #endregion

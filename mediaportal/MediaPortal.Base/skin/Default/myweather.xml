@@ -52,8 +52,18 @@
         <type>button</type>
         <id>5</id>
         <label>1028</label>
-        <ondown>2</ondown>
+        <ondown>6</ondown>
         <onright>5</onright>
+      </control>
+      <control>
+        <description>weather settings</description>
+        <type>button</type>
+        <id>6</id>
+        <label>5</label>
+        <ondown>2</ondown>
+        <onright>6</onright>
+        <hyperlink>17</hyperlink>
+        <visible>control.isvisible(5)</visible>
       </control>
     </control>
     <control>

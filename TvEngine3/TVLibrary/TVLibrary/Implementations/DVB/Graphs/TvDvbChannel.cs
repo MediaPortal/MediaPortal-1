@@ -44,7 +44,8 @@ namespace TvLibrary.Implementations.DVB
 
     #region local variables
 
-    private bool _listenCA = false;
+    private bool _cancelled;
+    private bool _listenCA;
 
     /// <summary>
     /// Indicates that PMT was grabbed
@@ -125,7 +126,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// The graph builder for the capture card graph.
     /// </summary>
-    protected IFilterGraph2 _graphBuilder;
+    protected IFilterGraph2 _graphBuilder;    
 
     #endregion
 
@@ -138,6 +139,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public TvDvbChannel()
     {
+      _cancelled = false;
       _listenCA = false;
       _eventPMT = new ManualResetEvent(false);
       _eventCA = new ManualResetEvent(false);
@@ -167,6 +169,7 @@ namespace TvLibrary.Implementations.DVB
     public TvDvbChannel(IFilterGraph2 graphBuilder, ConditionalAccess ca, MDPlugs mdplugs, IBaseFilter tif,
                         IBaseFilter tsWriter, int subChannelId, IChannel channel)
     {
+      _cancelled = false;
       _listenCA = false;
       _eventPMT = new ManualResetEvent(false);
       _eventCA = new ManualResetEvent(false);
@@ -267,6 +270,8 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if PMT was found, otherwise <c>false</c></returns>
     protected virtual bool WaitForPMT()
     {
+      ThrowExceptionIfTuneCancelled();
+
       bool foundPMT = false;
       int retryCount = 0;
       int lookForPid;
@@ -287,95 +292,117 @@ namespace TvLibrary.Implementations.DVB
         // allow retry to look for PMT in PAT if original one times out
         while (++retryCount <= 2)
         {
-          if (SetupPmtGrabber(lookForPid, channel.ServiceId)) // pat lookup by sid or PMT pid
+          try
           {
-            DateTime dtNow = DateTime.Now;
-            int timeoutPMT = _parameters.TimeOutPMT * 1000;
-            if (alwaysUsePATLookup)
+            if (SetupPmtGrabber(lookForPid, channel.ServiceId)) // pat lookup by sid or PMT pid
             {
-              Log.Log.Debug("WaitForPMT: Using new way for PMT grabbing via PAT");
-              Log.Log.Debug("WaitForPMT: Waiting for SID {0}", channel.ServiceId);
-            }
-            else
-            {
-              Log.Log.Debug("WaitForPMT: Waiting for PMT {0:X}", _pmtPid);
-            }
-
-            if (_eventPMT.WaitOne(timeoutPMT, true))
-            {
-              TimeSpan ts = DateTime.Now - dtNow;
-              Log.Log.Debug("WaitForPMT: Found PMT after {0} seconds.", ts.TotalSeconds);
-              DateTime dtNowPMT2CAM = DateTime.Now;
-              bool sendPmtToCamDone = false;
-              try
+              DateTime dtNow = DateTime.Now;
+              int timeoutPMT = _parameters.TimeOutPMT * 1000;
+              if (alwaysUsePATLookup)
               {
-                while (ts.TotalMilliseconds < timeoutPMT && !sendPmtToCamDone)
-                  //lets keep trying to send pmt2cam and at the same time obey the timelimit specified in timeoutPMT
-                {
-                  ts = DateTime.Now - dtNow;
-                  bool updatePids;
-                  int waitInterval; //ms         
-                  sendPmtToCamDone = SendPmtToCam(out updatePids, out waitInterval);
-                  if (sendPmtToCamDone)
-                  {
-                    if (updatePids)
-                    {
-                      if (_channelInfo != null)
-                      {
-                        SetMpegPidMapping(_channelInfo);
-                        if (_mdplugs != null && _channelInfo.scrambled)
-                        {
-                          _mdplugs.SetChannel(_currentChannel, _channelInfo, false);
-                        }
-                      }
-                      Log.Log.Info("subch:{0} stop tif", _subChannelId);
-                      if (_filterTIF != null)
-                      {
-                        _filterTIF.Stop();
-                      }
-                    }
-                  }
-                  else
-                  {
-                    Log.Log.Debug("WaitForPMT: waiting for SendPmtToCam {0} ms.", ts.TotalMilliseconds);
-                    Thread.Sleep(waitInterval);
-                  }
-                }
-              }
-              catch (Exception ex)
-              {
-                Log.Log.WriteFile("subch:{0}", ex.Message);
-                Log.Log.WriteFile("subch:{0}", ex.Source);
-                Log.Log.WriteFile("subch::{0}", ex.StackTrace);
-              }
-              TimeSpan tsPMT2CAM = DateTime.Now - dtNowPMT2CAM;
-              _listenCA = false;
-              if (!sendPmtToCamDone)
-              {
-                Log.Log.Debug("WaitForPMT: Timed out sending PMT to CAM {0} seconds.", tsPMT2CAM.TotalSeconds);
+                Log.Log.Debug("WaitForPMT: Using new way for PMT grabbing via PAT");
+                Log.Log.Debug("WaitForPMT: Waiting for SID {0}", channel.ServiceId);
               }
               else
               {
-                Log.Log.Debug("WaitForPmt: PMT handling took {0} seconds.", tsPMT2CAM.TotalSeconds);
+                Log.Log.Debug("WaitForPMT: Waiting for PMT {0:X}", _pmtPid);
               }
-              // PMT was found so exit here
-              foundPMT = true;
-              break;
+
+              if (_eventPMT.WaitOne(timeoutPMT, true))
+              {
+                ThrowExceptionIfTuneCancelled();
+                TimeSpan ts = DateTime.Now - dtNow;
+                Log.Log.Debug("WaitForPMT: Found PMT after {0} seconds.", ts.TotalSeconds);
+                DateTime dtNowPMT2CAM = DateTime.Now;
+                bool sendPmtToCamDone = false;
+                try
+                {
+                  while (ts.TotalMilliseconds < timeoutPMT && !sendPmtToCamDone)
+                  //lets keep trying to send pmt2cam and at the same time obey the timelimit specified in timeoutPMT
+                  {
+                    ts = DateTime.Now - dtNow;
+                    bool updatePids;
+                    int waitInterval; //ms         
+                    sendPmtToCamDone = SendPmtToCam(out updatePids, out waitInterval);
+                    if (sendPmtToCamDone)
+                    {
+                      if (updatePids)
+                      {
+                        if (_channelInfo != null)
+                        {
+                          SetMpegPidMapping(_channelInfo);
+                          if (_mdplugs != null && _channelInfo.scrambled && _mdplugs.IsProviderSelected(channel.Provider))
+                          {
+                            //_mdplugs.SetChannel(_currentChannel, _channelInfo, false);
+                          _mdplugs.AddSubChannel(_subChannelId,_currentChannel, _channelInfo, false);
+                          }
+                          else
+                          {
+                            Log.Log.Debug("OnPMTReceived: MDAPI disabled. Possible reasons are _mdplugs=null or provider not listed");
+                          }
+                        }
+                        Log.Log.Info("subch:{0} stop tif", _subChannelId);
+                        if (_filterTIF != null)
+                        {
+                          _filterTIF.Stop();
+                        }
+                      }
+                    }
+                    else
+                    {
+                      Log.Log.Debug("WaitForPMT: waiting for SendPmtToCam {0} ms.", ts.TotalMilliseconds);
+                      Thread.Sleep(waitInterval);
+                    }
+                  }
+                }
+                catch (Exception ex)
+                {
+                  Log.Log.WriteFile("subch:{0}", ex.Message);
+                  Log.Log.WriteFile("subch:{0}", ex.Source);
+                  Log.Log.WriteFile("subch::{0}", ex.StackTrace);
+                }
+                TimeSpan tsPMT2CAM = DateTime.Now - dtNowPMT2CAM;
+                _listenCA = false;
+                if (!sendPmtToCamDone)
+                {
+                  Log.Log.Debug("WaitForPMT: Timed out sending PMT to CAM {0} seconds.", tsPMT2CAM.TotalSeconds);
+                }
+                else
+                {
+                  Log.Log.Debug("WaitForPmt: PMT handling took {0} seconds.", tsPMT2CAM.TotalSeconds);
+                }
+                // PMT was found so exit here
+                foundPMT = true;
+                break;
+              }
+              else
+              {
+                // Timeout waiting for PMT
+                TimeSpan ts = DateTime.Now - dtNow;
+                Log.Log.Debug("WaitForPMT: Timed out waiting for PMT after {0} seconds. Increase the PMT timeout value?",
+                              ts.TotalSeconds);
+                Log.Log.Debug("Setting to 0 to search for new PMT.");
+                lookForPid = 0;
+              }
             }
-            else
-            {
-              // Timeout waiting for PMT
-              TimeSpan ts = DateTime.Now - dtNow;
-              Log.Log.Debug("WaitForPMT: Timed out waiting for PMT after {0} seconds. Increase the PMT timeout value?",
-                            ts.TotalSeconds);
-              Log.Log.Debug("Setting to 0 to search for new PMT.");
-              lookForPid = 0;
-            }
+          }
+          finally
+          {
+            _pmtRequested = false; // reset PMT request flag, it means that we have finished processing of PMT
           }
         } // retry loop
       }
 
       return foundPMT;
+    }
+
+    private void ThrowExceptionIfTuneCancelled()
+    {
+      if (_cancelled)
+      {
+        Log.Log.Debug("WaitForPMT: tuning interrupted.");
+        throw new TvExceptionTuneCancelled();
+      }
     }
 
     /// <summary>
@@ -863,7 +890,7 @@ namespace TvLibrary.Implementations.DVB
 
       // reset event before starting to wait
       _eventPMT.Reset();
-
+      ThrowExceptionIfTuneCancelled();
       if (pmtPid < 0)
         return false;
       if (pmtPid == _pmtPid)
@@ -1117,6 +1144,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected virtual bool SendPmtToCam(out bool updatePids, out int waitInterval)
     {
+      ThrowExceptionIfTuneCancelled();
       lock (this)
       {
         DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
@@ -1141,10 +1169,11 @@ namespace TvLibrary.Implementations.DVB
               }
               else
               {
+                ThrowExceptionIfTuneCancelled();
                 foundCA = true;
                 TimeSpan ts = DateTime.Now - dtNow;
                 Log.Log.Info("subch:{0} SendPmt:CA found after {1} seconds", _subChannelId, ts.TotalSeconds);
-              }
+              }              
             }
           }
         }
@@ -1303,6 +1332,17 @@ namespace TvLibrary.Implementations.DVB
       get { return (_pmtVersion > -1 && _channelInfo.pids.Count > 0); }
     }
 
+    /// <summary>
+    /// cancels the tune
+    /// </summary>    
+    public void CancelTune ()
+    {
+      Log.Log.WriteFile("subch:{0} CancelTune()", _subChannelId);
+      _cancelled = true;
+      _eventCA.Set();
+      _eventPMT.Set();
+    }    
+
     #endregion
 
     #region tswriter callback handlers
@@ -1333,6 +1373,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public virtual int OnPMTReceived(int pmtPid)
     {
+      DVBBaseChannel CurrentDVBChannel = _currentChannel as DVBBaseChannel;
       if (_eventPMT != null)
       {
         Log.Log.WriteFile("subch:{0} OnPMTReceived() pmt:{3:X} ran:{1} dynamic:{2}", _subChannelId, GraphRunning(),
@@ -1351,9 +1392,14 @@ namespace TvLibrary.Implementations.DVB
               if (_channelInfo != null)
               {
                 SetMpegPidMapping(_channelInfo);
-                if (_mdplugs != null && _channelInfo.scrambled)
+                if (_mdplugs != null && _channelInfo.scrambled && _mdplugs.IsProviderSelected(CurrentDVBChannel.Provider))
                 {
-                  _mdplugs.SetChannel(_currentChannel, _channelInfo, true);
+                  //_mdplugs.SetChannel(_currentChannel, _channelInfo, true);
+                  _mdplugs.AddSubChannel(_subChannelId, _currentChannel, _channelInfo, true);
+                }
+                else
+                {
+                  Log.Log.Debug("OnPMTReceived: MDAPI disabled. Possible reasons are _mdplugs=null or provider not listed");
                 }
               }
             }
@@ -1365,7 +1411,10 @@ namespace TvLibrary.Implementations.DVB
         }
       }
       PersistPMTtoDataBase(pmtPid);
-      _pmtRequested = false; // once received, reset
+      // Do *not* reset this flag. It will be reset after the PMT is processed.
+      // This prevents a race condition between when this flag is set and when
+      // we start to wait for PMT to be received.
+      //_pmtRequested = false;
       return 0;
     }
 

@@ -24,6 +24,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using MediaPortal.Database;
 using MediaPortal.GUI.Library;
+using System.Threading;
 
 namespace SQLite.NET
 {
@@ -378,7 +379,23 @@ namespace SQLite.NET
       TimeSpan ts = now - DateTime.Now;
       while (true && ts.TotalSeconds > -15)
       {
-        res = sqlite3_step(pVm);
+        for (int i = 0; i <= busyRetries; i++)
+        {
+          res = sqlite3_step(pVm);
+          if (res == SqliteError.LOCKED || res == SqliteError.BUSY)
+          {
+            Thread.Sleep(busyRetryDelay);
+          }
+          else
+          {
+            if (i > 0)
+            {
+              Log.Debug("SqlClient: database was busy (Available after " + (i + 1) + " retries)");
+            }
+            break;
+          }
+        }
+
         pN = sqlite3_column_count(pVm);
         /*
         if (res == SqliteError.ERROR)
@@ -568,7 +585,7 @@ namespace SQLite.NET
     public int BusyRetries
     {
       get { return busyRetries; }
-      set { busyRetries = value; }
+      set { busyRetries = value > 0 ? value : 0; }
     }
 
 

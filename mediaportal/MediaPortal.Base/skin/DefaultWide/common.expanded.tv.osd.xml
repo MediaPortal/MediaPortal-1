@@ -25,7 +25,7 @@
       <label>#time</label>
       <align>right</align>
       <font>font14</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
       <visible>control.hasfocus(1237)</visible>
     </control>
     <control>
@@ -33,9 +33,9 @@
       <type>image</type>
       <id>1</id>
       <posX>160</posX>
-      <posY>450</posY>
+      <posY>451</posY>
       <width>645</width>
-      <height>27</height>
+      <height>25</height>
       <texture>osd_progress_background.png</texture>
       <visible>control.hasfocus(1237)</visible>
     </control>
@@ -46,9 +46,9 @@
       <posX>160</posX>
       <posY>455</posY>
       <width>645</width>
-      <height>20</height>
+      <height>18</height>
       <toptexture>osd_progress_indicator.png</toptexture>
-      <TextureOffsetY>22</TextureOffsetY>
+      <TextureOffsetY>21</TextureOffsetY>
       <bottomtexture>-</bottomtexture>
       <texturetick>-</texturetick>
       <lefttexture>-</lefttexture>
@@ -59,9 +59,9 @@
       <fillbgxoff>0</fillbgxoff>
       <fillbgyoff>0</fillbgyoff>
       <filltexture1>osd_progress_mid_red.png</filltexture1>
-      <filltexture2>osd_progress_mid.png</filltexture2>
+      <filltexture2>osd_progress_mid_green.png</filltexture2>
       <filltexture3>osd_progress_mid_orange.png</filltexture3>
-      <fillheight>20</fillheight>
+      <fillheight>18</fillheight>
       <label>#TV.Record.percent1</label>
       <label1>#TV.Record.percent2</label1>
       <label2>#TV.Record.percent3</label2>
@@ -75,10 +75,10 @@
     <control>
       <description>End Time Info</description>
       <type>label</type>
-      <posX>810</posX>
-      <posY>445</posY>
+      <posX>915</posX>
+      <posY>448</posY>
       <label>#currentremaining</label>
-      <align>left</align>
+      <align>right</align>
       <font>font14</font>
       <textcolor>ffffffff</textcolor>
       <visible>control.hasfocus(1237)</visible>
@@ -87,7 +87,7 @@
       <description>Start Time Info</description>
       <type>label</type>
       <posX>40</posX>
-      <posY>445</posY>
+      <posY>448</posY>
       <label>#currentplaytime</label>
       <align>left</align>
       <font>font14</font>
@@ -112,13 +112,13 @@
       <id>1</id>
       <posX>40</posX>
       <posY>505</posY>
-      <width>1150</width>
+      <width>1210</width>
       <height>200</height>
       <align>left</align>
       <label>#TV.View.description</label>
       <seperator>&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;	&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;	&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;</seperator>
-      <font>font11</font>
-      <textcolor>gainsboro</textcolor>
+      <font>font12</font>
+      <textcolor>ivory</textcolor>
       <visible>control.hasfocus(1237)</visible>
       <shadowAngle>0</shadowAngle>
       <shadowDistance>0</shadowDistance>
@@ -130,11 +130,11 @@
       <width>770</width>
       <height>30</height>
       <posX>120</posX>
-      <posY>411</posY>
+      <posY>406</posY>
       <align>left</align>
       <label>#TV.View.title</label>
-      <font>font14</font>
-      <textcolor>ivory</textcolor>
+      <font>font18</font>
+      <textcolor>ff6FAFE1</textcolor>
       <visible>control.hasfocus(1237)</visible>
     </control>
     <control>
@@ -167,7 +167,7 @@
       <description>vertical divider</description>
       <type>image</type>
       <id>1</id>
-      <posX>930</posX>
+      <posX>940</posX>
       <posY>375</posY>
       <height>104</height>
       <width>1</width>

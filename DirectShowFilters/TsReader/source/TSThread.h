@@ -36,6 +36,7 @@ public:
 	virtual void ThreadProc() = 0;
 	HRESULT StartThread();
 	HRESULT StopThread(DWORD dwTimeoutMilliseconds = 1000);
+  void WakeThread();
 
 	BOOL ThreadIsStopping(DWORD dwTimeoutMilliseconds = 10);
   BOOL IsThreadRunning();
@@ -43,6 +44,7 @@ protected:
 	virtual void InternalThreadProc();
 	HANDLE m_hDoneEvent;
 	HANDLE m_hStopEvent;
+	HANDLE m_hWakeEvent;
 
 private:
   BOOL   m_bThreadRunning;

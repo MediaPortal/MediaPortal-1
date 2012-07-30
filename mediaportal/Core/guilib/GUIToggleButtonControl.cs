@@ -42,9 +42,11 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textcolorNoFocus")] protected long _textColorNoFocus = 0xFFFFFFFF;
     [XMLSkinElement("disabledcolor")] protected long _disabledColor = 0xFF606060;
     [XMLSkinElement("hyperlink")] protected int _hyperLinkWindowId = -1;
+    [XMLSkinElement("onclick")] protected string _onclick = "";
 
     protected string _scriptAction = "";
     [XMLSkinElement("textXOff")] protected int _textOffsetX = 0;
+    [XMLSkin("textXOff", "hasMargin")] protected bool _textOffsetXHasMargin = true;
     [XMLSkinElement("textYOff")] protected int _textOffsetY = 0;
     [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("textvalign")] protected VAlignment _textVAlignment = VAlignment.ALIGN_MIDDLE;
@@ -165,7 +167,12 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      int labelWidth = _width - 2 * _textOffsetX;
+      int labelWidth = _width;
+      if (_textOffsetXHasMargin)
+      {
+        labelWidth = _width - 2 * _textOffsetX;
+      }
+
       if (labelWidth <= 0)
       {
         base.Render(timePassed);
@@ -225,6 +232,13 @@ namespace MediaPortal.GUI.Library
         if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_SELECT_ITEM)
         {
           _isSelected = !_isSelected;
+
+          // If this button has a click setting then execute the setting.
+          if (_onclick.Length != 0)
+          {
+            GUIPropertyManager.Parse(_onclick, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
+          }
+
           if (_hyperLinkWindowId >= 0)
           {
             GUIWindowManager.ActivateWindow(_hyperLinkWindowId);

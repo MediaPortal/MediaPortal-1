@@ -784,7 +784,6 @@ namespace TvPlugin
                                             DateTime.Now, DateTime.Now.AddDays(1));
         newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
         newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-        newSchedule.RecommendedCard = Card.Id;
         newSchedule.Persist();
         server.OnNewSchedule();
       }
@@ -811,8 +810,7 @@ namespace TvPlugin
         Schedule newSchedule = new Schedule(channel.IdChannel, channel.CurrentProgram.Title,
                                             channel.CurrentProgram.StartTime, channel.CurrentProgram.EndTime);
         newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
-        newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-        newSchedule.RecommendedCard = Card.Id;
+        newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);        
         newSchedule.Persist();
         server.OnNewSchedule();
       }
@@ -3069,6 +3067,9 @@ namespace TvPlugin
         case TvResult.UnableToStartGraph:
           TextID = 1505;
           break;
+        case TvResult.TuneCancelled:
+          TextID = 1524;
+          break;
         case TvResult.UnknownError:
           // this error can also happen if we have no connection to the server.
           if (!Connected) // || !IsRemotingConnected())
@@ -3223,13 +3224,18 @@ namespace TvPlugin
       }
       Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.DisplayName);
 
-      //if a channel is untunable, then there is no reason to carry on or even stop playback.
-      ChannelState CurrentChanState = TvServer.GetChannelState(channel.IdChannel, Card.User);
-      if (CurrentChanState == ChannelState.nottunable)
+      //if a channel is untunable, then there is no reason to carry on or even stop playback.   
+      var userCopy = Card.User.Clone() as IUser;
+      if (userCopy != null) 
       {
-        ChannelTuneFailedNotifyUser(TvResult.AllCardsBusy, false, channel);
-        return false;
-      }
+        userCopy.Name = Dns.GetHostName();
+        ChannelState CurrentChanState = TvServer.GetChannelState(channel.IdChannel, userCopy);
+        if (CurrentChanState == ChannelState.nottunable)
+        {
+          ChannelTuneFailedNotifyUser(TvResult.AllCardsBusy, false, channel);
+          return false;
+        }
+      }      
 
       //BAV: fixing mantis bug 1263: TV starts with no video if Radio is previously ON & channel selected from TV guide
       if ((!channel.IsRadio && g_Player.IsRadio) || (channel.IsRadio && !g_Player.IsRadio))

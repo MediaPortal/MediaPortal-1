@@ -13,6 +13,7 @@
       <width>960</width>
       <height>720</height>
       <texture>-</texture>
+      <colordiffuse>ddffffff</colordiffuse>
     </control>
     <control>
       <description>tele-text rendering image 2</description>
@@ -23,6 +24,7 @@
       <width>960</width>
       <height>720</height>
       <texture>-</texture>
+      <colordiffuse>ddffffff</colordiffuse>
     </control>
     <control>
       <description>Current channel</description>

@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>6666</id>
   <defaultcontrol>2</defaultcontrol>
@@ -17,7 +17,7 @@
       <id>2</id>
       <label>40002</label>
       <font>font13</font>
-      <textcolor>White</textcolor>
+      <textcolor>ivory</textcolor>
     </control>
     <control>
       <posX>79</posX>
@@ -26,7 +26,7 @@
       <id>2</id>
       <label>40003</label>
       <font>font13</font>
-      <textcolor>White</textcolor>
+      <textcolor>ivory</textcolor>
     </control>
   </controls>
 </window>

@@ -54,7 +54,7 @@
       <width>470</width>
       <label>-</label>
       <font>font14</font>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
     </control>
     <control>
       <description>Dimensions txt</description>
@@ -319,6 +319,7 @@
       <height>420</height>
       <texture>-</texture>
       <keepaspectratio>yes</keepaspectratio>
+      <align>center</align>
     </control>
     <control>
       <description>Image</description>
@@ -330,6 +331,7 @@
       <height>420</height>
       <texture mask="picturethumbmask.png">#selectedthumb</texture>
       <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
     </control>
     <control>
       <type>image</type>
@@ -338,7 +340,7 @@
       <posY>180</posY>
       <width>470</width>
       <height>420</height>
-      <texture mask="picturethumbmask.png">Picturethumbframe.png</texture>
+      <texture>Picturethumbframe.png</texture>
     </control>
   </controls>
 </window>

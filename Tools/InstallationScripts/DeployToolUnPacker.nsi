@@ -85,7 +85,7 @@
 # INSTALLER ATTRIBUTES
 #---------------------------------------------------------------------------
 Name          "${SKRIPT_NAME}"
-BrandingText  "${PRODUCT_NAME} ${VERSION} by ${PRODUCT_PUBLISHER}"
+BrandingText  "${PRODUCT_NAME} ${VERSION_DISP} by ${PRODUCT_PUBLISHER}"
 Icon "${git_DeployTool}\Install.ico"
 !define /date buildTIMESTAMP "%Y-%m-%d-%H-%M"
 !if ${VER_BUILD} == 0
@@ -102,11 +102,11 @@ ShowInstDetails show
 AutoCloseWindow true
 VIProductVersion "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}"
 VIAddVersionKey ProductName       "${PRODUCT_NAME}"
-VIAddVersionKey ProductVersion    "${VERSION}"
+VIAddVersionKey ProductVersion    "${VERSION_DISP}"
 VIAddVersionKey CompanyName       "${PRODUCT_PUBLISHER}"
 VIAddVersionKey CompanyWebsite    "${PRODUCT_WEB_SITE}"
 VIAddVersionKey FileVersion       "${VERSION}"
-VIAddVersionKey FileDescription   "${PRODUCT_NAME} installation ${VERSION}"
+VIAddVersionKey FileDescription   "${PRODUCT_NAME} installation ${VERSION_DISP}"
 VIAddVersionKey LegalCopyright    "Copyright © 2005-2011 ${PRODUCT_PUBLISHER}"
 
 ;if we want to make it fully silent we can uncomment this

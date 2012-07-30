@@ -65,7 +65,7 @@ namespace MediaPortal.GUI.Settings
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\SettingsMyMusic.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\SettingsMyMusic.xml"));
     }
 
     public override void OnAction(Action action)

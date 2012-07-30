@@ -850,7 +850,7 @@ namespace MediaPortal
           {
             m_strSkin = GUIGraphicsContext.Skin;
           }
-          GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
+          GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
           GUIFontManager.InitializeDeviceObjects();
         }
 
@@ -891,7 +891,7 @@ namespace MediaPortal
             {
               m_strSkin = GUIGraphicsContext.Skin;
             }
-            GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
+            GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile("fonts.xml"));
             GUIFontManager.InitializeDeviceObjects();
           }
         }

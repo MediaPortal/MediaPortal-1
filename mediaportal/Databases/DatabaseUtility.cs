@@ -33,7 +33,9 @@ namespace MediaPortal.Database
 
     public static void CompactDatabase(SQLiteClient m_db)
     {
+      m_db.Execute("PRAGMA count_changes=0");
       m_db.Execute("vacuum");
+      m_db.Execute("PRAGMA count_changes=1");
     }
 
     public static void SetPragmas(SQLiteClient m_db)

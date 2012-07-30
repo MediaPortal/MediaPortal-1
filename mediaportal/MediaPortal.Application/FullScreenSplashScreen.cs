@@ -93,22 +93,8 @@ namespace MediaPortal
     /// </summary>
     private void ReadSplashScreenXML()
     {
-      string m_strSkin;
       string SkinFilePath = string.Empty;
-
-      // try to find the splashscreen.xml ín the curent skin folder
-      using (Settings xmlreader = new MPSettings())
-      {
-        if (D3DApp._strSkinOverride.Length > 0)
-        {
-          m_strSkin = D3DApp._strSkinOverride;
-        }
-        else
-        {
-          m_strSkin = xmlreader.GetValueAsString("skin", "name", "Default");
-        }
-        SkinFilePath = Config.GetFile(Config.Dir.Skin, m_strSkin + "\\splashscreen.xml");
-      }
+      SkinFilePath = GUIGraphicsContext.GetThemedSkinFile("\\splashscreen.xml");
 
       if (!File.Exists(SkinFilePath))
       {
@@ -128,7 +114,7 @@ namespace MediaPortal
             && Control.SelectSingleNode("id/text()").Value == "1") // if the background image control is found
         {
           string BackgoundImageName = Control.SelectSingleNode("texture/text()").Value;
-          string BackgroundImagePath = Config.GetFile(Config.Dir.Skin, m_strSkin + "\\media\\" + BackgoundImageName);
+          string BackgroundImagePath = GUIGraphicsContext.GetThemedSkinFile("\\media\\" + BackgoundImageName);
           if (File.Exists(BackgroundImagePath))
           {
             Log.Debug("FullScreenSplash: Try to load background image value found: {0}", BackgroundImagePath);
@@ -165,21 +151,8 @@ namespace MediaPortal
     /// </summary>
     private void ReadReferenceXML()
     {
-      string m_strSkin;
       string SkinReferenceFilePath = string.Empty;
-
-      using (Settings xmlreader = new MPSettings())
-      {
-        if (D3DApp._strSkinOverride.Length > 0)
-        {
-          m_strSkin = D3DApp._strSkinOverride;
-        }
-        else
-        {
-          m_strSkin = xmlreader.GetValueAsString("skin", "name", "Default");
-        }
-        SkinReferenceFilePath = Config.GetFile(Config.Dir.Skin, m_strSkin + "\\references.xml");
-      }
+      SkinReferenceFilePath = GUIGraphicsContext.GetThemedSkinFile("\\references.xml");
 
       Log.Debug("FullScreenSplash: Try to use the reference.xml: {0}", SkinReferenceFilePath);
 
@@ -192,7 +165,7 @@ namespace MediaPortal
         if (Control.SelectSingleNode("type/text()").Value.ToLower() == "image")
         {
           string BackgoundImageName = Control.SelectSingleNode("texture/text()").Value;
-          string BackgroundImagePath = Config.GetFile(Config.Dir.Skin, m_strSkin + "\\media\\" + BackgoundImageName);
+          string BackgroundImagePath = GUIGraphicsContext.GetThemedSkinFile("\\media\\" + BackgoundImageName);
           if (File.Exists(BackgroundImagePath))
           {
             pbBackground.Image = new Bitmap(BackgroundImagePath); // load the image as background

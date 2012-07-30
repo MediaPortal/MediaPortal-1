@@ -61,7 +61,7 @@ namespace MediaPortal.Dialogs
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\dialogDateTime.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\dialogDateTime.xml"));
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)

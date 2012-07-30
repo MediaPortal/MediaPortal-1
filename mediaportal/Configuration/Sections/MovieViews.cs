@@ -29,10 +29,17 @@ namespace MediaPortal.Configuration.Sections
                                     {
                                       "watched",
                                       "actor",
+                                      "director",
                                       "title",
                                       "genre",
                                       "year",
                                       "rating",
+                                      "recently added",
+                                      "recently watched",
+                                      "user groups",
+                                      "actorindex",
+                                      "directorindex",
+                                      "titleindex",
                                     };
 
     private string[] sqloperators = new string[]
@@ -80,6 +87,12 @@ namespace MediaPortal.Configuration.Sections
     public override void SaveSettings()
     {
       base.SaveSettings("Video");
+    }
+
+    public override void OnSectionActivated()
+    {
+      base.Section = "Video";
+      base.OnSectionActivated();
     }
   }
 }

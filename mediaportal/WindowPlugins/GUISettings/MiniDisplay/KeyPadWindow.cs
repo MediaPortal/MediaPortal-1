@@ -43,7 +43,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\settings_Display_Keypad.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\settings_Display_Keypad.xml"));
     }
 
     private void LoadSettings()

@@ -15,14 +15,14 @@
       <posY>150</posY>
       <width>850</width>
       <height>420</height>
-      <texture mask="picturethumbmask.png">blue.png</texture>
-      <colordiffuse>eeffffff</colordiffuse>
+      <texture>backslide2.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
     </control>
     <control>
       <description>group element</description>
       <type>group</type>
-      <animation effect="slide" time="70" start="800,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <control>
         <description>Horizontal Speed label</description>
         <type>label</type>
@@ -106,10 +106,10 @@
         <id>25</id>
         <posX>255</posX>
         <posY>300</posY>
-        <width>533</width>
+        <width>750</width>
         <label>-</label>
         <font>font13</font>
-        <textcolor>FFB2D4F5</textcolor>
+        <textcolor>ff6FAFE1</textcolor>
       </control>
       <control>
         <description>Description1</description>
@@ -117,11 +117,11 @@
         <id>26</id>
         <posX>255</posX>
         <posY>360</posY>
-        <width>633</width>
+        <width>750</width>
         <height>165</height>
         <label>-</label>
         <font>font13</font>
-        <textcolor>FFB2D4F5</textcolor>
+        <textcolor>ff6FAFE1</textcolor>
       </control>
     </control>
   </controls>

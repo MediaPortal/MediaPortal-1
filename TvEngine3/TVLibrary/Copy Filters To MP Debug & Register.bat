@@ -3,7 +3,7 @@ xcopy "..\..\DirectShowFilters\bin\Release\*.*" "_TvPluginDebug\MediaPortal\" /R
 chdir "..\..\DirectShowFilters\bin\Release\"
 regsvr32 cdxareader.ax /s
 regsvr32 CLDump.ax /s
-regsvr32 DVBSub2.ax /s
+regsvr32 DVBSub3.ax /s
 regsvr32 mmaacd.ax /s
 regsvr32 MpaDecFilter.ax /s
 regsvr32 MPAudioSwitcher.ax /s

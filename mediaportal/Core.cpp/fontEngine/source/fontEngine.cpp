@@ -745,9 +745,13 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 
 
 //*******************************************************************************************************************
+// blendMode 0 = ignore/bypass blending operation (completely disregard the use of textureNo2)
+// blendMode 1 = diffuse blending (choose D3DTOP_MODULATE)
+// blendMode 2 = linear blending (choose D3DTOP_BLENDTEXTUREALPHA)
 void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax,
                             int color, float m[3][4],
-                            int textureNo2, float uoff2, float voff2, float umax2, float vmax2)
+                            int textureNo2, float uoff2, float voff2, float umax2, float vmax2,
+                            int blendMode)
 {
   if (textureNo1 < 0 || textureNo1>=MAX_TEXTURES) return;
   if (textureNo2 < 0 || textureNo2>=MAX_TEXTURES) return;
@@ -777,12 +781,6 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
     {
       return;
     }
-  }
-
-  bool ignoreTextureBlending = false;
-  if (textureNo1 == textureNo2 && uoff2 == 0 && voff2 == 0 && umax2 == 0 && vmax2 == 0)
-  {
-    ignoreTextureBlending = true;
   }
 
   TransformMatrix matrix(m);
@@ -969,7 +967,7 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
     m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
   }
 
-  if (!ignoreTextureBlending)
+  if (blendMode > 0)
   {
     m_pDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
     m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
@@ -978,10 +976,27 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
     m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
     m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 
-    m_pDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
+    if (blendMode == 1)
+    {
+      m_pDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
+    }
+    else if (blendMode == 2)
+    {
+      m_pDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_BLENDTEXTUREALPHA);
+    }
+
     m_pDevice->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
     m_pDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
-    m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+
+    if (blendMode == 1)
+    {
+      m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+    }
+    else if (blendMode == 2)
+    {
+      m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_BLENDTEXTUREALPHA);
+    }
+
     m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
     m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
 
@@ -991,13 +1006,19 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
   }
 
   m_pDevice->SetTexture(0, texture1->pTexture);
-  m_pDevice->SetTexture(1, texture2->pTexture);
+  if (blendMode > 0)
+  {
+    m_pDevice->SetTexture(1, texture2->pTexture);
+  }
 
   m_pDevice->SetFVF(D3DFVF_CUSTOMVERTEX2);
   m_pDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, verts, sizeof(CUSTOMVERTEX2));
 
   m_pDevice->SetTexture(0, NULL);
-  m_pDevice->SetTexture(1, NULL);
+  if (blendMode > 0)
+  {
+    m_pDevice->SetTexture(1, NULL);
+  }
 
   // Important - the scissor test (for clipping) must be disabled before return.
   // Clipping may not be defined other FontEngine calls that draw textures.
@@ -1264,10 +1285,14 @@ void FontEngineDrawMaskedTexture(int textureNo1, float x, float y, float nw, flo
 }
 
 //*******************************************************************************************************************
+// blendMode 0 = ignore/bypass blending operation (completely disregard the use of textureNo2)
+// blendMode 1 = diffuse blending (choose D3DTOP_MODULATE)
+// blendMode 2 = linear blending (choose D3DTOP_BLENDTEXTUREALPHA)
 void FontEngineDrawMaskedTexture2(int textureNo1,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax,
                                   int color, float m[3][4],
                                   int textureNo2, float uoff2, float voff2, float umax2, float vmax2,
-                                  int textureNo3, float uoff3, float voff3, float umax3, float vmax3)
+                                  int textureNo3, float uoff3, float voff3, float umax3, float vmax3,
+                                  int blendMode)
 {
   // textureNo1 - main image
   // textureNo2 - diffuse image
@@ -1516,38 +1541,58 @@ void FontEngineDrawMaskedTexture2(int textureNo1,float x, float y, float nw, flo
     m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
   }
 
-  // This stage blends the color and alpha of the current texture (texture1) with the background (diffuse image).
-  m_pDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-  m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-  m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
-  m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-  m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-  m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+  if (blendMode > 0)
+  {
+    // This stage blends the color and alpha of the current texture (texture1) with the background (diffuse image).
+    m_pDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+    m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+    m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+    m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+    m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+    m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 
-  // This stage blends the alpha of result of the last stage with texture2 (our own alpha mask).
-  m_pDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
-  m_pDevice->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-  m_pDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
-  m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-  m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-  m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
+    // This stage blends the alpha of result of the last stage with texture2 (our own alpha mask).
+    if (blendMode == 1)
+    {
+      m_pDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
+    }
+    else if (blendMode == 2)
+    {
+      m_pDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_BLENDTEXTUREALPHA);
+    }
 
-  // This stage selects the color of the mask (arg1 = texture3) and blends it with the result of the
-  // last stage (our alpha adjusted texture).
-  m_pDevice->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
-  m_pDevice->SetTextureStageState(2, D3DTSS_COLORARG1, D3DTA_CURRENT);
-  m_pDevice->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-  m_pDevice->SetTextureStageState(2, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+    m_pDevice->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+    m_pDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
 
-  // This stage blends the masked resultant texture with the background (the diffuse texture).
-  m_pDevice->SetTextureStageState(3, D3DTSS_COLOROP, D3DTOP_MODULATE);
-  m_pDevice->SetTextureStageState(3, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
-  m_pDevice->SetTextureStageState(3, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-  m_pDevice->SetTextureStageState(3, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE);
+    if (blendMode == 1)
+    {
+      m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+    }
+    else if (blendMode == 2)
+    {
+      m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_BLENDTEXTUREALPHA);
+    }
 
-  // Disable the remainder of the texture stages.
-  m_pDevice->SetTextureStageState(4, D3DTSS_COLOROP, D3DTOP_DISABLE);
-  m_pDevice->SetTextureStageState(4, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
+    m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+    m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
+
+    // This stage selects the color of the mask (arg1 = texture3) and blends it with the result of the
+    // last stage (our alpha adjusted texture).
+    m_pDevice->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+    m_pDevice->SetTextureStageState(2, D3DTSS_COLORARG1, D3DTA_CURRENT);
+    m_pDevice->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+    m_pDevice->SetTextureStageState(2, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+
+    // This stage blends the masked resultant texture with the background (the diffuse texture).
+    m_pDevice->SetTextureStageState(3, D3DTSS_COLOROP, D3DTOP_MODULATE);
+    m_pDevice->SetTextureStageState(3, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
+    m_pDevice->SetTextureStageState(3, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+    m_pDevice->SetTextureStageState(3, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE);
+
+    // Disable the remainder of the texture stages.
+    m_pDevice->SetTextureStageState(4, D3DTSS_COLOROP, D3DTOP_DISABLE);
+    m_pDevice->SetTextureStageState(4, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
+  }
 
   m_pDevice->SetTexture(0, texture1->pTexture);
   m_pDevice->SetTexture(1, texture2->pTexture);

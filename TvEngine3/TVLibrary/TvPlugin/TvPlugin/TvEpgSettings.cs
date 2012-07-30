@@ -40,7 +40,7 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\settings_tvEpg.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\settings_tvEpg.xml"));
     }
 
     protected override void OnPageLoad()

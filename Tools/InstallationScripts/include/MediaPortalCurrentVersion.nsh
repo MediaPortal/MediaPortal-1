@@ -32,20 +32,46 @@
 
 !define VER_MAJOR       1
 !define VER_MINOR       2
-!define VER_REVISION    0
-;!define VER_TYPE        ""                 # can be "RC", "Beta". Please comment if Final release
+!define VER_REVISION    100
 
 #**********************************************************************************************************#
 
-!ifndef VER_BUILD
-    !define VER_BUILD   0
-!endif
-
-!ifndef VER_TYPE
+!if ${VER_REVISION} < 100
 	!define VER_TYPE ""
 	!define SPC ""
-!else
+	!define VER_MINOR_DISP		${VER_MINOR}
+	!define VER_REVISION_DISP	${VER_REVISION}
+
+!else 
 	!define SPC " "
+	!define /math VER_MINOR_DISP	${VER_MINOR} + 1
+	!define VER_REVISION_DISP		0
+
+	!if ${VER_REVISION} == 100
+		!define VER_TYPE "Alpha"
+	!else if ${VER_REVISION} < 200
+		!define /math ALPHA ${VER_REVISION} - 99
+		!define VER_TYPE "Alpha{$ALPHA}"
+		!undef ALPHA
+	!else if ${VER_REVISION} == 200
+		!define VER_TYPE "Beta"
+	!else if ${VER_REVISION} < 300
+		!define /math BETA ${VER_REVISION} - 199
+		!define VER_TYPE "Beta{$BETA}"
+		!undef BETA
+	!else if ${VER_REVISION} == 300
+		!define VER_TYPE "RC"
+	!else
+		!define /math RC ${VER_REVISION} - 299
+		!define VER_TYPE "RC{$RC}"
+		!undef RC
+	!endif
+!endif
+#!define VER_TYPE        "Alpha"                 # can be "RC", "Beta". Please comment if Final release
+
+
+!ifndef VER_BUILD
+    !define VER_BUILD   0
 !endif
 
 !if ${BUILD_TYPE} == "Debug"               # it's a debug release
@@ -77,4 +103,5 @@
 !endif
 
 
-!define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}${SPC}${VER_TYPE}${VER_GIT}"
+!define VERSION			"${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}${VER_GIT}"
+!define VERSION_DISP	"${VER_MAJOR}.${VER_MINOR_DISP}.${VER_REVISION_DISP}${SPC}${VER_TYPE}${VER_GIT}"

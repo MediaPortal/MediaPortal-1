@@ -26,7 +26,7 @@
 #include "qedit.h"
 
 // For more details for memory leak detection see the alloctracing.h header
-//#include "..\..\alloctracing.h"
+#include "..\..\alloctracing.h"
 
 // Function prototypes
 int GrabBitmaps(TCHAR * szFile);

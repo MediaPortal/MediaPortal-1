@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>16001</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <import>common.time.xml</import>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1366</width>
+      <height>768</height>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>1206</posX>
+      <posY>10</posY>
+      <width>40</width>
+      <height>40</height>
+      <texture>hover_my news.png</texture>
+      <visible>false</visible>
+    </control>
+    <control>
+      <description>Channel name label</description>
+      <type>label</type>
+      <id>12</id>
+      <posX>35</posX>
+      <posY>10</posY>
+      <label>InfoService - Feeds</label>
+      <font>font14</font>
+      <textcolor>ff6FAFE1</textcolor>
+  
+    </control>
+    <control>
+      <description>Number of Files Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>35</posX>
+      <posY>35</posY>
+      <label>#infoservice.feed.itemcount #infoservice.feed.itemtype</label>
+      <align>left</align>
+      <textcolor>ivory</textcolor>
+      <font>font11</font>
+    </control>
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>300</posX>
+      <posY>80</posY>
+      <width>950</width>
+      <font>font12</font>
+<textcolor>ivory</textcolor>
+      <label>#infoservice.feed.selected.title</label>
+      
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>31</posX>
+      <posY>272</posY>
+      <width>231</width>
+      <height>231</height>
+      <texture>album_preview_thumb_background.png</texture>
+      <visible>control.hasthumb(101)</visible>
+    </control>
+    <control>
+      <description>Site Logo</description>
+      <type>image</type>
+      <id>101</id>
+      <posX>45</posX>
+      <posY>285</posY>
+      <width>199</width>
+      <height>199</height>
+      <texture>#infoservice.feed.img</texture>
+      <centered>yes</centered>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>50</onexit>
+     <buttonX>-210</buttonX>
+      <buttonY>64</buttonY>
+      <buttonwidth>400</buttonwidth>
+      <buttonheight>515</buttonheight> 
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>100</width>
+      <height>568</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <posY>0</posY>
+        <width>290</width>
+        <height>768</height>
+        <texture>menu_slide_background.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="10" start="-300,0">visible</animation>
+        <animation effect="slide" time="10" end="-300,0">hidden</animation>
+      </control>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="10" end="-300,0">hidden</animation>
+        <animation effect="slide" time="10" start="-300,0">visible</animation>
+        <posX>20</posX>
+        <posY>80</posY>
+        <layout>StackLayout</layout>
+        <control>
+          <description>Refresh Button</description>
+          <type>button</type>
+          <id>2</id>
+          <label>184</label>
+          <onleft>2</onleft>
+          <onright>50</onright>
+          <onup>17</onup>
+          <ondown>4</ondown>
+        </control>
+        <control>
+          <description>RSS feed select</description>
+          <type>button</type>
+          <id>4</id>
+          <label>706</label>
+          <onleft>4</onleft>
+          <onright>50</onright>
+          <onup>2</onup>
+          <ondown>5</ondown>
+        </control>
+		<control>
+          <description>All feeds</description>
+          <type>button</type>
+          <id>5</id>
+          <label>Show all feeds on home</label>
+          <onleft>5</onleft>
+          <onright>50</onright>
+          <onup>4</onup>
+          <ondown>2</ondown>
+        </control>
+      </control>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <control>
+        <description>listcontrol</description>
+        <type>listcontrol</type>
+        <id>50</id>
+<posX>300</posX>
+<width>900</width>
+<font>font10</font>
+        <height>455</height>
+        <onleft>2</onleft>
+        <spinPosY>500</spinPosY>
+      </control>
+      <control>
+        <description>Chosen Story description</description>
+        <type>textboxscrollup</type>
+        <id>506</id>
+        <posX>300</posX>
+        <posY>530</posY>
+        <width>800</width>
+        <height>175</height>
+        <label>-</label>
+        <font>font11</font>
+      </control>
+    </control>
+  </controls>
+</window>

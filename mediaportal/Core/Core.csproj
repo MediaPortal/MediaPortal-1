@@ -341,10 +341,17 @@
     <Compile Include="guilib\GUIInternalOverlayWindow.cs" />
     <Compile Include="guilib\GUIInternalWindow.cs" />
     <Compile Include="guilib\GUIKeyboard.cs" />
+    <Compile Include="guilib\GUIMenuButton.cs" />
     <Compile Include="guilib\GUISpinButton.cs" />
     <Compile Include="guilib\GUIStandardKeyboard.cs" />
+    <Compile Include="guilib\IDialogbox2.cs" />
+    <Compile Include="guilib\IStandardKeyboard.cs" />
+    <Compile Include="guilib\GUIThemeManager.cs" />
     <Compile Include="guilib\ViewHandler.cs" />
     <Compile Include="guilib\XMLSkinFunctionAttribute.cs" />
+    <Compile Include="Player\BDOSDRenderer.cs" />
+    <Compile Include="Player\BDPlayer.cs" />
+    <Compile Include="Mixer\MasterVolumeHelper.cs" />
     <Compile Include="Player\FFDShow\FFDShowEngine.cs" />
     <Compile Include="Player\FFDShow\FFDShowReceiver.cs">
       <SubType>Form</SubType>
@@ -1847,6 +1854,7 @@
     <Compile Include="Util\Util.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\VideoDatabaseParserStrings.cs" />
     <Compile Include="Util\VideoThumbCreator.cs" />
     <Compile Include="Util\VirtualDirectory.cs">
       <SubType>Code</SubType>

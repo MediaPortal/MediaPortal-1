@@ -39,6 +39,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("disabledcolor")] protected long _disabledColor = 0xFF606060;
     [XMLSkinElement("align")] protected Alignment _alignment = Alignment.ALIGN_RIGHT;
     [XMLSkinElement("shadow")] protected bool _shadow = false;
+    [XMLSkinElement("onclick")] protected string _onclick = "";
+    [XMLSkinElement("selected")] protected string _selected = "";
     protected GUIAnimation _imageCheckMarkFocused = null;
     protected GUIAnimation _imageCheckMarkNonFocused = null;
     protected GUIFont _font = null;
@@ -126,6 +128,13 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public override void ScaleToScreenResolution()
+    {
+      base.ScaleToScreenResolution();
+      GUIGraphicsContext.ScaleHorizontal(ref _checkMarkWidth);
+      GUIGraphicsContext.ScaleVertical(ref _checkMarkHeight);
+    }
+
     /// <summary>
     /// Renders the GUICheckMarkControl.
     /// </summary>
@@ -140,6 +149,20 @@ namespace MediaPortal.GUI.Library
           return;
         }
       }
+
+      // Set the selection based on the user specified condition.
+      if (_selected.Length != 0)
+      {
+        try
+        {
+          Selected = bool.Parse(GUIPropertyManager.Parse(_selected, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS));
+        }
+        catch (System.Exception)
+        {
+          Log.Debug("GUICheckMarkControl: id={0} <selected> expression does not return a boolean value", GetID);
+        }
+      }
+
       if (Focus)
       {
         GUIPropertyManager.SetProperty("#highlightedbutton", _label);
@@ -235,11 +258,23 @@ namespace MediaPortal.GUI.Library
       {
         if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_SELECT_ITEM)
         {
+          // If this control does not have a "selected" setting then toggle the value.  The value of _selected (when used) is
+          // determined and set in each render pass based on a condition (value of a property or skin setting).
+          if (_selected.Length == 0)
+          {
+            _isSelected = !_isSelected;
+          }
+
           // Send a message that the checkbox was clicked.
-          _isSelected = !_isSelected;
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID,
                                           (int)action.wID, 0, null);
           GUIGraphicsContext.SendMessage(msg);
+
+          // If this button has a click setting then execute the setting.
+          if (_onclick.Length != 0)
+          {
+            GUIPropertyManager.Parse(_onclick, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
+          }
         }
       }
     }

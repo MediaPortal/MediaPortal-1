@@ -69,6 +69,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("suffixText")] protected string _suffixText = "";
     [XMLSkinElement("textXOff")] protected int _textOffsetX = 0;
     [XMLSkinElement("textYOff")] protected int _textOffsetY = 0;
+    [XMLSkinElement("onclick")] protected string _onclick = "";
 
     protected bool _autoCheck = true;
     protected int _startInt = 0;
@@ -223,6 +224,15 @@ namespace MediaPortal.GUI.Library
           else
           {
             wszText = (string)_listLabels[_intValue];
+          }
+          if (_prefixText.Length > 0)
+          {
+            wszText = _prefixText + " " + wszText;
+          }
+
+          if (_suffixText.Length > 0)
+          {
+            wszText = wszText + " " + _suffixText;
           }
         }
         else
@@ -642,6 +652,12 @@ namespace MediaPortal.GUI.Library
             _actionHandled = true;
             return;
           }
+
+          // If this button has a click setting then execute the setting.
+          if (_onclick.Length != 0)
+          {
+            GUIPropertyManager.Parse(_onclick, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
+          }
         }
       }
       base.OnAction(action);
@@ -768,6 +784,40 @@ namespace MediaPortal.GUI.Library
       _typed = "";
     }
 
+    public int FindItemByLabel(string label)
+    {
+      int item = 0;
+
+      // Find the spin item with the specified label.
+      // This algorithm chooses the first match.  It's a programming error to have to spin entries with the same label.
+      for (int i = 0; i < _listLabels.Count; i++)
+      {
+        if ((string)_listLabels[i] == label)
+        {
+          item = i;
+          break;
+        }
+      }
+      return item;
+    }
+
+    public int FindItemByValue(int value)
+    {
+      int item = 0;
+
+      // Find the spin item with the specified value.
+      // This algorithm chooses the first match.  It's a programming error to have to spin entries with the same value.
+      for (int i = 0; i < _listValues.Count; i++)
+      {
+        if ((int)_listValues[i] == value)
+        {
+          item = i;
+          break;
+        }
+      }
+      return item;
+    }
+
     public override void SetPosition(int dwPosX, int dwPosY)
     {
       if (dwPosX < 0)
@@ -884,6 +934,11 @@ namespace MediaPortal.GUI.Library
       }
       string strLabel = (string)_listLabels[_intValue];
       return strLabel;
+    }
+
+    public int GetItemCount()
+    {
+      return _listLabels.Count;
     }
 
     public override bool Focus
@@ -1019,6 +1074,7 @@ namespace MediaPortal.GUI.Library
     public long TextColor
     {
       get { return _textColor; }
+      set { _textColor = value; }
     }
 
     public string FontName

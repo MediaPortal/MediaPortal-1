@@ -31,7 +31,7 @@ namespace WindowPlugins.GUIMusic
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\MusicMenu.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\MusicMenu.xml"));
     }
 
     protected override void OnPageLoad()

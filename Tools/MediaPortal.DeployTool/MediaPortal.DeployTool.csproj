@@ -69,6 +69,7 @@
     <Compile Include="..\..\Common-MP-TVE3\OsInfo\OSInfo.cs">
       <Link>OSInfo.cs</Link>
     </Compile>
+    <Compile Include="InstallationChecks\LAVFilterMPEInstall.cs" />
     <Compile Include="InstallationChecks\OldVCRedistChecker.cs" />
     <Compile Include="InstallationChecks\VCRedistChecker.cs" />
     <Compile Include="InstallationChecks\DiskSpaceChecker.cs" />
@@ -218,6 +219,9 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.tr-TR.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.zh-CN.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\BaseInstallationTypeDlg.resx">

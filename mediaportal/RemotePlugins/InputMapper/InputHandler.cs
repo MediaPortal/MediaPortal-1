@@ -571,6 +571,12 @@ namespace MediaPortal.InputDevices
                         found = map;
                       }
                       break;
+                    case "MUSIC":
+                      if (g_Player.Playing && g_Player.IsMusic)
+                      {
+                        found = map;
+                      }
+                      break;
                     case "MEDIA":
                       if (g_Player.Playing)
                       {

@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>101</id>
   <defaultcontrol>10</defaultcontrol>
@@ -14,8 +14,6 @@
       <width>304</width>
       <height>21</height>
       <texture>osd_progress_background.png</texture>
-      
-      
     </control>
     <control>
       <description>progress bar</description>
@@ -26,7 +24,7 @@
       <width>304</width>
       <offset>0</offset>
       <height>16</height>
-      <innerheight>16</innerheight>
+      <innerheight>20</innerheight>
       <texturebg>-</texturebg>
       <lefttexture>-</lefttexture>
       <midtexture>osd_progress_mid.png</midtexture>
@@ -37,9 +35,9 @@
       <description>Cancel button</description>
       <type>button</type>
       <id>10</id>
-      <posX>487</posX>
+      <posX>499</posX>
       <posY>211</posY>
-      <width>40</width>
+      <width>28</width>
       <height>40</height>
       <textureFocus>dialogue_shutdown_focus.png</textureFocus>
       <textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
@@ -48,8 +46,6 @@
       <onright>10</onright>
       <onup>10</onup>
       <ondown>10</ondown>
-      
-      
     </control>
   </controls>
 </window>
