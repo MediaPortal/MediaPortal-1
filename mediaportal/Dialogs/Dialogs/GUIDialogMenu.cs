@@ -106,8 +106,14 @@ namespace MediaPortal.Dialogs
       if (selected >= 0 && selected < listItems.Count)
       {
         // Select dialog item
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, listView.GetID, 0, 0, null);
+        OnMessage(msg);
+        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0, listView.GetID, selected, 0, null);
+        OnMessage(msg);
+        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, listView.GetID, 0, 0, 0, null);
+        OnMessage(msg);
         selectedItemIndex = selected;
-      }
+      } 
     }
 
     public override void Process()
@@ -129,7 +135,7 @@ namespace MediaPortal.Dialogs
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
-      if (control == listView)
+      if (control == listView && listView.SelectedListItem != null)
       {
         selectedItemIndex = listView.SelectedListItemIndex;
         selectedItemLabel = listView.SelectedListItem.Label;
