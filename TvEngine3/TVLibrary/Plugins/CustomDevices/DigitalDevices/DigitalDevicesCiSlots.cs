@@ -182,7 +182,7 @@ namespace DigitalDevices
     /// <returns><c>true</c> if the device is a Digital Device common interface device, otherwise <c>false</c></returns>
     public static bool IsDigitalDevicesCiDevice(DsDevice device)
     {
-      if (device != null && device.Name == null &&
+      if (device != null && device.Name != null &&
         device.DevicePath.ToLowerInvariant().Contains(CommonDevicePathSection) &&
         device.Name.ToLowerInvariant().Contains("common interface"))
       {
