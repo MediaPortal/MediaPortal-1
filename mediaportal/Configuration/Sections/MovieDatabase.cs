@@ -1971,6 +1971,9 @@ namespace MediaPortal.Configuration.Sections
 
       using (Settings xmlwriter = new MPSettings())
       {
+        // Hidden setting - movie cover size (in pixels) for actor movie list
+        xmlwriter.SetValue("moviedatabase", "actormoviecoversize", 400);
+
         // Cover upgrade
         xmlwriter.SetValueAsBool("moviedatabase", "coversupgraded", _coversUpgraded);
 

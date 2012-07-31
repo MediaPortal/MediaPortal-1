@@ -42,16 +42,31 @@ internal class Grabber : IIMDBScriptGrabber
       }
     }
 
-    // Clean everything which looks like year from search string (leave year in brackets->IMDB likes that)
-    //strSearch = Regex.Replace(strSearch, @"\+\d\d\d\d$", "");	
-	
+    // Try to find year without brackets
+    if (year == 0)
+    {
+		string strYearIMDB = Regex.Match(strSearch, @"\+\d\d\d\d").Value.Replace("+", "");
+
+		if (!string.IsNullOrEmpty(strYearIMDB))
+		{
+			strYearIMDB = "+(" + strYearIMDB + ")";
+			strSearch = Regex.Replace(strSearch, @"\+\d\d\d\d", strYearIMDB);
+			rx = new Regex(@"^(.*)?[\[\(](19\d{2}|20\d{2})[\]\)]");
+			match = rx.Match(strSearch);
+		}
+
+		if (match.Success)
+		{
+			year = int.Parse(match.Groups[2].Value);
+		}
+    }
     // If string contains tt number use it
     if (Regex.Match(strSearch, @"tt\d{7}").Success)
     {
       strSearch = Regex.Match(strSearch, @"(?<imdbID>tt\d{7})").Groups["imdbID"].Value;
     }
 	
-	MediaPortal.GUI.Library.Log.Info("IMDB Script search for: {0}", strSearch);
+	MediaPortal.GUI.Library.Log.Info("IMDB Script search for: {0}, year {1}", strSearch, year);
 	
     try
     {

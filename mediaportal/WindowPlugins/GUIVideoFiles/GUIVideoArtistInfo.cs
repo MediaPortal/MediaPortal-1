@@ -65,6 +65,7 @@ namespace MediaPortal.GUI.Video
     private bool _forceRefreshAll; // Refresh all movies (context menu)
     private string _strBody = string.Empty; // Fetched html body for IMDB
     private string[] _vdbParserStr;
+    private int _actorMovieCoverSize = 400; //horizontal cover size for actor movie in pixels
     
     #endregion
 
@@ -136,6 +137,12 @@ namespace MediaPortal.GUI.Video
           GUIWindowManager.CloseCurrentWindow();
         }
         return;
+      }
+
+      using (MediaPortal.Profile.Settings xmlreader = new MPSettings())
+      {
+        // Hidden setting - movie cover size (in pixels) for actor movie list
+        _actorMovieCoverSize = xmlreader.GetValueAsInt("moviedatabase", "actormoviecoversize", 400);
       }
 
       _currentActor.SetProperties();
@@ -1132,8 +1139,8 @@ namespace MediaPortal.GUI.Video
 
       if (!string.IsNullOrEmpty(thumb) && !thumb.EndsWith(".jpg")) // (.jpg) safe 2nd check in case of new regex which will return full image
       {
-        int thumbSize = 400; // pixels size of picture -> horizontal
-        thumb += thumbSize + ".jpg";
+        int thumbSize = _actorMovieCoverSize; // pixels size of picture -> horizontal
+        thumb += "_SX" + thumbSize + ".jpg";
       }
 
       _strBody = string.Empty;
