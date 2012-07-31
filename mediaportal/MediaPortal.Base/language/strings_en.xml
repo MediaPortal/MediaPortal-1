@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <Language name="English" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="My ">Programmes</String>
@@ -941,6 +941,8 @@
     <String id="1054">(recording)</String>
     <String id="1055">(timeshifting)</String>
     <String id="1056">(unavailable)</String>
+    <String id="1057">Exit MediaPortal</String>
+    <String id="1058">Restart MediaPortal</String>
     <String id="1061">Removable</String>
     <String id="1062">Object</String>
     <String id="1064">Bookmarks</String>
