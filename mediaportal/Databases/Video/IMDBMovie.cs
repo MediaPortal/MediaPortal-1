@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Xml;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
@@ -857,6 +858,12 @@ namespace MediaPortal.Video.Database
       catch (Exception) { }
     }
 
+    private string GetStrThumb()
+    {
+      string titleExt = Title + "{" + ID + "}";
+      return Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+    }
+
     #endregion
 
     #region Share view movieinfo and skin properties
@@ -1004,10 +1011,10 @@ namespace MediaPortal.Video.Database
     /// <summary>
     /// Check and set movie info data from nfo file (must be in the same directory where is videofile and must have
     /// the same name as video file.
-    /// Eexceptions are DVD and BluRay folders where nfo file should have name as main folder
+    /// Exceptions are DVD and BluRay folders where nfo file should have name as main folder
     /// </summary>
-    /// <param name="path"></param>
-    /// <param name="filename"></param>
+    /// <param name="path">path is checked only for DVD/BD folders, in case of single video files it is the same as filename</param>
+    /// <param name="filename">filename with full path</param>
     /// <param name="movie"></param>
     public static void FetchMovieNfo(string path, string filename, ref IMDBMovie movie)
     {
@@ -1429,6 +1436,10 @@ namespace MediaPortal.Video.Database
           }
         }
       }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
+      }
       catch (Exception ex)
       {
         Log.Error("GUIVideoFiles. Error in nfo xml document: {0}", ex.Message);
@@ -1465,6 +1476,7 @@ namespace MediaPortal.Video.Database
         GUIPropertyManager.SetProperty("#rating", info.Rating.ToString());
         GUIPropertyManager.SetProperty("#strrating", info.Rating.ToString(CultureInfo.CurrentCulture) + "/10");
         GUIPropertyManager.SetProperty("#tagline", info.TagLine);
+        //Votes
         Int32 votes = 0;
         string strVotes = string.Empty;
         if (Int32.TryParse(info.Votes.Replace(".", string.Empty).Replace(",", string.Empty), out votes))
@@ -1472,18 +1484,23 @@ namespace MediaPortal.Video.Database
           strVotes = String.Format("{0:N0}", votes);
         }
         GUIPropertyManager.SetProperty("#votes", strVotes);
+        //
         GUIPropertyManager.SetProperty("#credits", info.WritingCredits.Replace(" /", ","));
         GUIPropertyManager.SetProperty("#thumb", strThumb);
         GUIPropertyManager.SetProperty("#title", info.Title);
         GUIPropertyManager.SetProperty("#year", info.Year.ToString());
+        // MPAA
         info.MPARating = Util.Utils.MakeFileName(info.MPARating);
         GUIPropertyManager.SetProperty("#mpaarating", info.MPARating);
+        //
         GUIPropertyManager.SetProperty("#studios", info.Studios.Replace(" /", ","));
         GUIPropertyManager.SetProperty("#country", info.Country);
         GUIPropertyManager.SetProperty("#language", info.Language);
+        // Last update date
         DateTime lastUpdate;
         DateTime.TryParseExact(info.LastUpdate, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out lastUpdate);
         GUIPropertyManager.SetProperty("#lastupdate", lastUpdate.ToShortDateString());
+        //
         GUIPropertyManager.SetProperty("#movieid", info.ID.ToString());
 
         if (info.ID == -1 || item.IsFolder)
@@ -1491,6 +1508,11 @@ namespace MediaPortal.Video.Database
           if (info.IsEmpty)
           {
             GUIPropertyManager.SetProperty("#hideinfo", "true");
+
+            if (item.Label == "..") // No id for GoToPreviousFolder item
+            {
+              GUIPropertyManager.SetProperty("#movieid", "-1");
+            }
           }
           else
           {
@@ -1540,7 +1562,6 @@ namespace MediaPortal.Video.Database
 
         // Watched percent property
         GUIPropertyManager.SetProperty("#watchedpercent", info.WatchedPercent.ToString());
-
         // Watched count
         GUIPropertyManager.SetProperty("#watchedcount", info.WatchedCount.ToString());
         
@@ -1599,10 +1620,6 @@ namespace MediaPortal.Video.Database
 
     #endregion
 
-    private string GetStrThumb()
-    {
-      string titleExt = Title + "{" + ID + "}";
-      return Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
-    }
+    
   }
 }

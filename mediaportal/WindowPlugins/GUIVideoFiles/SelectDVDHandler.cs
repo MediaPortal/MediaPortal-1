@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
@@ -213,13 +214,13 @@ namespace MediaPortal.GUI.Video
     // Changed - cover for movies with the same name
     public void SetIMDBThumbs(IList items, bool markWatchedFiles)
     {
-      try 
+      try
       {
         GUIListItem pItem;
         IMDBMovie movieDetails = new IMDBMovie();
-		    //bool eachMovieHasDedicatedFolder = false;
+        //bool eachMovieHasDedicatedFolder = false;
         ISelectBDHandler selectBdHandler;
-        
+
         if (GlobalServiceProvider.IsRegistered<ISelectBDHandler>())
         {
           selectBdHandler = GlobalServiceProvider.Get<ISelectBDHandler>();
@@ -237,8 +238,8 @@ namespace MediaPortal.GUI.Video
           string file = string.Empty;
           bool isFolderPinProtected = (pItem.IsFolder && IsFolderPinProtected(pItem.Path));
           IMDBMovie.SetMovieData(pItem);
-          movieDetails = (IMDBMovie) pItem.AlbumInfoTag;
-          
+          movieDetails = (IMDBMovie)pItem.AlbumInfoTag;
+
           // Skip DVD & BD backup folder
           if (pItem.IsFolder && !pItem.IsBdDvdFolder)
           {
@@ -258,19 +259,19 @@ namespace MediaPortal.GUI.Video
             if (!pItem.IsRemote && Util.Utils.IsFolderDedicatedMovieFolder(pItem.Path))
             {
               string[] strFiles = null;
-                
+
               try
               {
                 strFiles = Directory.GetFiles(pItem.Path);
               }
               catch (Exception) { }
-                
+
               if (strFiles != null)
               {
                 for (int i = 0; i < strFiles.Length; ++i)
                 {
                   string extensionension = Path.GetExtension(strFiles[i]);
-                    
+
                   if (VirtualDirectory.IsImageFile(extensionension))
                   {
                     if (DaemonTools.IsEnabled)
@@ -287,7 +288,7 @@ namespace MediaPortal.GUI.Video
                     {
                       continue;
                     }
-                    file =  strFiles[i];
+                    file = strFiles[i];
                     break;
                   }
                 }
@@ -299,7 +300,7 @@ namespace MediaPortal.GUI.Video
           {
             file = GetFolderVideoFile(pItem.Path);
           }
-            // Check for BD folder
+          // Check for BD folder
           else if (pItem.IsFolder && selectBdHandler.IsBDDirectory(pItem.Path))
           {
             file = selectBdHandler.GetFolderVideoFile(pItem.Path);
@@ -317,7 +318,7 @@ namespace MediaPortal.GUI.Video
           if (!string.IsNullOrEmpty(file))
           {
             int id = movieDetails.ID;
-            
+
             // Set thumb for movies
             if (id >= 0)
             {
@@ -329,7 +330,7 @@ namespace MediaPortal.GUI.Video
               string titleExt = movieDetails.Title + "{" + movieDetails.ID + "}";
               strThumb = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
             }
-            
+
             if (!Util.Utils.FileExistsInCache(strThumb) || string.IsNullOrEmpty(strThumb))
             {
               string fPic = string.Empty;
@@ -337,10 +338,10 @@ namespace MediaPortal.GUI.Video
               string path = pItem.Path;
               Util.Utils.RemoveStackEndings(ref path);
               Util.Utils.RemoveStackEndings(ref file);
-                
+
               if (pItem.IsBdDvdFolder)
               {
-                fPic = path + @"\" + Path.GetFileNameWithoutExtension(path)+ ".jpg";
+                fPic = path + @"\" + Path.GetFileNameWithoutExtension(path) + ".jpg";
                 fPicTbn = path + @"\" + Path.GetFileNameWithoutExtension(path) + ".tbn";
               }
               else
@@ -348,7 +349,7 @@ namespace MediaPortal.GUI.Video
                 fPic = Path.ChangeExtension(file, ".jpg");
                 fPicTbn = Path.ChangeExtension(file, ".tbn");
               }
-                
+
               if (File.Exists(fPic))
               {
                 strThumb = fPic;
@@ -374,6 +375,10 @@ namespace MediaPortal.GUI.Video
             }
           } // <-- file == empty
         } // of for (int x = 0; x < items.Count; ++x)
+      }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
       }
       catch (Exception ex)
       {

@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Xml;
 using MediaPortal.Configuration;
 using MediaPortal.Database;
@@ -105,7 +106,8 @@ namespace MediaPortal.Video.Database
           return;
         }
 
-        // actorinfo table
+        #region actorinfo table
+
         if (DatabaseUtility.TableColumnExists(m_db, "actorinfo", "thumbURL") == false)
         {
           string strSQL = "ALTER TABLE \"main\".\"actorinfo\" ADD COLUMN \"thumbURL\" text DEFAULT ''";
@@ -131,13 +133,21 @@ namespace MediaPortal.Video.Database
           string strSQL = "ALTER TABLE \"main\".\"actorinfo\" ADD COLUMN \"lastupdate\" timestamp DEFAULT '0001-01-01 00:00:00'";
           m_db.Execute(strSQL);
         }
-        // Actor table
+
+        #endregion
+
+        #region Actor table
+
         if (DatabaseUtility.TableColumnExists(m_db, "actors", "IMDBActorID") == false)
         {
           string strSQL = "ALTER TABLE \"main\".\"actors\" ADD COLUMN \"IMDBActorID\" text DEFAULT ''";
           m_db.Execute(strSQL);
         }
-        // movieinfo table
+
+        #endregion
+
+        #region movieinfo table
+
         if (DatabaseUtility.TableColumnExists(m_db, "movieinfo", "strUserReview") == false)
         {
           string strSQL = "ALTER TABLE \"main\".\"movieinfo\" ADD COLUMN \"strUserReview\" text DEFAULT ''";
@@ -204,7 +214,11 @@ namespace MediaPortal.Video.Database
           strSQL = "UPDATE movieinfo SET strSortTitle = strTitle";
           m_db.Execute(strSQL);
         }
-        // Movie table
+
+        #endregion
+
+        #region Movie table
+
         bool watchedUpg = false;
         
         if (DatabaseUtility.TableColumnExists(m_db, "movie", "watched") == false)
@@ -263,25 +277,40 @@ namespace MediaPortal.Video.Database
           m_db.Execute(strSQL);
           watchedUpg = true;
         }
-        // MediaInfo table
+
+        #endregion
+
+        #region MediaInfo table
+
         if (DatabaseUtility.TableExists(m_db, "filesmediainfo") == false)
         {
           DatabaseUtility.AddTable(m_db, "filesmediainfo",
                                    "CREATE TABLE filesmediainfo ( idFile integer primary key, videoCodec text, videoResolution text, aspectRatio text, hasSubtitles bool, audioCodec text, audioChannels text)");
         }
-        // Actorlinkmovie
+
+        #endregion
+
+        #region Actorlinkmovie table
+
         if (DatabaseUtility.TableColumnExists(m_db, "actorlinkmovie", "strRole") == false)
         {
           string strSQL = "ALTER TABLE \"main\".\"actorlinkmovie\" ADD COLUMN \"strRole\" text DEFAULT ''";
           m_db.Execute(strSQL);
         }
-        // IMDB Movies
+
+        #endregion
+
+        #region IMDB Movies table
+
         if (DatabaseUtility.TableExists(m_db, "IMDBmovies") == false)
         {
           DatabaseUtility.AddTable(m_db, "IMDBmovies",
                                    "CREATE TABLE IMDBmovies ( idIMDB text, idTmdb text, strPlot text, strCast text, strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, mpaa text)");
         }
-        // UserGroups table
+
+        #endregion
+
+        #region UserGroups table
         if (DatabaseUtility.TableExists(m_db, "usergroup") == false)
         {
           DatabaseUtility.AddTable(m_db, "usergroup",
@@ -293,6 +322,9 @@ namespace MediaPortal.Video.Database
           DatabaseUtility.AddTable(m_db, "usergrouplinkmovie",
                                "CREATE TABLE usergrouplinkmovie ( idGroup integer, idMovie integer)");
         }
+
+        #endregion
+
       }
 
       catch (Exception ex)
@@ -639,6 +671,10 @@ namespace MediaPortal.Video.Database
           totalMovieDuration += tempDuration;
         }
       }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
+      }
       catch (Exception) { }
 
       return totalMovieDuration;
@@ -712,6 +748,10 @@ namespace MediaPortal.Video.Database
             }
           }
         }
+      }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
       }
       catch (Exception ex)
       {
@@ -834,6 +874,10 @@ namespace MediaPortal.Video.Database
           return lPathId;
         }
       }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
+      }
       catch (Exception ex)
       {
         Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
@@ -942,6 +986,10 @@ namespace MediaPortal.Video.Database
           }
           files.Add(strFile);
         }
+      }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
       }
       catch (Exception ex)
       {
@@ -1079,6 +1127,10 @@ namespace MediaPortal.Video.Database
           VideoDatabase.GetFilesForMovie(movieId, ref movieFiles);
           SetMovieDuration(movieId, MovieDuration(movieFiles));
         }
+        catch (ThreadAbortException)
+        {
+          // Will be logged in thread main code
+        }
         catch (Exception) { }
       }
     }
@@ -1133,6 +1185,10 @@ namespace MediaPortal.Video.Database
 
         mediaInfo.AudioCodec = DatabaseUtility.Get(results, 0, "audioCodec");
         mediaInfo.AudioChannels = DatabaseUtility.Get(results, 0, "audioChannels");
+      }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
       }
       catch (Exception ex)
       {
@@ -2571,6 +2627,10 @@ namespace MediaPortal.Video.Database
         
         SetMovieDetails(ref details, 0, results);
       }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
+      }
       catch (Exception ex)
       {
         Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
@@ -2811,6 +2871,10 @@ namespace MediaPortal.Video.Database
           return duration;
         }
       }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
+      }
       catch (Exception ex)
       {
         Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
@@ -2992,6 +3056,10 @@ namespace MediaPortal.Video.Database
           return true;
         }
         return false;
+      }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
       }
       catch (Exception ex)
       {
@@ -3499,7 +3567,7 @@ namespace MediaPortal.Video.Database
       try
       {
         string strPath = strPath1;
-        
+
         if (strPath.Length > 0)
         {
           if (strPath[strPath.Length - 1] == '/' || strPath[strPath.Length - 1] == '\\')
@@ -3510,35 +3578,39 @@ namespace MediaPortal.Video.Database
 
         DatabaseUtility.RemoveInvalidChars(ref strPath);
         movies.Clear();
-        
+
         if (null == m_db)
         {
           return;
         }
-        
+
         int lPathId = GetPath(strPath);
-        
+
         if (lPathId < 0)
         {
           return;
         }
-        
+
         string strSQL =
           String.Format("SELECT * FROM files,movieinfo WHERE files.idpath={0} AND files.idMovie=movieinfo.idMovie",
                         lPathId);
         SQLiteResultSet results = m_db.Execute(strSQL);
-        
+
         if (results.Rows.Count == 0)
         {
           return;
         }
-        
+
         for (int iRow = 0; iRow < results.Rows.Count; iRow++)
         {
           IMDBMovie details = new IMDBMovie();
           SetMovieDetails(ref details, iRow, results);
           movies.Add(details);
         }
+      }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
       }
       catch (Exception ex)
       {
@@ -4184,6 +4256,10 @@ namespace MediaPortal.Video.Database
         
         m_db.Execute(strSql);
       }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
+      }
       catch (Exception ex)
       {
         Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
@@ -4210,6 +4286,10 @@ namespace MediaPortal.Video.Database
         {
           values.Add(DatabaseUtility.Get(results, iRow, fieldName));
         }
+      }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
       }
       catch (Exception ex)
       {

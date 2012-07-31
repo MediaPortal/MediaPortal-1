@@ -32,7 +32,7 @@
 			<![CDATA[<div\sclass="label">\s+<div\sclass="title">\s+<a\shref="/name/.*?>(?<actor>.*?)<]]>
 		</string>
 		<string><!--9-->
-			<![CDATA[<div\sclass="poster">\s+<a\shref="(?<poster>.*?)"]]>
+			<![CDATA[<div\sclass="poster">\s+<a\shref="[^<]*<span\sclass="retina-capable"><img\ssrc="(?<poster>.*?_V1_SX)]]>
 		</string>
 	</GUIVideoArtistInfo>
 	
@@ -385,8 +385,8 @@
 		<string><!--44 skip to end of (director movies)-->
 			<![CDATA[</div>]]>
 		</string>
-		<string><!--45 replace (See full bio »)-->
-			<![CDATA[<See full bio »]]>
+		<string><!--45 replace (See full bioÂ Â»)-->
+			<![CDATA[<See full bioÂ Â»]]>
 		</string>
 	</IMDBActorInfoDetails>
 	
@@ -457,6 +457,7 @@
 	</IMDBActorSkipNoMovies>
 	
 	<GUIVideoInfo>
+		
 		<string><!--0-->
 			<![CDATA[<h5>Runtime:</h5>.*?(?<movieRuntime>\d+)\smin\s+|(?<movieRuntime>\d+)\smin]]>
 		</string>
@@ -467,6 +468,11 @@
 			<![CDATA["ratingCount">(?<moviePopularity>.*?)<]]>
 		</string>
 	</GUIVideoInfo>
+	
+	<CleanFilter>
+		<string><!--0-->		<![CDATA[(([\(\{\[]|\b)((576|720|1080)[pi]|dir(ectors)?cut|dvd([r59]|rip|scr(eener)?)|(avc)?hd|avc|wmv|ntsc|pal|truehd|[1-7][.][1]|mpeg|dsr|r[1-5]|bd[59]|dts|ac3|blu(-)?ray|[hp]dtv|stv|hddvd|xvid|divx|x264|dxva|(?-i)FEST[Ii]VAL|L[iI]M[iI]TED|[WF]S|PROPER|REPACK|RER[Ii]P|REAL|RETA[Ii]L|EXTENDED|REMASTERED|UNRATED|CHRONO|THEATR[Ii]CAL|DC|SE|UNCUT|[Ii]NTERNAL|V\d{1}|BR[Rr]ip|[DS]UBBED)([\]\)\}]|\b)(-[^\s]+$)?)]]>
+		</string>
+	</CleanFilter>
 </section>
 
 

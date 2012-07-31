@@ -125,6 +125,19 @@ namespace MediaPortal.GUI.Video
 
       _vdbParserStr = VideoDatabaseParserStrings.GetParserStrings("GUIVideoArtistInfo");
 
+      if (_currentActor == null)
+      {
+        if (GUIWindowManager.HasPreviousWindow())
+        {
+          GUIWindowManager.ShowPreviousWindow();
+        }
+        else
+        {
+          GUIWindowManager.CloseCurrentWindow();
+        }
+        return;
+      }
+
       _currentActor.SetProperties();
       string biography = _currentActor.Biography;
 
@@ -1113,10 +1126,16 @@ namespace MediaPortal.GUI.Video
       {
         strBody = _strBody;
       }
-      //thumb = Regex.Match(strBody, @"<div\sclass=""poster"">\s+<a\shref=""(?<poster>.*?)""",
-      //                            RegexOptions.Singleline).Groups["poster"].Value;
-      thumb = Regex.Match(strBody, _vdbParserStr[9],
-                                  RegexOptions.Singleline).Groups["poster"].Value;
+
+      //Regex -> <div\sclass="poster">\s+<a\shref="[^<]*<span\sclass="retina-capable"><img\ssrc="(?<poster>.*?_V1_SX)
+      thumb = Regex.Match(strBody, _vdbParserStr[9], RegexOptions.Singleline).Groups["poster"].Value;
+
+      if (!string.IsNullOrEmpty(thumb) && !thumb.EndsWith(".jpg")) // (.jpg) safe 2nd check in case of new regex which will return full image
+      {
+        int thumbSize = 400; // pixels size of picture -> horizontal
+        thumb += thumbSize + ".jpg";
+      }
+
       _strBody = string.Empty;
       return thumb;
     }
