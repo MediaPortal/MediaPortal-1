@@ -205,7 +205,6 @@ namespace MpeInstaller
       _loading = true;
       onlyStableToolStripMenuItem.Checked = _settings.ShowOnlyStable;
       onlyCompatibleToolStripMenuItem.Checked = _settings.ShowOnlyCompatible;
-      chk_update_CheckedChanged(null, null);
       _loading = false;
       extensionListControlInstalled.UnInstallExtension += extensionListControl_UnInstallExtension;
       extensionListControlInstalled.UpdateExtension += extensionListControl_UpdateExtension;
@@ -662,15 +661,6 @@ namespace MpeInstaller
       _settings.Save();
     }
 
-    private void chk_update_CheckedChanged(object sender, EventArgs e)
-    {
-      if (!_loading)
-      { 
-        _settings.ShowOnlyStable = onlyStableToolStripMenuItem.Checked;
-        _settings.ShowOnlyCompatible = onlyCompatibleToolStripMenuItem.Checked;
-      }
-    }
-
     private void UpdateAll_Click(object sender, EventArgs e)
     {
       DoUpdateAll();
@@ -732,9 +722,12 @@ namespace MpeInstaller
 
     private void chk_stable_CheckedChanged(object sender, EventArgs e)
     {
-      chk_update_CheckedChanged(null, null);
-      FilterList();
-      RefreshLists();
+      if (!_loading)
+      {
+        _settings.ShowOnlyStable = onlyStableToolStripMenuItem.Checked;
+        FilterList();
+        RefreshLists();
+      }
     }
 
     private void CleanCache_Click(object sender, EventArgs e)
@@ -774,7 +767,7 @@ namespace MpeInstaller
     {
       if (!_loading)
       {
-        chk_update_CheckedChanged(null, null);
+        _settings.ShowOnlyCompatible = onlyCompatibleToolStripMenuItem.Checked;
         FilterList();
         RefreshLists();
       }

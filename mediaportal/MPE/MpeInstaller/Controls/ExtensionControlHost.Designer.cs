@@ -8,14 +8,14 @@
     private System.ComponentModel.IContainer components = null;
 
     /// <summary> 
-    /// Verwendete Ressourcen bereinigen.
+    /// Clean up any resources being used.
     /// </summary>
-    /// <param name="disposing">True, wenn verwaltete Ressourcen gelöscht werden sollen; andernfalls False.</param>
+    /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
     protected override void Dispose(bool disposing)
     {
-      if (disposing && (components != null))
+      if (disposing)
       {
-        components.Dispose();
+        if (components != null) components.Dispose();
       }
       base.Dispose(disposing);
     }
@@ -34,9 +34,11 @@
       // 
       // extensionControlCollapsed
       // 
+      this.extensionControlCollapsed.AutoSize = true;
       this.extensionControlCollapsed.Dock = System.Windows.Forms.DockStyle.Fill;
       this.extensionControlCollapsed.Location = new System.Drawing.Point(0, 0);
       this.extensionControlCollapsed.Margin = new System.Windows.Forms.Padding(1);
+      this.extensionControlCollapsed.MinimumSize = new System.Drawing.Size(0, 22);
       this.extensionControlCollapsed.Name = "extensionControlCollapsed";
       this.extensionControlCollapsed.Padding = new System.Windows.Forms.Padding(1);
       this.extensionControlCollapsed.Size = new System.Drawing.Size(550, 23);
@@ -44,14 +46,18 @@
       // 
       // extensionControlExpanded
       // 
+      this.extensionControlExpanded.AutoSize = true;
       this.extensionControlExpanded.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
       this.extensionControlExpanded.Dock = System.Windows.Forms.DockStyle.Fill;
       this.extensionControlExpanded.ForeColor = System.Drawing.SystemColors.ButtonFace;
       this.extensionControlExpanded.Location = new System.Drawing.Point(0, 0);
       this.extensionControlExpanded.Margin = new System.Windows.Forms.Padding(1);
+      this.extensionControlExpanded.MinimumSize = new System.Drawing.Size(0, 125);
       this.extensionControlExpanded.Name = "extensionControlExpanded";
-      this.extensionControlExpanded.Size = new System.Drawing.Size(550, 23);
+      this.extensionControlExpanded.Padding = new System.Windows.Forms.Padding(1);
+      this.extensionControlExpanded.Size = new System.Drawing.Size(550, 125);
       this.extensionControlExpanded.TabIndex = 0;
+      this.extensionControlExpanded.Visible = false;
       // 
       // ExtensionControlHost
       // 
@@ -64,6 +70,7 @@
       this.Name = "ExtensionControlHost";
       this.Size = new System.Drawing.Size(550, 23);
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
 

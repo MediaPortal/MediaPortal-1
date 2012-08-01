@@ -8,14 +8,14 @@
     private System.ComponentModel.IContainer components = null;
 
     /// <summary> 
-    /// Verwendete Ressourcen bereinigen.
+    /// Clean up any resources being used.
     /// </summary>
-    /// <param name="disposing">True, wenn verwaltete Ressourcen gelöscht werden sollen; andernfalls False.</param>
+    /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
     protected override void Dispose(bool disposing)
     {
-      if (disposing && (components != null))
+      if (disposing)
       {
-        components.Dispose();
+        if (components != null) components.Dispose();
       }
       base.Dispose(disposing);
     }
@@ -28,12 +28,10 @@
     /// </summary>
     private void InitializeComponent()
     {
-      this.components = new System.ComponentModel.Container();
       this.lbl_version = new System.Windows.Forms.Label();
       this.lbl_name = new System.Windows.Forms.Label();
       this.img_dep = new System.Windows.Forms.PictureBox();
       this.img_update = new System.Windows.Forms.PictureBox();
-      this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
       this.panel1 = new System.Windows.Forms.Panel();
       this.lblAuthors = new System.Windows.Forms.Label();
       this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
@@ -85,8 +83,6 @@
       this.img_dep.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
       this.img_dep.TabIndex = 42;
       this.img_dep.TabStop = false;
-      this.toolTip1.SetToolTip(this.img_dep, "Some dependencies are not met.\r\nThe extension may not work properly.\r\nClick here " +
-        "for more information.");
       this.img_dep.Click += new System.EventHandler(this.img_dep_Click);
       // 
       // img_update
@@ -101,12 +97,7 @@
       this.img_update.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
       this.img_update.TabIndex = 41;
       this.img_update.TabStop = false;
-      this.toolTip1.SetToolTip(this.img_update, "New update available ");
       this.img_update.Click += new System.EventHandler(this.ExtensionControlCollapsed_Click);
-      // 
-      // toolTip1
-      // 
-      this.toolTip1.IsBalloon = true;
       // 
       // panel1
       // 
@@ -118,6 +109,7 @@
       this.panel1.Name = "panel1";
       this.panel1.Size = new System.Drawing.Size(150, 20);
       this.panel1.TabIndex = 43;
+      this.panel1.Click += new System.EventHandler(this.ExtensionControlCollapsed_Click);
       // 
       // lblAuthors
       // 
@@ -175,7 +167,6 @@
     private System.Windows.Forms.PictureBox img_update;
     private System.Windows.Forms.Label lbl_version;
     private System.Windows.Forms.Label lbl_name;
-    private System.Windows.Forms.ToolTip toolTip1;
     private System.Windows.Forms.Panel panel1;
     private System.Windows.Forms.Label lblAuthors;
     private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;

@@ -46,11 +46,15 @@ namespace MpeInstaller.Controls
       lblAuthors.Text = string.Format("[{0}]", authors);
       lbl_version.Text = version;
       img_dep.Visible = meetsAllDependencies;
-
+      if (meetsAllDependencies)
+      {
+        (Parent.Parent.Parent as ExtensionListControl).toolTip1.SetToolTip(img_dep, 
+          "Some dependencies are not met.\r\nThe extension may not work properly.\r\nClick here for more information.");
+      }
       if (!string.IsNullOrEmpty(updateVersion))
       {
         img_update.Visible = true;
-        toolTip1.SetToolTip(img_update, string.Format("New update available. Version: {0}", updateVersion));
+        (Parent.Parent.Parent as ExtensionListControl).toolTip1.SetToolTip(img_update, string.Format("New update available. Version: {0}", updateVersion));
       }
       else
       {

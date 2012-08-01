@@ -1,39 +1,39 @@
 ﻿namespace MpeInstaller.Controls
 {
-    partial class ExtensionControlExpanded
+  partial class ExtensionControlExpanded
+  {
+    /// <summary> 
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.IContainer components = null;
+
+    /// <summary> 
+    /// Clean up any resources being used.
+    /// </summary>
+    /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+    protected override void Dispose(bool disposing)
     {
-        /// <summary> 
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
+      Package = null;
+      UpdatePackage = null;
+      if (disposing)
+      {
+        if (components != null) components.Dispose();
+      }
+      base.Dispose(disposing);
+    }
 
-        /// <summary> 
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+    #region Component Designer generated code
 
-        #region Component Designer generated code
-
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
-        /// the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
-        {
-      this.components = new System.ComponentModel.Container();
+    /// <summary> 
+    /// Required method for Designer support - do not modify 
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.lbl_name = new System.Windows.Forms.Label();
       this.btn_uninstall = new System.Windows.Forms.Button();
       this.lbl_description = new System.Windows.Forms.Label();
       this.lbl_version = new System.Windows.Forms.Label();
-      this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
       this.img_dep = new System.Windows.Forms.PictureBox();
       this.img_update = new System.Windows.Forms.PictureBox();
       this.btn_home = new System.Windows.Forms.Button();
@@ -47,23 +47,23 @@
       this.chk_ignore = new System.Windows.Forms.CheckBox();
       this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
       this.panelTop = new System.Windows.Forms.Panel();
+      this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
+      this.lblAuthors = new System.Windows.Forms.Label();
       this.panelBottom = new System.Windows.Forms.Panel();
       this.panelMiddle = new System.Windows.Forms.Panel();
       this.panelMiddleLeft = new System.Windows.Forms.Panel();
       this.panelMiddleRight = new System.Windows.Forms.Panel();
-      this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
-      this.lblAuthors = new System.Windows.Forms.Label();
       ((System.ComponentModel.ISupportInitialize)(this.img_dep)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.img_update)).BeginInit();
       this.toolStrip1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.img_logo)).BeginInit();
       this.flowLayoutPanel1.SuspendLayout();
       this.panelTop.SuspendLayout();
+      this.flowLayoutPanel2.SuspendLayout();
       this.panelBottom.SuspendLayout();
       this.panelMiddle.SuspendLayout();
       this.panelMiddleLeft.SuspendLayout();
       this.panelMiddleRight.SuspendLayout();
-      this.flowLayoutPanel2.SuspendLayout();
       this.SuspendLayout();
       // 
       // lbl_name
@@ -119,10 +119,6 @@
       this.lbl_version.Text = "3.2.55.2365";
       this.lbl_version.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
       // 
-      // toolTip1
-      // 
-      this.toolTip1.IsBalloon = true;
-      // 
       // img_dep
       // 
       this.img_dep.BackColor = System.Drawing.Color.Transparent;
@@ -132,8 +128,6 @@
       this.img_dep.Size = new System.Drawing.Size(32, 32);
       this.img_dep.TabIndex = 7;
       this.img_dep.TabStop = false;
-      this.toolTip1.SetToolTip(this.img_dep, "Some dependencies are not met.\r\nThe extension may not work properly.\r\nClick here " +
-        "for more information.");
       this.img_dep.Click += new System.EventHandler(this.img_dep_Click);
       // 
       // img_update
@@ -145,7 +139,6 @@
       this.img_update.Size = new System.Drawing.Size(32, 32);
       this.img_update.TabIndex = 5;
       this.img_update.TabStop = false;
-      this.toolTip1.SetToolTip(this.img_update, "New update available ");
       // 
       // btn_home
       // 
@@ -155,7 +148,6 @@
       this.btn_home.Name = "btn_home";
       this.btn_home.Size = new System.Drawing.Size(32, 32);
       this.btn_home.TabIndex = 12;
-      this.toolTip1.SetToolTip(this.btn_home, "Extension web page");
       this.btn_home.UseVisualStyleBackColor = true;
       this.btn_home.Click += new System.EventHandler(this.btn_home_Click);
       // 
@@ -167,7 +159,6 @@
       this.btn_forum.Name = "btn_forum";
       this.btn_forum.Size = new System.Drawing.Size(32, 32);
       this.btn_forum.TabIndex = 32;
-      this.toolTip1.SetToolTip(this.btn_forum, "Extension forum page");
       this.btn_forum.UseVisualStyleBackColor = true;
       this.btn_forum.Click += new System.EventHandler(this.btn_forum_Click);
       // 
@@ -207,6 +198,7 @@
       this.toolStrip1.Size = new System.Drawing.Size(70, 25);
       this.toolStrip1.TabIndex = 10;
       this.toolStrip1.Text = "toolStrip1";
+      this.toolStrip1.Visible = false;
       // 
       // btn_install
       // 
@@ -276,6 +268,33 @@
       this.panelTop.Size = new System.Drawing.Size(548, 20);
       this.panelTop.TabIndex = 37;
       // 
+      // flowLayoutPanel2
+      // 
+      this.flowLayoutPanel2.Controls.Add(this.lbl_name);
+      this.flowLayoutPanel2.Controls.Add(this.lblAuthors);
+      this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.flowLayoutPanel2.Location = new System.Drawing.Point(0, 0);
+      this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
+      this.flowLayoutPanel2.Name = "flowLayoutPanel2";
+      this.flowLayoutPanel2.Size = new System.Drawing.Size(448, 20);
+      this.flowLayoutPanel2.TabIndex = 5;
+      this.flowLayoutPanel2.WrapContents = false;
+      // 
+      // lblAuthors
+      // 
+      this.lblAuthors.AutoEllipsis = true;
+      this.lblAuthors.AutoSize = true;
+      this.lblAuthors.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.lblAuthors.ForeColor = System.Drawing.Color.RoyalBlue;
+      this.lblAuthors.Location = new System.Drawing.Point(99, 2);
+      this.lblAuthors.Margin = new System.Windows.Forms.Padding(0, 2, 0, 0);
+      this.lblAuthors.Name = "lblAuthors";
+      this.lblAuthors.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
+      this.lblAuthors.Size = new System.Drawing.Size(42, 16);
+      this.lblAuthors.TabIndex = 45;
+      this.lblAuthors.Text = "authors";
+      this.lblAuthors.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+      // 
       // panelBottom
       // 
       this.panelBottom.Controls.Add(this.toolStrip1);
@@ -320,33 +339,6 @@
       this.panelMiddleRight.Size = new System.Drawing.Size(36, 73);
       this.panelMiddleRight.TabIndex = 0;
       // 
-      // flowLayoutPanel2
-      // 
-      this.flowLayoutPanel2.Controls.Add(this.lbl_name);
-      this.flowLayoutPanel2.Controls.Add(this.lblAuthors);
-      this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.flowLayoutPanel2.Location = new System.Drawing.Point(0, 0);
-      this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
-      this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-      this.flowLayoutPanel2.Size = new System.Drawing.Size(448, 20);
-      this.flowLayoutPanel2.TabIndex = 5;
-      this.flowLayoutPanel2.WrapContents = false;
-      // 
-      // lblAuthors
-      // 
-      this.lblAuthors.AutoEllipsis = true;
-      this.lblAuthors.AutoSize = true;
-      this.lblAuthors.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.lblAuthors.ForeColor = System.Drawing.Color.RoyalBlue;
-      this.lblAuthors.Location = new System.Drawing.Point(99, 2);
-      this.lblAuthors.Margin = new System.Windows.Forms.Padding(0, 2, 0, 0);
-      this.lblAuthors.Name = "lblAuthors";
-      this.lblAuthors.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
-      this.lblAuthors.Size = new System.Drawing.Size(42, 16);
-      this.lblAuthors.TabIndex = 45;
-      this.lblAuthors.Text = "authors";
-      this.lblAuthors.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-      // 
       // ExtensionControlExpanded
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -368,42 +360,41 @@
       ((System.ComponentModel.ISupportInitialize)(this.img_logo)).EndInit();
       this.flowLayoutPanel1.ResumeLayout(false);
       this.panelTop.ResumeLayout(false);
+      this.flowLayoutPanel2.ResumeLayout(false);
+      this.flowLayoutPanel2.PerformLayout();
       this.panelBottom.ResumeLayout(false);
       this.panelBottom.PerformLayout();
       this.panelMiddle.ResumeLayout(false);
       this.panelMiddleLeft.ResumeLayout(false);
       this.panelMiddleRight.ResumeLayout(false);
-      this.flowLayoutPanel2.ResumeLayout(false);
-      this.flowLayoutPanel2.PerformLayout();
       this.ResumeLayout(false);
 
-        }
-
-        #endregion
-
-        private System.Windows.Forms.Label lbl_name;
-        private System.Windows.Forms.Button btn_uninstall;
-        private System.Windows.Forms.PictureBox img_logo;
-        private System.Windows.Forms.Label lbl_description;
-        private System.Windows.Forms.Label lbl_version;
-        private System.Windows.Forms.PictureBox img_update;
-        private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.Button btn_update;
-        private System.Windows.Forms.PictureBox img_dep;
-        private System.Windows.Forms.Button btn_conf;
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripDropDownButton btn_install;
-        private System.Windows.Forms.Button btn_forum;
-        private System.Windows.Forms.Button btn_home;
-        private System.Windows.Forms.Button btn_screenshot;
-        private System.Windows.Forms.CheckBox chk_ignore;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        private System.Windows.Forms.Panel panelTop;
-        private System.Windows.Forms.Panel panelBottom;
-        private System.Windows.Forms.Panel panelMiddle;
-        private System.Windows.Forms.Panel panelMiddleLeft;
-        private System.Windows.Forms.Panel panelMiddleRight;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
-        private System.Windows.Forms.Label lblAuthors;
     }
+
+    #endregion
+
+    private System.Windows.Forms.Label lbl_name;
+    private System.Windows.Forms.Button btn_uninstall;
+    private System.Windows.Forms.PictureBox img_logo;
+    private System.Windows.Forms.Label lbl_description;
+    private System.Windows.Forms.Label lbl_version;
+    private System.Windows.Forms.PictureBox img_update;
+    private System.Windows.Forms.Button btn_update;
+    private System.Windows.Forms.PictureBox img_dep;
+    private System.Windows.Forms.Button btn_conf;
+    private System.Windows.Forms.ToolStrip toolStrip1;
+    private System.Windows.Forms.ToolStripDropDownButton btn_install;
+    private System.Windows.Forms.Button btn_forum;
+    private System.Windows.Forms.Button btn_home;
+    private System.Windows.Forms.Button btn_screenshot;
+    private System.Windows.Forms.CheckBox chk_ignore;
+    private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+    private System.Windows.Forms.Panel panelTop;
+    private System.Windows.Forms.Panel panelBottom;
+    private System.Windows.Forms.Panel panelMiddle;
+    private System.Windows.Forms.Panel panelMiddleLeft;
+    private System.Windows.Forms.Panel panelMiddleRight;
+    private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
+    private System.Windows.Forms.Label lblAuthors;
+  }
 }

@@ -28,12 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
+      this.components = new System.ComponentModel.Container();
       this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
       this.textBox1 = new System.Windows.Forms.TextBox();
       this.label1 = new System.Windows.Forms.Label();
       this.comboBox1 = new System.Windows.Forms.ComboBox();
       this.label2 = new System.Windows.Forms.Label();
       this.panelTop = new System.Windows.Forms.Panel();
+      this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
       this.panelTop.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -105,6 +107,10 @@
       this.panelTop.Size = new System.Drawing.Size(577, 29);
       this.panelTop.TabIndex = 5;
       // 
+      // toolTip1
+      // 
+      this.toolTip1.IsBalloon = true;
+      // 
       // ExtensionListControl
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -127,6 +133,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Panel panelTop;
+        private System.Windows.Forms.Panel panelTop;
+        public System.Windows.Forms.ToolTip toolTip1;
     }
 }

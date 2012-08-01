@@ -44,6 +44,13 @@ namespace MpeInstaller.Controls
       InitializeComponent();
     }
 
+    protected override void OnVisibleChanged(EventArgs e)
+    {
+      base.OnVisibleChanged(e);
+      if (Package != null)
+        toolStrip1.Visible = Visible; // explicitly make the toolstrip visible, otherwise memory leak!
+    }
+
     public void Initialize(bool isInstalled, bool meetsAllDependencies, PackageClass package, PackageClass updatePackage)
     {
       Package = package;
@@ -53,20 +60,41 @@ namespace MpeInstaller.Controls
       lblAuthors.Text = string.Format("[{0}]", package.GeneralInfo.Author);
       lbl_version.Text = package.GeneralInfo.Version.ToString();
       img_dep.Visible = meetsAllDependencies;
+      if (meetsAllDependencies)
+      {
+        (Parent.Parent.Parent as ExtensionListControl).toolTip1.SetToolTip(img_dep,
+          "Some dependencies are not met.\r\nThe extension may not work properly.\r\nClick here for more information.");
+      }
       lbl_description.Text = package.GeneralInfo.ExtensionDescription;
       btn_screenshot.Visible = !string.IsNullOrEmpty(package.GeneralInfo.Params[ParamNamesConst.ONLINE_SCREENSHOT].Value);      
       btn_conf.Visible = isInstalled && !string.IsNullOrEmpty(Package.GeneralInfo.Params[ParamNamesConst.CONFIG].GetValueAsPath());
       btn_uninstall.Visible = isInstalled;
-      btn_home.Visible = !string.IsNullOrEmpty(Package.GeneralInfo.HomePage);
-      btn_forum.Visible = !string.IsNullOrEmpty(Package.GeneralInfo.ForumPage);
-
+      if (string.IsNullOrEmpty(Package.GeneralInfo.HomePage))
+      {
+        btn_home.Visible = false;
+      }
+      else
+      {
+        btn_home.Visible = true;
+        (Parent.Parent.Parent as ExtensionListControl).toolTip1.SetToolTip(btn_home, "Extension web page");
+      }
+      if (string.IsNullOrEmpty(Package.GeneralInfo.ForumPage))
+      {
+        btn_forum.Visible = false;
+      }
+      else
+      {
+        btn_forum.Visible = true;
+        (Parent.Parent.Parent as ExtensionListControl).toolTip1.SetToolTip(btn_forum, "Extension forum page");
+      }
       PopulateInstallBtn();
 
       if (isInstalled && updatePackage != null)
       {
         btn_update.Visible = true;
         img_update.Visible = true;
-        toolTip1.SetToolTip(img_update, string.Format("New update available. Version: {0}", updatePackage.GeneralInfo.Version.ToString()));
+        (Parent.Parent.Parent as ExtensionListControl).toolTip1.SetToolTip(img_update, 
+          string.Format("New update available. Version: {0}", updatePackage.GeneralInfo.Version.ToString()));
       }
       else
       {
@@ -108,8 +136,11 @@ namespace MpeInstaller.Controls
         {
           if (!Directory.Exists(Package.LocationFolder))
             Directory.CreateDirectory(Package.LocationFolder);
+
+          string url = Package.GeneralInfo.Params[ParamNamesConst.ONLINE_ICON].Value;
+          if (url.IndexOf("://") < 0) url = "http://" + url;
           var client = new CompressionWebClient();
-          byte[] imgData = client.DownloadData(Package.GeneralInfo.Params[ParamNamesConst.ONLINE_ICON].Value);
+          byte[] imgData = client.DownloadData(url);
           var ms = new MemoryStream(imgData);
           var image = Image.FromStream(ms);
           img_logo.Image = image;

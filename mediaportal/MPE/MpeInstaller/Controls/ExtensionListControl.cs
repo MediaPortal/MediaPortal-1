@@ -62,28 +62,39 @@ namespace MpeInstaller.Controls
 
     public void Set(ExtensionCollection collection, bool isListOfInstalledExtensions)
     {
-      flowLayoutPanel1.SuspendLayout();
-      collection.Sort();
-      comboBox1.Items.Clear();
-      comboBox1.Items.Add("All");
-      TagList.Clear();
-      flowLayoutPanel1.Controls.Clear();
-      foreach (PackageClass item in collection.Items)
+      var oldCursor = ParentForm.Cursor;
+      try
       {
-        var extHostCtrl = new ExtensionControlHost();
-        extHostCtrl.Initialize(item, isListOfInstalledExtensions);
-        flowLayoutPanel1.Controls.Add(extHostCtrl);
-        AddTags(item.GeneralInfo.TagList);
+        ParentForm.Cursor = Cursors.WaitCursor;
+        flowLayoutPanel1.SuspendLayout();
+        collection.Sort();
+        comboBox1.Items.Clear();
+        comboBox1.Items.Add("All");
+        TagList.Clear();
+        toolTip1.RemoveAll(); // removes all created user-objects for the tooltip - reuse this tooltip instance, otherwise memory leak!
+        foreach (Control c in flowLayoutPanel1.Controls) c.Dispose();
+        flowLayoutPanel1.Controls.Clear();
+        foreach (PackageClass item in collection.Items)
+        {
+          var extHostCtrl = new ExtensionControlHost();
+          flowLayoutPanel1.Controls.Add(extHostCtrl);
+          extHostCtrl.Initialize(item, isListOfInstalledExtensions);
+          AddTags(item.GeneralInfo.TagList);
+        }
+        comboBox1.Text = "All";
+        textBox1.Text = string.Empty;
+        foreach (KeyValuePair<string, int> tagList in TagList)
+        {
+          if (tagList.Value > 1)
+            comboBox1.Items.Add(tagList.Key);
+        }
+        flowLayoutPanel1.ResumeLayout();
+        flowLayoutPanel1_SizeChanged(this, EventArgs.Empty);
       }
-      comboBox1.Text = "All";
-      textBox1.Text = string.Empty;
-      foreach (KeyValuePair<string, int> tagList in TagList)
+      finally
       {
-        if (tagList.Value > 1)
-          comboBox1.Items.Add(tagList.Key);
+        ParentForm.Cursor = oldCursor;
       }
-      flowLayoutPanel1.ResumeLayout();
-      flowLayoutPanel1_SizeChanged(this, EventArgs.Empty);
     }
 
     private void AddTags(TagCollection tags)
