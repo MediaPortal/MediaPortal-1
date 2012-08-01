@@ -248,7 +248,7 @@ namespace MpeInstaller
       }
       if (!pak.CheckDependency(false))
       {
-        if (MessageBox.Show("Dependency check error! Install aborted!\nWould you like to view more details?", string.Empty,
+        if (MessageBox.Show("Dependency check error! Install aborted!\nWould you like to view more details?", pak.GeneralInfo.Name,
           MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
         {
           DependencyForm frm = new DependencyForm(pak);
@@ -440,7 +440,7 @@ namespace MpeInstaller
       {
         if (!silent)
         {
-          if (MessageBox.Show("Dependency check error! Update aborted!\nWould you like to view more details?", string.Empty,
+          if (MessageBox.Show("Dependency check error! Update aborted!\nWould you like to view more details?", pak.GeneralInfo.Name,
             MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
           {
             DependencyForm frm = new DependencyForm(pak);
@@ -604,7 +604,7 @@ namespace MpeInstaller
       {
         if (!silent)
         {
-          if (MessageBox.Show("Dependency check error! Install aborted!\nWould you like to view more details?", string.Empty, 
+          if (MessageBox.Show("Dependency check error! Install aborted!\nWould you like to view more details?", pak.GeneralInfo.Name, 
             MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
           {
             DependencyForm frm = new DependencyForm(pak);
