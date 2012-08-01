@@ -128,6 +128,9 @@ namespace MediaPortal.Ripper
 
       Log.Info("Autoplay: Start playing media type '{0}/{1}' from drive '{2}'", mediaType, mediaSubType, strDrive);
 
+      // Set time for avoid ANYDVD (removal/insert detection)
+      RemovableDriveHelper.SetExamineCDTime(DateTime.Now);
+
       switch (mediaType)
       {
         case MediaType.VIDEO:

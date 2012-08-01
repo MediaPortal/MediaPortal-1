@@ -24,7 +24,7 @@
 #include "dx9allocatorpresenter.h"
 
 // For more details for memory leak detection see the alloctracing.h header
-//#include "..\..\alloctracing.h"
+#include "..\..\alloctracing.h"
 
 void Log(const char *fmt, ...) ;
 

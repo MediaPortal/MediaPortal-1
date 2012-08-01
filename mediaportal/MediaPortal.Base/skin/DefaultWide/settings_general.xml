@@ -5,13 +5,13 @@
   <allowoverlay>yes</allowoverlay>
   <controls>
     <import>common.settings.xml</import>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
     <control>
       <description>buttons</description>
       <type>group</type>
-      
-      
-      <animation effect="slide" time="70" start="800,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <posX>99</posX>
       <posY>188</posY>
       <control>
@@ -24,11 +24,28 @@
         <onup>17</onup>
       </control>
       <control>
+        <description>theme</description>
+        <type>menubutton</type>
+        <id>15</id>
+        <posX>99</posX>
+        <posY>233</posY>
+        <mode>dialoglist</mode>
+        <dialogTitle>90</dialogTitle>
+        <valueTextInButton>yes</valueTextInButton>
+        <valuePrefixText>94</valuePrefixText>
+        <textXOff>10</textXOff>
+        <onclick>#(skin.settheme(#selectedlabel15,15))</onclick>
+        <binding>#skin.currenttheme</binding>
+        <subitems>
+          <subitem>#skin.themes</subitem>
+        </subitems>
+      </control>
+      <control>
         <description>Language</description>
         <type>button</type>
         <id>11</id>
         <posX>99</posX>
-        <posY>233</posY>
+        <posY>278</posY>
         <label>248</label>
       </control>
       <control>
@@ -36,7 +53,7 @@
         <type>togglebutton</type>
         <id>12</id>
         <posX>99</posX>
-        <posY>278</posY>
+        <posY>323</posY>
         <label>1047</label>
       </control>
       <control>
@@ -44,7 +61,7 @@
         <type>togglebutton</type>
         <id>13</id>
         <posX>99</posX>
-        <posY>323</posY>
+        <posY>368</posY>
         <label>360</label>
       </control>
       <control>
@@ -52,7 +69,7 @@
         <type>button</type>
         <id>21</id>
         <posX>99</posX>
-        <posY>368</posY>
+        <posY>413</posY>
         <label>6024</label>
         <hyperlink>708</hyperlink>
         <ondown>99</ondown>
@@ -62,10 +79,8 @@
       <description>Skin Preview</description>
       <type>image</type>
       <id>1</id>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-      <animation effect="slide" time="70" start="800,0">WindowOpen</animation>
-      <animation effect="slide" time="250" end="800,0">WindowClose</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <posX>550</posX>
       <posY>143</posY>
       <width>640</width>
@@ -76,10 +91,8 @@
       <description>Skin Preview</description>
       <type>image</type>
       <id>20</id>
-      
-      
-      <animation effect="slide" time="70" start="800,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <posX>570</posX>
       <posY>163</posY>
       <width>600</width>

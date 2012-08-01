@@ -216,7 +216,7 @@ namespace TvPlugin
         _immediateSeekIsRelative = xmlreader.GetValueAsBool("movieplayer", "immediateskipstepsisrelative", true);
         _immediateSeekValue = xmlreader.GetValueAsInt("movieplayer", "immediateskipstepsize", 10);
       }
-      Load(GUIGraphicsContext.Skin + @"\mytvFullScreen.xml");
+      Load(GUIGraphicsContext.GetThemedSkinFile(@"\mytvFullScreen.xml"));
       GetID = (int)Window.WINDOW_TVFULLSCREEN;
 
       SettingsLoaded = false;
@@ -627,7 +627,7 @@ namespace TvPlugin
             {
               if (g_Player.CurrentSubtitleStream == -1 && g_Player.SupportsCC)
               {
-                msg.Label = "CC1";
+                msg.Label = "CC1 Analog or Digital";
               }
               else
               {
@@ -1554,7 +1554,7 @@ namespace TvPlugin
         dlg.AddLocalizedString(100748); // Program Information
       }
 
-      if (!g_Player.IsTVRecording && Utils.FileExistsInCache(GUIGraphicsContext.Skin + @"\mytvtuningdetails.xml"))
+      if (!g_Player.IsTVRecording && Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile(@"\mytvtuningdetails.xml")))
       {
         dlg.AddLocalizedString(200041); // tuning details
       }
@@ -2146,7 +2146,7 @@ namespace TvPlugin
 
       if (g_Player.SupportsCC)
       {
-        dlg.Add("CC1");
+        dlg.Add("CC1 Analog or Digital");
       }
 
       // get the number of subtitles in the current movie
@@ -2166,7 +2166,7 @@ namespace TvPlugin
 
       // select/focus the subtitle, which is active atm.
       // There may be no subtitle streams selected at all (-1), which happens when a subtitle file is used instead
-      if (g_Player.EnableSubtitle && nbSubStreams > 0)
+      if (g_Player.EnableSubtitle && nbSubStreams >= 0)
       {
         if (g_Player.SupportsCC)
         {
@@ -3379,6 +3379,19 @@ namespace TvPlugin
     public bool OnActorsEnd(IMDBFetcher fetcher)
     {
       // won't occure
+      return true;
+    }
+
+    public bool OnActorInfoStarting(IMDBFetcher fetcher)
+    {
+      // won't occure
+      return true;
+    }
+
+    public bool OnSelectActor(IMDBFetcher fetcher, out int selected)
+    {
+      // won't occure
+      selected = 0;
       return true;
     }
 

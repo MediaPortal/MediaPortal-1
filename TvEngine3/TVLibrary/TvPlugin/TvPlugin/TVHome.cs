@@ -784,7 +784,6 @@ namespace TvPlugin
                                             DateTime.Now, DateTime.Now.AddDays(1));
         newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
         newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-        newSchedule.RecommendedCard = Card.Id;
         newSchedule.Persist();
         server.OnNewSchedule();
       }
@@ -811,8 +810,7 @@ namespace TvPlugin
         Schedule newSchedule = new Schedule(channel.IdChannel, channel.CurrentProgram.Title,
                                             channel.CurrentProgram.StartTime, channel.CurrentProgram.EndTime);
         newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
-        newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-        newSchedule.RecommendedCard = Card.Id;
+        newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);        
         newSchedule.Persist();
         server.OnNewSchedule();
       }
@@ -1756,16 +1754,7 @@ namespace TvPlugin
           string text = message.Label2;
           Channel ch = message.Object as Channel;
           //Log.Debug("Received rec notify message: {0}, {1}, {2}", heading, text, (ch != null).ToString()); //remove later
-          string logo = string.Empty;
-          if (null != ch && ch.IsTv)
-          {
-            logo = Utils.GetCoverArt(Thumbs.TVChannel, ch.DisplayName);
-          }
-          else if (null != ch && ch.IsRadio)
-          {
-            logo = Utils.GetCoverArt(Thumbs.Radio, ch.DisplayName);
-          }
-
+          string logo = TVUtil.GetChannelLogo(ch);
           GUIDialogNotify pDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
           if (pDlgNotify != null)
           {
@@ -2093,6 +2082,42 @@ namespace TvPlugin
     {
       if ((g_Player.IsTV && Card.IsTimeShifting) || g_Player.IsTVRecording)
       {
+        //push chapter and jumppoint information into the gui property manager
+        if (g_Player.IsTVRecording && g_Player.HasChapters)
+        {
+          double[] chapters = g_Player.Chapters;
+          double[] jumppoints = g_Player.JumpPoints;
+          
+          string strChapters = string.Empty;
+          string strJumpPoints = string.Empty;
+          
+          double duration = g_Player.Duration;
+          if (chapters != null)
+          {
+            foreach(double chapter in chapters)
+            {
+              double chapterPercent = chapter/duration*100.0d;
+              strChapters += String.Format("{0:0.00}", chapterPercent) + " ";
+            }
+          }
+          if (jumppoints != null)
+          {
+            foreach (double jump in jumppoints)
+            {
+              double jumpPercent = jump/duration*100.0d;
+              strJumpPoints += String.Format("{0:0.00}", jumpPercent) + " ";
+            }
+          }
+          GUIPropertyManager.SetProperty("#TV.Record.chapters", strChapters);
+          GUIPropertyManager.SetProperty("#TV.Record.jumppoints", strJumpPoints);
+          Log.Debug("TVHome.ShowFullScreenWindowTVHandler - setting chapters: " + strChapters);
+          Log.Debug("TVHome.ShowFUllScreenWindowTVHandler - setting jumppoints: " + strJumpPoints);
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#TV.Record.chapters", string.Empty);
+          GUIPropertyManager.SetProperty("#TV.Record.jumppoints", string.Empty);
+        }
         // watching TV
         if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_TVFULLSCREEN)
         {
@@ -2398,63 +2423,24 @@ namespace TvPlugin
         // Check for recordings vs liveTv/Radio or Idle
         if (g_Player.IsTVRecording)
         {
-          double currentPosition = g_Player.CurrentPosition;
-          double duration = g_Player.Duration;
-
-          string startTime = Utils.SecondsToHMSString((int)currentPosition);
-          string endTime = Utils.SecondsToHMSString((int)duration);
-
-          double percentLivePoint = currentPosition / duration;
-          percentLivePoint *= 100.0d;
-
-          GUIPropertyManager.SetProperty("#TV.Record.percent1", percentLivePoint.ToString());
-          GUIPropertyManager.SetProperty("#TV.Record.percent2", "0");
-          GUIPropertyManager.SetProperty("#TV.Record.percent3", "0");
-
-          Recording rec = TvRecorded.ActiveRecording();
-          string displayName = TvRecorded.GetRecordingDisplayName(rec);
-
-          GUIPropertyManager.SetProperty("#TV.View.channel", displayName + " (" + GUILocalizeStrings.Get(604) + ")");
-          GUIPropertyManager.SetProperty("#TV.View.title", g_Player.currentTitle);
-          GUIPropertyManager.SetProperty("#TV.View.compositetitle", g_Player.currentTitle);
-          GUIPropertyManager.SetProperty("#TV.View.description", g_Player.currentDescription);
-
-          GUIPropertyManager.SetProperty("#TV.View.start", startTime);
-          GUIPropertyManager.SetProperty("#TV.View.stop", endTime);
-          if (rec != null)
-          {
-            GUIPropertyManager.SetProperty("#TV.View.title", rec.Title);
-            GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(rec));
-            GUIPropertyManager.SetProperty("#TV.View.subtitle", rec.EpisodeName);
-            GUIPropertyManager.SetProperty("#TV.View.episode", rec.EpisodeNumber);
-          }
-
-          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, displayName);
-          GUIPropertyManager.SetProperty("#TV.View.thumb",
-                                          string.IsNullOrEmpty(strLogo) ? "defaultVideoBig.png" : strLogo);
-          return;
+          UpdateRecordingProperties();
         }
-
-        // No channel -> no EPG
-        if (Navigator.Channel == null)
+        else
         {
-          //Log.Debug("UpdateProgressPercentageBar: Navigator.Channel == null");
-          return;
+          UpdateTvProperties();
         }
+      }
+      finally
+      {
+        _updateProgressTimer = DateTime.Now;
+      }
+    }
 
-        if (g_Player.IsRadio)
-        {
-          //Log.Debug("UpdateProgressPercentageBar: g_Player.IsRadio = true");
-
-          /*
-              * Team decision was not to hide TV's last channel EPG while Radio plays
-              * 
-            UpdateCurrentEpgProperties(null);
-            UpdateNextEpgProperties(null);
-            */
-          return;
-        }
-
+    private static void UpdateTvProperties()
+    {
+      // No channel -> no EPG
+      if (Navigator.Channel != null && !g_Player.IsRadio)
+      {
         Channel infoChannel;
         if (Navigator.Channel.IsTv)
         {
@@ -2467,12 +2453,48 @@ namespace TvPlugin
         UpdateCurrentEpgProperties(infoChannel);
         UpdateNextEpgProperties(infoChannel);
         //Update lastTvChannel with current
-        _lastTvChannel = infoChannel;         
+        _lastTvChannel = infoChannel;
       }
-      finally
+    }
+
+    private static void UpdateRecordingProperties()
+    {
+      double currentPosition = g_Player.CurrentPosition;
+      double duration = g_Player.Duration;
+
+      string startTime = Utils.SecondsToHMSString((int)currentPosition);
+      string endTime = Utils.SecondsToHMSString((int)duration);
+
+      double percentLivePoint = currentPosition / duration;
+      percentLivePoint *= 100.0d;
+
+      GUIPropertyManager.SetProperty("#TV.Record.percent1", percentLivePoint.ToString());
+      GUIPropertyManager.SetProperty("#TV.Record.percent2", "0");
+      GUIPropertyManager.SetProperty("#TV.Record.percent3", "0");
+
+      Recording rec = TvRecorded.ActiveRecording();
+
+      if (rec != null)
       {
-        _updateProgressTimer = DateTime.Now;
+        GUIPropertyManager.SetProperty("#TV.View.title", rec.Title);
+        GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(rec));
+        GUIPropertyManager.SetProperty("#TV.View.subtitle", rec.EpisodeName);
+        GUIPropertyManager.SetProperty("#TV.View.episode", rec.EpisodeNumber);
       }
+      else
+      {
+        GUIPropertyManager.SetProperty("#TV.View.title", g_Player.currentTitle);
+        GUIPropertyManager.SetProperty("#TV.View.compositetitle", g_Player.currentTitle);
+      }
+      string displayName = TvRecorded.GetRecordingDisplayName(rec);
+      GUIPropertyManager.SetProperty("#TV.View.channel", displayName + " (" + GUILocalizeStrings.Get(604) + ")");
+      GUIPropertyManager.SetProperty("#TV.View.description", g_Player.currentDescription);
+      GUIPropertyManager.SetProperty("#TV.View.start", startTime);
+      GUIPropertyManager.SetProperty("#TV.View.stop", endTime);
+
+      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, displayName);
+      GUIPropertyManager.SetProperty("#TV.View.thumb",
+                                     string.IsNullOrEmpty(strLogo) ? "defaultVideoBig.png" : strLogo);
     }
 
     private static void UpdateAudioProperties(int currAudio)
@@ -2533,31 +2555,18 @@ namespace TvPlugin
 
       if (!hasChannel || !hasCurrentEPG)
       {
-        GUIPropertyManager.SetProperty("#TV.View.title", GUILocalizeStrings.Get(736));          // no epg for this channel
-        GUIPropertyManager.SetProperty("#TV.View.compositetitle", GUILocalizeStrings.Get(736)); // no epg for this channel
-        GUIPropertyManager.SetProperty("#TV.View.start", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.View.subtitle", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.View.episode", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.View.genre", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
-        GUIPropertyManager.SetProperty("#TV.Record.percent1", "0");
-        GUIPropertyManager.SetProperty("#TV.Record.percent2", "0");
-        GUIPropertyManager.SetProperty("#TV.Record.percent3", "0");
-        GUIPropertyManager.SetProperty("#TV.View.remaining", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.View.thumb", String.Empty);
-
+        ResetTvProperties();
         if (!hasChannel)
         {
           GUIPropertyManager.SetProperty("#TV.View.channel", String.Empty);
+          GUIPropertyManager.SetProperty("#TV.View.thumb", String.Empty);
           Log.Debug("UpdateCurrentEpgProperties: no channel, returning");
         }
-
-        if (!hasCurrentEPG)
+        else
         {
-          Log.Debug("UpdateCurrentEpgProperties: no EPG data, returning");
-        }
+          GUIPropertyManager.SetProperty("#TV.View.channel", ch.DisplayName);
+          SetTvThumbProperty(ch);
+        }            
       }
       else
       {
@@ -2574,13 +2583,7 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#TV.View.genre", current.Genre);
         GUIPropertyManager.SetProperty("#TV.View.remaining",
                                        Utils.SecondsToHMSString(current.EndTime - current.StartTime));
-
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.DisplayName);
-        if (string.IsNullOrEmpty(strLogo))
-        {
-          strLogo = "defaultVideoBig.png";
-        }
-        GUIPropertyManager.SetProperty("#TV.View.thumb", strLogo);
+        SetTvThumbProperty(ch);
 
         TimeSpan ts = current.EndTime - current.StartTime;
 
@@ -2613,10 +2616,42 @@ namespace TvPlugin
           percentLivePoint *= 100.0d;
           GUIPropertyManager.SetProperty("#TV.View.Percentage", percentLivePoint.ToString());
           GUIPropertyManager.SetProperty("#TV.Record.percent3", percentLivePoint.ToString());
+        
+          GUIPropertyManager.SetProperty("#TV.Record.chapters", string.Empty);
+          GUIPropertyManager.SetProperty("#TV.Record.jumppoints", string.Empty);
         }
       }
 
 
+    }
+
+    private static void SetTvThumbProperty(Channel ch)
+    {
+      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.DisplayName);
+      if (string.IsNullOrEmpty(strLogo))
+      {
+        strLogo = "defaultVideoBig.png";
+      }
+      GUIPropertyManager.SetProperty("#TV.View.thumb", strLogo);
+    }
+
+    private static void ResetTvProperties()
+    {
+      GUIPropertyManager.SetProperty("#TV.View.title", GUILocalizeStrings.Get(736)); // no epg for this channel
+      GUIPropertyManager.SetProperty("#TV.View.compositetitle", GUILocalizeStrings.Get(736)); // no epg for this channel
+      GUIPropertyManager.SetProperty("#TV.View.start", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.subtitle", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.episode", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.genre", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
+      GUIPropertyManager.SetProperty("#TV.Record.percent1", "0");
+      GUIPropertyManager.SetProperty("#TV.Record.percent2", "0");
+      GUIPropertyManager.SetProperty("#TV.Record.percent3", "0");
+      GUIPropertyManager.SetProperty("#TV.View.remaining", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Record.chapters", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.Record.jumppoints", string.Empty);
     }
 
     private static void UpdateNextEpgProperties(Channel ch)
@@ -3048,9 +3083,6 @@ namespace TvPlugin
       _lastError.FailingChannel = channel;
       _lastError.Messages.Clear();
 
-      // reset the last channel, so you can switch back after error
-      TVHome.Navigator.SetFailingChannel(_lastError.FailingChannel);
-
       int TextID = 0;
       _lastError.Messages.Add(GUILocalizeStrings.Get(1500));
       switch (succeeded)
@@ -3075,6 +3107,9 @@ namespace TvPlugin
           break;
         case TvResult.UnableToStartGraph:
           TextID = 1505;
+          break;
+        case TvResult.TuneCancelled:
+          TextID = 1524;
           break;
         case TvResult.UnknownError:
           // this error can also happen if we have no connection to the server.
@@ -3124,9 +3159,9 @@ namespace TvPlugin
       }
 
       GUIDialogNotify pDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
-      string caption = GUILocalizeStrings.Get(605) + " - " + channel.DisplayName;
-      // +GUILocalizeStrings.Get(1512); ("tune last?")
+      string caption = GUILocalizeStrings.Get(605) + " - " + _lastError.FailingChannel.DisplayName;
       pDlgNotify.SetHeading(caption); //my tv
+      pDlgNotify.SetImage(TVUtil.GetChannelLogo(_lastError.FailingChannel));
       StringBuilder sbMessage = new StringBuilder();
       // ignore the "unable to start timeshift" line to avoid scrolling, because NotifyDLG has very few space available.
       for (int idx = 1; idx < _lastError.Messages.Count; idx++)
@@ -3230,13 +3265,18 @@ namespace TvPlugin
       }
       Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.DisplayName);
 
-      //if a channel is untunable, then there is no reason to carry on or even stop playback.
-      ChannelState CurrentChanState = TvServer.GetChannelState(channel.IdChannel, Card.User);
-      if (CurrentChanState == ChannelState.nottunable)
+      //if a channel is untunable, then there is no reason to carry on or even stop playback.   
+      var userCopy = Card.User.Clone() as IUser;
+      if (userCopy != null) 
       {
-        ChannelTuneFailedNotifyUser(TvResult.AllCardsBusy, false, channel);
-        return false;
-      }
+        userCopy.Name = Dns.GetHostName();
+        ChannelState CurrentChanState = TvServer.GetChannelState(channel.IdChannel, userCopy);
+        if (CurrentChanState == ChannelState.nottunable)
+        {
+          ChannelTuneFailedNotifyUser(TvResult.AllCardsBusy, false, channel);
+          return false;
+        }
+      }      
 
       //BAV: fixing mantis bug 1263: TV starts with no video if Radio is previously ON & channel selected from TV guide
       if ((!channel.IsRadio && g_Player.IsRadio) || (channel.IsRadio && !g_Player.IsRadio))

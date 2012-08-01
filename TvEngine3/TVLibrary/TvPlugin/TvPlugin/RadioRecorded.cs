@@ -190,7 +190,7 @@ namespace TvPlugin
       g_Player.PlayBackStarted += new g_Player.StartedHandler(OnPlayRecordingBackStarted);
       g_Player.PlayBackChanged += new g_Player.ChangedHandler(OnPlayRecordingBackChanged);
 
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\myradiorecorded.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\myradiorecorded.xml"));
       //GUIWindowManager.Replace((int)Window.WINDOW_RECORDEDRADIO, this);
       //Restore();
       //PreInit();
@@ -203,6 +203,7 @@ namespace TvPlugin
       TVHome.WaitForGentleConnection();
 
       base.OnPageLoad();
+      InitViewSelections();
       DeleteInvalidRecordings();
 
       if (btnCompress != null)
@@ -346,6 +347,19 @@ namespace TvPlugin
         case GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED:
           UpdateProperties();
           break;
+
+        case GUIMessage.MessageType.GUI_MSG_ITEM_SELECT:
+        case GUIMessage.MessageType.GUI_MSG_CLICKED:
+
+          // Depending on the mode, handle the GUI_MSG_ITEM_SELECT message from the dialog menu and
+          // the GUI_MSG_CLICKED message from the spin control.
+          // Respond to the correct control.  The value is retrived directly from the control by the called handler.
+          if (message.TargetControlId == btnViews.GetID)
+          {
+            // Set the new view.
+            SetView(btnViews.SelectedItemValue);
+          }
+          break;
       }
       return base.OnMessage(message);
     }
@@ -435,43 +449,56 @@ namespace TvPlugin
       base.Process();
     }
 
-    protected override void OnShowViews()
+    protected override void InitViewSelections()
+    {
+      btnViews.ClearMenu();
+
+      // Add the view options to the menu.
+      int index = 0;
+      btnViews.AddItem(GUILocalizeStrings.Get(914), index++); // Recordings
+      btnViews.AddItem(GUILocalizeStrings.Get(135), index++); // Genres
+      btnViews.AddItem(GUILocalizeStrings.Get(812), index++); // Radio stations
+      btnViews.AddItem(GUILocalizeStrings.Get(636), index++); // Date
+
+      // Have the menu select the currently selected view.
+      switch (_currentDbView)
+      {
+        case DBView.Recordings:
+          btnViews.SetSelectedItemByValue(0);
+          break;
+        case DBView.Genre:
+          btnViews.SetSelectedItemByValue(1);
+          break;
+        case DBView.Channel:
+          btnViews.SetSelectedItemByValue(2);
+          break;
+        case DBView.History:
+          btnViews.SetSelectedItemByValue(3);
+          break;
+      }
+    }
+
+    protected override void SetView(int selectedViewId)
     {
       try
       {
-        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
-        if (dlg == null)
+        switch (selectedViewId)
         {
-          return;
-        }
-        dlg.Reset();
-        dlg.SetHeading(811); // recorded radio
-
-        dlg.AddLocalizedString(914);  // Recordings
-        dlg.AddLocalizedString(135);  // Genres
-        dlg.AddLocalizedString(812);  // Radio Stations
-        dlg.AddLocalizedString(636); //TODO: Implement proper view
-        dlg.DoModal(GetID);
-        if (dlg.SelectedLabel == -1)
-        {
-          return;
-        }
-        switch (dlg.SelectedId)
-        {
-          case 914: //	all
+          case 0:
             _currentDbView = DBView.Recordings;
             break;
-          case 135: //	genres
+          case 1:
             _currentDbView = DBView.Genre;
             break;
-          case 812: //	Radio stations
+          case 2:
             _currentDbView = DBView.Channel;
             break;
-          case 636: //	date
+          case 3:
             _currentDbView = DBView.History;
             break;
         }
-        // If we had been in 2nd group level - go up to root again
+
+        // If we had been in 2nd group level - go up to root again.
         _currentLabel = String.Empty;
         LoadDirectory();
       }
@@ -817,6 +844,7 @@ namespace TvPlugin
       //set object count label
       GUIPropertyManager.SetProperty("#itemcount", Utils.GetObjectCountLabel(itemlist.Count - (itemlist.Count > 0 && itemlist[0].Label == ".." ? 1 : 0)));
 
+      SwitchLayout();
       OnSort();
       UpdateProperties();
     }
@@ -845,8 +873,8 @@ namespace TvPlugin
 
     private GUIListItem BuildItemFromRecording(Recording aRecording)
     {
-      string strDefaultUnseenIcon = GUIGraphicsContext.Skin + @"\Media\defaultVideoBig.png";
-      string strDefaultSeenIcon = GUIGraphicsContext.Skin + @"\Media\defaultVideoSeenBig.png";
+      string strDefaultUnseenIcon = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultVideoBig.png");
+      string strDefaultSeenIcon = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultVideoSeenBig.png");
       GUIListItem item = null;
       string strChannelName = GUILocalizeStrings.Get(2014); // unknown
       string strGenre = GUILocalizeStrings.Get(2014); // unknown
@@ -1070,7 +1098,7 @@ namespace TvPlugin
         TVHome.Card.StopTimeShifting();
       }
 
-      return TVUtil.PlayRecording(rec, stoptime, g_Player.MediaType.Radio);
+      return TVUtil.PlayRecording(rec, stoptime, g_Player.MediaType.RadioRecording);
     }
 
     private void OnDeleteRecording(int iItem)
@@ -1640,7 +1668,7 @@ namespace TvPlugin
     private void doOnPlayBackStoppedOrChanged(g_Player.MediaType type, int stoptime, string filename, string caller)
     {
       Log.Info("RadioRecorded:{0} {1} {2}", caller, type, filename);
-      if (type != g_Player.MediaType.Recording)
+      if (type != g_Player.MediaType.Radio)
       {
         return;
       }
@@ -1685,7 +1713,7 @@ namespace TvPlugin
 
     private void OnPlayRecordingBackEnded(g_Player.MediaType type, string filename)
     {
-      if (type != g_Player.MediaType.Recording)
+      if (type != g_Player.MediaType.Radio)
       {
         return;
       }
@@ -1722,7 +1750,7 @@ namespace TvPlugin
 
     private void OnPlayRecordingBackStarted(g_Player.MediaType type, string filename)
     {
-      if (type != g_Player.MediaType.Recording)
+      if (type != g_Player.MediaType.Radio)
       {
         return;
       }

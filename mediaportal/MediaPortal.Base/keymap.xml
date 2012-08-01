@@ -531,6 +531,18 @@
       <sound />
       <description>Next bookmark</description>
     </action>
+    <action>
+      <id>134</id>
+      <key>E</key>
+      <sound />
+      <description>Next edidtion stream</description>
+    </action>
+    <action>
+      <id>135</id>
+      <key>V</key>
+      <sound />
+      <description>Next Video Stream</description>
+    </action>
   </window>
   <window>
     <id>2</id>

@@ -21,7 +21,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright( "Morten Mertner" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
-[assembly: AssemblyVersion( "1.5.0.29111" )]
+[assembly: AssemblyVersion( "1.5.0.29112" )]
 [assembly: CLSCompliant( true )]
 [assembly: ComVisible( false )]
 

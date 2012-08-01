@@ -21,6 +21,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Xml;
 using DirectShowLib;
@@ -37,11 +38,79 @@ namespace TvLibrary.Implementations.DVB
   {
     #region variables
 
+    private readonly Dictionary<int, DVBBaseChannel> _mapSubChannels = new Dictionary<int, DVBBaseChannel>();
     private MDPlug[] _mDPlugsArray;
     private int _instanceNumber;
     private String _cardFolder;
 
     #endregion
+
+    /// <summary>
+    /// Adds the sub channel.
+    /// </summary>
+    /// <param name="id">The id.</param>
+    /// <param name="channel">The channel</param>
+    public void AddSubChannel(int id, IChannel currentChannel, ChannelInfo channelInfo, bool update)
+    {
+      DVBBaseChannel dvbChannel = currentChannel as DVBBaseChannel;
+
+      if (dvbChannel != null)
+      {
+        bool isChannelAlreadyDecoding = IsChannelAlreadyDecoding(dvbChannel.Name);
+
+        if (!_mapSubChannels.ContainsKey(id))
+        {
+          _mapSubChannels[id] = dvbChannel;
+        }
+        
+        if (!isChannelAlreadyDecoding)
+        {
+          SetChannel(currentChannel, channelInfo, update); 
+        }        
+      }
+    }
+
+    private bool IsChannelAlreadyDecoding(string channel)
+    {
+      return _mapSubChannels.Any(t => t.Value.Name.Equals(channel));
+    }
+
+    /// <summary>
+    /// Frees the sub channel.
+    /// </summary>
+    /// <param name="id">The id.</param>
+    public void FreeSubChannel(int id)
+    {
+      string removedChannel = "";
+      if (_mapSubChannels.ContainsKey(id))
+      {
+        DVBBaseChannel channel = _mapSubChannels[id];
+        removedChannel = channel.Name;
+        Log.Log.WriteFile("FreeSubChannel MD: freeing sub channel : {0}", id);
+        _mapSubChannels.Remove(id);
+
+        if (removedChannel.Length > 0)
+        {
+
+          bool isChannelAlreadyDecoding = IsChannelAlreadyDecoding(removedChannel);
+
+          if (isChannelAlreadyDecoding)
+          {
+            Log.Log.WriteFile("FreeSubChannel MD: subchannel : {0} on channel {1} is still active", id, removedChannel);
+          }
+          else
+          {
+            FreeChannel(removedChannel); 
+          }                    
+        }
+      }
+      else
+      {
+        Log.Log.WriteFile("FreeSubChannel MD: tried to free non existing sub channel : {0}", id);
+      }
+
+     
+    }
 
     #region ctor
 
@@ -116,21 +185,12 @@ namespace TvLibrary.Implementations.DVB
         {
           XmlDocument doc = new XmlDocument();
           XmlNode rootNode = doc.CreateElement("cards");
-          XmlNode nodeCard = doc.CreateElement("card");
-          XmlAttribute attr = doc.CreateAttribute("DevicePath");
-          attr.InnerText = devicePath;
-          nodeCard.Attributes.Append(attr);
-          attr = doc.CreateAttribute("Name");
-          attr.InnerText = deviceName;
-          nodeCard.Attributes.Append(attr);
-          attr = doc.CreateAttribute("EnableMdapi");
-          attr.InnerText = "1";
+          XmlNode nodeNewCard = CreateCardSection(doc, devicePath, deviceName);
+          doc.AppendChild(rootNode);
+          rootNode.AppendChild(nodeNewCard);
+          doc.Save(xmlFile);
           //Fix null pointer problem on first run.
           InstanceNumber = 1;
-          nodeCard.Attributes.Append(attr);
-          rootNode.AppendChild(nodeCard);
-          doc.AppendChild(rootNode);
-          doc.Save(xmlFile);
           useMDAPI = true;
         }
         else
@@ -166,21 +226,12 @@ namespace TvLibrary.Implementations.DVB
             }
           if (!cardFound)
           {
-            XmlNode nodeNewCard = doc.CreateElement("card");
-            XmlAttribute attr = doc.CreateAttribute("DevicePath");
-            attr.InnerText = devicePath;
-            nodeNewCard.Attributes.Append(attr);
-            attr = doc.CreateAttribute("Name");
-            attr.InnerText = deviceName;
-            nodeNewCard.Attributes.Append(attr);
-            attr = doc.CreateAttribute("EnableMdapi");
-            attr.InnerText = "1";
-            //Fix null pointer problem on first run.
-            InstanceNumber = 1;
-            nodeNewCard.Attributes.Append(attr);
-            XmlNode rootNode = doc.SelectSingleNode("/cards");
+            XmlNode nodeNewCard = CreateCardSection(doc, devicePath, deviceName);
+            XmlNode rootNode = doc.SelectSingleNode("cards");
             rootNode.AppendChild(nodeNewCard);
             doc.Save(xmlFile);
+            //Fix null pointer problem on first run.
+            InstanceNumber = 1;
             useMDAPI = true;
           }
         }
@@ -193,9 +244,48 @@ namespace TvLibrary.Implementations.DVB
       return useMDAPI;
     }
 
+    private static XmlNode CreateCardSection(XmlDocument doc, string devicePath, string deviceName)
+    {
+      XmlNode nodeNewCard = doc.CreateElement("card");
+      XmlAttribute attr = doc.CreateAttribute("DevicePath");
+      attr.InnerText = devicePath;
+      nodeNewCard.Attributes.Append(attr);
+      attr = doc.CreateAttribute("Name");
+      attr.InnerText = deviceName;
+      nodeNewCard.Attributes.Append(attr);
+      attr = doc.CreateAttribute("EnableMdapi");
+      attr.InnerText = "1";
+      nodeNewCard.Attributes.Append(attr);
+      attr = doc.CreateAttribute("Provider");
+      attr.InnerText = "All";
+      nodeNewCard.Attributes.Append(attr);
+      return nodeNewCard;
+    }
+
     #endregion
 
     #region public method
+
+    ///<summary>
+    ///Check if Provider should be decrypted by MDAPI
+    ///</summary>
+    ///<param name="provider"></param>
+    ///<returns></returns>
+    public bool IsProviderSelected(string provider)
+    {
+      string xmlFile = AppDomain.CurrentDomain.BaseDirectory + "MDPLUGINS\\MDAPICards.xml";
+      XmlDocument doc = new XmlDocument();
+      doc.Load(xmlFile);
+      XmlNodeList cardList = doc.SelectNodes("/cards/card");
+      foreach (XmlNode nodeCard in cardList)
+      {
+        if (_cardFolder.Contains(nodeCard.Attributes["Name"].Value) && (nodeCard.Attributes["Provider"]==null || nodeCard.Attributes["Provider"].Value == "All" || (provider != null && nodeCard.Attributes["Provider"].Value.Contains(provider))))
+        {
+          return true;
+        }
+      }
+      return false;
+    }
 
     /// <summary>
     /// Method release all the mdapi filters in ordinary fashion
@@ -278,7 +368,7 @@ namespace TvLibrary.Implementations.DVB
     /// Frees the given channel
     /// </summary>
     /// <param name="channelName">Channel name to be freed</param>
-    public void FreeChannel(string channelName)
+    private void FreeChannel(string channelName)
     {
       Log.Log.Info("mdplug: FreeChannel {0}", channelName);
       MDPlug[] plugins = getPlugins();
@@ -286,7 +376,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (plugin.IsDecodingChannel(channelName))
         {
-          plugin.FreeDecodingChannel(false);
+          plugin.FreeDecodingChannel();
           return;
         }
       }
@@ -301,14 +391,14 @@ namespace TvLibrary.Implementations.DVB
       MDPlug[] plugins = getPlugins();
       foreach (MDPlug plugin in plugins)
       {
-        plugin.FreeDecodingChannel(true);
+        plugin.FreeDecodingChannel();
       }
     }
 
     /// <summary>
     /// Sends the current channel to the mdapifilter
     /// </summary>    
-    public void SetChannel(IChannel currentChannel, ChannelInfo channelInfo, bool update)
+    private void SetChannel(IChannel currentChannel, ChannelInfo channelInfo, bool update)
     {
       MDPlug[] plugins = getPlugins();
       MDPlug myPlugin = null;
@@ -347,8 +437,6 @@ namespace TvLibrary.Implementations.DVB
       {
         if (myPlugin != null)
         {
-          // Increment usage counter of this slot.
-          myPlugin.IncrementDecodingCounter();
           Log.Log.Info("mdplug: SetChannel already decoding channel {0}. Increment counter", currentChannel.Name);
           return;
         } // else not found allocate new slot
@@ -420,7 +508,7 @@ namespace TvLibrary.Implementations.DVB
     #region constants
 
     [ComImport, Guid("72E6DB8F-9F33-4D1C-A37C-DE8148C0BE74")]
-    private class MDAPIFilter {} ;
+    private class MDAPIFilter { } ;
 
     #endregion
 
@@ -487,6 +575,21 @@ namespace TvLibrary.Implementations.DVB
       int ChangeChannelTP82_Ex([In] IntPtr tp82, [In] IntPtr tPids2Dec);
     }
 
+    /// <summary>
+    /// IChangeChannel_Clear interface
+    /// </summary>
+    [ComVisible(true), ComImport,
+     Guid("D0EACAB1-3211-414B-B58B-E1157AC4D93A"),
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IChangeChannel_Clear
+    {
+        /// <summary>
+        /// Clear the channel
+        /// </summary>
+        [PreserveSig]
+        int ClearChannel();
+    }
+
     #endregion
 
     #region structs
@@ -527,17 +630,20 @@ namespace TvLibrary.Implementations.DVB
       /// <summary>
       /// Name
       /// </summary>
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)] public byte[] Name; // to simulate c++ char Name[30]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
+      public byte[] Name; // to simulate c++ char Name[30]
 
       /// <summary>
       /// Provider
       /// </summary>
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)] public byte[] Provider;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
+      public byte[] Provider;
 
       /// <summary>
       /// Country
       /// </summary>
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)] public byte[] Country;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
+      public byte[] Country;
 
       /// <summary>
       /// Frequence
@@ -657,7 +763,8 @@ namespace TvLibrary.Implementations.DVB
       /// <summary>
       /// Filters
       /// </summary>
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)] public byte[] Filters;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+      public byte[] Filters;
 
       // to simulate struct PIDFilters Filters[MAX_PID_IDS];
 
@@ -669,14 +776,16 @@ namespace TvLibrary.Implementations.DVB
       /// <summary>
       /// CA System82
       /// </summary>
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public CA_System82[] CA_System82;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+      public CA_System82[] CA_System82;
 
       // to simulate struct TCA_System CA_System[MAX_CA_SYSTEMS];
 
       /// <summary>
       /// CA Country
       /// </summary>
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public byte[] CA_Country;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+      public byte[] CA_Country;
 
       /// <summary>
       /// Marker
@@ -701,7 +810,8 @@ namespace TvLibrary.Implementations.DVB
       /// <summary>
       /// Extern Buffer
       /// </summary>
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] Extern_Buffer;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+      public byte[] Extern_Buffer;
     }
 
     /// <summary>
@@ -713,7 +823,8 @@ namespace TvLibrary.Implementations.DVB
       /// <summary>
       /// PIDs
       /// </summary>
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 63)] public ushort[] Pids;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 63)]
+      public ushort[] Pids;
 
       /// <summary>
       /// Number of pids
@@ -730,9 +841,9 @@ namespace TvLibrary.Implementations.DVB
 
     internal IBaseFilter mdapiFilter;
     private IChangeChannel _changeChannel;
+    private IChangeChannel_Clear _changeChannel_Clear;
     private IChangeChannel_Ex _changeChannel_Ex;
-    private IChannel _decodingChannel;
-    private int _decodingCounter;
+    private IChannel _decodingChannel;    
 
     #endregion
 
@@ -786,6 +897,18 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Info("mdplug: This MDAPIfilter doesnt have Extend capabilities. We will use standard");
         _changeChannel_Ex = null;
       }
+      // Test Clear capabilities
+      try
+      {
+          _changeChannel_Clear = (IChangeChannel_Clear)mdapiFilter;
+          Log.Log.Info("mdplug: This MDAPIfilter accept Clear capabilities");
+      }
+      catch (Exception)
+      {
+          //Log.Log.Write(ex);
+          Log.Log.Info("mdplug: This MDAPIfilter doesnt have Clear capabilities");
+          _changeChannel_Clear = null;
+      }
     }
 
     /// <summary>
@@ -832,37 +955,16 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// IncrementDecodingCounter
-    /// </summary>
-    public void IncrementDecodingCounter()
-    {
-      if (_decodingChannel != null)
-      {
-        _decodingCounter++;
-        Log.Log.Info("mdplug: usage counter for channel '{0}' is {1}", _decodingChannel.Name, _decodingCounter);
-      }
-    }
-
-    /// <summary>
     /// FreeDecodingChannel
-    /// </summary>
-    /// <param name="forceFree"></param>
-    public void FreeDecodingChannel(bool forceFree)
+    /// </summary>    
+    public void FreeDecodingChannel()
     {
       if (_decodingChannel != null)
-      {
-        _decodingCounter--;
-        if (forceFree
-            || _decodingCounter <= 0)
-        {
-          Log.Log.Info("mdplug: usage counter for channel '{0}' is zero", _decodingChannel.Name);
-          _decodingChannel = null;
-          _decodingCounter = 0;
-        }
-        else
-        {
-          Log.Log.Info("mdplug: usage counter for channel '{0}' is still {1}", _decodingChannel.Name, _decodingCounter);
-        }
+      {        
+        Log.Log.Info("mdplug: usage counter for channel '{0}' is zero", _decodingChannel.Name);
+          if (_changeChannel_Clear != null)
+              _changeChannel_Clear.ClearChannel();
+        _decodingChannel = null;                        
       }
     }
 
@@ -878,6 +980,7 @@ namespace TvLibrary.Implementations.DVB
       mdapiFilter = null;
       _changeChannel = null;
       _changeChannel_Ex = null;
+      _changeChannel_Clear = null;
     }
 
     /// <summary>
@@ -1338,8 +1441,7 @@ namespace TvLibrary.Implementations.DVB
         else
           _changeChannel.ChangeChannelTP82(lparam);
 
-        _decodingChannel = currentChannel;
-        _decodingCounter = 1;
+        _decodingChannel = currentChannel;        
 
         Log.Log.Info("mdplug: Send channel change to MDAPI filter Ca_Id:{0} CA_Nr:{1} ECM_PID:{2}(0x{3:X})",
                      _mDPlugTProg82.CA_ID,

@@ -34,14 +34,13 @@ public:
   STDMETHODIMP NonDelegatingQueryInterface( REFIID riid, void ** ppv );
 
   //CSourceStream
-  HRESULT GetMediaType(CMediaType *pMediaType);
+  HRESULT CheckMediaType(const CMediaType* pmt);
+  HRESULT GetMediaType(int iPosition, CMediaType *pMediaType);
   HRESULT DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES *pRequest);
   HRESULT CompleteConnect(IPin *pReceivePin);
   HRESULT CheckConnect(IPin *pReceivePin);
   HRESULT FillBuffer(IMediaSample *pSample);
   HRESULT BreakConnect();
-
-
   HRESULT DoBufferProcessingLoop(void);
 
   // CSourceSeeking
@@ -55,18 +54,27 @@ public:
   STDMETHODIMP Notify(IBaseFilter * pSender, Quality q);
 
   HRESULT OnThreadStartPlay();
+  HRESULT DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate);
   void SetStart(CRefTime rtStartTime);
   bool IsConnected();
+  bool IsInFillBuffer();
+  bool HasDeliveredSample();
   void SetDiscontinuity(bool onOff);
-
+  void SetAddPMT();
+  HRESULT StartNewSegment();
+  DWORD m_FillBuffSleepTime;
+  
 protected:
-  void      UpdateFromSeek();
+  HRESULT   UpdateFromSeek();
+  void      CreateEmptySample(IMediaSample *pSample);
   
   CTsReaderFilter * const m_pTsReaderFilter;
   bool      m_bConnected;
   BOOL      m_bDiscontinuity;
   CCritSec* m_section;
   bool      m_bPresentSample;
+  bool      m_bInFillBuffer;
+  bool      m_bDownstreamFlush;
 
   FILTER_INFO m_filterInfo;
   
@@ -79,6 +87,13 @@ protected:
   int             m_nNextMTD;
 	REFERENCE_TIME  m_fMTDMean;
 	REFERENCE_TIME  m_llMTDSumAvg;	
+
+  REFERENCE_TIME  m_llLastComp;
+  
+  DWORD m_LastFillBuffTime;
+  int   m_sampleCount;
+  bool  m_bPinNoAddPMT;
+  bool  m_bAddPMT;
 
 };
 

@@ -51,7 +51,7 @@ namespace MediaPortal.Dialogs
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\DialogNotify.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\DialogNotify.xml"));
     }
 
     #region Base Dialog Members

@@ -479,7 +479,7 @@ Transférer se dossier dans votre HTPC. Commencer l'installation, en éxecutant 
   <data name="Upgrade_labelSectionHeader" xml:space="preserve">
     <value>MediaPortal {0} detecté.</value>
   </data>
-  <data name="Upgrade_labelSectionHeader_SVN" xml:space="preserve">
+  <data name="Upgrade_labelSectionHeader_GIT" xml:space="preserve">
     <value>MediaPortal {0} (build {1}) detecté.</value>
   </data>
   <data name="Upgrade_no" xml:space="preserve">
@@ -489,7 +489,7 @@ Transférer se dossier dans votre HTPC. Commencer l'installation, en éxecutant 
     <value>Mise à jour vers {0}</value>
   </data>
   <data name="Upgrade_note" xml:space="preserve">
-    <value>REMARQUE: Vous ne pouvez évoluer à partir d'une SVN build,
+    <value>REMARQUE: Vous ne pouvez évoluer à partir d'une GIT build,
           ceux-ci sont destinés à des fins de test uniquement.</value>
   </data>
   <data name="Install_actionUpgradeInstall" xml:space="preserve">

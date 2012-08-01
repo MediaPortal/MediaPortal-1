@@ -77,6 +77,7 @@ namespace MediaPortal.GUI.Music
     private ScrobblerUtilsRequest _lastRequest;
     private string _defaultPlaylist = "default.m3u";
     private WaitCursor waitCursor;
+    private static bool _movingItem = false;
 
     #endregion
 
@@ -148,7 +149,8 @@ namespace MediaPortal.GUI.Music
       //added by Sam
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
       GUIWindowManager.OnNewAction += new OnActionHandler(this.OnNewAction);
-      return Load(GUIGraphicsContext.Skin + @"\myMusicplaylist.xml");
+      playlistPlayer.PlaylistChanged += playlistPlayer_Changed; 
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\myMusicplaylist.xml"));
     }
 
     public override void DeInit()
@@ -916,7 +918,7 @@ namespace MediaPortal.GUI.Music
 
     private void SavePlayList()
     {
-      string strNewFileName = string.Empty;
+      string strNewFileName = playlistPlayer.CurrentPlaylistName;
       if (GetKeyboard(ref strNewFileName))
       {
         string strPath = Path.GetFileNameWithoutExtension(strNewFileName);
@@ -962,6 +964,7 @@ namespace MediaPortal.GUI.Music
         return;
       }
 
+      _movingItem = true;
       int iItem = facadeLayout.SelectedListItemIndex;
 
       PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
@@ -975,6 +978,7 @@ namespace MediaPortal.GUI.Music
 
       facadeLayout.SelectedListItemIndex = selectedIndex;
       UpdateButtonStates();
+      _movingItem = false;
     }
 
     private void MovePlayListItemDown()
@@ -991,6 +995,7 @@ namespace MediaPortal.GUI.Music
         return;
       }
 
+      _movingItem = true;
       int iItem = facadeLayout.SelectedListItemIndex;
       PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
 
@@ -1003,6 +1008,7 @@ namespace MediaPortal.GUI.Music
       }
 
       UpdateButtonStates();
+      _movingItem = true;
     }
 
     private void DeletePlayListItem()
@@ -1618,6 +1624,17 @@ namespace MediaPortal.GUI.Music
 
       playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playlistItem);
       return true;
+    }
+
+    private void playlistPlayer_Changed(PlayListType nPlayList, PlayList playlist)
+    {
+      // update of playlist control is done by skin engine when moving item up / down
+      // but moving the item in the playlist triggers an event
+      // we do not want to reload if an item has been moved
+      if (!_movingItem)
+      {
+        DoRefreshList();
+      }
     }
 
     #endregion

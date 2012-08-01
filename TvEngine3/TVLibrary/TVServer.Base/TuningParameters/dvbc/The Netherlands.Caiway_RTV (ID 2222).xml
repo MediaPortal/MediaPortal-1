@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfDVBCTuning>
+  <!--Created on 2011-12-29 12:01-->
+  <DVBCTuning>
+    <!--Transponder ID 101 with channels Nederland 1,Nederland 2,Nederland 3,TV West-->
+    <Frequency>274000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 102 with channels BravaNL,Één,Ketnet/Canvas,TV Rijnmond,Nickelodeon,Omroep Brabant-->
+    <Frequency>468000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 103 with channels SBS 6,NET5,Kindernet/Comedy Central,Veronica/DisneyXD,RTL8-->
+    <Frequency>282000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 104 with channels RTL4,RTL5,Net5 HD,RTL7-->
+    <Frequency>290000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 105 with channels Hilversum Best 24,Pebble TV,BBC World,euronews,CNN International,TRT Turk,Xite,Consumenten 24-->
+    <Frequency>795000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 106 with channels BBC One,BBC Two,GoedTV,RTM1,Mezzo,Journaal 24,VH1 Classic,Tweede Kamer TV-->
+    <Frequency>834000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 107 with channels Animal Planet/TLC,Discovery Channel,Weer en Verkeer,TV Polonia,TV5 Monde,192TV-->
+    <Frequency>484000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 108 with channels Family7,Showroom,MTV NL,ZDF,Das Erste,Sterren.nl,Spirit24-->
+    <Frequency>764000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 114 with channels Nederland 1 HD-->
+    <Frequency>243000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 133 with channels Nederland 2 HD,Nederland 3 HD-->
+    <Frequency>554000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 134 with channels Caiway Informatie HD,RTL4 HD,RTL5 HD-->
+    <Frequency>666000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 136 with channels RTL7 HD,RTL8 HD,Eurosport,NGC-->
+    <Frequency>608000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 138 with channels Veronica/DisneyXD HD,SBS6 HD-->
+    <Frequency>624000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 199 with channels CAIW Testbeeld,Showroom,,-->
+    <Frequency>165000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+</ArrayOfDVBCTuning>

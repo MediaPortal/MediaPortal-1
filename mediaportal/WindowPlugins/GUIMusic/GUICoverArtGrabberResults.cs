@@ -170,7 +170,7 @@ namespace MediaPortal.GUI.Music
 
     public override bool Init()
     {
-      bool result = Load(GUIGraphicsContext.Skin + @"\MyMusicCoverArtGrabberResults.xml");
+      bool result = Load(GUIGraphicsContext.GetThemedSkinFile(@"\MyMusicCoverArtGrabberResults.xml"));
       return result;
     }
 
@@ -525,7 +525,7 @@ namespace MediaPortal.GUI.Music
       // If it still doesn't exist use the missing_coverart image
       if (!Util.Utils.FileExistsInCache(thumbPath))
       {
-        thumbPath = GUIGraphicsContext.Skin + @"\media\missing_coverart.png";
+        thumbPath = GUIGraphicsContext.GetThemedSkinFile(@"\media\missing_coverart.png");
       }
 
       return thumbPath;

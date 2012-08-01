@@ -55,7 +55,7 @@ namespace MediaPortal.Dialogs
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\DialogSelect.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\DialogSelect.xml"));
     }
 
 

@@ -31,7 +31,7 @@ public:
 	int fakePid;
 	int streamType;
 	int logicalStreamType;
-	byte rawDescriptorData[400];
+	byte rawDescriptorData[1024];
 	int rawDescriptorSize;
 	bool seenStart;
 	byte TsPktQ[4][188] ;

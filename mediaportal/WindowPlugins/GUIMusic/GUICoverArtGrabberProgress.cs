@@ -251,7 +251,7 @@ namespace MediaPortal.GUI.Music
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\MyMusicCoverArtGrabberProgress.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\MyMusicCoverArtGrabberProgress.xml"));
     }
 
     public override void DeInit()

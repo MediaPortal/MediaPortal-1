@@ -64,7 +64,7 @@ namespace MediaPortal.GUI.Settings
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\settingsScreenCalibration.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\settingsScreenCalibration.xml"));
     }
 
 

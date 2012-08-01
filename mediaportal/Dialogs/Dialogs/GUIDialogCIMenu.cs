@@ -38,7 +38,7 @@ namespace MediaPortal.Dialogs
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\DialogCIMenu.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\DialogCIMenu.xml"));
     }
 
     public override void Reset()

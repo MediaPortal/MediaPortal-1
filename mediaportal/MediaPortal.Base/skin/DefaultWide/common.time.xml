@@ -6,11 +6,11 @@
       <type>label</type>
       <id>0</id>
       <posX>1244</posX>
-      <posY>27</posY>
+      <posY>10</posY>
       <label>#date | #time</label>
       <align>right</align>
-      <font>font13</font>
-      <textcolor>ffa9d0f7</textcolor>
+      <font>font11</font>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
   </controls>
 </window>

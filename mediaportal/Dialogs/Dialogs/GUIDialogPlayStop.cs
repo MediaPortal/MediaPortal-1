@@ -40,7 +40,7 @@ namespace MediaPortal.Dialogs
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\dialogPlayStop.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\dialogPlayStop.xml"));
     }
 
     public override void OnAction(Action action)

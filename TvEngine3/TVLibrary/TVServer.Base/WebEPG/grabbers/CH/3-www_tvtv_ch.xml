@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="de" availableDays="7" timezone="W. Europe Standard Time" version="2.0" />
+  <Channels>
+	<!-- Schweizer Sender -->
+	<Channel id="sf1@sfdrs.ch" siteId="24" />
+    <Channel id="sf2@sfdrs.ch" siteId="900" />
+	<Channel id="sfi@sfdrs.ch" siteId="820" />
+	<Channel id="hd-suisse.ch" siteId="3747" />
+	<Channel id="3plus.ch" siteId="710" />	
+	<Channel id="startv.ch" siteId="995" />
+	<Channel id="tsr1@tsr.ch" siteId="2544" />
+    <Channel id="tsr2@tsr.ch" siteId="2545" /> 
+	<Channel id="la1@rtsi.ch" siteId="3043" />
+    <Channel id="la2@rtsi.ch" siteId="3053" />	
+	<Channel id="telebaselonline.ch" siteId="869" />
+    <Channel id="telezueri.ch" siteId="874" />
+    <Channel id="telem1.ch" siteId="872" />
+    <Channel id="teleostschweiz.ch" siteId="876" />
+	<Channel id="telebaern.ch" siteId="870" />
+	<Channel id="telebielingue.ch" siteId="871" />
+	<Channel id="teletop.ch" siteId="886" />
+	<Channel id="lemanbleu.ch" siteId="2603" />
+	<Channel id="www.canal9.ch" siteId="2600" />
+	<Channel id="latele.ch" siteId="4109" />
+	<Channel id="cinema@teleclub.ch" siteId="873" />
+	<Channel id="star@teleclub.ch" siteId="3532" />
+	<Channel id="sport1@teleclub.ch" siteId="3530" />
+	<Channel id="sport2@teleclub.ch" siteId="3531" />
+	<Channel id="sport3@teleclub.ch" siteId="3675" />
+	<Channel id="schweiz5.ch" siteId="1080"/>
+    <!-- Oesterreichische Sender -->
+    <Channel id="orf1@orf.at" siteId="14"/>
+    <Channel id="orf2@orf.at" siteId="15"/>
+    <Channel id="atvplus.at" siteId="958"/>  
+	<!-- Franzoesische Sender -->	
+	<Channel id="tf1.fr" siteId="2518"/>  
+	<Channel id="france2.fr" siteId="2507"/> 
+	<!-- Italienische Sender -->	
+	<Channel id="raiuno@rai.it" siteId="3034"/>  
+	<Channel id="raidue@rai.it" siteId="3023"/> 
+	<!-- Englische Sender -->	
+	<Channel id="bbchd@bbc.co.uk" siteId="3793"/> 
+	<Channel id="bbc1@bbc.co.uk" siteId="2008"/> 
+	<Channel id="bbc1ni@bbc.co.uk" siteId="2000"/>
+	<Channel id="bbc2@bbc.co.uk" siteId="2009"/> 
+	<Channel id="bbc2ni@bbc.co.uk" siteId="2003"/>
+	<Channel id="bbc3@bbc.co.uk" siteId="2020"/> 
+	<Channel id="bbc4@bbc.co.uk" siteId="2070"/> 
+	<Channel id="bbcnews@bbc.co.uk" siteId="2037"/> 
+	<Channel id="bbcworld.com" siteId="112"/>
+	<Channel id="e4@channel4.com" siteId="2160" />
+	<Channel id="itv1@itv.com" siteId="2034" />
+	<Channel id="itv2@itv.com" siteId="2035" />
+	<Channel id="travelchannel.co.uk" siteId="1067" />
+	<Channel id="aljazeera.net" siteId="3737"/>
+    <!-- Deutsche Sender -->
+    <Channel id="sat1.ch" siteId="832"/>
+	<Channel id="sat1.de" siteId="5"/>
+    <Channel id="rtl.de" siteId="4"/>
+    <Channel id="prosieben.ch" siteId="855"/>
+	<Channel id="prosieben.de" siteId="6"/>
+    <Channel id="zdf.de" siteId="2"/>
+    <Channel id="ard.de" siteId="1"/>
+    <Channel id="vox.de" siteId="11"/>
+    <Channel id="super-rtl.de" siteId="179"/>
+    <Channel id="rtl2.de" siteId="896"/>
+    <Channel id="kabeleins.de" siteId="8"/>
+    <Channel id="3sat.de" siteId="118"/>
+    <Channel id="das-vierte.de" siteId="885"/>
+    <Channel id="tele5.de" siteId="105"/>
+    <Channel id="arte-tv.com" siteId="10"/>	
+	<Channel id="neunlive.de" siteId="59" />	
+	<Channel id="swr.de" siteId="29" />
+	<Channel id="anixehd.tv" siteId="3538" />
+	<Channel id="rbb-online.de" siteId="35" />
+	<Channel id="br-online.de" siteId="18" />
+	<Channel id="alpha@br-online.de" siteId="57" />
+    <Channel id="hr-online.de" siteId="26" />
+	<Channel id="wdr.de" siteId="17" />
+	<Channel id="mdr.de" siteId="33" />
+	<Channel id="ndrtv.de" siteId="19" />
+	<Channel id="phoenix.de" siteId="206" />
+	<Channel id="sr-online.de" siteId="31" />
+	<Channel id="tvgusto.com" siteId="842" />
+    <!-- Unterhaltung -->
+    <Channel id="axntv.de" siteId="847"/>
+    <Channel id="animaxtv.de" siteId="3798"/>
+    <Channel id="kinowelt.de" siteId="844"/>
+    <Channel id="fox.de" siteId="3823"/>
+    <Channel id="mgm.com" siteId="941"/>
+    <Channel id="tnt.tv" siteId="717"/>
+    <Channel id="rtl-crime.rtl.de" siteId="719"/>
+    <Channel id="rtl-living.rtl.de" siteId="718"/>
+    <Channel id="passion.de" siteId="720"/>
+    <Channel id="13thstreet.de" siteId="913"/>
+    <Channel id="scifi.de" siteId="934"/>
+	<Channel id="sixx.de" siteId="4218"/>
+	<Channel id="dmax.de" siteId="227"/>
+    <!-- Kinder -->
+    <Channel id="kika.de" siteId="63"/>
+    <Channel id="nick.de" siteId="882"/>
+    <Channel id="cartoonnetwork.com" siteId="902"/>
+    <Channel id="junior.tv" siteId="930"/>
+    <Channel id="boomerang@cartoonnetwork.com" siteId="1511"/>
+    <Channel id="disney.de" siteId="931"/>
+    <Channel id="toon@disney.de" siteId="851"/>
+    <Channel id="playhouse@disney.de" siteId="853"/>
+	<Channel id="Nick/VIVA" siteId="810"/>
+    <!-- Sport/Musik -->
+	<Channel id="schweizersportfernsehen.ch" siteId="4106" />
+    <Channel id="eurosport@eurosport.com" siteId="107"/>
+    <Channel id="eurosport2@eurosport.com" siteId="865"/>
+    <Channel id="dsf.de" siteId="12"/>
+    <Channel id="sport1@sky.de" siteId="4116"/>
+	<Channel id="sport2@sky.de" siteId="4117"/>
+    <Channel id="sporthd@sky.de" siteId="4104"/>
+    <Channel id="motorvision.tv" siteId="4102"/>
+    <Channel id="espnamerica.com" siteId="867"/>
+    <Channel id="espnclassic.com" siteId="714"/>
+    <Channel id="mtv.de" siteId="109"/>
+    <Channel id="viva.tv" siteId="121"/>
+    <Channel id="gotv.at" siteId="887"/>
+    <Channel id="mtvtwo@mtv.de" siteId="2159"/>
+    <Channel id="mtvdance@mtv.de" siteId="2225"/>
+    <Channel id="mtvhits@mtv.de" siteId="2156"/>
+    <!-- Nachrichten -->
+    <Channel id="n-tv.de" siteId="7"/>
+    <Channel id="euronews.net" siteId="13"/>
+    <Channel id="n24.de" siteId="953"/>
+    <Channel id="cnn.com" siteId="2025"/>
+    <Channel id="bbcworld.com" siteId="112"/>
+    <Channel id="bbcentertainment.com" siteId="2043"/>
+    <Channel id="bloomberg.co.uk" siteId="2011"/>
+    <Channel id="news.sky.com" siteId="2053"/>
+    <Channel id="tv5.org" siteId="2559"/>
+    <Channel id="france24.com" siteId="2632"/>
+    <Channel id="discovery.de" siteId="933"/>
+	<Channel id="cnbceurope.com" siteId="2024" />
+    <!-- Doku/Info -->
+    <Channel id="spiegelgeschichte@spiegel.de" siteId="4101"/>
+    <Channel id="focusgesundheit.tv" siteId="988"/>
+    <Channel id="thebiographychannel.de" siteId="721"/>
+    <Channel id="nationalgeographic.com" siteId="845"/>
+    <Channel id="wild@nationalgeographic.com" siteId="4100"/>
+    <Channel id="hd@nationalgeographic.com" siteId="4099"/>
+    <Channel id="extra@ard-digital.de" siteId="962"/>
+    <Channel id="fest@ard-digital.de" siteId="955"/>
+    <Channel id="plus@ard-digital.de" siteId="956"/>
+	<Channel id="zdftheater@zdf.de" siteId="961" />
+    <Channel id="zdfneo@zdf.de" siteId="4130" />
+    <Channel id="zdfinfo@zdf.de" siteId="963" />
+    <!-- Sky -->
+    <Channel id="sky-cinema@sky.de" siteId="910"/>
+    <Channel id="sky-cinema1@sky.de" siteId="983"/>
+    <Channel id="sky-cinema24@sky.de" siteId="984"/>
+    <Channel id="sky-cinema-hits@sky.de" siteId="911"/>
+    <Channel id="action@sky.de" siteId="4095"/>
+    <Channel id="comedy@sky.de" siteId="4096"/>
+    <Channel id="emotion@sky.de" siteId="4097"/>
+    <Channel id="krimi@sky.de" siteId="936"/>
+    <Channel id="notstalgie@sky.de" siteId="940"/>
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.tvtv.ch/tvtv/index.vm?groupid=6&amp;dayId=[DAY_OFFSET]&amp;weekId=0&amp;chnl=[ID]&amp;lang=de&amp;epgView=list" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="timeTabMorn_on" end="">
+        <SectionTemplate tags="SAD">
+          <TemplateText>
+&lt;td&gt;&lt;div&gt;&lt;span&gt;&lt;#START&gt;&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;&lt;td&gt;&lt;div&gt;&lt;a href&gt;&lt;#TITLE&gt;&lt;/a&gt;&lt;/div&gt;&lt;div&gt;&lt;#DESCRIPTION&gt;&lt;/div&gt;&lt;/td&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>

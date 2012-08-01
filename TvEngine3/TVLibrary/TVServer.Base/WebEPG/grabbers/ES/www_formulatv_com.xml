@@ -26,6 +26,7 @@
     <Channel id="setenveo@setenveo.es" siteId="33/sony-entertainment-television" />
     <Channel id="cosmopolitan@cosmopolitan.es" siteId="35/cosmopolitan" />
     <Channel id="canal-hollywood@canalhollywood.es" siteId="36/canal-hollywood" />
+    <Channel id="disney-channel@disney.es" siteId="37/disney-channel" />
     <Channel id="mtv-españa@mtv.es" siteId="38/mtv-espana" />
     <Channel id="viajar@sogecable.es" siteId="39/canal-viajar" />
     <Channel id="eurosport@eurosport-tv.com" siteId="40/eurosport" />
@@ -80,7 +81,6 @@
     <Channel id="canal+dcine@plus.es" siteId="94/canal-plus-dcine" />
     <Channel id="7-tv-murcia@7rm.es" siteId="96/7-region-de-murcia" />
     <Channel id="animax@animax.es" siteId="97/animax" />
-    <Channel id="boomerang@cartoonnetwork.com" siteId="98/boomerang" />
     <Channel id="dark-teuve@teuve.com" siteId="99/dark-teuve" />
     <Channel id="cinestar@teuve.com" siteId="100/cine-star-teuve" />
     <Channel id="kidsco@kidscotv.tv" siteId="101/kids-co" />
@@ -92,6 +92,8 @@
     <Channel id="goltv@goltelevision.com" siteId="119/gol-television" />
     <Channel id="fox-crime@foxcrime.es" siteId="127/fox-crime" />
     <Channel id="la-10@la10.com" siteId="130/la-10" />
+    <Channel id="nitro@antena3.com" siteId="136/nitro" />
+    <Channel id="boing@boing.es" siteId="137/boing" />
     <Channel id="marcatv@veo.es" siteId="138/marca-tv" />
     <Channel id="lasexta2@lasexta.com" siteId="139/lasexta2" />
     <Channel id="lasexta3@lasexta.com" siteId="143/lasexta3" />
@@ -99,6 +101,9 @@
     <Channel id="crimen-investigacion" siteId="148/crimen-and-investigacion" />
     <Channel id="divinity@telecinco.es" siteId="153/divinity" />
     <Channel id="playboy-tv@sogecable.es" siteId="155/playboy-tv" />
+    <Channel id="cartoonito@cartoonnetwork.com" siteId="167/cartoonito" />
+    <Channel id="energy@plus.es" siteId="171/energy" />
+    <Channel id="discoverymax@tudiscovery.com" siteId="173/discovery-max" />
   </Channels>
   <Listing type="Html">
     <Site url="http://www.formulatv.com/programacion/[ID]/[YYYY]-[MM]-[DD]/" post="" external="false" encoding="windows-1252" />

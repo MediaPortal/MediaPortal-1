@@ -28,6 +28,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Services;
 using MediaPortal.Util;
 using MediaPortal.Profile;
+using System.Runtime.InteropServices;
 
 namespace MediaPortal.Configuration
 {
@@ -37,6 +38,8 @@ namespace MediaPortal.Configuration
   public class Startup
   {
     public static bool _automaticMovieCodec = false;
+    public static bool _automaticMovieFilter = false;
+    public static bool _automaticBDCodec = false;
 
     private enum StartupMode
     {

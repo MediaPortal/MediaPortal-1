@@ -39,7 +39,7 @@
       <texture>#fanarthandler.music.backdrop1.play</texture>
       <visible>control.isvisible(91919295)+control.isvisible(91919294)</visible>
       <animation effect="fade" time="300">visible</animation>
-      <animation effect="fade" time="300" delay="300">hidden</animation>
+      <animation effect="fade" time="300">hidden</animation>
     </control>
     <control>
       <description>FANART IMAGE 2</description>
@@ -53,7 +53,7 @@
       <texture>#fanarthandler.music.backdrop2.play</texture>
       <visible>control.isvisible(91919296)+control.isvisible(91919294)</visible>
       <animation effect="fade" time="300">visible</animation>
-      <animation effect="fade" time="300" delay="300">hidden</animation>
+      <animation effect="fade" time="300">hidden</animation>
     </control>
     <control>
       <description>Overlay for FanArt</description>
@@ -63,13 +63,13 @@
       <posy>0</posy>
       <width>1280</width>
       <height>720</height>
-      <texture>backgroundtop.png</texture>
-      <colordiffuse>ccffffff</colordiffuse>
-      <visible>control.isvisible(91919295)|control.isvisible(91919296)</visible>
+      <texture>black.png</texture>
+      <colordiffuse>aaffffff</colordiffuse>
+      <visible>control.isvisible(91919294)+player.hasaudio</visible>
       <animation effect="fade" time="70">visible</animation>
-      <animation effect="fade" time="70" delay="300">hidden</animation>
+      <animation effect="fade" time="300" delay="500">hidden</animation>
     </control>
-    <control>
+    <!--control>
       <description>Overlay for FanArt</description>
       <id>0</id>
       <type>image</type>
@@ -79,9 +79,10 @@
       <height>720</height>
       <texture>backgroundthumbsview.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
-      <visible>control.isvisible(91919295)|control.isvisible(91919296)</visible>
+      <visible>control.isvisible(91919294)+player.hasaudio</visible>
       <animation effect="fade" time="70">visible</animation>
-      <animation effect="fade" time="70" delay="300">hidden</animation>
-    </control>
+      <animation effect="fade" time="300" delay="500">hidden</animation>
+    </control-->
+    
   </controls>
 </window>

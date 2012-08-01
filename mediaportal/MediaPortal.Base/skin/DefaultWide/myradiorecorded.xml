@@ -65,14 +65,18 @@
       <posY>121</posY>
       <layout>StackLayout</layout>
       <control>
-        <type>button</type>
+        <type>menubutton</type>
         <description>View-As button</description>
         <id>2</id>
         <onleft>2</onleft>
         <onright>50</onright>
         <onup>17</onup>
         <ondown>3</ondown>
-        <label>100</label>
+        <label></label>
+        <mode>dialoglist</mode>
+        <dialogTitle>792</dialogTitle>
+        <valueTextInButton>yes</valueTextInButton>
+        <valuePrefixText>95</valuePrefixText>
       </control>
       <control>
         <type>sortbutton</type>
@@ -84,14 +88,18 @@
         <label>620</label>
       </control>
       <control>
-        <type>button</type>
+        <type>menubutton</type>
         <description>All,Genre,Channel button</description>
         <id>5</id>
         <onleft>5</onleft>
         <onright>50</onright>
         <onup>3</onup>
         <ondown>6</ondown>
-        <label>457</label>
+        <label></label>
+        <mode>dialoglist</mode>
+        <dialogTitle>499</dialogTitle>
+        <valueTextInButton>yes</valueTextInButton>
+        <valuePrefixText>97</valuePrefixText>
       </control>
       <control>
         <type>button</type>
@@ -123,7 +131,7 @@
       <posY>467</posY>
       <align>left</align>
       <width>674</width>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
       <label>#Radio.Recorded.Channel</label>
       <font>font12</font>
     </control>
@@ -137,7 +145,7 @@
       <label>#Radio.Recorded.Time</label>
       <align>left</align>
       <font>font12</font>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Current program genre</description>

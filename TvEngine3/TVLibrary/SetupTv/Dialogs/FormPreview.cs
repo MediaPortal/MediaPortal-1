@@ -26,6 +26,7 @@ using TvDatabase;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using TvControl;
+using TvService;
 
 namespace SetupTv.Sections
 {
@@ -51,7 +52,7 @@ namespace SetupTv.Sections
       Text = "Preview " + _channel.DisplayName;
 
       TvServer server = new TvServer();
-      IUser user = new User("setuptv", false);
+      IUser user = UserFactory.CreateBasicUser("setuptv");
       TvResult result = server.StartTimeShifting(ref user, _channel.IdChannel, out _card);
       if (result != TvResult.Succeeded)
       {

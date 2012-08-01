@@ -23,6 +23,8 @@
 #include "tsreader.h"
 #include "mediaseeking.h"
 
+#define NB_ASDSIZE 8
+
 class CAudioPin : public CSourceStream, public CSourceSeeking
 {
 public:
@@ -32,12 +34,14 @@ public:
   STDMETHODIMP NonDelegatingQueryInterface( REFIID riid, void ** ppv );
 
   //CSourceStream
-  HRESULT GetMediaType(CMediaType *pMediaType);
+  HRESULT CheckMediaType(const CMediaType* pmt);
+  HRESULT GetMediaType(int iPosition, CMediaType *pMediaType);
   HRESULT DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES *pRequest);
   HRESULT CompleteConnect(IPin *pReceivePin);
   HRESULT CheckConnect(IPin *pReceivePin);
   HRESULT FillBuffer(IMediaSample *pSample);
   HRESULT BreakConnect();
+  HRESULT DoBufferProcessingLoop(void);
 
   // CSourceSeeking
   HRESULT ChangeStart();
@@ -50,20 +54,44 @@ public:
   STDMETHODIMP Notify(IBaseFilter * pSender, Quality q);
 
   HRESULT OnThreadStartPlay();
+  HRESULT DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate);
   void SetStart(CRefTime rtStartTime);
   bool IsConnected();
+  bool IsInFillBuffer();
+  bool HasDeliveredSample();
   void SetDiscontinuity(bool onOff);
-  bool m_EnableSlowMotionOnZapping ;
+  void SetAddPMT();
+  LONGLONG m_sampleDuration;
+  //DWORD    m_sampleSleepTime;
+  DWORD    m_FillBuffSleepTime;
 
 protected:
-  void      UpdateFromSeek();
+  HRESULT   UpdateFromSeek();
+  void      CreateEmptySample(IMediaSample *pSample);
   
   CTsReaderFilter * const m_pTsReaderFilter;
   bool      m_bConnected;
   BOOL      m_bDiscontinuity;
   CCritSec* m_section;
   bool      m_bPresentSample;
-  bool      m_bSubtitleCompensationSet;
+  bool      m_bInFillBuffer;
+  bool      m_bDownstreamFlush;
+  
+  void     ClearAverageSampleDur();
+  LONGLONG GetAverageSampleDur (LONGLONG timeStamp);
+    
+  LONGLONG  m_pllASD [NB_ASDSIZE];   // timestamp buffer for average Audio sample duration calculation
+  LONGLONG  m_llLastASDts;
+  int       m_nNextASD;
+	LONGLONG  m_fASDMean;
+	LONGLONG  m_llASDSumAvg;	
+  LONGLONG  m_llLastComp;
+  
+  DWORD m_LastFillBuffTime;
+  int   m_sampleCount;
+  bool  m_bPinNoAddPMT;
+  bool  m_bAddPMT;
+  
 };
 
 #endif

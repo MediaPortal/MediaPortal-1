@@ -36,6 +36,7 @@ using System.Timers;
 using System.Windows.Forms;
 using System.Xml;
 using MediaPortal;
+using MediaPortal.Common.Utils;
 using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
@@ -71,8 +72,6 @@ namespace MediaPortal
 public class MediaPortalApp : D3DApp, IRender
 {
   #region vars
-
-  private Version SkinVersion = new Version(1, 2, 0, 0);
 
 #if AUTOUPDATE
   private ApplicationUpdateManager _updater = null;
@@ -436,6 +435,29 @@ public class MediaPortalApp : D3DApp, IRender
 
         //Localization strings for new splashscreen and for MediaPortal itself
         LoadLanguageString();
+
+        // Initialize the skin and theme prior to beginning the splash screen thread.  This provides for the splash screen to be used in a theme.
+        string strSkin = "";
+        try
+        {
+          using (Settings xmlreader = new MPSettings())
+          {
+            strSkin = _strSkinOverride.Length > 0 ? _strSkinOverride : xmlreader.GetValueAsString("skin", "name", "Default");
+          }
+        }
+        catch (Exception)
+        {
+          strSkin = "Default";
+        }
+        Config.SkinName = strSkin;
+        GUIGraphicsContext.Skin = strSkin;
+        SkinSettings.Load();
+
+        // Send a message that the skin has changed.
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SKIN_CHANGED, 0, 0, 0, 0, 0, null);
+        GUIGraphicsContext.SendMessage(msg);
+
+        Log.Info("Main: Skin is {0} using theme {1}", strSkin, GUIThemeManager.CurrentTheme);
 
 #if !DEBUG
         string version = ConfigurationManager.AppSettings["version"];
@@ -803,8 +825,6 @@ public class MediaPortalApp : D3DApp, IRender
     {
       using (Settings xmlreader = new MPSettings())
       {
-        m_strSkin = _strSkinOverride.Length > 0 ? _strSkinOverride : xmlreader.GetValueAsString("skin", "name", "Default");
-        Config.SkinName = m_strSkin;
         _autoHideMouse = xmlreader.GetValueAsBool("general", "autohidemouse", true);
         GUIGraphicsContext.MouseSupport = xmlreader.GetValueAsBool("gui", "mousesupport", false);
         GUIGraphicsContext.AllowRememberLastFocusedItem = xmlreader.GetValueAsBool("gui",
@@ -817,8 +837,8 @@ public class MediaPortalApp : D3DApp, IRender
     }
     catch (Exception)
     {
-      m_strSkin = "Default";
     }
+
     SetStyle(ControlStyles.Opaque, true);
     SetStyle(ControlStyles.UserPaint, true);
     SetStyle(ControlStyles.AllPaintingInWmPaint, true);
@@ -848,53 +868,67 @@ public class MediaPortalApp : D3DApp, IRender
 
   private void RenderStats()
   {
-    UpdateStats();
+    try
+    {
+      UpdateStats();
 
-    if (GUIGraphicsContext.IsEvr && g_Player.HasVideo)
-    {
-      if (m_bShowStats != m_bShowStatsPrevious)
+      if (GUIGraphicsContext.IsEvr && g_Player.HasVideo)
       {
-        // notify EVR presenter only when the setting changes
-        VMR9Util.g_vmr9.EnableEVRStatsDrawing(m_bShowStats);
-      }
-      // EVR presenter will draw the stats internaly
-      m_bShowStatsPrevious = m_bShowStats;
-      return;
-    }
-    else
-    {
-      m_bShowStatsPrevious = false;
-    }
-
-    if (m_bShowStats)
-    {
-      GetStats();
-      GUIFont font = GUIFontManager.GetFont(0);
-      if (font != null)
-      {
-        GUIGraphicsContext.SetScalingResolution(0, 0, false);
-        // '\n' doesnt work with the DirectX9 Ex device, so the string is splitted into two
-        font.DrawText(80, 40, 0xffffffff, frameStatsLine1, GUIControl.Alignment.ALIGN_LEFT, -1);
-        font.DrawText(80, 55, 0xffffffff, frameStatsLine2, GUIControl.Alignment.ALIGN_LEFT, -1);
-        region[0].X = m_ixpos;
-        region[0].Y = 0;
-        region[0].Width = 4;
-        region[0].Height = GUIGraphicsContext.Height;
-        GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.FromArgb(255, 255, 255, 255), 1.0f, 0, region);
-        float fStep = (GUIGraphicsContext.Width - 100);
-        fStep /= (2f * 16f);
-        fStep /= GUIGraphicsContext.CurrentFPS;
-        m_iFrameCount++;
-        if (m_iFrameCount >= (int)fStep)
+        if (m_bShowStats != m_bShowStatsPrevious)
         {
-          m_iFrameCount = 0;
-          m_ixpos += 12;
-          if (m_ixpos > GUIGraphicsContext.Width - 50)
+          // notify EVR presenter only when the setting changes
+          if (VMR9Util.g_vmr9 != null)
           {
-            m_ixpos = 50;
+            VMR9Util.g_vmr9.EnableEVRStatsDrawing(m_bShowStats);
+          }
+          else
+          {
+            return;
+          }
+        }
+        // EVR presenter will draw the stats internaly
+        m_bShowStatsPrevious = m_bShowStats;
+        return;
+      }
+      else
+      {
+        m_bShowStatsPrevious = false;
+      }
+
+      if (m_bShowStats)
+      {
+        GetStats();
+        GUIFont font = GUIFontManager.GetFont(0);
+        if (font != null)
+        {
+          GUIGraphicsContext.SetScalingResolution(0, 0, false);
+          // '\n' doesnt work with the DirectX9 Ex device, so the string is splitted into two
+          font.DrawText(80, 40, 0xffffffff, frameStatsLine1, GUIControl.Alignment.ALIGN_LEFT, -1);
+          font.DrawText(80, 55, 0xffffffff, frameStatsLine2, GUIControl.Alignment.ALIGN_LEFT, -1);
+          region[0].X = m_ixpos;
+          region[0].Y = 0;
+          region[0].Width = 4;
+          region[0].Height = GUIGraphicsContext.Height;
+          GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.FromArgb(255, 255, 255, 255), 1.0f, 0, region);
+          float fStep = (GUIGraphicsContext.Width - 100);
+          fStep /= (2f * 16f);
+          fStep /= GUIGraphicsContext.CurrentFPS;
+          m_iFrameCount++;
+          if (m_iFrameCount >= (int)fStep)
+          {
+            m_iFrameCount = 0;
+            m_ixpos += 12;
+            if (m_ixpos > GUIGraphicsContext.Width - 50)
+            {
+              m_ixpos = 50;
+            }
           }
         }
       }
+    }
+    catch 
+    {
+      // Intentionally left blank - if stats rendering fails it is not a critical issue
     }
   }
 
@@ -1330,30 +1364,10 @@ public class MediaPortalApp : D3DApp, IRender
         if (xmlreader.GetValueAsBool("general", "restartonresume", false))
         {
           Log.Info("Main: OnResume - prepare for restart!");
-          File.Delete(Config.GetFile(Config.Dir.Config, "mediaportal.running"));
-          Log.Info("Main: OnResume - saving settings...");
-          Settings.SaveCache();
-          Process restartScript = new Process();
-          restartScript.EnableRaisingEvents = false;
-          restartScript.StartInfo.WorkingDirectory = Config.GetFolder(Config.Dir.Base);
-          restartScript.StartInfo.FileName = Config.GetFile(Config.Dir.Base, @"restart.vbs");
-          Log.Debug("Main: OnResume - executing script {0}", restartScript.StartInfo.FileName);
-          restartScript.Start();
-          try
-          {
-            // Maybe the scripting host is not available therefore do not wait infinitely.
-            if (!restartScript.HasExited)
-            {
-              restartScript.WaitForExit();
-            }
-          }
-          catch (Exception ex)
-          {
-            Log.Error("Main: OnResume - WaitForExit: {0}", ex.Message);
-          }
+          Utils.RestartMePo();
         }
       }
-      if (_startWithBasicHome && File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml"))
+      if (_startWithBasicHome && File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml")))
       {
         Log.Info("Main: OnResume - Switch to basic home screen");
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
@@ -1383,6 +1397,10 @@ public class MediaPortalApp : D3DApp, IRender
 
       Log.Debug("Main: OnResume - autoplay start listening");
       AutoPlay.StartListening();
+
+      Log.Info("Main: OnResume - initializing volume handler");
+      MediaPortal.Player.VolumeHandler vh = MediaPortal.Player.VolumeHandler.Instance;
+
       _onResumeRunning = false;
       ignoreContextMenuAction = false;
       _lastOnresume = DateTime.Now;
@@ -1529,7 +1547,10 @@ public class MediaPortalApp : D3DApp, IRender
     {
       GUIWindowManager.SendThreadCallback(ShowStartupWarningDialogs, 0, 0, null);
     }
+    Log.Debug("Main: Autoplay start listening");
     AutoPlay.StartListening();
+    Log.Info("Main: Initializing volume handler");
+    MediaPortal.Player.VolumeHandler vh = MediaPortal.Player.VolumeHandler.Instance;
   }
 
   private int ShowStartupWarningDialogs(int param1, int param2, object data)
@@ -1742,7 +1763,6 @@ public class MediaPortalApp : D3DApp, IRender
     GUITextureManager.Dispose();
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(65)); // Loading keymap.xml...
     ActionTranslator.Load();
-    GUIGraphicsContext.Skin = m_strSkin;
     GUIGraphicsContext.ActiveForm = Handle;
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(67)); // Caching graphics...
     try
@@ -1765,10 +1785,9 @@ public class MediaPortalApp : D3DApp, IRender
 
     GUIGraphicsContext.Load();
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(68)); // Loading fonts...
-    GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
-    UpdateSplashScreenMessage(String.Format(GUILocalizeStrings.Get(69), m_strSkin)); // Loading skin ({0})...
+    GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
+    UpdateSplashScreenMessage(String.Format(GUILocalizeStrings.Get(69), GUIGraphicsContext.SkinName + " - " + GUIThemeManager.CurrentTheme)); // Loading skin ({0})...
     GUIFontManager.InitializeDeviceObjects();
-    Log.Info("Main: Loading {0} skin", m_strSkin);
     GUIWindowManager.Initialize();
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(70)); // Loading window plugins...
     if (!string.IsNullOrEmpty(_safePluginsList))
@@ -1817,7 +1836,7 @@ public class MediaPortalApp : D3DApp, IRender
     GUIWindowManager.PreInit();
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
     Log.Info("Main: Activating windowmanager");
-    if ((_startWithBasicHome) && (File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml")))
+    if ((_startWithBasicHome) && (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml"))))
     {
       GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
     }
@@ -1901,7 +1920,7 @@ public class MediaPortalApp : D3DApp, IRender
         int activeWin = GUIWindowManager.ActiveWindow;
         if (activeWin == 0 && !GUIWindowManager.HasPreviousWindow())
         {
-          if (_startWithBasicHome && File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml"))
+          if (_startWithBasicHome && File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml")))
           {
             activeWin = (int)GUIWindow.Window.WINDOW_SECOND_HOME;
           }
@@ -1927,12 +1946,8 @@ public class MediaPortalApp : D3DApp, IRender
 
         GUIGraphicsContext.DX9Device.EvictManagedResources();
         GUIWaitCursor.Dispose();
-        if (!m_strSkin.Equals(GUIGraphicsContext.Skin))
-        {
-          m_strSkin = GUIGraphicsContext.Skin;
-        }
         GUIGraphicsContext.Load();
-        GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
+        GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
         GUIFontManager.InitializeDeviceObjects();
 
         if (GUIGraphicsContext.DX9Device != null)
@@ -2458,41 +2473,6 @@ public class MediaPortalApp : D3DApp, IRender
           GUIWindowManager.SendThreadMessage(homeMsg);
           return;
 
-          //exit mediaportal
-        case Action.ActionType.ACTION_EXIT:
-          Log.Info("Main: Exit requested");
-          // is the minimize on gui option set?  If so, minimize to tray...
-          if (_minimizeOnGuiExit && !_shuttingDown)
-          {
-            if (WindowState != FormWindowState.Minimized)
-            {
-              Log.Info("Main: Minimizing to tray on GUI exit and restoring taskbar");
-            }
-            WindowState = FormWindowState.Minimized;
-            Hide();
-            if (autoHideTaskbar)
-            {
-              // only re-show the startbar if MP is the one that has hidden it.
-              Win32API.EnableStartBar(true);
-              Win32API.ShowStartBar(true);
-            }
-            if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD)
-            {
-              if (g_Player.Volume > 0)
-              {
-                m_iVolume = g_Player.Volume;
-                g_Player.Volume = 0;
-              }
-              if (g_Player.Paused == false && !GUIGraphicsContext.IsVMR9Exclusive)
-              {
-                g_Player.Pause();
-              }
-            }
-            return;
-          }
-          GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
-          return;
-
         case Action.ActionType.ACTION_MPRESTORE:
           {
             Log.Info("Main: Restore MP by action");
@@ -2583,10 +2563,12 @@ public class MediaPortalApp : D3DApp, IRender
             {
               dlg.Reset();
               dlg.SetHeading(GUILocalizeStrings.Get(498)); //Menu
-              dlg.AddLocalizedString(1030); //PowerOff
-              dlg.AddLocalizedString(1031); //Reboot
+              dlg.AddLocalizedString(1057); //Exit MediaPortal
+              dlg.AddLocalizedString(1058); //Restart MediaPortal
               dlg.AddLocalizedString(1032); //Suspend
               dlg.AddLocalizedString(1049); //Hibernate
+              dlg.AddLocalizedString(1031); //Reboot
+              dlg.AddLocalizedString(1030); //PowerOff
               dlg.DoModal(GUIWindowManager.ActiveWindow);
               //RestartOptions option = RestartOptions.Suspend;
               if (dlg.SelectedId < 0)
@@ -2600,6 +2582,15 @@ public class MediaPortalApp : D3DApp, IRender
               }
               switch (dlg.SelectedId)
               {
+                case 1057:
+                  ExitMePo();
+                  return;
+
+                case 1058:
+                  GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
+                  Utils.RestartMePo();
+                  break;
+
                 case 1030:
                   restartOptions = RestartOptions.PowerOff;
                   useRestartOptions = true;
@@ -2628,7 +2619,12 @@ public class MediaPortalApp : D3DApp, IRender
             break;
           }
 
-          //stop radio
+        //exit mediaportal
+        case Action.ActionType.ACTION_EXIT:
+          ExitMePo();
+          return;
+
+        //stop radio
         case Action.ActionType.ACTION_STOP:
           break;
 
@@ -2819,6 +2815,41 @@ public class MediaPortalApp : D3DApp, IRender
       throw new Exception("exception occured", ex);
 #endif
     }
+  }
+
+  private void ExitMePo()
+  {
+    Log.Info("Main: Exit requested");
+    // is the minimize on gui option set?  If so, minimize to tray...
+    if (_minimizeOnGuiExit && !_shuttingDown)
+    {
+      if (WindowState != FormWindowState.Minimized)
+      {
+        Log.Info("Main: Minimizing to tray on GUI exit and restoring taskbar");
+      }
+      WindowState = FormWindowState.Minimized;
+      Hide();
+      if (autoHideTaskbar)
+      {
+        // only re-show the startbar if MP is the one that has hidden it.
+        Win32API.EnableStartBar(true);
+        Win32API.ShowStartBar(true);
+      }
+      if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD)
+      {
+        if (g_Player.Volume > 0)
+        {
+          m_iVolume = g_Player.Volume;
+          g_Player.Volume = 0;
+        }
+        if (g_Player.Paused == false && !GUIGraphicsContext.IsVMR9Exclusive)
+        {
+          g_Player.Pause();
+        }
+      }
+      return;
+    }
+    GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
   }
 
   private bool PromptUserBeforeChangingPowermode(Action action)
@@ -3833,7 +3864,7 @@ public class MediaPortalApp : D3DApp, IRender
     }
 
     Version versionSkin = null;
-    string filename = Config.GetFile(Config.Dir.Skin, m_strSkin, "references.xml");
+    string filename = GUIGraphicsContext.GetThemedSkinFile(@"\references.xml");
     if (File.Exists(filename))
     {
       XmlDocument doc = new XmlDocument();
@@ -3844,7 +3875,7 @@ public class MediaPortalApp : D3DApp, IRender
         versionSkin = new Version(node.InnerText);
       }
     }
-    if (SkinVersion == versionSkin)
+    if (CompatibilityManager.SkinVersion == versionSkin)
     {
       return;
     }
@@ -3856,6 +3887,14 @@ public class MediaPortalApp : D3DApp, IRender
     float screenRatio = (screenWidth / screenHeight);
     m_strSkin = screenRatio > 1.5 ? "DefaultWide" : "Default";
     Config.SkinName = m_strSkin;
+    GUIGraphicsContext.Skin = m_strSkin;
+    SkinSettings.Load();
+
+    // Send a message that the skin has changed.
+    GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SKIN_CHANGED, 0, 0, 0, 0, 0, null);
+    GUIGraphicsContext.SendMessage(msg);
+
+    Log.Info("Main: User skin is not compatable, using skin {0} with theme {1}", m_strSkin, GUIThemeManager.CurrentTheme);
   }
 
 

@@ -32,6 +32,8 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player.Subtitles;
 using MediaPortal.Profile;
 using MediaPortal.Player.PostProcessing;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace MediaPortal.Player
 {
@@ -85,7 +87,7 @@ namespace MediaPortal.Player
     private int DSERR_NODRIVER = -2005401480; // No sound driver is available for use
 
     [ComImport, Guid("b9559486-E1BB-45D3-A2A2-9A7AFE49B23F")]
-    protected class TsReader {}
+    protected class TsReader { }
 
     #region imports
 
@@ -146,11 +148,17 @@ namespace MediaPortal.Player
     protected bool _CodecSupportsFastSeeking = true;
     protected bool _usingFastSeeking = false;
     protected IBaseFilter _interfaceTSReader = null;
-    protected IBaseFilter _audioRendererFilter = null;
     protected SubtitleSelector _subSelector = null;
     protected SubtitleRenderer _dvbSubRenderer = null;
     protected AudioSelector _audioSelector = null;
-    protected IAMLine21Decoder _line21Decoder = null;
+    protected IAMLine21Decoder _line21DecoderAnalog = null;
+    protected IAMLine21Decoder _line21DecoderDigital = null;
+
+    protected string CoreParserCodec = "";
+    protected string audioRendererFilter = "";
+    protected string AudioCodecName = "";
+    public Guid LATMAAC = new Guid("000000ff-0000-0010-8000-00aa00389b71");
+    public Guid AVC1 = new Guid("31435641-0000-0010-8000-00AA00389B71");
 
     /// <summary> control interface. </summary>
     protected IMediaControl _mediaCtrl = null;
@@ -184,7 +192,17 @@ namespace MediaPortal.Player
     protected int _lastFrameCounter;
     protected string videoFilter = "";
     protected string audioFilter = "";
+    protected bool CoreCCPresent = false;
+    protected bool CoreCCFilter = false;
     protected bool VideoChange = false;
+
+    protected Dictionary<string, object> PostProcessFilterVideo = new Dictionary<string, object>();
+    protected Dictionary<string, object> PostProcessFilterAudio = new Dictionary<string, object>();
+    //protected ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.Null);
+    //protected ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Null);
+
+    public TVFilterConfig filterConfig;
+    public FilterCodec filterCodec;
 
     #endregion
 
@@ -210,6 +228,103 @@ namespace MediaPortal.Player
     #endregion
 
     #region public members
+
+    public class FilterCodec
+    {
+      public IBaseFilter _audioSwitcherFilter { get; set; }
+      public IBaseFilter _audioRendererFilter { get; set; }
+      public IBaseFilter VideoCodec { get; set; }
+      public IBaseFilter AudioCodec { get; set; }
+      public IBaseFilter CoreCCParser { get; set; }
+      public IBaseFilter line21CoreCCParser { get; set; }
+      public IBaseFilter line21VideoCodec { get; set; }
+    }
+
+    public virtual FilterCodec GetFilterCodec()
+    {
+      FilterCodec filterCodec = new FilterCodec();
+
+      filterCodec._audioSwitcherFilter = null;
+      filterCodec._audioRendererFilter = null;
+      filterCodec.VideoCodec = null;
+      filterCodec.AudioCodec = null;
+      filterCodec.CoreCCParser = null;
+      filterCodec.line21CoreCCParser = null;
+      filterCodec.line21VideoCodec = null;
+
+      return filterCodec;
+    }
+
+    public class TVFilterConfig
+    {
+      public TVFilterConfig()
+      {
+        OtherFilters = new List<string>();
+      }
+
+      public string Video { get; set; }
+      public string VideoH264 { get; set; }
+      public string Audio { get; set; }
+      public string AudioAAC { get; set; }
+      public string AudioDDPlus { get; set; }
+      public string AudioRenderer { get; set; }
+      public bool enableDVBBitmapSubtitles { get; set; }
+      public bool enableDVBTtxtSubtitles { get; set; }
+      public bool enableCCSubtitles { get; set; }
+      public bool enableMPAudioSwitcher { get; set; }
+      public bool autoShowSubWhenTvStarts { get; set; }
+      public int relaxTsReader { get; set; }
+      public bool _CodecSupportsFastSeeking { get; set; }
+      public List<string> OtherFilters { get; set; }
+      public Geometry.Type AR { get; set; }
+    }
+
+    /// <summary>
+    /// Gets the filter configuration object from the user configuration
+    /// </summary>
+    /// <returns></returns>
+    protected virtual TVFilterConfig GetFilterConfiguration()
+    {
+      TVFilterConfig filterConfig = new TVFilterConfig();
+
+      using (Settings xmlreader = new MPSettings())
+      {
+        // get pre-defined filter setup
+        filterConfig.Video = xmlreader.GetValueAsString("mytv", "videocodec", "");
+        filterConfig.Audio = xmlreader.GetValueAsString("mytv", "audiocodec", "");
+        filterConfig.AudioAAC = xmlreader.GetValueAsString("mytv", "aacaudiocodec", "");
+        filterConfig.AudioDDPlus = xmlreader.GetValueAsString("mytv", "ddplusaudiocodec", "");
+        filterConfig.VideoH264 = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
+        filterConfig.AudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
+        filterConfig.enableDVBBitmapSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
+        filterConfig.enableDVBTtxtSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
+        filterConfig.enableCCSubtitles = xmlreader.GetValueAsBool("tvservice", "ccsubtitles", false);
+        filterConfig.enableMPAudioSwitcher = xmlreader.GetValueAsBool("tvservice", "audiodualmono", false);
+        filterConfig.relaxTsReader = (xmlreader.GetValueAsBool("mytv", "relaxTsReader", false) == false ? 0 : 1);
+        filterConfig.autoShowSubWhenTvStarts = xmlreader.GetValueAsBool("tvservice", "autoshowsubwhentvstarts", true);
+
+        // as int for passing through interface
+        string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "Normal");
+        filterConfig._CodecSupportsFastSeeking = xmlreader.GetValueAsBool("debug", "CodecSupportsFastSeeking", true);
+
+        // get post-processing filter setup
+        int i = 0;
+        while (xmlreader.GetValueAsString("mytv", "filter" + i, "undefined") != "undefined")
+        {
+          if (xmlreader.GetValueAsBool("mytv", "usefilter" + i, false))
+          {
+            filterConfig.OtherFilters.Add(xmlreader.GetValueAsString("mytv", "filter" + i, "undefined"));
+          }
+          i++;
+        }
+
+        // get AR setting
+        filterConfig.AR = Util.Utils.GetAspectRatio(xmlreader.GetValueAsString("mytv", "defaultar", "Normal"));
+        GUIGraphicsContext.ARType = Util.Utils.GetAspectRatio(strValue);
+      }
+
+      return filterConfig;
+    }
 
     /// <summary>
     /// Implements the AudioStreams member which interfaces the TsReader filter to get the IAMStreamSelect interface for enumeration of available streams
@@ -506,7 +621,7 @@ namespace MediaPortal.Player
         ExclusiveMode(false);
         return false;
       }
-//      _interfaceTSReader = _fileSource;
+      //      _interfaceTSReader = _fileSource;
       _startingUp = _isLive;
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
       msg.Label = strFile;
@@ -918,13 +1033,13 @@ namespace MediaPortal.Player
         return;
       }
       Log.Info("TSReaderPlayer:Continue graph");
-      _mediaCtrl.Run();
-      _mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
-
       if (VMR9Util.g_vmr9 != null)
       {
         VMR9Util.g_vmr9.Enable(true);
       }
+
+      _mediaCtrl.Run();
+      _mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
     }
 
     public override void PauseGraph()
@@ -934,12 +1049,13 @@ namespace MediaPortal.Player
         return;
       }
       Log.Info("TSReaderPlayer:Pause graph");
-      _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
-      _mediaCtrl.Pause();
       if (VMR9Util.g_vmr9 != null)
       {
         VMR9Util.g_vmr9.Enable(false);
       }
+
+      _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
+      _mediaCtrl.Pause();
     }
 
     public override void WndProc(ref Message m)
@@ -1389,7 +1505,7 @@ namespace MediaPortal.Player
       }
     }
 
-    protected virtual void OnProcess() {}
+    protected virtual void OnProcess() { }
 
 #if DEBUG
     private static DateTime dtStart = DateTime.Now;
@@ -1426,7 +1542,7 @@ namespace MediaPortal.Player
       }
     }
 
-    private void UpdateDuration() {}
+    private void UpdateDuration() { }
 
     private bool _bMediaTypeChanged;
     private bool _bRequestAudioChange;
@@ -1468,49 +1584,6 @@ namespace MediaPortal.Player
       }
       return 0;
     }
-
-    /*
-    //check if the pin connections can be kept, or if a graph rebuilding is necessary!
-    private bool GraphNeedsRebuild()
-    {
-      bool needsRebuild = false;
-      IEnumPins pinEnum;
-      int hr = _fileSource.EnumPins(out pinEnum);
-      if (hr != 0 || pinEnum == null)
-      {
-        needsRebuild = true;
-      }
-
-      IPin[] pins = new IPin[1];
-      while (!needsRebuild)
-      {
-        int fetched;
-        hr = pinEnum.Next(1, pins, out fetched);
-        if (hr != 0 || fetched == 0)
-        {
-          break;
-        }
-        IPin other;
-        hr = pins[0].ConnectedTo(out other);
-        if (hr == 0 && other != null)
-        {
-          try
-          {
-            if (!DirectShowUtil.QueryConnect(pins[0], other))
-            {
-              needsRebuild = true;
-            }
-            DirectShowUtil.ReleaseComObject(other);
-          }
-          catch {}
-        }
-        DirectShowUtil.ReleaseComObject(pins[0]);
-      }
-      DirectShowUtil.ReleaseComObject(pinEnum);
-      Log.Info("Graph needs a rebuild: {0}", needsRebuild ? "True" : "False");
-      return needsRebuild;
-    }
-    */
 
     public void DoGraphRebuild()
     {
@@ -1563,259 +1636,73 @@ namespace MediaPortal.Player
             {
               case 1: // audio changed
                 Log.Info("Rerendering audio pin of tsreader filter.");
-                ReAddFilters("Audio");
+                UpdateFilters("Audio");
                 break;
               case 2: // video changed
                 Log.Info("Rerendering video pin of tsreader filter.");
-                ReAddFilters("Video");
+                UpdateFilters("Video");
                 break;
               case 3: // both changed
                 Log.Info("Rerendering audio and video pins of tsreader filter.");
-                ReAddFilters("Audio");
-                ReAddFilters("Video");
+                UpdateFilters("Audio");
+                UpdateFilters("Video");
                 break;
             }
-            DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, _fileSource);
-            DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
-          }
 
-          //Re-enable PostProcessing
-          if (iChangedMediaTypes != 1 && VideoChange)
-          { 
-            PostProcessingEngine.GetInstance().FreePostProcess();
-            IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
-            if (!postengine.LoadPostProcessing(_graphBuilder))
+            if (iChangedMediaTypes != 1 && VideoChange)
             {
-              PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+              if (filterConfig != null && filterConfig.enableCCSubtitles)
+              {
+                CleanupCC();
+                DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _fileSource);
+                DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, filterCodec.VideoCodec);                
+                EnableCC();
+                if (CoreCCPresent)
+                {
+                  DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, filterCodec.CoreCCParser);                  
+                  EnableCC2();
+                }
+              }
+              else
+              {
+                DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _fileSource);
+                CleanupCC();
+              }
+              if (PostProcessingEngine.engine != null)
+                PostProcessingEngine.GetInstance().FreePostProcess();
+
+              IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
+              if (!postengine.LoadPostProcessing(_graphBuilder))
+              {
+                PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+              }
             }
-          }
-          /*
-          else
-          {
-            switch (iChangedMediaTypes)
+            else
             {
-              case 1: // audio changed
-                Log.Info("Reconnecting audio pin of tsreader filter.");
-                ReConnectPin("Audio");
-                break;
-              case 2: // video changed
-                Log.Info("Reconnecting video pin of tsreader filter.");
-                ReConnectPin("Video");
-                break;
-              case 3: // both changed
-                Log.Info("Reconnecting audio pin of tsreader filter.");
-                ReConnectPin("Audio");
-                Log.Info("Reconnecting video pin of tsreader filter.");
-                ReConnectPin("Video");
-                break;
+              DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _fileSource);
             }
+            DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
+
+            try
+            {
+              hr = _mediaCtrl.Run();
+              DsError.ThrowExceptionForHR(hr);
+            }
+            catch (Exception error)
+            {
+              Log.Error("Error starting graph: {0}", error.Message);
+              return;
+            }
+            Log.Info("Reconfigure graph done");
           }
-          */
-          try
-          {
-            hr = _mediaCtrl.Run();
-            DsError.ThrowExceptionForHR(hr);
-          }
-          catch (Exception error)
-          {
-            Log.Error("Error starting graph: {0}", error.Message);
-            return;
-          }
-          Log.Info("Reconfigure graph done");
         }
       }
     }
 
     /// <summary> create the used COM components and get the interfaces. </summary>
-    protected virtual bool GetInterfaces(string filename)
-    {
-      int hr;
-      Log.Info("TSReaderPlayer:GetInterfaces()");
-      //Type comtype = null;
-      object comobj = null;
-      try
-      {
-        _graphBuilder = (IGraphBuilder)new FilterGraph();
-        TsReader reader = new TsReader();
-        _fileSource = (IBaseFilter)reader;
-        ((ITSReader)reader).SetTsReaderCallback(this);
-        ((ITSReader)reader).SetRequestAudioChangeCallback(this);
-        IBaseFilter filter = (IBaseFilter)_fileSource;
-        _graphBuilder.AddFilter(filter, "TsReader");
-        IFileSourceFilter interFaceFile = (IFileSourceFilter)_fileSource;
-        interFaceFile.Load(filename, null);
-        // add preferred video & audio codecs
-        string strVideoCodec = "";
-        string strH264VideoCodec = "";
-        string strAudioCodec = "";
-        string strAACAudioCodec = "";
-        string strDDPLUSAudioCodec = "";
-        string strAudiorenderer = "";
-        int intFilters = 0; // FlipGer: count custom filters
-        string strFilters = ""; // FlipGer: collect custom filters
-        using (Settings xmlreader = new MPSettings())
-        {
-          _CodecSupportsFastSeeking = xmlreader.GetValueAsBool("debug", "CodecSupportsFastSeeking", true);
-          Log.Debug("BaseTSReaderPlayer: Codec supports fast seeking = {0}", _CodecSupportsFastSeeking);
-          // FlipGer: load infos for custom filters
-          int intCount = 0;
-          while (xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") != "undefined")
-          {
-            if (xmlreader.GetValueAsBool("mytv", "usefilter" + intCount.ToString(), false))
-            {
-              strFilters += xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") + ";";
-              intFilters++;
-            }
-            intCount++;
-          }
-          strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
-          strH264VideoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
-          strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
-          strAACAudioCodec = xmlreader.GetValueAsString("mytv", "aacaudiocodec", "");
-          strDDPLUSAudioCodec = xmlreader.GetValueAsString("mytv", "ddplusaudiocodec", "");
-          strAudiorenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
-          string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "Normal");
-          GUIGraphicsContext.ARType = Util.Utils.GetAspectRatio(strValue);
-        }
-        if (strVideoCodec.Length > 0)
-        {
-          DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
-        }
-        if (strH264VideoCodec.Length > 0)
-        {
-          DirectShowUtil.AddFilterToGraph(_graphBuilder, strH264VideoCodec);
-        }
-        if (strAudioCodec.Length > 0)
-        {
-          DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
-        }
-        if (strAACAudioCodec.Length > 0)
-        {
-          DirectShowUtil.AddFilterToGraph(_graphBuilder, strAACAudioCodec);
-        }
-        if (strDDPLUSAudioCodec.Length > 0)
-        {
-          DirectShowUtil.AddFilterToGraph(_graphBuilder, strDDPLUSAudioCodec);
-        }
-        if (strAudiorenderer.Length > 0)
-        {
-          _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudiorenderer, false);
-        }
-        // FlipGer: add custom filters to graph
-        string[] arrFilters = strFilters.Split(';');
-        for (int i = 0; i < intFilters; i++)
-        {
-          DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
-        }
+    protected virtual bool GetInterfaces(string filename) { return true; }
 
-        DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter)_fileSource);
-        _mediaCtrl = (IMediaControl)_graphBuilder;
-        _videoWin = _graphBuilder as IVideoWindow;
-        _mediaEvt = (IMediaEventEx)_graphBuilder;
-        _mediaSeeking = _graphBuilder as IMediaSeeking;
-        if (_mediaSeeking == null)
-        {
-          Log.Error("Unable to get IMediaSeeking interface#1");
-        }
-
-        if (_audioRendererFilter != null)
-        {
-          IMediaFilter mp = _graphBuilder as IMediaFilter;
-          IReferenceClock clock = _audioRendererFilter as IReferenceClock;
-          hr = mp.SetSyncSource(clock);
-        }
-        _basicVideo = _graphBuilder as IBasicVideo2;
-        _basicAudio = _graphBuilder as IBasicAudio;
-        //Log.Info("TSReaderPlayer:SetARMode");
-        DirectShowUtil.SetARMode(_graphBuilder, AspectRatioMode.Stretched);
-        _graphBuilder.SetDefaultSyncSource();
-        //Log.Info("TSReaderPlayer: set Deinterlace");
-        //Log.Info("TSReaderPlayer: done");
-        return true;
-      }
-      catch (Exception ex)
-      {
-        Log.Error("TSReaderPlayer:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
-        return false;
-      }
-      finally
-      {
-        if (comobj != null)
-        {
-          DirectShowUtil.ReleaseComObject(comobj);
-        }
-        comobj = null;
-      }
-    }
-
-    /// <summary> do cleanup and release DirectShow. </summary>
-    protected virtual void CloseInterfaces()
-    {
-      int hr;
-      if (_graphBuilder == null)
-      {
-        Log.Info("TSReaderPlayer:grapbuilder=null");
-        return;
-      }
-      Log.Info("TSReaderPlayer: Cleanup DShow graph");
-      try
-      {
-        if (_mediaCtrl != null)
-        {
-          hr = _mediaCtrl.Stop();
-          _mediaCtrl = null;
-        }
-        _state = PlayState.Init;
-        _mediaEvt = null;
-        _isWindowVisible = false;
-        _isVisible = false;
-        _videoWin = null;
-        _mediaSeeking = null;
-        _basicAudio = null;
-        _basicVideo = null;
-
-        if (_audioRendererFilter != null)
-        {
-          while ((hr = DirectShowUtil.ReleaseComObject(_audioRendererFilter)) > 0)
-          {
-            ;
-          }
-          _audioRendererFilter = null;
-        }
-
-        if (_fileSource != null)
-        {
-          while ((hr = DirectShowUtil.ReleaseComObject(_fileSource)) > 0)
-          {
-            ;
-          }
-          _fileSource = null;
-        }
-
-        if (_graphBuilder != null)
-        {
-          DirectShowUtil.RemoveFilters(_graphBuilder);
-          if (_rotEntry != null)
-          {
-            _rotEntry.SafeDispose();
-            _rotEntry = null;
-          }
-          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0)
-          {
-            ;
-          }
-          _graphBuilder = null;
-        }
-
-        _state = PlayState.Init;
-        GUIGraphicsContext.form.Invalidate(true);
-      }
-      catch (Exception ex)
-      {
-        Log.Error("TSReaderPlayer:exception while cleanuping DShow graph {0} {1}", ex.Message, ex.StackTrace);
-      }
-      Log.Info("TSReaderPlayer:cleanup done");
-    }
+    protected virtual void CloseInterfaces() { }
 
     private void OnGraphNotify()
     {
@@ -1861,9 +1748,9 @@ namespace MediaPortal.Player
       } while (hr == 0 && counter < 20);
     }
 
-    protected virtual void ExclusiveMode(bool onOff) {}
+    protected virtual void ExclusiveMode(bool onOff) { }
 
-    protected virtual void OnInitialized() {}
+    protected virtual void OnInitialized() { }
 
     protected void DoFFRW()
     {
@@ -1962,60 +1849,167 @@ namespace MediaPortal.Player
       }
     }
 
-    protected virtual void MatchFilters(string format) {}
+    protected virtual void PostProcessAddVideo() { }
 
-    private void ReAddFilters(string selection)
+    protected virtual void PostProcessAddAudio() { }
+
+    protected virtual void MPAudioSwitcherAdd() { }
+
+    protected virtual void AudioRendererAdd() { }
+
+    protected virtual void SyncAudioRenderer() { }
+
+    protected virtual string MatchFilters(string format) { return format; }
+
+    protected virtual void CoreCCParserCheck() { }
+
+    protected virtual void CleanupCC() { }
+
+    protected virtual void ReleaseCC() { }
+
+    protected virtual void ReleaseCC2() { }
+
+    protected virtual void EnableCC() { }
+
+    protected virtual void EnableCC2() { }
+
+    protected void UpdateFilters(string selection)
     {
-      VideoChange = false;
+      if (selection == "Video")
+      {
+        VideoChange = false;
+        if (PostProcessFilterVideo.Count > 0)
+        {
+          foreach (var ppFilter in PostProcessFilterVideo)
+          {
+            if (ppFilter.Value != null)
+            {
+              DirectShowUtil.RemoveFilters(_graphBuilder, ppFilter.Key);
+              DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
+            }
+          }
+          PostProcessFilterVideo.Clear();
+          Log.Info("TSReaderPlayer: UpdateFilters Cleanup PostProcessVideo");
+        }
+        if (filterConfig != null && filterConfig.enableCCSubtitles)
+        {
+          ReleaseCC();
+          ReleaseCC2();
+        }
+      }
+      else
+      {
+        if (PostProcessFilterAudio.Count > 0)
+        {
+          foreach (var ppFilter in PostProcessFilterAudio)
+          {
+            if (ppFilter.Value != null)
+            {
+              DirectShowUtil.RemoveFilters(_graphBuilder, ppFilter.Key);
+              DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
+            }
+          }
+          PostProcessFilterAudio.Clear();
+          Log.Info("TSReaderPlayer: UpdateFilters Cleanup PostProcessAudio");
+        }
+
+        if (filterConfig != null && filterConfig.enableMPAudioSwitcher)
+        {
+          IBaseFilter switcher = DirectShowUtil.GetFilterByName(_graphBuilder, "MediaPortal AudioSwitcher");
+          if (switcher != null)
+          {
+            _graphBuilder.RemoveFilter(switcher);
+            DirectShowUtil.ReleaseComObject(switcher);
+            switcher = null;
+          }
+        }
+      }
+
       // we have to find first filter connected to tsreader which will be removed
       IPin pinFrom = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, selection);
       IPin pinTo;
-      int hr = pinFrom.ConnectedTo(out pinTo);
-      if (hr >= 0 && pinTo != null)
+      if (pinFrom != null)
       {
-        PinInfo pInfo;
-        pinTo.QueryPinInfo(out pInfo);
-        FilterInfo fInfo;
-        pInfo.filter.QueryFilterInfo(out fInfo);
-        Log.Debug("TSReaderPlayer: Remove filter - {0}", fInfo.achName);
-        DirectShowUtil.DisconnectAllPins(_graphBuilder, pInfo.filter);
-        _graphBuilder.RemoveFilter(pInfo.filter);
-        DsUtils.FreePinInfo(pInfo);
-        DirectShowUtil.ReleaseComObject(fInfo.pGraph);
-        DirectShowUtil.ReleaseComObject(pinTo);
-        pinTo = null;
+        int hr = pinFrom.ConnectedTo(out pinTo);
+        if (hr >= 0 && pinTo != null)
+        {
+          PinInfo pInfo;
+          pinTo.QueryPinInfo(out pInfo);
+          FilterInfo fInfo;
+          pInfo.filter.QueryFilterInfo(out fInfo);
+
+          if (selection == "Video" && fInfo.achName.Equals("Core CC Parser"))
+          {
+            IPin pinFromOut = DsFindPin.ByDirection(filterCodec.CoreCCParser, PinDirection.Output, 0);
+            IPin pinToVideo;
+            hr = pinFromOut.ConnectedTo(out pinToVideo);
+            if (hr >= 0 && pinToVideo != null)
+            {
+              PinInfo pInfoNext;
+              pinToVideo.QueryPinInfo(out pInfoNext);
+              FilterInfo fInfoNext;
+              pInfoNext.filter.QueryFilterInfo(out fInfoNext);
+              Log.Debug("TSReaderPlayer: UpdateFilters Remove filter - {0}", fInfoNext.achName);
+              DirectShowUtil.DisconnectAllPins(_graphBuilder, pInfo.filter);
+              _graphBuilder.RemoveFilter(pInfoNext.filter);
+              DsUtils.FreePinInfo(pInfoNext);
+              DirectShowUtil.ReleaseComObject(fInfoNext.pGraph);
+              DirectShowUtil.ReleaseComObject(pinToVideo); pinToVideo = null;
+            }
+            DirectShowUtil.ReleaseComObject(pinFromOut); pinFromOut = null;
+          }
+          else
+          {
+            DirectShowUtil.DisconnectAllPins(_graphBuilder, pInfo.filter);
+            _graphBuilder.RemoveFilter(pInfo.filter);
+            Log.Debug("TSReaderPlayer: UpdateFilters Remove filter - {0}", fInfo.achName);
+          }
+          DsUtils.FreePinInfo(pInfo);
+          DirectShowUtil.ReleaseComObject(fInfo.pGraph);
+          DirectShowUtil.ReleaseComObject(pinTo); pinTo = null;
+        }
+        DirectShowUtil.ReleaseComObject(pinFrom); pinFrom = null;
       }
-      DirectShowUtil.ReleaseComObject(pinFrom);
-      pinFrom = null;
-      MatchFilters(selection);
 
       if (selection == "Video")
       {
-        DirectShowUtil.AddFilterToGraph(_graphBuilder, videoFilter);
+        //Add Post Process Video Codec
+        PostProcessAddVideo();
+
+        //Add Video Codec
+        if (filterCodec.VideoCodec != null)
+        {
+          DirectShowUtil.ReleaseComObject(filterCodec.VideoCodec);
+          filterCodec.VideoCodec = null;
+        }
+        filterCodec.VideoCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, MatchFilters(selection));
+
+        if (filterConfig != null && selection == "Video" && filterConfig.enableCCSubtitles)
+        {
+          CoreCCPresent = false;
+          CoreCCParserCheck();
+        }
         VideoChange = true;
       }
       else
       {
-        DirectShowUtil.AddFilterToGraph(_graphBuilder, audioFilter);
+        if (filterConfig != null && filterConfig.enableMPAudioSwitcher)
+        {
+          MPAudioSwitcherAdd();
+        }
+
+        //Add Post Process Audio Codec
+        PostProcessAddAudio();
+
+        //Add Audio Codec
+        if (filterCodec.AudioCodec != null)
+        {
+          DirectShowUtil.ReleaseComObject(filterCodec.AudioCodec);
+          filterCodec.AudioCodec = null;
+        }
+        filterCodec.AudioCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, MatchFilters(selection));
       }
     }
-
-    /*
-    private void ReConnectPin(string pinName)
-    {
-      IPin pPin = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, pinName);
-      _graphBuilder.Reconnect(pPin);
-      DirectShowUtil.ReleaseComObject(pPin);
-
-      // Reconnect connection between video decoder and video renderer as well
-      if (pinName == "Video")
-      {
-        IPin decoderPin = VMR9Util.g_vmr9.PinConnectedTo;
-        _graphBuilder.Reconnect(decoderPin);
-        DirectShowUtil.ReleaseComObject(decoderPin);
-      }
-    }
-    */
 
     #endregion
 

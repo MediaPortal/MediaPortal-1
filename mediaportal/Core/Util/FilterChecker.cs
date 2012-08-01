@@ -172,7 +172,7 @@ namespace MediaPortal.Util
       {
         LogRegisteredFilter("TsReader.ax", true, false);
         if (fUseDvbSubtitles)
-          LogRegisteredFilter("DVBsub2.ax", true, false);
+          LogRegisteredFilter("DVBsub3.ax", true, false);
         LogRegisteredFilter("mdapifilter", false, true);
       }
       LogRegisteredFilter("quartz.dll", true, true);

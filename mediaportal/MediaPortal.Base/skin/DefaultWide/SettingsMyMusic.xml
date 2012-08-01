@@ -15,14 +15,14 @@
       <posY>150</posY>
       <width>830</width>
       <height>380</height>
-      <texture mask="picturethumbmask.png">blue.png</texture>
+      <texture>backslide2.png</texture>
       <colordiffuse>eeffffff</colordiffuse>
     </control>
     <control>
       <description>group element</description>
       <type>group</type>
-      <animation effect="slide" time="70" start="800,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <control>
         <description>Shuffle Playlist on load</description>
         <type>checkmark</type>
@@ -33,18 +33,6 @@
         <onleft>2</onleft>
         <onright>2</onright>
         <onup>21</onup>
-        <ondown>6</ondown>
-      </control>
-      <control>
-        <description>Enable ID3  other tagformats</description>
-        <type>checkmark</type>
-        <id>6</id>
-        <posX>255</posX>
-        <posY>265</posY>
-        <label>258</label>
-        <onleft>6</onleft>
-        <onright>6</onright>
-        <onup>2</onup>
         <ondown>8</ondown>
       </control>
       <control>
@@ -66,7 +54,7 @@
         <height>41</height>
         <onleft>8</onleft>
         <onright>8</onright>
-        <onup>6</onup>
+        <onup>2</onup>
         <ondown>13</ondown>
       </control>
       <control>

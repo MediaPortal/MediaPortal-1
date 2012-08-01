@@ -2058,7 +2058,7 @@ namespace MediaPortal.GUI.Library
 
       label.SetPosition(x + xoff, y);
       label.Label = _labelText;
-      label.TextColor = _inputTextColor;
+      label.TextColor = _labelColor;
       label.Render(timePassed);
     }
 

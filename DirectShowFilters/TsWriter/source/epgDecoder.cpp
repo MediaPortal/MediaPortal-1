@@ -91,7 +91,7 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len,int PID)
 		unsigned long lNetworkId=network_id;
 		unsigned long lTransport_id=transport_id;
 		unsigned long lServiceId=service_id;
-		unsigned long key=(unsigned long)(lNetworkId<<32UL);
+		unsigned __int64 key=((unsigned __int64)lNetworkId << 32);
 		key+=(lTransport_id<<16);
 		key+=lServiceId;
 		imapEPG it=m_mapEPG.find(key);
@@ -110,11 +110,11 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len,int PID)
 		EPGChannel& channel=it->second; 
 
 		//did we already receive this section ?
-		key=crc32 ((char*)buf,len);
-		EPGChannel::imapSectionsReceived itSec=channel.mapSectionsReceived.find(key);
+		int sectionKey=crc32 ((char*)buf,len);
+		EPGChannel::imapSectionsReceived itSec=channel.mapSectionsReceived.find(sectionKey);
 		if (itSec!=channel.mapSectionsReceived.end())
 			return S_FINISHED; //yes
-		channel.mapSectionsReceived[key]=true;
+		channel.mapSectionsReceived[sectionKey]=true;
 		
 
 		m_epgTimeout=time(NULL);
@@ -162,7 +162,7 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len,int PID)
 					if (descriptor_tag ==0x4d)
 					{
 						//					LogDebug("epg:     short event descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
-						DecodeShortEventDescriptor(&buf[start+off],epgEvent,PID);
+						DecodeShortEventDescriptor(&buf[start+off],epgEvent, lNetworkId, PID);
 					}
 					else if (descriptor_tag ==0x54)
 					{
@@ -412,7 +412,7 @@ HRESULT CEpgDecoder::DecodePremierePrivateEPG(byte* buf,int len)
 					if (descriptor_tag ==0x4d)
 					{
 						//					LogDebug("epg:     short event descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
-						DecodeShortEventDescriptor( &buf[start+off],epgEvent,0);
+						DecodeShortEventDescriptor( &buf[start+off],epgEvent,0,0);
 					}
 					else if (descriptor_tag ==0x54)
 					{
@@ -464,7 +464,7 @@ void CEpgDecoder::DecodePremiereContentTransmissionDescriptor(byte* data, EPGEve
 	unsigned long lNetworkId=nid;
 	unsigned long lTransport_id=tid;
 	unsigned long lServiceId=sid;
-	unsigned long key=(unsigned long)(lNetworkId<<32UL);
+	unsigned __int64 key=((unsigned __int64)lNetworkId << 32);
 	key+=(lTransport_id<<16);
 	key+=lServiceId;
 	imapEPG it=m_mapEPG.find(key);
@@ -695,7 +695,7 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 	}	
 }
 
-void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int PID)
+void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int NetworkID, int PID)
 {
 	try
 	{
@@ -746,7 +746,11 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int P
 				return;
 			}
 
-			if(buf[6]==0x1f && (PID==PID_FREESAT_EPG || PID==PID_FREESAT2_EPG))
+			// 0x1f is tag for freesat/freeview huffman encoding
+			// buf[7] - huffman table id. Including this reduces the chance of non encoded
+			// text being sent through
+
+			if(buf[6]==0x1f && CanDecodeNetworkOrPID(NetworkID, PID))
 			{
 				eventText=FreesatHuffmanToString(&buf[6],event_len);
 			}
@@ -788,7 +792,10 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int P
 				return;
 			}
 			// Check if huffman encoded.
-			if(buf[off+1]==0x1f && (PID==PID_FREESAT_EPG || PID==PID_FREESAT2_EPG))
+			// 0x1f is tag for freesat/freeview huffman encoding
+			// off+2 - huffman table id. Including this reduces the chance of non encoded
+			// text being sent through
+			if(buf[off+1]==0x1f && CanDecodeNetworkOrPID(NetworkID, PID))
 			{
 				eventDescription=FreesatHuffmanToString(&buf[off+1],text_len);
 			}
@@ -1148,6 +1155,15 @@ void CEpgDecoder::GrabEPG()
 bool CEpgDecoder::IsEPGGrabbing()
 {
 	return m_bParseEPG;
+}
+
+bool CEpgDecoder::CanDecodeNetworkOrPID(int NetworkID, int PID)
+{
+	if(NetworkID == 9018 || NetworkID == 59 || PID==PID_FREESAT_EPG || PID==PID_FREESAT2_EPG)
+	{
+		return true;
+	}
+	return false;
 }
 bool CEpgDecoder::IsEPGReady()
 {

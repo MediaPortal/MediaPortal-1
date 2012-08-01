@@ -128,6 +128,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("frameFocus", "mask")] protected string _frameFocusMask = "";
     [XMLSkinElement("keepaspectratio")] protected bool _keepAspectRatio = true;
 
+    [XMLSkinElement("thumbZoom")] protected bool _zoom = false;
+    [XMLSkinElement("thumbAlign")] protected Alignment _imageAlignment = Alignment.ALIGN_CENTER;
+    [XMLSkinElement("thumbVAlign")] protected VAlignment _imageVAlignment = VAlignment.ALIGN_BOTTOM;
     [XMLSkin("thumbs", "flipX")] protected bool _flipX = false;
     [XMLSkin("thumbs", "flipY")] protected bool _flipY = false;
     [XMLSkin("thumbs", "diffuse")] protected string _diffuseFileName = "";
@@ -140,6 +143,9 @@ namespace MediaPortal.GUI.Library
 
     [XMLSkinElement("textXOff")] protected int _textXOff = 0;
     [XMLSkinElement("textYOff")] protected int _textYOff = 0;
+    [XMLSkinElement("spinCanFocus")] protected bool _spinCanFocus = true;
+
+    [XMLSkinElement("bdDvdDirectoryColor")] protected long _bdDvdDirectoryColor = 0xFFFFFFFF;
 
     #endregion
 
@@ -485,6 +491,10 @@ namespace MediaPortal.GUI.Library
           dwColor = _downloadColor;
         }
       }
+      if (pItem.IsBdDvdFolder)
+      {
+        dwColor = _bdDvdDirectoryColor;
+      }
       if (!Focus)
       {
         dwColor &= DimColor;
@@ -511,7 +521,9 @@ namespace MediaPortal.GUI.Library
                                 _thumbNailHeight + 2 * iOverSized, pItem.ThumbnailImage, 0x0);
           pImage.ParentControl = this;
           pImage.KeepAspectRatio = _keepAspectRatio;
-          pImage.ZoomFromTop = !pItem.IsFolder;
+          pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
+          pImage.ImageAlignment = _imageAlignment;
+          pImage.ImageVAlignment = _imageVAlignment;
           pImage.FlipX = _flipX;
           pImage.FlipY = _flipY;
           pImage.DiffuseFileName = _diffuseFileName;
@@ -520,10 +532,7 @@ namespace MediaPortal.GUI.Library
           pImage.AllocResources();
 
           pItem.Thumbnail = pImage;
-          int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
-          int yOff = (_thumbNailHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
-          pImage.SetPosition(_thumbNailPositionX - iOverSized + dwPosX + xOff,
-                             _thumbNailPositionY - iOverSized + dwPosY + yOff);
+          pImage.SetPosition(_thumbNailPositionX - iOverSized + dwPosX, _thumbNailPositionY - iOverSized + dwPosY);
           pImage.DimColor = DimColor;
           _sleeper += SLEEP_FRAME_COUNT;
         }
@@ -534,13 +543,12 @@ namespace MediaPortal.GUI.Library
             pImage.SafeDispose();
             pImage.AllocResources();
           }
-          pImage.ZoomFromTop = !pItem.IsFolder;
+          pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
+          pImage.ImageAlignment = _imageAlignment;
+          pImage.ImageVAlignment = _imageVAlignment;
           pImage.Width = _thumbNailWidth + 2 * iOverSized;
           pImage.Height = _thumbNailHeight + 2 * iOverSized;
-          int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
-          int yOff = (_thumbNailHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
-          pImage.SetPosition(_thumbNailPositionX + dwPosX - iOverSized + xOff,
-                             _thumbNailPositionY - iOverSized + dwPosY + yOff);
+          pImage.SetPosition(_thumbNailPositionX + dwPosX - iOverSized, _thumbNailPositionY - iOverSized + dwPosY);
           pImage.DimColor = DimColor;
           if (pImage.Focus != itemFocused)
           {
@@ -579,17 +587,16 @@ namespace MediaPortal.GUI.Library
                                   _thumbNailHeight + 2 * iOverSized, pItem.IconImageBig, 0x0);
             pImage.ParentControl = this;
             pImage.KeepAspectRatio = _keepAspectRatio;
-            pImage.ZoomFromTop = !pItem.IsFolder;
+            pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
+            pImage.ImageAlignment = _imageAlignment;
+            pImage.ImageVAlignment = _imageVAlignment;
             pImage.AllocResources();
             pImage.FlipX = _flipX;
             pImage.FlipY = _flipY;
             pImage.DiffuseFileName = _diffuseFileName;
             pImage.SetAnimations(_allThumbAnimations);
             pItem.IconBig = pImage;
-            int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
-            int yOff = (_thumbNailHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
-            pImage.SetPosition(_thumbNailPositionX + dwPosX - iOverSized + xOff,
-                               _thumbNailPositionY - iOverSized + dwPosY + yOff);
+            pImage.SetPosition(_thumbNailPositionX + dwPosX - iOverSized, _thumbNailPositionY - iOverSized + dwPosY);
             pImage.DimColor = DimColor;
             pImage.MaskFileName = _textureMask;
 
@@ -607,13 +614,12 @@ namespace MediaPortal.GUI.Library
           }
           if (null != pImage)
           {
-            pImage.ZoomFromTop = !pItem.IsFolder;
+            pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
+            pImage.ImageAlignment = _imageAlignment;
+            pImage.ImageVAlignment = _imageVAlignment;
             pImage.Width = _thumbNailWidth + 2 * iOverSized;
             pImage.Height = _thumbNailHeight + 2 * iOverSized;
-            int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
-            int yOff = (_thumbNailHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
-            pImage.SetPosition(_thumbNailPositionX - iOverSized + dwPosX + xOff,
-                               _thumbNailPositionY - iOverSized + dwPosY + yOff);
+            pImage.SetPosition(_thumbNailPositionX - iOverSized + dwPosX, _thumbNailPositionY - iOverSized + dwPosY);
             pImage.DimColor = DimColor;
 
             if (itemFocused)
@@ -2096,9 +2102,15 @@ namespace MediaPortal.GUI.Library
           {
             iPage++;
           }
-          if (_upDownControl != null)
+          if (_upDownControl != null && _spinCanFocus)
           {
-            _upDownControl.Value = iPage + 1;
+            _upDownControl.Focus = true;
+          }
+          else
+          {
+            _listType = GUIListControl.ListType.CONTROL_LIST;
+            this.Focus = true;
+            base.OnAction(action);
           }
         }
 

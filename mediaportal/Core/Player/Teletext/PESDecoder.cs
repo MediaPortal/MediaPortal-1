@@ -145,6 +145,11 @@ namespace MediaPortal.Player.Teletext
       }
 
       int pos = header.PayLoadStart; // where in the pes packet does the payload data start?
+      assert(pos >= 0 && pos <= tsPacket.Length - 8, "PESDECODER: pos " + pos + " would cause an IndexOutOfBounds exception!");
+      if (pos < 0 || pos > tsPacket.Length - 8)
+      {
+        return;
+      }
 
       if (header.PayloadUnitStart) // if this header starts a new PES packet
       {

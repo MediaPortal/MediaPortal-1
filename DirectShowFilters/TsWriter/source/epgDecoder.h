@@ -89,6 +89,7 @@ public:
 	void	GrabEPG();
 	bool	IsEPGReady();
 	bool	IsEPGGrabbing();
+	bool    CanDecodeNetworkOrPID(int NetworkID, int PID);
 	ULONG	GetEPGChannelCount( );
 	ULONG	GetEPGEventCount( ULONG channel);
 	void	GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  );
@@ -102,15 +103,15 @@ private:
 	bool GetChannelByindex(ULONG channel, EPGChannel& epgChannel);
 	void DecodeCombinedStarRating_MPAARatingDescriptor(byte* data,EPGEvent &epgEvent);
 	void DecodeParentalRatingDescriptor(byte* buf,EPGEvent& event);
-	void DecodeShortEventDescriptor(byte* buf,EPGEvent& event,int PID);
+	void DecodeShortEventDescriptor(byte* buf,EPGEvent& event,int NetworkID,int PID);
 	void DecodeContentDescription(byte* buf,EPGEvent& event);
 	void DecodeExtendedEvent(byte* buf, EPGEvent& event);
 	void DecodeDishShortDescription(byte* data, EPGEvent& epgEvent, int tnum);
 	void DecodeDishLongDescription(byte* data, EPGEvent& epgEvent, int tnum);
   void Sort();	
 
-	map<unsigned long,EPGChannel> m_mapEPG;
-	typedef map<unsigned long,EPGChannel>::iterator imapEPG;
+	map<unsigned __int64,EPGChannel> m_mapEPG;
+	typedef map<unsigned __int64,EPGChannel>::iterator imapEPG;
 	bool	m_bParseEPG;
 	bool	m_bEpgDone;
 	time_t  m_epgTimeout;

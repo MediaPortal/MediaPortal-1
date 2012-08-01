@@ -304,24 +304,32 @@ struct pshdr
 	struct avchdr
 	{
 		BYTE profile, level;
+		UINT64 chromaFormat;
+		WORD lumaDepth, chromaDepth;
 		unsigned int width, height;
-    bool progressive;
-		__int64 spspos, spslen;
-		__int64 ppspos, ppslen;
+		bool progressive;
+		BYTE * sps;
+		BYTE * pps;
+		__int64 spslen;
+		__int64 ppslen;
 		__int64 AvgTimePerFrame;
 		int arx, ary;
 		BYTE ar;
+		BYTE spsid;
+		BYTE ppsid;
 		avchdr()
 		{
-      progressive = true;
-			spspos = 0;
+			progressive = true;
+		  sps = NULL;
+		  pps = NULL;
 			spslen = 0;
-			ppspos = 0;
 			ppslen = 0;
 			AvgTimePerFrame = 0;
-      ar = 0;
-      arx = 0;
-      ary = 0;
+			ar = 0;
+			arx = 0;
+			ary = 0;
+			width = 0;
+			height = 0;
 		}
 	};
 
@@ -347,7 +355,7 @@ struct BasicVideoInfo
 {
 	int width;
 	int height;
-	int fps;
+	double fps;
 	int arx;
 	int ary;
 	int isInterlaced;
@@ -377,7 +385,7 @@ public:
 	bool Read(pshdr& h);
 	bool Read(pssyshdr& h);
 	bool Read(peshdr& h, BYTE code);
-	bool Read(seqhdr& h, int len, CMediaType* pmt = NULL);
+	bool Read(seqhdr& h, int len, CMediaType* pmt = NULL, bool reset = true);
 	bool Read(mpahdr& h, int len, bool fAllowV25, CMediaType* pmt = NULL);
 	bool Read(aachdr& h, int len, CMediaType* pmt = NULL);
 	bool Read(ac3hdr& h, int len, CMediaType* pmt = NULL);
@@ -393,7 +401,7 @@ public:
 	bool Read(trhdr& h, bool fSync = true);
 	bool Read(trsechdr& h);
 	bool Read(pvahdr& h, bool fSync = true);
-	bool Read(avchdr& h, int len, CMediaType* pmt = NULL);
+	bool Read(avchdr& h, int len, CMediaType* pmt = NULL, bool reset = true);
 	bool Read(vc1hdr& h, int len, CMediaType* pmt = NULL);
 
 	void RemoveMpegEscapeCode(BYTE* dst, BYTE* src, int length);

@@ -49,7 +49,7 @@ namespace MediaPortal.GUI.Settings
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\SettingsGUI.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\SettingsGUI.xml"));
     }
 
     public override void OnAction(Action action)

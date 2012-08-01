@@ -231,14 +231,6 @@ namespace MpeCore
 
     public bool CheckPluginsDependencies()
     {
-      if (!ProvidesPlugins())
-      {
-        return true;
-      }
-      if (PluginDependencies.Items.Count == 0)
-      {
-        return false;
-      }
       foreach (PluginDependencyItem dep in PluginDependencies.Items)
       {
         if (!CheckPluginDependency(dep))

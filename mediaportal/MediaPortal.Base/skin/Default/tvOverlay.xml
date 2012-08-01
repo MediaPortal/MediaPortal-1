@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>3002</id>
   <defaultcontrol>2</defaultcontrol>
@@ -9,12 +9,25 @@
       <description>rec logo</description>
       <type>image</type>
       <id>4</id>
-      <posX>5</posX>
-      <posY>23</posY>
-      <width>22</width>
-      <height>22</height>
+      <posX>348</posX>
+      <posY>8</posY>
+      <width>32</width>
+      <height>32</height>
       <texture>rec.png</texture>
-      <animation effect="zoom" start="100,100" end="120,120" time="700" condition="true" pulse="true">conditional</animation>
+      <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
+    <visible>!window.isvisible(0)+!window.isvisible(34)</visible>
+    </control>
+    <control>
+      <description>rec logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>220</posX>
+      <posY>8</posY>
+      <width>32</width>
+      <height>32</height>
+      <texture>rec.png</texture>
+      <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
+      <visible>window.isvisible(0)|window.isvisible(34)</visible>
     </control>
   </controls>
 </window>

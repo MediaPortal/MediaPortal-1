@@ -198,9 +198,68 @@ namespace DShowNET.Helper
       }
     }
 
+    public static ArrayList GetFileSync()
+    {
+      ArrayList list = new ArrayList();
+      foreach (Filter filter in Filters.LegacyFilters)
+      {
+        bool add = false;
+        if (filter.MonikerString ==
+            @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{E436EBB5-524F-11CE-9F53-0020AF0BA770}")
+        {
+          add = true;
+        }
+        if (add)
+        {
+          list.Add(filter.Name);
+        }
+      }
+      return list;
+    }
+
+    public static ArrayList GetFilterSource()
+    {
+      ArrayList sources = new ArrayList();
+
+      foreach (Filter filter in Filters.LegacyFilters)
+      {
+        if (filter.Name.ToLowerInvariant().Contains("source"))
+        {
+          sources.Add(filter.Name);
+        }
+      }
+      return sources;
+    }
+
+    public static ArrayList GetFilterSplitter()
+    {
+      ArrayList sources = new ArrayList();
+
+      foreach (Filter filter in Filters.LegacyFilters)
+      {
+        if (filter.Name.ToLowerInvariant().Contains("splitter"))
+        {
+          sources.Add(filter.Name);
+        }
+      }
+      return sources;
+    }
+
+    public static ArrayList GetVideoCodec()
+    {
+      ArrayList list = FilterHelper.GetFilters(MediaType.Video, MediaSubType.Null);
+      return list;
+    }
+
+    public static ArrayList GetAudioCodec()
+    {
+      ArrayList list = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Null);
+      return list;
+    }
+
     public static ArrayList GetFilters(Guid mediaType, Guid mediaSubType)
     {
-      return GetFilters(mediaType, mediaSubType, (Merit)0x080001);
+      return GetFilters(mediaType, mediaSubType, (Merit) 0x080001);
     }
 
     public static ArrayList GetFilters(Guid mediaType, Guid mediaSubType, Merit merit)
@@ -213,45 +272,60 @@ namespace DShowNET.Helper
       ArrayList filters = new ArrayList();
       IEnumMoniker enumMoniker = null;
       IMoniker[] moniker = new IMoniker[1];
-      IFilterMapper2 mapper = (IFilterMapper2)new FilterMapper2();
-      Guid[] types = new Guid[mediaType.Length * 2];
+      IFilterMapper2 mapper = (IFilterMapper2) new FilterMapper2();
+      Guid[] types = new Guid[mediaType.Length*2];
       for (int i = 0; i < mediaType.Length; i++)
       {
-        types[i * 2] = mediaType[i];
-        types[i * 2 + 1] = mediaSubType[i];
+        types[i*2] = mediaType[i];
+        types[i*2 + 1] = mediaSubType[i];
       }
-      if (mapper != null)
+      try
       {
-        int hResult = mapper.EnumMatchingFilters(
-          out enumMoniker,
-          0,
-          true,
-          merit,
-          true,
-          mediaType.Length,
-          types,
-          null,
-          null,
-          false,
-          true,
-          0,
-          new Guid[0],
-          null,
-          null);
-        IntPtr fetched = IntPtr.Zero;
-        do
+        if (mapper != null)
         {
-          hResult = enumMoniker.Next(1, moniker, fetched);
-          if ((moniker[0] == null))
+          int hResult = mapper.EnumMatchingFilters(
+            out enumMoniker,
+            0,
+            true,
+            merit,
+            true,
+            mediaType.Length,
+            types,
+            null,
+            null,
+            false,
+            true,
+            0,
+            new Guid[0],
+            null,
+            null);
+          IntPtr fetched = IntPtr.Zero;
+          do
           {
-            break;
-          }
-          string filterName = DirectShowUtil.GetFriendlyName(moniker[0]);
-          filters.Add(filterName);
-          moniker[0] = null;
-        } while (true);
+            try
+            {
+              enumMoniker.Next(1, moniker, IntPtr.Zero);
+            }
+            catch
+            {
+            }
+
+            if ((moniker[0] == null))
+              break;
+
+            string filterName = DirectShowUtil.GetFriendlyName(moniker[0]);
+            if (!String.IsNullOrEmpty(filterName))
+              filters.Add(filterName);
+            DirectShowUtil.TryRelease(ref moniker[0]);
+          } while (true);
+        }
+        return filters;
       }
-      return filters;
+      finally
+      {
+        DirectShowUtil.ReleaseComObject(enumMoniker);
+        DirectShowUtil.ReleaseComObject(mapper);
+      }
     }
   }
 }

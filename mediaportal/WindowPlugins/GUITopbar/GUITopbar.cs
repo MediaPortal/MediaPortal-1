@@ -62,7 +62,7 @@ namespace MediaPortal.Topbar
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\topbar.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\topbar.xml"));
       GetID = (int)Window.WINDOW_TOPBAR;
       m_bEnabled = PluginManager.IsPluginNameEnabled("Topbar");
 

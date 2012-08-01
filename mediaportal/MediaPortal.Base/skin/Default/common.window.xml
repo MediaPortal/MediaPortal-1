@@ -1,75 +1,76 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
     <control>
+      <description>background top overlay</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>720</width>
+      <height>216</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
       <type>label</type>
       <id>1</id>
-      <posX>33</posX>
-      <posY>21</posY>
+      <posX>16</posX>
+      <posY>8</posY>
       <label>#(iif(and(neq(L(102012), #currentmodule), neq(L(102002), #currentmodule), neq(L(100100), #currentmodule), neq(L(102015), #currentmodule)), #currentmodule, ' '))</label>
-      <font>font16</font>
+      <font>font14</font>
       <align>left</align>
-      <textcolor>White</textcolor>
-      <visible>!window.isvisible(2002)|!window.isvisible(7900)</visible>
-      
-      
+      <textcolor>ivory</textcolor>
     </control>
     <control>
       <description>Number of Files Label</description>
       <type>label</type>
       <id>1</id>
       <posX>699</posX>
-      <posY>48</posY>
+      <posY>32</posY>
       <label>#selectedindex/#itemcount #(iif(and(neq(L(102012), #currentmodule), neq(L(102002), #currentmodule), neq(L(100100), #currentmodule), neq(L(102015), #currentmodule)), #currentmodule, ' '))</label>
       <align>right</align>
-      <textcolor>White</textcolor>
+      <textcolor>ivory</textcolor>
       <font>font10</font>
       <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
-      
-      
     </control>
     <control>
       <description>Total duration Label</description>
       <type>label</type>
       <id>1</id>
       <posX>641</posX>
-      <posY>68</posY>
+      <posY>48</posY>
       <label>180</label>
       <align>right</align>
-      <textcolor>White</textcolor>
+      <textcolor>ivory</textcolor>
       <font>font10</font>
       <visible>string.equals(#totalduration)+[window.isvisible(500)|window.isvisible(501)|window.isvisible(504)]</visible>
-      
-      
     </control>
     <control>
       <description>Total duration Label</description>
       <type>label</type>
       <id>1</id>
       <posX>699</posX>
-      <posY>68</posY>
+      <posY>48</posY>
       <label>#totalduration</label>
       <align>right</align>
-      <textcolor>White</textcolor>
+      <textcolor>ivory</textcolor>
       <font>font10</font>
       <visible>string.equals(#totalduration)+[window.isvisible(500)|window.isvisible(501)|window.isvisible(504)]</visible>
-      
-      
     </control>
     <control>
-      
-      
       <description>Selected item Label</description>
       <type>fadelabel</type>
       <id>1</id>
-      <posX>33</posX>
-      <posY>52</posY>
+      <posX>16</posX>
+      <posY>32</posY>
       <width>399</width>
       <label>#selecteditem</label>
       <font>font13</font>
       <align>left</align>
-      <textcolor>ffa9d0f7</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>!window.isvisible(6)+!window.isvisible(25)</visible>
     </control>
   </controls>
 </window>

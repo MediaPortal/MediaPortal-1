@@ -412,17 +412,17 @@ namespace MediaPortal.GUI.Music
       // 3. a Now Playing with Led VUMeter
       if (_vuMeter.ToLower() == "analog")
       {
-        success = Load(GUIGraphicsContext.Skin + @"\MyMusicPlayingNowAnVu.xml");
+        success = Load(GUIGraphicsContext.GetThemedSkinFile(@"\MyMusicPlayingNowAnVu.xml"));
       }
       else if (_vuMeter.ToLower() == "led")
       {
-        success = Load(GUIGraphicsContext.Skin + @"\MyMusicPlayingNowLedVu.xml");
+        success = Load(GUIGraphicsContext.GetThemedSkinFile(@"\MyMusicPlayingNowLedVu.xml"));
       }
 
       if (!success)
       {
         _vuMeter = "none";
-        success = Load(GUIGraphicsContext.Skin + @"\MyMusicPlayingNow.xml");
+        success = Load(GUIGraphicsContext.GetThemedSkinFile(@"\MyMusicPlayingNow.xml"));
       }
 
       return success;
@@ -611,7 +611,6 @@ namespace MediaPortal.GUI.Music
       }
 
       // Start the VUMeter Update Timer, when it is enabled in skin file
-      string skinName = GUIGraphicsContext.Skin.Substring(GUIGraphicsContext.Skin.LastIndexOf(@"\"));
       GUIPropertyManager.SetProperty("#VUMeterL", @"VU1.png");
       GUIPropertyManager.SetProperty("#VUMeterR", @"VU1.png");
       if (VUMeterTimer == null && _usingBassEngine &&
@@ -1218,7 +1217,7 @@ namespace MediaPortal.GUI.Music
       {
         try
         {
-          ImgCoverArt.SetFileName(GUIGraphicsContext.Skin + @"\media\missing_coverart.png");
+          ImgCoverArt.SetFileName(GUIGraphicsContext.GetThemedSkinFile(@"\media\missing_coverart.png"));
         }
         catch (Exception ex)
         {

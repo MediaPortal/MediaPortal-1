@@ -48,7 +48,7 @@ namespace MediaPortal.GUI.Home
     public override bool Init()
     {
       //GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
-      return (Load(GUIGraphicsContext.Skin + @"\myHomePlugIns.xml"));
+      return (Load(GUIGraphicsContext.GetThemedSkinFile(@"\myHomePlugIns.xml")));
     }
 
     protected override void LoadButtonNames()

@@ -24,7 +24,7 @@
       <description>vertical divider</description>
       <type>image</type>
       <id>1</id>
-      <posX>523</posX>
+      <posX>528</posX>
       <posY>420</posY>
       <height>140</height>
       <width>0</width>
@@ -63,8 +63,8 @@
       <posY>460</posY>
       <width>334</width>
       <offset>0</offset>
-      <height>16</height>
-      <innerheight>20</innerheight>
+      <height>14</height>
+      <innerheight>18</innerheight>
       <lefttexture>-</lefttexture>
       <midtexture>osd_progress_mid.png</midtexture>
       <righttexture>-</righttexture>
@@ -76,7 +76,7 @@
       <type>label</type>
       <id>101</id>
       <posX>448</posX>
-      <posY>453</posY>
+      <posY>456</posY>
       <label>#currentremaining</label>
       <align>left</align>
       <font>font14</font>
@@ -88,7 +88,7 @@
       <type>label</type>
       <id>101</id>
       <posX>39</posX>
-      <posY>453</posY>
+      <posY>456</posY>
       <label>#currentplaytime</label>
       <align>left</align>
       <font>font14</font>
@@ -105,8 +105,8 @@
       <height>32</height>
       <label>-</label>
       <align>left</align>
-      <textcolor>ffffffff</textcolor>
-      <font>font14</font>
+      <textcolor>ff6FAFE1</textcolor>
+      <font>font18</font>
       <label>#Play.Current.Title</label>
       <visible>!control.hasfocus(1237)</visible>
     </control>

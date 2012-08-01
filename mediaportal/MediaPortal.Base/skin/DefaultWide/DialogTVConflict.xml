@@ -42,8 +42,8 @@
       <IconYOff>6</IconYOff>
       <itemWidth>65</itemWidth>
       <itemHeight>65</itemHeight>
-      <textureFocus>album_background_focus.png</textureFocus>
-      <textureNoFocus>album_background_nofocus.png</textureNoFocus>
+      <textureFocus>list_sub_focus.png</textureFocus>
+      <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
       <spaceBetweenItems>5</spaceBetweenItems>
       <textureHeight>80</textureHeight>
       <keepaspectratio>no</keepaspectratio>
@@ -73,8 +73,8 @@
       <spinPosY>410</spinPosY>
       <itemWidth>62</itemWidth>
       <itemHeight>43</itemHeight>
-      <textureFocus>album_background_focus.png</textureFocus>
-      <textureNoFocus>album_background_nofocus.png</textureNoFocus>
+      <textureFocus>list_sub_focus.png</textureFocus>
+      <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
       <spaceBetweenItems>8</spaceBetweenItems>
       <textureHeight>62</textureHeight>
       <keepaspectratio>no</keepaspectratio>

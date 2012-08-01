@@ -166,7 +166,7 @@ namespace MediaPortal.Util
       ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc";
 
     public static string VideoExtensionsDefault =
-      ".avi,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.m2ts,.sbe,.dvr-ms,.ts,.dat,.ifo";
+      ".avi,.bdmv,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.m2ts,.sbe,.dvr-ms,.ts,.dat,.ifo";
 
     public static string PictureExtensionsDefault = ".jpg,.jpeg,.gif,.bmp,.png";
     public static string ImageExtensionsDefault = ".cue,.bin,.iso,.ccd,.bwt,.mds,.cdi,.nrg,.pdi,.b5t,.img";
@@ -426,6 +426,11 @@ namespace MediaPortal.Util
           // Forced check to avoid users messed configuration ( .ts remove from Videos extensions list)
           return true;
         }
+        if (extensionFile == ".bdmv")
+        {
+          // Forced check to avoid users messed configuration ( .bdmv remove from Videos extensions list)
+          return true;
+        }
         if (VirtualDirectory.IsImageFile(extensionFile.ToLower()))
           return true;
         return m_VideoExtensions.Contains(extensionFile);
@@ -638,7 +643,7 @@ namespace MediaPortal.Util
 
       if (!item.IsFolder || (item.IsFolder && VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower())))
       {
-        if (IsPicture(item.Path))
+        if (!IsVideo(item.Path))
         {
           Log.Debug("SetThumbnails: nothing to do.");
           return;
@@ -662,13 +667,39 @@ namespace MediaPortal.Util
             break;
           }
         }
+        //
         bool createVideoThumbs;
-        using (Profile.Settings xmlreader = new Profile.MPSettings())
+        bool getItemThumb = true;
+          
+        using (Settings xmlreader = new MPSettings())
         {
           createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
+          //
+          //Get movies shares and check for video thumb create
+          //
+          const int maximumShares = 128;
+          for (int index = 0; index < maximumShares; index++)
+          {
+            // Get share dir
+            string sharePath = String.Format("sharepath{0}", index);
+            string shareDir = xmlreader.GetValueAsString("movies", sharePath, "");
+            // Get item dir
+            string itemDir = string.Empty;
+            if (!item.IsRemote)
+            {
+              itemDir = (GetParentDirectory(item.Path));
+            }
+            // Check if share dir correspond to item dir
+            if (AreEqual(shareDir, itemDir))
+            {
+              string thumbsCreate = String.Format("videothumbscreate{0}", index);
+              getItemThumb = xmlreader.GetValueAsBool("movies", thumbsCreate, true);
+              break;
+            }
+          }
         }
-
-        if (createVideoThumbs && !foundVideoThumb)
+        
+        if (createVideoThumbs && !foundVideoThumb && getItemThumb)
         {
           if (Path.IsPathRooted(item.Path) && IsVideo(item.Path) &&
               !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower()))
@@ -721,6 +752,100 @@ namespace MediaPortal.Util
       }
     }
 
+    /// <summary>
+    /// Function to check share path and selected item path.
+    /// Item path can have deeper subdir level but must begin
+    /// with share path to return TRUE, selected item extra 
+    /// subdir levels will be ignored
+    /// </summary>
+    /// <param name="dir1">share path</param>
+    /// <param name="dir2">selected item path</param>
+    /// <returns>true: paths are equal, false: paths do not match</returns>
+    public static bool AreEqual(string dir1, string dir2)
+    {
+      if (dir1 == string.Empty | dir2 == string.Empty)
+        return false;
+
+      try
+      {
+        DirectoryInfo parent1 = new DirectoryInfo(dir1);
+        DirectoryInfo parent2 = new DirectoryInfo(dir2);
+
+        // Build a list of parents
+        List<string> folder1Parents = new List<string>();
+        List<string> folder2Parents = new List<string>();
+
+        while (parent1 != null)
+        {
+          folder1Parents.Add(parent1.Name);
+          parent1 = parent1.Parent;
+        }
+
+        while (parent2 != null)
+        {
+          folder2Parents.Add(parent2.Name);
+          parent2 = parent2.Parent;
+        }
+        // Share path can't be deeper than item path
+        if (folder1Parents.Count > folder2Parents.Count)
+        {
+          return false;
+        }
+        // Remove extra subdirs from item path
+        if (folder2Parents.Count > folder1Parents.Count)
+        {
+          int diff = folder2Parents.Count - folder1Parents.Count;
+          for (int i = 0; i < diff; i++)
+          {
+            folder2Parents.RemoveAt(0);
+          }
+        }
+
+        bool equal = true;
+        // Final check
+        for (int i = 0; i < folder1Parents.Count; i++)
+        {
+          if (folder1Parents[i] != folder2Parents[i])
+          {
+            equal = false;
+            break;
+          }
+        }
+        return equal;
+      }
+      catch (Exception)
+      {
+        return false;
+      }
+    }
+
+    public static bool IsFolderDedicatedMovieFolder(string directory)
+    {
+      using (MPSettings xmlreader = new MPSettings())
+      {
+        const int maximumShares = 128;
+
+        for (int index = 0; index < maximumShares; index++)
+        {
+          // Get share dir
+          string sharePath = String.Format("sharepath{0}", index);
+          string shareDir = xmlreader.GetValueAsString("movies", sharePath, "");
+          // Get item dir
+          string itemDir = string.Empty;
+          itemDir = (GetParentDirectory(directory));
+          
+          // Check if share dir correspond to item dir
+          if (AreEqual(shareDir, itemDir))
+          {
+            string eachFolderIsMovie = String.Format("eachfolderismovie{0}", index);
+            bool folderMovie = xmlreader.GetValueAsBool("movies", eachFolderIsMovie, false);
+            return folderMovie;
+          }
+        }
+      }
+      return false;
+    }
+
     public static void GetVideoThumb(object i)
     {
       GUIListItem item = (GUIListItem)i;
@@ -731,8 +856,8 @@ namespace MediaPortal.Util
         return;
       }
 
-      // Do not try to create thumbnails for DVDs
-      if (path.Contains("VIDEO_TS\\VIDEO_TS.IFO"))
+      // Do not try to create thumbnails for DVDs/BDs
+      if (path.Contains("VIDEO_TS\\VIDEO_TS.IFO") || path.Contains("BDMV\\index.bdmv"))
       {
         return;
       }
@@ -1213,6 +1338,114 @@ namespace MediaPortal.Util
       return false;
     }
 
+    // Check if filename is from mounted ISO image
+    public static bool IsISOImage(string fileName)
+    {
+      string extension = Path.GetExtension(fileName).ToLower();
+      if (string.IsNullOrEmpty(fileName) || !File.Exists(fileName) || (extension == ".tsbuffer" || extension == ".ts"))
+        return false;
+
+      string vDrive = DaemonTools.GetVirtualDrive();
+      string bDrive = Path.GetPathRoot(fileName);
+
+      if (vDrive == Util.Utils.RemoveTrailingSlash(bDrive))
+      {
+        return true;
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Check if mounted image is BluRay. Use after mounting image!!!
+    /// Returns changed filename as index.bdmv with full path if ISO is BluRay.
+    /// </summary>
+    /// <param name="bdIsoFilename"></param>
+    /// <param name="fileName"></param>
+    /// <returns>true/false and full index.bdmv path as filename</returns>
+    public static bool IsBDImage(string bdIsoFilename, ref string fileName)
+    {
+      if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(bdIsoFilename)))
+      {
+        string drive = DaemonTools.GetVirtualDrive();
+        string driverLetter = drive.Substring(0, 1);
+        string bdFilename = String.Format(@"{0}:\BDMV\index.bdmv", driverLetter);
+
+        if (File.Exists(bdFilename))
+        {
+          fileName = bdFilename;
+          return true;
+        }
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Check if mounted image is BluRay. Use after mounting image!!!
+    /// </summary>
+    /// <param name="bdIsoFilename"></param>
+    /// <returns></returns>
+    public static bool IsBDImage(string bdIsoFilename)
+    {
+      if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(bdIsoFilename)))
+      {
+        string drive = DaemonTools.GetVirtualDrive();
+        string driverLetter = drive.Substring(0, 1);
+        string fileName = String.Format(@"{0}:\BDMV\index.bdmv", driverLetter);
+
+        if (File.Exists(fileName))
+        {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Check if mounted image is DVD. Use after mounting image!!!
+    /// </summary>
+    /// <param name="dvdIsoFilename"></param>
+    /// <returns>true/false</returns>
+    public static bool IsDVDImage(string dvdIsoFilename)
+    {
+      if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(dvdIsoFilename)))
+      {
+        string drive = DaemonTools.GetVirtualDrive();
+        string driverLetter = drive.Substring(0, 1);
+        string fileName = String.Format(@"{0}:\VIDEO_TS\VIDEO_TS.IFO", driverLetter);
+
+        if (File.Exists(fileName))
+        {
+          {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Check if mounted image is DVD and returns full path video_ts.ifo as filename. Use after mounting image!!!
+    /// </summary>
+    /// <param name="dvdIsoFilename"></param>
+    /// <param name="fileName"></param>
+    /// <returns></returns>
+    public static bool IsDVDImage(string dvdIsoFilename, ref string fileName)
+    {
+      if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(dvdIsoFilename)))
+      {
+        string drive = DaemonTools.GetVirtualDrive();
+        string driverLetter = drive.Substring(0, 1);
+        string dvdFileName = String.Format(@"{0}:\VIDEO_TS\VIDEO_TS.IFO", driverLetter);
+
+        if (File.Exists(dvdFileName))
+        {
+          fileName = dvdFileName;
+          return true;
+        }
+      }
+      return false;
+    }
+
     public static string GetObjectCountLabel(int iTotalItems)
     {
       return iTotalItems.ToString();
@@ -1469,6 +1702,8 @@ namespace MediaPortal.Util
         // Set to hidden to avoid losing focus.
         procInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
         procInfo.CreateNoWindow = true;
+        procInfo.FileName = strProgram;
+        procInfo.UseShellExecute = false;
       }
       return StartProcess(procInfo, bWaitForExit);
     }
@@ -1741,9 +1976,33 @@ namespace MediaPortal.Util
           {
             if (File.Exists(strPath))
             {
-              if (strParams.IndexOf("%filename%") >= 0)
-                strParams = strParams.Replace("%filename%", "\"" + strFile + "\"");
+              // %root% argument handling (TMT can only play BD/DVD/VCD images using root directory)
+              // other video files will go to the player with full path
+              if (strParams.IndexOf("%root%") >= 0)
+              {
+                DirectoryInfo dirInfo = new DirectoryInfo(strFile);
 
+                if (dirInfo.Parent != null)
+                {
+                  string dirLvl = dirInfo.Parent.ToString();
+
+                  // BluRay, DVD, VCD, HDDVD
+                  if (dirLvl.Equals("bdmv", StringComparison.OrdinalIgnoreCase) ||
+                      dirLvl.Equals("video_ts", StringComparison.OrdinalIgnoreCase) ||
+                      dirLvl.Equals("vcd", StringComparison.OrdinalIgnoreCase) ||
+                      dirLvl.Equals("hddvd_ts", StringComparison.OrdinalIgnoreCase))
+                  {
+                    dirInfo = new DirectoryInfo(dirInfo.Parent.FullName);
+                    if (dirInfo.Parent != null)
+                      strFile = dirInfo.Parent.FullName;
+                  }
+                  strParams = strParams.Replace("%root%", "\"" + strFile + "\"");
+                }
+              }
+              // %filename% argument handling
+              else if (strParams.IndexOf("%filename%") >= 0)
+                strParams = strParams.Replace("%filename%", "\"" + strFile + "\"");
+              
               Process movieplayer = new Process();
               string strWorkingDir = Path.GetFullPath(strPath);
               string strFileName = Path.GetFileName(strPath);
@@ -2193,18 +2452,17 @@ namespace MediaPortal.Util
       if (sSoundFile.Length == 0) return 0;
       if (!Util.Utils.FileExistsInCache(sSoundFile))
       {
-        string strSkin = GUIGraphicsContext.Skin;
-        if (Util.Utils.FileExistsInCache(strSkin + "\\sounds\\" + sSoundFile))
+        if (Util.Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile("\\sounds\\" + sSoundFile)))
         {
-          sSoundFile = strSkin + "\\sounds\\" + sSoundFile;
+          sSoundFile = GUIGraphicsContext.GetThemedSkinFile("\\sounds\\" + sSoundFile);
         }
-        else if (Util.Utils.FileExistsInCache(strSkin + "\\" + sSoundFile + ".wav"))
+        else if (Util.Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile("\\" + sSoundFile + ".wav")))
         {
-          sSoundFile = strSkin + "\\" + sSoundFile + ".wav";
+          sSoundFile = GUIGraphicsContext.GetThemedSkinFile("\\" + sSoundFile + ".wav");
         }
         else
         {
-          Log.Info(@"Cannot find sound:{0}\sounds\{1} ", strSkin, sSoundFile);
+          Log.Info(@"Cannot find sound:{0} ", GUIGraphicsContext.GetThemedSkinFile("\\sounds\\" + sSoundFile));
           return 0;
         }
       }
@@ -2518,13 +2776,19 @@ namespace MediaPortal.Util
     private static object _watchersLock = new object();
     private static object _fileExistsCacheLock = new object();
 
-    public static void UpdateLookUpCacheItem(FileLookUpItem fileLookUpItem, string key)
+    private static void UpdateLookUpCacheItem(FileLookUpItem fileLookUpItem, string key)
     {
       lock (_fileLookUpCacheLock)
       {
         //Log.Debug("UpdateLookUpCacheItem : {0}", key);
         _fileLookUpCache[key] = fileLookUpItem; // we never remove anything, so this is safe
       }
+    }
+
+    private static void UpdateFileNameForCache(ref string filename)
+    {
+      if (string.IsNullOrEmpty(filename)) return;
+      filename = filename.ToLower();
     }
 
     private static IEnumerable<string> DirSearch(string sDir)
@@ -2666,10 +2930,7 @@ namespace MediaPortal.Util
         if (watcher != null)
         {
           Log.Debug("fileSystemWatcher_Created file {0}", e.FullPath);
-          FileLookUpItem fileLookUpItem = new FileLookUpItem();
-          fileLookUpItem.Exists = true;
-          fileLookUpItem.Filename = e.FullPath;
-          UpdateLookUpCacheItem(fileLookUpItem, e.FullPath);
+          DoInsertExistingFileIntoCache(e.FullPath);
         }
       }
     }
@@ -3070,7 +3331,7 @@ namespace MediaPortal.Util
     private static void RemoveFoldersFromCache(string dir)
     {
       Dictionary<string, FileLookUpItem> fileLookUpCacheCopy = null;
-      lock (_fileLookUpCache)
+      lock (_fileLookUpCacheLock)
       {
         fileLookUpCacheCopy = new Dictionary<string, FileLookUpItem>(_fileLookUpCache);
       }
@@ -3080,7 +3341,7 @@ namespace MediaPortal.Util
 
       foreach (KeyValuePair<string, FileLookUpItem> fli in filesWithinDir)
       {
-        lock (_fileLookUpCache)
+        lock (_fileLookUpCacheLock)
         {
           _fileLookUpCache.Remove(fli.Key);
         }
@@ -3148,8 +3409,9 @@ namespace MediaPortal.Util
 
     public static void DoInsertExistingFileIntoCache(string file)
     {
-      FileLookUpItem fileLookUpItem = new FileLookUpItem();
+      UpdateFileNameForCache(ref file);
 
+      FileLookUpItem fileLookUpItem = new FileLookUpItem();
       fileLookUpItem.Exists = true;
       fileLookUpItem.Filename = file;
       UpdateLookUpCacheItem(fileLookUpItem, file);
@@ -3157,6 +3419,8 @@ namespace MediaPortal.Util
 
     public static void DoInsertNonExistingFileIntoCache(string file)
     {
+      UpdateFileNameForCache(ref file);
+
       FileLookUpItem fileLookUpItem = new FileLookUpItem();
       fileLookUpItem.Exists = false;
       fileLookUpItem.Filename = file;
@@ -3169,13 +3433,15 @@ namespace MediaPortal.Util
 
       if (!string.IsNullOrEmpty(filename))
       {
+        UpdateFileNameForCache(ref filename);
         FileLookUpItem fileLookUpItem = new FileLookUpItem();
         if (!_fileLookUpCache.TryGetValue(filename, out fileLookUpItem))
         {
           found = File.Exists(filename);
-          fileLookUpItem.Filename = filename;
-          fileLookUpItem.Exists = found;
-          UpdateLookUpCacheItem(fileLookUpItem, filename);
+          if (found)
+            DoInsertExistingFileIntoCache(filename);
+          else
+            DoInsertNonExistingFileIntoCache(filename);
         }
         else
         {
@@ -3342,6 +3608,7 @@ namespace MediaPortal.Util
       {
         try
         {
+          string defaultBackground;
           string currentSkin = GUIGraphicsContext.Skin;
 
           // when launched by configuration exe this might be the case
@@ -3351,9 +3618,13 @@ namespace MediaPortal.Util
             {
               currentSkin = Config.Dir.Config + @"\skin\" + xmlreader.GetValueAsString("skin", "name", "Default");
             }
+            defaultBackground = currentSkin + @"\media\previewbackground.png";
+          }
+          else
+          {
+            defaultBackground = GUIGraphicsContext.GetThemedSkinFile(@"\media\previewbackground.png");
           }
 
-          string defaultBackground = currentSkin + @"\media\previewbackground.png";
 
           using (FileStream fs = new FileStream(defaultBackground, FileMode.Open, FileAccess.Read))
           {
@@ -3843,6 +4114,31 @@ namespace MediaPortal.Util
     {
       Log.Info("Utils: Suspend system");
       WindowsController.ExitWindows(RestartOptions.Suspend, forceShutDown);
+    }
+
+    public static void RestartMePo()
+    {
+      File.Delete(Config.GetFile(Config.Dir.Config, "mediaportal.running"));
+      Log.Info("Restarting - saving settings...");
+      Settings.SaveCache();
+      Process restartScript = new Process();
+      restartScript.EnableRaisingEvents = false;
+      restartScript.StartInfo.WorkingDirectory = Config.GetFolder(Config.Dir.Base);
+      restartScript.StartInfo.FileName = Config.GetFile(Config.Dir.Base, @"restart.vbs");
+      Log.Debug("Restarting - executing script {0}", restartScript.StartInfo.FileName);
+      restartScript.Start();
+      try
+      {
+        // Maybe the scripting host is not available therefore do not wait infinitely.
+        if (!restartScript.HasExited)
+        {
+          restartScript.WaitForExit();
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Restarting - WaitForExit: {0}", ex.Message);
+      }
     }
 
     public static string EncryptPin(string code)

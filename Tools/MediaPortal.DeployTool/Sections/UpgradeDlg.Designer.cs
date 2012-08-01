@@ -109,7 +109,7 @@ namespace MediaPortal.DeployTool.Sections
       this.labelNote.Name = "labelNote";
       this.labelNote.Size = new System.Drawing.Size(269, 26);
       this.labelNote.TabIndex = 21;
-      this.labelNote.Text = "NOTE: You cannot upgrade from an existing SVN build,\r\n             those are mean" +
+      this.labelNote.Text = "NOTE: You cannot upgrade from an existing GIT build,\r\n             those are mean" +
           "t for testing purposes only.";
       // 
       // UpgradeDlg

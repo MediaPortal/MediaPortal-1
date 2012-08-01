@@ -24,7 +24,7 @@
       <label>#time</label>
       <align>right</align>
       <font>font14</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <type>image</type>
@@ -70,7 +70,7 @@
       <height>20</height>
       <innerheight>20</innerheight>
       <lefttexture>-</lefttexture>
-      <midtexture>osd_progress_mid.png</midtexture>
+      <midtexture>osd_progress_mid_green.png</midtexture>
       <righttexture>-</righttexture>
       <label>#TV.View.Percentage</label>
       <visible>yes</visible>
@@ -106,7 +106,7 @@
       <posY>670</posY>
       <label>#TV.View.Stop</label>
       <align>left</align>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <font>font14</font>
       <shadowAngle>0</shadowAngle>
       <shadowDistance>0</shadowDistance>
@@ -122,7 +122,7 @@
       <width>500</width>
       <align>left</align>
       <font>font14</font>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <shadowAngle>0</shadowAngle>
       <shadowDistance>0</shadowDistance>
       <shadowColor></shadowColor>

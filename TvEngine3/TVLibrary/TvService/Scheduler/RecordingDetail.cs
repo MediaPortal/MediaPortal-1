@@ -42,7 +42,7 @@ namespace TvService
     private DateTime _dateTimeRecordingStarted;
     private Recording _recording;
     private readonly bool _isSerie;
-    private User _user;
+    private readonly IUser _user;
 
     #endregion
 
@@ -60,11 +60,12 @@ namespace TvService
     /// 
     public RecordingDetail(Schedule schedule, Channel channel, DateTime endTime, bool isSerie)
     {
-      _user = new User();
-      User.Name = string.Format("scheduler{0}", schedule.IdSchedule);
+      _user = UserFactory.CreateSchedulerUser(schedule.IdSchedule);
+      /*User.Name = string.Format("scheduler{0}", schedule.IdSchedule);
       User.CardId = -1;
       User.SubChannel = -1;
       User.IsAdmin = true;
+      User.Priority = UserFactory.SCHEDULER_PRIORITY;*/
 
       _schedule = schedule;
       _channel = channel;

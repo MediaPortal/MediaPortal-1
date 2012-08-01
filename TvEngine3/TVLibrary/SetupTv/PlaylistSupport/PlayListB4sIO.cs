@@ -67,7 +67,7 @@ namespace MediaPortal.Playlists
           string infoLine = ReadInfoLine(node, file);
           int duration = ReadLength(node);
 
-          Utils.GetQualifiedFilename(basePath, ref file);
+          SetupTv.Utils.GetQualifiedFilename(basePath, ref file);
           PlayListItem newItem = new PlayListItem(infoLine, file, duration);
           playlist.Add(newItem);
         }

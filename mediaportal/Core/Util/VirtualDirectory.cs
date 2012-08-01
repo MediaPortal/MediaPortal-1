@@ -115,6 +115,7 @@ namespace MediaPortal.Util
     public Share DefaultShare
     {
       get { return defaultshare; }
+      set { defaultshare = value; }
     }
 
     public string CurrentShare
@@ -1412,8 +1413,7 @@ namespace MediaPortal.Util
           item.IsRemote = true;
         }
         Utils.SetDefaultIcons(item);
-
-        if (share.Pincode < 0 && !Utils.IsNetwork(share.Path))
+        if (share.Pincode < 0)// && !Utils.IsNetwork(share.Path))
         {
           string coverArt = Utils.GetCoverArtName(item.Path, "folder");
           string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
@@ -1427,10 +1427,12 @@ namespace MediaPortal.Util
           {
             item.IconImageBig = largeCoverArt;
           }
+
             // Fix for Mantis issue 0001465: folder.jpg in main shares view only displayed when list view is used
           else if (coverArtExists)
           {
             item.IconImageBig = coverArt;
+            item.ThumbnailImage = coverArt;
           }
         }
         items.Add(item);

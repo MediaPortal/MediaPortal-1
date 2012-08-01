@@ -83,15 +83,27 @@
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="TvLibrary.Utils">
+      <HintPath>..\TvLibrary.Utils\bin\Release\TvLibrary.Utils.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="CardManagement\CardAllocation\AdvancedCardAllocation.cs" />
+    <Compile Include="CardManagement\CardAllocation\AdvancedCardAllocationTicket.cs" />
     <Compile Include="CardManagement\CardAllocation\CardAllocationBase.cs" />
+    <Compile Include="CardManagement\CardAllocation\CardAllocationCache.cs" />
     <Compile Include="CardManagement\CardAllocation\ChannelStates.cs" />
+    <Compile Include="CardManagement\CardAllocation\AdvancedCardAllocationStatic.cs" />
     <Compile Include="CardManagement\CardHandler\AudioStreams.cs" />
+    <Compile Include="CardManagement\CardHandler\TimeShifterBase.cs" />
+    <Compile Include="CardManagement\CardReservation\Ticket\CardReservationTicketBase.cs" />
+    <Compile Include="CardManagement\CardReservation\Ticket\CardStopReservationTicket.cs" />
+    <Compile Include="CardManagement\CardReservation\Implementations\CardReservationBase.cs" />
+    <Compile Include="CardManagement\CardReservation\CardReservationHelper.cs" />
+    <Compile Include="CardManagement\CardReservation\Ticket\CardTuneReservationTicket.cs" />
     <Compile Include="CardManagement\CardHandler\CardTuner.cs" />
     <Compile Include="CardManagement\CardHandler\ChannelScanning.cs" />
     <Compile Include="CardManagement\CardHandler\CleanTimeshiftFilesThread.cs" />
@@ -101,6 +113,8 @@
     <Compile Include="CardManagement\CardHandler\TeletextManagement.cs" />
     <Compile Include="CardManagement\CardHandler\TimeShifter.cs" />
     <Compile Include="CardManagement\CardHandler\UserManagement.cs" />
+    <Compile Include="CardManagement\CardReservation\Implementations\CardReservationTimeshifting.cs" />
+    <Compile Include="CardManagement\CardReservation\Implementations\CardReservationRec.cs" />
     <Compile Include="ChannelLinkage\ChannelLinkageGrabber.cs" />
     <Compile Include="DiskManagement\RecordingFileHandler.cs" />
     <Compile Include="DiskManagement\DiskManagement.cs" />
@@ -111,6 +125,9 @@
     <Compile Include="Epg\Transponder.cs" />
     <Compile Include="CardManagement\CardAllocation\ICardAllocation.cs" />
     <Compile Include="CardManagement\CardHandler\ITvCardHandler.cs" />
+    <Compile Include="Interfaces\ICardReservation.cs" />
+    <Compile Include="Interfaces\ICardStopReservationTicket.cs" />
+    <Compile Include="Interfaces\ICardTuneReservationTicket.cs" />
     <Compile Include="Interfaces\ITvCardContext.cs" />
     <Compile Include="PluginLoader.cs" />
     <Compile Include="Scheduler\CardDetail.cs" />
@@ -134,6 +151,7 @@
     <Compile Include="TsCopier.cs" />
     <Compile Include="TvCardContext.cs" />
     <Compile Include="TVController.cs" />
+    <Compile Include="UserFactory.cs" />
     <Compile Include="Util.cs" />
   </ItemGroup>
   <ItemGroup>

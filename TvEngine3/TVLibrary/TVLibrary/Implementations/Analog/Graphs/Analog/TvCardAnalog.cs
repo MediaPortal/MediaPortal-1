@@ -387,7 +387,7 @@ namespace TvLibrary.Implementations.Analog
     ///<summary>
     ///</summary>
     ///<returns></returns>
-    public override bool LockedInOnSignal()
+    public override void LockInOnSignal()
     {
       bool isLocked = false;
       DateTime timeStart = DateTime.Now;
@@ -400,20 +400,20 @@ namespace TvLibrary.Implementations.Analog
         if (!isLocked)
         {
           ts = DateTime.Now - timeStart;
-          Log.Log.WriteFile("analog:  LockedInOnSignal waiting 20ms");
+          Log.Log.WriteFile("analog:  LockInOnSignal waiting 20ms");
           System.Threading.Thread.Sleep(20);
         }
       }
 
       if (!isLocked)
       {
-        Log.Log.WriteFile("analog:  LockedInOnSignal could not lock onto channel - no signal or bad signal");
+        Log.Log.WriteFile("analog:  LockInOnSignal could not lock onto channel - no signal or bad signal");
+        throw new TvExceptionNoSignal("Unable to tune to channel - no signal");
       }
       else
       {
-        Log.Log.WriteFile("analog:  LockedInOnSignal ok");
-      }
-      return isLocked;
+        Log.Log.WriteFile("analog:  LockInOnSignal ok");
+      }      
     }
 
     /// <summary>
@@ -434,10 +434,14 @@ namespace TvLibrary.Implementations.Analog
           return;
         }
       }
-      _tuner.UpdateSignalQuality();
-      _tunerLocked = _tuner.TunerLocked;
-      _signalLevel = _tuner.SignalLevel;
-      _signalQuality = _tuner.SignalQuality;
+
+      if (_tuner != null)
+      {
+        _tuner.UpdateSignalQuality();
+        _tunerLocked = _tuner.TunerLocked;
+        _signalLevel = _tuner.SignalLevel;
+        _signalQuality = _tuner.SignalQuality;
+      }
     }
 
     /// <summary>
@@ -536,6 +540,12 @@ namespace TvLibrary.Implementations.Analog
       _graphState = GraphState.Idle;
       Log.Log.WriteFile("analog: dispose completed");
     }
+
+    public void CancelTune(int subChannel)
+    {
+    }
+
+    public event OnNewSubChannelDelegate OnNewSubChannelEvent;
 
     #endregion
 
@@ -722,10 +732,7 @@ namespace TvLibrary.Implementations.Analog
       {
         if (graphRunning)
         {
-          if (!LockedInOnSignal())
-          {
-            throw new TvExceptionNoSignal("Unable to tune to channel - no signal");
-          }
+          LockInOnSignal();          
         }
         _mapSubChannels[subChannel].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
         _mapSubChannels[subChannel].AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
@@ -757,10 +764,7 @@ namespace TvLibrary.Implementations.Analog
       {
         return;
       }
-      if (!LockedInOnSignal())
-      {
-        throw new TvExceptionNoSignal("Unable to tune to channel - no signal");
-      }
+      LockInOnSignal();
       _mapSubChannels[subChannel].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
       _mapSubChannels[subChannel].AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
       _mapSubChannels[subChannel].OnGraphStarted();

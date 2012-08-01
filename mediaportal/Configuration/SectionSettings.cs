@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.Configuration
 {
@@ -49,6 +50,7 @@ namespace MediaPortal.Configuration
 
     public virtual void LoadWizardSettings(XmlNode node) {}
 
+    public virtual void CheckBoxValid(MPComboBox ComboBox) { }
 
     /// <summary>
     /// Returns the current setting for the given setting name

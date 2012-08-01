@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>3009</id>
   <defaultcontrol>35</defaultcontrol>
@@ -27,14 +27,14 @@
       <description>exit button</description>
       <type>button</type>
       <id>34</id>
-      <posX>577</posX>
+      <posX>588</posX>
       <posY>77</posY>
-      <width>54</width>
+      <width>43</width>
       <height>54</height>
       <textureFocus>dialogue_shutdown_focus.png</textureFocus>
       <textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
       <animation effect="zoom" start="100,100" end="100,100" time="100">focus</animation>
-      <animation effect="zoom" start="100,100" end="100,100" time="150">unfocus</animation>
+      <animation effect="zoom" start="100,100" end="100,100" time="70">unfocus</animation>
       <label>-</label>
       <onleft>36</onleft>
       <onright>34</onright>

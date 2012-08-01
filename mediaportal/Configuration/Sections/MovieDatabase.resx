@@ -120,42 +120,4 @@
   <metadata name="toolTipMPvdb.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="useFoldernameCheckBox.ToolTip" xml:space="preserve">
-    <value>Use folder name as search string for video file.
-Every video file must be in it's own folder,
-otherwise scan results can be unexpected.
-Video with more files (Name CD1, Name CD2..)
-inside folder is allowed.</value>
-  </data>
-  <data name="buttonLookupMovie.ToolTip" xml:space="preserve">
-    <value>If "Lookup by TT" option is used, movie data will be refreshed with cover ,
-fanart (random) and actor data (if "Download actor details" option is checked in Scan section).
-Otherwise, title name and standard lookup is used.</value>
-  </data>
-  <data name="tbFASearchString.ToolTip" xml:space="preserve">
-    <value>Fanart search string for movies without IMDBid number.
-If you can, use English title for better result but also other
-langugages can be used.
-Search string will be ignored if IMDBid number exists for
-selected movie.</value>
-  </data>
-  <data name="tbCoverSearchStr.ToolTip" xml:space="preserve">
-    <value>Fanart search string for movies without IMDBid number.
-If you can, use English title for better result but also other
-langugages can be used.
-Search string will be ignored if IMDBid number exists for
-selected movie.</value>
-  </data>
-  <metadata name="Year.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="Title.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="Role.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="IMDBID.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
 </root>
