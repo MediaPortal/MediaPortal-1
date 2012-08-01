@@ -109,6 +109,11 @@ namespace SetupTv.Dialogs
         MessageBox.Show(this, "Please enter a valid frequency!", "Incorrect input");
         return false;
       }
+      if (freq <= 0)
+      {
+        MessageBox.Show(this, "Please enter a valid frequency!", "Incorrect input");
+        return false;
+      }
       if (comboBoxBandWidth.SelectedIndex < 0)
       {
         MessageBox.Show(this, "Please select a valid bandwidth!", "Incorrect input");

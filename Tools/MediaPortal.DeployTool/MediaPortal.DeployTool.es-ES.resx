@@ -480,7 +480,7 @@ Transfiere esta carpeta a tu HTPC. Comienza la instalación ejecutando "MediaPor
   <data name="Upgrade_labelSectionHeader" xml:space="preserve">
     <value>Detectado {0} MediaPortal</value>
   </data>
-  <data name="Upgrade_labelSectionHeader_SVN" xml:space="preserve">
+  <data name="Upgrade_labelSectionHeader_GIT" xml:space="preserve">
     <value>Detectado  MediaPortal {0} (build {1})</value>
   </data>
   <data name="Upgrade_no" xml:space="preserve">
@@ -490,7 +490,7 @@ Transfiere esta carpeta a tu HTPC. Comienza la instalación ejecutando "MediaPor
     <value>Actualizar instalación actual a {0}</value>
   </data>
   <data name="Upgrade_note" xml:space="preserve">
-    <value>NOTA: No puedes actualizar desde SVN build,
+    <value>NOTA: No puedes actualizar desde GIT build,
           éstas están diseñadas sólo para su testeo.</value>
   </data>
   <data name="Install_actionUpgradeInstall" xml:space="preserve">

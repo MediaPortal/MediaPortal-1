@@ -463,7 +463,15 @@ namespace MediaPortal.Configuration.Sections
       //first time mp config is run, no refreshrate settings available, create the default ones.
       string[] p = new String[4];
       p[0] = "CINEMA";
-      p[1] = "23.976;24"; // fps
+      p[1] = "23.976"; // fps
+      p[2] = "23"; //hz
+      p[3] = ""; //action
+      dataGridViewRR.Rows.Add((object[])p);
+      defaultHz.Items.Add(p[0]);
+
+      p = new String[4];
+      p[0] = "CINEMA24";
+      p[1] = "24"; // fps
       p[2] = "24"; //hz
       p[3] = ""; //action
       dataGridViewRR.Rows.Add((object[])p);
@@ -478,7 +486,7 @@ namespace MediaPortal.Configuration.Sections
       defaultHz.Items.Add(p[0]);
 
       p = new String[4];
-      p[0] = "HDTV";
+      p[0] = "PALHD";
       p[1] = "50"; // fps
       p[2] = "50"; //hz
       p[3] = ""; //action
@@ -487,8 +495,16 @@ namespace MediaPortal.Configuration.Sections
 
       p = new String[4];
       p[0] = "NTSC";
-      p[1] = "29.97;30"; // fps
-      p[2] = "60"; //hz
+      p[1] = "29.97"; // fps
+      p[2] = "59"; //hz
+      p[3] = ""; //action
+      dataGridViewRR.Rows.Add((object[])p);
+      defaultHz.Items.Add(p[0]);
+
+      p = new String[4];
+      p[0] = "NTSCHD";
+      p[1] = "59.94"; // fps
+      p[2] = "59"; //hz
       p[3] = ""; //action
       dataGridViewRR.Rows.Add((object[])p);
       defaultHz.Items.Add(p[0]);

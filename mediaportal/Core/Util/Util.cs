@@ -4116,6 +4116,31 @@ namespace MediaPortal.Util
       WindowsController.ExitWindows(RestartOptions.Suspend, forceShutDown);
     }
 
+    public static void RestartMePo()
+    {
+      File.Delete(Config.GetFile(Config.Dir.Config, "mediaportal.running"));
+      Log.Info("Restarting - saving settings...");
+      Settings.SaveCache();
+      Process restartScript = new Process();
+      restartScript.EnableRaisingEvents = false;
+      restartScript.StartInfo.WorkingDirectory = Config.GetFolder(Config.Dir.Base);
+      restartScript.StartInfo.FileName = Config.GetFile(Config.Dir.Base, @"restart.vbs");
+      Log.Debug("Restarting - executing script {0}", restartScript.StartInfo.FileName);
+      restartScript.Start();
+      try
+      {
+        // Maybe the scripting host is not available therefore do not wait infinitely.
+        if (!restartScript.HasExited)
+        {
+          restartScript.WaitForExit();
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Restarting - WaitForExit: {0}", ex.Message);
+      }
+    }
+
     public static string EncryptPin(string code)
     {
       string result = string.Empty;
