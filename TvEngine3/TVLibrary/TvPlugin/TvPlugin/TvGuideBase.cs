@@ -50,11 +50,11 @@ namespace TvPlugin
     #region constants
 
     private int _loopDelay = 100; // wait at the last item this amount of msec until loop to the first item
-    
+
     private const string _skinPropertyPrefix = "#TV";
 
     #endregion
-    
+
     protected override string SkinPropertyPrefix
     {
       get { return _skinPropertyPrefix; }
@@ -97,7 +97,7 @@ namespace TvPlugin
     private bool _useHdProgramIcon = false;
     private string _hdtvProgramText = String.Empty;
     private bool _guideContinuousScroll = false;
-    
+
     // current minimum/maximum indexes
     //private int MaxXIndex; // means rows here (channels)
     private int MinYIndex; // means cols here (programs/time)
@@ -644,13 +644,13 @@ namespace TvPlugin
       }
       else // Cycle handling
         if ((newIndex == countGroups - 1) && Direction > 0)
-      {
-        newIndex = 0;
-      }
-      else if (newIndex == 0 && Direction < 0)
-      {
-        newIndex = countGroups - 1;
-      }
+        {
+          newIndex = 0;
+        }
+        else if (newIndex == 0 && Direction < 0)
+        {
+          newIndex = countGroups - 1;
+        }
 
       if (oldIndex != newIndex)
       {
@@ -680,8 +680,8 @@ namespace TvPlugin
         GUIGraphicsContext.Overlay = _isOverlayAllowed;
       }
     }
-    
-    
+
+
     public override bool OnMessage(GUIMessage message)
     {
       try
@@ -744,6 +744,7 @@ namespace TvPlugin
           case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
             {
               base.OnMessage(message);
+              SaveSettings();
               _recordingList.Clear();
 
               _controls = new Dictionary<int, GUIButton3PartControl>();
@@ -797,7 +798,7 @@ namespace TvPlugin
               GUIGraphicsContext.TopBarHidden = _autoHideTopbar;
               GUIGraphicsContext.DisableTopBar = _disableTopBar;
               UpdateChannelCount();
-              
+
               // Loading tvguide settings will overwrite the guide cursor position.  If we are coming back from the program info window (where
               // recording selections are made) we would like to reposition the cursor to the program from which we invoked the
               // program info window; the user comes back to where they started.  To do this we need to save and restore the cursor
@@ -1958,7 +1959,7 @@ namespace TvPlugin
       List<Program> programs = null;
       if (mapPrograms.ContainsKey(channel.IdChannel))
         programs = mapPrograms[channel.IdChannel];
-      
+
       bool noEPG = (programs == null || programs.Count == 0);
       if (noEPG)
       {
@@ -1992,7 +1993,7 @@ namespace TvPlugin
       {
         height = GetControl((int)Controls.IMG_CHAN1).Height;
       }
-      
+
 
       foreach (Program program in programs)
       {
@@ -2002,7 +2003,7 @@ namespace TvPlugin
         string strTitle = TVUtil.GetDisplayTitle(program);
         bool bStartsBefore = false;
         bool bEndsAfter = false;
-        
+
         if (Utils.datetolong(program.StartTime) < iStart)
           bStartsBefore = true;
 
@@ -2245,7 +2246,7 @@ namespace TvPlugin
             if (buttonRecordTemplate != null)
             {
               buttonRecordTemplate.IsVisible = false;
-              
+
               TexutureFocusLeftName = buttonRecordTemplate.TexutureFocusLeftName;
               TexutureFocusMidName = buttonRecordTemplate.TexutureFocusMidName;
               TexutureFocusRightName = buttonRecordTemplate.TexutureFocusRightName;
@@ -2705,7 +2706,7 @@ namespace TvPlugin
           else
           {
             // Are we at the bottom of the lst page of channels?
-            if (ChannelOffset > 0 && ChannelOffset >= (_channelList.Count-1) - _cursorX)
+            if (ChannelOffset > 0 && ChannelOffset >= (_channelList.Count - 1) - _cursorX)
             {
               // We're at the bottom of the last page of channels.
               // Reposition the guide to the top only after the key/button has been released and pressed again.
@@ -3157,7 +3158,7 @@ namespace TvPlugin
         ;
         if (null != img)
         {
-          _currentChannel = (Channel) img.Data;
+          _currentChannel = (Channel)img.Data;
         }
       }
     }
@@ -3382,7 +3383,7 @@ namespace TvPlugin
       {
         dlg.Reset();
         dlg.SetHeading(GUILocalizeStrings.Get(924)); //Menu
-        
+
         if (_currentChannel != null)
         {
           dlg.AddLocalizedString(938); // View this channel
@@ -3392,10 +3393,10 @@ namespace TvPlugin
         {
           dlg.AddLocalizedString(1041); //Upcoming episodes
         }
-        
+
         if (_currentProgram != null && _currentProgram.StartTime > DateTime.Now)
         {
-          if(_currentProgram.Notify)
+          if (_currentProgram.Notify)
           {
             dlg.AddLocalizedString(1212); // cancel reminder
           }
@@ -3540,7 +3541,7 @@ namespace TvPlugin
     {
       IMDBMovie movieDetails = new IMDBMovie();
       movieDetails.SearchString = _currentProgram.Title;
-      if (IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, true, false))
+      if (IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, false, false))
       {
         TvBusinessLayer dbLayer = new TvBusinessLayer();
 
@@ -3550,7 +3551,7 @@ namespace TvPlugin
         {
           Program prog = (Program)progs[0];
           prog.Description = movieDetails.Plot;
-          prog.Genre = movieDetails.Genre;
+          // prog.Genre = movieDetails.Genre;
           prog.StarRating = (int)movieDetails.Rating;
           prog.Persist();
         }
@@ -4073,8 +4074,8 @@ namespace TvPlugin
 
         // Last page adjust (To get a full page channel listing)
         if (iChannelNr > _channelList.Count - Math.Min(_channelList.Count, _channelCount) + 1)
-          // minimum of available channel/max visible channels
         {
+          // minimum of available channel/max visible channels
           ChannelOffset = _channelList.Count - _channelCount;
           iChannelNr = iChannelNr - ChannelOffset;
         }
@@ -4099,7 +4100,7 @@ namespace TvPlugin
       }
     }
 
-    
+
 
     protected override void GetChannels(bool refresh)
     {
@@ -4792,15 +4793,44 @@ namespace TvPlugin
 
     public bool OnRequestMovieTitle(IMDBFetcher fetcher, out string movieName)
     {
-      // won't occure
-      movieName = "";
-      return true;
+      movieName = fetcher.MovieName;
+      if (GetKeyboard(ref movieName))
+      {
+        if (movieName == string.Empty)
+        {
+          return false;
+        }
+        return true;
+      }
+      movieName = string.Empty;
+      return false;
     }
 
     public bool OnSelectMovie(IMDBFetcher fetcher, out int selectedMovie)
     {
-      // won't occure
-      selectedMovie = 0;
+      GUIDialogSelect pDlgSelect = (GUIDialogSelect)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_SELECT);
+      // more then 1 movie found
+      // ask user to select 1
+      pDlgSelect.Reset();
+      pDlgSelect.SetHeading(196); //select movie
+      for (int i = 0; i < fetcher.Count; ++i)
+      {
+        pDlgSelect.Add(fetcher[i].Title);
+      }
+      pDlgSelect.EnableButton(true);
+      pDlgSelect.SetButtonLabel(413); // manual
+      pDlgSelect.DoModal(GUIWindowManager.ActiveWindow);
+
+      // and wait till user selects one
+      selectedMovie = pDlgSelect.SelectedLabel;
+      if (pDlgSelect.IsButtonPressed)
+      {
+        return true;
+      }
+      if (selectedMovie == -1)
+      {
+        return false;
+      }
       return true;
     }
 

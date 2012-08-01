@@ -134,12 +134,22 @@ namespace SetupTv.Dialogs
         MessageBox.Show(this, "Please enter a valid frequency!", "Incorrect input");
         return false;
       }
+      if (freq <= 0)
+      {
+        MessageBox.Show(this, "Please enter a valid frequency!", "Incorrect input");
+        return false;
+      }
       if (textBoxSymbolRate.Text.Length == 0)
       {
         MessageBox.Show(this, "Please enter a symbol rate!", "Incorrect input");
         return false;
       }
       if (!Int32.TryParse(textBoxSymbolRate.Text, out symbolrate))
+      {
+        MessageBox.Show(this, "Please enter a valid symbol rate!", "Incorrect input");
+        return false;
+      }
+      if (symbolrate <= 0)
       {
         MessageBox.Show(this, "Please enter a valid symbol rate!", "Incorrect input");
         return false;
