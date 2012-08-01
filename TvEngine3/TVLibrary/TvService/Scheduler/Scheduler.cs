@@ -544,9 +544,22 @@ namespace TvService
                 }
                 if (pastRecordEpisode.Equals(ToRecordEpisode, StringComparison.CurrentCultureIgnoreCase))
                 {
+                  var startExisting = pastRecordings[i].StartTime;
+                  var endExisting = pastRecordings[i].EndTime;
+                  var startNew = newRecording.Program.StartTime.AddMinutes(-newRecording.Schedule.PreRecordInterval);
+                  var endNew = newRecording.Program.EndTime.AddMinutes(newRecording.Schedule.PostRecordInterval);
+
+                  var isOverlap = startNew < endExisting && endNew > startExisting;
+
                   // Check if new program overlaps with existing recording
                   // if so assume previous failure and recording needs to be resumed
-                  if (!ProgramOverlaps(pastRecordings[i], newRecording))
+                  if (isOverlap)
+                  {
+                    Log.Info(
+                      "Scheduler: Schedule {0} ({1}) had already been started - expect previous failure and try to resume...",
+                      ToRecordTitle, ToRecordEpisode);
+                  }
+                  else
                   {
                     // Check whether the file itself does really exist
                     // There could be faulty drivers 
@@ -597,12 +610,6 @@ namespace TvService
                         ToRecordTitle, ToRecordEpisode, ex.Message);
                     }
                   }
-                  else
-                  {
-                    Log.Info(
-                      "Scheduler: Schedule {0} ({1}) had already been started - expect previous failure and try to resume...",
-                      ToRecordTitle, ToRecordEpisode);
-                  }
                 }
               }
             }
@@ -614,18 +621,6 @@ namespace TvService
         Log.Error("Scheduler: Error checking schedule {0} for repeatings {1}", ToRecordTitle, ex1.ToString());
       }
       return NewRecordingNeeded;
-    }
-
-    private static bool ProgramOverlaps(Recording rec, RecordingDetail newRec)
-    {
-      var startExisting = rec.StartTime;
-      var endExisting = rec.EndTime;
-      var startNew = newRec.Program.StartTime.AddMinutes(-newRec.Schedule.PreRecordInterval);
-      var endNew = newRec.Program.EndTime.AddMinutes(newRec.Schedule.PostRecordInterval);
-      var isOverlap = (startNew >= startExisting && startNew < endExisting) ||
-                      (startNew <= startExisting && endNew >= endExisting) ||
-                      (endNew > startExisting && endNew <= endExisting);
-      return isOverlap;
     }
 
     private void CancelSchedule(RecordingDetail newRecording, int scheduleId)
