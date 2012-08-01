@@ -476,7 +476,7 @@ Flytta mappen till din HTPC. Starta installationen genom att köra "MediaPortal.
   <data name="Upgrade_labelSectionHeader" xml:space="preserve">
     <value>MediaPortal {0} upptäckt.</value>
   </data>
-  <data name="Upgrade_labelSectionHeader_SVN" xml:space="preserve">
+  <data name="Upgrade_labelSectionHeader_GIT" xml:space="preserve">
     <value>MediaPortal {0} (version {1}) upptäckt.</value>
   </data>
   <data name="Upgrade_no" xml:space="preserve">
@@ -486,7 +486,7 @@ Flytta mappen till din HTPC. Starta installationen genom att köra "MediaPortal.
     <value>Uppgradera aktuell installation till {0}</value>
   </data>
   <data name="Upgrade_note" xml:space="preserve">
-    <value>OBS: Du kan inte uppgradera en SVN-version, 
+    <value>OBS: Du kan inte uppgradera en GIT-version, 
        dessa är endast till för testning.</value>
   </data>
   <data name="Install_actionUpgradeInstall" xml:space="preserve">
