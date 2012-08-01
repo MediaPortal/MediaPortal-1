@@ -91,7 +91,7 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len,int PID)
 		unsigned long lNetworkId=network_id;
 		unsigned long lTransport_id=transport_id;
 		unsigned long lServiceId=service_id;
-		unsigned long key=(unsigned long)(lNetworkId<<32UL);
+		unsigned __int64 key=((unsigned __int64)lNetworkId << 32);
 		key+=(lTransport_id<<16);
 		key+=lServiceId;
 		imapEPG it=m_mapEPG.find(key);
@@ -110,11 +110,11 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len,int PID)
 		EPGChannel& channel=it->second; 
 
 		//did we already receive this section ?
-		key=crc32 ((char*)buf,len);
-		EPGChannel::imapSectionsReceived itSec=channel.mapSectionsReceived.find(key);
+		int sectionKey=crc32 ((char*)buf,len);
+		EPGChannel::imapSectionsReceived itSec=channel.mapSectionsReceived.find(sectionKey);
 		if (itSec!=channel.mapSectionsReceived.end())
 			return S_FINISHED; //yes
-		channel.mapSectionsReceived[key]=true;
+		channel.mapSectionsReceived[sectionKey]=true;
 		
 
 		m_epgTimeout=time(NULL);
@@ -464,7 +464,7 @@ void CEpgDecoder::DecodePremiereContentTransmissionDescriptor(byte* data, EPGEve
 	unsigned long lNetworkId=nid;
 	unsigned long lTransport_id=tid;
 	unsigned long lServiceId=sid;
-	unsigned long key=(unsigned long)(lNetworkId<<32UL);
+	unsigned __int64 key=((unsigned __int64)lNetworkId << 32);
 	key+=(lTransport_id<<16);
 	key+=lServiceId;
 	imapEPG it=m_mapEPG.find(key);
