@@ -566,9 +566,9 @@ namespace MpeInstaller
           MessageBox.Show("Wrong file format !");
         return;
       }
-      PackageClass installedPak = MpeCore.MpeInstaller.InstalledExtensions.Get(pak.GeneralInfo.Id);
       if (pak.CheckDependency(false))
       {
+        PackageClass installedPak = MpeCore.MpeInstaller.InstalledExtensions.Get(pak.GeneralInfo.Id);
         if (installedPak != null)
         {
           if (pak.GeneralInfo.Params[ParamNamesConst.FORCE_TO_UNINSTALL_ON_UPDATE].GetValueAsBool())
