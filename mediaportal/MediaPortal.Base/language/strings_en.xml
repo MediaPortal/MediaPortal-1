@@ -1082,6 +1082,7 @@
     <String id="1304">Create nfo file</String>
     <String id="1305">Nfo crated!</String>
     <String id="1306">Create nfo files for all movies</String>
+		<String id="1307">Update internal Grabber scripts</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
     <String id="1442">Scroll speed (horizontal)</String>

@@ -438,6 +438,7 @@ namespace MediaPortal.GUI.Video
         }
         
         dlg.AddLocalizedString(1262); // Update grabber scripts
+        dlg.AddLocalizedString(1307); // Update internal grabber scripts
         dlg.AddLocalizedString(1263); // Set default grabber
         dlg.DoModal(GetID);
 
@@ -463,7 +464,10 @@ namespace MediaPortal.GUI.Video
             OnSearchActor();
             break;
           case 1262: // Update grabber scripts
-            GUIVideoFiles.UpdateGrabberScripts();
+            GUIVideoFiles.UpdateGrabberScripts(false);
+            break;
+          case 1307: // Update internal grabber scripts
+            GUIVideoFiles.UpdateGrabberScripts(true);
             break;
         }
         return;
@@ -550,6 +554,7 @@ namespace MediaPortal.GUI.Video
       }
       
       dlg.AddLocalizedString(1262); // Update grabber scripts
+      dlg.AddLocalizedString(1307); // Update internal grabber scripts
       dlg.AddLocalizedString(1263); // Set default grabber
 
       dlg.DoModal(GetID);
@@ -591,7 +596,11 @@ namespace MediaPortal.GUI.Video
           break;
         
         case 1262: // Update grabber scripts
-          GUIVideoFiles.UpdateGrabberScripts();
+          GUIVideoFiles.UpdateGrabberScripts(false);
+          break;
+
+        case 1307: // Update internal grabber scripts
+          GUIVideoFiles.UpdateGrabberScripts(true);
           break;
         
         case 1263: // Set default grabber
@@ -1228,8 +1237,9 @@ namespace MediaPortal.GUI.Video
         }
       }
 
-      dlg.AddLocalizedString(1263); // Set default grabber
       dlg.AddLocalizedString(1262); // Update grabber scripts
+      dlg.AddLocalizedString(1307); // Update internal grabber scripts
+      dlg.AddLocalizedString(1263); // Set default grabber
       // Show menu
       dlg.DoModal(GetID);
 
@@ -1258,7 +1268,10 @@ namespace MediaPortal.GUI.Video
           GUIVideoFiles.SetDefaultGrabber();
           break;
         case 1262: // Update grabber scripts
-          GUIVideoFiles.UpdateGrabberScripts();
+          GUIVideoFiles.UpdateGrabberScripts(false);
+          break;
+        case 1307: // Update internal grabber scripts
+          GUIVideoFiles.UpdateGrabberScripts(true);
           break;
         case 1272: // Add user group
           OnAddUserGroup();

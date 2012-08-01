@@ -41,6 +41,7 @@ namespace MediaPortal.Video.Database
   public class IMDB : IEnumerable
   {
     public static string ScriptDirectory = Config.GetSubFolder(Config.Dir.Config, "scripts\\MovieInfo");
+    public static string InternalScriptDirectory = Config.GetSubFolder(Config.Dir.Config, "scripts");
     public const string DEFAULT_DATABASE = "IMDB_MP13x";
     public const int DEFAULT_SEARCH_LIMIT = 25;
 
@@ -230,6 +231,53 @@ namespace MediaPortal.Video.Database
       }
     }
 
+    public class InternalMovieInfoScraper
+    {
+      private IIMDBInternalScriptGrabber _internalGrabber;
+      private bool _internalGrabberLoaded;
+      
+      public IIMDBInternalScriptGrabber InternalGrabber
+      {
+        get
+        {
+          if (!_internalGrabberLoaded)
+          {
+            if (!LoadScript())
+              InternalGrabber = null;
+            _internalGrabberLoaded = true; // only try to load it once
+          }
+          return _internalGrabber;
+        }
+        set { _internalGrabber = value; }
+      }
+
+      public bool LoadScript()
+      {
+        string scriptFileName = InternalScriptDirectory + @"\InternalActorMoviesGrabber.csscript";
+
+        // Script support script.csscript
+        if (!File.Exists(scriptFileName))
+        {
+          Log.Error("InternalActorMoviesGrabber LoadScript() - grabber script not found: {0}", scriptFileName);
+          return false;
+        }
+
+        try
+        {
+          Environment.CurrentDirectory = Config.GetFolder(Config.Dir.Base);
+          AsmHelper script = new AsmHelper(CSScript.Load(scriptFileName, null, false));
+          InternalGrabber = (IIMDBInternalScriptGrabber)script.CreateObject("InternalGrabber");
+        }
+        catch (Exception ex)
+        {
+          Log.Error("InternalActorMoviesGrabber LoadScript() - file: {0}, message : {1}", scriptFileName, ex.Message);
+          return false;
+        }
+
+        return true;
+      }
+    }
+    
     #endregion
 
     #region internal vars
@@ -1292,5 +1340,11 @@ namespace MediaPortal.Video.Database
     bool GetDetails(IMDB.IMDBUrl url, ref IMDBMovie movieDetails);
     string GetName();
     string GetLanguage();
+  }
+
+  public interface IIMDBInternalScriptGrabber
+  {
+    void GetPlotImdb(ref IMDBMovie movie);
+    string GetThumbImdb(string imdbId);
   }
 }

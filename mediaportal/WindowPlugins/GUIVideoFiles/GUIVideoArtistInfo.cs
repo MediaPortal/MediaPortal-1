@@ -21,11 +21,8 @@
 using System;
 using System.Collections;
 using System.IO;
-using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Web;
 using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
@@ -63,9 +60,6 @@ namespace MediaPortal.GUI.Video
     private string _viewModeState = string.Empty;
     
     private bool _forceRefreshAll; // Refresh all movies (context menu)
-    private string _strBody = string.Empty; // Fetched html body for IMDB
-    private string[] _vdbParserStr;
-    private int _actorMovieCoverSize = 400; //horizontal cover size for actor movie in pixels
     
     #endregion
 
@@ -124,8 +118,6 @@ namespace MediaPortal.GUI.Video
       base.OnPageLoad();
       _forceRefreshAll = false;
 
-      _vdbParserStr = VideoDatabaseParserStrings.GetParserStrings("GUIVideoArtistInfo");
-
       if (_currentActor == null)
       {
         if (GUIWindowManager.HasPreviousWindow())
@@ -138,13 +130,8 @@ namespace MediaPortal.GUI.Video
         }
         return;
       }
-
-      using (MediaPortal.Profile.Settings xmlreader = new MPSettings())
-      {
-        // Hidden setting - movie cover size (in pixels) for actor movie list
-        _actorMovieCoverSize = xmlreader.GetValueAsInt("moviedatabase", "actormoviecoversize", 400);
-      }
-
+      
+      //_internalGrabber.LoadScript();
       _currentActor.SetProperties();
       string biography = _currentActor.Biography;
 
@@ -175,15 +162,17 @@ namespace MediaPortal.GUI.Video
         _scanThread.Abort();
         _scanThread = null;
       }
+      
       // Refresh actor info
-      _currentActor = VideoDatabase.GetActorInfo(_currentActor.ID);
-      
-      SaveState();
+      if (_currentActor != null)
+      {
+        _currentActor = VideoDatabase.GetActorInfo(_currentActor.ID);
+        SaveState();
+        //Clean properties
+        IMDBActor actor = new IMDBActor();
+        actor.SetProperties();
+      }
 
-      //Clean properties
-      IMDBActor actor = new IMDBActor();
-      actor.SetProperties();
-      
       base.OnPageDestroy(newWindowId);
     }
 
@@ -646,7 +635,6 @@ namespace MediaPortal.GUI.Video
               GUIPropertyManager.SetProperty("#Actor.Name", _currentActor.Name + "   (" + percCount + @"%)");
             }
             //
-            _strBody = string.Empty;
             GetDetails(item);
 
             // Refresh item data if it's selected
@@ -692,7 +680,6 @@ namespace MediaPortal.GUI.Video
               GUIPropertyManager.SetProperty("#Actor.Name", _currentActor.Name + "   (" + percCount + @"%)");
             }
             //
-            _strBody = string.Empty;
             GetDetails(item);
             
             // Refresh item data if it's selected
@@ -991,280 +978,89 @@ namespace MediaPortal.GUI.Video
 
     private string GetPlotImdb(GUIListItem item)
     {
-      if (_vdbParserStr == null || _vdbParserStr.Length != 10)
+      try
       {
-        return string.Empty;
-      }
-      
-      //string strUrl = String.Format("http://m.imdb.com/title/{0}", ListItemMovieInfo(item).MovieImdbID);
-      string strUrl = String.Format(_vdbParserStr[0], ListItemMovieInfo(item).MovieImdbID);
-      //string regex = @"<h1>Plot\sSummary</h1>\s+<p>(?<moviePlot>.+?)</p>";
-      string regex = _vdbParserStr[1];
+        string plot = string.Empty;
+        IMDBMovie movie = new IMDBMovie();
+        
+        movie.IMDBNumber = ListItemMovieInfo(item).MovieImdbID;
+        //_internalGrabber.InternalGrabber.GetPlotImdb(ref movie);
+        GUIVideoFiles.InternalGrabber.InternalGrabber.GetPlotImdb(ref movie);
 
-      _strBody = string.Empty;
-      string shortPlot = GetPlot(strUrl, regex, ref _strBody);
+        plot = movie.PlotOutline;
 
-      string pageNotFound = @"<h1>Page not found</h1>";
-
-      if (Regex.Match(_strBody, pageNotFound, RegexOptions.Singleline).Success)
-      {
-        Log.Warn("GUIVideoArtistInfo-Actor movielist update Page not found: {0}", strUrl);
-        return string.Empty;
-      }
-
-      // Full plot
-      //strUrl = String.Format("http://m.imdb.com/title/{0}/plotsummary", ListItemMovieInfo(item).MovieImdbID);
-      strUrl = String.Format(_vdbParserStr[2], ListItemMovieInfo(item).MovieImdbID);
-      //regex = @"<section\sclass=""plot"".*?<p>(?<moviePlot>.*?)</p>";
-      regex = _vdbParserStr[3];
-      
-      string plotBody = string.Empty;
-      string fullPlot = GetPlot(strUrl, regex, ref plotBody);
-
-      if (fullPlot != string.Empty)
-      {
-        shortPlot = fullPlot;
-      }
-
-      // Director, actors, rating....
-      GetExtraDataImdb(item);
-      
-      return shortPlot;
-    }
-
-    private void GetExtraDataImdb(GUIListItem item)
-    {
-      //Update title/Year
-      //regex = title"\scontent="(?<movieTitle>.*?)[(](?<movieYear>.{4})[)]
-      string regex = _vdbParserStr[4];
-      string title = Regex.Match(_strBody, regex, RegexOptions.Singleline).Groups["movieTitle"].Value.Trim();
-      int year = 0;
-      int.TryParse(Regex.Match(_strBody, regex, RegexOptions.Singleline).Groups["movieYear"].Value.Trim(), out year);
-      
-      if (title != string.Empty)
-      {
-        ExecuteSql("strTitle", title, item);
-        ListItemMovieInfo(item).MovieTitle = title;
-      }
-
-      if (year == 0)
-      {
-        year = DateTime.Today.Year + 3;
-      }
-      
-      ExecuteSql("iYear", year.ToString(), item);
-      ListItemMovieInfo(item).Year = year;
-      
-      // Director
-      //regex = @"(<h1>Director</h1>|<h1>Directors</h1>)\s+<p>\s+<a\shref="".*?>(?<director>.*?)</a>";
-      regex = _vdbParserStr[5];
-      string director = Regex.Match(_strBody, regex, RegexOptions.Singleline).Groups["director"].Value.Trim();
-      
-      if (director == string.Empty)
-        director = Strings.Unknown;
-      
-      ExecuteSql("strCredits", director, item);
-      ListItemMovieInfo(item).MovieCredits = director;
-
-      // Genre
-      //regex = @"<h1>Genre</h1>\s+<p>(?<genre>.+?)</p>";
-      regex = _vdbParserStr[6];
-      string genre = Regex.Match(_strBody, regex, RegexOptions.Singleline).Groups["genre"].Value.Trim();
-      genre = genre.Replace(", ", " / ");
-      
-      if (genre == string.Empty)
-        genre = Strings.Unknown;
-      
-      ExecuteSql("strGenre", genre, item);
-      ListItemMovieInfo(item).MovieGenre = genre;
-
-      // Rating
-      //regex = @"<h1>Rated</h1>\s+<p>(?<rating>.+?)</p>";
-      regex = _vdbParserStr[7];
-      string mpaaRating = Regex.Match(_strBody, regex, RegexOptions.Singleline).Groups["rating"].Value.Trim();
-      
-      if (mpaaRating == string.Empty)
-        mpaaRating = Strings.Unknown;
-      
-      ExecuteSql("mpaa", mpaaRating, item);
-      ListItemMovieInfo(item).MovieMpaaRating = mpaaRating;
-
-      // Actors
-      //regex = @"<div\sclass=""label"">\s+<div\sclass=""title"">\s+<a\shref="".*?>(?<actor>.*?)<";
-      regex = _vdbParserStr[8];
-      MatchCollection actors = Regex.Matches(_strBody, regex, RegexOptions.Singleline);
-      
-      string strActor = string.Empty;
-      foreach (Match actor in actors)
-      {
-        string tmpActor = actor.Groups["actor"].Value;
-        tmpActor = HttpUtility.HtmlDecode(tmpActor);
-
-        if (tmpActor != string.Empty)
+        // Extra data
+        if (movie.Title != string.Empty)
         {
-          strActor += tmpActor + " / ";
+          ExecuteSql("strTitle", movie.Title, item);
+          ListItemMovieInfo(item).MovieTitle = movie.Title;
         }
+        // Year
+        if (movie.Year == 0)
+        {
+          movie.Year = DateTime.Today.Year + 3;
+        }
+
+        ExecuteSql("iYear", movie.Year.ToString(), item);
+        ListItemMovieInfo(item).Year = movie.Year;
+        // Director
+        if (movie.WritingCredits == string.Empty)
+          movie.WritingCredits = Strings.Unknown;
+
+        ExecuteSql("strCredits", movie.WritingCredits, item);
+        ListItemMovieInfo(item).MovieCredits = movie.WritingCredits;
+        // Genres
+        if (movie.SingleGenre == string.Empty)
+          movie.SingleGenre = Strings.Unknown;
+
+        ExecuteSql("strGenre", movie.SingleGenre, item);
+        ListItemMovieInfo(item).MovieGenre = movie.SingleGenre;
+        // MPAA rating
+        if (movie.MPARating == string.Empty)
+          movie.MPARating = Strings.Unknown;
+
+        ExecuteSql("mpaa", movie.MPARating, item);
+        ListItemMovieInfo(item).MovieMpaaRating = movie.MPARating;
+        // Cast list
+        ExecuteSql("strCast", movie.Cast, item);
+        ListItemMovieInfo(item).MovieCast = movie.Cast;
+
+        movie = null;
+        return plot;
       }
-      int index = strActor.LastIndexOf(" /");
-      
-      if (index > 0)
-        strActor = strActor.Remove(index);
-      ExecuteSql("strCast", strActor, item);
-      ListItemMovieInfo(item).MovieCast = strActor;
+      catch(ThreadAbortException)
+      {
+        Log.Info("Movie database lookup GetDetails() Thread aborted");
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Movie database lookup GetDetails() {0}", ex.Message);
+      }
+
+      return string.Empty;
     }
 
     private string GetThumbImdb(GUIListItem item)
     {
-      if (_vdbParserStr == null || _vdbParserStr.Length != 10)
+      try
       {
-        return string.Empty;
+        string thumb = GUIVideoFiles.InternalGrabber.InternalGrabber.GetThumbImdb(ListItemMovieInfo(item).MovieImdbID);
+        return thumb;
+      }
+      catch (ThreadAbortException)
+      {
+        Log.Info("Movie database lookup GetThumbImdb() Thread aborted");
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Movie database lookup GetThumbImdb() {0}", ex.Message);
       }
 
-      string strBody = string.Empty;
-      string thumb = string.Empty;
-
-      if (_strBody == string.Empty)
-      {
-        string uri;
-        string strUrl = String.Format("http://m.imdb.com/title/" + ListItemMovieInfo(item).MovieImdbID);
-        strBody = GetPage(strUrl, "utf-8", out uri);
-      }
-      else
-      {
-        strBody = _strBody;
-      }
-
-      //Regex -> <div\sclass="poster">\s+<a\shref="[^<]*<span\sclass="retina-capable"><img\ssrc="(?<poster>.*?_V1_SX)
-      thumb = Regex.Match(strBody, _vdbParserStr[9], RegexOptions.Singleline).Groups["poster"].Value;
-
-      if (!string.IsNullOrEmpty(thumb) && !thumb.EndsWith(".jpg")) // (.jpg) safe 2nd check in case of new regex which will return full image
-      {
-        int thumbSize = _actorMovieCoverSize; // pixels size of picture -> horizontal
-        thumb += "_SX" + thumbSize + ".jpg";
-      }
-
-      _strBody = string.Empty;
-      return thumb;
+      return string.Empty;
     }
 
     #endregion
     
-    private string GetPlot(string strUrl, string regex, ref string strBody)
-    {
-      string absoluteUri;
-      strBody = HttpUtility.HtmlDecode(GetPage(strUrl, "utf-8", out absoluteUri));
-      
-      if (strBody != null)
-      {
-        string shortPlot = Regex.Match(strBody, regex, RegexOptions.Singleline).Groups["moviePlot"].Value.
-          Replace("&amp;", "&").
-          Replace("&lt;", "<").
-          Replace("&gt;", ">").
-          Replace("&quot;", "\"").
-          Replace("&apos;", "'").
-          Replace("No overview found.", string.Empty).Trim();
-
-
-        shortPlot = Util.Utils.stripHTMLtags(shortPlot);
-        
-        // extra cleanup
-        if (!string.IsNullOrEmpty(shortPlot))
-        {
-          int index = shortPlot.LastIndexOf(@"See full summary");
-          
-          if (index > 0)
-          {
-            shortPlot = shortPlot.Remove(index);
-          }
-          
-          index = shortPlot.LastIndexOf(@"See full synopsis");
-          
-          if (index > 0)
-          {
-            shortPlot = shortPlot.Remove(index);
-          }
-          
-          index = shortPlot.LastIndexOf("\n");
-
-          if (index > 0)
-          {
-            shortPlot = shortPlot.Remove(index);
-          }
-        }
-        return shortPlot;
-      }
-      return string.Empty;
-    }
-
-    // Download helper
-    private string GetPage(string strUrl, string strEncode, out string absoluteUri)
-    {
-      string strBody = "";
-      absoluteUri = string.Empty;
-      Stream receiveStream = null;
-      StreamReader sr = null;
-      WebResponse result = null;
-      try
-      {
-        // Make the Webrequest
-        HttpWebRequest req = (HttpWebRequest)WebRequest.Create(strUrl);
-        
-        try
-        {
-          // Use the current user in case an NTLM Proxy or similar is used.
-          req.Headers.Add("Accept-Language", "en-US");
-          req.UserAgent = "Mozilla/8.0 (compatible; MSIE 9.0; Windows NT 6.1; .NET CLR 1.0.3705;)";
-          req.Proxy.Credentials = CredentialCache.DefaultCredentials;
-          req.Timeout = 10000;
-        }
-        catch (Exception) { }
-        result = req.GetResponse();
-        receiveStream = result.GetResponseStream();
-
-        // Encoding: depends on selected page
-        Encoding encode = Encoding.GetEncoding(strEncode);
-        using (sr = new StreamReader(receiveStream, encode))
-        {
-          strBody = sr.ReadToEnd();
-        }
-
-
-        absoluteUri = result.ResponseUri.AbsoluteUri;
-      }
-      catch (Exception)
-      {
-        //Log.Error("Error retreiving WebPage: {0} Encoding:{1} err:{2} stack:{3}", strURL, strEncode, ex.Message, ex.StackTrace);
-      }
-      finally
-      {
-        if (sr != null)
-        {
-          try
-          {
-            sr.Close();
-          }
-          catch (Exception) { }
-        }
-        if (receiveStream != null)
-        {
-          try
-          {
-            receiveStream.Close();
-          }
-          catch (Exception) { }
-        }
-        if (result != null)
-        {
-          try
-          {
-            result.Close();
-          }
-          catch (Exception) { }
-        }
-      }
-      return strBody;
-    }
-
     #endregion
 
     #endregion

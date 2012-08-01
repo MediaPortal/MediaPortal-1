@@ -171,6 +171,8 @@ namespace MediaPortal.GUI.Video
     private bool _useSortTitle = false;
     private bool _useOnlyNfoScraper = false;
 
+    private static IMDB.InternalMovieInfoScraper _internalGrabber = new IMDB.InternalMovieInfoScraper();
+
     #endregion
 
     #region constructors
@@ -1372,8 +1374,9 @@ namespace MediaPortal.GUI.Video
         }
 
         dlg.AddLocalizedString(1299); // Refresh current directory
-        dlg.AddLocalizedString(1263); // Set default grabber
         dlg.AddLocalizedString(1262); // Update grabber scripts
+        dlg.AddLocalizedString(1307); // Update internal grabber scripts
+        dlg.AddLocalizedString(1263); // Set default grabber
       }
 
       dlg.DoModal(GetID);
@@ -1576,7 +1579,10 @@ namespace MediaPortal.GUI.Video
           break;
 
         case 1262: // Update grabber scripts
-          UpdateGrabberScripts();
+          UpdateGrabberScripts(false);
+          break;
+        case 1307: // Update internal grabber scripts
+          UpdateGrabberScripts(true);
           break;
         case 1263: // Set deault grabber script
           SetDefaultGrabber();
@@ -2302,7 +2308,7 @@ namespace MediaPortal.GUI.Video
       return selectDVDHandler;
     }
 
-    public static void UpdateGrabberScripts()
+    public static void UpdateGrabberScripts(bool internalScript)
     {
       // Check Internet connection
 
@@ -2326,28 +2332,52 @@ namespace MediaPortal.GUI.Video
       progressDialog.SetPercentage(50);
       progressDialog.StartModal(GUIWindowManager.ActiveWindow);
 
-      string parserIndexFile = Config.GetFile(Config.Dir.Config, "scripts\\VDBParserStrings.xml");
-      string parserIndexUrl = @"http://install.team-mediaportal.com/MP1/VDBParserStrings.xml";
+      if (internalScript)
+      {
+        string parserIndexFile = Config.GetFile(Config.Dir.Config, "scripts\\VDBParserStrings.xml");
+        string parserIndexUrl = @"http://install.team-mediaportal.com/MP1/VDBParserStrings.xml";
+        string internalGrabberScriptFile = Config.GetFile(Config.Dir.Config, "scripts\\InternalActorMoviesGrabber.csscript");
+        string internalGrabberScriptUrl = @"http://install.team-mediaportal.com/MP1/InternalGrabber/InternalActorMoviesGrabber.csscript";
+
+        // VDB parser update
+        progressDialog.SetHeading("Updating VDBparser file......");
+        progressDialog.ShowProgressBar(true);
+        progressDialog.SetLine(1, "Downloading VDBparser file...");
+        progressDialog.SetLine(2, "Downloading...");
+        progressDialog.SetPercentage(75);
+        progressDialog.StartModal(GUIWindowManager.ActiveWindow);
+
+        if (DownloadFile(parserIndexFile, parserIndexUrl) == false)
+        {
+          progressDialog.Close();
+          return;
+        }
+
+        // Internal grabber script update
+        progressDialog.SetHeading("Updating InternalGrabberScript file......");
+        progressDialog.ShowProgressBar(true);
+        progressDialog.SetLine(1, "Downloading InternalGrabberScript file...");
+        progressDialog.SetLine(2, "Downloading...");
+        progressDialog.SetPercentage(100);
+        progressDialog.StartModal(GUIWindowManager.ActiveWindow);
+
+        if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl) == false)
+        {
+          progressDialog.Close();
+          return;
+        }
+
+        _internalGrabber.LoadScript();
+        progressDialog.Close();
+      }
 
       if (DownloadFile(_grabberIndexFile, _grabberIndexUrl) == false)
       {
         progressDialog.Close();
         return;
       }
-
-      progressDialog.SetHeading("Updating VDBparser file......");
-      progressDialog.ShowProgressBar(true);
-      progressDialog.SetLine(1, "Downloading VDBparser file...");
-      progressDialog.SetLine(2, "Downloading...");
-      progressDialog.SetPercentage(100);
-      progressDialog.StartModal(GUIWindowManager.ActiveWindow);
-
-      if (DownloadFile(parserIndexFile, parserIndexUrl) == false)
-      {
-        progressDialog.Close();
-        return;
-      }
-
+      
+      
       // read index file
       if (!File.Exists(_grabberIndexFile))
       {
@@ -2587,6 +2617,11 @@ namespace MediaPortal.GUI.Video
     public static void ResetExtensions(ArrayList extensions)
     {
       _virtualDirectory.SetExtensions(extensions);
+    }
+
+    public static IMDB.InternalMovieInfoScraper InternalGrabber
+    {
+      get { return _internalGrabber; }
     }
 
     #endregion

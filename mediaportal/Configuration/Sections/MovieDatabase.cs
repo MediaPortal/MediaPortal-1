@@ -2227,6 +2227,8 @@ namespace MediaPortal.Configuration.Sections
 
       string parserIndexFile = Config.GetFile(Config.Dir.Config, "scripts\\VDBParserStrings.xml");
       string parserIndexUrl = @"http://install.team-mediaportal.com/MP1/VDBParserStrings.xml";
+      string internalGrabberScriptFile = Config.GetFile(Config.Dir.Config, "scripts\\InternalActorMoviesGrabber.csscript");
+      string internalGrabberScriptUrl = @"http://install.team-mediaportal.com/MP1/InternalGrabber/InternalActorMoviesGrabber.csscript";
 
       _progressDialog = new DlgProgress();
       _progressDialog.SetHeading("Updating MovieInfo grabber scripts...");
@@ -2250,6 +2252,17 @@ namespace MediaPortal.Configuration.Sections
       _progressDialog.Count = 1;
       _progressDialog.Show();
       if (DownloadFile(parserIndexFile, parserIndexUrl) == false)
+      {
+        _progressDialog.CloseProgress();
+        return;
+      }
+
+      _progressDialog.SetLine1("Downloading the InternalGrabberScript file...");
+      _progressDialog.SetLine2("Downloading...");
+      _progressDialog.Total = 1;
+      _progressDialog.Count = 1;
+      _progressDialog.Show();
+      if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl) == false)
       {
         _progressDialog.CloseProgress();
         return;

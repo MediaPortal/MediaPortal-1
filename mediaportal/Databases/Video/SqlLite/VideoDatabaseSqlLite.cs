@@ -2584,6 +2584,10 @@ namespace MediaPortal.Video.Database
         
         return true;
       }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
+      }
       catch (Exception ex)
       {
         Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
