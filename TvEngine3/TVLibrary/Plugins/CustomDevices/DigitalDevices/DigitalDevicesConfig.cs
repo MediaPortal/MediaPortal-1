@@ -83,6 +83,7 @@ namespace SetupTv.Sections
           Log.Debug("  new configuration");
           slot.DevicePath = device.DevicePath;
           slot.DecryptLimit = 0;
+          slot.Providers = new HashSet<String>();
         }
         Log.Debug("  decrypt limit  = {0}", slot.DecryptLimit);
         String[] providerList = new String[slot.Providers.Count];
