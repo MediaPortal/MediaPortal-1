@@ -73,6 +73,7 @@ namespace MediaPortal.GUI.Library
       _checkMarkWidth = dwCheckWidth;
       _checkMarkFocusTextureName = strTextureCheckMark;
       _checkMarkNoFocusTextureName = strTextureCheckMarkNF;
+      ScaleToScreenResolution();
       FinalizeConstruction();
     }
 
