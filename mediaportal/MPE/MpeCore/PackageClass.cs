@@ -858,7 +858,7 @@ namespace MpeCore
     {
       if (pak1.GeneralInfo.Name.ToUpper().CompareTo(pak2.GeneralInfo.Name.ToUpper()) == 0)
       {
-        return pak1.GeneralInfo.Version.CompareTo(pak2.GeneralInfo.Version);
+        return pak2.GeneralInfo.Version.CompareTo(pak1.GeneralInfo.Version);
       }
       return pak1.GeneralInfo.Name.ToUpper().CompareTo(pak2.GeneralInfo.Name.ToUpper());
     }
