@@ -20,7 +20,9 @@ namespace MpeInstaller.Dialogs
       InitializeComponent();
       package = pak;
       this.Text = pak.GeneralInfo.Name + " - Dependencies";
-      versionLabel.Text = MediaPortal.Common.Utils.CompatibilityManager.GetCurrentVersion().ToString();
+      versionLabel.Text = string.Format("MediaPortal {0}  -  Skin {1}",
+        MediaPortal.Common.Utils.CompatibilityManager.GetCurrentVersion().ToString(),
+        MediaPortal.Common.Utils.CompatibilityManager.SkinVersion);
       generalDepBindSource.DataSource = package.Dependencies.Items;
       dataGridView1.AutoGenerateColumns = false;
       SetColumnsGeneral();
@@ -53,6 +55,14 @@ namespace MpeInstaller.Dialogs
         foreach (MpeCore.Classes.PluginDependencyItem item in package.PluginDependencies.Items)
         {
           pluginDeps.Add(new SimplePluginDependency(item));
+          if (item.SubSystemsUsed != null)
+          {
+            foreach (var subSystem in item.SubSystemsUsed.Items)
+            {
+              var subSystemVersion = MediaPortal.Common.Utils.CompatibilityManager.GetCurrentSubSystemVersion(subSystem.Name);
+              pluginDeps.Add(new SimplePluginDependency(item) { SubSystem = subSystem.Name, CurrentVersion = subSystemVersion });
+            }
+          }
         }
         pluginDepBindSource.DataSource = pluginDeps;
         dataGridView2.AutoGenerateColumns = true;
@@ -65,13 +75,19 @@ namespace MpeInstaller.Dialogs
 
     void dataGridView2_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
     {
-      MpeCore.Classes.PluginDependencyItem depItem = package.PluginDependencies.Items[e.RowIndex];
+      SimplePluginDependency depItem = pluginDepBindSource[e.RowIndex] as SimplePluginDependency;
       if (depItem == null)
         return;
-      if (MpeCore.PackageClass.CheckPluginDependency(depItem))
-        e.CellStyle.ForeColor = Color.Green;
       else
-        e.CellStyle.ForeColor = Color.Red;
+      {
+        Version compatibleVersion = null;
+        try { compatibleVersion = new Version(depItem.CompatibleVersion); }
+        catch { }
+        if (compatibleVersion != null && depItem.CurrentVersion != null)
+        {
+          e.CellStyle.ForeColor = depItem.CurrentVersion > compatibleVersion ? Color.Red : Color.Green;
+        }
+      }
     }
 
     private void SetColumnsGeneral()
@@ -122,11 +138,16 @@ namespace MpeInstaller.Dialogs
   public class SimplePluginDependency
   {
     private MpeCore.Classes.PluginDependencyItem baseItem;
+    
     public string Name
     {
       get { return baseItem.AssemblyName; }
     }
-    public string Version
+    
+    public string SubSystem { get; set; }
+    public Version CurrentVersion { get; set; }
+
+    public string CompatibleVersion
     {
       get 
       {
