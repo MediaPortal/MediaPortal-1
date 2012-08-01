@@ -384,8 +384,10 @@ namespace MpeInstaller
                                                       PackageClass newpackageClass)
     {
       this.Hide();
-      DoUpdate(packageClass, newpackageClass, false);
-      RefreshLists();
+      if (DoUpdate(packageClass, newpackageClass, false))
+      {
+        RefreshLists();
+      }
       this.Show();
     }
 
@@ -480,8 +482,10 @@ namespace MpeInstaller
     private void extensionListControl_UnInstallExtension(object sender, PackageClass packageClass)
     {
       UnInstall dlg = new UnInstall();
-      dlg.Execute(packageClass, false);
-      RefreshLists();
+      if (dlg.Execute(packageClass, false))
+      {
+        RefreshLists();
+      }
     }
 
     private void MainForm_Load(object sender, EventArgs e)

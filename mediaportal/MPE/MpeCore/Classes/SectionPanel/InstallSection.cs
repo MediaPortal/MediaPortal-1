@@ -140,12 +140,16 @@ namespace MpeCore.Classes.SectionPanel
           if (!string.IsNullOrEmpty(actionItem.ConditionGroup) && !Package.Groups[actionItem.ConditionGroup].Checked)
             continue;
 
+          // use a new instance of the action, 
+          // because if we chain MPE installations, 
+          // reusing the action will result in multiple event subscription to advance the progress bar
+          var action = Activator.CreateInstance(MpeInstaller.ActionProviders[actionItem.ActionType].GetType()) as IActionType;
+
           progressBar1.Value = progressBar1.Minimum;
-          progressBar1.Maximum = MpeInstaller.ActionProviders[actionItem.ActionType].ItemsCount(Package,
-                                                                                                actionItem);
-          MpeInstaller.ActionProviders[actionItem.ActionType].ItemProcessed += packageClass_FileInstalled;
-          MpeInstaller.ActionProviders[actionItem.ActionType].Execute(Package, actionItem);
-          MpeInstaller.ActionProviders[actionItem.ActionType].ItemProcessed -= packageClass_FileInstalled;
+          progressBar1.Maximum = action.ItemsCount(Package, actionItem);
+          action.ItemProcessed += packageClass_FileInstalled;
+          action.Execute(Package, actionItem);
+          action.ItemProcessed -= packageClass_FileInstalled;
         }
         lbl_curr_file.Text = "Done";
         if (Package.Silent)
