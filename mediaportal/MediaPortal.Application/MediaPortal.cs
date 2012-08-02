@@ -36,6 +36,7 @@ using System.Timers;
 using System.Windows.Forms;
 using System.Xml;
 using MediaPortal;
+using MediaPortal.Common.Utils;
 using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
@@ -71,8 +72,6 @@ namespace MediaPortal
 public class MediaPortalApp : D3DApp, IRender
 {
   #region vars
-
-  private Version SkinVersion = new Version(1, 3, 0, 0);
 
 #if AUTOUPDATE
   private ApplicationUpdateManager _updater = null;
@@ -3886,7 +3885,7 @@ public class MediaPortalApp : D3DApp, IRender
         versionSkin = new Version(node.InnerText);
       }
     }
-    if (SkinVersion == versionSkin)
+    if (CompatibilityManager.SkinVersion == versionSkin)
     {
       return;
     }

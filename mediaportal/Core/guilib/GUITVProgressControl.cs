@@ -20,6 +20,7 @@
 
 using System;
 using MediaPortal.ExtensionMethods;
+using System.Collections.Generic;
 
 namespace MediaPortal.GUI.Library
 {
@@ -39,13 +40,20 @@ namespace MediaPortal.GUI.Library
     private GUIAnimation _imageFill1 = null;
     private GUIAnimation _imageFill2 = null;
     private GUIAnimation _imageFill3 = null;
+    private GUIAnimation _imageFillMarker = null;
     private GUIAnimation _imageLeft = null;
     private GUIAnimation _imageMid = null;
     private GUIAnimation _imageRight = null;
     private float _percentage1 = 0;
     private float _percentage2 = 0;
     private float _percentage3 = 0;
-
+    private string _markerStarts = string.Empty;
+    private string _markerEnds = string.Empty;
+    private List<float> _markersStartsPercent = new List<float>();
+    private List<float> _markersEndPercent = new List<float>();
+    private List<int> _markerXPositions = new List<int>();
+    private List<int> _markerYPositions = new List<int>();
+    private List<int> _markerWidths = new List<int>();
 
     [XMLSkinElement("label")] private string _propertyLabel = "";
     [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
@@ -63,6 +71,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("label")] private string _label1 = "";
     [XMLSkinElement("label1")] private string _label2 = "";
     [XMLSkinElement("label2")] private string _label3 = "";
+    [XMLSkinElement("labelmarkerstarts")] private string _labelmarkerstarts = "";
+    [XMLSkinElement("labelmarkerends")] private string _labelmarkerends = "";
     [XMLSkinElement("TextureOffsetY")] protected int _topTextureOffsetY = 0;
     [XMLSkinElement("toptexture")] protected string _topTextureName;
     [XMLSkinElement("bottomtexture")] protected string _bottomTextureName;
@@ -74,6 +84,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("filltexture1")] protected string _tickFill1TextureName;
     [XMLSkinElement("filltexture2")] protected string _tickFill2TextureName;
     [XMLSkinElement("filltexture3")] protected string _tickFill3TextureName;
+    [XMLSkinElement("markertexture")] protected string _markerTextureName;
     [XMLSkinElement("logotexture")] protected string _logoTextureName;
 
     public GUITVProgressControl(int dwParentID)
@@ -86,7 +97,7 @@ namespace MediaPortal.GUI.Library
                                 string strLeftTexture, string strMidTexture,
                                 string strRightTexture, string strTickTexure,
                                 string strTextureFill1, string strTextureFill2, string strTextureFill3,
-                                string strLogoTextureName)
+                                string strMarkerTexture, string strLogoTextureName)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _topTextureName = strBackGroundTexture;
@@ -98,6 +109,7 @@ namespace MediaPortal.GUI.Library
       _tickFill1TextureName = strTextureFill1;
       _tickFill2TextureName = strTextureFill2;
       _tickFill3TextureName = strTextureFill3;
+      _markerTextureName = strMarkerTexture;
       _logoTextureName = strLogoTextureName;
       FinalizeConstruction();
       DimColor = base.DimColor;
@@ -142,6 +154,10 @@ namespace MediaPortal.GUI.Library
       {
         _tickFill3TextureName = string.Empty;
       }
+      if (_markerTextureName == null)
+      {
+        _markerTextureName = string.Empty;
+      }
       if (_fillBackGroundTextureName == null)
       {
         _fillBackGroundTextureName = string.Empty;
@@ -185,6 +201,16 @@ namespace MediaPortal.GUI.Library
       _imageLogo = LoadAnimationControl(_parentControlId, _controlId, 0, 0, 0, 0, _logoTextureName);
       _imageLogo.ParentControl = this;
       FontName = _fontName;
+      
+      //create an image for the markers that we will move around and render as needed.
+      string strText = GUIPropertyManager.Parse(LabelMarkerStarts);
+      if (strText.Length > 0)
+      {
+        _imageFillMarker = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0,
+                                                _markerTextureName);
+        _imageFillMarker.KeepAspectRatio = false;
+        _imageFillMarker.ParentControl = this;
+      }
     }
 
     public override void ScaleToScreenResolution()
@@ -232,6 +258,10 @@ namespace MediaPortal.GUI.Library
         if (_imageFill3 != null)
         {
           _imageFill3.Dimmed = value;
+        }
+        if (_imageFillMarker != null)
+        {
+          _imageFillMarker.Dimmed = value;
         }
         if (_imageLeft != null)
         {
@@ -329,6 +359,16 @@ namespace MediaPortal.GUI.Library
         }
       }
 
+      //parse labels for markers
+      //only going to parse if the values are different than the current value
+      string tempStarts = GUIPropertyManager.Parse(LabelMarkerStarts);
+      string tempEnds = GUIPropertyManager.Parse(LabelMarkerEnds);
+      if(_markerStarts != tempStarts || _markerEnds != tempEnds) {
+        parseMarkerValues(tempStarts, tempEnds);
+        _markerStarts = tempStarts;
+        _markerEnds = tempEnds;
+      }
+      
       int iWidthLeft = _imageLeft.TextureWidth;
       int iHeightLeft = _imageLeft.TextureHeight;
       int iWidthRight = _imageRight.TextureWidth;
@@ -374,15 +414,28 @@ namespace MediaPortal.GUI.Library
       _imageFillBackground.SetPosition(xPos, _positionY + _fillBackgroundOffsetY);
       _imageFillBackground.Render(timePassed);
 
-      // render first color
+      
       int xoff = GUIGraphicsContext.ScaleHorizontal(3);
-
       xPos = _positionX + iWidthLeft + _fillBackgroundOffsetX + xoff;
       int yPos = _imageFillBackground.YPosition + (_imageFillBackground.Height / 2) - (_fillBackgroundHeight / 2);
+      iWidth -= 2*xoff;
       if (yPos < _positionY)
       {
         yPos = _positionY;
       }
+      //render commercial markers
+      fWidth = (float)iWidth;
+      fWidth /= 100.0f;
+      calculateMarkerSizeAndPosition(xPos, yPos, fWidth);
+      for (int i=0; i < _markerYPositions.Count || i < _markerXPositions.Count || i < _markerWidths.Count; i++)
+      {
+        _imageFillMarker.Width = _markerWidths[i];
+        _imageFillMarker.SetPosition(_markerXPositions[i], _markerYPositions[i]);
+        _imageFillMarker.Render(timePassed);
+      }
+      
+      //render first color
+      xPos = _positionX + _imageLeft.TextureWidth + _fillBackgroundOffsetX + xoff;
       fWidth = (float)iWidth;
       fWidth /= 100.0f;
       fWidth *= (float)Percentage1;
@@ -607,6 +660,24 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+    
+    public List<float> MarkerStartsPercent
+    {
+      get { return _markersStartsPercent; }
+      set
+      {
+        _markersStartsPercent = value;
+      }
+    }
+    
+    public List<float> MarkerEndsPercent
+    {
+      get { return _markersEndPercent; }
+      set
+      {
+        _markersEndPercent = value;
+      }
+    }
 
     public override void Dispose()
     {
@@ -618,6 +689,7 @@ namespace MediaPortal.GUI.Library
       _imageFill1.SafeDispose();
       _imageFill2.SafeDispose();
       _imageFill3.SafeDispose();
+      _imageFillMarker.SafeDispose();
       _imageFillBackground.SafeDispose();
       _imageTick.SafeDispose();
       _imageBottom.SafeDispose();
@@ -636,6 +708,10 @@ namespace MediaPortal.GUI.Library
       _imageFill1.PreAllocResources();
       _imageFill2.PreAllocResources();
       _imageFill3.PreAllocResources();
+      if (_imageFillMarker != null)
+      {
+        _imageFillMarker.PreAllocResources();
+      }
       _imageTick.PreAllocResources();
       _imageLogo.PreAllocResources();
     }
@@ -653,6 +729,12 @@ namespace MediaPortal.GUI.Library
       _imageFill1.AllocResources();
       _imageFill2.AllocResources();
       _imageFill3.AllocResources();
+      if (_imageFillMarker != null)
+      {
+        _imageFillMarker.AllocResources();
+        _imageFillMarker.Height = _height - 6;
+        _imageFillMarker.Filtering = false;
+      }
       _imageTick.AllocResources();
       _imageLogo.AllocResources();
 
@@ -697,6 +779,11 @@ namespace MediaPortal.GUI.Library
     public string Fill3TextureName
     {
       get { return _imageFill3.FileName; }
+    }
+    
+    public string MarkerTextureName
+    {
+      get { return _markerTextureName; }
     }
 
     public string TickTextureName
@@ -892,6 +979,32 @@ namespace MediaPortal.GUI.Library
         _label3 = value;
       }
     }
+    
+    public string LabelMarkerStarts
+    {
+      get { return _labelmarkerstarts; }
+      set
+      {
+        if (value == null)
+        {
+          return;
+        }
+        _labelmarkerstarts = value;
+      }
+    }
+    
+    public string LabelMarkerEnds
+    {
+      get { return _labelmarkerends; }
+      set
+      {
+        if (value == null)
+        {
+          return;
+        }
+        _labelmarkerends = value;
+      }
+    }
 
     public int TopTextureYOffset
     {
@@ -944,6 +1057,10 @@ namespace MediaPortal.GUI.Library
         {
           _imageFill3.DimColor = value;
         }
+        if (_imageFillMarker != null)
+        {
+          _imageFillMarker.DimColor = value;
+        }
         if (_imageLeft != null)
         {
           _imageLeft.DimColor = value;
@@ -958,5 +1075,92 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+    
+    #region Private methods
+    private void parseMarkerValues(string strStarts, string strEnds) {
+      //parse the labels and populate the percentages
+      Log.Debug("GUITVProgressControl.parseMarkerValues() - parsing markers");
+      if (LabelMarkerStarts.Length > 0)
+      {
+        if (strStarts.Length>0) {
+          string[] strMarkerStarts = strStarts.Trim().Split(' ');
+          MarkerStartsPercent.Clear();
+          for (int i=0; i < strMarkerStarts.Length; i++)
+          {
+            try
+            {
+              MarkerStartsPercent.Add(float.Parse(strMarkerStarts[i]));
+            }
+            catch (Exception) {}
+            if (MarkerStartsPercent[i] < 0 || MarkerStartsPercent[i] > 100)
+            {
+              MarkerStartsPercent[i] = 0;
+            }
+          }
+        }
+      }
+      if (LabelMarkerEnds.Length > 0)
+      {
+        if (strEnds.Length > 0)
+        {
+          string[] strMarkerEnds = strEnds.Trim().Split(' ');
+          MarkerEndsPercent.Clear();
+          for (int i=0; i < strMarkerEnds.Length; i++)
+          {
+            try
+            {
+              MarkerEndsPercent.Add(float.Parse(strMarkerEnds[i]));
+            }
+            catch (Exception) {}
+            if (MarkerEndsPercent[i] < 0 || MarkerEndsPercent[i] > 100)
+            {
+              MarkerEndsPercent[i] = 0;
+            }
+          }
+        }
+      }
+      Log.Debug("GUITVProgressControl.parseMarkerValues() - found " + MarkerStartsPercent.Count);
+    }
+    
+    private void calculateMarkerSizeAndPosition(int iXPos, int iYPos, float fTotWidth)
+    {
+      if (LabelMarkerStarts == null || LabelMarkerEnds == null || _imageFillMarker == null
+          || LabelMarkerStarts.Length == 0 || LabelMarkerEnds.Length == 0)
+      {
+        return;
+      }
+      
+      float fPercentIncrement = fTotWidth;
+      float fJumpWidth = 0;
+      int iCurrentPosition = 0;
+      int iWidth1 = 0;
+      _imageFillMarker.Height = _fillBackgroundHeight;
+      
+      _markerWidths.Clear();
+      _markerXPositions.Clear();
+      _markerYPositions.Clear();
+      
+      for (int i=0; i < MarkerStartsPercent.Count || i < MarkerEndsPercent.Count; i++)
+      {
+        //set the width of the bar
+        fJumpWidth = (float) MarkerEndsPercent[i] - (float) MarkerStartsPercent[i];
+        fJumpWidth *= fPercentIncrement;
+        
+        //set the current starting position
+        fTotWidth = fPercentIncrement*(float) MarkerStartsPercent[i];
+        iWidth1 = (int) Math.Floor(fTotWidth);
+        
+        iCurrentPosition = iWidth1 + iXPos;
+        iWidth1 = (int) Math.Floor(fJumpWidth);
+        
+        if (iWidth1 > 0)
+        {
+          _markerWidths.Add(iWidth1);
+          _markerXPositions.Add(iCurrentPosition);
+          _markerYPositions.Add(iYPos);
+        }
+      }
+    }
+    #endregion
   }
 }
