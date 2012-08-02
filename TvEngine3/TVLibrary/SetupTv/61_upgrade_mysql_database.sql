@@ -1,12 +1,6 @@
 USE %TvLibrary%;
 
-ALTER TABLE channel ADD COLUMN "channelNumber" int(11) NOT NULL DEFAULT 0;
-UPDATE channel c set c.channelnumber = (select t.channelNumber from tuningdetail t where t.idChannel = c.idChannel order by t.idTuning limit 1);
-
-UPDATE Version SET versionNumber=61;
-USE %TvLibrary%;
-
-ALTER TABLE channel ADD COLUMN "channelNumber" int(11) NOT NULL DEFAULT 0;
-UPDATE channel c set c.channelnumber = (select t.channelNumber from tuningdetail t where t.idChannel = c.idChannel order by t.idTuning limit 1);
+ALTER TABLE "Channel" ADD COLUMN "channelNumber" int(11) NOT NULL DEFAULT 10000;
+UPDATE Channel c set c.channelNumber = (SELECT t.channelNumber FROM TuningDetail t WHERE t.idChannel = c.idChannel ORDER BY t.idTuning limit 1);
 
 UPDATE Version SET versionNumber=61;
