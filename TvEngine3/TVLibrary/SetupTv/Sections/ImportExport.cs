@@ -360,7 +360,7 @@ namespace SetupTv.Sections
               bool visibileInGuide = (GetNodeAttribute(nodeChannel, "VisibleInGuide", "True") == "True");
               bool FreeToAir = (GetNodeAttribute(nodeChannel, "FreeToAir", "True") == "True");
               string displayName = GetNodeAttribute(nodeChannel, "DisplayName", "Unkown");
-              int chChannelNumber = Int32.Parse(GetNodeAttribute(nodeChannel, "ChannelNumber", "0"));
+              int chChannelNumber = Int32.Parse(GetNodeAttribute(nodeChannel, "ChannelNumber", "10000"));
 
               // Only import TV or radio channels if the corresponding checkbox was checked
               if ((isTv && !importtv) || (isRadio && !importradio))
