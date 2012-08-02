@@ -551,9 +551,9 @@ namespace TvService
 
                   var isOverlap = startNew < endExisting && endNew > startExisting;
 
-                  // Check if new program overlaps with existing recording
+                  // Check if new program overlaps with existing recording and is on the same channel
                   // if so assume previous failure and recording needs to be resumed
-                  if (isOverlap)
+                  if (isOverlap && pastRecordings[i].IdChannel == newRecording.Channel.IdChannel)
                   {
                     Log.Info(
                       "Scheduler: Schedule {0} ({1}) had already been started - expect previous failure and try to resume...",
