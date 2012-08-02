@@ -69,8 +69,13 @@ namespace SetupTv.Dialogs
         MessageBox.Show(this, "Please enter a valid channel number!", "Incorrect input");
         return;
       }
+      if (channelNumber < 0)
+      {
+        MessageBox.Show(this, "Please enter a positive channel number!", "Incorrect input");
+        return;
+      }
       _channel.DisplayName = textBoxName.Text;
-      _channel.ChannelNumber = Int32.Parse(textBoxChannelNumber.Text);
+      _channel.ChannelNumber = channelNumber;
       _channel.VisibleInGuide = checkBoxVisibleInTvGuide.Checked;
       _channel.IsTv = _isTv;
       _channel.IsRadio = !_isTv;
@@ -116,7 +121,7 @@ namespace SetupTv.Dialogs
       {
         _newChannel = true;
         _channel = new Channel(false, true, 0, Schedule.MinSchedule, true, Schedule.MinSchedule, 10000, true, "",
-                               "", 0);
+                               "", 10000);
       }
       textBoxName.Text = _channel.DisplayName;
       textBoxChannelNumber.Text = _channel.ChannelNumber.ToString();
