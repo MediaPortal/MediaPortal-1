@@ -309,6 +309,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel12 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel13 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel14 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpButtonUpdateInternalGrabber = new MediaPortal.UserInterface.Controls.MPButton();
       ((System.ComponentModel.ISupportInitialize)(this.fanartQ)).BeginInit();
       this.tabControl2.SuspendLayout();
       this.tabPageTitle.SuspendLayout();
@@ -635,9 +636,9 @@ namespace MediaPortal.Configuration.Sections
       // mpButtonUpdateGrabber
       // 
       this.mpButtonUpdateGrabber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonUpdateGrabber.Location = new System.Drawing.Point(370, 29);
+      this.mpButtonUpdateGrabber.Location = new System.Drawing.Point(316, 29);
       this.mpButtonUpdateGrabber.Name = "mpButtonUpdateGrabber";
-      this.mpButtonUpdateGrabber.Size = new System.Drawing.Size(91, 50);
+      this.mpButtonUpdateGrabber.Size = new System.Drawing.Size(140, 24);
       this.mpButtonUpdateGrabber.TabIndex = 7;
       this.mpButtonUpdateGrabber.Text = "Update grabber scripts";
       this.toolTipMPvdb.SetToolTip(this.mpButtonUpdateGrabber, "Update and remove old database engines\r\nfrom the Internet.");
@@ -647,7 +648,7 @@ namespace MediaPortal.Configuration.Sections
       // mpButtonAddGrabber
       // 
       this.mpButtonAddGrabber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonAddGrabber.Location = new System.Drawing.Point(281, 29);
+      this.mpButtonAddGrabber.Location = new System.Drawing.Point(246, 29);
       this.mpButtonAddGrabber.Name = "mpButtonAddGrabber";
       this.mpButtonAddGrabber.Size = new System.Drawing.Size(57, 24);
       this.mpButtonAddGrabber.TabIndex = 6;
@@ -3149,6 +3150,7 @@ namespace MediaPortal.Configuration.Sections
       // groupBoxAvailableGrabbers
       // 
       this.groupBoxAvailableGrabbers.BackColor = System.Drawing.Color.Transparent;
+      this.groupBoxAvailableGrabbers.Controls.Add(this.mpButtonUpdateInternalGrabber);
       this.groupBoxAvailableGrabbers.Controls.Add(this.linkLabel2);
       this.groupBoxAvailableGrabbers.Controls.Add(this.linkLabel1);
       this.groupBoxAvailableGrabbers.Controls.Add(this.mpButtonUpdateGrabber);
@@ -3195,9 +3197,9 @@ namespace MediaPortal.Configuration.Sections
             | System.Windows.Forms.AnchorStyles.Right)));
       this.mpComboBoxAvailableDatabases.BorderColor = System.Drawing.Color.Empty;
       this.mpComboBoxAvailableDatabases.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboBoxAvailableDatabases.Location = new System.Drawing.Point(15, 30);
+      this.mpComboBoxAvailableDatabases.Location = new System.Drawing.Point(6, 29);
       this.mpComboBoxAvailableDatabases.Name = "mpComboBoxAvailableDatabases";
-      this.mpComboBoxAvailableDatabases.Size = new System.Drawing.Size(264, 21);
+      this.mpComboBoxAvailableDatabases.Size = new System.Drawing.Size(234, 21);
       this.mpComboBoxAvailableDatabases.TabIndex = 5;
       // 
       // tabPageScan
@@ -3726,6 +3728,19 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel14.TabIndex = 21;
       this.mpLabel14.Text = "MPAA Rating:";
       // 
+      // mpButtonUpdateInternalGrabber
+      // 
+      this.mpButtonUpdateInternalGrabber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonUpdateInternalGrabber.Location = new System.Drawing.Point(315, 59);
+      this.mpButtonUpdateInternalGrabber.Name = "mpButtonUpdateInternalGrabber";
+      this.mpButtonUpdateInternalGrabber.Size = new System.Drawing.Size(141, 24);
+      this.mpButtonUpdateInternalGrabber.TabIndex = 10;
+      this.mpButtonUpdateInternalGrabber.Text = "Update internal grabbers";
+      this.toolTipMPvdb.SetToolTip(this.mpButtonUpdateInternalGrabber, "Update internal MP grabber scripts\r\n(used for internal actors and their movies\r\ni" +
+        "nformation fetch from IMDB)");
+      this.mpButtonUpdateInternalGrabber.UseVisualStyleBackColor = true;
+      this.mpButtonUpdateInternalGrabber.Click += new System.EventHandler(this.mpButtonUpdateInternalGrabber_Click);
+      // 
       // MovieDatabase
       // 
       this.AutoSize = true;
@@ -4081,5 +4096,6 @@ namespace MediaPortal.Configuration.Sections
     private UserInterface.Controls.MPTextBox tbSortTitle;
     private UserInterface.Controls.MPCheckBox chbUseSortTitle;
     private UserInterface.Controls.MPCheckBox chbUseNfoScraperOnly;
+    private UserInterface.Controls.MPButton mpButtonUpdateInternalGrabber;
   }
 }

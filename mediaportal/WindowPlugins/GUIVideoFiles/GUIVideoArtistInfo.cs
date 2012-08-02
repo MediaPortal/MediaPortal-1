@@ -984,9 +984,7 @@ namespace MediaPortal.GUI.Video
         IMDBMovie movie = new IMDBMovie();
         
         movie.IMDBNumber = ListItemMovieInfo(item).MovieImdbID;
-        //_internalGrabber.InternalGrabber.GetPlotImdb(ref movie);
         GUIVideoFiles.InternalGrabber.InternalGrabber.GetPlotImdb(ref movie);
-
         plot = movie.PlotOutline;
 
         // Extra data
@@ -995,32 +993,39 @@ namespace MediaPortal.GUI.Video
           ExecuteSql("strTitle", movie.Title, item);
           ListItemMovieInfo(item).MovieTitle = movie.Title;
         }
+
         // Year
         if (movie.Year == 0)
         {
           movie.Year = DateTime.Today.Year + 3;
         }
-
         ExecuteSql("iYear", movie.Year.ToString(), item);
         ListItemMovieInfo(item).Year = movie.Year;
+
         // Director
         if (movie.WritingCredits == string.Empty)
+        {
           movie.WritingCredits = Strings.Unknown;
-
+        }
         ExecuteSql("strCredits", movie.WritingCredits, item);
         ListItemMovieInfo(item).MovieCredits = movie.WritingCredits;
+
         // Genres
         if (movie.SingleGenre == string.Empty)
+        {
           movie.SingleGenre = Strings.Unknown;
-
+        }
         ExecuteSql("strGenre", movie.SingleGenre, item);
         ListItemMovieInfo(item).MovieGenre = movie.SingleGenre;
+
         // MPAA rating
         if (movie.MPARating == string.Empty)
+        {
           movie.MPARating = Strings.Unknown;
-
+        }
         ExecuteSql("mpaa", movie.MPARating, item);
         ListItemMovieInfo(item).MovieMpaaRating = movie.MPARating;
+
         // Cast list
         ExecuteSql("strCast", movie.Cast, item);
         ListItemMovieInfo(item).MovieCast = movie.Cast;

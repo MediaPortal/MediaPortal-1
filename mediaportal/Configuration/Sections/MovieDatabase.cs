@@ -28,6 +28,7 @@ using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using CSScriptLibrary;
@@ -2224,12 +2225,7 @@ namespace MediaPortal.Configuration.Sections
                         MessageBoxIcon.Error);
         return;
       }
-
-      string parserIndexFile = Config.GetFile(Config.Dir.Config, "scripts\\VDBParserStrings.xml");
-      string parserIndexUrl = @"http://install.team-mediaportal.com/MP1/VDBParserStrings.xml";
-      string internalGrabberScriptFile = Config.GetFile(Config.Dir.Config, "scripts\\InternalActorMoviesGrabber.csscript");
-      string internalGrabberScriptUrl = @"http://install.team-mediaportal.com/MP1/InternalGrabber/InternalActorMoviesGrabber.csscript";
-
+      
       _progressDialog = new DlgProgress();
       _progressDialog.SetHeading("Updating MovieInfo grabber scripts...");
       _progressDialog.TopMost = true;
@@ -2241,28 +2237,6 @@ namespace MediaPortal.Configuration.Sections
       _progressDialog.Count = 1;
       _progressDialog.Show();
       if (DownloadFile(_grabberIndexFile, GrabberIndexUrl) == false)
-      {
-        _progressDialog.CloseProgress();
-        return;
-      }
-
-      _progressDialog.SetLine1("Downloading the VDBparser file...");
-      _progressDialog.SetLine2("Downloading...");
-      _progressDialog.Total = 1;
-      _progressDialog.Count = 1;
-      _progressDialog.Show();
-      if (DownloadFile(parserIndexFile, parserIndexUrl) == false)
-      {
-        _progressDialog.CloseProgress();
-        return;
-      }
-
-      _progressDialog.SetLine1("Downloading the InternalGrabberScript file...");
-      _progressDialog.SetLine2("Downloading...");
-      _progressDialog.Total = 1;
-      _progressDialog.Count = 1;
-      _progressDialog.Show();
-      if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl) == false)
       {
         _progressDialog.CloseProgress();
         return;
@@ -2338,6 +2312,51 @@ namespace MediaPortal.Configuration.Sections
       ReloadGrabberScripts();
     }
 
+    private void mpButtonUpdateInternalGrabber_Click(object sender, EventArgs e)
+    {
+      string parserIndexFile = Config.GetFile(Config.Dir.Config, "scripts\\VDBParserStrings.xml");
+      string parserIndexUrl = @"http://install.team-mediaportal.com/MP1/VDBParserStrings.xml";
+      string internalGrabberScriptFile = Config.GetFile(Config.Dir.Config, "scripts\\InternalActorMoviesGrabber.csscript");
+      string internalGrabberScriptUrl = @"http://install.team-mediaportal.com/MP1/InternalGrabber/InternalActorMoviesGrabber.csscript";
+
+      if (!Win32API.IsConnectedToInternet())
+      {
+        MessageBox.Show("Update failed. Please check your internet connection!", "", MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+        return;
+      }
+
+      _progressDialog = new DlgProgress();
+      _progressDialog.SetHeading("Updating Internal grabber scripts...");
+      _progressDialog.TopMost = true;
+
+      _progressDialog.SetLine1("Downloading the VDBparser file...");
+      _progressDialog.SetLine2("Downloading...");
+      _progressDialog.Total = 1;
+      _progressDialog.Count = 1;
+      _progressDialog.Show();
+      if (DownloadFile(parserIndexFile, parserIndexUrl) == false)
+      {
+        _progressDialog.CloseProgress();
+        return;
+      }
+
+      _progressDialog.SetLine1("Downloading the InternalGrabberScript file...");
+      _progressDialog.SetLine2("Downloading...");
+      _progressDialog.Total = 1;
+      _progressDialog.Count = 1;
+      _progressDialog.Show();
+      if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl) == false)
+      {
+        _progressDialog.CloseProgress();
+        return;
+      }
+
+      _progressDialog.CloseProgress();
+
+      MessageBox.Show("Update of internal grabbers sucessfully finished.");
+    }
+
     private void mpNumericUpDownLimit_Leave(object sender, EventArgs e)
     {
       // cell editor losing focus
@@ -2379,36 +2398,54 @@ namespace MediaPortal.Configuration.Sections
       mpNumericUpDownLimit.Visible = false;
     }
 
+    private void ReloadGrabberScripts()
+    {
+      mpComboBoxAvailableDatabases.Items.Clear();
+      mpComboBoxAvailableDatabases.Items.Add("Loading grabber scripts...");
+      mpComboBoxAvailableDatabases.SelectedIndex = 0;
+      Thread loadScripts = new Thread(ReloadGrabberScriptsThread);
+      loadScripts.Priority = ThreadPriority.Lowest;
+      loadScripts.IsBackground = true;
+      loadScripts.Start();
+    }
+
     /// <summary>
     /// Search for all valid GrabberScript files found in scriptDirectory.
     /// </summary>
-    private void ReloadGrabberScripts()
+    private void ReloadGrabberScriptsThread()
     {
-      _grabberList = new Dictionary<string, IIMDBScriptGrabber>();
-
-      Directory.CreateDirectory(IMDB.ScriptDirectory);
-      DirectoryInfo di = new DirectoryInfo(IMDB.ScriptDirectory);
-
-      FileInfo[] fileList = di.GetFiles("*.csscript", SearchOption.AllDirectories);
-      foreach (FileInfo f in fileList)
+      try
       {
-        try
-        {
-          AsmHelper script = new AsmHelper(CSScript.Load(f.FullName, null, false));
-          IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
+        _grabberList = new Dictionary<string, IIMDBScriptGrabber>();
 
-          _grabberList.Add(Path.GetFileNameWithoutExtension(f.FullName), grabber);
-        }
-        catch (Exception ex)
+        Directory.CreateDirectory(IMDB.ScriptDirectory);
+        DirectoryInfo di = new DirectoryInfo(IMDB.ScriptDirectory);
+
+        FileInfo[] fileList = di.GetFiles("*.csscript", SearchOption.AllDirectories);
+        foreach (FileInfo f in fileList)
         {
-          //textBox3.Text = ex.Message;
-          Log.Error("Script grabber error file: {0}, message : {1}", f.FullName, ex.Message);
+          try
+          {
+            AsmHelper script = new AsmHelper(CSScript.Load(f.FullName, null, false));
+            IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
+
+            _grabberList.Add(Path.GetFileNameWithoutExtension(f.FullName), grabber);
+          }
+          catch (Exception ex)
+          {
+            //textBox3.Text = ex.Message;
+            Log.Error("Script grabber error file: {0}, message : {1}", f.FullName, ex.Message);
+          }
         }
+        
+        UpdateAvailableScripts();
       }
-
-      UpdateAvailableScripts();
+      catch (Exception ex)
+      {
+        Log.Error("Reload database scripts error {0}", ex.Message);
+      }
     }
-
+    
     /// <summary>
     /// Reloads all grabber in the combobox, which are not used atm.
     /// </summary>
