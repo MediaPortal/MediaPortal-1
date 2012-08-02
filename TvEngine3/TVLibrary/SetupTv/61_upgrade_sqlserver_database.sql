@@ -6,5 +6,3 @@ UPDATE Channel c SET c.channelNumber = (SELECT TOP 1 t.channelNumber FROM Tuning
 
 UPDATE Version SET versionNumber=61
 GO
-USE %TvLibrary%;
-GO

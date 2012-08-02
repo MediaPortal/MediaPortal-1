@@ -3760,7 +3760,7 @@ namespace TvPlugin
         {
           GuideChannel tvGuidChannel = new GuideChannel();
           tvGuidChannel.channel = new Channel(false, true, 0, DateTime.MinValue, false,
-                                              DateTime.MinValue, 0, true, "", GUILocalizeStrings.Get(911), 0);
+                                              DateTime.MinValue, 0, true, "", GUILocalizeStrings.Get(911), 10000);
           for (int i = 0; i < 10; ++i)
           {
             _channelList.Add(tvGuidChannel);
