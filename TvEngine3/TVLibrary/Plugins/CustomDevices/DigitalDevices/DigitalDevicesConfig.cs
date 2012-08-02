@@ -130,14 +130,14 @@ namespace SetupTv.Sections
 
       // Now that we have the details, we can build the user interface.
       InitializeComponent();
-      Log.Debug("Digital Devices config: constructed");
+      Log.Debug("Digital Devices config: constructed, slot count = {0}", _ciSlots.Count);
     }
 
     public override void SaveSettings()
     {
-      Log.Debug("Digital Devices config: saving settings");
+      Log.Debug("Digital Devices config: saving settings, slot count = {0}", _ciSlots.Count);
       TvBusinessLayer layer = new TvBusinessLayer();
-      byte i = 1;
+      byte i = 0;
       foreach (DigitalDevicesCiSlot slot in _ciSlots)
       {
         Log.Debug("Digital Devices config: slot {0}...", slot.CamRootMenuTitle);
@@ -191,6 +191,7 @@ namespace SetupTv.Sections
       }
 
       int i = 0;
+      Log.Debug("Digital Devices config: slot count = {0}", _ciSlots.Count);
       foreach (DigitalDevicesCiSlot slot in _ciSlots)
       {
         Log.Debug("Digital Devices config: slot {0}...", slot.CamRootMenuTitle);
@@ -217,8 +218,8 @@ namespace SetupTv.Sections
     {
       get
       {
-        // The section can always be activated (disabling it might be confusing for people), but we don't
-        // necessarily enable all of the tuner selection fields.
+        // The section can always be activated (disabling it might be confusing for people). If there
+        // are no CI slots detected then we show a message in a label to say this.
         return true;
       }
     }
