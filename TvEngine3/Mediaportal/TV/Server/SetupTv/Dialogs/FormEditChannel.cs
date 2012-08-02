@@ -37,11 +37,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
   {
     private bool _newChannel;
     private MediaTypeEnum _mediaType = MediaTypeEnum.TV;
-    private Channel _channel;
-
-    private IList<TuningDetail> _tuningDetails;
-
-    private IList<TuningDetail> _tuningDetailsToDelete;
+    private Channel _channel;    
+    
 
     public FormEditChannel()
     {
@@ -71,7 +68,21 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
       _channel.displayName = textBoxName.Text;
       _channel.visibleInGuide = checkBoxVisibleInTvGuide.Checked;
-      _channel.mediaType = (int) _mediaType;      
+      _channel.mediaType = (int) _mediaType;
+
+      foreach (TuningDetail detail in _channel.TuningDetails)
+      {                
+        if (detail.ChangeTracker.State != ObjectState.Deleted)
+        {
+          detail.idChannel = _channel.idChannel;
+          detail.mediaType = (int)_mediaType;
+          if (string.IsNullOrEmpty(detail.name))
+          {
+            detail.name = _channel.displayName;
+          }
+        }    
+      }
+
       _channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(_channel);      
 
       if (_newChannel)
@@ -84,22 +95,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         {
           MappingHelper.AddChannelToGroup(ref _channel, TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.Radio);          
         }
-      }
-      foreach (TuningDetail detail in _tuningDetails)
-      {
-        detail.idChannel = _channel.idChannel;
-        detail.mediaType = (int) _mediaType;        
-        if (string.IsNullOrEmpty(detail.name))
-        {
-          detail.name = _channel.displayName;
-        }        
-        ServiceAgents.Instance.ChannelServiceAgent.SaveTuningDetail(detail);
-      }
-
-      foreach (TuningDetail detail in _tuningDetailsToDelete)
-      {
-        ServiceAgents.Instance.ChannelServiceAgent.DeleteTuningDetail(detail.idTuning);
-      }
+      }            
 
 
       DialogResult = DialogResult.OK;
@@ -115,9 +111,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         _channel = ChannelFactory.CreateChannel(MediaTypeEnum.TV, 0, Schedule.MinSchedule, true, Schedule.MinSchedule, 10000, true, "", "");        
       }
       textBoxName.Text = _channel.displayName;
-      checkBoxVisibleInTvGuide.Checked = _channel.visibleInGuide;
-      _tuningDetails = _channel.TuningDetails;
-      _tuningDetailsToDelete = new List<TuningDetail>();
+      checkBoxVisibleInTvGuide.Checked = _channel.visibleInGuide;            
       UpdateTuningDetailList();
     }
 
@@ -127,8 +121,12 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       try
       {
         mpListView1.Items.Clear();
-        foreach (TuningDetail detail in _tuningDetails)
+        foreach (TuningDetail detail in _channel.TuningDetails)
         {
+          if (detail.ChangeTracker.State == ObjectState.Deleted)
+          {
+            continue;
+          }
           int imageIndex = 1;
           if (detail.freeToAir == false)
             imageIndex = 2;
@@ -236,7 +234,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         FormTuningDetailCommon form = CreateDialog(tuningType);
         if (form.ShowDialog(this) == DialogResult.OK)
         {
-          _tuningDetails.Add(form.TuningDetail);
+          _channel.TuningDetails.Add(form.TuningDetail);
           UpdateTuningDetailList();
         }
       }
@@ -247,7 +245,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       if (mpListView1.SelectedIndices.Count == 1)
       {
         int index = mpListView1.SelectedIndices[0];
-        TuningDetail tuningDetailToEdit = _tuningDetails[index];
+        TuningDetail tuningDetailToEdit = _channel.TuningDetails[index];
         FormTuningDetailCommon form = CreateDialog(tuningDetailToEdit.channelType);
         form.TuningDetail = tuningDetailToEdit;
         form.ShowDialog(this);
@@ -289,10 +287,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           for (int i = 0; i < mpListView1.SelectedIndices.Count; i++)
           {
             int index = mpListView1.SelectedIndices[i];
-
-            TuningDetail tuningDetailToDelete = _tuningDetails[index];
-            _tuningDetailsToDelete.Add(tuningDetailToDelete);
-            _tuningDetails.Remove(tuningDetailToDelete);
+            TuningDetail tuningDetailToDelete = _channel.TuningDetails[index];
+            tuningDetailToDelete.ChangeTracker.State = ObjectState.Deleted;                        
           }
           UpdateTuningDetailList();
         }

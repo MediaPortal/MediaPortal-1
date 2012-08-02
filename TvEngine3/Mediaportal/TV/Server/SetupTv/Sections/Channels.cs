@@ -42,6 +42,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
   public partial class Channels : SectionSettings
   {
     private MediaTypeEnum _mediaTypeEnum = MediaTypeEnum.TV;
+    private bool _ignoreItemCheckedEvent = false;
 
     public class CardInfo
     {
@@ -73,7 +74,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private Thread _scanThread;
 
     private Dictionary<int, CardType> _cards = null;
-    private IList<Channel> _allChannels = null;    
+    private IList<Channel> _allChannels = null;
+    
 
     public Channels(string name, MediaTypeEnum mediaType)
       : base(name)
@@ -349,20 +351,28 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void ReOrder()
     {
-      IList<Channel> channels = new List<Channel>();
-      for (int i = 0; i < mpListView1.Items.Count; ++i)
+      _ignoreItemCheckedEvent = true;
+      try
       {
-        Channel channel = (Channel)mpListView1.Items[i].Tag;
-        if (channel.sortOrder != i)
+        IList<Channel> channels = new List<Channel>();
+        for (int i = 0; i < mpListView1.Items.Count; ++i)
         {
-          channel.sortOrder = i;
-          channel.UnloadAllUnchangedRelationsForEntity();
-          channels.Add(channel);
-          channel.AcceptChanges();
-          mpListView1.Items[i].Tag = channel;
+          Channel channel = (Channel)mpListView1.Items[i].Tag;
+          if (channel.sortOrder != i)
+          {
+            channel.sortOrder = i;
+            channel.UnloadAllUnchangedRelationsForEntity();
+            channels.Add(channel);
+            channel.AcceptChanges();
+            mpListView1.Items[i].Tag = channel;
+          }
         }
+        ServiceAgents.Instance.ChannelServiceAgent.SaveChannels(channels);
       }
-      ServiceAgents.Instance.ChannelServiceAgent.SaveChannels(channels);
+      finally
+      {
+        _ignoreItemCheckedEvent = false;        
+      }      
     }
 
     private void ReOrderGroups()
@@ -390,12 +400,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void mpListView1_ItemChecked(object sender, ItemCheckedEventArgs e)
     {
-      Channel ch = (Channel)e.Item.Tag;
-      if (ch.visibleInGuide != e.Item.Checked && !_lvChannelHandler.PopulateRunning)
+      if (!_ignoreItemCheckedEvent)
       {
-        ch.visibleInGuide = e.Item.Checked;
-        ch = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(ch);
-        ch.AcceptChanges();
+        Channel ch = (Channel) e.Item.Tag;
+        if (ch.visibleInGuide != e.Item.Checked && !_lvChannelHandler.PopulateRunning)
+        {
+          ch.visibleInGuide = e.Item.Checked;
+          ch = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(ch);
+          ch.AcceptChanges();
+        }
       }
     }
 
@@ -409,6 +422,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       dlg.Channel = channel;
       if (dlg.ShowDialog(this) == DialogResult.OK)
       {
+        channel = dlg.Channel;
+        mpListView1.Items[indexes[0]].Tag = channel;
         IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
         Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
         foreach (Card card in dbsCards)
@@ -418,6 +433,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         mpListView1.BeginUpdate();
         try
         {
+          _ignoreItemCheckedEvent = true;
           mpListView1.Items[indexes[0]] = _lvChannelHandler.CreateListViewItemForChannel(channel, cards);
           mpListView1.Sort();
           ReOrder();
@@ -426,6 +442,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         {          
           mpListView1.EndUpdate();
           RefreshAll();
+          _ignoreItemCheckedEvent = false;
         }
       }
     }
