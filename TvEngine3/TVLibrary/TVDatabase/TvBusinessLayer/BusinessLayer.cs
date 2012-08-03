@@ -190,6 +190,12 @@ namespace TvDatabase
       return newChannel;
     }
 
+    [System.Obsolete("use AddNewChannel(name, channelNumber)")]
+    public Channel AddNewChannel(string name)
+    {
+      return AddNewChannel(name, 10000);
+    }
+
     public ChannelGroup CreateGroup(string groupName)
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (ChannelGroup));

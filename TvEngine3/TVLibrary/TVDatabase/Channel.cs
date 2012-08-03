@@ -79,6 +79,7 @@ namespace TvDatabase
       epgHasGaps = false;
     }
 
+
     /// <summary> 
     /// Create an object from an existing row of data. This will be used by Gentle to 
     /// construct objects from retrieved rows. 
@@ -101,6 +102,20 @@ namespace TvDatabase
       this.channelNumber = channelNumber;
       epgHasGaps = false;
     }
+
+    /// <summary> 
+    /// Obsolete constructor. Create a new object by specifying all fields (except the auto-generated primary key field) and the channelNumber. 
+    /// </summary> 
+    [System.Obsolete("Use the constructor with channelNumber")]
+    public Channel(bool isRadio, bool isTv, int timesWatched, DateTime totalTimeWatched, bool grabEpg,
+                   DateTime lastGrabTime, int sortOrder, bool visibleInGuide, string externalId,
+                   string displayName) : this(isRadio, isTv, timesWatched, totalTimeWatched, grabEpg,
+           lastGrabTime, sortOrder, visibleInGuide, externalId,
+           displayName, 10000) {
+
+    }
+
+
 
     #endregion
 
