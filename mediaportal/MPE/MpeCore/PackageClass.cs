@@ -142,10 +142,11 @@ namespace MpeCore
     }
 
     /// <summary>
-    /// Do the unistall procces. The unistall file info should be alredy loaded.
+    /// Do the unistall procces. The unistall file info should be already loaded.
     /// </summary>
     public void UnInstall()
     {
+      Util.KillAllMediaPortalProcesses();
       for (int i = UnInstallInfo.Items.Count - 1; i >= 0; i--)
       {
         UnInstallItem item = UnInstallInfo.Items[i];
@@ -451,6 +452,7 @@ namespace MpeCore
     /// <returns></returns>
     public bool StartInstallWizard()
     {
+      Util.KillAllMediaPortalProcesses();
       var navigator = new WizardNavigator(this);
       if (navigator.Navigate() == SectionResponseEnum.Ok)
         DoAdditionalInstallTasks();

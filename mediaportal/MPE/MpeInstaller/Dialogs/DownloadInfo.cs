@@ -31,7 +31,7 @@ namespace MpeInstaller.Dialogs
   public partial class DownloadInfo : Form
   {
     public bool silent = false;
-    private int counter = 0;
+    private int counter = -1;
     private List<string> onlineFiles = new List<string>();
     int runningThreads = 0;
 

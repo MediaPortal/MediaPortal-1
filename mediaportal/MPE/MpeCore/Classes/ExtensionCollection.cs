@@ -116,7 +116,7 @@ namespace MpeCore.Classes
     }
 
     /// <summary>
-    /// Adds the specified package class. But without copy all the sructure the GeneralInfo and the group Names
+    /// Adds the specified package class. But without copy all the structure the GeneralInfo and the group Names
     /// If the package with same version number already exist, will be replaced
     /// </summary>
     /// <param name="packageClass">The package class.</param>

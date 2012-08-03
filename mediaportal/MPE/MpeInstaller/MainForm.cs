@@ -103,29 +103,6 @@ namespace MpeInstaller
 
     public void ExecuteMpQueue()
     {
-      Process[] prs = Process.GetProcesses();
-      foreach (Process pr in prs)
-      {
-        if (pr.ProcessName.Equals("MediaPortal", StringComparison.InvariantCultureIgnoreCase))
-        {
-          pr.CloseMainWindow();
-          pr.Close();
-          Thread.Sleep(500);
-        }
-      }
-      prs = Process.GetProcesses();
-      foreach (Process pr in prs)
-      {
-        if (pr.ProcessName.Equals("MediaPortal", StringComparison.InvariantCultureIgnoreCase))
-        {
-          try
-          {
-            Thread.Sleep(5000);
-            pr.Kill();
-          }
-          catch (Exception) {}
-        }
-      }
       ExecuteQueue();
       Process.Start(Config.GetFile(Config.Dir.Base, "MediaPortal.exe"));
       Thread.Sleep(3000);
