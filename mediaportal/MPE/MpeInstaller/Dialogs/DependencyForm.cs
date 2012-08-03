@@ -40,7 +40,7 @@ namespace MpeInstaller.Dialogs
           skindepLabel.Visible = false;
       }
 
-      if (!package.ProvidesPlugins())
+      if (!package.ProvidesPlugins() && !package.PluginDependencies.Items.Any())
       {
         tabControl1.Controls.Remove(tabPage2);
       }
@@ -52,9 +52,10 @@ namespace MpeInstaller.Dialogs
       else
       {
         List<SimplePluginDependency> pluginDeps = new List<SimplePluginDependency>();
+        var mpVersion = MediaPortal.Common.Utils.CompatibilityManager.GetCurrentSubSystemVersion("*");
         foreach (MpeCore.Classes.PluginDependencyItem item in package.PluginDependencies.Items)
         {
-          pluginDeps.Add(new SimplePluginDependency(item));
+          pluginDeps.Add(new SimplePluginDependency(item) { CurrentVersion = mpVersion, SubSystem ="*" });
           if (item.SubSystemsUsed != null)
           {
             foreach (var subSystem in item.SubSystemsUsed.Items)
@@ -81,7 +82,7 @@ namespace MpeInstaller.Dialogs
       else
       {
         Version compatibleVersion = null;
-        try { compatibleVersion = new Version(depItem.CompatibleVersion); }
+        try { compatibleVersion = new Version(depItem.MaxVersion); }
         catch { }
         if (compatibleVersion != null && depItem.CurrentVersion != null)
         {
@@ -143,11 +144,25 @@ namespace MpeInstaller.Dialogs
     {
       get { return baseItem.AssemblyName; }
     }
-    
-    public string SubSystem { get; set; }
-    public Version CurrentVersion { get; set; }
 
-    public string CompatibleVersion
+    [DisplayName("Subsystem")]
+    public string SubSystem { get; set; }
+
+    [DisplayName("Min")]
+    public string MinVersion
+    {
+      get
+      {
+        if (baseItem.CompatibleVersion.Items.Count > 0)
+        {
+          return baseItem.CompatibleVersion.Items[0].MinRequiredVersion;
+        }
+        return "No version specified!";
+      }
+    }
+
+    [DisplayName("Max")]
+    public string MaxVersion
     {
       get 
       {
@@ -158,6 +173,9 @@ namespace MpeInstaller.Dialogs
         return "No version specified!";
       }
     }
+
+    [DisplayName("Required")]
+    public Version CurrentVersion { get; set; }
 
     public SimplePluginDependency(MpeCore.Classes.PluginDependencyItem item)
     {
