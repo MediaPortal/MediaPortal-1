@@ -736,7 +736,7 @@ namespace MpeInstaller
 
     private void CleanCache_Click(object sender, EventArgs e)
     {
-      if (MessageBox.Show("Do you want to clear all unused data ?\nYou need to redownload update info.", "Cleanup",
+      if (MessageBox.Show("Do you want to clear all unused data?\nYou need to redownload update info.", "Cleanup",
                           MessageBoxButtons.YesNo,
                           MessageBoxIcon.Question) == DialogResult.Yes)
       {
@@ -754,6 +754,11 @@ namespace MpeInstaller
           {
             if (Directory.Exists(packageClass.LocationFolder))
               Directory.Delete(packageClass.LocationFolder, true);
+            string baseExtensionPath = Path.GetDirectoryName(packageClass.LocationFolder.Trim('\\'));
+            if (Directory.Exists(baseExtensionPath) && Directory.GetFileSystemEntries(baseExtensionPath).Length == 0)
+            {
+              Directory.Delete(baseExtensionPath);
+            }
             MpeCore.MpeInstaller.KnownExtensions.Remove(packageClass);
           }
           catch (Exception ex)
