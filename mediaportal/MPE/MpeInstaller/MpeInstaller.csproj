@@ -253,6 +253,10 @@
     <None Include="MpeInstaller.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Icons\refresh.png" />
+    <None Include="Icons\recycle_bin.png" />
+    <None Include="Icons\help.png" />
+    <None Include="Icons\open.png" />
     <None Include="Icons\internet-group-chat.png" />
     <None Include="Icons\internet-web-browser.png" />
     <None Include="Icons\package-x-generic.png" />

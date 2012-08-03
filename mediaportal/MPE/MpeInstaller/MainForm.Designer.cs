@@ -40,15 +40,15 @@
       this.toolStripLastUpdate = new System.Windows.Forms.ToolStripStatusLabel();
       this.menuStrip1 = new System.Windows.Forms.MenuStrip();
       this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.refreshUpdateInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.updateAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.cleanCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.onlyStableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.onlyCompatibleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.refreshUpdateInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.cleanCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.wikiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       divider = new System.Windows.Forms.ToolStripStatusLabel();
       this.tabControl1.SuspendLayout();
@@ -63,7 +63,7 @@
       divider.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.None;
       divider.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       divider.Name = "divider";
-      divider.Size = new System.Drawing.Size(315, 17);
+      divider.Size = new System.Drawing.Size(346, 17);
       divider.Spring = true;
       // 
       // tabControl1
@@ -178,33 +178,13 @@
       this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
       this.fileToolStripMenuItem.Text = "File";
       // 
-      // openToolStripMenuItem
-      // 
-      this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-      this.openToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
-      this.openToolStripMenuItem.Text = "Open";
-      this.openToolStripMenuItem.Click += new System.EventHandler(this.FileOpen_Click);
-      // 
-      // refreshUpdateInfoToolStripMenuItem
-      // 
-      this.refreshUpdateInfoToolStripMenuItem.Name = "refreshUpdateInfoToolStripMenuItem";
-      this.refreshUpdateInfoToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
-      this.refreshUpdateInfoToolStripMenuItem.Text = "Refresh Update Info";
-      this.refreshUpdateInfoToolStripMenuItem.Click += new System.EventHandler(this.RefreshUpdateInfo_Click);
-      // 
       // updateAllToolStripMenuItem
       // 
+      this.updateAllToolStripMenuItem.Image = global::MpeInstaller.Properties.Resources.system_software_update;
       this.updateAllToolStripMenuItem.Name = "updateAllToolStripMenuItem";
       this.updateAllToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
       this.updateAllToolStripMenuItem.Text = "Update All";
       this.updateAllToolStripMenuItem.Click += new System.EventHandler(this.UpdateAll_Click);
-      // 
-      // cleanCacheToolStripMenuItem
-      // 
-      this.cleanCacheToolStripMenuItem.Name = "cleanCacheToolStripMenuItem";
-      this.cleanCacheToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
-      this.cleanCacheToolStripMenuItem.Text = "Clean Cache";
-      this.cleanCacheToolStripMenuItem.Click += new System.EventHandler(this.CleanCache_Click);
       // 
       // viewToolStripMenuItem
       // 
@@ -246,8 +226,33 @@
       this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
       this.helpToolStripMenuItem.Text = "Help";
       // 
+      // openToolStripMenuItem
+      // 
+      this.openToolStripMenuItem.Image = global::MpeInstaller.Properties.Resources.open;
+      this.openToolStripMenuItem.Name = "openToolStripMenuItem";
+      this.openToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+      this.openToolStripMenuItem.Text = "Open";
+      this.openToolStripMenuItem.Click += new System.EventHandler(this.FileOpen_Click);
+      // 
+      // refreshUpdateInfoToolStripMenuItem
+      // 
+      this.refreshUpdateInfoToolStripMenuItem.Image = global::MpeInstaller.Properties.Resources.refresh;
+      this.refreshUpdateInfoToolStripMenuItem.Name = "refreshUpdateInfoToolStripMenuItem";
+      this.refreshUpdateInfoToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+      this.refreshUpdateInfoToolStripMenuItem.Text = "Refresh Update Info";
+      this.refreshUpdateInfoToolStripMenuItem.Click += new System.EventHandler(this.RefreshUpdateInfo_Click);
+      // 
+      // cleanCacheToolStripMenuItem
+      // 
+      this.cleanCacheToolStripMenuItem.Image = global::MpeInstaller.Properties.Resources.recycle_bin;
+      this.cleanCacheToolStripMenuItem.Name = "cleanCacheToolStripMenuItem";
+      this.cleanCacheToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+      this.cleanCacheToolStripMenuItem.Text = "Clean Cache";
+      this.cleanCacheToolStripMenuItem.Click += new System.EventHandler(this.CleanCache_Click);
+      // 
       // wikiToolStripMenuItem
       // 
+      this.wikiToolStripMenuItem.Image = global::MpeInstaller.Properties.Resources.help;
       this.wikiToolStripMenuItem.Name = "wikiToolStripMenuItem";
       this.wikiToolStripMenuItem.Size = new System.Drawing.Size(97, 22);
       this.wikiToolStripMenuItem.Text = "Wiki";

@@ -50,9 +50,9 @@
       this.groupBox1.Controls.Add(this.numeric_Days);
       this.groupBox1.Controls.Add(this.chk_update);
       this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.groupBox1.Location = new System.Drawing.Point(0, 0);
+      this.groupBox1.Location = new System.Drawing.Point(1, 1);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(313, 103);
+      this.groupBox1.Size = new System.Drawing.Size(311, 69);
       this.groupBox1.TabIndex = 3;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Startup";
@@ -115,9 +115,9 @@
       this.panel1.Controls.Add(this.btnOK);
       this.panel1.Controls.Add(this.btnCancel);
       this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-      this.panel1.Location = new System.Drawing.Point(0, 71);
+      this.panel1.Location = new System.Drawing.Point(1, 70);
       this.panel1.Name = "panel1";
-      this.panel1.Size = new System.Drawing.Size(313, 32);
+      this.panel1.Size = new System.Drawing.Size(311, 32);
       this.panel1.TabIndex = 4;
       // 
       // btnOK
@@ -148,10 +148,11 @@
       this.CancelButton = this.btnCancel;
       this.ClientSize = new System.Drawing.Size(313, 103);
       this.ControlBox = false;
-      this.Controls.Add(this.panel1);
       this.Controls.Add(this.groupBox1);
+      this.Controls.Add(this.panel1);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
       this.Name = "SettingsForm";
+      this.Padding = new System.Windows.Forms.Padding(1);
       this.ShowInTaskbar = false;
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "Settings";
