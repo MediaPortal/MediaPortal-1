@@ -734,11 +734,11 @@ namespace MediaPortal.GUI.Video
       }
       
       // Save plot into DB
-      if (plot != string.Empty)
+      if (plot != string.Empty || _forceRefreshAll)
         SetPlot(item, plot);
       
       // Save cover url into db
-      if (cover.StartsWith("http://"))
+      if (cover.StartsWith("http://") || _forceRefreshAll)
         SetThumb(ref item, cover);
 
       // Update/Set back original item label (Downloading... -> Movie title)
@@ -797,9 +797,18 @@ namespace MediaPortal.GUI.Video
           temporaryFilenameLarge += ".jpg";
           Util.Utils.FileDelete(tmpFile);
           Util.Utils.FileDelete(temporaryFilenameLarge);
-          Util.Utils.DownLoadAndCacheImage(thumb, temporaryFilename);
-          // Convert downloaded image to large and small file and save on disk
-          SaveCover(temporaryFilename, filenameL); // Temp file is deleted in SetCover method
+          
+          if (!string.IsNullOrEmpty(thumb))
+          {
+            Util.Utils.DownLoadAndCacheImage(thumb, temporaryFilename);
+            // Convert downloaded image to large and small file and save on disk
+            SaveCover(temporaryFilename, filenameL); // Temp file is deleted in SetCover method
+          }
+          else
+          {
+            Util.Utils.FileDelete(filenameL);
+            filenameL = string.Empty;
+          }
 
           // Update database
           ExecuteSql("strPictureURL", thumb, item);

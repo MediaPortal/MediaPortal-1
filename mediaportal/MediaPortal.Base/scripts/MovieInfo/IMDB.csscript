@@ -290,7 +290,7 @@ internal class Grabber : IIMDBScriptGrabber
                 ("http://www.imdb.com" + imdbURL, "*" + imdbTitle + " " + imdbOptions, "IMDB");
               elements.Add(url);
               iCount++;
-			      }
+			}
             imdbEntry = imdbEntry.NextMatch();
             if (iCount > iLimit)
             {
@@ -598,10 +598,14 @@ internal class Grabber : IIMDBScriptGrabber
       string votes = Regex.Match(strBody, regexPattern).Groups["moviePopularity"].Value;
       movieDetails.Votes = votes.Replace(",", "");
 
-      // Plot short
-      regexPattern = @"itemprop=""description"">(?<moviePlotShort>[^<]+)<";
-      string shortPlot = Regex.Match(strBody, regexPattern, RegexOptions.Singleline).Groups["moviePlotShort"].Value;
-      movieDetails.PlotOutline = HttpUtility.HtmlDecode(Utils.stripHTMLtags(shortPlot)).Trim();
+     // Plot short
+        regexPattern = @"itemprop=""description"">(?<moviePlotShort>.*?)</p>";
+        string shortPlot = Regex.Match(strBody, regexPattern, RegexOptions.Singleline).Groups["moviePlotShort"].Value;
+        string htmlDecode = HttpUtility.HtmlDecode(Utils.stripHTMLtags(shortPlot));
+        if (htmlDecode != null)
+        {
+          movieDetails.PlotOutline = htmlDecode.Trim().Replace("\n", "");
+        }
 
       // Plot long
       string strPlotUrl = "http://www.imdb.com/title/" + movieDetails.IMDBNumber + "/plotsummary";
@@ -699,8 +703,8 @@ internal class Grabber : IIMDBScriptGrabber
       // Make the Webrequest
       //Log.Info("IMDB: get page:{0}", strURL);
       WebRequest req = WebRequest.Create(strUrl);
-	    req.Headers.Add("Accept-Language", "en-US");
-	    req.Timeout = 10000;
+	  req.Headers.Add("Accept-Language", "en-US");
+	  req.Timeout = 10000;
 
       result = req.GetResponse();
       receiveStream = result.GetResponseStream();

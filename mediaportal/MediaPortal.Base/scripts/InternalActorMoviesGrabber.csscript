@@ -113,24 +113,18 @@ internal class InternalGrabber : IIMDBInternalScriptGrabber
       strActor = strActor.Remove(index);
     }
     movie.Cast = strActor;
+		_strBody = string.Empty;
   }
 
   string IIMDBInternalScriptGrabber.GetThumbImdb(string imdbId)
   {
-    string strBody = string.Empty;
+    _strBody = string.Empty;
     string thumb = string.Empty;
 
-    if (_strBody == string.Empty)
-    {
-      string uri;
-      string strUrl = String.Format("http://m.imdb.com/title/" + imdbId);
-      strBody = GetPage(strUrl, "utf-8", out uri);
-    }
-    else
-    {
-      strBody = _strBody;
-    }
-    thumb = Regex.Match(strBody, @"<div\sclass=""poster"">\s+<a\shref=""[^<]*<span\sclass=""retina-capable""><img\ssrc=""(?<poster>.*?_V1)",
+    string uri;
+    string strUrl = String.Format("http://m.imdb.com/title/" + imdbId);
+    _strBody = GetPage(strUrl, "utf-8", out uri);
+    thumb = Regex.Match(_strBody, @"<div\sclass=""poster"">\s+<a\shref=""[^<]*<span\sclass=""retina-capable""><img\ssrc=""(?<poster>.*?_V1)",
                                 RegexOptions.Singleline).Groups["poster"].Value;
     if (!string.IsNullOrEmpty(thumb))
     {

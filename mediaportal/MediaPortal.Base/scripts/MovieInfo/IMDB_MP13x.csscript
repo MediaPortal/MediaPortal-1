@@ -318,8 +318,11 @@ internal class Grabber : IIMDBScriptGrabber
 
       string strAbsUrl;
       string strBody = GetPage(url.URL, "utf-8", out strAbsUrl);
+      
       if (string.IsNullOrEmpty(strBody))
+      {
         return false;
+      }
 
       string regexBlockPattern = string.Empty;
       string regexPattern = string.Empty;
@@ -525,8 +528,11 @@ internal class Grabber : IIMDBScriptGrabber
       block = Regex.Match(strBody, regexBlockPattern, RegexOptions.Singleline).Value;
       regexPattern = @"alt=""(?<rating>.*?)""";
       string mCertUSA = Regex.Match(block, regexPattern, RegexOptions.Singleline).Groups["rating"].Value.Replace("_", "-");
+      
       if (mCertUSA.ToLower().Contains("tv-"))
+      {
         mCertUSA = string.Empty;
+      }
 
       //Get all other ratings
       string mpaRating = string.Empty;
@@ -543,6 +549,7 @@ internal class Grabber : IIMDBScriptGrabber
       //Try to find rating according user country
       char[] splitter = { '|' };
       string[] landRating = tempRating.Split(splitter);
+      
       if (landRating.Length > 0)
       {
         for (int i = 0; i < landRating.Length; ++i)
@@ -619,10 +626,14 @@ internal class Grabber : IIMDBScriptGrabber
       string votes = Regex.Match(strBody, regexPattern).Groups["moviePopularity"].Value;
       movieDetails.Votes = votes.Replace(",", "");
 
-      // Plot short
-        regexPattern = @"itemprop=""description"">(?<moviePlotShort>[^<]+)<";
+     // Plot short
+        regexPattern = @"itemprop=""description"">(?<moviePlotShort>.*?)</p>";
         string shortPlot = Regex.Match(strBody, regexPattern, RegexOptions.Singleline).Groups["moviePlotShort"].Value;
-        movieDetails.PlotOutline = HttpUtility.HtmlDecode(Utils.stripHTMLtags(shortPlot)).Trim();
+        string htmlDecode = HttpUtility.HtmlDecode(Utils.stripHTMLtags(shortPlot));
+        if (htmlDecode != null)
+        {
+          movieDetails.PlotOutline = htmlDecode.Trim().Replace("\n", "");
+        }
 
       // Plot long
       string strPlotUrl = "http://www.imdb.com/title/" + movieDetails.IMDBNumber + "/plotsummary";
