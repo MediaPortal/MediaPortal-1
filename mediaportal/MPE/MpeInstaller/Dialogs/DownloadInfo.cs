@@ -83,7 +83,11 @@ namespace MpeInstaller.Dialogs
           try
           {
             client.DownloadFile(onlineFile, tempFile);
-            MpeCore.MpeInstaller.KnownExtensions.Add(ExtensionCollection.Load(tempFile));
+            var extCol = ExtensionCollection.Load(tempFile);
+            lock (this)
+            {
+              MpeCore.MpeInstaller.KnownExtensions.Add(extCol);
+            }
             success = true;
           }
           catch (Exception ex)
