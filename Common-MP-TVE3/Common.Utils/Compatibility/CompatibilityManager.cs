@@ -290,6 +290,13 @@ namespace MediaPortal.Common.Utils
       return version;
     }
 
+    public static Version GetCurrentSubSystemVersion(string subSystem)
+    {
+      Version version = null;
+      SubSystemVersions.TryGetValue(subSystem, out version);
+      return version;
+    }
+
     public static IEnumerable<UsesSubsystemAttribute> GetSubSystemsUsed(Assembly asm)
     {
       return ((UsesSubsystemAttribute[])asm.GetCustomAttributes(typeof(UsesSubsystemAttribute), true)).Where(attr => attr.Used);
