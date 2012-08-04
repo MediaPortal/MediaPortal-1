@@ -352,15 +352,8 @@ namespace MediaPortal.GUI.Video
           movie = (IMDBMovie)movies[0];
           item.DVDLabel = movie.ID.ToString(); // DVD label holds videodatabase movieID
           item.IsPlayed = true;
-          // New colors suggested by Dadeo
-          //if (movie.Watched > 0)
-          //  item.IsPlayed = true;
         }
-        //else // We don't have a movie
-        //{
-        //  item.IsRemote = true;
-        //}
-        
+
         item.ThumbnailImage = filenameL;
         item.OnItemSelected += OnItemSelected;
         listActorMovies.Add(item);
@@ -478,7 +471,9 @@ namespace MediaPortal.GUI.Video
       }
       // Get movie info (item.DVDLabel holds movie id from videodatabase)
       IMDBMovie movie = new IMDBMovie();
-      VideoDatabase.GetMovieInfoById(Convert.ToInt32(item.DVDLabel), ref movie);
+      int movieId = -1;
+      int.TryParse(item.DVDLabel, out movieId);
+      VideoDatabase.GetMovieInfoById(movieId, ref movie);
       
       if (movie == null)
       {
@@ -499,7 +494,7 @@ namespace MediaPortal.GUI.Video
     {
       if ((_scanThread != null) && (_scanThread.IsAlive))
       {
-        var dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK); ;
+        var dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
         if (dlg == null)
         {
           return;
@@ -518,7 +513,7 @@ namespace MediaPortal.GUI.Video
     {
       if ((_scanThread != null) && (_scanThread.IsAlive))
       {
-        var dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);;
+        var dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
         if (dlg == null)
         {
           return;
@@ -735,11 +730,15 @@ namespace MediaPortal.GUI.Video
       
       // Save plot into DB
       if (plot != string.Empty || _forceRefreshAll)
+      {
         SetPlot(item, plot);
-      
+      }
+
       // Save cover url into db
       if (cover.StartsWith("http://") || _forceRefreshAll)
+      {
         SetThumb(ref item, cover);
+      }
 
       // Update/Set back original item label (Downloading... -> Movie title)
       string line = String.Format("{0}. {1} ({2})",
@@ -747,7 +746,6 @@ namespace MediaPortal.GUI.Video
                                     ListItemMovieInfo(item).MovieTitle,
                                     ListItemMovieInfo(item).Role);
       line.Replace("()", string.Empty).Trim();
-
       tempItemLabel = line; // Year+Title+Role (visible on screen item)
       item.Label = tempItemLabel;
     }
@@ -996,7 +994,9 @@ namespace MediaPortal.GUI.Video
         GUIVideoFiles.InternalGrabber.InternalGrabber.GetPlotImdb(ref movie);
         plot = movie.PlotOutline;
 
-        // Extra data
+        #region Extra data
+
+        // Title
         if (movie.Title != string.Empty)
         {
           ExecuteSql("strTitle", movie.Title, item);
@@ -1038,6 +1038,8 @@ namespace MediaPortal.GUI.Video
         // Cast list
         ExecuteSql("strCast", movie.Cast, item);
         ListItemMovieInfo(item).MovieCast = movie.Cast;
+
+        #endregion
 
         movie = null;
         return plot;
