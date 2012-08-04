@@ -145,7 +145,7 @@ UINT CALLBACK LogThread(void* param)
   LogPath(fileName, "log");
 
   HANDLE handles[2];
-  handles[0] = &m_eLog;
+  handles[0] = m_eLog;
   handles[1] = m_hLogger;
 
   while (m_bLoggerRunning)
@@ -166,8 +166,18 @@ UINT CALLBACK LogThread(void* param)
         fclose(pFile);
       }
     }
-    m_eLog.Reset();
-    WaitForMultipleObjects(2, handles, false, INFINITE);
+    DWORD result = WaitForMultipleObjects(2, handles, false, INFINITE);
+
+    if (result == WAIT_FAILED)
+    {
+      DWORD error = GetLastError();
+      FILE* pFile = fopen(fileName, "a+");
+      if (pFile)
+      {
+        fprintf(pFile, "LoggerThread - WaitForMultipleObjects failed, result: %d error: %d\n", result, error);
+        fclose(pFile);
+      }
+    }
   }
 
   return 0;
