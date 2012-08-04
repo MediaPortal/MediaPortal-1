@@ -165,15 +165,9 @@ namespace MediaPortal.Music.Database
       for (var m = AlbumURLRegEx.Match(discHTML); m.Success; m = m.NextMatch())
       {
         var strFoundValue = m.Groups["albumName"].ToString().ToLower();
-        Log.Debug("strfoundvalue: {0}", strFoundValue);
-
         strFoundValue = System.Web.HttpUtility.HtmlDecode(strFoundValue);
         var strFoundPunctuation = PunctuationRegex.Replace(strFoundValue, "");
         var strFoundAnd = strFoundValue.Replace("&", "and").Replace("+", "and");
-        
-        Log.Debug("strfoundvalue: {0}", strFoundValue);
-        Log.Debug("strfoundpunc: {0}", strFoundPunctuation);
-        Log.Debug("strfoundand: {0}", strFoundAnd);
 
         if (strFoundValue == strAlbum.ToLower())
         {

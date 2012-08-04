@@ -1141,7 +1141,6 @@ namespace MediaPortal.GUI.Music
               selectedMatch = artists[iSelectedMatch];
             }
 
-            // ok, now show dialog we're downloading the artist info
             if (null != dlgProgress)
             {
               dlgProgress.Reset();
