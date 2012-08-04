@@ -443,6 +443,33 @@ namespace MediaPortal.Music.Database
       Loaded = true;
     }
 
+    /// <summary>
+    /// Return the Album Info
+    /// </summary>
+    /// <returns></returns>
+    public AlbumInfo Get()
+    {
+     var album = new AlbumInfo();
+      if (_bLoaded)
+      {
+        int iYear;
+
+        album.Artist = Artist;
+        album.Album = Title;
+        Int32.TryParse(DateOfRelease, out iYear);
+        album.Year = iYear;
+        album.Genre = Genre;
+        album.Tones = Tones;
+        album.Styles = Styles;
+        album.Review = Review;
+        album.Image = ImageURL;
+        album.Rating = Rating;
+        album.Tracks = Tracks;
+
+      }
+      return album;
+    }
+
     public void SetSongs(ArrayList list)
     {
       _songs.Clear();

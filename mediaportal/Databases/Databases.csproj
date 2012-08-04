@@ -241,9 +241,6 @@
     <Compile Include="Music\InternetLookups\MusicArtistInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Music\InternetLookups\MusicInfoScraper.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Music\MusicDatabase.Lookups.cs" />
     <Compile Include="Music\MusicDatabase.Updates.cs" />
     <Compile Include="Music\MusicSong.cs">
