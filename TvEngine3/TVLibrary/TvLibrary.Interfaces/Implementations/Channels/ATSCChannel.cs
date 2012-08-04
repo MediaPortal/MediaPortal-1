@@ -181,17 +181,18 @@ namespace TvLibrary.Channels
         return true;
       }
 
+      if (_modulation != atscChannel.ModulationType)
+      {
+        return true;
+      }
+
       // ATSC (over-the-air digital television).
-      if (_modulation == ModulationType.Mod8Vsb)
+      if (_modulation == ModulationType.Mod8Vsb || _modulation == ModulationType.Mod16Vsb)
       {
         return atscChannel.PhysicalChannel != _physicalChannel;
       }
       // QAM (cable television).
-      else if (_modulation == ModulationType.Mod256Qam)
-      {
-        return atscChannel.Frequency != Frequency;
-      }
-      return true;
+      return atscChannel.Frequency != Frequency;
     }
   }
 }
