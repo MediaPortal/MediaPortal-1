@@ -193,7 +193,29 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
   }
 
   WAVEFORMATEXTENSIBLE* pwfxAccepted = NULL;
+  WAVEFORMATEXTENSIBLE outFormat = *pwfx;
   hr = IsFormatSupported(pwfx, &pwfxAccepted);
+
+  // Try different speaker setup
+  if (FAILED(hr))
+  {
+    DWORD dwSpeakers = pwfx->dwChannelMask;
+    if (dwSpeakers == KSAUDIO_SPEAKER_5POINT1)
+      dwSpeakers = KSAUDIO_SPEAKER_5POINT1_SURROUND;
+    else if (dwSpeakers == KSAUDIO_SPEAKER_5POINT1_SURROUND)
+      dwSpeakers = KSAUDIO_SPEAKER_5POINT1;
+    else if (dwSpeakers == KSAUDIO_SPEAKER_7POINT1)
+      dwSpeakers = KSAUDIO_SPEAKER_7POINT1_SURROUND;
+    else if (dwSpeakers == KSAUDIO_SPEAKER_7POINT1_SURROUND)
+      dwSpeakers = KSAUDIO_SPEAKER_7POINT1;
+
+    if (dwSpeakers != pwfx->dwChannelMask)
+    {
+      outFormat.dwChannelMask = dwSpeakers;
+      hr = IsFormatSupported(&outFormat, &pwfxAccepted);
+    }
+  }
+
   if (FAILED(hr))
   {
     SAFE_DELETE_WAVEFORMATEX(pwfxAccepted);
@@ -202,7 +224,7 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
 
   if (bApplyChanges)
   {
-    LogWaveFormat(pwfx, "REN - applying  ");
+    LogWaveFormat(&outFormat, "REN - applying  ");
 
     // Stop and discard audio client
     StopAudioClient();
@@ -211,8 +233,9 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
     SAFE_RELEASE(m_pAudioClient);
 
     // We must use incoming format so the WAVEFORMATEXTENSIBLE to WAVEFORMATEXT difference
-    // that some audio drivers require is not causing an infonite loop of format changes
+    // that some audio drivers require is not causing an infinite loop of format changes
     SetInputFormat(pwfx);
+    SetOutputFormat(&outFormat);    
 
     // Reinitialize audio client
     hr = CreateAudioClient(true);
@@ -1172,7 +1195,7 @@ HRESULT CWASAPIRenderFilter::InitAudioClient()
   }
 
   WAVEFORMATEXTENSIBLE* pwfxAccepted = NULL;
-  hr = IsFormatSupported(m_pInputFormat, &pwfxAccepted);
+  hr = IsFormatSupported(m_pOutputFormat, &pwfxAccepted);
   if (FAILED(hr))
   {
     SAFE_DELETE_WAVEFORMATEX(pwfxAccepted);
@@ -1182,8 +1205,8 @@ HRESULT CWASAPIRenderFilter::InitAudioClient()
   GetBufferSize((WAVEFORMATEX*)pwfxAccepted, &m_pSettings->m_hnsPeriod);
 
   if (SUCCEEDED(hr))
-    hr = m_pAudioClient->Initialize(m_pSettings->m_WASAPIShareMode, m_dwStreamFlags,
-	                                m_pSettings->m_hnsPeriod, m_pSettings->m_hnsPeriod, (WAVEFORMATEX*)pwfxAccepted, NULL);
+    hr = m_pAudioClient->Initialize(m_pSettings->m_WASAPIShareMode, m_dwStreamFlags, m_pSettings->m_hnsPeriod, 
+                                    m_pSettings->m_hnsPeriod, (WAVEFORMATEX*)pwfxAccepted, NULL);
 
   if (FAILED(hr) && hr != AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED)
   {
@@ -1229,8 +1252,8 @@ HRESULT CWASAPIRenderFilter::InitAudioClient()
     Log("WASAPIRenderFilter::InitAudioClient Trying again with periodicity of %I64u hundred-nanoseconds, or %u frames", m_pSettings->m_hnsPeriod, m_nFramesInBuffer);
 
     if (SUCCEEDED (hr)) 
-      hr = m_pAudioClient->Initialize(m_pSettings->m_WASAPIShareMode, m_dwStreamFlags, 
-	                                    m_pSettings->m_hnsPeriod, m_pSettings->m_hnsPeriod, (WAVEFORMATEX*)pwfxAccepted, NULL);
+      hr = m_pAudioClient->Initialize(m_pSettings->m_WASAPIShareMode, m_dwStreamFlags, m_pSettings->m_hnsPeriod, 
+                                      m_pSettings->m_hnsPeriod, (WAVEFORMATEX*)pwfxAccepted, NULL);
  
     if (FAILED(hr))
     {
