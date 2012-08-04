@@ -46,7 +46,11 @@ namespace MediaPortal.Dialogs
     private bool m_bSortAscending = true;
     private bool m_bButtonEnabled = false;
     private string m_strSelected = "";
+    private string m_strItemSelectedLabelTextNoFocus = "";
+    private int m_iItemSelectedIndexNoFocus;
     private ArrayList m_vecList = new ArrayList();
+    private string m_strLastSelectedItem = "";
+    private bool m_bNewBehaviour = false;
 
     public GUIDialogSelect()
     {
@@ -58,6 +62,27 @@ namespace MediaPortal.Dialogs
       return Load(GUIGraphicsContext.GetThemedSkinFile(@"\DialogSelect.xml"));
     }
 
+    protected override void OnPageLoad()
+    {
+      base.OnPageLoad();
+
+      if (m_bNewBehaviour)
+      {
+        m_strLastSelectedItem = GUIPropertyManager.GetProperty("#selecteditem");
+      }
+
+
+    }
+
+    protected override void OnPageDestroy(int new_windowId)
+    {
+      base.OnPageDestroy(new_windowId);
+      
+      if (m_bNewBehaviour)
+      {
+        GUIPropertyManager.SetProperty("#selecteditem", m_strLastSelectedItem);
+      }
+    }
 
     public override bool OnMessage(GUIMessage message)
     {
@@ -121,7 +146,66 @@ namespace MediaPortal.Dialogs
             }
           }
           break;
-      }
+     
+        case GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED:
+          {
+            if (m_bNewBehaviour)
+            {
+              if (GetSelectedItem() != null)
+              {
+                GUIPropertyManager.SetProperty("#selecteditem", GetSelectedItem().Label);
+              }
+            }
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED:
+          {
+            if (m_bNewBehaviour)
+            {
+              int iControl = message.SenderControlId;
+              if ((int)Controls.CONTROL_LIST == iControl)
+              {
+                if (GetSelectedItem() != null)
+                {
+                  m_strItemSelectedLabelTextNoFocus = GetSelectedItem().Label;
+                  m_iItemSelectedIndexNoFocus = GetSelectedItemNo();
+                }
+              }
+            }
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_SETFOCUS:
+          {
+            if (m_bNewBehaviour)
+            {
+              int iControl = message.TargetControlId;
+              
+              if ((int)Controls.CONTROL_LIST == iControl)
+              {
+                if (GetSelectedItem() != null)
+                {
+                  //GetSelectedItem().Selected = false;
+                  int itemCount = GUIControl.GetItemCount(GetID, (int)Controls.CONTROL_LIST);
+
+                  for (int i = 0; i < itemCount; i++)
+                  {
+                    GUIControl.GetListItem(GetID, (int)Controls.CONTROL_LIST, i).Selected = false;
+                  }
+                }
+              }
+              if ((int)Controls.CONTROL_BUTTON == iControl)
+              {
+                if (GetSelectedItem() != null)
+                {
+                  GetSelectedItem().Selected = true;
+                }
+              }
+            }
+          }
+          break;
+        }
 
       return base.OnMessage(message);
     }
@@ -131,12 +215,28 @@ namespace MediaPortal.Dialogs
       base.Reset();
       m_vecList.DisposeAndClearList();
       m_bButtonEnabled = false;
+      m_bNewBehaviour = false;
+    }
+
+    public bool MarkSelectedItemOnButton
+    {
+      set { m_bNewBehaviour = value; }
     }
 
     public void Add(string strLabel)
     {
       GUIListItem pItem = new GUIListItem(strLabel);
       m_vecList.Add(pItem);
+    }
+
+    public int SelectedItemLabelIndexNoFocus
+    {
+      get { return m_iItemSelectedIndexNoFocus; }
+    }
+
+    public string SelectedItemLabelTextNoFocus
+    {
+      get { return m_strItemSelectedLabelTextNoFocus; }
     }
 
     public string SelectedLabelText

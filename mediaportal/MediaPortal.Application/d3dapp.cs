@@ -1967,7 +1967,7 @@ namespace MediaPortal
 
         // check if system has been awaken by user or psclient.
         // if by psclient, DO NOT resume last active module
-        if (showLastActiveModule)
+        if (showLastActiveModule && !Util.Utils.IsGUISettingsWindow(lastActiveModule))
         {
           string psClientNextwakeupStr = xmlreader.GetValueAsString("psclientplugin", "nextwakeup",
                                                                     DateTime.MaxValue.ToString());

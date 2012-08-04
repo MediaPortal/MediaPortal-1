@@ -1615,7 +1615,7 @@ public class MediaPortalApp : D3DApp, IRender
     bool currentmodulefullscreen = Currentmodulefullscreen();
     string currentmodulefullscreenstate = GUIPropertyManager.GetProperty("#currentmodulefullscreenstate");
     string currentmoduleid = GUIPropertyManager.GetProperty("#currentmoduleid");
-    if (showLastActiveModule)
+    if (showLastActiveModule && !Utils.IsGUISettingsWindow(GUIWindowManager.GetPreviousActiveWindow()))
     {
       using (Settings xmlreader = new MPSettings())
       {

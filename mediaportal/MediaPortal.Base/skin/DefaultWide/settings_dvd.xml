@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>704</id>
-  <defaultcontrol>21</defaultcontrol>
-  <allowoverlay>yes</allowoverlay>
-  <define>#header.label:6015</define>
-  <define>#header.hover:hover_my videos.png</define>
+  <defaultcontrol>22</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
+		<import>common.window.xml</import>
+    <import>common.time.xml</import>
     <control>
       <description>background</description>
       <type>image</type>
@@ -21,75 +22,47 @@
     <control>
       <description>buttons</description>
       <type>group</type>
-      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
-      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="70" end="-300,0">WindowClose</animation>
       <posX>465</posX>
       <posY>160</posY>
-      <layout>StackLayout(0, Vertical, true)</layout>
-      <control>
-        <description>DVD Navigators</description>
-        <type>button</type>
-        <id>21</id>
-        <label>1198</label>
-        <onup>17</onup>
-        <width>350</width>
-      </control>
-      <control>
-        <description>Video Codecs</description>
-        <type>button</type>
-        <id>24</id>
-        <label>6000</label>
-        <width>350</width>
-      </control>
-      <control>
-        <description>Audio Codecs</description>
-        <type>button</type>
-        <id>25</id>
-        <label>6001</label>
-        <width>350</width>
-      </control>
-      <control>
-        <description>Audio Renderer</description>
-        <type>button</type>
-        <id>27</id>
-        <label>6002</label>
-        <width>350</width>
-      </control>
-      <control>
-        <description>Apect Ratio</description>
-        <type>button</type>
-        <id>28</id>
-        <label>6004</label>
-        <width>350</width>
-      </control>
+      <layout>StackLayout(0, Horizontal, True)</layout>
       <control>
         <description>Enable Subtitles</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>22</id>
         <label>1196</label>
         <width>350</width>
+        <onup>17</onup>
       </control>
       <control>
-        <description>Subtitle Language</description>
-        <type>button</type>
-        <id>29</id>
-        <label>1029</label>
-        <width>350</width>
-      </control>
-      <control>
-        <description>Audio Language</description>
-        <type>button</type>
-        <id>30</id>
-        <label>492</label>
+        <description>Enable Closed Caption</description>
+        <type>checkbutton</type>
+        <id>31</id>
+        <label>300079</label>
         <width>350</width>
       </control>
       <control>
         <description>Turn Off DXVA</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>23</id>
         <label>1197</label>
-        <ondown>99</ondown>
         <width>350</width>
+      </control>
+      <control>
+        <description>Video</description>
+        <type>button</type>
+        <id>24</id>
+        <label>291</label>
+        <width>350</width>
+      </control>
+      <control>
+        <description>Audio</description>
+        <type>button</type>
+        <id>25</id>
+        <label>292</label>
+        <width>350</width>
+        <ondown>22</ondown>
       </control>
     </control>
   </controls>

@@ -245,21 +245,48 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUISettings\BluRay\GUISetingsBluRay.cs" />
+    <Compile Include="GUISettings\MyVideos\GUISettingsMyVideos_OtherSettings.cs" />
     <Compile Include="GUISettings\Weather\GUISettingsWeather.cs" />
     <Compile Include="GUIVideoFiles\SelectBDHandler.cs" />
+    <Compile Include="GUISettings\General\GeneralMP\GUISettingsGeneral_Resume.cs" />
+    <Compile Include="GUISettings\General\GeneralMP\GUISettingsGeneral_GeneralMP.cs" />
+    <Compile Include="GUISettings\General\GeneralMP\GUISettingsGeneral.cs" />
+    <Compile Include="GUISettings\General\GUI\GUISettingsGUI_General.cs" />
+    <Compile Include="GUISettings\General\GUI\GUISettingsGUI.cs" />
+    <Compile Include="GUISettings\GUISettings_SharesHelper.cs" />
+    <Compile Include="GUISettings\GUISettingsCommon_Playlist.cs" />
+    <Compile Include="GUISettings\MyMusic\GUISettingsMusic_NowPlaying.cs" />
+    <Compile Include="GUISettings\MyPictures\GUISettingsPictures_Slideshow.cs" />
+    <Compile Include="GUISettings\MyPictures\GUISettingsPictures_Database.cs" />
+    <Compile Include="GUISettings\MyVideos\GUISettingsMyVideos_Database.cs" />
+    <Compile Include="GUISettings\General\GeneralMP\GUISettingsGeneral_Startup.cs" />
+    <Compile Include="GUISettings\General\GeneralMP\GUISettingsGeneral_RefreshRate.cs" />
+    <Compile Include="GUISettings\General\GeneralMP\GUISettingsGeneral_Volume.cs" />
+    <Compile Include="GUISettings\General\GUI\GUISettingsGUI_Thumbnails.cs" />
+    <Compile Include="GUISettings\General\GUI\GUISettingsGUI_OnScreenDisplay.cs" />
+    <Compile Include="GUISettings\General\GUI\GUISettingsGUI_ScreenSaver.cs" />
+    <Compile Include="GUISettings\GUISettingsCommon_Extensions.cs" />
+    <Compile Include="GUISettings\GUISettingsCommon_ShareFolders.cs" />
+    <Compile Include="GUISettings\MyMusic\GUISettingsMusic_Database.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\MyPictures\GUISettingsPictures.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="StateBase.cs" />
     <Compile Include="WindowPluginBase.cs" />
     <Compile Include="GUIDisc\GUIDisc.cs" />
     <Compile Include="GUIMusic\GUIMusicMenu.cs" />
     <Compile Include="GUIPictures\GUISlidePicture.cs" />
     <Compile Include="GUIPictures\SlideCache.cs" />
-    <Compile Include="GUISettings\MiniDisplay\BacklightWindow.cs" />
-    <Compile Include="GUISettings\MiniDisplay\DisplayControlWindow.cs" />
-    <Compile Include="GUISettings\MiniDisplay\DisplayOptionsWindow.cs" />
-    <Compile Include="GUISettings\MiniDisplay\EqualizerWindow.cs" />
-    <Compile Include="GUISettings\MiniDisplay\KeyPadWindow.cs" />
-    <Compile Include="GUISettings\MiniDisplay\MainMenuWindow.cs" />
-    <Compile Include="GUISettings\MiniDisplay\RemoteWindow.cs" />
+    <Compile Include="GUISettings\MiniDisplay\GUISettingsMiniDisplay_BackLight.cs" />
+    <Compile Include="GUISettings\MiniDisplay\GUISettingsMiniDisplay_ControlWindow.cs" />
+    <Compile Include="GUISettings\MiniDisplay\GUISettingsMiniDisplay_OptionsWindow.cs" />
+    <Compile Include="GUISettings\MiniDisplay\GUISettingsMiniDisplay_EqualizerWindow.cs" />
+    <Compile Include="GUISettings\MiniDisplay\GUISettingsMiniDisplay_KeyPadWindow.cs" />
+    <Compile Include="GUISettings\MiniDisplay\GUISettingsMiniDisplay_MainMenuWindow.cs" />
+    <Compile Include="GUISettings\MiniDisplay\GUISettingsMiniDisplay_RemoteWindow.cs" />
     <Compile Include="GUISettings\TV\GUISettingsTv.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -415,37 +442,34 @@
     <Compile Include="GUISettings\DVD\GUISettingsDVD.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUISettings\General\GUISettingsGeneral.cs">
+    <Compile Include="GUISettings\General\GUI\GUISettingsGUI_Skin.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUISettings\General\GUISettingsSkipSteps.cs">
+    <Compile Include="GUISettings\General\GUI\GUISettingsGUI_SkipSteps.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUISettings\GUISettings.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUISettings\GUISettingsGUI.cs">
+    <Compile Include="GUISettings\General\GUI\GUISettingsGUI_ScrollSpeed.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUISettings\GUISettingsMovieCalibration.cs">
+    <Compile Include="GUISettings\General\GUI\GUISettingsGUI_VideoScreenCalibration.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUISettings\GUISettingsMusic.cs">
+    <Compile Include="GUISettings\MyMusic\GUISettingsMusic.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUISettings\GUISettingsScreen.cs">
+    <Compile Include="GUISettings\General\GUI\GUISettingsGUI_ScreenSetup.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUISettings\GUISettingsSlideShow.cs">
+    <Compile Include="GUISettings\General\GUI\GUISettingsGUI_UICalibration.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUISettings\GUISettingsUICalibration.cs">
+    <Compile Include="GUISettings\MyVideos\GUISettingsMyVideos.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUISettings\Movies\GUISettingsMovies.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUISettings\MusicDatabaseReorg.cs">
+    <Compile Include="GUISettings\MyMusic\MusicDatabaseReorg.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUINumberPlace\CellControl.cs" />
@@ -629,6 +653,7 @@
   <ItemGroup>
     <EmbeddedResource Include="GUIDisc\DVDDisabled.gif" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
