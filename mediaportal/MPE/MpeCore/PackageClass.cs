@@ -455,8 +455,14 @@ namespace MpeCore
       Util.KillAllMediaPortalProcesses();
       var navigator = new WizardNavigator(this);
       if (navigator.Navigate() == SectionResponseEnum.Ok)
+      {
         DoAdditionalInstallTasks();
-      return true;
+        return true;
+      }
+      else
+      {
+        return false;
+      }
     }
 
     public void GenerateRelativePath(string path)

@@ -20,7 +20,6 @@
 
 using System;
 using System.Windows.Forms;
-using MpeInstaller.Classes;
 
 namespace MpeInstaller
 {

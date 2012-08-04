@@ -71,10 +71,7 @@
     <Compile Include="..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="Classes\CompressionWebClient.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Classes\ProgramArguments.cs" />
+    <Compile Include="ProgramArguments.cs" />
     <Compile Include="Controls\ExtensionControlExpanded.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -104,18 +101,6 @@
     </Compile>
     <Compile Include="Dialogs\DependencyForm.Designer.cs">
       <DependentUpon>DependencyForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\DownloadFile.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\DownloadFile.Designer.cs">
-      <DependentUpon>DownloadFile.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\DownloadInfo.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\DownloadInfo.Designer.cs">
-      <DependentUpon>DownloadInfo.cs</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\InfoForm.cs">
       <SubType>Form</SubType>
@@ -171,14 +156,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\DependencyForm.resx">
       <DependentUpon>DependencyForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\DownloadFile.resx">
-      <DependentUpon>DownloadFile.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\DownloadInfo.resx">
-      <DependentUpon>DownloadInfo.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\InfoForm.resx">

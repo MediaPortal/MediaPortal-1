@@ -43,7 +43,6 @@ namespace MpeCore
     public static ExtensionCollection InstalledExtensions { get; set; }
     public static ExtensionCollection KnownExtensions { get; set; }
 
-
     private static List<string> extensionUrlList = new List<string>();
 
     public static void Init()

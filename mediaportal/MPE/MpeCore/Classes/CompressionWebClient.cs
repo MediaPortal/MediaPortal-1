@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Net;
 
-namespace MpeInstaller
+namespace MpeCore.Classes
 {
   public class CompressionWebClient : WebClient
   {

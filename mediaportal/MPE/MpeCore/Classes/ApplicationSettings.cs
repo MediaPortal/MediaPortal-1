@@ -27,7 +27,18 @@ namespace MpeCore.Classes
 {
   public class ApplicationSettings
   {
-    public ApplicationSettings()
+    protected static ApplicationSettings _instance = null;
+    public static ApplicationSettings Instance
+    {
+      get 
+      {
+        if (_instance == null)
+          _instance = Load();
+        return _instance;
+      }
+    }
+
+    protected ApplicationSettings()
     {
       LastUpdate = DateTime.MinValue;
       UpdateDays = 7;
@@ -59,7 +70,7 @@ namespace MpeCore.Classes
       }
     }
 
-    public static ApplicationSettings Load()
+    protected static ApplicationSettings Load()
     {
       var apls = new ApplicationSettings();
       string filename = string.Format("{0}\\InstallerSettings.xml", MpeInstaller.BaseFolder);
