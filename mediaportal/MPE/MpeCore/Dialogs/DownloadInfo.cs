@@ -29,6 +29,7 @@ namespace MpeCore.Dialogs
 {
   public partial class DownloadInfo : Form
   {
+    bool cancel = false;
     public bool silent = false;
     private int counter = -1;
     private List<string> onlineFiles = new List<string>();
@@ -68,7 +69,7 @@ namespace MpeCore.Dialogs
         string tempFile = Path.GetTempFileName();
         CompressionWebClient client = new CompressionWebClient();
         int index = -1;
-        while (index < onlineFiles.Count)
+        while (index < onlineFiles.Count && !cancel)
         {
           lock (this)
           {
@@ -114,11 +115,18 @@ namespace MpeCore.Dialogs
             MpeCore.MpeInstaller.Save();
             Invoke((Action)(() =>
             {
+              DialogResult = cancel ? DialogResult.Cancel : DialogResult.OK;
               Close();
             }));
           }
         }
       }
+    }
+
+    private void CancelClick(object sender, EventArgs e)
+    {
+      cancel = true;
+      btnCancel.Enabled = false;
     }
   }
 }

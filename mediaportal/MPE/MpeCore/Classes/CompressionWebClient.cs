@@ -12,6 +12,7 @@ namespace MpeCore.Classes
     {
       Headers["Accept-Encoding"] = "gzip,deflate";
       HttpWebRequest request = base.GetWebRequest(address) as HttpWebRequest;
+      request.Timeout = 20000; // use 20 seconds - default is 100 seconds
       request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
       return request;
     }

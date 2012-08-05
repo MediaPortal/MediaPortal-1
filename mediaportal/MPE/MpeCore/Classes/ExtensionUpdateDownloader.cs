@@ -41,8 +41,10 @@ namespace MpeCore.Classes
       DownloadExtensionIndex(downloadProgressChanged, downloadFileCompleted);
       DownloadInfo dlg = new DownloadInfo();
       dlg.silent = silent;
-      dlg.ShowDialog();
-      ApplicationSettings.Instance.LastUpdate = DateTime.Now;
+      if (dlg.ShowDialog() == DialogResult.OK)
+      {
+        ApplicationSettings.Instance.LastUpdate = DateTime.Now;
+      }
       ApplicationSettings.Instance.Save();
     }
 
