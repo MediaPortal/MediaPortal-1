@@ -128,6 +128,7 @@ namespace MpeCore.Classes.SectionPanel
 
     private void treeView1_AfterCheck(object sender, TreeViewEventArgs e)
     {
+      foreach (TreeNode child in e.Node.Nodes) child.Checked = e.Node.Checked;
       if (Mode == ShowModeEnum.Preview)
         return;
       GroupItem groupItem = e.Node.Tag as GroupItem;
