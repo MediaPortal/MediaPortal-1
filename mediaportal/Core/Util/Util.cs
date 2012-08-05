@@ -4564,6 +4564,5 @@ namespace MediaPortal.Util
       return source.Select(i => actionOnItem.DoAsync(i))
         .ToArray();
     }
-    
   }
 }
