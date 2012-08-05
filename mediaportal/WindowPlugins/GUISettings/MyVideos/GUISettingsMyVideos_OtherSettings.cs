@@ -71,8 +71,8 @@ namespace MediaPortal.GUI.Settings
       using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
         xmlwriter.SetValueAsBool("movies", "markwatched", btnMarkWatched.Selected);
-        xmlwriter.SetValueAsBool("movies", "markwatched", btnKeepFoldersTogether.Selected);
-        xmlwriter.SetValueAsBool("movies", "markwatched", btnCommercialSkip.Selected);
+        xmlwriter.SetValueAsBool("movies", "keepfolderstogether", btnKeepFoldersTogether.Selected);
+        xmlwriter.SetValueAsBool("comskip", "automaticskip", btnCommercialSkip.Selected);
 
         xmlwriter.SetValue("movies", "playedpercentagewatched", _watchedPercentage);
         xmlwriter.SetValue("FFDShow", "audiodelayInterval", _videoAudioDelay);
