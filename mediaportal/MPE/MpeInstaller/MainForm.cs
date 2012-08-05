@@ -239,10 +239,19 @@ namespace MpeInstaller
         return;
       }
 
+      if (packageClass.GeneralInfo.Version.CompareTo(pak.GeneralInfo.Version) != 0)
+      {
+        if (MessageBox.Show(
+          string.Format(@"Downloaded version of {0} is {1} and differs from your selected version: {2}!
+Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Version,packageClass.GeneralInfo.Version), "Install extension", MessageBoxButtons.YesNo,
+          MessageBoxIcon.Exclamation) != DialogResult.Yes)
+        return;
+      }
+
       if (
         MessageBox.Show(
-          "This operation will install extension " + packageClass.GeneralInfo.Name + " version " +
-          pak.GeneralInfo.Version + " \n Do you want to continue ? ", "Install extension", MessageBoxButtons.YesNo,
+          "This operation will install " + packageClass.GeneralInfo.Name + " version " +
+          pak.GeneralInfo.Version + "\n Do you want to continue ?", "Install extension", MessageBoxButtons.YesNo,
           MessageBoxIcon.Exclamation) != DialogResult.Yes)
         return;
       this.Hide();
@@ -251,13 +260,16 @@ namespace MpeInstaller
       {
         if (pak.GeneralInfo.Params[ParamNamesConst.FORCE_TO_UNINSTALL_ON_UPDATE].GetValueAsBool())
         {
-            if (
-              MessageBox.Show(
-                "Another version of this extension is installed\nand needs to be uninstalled first.\nDo you want to continue?\n" +
-                "Old extension version: " + packageClass.GeneralInfo.Version + "\n" +
-                "New extension version: " + pak.GeneralInfo.Version,
-                "Install extension", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) != DialogResult.Yes)
-              return;
+          if (
+            MessageBox.Show(
+              "Another version of this extension is installed\nand needs to be uninstalled first.\nDo you want to continue?\n" +
+              "Old extension version: " + packageClass.GeneralInfo.Version + "\n" +
+              "New extension version: " + pak.GeneralInfo.Version,
+              "Install extension", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) != DialogResult.Yes)
+          {
+            this.Show();
+            return;
+          }
           UnInstall dlg = new UnInstall();
           dlg.Execute(packageClass, false);
         }

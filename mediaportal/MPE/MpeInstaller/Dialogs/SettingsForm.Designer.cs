@@ -28,6 +28,8 @@
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.chk_updateExtension = new System.Windows.Forms.CheckBox();
       this.label2 = new System.Windows.Forms.Label();
@@ -37,6 +39,7 @@
       this.panel1 = new System.Windows.Forms.Panel();
       this.btnOK = new System.Windows.Forms.Button();
       this.btnCancel = new System.Windows.Forms.Button();
+      this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
       this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numeric_Days)).BeginInit();
       this.panel1.SuspendLayout();
@@ -52,7 +55,7 @@
       this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
       this.groupBox1.Location = new System.Drawing.Point(1, 1);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(311, 69);
+      this.groupBox1.Size = new System.Drawing.Size(543, 78);
       this.groupBox1.TabIndex = 3;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Startup";
@@ -63,15 +66,18 @@
       this.chk_updateExtension.AutoSize = true;
       this.chk_updateExtension.Location = new System.Drawing.Point(6, 42);
       this.chk_updateExtension.Name = "chk_updateExtension";
-      this.chk_updateExtension.Size = new System.Drawing.Size(155, 17);
+      this.chk_updateExtension.Size = new System.Drawing.Size(218, 17);
       this.chk_updateExtension.TabIndex = 4;
-      this.chk_updateExtension.Text = "Update installed extensions";
+      this.chk_updateExtension.Text = "Automatically update installed extensions";
+      this.toolTip1.SetToolTip(this.chk_updateExtension, "If enabled, this option will automatically download and install an update for you" +
+        "r installed extensions. It\'s recommended that you also enable downloading of upd" +
+        "ate information.");
       this.chk_updateExtension.UseVisualStyleBackColor = true;
       // 
       // label2
       // 
       this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(259, 20);
+      this.label2.Location = new System.Drawing.Point(507, 20);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(29, 13);
       this.label2.TabIndex = 3;
@@ -80,7 +86,7 @@
       // label1
       // 
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(173, 20);
+      this.label1.Location = new System.Drawing.Point(421, 20);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(34, 13);
       this.label1.TabIndex = 2;
@@ -88,7 +94,7 @@
       // 
       // numeric_Days
       // 
-      this.numeric_Days.Location = new System.Drawing.Point(213, 16);
+      this.numeric_Days.Location = new System.Drawing.Point(461, 16);
       this.numeric_Days.Maximum = new decimal(new int[] {
             30,
             0,
@@ -104,9 +110,10 @@
       this.chk_update.AutoSize = true;
       this.chk_update.Location = new System.Drawing.Point(6, 19);
       this.chk_update.Name = "chk_update";
-      this.chk_update.Size = new System.Drawing.Size(149, 17);
+      this.chk_update.Size = new System.Drawing.Size(345, 17);
       this.chk_update.TabIndex = 0;
-      this.chk_update.Text = "Get update info on startup";
+      this.chk_update.Text = "Automatically download update information for extensions on startup";
+      this.toolTip1.SetToolTip(this.chk_update, resources.GetString("chk_update.ToolTip"));
       this.chk_update.UseVisualStyleBackColor = true;
       this.chk_update.CheckedChanged += new System.EventHandler(this.chk_update_CheckedChanged);
       // 
@@ -115,15 +122,15 @@
       this.panel1.Controls.Add(this.btnOK);
       this.panel1.Controls.Add(this.btnCancel);
       this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-      this.panel1.Location = new System.Drawing.Point(1, 70);
+      this.panel1.Location = new System.Drawing.Point(1, 79);
       this.panel1.Name = "panel1";
-      this.panel1.Size = new System.Drawing.Size(311, 32);
+      this.panel1.Size = new System.Drawing.Size(543, 32);
       this.panel1.TabIndex = 4;
       // 
       // btnOK
       // 
       this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-      this.btnOK.Location = new System.Drawing.Point(151, 5);
+      this.btnOK.Location = new System.Drawing.Point(380, 4);
       this.btnOK.Name = "btnOK";
       this.btnOK.Size = new System.Drawing.Size(75, 23);
       this.btnOK.TabIndex = 1;
@@ -133,12 +140,16 @@
       // btnCancel
       // 
       this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.btnCancel.Location = new System.Drawing.Point(232, 5);
+      this.btnCancel.Location = new System.Drawing.Point(461, 4);
       this.btnCancel.Name = "btnCancel";
       this.btnCancel.Size = new System.Drawing.Size(75, 23);
       this.btnCancel.TabIndex = 0;
       this.btnCancel.Text = "Cancel";
       this.btnCancel.UseVisualStyleBackColor = true;
+      // 
+      // toolTip1
+      // 
+      this.toolTip1.IsBalloon = true;
       // 
       // SettingsForm
       // 
@@ -146,7 +157,7 @@
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.CancelButton = this.btnCancel;
-      this.ClientSize = new System.Drawing.Size(313, 103);
+      this.ClientSize = new System.Drawing.Size(545, 112);
       this.ControlBox = false;
       this.Controls.Add(this.groupBox1);
       this.Controls.Add(this.panel1);
@@ -175,5 +186,6 @@
     public System.Windows.Forms.CheckBox chk_updateExtension;
     public System.Windows.Forms.NumericUpDown numeric_Days;
     public System.Windows.Forms.CheckBox chk_update;
+    private System.Windows.Forms.ToolTip toolTip1;
   }
 }
