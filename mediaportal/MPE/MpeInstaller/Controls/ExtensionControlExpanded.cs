@@ -277,5 +277,16 @@ namespace MpeInstaller.Controls
       if (parent != null)
         parent.OnConfigureExtension(this);
     }
+
+    private void btn_install_ButtonClick(object sender, EventArgs e)
+    {
+      if (btn_install.DropDownItems.Count > 0)
+      {
+        var parent = Parent.Parent.Parent as ExtensionListControl;
+        if (parent == null)
+          return;
+        parent.OnInstallExtension(this, btn_install.DropDownItems[0].Tag as PackageClass);
+      }
+    }
   }
 }

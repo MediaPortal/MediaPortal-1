@@ -41,7 +41,7 @@
       this.btn_update = new System.Windows.Forms.Button();
       this.btn_conf = new System.Windows.Forms.Button();
       this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-      this.btn_install = new System.Windows.Forms.ToolStripDropDownButton();
+      this.btn_install = new System.Windows.Forms.ToolStripSplitButton();
       this.img_logo = new System.Windows.Forms.PictureBox();
       this.btn_screenshot = new System.Windows.Forms.Button();
       this.chk_ignore = new System.Windows.Forms.CheckBox();
@@ -188,28 +188,31 @@
       // 
       // toolStrip1
       // 
-      this.toolStrip1.BackColor = System.Drawing.SystemColors.ButtonFace;
       this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
       this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
       this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btn_install});
-      this.toolStrip1.Location = new System.Drawing.Point(4, 3);
+      this.toolStrip1.Location = new System.Drawing.Point(4, 2);
       this.toolStrip1.Name = "toolStrip1";
-      this.toolStrip1.Size = new System.Drawing.Size(70, 25);
+      this.toolStrip1.Padding = new System.Windows.Forms.Padding(1);
+      this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
+      this.toolStrip1.Size = new System.Drawing.Size(79, 25);
       this.toolStrip1.TabIndex = 10;
       this.toolStrip1.Text = "toolStrip1";
       this.toolStrip1.Visible = false;
       // 
       // btn_install
       // 
-      this.btn_install.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+      this.btn_install.DropDownButtonWidth = 16;
       this.btn_install.ForeColor = System.Drawing.SystemColors.ControlText;
       this.btn_install.Image = global::MpeInstaller.Properties.Resources.system_software_update;
       this.btn_install.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.btn_install.Margin = new System.Windows.Forms.Padding(0);
       this.btn_install.Name = "btn_install";
-      this.btn_install.Size = new System.Drawing.Size(67, 22);
+      this.btn_install.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
+      this.btn_install.Size = new System.Drawing.Size(75, 25);
       this.btn_install.Text = "Install";
-      this.btn_install.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+      this.btn_install.ButtonClick += new System.EventHandler(this.btn_install_ButtonClick);
       // 
       // img_logo
       // 
@@ -253,7 +256,7 @@
       this.flowLayoutPanel1.Controls.Add(this.btn_uninstall);
       this.flowLayoutPanel1.Controls.Add(this.btn_update);
       this.flowLayoutPanel1.Controls.Add(this.btn_conf);
-      this.flowLayoutPanel1.Location = new System.Drawing.Point(77, 0);
+      this.flowLayoutPanel1.Location = new System.Drawing.Point(81, 0);
       this.flowLayoutPanel1.Name = "flowLayoutPanel1";
       this.flowLayoutPanel1.Size = new System.Drawing.Size(328, 30);
       this.flowLayoutPanel1.TabIndex = 36;
@@ -383,7 +386,7 @@
     private System.Windows.Forms.PictureBox img_dep;
     private System.Windows.Forms.Button btn_conf;
     private System.Windows.Forms.ToolStrip toolStrip1;
-    private System.Windows.Forms.ToolStripDropDownButton btn_install;
+    private System.Windows.Forms.ToolStripSplitButton btn_install;
     private System.Windows.Forms.Button btn_forum;
     private System.Windows.Forms.Button btn_home;
     private System.Windows.Forms.Button btn_screenshot;
