@@ -153,7 +153,7 @@ namespace MpeMaker.Sections
       add_list.Enabled = !(String.IsNullOrEmpty(txt_list1.Text) || String.IsNullOrEmpty(txt_list2.Text));
     }
 
-    private void button2_Click(object sender, EventArgs e)
+    private void PublishClick(object sender, EventArgs e)
     {
       if (string.IsNullOrEmpty(Package.GeneralInfo.UpdateUrl))
       {
@@ -162,7 +162,7 @@ namespace MpeMaker.Sections
       }
       if (Package.ValidatePackage().Count > 0)
       {
-        MessageBox.Show("Package contain error(s). First sove it !");
+        MessageBox.Show("Package contain error(s). First solve it!");
         return;
       }
 

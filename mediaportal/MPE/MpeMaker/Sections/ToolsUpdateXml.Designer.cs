@@ -192,7 +192,7 @@
           this.btn_publish.TabIndex = 0;
           this.btn_publish.Text = "Publish";
           this.btn_publish.UseVisualStyleBackColor = true;
-          this.btn_publish.Click += new System.EventHandler(this.button2_Click);
+          this.btn_publish.Click += new System.EventHandler(this.PublishClick);
           // 
           // webBrowser
           // 
