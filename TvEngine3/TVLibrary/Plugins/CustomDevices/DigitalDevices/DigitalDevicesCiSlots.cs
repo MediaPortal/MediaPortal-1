@@ -70,6 +70,20 @@ namespace DigitalDevices
     /// set is empty, the slot/CAM is considered to be able to decrypt any service.
     /// </remarks>
     public HashSet<String> Providers;
+
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
+    /// <param name="devicePath">The device path of the corresponding CI device.</param>
+    public DigitalDevicesCiSlot(String devicePath)
+    {
+      DeviceName = String.Empty;
+      DevicePath = devicePath;
+      CamRootMenuTitle = "(empty)";
+      DecryptLimit = 0;
+      CurrentTunerSet = new HashSet<String>();
+      Providers = new HashSet<String>();
+    }
   }
 
   /// <summary>
@@ -101,11 +115,11 @@ namespace DigitalDevices
     /// Get a list containing the current settings for each of the known Digital Devices CI slots.
     /// </summary>
     /// <returns>the CI list</returns>
-    public static List<DigitalDevicesCiSlot> GetDatabaseSettings()
+    public static Dictionary<String, DigitalDevicesCiSlot> GetDatabaseSettings()
     {
-      List<DigitalDevicesCiSlot> slotSettings = new List<DigitalDevicesCiSlot>();
+      Dictionary<String, DigitalDevicesCiSlot> slotSettings = new Dictionary<String, DigitalDevicesCiSlot>();
       TvBusinessLayer layer = new TvBusinessLayer();
-      byte i = 1;
+      byte i = 0;
       while (true)  // Loop until we don't find any more settings.
       {
         Setting devicePath = layer.GetSetting("digitalDevicesCiDevicePath" + i, String.Empty);
@@ -114,8 +128,7 @@ namespace DigitalDevices
           break;
         }
 
-        DigitalDevicesCiSlot slot = new DigitalDevicesCiSlot();
-        slot.DevicePath = devicePath.Value;
+        DigitalDevicesCiSlot slot = new DigitalDevicesCiSlot(devicePath.Value);
         Setting deviceName = layer.GetSetting("digitalDevicesCiDeviceName" + i, String.Empty);
         slot.DeviceName = deviceName.Value;
         Setting decryptLimit = layer.GetSetting("digitalDevicesCiDecryptLimit" + i, "0");
@@ -129,8 +142,12 @@ namespace DigitalDevices
         }
         Setting providerList = layer.GetSetting("digitalDevicesCiProviderList" + i, String.Empty);
         slot.Providers = new HashSet<String>(providerList.Value.Split('|'));
-        slot.CamRootMenuTitle = "<empty>";
-        slotSettings.Add(slot);
+
+        // Use the first settings found. Settings found later could be invalid left-overs.
+        if (!slotSettings.ContainsKey(devicePath.Value))
+        {
+          slotSettings.Add(devicePath.Value, slot);
+        }
         i++;
       }
 
@@ -185,6 +202,21 @@ namespace DigitalDevices
       if (device != null && device.Name != null &&
         device.DevicePath.ToLowerInvariant().Contains(CommonDevicePathSection) &&
         device.Name.ToLowerInvariant().Contains("common interface"))
+      {
+        return true;
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Determine whether the TV Server Digital Devices plugin is currently enabled.
+    /// </summary>
+    /// <returns><c>true</c> if the plugin is enabled, otherwise <c>false</c></returns>
+    public static bool IsPluginEnabled()
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Setting s = layer.GetSetting("pluginDigital Devices", "false");
+      if (s.Value.Equals("true"))
       {
         return true;
       }

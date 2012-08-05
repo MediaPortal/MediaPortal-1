@@ -145,68 +145,6 @@ namespace TvEngine
 
     #endregion
 
-    #region COM interfaces
-    // Note: this is a generic interface. Ideally it should be in the DirectShow.NET project, however it should
-    // be mixed with DirectShow.NET code to avoid maintenance issues.
-
-    [ComImport, SuppressUnmanagedCodeSecurity,
-     Guid("28f54685-06fd-11d2-b27a-00a0c9223196"),
-     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    private interface IKsControl
-    {
-      [PreserveSig]
-      int KsProperty(
-        [In] ref KsMethod Property,
-        [In] Int32 PropertyLength,
-        [In, Out] IntPtr PropertyData,
-        [In] Int32 DataLength,
-        [In, Out] ref Int32 BytesReturned
-      );
-
-      [PreserveSig]
-      int KsMethod(
-        [In] ref KsMethod Method,
-        [In] Int32 MethodLength,
-        [In, Out] IntPtr MethodData,
-        [In] Int32 DataLength,
-        [In, Out] ref Int32 BytesReturned
-      );
-
-      [PreserveSig]
-      int KsEvent(
-        [In, Optional] ref KsMethod Event,
-        [In] Int32 EventLength,
-        [In, Out] IntPtr EventData,
-        [In] Int32 DataLength,
-        [In, Out] ref Int32 BytesReturned
-      );
-    }
-
-    private struct KsMethod
-    {
-      public Guid Set;
-      public Int32 Id;
-      public Int32 Flags;
-
-      public KsMethod(Guid set, Int32 id, Int32 flags)
-      {
-        Set = set;
-        Id = id;
-        Flags = flags;
-      }
-    }
-
-    [Flags]
-    private enum KsMethodFlag
-    {
-      Send = 1,
-      SetSupport = 256,
-      BasicSupport = 512,
-      Topology = 0x10000000
-    }
-
-    #endregion
-
     #region constants
 
     private static readonly string[] ValidDeviceNamePrefixes = new string[]
@@ -229,12 +167,9 @@ namespace TvEngine
 
     #region variables
 
-    // We use this hash to keep track of common interface filters that are already in use across all
-    // DigitalDevices instances.
-    private static HashSet<String> _devicesInUse = new HashSet<String>();
-
     // We use these global CI settings to apply decrypt limits and commands to each CI slot/CAM.
-    private static List<DigitalDevicesCiSlot> _ciSlotSettings = null;
+    // Structure: device path -> settings
+    private static Dictionary<String, DigitalDevicesCiSlot> _ciSlotSettings = null;
 
     // Indicates whether one or more CI slots have global configuration (ie. that the user has actually
     // filled in the configuration). If there is no configuration, we can't apply decrypt limits
@@ -707,73 +642,65 @@ namespace TvEngine
             {
               continue;
             }
-            lock (_devicesInUse)
+
+            // Stage 3: okay, we've got a CI filter device. Let's try and connect it into the graph.
+            Log.Debug("Digital Devices: adding filter for device \"{0}\"", captureDevice.Name);
+            IBaseFilter tmpCiFilter = null;
+            hr = _graph.AddSourceFilterForMoniker(captureDevice.Mon, null, captureDevice.Name, out tmpCiFilter);
+            if (hr != 0 || tmpCiFilter == null)
             {
-              if (_devicesInUse.Contains(captureDevice.DevicePath))
-              {
-                continue;
-              }
-
-              // Stage 3: okay, we've got a CI filter device. Let's try and connect it into the graph.
-              Log.Debug("Digital Devices: adding filter for device \"{0}\"", captureDevice.Name);
-              IBaseFilter tmpCiFilter = null;
-              hr = _graph.AddSourceFilterForMoniker(captureDevice.Mon, null, captureDevice.Name, out tmpCiFilter);
-              if (hr != 0 || tmpCiFilter == null)
-              {
-                Log.Debug("Digital Devices: failed to add the filter to the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-                continue;
-              }
-
-              // Now we've got a filter in the graph. Ensure that the filter has input and output pins (really
-              // just a formality) and check if it can be connected to our upstream filter.
-              IPin tmpFilterInputPin = DsFindPin.ByDirection(tmpCiFilter, PinDirection.Input, 0);
-              IPin tmpFilterOutputPin = DsFindPin.ByDirection(tmpCiFilter, PinDirection.Output, 0);
-              hr = 1;
-              try
-              {
-                if (tmpFilterInputPin == null || tmpFilterOutputPin == null)
-                {
-                  Log.Debug("Digital Devices: the filter doesn't have required pin(s)");
-                  continue;
-                }
-                hr = _graph.Connect(lastFilterOutputPin, tmpFilterInputPin);
-                if (hr != 0)
-                {
-                  Log.Debug("Digital Devices: failed to connect the filter into the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-                  continue;
-                }
-              }
-              finally
-              {
-                if (tmpFilterInputPin != null)
-                {
-                  DsUtils.ReleaseComObject(tmpFilterInputPin);
-                  tmpFilterInputPin = null;
-                }
-                if (hr != 0)
-                {
-                  if (tmpFilterOutputPin != null)
-                  {
-                    DsUtils.ReleaseComObject(tmpFilterOutputPin);
-                    tmpFilterOutputPin = null;
-                  }
-                  _graph.RemoveFilter(tmpCiFilter);
-                  DsUtils.ReleaseComObject(tmpCiFilter);
-                  tmpCiFilter = null;
-                }
-              }
-
-              DsUtils.ReleaseComObject(lastFilterOutputPin);
-              lastFilterOutputPin = tmpFilterOutputPin;
-
-              // Excellent - CI filter successfully added!
-              _ciContexts.Add(new CiContext(tmpCiFilter, captureDevice));
-              _devicesInUse.Add(captureDevice.DevicePath);
-              Log.Debug("Digital Devices: total of {0} CI filter(s) in the graph", _ciContexts.Count);
-              lastFilter = tmpCiFilter;
-              addedFilter = true;
-              _isCiSlotPresent = true;
+              Log.Debug("Digital Devices: failed to add the filter to the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+              continue;
             }
+
+            // Now we've got a filter in the graph. Ensure that the filter has input and output pins (really
+            // just a formality) and check if it can be connected to our upstream filter.
+            IPin tmpFilterInputPin = DsFindPin.ByDirection(tmpCiFilter, PinDirection.Input, 0);
+            IPin tmpFilterOutputPin = DsFindPin.ByDirection(tmpCiFilter, PinDirection.Output, 0);
+            hr = 1;
+            try
+            {
+              if (tmpFilterInputPin == null || tmpFilterOutputPin == null)
+              {
+                Log.Debug("Digital Devices: the filter doesn't have required pin(s)");
+                continue;
+              }
+              hr = _graph.Connect(lastFilterOutputPin, tmpFilterInputPin);
+              if (hr != 0)
+              {
+                Log.Debug("Digital Devices: failed to connect the filter into the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+                continue;
+              }
+            }
+            finally
+            {
+              if (tmpFilterInputPin != null)
+              {
+                DsUtils.ReleaseComObject(tmpFilterInputPin);
+                tmpFilterInputPin = null;
+              }
+              if (hr != 0)
+              {
+                if (tmpFilterOutputPin != null)
+                {
+                  DsUtils.ReleaseComObject(tmpFilterOutputPin);
+                  tmpFilterOutputPin = null;
+                }
+                _graph.RemoveFilter(tmpCiFilter);
+                DsUtils.ReleaseComObject(tmpCiFilter);
+                tmpCiFilter = null;
+              }
+            }
+
+            DsUtils.ReleaseComObject(lastFilterOutputPin);
+            lastFilterOutputPin = tmpFilterOutputPin;
+
+            // Excellent - CI filter successfully added!
+            _ciContexts.Add(new CiContext(tmpCiFilter, captureDevice));
+            Log.Debug("Digital Devices: total of {0} CI filter(s) in the graph", _ciContexts.Count);
+            lastFilter = tmpCiFilter;
+            addedFilter = true;
+            _isCiSlotPresent = true;
           }
 
           // Insurance: we don't want to get stuck in an endless loop.
@@ -926,15 +853,22 @@ namespace TvEngine
       {
         _ciSlotSettings = DigitalDevicesCiSlots.GetDatabaseSettings();
       }
-      // Check: are the global settings configured?
+
+      // Check: are the global settings configured? If the plugin is disabled then
+      // we ignore the settings (if they exist). Otherwise, optimise: only use the
+      // settings when they will make a difference.
       _ciSlotsConfigured = false;
-      foreach (DigitalDevicesCiSlot globalSlot in _ciSlotSettings)
+      if (DigitalDevicesCiSlots.IsPluginEnabled())
       {
-        if (globalSlot.Providers.Count != 0)
+        IEnumerator<DigitalDevicesCiSlot> en = _ciSlotSettings.Values.GetEnumerator();
+        while (en.MoveNext())
         {
-          Log.Debug("Digital Devices: CI slots have configuration");
-          _ciSlotsConfigured = true;
-          break;
+          if (en.Current.Providers.Count != 0 || en.Current.DecryptLimit != 0)
+          {
+            Log.Debug("Digital Devices: CI slots have configuration");
+            _ciSlotsConfigured = true;
+            break;
+          }
         }
       }
 
@@ -1080,11 +1014,12 @@ namespace TvEngine
       // "Not selected" commands remove all decrypt entries for this tuner.
       if (command == CaPmtCommand.NotSelected)
       {
-        foreach (DigitalDevicesCiSlot slot in _ciSlotSettings)
+        IEnumerator<DigitalDevicesCiSlot> en = _ciSlotSettings.Values.GetEnumerator();
+        while (en.MoveNext())
         {
-          if (slot.CurrentTunerSet.Contains(_tunerDevicePath))
+          if (en.Current.CurrentTunerSet.Contains(_tunerDevicePath))
           {
-            slot.CurrentTunerSet.Remove(_tunerDevicePath);
+            en.Current.CurrentTunerSet.Remove(_tunerDevicePath);
           }
         }
         Log.Debug("Digital Devices: result = success");
@@ -1109,7 +1044,7 @@ namespace TvEngine
         serviceId |= (uint)DecryptChainingRestriction.None;
 
         // Disable messages from the CAM for the next 10 seconds. We do this to
-        // avoid showing MMI messages which the driver tries to use unsuccessfully.
+        // avoid showing MMI messages from CAMs which can't decrypt the channel.
         // A better solution would be to apply requests to the CAM(s) that are able
         // to decrypt the service, but we don't have configuration...
         if (_ciContexts.Count > 1)
@@ -1120,44 +1055,45 @@ namespace TvEngine
       }
       else
       {
-        // In this case we always select a specific slot. If the provider is not set, we look for a
-        // slot that has the provider not set. Otherwise look for a slot that can decrypt services
-        // for the provider. The slot must also have decrypt limit "headroom".
+        // In this case we try to select a specific slot. If the channel provider is not set, we
+        // look for a slot that has the provider not set. Otherwise look for a slot that can decrypt
+        // services for the provider. The slot must also have decrypt limit "headroom".
         Log.Debug("Digital Devices: chaining restrictions applied");
         serviceId |= (uint)DecryptChainingRestriction.NoBackwardChaining | (uint)DecryptChainingRestriction.NoForwardChaining;
-        lock (_ciSlotSettings)
+        // For each slot available to this tuner...
+        for (int i = 0; i < _ciContexts.Count; i++)
         {
-          foreach (DigitalDevicesCiSlot globalSlot in _ciSlotSettings)
+          Log.Debug("  {0}...", _ciContexts[i].CamMenuTitle);
+          if (_ciSlotSettings.ContainsKey(_ciContexts[i].Device.DevicePath))
           {
-            Log.Debug("  {0}: {1}/{2}", globalSlot.CamRootMenuTitle, globalSlot.CurrentTunerSet.Count, globalSlot.DecryptLimit);
-            if (((provider.Equals(String.Empty) && globalSlot.Providers.Count == 0) || globalSlot.Providers.Contains(provider)) &&
-              (globalSlot.DecryptLimit == 0 || globalSlot.CurrentTunerSet.Count < globalSlot.DecryptLimit))
+            lock (_ciSlotSettings)
             {
-              Log.Debug("  slot is capable, checking for tuner link...");
-              // Now find the context that is associated with the slot. There may not be one if the slot
-              // is not linked to this tuner.
-              for (int i = 0; i < _ciContexts.Count; i++)
+              DigitalDevicesCiSlot globalSlot = _ciSlotSettings[_ciContexts[i].Device.DevicePath];
+              if ((provider.Equals(String.Empty) && globalSlot.Providers.Count == 0) || globalSlot.Providers.Contains(provider))
               {
-                if (_ciContexts[i].Device.DevicePath.Equals(globalSlot.DevicePath))
+                Log.Debug("    provider supported, decrypt limit status = {0}/{1}", globalSlot.CurrentTunerSet.Count, globalSlot.DecryptLimit);
+                if (globalSlot.DecryptLimit == 0 || globalSlot.CurrentTunerSet.Count < globalSlot.DecryptLimit)
                 {
-                  Log.Debug("  link found to slot {0}", i + 1);
                   context = i;
                   globalSlot.CurrentTunerSet.Add(_tunerDevicePath);
                   break;
                 }
               }
             }
-            if (context != -1)
-            {
-              break;
-            }
           }
-          if (context == -1)
+          else
           {
-            Log.Debug("Digital Devices: no slots available");
-            return true;   // Don't bother retrying.
+            // If we don't have configuration for one of the slots then we'll use it blindly.
+            Log.Debug("    using slot with missing configuration");
+            context = i;
+            break;
           }
         }
+      }
+      if (context == -1)
+      {
+        Log.Debug("Digital Devices: no slots available");
+        return true;   // Don't bother retrying.
       }
 
       int paramSize = sizeof(Int32);
@@ -1609,10 +1545,6 @@ namespace TvEngine
         {
           if (context.Device != null)
           {
-            lock (_devicesInUse)
-            {
-              _devicesInUse.Remove(context.Device.DevicePath);
-            }
             context.Device = null;
           }
           if (context.Filter != null)

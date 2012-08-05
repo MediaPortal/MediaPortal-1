@@ -608,6 +608,66 @@ namespace DirectShowLib
     /// <summary> MEDIASUBTYPE_LATM_AAC_LAVF_SPLITTER </summary>
     public static readonly Guid LATMAACLAVF = new Guid(0x53544441, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71);
   }
+
+  #region IKsControl
+
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("28f54685-06fd-11d2-b27a-00a0c9223196"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IKsControl
+  {
+    [PreserveSig]
+    int KsProperty(
+      [In] ref KsMethod Property,
+      [In] Int32 PropertyLength,
+      [In, Out] IntPtr PropertyData,
+      [In] Int32 DataLength,
+      [In, Out] ref Int32 BytesReturned
+    );
+
+    [PreserveSig]
+    int KsMethod(
+      [In] ref KsMethod Method,
+      [In] Int32 MethodLength,
+      [In, Out] IntPtr MethodData,
+      [In] Int32 DataLength,
+      [In, Out] ref Int32 BytesReturned
+    );
+
+    [PreserveSig]
+    int KsEvent(
+      [In, Optional] ref KsMethod Event,
+      [In] Int32 EventLength,
+      [In, Out] IntPtr EventData,
+      [In] Int32 DataLength,
+      [In, Out] ref Int32 BytesReturned
+    );
+  }
+
+  public struct KsMethod
+  {
+    public Guid Set;
+    public Int32 Id;
+    public Int32 Flags;
+
+    public KsMethod(Guid set, Int32 id, Int32 flags)
+    {
+      Set = set;
+      Id = id;
+      Flags = flags;
+    }
+  }
+
+  [Flags]
+  public enum KsMethodFlag
+  {
+    Send = 1,
+    SetSupport = 256,
+    BasicSupport = 512,
+    Topology = 0x10000000
+  }
+
+  #endregion
 }
 
 namespace DirectShowLib.BDA

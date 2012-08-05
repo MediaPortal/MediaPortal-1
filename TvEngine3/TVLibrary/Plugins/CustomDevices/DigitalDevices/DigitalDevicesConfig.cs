@@ -52,7 +52,7 @@ namespace SetupTv.Sections
       Log.Debug("Digital Devices config: constructing");
 
       // Get the details for the slots we've seen in the past.
-      List<DigitalDevicesCiSlot> dbSlots = DigitalDevicesCiSlots.GetDatabaseSettings();
+      Dictionary<String, DigitalDevicesCiSlot> dbSlots = DigitalDevicesCiSlots.GetDatabaseSettings();
 
       // Now read the details for the currently available slots and merge settings from the DB
       // to fill the _ciSlots list.
@@ -66,31 +66,21 @@ namespace SetupTv.Sections
           continue;
         }
         Log.Debug("Digital Devices config: device {0} ({1})...", device.Name, device.DevicePath);
-        DigitalDevicesCiSlot slot = new DigitalDevicesCiSlot();
-        bool found = false;
-        foreach (DigitalDevicesCiSlot s in dbSlots)
+        DigitalDevicesCiSlot slot = new DigitalDevicesCiSlot(device.DevicePath);
+        if (dbSlots.ContainsKey(device.DevicePath))
         {
-          if (device.DevicePath.Equals(s.DevicePath))
-          {
-            Log.Debug("  found existing configuration");
-            found = true;
-            slot = s;
-            break;
-          }
+          Log.Debug("  found existing configuration");
+          slot = dbSlots[device.DevicePath];
         }
-        if (!found)
+        else
         {
           Log.Debug("  new configuration");
-          slot.DevicePath = device.DevicePath;
-          slot.DecryptLimit = 0;
-          slot.Providers = new HashSet<String>();
         }
+        slot.DeviceName = device.Name;
         Log.Debug("  decrypt limit  = {0}", slot.DecryptLimit);
         String[] providerList = new String[slot.Providers.Count];
         slot.Providers.CopyTo(providerList);
         Log.Debug("  provider list  = {0}", String.Join(", ", providerList));
-        slot.DeviceName = device.Name;
-        slot.CamRootMenuTitle = "(empty)";
 
         // If possible, read the root menu title for the CAM in the slot.
         object obj = null;
@@ -187,7 +177,12 @@ namespace SetupTv.Sections
       // registered slots not matching the number of sets of settings in the UI.
       if (!_isFirstActivation)
       {
-        _ciSlots = DigitalDevicesCiSlots.GetDatabaseSettings();
+        _ciSlots = null;
+        IEnumerator<DigitalDevicesCiSlot> en = DigitalDevicesCiSlots.GetDatabaseSettings().Values.GetEnumerator();
+        while (en.MoveNext())
+        {
+          _ciSlots.Add(en.Current);
+        }
       }
 
       int i = 0;
