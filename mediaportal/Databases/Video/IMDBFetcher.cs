@@ -1266,6 +1266,7 @@ namespace MediaPortal.Video.Database
       {
         strFileName = filename;
       }
+
       if ((strMovieName == string.Empty) || (strMovieName == Strings.Unknown))
       {
         strMovieName = currentMovie.Title;
@@ -1331,7 +1332,12 @@ namespace MediaPortal.Video.Database
       {
         currentMovie.ID = VideoDatabase.AddMovieFile(strFileName);
       }
-      
+
+      if (addToDatabase)
+      {
+        SearchForImdbId(path, filename, _foldercheck, ref strMovieName);
+      }
+
       currentMovie.SearchString = strMovieName;
       
       if (currentMovie.ID >= 0 || !addToDatabase)
@@ -1767,6 +1773,132 @@ namespace MediaPortal.Video.Database
           return true;
         }
       }
+      return false;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="path">path without filename</param>
+    /// <param name="filename">filename without path</param>
+    /// <param name="dedicatedMovieFolders">is every movie in its own folder?</param>
+    /// <param name="searchString">returns tt1234567 if success</param>
+    private static void SearchForImdbId(string path, string filename, bool dedicatedMovieFolders, ref string searchString)
+    {
+      try
+      {
+      // First check for DVD/BD folders and take main path
+      bool isDvdBd = false;
+      if (path.ToUpperInvariant().Contains(@"\VIDEO_TS"))
+      {
+        path = path.Replace(@"\VIDEO_TS", string.Empty);
+        isDvdBd = true;
+      }
+      else if (path.ToUpperInvariant().Contains(@"\BDMV"))
+      {
+        path = path.Replace(@"\BDMV", string.Empty);
+        isDvdBd = true;
+      }
+
+      // DVD or BD
+      if (isDvdBd || dedicatedMovieFolders)
+      {
+        // Check for tt in path name
+        if (MatchImdb(ref path))
+        {
+          searchString = path;
+        }
+        else
+        {
+          // Get all txt and nfo files in main path directory
+          ArrayList files = new ArrayList();
+          string[] txtFiles = Directory.GetFiles(path, "*.txt", SearchOption.TopDirectoryOnly);
+          files.AddRange(txtFiles);
+          txtFiles = Directory.GetFiles(path, "*.nfo", SearchOption.TopDirectoryOnly);
+          files.AddRange(txtFiles);
+
+          foreach (string file in files)
+          {
+            if (File.Exists(file))
+            {
+              // Check for tt in txt or nfo filename
+              string strFile = file;
+              
+              if (MatchImdb(ref strFile))
+              {
+                searchString = strFile;
+                return;
+              }
+              
+              // check for tt in files content (firts match success will break loop))
+              string txt = string.Empty;
+              using (StreamReader reader = new StreamReader(file))
+              {
+                txt = reader.ReadToEnd();
+
+                if (MatchImdb(ref txt))
+                {
+                  searchString = txt;
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }
+      else
+      {
+        // normal videos (nfo or txt files must contain videofilename part)
+        string[] txtFile = {
+                               path + @"\" + Util.Utils.GetFilename(filename,true) + @"-IMDB.txt",
+                               path + @"\" + Util.Utils.GetFilename(filename,true) + @"-IMDB.nfo",
+                               path + @"\" + Util.Utils.GetFilename(filename,true) + @".nfo",
+                               path + @"\" + Util.Utils.GetFilename(filename,true) + @".txt",
+                             };
+
+        foreach (string file in txtFile)
+        {
+          if (File.Exists(file))
+          {
+            // check first tt in filename
+            string strFile = file;
+            if (MatchImdb(ref strFile))
+            {
+              searchString = strFile;
+              return;
+            }
+            // check filename content for tt
+            string txt = string.Empty;
+            using (StreamReader reader = new StreamReader(file))
+            {
+              txt = reader.ReadToEnd();
+
+              if (MatchImdb(ref txt))
+              {
+                searchString = txt;
+                break;
+              }
+            }
+          }
+        }
+      }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("IMDBFetcher SearchForImdbId exception {0}", ex.Message);
+      }
+    }
+
+    private static bool MatchImdb(ref string strToMatch)
+    {
+      Match match = Regex.Match(strToMatch, @"tt[\d]{7}?", RegexOptions.IgnoreCase);
+      
+      if (match.Success)
+      {
+        strToMatch = match.Value;
+        return true;
+      }
+
       return false;
     }
   }

@@ -3359,8 +3359,8 @@ namespace MediaPortal.GUI.Library
       {
         _listItems.Add(item);
       }
-      int iPages = _listItems.Count / _itemsPerPage;
-      if ((_listItems.Count % _itemsPerPage) != 0)
+      int iPages = _itemsPerPage == 0 ? 0 : _listItems.Count / _itemsPerPage;
+      if (_itemsPerPage != 0 && (_listItems.Count % _itemsPerPage) != 0)
       {
         iPages++;
       }
