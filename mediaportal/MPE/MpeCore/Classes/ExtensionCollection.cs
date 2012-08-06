@@ -43,7 +43,7 @@ namespace MpeCore.Classes
     /// Gets the unique list of extensions with highest version
     /// </summary>
     /// <returns></returns>
-    public ExtensionCollection GetUniqueList(ExtensionCollection exlude = null)
+    public ExtensionCollection GetUniqueList(ExtensionCollection exlude)
     {
       HashSet<string> exludedIds = new HashSet<string>();
       if (exlude != null) exlude.Items.ForEach(p => exludedIds.Add(p.GeneralInfo.Id));

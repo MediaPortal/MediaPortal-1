@@ -36,7 +36,7 @@ namespace MpeCore.Classes
 
     static string tempUpdateIndex;
 
-    public static void UpdateList(bool silent = false, DownloadProgressChangedEventHandler downloadProgressChanged = null, AsyncCompletedEventHandler downloadFileCompleted = null)
+    public static void UpdateList(bool silent, DownloadProgressChangedEventHandler downloadProgressChanged, AsyncCompletedEventHandler downloadFileCompleted)
     {
       DownloadExtensionIndex(downloadProgressChanged, downloadFileCompleted);
       DownloadInfo dlg = new DownloadInfo();
@@ -90,7 +90,7 @@ namespace MpeCore.Classes
       MpeCore.MpeInstaller.SetInitialUrlIndex(indexUrls);
     }
 
-    public static string GetPackageLocation(PackageClass packageClass, DownloadProgressChangedEventHandler downloadProgressChanged = null, AsyncCompletedEventHandler downloadFileCompleted = null)
+    public static string GetPackageLocation(PackageClass packageClass, DownloadProgressChangedEventHandler downloadProgressChanged, AsyncCompletedEventHandler downloadFileCompleted)
     {
       string newPackageLoacation = packageClass.GeneralInfo.Location;
       if (!File.Exists(newPackageLoacation))

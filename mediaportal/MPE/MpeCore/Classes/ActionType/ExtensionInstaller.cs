@@ -96,7 +96,7 @@ namespace MpeCore.Classes.ActionType
         if (knownPackage == null && (DateTime.Now - ApplicationSettings.Instance.LastUpdate).TotalHours > 12)
         {
           // package unknown and last download of update info was over 12 hours ago -> update the list first
-          ExtensionUpdateDownloader.UpdateList();
+          ExtensionUpdateDownloader.UpdateList(false, null, null);
           // search for the package again - we don't want incompatible versions
           MpeInstaller.KnownExtensions.HideByDependencies();
           knownPackage = MpeInstaller.KnownExtensions.Get(actionItem.Params[Const_Guid].Value);
@@ -107,7 +107,7 @@ namespace MpeCore.Classes.ActionType
           if (knownPackage.GeneralInfo.Version.CompareTo(new Version(actionItem.Params[Const_Version].Value)) >= 0)
           {
             // download extension package
-            string newPackageLoacation = ExtensionUpdateDownloader.GetPackageLocation(knownPackage);
+            string newPackageLoacation = ExtensionUpdateDownloader.GetPackageLocation(knownPackage, null, null);
             if (File.Exists(newPackageLoacation))
               embeddedPackage = new PackageClass().ZipProvider.Load(newPackageLoacation);
           }
