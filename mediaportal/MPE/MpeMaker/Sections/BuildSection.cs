@@ -125,6 +125,14 @@ namespace MpeMaker.Sections
         tabControl1.SelectTab(0);
       }
       list_message.Items.Add("Creating package started at : " + DateTime.Now.ToLongTimeString());
+      if (string.IsNullOrEmpty(Package.GeneralInfo.Params[ParamNamesConst.CONFIG].Value) && Package.ProvidesPlugins())
+      {
+        list_message.Items.Add("Notice: Package provides a plugin, but no configuration file set under General Information Parameters!");
+      }
+      if (string.IsNullOrEmpty(Package.GeneralInfo.Params[ParamNamesConst.ONLINE_SCREENSHOT].Value))
+      {
+        list_message.Items.Add("Notice: No screenshot URL set under General Information Parameters!");
+      }
       list_message.Refresh();
       Refresh();
       string file = Package.ReplaceInfo(fileName);
