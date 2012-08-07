@@ -244,7 +244,7 @@ namespace MpeInstaller
         if (MessageBox.Show(
           string.Format(@"Downloaded version of {0} is {1} and differs from your selected version: {2}!
 Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Version,packageClass.GeneralInfo.Version), "Install extension", MessageBoxButtons.YesNo,
-          MessageBoxIcon.Exclamation) != DialogResult.Yes)
+          MessageBoxIcon.Error) != DialogResult.Yes)
         return;
       }
 
