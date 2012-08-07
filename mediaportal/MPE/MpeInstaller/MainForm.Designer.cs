@@ -50,6 +50,7 @@
       this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.wikiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.settingsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
       divider = new System.Windows.Forms.ToolStripStatusLabel();
       this.tabControl1.SuspendLayout();
       this.tab_extensions.SuspendLayout();
@@ -63,7 +64,7 @@
       divider.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.None;
       divider.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       divider.Name = "divider";
-      divider.Size = new System.Drawing.Size(313, 17);
+      divider.Size = new System.Drawing.Size(344, 17);
       divider.Spring = true;
       // 
       // tabControl1
@@ -237,10 +238,11 @@
       // 
       // settingsToolStripMenuItem
       // 
+      this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.settingsToolStripMenuItem1});
       this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
       this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
-      this.settingsToolStripMenuItem.Text = "Settings";
-      this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
+      this.settingsToolStripMenuItem.Text = "Options";
       // 
       // helpToolStripMenuItem
       // 
@@ -257,6 +259,14 @@
       this.wikiToolStripMenuItem.Size = new System.Drawing.Size(97, 22);
       this.wikiToolStripMenuItem.Text = "Wiki";
       this.wikiToolStripMenuItem.Click += new System.EventHandler(this.wikiToolStripMenuItem_Click);
+      // 
+      // settingsToolStripMenuItem1
+      // 
+      this.settingsToolStripMenuItem1.Image = global::MpeInstaller.Properties.Resources.settings;
+      this.settingsToolStripMenuItem1.Name = "settingsToolStripMenuItem1";
+      this.settingsToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+      this.settingsToolStripMenuItem1.Text = "Settings";
+      this.settingsToolStripMenuItem1.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
       // 
       // MainForm
       // 
@@ -313,6 +323,7 @@
         private System.Windows.Forms.ToolStripMenuItem wikiToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem refreshUpdateInfoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem1;
     }
 }
 

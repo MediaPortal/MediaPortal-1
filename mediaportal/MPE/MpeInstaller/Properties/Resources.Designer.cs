@@ -109,6 +109,13 @@ namespace MpeInstaller.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap settings {
+            get {
+                object obj = ResourceManager.GetObject("settings", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap software_update_available {
             get {
                 object obj = ResourceManager.GetObject("software-update-available", resourceCulture);

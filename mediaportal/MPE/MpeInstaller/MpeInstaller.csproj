@@ -230,6 +230,7 @@
     <None Include="MpeInstaller.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Icons\settings.png" />
     <None Include="Icons\refresh.png" />
     <None Include="Icons\recycle_bin.png" />
     <None Include="Icons\help.png" />
