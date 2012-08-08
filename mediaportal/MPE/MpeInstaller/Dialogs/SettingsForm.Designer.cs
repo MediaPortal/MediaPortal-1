@@ -70,8 +70,7 @@
       this.chk_updateExtension.TabIndex = 4;
       this.chk_updateExtension.Text = "Automatically update installed extensions";
       this.toolTip1.SetToolTip(this.chk_updateExtension, "If enabled, this option will automatically download and install an update for you" +
-        "r installed extensions. It\'s recommended that you also enable downloading of upd" +
-        "ate information.");
+        "r installed extensions.");
       this.chk_updateExtension.UseVisualStyleBackColor = true;
       // 
       // label2
