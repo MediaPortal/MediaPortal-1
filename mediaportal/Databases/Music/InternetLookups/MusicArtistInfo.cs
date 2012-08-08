@@ -22,7 +22,7 @@ using System;
 using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
-using MediaPortal.Util;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Music.Database
 {
@@ -357,8 +357,10 @@ namespace MediaPortal.Music.Database
       var match = ArtistDetailsRegEx.Match(strHTML);
       if (!match.Success)
       {
+        Log.Debug("Artist HTML does not match expected format, unable to parse");
         return false;
       }
+      var artistDetails = match.Value;
 
       var strArtist = string.Empty;
       var artistMatch = ArtistRegEx.Match(strHTML);
@@ -366,9 +368,9 @@ namespace MediaPortal.Music.Database
       {
         strArtist = artistMatch.Groups["artist"].Value.Trim();
       }
-      
+      strArtist = System.Web.HttpUtility.HtmlDecode(strArtist);
+      Log.Debug("Trying to parse html for artist: {0}", strArtist);
 
-      var artistDetails = match.Value;
 
       // build up genres into one string
       var strGenres = string.Empty;

@@ -218,6 +218,7 @@
     </Compile>
     <Compile Include="Folders\IFolderSettings.cs" />
     <Compile Include="Folders\ADO\FolderSettingAdo.cs" />
+    <Compile Include="Music\InternetLookups\AllMusicArtistMatch.cs" />
     <Compile Include="Music\MusicDatabaseSettings.cs" />
     <Compile Include="Music\InternetLookups\AlbumInfo.cs">
       <SubType>Code</SubType>
