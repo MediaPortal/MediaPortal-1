@@ -41,7 +41,6 @@ namespace SetupTv.Dialogs
         textBoxTransportId.Text = TuningDetail.TransportId.ToString();
         textBoxServiceId.Text = TuningDetail.ServiceId.ToString();
         textBoxSymbolRate.Text = TuningDetail.Symbolrate.ToString();
-        textBoxDVBSChannel.Text = TuningDetail.ChannelNumber.ToString();
         textBoxDVBSPmt.Text = TuningDetail.PmtPid.ToString();
         textBoxDVBSProvider.Text = TuningDetail.Provider;
         checkBoxDVBSfta.Checked = TuningDetail.FreeToAir;
@@ -59,7 +58,6 @@ namespace SetupTv.Dialogs
         textBoxTransportId.Text = "";
         textBoxServiceId.Text = "";
         textBoxSymbolRate.Text = "";
-        textBoxDVBSChannel.Text = "";
         textBoxDVBSPmt.Text = "";
         textBoxDVBSProvider.Text = "";
         checkBoxDVBSfta.Checked = false;
@@ -99,7 +97,6 @@ namespace SetupTv.Dialogs
       TuningDetail.Pilot = (int)(Pilot)(comboBoxPilot.SelectedIndex - 1);
       TuningDetail.RollOff = (int)(RollOff)(comboBoxRollOff.SelectedIndex - 1);
       TuningDetail.Modulation = (int)(ModulationType)(comboBoxModulation.SelectedIndex - 1);
-      TuningDetail.ChannelNumber = Int32.Parse(textBoxDVBSChannel.Text);
       TuningDetail.PmtPid = Int32.Parse(textBoxDVBSPmt.Text);
       TuningDetail.Provider = textBoxDVBSProvider.Text;
       TuningDetail.FreeToAir = checkBoxDVBSfta.Checked;
@@ -108,17 +105,7 @@ namespace SetupTv.Dialogs
 
     private bool ValidateInput()
     {
-      int lcn, freq, onid, tsid, sid, symbolrate, pmt;
-      if (textBoxDVBSChannel.Text.Length == 0)
-      {
-        MessageBox.Show(this, "Please enter a channel number!", "Incorrect input");
-        return false;
-      }
-      if (!Int32.TryParse(textBoxDVBSChannel.Text, out lcn))
-      {
-        MessageBox.Show(this, "Please enter a valid channel number!", "Incorrect input");
-        return false;
-      }
+      int freq, onid, tsid, sid, symbolrate, pmt;
       if (comboBoxDisEqc.SelectedIndex < 0)
       {
         MessageBox.Show(this, "Please select a valid DiSEqC port!", "Incorrect input");
