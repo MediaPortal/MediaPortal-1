@@ -76,7 +76,6 @@ namespace SetupTv.Dialogs
       if (TuningDetail != null)
       {
         //Editing
-        textBoxChannel.Text = TuningDetail.ChannelNumber.ToString();
         textboxFreq.Text = TuningDetail.Frequency.ToString();
         textBoxONID.Text = TuningDetail.NetworkId.ToString();
         textBoxTSID.Text = TuningDetail.TransportId.ToString();
@@ -89,7 +88,6 @@ namespace SetupTv.Dialogs
       }
       else
       {
-        textBoxChannel.Text = "";
         textboxFreq.Text = "";
         textBoxONID.Text = "";
         textBoxTSID.Text = "";
@@ -118,7 +116,6 @@ namespace SetupTv.Dialogs
 
     private void UpdateTuningDetail()
     {
-      TuningDetail.ChannelNumber = Int32.Parse(textBoxChannel.Text);
       TuningDetail.Frequency = Convert.ToInt32(textboxFreq.Text);
       TuningDetail.NetworkId = Convert.ToInt32(textBoxONID.Text);
       TuningDetail.TransportId = Convert.ToInt32(textBoxTSID.Text);
@@ -133,12 +130,7 @@ namespace SetupTv.Dialogs
 
     private bool ValidateInput()
     {
-      int channel, freq, onid, tsid, sid, symbolrate, pmt;
-      if (!Int32.TryParse(textBoxChannel.Text, out channel))
-      {
-        MessageBox.Show(this, "Please enter a valid channel number!", "Incorrect input");
-        return false;
-      }
+      int freq, onid, tsid, sid, symbolrate, pmt;
       if (!Int32.TryParse(textboxFreq.Text, out freq))
       {
         MessageBox.Show(this, "Please enter a valid frequency!", "Incorrect input");
