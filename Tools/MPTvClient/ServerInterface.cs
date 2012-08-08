@@ -40,7 +40,7 @@ namespace MPTvClient
     private IList<Channel> channels;
     private IList<GroupMap> mappings;
     private IList<Card> cards;
-    private User me;
+    private IUser me;
     private bool _isTimeShifting = false;
     public Exception lastException = null;
 
@@ -141,7 +141,7 @@ namespace MPTvClient
       bool result;
       try
       {
-        result = RemoteControl.Instance.StopTimeShifting(ref me);
+          result = RemoteControl.Instance.StopTimeShifting(ref me, TvStoppedReason.KickedByAdmin);
       }
       catch (Exception ex)
       {
@@ -200,8 +200,8 @@ namespace MPTvClient
       {
         foreach (Card card in cards)
         {
-          User user = new User();
-          User[] usersForCard = null;
+          IUser user = new User();
+          IUser[] usersForCard = null;
           user.CardId = card.IdCard;
           try
           {
@@ -490,7 +490,7 @@ namespace MPTvClient
           sched.scheduleID = schedule.IdSchedule.ToString();
           sched.startTime = schedule.StartTime;
           sched.endTime = schedule.EndTime;
-          sched.channelName = schedule.ReferencedChannel().Name;
+          sched.channelName = schedule.ReferencedChannel().DisplayName;
           sched.description = schedule.ProgramName;
           ScheduleRecordingType stype = (ScheduleRecordingType)schedule.ScheduleType;
           sched.type = stype.ToString();
