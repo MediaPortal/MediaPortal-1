@@ -1078,6 +1078,7 @@
     <String id="1300" prefix="My ">TV Shows</String>
     <String id="1301">Downloading movie actors and roles</String>
     <String id="1302">Downloading actor info</String>
+	<String id="1303">Select Artist</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
     <String id="1442">Scroll speed (horizontal)</String>
