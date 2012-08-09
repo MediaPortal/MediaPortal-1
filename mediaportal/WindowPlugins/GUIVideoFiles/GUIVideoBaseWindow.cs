@@ -24,7 +24,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
-using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.View;
@@ -44,6 +43,13 @@ namespace MediaPortal.GUI.Video
   /// </summary>
   public abstract class GUIVideoBaseWindow : WindowPluginBase
   {
+    public enum MediaTypes
+    {
+      DVD = 0,
+      BD = 1,
+      ISO = 2,
+    }
+
     #region Base variables
 
     protected VideoSort.SortMethod currentSortMethod = VideoSort.SortMethod.Name;

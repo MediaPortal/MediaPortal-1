@@ -23,9 +23,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
-using MediaPortal.Services;
 using MediaPortal.Video.Database;
-using System.Collections;
 
 namespace MediaPortal.GUI.Video
 {

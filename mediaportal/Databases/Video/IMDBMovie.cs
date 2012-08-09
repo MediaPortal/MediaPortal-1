@@ -1618,6 +1618,46 @@ namespace MediaPortal.Video.Database
       catch (Exception){}
     }
 
+    public static void ResetMovieProperties()
+    {
+      GUIPropertyManager.SetProperty("#director", string.Empty);
+      GUIPropertyManager.SetProperty("#genre", string.Empty);
+      GUIPropertyManager.SetProperty("#cast", string.Empty);
+      GUIPropertyManager.SetProperty("#dvdlabel", string.Empty);
+      GUIPropertyManager.SetProperty("#imdbnumber", string.Empty);
+      GUIPropertyManager.SetProperty("#file", string.Empty);
+      GUIPropertyManager.SetProperty("#plot", string.Empty);
+      GUIPropertyManager.SetProperty("#plotoutline", string.Empty);
+      GUIPropertyManager.SetProperty("#userreview", string.Empty);
+      GUIPropertyManager.SetProperty("#rating", string.Empty);
+      GUIPropertyManager.SetProperty("#strrating", string.Empty);
+      GUIPropertyManager.SetProperty("#tagline", string.Empty);
+      GUIPropertyManager.SetProperty("#votes", string.Empty);
+      GUIPropertyManager.SetProperty("#credits", string.Empty);
+      GUIPropertyManager.SetProperty("#thumb", string.Empty);
+      GUIPropertyManager.SetProperty("#title", string.Empty);
+      GUIPropertyManager.SetProperty("#year", string.Empty);
+      GUIPropertyManager.SetProperty("#mpaarating", string.Empty);
+      GUIPropertyManager.SetProperty("#studios", string.Empty);
+      GUIPropertyManager.SetProperty("#country", string.Empty);
+      GUIPropertyManager.SetProperty("#language", string.Empty);
+      GUIPropertyManager.SetProperty("#lastupdate", string.Empty);
+      GUIPropertyManager.SetProperty("#movieid", "-1");
+      GUIPropertyManager.SetProperty("#hideinfo", "true");
+      GUIPropertyManager.SetProperty("#runtime", string.Empty);
+      GUIPropertyManager.SetProperty("#videoruntime", string.Empty);
+      GUIPropertyManager.SetProperty("#iswatched", string.Empty);
+      GUIPropertyManager.SetProperty("#watchedpercent", string.Empty);
+      GUIPropertyManager.SetProperty("#watchedcount", string.Empty);
+      GUIPropertyManager.SetProperty("#VideoMediaSource", string.Empty);
+      GUIPropertyManager.SetProperty("#VideoCodec", string.Empty);
+      GUIPropertyManager.SetProperty("#VideoResolution", string.Empty);
+      GUIPropertyManager.SetProperty("#AudioCodec", string.Empty);
+      GUIPropertyManager.SetProperty("#AudioChannels", string.Empty);
+      GUIPropertyManager.SetProperty("#HasSubtitles", string.Empty);
+      GUIPropertyManager.SetProperty("#AspectRatio", string.Empty);
+    }
+
     #endregion
 
     

@@ -102,7 +102,7 @@ namespace MediaPortal.GUI.Video
     }
 
     #endregion
-
+    
     #region variables
 
     private static bool _askBeforePlayingDVDImage;
@@ -2668,6 +2668,7 @@ namespace MediaPortal.GUI.Video
         _currentFolder = newFolderName;
       }
 
+      IMDBMovie.ResetMovieProperties(); // Clear skin properties values
       GUIControl.ClearControl(GetID, facadeLayout.GetID);
       List<GUIListItem> itemlist = null;
 
@@ -2713,16 +2714,16 @@ namespace MediaPortal.GUI.Video
             {
               if (selectDvdHandler.IsDvdDirectory(item.Path))
               {
-                item.Label3 = "DVD";
+                item.Label3 = MediaTypes.DVD.ToString();
               }
               else
               {
-                item.Label3 = "BD";
+                item.Label3 = MediaTypes.BD.ToString();
               }
             }
             else if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
             {
-              item.Label3 = "ISO";
+              item.Label3 = MediaTypes.ISO.ToString();
             }
             else
             {
@@ -2835,16 +2836,16 @@ namespace MediaPortal.GUI.Video
                 {
                   if (sDvd.IsDvdDirectory(item.Path))
                   {
-                    item.Label3 = "DVD";
+                    item.Label3 = MediaTypes.DVD.ToString();
                   }
                   else
                   {
-                    item.Label3 = "BD";
+                    item.Label3 = MediaTypes.BD.ToString();
                   }
                 }
                 else if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
                 {
-                  item.Label3 = "ISO";
+                  item.Label3 = MediaTypes.ISO.ToString();
                 }
                 else
                 {
@@ -3557,14 +3558,7 @@ namespace MediaPortal.GUI.Video
       {
         if (item.IsFolder && (sDvd.IsDvdDirectory(item.Path) || sBd.IsBDDirectory(item.Path)))
         {
-          //if (sDvd.IsDvdDirectory(item.Path))
-          //{
-          //  item.Label2 = "DVD";
-          //}
-          //else
-          //{
-          //  item.Label2 = "BD";
-          //}
+          // Reserved if needed
         }
         else
         {
@@ -3579,14 +3573,7 @@ namespace MediaPortal.GUI.Video
       {
         if (item.IsFolder && (sDvd.IsDvdDirectory(item.Path) || sBd.IsBDDirectory(item.Path)))
         {
-          //if (sDvd.IsDvdDirectory(item.Path))
-          //{
-          //  item.Label2 = "DVD";
-          //}
-          //else
-          //{
-          //  item.Label2 = "BD";
-          //}
+          //Reserved if needed
         }
         else
         {
