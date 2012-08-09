@@ -1286,8 +1286,12 @@ namespace MediaPortal.Player
             Log.Debug("g_Player.Play - Mediatype Unknown, forcing detection as Video");
             type = MediaType.Video;
           }
-          // refreshrate change done here.
-          RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+
+          // Refreshrate change done here. Blu-ray player will handle the refresh rate changes by itself
+          if (strFile.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV") == -1)
+          {
+            RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+          }
 
           if (RefreshRateChanger.RefreshRateChangePending)
           {
