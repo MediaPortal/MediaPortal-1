@@ -266,6 +266,12 @@ HRESULT CSubtitlePin::DeliverBeginFlush()
   HRESULT hr = __super::DeliverBeginFlush();
   LogDebug("sub: DeliverBeginFlush - hr: %08lX", hr);
 
+  if (hr != S_OK)
+  {
+    m_bFlushing = true;
+    m_bSeekDone = true;
+  }
+
   return hr;
 }
 
