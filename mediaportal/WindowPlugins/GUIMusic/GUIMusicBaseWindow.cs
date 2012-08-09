@@ -1318,40 +1318,21 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    private void OnInfoFile(GUIListItem item) {}
-
-    private void OnInfoFolder(GUIListItem item) {}
-
     protected override void OnInfo(int iItem)
     {
-      GUIListItem pItem = facadeLayout[iItem];
+      var pItem = facadeLayout[iItem];
       if (pItem == null)
       {
         return;
       }
-      Song song = pItem.AlbumInfoTag as Song;
+      var song = pItem.AlbumInfoTag as Song;
       if (song == null)
       {
-        if (!pItem.IsFolder)
-        {
-          if (pItem.Path != string.Empty)
-          {
-            OnInfoFile(pItem);
-          }
-        }
-        else
-        {
-          if (pItem.Path != string.Empty)
-          {
-            OnInfoFolder(pItem);
-          }
-        }
-        facadeLayout.RefreshCoverArt();
         return;
       }
       else if (song.Album != "")
       {
-        ShowAlbumInfo(false, song.Artist, song.Album, song.FileName, pItem.MusicTag as MusicTag);
+        ShowAlbumInfo(song.Artist, song.Album, song.FileName, pItem.MusicTag as MusicTag);
       }
       else if (song.Artist != "")
       {
@@ -1364,13 +1345,12 @@ namespace MediaPortal.GUI.Music
       facadeLayout.RefreshCoverArt();
     }
 
-    protected void ShowAlbumInfo(bool isFolder, string artistName, string albumName, string strPath, MusicTag tag)
+    protected void ShowAlbumInfo(string artistName, string albumName, string strPath, MusicTag tag)
     {
-      ShowAlbumInfo(GetID, isFolder, artistName, albumName, strPath, tag);
+      ShowAlbumInfo(GetID, artistName, albumName, strPath, tag);
     }
 
-    public void ShowAlbumInfo(int parentWindowID, bool isFolder, string artistName, string albumName, string strPath,
-                              MusicTag tag)
+    public void ShowAlbumInfo(int parentWindowID, string artistName, string albumName, string strPath, MusicTag tag)
     {
       Log.Debug("Searching for album: {0} - {1}", albumName, artistName);
 
@@ -1515,7 +1495,7 @@ namespace MediaPortal.GUI.Music
           if (pDlgAlbumInfo.NeedsRefresh)
           {
             m_database.DeleteAlbumInfo(albumName, artistName);
-            ShowAlbumInfo(parentWindowID, isFolder, artistName, albumName, strPath, tag);
+            ShowAlbumInfo(parentWindowID, artistName, albumName, strPath, tag);
             return;
           }
         }

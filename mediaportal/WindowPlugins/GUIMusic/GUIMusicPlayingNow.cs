@@ -758,8 +758,7 @@ namespace MediaPortal.GUI.Music
             string albumFolderPath = Path.GetDirectoryName(CurrentTrackFileName);
             if (_MusicWindow != null)
             {
-              _MusicWindow.ShowAlbumInfo(GetID, false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath,
-                                         CurrentTrackTag);
+              _MusicWindow.ShowAlbumInfo(GetID, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath, CurrentTrackTag);
             }
           }
           break;
