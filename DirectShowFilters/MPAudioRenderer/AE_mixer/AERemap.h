@@ -1,6 +1,6 @@
 #pragma once
 /*
- *      Copyright (C) 2005-2010 Team XBMC
+ *      Copyright (C) 2010-2012 Team XBMC
  *      http://xbmc.org
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -33,8 +33,8 @@ public:
 
 private:
   typedef struct {
-    int   index;
-    float level;
+    int       index;
+    float     level;
   } AEMixLevel;
 
   typedef struct {
@@ -43,6 +43,7 @@ private:
     int               outIndex;
     int               srcCount;
     AEMixLevel        srcIndex[AE_CH_MAX];
+    int               cpyCount; /* the number of times the channel has been cloned */
   } AEMixInfo;
 
   AEMixInfo      m_mixInfo[AE_CH_MAX+1];
@@ -51,5 +52,6 @@ private:
   int            m_outChannels;
 
   void ResolveMix(const AEChannel from, CAEChannelInfo to);
+  void BuildUpmixMatrix(const CAEChannelInfo& input, const CAEChannelInfo& output);
 };
 

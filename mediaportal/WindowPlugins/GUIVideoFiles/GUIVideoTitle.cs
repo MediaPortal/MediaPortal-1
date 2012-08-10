@@ -529,7 +529,7 @@ namespace MediaPortal.GUI.Video
         }
 
         dlg.AddLocalizedString(118); //rename title
-        dlg.AddLocalizedString(1303); //Rename sort title
+        dlg.AddLocalizedString(1308); //Rename sort title
         dlg.AddLocalizedString(925); //delete
       }
 
@@ -619,7 +619,7 @@ namespace MediaPortal.GUI.Video
           OnAddUserGroup();
           break;
         
-        case 1303: // Rename sort title
+        case 1308: // Rename sort title
           OnChangeSortTitle(movie, itemNo);
           break;
         
