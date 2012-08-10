@@ -170,6 +170,7 @@ namespace MediaPortal.GUI.Video
 
             ArrayList sortStrings = new ArrayList();
             sortStrings.Add("Name");
+            sortStrings.Add("NameAll");
             sortStrings.Add("Date");
             sortStrings.Add("Size");
             sortStrings.Add("Year");
@@ -1121,20 +1122,27 @@ namespace MediaPortal.GUI.Video
     {
       IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
 
-      if (movie != null && movie.ID > 0 && !item.IsFolder)
+      if (movie != null && movie.ID > 0 && (!item.IsFolder || CurrentSortMethod == VideoSort.SortMethod.NameAll))
       {
-        if (CurrentSortMethod == VideoSort.SortMethod.Name)
+        if (CurrentSortMethod == VideoSort.SortMethod.Name || CurrentSortMethod == VideoSort.SortMethod.NameAll)
         {
-          // Show real movie duration (from video file)
-          int mDuration = movie.Duration;
-
-          if (mDuration <= 0)
+          if (item.IsFolder)
           {
-            item.Label2 = Util.Utils.SecondsToHMString(movie.RunTime * 60);
+            item.Label2 = string.Empty;
           }
           else
           {
-            item.Label2 = Util.Utils.SecondsToHMString(mDuration);
+            // Show real movie duration (from video file)
+            int mDuration = movie.Duration;
+
+            if (mDuration <= 0)
+            {
+              item.Label2 = Util.Utils.SecondsToHMString(movie.RunTime*60);
+            }
+            else
+            {
+              item.Label2 = Util.Utils.SecondsToHMString(mDuration);
+            }
           }
         }
         else if (CurrentSortMethod == VideoSort.SortMethod.Year)

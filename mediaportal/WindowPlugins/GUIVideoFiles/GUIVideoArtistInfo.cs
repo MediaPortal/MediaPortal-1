@@ -991,7 +991,12 @@ namespace MediaPortal.GUI.Video
         IMDBMovie movie = new IMDBMovie();
         
         movie.IMDBNumber = ListItemMovieInfo(item).MovieImdbID;
-        GUIVideoFiles.InternalGrabber.InternalGrabber.GetPlotImdb(ref movie);
+        
+        if(!GUIVideoFiles.InternalGrabber.InternalGrabber.GetPlotImdb(ref movie))
+        {
+          return string.Empty;
+        }
+        
         plot = movie.PlotOutline;
 
         #region Extra data

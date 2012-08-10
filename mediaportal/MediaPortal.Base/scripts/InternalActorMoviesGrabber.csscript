@@ -1,4 +1,4 @@
-//css_reference "core.dll";
+﻿//css_reference "core.dll";
 //css_reference "Databases.dll";
 //css_reference "utils.dll";
 
@@ -17,7 +17,7 @@ internal class InternalGrabber : IIMDBInternalScriptGrabber
 
   private string _strBody = string.Empty;
 
-  void IIMDBInternalScriptGrabber.GetPlotImdb(ref IMDBMovie movie)
+  bool IIMDBInternalScriptGrabber.GetPlotImdb(ref IMDBMovie movie)
   {
     string strUrl = String.Format("http://m.imdb.com/title/{0}", movie.IMDBNumber);
     string regex = @"<h1>Plot\sSummary</h1>\s+<p>(?<moviePlot>.+?)</p>";
@@ -30,6 +30,7 @@ internal class InternalGrabber : IIMDBInternalScriptGrabber
     if (Regex.Match(_strBody, pageNotFound, RegexOptions.Singleline).Success)
     {
       Log.Warn("GUIVideoArtistInfo-Actor movielist update Page not found: {0}", strUrl);
+			return false;
     }
 
     // Full plot
@@ -40,12 +41,15 @@ internal class InternalGrabber : IIMDBInternalScriptGrabber
     string fullPlot = GetPlot(strUrl, regex, ref plotBody);
 
     if (fullPlot != string.Empty)
+    {
       shortPlot = fullPlot;
+    }
 
     movie.PlotOutline = shortPlot;
 
     // Director, actors, rating....
     GetExtraDataImdb(ref movie);
+		return true;
   }
 
   private void GetExtraDataImdb(ref IMDBMovie movie)
@@ -55,33 +59,61 @@ internal class InternalGrabber : IIMDBInternalScriptGrabber
     string title = Regex.Match(_strBody, regex, RegexOptions.Singleline).Groups["movieTitle"].Value.Trim();
     int year = 0;
     int.TryParse(Regex.Match(_strBody, regex, RegexOptions.Singleline).Groups["movieYear"].Value.Trim(), out year);
+    
     if (title != string.Empty)
     {
       movie.Title = title;
     }
+    
     if (year == 0)
     {
       year = DateTime.Today.Year + 3;
     }
+    
     movie.Year = year;
 
     // Director
-    regex = @"(<h1>Director</h1>|<h1>Directors</h1>)\s+<p>\s+<a\shref="".*?>(?<director>.*?)</a>";
-    string director = Regex.Match(_strBody, regex, RegexOptions.Singleline).Groups["director"].Value.Trim();
+    string directorsBlockRx = @"<div>\s(<h1>Director</h1>|<h1>Directors</h1>).*?</div>";
+    string directorsBlock = Regex.Match(_strBody, directorsBlockRx, RegexOptions.Singleline | RegexOptions.IgnoreCase).Value;
+    regex = @"<a\shref=""/name/nm\d{7}/"">(?<director>.*?)</a>";
+    MatchCollection mc = Regex.Matches(directorsBlock, regex, RegexOptions.Singleline);
+    string director = string.Empty;
+    
+    foreach (Match m in mc)
+    {
+      if (!string.IsNullOrEmpty(m.Groups["director"].Value))
+      {
+        director += m.Groups["director"].Value + " / ";
+      }
+    }
+
     if (director == string.Empty)
     {
       director = Strings.Unknown;
     }
-    movie.WritingCredits = director;
+    else
+    {
+      int iDirector = director.LastIndexOf(" /");
+
+      if (iDirector > 0)
+      {
+        director = director.Remove(iDirector);
+      }
+
+      movie.WritingCredits = director;
+    }
+
 
     // Genre
     regex = @"<h1>Genre</h1>\s+<p>(?<genre>.+?)</p>";
     string genre = Regex.Match(_strBody, regex, RegexOptions.Singleline).Groups["genre"].Value.Trim();
     genre = genre.Replace(", ", " / ");
+    
     if (genre == string.Empty)
     {
       genre = Strings.Unknown;
     }
+    
     movie.SingleGenre = genre;
 
     // Rating
@@ -91,12 +123,14 @@ internal class InternalGrabber : IIMDBInternalScriptGrabber
     {
       mpaaRating = Strings.Unknown;
     }
+    
     movie.MPARating = mpaaRating;
 
     // Actors
     regex = @"<div\sclass=""label"">\s+<div\sclass=""title"">\s+<a\shref=""/name/.*?>(?<actor>.*?)<";
     MatchCollection actors = Regex.Matches(_strBody, regex, RegexOptions.Singleline);
     string strActor = string.Empty;
+    
     foreach (Match actor in actors)
     {
       string tmpActor = actor.Groups["actor"].Value;
@@ -107,13 +141,16 @@ internal class InternalGrabber : IIMDBInternalScriptGrabber
         strActor += tmpActor + " / ";
       }
     }
+    
     int index = strActor.LastIndexOf(" /");
+    
     if (index > 0)
     {
       strActor = strActor.Remove(index);
     }
+    
     movie.Cast = strActor;
-		_strBody = string.Empty;
+    _strBody = string.Empty;
   }
 
   string IIMDBInternalScriptGrabber.GetThumbImdb(string imdbId)
@@ -131,6 +168,7 @@ internal class InternalGrabber : IIMDBInternalScriptGrabber
       int thumbSize = 400; // pixels size of picture -> horizontal
       thumb += "_SX" + thumbSize + ".jpg";
     }
+    
     _strBody = string.Empty;
     return thumb;
   }

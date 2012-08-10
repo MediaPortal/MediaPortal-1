@@ -35,14 +35,15 @@ namespace MediaPortal.GUI.Video
     public enum SortMethod
     {
       Name = 0,
-      Date = 1,
-      Size = 2,
-      Watched = 3,
-      Year = 4,
-      Rating = 5,
-      Label = 6,
-      Modified = 7,
-      Created = 8,
+      NameAll = 1,
+      Date = 2,
+      Size = 3,
+      Watched = 4,
+      Year = 5,
+      Rating = 6,
+      Label = 7,
+      Modified = 8,
+      Created = 9,
     }
 
     protected SortMethod CurrentSortMethod;
@@ -84,11 +85,11 @@ namespace MediaPortal.GUI.Video
       {
         return -1;
       }
-      if (item1.IsFolder && !item2.IsFolder)
+      if (item1.IsFolder && !item2.IsFolder && CurrentSortMethod != SortMethod.NameAll)
       {
         return -1;
       }
-      if (!item1.IsFolder && item2.IsFolder)
+      if (!item1.IsFolder && item2.IsFolder && CurrentSortMethod != SortMethod.NameAll)
       {
         return 1;
       }
@@ -160,6 +161,7 @@ namespace MediaPortal.GUI.Video
           }
 
         case SortMethod.Name:
+        case SortMethod.NameAll:
 
           IMDBMovie movie1 = item1.AlbumInfoTag as IMDBMovie;
           IMDBMovie movie2 = item2.AlbumInfoTag as IMDBMovie;

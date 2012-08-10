@@ -1344,7 +1344,7 @@ namespace MediaPortal.Video.Database
 
   public interface IIMDBInternalScriptGrabber
   {
-    void GetPlotImdb(ref IMDBMovie movie);
+    bool GetPlotImdb(ref IMDBMovie movie);
     string GetThumbImdb(string imdbId);
   }
 }

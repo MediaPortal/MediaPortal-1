@@ -126,22 +126,26 @@ namespace MediaPortal.GUI.Video
     {
       switch (s.Trim().ToLower())
       {
+        case "name":
+          return VideoSort.SortMethod.Name;
+        case "nameall":
+          return VideoSort.SortMethod.NameAll;
+        case "date":
+          return VideoSort.SortMethod.Date;
+        case "size":
+          return VideoSort.SortMethod.Size;
         case "modified":
           return VideoSort.SortMethod.Modified;
         case "created":
           return VideoSort.SortMethod.Created;
-        case "date":
-          return VideoSort.SortMethod.Date;
         case "label":
           return VideoSort.SortMethod.Label;
-        case "name":
-          return VideoSort.SortMethod.Name;
         case "rating":
           return VideoSort.SortMethod.Rating;
-        case "size":
-          return VideoSort.SortMethod.Size;
         case "year":
           return VideoSort.SortMethod.Year;
+        case "watched":
+          return VideoSort.SortMethod.Watched;
       }
       if (!string.IsNullOrEmpty(s))
       {
@@ -155,7 +159,7 @@ namespace MediaPortal.GUI.Video
       base.SaveSettings();
       using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
-        xmlwriter.SetValue(SerializeName, "sortmethod", (int)currentSortMethod);
+        xmlwriter.SetValue(SerializeName, "sortmethod", (int)CurrentSortMethod);
         xmlwriter.SetValue(SerializeName, "sortmethodroot", (int)currentSortMethodRoot);
       }
     }
@@ -329,6 +333,9 @@ namespace MediaPortal.GUI.Video
         case VideoSort.SortMethod.Name:
           strLine = GUILocalizeStrings.Get(365);
           break;
+        case VideoSort.SortMethod.NameAll:
+          strLine = GUILocalizeStrings.Get(1309);
+          break;
         case VideoSort.SortMethod.Date:
           strLine = GUILocalizeStrings.Get(104);
           break;
@@ -363,7 +370,8 @@ namespace MediaPortal.GUI.Video
       if (null != facadeLayout)
         facadeLayout.EnableScrollLabel = CurrentSortMethod == VideoSort.SortMethod.Label ||
                                          CurrentSortMethod == VideoSort.SortMethod.Year ||
-                                         CurrentSortMethod == VideoSort.SortMethod.Name
+                                         CurrentSortMethod == VideoSort.SortMethod.Name ||
+                                         CurrentSortMethod == VideoSort.SortMethod.NameAll
           ;
     }
 
@@ -423,11 +431,11 @@ namespace MediaPortal.GUI.Video
 
     protected virtual void SetLabels()
     {
-      bool isHareView = false;
+      bool isShareView = false;
       
       if(GUIWindowManager.ActiveWindow == (int)Window.WINDOW_VIDEOS)
       {
-        isHareView = true;
+        isShareView = true;
       }
 
       for (int i = 0; i < facadeLayout.Count; ++i)
@@ -435,33 +443,39 @@ namespace MediaPortal.GUI.Video
         GUIListItem item = facadeLayout[i];
         IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
 
-        if (movie != null && movie.ID > 0 && !item.IsFolder && !isHareView)
+        if (movie != null && movie.ID > 0  && !isShareView && 
+            (!item.IsFolder || CurrentSortMethod == VideoSort.SortMethod.NameAll ))
         {
-          if (CurrentSortMethod == VideoSort.SortMethod.Name)
+          if (CurrentSortMethod == VideoSort.SortMethod.Name || CurrentSortMethod == VideoSort.SortMethod.NameAll)
           {
-            //item.Label2 = Util.Utils.SecondsToHMString(movie.RunTime * 60);
-
-            // Show real movie duration (from video file)
-            int mDuration = VideoDatabase.GetMovieDuration(movie.ID);
-
-            if (mDuration <= 0)
+            if (item.IsFolder)
             {
-              ArrayList mFiles = new ArrayList();
-              VideoDatabase.GetFilesForMovie(movie.ID, ref mFiles);
-              mDuration = GUIVideoFiles.MovieDuration(mFiles, true);
+              item.Label2 = string.Empty;
+            }
+            else
+            {
+              // Show real movie duration (from video file)
+              int mDuration = VideoDatabase.GetMovieDuration(movie.ID);
 
               if (mDuration <= 0)
               {
-                item.Label2 = Util.Utils.SecondsToHMString(movie.RunTime * 60);
+                ArrayList mFiles = new ArrayList();
+                VideoDatabase.GetFilesForMovie(movie.ID, ref mFiles);
+                mDuration = GUIVideoFiles.MovieDuration(mFiles, true);
+
+                if (mDuration <= 0)
+                {
+                  item.Label2 = Util.Utils.SecondsToHMString(movie.RunTime * 60);
+                }
+                else
+                {
+                  item.Label2 = Util.Utils.SecondsToHMString(mDuration);
+                }
               }
               else
               {
                 item.Label2 = Util.Utils.SecondsToHMString(mDuration);
               }
-            }
-            else
-            {
-              item.Label2 = Util.Utils.SecondsToHMString(mDuration);
             }
           }
           else if (CurrentSortMethod == VideoSort.SortMethod.Year)
@@ -491,9 +505,7 @@ namespace MediaPortal.GUI.Video
         else
         {
           string strSize1 = string.Empty, strDate = string.Empty;
-          ISelectDVDHandler sDvd = GUIVideoFiles.GetSelectDvdHandler();
-          ISelectBDHandler sBd = GUIVideoFiles.GetSelectBDHandler();
-
+          
           if (item.FileInfo != null && !item.IsFolder)
           {
             strSize1 = Util.Utils.GetSize(item.FileInfo.Length);
@@ -507,7 +519,7 @@ namespace MediaPortal.GUI.Video
               strDate = item.FileInfo.CreationTime.ToShortDateString() + " " +
                         item.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
           }
-          if (CurrentSortMethod == VideoSort.SortMethod.Name)
+          if (CurrentSortMethod == VideoSort.SortMethod.Name || CurrentSortMethod == VideoSort.SortMethod.NameAll)
           {
             if (item.IsFolder)
             {
@@ -562,28 +574,30 @@ namespace MediaPortal.GUI.Video
       // Common sorts - group 1
       dlg.AddLocalizedString(365); // 0 name
       maxCommonSortIndex++;
-      dlg.AddLocalizedString(104); // 1 date created (date)
+      dlg.AddLocalizedString(1309); // 1 nameall
       maxCommonSortIndex++;
-      dlg.AddLocalizedString(105); // 2 size
+      dlg.AddLocalizedString(104); // 2 date created (date)
       maxCommonSortIndex++;
-      dlg.AddLocalizedString(527); // 3 watched
+      dlg.AddLocalizedString(105); // 3 size
+      maxCommonSortIndex++;
+      dlg.AddLocalizedString(527); // 4 watched
       maxCommonSortIndex++;
       
       // Database sorts - group 2
-      if (GUIWindowManager.ActiveWindow != (int)Window.WINDOW_VIDEOS)
+      if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_VIDEO_TITLE)
       {
-        dlg.AddLocalizedString(366); // 4 year
+        dlg.AddLocalizedString(366); // 5 year
         dbSortCount++;
-        dlg.AddLocalizedString(367); // 5 rating
+        dlg.AddLocalizedString(367); // 6 rating
         dbSortCount++;
       }
 
       // Share sorts - group 3
       if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_VIDEOS)
       {
-        dlg.AddLocalizedString(430);  // 6 CD label
-        dlg.AddLocalizedString(1221); // 7 date modified
-        dlg.AddLocalizedString(1220); // 8 date created
+        dlg.AddLocalizedString(430);  // 7 CD label
+        dlg.AddLocalizedString(1221); // 8 date modified
+        dlg.AddLocalizedString(1220); // 9 date created
       }
       
       // set the focus to currently used sort method
@@ -611,6 +625,9 @@ namespace MediaPortal.GUI.Video
       {
         case 365:
           CurrentSortMethod = VideoSort.SortMethod.Name;
+          break;
+        case 1309:
+          CurrentSortMethod = VideoSort.SortMethod.NameAll;
           break;
         case 104:
           CurrentSortMethod = VideoSort.SortMethod.Date;
