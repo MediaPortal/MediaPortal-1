@@ -96,7 +96,7 @@ namespace MpeCore.Classes.ActionType
         if (knownPackage == null && (DateTime.Now - ApplicationSettings.Instance.LastUpdate).TotalHours > 12)
         {
           // package unknown and last download of update info was over 12 hours ago -> update the list first
-          ExtensionUpdateDownloader.UpdateList(false, null, null);
+          ExtensionUpdateDownloader.UpdateList(false, false, null, null);
           // search for the package again - we don't want incompatible versions
           MpeInstaller.KnownExtensions.HideByDependencies();
           knownPackage = MpeInstaller.KnownExtensions.Get(actionItem.Params[Const_Guid].Value);

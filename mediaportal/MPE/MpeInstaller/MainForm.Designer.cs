@@ -48,9 +48,9 @@
       this.onlyStableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.onlyCompatibleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.settingsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
       this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.wikiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.settingsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
       divider = new System.Windows.Forms.ToolStripStatusLabel();
       this.tabControl1.SuspendLayout();
       this.tab_extensions.SuspendLayout();
@@ -200,7 +200,7 @@
       this.updateAllToolStripMenuItem.Image = global::MpeInstaller.Properties.Resources.system_software_update;
       this.updateAllToolStripMenuItem.Name = "updateAllToolStripMenuItem";
       this.updateAllToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
-      this.updateAllToolStripMenuItem.Text = "Update All";
+      this.updateAllToolStripMenuItem.Text = "Update All Installed";
       this.updateAllToolStripMenuItem.Click += new System.EventHandler(this.UpdateAll_Click);
       // 
       // cleanCacheToolStripMenuItem
@@ -244,6 +244,14 @@
       this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
       this.settingsToolStripMenuItem.Text = "Options";
       // 
+      // settingsToolStripMenuItem1
+      // 
+      this.settingsToolStripMenuItem1.Image = global::MpeInstaller.Properties.Resources.settings;
+      this.settingsToolStripMenuItem1.Name = "settingsToolStripMenuItem1";
+      this.settingsToolStripMenuItem1.Size = new System.Drawing.Size(116, 22);
+      this.settingsToolStripMenuItem1.Text = "Settings";
+      this.settingsToolStripMenuItem1.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
+      // 
       // helpToolStripMenuItem
       // 
       this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -259,14 +267,6 @@
       this.wikiToolStripMenuItem.Size = new System.Drawing.Size(97, 22);
       this.wikiToolStripMenuItem.Text = "Wiki";
       this.wikiToolStripMenuItem.Click += new System.EventHandler(this.wikiToolStripMenuItem_Click);
-      // 
-      // settingsToolStripMenuItem1
-      // 
-      this.settingsToolStripMenuItem1.Image = global::MpeInstaller.Properties.Resources.settings;
-      this.settingsToolStripMenuItem1.Name = "settingsToolStripMenuItem1";
-      this.settingsToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
-      this.settingsToolStripMenuItem1.Text = "Settings";
-      this.settingsToolStripMenuItem1.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
       // 
       // MainForm
       // 

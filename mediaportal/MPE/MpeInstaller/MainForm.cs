@@ -61,8 +61,8 @@ namespace MpeInstaller
         if (args.Update)
         {
           ApplicationSettings.Instance.DoUpdateInStartUp = false;
-          RefreshLists();
-          DoUpdateAll();
+          RefreshListControls();
+          DoUpdateAll(false);
           this.Close();
           return;
         }
@@ -145,18 +145,8 @@ namespace MpeInstaller
       collection.Save();
     }
 
-    private void FilterList()
+    private void SetFilterForKnownExtensionsList()
     {
-      //if (_settings.ShowOnlyStable)
-      //{
-      //  //MpeCore.MpeInstaller.InstalledExtensions.HideByRelease();
-      //  MpeCore.MpeInstaller.KnownExtensions.HideByRelease();
-      //}
-      //else
-      //{
-      //  MpeCore.MpeInstaller.InstalledExtensions.ShowAll();
-      //  MpeCore.MpeInstaller.KnownExtensions.ShowAll();
-      //}
       MpeCore.MpeInstaller.KnownExtensions.Hide(ApplicationSettings.Instance.ShowOnlyStable, ApplicationSettings.Instance.ShowOnlyCompatible);
       if (MpeCore.MpeInstaller.KnownExtensions.GetHiddenExtensionCount() > 0)
       {
@@ -280,7 +270,7 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
         pak.CopyGroupCheck(packageClass);
       }
       pak.StartInstallWizard();
-      RefreshLists();
+      RefreshListControls();
       pak.ZipProvider.Dispose();
       try
       {
@@ -352,14 +342,13 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
       this.Hide();
       if (DoUpdate(packageClass, newpackageClass, false))
       {
-        RefreshLists();
+        RefreshListControls();
       }
       this.Show();
     }
 
-    private void DoUpdateAll()
+    private void DoUpdateAll(bool askForInfoUpdate)
     {
-      this.Hide();
       var updatelist = new Dictionary<PackageClass, PackageClass>();
       foreach (PackageClass packageClass in MpeCore.MpeInstaller.InstalledExtensions.Items)
       {
@@ -368,14 +357,28 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
           continue;
         updatelist.Add(packageClass, update);
       }
-      foreach (KeyValuePair<PackageClass, PackageClass> valuePair in updatelist)
+      if (updatelist.Count > 0)
       {
-        if (valuePair.Value == null)
-          continue;
-        DoUpdate(valuePair.Key, valuePair.Value, true);
+        this.Hide();
+        foreach (KeyValuePair<PackageClass, PackageClass> valuePair in updatelist)
+        {
+          if (valuePair.Value == null)
+            continue;
+          DoUpdate(valuePair.Key, valuePair.Value, true);
+        }
+        RefreshListControls();
+        this.Show();
       }
-      RefreshLists();
-      this.Show();
+      else
+      {
+        if (askForInfoUpdate && MessageBox.Show("All installed extensions seem up to date.\nRefresh update info and try again?", "No updates found", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+        {
+          ExtensionUpdateDownloader.UpdateList(false, true, null, null);
+          SetFilterForKnownExtensionsList();
+          RefreshListControls();
+          DoUpdateAll(false);
+        }
+      }
     }
 
     private bool DoUpdate(PackageClass packageClass, PackageClass newpackageClass, bool silent)
@@ -438,7 +441,7 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
       return true;
     }
 
-    private void RefreshLists()
+    private void RefreshListControls()
     {
       toolStripLastUpdate.Text = "Last update: " + (ApplicationSettings.Instance.LastUpdate == DateTime.MinValue ? "Never" : ApplicationSettings.Instance.LastUpdate.ToString("g"));
       extensionListControlInstalled.Set(MpeCore.MpeInstaller.InstalledExtensions, true);
@@ -450,7 +453,7 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
       UnInstall dlg = new UnInstall();
       if (dlg.Execute(packageClass, false))
       {
-        RefreshLists();
+        RefreshListControls();
       }
     }
 
@@ -470,8 +473,8 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
         Name = "ProxyPrecacheDiscovery" 
       }.Start();
 
-      FilterList();
-      RefreshLists();
+      SetFilterForKnownExtensionsList();
+      RefreshListControls();
     }
 
     private void FileOpen_Click(object sender, EventArgs e)
@@ -562,8 +565,8 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
         pak.StartInstallWizard();
         if (gui)
         {
-          FilterList();
-          RefreshLists();
+          SetFilterForKnownExtensionsList();
+          RefreshListControls();
           this.Show();
         }
       }
@@ -583,9 +586,9 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
 
     private void RefreshUpdateInfo_Click(object sender, EventArgs e)
     {
-      ExtensionUpdateDownloader.UpdateList(false, Client_DownloadProgressChanged, Client_DownloadFileCompleted);
-      FilterList();
-      RefreshLists();
+      ExtensionUpdateDownloader.UpdateList(false, false, Client_DownloadProgressChanged, Client_DownloadFileCompleted);
+      SetFilterForKnownExtensionsList();
+      RefreshListControls();
     }
 
     private void MainForm_Shown(object sender, EventArgs e)
@@ -599,7 +602,7 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
       {
         RefreshUpdateInfo_Click(sender, e);
         if (ApplicationSettings.Instance.UpdateAll)
-          DoUpdateAll();
+          DoUpdateAll(false);
       }
     }
 
@@ -623,7 +626,7 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
 
     private void UpdateAll_Click(object sender, EventArgs e)
     {
-      DoUpdateAll();
+      DoUpdateAll(true);
     }
 
     private void chk_stable_CheckedChanged(object sender, EventArgs e)
@@ -631,8 +634,8 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
       if (!_loading)
       {
         ApplicationSettings.Instance.ShowOnlyStable = onlyStableToolStripMenuItem.Checked;
-        FilterList();
-        RefreshLists();
+        SetFilterForKnownExtensionsList();
+        RefreshListControls();
       }
     }
 
@@ -670,8 +673,8 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
         }
         ApplicationSettings.Instance.LastUpdate = DateTime.MinValue;
         MpeCore.MpeInstaller.Save();
-        FilterList();
-        RefreshLists();
+        SetFilterForKnownExtensionsList();
+        RefreshListControls();
       }
     }
 
@@ -680,8 +683,8 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
       if (!_loading)
       {
         ApplicationSettings.Instance.ShowOnlyCompatible = onlyCompatibleToolStripMenuItem.Checked;
-        FilterList();
-        RefreshLists();
+        SetFilterForKnownExtensionsList();
+        RefreshListControls();
       }
     }
 

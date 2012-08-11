@@ -36,16 +36,20 @@ namespace MpeCore.Classes
 
     static string tempUpdateIndex;
 
-    public static void UpdateList(bool silent, DownloadProgressChangedEventHandler downloadProgressChanged, AsyncCompletedEventHandler downloadFileCompleted)
+    public static void UpdateList(bool silent, bool installedOnly, DownloadProgressChangedEventHandler downloadProgressChanged, AsyncCompletedEventHandler downloadFileCompleted)
     {
-      DownloadExtensionIndex(downloadProgressChanged, downloadFileCompleted);
+      if (!installedOnly)
+      {
+        DownloadExtensionIndex(downloadProgressChanged, downloadFileCompleted);
+      }
       DownloadInfo dlg = new DownloadInfo();
       dlg.silent = silent;
-      if (dlg.ShowDialog() == DialogResult.OK)
+      dlg.installedOnly = installedOnly;
+      if (dlg.ShowDialog() == DialogResult.OK && !installedOnly)
       {
         ApplicationSettings.Instance.LastUpdate = DateTime.Now;
+        ApplicationSettings.Instance.Save();
       }
-      ApplicationSettings.Instance.Save();
     }
 
     static void DownloadExtensionIndex(DownloadProgressChangedEventHandler downloadProgressChanged, AsyncCompletedEventHandler downloadFileCompleted)

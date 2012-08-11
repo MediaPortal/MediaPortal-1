@@ -31,6 +31,7 @@ namespace MpeCore.Dialogs
   {
     bool cancel = false;
     public bool silent = false;
+    public bool installedOnly = false;
     private int counter = -1;
     private List<string> onlineFiles = new List<string>();
     int runningThreads = 0;
@@ -43,8 +44,11 @@ namespace MpeCore.Dialogs
     private void DownloadInfo_Shown(object sender, EventArgs e)
     {
       onlineFiles = MpeCore.MpeInstaller.InstalledExtensions.GetUpdateUrls(new List<string>());
-      onlineFiles = MpeCore.MpeInstaller.KnownExtensions.GetUpdateUrls(onlineFiles);
-      onlineFiles = MpeCore.MpeInstaller.GetInitialUrlIndex(onlineFiles);
+      if (!installedOnly)
+      {
+        onlineFiles = MpeCore.MpeInstaller.KnownExtensions.GetUpdateUrls(onlineFiles);
+        onlineFiles = MpeCore.MpeInstaller.GetInitialUrlIndex(onlineFiles);
+      }
 
       if (onlineFiles.Count < 1)
       {
