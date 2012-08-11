@@ -35,7 +35,7 @@ namespace MpeInstaller
       Application.SetCompatibleTextRenderingDefault(false);
       if (args.Length > 0)
       {
-        Application.Run(new MainForm(new ProgramArguments(args)));
+        new MainForm(new ProgramArguments(args));
       }
       else
       {

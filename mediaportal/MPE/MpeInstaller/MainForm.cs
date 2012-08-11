@@ -46,27 +46,22 @@ namespace MpeInstaller
       Init();
     }
 
-    public MainForm(ProgramArguments args)
+    public MainForm(ProgramArguments args) : this()
     {
-      Init();
       try
       {
         if (File.Exists(args.PackageFile))
         {
           ApplicationSettings.Instance.DoUpdateInStartUp = false;
           InstallFile(args.PackageFile, args.Silent, false);
-          this.Close();
-          return;
         }
-        if (args.Update)
+        else if (args.Update)
         {
           ApplicationSettings.Instance.DoUpdateInStartUp = false;
           RefreshListControls();
           DoUpdateAll(false);
-          this.Close();
-          return;
         }
-        if (args.MpQueue)
+        else if (args.MpQueue)
         {
           ApplicationSettings.Instance.DoUpdateInStartUp = false;
           if (args.Splash)
@@ -76,12 +71,10 @@ namespace MpeInstaller
             splashScreen.Update();
           }
           ExecuteMpQueue();
-          this.Close();
           if (splashScreen.Visible)
             splashScreen.Close();
-          return;
         }
-        if (args.UninstallPackage)
+        else if (args.UninstallPackage)
         {
           if (string.IsNullOrEmpty(args.PackageID)) return;
           PackageClass pc = MpeCore.MpeInstaller.InstalledExtensions.Get(args.PackageID);
@@ -89,14 +82,15 @@ namespace MpeInstaller
 
           UnInstall dlg = new UnInstall();
           dlg.Execute(pc, args.Silent);
-
-          return;
         }
       }
       catch (Exception ex)
       {
-        MessageBox.Show(ex.Message);
-        MessageBox.Show(ex.StackTrace);
+        MessageBox.Show(ex.ToString());
+      }
+      finally
+      {
+        this.Close();
       }
     }
 
