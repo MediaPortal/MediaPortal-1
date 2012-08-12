@@ -38,5 +38,15 @@ namespace MpeCore.Classes
     {
       Items.Add(item);
     }
+
+    public void Sort()
+    {
+      Items.Sort(Compare);
+    }
+
+    static int Compare(SubSystemItem ssi1, SubSystemItem ssi2)
+    {
+      return ssi1.Name.CompareTo(ssi2.Name);
+    }
   }
 }
