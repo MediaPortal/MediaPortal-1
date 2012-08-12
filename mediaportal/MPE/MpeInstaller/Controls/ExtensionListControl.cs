@@ -67,7 +67,7 @@ namespace MpeInstaller.Controls
       {
         ParentForm.Cursor = Cursors.WaitCursor;
         flowLayoutPanel1.SuspendLayout();
-        collection.Sort();
+        collection.Sort(false);
         comboBox1.Items.Clear();
         comboBox1.Items.Add("All");
         TagList.Clear();

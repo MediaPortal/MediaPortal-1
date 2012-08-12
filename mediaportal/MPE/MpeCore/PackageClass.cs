@@ -101,7 +101,7 @@ namespace MpeCore
 
 
     /// <summary>
-    /// Copies the defaul group check from  another package
+    /// Copies the default group check from  another package
     /// </summary>
     /// <param name="packageClass">The package class.</param>
     public void CopyGroupCheck(PackageClass packageClass)
@@ -752,17 +752,14 @@ namespace MpeCore
 
       ExtensionCollection list = ExtensionCollection.Load(xmlFile);
 
-      PackageClass pakToAdd = this;
-      pakToAdd.GeneralInfo.OnlineLocation = ReplaceInfo(pakToAdd.GeneralInfo.OnlineLocation);
+      PackageClass pakToAdd = Clone();
 
-      SectionParam iconParam = pakToAdd.GeneralInfo.Params[ParamNamesConst.ICON];
+      pakToAdd.GeneralInfo.OnlineLocation = ReplaceInfo(pakToAdd.GeneralInfo.OnlineLocation);
       pakToAdd.GeneralInfo.Params.Items.Remove(pakToAdd.GeneralInfo.Params[ParamNamesConst.ICON]);
 
       list.Add(pakToAdd);
-
+      list.Sort(true);
       list.Save(xmlFile);
-
-      pakToAdd.GeneralInfo.Params.Items.Insert(0, iconParam);
 
       return true;
     }
@@ -869,6 +866,36 @@ namespace MpeCore
         return pak2.GeneralInfo.Version.CompareTo(pak1.GeneralInfo.Version);
       }
       return pak1.GeneralInfo.Name.ToUpper().CompareTo(pak2.GeneralInfo.Name.ToUpper());
+    }
+
+    /// <summary>
+    /// Compares the specified package.
+    /// </summary>
+    /// <param name="pak1">The pak1.</param>
+    /// <param name="pak2">The pak2.</param>
+    /// <returns></returns>
+    public static int CompareVersionAscending(PackageClass pak1, PackageClass pak2)
+    {
+      if (pak1.GeneralInfo.Name.ToUpper().CompareTo(pak2.GeneralInfo.Name.ToUpper()) == 0)
+      {
+        return pak1.GeneralInfo.Version.CompareTo(pak2.GeneralInfo.Version);
+      }
+      return pak1.GeneralInfo.Name.ToUpper().CompareTo(pak2.GeneralInfo.Name.ToUpper());
+    }
+
+    public PackageClass Clone()
+    {
+      var serializer = new XmlSerializer(typeof(PackageClass));
+      using (MemoryStream memoryStream = new MemoryStream())
+      {
+        TextWriter writer = new StreamWriter(memoryStream);
+        serializer.Serialize(writer, this);
+        writer.Flush();
+        memoryStream.Position = 0;
+        var packageClass = (PackageClass)serializer.Deserialize(memoryStream);
+        packageClass.CopyGroupCheck(this);
+        return packageClass;
+      }
     }
   }
 }

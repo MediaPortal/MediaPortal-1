@@ -43,6 +43,16 @@ namespace MpeCore.Classes
     /// Gets the unique list of extensions with highest version
     /// </summary>
     /// <returns></returns>
+    public ExtensionCollection GetUniqueList()
+    {
+      return GetUniqueList(null);
+    }
+
+    /// <summary>
+    /// Gets the unique list of extensions with highest version
+    /// </summary>
+    /// <param name="exlude">Exlude these extensions</param>
+    /// <returns></returns>
     public ExtensionCollection GetUniqueList(ExtensionCollection exlude)
     {
       HashSet<string> exludedIds = new HashSet<string>();
@@ -227,9 +237,12 @@ namespace MpeCore.Classes
     /// <summary>
     /// Sorts this instance.
     /// </summary>
-    public void Sort()
+    public void Sort(bool versionAscending)
     {
-      Items.Sort(PackageClass.Compare);
+      if (versionAscending)
+        Items.Sort(PackageClass.CompareVersionAscending);
+      else
+        Items.Sort(PackageClass.Compare);
     }
 
     /// <summary>
