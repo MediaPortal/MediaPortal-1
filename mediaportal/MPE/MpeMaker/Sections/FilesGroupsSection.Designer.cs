@@ -373,8 +373,7 @@
       // 
       // btn_set
       // 
-      this.btn_set.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btn_set.Location = new System.Drawing.Point(311, 122);
+      this.btn_set.Location = new System.Drawing.Point(9, 163);
       this.btn_set.Name = "btn_set";
       this.btn_set.Size = new System.Drawing.Size(35, 20);
       this.btn_set.TabIndex = 7;
