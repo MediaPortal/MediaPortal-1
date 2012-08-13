@@ -725,6 +725,12 @@ HRESULT CVideoPin::DeliverBeginFlush()
   HRESULT hr = __super::DeliverBeginFlush();
   LogDebug("vid: DeliverBeginFlush - hr: %08lX", hr);
 
+  if (hr != S_OK)
+  {
+    m_bFlushing = true;
+    m_bSeekDone = true;
+  }
+
   return hr;
 }
 
