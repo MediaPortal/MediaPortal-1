@@ -1,4 +1,4 @@
-﻿//css_reference "core.dll";
+//css_reference "core.dll";
 //css_reference "Databases.dll";
 //css_reference "utils.dll";
 
@@ -27,7 +27,7 @@ internal class InternalGrabber : IIMDBInternalScriptGrabber
 
     string pageNotFound = @"<h1>Page not found</h1>";
 
-    if (Regex.Match(_strBody, pageNotFound, RegexOptions.Singleline).Success)
+    if (Regex.Match(_strBody, pageNotFound, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
     {
       Log.Warn("GUIVideoArtistInfo-Actor movielist update Page not found: {0}", strUrl);
 			return false;
@@ -55,14 +55,16 @@ internal class InternalGrabber : IIMDBInternalScriptGrabber
   private void GetExtraDataImdb(ref IMDBMovie movie)
   {
     //Update title/Year
-    string regex = @"title""\scontent=""(?<movieTitle>.*?)[(](?<movieYear>.{4})[)]";
-    string title = Regex.Match(_strBody, regex, RegexOptions.Singleline).Groups["movieTitle"].Value.Trim();
+		string rxTitleBlock = "<title>.*?</title>";
+		string titleBlock = Regex.Match(_strBody, rxTitleBlock, RegexOptions.Singleline | RegexOptions.IgnoreCase).Value.Trim();
+		string regex = @"<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\d{4})";
+    string title = Regex.Match(titleBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["movieTitle"].Value;
     int year = 0;
-    int.TryParse(Regex.Match(_strBody, regex, RegexOptions.Singleline).Groups["movieYear"].Value.Trim(), out year);
+    int.TryParse(Regex.Match(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["movieYear"].Value.Trim(), out year);
     
     if (title != string.Empty)
     {
-      movie.Title = title;
+      movie.Title = title.Replace("IMDb -", string.Empty).Trim();
     }
     
     if (year == 0)
@@ -73,10 +75,10 @@ internal class InternalGrabber : IIMDBInternalScriptGrabber
     movie.Year = year;
 
     // Director
-    string directorsBlockRx = @"<div>\s(<h1>Director</h1>|<h1>Directors</h1>).*?</div>";
-    string directorsBlock = Regex.Match(_strBody, directorsBlockRx, RegexOptions.Singleline | RegexOptions.IgnoreCase).Value;
+    string rxDirectorsBlock = @"<div>\s(<h1>Director</h1>|<h1>Directors</h1>).*?</div>";
+    string directorsBlock = Regex.Match(_strBody, rxDirectorsBlock, RegexOptions.Singleline | RegexOptions.IgnoreCase).Value;
     regex = @"<a\shref=""/name/nm\d{7}/"">(?<director>.*?)</a>";
-    MatchCollection mc = Regex.Matches(directorsBlock, regex, RegexOptions.Singleline);
+    MatchCollection mc = Regex.Matches(directorsBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase);
     string director = string.Empty;
     
     foreach (Match m in mc)
@@ -106,7 +108,7 @@ internal class InternalGrabber : IIMDBInternalScriptGrabber
 
     // Genre
     regex = @"<h1>Genre</h1>\s+<p>(?<genre>.+?)</p>";
-    string genre = Regex.Match(_strBody, regex, RegexOptions.Singleline).Groups["genre"].Value.Trim();
+    string genre = Regex.Match(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["genre"].Value.Trim();
     genre = genre.Replace(", ", " / ");
     
     if (genre == string.Empty)
@@ -118,7 +120,7 @@ internal class InternalGrabber : IIMDBInternalScriptGrabber
 
     // Rating
     regex = @"<h1>Rated</h1>\s+<p>(?<rating>.+?)</p>";
-    string mpaaRating = Regex.Match(_strBody, regex, RegexOptions.Singleline).Groups["rating"].Value.Trim();
+    string mpaaRating = Regex.Match(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["rating"].Value.Trim();
     if (mpaaRating == string.Empty)
     {
       mpaaRating = Strings.Unknown;
@@ -128,7 +130,7 @@ internal class InternalGrabber : IIMDBInternalScriptGrabber
 
     // Actors
     regex = @"<div\sclass=""label"">\s+<div\sclass=""title"">\s+<a\shref=""/name/.*?>(?<actor>.*?)<";
-    MatchCollection actors = Regex.Matches(_strBody, regex, RegexOptions.Singleline);
+    MatchCollection actors = Regex.Matches(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase);
     string strActor = string.Empty;
     
     foreach (Match actor in actors)
@@ -162,7 +164,7 @@ internal class InternalGrabber : IIMDBInternalScriptGrabber
     string strUrl = String.Format("http://m.imdb.com/title/" + imdbId);
     _strBody = GetPage(strUrl, "utf-8", out uri);
     thumb = Regex.Match(_strBody, @"<div\sclass=""poster"">\s+<a\shref=""[^<]*<span\sclass=""retina-capable""><img\ssrc=""(?<poster>.*?_V1)",
-                                RegexOptions.Singleline).Groups["poster"].Value;
+                                RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["poster"].Value;
     if (!string.IsNullOrEmpty(thumb))
     {
       int thumbSize = 400; // pixels size of picture -> horizontal
@@ -180,7 +182,7 @@ internal class InternalGrabber : IIMDBInternalScriptGrabber
 
     if (strBody != null)
     {
-      string shortPlot = Regex.Match(strBody, regex, RegexOptions.Singleline).Groups["moviePlot"].Value.
+      string shortPlot = Regex.Match(strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["moviePlot"].Value.
         Replace("&amp;", "&").
         Replace("&lt;", "<").
         Replace("&gt;", ">").

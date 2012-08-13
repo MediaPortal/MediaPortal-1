@@ -276,7 +276,7 @@ namespace MediaPortal.GUI.Video
         _currentMovie = null;
       
       GUIPropertyManager.SetProperty("#actorThumb", string.Empty);
-      
+      ReleaseResources();
       base.OnPageDestroy(newWindowId);
     }
     
@@ -761,19 +761,25 @@ namespace MediaPortal.GUI.Video
 
         btnWatched.Selected = (_currentMovie.Watched != 0);
         // Set skin control properties
-        ArrayList files = new ArrayList();
-        VideoDatabase.GetFilesForMovie(_currentMovie.ID, ref files);
+        //ArrayList files = new ArrayList();
+        //VideoDatabase.GetFilesForMovie(_currentMovie.ID, ref files);
         
-        if (files.Count > 0)
-        {
-          _currentMovie.SetProperties(false, (string) files[0]);
-        }
-        else
-        {
-          _currentMovie.SetProperties(false, string.Empty);
-        }
+        //if (files.Count > 0)
+        //{
+        //  _currentMovie.SetProperties(false, (string) files[0]);
+        //}
+        //else
+        //{
+        //  _currentMovie.SetProperties(false, string.Empty);
+        //}
 
         if (imgCoverArt != null)
+        {
+          imgCoverArt.Dispose();
+          imgCoverArt.AllocResources();
+        }
+
+        if (imgActorArt != null)
         {
           imgCoverArt.Dispose();
           imgCoverArt.AllocResources();
@@ -900,6 +906,7 @@ namespace MediaPortal.GUI.Video
             try
             {
               Util.Utils.FileDelete(strFolderImage);
+              
               if (forceFolderThumb)
               {
                 if (Util.Utils.FileExistsInCache(largeCoverArtImage))
@@ -918,9 +925,12 @@ namespace MediaPortal.GUI.Video
               }
               else
               {
-                File.Copy(largeCoverArtImage, strFolderImage, false); //edited by BoelShit
+                if (!File.Exists(strFolderImage))
+                {
+                  File.Copy(largeCoverArtImage, strFolderImage, false); //edited by BoelShit
+                }
               }
-              File.Copy(coverArtImage, strFolderImage, false); //edited by BoelShit
+              //File.Copy(coverArtImage, strFolderImage, false); //edited by BoelShit
             }
             catch (Exception ex1)
             {
@@ -1983,6 +1993,24 @@ namespace MediaPortal.GUI.Video
       // Send global message that movie is refreshed/scanned
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
       GUIWindowManager.SendMessage(msg);
+    }
+
+    private void ReleaseResources()
+    {
+      if (listActors != null)
+      {
+        listActors.Clear();
+      }
+
+      if (imgActorArt != null)
+      {
+        imgActorArt.Dispose();
+      }
+
+      if (imgActorArt != null)
+      {
+        imgActorArt.Dispose();
+      }
     }
 
   }

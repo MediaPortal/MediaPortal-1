@@ -58,6 +58,8 @@ namespace MediaPortal.GUI.Video
     private int _actorIdState = -1; // Current session setting
     private int _selectedItemState = -1; //last selected item index
     private string _viewModeState = string.Empty;
+    private bool _movieInfoBeforePlay;
+    private bool _playClicked;
     
     private bool _forceRefreshAll; // Refresh all movies (context menu)
     
@@ -94,6 +96,11 @@ namespace MediaPortal.GUI.Video
 
     public override bool Init()
     {
+      using (Profile.Settings xmlreader = new MPSettings())
+      {
+        _movieInfoBeforePlay = xmlreader.GetValueAsBool("moviedatabase", "movieinfobeforeplay", false);
+      }
+
       return Load(GUIGraphicsContext.GetThemedSkinFile(@"\DialogVideoArtistInfo.xml"));
     }
 
@@ -105,9 +112,16 @@ namespace MediaPortal.GUI.Video
       if (action.wID == Action.ActionType.ACTION_SHOW_INFO)
       {
         GUIListItem item = listActorMovies.SelectedListItem;
-        
+
         if (!item.IsRemote)
+        {
           OnMovieInfo(item);
+        }
+      }
+
+      if (action.wID == Action.ActionType.ACTION_PLAY || action.wID == Action.ActionType.ACTION_MUSIC_PLAY)
+      {
+        _playClicked = true;
       }
 
       base.OnAction(action);
@@ -169,10 +183,10 @@ namespace MediaPortal.GUI.Video
         _currentActor = VideoDatabase.GetActorInfo(_currentActor.ID);
         SaveState();
         //Clean properties
-        IMDBActor actor = new IMDBActor();
-        actor.SetProperties();
+        _currentActor.ResetProperties();
       }
 
+      ReleaseResources();
       base.OnPageDestroy(newWindowId);
     }
 
@@ -204,6 +218,13 @@ namespace MediaPortal.GUI.Video
         {
           try
           {
+            if (_movieInfoBeforePlay && !_playClicked)
+            {
+              OnMovieInfo(listActorMovies.SelectedListItem);
+              return;
+            }
+
+            _playClicked = false;
             GUIVideoFiles.PlayMovie(Convert.ToInt32(listActorMovies.SelectedListItem.DVDLabel), true);
           }
           catch { }
@@ -575,6 +596,24 @@ namespace MediaPortal.GUI.Video
         {
           xmlwriter.SetValue("VideoArtistInfo", "itemid", listActorMovies.SelectedListItemIndex);
         }
+      }
+    }
+
+    private void ReleaseResources()
+    {
+      if (listActorMovies != null)
+      {
+        listActorMovies.Clear();
+      }
+
+      if (imgCoverArt != null)
+      {
+        imgCoverArt.Dispose();
+      }
+
+      if (imgMovieCover != null)
+      {
+        imgMovieCover.Dispose();
       }
     }
 
@@ -1051,11 +1090,11 @@ namespace MediaPortal.GUI.Video
       }
       catch(ThreadAbortException)
       {
-        Log.Info("Movie database lookup GetDetails() Thread aborted");
+        Log.Info("GUIVideoArtistInfo: Movie database lookup GetDetails(): Thread aborted");
       }
       catch (Exception ex)
       {
-        Log.Error("Movie database lookup GetDetails() {0}", ex.Message);
+        Log.Error("GUIVideoArtistInfo: Movie database lookup GetDetails() error: {0}", ex.Message);
       }
 
       return string.Empty;
