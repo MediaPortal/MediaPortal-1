@@ -244,6 +244,7 @@
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
@@ -497,6 +498,7 @@
     <Compile Include="Util\IMPawardsSearch.cs" />
     <Compile Include="Util\NativeFileSystemOperations.cs" />
     <Compile Include="Util\Network.cs" />
+    <Compile Include="Util\NetworkShares.cs" />
     <Compile Include="Util\PathUtility.cs" />
     <Compile Include="Util\PRNG.cs" />
     <Compile Include="Util\ProcessLock.cs" />

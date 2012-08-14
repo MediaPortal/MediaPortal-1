@@ -1965,6 +1965,11 @@ namespace MediaPortal
         lastActiveModule = xmlreader.GetValueAsInt("general", "lastactivemodule", -1);
         lastActiveModuleFullscreen = xmlreader.GetValueAsBool("general", "lastactivemodulefullscreen", false);
 
+        if (Util.Utils.IsGUISettingsWindow(lastActiveModule))
+        {
+          return false;
+        }
+
         // check if system has been awaken by user or psclient.
         // if by psclient, DO NOT resume last active module
         if (showLastActiveModule)

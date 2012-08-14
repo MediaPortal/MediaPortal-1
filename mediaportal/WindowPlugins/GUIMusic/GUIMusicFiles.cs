@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -130,12 +131,12 @@ namespace MediaPortal.GUI.Music
     private MapSettings _mapSettings = new MapSettings();
     private DirectoryHistory _dirHistory = new DirectoryHistory();
     private GUIListItem _selectedListItem = null;
-    private VirtualDirectory _virtualDirectory = new VirtualDirectory();
+    private static VirtualDirectory _virtualDirectory = new VirtualDirectory();
 
     private int _selectedAlbum = -1;
     private int _selectedItem = -1;
     private string _discId = string.Empty;
-    private string currentFolder = string.Empty;
+    private static string currentFolder = string.Empty;
     private string _startDirectory = string.Empty;
     private string _destination = string.Empty;
     private string _fileMenuPinCode = string.Empty;
@@ -1894,6 +1895,32 @@ namespace MediaPortal.GUI.Music
     }
 
     #endregion
+
+    public static void ResetShares()
+    {
+      _virtualDirectory.Reset();
+      _virtualDirectory.DefaultShare = null;
+      _virtualDirectory.LoadSettings("music");
+      
+      if (_virtualDirectory.DefaultShare != null)
+      {
+        int pincode;
+        bool folderPinProtected = _virtualDirectory.IsProtectedShare(_virtualDirectory.DefaultShare.Path, out pincode);
+        if (folderPinProtected)
+        {
+          currentFolder = string.Empty;
+        }
+        else
+        {
+          currentFolder = _virtualDirectory.DefaultShare.Path;
+        }
+      }
+    }
+
+    public static void ResetExtensions(ArrayList extensions)
+    {
+      _virtualDirectory.SetExtensions(extensions);
+    }
 
     #region ISetupForm Members
 

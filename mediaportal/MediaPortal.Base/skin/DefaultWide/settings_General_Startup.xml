@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>1019</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <controls>
+    <import>common.settings.xml</import>
+		<import>common.window.xml</import>
+		<import>common.time.xml</import>
+    <!-- Mask-->
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>320</posX>
+      <posY>120</posY>
+      <height>390</height>
+      <width>680</width>
+      <texture>backslide2.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <!-- Startup resume-->
+    <control>
+      <description>buttons</description>
+      <type>group</type>
+      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="70" end="-300,0">WindowClose</animation>
+      <posX>350</posX>
+      <posY>160</posY>
+      <layout>StackLayout(0, Horizontal, True)</layout>
+      <control>
+        <description>MP fullscreen</description>
+        <type>checkbutton</type>
+        <id>10</id>
+        <onup>123</onup>
+        <label>300105</label>
+        <width>600</width>
+      </control>
+      <control>
+        <description>Splashscreen</description>
+        <type>checkbutton</type>
+        <id>11</id>
+        <label>300106</label>
+        <width>600</width>
+      </control>
+      <control>
+        <description>On top</description>
+        <type>checkbutton</type>
+        <id>12</id>
+        <label>300107</label>
+        <width>600</width>
+      </control>
+      <control>
+        <description>Hide taskbar</description>
+        <type>checkbutton</type>
+        <id>13</id>
+        <label>300108</label>
+        <width>600</width>
+      </control>
+      <control>
+        <description>Aautostart on WinUp</description>
+        <type>checkbutton</type>
+        <id>14</id>
+        <label>300109</label>
+        <width>600</width>
+      </control>
+      <control>
+        <description>Minimize to tray Startup</description>
+        <type>checkbutton</type>
+        <id>15</id>
+        <label>300110</label>
+        <width>600</width>
+      </control>
+      <control>
+        <description>Minimize to tray GUI exit</description>
+        <type>checkbutton</type>
+        <id>16</id>
+        <label>300111</label>
+        <width>600</width>
+        <ondown>10</ondown>
+      </control>
+    </control>
+  </controls>
+</window>
