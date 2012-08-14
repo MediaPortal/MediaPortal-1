@@ -79,6 +79,14 @@ namespace MediaPortal.GUI.Settings
     {
       base.OnPageLoad();
       WeatherSettings_OnPageLoad();
+
+      if (!MediaPortal.Util.Utils.IsGUISettingsWindow(GUIWindowManager.GetPreviousActiveWindow()))
+      {
+        if (MediaPortal.GUI.Settings.GUISettings.IsPinLocked() && !MediaPortal.GUI.Settings.GUISettings.RequestPin())
+        {
+          GUIWindowManager.CloseCurrentWindow();
+        }
+      }
     }
 
     protected override void OnPageDestroy(int new_windowId)

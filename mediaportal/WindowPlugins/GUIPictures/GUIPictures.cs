@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing.Imaging;
@@ -299,10 +300,10 @@ namespace MediaPortal.GUI.Pictures
     private int selectedItemIndex = -1;
     private GUIListItem selectedListItem = null;
     private DirectoryHistory folderHistory = new DirectoryHistory();
-    private string currentFolder = string.Empty;
+    private static string currentFolder = string.Empty;
     private string m_strDirectoryStart = string.Empty;
     private string destinationFolder = string.Empty;
-    private VirtualDirectory virtualDirectory = new VirtualDirectory();
+    private static VirtualDirectory virtualDirectory = new VirtualDirectory();
     private MapSettings mapSettings = new MapSettings();
     private bool isFileMenuEnabled = false;
     private string fileMenuPinCode = string.Empty;
@@ -2042,6 +2043,32 @@ namespace MediaPortal.GUI.Pictures
         sString = keyboard.Text;
       }
       return keyboard.IsConfirmed;
+    }
+
+    public static void ResetShares()
+    {
+      virtualDirectory.Reset();
+      virtualDirectory.DefaultShare = null;
+      virtualDirectory.LoadSettings("pictures");
+
+      if (virtualDirectory.DefaultShare != null)
+      {
+        int pincode;
+        bool folderPinProtected = virtualDirectory.IsProtectedShare(virtualDirectory.DefaultShare.Path, out pincode);
+        if (folderPinProtected)
+        {
+          currentFolder = string.Empty;
+        }
+        else
+        {
+          currentFolder = virtualDirectory.DefaultShare.Path;
+        }
+      }
+    }
+
+    public static void ResetExtensions(ArrayList extensions)
+    {
+      virtualDirectory.SetExtensions(extensions);
     }
 
     #endregion

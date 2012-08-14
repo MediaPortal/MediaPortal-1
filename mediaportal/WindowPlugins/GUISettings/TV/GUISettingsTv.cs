@@ -54,6 +54,21 @@ namespace WindowPlugins.GUISettings.TV
       return Load(GUIGraphicsContext.GetThemedSkinFile(@"\settings_tv.xml"));
     }
 
+    protected override void OnPageLoad()
+    {
+      base.OnPageLoad();
+      
+      if (!MediaPortal.Util.Utils.IsGUISettingsWindow(GUIWindowManager.GetPreviousActiveWindow()))
+      {
+        if (MediaPortal.GUI.Settings.GUISettings.IsPinLocked() && !MediaPortal.GUI.Settings.GUISettings.RequestPin())
+        {
+          GUIWindowManager.CloseCurrentWindow();
+        }
+      }
+    }
+
+    #region Overrides
+
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       if (control == btnAudioRenderer)
@@ -90,6 +105,18 @@ namespace WindowPlugins.GUISettings.TV
       }
       base.OnClicked(controlId, control, actionType);
     }
+
+    public override void OnAction(Action action)
+    {
+      if (action.wID == Action.ActionType.ACTION_HOME || action.wID == Action.ActionType.ACTION_SWITCH_HOME)
+      {
+        return;
+      }
+
+      base.OnAction(action);
+    }
+
+    #endregion
 
     private void OnVideoCodec()
     {
