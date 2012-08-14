@@ -181,7 +181,7 @@ namespace DigitalDevices
         );
         if (hr == 0)
         {
-          title = Marshal.PtrToStringAnsi(buffer, returnedByteCount).TrimEnd();
+          title = Marshal.PtrToStringAnsi(buffer, returnedByteCount).TrimEnd(new char[] { (char)0 });
         }
         return hr;
       }
@@ -211,6 +211,9 @@ namespace DigitalDevices
     /// <summary>
     /// Determine whether the TV Server Digital Devices plugin is currently enabled.
     /// </summary>
+    /// <remarks>
+    /// If the plugin is not enabled, decrypt limits and provider associations should be ignored.
+    /// </remarks>
     /// <returns><c>true</c> if the plugin is enabled, otherwise <c>false</c></returns>
     public static bool IsPluginEnabled()
     {

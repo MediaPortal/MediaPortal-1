@@ -383,11 +383,14 @@ namespace TvEngine
       int hr = ((IKsControl)_ciContexts[slot].Filter).KsMethod(ref method, KsMethodSize, _mmiBuffer, MenuDataSize, ref returnedByteCount);
       if (hr != 0)
       {
-        Log.Debug("Digital Devices: read MMI failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        // Attempting to check for an MMI message when the menu has not previously been
+        // opened seems to fail (HRESULT 0x8007001f). Don't flood the logs...
+        if (_menuContext != -1)
+        {
+          Log.Debug("Digital Devices: read MMI failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        }
         return false;
       }
-
-      DVB_MMI.DumpBinary(_mmiBuffer, 0, returnedByteCount);
 
       // Is this a menu that we haven't seen before?
       menu.Id = Marshal.ReadInt32(_mmiBuffer, 0);
@@ -395,6 +398,9 @@ namespace TvEngine
       {
         return false;
       }
+
+      DVB_MMI.DumpBinary(_mmiBuffer, 0, returnedByteCount);
+
       _ciContexts[slot].CamMenuId = menu.Id;
 
       // Manually marshal the MMI information into our structure. We are forced
