@@ -477,7 +477,7 @@ namespace SetupTv.Sections
           }
 
           IChannel[] channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
-          if (channels == null || channels.Length == 0)
+          if (curTuning.Offset != 0 && (channels == null || channels.Length == 0))
           {
             /// try frequency - offset
             tuneChannel.Frequency = curTuning.Frequency - curTuning.Offset;

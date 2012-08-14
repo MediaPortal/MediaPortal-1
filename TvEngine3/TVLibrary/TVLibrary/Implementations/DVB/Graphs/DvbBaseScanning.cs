@@ -78,6 +78,13 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
+        _card.IsScanning = true;
+        // An exception is thrown here if signal is not locked.
+        _card.Scan(0, channel);
+
+        Log.Log.WriteFile("Scan: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel,
+                          _card.SignalQuality);
+
         _analyzer = _card.StreamAnalyzer;
         if (_analyzer == null)
         {
@@ -85,12 +92,6 @@ namespace TvLibrary.Implementations.DVB
           return new List<IChannel>();
         }
 
-        _card.IsScanning = true;
-        // An exception is thrown here if signal is not locked.
-        _card.Scan(0, channel);
-
-        Log.Log.WriteFile("Scan: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel,
-                          _card.SignalQuality);
         try
         {
           _event = new ManualResetEvent(false);
@@ -229,17 +230,16 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
+        _card.IsScanning = true;
+        // An exception is thrown here if signal is not locked.
+        _card.Scan(0, channel);
+
         _analyzer = _card.StreamAnalyzer;
         if (_analyzer == null)
         {
           Log.Log.WriteFile("Scan: no analyzer interface available");
           return new List<IChannel>();
         }
-
-        _card.IsScanning = true;
-        // An exception is thrown here if signal is not locked.
-        _card.Scan(0, channel);
-
         _analyzer.SetCallBack(null);
         _analyzer.ScanNIT();
 
