@@ -1820,7 +1820,8 @@ namespace MediaPortal.GUI.Video
       string where = string.Empty;
       string value = string.Empty;
       string sql = string.Empty;
-      string view = handler.CurrentLevelWhere.ToLower(); 
+      string view = handler.CurrentLevelWhere.ToLower();
+      string groupDescription = string.Empty;
 
       // Set coverflow info property for groups (folder type item)
       switch (view)
@@ -1830,7 +1831,14 @@ namespace MediaPortal.GUI.Video
           break;
       
         case "user groups":
-        VideoDatabase.GetMoviesByUserGroup(item.Label, ref movies);
+          VideoDatabase.GetMoviesByUserGroup(item.Label, ref movies);
+          int grpId = VideoDatabase.AddUserGroup(item.Label, string.Empty);
+          groupDescription = VideoDatabase.GetUserGroupDescriptionById(grpId);
+
+          if (!string.IsNullOrEmpty(groupDescription))
+          {
+            groupDescription += ("\n\n" + GUILocalizeStrings.Get(342) + ":"); //Movies
+          }
           break;
       
         case "actor":
@@ -1869,6 +1877,10 @@ namespace MediaPortal.GUI.Video
 
       if (movies.Count > 0)
       {
+        if (!string.IsNullOrEmpty(groupDescription))
+        {
+          strMovies += groupDescription;
+        }
         foreach (IMDBMovie movieInGroup in movies)
         {
           if (strMovies.Length > 0)
@@ -1877,6 +1889,7 @@ namespace MediaPortal.GUI.Video
           }
           strMovies += movieInGroup.Title;
         }
+        
         return strMovies;
       }
 
@@ -2112,7 +2125,7 @@ namespace MediaPortal.GUI.Video
         return;
       }
       
-      VideoDatabase.AddUserGroupToMovie(movie.ID, VideoDatabase.AddUserGroup(dlg.SelectedLabelText));
+      VideoDatabase.AddUserGroupToMovie(movie.ID, VideoDatabase.AddUserGroup(dlg.SelectedLabelText, string.Empty));
 
       currentSelectedItem = itemIndex;
 
@@ -2136,7 +2149,7 @@ namespace MediaPortal.GUI.Video
     private void OnRemoveFromUserGroup(IMDBMovie movie, int itemIndex)
     {
       string group = m_history.Get("user groups");
-      VideoDatabase.RemoveUserGroupFromMovie(movie.ID, VideoDatabase.AddUserGroup(group));
+      VideoDatabase.RemoveUserGroupFromMovie(movie.ID, VideoDatabase.AddUserGroup(group, string.Empty));
       
       currentSelectedItem = itemIndex;
       
@@ -2167,7 +2180,7 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
-      VideoDatabase.AddUserGroup(newGroup);
+      VideoDatabase.AddUserGroup(newGroup, string.Empty);
       LoadDirectory(currentFolder);
     }
 

@@ -1235,7 +1235,7 @@ namespace MediaPortal.Configuration.Sections
         }
       }
 
-      VideoDatabase.AddUserGroup(tbUserGroup.Text);
+      VideoDatabase.AddUserGroup(tbUserGroup.Text, string.Empty);
       lvUserGroups.Items.Add(tbUserGroup.Text);
       tbUserGroup.Text = string.Empty;
     }
@@ -1262,7 +1262,7 @@ namespace MediaPortal.Configuration.Sections
       {
         ListViewItem listItem = lvUserGroups.SelectedItems[i];
         lvMovieUserGroups.Items.Add(listItem.Text);
-        int iGroup = VideoDatabase.AddUserGroup(listItem.Text);
+        int iGroup = VideoDatabase.AddUserGroup(listItem.Text, string.Empty);
         VideoDatabase.AddUserGroupToMovie(CurrentMovie.ID, iGroup);
       }
 
@@ -1279,7 +1279,7 @@ namespace MediaPortal.Configuration.Sections
       {
         ListViewItem listItem = lvMovieUserGroups.SelectedItems[i];
         lvUserGroups.Items.Add(listItem.Text);
-        int iGroup = VideoDatabase.AddUserGroup(listItem.Text);
+        int iGroup = VideoDatabase.AddUserGroup(listItem.Text, string.Empty);
         VideoDatabase.RemoveUserGroupFromMovie(CurrentMovie.ID, iGroup);
       }
 
@@ -3853,6 +3853,31 @@ namespace MediaPortal.Configuration.Sections
                                                                        cbUserGroups.SelectedItem.ToString());
     }
 
+    private void cbUserGroupsMiscList_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (cbUserGroupsMiscList.SelectedIndex == -1)
+      {
+        return;
+      }
+
+      int idGroup = VideoDatabase.AddUserGroup(cbUserGroupsMiscList.SelectedItem.ToString(), string.Empty);
+      tbUserGroupDescription.Text = VideoDatabase.GetUserGroupDescriptionById(idGroup);
+    }
+
+    private void btSaveUserGroupMisc_Click(object sender, EventArgs e)
+    {
+      if (!string.IsNullOrEmpty(tbUserGroupDescription.Text) && 
+        tbUserGroupDescription.Text != Strings.Unknown)
+      {
+        if (cbUserGroupsMiscList.SelectedIndex == -1)
+        {
+          return;
+        }
+
+        VideoDatabase.AddUserGroup(cbUserGroupsMiscList.SelectedItem.ToString(), tbUserGroupDescription.Text);
+      }
+    }
+
     private void cbGroupType_SelectedIndexChanged(object sender, EventArgs e)
     {
       if (cbUserGroupType.SelectedIndex == -1)
@@ -4094,7 +4119,7 @@ namespace MediaPortal.Configuration.Sections
         {
           foreach (string movieId in values)
           {
-            VideoDatabase.AddUserGroupToMovie(Convert.ToInt32(movieId), VideoDatabase.AddUserGroup(userGroup));
+            VideoDatabase.AddUserGroupToMovie(Convert.ToInt32(movieId), VideoDatabase.AddUserGroup(userGroup, string.Empty));
           }
 
           if (cbTitle.SelectedItem != null)
@@ -4684,6 +4709,20 @@ namespace MediaPortal.Configuration.Sections
         foreach (string userGroup in userGroups)
         {
           cbUserGroups.Items.Add(userGroup);
+        }
+      }
+
+      if (tabControl2.SelectedTab == tabPageUserGroupDescription)
+      {
+        ArrayList userGroups = new ArrayList();
+        VideoDatabase.GetUserGroups(userGroups);
+        cbUserGroupsMiscList.Items.Clear();
+        tbUserGroupDescription.Text = string.Empty;
+
+
+        foreach (string userGroup in userGroups)
+        {
+          cbUserGroupsMiscList.Items.Add(userGroup);
         }
       }
     }

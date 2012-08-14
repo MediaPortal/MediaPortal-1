@@ -528,7 +528,7 @@ namespace MediaPortal.Video.Database
 
                   if (values.Count > 0 && values.Contains(_movieDetails.ID.ToString()))
                   {
-                    VideoDatabase.AddUserGroupToMovie(_movieDetails.ID, VideoDatabase.AddUserGroup(group));
+                    VideoDatabase.AddUserGroupToMovie(_movieDetails.ID, VideoDatabase.AddUserGroup(group, string.Empty));
                   }
                 }
                 catch (Exception)

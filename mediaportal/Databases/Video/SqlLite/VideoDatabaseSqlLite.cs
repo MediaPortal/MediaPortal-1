@@ -322,7 +322,13 @@ namespace MediaPortal.Video.Database
           DatabaseUtility.AddTable(m_db, "usergrouplinkmovie",
                                "CREATE TABLE usergrouplinkmovie ( idGroup integer, idMovie integer)");
         }
-
+        // User groups description
+        if (DatabaseUtility.TableColumnExists(m_db, "usergroup", "strGroupDescription") == false)
+        {
+          string strSQL = "ALTER TABLE \"main\".\"usergroup\" ADD COLUMN \"strGroupDescription\" text DEFAULT ''";
+          m_db.Execute(strSQL);
+        }
+        
         #endregion
 
       }
@@ -511,7 +517,7 @@ namespace MediaPortal.Video.Database
       DatabaseUtility.AddTable(m_db, "genrelinkmovie",
                                "CREATE TABLE genrelinkmovie ( idGenre integer, idMovie integer)");
       DatabaseUtility.AddTable(m_db, "usergroup",
-                               "CREATE TABLE usergroup ( idGroup integer primary key, strGroup text, strRule text)");
+                               "CREATE TABLE usergroup ( idGroup integer primary key, strGroup text, strRule text, strGroupDescription)");
       DatabaseUtility.AddTable(m_db, "usergrouplinkmovie",
                                "CREATE TABLE usergrouplinkmovie ( idGroup integer, idMovie integer)");
       DatabaseUtility.AddTable(m_db, "movie",
@@ -1408,12 +1414,15 @@ namespace MediaPortal.Video.Database
 
     #region UserGroups
 
-    public int AddUserGroup(string strUserGroup1)
+    public int AddUserGroup(string userGroup, string groupDescription)
     {
       try
       {
-        string strUserGroup = strUserGroup1.Trim();
+        string strUserGroup = userGroup.Trim();
         DatabaseUtility.RemoveInvalidChars(ref strUserGroup);
+
+        string strGroupDescription= groupDescription.Trim();
+        DatabaseUtility.RemoveInvalidChars(ref strGroupDescription);
 
         if (null == m_db)
         {
@@ -1428,18 +1437,24 @@ namespace MediaPortal.Video.Database
         if (results.Rows.Count == 0)
         {
           // doesnt exists, add it
-          strSQL = "INSERT INTO usergroup (idGroup, strGroup) VALUES( NULL, '";
-          strSQL += strUserGroup;
-          strSQL += "')";
+          strSQL = string.Format("INSERT INTO usergroup (idGroup, strGroup, strRule, strGroupDescription) VALUES( NULL, '{0}', '', '{1}')", strUserGroup, strGroupDescription); 
           m_db.Execute(strSQL);
-          int lUserGroupId = m_db.LastInsertID();
-          return lUserGroupId;
+          int groupId = m_db.LastInsertID();
+          return groupId;
         }
         else
         {
-          int lUserGroupId;
-          Int32.TryParse(DatabaseUtility.Get(results, 0, "idGroup"), out lUserGroupId);
-          return lUserGroupId;
+          int groupId;
+          Int32.TryParse(DatabaseUtility.Get(results, 0, "idGroup"), out groupId);
+
+          if (!string.IsNullOrEmpty(strGroupDescription) && strGroupDescription != Strings.Unknown)
+          {
+            strSQL = String.Format("UPDATE usergroup SET strGroupDescription='{0}' WHERE idGroup={1}",
+                                   strGroupDescription, groupId);
+            m_db.Execute(strSQL);
+          }
+
+          return groupId;
         }
       }
       catch (Exception ex)
@@ -1535,6 +1550,35 @@ namespace MediaPortal.Video.Database
         SQLiteResultSet results = m_db.Execute(sql);
         
         strGroup =  DatabaseUtility.Get(results, 0, "strGroup");
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return strGroup;
+    }
+
+    public string GetUserGroupDescriptionById(int groupId)
+    {
+      if (m_db == null)
+      {
+        return string.Empty;
+      }
+
+      string strGroup = string.Empty;
+
+      try
+      {
+        string sql = string.Format("SELECT strGroupDescription FROM usergroup WHERE idGroup = {0}", groupId);
+        SQLiteResultSet results = m_db.Execute(sql);
+
+        strGroup = DatabaseUtility.Get(results, 0, "strGroupDescription");
+
+        if (strGroup == Strings.Unknown)
+        {
+          strGroup = string.Empty;
+        }
       }
       catch (Exception ex)
       {
@@ -5222,7 +5266,7 @@ namespace MediaPortal.Video.Database
 
                 if (!string.IsNullOrEmpty(strUserGroup))
                 {
-                  int iUserGroup = AddUserGroup(strUserGroup);
+                  int iUserGroup = AddUserGroup(strUserGroup, string.Empty);
                   AddUserGroupToMovie(movie.ID, iUserGroup);
                 }
               }

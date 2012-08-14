@@ -156,11 +156,11 @@ namespace MediaPortal.Video.Database
 
     #region User groups
 
-    public static int AddUserGroup(string strUserGroup1)
+    public static int AddUserGroup(string userGroup, string groupDescription)
     {
-      return _database.AddUserGroup(strUserGroup1);
+      return _database.AddUserGroup(userGroup, groupDescription);
     }
-
+    
     public static void GetUserGroups(ArrayList userGroups)
     {
       _database.GetUserGroups(userGroups);
@@ -171,6 +171,11 @@ namespace MediaPortal.Video.Database
       return _database.GetUserGroupById(groupId);
     }
 
+    public static string GetUserGroupDescriptionById(int groupId)
+    {
+      return _database.GetUserGroupDescriptionById(groupId);
+    }
+    
     public static void GetMovieUserGroups(int movieId, ArrayList userGroups)
     {
       _database.GetMovieUserGroups(movieId, userGroups);

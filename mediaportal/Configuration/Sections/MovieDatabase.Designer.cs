@@ -192,6 +192,12 @@ namespace MediaPortal.Configuration.Sections
       this.btAddGroupToMovie = new MediaPortal.UserInterface.Controls.MPButton();
       this.lvMovieUserGroups = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.tabPageUserGroupDescription = new System.Windows.Forms.TabPage();
+      this.btSaveUserGroupMisc = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpLabel43 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel42 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tbUserGroupDescription = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.cbUserGroupsMiscList = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.tabPageUserGroupRules = new System.Windows.Forms.TabPage();
       this.mpLabel34 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel33 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -248,6 +254,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbActorsListFetchSize = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.chbUseSortTitle = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.chbUseNfoScraperOnly = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpButtonUpdateInternalGrabber = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageSettings = new System.Windows.Forms.TabPage();
       this.groupBoxActiveGrabbers = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -309,7 +316,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel12 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel13 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel14 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpButtonUpdateInternalGrabber = new MediaPortal.UserInterface.Controls.MPButton();
       ((System.ComponentModel.ISupportInitialize)(this.fanartQ)).BeginInit();
       this.tabControl2.SuspendLayout();
       this.tabPageTitle.SuspendLayout();
@@ -335,6 +341,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox8.SuspendLayout();
       this.mpGroupBox9.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pbUserGroupImage)).BeginInit();
+      this.tabPageUserGroupDescription.SuspendLayout();
       this.tabPageUserGroupRules.SuspendLayout();
       this.tabPageCoverArt.SuspendLayout();
       this.groupBox7.SuspendLayout();
@@ -962,6 +969,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl2.Controls.Add(this.tabPageActorMovies);
       this.tabControl2.Controls.Add(this.tabPageGenres);
       this.tabControl2.Controls.Add(this.tabPageUserGroups);
+      this.tabControl2.Controls.Add(this.tabPageUserGroupDescription);
       this.tabControl2.Controls.Add(this.tabPageUserGroupRules);
       this.tabControl2.Controls.Add(this.tabPageCoverArt);
       this.tabControl2.Controls.Add(this.tabPageFanart);
@@ -2301,6 +2309,80 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader3.Text = "Groups for this Movie";
       this.columnHeader3.Width = 229;
       // 
+      // tabPageUserGroupDescription
+      // 
+      this.tabPageUserGroupDescription.Controls.Add(this.btSaveUserGroupMisc);
+      this.tabPageUserGroupDescription.Controls.Add(this.mpLabel43);
+      this.tabPageUserGroupDescription.Controls.Add(this.mpLabel42);
+      this.tabPageUserGroupDescription.Controls.Add(this.tbUserGroupDescription);
+      this.tabPageUserGroupDescription.Controls.Add(this.cbUserGroupsMiscList);
+      this.tabPageUserGroupDescription.Location = new System.Drawing.Point(4, 22);
+      this.tabPageUserGroupDescription.Name = "tabPageUserGroupDescription";
+      this.tabPageUserGroupDescription.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageUserGroupDescription.Size = new System.Drawing.Size(459, 320);
+      this.tabPageUserGroupDescription.TabIndex = 12;
+      this.tabPageUserGroupDescription.Text = "User Groups misc";
+      this.tabPageUserGroupDescription.UseVisualStyleBackColor = true;
+      // 
+      // btSaveUserGroupMisc
+      // 
+      this.btSaveUserGroupMisc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btSaveUserGroupMisc.Location = new System.Drawing.Point(344, 291);
+      this.btSaveUserGroupMisc.Name = "btSaveUserGroupMisc";
+      this.btSaveUserGroupMisc.Size = new System.Drawing.Size(109, 23);
+      this.btSaveUserGroupMisc.TabIndex = 72;
+      this.btSaveUserGroupMisc.Text = "Save changes";
+      this.toolTipMPvdb.SetToolTip(this.btSaveUserGroupMisc, "Local image browsing.\r\n(Use local image for group thumb).");
+      this.btSaveUserGroupMisc.UseVisualStyleBackColor = true;
+      this.btSaveUserGroupMisc.Click += new System.EventHandler(this.btSaveUserGroupMisc_Click);
+      // 
+      // mpLabel43
+      // 
+      this.mpLabel43.AutoSize = true;
+      this.mpLabel43.Location = new System.Drawing.Point(6, 11);
+      this.mpLabel43.Name = "mpLabel43";
+      this.mpLabel43.Size = new System.Drawing.Size(62, 13);
+      this.mpLabel43.TabIndex = 40;
+      this.mpLabel43.Text = "User group:";
+      // 
+      // mpLabel42
+      // 
+      this.mpLabel42.AutoSize = true;
+      this.mpLabel42.Location = new System.Drawing.Point(6, 43);
+      this.mpLabel42.Name = "mpLabel42";
+      this.mpLabel42.Size = new System.Drawing.Size(116, 13);
+      this.mpLabel42.TabIndex = 71;
+      this.mpLabel42.Text = "User group description:";
+      // 
+      // tbUserGroupDescription
+      // 
+      this.tbUserGroupDescription.AcceptsReturn = true;
+      this.tbUserGroupDescription.AcceptsTab = true;
+      this.tbUserGroupDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbUserGroupDescription.BorderColor = System.Drawing.Color.Empty;
+      this.tbUserGroupDescription.Location = new System.Drawing.Point(6, 67);
+      this.tbUserGroupDescription.Multiline = true;
+      this.tbUserGroupDescription.Name = "tbUserGroupDescription";
+      this.tbUserGroupDescription.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+      this.tbUserGroupDescription.Size = new System.Drawing.Size(447, 218);
+      this.tbUserGroupDescription.TabIndex = 70;
+      this.toolTipMPvdb.SetToolTip(this.tbUserGroupDescription, "Add optional group description which will be visible \r\non group select in movie p" +
+        "lot area in GUI.\r\n");
+      // 
+      // cbUserGroupsMiscList
+      // 
+      this.cbUserGroupsMiscList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbUserGroupsMiscList.BorderColor = System.Drawing.Color.Empty;
+      this.cbUserGroupsMiscList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbUserGroupsMiscList.Location = new System.Drawing.Point(74, 8);
+      this.cbUserGroupsMiscList.Name = "cbUserGroupsMiscList";
+      this.cbUserGroupsMiscList.Size = new System.Drawing.Size(246, 21);
+      this.cbUserGroupsMiscList.TabIndex = 39;
+      this.cbUserGroupsMiscList.SelectedIndexChanged += new System.EventHandler(this.cbUserGroupsMiscList_SelectedIndexChanged);
+      // 
       // tabPageUserGroupRules
       // 
       this.tabPageUserGroupRules.Controls.Add(this.mpLabel34);
@@ -2995,6 +3077,19 @@ namespace MediaPortal.Configuration.Sections
       this.toolTipMPvdb.SetToolTip(this.chbUseNfoScraperOnly, resources.GetString("chbUseNfoScraperOnly.ToolTip"));
       this.chbUseNfoScraperOnly.UseVisualStyleBackColor = true;
       this.chbUseNfoScraperOnly.CheckedChanged += new System.EventHandler(this.chbUseNfoScraperOnly_CheckedChanged);
+      // 
+      // mpButtonUpdateInternalGrabber
+      // 
+      this.mpButtonUpdateInternalGrabber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonUpdateInternalGrabber.Location = new System.Drawing.Point(315, 59);
+      this.mpButtonUpdateInternalGrabber.Name = "mpButtonUpdateInternalGrabber";
+      this.mpButtonUpdateInternalGrabber.Size = new System.Drawing.Size(141, 24);
+      this.mpButtonUpdateInternalGrabber.TabIndex = 10;
+      this.mpButtonUpdateInternalGrabber.Text = "Update internal grabbers";
+      this.toolTipMPvdb.SetToolTip(this.mpButtonUpdateInternalGrabber, "Update internal MP grabber scripts\r\n(used for internal actors and their movies\r\ni" +
+        "nformation fetch from IMDB)");
+      this.mpButtonUpdateInternalGrabber.UseVisualStyleBackColor = true;
+      this.mpButtonUpdateInternalGrabber.Click += new System.EventHandler(this.mpButtonUpdateInternalGrabber_Click);
       // 
       // tabControl1
       // 
@@ -3728,19 +3823,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel14.TabIndex = 21;
       this.mpLabel14.Text = "MPAA Rating:";
       // 
-      // mpButtonUpdateInternalGrabber
-      // 
-      this.mpButtonUpdateInternalGrabber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonUpdateInternalGrabber.Location = new System.Drawing.Point(315, 59);
-      this.mpButtonUpdateInternalGrabber.Name = "mpButtonUpdateInternalGrabber";
-      this.mpButtonUpdateInternalGrabber.Size = new System.Drawing.Size(141, 24);
-      this.mpButtonUpdateInternalGrabber.TabIndex = 10;
-      this.mpButtonUpdateInternalGrabber.Text = "Update internal grabbers";
-      this.toolTipMPvdb.SetToolTip(this.mpButtonUpdateInternalGrabber, "Update internal MP grabber scripts\r\n(used for internal actors and their movies\r\ni" +
-        "nformation fetch from IMDB)");
-      this.mpButtonUpdateInternalGrabber.UseVisualStyleBackColor = true;
-      this.mpButtonUpdateInternalGrabber.Click += new System.EventHandler(this.mpButtonUpdateInternalGrabber_Click);
-      // 
       // MovieDatabase
       // 
       this.AutoSize = true;
@@ -3781,6 +3863,8 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox8.PerformLayout();
       this.mpGroupBox9.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.pbUserGroupImage)).EndInit();
+      this.tabPageUserGroupDescription.ResumeLayout(false);
+      this.tabPageUserGroupDescription.PerformLayout();
       this.tabPageUserGroupRules.ResumeLayout(false);
       this.tabPageUserGroupRules.PerformLayout();
       this.tabPageCoverArt.ResumeLayout(false);
@@ -4097,5 +4181,11 @@ namespace MediaPortal.Configuration.Sections
     private UserInterface.Controls.MPCheckBox chbUseSortTitle;
     private UserInterface.Controls.MPCheckBox chbUseNfoScraperOnly;
     private UserInterface.Controls.MPButton mpButtonUpdateInternalGrabber;
+    private System.Windows.Forms.TabPage tabPageUserGroupDescription;
+    private UserInterface.Controls.MPComboBox cbUserGroupsMiscList;
+    private UserInterface.Controls.MPLabel mpLabel42;
+    private UserInterface.Controls.MPTextBox tbUserGroupDescription;
+    private UserInterface.Controls.MPLabel mpLabel43;
+    private UserInterface.Controls.MPButton btSaveUserGroupMisc;
   }
 }
