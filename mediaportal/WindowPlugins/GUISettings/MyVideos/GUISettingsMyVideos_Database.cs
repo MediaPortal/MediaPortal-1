@@ -778,9 +778,7 @@ namespace MediaPortal.GUI.Settings
         string path = item.Path;
         availablePaths.Add(path);
       }
-      // Here goes check for nfo scraper only
       
-
       // Clean covers and fanarts (only if refreshexisting cb is checked)
       if (btnRefreshexistingonly.Selected)
       {

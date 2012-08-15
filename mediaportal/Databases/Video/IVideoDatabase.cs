@@ -48,7 +48,8 @@ namespace MediaPortal.Video.Database
     void RemoveGenresForMovie(int lMovieId);
     
     // User groups
-    int AddUserGroup(string userGroup, string groupDescription);
+    int AddUserGroup(string userGroup);
+    void AddUserGroupDescription(string userGroup, string description);
     void GetUserGroups(ArrayList userGroups);
     string GetUserGroupById(int groupId);
     string GetUserGroupDescriptionById(int groupId);

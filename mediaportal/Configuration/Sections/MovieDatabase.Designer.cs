@@ -2373,8 +2373,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbUserGroupsMiscList
       // 
-      this.cbUserGroupsMiscList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
       this.cbUserGroupsMiscList.BorderColor = System.Drawing.Color.Empty;
       this.cbUserGroupsMiscList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbUserGroupsMiscList.Location = new System.Drawing.Point(74, 8);

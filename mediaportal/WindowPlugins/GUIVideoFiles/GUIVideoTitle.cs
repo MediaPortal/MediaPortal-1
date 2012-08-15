@@ -1832,7 +1832,7 @@ namespace MediaPortal.GUI.Video
       
         case "user groups":
           VideoDatabase.GetMoviesByUserGroup(item.Label, ref movies);
-          int grpId = VideoDatabase.AddUserGroup(item.Label, string.Empty);
+          int grpId = VideoDatabase.AddUserGroup(item.Label);
           groupDescription = VideoDatabase.GetUserGroupDescriptionById(grpId);
 
           if (!string.IsNullOrEmpty(groupDescription))
@@ -2125,7 +2125,7 @@ namespace MediaPortal.GUI.Video
         return;
       }
       
-      VideoDatabase.AddUserGroupToMovie(movie.ID, VideoDatabase.AddUserGroup(dlg.SelectedLabelText, string.Empty));
+      VideoDatabase.AddUserGroupToMovie(movie.ID, VideoDatabase.AddUserGroup(dlg.SelectedLabelText));
 
       currentSelectedItem = itemIndex;
 
@@ -2149,7 +2149,7 @@ namespace MediaPortal.GUI.Video
     private void OnRemoveFromUserGroup(IMDBMovie movie, int itemIndex)
     {
       string group = m_history.Get("user groups");
-      VideoDatabase.RemoveUserGroupFromMovie(movie.ID, VideoDatabase.AddUserGroup(group, string.Empty));
+      VideoDatabase.RemoveUserGroupFromMovie(movie.ID, VideoDatabase.AddUserGroup(group));
       
       currentSelectedItem = itemIndex;
       
@@ -2180,7 +2180,7 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
-      VideoDatabase.AddUserGroup(newGroup, string.Empty);
+      VideoDatabase.AddUserGroup(newGroup);
       LoadDirectory(currentFolder);
     }
 

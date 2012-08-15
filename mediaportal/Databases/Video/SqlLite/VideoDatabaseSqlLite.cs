@@ -1414,35 +1414,63 @@ namespace MediaPortal.Video.Database
 
     #region UserGroups
 
-    public int AddUserGroup(string userGroup, string groupDescription)
+    public int AddUserGroup(string userGroup)
+    {
+      try
+      {
+        string strUserGroup = userGroup.Trim();
+        DatabaseUtility.RemoveInvalidChars(ref strUserGroup);
+        
+        if (null == m_db)
+        {
+          return -1;
+        }
+
+        string strSQL = string.Format("SELECT * FROM usergroup WHERE strGroup like '{0}'", strUserGroup);
+        SQLiteResultSet results = m_db.Execute(strSQL);
+        
+        if (results.Rows.Count == 0)
+        {
+          // doesnt exists, add it
+          strSQL = string.Format("INSERT INTO usergroup (idGroup, strGroup, strRule, strGroupDescription) VALUES( NULL, '{0}', '', '')", strUserGroup); 
+          m_db.Execute(strSQL);
+          int groupId = m_db.LastInsertID();
+          return groupId;
+        }
+        else
+        {
+          int groupId;
+          Int32.TryParse(DatabaseUtility.Get(results, 0, "idGroup"), out groupId);
+          return groupId;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return -1;
+    }
+
+    public void AddUserGroupDescription(string userGroup, string description)
     {
       try
       {
         string strUserGroup = userGroup.Trim();
         DatabaseUtility.RemoveInvalidChars(ref strUserGroup);
 
-        string strGroupDescription= groupDescription.Trim();
+        string strGroupDescription = description.Trim();
         DatabaseUtility.RemoveInvalidChars(ref strGroupDescription);
 
         if (null == m_db)
         {
-          return -1;
+          return;
         }
 
-        string strSQL = "SELECT * FROM usergroup WHERE strGroup like '";
-        strSQL += strUserGroup;
-        strSQL += "'";
+        string strSQL = string.Format("SELECT * FROM usergroup WHERE strGroup like '{0}'", strUserGroup);
         SQLiteResultSet results = m_db.Execute(strSQL);
-        
-        if (results.Rows.Count == 0)
-        {
-          // doesnt exists, add it
-          strSQL = string.Format("INSERT INTO usergroup (idGroup, strGroup, strRule, strGroupDescription) VALUES( NULL, '{0}', '', '{1}')", strUserGroup, strGroupDescription); 
-          m_db.Execute(strSQL);
-          int groupId = m_db.LastInsertID();
-          return groupId;
-        }
-        else
+
+        if (results.Rows.Count > 0)
         {
           int groupId;
           Int32.TryParse(DatabaseUtility.Get(results, 0, "idGroup"), out groupId);
@@ -1453,8 +1481,6 @@ namespace MediaPortal.Video.Database
                                    strGroupDescription, groupId);
             m_db.Execute(strSQL);
           }
-
-          return groupId;
         }
       }
       catch (Exception ex)
@@ -1462,7 +1488,6 @@ namespace MediaPortal.Video.Database
         Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
-      return -1;
     }
 
     public void AddUserGroupRuleByGroupId(int groupId, string rule)
@@ -5266,7 +5291,7 @@ namespace MediaPortal.Video.Database
 
                 if (!string.IsNullOrEmpty(strUserGroup))
                 {
-                  int iUserGroup = AddUserGroup(strUserGroup, string.Empty);
+                  int iUserGroup = AddUserGroup(strUserGroup);
                   AddUserGroupToMovie(movie.ID, iUserGroup);
                 }
               }

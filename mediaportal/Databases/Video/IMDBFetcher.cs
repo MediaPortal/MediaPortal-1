@@ -528,7 +528,7 @@ namespace MediaPortal.Video.Database
 
                   if (values.Count > 0 && values.Contains(_movieDetails.ID.ToString()))
                   {
-                    VideoDatabase.AddUserGroupToMovie(_movieDetails.ID, VideoDatabase.AddUserGroup(group, string.Empty));
+                    VideoDatabase.AddUserGroupToMovie(_movieDetails.ID, VideoDatabase.AddUserGroup(group));
                   }
                 }
                 catch (Exception)
@@ -1398,35 +1398,33 @@ namespace MediaPortal.Video.Database
           {
             if (fetcher.Count > 0)
             {
+              int iMoviesFound = fetcher.Count;
+              
               // EPG - one result, get movie without ask
-              if (fetcher.Count == 1 && !addToDatabase)
+              if (iMoviesFound == 1 && !addToDatabase)
               {
                 selectedMovie = 0;
                 break;
               }
               
-              int iMoviesFound = fetcher.Count;
               //GEMX 28.03.08: There should always be a choice to enter the movie manually 
               //               in case the 1 and only found name is wrong
-              if (iMoviesFound > 0)
+              if (!fetcher.OnSelectMovie(fetcher, out selectedMovie))
               {
-                if (!fetcher.OnSelectMovie(fetcher, out selectedMovie))
+                return false;
+              }
+
+              if (selectedMovie < 0)
+              {
+
+                if (!fetcher.OnRequestMovieTitle(fetcher, out strMovieName))
                 {
                   return false;
                 }
-                
-                if (selectedMovie < 0)
+
+                if (strMovieName == string.Empty)
                 {
-                  
-                  if (!fetcher.OnRequestMovieTitle(fetcher, out strMovieName))
-                  {
-                    return false;
-                  }
-                  
-                  if (strMovieName == string.Empty)
-                  {
-                    return false;
-                  }
+                  return false;
                 }
               }
             }
