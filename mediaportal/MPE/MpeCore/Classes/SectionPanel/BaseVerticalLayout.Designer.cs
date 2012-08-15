@@ -131,7 +131,6 @@
       this.Controls.Add(this.panel1);
       this.Name = "BaseVerticalLayout";
       this.Text = "BaseVerticalLayout";
-      this.Load += new System.EventHandler(this.Base_Load);
       this.panel2.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.panel1.ResumeLayout(false);

@@ -55,7 +55,6 @@
       this.pictureBox3.TabIndex = 26;
       this.pictureBox3.TabStop = false;
       this.pictureBox3.WaitOnLoad = true;
-      this.pictureBox3.Click += new System.EventHandler(this.pictureBox3_Click);
       // 
       // radioButton2
       // 
@@ -91,7 +90,6 @@
       this.pictureBox1.TabIndex = 23;
       this.pictureBox1.TabStop = false;
       this.pictureBox1.WaitOnLoad = true;
-      this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
       // 
       // ImageRadioSelector
       // 

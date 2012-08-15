@@ -102,7 +102,7 @@
       this.checkBox1.TabIndex = 14;
       this.checkBox1.Text = "checkBox1";
       this.checkBox1.UseVisualStyleBackColor = true;
-      this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+      this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
       // 
       // checkBox2
       // 
@@ -113,6 +113,7 @@
       this.checkBox2.TabIndex = 15;
       this.checkBox2.Text = "checkBox2";
       this.checkBox2.UseVisualStyleBackColor = true;
+      this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
       // 
       // checkBox3
       // 
@@ -123,6 +124,7 @@
       this.checkBox3.TabIndex = 16;
       this.checkBox3.Text = "checkBox3";
       this.checkBox3.UseVisualStyleBackColor = true;
+      this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
       // 
       // checkBox4
       // 
@@ -133,6 +135,7 @@
       this.checkBox4.TabIndex = 17;
       this.checkBox4.Text = "checkBox4";
       this.checkBox4.UseVisualStyleBackColor = true;
+      this.checkBox4.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
       // 
       // checkBox5
       // 
@@ -143,6 +146,7 @@
       this.checkBox5.TabIndex = 18;
       this.checkBox5.Text = "checkBox5";
       this.checkBox5.UseVisualStyleBackColor = true;
+      this.checkBox5.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
       // 
       // checkBox6
       // 
@@ -153,6 +157,7 @@
       this.checkBox6.TabIndex = 19;
       this.checkBox6.Text = "checkBox6";
       this.checkBox6.UseVisualStyleBackColor = true;
+      this.checkBox6.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
       // 
       // checkBox7
       // 
@@ -163,6 +168,7 @@
       this.checkBox7.TabIndex = 20;
       this.checkBox7.Text = "checkBox7";
       this.checkBox7.UseVisualStyleBackColor = true;
+      this.checkBox7.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
       // 
       // radioButton1
       // 
@@ -174,7 +180,7 @@
       this.radioButton1.TabStop = true;
       this.radioButton1.Text = "radioButton1";
       this.radioButton1.UseVisualStyleBackColor = true;
-      this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
+      this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton_CheckedChanged);
       // 
       // radioButton2
       // 
@@ -186,6 +192,7 @@
       this.radioButton2.TabStop = true;
       this.radioButton2.Text = "radioButton2";
       this.radioButton2.UseVisualStyleBackColor = true;
+      this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton_CheckedChanged);
       // 
       // radioButton3
       // 
@@ -197,6 +204,7 @@
       this.radioButton3.TabStop = true;
       this.radioButton3.Text = "radioButton3";
       this.radioButton3.UseVisualStyleBackColor = true;
+      this.radioButton3.CheckedChanged += new System.EventHandler(this.radioButton_CheckedChanged);
       // 
       // radioButton4
       // 
@@ -208,6 +216,7 @@
       this.radioButton4.TabStop = true;
       this.radioButton4.Text = "radioButton4";
       this.radioButton4.UseVisualStyleBackColor = true;
+      this.radioButton4.CheckedChanged += new System.EventHandler(this.radioButton_CheckedChanged);
       // 
       // radioButton5
       // 
@@ -219,6 +228,7 @@
       this.radioButton5.TabStop = true;
       this.radioButton5.Text = "radioButton5";
       this.radioButton5.UseVisualStyleBackColor = true;
+      this.radioButton5.CheckedChanged += new System.EventHandler(this.radioButton_CheckedChanged);
       // 
       // radioButton6
       // 
@@ -230,6 +240,7 @@
       this.radioButton6.TabStop = true;
       this.radioButton6.Text = "radioButton6";
       this.radioButton6.UseVisualStyleBackColor = true;
+      this.radioButton6.CheckedChanged += new System.EventHandler(this.radioButton_CheckedChanged);
       // 
       // radioButton7
       // 
@@ -241,6 +252,7 @@
       this.radioButton7.TabStop = true;
       this.radioButton7.Text = "radioButton7";
       this.radioButton7.UseVisualStyleBackColor = true;
+      this.radioButton7.CheckedChanged += new System.EventHandler(this.radioButton_CheckedChanged);
       // 
       // Finish
       // 
@@ -267,7 +279,6 @@
       this.Controls.Add(this.button_cancel);
       this.Name = "Finish";
       this.Text = "Installer";
-      this.Load += new System.EventHandler(this.Welcome_Load);
       this.Controls.SetChildIndex(this.button_cancel, 0);
       this.Controls.SetChildIndex(this.button_next, 0);
       this.Controls.SetChildIndex(this.button_back, 0);

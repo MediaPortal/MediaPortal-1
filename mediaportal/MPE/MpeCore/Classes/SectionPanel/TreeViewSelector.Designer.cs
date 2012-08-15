@@ -37,7 +37,7 @@
       // 
       // button_next
       // 
-      this.button_next.Text = "Next>";
+      this.button_next.Text = "Next >";
       // 
       // lbl_description
       // 
@@ -87,7 +87,6 @@
       this.Controls.Add(this.label1);
       this.Name = "TreeViewSelector";
       this.Text = "Extension Installer for   - 0.0.0.0";
-      this.Load += new System.EventHandler(this.TreeViewSelector_Load);
       this.Controls.SetChildIndex(this.label1, 0);
       this.Controls.SetChildIndex(this.treeView1, 0);
       this.Controls.SetChildIndex(this.groupBox1, 0);

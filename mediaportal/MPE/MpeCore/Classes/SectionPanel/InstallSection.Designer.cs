@@ -42,7 +42,7 @@
       // 
       // button_next
       // 
-      this.button_next.Text = "Next>";
+      this.button_next.Text = "Next >";
       // 
       // timer1
       // 
@@ -109,7 +109,6 @@
       this.Controls.Add(this.lbl_curr_file);
       this.Name = "InstallSection";
       this.Text = "Extension Installer for   - 0.0.0.0";
-      this.Load += new System.EventHandler(this.InstallSection_Load);
       this.Shown += new System.EventHandler(this.InstallSection_Shown);
       this.Controls.SetChildIndex(this.lbl_curr_file, 0);
       this.Controls.SetChildIndex(this.panel4, 0);
