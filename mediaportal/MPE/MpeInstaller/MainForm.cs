@@ -27,7 +27,6 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using Ionic.Zip;
-using MediaPortal.Configuration;
 using MpeCore;
 using MpeCore.Classes;
 using MpeInstaller.Dialogs;
@@ -97,8 +96,12 @@ namespace MpeInstaller
     public void ExecuteMpQueue()
     {
       ExecuteQueue();
-      Process.Start(Config.GetFile(Config.Dir.Base, "MediaPortal.exe"));
-      Thread.Sleep(3000);
+      string mpExe = Path.Combine(Application.StartupPath, "MediaPortal.exe");
+      if (File.Exists(mpExe))
+      {
+        Process.Start(mpExe);
+        Thread.Sleep(3000);
+      }
     }
 
     public void ExecuteQueue()
