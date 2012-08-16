@@ -53,9 +53,10 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Ticket
     private int _pendingSubchannel;
     private readonly bool _hasHighestPriority;
     private readonly bool _hasEqualOrHigherPriority;
+    private readonly long? _channelTimeshiftingOnOtherMux;
 
     #endregion
-
+    
     public CardTuneReservationTicket(
       IUser user, 
       IChannel tuningDetail, 
@@ -77,7 +78,8 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Ticket
       int numberOfUsersOnSameCurrentChannel, 
       bool isCamAlreadyDecodingChannel,
       bool hasHighestPriority,
-      bool hasEqualOrHigherPriority)
+      bool hasEqualOrHigherPriority,
+      long? channelTimeshiftingOnOtherMux)
     {
       _pendingSubchannel = -1;
       _user = user;
@@ -100,7 +102,8 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Ticket
       _activeUsers = activeUsers;
       _users = users;
       _hasHighestPriority = hasHighestPriority;
-      _hasEqualOrHigherPriority = hasEqualOrHigherPriority;               
+      _hasEqualOrHigherPriority = hasEqualOrHigherPriority;
+      _channelTimeshiftingOnOtherMux = channelTimeshiftingOnOtherMux;
     }    
 
     public IChannel TuningDetail
@@ -157,6 +160,11 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Ticket
       {
         return _hasEqualOrHigherPriority;        
       }
+    }
+
+    public long? ChannelTimeshiftingOnOtherMux
+    {
+      get { return _channelTimeshiftingOnOtherMux; }
     }
 
     public bool IsOwner

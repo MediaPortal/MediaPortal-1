@@ -26,6 +26,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces;
@@ -519,6 +520,30 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
       settings.MaximumFileSize *= 1000;
       settings.MaximumFileSize *= 1000;
       _card.Parameters = settings;
+    }
+
+    public long CurrentMux()
+    {
+      ITvSubChannel subchannel = _card.GetFirstSubChannel();
+      long frequency = -1;
+
+      IChannel tuningDetail = subchannel.CurrentChannel;
+
+      var dvbTuningDetail = tuningDetail as DVBBaseChannel;
+      if (dvbTuningDetail != null)
+      {
+        frequency = dvbTuningDetail.Frequency;
+      }
+      else
+      {
+        var analogTuningDetail = tuningDetail as AnalogChannel;
+        if (analogTuningDetail != null)
+        {
+          frequency = analogTuningDetail.Frequency; 
+        }        
+      }
+
+      return frequency;      
     }
 
 

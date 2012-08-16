@@ -52,8 +52,8 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Impleme
     #region events & delegates
 
     public delegate TvResult StartCardTuneDelegate(ref IUser user, ref string fileName, int idChannel);
-    public event StartCardTuneDelegate OnStartCardTune;    
-
+    public event StartCardTuneDelegate OnStartCardTune;
+   
     protected abstract bool OnStartTune(ITvCardHandler tvcard, IUser user, int idChannel);
 
     #endregion    
@@ -170,6 +170,8 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Impleme
       return tvResult;
     }
 
+
+
     public ICardTuneReservationTicket RequestCardTuneReservation(ITvCardHandler tvcard, IChannel tuningDetail, IUser user, int idChannel)
     {
       ICardTuneReservationTicket cardTuneReservationTicket = null;      
@@ -212,11 +214,14 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Impleme
           tvcard.Tuner.CardTuneState = CardTuneState.TunePending;            
           bool isTunedToTransponder = IsTunedToTransponder(tvcard, tuningDetail);
 
-          if (isTunedToTransponder)
+          /*if (isTunedToTransponder)
           {
+           // no point here, as we dont check the bool return value ???
             CheckTransponder(tvcard, tuningDetail, user);
-          }
-
+          }*/
+          long? channelTimeshiftingOnOtherMux;
+          var cardAllocation = new AdvancedCardAllocation();
+          cardAllocation.IsChannelTimeshiftingOnOtherMux(tvcard, idChannel, tuningDetail, out channelTimeshiftingOnOtherMux);
           ISubChannel ownerSubchannel = null;
           int numberOfUsersOnSameCurrentChannel = 0;
           int numberOfOtherUsersOnSameChannel = 0;
@@ -302,7 +307,6 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Impleme
                       }
                     }
                   }
-                  
                 }
               }
 
@@ -321,6 +325,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Impleme
 
           bool isFreeToAir = CardReservationHelper.IsFreeToAir(tvcard, user.Name, idChannel);
 
+          
           cardTuneReservationTicket = new CardTuneReservationTicket
               (                
               user,
@@ -343,10 +348,11 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Impleme
               numberOfUsersOnSameCurrentChannel,
               isCamAlreadyDecodingChannel,
               hasUserHighestPriority,
-              hasUserEqualOrHigherPriority);
+              hasUserEqualOrHigherPriority,
+              channelTimeshiftingOnOtherMux);
           tvcard.Tuner.ActiveCardTuneReservationTicket = cardTuneReservationTicket;
           tvcard.Tuner.ReservationsForTune.Add(cardTuneReservationTicket);          
-        }
+        }        
 
         cardTuneState = tvcard.Tuner.CardTuneState;        
         if (tvcard.Tuner.ActiveCardTuneReservationTicket != null)
@@ -373,6 +379,8 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Impleme
       }              
       return cardTuneReservationTicket;
     }
+
+    
 
     private static bool IsOwner(ITvCardHandler tvcard, IUser user, int idChannel)
     {
@@ -439,11 +447,11 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Impleme
       return isCamAlreadyDecodingChannel;
     }
 
-    private void CheckTransponder(ITvCardHandler tvcard, IChannel tuningDetail, IUser user)
+    /*private void CheckTransponder(ITvCardHandler tvcard, IChannel tuningDetail, IUser user)
     {
       var cardAlloc = new AdvancedCardAllocation();
       cardAlloc.CheckTransponder(user, tvcard, tuningDetail);
-    }      
+    } */     
 
     #endregion
 

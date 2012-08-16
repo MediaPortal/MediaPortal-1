@@ -298,7 +298,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     /// <param name="id">The id.</param>
     /// <returns></returns>
     ITvSubChannel GetSubChannel(int id);
-
+    ITvSubChannel GetFirstSubChannel();
 
     /// <summary>
     /// Frees the sub channel.
@@ -315,6 +315,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     #endregion
 
     void CancelTune(int subChannel);    
-    event OnNewSubChannelDelegate OnNewSubChannelEvent;
+    event OnNewSubChannelDelegate OnNewSubChannelEvent;    
   }
 }

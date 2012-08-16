@@ -38,12 +38,22 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
 
   public class AdvancedCardAllocationTicket : AdvancedCardAllocation
   {
-    private readonly ICollection<ICardTuneReservationTicket> _tickets;
+    private readonly IDictionary<int, ICardTuneReservationTicket> _tickets;
 
-    public AdvancedCardAllocationTicket(ICollection<ICardTuneReservationTicket> tickets)
-      : base()
+    public AdvancedCardAllocationTicket(IEnumerable<ICardTuneReservationTicket> tickets)     
     {
-      _tickets = tickets;
+      _tickets = new Dictionary<int, ICardTuneReservationTicket>();
+      foreach (ICardTuneReservationTicket cardTuneReservationTicket in tickets)
+      {
+        if (cardTuneReservationTicket != null)
+        {
+          int idCard = cardTuneReservationTicket.CardId;
+          if (!_tickets.ContainsKey(idCard))
+          {
+            _tickets.Add(idCard, cardTuneReservationTicket);
+          } 
+        }
+      }      
     }   
 
     private void LogNumberOfOtherUsersFound(CardDetail cardDetail)
@@ -58,23 +68,24 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
       }
     }
 
-    public ICollection<CardDetail> UpdateFreeCardsForChannelBasedOnTicket(ICollection<CardDetail> cardsAvailable, IUser user, out TvResult result)
-    {
-      IDictionary<int, ITvCardHandler> cards = ServiceManager.Instance.InternalControllerService.CardCollection;
+    public IList<CardDetail> UpdateFreeCardsForChannelBasedOnTicket(ICollection<CardDetail> cardsAvailable, IUser user, out TvResult result)
+    {      
       var cardetails = new List<CardDetail>();
 
       foreach (CardDetail cardDetail in cardsAvailable)
       {
-        ICardTuneReservationTicket ticket = _tickets.FirstOrDefault(t => t.CardId == cardDetail.Card.idCard);
-
+        ICardTuneReservationTicket ticket = GetCardTuneReservationTicket(cardDetail.Card.idCard);
         if (ticket != null)
-        {          
+        {                   
           cardDetail.SameTransponder = ticket.IsSameTransponder;
           cardDetail.NumberOfOtherUsers = ticket.NumberOfOtherUsersOnCurrentCard;
+          cardDetail.ChannelTimeshiftingOnOtherMux = ticket.ChannelTimeshiftingOnOtherMux;
           LogNumberOfOtherUsersFound(cardDetail);
+          IDictionary<int, ITvCardHandler> cards = ServiceManager.Instance.InternalControllerService.CardCollection;
+          IChannel tuningDetail = cardDetail.TuningDetail;
           bool checkTransponder = CheckTransponder(user, 
-                                                   cards[cardDetail.Card.idCard],                                                    
-                                                   cardDetail.TuningDetail);
+                                                   cards[cardDetail.Card.idCard],
+                                                   tuningDetail);
           if (checkTransponder)
           {
             cardetails.Add(cardDetail);
@@ -82,7 +93,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
         }
       }
 
-      cardetails.Sort();
+      cardetails.SortStable();
 
       if (cardetails.Count > 0)
       {
@@ -96,6 +107,13 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
       return cardetails;
     }
 
+    private ICardTuneReservationTicket GetCardTuneReservationTicket(int cardId)
+    {
+      ICardTuneReservationTicket ticket;
+      _tickets.TryGetValue(cardId, out ticket);
+      return ticket;
+    }
+
     #region overrides   
 
     protected override bool CanCardTuneChannel(ITvCardHandler cardHandler, Channel dbChannel, IChannel tuningDetail)
@@ -105,8 +123,8 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
 
     protected override int GetNumberOfUsersOnCurrentChannel(ITvCardHandler tvcard, string userName)
     {
-      int numberOfUsersOnCurrentChannel = 0;
-      ICardTuneReservationTicket ticket = _tickets.FirstOrDefault(t => t.CardId == tvcard.DataBaseCard.idCard);      
+      int numberOfUsersOnCurrentChannel = 0;      
+      ICardTuneReservationTicket ticket = GetCardTuneReservationTicket(tvcard.DataBaseCard.idCard);
 
       if (ticket != null)
       {
@@ -118,8 +136,8 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
 
     protected override bool IsFreeToAir(ITvCardHandler tvcard, string userName, int idChannel)
     {
-      bool isFreeToAir = true;
-      ICardTuneReservationTicket ticket = _tickets.FirstOrDefault(t => t.CardId == tvcard.DataBaseCard.idCard);
+      bool isFreeToAir = true;      
+      ICardTuneReservationTicket ticket = GetCardTuneReservationTicket(tvcard.DataBaseCard.idCard);
 
       if (ticket != null)
       {
@@ -130,8 +148,8 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
 
     protected override int NumberOfChannelsDecrypting(ITvCardHandler tvcard)
     {
-      int numberOfChannelsDecrypting = 0;
-      ICardTuneReservationTicket ticket = _tickets.FirstOrDefault(t => t.CardId == tvcard.DataBaseCard.idCard);
+      int numberOfChannelsDecrypting = 0;      
+      ICardTuneReservationTicket ticket = GetCardTuneReservationTicket(tvcard.DataBaseCard.idCard);
 
       if (ticket != null)
       {
@@ -142,8 +160,8 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
 
     protected override bool IsCamAlreadyDecodingChannel(ITvCardHandler tvcard, IChannel tuningDetail)
     {
-      bool isCamAlreadyDecodingChannel = false;
-      ICardTuneReservationTicket ticket = _tickets.FirstOrDefault(t => t.CardId == tvcard.DataBaseCard.idCard);
+      bool isCamAlreadyDecodingChannel = false;      
+      ICardTuneReservationTicket ticket = GetCardTuneReservationTicket(tvcard.DataBaseCard.idCard);
 
       if (ticket != null)
       {
@@ -156,8 +174,8 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
 
     protected override bool IsOwnerOfCard(ITvCardHandler tvcard, IUser user)
     {
-      bool isOwnerOfCard = false;
-      ICardTuneReservationTicket ticket = _tickets.FirstOrDefault(t => t.CardId == tvcard.DataBaseCard.idCard);
+      bool isOwnerOfCard = false;      
+      ICardTuneReservationTicket ticket = GetCardTuneReservationTicket(tvcard.DataBaseCard.idCard);
 
       if (ticket != null)
       {
@@ -181,7 +199,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
     protected override bool IsSameTransponder(ITvCardHandler tvcard, IChannel tuningDetail)
     {
       bool isSameTransponder = false;
-      ICardTuneReservationTicket ticket = _tickets.FirstOrDefault(t => t.CardId == tvcard.DataBaseCard.idCard);
+      ICardTuneReservationTicket ticket = GetCardTuneReservationTicket(tvcard.DataBaseCard.idCard);
 
       if (ticket != null)
       {
@@ -192,15 +210,15 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
 
     protected override int NumberOfOtherUsersOnCurrentCard(ITvCardHandler tvcard, IUser user)
     {
-      int numberOfOtherUsersOnCurrentCard = 0;
-      ICardTuneReservationTicket ticket = _tickets.FirstOrDefault(t => t.CardId == tvcard.DataBaseCard.idCard);
+      int numberOfOtherUsersOnCurrentCard = 0;      
+      ICardTuneReservationTicket ticket = GetCardTuneReservationTicket(tvcard.DataBaseCard.idCard);
 
       if (ticket != null)
       {
         numberOfOtherUsersOnCurrentCard = ticket.NumberOfOtherUsersOnCurrentCard;
       }
       return numberOfOtherUsersOnCurrentCard;
-    }
+    }    
 
     #endregion
 

@@ -27,6 +27,7 @@ using System.Linq;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.CardManagement.CardHandler;
@@ -45,7 +46,6 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
     #region private members   
 
     public AdvancedCardAllocation()
-      : base()
     {
     }
 
@@ -130,7 +130,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
         }
 
         //sort cards
-        cardsAvailable.Sort();
+        cardsAvailable.SortStable();
 
         if (cardsAvailable.Count > 0)
         {
@@ -263,16 +263,17 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
               Log.Info("Controller:    card:{0} type:{1} can tune to channel", cardId, cardHandler.Type);
             }
             int nrOfOtherUsers = NumberOfOtherUsersOnCurrentCard(cardHandler, user);
-            //bool isParked = IsCardParkedOnOtherChannel(cardHandler, dbChannel.idChannel);
+            long? channelTimeshiftingOnOtherMux;
+            IsChannelTimeshiftingOnOtherMux(cardHandler, dbChannel.idChannel, tuningDetail, out channelTimeshiftingOnOtherMux);
             var cardInfo = new CardDetail(cardId, cardHandler.DataBaseCard, tuningDetail, isSameTransponder,
-                                                 nrOfOtherUsers);
+                                                 nrOfOtherUsers, channelTimeshiftingOnOtherMux);
             cardsAvailable.Add(cardInfo);
           }
         }
 
 
         //sort cards
-        cardsAvailable.Sort();
+        cardsAvailable.SortStable();
         if (LogEnabled)
         {
           Log.Info("Controller: found {0} card(s) for channel", cardsAvailable.Count);
@@ -292,10 +293,37 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
       }
     }
 
-    /*private bool IsCardParkedOnOtherChannel(ITvCardHandler cardHandler, int idChannel)
+    public virtual bool IsChannelTimeshiftingOnOtherMux(ITvCardHandler card, int idChannel, IChannel tuningDetail, out long? otherFrequency)
     {
-      return cardHandler.IsCardParkedOnOtherChannel(idChannel);
-    }*/
+      otherFrequency = null;
+      bool isChannelTimeshiftingOnOtherMux = false;
+
+      bool isAnyUserLockedOnChannel = card.UserManagement.IsAnyUserLockedOnChannel(idChannel);
+      if (isAnyUserLockedOnChannel)
+      {
+        var dvbTuningDetail = tuningDetail as DVBBaseChannel;
+        long frequency = -1;
+        if (dvbTuningDetail != null)
+        {
+          frequency = dvbTuningDetail.Frequency;
+        }
+        else
+        {
+          var analogTuningDetail = tuningDetail as AnalogChannel;
+          if (analogTuningDetail != null)
+          {
+            frequency = analogTuningDetail.Frequency;
+          }
+        }
+        if (card.CurrentMux() != frequency)
+        {
+          otherFrequency = card.CurrentMux();
+          isChannelTimeshiftingOnOtherMux = true;
+        }
+      }
+
+      return isChannelTimeshiftingOnOtherMux;
+    }
 
     private static bool CanCardDecodeChannel(ITvCardHandler cardHandler, IChannel tuningDetail)
     {

@@ -1025,45 +1025,40 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
                                             ICollection<CardDetail> cardsForReservation,
                                             CardReservationRec cardRes)
     {
-      ICollection<ICardTuneReservationTicket> tickets = null;
+      IDictionary<CardDetail, ICardTuneReservationTicket> tickets = null;
       try
       {
-        var cardsIterated = new HashSet<int>();
+        ICollection<CardDetail> cardsIterated  = new HashSet<CardDetail>();
 
         int cardIterations = 0;
         bool moreCardsAvailable = true;
-      bool recSucceded = false;
+        bool recSucceded = false;
         while (moreCardsAvailable && !recSucceded)
-      {
-          tickets = CardReservationHelper.RequestCardReservations(user, cardsForReservation,
-                                                                  cardRes, cardsIterated, recDetail.Channel.idChannel);
-
+        {
+          tickets = CardReservationHelper.RequestCardReservations(user, cardsForReservation, cardRes, cardsIterated, recDetail.Channel.idChannel);
           if (tickets.Count == 0)
           {
             //no free cards available
             Log.Write("scheduler: no free card reservation(s) could be made.");
-            break;
-      }
+            break;  
+          }
           TvResult tvResult;
-          var cardAllocationTicket = new AdvancedCardAllocationTicket(tickets);
+          ICollection<ICardTuneReservationTicket> ticketsList = tickets.Values;
+          var cardAllocationTicket = new AdvancedCardAllocationTicket(ticketsList);
           ICollection<CardDetail> cards = cardAllocationTicket.UpdateFreeCardsForChannelBasedOnTicket(
                                                                               cardsForReservation,
                                                                               user, out tvResult);
 
-          CardReservationHelper.CancelCardReservationsExceedingMaxConcurrentTickets(tickets, cards,
-                                                                                    ServiceManager.Instance.InternalControllerService.CardCollection);
-          CardReservationHelper.CancelCardReservationsNotFoundInFreeCards(cardsForReservation, tickets,
-                                                                          cards,
-                                                                          ServiceManager.Instance.InternalControllerService.CardCollection);
+          CardReservationHelper.CancelCardReservationsExceedingMaxConcurrentTickets(tickets, cards);
+          CardReservationHelper.CancelCardReservationsNotFoundInFreeCards(cardsForReservation, tickets, cards);
           int maxCards = GetMaxCards(cards);
-          CardReservationHelper.CancelCardReservationsBasedOnMaxCardsLimit(tickets, cards, maxCards,
-                                                                           ServiceManager.Instance.InternalControllerService.CardCollection);
+          CardReservationHelper.CancelCardReservationsBasedOnMaxCardsLimit(tickets, cards, maxCards);
           UpdateCardsIterated(cardsIterated, cards); //keep track of what cards have been iterated here.           
 
           if (cards != null && cards.Count > 0)
           {            
             cardIterations += cards.Count;
-            recSucceded = IterateTicketsUntilRecording(recDetail, user, cards, cardRes, maxCards, tickets);
+            recSucceded = IterateTicketsUntilRecording(recDetail, user, cards, cardRes, maxCards, tickets, cardsIterated);
             moreCardsAvailable = _maxRecordFreeCardsToTry == 0 || _maxRecordFreeCardsToTry > cardIterations;
           }
       else
@@ -1075,12 +1070,11 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
       }
       finally
       {
-        CardReservationHelper.CancelAllCardReservations(tickets, ServiceManager.Instance.InternalControllerService.CardCollection);
+        CardReservationHelper.CancelAllCardReservations(tickets);
       }
     }
 
-    private bool IterateTicketsUntilRecording(RecordingDetail recDetail, IUser user, ICollection<CardDetail> cards,
-                                              CardReservationRec cardRes, int maxCards, ICollection<ICardTuneReservationTicket> tickets)
+    private bool IterateTicketsUntilRecording(RecordingDetail recDetail, IUser user, ICollection<CardDetail> cards, CardReservationRec cardRes, int maxCards, IDictionary<CardDetail, ICardTuneReservationTicket> tickets, ICollection<CardDetail> cardsIterated)
         {
       bool recSucceded = false;
       while (!recSucceded && tickets.Count > 0)
@@ -1091,9 +1085,9 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
 
         Log.Write("scheduler: try max {0} of {1} free cards for recording", maxCards, cards.Count);
         if (freeCards.Count > 0)
-          {
+        {
           recSucceded = FindFreeCardAndStartRecord(recDetail, user, freeCards, maxCards, tickets, cardRes);
-          }
+        }
         else if (availCards.Count > 0)
         {
           recSucceded = FindAvailCardAndStartRecord(recDetail, user, availCards, maxCards, tickets, cardRes);
@@ -1101,38 +1095,38 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
 
         if (!recSucceded)
         {
-          CardDetail cardInfo = GetCardInfoForRecording(cards);
+          CardDetail cardInfo = GetCardDetailForRecording(cards);
           cards.Remove(cardInfo);
-
-          if (!recSucceded)
-          {
-            RecordingFailedNotification(recDetail);
-          }
+          RecordingFailedNotification(recDetail);
         }
       }
       return recSucceded;
     }
 
     private void StartRecordOnFreeCard(RecordingDetail recDetail, ref IUser user)
-        {
+    {
       var cardAllocationStatic = new AdvancedCardAllocationStatic();
       List<CardDetail> freeCardsForReservation = cardAllocationStatic.GetFreeCardsForChannel(ServiceManager.Instance.InternalControllerService.CardCollection, recDetail.Channel, user);
       StartRecordOnCard(recDetail, ref user, freeCardsForReservation);
-        }
-    
-    private static void UpdateCardsIterated(ICollection<int> freeCardsIterated, IEnumerable<CardDetail> freeCards)
+    }
+
+    private static void UpdateCardsIterated(ICollection<CardDetail> freeCardsIterated, IEnumerable<CardDetail> freeCards)
     {
       foreach (CardDetail card in freeCards)
       {
-        int idCard = card.Card.idCard;
-        if (!freeCardsIterated.Contains(idCard))
-        {
-          freeCardsIterated.Add(idCard);
+        UpdateCardsIterated(freeCardsIterated, card);
       }
     }
-    }
 
-    private bool FindAvailCardAndStartRecord(RecordingDetail recDetail, IUser user, ICollection<CardDetail> cards, int maxCards, ICollection<ICardTuneReservationTicket> tickets, CardReservationRec cardResImpl)
+    private static void UpdateCardsIterated(ICollection<CardDetail> freeCardsIterated, CardDetail card)
+    {
+      if (!freeCardsIterated.Contains(card))
+      {
+        freeCardsIterated.Add(card);
+      }
+    }    
+
+    private bool FindAvailCardAndStartRecord(RecordingDetail recDetail, IUser user, ICollection<CardDetail> cards, int maxCards, IDictionary<CardDetail, ICardTuneReservationTicket> tickets, CardReservationRec cardResImpl)
     {
       bool result = false;
       //keep tuning each card until we are succesful                
@@ -1140,29 +1134,38 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
       for (int k = 0; k < maxCards; k++)
       {
         ITvCardHandler tvCardHandler;
-        CardDetail cardInfo = GetCardInfoForRecording(cards);
+        CardDetail cardInfo = GetCardDetailForRecording(cards);
         if (ServiceManager.Instance.InternalControllerService.CardCollection.TryGetValue(cardInfo.Id, out tvCardHandler))
         {
-          ICardTuneReservationTicket ticket = GetTicketByCardId(tickets, cardInfo.Id);
+          ICardTuneReservationTicket ticket = GetTicketByCardDetail(cardInfo, tickets);
+
+          if (ticket == null)
+          {
+            ticket = CardReservationHelper.RequestCardReservation(user, cardInfo, cardResImpl, recDetail.Channel.idChannel);
+            if (ticket != null)
+            {
+              tickets[cardInfo] = ticket;              
+            }
+          }
 
           if (ticket != null)
           {
-        try
-        {
+            try
+            {
               cardInfo = HijackCardForRecording(cards, ticket);
               result = SetupAndStartRecord(recDetail, ref user, cardInfo, ticket, cardResImpl);
-          if (result)
-          {
-            break;
-          }
+              if (result)
+              {
+                break;
+              }
 
-        }
-        catch (Exception ex)
-        {
-              CardReservationHelper.CancelCardReservationAndRemoveTicket(tvCardHandler, tickets);
-          Log.Write(ex);
+            }
+            catch (Exception ex)
+            {
+              CardReservationHelper.CancelCardReservationAndRemoveTicket(cardInfo, tickets);
+              Log.Write(ex);
               StopFailedRecord(recDetail);
-        }
+            }
           }
           else
           {
@@ -1170,7 +1173,7 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
           }
         }
         Log.Write("scheduler: recording failed, lets try next available card.");
-        CardReservationHelper.CancelCardReservationAndRemoveTicket(tvCardHandler, tickets);
+        CardReservationHelper.CancelCardReservationAndRemoveTicket(cardInfo, tickets);
         if (cardInfo != null && cards.Contains(cardInfo))
         {
           cards.Remove(cardInfo);
@@ -1179,33 +1182,44 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
       return result;
     }
 
-    private static ICardTuneReservationTicket GetTicketByCardId(IEnumerable<ICardTuneReservationTicket> tickets, int cardId)
+    private static ICardTuneReservationTicket GetTicketByCardDetail(CardDetail cardInfo, IDictionary<CardDetail, ICardTuneReservationTicket> tickets)
     {
-      return tickets.FirstOrDefault(t => t.CardId == cardId);
+      ICardTuneReservationTicket ticket;
+      tickets.TryGetValue(cardInfo, out ticket);
+      return ticket;
     }
 
-    private bool FindFreeCardAndStartRecord(RecordingDetail recDetail, IUser user, ICollection<CardDetail> cards, int maxCards, ICollection<ICardTuneReservationTicket> tickets, CardReservationRec cardResImpl)
+    private bool FindFreeCardAndStartRecord(RecordingDetail recDetail, IUser user, ICollection<CardDetail> cards, int maxCards, IDictionary<CardDetail, ICardTuneReservationTicket> tickets, CardReservationRec cardResImpl)
     {
       bool result = false;
       //keep tuning each card until we are succesful                
       for (int i = 0; i < maxCards; i++)
       {
         CardDetail cardInfo = null;
-        ITvCardHandler tvCardHandler = null;
         try
-        {
-          cardInfo = GetCardInfoForRecording(cards);
+        {          
+          cardInfo = GetCardDetailForRecording(cards);
+          ITvCardHandler tvCardHandler;
           if (ServiceManager.Instance.InternalControllerService.CardCollection.TryGetValue(cardInfo.Id, out tvCardHandler))
-          {
-            ICardTuneReservationTicket ticket = GetTicketByCardId(tickets, cardInfo.Id);
+          {            
+            ICardTuneReservationTicket ticket = GetTicketByCardDetail(cardInfo, tickets);            
+            if (ticket == null)
+            {              
+              ticket = CardReservationHelper.RequestCardReservation(user, cardInfo, cardResImpl, recDetail.Channel.idChannel);
+              if (ticket != null)
+              {
+                tickets[cardInfo] = ticket;
+              }
+            }
+
             if (ticket != null)
             {
               result = SetupAndStartRecord(recDetail, ref user, cardInfo, ticket, cardResImpl);
-          if (result)
-          {
-            break;
-          }
-        }
+              if (result)
+              {
+                break;
+              }
+            }
             else
             {
               Log.Write("scheduler: could not find free cardreservation on card:{0}", cardInfo.Id);
@@ -1217,7 +1231,7 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
           Log.Error(ex.ToString());          
         }
         Log.Write("scheduler: recording failed, lets try next available card.");
-        CardReservationHelper.CancelCardReservationAndRemoveTicket(tvCardHandler, tickets);
+        CardReservationHelper.CancelCardReservationAndRemoveTicket(cardInfo, tickets);
         StopFailedRecord(recDetail);
         if (cardInfo != null && cards.Contains(cardInfo))
         {
@@ -1310,7 +1324,7 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
       }
     }
 
-    private static CardDetail GetCardInfoForRecording(IEnumerable<CardDetail> freeCards)
+    private static CardDetail GetCardDetailForRecording(IEnumerable<CardDetail> freeCards)
     {
       //first try to start recording using the recommended card
       CardDetail cardInfo = freeCards.FirstOrDefault();      

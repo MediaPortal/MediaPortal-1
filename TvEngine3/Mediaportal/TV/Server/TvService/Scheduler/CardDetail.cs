@@ -19,11 +19,31 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
 namespace Mediaportal.TV.Server.TVService.Scheduler
 {
+  public static class IComparableExtensions
+  {
+    public static void SortStable<T>(this List<T> list) where T : IComparable<T>
+    {
+      var listStableOrdered = list.OrderBy<T, T>(x => x, new ComparableComparer<T>()).ToList();
+      list.Clear();
+      list.AddRange(listStableOrdered);
+    }
+
+    private class ComparableComparer<T> : IComparer<T> where T : IComparable<T>
+    {
+      public int Compare(T x, T y)
+      {
+        return x.CompareTo(y);
+      }
+    }
+  }
   /// <summary>
   /// Class which can be used to sort Cards bases on priority
   /// </summary>
@@ -35,7 +55,8 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
     private readonly int _priority;
     private bool _sameTransponder;
     private int _numberOfOtherUsers;
-    private bool _isParked;
+    private long? _channelTimeshiftingOnOtherMux;
+    private readonly long _frequency = -1;
 
     /// <summary>
     /// ctor
@@ -45,8 +66,9 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
     /// <param name="detail">tuning detail</param>
     /// <param name="sameTransponder">indicates whether it is the same transponder</param>
     /// <param name="numberOfOtherUsers"></param>
+    /// <param name="isChannelTimeshiftingOnOtherMux"> </param>
     /// <param name="isParked"> </param>
-    public CardDetail(int id, Card card, IChannel detail, bool sameTransponder, int numberOfOtherUsers/*, bool isParked*/)
+    public CardDetail(int id, Card card, IChannel detail, bool sameTransponder, int numberOfOtherUsers, long? channelTimeshiftingOnOtherMux)
     {
       _sameTransponder = sameTransponder;
       _cardId = id;
@@ -54,7 +76,21 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
       _detail = detail;
       _priority = _card.priority;
       _numberOfOtherUsers = numberOfOtherUsers;
-      //_isParked = isParked;
+      _channelTimeshiftingOnOtherMux = channelTimeshiftingOnOtherMux;
+
+      var dvbTuningDetail = detail as DVBBaseChannel;
+      if (dvbTuningDetail != null)
+      {
+        _frequency = dvbTuningDetail.Frequency;
+      }
+      else
+      {
+        var analogTuningDetail = detail as AnalogChannel;
+        if (analogTuningDetail != null)
+        {
+          _frequency = analogTuningDetail.Frequency;
+        }
+      }
     }
 
     /// <summary>
@@ -108,10 +144,16 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
       set { _numberOfOtherUsers = value; }
     }
 
-    /*public bool IsParked
+    public long? ChannelTimeshiftingOnOtherMux
     {
-      get { return _isParked; }
-    }*/
+      get { return _channelTimeshiftingOnOtherMux; }
+      set { _channelTimeshiftingOnOtherMux = value; }
+    }
+
+    public long Frequency
+    {
+      get { return _frequency; }
+    }
 
     #region IComparable<CardInfo> Members
 
@@ -141,6 +183,12 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
         {
           return 1;
         }
+
+        if (ChannelTimeshiftingOnOtherMux.HasValue && !other.ChannelTimeshiftingOnOtherMux.HasValue)
+        {
+          return 1;
+        }
+
         return 0;
       }
 

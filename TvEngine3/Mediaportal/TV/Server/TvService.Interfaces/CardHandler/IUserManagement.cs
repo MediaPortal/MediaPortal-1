@@ -152,6 +152,7 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     bool IsAnyUserTimeShifting();
     int UsersCount();
     bool IsAnyUserLockedOnChannel(int channelId, TvUsage tvUsage);
+    bool IsAnyUserLockedOnChannel(int channelId);
     IEnumerable<int> GetAllSubChannelForChannel(int channelId, TvUsage tvUsage);
     IDictionary<int, ChannelState> GetAllTimeShiftingAndRecordingChannelIds();
     IDictionary<string, IUser> UsersCopy { get; }

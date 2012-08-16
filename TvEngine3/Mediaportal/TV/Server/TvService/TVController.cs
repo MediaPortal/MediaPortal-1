@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -3360,8 +3361,7 @@ namespace Mediaportal.TV.Server.TVService
       TvResult result = TvResult.UnknownError;
       kickableCards = null;
       card = null;
-      cardChanged = false;
-      //RefreshTimeshiftingUserFromAnyContext(ref user);
+      cardChanged = false;      
       if (user != null)
       {
         int oldCardId = user.CardId;
@@ -3376,11 +3376,12 @@ namespace Mediaportal.TV.Server.TVService
         Log.Write("Controller: StartTimeShifting {0} {1}", channel.displayName, channel.idChannel);
         StopEPGgrabber();
 
-        ICollection<ICardTuneReservationTicket> tickets = null;
+        IDictionary<CardDetail, ICardTuneReservationTicket> tickets = null;
         try
         {
           var cardAllocationStatic = new AdvancedCardAllocationStatic();
           List<CardDetail> freeCardsForReservation = cardAllocationStatic.GetFreeCardsForChannel(_cards, channel, user);
+
           if (HasFreeCards(freeCardsForReservation))
           {
             tickets = IterateCardsUntilTimeshifting(
@@ -3390,7 +3391,7 @@ namespace Mediaportal.TV.Server.TVService
               freeCardsForReservation,
               kickCardId,
               out kickableCards,
-              out cardChanged, ref result, ref card, ref parkedDuration);
+              ref result, ref card, ref parkedDuration);
           }
           else
           {
@@ -3405,18 +3406,15 @@ namespace Mediaportal.TV.Server.TVService
         }
         finally
         {
-          CardReservationHelper.CancelAllCardReservations(tickets, _cards);
+          CardReservationHelper.CancelAllCardReservations(tickets);
           if (!HasTvSucceeded(result))
           {
             StartEPGgrabber();
           }
-          else if (!cardChanged)
+          cardChanged = card.Id != oldCardId;
+          if (!cardChanged)
           {
-            cardChanged = card.Id != oldCardId;
-            if (!cardChanged)
-            {
-              cardChanged = initialTimeshiftingFile != card.TimeShiftFileName;
-            }
+            cardChanged = initialTimeshiftingFile != card.TimeShiftFileName;
           }
         }
       }
@@ -3424,32 +3422,34 @@ namespace Mediaportal.TV.Server.TVService
       return result;
     }
 
-   
 
-    private ICollection<ICardTuneReservationTicket> IterateCardsUntilTimeshifting(ref IUser user, Channel channel, bool forceCardId, ICollection<CardDetail> freeCardsForReservation, int? kickCardId, out Dictionary<int, List<IUser>> kickableCards, out bool cardChanged, ref TvResult result, ref IVirtualCard card, ref double? parkedDuration)
+
+    private IDictionary<CardDetail, ICardTuneReservationTicket> IterateCardsUntilTimeshifting(ref IUser user, Channel channel, 
+        bool forceCardId, ICollection<CardDetail> freeCardsForReservation, int? kickCardId, out Dictionary<int, List<IUser>> kickableCards, 
+        ref TvResult result, ref IVirtualCard card, ref double? parkedDuration)
     {
       kickableCards = null;
-      cardChanged = false;      
       var cardResImpl = new CardReservationTimeshifting();
-      ICollection<ICardTuneReservationTicket> tickets = null;
-      ICollection<int> freeCardsIterated = UpdateCardsIteratedBasedOnForceCardId(user, forceCardId);
+
+      IDictionary<CardDetail, ICardTuneReservationTicket> tickets = null;
       int cardsIterated = 0;
       bool moreCardsAvailable = true;
+      ICollection<CardDetail> freeCardsIterated = UpdateCardsIteratedBasedOnForceCardId(user, forceCardId, freeCardsForReservation);
       while (moreCardsAvailable && !HasTvSucceeded(result))
       {
-        tickets = CardReservationHelper.RequestCardReservations(user, freeCardsForReservation, cardResImpl,
-                                                                freeCardsIterated, channel.idChannel);
-        if (HasTickets(tickets))
+        tickets = CardReservationHelper.RequestCardReservations(user, freeCardsForReservation, cardResImpl, freeCardsIterated, channel.idChannel);
+        AdjustCardReservations(user, tickets, channel.idChannel, cardResImpl);
+
+        List<ICardTuneReservationTicket> ticketsList = tickets.Values.ToList();
+        if (HasTickets(ticketsList))
         {
-          var cardAllocationTicket = new AdvancedCardAllocationTicket(tickets);
-          ICollection<CardDetail> freeCards = cardAllocationTicket.UpdateFreeCardsForChannelBasedOnTicket(freeCardsForReservation,
-                                                                                                          user, out result);
-          CardReservationHelper.CancelCardReservationsExceedingMaxConcurrentTickets(tickets, freeCards, _cards);
-          CardReservationHelper.CancelCardReservationsNotFoundInFreeCards(freeCardsForReservation, tickets, freeCards,
-                                                                          _cards);
+          var cardAllocationTicket = new AdvancedCardAllocationTicket(ticketsList);
+          IList<CardDetail> freeCards = cardAllocationTicket.UpdateFreeCardsForChannelBasedOnTicket(freeCardsForReservation, user, out result);
+          CardReservationHelper.CancelCardReservationsExceedingMaxConcurrentTickets(tickets, freeCards);
+          CardReservationHelper.CancelCardReservationsNotFoundInFreeCards(freeCardsForReservation, tickets, freeCards);
           int maxCards = GetMaxCards(freeCards);
-          CardReservationHelper.CancelCardReservationsBasedOnMaxCardsLimit(tickets, freeCards, maxCards, _cards);
-          UpdateFreeCardsIterated(freeCardsIterated, freeCards); //keep tracks of what cards have been iterated here.
+          CardReservationHelper.CancelCardReservationsBasedOnMaxCardsLimit(tickets, freeCards, maxCards);
+          UpdateFreeCardsIterated(freeCardsIterated, freeCards); //keep tracks of what card details have been iterated here.
           moreCardsAvailable = HasFreeCards(freeCards);
           if (moreCardsAvailable)
           {
@@ -3462,7 +3462,7 @@ namespace Mediaportal.TV.Server.TVService
               maxCards,
               kickCardId,
               out kickableCards,
-              ref card, ref result, ref cardsIterated, out cardChanged, ref parkedDuration);
+              ref card, ref result, ref cardsIterated, ref parkedDuration);
           }
           else
           {
@@ -3477,27 +3477,74 @@ namespace Mediaportal.TV.Server.TVService
           moreCardsAvailable = false;
         }
       } //end of while             
-      
+
       return tickets;
     }
 
-    private ICollection<int> UpdateCardsIteratedBasedOnForceCardId(IUser user, bool forceCardId)
+    private void AdjustCardReservations(IUser user, IDictionary<CardDetail, ICardTuneReservationTicket> tickets, int idChannel, ICardReservation cardResImpl)
     {
-      ICollection<int> freeCardsIterated = new HashSet<int>();
+      long otherMux = -1;
+      IList<CardDetail> removeList = new List<CardDetail>();
+
+      foreach (KeyValuePair<CardDetail, ICardTuneReservationTicket> cardResKVP in tickets)
+      {
+        ICardTuneReservationTicket ticket = cardResKVP.Value;
+        CardDetail cardDetail = cardResKVP.Key;
+        if (ticket != null && ticket.ChannelTimeshiftingOnOtherMux.HasValue)
+        {
+          otherMux = ticket.ChannelTimeshiftingOnOtherMux.GetValueOrDefault();
+          ITvCardHandler cardHandler = _cards[ticket.CardId];
+          CardReservationHelper.CancelCardReservation(cardHandler, ticket);
+          removeList.Add(cardDetail);          
+        }
+      }
+
+      foreach (CardDetail cardDetail in removeList)
+      {
+        tickets.Remove(cardDetail);
+      }
+
+      if (removeList.Count > 0)
+      {
+        foreach (KeyValuePair<CardDetail, ICardTuneReservationTicket> cardResKVP in tickets)
+        {
+          ICardTuneReservationTicket ticket = cardResKVP.Value;
+          CardDetail cardDetail = cardResKVP.Key;
+          if (ticket == null)
+          {
+            if (cardDetail.Frequency.Equals(otherMux))
+            {
+              ticket = CardReservationHelper.RequestCardReservation(user, cardDetail, cardResImpl, idChannel);
+              tickets[cardDetail] = ticket;
+              break;
+            } 
+          }          
+        }        
+      }
+    }
+
+    private ICollection<CardDetail> UpdateCardsIteratedBasedOnForceCardId(IUser user, bool forceCardId, IEnumerable<CardDetail> freeCardsForReservation)
+    {
+      ICollection<CardDetail> freeCardsIterated = new HashSet<CardDetail>();
       if (forceCardId)
       {
-        foreach (KeyValuePair<int, ITvCardHandler> card in _cards.Where(t => t.Value.DataBaseCard.idCard != user.CardId))
+        foreach (CardDetail cardDetail in freeCardsForReservation)
         {
-          freeCardsIterated.Add(card.Value.DataBaseCard.idCard);
+          if (cardDetail.Id != user.CardId)
+          {
+            freeCardsIterated.Add(cardDetail);
+          }
         }
       }
       return freeCardsIterated;
     }
 
-    private bool IterateTicketsUntilTimeshifting(ref IUser userBefore, Channel channel, ICollection<ICardTuneReservationTicket> tickets, CardReservationTimeshifting cardResImpl, ICollection<CardDetail> freeCards, int maxCards, int? kickCardId, out Dictionary<int, List<IUser>> kickableCards, ref IVirtualCard card, ref TvResult result, ref int cardsIterated, out bool cardChanged, ref double? parkedDuration)
+    private bool IterateTicketsUntilTimeshifting(ref IUser userBefore, Channel channel, IDictionary<CardDetail,
+        ICardTuneReservationTicket> tickets, CardReservationTimeshifting cardResImpl, IList<CardDetail> freeCards, 
+        int maxCards, int? kickCardId, out Dictionary<int, List<IUser>> kickableCards, ref IVirtualCard card, 
+        ref TvResult result, ref int cardsIterated, ref double? parkedDuration)
     {      
       kickableCards = null;
-      cardChanged = false;
       int failedCardId = -1;
       bool moreCardsAvailable = true;
       Log.Write("Controller: try max {0} of {1} cards for timeshifting", maxCards, freeCards.Count);
@@ -3515,13 +3562,22 @@ namespace Mediaportal.TV.Server.TVService
         ITvCardHandler tvcard = _cards[newCardId];
         try
         {
-          ICardTuneReservationTicket ticket = GetTicketByCardId(cardInfo, tickets);
+          ICardTuneReservationTicket ticket = GetTicketByCardDetail(cardInfo, tickets);
           if (ticket == null)
-          {
-            Log.Write("Controller: StartTimeShifting - could not find cardreservation on card:{0}",
+          {            
+            ticket = CardReservationHelper.RequestCardReservation(userBefore, cardInfo, cardResImpl, channel.idChannel);
+            if (ticket == null)
+            {
+             Log.Write("Controller: StartTimeShifting - could not find cardreservation on card:{0}",
                       userNow.CardId);
-            HandleAllCardsBusy(tickets, out result, out failedCardId, cardInfo, tvcard);
-            continue;
+             HandleAllCardsBusy(tickets, out result, cardInfo);
+              failedCardId = cardInfo.Id;
+              continue; 
+            }        
+            else
+            {
+              tickets[cardInfo] = ticket;
+            }
           }
           cardsIterated++;
           bool isTimeshifting = ticket.IsAnySubChannelTimeshifting;
@@ -3573,12 +3629,13 @@ namespace Mediaportal.TV.Server.TVService
               {
                 if (kickableCards != null && kickableCards.Count > 0)
                 {
-                  result = TvResult.UsersBlocking;
-                  HandleTvException(tickets, out failedCardId, cardInfo, tvcard);
+                  result = TvResult.UsersBlocking;                 
+                  HandleTvException(tickets, cardInfo);                                     
+                  failedCardId = cardInfo.Id;
                 }
                 else
                 {
-                  HandleAllCardsBusy(tickets, out result, out failedCardId, cardInfo, tvcard); 
+                  HandleAllCardsBusy(tickets, out result, cardInfo); 
                 }                
                 continue;
               }              
@@ -3591,8 +3648,9 @@ namespace Mediaportal.TV.Server.TVService
             IChannel tuneChannel = cardInfo.TuningDetail;
             result = CardTune(ref userNow, tuneChannel, channel, ticket, cardResImpl);
             if (!HasTvSucceeded(result))
-            {
-              HandleTvException(tickets, out failedCardId, cardInfo, tvcard);
+            {              
+              HandleTvException(tickets, cardInfo);                                             
+              failedCardId = cardInfo.Id;
               StopTimeShifting(ref userNow, channel.idChannel);
               continue; //try next card            
             }
@@ -3600,7 +3658,7 @@ namespace Mediaportal.TV.Server.TVService
 
           //reset failedCardId incase previous card iteration failed.
           failedCardId = -1;
-          CardReservationHelper.CancelAllCardReservations(tickets, _cards);
+          CardReservationHelper.CancelAllCardReservations(tickets);
           Log.Info("control2:{0} {1} {2}", userNow.Name, userNow.CardId, tvcard.UserManagement.GetSubChannelIdByChannelId(userNow.Name, channel.idChannel));
           card = GetVirtualCard(userNow);
           card.NrOfOtherUsersTimeshiftingOnCard = ticket.NumberOfOtherUsersOnSameChannel;
@@ -3610,11 +3668,11 @@ namespace Mediaportal.TV.Server.TVService
         }
         catch (Exception)
         {
-          CardReservationHelper.CancelCardReservationAndRemoveTicket(tvcard, tickets);
+          CardReservationHelper.CancelCardReservationAndRemoveTicket(cardInfo, tickets);
           if ((cardIteration + 1) < maxCards)
-          {
-            //in case of exception, try next card if available.
-            HandleTvException(tickets, out failedCardId, cardInfo, tvcard);
+          {            
+            HandleTvException(tickets, cardInfo);                                          
+            failedCardId = cardInfo.Id;
             continue;
           }
           throw;
@@ -3632,8 +3690,7 @@ namespace Mediaportal.TV.Server.TVService
             moreCardsAvailable = AreMoreCardsAvailable(cardsIterated, maxCards, cardIteration);
             Log.Write(moreCardsAvailable
                         ? "Controller: Timeshifting failed, lets try next available card."
-                        : "Controller: Timeshifting failed, no more cards available.");
-            cardChanged = (maxCards > 1);
+                        : "Controller: Timeshifting failed, no more cards available.");            
           }
           else
           {
@@ -3645,17 +3702,14 @@ namespace Mediaportal.TV.Server.TVService
       return moreCardsAvailable;
     }
 
-    private static void HandleTvException(ICollection<ICardTuneReservationTicket> tickets, out int failedCardId,
-                                       CardDetail cardInfo, ITvCardHandler tvcard)
+    private static void HandleTvException(IDictionary<CardDetail, ICardTuneReservationTicket> tickets, CardDetail cardInfo)
     {
-      CardReservationHelper.CancelCardReservationAndRemoveTicket(tvcard, tickets);
-      failedCardId = cardInfo.Id;
+      CardReservationHelper.CancelCardReservationAndRemoveTicket(cardInfo, tickets);      
     }
-
-    private static void HandleAllCardsBusy(ICollection<ICardTuneReservationTicket> tickets, out TvResult result, out int failedCardId,
-                                           CardDetail cardInfo, ITvCardHandler tvcard)
+   
+    private static void HandleAllCardsBusy(IDictionary<CardDetail, ICardTuneReservationTicket> tickets, out TvResult result, CardDetail cardInfo)
     {
-      HandleTvException(tickets, out failedCardId, cardInfo, tvcard);
+      HandleTvException(tickets, cardInfo);      
       result = TvResult.AllCardsBusy;
     }    
 
@@ -3675,24 +3729,16 @@ namespace Mediaportal.TV.Server.TVService
       return result;
     }
 
-    private VirtualCard GetValidVirtualCard(IUser user)
-    {
-      VirtualCard initialCard = null;
-      if (user.CardId != -1)
-      {
-        initialCard = GetVirtualCard(user);
-      }
-      return initialCard;
-    }
-
     private bool AreMoreCardsAvailable(int cardsIterated, int maxCards, int i)
     {
       return (i < maxCards) && (_maxFreeCardsToTry == 0 || _maxFreeCardsToTry > cardsIterated);
     }
 
-    private static ICardTuneReservationTicket GetTicketByCardId(CardDetail cardInfo, IEnumerable<ICardTuneReservationTicket> tickets)
-    {
-      return tickets.FirstOrDefault(t => t.CardId == cardInfo.Id);
+    private static ICardTuneReservationTicket GetTicketByCardDetail(CardDetail cardInfo, IDictionary<CardDetail, ICardTuneReservationTicket> tickets)
+    {      
+      ICardTuneReservationTicket ticket;
+      tickets.TryGetValue(cardInfo, out ticket);
+      return ticket;
     }
 
     private bool TransponderAcquired(int maxCards, ICardTuneReservationTicket ticket, ITvCardHandler tvcard, int cardIteration, int idChannel, int? kickCardId, ref Dictionary<int, List<IUser>> kickableCards)
@@ -3749,18 +3795,22 @@ namespace Mediaportal.TV.Server.TVService
       }      
       return isTransponderAvailable;
     }
-    
 
-    private static void UpdateFreeCardsIterated(ICollection<int> freeCardsIterated, IEnumerable<CardDetail> freeCards)
+
+    private static void UpdateFreeCardsIterated(ICollection<CardDetail> freeCardsIterated, IEnumerable<CardDetail> freeCards)
     {
       foreach (CardDetail card in freeCards)
       {
-        int idCard = card.Card.idCard;
-        if (!freeCardsIterated.Contains(idCard))
-        {
-          freeCardsIterated.Add(idCard);
-        }
+        UpdateFreeCardsIterated(freeCardsIterated, card);        
       }
+    }
+
+    private static void UpdateFreeCardsIterated(ICollection<CardDetail> freeCardsIterated, CardDetail card)
+    {
+      if (!freeCardsIterated.Contains(card))
+      {
+        freeCardsIterated.Add(card);
+      }      
     }
 
     private static bool HasFreeCards<T>(ICollection<T> freeCards)

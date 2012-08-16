@@ -290,6 +290,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.RadioWebStream
     }
 
     /// <summary>
+    /// Gets the first sub channel.
+    /// </summary>    
+    /// <returns></returns>
+    public ITvSubChannel GetFirstSubChannel()
+    {
+      return null;
+    }
+
+    /// <summary>
     /// Gets the sub channels.
     /// </summary>
     /// <value>The sub channels.</value>

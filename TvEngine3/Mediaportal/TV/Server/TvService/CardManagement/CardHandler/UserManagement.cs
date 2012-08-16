@@ -418,6 +418,14 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
       }
     }
 
+    public bool IsAnyUserLockedOnChannel(int channelId)
+    {
+      lock (_usersLock)
+      {
+        return Users.Values.Any(user => GetSubChannelIdByChannelId(user.Name, channelId) > -1);
+      }
+    }
+
     public IEnumerable<int> GetAllSubChannelForChannel(int channelId, TvUsage tvUsage)
     {
       ICollection<int> subChannelIds = new List<int>();

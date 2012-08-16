@@ -63,54 +63,6 @@ namespace Mediaportal.TV.Server.TVService.EventDispatchers
       }
     }
 
-    private void DoOnTvServerEventAsynch(TvServerEventArgs tvEvent)
-    {
-      try
-      {
-        IDictionary<string, DateTime> usersCopy = GetUsersCopy();
-
-        if (usersCopy.Count > 0)
-        {
-
-
-          if (tvEvent.EventType == TvServerEventType.ChannelStatesChanged)
-          {
-            foreach (string username in usersCopy.Keys)
-            {
-              //todo channel states for idle users should ideally only be pushed out to idle users and not all users.
-              if (tvEvent.User.Name.Equals(username))
-              {
-                EventService.CallbackTvServerEvent(username, tvEvent);
-              }
-              else if (tvEvent.User.Name.Equals("idle"))
-              {
-                bool isTimeShifting = ServiceManager.Instance.InternalControllerService.IsTimeShifting(username);
-                if (!isTimeShifting)
-                {
-                  EventService.CallbackTvServerEvent(username, tvEvent);
-                }
-              }
-            }
-          }
-          else
-          {
-            foreach (string username in usersCopy.Keys)
-            {
-              EventService.CallbackTvServerEvent(username, tvEvent);
-            }
-          }
-        }
-        else
-        {
-          Log.Debug("TvServerEventDispatcher.DoOnTvServerEventAsynch : tvserver event received but no users found...");
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Debug("DoOnTvServerEventAsynch failed : {0}", ex);        
-      }
-    }
-
     #region Overrides of EventDispatcher
 
     public override void Start()

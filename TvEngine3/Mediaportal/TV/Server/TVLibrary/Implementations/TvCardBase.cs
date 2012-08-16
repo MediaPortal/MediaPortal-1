@@ -734,6 +734,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     }
 
     /// <summary>
+    /// Gets the first sub channel.
+    /// </summary>
+    /// <returns></returns>
+    public ITvSubChannel GetFirstSubChannel()
+    {
+      ITvSubChannel subChannel = null;
+      if (_mapSubChannels.Count > 0)
+      {
+        subChannel = _mapSubChannels.FirstOrDefault().Value;
+      }
+      return subChannel;
+    }
+
+    /// <summary>
     /// Gets the sub channel.
     /// </summary>
     /// <param name="id">The id.</param>

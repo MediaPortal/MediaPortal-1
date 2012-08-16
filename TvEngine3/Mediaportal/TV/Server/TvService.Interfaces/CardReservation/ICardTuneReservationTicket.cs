@@ -53,5 +53,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardReservation
     int PendingSubchannel { get; set; }
     bool HasHighestPriority { get; }
     bool HasEqualOrHigherPriority { get; }
+    long? ChannelTimeshiftingOnOtherMux { get; }
   }
 }
