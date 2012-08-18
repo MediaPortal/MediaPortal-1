@@ -127,7 +127,6 @@ namespace MediaPortal.GUI.Video
     private bool _scanSkipExisting;
     private bool _getActors = true;
     private bool _markWatchedFiles = true;
-    private bool _eachFolderIsMovie;
     private ArrayList _conflictFiles = new ArrayList();
     private bool _switchRemovableDrives;
     // Stacked files duration - for watched status/also used in GUIVideoTitle
@@ -2671,15 +2670,15 @@ namespace MediaPortal.GUI.Video
       IMDBMovie.ResetMovieProperties(); // Clear skin properties values
       GUIControl.ClearControl(GetID, facadeLayout.GetID);
       List<GUIListItem> itemlist = null;
+      ISelectDVDHandler selectDvdHandler = GetSelectDvdHandler();
+      ISelectBDHandler selectBDHandler = GetSelectBDHandler();
 
       //Tweak to boost performance when starting/stopping playback
       //For further details see comment in Core\Util\VirtualDirectory.cs
       if (useCache && _cachedDir == _currentFolder && _cachedItems != null && _cachedItems.Count > 0)
       {
         itemlist = _cachedItems;
-        ISelectDVDHandler selectDvdHandler = GetSelectDvdHandler();
-        ISelectBDHandler selectBDHandler = GetSelectBDHandler();
-
+        
         foreach (GUIListItem item in itemlist)
         {
           // set label 1 & 2
@@ -2710,6 +2709,7 @@ namespace MediaPortal.GUI.Video
             {
               item.IsPlayed = played;
             }
+            
             if (item.IsBdDvdFolder)
             {
               if (selectDvdHandler.IsDvdDirectory(item.Path))
@@ -2787,14 +2787,10 @@ namespace MediaPortal.GUI.Video
             }
           }
 
-          List<GUIListItem> itemfiltered = new List<GUIListItem>(itemlist.Count);
-
           foreach (KeyValuePair<string, List<GUIListItem>> pair in stackings)
           {
             List<GUIListItem> innerList = pair.Value;
-            ISelectDVDHandler sDvd = GetSelectDvdHandler();
-            ISelectBDHandler sBd = GetSelectBDHandler();
-
+            
             for (int i = 0; i < innerList.Count; i++)
             {
               GUIListItem item = innerList[i];
@@ -2807,18 +2803,19 @@ namespace MediaPortal.GUI.Video
 
               // Check db for watched status for played movie or changed status in movie info window
               string file = item.Path;
+              bool isMovieFolder = IsMovieFolder(item.Path);
 
-              if (!item.IsFolder || IsMovieFolder(item.Path))
+              if (!item.IsFolder || isMovieFolder)
               {
                 // Special folders (DVD/BluRay)
-                if (IsMovieFolder(item.Path))
+                if (isMovieFolder)
                 {
                   item.IsBdDvdFolder = true;
-                  file = sDvd.GetFolderVideoFile(item.Path);
+                  file = selectDvdHandler.GetFolderVideoFile(item.Path);
 
                   if (file == string.Empty)
                   {
-                    file = sBd.GetFolderVideoFile(item.Path);
+                    file = selectBDHandler.GetFolderVideoFile(item.Path);
                   }
                 }
 
@@ -2834,7 +2831,7 @@ namespace MediaPortal.GUI.Video
 
                 if (item.IsBdDvdFolder)
                 {
-                  if (sDvd.IsDvdDirectory(item.Path))
+                  if (selectDvdHandler.IsDvdDirectory(item.Path))
                   {
                     item.Label3 = MediaTypes.DVD.ToString();
                   }
@@ -2855,10 +2852,9 @@ namespace MediaPortal.GUI.Video
 
               item.OnItemSelected += item_OnItemSelected;
               facadeLayout.Add(item);
-              itemfiltered.Add(item);
             }
           }
-          itemlist = itemfiltered;
+          itemlist = facadeLayout.ListLayout.ListItems;
         }
 
         _cachedItems = itemlist;
@@ -2870,8 +2866,7 @@ namespace MediaPortal.GUI.Video
       
       // Update thumbs for all items (cached also - > cover can be changed in VideoInfoScreen and if we do
       // not update cover, old one will be visible)
-      ISelectDVDHandler setThumbs = GetSelectDvdHandler();
-      SetImdbThumbs(itemlist, setThumbs);
+      SetImdbThumbs(itemlist, selectDvdHandler);
       
       int selectedIndex = -1;
       Int32.TryParse(_history.Get(_currentFolder), out selectedIndex);
@@ -2920,8 +2915,7 @@ namespace MediaPortal.GUI.Video
       // can be missing and wan't be loaded, so here we reload them again.
       if (_setThumbsThreadAborted)
       {
-        ISelectDVDHandler selectDVDHandler = GetSelectDvdHandler();
-        SetImdbThumbs(itemlist, selectDVDHandler);
+        SetImdbThumbs(itemlist, selectDvdHandler);
       }
 
       GUIWaitCursor.Hide();
@@ -3367,7 +3361,6 @@ namespace MediaPortal.GUI.Video
         // ****** Watch out for fallthrough of empty cases if reordering CASE *******
         //
         case 0: // By name == 103
-
         case 103:
           IOrderedEnumerable<object> sortedPlayList = GetSortedPlayListbyName(playFiles);
           // Add all files in temporary playlist
@@ -3375,14 +3368,12 @@ namespace MediaPortal.GUI.Video
           break;
 
         case 1: // By date (date modified) == 104
-
         case 104:
           sortedPlayList = GetSortedPlayListbyDate(playFiles);
           AddToPlayList(tmpPlayList, sortedPlayList);
           break;
 
         case 2: // Shuffle == 191
-
         case 191:
           sortedPlayList = GetSortedPlayListbyName(playFiles);
           AddToPlayList(tmpPlayList, sortedPlayList);
