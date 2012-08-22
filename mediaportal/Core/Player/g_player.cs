@@ -597,7 +597,7 @@ namespace MediaPortal.Player
         Log.Debug("g_Player.doStop() keepTimeShifting = {0} keepExclusiveModeOn = {1}", keepTimeShifting,
                   keepExclusiveModeOn);
         // Get playing file for unmount handling
-        string currentFile = g_Player.CurrentFile;
+        string currentFile = g_Player.currentFileName;
         OnStopped();
 
         //since plugins could stop playback, we need to make sure that _player is not null.
