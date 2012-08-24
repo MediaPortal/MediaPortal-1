@@ -76,58 +76,6 @@ namespace TvDatabase
 
     #region Constructors
 
-    /// <summary> 
-    /// Create a new object by specifying all fields (except the auto-generated primary key field). 
-    /// </summary> 
-    public Program(int idChannel, DateTime startTime, DateTime endTime, string title, string description, string genre,
-                   ProgramState state, DateTime originalAirDate, string seriesNum, string episodeNum, string episodeName,
-                    string classification, int parentalRating, string SeriesID, int SeriesIDTermination)
-     {
-         isChanged = true;
-         this.idChannel = idChannel;
-         this.startTime = startTime;
-         this.endTime = endTime;
-         this.title = title;
-         this.description = description;
-         this.genre = genre;
-         this.state = (int)state;
-         this.originalAirDate = originalAirDate;
-         this.seriesNum = seriesNum;
-         this.episodeNum = episodeNum;
-         this.episodeName = episodeName;
-         this.episodePart = episodePart;
-         this.starRating = starRating;
-         this.classification = classification;
-         this.parentalRating = parentalRating;
-         this.seriesId = SeriesID;
-         this.seriesTermination = SeriesIDTermination;
-   }
- 
-     /// <summary> 
-     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
-     /// </summary> 
-     public Program(int idChannel, DateTime startTime, DateTime endTime, string title, string description, string genre,
-                    ProgramState state, DateTime originalAirDate, string seriesNum, string episodeNum, string episodeName,
-                    string episodePart, int starRating,
-                   string classification, int parentalRating)
-    {
-      isChanged = true;
-      this.idChannel = idChannel;
-      this.startTime = startTime;
-      this.endTime = endTime;
-      this.title = title;
-      this.description = description;
-      this.genre = genre;
-      this.state = (int)state;
-      this.originalAirDate = originalAirDate;
-      this.seriesNum = seriesNum;
-      this.episodeNum = episodeNum;
-      this.episodeName = episodeName;
-      this.episodePart = episodePart;
-      this.starRating = starRating;
-      this.classification = classification;
-      this.parentalRating = parentalRating;
-    }
      /// <summary>
      /// Series Id is used only for Sky UK/IT/AU at the moment for 'series link' functionality
      /// </summary>
@@ -178,6 +126,63 @@ namespace TvDatabase
        return ObjectFactory.GetCollection<Program>(stmt.Execute());
      }
 
+    #endregion
+
+    #region Public Properties
+         /// <summary> 
+    /// Create a new object by specifying all fields (except the auto-generated primary key field). 
+    /// </summary> 
+    public Program(int idChannel, DateTime startTime, DateTime endTime, string title, string description, string genre,
+                   ProgramState state, DateTime originalAirDate, string seriesNum, string episodeNum, string episodeName,
+                   string episodePart, int starRating,
+                   string classification, int parentalRating, string SeriesID, int SeriesIDTermination)
+    {
+        isChanged = true;
+        this.idChannel = idChannel;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.title = title;
+        this.description = description;
+        this.genre = genre;
+        this.state = (int)state;
+        this.originalAirDate = originalAirDate;
+        this.seriesNum = seriesNum;
+        this.episodeNum = episodeNum;
+        this.episodeName = episodeName;
+        this.episodePart = episodePart;
+        this.starRating = starRating;
+        this.classification = classification;
+        this.parentalRating = parentalRating;
+        this.seriesId = SeriesID;
+        this.seriesTermination = SeriesIDTermination;
+  }
+
+    /// <summary> 
+    /// Create a new object by specifying all fields (except the auto-generated primary key field). 
+    /// </summary> 
+    public Program(int idChannel, DateTime startTime, DateTime endTime, string title, string description, string genre,
+                   ProgramState state, DateTime originalAirDate, string seriesNum, string episodeNum, string episodeName,
+                   string episodePart, int starRating,
+                   string classification, int parentalRating)
+    {
+      isChanged = true;
+      this.idChannel = idChannel;
+      this.startTime = startTime;
+      this.endTime = endTime;
+      this.title = title;
+      this.description = description;
+      this.genre = genre;
+      this.state = (int)state;
+      this.originalAirDate = originalAirDate;
+      this.seriesNum = seriesNum;
+      this.episodeNum = episodeNum;
+      this.episodeName = episodeName;
+      this.episodePart = episodePart;
+      this.starRating = starRating;
+      this.classification = classification;
+      this.parentalRating = parentalRating;
+    }
+
     /// <summary> 
     /// Create an object from an existing row of data. This will be used by Gentle to 
     /// construct objects from retrieved rows. 
@@ -206,8 +211,6 @@ namespace TvDatabase
     }
 
     #endregion
-
-    #region Public Properties
 
     /// <summary>
     /// Indicates whether the entity is changed and requires saving or not.
@@ -616,7 +619,6 @@ namespace TvDatabase
       }
     }
 
-    #endregion
 
     #region Storage and Retrieval
 

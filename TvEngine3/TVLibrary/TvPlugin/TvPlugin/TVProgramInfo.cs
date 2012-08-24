@@ -1175,7 +1175,7 @@ namespace TvPlugin
         schedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
         schedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
         schedule.ScheduleType = scheduleType;
-        if (scheduleType == (int)ScheduleRecordingType.SeriesLink
+        if (scheduleType == (int)ScheduleRecordingType.SeriesLink)
             schedule.SeriesId = program.SeriesId;
       }
 
