@@ -36,6 +36,7 @@ public:
 	HRESULT GetFileName(LPWSTR *lpszFileName);
 	HRESULT SetFileName(LPCWSTR pszFileName);
 	HRESULT OpenFile();
+	HRESULT OpenFileWithShare();
 	HRESULT CloseFile();
 	HRESULT Write(PBYTE pbData, ULONG lDataLength);
 

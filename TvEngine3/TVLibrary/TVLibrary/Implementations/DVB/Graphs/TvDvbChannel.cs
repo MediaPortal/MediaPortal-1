@@ -1332,6 +1332,54 @@ namespace TvLibrary.Implementations.DVB
       get { return (_pmtVersion > -1 && _channelInfo.pids.Count > 0); }
     }
 
+      /// <summary>
+     /// Sets the Filename, CustomFilename and Pids for Custom data grabbing.
+     /// </summary>
+     protected override bool OnStartTimeShiftingWithCustom(string fileName, string CustomFileName, List<int> Pids)
+     {
+         //if (_channelInfo.pids.Count == 0)
+         if (!PMTreceived)
+         {
+             Log.Log.WriteFile("subch:{0} SetTimeShiftFileName no pmt received. Timeshifting failed", _subChannelId);
+             return false;
+         }
+ 
+         _timeshiftFileName = fileName;
+         Log.Log.WriteFile("subch:{0} SetTimeShiftFileName:{1}", _subChannelId, fileName);
+         //int hr;
+         if (_tsFilterInterface != null)
+         {
+             Log.Log.WriteFile("Set video / audio observer");
+             _tsFilterInterface.SetVideoAudioObserver(_subChannelIndex, this);
+             _tsFilterInterface.TimeShiftSetParams(_subChannelIndex, _parameters.MinimumFiles, _parameters.MaximumFiles,
+                                                   _parameters.MaximumFileSize);
+             _tsFilterInterface.TimeShiftSetTimeShiftingFileNameW(_subChannelIndex, fileName);
+ 
+             if (CurrentChannel == null)
+             {
+                 Log.Log.Error("CurrentChannel is null when trying to start timeshifting");
+                 return false;
+             }
+ 
+             //  Set the channel type (0=tv, 1=radio)
+             _tsFilterInterface.TimeShiftSetChannelType(_subChannelId, (CurrentChannel.IsTv ? 0 : 1));
+ 
+             Log.Log.WriteFile("subch:{0} SetTimeShiftFileName fill in pids", _subChannelId);
+             _startTimeShifting = false;
+             SetTimeShiftPids();
+             _tsFilterInterface.SetCustomDataFilename(_subChannelIndex, CustomFileName);
+             foreach (int i in Pids)
+             {
+                 _tsFilterInterface.AddPidtoCustomData(_subChannelIndex, i);
+             }
+            Log.Log.WriteFile("subch:{0}-{1} tswriter StartTimeshifting...", _subChannelId, _subChannelIndex);
+             _tsFilterInterface.TimeShiftStart(_subChannelIndex);
+            _graphState = GraphState.TimeShifting;
+         }
+         return (_channelInfo.pids.Count != 0);
+     }
+ 
+
     /// <summary>
     /// cancels the tune
     /// </summary>    

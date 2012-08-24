@@ -326,6 +326,81 @@ namespace TvControl
       return TvResult.UnknownError;
     }
 
+     /// <summary>
+     /// Start timeshifting on a specific channel
+     /// </summary>
+     /// <param name="user">The user.</param>
+     /// <param name="idChannel">id of the channel</param>
+     /// <param name="card">returns on which card timeshifting is started</param>
+     /// <returns>
+     /// TvResult indicating whether method succeeded
+     /// </returns>
+     public TvResult StartTimeShiftingWithCustom(ref IUser user, int idChannel, out VirtualCard card, string CustomFileName, List<int> Pids)
+     {
+         card = null;
+         try
+         {
+             TvResult result = RemoteControl.Instance.StartTimeShiftingWithCustom(ref user, idChannel, out card, CustomFileName, Pids);
+             return result;
+         }
+         catch (Exception)
+         {
+            HandleFailure();
+         }
+         return TvResult.UnknownError;
+     }
+ 
+     /// <summary>
+     /// Start timeshifting on a specific channel
+     /// </summary>
+     /// <param name="user">The user.</param>
+     /// <param name="idChannel">id of the channel</param>
+     /// <param name="card">returns on which card timeshifting is started</param>
+     /// <param name="cardChanged">indicates if card was changed</param>
+     /// <returns>
+     /// TvResult indicating whether method succeeded
+     /// </returns>
+     public TvResult StartTimeShiftingWithCustom(ref IUser user, int idChannel, out VirtualCard card, out bool cardChanged, string CustomFileName, List<int> Pids)
+     {
+         card = null;
+         cardChanged = false;
+         try
+         {
+             TvResult result = RemoteControl.Instance.StartTimeShiftingWithCustom(ref user, idChannel, out card, out cardChanged, CustomFileName, Pids);
+             return result;
+         }
+         catch (Exception)
+         {
+             HandleFailure();
+         }
+         return TvResult.UnknownError;
+     }
+ 
+     /// <summary>
+     /// Start timeshifting on a specific channel
+     /// </summary>
+     /// <param name="user">The user.</param>
+     /// <param name="idChannel">id of the channel</param>
+     /// <param name="card">returns on which card timeshifting is started</param>
+     /// <param name="forceCardId">Indicated, if the card should be forced</param>
+     /// <returns>
+     /// TvResult indicating whether method succeeded
+     /// </returns>
+     public TvResult StartTimeShiftingWithCustom(ref IUser user, int idChannel, out VirtualCard card, bool forceCardId, string CustomFileName, List<int> Pids)
+     {
+         card = null;
+         try
+         {
+             TvResult result = RemoteControl.Instance.StartTimeShiftingWithCustom(ref user, idChannel, out card, forceCardId, CustomFileName, Pids);
+             return result;
+         }
+         catch (Exception)
+         {
+             HandleFailure();
+         }
+         return TvResult.UnknownError;
+     }
+
     /// <summary>
     /// Start timeshifting on a specific channel
     /// </summary>

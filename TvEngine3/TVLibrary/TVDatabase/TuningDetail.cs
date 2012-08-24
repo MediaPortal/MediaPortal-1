@@ -630,6 +630,30 @@ namespace TvDatabase
       return Broker.RetrieveList<TuningDetail>();
     }
 
+     /// <summary>
+     /// Finds all matching tuning detail entries
+     /// </summary>
+     /// <param name="frequency"></param>
+     /// <param name="frequenyTolerance"></param>
+     /// <param name="polarisation"></param>
+     /// <param name="innerFEC"></param>
+     /// <param name="symbolRate"></param>
+     /// <param name="networkId"></param>
+     /// <returns></returns>
+     public static IList<TuningDetail> Find(int frequency, int frequenyTolerance, int polarisation, int innerFEC, int symbolRate, int networkId)
+     {
+       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(TuningDetail));
+        sb.AddConstraint(Operator.GreaterThanOrEquals, "frequency", (frequency - frequenyTolerance));
+       sb.AddConstraint(Operator.LessThanOrEquals, "frequency", (frequency + frequenyTolerance));
+       sb.AddConstraint(Operator.Equals, "polarisation", polarisation);
+       sb.AddConstraint(Operator.Equals, "innerFecRate", innerFEC);
+       sb.AddConstraint(Operator.Equals, "symbolrate", symbolRate);
+       sb.AddConstraint(Operator.Equals, "networkId", networkId);
+ 
+       SqlStatement stmt = sb.GetStatement(true);
+       return ObjectFactory.GetCollection<TuningDetail>(stmt.Execute());
+      }
+
     /// <summary>
     /// Retrieves an entity given it's id.
     /// </summary>

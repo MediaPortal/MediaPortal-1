@@ -22,6 +22,7 @@ using System;
 using System.Windows.Forms;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
+using System.Collections.Generic;
 
 #pragma warning disable 108
 
@@ -42,7 +43,14 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel label8;
     private MPComboBox cbDeinterlace;
     private MPGroupBox mpGroupBoxAdditional;
+    private MPGroupBox gbRecording;
+    private MPListView lvIncludeScheduleTypes;
+    private MPCheckBox cbUseQuickRecordMenu;
+    private ColumnHeader clIncludedSchedules;
+    private MPButton btQuickRecordScheduleUp;
+    private MPButton btQuickRecordScheduleDown;
     public int pluginVersion;
+    private readonly Dictionary<ListViewItem, string> _listItemScheduleLookup = new Dictionary<ListViewItem, string>();
 
     public TV()
       : this("TV") {}
@@ -84,11 +92,19 @@ namespace MediaPortal.Configuration.Sections
       this.label8 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.cbDeinterlace = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpGroupBoxAdditional = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.gbRecording = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.btQuickRecordScheduleDown = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btQuickRecordScheduleUp = new MediaPortal.UserInterface.Controls.MPButton();
+      this.lvIncludeScheduleTypes = new MediaPortal.UserInterface.Controls.MPListView();
+      this.clIncludedSchedules = new System.Windows.Forms.ColumnHeader();
+      this.cbUseQuickRecordMenu = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox3.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.channelNumberMaxLengthNumUpDn)).BeginInit();
       this.groupBox5.SuspendLayout();
       this.mpGroupBoxAdditional.SuspendLayout();
+      this.gbRecording.SuspendLayout();
       this.SuspendLayout();
+      
       // 
       // radioButton1
       // 
@@ -256,9 +272,81 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBoxAdditional.TabIndex = 16;
       this.mpGroupBoxAdditional.TabStop = false;
       this.mpGroupBoxAdditional.Text = "Additional settings";
+       
+       // 
+       // gbRecording
+       // 
+       this.gbRecording.Controls.Add(this.btQuickRecordScheduleDown);
+       this.gbRecording.Controls.Add(this.btQuickRecordScheduleUp);
+       this.gbRecording.Controls.Add(this.lvIncludeScheduleTypes);
+       this.gbRecording.Controls.Add(this.cbUseQuickRecordMenu);
+       this.gbRecording.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+       this.gbRecording.Location = new System.Drawing.Point(4, 181);
+       this.gbRecording.Name = "gbRecording";
+       this.gbRecording.Size = new System.Drawing.Size(267, 243);
+       this.gbRecording.TabIndex = 17;
+       this.gbRecording.TabStop = false;
+       this.gbRecording.Text = "Recording";
+       
+       // 
+       // btQuickRecordScheduleDown
+       // 
+       this.btQuickRecordScheduleDown.Location = new System.Drawing.Point(225, 130);
+       this.btQuickRecordScheduleDown.Name = "btQuickRecordScheduleDown";
+       this.btQuickRecordScheduleDown.Size = new System.Drawing.Size(34, 23);
+       this.btQuickRecordScheduleDown.TabIndex = 3;
+       this.btQuickRecordScheduleDown.Text = "Dw";
+       this.btQuickRecordScheduleDown.UseVisualStyleBackColor = true;
+       this.btQuickRecordScheduleDown.Click += new System.EventHandler(this.btQuickRecordScheduleDown_Click);
+       
+       // 
+       // btQuickRecordScheduleUp
+       // 
+       this.btQuickRecordScheduleUp.Location = new System.Drawing.Point(225, 101);
+       this.btQuickRecordScheduleUp.Name = "btQuickRecordScheduleUp";
+       this.btQuickRecordScheduleUp.Size = new System.Drawing.Size(34, 23);
+       this.btQuickRecordScheduleUp.TabIndex = 2;
+       this.btQuickRecordScheduleUp.Text = "Up";
+       this.btQuickRecordScheduleUp.UseVisualStyleBackColor = true;
+       this.btQuickRecordScheduleUp.Click += new System.EventHandler(this.btQuickRecordScheduleUp_Click);
+        
+       // 
+       // lvIncludeScheduleTypes
+       // 
+       this.lvIncludeScheduleTypes.AllowDrop = true;
+       this.lvIncludeScheduleTypes.AllowRowReorder = true;
+       this.lvIncludeScheduleTypes.CheckBoxes = true;
+       this.lvIncludeScheduleTypes.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {this.clIncludedSchedules});
+       this.lvIncludeScheduleTypes.FullRowSelect = true;
+       this.lvIncludeScheduleTypes.Location = new System.Drawing.Point(16, 42);
+       this.lvIncludeScheduleTypes.MultiSelect = false;
+       this.lvIncludeScheduleTypes.Name = "lvIncludeScheduleTypes";
+       this.lvIncludeScheduleTypes.Size = new System.Drawing.Size(203, 182);
+       this.lvIncludeScheduleTypes.TabIndex = 1;
+       this.lvIncludeScheduleTypes.UseCompatibleStateImageBehavior = false;
+       this.lvIncludeScheduleTypes.View = System.Windows.Forms.View.Details;
+       
+       // 
+       // clIncludedSchedules
+       // 
+       this.clIncludedSchedules.Text = "Include schedule types";
+       this.clIncludedSchedules.Width = 198;
+       
+       // 
+       // cbUseQuickRecordMenu
+       // 
+       this.cbUseQuickRecordMenu.AutoSize = true;
+       this.cbUseQuickRecordMenu.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+       this.cbUseQuickRecordMenu.Location = new System.Drawing.Point(16, 19);
+       this.cbUseQuickRecordMenu.Name = "cbUseQuickRecordMenu";
+       this.cbUseQuickRecordMenu.Size = new System.Drawing.Size(191, 17);
+       this.cbUseQuickRecordMenu.TabIndex = 0;
+       this.cbUseQuickRecordMenu.Text = "Use quick record menu in TV guide";
+       this.cbUseQuickRecordMenu.UseVisualStyleBackColor = true; 
       // 
       // TV
       // 
+      this.Controls.Add(this.gbRecording);
       this.Controls.Add(this.mpGroupBoxAdditional);
       this.Controls.Add(this.groupBox5);
       this.Controls.Add(this.groupBox3);
@@ -270,6 +358,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox5.ResumeLayout(false);
       this.groupBox5.PerformLayout();
       this.mpGroupBoxAdditional.ResumeLayout(false);
+      this.gbRecording.ResumeLayout(false);
+      this.gbRecording.PerformLayout();
       this.ResumeLayout(false);
     }
 
@@ -299,6 +389,90 @@ namespace MediaPortal.Configuration.Sections
           DeInterlaceMode = 3;
         }
         cbDeinterlace.SelectedIndex = DeInterlaceMode;
+        //  Load quick record menu options
+        cbUseQuickRecordMenu.Checked = xmlreader.GetValueAsBool("mytv", "usequickrecordmenu", false);
+ 
+        string selectedSchedulesValue = xmlreader.GetValueAsString("mytv", "selectedquickrecordschedules", string.Empty);
+ 
+        if (selectedSchedulesValue == null)
+        selectedSchedulesValue = string.Empty;
+
+        string[] scheduleOrder = xmlreader.GetValueAsString("mytv", "quickrecordscheduleorder", string.Empty).Split(new char[] { ',' });
+        List<string> scheduleOrderList = new List<string>(scheduleOrder);
+ 
+        if (!scheduleOrderList.Contains("Once")
+         || !scheduleOrderList.Contains("Daily")
+         || !scheduleOrderList.Contains("Weekly")
+         || !scheduleOrderList.Contains("EveryTimeOnThisChannel")
+         || !scheduleOrderList.Contains("EveryTimeOnEveryChannel")
+         || !scheduleOrderList.Contains("Weekends")
+         || !scheduleOrderList.Contains("WorkingDays")
+         || !scheduleOrderList.Contains("WeeklyEveryTimeOnThisChannel")
+         || !scheduleOrderList.Contains("SeriesLink")
+           )
+         {
+           scheduleOrderList = new List<string>() { "Once", "Daily", "Weekly", "EveryTimeOnThisChannel", "EveryTimeOnEveryChannel", "Weekends", "WorkingDays", "WeeklyEveryTimeOnThisChannel", "SeriesLink" };
+         }
+ 
+         _listItemScheduleLookup.Clear();
+         lvIncludeScheduleTypes.Items.Clear();
+ 
+         string[] selectedSchedules = xmlreader.GetValueAsString("mytv", "selectedquickrecordschedules", string.Empty).Split(new char[] { ',' });
+         List<string> selectedSchedulesList = new List<string>(selectedSchedules);
+ 
+        //  Populate the list
+         foreach (string scheduleItem in scheduleOrderList)
+         {
+           string scheduleDescription = string.Empty;
+ 
+           switch (scheduleItem)
+           {
+             case "Once":
+               scheduleDescription = "Once";
+               break;
+             case "Daily":
+               scheduleDescription = "Daily";
+               break;
+             case "Weekly":
+               scheduleDescription = "Weekly";
+               break;
+             case "EveryTimeOnThisChannel":
+               scheduleDescription = "Every time on this channel";
+               break;
+             case "EveryTimeOnEveryChannel":
+               scheduleDescription = "Every time on every channel";
+               break;
+             case "Weekends":
+               scheduleDescription = "Saturday/Sunday";
+               break;
+             case "WorkingDays":
+               scheduleDescription = "Monday-Friday";
+               break;
+             case "WeeklyEveryTimeOnThisChannel":
+               scheduleDescription = "Weekly every time on this channel";
+               break;
+             case "SeriesLink":
+               scheduleDescription = "Series link";
+               break;
+           }
+
+          if (scheduleDescription == string.Empty)
+             continue;
+ 
+           ListViewItem newItem = new ListViewItem();
+ 
+          newItem.Text = scheduleDescription;
+ 
+ 
+           if (selectedSchedulesList.Contains(scheduleItem))
+             newItem.Checked = true;
+           else
+             newItem.Checked = false;
+ 
+           lvIncludeScheduleTypes.Items.Add(newItem);
+           _listItemScheduleLookup.Add(newItem, scheduleItem);
+         }
+ 
       }
     }
 
@@ -320,6 +494,26 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("mytv", "byindex", byIndexCheckBox.Checked);
         xmlwriter.SetValueAsBool("mytv", "showchannelnumber", showChannelNumberCheckBox.Checked);
         xmlwriter.SetValue("mytv", "channelnumbermaxlength", channelNumberMaxLengthNumUpDn.Value);
+        //  Save quick record menu options
+         xmlwriter.SetValueAsBool("mytv", "usequickrecordmenu", cbUseQuickRecordMenu.Checked);
+ 
+         //  Build a list of selected items
+         string selectedItems = string.Empty;
+         string scheduleOrder = string.Empty;
+ 
+         foreach (ListViewItem item in lvIncludeScheduleTypes.Items)
+         {
+           string scheduleName = _listItemScheduleLookup[item];
+           scheduleOrder += (scheduleOrder != string.Empty ? "," : string.Empty) + scheduleName;
+ 
+           if (item.Checked)
+             selectedItems += (selectedItems != string.Empty ? "," : string.Empty) + scheduleName;
+ 
+         }
+ 
+         xmlwriter.SetValue("mytv", "quickrecordscheduleorder", scheduleOrder);
+         xmlwriter.SetValue("mytv", "selectedquickrecordschedules", selectedItems);
+ 
       }
     }
 
@@ -330,5 +524,46 @@ namespace MediaPortal.Configuration.Sections
         cbTurnOnTv.Checked = true;
       }
     }
+ 
+private void btQuickRecordScheduleUp_Click(object sender, EventArgs e)
+    {
+      if (lvIncludeScheduleTypes.SelectedItems.Count != 1)
+         return;
+ 
+       ListViewItem selectedItem = lvIncludeScheduleTypes.SelectedItems[0];
+ 
+       int selectedItemIndex = lvIncludeScheduleTypes.Items.IndexOf(selectedItem);
+ 
+       lvIncludeScheduleTypes.Items.RemoveAt(selectedItemIndex);
+ 
+       selectedItemIndex--;
+       if (selectedItemIndex < 0)
+         selectedItemIndex = 0;
+ 
+       lvIncludeScheduleTypes.Items.Insert(selectedItemIndex, selectedItem);
+       selectedItem.Selected = true;
+       lvIncludeScheduleTypes.Select();
+     }
+ 
+     private void btQuickRecordScheduleDown_Click(object sender, EventArgs e)
+     {
+       if (lvIncludeScheduleTypes.SelectedItems.Count != 1)
+         return;
+ 
+       ListViewItem selectedItem = lvIncludeScheduleTypes.SelectedItems[0];
+ 
+       int selectedItemIndex = lvIncludeScheduleTypes.Items.IndexOf(selectedItem);
+ 
+       lvIncludeScheduleTypes.Items.RemoveAt(selectedItemIndex);
+ 
+       selectedItemIndex++;
+       if (selectedItemIndex > lvIncludeScheduleTypes.Items.Count)
+         selectedItemIndex = lvIncludeScheduleTypes.Items.Count;
+ 
+       lvIncludeScheduleTypes.Items.Insert(selectedItemIndex, selectedItem);
+       selectedItem.Selected = true;
+       lvIncludeScheduleTypes.Select();
+     }
+
   }
 }

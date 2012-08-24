@@ -328,6 +328,7 @@ namespace TvPlugin
         {
           CurrentProgram = new Program(value.IdChannel, value.StartTime, value.EndTime, value.ProgramName, "",
                                        "", Program.ProgramState.None, DateTime.MinValue, "", "", "", "", 0, "", 0);
+          CurrentProgram.SeriesId = value.SeriesId;
         }        
       }
     }
@@ -336,7 +337,7 @@ namespace TvPlugin
 
     #region Static methods
 
-    private static string GetRecordingDateTime(Schedule rec)
+    internal static string GetRecordingDateTime(Schedule rec)
     {
       return String.Format("{0} {1} - {2}",
                            Utils.GetShortDayString(rec.StartTime),
@@ -344,8 +345,8 @@ namespace TvPlugin
                            rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
     }
 
-    public static bool IsRecordingProgram(Program program, out Schedule recordingSchedule,
-                                           bool filterCanceledRecordings)
+    internal static bool IsRecordingProgram(Program program, out Schedule recordingSchedule,
+                                            bool filterCanceledRecordings)
     {
       recordingSchedule = null;
       
@@ -1057,8 +1058,8 @@ namespace TvPlugin
       Update();
     }
 
-    private static void CancelProgram(Program program, Schedule schedule, int dialogId)
-    {
+     internal static void CancelProgram(Program program, Schedule schedule, int dialogId)
+         {
       Log.Debug("TVProgammInfo.CancelProgram - programm = {0}", program.ToString());
       Log.Debug("                            - schedule = {0}", schedule.ToString());
       Log.Debug(" ProgramID = {0}            ScheduleID = {1}", program.IdProgram, schedule.IdSchedule);
@@ -1162,7 +1163,8 @@ namespace TvPlugin
 
           schedule.PreRecordInterval = saveSchedule.PreRecordInterval;
           schedule.PostRecordInterval = saveSchedule.PostRecordInterval;
-          schedule.ScheduleType = (int)ScheduleRecordingType.Once; // needed for layer.GetConflictingSchedules(...)
+          schedule.ScheduleType = (int)ScheduleRecordingType.Once; // needed for layer.GetConflictingSchedules(...)if (scheduleType == (int)ScheduleRecordingType.SeriesLink)
+          schedule.SeriesId = program.SeriesId;
         }
       }
       else
@@ -1173,6 +1175,8 @@ namespace TvPlugin
         schedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
         schedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
         schedule.ScheduleType = scheduleType;
+        if (scheduleType == (int)ScheduleRecordingType.SeriesLink
+            schedule.SeriesId = program.SeriesId;
       }
 
       // check if this program is conflicting with any other already scheduled recording or not viewable cause isn't assigned to a card
@@ -1400,7 +1404,13 @@ namespace TvPlugin
         dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WorkingDays)));
         dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WeekendDays)));
         dlg.AddLocalizedString(990000); // 990000=Weekly everytime on this channel
-
+         //  If the program has series link information (Sky UK/IT/AU / FreeSat)
+         bool seriesLinkAvailable = (CurrentProgram.SeriesId != "0");
+         if (seriesLinkAvailable)
+         {
+           //  200092=Series Link
+           dlg.AddLocalizedString(210092);
+         }
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel == -1)
         {
@@ -1434,6 +1444,9 @@ namespace TvPlugin
           case 7://Weekly everytime, this channel
             scheduleType = (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel;
             break;
+          case 8: //  Series Link
+             scheduleType = (int)ScheduleRecordingType.SeriesLink;
+             break;
         }
         CreateProgram(CurrentProgram, scheduleType, GetID);
 

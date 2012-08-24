@@ -43,7 +43,8 @@ namespace TvDatabase
     EveryTimeOnEveryChannel,
     Weekends,
     WorkingDays,
-    WeeklyEveryTimeOnThisChannel
+    WeeklyEveryTimeOnThisChannel,
+    SeriesLink
   }
 
   /// <summary>
@@ -80,7 +81,7 @@ namespace TvDatabase
     [TableColumn("canceled", NotNull = true)] private DateTime canceled;
     [TableColumn("recommendedCard", NotNull = true)] private int recommendedCard;
     [TableColumn("series", NotNull = true)] private bool series;
-
+    [TableColumn("seriesId", NotNull = false, NullValue = "0")] private string seriesId;
     #endregion
 
     #region Constructors
@@ -109,6 +110,21 @@ namespace TvDatabase
       recommendedCard = -1;
     }
 
+    /// <summary>
+    /// Gets/Sets the series id
+    /// </summary>
+    public string SeriesId
+    {
+      get
+      {
+        return seriesId;
+      }
+      set
+      {
+        seriesId = value;
+      }
+    }
+ 
     /// <summary> 
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
     /// </summary> 
@@ -685,6 +701,9 @@ namespace TvDatabase
 
         case (int)ScheduleRecordingType.WorkingDays:
           progs = Program.RetrieveWorkingDays(schedule.startTime, schedule.endTime, schedule.ReferencedChannel().IdChannel);
+          break;
+        case (int)ScheduleRecordingType.SeriesLink:
+          progs = Program.RetrieveBySeriesId(schedule.SeriesId, schedule.ReferencedChannel().IdChannel);
           break;
       }
 
