@@ -1117,7 +1117,7 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    /// <summary>
+    /// <summary
     /// Sets the pids for the recorder
     /// </summary>
     protected void SetRecorderPids()
@@ -1354,7 +1354,15 @@ namespace TvLibrary.Implementations.DVB
              _tsFilterInterface.TimeShiftSetParams(_subChannelIndex, _parameters.MinimumFiles, _parameters.MaximumFiles,
                                                    _parameters.MaximumFileSize);
              _tsFilterInterface.TimeShiftSetTimeShiftingFileNameW(_subChannelIndex, fileName);
- 
+             _tsFilterInterface.SetCustomDataFilename(_subChannelIndex, CustomFileName);
+              Log.Log.WriteFile("subch:{0} SetTimeCustomFilename {1}", _subChannelId, CustomFileName);
+          
+             foreach (int i in Pids)
+             {
+                 Log.Log.WriteFile("subch:{0} Added Custom Pid {1}", _subChannelId, i);
+                 _tsFilterInterface.AddPidtoCustomData(_subChannelIndex, i);
+             }
+            
              if (CurrentChannel == null)
              {
                  Log.Log.Error("CurrentChannel is null when trying to start timeshifting");
@@ -1367,12 +1375,7 @@ namespace TvLibrary.Implementations.DVB
              Log.Log.WriteFile("subch:{0} SetTimeShiftFileName fill in pids", _subChannelId);
              _startTimeShifting = false;
              SetTimeShiftPids();
-             _tsFilterInterface.SetCustomDataFilename(_subChannelIndex, CustomFileName);
-             foreach (int i in Pids)
-             {
-                 _tsFilterInterface.AddPidtoCustomData(_subChannelIndex, i);
-             }
-            Log.Log.WriteFile("subch:{0}-{1} tswriter StartTimeshifting...", _subChannelId, _subChannelIndex);
+             Log.Log.WriteFile("subch:{0}-{1} tswriter StartTimeshifting...", _subChannelId, _subChannelIndex);
              _tsFilterInterface.TimeShiftStart(_subChannelIndex);
             _graphState = GraphState.TimeShifting;
          }

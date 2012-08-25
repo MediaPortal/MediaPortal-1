@@ -71,8 +71,9 @@ namespace TvService
     #region events & delegates
 
     public delegate TvResult StartCardTuneDelegate(ref IUser user, ref string fileName);
-    public event StartCardTuneDelegate OnStartCardTune;    
-
+    public event StartCardTuneDelegate OnStartCardTune;
+    public delegate TvResult StartCardTuneDelegateWithCustom(ref IUser user, ref string fileName,ref string CustomFileName, ref List<int> Pids);
+    public event StartCardTuneDelegateWithCustom OnStartCardTuneWithCustom;  
     protected abstract bool OnStartTune(IUser user);
 
     #endregion    
@@ -186,8 +187,51 @@ namespace TvService
       }
       return tvResult;
     }
+    public TvResult CardTuneWithCustom(ITvCardHandler tvcard, ref IUser user, IChannel channel, Channel dbChannel, ICardTuneReservationTicket ticket,string CustomFileName, List<int> Pids)
+    {
+        TvResult tvResult = TvResult.AllCardsBusy;
+        bool ticketFound;
+        bool isTuningPending = CardReservationHelper.GetIsTuningPending(tvcard, ticket, out ticketFound);
 
-    public ICardTuneReservationTicket RequestCardTuneReservation(ITvCardHandler tvcard, IChannel tuningDetail, IUser user, int idChannel)
+        try
+        {
+            if (isTuningPending && ticketFound)
+            {
+                Log.Debug("CardReservationBase: tvcard={0}, user={1}, dbChannel={2}, ticket={3}, tunestate={4}, stopstate={5}", tvcard.DataBaseCard.IdCard, user.Name, dbChannel.IdChannel, ticket.Id, tvcard.Tuner.CardTuneState, tvcard.Tuner.CardStopState);
+                tvResult = tvcard.Tuner.CardTune(ref user, channel, dbChannel);
+
+                if (tvResult == TvResult.Succeeded)
+                {
+                    if (OnStartCardTuneWithCustom != null)
+                    {
+                        if (!_tvController.IsTimeShifting(ref user))
+                        {
+                            CleanTimeShiftFiles(tvcard.DataBaseCard.TimeShiftFolder,
+                                                String.Format("live{0}-{1}.ts", user.CardId, user.SubChannel));
+                        }
+
+                        string timeshiftFileName = String.Format(@"{0}\live{1}-{2}.ts", tvcard.DataBaseCard.TimeShiftFolder,
+                                                                 user.CardId,
+                                                                 user.SubChannel);
+                        tvResult = OnStartCardTuneWithCustom(ref user, ref timeshiftFileName,ref CustomFileName,ref Pids);
+                    }
+                }
+
+                CardReservationHelper.SetCardStateBasedOnTVresult(tvcard, tvResult);
+            }
+            else // state is not tuning, some other card tune session is busy.
+            {
+            }
+        }
+        finally
+        {
+            CardReservationHelper.RemoveTuneTicket(tvcard, ticket, ticketFound);
+            tvcard.Tuner.CleanUpPendingTune(ticket.PendingSubchannel);
+        }
+        return tvResult;
+    }
+
+    public ICardTuneReservationTicket RequestCardTuneReservation(ITvCardHandler tvcard, IChannel tuningDetail, IUser user)
     {
       ICardTuneReservationTicket cardTuneReservationTicket = null;
       var layer = new TvBusinessLayer();
