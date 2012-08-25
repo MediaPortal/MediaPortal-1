@@ -151,8 +151,7 @@ namespace MediaPortal.Util
     private static HashSet<string> m_ImageExtensions = new HashSet<string>();
 
     private static string[] _artistNamePrefixes;
-    private static string[] _movieNamePrefixes;
-
+    
     private static bool m_bHideExtensions = false;
     private static bool enableGuiSounds;
 
@@ -178,10 +177,6 @@ namespace MediaPortal.Util
         m_bHideExtensions = xmlreader.GetValueAsBool("gui", "hideextensions", true);
         string artistNamePrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
         _artistNamePrefixes = artistNamePrefixes.Split(',');
-
-        // Movie title prefix strip
-        string movieNamePrefixes = xmlreader.GetValueAsString("moviedatabase", "titleprefixes", "The, Les, Die");
-        _movieNamePrefixes = movieNamePrefixes.Split(',');
 
         string strTmp = xmlreader.GetValueAsString("music", "extensions", AudioExtensionsDefault);
         Tokens tok = new Tokens(strTmp, new[] {','});
@@ -3802,9 +3797,15 @@ namespace MediaPortal.Util
     // Move the prefix of movie to the end of the string for better sorting
     public static bool StripMovieNamePrefix(ref string movieName, bool appendPrefix)
     {
+      string[] movieNamePrefixes;
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
+      {
+        // Movie title prefix strip
+        movieNamePrefixes = xmlreader.GetValueAsString("moviedatabase", "titleprefixes", "The, Les, Die").Split(',');
+      }
       string temp = movieName.ToLower();
 
-      foreach (string s in _movieNamePrefixes)
+      foreach (string s in movieNamePrefixes)
       {
         if (s.Length == 0)
           continue;

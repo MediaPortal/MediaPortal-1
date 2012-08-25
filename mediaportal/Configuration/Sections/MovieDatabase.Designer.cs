@@ -3438,6 +3438,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbTitlePrefixes.Name = "tbTitlePrefixes";
       this.tbTitlePrefixes.Size = new System.Drawing.Size(146, 20);
       this.tbTitlePrefixes.TabIndex = 17;
+      this.tbTitlePrefixes.Leave += new System.EventHandler(this.tbTitlePrefixes_TextChanged);
       // 
       // checkBoxStripTitlePrefix
       // 

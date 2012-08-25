@@ -3390,7 +3390,6 @@ namespace MediaPortal.Configuration.Sections
       {
         // Strip movie title prefix
         xmlwriter.SetValueAsBool("moviedatabase", "striptitleprefixes", checkBoxStripTitlePrefix.Checked);
-        xmlwriter.SetValue("moviedatabase", "titleprefixes", tbTitlePrefixes.Text);
       }
     }
 
@@ -4908,6 +4907,15 @@ namespace MediaPortal.Configuration.Sections
         mpDeleteGrabber.Enabled = false;
         mpComboBoxAvailableDatabases.Enabled = false;
         mpButtonAddGrabber.Enabled = false;
+      }
+    }
+
+    private void tbTitlePrefixes_TextChanged(object sender, EventArgs e)
+    {
+      using (Settings xmlwriter = new MPSettings())
+      {
+        // Strip movie title prefix
+        xmlwriter.SetValue("moviedatabase", "titleprefixes", tbTitlePrefixes.Text);
       }
     }
 
