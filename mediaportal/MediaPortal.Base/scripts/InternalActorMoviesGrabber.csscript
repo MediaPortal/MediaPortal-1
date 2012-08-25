@@ -57,10 +57,10 @@ internal class InternalGrabber : IIMDBInternalScriptGrabber
     //Update title/Year
 		string rxTitleBlock = "<title>.*?</title>";
 		string titleBlock = Regex.Match(_strBody, rxTitleBlock, RegexOptions.Singleline | RegexOptions.IgnoreCase).Value.Trim();
-		string regex = @"<title>(?<movieTitle>.*?)[(](?<movieYear>.{4})";
+		string regex = @"<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\d{4})|<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\?{4})";
     string title = Regex.Match(titleBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["movieTitle"].Value;
     int year = 0;
-    int.TryParse(Regex.Match(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["movieYear"].Value.Trim(), out year);
+    int.TryParse(Regex.Match(titleBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["movieYear"].Value.Trim(), out year);
     
     if (title != string.Empty)
     {
