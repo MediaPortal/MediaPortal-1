@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 USE %TvLibrary%;
 GO
 ALTER TABLE Channel ADD channelNumber INT NOT NULL CONSTRAINT [DF_Channel_ChannelNumber] DEFAULT 10000
@@ -6,3 +7,22 @@ UPDATE Channel SET channelNumber = (SELECT TOP 1 t.channelNumber FROM TuningDeta
 GO
 UPDATE Version SET versionNumber=61
 GO
+=======
+use %TvLibrary%
+GO
+ 
+ALTER TABLE program
+  ADD seriesId varchar(200)
+GO
+
+ALTER TABLE program
+  ADD seriesTermination TINYINT
+GO
+
+ALTER TABLE schedule
+  ADD seriesId varchar(200)
+GO
+
+UPDATE Version SET versionNumber=61
+GO#
+>>>>>>> 7716a4f... Updated .sql files due to no CRLF being entered in notepad.
