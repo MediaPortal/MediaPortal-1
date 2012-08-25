@@ -3045,6 +3045,7 @@ namespace TvService
     {
         cardChanged = false;
         VirtualCard initialCard = GetValidVirtualCard(user);
+        
         string intialTimeshiftingFilename = GetIntialTimeshiftingFilename(initialCard);
         var cardResImpl = new CardReservationTimeshifting(this);
         ICollection<ICardTuneReservationTicket> tickets = null;
@@ -3111,6 +3112,8 @@ namespace TvService
             }
             IUser userCopy = UserFactory.CreateBasicUser(user.Name, cardInfo.Id, user.Priority, user.IsAdmin);
             SetupTimeShiftingFolders(cardInfo);
+            string CustomFilenameNew = cardInfo.Card.TimeShiftFolder + "\\" + CustomFileName;
+           
             ITvCardHandler tvcard = _cards[cardInfo.Id];
             try
             {
@@ -3136,7 +3139,7 @@ namespace TvService
 
                 //tune to the new channel                  
                 IChannel tuneChannel = cardInfo.TuningDetail;
-                result = CardTuneWithCustom(ref userCopy, tuneChannel, channel, ticket, cardResImpl,CustomFileName,Pids);
+                result = CardTuneWithCustom(ref userCopy, tuneChannel, channel, ticket, cardResImpl, CustomFilenameNew, Pids);
                 if (!HasTvSucceeded(result))
                 {
                     HandleTvException(tickets, out failedCardId, cardInfo, tvcard);
@@ -3426,6 +3429,15 @@ namespace TvService
       if (initialCard != null && initialCard.TimeShiftFileName != null)
       {
         intialTimeshiftingFilename = initialCard.TimeShiftFileName;
+      }
+      return intialTimeshiftingFilename;
+    }
+    private string GetIntialCustomFilename(VirtualCard initialCard, string CustomFilename)
+    {
+      string intialTimeshiftingFilename = "";
+      if (initialCard != null && initialCard.TimeShiftFileName != null)
+      {
+          intialTimeshiftingFilename = (initialCard.TimeshiftFolder + "\\" + CustomFilename);
       }
       return intialTimeshiftingFilename;
     }

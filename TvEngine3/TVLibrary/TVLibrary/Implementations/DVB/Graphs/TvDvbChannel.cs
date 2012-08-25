@@ -1354,6 +1354,7 @@ namespace TvLibrary.Implementations.DVB
              _tsFilterInterface.TimeShiftSetParams(_subChannelIndex, _parameters.MinimumFiles, _parameters.MaximumFiles,
                                                    _parameters.MaximumFileSize);
              _tsFilterInterface.TimeShiftSetTimeShiftingFileNameW(_subChannelIndex, fileName);
+
              _tsFilterInterface.SetCustomDataFilename(_subChannelIndex, CustomFileName);
               Log.Log.WriteFile("subch:{0} SetTimeCustomFilename {1}", _subChannelId, CustomFileName);
           
