@@ -792,8 +792,10 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         List<ushort> HwPids = new List<ushort>();
-
-        _mapSubChannels[subChannel].Pids = pids;
+        if (_mapSubChannels.ContainsKey(subChannel))
+        {
+            _mapSubChannels[subChannel].Pids = pids;
+        }
 
         Dictionary<int, ConditionalAccessContext>.Enumerator enSubch = _mapSubChannels.GetEnumerator();
         while (enSubch.MoveNext())
@@ -900,7 +902,7 @@ namespace TvLibrary.Implementations.DVB
               }
               channel.ModulationType = channel.InnerFecRate == BinaryConvolutionCodeRate.Rate8_9
                                          ? ModulationType.Mod16Qam
-                                         : ModulationType.ModBpsk;
+                                         : ModulationType.ModQpsk;
             }
             //Set the Hauppauge Modulation type
             /*if (channel.ModulationType == ModulationType.ModQpsk)

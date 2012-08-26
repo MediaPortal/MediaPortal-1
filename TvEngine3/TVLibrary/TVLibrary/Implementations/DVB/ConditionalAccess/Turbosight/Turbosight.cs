@@ -562,26 +562,21 @@ namespace TvLibrary.Implementations.DVB
       NbcTuningParams command = new NbcTuningParams();
       // Default: tuning with "auto" is slower, so avoid it if possible.
       command.DvbsStandard = TbsDvbsStandard.Auto;
-
       // FEC rate
       command.InnerFecRate = ch.InnerFecRate;
       Log.Log.Debug("  inner FEC rate = {0}", command.InnerFecRate);
 
       // Modulation
-      if (ch.ModulationType == ModulationType.ModNotSet)
+      if (ch.ModulationType != ModulationType.ModNotDefined && ch.ModulationType != ModulationType.ModNotSet)
       {
-        ch.ModulationType = ModulationType.ModQpsk;
-        command.DvbsStandard = TbsDvbsStandard.Dvbs;
-      }
-      else if (ch.ModulationType == ModulationType.ModQpsk)
-      {
-        ch.ModulationType = ModulationType.ModNbcQpsk;
-        command.DvbsStandard = TbsDvbsStandard.Dvbs2;
-      }
-      else if (ch.ModulationType == ModulationType.Mod8Psk)
-      {
-        ch.ModulationType = ModulationType.ModNbc8Psk;
-        command.DvbsStandard = TbsDvbsStandard.Dvbs2;
+          if (ch.ModulationType == ModulationType.ModNbcQpsk || ch.ModulationType == ModulationType.ModNbc8Psk)
+          {
+              command.DvbsStandard = TbsDvbsStandard.Dvbs2;
+          }
+          else
+          {
+              command.DvbsStandard = TbsDvbsStandard.Dvbs;
+          }
       }
       command.ModulationType = ch.ModulationType;
       Log.Log.Debug("  modulation     = {0}", ch.ModulationType);
