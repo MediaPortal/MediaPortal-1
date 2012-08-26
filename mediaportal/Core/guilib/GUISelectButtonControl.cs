@@ -38,16 +38,24 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textureNoFocus")] protected string _textureNoFocusName = "";
     [XMLSkinElement("texturebg")] protected string _backgroundTextureName = "";
     [XMLSkinElement("textureLeft")] protected string _leftTextureName = "";
+    [XMLSkinAttribute("textureLeft","height")]
     [XMLSkinElement("textureLeftHeight")] private int _leftTextureHeight = 16;
+    [XMLSkinAttribute("textureLeft", "width")]
     [XMLSkinElement("textureLeftWidth")] private int _leftTextureWidth = 16;
     [XMLSkinElement("textureRight")] protected string _rightTextureName = "";
+    [XMLSkinAttribute("textureRight", "height")]
     [XMLSkinElement("textureRightHeight")] private int _rightTextureHeight = 16;
+    [XMLSkinAttribute("textureRight", "width")]
     [XMLSkinElement("textureRightWidth")] private int _rightTextureWidth = 16;
     [XMLSkinElement("textureLeftFocus")] protected string _leftFocusName = "";
+    [XMLSkinAttribute("textureLeftFocus", "height")]
     [XMLSkinElement("textureLeftFocusHeight")] private int _leftTextureFocusHeight = 16;
+    [XMLSkinAttribute("textureLeftFocus", "width")]
     [XMLSkinElement("textureLeftFocusWidth")] private int _leftTextureFocusWidth = 16;
     [XMLSkinElement("textureRightFocus")] protected string _rightFocusName = "";
+    [XMLSkinAttribute("textureRightFocus", "height")]
     [XMLSkinElement("textureRightFocusHeight")] private int _rightTextureFocusHeight = 16;
+    [XMLSkinAttribute("textureRightFocus", "width")]
     [XMLSkinElement("textureRightFocusWidth")] private int _rightTextureFocusWidth = 16;
     [XMLSkinElement("textXOff")] protected int _textOffsetX = 0;
     [XMLSkinElement("textYOff")] protected int _textOffsetY = 0;
