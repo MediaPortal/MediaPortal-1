@@ -217,7 +217,6 @@ namespace MediaPortal.GUI.Video
       try
       {
         GUIListItem pItem;
-        IMDBMovie movieDetails = new IMDBMovie();
         //bool eachMovieHasDedicatedFolder = false;
         ISelectBDHandler selectBdHandler;
 
@@ -237,9 +236,7 @@ namespace MediaPortal.GUI.Video
           pItem = (GUIListItem)items[x];
           string file = string.Empty;
           bool isFolderPinProtected = (pItem.IsFolder && IsFolderPinProtected(pItem.Path));
-          IMDBMovie.SetMovieData(pItem);
-          movieDetails = (IMDBMovie)pItem.AlbumInfoTag;
-
+          
           // Skip DVD & BD backup folder
           if (pItem.IsFolder && !pItem.IsBdDvdFolder)
           {
@@ -317,6 +314,9 @@ namespace MediaPortal.GUI.Video
 
           if (!string.IsNullOrEmpty(file))
           {
+            IMDBMovie movieDetails = new IMDBMovie();
+            VideoDatabase.GetMovieInfo(file, ref movieDetails);
+
             int id = movieDetails.ID;
 
             // Set thumb for movies
@@ -369,10 +369,13 @@ namespace MediaPortal.GUI.Video
             pItem.IconImage = strThumb;
 
             strThumb = Util.Utils.ConvertToLargeCoverArt(strThumb);
+            
             if (Util.Utils.FileExistsInCache(strThumb))
             {
               pItem.ThumbnailImage = strThumb;
             }
+
+            movieDetails = null;
           } // <-- file == empty
         } // of for (int x = 0; x < items.Count; ++x)
       }

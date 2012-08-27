@@ -2730,6 +2730,7 @@ namespace MediaPortal.GUI.Video
               item.Label3 = percentWatched + "% #" + timesWatched;
             }
           }
+          
           //Do NOT add OnItemSelected event handler here, because its still there...
           facadeLayout.Add(item);
         }
@@ -3684,6 +3685,13 @@ namespace MediaPortal.GUI.Video
 
       _currentSelectedItem = facadeLayout.SelectedListItemIndex;
       IMDBMovie info = item.AlbumInfoTag as IMDBMovie;
+      
+      // Read database only once per item
+      if (item.AlbumInfoTag == null)
+      {
+        IMDBMovie.SetMovieData(item);
+        info = item.AlbumInfoTag as IMDBMovie;
+      }
 
       if (info == null)
       {
@@ -3691,7 +3699,6 @@ namespace MediaPortal.GUI.Video
       }
 
       _selectedFilename = info.VideoFileName;
-      
       IMDBMovie.SetMovieProperties(item);
       GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
 
