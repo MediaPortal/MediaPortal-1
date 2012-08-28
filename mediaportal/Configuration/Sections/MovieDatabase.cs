@@ -225,6 +225,7 @@ namespace MediaPortal.Configuration.Sections
       {
         _sharesData = (List<BaseShares.ShareData>)section.GetSetting("sharesdata");
         int dgRows = 0;
+        section.SaveSettings();
         
         foreach (BaseShares.ShareData share in _sharesData)
         {
@@ -279,6 +280,12 @@ namespace MediaPortal.Configuration.Sections
         BaseShares.ShareData share = _sharesData[e.RowIndex];
         share.ScanShare = Convert.ToBoolean(dgShares[e.ColumnIndex, e.RowIndex].Value.ToString());
         UpdateControlStatus();
+        
+        using (Settings xmlwriter = new MPSettings())
+        {
+          string shareScan = String.Format("sharescan{0}", e.RowIndex);
+          xmlwriter.SetValueAsBool("movies", shareScan, share.ScanShare);
+        }
       }
 
       if (e.ColumnIndex == 3)
@@ -286,6 +293,12 @@ namespace MediaPortal.Configuration.Sections
         BaseShares.ShareData share = _sharesData[e.RowIndex];
         share.EachFolderIsMovie = Convert.ToBoolean(dgShares[e.ColumnIndex, e.RowIndex].Value.ToString());
         UpdateControlStatus();
+
+        using (Settings xmlwriter = new MPSettings())
+        {
+          string folderMovie = String.Format("eachfolderismovie{0}", e.RowIndex);
+          xmlwriter.SetValueAsBool("movies", folderMovie, share.EachFolderIsMovie);
+        }
       }
     }
     
