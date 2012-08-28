@@ -3027,6 +3027,7 @@ namespace MediaPortal.Configuration.Sections
         "arching\r\nmovies, but movie title will use folder name.\r\nThis will not work in fo" +
         "lders with ripped DVD.");
       this.preferFileNameCheckBox.UseVisualStyleBackColor = true;
+      this.preferFileNameCheckBox.CheckedChanged += new System.EventHandler(this.preferFileNameCheckBox_CheckedChanged_1);
       // 
       // cbActorsListFetchSize
       // 

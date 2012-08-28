@@ -343,6 +343,12 @@ namespace MediaPortal.Configuration.Sections
           GetNfoFiles(availablePath, ref _nfoFiles);
         }
         
+        if (_nfoFiles.Count == 0)
+        {
+          MessageBox.Show("No nfo files found in share folders!");
+          return;
+        }
+
         ImportNfo();
       }
       else
@@ -4534,6 +4540,13 @@ namespace MediaPortal.Configuration.Sections
 
       _nfoFiles = new ArrayList();
       GetNfoFiles(fBrowser.SelectedPath, ref _nfoFiles);
+
+      if (_nfoFiles.Count == 0)
+      {
+        MessageBox.Show("No nfo files found!");
+        return;
+      }
+
       ImportNfo();
     }
 
@@ -4929,6 +4942,15 @@ namespace MediaPortal.Configuration.Sections
       {
         // Strip movie title prefix
         xmlwriter.SetValue("moviedatabase", "titleprefixes", tbTitlePrefixes.Text);
+      }
+    }
+
+    private void preferFileNameCheckBox_CheckedChanged_1(object sender, EventArgs e)
+    {
+      using (Settings xmlwriter = new MPSettings())
+      {
+        // Folder movie title
+        xmlwriter.SetValueAsBool("moviedatabase", "preferfilenameforsearch", preferFileNameCheckBox.Checked);
       }
     }
 
