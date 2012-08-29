@@ -433,10 +433,13 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
             
       if(m_bDownstreamFlush)
       {
-        //Downstream flush
-        LogDebug("vidPin : Downstream flush") ;
-        DeliverBeginFlush();
-        DeliverEndFlush();
+        if( m_dRateSeeking == 1.0 ) //MS DTV video decoder can hang if we flush in FFWD
+        {
+          //Downstream flush
+          //LogDebug("vidPin : Downstream flush") ;
+          DeliverBeginFlush();
+          DeliverEndFlush();
+        }
         m_bDownstreamFlush=false;
       }
       
@@ -741,9 +744,12 @@ HRESULT CVideoPin::OnThreadStartPlay()
   //get file-duration and set m_rtDuration
   GetDuration(NULL);
 
-  //Downstream flush
-  DeliverBeginFlush();
-  DeliverEndFlush();
+  if( m_dRateSeeking == 1.0 ) //MS DTV video decoder can hang if we flush in FFWD
+  {
+    //Downstream flush
+    DeliverBeginFlush();
+    DeliverEndFlush();
+  }
 
   //start playing
   DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
