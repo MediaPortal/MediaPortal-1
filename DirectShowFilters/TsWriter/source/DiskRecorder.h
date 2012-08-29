@@ -70,6 +70,23 @@ typedef struct stLastPtsDtsRecord
   int m_Pid ;
 } LastPtsDtsRecord;
 
+typedef struct stPidInfo2
+{
+public:
+	int elementaryPid;
+	int fakePid;
+	bool seenStart;
+	byte TsPktQ[4][188] ;
+	int  NPktQ ;
+	CTsHeader TsHeaderQ[4] ;
+	byte PesHeader[19] ;
+	int  PesHeaderLength ;
+	byte ccPrev ;
+	byte m_Pkt[188] ;
+}PidInfo2;
+
+typedef vector<stPidInfo2>::iterator ivecPidInfo2;
+
 class IFileWriter
 {
 public:
@@ -120,11 +137,10 @@ private:
 	void WriteLog(const char *fmt, ...);
 	void WriteLog(const wchar_t *fmt, ...);
 	void SetPcrPid(int pcrPid);
-	bool IsStreamWanted(int stream_type);
-	void AddStream(PidInfo2 pidInfo);
   void Flush();
 	void WriteTs(byte* tsPacket);
-  void WriteFakePAT();  
+  void WriteFakePAT();
+  void CreateFakePMT(byte* realPmt);
   void WriteFakePMT();
 
   __int64 EcPcrTime(__int64 New, __int64 Prev) ;
@@ -140,6 +156,7 @@ private:
 	HANDLE							 m_hFile;
 	CCriticalSection     m_section;
   int                  m_iPmtPid;
+  char                 m_fakePmt[MAX_SECTION_LENGTH];
   int                  m_pcrPid;
 	int									 m_iServiceId;
 	vector<PidInfo2>		 m_vecPids;

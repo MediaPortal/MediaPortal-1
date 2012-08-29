@@ -375,10 +375,10 @@ void CDiskRecorder::GetRecordingMode(int *mode)
 	*mode=(int)m_recordingMode;
 }
 
-void CDiskRecorder::SetPmtPid(int pmtPid,int serviceId,byte* pmtData,int pmtLength)
+void CDiskRecorder::SetPmtPid(int pmtPid, int serviceId, byte* pmtData, int pmtLength)
 {
 	CEnterCriticalSection enter(m_section);
-	WriteLog("Received from TvService: pmt pid:0x%x serviceId: 0x%x pmtlength:%d",pmtPid,serviceId,pmtLength);
+	WriteLog("Received from TvService: PMT PID 0x%x, service ID 0x%x, PMT length %d", pmtPid, serviceId, pmtLength);
   m_iPmtPid=pmtPid;
 	m_iServiceId=serviceId;
 	m_pPmtParser->Reset();
@@ -390,25 +390,15 @@ void CDiskRecorder::SetPmtPid(int pmtPid,int serviceId,byte* pmtData,int pmtLeng
 	section.DecodeHeader();
 	m_vecPids.clear();
 	m_AudioOrVideoSeen=false ;
-	WriteLog("Old pids cleared");
-	WriteLog("got pmt - tableid: 0x%x section_length: %d sid: 0x%x",section.table_id,section.section_length,section.table_id_extension);
-	int pcrPid;
-	bool hasCaDescriptor = false;
-	vector<PidInfo2> pidInfos;
-	if (!m_pPmtParser->DecodePmt(section,pcrPid,hasCaDescriptor,pidInfos))
+	WriteLog("Old PIDs cleared");
+	if (!m_pPmtParser->DecodePmtSection(section))
 	{
-		WriteLog("!!! PANIC - DecodePmt(...) returned FALSE !!!");
+		WriteLog("!!! PANIC - DecodePmtSection(...) returned FALSE !!!");
 		return;
 	}
-	WriteLog("PMT parsed  - Pid 0x%x ServiceId 0x%x stream count: %d",pmtPid, m_iServiceId,pidInfos.size());
-	SetPcrPid(pcrPid);
-	ivecPidInfo2 it=pidInfos.begin();
-	while (it!=pidInfos.end())
-	{
-		PidInfo2 info=*it;
-		AddStream(info);
-		++it;
-	}
+	WriteLog("PMT parsed successfully");
+  SetPcrPid(m_pPmtParser->GetPidInfo().PcrPid);
+  CreateFakePMT(pmtData);
 }
 
 void CDiskRecorder::SetVideoAudioObserver (IVideoAudioObserver* callback)
@@ -784,91 +774,6 @@ void CDiskRecorder::SetPcrPid(int pcrPid)
 		m_iPmtVersion=0;
 }
 
-bool CDiskRecorder::IsStreamWanted(int stream_type)
-{
-	return (stream_type==SERVICE_TYPE_VIDEO_MPEG1 || 
-					stream_type==SERVICE_TYPE_VIDEO_MPEG2 || 
-					stream_type==SERVICE_TYPE_VIDEO_MPEG2_DCII ||
-					stream_type==SERVICE_TYPE_VIDEO_MPEG4 || 
-					stream_type==SERVICE_TYPE_VIDEO_H264 ||
-					stream_type==SERVICE_TYPE_AUDIO_MPEG1 || 
-					stream_type==SERVICE_TYPE_AUDIO_MPEG2 || 
-					stream_type==SERVICE_TYPE_AUDIO_AC3 ||
-					stream_type==SERVICE_TYPE_AUDIO_E_AC3 ||
-					stream_type==SERVICE_TYPE_DVB_SUBTITLES2 ||
-					stream_type==DESCRIPTOR_DVB_TELETEXT ||
-          stream_type==SERVICE_TYPE_AUDIO_AAC ||
-          stream_type==SERVICE_TYPE_AUDIO_LATM_AAC
-					);
-}
-
-void CDiskRecorder::AddStream(PidInfo2 pidInfo)
-{
-  ivecPidInfo2 it = m_vecPids.begin();
-  while (it!=m_vecPids.end())
-  {
-		PidInfo2 info=*it;
-		if (info.elementaryPid==pidInfo.elementaryPid)
-      return;
-    ++it;
-  }
-  //ITV HD workaround, this enables TSWriter to timeshift / record & avoids no audio/video found.
-  if (pidInfo.streamType==SERVICE_TYPE_DVB_SUBTITLES2 && pidInfo.logicalStreamType==0xffffffff && pidInfo.elementaryPid==0xd49)
-  {
-    pidInfo.streamType=SERVICE_TYPE_VIDEO_H264;
-    pidInfo.logicalStreamType=SERVICE_TYPE_VIDEO_H264;
-    LogDebug("AddStream: set ITV HD video stream to H.264");
-  }
-  //end of workaround
-	if (IsStreamWanted(pidInfo.logicalStreamType))
-	{
-		PidInfo2 pi;
-		pi.NPktQ=0 ;
-		pi.ccPrev=255;
-		pi.seenStart=false;
-		pi.fakePid=-1;
-		pi.elementaryPid=pidInfo.elementaryPid;
-		pi.streamType=pidInfo.streamType;
-		pi.logicalStreamType=pidInfo.logicalStreamType;
-		pi.rawDescriptorSize=pidInfo.rawDescriptorSize;
-		memset(pi.rawDescriptorData,0xFF,pi.rawDescriptorSize);
-		memcpy(pi.rawDescriptorData,pidInfo.rawDescriptorData,pi.rawDescriptorSize);
-		if (pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_AC3 || pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_E_AC3 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG2 || pidInfo.streamType==SERVICE_TYPE_AUDIO_AAC  || pidInfo.streamType==SERVICE_TYPE_AUDIO_LATM_AAC)
-		{
-			pi.fakePid=DR_FAKE_AUDIO_PID;
-			DR_FAKE_AUDIO_PID++;
-			m_vecPids.push_back(pi);
-			WriteLog("add audio stream pid: 0x%x fake pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pi.fakePid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
-		}
-		else if (pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG2 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG4 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_H264 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG2_DCII)
-		{
-			pi.fakePid=DR_FAKE_VIDEO_PID;
-			DR_FAKE_VIDEO_PID++;
-			m_vecPids.push_back(pi);
-			WriteLog("add video stream pid: 0x%x fake pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pi.fakePid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);			
-		}
-		if (pidInfo.logicalStreamType==DESCRIPTOR_DVB_TELETEXT)
-		{
-			pi.fakePid=DR_FAKE_TELETEXT_PID;
-			DR_FAKE_TELETEXT_PID++;
-			m_vecPids.push_back(pi);
-			WriteLog("add teletext stream pid: 0x%x fake pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pi.fakePid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
-		}
-		else if (pidInfo.logicalStreamType==SERVICE_TYPE_DVB_SUBTITLES1 || pidInfo.logicalStreamType==SERVICE_TYPE_DVB_SUBTITLES2)
-		{
-			pi.fakePid=DR_FAKE_SUBTITLE_PID;
-			DR_FAKE_SUBTITLE_PID++;
-			m_vecPids.push_back(pi);
-			WriteLog("add subtitle stream pid: 0x%x fake pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pi.fakePid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
-		}
-
-		if (pi.elementaryPid==m_pcrPid)
-			DR_FAKE_PCR_PID=pi.fakePid;
-	}
-	else
-		WriteLog("stream rejected - pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
-}
-
 void CDiskRecorder::Flush()
 {
 	try
@@ -1049,48 +954,48 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 				info.ccPrev = m_tsHeader.ContinuityCounter ;
 
 				memcpy(info.m_Pkt,tsPacket,188);
-	
-				if (info.streamType==SERVICE_TYPE_VIDEO_MPEG1 || info.streamType==SERVICE_TYPE_VIDEO_MPEG2||info.streamType==SERVICE_TYPE_VIDEO_MPEG4||info.streamType==SERVICE_TYPE_VIDEO_H264 || info.streamType==SERVICE_TYPE_VIDEO_MPEG2_DCII)
-				{
-					//video
-					if (!info.seenStart) 
-					{
-						if (PayLoadUnitStart)
-						{
-							info.seenStart=true;
-							m_AudioOrVideoSeen=true;
-							WriteLog("start of video detected");
-	              			if(m_pVideoAudioObserver) m_pVideoAudioObserver->OnNotify(PidType::Video);
-						}
-					else return ;
-					}
-				}
-	
-				if (info.streamType==SERVICE_TYPE_AUDIO_MPEG1 || info.streamType==SERVICE_TYPE_AUDIO_MPEG2|| info.logicalStreamType==SERVICE_TYPE_AUDIO_AC3 || info.logicalStreamType==SERVICE_TYPE_AUDIO_E_AC3 || info.logicalStreamType==SERVICE_TYPE_AUDIO_AAC || info.logicalStreamType==SERVICE_TYPE_AUDIO_LATM_AAC)
-				{
-					//audio
-					if (!info.seenStart)
-					{
-						if (PayLoadUnitStart)
-						{
-							info.seenStart=true;
-							m_AudioOrVideoSeen=true;
-							WriteLog("start of audio detected");
-	              			if(m_pVideoAudioObserver) m_pVideoAudioObserver->OnNotify(PidType::Audio);
-						}
-						else return ;
-					}
-				}
-	
-				if (info.logicalStreamType==SERVICE_TYPE_DVB_SUBTITLES1 || info.streamType==SERVICE_TYPE_DVB_SUBTITLES2)
-				{
-					// subtitles
-					if (!info.seenStart)
-					{
-						if (PayLoadUnitStart) info.seenStart=true;
-						else return ;
-					}                        
-				}
+
+        if (!info.seenStart)
+        {
+          if (PayLoadUnitStart == 0)
+          {
+            return;
+          }
+          info.seenStart = true;
+          CPidTable pidTable = m_pPmtParser->GetPidInfo();
+          bool foundPid = false;
+          for (vector<VideoPid>::iterator it2 = pidTable.videoPids.begin(); it2 != pidTable.videoPids.end(); it2++)
+          {
+            if (it2->Pid == info.elementaryPid)
+            {
+              foundPid = true;
+              m_AudioOrVideoSeen = true;
+              WriteLog("start of video detected");
+              if (m_pVideoAudioObserver)
+              {
+                m_pVideoAudioObserver->OnNotify(PidType::Video);
+              }
+              break;
+            }
+          }
+          if (!foundPid)
+          {
+            for (vector<AudioPid>::iterator it2 = pidTable.audioPids.begin(); it2 != pidTable.audioPids.end(); it2++)
+            {
+              if (it2->Pid == info.elementaryPid)
+              {
+                foundPid = true;
+                m_AudioOrVideoSeen = true;
+                WriteLog("start of audio detected");
+                if (m_pVideoAudioObserver)
+                {
+                  m_pVideoAudioObserver->OnNotify(PidType::Audio);
+                }
+                break;
+              }
+            }
+          }
+        }
 	 
 				if (info.seenStart)
 				{
@@ -1210,100 +1115,165 @@ void CDiskRecorder::WriteFakePAT()
 	Write(pat,188);
 }
 
+void CDiskRecorder::CreateFakePMT(byte* realPmt)
+{
+  m_fakePmt[0] = 2; // table id - standard for PMT
+  m_fakePmt[1] = 0; // section syntax indicator and section length - we fill these once we know what the section length should be
+  m_fakePmt[2] = 0;
+  m_fakePmt[3] = (DR_FAKE_SERVICE_ID >> 8) & 0xff;
+  m_fakePmt[4] = DR_FAKE_SERVICE_ID & 0xff;
+  m_fakePmt[5] = ((m_iPmtVersion & 0x1f) << 1) | 0xc1;
+  m_fakePmt[6] = 0; // section number - standard for PMT
+  m_fakePmt[7] = 0; // last section number - standard for PMT
+  m_fakePmt[8] = 0; // PCR PID - we fill this once we know what the fake PID is
+  m_fakePmt[9] = 0;
+  m_fakePmt[10] = (char)0xf0; // program info length - we won't include program descriptors
+  m_fakePmt[11] = 0;
+
+  int fakePmtOffset = 12;
+  int realPmtOffset = 12;
+  int realPmtEndOfSection = ((realPmt[1] & 0xf) << 8) + realPmt[2] - 1;
+  int realPmtProgramInfoLength = ((realPmt[10] & 0xf) << 8) + realPmt[11];
+  realPmtOffset += realPmtProgramInfoLength;
+  CPidTable& pidTable = m_pPmtParser->GetPidInfo();
+  while (realPmtOffset + 4 < realPmtEndOfSection)
+  {
+    int stream_type = realPmt[realPmtOffset++];
+    int elementary_pid = ((realPmt[realPmtOffset] & 0x1f) << 8) + realPmt[realPmtOffset + 1];
+    realPmtOffset += 2;
+    int es_info_length = ((realPmt[realPmtOffset] & 0xf) << 8) + realPmt[realPmtOffset + 1];
+    realPmtOffset += 2;
+
+    // Is this a stream that we want to keep?
+    // If so, copy it into the fake PMT along with all its descriptors.
+    // Note that we overwrite the PID with our fake PID.
+    bool keepStream = false;
+    PidInfo2 pi;
+		pi.NPktQ = 0;
+		pi.ccPrev = 255;
+		pi.seenStart = false;
+		pi.elementaryPid = elementary_pid;
+    vector<VideoPid>::iterator it = pidTable.videoPids.begin();
+    while (it != pidTable.videoPids.end())
+    {
+      if (elementary_pid == it->Pid)
+      {
+			  pi.fakePid = DR_FAKE_VIDEO_PID++;
+        WriteLog("add video stream, PID = 0x%x, fake PID = 0x%x, stream type = 0x%x, logical stream type = 0x%x", elementary_pid, pi.fakePid, stream_type, it->StreamType);
+        keepStream = true;
+        break;
+      }
+      it++;
+    }
+    if (!keepStream)
+    {
+      vector<AudioPid>::iterator it = pidTable.audioPids.begin();
+      while (it != pidTable.audioPids.end())
+      {
+        if (elementary_pid == it->Pid)
+        {
+			    pi.fakePid = DR_FAKE_AUDIO_PID++;
+			    WriteLog("add audio stream, PID = 0x%x, fake PID = 0x%x, stream type = 0x%x, logical stream type = 0x%x", elementary_pid, pi.fakePid, stream_type, it->StreamType);
+          keepStream = true;
+          break;
+        }
+        it++;
+      }
+    }
+    if (!keepStream)
+    {
+      vector<SubtitlePid>::iterator it = pidTable.subtitlePids.begin();
+      while (it != pidTable.subtitlePids.end())
+      {
+        if (elementary_pid == it->Pid)
+        {
+			    pi.fakePid = DR_FAKE_SUBTITLE_PID++;
+          WriteLog("add subtitle stream, PID = 0x%x, fake PID = 0x%x, stream type = 0x%x, logical stream type = 0x%x", elementary_pid, pi.fakePid, stream_type, it->StreamType);
+          keepStream = true;
+          break;
+        }
+        it++;
+      }
+    }
+    if (!keepStream && elementary_pid == pidTable.TeletextPid)
+    {
+			pi.fakePid = DR_FAKE_TELETEXT_PID++;
+      WriteLog("add teletext stream, PID = 0x%x, fake PID = 0x%x, stream type = 0x%x, logical stream type = 0x%x", elementary_pid, pi.fakePid, stream_type, it->StreamType);
+      keepStream = true;
+    }
+    if (keepStream)
+    {
+      m_vecPids.push_back(pi);
+
+      m_fakePmt[fakePmtOffset++] = stream_type;
+      m_fakePmt[fakePmtOffset++] = ((pi.fakePid >> 8) & 0x1f) | 0xe0;
+      m_fakePmt[fakePmtOffset++] = pi.fakePid & 0xff;
+      m_fakePmt[fakePmtOffset++] = ((es_info_length >> 8) & 0xf) | 0xf0;
+      m_fakePmt[fakePmtOffset++] = es_info_length & 0xff;
+      memcpy(&m_fakePmt[fakePmtOffset], realPmt, es_info_length);
+      fakePmtOffset += es_info_length;
+
+      if (pi.elementaryPid == m_pcrPid)
+      {
+        WriteLog("  set fake PCR PID");
+        DR_FAKE_PCR_PID = pi.fakePid;
+      }
+    }
+    else
+    {
+      WriteLog("reject stream, PID = 0x%x, fake PID = 0x%x, stream type = 0x%x, logical stream type = 0x%x", elementary_pid, pi.fakePid, stream_type, it->StreamType);
+    }
+    realPmtOffset += es_info_length;
+  }
+
+  // Fill in the section length. This should include the 4 bytes of CRC, but not the
+  // table ID or section length bytes.
+  m_fakePmt[1] = (((fakePmtOffset + 1) >> 8) & 0xf) | 0xb0;
+  m_fakePmt[2] = (fakePmtOffset + 1) & 0xff;
+
+  // Fill in the PCR PID.
+  m_fakePmt[8] = ((DR_FAKE_PCR_PID >> 8) & 0x1f) | 0xe0;
+  m_fakePmt[9] = DR_FAKE_PCR_PID & 0xff;
+
+  DWORD crc = crc32(m_fakePmt, fakePmtOffset);
+  m_fakePmt[fakePmtOffset++] = ((crc >> 24) & 0xff);
+  m_fakePmt[fakePmtOffset++] = ((crc >> 16) & 0xff);
+  m_fakePmt[fakePmtOffset++] = ((crc >> 8) & 0xff);
+  m_fakePmt[fakePmtOffset++] = (crc & 0xff);
+}
+
 void CDiskRecorder::WriteFakePMT()
 {
-	int program_info_length=0;
-	int sectionLenght=9+2*5+5;
+  int fakePmtLength = ((m_fakePmt[1] & 0xf) << 8) + m_fakePmt[2] + 3; // includes table ID, section length bytes and CRC
+  int pointer = 0;
+  byte packet[188];
+  packet[0] = 0x47;  // sync byte
+  packet[1] = ((DR_FAKE_PMT_PID >> 8) & 0x1f) | 0x40;
+  packet[2] = DR_FAKE_PMT_PID & 0xff;
+  while (fakePmtLength > 0)
+  {
+	  m_iPmtContinuityCounter++;
+	  if (m_iPmtContinuityCounter > 0xf)
+    {
+      m_iPmtContinuityCounter = 0;
+    }
+    packet[3] = 0x10 | m_iPmtContinuityCounter;
+    if (fakePmtLength >= 184)
+    {
+		  memcpy(&packet[4], &m_fakePmt[pointer], 184);
+      fakePmtLength -= 184;
+    }
+    else
+    {
+		  memcpy(&packet[4], &m_fakePmt[pointer], fakePmtLength);
+      memset(&packet[4 + fakePmtLength], 0xff, 184 - fakePmtLength);
+      fakePmtLength = 0;
+    }
+		Write(packet, 188);
+    pointer += 184;
 
-	int current_next_indicator=1;
-	int section_number = 0;
-	int last_section_number = 0;
-	int transportId=DR_FAKE_TRANSPORT_ID;
-
-	int tableId=2;
-	int pid=DR_FAKE_PMT_PID;
-	int PayLoadUnitStart=1;
-	int AdaptionControl=1;
-
-	m_iPmtContinuityCounter++;
-	if (m_iPmtContinuityCounter>0xf) m_iPmtContinuityCounter=0;
-
-	BYTE pmt[MAX_SECTION_LENGTH]; 
-
-	memset(pmt,0xff,sizeof(pmt));
-	pmt[0]=0x47;
-	pmt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
-	pmt[2]=(pid&0xff);
-	pmt[3]=(AdaptionControl<<4) +m_iPmtContinuityCounter;
-	pmt[4]=0;
-	byte* pmtPtr=&pmt[4];
-	pmt[5]=tableId;//table id
-	pmt[6]=0;
-	pmt[7]=0;
-	pmt[8]=(DR_FAKE_SERVICE_ID>>8)&0xff;
-	pmt[9]=(DR_FAKE_SERVICE_ID)&0xff;
-	pmt[10]=((m_iPmtVersion&0x1f)<<1)+current_next_indicator;
-	pmt[11]=section_number;
-	pmt[12]=last_section_number;
-	pmt[13]=(DR_FAKE_PCR_PID>>8)&0xff;
-	pmt[14]=(DR_FAKE_PCR_PID)&0xff;
-	pmt[15]=(program_info_length>>8)&0xff;
-	pmt[16]=(program_info_length)&0xff;
-
-	int pmtLength=9+4;
-	int offset=17;
-	ivecPidInfo2 it=m_vecPids.begin();
-	while (it!=m_vecPids.end())
-	{
-		PidInfo2 info=*it;
-		pmt[offset++]=info.streamType;
-		pmt[offset++]=0xe0+((info.fakePid>>8)&0x1F); // reserved; elementary_pid (high)
-		pmt[offset++]=(info.fakePid)&0xff; // elementary_pid (low)
-		pmt[offset++]=0; // es_length (high)
-		pmt[offset++]=0; // es_length (low)
-		pmtLength+=5;
-		if (info.rawDescriptorData!=NULL)
-		{
-			pmt[offset-2]=0xF0+((info.rawDescriptorSize>>8)&0x3); //Mask to 2 bits then set 'reserved' bits
-			pmt[offset-1]=(info.rawDescriptorSize&0xFF);
-			memcpy(&pmt[offset],info.rawDescriptorData,info.rawDescriptorSize);
-			offset += info.rawDescriptorSize;
-			pmtLength += info.rawDescriptorSize;
-		}
-		++it;
-	}
-	unsigned section_length = (pmtLength);
-	pmt[6]=0xb0+((section_length>>8)&0xf);
-	pmt[7]=section_length&0xff;
-
-	DWORD crc= crc32((char*)&pmt[5],offset-5);
-	pmt[offset++]=(byte)((crc>>24)&0xff);
-	pmt[offset++]=(byte)((crc>>16)&0xff);
-	pmt[offset++]=(byte)((crc>>8)&0xff);
-	pmt[offset++]=(byte)((crc)&0xff);
-
-	//if(pmtLength > 188) WriteLog("ERROR: Pmt length : %i ( >188 )!!!!",pmtLength);
-
-	Write(pmt,188);
-	pmtLength -= 180 ;
-	int pointer = 188 ;
-	while(pmtLength > 0)
-	{
-		byte packet[188];
-		memset(packet,0xff,188);
-		packet[0]=0x47;
-		packet[1]=(pid>>8) & 0x1f;
-		packet[2]=(pid&0xff);
-		m_iPmtContinuityCounter++;
-		if (m_iPmtContinuityCounter>0xf) m_iPmtContinuityCounter=0;
-		packet[3]=(AdaptionControl<<4) +m_iPmtContinuityCounter;
-		int Length = pmtLength ;
-		if (Length > 184) Length = 184 ;
-		memcpy(&packet[4],&pmt[pointer],Length);
-		Write(packet,188);
-		pmtLength -= Length ;
-		pointer += Length ;
-	}
+    packet[1] &= 0x1f;  // unset payload unit start indicator
+  }
 }
 
 
@@ -1545,7 +1515,7 @@ void CDiskRecorder::PatchPtsDts(byte* tsPacket,CTsHeader& header,PidInfo2& PidIn
 		m_mapLastPtsDts.push_back(lastRec) ;
 		it = m_mapLastPtsDts.end() ;
 		it-- ;
-//Remove verbosity		WriteLog(">>> Add Pid %x ( Type : %x, Logical %x, fake pid %x ) <<<<<", it->m_Pid, PidInfo.streamType, PidInfo.logicalStreamType, PidInfo.fakePid ) ;
+//Remove verbosity		WriteLog(">>> Add Pid %x ( fake pid %x ) <<<<<", it->m_Pid, PidInfo.fakePid ) ;
 	}
 
 	if (pts.IsValid)

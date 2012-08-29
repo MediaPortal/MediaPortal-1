@@ -56,11 +56,9 @@ DECLARE_INTERFACE_(ITSFilter, IUnknown)
 	STDMETHOD(AnalyzerIsAudioEncrypted)(THIS_ int handle,  int* yesNo)PURE;
 	STDMETHOD(AnalyzerReset)(THIS_ int handle )PURE;
 
-	
-	STDMETHOD(PmtSetPmtPid)(THIS_ int handle,  int pmtPid, long serviceId);
-	STDMETHOD(PmtSetCallBack)(THIS_ int handle,   IPMTCallback* callback);
-	STDMETHOD(PmtGetPMTData) (THIS_ int handle,   BYTE *pmtData);
-
+	STDMETHOD(PmtSetPmtPid)(THIS_ int handle, int pmtPid, int serviceId);
+	STDMETHOD(PmtSetCallBack)(THIS_ int handle, IPmtCallBack* callBack);
+	STDMETHOD(PmtGetPmtData)(THIS_ int handle, BYTE *pmtData);
 	
   STDMETHOD(RecordSetRecordingFileNameW)(THIS_ int handle,wchar_t* pwszFileName)PURE;
   STDMETHOD(RecordStartRecord)(THIS_ int handle)PURE;
@@ -178,10 +176,9 @@ public:
 		STDMETHODIMP AnalyzerIsAudioEncrypted(int handle,  int* yesNo);
 		STDMETHODIMP AnalyzerReset(int handle );
 
-		STDMETHODIMP PmtSetPmtPid(int handle,int pmtPid, long serviceId);
-		STDMETHODIMP PmtSetCallBack(int handle,IPMTCallback* callback);
-		STDMETHODIMP PmtGetPMTData (int handle,BYTE *pmtData);
-
+		STDMETHODIMP PmtSetPmtPid(int handle, int pmtPid, int serviceId);
+		STDMETHODIMP PmtSetCallBack(int handle, IPmtCallBack* callBack);
+		STDMETHODIMP PmtGetPmtData(int handle, BYTE *pmtData);
 
 		STDMETHODIMP RecordSetRecordingFileNameW( int handle,wchar_t* pszFileName);
 		STDMETHODIMP RecordStartRecord( int handle);

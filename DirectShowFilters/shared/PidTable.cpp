@@ -80,6 +80,8 @@ void CPidTable::Reset()
 
   TeletextPid=0;
   // no reason to reset TeletextSubLang
+
+  ConditionalAccessDescriptorCount = 0;
 }
 
 
@@ -137,7 +139,7 @@ void CPidTable::LogPIDs()
   {
     LogDebug(" video    pid: %4x type: %s",
       videoPids[i].Pid, 
-      StreamFormatAsString(videoPids[i].VideoServiceType));
+      StreamFormatAsString(videoPids[i].StreamType));
   }
 
   // Log all audio streams
@@ -146,7 +148,7 @@ void CPidTable::LogPIDs()
 	  LogDebug(" audio    pid: %4x language: %3s type: %s",
       audioPids[i].Pid, 
       audioPids[i].Lang,
-      StreamFormatAsString(audioPids[i].AudioServiceType));
+      StreamFormatAsString(audioPids[i].StreamType));
   }
   
   // Log all subtitle streams
@@ -155,7 +157,7 @@ void CPidTable::LogPIDs()
 	  LogDebug(" Subtitle pid: %4x language: %3s type: %s",
       subtitlePids[i].Pid, 
       subtitlePids[i].Lang,
-      StreamFormatAsString(subtitlePids[i].SubtitleServiceType));  
+      StreamFormatAsString(subtitlePids[i].StreamType));  
   }  
 }
 

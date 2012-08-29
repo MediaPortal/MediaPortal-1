@@ -19,35 +19,38 @@
  *
  */
 #pragma once
-
 #include "..\..\shared\sectiondecoder.h"
+#include "..\..\shared\channelinfo.h"
+#include "..\..\shared\pidtable.h"
+#include "..\..\shared\tsHeader.h"
 #include <map>
+#include <vector>
 using namespace std;
 
-class IPatCallBack
+class IVctCallBack
 {
   public:
-    virtual void OnPatReceived(int serviceId, int pmtPid) = 0;
+    virtual void OnVctReceived(const CChannelInfo& info) = 0;
 };
 
-#define PID_PAT 0x0
+#define PID_VCT 0x1ffb
 
-class CPatParser : public CSectionDecoder
+class CVctParser : public CSectionDecoder
 {
   public:
-    CPatParser(void);
-    virtual ~CPatParser(void);
+    CVctParser(void);
+    virtual ~CVctParser(void);
     void Reset();
-    void SetCallBack(IPatCallBack* callBack);
-    void OnNewSection(CSection& sections);
+    void SetCallBack(IVctCallBack* callBack);
+    void OnNewSection(CSection& section);
     bool IsReady();
-    int GetServiceCount();
-    int GetService(int idx, int* serviceId, int* pmtPid);
-    int GetPmtPid(int serviceId, int* pmtPid);
 
   private:
-    IPatCallBack* m_pCallBack;
-    map<int, bool> m_mSeenSections;
+    void DecodeServiceLocationDescriptor(byte* b, int length, int* hasVideo, int* hasAudio);
+    void DecodeMultipleStrings(byte* b, int length, vector<char*>* strings);
+    void DecodeString(byte* b, int compression_type, int mode, int number_bytes, char* string);
+
+    IVctCallBack* m_pCallBack;
+    map<unsigned int, bool> m_mSeenSections;
     bool m_bIsReady;
-    map<int, int> m_mServices;
 };

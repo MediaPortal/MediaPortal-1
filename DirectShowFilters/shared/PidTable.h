@@ -30,14 +30,15 @@ public:
 
   SubtitlePid()
   {
-    Pid=-1; 
-    SubtitleServiceType=-1; 
+    Pid=-1;
+    StreamType=-1;
     Lang[0]='U'; Lang[1]='N'; Lang[2]='K'; Lang[3]=0;
   }
   
   bool operator ==(const SubtitlePid& other) const
   {
     if(Pid != other.Pid
+      || StreamType != other.StreamType
       || Lang[0] != other.Lang[0]
       || Lang[1] != other.Lang[1]
       || Lang[2] != other.Lang[2]
@@ -51,7 +52,7 @@ public:
     }
   }
   WORD Pid;
-  WORD SubtitleServiceType;
+  WORD StreamType;
   BYTE Lang[4];
 };
 
@@ -61,21 +62,21 @@ class AudioPid
 public:
   AudioPid()
   {
-    Pid=-1; 
-    AudioServiceType=-1; 
+    Pid=-1;
+    StreamType=-1;
     Lang[0]='U'; Lang[1]='N'; Lang[2]='K'; Lang[3]=0; Lang[4]=0; Lang[5]=0; Lang[6]=0;
   }
   bool operator ==(const AudioPid& other) const
   {
     if(Pid != other.Pid
+      || StreamType != other.StreamType
       || Lang[0] != other.Lang[0]
       || Lang[1] != other.Lang[1]
       || Lang[2] != other.Lang[2]
       || Lang[3] != other.Lang[3]
       || Lang[4] != other.Lang[4]
       || Lang[5] != other.Lang[5]
-      || Lang[6] != other.Lang[6]
-      || AudioServiceType != other.AudioServiceType)
+      || Lang[6] != other.Lang[6])
       {
         return false;
       }
@@ -85,8 +86,8 @@ public:
     }
   }
   WORD Pid;
+  WORD StreamType;
   BYTE Lang[7];
-  WORD AudioServiceType;
 };
 
 // This class used to store video stream specific information
@@ -95,13 +96,14 @@ class VideoPid
 public:
   VideoPid()
   {
-    Pid=-1; VideoServiceType=-1; 
+    Pid=-1;
+    StreamType=-1;
   }
 
   bool operator ==(const VideoPid& other) const
   {
     if(Pid != other.Pid 
-      || VideoServiceType != other.VideoServiceType)
+      || StreamType != other.StreamType)
     {
       return false;
     }
@@ -112,7 +114,7 @@ public:
   }
 
   WORD Pid;
-  int VideoServiceType;
+  WORD StreamType;
 };
 
 class TempPid
@@ -152,9 +154,11 @@ public:
   WORD TeletextPid; // which PID contains the teletext data
   std::vector<TeletextServiceInfo> TeletextInfo;
 
-  int  ServiceId;
+  int ServiceId;
 
   std::vector<VideoPid> videoPids;
   std::vector<AudioPid> audioPids;
   std::vector<SubtitlePid> subtitlePids;
+
+  int ConditionalAccessDescriptorCount;
 };

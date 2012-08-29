@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,31 +20,30 @@
  */
 #pragma once
 #include "..\..\shared\sectiondecoder.h"
-#include "..\..\shared\PidTable.h"
 #include "..\..\shared\ChannelInfo.h"
-#include "..\..\shared\tsheader.h"
-#include <vector>
+#include <map>
 using namespace std;
 
 class ISdtCallBack
 {
-public:
-	virtual void OnSdtReceived(const CChannelInfo& sdtInfo)=0;
+  public:
+    virtual void OnSdtReceived(const CChannelInfo& sdtInfo) = 0;
 };
 
 #define PID_SDT 0x11
 
-class CSdtParser: public  CSectionDecoder
+class CSdtParser: public CSectionDecoder
 {
-private:
-public:
-  CSdtParser(void);
-  virtual ~CSdtParser(void);
-	void  OnNewSection(CSection& sections);
-  void  Reset();
-  void SetCallback(ISdtCallBack* callback);
-private:
-  void DVB_GetService(BYTE *b,CChannelInfo& info);
-  ISdtCallBack* m_pCallback;
-  CTsHeader             m_tsHeader;
+  public:
+    CSdtParser(void);
+    virtual ~CSdtParser(void);
+    void Reset();
+    void SetCallBack(ISdtCallBack* callback);
+    void OnNewSection(CSection& sections);
+    bool IsReady();
+
+  private:
+    ISdtCallBack* m_pCallBack;
+    map<unsigned __int64, bool> m_mSeenSections;
+    bool m_bIsReady;
 };

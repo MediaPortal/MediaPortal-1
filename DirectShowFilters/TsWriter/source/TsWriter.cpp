@@ -435,10 +435,10 @@ STDMETHODIMP CMpTs::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
   CAutoLock lock(&m_Lock);
 
   // Do we have this interface
-	if (riid == IID_ITSChannelScan)
+	if (riid == IID_ITsChannelScan)
 	{
-		//LogDebug("CMpTs:NonDelegatingQueryInterface IID_ITSChannelScan");
-		return GetInterface((ITSChannelScan*)m_pChannelScanner, ppv);
+		//LogDebug("CMpTs:NonDelegatingQueryInterface IID_ITsChannelScan");
+		return GetInterface((ITsChannelScan*)m_pChannelScanner, ppv);
 	}
 	else if (riid == IID_ITsEpgScanner)
 	{
@@ -635,25 +635,34 @@ STDMETHODIMP CMpTs::AnalyzerReset(int handle )
 	return pChannel->m_pVideoAnalyzer->Reset(  );
 }
 
-STDMETHODIMP CMpTs::PmtSetPmtPid(int handle,int pmtPid, long serviceId)
+STDMETHODIMP CMpTs::PmtSetPmtPid(int handle, int pmtPid, int serviceId)
 {
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pPmtGrabber->SetPmtPid(pmtPid,serviceId  );
+  CTsChannel* pChannel = GetTsChannel(handle);
+  if (pChannel == NULL)
+  {
+    return S_OK;
+  }
+	return pChannel->m_pPmtGrabber->SetPmtPid(pmtPid, serviceId);
 }
 
-STDMETHODIMP CMpTs::PmtSetCallBack(int handle,IPMTCallback* callback)
+STDMETHODIMP CMpTs::PmtSetCallBack(int handle, IPmtCallBack* callBack)
 {
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pPmtGrabber->SetCallBack(callback);
+  CTsChannel* pChannel = GetTsChannel(handle);
+  if (pChannel == NULL)
+  {
+    return S_OK;
+  }
+	return pChannel->m_pPmtGrabber->SetCallBack(callBack);
 }
 
-STDMETHODIMP CMpTs::PmtGetPMTData (int handle,BYTE *pmtData)
+STDMETHODIMP CMpTs::PmtGetPmtData(int handle, BYTE *pmtData)
 {
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pPmtGrabber->GetPMTData (pmtData);
+  CTsChannel* pChannel = GetTsChannel(handle);
+  if (pChannel == NULL)
+  {
+    return S_OK;
+  }
+	return pChannel->m_pPmtGrabber->GetPmtData(pmtData);
 }
 
 STDMETHODIMP CMpTs::RecordSetRecordingFileNameW( int handle, wchar_t* pwszFileName)

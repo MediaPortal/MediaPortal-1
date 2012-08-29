@@ -19,39 +19,34 @@
  *
  */
 #pragma once
-#include "pidtable.h" 
+#define CHANNEL_INFO_MAX_STRING_LENGTH 4095
+#define DESCRIPTOR_MAX_STRING_LENGTH 255
 
 class CChannelInfo
 {
-public:
-  CChannelInfo(void);
-  CChannelInfo(const CChannelInfo& info);
-  virtual ~CChannelInfo(void);
-  CChannelInfo& operator = (const CChannelInfo &info);
-  void Copy(const CChannelInfo &info);
-  void Reset();
-  int NetworkId;
-  int TransportId;
-  int ServiceId;
-  int MajorChannel;
-  int MinorChannel;
-  int Frequency;
-  int EIT_schedule_flag;
-  int EIT_present_following_flag;
-  int RunningStatus;
-  int FreeCAMode;
-  int ServiceType;
-  int Modulation;
-	int LCN;
-  char ProviderName[255];
-  char ServiceName[255];
-	int hasVideo;
-	int hasAudio;
-  int hasCaDescriptor;
+  public:
+    CChannelInfo(void);
+    CChannelInfo(const CChannelInfo& info);
+    virtual ~CChannelInfo(void);
+    CChannelInfo& operator = (const CChannelInfo &info);
+    void Copy(const CChannelInfo &info);
+    void Reset();
 
-  CPidTable PidTable;
-  int PatVersion;
-	bool OtherMux;
-	bool PmtReceived;
-	bool SdtReceived;
+    int NetworkId;
+    int TransportId;
+    int ServiceId;
+    char ServiceName[CHANNEL_INFO_MAX_STRING_LENGTH + 1];
+    char ProviderName[CHANNEL_INFO_MAX_STRING_LENGTH + 1];
+    char NetworkNames[CHANNEL_INFO_MAX_STRING_LENGTH + 1];
+    char LogicalChannelNumber[CHANNEL_INFO_MAX_STRING_LENGTH + 1];
+    int ServiceType;
+    int HasVideo;
+    int HasAudio;
+    bool IsEncrypted;
+    bool IsRunning;
+    bool IsOtherMux;
+    int PmtPid;
+    bool IsPmtReceived;
+    bool IsServiceInfoReceived;
+    int PatVersion;
 };

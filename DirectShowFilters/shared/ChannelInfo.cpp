@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2010 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2010 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ CChannelInfo::CChannelInfo(const CChannelInfo& info)
 {
   Copy(info);
 }
+
 CChannelInfo::CChannelInfo(void)
 {
   Reset();
@@ -38,56 +39,52 @@ CChannelInfo::~CChannelInfo(void)
 
 void CChannelInfo::Reset()
 {
-  PatVersion=-1;
-	LCN=10000;
-  NetworkId=0;
-  TransportId=0;
-  ServiceId=0;
-  EIT_schedule_flag=0;
-  EIT_present_following_flag=0;
-  RunningStatus=0;
-  FreeCAMode=0;
-  ServiceType=0;
-  MajorChannel=0;
-  MinorChannel=0;
-  Frequency=0;
-  Modulation=0;
-  strcpy(ProviderName,"");
-  strcpy(ServiceName,"");
-	hasVideo=0;
-	hasAudio=0;
-	hasCaDescriptor=0;
-	OtherMux=false;
-	PmtReceived=false;
-	SdtReceived=false;
+  NetworkId = 0;
+  TransportId = 0;
+  ServiceId = 0;
+  strcpy(ServiceName, "");
+  strcpy(ProviderName, "");
+  strcpy(NetworkNames, "");
+  strcpy(LogicalChannelNumber, "10000");
+  ServiceType = 0;
+  HasVideo = 0;
+  HasAudio = 0;
+  IsEncrypted = false;
+  IsRunning = false;
+  IsOtherMux = false;
+  PmtPid = 0;
+  IsPmtReceived = false;
+  IsServiceInfoReceived = false;
+  PatVersion = -1;
 }
+
 CChannelInfo& CChannelInfo::operator = (const CChannelInfo &info)
 {
-  if (&info==this) return *this;
+  if (&info == this)
+  {
+    return *this;
+  }
   Copy(info);
   return *this;
 }
 
 void CChannelInfo::Copy(const CChannelInfo &info)
 {
-	LCN=info.LCN;
-  NetworkId=info.NetworkId;
-  TransportId=info.TransportId;
-  ServiceId=info.ServiceId;
-	ServiceType=info.ServiceType;
-  FreeCAMode=info.FreeCAMode;
-  ServiceType=info.ServiceType;
-  MajorChannel=info.MajorChannel;
-  MinorChannel=info.MinorChannel;
-  Frequency=info.Frequency;
-  Modulation=info.Modulation;
-  strcpy(ProviderName,info.ProviderName);
-  strcpy(ServiceName,info.ServiceName);
-	hasVideo=info.hasVideo;
-	hasAudio=info.hasAudio;
-	hasCaDescriptor=info.hasCaDescriptor;
-	OtherMux=info.OtherMux;
-	PmtReceived=info.PmtReceived;
-	SdtReceived=info.SdtReceived;
-  PidTable=info.PidTable;
+  NetworkId = info.NetworkId;
+  TransportId = info.TransportId;
+  ServiceId = info.ServiceId;
+  strcpy(ServiceName, info.ServiceName);
+  strcpy(ProviderName, info.ProviderName);
+  strcpy(NetworkNames, info.NetworkNames);
+  strcpy(LogicalChannelNumber, info.LogicalChannelNumber);
+  ServiceType = info.ServiceType;
+  HasVideo = info.HasVideo;
+  HasAudio = info.HasAudio;
+  IsEncrypted = info.IsEncrypted;
+  IsRunning = info.IsRunning;
+  IsOtherMux = info.IsOtherMux;
+  PmtPid = info.PmtPid;
+  IsPmtReceived = info.IsPmtReceived;
+  IsServiceInfoReceived = info.IsServiceInfoReceived;
+  //PatVersion = info.PatVersion;
 }

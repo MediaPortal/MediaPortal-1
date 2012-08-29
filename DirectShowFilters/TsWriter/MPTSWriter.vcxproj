@@ -161,6 +161,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\BatParser.cpp" />
     <ClCompile Include="source\CaGrabber.cpp" />
     <ClCompile Include="source\ChannelLinkageScanner.cpp" />
     <ClCompile Include="source\ChannelScan.cpp" />
@@ -176,11 +177,11 @@
     <ClCompile Include="source\EpgParser.cpp" />
     <ClCompile Include="source\MHWDecoder.cpp" />
     <ClCompile Include="source\MhwParser.cpp" />
-    <ClCompile Include="source\NITDecoder.cpp" />
+    <ClCompile Include="source\NitParser.cpp" />
     <ClCompile Include="source\PatParser.cpp" />
     <ClCompile Include="source\PmtParser.cpp" />
     <ClCompile Include="source\SdtParser.cpp" />
-    <ClCompile Include="source\VirtualChannelTableParser.cpp" />
+    <ClCompile Include="source\VctParser.cpp" />
     <ClCompile Include="source\PcrDecoder.cpp" />
     <ClCompile Include="source\VideoAudioScrambledAnalyzer.cpp" />
     <ClCompile Include="source\FileWriter.cpp" />
@@ -193,6 +194,7 @@
     <None Include="source\TsWriter.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\BatParser.h" />
     <ClInclude Include="source\CaGrabber.h" />
     <ClInclude Include="source\ChannelLinkageScanner.h" />
     <ClInclude Include="source\ChannelScan.h" />
@@ -213,11 +215,11 @@
     <ClInclude Include="source\EpgParser.h" />
     <ClInclude Include="source\MHWDecoder.h" />
     <ClInclude Include="source\MhwParser.h" />
-    <ClInclude Include="source\NITDecoder.h" />
+    <ClInclude Include="source\NitParser.h" />
     <ClInclude Include="source\PatParser.h" />
     <ClInclude Include="source\PmtParser.h" />
     <ClInclude Include="source\SdtParser.h" />
-    <ClInclude Include="source\VirtualChannelTableParser.h" />
+    <ClInclude Include="source\VctParser.h" />
     <ClInclude Include="source\FileWriter.h" />
     <ClInclude Include="source\MultiFileWriter.h" />
     <ClInclude Include="source\autoString.h" />
