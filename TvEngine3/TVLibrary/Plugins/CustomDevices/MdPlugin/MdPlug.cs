@@ -248,47 +248,30 @@ namespace TvEngine
         // Otherwise, we have to fill the specific PID fields in the
         // Program82 structure as best as we can. We'll keep the first
         // of each type of PID.
-        if (programToDecode.VideoPid == 0 &&
-            (es.StreamType == StreamType.Mpeg1Part2Video ||
-            es.StreamType == StreamType.Mpeg2Part2Video ||
-            es.StreamType == StreamType.Mpeg4Part2Video ||
-            es.StreamType == StreamType.Mpeg4Part10Video ||
-            es.PrimaryDescriptorTag == DescriptorTag.VideoStream ||
-            es.PrimaryDescriptorTag == DescriptorTag.Mpeg4Video ||
-            es.PrimaryDescriptorTag == DescriptorTag.AvcVideo)
-        )
+        if (programToDecode.VideoPid == 0 && StreamTypeHelper.IsVideoStream(es.LogicalStreamType))
         {
           programToDecode.VideoPid = es.Pid;
         }
-        else if (programToDecode.AudioPid == 0 &&
-            (es.StreamType == StreamType.Mpeg1Part3Audio ||
-            es.StreamType == StreamType.Mpeg2Part3Audio ||
-            es.StreamType == StreamType.Mpeg2Part7Audio ||
-            es.StreamType == StreamType.Mpeg4Part3Audio ||
-            es.PrimaryDescriptorTag == DescriptorTag.AudioStream ||
-            es.PrimaryDescriptorTag == DescriptorTag.Mpeg4Audio ||
-            es.PrimaryDescriptorTag == DescriptorTag.Mpeg2AacAudio ||
-            es.PrimaryDescriptorTag == DescriptorTag.Aac)
-        )
-        {
-          programToDecode.AudioPid = es.Pid;
-        }
-        else if (programToDecode.Ac3AudioPid == 0 &&
-            (es.StreamType == StreamType.Ac3Audio ||
-            es.StreamType == StreamType.EnhancedAc3Audio ||
-            es.PrimaryDescriptorTag == DescriptorTag.Ac3 ||        // DVB
-            es.PrimaryDescriptorTag == DescriptorTag.Ac3Audio ||   // ATSC
-            es.PrimaryDescriptorTag == DescriptorTag.EnhancedAc3)
-        )
-        {
-          programToDecode.Ac3AudioPid = es.Pid;
-        }
-        else if (programToDecode.TeletextPid == 0 &&
-          (es.PrimaryDescriptorTag == DescriptorTag.Teletext ||
-          es.PrimaryDescriptorTag == DescriptorTag.VbiTeletext)
-        )
+        else if (programToDecode.TeletextPid == 0 && es.LogicalStreamType == LogicalStreamType.Teletext)
         {
           programToDecode.TeletextPid = es.Pid;
+        }
+        else
+        {
+          if (es.LogicalStreamType == LogicalStreamType.Ac3 || es.LogicalStreamType == LogicalStreamType.EnhancedAc3)
+          {
+            if (programToDecode.Ac3AudioPid == 0)
+            {
+              programToDecode.Ac3AudioPid = es.Pid;
+            }
+          }
+          else
+          {
+            if (programToDecode.AudioPid == 0 && StreamTypeHelper.IsAudioStream(es.LogicalStreamType))
+            {
+              programToDecode.AudioPid = es.Pid;
+            }
+          }
         }
       }
     }

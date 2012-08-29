@@ -1849,53 +1849,21 @@ namespace TvEngine
         // conditional access descriptors.
         AnyseeEsType esType = AnyseeEsType.Unknown;
 
-        // Can we determine the stream type from the PMT stream type?
-        if (es.StreamType == StreamType.Mpeg1Part2Video ||
-          es.StreamType == StreamType.Mpeg2Part2Video ||
-          es.StreamType == StreamType.Mpeg4Part2Video ||
-          es.StreamType == StreamType.Mpeg4Part10Video)
+        if (StreamTypeHelper.IsVideoStream(es.LogicalStreamType))
         {
           esType = AnyseeEsType.Video;
         }
-        else if (es.StreamType == StreamType.Mpeg1Part3Audio ||
-          es.StreamType == StreamType.Mpeg2Part3Audio ||
-          es.StreamType == StreamType.Mpeg2Part7Audio ||
-          es.StreamType == StreamType.Mpeg4Part3Audio ||
-          es.StreamType == StreamType.Ac3Audio ||
-          es.StreamType == StreamType.EnhancedAc3Audio)
+        else if (StreamTypeHelper.IsAudioStream(es.LogicalStreamType))
         {
           esType = AnyseeEsType.Audio;
         }
-
-        // Maybe the primary descriptor type will help?
-        if (esType == AnyseeEsType.Unknown)
+        else if (es.LogicalStreamType == LogicalStreamType.Subtitles)
         {
-          if (es.PrimaryDescriptorTag == DescriptorTag.VideoStream ||
-            es.PrimaryDescriptorTag == DescriptorTag.Mpeg4Video ||
-            es.PrimaryDescriptorTag == DescriptorTag.AvcVideo)
-          {
-            esType = AnyseeEsType.Video;
-          }
-          else if (es.PrimaryDescriptorTag == DescriptorTag.AudioStream ||
-            es.PrimaryDescriptorTag == DescriptorTag.Mpeg4Audio ||
-            es.PrimaryDescriptorTag == DescriptorTag.Mpeg2AacAudio ||
-            es.PrimaryDescriptorTag == DescriptorTag.Aac ||
-            es.PrimaryDescriptorTag == DescriptorTag.Ac3 ||        // DVB
-            es.PrimaryDescriptorTag == DescriptorTag.Ac3Audio ||   // ATSC
-            es.PrimaryDescriptorTag == DescriptorTag.EnhancedAc3 ||
-            es.PrimaryDescriptorTag == DescriptorTag.Dts)
-          {
-            esType = AnyseeEsType.Audio;
-          }
-          else if (es.PrimaryDescriptorTag == DescriptorTag.Subtitling)
-          {
-            esType = AnyseeEsType.Subtitle;
-          }
-          else if (es.PrimaryDescriptorTag == DescriptorTag.Teletext ||
-            es.PrimaryDescriptorTag == DescriptorTag.VbiTeletext)
-          {
-            esType = AnyseeEsType.Teletext;
-          }
+          esType = AnyseeEsType.Subtitle;
+        }
+        else if (es.LogicalStreamType == LogicalStreamType.Teletext)
+        {
+          esType = AnyseeEsType.Teletext;
         }
 
         // So do we actually want to keep this stream?

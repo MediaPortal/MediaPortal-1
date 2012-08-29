@@ -501,48 +501,34 @@ namespace TvLibrary.Implementations.DVB
         }
         foreach (PmtElementaryStream es in _pmt.ElementaryStreams)
         {
-          stream = new DVBAudioStream();
-          if (es.StreamType == StreamType.Ac3Audio ||
-            es.PrimaryDescriptorTag == DescriptorTag.Ac3)
+          if (StreamTypeHelper.IsAudioStream(es.LogicalStreamType))
           {
-            stream.StreamType = AudioStreamType.AC3;
-          }
-          else if (es.StreamType == StreamType.EnhancedAc3Audio ||
-            es.PrimaryDescriptorTag == DescriptorTag.EnhancedAc3)
-          {
-            stream.StreamType = AudioStreamType.EAC3;
-          }
-          else if (es.StreamType == StreamType.Mpeg1Part3Audio)
-          {
-            stream.StreamType = AudioStreamType.MPEG1;
-          }
-          else if (es.StreamType == StreamType.Mpeg2Part3Audio)
-          {
-            stream.StreamType = AudioStreamType.MPEG2;
-          }
-          else if (es.StreamType == StreamType.Mpeg2Part7Audio)
-          {
-            stream.StreamType = AudioStreamType.AAC;
-          }
-          else if (es.StreamType == StreamType.Mpeg4Part3Audio)
-          {
-            stream.StreamType = AudioStreamType.LATMAAC;
-          }
-          else if (es.PrimaryDescriptorTag == DescriptorTag.AudioStream ||
-            es.PrimaryDescriptorTag == DescriptorTag.Mpeg4Audio ||
-            es.PrimaryDescriptorTag == DescriptorTag.Mpeg2AacAudio ||
-            es.PrimaryDescriptorTag == DescriptorTag.Aac ||
-            es.PrimaryDescriptorTag == DescriptorTag.Dts)
-          {
-            stream.StreamType = AudioStreamType.Unknown;
-          }
-          else
-          {
-            stream = null;
-          }
+            stream = new DVBAudioStream();
+            switch (es.LogicalStreamType)
+            {
+              case LogicalStreamType.Mpeg1Audio:
+                stream.StreamType = AudioStreamType.MPEG1;
+                break;
+              case LogicalStreamType.Mpeg2Audio:
+                stream.StreamType = AudioStreamType.MPEG2;
+                break;
+              case LogicalStreamType.AdtsAac:
+                stream.StreamType = AudioStreamType.AAC;
+                break;
+              case LogicalStreamType.LatmAac:
+                stream.StreamType = AudioStreamType.LATMAAC;
+                break;
+              case LogicalStreamType.Ac3:
+                stream.StreamType = AudioStreamType.AC3;
+                break;
+              case LogicalStreamType.EnhancedAc3:
+                stream.StreamType = AudioStreamType.EAC3;
+                break;
+              default:
+                stream.StreamType = AudioStreamType.Unknown;
+                break;
+            }
 
-          if (stream != null)
-          {
             // TODO audio language descriptor handling;
             //stream.Language = info.language;
             stream.Language = "eng";
@@ -620,38 +606,28 @@ namespace TvLibrary.Implementations.DVB
 
         foreach (PmtElementaryStream es in _pmt.ElementaryStreams)
         {
-          bool isVideoStream = true;
-          if (es.StreamType == StreamType.Mpeg1Part2Video)
+          if (StreamTypeHelper.IsVideoStream(es.LogicalStreamType))
           {
-            stream.StreamType = VideoStreamType.MPEG1;
-          }
-          else if (es.StreamType == StreamType.Mpeg2Part2Video)
-          {
-            stream.StreamType = VideoStreamType.MPEG2;
-          }
-          else if (es.StreamType == StreamType.Mpeg4Part2Video ||
-            es.PrimaryDescriptorTag == DescriptorTag.Mpeg4Video)
-          {
-            stream.StreamType = VideoStreamType.MPEG4;
-          }
-          else if (es.StreamType == StreamType.Mpeg4Part10Video ||
-            es.PrimaryDescriptorTag == DescriptorTag.AvcVideo)
-          {
-            stream.StreamType = VideoStreamType.H264;
-          }
-          else if (es.PrimaryDescriptorTag == DescriptorTag.VideoStream)
-          {
-            stream.StreamType = VideoStreamType.Unknown;
-          }
-          else
-          {
-            isVideoStream = false;
-          }
-
-          if (isVideoStream)
-          {
+            switch (es.LogicalStreamType)
+            {
+              case LogicalStreamType.Mpeg1Video:
+                stream.StreamType = VideoStreamType.MPEG1;
+                break;
+              case LogicalStreamType.Mpeg2Video:
+                stream.StreamType = VideoStreamType.MPEG2;
+                break;
+              case LogicalStreamType.Mpeg4Video:
+                stream.StreamType = VideoStreamType.MPEG4;
+                break;
+              case LogicalStreamType.AvcVideo:
+                stream.StreamType = VideoStreamType.H264;
+                break;
+              default:
+                stream.StreamType = VideoStreamType.Unknown;
+                break;
+            }
             stream.Pid = es.Pid;
-            return stream;
+            return stream;  // Only one video stream supported.
           }
         }
         return stream;
@@ -673,8 +649,7 @@ namespace TvLibrary.Implementations.DVB
       {
         foreach (PmtElementaryStream es in _pmt.ElementaryStreams)
         {
-          if (es.PrimaryDescriptorTag == DescriptorTag.Teletext ||
-            es.PrimaryDescriptorTag == DescriptorTag.VbiTeletext)
+          if (es.LogicalStreamType == LogicalStreamType.Teletext)
           {
             teletextPid = es.Pid;
             break;
@@ -754,10 +729,16 @@ namespace TvLibrary.Implementations.DVB
         _currentAudioStream = null;
         foreach (PmtElementaryStream es in _pmt.ElementaryStreams)
         {
-          bool isAudio = false;
-          AudioStreamType audioStreamType = AudioStreamType.Unknown;
-          if (es.PrimaryDescriptorTag == DescriptorTag.Teletext ||
-            es.PrimaryDescriptorTag == DescriptorTag.VbiTeletext)
+          if (StreamTypeHelper.IsVideoStream(es.LogicalStreamType))
+          {
+            _pids.Add(es.Pid);
+            _tsFilterInterface.AnalyzerSetVideoPid(_subChannelIndex, es.Pid);
+          }
+          else if (es.LogicalStreamType == LogicalStreamType.Subtitles)
+          {
+            _pids.Add(es.Pid);
+          }
+          else if (es.LogicalStreamType == LogicalStreamType.Teletext)
           {
             _pids.Add(es.Pid);
             if (!_hasTeletext && _grabTeletext)
@@ -766,57 +747,7 @@ namespace TvLibrary.Implementations.DVB
               _hasTeletext = true;
             }
           }
-          else if (es.StreamType == StreamType.Ac3Audio ||
-            es.PrimaryDescriptorTag == DescriptorTag.Ac3)
-          {
-            audioStreamType = AudioStreamType.AC3;
-          }
-          else if (es.StreamType == StreamType.EnhancedAc3Audio ||
-            es.PrimaryDescriptorTag == DescriptorTag.EnhancedAc3)
-          {
-            audioStreamType = AudioStreamType.EAC3;
-          }
-          else if (es.StreamType == StreamType.Mpeg1Part3Audio)
-          {
-            audioStreamType = AudioStreamType.MPEG1;
-          }
-          else if (es.StreamType == StreamType.Mpeg2Part3Audio)
-          {
-            audioStreamType = AudioStreamType.MPEG2;
-          }
-          else if (es.StreamType == StreamType.Mpeg2Part7Audio)
-          {
-            audioStreamType = AudioStreamType.AAC;
-          }
-          else if (es.StreamType == StreamType.Mpeg4Part3Audio)
-          {
-            audioStreamType = AudioStreamType.LATMAAC;
-          }
-          else if (es.PrimaryDescriptorTag == DescriptorTag.AudioStream ||
-            es.PrimaryDescriptorTag == DescriptorTag.Mpeg4Audio ||
-            es.PrimaryDescriptorTag == DescriptorTag.Mpeg2AacAudio ||
-            es.PrimaryDescriptorTag == DescriptorTag.Aac ||
-            es.PrimaryDescriptorTag == DescriptorTag.Dts)
-          {
-            isAudio = true;
-          }
-          else if (es.StreamType == StreamType.Mpeg1Part2Video ||
-            es.StreamType == StreamType.Mpeg2Part2Video ||
-            es.StreamType == StreamType.Mpeg4Part2Video ||
-            es.StreamType == StreamType.Mpeg4Part10Video ||
-            es.PrimaryDescriptorTag == DescriptorTag.VideoStream ||
-            es.PrimaryDescriptorTag == DescriptorTag.Mpeg4Video ||
-            es.PrimaryDescriptorTag == DescriptorTag.AvcVideo)
-          {
-            _pids.Add(es.Pid);
-            _tsFilterInterface.AnalyzerSetVideoPid(_subChannelIndex, es.Pid);
-          }
-          else if (es.PrimaryDescriptorTag == DescriptorTag.Subtitling)
-          {
-            _pids.Add(es.Pid);
-          }
-
-          if (isAudio || audioStreamType != AudioStreamType.Unknown)
+          else if (StreamTypeHelper.IsAudioStream(es.LogicalStreamType))
           {
             _pids.Add(es.Pid);
             if (_currentAudioStream == null)
@@ -824,7 +755,30 @@ namespace TvLibrary.Implementations.DVB
               _currentAudioStream = new DVBAudioStream();
               _currentAudioStream.Language = "eng";
               _currentAudioStream.Pid = es.Pid;
-              _currentAudioStream.StreamType = audioStreamType;
+              switch (es.LogicalStreamType)
+              {
+                case LogicalStreamType.Mpeg1Audio:
+                  _currentAudioStream.StreamType = AudioStreamType.MPEG1;
+                  break;
+                case LogicalStreamType.Mpeg2Audio:
+                  _currentAudioStream.StreamType = AudioStreamType.MPEG2;
+                  break;
+                case LogicalStreamType.AdtsAac:
+                  _currentAudioStream.StreamType = AudioStreamType.AAC;
+                  break;
+                case LogicalStreamType.LatmAac:
+                  _currentAudioStream.StreamType = AudioStreamType.LATMAAC;
+                  break;
+                case LogicalStreamType.Ac3:
+                  _currentAudioStream.StreamType = AudioStreamType.AC3;
+                  break;
+                case LogicalStreamType.EnhancedAc3:
+                  _currentAudioStream.StreamType = AudioStreamType.EAC3;
+                  break;
+                default:
+                  _currentAudioStream.StreamType = AudioStreamType.Unknown;
+                  break;
+              }
               _tsFilterInterface.AnalyzerSetAudioPid(_subChannelIndex, es.Pid);
             }
           }

@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -343,107 +344,107 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// MPEG ISO/IEC 11172-2 video (MPEG 1 video)
     /// </summary>
-    Mpeg1Part2Video = 1,
+    Mpeg1Part2Video = 0x01,
     /// <summary>
     /// MPEG ITU-T Rec. H.262 | ISO/IEC 13818-2 Video or ISO/IEC 11172-2 constrained parameter video stream (MPEG 2 video)
     /// </summary>
-    Mpeg2Part2Video,
+    Mpeg2Part2Video = 0x02,
     /// <summary>
     /// MPEG ISO/IEC 11172-3 audio (MPEG 1 audio)
     /// </summary>
-    Mpeg1Part3Audio,
+    Mpeg1Part3Audio = 0x03,
     /// <summary>
     /// MPEG ISO/IEC 13818-3 audio (MPEG 2 audio)
     /// </summary>
-    Mpeg2Part3Audio,
+    Mpeg2Part3Audio = 0x04,
     /// <summary>
     /// MPEG ITU-T Rec. H.222.0 | ISO/IEC 13818-1 private_sections
     /// </summary>
-    Mpeg2Part1PrivateSection,
+    Mpeg2Part1PrivateSection = 0x05,
     /// <summary>
     /// MPEG ITU-T Rec. H.222.0 | ISO/IEC 13818-1 PES packets containing private data
     /// </summary>
-    Mpeg2Part1PrivateData,
+    Mpeg2Part1PrivateData = 0x06,
     /// <summary>
     /// MPEG ISO/IEC 13522 MHEG
     /// </summary>
-    Mheg5,
+    Mheg5 = 0x07,
     /// <summary>
     /// MPEG ITU-T Rec. H.222.0 | ISO/IEC 13818-1 Annex A DSM-CC
     /// </summary>
-    AnnexADsmCc,
+    AnnexADsmCc = 0x08,
     /// <summary>
     /// MPEG ITU-T Rec. H.222.1
     /// </summary>
-    MediaMultiplex,
+    MediaMultiplex = 0x09,
     /// <summary>
     /// MPEG ISO/IEC 13818-6 type A - multi-protocol encapsulation
     /// </summary>
-    Mpeg2Part6DsmCcMultiProtocolEncapsulation,
+    Mpeg2Part6DsmCcMultiProtocolEncapsulation = 0x0a,
     /// <summary>
     /// MPEG ISO/IEC 13818-6 type B - DSM-CC U-N messages
     /// </summary>
-    Mpeg2Part6DsmCcUnMessages,
+    Mpeg2Part6DsmCcUnMessages = 0x0b,
     /// <summary>
     /// MPEG ISO/IEC 13818-6 type C - DSM-CC stream descriptors
     /// </summary>
-    Mpeg2Part6DsmCcStreamDescriptor,
+    Mpeg2Part6DsmCcStreamDescriptor = 0x0c,
     /// <summary>
     /// MPEG ISO/IEC 13818-6 type D - DSM-CC sections (any type, including private data) or DSM-CC addressable sections
     /// </summary>
-    Mpeg2Part6DsmCcSection,
+    Mpeg2Part6DsmCcSection = 0x0d,
     /// <summary>
     /// MPEG ITU-T Rec. H.222.0 | ISO/IEC 13818-1 auxiliary
     /// </summary>
-    Mpeg2Part1Auxiliary,
+    Mpeg2Part1Auxiliary = 0x0e,
     /// <summary>
     /// MPEG ISO/IEC 13818-7 audio with ADTS transport syntax (AAC audio)
     /// </summary>
-    Mpeg2Part7Audio,
+    Mpeg2Part7Audio = 0x0f,
     /// <summary>
     /// MPEG ISO/IEC 14496-2 visual (MPEG 4)
     /// </summary>
-    Mpeg4Part2Video,
+    Mpeg4Part2Video = 0x10,
     /// <summary>
     /// MPEG ISO/IEC 14496-3 audio with the LATM transport syntax (LATM-AAC audio)
     /// </summary>
-    Mpeg4Part3Audio,
+    Mpeg4Part3Audio = 0x11,
     /// <summary>
     /// MPEG ISO/IEC 14496-1 SL-packetized stream or FlexMux stream carried in PES packets
     /// </summary>
-    Mpeg4Part1PesPacketisedStream,
+    Mpeg4Part1PesPacketisedStream = 0x12,
     /// <summary>
     /// MPEG ISO/IEC 14496-1 SL-packetized stream or FlexMux stream carried in ISO/IEC 14496_sections
     /// </summary>
-    Mpeg4Part1PacketisedStream,
+    Mpeg4Part1PacketisedStream = 0x13,
     /// <summary>
     /// MPEG ISO/IEC 13818-6 synchronized download protocol
     /// </summary>
-    Mpeg2Part6SynchronisedDownloadProtocol,
+    Mpeg2Part6SynchronisedDownloadProtocol = 0x14,
     /// <summary>
     /// MPEG metadata carried in PES packets
     /// </summary>
-    PesMetadata,
+    PesMetadata = 0x15,
     /// <summary>
     /// MPEG metadata carried in metadata_sections
     /// </summary>
-    SectionMetadata,
+    SectionMetadata = 0x16,
     /// <summary>
     /// MPEG metadata carried in ISO/IEC 13818-6 data carousel
     /// </summary>
-    Mpeg2Part6DataCarousel,
+    Mpeg2Part6DataCarousel = 0x17,
     /// <summary>
     /// MPEG metadata carried in ISO/IEC 13818-6 object carousel
     /// </summary>
-    Mpeg2Part6ObjectCarousel,
+    Mpeg2Part6ObjectCarousel = 0x18,
     /// <summary>
     /// MPEG metadata carried in ISO/IEC 13818-6 synchronized download protocol
     /// </summary>
-    Mpeg2Part6SynchronisedDownloadProtocolMetadata,
+    Mpeg2Part6SynchronisedDownloadProtocolMetadata = 0x19,
     /// <summary>
     /// MPEG IPMP stream defined in ISO/IEC 13818-11
     /// </summary>
-    Mpeg4Part11Ipmp,
+    Mpeg4Part11Ipmp = 0x1a,
     /// <summary>
     /// MPEG AVC video stream as defined in ITU-T Rec. H.264 | ISO/IEC 14496-10 video
     /// </summary>
@@ -453,7 +454,7 @@ namespace TvLibrary.Interfaces
 
     #endregion
 
-    #region ATSC A-53 part 3
+    #region ATSC A/53 part 3
 
     /// <summary>
     /// ATSC AC3 audio
@@ -462,9 +463,117 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// ATSC E-AC3 audio
     /// </summary>
-    EnhancedAc3Audio = 0x87
+    EnhancedAc3Audio = 0x87,
 
     #endregion
+
+    #region SCTE
+
+    /// <summary>
+    /// DigiCipher II video, identical to MPEG ITU-T Rec. H.262 | ISO/IEC 13818-2
+    /// </summary>
+    /// <remarks>
+    /// This stream type has been known to conflict with private elementary streams in DVB transport streams.
+    /// See mantis #3950.
+    /// </remarks>
+    DigiCipher2Video = 0x80,
+    /// <summary>
+    /// SCTE subtitles (SCTE 27)
+    /// </summary>
+    Subtitles = 0x82
+
+    #endregion
+  }
+
+  /// <summary>
+  /// TV Server stream types used for unified standard handling.
+  /// </summary>
+  /// <remarks>
+  /// Standard, de-facto standard or unique stream types are used where possible to simplify the conversion
+  /// between stream type and logical stream type.
+  /// </remarks>
+  public enum LogicalStreamType
+  {
+    /// <summary>
+    /// Unknown stream type.
+    /// </summary>
+    Unknown = 0,
+
+    #region video stream types
+
+    /// <summary>
+    /// MPEG ISO/IEC 11172-2 video (MPEG 1 video)
+    /// </summary>
+    [Description("MPEG 1 Video")]
+    Mpeg1Video = 0x01,
+    /// <summary>
+    /// MPEG ITU-T Rec. H.262 | ISO/IEC 13818-2 Video or ISO/IEC 11172-2 constrained parameter video stream (MPEG 2 video)
+    /// </summary>
+    [Description("MPEG 2 Video")]
+    Mpeg2Video = 0x02,
+    /// <summary>
+    /// MPEG ISO/IEC 14496-2 visual (MPEG 4)
+    /// </summary>
+    [Description("MPEG 4 Video")]
+    Mpeg4Video = 0x10,
+    /// <summary>
+    /// MPEG AVC video stream as defined in ITU-T Rec. H.264 | ISO/IEC 14496-10 video
+    /// </summary>
+    [Description("H.264/AVC Video")]
+    AvcVideo = 0x1b,
+
+    #endregion
+
+    #region audio stream types
+
+    /// <summary>
+    /// MPEG ISO/IEC 11172-3 audio (MPEG 1 audio)
+    /// </summary>
+    [Description("MPEG 1 Audio")]
+    Mpeg1Audio = 0x03,
+    /// <summary>
+    /// MPEG ISO/IEC 13818-3 audio (MPEG 2 audio)
+    /// </summary>
+    [Description("MPEG 2 Audio")]
+    Mpeg2Audio = 0x04,
+    /// <summary>
+    /// MPEG ISO/IEC 13818-7 audio with ADTS transport syntax (AAC audio)
+    /// </summary>
+    [Description("ADTS-AAC Audio")]
+    AdtsAac = 0x0f,
+    /// <summary>
+    /// MPEG ISO/IEC 14496-3 audio with the LATM transport syntax (LATM-AAC audio)
+    /// </summary>
+    [Description("LATM-AAC Audio")]
+    LatmAac = 0x11,
+    /// <summary>
+    /// AC-3/Dolby Digital audio
+    /// </summary>
+    [Description("AC-3/Dolby Digital Audio")]
+    Ac3 = 0x81,
+    /// <summary>
+    /// Enhanced AC-3/Dolby Digital Plus audio
+    /// </summary>
+    [Description("Enhanced AC-3/Dolby Digital Plus Audio")]
+    EnhancedAc3 = 0x87,
+    /// <summary>
+    /// DTS audio
+    /// </summary>
+    [Description("DTS Audio")]
+    Dts = 1000,       // non standard stream type
+
+    #endregion
+
+    /// <summary>
+    /// Teletext
+    /// </summary>
+    [Description("Teletext")]
+    Teletext = 1001,  // non standard stream type
+    /// <summary>
+    /// Subtitles
+    /// </summary>
+    [Description("Subtitles")]
+    Subtitles = 0x82
   }
 
   /// <summary>
@@ -676,7 +785,7 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// DVB time shifted service descriptor
     /// </summary>
-    TimeShiftedService,
+    DvbTimeShiftedService,
     /// <summary>
     /// DVB short event descriptor
     /// </summary>
@@ -698,7 +807,7 @@ namespace TvLibrary.Interfaces
     /// </summary>
     Mosaic,
     /// <summary>
-    /// DVB stream identifier descriptor
+    /// DVB stream identifier descriptor. Harmonised with SCTE (ANSI/SCTE 35).
     /// </summary>
     StreamIdentifier,
     /// <summary>
@@ -884,26 +993,378 @@ namespace TvLibrary.Interfaces
 
     #endregion
 
-    #region ATSC A-53 part 3
+    #region ATSC/SCTE
 
+    #region ATSC A/101
+
+    /// <summary>
+    /// ATSC Advanced Common Application Platform descriptor
+    /// </summary>
+    AcapXApplication = 0x60,
+    /// <summary>
+    /// ATSC Advanced Common Application Platform location descriptor
+    /// </summary>
+    AcapXApplicationLocation = 0x61,
+    /// <summary>
+    /// ATSC Advanced Common Application Platform boundary descriptor
+    /// </summary>
+    AcapXApplicationBoundary = 0x62,
+
+    #endregion
+
+    /// <summary>
+    /// ATSC stuffing descriptor
+    /// </summary>
+    AtscStuffing = 0x80,
     /// <summary>
     /// ATSC AC3 audio descriptor
     /// </summary>
     Ac3Audio = 0x81,
     /// <summary>
+    /// SCTE frame rate descriptor
+    /// </summary>
+    FrameRate = 0x82,
+    /// <summary>
+    /// SCTE extended video descriptor
+    /// </summary>
+    ExtendedVideo = 0x83,
+    /// <summary>
+    /// SCTE component name descriptor
+    /// </summary>
+    ScteComponentName = 0x84,
+    /// <summary>
+    /// ATSC program identifier descriptor
+    /// </summary>
+    ProgramIdentifier = 0x85,
+    /// <summary>
+    /// ATSC caption service descriptor
+    /// </summary>
+    CaptionService = 0x86,
+    /// <summary>
+    /// ATSC content advisory descriptor
+    /// </summary>
+    ContentAdvisory = 0x87,
+    /// <summary>
+    /// ATSC conditional access descriptor
+    /// </summary>
+    AtscConditionalAccess = 0x88,
+    /// <summary>
+    /// ATSC descriptor descriptor
+    /// </summary>
+    Descriptor = 0x89,
+    /// <summary>
+    /// SCTE cue identifier descriptor
+    /// </summary>
+    CueIdentifier = 0x8a,
+
+    // 0x8b reserved
+
+    /// <summary>
+    /// ATSC timestamp descriptor
+    /// </summary>
+    TimeStamp = 0x8c,
+
+    // 0x8d - 0x8f reserved
+
+    /// <summary>
+    /// SCTE frequency spec descriptor
+    /// </summary>
+    FrequencySpec = 0x90,
+    /// <summary>
+    /// SCTE modulation params descriptor
+    /// </summary>
+    ModulationParams = 0x91,
+    /// <summary>
+    /// SCTE transport stream ID descriptor
+    /// </summary>
+    TransportStreamId = 0x92,
+
+    #region SCTE 65, ATSC A/65
+
+    /// <summary>
+    /// SCTE revision detection descriptor
+    /// </summary>
+    RevisionDetection = 0x93,
+    /// <summary>
+    /// SCTE two part channel number descriptor
+    /// </summary>
+    TwoPartChannelNumber = 0x94,
+    /// <summary>
+    /// SCTE channel properties descriptor
+    /// </summary>
+    ChannelProperties = 0x95,
+    /// <summary>
+    /// SCTE daylight savings time descriptor
+    /// </summary>
+    DaylightSavingsTime = 0x96,
+
+    /// <summary>
+    /// SCTE adaption field data descriptor
+    /// </summary>
+    ScteAdaptionFieldData = 0x97,
+
+    // 0x98 - 0x9f reserved
+
+    /// <summary>
+    /// ATSC extended channel name descriptor
+    /// </summary>
+    ExtendedChannelName = 0xa0,
+    /// <summary>
+    /// ATSC service location descriptor
+    /// </summary>
+    ServiceLocation = 0xa1,
+    /// <summary>
+    /// ATSC time shifted service descriptor
+    /// </summary>
+    AtscTimeShiftedService = 0xa2,
+    /// <summary>
+    /// ATSC component name descriptor
+    /// </summary>
+    AtscComponentName = 0xa3,
+
+    #endregion
+
+    #region ATSC A/90
+
+    /// <summary>
+    /// ATSC data service descriptor
+    /// </summary>
+    DataService = 0xa4,
+    /// <summary>
+    /// ATSC PID count descriptor
+    /// </summary>
+    PidCount = 0xa5,
+    /// <summary>
+    /// ATSC download descriptor
+    /// </summary>
+    Download = 0xa6,
+    /// <summary>
+    /// ATSC multiprotocol encapsulation descriptor
+    /// </summary>
+    MultiprotocolEncapsulation = 0xa7,
+
+    #endregion
+
+    #region ATSC A/65
+
+    /// <summary>
+    /// ATSC Directed Channel Change departing request descriptor
+    /// </summary>
+    DccDepartingRequest = 0xa8,
+    /// <summary>
+    /// ATSC Directed Channel Change arriving request descriptor
+    /// </summary>
+    DccArrivingRequest = 0xa9,
+    /// <summary>
+    /// ATSC redistribution control descriptor
+    /// </summary>
+    Rc = 0xaa,
+    /// <summary>
+    /// ATSC genre descriptor
+    /// </summary>
+    Genre = 0xab,
+
+    #endregion
+
+    /// <summary>
+    /// SCTE MAC address list descriptor
+    /// </summary>
+    MacAddressList = 0xac,
+    /// <summary>
     /// ATSC private information descriptor
     /// </summary>
-    AtscPrivateInformation = 0xad,
+    PrivateInformation = 0xad,
+
+    #region ATSC A/94
+
+    /// <summary>
+    /// ATSC compatibility wrapper descriptor
+    /// </summary>
+    CompatibilityWrapper = 0xae,
+    /// <summary>
+    /// ATSC broadcaster policy descriptor
+    /// </summary>
+    BroadcasterPolicy = 0xaf,
+    /// <summary>
+    /// ATSC service name descriptor
+    /// </summary>
+    ServiceName = 0xb0,
+    /// <summary>
+    /// ATSC URI descriptor
+    /// </summary>
+    Uri = 0xb1,
+
+    #endregion
+
     /// <summary>
     /// ATSC enhanced signalling descriptor
     /// </summary>
-    EnhancedSignalling = 0xb2
+    EnhancedSignalling = 0xb2,
+    /// <summary>
+    /// ATSC string mapping descriptor
+    /// </summary>
+    StringMapping = 0xb3,
+    /// <summary>
+    /// ATSC module link descriptor
+    /// </summary>
+    ModuleLink = 0xb4,
+    /// <summary>
+    /// ATSC CRC32 descriptor
+    /// </summary>
+    Crc32 = 0xb5,
+    /// <summary>
+    /// ATSC content identifier descriptor
+    /// </summary>
+    AtscContentIdentifier = 0xb6,
+    /// <summary>
+    /// ATSC module info descriptor
+    /// </summary>
+    ModuleInfo = 0xb7,
+    /// <summary>
+    /// ATSC group link descriptor
+    /// </summary>
+    GroupLink = 0xb8,
+    /// <summary>
+    /// ATSC timestamp descriptor
+    /// </summary>
+    AtscTimeStamp = 0xb9,
+    /// <summary>
+    /// ATSC schedule descriptor
+    /// </summary>
+    Schedule = 0xba,
+    /// <summary>
+    /// ATSC component list descriptor
+    /// </summary>
+    ComponentList = 0xbb,
+
+    #region ATSC M/H A/153 part 3
+
+    /// <summary>
+    /// ATSC M/H component descriptor
+    /// </summary>
+    AtscMhComponent = 0xbc,
+    /// <summary>
+    /// ATSC M/H rights issuer descriptor
+    /// </summary>
+    RightsIssuer = 0xbd,
+    /// <summary>
+    /// ATSC M/H current program descriptor
+    /// </summary>
+    CurrentProgram = 0xbe,
+    /// <summary>
+    /// ATSC M/H original service identification descriptor
+    /// </summary>
+    OriginalServiceIdentification = 0xbf,
+    /// <summary>
+    /// ATSC M/H protection descriptor
+    /// </summary>
+    Protection = 0xc0,
+    /// <summary>
+    /// ATSC M/H SG bootstrap descriptor
+    /// </summary>
+    MhSgBootstrap = 0xc1,
+
+    #endregion
+
+    #region ATSC A/103
+
+    /// <summary>
+    /// ATSC service ID descriptor
+    /// </summary>
+    ServiceId = 0xc2,
+    /// <summary>
+    /// ATSC protocol version descriptor
+    /// </summary>
+    ProtocolVersion = 0xc3,
+    /// <summary>
+    /// ATSC Non Real Time service descriptor
+    /// </summary>
+    NrtService = 0xc4,
+    /// <summary>
+    /// ATSC capabilities descriptor
+    /// </summary>
+    Capabilities = 0xc5,
+    /// <summary>
+    /// ATSC icon descriptor
+    /// </summary>
+    Icon = 0xc6,
+    /// <summary>
+    /// ATSC receiver targeting descriptor
+    /// </summary>
+    ReceiverTargeting = 0xc7,
+    /// <summary>
+    /// ATSC time slot descriptor
+    /// </summary>
+    TimeSlot = 0xc8,
+    /// <summary>
+    /// ATSC internet location descriptor
+    /// </summary>
+    InternetLocation = 0xc9,
+    /// <summary>
+    /// ATSC associated service descriptor
+    /// </summary>
+    AssociatedService = 0xca,
+    /// <summary>
+    /// ATSC eye identification descriptor
+    /// </summary>
+    EyeIdentification = 0xcb,
+
+    #endregion
+
+    /// <summary>
+    /// ATSC enhanced AC-3 descriptor
+    /// </summary>
+    Eac3 = 0xcc
 
     #endregion
   }
 
   /// <summary>
-  /// DVB service types.
+  /// A simple helper class to centralise logic that needs to distinguish between different stream
+  /// categories or types.
+  /// </summary>
+  public static class StreamTypeHelper
+  {
+    /// <summary>
+    /// Determine whether an elementary stream is a video stream.
+    /// </summary>
+    /// <param name="streamType">The logical stream type of the elementary stream.</param>
+    /// <returns><c>true</c> if the elementary stream is a video stream, otherwise <c>false</c></returns>
+    public static bool IsVideoStream(LogicalStreamType streamType)
+    {
+      if (streamType == LogicalStreamType.Mpeg1Video ||
+        streamType == LogicalStreamType.Mpeg2Video ||
+        streamType == LogicalStreamType.Mpeg4Video ||
+        streamType == LogicalStreamType.AvcVideo)
+      {
+        return true;
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Determine whether an elementary stream is an audio stream.
+    /// </summary>
+    /// <param name="streamType">The logical stream type of the elementary stream.</param>
+    /// <returns><c>true</c> if the elementary stream is an audio stream, otherwise <c>false</c></returns>
+    public static bool IsAudioStream(LogicalStreamType streamType)
+    {
+      if (streamType == LogicalStreamType.Mpeg1Audio ||
+        streamType == LogicalStreamType.Mpeg2Audio ||
+        streamType == LogicalStreamType.AdtsAac ||
+        streamType == LogicalStreamType.LatmAac ||
+        streamType == LogicalStreamType.Ac3 ||
+        streamType == LogicalStreamType.EnhancedAc3 ||
+        streamType == LogicalStreamType.Dts)
+      {
+        return true;
+      }
+      return false;
+    }
+  }
+
+  /// <summary>
+  /// DVB service types. See EN 300 468 table 81.
   /// </summary>
   public enum DvbServiceType
   {
@@ -1016,22 +1477,46 @@ namespace TvLibrary.Interfaces
   }
 
   /// <summary>
-  /// ATSC service types.
+  /// ATSC service types. See A/53 part 1 table 4.1 and the ATSC code points registry "other" tab.
   /// </summary>
   public enum AtscServiceType
   {
     /// <summary>
-    /// analog television (see A/65 [9])
+    /// analog television (A/65)
     /// </summary>
     AnalogTelevision = 0x01,
     /// <summary>
-    /// ATSC digital television (see A/53 part 3 [2])
+    /// ATSC digital television service (A/53 part 3)
     /// </summary>
     DigitalTelevision = 0x02,
     /// <summary>
-    /// ATSC audio (see A/53 part 3 [2])
+    /// ATSC audio service (A/53 part 3)
     /// </summary>
-    Audio = 0x03
+    Audio = 0x03,
+    /// <summary>
+    /// ATSC data only service (A/90)
+    /// </summary>
+    DataOnly = 0x04,
+    /// <summary>
+    /// ATSC software download service (A/97)
+    /// </summary>
+    SoftwareDownload = 0x05,
+    /// <summary>
+    /// unassociated/small screen service (A/53 part 3)
+    /// </summary>
+    SmallScreen = 0x06,
+    /// <summary>
+    /// parameterised service (A/71)
+    /// </summary>
+    Parameterised = 0x07,
+    /// <summary>
+    /// Non Real Time service (A/103)
+    /// </summary>
+    Nrt = 0x08,
+    /// <summary>
+    /// extended parametised service (A/71)
+    /// </summary>
+    ExtendedParameterised = 0x09
   }
 
   #endregion
@@ -1598,8 +2083,15 @@ namespace TvLibrary.Interfaces
       while (offset + 4 < endEsData)
       {
         PmtElementaryStream es = new PmtElementaryStream();
-        es.PrimaryDescriptorTag = DescriptorTag.Reserved;
         es.StreamType = (StreamType)data[offset++];
+        if (Enum.IsDefined(typeof(LogicalStreamType), es.StreamType))
+        {
+          es.LogicalStreamType = (LogicalStreamType)es.StreamType;
+        }
+        else
+        {
+          es.LogicalStreamType = LogicalStreamType.Unknown;
+        }
         es.Pid = (UInt16)(((data[offset] & 0x1f) << 8) + data[offset + 1]);
         offset += 2;
         es.EsInfoLength = (UInt16)(((data[offset] & 0x0f) << 8) + data[offset + 1]);
@@ -1622,7 +2114,7 @@ namespace TvLibrary.Interfaces
             Log.Log.Debug("PMT: elementary stream descriptor {0} for PID {1} (0x{1:x}) is invalid", es.Descriptors.Count + es.CaDescriptors.Count + 1, es.Pid);
             return null;
           }
-          offset += d.Length + 2;
+
           if (d.Tag == DescriptorTag.ConditionalAccess)
           {
             es.CaDescriptors.Add(d);
@@ -1630,24 +2122,46 @@ namespace TvLibrary.Interfaces
           else
           {
             es.Descriptors.Add(d);
-            if (d.Tag == DescriptorTag.VideoStream ||
-              d.Tag == DescriptorTag.Mpeg4Video ||
-              d.Tag == DescriptorTag.AvcVideo ||
-              d.Tag == DescriptorTag.AudioStream ||
-              d.Tag == DescriptorTag.Mpeg4Audio ||
-              d.Tag == DescriptorTag.Mpeg2AacAudio ||
-              d.Tag == DescriptorTag.Aac ||
-              d.Tag == DescriptorTag.Ac3 ||        // DVB
-              d.Tag == DescriptorTag.Ac3Audio ||   // ATSC
-              d.Tag == DescriptorTag.EnhancedAc3 ||
-              d.Tag == DescriptorTag.Dts ||
-              d.Tag == DescriptorTag.Subtitling ||
-              d.Tag == DescriptorTag.Teletext ||
-              d.Tag == DescriptorTag.VbiTeletext)
+            if (es.LogicalStreamType == LogicalStreamType.Unknown)
             {
-              es.PrimaryDescriptorTag = d.Tag;
+              switch (d.Tag)
+              {
+                case DescriptorTag.Mpeg4Video:
+                  es.LogicalStreamType = LogicalStreamType.Mpeg4Video;
+                  break;
+                case DescriptorTag.AvcVideo:
+                  es.LogicalStreamType = LogicalStreamType.AvcVideo;
+                  break;
+                case DescriptorTag.Mpeg2AacAudio:
+                  es.LogicalStreamType = LogicalStreamType.AdtsAac;
+                  break;
+                case DescriptorTag.Mpeg4Audio:
+                case DescriptorTag.Aac:
+                  es.LogicalStreamType = LogicalStreamType.LatmAac;
+                  es.LogicalStreamType = LogicalStreamType.LatmAac;
+                  break;
+                case DescriptorTag.Ac3:         // DVB
+                case DescriptorTag.Ac3Audio:    // ATSC
+                  es.LogicalStreamType = LogicalStreamType.Ac3;
+                  break;
+                case DescriptorTag.EnhancedAc3: // DVB
+                case DescriptorTag.Eac3:        // ATSC
+                  es.LogicalStreamType = LogicalStreamType.EnhancedAc3;
+                  break;
+                case DescriptorTag.Dts:
+                  es.LogicalStreamType = LogicalStreamType.Dts;
+                  break;
+                case DescriptorTag.Subtitling:
+                  es.LogicalStreamType = LogicalStreamType.Subtitles;
+                  break;
+                case DescriptorTag.Teletext:
+                case DescriptorTag.VbiTeletext:
+                  es.LogicalStreamType = LogicalStreamType.Teletext;
+                  break;
+              }
             }
           }
+          offset += d.Length + 2;
         }
         if (offset != endEsDescriptors)
         {
@@ -1678,7 +2192,7 @@ namespace TvLibrary.Interfaces
         offset = 12 + pmt._programInfoLength;
         foreach (PmtElementaryStream es in pmt._elementaryStreams)
         {
-          if (es.StreamType == StreamType.Mpeg2Part1PrivateData && es.PrimaryDescriptorTag == DescriptorTag.Ac3)
+          if (es.StreamType == StreamType.Mpeg2Part1PrivateData && es.LogicalStreamType == LogicalStreamType.Ac3)
           {
             es.StreamType = StreamType.Ac3Audio;
             pmt._rawPmt[offset] = (byte)StreamType.Ac3Audio;
@@ -1742,32 +2256,11 @@ namespace TvLibrary.Interfaces
       foreach (PmtElementaryStream es in _elementaryStreams)
       {
         // We add each video, audio, subtitle and teletext stream with their corresponding conditional access
-        // descriptors to the CA PMT. The first trick is to find out if the stream is one that we want to
-        // include. That requires checking the stream type and primary descriptor type.
-        if (es.StreamType == StreamType.Mpeg1Part2Video ||
-          es.StreamType == StreamType.Mpeg2Part2Video ||
-          es.StreamType == StreamType.Mpeg4Part2Video ||
-          es.StreamType == StreamType.Mpeg4Part10Video ||
-          es.StreamType == StreamType.Mpeg1Part3Audio ||
-          es.StreamType == StreamType.Mpeg2Part3Audio ||
-          es.StreamType == StreamType.Mpeg2Part7Audio ||
-          es.StreamType == StreamType.Mpeg4Part3Audio ||
-          es.StreamType == StreamType.Ac3Audio ||
-          es.StreamType == StreamType.EnhancedAc3Audio ||
-          es.PrimaryDescriptorTag == DescriptorTag.VideoStream ||
-          es.PrimaryDescriptorTag == DescriptorTag.Mpeg4Video ||
-          es.PrimaryDescriptorTag == DescriptorTag.AvcVideo ||
-          es.PrimaryDescriptorTag == DescriptorTag.AudioStream ||
-          es.PrimaryDescriptorTag == DescriptorTag.Mpeg4Audio ||
-          es.PrimaryDescriptorTag == DescriptorTag.Mpeg2AacAudio ||
-          es.PrimaryDescriptorTag == DescriptorTag.Aac ||
-          es.PrimaryDescriptorTag == DescriptorTag.Ac3 ||        // DVB
-          es.PrimaryDescriptorTag == DescriptorTag.Ac3Audio ||   // ATSC
-          es.PrimaryDescriptorTag == DescriptorTag.EnhancedAc3 ||
-          es.PrimaryDescriptorTag == DescriptorTag.Dts ||
-          es.PrimaryDescriptorTag == DescriptorTag.Subtitling ||
-          es.PrimaryDescriptorTag == DescriptorTag.Teletext ||
-          es.PrimaryDescriptorTag == DescriptorTag.VbiTeletext)
+        // descriptors to the CA PMT.
+        if (StreamTypeHelper.IsVideoStream(es.LogicalStreamType) ||
+          StreamTypeHelper.IsAudioStream(es.LogicalStreamType) ||
+          es.LogicalStreamType == LogicalStreamType.Subtitles ||
+          es.LogicalStreamType == LogicalStreamType.Teletext)
         {
           tempCaPmt[offset++] = (byte)es.StreamType;
           tempCaPmt[offset++] = (byte)((es.Pid >> 8) & 0x1f);
@@ -1859,7 +2352,7 @@ namespace TvLibrary.Interfaces
     private List<IDescriptor> _descriptors;
     private List<IDescriptor> _caDescriptors;
 
-    private DescriptorTag _primaryDescriptorTag;
+    private LogicalStreamType _logicalStreamType;
 
     #endregion
 
@@ -1941,18 +2434,19 @@ namespace TvLibrary.Interfaces
     }
 
     /// <summary>
-    /// The descriptor tag that best describes the elementary stream type. This property can be used to
-    /// quickly and precisely determine the stream type when the stream type property is not specific enough.
+    /// The logical type or category of the elementary stream. This property can be used to quickly and
+    /// precisely determine the stream type when the stream type would normally be indicated using one
+    /// or more descriptors.
     /// </summary>
-    public DescriptorTag PrimaryDescriptorTag
+    public LogicalStreamType LogicalStreamType
     {
       get
       {
-        return _primaryDescriptorTag;
+        return _logicalStreamType;
       }
       set
       {
-        _primaryDescriptorTag = value;
+        _logicalStreamType = value;
       }
     }
 
@@ -1964,10 +2458,10 @@ namespace TvLibrary.Interfaces
     public void Dump()
     {
       Log.Log.Debug("Elementary Stream: dump...");
-      Log.Log.Debug("  stream type = {0}", _streamType);
-      Log.Log.Debug("  PID         = {0} (0x{0:x})", _pid);
-      Log.Log.Debug("  length      = {0}", _esInfoLength);
-      Log.Log.Debug("  main tag    = {0}", _primaryDescriptorTag);
+      Log.Log.Debug("  stream type         = {0}", _streamType);
+      Log.Log.Debug("  PID                 = {0} (0x{0:x})", _pid);
+      Log.Log.Debug("  length              = {0}", _esInfoLength);
+      Log.Log.Debug("  logical stream type = {0}", _logicalStreamType);
       Log.Log.Debug("  {0} descriptor(s)...", _descriptors.Count + _caDescriptors.Count);
       foreach (IDescriptor d in _descriptors)
       {
