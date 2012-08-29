@@ -1,6 +1,6 @@
 #pragma once
 /*
- *      Copyright (C) 2005-2010 Team XBMC
+ *      Copyright (C) 2010-2012 Team XBMC
  *      http://xbmc.org
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -56,16 +56,18 @@ enum AEDataFormat
   AE_FMT_FLOAT,
 
   /* Bitstream formats */
+  AE_FMT_AAC,
   AE_FMT_AC3,
   AE_FMT_DTS,
   AE_FMT_EAC3,
   AE_FMT_TRUEHD,
   AE_FMT_DTSHD,
+  AE_FMT_LPCM,
 
   AE_FMT_MAX
 };
 
-#define AE_IS_RAW(x) ((x) >= AE_FMT_AC3 && (x) < AE_FMT_MAX)
+#define AE_IS_RAW(x) ((x) >= AE_FMT_AAC && (x) < AE_FMT_MAX)
 #define AE_IS_RAW_HD(x) ((x) >= AE_FMT_EAC3 && (x) < AE_FMT_MAX)
 
 /**
@@ -75,31 +77,36 @@ typedef struct {
   /**
    * The stream's data format (eg, AE_FMT_S16LE)
    */
-  enum AEDataFormat  m_dataFormat;
+  enum AEDataFormat m_dataFormat;
 
   /**
    * The stream's sample rate (eg, 48000)
    */
-  unsigned int       m_sampleRate;
+  unsigned int m_sampleRate;
+
+  /**
+   * The encoded streams sample rate if a bitstream, otherwise undefined
+   */
+  unsigned int m_encodedRate;
 
   /**
    * The stream's channel layout
    */
-  CAEChannelInfo     m_channelLayout;
+  CAEChannelInfo m_channelLayout;
 
   /**
    * The number of frames per period
    */
-  unsigned int       m_frames;
+  unsigned int m_frames;
 
   /**
    * The number of samples in one frame
    */
-  unsigned int       m_frameSamples;
+  unsigned int m_frameSamples;
 
   /**
    * The size of one frame in bytes
    */
-  unsigned int       m_frameSize;
+  unsigned int m_frameSize;
 } AEAudioFormat;
 

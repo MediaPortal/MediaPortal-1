@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>1013</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <controls>
+    <import>common.settings.xml</import>
+		<import>common.window.xml</import>
+		<import>common.time.xml</import>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>260</posX>
+      <posY>135</posY>
+      <height>390</height>
+      <width>780</width>
+      <texture>backslide2.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>Dynamic content label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>300</posX>
+      <posY>170</posY>
+      <label>300175</label>
+    </control>
+    <control>
+      <description>Disable internet lookup for coverart</description>
+      <type>checkbutton</type>
+      <id>2</id>
+      <label>300176</label>
+      <posX>300</posX>
+      <posY>215</posY>
+      <width>690</width>
+      <onup>17</onup>
+    </control>
+    <control>
+      <description>Disable Interent lookups for best albums tracks</description>
+      <type>checkbutton</type>
+      <id>3</id>
+      <label>300177</label>
+      <posX>300</posX>
+      <posY>260</posY>
+      <width>690</width>
+      
+    </control>
+    <control>
+      <description>Disable interent lookups for track suggestions</description>
+      <type>checkbutton</type>
+      <id>4</id>
+      <label>300178</label>
+      <posX>300</posX>
+      <posY>305</posY>
+      <width>690</width>
+      
+    </control>
+    <control>
+      <description>Switch artists</description>
+      <type>checkbutton</type>
+      <id>5</id>
+      <label>300179</label>
+      <posX>300</posX>
+      <posY>350</posY>
+      <width>690</width>
+      
+    </control>
+    <control>
+      <description>VuMeter label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>300</posX>
+      <posY>410</posY>
+      <width>690</width>
+      <label>300180</label>
+    </control>
+    <control>
+      <description>VUMeter button</description>
+      <type>button</type>
+      <id>6</id>
+      <label>#vumeter</label>
+      <posX>300</posX>
+      <posY>455</posY>
+      <ondown>2</ondown>
+    </control>
+  </controls>
+</window>

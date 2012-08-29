@@ -91,11 +91,11 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     LogRotate();
     if (NO_MP_AUD_REND)
     {
-      Log("---------- v1.5.58 ----------- instance 0x%x", this);
+      Log("---------- v1.5.59 ----------- instance 0x%x", this);
     }
     else
     {
-      Log("---------- v1.5.58 ----------- instance 0x%x", this);
+      Log("---------- v1.5.59 ----------- instance 0x%x", this);
       Log("--- audio renderer enabled --- instance 0x%x", this);
     }
     m_hMonitor = monitor;
@@ -1414,12 +1414,22 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pTargetTime, LON
     // When scrubbing always display at least every eighth frame - even if it's late
     if ( (nextSampleTime >= -lateLimit) || m_bDVDMenu || !m_bFrameSkipping || (m_bScrubbing && !(m_iFramesProcessed % 8)) || m_bZeroScrub )
     {   
+      // Within the time window to 'present' a sample, or it's a special play mode
       if (m_iLateFrames > 0)
       {
         LOG_LATEFR("Late frame (present), sampTime %.2f ms, last sleep %.2f, LFr %d",(double)nextSampleTime/10000, (double)lastSleepTime/10000, m_iLateFrames) ;
       }
-      GetFrameRateRatio(); // update video to display FPS ratio data
-      // Within the time window to 'present' a sample, or it's a special play mode
+      
+      //The sample duration has been adjusted to match the video FPS in VideoFpsFromSample()
+      LONGLONG GetDuration;
+      pSample->GetSampleDuration(&GetDuration);
+      m_DetectedFrameTime = ((double)GetDuration)/10000000.0;    
+      GetFrameRateRatio(); // update video to display FPS ratio data     
+      if (m_DetectedFrameTime > DFT_THRESH)
+      {
+        frameTime = GetDuration;
+      }
+
       if (!m_bZeroScrub)
       {   
         systemTime = GetCurrentTimestamp();
@@ -1457,7 +1467,7 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pTargetTime, LON
           m_earliestPresentTime = systemTime + (displayTime * (m_rawFRRatio - 1)) + offsetTime;
         }    
         
-        if (nextSampleTime > (frameTime + earlyLimit))
+        if (nextSampleTime > (max(frameTime, displayTime) + earlyLimit))
         {      
           // It's too early to present sample, so delay for a while
           if (m_iLateFrames > 0)

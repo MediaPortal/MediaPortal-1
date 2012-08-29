@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -130,12 +131,12 @@ namespace MediaPortal.GUI.Music
     private MapSettings _mapSettings = new MapSettings();
     private DirectoryHistory _dirHistory = new DirectoryHistory();
     private GUIListItem _selectedListItem = null;
-    private VirtualDirectory _virtualDirectory = new VirtualDirectory();
+    private static VirtualDirectory _virtualDirectory = new VirtualDirectory();
 
     private int _selectedAlbum = -1;
     private int _selectedItem = -1;
     private string _discId = string.Empty;
-    private string currentFolder = string.Empty;
+    private static string currentFolder = string.Empty;
     private string _startDirectory = string.Empty;
     private string _destination = string.Empty;
     private string _fileMenuPinCode = string.Empty;
@@ -1101,14 +1102,14 @@ namespace MediaPortal.GUI.Music
 
     protected override void OnInfo(int iItem)
     {
-      GUIListItem pItem = facadeLayout[iItem];
+      var pItem = facadeLayout[iItem];
 
       if (pItem.IsFolder && pItem.Label != "..")
-      {
+      {  // read next level under folder to try and find tags
         string oldFolder = currentFolder;
-        VirtualDirectory dir = new VirtualDirectory();
+        var dir = new VirtualDirectory();
         dir.SetExtensions(Util.Utils.AudioExtensions);
-        List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(pItem.Path, true);
+        var items = dir.GetDirectoryUnProtectedExt(pItem.Path, true);
 
         if (items.Count < 2)
         {
@@ -1118,34 +1119,34 @@ namespace MediaPortal.GUI.Music
         currentFolder = pItem.Path;
         GetTagInfo(ref items);
         currentFolder = oldFolder;
-        GUIListItem item = items[1] as GUIListItem;
-        MusicTag tag = item.MusicTag as MusicTag;
+        var item = items[1] as GUIListItem;
+        var tag = item.MusicTag as MusicTag;
 
         // Is this an album?
-        if (tag != null && tag.Album.Length > 0)
+        if (tag != null && !string.IsNullOrEmpty(tag.Album))
         {
-          ShowAlbumInfo(true, tag.Artist, tag.Album, pItem.Path, tag);
+          ShowAlbumInfo(tag.Artist, tag.Album, pItem.Path, tag);
           facadeLayout.RefreshCoverArt();
         }
-
-          // Nope, it's a artist folder or share
         else
-        {
+        { // Nope, it's a artist folder or share
           return;
         }
       }
-
-      Song song = pItem.AlbumInfoTag as Song;
-
-      if (song == null)
+      else
       {
-        List<GUIListItem> list = new List<GUIListItem>();
-        list.Add(pItem);
-        GetTagInfo(ref list);
-      }
+        var song = new Song();
+        var tag = pItem.MusicTag as MusicTag;
+        if (tag != null)
+        {
+          song.Album = tag.Album;
+          song.Artist = tag.Artist;
+          song.AlbumArtist = tag.AlbumArtist;
+          facadeLayout[iItem].AlbumInfoTag = song;
+        }
 
-      //facadeLayout.RefreshCoverArt();
-      base.OnInfo(iItem);
+        base.OnInfo(iItem);
+      }
     }
 
     protected override void AddSongToFavorites(GUIListItem item)
@@ -1894,6 +1895,32 @@ namespace MediaPortal.GUI.Music
     }
 
     #endregion
+
+    public static void ResetShares()
+    {
+      _virtualDirectory.Reset();
+      _virtualDirectory.DefaultShare = null;
+      _virtualDirectory.LoadSettings("music");
+      
+      if (_virtualDirectory.DefaultShare != null)
+      {
+        int pincode;
+        bool folderPinProtected = _virtualDirectory.IsProtectedShare(_virtualDirectory.DefaultShare.Path, out pincode);
+        if (folderPinProtected)
+        {
+          currentFolder = string.Empty;
+        }
+        else
+        {
+          currentFolder = _virtualDirectory.DefaultShare.Path;
+        }
+      }
+    }
+
+    public static void ResetExtensions(ArrayList extensions)
+    {
+      _virtualDirectory.SetExtensions(extensions);
+    }
 
     #region ISetupForm Members
 
