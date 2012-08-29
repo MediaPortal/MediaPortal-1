@@ -101,6 +101,7 @@ protected:
   Packet* m_pCachedBuffer;
   bool m_bProvidePMT;
 
+  CCritSec m_csDeliver;
   CAMEvent* m_eFlushStart;
   bool m_bFlushing;
   bool m_bSeekDone;

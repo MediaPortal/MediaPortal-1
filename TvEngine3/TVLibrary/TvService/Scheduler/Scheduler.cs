@@ -544,13 +544,22 @@ namespace TvService
                 }
                 if (pastRecordEpisode.Equals(ToRecordEpisode, StringComparison.CurrentCultureIgnoreCase))
                 {
-                  // How to handle "interrupted" recordings?
-                  // E.g. Windows reboot because of update installation: Previously the tvservice restarted to record the episode 
-                  // and simply took care of creating a unique filename.
-                  // Now we need to check whether Recording's and Scheduling's Starttime are identical. If they are we expect that
-                  // the recording process should be resume because of previous failures.
-                  if (pastRecordings[i].StartTime <= newRecording.Program.EndTime.AddMinutes(newRecording.Schedule.PostRecordInterval) &&
-                      pastRecordings[i].EndTime >= newRecording.Program.StartTime.AddMinutes(-newRecording.Schedule.PreRecordInterval))
+                  var startExisting = pastRecordings[i].StartTime;
+                  var endExisting = pastRecordings[i].EndTime;
+                  var startNew = newRecording.Program.StartTime.AddMinutes(-newRecording.Schedule.PreRecordInterval);
+                  var endNew = newRecording.Program.EndTime.AddMinutes(newRecording.Schedule.PostRecordInterval);
+
+                  var isOverlap = startNew < endExisting && endNew > startExisting;
+
+                  // Check if new program overlaps with existing recording and is on the same channel
+                  // if so assume previous failure and recording needs to be resumed
+                  if (isOverlap && pastRecordings[i].IdChannel == newRecording.Channel.IdChannel)
+                  {
+                    Log.Info(
+                      "Scheduler: Schedule {0} ({1}) had already been started - expect previous failure and try to resume...",
+                      ToRecordTitle, ToRecordEpisode);
+                  }
+                  else
                   {
                     // Check whether the file itself does really exist
                     // There could be faulty drivers 
@@ -600,12 +609,6 @@ namespace TvService
                         "Scheduler: Schedule {0} ({1}) has already been recorded but the file is invalid ({2})! Going to record again...",
                         ToRecordTitle, ToRecordEpisode, ex.Message);
                     }
-                  }
-                  else
-                  {
-                    Log.Info(
-                      "Scheduler: Schedule {0} ({1}) had already been started - expect previous failure and try to resume...",
-                      ToRecordTitle, ToRecordEpisode);
                   }
                 }
               }

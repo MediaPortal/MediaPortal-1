@@ -524,7 +524,6 @@ namespace MediaPortal.Player
     protected BDFilterConfig filterConfig;
     protected int _currentVideoFormat;
     protected int _currentAudioFormat;
-    protected int _currentVideoFormatRate;
     protected static BDPlayerSettings settings;
     protected MenuState menuState;
     protected bool _subtitlesEnabled = true;
@@ -1469,7 +1468,7 @@ namespace MediaPortal.Player
         _currentAudioFormat = audioFormat;
       }
 
-      UpdateRefreshRate(videoRate);      
+      UpdateRefreshRate(videoRate);
 
       if (_mChangedMediaType != MediaType.None)
       {
@@ -1862,7 +1861,10 @@ namespace MediaPortal.Player
       {
         BDStreamInfo clipInfo = new BDStreamInfo();
         _ireader.GetCurrentClipStreamInfo(ref clipInfo);
-        Log.Debug("BDPlayer: CurrentStreamInfo - video format: {0}({1})@{2}fps, duration: {3}", StreamTypetoString(clipInfo.coding_type), VideoFormattoString(clipInfo.format), VideoRatetoDouble(clipInfo.rate), _duration);
+        
+        Log.Debug("BDPlayer: CurrentStreamInfo - video format: {0}({1})@{2}fps, duration: {3}",
+          StreamTypetoString(clipInfo.coding_type), VideoFormattoString(clipInfo.format), VideoRatetoDouble(clipInfo.rate), _duration);
+
         UpdateRefreshRate(clipInfo.rate);
       }
       catch
@@ -1873,12 +1875,14 @@ namespace MediaPortal.Player
 
     protected void UpdateRefreshRate(int videoRate)
     {
-      if (_currentVideoFormatRate != videoRate && _duration > 300)
+      BDTitleInfo titleInfo = GetTitleInfo(_ireader, unchecked((int)BLURAY_TITLE_CURRENT));
+
+      // Do not change refresh rate if the clip is less than 1 minute long
+      if (titleInfo.duration / 90000 > 60)
       {
-        _currentVideoFormatRate = videoRate;
         RefreshRateChanger.SetRefreshRateBasedOnFPS(VideoRatetoDouble(videoRate), "", RefreshRateChanger.MediaType.Video);
       }
-    }     
+    }
 
     protected void UpdateChapters()
     {

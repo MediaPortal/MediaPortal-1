@@ -51,6 +51,7 @@ namespace MediaPortal.Video.Database
     private int _actorIndex;
     private static bool _foldercheck = true;
     private ArrayList _nfoFiles;
+    private bool _addToDatabase = true;
     
     public IMDBFetcher(IMDB.IProgress progress)
     {
@@ -162,12 +163,18 @@ namespace MediaPortal.Video.Database
 
     #region Fetch Movie details
 
+     public bool FetchDetails(int selectedMovie, ref IMDBMovie currentMovie)
+     {
+       return FetchDetails(selectedMovie, ref currentMovie, true);
+     }
+
     // Movie details fetch/refresh
-    public bool FetchDetails(int selectedMovie, ref IMDBMovie currentMovie)
+    public bool FetchDetails(int selectedMovie, ref IMDBMovie currentMovie, bool addToDatabase)
     {
       try
       {
         _movieDetails = currentMovie;
+        _addToDatabase = addToDatabase;
         
         if ((selectedMovie < 0) || (selectedMovie >= Count))
         {
@@ -264,111 +271,117 @@ namespace MediaPortal.Video.Database
           string localCover = string.Empty; // local cover named as movie filename
           string movieFile = string.Empty;
           string moviePath = _movieDetails.Path;
-          
-          // Find movie file(s)
-          ArrayList files = new ArrayList();
-          VideoDatabase.GetFilesForMovie(_movieDetails.ID, ref files);
-          
-          // Remove stack endings for video file(CD, Part...)
-          if (files.Count > 0)
+          string titleExt = string.Empty;
+          string largeCoverArt = string.Empty;
+          string coverArt = string.Empty;
+
+          if (_addToDatabase)
           {
-            movieFile = (string)files[0];
-            Util.Utils.RemoveStackEndings(ref movieFile);
-          }
-          
-          localCover = moviePath + @"\" + Util.Utils.GetFilename(movieFile, true) + ".jpg";
-          
-          // Every movie in it's own folder?
-          if (folderTitle)
-          {
-            string folderCover = moviePath + @"\folder.jpg";
-            
-            if (File.Exists(folderCover))
+            // Find movie file(s)
+            ArrayList files = new ArrayList();
+            VideoDatabase.GetFilesForMovie(_movieDetails.ID, ref files);
+
+            // Remove stack endings for video file(CD, Part...)
+            if (files.Count > 0)
             {
-              _movieDetails.ThumbURL = "file://" + folderCover;
+              movieFile = (string) files[0];
+              Util.Utils.RemoveStackEndings(ref movieFile);
             }
+
+            localCover = moviePath + @"\" + Util.Utils.GetFilename(movieFile, true) + ".jpg";
+
+            // Every movie in it's own folder?
+            if (folderTitle)
+            {
+              string folderCover = moviePath + @"\folder.jpg";
+
+              if (File.Exists(folderCover))
+              {
+                _movieDetails.ThumbURL = "file://" + folderCover;
+              }
+              else if (File.Exists(localCover))
+              {
+                _movieDetails.ThumbURL = "file://" + localCover;
+              }
+            }
+              // Try local movefilename.jpg
             else if (File.Exists(localCover))
             {
               _movieDetails.ThumbURL = "file://" + localCover;
             }
-          }
-          // Try local movefilename.jpg
-          else if (File.Exists(localCover))
-          {
-            _movieDetails.ThumbURL = "file://" + localCover;
-          }
-          
-          // No local or scraper thumb
-          if (_movieDetails.ThumbURL == string.Empty)
-          {
-            // **Progress bar message cover search IMPAw start
-            line1 = GUILocalizeStrings.Get(928) + ": IMP Awards"; 
-            OnProgress(line1, _url.Title, string.Empty, 20);
 
-            // Added IMDBNumber parameter for movie cover check
-            // This number is checked on HTML cover source page, if it's equal then this is the cover for our movie
-
-            // IMPAwards
-            IMPAwardsSearch impSearch = new IMPAwardsSearch();
-            impSearch.SearchCovers(_movieDetails.Title, _movieDetails.IMDBNumber);
-
-            if ((impSearch.Count > 0) && (impSearch[0] != string.Empty))
+            // No local or scraper thumb
+            if (_movieDetails.ThumbURL == string.Empty)
             {
-              _movieDetails.ThumbURL = impSearch[0];
-
-              // **Progress bar message for IMPAw end
-              OnProgress(line1, _url.Title, string.Empty, 40);
-            }
-            
-            // If no IMPAwards lets try TMDB 
-            TMDBCoverSearch tmdbSearch = new TMDBCoverSearch();
-            
-            if (impSearch.Count == 0)
-            {
-              line1 = GUILocalizeStrings.Get(928) + ": TMDB"; // **Progress bar message for TMDB start
-              OnProgress(line1, _url.Title, string.Empty, 20);
-              
-              tmdbSearch.SearchCovers(_movieDetails.Title, _movieDetails.IMDBNumber);
-
-              if ((tmdbSearch.Count > 0) && (tmdbSearch[0] != string.Empty))
-              {
-                _movieDetails.ThumbURL = tmdbSearch[0];
-                // **Progress bar message for TMDB end
-                OnProgress(line1, _url.Title, string.Empty, 40);
-              }
-            }
-            // All fail, last try IMDB
-            if (impSearch.Count == 0 && tmdbSearch.Count == 0)
-            {
-              // **Progress bar message for IMDB start
-              line1 = GUILocalizeStrings.Get(928) + ": IMDB";
+              // **Progress bar message cover search IMPAw start
+              line1 = GUILocalizeStrings.Get(928) + ": IMP Awards";
               OnProgress(line1, _url.Title, string.Empty, 20);
 
-              IMDBSearch imdbSearch = new IMDBSearch();
-              imdbSearch.SearchCovers(_movieDetails.IMDBNumber, true);
+              // Added IMDBNumber parameter for movie cover check
+              // This number is checked on HTML cover source page, if it's equal then this is the cover for our movie
 
-              if ((imdbSearch.Count > 0) && (imdbSearch[0] != string.Empty))
+              // IMPAwards
+              IMPAwardsSearch impSearch = new IMPAwardsSearch();
+              impSearch.SearchCovers(_movieDetails.Title, _movieDetails.IMDBNumber);
+
+              if ((impSearch.Count > 0) && (impSearch[0] != string.Empty))
               {
-                _movieDetails.ThumbURL = imdbSearch[0];
-                // **Progress bar message for IMDB end
+                _movieDetails.ThumbURL = impSearch[0];
+
+                // **Progress bar message for IMPAw end
                 OnProgress(line1, _url.Title, string.Empty, 40);
               }
-            }
-          }
-          
-          string titleExt = _movieDetails.Title + "{" + _movieDetails.ID + "}";
-          string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
-          string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
 
-          if (_movieDetails.ID >= 0)
-          {
-            if (!string.IsNullOrEmpty(_movieDetails.ThumbURL))
-            {
-              Util.Utils.FileDelete(largeCoverArt);
-              Util.Utils.FileDelete(coverArt);
-              line1 = GUILocalizeStrings.Get(1009);
+              // If no IMPAwards lets try TMDB 
+              TMDBCoverSearch tmdbSearch = new TMDBCoverSearch();
+
+              if (impSearch.Count == 0)
+              {
+                line1 = GUILocalizeStrings.Get(928) + ": TMDB"; // **Progress bar message for TMDB start
+                OnProgress(line1, _url.Title, string.Empty, 20);
+
+                tmdbSearch.SearchCovers(_movieDetails.Title, _movieDetails.IMDBNumber);
+
+                if ((tmdbSearch.Count > 0) && (tmdbSearch[0] != string.Empty))
+                {
+                  _movieDetails.ThumbURL = tmdbSearch[0];
+                  // **Progress bar message for TMDB end
+                  OnProgress(line1, _url.Title, string.Empty, 40);
+                }
+              }
+              // All fail, last try IMDB
+              if (impSearch.Count == 0 && tmdbSearch.Count == 0)
+              {
+                // **Progress bar message for IMDB start
+                line1 = GUILocalizeStrings.Get(928) + ": IMDB";
+                OnProgress(line1, _url.Title, string.Empty, 20);
+
+                IMDBSearch imdbSearch = new IMDBSearch();
+                imdbSearch.SearchCovers(_movieDetails.IMDBNumber, true);
+
+                if ((imdbSearch.Count > 0) && (imdbSearch[0] != string.Empty))
+                {
+                  _movieDetails.ThumbURL = imdbSearch[0];
+                  // **Progress bar message for IMDB end
+                  OnProgress(line1, _url.Title, string.Empty, 40);
+                }
+              }
             }
-            OnProgress(line1, _url.Title, string.Empty, 40); // **Too fast so leave percent
+
+            titleExt = _movieDetails.Title + "{" + _movieDetails.ID + "}";
+            largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+            coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
+
+            if (_movieDetails.ID >= 0)
+            {
+              if (!string.IsNullOrEmpty(_movieDetails.ThumbURL))
+              {
+                Util.Utils.FileDelete(largeCoverArt);
+                Util.Utils.FileDelete(coverArt);
+                line1 = GUILocalizeStrings.Get(1009);
+              }
+              OnProgress(line1, _url.Title, string.Empty, 40); // **Too fast so leave percent
+            }
           }
 
           #endregion
@@ -376,7 +389,7 @@ namespace MediaPortal.Video.Database
           #region Fanart
 
           // FanArt grab
-          if (useFanArt)
+          if (useFanArt && _addToDatabase)
           {
             // **Progress bar message fanart start
             line1 = GUILocalizeStrings.Get(921) + ": Fanart";
@@ -435,7 +448,7 @@ namespace MediaPortal.Video.Database
 
           #region Actors
 
-          if (VideoDatabase.CheckMovieImdbId(_movieDetails.IMDBNumber))
+          if (VideoDatabase.CheckMovieImdbId(_movieDetails.IMDBNumber) && _addToDatabase)
           {
             line1 = GUILocalizeStrings.Get(344); // **Progress bar actors start sets actual value to 0
             OnProgress(line1, _url.Title, string.Empty, 60);
@@ -448,7 +461,7 @@ namespace MediaPortal.Video.Database
 
           #region Download & save covers, save movie info
 
-          if (_movieDetails.ID >= 0)
+          if (_movieDetails.ID >= 0 && _addToDatabase)
           {
             // **Progress bar downloading cover art, final step
             line1 = GUILocalizeStrings.Get(1009); 
@@ -491,11 +504,11 @@ namespace MediaPortal.Video.Database
 
             // Save movie info
             VideoDatabase.SetMovieInfoById(_movieDetails.ID, ref _movieDetails, true);
-            
+
             // Add groups with rules
             ArrayList groups = new ArrayList();
             VideoDatabase.GetUserGroups(groups);
-            
+
             foreach (string group in groups)
             {
               string rule = VideoDatabase.GetUserGroupRule(group);
@@ -507,7 +520,7 @@ namespace MediaPortal.Video.Database
                   ArrayList values = new ArrayList();
                   bool error = false;
                   values = VideoDatabase.ExecuteRuleSql(rule, "movieinfo.idMovie", out error);
-                  
+
                   if (error)
                   {
                     continue;
@@ -518,7 +531,9 @@ namespace MediaPortal.Video.Database
                     VideoDatabase.AddUserGroupToMovie(_movieDetails.ID, VideoDatabase.AddUserGroup(group));
                   }
                 }
-                catch (Exception) { }
+                catch (Exception)
+                {
+                }
               }
             }
             OnProgress(line1, _url.Title, string.Empty, 100); // **Progress bar end details
@@ -1374,6 +1389,13 @@ namespace MediaPortal.Video.Database
           {
             if (fetcher.Count > 0)
             {
+              // EPG - one result, get movie without ask
+              if (fetcher.Count == 1 && !addToDatabase)
+              {
+                selectedMovie = 0;
+                break;
+              }
+              
               int iMoviesFound = fetcher.Count;
               //GEMX 28.03.08: There should always be a choice to enter the movie manually 
               //               in case the 1 and only found name is wrong
@@ -1383,12 +1405,15 @@ namespace MediaPortal.Video.Database
                 {
                   return false;
                 }
+                
                 if (selectedMovie < 0)
                 {
+                  
                   if (!fetcher.OnRequestMovieTitle(fetcher, out strMovieName))
                   {
                     return false;
                   }
+                  
                   if (strMovieName == string.Empty)
                   {
                     return false;
@@ -1402,10 +1427,12 @@ namespace MediaPortal.Video.Database
               {
                 return false;
               }
+              
               if (!fetcher.OnRequestMovieTitle(fetcher, out strMovieName))
               {
                 return false;
               }
+              
               if (strMovieName == string.Empty)
               {
                 return false;
@@ -1413,10 +1440,12 @@ namespace MediaPortal.Video.Database
             }
           }
         } while (selectedMovie < 0);
-        if (!fetcher.FetchDetails(selectedMovie, ref currentMovie))
+        
+        if (!fetcher.FetchDetails(selectedMovie, ref currentMovie, addToDatabase))
         {
           return false;
         }
+        
         IMDBMovie movieDetails = fetcher.Movie;
 
         if (movieDetails != null)
@@ -1428,10 +1457,12 @@ namespace MediaPortal.Video.Database
           currentMovie = movieDetails;
           return true;
         }
+        
         if (fetcher.Movie == null)
         {
           fetcher.Movie = currentMovie;
         }
+        
         return fetcher.OnDetailsNotFound(fetcher);
       }
       return false;

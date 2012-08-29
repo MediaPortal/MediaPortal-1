@@ -3541,7 +3541,7 @@ namespace TvPlugin
     {
       IMDBMovie movieDetails = new IMDBMovie();
       movieDetails.SearchString = _currentProgram.Title;
-      if (IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, true, false))
+      if (IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, false, false))
       {
         TvBusinessLayer dbLayer = new TvBusinessLayer();
 
@@ -3551,7 +3551,7 @@ namespace TvPlugin
         {
           Program prog = (Program)progs[0];
           prog.Description = movieDetails.Plot;
-          prog.Genre = movieDetails.Genre;
+          // prog.Genre = movieDetails.Genre;
           prog.StarRating = (int)movieDetails.Rating;
           prog.Persist();
         }
@@ -4793,15 +4793,44 @@ namespace TvPlugin
 
     public bool OnRequestMovieTitle(IMDBFetcher fetcher, out string movieName)
     {
-      // won't occure
-      movieName = "";
-      return true;
+      movieName = fetcher.MovieName;
+      if (GetKeyboard(ref movieName))
+      {
+        if (movieName == string.Empty)
+        {
+          return false;
+        }
+        return true;
+      }
+      movieName = string.Empty;
+      return false;
     }
 
     public bool OnSelectMovie(IMDBFetcher fetcher, out int selectedMovie)
     {
-      // won't occure
-      selectedMovie = 0;
+      GUIDialogSelect pDlgSelect = (GUIDialogSelect)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_SELECT);
+      // more then 1 movie found
+      // ask user to select 1
+      pDlgSelect.Reset();
+      pDlgSelect.SetHeading(196); //select movie
+      for (int i = 0; i < fetcher.Count; ++i)
+      {
+        pDlgSelect.Add(fetcher[i].Title);
+      }
+      pDlgSelect.EnableButton(true);
+      pDlgSelect.SetButtonLabel(413); // manual
+      pDlgSelect.DoModal(GUIWindowManager.ActiveWindow);
+
+      // and wait till user selects one
+      selectedMovie = pDlgSelect.SelectedLabel;
+      if (pDlgSelect.IsButtonPressed)
+      {
+        return true;
+      }
+      if (selectedMovie == -1)
+      {
+        return false;
+      }
       return true;
     }
 

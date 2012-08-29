@@ -21,6 +21,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Soap;
 using MediaPortal.Configuration;
@@ -365,9 +366,9 @@ namespace MediaPortal.GUI.Music
 
           for (int i = 0; i < currentLevel; i++)
           {
-            // get previous filter to see, if we had an album
+            // get previous filter to see, if we had an album that was not a group level
             FilterDefinition defPrevious = (FilterDefinition)currentView.Filters[i];
-            if (defPrevious.Where == "album")
+            if (defPrevious.Where == "album" && defPrevious.SqlOperator != "group")
             {
               if (whereClause != "")
               {
@@ -376,6 +377,12 @@ namespace MediaPortal.GUI.Music
 
               string selectedArtist = currentSong.AlbumArtist;
               DatabaseUtility.RemoveInvalidChars(ref selectedArtist);
+
+              // we don't store "unknown" into the datbase, so let's correct empty values
+              if (selectedArtist == "unknown")
+              {
+                selectedArtist = string.Empty;
+              }
 
               whereClause += String.Format("strAlbumArtist like '%| {0} |%'", selectedArtist);
               break;
@@ -402,9 +409,9 @@ namespace MediaPortal.GUI.Music
       {
         for (int i = 0; i < currentLevel; i++)
         {
-          // get previous filter to see, if we had an album
+          // get previous filter to see, if we had an album that was not a group level
           FilterDefinition defPrevious = (FilterDefinition)currentView.Filters[i];
-          if (defPrevious.Where == "album")
+          if (defPrevious.Where == "album" && defPrevious.SqlOperator != "group")
           {
             if (whereClause != "")
             {
@@ -413,6 +420,12 @@ namespace MediaPortal.GUI.Music
 
             string selectedArtist = currentSong.AlbumArtist;
             DatabaseUtility.RemoveInvalidChars(ref selectedArtist);
+
+            // we don't store "unknown" into the datbase, so let's correct empty values
+            if (selectedArtist == "unknown")
+            {
+              selectedArtist = string.Empty;
+            }
 
             whereClause += String.Format("strAlbumArtist like '%| {0} |%'", selectedArtist);
             break;
