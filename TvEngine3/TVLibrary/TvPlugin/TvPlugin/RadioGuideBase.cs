@@ -3360,8 +3360,14 @@ namespace TvPlugin
                   case 1213:
                     Log.Debug("RadioGuide: switch currently running show to fullscreen");
                     GUIWaitCursor.Show();
-                    Radio.Play();
-                    GUIWaitCursor.Hide();
+                    try
+                    {
+                      Radio.Play();
+                    }
+                    finally
+                    {
+                      GUIWaitCursor.Hide();
+                    }
                     if (g_Player.Playing)
                     {
                       g_Player.ShowFullScreenWindow();
@@ -3380,8 +3386,14 @@ namespace TvPlugin
                 TVHome.UserChannelChanged = true;
                 // fixing mantis 1874: TV doesn't start when from other playing media to TVGuide & select program
                 GUIWaitCursor.Show();
-                Radio.Play();
-                GUIWaitCursor.Hide();
+                try
+                {
+                  Radio.Play();
+                }
+                finally
+                {
+                  GUIWaitCursor.Hide();
+                }
                 if (g_Player.Playing)
                 {
                   if (isPlayingTV) GUIWindowManager.CloseCurrentWindow();
