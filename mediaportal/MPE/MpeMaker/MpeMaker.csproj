@@ -327,6 +327,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
+      <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
+      <Name>Common.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MpeCore\MpeCore.csproj">
       <Project>{4458F642-6022-4A3F-996F-E8AA510FB7E8}</Project>
       <Name>MpeCore</Name>

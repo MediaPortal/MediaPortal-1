@@ -20,8 +20,9 @@ namespace MpeInstaller.Dialogs
       InitializeComponent();
       package = pak;
       this.Text = pak.GeneralInfo.Name + " - Dependencies";
-      versionLabel.Text = string.Format("MediaPortal {0}  -  Skin {1}",
-        MediaPortal.Common.Utils.CompatibilityManager.GetCurrentVersion().ToString(),
+      versionLabel.Text = string.Format("MediaPortal {0} (API: {1})  -  Skin {2}",
+        MediaPortal.Common.Utils.CompatibilityManager.MediaPortalReleaseForApiVersion(MediaPortal.Common.Utils.CompatibilityManager.GetCurrentMaxVersion()),
+        MediaPortal.Common.Utils.CompatibilityManager.GetCurrentVersion(),
         MediaPortal.Common.Utils.CompatibilityManager.SkinVersion);
       generalDepBindSource.DataSource = package.Dependencies.Items;
       dataGridView1.AutoGenerateColumns = false;
@@ -69,8 +70,20 @@ namespace MpeInstaller.Dialogs
         dataGridView2.AutoGenerateColumns = true;
         dataGridView2.RowHeadersVisible = false;
         dataGridView2.DataSource = pluginDepBindSource;
+        dataGridView2.CellToolTipTextNeeded += new DataGridViewCellToolTipTextNeededEventHandler(dataGridView2_CellToolTipTextNeeded);
         dataGridView2.AutoResizeColumns( DataGridViewAutoSizeColumnsMode.AllCells);
         dataGridView2.CellFormatting += new DataGridViewCellFormattingEventHandler(dataGridView2_CellFormatting);
+      }
+    }
+
+    void dataGridView2_CellToolTipTextNeeded(object sender, DataGridViewCellToolTipTextNeededEventArgs e)
+    {
+      if (e.RowIndex >= 0 && e.ColumnIndex == 4)
+      {
+        SimplePluginDependency depItem = pluginDepBindSource[e.RowIndex] as SimplePluginDependency;
+        if (depItem.CurrentVersion != null)
+          e.ToolTipText = string.Format("since MediaPortal {0}",
+              MediaPortal.Common.Utils.CompatibilityManager.MediaPortalReleaseForApiVersion(depItem.CurrentVersion));
       }
     }
 
@@ -82,7 +95,7 @@ namespace MpeInstaller.Dialogs
       else
       {
         Version compatibleVersion = null;
-        try { compatibleVersion = new Version(depItem.MaxVersion); }
+        try { compatibleVersion = new Version(depItem.CompatibleVersionItem.DesignedForVersion); }
         catch { }
         if (compatibleVersion != null && depItem.CurrentVersion != null)
         {
@@ -98,9 +111,9 @@ namespace MpeInstaller.Dialogs
       dataGridView1.Columns[0].DataPropertyName = "Name";
       dataGridView1.Columns[1].Name = "Type";
       dataGridView1.Columns[1].DataPropertyName = "Type";
-      dataGridView1.Columns[2].Name = "Min version";
+      dataGridView1.Columns[2].Name = "Min";
       dataGridView1.Columns[2].DataPropertyName = "MinVersion";
-      dataGridView1.Columns[3].Name = "Max version";
+      dataGridView1.Columns[3].Name = "Max";
       dataGridView1.Columns[3].DataPropertyName = "MaxVersion";
     }
 
@@ -139,6 +152,11 @@ namespace MpeInstaller.Dialogs
   public class SimplePluginDependency
   {
     private MpeCore.Classes.PluginDependencyItem baseItem;
+
+    internal MpeCore.Classes.CompatibleVersionItem CompatibleVersionItem
+    {
+      get { return baseItem.CompatibleVersion.Items.FirstOrDefault(); }
+    }
     
     public string Name
     {
@@ -174,8 +192,15 @@ namespace MpeInstaller.Dialogs
       }
     }
 
-    [DisplayName("Required")]
-    public Version CurrentVersion { get; set; }
+    internal Version CurrentVersion { get; set; }
+
+    public string Installed
+    {
+      get 
+      {
+        return CurrentVersion == null ? "" : CurrentVersion.ToString();
+      }
+    }
 
     public SimplePluginDependency(MpeCore.Classes.PluginDependencyItem item)
     {

@@ -60,6 +60,10 @@ namespace MpeMaker.Sections
       if (type != null)
       {
         var item = new DependencyItem(type.DisplayName) { MinVersion = type.Version(null), MaxVersion = type.Version(null) };
+        if (type is MpeCore.Classes.VersionProvider.MediaPortalVersion)
+        {
+          item.Message = string.Format("This version of {0} requires MediaPortal {1} or higher!", Package.GeneralInfo.Name, MediaPortal.Common.Utils.CompatibilityManager.MediaPortalReleaseForApiVersion(new Version(item.MinVersion.ToString())));
+        }
         Package.Dependencies.Add(item);
         list_versions.Items.Add(item);
       }
