@@ -33,7 +33,7 @@ extern void LogDebug(const char *fmt, ...) ;
 CTsChannel::CTsChannel(LPUNKNOWN pUnk, HRESULT *phr,int id) 
 {
 	m_id=id;
-	m_pVideoAnalyzer = new CVideoAnalyzer(pUnk,phr);
+	m_pEncryptionAnalyser = new CEncryptionAnalyser(pUnk,phr);
 	m_pPmtGrabber = new CPmtGrabber(pUnk,phr);
 	m_pRecorder = new CDiskRecorder(RecordingMode::Recording);
 	m_pTimeShifting= new CDiskRecorder(RecordingMode::TimeShift);
@@ -43,11 +43,11 @@ CTsChannel::CTsChannel(LPUNKNOWN pUnk, HRESULT *phr,int id)
 
 CTsChannel::~CTsChannel(void)
 {
-	if (m_pVideoAnalyzer!=NULL)
+	if (m_pEncryptionAnalyser!=NULL)
 	{
-		LogDebug("del m_pVideoAnalyzer");
-		delete m_pVideoAnalyzer;
-		m_pVideoAnalyzer=NULL;
+		LogDebug("del m_pEncryptionAnalyser");
+		delete m_pEncryptionAnalyser;
+		m_pEncryptionAnalyser=NULL;
 	}
 	if (m_pPmtGrabber!=NULL)
 	{
@@ -86,7 +86,7 @@ void CTsChannel::OnTsPacket(byte* tsPacket)
 {
 	try
 	{
-		m_pVideoAnalyzer->OnTsPacket(tsPacket);
+		m_pEncryptionAnalyser->OnTsPacket(tsPacket);
 		m_pPmtGrabber->OnTsPacket(tsPacket);
 		m_pRecorder->OnTsPacket(tsPacket);
 		m_pTimeShifting->OnTsPacket(tsPacket);

@@ -37,22 +37,39 @@ CChannelScan::CChannelScan(LPUNKNOWN pUnk, HRESULT *phr, CMpTsFilter* filter)
   m_bIsScanningNetwork = false;
   m_pFilter = filter;
   m_pCallBack = NULL;
+  m_pEncryptionAnalyser = new CEncryptionAnalyser(GetOwner(), phr);
+  if (m_pEncryptionAnalyser == NULL)
+  {
+    *phr = E_OUTOFMEMORY;
+  }
 }
 
 CChannelScan::~CChannelScan(void)
 {
   CleanUp();
+  delete m_pEncryptionAnalyser;
+  m_pEncryptionAnalyser = NULL;
 }
 
 void CChannelScan::CleanUp()
 {
-  vector<CPmtParser*>::iterator it = m_vPmtParsers.begin();
-  while (it != m_vPmtParsers.end())
+  map<int, CChannelInfo*>::iterator it = m_mServices.begin();
+  while (it != m_mServices.end())
   {
-    CPmtParser* parser = *it;
+    CChannelInfo* info = it->second;
+    delete info;
+    info = NULL;
+    it++;
+  }
+  m_mServices.clear();
+
+  vector<CPmtParser*>::iterator it2 = m_vPmtParsers.begin();
+  while (it2 != m_vPmtParsers.end())
+  {
+    CPmtParser* parser = *it2;
     delete parser;
     parser = NULL;
-    it++;
+    it2++;
   }
   m_vPmtParsers.clear();
 }
@@ -63,25 +80,28 @@ STDMETHODIMP CChannelScan::SetCallBack(IChannelScanCallBack* callBack)
   return S_OK;
 }
 
-STDMETHODIMP CChannelScan::ScanStream(TransmissionStandard transmissionStandard)
+STDMETHODIMP CChannelScan::ScanStream(BroadcastStandard broadcastStandard)
 {
   CEnterCriticalSection enter(m_section);
   try
   {
     CleanUp();
-    m_mServices.clear();
+    m_mPids.clear();
 
-    m_transmissionStandard = transmissionStandard;
+    LogDebug("ChannelScan: start scanning stream, broadcast standard = %d", broadcastStandard);
+    m_broadcastStandard = broadcastStandard;
     m_bIsScanningNetwork = false;
     m_bIsScanning = true;
-    m_patParser.SetCallBack(this);
-    m_sdtParser.SetCallBack(this);
-    m_vctParser.SetCallBack(this);
     m_patParser.Reset();
-    m_sdtParser.Reset();
+    m_pEncryptionAnalyser->Reset();
+    m_sdtParser.Reset(false);
     m_nitParser.Reset();
     m_batParser.Reset();
     m_vctParser.Reset();
+    m_patParser.SetCallBack(this);
+    m_pEncryptionAnalyser->SetCallBack(this);
+    m_sdtParser.SetCallBack(this);
+    m_vctParser.SetCallBack(this);
   }
   catch (...)
   {
@@ -96,9 +116,11 @@ STDMETHODIMP CChannelScan::StopStreamScan()
   CEnterCriticalSection enter(m_section);
   try
   {
+    LogDebug("ChannelScan: stop scanning stream");
     m_bIsScanning = false;
     m_pCallBack = NULL;
     m_patParser.SetCallBack(NULL);
+    m_pEncryptionAnalyser->SetCallBack(NULL);
     m_sdtParser.SetCallBack(NULL);
     m_vctParser.SetCallBack(NULL);
   }
@@ -128,7 +150,7 @@ STDMETHODIMP CChannelScan::GetServiceCount(int* serviceCount)
 
 STDMETHODIMP CChannelScan::GetService(int index,
                                        long* networkId,
-                                       long* transportId,
+                                       long* transportStreamId,
                                        long* serviceId,
                                        char** serviceName,
                                        char** providerName,
@@ -137,8 +159,7 @@ STDMETHODIMP CChannelScan::GetService(int index,
                                        int* serviceType,
                                        int* hasVideo,
                                        int* hasAudio,
-                                       int* isEncrypted,
-                                       int* hasCaDescriptor,
+                                       bool* isEncrypted,
                                        int* pmtPid)
 {
   static char sServiceName[CHANNEL_INFO_MAX_STRING_LENGTH + 1];
@@ -163,13 +184,13 @@ STDMETHODIMP CChannelScan::GetService(int index,
 
     CChannelInfo* info = it->second;
     *networkId = info->NetworkId;
-    *transportId = info->TransportId;
+    *transportStreamId = info->TransportStreamId;
     *serviceId = info->ServiceId;
     strcpy(sServiceName, info->ServiceName);
     *serviceName = sServiceName;
     strcpy(sProviderName, info->ProviderName);
     *providerName = sProviderName;
-    if (m_transmissionStandard == Atsc || m_transmissionStandard == Scte)
+    if (m_broadcastStandard == Atsc || m_broadcastStandard == Scte)
     {
       strcpy(sNetworkNames, "");
       strcpy(sLogicalChannelNumber, info->LogicalChannelNumber);
@@ -178,7 +199,7 @@ STDMETHODIMP CChannelScan::GetService(int index,
     {
       // Concatenate available network and bouquet strings with a ",," separator.
       strcpy(sNetworkNames, "");
-      vector<char*>* names = m_nitParser.GetGroupNames(info->NetworkId, info->TransportId, info->ServiceId);
+      vector<char*>* names = m_nitParser.GetGroupNames(info->NetworkId, info->TransportStreamId, info->ServiceId);
       if (names->size() > 0)
       {
         int offset = 0;
@@ -199,10 +220,10 @@ STDMETHODIMP CChannelScan::GetService(int index,
         }
       }
 
-      int tempLcn = m_nitParser.GetLogicialChannelNumber(info->NetworkId, info->TransportId, info->ServiceId);
+      int tempLcn = m_nitParser.GetLogicialChannelNumber(info->NetworkId, info->TransportStreamId, info->ServiceId);
       if (tempLcn <= 0 || tempLcn == 10000)
       {
-        tempLcn = m_batParser.GetLogicialChannelNumber(info->NetworkId, info->TransportId, info->ServiceId);
+        tempLcn = m_batParser.GetLogicialChannelNumber(info->NetworkId, info->TransportStreamId, info->ServiceId);
       }
       sprintf(sLogicalChannelNumber, "%d", tempLcn);
     }
@@ -213,6 +234,13 @@ STDMETHODIMP CChannelScan::GetService(int index,
     *hasAudio = info->HasAudio;
     *isEncrypted = info->IsEncrypted;
     *pmtPid = info->PmtPid;
+    LogDebug("%4d) %-25s provider = %-15s, ONID = 0x%4x, TSID = 0x%4x, SID = 0x%4x, LCN = %7s, type = %3d",
+            sServiceName, sProviderName, info->NetworkId, info->TransportStreamId, info->ServiceId, sLogicalChannelNumber, info->ServiceType);
+    LogDebug("       has video = %1d, has audio = %1d, is encrypted = %1d, is running = %1d, is other mux = %1d",
+            info->HasVideo, info->HasAudio, info->IsEncrypted, info->IsRunning, info->IsOtherMux);
+    LogDebug("       is PMT received = %1d, is SDT/VCT received = %1d, is PID received = %1d",
+            info->IsPmtReceived, info->IsServiceInfoReceived, info->IsPidReceived);
+    LogDebug("       network/bouquet names = %s", sNetworkNames);
   }
   catch (...)
   {
@@ -227,12 +255,23 @@ STDMETHODIMP CChannelScan::ScanNetwork()
   CEnterCriticalSection enter(m_section);
   try
   {
+    CleanUp();
+    m_mPids.clear();
     m_vMultiplexes.clear();
+
+    LogDebug("ChannelScan: start scanning network");
     m_bIsScanning = true;
     m_bIsScanningNetwork = true;
-    m_transmissionStandard = Dvb;   // Only DVB network scanning is supported. Other standards don't seem to have network information tables.
+    m_broadcastStandard = Dvb;   // Only DVB network scanning is supported. Other standards don't seem to have network information tables.
+    m_bIsOtherMuxServiceInfoSeen = false;
+    m_patParser.Reset();
+    m_pEncryptionAnalyser->Reset();
+    m_sdtParser.Reset(true);
     m_nitParser.Reset();
     m_batParser.Reset();
+    m_patParser.SetCallBack(this);
+    m_pEncryptionAnalyser->SetCallBack(this);
+    m_sdtParser.SetCallBack(this);
   }
   catch (...)
   {
@@ -242,13 +281,21 @@ STDMETHODIMP CChannelScan::ScanNetwork()
   return S_OK;
 }
 
-STDMETHODIMP CChannelScan::StopNetworkScan()
+STDMETHODIMP CChannelScan::StopNetworkScan(bool* isOtherMuxServiceInfoAvailable)
 {
   CEnterCriticalSection enter(m_section);
   try
   {
+    LogDebug("ChannelScan: stop scanning network");
     m_bIsScanning = false;
     m_bIsScanningNetwork = false;
+    m_pCallBack = NULL;
+    m_patParser.SetCallBack(NULL);
+    m_pEncryptionAnalyser->SetCallBack(NULL);
+    m_sdtParser.SetCallBack(NULL);
+    m_vctParser.SetCallBack(NULL);
+
+    *isOtherMuxServiceInfoAvailable = m_bIsOtherMuxServiceInfoSeen;
 
     // Merge the results from the NIT and BAT scanner. The NIT and BAT result sets are distinct
     // within themselves so we only need to check whether items in the second set are already
@@ -346,6 +393,8 @@ STDMETHODIMP CChannelScan::GetMultiplexCount(int* multiplexCount)
 }
 
 STDMETHODIMP CChannelScan::GetMultiplex(int index,
+                                          int* networkId,
+                                          int* transportStreamId,
                                           int* type,
                                           int* frequency,
                                           int *polarisation,
@@ -369,6 +418,10 @@ STDMETHODIMP CChannelScan::GetMultiplex(int index,
       LogDebug("ChannelScan: multiplex is NULL, index = %d, multiplex count = %d", index, m_vMultiplexes.size());
       return S_FALSE;
     }
+
+    *networkId = mux->NetworkId;
+    *transportStreamId = mux->TransportStreamId;
+
     NitCableMultiplexDetail* cableMux = dynamic_cast<NitCableMultiplexDetail*>(mux);
     if (cableMux != NULL)
     {
@@ -438,26 +491,25 @@ void CChannelScan::OnTsPacket(byte* tsPacket)
     // Note: we continue parsing even when we think scanning is complete. The user
     // has the option to set a minimum scan time...
     bool isReady = true;
-    if (m_transmissionStandard == Atsc || m_transmissionStandard == Scte)
+    if (m_broadcastStandard == Atsc || m_broadcastStandard == Scte)
     {
       isReady = m_vctParser.IsReady();
     }
     else
     {
-      isReady = m_nitParser.IsReady() && !m_batParser.IsReady() && (m_bIsScanningNetwork || m_sdtParser.IsReady());
+      isReady = m_nitParser.IsReady() && m_batParser.IsReady() && m_sdtParser.IsReady();
     }
-    if (!m_bIsScanningNetwork)
+    if (isReady)
     {
-      if (!m_patParser.IsReady())
-      {
-        isReady = false;
-      }
+      isReady = m_patParser.IsReady();
       if (isReady)
       {
         map<int, CChannelInfo*>::iterator it = m_mServices.begin();
         while (it != m_mServices.end())
         {
-          if (!(*it->second).IsPmtReceived && (*it->second).IsRunning)
+          // If the information from the encryption analyser hasn't been received and the
+          // service is meant to be in this stream and is apparently running, then we're not ready.
+          if (!(*it->second).IsPidReceived && !(*it->second).IsOtherMux && (*it->second).IsRunning)
           {
             isReady = false;
             break;
@@ -477,7 +529,7 @@ void CChannelScan::OnTsPacket(byte* tsPacket)
       m_pCallBack = NULL;
     }
 
-    if (m_transmissionStandard == Atsc || m_transmissionStandard == Scte)
+    if (m_broadcastStandard == Atsc || m_broadcastStandard == Scte)
     {
       m_vctParser.OnTsPacket(tsPacket);
     }
@@ -485,22 +537,18 @@ void CChannelScan::OnTsPacket(byte* tsPacket)
     {
       m_nitParser.OnTsPacket(tsPacket);
       m_batParser.OnTsPacket(tsPacket);
-      if (!m_bIsScanningNetwork)
-      {
-        m_sdtParser.OnTsPacket(tsPacket);
-      }
+      m_sdtParser.OnTsPacket(tsPacket);
     }
-    if (!m_bIsScanningNetwork)
+
+    m_patParser.OnTsPacket(tsPacket);
+    vector<CPmtParser*>::iterator it = m_vPmtParsers.begin();
+    while (it != m_vPmtParsers.end())
     {
-      m_patParser.OnTsPacket(tsPacket);
-      vector<CPmtParser*>::iterator it = m_vPmtParsers.begin();
-      while (it != m_vPmtParsers.end())
-      {
-        CPmtParser *parser = *it;
-        parser->OnTsPacket(tsPacket);
-        it++;
-      }
+      CPmtParser* parser = *it;
+      parser->OnTsPacket(tsPacket);
+      it++;
     }
+    m_pEncryptionAnalyser->OnTsPacket(tsPacket);
   }
   catch (...)
   {
@@ -513,17 +561,22 @@ void CChannelScan::OnPatReceived(int serviceId, int pmtPid)
   CEnterCriticalSection enter(m_section);
   try
   {
+    if (m_pCallBack == NULL)
+    {
+      return;
+    }
+
     map<int, CChannelInfo*>::iterator it = m_mServices.find(serviceId);
     if (it == m_mServices.end())
     {
-      CChannelInfo info;
-      info.ServiceId = serviceId;
-      info.PmtPid = pmtPid;
-      m_mServices[serviceId] = &info;
+      CChannelInfo* info = new CChannelInfo();
+      info->ServiceId = serviceId;
+      info->PmtPid = pmtPid;
+      m_mServices[serviceId] = info;
     }
     else
     {
-      (*it->second).PmtPid = pmtPid;
+      it->second->PmtPid = pmtPid;
     }
 
     // We're not expecting there to be a PMT parser yet, but double check just in case.
@@ -563,33 +616,43 @@ void CChannelScan::OnSdtReceived(const CChannelInfo& sdtInfo)
     map<int, CChannelInfo*>::iterator it = m_mServices.find(sdtInfo.ServiceId);
 
     // Do we have a channel with this service ID?
-    bool addService = true;
-    CChannelInfo info;
+    CChannelInfo* info = NULL;
     if (it != m_mServices.end())
     {
-      addService = false;
-      info = *it->second;
-      if (info.IsServiceInfoReceived)
+      info = it->second;
+      if (info->IsServiceInfoReceived)
       {
         LogDebug("ChannelScan: SDT information for service 0x%x received multiple times", sdtInfo.ServiceId);
       }
     }
-
-    info.NetworkId = sdtInfo.NetworkId;
-    info.TransportId = sdtInfo.TransportId;
-    info.ServiceId = sdtInfo.ServiceId;
-    info.ServiceType = sdtInfo.ServiceType;
-    info.IsEncrypted = sdtInfo.IsEncrypted;  // we trust free_ca_mode over PMT CA descriptors
-    info.IsRunning = sdtInfo.IsRunning;      // we trust running_status over PMT having been received or not
-    info.IsOtherMux = sdtInfo.IsOtherMux;
-    strcpy(info.ProviderName, sdtInfo.ProviderName);
-    strcpy(info.ServiceName, sdtInfo.ServiceName);
-    info.IsServiceInfoReceived = true;
-    LogDebug("ChannelScan: SDT information found for service 0x%x", sdtInfo.ServiceId);
-    if (addService)
+    else
     {
-      m_mServices[info.ServiceId] = &info;
+      info = new CChannelInfo();
+      m_mServices[sdtInfo.ServiceId] = info;
     }
+
+    info->NetworkId = sdtInfo.NetworkId;
+    info->TransportStreamId = sdtInfo.TransportStreamId;
+    info->ServiceId = sdtInfo.ServiceId;
+    info->ServiceType = sdtInfo.ServiceType;
+    // We trust running_status and free_ca_mode over PMT being
+    // received (or not) and CA descriptors being found in the PMT
+    // (or not). However, information from the encryption analyser
+    // takes higher precedence.
+    if (!info->IsPidReceived)
+    {
+      info->IsEncrypted = sdtInfo.IsEncrypted;
+      info->IsRunning = sdtInfo.IsRunning;
+    }
+    info->IsOtherMux = sdtInfo.IsOtherMux;
+    if (sdtInfo.IsOtherMux)
+    {
+      m_bIsOtherMuxServiceInfoSeen = true;
+    }
+    strcpy(info->ProviderName, sdtInfo.ProviderName);
+    strcpy(info->ServiceName, sdtInfo.ServiceName);
+    info->IsServiceInfoReceived = true;
+    LogDebug("ChannelScan: received SDT information for service 0x%x", sdtInfo.ServiceId);
   }
   catch (...)
   {
@@ -605,39 +668,51 @@ void CChannelScan::OnVctReceived(const CChannelInfo& vctInfo)
     map<int, CChannelInfo*>::iterator it = m_mServices.find(vctInfo.ServiceId);
 
     // Do we have a channel with this service ID?
-    bool addService = true;
-    CChannelInfo info;
+    CChannelInfo* info = NULL;
     if (it != m_mServices.end())
     {
-      addService = false;
-      info = *it->second;
-      if (info.IsServiceInfoReceived)
+      info = it->second;
+      if (info->IsServiceInfoReceived)
       {
         LogDebug("ChannelScan: VCT information for service 0x%x received multiple times", vctInfo.ServiceId);
       }
     }
+    else
+    {
+      info = new CChannelInfo();
+      m_mServices[vctInfo.ServiceId] = info;
+    }
 
-    info.NetworkId = vctInfo.NetworkId;
-    info.TransportId = vctInfo.TransportId;
-    info.ServiceId = vctInfo.ServiceId;
-    info.ServiceType = vctInfo.ServiceType;
-    if (!info.IsServiceInfoReceived)
+    info->NetworkId = vctInfo.NetworkId;
+    info->TransportStreamId = vctInfo.TransportStreamId;
+    info->ServiceId = vctInfo.ServiceId;
+    info->ServiceType = vctInfo.ServiceType;
+    // We trust PMT information over anything else for A/V present
+    // status.
+    if (!info->IsPmtReceived)
     {
-      info.HasVideo = vctInfo.HasVideo;
-      info.HasAudio = vctInfo.HasAudio;
+      info->HasVideo = vctInfo.HasVideo;
+      info->HasAudio = vctInfo.HasAudio;
     }
-    info.IsEncrypted = vctInfo.IsEncrypted;  // we trust access_controlled over PMT CA descriptors
-    info.IsRunning = vctInfo.IsRunning;      // we trust VCT info over PMT having been received or not
-    info.IsOtherMux = vctInfo.IsOtherMux;
-    strcpy(info.ProviderName, vctInfo.ProviderName);
-    strcpy(info.ServiceName, vctInfo.ServiceName);
-    strcpy(info.LogicalChannelNumber, vctInfo.LogicalChannelNumber);
-    info.IsServiceInfoReceived = true;
-    LogDebug("ChannelScan: VCT information found for service 0x%x", vctInfo.ServiceId);
-    if (addService)
+    // We trust VCT info and access_controlled over PMT being
+    // received (or not) and CA descriptors being found in the PMT
+    // (or not). However, information from the encryption analyser
+    // takes higher precedence.
+    if (!info->IsPidReceived)
     {
-      m_mServices[info.ServiceId] = &info;
+      info->IsEncrypted = vctInfo.IsEncrypted;
+      info->IsRunning = vctInfo.IsRunning;
     }
+    info->IsOtherMux = vctInfo.IsOtherMux;
+    if (vctInfo.IsOtherMux)
+    {
+      m_bIsOtherMuxServiceInfoSeen = true;
+    }
+    strcpy(info->ProviderName, vctInfo.ProviderName);
+    strcpy(info->ServiceName, vctInfo.ServiceName);
+    strcpy(info->LogicalChannelNumber, vctInfo.LogicalChannelNumber);
+    info->IsServiceInfoReceived = true;
+    LogDebug("ChannelScan: received VCT information for service 0x%x", vctInfo.ServiceId);
   }
   catch (...)
   {
@@ -653,33 +728,49 @@ void CChannelScan::OnPmtReceived(const CPidTable& pidTable)
     map<int, CChannelInfo*>::iterator it = m_mServices.find(pidTable.ServiceId);
 
     // Do we have a channel with this service ID?
-    bool addService = true;
-    CChannelInfo info;
+    CChannelInfo* info = NULL;
     if (it != m_mServices.end())
     {
-      addService = false;
-      info = *it->second;
-      if (info.IsPmtReceived)
+      info = it->second;
+      if (info->IsPmtReceived)
       {
         LogDebug("ChannelScan: PMT information for service 0x%x received multiple times", pidTable.ServiceId);
       }
     }
-
-    info.ServiceId = pidTable.ServiceId;
-    info.HasVideo = (int)pidTable.videoPids.size();
-    info.HasAudio = (int)pidTable.audioPids.size();
-    if (!info.IsServiceInfoReceived)
+    else
     {
-      info.IsEncrypted = pidTable.ConditionalAccessDescriptorCount > 0;
-      info.IsRunning = true;
+      info = new CChannelInfo();
+      m_mServices[pidTable.ServiceId] = info;
     }
-    info.IsOtherMux = false;
-    info.IsPmtReceived = true;
-    LogDebug("ChannelScan: PMT information found for service 0x%x received from PID 0x%x", pidTable.ServiceId, pidTable.PmtPid);
-    if (addService)
+
+    info->ServiceId = pidTable.ServiceId;
+    // We trust PMT information over anything else for A/V present
+    // status.
+    info->HasVideo = (int)pidTable.videoPids.size();
+    info->HasAudio = (int)pidTable.audioPids.size();
+    // We trust service and encryption analyser information over the PMT information
+    // for encryption and running status.
+    if (!info->IsServiceInfoReceived && !info->IsPidReceived)
     {
-      LogDebug("ChannelScan: received PMT information for service not seen in PAT");
-      m_mServices[info.ServiceId] = &info;
+      info->IsEncrypted = pidTable.ConditionalAccessDescriptorCount > 0;
+      info->IsRunning = true;
+    }
+    info->IsOtherMux = false;
+    info->IsPmtReceived = true;
+    LogDebug("ChannelScan: PMT information for service 0x%x received from PID 0x%x", pidTable.ServiceId, pidTable.PmtPid);
+
+    // Add an analyser for each video and audio PID.
+    vector<VideoPid>::const_iterator vPidIt = pidTable.videoPids.begin();
+    while (vPidIt != pidTable.videoPids.end())
+    {
+      m_pEncryptionAnalyser->AddPid(vPidIt->Pid);
+      m_mPids[vPidIt->Pid] = pidTable.ServiceId;
+    }
+    vector<AudioPid>::const_iterator aPidIt = pidTable.audioPids.begin();
+    while (aPidIt != pidTable.audioPids.end())
+    {
+      m_pEncryptionAnalyser->AddPid(aPidIt->Pid);
+      m_mPids[aPidIt->Pid] = pidTable.ServiceId;
     }
   }
   catch (...)
@@ -688,24 +779,39 @@ void CChannelScan::OnPmtReceived(const CPidTable& pidTable)
   }
 }
 
-/*
-
-void CPatParser::Dump()
+HRESULT CChannelScan::OnEncryptionStateChange(int pid, EncryptionState encryptionState)
 {
-  if (m_bDumped) return;
-  m_bDumped=true;
-  int i=0;
-  itChannels it=m_mapChannels.begin();
-  while (it!=m_mapChannels.end()) 
+  CEnterCriticalSection enter(m_section);
+  try
   {
-    CChannelInfo& info=it->second;
-    LogDebug("%4d)  p:%-15s s:%-25s  onid:%4x tsid:%4x sid:%4x major:%3d minor:%3x freq:%3x type:%3d pmt:%4x othermux:%d freeca:%d hasVideo:%d hasAudio:%d hasCaDescriptor:%d",i,
-            info.ProviderName,info.ServiceName,info.NetworkId,info.TransportId,info.ServiceId,info.MajorChannel,info.MinorChannel,info.Frequency,
-            info.ServiceType,info.PidTable.PmtPid,info.OtherMux,info.FreeCAMode,info.hasVideo,info.hasAudio,info.hasCaDescriptor);
+    // Find the service that the PID is associated with (note the limitation that
+    // a PID may only be associated with one service).
+    map<int, int>::iterator it = m_mPids.find(pid);
+    if (it == m_mPids.end())
+    {
+      LogDebug("ChannelScan: encryption state received for PID 0x%x that we don't know about", pid);
+      return S_OK;
+    }
+    map<int, CChannelInfo*>::iterator it2 = m_mServices.find(it->second);
+    if (it2 == m_mServices.end())
+    {
+      LogDebug("ChannelScan: encryption state received for PID 0x%x associated with service 0x%x that we don't know about", pid, it->second);
+      return S_OK;
+    }
 
-    it++;
-    i++;
+    CChannelInfo* info = it2->second;
+    info->IsRunning = true;
+    // Have we already seen one or more of the PIDs for this service?
+    // If yes, set the encrypted flag to true if any of the elementary streams are encrypted.
+    // If no, assume that the encryption state for this elementary stream reflects the encryption state for the service.
+    if (!info->IsPidReceived || !info->IsEncrypted || encryptionState == Encrypted)
+    {
+      info->IsEncrypted = (encryptionState == Encrypted);
+    }
   }
+  catch (...)
+  {
+    LogDebug("ChannelScan: unhandled exception in OnEncryptionStateChange()");
+  }
+  return S_OK;
 }
-
-*/

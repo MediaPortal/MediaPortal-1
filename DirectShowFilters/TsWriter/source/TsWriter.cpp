@@ -586,63 +586,76 @@ STDMETHODIMP CMpTs::DeleteAllChannels()
   return S_OK;
 }
 
-STDMETHODIMP CMpTs::AnalyzerSetVideoPid(int handle, int videoPid)
+
+STDMETHODIMP CMpTs::AnalyserAddPid(int handle, int pid)
 {
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pVideoAnalyzer->SetVideoPid(  videoPid);
+  CTsChannel* pChannel = GetTsChannel(handle);
+  if (pChannel == NULL)
+  {
+    return S_FALSE;
+  }
+  return pChannel->m_pEncryptionAnalyser->AddPid(pid);
 }
 
-STDMETHODIMP CMpTs::AnalyzerGetVideoPid(int handle,  int* videoPid)
+STDMETHODIMP CMpTs::AnalyserRemovePid(int handle, int pid)
 {
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pVideoAnalyzer->GetVideoPid(  videoPid);
+  CTsChannel* pChannel = GetTsChannel(handle);
+  if (pChannel == NULL)
+  {
+    return S_FALSE;
+  }
+  return pChannel->m_pEncryptionAnalyser->RemovePid(pid);
 }
 
-STDMETHODIMP CMpTs::AnalyzerSetAudioPid(int handle,  int audioPid)
+STDMETHODIMP CMpTs::AnalyserGetPidCount(int handle, int* pidCount)
 {
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pVideoAnalyzer->SetAudioPid(  audioPid);
+  CTsChannel* pChannel = GetTsChannel(handle);
+  if (pChannel == NULL)
+  {
+    return S_FALSE;
+  }
+  return pChannel->m_pEncryptionAnalyser->GetPidCount(pidCount);
 }
 
-STDMETHODIMP CMpTs::AnalyzerGetAudioPid(int handle,  int* audioPid)
+STDMETHODIMP CMpTs::AnalyserGetPid(int handle, int pidIdx, int* pid, EncryptionState* encryptionState)
 {
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pVideoAnalyzer->GetAudioPid(  audioPid);
+  CTsChannel* pChannel = GetTsChannel(handle);
+  if (pChannel == NULL)
+  {
+    return S_FALSE;
+  }
+  return pChannel->m_pEncryptionAnalyser->GetPid(pidIdx, pid, encryptionState);
 }
 
-STDMETHODIMP CMpTs::AnalyzerIsVideoEncrypted(int handle,  int* yesNo)
+STDMETHODIMP CMpTs::AnalyserSetCallBack(int handle, IEncryptionStateChangeCallBack* callBack)
 {
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pVideoAnalyzer->IsVideoEncrypted(  yesNo);
+  CTsChannel* pChannel = GetTsChannel(handle);
+  if (pChannel == NULL)
+  {
+    return S_FALSE;
+  }
+  return pChannel->m_pEncryptionAnalyser->SetCallBack(callBack);
 }
 
-STDMETHODIMP CMpTs::AnalyzerIsAudioEncrypted(int handle,  int* yesNo)
+STDMETHODIMP CMpTs::AnalyserReset(int handle)
 {
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pVideoAnalyzer->IsAudioEncrypted(  yesNo);
+  CTsChannel* pChannel = GetTsChannel(handle);
+  if (pChannel == NULL)
+  {
+    return S_FALSE;
+  }
+  return pChannel->m_pEncryptionAnalyser->Reset();
 }
 
-STDMETHODIMP CMpTs::AnalyzerReset(int handle )
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pVideoAnalyzer->Reset(  );
-}
 
 STDMETHODIMP CMpTs::PmtSetPmtPid(int handle, int pmtPid, int serviceId)
 {
   CTsChannel* pChannel = GetTsChannel(handle);
   if (pChannel == NULL)
   {
-    return S_OK;
+    return S_FALSE;
   }
-	return pChannel->m_pPmtGrabber->SetPmtPid(pmtPid, serviceId);
+  return pChannel->m_pPmtGrabber->SetPmtPid(pmtPid, serviceId);
 }
 
 STDMETHODIMP CMpTs::PmtSetCallBack(int handle, IPmtCallBack* callBack)
@@ -650,9 +663,9 @@ STDMETHODIMP CMpTs::PmtSetCallBack(int handle, IPmtCallBack* callBack)
   CTsChannel* pChannel = GetTsChannel(handle);
   if (pChannel == NULL)
   {
-    return S_OK;
+    return S_FALSE;
   }
-	return pChannel->m_pPmtGrabber->SetCallBack(callBack);
+  return pChannel->m_pPmtGrabber->SetCallBack(callBack);
 }
 
 STDMETHODIMP CMpTs::PmtGetPmtData(int handle, BYTE *pmtData)
@@ -660,10 +673,11 @@ STDMETHODIMP CMpTs::PmtGetPmtData(int handle, BYTE *pmtData)
   CTsChannel* pChannel = GetTsChannel(handle);
   if (pChannel == NULL)
   {
-    return S_OK;
+    return S_FALSE;
   }
-	return pChannel->m_pPmtGrabber->GetPmtData(pmtData);
+  return pChannel->m_pPmtGrabber->GetPmtData(pmtData);
 }
+
 
 STDMETHODIMP CMpTs::RecordSetRecordingFileNameW( int handle, wchar_t* pwszFileName)
 {

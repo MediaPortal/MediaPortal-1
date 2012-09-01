@@ -33,7 +33,7 @@ class CChannelInfo
     void Reset();
 
     int NetworkId;
-    int TransportId;
+    int TransportStreamId;
     int ServiceId;
     char ServiceName[CHANNEL_INFO_MAX_STRING_LENGTH + 1];
     char ProviderName[CHANNEL_INFO_MAX_STRING_LENGTH + 1];
@@ -48,5 +48,6 @@ class CChannelInfo
     int PmtPid;
     bool IsPmtReceived;
     bool IsServiceInfoReceived;
+    bool IsPidReceived;
     int PatVersion;
 };

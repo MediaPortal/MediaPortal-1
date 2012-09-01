@@ -40,7 +40,7 @@ CChannelInfo::~CChannelInfo(void)
 void CChannelInfo::Reset()
 {
   NetworkId = 0;
-  TransportId = 0;
+  TransportStreamId = 0;
   ServiceId = 0;
   strcpy(ServiceName, "");
   strcpy(ProviderName, "");
@@ -55,6 +55,7 @@ void CChannelInfo::Reset()
   PmtPid = 0;
   IsPmtReceived = false;
   IsServiceInfoReceived = false;
+  IsPidReceived = false;
   PatVersion = -1;
 }
 
@@ -71,7 +72,7 @@ CChannelInfo& CChannelInfo::operator = (const CChannelInfo &info)
 void CChannelInfo::Copy(const CChannelInfo &info)
 {
   NetworkId = info.NetworkId;
-  TransportId = info.TransportId;
+  TransportStreamId = info.TransportStreamId;
   ServiceId = info.ServiceId;
   strcpy(ServiceName, info.ServiceName);
   strcpy(ProviderName, info.ProviderName);
@@ -86,5 +87,6 @@ void CChannelInfo::Copy(const CChannelInfo &info)
   PmtPid = info.PmtPid;
   IsPmtReceived = info.IsPmtReceived;
   IsServiceInfoReceived = info.IsServiceInfoReceived;
+  IsPidReceived = info.IsPidReceived;
   //PatVersion = info.PatVersion;
 }

@@ -37,7 +37,7 @@ class CSdtParser: public CSectionDecoder
   public:
     CSdtParser(void);
     virtual ~CSdtParser(void);
-    void Reset();
+    void Reset(bool parseSdtOther);
     void SetCallBack(ISdtCallBack* callback);
     void OnNewSection(CSection& sections);
     bool IsReady();
@@ -46,4 +46,5 @@ class CSdtParser: public CSectionDecoder
     ISdtCallBack* m_pCallBack;
     map<unsigned __int64, bool> m_mSeenSections;
     bool m_bIsReady;
+    bool m_bParseSdtOther;
 };

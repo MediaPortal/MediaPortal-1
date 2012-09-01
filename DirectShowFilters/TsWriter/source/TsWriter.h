@@ -19,15 +19,15 @@
  *
  */
 #include "..\..\shared\packetsync.h"
-#include "videoanalyzer.h"
-#include "channelscan.h"
+#include "ChannelScan.h"
+#include "EncryptionAnalyser.h"
 #include "epgscanner.h"
-#include "pmtgrabber.h"
+#include "PmtGrabber.h"
 #include "DiskRecorder.h"
 #include "teletextgrabber.h"
 #include "cagrabber.h"
 #include "channellinkagescanner.h"
-#include "tschannel.h"
+#include "TsChannel.h"
 #include "videoaudioobserver.h"
 #include <map>
 #include <vector>
@@ -48,13 +48,12 @@ DECLARE_INTERFACE_(ITSFilter, IUnknown)
   STDMETHOD(DeleteChannel)(THIS_ int handle)PURE;
   STDMETHOD(DeleteAllChannels)()PURE;
 
-	STDMETHOD(AnalyzerSetVideoPid)(THIS_ int handle, int videoPid)PURE;
-	STDMETHOD(AnalyzerGetVideoPid)(THIS_ int handle,  int* videoPid)PURE;
-	STDMETHOD(AnalyzerSetAudioPid)(THIS_ int handle,  int audioPid)PURE;
-	STDMETHOD(AnalyzerGetAudioPid)(THIS_ int handle,  int* audioPid)PURE;
-	STDMETHOD(AnalyzerIsVideoEncrypted)(THIS_ int handle,  int* yesNo)PURE;
-	STDMETHOD(AnalyzerIsAudioEncrypted)(THIS_ int handle,  int* yesNo)PURE;
-	STDMETHOD(AnalyzerReset)(THIS_ int handle )PURE;
+	STDMETHOD(AnalyserAddPid)(THIS_ int handle, int pid)PURE;
+	STDMETHOD(AnalyserRemovePid)(THIS_ int handle, int pid)PURE;
+	STDMETHOD(AnalyserGetPidCount)(THIS_ int handle, int* pidCount)PURE;
+	STDMETHOD(AnalyserGetPid)(THIS_ int handle, int pidIdx, int* pid, EncryptionState* encryptionState)PURE;
+	STDMETHOD(AnalyserSetCallBack)(THIS_ int handle, IEncryptionStateChangeCallBack* callBack)PURE;
+	STDMETHOD(AnalyserReset)(THIS_ int handle)PURE;
 
 	STDMETHOD(PmtSetPmtPid)(THIS_ int handle, int pmtPid, int serviceId);
 	STDMETHOD(PmtSetCallBack)(THIS_ int handle, IPmtCallBack* callBack);
@@ -168,13 +167,12 @@ public:
     STDMETHODIMP DeleteChannel( int handle);
     STDMETHODIMP DeleteAllChannels();
 
-		STDMETHODIMP AnalyzerSetVideoPid(int handle, int videoPid);
-		STDMETHODIMP AnalyzerGetVideoPid(int handle,  int* videoPid);
-		STDMETHODIMP AnalyzerSetAudioPid(int handle,  int audioPid);
-		STDMETHODIMP AnalyzerGetAudioPid(int handle,  int* audioPid);
-		STDMETHODIMP AnalyzerIsVideoEncrypted(int handle,  int* yesNo);
-		STDMETHODIMP AnalyzerIsAudioEncrypted(int handle,  int* yesNo);
-		STDMETHODIMP AnalyzerReset(int handle );
+		STDMETHODIMP AnalyserAddPid(int handle, int pid);
+		STDMETHODIMP AnalyserRemovePid(int handle, int pid);
+		STDMETHODIMP AnalyserGetPidCount(int handle, int* pidCount);
+		STDMETHODIMP AnalyserGetPid(int handle, int pidIdx, int* pid, EncryptionState* encryptionState);
+		STDMETHODIMP AnalyserSetCallBack(int handle, IEncryptionStateChangeCallBack* callBack);
+		STDMETHODIMP AnalyserReset(int handle);
 
 		STDMETHODIMP PmtSetPmtPid(int handle, int pmtPid, int serviceId);
 		STDMETHODIMP PmtSetCallBack(int handle, IPmtCallBack* callBack);

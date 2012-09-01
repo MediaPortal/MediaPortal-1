@@ -33,6 +33,9 @@ extern void LogDebug(const char *fmt, ...);
 #define MIN_CABLE_FREQUENCY_KHZ 20000
 #define MAX_CABLE_FREQUENCY_KHZ 900000
 
+#define MIN_SATELLITE_FREQUENCY_KHZ 3000000
+#define MAX_SATELLITE_FREQUENCY_KHZ 15000000
+
 #define MIN_TERRESTRIAL_FREQUENCY_KHZ 40000
 #define MAX_TERRESTRIAL_FREQUENCY_KHZ 900000
 
@@ -54,9 +57,40 @@ typedef struct NitNameSet
 
 typedef struct NitMultiplexDetail
 {
+  int NetworkId;
+  int TransportStreamId;
+
   virtual bool Equals(NitMultiplexDetail* mux)
   {
+    try
+    {
+      if (mux != NULL && mux->NetworkId == NetworkId && mux->TransportStreamId == TransportStreamId)
+      {
+        return true;
+      }
+    }
+    catch (...)
+    {
+      LogDebug("NitMultiplexDetail: unhandled exception in Equals()");
+    }
     return false;
+  }
+
+  virtual void Clone(NitMultiplexDetail* clone)
+  {
+    try
+    {
+      if (clone == NULL)
+      {
+        return;
+      }
+      clone->NetworkId = NetworkId;
+      clone->TransportStreamId = TransportStreamId;
+    }
+    catch (...)
+    {
+      LogDebug("NitMultiplexDetail: unhandled exception in Clone()");
+    }
   }
 }NitMultiplexDetail;
 
@@ -72,6 +106,10 @@ typedef struct NitCableMultiplexDetail : public NitMultiplexDetail
   {
     try
     {
+      if (!NitMultiplexDetail::Equals(mux))
+      {
+        return false;
+      }
       NitCableMultiplexDetail* cableMux = dynamic_cast<NitCableMultiplexDetail*>(mux);
       if (cableMux != NULL && cableMux->Frequency == Frequency && cableMux->Modulation == Modulation && cableMux->SymbolRate == SymbolRate)
       {
@@ -83,6 +121,32 @@ typedef struct NitCableMultiplexDetail : public NitMultiplexDetail
       LogDebug("NitCableMultiplexDetail: unhandled exception in Equals()");
     }
     return false;
+  }
+
+  void Clone(NitMultiplexDetail* clone)
+  {
+    try
+    {
+      if (clone == NULL)
+      {
+        return;
+      }
+      NitCableMultiplexDetail* cableMuxClone = dynamic_cast<NitCableMultiplexDetail*>(clone);
+      if (cableMuxClone == NULL)
+      {
+        return;
+      }
+      NitMultiplexDetail::Clone(cableMuxClone);
+      cableMuxClone->Frequency = Frequency;
+      cableMuxClone->OuterFecMethod = OuterFecMethod;
+      cableMuxClone->Modulation = Modulation;
+      cableMuxClone->SymbolRate = SymbolRate;
+      cableMuxClone->InnerFecRate = InnerFecRate;
+    }
+    catch (...)
+    {
+      LogDebug("NitCableMultiplexDetail: unhandled exception in Clone()");
+    }
   }
 }NitCableMultiplexDetail;
 
@@ -102,6 +166,10 @@ typedef struct NitSatelliteMultiplexDetail : public NitMultiplexDetail
   {
     try
     {
+      if (!NitMultiplexDetail::Equals(mux))
+      {
+        return false;
+      }
       NitSatelliteMultiplexDetail* satelliteMux = dynamic_cast<NitSatelliteMultiplexDetail*>(mux);
       if (satelliteMux != NULL && satelliteMux->Frequency == Frequency && satelliteMux->Modulation == Modulation &&
         satelliteMux->Polarisation == Polarisation && satelliteMux->SymbolRate == SymbolRate &&
@@ -115,6 +183,36 @@ typedef struct NitSatelliteMultiplexDetail : public NitMultiplexDetail
       LogDebug("NitSatelliteMultiplexDetail: unhandled exception in Equals()");
     }
     return false;
+  }
+
+  void Clone(NitSatelliteMultiplexDetail* clone)
+  {
+    try
+    {
+      if (clone == NULL)
+      {
+        return;
+      }
+      NitSatelliteMultiplexDetail* satelliteMuxClone = dynamic_cast<NitSatelliteMultiplexDetail*>(clone);
+      if (satelliteMuxClone == NULL)
+      {
+        return;
+      }
+      NitMultiplexDetail::Clone(satelliteMuxClone);
+      satelliteMuxClone->Frequency = Frequency;
+      satelliteMuxClone->OrbitalPosition = OrbitalPosition;
+      satelliteMuxClone->WestEastFlag = WestEastFlag;
+      satelliteMuxClone->Polarisation = Polarisation;
+      satelliteMuxClone->Modulation = Modulation;
+      satelliteMuxClone->SymbolRate = SymbolRate;
+      satelliteMuxClone->InnerFecRate = InnerFecRate;
+      satelliteMuxClone->RollOff = RollOff;
+      satelliteMuxClone->IsS2 = IsS2;
+    }
+    catch (...)
+    {
+      LogDebug("NitSatelliteMultiplexDetail: unhandled exception in Clone()");
+    }
   }
 }NitSatelliteMultiplexDetail;
 
@@ -138,6 +236,10 @@ typedef struct NitTerrestrialMultiplexDetail : public NitMultiplexDetail
   {
     try
     {
+      if (!NitMultiplexDetail::Equals(mux))
+      {
+        return false;
+      }
       NitTerrestrialMultiplexDetail* terrestrialMux = dynamic_cast<NitTerrestrialMultiplexDetail*>(mux);
       if (terrestrialMux != NULL && terrestrialMux->CentreFrequency == CentreFrequency && terrestrialMux->Bandwidth == Bandwidth)
       {
@@ -149,6 +251,40 @@ typedef struct NitTerrestrialMultiplexDetail : public NitMultiplexDetail
       LogDebug("NitTerrestrialMultiplexDetail: unhandled exception in Equals()");
     }
     return false;
+  }
+
+  void Clone(NitTerrestrialMultiplexDetail* clone)
+  {
+    try
+    {
+      if (clone == NULL)
+      {
+        return;
+      }
+      NitTerrestrialMultiplexDetail* terrestrialMuxCone = dynamic_cast<NitTerrestrialMultiplexDetail*>(clone);
+      if (terrestrialMuxCone == NULL)
+      {
+        return;
+      }
+      NitMultiplexDetail::Clone(terrestrialMuxCone);
+      terrestrialMuxCone->CentreFrequency = CentreFrequency;
+      terrestrialMuxCone->Bandwidth = Bandwidth;
+      terrestrialMuxCone->IsHighPriority = IsHighPriority;
+      terrestrialMuxCone->TimeSlicingIndicator = TimeSlicingIndicator;
+      terrestrialMuxCone->MpeFecIndicator = MpeFecIndicator;
+      terrestrialMuxCone->Constellation = Constellation;
+      terrestrialMuxCone->IndepthInterleaverUsed = IndepthInterleaverUsed;
+      terrestrialMuxCone->HierarchyInformation = HierarchyInformation;
+      terrestrialMuxCone->CoderateHpStream = CoderateHpStream;
+      terrestrialMuxCone->CoderateLpStream = CoderateLpStream;
+      terrestrialMuxCone->GuardInterval = GuardInterval;
+      terrestrialMuxCone->TransmissionMode = TransmissionMode;
+      terrestrialMuxCone->OtherFrequencyFlag = OtherFrequencyFlag;
+    }
+    catch (...)
+    {
+      LogDebug("NitTerrestrialMultiplexDetail: unhandled exception in Clone()");
+    }
   }
 }NitTerrestrialMultiplexDetail;
 
@@ -172,10 +308,11 @@ class CNitParser : public CSectionDecoder
     void DecodeCableDeliverySystemDescriptor(byte* b, int length, NitCableMultiplexDetail* mux);
     void DecodeSatelliteDeliverySystemDescriptor(byte* b, int length, NitSatelliteMultiplexDetail* mux);
     void DecodeTerrestrialDeliverySystemDescriptor(byte* b, int length, NitTerrestrialMultiplexDetail* mux);
-    void DecodeFrequencyListDescriptor(byte* b, int length, vector<int>* frequencies);
+    void DecodeFrequencyListDescriptor(byte* b, int length, vector<int>* frequencies, int* frequencyType);
     void DecodeServiceListDescriptor(byte* b, int length, vector<int>* services);
     void DecodeNameDescriptor(byte* b, int length, vector<char*>* string);
     void DecodeMultilingualNameDescriptor(byte* b, int length, vector<char*>* strings);
+    void DecodeCellFrequencyLinkDescriptor(byte* b, int length, vector<int>* frequencies);
 
     int DecodeCableFrequency(byte* b);
     int DecodeSatelliteFrequency(byte* b);
@@ -183,7 +320,7 @@ class CNitParser : public CSectionDecoder
 
     void AddLogicalChannelNumbers(int nid, int tsid, map<int, int>* lcns);
     void AddGroupNames(int nid, int tsid, int sid, vector<char*>* names);
-    void AddSatelliteMux(NitSatelliteMultiplexDetail* mux);
+    void AddSatelliteMux(NitSatelliteMultiplexDetail* mux, vector<int>* frequencies);
     void AddCableMux(NitCableMultiplexDetail* mux, vector<int>* frequencies);
     void AddTerrestrialMux(NitTerrestrialMultiplexDetail* mux, vector<int>* frequencies);
 

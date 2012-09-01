@@ -247,7 +247,7 @@ void CVctParser::OnNewSection(CSection& sections)
       }
 
       CChannelInfo info;
-      info.TransportId = channel_tsid;
+      info.TransportStreamId = channel_tsid;
       info.ServiceId = program_number;
       if (extendedNames.size() == 0)
       {

@@ -28,15 +28,16 @@
 #include "NitParser.h"
 #include "BatParser.h"
 #include "VctParser.h"
+#include "EncryptionAnalyser.h"
 
 using namespace Mediaportal;
 
 #pragma once
 
-// Enum specifying possible transmission standards or transport stream types.
-enum TransmissionStandard
+// Enum specifying possible broadcast standards or transport stream types.
+enum BroadcastStandard
 {
-	NotSet = -1,
+	BroadcastStandardNotSet = -1,
   Dvb = 0,
   Atsc = 1,
   Scte = 2,   // North American cable
@@ -56,12 +57,12 @@ DECLARE_INTERFACE_(ITsChannelScan, IUnknown)
   STDMETHOD(SetCallBack)(THIS_ IChannelScanCallBack* callBack)PURE;
 
   // SDT/VCT transponder-by-transponder scanning
-  STDMETHOD(ScanStream)(THIS_ TransmissionStandard transmissionStandard)PURE;
+  STDMETHOD(ScanStream)(THIS_ BroadcastStandard broadcastStandard)PURE;
   STDMETHOD(StopStreamScan)(THIS_)PURE;
   STDMETHOD(GetServiceCount)(THIS_ int* serviceCount)PURE;
   STDMETHOD(GetService)(THIS_ int index,
                          long* networkId,
-                         long* transportId,
+                         long* transportStreamId,
                          long* serviceId,
                          char** serviceName,
                          char** providerName,
@@ -70,15 +71,16 @@ DECLARE_INTERFACE_(ITsChannelScan, IUnknown)
                          int* serviceType,
                          int* hasVideo,
                          int* hasAudio,
-                         int* isEncrypted,
-                         int* hasCaDescriptor,
+                         bool* isEncrypted,
                          int* pmtPid)PURE;
 
   // NIT fast scanning
   STDMETHOD(ScanNetwork)(THIS_)PURE;
-  STDMETHOD(StopNetworkScan)(THIS_)PURE;
+  STDMETHOD(StopNetworkScan)(THIS_ bool* isOtherMuxServiceInfoAvailable)PURE;
   STDMETHOD(GetMultiplexCount)(THIS_ int* multiplexCount)PURE;
   STDMETHOD(GetMultiplex)(THIS_ int index,
+                            int* networkId,
+                            int* transportStreamId,
                             int* type,
                             int* frequency,
                             int *polarisation,
@@ -91,7 +93,7 @@ DECLARE_INTERFACE_(ITsChannelScan, IUnknown)
 
 class CMpTsFilter;
 
-class CChannelScan : public CUnknown, public ITsChannelScan, IPatCallBack, IPmtCallBack2, ISdtCallBack, IVctCallBack
+class CChannelScan : public CUnknown, public ITsChannelScan, IPatCallBack, IPmtCallBack2, ISdtCallBack, IVctCallBack, public IEncryptionStateChangeCallBack
 {
   public:
     CChannelScan(LPUNKNOWN pUnk, HRESULT *phr, CMpTsFilter* filter);
@@ -101,12 +103,12 @@ class CChannelScan : public CUnknown, public ITsChannelScan, IPatCallBack, IPmtC
 
     STDMETHODIMP SetCallBack(IChannelScanCallBack* callBack);
   
-    STDMETHODIMP ScanStream(TransmissionStandard transmissionStandard);
+    STDMETHODIMP ScanStream(BroadcastStandard broadcastStandard);
     STDMETHODIMP StopStreamScan();
     STDMETHODIMP GetServiceCount(int* serviceCount);
     STDMETHODIMP GetService(int index,
                              long* networkId,
-                             long* transportId,
+                             long* transportStreamId,
                              long* serviceId,
                              char** serviceName,
                              char** providerName,
@@ -115,15 +117,16 @@ class CChannelScan : public CUnknown, public ITsChannelScan, IPatCallBack, IPmtC
                              int* serviceType,
                              int* hasVideo,
                              int* hasAudio,
-                             int* isEncrypted,
-                             int* hasCaDescriptor,
+                             bool* isEncrypted,
                              int* pmtPid);
 
 
     STDMETHODIMP ScanNetwork();
-    STDMETHODIMP StopNetworkScan();
+    STDMETHODIMP StopNetworkScan(bool* isOtherMuxServiceInfoAvailable);
     STDMETHODIMP GetMultiplexCount(int* multiplexCount);
     STDMETHODIMP GetMultiplex(int index,
+                                int* networkId,
+                                int* transportStreamId,
                                 int* type,
                                 int* frequency,
                                 int *polarisation,
@@ -138,6 +141,7 @@ class CChannelScan : public CUnknown, public ITsChannelScan, IPatCallBack, IPmtC
     void OnPmtReceived(const CPidTable& pidTable);
     void OnSdtReceived(const CChannelInfo& sdtInfo);
     void OnVctReceived(const CChannelInfo& vctInfo);
+    STDMETHODIMP OnEncryptionStateChange(int pid, EncryptionState encryptionState);
 
   private:
     void CleanUp();
@@ -147,13 +151,16 @@ class CChannelScan : public CUnknown, public ITsChannelScan, IPatCallBack, IPmtC
     IChannelScanCallBack* m_pCallBack;
     bool m_bIsScanning;
     bool m_bIsScanningNetwork;
-    TransmissionStandard m_transmissionStandard;
+    BroadcastStandard m_broadcastStandard;
+    bool m_bIsOtherMuxServiceInfoSeen;
 
     map<int, CChannelInfo*> m_mServices;
     vector<NitMultiplexDetail*> m_vMultiplexes;
 
     CPatParser m_patParser;
     vector<CPmtParser*> m_vPmtParsers;
+    CEncryptionAnalyser* m_pEncryptionAnalyser;
+    map<int, int> m_mPids;  // map directly linking a PID to a service - limitation a PID can only be linked to one service
     CSdtParser m_sdtParser;
     CNitParser m_nitParser;
     CBatParser m_batParser;

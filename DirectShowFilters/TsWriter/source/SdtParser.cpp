@@ -32,7 +32,7 @@ CSdtParser::CSdtParser(void)
   {
     EnableCrcCheck(false);
   }
-  Reset();
+  Reset(false);
   m_pCallBack = NULL;
 }
 
@@ -40,12 +40,13 @@ CSdtParser::~CSdtParser(void)
 {
 }
 
-void CSdtParser::Reset()
+void CSdtParser::Reset(bool parseSdtOther)
 {
-  LogDebug("SdtParser: reset");
+  LogDebug("SdtParser: reset, parse SDT other = %d", parseSdtOther);
   CSectionDecoder::Reset();
   m_mSeenSections.clear();
   m_bIsReady = false;
+  m_bParseSdtOther = parseSdtOther;
   LogDebug("SdtParser: reset done");
 }
 
@@ -63,7 +64,7 @@ void CSdtParser::OnNewSection(CSection& sections)
 {
   // 0x42 = actual (current) transport stream
   // 0x46 = other transport streams
-  if (sections.table_id != 0x42/* && sections.table_id != 0x46*/)
+  if (sections.table_id != 0x42 && (sections.table_id != 0x46 || !m_bParseSdtOther))
   {
     return;
   }
@@ -158,8 +159,8 @@ void CSdtParser::OnNewSection(CSection& sections)
       int free_ca_mode = (section[pointer] >> 4) & 1;
 
       CChannelInfo info;
-      info.TransportId = transport_stream_id;
       info.NetworkId = original_network_id;
+      info.TransportStreamId = transport_stream_id;
       info.ServiceId = service_id;
       info.IsOtherMux = (sections.table_id == 0x46);
       info.IsRunning = (running_status == 2 || running_status == 4);    // running or starting in a few seconds

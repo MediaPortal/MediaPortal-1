@@ -21,12 +21,11 @@
 #pragma once
 
 #include "..\..\shared\packetsync.h"
-#include "videoanalyzer.h"
-#include "channelscan.h"
-#include "pmtgrabber.h"
+#include "EncryptionAnalyser.h"
+#include "PmtGrabber.h"
 #include "DiskRecorder.h"
-#include "teletextgrabber.h"
-#include "cagrabber.h"
+#include "TeletextGrabber.h"
+#include "CaGrabber.h"
 
 // {C564CEB9-FC77-4776-8CB8-96DD87624161}
 
@@ -38,7 +37,7 @@ public:
   void OnTsPacket(byte* tsPacket);
 	int Handle() { return m_id;}
 
-	CVideoAnalyzer* m_pVideoAnalyzer;
+	CEncryptionAnalyser* m_pEncryptionAnalyser;
 	CPmtGrabber*		m_pPmtGrabber;
 	CDiskRecorder*	m_pRecorder;
 	CDiskRecorder*	m_pTimeShifting;

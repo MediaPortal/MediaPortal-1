@@ -225,21 +225,45 @@ void CNitParser::OnNewSection(CSection& sections)
         else if (tag == 0x43) // satellite delivery system descriptor
         {
           DecodeSatelliteDeliverySystemDescriptor(&section[pointer], length, &satelliteMux);
-          AddSatelliteMux(&satelliteMux);
+          satelliteMux.NetworkId = original_network_id;
+          satelliteMux.TransportStreamId = transport_stream_id;
+          AddSatelliteMux(&satelliteMux, &frequencies);
         }
         else if (tag == 0x44) // cable delivery system descriptor
         {
           DecodeCableDeliverySystemDescriptor(&section[pointer], length, &cableMux);
+          cableMux.NetworkId = original_network_id;
+          cableMux.TransportStreamId = transport_stream_id;
           AddCableMux(&cableMux, &frequencies);
         }
         else if (tag == 0x5a) // terrestrial delivery system descriptor
         {
           DecodeTerrestrialDeliverySystemDescriptor(&section[pointer], length, &terrestrialMux);
+          terrestrialMux.NetworkId = original_network_id;
+          terrestrialMux.TransportStreamId = transport_stream_id;
           AddTerrestrialMux(&terrestrialMux, &frequencies);
         }
         else if (tag == 0x62) // frequency list descriptor
         {
-          DecodeFrequencyListDescriptor(&section[pointer], length, &frequencies);
+          int frequencyType = 0;
+          DecodeFrequencyListDescriptor(&section[pointer], length, &frequencies, &frequencyType);
+          if (frequencyType == 1)
+          {
+            AddSatelliteMux(&satelliteMux, &frequencies);
+          }
+          else if (frequencyType == 2)
+          {
+            AddCableMux(&cableMux, &frequencies);
+          }
+          else if (frequencyType == 3)
+          {
+            AddTerrestrialMux(&terrestrialMux, &frequencies);
+          }
+        }
+        else if (tag == 0x6d) // cell frequency link descriptor
+        {
+          DecodeCellFrequencyLinkDescriptor(&section[pointer], length, &frequencies);
+          // According to EN 300 468, this descriptor only applies for terrestrial networks.
           AddTerrestrialMux(&terrestrialMux, &frequencies);
         }
         else if (tag == 0x83) // logical channel number descriptor
@@ -759,7 +783,7 @@ void CNitParser::DecodeTerrestrialDeliverySystemDescriptor(byte* b, int length, 
   }
 }
 
-void CNitParser::DecodeFrequencyListDescriptor(byte* b, int length, vector<int>* frequencies)
+void CNitParser::DecodeFrequencyListDescriptor(byte* b, int length, vector<int>* frequencies, int* frequencyType)
 {
   if (length < 1)
   {
@@ -770,15 +794,10 @@ void CNitParser::DecodeFrequencyListDescriptor(byte* b, int length, vector<int>*
   try
   {
     int coding_type = b[0] & 0x3;
+    *frequencyType = coding_type;
     if (coding_type != 1 && coding_type != 2 && coding_type != 3)
     {
       LogDebug("%s: unsupported coding type %d in DecodeFrequencyListDescriptor()", m_sName, coding_type);
-      return;
-    }
-    else if (coding_type != 2 && coding_type != 3)
-    {
-      // We only expect cable or terrestrial frequencies.
-      LogDebug("%s: unexpected coding type %d in DecodeFrequencyListDescriptor()", m_sName, coding_type);
       return;
     }
     int pointer = 1;
@@ -798,7 +817,7 @@ void CNitParser::DecodeFrequencyListDescriptor(byte* b, int length, vector<int>*
         frequency = DecodeTerrestrialFrequency(&b[pointer]);
       }
       bool alreadyAdded = false;
-      for (int i = 0; i < (int)frequencies->size(); i++)
+      for (unsigned int i = 0; i < frequencies->size(); i++)
       {
         if (frequency == (*frequencies)[i])
         {
@@ -860,6 +879,71 @@ void CNitParser::DecodeMultilingualNameDescriptor(byte* b, int length, vector<ch
   }
 }
 
+void CNitParser::DecodeCellFrequencyLinkDescriptor(byte* b, int length, vector<int>* frequencies)
+{
+  try
+  {
+    int pointer = 0;
+    while (pointer + 6 < length)
+    {
+      int cell_id = (b[pointer] << 8) + b[pointer + 1];
+      pointer += 2;
+      int frequency = DecodeTerrestrialFrequency(&b[pointer]);
+      pointer += 4;
+      int subcell_info_loop_length = b[pointer++];
+
+      bool alreadyAdded = false;
+      for (unsigned int i = 0; i < frequencies->size(); i++)
+      {
+        if (frequency == (*frequencies)[i])
+        {
+          alreadyAdded = true;
+          break;
+        }
+      }
+      if (!alreadyAdded && frequency > 0)
+      {
+        frequencies->push_back(frequency);
+      }
+
+      if (subcell_info_loop_length > 0)
+      {
+        int endOfSubCellInfoLoop = pointer + subcell_info_loop_length;
+        if (endOfSubCellInfoLoop > length)
+        {
+          LogDebug("%s: invalid sub-cell info loop length %d, pointer = %d, descriptor length = %d", m_sName, subcell_info_loop_length, pointer, length);
+          return;
+        }
+        while (pointer + 4 < endOfSubCellInfoLoop)
+        {
+          int cell_id_extension = b[pointer++];
+          frequency = DecodeTerrestrialFrequency(&b[pointer]);
+          pointer += 4;
+
+          alreadyAdded = false;
+          for (unsigned int i = 0; i < frequencies->size(); i++)
+          {
+            if (frequency == (*frequencies)[i])
+            {
+              alreadyAdded = true;
+              break;
+            }
+          }
+          if (!alreadyAdded && frequency > 0)
+          {
+            frequencies->push_back(frequency);
+          }
+        }
+      }
+    }
+  }
+  catch (...)
+  {
+    LogDebug("%s: unhandled exception in DecodeCellFrequencyLinkDescriptor()", m_sName);
+    frequencies = NULL;
+  }
+}
+
 int CNitParser::DecodeCableFrequency(byte* b)
 {
   // Frequency in MHz is encoded with BCD digits. The DP is after the 4th digit. We want the frequency in kHz.
@@ -895,14 +979,14 @@ int CNitParser::DecodeTerrestrialFrequency(byte* b)
 
 void CNitParser::AddLogicalChannelNumbers(int nid, int tsid, map<int, int>* lcns)
 {
-  if (&lcns != NULL)
+  if (lcns != NULL)
   {
     for (map<int, int>::iterator it = lcns->begin(); it != lcns->end(); it++)
     {
-			NitLcn lcn;
+      NitLcn lcn;
       lcn.Lcn = it->second;
-			lcn.NetworkId = nid;
-			lcn.TransportStreamId = tsid;
+      lcn.NetworkId = nid;
+      lcn.TransportStreamId = tsid;
       lcn.ServiceId = it->first;
       m_vLcns.push_back(&lcn);
       LogDebug("%s: logical channel number, NID = 0x%x, TSID = 0x%x, SID = 0x%x, LCN = %d", m_sName, nid, tsid, it->first, it->second);
@@ -944,27 +1028,30 @@ void CNitParser::AddGroupNames(int nid, int tsid, int sid, vector<char*>* names)
 
 void CNitParser::AddCableMux(NitCableMultiplexDetail* mux, vector<int>* frequencies)
 {
-  if (&mux != NULL && mux->SymbolRate != 0)
+  // Do we actually have the multiplex tuning details? This function might have been called
+  // on receipt of a frequency list descriptor, without having yet received the cable delivery
+  // system descriptor.
+  if (mux != NULL && mux->SymbolRate != 0)
   {
     // Is the frequency specified in the cable delivery system descriptor, or should we expect
     // a frequency list descriptor to give us the list of all possible frequencies?
     if (mux->Frequency > MIN_CABLE_FREQUENCY_KHZ && mux->Frequency < MAX_CABLE_FREQUENCY_KHZ)
     {
-		  bool alreadyAdded = false;
+      bool alreadyAdded = false;
       for (vector<NitCableMultiplexDetail*>::iterator it = m_vCableMuxes.begin(); it != m_vCableMuxes.end(); it++)
-		  {
+      {
         if ((*it)->Equals(mux))
-			  {
-				  alreadyAdded = true;
-				  break;
-			  }
-		  }
-		  if (!alreadyAdded)
-		  {
+        {
+          alreadyAdded = true;
+          break;
+        }
+      }
+      if (!alreadyAdded)
+      {
         m_vCableMuxes.push_back(mux);
         LogDebug("%s: cable multiplex, frequency = %d kHz, modulation = %d, symbol rate = %d ks/s",
                   m_sName, mux->Frequency, mux->Modulation, mux->SymbolRate);
-		  }
+      }
     }
     // Do we have the required frequency list yet?
     else if (frequencies != NULL && frequencies->size() > 0)
@@ -972,78 +1059,113 @@ void CNitParser::AddCableMux(NitCableMultiplexDetail* mux, vector<int>* frequenc
       for (unsigned int i = 0; i < frequencies->size(); i++)
       {
         NitCableMultiplexDetail clone;
+        mux->Clone(&clone);
         clone.Frequency = (*frequencies)[i];
-        clone.OuterFecMethod = mux->OuterFecMethod;
-        clone.Modulation = mux->Modulation;
-        clone.SymbolRate = mux->SymbolRate;
-        clone.InnerFecRate = mux->InnerFecRate;
 
-			  bool alreadyAdded = false;
+        bool alreadyAdded = false;
         for (vector<NitCableMultiplexDetail*>::iterator it = m_vCableMuxes.begin(); it != m_vCableMuxes.end(); it++)
-			  {
+        {
           if ((*it)->Equals(&clone))
-			    {
-				    alreadyAdded = true;
-				    break;
-			    }
-			  }
-		    if (!alreadyAdded)
-		    {
+          {
+            alreadyAdded = true;
+            break;
+          }
+        }
+        if (!alreadyAdded)
+        {
           m_vCableMuxes.push_back(&clone);
           LogDebug("%s: cable multiplex, frequency = %d kHz, modulation = %d, symbol rate = %d ks/s",
                     m_sName, clone.Frequency, clone.Modulation, clone.SymbolRate);
-		    }
+        }
       }
     }
   }
 }
 
-void CNitParser::AddSatelliteMux(NitSatelliteMultiplexDetail* mux)
+void CNitParser::AddSatelliteMux(NitSatelliteMultiplexDetail* mux, vector<int>* frequencies)
 {
-  if (&mux != NULL)
+  // Do we actually have the multiplex tuning details? This function might have been called
+  // on receipt of a frequency list descriptor, without having yet received the satellite delivery
+  // system descriptor.
+  if (mux != NULL && mux->SymbolRate != 0)
   {
-		bool alreadyAdded = false;
-    for (vector<NitSatelliteMultiplexDetail*>::iterator it = m_vSatelliteMuxes.begin(); it != m_vSatelliteMuxes.end(); it++)
-		{
-      if ((*it)->Equals(mux))
-			{
-				alreadyAdded = true;
-				break;
-			}
-		}
-		if (!alreadyAdded)
-		{
-      m_vSatelliteMuxes.push_back(mux);
-      LogDebug("%s: satellite multiplex, frequency = %d kHz, polarisation = %d, modulation = %d, symbol rate = %d ks/s, inner FEC rate = %d, is DVB-S2 = %d, roll-off = %d",
-                m_sName, mux->Frequency, mux->Polarisation, mux->Modulation, mux->SymbolRate,
-                mux->InnerFecRate, mux->IsS2, mux->RollOff);
-		}
+    // Is the frequency specified in the satellite delivery system descriptor, or should we expect
+    // a frequency list descriptor to give us the list of all possible frequencies?
+    if (mux->Frequency > MIN_SATELLITE_FREQUENCY_KHZ && mux->Frequency < MAX_SATELLITE_FREQUENCY_KHZ)
+    {
+      bool alreadyAdded = false;
+      for (vector<NitSatelliteMultiplexDetail*>::iterator it = m_vSatelliteMuxes.begin(); it != m_vSatelliteMuxes.end(); it++)
+      {
+        if ((*it)->Equals(mux))
+        {
+          alreadyAdded = true;
+          break;
+        }
+      }
+      if (!alreadyAdded)
+      {
+        m_vSatelliteMuxes.push_back(mux);
+        LogDebug("%s: satellite multiplex, frequency = %d kHz, polarisation = %d, modulation = %d, symbol rate = %d ks/s, inner FEC rate = %d, is DVB-S2 = %d, roll-off = %d",
+                  m_sName, mux->Frequency, mux->Polarisation, mux->Modulation, mux->SymbolRate,
+                  mux->InnerFecRate, mux->IsS2, mux->RollOff);
+      }
+    }
+    // Do we have the required frequency list yet?
+    else if (frequencies != NULL && frequencies->size() > 0)
+    {
+      for (unsigned int i = 0; i < frequencies->size(); i++)
+      {
+        NitSatelliteMultiplexDetail clone;
+        mux->Clone(&clone);
+        clone.Frequency = (*frequencies)[i];
+
+        bool alreadyAdded = false;
+        for (vector<NitSatelliteMultiplexDetail*>::iterator it = m_vSatelliteMuxes.begin(); it != m_vSatelliteMuxes.end(); it++)
+        {
+          if ((*it)->Equals(&clone))
+          {
+            alreadyAdded = true;
+            break;
+          }
+        }
+        if (!alreadyAdded)
+        {
+          m_vSatelliteMuxes.push_back(&clone);
+          LogDebug("%s: satellite multiplex, frequency = %d kHz, polarisation = %d, modulation = %d, symbol rate = %d ks/s, inner FEC rate = %d, is DVB-S2 = %d, roll-off = %d",
+                    m_sName, clone.Frequency, clone.Polarisation, clone.Modulation, clone.SymbolRate,
+                    clone.InnerFecRate, clone.IsS2, clone.RollOff);
+        }
+      }
+    }
   }
 }
 
 void CNitParser::AddTerrestrialMux(NitTerrestrialMultiplexDetail* mux, vector<int>* frequencies)
 {
-  if (&mux != NULL && mux->Bandwidth != 0)
+  // Do we actually have the multiplex tuning details? This function might have been called
+  // on receipt of a frequency list descriptor, without having yet received the terrestrial delivery
+  // system descriptor.
+  if (mux != NULL && mux->Bandwidth != 0)
   {
     // Is the frequency specified in the terrestrial delivery system descriptor, or should we expect
     // a frequency list descriptor to give us the list of all possible frequencies?
     if (mux->CentreFrequency > MIN_TERRESTRIAL_FREQUENCY_KHZ && mux->CentreFrequency < MAX_TERRESTRIAL_FREQUENCY_KHZ)
     {
-			bool alreadyAdded = false;
+      bool alreadyAdded = false;
       for (vector<NitTerrestrialMultiplexDetail*>::iterator it = m_vTerrestrialMuxes.begin(); it != m_vTerrestrialMuxes.end(); it++)
-			{
+      {
         if ((*it)->Equals(mux))
-			  {
-				  alreadyAdded = true;
-				  break;
-			  }
-			}
-			if (!alreadyAdded)
-			{
+        {
+          alreadyAdded = true;
+          break;
+        }
+      }
+      if (!alreadyAdded)
+      {
         m_vTerrestrialMuxes.push_back(mux);
         LogDebug("%s: terrestrial multiplex, frequency = %d kHz, bandwidth = %d MHz",
                   m_sName, mux->CentreFrequency, mux->Bandwidth);
-			}
+      }
     }
     // Do we have the required frequency list yet?
     else if (frequencies != NULL && frequencies->size() > 0)
@@ -1051,35 +1173,24 @@ void CNitParser::AddTerrestrialMux(NitTerrestrialMultiplexDetail* mux, vector<in
       for (unsigned int i = 0; i < frequencies->size(); i++)
       {
         NitTerrestrialMultiplexDetail clone;
+        mux->Clone(&clone);
         clone.CentreFrequency = (*frequencies)[i];
-        clone.Bandwidth = mux->Bandwidth;
-        clone.IsHighPriority = mux->IsHighPriority;
-        clone.TimeSlicingIndicator = mux->TimeSlicingIndicator;
-        clone.MpeFecIndicator = mux->MpeFecIndicator;
-        clone.Constellation = mux->Constellation;
-        clone.IndepthInterleaverUsed = mux->IndepthInterleaverUsed;
-        clone.HierarchyInformation = mux->HierarchyInformation;
-        clone.CoderateHpStream = mux->CoderateHpStream;
-        clone.CoderateLpStream = mux->CoderateLpStream;
-        clone.GuardInterval = mux->GuardInterval;
-        clone.TransmissionMode = mux->TransmissionMode;
-        clone.OtherFrequencyFlag = mux->OtherFrequencyFlag;
 
-			  bool alreadyAdded = false;
+        bool alreadyAdded = false;
         for (vector<NitTerrestrialMultiplexDetail*>::iterator it = m_vTerrestrialMuxes.begin(); it != m_vTerrestrialMuxes.end(); it++)
-			  {
+        {
           if ((*it)->Equals(&clone))
-			    {
-				    alreadyAdded = true;
-				    break;
-			    }
-			  }
-			  if (!alreadyAdded)
-			  {
+          {
+            alreadyAdded = true;
+            break;
+          }
+        }
+        if (!alreadyAdded)
+        {
           m_vTerrestrialMuxes.push_back(&clone);
           LogDebug("%s: terrestrial multiplex, frequency = %d kHz, bandwidth = %d MHz",
                     m_sName, clone.CentreFrequency, clone.Bandwidth);
-			  }
+        }
       }
     }
   }
