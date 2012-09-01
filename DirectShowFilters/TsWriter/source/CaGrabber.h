@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -28,40 +28,40 @@
 using namespace Mediaportal;
 
 // {F9AA3910-7818-452a-94D1-72E039DF50EF}
-DEFINE_GUID(IID_ICaGrabber,0xf9aa3910, 0x7818, 0x452a, 0x94, 0xd1, 0x72, 0xe0, 0x39, 0xdf, 0x50, 0xef);
+DEFINE_GUID(IID_ICaGrabber, 0xf9aa3910, 0x7818, 0x452a, 0x94, 0xd1, 0x72, 0xe0, 0x39, 0xdf, 0x50, 0xef);
 
-DECLARE_INTERFACE_(ICACallback, IUnknown)
+DECLARE_INTERFACE_(ICaCallBack, IUnknown)
 {
-	STDMETHOD(OnCaReceived)()PURE;
+  STDMETHOD(OnCaReceived)()PURE;
 };
 
+#define PID_CAT 0x1
 
 DECLARE_INTERFACE_(ICaGrabber, IUnknown)
 {
-	STDMETHOD(SetCallBack)(THIS_ ICACallback* callback)PURE;
-	STDMETHOD(GetCaData) (THIS_ BYTE *caData)PURE;
-	STDMETHOD(Reset)()PURE;
+  STDMETHOD(Reset)()PURE;
+  STDMETHOD(SetCallBack)(THIS_ ICaCallBack* callBack)PURE;
+  STDMETHOD(GetCaData)(THIS_ BYTE *caData)PURE;
 };
 
-class CCaGrabber: public CUnknown, public CSectionDecoder, public ICaGrabber
+class CCaGrabber : public CUnknown, public CSectionDecoder, public ICaGrabber
 {
-public:
-	CCaGrabber(LPUNKNOWN pUnk, HRESULT *phr);
-	~CCaGrabber(void);
+  public:
+    CCaGrabber(LPUNKNOWN pUnk, HRESULT *phr);
+    ~CCaGrabber(void);
 
-  DECLARE_IUNKNOWN
-	STDMETHODIMP SetCallBack( ICACallback* callback);
-	STDMETHODIMP GetCaData(BYTE *caData);
-	STDMETHODIMP Reset();
+    DECLARE_IUNKNOWN
+    STDMETHODIMP Reset();
+    STDMETHODIMP SetCallBack(ICaCallBack* callBack);
+    STDMETHODIMP GetCaData(BYTE *caData);
 
-	void OnTsPacket(byte* tsPacket);
-  virtual void OnNewSection(CSection& section);
-private:
-	ICACallback* m_pCallback;
-  byte					m_caData[MAX_SECTION_LENGTH];
-	byte					m_caPrevData[MAX_SECTION_LENGTH];
-	int						m_iCaVersion;
-	int						m_iCaLength;
-  CTsHeader     m_tsHeader;
-	CCriticalSection m_section;
+    void OnTsPacket(byte* tsPacket);
+    virtual void OnNewSection(CSection& section);
+
+  private:
+    ICaCallBack* m_pCallBack;
+    byte m_caData[MAX_SECTION_LENGTH];
+    int m_iCaVersion;
+    int m_iCaLength;
+    CCriticalSection m_section;
 };

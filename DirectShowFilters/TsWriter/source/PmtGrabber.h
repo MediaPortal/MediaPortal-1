@@ -42,10 +42,10 @@ DECLARE_INTERFACE_(IPmtGrabber, IUnknown)
 {
   STDMETHOD(SetPmtPid)(THIS_ int pmtPid, int serviceId)PURE;
   STDMETHOD(SetCallBack)(THIS_ IPmtCallBack* callback)PURE;
-  STDMETHOD(GetPmtData)(THIS_ BYTE *pmtData)PURE;
+  STDMETHOD(GetPmtData)(THIS_ BYTE* pmtData)PURE;
 };
 
-class CPmtGrabber: public CUnknown, public CSectionDecoder, public IPmtGrabber, IPatCallBack, ISdtCallBack, IVctCallBack
+class CPmtGrabber : public CUnknown, public CSectionDecoder, public IPmtGrabber, IPatCallBack, ISdtCallBack, IVctCallBack
 {
   public:
     CPmtGrabber(LPUNKNOWN pUnk, HRESULT *phr);
@@ -54,7 +54,7 @@ class CPmtGrabber: public CUnknown, public CSectionDecoder, public IPmtGrabber, 
     DECLARE_IUNKNOWN
     STDMETHODIMP SetPmtPid(int pmtPid, int serviceId);
     STDMETHODIMP SetCallBack(IPmtCallBack* callBack);
-    STDMETHODIMP GetPmtData(BYTE *pmtData);
+    STDMETHODIMP GetPmtData(BYTE* pmtData);
 
     void OnTsPacket(byte* tsPacket);
     virtual void OnNewSection(CSection& section);

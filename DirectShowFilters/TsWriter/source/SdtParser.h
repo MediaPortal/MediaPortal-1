@@ -32,7 +32,7 @@ class ISdtCallBack
 
 #define PID_SDT 0x11
 
-class CSdtParser: public CSectionDecoder
+class CSdtParser : public CSectionDecoder
 {
   public:
     CSdtParser(void);

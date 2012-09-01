@@ -54,95 +54,96 @@ namespace TvLibrary.Interfaces.Analyzer
     [PreserveSig]
     int DeleteAllChannels();
 
-    /// <summary>
-    /// Sets the video pid on the analyzer for the given sub channel
-    /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
-    /// <param name="videoPid">Video PID</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int AnalyzerSetVideoPid(int handle, int videoPid);
+    #region encryption analyser
 
     /// <summary>
-    /// Gets the video pid of the analyzer for the given sub channel
+    /// Add an elementary stream to the set of streams that the analyser for a subchannel should monitor.
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
-    /// <param name="videoPid">Video pid</param>
-    /// <returns></returns>
+    /// <param name="handle">The subchannel handle.</param>
+    /// <param name="pid">The PID associated with the elementary stream.</param>
+    /// <returns>an HRESULT indicating whether the elementary stream was successfully registered</returns>
     [PreserveSig]
-    int AnalyzerGetVideoPid(int handle, out int videoPid);
+    int AnalyserAddPid(int handle, int pid);
 
     /// <summary>
-    /// Sets the audio pid on the analyzer for the given sub channel
+    /// Remove an elementary stream from the set of streams that the analyser for a subchannel is monitoring.
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
-    /// <param name="audioPid">Audio pid</param>
-    /// <returns></returns>
+    /// <param name="handle">The subchannel handle.</param>
+    /// <param name="pid">The PID associated with the elementary stream.</param>
+    /// <returns>an HRESULT indicating whether the elementary stream was successfully deregistered</returns>
     [PreserveSig]
-    int AnalyzerSetAudioPid(int handle, int audioPid);
+    int AnalyserRemovePid(int handle, int pid);
 
     /// <summary>
-    /// Gets the audio pid on the analyzer for the given sub channel
+    /// Get a count of the elementary streams that the analyser for a subchannel is currently monitoring.
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
-    /// <param name="audioPid">Audio pid</param>
-    /// <returns></returns>
+    /// <param name="handle">The subchannel handle.</param>
+    /// <param name="pidCount">The number of elementary streams that the analyser is currently monitoring.</param>
+    /// <returns>an HRESULT indicating whether the elementary stream count was successfully retrieved</returns>
     [PreserveSig]
-    int AnalyzerGetAudioPid(int handle, out int audioPid);
+    int AnalyserGetPidCount(int handle, out int pidCount);
 
     /// <summary>
-    /// Checks if video of the channel is encrypted for the given sub channel
+    /// Get the encryption state for a specific elementary stream that the analyser for a subchannel is monitoring.
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
-    /// <param name="yesNo">true, if the channel is encrypted</param>
-    /// <returns></returns>
+    /// <param name="handle">The subchannel handle.</param>
+    /// <param name="pidIndex">The PID index. The value of this parameter should be in the range 0..[GetPidCount() - 1] (inclusive).</param>
+    /// <param name="pid">The PID associated with the stream.</param>
+    /// <param name="encryptionState">The current encryption state of the elementary stream.</param>
+    /// <returns>an HRESULT indicating whether the elementary stream state was successfully retrieved</returns>
     [PreserveSig]
-    int AnalyzerIsVideoEncrypted(int handle, out int yesNo);
+    int AnalyserGetPid(int handle, int pidIndex, out int pid, out EncryptionState encryptionState);
 
     /// <summary>
-    /// Checks if audioof the channel is encrypted for the given sub channel
+    /// Set the delegate for the analyser for a subchannel to notify when the encryption state of one of the monitored elementary streams changes.
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
-    /// <param name="yesNo">true, if the channel is encrypted</param>
-    /// <returns></returns>
+    /// <param name="handle">The subchannel handle.</param>
+    /// <param name="callBack">The delegate callback interface.</param>
+    /// <returns>an HRESULT indicating whether the delegate was successfully registered</returns>
     [PreserveSig]
-    int AnalyzerIsAudioEncrypted(int handle, out int yesNo);
+    int AnalyserSetCallBack(int handle, IEncryptionStateChangeCallBack callBack);
 
     /// <summary>
-    /// Resets the analyzer of the given sub channel
+    /// Reset the encryption analyser for a subchannel.
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
-    /// <returns></returns>
+    /// <param name="handle">The subchannel handle.</param>
+    /// <returns>an HRESULT indicating whether the analyser was successfully reset</returns>
     [PreserveSig]
-    int AnalyzerReset(int handle);
+    int AnalyserReset(int handle);
+
+    #endregion
+
+    #region PMT grabber
 
     /// <summary>
-    /// Sets the pmt for the given sub channel
+    /// Set the PID and service for the PMT grabber for a subchannel to monitor.
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
-    /// <param name="pmtPid">The PMT pid</param>
-    /// <param name="serviceId">The service id</param>
-    /// <returns></returns>
+    /// <param name="handle">The subchannel handle.</param>
+    /// <param name="pmtPid">The PID that the grabber should monitor.</param>
+    /// <param name="serviceId">The ID of the service that the grabber should monitor.</param>
+    /// <returns>an HRESULT indicating whether the grabber parameters were successfully registered</returns>
     [PreserveSig]
-    int PmtSetPmtPid(int handle, int pmtPid, long serviceId);
+    int PmtSetPmtPid(int handle, int pmtPid, int serviceId);
 
     /// <summary>
-    /// Sets the pmt callback for the given sub channel
+    /// Set the delegate for the PMT grabber for a subchannel to notify when a new PMT section is received.
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
-    /// <param name="callback">The pmt callback</param>
-    /// <returns></returns>
+    /// <param name="handle">The subchannel handle.</param>
+    /// <param name="callBack">The delegate callback interface.</param>
+    /// <returns>an HRESULT indicating whether the delegate was successfully registered</returns>
     [PreserveSig]
-    int PmtSetCallBack(int handle, IPMTCallback callback);
+    int PmtSetCallBack(int handle, IPmtCallBack callBack);
 
     /// <summary>
-    /// Gets the pmt data of the given sub channel
+    /// Used by the delegate to retrieve a PMT section from the PMT grabber for a subchannel.
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
-    /// <param name="pmtData">Pointer for the PMT data</param>
-    /// <returns></returns>
+    /// <param name="handle">The subchannel handle.</param>
+    /// <param name="pmtData">A pointer to a buffer that will be populated with the most recently received PMT section.</param>
+    /// <returns>the length of the PMT section in bytes</returns>
     [PreserveSig]
-    int PmtGetPMTData(int handle, IntPtr pmtData);
+    int PmtGetPmtData(int handle, IntPtr pmtData);
+
+    #endregion
 
     /// <summary>
     /// Sets the recorder unicode filename for the given subchannel
@@ -318,31 +319,35 @@ namespace TvLibrary.Interfaces.Analyzer
     [PreserveSig]
     int TTxSetCallBack(int handle, ITeletextCallBack callback);
 
-    /// <summary>
-    /// Set the CA callback
-    /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
-    /// <param name="callback">The callback</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int CaSetCallBack(int handle, ICACallback callback);
+    #region CAT grabber
 
     /// <summary>
-    /// Gets the ca data of the given sub channel
+    /// Reset the CAT grabber for a subchannel, causing it to forget about previously seen CAT sections.
     /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
-    /// <param name="caData">Pointer for the ca data</param>
-    /// <returns></returns>
+    /// <param name="handle">The subchannel handle.</param>
+    /// <returns>an HRESULT indicating whether the grabber was successfully reset</returns>
+    [PreserveSig]
+    int CaReset(int handle);
+
+    /// <summary>
+    /// Set the delegate for the CAT grabber for a subchannel to notify when a new CAT section is received.
+    /// </summary>
+    /// <param name="handle">The subchannel handle.</param>
+    /// <param name="callBack">The delegate callback interface.</param>
+    /// <returns>an HRESULT indicating whether the delegate was successfully registered</returns>
+    [PreserveSig]
+    int CaSetCallBack(int handle, ICaCallBack callBack);
+
+    /// <summary>
+    /// Used by the delegate to retrieve a CAT section from the CAT grabber for a subchannel.
+    /// </summary>
+    /// <param name="handle">The subchannel handle.</param>
+    /// <param name="caData">A pointer to a buffer that will be populated with the most recently received CAT section.</param>
+    /// <returns>the length of the CAT section in bytes</returns>
     [PreserveSig]
     int CaGetCaData(int handle, IntPtr caData);
 
-    /// <summary>
-    /// Resets the ca for the given sub channel
-    /// </summary>
-    /// <param name="handle">Handle of the sub channel</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int CaReset(int handle);
+    #endregion
 
     /// <summary>
     /// Fetches the stream quality information

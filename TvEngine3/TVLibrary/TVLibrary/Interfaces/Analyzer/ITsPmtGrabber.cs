@@ -24,36 +24,63 @@ using System.Runtime.InteropServices;
 namespace TvLibrary.Interfaces.Analyzer
 {
   /// <summary>
-  /// interface to the pmt grabber com object
+  /// TsWriter PMT grabber callback interface.
   /// </summary>
   [ComVisible(true), ComImport,
-   Guid("6E714740-803D-4175-BEF6-67246BDF1855"),
-   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    Guid("37a1c1e3-4760-49fe-ab59-6688ada54923"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IPmtCallBack
+  {
+    /// <summary>
+    /// Called by an ITsPmtGrabber instance when it receives a new PMT section for a service.
+    /// </summary>
+    /// <param name="pmtPid">The PID of the elementary stream from which the PMT section received.</param>
+    /// <param name="serviceId">The ID associated with the service which the PMT section is associated with.</param>
+    /// <param name="isServiceRunning">Indicates whether the service that the grabber is monitoring is active.
+    ///   The grabber will not wait for PMT to be received if it thinks the service is not running.</param>
+    /// <returns>an HRESULT indicating whether the PMT section was successfully handled</returns>
+    [PreserveSig]
+    int OnPmtReceived(int pmtPid, int serviceId, bool isServiceRunning);
+  }
+
+  /// <summary>
+  /// TsWriter PMT grabber interface.
+  /// </summary>
+  [ComVisible(true), ComImport,
+    Guid("6e714740-803d-4175-bef6-67246bdf1855"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsPmtGrabber
   {
     /// <summary>
-    /// Sets the PMT pid.
+    /// Set the PID and service for the grabber to monitor.
     /// </summary>
-    /// <param name="pmtPid">The PMT pid.</param>
-    /// <param name="serviceId">The service id</param>
-    /// <returns></returns>
+    /// <remarks>
+    /// The service ID must also be set because a PID may carry PMT for more than one service.
+    /// The PMT PID may be zero, in which case the grabber will use the service ID to determine
+    /// the PID which is currently carrying the service's PMT, using the PAT.
+    /// The service ID may be zero, in which case the grabber will grab PMT for the first service
+    /// that it finds in the PAT.
+    /// </remarks>
+    /// <param name="pmtPid">The PID that the grabber should monitor.</param>
+    /// <param name="serviceId">The ID of the service that the grabber should monitor.</param>
+    /// <returns>an HRESULT indicating whether the grabber parameters were successfully registered</returns>
     [PreserveSig]
-    int SetPmtPid(short pmtPid, int serviceId);
+    int SetPmtPid(int pmtPid, int serviceId);
 
     /// <summary>
-    /// Sets the call back to be called when PMT is received.
+    /// Set the delegate for the grabber to notify when a new PMT section is received.
     /// </summary>
-    /// <param name="callback">The callback.</param>
-    /// <returns></returns>
+    /// <param name="callBack">The delegate callback interface.</param>
+    /// <returns>an HRESULT indicating whether the delegate was successfully registered</returns>
     [PreserveSig]
-    int SetCallBack(IPMTCallback callback);
+    int SetCallBack(IPmtCallBack callBack);
 
     /// <summary>
-    /// Gets the PMT data.
+    /// Used by the delegate to retrieve a PMT section from the grabber.
     /// </summary>
-    /// <param name="pmt">The PMT.</param>
-    /// <returns></returns>
+    /// <param name="pmtData">A pointer to a buffer that will be populated with the most recently received PMT section.</param>
+    /// <returns>the length of the PMT section in bytes</returns>
     [PreserveSig]
-    int GetPMTData(IntPtr pmt);
+    int GetPmtData(IntPtr pmtData);
   }
 }

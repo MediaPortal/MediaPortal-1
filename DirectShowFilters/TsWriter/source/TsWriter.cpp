@@ -668,7 +668,7 @@ STDMETHODIMP CMpTs::PmtSetCallBack(int handle, IPmtCallBack* callBack)
   return pChannel->m_pPmtGrabber->SetCallBack(callBack);
 }
 
-STDMETHODIMP CMpTs::PmtGetPmtData(int handle, BYTE *pmtData)
+STDMETHODIMP CMpTs::PmtGetPmtData(int handle, BYTE* pmtData)
 {
   CTsChannel* pChannel = GetTsChannel(handle);
   if (pChannel == NULL)
@@ -861,26 +861,37 @@ STDMETHODIMP CMpTs::TTxSetCallBack( int handle,ITeletextCallBack* callback)
 	return pChannel->m_pTeletextGrabber->SetCallBack(callback );
 }
 
-STDMETHODIMP CMpTs::CaSetCallBack(int handle,ICACallback* callback)
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pCaGrabber->SetCallBack(callback );
-}
-
-STDMETHODIMP CMpTs::CaGetCaData(int handle,BYTE *caData)
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pCaGrabber->GetCaData(caData );
-}
 
 STDMETHODIMP CMpTs::CaReset(int handle)
 {
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pCaGrabber->Reset( );
+  CTsChannel* pChannel = GetTsChannel(handle);
+  if (pChannel == NULL)
+  {
+    return S_FALSE;
+  }
+  return pChannel->m_pCaGrabber->Reset();
 }
+
+STDMETHODIMP CMpTs::CaSetCallBack(int handle, ICaCallBack* callBack)
+{
+  CTsChannel* pChannel = GetTsChannel(handle);
+  if (pChannel == NULL)
+  {
+    return S_FALSE;
+  }
+  return pChannel->m_pCaGrabber->SetCallBack(callBack);
+}
+
+STDMETHODIMP CMpTs::CaGetCaData(int handle, BYTE* caData)
+{
+  CTsChannel* pChannel = GetTsChannel(handle);
+  if (pChannel == NULL)
+  {
+    return S_FALSE;
+  }
+  return pChannel->m_pCaGrabber->GetCaData(caData);
+}
+
 
 STDMETHODIMP CMpTs::GetStreamQualityCounters(int handle, int* totalTsBytes, int* totalRecordingBytes, 
       int* TsDiscontinuity, int* recordingDiscontinuity)

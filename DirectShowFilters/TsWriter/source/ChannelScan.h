@@ -60,7 +60,7 @@ DECLARE_INTERFACE_(ITsChannelScan, IUnknown)
   STDMETHOD(ScanStream)(THIS_ BroadcastStandard broadcastStandard)PURE;
   STDMETHOD(StopStreamScan)(THIS_)PURE;
   STDMETHOD(GetServiceCount)(THIS_ int* serviceCount)PURE;
-  STDMETHOD(GetService)(THIS_ int index,
+  STDMETHOD(GetServiceDetail)(THIS_ int index,
                          long* networkId,
                          long* transportStreamId,
                          long* serviceId,
@@ -74,11 +74,11 @@ DECLARE_INTERFACE_(ITsChannelScan, IUnknown)
                          bool* isEncrypted,
                          int* pmtPid)PURE;
 
-  // NIT fast scanning
+  // NIT scanning
   STDMETHOD(ScanNetwork)(THIS_)PURE;
   STDMETHOD(StopNetworkScan)(THIS_ bool* isOtherMuxServiceInfoAvailable)PURE;
   STDMETHOD(GetMultiplexCount)(THIS_ int* multiplexCount)PURE;
-  STDMETHOD(GetMultiplex)(THIS_ int index,
+  STDMETHOD(GetMultiplexDetail)(THIS_ int index,
                             int* networkId,
                             int* transportStreamId,
                             int* type,
@@ -106,7 +106,7 @@ class CChannelScan : public CUnknown, public ITsChannelScan, IPatCallBack, IPmtC
     STDMETHODIMP ScanStream(BroadcastStandard broadcastStandard);
     STDMETHODIMP StopStreamScan();
     STDMETHODIMP GetServiceCount(int* serviceCount);
-    STDMETHODIMP GetService(int index,
+    STDMETHODIMP GetServiceDetail(int index,
                              long* networkId,
                              long* transportStreamId,
                              long* serviceId,
@@ -124,12 +124,12 @@ class CChannelScan : public CUnknown, public ITsChannelScan, IPatCallBack, IPmtC
     STDMETHODIMP ScanNetwork();
     STDMETHODIMP StopNetworkScan(bool* isOtherMuxServiceInfoAvailable);
     STDMETHODIMP GetMultiplexCount(int* multiplexCount);
-    STDMETHODIMP GetMultiplex(int index,
+    STDMETHODIMP GetMultiplexDetail(int index,
                                 int* networkId,
                                 int* transportStreamId,
                                 int* type,
                                 int* frequency,
-                                int *polarisation,
+                                int* polarisation,
                                 int* modulation,
                                 int* symbolRate,
                                 int* bandwidth,

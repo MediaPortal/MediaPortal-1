@@ -82,7 +82,7 @@ STDMETHODIMP CPmtGrabber::SetPmtPid(int pmtPid, int serviceId)
   }
   catch (...)
   {
-    LogDebug("PmtGrabber: exception in SetPmtPid()");
+    LogDebug("PmtGrabber: unhandled exception in SetPmtPid()");
     return S_FALSE;
   }
   return S_OK;
@@ -98,7 +98,7 @@ STDMETHODIMP CPmtGrabber::SetCallBack(IPmtCallBack* callBack)
   }
   catch (...)
   {
-    LogDebug("PmtGrabber: exception in SetCallBack()");
+    LogDebug("PmtGrabber: unhandled exception in SetCallBack()");
     return S_FALSE;
   }
   return S_OK;
@@ -211,11 +211,11 @@ void CPmtGrabber::OnTsPacket(byte* tsPacket)
 {
   try
   {
+    CEnterCriticalSection enter(m_section);
     if (m_pCallBack == NULL)
     {
       return;
     }
-    CEnterCriticalSection enter(m_section);
     if (m_iCurrentServiceId != 0)
     {
       m_sdtParser.OnTsPacket(tsPacket);
@@ -231,7 +231,7 @@ void CPmtGrabber::OnTsPacket(byte* tsPacket)
   }
   catch (...)
   {
-    LogDebug("PmtGrabber: exception in OnTsPacket()");
+    LogDebug("PmtGrabber: unhandled exception in OnTsPacket()");
   }
 }
 
@@ -303,82 +303,74 @@ void CPmtGrabber::OnNewSection(CSection& section)
       return;
     }
 
-    // If the new section is not identical to the previous section...
-    if (m_iPmtVersion < 0 || memcmp(section.Data, m_pmtPrevSection.Data, m_iPmtLength) != 0)
+    // Check section for corruption.
+    CPmtParser currPmtParser;
+    currPmtParser.SetPid(GetPid());
+    if (!currPmtParser.DecodePmtSection(section))
     {
-      // Check section for corruption.
-      CPmtParser currPmtParser;
-      currPmtParser.SetPid(GetPid());
-      if (!currPmtParser.DecodePmtSection(section))
-      {
-         LogDebug("PmtGrabber: error decoding PMT section for service 0x%x from PID 0x%x. Check your signal quality.", serviceId, GetPid());
-         return;
-      }
+        LogDebug("PmtGrabber: error decoding PMT section for service 0x%x from PID 0x%x. Check your signal quality.", serviceId, GetPid());
+        return;
+    }
 
-      bool pidsChanged = false;
-      if (m_iPmtVersion < 0)
+    bool pidsChanged = false;
+    if (m_iPmtVersion < 0)
+    {
+      LogDebug("PmtGrabber: got PMT for service 0x%x from PID 0x%x", serviceId, GetPid());
+      LogDebug("PmtGrabber: elementary streams to include:");
+      currPmtParser.GetPidInfo().LogPIDs();
+      pidsChanged = true;
+    }
+    else
+    {
+      LogDebug("PmtGrabber: found new PMT version %d (old version %d) for service 0x%x from PID 0x%x", section.version_number, m_iPmtVersion, serviceId, GetPid());
+      // Decode the previous section so we can check if the service elementary streams have changed.
+      CPmtParser prevPmtParser;
+      prevPmtParser.SetPid(GetPid());
+      prevPmtParser.DecodePmtSection(m_pmtPrevSection);
+
+      if (!(prevPmtParser.GetPidInfo() == currPmtParser.GetPidInfo()))
       {
-        LogDebug("PmtGrabber: got PMT for service 0x%x from PID 0x%x", serviceId, GetPid());
-        LogDebug("PmtGrabber: elementary streams to include:");
+        LogDebug("PmtGrabber: PMT elementary streams to include changed from:");
+        prevPmtParser.GetPidInfo().LogPIDs();
+        LogDebug("PmtGrabber: PMT elementary streams to include changed to:");
         currPmtParser.GetPidInfo().LogPIDs();
         pidsChanged = true;
       }
-      else
-      {
-        LogDebug("PmtGrabber: found new PMT version %d (old version %d) for service 0x%x from PID 0x%x", section.version_number, m_iPmtVersion, serviceId, GetPid());
-        // Decode the previous section so we can check if the service elementary streams have changed.
-        CPmtParser prevPmtParser;
-        prevPmtParser.SetPid(GetPid());
-        prevPmtParser.DecodePmtSection(m_pmtPrevSection);
-
-        if (!(prevPmtParser.GetPidInfo() == currPmtParser.GetPidInfo()))
-        {
-          LogDebug("PmtGrabber: PMT elementary streams to include changed from:");
-          prevPmtParser.GetPidInfo().LogPIDs();
-          LogDebug("PmtGrabber: PMT elementary streams to include changed to:");
-          currPmtParser.GetPidInfo().LogPIDs();
-          pidsChanged = true;
-        }
-      }
-
-      // PIDs may not have changed but we still need to keep the PMT data that we
-      // hold up-to-date. The + 3 is because the section length doesn't include the
-      // table ID, section syntax indicator, and section length bytes that we want
-      // to pass back.
-      m_iPmtLength = section.section_length + 3;
-      memcpy(m_pmtData, section.Data, m_iPmtLength);
-      m_pmtPrevSection = section;
-
-      // If the elementary streams are different then a callback is required.
-      if (pidsChanged)
-      {
-        LogDebug("PmtGrabber: do callback...");
-
-        // If we receive PMT, assume the service is running.
-        m_pCallBack->OnPmtReceived(GetPid(), serviceId, 1);
-
-        // We're not interested in continually monitoring if the service is running.
-        m_sdtParser.SetCallBack(NULL);
-        m_vctParser.SetCallBack(NULL);
-      }
-      else 
-      {
-        LogDebug("PmtGrabber: callback not done because A/V PIDs haven't changed");
-      }
     }
 
-    // We update this whenever identical and/or valid PMT is received, even if a
-    // callback is not performed. It can help to avoid unnecessary byte-wise section
-    // comparsion.
+    // PIDs may not have changed but we still need to keep the PMT data that we
+    // hold up-to-date. The + 3 is because the section length doesn't include the
+    // table ID, section syntax indicator, and section length bytes that we want
+    // to pass back.
+    m_iPmtLength = section.section_length + 3;
+    memcpy(m_pmtData, section.Data, m_iPmtLength);
     m_iPmtVersion = section.version_number;
+    m_pmtPrevSection = section;
+
+    // If the elementary streams are different then a callback is required.
+    if (pidsChanged)
+    {
+      LogDebug("PmtGrabber: do callback...");
+
+      // If we receive PMT, assume the service is running.
+      m_pCallBack->OnPmtReceived(GetPid(), serviceId, 1);
+
+      // We're not interested in continually monitoring if the service is running.
+      m_sdtParser.SetCallBack(NULL);
+      m_vctParser.SetCallBack(NULL);
+    }
+    else 
+    {
+      LogDebug("PmtGrabber: callback not done because A/V PIDs haven't changed");
+    }
   }
   catch (...)
   {
-    LogDebug("PmtGrabber: exception in OnNewSection()");
+    LogDebug("PmtGrabber: unhandled exception in OnNewSection()");
   }
 }
 
-STDMETHODIMP CPmtGrabber::GetPmtData(BYTE *pmtData)
+STDMETHODIMP CPmtGrabber::GetPmtData(BYTE* pmtData)
 {
   try
   {
@@ -391,7 +383,7 @@ STDMETHODIMP CPmtGrabber::GetPmtData(BYTE *pmtData)
   }
   catch (...)
   {
-    LogDebug("PmtGrabber: exception in GetPmtData()");
+    LogDebug("PmtGrabber: unhandled exception in GetPmtData()");
   }
   return 0;
 }

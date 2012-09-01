@@ -57,7 +57,7 @@ DECLARE_INTERFACE_(ITSFilter, IUnknown)
 
 	STDMETHOD(PmtSetPmtPid)(THIS_ int handle, int pmtPid, int serviceId);
 	STDMETHOD(PmtSetCallBack)(THIS_ int handle, IPmtCallBack* callBack);
-	STDMETHOD(PmtGetPmtData)(THIS_ int handle, BYTE *pmtData);
+	STDMETHOD(PmtGetPmtData)(THIS_ int handle, BYTE* pmtData);
 	
   STDMETHOD(RecordSetRecordingFileNameW)(THIS_ int handle,wchar_t* pwszFileName)PURE;
   STDMETHOD(RecordStartRecord)(THIS_ int handle)PURE;
@@ -81,9 +81,9 @@ DECLARE_INTERFACE_(ITSFilter, IUnknown)
 	STDMETHOD(TTxSetTeletextPid)(THIS_ int handle,int teletextPid)PURE;
 	STDMETHOD(TTxSetCallBack)(THIS_ int handle,ITeletextCallBack* callback)PURE;
 
-  STDMETHOD(CaSetCallBack)(THIS_ int handle,ICACallback* callback)PURE;
-	STDMETHOD(CaGetCaData) (THIS_ int handle,BYTE *caData)PURE;
 	STDMETHOD(CaReset)(THIS_ int handle)PURE;
+  STDMETHOD(CaSetCallBack)(THIS_ int handle, ICaCallBack* callBack)PURE;
+	STDMETHOD(CaGetCaData)(THIS_ int handle, BYTE* caData)PURE;
 
   STDMETHOD(GetStreamQualityCounters)(THIS_ int handle, int* totalTsBytes, int* totalRecordingBytes, 
       int* TsDiscontinuity, int* recordingDiscontinuity)PURE;
@@ -176,7 +176,7 @@ public:
 
 		STDMETHODIMP PmtSetPmtPid(int handle, int pmtPid, int serviceId);
 		STDMETHODIMP PmtSetCallBack(int handle, IPmtCallBack* callBack);
-		STDMETHODIMP PmtGetPmtData(int handle, BYTE *pmtData);
+		STDMETHODIMP PmtGetPmtData(int handle, BYTE* pmtData);
 
 		STDMETHODIMP RecordSetRecordingFileNameW( int handle,wchar_t* pszFileName);
 		STDMETHODIMP RecordStartRecord( int handle);
@@ -200,9 +200,10 @@ public:
 		STDMETHODIMP TTxSetTeletextPid( int handle,int teletextPid);
 		STDMETHODIMP TTxSetCallBack( int handle,ITeletextCallBack* callback);
 
-    STDMETHODIMP CaSetCallBack(int handle,ICACallback* callback);
-	  STDMETHODIMP CaGetCaData(int handle,BYTE *caData);
-	  STDMETHODIMP CaReset(int handle);
+		STDMETHODIMP CaReset(int handle);
+		STDMETHODIMP CaSetCallBack(int handle, ICaCallBack* callBack);
+		STDMETHODIMP CaGetCaData(int handle, BYTE* caData);
+
     STDMETHODIMP GetStreamQualityCounters(int handle, int* totalTsBytes, int* totalRecordingBytes, 
       int* TsDiscontinuity, int* recordingDiscontinuity);
 

@@ -148,7 +148,7 @@ STDMETHODIMP CChannelScan::GetServiceCount(int* serviceCount)
   return S_OK;
 }
 
-STDMETHODIMP CChannelScan::GetService(int index,
+STDMETHODIMP CChannelScan::GetServiceDetail(int index,
                                        long* networkId,
                                        long* transportStreamId,
                                        long* serviceId,
@@ -244,7 +244,7 @@ STDMETHODIMP CChannelScan::GetService(int index,
   }
   catch (...)
   {
-    LogDebug("ChannelScan: unhandled exception in GetService()");
+    LogDebug("ChannelScan: unhandled exception in GetServiceDetail()");
     return S_FALSE;
   }
   return S_OK;
@@ -392,7 +392,7 @@ STDMETHODIMP CChannelScan::GetMultiplexCount(int* multiplexCount)
   return S_OK;
 }
 
-STDMETHODIMP CChannelScan::GetMultiplex(int index,
+STDMETHODIMP CChannelScan::GetMultiplexDetail(int index,
                                           int* networkId,
                                           int* transportStreamId,
                                           int* type,
@@ -467,12 +467,12 @@ STDMETHODIMP CChannelScan::GetMultiplex(int index,
       return S_OK;
     }
 
-    LogDebug("ChannelScan: unhandled multiplex type in GetTransponder()");
+    LogDebug("ChannelScan: unhandled multiplex type in GetMultiplexDetail()");
     return S_FALSE;
   }
   catch (...)
   {
-    LogDebug("ChannelScan: unhandled exception in GetTransponder()");
+    LogDebug("ChannelScan: unhandled exception in GetMultiplexDetail()");
     return S_FALSE;
   }
   return S_OK;
