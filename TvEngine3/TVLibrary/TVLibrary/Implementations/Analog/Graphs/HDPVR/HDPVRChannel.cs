@@ -33,7 +33,7 @@ namespace TvLibrary.Implementations.Analog
   /// <summary>
   /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles analog tv cards
   /// </summary>
-  public class HDPVRChannel : TvDvbChannel, ITvSubChannel, IVideoAudioObserver, IPMTCallback
+  public class HDPVRChannel : TvDvbChannel
   {
     #region constants
 

@@ -1701,7 +1701,10 @@ namespace TvLibrary.Implementations
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        if (!(ex is TvException))
+        {
+          Log.Log.Write(ex);
+        }
 
         // One potential reason for getting here is that signal could not be locked, and the reason for
         // that may be that tuning failed. We always want to force a retune on the next tune request in

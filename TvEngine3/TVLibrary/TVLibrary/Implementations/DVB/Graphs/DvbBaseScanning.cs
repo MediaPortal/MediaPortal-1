@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
 using DirectShowLib.BDA;
@@ -32,18 +33,13 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// A base class which implements TV and radio service scanning for digital tuners with BDA drivers.
   /// </summary>
-  public class DvbBaseScanning : IChannelScanCallback, ITVScanning
+  public class DvbBaseScanning : IChannelScanCallBack, ITVScanning
   {
     #region variables
 
     private ITsChannelScan _analyzer;
     private readonly TvCardDvbBase _card;
     private ManualResetEvent _event;
-
-    /// <summary>
-    /// Enable wait for VCT indicator. VCT is the virtual channel table, only relevant for ATSC/QAM streams.
-    /// </summary>
-    protected bool _enableWaitForVct;
 
     #endregion
 
@@ -56,7 +52,6 @@ namespace TvLibrary.Implementations.DVB
     public DvbBaseScanning(TvCardDvbBase tuner)
     {
       _card = tuner;
-      _enableWaitForVct = false;
     }
 
     #endregion
@@ -65,6 +60,20 @@ namespace TvLibrary.Implementations.DVB
     /// Resets this instance.
     /// </summary>
     public void Reset() {}
+
+    #region IChannelScanCallBack member
+
+    /// <summary>
+    /// Called by TsWriter when all available service and/or network information has been received.
+    /// </summary>
+    /// <returns>an HRESULT indicating whether the notification was successfully handled</returns>
+    public int OnScannerDone()
+    {
+      _event.Set();
+      return 0; // success
+    }
+
+    #endregion
 
     #region channel scanning
 
@@ -96,60 +105,69 @@ namespace TvLibrary.Implementations.DVB
         {
           _event = new ManualResetEvent(false);
           _analyzer.SetCallBack(this);
-          _analyzer.Start(_enableWaitForVct);
+
+          // Determine the broadcast standard that the stream conforms to.
+          BroadcastStandard standard = BroadcastStandard.Dvb; // default
+          ATSCChannel atscChannel = channel as ATSCChannel;
+          if (atscChannel != null)
+          {
+            if (atscChannel.ModulationType == ModulationType.Mod8Vsb || atscChannel.ModulationType == ModulationType.Mod16Vsb)
+            {
+              standard = BroadcastStandard.Atsc;
+            }
+            else
+            {
+              standard = BroadcastStandard.Scte;
+            }
+          }
+
+          // Start scanning, then wait for TsWriter to tell us that scanning is complete.
+          _analyzer.ScanStream(standard);
           _event.WaitOne(settings.TimeOutSDT * 1000, true);
 
           int found = 0;
-          short channelCount;
-          _analyzer.GetCount(out channelCount);
+          int serviceCount;
+          _analyzer.GetServiceCount(out serviceCount);
+          Log.Log.Write("Found {0} service(s)...", serviceCount);
           List<IChannel> channelsFound = new List<IChannel>();
 
-          for (int i = 0; i < channelCount; ++i)
+          for (int i = 0; i < serviceCount; i++)
           {
             int networkId;
-            int transportId;
+            int transportStreamId;
             int serviceId;
-            short majorChannel;
-            short minorChannel;
-            short frequency;
-            short freeCAMode;
-            short serviceType;
-            short modulation;
-            IntPtr providerNamePtr;
             IntPtr serviceNamePtr;
-            short pmtPid;
-            short hasVideo;
-            short hasAudio;
-            short hasCaDescriptor;
-            short lcn;
-            _analyzer.GetChannel((short)i,
-                                  out networkId, out transportId, out serviceId, out majorChannel, out minorChannel,
-                                  out frequency, out lcn, out freeCAMode, out serviceType, out modulation,
-                                  out providerNamePtr, out serviceNamePtr,
-                                  out pmtPid, out hasVideo, out hasAudio, out hasCaDescriptor);
+            IntPtr providerNamePtr;
+            IntPtr networkNamesPtr;
+            IntPtr logicalChannelNumberPtr;
+            int serviceType;
+            int hasVideo;
+            int hasAudio;
+            bool isEncrypted;
+            int pmtPid;
+            _analyzer.GetServiceDetail(i,
+                          out networkId, out transportStreamId, out serviceId,
+                          out serviceNamePtr, out providerNamePtr, out networkNamesPtr, out logicalChannelNumberPtr,
+                          out serviceType, out hasVideo, out hasAudio, out isEncrypted, out pmtPid);
 
             string serviceName = DvbTextConverter.Convert(serviceNamePtr, "");
             string providerName = DvbTextConverter.Convert(providerNamePtr, "");
-            Log.Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} type:{6:X}", i + 1, networkId, transportId, serviceId,
-                          pmtPid, serviceName, serviceType);
+            DVB_MMI.DumpBinary(networkNamesPtr, 0, Marshal.SizeOf(networkNamesPtr));
+            string logicalChannelNumber = Marshal.PtrToStringAnsi(logicalChannelNumberPtr);
+            Log.Log.Write("{0}) {1,-32} provider = {2,-16}, LCN = {3,-7}, NID = 0x{4:4x}, TSID = 0x{5:4x}, SID = 0x{6:4x}, type = {7}, has video = {8}, has audio = {9}, is encrypted = {10}, PMT PID = 0x{11:4x}",
+                            i + 1, serviceName, providerName, logicalChannelNumber, networkId, transportStreamId, serviceId,
+                            serviceType, hasVideo, hasAudio, isEncrypted, pmtPid);
 
-            found++;
-
-            // The SDT service type is unfortunately not sufficient for service type identification. Many DVB-IP
-            // and some ATSC and annex-C broadcasters in particular do not comply with specifications. Well, either
-            // that, or we do not fully/properly implement the specifications (which is true for DVB-IP at present)!
-            // In any case we want to err on the side of caution and pick up any channels that TsWriter says have
-            // video and/or audio streams until we can find a better way to properly identify TV and radio services.
+            // The SDT/VCT service type is unfortunately not sufficient for service type identification. Many DVB-IP
+            // and some ATSC and North American cable broadcasters in particular do not set the service type.
             serviceType = SetMissingServiceType(serviceType, hasVideo, hasAudio);
 
             if (!IsKnownServiceType(serviceType))
             {
-              Log.Log.Write(
-                "Found Unknown: {0} {1} type:{2} onid:{3:X} tsid:{4:X} sid:{5:X} pmt:{6:X} hasVideo:{7} hasAudio:{8}",
-                providerName, serviceName, serviceType, networkId, transportId, serviceId, pmtPid, hasVideo, hasAudio
-              );
+              Log.Log.Write("Service is not a TV or radio service.");
               continue;
             }
+            found++;
 
             DVBBaseChannel newChannel = (DVBBaseChannel)channel.Clone();
 
@@ -157,23 +175,13 @@ namespace TvLibrary.Implementations.DVB
             newChannel.Name = serviceName;
             newChannel.Provider = providerName;
             newChannel.NetworkId = networkId;
-            newChannel.TransportId = transportId;
+            newChannel.TransportId = transportStreamId;
             newChannel.ServiceId = serviceId;
             newChannel.PmtPid = pmtPid;
             newChannel.IsTv = IsTvService(serviceType);
             newChannel.IsRadio = IsRadioService(serviceType);
-            newChannel.LogicalChannelNumber = lcn;
-            newChannel.FreeToAir = (freeCAMode == 0 && hasCaDescriptor == 0);
-
-            // There are a couple of ATSC-specific parameters that are not tuning parameters and not
-            // available as properties on DVBBaseChannel...
-            ATSCChannel atscChannel = newChannel as ATSCChannel;
-            if (atscChannel != null)
-            {
-              atscChannel.MajorChannel = majorChannel;
-              atscChannel.MinorChannel = minorChannel;
-              newChannel = atscChannel;
-            }
+            newChannel.LogicalChannelNumber = Int32.Parse(logicalChannelNumber); //TODO this won't work for ATSC x.y LCNs. LCN must be a string.
+            newChannel.FreeToAir = !isEncrypted;
 
             if (serviceName.Length == 0)
             {
@@ -183,7 +191,7 @@ namespace TvLibrary.Implementations.DVB
             channelsFound.Add(newChannel);
           }
 
-          Log.Log.Write("Scan Got {0} from {1} channels", found, channelCount);
+          Log.Log.Write("Scan found {0} channels from {1} services", found, serviceCount);
           return channelsFound;
         }
         finally
@@ -191,7 +199,7 @@ namespace TvLibrary.Implementations.DVB
           if (_analyzer != null)
           {
             _analyzer.SetCallBack(null);
-            _analyzer.Stop();
+            _analyzer.StopStreamScan();
           }
           _event.Close();
         }
@@ -201,24 +209,6 @@ namespace TvLibrary.Implementations.DVB
         _card.IsScanning = false;
       }
     }
-
-    #region IChannelScanCallback Members
-
-    /// <summary>
-    /// Called when [scanner done].
-    /// </summary>
-    /// <returns></returns>
-    public int OnScannerDone()
-    {
-      _event.Set();
-      return 0;
-    }
-
-    #endregion
-
-    #endregion
-
-    #region NIT scanning
 
     ///<summary>
     /// Scan NIT channel
@@ -240,85 +230,203 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("Scan: no analyzer interface available");
           return new List<IChannel>();
         }
-        _analyzer.SetCallBack(null);
-        _analyzer.ScanNIT();
 
-        Log.Log.WriteFile("ScanNIT: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel,
-                          _card.SignalQuality);
-
-        // Wait for TsWriter to find all the NIT frequencies.
-        // TODO: this should *definitely* not be hard-coded!
-        _event = new ManualResetEvent(false);
-        _event.WaitOne(16000, true);
-        _event.Close();
-
-        List<IChannel> channelsFound = new List<IChannel>();
-        int count;
-        _analyzer.GetNITCount(out count);
-        for (int i = 0; i < count; ++i)
+        try
         {
-          int frequency, polarisation, modulation, symbolRate, bandwidth, innerFecRate, rollOff, chType;
-          IntPtr ptrName;
-          _analyzer.GetNITChannel((short)i, out chType, out frequency, out polarisation, out modulation, out symbolRate, out bandwidth,
-                                  out innerFecRate, out rollOff, out ptrName);
-          string name = DvbTextConverter.Convert(ptrName, "");
-          DVBBaseChannel ch;
-          if (chType == 0)
+          _event = new ManualResetEvent(false);
+          _analyzer.SetCallBack(this);
+          _analyzer.ScanNetwork();
+
+          Log.Log.WriteFile("ScanNIT: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel,
+                            _card.SignalQuality);
+
+          // Start scanning, then wait for TsWriter to tell us that scanning is complete.
+          _event = new ManualResetEvent(false);
+          _event.WaitOne(settings.TimeOutSDT * 1000, true); //TODO: timeout SDT should be "max scan time"
+
+          //TODO: add min scan time
+
+          // Stop scanning. We have to do this explicitly for a network scan in order to merge sets
+          // of multiplex tuning details found in different SI tables.
+          bool isServiceInfoAvailable = false;
+          _analyzer.StopNetworkScan(out isServiceInfoAvailable);
+
+          int multiplexCount;
+          _analyzer.GetMultiplexCount(out multiplexCount);
+          Log.Log.Write("Found {0} multiplex(es), service information available = {1}...", multiplexCount, isServiceInfoAvailable);
+          List<IChannel> channelsFound = new List<IChannel>();
+          Dictionary<uint, IChannel> multiplexesFound = new Dictionary<uint, IChannel>();
+
+          for (int i = 0; i < multiplexCount; ++i)
           {
-            DVBSChannel dvbsChannel = new DVBSChannel();
-            dvbsChannel.RollOff = (RollOff)rollOff;
-            dvbsChannel.ModulationType = ModulationType.ModNotSet;
-            switch (modulation)
+            int networkId;
+            int transportStreamId;
+            int type;
+            int frequency;
+            int polarisation;
+            int modulation;
+            int symbolRate;
+            int bandwidth;
+            int innerFecRate;
+            int rollOff;
+            _analyzer.GetMultiplexDetail(i,
+                          out networkId, out transportStreamId, out type,
+                          out frequency, out polarisation, out modulation, out symbolRate, out bandwidth, out innerFecRate, out rollOff);
+
+            DVBBaseChannel ch;
+            if (type == 0)  //TODO switch to DB types, and create an enum of channel types
             {
-              case 1:
-                // Modulation not set indicates DVB-S; QPSK is DVB-S2 QPSK.
-                if (dvbsChannel.RollOff != RollOff.NotSet)
-                {
-                  dvbsChannel.ModulationType = ModulationType.ModQpsk;
-                }
-                break;
-              case 2:
-                dvbsChannel.ModulationType = ModulationType.Mod8Psk;
-                break;
-              case 3:
-                dvbsChannel.ModulationType = ModulationType.Mod16Qam;
-                break;
+              DVBSChannel dvbsChannel = new DVBSChannel();
+              dvbsChannel.RollOff = (RollOff)rollOff;
+              dvbsChannel.ModulationType = ModulationType.ModNotSet;
+              switch (modulation)
+              {
+                case 1:
+                  // Modulation not set indicates DVB-S; QPSK is DVB-S2 QPSK.
+                  if (dvbsChannel.RollOff != RollOff.NotSet)
+                  {
+                    dvbsChannel.ModulationType = ModulationType.ModQpsk;
+                  }
+                  break;
+                case 2:
+                  dvbsChannel.ModulationType = ModulationType.Mod8Psk;
+                  break;
+                case 3:
+                  dvbsChannel.ModulationType = ModulationType.Mod16Qam;
+                  break;
+              }
+              dvbsChannel.SymbolRate = symbolRate;
+              dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)innerFecRate;
+              dvbsChannel.Polarisation = (Polarisation)polarisation;
+              ch = dvbsChannel;
             }
-            dvbsChannel.SymbolRate = symbolRate;
-            dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)innerFecRate;
-            dvbsChannel.Polarisation = (Polarisation)polarisation;
-            ch = dvbsChannel;
+            else if (type == 1)
+            {
+              DVBCChannel dvbcChannel = new DVBCChannel();
+              dvbcChannel.ModulationType = (ModulationType)modulation;
+              dvbcChannel.SymbolRate = symbolRate;
+              ch = dvbcChannel;
+            }
+            else if (type == 2)
+            {
+              DVBTChannel dvbtChannel = new DVBTChannel();
+              dvbtChannel.Bandwidth = bandwidth;
+              ch = dvbtChannel;
+            }
+            else
+            {
+              throw new TvException("DvbBaseScanning: unsupported channel type " + type + " returned from TsWriter network scan");
+            }
+            ch.Frequency = frequency;
+
+            channelsFound.Add(ch);
+            uint key = (uint)((uint)networkId << 16) + (uint)transportStreamId;
+            if (multiplexesFound.ContainsKey(key))
+            {
+              Log.Log.WriteFile("Tuning details for NID 0x{0:x} and TSID 0x{1:x} are ambiguous, disregarding service information", networkId, transportStreamId);
+              isServiceInfoAvailable = false;
+            }
+            else
+            {
+              multiplexesFound.Add(key, ch);
+            }
           }
-          else if (chType == 1)
+
+          // If service information is not available or the corresponding tuning details are ambiguous then we return
+          // a set of multiplex tuning details.
+          if (!isServiceInfoAvailable)
           {
-            DVBCChannel dvbcChannel = new DVBCChannel();
-            dvbcChannel.ModulationType = (ModulationType)modulation;
-            dvbcChannel.SymbolRate = symbolRate;
-            ch = dvbcChannel;
+            return channelsFound;
           }
-          else if (chType == 2)
+
+          // We're going to attempt to return a set of services.
+          int found = 0;
+          int serviceCount;
+          _analyzer.GetServiceCount(out serviceCount);
+          Log.Log.Write("Found {0} service(s)...", serviceCount);
+          List<IChannel> servicesFound = new List<IChannel>();
+          for (int i = 0; i < serviceCount; i++)
           {
-            DVBTChannel dvbtChannel = new DVBTChannel();
-            dvbtChannel.Bandwidth = bandwidth;
-            ch = dvbtChannel;
+            int networkId;
+            int transportStreamId;
+            int serviceId;
+            IntPtr serviceNamePtr;
+            IntPtr providerNamePtr;
+            IntPtr networkNamesPtr;
+            IntPtr logicalChannelNumberPtr;
+            int serviceType;
+            int hasVideo;
+            int hasAudio;
+            bool isEncrypted;
+            int pmtPid;
+            _analyzer.GetServiceDetail(i,
+                          out networkId, out transportStreamId, out serviceId,
+                          out serviceNamePtr, out providerNamePtr, out networkNamesPtr, out logicalChannelNumberPtr,
+                          out serviceType, out hasVideo, out hasAudio, out isEncrypted, out pmtPid);
+
+            string serviceName = DvbTextConverter.Convert(serviceNamePtr, "");
+            string providerName = DvbTextConverter.Convert(providerNamePtr, "");
+            DVB_MMI.DumpBinary(networkNamesPtr, 0, Marshal.SizeOf(networkNamesPtr));
+            string logicalChannelNumber = Marshal.PtrToStringAnsi(logicalChannelNumberPtr);
+            Log.Log.Write("{0}) {1,-32} provider = {2,-16}, LCN = {3,-7}, NID = 0x{4:4x}, TSID = 0x{5:4x}, SID = 0x{6:4x}, type = {7}, has video = {8}, has audio = {9}, is encrypted = {10}, PMT PID = 0x{11:4x}",
+                            i + 1, serviceName, providerName, logicalChannelNumber, networkId, transportStreamId, serviceId,
+                            serviceType, hasVideo, hasAudio, isEncrypted, pmtPid);
+
+            // The SDT/VCT service type is unfortunately not sufficient for service type identification. Many DVB-IP
+            // and some ATSC and North American cable broadcasters in particular do not set the service type.
+            serviceType = SetMissingServiceType(serviceType, hasVideo, hasAudio);
+
+            if (!IsKnownServiceType(serviceType))
+            {
+              Log.Log.Write("Service is not a TV or radio service.");
+              continue;
+            }
+
+            // Find the corresponding multiplex for this service.
+            uint key = (uint)((uint)networkId << 16) + (uint)transportStreamId;
+            if (!multiplexesFound.ContainsKey(key))
+            {
+              Log.Log.Write("Discarding service, no multiplex details available.");
+              continue;
+            }
+            found++;
+
+            DVBBaseChannel newChannel = (DVBBaseChannel)multiplexesFound[key].Clone();
+
+            // Set non-tuning parameters (ie. parameters determined by scanning).
+            newChannel.Name = serviceName;
+            newChannel.Provider = providerName;
+            newChannel.NetworkId = networkId;
+            newChannel.TransportId = transportStreamId;
+            newChannel.ServiceId = serviceId;
+            newChannel.PmtPid = pmtPid;
+            newChannel.IsTv = IsTvService(serviceType);
+            newChannel.IsRadio = IsRadioService(serviceType);
+            newChannel.LogicalChannelNumber = Int32.Parse(logicalChannelNumber); //TODO this won't work for ATSC x.y LCNs. LCN must be a string.
+            newChannel.FreeToAir = !isEncrypted;
+
+            if (serviceName.Length == 0)
+            {
+              SetMissingServiceName(newChannel);
+            }
+            Log.Log.Write("Found: {0}", newChannel);
+            servicesFound.Add(newChannel);
           }
-          else
-          {
-            throw new TvException("DvbBaseScanning: unsupported channel type " + chType + " returned by TsWriter NIT scan");
-          }
-          ch.Name = name;
-          ch.Frequency = frequency;
-          channelsFound.Add(ch);
+
+          Log.Log.Write("Scan found {0} channels from {1} services", found, serviceCount);
+          return servicesFound;
         }
-        _analyzer.StopNIT();
-        return channelsFound;
+        finally
+        {
+          if (_analyzer != null)
+          {
+            _analyzer.SetCallBack(null);
+          }
+          _event.Close();
+        }
       }
       finally
       {
-        if (_analyzer != null)
-        {
-          _analyzer.StopNIT();
-        }
         _card.IsScanning = false;
       }
     }
@@ -334,17 +442,17 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="hasVideo">Non-zero if the corresponding service has at least one video stream.</param>
     /// <param name="hasAudio">Non-zero if the corresponding service has at least one audio stream.</param>
     /// <returns>the updated service type</returns>
-    protected virtual short SetMissingServiceType(short serviceType, short hasVideo, short hasAudio)
+    protected virtual int SetMissingServiceType(int serviceType, int hasVideo, int hasAudio)
     {
       if (serviceType <= 0)
       {
         if (hasVideo != 0)
         {
-          return (short)DvbServiceType.DigitalTelevision;
+          return (int)DvbServiceType.DigitalTelevision;
         }
         else if (hasAudio != 0)
         {
-          return (short)DvbServiceType.DigitalRadio;
+          return (int)DvbServiceType.DigitalRadio;
         }
       }
       return serviceType;

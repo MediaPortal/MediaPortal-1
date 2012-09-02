@@ -36,7 +36,7 @@ namespace TvLibrary.Implementations.DVB
   ///<summary>
   /// A base class for digital services ("subchannels").
   ///</summary>
-  public class TvDvbChannel : BaseSubChannel, ITeletextCallBack, IPMTCallback, ICACallback, ITvSubChannel,
+  public class TvDvbChannel : BaseSubChannel, ITeletextCallBack, IPmtCallBack, ICaCallBack, ITvSubChannel,
                               IVideoAudioObserver
   {
     #region variables
@@ -44,9 +44,15 @@ namespace TvLibrary.Implementations.DVB
     #region local variables
 
     /// <summary>
-    /// PMT Pid
+    /// The current PMT PID for the service that this subchannel represents.
     /// </summary>
     private int _pmtPid = -1;
+
+    /// <summary>
+    /// Set by the TsWriter OnPmtReceived() callback. Indicates whether the service
+    /// that this subchannel represents is currently active.
+    /// </summary>
+    private bool _isServiceRunning = false;
 
     /// <summary>
     /// Ts filter instance
@@ -54,7 +60,7 @@ namespace TvLibrary.Implementations.DVB
     private ITsFilter _tsFilterInterface;
 
     /// <summary>
-    /// SubChannel index
+    /// The handle that links this subchannel with a corresponding subchannel instance in TsWriter.
     /// </summary>
     private int _subChannelIndex = -1;
 
@@ -76,12 +82,12 @@ namespace TvLibrary.Implementations.DVB
     #region events
 
     /// <summary>
-    /// Event that gets signaled when PMT arrives.
+    /// Event that gets signaled when a new PMT section is seen.
     /// </summary>
     protected ManualResetEvent _eventPmt;
 
     /// <summary>
-    /// Event that gets signaled when CA arrives.
+    /// Event that gets signaled when a new CAT section is seen.
     /// </summary>
     private ManualResetEvent _eventCa;
 
@@ -215,12 +221,20 @@ namespace TvLibrary.Implementations.DVB
     {
       ThrowExceptionIfTuneCancelled();
       Log.Log.Debug("TvDvbChannel: subchannel {0} wait for PMT, service ID = {1} (0x{1:x}), PMT PID = {2} (0x{2:x})", _subChannelId, serviceId, pmtPid);
+
       // There are 3 classes of PMT PID settings:
       // -1 = Scanning behaviour, where we don't care about PMT.
       // 0 = We don't know the correct/current PMT PID, so we ask TsWriter to determine what it should be,
-      //      and then grab the associated PMT data.
+      //      and then grab the associated PMT sections.
       // <anything else> = A valid PMT PID for the service that we are trying to tune. TsWriter should grab
-      //                    the associated PMT data.
+      //                    the associated PMT sections.
+
+      // There are also 2 classes of service ID settings:
+      // 0 = The service is expected to be the only service in the transport stream. TsWriter should take the
+      //      first service that it sees and grab the associated PMT sections for that service. This situation
+      //      is most applicable for providers that re-broadcast services without updating/fixing the SI.
+      // <anything else> = A valid service ID for the service that we are trying to tune. TsWriter should grab
+      //                    the associated PMT sections.
       if (pmtPid < 0)
       {
         return true;
@@ -253,6 +267,7 @@ namespace TvLibrary.Implementations.DVB
         // Do this as late as possible. Any PMT that arrives between when the PMT callback was set and
         // when we start waiting for PMT will cause us to miss or mess up the PMT handling.
         _pmtPid = -1;
+        _isServiceRunning = false;
         _pmt = null;
         _cat = null;
         _eventPmt.Reset();
@@ -275,6 +290,11 @@ namespace TvLibrary.Implementations.DVB
             pmtPidToSearchFor = 0;
           }
         }
+      }
+
+      if (!_isServiceRunning)
+      {
+        throw new TvExceptionServiceNotRunning();
       }
 
       Log.Log.Debug("TvDvbChannel: found PMT after {0} seconds", waitLength.TotalSeconds);
@@ -551,7 +571,7 @@ namespace TvLibrary.Implementations.DVB
         DVBAudioStream audioStream = (DVBAudioStream)value;
         if (_tsFilterInterface != null)
         {
-          _tsFilterInterface.AnalyzerSetAudioPid(_subChannelIndex, audioStream.Pid);
+          _tsFilterInterface.AnalyserAddPid(_subChannelIndex, audioStream.Pid);
         }
         _currentAudioStream = audioStream;
       }
@@ -574,14 +594,16 @@ namespace TvLibrary.Implementations.DVB
         if (_currentChannel == null)
           return false;
 
-        int audioEncrypted;
+        //TODO
+        return true;
+        /*int audioEncrypted;
         int videoEncrypted = 0;
         _tsFilterInterface.AnalyzerIsAudioEncrypted(_subChannelIndex, out audioEncrypted);
         if (_currentChannel.IsTv)
         {
           _tsFilterInterface.AnalyzerIsVideoEncrypted(_subChannelIndex, out videoEncrypted);
         }
-        return ((audioEncrypted == 0) && (videoEncrypted == 0));
+        return ((audioEncrypted == 0) && (videoEncrypted == 0));*/
       }
     }
 
@@ -732,7 +754,7 @@ namespace TvLibrary.Implementations.DVB
           if (StreamTypeHelper.IsVideoStream(es.LogicalStreamType))
           {
             _pids.Add(es.Pid);
-            _tsFilterInterface.AnalyzerSetVideoPid(_subChannelIndex, es.Pid);
+            _tsFilterInterface.AnalyserAddPid(_subChannelIndex, es.Pid);
           }
           else if (es.LogicalStreamType == LogicalStreamType.Subtitles)
           {
@@ -779,7 +801,7 @@ namespace TvLibrary.Implementations.DVB
                   _currentAudioStream.StreamType = AudioStreamType.Unknown;
                   break;
               }
-              _tsFilterInterface.AnalyzerSetAudioPid(_subChannelIndex, es.Pid);
+              _tsFilterInterface.AnalyserAddPid(_subChannelIndex, es.Pid);
             }
           }
         }
@@ -877,7 +899,7 @@ namespace TvLibrary.Implementations.DVB
         IntPtr pmtBuffer = Marshal.AllocCoTaskMem(2048);
         try
         {
-          int pmtLength = _tsFilterInterface.PmtGetPMTData(_subChannelIndex, pmtBuffer);
+          int pmtLength = _tsFilterInterface.PmtGetPmtData(_subChannelIndex, pmtBuffer);
           byte[] pmtData = new byte[pmtLength];
           Marshal.Copy(pmtBuffer, pmtData, 0, pmtLength);
           Pmt pmt = Pmt.Decode(pmtData, _tuner.CamType);
@@ -1002,7 +1024,7 @@ namespace TvLibrary.Implementations.DVB
 
     #region tswriter callback handlers
 
-    #region ICaCallback Members
+    #region ICaCallBack members
 
     /// <summary>
     /// Called when tswriter.ax has received a new ca section
@@ -1020,24 +1042,30 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
-    #region IPMTCallback Members
+    #region IPmtCallBack member
 
     /// <summary>
-    /// Called when TsWriter receives updated PMT for a service.
+    /// Called by TsWriter when:
+    /// - a new PMT section for the current service is received
+    /// - the PMT PID for the current service changes
+    /// - the service ID for the current service changes
     /// </summary>
-    /// <param name="pmtPid">The PID of the elementary stream from which the PMT data was received.</param>
-    /// <returns>an HRESULT indicating whether the event was successfully handled</returns>
-    public int OnPMTReceived(int pmtPid)
+    /// <param name="pmtPid">The PID of the elementary stream from which the PMT section received.</param>
+    /// <param name="serviceId">The ID associated with the service which the PMT section is associated with.</param>
+    /// <param name="isServiceRunning">Indicates whether the service that the grabber is monitoring is active.
+    ///   The grabber will not wait for PMT to be received if it thinks the service is not running.</param>
+    /// <returns>an HRESULT indicating whether the PMT section was successfully handled</returns>
+    public int OnPmtReceived(int pmtPid, int serviceId, bool isServiceRunning)
     {
-      // TsWriter calls this PMT callback delegate when the PMT version changes. Check if the PMT that
-      // TsWriter has just received was requested. If it wasn't requested, we have to ensure that it gets
-      // handled appropriately.
-      Log.Log.Debug("TvDvbChannel: subchannel {0} OnPMTReceived(), PMT PID = {1} (0x{1:x}), dynamic = {2}", _subChannelId, pmtPid, _pmt != null);
+      Log.Log.Debug("TvDvbChannel: subchannel {0} OnPmtReceived(), PMT PID = {1} (0x{1:x}), service ID = {2} (0x{2:x}), is service running = {3}, dynamic = {4}",
+          _subChannelId, pmtPid, serviceId, isServiceRunning, _pmt != null);
       _pmtPid = pmtPid;
+      _isServiceRunning = isServiceRunning;
       if (_eventPmt != null)
       {
         _eventPmt.Set();
       }
+      // Was the PMT requested? If not, we are responsible for handling it.
       if (_pmt != null)
       {
         if (HandlePmt())

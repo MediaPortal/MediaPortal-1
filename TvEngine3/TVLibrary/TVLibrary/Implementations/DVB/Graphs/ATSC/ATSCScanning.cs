@@ -38,7 +38,6 @@ namespace TvLibrary.Implementations.DVB
     public ATSCScanning(TvCardDvbBase tuner)
       : base(tuner)
     {
-      _enableWaitForVct = true;
     }
 
     /// <summary>
@@ -48,17 +47,17 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="hasVideo">Non-zero if the corresponding service has at least one video stream.</param>
     /// <param name="hasAudio">Non-zero if the corresponding service has at least one audio stream.</param>
     /// <returns>the updated service type</returns>
-    protected override short SetMissingServiceType(short serviceType, short hasVideo, short hasAudio)
+    protected override int SetMissingServiceType(int serviceType, int hasVideo, int hasAudio)
     {
       if (serviceType <= 0)
       {
         if (hasVideo != 0)
         {
-          return (short)AtscServiceType.DigitalTelevision;
+          return (int)AtscServiceType.DigitalTelevision;
         }
         else if (hasAudio != 0)
         {
-          return (short)AtscServiceType.Audio;
+          return (int)AtscServiceType.Audio;
         }
       }
       return serviceType;
@@ -98,13 +97,14 @@ namespace TvLibrary.Implementations.DVB
       }
 
       // North America has strange service naming conventions. Services have a callsign (eg. WXYZ) and/or name,
-      // and a virtual channel number (eg. 21-2). The callsign is a historical thing - if available, it is usually
+      // and a virtual channel number (eg. 21.2). The callsign is a historical thing - if available, it is usually
       // found in the short name field in the VCT. Virtual channel numbers were introduced in the analog (NTSC)
       // switch-off. They don't necessarily have any relationship to the physical channel number (6 MHz frequency
       // slot - in TV Server, ATSCChannel.PhysicalChannel) that the service is transmitted in.
 
+      //TODO redo
       // If possible we use <major channel>-<minor channel> labelling.
-      int majorChannel = atscChannel.MajorChannel;
+      /*int majorChannel = atscChannel.MajorChannel;
       int minorChannel = atscChannel.MinorChannel;
       if (atscChannel.MajorChannel > 0)
       {
@@ -143,7 +143,7 @@ namespace TvLibrary.Implementations.DVB
         }
       }
 
-      atscChannel.Name = majorChannel + "-" + minorChannel;
+      atscChannel.Name = majorChannel + "-" + minorChannel;*/
     }
   }
 }

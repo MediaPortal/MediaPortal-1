@@ -21,12 +21,40 @@
 using System;
 
 namespace TvLibrary
-{  
+{
   /// <summary>
   /// Exception class for the tv library
   /// </summary>
   [Serializable]
-  public class TvExceptionTuneCancelled : Exception
+  public class TvExceptionServiceNotRunning : TvException
+  {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvExceptionServiceNotRunning"/> class.
+    /// </summary>
+    public TvExceptionServiceNotRunning() { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvExceptionServiceNotRunning"/> class.
+    /// </summary>
+    /// <param name="message">The message.</param>
+    public TvExceptionServiceNotRunning(string message)
+      : base(message) { }
+
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvExceptionServiceNotRunning"/> class.
+    /// </summary>
+    /// <param name="message">The message.</param>
+    /// <param name="innerException">The inner exception.</param>
+    public TvExceptionServiceNotRunning(string message, Exception innerException)
+      : base(message, innerException) { }
+  }
+
+  /// <summary>
+  /// Exception class for the tv library
+  /// </summary>
+  [Serializable]
+  public class TvExceptionTuneCancelled : TvException
   {
     /// <summary>
     /// Initializes a new instance of the <see cref="TvExceptionTuneCancelled"/> class.
@@ -54,7 +82,7 @@ namespace TvLibrary
   /// Exception class for the tv library
   /// </summary>
   [Serializable]
-  public class TvExceptionNoPMT : Exception
+  public class TvExceptionNoPMT : TvException
   {
     /// <summary>
     /// Initializes a new instance of the <see cref="TvExceptionNoPMT"/> class.
@@ -82,7 +110,7 @@ namespace TvLibrary
   /// Exception class for the tv library
   /// </summary>
   [Serializable]
-  public class TvExceptionNoSignal : Exception
+  public class TvExceptionNoSignal : TvException
   {
     /// <summary>
     /// Initializes a new instance of the <see cref="TvException"/> class.
@@ -110,7 +138,7 @@ namespace TvLibrary
   /// Exception class for the tv library
   /// </summary>
   [Serializable]
-  public class TvExceptionGraphBuildingFailed : Exception
+  public class TvExceptionGraphBuildingFailed : TvException
   {
     /// <summary>
     /// Initializes a new instance of the <see cref="TvException"/> class.
@@ -139,7 +167,7 @@ namespace TvLibrary
   /// Exception class for the tv library
   /// </summary>
   [Serializable]
-  public class TvExceptionSWEncoderMissing : Exception
+  public class TvExceptionSWEncoderMissing : TvException
   {
     /// <summary>
     /// Initializes a new instance of the <see cref="TvException"/> class.
