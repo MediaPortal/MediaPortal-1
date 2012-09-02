@@ -475,7 +475,7 @@
   <data name="Upgrade_labelSectionHeader" xml:space="preserve">
     <value>检测到MediaPortal {0}。</value>
   </data>
-  <data name="Upgrade_labelSectionHeader_SVN" xml:space="preserve">
+  <data name="Upgrade_labelSectionHeader_GIT" xml:space="preserve">
     <value>检测到MediaPortal {0} (build {1})。</value>
   </data>
   <data name="Upgrade_no" xml:space="preserve">
@@ -485,8 +485,8 @@
     <value>更新目前安装到 {0}</value>
   </data>
   <data name="Upgrade_note" xml:space="preserve">
-    <value>注意：不能从一个已存在的SVN build更新，
-          SVN build是仅供测试所用的。</value>
+    <value>注意：不能从一个已存在的GIT build更新，
+          GIT build是仅供测试所用的。</value>
   </data>
   <data name="Install_actionUpgradeInstall" xml:space="preserve">
     <value>更新-&gt;安装</value>

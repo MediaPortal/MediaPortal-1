@@ -131,7 +131,7 @@ namespace MediaPortal.DeployTool.Sections
       if (!String.IsNullOrEmpty(MpBuild))
       {
         labelSectionHeader.Text = !Utils.IsOfficialBuild(MpBuild)
-                                    ? String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader_SVN"),
+                                    ? String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader_GIT"),
                                                     strMPDisplayVer, MpBuild)
                                     : String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader"),
                                                     strMPDisplayVer);
@@ -139,7 +139,7 @@ namespace MediaPortal.DeployTool.Sections
       else
       {
         labelSectionHeader.Text = !Utils.IsOfficialBuild(Tv3Build)
-                                    ? String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader_SVN"),
+                                    ? String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader_GIT"),
                                                     strTVDisplayVer, Tv3Build)
                                     : String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader"),
                                                     strTVDisplayVer);

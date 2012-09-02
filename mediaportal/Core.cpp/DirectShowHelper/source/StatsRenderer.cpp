@@ -197,7 +197,7 @@ void StatsRenderer::DrawStats()
     
     strText.Format("Display: %d x %d @ %.6f Hz | Meas rfsh: %.6f Hz | MaxLine: %d | PCD: %.6f", 
       m_pPresenter->m_displayMode.Width, m_pPresenter->m_displayMode.Height,
-      m_pPresenter->m_dD3DRefreshRate, 1000.0/m_pPresenter->m_dEstRefreshCycle, m_pPresenter->m_maxScanLine,
+      m_pPresenter->m_dD3DRefreshRate, 1000.0/m_pPresenter->m_displayParams.dEstRefreshCycle, m_pPresenter->m_displayParams.maxScanLine,
       m_pPresenter->m_fPCDMean);
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);

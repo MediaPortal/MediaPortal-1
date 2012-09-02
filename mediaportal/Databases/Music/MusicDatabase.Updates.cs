@@ -423,11 +423,8 @@ namespace MediaPortal.Music.Database
       DatabaseUtility.RemoveInvalidChars(ref strAlbum);
       string strArtist = aArtistName;
       DatabaseUtility.RemoveInvalidChars(ref strArtist);
-      SQLiteResultSet results;
-      results = MusicDbClient.Execute(strSQL);
-      strSQL = String.Format("delete from albuminfo where strAlbum like '{0} ' and strArtist like '{1}%'", strAlbum,
-                             strArtist);
-      MusicDbClient.Execute(strSQL);
+      strSQL = String.Format("delete from albuminfo where strAlbum like '{0}' and strArtist like '{1}'", strAlbum, strArtist);
+      DirectExecute(strSQL);
     }
 
     public void DeleteArtistInfo(string aArtistName)

@@ -479,7 +479,7 @@ Bu dizini HTPC'nize aktarın. "MediaPortal.DeployTool.exe" dosyasını çalışt
   <data name="Upgrade_labelSectionHeader" xml:space="preserve">
     <value>MediaPortal {0} bulundu.</value>
   </data>
-  <data name="Upgrade_labelSectionHeader_SVN" xml:space="preserve">
+  <data name="Upgrade_labelSectionHeader_GIT" xml:space="preserve">
     <value>MediaPortal {0} (derleme {1}) bulundu.</value>
   </data>
   <data name="Upgrade_no" xml:space="preserve">
@@ -489,8 +489,8 @@ Bu dizini HTPC'nize aktarın. "MediaPortal.DeployTool.exe" dosyasını çalışt
     <value>Mevcut kurulumu {0}'a güncelle</value>
   </data>
   <data name="Upgrade_note" xml:space="preserve">
-    <value>NOT: Mevcut SVN derlemesinden güncelleme yapılamaz,
-          SVN derlemeleri sadece test amaçlıdır.</value>
+    <value>NOT: Mevcut GIT derlemesinden güncelleme yapılamaz,
+          GIT derlemeleri sadece test amaçlıdır.</value>
   </data>
   <data name="Install_actionUpgradeInstall" xml:space="preserve">
     <value>Güncelleme-&gt;Kur</value>

@@ -129,7 +129,7 @@ CBDReaderFilter::CBDReaderFilter(IUnknown *pUnk, HRESULT *phr):
   GetLogFile(filename);
   ::DeleteFile(filename);
   LogDebug("--------- bluray ---------------------");
-  LogDebug("-------------- v0.61 -----------------");
+  LogDebug("-------------- v0.63 -----------------");
 
   LogDebug("CBDReaderFilter::ctor");
   m_pAudioPin = new CAudioPin(GetOwner(), this, phr, &m_section, m_demultiplexer);
@@ -1165,13 +1165,22 @@ void CBDReaderFilter::DeliverBeginFlush()
   m_bFlushing = true;
 
   if (m_pVideoPin && m_pVideoPin->IsConnected())
+  {
     m_pVideoPin->DeliverBeginFlush();
+    m_pVideoPin->Stop();
+  }
 
   if (m_pAudioPin && m_pAudioPin->IsConnected())
+  {
     m_pAudioPin->DeliverBeginFlush();
+    m_pVideoPin->Stop();
+  }
 
   if (m_pSubtitlePin && m_pSubtitlePin->IsConnected())
+  {
     m_pSubtitlePin->DeliverBeginFlush();
+    m_pVideoPin->Stop();
+  }
 }
 
 void CBDReaderFilter::DeliverEndFlush()

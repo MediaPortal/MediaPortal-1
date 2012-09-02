@@ -22,7 +22,7 @@ using System;
 using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
-using MediaPortal.Util;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Music.Database
 {
@@ -55,6 +55,45 @@ namespace MediaPortal.Music.Database
     private string _compilations = "";
     private string _singles = "";
     private string _misc = "";
+
+    #endregion
+
+    #region regexps
+
+    // artist regular expressions
+    private const string ArtistRegExp = @"<div class=""artist-name"">(?<artist>.*?)<";
+    private static readonly Regex ArtistRegEx = new Regex(ArtistRegExp, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
+    private const string ArtistDetailsRegExp = @"<dl class=""details"">.*</dl>";
+    private static readonly Regex ArtistDetailsRegEx = new Regex(ArtistDetailsRegExp, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
+    private const string GenreRegExp = @"<dt>Genres</dt>\s*<dd class=""genres"">\s*<ul>(?<genres>.*?)</ul>";
+    private static readonly Regex GenreRegEx = new Regex(GenreRegExp, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
+    private const string StyleRegExp = @"<dt>Styles</dt>\s*<dd class=""styles"">\s*<ul>(?<styles>.*?)</ul>";
+    private static readonly Regex StyleRegEx = new Regex(StyleRegExp, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
+    private const string ActiveRegExp = @"<dt>Active</dt>\s*<dd class=""active"">(?<active>.*?)</dd>";
+    private static readonly Regex ActiveRegEx = new Regex(ActiveRegExp, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
+    private const string BornRegExp = @"<dd class=""birth"">\s*<span>(?<born>.*?)</span>";
+    private static readonly Regex BornRegEx = new Regex(BornRegExp, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
+    private const string TonesRegExp = @"<h4>artist moods</h4>\s*<ul>(?<tones>.*?)</ul>";
+    private static readonly Regex TonesRegEx = new Regex(TonesRegExp, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
+    private const string BIORegExp = @"<div id=""bio"">\s*<div class=""heading"">.*?</div>(?<BIO>.*?)<div class=""advertisement leaderboard"">";
+    private static readonly Regex BIORegEx = new Regex(BIORegExp, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
+    private const string ImgRegExp = @"<div class=""artist-image"">\s*<div class=""image-container has-gallery"">\s*<img src=""(?<imgURL>.*?)""";
+    private static readonly Regex ImgRegEx = new Regex(ImgRegExp, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
+    private const string AlbumRowRegExp = @"<tr>.*?</tr>";
+    private static readonly Regex AlbumRowRegEx = new Regex(AlbumRowRegExp, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
+    private const string ArtistAlbumYearRegExp = @"<td class=""year.*?>(?<year>.*?)</td>";
+    private static readonly Regex ArtistAlbumYearRegEx = new Regex(ArtistAlbumYearRegExp, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
+    private const string ArtistAlbumNameRegExp = @"<td class=""title primary_link"".*?<a href="".*?"" class=""title.*?"" data-tooltip="".*?"">(?<albumName>.*?)</a>";
+    private static readonly Regex ArtistAlbumNameRegEx = new Regex(ArtistAlbumNameRegExp, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
+    private const string ArtistAlbumLabelRegExp = @"<td class=""label"".*?<span class=""full-title"">(?<label>.*?)</span>";
+    private static readonly Regex ArtistAlbumLabelRegEx = new Regex(ArtistAlbumLabelRegExp, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
+
+
+    // general regular expressions
+    private const string HTMLListRegExp = @"<li>.*?</li>";
+    private static readonly Regex HTMLListRegEx = new Regex(HTMLListRegExp, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+    private const string HTMLRegExp = @"<.*?>";
+    private static readonly Regex HTMLRegEx = new Regex(HTMLRegExp, RegexOptions.Singleline | RegexOptions.Compiled);
 
     #endregion
 
@@ -315,353 +354,133 @@ namespace MediaPortal.Music.Database
     /// <returns></returns>
     public bool Parse(string strHTML)
     {
-      HTMLUtil util = new HTMLUtil();
-      int begIndex = 0;
-      int endIndex = 0;
-      string strHTMLLow = strHTML.ToLower();
-
-      // Get the Artist Name
-      string pattern = @"<h1.*class=""title"">(.*)</h1>";
-      if (!FindPattern(pattern, strHTML))
+      var match = ArtistDetailsRegEx.Match(strHTML);
+      if (!match.Success)
       {
+        Log.Debug("Artist HTML does not match expected format, unable to parse");
         return false;
       }
+      var artistDetails = match.Value;
 
-      _strArtistName = _match.Groups[1].Value;
-
-      // Born
-      pattern = @"<h3>.*Born.*</h3>\s*?<p>(.*)</p>";
-      if (FindPattern(pattern, strHTML))
+      var strArtist = string.Empty;
+      var artistMatch = ArtistRegEx.Match(strHTML);
+      if (artistMatch.Success)
       {
-        string strValue = _match.Groups[1].Value;
-        util.RemoveTags(ref strValue);
-        util.ConvertHTMLToAnsi(strValue, out _strBorn);
-        _strBorn = _strBorn.Trim();
+        strArtist = artistMatch.Groups["artist"].Value.Trim();
       }
+      strArtist = System.Web.HttpUtility.HtmlDecode(strArtist);
+      Log.Debug("Trying to parse html for artist: {0}", strArtist);
 
-      // Years Active
-      pattern = @"(<span.*?class=""active"">(.*?)</span>)";
-      if (FindPattern(pattern, strHTML))
+
+      // build up genres into one string
+      var strGenres = string.Empty;
+      var genreMatch = GenreRegEx.Match(artistDetails);
+      if (genreMatch.Success)
       {
-        while (_match.Success)
+        var genres = HTMLListRegEx.Matches(genreMatch.Groups["genres"].Value.Trim());
+        foreach (var genre in genres)
         {
-          _strYearsActive += string.Format("{0}s, ", _match.Groups[2].Value);
-          _match = _match.NextMatch();
+          var cleanGenre = HTMLRegEx.Replace(genre.ToString(), "");
+          strGenres += cleanGenre + ", ";
         }
-        _strYearsActive = _strYearsActive.Trim(new[] {' ', ','});
+        strGenres = strGenres.TrimEnd(new[] { ' ', ',' });
       }
 
-      // Genre
-      pattern = @"<div.*?id=""genre-style"">\s*?.*?\s*?<h3>.*?Genres.*?</h3>\s*?.*?(<p>(.*?)</p>)";
-      if (FindPattern(pattern, strHTML))
+      // build up styles into one string
+      var strStyles = string.Empty;
+      var styleMatch = StyleRegEx.Match(artistDetails);
+      if (styleMatch.Success)
       {
-        string data = "";
-        while (_match.Success)
+        var styles = HTMLListRegEx.Matches(styleMatch.Groups["styles"].Value.Trim());
+        foreach (var style in styles)
         {
-          data += string.Format("{0}, ", _match.Groups[2].Value);
-          _match = _match.NextMatch();
+          var cleanStyle = HTMLRegEx.Replace(style.ToString(), "");
+          strStyles += cleanStyle + ", ";
         }
-        util.RemoveTags(ref data);
-        util.ConvertHTMLToAnsi(data, out _strGenres);
-        _strGenres = _strGenres.Trim(new[] {' ', ','});
+        strStyles = strStyles.TrimEnd(new[] { ' ', ',' });
       }
 
-      // Style
-      begIndex = strHTMLLow.IndexOf("<h3>styles</h3>");
-      endIndex = strHTMLLow.IndexOf("<!--end genre/styles-->", begIndex + 2);
-
-      if (begIndex != -1 && endIndex != -1)
+      // years active
+      var strActive = string.Empty;
+      var activeMatch = ActiveRegEx.Match(artistDetails);
+      if (activeMatch.Success)
       {
-        string contentInfo = strHTML.Substring(begIndex, endIndex - begIndex);
-        pattern = @"(<li>(.*?)</li>)";
-        if (FindPattern(pattern, contentInfo))
+        strActive = activeMatch.Groups["active"].Value.Trim();
+      }
+
+      // born / formed
+      var strBorn = string.Empty;
+      var bornMatch = BornRegEx.Match(artistDetails);
+      if (bornMatch.Success)
+      {
+        strBorn = bornMatch.Groups["born"].Value.Trim();
+      }
+
+      // build up tones into one string
+      var strTones = string.Empty;
+      var tonesMatch = TonesRegEx.Match(strHTML);
+      if (tonesMatch.Success)
+      {
+        var tones = HTMLListRegEx.Matches(tonesMatch.Groups["tones"].Value.Trim());
+        foreach (var tone in tones)
         {
-          string data = "";
-          while (_match.Success)
-          {
-            data += string.Format("{0}, ", _match.Groups[2].Value);
-            _match = _match.NextMatch();
-          }
-          util.RemoveTags(ref data);
-          util.ConvertHTMLToAnsi(data, out _strStyles);
-          _strStyles = _strStyles.Trim(new[] {' ', ','});
+          var cleanTone = HTMLRegEx.Replace(tone.ToString(), "");
+          strTones += cleanTone + ", ";
         }
+        strTones = strTones.TrimEnd(new[] { ' ', ',' });
       }
 
-      // Mood
-      begIndex = strHTMLLow.IndexOf("<h3>moods</h3>");
-      endIndex = strHTMLLow.IndexOf("</div>", begIndex + 2);
-      if (begIndex != -1 && endIndex != -1)
+      // Biography
+      var AMGBIO = string.Empty;
+      var AMGBioMatch = BIORegEx.Match(strHTML);
+      if (AMGBioMatch.Success)
       {
-        string contentInfo = strHTML.Substring(begIndex, endIndex - begIndex);
-        pattern = @"(<li>(.*?)</li>)";
-        if (FindPattern(pattern, contentInfo))
+        AMGBIO = AMGBioMatch.Groups["BIO"].Value.Trim();
+        AMGBIO = HTMLRegEx.Replace(AMGBIO, "");
+      }
+
+      // artist image URL
+      var strImg = string.Empty;
+      var imgMatch = ImgRegEx.Match(strHTML);
+      if (imgMatch.Success)
+      {
+        strImg = imgMatch.Groups["imgURL"].Value;
+      }
+
+      // list albums
+      var albumRows = AlbumRowRegEx.Matches(strHTML);
+      var albumList = string.Empty;
+      foreach (Match albumRow in albumRows)
+      {
+        var albumNameMatch = ArtistAlbumNameRegEx.Match(albumRow.Value);
+        if (!albumNameMatch.Success)
         {
-          string data = "";
-          while (_match.Success)
-          {
-            data += string.Format("{0}, ", _match.Groups[2].Value);
-            _match = _match.NextMatch();
-          }
-          util.RemoveTags(ref data);
-          util.ConvertHTMLToAnsi(data, out _strTones);
-          _strTones = _strTones.Trim(new[] {' ', ','});
+          continue;
         }
+        var albumName = albumNameMatch.Groups["albumName"].Value.Trim();
+        var albumYear = ArtistAlbumYearRegEx.Match(albumRow.Value).Groups["year"].Value.Trim();
+        var albumLabel = ArtistAlbumLabelRegEx.Match(albumRow.Value).Groups["label"].Value.Trim();
+        albumList += string.Format("{0} - {1} ({2})", albumYear, albumName, albumLabel) + Environment.NewLine;
       }
 
-      // Instruments
-      begIndex = strHTMLLow.IndexOf("<h3>instruments</h3>");
-      endIndex = strHTMLLow.IndexOf("</div>", begIndex + 2);
-      if (begIndex != -1 && endIndex != -1)
+      var artistInfo = new ArtistInfo
       {
-        string contentInfo = strHTML.Substring(begIndex, endIndex - begIndex);
-        if (FindPattern(pattern, contentInfo))
-        {
-          string data = "";
-          while (_match.Success)
-          {
-            data += string.Format("{0}, ", _match.Groups[2].Value);
-            _match = _match.NextMatch();
-          }
-          util.RemoveTags(ref data);
-          util.ConvertHTMLToAnsi(data, out _strInstruments);
-          _strInstruments = _strInstruments.Trim(new[] {' ', ','});
-        }
-      }
+        AMGBio = AMGBIO,
+        Albums = albumList,
+        Artist = strArtist,
+        Born = strBorn,
+        Compilations = string.Empty,
+        Genres = strGenres,
+        Image = strImg,
+        Instruments = string.Empty,
+        Misc = string.Empty,
+        Singles = string.Empty,
+        Styles = strStyles,
+        Tones = strTones,
+        YearsActive = strActive
+      };
 
-      // picture URL
-      pattern = @"<div.*?class=""image"">\s*?.*<img.*id=""artist_image"".*?src=\""(.*?)\""";
-      if (FindPattern(pattern, strHTML))
-      {
-        _strArtistPictureURL = _match.Groups[1].Value;
-      }
-
-      // parse AMG BIOGRAPHY
-      pattern = @"<td.*?class=""tab_off""><a.*?href=""(.*?)"">.*?Biography.*?</a>";
-      if (FindPattern(pattern, strHTML))
-      {
-        try
-        {
-          string contentinfo = AllmusicSiteScraper.GetHTTP(_match.Groups[1].Value);
-          begIndex = contentinfo.IndexOf("<!--Begin Biography -->");
-          endIndex = contentinfo.IndexOf("</div>", begIndex + 2);
-          if (begIndex != -1 && endIndex != -1)
-          {
-            pattern = @"<p.*?class=""text"">(.*?)</p>";
-            if (FindPattern(pattern, contentinfo))
-            {
-              string data = _match.Groups[1].Value;
-              util.RemoveTags(ref data);
-              util.ConvertHTMLToAnsi(data, out data);
-              _strAMGBiography = data.Trim();
-            }
-          }
-        }
-        catch (Exception) {}
-      }
-
-
-      string compilationPage = "";
-      string singlesPage = "";
-      string dvdPage = "";
-      string miscPage = "";
-
-      // discography (albums)
-      pattern = @"<td.*class=""tab_off""><a.*?href=""(.*?)"">.*Discography.*</a>";
-      if (FindPattern(pattern, strHTML))
-      {
-        // Get Link to other sub pages
-        compilationPage = _match.Groups[1].Value + "/compilations";
-        singlesPage = _match.Groups[1].Value + "/singles-eps";
-        dvdPage = _match.Groups[1].Value + "/dvds-videos";
-        miscPage = _match.Groups[1].Value + "/other";
-
-        try
-        {
-          string contentinfo = AllmusicSiteScraper.GetHTTP(_match.Groups[1].Value);
-          pattern = @"sorted.*? cell"">(?<year>.*?)</td>\s*?.*?</td>\s*.*?<a.*?"">(?<album>.*?)" +
-                    @"</a>.*?</td>\s*.*?</td>\s*.*?"">(?<label>.*?)</td>";
-
-          if (FindPattern(pattern, contentinfo))
-          {
-            while (_match.Success)
-            {
-              string year = _match.Groups["year"].Value;
-              string albumTitle = _match.Groups["album"].Value;
-              string label = _match.Groups["label"].Value;
-
-              util.RemoveTags(ref year);
-              util.ConvertHTMLToAnsi(year, out year);
-              util.RemoveTags(ref albumTitle);
-              util.ConvertHTMLToAnsi(albumTitle, out albumTitle);
-              util.RemoveTags(ref label);
-              util.ConvertHTMLToAnsi(label, out label);
-
-              try
-              {
-                string[] dAlbumInfo = {year.Trim(), albumTitle.Trim(), label.Trim()};
-                _discographyAlbum.Add(dAlbumInfo);
-              }
-              catch {}
-
-              _match = _match.NextMatch();
-            }
-          }
-        }
-        catch (Exception) {}
-      }
-
-      // Compilations
-      if (compilationPage != "")
-      {
-        try
-        {
-          string contentinfo = AllmusicSiteScraper.GetHTTP(compilationPage);
-          pattern = @"sorted.*? cell"">(?<year>.*?)</td>\s*?.*?</td>\s*.*?<a.*?"">(?<album>.*?)" +
-                    @"</a>.*?</td>\s*.*?</td>\s*.*?"">(?<label>.*?)</td>";
-
-          if (FindPattern(pattern, contentinfo))
-          {
-            while (_match.Success)
-            {
-              string year = _match.Groups["year"].Value;
-              string albumTitle = _match.Groups["album"].Value;
-              string label = _match.Groups["label"].Value;
-
-              util.RemoveTags(ref year);
-              util.ConvertHTMLToAnsi(year, out year);
-              util.RemoveTags(ref albumTitle);
-              util.ConvertHTMLToAnsi(albumTitle, out albumTitle);
-              util.RemoveTags(ref label);
-              util.ConvertHTMLToAnsi(label, out label);
-
-              try
-              {
-                string[] dAlbumInfo = {year.Trim(), albumTitle.Trim(), label.Trim()};
-                _discographyCompilations.Add(dAlbumInfo);
-              }
-              catch {}
-
-              _match = _match.NextMatch();
-            }
-          }
-        }
-        catch (Exception) {}
-      }
-
-      // Singles
-      if (singlesPage != "")
-      {
-        try
-        {
-          string contentinfo = AllmusicSiteScraper.GetHTTP(singlesPage);
-          pattern = @"sorted.*? cell"">(?<year>.*?)</td>\s*?.*?</td>\s*.*?<a.*?"">(?<album>.*?)" +
-                    @"</a>.*?</td>\s*.*?</td>\s*.*?"">(?<label>.*?)</td>";
-
-          if (FindPattern(pattern, contentinfo))
-          {
-            while (_match.Success)
-            {
-              string year = _match.Groups["year"].Value;
-              string albumTitle = _match.Groups["album"].Value;
-              string label = _match.Groups["label"].Value;
-
-              util.RemoveTags(ref year);
-              util.ConvertHTMLToAnsi(year, out year);
-              util.RemoveTags(ref albumTitle);
-              util.ConvertHTMLToAnsi(albumTitle, out albumTitle);
-              util.RemoveTags(ref label);
-              util.ConvertHTMLToAnsi(label, out label);
-
-              try
-              {
-                string[] dAlbumInfo = {year.Trim(), albumTitle.Trim(), label.Trim()};
-                _discographySingles.Add(dAlbumInfo);
-              }
-              catch {}
-
-              _match = _match.NextMatch();
-            }
-          }
-        }
-        catch (Exception) {}
-      }
-
-      // DVD Videos
-      if (dvdPage != "")
-      {
-        try
-        {
-          string contentinfo = AllmusicSiteScraper.GetHTTP(dvdPage);
-          pattern = @"sorted.*? cell"">(?<year>.*?)</td>\s*?.*?</td>\s*.*?<a.*?"">(?<album>.*?)" +
-                    @"</a>.*?</td>\s*.*?</td>\s*.*?"">(?<label>.*?)</td>";
-
-          if (FindPattern(pattern, contentinfo))
-          {
-            while (_match.Success)
-            {
-              string year = _match.Groups["year"].Value;
-              string albumTitle = _match.Groups["album"].Value;
-              string label = _match.Groups["label"].Value;
-
-              util.RemoveTags(ref year);
-              util.ConvertHTMLToAnsi(year, out year);
-              util.RemoveTags(ref albumTitle);
-              util.ConvertHTMLToAnsi(albumTitle, out albumTitle);
-              util.RemoveTags(ref label);
-              util.ConvertHTMLToAnsi(label, out label);
-
-              try
-              {
-                string[] dAlbumInfo = {year.Trim(), albumTitle.Trim(), label.Trim()};
-                _discographyMisc.Add(dAlbumInfo);
-              }
-              catch {}
-
-              _match = _match.NextMatch();
-            }
-          }
-        }
-        catch (Exception) {}
-      }
-
-      // Other
-      if (miscPage != "")
-      {
-        try
-        {
-          string contentinfo = AllmusicSiteScraper.GetHTTP(miscPage);
-          pattern = @"sorted.*? cell"">(?<year>.*?)</td>\s*?.*?</td>\s*.*?<a.*?"">(?<album>.*?)" +
-                    @"</a>.*?</td>\s*.*?</td>\s*.*?"">(?<label>.*?)</td>";
-
-          if (FindPattern(pattern, contentinfo))
-          {
-            while (_match.Success)
-            {
-              string year = _match.Groups["year"].Value;
-              string albumTitle = _match.Groups["album"].Value;
-              string label = _match.Groups["label"].Value;
-
-              util.RemoveTags(ref year);
-              util.ConvertHTMLToAnsi(year, out year);
-              util.RemoveTags(ref albumTitle);
-              util.ConvertHTMLToAnsi(albumTitle, out albumTitle);
-              util.RemoveTags(ref label);
-              util.ConvertHTMLToAnsi(label, out label);
-
-              try
-              {
-                string[] dAlbumInfo = {year.Trim(), albumTitle.Trim(), label.Trim()};
-                _discographyMisc.Add(dAlbumInfo);
-              }
-              catch {}
-
-              _match = _match.NextMatch();
-            }
-          }
-        }
-        catch (Exception) {}
-      }
+      Set(artistInfo);
 
       _bLoaded = true;
       return _bLoaded;

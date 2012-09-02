@@ -45,17 +45,6 @@ namespace MediaPortal.GUI.Music
     [SkinControl(5)] protected GUIButtonControl btnTracks = null;
     [SkinControl(6)] protected GUIButtonControl btnRefresh = null;
 
-    /*
-    #region Base Dialog Variables
-
-    private bool m_bRunning = false;
-    private bool needsRefresh = false;
-    private int m_dwParentWindowID = 0;
-    private GUIWindow m_pParentWindow = null;
-
-    #endregion
-    */
-
     private bool needsRefresh = false;
     private Texture coverArtTexture = null;
     private bool showReview = false;
@@ -74,91 +63,6 @@ namespace MediaPortal.GUI.Music
       return Load(GUIGraphicsContext.GetThemedSkinFile(@"\DialogAlbumInfo.xml"));
     }
 
-    //public override void PreInit() {}
-
-    /*
-    public override void OnAction(Action action)
-    {
-      if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU || action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
-      {
-        Close();
-        return;
-      }
-      base.OnAction(action);
-    }
-    */
-
-    /*
-    public override bool OnMessage(GUIMessage message)
-    {
-      switch (message.Message)
-      {
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-          {
-            base.OnMessage(message);
-            m_pParentWindow = null;
-            m_bRunning = false;
-            Dispose();
-            DeInitControls();
-            GUILayerManager.UnRegisterLayer(this);
-            return true;
-          }
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-          {
-            base.OnMessage(message);
-            GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
-            m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
-            GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
-            return true;
-          }
-      }
-      return base.OnMessage(message);
-    }
-    */
-
-    /*
-    #region Base Dialog Members
-
-    public void RenderDlg(float timePassed)
-    {
-      base.Render(timePassed);
-    }
-
-    private void Close()
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
-      OnMessage(msg);
-    }
-
-    public void DoModal(int dwParentId)
-    {
-      needsRefresh = false;
-      m_dwParentWindowID = dwParentId;
-      m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
-      if (null == m_pParentWindow)
-      {
-        m_dwParentWindowID = 0;
-        return;
-      }
-
-      GUIWindowManager.RouteToWindow(GetID);
-
-      // active this window...
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, 0, 0, null);
-      OnMessage(msg);
-
-      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
-      m_bRunning = true;
-      while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-      {
-        GUIWindowManager.Process();
-      }
-      GUILayerManager.UnRegisterLayer(this);
-    }
-
-    #endregion
-    */
-
     public override void DoModal(int ParentID)
     {
       needsRefresh = false;
@@ -170,13 +74,6 @@ namespace MediaPortal.GUI.Music
 
     protected override void OnPageDestroy(int newWindowId)
     {
-      //if (m_bRunning)
-      //{
-      //  m_bRunning = false;
-      //  m_pParentWindow = null;
-      //  GUIWindowManager.UnRoute();
-      //}
-
       albumInfo = null;
       if (coverArtTexture != null)
       {
@@ -278,7 +175,6 @@ namespace MediaPortal.GUI.Music
     public override void Render(float timePassed)
     {
       base.Render(timePassed);
-      //RenderDlg(timePassed);
 
       if (null == coverArtTexture)
       {
@@ -351,20 +247,5 @@ namespace MediaPortal.GUI.Music
       get { return needsRefresh; }
     }
 
-    /*
-    #region IRenderLayer
-
-    public bool ShouldRenderLayer()
-    {
-      return true;
-    }
-
-    public void RenderLayer(float timePassed)
-    {
-      Render(timePassed);
-    }
-
-    #endregion
-    */
   }
 }

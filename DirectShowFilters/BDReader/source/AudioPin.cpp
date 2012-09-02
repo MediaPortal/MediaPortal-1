@@ -338,7 +338,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           }
           else
             Sleep(10);
-		  
+
           return ERROR_NO_DATA;
         }
       }
@@ -490,13 +490,26 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             pSample->SetSyncPoint(false);
           }
 
-          ProcessAudioSample(buffer, pSample);
-#ifdef LOG_AUDIO_PIN_SAMPLES
-          LogDebug("aud: %6.3f corr %6.3f Playlist time %6.3f clip: %d playlist: %d", buffer->rtStart / 10000000.0, rtCorrectedStartTime / 10000000.0,
-            buffer->rtPlaylistTime / 10000000.0, buffer->nClipNumber, buffer->nPlaylist);
-#endif
-          m_bFirstSample = false;
+          {
+            CAutoLock lock(&m_csDeliver);
 
+            if (!m_bFlushing)
+            {
+              ProcessAudioSample(buffer, pSample);
+#ifdef LOG_AUDIO_PIN_SAMPLES
+             LogDebug("aud: %6.3f corr %6.3f Playlist time %6.3f clip: %d playlist: %d", buffer->rtStart / 10000000.0, rtCorrectedStartTime / 10000000.0,
+                buffer->rtPlaylistTime / 10000000.0, buffer->nClipNumber, buffer->nPlaylist);
+#endif
+            }
+            else
+            {
+              LogDebug("aud: dropped sample as flush is active!");
+              delete buffer;
+              return ERROR_NO_DATA;
+            }
+          }
+
+          m_bFirstSample = false;
           delete buffer;
         }
         else
@@ -685,18 +698,26 @@ HRESULT CAudioPin::OnThreadDestroy()
 {
   // Make sure video pin is not waiting for us
   if (m_demux.m_eAudioClipSeen)
-    m_demux.m_eAudioClipSeen->Set(); 
+    m_demux.m_eAudioClipSeen->Set();
 
   return S_OK;
 }
 
 HRESULT CAudioPin::DeliverBeginFlush()
 {
+  CAutoLock lock(&m_csDeliver);
+
   m_eFlushStart->Set();
   m_bFlushing = true;
   m_bSeekDone = false;
   HRESULT hr = __super::DeliverBeginFlush();
   LogDebug("aud: DeliverBeginFlush - hr: %08lX", hr);
+
+  if (hr != S_OK)
+  {
+    m_bFlushing = true;
+    m_bSeekDone = true;
+  }
 
   return hr;
 }

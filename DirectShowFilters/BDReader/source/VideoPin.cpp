@@ -662,20 +662,33 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
 
         pSample->SetSyncPoint(buffer->bSyncPoint);
 
-        BYTE* pSampleBuffer;
-        pSample->SetActualDataLength(buffer->GetDataSize());
-        pSample->GetPointer(&pSampleBuffer);
-        memcpy(pSampleBuffer, buffer->GetData(), buffer->GetDataSize());
+        {
+          CAutoLock lock(&m_csDeliver);
 
-        m_bFirstSample = false;
+          if (!m_bFlushing)
+          {
+            BYTE* pSampleBuffer;
+            pSample->SetActualDataLength(buffer->GetDataSize());
+            pSample->GetPointer(&pSampleBuffer);
+            memcpy(pSampleBuffer, buffer->GetData(), buffer->GetDataSize());
+
+            m_bFirstSample = false;
+
+#ifdef LOG_VIDEO_PIN_SAMPLES
+            LogDebug("vid: %6.3f corr %6.3f playlist time %6.3f clip: %d playlist: %d size: %d", buffer->rtStart / 10000000.0, rtCorrectedStartTime / 10000000.0, 
+              buffer->rtPlaylistTime / 10000000.0, buffer->nClipNumber, buffer->nPlaylist, buffer->GetCount());
+#endif
+          }
+          else
+          {
+            LogDebug("vid: dropped sample as flush is active!");
+            return ERROR_NO_DATA;
+          }
+        }
 
         //static int iFrameNumber = 0;
         //LogMediaSample(pSample, iFrameNumber++);
 
-#ifdef LOG_VIDEO_PIN_SAMPLES
-        LogDebug("vid: %6.3f corr %6.3f playlist time %6.3f clip: %d playlist: %d size: %d", buffer->rtStart / 10000000.0, rtCorrectedStartTime / 10000000.0, 
-          buffer->rtPlaylistTime / 10000000.0, buffer->nClipNumber, buffer->nPlaylist, buffer->GetCount());
-#endif
         delete buffer;
       }
     } while (!buffer);
@@ -704,11 +717,19 @@ HRESULT CVideoPin::OnThreadStartPlay()
 
 HRESULT CVideoPin::DeliverBeginFlush()
 {
+  CAutoLock lock(&m_csDeliver);
+
   m_eFlushStart->Set();
   m_bFlushing = true;
   m_bSeekDone = false;
   HRESULT hr = __super::DeliverBeginFlush();
   LogDebug("vid: DeliverBeginFlush - hr: %08lX", hr);
+
+  if (hr != S_OK)
+  {
+    m_bFlushing = true;
+    m_bSeekDone = true;
+  }
 
   return hr;
 }

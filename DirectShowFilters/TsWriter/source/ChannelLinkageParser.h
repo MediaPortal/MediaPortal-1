@@ -88,8 +88,8 @@ private:
 		bool	m_bScanning;
 		bool	m_bScanningDone;
 		time_t  m_scanTimeout;
-		map<unsigned long,PortalChannel> m_mapChannels;
-		typedef map<unsigned long,PortalChannel>::iterator imapChannels;
+		map<unsigned __int64,PortalChannel> m_mapChannels;
+		typedef map<unsigned __int64,PortalChannel>::iterator imapChannels;
 		long	   m_prevChannelIndex;
 		long	   m_prevLinkIndex;
 		PortalChannel m_prevChannel;

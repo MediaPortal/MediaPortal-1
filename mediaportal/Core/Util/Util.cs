@@ -4116,6 +4116,31 @@ namespace MediaPortal.Util
       WindowsController.ExitWindows(RestartOptions.Suspend, forceShutDown);
     }
 
+    public static void RestartMePo()
+    {
+      File.Delete(Config.GetFile(Config.Dir.Config, "mediaportal.running"));
+      Log.Info("Restarting - saving settings...");
+      Settings.SaveCache();
+      Process restartScript = new Process();
+      restartScript.EnableRaisingEvents = false;
+      restartScript.StartInfo.WorkingDirectory = Config.GetFolder(Config.Dir.Base);
+      restartScript.StartInfo.FileName = Config.GetFile(Config.Dir.Base, @"restart.vbs");
+      Log.Debug("Restarting - executing script {0}", restartScript.StartInfo.FileName);
+      restartScript.Start();
+      try
+      {
+        // Maybe the scripting host is not available therefore do not wait infinitely.
+        if (!restartScript.HasExited)
+        {
+          restartScript.WaitForExit();
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Restarting - WaitForExit: {0}", ex.Message);
+      }
+    }
+
     public static string EncryptPin(string code)
     {
       string result = string.Empty;
@@ -4425,6 +4450,56 @@ namespace MediaPortal.Util
         strFormattedString += String.Format("{0} | ", s.Trim());
       }
       return strFormattedString;
+    }
+
+    public static bool IsGUISettingsWindow(int windowId)
+    {
+      if (windowId == (int)GUIWindow.Window.WINDOW_SETTINGS ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_DVD ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_BLURAY ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_EXTENSIONS ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_FOLDERS ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GENERALMAIN ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GENERALMP ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GENERALSTARTUP ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GENERALRESUME ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GENERALREFRESHRATE ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_MOVIES ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_MUSIC ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_MUSICDATABASE ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_MUSICNOWPLAYING ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GUIMAIN ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GUISKIN ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GUIGENERAL ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GUIONSCREEN_DISPLAY ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GUICONTROL ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GUISKIPSTEPS ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GUITHUMBNAILS ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_PICTURES ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_PICTURES_SLIDESHOW ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_PICTURESDATABASE ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_PLAYLIST ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_RECORDINGS ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GUISCREENSETUP ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GUISCREENSAVER ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_SORT_CHANNELS ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_TV ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_TV_EPG ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_VIDEODATABASE ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_VIDEOOTHERSETTINGS ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GENERALVOLUME ||
+        // Minidisplay (no enum values in GUIWindow)
+          windowId == 9000 ||
+          windowId == 9001 ||
+          windowId == 9002 ||
+          windowId == 9003 ||
+          windowId == 9004 ||
+          windowId == 9005 ||
+          windowId == 9006)
+      {
+        return true;
+      }
+      return false;
     }
   }
 
