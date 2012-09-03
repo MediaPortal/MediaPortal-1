@@ -1394,12 +1394,12 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 					time_scale				    = (double)gb.BitRead(32);
 					fixed_frame_rate_flag	= (bool)gb.BitRead(1);
 
-					if ((time_scale > 0) && fixed_frame_rate_flag)
+					if ((time_scale > 0) && (num_units_in_tick > 0))
 					{
 						// VUI consider fields even for progressive stream : multiply num_units_in_tick by 2
 						h.AvgTimePerFrame = (REFERENCE_TIME)((20000000.0 * num_units_in_tick)/time_scale);
 				  }
-				  else //variable frame rate, so guess ?
+				  else // guess ?
 				  {
 						h.AvgTimePerFrame = 370000; // lets go for 27Hz :-)
 				  }
