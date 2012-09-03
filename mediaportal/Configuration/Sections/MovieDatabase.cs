@@ -26,6 +26,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
@@ -1356,7 +1357,7 @@ namespace MediaPortal.Configuration.Sections
       
       if (chbUseNfoScraperOnly.Checked)
       {
-        VideoDatabase.ImportNfoUsingVideoFile(strFilenameAndPath);
+        VideoDatabase.ImportNfoUsingVideoFile(strFilenameAndPath, false, false);
         VideoDatabase.GetMovieInfoById(movieDetails.ID, ref movieDetails);
         MessageBox.Show("Nfo file imported");
       }
@@ -1896,9 +1897,8 @@ namespace MediaPortal.Configuration.Sections
           btnUpgradeCovers.Enabled = true;
           btnDowngradeCovers.Enabled = false;
         }
-
+        
         _isFuzzyMatching = xmlreader.GetValueAsBool("movies", "fuzzyMatching", true);
-
         _fuzzyMatchingCheckBox.Checked = _isFuzzyMatching;
 
         // Sort by "Sort title" db field
@@ -4323,9 +4323,6 @@ namespace MediaPortal.Configuration.Sections
         ProgressBarAdvance(ref pbTools, string.Empty, false);
       }
       pbTools.Value = 0;
-      // Refresh actors list view
-      //listViewAllActors.Items.Clear();
-      //listViewAllActors.BeginUpdate();
       listActors = new ArrayList();
       VideoDatabase.GetActors(listActors);
 
@@ -4606,7 +4603,7 @@ namespace MediaPortal.Configuration.Sections
 
         _progressDialog.SetLine1("Importing: " + nfoFile);
 
-        VideoDatabase.ImportNfo(nfoFile);
+        VideoDatabase.ImportNfo(nfoFile, skipCheckBox.Checked, refreshdbCheckBox.Checked);
 
         // Update progress
         if (_progressDialog.Count < _nfoFiles.Count)
@@ -4690,8 +4687,9 @@ namespace MediaPortal.Configuration.Sections
     private void GetNfoFiles(string path, ref ArrayList availableFiles)
     {
       string[] files = Directory.GetFiles(path, "*.nfo", SearchOption.AllDirectories);
+      var sortedFiles = files.OrderBy(f => f);
 
-      foreach (string file in files)
+      foreach (string file in sortedFiles)
       {
         availableFiles.Add(file);
       }

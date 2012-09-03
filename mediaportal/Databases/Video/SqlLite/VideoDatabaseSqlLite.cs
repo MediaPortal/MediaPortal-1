@@ -631,7 +631,7 @@ namespace MediaPortal.Video.Database
       {
         int lFileId = -1;
         strFileName = strFileName.Trim();
-
+        
         string strSQL = String.Format("SELECT * FROM files WHERE idmovie={0} AND idpath={1} AND strFileName LIKE '{2}'",
                                       lMovieId, lPathId, strFileName);
         SQLiteResultSet results = m_db.Execute(strSQL);
@@ -4413,46 +4413,67 @@ namespace MediaPortal.Video.Database
       return true;
     }
 
-    public void ImportNfoUsingVideoFile(string videoFile)
+    public void ImportNfoUsingVideoFile(string videoFile, bool skipExisting, bool refreshdbOnly)
     {
       try
       {
         string nfoFile = string.Empty;
         string path = string.Empty;
+        bool isbdDvd = false;
 
         if (videoFile.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase) >= 0)
         {
           //DVD folder
           path = videoFile.Substring(0, videoFile.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase));
+          isbdDvd = true;
         }
         else if (videoFile.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV", StringComparison.InvariantCultureIgnoreCase) >= 0)
         {
           //BD folder
           path = videoFile.Substring(0, videoFile.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV", StringComparison.InvariantCultureIgnoreCase));
+          isbdDvd = true;
         }
 
-        if (videoFile.ToUpperInvariant().Contains("VIDEO_TS.IFO") || videoFile.ToUpperInvariant().Contains("INDEX.BDMV"))
+        if (isbdDvd)
         {
-          nfoFile = path + @"\" + Path.GetFileNameWithoutExtension(videoFile) + ".nfo";
+          string cleanFile = string.Empty;
+          cleanFile = Path.GetFileNameWithoutExtension(videoFile);
+          Util.Utils.RemoveStackEndings(ref cleanFile);
+          nfoFile = path + @"\" + cleanFile + ".nfo";
 
           if (!File.Exists(nfoFile))
           {
-            nfoFile = path + @"\" + Path.GetFileNameWithoutExtension(path) + ".nfo";
+            cleanFile = Path.GetFileNameWithoutExtension(path);
+            Util.Utils.RemoveStackEndings(ref cleanFile);
+            nfoFile = path + @"\" + cleanFile + ".nfo";
           }
         }
         else
         {
-          nfoFile = Path.ChangeExtension(videoFile, ".nfo");
+          string cleanFile = string.Empty;
+          string strPath, strFilename;
+          DatabaseUtility.Split(videoFile, out strPath, out strFilename);
+          cleanFile = strFilename;
+          Util.Utils.RemoveStackEndings(ref cleanFile);
+          cleanFile = strPath + cleanFile;
+          nfoFile = Path.ChangeExtension(cleanFile, ".nfo");
         }
-
-        Util.Utils.RemoveStackEndings(ref nfoFile);
 
         if (!File.Exists(nfoFile))
         {
           return;
         }
 
-        ImportNfo(nfoFile);
+        IMDBMovie movie = new IMDBMovie();
+        int id = GetMovieInfo(videoFile, ref movie);
+        movie = null;
+
+        if (skipExisting && id > 0)
+        {
+          return;
+        }
+
+        ImportNfo(nfoFile, skipExisting, refreshdbOnly);
       }
       catch (Exception ex)
       {
@@ -4460,9 +4481,10 @@ namespace MediaPortal.Video.Database
       }
     }
 
-    public void ImportNfo(string nfoFile)
+    public void ImportNfo(string nfoFile, bool skipExisting, bool refreshdbOnly)
     {
       IMDBMovie movie = new IMDBMovie();
+      
       try
       {
         XmlDocument doc = new XmlDocument();
@@ -4514,6 +4536,105 @@ namespace MediaPortal.Video.Database
             
             #endregion
 
+            #region Moviefiles
+
+            // Get path from *.nfo file)
+            Util.Utils.Split(nfoFile, out path, out fileName);
+            // Movie filename to search from gathered files from nfo path
+            fileName = Util.Utils.GetFilename(fileName, true);
+            // Get all video files from nfo path
+            ArrayList files = new ArrayList();
+            GetVideoFiles(path, ref files);
+            bool isDvdBdFolder = false;
+
+            foreach (String file in files)
+            {
+              if ((file.ToUpperInvariant().Contains("VIDEO_TS.IFO") ||
+                  file.ToUpperInvariant().Contains("INDEX.BDMV")) && files.Count == 1)
+              {
+                var pattern = Util.Utils.StackExpression();
+                int stackSequence = -1; // seq 0 = [x-y], seq 1 = CD1, Part1....
+                int digit = 0;
+
+                for (int i = 0; i < pattern.Length; i++)
+                {
+                  if (pattern[i].IsMatch(file))
+                  {
+                    digit = Convert.ToInt16(pattern[i].Match(file).Groups["digit"].Value);
+                    stackSequence = i;
+                    break;
+                  }
+                }
+                if (digit > 1)
+                {
+                  string filename;
+                  string tmpPath = string.Empty;
+                  DatabaseUtility.Split(file, out path, out filename);
+
+                  try
+                  {
+                    if (stackSequence == 0)
+                    {
+                      string strReplace = "[" + digit;
+                      int stackIndex = path.LastIndexOf(strReplace);
+                      tmpPath = path.Remove(stackIndex, 2);
+                      tmpPath = tmpPath.Insert(stackIndex, "[1");
+                    }
+                    else
+                    {
+                      int stackIndex = path.LastIndexOf(digit.ToString());
+                      tmpPath = path.Remove(stackIndex, 1);
+                      tmpPath = tmpPath.Insert(stackIndex, "1");
+                    }
+
+                    int movieId = VideoDatabase.GetMovieId(tmpPath + filename);
+                    int pathId = VideoDatabase.AddPath(path);
+                    VideoDatabase.AddFile(movieId, pathId, filename);
+                    return;
+                  }
+                  catch
+                  (Exception) { }
+                }
+
+                id = VideoDatabase.AddMovie(file, true);
+                movie.ID = id;
+                isDvdBdFolder = true;
+              }
+              else
+              {
+                string tmpFile = string.Empty;
+                string tmpPath = string.Empty;
+                // Read filename
+                Util.Utils.Split(file, out tmpPath, out tmpFile);
+                // Remove extension
+                tmpFile = Util.Utils.GetFilename(tmpFile, true);
+                // Remove stack endings (CD1...)
+                Util.Utils.RemoveStackEndings(ref tmpFile);
+                // Check and add to vdb and get movieId
+                if (tmpFile.Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
+                {
+                  id = VideoDatabase.AddMovie(file, true);
+                  movie.ID = id;
+                }
+              }
+            }
+
+            #endregion
+
+            #region Check for existing or refreshign database only
+            
+            GetMovieInfoById(id, ref movie);
+
+            if (skipExisting && !movie.IsEmpty || refreshdbOnly && movie.IsEmpty)
+            {
+              return;
+            }
+
+            movie = new IMDBMovie();
+            movie.ID = id;
+
+            #endregion
+
             #region Genre
 
             XmlNodeList genres = nodeMovie.SelectNodes("genre");
@@ -4541,47 +4662,6 @@ namespace MediaPortal.Video.Database
             {
               movie.WritingCredits = nodeCredits.InnerText;
             }
-            #endregion
-
-            #region Moviefiles
-            
-            // Get path from *.nfo file)
-            Util.Utils.Split(nfoFile, out path, out fileName);
-            // Movie filename to search from gathered files from nfo path
-            fileName = Util.Utils.GetFilename(fileName, true);
-            // Get all video files from nfo path
-            ArrayList files = new ArrayList();
-            GetVideoFiles(path, ref files);
-            bool isDvdBdFolder = false;
-
-            foreach (String file in files)
-            {
-              if ((file.ToUpperInvariant().Contains("VIDEO_TS.IFO") ||
-                  file.ToUpperInvariant().Contains("INDEX.BDMV")) && files.Count == 1)
-              {
-                id = VideoDatabase.AddMovie(file, true);
-                movie.ID = id;
-                isDvdBdFolder = true;
-              }
-              else
-              {
-                string tmpFile = string.Empty;
-                string tmpPath = string.Empty;
-                // Read filename
-                Util.Utils.Split(file, out tmpPath, out tmpFile);
-                // Remove extension
-                tmpFile = Util.Utils.GetFilename(tmpFile, true);
-                // Remove stack endings (CD1...)
-                Util.Utils.RemoveStackEndings(ref tmpFile);
-                // Check and add to vdb and get movieId
-                if (tmpFile.Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
-                {
-                  id = VideoDatabase.AddMovie(file, true);
-                  movie.ID = id;
-                }
-              }
-            }
-
             #endregion
 
             #region DateAdded
@@ -5314,221 +5394,261 @@ namespace MediaPortal.Video.Database
       string moviePath = string.Empty;
       string movieFile = string.Empty;
       ArrayList movieFiles = new ArrayList();
+      ArrayList nfoFiles = new ArrayList();
       string nfoFile = string.Empty;
-      
-      // Get files
-      GetFilesForMovie(movieId, ref movieFiles);
-      // Wee need only 1 if they are stacked
-      movieFile = movieFiles[0].ToString();
+      int fileCounter = 0;
 
-      if (!File.Exists(movieFile))
+      try
       {
+        // Get files
+        GetFilesForMovie(movieId, ref movieFiles);
+
+        foreach (string file in movieFiles)
+        {
+          if (!File.Exists(file))
+          {
+            return false;
+          }
+
+          movieFile = file;
+          Util.Utils.Split(movieFile, out moviePath, out movieFile);
+
+          // Check for DVD folder
+          if (movieFile.ToUpperInvariant() == "VIDEO_TS.IFO" || movieFile.ToUpperInvariant() == "INDEX.BDMV")
+          {
+            // Remove \VIDEO_TS from directory structure
+            string directoryDVD = moviePath.Substring(0, moviePath.LastIndexOf("\\"));
+
+            if (Directory.Exists(directoryDVD))
+            {
+              moviePath = directoryDVD;
+              movieFile = directoryDVD;
+            }
+          }
+          else
+          {
+            if (fileCounter > 0)
+            {
+              return true;
+            }
+          }
+          // remove stack endings (CDx..) form filename
+          Util.Utils.RemoveStackEndings(ref movieFile);
+          // Remove file extension
+          movieFile = Util.Utils.GetFilename(movieFile, true).Trim();
+          // Add nfo extension
+          nfoFile = moviePath + @"\" + movieFile + ".nfo";
+          Util.Utils.FileDelete(nfoFile);
+          nfoFiles.Add(nfoFile);
+          //}
+
+          IMDBMovie movieDetails = new IMDBMovie();
+          GetMovieInfoById(movieId, ref movieDetails);
+          // Prepare XML
+          XmlDocument doc = new XmlDocument();
+          XmlDeclaration xmldecl = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
+
+          // Main tag
+          XmlNode mainNode = doc.CreateElement("movie");
+          XmlNode subNode;
+
+          #region Movie fields
+
+          // Filenames
+          foreach (string strMovieFile in movieFiles)
+          {
+            CreateXmlNode(mainNode, doc, "filenameandpath", strMovieFile);
+          }
+
+          // Title
+          CreateXmlNode(mainNode, doc, "title", movieDetails.Title);
+          // Sort Title
+          if (!string.IsNullOrEmpty(movieDetails.SortTitle))
+          {
+            CreateXmlNode(mainNode, doc, "sorttitle", movieDetails.SortTitle);
+          }
+          else
+          {
+            CreateXmlNode(mainNode, doc, "sorttitle", movieDetails.Title);
+          }
+
+          //  movie IMDB number
+          CreateXmlNode(mainNode, doc, "imdb", movieDetails.IMDBNumber);
+          //  Language
+          CreateXmlNode(mainNode, doc, "language", movieDetails.Language);
+          //  Country
+          CreateXmlNode(mainNode, doc, "country", movieDetails.Country);
+          //  Year
+          CreateXmlNode(mainNode, doc, "year", movieDetails.Year.ToString());
+          //  Rating
+          CreateXmlNode(mainNode, doc, "rating", movieDetails.Rating.ToString().Replace(",", "."));
+          //  Runtime
+          CreateXmlNode(mainNode, doc, "runtime", movieDetails.RunTime.ToString());
+          // MPAA
+          CreateXmlNode(mainNode, doc, "mpaa", movieDetails.MPARating);
+          // Votes
+          CreateXmlNode(mainNode, doc, "votes", movieDetails.Votes);
+          // TOp 250
+          CreateXmlNode(mainNode, doc, "top250", movieDetails.Top250.ToString());
+          // Studio
+          CreateXmlNode(mainNode, doc, "studio", movieDetails.Studios);
+          //  Director
+          CreateXmlNode(mainNode, doc, "director", movieDetails.Director);
+          //  Director imdbId
+          CreateXmlNode(mainNode, doc, "directorimdb", GetActorImdbId(movieDetails.ID));
+          // Credits
+          CreateXmlNode(mainNode, doc, "credits", movieDetails.WritingCredits);
+          // Tagline
+          CreateXmlNode(mainNode, doc, "tagline", movieDetails.TagLine);
+          // Plot outline (short one)
+          CreateXmlNode(mainNode, doc, "outline", movieDetails.PlotOutline);
+          // Plot - long
+          CreateXmlNode(mainNode, doc, "plot", movieDetails.Plot);
+          // Review
+          CreateXmlNode(mainNode, doc, "review", movieDetails.UserReview);
+          // Watched
+          string watched = "false";
+
+          if (movieDetails.Watched > 0)
+          {
+            watched = "true";
+          }
+
+          CreateXmlNode(mainNode, doc, "watched", watched);
+
+          // Watched count
+          int percent = 0;
+          int watchedCount = 0;
+          GetMovieWatchedStatus(movieId, out percent, out watchedCount);
+          CreateXmlNode(mainNode, doc, "playcount", watchedCount.ToString());
+
+          // Poster
+          string titleExt = movieDetails.Title + "{" + movieId + "}";
+          string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+          string coverFilename = moviePath + @"\" + movieFile + ".jpg";
+
+          if (File.Exists(largeCoverArtImage))
+          {
+            try
+            {
+              File.Copy(largeCoverArtImage, coverFilename, true);
+              CreateXmlNode(mainNode, doc, "thumb", movieFile + ".jpg");
+            }
+            catch (Exception ex)
+            {
+              Log.Info("VideoDatabas: Error in creating nfo - poster section:{0}", ex.Message);
+            }
+          }
+
+          // Fanart
+          string faFile = string.Empty;
+          subNode = doc.CreateElement("fanart");
+
+          for (int i = 0; i < 5; i++)
+          {
+            FanArt.GetFanArtfilename(movieId, i, out faFile);
+            string index = string.Empty;
+
+            if (File.Exists(faFile))
+            {
+              if (i > 0)
+              {
+                index = i.ToString();
+              }
+
+              try
+              {
+                string faFilename = moviePath + @"\" + movieFile + "-fanart" + index + ".jpg";
+                File.Copy(faFile, faFilename, true);
+                CreateXmlNode(subNode, doc, "thumb", movieFile + "-fanart" + index + ".jpg");
+              }
+              catch (Exception ex)
+              {
+                Log.Info("VideoDatabas: Error in creating nfo - fanart section:{0}", ex.Message);
+              }
+
+            }
+          }
+          mainNode.AppendChild(subNode);
+
+          // Genre
+          string szGenres = movieDetails.Genre;
+
+          if (szGenres.IndexOf("/") >= 0)
+          {
+            Tokens f = new Tokens(szGenres, new[] {'/'});
+
+            foreach (string strGenre in f)
+            {
+              CreateXmlNode(mainNode, doc, "genre", strGenre.Trim());
+            }
+          }
+          else
+          {
+            CreateXmlNode(mainNode, doc, "genre", movieDetails.Genre);
+          }
+
+          // Cast
+          ArrayList castList = new ArrayList();
+          GetActorsByMovieID(movieId, ref castList);
+
+          foreach (string actor in castList)
+          {
+            IMDBActor actorInfo = new IMDBActor();
+            subNode = doc.CreateElement("actor");
+
+            char[] splitter = {'|'};
+            string[] temp = actor.Split(splitter);
+            actorInfo = GetActorInfo(Convert.ToInt32(temp[0]));
+
+            CreateXmlNode(subNode, doc, "name", temp[1]);
+            CreateXmlNode(subNode, doc, "role", temp[3]);
+            CreateXmlNode(subNode, doc, "imdb", temp[2]);
+
+            if (actorInfo != null)
+            {
+              CreateXmlNode(subNode, doc, "thumb", actorInfo.ThumbnailUrl);
+              CreateXmlNode(subNode, doc, "birthdate", actorInfo.DateOfBirth);
+              CreateXmlNode(subNode, doc, "birthplace", actorInfo.PlaceOfBirth);
+              CreateXmlNode(subNode, doc, "deathdate", actorInfo.DateOfDeath);
+              CreateXmlNode(subNode, doc, "deathplace", actorInfo.PlaceOfDeath);
+              CreateXmlNode(subNode, doc, "minibiography", actorInfo.MiniBiography);
+              CreateXmlNode(subNode, doc, "biography", actorInfo.Biography);
+            }
+
+            mainNode.AppendChild(subNode);
+          }
+
+          // User groups
+          ArrayList userGroups = new ArrayList();
+          GetMovieUserGroups(movieId, userGroups);
+
+          if (userGroups.Count > 0)
+          {
+            foreach (string userGroup in userGroups)
+            {
+              CreateXmlNode(mainNode, doc, "set", userGroup);
+            }
+          }
+
+          // Trailer
+          CreateXmlNode(mainNode, doc, "trailer", string.Empty);
+
+          #endregion
+
+          // End and save
+          doc.AppendChild(mainNode);
+          doc.InsertBefore(xmldecl, mainNode);
+          doc.Save(nfoFile);
+          fileCounter++;
+        }
+      }
+      catch(Exception ex)
+      {
+        Log.Info("VideoDatabas: Error in creating nfo file:{0} {1}", nfoFile ,ex.Message);
         return false;
       }
 
-      // Split to filename and path
-      Util.Utils.Split(movieFile, out moviePath, out movieFile);
-      
-      // Check for DVD folder
-      if (movieFile.ToUpperInvariant() == "VIDEO_TS.IFO" || movieFile.ToUpperInvariant() == "INDEX.BDMV")
-      {
-        // Remove \VIDEO_TS from directory structure
-        string directoryDVD = moviePath.Substring(0, moviePath.LastIndexOf("\\"));
-        
-        if (Directory.Exists(directoryDVD))
-        {
-          moviePath = directoryDVD;
-          movieFile = directoryDVD;
-        }
-      }
-      // remove stack endings (CDx..) form filename
-      Util.Utils.RemoveStackEndings(ref movieFile);
-      // Remove file extension
-      movieFile = Util.Utils.GetFilename(movieFile, true);
-      // Add nfo extension
-      nfoFile = moviePath + @"\" + movieFile + ".nfo";
-      Util.Utils.FileDelete(nfoFile);
-      
-      IMDBMovie movieDetails = new IMDBMovie();
-      GetMovieInfoById(movieId, ref movieDetails);
-      // Prepare XML
-      XmlDocument doc = new XmlDocument();
-      XmlDeclaration xmldecl = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
-      
-      // Main tag
-      XmlNode mainNode = doc.CreateElement("movie");
-      XmlNode subNode;
-
-      #region Movie fields
-
-      // Filenames
-      foreach (string strMovieFile in movieFiles)
-      {
-        CreateXmlNode(mainNode, doc, "filenameandpath", strMovieFile);
-      }
-      
-      // Title
-      CreateXmlNode(mainNode, doc, "title", movieDetails.Title);
-      // Sort Title
-      if (!string.IsNullOrEmpty(movieDetails.SortTitle))
-      {
-        CreateXmlNode(mainNode, doc, "sorttitle", movieDetails.SortTitle);
-      }
-      else
-      {
-        CreateXmlNode(mainNode, doc, "sorttitle", movieDetails.Title);
-      }
-      
-      //  movie IMDB number
-      CreateXmlNode(mainNode, doc, "imdb", movieDetails.IMDBNumber);
-      //  Language
-      CreateXmlNode(mainNode, doc, "language", movieDetails.Language);
-      //  Country
-      CreateXmlNode(mainNode, doc, "country", movieDetails.Country);
-      //  Year
-      CreateXmlNode(mainNode, doc, "year", movieDetails.Year.ToString());
-      //  Rating
-      CreateXmlNode(mainNode, doc, "rating", movieDetails.Rating.ToString().Replace(",", "."));
-      //  Runtime
-      CreateXmlNode(mainNode, doc, "runtime", movieDetails.RunTime.ToString());
-      // MPAA
-      CreateXmlNode(mainNode, doc, "mpaa", movieDetails.MPARating);
-      // Votes
-      CreateXmlNode(mainNode, doc, "votes", movieDetails.Votes);
-      // TOp 250
-      CreateXmlNode(mainNode, doc, "top250", movieDetails.Top250.ToString());
-      // Studio
-      CreateXmlNode(mainNode, doc, "studio", movieDetails.Studios);
-      //  Director
-      CreateXmlNode(mainNode, doc, "director", movieDetails.Director);
-      //  Director imdbId
-      CreateXmlNode(mainNode, doc, "directorimdb", GetActorImdbId(movieDetails.ID));
-      // Credits
-      CreateXmlNode(mainNode, doc, "credits", movieDetails.WritingCredits);
-      // Tagline
-      CreateXmlNode(mainNode, doc, "tagline", movieDetails.TagLine);
-      // Plot outline (short one)
-      CreateXmlNode(mainNode, doc, "outline", movieDetails.PlotOutline);
-      // Plot - long
-      CreateXmlNode(mainNode, doc, "plot", movieDetails.Plot);
-      // Review
-      CreateXmlNode(mainNode, doc, "review", movieDetails.UserReview);
-      // Watched
-      string watched = "false";
-      
-      if (movieDetails.Watched > 0)
-      {
-        watched = "true";
-      }
-
-      CreateXmlNode(mainNode, doc, "watched", watched);
-      
-      // Watched count
-      int percent = 0;
-      int watchedCount = 0;
-      GetMovieWatchedStatus(movieId, out percent, out watchedCount);
-      CreateXmlNode(mainNode, doc, "playcount", watchedCount.ToString());
-      
-      // Poster
-      string titleExt = movieDetails.Title + "{" + movieId + "}";
-      string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
-      string coverFilename = moviePath + @"\" + movieFile + ".jpg";
-      
-      if (File.Exists(largeCoverArtImage))
-      {
-        File.Copy(largeCoverArtImage, coverFilename, true);
-        CreateXmlNode(mainNode, doc, "thumb", movieFile + ".jpg");
-      }
-
-      // Fanart
-      string faFile = string.Empty;
-      subNode = doc.CreateElement("fanart");
-      
-      for (int i = 0; i < 5; i++)
-      {
-        FanArt.GetFanArtfilename(movieId, i, out faFile);
-        string index = string.Empty;
-
-        if (File.Exists(faFile))
-        {
-          if (i > 0)
-          {
-            index = i.ToString();
-          }
-
-          string faFilename = moviePath + @"\" + movieFile + "-fanart" + index + ".jpg";
-          File.Copy(faFile, faFilename, true);
-          CreateXmlNode(subNode, doc, "thumb", movieFile + "-fanart" + index + ".jpg");
-          
-        }
-      }
-      mainNode.AppendChild(subNode);
-
-      // Genre
-      string szGenres = movieDetails.Genre;
-      
-      if (szGenres.IndexOf("/") >= 0)
-      {
-        Tokens f = new Tokens(szGenres, new[] { '/' });
-        
-        foreach (string strGenre in f)
-        {
-          CreateXmlNode(mainNode, doc, "genre", strGenre.Trim());
-        }
-      }
-      
-      // Cast
-      ArrayList castList = new ArrayList();
-      GetActorsByMovieID(movieId, ref castList);
-
-      foreach (string actor in castList)
-      {
-        IMDBActor actorInfo = new IMDBActor();
-        subNode = doc.CreateElement("actor");
-
-        char[] splitter = { '|' };
-        string[] temp = actor.Split(splitter);
-        actorInfo = GetActorInfo(Convert.ToInt32(temp[0]));
-
-        CreateXmlNode(subNode, doc, "name", temp[1]);
-        CreateXmlNode(subNode, doc, "role", temp[3]);
-        CreateXmlNode(subNode, doc, "imdb", temp[2]);
-
-        if (actorInfo != null)
-        {
-          CreateXmlNode(subNode, doc, "thumb", actorInfo.ThumbnailUrl);
-          CreateXmlNode(subNode, doc, "birthdate", actorInfo.DateOfBirth);
-          CreateXmlNode(subNode, doc, "birthplace", actorInfo.PlaceOfBirth);
-          CreateXmlNode(subNode, doc, "deathdate", actorInfo.DateOfDeath);
-          CreateXmlNode(subNode, doc, "deathplace", actorInfo.PlaceOfDeath);
-          CreateXmlNode(subNode, doc, "minibiography", actorInfo.MiniBiography);
-          CreateXmlNode(subNode, doc, "biography", actorInfo.Biography);
-        }
-
-        mainNode.AppendChild(subNode);
-      }
-
-      // User groups
-      ArrayList userGroups = new ArrayList();
-      GetMovieUserGroups(movieId, userGroups);
-
-      if (userGroups.Count > 0)
-      {
-        foreach (string userGroup in userGroups)
-        {
-          CreateXmlNode(mainNode, doc, "set", userGroup);
-        }
-      }
-      
-      // Trailer
-      CreateXmlNode(mainNode, doc, "trailer", string.Empty);
-
-      #endregion
-
-      // End and save
-      doc.AppendChild(mainNode);
-      doc.InsertBefore(xmldecl, mainNode);
-      doc.Save(nfoFile);
       return true;
     }
 

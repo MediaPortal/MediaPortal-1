@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using MediaPortal.Database;
@@ -1095,7 +1096,7 @@ namespace MediaPortal.GUI.Video
           }
           
           IMDBFetcher fetcher = new IMDBFetcher(this);
-          fetcher.FetchNfo(nfoFiles);
+          fetcher.FetchNfo(nfoFiles, true, false);
         }
         // Send global message that movie is refreshed/scanned
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
@@ -2736,8 +2737,9 @@ namespace MediaPortal.GUI.Video
     private void GetNfoFiles(string path, ref ArrayList nfoFiles)
     {
       string[] files = Directory.GetFiles(path, "*.nfo", SearchOption.AllDirectories);
+      var sortedFiles = files.OrderBy(f => f);
 
-      foreach (string file in files)
+      foreach (string file in sortedFiles)
       {
         nfoFiles.Add(file);
       }

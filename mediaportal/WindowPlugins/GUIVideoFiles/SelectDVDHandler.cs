@@ -341,8 +341,8 @@ namespace MediaPortal.GUI.Video
 
               if (pItem.IsBdDvdFolder)
               {
-                fPic = path + @"\" + Path.GetFileNameWithoutExtension(path) + ".jpg";
-                fPicTbn = path + @"\" + Path.GetFileNameWithoutExtension(path) + ".tbn";
+                fPic = pItem.Path + @"\" + Path.GetFileNameWithoutExtension(path) + ".jpg";
+                fPicTbn = pItem.Path + @"\" + Path.GetFileNameWithoutExtension(path) + ".tbn";
               }
               else
               {

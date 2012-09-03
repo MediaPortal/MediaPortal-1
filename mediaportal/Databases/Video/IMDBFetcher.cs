@@ -52,6 +52,8 @@ namespace MediaPortal.Video.Database
     private static bool _foldercheck = true;
     private ArrayList _nfoFiles;
     private bool _addToDatabase = true;
+    private bool _skipExisting;
+    private bool _refreshdbOnly;
     
     public IMDBFetcher(IMDB.IProgress progress)
     {
@@ -114,7 +116,7 @@ namespace MediaPortal.Video.Database
 
     #region NfoFetch
 
-    public void FetchNfo(ArrayList nfoFiles)
+    public void FetchNfo(ArrayList nfoFiles, bool skipExisting, bool refreshdbOnly)
     {
       if (nfoFiles == null || nfoFiles.Count == 0)
       {
@@ -126,6 +128,8 @@ namespace MediaPortal.Video.Database
         return;
       }
 
+      _skipExisting = skipExisting;
+      _refreshdbOnly = refreshdbOnly;
       _nfoFiles = nfoFiles;
       _movieThread = new Thread(FetchNfoThread);
       _movieThread.Name = "NfoFetcher";
@@ -147,7 +151,7 @@ namespace MediaPortal.Video.Database
         foreach (string nfoFile in _nfoFiles)
         {
           OnProgress(nfoFile, string.Empty, string.Empty, 0);
-          VideoDatabase.ImportNfo(nfoFile);
+          VideoDatabase.ImportNfo(nfoFile, _skipExisting, _refreshdbOnly);
         }
       }
       catch (ThreadAbortException) { }
@@ -1338,6 +1342,7 @@ namespace MediaPortal.Video.Database
         SearchForImdbId(path, filename, _foldercheck, ref strMovieName);
       }
 
+      Util.Utils.RemoveStackEndings(ref strMovieName);
       currentMovie.SearchString = strMovieName;
       
       if (currentMovie.ID >= 0 || !addToDatabase)
@@ -1556,12 +1561,15 @@ namespace MediaPortal.Video.Database
         int digit = 0; // Only first file in set will proceed (cd1, part1, dvd1...)
 
         var pattern = Util.Utils.StackExpression();
+        int stackSequence = 0; // seq 0 = [x-y], seq 1 = CD1, Part1....
         
         for (int i = 0; i < pattern.Length; i++)
         {
           if (pattern[i].IsMatch(file))
           {
             digit = Convert.ToInt16(pattern[i].Match(file).Groups["digit"].Value);
+            stackSequence = i;
+            break;
           }
         }
         try
@@ -1588,6 +1596,37 @@ namespace MediaPortal.Video.Database
               movieDetails.File = filename;
               // Caution - Thumb creation spam no2 starts in GetInfoFromIMDB
               GetInfoFromIMDB(progress, ref movieDetails, fuzzyMatching, getActors);
+            }
+            else if (digit > 1) // Add DVD or BD stack folders to existing movie
+            {
+              string path, filename;
+              string tmpPath = string.Empty;
+              DatabaseUtility.Split(file, out path, out filename);
+
+              if (path.ToUpperInvariant().Contains(@"\VIDEO_TS") || path.ToUpperInvariant().Contains(@"\BDMV"))
+              {
+                try
+                {
+                  if (stackSequence == 0)
+                  {
+                    string strReplace = "[" + digit;
+                    int stackIndex = path.LastIndexOf(strReplace);
+                    tmpPath = path.Remove(stackIndex, 2);
+                    tmpPath = tmpPath.Insert(stackIndex, "[1");
+                  }
+                  else
+                  {
+                    int stackIndex = path.LastIndexOf(digit.ToString());
+                    tmpPath = path.Remove(stackIndex, 1);
+                    tmpPath = tmpPath.Insert(stackIndex, "1");
+                  }
+
+                  int movieId = VideoDatabase.GetMovieId(tmpPath + filename);
+                  int pathId = VideoDatabase.AddPath(path);
+                  VideoDatabase.AddFile(movieId, pathId, filename);
+                }
+                catch (Exception){}
+              }
             }
           }
         }
@@ -1635,6 +1674,7 @@ namespace MediaPortal.Video.Database
       int digit = 0; // Only first file in set will proceed (cd1, part1, dvd1...)
 
       var pattern = Util.Utils.StackExpression();
+      int stackSequence = 0; // seq 0 = [x-y], seq 1 = CD1, Part1....
 
       for (int i = 0; i < pattern.Length; i++)
       {
@@ -1667,6 +1707,37 @@ namespace MediaPortal.Video.Database
             movieDetails.File = filename;
             // Caution - Thumb creation spam no2 starts in GetInfoFromIMDB
             GetInfoFromIMDB(progress, ref movieDetails, fuzzyMatching, getActors);
+          }
+          else if (digit > 1) // Add DVD or BD stack folders to existing movie
+          {
+            string path, filename;
+            string tmpPath = string.Empty;
+            DatabaseUtility.Split(file, out path, out filename);
+
+            if (path.ToUpperInvariant().Contains(@"\VIDEO_TS") || path.ToUpperInvariant().Contains(@"\BDMV"))
+            {
+              try
+              {
+                if (stackSequence == 0)
+                {
+                  string strReplace = "[" + digit;
+                  int stackIndex = path.LastIndexOf(strReplace);
+                  tmpPath = path.Remove(stackIndex, 2);
+                  tmpPath = tmpPath.Insert(stackIndex, "[1");
+                }
+                else
+                {
+                  int stackIndex = path.LastIndexOf(digit.ToString());
+                  tmpPath = path.Remove(stackIndex, 1);
+                  tmpPath = tmpPath.Insert(stackIndex, "1");
+                }
+
+                int movieId = VideoDatabase.GetMovieId(tmpPath + filename);
+                int pathId = VideoDatabase.AddPath(path);
+                VideoDatabase.AddFile(movieId, pathId, filename);
+              }
+              catch (Exception) { }
+            }
           }
         }
       }

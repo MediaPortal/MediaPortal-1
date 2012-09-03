@@ -816,7 +816,7 @@ namespace MediaPortal.GUI.Settings
         }
 
         IMDBFetcher fetcher = new IMDBFetcher(this);
-        fetcher.FetchNfo(nfoFiles);
+        fetcher.FetchNfo(nfoFiles, btnSkipalreadyexisting.Selected, btnRefreshexistingonly.Selected);
       }
     }
 
@@ -923,8 +923,9 @@ namespace MediaPortal.GUI.Settings
     private void GetNfoFiles(string path, ref ArrayList nfoFiles)
     {
       string[] files = Directory.GetFiles(path, "*.nfo", SearchOption.AllDirectories);
+      var sortedFiles = files.OrderBy(f => f);
 
-      foreach (string file in files)
+      foreach (string file in sortedFiles)
       {
         nfoFiles.Add(file);
       }

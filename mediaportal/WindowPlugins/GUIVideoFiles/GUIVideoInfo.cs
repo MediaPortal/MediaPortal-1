@@ -353,7 +353,7 @@ namespace MediaPortal.GUI.Video
         
         if (_useOnlyNfoScraper && _addToDatabase)
         {
-          VideoDatabase.ImportNfoUsingVideoFile(_currentMovie.VideoFileName);
+          VideoDatabase.ImportNfoUsingVideoFile(_currentMovie.VideoFileName, false, false);
           VideoDatabase.GetMovieInfo(_currentMovie.VideoFileName, ref _currentMovie);
           UpdateMovieAfterRefresh();
         }

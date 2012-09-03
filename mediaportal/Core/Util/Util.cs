@@ -1509,6 +1509,36 @@ namespace MediaPortal.Util
       return false;
     }
 
+    public static bool PathShouldStack(string strPath1, string strPath2)
+    {
+      if (strPath1 == null) return false;
+      if (strPath2 == null) return false;
+      try
+      {
+        var stackReg = StackExpression();
+
+        // Check all the patterns
+        for (int i = 0; i < stackReg.Length; i++)
+        {
+          // See if we can find the special patterns in both paths
+          if (stackReg[i].IsMatch(strPath1) && stackReg[i].IsMatch(strPath2))
+          {
+            // Both strings had the special pattern. Now see if the paths are the same.
+            // Do this by removing the special pattern and compare the remains.
+            if (stackReg[i].Replace(strPath1, "") == stackReg[i].Replace(strPath2, ""))
+            {
+              // It was a match so stack it
+              return true;
+            }
+          }
+        }
+      }
+      catch (Exception) { }
+
+      // No matches were found, so no stacking
+      return false;
+    }
+
     public static void RemoveStackEndings(ref string strFileName)
     {
       if (strFileName == null) return;
@@ -1538,7 +1568,7 @@ namespace MediaPortal.Util
       //
       if (StackRegExpressions != null) return StackRegExpressions;
       string[] pattern = {
-                           "\\[(?<digit>[0-9]{1,2})-[0-9]{1,2}\\]",
+                           "\\s*\\[(?<digit>[0-9]{1,2})-[0-9]{1,2}\\]",
                            "\\s*[-_+ ]\\({0,1}(cd|dis[ck]|part|dvd)[-_+ ]{0,1}(?<digit>[0-9]{1,2})\\){0,1}"
                          };
 

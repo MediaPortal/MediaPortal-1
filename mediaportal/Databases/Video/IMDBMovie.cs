@@ -965,6 +965,14 @@ namespace MediaPortal.Video.Database
 
             VideoDatabase.GetVideoFilesMediaInfo(fileName, ref mInfo, false);
             info.VideoFileName = fileName;
+
+            if (string.IsNullOrEmpty(info.VideoFilePath) || info.VideoFilePath == Strings.Unknown)
+            {
+              string tmpFile = string.Empty;
+              Util.Utils.Split(fileName, out path, out tmpFile);
+              info.VideoFilePath = path;
+            }
+
             info.Path = path;
             info.MediaInfo = mInfo;
             info.Duration = VideoDatabase.GetMovieDuration(info.ID);
@@ -1028,16 +1036,17 @@ namespace MediaPortal.Video.Database
 
           if (!System.IO.File.Exists(nfoFile))
           {
-            nfoFile = path + @"\" + System.IO.Path.GetFileNameWithoutExtension(path) + ".nfo";
+            string noStackPath = path;
+            Util.Utils.RemoveStackEndings(ref noStackPath);
+            nfoFile = path + @"\" + System.IO.Path.GetFileNameWithoutExtension(noStackPath) + ".nfo";
           }
         }
         else
         {
           nfoFile = System.IO.Path.ChangeExtension(filename, ".nfo");
+          Util.Utils.RemoveStackEndings(ref nfoFile);
         }
-
-        Util.Utils.RemoveStackEndings(ref nfoFile);
-
+        
         if (!System.IO.File.Exists(nfoFile))
         {
           return;

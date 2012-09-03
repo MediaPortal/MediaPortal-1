@@ -590,9 +590,9 @@ namespace MediaPortal.Video.Database
 
     #region nfo handler
 
-    public static void ImportNfo(string nfoFile)
+    public static void ImportNfo(string nfoFile, bool skipExisting, bool refreshdbOnly)
     {
-      _database.ImportNfo(nfoFile);
+      _database.ImportNfo(nfoFile, skipExisting, refreshdbOnly);
     }
 
     public static bool MakeNfo (int movieId)
@@ -600,9 +600,9 @@ namespace MediaPortal.Video.Database
       return _database.MakeNfo(movieId);
     }
 
-    public static void ImportNfoUsingVideoFile(string videoFile)
+    public static void ImportNfoUsingVideoFile(string videoFile, bool skipExisting, bool refreshdbOnly)
     {
-      _database.ImportNfoUsingVideoFile(videoFile);
+      _database.ImportNfoUsingVideoFile(videoFile, skipExisting, refreshdbOnly);
     }
 
     #endregion
