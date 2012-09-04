@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>703</id>
+  <defaultcontrol>42</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <controls>
+    <import>common.settings.xml</import>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>244</posX>
+      <posY>96</posY>
+      <height>416</height>
+      <width>244</width>
+      <texture>backslide.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>buttons</description>
+      <type>group</type>
+      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="70" end="-300,0">WindowClose</animation>
+      <posX>261</posX>
+      <posY>128</posY>
+      <layout>StackLayout(0, Horizontal, True)</layout>
+      <control>
+        <description>Playlist</description>
+        <type>button</type>
+        <id>42</id>
+        <label>851</label>
+        <width>196</width>
+        <onup>17</onup>
+      </control>
+      <control>
+        <description>Subtitles On/Off</description>
+        <type>checkbutton</type>
+        <id>31</id>
+        <label>1196</label>
+        <width>196</width>
+      </control>
+      <control>
+        <description>Play all</description>
+        <type>button</type>
+        <id>34</id>
+        <label>300192</label>
+        <width>196</width>
+      </control>
+      <control>
+        <description>Share folders</description>
+        <type>button</type>
+        <id>40</id>
+        <label>300071</label>
+        <width>196</width>
+      </control>
+      <control>
+        <description>Database</description>
+        <type>button</type>
+        <id>41</id>
+        <label>300161</label>
+        <width>196</width>
+      </control>
+      <control>
+        <description>Extensions</description>
+        <type>button</type>
+        <id>35</id>
+        <label>300162</label>
+        <width>196</width>
+      </control>
+      <control>
+        <description>Video</description>
+        <type>button</type>
+        <id>24</id>
+        <label>2134</label>
+        <width>196</width>
+      </control>
+      <control>
+        <description>Audio</description>
+        <type>button</type>
+        <id>25</id>
+        <label>2135</label>
+        <width>196</width>
+        <ondown>42</ondown>
+      </control>
+    </control>
+  </controls>
+</window>

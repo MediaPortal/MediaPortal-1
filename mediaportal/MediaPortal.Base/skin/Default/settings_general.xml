@@ -1,104 +1,76 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
-  <id>705</id>
-  <defaultcontrol>10</defaultcontrol>
-  <allowoverlay>yes</allowoverlay>
+  <id>1016</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
-      <description>buttons</description>
-      <type>group</type>
-      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
-      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
-      <posX>55</posX>
-      <posY>150</posY>
-      <control>
-        <description>Skin</description>
-        <type>button</type>
-        <id>10</id>
-        <posX>55</posX>
-        <posY>150</posY>
-        <label>166</label>
-        <onup>17</onup>
-      </control>
-      <control>
-        <description>theme</description>
-        <type>menubutton</type>
-        <id>15</id>
-        <posX>55</posX>
-        <posY>186</posY>
-        <mode>dialoglist</mode>
-        <dialogTitle>90</dialogTitle>
-        <valueTextInButton>yes</valueTextInButton>
-        <valuePrefixText>94</valuePrefixText>
-        <textXOff>5</textXOff>
-        <onclick>#(skin.settheme(#selectedlabel15,15))</onclick>
-        <binding>#skin.currenttheme</binding>
-        <subitems>
-          <subitem>#skin.themes</subitem>
-        </subitems>
-      </control>
-      <control>
-        <description>Language</description>
-        <type>button</type>
-        <id>11</id>
-        <posX>55</posX>
-        <posY>222</posY>
-        <label>248</label>
-      </control>
-      <control>
-        <description>Start in fullscreen mode</description>
-        <type>togglebutton</type>
-        <id>12</id>
-        <posX>55</posX>
-        <posY>258</posY>
-        <label>1047</label>
-      </control>
-      <control>
-        <description>Screensaver</description>
-        <type>togglebutton</type>
-        <id>13</id>
-        <posX>55</posX>
-        <posY>294</posY>
-        <label>360</label>
-      </control>
-      <control>
-        <description>Skip steps screen button</description>
-        <type>button</type>
-        <id>21</id>
-        <posX>55</posX>
-        <posY>330</posY>
-        <label>6024</label>
-        <hyperlink>708</hyperlink>
-        <ondown>99</ondown>
-      </control>
-    </control>
-    <control>
-      <description>Skin Preview</description>
+      <description>background</description>
       <type>image</type>
       <id>1</id>
-      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
-      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
-      <posX>309</posX>
-      <posY>114</posY>
-      <width>360</width>
-      <height>302</height>
-      <texture>LCD.png</texture>
+      <posX>244</posX>
+      <posY>96</posY>
+      <height>416</height>
+      <width>244</width>
+      <texture>backslide.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
     </control>
     <control>
-      <description>Skin Preview</description>
-      <type>image</type>
-      <id>20</id>
-      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
-      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
-      <posX>320</posX>
-      <posY>130</posY>
-      <width>337</width>
-      <height>270</height>
-      <texture>preview.png</texture>
+      <description>buttons</description>
+      <type>group</type>
+      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="70" end="-300,0">WindowClose</animation>
+      <posX>261</posX>
+      <posY>128</posY>
+      <layout>StackLayout(0, Horizontal, True)</layout>
+      <control>
+        <description>General MP Settings</description>
+        <type>button</type>
+        <id>2</id>
+        <label>300080</label>
+        <width>196</width>
+        <onup>42</onup>
+      </control>
+      <control>
+        <description>Startup settings</description>
+        <type>button</type>
+        <id>3</id>
+        <label>300081</label>
+        <width>196</width>
+      </control>
+      <control>
+        <description>Resume settings</description>
+        <type>button</type>
+        <id>4</id>
+        <label>300082</label>
+        <width>196</width>
+      </control>
+      <control>
+        <description>Volume settings</description>
+        <type>button</type>
+        <id>5</id>
+        <label>101007</label>
+        <width>196</width>
+      </control>
+      <control>
+        <description>RefreshRate settings</description>
+        <type>button</type>
+        <id>6</id>
+        <label>300083</label>
+        <width>196</width>
+      </control>
+      <control>
+        <description>AUtoplay</description>
+        <type>button</type>
+        <id>7</id>
+        <label>713</label>
+        <width>196</width>
+      </control>
     </control>
   </controls>
 </window>
