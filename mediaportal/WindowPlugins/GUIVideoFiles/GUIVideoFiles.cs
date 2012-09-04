@@ -3580,7 +3580,6 @@ namespace MediaPortal.GUI.Video
 
               if (Util.Utils.PathShouldStack(movie.VideoFilePath, strPath))
               {
-                //items[i].Path = movie.VideoFileName;
                 allFiles.Add(items[i]);
               }
             }
@@ -3591,10 +3590,16 @@ namespace MediaPortal.GUI.Video
         foreach (GUIListItem item in allFiles)
         {
           IMDBMovie movie = (IMDBMovie) item.AlbumInfoTag;
-          string path, filename;
-          DatabaseUtility.Split(movie.VideoFileName, out path, out filename);
-          int pathId = VideoDatabase.AddPath(path);
-          VideoDatabase.AddFile(movieId, pathId, filename);
+          int idFile = VideoDatabase.GetFileId(movie.VideoFileName);
+
+          if (idFile == -1)
+          {
+            string path, filename;
+            DatabaseUtility.Split(movie.VideoFileName, out path, out filename);
+            int pathId = VideoDatabase.AddPath(path);
+            VideoDatabase.AddFile(movieId, pathId, filename);
+          }
+
           files.Add(movie.VideoFileName);
         }
       }
@@ -4039,7 +4044,7 @@ namespace MediaPortal.GUI.Video
         nfoFiles.Add(file);
       }
     }
-
+    
     #endregion
 
     #region Thread Set thumbs
