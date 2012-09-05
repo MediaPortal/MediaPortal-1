@@ -32,6 +32,7 @@ CEncryptionAnalyser::CEncryptionAnalyser(LPUNKNOWN pUnk, HRESULT *phr)
   : CUnknown( NAME ("MpTsEncryptionAnalyser"), pUnk)
 {
   m_mPids.clear();
+  m_pCallBack = NULL;
 }
 
 CEncryptionAnalyser::~CEncryptionAnalyser(void)

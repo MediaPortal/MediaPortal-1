@@ -67,8 +67,8 @@ class CPmtGrabber : public CUnknown, public CSectionDecoder, public IPmtGrabber,
     byte m_pmtData[MAX_SECTION_LENGTH];
     int m_iPmtVersion;
     int m_iPmtLength;
-    int m_iServiceId;         // The service ID passed to us.
-    int m_iCurrentServiceId;  // The service ID that we're actually monitoring.
+    int m_iOriginalServiceId;   // The service ID passed to us.
+    int m_iCurrentServiceId;    // The service ID that we're actually monitoring.
     CSection m_pmtPrevSection;
     CPatParser m_patParser;
     CSdtParser m_sdtParser;

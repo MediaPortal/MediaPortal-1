@@ -48,7 +48,7 @@ class CVctParser : public CSectionDecoder
   private:
     void DecodeServiceLocationDescriptor(byte* b, int length, int* hasVideo, int* hasAudio);
     void DecodeMultipleStrings(byte* b, int length, vector<char*>* strings);
-    void DecodeString(byte* b, int compression_type, int mode, int number_bytes, char* string);
+    void DecodeString(byte* b, int compression_type, int mode, int number_bytes, char** string);
 
     IVctCallBack* m_pCallBack;
     map<unsigned int, bool> m_mSeenSections;

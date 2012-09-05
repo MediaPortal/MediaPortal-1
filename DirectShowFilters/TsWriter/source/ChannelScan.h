@@ -67,11 +67,12 @@ DECLARE_INTERFACE_(ITsChannelScan, IUnknown)
                          char** serviceName,
                          char** providerName,
                          char** networkNames,
+                         char** bouquetNames,
                          char** logicalChannelNumber,
                          int* serviceType,
                          int* hasVideo,
                          int* hasAudio,
-                         bool* isEncrypted,
+                         int* isEncrypted,
                          int* pmtPid)PURE;
 
   // NIT scanning
@@ -113,11 +114,12 @@ class CChannelScan : public CUnknown, public ITsChannelScan, IPatCallBack, IPmtC
                              char** serviceName,
                              char** providerName,
                              char** networkNames,
+                             char** bouquetNames,
                              char** logicalChannelNumber,
                              int* serviceType,
                              int* hasVideo,
                              int* hasAudio,
-                             bool* isEncrypted,
+                             int* isEncrypted,
                              int* pmtPid);
 
 
@@ -145,6 +147,7 @@ class CChannelScan : public CUnknown, public ITsChannelScan, IPatCallBack, IPmtC
 
   private:
     void CleanUp();
+    void ConcatNames(vector<char*>* names, char* destination, int maxLength, int* length);
 
     CMpTsFilter* m_pFilter;
     CCriticalSection m_section;

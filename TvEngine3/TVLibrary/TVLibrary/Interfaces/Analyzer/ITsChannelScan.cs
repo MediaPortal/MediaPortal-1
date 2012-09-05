@@ -115,12 +115,13 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="serviceId">The service's ID.</param>
     /// <param name="serviceName">The name of the service.</param>
     /// <param name="providerName">The name of the service's provider.</param>
-    /// <param name="networkNames">The names of the networks and bouquets that the service is included in. Names are ",," separated.</param>
+    /// <param name="networkNames">The names of the networks that the service is included in. Names are ",," separated.</param>
+    /// <param name="bouquetNames">The names of the bouquets that the service is included in. Names are ",," separated.</param>
     /// <param name="logicalChannelNumber">The logical channel number associated with the service.</param>
     /// <param name="serviceType">The type of the service (eg. TV, radio).</param>
     /// <param name="hasVideo">The number of video streams associated with the service.</param>
     /// <param name="hasAudio">The number of audio streams associated with the service.</param>
-    /// <param name="isEncrypted">An indicator of whether the service is encrypted or not.</param>
+    /// <param name="isEncrypted"><c>One</c> if the service is encrypted, otherwise <c>zero</c>.</param>
     /// <param name="pmtPid">The service's PMT PID.</param>
     /// <returns>an HRESULT indicating whether the service details were successfully retrieved</returns>
     [PreserveSig]
@@ -131,11 +132,12 @@ namespace TvLibrary.Interfaces.Analyzer
                           out IntPtr serviceName,
                           out IntPtr providerName,
                           out IntPtr networkNames,
+                          out IntPtr bouquetNames,
                           out IntPtr logicalChannelNumber,
                           out int serviceType,
                           out int hasVideo,
                           out int hasAudio,
-                          out bool isEncrypted,
+                          out int isEncrypted,
                           out int pmtPid);
 
     /// <summary>
@@ -173,7 +175,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="index">The multiplex index. The value of this parameter should be in the range 0..[GetMultiplexCount() - 1] (inclusive).</param>
     /// <param name="networkId">The multiplex's network ID.</param>
     /// <param name="transportStreamId">The multiplex's transport stream ID.</param>
-    /// <param name="type">The multiplex type (eg. cable, satellite, terrestrial).</param>
+    /// <param name="type">The multiplex type (eg. cable, satellite, terrestrial), as per the TV database tuning detail type.</param>
     /// <param name="frequency">The multiplex frequency, in kHz.</param>
     /// <param name="polarisation">The multiplex polarisation. Only applicable for DVB-S/2 multiplexes.</param>
     /// <param name="modulation">The multiplex modulation scheme. Only applicable for DVB-S/2 and DVB-C multiplexes.</param>

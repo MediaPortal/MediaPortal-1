@@ -268,7 +268,10 @@ namespace TvLibrary.Channels
     public override object Clone()
     {
       DVBSChannel ch = (DVBSChannel)this.MemberwiseClone();
-      ch.LnbType = (ILnbType)ch.LnbType.Clone();
+      if (this.LnbType != null)
+      {
+        ch.LnbType = (ILnbType)this.LnbType.Clone();
+      }
       return ch;
     }
 

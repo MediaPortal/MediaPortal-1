@@ -1117,20 +1117,21 @@ void CDiskRecorder::WriteFakePAT()
 
 void CDiskRecorder::CreateFakePMT(byte* realPmt)
 {
-  m_fakePmt[0] = 2; // table id - standard for PMT
-  m_fakePmt[1] = 0; // section syntax indicator and section length - we fill these once we know what the section length should be
-  m_fakePmt[2] = 0;
-  m_fakePmt[3] = (DR_FAKE_SERVICE_ID >> 8) & 0xff;
-  m_fakePmt[4] = DR_FAKE_SERVICE_ID & 0xff;
-  m_fakePmt[5] = ((m_iPmtVersion & 0x1f) << 1) | 0xc1;
-  m_fakePmt[6] = 0; // section number - standard for PMT
-  m_fakePmt[7] = 0; // last section number - standard for PMT
-  m_fakePmt[8] = 0; // PCR PID - we fill this once we know what the fake PID is
-  m_fakePmt[9] = 0;
-  m_fakePmt[10] = (char)0xf0; // program info length - we won't include program descriptors
-  m_fakePmt[11] = 0;
+  m_fakePmt[0] = 0; // adaption field length
+  m_fakePmt[1] = 2; // table id - standard for PMT
+  m_fakePmt[2] = 0; // section syntax indicator and section length - we fill these once we know what the section length should be
+  m_fakePmt[3] = 0;
+  m_fakePmt[4] = (DR_FAKE_SERVICE_ID >> 8) & 0xff;
+  m_fakePmt[5] = DR_FAKE_SERVICE_ID & 0xff;
+  m_fakePmt[6] = ((m_iPmtVersion & 0x1f) << 1) | 0xc1;
+  m_fakePmt[7] = 0; // section number - standard for PMT
+  m_fakePmt[8] = 0; // last section number - standard for PMT
+  m_fakePmt[9] = 0; // PCR PID - we fill this once we know what the fake PID is
+  m_fakePmt[10] = 0;
+  m_fakePmt[11] = 0xf0; // program info length - we won't include program descriptors
+  m_fakePmt[12] = 0;
 
-  int fakePmtOffset = 12;
+  int fakePmtOffset = 13;
   int realPmtOffset = 12;
   int realPmtEndOfSection = ((realPmt[1] & 0xf) << 8) + realPmt[2] - 1;
   int realPmtProgramInfoLength = ((realPmt[10] & 0xf) << 8) + realPmt[11];
@@ -1210,7 +1211,7 @@ void CDiskRecorder::CreateFakePMT(byte* realPmt)
       m_fakePmt[fakePmtOffset++] = pi.fakePid & 0xff;
       m_fakePmt[fakePmtOffset++] = ((es_info_length >> 8) & 0xf) | 0xf0;
       m_fakePmt[fakePmtOffset++] = es_info_length & 0xff;
-      memcpy(&m_fakePmt[fakePmtOffset], realPmt, es_info_length);
+      memcpy(&m_fakePmt[fakePmtOffset], &realPmt[realPmtOffset], es_info_length);
       fakePmtOffset += es_info_length;
 
       if (pi.elementaryPid == m_pcrPid)
@@ -1226,16 +1227,18 @@ void CDiskRecorder::CreateFakePMT(byte* realPmt)
     realPmtOffset += es_info_length;
   }
 
-  // Fill in the section length. This should include the 4 bytes of CRC, but not the
-  // table ID or section length bytes.
-  m_fakePmt[1] = (((fakePmtOffset + 1) >> 8) & 0xf) | 0xb0;
-  m_fakePmt[2] = (fakePmtOffset + 1) & 0xff;
+  // Fill in the section length. At this point, fakePmtOffset is the length of what we've
+  // created. The section length should be that value, minus the adaption field length,
+  // table ID and section length bytes, plus the four CRC bytes that we haven't yet written.
+  m_fakePmt[2] = ((fakePmtOffset >> 8) & 0xf) | 0xb0;
+  m_fakePmt[3] = (fakePmtOffset & 0xff);
 
   // Fill in the PCR PID.
-  m_fakePmt[8] = ((DR_FAKE_PCR_PID >> 8) & 0x1f) | 0xe0;
-  m_fakePmt[9] = DR_FAKE_PCR_PID & 0xff;
+  m_fakePmt[9] = ((DR_FAKE_PCR_PID >> 8) & 0x1f) | 0xe0;
+  m_fakePmt[10] = DR_FAKE_PCR_PID & 0xff;
 
-  DWORD crc = crc32(m_fakePmt, fakePmtOffset);
+  // The CRC covers everything we've written so far, except the one adaption field length byte.
+  DWORD crc = crc32((char*)&m_fakePmt[1], fakePmtOffset - 1);
   m_fakePmt[fakePmtOffset++] = ((crc >> 24) & 0xff);
   m_fakePmt[fakePmtOffset++] = ((crc >> 16) & 0xff);
   m_fakePmt[fakePmtOffset++] = ((crc >> 8) & 0xff);
@@ -1244,7 +1247,7 @@ void CDiskRecorder::CreateFakePMT(byte* realPmt)
 
 void CDiskRecorder::WriteFakePMT()
 {
-  int fakePmtLength = ((m_fakePmt[1] & 0xf) << 8) + m_fakePmt[2] + 3; // includes table ID, section length bytes and CRC
+  int fakePmtLength = ((m_fakePmt[2] & 0xf) << 8) + m_fakePmt[3] + 4; // includes adaption field length, table ID, section length bytes, PMT and CRC
   int pointer = 0;
   byte packet[188];
   packet[0] = 0x47;  // sync byte

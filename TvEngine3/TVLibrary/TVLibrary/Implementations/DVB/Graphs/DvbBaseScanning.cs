@@ -24,6 +24,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
 using DirectShowLib.BDA;
+using TvDatabase;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
@@ -139,22 +140,22 @@ namespace TvLibrary.Implementations.DVB
             IntPtr serviceNamePtr;
             IntPtr providerNamePtr;
             IntPtr networkNamesPtr;
+            IntPtr bouquetNamesPtr;
             IntPtr logicalChannelNumberPtr;
             int serviceType;
             int hasVideo;
             int hasAudio;
-            bool isEncrypted;
+            int isEncrypted;
             int pmtPid;
             _analyzer.GetServiceDetail(i,
                           out networkId, out transportStreamId, out serviceId,
-                          out serviceNamePtr, out providerNamePtr, out networkNamesPtr, out logicalChannelNumberPtr,
+                          out serviceNamePtr, out providerNamePtr, out networkNamesPtr, out bouquetNamesPtr, out logicalChannelNumberPtr,
                           out serviceType, out hasVideo, out hasAudio, out isEncrypted, out pmtPid);
 
             string serviceName = DvbTextConverter.Convert(serviceNamePtr, "");
             string providerName = DvbTextConverter.Convert(providerNamePtr, "");
-            DVB_MMI.DumpBinary(networkNamesPtr, 0, Marshal.SizeOf(networkNamesPtr));
             string logicalChannelNumber = Marshal.PtrToStringAnsi(logicalChannelNumberPtr);
-            Log.Log.Write("{0}) {1,-32} provider = {2,-16}, LCN = {3,-7}, NID = 0x{4:4x}, TSID = 0x{5:4x}, SID = 0x{6:4x}, type = {7}, has video = {8}, has audio = {9}, is encrypted = {10}, PMT PID = 0x{11:4x}",
+            Log.Log.Write("{0}) {1,-32} provider = {2,-16}, LCN = {3,-7}, NID = 0x{4:x4}, TSID = 0x{5:x4}, SID = 0x{6:x4}, type = {7}, has video = {8}, has audio = {9}, is encrypted = {10}, PMT PID = 0x{11:x4}",
                             i + 1, serviceName, providerName, logicalChannelNumber, networkId, transportStreamId, serviceId,
                             serviceType, hasVideo, hasAudio, isEncrypted, pmtPid);
 
@@ -181,7 +182,7 @@ namespace TvLibrary.Implementations.DVB
             newChannel.IsTv = IsTvService(serviceType);
             newChannel.IsRadio = IsRadioService(serviceType);
             newChannel.LogicalChannelNumber = Int32.Parse(logicalChannelNumber); //TODO this won't work for ATSC x.y LCNs. LCN must be a string.
-            newChannel.FreeToAir = !isEncrypted;
+            newChannel.FreeToAir = (isEncrypted == 0);
 
             if (serviceName.Length == 0)
             {
@@ -254,14 +255,17 @@ namespace TvLibrary.Implementations.DVB
           int multiplexCount;
           _analyzer.GetMultiplexCount(out multiplexCount);
           Log.Log.Write("Found {0} multiplex(es), service information available = {1}...", multiplexCount, isServiceInfoAvailable);
+
+          // Channels found will contain a distinct list of multiplex tuning details.
           List<IChannel> channelsFound = new List<IChannel>();
+          // Multiplexes found will contain a dictionary of ONID + TSID => multiplex tuning details.
           Dictionary<uint, IChannel> multiplexesFound = new Dictionary<uint, IChannel>();
 
           for (int i = 0; i < multiplexCount; ++i)
           {
             int networkId;
             int transportStreamId;
-            int type;
+            int type;   // This is as-per the TV Server channel types.
             int frequency;
             int polarisation;
             int modulation;
@@ -274,7 +278,14 @@ namespace TvLibrary.Implementations.DVB
                           out frequency, out polarisation, out modulation, out symbolRate, out bandwidth, out innerFecRate, out rollOff);
 
             DVBBaseChannel ch;
-            if (type == 0)  //TODO switch to DB types, and create an enum of channel types
+            if (type == 2)
+            {
+              DVBCChannel dvbcChannel = new DVBCChannel();
+              dvbcChannel.ModulationType = (ModulationType)modulation;
+              dvbcChannel.SymbolRate = symbolRate;
+              ch = dvbcChannel;
+            }
+            else if (type == 3)
             {
               DVBSChannel dvbsChannel = new DVBSChannel();
               dvbsChannel.RollOff = (RollOff)rollOff;
@@ -298,16 +309,21 @@ namespace TvLibrary.Implementations.DVB
               dvbsChannel.SymbolRate = symbolRate;
               dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)innerFecRate;
               dvbsChannel.Polarisation = (Polarisation)polarisation;
+
+              // We're missing an all important detail for the channel - the LNB type.
+              DVBSChannel currentChannel = channel as DVBSChannel;
+              if (currentChannel != null)
+              {
+                dvbsChannel.LnbType = (ILnbType)currentChannel.LnbType.Clone();
+              }
+              else
+              {
+                dvbsChannel.LnbType = LnbType.Retrieve(1);  // default: universal LNB
+              }
+
               ch = dvbsChannel;
             }
-            else if (type == 1)
-            {
-              DVBCChannel dvbcChannel = new DVBCChannel();
-              dvbcChannel.ModulationType = (ModulationType)modulation;
-              dvbcChannel.SymbolRate = symbolRate;
-              ch = dvbcChannel;
-            }
-            else if (type == 2)
+            else if (type == 4)
             {
               DVBTChannel dvbtChannel = new DVBTChannel();
               dvbtChannel.Bandwidth = bandwidth;
@@ -319,16 +335,32 @@ namespace TvLibrary.Implementations.DVB
             }
             ch.Frequency = frequency;
 
-            channelsFound.Add(ch);
-            uint key = (uint)((uint)networkId << 16) + (uint)transportStreamId;
-            if (multiplexesFound.ContainsKey(key))
+            bool isUniqueTuning = true;
+            foreach (IChannel mux in channelsFound)
             {
-              Log.Log.WriteFile("Tuning details for NID 0x{0:x} and TSID 0x{1:x} are ambiguous, disregarding service information", networkId, transportStreamId);
-              isServiceInfoAvailable = false;
+              if (mux.Equals(ch))
+              {
+                isUniqueTuning = false;
+                break;
+              }
             }
-            else
+            if (isUniqueTuning)
             {
-              multiplexesFound.Add(key, ch);
+              channelsFound.Add(ch);
+            }
+
+            if (isServiceInfoAvailable)
+            {
+              uint key = (uint)((uint)networkId << 16) + (uint)transportStreamId;
+              if (multiplexesFound.ContainsKey(key))
+              {
+                Log.Log.WriteFile("Tuning details for NID 0x{0:x} and TSID 0x{1:x} are ambiguous, disregarding service information", networkId, transportStreamId);
+                isServiceInfoAvailable = false;
+              }
+              else
+              {
+                multiplexesFound.Add(key, ch);
+              }
             }
           }
 
@@ -353,22 +385,23 @@ namespace TvLibrary.Implementations.DVB
             IntPtr serviceNamePtr;
             IntPtr providerNamePtr;
             IntPtr networkNamesPtr;
+            IntPtr bouquetNamesPtr;
             IntPtr logicalChannelNumberPtr;
             int serviceType;
             int hasVideo;
             int hasAudio;
-            bool isEncrypted;
+            int isEncrypted;
             int pmtPid;
             _analyzer.GetServiceDetail(i,
                           out networkId, out transportStreamId, out serviceId,
-                          out serviceNamePtr, out providerNamePtr, out networkNamesPtr, out logicalChannelNumberPtr,
+                          out serviceNamePtr, out providerNamePtr, out networkNamesPtr, out bouquetNamesPtr, out logicalChannelNumberPtr,
                           out serviceType, out hasVideo, out hasAudio, out isEncrypted, out pmtPid);
 
             string serviceName = DvbTextConverter.Convert(serviceNamePtr, "");
             string providerName = DvbTextConverter.Convert(providerNamePtr, "");
             DVB_MMI.DumpBinary(networkNamesPtr, 0, Marshal.SizeOf(networkNamesPtr));
             string logicalChannelNumber = Marshal.PtrToStringAnsi(logicalChannelNumberPtr);
-            Log.Log.Write("{0}) {1,-32} provider = {2,-16}, LCN = {3,-7}, NID = 0x{4:4x}, TSID = 0x{5:4x}, SID = 0x{6:4x}, type = {7}, has video = {8}, has audio = {9}, is encrypted = {10}, PMT PID = 0x{11:4x}",
+            Log.Log.Write("{0}) {1,-32} provider = {2,-16}, LCN = {3,-7}, NID = 0x{4:x4}, TSID = 0x{5:x4}, SID = 0x{6:x4}, type = {7}, has video = {8}, has audio = {9}, is encrypted = {10}, PMT PID = 0x{11:x4}",
                             i + 1, serviceName, providerName, logicalChannelNumber, networkId, transportStreamId, serviceId,
                             serviceType, hasVideo, hasAudio, isEncrypted, pmtPid);
 
@@ -403,7 +436,7 @@ namespace TvLibrary.Implementations.DVB
             newChannel.IsTv = IsTvService(serviceType);
             newChannel.IsRadio = IsRadioService(serviceType);
             newChannel.LogicalChannelNumber = Int32.Parse(logicalChannelNumber); //TODO this won't work for ATSC x.y LCNs. LCN must be a string.
-            newChannel.FreeToAir = !isEncrypted;
+            newChannel.FreeToAir = (isEncrypted == 0);
 
             if (serviceName.Length == 0)
             {

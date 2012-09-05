@@ -37,7 +37,7 @@ CPmtGrabber::CPmtGrabber(LPUNKNOWN pUnk, HRESULT *phr)
 {
   m_pCallBack = NULL;
   m_iPmtVersion = -1;
-  m_iServiceId = -1;
+  m_iOriginalServiceId = -1;
   m_iCurrentServiceId = -1;
   memset(m_pmtPrevSection.Data, 0, sizeof(m_pmtPrevSection.Data));
 }
@@ -59,7 +59,7 @@ STDMETHODIMP CPmtGrabber::SetPmtPid(int pmtPid, int serviceId)
     }
     else
     {
-      if (pmtPid == 0)
+      if (pmtPid != 0)
       {
         LogDebug("PmtGrabber: grab PMT for service 0x%x", serviceId);
       }
@@ -76,7 +76,7 @@ STDMETHODIMP CPmtGrabber::SetPmtPid(int pmtPid, int serviceId)
     m_patParser.Reset();
     m_patParser.SetCallBack(this);
     m_iPmtVersion = -1;   // Indicates that we haven't seen PMT yet.
-    m_iServiceId = serviceId;
+    m_iOriginalServiceId = serviceId;
     m_iCurrentServiceId = serviceId;
     memset(m_pmtPrevSection.Data, 0, sizeof(m_pmtPrevSection.Data));
   }
@@ -109,22 +109,30 @@ void CPmtGrabber::OnPatReceived(int serviceId, int pmtPid)
   CEnterCriticalSection enter(m_section);
   try
   {
-    LogDebug("PmtGrabber: PAT information for service 0x%x received, PMT PID = 0x%x", serviceId, pmtPid);
-    if (m_iServiceId == 0)  // ([originally] searching for any service...)
+    if (m_iOriginalServiceId == 0 && serviceId != m_iCurrentServiceId)  // ([originally] searching for any service and service ID has changed [again]...)
     {
-      if (GetPid() != 0)
+      if (GetPid() == 0)
       {
-        LogDebug("PmtGrabber: previously monitoring service 0x%x (PMT PID 0x%x), switching to monitor new service...", m_iCurrentServiceId, GetPid());
+        LogDebug("PmtGrabber: PAT information for service 0x%x received, PMT PID = 0x%x", serviceId, pmtPid);
+      }
+      else
+      {
+        LogDebug("PmtGrabber: previously monitoring service 0x%x (PMT PID 0x%x), switching to monitor new service 0x%x (PMT PID 0x%x)...", m_iCurrentServiceId, GetPid(), serviceId, pmtPid);
       }
       SetPmtPid(pmtPid, serviceId);
-      m_iServiceId = 0; // Important! Set back to zero so we keep monitoring for service ID changes.
+      m_iOriginalServiceId = 0; // Important! Set back to zero so we keep monitoring for service ID changes.
     }
-    else  // (searching for the PMT PID for a specific service...)
+    else if (serviceId == m_iCurrentServiceId && pmtPid != GetPid())    // (searching for the PMT PID for a specific service...)
     {
-      if (serviceId == m_iServiceId)
+      if (GetPid() == 0)
       {
-        SetPmtPid(pmtPid, serviceId);
+        LogDebug("PmtGrabber: PAT information for service 0x%x received, PMT PID = 0x%x", serviceId, pmtPid);
       }
+      else
+      {
+        LogDebug("PmtGrabber: previously monitoring PID 0x%x, switching to monitor PMT PID 0x%x...", GetPid(), pmtPid);
+      }
+      SetPmtPid(pmtPid, serviceId);
     }
   }
   catch (...)
@@ -258,7 +266,7 @@ void CPmtGrabber::OnNewSection(CSection& section)
         if (m_pCallBack != NULL)
         {
           LogDebug("PmtGrabber: do callback (PAT)...");
-          m_pCallBack->OnPmtReceived(GetPid(), m_iServiceId, 0);
+          m_pCallBack->OnPmtReceived(GetPid(), m_iOriginalServiceId, 0);
           m_sdtParser.SetCallBack(NULL);
           m_vctParser.SetCallBack(NULL);
         }
@@ -308,8 +316,8 @@ void CPmtGrabber::OnNewSection(CSection& section)
     currPmtParser.SetPid(GetPid());
     if (!currPmtParser.DecodePmtSection(section))
     {
-        LogDebug("PmtGrabber: error decoding PMT section for service 0x%x from PID 0x%x. Check your signal quality.", serviceId, GetPid());
-        return;
+      LogDebug("PmtGrabber: error decoding PMT section for service 0x%x from PID 0x%x. Check your signal quality.", serviceId, GetPid());
+      return;
     }
 
     bool pidsChanged = false;

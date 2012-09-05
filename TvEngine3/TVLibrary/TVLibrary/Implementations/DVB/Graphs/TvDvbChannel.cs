@@ -36,8 +36,7 @@ namespace TvLibrary.Implementations.DVB
   ///<summary>
   /// A base class for digital services ("subchannels").
   ///</summary>
-  public class TvDvbChannel : BaseSubChannel, ITeletextCallBack, IPmtCallBack, ICaCallBack, ITvSubChannel,
-                              IVideoAudioObserver
+  public class TvDvbChannel : BaseSubChannel, ITeletextCallBack, IPmtCallBack, ICaCallBack, ITvSubChannel, IVideoAudioObserver
   {
     #region variables
 
@@ -772,6 +771,7 @@ namespace TvLibrary.Implementations.DVB
           else if (StreamTypeHelper.IsAudioStream(es.LogicalStreamType))
           {
             _pids.Add(es.Pid);
+            _tsFilterInterface.AnalyserAddPid(_subChannelIndex, es.Pid);
             if (_currentAudioStream == null)
             {
               _currentAudioStream = new DVBAudioStream();
@@ -801,7 +801,6 @@ namespace TvLibrary.Implementations.DVB
                   _currentAudioStream.StreamType = AudioStreamType.Unknown;
                   break;
               }
-              _tsFilterInterface.AnalyserAddPid(_subChannelIndex, es.Pid);
             }
           }
         }

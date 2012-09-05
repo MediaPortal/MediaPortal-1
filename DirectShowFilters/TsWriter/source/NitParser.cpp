@@ -40,6 +40,72 @@ CNitParser::CNitParser(void)
 
 CNitParser::~CNitParser(void)
 {
+  CleanUp();
+}
+
+void CNitParser::CleanUp()
+{
+  vector<NitLcn*>::iterator lcnIt = m_vLcns.begin();
+  while (lcnIt != m_vLcns.end())
+  {
+    NitLcn* lcn = *lcnIt;
+    delete lcn;
+    lcn = NULL;
+    lcnIt++;
+  }
+  m_vLcns.clear();
+
+  vector<NitNameSet*>::iterator nameSetIt = m_vGroupNames.begin();
+  while (nameSetIt != m_vGroupNames.end())
+  {
+    NitNameSet* nameSet = *nameSetIt;
+
+    // Each of the names held in the name set were new'd individually, so
+    // they must also be deleted individually.
+    for (vector<char*>::iterator nameIt = nameSet->Names.begin(); nameIt != nameSet->Names.end(); nameIt++)
+    {
+      char* name = *nameIt;
+      delete[] name;
+      name = NULL;
+    }
+    nameSet->Names.clear();
+
+    // Now we can delete the name set.
+    delete nameSet;
+    nameSet = NULL;
+    nameSetIt++;
+  }
+  m_vGroupNames.clear();
+
+  vector<NitCableMultiplexDetail*>::iterator cableMuxIt = m_vCableMuxes.begin();
+  while (cableMuxIt != m_vCableMuxes.end())
+  {
+    NitCableMultiplexDetail* cableMux = *cableMuxIt;
+    delete cableMux;
+    cableMux = NULL;
+    cableMuxIt++;
+  }
+  m_vCableMuxes.clear();
+
+  vector<NitSatelliteMultiplexDetail*>::iterator satMuxIt = m_vSatelliteMuxes.begin();
+  while (satMuxIt != m_vSatelliteMuxes.end())
+  {
+    NitSatelliteMultiplexDetail* satMux = *satMuxIt;
+    delete satMux;
+    satMux = NULL;
+    satMuxIt++;
+  }
+  m_vSatelliteMuxes.clear();
+
+  vector<NitTerrestrialMultiplexDetail*>::iterator terrMuxIt = m_vTerrestrialMuxes.begin();
+  while (terrMuxIt != m_vTerrestrialMuxes.end())
+  {
+    NitTerrestrialMultiplexDetail* terrMux = *terrMuxIt;
+    delete terrMux;
+    terrMux = NULL;
+    terrMuxIt++;
+  }
+  m_vTerrestrialMuxes.clear();
 }
 
 void CNitParser::OnNewSection(CSection& sections)
@@ -153,11 +219,21 @@ void CNitParser::OnNewSection(CSection& sections)
 
       if (tag == 0x40)  // network name descriptor
       {
-        DecodeNameDescriptor(&section[pointer], length, &names);
+        char* name = NULL;
+        DecodeNameDescriptor(&section[pointer], length, &name);
+        if (name != NULL)
+        {
+          names.push_back(name);
+        }
       }
       else if (tag == 0x47) // bouquet name descriptor
       {
-        DecodeNameDescriptor(&section[pointer], length, &names);
+        char* name = NULL;
+        DecodeNameDescriptor(&section[pointer], length, &name);
+        if (name != NULL)
+        {
+          names.push_back(name);
+        }
       }
       else if (tag == 0x5b) // multilingual network name descriptor
       {
@@ -167,6 +243,7 @@ void CNitParser::OnNewSection(CSection& sections)
       {
         DecodeMultilingualNameDescriptor(&section[pointer], length, &names);
       }
+
       pointer += length;
     }
     pointer = endOfExtensionDescriptorLoop;
@@ -203,6 +280,7 @@ void CNitParser::OnNewSection(CSection& sections)
       NitTerrestrialMultiplexDetail terrestrialMux;
       map<int, int> lcns;
       vector<int> frequencies;
+      bool seenServiceList = false;
       while (pointer + 1 < endOfTransportDescriptors)
       {
         int tag = section[pointer++];
@@ -213,8 +291,10 @@ void CNitParser::OnNewSection(CSection& sections)
           LogDebug("%s: invalid descriptor length = %d, pointer = %d, end of transport descriptors = %d, end of section = %d, section length = %d", m_sName, length, pointer, endOfTransportDescriptors, endOfSection, section_length);
           return;
         }
+
         if (tag == 0x41)  // service list descriptor
         {
+          seenServiceList = true;
           vector<int> serviceIds;
           DecodeServiceListDescriptor(&section[pointer], length, &serviceIds);
           for (vector<int>::iterator it = serviceIds.begin(); it != serviceIds.end(); it++)
@@ -271,9 +351,32 @@ void CNitParser::OnNewSection(CSection& sections)
           DecodeLogicalChannelNumberDescriptor(&section[pointer], length, &lcns);
           AddLogicalChannelNumbers(original_network_id, transport_stream_id, &lcns);
         }
+        else if (tag == 0xe2) // Sky NZ logical channel number descriptor
+        {
+          DecodeLogicalChannelNumberDescriptor(&section[pointer], length, &lcns);
+          AddLogicalChannelNumbers(original_network_id, transport_stream_id, &lcns);
+        }
+
         pointer += length;
       }
+
+      // If we didn't see a service list descriptor, assume that the network/bouquet name(s)
+      // apply to all services with the given ONID + TSID combination.
+      if (!seenServiceList && names.size() > 0)
+      {
+        AddGroupNames(original_network_id, transport_stream_id, 0, &names);
+      }
     }
+
+    // Free strings held in the names vector. These have been new'd in DecodeNameDescriptor()
+    // and copied to new memory for each related service in AddGroupNames().
+    for (vector<char*>::iterator it = names.begin(); it != names.end(); it++)
+    {
+      char* name = *it;
+      delete[] name;
+      name = NULL;
+    }
+    names.clear();
 
     if (pointer != endOfSection)
     {
@@ -299,11 +402,8 @@ void CNitParser::Reset()
 {
   LogDebug("%s: reset", m_sName);
   CSectionDecoder::Reset();
+  CleanUp();
   m_mSeenSections.clear();
-  m_vSatelliteMuxes.clear();
-  m_vCableMuxes.clear();
-  m_vTerrestrialMuxes.clear();
-  m_vLcns.clear();
   m_bIsReady = false;
   LogDebug("%s: reset done", m_sName);
 }
@@ -336,13 +436,13 @@ NitMultiplexDetail* CNitParser::GetMultiplexDetail(int idx)
   return NULL;
 }
 
-int CNitParser::GetLogicialChannelNumber(int networkId, int transportId, int serviceId)
+int CNitParser::GetLogicialChannelNumber(int networkId, int transportStreamId, int serviceId)
 {
   for (unsigned int i = 0; i < m_vLcns.size(); i++)
   {
     NitLcn& lcn = *m_vLcns[i];
     if (lcn.NetworkId == networkId &&
-        lcn.TransportStreamId == transportId &&
+        lcn.TransportStreamId == transportStreamId &&
         lcn.ServiceId == serviceId)
     {
       return lcn.Lcn;
@@ -351,16 +451,16 @@ int CNitParser::GetLogicialChannelNumber(int networkId, int transportId, int ser
   return 10000;
 }
 
-vector<char*>* CNitParser::GetGroupNames(int networkId, int transportId, int serviceId)
+vector<char*>* CNitParser::GetGroupNames(int networkId, int transportStreamId, int serviceId)
 {
   for (unsigned int i = 0; i < m_vGroupNames.size(); i++)
   {
     NitNameSet& nameSet = *m_vGroupNames[i];
     if (nameSet.NetworkId == networkId &&
-        nameSet.TransportStreamId == transportId &&
+        nameSet.TransportStreamId == transportStreamId &&
         nameSet.ServiceId == serviceId)
     {
-      return &nameSet.Names;
+      return &(nameSet.Names);
     }
   }
   return NULL;
@@ -851,16 +951,18 @@ void CNitParser::DecodeServiceListDescriptor(byte* b, int length, vector<int>* s
   }
 }
 
-void CNitParser::DecodeNameDescriptor(byte* b, int length, vector<char*>* strings)
+void CNitParser::DecodeNameDescriptor(byte* b, int length, char** name)
 {
-  char string[DESCRIPTOR_MAX_STRING_LENGTH + 1];
-  int stringLength = min(length, DESCRIPTOR_MAX_STRING_LENGTH);
-  memcpy(&string, b, stringLength);
-  string[stringLength] = 0;  // NULL terminate
-  strings->push_back((char*)&string);
+  *name = new char[DESCRIPTOR_MAX_STRING_LENGTH + 1];
+  if (*name == NULL)
+  {
+    LogDebug("%s: failed to allocate memory in DecodeNameDescriptor()", m_sName);
+    return;
+  }
+  getString468A(b, length, *name, DESCRIPTOR_MAX_STRING_LENGTH);
 }
 
-void CNitParser::DecodeMultilingualNameDescriptor(byte* b, int length, vector<char*>* strings)
+void CNitParser::DecodeMultilingualNameDescriptor(byte* b, int length, vector<char*>* names)
 {
   int pointer = 0;
   while (pointer + 3 < length)
@@ -869,11 +971,14 @@ void CNitParser::DecodeMultilingualNameDescriptor(byte* b, int length, vector<ch
     pointer += 3;
     int network_name_length = b[pointer++];
 
-    char string[DESCRIPTOR_MAX_STRING_LENGTH + 1];
-    int stringLength = min(network_name_length, DESCRIPTOR_MAX_STRING_LENGTH);
-    memcpy(string, b, stringLength);
-    string[stringLength] = 0;  // NULL terminate
-    strings->push_back((char*)&string);
+    char* name = new char[DESCRIPTOR_MAX_STRING_LENGTH + 1];
+    if (name == NULL)
+    {
+      LogDebug("%s: failed to allocate memory in DecodeMultilingualNameDescriptor()", m_sName);
+      return;
+    }
+    getString468A(&b[pointer], network_name_length, name, DESCRIPTOR_MAX_STRING_LENGTH);
+    names->push_back(name);
 
     pointer += network_name_length;
   }
@@ -983,13 +1088,13 @@ void CNitParser::AddLogicalChannelNumbers(int nid, int tsid, map<int, int>* lcns
   {
     for (map<int, int>::iterator it = lcns->begin(); it != lcns->end(); it++)
     {
-      NitLcn lcn;
-      lcn.Lcn = it->second;
-      lcn.NetworkId = nid;
-      lcn.TransportStreamId = tsid;
-      lcn.ServiceId = it->first;
-      m_vLcns.push_back(&lcn);
-      LogDebug("%s: logical channel number, NID = 0x%x, TSID = 0x%x, SID = 0x%x, LCN = %d", m_sName, nid, tsid, it->first, it->second);
+      NitLcn* lcn = new NitLcn();
+      lcn->Lcn = it->second;
+      lcn->NetworkId = nid;
+      lcn->TransportStreamId = tsid;
+      lcn->ServiceId = it->first;
+      m_vLcns.push_back(lcn);
+      LogDebug("%s: logical channel number, ONID = 0x%x, TSID = 0x%x, SID = 0x%x, LCN = %d", m_sName, nid, tsid, it->first, it->second);
     }
   }
 }
@@ -1007,23 +1112,36 @@ void CNitParser::AddGroupNames(int nid, int tsid, int sid, vector<char*>* names)
     {
       for (vector<char*>::iterator it2 = names->begin(); it2 != names->end(); it2++)
       {
-        nameSet->Names.push_back(*it2);
+        char* name = new char[DESCRIPTOR_MAX_STRING_LENGTH + 1];
+        if (name == NULL)
+        {
+          LogDebug("%s: failed to allocate memory in AddGroupNames()", m_sName);
+          return;
+        }
+        strcpy(name, *it2);
+        LogDebug("%s: group name, ONID = 0x%x, TSID = 0x%x, SID = 0x%x, name = %s", m_sName, nid, tsid, sid, name);
+        nameSet->Names.push_back(name);
       }
       return;
     }
   }
-  NitNameSet n;
-  n.NetworkId = nid;
-  n.TransportStreamId = tsid;
-  n.ServiceId = sid;
-  // Copy the char* pointers. We don't copy the vector<char*>* pointer as more names
-  // could be added later, and that could change the name list for multiple services
-  // unintentionally.
+  NitNameSet* nameSet = new NitNameSet();
+  nameSet->NetworkId = nid;
+  nameSet->TransportStreamId = tsid;
+  nameSet->ServiceId = sid;
   for (vector<char*>::iterator it = names->begin(); it != names->end(); it++)
   {
-    n.Names.push_back(*it);
+    char* name = new char[DESCRIPTOR_MAX_STRING_LENGTH + 1];
+    if (name == NULL)
+    {
+      LogDebug("%s: failed to allocate memory in AddGroupNames()", m_sName);
+      return;
+    }
+    strcpy(name, *it);
+    LogDebug("%s: group name, ONID = 0x%x, TSID = 0x%x, SID = 0x%x, name = %s", m_sName, nid, tsid, sid, name);
+    nameSet->Names.push_back(name);
   }
-  m_vGroupNames.push_back(&n);
+  m_vGroupNames.push_back(nameSet);
 }
 
 void CNitParser::AddCableMux(NitCableMultiplexDetail* mux, vector<int>* frequencies)
@@ -1048,9 +1166,16 @@ void CNitParser::AddCableMux(NitCableMultiplexDetail* mux, vector<int>* frequenc
       }
       if (!alreadyAdded)
       {
-        m_vCableMuxes.push_back(mux);
-        LogDebug("%s: cable multiplex, frequency = %d kHz, modulation = %d, symbol rate = %d ks/s",
-                  m_sName, mux->Frequency, mux->Modulation, mux->SymbolRate);
+        NitCableMultiplexDetail* cableMux = new NitCableMultiplexDetail();
+        if (cableMux == NULL)
+        {
+          LogDebug("%s: failed to allocate memory in AddCableMux()", m_sName);
+          return;
+        }
+        mux->Clone(cableMux);
+        m_vCableMuxes.push_back(cableMux);
+        LogDebug("%s: cable multiplex, ONID = 0x%x, TSID = 0x%x, frequency = %d kHz, modulation = %d, symbol rate = %d ks/s",
+                  m_sName, mux->NetworkId, mux->TransportStreamId, mux->Frequency, mux->Modulation, mux->SymbolRate);
       }
     }
     // Do we have the required frequency list yet?
@@ -1058,14 +1183,11 @@ void CNitParser::AddCableMux(NitCableMultiplexDetail* mux, vector<int>* frequenc
     {
       for (unsigned int i = 0; i < frequencies->size(); i++)
       {
-        NitCableMultiplexDetail clone;
-        mux->Clone(&clone);
-        clone.Frequency = (*frequencies)[i];
-
+        mux->Frequency = (*frequencies)[i];
         bool alreadyAdded = false;
         for (vector<NitCableMultiplexDetail*>::iterator it = m_vCableMuxes.begin(); it != m_vCableMuxes.end(); it++)
         {
-          if ((*it)->Equals(&clone))
+          if ((*it)->Equals(mux))
           {
             alreadyAdded = true;
             break;
@@ -1073,9 +1195,16 @@ void CNitParser::AddCableMux(NitCableMultiplexDetail* mux, vector<int>* frequenc
         }
         if (!alreadyAdded)
         {
-          m_vCableMuxes.push_back(&clone);
-          LogDebug("%s: cable multiplex, frequency = %d kHz, modulation = %d, symbol rate = %d ks/s",
-                    m_sName, clone.Frequency, clone.Modulation, clone.SymbolRate);
+          NitCableMultiplexDetail* clone = new NitCableMultiplexDetail();
+          if (clone == NULL)
+          {
+            LogDebug("%s: failed to allocate memory in AddCableMux()", m_sName);
+            return;
+          }
+          mux->Clone(clone);
+          m_vCableMuxes.push_back(clone);
+          LogDebug("%s: cable multiplex, ONID = 0x%x, TSID = 0x%x, frequency = %d kHz, modulation = %d, symbol rate = %d ks/s",
+                    m_sName, clone->NetworkId, clone->TransportStreamId, clone->Frequency, clone->Modulation, clone->SymbolRate);
         }
       }
     }
@@ -1104,10 +1233,17 @@ void CNitParser::AddSatelliteMux(NitSatelliteMultiplexDetail* mux, vector<int>* 
       }
       if (!alreadyAdded)
       {
-        m_vSatelliteMuxes.push_back(mux);
-        LogDebug("%s: satellite multiplex, frequency = %d kHz, polarisation = %d, modulation = %d, symbol rate = %d ks/s, inner FEC rate = %d, is DVB-S2 = %d, roll-off = %d",
-                  m_sName, mux->Frequency, mux->Polarisation, mux->Modulation, mux->SymbolRate,
-                  mux->InnerFecRate, mux->IsS2, mux->RollOff);
+        NitSatelliteMultiplexDetail* satMux = new NitSatelliteMultiplexDetail();
+        if (satMux == NULL)
+        {
+          LogDebug("%s: failed to allocate memory in AddSatelliteMux()", m_sName);
+          return;
+        }
+        mux->Clone(satMux);
+        m_vSatelliteMuxes.push_back(satMux);
+        LogDebug("%s: satellite multiplex, ONID = 0x%x, TSID = 0x%x, frequency = %d kHz, polarisation = %d, modulation = %d, symbol rate = %d ks/s, inner FEC rate = %d, is DVB-S2 = %d, roll-off = %d",
+                  m_sName, mux->NetworkId, mux->TransportStreamId, mux->Frequency, mux->Polarisation,
+                  mux->Modulation, mux->SymbolRate, mux->InnerFecRate, mux->IsS2, mux->RollOff);
       }
     }
     // Do we have the required frequency list yet?
@@ -1115,14 +1251,11 @@ void CNitParser::AddSatelliteMux(NitSatelliteMultiplexDetail* mux, vector<int>* 
     {
       for (unsigned int i = 0; i < frequencies->size(); i++)
       {
-        NitSatelliteMultiplexDetail clone;
-        mux->Clone(&clone);
-        clone.Frequency = (*frequencies)[i];
-
+        mux->Frequency = (*frequencies)[i];
         bool alreadyAdded = false;
         for (vector<NitSatelliteMultiplexDetail*>::iterator it = m_vSatelliteMuxes.begin(); it != m_vSatelliteMuxes.end(); it++)
         {
-          if ((*it)->Equals(&clone))
+          if ((*it)->Equals(mux))
           {
             alreadyAdded = true;
             break;
@@ -1130,10 +1263,17 @@ void CNitParser::AddSatelliteMux(NitSatelliteMultiplexDetail* mux, vector<int>* 
         }
         if (!alreadyAdded)
         {
-          m_vSatelliteMuxes.push_back(&clone);
-          LogDebug("%s: satellite multiplex, frequency = %d kHz, polarisation = %d, modulation = %d, symbol rate = %d ks/s, inner FEC rate = %d, is DVB-S2 = %d, roll-off = %d",
-                    m_sName, clone.Frequency, clone.Polarisation, clone.Modulation, clone.SymbolRate,
-                    clone.InnerFecRate, clone.IsS2, clone.RollOff);
+          NitSatelliteMultiplexDetail* clone = new NitSatelliteMultiplexDetail();
+          if (clone == NULL)
+          {
+            LogDebug("%s: failed to allocate memory in AddSatelliteMux()", m_sName);
+            return;
+          }
+          mux->Clone(clone);
+          m_vSatelliteMuxes.push_back(clone);
+          LogDebug("%s: satellite multiplex, ONID = 0x%x, TSID = 0x%x, frequency = %d kHz, polarisation = %d, modulation = %d, symbol rate = %d ks/s, inner FEC rate = %d, is DVB-S2 = %d, roll-off = %d",
+                    m_sName, clone->NetworkId, clone->TransportStreamId, clone->Frequency, clone->Polarisation,
+                    clone->Modulation, clone->SymbolRate, clone->InnerFecRate, clone->IsS2, clone->RollOff);
         }
       }
     }
@@ -1162,9 +1302,16 @@ void CNitParser::AddTerrestrialMux(NitTerrestrialMultiplexDetail* mux, vector<in
       }
       if (!alreadyAdded)
       {
-        m_vTerrestrialMuxes.push_back(mux);
-        LogDebug("%s: terrestrial multiplex, frequency = %d kHz, bandwidth = %d MHz",
-                  m_sName, mux->CentreFrequency, mux->Bandwidth);
+        NitTerrestrialMultiplexDetail* terrMux = new NitTerrestrialMultiplexDetail();
+        if (terrMux == NULL)
+        {
+          LogDebug("%s: failed to allocate memory in AddTerrestrialMux()", m_sName);
+          return;
+        }
+        mux->Clone(terrMux);
+        m_vTerrestrialMuxes.push_back(terrMux);
+        LogDebug("%s: terrestrial multiplex, ONID = 0x%x, TSID = 0x%x, frequency = %d kHz, bandwidth = %d MHz",
+                  m_sName, mux->NetworkId, mux->TransportStreamId, mux->CentreFrequency, mux->Bandwidth);
       }
     }
     // Do we have the required frequency list yet?
@@ -1172,14 +1319,11 @@ void CNitParser::AddTerrestrialMux(NitTerrestrialMultiplexDetail* mux, vector<in
     {
       for (unsigned int i = 0; i < frequencies->size(); i++)
       {
-        NitTerrestrialMultiplexDetail clone;
-        mux->Clone(&clone);
-        clone.CentreFrequency = (*frequencies)[i];
-
+        mux->CentreFrequency = (*frequencies)[i];
         bool alreadyAdded = false;
         for (vector<NitTerrestrialMultiplexDetail*>::iterator it = m_vTerrestrialMuxes.begin(); it != m_vTerrestrialMuxes.end(); it++)
         {
-          if ((*it)->Equals(&clone))
+          if ((*it)->Equals(mux))
           {
             alreadyAdded = true;
             break;
@@ -1187,9 +1331,16 @@ void CNitParser::AddTerrestrialMux(NitTerrestrialMultiplexDetail* mux, vector<in
         }
         if (!alreadyAdded)
         {
-          m_vTerrestrialMuxes.push_back(&clone);
-          LogDebug("%s: terrestrial multiplex, frequency = %d kHz, bandwidth = %d MHz",
-                    m_sName, clone.CentreFrequency, clone.Bandwidth);
+          NitTerrestrialMultiplexDetail* clone = new NitTerrestrialMultiplexDetail();
+          if (clone == NULL)
+          {
+            LogDebug("%s: failed to allocate memory in AddTerrestrialMux()", m_sName);
+            return;
+          }
+          mux->Clone(clone);
+          m_vTerrestrialMuxes.push_back(clone);
+          LogDebug("%s: terrestrial multiplex, ONID = 0x%x, TSID = 0x%x, frequency = %d kHz, bandwidth = %d MHz",
+                    m_sName, clone->NetworkId, clone->TransportStreamId, clone->CentreFrequency, clone->Bandwidth);
         }
       }
     }

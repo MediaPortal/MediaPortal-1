@@ -53,25 +53,62 @@ CChannelScan::~CChannelScan(void)
 
 void CChannelScan::CleanUp()
 {
-  map<int, CChannelInfo*>::iterator it = m_mServices.begin();
-  while (it != m_mServices.end())
+  map<int, CChannelInfo*>::iterator serviceIt = m_mServices.begin();
+  while (serviceIt != m_mServices.end())
   {
-    CChannelInfo* info = it->second;
+    CChannelInfo* info = serviceIt->second;
     delete info;
     info = NULL;
-    it++;
+    serviceIt++;
   }
   m_mServices.clear();
 
-  vector<CPmtParser*>::iterator it2 = m_vPmtParsers.begin();
-  while (it2 != m_vPmtParsers.end())
+  /*vector<NitMultiplexDetail*>::iterator muxIt = m_vMultiplexes.begin();
+  while (muxIt != m_vMultiplexes.end())
   {
-    CPmtParser* parser = *it2;
+    NitMultiplexDetail* mux = *muxIt;
+    delete mux;
+    mux = NULL;
+    muxIt++;
+  }
+  m_vMultiplexes.clear();*/
+
+  vector<CPmtParser*>::iterator pmtIt = m_vPmtParsers.begin();
+  while (pmtIt != m_vPmtParsers.end())
+  {
+    CPmtParser* parser = *pmtIt;
     delete parser;
     parser = NULL;
-    it2++;
+    pmtIt++;
   }
   m_vPmtParsers.clear();
+}
+
+void CChannelScan::ConcatNames(vector<char*>* names, char* destination, int maxLength, int* length)
+{
+  *length = 0;
+  if (names == NULL || names->size() == 0 || maxLength < 5)
+  {
+    return;
+  }
+
+  unsigned int i = 0;
+  while (i < names->size())
+  {
+    int stringLength = strlen((*names)[i]);
+    if (*length + stringLength + 2 >= maxLength)  // + 2 for the ",," separator; maxLength already takes the NULL terminator byte into account
+    {
+      continue;
+    }
+    if (*length != 0)
+    {
+      strcat(destination, ",,");
+      *length += 2;
+    }
+    strcat(destination, (*names)[i]);
+    *length += stringLength;
+    i++;
+  }
 }
 
 STDMETHODIMP CChannelScan::SetCallBack(IChannelScanCallBack* callBack)
@@ -155,16 +192,18 @@ STDMETHODIMP CChannelScan::GetServiceDetail(int index,
                                        char** serviceName,
                                        char** providerName,
                                        char** networkNames,
+                                       char** bouquetNames,
                                        char** logicalChannelNumber,
                                        int* serviceType,
                                        int* hasVideo,
                                        int* hasAudio,
-                                       bool* isEncrypted,
+                                       int* isEncrypted,
                                        int* pmtPid)
 {
   static char sServiceName[CHANNEL_INFO_MAX_STRING_LENGTH + 1];
   static char sProviderName[CHANNEL_INFO_MAX_STRING_LENGTH + 1];
   static char sNetworkNames[CHANNEL_INFO_MAX_STRING_LENGTH + 1];
+  static char sBouquetNames[CHANNEL_INFO_MAX_STRING_LENGTH + 1];
   static char sLogicalChannelNumber[CHANNEL_INFO_MAX_STRING_LENGTH + 1];
   CEnterCriticalSection enter(m_section);
   try
@@ -175,6 +214,7 @@ STDMETHODIMP CChannelScan::GetServiceDetail(int index,
       return S_FALSE;
     }
 
+    int originalIndex = index + 1;
     map<int, CChannelInfo*>::iterator it = m_mServices.begin();
     while (index > 0)
     {
@@ -190,34 +230,53 @@ STDMETHODIMP CChannelScan::GetServiceDetail(int index,
     *serviceName = sServiceName;
     strcpy(sProviderName, info->ProviderName);
     *providerName = sProviderName;
+
+    strcpy(sNetworkNames, "");
+    strcpy(sBouquetNames, "");
     if (m_broadcastStandard == Atsc || m_broadcastStandard == Scte)
     {
-      strcpy(sNetworkNames, "");
       strcpy(sLogicalChannelNumber, info->LogicalChannelNumber);
     }
     else
     {
-      // Concatenate available network and bouquet strings with a ",," separator.
-      strcpy(sNetworkNames, "");
+      // Concatenate available network names for this service.
+      int maxLength = CHANNEL_INFO_MAX_STRING_LENGTH - 1;   // -1 for the NULL termination
+      int stringLength = 0;
+      sNetworkNames[0] = 0; // Start with a zero-length string.
       vector<char*>* names = m_nitParser.GetGroupNames(info->NetworkId, info->TransportStreamId, info->ServiceId);
-      if (names->size() > 0)
+      ConcatNames(names, (char*)&sNetworkNames, maxLength, &stringLength);
+      maxLength -= stringLength;
+
+      // Do we have any other network names that apply to all services, and do we have spare buffer space to hold them?
+      names = m_nitParser.GetGroupNames(info->NetworkId, info->TransportStreamId, 0);
+      if (names != NULL && names->size() > 0 && maxLength > 2)
       {
-        int offset = 0;
-        unsigned int i = 0;
-        while (i < names->size())
+        if (stringLength != 0)
         {
-          int stringLength = strlen((*names)[i]);
-          if (offset + stringLength + 2 >= CHANNEL_INFO_MAX_STRING_LENGTH)  // + 2 for the ",," separator
-          {
-            continue;
-          }
-          if (offset != 0)
-          {
-            strcat(sNetworkNames, ",,");  // used to separate strings in the case where multiple network/bouquet names are available
-          }
-          strcat(sNetworkNames, (*names)[i]);
-          i++;
+          strcat((char*)&sNetworkNames, ",,");
+          stringLength += 2;
         }
+        ConcatNames(names, (char*)&sNetworkNames, maxLength, &stringLength);
+      }
+
+      // Concatenate available bouquet names for this service.
+      maxLength = CHANNEL_INFO_MAX_STRING_LENGTH - 1;   // -1 for the NULL termination
+      stringLength = 0;
+      sBouquetNames[0] = 0; // Start with a zero-length string.
+      names = m_batParser.GetGroupNames(info->NetworkId, info->TransportStreamId, info->ServiceId);
+      ConcatNames(names, (char*)&sBouquetNames, maxLength, &stringLength);
+      maxLength -= stringLength;
+
+      // Do we have any other bouquet names that apply to all services, and do we have spare buffer space to hold them?
+      names = m_batParser.GetGroupNames(info->NetworkId, info->TransportStreamId, 0);
+      if (names != NULL && names->size() > 0 && maxLength > 2)
+      {
+        if (stringLength != 0)
+        {
+          strcat((char*)&sBouquetNames, ",,");
+          stringLength += 2;
+        }
+        ConcatNames(names, (char*)&sBouquetNames, maxLength, &stringLength);
       }
 
       int tempLcn = m_nitParser.GetLogicialChannelNumber(info->NetworkId, info->TransportStreamId, info->ServiceId);
@@ -227,20 +286,23 @@ STDMETHODIMP CChannelScan::GetServiceDetail(int index,
       }
       sprintf(sLogicalChannelNumber, "%d", tempLcn);
     }
+
     *networkNames = sNetworkNames;
+    *bouquetNames = sBouquetNames;
     *logicalChannelNumber = sLogicalChannelNumber;
     *serviceType = info->ServiceType;
     *hasVideo = info->HasVideo;
     *hasAudio = info->HasAudio;
-    *isEncrypted = info->IsEncrypted;
+    *isEncrypted = info->IsEncrypted ? 1 : 0;
     *pmtPid = info->PmtPid;
-    LogDebug("%4d) %-25s provider = %-15s, ONID = 0x%4x, TSID = 0x%4x, SID = 0x%4x, LCN = %7s, type = %3d",
-            sServiceName, sProviderName, info->NetworkId, info->TransportStreamId, info->ServiceId, sLogicalChannelNumber, info->ServiceType);
-    LogDebug("       has video = %1d, has audio = %1d, is encrypted = %1d, is running = %1d, is other mux = %1d",
-            info->HasVideo, info->HasAudio, info->IsEncrypted, info->IsRunning, info->IsOtherMux);
+    LogDebug("%4d) %-25s provider = %-15s, ONID = 0x%-4x, TSID = 0x%-4x, SID = 0x%-4x, LCN = %-7s",
+            originalIndex, sServiceName, sProviderName, info->NetworkId, info->TransportStreamId, info->ServiceId, sLogicalChannelNumber);
+    LogDebug("       type = %-3d, has video = %1d, has audio = %1d, is encrypted = %1d, is running = %1d, is other mux = %1d",
+            info->ServiceType, info->HasVideo, info->HasAudio, info->IsEncrypted, info->IsRunning, info->IsOtherMux);
     LogDebug("       is PMT received = %1d, is SDT/VCT received = %1d, is PID received = %1d",
             info->IsPmtReceived, info->IsServiceInfoReceived, info->IsPidReceived);
-    LogDebug("       network/bouquet names = %s", sNetworkNames);
+    LogDebug("       network name(s) = %s", sNetworkNames);
+    LogDebug("       bouquet name(s) = %s", sBouquetNames);
   }
   catch (...)
   {
@@ -429,7 +491,7 @@ STDMETHODIMP CChannelScan::GetMultiplexDetail(int index,
       *modulation = cableMux->Modulation;
       *symbolRate = cableMux->SymbolRate;
       *innerFecRate = cableMux->InnerFecRate;
-      *type = 0;
+      *type = 2;  // This is as-per the TV Server database channel types.
 
       *polarisation = BDA_POLARISATION_NOT_SET;
       *bandwidth = 0;
@@ -446,7 +508,7 @@ STDMETHODIMP CChannelScan::GetMultiplexDetail(int index,
       *symbolRate = satelliteMux->SymbolRate;
       *innerFecRate = satelliteMux->InnerFecRate;
       *rollOff = satelliteMux->RollOff;
-      *type = 1;
+      *type = 3;  // This is as-per the TV Server database channel types.
 
       *bandwidth = 0;
       return S_OK;
@@ -457,7 +519,7 @@ STDMETHODIMP CChannelScan::GetMultiplexDetail(int index,
     {
       *frequency = terrestrialMux->CentreFrequency;
       *bandwidth = terrestrialMux->Bandwidth;
-      *type = 2;
+      *type = 4;  // This is as-per the TV Server database channel types.
 
       *polarisation = BDA_POLARISATION_NOT_SET;
       *modulation = BDA_MOD_NOT_SET;
@@ -541,12 +603,12 @@ void CChannelScan::OnTsPacket(byte* tsPacket)
     }
 
     m_patParser.OnTsPacket(tsPacket);
-    vector<CPmtParser*>::iterator it = m_vPmtParsers.begin();
-    while (it != m_vPmtParsers.end())
+    vector<CPmtParser*>::iterator it2 = m_vPmtParsers.begin();
+    while (it2 != m_vPmtParsers.end())
     {
-      CPmtParser* parser = *it;
+      CPmtParser* parser = *it2;
       parser->OnTsPacket(tsPacket);
-      it++;
+      it2++;
     }
     m_pEncryptionAnalyser->OnTsPacket(tsPacket);
   }
@@ -594,7 +656,7 @@ void CChannelScan::OnPatReceived(int serviceId, int pmtPid)
         LogDebug("ChannelScan: PMT parser already exists");
         return;
       }
-      it++;
+      it2++;
     }
     parser = new CPmtParser();
     parser->SetFilter(pmtPid, serviceId);
@@ -765,12 +827,14 @@ void CChannelScan::OnPmtReceived(const CPidTable& pidTable)
     {
       m_pEncryptionAnalyser->AddPid(vPidIt->Pid);
       m_mPids[vPidIt->Pid] = pidTable.ServiceId;
+      vPidIt++;
     }
     vector<AudioPid>::const_iterator aPidIt = pidTable.audioPids.begin();
     while (aPidIt != pidTable.audioPids.end())
     {
       m_pEncryptionAnalyser->AddPid(aPidIt->Pid);
       m_mPids[aPidIt->Pid] = pidTable.ServiceId;
+      aPidIt++;
     }
   }
   catch (...)

@@ -434,8 +434,8 @@ void CVctParser::DecodeMultipleStrings(byte* b, int length, vector<char*>* strin
           return;
         }
 
-        char* string;
-        DecodeString(b, compression_type, mode, number_bytes, string);
+        char* string = NULL;
+        DecodeString(b, compression_type, mode, number_bytes, &string);
         if (string != NULL)
         {
           strings->push_back(string);
@@ -451,16 +451,15 @@ void CVctParser::DecodeMultipleStrings(byte* b, int length, vector<char*>* strin
   }
 }
 
-void CVctParser::DecodeString(byte* b, int compression_type, int mode, int number_bytes, char* string)
+void CVctParser::DecodeString(byte* b, int compression_type, int mode, int number_bytes, char** string)
 {
   //LogDebug("VctParser: decode string, compression type = 0x%x, mode = 0x%x, number of bytes = %d", compression_type, mode, number_bytes);
   if (compression_type == 0 && mode == 0)
   {
-    char s[DESCRIPTOR_MAX_STRING_LENGTH + 1];
+    *string = new char[DESCRIPTOR_MAX_STRING_LENGTH + 1];
     int stringLength = min(number_bytes, DESCRIPTOR_MAX_STRING_LENGTH);
-    memcpy(&s, b, stringLength);
-    s[stringLength] = 0;  // NULL terminate
-    string = (char*)&s;
+    memcpy(*string, b, stringLength);
+    (*string)[stringLength] = 0;  // NULL terminate
     return;
   }
   LogDebug("VctParser: unsupported compression type or mode in DecodeString(), compression type = 0x%x, mode = 0x%x", compression_type, mode);

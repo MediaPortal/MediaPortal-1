@@ -200,12 +200,12 @@ void CSdtParser::OnNewSection(CSection& sections)
           int service_provider_name_length = section[pointer++];
           if (pointer + service_provider_name_length + 1 <= endOfDescriptor)
           {
-            getString468A(&section[pointer], service_provider_name_length, info.ProviderName, sizeof(info.ProviderName));
+            getString468A(&section[pointer], service_provider_name_length, info.ProviderName, CHANNEL_INFO_MAX_STRING_LENGTH);
             pointer += service_provider_name_length;
             int service_name_length = section[pointer++];
             if (pointer + service_name_length <= endOfDescriptor)
             {
-              getString468A(&section[pointer], service_name_length, info.ServiceName, sizeof(info.ServiceName));
+              getString468A(&section[pointer], service_name_length, info.ServiceName, CHANNEL_INFO_MAX_STRING_LENGTH);
               pointer += service_name_length;
               //LogDebug("SdtParser: service type = 0x%x, service name = %s, provider name = %s", info.ServiceType, info.ServiceName, info.ProviderName);
             }

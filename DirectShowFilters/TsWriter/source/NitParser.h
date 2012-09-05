@@ -261,25 +261,25 @@ typedef struct NitTerrestrialMultiplexDetail : public NitMultiplexDetail
       {
         return;
       }
-      NitTerrestrialMultiplexDetail* terrestrialMuxCone = dynamic_cast<NitTerrestrialMultiplexDetail*>(clone);
-      if (terrestrialMuxCone == NULL)
+      NitTerrestrialMultiplexDetail* terrestrialMuxClone = dynamic_cast<NitTerrestrialMultiplexDetail*>(clone);
+      if (terrestrialMuxClone == NULL)
       {
         return;
       }
-      NitMultiplexDetail::Clone(terrestrialMuxCone);
-      terrestrialMuxCone->CentreFrequency = CentreFrequency;
-      terrestrialMuxCone->Bandwidth = Bandwidth;
-      terrestrialMuxCone->IsHighPriority = IsHighPriority;
-      terrestrialMuxCone->TimeSlicingIndicator = TimeSlicingIndicator;
-      terrestrialMuxCone->MpeFecIndicator = MpeFecIndicator;
-      terrestrialMuxCone->Constellation = Constellation;
-      terrestrialMuxCone->IndepthInterleaverUsed = IndepthInterleaverUsed;
-      terrestrialMuxCone->HierarchyInformation = HierarchyInformation;
-      terrestrialMuxCone->CoderateHpStream = CoderateHpStream;
-      terrestrialMuxCone->CoderateLpStream = CoderateLpStream;
-      terrestrialMuxCone->GuardInterval = GuardInterval;
-      terrestrialMuxCone->TransmissionMode = TransmissionMode;
-      terrestrialMuxCone->OtherFrequencyFlag = OtherFrequencyFlag;
+      NitMultiplexDetail::Clone(terrestrialMuxClone);
+      terrestrialMuxClone->CentreFrequency = CentreFrequency;
+      terrestrialMuxClone->Bandwidth = Bandwidth;
+      terrestrialMuxClone->IsHighPriority = IsHighPriority;
+      terrestrialMuxClone->TimeSlicingIndicator = TimeSlicingIndicator;
+      terrestrialMuxClone->MpeFecIndicator = MpeFecIndicator;
+      terrestrialMuxClone->Constellation = Constellation;
+      terrestrialMuxClone->IndepthInterleaverUsed = IndepthInterleaverUsed;
+      terrestrialMuxClone->HierarchyInformation = HierarchyInformation;
+      terrestrialMuxClone->CoderateHpStream = CoderateHpStream;
+      terrestrialMuxClone->CoderateLpStream = CoderateLpStream;
+      terrestrialMuxClone->GuardInterval = GuardInterval;
+      terrestrialMuxClone->TransmissionMode = TransmissionMode;
+      terrestrialMuxClone->OtherFrequencyFlag = OtherFrequencyFlag;
     }
     catch (...)
     {
@@ -296,22 +296,22 @@ class CNitParser : public CSectionDecoder
     void Reset();
     void OnNewSection(CSection& sections);
     bool IsReady();
-    int GetLogicialChannelNumber(int networkId, int transportId, int serviceId);
-    vector<char*>* GetGroupNames(int networkId, int transportId, int serviceId);
+    int GetLogicialChannelNumber(int networkId, int transportStreamId, int serviceId);
+    vector<char*>* GetGroupNames(int networkId, int transportStreamId, int serviceId);
     int GetMultiplexCount();
     NitMultiplexDetail* GetMultiplexDetail(int idx);
 
   protected:
+    void CleanUp();
+
     void DecodeLogicalChannelNumberDescriptor(byte* b, int length, map<int, int>* lcns);
-    void DecodeNetworkOrBouquetNameDescriptor(byte* b, int length, char* name);
-    void DecodeMultilingualNetworkOrBouquetNameDescriptor(byte* b, int length, char* name);
     void DecodeCableDeliverySystemDescriptor(byte* b, int length, NitCableMultiplexDetail* mux);
     void DecodeSatelliteDeliverySystemDescriptor(byte* b, int length, NitSatelliteMultiplexDetail* mux);
     void DecodeTerrestrialDeliverySystemDescriptor(byte* b, int length, NitTerrestrialMultiplexDetail* mux);
     void DecodeFrequencyListDescriptor(byte* b, int length, vector<int>* frequencies, int* frequencyType);
     void DecodeServiceListDescriptor(byte* b, int length, vector<int>* services);
-    void DecodeNameDescriptor(byte* b, int length, vector<char*>* string);
-    void DecodeMultilingualNameDescriptor(byte* b, int length, vector<char*>* strings);
+    void DecodeNameDescriptor(byte* b, int length, char** name);
+    void DecodeMultilingualNameDescriptor(byte* b, int length, vector<char*>* names);
     void DecodeCellFrequencyLinkDescriptor(byte* b, int length, vector<int>* frequencies);
 
     int DecodeCableFrequency(byte* b);
@@ -324,13 +324,13 @@ class CNitParser : public CSectionDecoder
     void AddCableMux(NitCableMultiplexDetail* mux, vector<int>* frequencies);
     void AddTerrestrialMux(NitTerrestrialMultiplexDetail* mux, vector<int>* frequencies);
 
-    string m_sName;
+    char* m_sName;
     vector<int> m_vTableIds;
     map<unsigned int, bool> m_mSeenSections;
     bool m_bIsReady;
     vector<NitLcn*> m_vLcns;
     vector<NitNameSet*> m_vGroupNames;
-    vector<NitSatelliteMultiplexDetail*> m_vSatelliteMuxes;
     vector<NitCableMultiplexDetail*> m_vCableMuxes;
+    vector<NitSatelliteMultiplexDetail*> m_vSatelliteMuxes;
     vector<NitTerrestrialMultiplexDetail*> m_vTerrestrialMuxes;
 };

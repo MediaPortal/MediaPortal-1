@@ -156,7 +156,7 @@ private:
 	HANDLE							 m_hFile;
 	CCriticalSection     m_section;
   int                  m_iPmtPid;
-  char                 m_fakePmt[MAX_SECTION_LENGTH];
+  byte                 m_fakePmt[MAX_SECTION_LENGTH];
   int                  m_pcrPid;
 	int									 m_iServiceId;
 	vector<PidInfo2>		 m_vecPids;

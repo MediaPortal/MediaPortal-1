@@ -2084,9 +2084,9 @@ namespace TvLibrary.Interfaces
       {
         PmtElementaryStream es = new PmtElementaryStream();
         es.StreamType = (StreamType)data[offset++];
-        if (Enum.IsDefined(typeof(LogicalStreamType), es.StreamType))
+        if (Enum.IsDefined(typeof(LogicalStreamType), (int)es.StreamType))
         {
-          es.LogicalStreamType = (LogicalStreamType)es.StreamType;
+          es.LogicalStreamType = (LogicalStreamType)(int)es.StreamType;
         }
         else
         {
