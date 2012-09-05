@@ -874,119 +874,130 @@ namespace MediaPortal.Video.Database
     /// <param name="item"></param>
     public static void SetMovieData(GUIListItem item)
     {
+      IMDBMovie info = new IMDBMovie();
+
+      if (item == null)
+      {
+        return;
+      }
+      
       try
       {
-        if (item != null)
+        string path = string.Empty;
+        string fileName = string.Empty;
+
+        if (Util.Utils.IsVideo(item.Path))
         {
-          string path = string.Empty;
-          string fileName = string.Empty;
+          Util.Utils.Split(item.Path, out path, out fileName);
+        }
+        else
+        {
+          path = item.Path;
+        }
 
-          if (Util.Utils.IsVideo(item.Path))
-          {
-            Util.Utils.Split(item.Path, out path, out fileName);
-          }
-          else
-          {
-            path = item.Path;
-          }
+        if (item.Path != ".." && System.IO.File.Exists(item.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
+        {
+          fileName = item.Path + @"\VIDEO_TS\VIDEO_TS.IFO";
+        }
+        else if (item.Path != ".." && System.IO.File.Exists(item.Path + @"\BDMV\index.bdmv"))
+        {
+          fileName = item.Path + @"\BDMV\index.bdmv";
+        }
+        else
+        {
+          fileName = item.Path;
+        }
 
-          if (item.Path != ".." && System.IO.File.Exists(item.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
-          {
-            fileName = item.Path + @"\VIDEO_TS\VIDEO_TS.IFO";
-          }
-          else if (item.Path != ".." && System.IO.File.Exists(item.Path + @"\BDMV\index.bdmv"))
-          {
-            fileName = item.Path + @"\BDMV\index.bdmv";
-          }
-          else
-          {
-            fileName = item.Path;
-          }
+        // Set
+        VideoFilesMediaInfo mInfo = new VideoFilesMediaInfo();
 
-          // Set
-          IMDBMovie info = new IMDBMovie();
-          VideoFilesMediaInfo mInfo = new VideoFilesMediaInfo();
+        if (path == ".." || string.IsNullOrEmpty(path) || (!Directory.Exists(path) && !Util.Utils.IsVideo(fileName)))
+        {
+          info.MediaInfo = mInfo;
+          item.AlbumInfoTag = info;
+          return;
+        }
 
-          if (path == ".." || string.IsNullOrEmpty(path) || (!Directory.Exists(path) && !Util.Utils.IsVideo(fileName)))
+        if (Directory.Exists(path) && !Util.Utils.IsVideo(fileName))
+        {
+          int rndMovieId = -1;
+
+          VirtualDirectory vDir = new VirtualDirectory();
+          int pin = 0;
+          vDir.LoadSettings("movies");
+
+          if (!vDir.IsProtectedShare(path, out pin))
           {
-            info.MediaInfo = mInfo;
-            item.AlbumInfoTag = info;
-            return;
-          }
+            ArrayList mList = new ArrayList();
+            VideoDatabase.GetMoviesByPath(path, ref mList);
 
-          if (Directory.Exists(path) && !Util.Utils.IsVideo(fileName))
-          {
-            int rndMovieId = -1;
-
-            VirtualDirectory vDir = new VirtualDirectory();
-            int pin = 0;
-            vDir.LoadSettings("movies");
-
-            if (!vDir.IsProtectedShare(path, out pin))
+            if (mList.Count > 0)
             {
-              ArrayList mList = new ArrayList();
-              VideoDatabase.GetMoviesByPath(path, ref mList);
+              Random rnd = new Random();
+              int r = rnd.Next(mList.Count);
+              IMDBMovie movieDetails = (IMDBMovie)mList[r];
+              mList.Clear();
+              VideoDatabase.GetFilesForMovie(movieDetails.ID, ref mList);
 
-              if (mList.Count > 0)
+              if (mList.Count > 0 && System.IO.File.Exists(mList[0].ToString()))
               {
-                Random rnd = new Random();
-                int r = rnd.Next(mList.Count);
-                IMDBMovie movieDetails = (IMDBMovie)mList[r];
-                mList.Clear();
-                VideoDatabase.GetFilesForMovie(movieDetails.ID, ref mList);
-
-                if (mList.Count > 0 && System.IO.File.Exists(mList[0].ToString()))
-                {
-                  rndMovieId = movieDetails.ID;
-                }
+                rndMovieId = movieDetails.ID;
               }
             }
-
-            info.ID = rndMovieId;
-            info.MediaInfo = mInfo;
-            item.AlbumInfoTag = info;
-            return;
           }
 
-          try
-          {
-            VideoDatabase.GetMovieInfo(fileName, ref info);
+          info.ID = rndMovieId;
+          info.MediaInfo = mInfo;
+          item.AlbumInfoTag = info;
+          return;
+        }
 
-            // Get recording/nfo xml
+        try
+        {
+          VideoDatabase.GetMovieInfo(fileName, ref info);
+
+          // Get recording/nfo xml
+          if (info.IsEmpty)
+          {
+            FetchMatroskaInfo(fileName, false, ref info);
+
             if (info.IsEmpty)
             {
-              FetchMatroskaInfo(fileName, false, ref info);
-
-              if (info.IsEmpty)
-              {
-                FetchMovieNfo(path, fileName, ref info);
-              }
+              FetchMovieNfo(path, fileName, ref info);
             }
-
-            VideoDatabase.GetVideoFilesMediaInfo(fileName, ref mInfo, false);
-            info.VideoFileName = fileName;
-
-            if (string.IsNullOrEmpty(info.VideoFilePath) || info.VideoFilePath == Strings.Unknown)
-            {
-              string tmpFile = string.Empty;
-              Util.Utils.Split(fileName, out path, out tmpFile);
-              info.VideoFilePath = path;
-            }
-
-            info.Path = path;
-            info.MediaInfo = mInfo;
-            info.Duration = VideoDatabase.GetMovieDuration(info.ID);
-            int percent = 0;
-            int watchedCount = 0;
-            VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(fileName), out percent, out watchedCount);
-            info.WatchedPercent = percent;
-            info.WatchedCount = watchedCount;
-            item.AlbumInfoTag = info;
           }
-          catch (Exception) { }
+
+          VideoDatabase.GetVideoFilesMediaInfo(fileName, ref mInfo, false);
+          info.VideoFileName = fileName;
+
+          if (string.IsNullOrEmpty(info.VideoFilePath) || info.VideoFilePath == Strings.Unknown)
+          {
+            string tmpFile = string.Empty;
+            Util.Utils.Split(fileName, out path, out tmpFile);
+            info.VideoFilePath = path;
+          }
+
+          info.Path = path;
+          info.MediaInfo = mInfo;
+          info.Duration = VideoDatabase.GetMovieDuration(info.ID);
+          int percent = 0;
+          int watchedCount = 0;
+          VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(fileName), out percent, out watchedCount);
+          info.WatchedPercent = percent;
+          info.WatchedCount = watchedCount;
+          item.AlbumInfoTag = info;
+        }
+        catch (Exception ex)
+        {
+          Log.Error("IMDBMovie SetMovieData (GetMovieInfo) error: {0}", ex.Message);
+          item.AlbumInfoTag = info;
         }
       }
-      catch (Exception) { }
+      catch (Exception ex)
+      {
+        Log.Error("IMDBMovie SetMovieData error: {0}", ex.Message);
+        item.AlbumInfoTag = info;
+      }
     }
 
     /// <summary>

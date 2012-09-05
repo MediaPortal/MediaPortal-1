@@ -94,6 +94,11 @@ namespace MediaPortal.Video.Database
       _database.RemoveFilesForMovie(lMovieId);
     }
 
+    /// <summary>
+    /// Returns -1 if file don't exists
+    /// </summary>
+    /// <param name="strFilenameAndPath"></param>
+    /// <returns></returns>
     public static int GetFileId(string strFilenameAndPath)
     {
       return _database.GetFileId(strFilenameAndPath);

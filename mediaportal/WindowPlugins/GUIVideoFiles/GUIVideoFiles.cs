@@ -599,30 +599,23 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
-      bool isFolderAMovie = false;
       string path = item.Path;
 
-      if (item.IsFolder && !item.IsRemote)
+      if (item.IsBdDvdFolder)
       {
         // Check if folder is actually a DVD. If so don't browse this folder, but play the DVD!
-        if ((File.Exists(path + @"\VIDEO_TS\VIDEO_TS.IFO")) && (item.Label != ".."))
+        if (File.Exists(path + @"\VIDEO_TS\VIDEO_TS.IFO"))
         {
-          isFolderAMovie = true;
           path = item.Path + @"\VIDEO_TS\VIDEO_TS.IFO";
         }
-        // Check if folder is actually a BD. If so don't browse this folder, but play the BD!
-        else if ((File.Exists(path + @"\BDMV\index.bdmv")) && (item.Label != ".."))
-        {
-          isFolderAMovie = true;
-          path = item.Path + @"\BDMV\index.bdmv";
-        }
+        // Then it's a Blu-Ray. Play the Blu-Ray!
         else
         {
-          isFolderAMovie = false;
+          path = item.Path + @"\BDMV\index.bdmv";
         }
       }
 
-      if ((item.IsFolder && !isFolderAMovie))
+      if ((item.IsFolder && !item.IsBdDvdFolder))
       {
         _currentSelectedItem = -1;
         
@@ -710,19 +703,19 @@ namespace MediaPortal.GUI.Video
         // Proceed to file stack check if file is stackable
         if (_mapSettings.Stack && IsFileStackable(movieFileName))
         {
+          IsStacked = true;
           int selectedFileIndex = 0;
           int movieDuration = 0;
           ArrayList movies = new ArrayList();
           List<GUIListItem> items = new List<GUIListItem>();
-          IMDBMovie movie = new IMDBMovie();
-          ArrayList movieFiles = new ArrayList();
-
+          IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
+          
           // This will return all stackable files for current clicked item
           // Also will add all stackable files to videodatabase if they are not exist
-          movieFiles = AddFileToDatabase(movieFileName);
-
+          StackedMovieFiles = AddFileToDatabase(movieFileName);
+          
           // Add movie files to list
-          foreach (string file in movieFiles)
+          foreach (string file in StackedMovieFiles)
           {
             FileInformation fi = new FileInformation();
             GUIListItem itemMovie = new GUIListItem(Util.Utils.GetFilename(file), "", file, false, fi);
@@ -732,40 +725,28 @@ namespace MediaPortal.GUI.Video
           // In the list must be at least 2 files so we check stackable movie for resume 
           // (which file have a stop time)
           bool asked = false;
-          ArrayList newItems = new ArrayList();
+          //ArrayList newItems = new ArrayList();
+          string title = item.Label; // Dlg title
+
+          if (movie != null && !movie.IsEmpty)
+          {
+            title = movie.Title;
+          }
           
           for (int i = 0; i < items.Count; ++i)
           {
-            IMDBMovie.SetMovieData(items[i]);
+            IMDBMovie.SetMovieData(items[i]); // This will set IMDBMovie object and it will never be null
             movie = items[i].AlbumInfoTag as IMDBMovie;
-            //string strFileName, strPath;
-            //Util.Utils.Split(path, out strPath, out strFileName);
-
-            IsStacked = true;
-            StackedMovieFiles.Add(movie.VideoFileName);
-              
+             
             if (!asked)
             {
               selectedFileIndex++;
             }
 
             int idFile = VideoDatabase.GetFileId(movie.VideoFileName);
-            int idMovie = VideoDatabase.GetMovieId(movie.VideoFileName);
-              
-            if ((idMovie >= 0) && (idFile >= 0))
-            {
-              string title = Path.GetFileName(movie.VideoFilePath);
-                
-              if ((VirtualDirectory.IsValidExtension(path, Util.Utils.VideoExtensions, false)))
-              {
-                Util.Utils.RemoveStackEndings(ref title);
-              }
-                
-              if (movie.Title != string.Empty)
-              {
-                title = movie.Title;
-              }
 
+            if (idFile != -1)
+            {
               int timeMovieStopped = VideoDatabase.GetMovieStopTime(idFile);
                 
               if (timeMovieStopped > 0)
@@ -773,7 +754,6 @@ namespace MediaPortal.GUI.Video
                 if (!asked)
                 {
                   asked = true;
-
                   GUIResumeDialog.Result result =
                     GUIResumeDialog.ShowResumeDialog(title, movieDuration + timeMovieStopped,
                                                       GUIResumeDialog.MediaType.Video);
@@ -786,38 +766,23 @@ namespace MediaPortal.GUI.Video
                   if (result == GUIResumeDialog.Result.PlayFromBeginning)
                   {
                     VideoDatabase.DeleteMovieStopTime(idFile);
-                    newItems.Add(items[i]);
                   }
                   else
                   {
                     askForResumeMovie = false;
-                    newItems.Add(items[i]);
                   }
-                } //if (!asked)
-                else
-                {
-                  newItems.Add(items[i]);
                 }
-              } //if (timeMovieStopped>0)
-              else
-              {
-                newItems.Add(items[i]);
               }
-
+              
               // Total movie duration
               movieDuration += VideoDatabase.GetVideoDuration(idFile);
               TotalMovieDuration = movieDuration;
             }
-            else //if (idMovie >=0)
-            {
-              newItems.Add(items[i]);
-            }
-            //} //if ( MediaPortal.Util.Utils.ShouldStack(temporaryListItem.Path, path))
           }
 
-          for (int i = 0; i < newItems.Count; ++i)
+          for (int i = 0; i < items.Count; ++i)
           {
-            GUIListItem temporaryListItem = (GUIListItem)newItems[i];
+            GUIListItem temporaryListItem = (GUIListItem)items[i];
             movie = (IMDBMovie)temporaryListItem.AlbumInfoTag;
 
             if (Util.Utils.IsVideo(movie.VideoFileName) && !PlayListFactory.IsPlayList(movie.VideoFileName))
@@ -2786,7 +2751,7 @@ namespace MediaPortal.GUI.Video
               
               if (!item.IsFolder || isMovieFolder)
               {
-                // Special folders (DVD/BluRay)
+                // Special folders (DVD/Blu-Ray)
                 if (isMovieFolder)
                 {
                   item.IsBdDvdFolder = true;
