@@ -1024,7 +1024,7 @@ namespace MediaPortal.Configuration.Sections
     public void PopulateThemesList(string selectedTheme)
     {
       // Get a list of available themes for the selected skin.
-      string selectedSkinFolderPath = Config.GetFolder(Config.Dir.SelectedSkin);
+      string selectedSkinFolderPath = Config.GetSubFolder(Config.Dir.Skin, Config.SkinName);
       ArrayList listAvailableThemes = GUIThemeManager.GetSkinThemesForSkin(selectedSkinFolderPath);
 
       // Transfer the list of themes to the drop down combo box and select the proper value.
@@ -1236,7 +1236,7 @@ namespace MediaPortal.Configuration.Sections
       }
 
       string selectedTheme = listViewAvailableThemes.SelectedItems[0].Text;
-      string selectedSkinFolderPath = Config.GetFolder(Config.Dir.SelectedSkin);
+      string selectedSkinFolderPath = Config.GetSubFolder(Config.Dir.Skin, Config.SkinName);
       string previewFile = selectedSkinFolderPath + @"\Themes\" + selectedTheme + @"\media\preview.png";
 
       if (!File.Exists(previewFile))
