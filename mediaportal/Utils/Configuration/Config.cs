@@ -210,7 +210,12 @@ namespace MediaPortal.Configuration
     public static string SkinName
     {
       get { return skinName; }
-      set { skinName = value; }
+      set 
+      { 
+        skinName = value;
+        var skinDir = GetSubFolder(Dir.Skin, Config.skinName);
+        Set(Dir.Weather, Path.Combine(skinDir, @"Media\Weather\"));
+      }
     }
 
     #endregion
@@ -339,6 +344,7 @@ namespace MediaPortal.Configuration
       Set(Dir.Plugins, Path.Combine(baseDir, @"plugins\"));
       Set(Dir.Skin, Path.Combine(commonAppData, @"skin\"));
       Set(Dir.Thumbs, Path.Combine(commonAppData, @"thumbs\"));
+      Set(Dir.Weather, Path.Combine(commonAppData, @"skin\Default\Media\Weather\")); //will be 'fixed' and set to correct path as soon as available
     }
 
 
