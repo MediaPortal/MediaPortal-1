@@ -42,7 +42,6 @@ namespace MediaPortal.Configuration
       Cache = 7,
       Weather = 8,
       Config = 10,
-      SelectedSkin = 11,
     }
 
     #endregion
@@ -210,18 +209,8 @@ namespace MediaPortal.Configuration
 
     public static string SkinName
     {
-      set
-      {
-        if (value != skinName)
-        {
-          skinName = value;
-          string commonAppData =
-            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)
-            + @"\Team MediaPortal\MediaPortal\";
-          Set(Dir.SelectedSkin, Path.Combine(commonAppData, @"skin\" + skinName + @"\"));
-          Set(Dir.Weather, Path.Combine(Get(Dir.SelectedSkin), @"Media\Weather\"));
-        }
-      }
+      get { return skinName; }
+      set { skinName = value; }
     }
 
     #endregion
@@ -350,9 +339,6 @@ namespace MediaPortal.Configuration
       Set(Dir.Plugins, Path.Combine(baseDir, @"plugins\"));
       Set(Dir.Skin, Path.Combine(commonAppData, @"skin\"));
       Set(Dir.Thumbs, Path.Combine(commonAppData, @"thumbs\"));
-      // The following directories will be 'fixed' and set to correct path as soon as available.
-      Set(Dir.SelectedSkin, Path.Combine(commonAppData, @"skin\" + skinName + @"\"));
-      Set(Dir.Weather, Path.Combine(Get(Dir.SelectedSkin), @"Media\Weather\"));
     }
 
 
