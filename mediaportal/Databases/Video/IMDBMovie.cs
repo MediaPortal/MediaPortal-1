@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -1634,8 +1635,99 @@ namespace MediaPortal.Video.Database
         GUIPropertyManager.SetProperty("#AudioChannels", info.MediaInfo.AudioChannels);
         GUIPropertyManager.SetProperty("#HasSubtitles", hasSubtitles);
         GUIPropertyManager.SetProperty("#AspectRatio", info.MediaInfo.AspectRatio);
+        GUIPropertyManager.SetProperty("#myvideosuserfanart", string.Empty);
+
+        try
+        {
+          if (info.ID < 1)
+          {
+            string strPath, strFilename;
+            Util.Utils.Split(info.VideoFileName, out  strPath, out strFilename);
+
+            if (string.IsNullOrEmpty(strPath))
+            {
+              if (string.IsNullOrEmpty(item.Path))
+              {
+                return;
+              }
+              strPath = item.Path;
+            }
+          
+            List<string> faFiles = new List<string>();
+            string faFile = strPath + @"\fanart.jpg";
+            faFiles.Add(faFile);
+            faFile = strPath + @"\backdrop.jpg";
+            faFiles.Add(faFile);
+          
+          
+            if (item.IsBdDvdFolder) // dvd/blu-ray
+            {
+              strPath = strPath.Remove(strPath.LastIndexOf(@"\"));
+
+              faFile = strPath + @"\" + Util.Utils.GetFilename(strFilename, true) + "-fanart.jpg";
+              faFiles.Add(faFile);
+              faFile = strPath + @"\" + "fanart.jpg";
+              faFiles.Add(faFile);
+              faFile = strPath + @"\" + "backdrop.jpg";
+              faFiles.Add(faFile);
+
+              string dvdBdPath = strPath.Substring(strPath.LastIndexOf(@"\") + 1);
+              Util.Utils.RemoveStackEndings(ref dvdBdPath);
+            
+              faFile = strPath + @"\" + dvdBdPath.Trim() + "-fanart.jpg";
+              faFiles.Add(faFile);
+
+              foreach (string file in faFiles)
+              {
+                if (System.IO.File.Exists(file))
+                {
+                  GUIPropertyManager.SetProperty("#myvideosuserfanart", file);
+                  break;
+                }
+              }
+            }
+            else if (!item.IsFolder && !string.IsNullOrEmpty(strFilename)) // video file
+            {
+              Util.Utils.RemoveStackEndings(ref strFilename);
+              faFile = strPath + @"\" + Util.Utils.GetFilename(strFilename, true) + "-fanart.jpg";
+              faFiles.Add(faFile);
+
+              foreach (string file in faFiles)
+              {
+                if (System.IO.File.Exists(file))
+                {
+                  GUIPropertyManager.SetProperty("#myvideosuserfanart", file);
+                  break;
+                }
+              }
+            }
+            else if (item.IsFolder && Util.Utils.IsFolderDedicatedMovieFolder(strPath)) // folder & dedicated movie folder
+            {
+              string cleanPath = item.Path.Substring(item.Path.LastIndexOf(@"\") + 1);
+              Util.Utils.RemoveStackEndings(ref cleanPath);
+              faFile = strPath + @"\" + cleanPath + "-fanart.jpg";
+              faFiles.Add(faFile);
+
+              foreach (string file in faFiles)
+              {
+                if (System.IO.File.Exists(file))
+                {
+                  GUIPropertyManager.SetProperty("#myvideosuserfanart", file);
+                  break;
+                }
+              }
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("IMDBMovie Set user fanart file property error: {0}", ex.Message);
+        }
       }
-      catch (Exception){}
+      catch (Exception ex)
+      {
+        Log.Error("IMDBMovie Set movie properties error: {0}", ex.Message);
+      }
     }
 
     public static void ResetMovieProperties()
@@ -1676,6 +1768,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#AudioChannels", string.Empty);
       GUIPropertyManager.SetProperty("#HasSubtitles", string.Empty);
       GUIPropertyManager.SetProperty("#AspectRatio", string.Empty);
+      GUIPropertyManager.SetProperty("#myvideosuserfanart", string.Empty);
     }
 
     #endregion

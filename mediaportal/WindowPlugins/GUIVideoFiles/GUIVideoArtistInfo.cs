@@ -703,15 +703,16 @@ namespace MediaPortal.GUI.Video
         {
           int count = listActorMovies.ListItems.Count;
           int countCurrent = 1;
-
+          
           foreach (GUIListItem item in listActorMovies.ListItems)
           {
             // Show visible progress
             if (count > 0)
             {
               int percCount = (100 * countCurrent) / count;
+              //GUIPropertyManager.SetProperty("#Actor.Name", _currentActor.Name + "   (" + countCurrent + "/" + count + ")");
+              GUIPropertyManager.SetProperty("#Actor.Name", _currentActor.Name + "   (" + percCount + "%)");
               countCurrent += 1;
-              GUIPropertyManager.SetProperty("#Actor.Name", _currentActor.Name + "   (" + percCount + @"%)");
             }
             //
             GetDetails(item);

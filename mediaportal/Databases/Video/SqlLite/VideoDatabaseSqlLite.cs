@@ -5241,15 +5241,29 @@ namespace MediaPortal.Video.Database
 
             if (!faFound)
             {
+              List<string> localFanart = new List<string>(); 
               faIndex = 0;
               faFile = path + @"\" + Path.GetFileNameWithoutExtension(fileName) + "-fanart.jpg";
-              
-              if (File.Exists(faFile))
+              localFanart.Add(faFile);
+              faFile = path + @"\" + Path.GetFileNameWithoutExtension(fileName) + "-backdrop.jpg";
+              localFanart.Add(faFile);
+              faFile= path + @"\" + "backdrop.jpg";
+              localFanart.Add(faFile);
+              faFile = path + @"\" + "fanart.jpg";
+              localFanart.Add(faFile);
+
+              foreach (string fanart in localFanart)
               {
-                fa.GetLocalFanart(id, "file://" + faFile, faIndex);
-                movie.FanartURL = faFile;
+                if (File.Exists(fanart))
+                {
+                  fa.GetLocalFanart(id, "file://" + faFile, faIndex);
+                  movie.FanartURL = faFile;
+                  faFound = true;
+                  break;
+                }
               }
-              else
+              
+              if (!faFound)
               {
                 fa.GetTmdbFanartByApi(movie.ID, movie.IMDBNumber, string.Empty, false, 1, string.Empty);
               }
