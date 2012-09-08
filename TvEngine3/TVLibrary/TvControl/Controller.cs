@@ -688,40 +688,6 @@ namespace TvControl
     void CopyTimeShiftFile(Int64 position1, string bufferFile1, Int64 position2, string bufferFile2,
                            string recordingFile);
 
-    #region audio stream selection
-
-    /// <summary>
-    /// returns the list of available audio streams for the card specified
-    /// </summary>
-    /// <param name="user">The user.</param>
-    /// <returns>List containing all audio streams</returns>
-    IAudioStream[] AvailableAudioStreams(IUser user);
-
-
-    /// <summary>
-    /// returns the current selected audio stream for the card specified
-    /// </summary>
-    /// <param name="user">The user.</param>
-    /// <returns>current audio stream</returns>
-    IAudioStream GetCurrentAudioStream(IUser user);
-
-
-    /// <summary>
-    /// Sets the current audio stream for the card specified
-    /// </summary>
-    /// <param name="user">The user.</param>
-    /// <param name="stream">audio stream</param>
-    void SetCurrentAudioStream(IUser user, IAudioStream stream);
-
-    #endregion
-
-    /// <summary>
-    /// returns the current video stream on the virtual card. 
-    /// </summary>
-    /// <param name="user">The user.</param>
-    /// <returns>List containing all audio streams</returns>
-    IVideoStream GetCurrentVideoStream(IUser user);
-
     /// <summary>
     /// Start timeshifting.
     /// </summary>

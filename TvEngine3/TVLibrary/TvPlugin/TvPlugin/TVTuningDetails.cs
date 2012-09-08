@@ -20,13 +20,14 @@
 
 using System;
 using System.Collections.Generic;
-using MediaPortal.GUI.Library;
-using TvDatabase;
-using TvLibrary.Interfaces;
-using TvControl;
 using DirectShowLib.BDA;
+using MediaPortal.GUI.Library;
+using MediaPortal.Player;
+using TvControl;
+using TvDatabase;
 using TvLibrary;
 using TvLibrary.Implementations;
+using TvLibrary.Interfaces;
 
 namespace TvPlugin
 {
@@ -138,19 +139,27 @@ namespace TvPlugin
               break;
           }
 
-          IUser user = TVHome.Card.User;
-          IVideoStream videoStream = TVHome.Card.GetCurrentVideoStream((User)user);
-          IAudioStream[] audioStreams = TVHome.Card.AvailableAudioStreams;
-
-          String audioPids = String.Empty;
-          String videoPid = String.Empty;		  
-
-          foreach (IAudioStream stream in audioStreams)
+          string videoStreams = "";
+          int videoStreamCount = g_Player.VideoStreams;
+          for (int i = 0; i < videoStreamCount; i++)
           {
-            audioPids += stream.Pid + " (" + stream.StreamType + ") ";
+            if (i != 0)
+            {
+              videoStreams += ", ";
+            }
+            videoStreams += g_Player.VideoType(i);
           }
-		  
-          videoPid = videoStream.Pid.ToString() + " (" + videoStream.StreamType + ")";
+
+          string audioStreams = "";
+          int audioStreamCount = g_Player.AudioStreams;
+          for (int i = 0; i < audioStreamCount; i++)
+          {
+            if (i != 0)
+            {
+              audioStreams += ", ";
+            }
+            audioStreams += g_Player.AudioLanguage(i) + "(" + g_Player.AudioType(i) + ")";
+          }
 
           GUIPropertyManager.SetProperty("#TV.TuningDetails.Provider", detail.Provider);
           GUIPropertyManager.SetProperty("#TV.TuningDetails.FreeToAir", detail.FreeToAir.ToString());
@@ -164,9 +173,8 @@ namespace TvPlugin
           GUIPropertyManager.SetProperty("#TV.TuningDetails.NetworkId", detail.NetworkId.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.TransportId", detail.TransportId.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.PmtPid", detail.PmtPid.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.PcrPid", videoStream.PcrPid.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.VideoPid", videoPid);
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.AudioPid", audioPids);
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.VideoStream", videoStreams);
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.AudioStreams", audioStreams);
         }
       }
     }

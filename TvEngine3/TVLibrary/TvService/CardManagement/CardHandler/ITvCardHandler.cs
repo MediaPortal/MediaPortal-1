@@ -31,7 +31,6 @@ namespace TvService
     TeletextManagement Teletext { get; }
     ChannelScanning Scanner { get; }
     EpgGrabbing Epg { get; }
-    AudioStreams Audio { get; }
     Recorder Recorder { get; }
     TimeShifter TimeShifter { get; }
     CardTuner Tuner { get; }
@@ -60,7 +59,6 @@ namespace TvService
     IChannel CurrentChannel(ref IUser user);
     int CurrentDbChannel(ref IUser user);
     string CurrentChannelName(ref IUser user);
-    IVideoStream GetCurrentVideoStream(IUser user);
     bool IsScrambled(ref IUser user);
 
     void StopCard(IUser user);

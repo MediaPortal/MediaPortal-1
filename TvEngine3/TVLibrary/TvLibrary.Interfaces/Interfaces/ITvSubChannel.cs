@@ -82,13 +82,6 @@ namespace TvLibrary.Interfaces
 
     #endregion
 
-    /// <summary>
-    /// returns true if we record in transport stream mode
-    /// false we record in program stream mode
-    /// </summary>
-    /// <value>true for transport stream, false for program stream.</value>
-    IVideoStream GetCurrentVideoStream { get; }
-
     #region teletext
 
     /// <summary>
@@ -147,20 +140,6 @@ namespace TvLibrary.Interfaces
     /// Cancel the current tuning process.
     /// </summary>
     void CancelTune();
-
-    #endregion
-
-    #region audio streams
-
-    /// <summary>
-    /// returns the list of available audio streams
-    /// </summary>
-    List<IAudioStream> AvailableAudioStreams { get; }
-
-    /// <summary>
-    /// get/set the current selected audio stream
-    /// </summary>
-    IAudioStream CurrentAudioStream { get; set; }
 
     #endregion
   }

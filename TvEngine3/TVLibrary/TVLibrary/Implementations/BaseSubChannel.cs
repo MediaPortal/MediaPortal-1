@@ -561,23 +561,6 @@ namespace TvLibrary.Implementations
     /// <returns>true of false</returns>
     public abstract bool IsReceivingAudioVideo { get; }
 
-    /// <summary>
-    /// returns true if we record in transport stream mode
-    /// false we record in program stream mode
-    /// </summary>
-    /// <value>true for transport stream, false for program stream.</value>
-    public abstract IVideoStream GetCurrentVideoStream { get; }
-
-    /// <summary>
-    /// returns the list of available audio streams
-    /// </summary>
-    public abstract List<IAudioStream> AvailableAudioStreams { get; }
-
-    /// <summary>
-    /// get/set the current selected audio stream
-    /// </summary>
-    public abstract IAudioStream CurrentAudioStream { get; set; }
-
     #endregion
   }
 }

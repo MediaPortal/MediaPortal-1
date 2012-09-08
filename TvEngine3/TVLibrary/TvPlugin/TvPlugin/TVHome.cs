@@ -43,7 +43,6 @@ using MediaPortal.Profile;
 using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
-using TvLibrary.Implementations.DVB;
 using TvLibrary.Interfaces;
 using Action = MediaPortal.GUI.Library.Action;
 
@@ -75,6 +74,8 @@ namespace TvPlugin
     private const int PBT_APMRESUMEAUTOMATIC = 0x0012;
     private const int PROGRESS_PERCENTAGE_UPDATE_INTERVAL = 1000;
     private const int PROCESS_UPDATE_INTERVAL = 1000;
+
+    private const int AUDIO_STREAM_PRIORITY_NOT_DEFINED = 100;
 
     #endregion
 
@@ -2721,356 +2722,106 @@ namespace TvPlugin
     #region audio selection section
 
     /// <summary>
-    /// unit test enabled method. please respect this.
-    /// run and/or modify the unit tests accordingly.
+    /// Choose the preferred audio stream based on audio-related preferences.
     /// </summary>
+    /// <remarks>
+    /// This method has unit tests. Any changes require the unit tests to be re-run and/or updated.
+    /// </remarks>
     public static int GetPreferedAudioStreamIndex(out eAudioDualMonoMode dualMonoMode)
-    // also used from tvrecorded class
     {
-      int idxFirstAc3 = -1; // the index of the first avail. ac3 found
-      int idxFirstmpeg = -1; // the index of the first avail. mpg found
-      int idxStreamIndexAc3 = -1; // the streamindex of ac3 found based on lang. pref
-      int idxStreamIndexmpeg = -1; // the streamindex of mpg found based on lang. pref   
-      int idx = -1; // the chosen audio index we return
-      int idxLangPriAc3 = -1; // the lang priority of ac3 found based on lang. pref
-      int idxLangPrimpeg = -1; // the lang priority of mpg found based on lang. pref         
-      string ac3BasedOnLang = ""; // for debugging, what lang. in prefs. where used to choose the ac3 audio track ?
-      string mpegBasedOnLang = "";
-      // for debugging, what lang. in prefs. where used to choose the mpeg audio track ?      
+      int currentPreferredIndex = -1; // Not set.
+      bool isCurrentPreferredAc3 = false;
+      int currentPreferredLangPriority = AUDIO_STREAM_PRIORITY_NOT_DEFINED;  // The lower the priority, the more it is preferred.
+      string currentPreferredLang = "";
+      eAudioDualMonoMode currentPreferredDualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
 
-      dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
+      bool haveLangPreferences = (_preferredLanguages != null && _preferredLanguages.Count > 0);
+      bool isDualMonoModeEnabled = (g_Player.GetAudioDualMonoMode() != eAudioDualMonoMode.UNSUPPORTED);
 
-      IAudioStream[] streams = GetStreamsList();
+      Log.Debug("TvHome: GetPreferedAudioStreamIndex(), preferred languages = {0}, prefer AC3 = {1}, prefer audio type over language = {2}, dual mono switching enabled = {3}",
+                  (haveLangPreferences ? String.Join(";", _preferredLanguages.ToArray()) : "N/A"), _preferAC3, _preferAudioTypeOverLang, isDualMonoModeEnabled);
 
-      if (IsPreferredAudioLanguageAvailable())
-      {
-        Log.Debug(
-          "TVHome.GetPreferedAudioStreamIndex(): preferred LANG(s):{0} preferAC3:{1} preferAudioTypeOverLang:{2}",
-          String.Join(";", _preferredLanguages.ToArray()), _preferAC3, _preferAudioTypeOverLang);
-      }
-      else
-      {
-        Log.Debug(
-          "TVHome.GetPreferedAudioStreamIndex(): preferred LANG(s):{0} preferAC3:{1} _preferAudioTypeOverLang:{2}",
-          "n/a", _preferAC3, _preferAudioTypeOverLang);
-      }
-      Log.Debug("Audio streams avail: {0}", streams.Length);
-      bool dualMonoModeEnabled = (g_Player.GetAudioDualMonoMode() != eAudioDualMonoMode.UNSUPPORTED);
-
-      if (streams.Length == 1 && !ShouldApplyDualMonoMode(streams[0].Language))
-      {
-        Log.Info("Audio stream: switching to preferred AC3/MPEG audio stream 0 (only 1 track avail.)");
-        return 0;
-      }
-
-      int priority = int.MaxValue;
-      idxFirstAc3 = GetFirstAC3Index(streams);
-      idxFirstmpeg = GetFirstMpegIndex(streams);
-
-      UpdateAudioStreamIndexesAndPrioritiesBasedOnLanguage(streams, priority, ref idxStreamIndexmpeg,
-                                                           ref mpegBasedOnLang, ref idxStreamIndexAc3, idxLangPriAc3,
-                                                           idxLangPrimpeg, ref ac3BasedOnLang, out dualMonoMode);
-      idx = GetAC3AudioStreamIndex(idxStreamIndexmpeg, idxStreamIndexAc3, ac3BasedOnLang, idx, idxFirstAc3);
-
-      if (idx == -1 && _preferAC3)
-      {
-        Log.Info("Audio stream: no preferred AC3 audio stream found, trying mpeg instead.");
-      }
-
-      if (idx == -1 || !_preferAC3)
-      // we end up here if ac3 selection didnt happen (no ac3 avail.) or if preferac3 is disabled.
-      {
-        if (IsPreferredAudioLanguageAvailable())
-        {
-          //did we find a mpeg track that matches our LANG prefs ?
-          idx = GetMpegAudioStreamIndexBasedOnLanguage(idxStreamIndexmpeg, mpegBasedOnLang, idxStreamIndexAc3, idx,
-                                                       idxFirstmpeg);
-        }
-        else
-        {
-          idx = idxFirstmpeg;
-          Log.Info("Audio stream: switching to preferred MPEG audio stream {0}, NOT based on LANG", idx);
-        }
-      }
-
-      if (idx == -1)
-      {
-        idx = 0;
-        Log.Info("Audio stream: no preferred stream found - switching to audio stream 0");
-      }
-
-      return idx;
-    }
-
-    private static int GetAC3AudioStreamIndex(int idxStreamIndexmpeg, int idxStreamIndexAc3, string ac3BasedOnLang,
-                                              int idx, int idxFirstAc3)
-    {
-      if (_preferAC3)
-      {
-        if (IsPreferredAudioLanguageAvailable())
-        {
-          //did we find an ac3 track that matches our LANG prefs ?
-          idx = GetAC3AudioStreamIndexBasedOnLanguage(idxStreamIndexmpeg, idxStreamIndexAc3, ac3BasedOnLang, idx,
-                                                      idxFirstAc3);
-          //if not then proceed with mpeg lang. selection below.
-        }
-        else
-        {
-          //did we find an ac3 track ?
-          if (idxFirstAc3 > -1)
-          {
-            idx = idxFirstAc3;
-            Log.Info("Audio stream: switching to preferred AC3 audio stream {0}, NOT based on LANG", idx);
-          }
-          //if not then proceed with mpeg lang. selection below.
-        }
-      }
-      return idx;
-    }
-
-    private static void UpdateAudioStreamIndexesAndPrioritiesBasedOnLanguage(IAudioStream[] streams, int priority,
-                                                                             ref int idxStreamIndexmpeg,
-                                                                             ref string mpegBasedOnLang,
-                                                                             ref int idxStreamIndexAc3,
-                                                                             int idxLangPriAc3, int idxLangPrimpeg,
-                                                                             ref string ac3BasedOnLang,
-                                                                             out eAudioDualMonoMode dualMonoMode)
-    {
-      dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
-      if (IsPreferredAudioLanguageAvailable())
-      {
-        for (int i = 0; i < streams.Length; i++)
-        {
-          //now find the ones based on LANG prefs.        
-          if (ShouldApplyDualMonoMode(streams[i].Language))
-          {
-            dualMonoMode = GetDualMonoMode(streams, i, ref priority, ref idxStreamIndexmpeg, ref mpegBasedOnLang);
-            if (dualMonoMode != eAudioDualMonoMode.UNSUPPORTED)
-            {
-              break;
-            }
-          }
-          else
-          {
-            // lower value means higher priority
-            UpdateAudioStreamIndexesBasedOnLang(streams, i, ref idxStreamIndexmpeg, ref idxStreamIndexAc3,
-                                                ref mpegBasedOnLang, ref idxLangPriAc3, ref idxLangPrimpeg, ref ac3BasedOnLang);
-          }
-        }
-      }
-    }
-
-    private static int GetMpegAudioStreamIndexBasedOnLanguage(int idxStreamIndexmpeg, string mpegBasedOnLang,
-                                                              int idxStreamIndexAc3, int idx, int idxFirstmpeg)
-    {
-      if (idxStreamIndexmpeg > -1)
-      {
-        idx = idxStreamIndexmpeg;
-        Log.Info("Audio stream: switching to preferred MPEG audio stream {0}, based on LANG {1}", idx,
-                 mpegBasedOnLang);
-      }
-      //if not, did we even find a mpeg track ?
-      else if (idxFirstmpeg > -1)
-      {
-        //we did find a AC3 track, but not based on LANG - should we choose this or the mpeg track which is based on LANG.
-        if (_preferAudioTypeOverLang || (idxStreamIndexAc3 == -1 && _preferAudioTypeOverLang))
-        {
-          idx = idxFirstmpeg;
-          Log.Info(
-            "Audio stream: switching to preferred MPEG audio stream {0}, NOT based on LANG (none avail. matching {1})",
-            idx, mpegBasedOnLang);
-        }
-        else if (idxStreamIndexAc3 > -1)
-        {
-          idx = idxStreamIndexAc3;
-          Log.Info("Audio stream: ignoring MPEG audio stream {0}", idx);
-        }
-      }
-      return idx;
-    }
-
-    private static int GetAC3AudioStreamIndexBasedOnLanguage(int idxStreamIndexmpeg, int idxStreamIndexAc3,
-                                                             string ac3BasedOnLang, int idx, int idxFirstAc3)
-    {
-      if (idxStreamIndexAc3 > -1)
-      {
-        idx = idxStreamIndexAc3;
-        Log.Info("Audio stream: switching to preferred AC3 audio stream {0}, based on LANG {1}", idx, ac3BasedOnLang);
-      }
-      //if not, did we even find an ac3 track ?
-      else if (idxFirstAc3 > -1)
-      {
-        //we did find an AC3 track, but not based on LANG - should we choose this or the mpeg track which is based on LANG.
-        if (_preferAudioTypeOverLang || idxStreamIndexmpeg == -1)
-        {
-          idx = idxFirstAc3;
-          Log.Info(
-            "Audio stream: switching to preferred AC3 audio stream {0}, NOT based on LANG (none avail. matching {1})",
-            idx, ac3BasedOnLang);
-        }
-        else
-        {
-          Log.Info("Audio stream: ignoring AC3 audio stream {0}", idxFirstAc3);
-        }
-      }
-      return idx;
-    }
-
-    private static void UpdateAudioStreamIndexesBasedOnLang(IAudioStream[] streams, int i, ref int idxStreamIndexmpeg,
-                                                            ref int idxStreamIndexAc3, ref string mpegBasedOnLang,
-                                                            ref int idxLangPriAc3, ref int idxLangPrimpeg,
-                                                            ref string ac3BasedOnLang)
-    {
-      int langPriority = _preferredLanguages.IndexOf(streams[i].Language);
-      string langSel = streams[i].Language;
-      Log.Debug("Stream {0} lang {1}, lang priority index {2}", i, langSel, langPriority);
-
-      // is the stream language preferred?
-      if (langPriority >= 0)
-      {
-        // has the stream a higher priority than an old one or is this the first AC3 stream with lang pri (idxLangPriAc3 == -1) (AC3)
-        bool isAC3 = IsStreamAC3(streams[i]);
-        if (isAC3)
-        {
-          if (idxLangPriAc3 == -1 || langPriority < idxLangPriAc3)
-          {
-            Log.Debug("Setting AC3 pref");
-            idxStreamIndexAc3 = i;
-            idxLangPriAc3 = langPriority;
-            ac3BasedOnLang = langSel;
-          }
-        }
-        else //not AC3
-        {
-          // has the stream a higher priority than an old one or is this the first mpeg stream with lang pri (idxLangPrimpeg == -1) (mpeg)
-          if (idxLangPrimpeg == -1 || langPriority < idxLangPrimpeg)
-          {
-            Log.Debug("Setting mpeg pref");
-            idxStreamIndexmpeg = i;
-            idxLangPrimpeg = langPriority;
-            mpegBasedOnLang = langSel;
-          }
-        }
-      }
-    }
-
-    private static bool IsStreamAC3(IAudioStream stream)
-    {
-      return (stream.StreamType == AudioStreamType.AC3 ||
-              stream.StreamType == AudioStreamType.EAC3);
-    }
-
-    private static bool ShouldApplyDualMonoMode(string language)
-    {
-      bool dualMonoModeEnabled = (g_Player.GetAudioDualMonoMode() != eAudioDualMonoMode.UNSUPPORTED);
-      return (dualMonoModeEnabled && language.Length == 6);
-    }
-
-    private static int GetFirstAC3Index(IAudioStream[] streams)
-    {
-      int idxFirstAc3 = -1;
-
-      for (int i = 0; i < streams.Length; i++)
-      {
-        if (IsStreamAC3(streams[i]))
-        {
-          idxFirstAc3 = i;
-          break;
-        }
-      }
-      return idxFirstAc3;
-    }
-
-    private static int GetFirstMpegIndex(IAudioStream[] streams)
-    {
-      int idxFirstMpeg = -1;
-
-      for (int i = 0; i < streams.Length; i++)
-      {
-        if (!IsStreamAC3(streams[i]))
-        {
-          idxFirstMpeg = i;
-          break;
-        }
-      }
-      return idxFirstMpeg;
-    }
-
-    private static eAudioDualMonoMode GetDualMonoMode(IAudioStream[] streams, int currentIndex, ref int priority,
-                                                      ref int idxStreamIndexmpeg, ref string mpegBasedOnLang)
-    {
-      eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
-      string leftAudioLang = streams[currentIndex].Language.Substring(0, 3);
-      string rightAudioLang = streams[currentIndex].Language.Substring(3, 3);
-
-      int indexLeft = _preferredLanguages.IndexOf(leftAudioLang);
-      if (indexLeft >= 0 && indexLeft < priority)
-      {
-        dualMonoMode = eAudioDualMonoMode.LEFT_MONO;
-        mpegBasedOnLang = leftAudioLang;
-        idxStreamIndexmpeg = currentIndex;
-        priority = indexLeft;
-      }
-
-      int indexRight = _preferredLanguages.IndexOf(rightAudioLang);
-      if (indexRight >= 0 && indexRight < priority)
-      {
-        dualMonoMode = eAudioDualMonoMode.RIGHT_MONO;
-        mpegBasedOnLang = rightAudioLang;
-        idxStreamIndexmpeg = currentIndex;
-        priority = indexRight;
-      }
-      return dualMonoMode;
-    }
-
-    private static bool IsPreferredAudioLanguageAvailable()
-    {
-      return (_preferredLanguages != null && _preferredLanguages.Count > 0);
-    }
-
-    private static IAudioStream[] GetStreamsList()
-    {
-      List<IAudioStream> streamsList = new List<IAudioStream>();
       for (int i = 0; i < g_Player.AudioStreams; i++)
       {
-        DVBAudioStream stream = new DVBAudioStream();
+        bool isAc3 = false;
+        string lang = "";
+        int langPriority = AUDIO_STREAM_PRIORITY_NOT_DEFINED;
+        eAudioDualMonoMode dmMode = eAudioDualMonoMode.UNSUPPORTED;
 
+        // Is the stream an AC3 stream, or not?
         string streamType = g_Player.AudioType(i);
-
-        switch (streamType)
+        if (streamType.Equals("AC3") || streamType.Equals("AC3plus"))
         {
-          case "AC3":
-            stream.StreamType = AudioStreamType.AC3;
-            break;
-          case "AC3plus":
-            stream.StreamType = AudioStreamType.EAC3;
-            break;
-          case "Mpeg1":
-            stream.StreamType = AudioStreamType.MPEG1;
-            break;
-          case "Mpeg2":
-            stream.StreamType = AudioStreamType.MPEG2;
-            break;
-          case "AAC":
-            stream.StreamType = AudioStreamType.AAC;
-            break;
-          case "LATMAAC":
-            stream.StreamType = AudioStreamType.LATMAAC;
-            break;
-          default:
-            stream.StreamType = AudioStreamType.Unknown;
-            break;
+          isAc3 = true;
+        }
+        // else: "Mpeg1", "Mpeg2", "AAC", "LATMAAC"
+
+        // Determine the stream language.
+        lang = g_Player.AudioLanguage(i);
+        string[] langParts = lang.Split('(');
+        if (langParts.Length > 1)
+        {
+          lang = langParts[1].Substring(0, langParts[1].Length - 1);
         }
 
-        stream.Language = g_Player.AudioLanguage(i);
-        string[] lang = stream.Language.Split('(');
-        if (lang.Length > 1)
+        // Handle dual-mono streams by choosing the preferred of the two channels
+        // by language (channel encoding format should be the same).
+        if (isDualMonoModeEnabled && lang.Length == 6)
         {
-          stream.Language = lang[1].Substring(0, lang[1].Length - 1);
+          // Use left channel by default.
+          dmMode = eAudioDualMonoMode.LEFT_MONO;
+          string rightChannelLang = lang.Substring(3, 3);
+          lang = lang.Substring(0, 3);
+          langPriority = _preferredLanguages.IndexOf(lang);
+          int rightChannelLangPriority = _preferredLanguages.IndexOf(rightChannelLang);
+
+          // Do we actually prefer the right channel?
+          if ((langPriority == -1 && rightChannelLangPriority >= 0) || (rightChannelLangPriority >= 0 && rightChannelLangPriority < langPriority))
+          {
+            dmMode = eAudioDualMonoMode.RIGHT_MONO;
+            lang = rightChannelLang;
+            langPriority = rightChannelLangPriority;
+          }
         }
-        streamsList.Add(stream);
+        else
+        {
+          langPriority = _preferredLanguages.IndexOf(lang);
+        }
+        if (langPriority == -1)
+        {
+          langPriority = AUDIO_STREAM_PRIORITY_NOT_DEFINED;
+        }
+
+        // Do we prefer this stream over the previously seen streams?
+        bool isPreferred = false;
+        if (currentPreferredIndex == -1)
+        {
+          isPreferred = true;
+        }
+        // Choice by language...
+        else if (langPriority < currentPreferredLangPriority && (!_preferAudioTypeOverLang || !_preferAC3 || isAc3 || !isCurrentPreferredAc3))
+        {
+          Log.Debug("TvHome: choosing stream {0} (is AC3 {1}, lang = {2}, lang priority = {3}) over {4} (is AC3 = {5}, lang = {6}, lang priority = {7})", i, isAc3, lang, langPriority, currentPreferredIndex, isCurrentPreferredAc3, currentPreferredLang, currentPreferredLangPriority);
+          isPreferred = true;
+        }
+        // Choice by AC3...
+        else if (isAc3 && _preferAC3 && !isCurrentPreferredAc3 && (currentPreferredLangPriority == AUDIO_STREAM_PRIORITY_NOT_DEFINED || langPriority <= currentPreferredLangPriority || (_preferAudioTypeOverLang && langPriority != AUDIO_STREAM_PRIORITY_NOT_DEFINED)))
+        {
+          Log.Debug("TvHome: choosing AC3 stream {0} (lang = {1}, lang priority = {2}) over {3} (is AC3 = {4}, lang = {5}, lang priority = {6})", i, lang, langPriority, currentPreferredIndex, isCurrentPreferredAc3, currentPreferredLang, currentPreferredLangPriority);
+          isPreferred = true;
+        }
+        if (isPreferred)
+        {
+          currentPreferredIndex = i;
+          isCurrentPreferredAc3 = isAc3;
+          currentPreferredLangPriority = langPriority;
+          currentPreferredLang = lang;
+          currentPreferredDualMonoMode = dmMode;
+        }
       }
-      return streamsList.ToArray();
+
+      dualMonoMode = currentPreferredDualMonoMode;
+      return currentPreferredIndex;
     }
 
     #endregion

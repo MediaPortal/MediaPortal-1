@@ -220,29 +220,6 @@ namespace TvLibrary.Implementations.Analog
 
     #endregion
 
-    #region audio streams
-
-    /// <summary>
-    /// returns the list of available audio streams
-    /// </summary>
-    public override List<IAudioStream> AvailableAudioStreams
-    {
-      get { return _tvAudio.GetAvailableAudioStreams(); }
-    }
-
-    /// <summary>
-    /// get/set the current selected audio stream
-    /// </summary>
-    public override IAudioStream CurrentAudioStream
-    {
-      get { return _tvAudio.CurrentAudioStream; }
-      set { _tvAudio.CurrentAudioStream = value; }
-    }
-
-    #endregion
-
-    #region video stream
-
     /// <summary>
     /// Returns true when unscrambled audio/video is received otherwise false
     /// </summary>
@@ -251,21 +228,6 @@ namespace TvLibrary.Implementations.Analog
     {
       get { return true; }
     }
-
-    /// <summary>
-    /// Retursn the video format (always returns MPEG2). 
-    /// </summary>
-    /// <value>The number of channels decrypting.</value>
-    public override IVideoStream GetCurrentVideoStream
-    {
-      get
-      {
-        VideoStream stream = new VideoStream();
-        return stream;
-      }
-    }
-
-    #endregion
 
     #region teletext
 

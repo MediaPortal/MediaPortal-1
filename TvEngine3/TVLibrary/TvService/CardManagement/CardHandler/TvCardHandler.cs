@@ -44,7 +44,6 @@ namespace TvService
     private readonly TeletextManagement _teletext;
     private readonly ChannelScanning _scanner;
     private readonly EpgGrabbing _epgGrabbing;
-    private readonly AudioStreams _audioStreams;
     private readonly Recorder _recorder;
     private readonly TimeShifter _timerShifter;
     private readonly CardTuner _tuner;
@@ -67,7 +66,6 @@ namespace TvService
       _teletext = new TeletextManagement(this);
       _scanner = new ChannelScanning(this);
       _epgGrabbing = new EpgGrabbing(this);
-      _audioStreams = new AudioStreams(this);
       _tuner = new CardTuner(this);
       _recorder = new Recorder(this);
       _timerShifter = new TimeShifter(this);
@@ -138,11 +136,6 @@ namespace TvService
     public EpgGrabbing Epg
     {
       get { return _epgGrabbing; }
-    }
-
-    public AudioStreams Audio
-    {
-      get { return _audioStreams; }
     }
 
     public Recorder Recorder
@@ -882,38 +875,6 @@ namespace TvService
         Log.Write(ex);
       }
     }
-
-    /// <summary>
-    /// Gets the current video stream.
-    /// </summary>
-    /// <returns></returns>
-    public IVideoStream GetCurrentVideoStream(IUser user)
-    {
-      if (_dbsCard.Enabled == false)
-        return null;
-      if (IsLocal == false)
-      {
-        try
-        {
-          RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
-          return RemoteControl.Instance.GetCurrentVideoStream(user);
-        }
-        catch (Exception)
-        {
-          Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
-          return null;
-        }
-      }
-      ITvCardContext context = _card.Context as ITvCardContext;
-      if (context == null)
-        return null;
-      context.GetUser(ref user);
-      ITvSubChannel subchannel = _card.GetSubChannel(user.SubChannel);
-      if (subchannel == null)
-        return null;
-      return subchannel.GetCurrentVideoStream;
-    }
-
 
     /// <summary>
     /// returns a virtual card for this tvcard

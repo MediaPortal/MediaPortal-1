@@ -94,7 +94,6 @@
     <Compile Include="CardManagement\CardAllocation\CardAllocationCache.cs" />
     <Compile Include="CardManagement\CardAllocation\ChannelStates.cs" />
     <Compile Include="CardManagement\CardAllocation\AdvancedCardAllocationStatic.cs" />
-    <Compile Include="CardManagement\CardHandler\AudioStreams.cs" />
     <Compile Include="CardManagement\CardHandler\TimeShifterBase.cs" />
     <Compile Include="CardManagement\CardReservation\Ticket\CardReservationTicketBase.cs" />
     <Compile Include="CardManagement\CardReservation\Ticket\CardStopReservationTicket.cs" />

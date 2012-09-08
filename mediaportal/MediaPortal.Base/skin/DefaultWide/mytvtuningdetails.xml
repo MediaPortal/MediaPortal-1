@@ -109,34 +109,23 @@
       <visible>!string.equals(#TV.TuningDetails.ChannelType,Analog)</visible>
     </control>
     <control>
-      <description>PCR PID</description>
+      <description>Video Stream</description>
       <type>label</type>
       <id>11</id>
       <posX>60</posX>
       <posY>300</posY>
-      <label>PCR PID: #TV.TuningDetails.PcrPid</label>
+      <label>Video Stream: #TV.TuningDetails.VideoStream</label>
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>!string.equals(#TV.TuningDetails.ChannelType,Analog)</visible>
     </control>
     <control>
-      <description>Video PID</description>
+      <description>Audio Stream(s)</description>
       <type>label</type>
       <id>12</id>
       <posX>60</posX>
       <posY>325</posY>
-      <label>Video PID: #TV.TuningDetails.VideoPid</label>
-      <font>font11</font>
-      <textcolor>FFFFFFFF</textcolor>
-      <visible>!string.equals(#TV.TuningDetails.ChannelType,Analog)</visible>
-    </control>
-    <control>
-      <description>Audio PID(s)</description>
-      <type>label</type>
-      <id>13</id>
-      <posX>60</posX>
-      <posY>350</posY>
-      <label>Audio PID(s): #TV.TuningDetails.AudioPid</label>
+      <label>Audio Stream(s): #TV.TuningDetails.AudioStreams</label>
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>!string.equals(#TV.TuningDetails.ChannelType,Analog)</visible>
@@ -145,10 +134,10 @@
     <control>
       <description>Frequency</description>
       <type>label</type>
-      <id>14</id>
+      <id>13</id>
       <posX>750</posX>
       <posY>175</posY>
-      <label>Frequency (kHz): #TV.TuningDetails.Frequency</label>
+      <label>Frequency: #TV.TuningDetails.Frequency kHz</label>
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>string.equals(#TV.TuningDetails.ChannelType,DVB-S)</visible>
@@ -156,10 +145,10 @@
     <control>
       <description>Symbol Rate</description>
       <type>label</type>
-      <id>15</id>
+      <id>14</id>
       <posX>750</posX>
       <posY>200</posY>
-      <label>Symbol Rate (ks/s): #TV.TuningDetails.SymbolRate</label>
+      <label>Symbol Rate: #TV.TuningDetails.SymbolRate ks/s</label>
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>string.equals(#TV.TuningDetails.ChannelType,DVB-S)</visible>
@@ -167,7 +156,7 @@
     <control>
       <description>Polarisation</description>
       <type>label</type>
-      <id>16</id>
+      <id>15</id>
       <posX>750</posX>
       <posY>225</posY>
       <label>Polarisation: #TV.TuningDetails.Polarisation</label>
@@ -178,7 +167,7 @@
     <control>
       <description>Modulation</description>
       <type>label</type>
-      <id>17</id>
+      <id>16</id>
       <posX>750</posX>
       <posY>250</posY>
       <label>Modulation: #TV.TuningDetails.Modulation</label>
@@ -189,7 +178,7 @@
     <control>
       <description>FEC Rate</description>
       <type>label</type>
-      <id>18</id>
+      <id>17</id>
       <posX>750</posX>
       <posY>275</posY>
       <label>FEC Rate: #TV.TuningDetails.FecRate</label>
@@ -200,7 +189,7 @@
     <control>
       <description>Pilot</description>
       <type>label</type>
-      <id>19</id>
+      <id>18</id>
       <posX>750</posX>
       <posY>300</posY>
       <label>Pilot: #TV.TuningDetails.Pilot</label>
@@ -211,7 +200,7 @@
     <control>
       <description>Roll-Off</description>
       <type>label</type>
-      <id>20</id>
+      <id>19</id>
       <posX>750</posX>
       <posY>325</posY>
       <label>Roll-Off: #TV.TuningDetails.RollOff</label>
@@ -223,10 +212,10 @@
     <control>
       <description>Frequency</description>
       <type>label</type>
-      <id>21</id>
+      <id>20</id>
       <posX>750</posX>
       <posY>175</posY>
-      <label>Frequency (kHz): #TV.TuningDetails.Frequency</label>
+      <label>Frequency: #TV.TuningDetails.Frequency kHz</label>
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>string.equals(#TV.TuningDetails.ChannelType,DVB-C)</visible>
@@ -234,10 +223,10 @@
     <control>
       <description>Symbol Rate</description>
       <type>label</type>
-      <id>22</id>
+      <id>21</id>
       <posX>750</posX>
       <posY>200</posY>
-      <label>Symbol Rate (ks/s): #TV.TuningDetails.SymbolRate</label>
+      <label>Symbol Rate: #TV.TuningDetails.SymbolRate ks/s</label>
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>string.equals(#TV.TuningDetails.ChannelType,DVB-C)</visible>
@@ -245,7 +234,7 @@
     <control>
       <description>Modulation</description>
       <type>label</type>
-      <id>23</id>
+      <id>22</id>
       <posX>750</posX>
       <posY>225</posY>
       <label>Modulation: #TV.TuningDetails.Modulation</label>
@@ -257,10 +246,10 @@
     <control>
       <description>Frequency</description>
       <type>label</type>
-      <id>24</id>
+      <id>23</id>
       <posX>750</posX>
       <posY>175</posY>
-      <label>Frequency (kHz): #TV.TuningDetails.Frequency</label>
+      <label>Frequency: #TV.TuningDetails.Frequency kHz</label>
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>string.equals(#TV.TuningDetails.ChannelType,DVB-T)</visible>
@@ -268,10 +257,10 @@
     <control>
       <description>Bandwidth</description>
       <type>label</type>
-      <id>25</id>
+      <id>24</id>
       <posX>750</posX>
       <posY>200</posY>
-      <label>Bandwidth (MHz): #TV.TuningDetails.Bandwidth</label>
+      <label>Bandwidth: #TV.TuningDetails.Bandwidth MHz</label>
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>string.equals(#TV.TuningDetails.ChannelType,DVB-T)</visible>
@@ -280,7 +269,7 @@
     <control>
       <description>Physical Channel Number</description>
       <type>label</type>
-      <id>26</id>
+      <id>25</id>
       <posX>750</posX>
       <posY>175</posY>
       <label>Phys. Channel Number: #TV.TuningDetails.ChannelNumber</label>
@@ -291,7 +280,7 @@
     <control>
       <description>Major Channel Number</description>
       <type>label</type>
-      <id>27</id>
+      <id>26</id>
       <posX>750</posX>
       <posY>200</posY>
       <label>Major Channel Number: #TV.TuningDetails.MajorChannelNumber</label>
@@ -302,7 +291,7 @@
     <control>
       <description>Minor Channel Number</description>
       <type>label</type>
-      <id>28</id>
+      <id>27</id>
       <posX>750</posX>
       <posY>225</posY>
       <label>Minor Channel Number: #TV.TuningDetails.MinorChannelNumber</label>
@@ -313,7 +302,7 @@
     <control>
       <description>Modulation</description>
       <type>label</type>
-      <id>29</id>
+      <id>28</id>
       <posX>750</posX>
       <posY>250</posY>
       <label>Modulation: #TV.TuningDetails.Modulation</label>
@@ -325,10 +314,10 @@
     <control>
       <description>Frequency</description>
       <type>label</type>
-      <id>30</id>
+      <id>29</id>
       <posX>750</posX>
       <posY>175</posY>
-      <label>Frequency (kHz): #TV.TuningDetails.Frequency</label>
+      <label>Frequency: #TV.TuningDetails.Frequency kHz</label>
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>string.equals(#TV.TuningDetails.ChannelType,Cable)</visible>
@@ -336,7 +325,7 @@
     <control>
       <description>Major Channel Number</description>
       <type>label</type>
-      <id>31</id>
+      <id>30</id>
       <posX>750</posX>
       <posY>200</posY>
       <label>Major Channel Number: #TV.TuningDetails.MajorChannelNumber</label>
@@ -347,7 +336,7 @@
     <control>
       <description>Minor Channel Number</description>
       <type>label</type>
-      <id>32</id>
+      <id>31</id>
       <posX>750</posX>
       <posY>225</posY>
       <label>Minor Channel Number: #TV.TuningDetails.MinorChannelNumber</label>
@@ -358,7 +347,7 @@
     <control>
       <description>Modulation</description>
       <type>label</type>
-      <id>33</id>
+      <id>32</id>
       <posX>750</posX>
       <posY>250</posY>
       <label>Modulation: #TV.TuningDetails.Modulation</label>
@@ -370,7 +359,7 @@
     <control>
       <description>Physical Channel Number</description>
       <type>label</type>
-      <id>34</id>
+      <id>33</id>
       <posX>750</posX>
       <posY>175</posY>
       <label>Phys. Channel Number: #TV.TuningDetails.ChannelNumber</label>
@@ -381,7 +370,7 @@
     <control>
       <description>Country</description>
       <type>label</type>
-      <id>35</id>
+      <id>34</id>
       <posX>750</posX>
       <posY>200</posY>
       <label>Country: #TV.TuningDetails.Country</label>
@@ -392,7 +381,7 @@
     <control>
       <description>Video Source</description>
       <type>label</type>
-      <id>36</id>
+      <id>35</id>
       <posX>750</posX>
       <posY>225</posY>
       <label>Video Source: #TV.TuningDetails.VideoSource</label>
@@ -403,7 +392,7 @@
     <control>
       <description>Audio Source</description>
       <type>label</type>
-      <id>37</id>
+      <id>36</id>
       <posX>750</posX>
       <posY>250</posY>
       <label>Audio Source: #TV.TuningDetails.AudioSource</label>
@@ -415,7 +404,7 @@
     <control>
       <description>Signal Level</description>
       <type>label</type>
-      <id>38</id>
+      <id>37</id>
       <posX>60</posX>
       <posY>400</posY>
       <label>Signal Level: #TV.TuningDetails.SignalLevel</label>
@@ -425,7 +414,7 @@
     <control>
       <type>image</type>
       <description>progress background image</description>
-      <id>39</id>
+      <id>38</id>
       <posX>60</posX>
       <posY>438</posY>
       <width>404</width>
@@ -435,7 +424,7 @@
     <control>
       <description>Signal quality progress bar</description>
       <type>progress</type>
-      <id>40</id>
+      <id>39</id>
       <posX>62</posX>
       <posY>440</posY>
       <width>400</width>
@@ -452,7 +441,7 @@
     <control>
       <description>Signal Quality</description>
       <type>label</type>
-      <id>41</id>
+      <id>40</id>
       <posX>750</posX>
       <posY>400</posY>
       <label>Signal Quality: #TV.TuningDetails.SignalQuality</label>
@@ -462,7 +451,7 @@
     <control>
       <type>image</type>
       <description>progress background image</description>
-      <id>42</id>
+      <id>41</id>
       <posX>750</posX>
       <posY>438</posY>
       <width>404</width>
@@ -472,7 +461,7 @@
     <control>
       <description>Signal quality progress bar</description>
       <type>progress</type>
-      <id>43</id>
+      <id>42</id>
       <posX>752</posX>
       <posY>442</posY>
       <width>400</width>
@@ -489,7 +478,7 @@
     <control>
       <description>TV preview window Background</description>
       <type>image</type>
-      <id>44</id>
+      <id>43</id>
       <posX>62</posX>
       <posY>490</posY>
       <width>340</width>

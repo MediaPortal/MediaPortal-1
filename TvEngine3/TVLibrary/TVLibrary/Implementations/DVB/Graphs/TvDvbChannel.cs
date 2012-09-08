@@ -63,11 +63,6 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     private int _subChannelIndex = -1;
 
-    /// <summary>
-    /// Current audio stream
-    /// </summary>
-    private DVBAudioStream _currentAudioStream;
-
     /// set to true to enable PAT lookup of PMT
     private bool _alwaysLookupPmtPidInPat = DebugSettings.UsePATLookup;
 
@@ -179,7 +174,6 @@ namespace TvLibrary.Implementations.DVB
     {
       Log.Log.WriteFile("subch:{0} OnBeforeTune", _subChannelId);
       _hasTeletext = false;
-      _currentAudioStream = null;
     }
 
     /// <summary>
@@ -502,84 +496,6 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
-    #region audio streams methods
-
-    /// <summary>
-    /// returns the list of available audio streams
-    /// </summary>
-    public override List<IAudioStream> AvailableAudioStreams
-    {
-      get
-      {
-        DVBAudioStream stream = null;
-        List<IAudioStream> streams = new List<IAudioStream>();
-        if (_pmt == null)
-        {
-          Log.Log.Debug("TvDvbChannel: PMT is not available");
-          return streams;
-        }
-        foreach (PmtElementaryStream es in _pmt.ElementaryStreams)
-        {
-          if (StreamTypeHelper.IsAudioStream(es.LogicalStreamType))
-          {
-            stream = new DVBAudioStream();
-            switch (es.LogicalStreamType)
-            {
-              case LogicalStreamType.Mpeg1Audio:
-                stream.StreamType = AudioStreamType.MPEG1;
-                break;
-              case LogicalStreamType.Mpeg2Audio:
-                stream.StreamType = AudioStreamType.MPEG2;
-                break;
-              case LogicalStreamType.AdtsAac:
-                stream.StreamType = AudioStreamType.AAC;
-                break;
-              case LogicalStreamType.LatmAac:
-                stream.StreamType = AudioStreamType.LATMAAC;
-                break;
-              case LogicalStreamType.Ac3:
-                stream.StreamType = AudioStreamType.AC3;
-                break;
-              case LogicalStreamType.EnhancedAc3:
-                stream.StreamType = AudioStreamType.EAC3;
-                break;
-              default:
-                stream.StreamType = AudioStreamType.Unknown;
-                break;
-            }
-
-            // TODO audio language descriptor handling;
-            //stream.Language = info.language;
-            stream.Language = "eng";
-            stream.Pid = es.Pid;
-            streams.Add(stream);
-          }
-        }
-        return streams;
-      }
-    }
-
-    /// <summary>
-    /// get/set the current selected audio stream
-    /// </summary>
-    public override IAudioStream CurrentAudioStream
-    {
-      get { return _currentAudioStream; }
-      set
-      {
-        DVBAudioStream audioStream = (DVBAudioStream)value;
-        if (_tsFilterInterface != null)
-        {
-          _tsFilterInterface.AnalyserAddPid(_subChannelIndex, audioStream.Pid);
-        }
-        _currentAudioStream = audioStream;
-      }
-    }
-
-    #endregion
-
-    #region video streams methods
-
     /// <summary>
     /// Returns true when unscrambled audio/video is received otherwise false
     /// </summary>
@@ -605,57 +521,6 @@ namespace TvLibrary.Implementations.DVB
         return ((audioEncrypted == 0) && (videoEncrypted == 0));*/
       }
     }
-
-    /// <summary>
-    /// returns true if we record in transport stream mode
-    /// false we record in program stream mode
-    /// </summary>
-    /// <value>true for transport stream, false for program stream.</value>
-    public override IVideoStream GetCurrentVideoStream
-    {
-      get
-      {
-        VideoStream stream = null;
-        if (_pmt == null)
-        {
-          Log.Log.Debug("TvDvbChannel: PMT is not available");
-          return stream;
-        }
-
-        stream = new VideoStream();
-        stream.PcrPid = _pmt.PcrPid;
-
-        foreach (PmtElementaryStream es in _pmt.ElementaryStreams)
-        {
-          if (StreamTypeHelper.IsVideoStream(es.LogicalStreamType))
-          {
-            switch (es.LogicalStreamType)
-            {
-              case LogicalStreamType.Mpeg1Video:
-                stream.StreamType = VideoStreamType.MPEG1;
-                break;
-              case LogicalStreamType.Mpeg2Video:
-                stream.StreamType = VideoStreamType.MPEG2;
-                break;
-              case LogicalStreamType.Mpeg4Video:
-                stream.StreamType = VideoStreamType.MPEG4;
-                break;
-              case LogicalStreamType.AvcVideo:
-                stream.StreamType = VideoStreamType.H264;
-                break;
-              default:
-                stream.StreamType = VideoStreamType.Unknown;
-                break;
-            }
-            stream.Pid = es.Pid;
-            return stream;  // Only one video stream supported.
-          }
-        }
-        return stream;
-      }
-    }
-
-    #endregion
 
     #region teletext
 
@@ -747,7 +612,6 @@ namespace TvLibrary.Implementations.DVB
         }
 
         _hasTeletext = false;
-        _currentAudioStream = null;
         foreach (PmtElementaryStream es in _pmt.ElementaryStreams)
         {
           if (StreamTypeHelper.IsVideoStream(es.LogicalStreamType))
@@ -772,36 +636,6 @@ namespace TvLibrary.Implementations.DVB
           {
             _pids.Add(es.Pid);
             _tsFilterInterface.AnalyserAddPid(_subChannelIndex, es.Pid);
-            if (_currentAudioStream == null)
-            {
-              _currentAudioStream = new DVBAudioStream();
-              _currentAudioStream.Language = "eng";
-              _currentAudioStream.Pid = es.Pid;
-              switch (es.LogicalStreamType)
-              {
-                case LogicalStreamType.Mpeg1Audio:
-                  _currentAudioStream.StreamType = AudioStreamType.MPEG1;
-                  break;
-                case LogicalStreamType.Mpeg2Audio:
-                  _currentAudioStream.StreamType = AudioStreamType.MPEG2;
-                  break;
-                case LogicalStreamType.AdtsAac:
-                  _currentAudioStream.StreamType = AudioStreamType.AAC;
-                  break;
-                case LogicalStreamType.LatmAac:
-                  _currentAudioStream.StreamType = AudioStreamType.LATMAAC;
-                  break;
-                case LogicalStreamType.Ac3:
-                  _currentAudioStream.StreamType = AudioStreamType.AC3;
-                  break;
-                case LogicalStreamType.EnhancedAc3:
-                  _currentAudioStream.StreamType = AudioStreamType.EAC3;
-                  break;
-                default:
-                  _currentAudioStream.StreamType = AudioStreamType.Unknown;
-                  break;
-              }
-            }
           }
         }
 

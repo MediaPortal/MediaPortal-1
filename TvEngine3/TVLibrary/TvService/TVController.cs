@@ -1225,17 +1225,6 @@ namespace TvService
     }
 
     /// <summary>
-    /// Returns the video stream currently associated with the card. 
-    /// </summary>
-    /// <returns>stream_type</returns>
-    public IVideoStream GetCurrentVideoStream(IUser user)
-    {
-      if (ValidateTvControllerParams(user))
-        return null;
-      return _cards[user.CardId].GetCurrentVideoStream(user);
-    }
-
-    /// <summary>
     /// Determines if any card is currently busy recording
     /// </summary>
     /// <returns>
@@ -2324,27 +2313,6 @@ namespace TvService
     }
 
     #region audio streams
-
-    public IAudioStream[] AvailableAudioStreams(IUser user)
-    {
-      if (ValidateTvControllerParams(user))
-        return null;
-      return _cards[user.CardId].Audio.Streams(user);
-    }
-
-    public IAudioStream GetCurrentAudioStream(IUser user)
-    {
-      if (ValidateTvControllerParams(user))
-        return null;
-      return _cards[user.CardId].Audio.GetCurrent(user);
-    }
-
-    public void SetCurrentAudioStream(IUser user, IAudioStream stream)
-    {
-      if (ValidateTvControllerParams(user))
-        return;
-      _cards[user.CardId].Audio.Set(user, stream);
-    }
 
     public string GetStreamingUrl(IUser user)
     {

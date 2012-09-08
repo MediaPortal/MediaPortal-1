@@ -156,33 +156,5 @@ namespace TvLibrary.Implementations.RadioWebStream
     }
 
     #endregion
-
-    #region audio streams
-
-    /// <summary>
-    /// returns the list of available audio streams
-    /// </summary>
-    public List<IAudioStream> AvailableAudioStreams
-    {
-      get
-      {
-        List<IAudioStream> streams = new List<IAudioStream>();
-        AnalogAudioStream stream = new AnalogAudioStream();
-        stream.AudioMode = TVAudioMode.Stereo;
-        stream.Language = "Stereo";
-        streams.Add(stream);
-        return streams;
-      }
-    }
-
-    /// <summary>
-    /// get/set the current selected audio stream
-    /// </summary>
-    public IAudioStream CurrentAudioStream
-    {
-      get { return AvailableAudioStreams[0]; }
-    }
-
-    #endregion
   }
 }

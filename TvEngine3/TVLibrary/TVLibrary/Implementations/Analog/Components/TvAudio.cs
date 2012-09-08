@@ -51,14 +51,14 @@ namespace TvLibrary.Implementations.Analog.Components
     private DsDevice _audioDevice;
 
     /// <summary>
-    /// The mode of the TvAudio component in the graph
+    /// The variant or mode of the audio source in the graph.
     /// </summary>
-    private TvAudioVariant mode;
+    private TvAudioVariant _variant;
 
     /// <summary>
-    /// List of available streams
+    /// The set of audio modes that the hardware supports.
     /// </summary>
-    private List<IAudioStream> streams;
+    private TVAudioMode _hardwareSupportedModes;
 
     #endregion
 
@@ -85,7 +85,7 @@ namespace TvLibrary.Implementations.Analog.Components
     /// </summary>
     public void Dispose()
     {
-      if (mode == TvAudioVariant.Normal)
+      if (_variant == TvAudioVariant.Normal)
       {
         if (_filterTvAudioTuner != null)
         {
@@ -120,7 +120,6 @@ namespace TvLibrary.Implementations.Analog.Components
     /// <returns>true, if the graph building was successful</returns>
     public bool CreateFilterInstance(Graph graph, IFilterGraph2 graphBuilder, Tuner tuner, Crossbar crossbar)
     {
-      streams = new List<IAudioStream>();
       if (!string.IsNullOrEmpty(graph.TvAudio.Name) && graph.TvAudio.Mode != TvAudioVariant.Unavailable)
       {
         Log.Log.WriteFile("analog: Using TvAudio configuration from stored graph");
@@ -134,7 +133,7 @@ namespace TvLibrary.Implementations.Analog.Components
       if (tuner.AudioPin == null)
       {
         Log.Log.WriteFile("analog: AddTvAudioFilter no tv audio device needed!");
-        mode = TvAudioVariant.Unavailable;
+        _variant = TvAudioVariant.Unavailable;
         return true;
       }
       Log.Log.WriteFile("analog: No stored graph for TvAudio component - Trying to detect");
@@ -173,9 +172,8 @@ namespace TvLibrary.Implementations.Analog.Components
           {
             Log.Log.WriteFile("analog: AddTvAudioFilter succeeded - TvTuner is also TvAudio");
             _filterTvAudioTuner = tuner.Filter;
-            mode = TvAudioVariant.TvTuner;
-            streams = new List<IAudioStream>();
-            CheckCapabilities(graph);
+            _variant = TvAudioVariant.TvTuner;
+            _hardwareSupportedModes = graph.TvAudio.AudioModes;
             return true;
           }
           return false;
@@ -265,8 +263,8 @@ namespace TvLibrary.Implementations.Analog.Components
       {
         return false;
       }
-      mode = TvAudioVariant.Normal;
-      CheckCapabilities(graph);
+      _variant = TvAudioVariant.Normal;
+      _hardwareSupportedModes = graph.TvAudio.AudioModes;
       return true;
     }
 
@@ -363,78 +361,34 @@ namespace TvLibrary.Implementations.Analog.Components
         if (hr != 0)
         {
           Log.Log.Error("analog: unable to add TvAudioTuner to graph - even TvTuner as TvAudio fails");
-          mode = TvAudioVariant.Unavailable;
+          _variant = TvAudioVariant.Unavailable;
         }
         else
         {
           Log.Log.WriteFile("analog: AddTvAudioFilter connected TvTuner with Crossbar directly succeeded!");
-          mode = TvAudioVariant.TvTunerConnection;
+          _variant = TvAudioVariant.TvTunerConnection;
           _tvAudioTunerInterface = tuner.Filter as IAMTVAudio;
           if (_tvAudioTunerInterface != null)
           {
             Log.Log.WriteFile("analog: AddTvAudioFilter succeeded - TvTuner is also TvAudio");
             _filterTvAudioTuner = tuner.Filter;
-            mode = TvAudioVariant.TvTuner;
+            _variant = TvAudioVariant.TvTuner;
           }
         }
-        graph.TvAudio.Mode = mode;
+        graph.TvAudio.Mode = _variant;
       }
       else
       {
-        mode = TvAudioVariant.Normal;
+        _variant = TvAudioVariant.Normal;
         graph.TvAudio.Name = _audioDevice.Name;
       }
-      if (mode != TvAudioVariant.Unavailable && mode != TvAudioVariant.TvTunerConnection &&
+      if (_variant != TvAudioVariant.Unavailable && _variant != TvAudioVariant.TvTunerConnection &&
           _tvAudioTunerInterface != null)
       {
-        CheckCapabilities(graph);
+        _tvAudioTunerInterface.GetHardwareSupportedTVAudioModes(out _hardwareSupportedModes);
+        graph.TvAudio.AudioModes = _hardwareSupportedModes;
       }
       return true;
-    }
-
-    /// <summary>
-    /// Detects the capabilities of the tv audio device
-    /// </summary>
-    private void CheckCapabilities(Graph graph)
-    {
-      TVAudioMode availableAudioModes;
-      _tvAudioTunerInterface.GetHardwareSupportedTVAudioModes(out availableAudioModes);
-      graph.TvAudio.AudioModes = availableAudioModes;
-      if ((availableAudioModes & (TVAudioMode.Stereo)) != 0)
-      {
-        AnalogAudioStream stream = new AnalogAudioStream();
-        stream.AudioMode = TVAudioMode.Stereo;
-        stream.Language = "Stereo";
-        streams.Add(stream);
-      }
-      if ((availableAudioModes & (TVAudioMode.Mono)) != 0)
-      {
-        AnalogAudioStream stream = new AnalogAudioStream();
-        stream.AudioMode = TVAudioMode.Mono;
-        stream.Language = "Mono";
-        streams.Add(stream);
-      }
-      if ((availableAudioModes & (TVAudioMode.LangA)) != 0)
-      {
-        AnalogAudioStream stream = new AnalogAudioStream();
-        stream.AudioMode = TVAudioMode.LangA;
-        stream.Language = "LangA";
-        streams.Add(stream);
-      }
-      if ((availableAudioModes & (TVAudioMode.LangB)) != 0)
-      {
-        AnalogAudioStream stream = new AnalogAudioStream();
-        stream.AudioMode = TVAudioMode.LangB;
-        stream.Language = "LangB";
-        streams.Add(stream);
-      }
-      if ((availableAudioModes & (TVAudioMode.LangC)) != 0)
-      {
-        AnalogAudioStream stream = new AnalogAudioStream();
-        stream.AudioMode = TVAudioMode.LangC;
-        stream.Language = "LangC";
-        streams.Add(stream);
-      }
     }
 
     #endregion
@@ -442,54 +396,66 @@ namespace TvLibrary.Implementations.Analog.Components
     #region public methods
 
     /// <summary>
-    /// Gets the available audio streams
+    /// Gets the available audio modes.
     /// </summary>
-    /// <returns>List of available audio streams</returns>
-    public List<IAudioStream> GetAvailableAudioStreams()
+    /// <returns>List of available audio modes.</returns>
+    public List<TVAudioMode> GetAvailableAudioModes()
     {
-      List<IAudioStream> availableStreams = new List<IAudioStream>();
+      List<TVAudioMode> availableStreams = new List<TVAudioMode>();
       if (_filterTvAudioTuner != null)
       {
         TVAudioMode availableAudioModes;
         _tvAudioTunerInterface.GetAvailableTVAudioModes(out availableAudioModes);
-        foreach (AnalogAudioStream stream in streams)
+        availableAudioModes = availableAudioModes & _hardwareSupportedModes;
+
+        if ((availableAudioModes & TVAudioMode.Stereo) != 0)
         {
-          if ((stream.AudioMode & availableAudioModes) != 0)
-          {
-            availableStreams.Add(stream);
-          }
+          availableStreams.Add(TVAudioMode.Stereo);
+        }
+        if ((availableAudioModes & TVAudioMode.Mono) != 0)
+        {
+          availableStreams.Add(TVAudioMode.Mono);
+        }
+        if ((availableAudioModes & TVAudioMode.LangA) != 0)
+        {
+          availableStreams.Add(TVAudioMode.LangA);
+        }
+        if ((availableAudioModes & TVAudioMode.LangB) != 0)
+        {
+          availableStreams.Add(TVAudioMode.LangB);
+        }
+        if ((availableAudioModes & TVAudioMode.LangC) != 0)
+        {
+          availableStreams.Add(TVAudioMode.LangC);
         }
       }
       return availableStreams;
     }
 
     /// <summary>
-    /// get/set the current selected audio stream
+    /// get/set the audio mode
     /// </summary>
-    public IAudioStream CurrentAudioStream
+    public TVAudioMode CurrentAudioMode
     {
       get
       {
         if (_filterTvAudioTuner == null)
-          return null;
+        {
+          return TVAudioMode.None;
+        }
         TVAudioMode currentMode;
         _tvAudioTunerInterface.get_TVAudioMode(out currentMode);
-        List<IAudioStream> availableStreams = GetAvailableAudioStreams();
-        foreach (AnalogAudioStream stream in availableStreams)
-        {
-          if (stream.AudioMode == currentMode)
-            return stream;
-        }
-        return null;
+        return currentMode;
       }
       set
       {
-        AnalogAudioStream stream = value as AnalogAudioStream;
-        if (stream != null && _filterTvAudioTuner != null)
+        if (_filterTvAudioTuner != null && (value & _hardwareSupportedModes) != 0)
         {
           IAMTVAudio tvAudioTunerInterface = _filterTvAudioTuner as IAMTVAudio;
           if (tvAudioTunerInterface != null)
-            tvAudioTunerInterface.put_TVAudioMode(stream.AudioMode);
+          {
+            tvAudioTunerInterface.put_TVAudioMode(value);
+          }
         }
       }
     }
