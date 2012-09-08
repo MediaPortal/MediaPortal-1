@@ -215,26 +215,30 @@ namespace TvLibrary.Implementations.DVB
       ThrowExceptionIfTuneCancelled();
       Log.Log.Debug("TvDvbChannel: subchannel {0} wait for PMT, service ID = {1} (0x{1:x}), PMT PID = {2} (0x{2:x})", _subChannelId, serviceId, pmtPid);
 
-      // There are 3 classes of PMT PID settings:
+      // There 3 classes of service ID settings:
       // -1 = Scanning behaviour, where we don't care about PMT.
-      // 0 = We don't know the correct/current PMT PID, so we ask TsWriter to determine what it should be,
-      //      and then grab the associated PMT sections.
-      // <anything else> = A valid PMT PID for the service that we are trying to tune. TsWriter should grab
-      //                    the associated PMT sections.
-
-      // There are also 2 classes of service ID settings:
       // 0 = The service is expected to be the only service in the transport stream. TsWriter should take the
       //      first service that it sees and grab the associated PMT sections for that service. This situation
       //      is most applicable for providers that re-broadcast services without updating/fixing the SI.
       // <anything else> = A valid service ID for the service that we are trying to tune. TsWriter should grab
       //                    the associated PMT sections.
-      if (pmtPid < 0)
+
+      // There are also 3 classes of PMT PID settings:
+      // -1 = We don't know the correct/current PMT PID, so we ask TsWriter to determine what it should be,
+      //      and then grab the associated PMT sections. Once PMT is received, we update the channel/tuning
+      //      detail with the correct/current PID.
+      // 0 = We don't know the correct/current PMT PID, so we ask TsWriter to determine what it should be,
+      //      and then grab the associated PMT sections. We do *not* update the channel/tuning detail.
+      // <anything else> = A valid PMT PID for the service that we are trying to tune. TsWriter should grab
+      //                    the associated PMT sections.
+
+      if (serviceId < 0)
       {
         return true;
       }
 
       int pmtPidToSearchFor;
-      if (_alwaysLookupPmtPidInPat)
+      if (_alwaysLookupPmtPidInPat || pmtPid < 0)
       {
         pmtPidToSearchFor = 0;
       }

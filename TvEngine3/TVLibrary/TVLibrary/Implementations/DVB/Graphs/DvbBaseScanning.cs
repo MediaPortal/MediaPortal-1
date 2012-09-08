@@ -424,6 +424,15 @@ namespace TvLibrary.Implementations.DVB
             }
             found++;
 
+            // If this service comes from another multiplex then we won't know what the PMT PID
+            // is. The current value should be set to zero. We set the value to negative one here
+            // so that the TV library will determine and set the PMT PID the first time the channel
+            // is tuned.
+            if (pmtPid == 0)
+            {
+              pmtPid = -1;
+            }
+
             DVBBaseChannel newChannel = (DVBBaseChannel)multiplexesFound[key].Clone();
 
             // Set non-tuning parameters (ie. parameters determined by scanning).
