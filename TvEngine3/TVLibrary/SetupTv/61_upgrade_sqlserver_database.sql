@@ -1,6 +1,9 @@
 ﻿USE %TvLibrary%
 GO
 
+DROP INDEX [IX_TuningDetail_idChannel] ON [dbo].[TuningDetail] WITH ( ONLINE = OFF )
+GO
+
 CREATE TABLE LnbType
 (
 	idLnbType INT IDENTITY(1, 1) NOT NULL,
@@ -30,11 +33,23 @@ INSERT INTO LnbType (name, lowBandFrequency, highBandFrequency, switchFrequency,
 GO
 
 INSERT INTO LnbType (name, lowBandFrequency, highBandFrequency, switchFrequency, isBandStacked, isToroidal)
+  VALUES ('10750 MHz [22 kHz on]', 10250000, 10750000, 11250000, 0, 0)
+GO
+
+INSERT INTO LnbType (name, lowBandFrequency, highBandFrequency, switchFrequency, isBandStacked, isToroidal)
   VALUES ('11250 MHz (NA Legacy)', 11250000, 11750000, 18000000, 0, 0)
 GO
 
 INSERT INTO LnbType (name, lowBandFrequency, highBandFrequency, switchFrequency, isBandStacked, isToroidal)
+  VALUES ('11250 MHz (NA Legacy) [22 kHz on]', 10750000, 11250000, 11750000, 0, 0)
+GO
+
+INSERT INTO LnbType (name, lowBandFrequency, highBandFrequency, switchFrequency, isBandStacked, isToroidal)
   VALUES ('11300 MHz', 11300000, 11800000, 18000000, 0, 0)
+GO
+
+INSERT INTO LnbType (name, lowBandFrequency, highBandFrequency, switchFrequency, isBandStacked, isToroidal)
+  VALUES ('11300 MHz [22 kHz on]', 10800000, 11300000, 11800000, 0, 0)
 GO
 
 INSERT INTO LnbType (name, lowBandFrequency, highBandFrequency, switchFrequency, isBandStacked, isToroidal)
@@ -61,10 +76,10 @@ INSERT INTO LnbType (name, lowBandFrequency, highBandFrequency, switchFrequency,
   VALUES ('C-Band Band Stacked', 5150000, 5750000, 18000000, 1, 0)
 GO
 
-DROP INDEX [IX_TuningDetail_idChannel] ON [dbo].[TuningDetail] WITH ( ONLINE = OFF )
+EXEC SP_RENAME 'TuningDetail.band', 'idLnbType', 'COLUMN'
 GO
 
-EXEC SP_RENAME 'TuningDetail.band', 'idLnbType', 'COLUMN'
+ALTER TABLE TuningDetail DROP COLUMN switchingFrequency
 GO
 
 ALTER TABLE TuningDetail DROP COLUMN switchingFrequency
@@ -110,25 +125,25 @@ INCLUDE (
 ) WITH (STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 GO
 
-UPDATE TuningDetail SET idLnbType = 11 WHERE idLnbType = 7
+UPDATE TuningDetail SET idLnbType = 14 WHERE idLnbType = 7
 GO
-UPDATE TuningDetail SET idLnbType = 7 WHERE idLnbType = 3
+UPDATE TuningDetail SET idLnbType = 12 WHERE idLnbType = 5
+GO
+UPDATE TuningDetail SET idLnbType = 11 WHERE idLnbType = 6
+GO
+UPDATE TuningDetail SET idLnbType = 5 WHERE idLnbType = 8
+GO
+UPDATE TuningDetail SET idLnbType = 5 WHERE idLnbType = 9
+GO
+UPDATE TuningDetail SET idLnbType = 6 WHERE idLnbType = 10
+GO
+UPDATE TuningDetail SET idLnbType = 9 WHERE idLnbType = 4
+GO
+UPDATE TuningDetail SET idLnbType = 10 WHERE idLnbType = 3
 GO
 UPDATE TuningDetail SET idLnbType = 3 WHERE idLnbType = 1
 GO
 UPDATE TuningDetail SET idLnbType = 1 WHERE idLnbType = 0 AND channelType = 3
-GO
-UPDATE TuningDetail SET idLnbType = 0 WHERE idLnbType = 4
-GO
-UPDATE TuningDetail SET idLnbType = 4 WHERE idLnbType = 8
-GO
-UPDATE TuningDetail SET idLnbType = 4 WHERE idLnbType = 9
-GO
-UPDATE TuningDetail SET idLnbType = 8 WHERE idLnbType = 6
-GO
-UPDATE TuningDetail SET idLnbType = 9 WHERE idLnbType = 5
-GO
-UPDATE TuningDetail SET idLnbType = 6 WHERE idLnbType = 0 AND channelType = 3
 GO
 
 UPDATE Version SET versionNumber = 61
