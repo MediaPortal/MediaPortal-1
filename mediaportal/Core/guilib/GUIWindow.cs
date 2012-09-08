@@ -783,6 +783,9 @@ namespace MediaPortal.GUI.Library
 
       try
       {
+        bool createAsProperty;
+        bool evaluateNow;
+
         foreach (XmlNode node in document.SelectNodes("/window/define"))
         {
           string[] tokens = node.InnerText.Split(':');
@@ -792,9 +795,50 @@ namespace MediaPortal.GUI.Library
             continue;
           }
 
-          // Parse the #define value as an expression and promote the #define to a property.
-          table[tokens[0]] = GUIExpressionManager.Parse(tokens[1]);
-          GUIPropertyManager.SetProperty(tokens[0], table[tokens[0]]);
+          // Determine if the define should be promoted to a property.
+          createAsProperty = false;
+
+          if (node.Attributes["property"] != null && !string.IsNullOrEmpty(node.Attributes["property"].Value))
+          {
+            try
+            {
+              createAsProperty = bool.Parse(node.Attributes["property"].Value);
+            }
+            catch (FormatException)
+            {
+              Log.Debug("Window: LoadDefines() - failed to parse define attribute value for 'property'; {0} is not a boolean value", node.Attributes["property"].Value);
+            }
+          }
+
+          // Determine if the define should be evaluated now.
+          evaluateNow = false;
+          if (node.Attributes["evaluateNow"] != null && !string.IsNullOrEmpty(node.Attributes["evaluateNow"].Value))
+          {
+            try
+            {
+              evaluateNow = bool.Parse(node.Attributes["evaluateNow"].Value);
+            }
+            catch (FormatException)
+            {
+              Log.Debug("Window: LoadDefines() - failed to parse define attribute value for 'evaluateNow'; {0} is not a boolean value", node.Attributes["evaluateNow"].Value);
+            }
+          }
+
+          // If evaluateNow then parse and evaluate the define value expression now.
+          if (evaluateNow)
+          {
+            table[tokens[0]] = GUIExpressionManager.Parse(tokens[1], GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
+          }
+          else
+          {
+            table[tokens[0]] = tokens[1];
+          }
+
+          // Promote the define to a property if specified.
+          if (createAsProperty)
+          {
+            GUIPropertyManager.SetProperty(tokens[0], table[tokens[0]]);
+          }
         }
       }
       catch (Exception e)
