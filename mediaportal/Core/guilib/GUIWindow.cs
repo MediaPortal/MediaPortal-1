@@ -665,7 +665,28 @@ namespace MediaPortal.GUI.Library
               break;
             case "include":
             case "import":
-              LoadInclude(node, defines);
+
+              // Allow an include to be conditionally loaded based on a 'condition' expression.
+              bool loadInclude = true;
+
+              if (node.Attributes["condition"] != null && !string.IsNullOrEmpty(node.Attributes["condition"].Value))
+              {
+                try
+                {
+                  loadInclude = bool.Parse(GUIPropertyManager.Parse(node.Attributes["condition"].Value, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS));
+                }
+                catch (FormatException)
+                {
+                  // The include will not be loaded if the expression could not be evaluated.
+                  loadInclude = false;
+                  Log.Debug("LoadSkin: {0}, could not evaluate include expression '{1}' ", _windowXmlFileName, node.Attributes["condition"].Value);
+                }
+              }
+
+              if (loadInclude)
+              {
+                LoadInclude(node, defines);
+              }
               break;
           }
         }
