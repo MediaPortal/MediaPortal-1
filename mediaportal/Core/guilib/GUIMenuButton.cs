@@ -382,7 +382,7 @@ namespace MediaPortal.GUI.Library
     private void bindToValue(string strValue)
     {
       string strTemp = strValue;
-      strValue = GUIPropertyManager.GetProperty(strValue);
+      strValue = GUIPropertyManager.Parse(strValue, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
       if (strValue == null || strValue == "")
       {
         strValue = strTemp;
