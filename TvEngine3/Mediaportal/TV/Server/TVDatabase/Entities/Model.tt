@@ -1,9 +1,7 @@
 ﻿<#@ template language="C#" debug="false" hostspecific="true"#>
-<#@ include file="EF.Utility.CS.OOB.ttinclude"#><#@
+<#@ include file="EF.Utility.CS.ttinclude"#><#@
  output extension=".cs"#><#
 // Copyright (c) Microsoft Corporation.  All rights reserved.
-
-DefineMetadata();
 
 CodeGenerationTools code = new CodeGenerationTools(this);
 MetadataLoader loader = new MetadataLoader(this);
@@ -39,9 +37,9 @@ foreach (EntityType entity in ItemCollection.GetItems<EntityType>().OrderBy(e =>
 <#=Accessibility.ForType(entity)#> <#=code.SpaceAfter(code.AbstractOption(entity))#>partial class <#=code.Escape(entity)#><#=code.StringBefore(" : ", code.Escape(entity.BaseType))#><#=entity.BaseType == null ? ": " : ", "#>IObjectWithChangeTracker, INotifyPropertyChanged
 {
 <#
-    region.Begin("Simple Properties");
+    region.Begin("Primitive Properties");
 
-    foreach (EdmProperty edmProperty in entity.Properties.Where(p => p.TypeUsage.EdmType is SimpleType && p.DeclaringType == entity))
+    foreach (EdmProperty edmProperty in entity.Properties.Where(p => p.TypeUsage.EdmType is PrimitiveType && p.DeclaringType == entity))
     {
 #>
 
@@ -52,7 +50,7 @@ foreach (EntityType entity in ItemCollection.GetItems<EntityType>().OrderBy(e =>
         <#=code.SpaceAfter(Accessibility.ForSetter(edmProperty))#>set
         {
 <#
-        if (ef.ClrType(edmProperty.TypeUsage) == typeof(byte[]) &&
+        if (((PrimitiveType)edmProperty.TypeUsage.EdmType).PrimitiveTypeKind == PrimitiveTypeKind.Binary &&
             (ef.IsKey(edmProperty) || entity.NavigationProperties.Where(np=>np.GetDependentProperties().Contains(edmProperty)).Any()))
         {
 #>
@@ -96,7 +94,7 @@ foreach (EntityType entity in ItemCollection.GetItems<EntityType>().OrderBy(e =>
         foreach (var np in entity.NavigationProperties.Where(np=>np.GetDependentProperties().Contains(edmProperty)))
         {
             EdmProperty principalProperty = ef.GetCorrespondingPrincipalProperty(np, edmProperty);
-            if (ef.ClrType(principalProperty.TypeUsage) == typeof(byte[]))
+            if (((PrimitiveType)principalProperty.TypeUsage.EdmType).PrimitiveTypeKind == PrimitiveTypeKind.Binary)
             {
 #>
                     if (<#=code.Escape(np)#> != null && !EqualityComparer.BinaryEquals(<#=code.Escape(np)#>.<#=code.Escape(principalProperty)#>, value))
@@ -194,6 +192,10 @@ foreach (EntityType entity in ItemCollection.GetItems<EntityType>().OrderBy(e =>
     }
 
     region.End();
+
+    ////////
+    //////// Write Navigation properties -------------------------------------------------------------------------------------------
+    ////////
 
     region.Begin("Navigation Properties");
 
@@ -306,7 +308,7 @@ foreach (EntityType entity in ItemCollection.GetItems<EntityType>().OrderBy(e =>
                     }
 
                     string equality = null;
-                    if (ef.ClrType(principalProperty.TypeUsage) == typeof(byte[]))
+                    if (((PrimitiveType)principalProperty.TypeUsage.EdmType).PrimitiveTypeKind == PrimitiveTypeKind.Binary)
                     {
                         equality = "!EqualityComparer.BinaryEquals({0}, value.{1})";
                     }
@@ -402,6 +404,28 @@ foreach (EntityType entity in ItemCollection.GetItems<EntityType>().OrderBy(e =>
             ClearNavigationProperties();
         }
     }
+<#
+    // If this entity type participates in any relationships where the other end has an OnDelete
+    // cascade delete defined, or if it is the dependent in any identifying relationships, it needs
+    // an event handler to handle notifications that are fired when the parent is deleted.
+    if (ItemCollection.GetItems<AssociationType>().Where(a =>
+        ((RefType)a.AssociationEndMembers[0].TypeUsage.EdmType).ElementType == entity && ef.IsCascadeDeletePrincipal(a.AssociationEndMembers[1]) ||
+        ((RefType)a.AssociationEndMembers[1].TypeUsage.EdmType).ElementType == entity && ef.IsCascadeDeletePrincipal(a.AssociationEndMembers[0])).Any())
+    {
+#>
+
+    // This entity type is the dependent end in at least one association that performs cascade deletes.
+    // This event handler will process notifications that occur when the principal end is deleted.
+    internal void HandleCascadeDelete(object sender, ObjectStateChangingEventArgs e)
+    {
+        if (e.NewState == ObjectState.Deleted)
+        {
+            this.MarkAsDeleted();
+        }
+    }
+<#
+    }
+#>
 
     protected bool IsDeserializing { get; private set; }
 
@@ -416,25 +440,6 @@ foreach (EntityType entity in ItemCollection.GetItems<EntityType>().OrderBy(e =>
     {
         IsDeserializing = false;
         ChangeTracker.ChangeTrackingEnabled = true;
-    }
-<#
-    }
-
-    // If this entity type participates in any relationships where the other end has an OnDelete
-    // cascade delete defined, or if it is the dependent in any identifying relationships, it needs
-    // an event handler to handle notifications that are fired when the parent is deleted.
-    if (ef.NeedsHandleCascadeDeleteMethod(ItemCollection, entity))
-    {
-#>
-
-    // This entity type is the dependent end in at least one association that performs cascade deletes.
-    // This event handler will process notifications that occur when the principal end is deleted.
-    internal void HandleCascadeDelete(object sender, ObjectStateChangingEventArgs e)
-    {
-        if (e.NewState == ObjectState.Deleted)
-        {
-            this.MarkAsDeleted();
-        }
     }
 <#
     }
@@ -471,7 +476,7 @@ foreach (EntityType entity in ItemCollection.GetItems<EntityType>().OrderBy(e =>
                                                                                    x.AssociationEndMembers[1].RelationshipMultiplicity != RelationshipMultiplicity.One &&
                                                                                    x.AssociationEndMembers[0].RelationshipMultiplicity != RelationshipMultiplicity.Many)))
     {
-        if (!entity.NavigationProperties.Any(x => x.RelationshipType == association && IsReadWriteAccessibleProperty(x)))
+        if (!entity.NavigationProperties.Any(x => x.RelationshipType == association))
         {
             for (int i = 0; i < 2; i++)
             {
@@ -826,7 +831,7 @@ foreach (EntityType entity in ItemCollection.GetItems<EntityType>().OrderBy(e =>
 <#
             for(int k=0; k < keyNames.Count; k++)
             {
-                string equality = ef.ClrType(targetType.KeyMembers[keyNames[k]].TypeUsage) == typeof(byte[]) ? "EqualityComparer.Binary" : String.Empty;
+                string equality = ((PrimitiveType)targetType.KeyMembers[keyNames[k]].TypeUsage.EdmType).PrimitiveTypeKind == PrimitiveTypeKind.Binary ? "EqualityComparer.Binary" : String.Empty;
 #>
                !<#=equality#>Equals(ChangeTracker.ExtendedProperties[<#=CreateKeyNameVariable(code.Escape(keyNames[k]))#>], <#=code.Escape(navProperty)#>.<#=code.Escape(keyNames[k])#>)<#=k < keyNames.Count - 1 ? " ||" : ")" #>
 <#
@@ -1049,7 +1054,7 @@ foreach (EntityType entity in ItemCollection.GetItems<EntityType>().OrderBy(e =>
 <#
         for(int k=0; k < keyNames.Count; k++)
         {
-                string equality = ef.ClrType(targetType.KeyMembers[keyNames[k]].TypeUsage) == typeof(byte[]) ? "EqualityComparer.Binary" : String.Empty;
+                string equality = ((PrimitiveType)targetType.KeyMembers[keyNames[k]].TypeUsage.EdmType).PrimitiveTypeKind == PrimitiveTypeKind.Binary ? "EqualityComparer.Binary" : String.Empty;
 #>
                 !<#=equality#>Equals(ChangeTracker.ExtendedProperties[<#=CreateKeyNameVariable(code.Escape(keyNames[k]))#>], value == null ? null : (object)value.<#=code.Escape(keyNames[k])#>)<#=k < keyNames.Count - 1 ? " ||" : ")"#>
 <#
@@ -1099,7 +1104,6 @@ foreach (EntityType entity in ItemCollection.GetItems<EntityType>().OrderBy(e =>
     EndNamespace(namespaceName);
 }
 
-// Emit Complex Types
 foreach (ComplexType complex in ItemCollection.GetItems<ComplexType>().OrderBy(e => e.Name))
 {
     fileManager.StartNewFile(complex.Name + ".cs");
@@ -1109,9 +1113,9 @@ foreach (ComplexType complex in ItemCollection.GetItems<ComplexType>().OrderBy(e
 <#=Accessibility.ForType(complex)#> partial class <#=code.Escape(complex)#> : INotifyComplexPropertyChanging, INotifyPropertyChanged
 {
 <#
-    region.Begin("Simple Properties");
+    region.Begin("Primitive Properties");
 
-    foreach(EdmProperty edmProperty in complex.Properties.Where(p => p.TypeUsage.EdmType is SimpleType && p.DeclaringType == complex))
+    foreach(EdmProperty edmProperty in complex.Properties.Where(p => p.TypeUsage.EdmType is PrimitiveType && p.DeclaringType == complex))
     {
 #>
 
@@ -1129,7 +1133,7 @@ foreach (ComplexType complex in ItemCollection.GetItems<ComplexType>().OrderBy(e
             }
         }
     }
-    private <#=code.Escape(edmProperty.TypeUsage)#> <#=code.FieldName(edmProperty)#><#=code.StringBefore(" = ", code.CreateLiteral(edmProperty.DefaultValue))#>;
+    private <#=code.Escape(edmProperty.TypeUsage)#> <#=code.FieldName(edmProperty)#>;
 <#
     }
 
@@ -1257,44 +1261,6 @@ foreach (ComplexType complex in ItemCollection.GetItems<ComplexType>().OrderBy(e
     EndNamespace(namespaceName);
 }
 
-// Emit Enum Types
-foreach (EnumType enumType in ItemCollection.GetItems<EnumType>().OrderBy(e => e.Name))
-{
-    fileManager.StartNewFile(enumType.Name + ".cs");
-    BeginNamespace(namespaceName, code);
-
-    if (enumType.IsFlags)
-    {
-#>
-[Flags]
-<#
-    }
-#>
-[DataContract]
-<#=Accessibility.ForType(enumType)#> enum <#=code.Escape(enumType)#> : <#=code.Escape(enumType.UnderlyingType.ClrEquivalentType, fullyQualifySystemTypes: false)#>
-{
-<#
-    foreach (EnumMember member in enumType.Members)
-    {
-#>
-    [EnumMember]
-    <#=code.Escape(member)#> = <#=member.Value#>,
-
-<#
-    }
-
-    // Remove the last comma and line break
-    if (enumType.Members.Any())
-    {
-        this.GenerationEnvironment.Remove(
-            this.GenerationEnvironment.Length - (CurrentIndent.Length + 5), CurrentIndent.Length + 3);
-    }
-#>
-}
-<#
-    EndNamespace(namespaceName);
-}
-
 if (!VerifyTypesAreCaseInsensitiveUnique(ItemCollection))
 {
     return "";
@@ -1408,7 +1374,7 @@ bool IsSaveReference(MetadataTools tools, NavigationProperty navProperty)
 
 string CreateFixupMethodName(RelationshipEndMember endMember)
 {
-    return String.Format(CultureInfo.InvariantCulture, "Fixup{0}_{1}_{2}Keys", endMember.DeclaringType.NamespaceName.Replace(".", "_"), endMember.DeclaringType.Name, endMember.Name);
+    return String.Format(CultureInfo.InvariantCulture, "Fixup{0}_{1}_{2}Keys", endMember.DeclaringType.NamespaceName, endMember.DeclaringType.Name, endMember.Name);
 }
 
 string CreateKeyNameVariable(string keyName)
@@ -1432,7 +1398,6 @@ void WriteCustomObservableCollection()
 
 // An System.Collections.ObjectModel.ObservableCollection that raises
 // individual item removal notifications on clear and prevents adding duplicates.
-[CollectionDataContract]
 public class TrackableCollection<T> : ObservableCollection<T>
 {
     protected override void ClearItems()
@@ -1459,7 +1424,7 @@ void WriteObjectChangeTracker()
 [DataContract(IsReference = true)]
 public class ObjectChangeTracker
 {
-    #region Fields
+    #region  Fields
 
     private bool _isDeserializing;
     private ObjectState _objectState = ObjectState.Added;
@@ -1563,7 +1528,7 @@ public class ObjectChangeTracker
         }
     }
 
-    #region Methods for Change Tracking on Client
+    #region MethodsForChangeTrackingOnClient
 
     [OnDeserializing]
     public void OnDeserializingMethod(StreamingContext context)
@@ -1665,7 +1630,7 @@ public class ObjectChangeTracker
     #endregion
 }
 
-#region "Enum for Object State"
+#region EnumForObjectState
 [Flags]
 public enum ObjectState
 {
@@ -1907,13 +1872,6 @@ private bool IsForeignKeyOrIdentifyingRelationship(MetadataTools tools, Associat
     }
 
     return association.IsForeignKey || tools.IsIdentifyingRelationship(association);
-}
-
-private void DefineMetadata()
-{
-    TemplateMetadata[MetadataConstants.TT_TEMPLATE_NAME] = "CSharpSelfTracking.Types";
-    TemplateMetadata[MetadataConstants.TT_TEMPLATE_VERSION] = "4.2";
-    TemplateMetadata[MetadataConstants.TT_MINIMUM_ENTITY_FRAMEWORK_VERSION] = "4.2";
 }
 
 // Set recordRequiredOriginalValuesOnly to false in the OriginalValueMembers constructor in order to always record all original values

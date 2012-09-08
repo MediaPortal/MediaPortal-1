@@ -354,7 +354,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
     // An System.Collections.ObjectModel.ObservableCollection that raises
     // individual item removal notifications on clear and prevents adding duplicates.
-    [CollectionDataContract]
     public class TrackableCollection<T> : ObservableCollection<T>
     {
         protected override void ClearItems()

@@ -92,7 +92,8 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 {
                     ObjectStateEntry entry = context.ObjectStateManager.GetObjectStateEntry(changedEntity);
     
-                    EntityType entityType = context.MetadataWorkspace.GetCSpaceEntityType(changedEntity);
+                    EntityType entityType = context.MetadataWorkspace.GetCSpaceEntityType(changedEntity.GetType());
+    
                     foreach (NavigationProperty navProp in entityType.NavigationProperties)
                     {
                         RelatedEnd relatedEnd = entry.GetRelatedEnd(navProp.Name);
@@ -236,7 +237,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 changeTracker.State == ObjectState.Deleted)
             {
                 ObjectStateEntry entry = context.ObjectStateManager.GetObjectStateEntry(entity);
-                EntityType entityType = context.MetadataWorkspace.GetCSpaceEntityType(entity);
+                EntityType entityType = context.MetadataWorkspace.GetCSpaceEntityType(entity.GetType());
                 RelationshipManager relationshipManager = context.ObjectStateManager.GetRelationshipManager(entity);
     
                 foreach (var entityReference in EnumerateSaveReferences(relationshipManager))
@@ -498,7 +499,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     String.Format(
                         CultureInfo.CurrentCulture,
                         "The OriginalValues or ExtendedProperties collections on the type '{0}' contained only a partial key to satisfy the relationship '{1}' targeting the role '{2}'",
-                        ObjectContext.GetObjectType(entity.GetType()).FullName,
+                        entity.GetType().FullName,
                         reference.RelationshipName,
                         reference.TargetRoleName));
             }
@@ -543,7 +544,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     String.Format(
                         CultureInfo.CurrentCulture,
                         " The OriginalValues or ExtendedProperties collections on the type '{0}' contained only a partial key to satisfy the relationship '{1}' targeting the role '{2}'",
-                        ObjectContext.GetObjectType(entity.GetType()).FullName,
+                        entity.GetType().FullName,
                         reference.RelationshipName,
                         reference.TargetRoleName));
             }
@@ -571,7 +572,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
     
             var relationshipManager = entry.RelationshipManager;
-            EntityType entityType = context.MetadataWorkspace.GetCSpaceEntityType(entity);
+            EntityType entityType = context.MetadataWorkspace.GetCSpaceEntityType(entity.GetType());
             foreach (EntityReference entityReference in EnumerateSaveReferences(relationshipManager))
             {
                 NavigationProperty navigationProperty = entityType.NavigationProperties.FirstOrDefault(n => n.RelationshipType == entityReference.RelationshipSet.ElementType &&
@@ -618,7 +619,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
             ObjectStateEntry entry = context.ObjectStateManager.GetObjectStateEntry(entity);
             OriginalValueRecord originalValueRecord = entry.GetUpdatableOriginalValues();
-            EntityType entityType = context.MetadataWorkspace.GetCSpaceEntityType(entity);
+            EntityType entityType = context.MetadataWorkspace.GetCSpaceEntityType(entity.GetType());
     
             // walk through each property and see if we have an original value for it
             // set it if we do.  Walk down through ComplexType properties to set original values
@@ -636,7 +637,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 else if(property.TypeUsage.EdmType is ComplexType)
                 {
                     OriginalValueRecord complexOriginalValues = originalValueRecord.GetOriginalValueRecord(property.Name);
-                    UpdateOriginalValues((ComplexType)property.TypeUsage.EdmType, ObjectContext.GetObjectType(entity.GetType()).FullName, property.Name, entity.ChangeTracker.OriginalValues, complexOriginalValues);
+                    UpdateOriginalValues((ComplexType)property.TypeUsage.EdmType, entity.GetType().FullName, property.Name, entity.ChangeTracker.OriginalValues, complexOriginalValues);
                 }
             }
         }
@@ -732,12 +733,12 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 case (ObjectState.Deleted):
                     context.ObjectStateManager.ChangeObjectState(entity, EntityState.Deleted);
                     break;
+    
             }
         }
     
-        private static EntityType GetCSpaceEntityType(this MetadataWorkspace workspace, object entity)
+        private static EntityType GetCSpaceEntityType(this MetadataWorkspace workspace, Type type)
         {
-            Type type = ObjectContext.GetObjectType(entity.GetType());
             EntityType ospaceEntityType = null;
             StructuralType cspaceEntityType = null;
             EntityType entityType = null;
@@ -788,7 +789,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private static RelatedEnd GetRelatedEnd(this ObjectStateEntry entry, string navigationPropertyIdentity)
         {
             NavigationProperty navigationProperty =
-                            GetNavigationProperty(entry.ObjectStateManager.MetadataWorkspace.GetCSpaceEntityType(entry.Entity), navigationPropertyIdentity);
+                            GetNavigationProperty(entry.ObjectStateManager.MetadataWorkspace.GetCSpaceEntityType(entry.Entity.GetType()), navigationPropertyIdentity);
             return entry.RelationshipManager.GetRelatedEnd(
                 navigationProperty.RelationshipType.FullName, navigationProperty.ToEndMember.Name) as RelatedEnd;
         }
@@ -920,7 +921,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     _entityIndex.Add(entry, changeTracker);
     
                     // Queue removed reference values
-                    var navPropNames = _context.MetadataWorkspace.GetCSpaceEntityType(entity).NavigationProperties.Select(n => n.Name);
+                    var navPropNames = _context.MetadataWorkspace.GetCSpaceEntityType(entity.GetType()).NavigationProperties.Select(n => n.Name);
                     var entityRefOriginalValues = changeTracker.OriginalValues.Where(kvp => navPropNames.Contains(kvp.Key));
                     foreach (KeyValuePair<string, object> originalValueWithName in entityRefOriginalValues)
                     {
@@ -1003,28 +1004,30 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 _allEntities = new HashSet<IObjectWithChangeTracker>();
                 _temporaryKeyMap = new Dictionary<EntityKey, EntityKey>();
             }
-
+    
             public void Add(ObjectStateEntry entry, ObjectChangeTracker changeTracker)
             {
-              EntityKey temporaryKey = entry.EntityKey;
-              EntityKey finalKey;
-              var objectWithChangeTracker = entry.Entity as IObjectWithChangeTracker;
-              if (!_allEntities.Contains(objectWithChangeTracker))
-              {
-                _allEntities.Add(objectWithChangeTracker);
-              }
-              if (changeTracker.State == ObjectState.Added)
-              {
-                finalKey = temporaryKey;
-              }
-              else
-              {
-                finalKey = _context.CreateEntityKey(temporaryKey.EntityContainerName + "." + temporaryKey.EntitySetName, entry.Entity);
-              }
-              if (!_temporaryKeyMap.ContainsKey(finalKey))
-              {
-                _temporaryKeyMap.Add(finalKey, temporaryKey);
-              }
+                EntityKey temporaryKey = entry.EntityKey;
+                EntityKey finalKey;
+    
+                if (!_allEntities.Contains(entry.Entity))
+                {
+                    // Track that this Apply will be handling this entity
+                    _allEntities.Add(entry.Entity as IObjectWithChangeTracker);
+                }
+    
+                if (changeTracker.State == ObjectState.Added)
+                {
+                    finalKey = temporaryKey;
+                }
+                else
+                {
+                    finalKey = _context.CreateEntityKey(temporaryKey.EntityContainerName + "." + temporaryKey.EntitySetName, entry.Entity);
+                }
+                if (!_temporaryKeyMap.ContainsKey(finalKey))
+                {
+                    _temporaryKeyMap.Add(finalKey, temporaryKey);
+                }
             }
     
             public bool Contains(object entity)
