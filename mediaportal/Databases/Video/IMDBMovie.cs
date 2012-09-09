@@ -836,7 +836,7 @@ namespace MediaPortal.Video.Database
         //    if (System.IO.Path.HasExtension(file))
         //    {
         //      string extension = System.IO.Path.GetExtension(file).Replace(".", string.Empty);
-        //      string extImage = Config.GetFolder(Config.Dir.SelectedSkin) +
+        //      string extImage = GUIGraphicsContext.Skin +
         //                          @"\Media\Logos\" + extension + @".png";
 
         //      if (System.IO.File.Exists(extImage))
@@ -1616,7 +1616,7 @@ namespace MediaPortal.Video.Database
         //      if (System.IO.Path.HasExtension(info.VideoFileName))
         //      {
         //        string extension = System.IO.Path.GetExtension(info.VideoFileName).Replace(".", string.Empty);
-        //        string extImage = Config.GetFolder(Config.Dir.SelectedSkin) +
+        //        string extImage = GUIGraphicsContext.Skin +
         //                          @"\Media\Logos\" + extension + @".png";
 
         //        if (System.IO.File.Exists(extImage))
