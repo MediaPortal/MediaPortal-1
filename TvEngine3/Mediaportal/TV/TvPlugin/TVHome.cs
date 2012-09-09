@@ -68,7 +68,7 @@ using Action = MediaPortal.GUI.Library.Action;
 #endregion
 
 namespace Mediaportal.TV.TvPlugin
-{  
+{
   /// <summary>
   /// TV Home screen.
   /// </summary>
@@ -103,7 +103,7 @@ namespace Mediaportal.TV.TvPlugin
       LABEL_REC_INFO = 22,
       IMG_REC_RECTANGLE = 23,
     }
-    
+
     [Flags]
     public enum LiveTvStatus
     {
@@ -111,8 +111,8 @@ namespace Mediaportal.TV.TvPlugin
       CardChange = 2,
       SeekToEnd = 4,
       SeekToEndAfterPlayback = 8
-    }    
-        
+    }
+
     private Channel _resumeChannel = null;
     private static DateTime _updateProgressTimer = DateTime.MinValue;
     private static ChannelNavigator m_navigator;
@@ -122,7 +122,7 @@ namespace Mediaportal.TV.TvPlugin
     private static bool _autoTurnOnTv = false;
     private static int _waitonresume = 0;
     public static bool settingsLoaded = false;
-    private TvNotifyManager _notifyManager;    
+    private TvNotifyManager _notifyManager;
     private static List<string> _preferredLanguages;
     private static bool _usertsp;
     private static string _recordingpath = "";
@@ -143,7 +143,7 @@ namespace Mediaportal.TV.TvPlugin
     private static bool _recoverTV = false;
     private static bool _connected = false;
     private static bool _isAnyCardRecording = false;
-    
+
 
     private static ManualResetEvent _waitForBlackScreen = null;
     private static ManualResetEvent _waitForVideoReceived = null;
@@ -172,14 +172,14 @@ namespace Mediaportal.TV.TvPlugin
 
     // error handling
     public class ChannelErrorInfo
-    {      
+    {
       public Channel FailingChannel;
       public TvResult Result;
       public List<String> Messages = new List<string>();
     }
 
     public static ChannelErrorInfo _lastError = new ChannelErrorInfo();
-    private static HeartbeatEventHandler _heartbeatEventHandler;    
+    private static HeartbeatEventHandler _heartbeatEventHandler;
 
     // CI Menu
     private static CiMenuEventEventHandler _ciMenuEventEventHandler;
@@ -200,7 +200,7 @@ namespace Mediaportal.TV.TvPlugin
     protected static bool _playNotifyBeep = true;
     protected static int _preNotifyConfig = 60;
 
-    private readonly ServerMonitor _serverMonitor = new ServerMonitor();
+    private static readonly ServerMonitor _serverMonitor = new ServerMonitor();
 
     #endregion
 
@@ -293,8 +293,13 @@ namespace Mediaportal.TV.TvPlugin
     }
 
     public override void OnAdded()
-    {      
-      //System.Diagnostics.Debugger.Launch();
+    {
+#if DEBUG
+      if (File.Exists(@"c:\debug_tvplugin.txt"))
+      {
+        System.Diagnostics.Debugger.Launch();
+      }
+#endif
       Log.Info("TVHome:OnAdded");
 
       GUIGraphicsContext.OnBlackImageRendered += new BlackImageRenderedHandler(OnBlackImageRendered);
@@ -330,7 +335,7 @@ namespace Mediaportal.TV.TvPlugin
         HandleWakeUpTvServer();
         StartServerMonitor();
         SubscribeToEventService();
-        RegisterUserForHeartbeatMonitoring();        
+        RegisterUserForHeartbeatMonitoring();
         LoadSettings();
 
         string pluginVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
@@ -354,23 +359,22 @@ namespace Mediaportal.TV.TvPlugin
       }
       finally
       {
-        _notifyManager.Start(); 
-      }      
-    }    
+        _notifyManager.Start();
+      }
+    }
 
     private void StartServerMonitor()
     {
-
       _serverMonitor.OnServerConnected -= OnServerConnected;
       _serverMonitor.OnServerDisconnected -= OnServerDisconnected;
       _serverMonitor.OnServerConnected += OnServerConnected;
       _serverMonitor.OnServerDisconnected += OnServerDisconnected;
-      _serverMonitor.Start();      
+      _serverMonitor.Start();
     }
 
     private void SubscribeToEventService()
     {
-      ServiceAgents.Instance.EventServiceAgent.RegisterTvServerEventCallbacks(this);      
+      ServiceAgents.Instance.EventServiceAgent.RegisterTvServerEventCallbacks(this);
     }
 
     private void UnSubscribeFromEventService()
@@ -378,7 +382,7 @@ namespace Mediaportal.TV.TvPlugin
       ServiceAgents.Instance.EventServiceAgent.UnRegisterTvServerEventCallbacks(this, !Connected);
     }
 
-    
+
 
     private void OnTimeShiftingForcefullyStopped(string username, TvStoppedReason tvStoppedReason)
     {
@@ -438,7 +442,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private static IDictionary<int, ChannelState> _tvChannelStatesList = new Dictionary<int, ChannelState>();
     private readonly static object _channelStatesLock = new object();
-    
+
 
     private void OnChannelStatesChanged(IDictionary<int, ChannelState> channelStates)
     {
@@ -548,12 +552,12 @@ namespace Mediaportal.TV.TvPlugin
       }
 
       btnActiveStreams.Label = GUILocalizeStrings.Get(692);
-
+      WaitForServiceConnection();
       if (!Connected)
       {
         if (!_onPageLoadDone)
-        {
-          GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
+        {          
+          ShowTvEngineSettingsUI();          
           return;
         }
         else
@@ -563,14 +567,6 @@ namespace Mediaportal.TV.TvPlugin
           UpdateRecordingIndicator();
           return;
         }
-      }
-
-      try
-      {
-        int cards = ServiceAgents.Instance.ControllerServiceAgent.Cards;
-      }
-      catch
-      {
       }
 
       // stop the old recorder.
@@ -777,7 +773,7 @@ namespace Mediaportal.TV.TvPlugin
           ViewChannelAndCheck(Navigator.Channel.Entity, 0);
         }
         else
-          // current channel seems to be non-tv (radio ?), get latest known tv channel from xml config and use this instead
+        // current channel seems to be non-tv (radio ?), get latest known tv channel from xml config and use this instead
         {
           Settings xmlreader = new MPSettings();
           string currentchannelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
@@ -832,8 +828,8 @@ namespace Mediaportal.TV.TvPlugin
 
     private static void ForceUpdates()
     {
-      _updateTimer = DateTime.Now.AddMilliseconds(-1 * (PROCESS_UPDATE_INTERVAL+1));
-      _updateProgressTimer = DateTime.Now.AddMilliseconds(-1 * (PROGRESS_PERCENTAGE_UPDATE_INTERVAL+1));
+      _updateTimer = DateTime.Now.AddMilliseconds(-1 * (PROCESS_UPDATE_INTERVAL + 1));
+      _updateProgressTimer = DateTime.Now.AddMilliseconds(-1 * (PROGRESS_PERCENTAGE_UPDATE_INTERVAL + 1));
     }
 
     public override void Process()
@@ -873,7 +869,7 @@ namespace Mediaportal.TV.TvPlugin
         _updateTimer = DateTime.Now;
       }
     }
-    
+
 
     public override bool IsTv
     {
@@ -886,15 +882,15 @@ namespace Mediaportal.TV.TvPlugin
 
     public static void StartRecordingSchedule(ChannelBLL channel, bool manual)
     {
-      
+
       if (manual) // until manual stop
       {
         Schedule newSchedule = ScheduleFactory.CreateSchedule(channel.Entity.idChannel,
                                                               GUILocalizeStrings.Get(413) + " (" + channel.Entity.displayName +
                                                               ")",
-                                                              DateTime.Now, DateTime.Now.AddDays(1));                    
+                                                              DateTime.Now, DateTime.Now.AddDays(1));
         newSchedule.preRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").value);
-        newSchedule.postRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);        
+        newSchedule.postRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);
         ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(newSchedule);
         ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
       }
@@ -903,7 +899,7 @@ namespace Mediaportal.TV.TvPlugin
         // lets find any canceled episodes that match this one we want to create, if found uncancel it.
         Schedule existingParentSchedule = ServiceAgents.Instance.ScheduleServiceAgent.RetrieveSeriesByStartEndTimes(channel.Entity.idChannel, channel.CurrentProgram.title,
                                                           channel.CurrentProgram.startTime,
-                                                          channel.CurrentProgram.endTime);        
+                                                          channel.CurrentProgram.endTime);
         if (existingParentSchedule != null)
         {
           foreach (CanceledSchedule cancelSched in existingParentSchedule.CanceledSchedules)
@@ -921,7 +917,7 @@ namespace Mediaportal.TV.TvPlugin
         Schedule newSchedule = ScheduleFactory.CreateSchedule(channel.Entity.idChannel, channel.CurrentProgram.title,
                                             channel.CurrentProgram.startTime, channel.CurrentProgram.endTime);
         newSchedule.preRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").value);
-        newSchedule.postRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);        
+        newSchedule.postRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);
         ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(newSchedule);
         ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
       }
@@ -1077,9 +1073,8 @@ namespace Mediaportal.TV.TvPlugin
         }
         else
         {
-          bool gentleConnected = WaitForGentleConnection();
-
-          if (!gentleConnected)
+          bool connected = WaitForServiceConnection();
+          if (!connected)
           {
             return true;
           }
@@ -1098,36 +1093,26 @@ namespace Mediaportal.TV.TvPlugin
       return false;
     }
 
-    public static bool WaitForGentleConnection()
+    private static void ShowTvEngineSettingsUI()
     {
-      // lets try one more time - seems like the gentle framework is not properly initialized when coming out of standby/hibernation.                    
-      // lets wait 10 secs before giving up.
-      bool success = false;
+      GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
+    }
 
-      Stopwatch timer = Stopwatch.StartNew();
-      while (!success && timer.ElapsedMilliseconds < 10000) //10sec max
+    public static void ShowTvEngineSettingsUIIfConnectionDown()
+    {
+      if (!WaitForServiceConnection())
       {
-        try
-        {
-          ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
-          success = true;
-        }
-        catch (Exception)
-        {
-          success = false;
-          Log.Debug("TVHome: waiting for gentle.net DB connection {0} msec", timer.ElapsedMilliseconds);
-          Thread.Sleep(100);
-        }
+        ShowTvEngineSettingsUI();
       }
+    }
 
-      if (!success)
-      {
-        GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
-        //GUIWaitCursor.Hide();          
-      }
-
+    private static bool WaitForServiceConnection()
+    {
+      bool success = _serverMonitor.WaitForConnection(10000);      
       return success;
     }
+
+    
 
     public static List<string> PreferredLanguages
     {
@@ -1162,7 +1147,7 @@ namespace Mediaportal.TV.TvPlugin
       }
     }
 
-    
+
 
     public static bool IsAnyCardRecording
     {
@@ -1304,7 +1289,7 @@ namespace Mediaportal.TV.TvPlugin
             return;
           }
         }
-      }      
+      }
       ServiceAgents.Instance.Hostname = hostName;
       Log.Info("Remote control:master server :{0}", ServiceAgents.Instance.Hostname);
     }
@@ -1447,8 +1432,8 @@ namespace Mediaportal.TV.TvPlugin
       {
         Log.Info("TVHome: OnServerConnected, recovered from a disconnection");
         recovered = true;
-      }      
-      
+      }
+
       ServiceAgents.Instance.ReConnect();
       ServiceAgents.Instance.EventServiceAgent.ReConnect();
 
@@ -1464,8 +1449,7 @@ namespace Mediaportal.TV.TvPlugin
         GUIWindowManager.SendThreadMessage(initMsg);
       }
       if (recovered)
-      {
-        //System.Diagnostics.Debugger.Launch();
+      {        
         _isAnyCardRecording = ServiceAgents.Instance.ControllerServiceAgent.IsAnyCardRecording();
 
         RetrieveChannelStatesFromServer();
@@ -1521,7 +1505,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private void UnsubscribeFromEventService()
     {
-      ServiceAgents.Instance.EventServiceAgent.UnRegisterHeartbeatCallbacks(_heartbeatEventHandler, !Connected);                    
+      ServiceAgents.Instance.EventServiceAgent.UnRegisterHeartbeatCallbacks(_heartbeatEventHandler, !Connected);
       //ServiceAgents.Instance.EventServiceAgent.Unsubscribe(Dns.GetHostName());      
     }
 
@@ -1648,7 +1632,7 @@ namespace Mediaportal.TV.TvPlugin
           Card.StopTimeShifting();
         }
         _notifyManager.Stop();
-        UnsubscribeFromEventService();        
+        UnsubscribeFromEventService();
         UnRegisterCiMenu();
         StopServerMonitor();
         //Connected = false;
@@ -1834,7 +1818,7 @@ namespace Mediaportal.TV.TvPlugin
           string text = message.Label2;
           Channel ch = message.Object as Channel;
           //Log.Debug("Received rec notify message: {0}, {1}, {2}", heading, text, (ch != null).ToString()); //remove later
-          string logo = TVUtil.GetChannelLogo(ch);          
+          string logo = TVUtil.GetChannelLogo(ch);
           GUIDialogNotify pDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
           if (pDlgNotify != null)
           {
@@ -2005,7 +1989,7 @@ namespace Mediaportal.TV.TvPlugin
       Log.Info("TVHome:turn tv off");
       SaveSettings();
       Card.User.Name = new User().Name;
-      Card.StopTimeShifting();            
+      Card.StopTimeShifting();
       _recoverTV = false;
       _playbackStopped = true;
     }
@@ -2024,7 +2008,7 @@ namespace Mediaportal.TV.TvPlugin
       }
 
       Log.Info("TVHome:Record action");
-      
+
 
       IVirtualCard card = null;
       ProgramBLL prog = new ProgramBLL(channel.CurrentProgram);
@@ -2108,7 +2092,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private static bool DoesManualScheduleAlreadyExist(Channel channel)
     {
-      Schedule existingSchedule = ServiceAgents.Instance.ScheduleServiceAgent.GetScheduleWithNoEPG(channel.idChannel);                    
+      Schedule existingSchedule = ServiceAgents.Instance.ScheduleServiceAgent.GetScheduleWithNoEPG(channel.idChannel);
       return (existingSchedule != null);
     }
 
@@ -2194,7 +2178,7 @@ namespace Mediaportal.TV.TvPlugin
 
       IList<Recording> activeRecordings =
         ServiceAgents.Instance.RecordingServiceAgent.ListAllActiveRecordingsByMediaType(MediaTypeEnum.TV).ToList();
-      
+
       if (activeRecordings != null && activeRecordings.Count > 0)
       {
         foreach (Recording activeRecording in activeRecordings)
@@ -2279,13 +2263,13 @@ namespace Mediaportal.TV.TvPlugin
           Channel ch = streaming.Channel;
           IUser user = streaming.User;
           bool isParked = streaming.IsParked;
-          bool isRecording = streaming.IsRecording;          
+          bool isRecording = streaming.IsRecording;
           int idChannel = ch.idChannel;
           item.Label = ch.displayName;
 
           if (isParked)
           {
-            item.Label += " [parked @ " + streaming.ParkedAt.ToShortTimeString() +"]";
+            item.Label += " [parked @ " + streaming.ParkedAt.ToShortTimeString() + "]";
           }
 
           item.Label2 = user.Name;
@@ -2303,12 +2287,12 @@ namespace Mediaportal.TV.TvPlugin
           {
             item.PinImage = "";
           }
-          dlg.Add(item);          
+          dlg.Add(item);
           if (Card != null && Card.IdChannel == idChannel)
           {
             selected = count;
           }
-          count++;          
+          count++;
         }
 
         if (streamingChannels.Count == 0)
@@ -2320,7 +2304,7 @@ namespace Mediaportal.TV.TvPlugin
             pDlgOK.SetLine(1, GUILocalizeStrings.Get(1511)); // No Active streams
             pDlgOK.SetLine(2, "");
             pDlgOK.DoModal(this.GetID);
-          }          
+          }
         }
         else
         {
@@ -2352,11 +2336,11 @@ namespace Mediaportal.TV.TvPlugin
 
     private static bool ShowUnParkDialogue(string userName)
     {
-      var dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+      var dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (dlgYesNo != null)
       {
         dlgYesNo.SetHeading(GUILocalizeStrings.Get(2555, new[] { userName }));
-          //"Unpark channel by [" + streamingChannel.User.Name + "] ?"
+        //"Unpark channel by [" + streamingChannel.User.Name + "] ?"
         dlgYesNo.SetLine(1, GUILocalizeStrings.Get(2556)); //"Unpark and resume channel?"
         dlgYesNo.SetLine(2, GUILocalizeStrings.Get(2557)); //"If not you will watch TV from live point."
         dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732)); //are you sure
@@ -2367,7 +2351,7 @@ namespace Mediaportal.TV.TvPlugin
     }
 
     private static void ViewParkedChannel(StreamPresentation streamingChannel)
-    {                 
+    {
       ViewParkedChannelAndCheck(streamingChannel.Channel, streamingChannel.ParkedDuration, streamingChannel.User.CardId, false);
       UpdateProgressPercentageBar();
     }
@@ -2391,7 +2375,7 @@ namespace Mediaportal.TV.TvPlugin
           return checkResult;
 
         _doingChannelChange = true;
-        IUser user = new User();        
+        IUser user = new User();
 
         if ((g_Player.Playing && g_Player.IsTimeShifting && !g_Player.Stopped) && (g_Player.IsTV || g_Player.IsRadio))
         {
@@ -2400,7 +2384,7 @@ namespace Mediaportal.TV.TvPlugin
 
         //Start timeshifting the new tv channel
 
-        IVirtualCard card;      
+        IVirtualCard card;
 
         //Added by joboehl - If any major related to the timeshifting changed during the start, restart the player.           
         if (newCardId != -1 && Card.Id != newCardId)
@@ -2440,7 +2424,7 @@ namespace Mediaportal.TV.TvPlugin
                                                                                        parkedDuration,
                                                                                        channel.idChannel,
                                                                                        out user, out card);
-        
+
         if (!succeeded)
         {
           //timeshifting new channel failed. 
@@ -2452,7 +2436,7 @@ namespace Mediaportal.TV.TvPlugin
           _doingChannelChange = true; // keep fullscreen false;
           return true; // "success"
         }
-        
+
         if (_status.IsSet(LiveTvStatus.WasPlaying))
         {
           if (card != null)
@@ -2494,7 +2478,7 @@ namespace Mediaportal.TV.TvPlugin
         if (watchFromLivePoint)
         {
           g_Player.SeekAbsolute(g_Player.Duration - 1);
-          SeekToEnd(true);          
+          SeekToEnd(true);
         }
         else
         {
@@ -2563,7 +2547,7 @@ namespace Mediaportal.TV.TvPlugin
       if (Navigator.Channel != null && Navigator.Channel.Entity != null && Card != null)
       {
         string label;
-        
+
         IVirtualCard vc;
         if (ServiceAgents.Instance.ControllerServiceAgent.IsRecording(Navigator.Channel.Entity.idChannel, out vc))
         {
@@ -2636,7 +2620,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           return;
         }
-        
+
         //set audio video related media info properties.
         int currAudio = g_Player.CurrentAudioStream;
         if (currAudio > -1)
@@ -2790,7 +2774,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           GUIPropertyManager.SetProperty("#TV.View.channel", ch.Entity.displayName);
           SetTvThumbProperty(ch.Entity);
-        }            
+        }
       }
       else
       {
@@ -2844,7 +2828,7 @@ namespace Mediaportal.TV.TvPlugin
       }
 
 
-    }    
+    }
 
     private static void SetTvThumbProperty(Channel ch)
     {
@@ -2872,7 +2856,7 @@ namespace Mediaportal.TV.TvPlugin
       GUIPropertyManager.SetProperty("#TV.Record.percent3", "0");
       GUIPropertyManager.SetProperty("#TV.View.remaining", String.Empty);
     }
-    
+
     private static void UpdateNextEpgProperties(ChannelBLL ch)
     {
       Program next = null;
@@ -2899,7 +2883,7 @@ namespace Mediaportal.TV.TvPlugin
                                        next.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
         GUIPropertyManager.SetProperty("#TV.Next.description", next.description);
         GUIPropertyManager.SetProperty("#TV.Next.subtitle", next.episodeName);
-        GUIPropertyManager.SetProperty("#TV.Next.episode", next.episodeNum );
+        GUIPropertyManager.SetProperty("#TV.Next.episode", next.episodeNum);
         GUIPropertyManager.SetProperty("#TV.Next.genre", TVUtil.GetCategory(next.ProgramCategory));
         GUIPropertyManager.SetProperty("#TV.Next.remaining", Utils.SecondsToHMSString(next.endTime - next.startTime));
       }
@@ -2944,7 +2928,7 @@ namespace Mediaportal.TV.TvPlugin
     /// run and/or modify the unit tests accordingly.
     /// </summary>
     public static int GetPreferedAudioStreamIndex(out eAudioDualMonoMode dualMonoMode)
-      // also used from tvrecorded class
+    // also used from tvrecorded class
     {
       int idxFirstAc3 = -1; // the index of the first avail. ac3 found
       int idxFirstmpeg = -1; // the index of the first avail. mpg found
@@ -2997,7 +2981,7 @@ namespace Mediaportal.TV.TvPlugin
       }
 
       if (idx == -1 || !_preferAC3)
-        // we end up here if ac3 selection didnt happen (no ac3 avail.) or if preferac3 is disabled.
+      // we end up here if ac3 selection didnt happen (no ac3 avail.) or if preferac3 is disabled.
       {
         if (IsPreferredAudioLanguageAvailable())
         {
@@ -3088,7 +3072,7 @@ namespace Mediaportal.TV.TvPlugin
         Log.Info("Audio stream: switching to preferred MPEG audio stream {0}, based on LANG {1}", idx,
                  mpegBasedOnLang);
       }
-        //if not, did we even find a mpeg track ?
+      //if not, did we even find a mpeg track ?
       else if (idxFirstmpeg > -1)
       {
         //we did find a AC3 track, but not based on LANG - should we choose this or the mpeg track which is based on LANG.
@@ -3116,7 +3100,7 @@ namespace Mediaportal.TV.TvPlugin
         idx = idxStreamIndexAc3;
         Log.Info("Audio stream: switching to preferred AC3 audio stream {0}, based on LANG {1}", idx, ac3BasedOnLang);
       }
-        //if not, did we even find an ac3 track ?
+      //if not, did we even find an ac3 track ?
       else if (idxFirstAc3 > -1)
       {
         //we did find an AC3 track, but not based on LANG - should we choose this or the mpeg track which is based on LANG.
@@ -3297,7 +3281,7 @@ namespace Mediaportal.TV.TvPlugin
     private static void ChannelTuneFailedNotifyUser(TvResult succeeded, bool wasPlaying, Channel channel)
     {
       GUIGraphicsContext.RenderBlackImage = false;
-      
+
       _lastError.Result = succeeded;
       _lastError.FailingChannel = channel;
       _lastError.Messages.Clear();
@@ -3516,7 +3500,7 @@ namespace Mediaportal.TV.TvPlugin
         }
       }
       else if (g_Player.IsTVRecording && _userChannelChanged)
-        //we are watching a recording, we have now issued a ch. change..stop the player.
+      //we are watching a recording, we have now issued a ch. change..stop the player.
       {
         _userChannelChanged = false;
         g_Player.Stop(true);
@@ -3530,7 +3514,7 @@ namespace Mediaportal.TV.TvPlugin
       if (Card != null)
       {
         if (g_Player.Playing && g_Player.IsTV && !g_Player.IsTVRecording)
-          //modified by joboehl. Avoids other video being played instead of TV. 
+        //modified by joboehl. Avoids other video being played instead of TV. 
         {
           //if we're already watching this channel, then simply return
           if (Card.IsTimeShifting == true && Card.IdChannel == channel.idChannel)
@@ -3560,7 +3544,7 @@ namespace Mediaportal.TV.TvPlugin
       double? parkedDuration = null;
       TvResult succeeded = TvResult.UnknownError;
       Dictionary<int, List<IUser>> kickableCards = null;
-      _status.Clear();      
+      _status.Clear();
       _doingChannelChange = false;
 
       try
@@ -3573,7 +3557,7 @@ namespace Mediaportal.TV.TvPlugin
         _doingChannelChange = true;
 
 
-        IUser user = new User();        
+        IUser user = new User();
 
         if ((g_Player.Playing && g_Player.IsTimeShifting && !g_Player.Stopped) && (g_Player.IsTV || g_Player.IsRadio))
         {
@@ -3581,7 +3565,7 @@ namespace Mediaportal.TV.TvPlugin
         }
 
         //Start timeshifting the new tv channel
-        
+
         IVirtualCard card;
         int newCardId = -1;
 
@@ -3623,7 +3607,7 @@ namespace Mediaportal.TV.TvPlugin
         }
         bool cardChanged;
         succeeded = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, channel.idChannel, kickCardId, out card, out kickableCards, out cardChanged, out parkedDuration, out user);
-        
+
         if (_status.IsSet(LiveTvStatus.WasPlaying))
         {
           if (card != null)
@@ -3634,7 +3618,7 @@ namespace Mediaportal.TV.TvPlugin
 
 
         if (succeeded != TvResult.Succeeded && succeeded != TvResult.UsersBlocking && succeeded != TvResult.AlreadyParked)
-        {                    
+        {
           //timeshifting new channel failed. 
           g_Player.Stop();
           // ensure right channel name, even if not watchable:Navigator.Channel = channel; 
@@ -3674,7 +3658,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
         }
-        
+
         // if needed seek to end
         if (_status.IsSet(LiveTvStatus.SeekToEnd))
         {
@@ -3704,7 +3688,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           //ignore, error already logged
         }
-        
+
         _playbackStopped = false;
         _doingChannelChange = false;
         _ServerNotConnectedHandled = false;
@@ -3721,20 +3705,20 @@ namespace Mediaportal.TV.TvPlugin
       }
       finally
       {
-        StopRenderBlackImage();        
-        _userChannelChanged = false;        
+        StopRenderBlackImage();
+        _userChannelChanged = false;
 
         if (succeeded == TvResult.UsersBlocking)
-        {          
+        {
           int cardId = ShowKickUserDialogue(kickableCards);
           if (cardId > 0)
           {
             ViewChannelAndCheck(channel, cardId);
-          }          
+          }
         }
         else if (succeeded == TvResult.AlreadyParked)
         {
-          bool dlgYesNo = ShowUnParkDialogue(Card.User.Name);          
+          bool dlgYesNo = ShowUnParkDialogue(Card.User.Name);
           bool watchFromLivePoint = !dlgYesNo;
           ViewParkedChannelAndCheck(channel, parkedDuration.GetValueOrDefault(0), Card.User.CardId, watchFromLivePoint);
         }
@@ -3748,7 +3732,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private static int ShowKickUserDialogue(Dictionary<int, List<IUser>> kickableCards)
     {
-      var dlgExt = (GUIDialogMenuExtended) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU_EXTENDED);
+      var dlgExt = (GUIDialogMenuExtended)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU_EXTENDED);
 
       dlgExt.Reset();
       dlgExt.SetHeading(GUILocalizeStrings.Get(2558)); //"Kick user(s) from card?"
@@ -3780,9 +3764,8 @@ namespace Mediaportal.TV.TvPlugin
             {
               subItemString += " [PARKED]";
             }
-            
-            var subItem = new GUIListItem(subItemString)
-                            {IconImage = Utils.GetCoverArt(Thumbs.TVChannel, displayName)};
+
+            var subItem = new GUIListItem(subItemString) { IconImage = Utils.GetCoverArt(Thumbs.TVChannel, displayName) };
             subItem.IconImageBig = subItem.IconImage;
             subitems.Add(subItem);
           }
@@ -3808,12 +3791,12 @@ namespace Mediaportal.TV.TvPlugin
       {
         OnChannelChanged();
       }
-    }    
+    }
 
     public static void ViewChannel(Channel channel)
     {
-      ViewChannelAndCheck(channel, 0);      
-      UpdateProgressPercentageBar();      
+      ViewChannelAndCheck(channel, 0);
+      UpdateProgressPercentageBar();
     }
 
     /// <summary>
@@ -3905,7 +3888,7 @@ namespace Mediaportal.TV.TvPlugin
       string timeshiftFileName = Card.TimeShiftFileName;
       Log.Info("tvhome:file:{0}", timeshiftFileName);
 
-      MediaTypeEnum? mediaTypeCard = Card.MediaType;      
+      MediaTypeEnum? mediaTypeCard = Card.MediaType;
       if (!mediaTypeCard.HasValue)
       {
         Log.Info("tvhome:startplay channel=null");
@@ -3915,7 +3898,7 @@ namespace Mediaportal.TV.TvPlugin
       if (mediaTypeCard.Value == MediaTypeEnum.Radio)
       {
         mediaType = g_Player.MediaType.Radio;
-      }      
+      }
 
       benchClock.Stop();
       Log.Warn("tvhome:startplay.  Phase 1 - {0} ms - Done method initialization",
@@ -3968,7 +3951,7 @@ namespace Mediaportal.TV.TvPlugin
     }
 
     private static void Seek(bool zapping, double duration)
-    {      
+    {
       double position = g_Player.CurrentPosition;
 
       bool useRtsp = UseRTSP();
@@ -4008,7 +3991,7 @@ namespace Mediaportal.TV.TvPlugin
       if (newCardId != -1 && ServiceAgents.Instance.ControllerServiceAgent.CiMenuSupported(newCardId))
       {
         // opens remoting and attach local eventhandler to server event, call only once        
-        ServiceAgents.Instance.EventServiceAgent.RegisterCiMenuCallbacks(_ciMenuEventEventHandler);                            
+        ServiceAgents.Instance.EventServiceAgent.RegisterCiMenuCallbacks(_ciMenuEventEventHandler);
 
         // Enable CI menu handling in card
         ServiceAgents.Instance.ControllerServiceAgent.SetCiMenuHandler(newCardId, null);
@@ -4020,7 +4003,7 @@ namespace Mediaportal.TV.TvPlugin
     {
       if (_ciMenuEventEventHandler != null)
       {
-        ServiceAgents.Instance.EventServiceAgent.UnRegisterCiMenuCallbacks(_ciMenuEventEventHandler, !Connected);        
+        ServiceAgents.Instance.EventServiceAgent.UnRegisterCiMenuCallbacks(_ciMenuEventEventHandler, !Connected);
       }
     }
 
@@ -4090,7 +4073,7 @@ namespace Mediaportal.TV.TvPlugin
 
       switch (currentCiMenu.State)
       {
-          // choices available, so show them
+        // choices available, so show them
         case CiMenuState.Ready:
           dlgCiMenu.Reset();
           dlgCiMenu.SetHeading(currentCiMenu.Title, currentCiMenu.Subtitle, currentCiMenu.BottomText); // CI Menu
@@ -4118,7 +4101,7 @@ namespace Mediaportal.TV.TvPlugin
           }
           break;
 
-          // errors and menu options with no choices
+        // errors and menu options with no choices
         case CiMenuState.Error:
         case CiMenuState.NoChoices:
 
@@ -4137,7 +4120,7 @@ namespace Mediaportal.TV.TvPlugin
           }
           break;
 
-          // requests require users input so open keyboard
+        // requests require users input so open keyboard
         case CiMenuState.Request:
           String result = "";
           if (
@@ -4173,7 +4156,7 @@ namespace Mediaportal.TV.TvPlugin
 
     #region Implementation of ITvServerEvent
 
-    
+
 
     #endregion
 
@@ -4211,34 +4194,34 @@ namespace Mediaportal.TV.TvPlugin
           if (eventArgs.Card.Id == Card.Id)
           {
             Card.IsGrabbingEpg = true;
-          }          
+          }
           break;
         case TvServerEventType.EpgGrabbingStopped:
           if (eventArgs.Card.Id == Card.Id)
           {
             Card.IsGrabbingEpg = false;
-          }          
+          }
           break;
 
         case TvServerEventType.ScanningStarted:
           if (eventArgs.Card.Id == Card.Id)
           {
             Card.IsScanning = true;
-          }          
+          }
           break;
         case TvServerEventType.ScanningStopped:
           if (eventArgs.Card.Id == Card.Id)
           {
             Card.IsScanning = false;
-          }          
-          break;        
+          }
+          break;
       }
-            
+
       //todo : gibman, maybe handle scrambled state as well ?
       //TVHome.Card.IsScrambled
 
     }
 
     #endregion
-  } 
+  }
 }

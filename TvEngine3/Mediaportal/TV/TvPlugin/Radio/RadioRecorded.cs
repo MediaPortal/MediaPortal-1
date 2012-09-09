@@ -204,7 +204,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
     protected override void OnPageLoad()
     {
-      TVHome.WaitForGentleConnection();
+      TVHome.ShowTvEngineSettingsUIIfConnectionDown();
 
       base.OnPageLoad();
       DeleteInvalidRecordings();

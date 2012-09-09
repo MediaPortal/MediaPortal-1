@@ -3454,7 +3454,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
           case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
             {
-              TVHome.WaitForGentleConnection();
+              TVHome.ShowTvEngineSettingsUIIfConnectionDown();
 
               GUIPropertyManager.SetProperty("#itemcount", string.Empty);
               GUIPropertyManager.SetProperty("#selecteditem", string.Empty);
