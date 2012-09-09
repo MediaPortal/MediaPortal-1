@@ -19,13 +19,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
 using System.Windows.Forms;
-using MpeCore;
-using MpeCore.Classes;
-using MpeInstaller.Classes;
 
 namespace MpeInstaller
 {
@@ -37,49 +31,15 @@ namespace MpeInstaller
     [STAThread]
     private static void Main(string[] args)
     {
-      KillProcces("Configuration");
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
       if (args.Length > 0)
       {
-        var arg = new ProgramArguments(args);
-        if (!arg.MpQueue)
-          KillProcces("MediaPortal");
-        MainForm dlg = new MainForm(arg);
-        //if (!dlg.IsDisposed)
-        //    Application.Run(dlg);
+        new MainForm(new ProgramArguments(args));
       }
       else
       {
-        KillProcces("MediaPortal");
         Application.Run(new MainForm());
-      }
-    }
-
-    private static void KillProcces(string name)
-    {
-      Process[] prs = Process.GetProcesses();
-      foreach (Process pr in prs)
-      {
-        if (pr.ProcessName.Equals(name, StringComparison.InvariantCultureIgnoreCase))
-        {
-          pr.CloseMainWindow();
-          pr.Close();
-          Thread.Sleep(500);
-        }
-      }
-      prs = Process.GetProcesses();
-      foreach (Process pr in prs)
-      {
-        if (pr.ProcessName.Equals(name, StringComparison.InvariantCultureIgnoreCase))
-        {
-          try
-          {
-            Thread.Sleep(5000);
-            pr.Kill();
-          }
-          catch (Exception) {}
-        }
       }
     }
   }

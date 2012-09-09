@@ -40,6 +40,7 @@ namespace MpeMaker.Sections
     {
       Package = new PackageClass();
       InitializeComponent();
+      webBrowser.StatusTextChanged += webBrowser_StatusTextChanged;
     }
 
     #region Browse buttons
@@ -153,27 +154,40 @@ namespace MpeMaker.Sections
       add_list.Enabled = !(String.IsNullOrEmpty(txt_list1.Text) || String.IsNullOrEmpty(txt_list2.Text));
     }
 
-    private void button2_Click(object sender, EventArgs e)
+    private void PublishClick(object sender, EventArgs e)
     {
       if (string.IsNullOrEmpty(Package.GeneralInfo.UpdateUrl))
       {
-        MessageBox.Show("No update url is specified.");
+        MessageBox.Show("No update url is specified.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        return;
+      }
+      Uri parsedUri = null;
+      if (!Uri.TryCreate(Package.GeneralInfo.UpdateUrl, UriKind.Absolute, out parsedUri))
+      {
+        MessageBox.Show("Invalid update url specified.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        return;
+      }
+      if (!parsedUri.Scheme.StartsWith("http"))
+      {
+        MessageBox.Show("Update url must starte with http.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         return;
       }
       if (Package.ValidatePackage().Count > 0)
       {
-        MessageBox.Show("Package contain error(s). First sove it !");
+        MessageBox.Show("Package contains error(s). First solve it!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         return;
       }
 
       string url =
         string.Format("http://install.team-mediaportal.com/MPEI/submit.php?url={0}&name={1}&version={2}&id={3}",
-                      HttpUtility.UrlEncode(Package.GeneralInfo.UpdateUrl), Package.GeneralInfo.Name,
+                      HttpUtility.UrlEncode(Package.GeneralInfo.UpdateUrl), 
+                      Package.GeneralInfo.Name,
                       Package.GeneralInfo.Version,
                       Package.GeneralInfo.Id);
-      webBrowser.ProgressChanged += webBrowser_ProgressChanged;
-      webBrowser.StatusTextChanged += webBrowser_StatusTextChanged;
-      webBrowser.Navigate(url);
+      if (webBrowser.Url != null && webBrowser.Url.OriginalString == url)
+        webBrowser.Refresh(WebBrowserRefreshOption.Completely);
+      else
+        webBrowser.Navigate(url);
     }
 
     private void webBrowser_StatusTextChanged(object sender, EventArgs e)
@@ -184,7 +198,7 @@ namespace MpeMaker.Sections
     private void webBrowser_ProgressChanged(object sender, WebBrowserProgressChangedEventArgs e)
     {
       toolStripProgressBar1.Maximum = (int)e.MaximumProgress;
-      toolStripProgressBar1.Value = (int)e.CurrentProgress;
+      toolStripProgressBar1.Value = Math.Max(0, (int)e.CurrentProgress);
     }
   }
 }
