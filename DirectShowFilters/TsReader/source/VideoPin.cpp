@@ -62,6 +62,7 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
   m_bInFillBuffer = false;
   m_bPinNoAddPMT = false;
   m_bAddPMT = false;
+  m_bPinNoNewSegFlush = false;
   m_bDownstreamFlush=false;
 }
 
@@ -203,6 +204,7 @@ HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
 {
   m_bInFillBuffer = false;
   m_bPinNoAddPMT = false;
+  m_bPinNoNewSegFlush = false;
   m_bAddPMT = true;
   HRESULT hr = CBaseOutputPin::CompleteConnect(pReceivePin);
   if (!SUCCEEDED(hr)) return E_FAIL;
@@ -238,6 +240,11 @@ HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
     {
       m_bPinNoAddPMT = true;
       //LogDebug("vidPin:CompleteConnect() FFDShow DXVA Video Decoder connected, disable AddPMT");
+    }
+    else if (m_pTsReaderFilter->m_videoDecoderCLSID == CLSID_MSDTVDVDVIDEO)
+    {
+      m_bPinNoNewSegFlush = true;
+      //LogDebug("vidPin:CompleteConnect() MS DTV-DVD Video Decoder connected, disable NewSegFlush");
     }
   }
   else
@@ -744,13 +751,13 @@ HRESULT CVideoPin::OnThreadStartPlay()
   //get file-duration and set m_rtDuration
   GetDuration(NULL);
 
-  if( m_dRateSeeking == 1.0 ) //MS DTV video decoder can hang if we flush in FFWD
+  if( !m_bPinNoNewSegFlush ) //MS DTV video decoder can hang if we flush here...
   {
     //Downstream flush
     DeliverBeginFlush();
     DeliverEndFlush();
   }
-
+  
   //start playing
   DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
   return CSourceStream::OnThreadStartPlay( );
