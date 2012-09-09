@@ -27,17 +27,15 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using Ionic.Zip;
-using MediaPortal.Configuration;
 using MpeCore;
 using MpeCore.Classes;
 using MpeInstaller.Dialogs;
-using MpeInstaller.Classes;
+using MpeCore.Dialogs;
 
 namespace MpeInstaller
 {
   public partial class MainForm : Form
   {
-    private ApplicationSettings _settings = new ApplicationSettings();
     private SplashScreen splashScreen = new SplashScreen();
     private bool _loading = true;
     private ScreenShotNavigator _screenShotNavigator = new ScreenShotNavigator();
@@ -47,29 +45,24 @@ namespace MpeInstaller
       Init();
     }
 
-    public MainForm(ProgramArguments args)
+    public MainForm(ProgramArguments args) : this()
     {
-      Init();
       try
       {
         if (File.Exists(args.PackageFile))
         {
-          _settings.DoUpdateInStartUp = false;
+          ApplicationSettings.Instance.DoUpdateInStartUp = false;
           InstallFile(args.PackageFile, args.Silent, false);
-          this.Close();
-          return;
         }
-        if (args.Update)
+        else if (args.Update)
         {
-          _settings.DoUpdateInStartUp = false;
-          RefreshLists();
-          DoUpdateAll();
-          this.Close();
-          return;
+          ApplicationSettings.Instance.DoUpdateInStartUp = false;
+          RefreshListControls();
+          DoUpdateAll(false);
         }
-        if (args.MpQueue)
+        else if (args.MpQueue)
         {
-          _settings.DoUpdateInStartUp = false;
+          ApplicationSettings.Instance.DoUpdateInStartUp = false;
           if (args.Splash)
           {
             splashScreen.SetImg(args.BackGround);
@@ -77,12 +70,10 @@ namespace MpeInstaller
             splashScreen.Update();
           }
           ExecuteMpQueue();
-          this.Close();
           if (splashScreen.Visible)
             splashScreen.Close();
-          return;
         }
-        if (args.UninstallPackage)
+        else if (args.UninstallPackage)
         {
           if (string.IsNullOrEmpty(args.PackageID)) return;
           PackageClass pc = MpeCore.MpeInstaller.InstalledExtensions.Get(args.PackageID);
@@ -90,45 +81,27 @@ namespace MpeInstaller
 
           UnInstall dlg = new UnInstall();
           dlg.Execute(pc, args.Silent);
-
-          return;
         }
       }
       catch (Exception ex)
       {
-        MessageBox.Show(ex.Message);
-        MessageBox.Show(ex.StackTrace);
+        MessageBox.Show(ex.ToString());
+      }
+      finally
+      {
+        this.Close();
       }
     }
 
     public void ExecuteMpQueue()
     {
-      Process[] prs = Process.GetProcesses();
-      foreach (Process pr in prs)
-      {
-        if (pr.ProcessName.Equals("MediaPortal", StringComparison.InvariantCultureIgnoreCase))
-        {
-          pr.CloseMainWindow();
-          pr.Close();
-          Thread.Sleep(500);
-        }
-      }
-      prs = Process.GetProcesses();
-      foreach (Process pr in prs)
-      {
-        if (pr.ProcessName.Equals("MediaPortal", StringComparison.InvariantCultureIgnoreCase))
-        {
-          try
-          {
-            Thread.Sleep(5000);
-            pr.Kill();
-          }
-          catch (Exception) {}
-        }
-      }
       ExecuteQueue();
-      Process.Start(Config.GetFile(Config.Dir.Base, "MediaPortal.exe"));
-      Thread.Sleep(3000);
+      string mpExe = Path.Combine(Application.StartupPath, "MediaPortal.exe");
+      if (File.Exists(mpExe))
+      {
+        Process.Start(mpExe);
+        Thread.Sleep(3000);
+      }
     }
 
     public void ExecuteQueue()
@@ -147,7 +120,7 @@ namespace MpeInstaller
               if (packageClass == null)
                 continue;
               splashScreen.SetInfo("Installing " + packageClass.GeneralInfo.Name);
-              string newPackageLoacation = GetPackageLocation(packageClass);
+              string newPackageLoacation = ExtensionUpdateDownloader.GetPackageLocation(packageClass, Client_DownloadProgressChanged, Client_DownloadFileCompleted);
               InstallFile(newPackageLoacation, true, false);
             }
             break;
@@ -169,51 +142,42 @@ namespace MpeInstaller
       collection.Save();
     }
 
-    private void FilterList()
+    private void SetFilterForKnownExtensionsList()
     {
-      //if (_settings.ShowOnlyStable)
-      //{
-      //  //MpeCore.MpeInstaller.InstalledExtensions.HideByRelease();
-      //  MpeCore.MpeInstaller.KnownExtensions.HideByRelease();
-      //}
-      //else
-      //{
-      //  MpeCore.MpeInstaller.InstalledExtensions.ShowAll();
-      //  MpeCore.MpeInstaller.KnownExtensions.ShowAll();
-      //}
-      MpeCore.MpeInstaller.KnownExtensions.Hide(_settings.ShowOnlyStable, _settings.ShowOnlyCompatible);
+      MpeCore.MpeInstaller.KnownExtensions.Hide(ApplicationSettings.Instance.ShowOnlyStable, ApplicationSettings.Instance.ShowOnlyCompatible);
       if (MpeCore.MpeInstaller.KnownExtensions.GetHiddenExtensionCount() > 0)
-        lbl_warn.Visible = true;
+      {
+        toolStripLabelWarn.Visible = true;
+        string infoText = "";
+        if (ApplicationSettings.Instance.ShowOnlyStable) infoText += "unstable ";
+        if (ApplicationSettings.Instance.ShowOnlyCompatible) infoText += (ApplicationSettings.Instance.ShowOnlyStable ? "and " : "") + "incompatible ";
+        infoText += "extensions are hidden";
+        toolStripLabelWarn.Text = infoText;
+      }
       else
-        lbl_warn.Visible = false;
+        toolStripLabelWarn.Visible = false;
     }
 
     public void Init()
     {
       InitializeComponent();
       MpeCore.MpeInstaller.Init();
-      _settings = ApplicationSettings.Load();
-      MpeCore.MpeInstaller.InstalledExtensions.IgnoredUpdates = _settings.IgnoredUpdates;
-      MpeCore.MpeInstaller.KnownExtensions.IgnoredUpdates = _settings.IgnoredUpdates;
+      MpeCore.MpeInstaller.InstalledExtensions.IgnoredUpdates = ApplicationSettings.Instance.IgnoredUpdates;
+      MpeCore.MpeInstaller.KnownExtensions.IgnoredUpdates = ApplicationSettings.Instance.IgnoredUpdates;
       _loading = true;
-      chk_update.Checked = _settings.DoUpdateInStartUp;
-      chk_updateExtension.Checked = _settings.UpdateAll;
-      chk_stable.Checked = _settings.ShowOnlyStable;
-      chk_dependency.Checked = _settings.ShowOnlyCompatible;
-      numeric_Days.Value = _settings.UpdateDays;
-      FilterList();
-      chk_update_CheckedChanged(null, null);
+      onlyStableToolStripMenuItem.Checked = ApplicationSettings.Instance.ShowOnlyStable;
+      onlyCompatibleToolStripMenuItem.Checked = ApplicationSettings.Instance.ShowOnlyCompatible;
       _loading = false;
-      extensionListControl.UnInstallExtension += extensionListControl_UnInstallExtension;
-      extensionListControl.UpdateExtension += extensionListControl_UpdateExtension;
-      extensionListControl.ConfigureExtension += extensionListControl_ConfigureExtension;
-      extensionListControl.InstallExtension += extensionListControl_InstallExtension;
-      extensionListControl.ShowScreenShot += extensionListControl_ShowScreenShot;
-      extensionListContro_all.UnInstallExtension += extensionListControl_UnInstallExtension;
-      extensionListContro_all.UpdateExtension += extensionListControl_UpdateExtension;
-      extensionListContro_all.ConfigureExtension += extensionListControl_ConfigureExtension;
-      extensionListContro_all.InstallExtension += extensionListControl_InstallExtension;
-      extensionListContro_all.ShowScreenShot += extensionListControl_ShowScreenShot;
+      extensionListControlInstalled.UnInstallExtension += extensionListControl_UnInstallExtension;
+      extensionListControlInstalled.UpdateExtension += extensionListControl_UpdateExtension;
+      extensionListControlInstalled.ConfigureExtension += extensionListControl_ConfigureExtension;
+      extensionListControlInstalled.InstallExtension += extensionListControl_InstallExtension;
+      extensionListControlInstalled.ShowScreenShot += extensionListControl_ShowScreenShot;
+      extensionListControlKnown.UnInstallExtension += extensionListControl_UnInstallExtension;
+      extensionListControlKnown.UpdateExtension += extensionListControl_UpdateExtension;
+      extensionListControlKnown.ConfigureExtension += extensionListControl_ConfigureExtension;
+      extensionListControlKnown.InstallExtension += extensionListControl_InstallExtension;
+      extensionListControlKnown.ShowScreenShot += extensionListControl_ShowScreenShot;
     }
 
     private void extensionListControl_ShowScreenShot(object sender, PackageClass packageClass)
@@ -225,7 +189,7 @@ namespace MpeInstaller
 
     private void extensionListControl_InstallExtension(object sender, PackageClass packageClass)
     {
-      string newPackageLoacation = GetPackageLocation(packageClass);
+      string newPackageLoacation = ExtensionUpdateDownloader.GetPackageLocation(packageClass, Client_DownloadProgressChanged, Client_DownloadFileCompleted);
       if (!File.Exists(newPackageLoacation))
       {
         MessageBox.Show("Can't locate the installer package. Install aborted");
@@ -246,7 +210,7 @@ namespace MpeInstaller
       }
       if (!pak.CheckDependency(false))
       {
-        if (MessageBox.Show("Dependency check error! Install aborted!\nWould you like to view more details?", string.Empty,
+        if (MessageBox.Show("Dependency check error! Install aborted!\nWould you like to view more details?", pak.GeneralInfo.Name,
           MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
         {
           DependencyForm frm = new DependencyForm(pak);
@@ -262,10 +226,19 @@ namespace MpeInstaller
         return;
       }
 
+      if (packageClass.GeneralInfo.Version.CompareTo(pak.GeneralInfo.Version) != 0)
+      {
+        if (MessageBox.Show(
+          string.Format(@"Downloaded version of {0} is {1} and differs from your selected version: {2}!
+Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Version,packageClass.GeneralInfo.Version), "Install extension", MessageBoxButtons.YesNo,
+          MessageBoxIcon.Error) != DialogResult.Yes)
+        return;
+      }
+
       if (
         MessageBox.Show(
-          "This operation will install extension " + packageClass.GeneralInfo.Name + " version " +
-          pak.GeneralInfo.Version + " \n Do you want to continue ? ", "Install extension", MessageBoxButtons.YesNo,
+          "This operation will install " + packageClass.GeneralInfo.Name + " version " +
+          pak.GeneralInfo.Version + "\n Do you want to continue ?", "Install extension", MessageBoxButtons.YesNo,
           MessageBoxIcon.Exclamation) != DialogResult.Yes)
         return;
       this.Hide();
@@ -274,13 +247,16 @@ namespace MpeInstaller
       {
         if (pak.GeneralInfo.Params[ParamNamesConst.FORCE_TO_UNINSTALL_ON_UPDATE].GetValueAsBool())
         {
-            if (
-              MessageBox.Show(
-                "Another version of this extension is installed\nand needs to be uninstalled first.\nDo you want to continue?\n" +
-                "Old extension version: " + packageClass.GeneralInfo.Version + "\n" +
-                "New extension version: " + pak.GeneralInfo.Version,
-                "Install extension", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) != DialogResult.Yes)
-              return;
+          if (
+            MessageBox.Show(
+              "Another version of this extension is installed\nand needs to be uninstalled first.\nDo you want to continue?\n" +
+              "Old extension version: " + packageClass.GeneralInfo.Version + "\n" +
+              "New extension version: " + pak.GeneralInfo.Version,
+              "Install extension", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) != DialogResult.Yes)
+          {
+            this.Show();
+            return;
+          }
           UnInstall dlg = new UnInstall();
           dlg.Execute(packageClass, false);
         }
@@ -291,7 +267,7 @@ namespace MpeInstaller
         pak.CopyGroupCheck(packageClass);
       }
       pak.StartInstallWizard();
-      RefreshLists();
+      RefreshListControls();
       pak.ZipProvider.Dispose();
       try
       {
@@ -341,27 +317,6 @@ namespace MpeInstaller
       }
     }
 
-    private string GetPackageLocation(PackageClass packageClass)
-    {
-      string newPackageLoacation = packageClass.GeneralInfo.Location;
-      if (!File.Exists(newPackageLoacation))
-      {
-        newPackageLoacation = packageClass.LocationFolder + packageClass.GeneralInfo.Id + ".mpe2";
-        if (!File.Exists(newPackageLoacation))
-        {
-          if (!string.IsNullOrEmpty(packageClass.GeneralInfo.OnlineLocation))
-          {
-            newPackageLoacation = Path.GetTempFileName();
-            DownloadFile dlg = new DownloadFile();
-            dlg.Client.DownloadProgressChanged += Client_DownloadProgressChanged;
-            dlg.Client.DownloadFileCompleted += Client_DownloadFileCompleted;
-            dlg.StartDownload(packageClass.GeneralInfo.OnlineLocation, newPackageLoacation);
-          }
-        }
-      }
-      return newPackageLoacation;
-    }
-
     private void Client_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
     {
       if (splashScreen.Visible)
@@ -382,14 +337,15 @@ namespace MpeInstaller
                                                       PackageClass newpackageClass)
     {
       this.Hide();
-      DoUpdate(packageClass, newpackageClass, false);
-      RefreshLists();
+      if (DoUpdate(packageClass, newpackageClass, false))
+      {
+        RefreshListControls();
+      }
       this.Show();
     }
 
-    private void DoUpdateAll()
+    private void DoUpdateAll(bool askForInfoUpdate)
     {
-      this.Hide();
       var updatelist = new Dictionary<PackageClass, PackageClass>();
       foreach (PackageClass packageClass in MpeCore.MpeInstaller.InstalledExtensions.Items)
       {
@@ -398,19 +354,33 @@ namespace MpeInstaller
           continue;
         updatelist.Add(packageClass, update);
       }
-      foreach (KeyValuePair<PackageClass, PackageClass> valuePair in updatelist)
+      if (updatelist.Count > 0)
       {
-        if (valuePair.Value == null)
-          continue;
-        DoUpdate(valuePair.Key, valuePair.Value, true);
+        this.Hide();
+        foreach (KeyValuePair<PackageClass, PackageClass> valuePair in updatelist)
+        {
+          if (valuePair.Value == null)
+            continue;
+          DoUpdate(valuePair.Key, valuePair.Value, true);
+        }
+        RefreshListControls();
+        this.Show();
       }
-      RefreshLists();
-      this.Show();
+      else
+      {
+        if (askForInfoUpdate && MessageBox.Show("All installed extensions seem up to date.\nRefresh update info and try again?", "No updates found", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+        {
+          ExtensionUpdateDownloader.UpdateList(false, true, null, null);
+          SetFilterForKnownExtensionsList();
+          RefreshListControls();
+          DoUpdateAll(false);
+        }
+      }
     }
 
     private bool DoUpdate(PackageClass packageClass, PackageClass newpackageClass, bool silent)
     {
-      string newPackageLoacation = GetPackageLocation(newpackageClass);
+      string newPackageLoacation = ExtensionUpdateDownloader.GetPackageLocation(newpackageClass, Client_DownloadProgressChanged, Client_DownloadFileCompleted);
       if (!File.Exists(newPackageLoacation))
       {
         if (!silent)
@@ -436,7 +406,7 @@ namespace MpeInstaller
       {
         if (!silent)
         {
-          if (MessageBox.Show("Dependency check error! Update aborted!\nWould you like to view more details?", string.Empty,
+          if (MessageBox.Show("Dependency check error! Update aborted!\nWould you like to view more details?", pak.GeneralInfo.Name,
             MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
           {
             DependencyForm frm = new DependencyForm(pak);
@@ -468,26 +438,43 @@ namespace MpeInstaller
       return true;
     }
 
-    private void RefreshLists()
+    private void RefreshListControls()
     {
-      lbl_lastupdate.Text = "Last update " + _settings.LastUpdate.ToString();
-      extensionListControl.Set(MpeCore.MpeInstaller.InstalledExtensions);
-      extensionListContro_all.Set(MpeCore.MpeInstaller.KnownExtensions.GetUniqueList());
+      toolStripLastUpdate.Text = "Last update: " + (ApplicationSettings.Instance.LastUpdate == DateTime.MinValue ? "Never" : ApplicationSettings.Instance.LastUpdate.ToString("g"));
+      extensionListControlInstalled.Set(MpeCore.MpeInstaller.InstalledExtensions, true);
+      extensionListControlKnown.Set(MpeCore.MpeInstaller.KnownExtensions.GetUniqueList(MpeCore.MpeInstaller.InstalledExtensions), false);
     }
 
     private void extensionListControl_UnInstallExtension(object sender, PackageClass packageClass)
     {
       UnInstall dlg = new UnInstall();
-      dlg.Execute(packageClass, false);
-      RefreshLists();
+      if (dlg.Execute(packageClass, false))
+      {
+        RefreshListControls();
+      }
     }
 
     private void MainForm_Load(object sender, EventArgs e)
     {
-      RefreshLists();
+      // The default connection limit is 2 in .Net on most platforms! This means downloading two files will block all other WebRequests.
+      System.Net.ServicePointManager.DefaultConnectionLimit = 100;
+
+      // the first time a WebClient is used to download data, it will do a proxy discovery which can be slow (10 seconds)
+      // do this on startup in a background thread to have the discovery ready when before the UI might block
+      new Thread(() => 
+      { 
+        System.Net.WebRequest.DefaultWebProxy.GetProxy(new Uri("http://www.google.com")); 
+      }) 
+      { 
+        IsBackground = true, 
+        Name = "ProxyPrecacheDiscovery" 
+      }.Start();
+
+      SetFilterForKnownExtensionsList();
+      RefreshListControls();
     }
 
-    private void button1_Click(object sender, EventArgs e)
+    private void FileOpen_Click(object sender, EventArgs e)
     {
       OpenFileDialog dialog = new OpenFileDialog
                                 {
@@ -545,9 +532,9 @@ namespace MpeInstaller
           MessageBox.Show("Wrong file format !");
         return;
       }
-      PackageClass installedPak = MpeCore.MpeInstaller.InstalledExtensions.Get(pak.GeneralInfo.Id);
       if (pak.CheckDependency(false))
       {
+        PackageClass installedPak = MpeCore.MpeInstaller.InstalledExtensions.Get(pak.GeneralInfo.Id);
         if (installedPak != null)
         {
           if (pak.GeneralInfo.Params[ParamNamesConst.FORCE_TO_UNINSTALL_ON_UPDATE].GetValueAsBool())
@@ -575,7 +562,8 @@ namespace MpeInstaller
         pak.StartInstallWizard();
         if (gui)
         {
-          RefreshLists();
+          SetFilterForKnownExtensionsList();
+          RefreshListControls();
           this.Show();
         }
       }
@@ -583,7 +571,7 @@ namespace MpeInstaller
       {
         if (!silent)
         {
-          if (MessageBox.Show("Dependency check error! Install aborted!\nWould you like to view more details?", string.Empty, 
+          if (MessageBox.Show("Dependency check error! Install aborted!\nWould you like to view more details?", pak.GeneralInfo.Name, 
             MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
           {
             DependencyForm frm = new DependencyForm(pak);
@@ -593,38 +581,27 @@ namespace MpeInstaller
       }
     }
 
-    private void btn_online_update_Click(object sender, EventArgs e)
+    private void RefreshUpdateInfo_Click(object sender, EventArgs e)
     {
-      UpdateList(false);
-      RefreshLists();
-    }
-
-    private void UpdateList(bool silent)
-    {
-      DownloadExtensionIndex();
-      DownloadInfo dlg = new DownloadInfo();
-      dlg.silent = silent;
-      dlg.ShowDialog();
-      FilterList();
-      _settings.LastUpdate = DateTime.Now;
-      _settings.Save();
+      ExtensionUpdateDownloader.UpdateList(false, false, Client_DownloadProgressChanged, Client_DownloadFileCompleted);
+      SetFilterForKnownExtensionsList();
+      RefreshListControls();
     }
 
     private void MainForm_Shown(object sender, EventArgs e)
     {
-      DateTime d = _settings.LastUpdate;
+      DateTime d = ApplicationSettings.Instance.LastUpdate;
       int i = DateTime.Now.Subtract(d).Days;
-      if (((_settings.DoUpdateInStartUp && i > _settings.UpdateDays) ||
+      if (((ApplicationSettings.Instance.DoUpdateInStartUp && i > ApplicationSettings.Instance.UpdateDays) ||
            MpeCore.MpeInstaller.KnownExtensions.Items.Count == 0) &&
           MessageBox.Show("Do you want to update the extension list ?", "Update", MessageBoxButtons.YesNo,
                           MessageBoxIcon.Question) == DialogResult.Yes)
       {
-        btn_online_update_Click(sender, e);
-        if (_settings.UpdateAll)
-          DoUpdateAll();
+        RefreshUpdateInfo_Click(sender, e);
+        if (ApplicationSettings.Instance.UpdateAll)
+          DoUpdateAll(false);
       }
     }
-
 
     private void MainForm_DragEnter(object sender, DragEventArgs e)
     {
@@ -641,99 +618,27 @@ namespace MpeInstaller
 
     private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
     {
-      _settings.Save();
+      ApplicationSettings.Instance.Save();
     }
 
-    private void chk_update_CheckedChanged(object sender, EventArgs e)
+    private void UpdateAll_Click(object sender, EventArgs e)
     {
-      if (!_loading)
-      {
-        _settings.DoUpdateInStartUp = chk_update.Checked;
-        _settings.UpdateAll = chk_updateExtension.Checked;
-        _settings.UpdateDays = (int)numeric_Days.Value;
-        _settings.ShowOnlyStable = chk_stable.Checked;
-        _settings.ShowOnlyCompatible = chk_dependency.Checked;
-      }
-      if (!_settings.DoUpdateInStartUp)
-      {
-        numeric_Days.Enabled = false;
-        chk_updateExtension.Enabled = false;
-      }
-      else
-      {
-        numeric_Days.Enabled = true;
-        chk_updateExtension.Enabled = true;
-      }
+      DoUpdateAll(true);
     }
-
-    private void button2_Click(object sender, EventArgs e)
-    {
-      DoUpdateAll();
-    }
-
-    #region DownloadExtensionIndex
-
-    private string tempUpdateIndex;
-    private const string UpdateIndexUrl = "http://install.team-mediaportal.com/MPEI/extensions.txt";
-
-    private void DownloadExtensionIndex()
-    {
-      try
-      {
-        tempUpdateIndex = Path.GetTempFileName();
-        DownloadFile dlg = new DownloadFile();
-        dlg.Client.DownloadProgressChanged += Client_DownloadProgressChanged;
-        dlg.Client.DownloadFileCompleted += UpdateIndex_DownloadFileCompleted;
-        dlg.StartDownload(UpdateIndexUrl, tempUpdateIndex);
-
-
-        //WebClient webClient = new WebClient();
-        //webClient.DownloadProgressChanged += Client_DownloadProgressChanged;
-        //webClient.DownloadFileCompleted += updateIndex_DownloadFileCompleted;
-
-        //tempIndexFile = Path.GetTempFileName();
-        ////listBox1.Items.Add(onlineFile);
-        ////progressBar1.Value++;
-        ////progressBar1.Update();
-        ////listBox1.Update();
-        ////Update();
-        //Client.DownloadFileAsync(new Uri(UpdateIndexUrl), tempIndexFile);
-      }
-      catch (Exception ex)
-      {
-        MessageBox.Show("Error :" + ex.Message);
-      }
-    }
-
-    private void UpdateIndex_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
-    {
-      Client_DownloadFileCompleted(sender, e);
-      if (!File.Exists(tempUpdateIndex)) return;
-
-      var indexUrls = new List<string>();
-      string[] lines = File.ReadAllLines(tempUpdateIndex);
-      foreach (string line in lines)
-      {
-        if (string.IsNullOrEmpty(line)) continue;
-        if (line.StartsWith("#")) continue;
-
-        indexUrls.Add(line.Split(';')[0]);
-      }
-      MpeCore.MpeInstaller.SetInitialUrlIndex(indexUrls);
-    }
-
-    #endregion
 
     private void chk_stable_CheckedChanged(object sender, EventArgs e)
     {
-      chk_update_CheckedChanged(null, null);
-      FilterList();
-      RefreshLists();
+      if (!_loading)
+      {
+        ApplicationSettings.Instance.ShowOnlyStable = onlyStableToolStripMenuItem.Checked;
+        SetFilterForKnownExtensionsList();
+        RefreshListControls();
+      }
     }
 
-    private void btn_clean_Click(object sender, EventArgs e)
+    private void CleanCache_Click(object sender, EventArgs e)
     {
-      if (MessageBox.Show("Do you want to clear all unused data ?\nYou need to redownload update info .", "Cleanup",
+      if (MessageBox.Show("Do you want to clear all unused data?\nYou need to redownload update info.", "Cleanup",
                           MessageBoxButtons.YesNo,
                           MessageBoxIcon.Question) == DialogResult.Yes)
       {
@@ -751,6 +656,11 @@ namespace MpeInstaller
           {
             if (Directory.Exists(packageClass.LocationFolder))
               Directory.Delete(packageClass.LocationFolder, true);
+            string baseExtensionPath = Path.GetDirectoryName(packageClass.LocationFolder.Trim('\\'));
+            if (Directory.Exists(baseExtensionPath) && Directory.GetFileSystemEntries(baseExtensionPath).Length == 0)
+            {
+              Directory.Delete(baseExtensionPath);
+            }
             MpeCore.MpeInstaller.KnownExtensions.Remove(packageClass);
           }
           catch (Exception ex)
@@ -758,19 +668,45 @@ namespace MpeInstaller
             MessageBox.Show("Error : " + ex.Message);
           }
         }
+        ApplicationSettings.Instance.LastUpdate = DateTime.MinValue;
         MpeCore.MpeInstaller.Save();
-        FilterList();
-        RefreshLists();
+        SetFilterForKnownExtensionsList();
+        RefreshListControls();
       }
     }
+
     private void chk_dependency_CheckedChanged(object sender, EventArgs e)
     {
-      chk_update_CheckedChanged(null, null);
-      FilterList();
-      RefreshLists();
+      if (!_loading)
+      {
+        ApplicationSettings.Instance.ShowOnlyCompatible = onlyCompatibleToolStripMenuItem.Checked;
+        SetFilterForKnownExtensionsList();
+        RefreshListControls();
+      }
     }
 
+    private void wikiToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      try
+      {
+        Process.Start("http://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/17_Extensions/1_Installer_(MPEI)");
+      }
+      catch (Exception) { }
+    }
 
+    private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      SettingsForm dlg = new SettingsForm();
+      dlg.chk_update.Checked = ApplicationSettings.Instance.DoUpdateInStartUp;
+      dlg.chk_updateExtension.Checked = ApplicationSettings.Instance.UpdateAll;
+      dlg.numeric_Days.Value = ApplicationSettings.Instance.UpdateDays;
+      if (dlg.ShowDialog() == DialogResult.OK)
+      {
+        ApplicationSettings.Instance.DoUpdateInStartUp = dlg.chk_update.Checked;
+        ApplicationSettings.Instance.UpdateAll = dlg.chk_updateExtension.Checked;
+        ApplicationSettings.Instance.UpdateDays = (int)dlg.numeric_Days.Value;
+      }
+    }
 
   }
 }

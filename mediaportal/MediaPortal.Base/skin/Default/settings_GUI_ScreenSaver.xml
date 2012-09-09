@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>1020</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <controls>
+    <import>common.settings.xml</import>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>118</posX>
+      <posY>136</posY>
+      <height>192</height>
+      <width>438</width>
+      <texture>backslide2.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>Enable screen saver</description>
+      <type>checkbutton</type>
+      <id>2</id>
+      <width>225</width>
+      <label>300133</label>
+      <posX>140</posX>
+      <posY>164</posY>
+      <ondown>3</ondown>
+      <onup>17</onup>
+    </control>
+    <control>
+      <description>Delay label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>140</posX>
+      <posY>204</posY>
+      <label>355</label>
+    </control>
+    <control>
+      <description>Delay</description>
+      <type>spincontrol</type>
+      <id>3</id>
+      <posX>506</posX>
+      <posY>208</posY>
+      <align>right</align>
+      <onup>2</onup>
+      <ondown>4</ondown>
+    </control>
+    <control>
+      <description>BurnIn</description>
+      <type>checkbutton</type>
+      <id>4</id>
+      <width>229</width>
+      <label>300134</label>
+      <posX>140</posX>
+      <posY>244</posY>
+      <onright>5</onright>
+      <onup>3</onup>
+    </control>
+    <control>
+      <description>Reduce framerate</description>
+      <type>checkbutton</type>
+      <id>5</id>
+      <width>229</width>
+      <label>300135</label>
+      <posX>140</posX>
+      <posY>276</posY>
+      <ondown>2</ondown>
+    </control>
+  </controls>
+</window>

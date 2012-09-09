@@ -62,10 +62,13 @@
       <filltexture1>osd_progress_mid_red.png</filltexture1>
       <filltexture2>osd_progress_mid_green.png</filltexture2>
       <filltexture3>osd_progress_mid_orange.png</filltexture3>
+      <markertexture>osd_progress_mid_orange.png</markertexture>
       <fillheight>14</fillheight>
       <label>#TV.Record.percent1</label>
       <label1>#TV.Record.percent2</label1>
       <label2>#TV.Record.percent3</label2>
+      <labelmarkerstarts>#TV.Record.jumppoints</labelmarkerstarts>
+	    <labelmarkerends>#TV.Record.chapters</labelmarkerends>
       <startlabel />
       <endlabel />
       <toplabel />

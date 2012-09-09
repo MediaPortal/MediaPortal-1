@@ -19,60 +19,27 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Windows.Forms;
 using MpeCore.Interfaces;
-using MpeCore.Classes;
 
 namespace MpeCore.Classes.SectionPanel
 {
   public partial class ImageRadioSelector : BaseHorizontalLayout, ISectionPanel
   {
-    //private PackageClass Package;
-    //private SectionResponseEnum _resp = SectionResponseEnum.Cancel;
-
     private const string CONST_IMAGE_1 = "First option Image file";
     private const string CONST_IMAGE_2 = "Second option Image file";
     private const string CONST_TEXT = "Description ";
 
-    public ImageRadioSelector()
-    {
-      InitializeComponent();
-    }
-
     #region ISectionPanel Members
 
-    public bool Unique
+    public string DisplayName
     {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
+      get { return "Image Radio button Section"; }
     }
 
-    private void SetValues()
+    public string Guid
     {
-      if (File.Exists(Section.Params[CONST_IMAGE_1].Value))
-        pictureBox1.Load(Section.Params[CONST_IMAGE_1].Value);
-      if (File.Exists(Section.Params[CONST_IMAGE_1].Value))
-        pictureBox3.Load(Section.Params[CONST_IMAGE_2].Value);
-      label1.Text = Section.Params[CONST_TEXT].Value;
-      if (Section.IncludedGroups.Count > 1)
-      {
-        radioButton1.Checked = Package.Groups[Section.IncludedGroups[0]].Checked;
-        radioButton1.Tag = Package.Groups[Section.IncludedGroups[0]];
-        radioButton1.Text = Package.Groups[Section.IncludedGroups[0]].DisplayName;
-        radioButton2.Checked = Package.Groups[Section.IncludedGroups[1]].Checked;
-        radioButton2.Tag = Package.Groups[Section.IncludedGroups[1]];
-        radioButton2.Text = Package.Groups[Section.IncludedGroups[1]].DisplayName;
-      }
-    }
-
-    public SectionParamCollection Init()
-    {
-      throw new NotImplementedException();
+      get { return "{3BD8934A-FEFD-41a7-9F12-B30DABEF556B}"; }
     }
 
     public SectionParamCollection GetDefaultParams()
@@ -115,6 +82,29 @@ namespace MpeCore.Classes.SectionPanel
 
     #endregion
 
+    public ImageRadioSelector()
+    {
+      InitializeComponent();
+    }
+
+    private void SetValues()
+    {
+      if (File.Exists(Section.Params[CONST_IMAGE_1].Value))
+        pictureBox1.Load(Section.Params[CONST_IMAGE_1].Value);
+      if (File.Exists(Section.Params[CONST_IMAGE_1].Value))
+        pictureBox3.Load(Section.Params[CONST_IMAGE_2].Value);
+      label1.Text = Section.Params[CONST_TEXT].Value;
+      if (Section.IncludedGroups.Count > 1)
+      {
+        radioButton1.Checked = Package.Groups[Section.IncludedGroups[0]].Checked;
+        radioButton1.Tag = Package.Groups[Section.IncludedGroups[0]];
+        radioButton1.Text = Package.Groups[Section.IncludedGroups[0]].DisplayName;
+        radioButton2.Checked = Package.Groups[Section.IncludedGroups[1]].Checked;
+        radioButton2.Tag = Package.Groups[Section.IncludedGroups[1]];
+        radioButton2.Text = Package.Groups[Section.IncludedGroups[1]].DisplayName;
+      }
+    }
+
     private void radioButton1_CheckedChanged(object sender, EventArgs e)
     {
       if (Mode == ShowModeEnum.Preview)
@@ -126,23 +116,5 @@ namespace MpeCore.Classes.SectionPanel
         Package.Groups[Section.IncludedGroups[1]].Checked = radioButton2.Checked;
       }
     }
-
-    #region ISectionPanel Members
-
-    public string DisplayName
-    {
-      get { return "Image Radio button Section"; }
-    }
-
-    public string Guid
-    {
-      get { return "{3BD8934A-FEFD-41a7-9F12-B30DABEF556B}"; }
-    }
-
-    #endregion
-
-    private void pictureBox1_Click(object sender, EventArgs e) {}
-
-    private void pictureBox3_Click(object sender, EventArgs e) {}
   }
 }

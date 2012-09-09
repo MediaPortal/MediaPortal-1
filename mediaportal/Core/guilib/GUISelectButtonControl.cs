@@ -38,9 +38,17 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textureNoFocus")] protected string _textureNoFocusName = "";
     [XMLSkinElement("texturebg")] protected string _backgroundTextureName = "";
     [XMLSkinElement("textureLeft")] protected string _leftTextureName = "";
+    [XMLSkinElement("textureLeftHeight")] private int _leftTextureHeight = 16;
+    [XMLSkinElement("textureLeftWidth")] private int _leftTextureWidth = 16;
     [XMLSkinElement("textureRight")] protected string _rightTextureName = "";
+    [XMLSkinElement("textureRightHeight")] private int _rightTextureHeight = 16;
+    [XMLSkinElement("textureRightWidth")] private int _rightTextureWidth = 16;
     [XMLSkinElement("textureLeftFocus")] protected string _leftFocusName = "";
+    [XMLSkinElement("textureLeftFocusHeight")] private int _leftTextureFocusHeight = 16;
+    [XMLSkinElement("textureLeftFocusWidth")] private int _leftTextureFocusWidth = 16;
     [XMLSkinElement("textureRightFocus")] protected string _rightFocusName = "";
+    [XMLSkinElement("textureRightFocusHeight")] private int _rightTextureFocusHeight = 16;
+    [XMLSkinElement("textureRightFocusWidth")] private int _rightTextureFocusWidth = 16;
     [XMLSkinElement("textXOff")] protected int _textOffsetX = 0;
     [XMLSkinElement("textYOff")] protected int _textOffsetY = 0;
     [XMLSkinElement("textXOff2")] protected int _textOffsetX2 = 0;
@@ -147,20 +155,20 @@ namespace MediaPortal.GUI.Library
       _imageBackground.ParentControl = this;
       _imageBackground.DimColor = DimColor;
 
-      _imageLeft = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, x1, y1, _leftTextureName);
+      _imageLeft = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _leftTextureWidth, _leftTextureHeight, _leftTextureName);
       _imageLeft.DimColor = DimColor;
       _imageLeft.ParentControl = this;
 
-      _imageLeftFocus = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, x1, y1,
+      _imageLeftFocus = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _leftTextureFocusWidth, _leftTextureFocusHeight,
                                              _leftFocusName);
       _imageLeftFocus.ParentControl = this;
       _imageLeftFocus.DimColor = DimColor;
 
-      _imageRight = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, x1, y1, _rightTextureName);
+      _imageRight = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _rightTextureWidth, _rightTextureHeight, _rightTextureName);
       _imageRight.ParentControl = this;
       _imageRight.DimColor = DimColor;
 
-      _imageRightFocus = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, x1, y1,
+      _imageRightFocus = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _rightTextureFocusWidth, _rightTextureFocusHeight,
                                               _rightFocusName);
       _imageRightFocus.ParentControl = this;
       _imageRightFocus.DimColor = DimColor;

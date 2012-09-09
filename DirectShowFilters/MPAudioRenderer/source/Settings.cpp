@@ -34,6 +34,8 @@ unsigned int speakerConfigs[7]              = {4, 3, 51, 263, 63, 1551, 1599};
 
 LPCTSTR folder = TEXT("Software\\Team MediaPortal\\Audio Renderer");
 
+#define DEFAULT_AC3_BITRATE 448000
+
 // Registry setting names
 LPCTSTR enableTimestretching = TEXT("EnableTimestretching");
 LPCTSTR WASAPIExclusive = TEXT("WASAPIExclusive");
@@ -108,7 +110,7 @@ AudioRendererSettings::AudioRendererSettings() :
   m_lQuality_SEEKWINDOW_MS(28),
   m_lQuality_OVERLAP_MS(28),
   m_hnsPeriod(0),
-  m_AC3bitrate(448), 
+  m_AC3bitrate(DEFAULT_AC3_BITRATE),
   m_dMaxBias(1.1),
   m_dMinBias(0.9),
   m_lAudioDelay(0),
@@ -124,7 +126,7 @@ AudioRendererSettings::AudioRendererSettings() :
   m_bExpandMonoToStereo(true)
 {
   LogRotate();
-  Log("MP Audio Renderer - v1.0");
+  Log("MP Audio Renderer - v1.0.4");
 
   LoadSettingsFromRegistry();
 }
@@ -320,7 +322,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       m_AC3bitrate = AC3bitrateData * 1000;
     else
     {
-      m_AC3bitrate = 448000;
+      m_AC3bitrate = DEFAULT_AC3_BITRATE;
       Log("   invalid AC3 bitrate, using 448");
     }
 
@@ -369,7 +371,6 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
 
     delete[] WASAPIPreferredDeviceData;
   }
-
   else // no settings in registry, create default values
   {
     Log("Failed to open %s", folder);
@@ -407,6 +408,10 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, quality_SEQUENCE_MS, quality_SEQUENCE_MSData);
       WriteRegistryKeyDword(hKey, quality_SEEKWINDOW_MS, quality_SEEKWINDOW_MSData);
       WriteRegistryKeyDword(hKey, quality_OVERLAP_MS, quality_OVERLAP_MSData);
+
+      delete[] m_wWASAPIPreferredDeviceId;
+      m_wWASAPIPreferredDeviceId = new WCHAR[MAX_REG_LENGTH];
+      wcsncpy(m_wWASAPIPreferredDeviceId, T2W(WASAPIPreferredDeviceData), MAX_REG_LENGTH);
 
       WriteRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
     } 
@@ -740,6 +745,13 @@ HRESULT AudioRendererSettings::GetAvailableAudioDevices(IMMDeviceCollection** pp
 
   if (pLog || hDialog)
   {
+    if (hDialog)
+    {
+      LPSTR defaultDevice = "<OS default audio device>";
+      SendDlgItemMessage(hDialog, IDC_AUDIO_DEVICE, CB_ADDSTRING, 0, (LPARAM)defaultDevice);
+      SendDlgItemMessage(hDialog, IDC_AUDIO_DEVICE, CB_SETCURSEL, 0, 0);
+    }
+
     for (UINT i = 0; i < count; i++)
     {
       if ((*ppMMDevices)->Item(i, &pEndpoint) != S_OK)
@@ -766,8 +778,8 @@ HRESULT AudioRendererSettings::GetAvailableAudioDevices(IMMDeviceCollection** pp
       if (hDialog)
       {
         SendDlgItemMessage(hDialog, IDC_AUDIO_DEVICE, CB_ADDSTRING, 0, (LPARAM)W2T(varName.pwszVal));
-        if (wcscmp(pwszID, m_wWASAPIPreferredDeviceId) == 0)
-          SendDlgItemMessage(hDialog, IDC_AUDIO_DEVICE, CB_SETCURSEL, i, 0);
+        if (m_wWASAPIPreferredDeviceId && wcscmp(pwszID, m_wWASAPIPreferredDeviceId) == 0)
+          SendDlgItemMessage(hDialog, IDC_AUDIO_DEVICE, CB_SETCURSEL, i + 1, 0);
       }
 
       if (pLog)
@@ -814,7 +826,12 @@ void AudioRendererSettings::SetAudioDevice(int setting)
     return;
   }
 
-  if (GetAvailableAudioDevices(&devices, NULL, false) == S_OK)
+  if (setting == 0) // default audio device
+  {
+    WCHAR empty[1] = {0};
+    wcsncpy(m_wWASAPIPreferredDeviceId, empty, MAX_REG_LENGTH);
+  }
+  else if (GetAvailableAudioDevices(&devices, NULL, false) == S_OK)
   {
     UINT count = 0;
     hr = devices->GetCount(&count);
@@ -822,7 +839,7 @@ void AudioRendererSettings::SetAudioDevice(int setting)
     IMMDevice* pEndpoint = NULL;
     LPWSTR pwszID = NULL;
 
-    hr = devices->Item(setting, &pEndpoint);
+    hr = devices->Item(setting - 1, &pEndpoint);
     if (SUCCEEDED(hr))
     {
       hr = pEndpoint->GetId(&pwszID);

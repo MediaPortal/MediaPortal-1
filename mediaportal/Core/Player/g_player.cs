@@ -597,7 +597,7 @@ namespace MediaPortal.Player
         Log.Debug("g_Player.doStop() keepTimeShifting = {0} keepExclusiveModeOn = {1}", keepTimeShifting,
                   keepExclusiveModeOn);
         // Get playing file for unmount handling
-        string currentFile = g_Player.CurrentFile;
+        string currentFile = g_Player.currentFileName;
         OnStopped();
 
         //since plugins could stop playback, we need to make sure that _player is not null.
@@ -746,7 +746,7 @@ namespace MediaPortal.Player
     {
       if (_player != null)
       {
-        if (!_player.IsDVD && _chapters != null)
+        if (!_player.IsDVD && Chapters != null)
         {
           switch (action.wID)
           {
@@ -1286,8 +1286,12 @@ namespace MediaPortal.Player
             Log.Debug("g_Player.Play - Mediatype Unknown, forcing detection as Video");
             type = MediaType.Video;
           }
-          // refreshrate change done here.
-          RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+
+          // Refreshrate change done here. Blu-ray player will handle the refresh rate changes by itself
+          if (strFile.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV") == -1)
+          {
+            RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+          }
 
           if (RefreshRateChanger.RefreshRateChangePending)
           {
@@ -1422,10 +1426,10 @@ namespace MediaPortal.Player
           {
             _isInitialized = false;
             _currentFilePlaying = _player.CurrentFile;
-            if (_chapters == null)
-            {
-              _chapters = _player.Chapters;
-            }
+            //if (_chapters == null)
+            //{
+            //  _chapters = _player.Chapters;
+            //}
             if (_chaptersname == null)
             {
               _chaptersname = _player.ChaptersName;
@@ -1769,12 +1773,18 @@ namespace MediaPortal.Player
     {
       get
       {
-        if (_player == null)
+        if (_player == null && _chapters == null)
         {
           return null;
         }
-        _chapters = _player.Chapters;
-        return _chapters;
+        if (_chapters != null)
+        {
+          return _chapters;
+        }
+        else
+        {
+          return _player.Chapters;
+        }
       }
     }
 
@@ -1788,6 +1798,14 @@ namespace MediaPortal.Player
         }
         _chaptersname = _player.ChaptersName;
         return _chaptersname;
+      }
+    }
+    
+    public static double[] JumpPoints
+    {
+      get
+      {
+        return _jumpPoints;
       }
     }
 
@@ -2193,10 +2211,10 @@ namespace MediaPortal.Player
             StepNow();
           }
         }
-        else if (_autoComSkip && _jumpPoints != null && _player.Speed == 1)
+        else if (_autoComSkip && JumpPoints != null && _player.Speed == 1)
         {
           double currentPos = _player.CurrentPosition;
-          foreach (double jumpFrom in _jumpPoints)
+          foreach (double jumpFrom in JumpPoints)
           {
             if (jumpFrom != 0 && currentPos <= jumpFrom + 1.0 && currentPos >= jumpFrom - 0.1)
             {
@@ -3042,13 +3060,13 @@ namespace MediaPortal.Player
 
     private static double NextChapterTime(double currentPos)
     {
-      if (_chapters != null)
+      if (Chapters != null)
       {
-        for (int index = 0; index < _chapters.Length; index++)
+        for (int index = 0; index < Chapters.Length; index++)
         {
-          if (currentPos < _chapters[index])
+          if (currentPos < Chapters[index])
           {
-            return _chapters[index];
+            return Chapters[index];
           }
         }
       }
@@ -3058,13 +3076,13 @@ namespace MediaPortal.Player
 
     private static double PreviousChapterTime(double currentPos)
     {
-      if (_chapters != null)
+      if (Chapters != null)
       {
-        for (int index = _chapters.Length - 1; index >= 0; index--)
+        for (int index = Chapters.Length - 1; index >= 0; index--)
         {
-          if (_chapters[index] < currentPos - 5.0)
+          if (Chapters[index] < currentPos - 5.0)
           {
-            return _chapters[index];
+            return Chapters[index];
           }
         }
       }

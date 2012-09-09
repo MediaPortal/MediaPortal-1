@@ -290,6 +290,19 @@ namespace MediaPortal.Common.Utils
       return version;
     }
 
+    public static Version GetCurrentMaxVersion()
+    {
+      CheckLoadedAssemblies();
+      return SubSystemVersions.Max(v => v.Value);
+    }
+
+    public static Version GetCurrentSubSystemVersion(string subSystem)
+    {
+      Version version = null;
+      SubSystemVersions.TryGetValue(subSystem, out version);
+      return version;
+    }
+
     public static IEnumerable<UsesSubsystemAttribute> GetSubSystemsUsed(Assembly asm)
     {
       return ((UsesSubsystemAttribute[])asm.GetCustomAttributes(typeof(UsesSubsystemAttribute), true)).Where(attr => attr.Used);
@@ -360,6 +373,17 @@ namespace MediaPortal.Common.Utils
       Version ver;
       // Have all used subsystem known versions and prior to the one the plugin was designed for?
       return subsystemsUsed.All(attr => SubSystemVersions.TryGetValue(attr, out ver) && CompareVersions(ver, designedForVersion) <= 0);
+    }
+
+    static readonly Dictionary<Version, string> MpReleaseApi = new Dictionary<Version, string>()
+    {
+      { new Version("1.1.6.27644"), "1.2.0 Beta" },
+      { new Version("1.2.100.0"), "1.3.0 Alpha" }
+    };
+
+    public static string MediaPortalReleaseForApiVersion(Version apiVersion)
+    {
+      return MpReleaseApi.First(v => v.Key >= apiVersion).Value;
     }
   }
 }

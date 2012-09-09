@@ -94,6 +94,11 @@ namespace MediaPortal.Video.Database
       _database.RemoveFilesForMovie(lMovieId);
     }
 
+    /// <summary>
+    /// Returns -1 if file don't exists
+    /// </summary>
+    /// <param name="strFilenameAndPath"></param>
+    /// <returns></returns>
     public static int GetFileId(string strFilenameAndPath)
     {
       return _database.GetFileId(strFilenameAndPath);
@@ -156,11 +161,16 @@ namespace MediaPortal.Video.Database
 
     #region User groups
 
-    public static int AddUserGroup(string strUserGroup1)
+    public static int AddUserGroup(string userGroup)
     {
-      return _database.AddUserGroup(strUserGroup1);
+      return _database.AddUserGroup(userGroup);
     }
 
+    public static void AddUserGroupDescription(string userGroup, string description)
+    {
+      _database.AddUserGroupDescription(userGroup, description);
+    }
+    
     public static void GetUserGroups(ArrayList userGroups)
     {
       _database.GetUserGroups(userGroups);
@@ -171,6 +181,11 @@ namespace MediaPortal.Video.Database
       return _database.GetUserGroupById(groupId);
     }
 
+    public static string GetUserGroupDescriptionById(int groupId)
+    {
+      return _database.GetUserGroupDescriptionById(groupId);
+    }
+    
     public static void GetMovieUserGroups(int movieId, ArrayList userGroups)
     {
       _database.GetMovieUserGroups(movieId, userGroups);
@@ -580,14 +595,19 @@ namespace MediaPortal.Video.Database
 
     #region nfo handler
 
-    public static void ImportNfo(string nfoFile)
+    public static void ImportNfo(string nfoFile, bool skipExisting, bool refreshdbOnly)
     {
-      _database.ImportNfo(nfoFile);
+      _database.ImportNfo(nfoFile, skipExisting, refreshdbOnly);
     }
 
     public static bool MakeNfo (int movieId)
     {
       return _database.MakeNfo(movieId);
+    }
+
+    public static void ImportNfoUsingVideoFile(string videoFile, bool skipExisting, bool refreshdbOnly)
+    {
+      _database.ImportNfoUsingVideoFile(videoFile, skipExisting, refreshdbOnly);
     }
 
     #endregion
@@ -646,6 +666,16 @@ namespace MediaPortal.Video.Database
       string characters =
         @"'1','2','3','4','5','6','7','8','9','''','(',')','[',']','{','}','""','!','#','$','%','&','/','+','-','<','>','.',',',':',';','§','|','_','\','@','€','~','^','ˇ','½','*'";
       return characters;
+    }
+
+    public static void FlushTransactionsToDisk()
+    {
+      _database.FlushTransactionsToDisk();
+    }
+
+    public static void RevertFlushTransactionsToDisk()
+    {
+      _database.RevertFlushTransactionsToDisk();
     }
   }
 }

@@ -110,8 +110,8 @@ private:
 	void DecodeDishLongDescription(byte* data, EPGEvent& epgEvent, int tnum);
   void Sort();	
 
-	map<unsigned long,EPGChannel> m_mapEPG;
-	typedef map<unsigned long,EPGChannel>::iterator imapEPG;
+	map<unsigned __int64,EPGChannel> m_mapEPG;
+	typedef map<unsigned __int64,EPGChannel>::iterator imapEPG;
 	bool	m_bParseEPG;
 	bool	m_bEpgDone;
 	time_t  m_epgTimeout;

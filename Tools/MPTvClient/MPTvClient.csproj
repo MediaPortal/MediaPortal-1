@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -14,7 +15,7 @@
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
     <PublishUrl>http://localhost/MPTvClient/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -29,6 +30,8 @@
     <ApplicationVersion>1.2.5.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -38,6 +41,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -46,6 +50,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -54,6 +59,7 @@
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -62,17 +68,24 @@
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Gentle.Common, Version=1.2.9.1285, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\deps\Gentle.Common.dll</HintPath>
+    <Reference Include="Gentle.Common, Version=1.5.0.29112, Culture=neutral, PublicKeyToken=80b5de62e27be49b, processorArchitecture=MSIL">
+      <HintPath>..\..\TvEngine3\TVLibrary\TVDatabase\references\Gentle.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gentle.Framework, Version=1.2.9.1286, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\deps\Gentle.Framework.dll</HintPath>
+    <Reference Include="Gentle.Framework, Version=1.5.0.29112, Culture=neutral, PublicKeyToken=80b5de62e27be49b, processorArchitecture=MSIL">
+      <HintPath>..\..\TvEngine3\TVLibrary\TVDatabase\references\Gentle.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="MySql.Data, Version=5.0.8.1, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL" />
+    <Reference Include="Gentle.Provider.MySQL, Version=1.5.0.29112, Culture=neutral, PublicKeyToken=80b5de62e27be49b, processorArchitecture=MSIL">
+      <HintPath>..\..\TvEngine3\TVLibrary\TVDatabase\references\Gentle.Provider.MySQL.dll</HintPath>
+    </Reference>
+    <Reference Include="Gentle.Provider.SQLServer, Version=1.5.0.29112, Culture=neutral, PublicKeyToken=80b5de62e27be49b, processorArchitecture=MSIL">
+      <HintPath>..\..\TvEngine3\TVLibrary\TVDatabase\references\Gentle.Provider.SQLServer.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=5.1.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\..\TvEngine3\TVLibrary\TVDatabase\references\MySql.Data.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
@@ -80,21 +93,17 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="TvControl, Version=0.9.3.29112, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\TvEngine3\TVLibrary\TvControl\bin\Release\TvControl.dll</HintPath>
+    <Reference Include="TvControl">
+      <HintPath>..\..\TvEngine3\TVLibrary\TvControl\bin\Debug\TvControl.dll</HintPath>
     </Reference>
-    <Reference Include="TVDatabase, Version=0.9.3.29111, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\TvEngine3\TVLibrary\TVDatabase\bin\Release\TVDatabase.dll</HintPath>
+    <Reference Include="TVDatabase">
+      <HintPath>..\..\TvEngine3\TVLibrary\TVLibrary\bin\Debug\TVDatabase.dll</HintPath>
     </Reference>
-    <Reference Include="TVLibrary, Version=0.9.3.26634, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\TvEngine3\TVLibrary\TVLibrary\bin\Release\TVLibrary.dll</HintPath>
+    <Reference Include="TVLibrary">
+      <HintPath>..\..\TvEngine3\TVLibrary\TVLibrary\bin\Debug\TVLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="TvLibrary.Interfaces, Version=0.9.3.29111, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\TvEngine3\TVLibrary\TvControl\bin\Release\TvLibrary.Interfaces.dll</HintPath>
+    <Reference Include="TvLibrary.Interfaces">
+      <HintPath>..\..\TvEngine3\TVLibrary\TVLibrary\bin\Debug\TvLibrary.Interfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

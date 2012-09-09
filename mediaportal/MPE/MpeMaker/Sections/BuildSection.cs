@@ -98,23 +98,41 @@ namespace MpeMaker.Sections
     {
       list_error.Items.Clear();
       list_message.Items.Clear();
-      foreach (FolderGroup folderGroup in Package.ProjectSettings.FolderGroups)
-      {
-        ProjectSettings.UpdateFiles(Package, folderGroup);
-      }
-
-      String fileName = txt_outfile.Text;
+      string fileName = txt_outfile.Text;
       if (string.IsNullOrEmpty(fileName))
-        list_error.Items.Add("No output file is specified");
+      {
+        list_error.Items.Add("Error: No output file is specified!");
+      }
+      else
+      {
+        foreach (FolderGroup folderGroup in Package.ProjectSettings.FolderGroups)
+        {
+          ProjectSettings.UpdateFiles(Package, folderGroup);
+        }
 
-      if (!Path.IsPathRooted(fileName))
+        if (!Path.IsPathRooted(fileName))
           fileName = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(Package.ProjectSettings.ProjectFilename), fileName));
 
-      foreach (string s in Package.ValidatePackage())
-      {
-        list_error.Items.Add(s);
-      }
+        foreach (string s in Package.ValidatePackage())
+        {
+          list_error.Items.Add(s);
+        }
 
+        list_message.Items.Add("Creating package started at : " + DateTime.Now.ToLongTimeString());
+        if (string.IsNullOrEmpty(Package.GeneralInfo.Params[ParamNamesConst.CONFIG].Value) && Package.ProvidesPlugins())
+        {
+          list_message.Items.Add("Notice: Package provides a plugin, but no configuration file set under General Information Parameters!");
+        }
+        if (string.IsNullOrEmpty(Package.GeneralInfo.Params[ParamNamesConst.ONLINE_SCREENSHOT].Value))
+        {
+          list_message.Items.Add("Notice: No screenshot URL set under General Information Parameters!");
+        }
+        list_message.Refresh();
+        Refresh();
+        fileName = Package.ReplaceInfo(fileName);
+        MpeInstaller.ZipProvider.Save(Package, fileName);
+        list_message.Items.Add("Ended at : " + DateTime.Now.ToLongTimeString());
+      }
       if (list_error.Items.Count > 0)
       {
         tabControl1.SelectTab(1);
@@ -124,14 +142,9 @@ namespace MpeMaker.Sections
       {
         tabControl1.SelectTab(0);
       }
-      list_message.Items.Add("Creating package started at : " + DateTime.Now.ToLongTimeString());
-      list_message.Refresh();
-      Refresh();
-      string file = Package.ReplaceInfo(fileName);
-      MpeInstaller.ZipProvider.Save(Package, file);
-      list_message.Items.Add("Ended at : " + DateTime.Now.ToLongTimeString());
-      if (run && File.Exists(file))
-        Process.Start(file);
+
+      if (run && File.Exists(fileName))
+        Process.Start(fileName);
     }
   }
 }

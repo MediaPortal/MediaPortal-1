@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>1024</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <controls>
+    <import>common.settings.xml</import>
+		<import>common.window.xml</import>
+		<import>common.time.xml</import>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>75</posX>
+      <posY>120</posY>
+      <height>520</height>
+      <width>435</width>
+      <texture>backslide.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+		<control>
+      <description>Blu-ray regions</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>550</posX>
+      <posY>160</posY>
+      <height>325</height>
+      <width>650</width>
+      <texture>Blu-ray_regions.png</texture>
+			<visible>yes</visible>
+    </control>
+    <control>
+      <description>buttons</description>
+      <type>group</type>
+      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="70" end="-300,0">WindowClose</animation>
+      <posX>105</posX>
+      <posY>160</posY>
+      <layout>StackLayout(0, Horizontal, True)</layout>
+      <control>
+        <description>Region</description>
+        <type>button</type>
+        <id>2</id>
+        <label>300218</label>
+        <width>350</width>
+        <onup>7</onup>
+      </control>
+			<control>
+        <description>AudioType</description>
+        <type>button</type>
+        <id>3</id>
+        <label>300219</label>
+        <width>350</width>
+      </control>
+      <control>
+        <description>Video</description>
+        <type>button</type>
+        <id>4</id>
+        <label>2134</label>
+        <width>350</width>
+      </control>
+      <control>
+        <description>Audio</description>
+        <type>button</type>
+        <id>5</id>
+        <label>2135</label>
+        <width>350</width>
+      </control>
+			<control>
+        <description>Subtitles On/Off</description>
+        <type>checkbutton</type>
+        <id>6</id>
+        <label>1196</label>
+        <width>350</width>
+				<ondown>7</ondown>
+			</control>			
+    </control>
+		
+		<control>
+					<description>Parental age limit</description>
+					<type>label</type>
+					<id>102</id>
+					<posX>110</posX>
+					<posY>380</posY>
+					<label>300220</label>
+				</control>
+				<control>
+					<description>Age limit value</description>
+					<type>spincontrol</type>
+					<id>7</id>
+					<posX>280</posX>
+					<posY>425</posY>
+					<onleft>7</onleft>
+					<onup>6</onup>
+					<ondown>2</ondown>
+					<align>right</align>
+					<buddycontrolid>102</buddycontrolid>
+				</control>
+		
+		
+  </controls>
+</window>

@@ -19,4 +19,6 @@ EVRDrawStats		    @14
 EVRResetStatCounters	@15
 EVRNotifyRateChange     @16
 EVRNotifyDVDMenuState   @17
-
+EVRGetVideoFPS          @18
+EVRUpdateDisplayFPS     @19
+EVRGetDisplayFPS        @20

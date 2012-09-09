@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>1022</id>
+  <defaultcontrol>30</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <controls>
+    <import>common.settings.xml</import>
+		<import>common.window.xml</import>
+		<import>common.time.xml</import>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>320</posX>
+      <posY>120</posY>
+      <height>470</height>
+      <width>780</width>
+      <texture>backslide2.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>buttons</description>
+      <type>group</type>
+      <animation effect="slide" time="70" start="800,0">WindowOpen</animation>
+      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
+      <posX>350</posX>
+      <posY>160</posY>
+      <layout>StackLayout(0, Horizontal, True)</layout>
+      <control>
+        <description>last focus item</description>
+        <type>checkbutton</type>
+        <id>30</id>
+        <label>300122</label>
+        <width>700</width>
+        <onup>17</onup>
+      </control>
+      <control>
+        <description>Autosize window</description>
+        <type>checkbutton</type>
+        <id>31</id>
+        <label>300123</label>
+        <width>700</width>
+      </control>
+      <control>
+        <description>Hide extensions</description>
+        <type>checkbutton</type>
+        <id>32</id>
+        <label>300124</label>
+        <width>700</width>
+      </control>
+      <control>
+        <description>File cache</description>
+        <type>checkbutton</type>
+        <id>33</id>
+        <label>300125</label>
+        <width>700</width>
+      </control>
+      <control>
+        <description>Skin sounds</description>
+        <type>checkbutton</type>
+        <id>34</id>
+        <label>300126</label>
+        <width>700</width>
+      </control>
+      <control>
+        <description>Mouse controls</description>
+        <type>checkbutton</type>
+        <id>35</id>
+        <label>300127</label>
+        <width>700</width>
+      </control>
+    </control>
+    <!--Home screen selector-->
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>350</posX>
+      <posY>460</posY>
+      <label>300128</label>
+      <align>left</align>
+      <width>700</width>
+    </control>
+    <control>
+      <description>Home button</description>
+      <type>button</type>
+      <id>40</id>
+      <posX>350</posX>
+      <posY>500</posY>
+      <onup>35</onup>
+      <ondown>30</ondown>
+      <label></label>
+      <width>700</width>
+    </control>
+  </controls>
+</window>

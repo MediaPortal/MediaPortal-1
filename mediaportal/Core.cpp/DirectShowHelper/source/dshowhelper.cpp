@@ -726,6 +726,40 @@ void EVRResetStatCounters(bool enable)
   m_evrPresenter->ResetEVRStatCounters();
 }
 
+// Get video FPS - returns video FPS from a source selected by 'fpsSource'
+double EVRGetVideoFPS(int fpsSource)
+{
+  double videoFPS = -1.0;
+  
+  if (m_evrPresenter)
+  {
+    videoFPS = m_evrPresenter->GetVideoFramePeriod((FPS_SOURCE_METHOD)fpsSource); // frame period in seconds
+    
+    if (videoFPS > 0.0)
+      videoFPS = 1.0 / videoFPS; // Convert valid frame period into FPS
+  }
+  return videoFPS;
+}
+
+void EVRUpdateDisplayFPS()
+{
+  m_evrPresenter->UpdateDisplayFPS();
+}
+
+// Get display FPS - returns display FPS
+double EVRGetDisplayFPS()
+{
+  double displayFPS = -1.0;
+  
+  if (m_evrPresenter)
+  {
+    displayFPS = m_evrPresenter->GetDisplayCycle(); // display frame period in milliseconds
+    
+    if (displayFPS > 0.0)
+      displayFPS = 1000.0 / displayFPS; // Convert period into FPS
+  }
+  return displayFPS;
+}
 
 void Vmr9SetDeinterlaceMode(int mode)
 {

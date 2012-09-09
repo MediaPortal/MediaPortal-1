@@ -1,0 +1,1 @@
+bluray.dll is based on libbluray (GPL) component. It has been build without any modifications from the LAV filter fork of libbluray (git://git.1f0.de/libbluray.git).

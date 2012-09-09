@@ -113,25 +113,6 @@ HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nAp
   hr = m_pNextSink->NegotiateFormat(pOutWfx, nApplyChangesDepth, pChOrder);
   m_chOrder = *pChOrder;
 
-  // Try different speaker setup
-  if (FAILED(hr))
-  {
-    DWORD dwSpeakers = ((WAVEFORMATEXTENSIBLE *)pOutWfx)->dwChannelMask;
-    if (dwSpeakers == KSAUDIO_SPEAKER_5POINT1)
-      dwSpeakers = KSAUDIO_SPEAKER_5POINT1_SURROUND;
-    else if (dwSpeakers == KSAUDIO_SPEAKER_5POINT1_SURROUND)
-      dwSpeakers = KSAUDIO_SPEAKER_5POINT1;
-    else if (dwSpeakers == KSAUDIO_SPEAKER_7POINT1)
-      dwSpeakers = KSAUDIO_SPEAKER_7POINT1_SURROUND;
-    else if (dwSpeakers == KSAUDIO_SPEAKER_7POINT1_SURROUND)
-      dwSpeakers = KSAUDIO_SPEAKER_7POINT1;
-
-    if (dwSpeakers != pOutWfx->dwChannelMask)
-    {
-      pOutWfx->dwChannelMask = dwSpeakers;
-      hr = m_pNextSink->NegotiateFormat(pOutWfx, nApplyChangesDepth, pChOrder);
-    }
-  }
 
   if (FAILED(hr))
   {
@@ -168,7 +149,7 @@ HRESULT CChannelMixer::PutSample(IMediaSample *pSample)
   
   HRESULT hr = S_OK;
 
-  if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt != NULL)
+  if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt)
     bFormatChanged = !FormatsEqual((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, m_pInputFormat);
 
   if (pSample->IsDiscontinuity() == S_OK)
@@ -313,7 +294,7 @@ HRESULT CChannelMixer::MapChannelsFromDStoAE(WAVEFORMATEXTENSIBLE* pWfex, CAECha
         if (pWfex->dwChannelMask & SPEAKER_BACK_CENTER)
           *pChannelInfo = AE_AC3_CH_LAYOUT_3_S;
         else
-          *pChannelInfo = AE_AC3_CH_LAYOUT_4_0;   
+          *pChannelInfo = AE_AC3_CH_LAYOUT_4_0;
         break;
       case 5:
         *pChannelInfo = AE_AC3_CH_LAYOUT_5_0;
@@ -357,7 +338,15 @@ HRESULT CChannelMixer::MapChannelsFromDStoAE(WAVEFORMATEXTENSIBLE* pWfex, CAECha
         *pChannelInfo = AE_CH_LAYOUT_5_1;
         break;
       case 7:
-        *pChannelInfo = AE_CH_LAYOUT_7_0;
+        if (pWfex->dwChannelMask & SPEAKER_LOW_FREQUENCY)
+        {
+          if (pWfex->dwChannelMask == 0x13f)
+            *pChannelInfo = AE_CH_LAYOUT_6_1_0x13f;
+          else
+            *pChannelInfo = AE_CH_LAYOUT_6_1_0x70f;
+        }
+        else
+          *pChannelInfo = AE_CH_LAYOUT_7_0;
         break;
       case 8:
         *pChannelInfo = AE_CH_LAYOUT_7_1;

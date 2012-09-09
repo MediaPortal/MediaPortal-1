@@ -477,7 +477,7 @@ Overfør denne folderen til din HTPC. Start installasjonen ved å kjøre "MediaP
   <data name="Upgrade_labelSectionHeader" xml:space="preserve">
     <value>MediaPortal {0} funnet.</value>
   </data>
-  <data name="Upgrade_labelSectionHeader_SVN" xml:space="preserve">
+  <data name="Upgrade_labelSectionHeader_GIT" xml:space="preserve">
     <value>MediaPortal {0} (build {1}) funnet.</value>
   </data>
   <data name="Upgrade_no" xml:space="preserve">
@@ -487,7 +487,7 @@ Overfør denne folderen til din HTPC. Start installasjonen ved å kjøre "MediaP
     <value>Oppdatere gjeldende installasjon til {0}</value>
   </data>
   <data name="Upgrade_note" xml:space="preserve">
-    <value>NB! Du kan ikke oppgradere fra en SVN versjon,
+    <value>NB! Du kan ikke oppgradere fra en GIT versjon,
        siden de er kun ment for testing.</value>
   </data>
   <data name="Install_actionUpgradeInstall" xml:space="preserve">
