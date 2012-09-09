@@ -817,36 +817,36 @@ namespace MediaPortal.Video.Database
           hasSubtitles = "true";
         }
 
-        if (file.ToUpperInvariant().Contains(@"VIDEO_TS.IFO"))
-        {
-          videoMediaSource = "DVD";
-        }
-        else if (file.ToUpperInvariant().Contains(@"INDEX.BDMV"))
-        {
-          videoMediaSource = "Bluray";
-        }
-        else if (file.ToUpperInvariant().EndsWith(@".MKV"))
-        {
-          videoMediaSource = "matroska";
-        }
-        else
-        {
-          try
-          {
-            if (System.IO.Path.HasExtension(file))
-            {
-              string extension = System.IO.Path.GetExtension(file).Replace(".", string.Empty);
-              string extImage = Config.GetFolder(Config.Dir.SelectedSkin) +
-                                  @"\Media\Logos\" + extension + @".png";
+        //if (file.ToUpperInvariant().Contains(@"VIDEO_TS.IFO"))
+        //{
+        //  videoMediaSource = "DVD";
+        //}
+        //else if (file.ToUpperInvariant().Contains(@"INDEX.BDMV"))
+        //{
+        //  videoMediaSource = "Bluray";
+        //}
+        //else if (file.ToUpperInvariant().EndsWith(@".MKV"))
+        //{
+        //  videoMediaSource = "matroska";
+        //}
+        //else
+        //{
+        //  try
+        //  {
+        //    if (System.IO.Path.HasExtension(file))
+        //    {
+        //      string extension = System.IO.Path.GetExtension(file).Replace(".", string.Empty);
+        //      string extImage = Config.GetFolder(Config.Dir.SelectedSkin) +
+        //                          @"\Media\Logos\" + extension + @".png";
 
-              if (System.IO.File.Exists(extImage))
-              {
-                videoMediaSource = extension;
-              }
-            }
-          }
-          catch (Exception) { }
-        }
+        //      if (System.IO.File.Exists(extImage))
+        //      {
+        //        videoMediaSource = extension;
+        //      }
+        //    }
+        //  }
+        //  catch (Exception) { }
+        //}
 
         GUIPropertyManager.SetProperty("#VideoMediaSource", videoMediaSource);
         GUIPropertyManager.SetProperty("#VideoCodec", Util.Utils.MakeFileName(MediaInfo.VideoCodec));
@@ -1594,39 +1594,40 @@ namespace MediaPortal.Video.Database
           hasSubtitles = "true";
         }
 
-        if (!string.IsNullOrEmpty(info.VideoFileName) && System.IO.File.Exists(info.VideoFileName))
-        {
-          if (info.VideoFileName.ToUpperInvariant().Contains(@"VIDEO_TS.IFO"))
-          {
-            videoMediaSource = "DVD";
-          }
-          else if (info.VideoFileName.ToUpperInvariant().Contains(@"INDEX.BDMV"))
-          {
-            videoMediaSource = "Bluray";
-          }
-          else if (info.VideoFileName.ToUpperInvariant().EndsWith(@".MKV"))
-          {
-            videoMediaSource = "matroska";
-          }
-          else
-          {
-            try
-            {
-              if (System.IO.Path.HasExtension(info.VideoFileName))
-              {
-                string extension = System.IO.Path.GetExtension(info.VideoFileName).Replace(".", string.Empty);
-                string extImage = Config.GetFolder(Config.Dir.SelectedSkin) +
-                                  @"\Media\Logos\" + extension + @".png";
+        // Maybe in the future
+        //if (!string.IsNullOrEmpty(info.VideoFileName) && System.IO.File.Exists(info.VideoFileName))
+        //{
+        //  if (info.VideoFileName.ToUpperInvariant().Contains(@"VIDEO_TS.IFO"))
+        //  {
+        //    videoMediaSource = "DVD";
+        //  }
+        //  else if (info.VideoFileName.ToUpperInvariant().Contains(@"INDEX.BDMV"))
+        //  {
+        //    videoMediaSource = "Bluray";
+        //  }
+        //  else if (info.VideoFileName.ToUpperInvariant().EndsWith(@".MKV"))
+        //  {
+        //    videoMediaSource = "matroska";
+        //  }
+        //  else
+        //  {
+        //    try
+        //    {
+        //      if (System.IO.Path.HasExtension(info.VideoFileName))
+        //      {
+        //        string extension = System.IO.Path.GetExtension(info.VideoFileName).Replace(".", string.Empty);
+        //        string extImage = Config.GetFolder(Config.Dir.SelectedSkin) +
+        //                          @"\Media\Logos\" + extension + @".png";
 
-                if (System.IO.File.Exists(extImage))
-                {
-                  videoMediaSource = extension;
-                }
-              }
-            }
-            catch (Exception) { }
-          }
-        }
+        //        if (System.IO.File.Exists(extImage))
+        //        {
+        //          videoMediaSource = extension;
+        //        }
+        //      }
+        //    }
+        //    catch (Exception) { }
+        //  }
+        //}
 
         GUIPropertyManager.SetProperty("#VideoMediaSource", videoMediaSource);
         GUIPropertyManager.SetProperty("#VideoCodec", Util.Utils.MakeFileName(info.MediaInfo.VideoCodec));
@@ -1701,7 +1702,7 @@ namespace MediaPortal.Video.Database
                 }
               }
             }
-            else if (item.IsFolder && Util.Utils.IsFolderDedicatedMovieFolder(strPath)) // folder & dedicated movie folder
+            else if (item.IsFolder && !VirtualDirectories.Instance.Movies.IsRootShare(item.Path) && Util.Utils.IsFolderDedicatedMovieFolder(strPath)) // folder & dedicated movie folder
             {
               string cleanPath = item.Path.Substring(item.Path.LastIndexOf(@"\") + 1);
               Util.Utils.RemoveStackEndings(ref cleanPath);

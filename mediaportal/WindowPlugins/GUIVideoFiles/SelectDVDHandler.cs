@@ -256,13 +256,13 @@ namespace MediaPortal.GUI.Video
             // Check for everymovieinitsownfolder only once for all items (defined share is the same for all)
             if (!dedicatedMovieFolderChecked)
             {
-              if (!pItem.IsRemote)
+              if (!pItem.IsRemote && !VirtualDirectories.Instance.Movies.IsRootShare(pItem.Path))
               {
                 dedicatedMovieFolderChecked = true;
                 dedicatedMovieFolder = Util.Utils.IsFolderDedicatedMovieFolder(pItem.Path);
               }
             }
-
+            
             // If this is enabled you'll see the thumb of the first movie in that dir - but if you put serveral movies into that dir you'll be irritated...          
             if (!pItem.IsRemote && dedicatedMovieFolder)
             {
