@@ -59,7 +59,11 @@ namespace MpeMaker.Sections
       IVersionProvider type = menu.Tag as IVersionProvider;
       if (type != null)
       {
-        var item = new DependencyItem(type.DisplayName);
+        var item = new DependencyItem(type.DisplayName) { MinVersion = type.Version(null), MaxVersion = type.Version(null) };
+        if (type is MpeCore.Classes.VersionProvider.MediaPortalVersion)
+        {
+          item.Message = string.Format("This version of {0} requires MediaPortal {1} or higher!", Package.GeneralInfo.Name, MediaPortal.Common.Utils.CompatibilityManager.MediaPortalReleaseForApiVersion(new Version(item.MinVersion.ToString())));
+        }
         Package.Dependencies.Add(item);
         list_versions.Items.Add(item);
       }
@@ -90,16 +94,23 @@ namespace MpeMaker.Sections
 
     private void UpdateControlStates()
     {
+      bool isMPDep = cmb_type.Text == MPDependency.DisplayName;
+      
+      txt_version1_min.ReadOnly = isMPDep;
+      txt_version2_min.ReadOnly = isMPDep;
+      txt_version3_min.ReadOnly = isMPDep;
+      txt_version4_min.ReadOnly = isMPDep;
+      txt_version1_max.ReadOnly = isMPDep;
+      txt_version2_max.ReadOnly = isMPDep;
+      txt_version3_max.ReadOnly = isMPDep;
+      txt_version4_max.ReadOnly = isMPDep;
+
+      chk_warn.Enabled = !isMPDep;
+      txt_id.Enabled = button1.Enabled = cmb_type.Text == new MpeCore.Classes.VersionProvider.ExtensionVersion().DisplayName;
+
       if (cmb_type.Text == MPDependency.DisplayName)
       {
         chk_warn.Checked = false;
-        chk_warn.Enabled = false;
-        txt_id.Enabled = false;
-      }
-      else
-      {
-        chk_warn.Enabled = true;
-        txt_id.Enabled = true;
       }
     }
 
@@ -148,7 +159,7 @@ namespace MpeMaker.Sections
         lbl_ver.Text = MpeInstaller.VersionProviders[cmb_type.Text].Version(txt_id.Text).ToString();
     }
 
-    private void button1_Click(object sender, EventArgs e)
+    private void BrowseInstalledExtensionIdsClick(object sender, EventArgs e)
     {
       var dlg = new InstalledExtensionsSelector();
       dlg.ShowDialog();
@@ -163,7 +174,7 @@ namespace MpeMaker.Sections
         return;
       if (SelectedItem == null)
         return;
-      if (MessageBox.Show("Do you want to dependency " + SelectedItem.Name, "", MessageBoxButtons.YesNo) !=
+      if (MessageBox.Show("Do you want to remove dependency " + SelectedItem.Name, "", MessageBoxButtons.YesNo) !=
           DialogResult.Yes)
         return;
       Package.Dependencies.Items.Remove(SelectedItem);

@@ -180,7 +180,7 @@
       this.button1.Text = "...";
       this.toolTip1.SetToolTip(this.button1, "Browse for installed extension");
       this.button1.UseVisualStyleBackColor = true;
-      this.button1.Click += new System.EventHandler(this.button1_Click);
+      this.button1.Click += new System.EventHandler(this.BrowseInstalledExtensionIdsClick);
       // 
       // label3
       // 

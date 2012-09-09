@@ -30,7 +30,5 @@ namespace MpeCore.Classes.SectionPanel
     {
       InitializeComponent();
     }
-
-    private void Base_Load(object sender, EventArgs e) {}
   }
 }

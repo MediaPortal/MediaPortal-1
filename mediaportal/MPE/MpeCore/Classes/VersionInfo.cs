@@ -78,7 +78,7 @@ namespace MpeCore.Classes
       set { _revision = value; }
     }
 
-    public static VersionInfo Pharse(string s)
+    public static VersionInfo Parse(string s)
     {
       VersionInfo ver = new VersionInfo();
       string[] vers = s.Split('.');
