@@ -138,7 +138,9 @@
       <LastGenOutput>Model.Designer.cs</LastGenOutput>
     </EntityDeploy>
     <EmbeddedResource Include="Model.MSSQL.ssdl" />
-    <EmbeddedResource Include="Model.MySQL.ssdl" />
+    <EmbeddedResource Include="Model.MySQL.ssdl">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
