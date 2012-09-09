@@ -20,8 +20,6 @@
       <width>727</width>
       <height>252</height>
       <texture>dialog_background.png</texture>
-      
-      
     </control>
     <control>
       <type>image</type>
@@ -31,8 +29,6 @@
       <width>727</width>
       <height>252</height>
       <texture>dialog_background.png</texture>
-      
-      
     </control>
     <control>
       <description>Heading text label</description>
@@ -43,8 +39,6 @@
       <label>181</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>options listcontrol</description>
@@ -60,8 +54,6 @@
       <ondown>5</ondown>
       <spinPosX>800</spinPosX>
       <spinPosY>462</spinPosY>
-      
-      
     </control>
   </controls>
 </window>

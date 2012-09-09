@@ -43,7 +43,7 @@ namespace MediaPortal.Dialogs
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\dialogFileStacking.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\dialogFileStacking.xml"));
     }
 
     public override void OnAction(Action action)

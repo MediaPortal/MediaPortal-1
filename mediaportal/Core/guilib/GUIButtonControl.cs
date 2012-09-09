@@ -43,7 +43,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("hyperlink", "history")] protected bool _addToHistory = true;
     [XMLSkinElement("action")] protected int _actionId = -1;
     [XMLSkinElement("script")] protected string _scriptAction = "";
+    [XMLSkinElement("onclick")] protected string _onclick = "";
     [XMLSkinElement("textXOff")] protected int _textOffsetX = 0;
+    [XMLSkin("textXOff", "hasMargin")] protected bool _textOffsetXHasMargin = true;
     [XMLSkinElement("textYOff")] protected int _textOffsetY = 0;
     [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("textvalign")] protected VAlignment _textVAlignment = VAlignment.ALIGN_TOP;
@@ -60,10 +62,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("scrollStartDelaySec")] protected int _scrollStartDelay = -1;
     [XMLSkinElement("scrollWrapString")] protected string _userWrapString = "";
     [XMLSkin("textureFocus", "border")] protected string _strBorderTF = "";
-
-    [XMLSkin("textureFocus", "position")] protected GUIImage.BorderPosition _borderPositionTF =
-      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
-
+    [XMLSkin("textureFocus", "position")] protected GUIImage.BorderPosition _borderPositionTF = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
     [XMLSkin("textureFocus", "textureRepeat")] protected bool _borderTextureRepeatTF = false;
     [XMLSkin("textureFocus", "textureRotate")] protected bool _borderTextureRotateTF = false;
     [XMLSkin("textureFocus", "texture")] protected string _borderTextureFileNameTF = "image_border.png";
@@ -71,11 +70,11 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("textureFocus", "corners")] protected bool _borderHasCornersTF = false;
     [XMLSkin("textureFocus", "cornerRotate")] protected bool _borderCornerTextureRotateTF = true;
     [XMLSkin("textureFocus", "mask")] protected string _focusedTextureMask = "";
+    [XMLSkin("textureFocus", "tileFill")] protected bool _textureFocusTileFill = false;
+    [XMLSkin("textureFocus", "overlay")] protected string _overlayTF = "";
+
     [XMLSkin("textureNoFocus", "border")] protected string _strBorderTNF = "";
-
-    [XMLSkin("textureNoFocus", "position")] protected GUIImage.BorderPosition _borderPositionTNF =
-      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
-
+    [XMLSkin("textureNoFocus", "position")] protected GUIImage.BorderPosition _borderPositionTNF = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
     [XMLSkin("textureNoFocus", "textureRepeat")] protected bool _borderTextureRepeatTNF = false;
     [XMLSkin("textureNoFocus", "textureRotate")] protected bool _borderTextureRotateTNF = false;
     [XMLSkin("textureNoFocus", "texture")] protected string _borderTextureFileNameTNF = "image_border.png";
@@ -83,11 +82,11 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("textureNoFocus", "corners")] protected bool _borderHasCornersTNF = false;
     [XMLSkin("textureNoFocus", "cornerRotate")] protected bool _borderCornerTextureRotateTNF = true;
     [XMLSkin("textureNoFocus", "mask")] protected string _nonFocusedTextureMask = "";
+    [XMLSkin("textureNoFocus", "tileFill")] protected bool _textureNoFocusTileFill = false;
+    [XMLSkin("textureNoFocus", "overlay")] protected string _overlayTNF = "";
+
     [XMLSkin("hover", "border")] protected string _strBorderH = "";
-
-    [XMLSkin("hover", "position")] protected GUIImage.BorderPosition _borderPositionH =
-      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
-
+    [XMLSkin("hover", "position")] protected GUIImage.BorderPosition _borderPositionH = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
     [XMLSkin("hover", "textureRepeat")] protected bool _borderTextureRepeatH = false;
     [XMLSkin("hover", "textureRotate")] protected bool _borderTextureRotateH = false;
     [XMLSkin("hover", "texture")] protected string _borderTextureFileNameH = "image_border.png";
@@ -95,9 +94,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("hover", "corners")] protected bool _borderHasCornersH = false;
     [XMLSkin("hover", "cornerRotate")] protected bool _borderCornerTextureRotateH = true;
     [XMLSkin("hover", "mask")] protected string _hoverMask = "";
-    [XMLSkin("textureFocus", "tileFill")] protected bool _textureFocusTileFill = false;
-    [XMLSkin("textureNoFocus", "tileFill")] protected bool _textureNoFocusTileFill = false;
     [XMLSkin("hover", "tileFill")] protected bool _hoverTileFill = false;
+    [XMLSkin("hover", "overlay")] protected string _overlayH = "";
 
     protected int _frameCounter = 0;
     protected GUIAnimation _imageFocused = null;
@@ -170,6 +168,7 @@ namespace MediaPortal.GUI.Library
                               _borderCornerTextureRotateTF);
       TileFillTF = _textureFocusTileFill;
       _imageFocused.MaskFileName = _focusedTextureMask;
+      _imageFocused.OverlayFileName = _overlayTF;
 
       _imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
                                               _nonFocusedTextureName);
@@ -182,6 +181,7 @@ namespace MediaPortal.GUI.Library
                                  _borderCornerTextureRotateTNF);
       TileFillTNF = _textureNoFocusTileFill;
       _imageNonFocused.MaskFileName = _nonFocusedTextureMask;
+      _imageNonFocused.OverlayFileName = _overlayTNF;
 
       if (_hoverFilename != string.Empty)
       {
@@ -195,6 +195,7 @@ namespace MediaPortal.GUI.Library
                               _borderTextureFileNameH, _borderColorKeyH, _borderHasCornersH, _borderCornerTextureRotateH);
         TileFillH = _hoverTileFill;
         _hoverImage.MaskFileName = _hoverMask;
+        _hoverImage.OverlayFileName = _overlayH;
       }
 
       GUILocalizeStrings.LocalizeLabel(ref _label);
@@ -313,7 +314,12 @@ namespace MediaPortal.GUI.Library
         _imageNonFocused.Render(timePassed);
       }
 
-      int labelWidth = _width - 2 * _textOffsetX;
+      int labelWidth = _width;
+      if (_textOffsetXHasMargin)
+      {
+        labelWidth = _width - 2 * _textOffsetX;
+      }
+
       if (labelWidth <= 0)
       {
         base.Render(timePassed);
@@ -408,6 +414,12 @@ namespace MediaPortal.GUI.Library
       {
         if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_SELECT_ITEM)
         {
+          // If this button has a click setting then execute the setting.
+          if (_onclick.Length != 0)
+          {
+            GUIPropertyManager.Parse(_onclick, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
+          }
+
           if (ContextMenu != null)
           {
             DoContextMenu();
@@ -437,7 +449,7 @@ namespace MediaPortal.GUI.Library
           {
             if (_hyperLinkParameter != null && !_hyperLinkParameter.Equals(""))
             {
-//the link also contains a parameter that we want to pass to the plugin
+              // The link also contains a parameter that we want to pass to the plugin
               GUIWindowManager.ActivateWindow((int)_hyperLinkWindowId, GUIPropertyManager.Parse(_hyperLinkParameter),
                                               !_addToHistory);
             }
@@ -1092,6 +1104,33 @@ namespace MediaPortal.GUI.Library
       {
         _hoverMask = mask;
         _hoverImage.MaskFileName = _hoverMask;
+      }
+    }
+
+    public void SetOverlayTF(string overlay)
+    {
+      if (null != _imageFocused)
+      {
+        _overlayTF = overlay;
+        _imageFocused.OverlayFileName = _overlayTF;
+      }
+    }
+
+    public void SetOverlayTNF(string overlay)
+    {
+      if (null != _imageNonFocused)
+      {
+        _overlayTNF = overlay;
+        _imageNonFocused.OverlayFileName = _overlayTNF;
+      }
+    }
+
+    public void SetOverlayH(string overlay)
+    {
+      if (null != _hoverImage)
+      {
+        _overlayH = overlay;
+        _hoverImage.OverlayFileName = _overlayH;
       }
     }
   }

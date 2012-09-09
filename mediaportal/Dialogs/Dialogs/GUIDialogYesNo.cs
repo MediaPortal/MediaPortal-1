@@ -49,7 +49,7 @@ namespace MediaPortal.Dialogs
 
     public override bool Init()
     {
-      bool result = Load(GUIGraphicsContext.Skin + @"\dialogYesNo.xml");
+      bool result = Load(GUIGraphicsContext.GetThemedSkinFile(@"\dialogYesNo.xml"));
 
       SaveDefaultBtnLabels();
 

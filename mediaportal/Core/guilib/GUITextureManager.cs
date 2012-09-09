@@ -180,7 +180,7 @@ namespace MediaPortal.GUI.Library
       {
         if (!Path.IsPathRooted(fileName))
         {
-          return GUIGraphicsContext.Skin + @"\media\" + fileName;
+          return GUIGraphicsContext.GetThemedSkinFile(@"\media\" + fileName);
         }
       }
       return fileName;
@@ -579,7 +579,7 @@ namespace MediaPortal.GUI.Library
       {
         Log.Error("TextureManager: LoadGraphic - invalid thumb({0})", fileName);
         Format fmt = Format.A8R8G8B8;
-        string fallback = GUIGraphicsContext.Skin + @"\media\" + "black.png";
+        string fallback = GUIGraphicsContext.GetThemedSkinFile(@"\media\" + "black.png");
 
         ImageInformation info2 = new ImageInformation();
         texture = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
@@ -817,7 +817,7 @@ namespace MediaPortal.GUI.Library
       {
         if (!Path.IsPathRooted(fileName))
         {
-          fullFileName = GUIGraphicsContext.Skin + @"\media\" + fileName;
+          fullFileName = GUIGraphicsContext.GetThemedSkinFile(@"\media\" + fileName);
         }
       }
 

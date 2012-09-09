@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>1000</id>
+  <defaultcontrol>43</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <rememberLastFocusedControl>no</rememberLastFocusedControl>
+  <controls>
+    <import>common.settings.xml</import>
+		<import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <!--     *******************************************************************************************  -->
+    <!--     *************************     BUTTONS ADD, REMOVE ETC.     ********************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <description>Add/Remove/Edit</description>
+      <type>group</type>
+      <posX>60</posX>
+      <posY>120</posY>
+      <layout>StackLayout(0, Vertical, true)</layout>
+      <control>
+        <description>Add</description>
+        <type>button</type>
+        <id>3</id>
+        <label>300063</label>
+        <onright>43</onright>
+        <onup>17</onup>
+        <width>170</width>
+      </control>
+      <control>
+        <description>Remove</description>
+        <type>button</type>
+        <id>4</id>
+        <label>Remove</label>
+        <onright>43</onright>
+        <width>170</width>
+      </control>
+      <control>
+        <description>Edit</description>
+        <type>button</type>
+        <id>5</id>
+        <label>2076</label>
+        <onright>43</onright>
+        <width>170</width>
+      </control>
+      <control>
+        <description>Default</description>
+        <type>button</type>
+        <id>6</id>
+        <label>868</label>
+        <onright>43</onright>
+        <ondown>3</ondown>
+        <width>170</width>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     *************************          SHARE FOLDER LIST       ********************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <description>BG Share Folders</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>context_background.png</texture>
+      <posX>250</posX>
+      <posY>103</posY>
+      <width>400</width>
+      <height>290</height>
+    </control>
+    <control>
+      <description>Folders label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>280</posX>
+      <posY>113</posY>
+      <width>300</width>
+      <label>300071</label>
+      <font>font13</font>
+    </control>
+    <control>
+      <description>Share folders listcontrol</description>
+      <type>listcontrol</type>
+      <id>43</id>
+      <posX>280</posX>
+      <posY>150</posY>
+      <width>350</width>
+      <height>250</height>
+      <scrollOffset>2</scrollOffset>
+      <textXOff>-30</textXOff>
+      <textYOff>2</textYOff>
+      <textXOff2>700</textXOff2>
+      <textYOff2>2</textYOff2>
+      <textXOff3>710</textXOff3>
+      <textYOff3>4</textYOff3>
+      <PinIconWidth>35</PinIconWidth>
+      <PinIconHeight>25</PinIconHeight>
+      <PinIconXOff>747</PinIconXOff>
+      <PinIconYOff>6</PinIconYOff>
+      <textureHeight>40</textureHeight>
+      <itemWidth>32</itemWidth>
+      <itemHeight>32</itemHeight>
+      <IconXOff>10</IconXOff>
+      <IconYOff>4</IconYOff>
+      <keepaspectratio>yes</keepaspectratio>
+      <font>font11</font>
+      <font2>font11</font2>
+      <font3>font11</font3>
+      <textcolor>ffffffff</textcolor>
+      <textcolor2>ffffffff</textcolor2>
+      <textcolor3>ffffffff</textcolor3>
+      <selectedColor>80000000</selectedColor>
+      <selectedColor2>ffffffff</selectedColor2>
+      <spinWidth>46</spinWidth>
+      <spinHeight>33</spinHeight>
+      <spinPosX>520</spinPosX>
+      <spinPosY>350</spinPosY>
+      <onup>42</onup>
+      <ondown>40</ondown>
+      <onleft>3</onleft>
+      <onright>3</onright>
+      <spaceBetweenItems>0</spaceBetweenItems>
+      <unfocusedAlpha>160</unfocusedAlpha>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     *************************      SHARE FOLDER PROPERTIES     ********************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <description>BG Share Folder Properties</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>context_background.png</texture>
+      <posX>680</posX>
+      <posY>103</posY>
+      <width>530</width>
+      <height>290</height>
+    </control>
+    <control>
+      <description>Folder info label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>710</posX>
+      <posY>113</posY>
+      <width>500</width>
+      <label>300072</label>
+      <font>font13</font>
+    </control>
+    <!--Labels for values-->
+    <control>
+      <description>Folder Properties Label</description>
+      <type>group</type>
+      <posX>720</posX>
+      <posY>158</posY>
+      <layout>StackLayout(35, Vertical, true)</layout>
+      <control>
+        <description>Share Name label</description>
+        <type>label</type>
+        <id>1</id>
+        <width>245</width>
+        <label>853</label>
+        <font>font11</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+      <control>
+        <description>Share folder label</description>
+        <type>fadelabel</type>
+        <id>1</id>
+        <width>245</width>
+        <label>300073</label>
+        <font>font11</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+      <control>
+        <description>Default layout label</description>
+        <type>label</type>
+        <id>1</id>
+        <width>245</width>
+        <label>300074</label>
+        <font>font11</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+      <control>
+        <description>Pincode label</description>
+        <type>label</type>
+        <id>1</id>
+        <width>245</width>
+        <label>300075</label>
+        <font>font11</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+			<control>
+        <description>Thumbs</description>
+        <type>label</type>
+        <id>1</id>
+        <width>245</width>
+        <label>300222</label>
+        <font>font11</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+			<control>
+        <description>Each folder is movie</description>
+        <type>label</type>
+        <id>1</id>
+        <width>245</width>
+        <label>300223</label>
+        <font>font11</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+    </control>
+    <!-- Values-->
+    <control>
+      <description>Folder Properties values</description>
+      <type>group</type>
+      <posX>920</posX>
+      <posY>158</posY>
+      <layout>StackLayout(35, Vertical, true)</layout>
+      <control>
+        <description>Share Name label</description>
+        <type>label</type>
+        <id>1</id>
+        <width>345</width>
+        <label>#folderName</label>
+        <font>font11</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+      <control>
+        <description>Share folder label</description>
+        <type>fadelabel</type>
+        <id>1</id>
+        <width>345</width>
+        <label>#folder</label>
+        <font>font11</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+      <control>
+        <description>Default layout label</description>
+        <type>label</type>
+        <id>1</id>
+        <width>345</width>
+        <label>#layout</label>
+        <font>font11</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+      <control>
+        <description>Pincode label</description>
+        <type>label</type>
+        <id>1</id>
+        <width>345</width>
+        <label>#pinCode</label>
+        <font>font11</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+			<control>
+        <description>Thumbs</description>
+        <type>label</type>
+        <id>1</id>
+        <width>345</width>
+        <label>#createThumb</label>
+        <font>font11</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+			<control>
+        <description>Movie folder</description>
+        <type>label</type>
+        <id>1</id>
+        <width>345</width>
+        <label>#eachFolderIsMovie</label>
+        <font>font11</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     ****************************      FOLDER OPTIONS GROUP     ********************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <description>BG Folder Options Group</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>context_background.png</texture>
+      <posX>250</posX>
+      <posY>402</posY>
+      <width>400</width>
+      <height>250</height>
+    </control>
+    <control>
+      <description>Options group label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>275</posX>
+      <posY>410</posY>
+      <width>500</width>
+      <label>496</label>
+      <font>font11</font>
+    </control>
+    <control>
+      <description>Remeber last folder On/Off</description>
+      <type>checkbutton</type>
+      <id>40</id>
+      <label>300076</label>
+      <posX>275</posX>
+      <posY>450</posY>
+      <width>340</width>
+      <height>35</height>
+      <font>font11</font>
+      <onup>43</onup>
+    </control>
+    <control>
+      <description>Add  optical drives On/Off</description>
+      <type>checkbutton</type>
+      <id>41</id>
+      <label>300077</label>
+      <posX>275</posX>
+      <posY>485</posY>
+      <width>340</width>
+      <height>35</height>
+      <font>font11</font>
+    </control>
+    <control>
+      <description>Auto switch removables On/Off</description>
+      <type>checkbutton</type>
+      <id>42</id>
+      <label>300078</label>
+      <posX>275</posX>
+      <posY>520</posY>
+      <width>340</width>
+      <height>35</height>
+      <font>font11</font>
+      <ondown>40</ondown>
+    </control>
+  </controls>
+</window>

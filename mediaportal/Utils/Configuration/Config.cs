@@ -42,6 +42,7 @@ namespace MediaPortal.Configuration
       Cache = 7,
       Weather = 8,
       Config = 10,
+      SelectedSkin = 11,
     }
 
     #endregion
@@ -49,7 +50,7 @@ namespace MediaPortal.Configuration
     #region Variables
 
     private static Dictionary<Dir, string> directories;
-    private static string skinName = string.Empty;
+    private static string skinName = "DefaultWide";
 
     #endregion
 
@@ -217,8 +218,8 @@ namespace MediaPortal.Configuration
           string commonAppData =
             Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)
             + @"\Team MediaPortal\MediaPortal\";
-          string weatherDir = commonAppData + @"skin\" + skinName + @"\Media\Weather\";
-          Set(Dir.Weather, weatherDir);
+          Set(Dir.SelectedSkin, Path.Combine(commonAppData, @"skin\" + skinName + @"\"));
+          Set(Dir.Weather, Path.Combine(Get(Dir.SelectedSkin), @"Media\Weather\"));
         }
       }
     }
@@ -349,8 +350,9 @@ namespace MediaPortal.Configuration
       Set(Dir.Plugins, Path.Combine(baseDir, @"plugins\"));
       Set(Dir.Skin, Path.Combine(commonAppData, @"skin\"));
       Set(Dir.Thumbs, Path.Combine(commonAppData, @"thumbs\"));
-      Set(Dir.Weather, Path.Combine(commonAppData, @"skin\DefaultWide\Media\Weather\"));
-      //will be 'fixed' and set to correct path as soon as available
+      // The following directories will be 'fixed' and set to correct path as soon as available.
+      Set(Dir.SelectedSkin, Path.Combine(commonAppData, @"skin\" + skinName + @"\"));
+      Set(Dir.Weather, Path.Combine(Get(Dir.SelectedSkin), @"Media\Weather\"));
     }
 
 

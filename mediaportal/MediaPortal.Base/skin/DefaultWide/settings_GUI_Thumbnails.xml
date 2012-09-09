@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>1005</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <controls>
+    <import>common.settings.xml</import>
+		<import>common.window.xml</import>
+		<import>common.time.xml</import>
+    <control>
+      <description>rectangle image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>70</posX>
+      <posY>80</posY>
+      <width>1180</width>
+      <height>580</height>
+      <texture>backslide2.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>Thumb quality spin label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>99</posX>
+      <posY>115</posY>
+      <width>400</width>
+      <label>300145</label>
+    </control>
+    <control>
+      <description>Thumb quality</description>
+      <type>spincontrol</type>
+      <id>10</id>
+      <posX>350</posX>
+      <posY>123</posY>
+      <onleft>10</onleft>
+      <onright>10</onright>
+      <onup>17</onup>
+      <ondown>2</ondown>
+    </control>
+    <!--Thumbs quality labels-->
+    <control>
+      <description>Resolution label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>550</posX>
+      <posY>120</posY>
+      <width>400</width>
+      <label>169</label>
+      <font>font11</font>
+    </control>
+    <control>
+      <description>Resolution label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>750</posX>
+      <posY>120</posY>
+      <width>400</width>
+      <label>#thumbResolution</label>
+      <font>font11</font>
+    </control>
+    <control>
+      <description>Compositing label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>550</posX>
+      <posY>150</posY>
+      <width>400</width>
+      <label>300146</label>
+      <font>font11</font>
+    </control>
+    <control>
+      <description>Compositing label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>750</posX>
+      <posY>150</posY>
+      <width>400</width>
+      <label>#thumbCompositing</label>
+      <font>font11</font>
+    </control>
+    <control>
+      <description>Interpolation label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>550</posX>
+      <posY>180</posY>
+      <width>400</width>
+      <label>300147</label>
+      <font>font11</font>
+    </control>
+    <control>
+      <description>Interpolation label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>750</posX>
+      <posY>180</posY>
+      <width>400</width>
+      <label>#thumbInterpolation</label>
+      <font>font11</font>
+    </control>
+    <control>
+      <description>Smoothing label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>550</posX>
+      <posY>210</posY>
+      <width>400</width>
+      <label>300148</label>
+      <font>font11</font>
+    </control>
+    <control>
+      <description>Smoothing label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>750</posX>
+      <posY>210</posY>
+      <width>400</width>
+      <label>#thumbSmoothing</label>
+      <font>font11</font>
+    </control>
+    <control>
+      <description>Screen type label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>550</posX>
+      <posY>240</posY>
+      <width>600</width>
+      <label>300149</label>
+      <font>font11</font>
+    </control>
+    <control>
+      <description>Screen label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>750</posX>
+      <posY>240</posY>
+      <width>600</width>
+      <label>#thumbScreen</label>
+      <font>font11</font>
+    </control>
+    <!--Music-->
+    <control>
+      <description>Music section label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>99</posX>
+      <posY>300</posY>
+      <width>200</width>
+      <label>249</label>
+    </control>
+    <control>
+      <description>Create music thumb button</description>
+      <type>checkbutton</type>
+      <id>2</id>
+      <posX>99</posX>
+      <posY>345</posY>
+      <width>500</width>
+      <label>300150</label>
+      <onleft>2</onleft>
+      <onright>4</onright>
+      <onup>10</onup>
+      <ondown>3</ondown>
+    </control>
+    <control>
+      <description>Delete music thumbs button</description>
+      <type>button</type>
+      <id>3</id>
+      <posX>99</posX>
+      <posY>390</posY>
+      <width>500</width>
+      <label>300151</label>
+      <onup>2</onup>
+      <ondown>6</ondown>
+      <onleft>3</onleft>
+      <onright>5</onright>
+    </control>
+    <!--pictures-->
+    <control>
+      <description>Pictures section label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>700</posX>
+      <posY>300</posY>
+      <width>250</width>
+      <label>300152</label>
+    </control>
+    <control>
+      <description>Create pictures thumbs button</description>
+      <type>checkbutton</type>
+      <id>4</id>
+      <posX>700</posX>
+      <posY>345</posY>
+      <width>500</width>
+      <label>300153</label>
+      <onup>8</onup>
+      <ondown>5</ondown>
+      <onleft>2</onleft>
+      <onright>4</onright>
+    </control>
+    <control>
+      <description>Delete pictures thumbs button</description>
+      <type>button</type>
+      <id>5</id>
+      <posX>700</posX>
+      <posY>390</posY>
+      <width>500</width>
+      <label>300154</label>
+      <onup>4</onup>
+      <ondown>11</ondown>
+      <onleft>3</onleft>
+      <onright>5</onright>
+    </control>
+    <!--Videos-->
+    <control>
+      <description>Videos section label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>99</posX>
+      <posY>460</posY>
+      <width>250</width>
+      <label>300155</label>
+    </control>
+    <control>
+      <description>Create video thumbs button</description>
+      <type>checkbutton</type>
+      <id>6</id>
+      <posX>99</posX>
+      <posY>505</posY>
+      <width>500</width>
+      <label>300156</label>
+      <onup>3</onup>
+      <ondown>7</ondown>
+      <onleft>6</onleft>
+      <onright>11</onright>
+    </control>
+    <control>
+      <description>Leave a thumb button</description>
+      <type>checkbutton</type>
+      <id>7</id>
+      <posX>99</posX>
+      <posY>550</posY>
+      <width>500</width>
+      <label>300157</label>
+      <onup>6</onup>
+      <ondown>8</ondown>
+      <onleft>7</onleft>
+      <onright>12</onright>
+    </control>
+    <control>
+      <description>Delete video thumbs button</description>
+      <type>button</type>
+      <id>8</id>
+      <posX>99</posX>
+      <posY>595</posY>
+      <width>500</width>
+      <label>300158</label>
+      <onup>7</onup>
+      <ondown>4</ondown>
+      <onleft>8</onleft>
+      <onright>12</onright>
+    </control>
+    <!--Videos Thumb columns rows-->
+    <control>
+      <description>Videos section preview label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>700</posX>
+      <posY>460</posY>
+      <width>400</width>
+      <label>300159</label>
+    </control>
+    <control>
+      <description>Thumb columns/rows for videos</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>730</posX>
+      <posY>505</posY>
+      <width>250</width>
+      <label>450</label>
+    </control>
+    <control>
+      <description>Columns spincontrol</description>
+      <type>spincontrol</type>
+      <id>11</id>
+      <posX>1000</posX>
+      <posY>510</posY>
+      <onleft>6</onleft>
+      <onright>11</onright>
+      <onup>5</onup>
+      <ondown>12</ondown>
+    </control>
+    <control>
+      <description>Rows label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>730</posX>
+      <posY>550</posY>
+      <width>250</width>
+      <label>300160</label>
+    </control>
+    <control>
+      <description>Rows spincontrol</description>
+      <type>spincontrol</type>
+      <id>12</id>
+      <posX>1000</posX>
+      <posY>555</posY>
+      <onleft>7</onleft>
+      <onright>12</onright>
+      <onup>11</onup>
+      <ondown>99</ondown>
+    </control>
+  </controls>
+</window>

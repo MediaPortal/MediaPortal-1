@@ -16,17 +16,17 @@
     <import>common.time.xml</import>
     <import>common.music.play.fanart.xml</import>
     <control>
-      <type>label</type>
-      <description>album label</description>
       <id>0</id>
-      <posX>60</posX>
-      <posY>95</posY>
-      <width>900</width>
-      <label>#(L(170)) #Play.Current.Album</label>
-      <font>font14</font>
-      <align>left</align>
-      <textcolor>80ffffff</textcolor>
-      <visible>player.hasmedia</visible>
+      <description>album/artist/genre etc info label</description>
+      <type>fadelabel</type>
+      <posX>0</posX>
+      <posY>85</posY>
+      <width>1280</width>
+      <font>font17</font>
+      <align>center</align>
+      <label>#(L(179)): #Play.Current.Title\r#(L(171)) #Play.Current.Artist\r#(L(170)) #Play.Current.Album</label>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>player.hasaudio</visible>
     </control>
     <control>
       <type>image</type>
@@ -124,44 +124,6 @@
       </control>
     </control>
     <control>
-      <type>fadelabel</type>
-      <description>artist label</description>
-      <id>0</id>
-      <posX>71</posX>
-      <posY>471</posY>
-      <width>600</width>
-      <height>25</height>
-      <label>#Play.Current.Artist</label>
-      <font>font18</font>
-      <disabledcolor>ff808080</disabledcolor>
-      <textcolor>black</textcolor>
-    </control>
-    <control>
-      <type>fadelabel</type>
-      <description>artist label</description>
-      <id>0</id>
-      <posX>70</posX>
-      <posY>469</posY>
-      <width>600</width>
-      <height>25</height>
-      <label>#Play.Current.Artist</label>
-      <font>font18</font>
-      <disabledcolor>ff808080</disabledcolor>
-    </control>
-    <control>
-      <type>fadelabel</type>
-      <description>track label</description>
-      <id>0</id>
-      <posX>70</posX>
-      <posY>513</posY>
-      <width>1050</width>
-      <height>25</height>
-      <label>#Play.Current.Title</label>
-      <font>font18</font>
-      <visible>player.hasmedia</visible>
-      <disabledcolor>ff800000</disabledcolor>
-    </control>
-    <control>
       <type>label</type>
       <description>stream label</description>
       <id>0</id>
@@ -178,11 +140,11 @@
       <description>track progress label</description>
       <id>0</id>
       <posX>888</posX>
-      <posY>463</posY>
+      <posY>466</posY>
       <label>#currentplaytime</label>
       <font>font14</font>
       <align>left</align>
-      <textcolor>80ffffff</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>player.hasmedia</visible>
     </control>
     <control>
@@ -217,22 +179,22 @@
       <description>track duration label</description>
       <id>0</id>
       <posX>1212</posX>
-      <posY>463</posY>
+      <posY>466</posY>
       <label>#trackduration</label>
       <font>font14</font>
       <align>right</align>
-      <textcolor>80ffffff</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>player.hasmedia</visible>
     </control>
     <control Style="BasicHomeFade">
-      <description>background for recently added files</description>
+      <description>background for hints/tags</description>
       <type>image</type>
       <id>0</id>
       <posX>50</posX>
       <posY>563</posY>
       <width>1180</width>
-      <height>150</height>
-      <texture>list_sub_focus.png</texture>
+      <height>130</height>
+      <texture mask="osd_mask.png">black.png</texture>
       <colordiffuse>80ffffff</colordiffuse>
       <visible>control.hastext(444)|control.hastext(333)</visible>
     </control>
@@ -245,7 +207,7 @@
       <label>34039</label>
       <font>font12</font>
       <align>left</align>
-      <textcolor>80ffffff</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
       <visible>control.hastext(444)</visible>
     </control>
     <control>
@@ -259,7 +221,7 @@
       <label>#Play.Current.Lastfm.SimilarArtists</label>
       <font>font11</font>
       <align>left</align>
-      <textcolor>80ffffff</textcolor>
+      <textcolor>ivory</textcolor>
     </control>
     <control>
       <type>label</type>
@@ -270,7 +232,7 @@
       <label>34041</label>
       <font>font12</font>
       <align>left</align>
-      <textcolor>80ffffff</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
       <visible>control.hastext(333)</visible>
     </control>
     <control>
@@ -284,7 +246,7 @@
       <label>#Play.Current.Lastfm.TrackTags</label>
       <font>font11</font>
       <align>left</align>
-      <textcolor>80ffffff</textcolor>
+      <textcolor>ivory</textcolor>
     </control>
     <control>
       <type>listcontrol</type>
@@ -299,7 +261,7 @@
       <font>font11</font>
       <font2>font11</font2>
       <font3>font11</font3>
-      <textcolor2>80ffffff</textcolor2>
+      <textcolor2>ffffffff</textcolor2>
       <textXOff>44</textXOff>
       <textXOff2>75</textXOff2>
       <textXOff3>222</textXOff3>

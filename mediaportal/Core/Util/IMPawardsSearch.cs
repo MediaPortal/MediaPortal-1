@@ -65,12 +65,20 @@ namespace MediaPortal.Util
       if (movieName == null) return;
       if (movieName == string.Empty) return;
 
+      string[] vdbParserStr = VdbParserString();
+
+      if (vdbParserStr == null || vdbParserStr.Length != 7)
+      {
+        return;
+      }
+
       _imageList.Clear();
       movieName = movieName.Replace(" ", "+");
       string resultGoogle = string.Empty;
       string resultImpAw = string.Empty;
 
-      string url = "http://www.google.com/search?as_q=" + movieName + "+poster&as_sitesearch=www.impawards.com";
+      //string url = "http://www.google.com/search?as_q=" + movieName + "+poster&as_sitesearch=www.impawards.com";
+      string url = vdbParserStr[0] + movieName + vdbParserStr[1];
 
       IMPAwardsSearch x = new IMPAwardsSearch();
 
@@ -89,7 +97,8 @@ namespace MediaPortal.Util
       {
         wc.Dispose();
       }
-      Match mGoogle = Regex.Match(resultGoogle, @"www.impawards.com[^""& <].*?(?<year>\d{4}/).*?html");
+      //Match mGoogle = Regex.Match(resultGoogle, @"www.impawards.com[^""& <].*?(?<year>\d{4}/).*?html");
+      Match mGoogle = Regex.Match(resultGoogle, vdbParserStr[2]);
 
       while (mGoogle.Success)
       {
@@ -116,15 +125,18 @@ namespace MediaPortal.Util
             wc.Dispose();
           }
           // Check if IMDB number on poster page is equal to  IMDB ttnumber, if not-> next link
-          Match ttcheck = Regex.Match(resultImpAw, @"tt\d{7}");
+          //Match ttcheck = Regex.Match(resultImpAw, @"tt\d{7}");
+          Match ttcheck = Regex.Match(resultImpAw, vdbParserStr[3]);
           if (ttcheck.Value != imdbMovieID)
           {
             break;
           }
 
-          Match urlImpAw = Regex.Match(url2, @".*?\d{4}./*?");
+          //Match urlImpAw = Regex.Match(url2, @".*?\d{4}./*?");
+          Match urlImpAw = Regex.Match(url2, vdbParserStr[4]);
           // get main poster displayed on html-page
-          mImpAw = Regex.Match(resultImpAw, @"posters/.*?.jpg");
+          //mImpAw = Regex.Match(resultImpAw, @"posters/.*?.jpg");
+          mImpAw = Regex.Match(resultImpAw, vdbParserStr[5]);
           if (mImpAw.Success)
           {
             // Check duplicate entries because Google page links can point to
@@ -144,7 +156,8 @@ namespace MediaPortal.Util
               _imageList.Add(urlImpAw + mImpAw.Value);
             }
             // get other posters displayed on this html-page as thumbs
-            MatchCollection mcImpAw = Regex.Matches(resultImpAw, @"thumbs/imp_(?<poster>.*?.jpg)");
+            //MatchCollection mcImpAw = Regex.Matches(resultImpAw, @"thumbs/imp_(?<poster>.*?.jpg)");
+            MatchCollection mcImpAw = Regex.Matches(resultImpAw, vdbParserStr[6]);
             foreach (Match m1 in mcImpAw)
             {
               // Check duplicate entries because Google page links can point to
@@ -168,6 +181,12 @@ namespace MediaPortal.Util
         mGoogle = mGoogle.NextMatch();
       }
       return;
+    }
+
+    private string[] VdbParserString()
+    {
+      string[] vdbParserStr = VideoDatabaseParserStrings.GetParserStrings("IMPAwardsposter");
+      return vdbParserStr;
     }
   }
 }

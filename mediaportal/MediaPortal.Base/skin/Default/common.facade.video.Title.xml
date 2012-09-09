@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
     <control>
       <description>group element</description>
       <type>group</type>
       <visible>!Control.HasFocus(50)</visible>
-      <animation effect="slide" time="150" start="0,-300">WindowOpen</animation>
-      <animation effect="slide" time="150" end="800,0">WindowClose</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <control>
         <description>composite control consisting of a list control and a thumbnail panel</description>
         <type>facadeview</type>
@@ -15,47 +16,87 @@
           <description>listcontrol</description>
           <type>listcontrol</type>
           <id>50</id>
-          <posX>349</posX>
+          <posX>338</posX>
           <posY>160</posY>
-          <width>349</width>
+          <width>361</width>
           <height>400</height>
           <onleft>2</onleft>
           <onright>2</onright>
+          <textXOff2>300</textXOff2>
+          <textYOff2>1</textYOff2>
+          <textXOff3>355</textXOff3>
+          <textYOff3>6</textYOff3>
+          <textalign3>right</textalign3>
+          <font3>font9</font3>
           <scrollOffset>2</scrollOffset>
-          <spinPosX>645</spinPosX>
-          <spinPosY>528</spinPosY>
           <spinCanFocus>yes</spinCanFocus>
           <unfocusedAlpha>160</unfocusedAlpha>
+          <folderPrefix />
+          <folderSuffix />
+        </control>
+        <control>
+          <description>album view listcontrol</description>
+          <type>listcontrol</type>
+          <subtype>album</subtype>
+          <id>50</id>
+          <posX>338</posX>
+          <posY>160</posY>
+          <width>361</width>
+          <height>400</height>
+          <font>font16</font>
+          <font2>font14</font2>
+          <selectedColor>ff009900</selectedColor>
+          <textcolor>ffffffff</textcolor>
+          <selectedColor2>ff009900</selectedColor2>
+          <textcolor2>ffffffff</textcolor2>
+          <textXOff>1</textXOff>
+          <textYOff>8</textYOff>
+          <textXOff2>112</textXOff2>
+          <textYOff2>44</textYOff2>
+          <itemWidth>50</itemWidth>
+          <itemHeight>72</itemHeight>
+          <IconXOff>6</IconXOff>
+          <IconYOff>7</IconYOff>
+          <spaceBetweenItems>0</spaceBetweenItems>
+          <textureHeight>89</textureHeight>
+          <scrollOffset>1</scrollOffset>
+          <textureFocus>list_sub_focus.png</textureFocus>
+          <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
+          <onleft>2</onleft>
+          <onright>50</onright>
+          <onup>2</onup>
+          <ondown>2</ondown>
         </control>
         <control>
           <description>Thumbnail Panel</description>
           <type>thumbnailpanel</type>
           <id>50</id>
-          <posX>56</posX>
-          <posY>121</posY>
+          <posX>45</posX>
+          <posY>96</posY>
           <width>675</width>
           <height>470</height>
           <scrollOffset>1</scrollOffset>
           <onleft>2</onleft>
           <onright>2</onright>
-          <itemWidth>90</itemWidth>
-          <itemHeight>132</itemHeight>
-          <textureWidth>80</textureWidth>
-          <textureHeight>117</textureHeight>
-          <thumbWidth>80</thumbWidth>
-          <thumbHeight>117</thumbHeight>
+          <itemWidth>91</itemWidth>
+          <itemHeight>148</itemHeight>
+          <textureWidth>81</textureWidth>
+          <textureHeight>116</textureHeight>
+          <thumbWidth>81</thumbWidth>
+          <thumbHeight>116</thumbHeight>
           <thumbPosX>0</thumbPosX>
           <thumbPosY>0</thumbPosY>
-          <itemWidthBig>130</itemWidthBig>
-          <itemHeightBig>188</itemHeightBig>
-          <thumbWidthBig>110</thumbWidthBig>
-          <thumbHeightBig>163</thumbHeightBig>
-          <textureWidthBig>110</textureWidthBig>
-          <textureHeightBig>163</textureHeightBig>
+          <itemWidthBig>124</itemWidthBig>
+          <itemHeightBig>204</itemHeightBig>
+          <thumbWidthBig>114</thumbWidthBig>
+          <thumbHeightBig>164</thumbHeightBig>
+          <textureWidthBig>114</textureWidthBig>
+          <textureHeightBig>164</textureHeightBig>
           <thumbPosXBig>0</thumbPosXBig>
           <thumbPosYBig>0</thumbPosYBig>
           <zoomXPixels>30</zoomXPixels>
           <zoomYPixels>30</zoomYPixels>
+          <keepaspectratio>no</keepaspectratio>
           <hideUnfocusTexture>yes</hideUnfocusTexture>
           <renderFocusText>no</renderFocusText>
           <renderUnfocusText>yes</renderUnfocusText>
@@ -66,41 +107,53 @@
           <imageFolder>-</imageFolder>
           <imageFolderFocus>-</imageFolderFocus>
           <dimColor>ffffffff</dimColor>
+          <folderPrefix />
+          <folderSuffix />
         </control>
         <control>
           <description>Filmstrip view</description>
           <type>filmstrip</type>
-          <dimColor>90ffffff</dimColor>
           <id>50</id>
-          <scrollOffset>2</scrollOffset>
-          <posX>39</posX>
-          <posY>230</posY>
-          <width>699</width>
-          <height>576</height>
-          <onup>2</onup>
+          <posX>45</posX>
+          <posY>192</posY>
+          <width>663</width>
+          <height>400</height>
+          <spinPosX>-800</spinPosX>
+          <spinPosY>444</spinPosY>
           <onleft>2</onleft>
-          <thumbWidth>110</thumbWidth>
-          <thumbHeight>163</thumbHeight>
+          <onright>2</onright>
+          <onup>2</onup>
+          <ondown>2</ondown>
+          <frame>videothumbframe.png</frame>
+          <frameFocus>videothumbframe.png</frameFocus>
+          <itemWidth>123</itemWidth>
+          <itemHeight>320</itemHeight>
+          <textureWidth>133</textureWidth>
+          <textureHeight>192</textureHeight>
+          <thumbWidth>133</thumbWidth>
+          <thumbHeight>192</thumbHeight>
           <thumbPosX>0</thumbPosX>
           <thumbPosY>0</thumbPosY>
-          <itemWidth>130</itemWidth>
-          <itemHeight>184</itemHeight>
-          <textureWidth>110</textureWidth>
-          <textureHeight>163</textureHeight>
-          <imageFolder>DVD Cover.png</imageFolder>
-          <imageFolderFocus>DVD Cover.png</imageFolderFocus>
-          <frame>DVD Cover.png</frame>
-          <frameFocus>DVD Cover.png</frameFocus>
-          <background>emtpy.png</background>
-          <thumbs mask="videothumbmask.png"></thumbs>
-          <InfoImage mask="videothumbmask.png"></InfoImage>
           <showFrame>yes</showFrame>
-          <showFolder>yes</showFolder>
+          <showFolder>no</showFolder>
           <showBackGround>no</showBackGround>
           <showInfoImage>no</showInfoImage>
-          <visible>facadeview.filmstrip</visible>
-          <thumbAnimation effect="zoom" start="100,100" end="130,130" time="200">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="130,130" end="100,100" time="200">unfocus</thumbAnimation>
+          <enableFocusZoom>no</enableFocusZoom>
+          <scrollOffset>5</scrollOffset>
+          <keepaspectratio>no</keepaspectratio>
+          <suffix>|</suffix>
+          <folderPrefix />
+          <folderSuffix />
+          <spinCanFocus>no</spinCanFocus>
+          <scrollbarBackground>bar_hor.png</scrollbarBackground>
+          <scrollbarLeft>mouse_left_horizontal.png</scrollbarLeft>
+          <scrollbarRight>mouse_right_horizontal.png</scrollbarRight>
+          <scrollbarYOff>280</scrollbarYOff>
+          <showScrollbar>yes</showScrollbar>
+          <thumbs mask="Videothumbmask.png">
+          </thumbs>
+          <thumbAnimation effect="zoom" start="100,100" end="150,150" time="200" tween="circle" ease="inout">focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="150,150" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
         </control>
         <control>
           <description>Cover Flow view</description>
@@ -109,353 +162,231 @@
           <dimColor>90ffffff</dimColor>
           <id>50</id>
           <posX>0</posX>
-          <posY>150</posY>
+          <posY>80</posY>
           <width>720</width>
           <height>576</height>
           <onup>2</onup>
           <onleft>2</onleft>
           <selectedCard>0</selectedCard>
-          <cardWidth>190</cardWidth>
-          <cardHeight>280</cardHeight>
+          <cardWidth>250</cardWidth>
+          <cardHeight>360</cardHeight>
           <angle>65</angle>
-          <sideShift>200</sideShift>
-          <sideGap>90</sideGap>
-          <sideDepth>400</sideDepth>
+          <sideShift>300</sideShift>
+          <sideGap>100</sideGap>
+          <sideDepth>550</sideDepth>
           <offsetY>0</offsetY>
           <selectedOffsetY>0</selectedOffsetY>
           <speed>8</speed>
-          <backgroundHeight>576</backgroundHeight>
-          <backgroundWidth>720</backgroundWidth>
+          <backgroundColor>000000FF</backgroundColor>
+          <backgroundHeight>80</backgroundHeight>
+          <backgroundWidth>768</backgroundWidth>
           <backgroundX>0</backgroundX>
-          <backgroundY>170</backgroundY>
-          <backgroundDiffuse>FF000000</backgroundDiffuse>
-          <background>background2.png</background>
-          <showBackground>no</showBackground>
-          <foregroundHeight>576</foregroundHeight>
-          <foregroundWidth>720</foregroundWidth>
+          <backgroundY>310</backgroundY>
+          <backgroundDiffuse>60000000</backgroundDiffuse>
+          <background>roof.png</background>
+          <showBackground>yes</showBackground>
+          <foregroundHeight>720</foregroundHeight>
+          <foregroundWidth>1280</foregroundWidth>
           <foregroundX>0</foregroundX>
           <foregroundY>0</foregroundY>
           <foregroundDiffuse>FF000000</foregroundDiffuse>
           <foreground>-</foreground>
-          <showForeground>yes</showForeground>
+          <showForeground>no</showForeground>
           <showFrame>yes</showFrame>
-          <frame>Picture_cover2.png</frame>
-          <frameFocus>Picture_cover2.png</frameFocus>
-          <frameWidth>190</frameWidth>
-          <frameHeight>280</frameHeight>
+          <frame>videothumbframe.png</frame>
+          <frameFocus>videothumbframe.png</frameFocus>
+          <frameWidth>250</frameWidth>
+          <frameHeight>360</frameHeight>
           <spinSpeed>8</spinSpeed>
           <unfocusedAlpha>FF</unfocusedAlpha>
           <folderPrefix>[</folderPrefix>
           <folderSuffix>]</folderSuffix>
           <font1>font13</font1>
           <font2>font10</font2>
-          <label1></label1>
-          <label2></label2>
+          <label1>#title</label1>
+          <label2>#genre</label2>
           <textColor>FFFFFFFF</textColor>
-          <remoteColor>FFFF0000</remoteColor>
-          <playedColor>FFA0D0FF</playedColor>
-          <downloadColor>FF00FF00</downloadColor>
-          <selectedColor>FFFFFFFF</selectedColor>
-          <shadowAngle>65</shadowAngle>
+          <remoteColor>ffcc9900</remoteColor>
+          <playedColor>ff6FAFE1</playedColor>
+          <downloadColor>ff6FAFE1</downloadColor>
+          <selectedColor>ff6FAFE1</selectedColor>
+          <shadowAngle>45</shadowAngle>
           <shadowDistance>0</shadowDistance>
           <shadowColor>FF000000</shadowColor>
-          <label1YOff>305</label1YOff>
-          <label2YOff>330</label2YOff>
-          <pageSize>100</pageSize>
+          <label1YOff>405</label1YOff>
+          <label2YOff>430</label2YOff>
+          <pageSize>5</pageSize>
+          <keepaspectratio>no</keepaspectratio>
           <scrollbarBackground>bar_hor.png</scrollbarBackground>
           <scrollbarLeft>mouse_left_horizontal.png</scrollbarLeft>
           <scrollbarRight>mouse_right_horizontal.png</scrollbarRight>
-          <scrollbarYOff>285</scrollbarYOff>
+          <scrollbarYOff>455</scrollbarYOff>
           <showScrollbar>yes</showScrollbar>
-          <cards mask="videothumbmask.png"></cards>
+          <cards mask="videothumbmask.png">videothumbframe.png</cards>
+          <folderPrefix />
+          <folderSuffix />
           <subitems>
-            <subitem>
-              <![CDATA[                 <controls>
-              <control>
-                <description>background</description>
-                <type>image</type>
-                <posX>0</posX>
-                <posY>0</posY>
-                <width>190</width>
-                <height>280</height>
-                <texture mask="videothumbmask.png">background2.png</texture>
-              </control>
-              <control>
-                <description>Movie Details</description>
-                <type>label</type>
-                <posX>10</posX>
-                <posY>10</posY>
-                <width>210</width>
-                <label>Movie Details</label>
-                <font>font10</font>
-                <textcolor>FFFFFFFF</textcolor>
-              </control>
-              <control>
-                <description>genre</description>
-                <type>label</type>
-                <posX>10</posX>
-                <posY>40</posY>
-                <width>170</width>
-                <label>#genre</label>
-                <font>font9</font>
-                <textcolor>FFFFFFFF</textcolor>
-              </control>
-              <control>
-                <description>year</description>
-                <type>label</type>
-                <posX>10</posX>
-                <posY>60</posY>
-                <width>170</width>
-                <label>#year</label>
-                <font>font9</font>
-                <textcolor>FFFFFFFF</textcolor>
-              </control>
-              <control>
-                <description>runtime</description>
-                <type>label</type>
-                <posX>10</posX>
-                <posY>80</posY>
-                <width>170</width>
-                <label>#runtime min</label>
-                <font>font9</font>
-                <textcolor>FFFFFFFF</textcolor>
-              </control>
-              <control>
-                <description>rating</description>
-                <type>label</type>
-                <posX>10</posX>
-                <posY>100</posY>
-                <width>170</width>
-                <label>#rating</label>
-                <font>font9</font>
-                <textcolor>FFFFFFFF</textcolor>
-              </control>
-              <control>
-                <description>votes</description>
-                <type>label</type>
-                <posX>50</posX>
-                <posY>100</posY>
-                <width>170</width>
-                <label>(#votes votes)</label>
-                <font>font9</font>
-                <textcolor>FFFFFFFF</textcolor>
-              </control>
-              <control>
-                <description>Director</description>
-                <type>label</type>
-                <posX>10</posX>
-                <posY>120</posY>
-                <width>170</width>
-                <label>Director</label>
-                <font>font10</font>
-                <textcolor>FFFFFFFF</textcolor>
-              </control>
-              <control>
-                <description>director</description>
-                <type>label</type>
-                <posX>10</posX>
-                <posY>140</posY>
-                <width>170</width>
-                <label>#director</label>
-                <font>font9</font>
-                <textcolor>FFFFFFFF</textcolor>
-              </control>
-              <control>
-                <description>plot</description>
-                <type>textboxscrollup</type>
-                <posX>10</posX>
-                <posY>165</posY>
-                <width>170</width>
-                <height>50</height>
-                <label>#plot</label>
-                <font>font9</font>
-                <lineSpacing>2</lineSpacing>
-                <textcolor>FFFFFFFF</textcolor>
-              </control>
-              <!--                    <control>
-              <description>cast</description>
-              <type>label</type>
-              <posX>20</posX>
-              <posY>70</posY>
-              <width>1000</width>
-              <label>#cast</label>
-              <font>font9</font>
-              <align>left</align>
-              <textcolor>FFFFFFFF</textcolor>
-              <visible>no</visible>
-            </control>
-            <control>
-              <description>dvdlabel</description>
-              <type>label</type>
-              <posX>20</posX>
-              <posY>90</posY>
-              <width>1000</width>
-              <label>#dvdlabel</label>
-              <font>font9</font>
-              <align>left</align>
-              <textcolor>FFFFFFFF</textcolor>
-            </control>
-            <control>
-              <description>imdb number</description>
-              <type>label</type>
-              <posX>20</posX>
-              <posY>110</posY>
-              <width>1000</width>
-              <label>#imdbnumber</label>
-              <font>font9</font>
-              <align>left</align>
-              <textcolor>FFFFFFFF</textcolor>
-            </control>
-            <control>
-              <description>file</description>
-              <type>label</type>
-              <posX>20</posX>
-              <posY>130</posY>
-              <width>1000</width>
-              <label>#file</label>
-              <font>font9</font>
-              <align>left</align>
-              <textcolor>FFFFFFFF</textcolor>
-            </control>
-            <control>
-              <description>plot outline</description>
-              <type>label</type>
-              <posX>20</posX>
-              <posY>170</posY>
-              <width>1000</width>
-              <label>#plotoutline</label>
-              <font>font9</font>
-              <align>left</align>
-              <textcolor>FFFFFFFF</textcolor>
-            </control>
-            <control>
-              <description>tagline</description>
-              <type>label</type>
-              <posX>20</posX>
-              <posY>1000</posY>
-              <width>1000</width>
-              <label>#tagline</label>
-              <font>font9</font>
-              <align>left</align>
-              <textcolor>FFFFFFFF</textcolor>
-            </control>
-            <control>
-              <description>credits</description>
-              <type>label</type>
-              <posX>20</posX>
-              <posY>250</posY>
-              <width>1000</width>
-              <label>#credits</label>
-              <font>font9</font>
-              <align>left</align>
-              <textcolor>FFFFFFFF</textcolor>
-            </control>
-            <control>
-              <description>thumb</description>
-              <type>label</type>
-              <posX>20</posX>
-              <posY>270</posY>
-              <width>1000</width>
-              <label>#thumb</label>
-              <font>font9</font>
-              <align>left</align>
-              <textcolor>FFFFFFFF</textcolor>
-            </control>
-            <control>
-              <description>title</description>
-              <type>label</type>
-              <posX>20</posX>
-              <posY>290</posY>
-              <width>1000</width>
-              <label>#title</label>
-              <font>font9</font>
-              <align>left</align>
-              <textcolor>FFFFFFFF</textcolor>
-            </control>
-            <control>
-              <description>mpaa rating</description>
-              <type>label</type>
-              <posX>20</posX>
-              <posY>350</posY>
-              <width>1000</width>
-              <label>#mpaarating</label>
-              <font>font9</font>
-              <align>left</align>
-              <textcolor>FFFFFFFF</textcolor>
-            </control>
-            <control>
-              <description>watched</description>
-              <type>label</type>
-              <posX>20</posX>
-              <posY>370</posY>
-              <width>1000</width>
-              <label>#iswatched</label>
-              <font>font9</font>
-              <align>left</align>
-              <textcolor>FFFFFFFF</textcolor>
-            </control>-->
-            <control>
-              <description>mpaa G</description>
-              <type>image</type>
-              <posX>20</posX>
-              <posY>325</posY>
-              <width>170</width>
-              <keepaspectratio>yes</keepaspectratio>
-              <texture>logos/mpaa/large/mpaa_general.png</texture>
-              <visible>string.contains(#mpaarating, Rated G)</visible>
-            </control>
-            <control>
-              <description>mpaa PG</description>
-              <type>image</type>
-              <posX>20</posX>
-              <posY>325</posY>
-              <width>170</width>
-              <keepaspectratio>yes</keepaspectratio>
-              <texture>logos/mpaa/large/mpaa_pg.png</texture>
-              <visible>string.contains(#mpaarating, Rated PG)+!string.contains(#mpaarating, Rated PG-13)</visible>
-            </control>
-            <control>
-              <description>mpaa PG-13</description>
-              <type>image</type>
-              <posX>20</posX>
-              <posY>325</posY>
-              <width>170</width>
-              <keepaspectratio>yes</keepaspectratio>
-              <texture>logos/mpaa/large/mpaa_pg13.png</texture>
-              <visible>string.contains(#mpaarating, Rated PG-13)</visible>
-            </control>
-            <control>
-              <description>mpaa R</description>
-              <type>image</type>
-              <posX>20</posX>
-              <posY>325</posY>
-              <width>170</width>
-              <keepaspectratio>yes</keepaspectratio>
-              <texture>logos/mpaa/large/mpaa_restricted.png</texture>
-              <visible>string.contains(#mpaarating, Rated R)</visible>
-            </control>
-            <control>
-              <description>mpaa NC17</description>
-              <type>image</type>
-              <posX>20</posX>
-              <posY>325</posY>
-              <width>170</width>
-              <keepaspectratio>yes</keepaspectratio>
-              <texture>logos/mpaa/large/mpaa_nc17.png</texture>
-              <visible>string.contains(#mpaarating, Rated NC-17)</visible>
-            </control>
-          </controls>]]></subitem>
-      </subitems>
+            <subitem>                 &lt;controls&gt;
+              &lt;control&gt;
+                &lt;description&gt;background&lt;/description&gt;
+                &lt;type&gt;image&lt;/type&gt;
+                &lt;posX&gt;0&lt;/posX&gt;
+                &lt;posY&gt;0&lt;/posY&gt;
+                &lt;width&gt;250&lt;/width&gt;
+                &lt;height&gt;360&lt;/height&gt;
+                &lt;texture mask="videothumbmask.png"&gt;blue.png&lt;/texture&gt;
+              &lt;/control&gt;
+              &lt;control&gt;
+                &lt;description&gt;Movie Details&lt;/description&gt;
+                &lt;type&gt;fadelabel&lt;/type&gt;
+                &lt;posX&gt;10&lt;/posX&gt;
+                &lt;posY&gt;10&lt;/posY&gt;
+                &lt;width&gt;230&lt;/width&gt;
+                &lt;label&gt;#title&lt;/label&gt;
+                &lt;font&gt;font11&lt;/font&gt;
+                &lt;textcolor&gt;ivory&lt;/textcolor&gt;
+                &lt;shadowAngle&gt;0&lt;/shadowAngle&gt;
+                &lt;shadowDistance&gt;0&lt;/shadowDistance&gt;
+                &lt;visible&gt;string.equals(#hideinfo, true)&lt;/visible&gt;
+              &lt;/control&gt;
+              &lt;control&gt;
+                &lt;description&gt;User group movie list&lt;/description&gt;
+                &lt;type&gt;textboxscrollup&lt;/type&gt;
+                &lt;posX&gt;20&lt;/posX&gt;
+                &lt;posY&gt;40&lt;/posY&gt;
+                &lt;width&gt;230&lt;/width&gt;
+                &lt;height&gt;205&lt;/height&gt;
+                &lt;label&gt;#groupmovielist&lt;/label&gt;
+                &lt;font&gt;font9&lt;/font&gt;
+                &lt;lineSpacing&gt;2&lt;/lineSpacing&gt;
+                &lt;textcolor&gt;ivory&lt;/textcolor&gt;
+                &lt;shadowAngle&gt;0&lt;/shadowAngle&gt;
+                &lt;shadowDistance&gt;0&lt;/shadowDistance&gt;
+                &lt;visible&gt;string.equals(#hideinfo, True)&lt;/visible&gt;
+              &lt;/control&gt;
+              &lt;control&gt;
+                &lt;description&gt;Movie Details&lt;/description&gt;
+                &lt;type&gt;fadelabel&lt;/type&gt;
+                &lt;posX&gt;10&lt;/posX&gt;
+                &lt;posY&gt;10&lt;/posY&gt;
+                &lt;width&gt;230&lt;/width&gt;
+                &lt;label&gt;#title&lt;/label&gt;
+                &lt;font&gt;font11&lt;/font&gt;
+                &lt;textcolor&gt;ivory&lt;/textcolor&gt;
+                &lt;shadowAngle&gt;0&lt;/shadowAngle&gt;
+                &lt;shadowDistance&gt;0&lt;/shadowDistance&gt;
+                &lt;visible&gt;string.equals(#hideinfo, False)&lt;/visible&gt;
+              &lt;/control&gt;
+              &lt;control&gt;
+                &lt;type&gt;imagelist&lt;/type&gt;
+                &lt;id&gt;1&lt;/id&gt;
+                &lt;posX&gt;10&lt;/posX&gt;
+                &lt;posY&gt;40&lt;/posY&gt;
+                &lt;width&gt;230&lt;/width&gt;
+                &lt;height&gt;37&lt;/height&gt;
+                &lt;textureWidth&gt;17&lt;/textureWidth&gt;
+                &lt;textureHeight&gt;17&lt;/textureHeight&gt;
+                &lt;subitems&gt;
+                  &lt;subitem&gt;greystar.png&lt;/subitem&gt;
+                  &lt;subitem&gt;star.png&lt;/subitem&gt;
+                &lt;/subitems&gt;
+                &lt;orientation&gt;horizontal&lt;/orientation&gt;
+                &lt;align&gt;left&lt;/align&gt;
+                &lt;imagesToDraw&gt;10&lt;/imagesToDraw&gt;
+                &lt;percentage&gt;#rating&lt;/percentage&gt;
+                &lt;visible&gt;string.equals(#hideinfo, False)&lt;/visible&gt;
+              &lt;/control&gt;
+              &lt;control&gt;
+                &lt;description&gt;genre&lt;/description&gt;
+                &lt;type&gt;fadelabel&lt;/type&gt;
+                &lt;posX&gt;10&lt;/posX&gt;
+                &lt;posY&gt;60&lt;/posY&gt;
+                &lt;width&gt;230&lt;/width&gt;
+                &lt;label&gt;#genre&lt;/label&gt;
+                &lt;font&gt;font9&lt;/font&gt;
+                &lt;textcolor&gt;ivory&lt;/textcolor&gt;
+                &lt;shadowAngle&gt;0&lt;/shadowAngle&gt;
+                &lt;shadowDistance&gt;0&lt;/shadowDistance&gt;
+                &lt;visible&gt;string.equals(#hideinfo, False)&lt;/visible&gt;
+              &lt;/control&gt;
+              &lt;control&gt;
+                &lt;description&gt;year runtime&lt;/description&gt;
+                &lt;type&gt;fadelabel&lt;/type&gt;
+                &lt;posX&gt;10&lt;/posX&gt;
+                &lt;posY&gt;80&lt;/posY&gt;
+                &lt;width&gt;230&lt;/width&gt;
+                &lt;label&gt;#year  /  #runtime&lt;/label&gt;
+                &lt;font&gt;font9&lt;/font&gt;
+                &lt;textcolor&gt;ivory&lt;/textcolor&gt;
+                &lt;shadowAngle&gt;0&lt;/shadowAngle&gt;
+                &lt;shadowDistance&gt;0&lt;/shadowDistance&gt;
+                &lt;visible&gt;string.equals(#hideinfo, False)&lt;/visible&gt;
+              &lt;/control&gt;
+              &lt;control&gt;
+                &lt;description&gt;director&lt;/description&gt;
+                &lt;type&gt;fadelabel&lt;/type&gt;
+                &lt;posX&gt;10&lt;/posX&gt;
+                &lt;posY&gt;100&lt;/posY&gt;
+                &lt;width&gt;230&lt;/width&gt;
+                &lt;label&gt;#(L(199)) #director&lt;/label&gt;
+                &lt;font&gt;font9&lt;/font&gt;
+                &lt;textcolor&gt;ivory&lt;/textcolor&gt;
+                &lt;shadowAngle&gt;0&lt;/shadowAngle&gt;
+                &lt;shadowDistance&gt;0&lt;/shadowDistance&gt;
+                &lt;visible&gt;string.equals(#hideinfo, False)&lt;/visible&gt;
+              &lt;/control&gt;
+              &lt;control&gt;
+                &lt;description&gt;mpaarating&lt;/description&gt;
+                &lt;type&gt;fadelabel&lt;/type&gt;
+                &lt;posX&gt;10&lt;/posX&gt;
+                &lt;posY&gt;120&lt;/posY&gt;
+                &lt;width&gt;230&lt;/width&gt;
+                &lt;label&gt;#(L(173)) #mpaarating&lt;/label&gt;
+                &lt;font&gt;font9&lt;/font&gt;
+                &lt;textcolor&gt;ivory&lt;/textcolor&gt;
+                &lt;shadowAngle&gt;0&lt;/shadowAngle&gt;
+                &lt;shadowDistance&gt;0&lt;/shadowDistance&gt;
+                &lt;visible&gt;string.equals(#hideinfo, False)&lt;/visible&gt;
+              &lt;/control&gt;
+              &lt;control&gt;
+                &lt;description&gt;plot&lt;/description&gt;
+                &lt;type&gt;textboxscrollup&lt;/type&gt;
+                &lt;posX&gt;10&lt;/posX&gt;
+                &lt;posY&gt;145&lt;/posY&gt;
+                &lt;width&gt;240&lt;/width&gt;
+                &lt;height&gt;100&lt;/height&gt;
+                &lt;label&gt;#plot&lt;/label&gt;
+                &lt;font&gt;font9&lt;/font&gt;
+                &lt;lineSpacing&gt;2&lt;/lineSpacing&gt;
+                &lt;textcolor&gt;ivory&lt;/textcolor&gt;
+                &lt;shadowAngle&gt;0&lt;/shadowAngle&gt;
+                &lt;shadowDistance&gt;0&lt;/shadowDistance&gt;
+                &lt;visible&gt;string.equals(#hideinfo, False)&lt;/visible&gt;
+              &lt;/control&gt;
+            &lt;/controls&gt;</subitem>
+          </subitems>
+        </control>
+        <control>
+          <description>playlist listcontrol</description>
+          <type>playlistcontrol</type>
+          <id>50</id>
+          <posX>338</posX>
+          <posY>160</posY>
+          <width>361</width>
+          <height>400</height>
+          <upBtnXOffset>286</upBtnXOffset>
+          <downBtnXOffset>309</downBtnXOffset>
+          <deleteBtnXOffset>331</deleteBtnXOffset>
+          <onleft>2</onleft>
+          <onright>2</onright>
+          <scrollOffset>2</scrollOffset>
+          <itemWidth>18</itemWidth>
+          <itemHeight>25</itemHeight>
+          <IconXOff>6</IconXOff>
+          <IconYOff>3</IconYOff>
+          <keepaspectratio>yes</keepaspectratio>
+        </control>
+      </control>
     </control>
-    <control>
-      <description>playlist listcontrol</description>
-      <type>playlistcontrol</type>
-      <id>50</id>
-      <onleft>2</onleft>
-      <onright>2</onright>
-      <scrollOffset>2</scrollOffset>
-    </control>
-  </control>
-</control>
-</controls>
+  </controls>
 </window>

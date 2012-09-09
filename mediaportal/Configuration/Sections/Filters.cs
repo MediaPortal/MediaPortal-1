@@ -115,6 +115,17 @@ namespace MediaPortal.Configuration.Sections
       videoTab.Controls.Add(mc);
       mpTabControl1.TabPages.Add(videoTab);
 
+      Log.Info("  add Blu-ray codec section");
+      TabPage bdTab = new TabPage("Blu-ray Codecs");
+      BDCodec bd = new BDCodec();
+      bd.LoadSettings();
+      bd.Dock = DockStyle.Fill;
+      bd.OnSectionActivated();
+      bdTab.Enter += new System.EventHandler(OnSectionActivatedWrapper);
+      bdTab.Leave += new System.EventHandler(OnSectionDeActivatedWrapper);
+      bdTab.Controls.Add(bd);
+      mpTabControl1.TabPages.Add(bdTab);
+
       Log.Info("  add TV codec section");
       TabPage tvTab = new TabPage("TV Codecs");
       TVCodec tc = new TVCodec();

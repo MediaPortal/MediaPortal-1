@@ -312,42 +312,42 @@ public class MyTetrisControl : GUIControl, IHostTetris
     m_imgBlocks = new GUIImage[]
                     {
                       new GUIImage(_parentControlId, 10001, _positionX, _positionY, m_cxBlock, m_cyBlock,
-                                   GUIGraphicsContext.Skin + @"\media\tetris\block_red.png", m_dwColorDiffuse),
+                                   GUIGraphicsContext.GetThemedSkinFile(@"\media\tetris\block_red.png"), m_dwColorDiffuse),
                       new GUIImage(_parentControlId, 10002, _positionX, _positionY, m_cxBlock, m_cyBlock,
-                                   GUIGraphicsContext.Skin + @"\media\tetris\block_blue.png", m_dwColorDiffuse),
+                                   GUIGraphicsContext.GetThemedSkinFile(@"\media\tetris\block_blue.png"), m_dwColorDiffuse),
                       new GUIImage(_parentControlId, 10003, _positionX, _positionY, m_cxBlock, m_cyBlock,
-                                   GUIGraphicsContext.Skin + @"\media\tetris\block_gray.png", m_dwColorDiffuse),
+                                   GUIGraphicsContext.GetThemedSkinFile(@"\media\tetris\block_gray.png"), m_dwColorDiffuse),
                       new GUIImage(_parentControlId, 10004, _positionX, _positionY, m_cxBlock, m_cyBlock,
-                                   GUIGraphicsContext.Skin + @"\media\tetris\block_yellow.png", m_dwColorDiffuse),
+                                   GUIGraphicsContext.GetThemedSkinFile(@"\media\tetris\block_yellow.png"), m_dwColorDiffuse),
                       new GUIImage(_parentControlId, 10005, _positionX, _positionY, m_cxBlock, m_cyBlock,
-                                   GUIGraphicsContext.Skin + @"\media\tetris\block_cyan.png", m_dwColorDiffuse),
+                                   GUIGraphicsContext.GetThemedSkinFile(@"\media\tetris\block_cyan.png"), m_dwColorDiffuse),
                       new GUIImage(_parentControlId, 10006, _positionX, _positionY, m_cxBlock, m_cyBlock,
-                                   GUIGraphicsContext.Skin + @"\media\tetris\block_orange.png", m_dwColorDiffuse),
+                                   GUIGraphicsContext.GetThemedSkinFile(@"\media\tetris\block_orange.png"), m_dwColorDiffuse),
                       new GUIImage(_parentControlId, 10007, _positionX, _positionY, m_cxBlock, m_cyBlock,
-                                   GUIGraphicsContext.Skin + @"\media\tetris\block_green.png", m_dwColorDiffuse),
+                                   GUIGraphicsContext.GetThemedSkinFile(@"\media\tetris\block_green.png"), m_dwColorDiffuse),
                     };
 
     m_imgBlocksGlow = new GUIImage[]
                         {
                           new GUIImage(_parentControlId, 10011, _positionX, _positionY, m_cxBlock, m_cyBlock,
-                                       GUIGraphicsContext.Skin + @"\media\tetris\block_red_glow.png", m_dwColorDiffuse),
+                                       GUIGraphicsContext.GetThemedSkinFile(@"\media\tetris\block_red_glow.png"), m_dwColorDiffuse),
                           new GUIImage(_parentControlId, 10012, _positionX, _positionY, m_cxBlock, m_cyBlock,
-                                       GUIGraphicsContext.Skin + @"\media\tetris\block_blue_glow.png", m_dwColorDiffuse)
+                                       GUIGraphicsContext.GetThemedSkinFile(@"\media\tetris\block_blue_glow.png"), m_dwColorDiffuse)
                           ,
                           new GUIImage(_parentControlId, 10013, _positionX, _positionY, m_cxBlock, m_cyBlock,
-                                       GUIGraphicsContext.Skin + @"\media\tetris\block_gray_glow.png", m_dwColorDiffuse)
+                                       GUIGraphicsContext.GetThemedSkinFile(@"\media\tetris\block_gray_glow.png"), m_dwColorDiffuse)
                           ,
                           new GUIImage(_parentControlId, 10014, _positionX, _positionY, m_cxBlock, m_cyBlock,
-                                       GUIGraphicsContext.Skin + @"\media\tetris\block_yellow_glow.png",
+                                       GUIGraphicsContext.GetThemedSkinFile(@"\media\tetris\block_yellow_glow.png"),
                                        m_dwColorDiffuse),
                           new GUIImage(_parentControlId, 10015, _positionX, _positionY, m_cxBlock, m_cyBlock,
-                                       GUIGraphicsContext.Skin + @"\media\tetris\block_cyan_glow.png", m_dwColorDiffuse)
+                                       GUIGraphicsContext.GetThemedSkinFile(@"\media\tetris\block_cyan_glow.png"), m_dwColorDiffuse)
                           ,
                           new GUIImage(_parentControlId, 10016, _positionX, _positionY, m_cxBlock, m_cyBlock,
-                                       GUIGraphicsContext.Skin + @"\media\tetris\block_orange_glow.png",
+                                       GUIGraphicsContext.GetThemedSkinFile(@"\media\tetris\block_orange_glow.png"),
                                        m_dwColorDiffuse),
                           new GUIImage(_parentControlId, 10017, _positionX, _positionY, m_cxBlock, m_cyBlock,
-                                       GUIGraphicsContext.Skin + @"\media\tetris\block_green_glow.png", m_dwColorDiffuse)
+                                       GUIGraphicsContext.GetThemedSkinFile(@"\media\tetris\block_green_glow.png"), m_dwColorDiffuse)
                           ,
                         };
 

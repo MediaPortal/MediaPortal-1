@@ -40,6 +40,7 @@ CBuffer::CBuffer()
 {
   bufferCount++;
   m_bDiscontinuity=false;
+  m_bForcePMT=false;
   m_iLength=0;
   m_pBuffer = new byte[MAX_BUFFER_SIZE];
   m_iSize = MAX_BUFFER_SIZE;
@@ -51,6 +52,7 @@ CBuffer::CBuffer(unsigned long size)
 {
   bufferCount++;
   m_bDiscontinuity=false;
+  m_bForcePMT=false;
   m_iLength=0;
   m_pBuffer = new byte[size];
   m_iSize = size;
@@ -73,6 +75,16 @@ void CBuffer::SetDiscontinuity()
 bool CBuffer::GetDiscontinuity()
 {
   return m_bDiscontinuity;
+}
+
+void CBuffer::SetForcePMT()
+{
+  m_bForcePMT=true;
+}
+
+bool CBuffer::GetForcePMT()
+{
+  return m_bForcePMT;
 }
 
 void CBuffer::SetVideoServiceType(int type)

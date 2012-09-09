@@ -304,6 +304,8 @@ struct pshdr
 	struct avchdr
 	{
 		BYTE profile, level;
+		UINT64 chromaFormat;
+		WORD lumaDepth, chromaDepth;
 		unsigned int width, height;
 		bool progressive;
 		BYTE * sps;
@@ -313,9 +315,13 @@ struct pshdr
 		__int64 AvgTimePerFrame;
 		int arx, ary;
 		BYTE ar;
+		BYTE spsid;
+		BYTE ppsid;
 		avchdr()
 		{
 			progressive = true;
+		  sps = NULL;
+		  pps = NULL;
 			spslen = 0;
 			ppslen = 0;
 			AvgTimePerFrame = 0;
@@ -349,7 +355,7 @@ struct BasicVideoInfo
 {
 	int width;
 	int height;
-	int fps;
+	double fps;
 	int arx;
 	int ary;
 	int isInterlaced;

@@ -38,6 +38,8 @@ public:
   bool   MediaTime(CRefTime &reftime);
   void   SetDiscontinuity();
   bool   GetDiscontinuity();
+  void   SetForcePMT();
+  bool   GetForcePMT();
   void   SetVideoServiceType(int type);
   int    GetVideoServiceType();
   void   SetFrameType(char type) { m_frameType = type ; } ;
@@ -47,6 +49,7 @@ public:
 
 private:
   bool  m_bDiscontinuity;
+  bool  m_bForcePMT;
   int   m_iVideoServiceType;
   CPcr  m_currentPcr;
   CPcr  m_pts;

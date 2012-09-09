@@ -219,6 +219,7 @@
     </Compile>
     <Compile Include="Folders\IFolderSettings.cs" />
     <Compile Include="Folders\ADO\FolderSettingAdo.cs" />
+    <Compile Include="Music\InternetLookups\AllMusicArtistMatch.cs" />
     <Compile Include="Music\MusicDatabaseSettings.cs" />
     <Compile Include="Music\InternetLookups\AlbumInfo.cs">
       <SubType>Code</SubType>
@@ -240,9 +241,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Music\InternetLookups\MusicArtistInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Music\InternetLookups\MusicInfoScraper.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Music\MusicDatabase.Lookups.cs" />
@@ -289,6 +287,9 @@
     </Compile>
     <Compile Include="Video\IVideoDatabase.cs" />
     <Compile Include="Video\VideoDatabase.cs" />
+    <Compile Include="Video\VideoFilesMediaInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Video\VideoThumbBlacklistDBImpl.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -205,7 +205,7 @@ void CChannelLinkageParser::DecodeLinkage(byte* buf, int len)
 		unsigned long lNetworkId=network_id;
 		unsigned long lTransport_id=transport_id;
 		unsigned long lServiceId=service_id;
-		unsigned long key=(unsigned long)(lNetworkId<<32UL);
+		unsigned __int64 key=((unsigned __int64)lNetworkId << 32);
 		key+=(lTransport_id<<16);
 		key+=lServiceId;
 		imapChannels it=m_mapChannels.find(key);
@@ -224,11 +224,11 @@ void CChannelLinkageParser::DecodeLinkage(byte* buf, int len)
 		PortalChannel& channel=it->second; 
 
 		//did we already receive this section ?
-		key=crc32 ((char*)buf,len);
-		PortalChannel::imapSectionsReceived itSec=channel.mapSectionsReceived.find(key);
+		int sectionKey=crc32 ((char*)buf,len);
+		PortalChannel::imapSectionsReceived itSec=channel.mapSectionsReceived.find(sectionKey);
 		if (itSec!=channel.mapSectionsReceived.end())
 			return; //yes
-		channel.mapSectionsReceived[key]=true;
+		channel.mapSectionsReceived[sectionKey]=true;
 		m_scanTimeout=time(NULL);
 		int start=14;
 		while (start+11 <= len+1)

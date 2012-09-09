@@ -58,7 +58,7 @@ namespace MediaPortal.Dialogs
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\DialogPictureInfo.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\DialogPictureInfo.xml"));
     }
 
     public override bool OnMessage(GUIMessage message)

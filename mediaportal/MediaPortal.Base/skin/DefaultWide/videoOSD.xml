@@ -23,7 +23,7 @@
       <description>vertical divider</description>
       <type>image</type>
       <id>1</id>
-      <posX>930</posX>
+      <posX>940</posX>
       <posY>525</posY>
       <height>175</height>
       <width>1</width>
@@ -39,8 +39,8 @@
       <posY>520</posY>
       <label>#time</label>
       <align>right</align>
-      <font>font14</font>
-      <textcolor>ivory</textcolor>
+      <font>font12</font>
+      <textcolor>ff6FAFE1</textcolor>
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
@@ -48,9 +48,9 @@
       <type>image</type>
       <id>104</id>
       <posX>190</posX>
-      <posY>572</posY>
+      <posY>575</posY>
       <width>595</width>
-      <height>27</height>
+      <height>22</height>
       <texture>osd_progress_background.png</texture>
       <visible>!control.hasfocus(1237)</visible>
     </control>
@@ -59,11 +59,11 @@
       <type>progress</type>
       <id>105</id>
       <posX>193</posX>
-      <posY>576</posY>
+      <posY>579</posY>
       <width>595</width>
       <offset>0</offset>
-      <height>20</height>
-      <innerheight>20</innerheight>
+      <height>16</height>
+      <innerheight>16</innerheight>
       <lefttexture>-</lefttexture>
       <midtexture>osd_progress_mid.png</midtexture>
       <righttexture>-</righttexture>
@@ -75,7 +75,7 @@
       <type>label</type>
       <id>101</id>
       <posX>798</posX>
-      <posY>567</posY>
+      <posY>570</posY>
       <label>#currentremaining</label>
       <align>left</align>
       <font>font14</font>
@@ -87,7 +87,7 @@
       <type>label</type>
       <id>101</id>
       <posX>70</posX>
-      <posY>567</posY>
+      <posY>570</posY>
       <label>#currentplaytime</label>
       <align>left</align>
       <font>font14</font>
@@ -104,8 +104,8 @@
       <height>40</height>
       <label>-</label>
       <align>left</align>
-      <textcolor>ffffffff</textcolor>
-      <font>font14</font>
+      <textcolor>ff6FAFE1</textcolor>
+      <font>font18</font>
       <label>#Play.Current.Title</label>
       <visible>!control.hasfocus(1237)</visible>
     </control>

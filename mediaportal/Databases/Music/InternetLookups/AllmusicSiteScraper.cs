@@ -19,14 +19,14 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
-using MediaPortal.Util;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Music.Database
 {
@@ -35,346 +35,243 @@ namespace MediaPortal.Music.Database
   /// </summary>
   public class AllmusicSiteScraper
   {
-    #region Enum
 
-    public enum SearchBy : int
-    {
-      Artists = 1,
-      Albums
-    } ;
+    #region variables
 
-    #endregion
-
-    #region Variables 
-
-    internal const string MAINURL = "http://www.allmusic.com";
-    internal const string URLPROGRAM = "/search";
-    internal const string ARTISTSEARCH = "search_term={0}&x=34&y=8&search_type=artist";
-    internal const string ALBUMSEARCH = "search_term={0}&x=34&y=8&search_type=album";
-    protected List<string> _codes = new List<string>(); // if multiple..
-    protected List<string> _values = new List<string>(); // if multiple..
-    protected List<MusicAlbumInfo> _albumList = new List<MusicAlbumInfo>();
-    protected bool _multiple = false;
-    protected string _htmlCode = null;
-    protected string _queryString = "";
-    protected SearchBy _searchby = SearchBy.Artists;
+    private const string BaseURL = "http://www.allmusic.com/search/artists/";
+    private const string AlbumRegExpPattern = @"<td class=""title primary_link"".*?<a href=""(?<albumURL>.*?)"" class=""title.*?"" data-tooltip="".*?"">(?<albumName>.*?)</a>";
+    private static readonly Regex AlbumURLRegEx = new Regex(AlbumRegExpPattern, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
+    private const string ArtistRegExpPattern = @"<dl class=""info small"">\s*<dt class=""name primary_link"">\s*<a href=""(?<artistURL>.*?)"".*>(?<artist>.*?)</a>\s*</dt>\s*(?:<dd class=""years-active"">active: (?<years>.*?)</dd>\s*)?<dd class=""genre third_link"">\s*(?<genres>.*?)\s*</dd>";
+    private static readonly Regex ArtistURLRegEx = new Regex(ArtistRegExpPattern, RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled);
+    private static readonly Regex BracketRegEx = new Regex(@"\s*[\(\[\{].*?[\]\)\}]\s*", RegexOptions.Compiled);
+    private static readonly Regex PunctuationRegex = new Regex(@"[^\w\s]|_", RegexOptions.Compiled);
+    private static bool _strippedPrefixes;
 
     #endregion
 
-    #region ctor
+    #region public method
 
-    public AllmusicSiteScraper() {}
-
-    #endregion
-
-    #region Public Methods
-
-    /// <summary>
-    /// Do we have Multiple hits on the searchg
-    /// </summary>
-    /// <returns></returns>
-    public bool IsMultiple()
+    public bool GetArtists(string strArtist, out  List<AllMusicArtistMatch> artists)
     {
-      return _multiple;
-    }
+      Log.Debug("AllmusicScraper.  Searching-Artist: {0}", strArtist);
+      artists = new List<AllMusicArtistMatch>();
+      var strEncodedArtist = EncodeString(strArtist);
+      var strURL = BaseURL + strEncodedArtist;
 
-    /// <summary>
-    /// Retrieve the Items found
-    /// </summary>
-    /// <returns></returns>
-    public List<string> GetItemsFound()
-    {
-      return _values;
-    }
-
-    /// <summary>
-    /// Retrieve the Albums Found
-    /// </summary>
-    /// <returns></returns>
-    public List<MusicAlbumInfo> GetAlbumsFound()
-    {
-      return _albumList;
-    }
-
-    /// <summary>
-    /// Get the HTML Content
-    /// </summary>
-    /// <returns></returns>
-    public string GetHtmlContent()
-    {
-      return _htmlCode;
-    }
-
-    /// <summary>
-    /// Get page as per selected index
-    /// </summary>
-    /// <param name="index"></param>
-    /// <returns></returns>
-    public bool FindInfoByIndex(int index)
-    {
-      if (index < 0)
+      string artistSearchHtml;
+      if (!GetHTML(strURL, out artistSearchHtml))
       {
         return false;
       }
 
-      string url = "";
-      if (_searchby == SearchBy.Artists)
+      var matches = ArtistURLRegEx.Matches(artistSearchHtml);
+      var strCleanArtist = EncodeString(CleanArtist(strArtist));
+
+      //TODO needs image url in regexp
+      artists.AddRange(from Match m in matches
+                       let strCleanMatch = EncodeString(CleanArtist(m.Groups["artist"].ToString()))
+                       let strYearsActive = m.Groups["years"].ToString().Trim()
+                       let strArtistUrl = m.Groups["artistURL"].ToString()
+                       let strGenre = m.Groups["genres"].ToString()
+                       where strCleanArtist == strCleanMatch
+                       where ! string.IsNullOrEmpty(strYearsActive)
+                       select new AllMusicArtistMatch { Artist = strArtist, YearsActive = strYearsActive, ArtistUrl = strArtistUrl, Genre = strGenre});
+
+      if(artists.Count == 0)
       {
-        url = _codes[index];
-      }
-      else
-      {
-        url = _albumList[index].AlbumURL;
+        // still possible that search returned values but none match our artist
+        // try again but this time do not include years active
+        artists.AddRange(from Match m in matches 
+                         let strCleanMatch = EncodeString(CleanArtist(m.Groups["artist"].ToString())) 
+                         let strYearsActive = m.Groups["years"].ToString().Trim() 
+                         let strArtistUrl = m.Groups["artistURL"].ToString() 
+                         let strGenre = m.Groups["genres"].ToString()
+                         where strCleanArtist == strCleanMatch 
+                         select new AllMusicArtistMatch {Artist = strArtist, YearsActive = strYearsActive, ArtistUrl = strArtistUrl, Genre = strGenre });
       }
 
-      string strHTML = GetHTTP(url);
-      if (strHTML.Length == 0)
+      Log.Debug("AllmusicScraper.  Searched-Artist: {0} Found: {1} matches", strArtist, artists.Count.ToString(CultureInfo.InvariantCulture));
+
+        return artists.Count != 0;
+    }
+
+    public bool GetArtistHtml(AllMusicArtistMatch allMusicArtistMatch, out string strHTML)
+    {
+      return GetHTML(allMusicArtistMatch.ArtistUrl, out strHTML); 
+    }
+
+    public bool GetAlbumHtml(string strAlbum, string strArtistUrl, out string strHtml)
+    {
+      Log.Debug("AllmusicScraper.  Searching-Album: {0}", strAlbum);
+      strHtml = string.Empty;
+      string strAlbumURL;
+      var strURL = strArtistUrl + "/overview/main#discography";
+      if(!GetAlbumURL(strURL, strAlbum, out strAlbumURL))
+      {
+        Log.Debug("AllmusicScraper.  Searching-Album: {0} - not found in main albums.  Checking compilations", strAlbum);
+        strURL = strArtistUrl + "/overview/compilations#discography";
+        if (!GetAlbumURL(strURL, strAlbum, out strAlbumURL))
+        {
+          Log.Debug("AllmusicScraper.  Searching-Album: {0} - not found", strAlbum);
+          return false;
+        }
+      }
+
+      return GetHTML(strAlbumURL, out strHtml);
+    }
+
+    #endregion
+
+    #region private methods
+
+    private static bool GetAlbumURL(string strArtistURL, string strAlbum, out string strAlbumURL)
+    {
+      strAlbumURL = string.Empty;
+      string discHTML;
+      if (!GetHTML(strArtistURL, out discHTML))
       {
         return false;
       }
 
-      _htmlCode = strHTML; // save the html content...
+      strAlbum = strAlbum.ToLower();
+
+      // build up a list of possible alternatives
+
+      // attempt to remove stack endings (eg. disc2, (CD2) etc)
+      var strStripStackEnding = strAlbum;
+      Util.Utils.RemoveStackEndings(ref strStripStackEnding);
+      // try and remove any thing else in brackets at end of album name
+      // eg. (remastered), (special edition), (vinyl) etc
+      var strAlbumRemoveBrackets = BracketRegEx.Replace(strAlbum, "$1").Trim();
+      // try and repalce all punctuation to try and get a match
+      // sometimes you have three dots in one format but two in another
+      var strRemovePunctuation = PunctuationRegex.Replace(strAlbum, "").Trim();
+      // replace & and + with "and"
+      var strAndAlbum = strAlbum.Replace("&", "and").Replace("+", "and");
+
+      var albumFound = false;
+      for (var m = AlbumURLRegEx.Match(discHTML); m.Success; m = m.NextMatch())
+      {
+        var strFoundValue = m.Groups["albumName"].ToString().ToLower();
+        strFoundValue = System.Web.HttpUtility.HtmlDecode(strFoundValue);
+        var strFoundPunctuation = PunctuationRegex.Replace(strFoundValue, "");
+        var strFoundAnd = strFoundValue.Replace("&", "and").Replace("+", "and");
+
+        if (strFoundValue == strAlbum.ToLower())
+        {
+          albumFound = true;
+        }
+        else if (strFoundValue == strStripStackEnding.ToLower())
+        {
+          albumFound = true;
+        }
+        else if (strFoundValue == strAlbumRemoveBrackets.ToLower())
+        {
+          albumFound = true;
+        }
+        else if (strFoundPunctuation == strRemovePunctuation.ToLower())
+        {
+          albumFound = true;
+        }
+        else if (strAndAlbum == strFoundAnd)
+        {
+          albumFound = true;
+        }
+
+        if (!albumFound) continue;
+        strAlbumURL = m.Groups["albumURL"].ToString();
+        break;
+      }
+
+      // return true if we have picked up a URL
+      return !String.IsNullOrEmpty(strAlbumURL);
+    }
+
+    /// <summary>
+    /// Attempt to make string searching more helpful.   Removes all accents and puts in lower case
+    /// Then escapes characters for use in URI
+    /// </summary>
+    /// <param name="strUnclean">String to be encoded</param>
+    /// <returns>An encoded, cleansed string</returns>
+    private static string EncodeString(string strUnclean)
+    {
+      var stFormD = strUnclean.Normalize(NormalizationForm.FormD);
+      var sb = new StringBuilder();
+
+      foreach (var t in from t in stFormD let uc = CharUnicodeInfo.GetUnicodeCategory(t) where uc != UnicodeCategory.NonSpacingMark select t)
+      {
+        sb.Append(t);
+      }
+      var strClean = Uri.EscapeDataString(sb.ToString().Normalize(NormalizationForm.FormC)).ToLower();
+
+      return strClean;
+    }
+
+    /// <summary>
+    /// Improve changes of matching artist by replacing & and + with "and"
+    /// on both side of comparison
+    /// Also remove "The"
+    /// </summary>
+    /// <param name="strArtist">artist we are searching for</param>
+    /// <returns>Cleaned artist string</returns>
+    private static string CleanArtist(string strArtist)
+    {
+      var strCleanArtist = strArtist.ToLower();
+      strCleanArtist = strCleanArtist.Replace("&", "and");
+      strCleanArtist = strCleanArtist.Replace("+", "and");
+      strCleanArtist = Regex.Replace(strCleanArtist, "^the ", "", RegexOptions.IgnoreCase);
+      return strCleanArtist;
+    }
+
+    #endregion
+
+    #region HTTP
+
+    private static bool GetHTML(string strURL, out string strHTML)
+    {
+      strHTML = string.Empty;
+      try 
+      {
+        var x = (HttpWebRequest)WebRequest.Create(strURL);
+
+        x.ProtocolVersion = HttpVersion.Version10;
+        x.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0";
+        x.ContentType = "text/html";
+        x.Timeout = 30000;
+        x.AllowAutoRedirect = false;
+
+        using (var y = (HttpWebResponse)x.GetResponse())
+        {
+          using (var z = y.GetResponseStream())
+          {
+            if (z == null)
+            {
+              x.Abort();
+              y.Close();
+              return false;
+            }
+            using (var sr = new StreamReader(z, Encoding.UTF8))
+            {
+              strHTML = sr.ReadToEnd();
+            }
+
+            z.Close();
+            x.Abort();
+            y.Close();
+          }
+        }
+      }
+      catch(Exception ex)
+      {
+        Log.Error("AMG Scraper: Error retrieving html for: {0}", strURL);
+        Log.Error(ex);
+        return false;
+      }
+
       return true;
     }
 
-    public bool FindAlbumInfo(string strAlbum, string artistName, int releaseYear)
-    {
-      _searchby = SearchBy.Albums;
-      _albumList.Clear();
-      if (FindInfo(SearchBy.Albums, strAlbum))
-      {
-        // Sort the Album
-        artistName = SwitchArtist(artistName);
-        _albumList.Sort(new AlbumSort(strAlbum, artistName, releaseYear));
-        return true;
-      }
-      return false;
-    }
-
-    /// <summary>
-    /// Search on Allmusic for the requested string
-    /// </summary>
-    /// <param name="searchBy"></param>
-    /// <param name="searchStr"></param>
-    /// <returns></returns>
-    public bool FindInfo(SearchBy searchBy, string searchStr)
-    {
-      _searchby = searchBy;
-      HTMLUtil util = new HTMLUtil();
-      string strPostData = "";
-      if (SearchBy.Albums == searchBy)
-      {
-        strPostData = string.Format(ALBUMSEARCH, HttpUtility.UrlEncode(searchStr));
-      }
-      else
-      {
-        searchStr = SwitchArtist(searchStr);
-        strPostData = string.Format(ARTISTSEARCH, HttpUtility.UrlEncode(searchStr));
-      }
-
-      string strHTML = PostHTTP(MAINURL + URLPROGRAM, strPostData);
-      if (strHTML.Length == 0)
-      {
-        return false;
-      }
-
-      _htmlCode = strHTML; // save the html content...
-
-      Regex multiples = new Regex(
-        @"\sSearch\sResults\sfor:",
-        RegexOptions.IgnoreCase
-        | RegexOptions.Multiline
-        | RegexOptions.IgnorePatternWhitespace
-        | RegexOptions.Compiled
-        );
-
-      if (multiples.IsMatch(strHTML))
-      {
-        string pattern = "";
-        if (searchBy.ToString().Equals("Artists"))
-        {
-          pattern = @"<tr.*?>\s*?.*?<td\s*?class=""relevance\stext-center"">\s*?.*\s*?.*</td>" +
-                    @"\s*?.*<td.*\s*?.*</td>\s*?.*<td>.*<a.*href=""(?<code>.*?)"">(?<name>.*)</a>.*</td>" +
-                    @"\s*?.*<td>(?<detail>.*)</td>\s*?.*<td>(?<detail2>.*)</td>";
-        }
-        else if (searchBy.ToString().Equals("Albums"))
-        {
-          pattern = @"<tr.*?>\s*?.*?<td\s*?class=""relevance\stext-center"">\s*?.*\s*?.*</td>" +
-                    @"\s*?.*<td.*\s*?.*</td>\s*?.*<td>.*<a.*href=""(?<code>.*?)"">(?<name>.*)</a>.*</td>" +
-                    @"\s*?.*<td>(?<detail>.*)</td>\s*?.*<td>.*</td>\s*?.*<td>(?<detail2>.*)</td>";
-        }
-
-
-        Match m;
-        Regex itemsFoundFromSite = new Regex(
-          pattern,
-          RegexOptions.IgnoreCase
-          | RegexOptions.Multiline
-          | RegexOptions.IgnorePatternWhitespace
-          | RegexOptions.Compiled
-          );
-
-
-        for (m = itemsFoundFromSite.Match(strHTML); m.Success; m = m.NextMatch())
-        {
-          string code = m.Groups["code"].ToString();
-          string name = m.Groups["name"].ToString();
-          string detail = m.Groups["detail"].ToString();
-          string detail2 = m.Groups["detail2"].ToString();
-
-          util.RemoveTags(ref name);
-          util.ConvertHTMLToAnsi(name, out name);
-
-          util.RemoveTags(ref detail);
-          util.ConvertHTMLToAnsi(detail, out detail);
-
-          util.RemoveTags(ref detail2);
-          util.ConvertHTMLToAnsi(detail2, out detail2);
-
-          if (SearchBy.Artists == searchBy)
-          {
-            detail += " - " + detail2;
-            if (detail.Length > 0)
-            {
-              _codes.Add(code);
-              _values.Add(name + " - " + detail);
-            }
-            else
-            {
-              _codes.Add(code);
-              _values.Add(name);
-            }
-          }
-          else
-          {
-            MusicAlbumInfo albumInfo = new MusicAlbumInfo();
-            albumInfo.AlbumURL = code;
-            albumInfo.Artist = detail;
-            albumInfo.Title = name;
-            albumInfo.DateOfRelease = detail2;
-            _albumList.Add(albumInfo);
-          }
-        }
-        _multiple = true;
-      }
-      else // found the right one
-      {}
-      return true;
-    }
-
     #endregion
 
-    #region Private Methods
-
-    /// <summary>
-    /// Post method for posting te search form
-    /// </summary>
-    /// <param name="strURL"></param>
-    /// <param name="strData"></param>
-    /// <returns></returns>
-    internal static string PostHTTP(string strURL, string strData)
-    {
-      try
-      {
-        string strBody;
-
-        HttpWebRequest req = (HttpWebRequest)WebRequest.Create(strURL);
-        try
-        {
-          // Use the current user in case an NTLM Proxy or similar is used.
-          req.Proxy.Credentials = CredentialCache.DefaultCredentials;
-        }
-        catch (Exception) {}
-
-        req.Method = "POST";
-        req.ProtocolVersion = HttpVersion.Version11;
-        req.UserAgent =
-          "Mozilla/5.0 (Windows; U; Windows NT 5.1; de; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5";
-        req.ContentType = "application/x-www-form-urlencoded";
-        req.ContentLength = strData.Length;
-
-        // Post the Data
-        StreamWriter sw = new StreamWriter(req.GetRequestStream());
-        sw.Write(strData);
-        sw.Close();
-
-        HttpWebResponse result = (HttpWebResponse)req.GetResponse();
-
-        try
-        {
-          Stream ReceiveStream = result.GetResponseStream();
-
-          using (StreamReader sr = new StreamReader(ReceiveStream, Encoding.Default))
-          {
-            strBody = sr.ReadToEnd();
-          }
-
-          return strBody;
-        }
-        finally
-        {
-          if (result != null)
-          {
-            result.Close();
-          }
-        }
-      }
-      catch (Exception) {}
-      return "";
-    }
-
-    /// <summary>
-    /// Retrieve HTTP content as per given URL
-    /// </summary>
-    /// <param name="strURL"></param>
-    /// <returns></returns>
-    internal static string GetHTTP(string strURL)
-    {
-      string retval = null;
-
-      // Initialize the WebRequest.
-      WebRequest myRequest = WebRequest.Create(strURL);
-
-      try
-      {
-        // Use the current user in case an NTLM Proxy or similar is used.
-        // wr.Proxy = WebProxy.GetDefaultProxy();
-        myRequest.Proxy.Credentials = CredentialCache.DefaultCredentials;
-      }
-      catch (Exception) {}
-
-      // Return the response. 
-      WebResponse myResponse = myRequest.GetResponse();
-
-      Stream ReceiveStream = myResponse.GetResponseStream();
-
-      using (StreamReader sr = new StreamReader(ReceiveStream, Encoding.Default))
-      {
-        retval = sr.ReadToEnd();
-      }
-
-      // Close the response to free resources.
-      myResponse.Close();
-
-      return retval;
-    }
-
-    /// <summary>
-    /// AllMusic has problems finding the right artist, if it is tagged e.g. Collins, Phil
-    /// so we return Phil Collins for the search
-    /// </summary>
-    /// <param name="artist"></param>
-    /// <returns></returns>
-    internal static string SwitchArtist(string artist)
-    {
-      int iPos = artist.IndexOf(',');
-      if (iPos > 0)
-      {
-        artist = String.Format("{0} {1}", artist.Substring(iPos + 2), artist.Substring(0, iPos));
-      }
-      return artist;
-    }
-
-    #endregion
   }
 }

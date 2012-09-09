@@ -23,84 +23,29 @@
     /// </summary>
     private void InitializeComponent()
     {
-      this.groupBoxGuiSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.homeComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.settingsCheckedListBox = new System.Windows.Forms.CheckedListBox();
       this.groupBoxSkin = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpButtonEditSkinSettings = new System.Windows.Forms.Button();
       this.linkLabel1 = new System.Windows.Forms.LinkLabel();
       this.panelFitImage = new System.Windows.Forms.Panel();
       this.previewPictureBox = new System.Windows.Forms.PictureBox();
       this.listViewAvailableSkins = new System.Windows.Forms.ListView();
-      this.colName = new System.Windows.Forms.ColumnHeader();
-      this.colVersion = new System.Windows.Forms.ColumnHeader();
-      this.groupBoxGuiSettings.SuspendLayout();
+      this.colName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.colVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.groupBoxGuiSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.homeComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.settingsCheckedListBox = new System.Windows.Forms.CheckedListBox();
       this.groupBoxSkin.SuspendLayout();
       this.panelFitImage.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.previewPictureBox)).BeginInit();
+      this.groupBoxGuiSettings.SuspendLayout();
       this.SuspendLayout();
-      // 
-      // groupBoxGuiSettings
-      // 
-      this.groupBoxGuiSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxGuiSettings.Controls.Add(this.homeComboBox);
-      this.groupBoxGuiSettings.Controls.Add(this.mpLabel1);
-      this.groupBoxGuiSettings.Controls.Add(this.settingsCheckedListBox);
-      this.groupBoxGuiSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxGuiSettings.Location = new System.Drawing.Point(6, 203);
-      this.groupBoxGuiSettings.Name = "groupBoxGuiSettings";
-      this.groupBoxGuiSettings.Size = new System.Drawing.Size(462, 190);
-      this.groupBoxGuiSettings.TabIndex = 1;
-      this.groupBoxGuiSettings.TabStop = false;
-      this.groupBoxGuiSettings.Text = "GUI settings";
-      // 
-      // homeComboBox
-      // 
-      this.homeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.homeComboBox.BorderColor = System.Drawing.Color.Empty;
-      this.homeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.homeComboBox.Items.AddRange(new object[] {
-            "Classic and Basic, prefer Classic",
-            "Classic and Basic, prefer Basic",
-            "only Classic Home",
-            "only Basic Home"});
-      this.homeComboBox.Location = new System.Drawing.Point(108, 124);
-      this.homeComboBox.Name = "homeComboBox";
-      this.homeComboBox.Size = new System.Drawing.Size(315, 21);
-      this.homeComboBox.TabIndex = 11;
-      // 
-      // mpLabel1
-      // 
-      this.mpLabel1.Location = new System.Drawing.Point(6, 127);
-      this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(96, 16);
-      this.mpLabel1.TabIndex = 10;
-      this.mpLabel1.Text = "Home Screen:";
-      // 
-      // settingsCheckedListBox
-      // 
-      this.settingsCheckedListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.settingsCheckedListBox.CheckOnClick = true;
-      this.settingsCheckedListBox.Items.AddRange(new object[] {
-            "Allow remember last focused item on supported window/skin",
-            "Autosize window mode to skin dimensions",
-            "Hide file extensions like .mp3, .avi, .mpg,...",
-            "Enable file existence cache (improves performance on some systems)",
-            "Enable skin sound effects",
-            "Show special mouse controls (scrollbars, etc)"});
-      this.settingsCheckedListBox.Location = new System.Drawing.Point(6, 20);
-      this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-      this.settingsCheckedListBox.Size = new System.Drawing.Size(450, 94);
-      this.settingsCheckedListBox.TabIndex = 0;
       // 
       // groupBoxSkin
       // 
       this.groupBoxSkin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxSkin.Controls.Add(this.mpButtonEditSkinSettings);
       this.groupBoxSkin.Controls.Add(this.linkLabel1);
       this.groupBoxSkin.Controls.Add(this.panelFitImage);
       this.groupBoxSkin.Controls.Add(this.listViewAvailableSkins);
@@ -110,7 +55,17 @@
       this.groupBoxSkin.Size = new System.Drawing.Size(462, 197);
       this.groupBoxSkin.TabIndex = 4;
       this.groupBoxSkin.TabStop = false;
-      this.groupBoxSkin.Text = "Skin Selection";
+      this.groupBoxSkin.Text = "Skin selection";
+      // 
+      // mpButtonEditSkinSettings
+      // 
+      this.mpButtonEditSkinSettings.Location = new System.Drawing.Point(263, 159);
+      this.mpButtonEditSkinSettings.Name = "mpButtonEditSkinSettings";
+      this.mpButtonEditSkinSettings.Size = new System.Drawing.Size(150, 23);
+      this.mpButtonEditSkinSettings.TabIndex = 11;
+      this.mpButtonEditSkinSettings.Text = "Edit Skin Settings";
+      this.mpButtonEditSkinSettings.UseVisualStyleBackColor = true;
+      this.mpButtonEditSkinSettings.Click += new System.EventHandler(this.mpButtonEditSkinSettings_Click);
       // 
       // linkLabel1
       // 
@@ -174,6 +129,63 @@
       this.colVersion.Text = "Version";
       this.colVersion.Width = 56;
       // 
+      // groupBoxGuiSettings
+      // 
+      this.groupBoxGuiSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxGuiSettings.Controls.Add(this.homeComboBox);
+      this.groupBoxGuiSettings.Controls.Add(this.mpLabel1);
+      this.groupBoxGuiSettings.Controls.Add(this.settingsCheckedListBox);
+      this.groupBoxGuiSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxGuiSettings.Location = new System.Drawing.Point(6, 203);
+      this.groupBoxGuiSettings.Name = "groupBoxGuiSettings";
+      this.groupBoxGuiSettings.Size = new System.Drawing.Size(462, 190);
+      this.groupBoxGuiSettings.TabIndex = 1;
+      this.groupBoxGuiSettings.TabStop = false;
+      this.groupBoxGuiSettings.Text = "GUI settings";
+      // 
+      // homeComboBox
+      // 
+      this.homeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.homeComboBox.BorderColor = System.Drawing.Color.Empty;
+      this.homeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.homeComboBox.Items.AddRange(new object[] {
+            "Classic and Basic, prefer Classic",
+            "Classic and Basic, prefer Basic",
+            "only Classic Home",
+            "only Basic Home"});
+      this.homeComboBox.Location = new System.Drawing.Point(108, 124);
+      this.homeComboBox.Name = "homeComboBox";
+      this.homeComboBox.Size = new System.Drawing.Size(315, 21);
+      this.homeComboBox.TabIndex = 11;
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.Location = new System.Drawing.Point(6, 127);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(96, 16);
+      this.mpLabel1.TabIndex = 10;
+      this.mpLabel1.Text = "Home Screen:";
+      // 
+      // settingsCheckedListBox
+      // 
+      this.settingsCheckedListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.settingsCheckedListBox.CheckOnClick = true;
+      this.settingsCheckedListBox.Items.AddRange(new object[] {
+            "Allow remember last focused item on supported window/skin",
+            "Autosize window mode to skin dimensions",
+            "Hide file extensions like .mp3, .avi, .mpg,...",
+            "Enable file existence cache (improves performance on some systems)",
+            "Enable skin sound effects",
+            "Show special mouse controls (scrollbars, etc)"});
+      this.settingsCheckedListBox.Location = new System.Drawing.Point(6, 20);
+      this.settingsCheckedListBox.Name = "settingsCheckedListBox";
+      this.settingsCheckedListBox.Size = new System.Drawing.Size(450, 94);
+      this.settingsCheckedListBox.TabIndex = 0;
+      // 
       // Gui
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -182,11 +194,11 @@
       this.Controls.Add(this.groupBoxGuiSettings);
       this.Name = "Gui";
       this.Size = new System.Drawing.Size(472, 402);
-      this.groupBoxGuiSettings.ResumeLayout(false);
       this.groupBoxSkin.ResumeLayout(false);
       this.groupBoxSkin.PerformLayout();
       this.panelFitImage.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.previewPictureBox)).EndInit();
+      this.groupBoxGuiSettings.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -204,5 +216,6 @@
     private System.Windows.Forms.ColumnHeader colVersion;
     private MediaPortal.UserInterface.Controls.MPComboBox homeComboBox;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
+    private System.Windows.Forms.Button mpButtonEditSkinSettings;
   }
 }

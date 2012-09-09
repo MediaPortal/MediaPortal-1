@@ -244,12 +244,12 @@ namespace MediaPortal.GUI.NumberPlace
       GUIControlFactory.RegisterControl("cell", typeof (CellControl));
 
       // Create our skin xml file
-      CreateSkinXML(GetWindowId(), GUIGraphicsContext.Skin);
+      CreateSkinXML(GetWindowId(), GUIGraphicsContext.Theme);
 
       this.timer.Elapsed += new ElapsedEventHandler(OnTimer_Tick);
 
       // Load the skin xml file
-      return Load(GUIGraphicsContext.Skin + @"\" + pluginConfigFileName + ".xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\" + pluginConfigFileName + ".xml"));
     }
 
     /// <summary>

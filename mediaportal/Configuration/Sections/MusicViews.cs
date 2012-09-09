@@ -81,7 +81,8 @@ namespace MediaPortal.Configuration.Sections
                                   "Filename",
                                   "Rating",
                                   "Disc#",
-                                  "Composer"
+                                  "Composer",
+                                  "Times Played"
                                 };
 
     public MusicViews()
@@ -98,6 +99,12 @@ namespace MediaPortal.Configuration.Sections
     public override void SaveSettings()
     {
       base.SaveSettings("Music");
+    }
+
+    public override void OnSectionActivated()
+    {
+      base.Section = "Music";
+      base.OnSectionActivated();
     }
   }
 }

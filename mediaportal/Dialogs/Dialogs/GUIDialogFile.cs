@@ -79,7 +79,7 @@ namespace MediaPortal.Dialogs
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\DialogFile.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\DialogFile.xml"));
     }
 
     public override bool SupportsDelayedLoad

@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2019</id>
   <defaultcontrol>10</defaultcontrol>
@@ -12,8 +12,6 @@
       <height>576</height>
       <texture>black.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
-      
-      
     </control>
     <control>
       <type>image</type>
@@ -23,8 +21,6 @@
       <width>337</width>
       <height>228</height>
       <texture>dialog_background.png</texture>
-      
-      
     </control>
     <control>
       <description>dialog Heading</description>
@@ -36,8 +32,6 @@
       <label>0</label>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
-      
-      
     </control>
     <control>
       <description>dialog line 1</description>
@@ -48,8 +42,6 @@
       <width>222</width>
       <font>font11</font>
       <textcolor>ffffffff</textcolor>
-      
-      
     </control>
     <control>
       <description>dialog line 2</description>
@@ -61,8 +53,6 @@
       <width>222</width>
       <font>font11</font>
       <textcolor>ffffffff</textcolor>
-      
-      
     </control>
     <control>
       <description>dialog line 3</description>
@@ -74,8 +64,6 @@
       <width>222</width>
       <font>font11</font>
       <textcolor>ffffffff</textcolor>
-      
-      
     </control>
     <control>
       <description>dialog line 4</description>
@@ -87,8 +75,6 @@
       <width>222</width>
       <font>font11</font>
       <textcolor>ffffffff</textcolor>
-      
-      
     </control>
     <control>
       <description>No button</description>

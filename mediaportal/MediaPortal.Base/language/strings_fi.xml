@@ -33,18 +33,6 @@
     <String id="32"> joulukuuta</String>
     <String id="50">DVD</String>
     <String id="51">Toista levy</String>
-
-
-
-
-
-
-
-
-
-
-
-
     <String id="100">Näytä: Ikonit</String>
     <String id="101">Näytä: Lista</String>
     <String id="102">Etsi tiedot</String>
@@ -1030,12 +1018,16 @@
     <String id="1518">Dekooderia ei pystytty luomaan.</String>
     <String id="1519">Ei sopivaa ohjelmistopohjaista koodekkia.</String>
     <String id="1520">Ei riittävästi levytilaa.</String>
-	<String id="1521">Näytä: Otsikko</String>
-	<String id="1522">Näytä: Tyylilaji</String>
-	<String id="1523">Etsi kuvauksesta</String>
+    <String id="1521">Näytä: Otsikko</String>
+    <String id="1522">Näytä: Tyylilaji</String>
+    <String id="1523">Etsi kuvauksesta</String>
     <String id="1600">Haluatko sammuttaa tietokoneen?</String>
     <String id="1601">Haluatko siirtyä valmiustilaan?</String>
     <String id="1602">Haluatko siirtyä lepotilaan?</String>
+    <String id="1700">Ponnahdusvalikko</String>
+    <String id="1701">Valitse toistotapa</String>
+    <String id="1702">Otsikko: #{0} - kohtauksia: {1}, kesto: {2}</String>
+    <String id="1703">Valitse kaikista otsikoista</String>
     <String id="1950">Tila</String>
     <String id="1951">Kiintolevy</String>
     <String id="1952">Tuuletin</String>

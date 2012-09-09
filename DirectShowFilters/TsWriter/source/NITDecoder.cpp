@@ -431,7 +431,7 @@ void CNITDecoder::DVB_GetSatDelivSys(byte* b,int maxLen)
 			for (int i=0; i < m_nit.satteliteNIT.size();++i)
 			{
 				NITSatDescriptor& nit=m_nit.satteliteNIT[i];
-				if (nit.Frequency==satteliteNIT.Frequency)
+				if (nit.Frequency==satteliteNIT.Frequency && nit.Polarisation==satteliteNIT.Polarisation)
 				{
           LogDebug("Sat nit: frequency:%d Symbolrate:%d Polarisation:%d FEC:%d S2:%d RollOff:%d", 
             satteliteNIT.Frequency,satteliteNIT.Symbolrate,satteliteNIT.Polarisation, satteliteNIT.FECInner, satteliteNIT.isS2, satteliteNIT.RollOff);

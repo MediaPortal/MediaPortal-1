@@ -61,6 +61,7 @@ void CPmtParser::OnNewSection(CSection& section)
   try
 	{
 		bool lpcm_audio_found=false;
+		bool dvb_video_found=false;
     int program_number = section.table_id_extension;
     int pcr_pid=((section.Data[8]& 0x1F)<<8)+section.Data[9];
     int program_info_length = ((section.Data[10] & 0xF)<<8)+section.Data[11];
@@ -110,7 +111,12 @@ void CPmtParser::OnNewSection(CSection& section)
         VideoPid pid;
         pid.Pid=elementary_PID;
         pid.VideoServiceType=stream_type;
+        if (!dvb_video_found) //Workaround for mis-detection of DC II streams...
+        {
+          m_pidInfo.videoPids.clear();
+        }
         m_pidInfo.videoPids.push_back(pid);
+        dvb_video_found = true;
       }
       if(stream_type==SERVICE_TYPE_AUDIO_MPEG1 || 
         stream_type==SERVICE_TYPE_AUDIO_MPEG2 || 
@@ -341,7 +347,7 @@ void CPmtParser::OnNewSection(CSection& section)
         len1 -= x;
         pointer += x;
       }
-      if (stream_type==SERVICE_TYPE_DCII_OR_LPCM && !lpcm_audio_found)
+      if (stream_type==SERVICE_TYPE_DCII_OR_LPCM && !lpcm_audio_found && !dvb_video_found)
       {
         VideoPid pid;
         pid.Pid=elementary_PID;

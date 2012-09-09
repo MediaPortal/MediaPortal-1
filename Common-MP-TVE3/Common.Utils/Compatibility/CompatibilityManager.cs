@@ -44,7 +44,7 @@ namespace MediaPortal.Common.Utils
     private static readonly HashSet<Assembly> AppAssemblies = new HashSet<Assembly>();
     private static readonly Dictionary<string, Version> SubSystemVersions = new Dictionary<string, Version>();
     private static readonly Version AppVersion;
-    public static readonly Version SkinVersion = new Version(1, 2, 0, 0);
+    public static readonly Version SkinVersion = new Version(1, 3, 0, 0);
     private static readonly string MinRequiredVersionDefault = "1.1.8.0"; // 1.2.0 RC1
 
     static CompatibilityManager()

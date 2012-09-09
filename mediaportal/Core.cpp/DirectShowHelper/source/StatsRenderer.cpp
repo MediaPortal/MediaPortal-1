@@ -14,11 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
+#include "stdafx.h"
+
 #include <streams.h>
 #include <d3dx9.h>
 
 #include "statsrenderer.h"
 #include "evrcustompresenter.h"
+
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\alloctracing.h"
 
 #define countof(array) (sizeof(array)/sizeof(array[0]))
 
@@ -192,7 +197,7 @@ void StatsRenderer::DrawStats()
     
     strText.Format("Display: %d x %d @ %.6f Hz | Meas rfsh: %.6f Hz | MaxLine: %d | PCD: %.6f", 
       m_pPresenter->m_displayMode.Width, m_pPresenter->m_displayMode.Height,
-      m_pPresenter->m_dD3DRefreshRate, 1000.0/m_pPresenter->m_dEstRefreshCycle, m_pPresenter->m_maxScanLine,
+      m_pPresenter->m_dD3DRefreshRate, 1000.0/m_pPresenter->m_displayParams.dEstRefreshCycle, m_pPresenter->m_displayParams.maxScanLine,
       m_pPresenter->m_fPCDMean);
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);

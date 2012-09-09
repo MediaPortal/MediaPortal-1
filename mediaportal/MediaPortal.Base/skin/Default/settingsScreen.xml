@@ -9,38 +9,49 @@
   <controls>
     <import>common.settings.xml</import>
     <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>244</posX>
+      <posY>96</posY>
+      <height>416</height>
+      <width>244</width>
+      <texture>backslide.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
       <description>buttons</description>
       <type>group</type>
-      <animation effect="slide" time="70" start="800,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
-      <posX>244</posX>
-      <posY>164</posY>
-      <layout>StackLayout</layout>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <posX>261</posX>
+      <posY>128</posY>
+      <layout>StackLayout(0, Vertical, true)</layout>
       <control>
         <description>UI Calibration button</description>
         <type>button</type>
         <id>2</id>
-        <width>229</width>
         <label>213</label>
         <hyperlink>10</hyperlink>
         <onup>17</onup>
+        <width>196</width>
       </control>
       <control>
         <description>Screen Calibration button</description>
         <type>button</type>
         <id>3</id>
-        <width>229</width>
         <label>214</label>
         <hyperlink>11</hyperlink>
+        <width>196</width>
       </control>
       <control>
         <description>Scroll speed button</description>
         <type>button</type>
         <id>4</id>
-        <width>229</width>
         <label>673</label>
         <hyperlink>31</hyperlink>
         <ondown>99</ondown>
+        <width>196</width>
       </control>
     </control>
   </controls>

@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>7700</id>
   <defaultcontrol>502</defaultcontrol>
@@ -7,7 +7,6 @@
   <define>#header.label:Teletext</define>
   <define>#header.hover:hover_my tv.png</define>
   <controls>
-    <import>common.time.xml</import>
     <control>
       <description>BG</description>
       <type>image</type>
@@ -15,29 +14,8 @@
       <width>720</width>
       <height>576</height>
     </control>
-    <control>
-      
-      
-      <type>image</type>
-      <id>1</id>
-      <posX>33</posX>
-      <posY>8</posY>
-      <width>46</width>
-      <height>80</height>
-      <texture>#header.hover</texture>
-    </control>
-    <control>
-      <type>label</type>
-      <id>1</id>
-      <posX>92</posX>
-      <posY>24</posY>
-      <label>#header.label</label>
-      <font>font16</font>
-      <align>left</align>
-      <textcolor>White</textcolor>
-      
-      
-    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
     <control>
       <description>tele-text rendering image</description>
       <type>image</type>
@@ -47,8 +25,6 @@
       <width>427</width>
       <height>456</height>
       <texture>black.png</texture>
-      
-      
     </control>
     <control>
       <description>tele-text rendering image 2</description>
@@ -59,22 +35,18 @@
       <width>427</width>
       <height>456</height>
       <texture>black.png</texture>
-      
-      
     </control>
     <control>
-      <description>template for program title darkarea </description>
+      <description>template for program title darkarea</description>
       <type>label</type>
       <visible>no</visible>
       <id>26</id>
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
-      <description>template for program title darkarea </description>
+      <description>template for program title darkarea</description>
       <type>label</type>
       <visible>no</visible>
       <posX>299</posX>
@@ -83,8 +55,6 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <type>group</type>
@@ -92,8 +62,6 @@
       <posY>96</posY>
       <layout>StackLayout</layout>
       <description>group element</description>
-      
-      
       <control>
         <description>Page100</description>
         <type>button</type>
@@ -211,8 +179,6 @@
       <width>123</width>
       <height>99</height>
       <texture>Picture_cover.png</texture>
-      
-      
     </control>
     <control>
       <description>video preview window</description>
@@ -226,8 +192,6 @@
       <centered>yes</centered>
       <action>18</action>
       <textureFocus>tv_green_border.png</textureFocus>
-      
-      
     </control>
   </controls>
 </window>

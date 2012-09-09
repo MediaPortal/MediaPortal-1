@@ -165,6 +165,10 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="WinCustomControls\WinCustomControls.csproj">
+      <Project>{49DFF256-09FD-4598-A3E8-855753E2A1FC}</Project>
+      <Name>WinCustomControls</Name>
+    </ProjectReference>
     <Reference Include="Bass.Net, Version=2.3.1.1, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\Bass.Net.dll</HintPath>
@@ -251,6 +255,18 @@
     </Compile>
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Sections\BD.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\BDCodec.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\BDCodec.designer.cs">
+      <DependentUpon>BDCodec.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RegistryUtilities.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\FiltersPowerDVDAudioDecoder.cs">
       <SubType>UserControl</SubType>
@@ -367,6 +383,12 @@
     </Compile>
     <Compile Include="SettingsForm.Designer.cs">
       <DependentUpon>SettingsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Subdialogs\DlgSkinSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Subdialogs\DlgAddGenre.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Subdialogs\DlgMpcSubs.cs">
       <SubType>Form</SubType>
@@ -618,6 +640,7 @@
     <Compile Include="WeatherChannel.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Content Include="Resources\blu-ray_regions.png" />
     <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\00_plugin_other.png" />
     <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\01_plugin_other_off.png" />
     <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\02_plugin_window.png" />
@@ -657,6 +680,12 @@
       <SubType>Designer</SubType>
       <DependentUpon>BaseViews.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sections\BD.resx">
+      <DependentUpon>BD.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\BDCodec.resx">
+      <DependentUpon>BDCodec.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\FiltersPowerDVDAudioDecoder.resx">
       <DependentUpon>FiltersPowerDVDAudioDecoder.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -687,6 +716,9 @@
     <EmbeddedResource Include="Sections\DVDZoom.resx">
       <DependentUpon>DVDZoom.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\MusicShares.resx">
+      <DependentUpon>MusicShares.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\TVDebugOptions.resx">
       <DependentUpon>TVDebugOptions.cs</DependentUpon>
@@ -739,6 +771,14 @@
     <EmbeddedResource Include="SettingsForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>SettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Subdialogs\DlgSkinSettings.resx">
+      <DependentUpon>DlgSkinSettings.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Subdialogs\DlgAddGenre.resx">
+      <DependentUpon>DlgAddGenre.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Subdialogs\DlgMpcSubs.resx">
       <DependentUpon>DlgMpcSubs.cs</DependentUpon>
@@ -954,6 +994,7 @@
     <None Include="Resources\remote.HidKeys.png" />
     <None Include="Resources\remote.FireDtv.png" />
     <None Include="Resources\remote.Centarea.png" />
+    <None Include="Resources\codec_screwdriver.png" />
     <Content Include="Resources\icon_folder.png" />
     <Content Include="Resources\icon_help.png" />
     <Content Include="Resources\icon_refresh.png" />

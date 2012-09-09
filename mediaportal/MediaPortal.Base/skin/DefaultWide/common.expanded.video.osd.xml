@@ -21,7 +21,7 @@
       <type>label</type>
       <id>1</id>
       <posX>70</posX>
-      <posY>370</posY>
+      <posY>373</posY>
       <label>#currentplaytime</label>
       <align>left</align>
       <font>font14</font>
@@ -33,9 +33,9 @@
       <type>image</type>
       <id>1</id>
       <posX>190</posX>
-      <posY>376</posY>
+      <posY>379</posY>
       <width>595</width>
-      <height>27</height>
+      <height>22</height>
       <texture>osd_progress_background.png</texture>
       <visible>control.hasfocus(1237)</visible>
     </control>
@@ -44,11 +44,11 @@
       <type>progress</type>
       <id>1</id>
       <posX>193</posX>
-      <posY>380</posY>
+      <posY>383</posY>
       <width>595</width>
       <offset>0</offset>
-      <height>20</height>
-      <innerheight>20</innerheight>
+      <height>16</height>
+      <innerheight>16</innerheight>
       <lefttexture>-</lefttexture>
       <midtexture>osd_progress_mid.png</midtexture>
       <righttexture>-</righttexture>
@@ -60,7 +60,7 @@
       <type>label</type>
       <id>1</id>
       <posX>810</posX>
-      <posY>370</posY>
+      <posY>373</posY>
       <label>#currentremaining</label>
       <align>left</align>
       <font>font14</font>
@@ -86,12 +86,12 @@
       <posX>70</posX>
       <posY>435</posY>
       <width>950</width>
-      <height>200</height>
+      <height>205</height>
       <align>left</align>
       <label>#Play.Current.Plot</label>
       <seperator>&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;	&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;	&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;</seperator>
-      <font>font11</font>
-      <textcolor>white</textcolor>
+      <font>font12</font>
+      <textcolor>ivory</textcolor>
       <visible>control.hasfocus(1237)</visible>
       <shadowAngle>0</shadowAngle>
       <shadowDistance>0</shadowDistance>
@@ -106,8 +106,8 @@
       <posY>324</posY>
       <align>left</align>
       <label>#Play.Current.Title</label>
-      <font>font14</font>
-      <textcolor>ivory</textcolor>
+      <font>font18</font>
+      <textcolor>ff6FAFE1</textcolor>
       <visible>control.hasfocus(1237)</visible>
     </control>
     <control>
@@ -116,7 +116,7 @@
       <id>102</id>
       <posX>1080</posX>
       <posY>435</posY>
-      <texture>#Play.Current.Thumb</texture>
+      <texture mask="videothumbmask.png">#Play.Current.Thumb</texture>
       <height>240</height>
       <width>160</width>
       <keepaspectratio>no</keepaspectratio>
@@ -125,18 +125,18 @@
     <control>
       <id>1</id>
       <type>image</type>
-      <posX>1078</posX>
-      <posY>433</posY>
-      <height>244</height>
-      <width>164</width>
-      <texture>DVD Cover.png</texture>
+      <posX>1080</posX>
+      <posY>435</posY>
+      <height>240</height>
+      <width>160</width>
+      <texture>Videothumbframe.png</texture>
       <visible>control.hasthumb(102)+control.hasfocus(1237)</visible>
     </control>
     <control>
       <description>vertical divider</description>
       <type>image</type>
       <id>1</id>
-      <posX>940</posX>
+      <posX>950</posX>
       <posY>325</posY>
       <height>80</height>
       <width>1</width>
@@ -152,8 +152,8 @@
       <posY>324</posY>
       <label>#time</label>
       <align>right</align>
-      <font>font14</font>
-      <textcolor>ivory</textcolor>
+      <font>font12</font>
+      <textcolor>ff6FAFE1</textcolor>
       <visible>control.hasfocus(1237)</visible>
     </control>
   </controls>

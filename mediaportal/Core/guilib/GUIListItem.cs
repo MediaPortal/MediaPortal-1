@@ -70,6 +70,7 @@ namespace MediaPortal.GUI.Library
     private int _idItem = 0; // General item id
     private bool _retrieveCoverArtAllowed = true;
     private int _dimColor = 0x60ffffff;
+    private bool _isBdDvdFolder = false; // is DVD or BD rip folder
 
     /// <summary>
     /// The (empty) constructor of the GUIListItem.
@@ -102,6 +103,7 @@ namespace MediaPortal.GUI.Library
       _tagMusic = item._tagMusic;
       _tagTv = item._tagTv;
       _tagAlbumInfo = item._tagAlbumInfo;
+      _isBdDvdFolder = item._isBdDvdFolder;
     }
 
     public GUIListItem(string aLabel, string aLabel2, string aPath, bool aIsFolder, FileInformation aFileInformation)
@@ -398,6 +400,15 @@ namespace MediaPortal.GUI.Library
     {
       get { return _isFolder; }
       set { _isFolder = value; }
+    }
+
+    /// <summary>
+    /// Get/set if item is DVD/BD rip folder
+    /// </summary>
+    public bool IsBdDvdFolder
+    {
+      get { return _isBdDvdFolder; }
+      set { _isBdDvdFolder = value; }
     }
 
     /// <summary>
