@@ -257,17 +257,13 @@ Global
 		{8635D515-A5D4-4FB7-BD30-71770651E18B}.UseCaptureCardDefinitions|x86.ActiveCfg = Release|Any CPU
 		{8635D515-A5D4-4FB7-BD30-71770651E18B}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|Any CPU
 		{7701AA79-18D4-4A18-BB52-16774FB7943D}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{7701AA79-18D4-4A18-BB52-16774FB7943D}.Debug|x86.Build.0 = Debug|Any CPU
 		{7701AA79-18D4-4A18-BB52-16774FB7943D}.Release|x86.ActiveCfg = Release|Any CPU
-		{7701AA79-18D4-4A18-BB52-16774FB7943D}.Release|x86.Build.0 = Release|Any CPU
 		{7701AA79-18D4-4A18-BB52-16774FB7943D}.UseCaptureCardDefinitions|x86.ActiveCfg = Release|x86
 		{7701AA79-18D4-4A18-BB52-16774FB7943D}.UseCaptureCardDefinitions|x86.Build.0 = Release|x86
 		{7701AA79-18D4-4A18-BB52-16774FB7943D}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|x86
 		{7701AA79-18D4-4A18-BB52-16774FB7943D}.UseCaptureDefintionsRelease|x86.Build.0 = Release|x86
 		{CC77F438-DBD3-4D9C-80B1-C86BA50CF635}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{CC77F438-DBD3-4D9C-80B1-C86BA50CF635}.Debug|x86.Build.0 = Debug|Any CPU
 		{CC77F438-DBD3-4D9C-80B1-C86BA50CF635}.Release|x86.ActiveCfg = Release|Any CPU
-		{CC77F438-DBD3-4D9C-80B1-C86BA50CF635}.Release|x86.Build.0 = Release|Any CPU
 		{CC77F438-DBD3-4D9C-80B1-C86BA50CF635}.UseCaptureCardDefinitions|x86.ActiveCfg = Release|x86
 		{CC77F438-DBD3-4D9C-80B1-C86BA50CF635}.UseCaptureCardDefinitions|x86.Build.0 = Release|x86
 		{CC77F438-DBD3-4D9C-80B1-C86BA50CF635}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|x86

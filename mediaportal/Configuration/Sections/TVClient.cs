@@ -343,7 +343,7 @@ namespace MediaPortal.Configuration.Sections
       }
 
       // Populate the list of program genres from the tv database.
-      Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvControl.dll");
+      Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\Mediaportal.TV.Server.TvControl.dll");
       if (assem != null)
       {
         Type[] types = assem.GetExportedTypes();
@@ -401,7 +401,7 @@ namespace MediaPortal.Configuration.Sections
 
       try
       {
-        Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\Mediaportal.TV.Server.TVLibrary.Interfaces.dll");
+        assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\Mediaportal.TV.Server.TVLibrary.Interfaces.dll");
         if (assem != null)
         {
           Type[] types = assem.GetExportedTypes();

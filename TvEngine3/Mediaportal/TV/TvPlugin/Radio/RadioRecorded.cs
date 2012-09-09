@@ -439,7 +439,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       base.Process();
     }
 
-    protected override void OnShowViews()
+    /*protected override void OnShowViews()
     {
       try
       {
@@ -483,7 +483,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       {
         Log.Error("RadioRecorded: Error in ShowViews - {0}", ex.ToString());
       }
-    }
+    }*/
 
     protected override void UpdateButtonStates()
     {
