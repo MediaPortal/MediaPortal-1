@@ -45,6 +45,7 @@
     <String id="44">Dec</String>
     <String id="50" prefix="My ">DVDs</String>
     <String id="51">Play disc</String>
+    <String id="59">Note: These settings are not available because the TV plugin is not installed.</String>
     <String id="60">Waiting for startup of TV service...</String>
     <String id="61">Waiting {0} second(s) before startup...</String>
     <String id="62">Initialising DirectX...</String>
