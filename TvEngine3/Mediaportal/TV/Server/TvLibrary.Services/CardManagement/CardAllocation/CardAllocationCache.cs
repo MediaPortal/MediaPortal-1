@@ -3,7 +3,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
+namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 {
   public static class CardAllocationCache
   {

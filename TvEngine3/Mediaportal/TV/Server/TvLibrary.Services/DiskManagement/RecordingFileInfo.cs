@@ -22,7 +22,7 @@ using System;
 using System.IO;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 
-namespace Mediaportal.TV.Server.TVService.DiskManagement
+namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
 {
   public class RecordingFileInfo : IComparable<RecordingFileInfo>
   {

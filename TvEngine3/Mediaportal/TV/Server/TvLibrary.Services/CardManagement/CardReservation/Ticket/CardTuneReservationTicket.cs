@@ -20,11 +20,10 @@
 
 using System.Collections.Generic;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.CardReservation;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
-namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Ticket
+namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Ticket
 {
   public class CardTuneReservationTicket : CardReservationTicketBase, ICardTuneReservationTicket
   {

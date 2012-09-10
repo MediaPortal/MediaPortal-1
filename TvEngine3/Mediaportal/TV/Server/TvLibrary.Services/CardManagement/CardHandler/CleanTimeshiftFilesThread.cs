@@ -22,7 +22,7 @@ using System.IO;
 using System.Threading;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
+namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   /// <summary>
   /// Thread that tries to cleanup timeshift files

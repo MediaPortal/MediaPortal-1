@@ -20,15 +20,13 @@
 
 using System;
 using System.Collections.Generic;
-using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
-namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
+namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public class EpgGrabbing : IEpgGrabbing
   {

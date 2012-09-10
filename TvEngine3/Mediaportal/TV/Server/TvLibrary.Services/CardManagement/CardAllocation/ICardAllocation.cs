@@ -20,13 +20,12 @@
 
 using System.Collections.Generic;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVService.CardManagement.CardHandler;
+using Mediaportal.TV.Server.TVLibrary.Scheduler;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
-using Mediaportal.TV.Server.TVService.Scheduler;
 
-namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
+namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 {
   public interface ICardAllocation
   {

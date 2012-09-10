@@ -19,11 +19,10 @@
 #endregion
 
 using System.Collections.Generic;
-using Mediaportal.TV.Server.TVService.CardManagement.CardHandler;
-using Mediaportal.TV.Server.TVService.Interfaces.Enums;
+using Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
-namespace Mediaportal.TV.Server.TVService.Interfaces
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
   public interface ITvCardContext
   {

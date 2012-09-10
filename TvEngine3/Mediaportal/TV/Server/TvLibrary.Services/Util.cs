@@ -27,7 +27,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace Mediaportal.TV.Server.TVService
+namespace Mediaportal.TV.Server.TVLibrary
 {
   /// <summary>
   /// 

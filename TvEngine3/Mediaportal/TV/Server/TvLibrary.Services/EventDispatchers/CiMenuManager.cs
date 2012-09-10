@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVService.Services;
+using Mediaportal.TV.Server.TVLibrary.Services;
 
-namespace Mediaportal.TV.Server.TVService.EventDispatchers
+namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
 {
   public class CiMenuManager : EventDispatcher, ICiMenuCallbacks
   {

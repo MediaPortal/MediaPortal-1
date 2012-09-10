@@ -21,14 +21,13 @@
 using System;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVService.CardManagement.CardHandler;
+using Mediaportal.TV.Server.TVLibrary.Scheduler;
+using Mediaportal.TV.Server.TVLibrary.Services;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
-using Mediaportal.TV.Server.TVService.Scheduler;
-using Mediaportal.TV.Server.TVService.Services;
 
-namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Implementations
+namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Implementations
 {
   public class CardReservationRec : CardReservationBase
   {    

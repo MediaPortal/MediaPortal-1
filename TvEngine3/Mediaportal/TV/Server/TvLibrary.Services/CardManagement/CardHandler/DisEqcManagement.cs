@@ -21,7 +21,7 @@
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 
-namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
+namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public class DisEqcManagement : IDisEqcManagement
   {

@@ -1,7 +1,7 @@
 using System;
 using System.Net;
 
-namespace Mediaportal.TV.Server.TVService.EventDispatchers
+namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
 {
   public class HeartbeatUser
   {    

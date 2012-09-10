@@ -17,14 +17,11 @@
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 #endregion
 
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVService.CardManagement.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
-using Mediaportal.TV.Server.TVService.Services;
 
-namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
+namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 {
   public class AdvancedCardAllocationStatic : AdvancedCardAllocation
   {

@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Services;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
-using Mediaportal.TV.Server.TVService.Services;
 
-namespace Mediaportal.TV.Server.TVService.EventDispatchers
+namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
 {
   public class HeartbeatManager : EventDispatcher
   {

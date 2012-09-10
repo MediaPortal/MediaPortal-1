@@ -22,27 +22,24 @@ using System;
 using System.Collections.Generic;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.Events;
-using Mediaportal.TV.Server.TVControl.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation;
+using Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVService.CardManagement.CardHandler;
-using Mediaportal.TV.Server.TVService.CardManagement.CardReservation;
-using Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Implementations;
-using Mediaportal.TV.Server.TVService.Interfaces;
 using System.Threading;
+using Mediaportal.TV.Server.TVLibrary.Services;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.CardReservation;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
-using Mediaportal.TV.Server.TVService.Services;
 
-namespace Mediaportal.TV.Server.TVService.Epg
+namespace Mediaportal.TV.Server.TVLibrary.Epg
 {
   /// <summary>
   /// Class which will  grab the epg for for a specific card

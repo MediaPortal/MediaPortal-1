@@ -35,24 +35,23 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation;
+using Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation;
+using Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Implementations;
+using Mediaportal.TV.Server.TVLibrary.DiskManagement;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVService.CardManagement.CardAllocation;
-using Mediaportal.TV.Server.TVService.CardManagement.CardHandler;
-using Mediaportal.TV.Server.TVService.CardManagement.CardReservation;
-using Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Implementations;
-using Mediaportal.TV.Server.TVService.DiskManagement;
+using Mediaportal.TV.Server.TVLibrary.Services;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.CardReservation;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
-using Mediaportal.TV.Server.TVService.Services;
-using RecordingManagement = Mediaportal.TV.Server.TVService.DiskManagement.RecordingManagement;
+using RecordingManagement = Mediaportal.TV.Server.TVLibrary.DiskManagement.RecordingManagement;
 
 #endregion
 
-namespace Mediaportal.TV.Server.TVService.Scheduler
+namespace Mediaportal.TV.Server.TVLibrary.Scheduler
 {
   /// <summary>
   /// Scheduler class.
@@ -68,7 +67,7 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
 
     #region imports
 
-    [FlagsAttribute]
+    [Flags]
     public enum EXECUTION_STATE : uint
     {
       ES_SYSTEM_REQUIRED = 0x00000001,

@@ -18,22 +18,17 @@
 #endregion
 
 using System.Collections.Generic;
-using System.Linq;
-using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVService.CardManagement.CardHandler;
-using Mediaportal.TV.Server.TVService.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Scheduler;
+using Mediaportal.TV.Server.TVLibrary.Services;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.CardReservation;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
-using Mediaportal.TV.Server.TVService.Scheduler;
-using Mediaportal.TV.Server.TVService.Services;
 
-namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
+namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 {
 
   public class AdvancedCardAllocationTicket : AdvancedCardAllocation

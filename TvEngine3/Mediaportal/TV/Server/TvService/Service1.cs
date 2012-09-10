@@ -20,18 +20,12 @@
 
 using System;
 using System.Collections;
-using System.Collections.Specialized;
-using System.Configuration;
 using System.Configuration.Install;
-using System.Diagnostics;
 using System.IO;
-using System.Runtime.Remoting;
 using System.ServiceProcess;
 using System.Threading;
 using System.Windows.Forms;
-using System.Xml;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVService

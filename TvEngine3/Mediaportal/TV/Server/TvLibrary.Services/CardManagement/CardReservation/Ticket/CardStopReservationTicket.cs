@@ -18,10 +18,9 @@
 
 #endregion
 
-using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.CardReservation;
 
-namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Ticket
+namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Ticket
 {
   public class CardStopReservationTicket : CardReservationTicketBase, ICardStopReservationTicket
   {

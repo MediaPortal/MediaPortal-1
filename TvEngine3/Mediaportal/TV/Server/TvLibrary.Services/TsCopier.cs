@@ -23,7 +23,7 @@ using System.IO;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace Mediaportal.TV.Server.TVService
+namespace Mediaportal.TV.Server.TVLibrary
 {
   internal class TsCopier
   {

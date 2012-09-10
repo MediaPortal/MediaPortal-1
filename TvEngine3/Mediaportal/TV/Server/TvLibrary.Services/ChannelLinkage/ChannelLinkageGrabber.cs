@@ -26,7 +26,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using System.Threading;
 
-namespace Mediaportal.TV.Server.TVService.ChannelLinkage
+namespace Mediaportal.TV.Server.TVLibrary.ChannelLinkage
 {
   public class ChannelLinkageGrabber : BaseChannelLinkageScanner
   {

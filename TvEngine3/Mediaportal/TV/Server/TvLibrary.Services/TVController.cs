@@ -21,57 +21,52 @@
 #region usings
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
-using System.ServiceModel;
 using System.Threading;
 using System.Xml;
 using MediaPortal.Common.Utils;
 using MediaPortal.Common.Utils.ExtensionMethods;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.Events;
-using Mediaportal.TV.Server.TVControl.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Presentation;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation;
+using Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler;
+using Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation;
+using Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Implementations;
+using Mediaportal.TV.Server.TVLibrary.DiskManagement;
+using Mediaportal.TV.Server.TVLibrary.Epg;
+using Mediaportal.TV.Server.TVLibrary.EventDispatchers;
 using Mediaportal.TV.Server.TVLibrary.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Scheduler;
+using Mediaportal.TV.Server.TVLibrary.Services;
 using Mediaportal.TV.Server.TVLibrary.Streaming;
-using Mediaportal.TV.Server.TVService.CardManagement.CardAllocation;
-using Mediaportal.TV.Server.TVService.CardManagement.CardHandler;
-using Mediaportal.TV.Server.TVService.CardManagement.CardReservation;
-using Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Implementations;
-using Mediaportal.TV.Server.TVService.DiskManagement;
-using Mediaportal.TV.Server.TVService.Epg;
-using Mediaportal.TV.Server.TVService.EventDispatchers;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.CardReservation;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
-using Mediaportal.TV.Server.TVService.Scheduler;
-using Mediaportal.TV.Server.TVService.Services;
 using RecordingManagement = Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.RecordingManagement;
 
 #endregion
 
-namespace Mediaportal.TV.Server.TVService
+namespace Mediaportal.TV.Server.TVLibrary
 {
   /// <summary>
   /// This class servers all requests from remote clients

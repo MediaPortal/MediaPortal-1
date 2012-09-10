@@ -20,27 +20,17 @@
 
 #region
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Timers;
-using Mediaportal.TV.Server.TVControl;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVService.CardManagement.CardHandler;
-using Mediaportal.TV.Server.TVService.Interfaces;
-using Mediaportal.TV.Server.TVService.Interfaces.Enums;
+using Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
-using Mediaportal.TV.Server.TVService.Services;
 
 #endregion
 
 [assembly: InternalsVisibleTo("TVServiceTests")]
 
-namespace Mediaportal.TV.Server.TVService
+namespace Mediaportal.TV.Server.TVLibrary
 {
   /// <summary>
   ///   Class which holds the context for a specific card

@@ -28,9 +28,9 @@ using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using System.Threading;
-using Mediaportal.TV.Server.TVService.Services;
+using Mediaportal.TV.Server.TVLibrary.Services;
 
-namespace Mediaportal.TV.Server.TVService.Epg
+namespace Mediaportal.TV.Server.TVLibrary.Epg
 {
   public class EpgCardPriorityComparer : IComparer<EpgCard>
   {

@@ -20,8 +20,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Presentation;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
@@ -32,7 +30,7 @@ using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 using MediaPortal.Common.Utils;
 
-namespace Mediaportal.TV.Server.TVService.Services
+namespace Mediaportal.TV.Server.TVLibrary.Services
 {
   /// <summary>
   /// This class servers all requests from remote clients  

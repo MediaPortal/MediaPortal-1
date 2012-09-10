@@ -25,7 +25,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace Mediaportal.TV.Server.TVService.Scheduler
+namespace Mediaportal.TV.Server.TVLibrary.Scheduler
 {
   public static class IComparableExtensions
   {

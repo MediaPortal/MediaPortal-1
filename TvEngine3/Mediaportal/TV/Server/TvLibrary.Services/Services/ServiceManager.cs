@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVControl;
-using Mediaportal.TV.Server.TVControl.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
-namespace Mediaportal.TV.Server.TVService.Services
+namespace Mediaportal.TV.Server.TVLibrary.Services
 {
   public class ServiceManager : Singleton<ServiceManager>, IDisposable
   {

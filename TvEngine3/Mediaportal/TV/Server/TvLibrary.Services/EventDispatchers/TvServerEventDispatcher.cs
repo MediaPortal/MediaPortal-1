@@ -1,14 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.ServiceModel;
-using System.Threading;
 using Mediaportal.TV.Server.TVControl.Events;
-using Mediaportal.TV.Server.TVControl.Interfaces.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVService.Services;
+using Mediaportal.TV.Server.TVLibrary.Services;
 
-namespace Mediaportal.TV.Server.TVService.EventDispatchers
+namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
 {
   public class TvServerEventDispatcher : EventDispatcher
   {            

@@ -25,7 +25,7 @@ using Mediaportal.TV.Server.Plugins.Base;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Common.Utils;
 
-namespace Mediaportal.TV.Server.TVService
+namespace Mediaportal.TV.Server.TVLibrary
 {
   internal class PluginLoader
   {

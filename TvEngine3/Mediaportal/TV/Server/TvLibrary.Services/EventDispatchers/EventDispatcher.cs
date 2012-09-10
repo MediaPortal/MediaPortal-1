@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Mediaportal.TV.Server.TVService.EventDispatchers
+namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
 {
   public abstract class EventDispatcher
   {

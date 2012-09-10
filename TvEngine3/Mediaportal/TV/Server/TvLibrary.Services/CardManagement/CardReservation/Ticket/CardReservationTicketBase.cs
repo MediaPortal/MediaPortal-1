@@ -19,7 +19,7 @@
 #endregion
 
 
-namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Ticket
+namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Ticket
 {
   public class CardReservationTicketBase
   {
