@@ -301,7 +301,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SplashScreen.cs" />
-    <Compile Include="ThreadMessageFilter.cs" />
     <Compile Include="WorkingSet.cs" />
     <EmbeddedResource Include="CodecsForm.resx">
       <DependentUpon>CodecsForm.cs</DependentUpon>

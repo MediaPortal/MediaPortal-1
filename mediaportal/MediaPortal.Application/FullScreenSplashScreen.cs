@@ -184,14 +184,14 @@ namespace MediaPortal
     {
       using (Settings xmlreader = new MPSettings())
       {
-        if ((D3DApp._screenNumberOverride != -1) ||
+        if ((D3DApp.ScreenNumberOverride != -1) ||
             xmlreader.GetValueAsBool("screenselector", "usescreenselector", false))
           // lets see if the command line option "/screen=" was set or the screen selector is enabled in the config
         {
           int ScreenNumber = 0;
-          if (D3DApp._screenNumberOverride != -1)
+          if (D3DApp.ScreenNumberOverride != -1)
           {
-            ScreenNumber = D3DApp._screenNumberOverride;
+            ScreenNumber = D3DApp.ScreenNumberOverride;
           }
           else
           {
