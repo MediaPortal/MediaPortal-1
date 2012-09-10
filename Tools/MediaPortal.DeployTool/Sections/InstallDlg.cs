@@ -175,7 +175,7 @@ namespace MediaPortal.DeployTool.Sections
       AddPackageToListView(new VCRedistChecker());
       AddPackageToListView(new VCRedistCheckerOld());
       AddPackageToListView(new WindowsMediaPlayerChecker());
-      AddPackageToListView(new CTP2011Checker());
+      // AddPackageToListView(new CTP2011Checker()); // Disable CTP2011
       switch (InstallationProperties.Instance["InstallType"])
       {
         case "singleseat":
