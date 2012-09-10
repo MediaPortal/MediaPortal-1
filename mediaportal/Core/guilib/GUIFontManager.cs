@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2012 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2012 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -79,7 +79,7 @@ namespace MediaPortal.GUI.Library
     protected static Dictionary<string, string> _dictFontAlias = new Dictionary<string, string>();
     private static Sprite _d3dxSprite;
     private static bool _d3dxSpriteUsed;
-    private static int _maxCachedTextures = 250;
+    private const int MaxCachedTextures = 250;
     private static List<FontManagerDrawText> _listDrawText = new List<FontManagerDrawText>();
     private static List<FontTexture> _listFontTextures = new List<FontTexture>();
     private static List<FontObject> _listFontObjects = new List<FontObject>();
@@ -141,72 +141,78 @@ namespace MediaPortal.GUI.Library
           }
           // Select the list of fonts
           XmlNodeList list = doc.DocumentElement.SelectNodes("/fonts/font");
-          foreach (XmlNode node in list)
+          if (list != null)
           {
-            XmlNode nodeStart = node.SelectSingleNodeFast("startchar");
-            XmlNode nodeEnd = node.SelectSingleNodeFast("endchar");
-            XmlNode nodeName = node.SelectSingleNodeFast("name");
-            XmlNode nodeFileName = node.SelectSingleNodeFast("filename");
-            XmlNode nodeHeight = node.SelectSingleNodeFast("height");
-            XmlNode nodeBold = node.SelectSingleNodeFast("bold");
-            XmlNode nodeItalics = node.SelectSingleNodeFast("italic");
-            if (nodeHeight != null && nodeName != null && nodeFileName != null)
+            foreach (XmlNode node in list)
             {
-              bool bold = false;
-              bool italic = false;
-              if (nodeBold != null && nodeBold.InnerText != null && nodeBold.InnerText.Equals("yes"))
+              XmlNode nodeStart = node.SelectSingleNodeFast("startchar");
+              XmlNode nodeEnd = node.SelectSingleNodeFast("endchar");
+              XmlNode nodeName = node.SelectSingleNodeFast("name");
+              XmlNode nodeFileName = node.SelectSingleNodeFast("filename");
+              XmlNode nodeHeight = node.SelectSingleNodeFast("height");
+              XmlNode nodeBold = node.SelectSingleNodeFast("bold");
+              XmlNode nodeItalics = node.SelectSingleNodeFast("italic");
+              if (nodeHeight != null && nodeName != null && nodeFileName != null)
               {
-                bold = true;
-              }
-              if (nodeItalics != null && nodeItalics.InnerText != null && nodeItalics.InnerText.Equals("yes"))
-              {
-                italic = true;
-              }
-              string strName = nodeName.InnerText;
-              string strFileName = nodeFileName.InnerText;
-              int iHeight = Int32.Parse(nodeHeight.InnerText);
+                bool bold = false;
+                bool italic = false;
+                if (nodeBold != null && nodeBold.InnerText.Equals("yes"))
+                {
+                  bold = true;
+                }
+                if (nodeItalics != null && nodeItalics.InnerText.Equals("yes"))
+                {
+                  italic = true;
+                }
+                string strName = nodeName.InnerText;
+                string strFileName = nodeFileName.InnerText;
+                int iHeight = Int32.Parse(nodeHeight.InnerText);
 
-              // height is based on 720x576
-              float fPercent = (((float)GUIGraphicsContext.Height) * GUIGraphicsContext.ZoomVertical) / 576.0f;
-              fPercent *= iHeight;
-              iHeight = (int)fPercent;
-              FontStyle style = new FontStyle();
-              style = FontStyle.Regular;
-              if (bold)
-              {
-                style |= FontStyle.Bold;
-              }
-              if (italic)
-              {
-                style |= FontStyle.Italic;
-              }
-              GUIFont font = new GUIFont(strName, strFileName, iHeight, style);
-              font.ID = counter++;
+                // height is based on 720x576
+                // TODO: make height depended on skin dimensions
+                float fPercent = (GUIGraphicsContext.Height * GUIGraphicsContext.ZoomVertical) / 576.0f;
+                fPercent *= iHeight;
+                iHeight = (int)fPercent;
+                FontStyle style = FontStyle.Regular;
+                if (bold)
+                {
+                  style |= FontStyle.Bold;
+                }
+                if (italic)
+                {
+                  style |= FontStyle.Italic;
+                }
+                GUIFont font = new GUIFont(strName, strFileName, iHeight, style);
+                font.ID = counter++;
 
-              // .NET's LocalisationProvider should give the correct amount of chars.
-              if (nodeStart != null && nodeStart.InnerText != "" && nodeEnd != null && nodeEnd.InnerText != "")
-              {
-                int start = Int32.Parse(nodeStart.InnerText);
-                int end = Int32.Parse(nodeEnd.InnerText);
-                font.SetRange(start, end);
-              }
-              else
-              {
-                font.SetRange(0, GUIGraphicsContext.CharsInCharacterSet);
-              }
+                // .NET's LocalisationProvider should give the correct amount of chars.
+                if (nodeStart != null && nodeStart.InnerText != "" && nodeEnd != null && nodeEnd.InnerText != "")
+                {
+                  int start = Int32.Parse(nodeStart.InnerText);
+                  int end = Int32.Parse(nodeEnd.InnerText);
+                  font.SetRange(start, end);
+                }
+                else
+                {
+                  font.SetRange(0, GUIGraphicsContext.CharsInCharacterSet);
+                }
 
-              font.Load();
-              _listFonts.Add(font);
+                font.Load();
+                _listFonts.Add(font);
+              }
             }
           }
 
           // Select the list of aliases
           XmlNodeList listAlias = doc.DocumentElement.SelectNodes("/fonts/alias");
-          foreach (XmlNode node in listAlias)
+          if (listAlias != null)
           {
-            XmlNode nodeName = node.SelectSingleNodeFast("name");
-            XmlNode nodeFontName = node.SelectSingleNodeFast("fontname");
-            _dictFontAlias.Add(nodeName.InnerText, nodeFontName.InnerText);
+            foreach (XmlNode node in listAlias)
+            {
+              XmlNode nodeName = node.SelectSingleNodeFast("name");
+              XmlNode nodeFontName = node.SelectSingleNodeFast("fontname");
+              _dictFontAlias.Add(nodeName.InnerText, nodeFontName.InnerText);
+            }
           }
 
           return true;
@@ -256,9 +262,8 @@ namespace MediaPortal.GUI.Library
             fn = strFontName;
           }
 
-          for (int i = 0; i < _listFonts.Count; ++i)
+          foreach (GUIFont font in _listFonts)
           {
-            GUIFont font = _listFonts[i];
             if (font.FontName == fn)
             {
               return font;
@@ -297,7 +302,6 @@ namespace MediaPortal.GUI.Library
         textwidth = rect.Width;
         textheight = rect.Height;
       }
-      return;
     }
 
     /// <summary>
@@ -367,6 +371,7 @@ namespace MediaPortal.GUI.Library
       draw.color = color.ToArgb();
       draw.text = text;
       draw.matrix = (float[,])GUIGraphicsContext.GetFinalMatrix().Clone();
+      // TODO: DX9Device.Viewport should be used to get current resolution of form
       draw.viewport = GUIGraphicsContext.DX9Device.Viewport;
       if (maxWidth >= 0)
       {
@@ -421,7 +426,7 @@ namespace MediaPortal.GUI.Library
                 g.SmoothingMode = SmoothingMode.AntiAlias;
                 g.TextRenderingHint = TextRenderingHint.AntiAlias;
                 g.TextContrast = 0;
-                g.DrawString(draw.text, CachedSystemFont(fontSize), Brushes.White, new Point((int)0, (int)0),
+                g.DrawString(draw.text, CachedSystemFont(fontSize), Brushes.White, new Point(0, 0),
                              StringFormat.GenericTypographic);
 
                 bitmap.Save(imageStream, ImageFormat.Bmp);
@@ -474,7 +479,7 @@ namespace MediaPortal.GUI.Library
         newTexture.texture = texture;
         newTexture.size = fontSize;
 
-        if (_listFontTextures.Count >= _maxCachedTextures)
+        if (_listFontTextures.Count >= MaxCachedTextures)
         {
           //need to clear this and not rely on the finalizer
           FontTexture disposableFont = _listFontTextures[0];
@@ -495,9 +500,8 @@ namespace MediaPortal.GUI.Library
       lock (Renderlock)
       {
         FontEnginePresentTextures();
-        for (int i = 0; i < _listFonts.Count; ++i)
+        foreach (GUIFont font in _listFonts)
         {
-          GUIFont font = _listFonts[i];
           font.Present();
         }
 
@@ -508,6 +512,7 @@ namespace MediaPortal.GUI.Library
             _d3dxSprite = new Sprite(GUIGraphicsContext.DX9Device);
           }
           _d3dxSprite.Begin(SpriteFlags.AlphaBlend | SpriteFlags.SortTexture);
+          // TODO: DX9Device.Viewport should be used to get current resolution of form
           Viewport orgView = GUIGraphicsContext.DX9Device.Viewport;
           Matrix orgProj = GUIGraphicsContext.DX9Device.Transform.View;
           Matrix projm = orgProj;
@@ -532,11 +537,12 @@ namespace MediaPortal.GUI.Library
             finalm.M34 = 0;
             finalm.M44 = 1.0f;
             _d3dxSprite.Transform = finalm;
+            // TODO: DX9Device.Viewport should be used to get current resolution of form
             GUIGraphicsContext.DX9Device.Viewport = draw.viewport;
-            float wfactor = ((float)orgView.Width) / (float)draw.viewport.Width;
-            float hfactor = ((float)orgView.Height) / (float)draw.viewport.Height;
-            float xoffset = (float)(orgView.X - draw.viewport.X);
-            float yoffset = (float)(orgView.Y - draw.viewport.Y);
+            float wfactor = (float)orgView.Width / draw.viewport.Width;
+            float hfactor = (float)orgView.Height / draw.viewport.Height;
+            float xoffset = (float)orgView.X - draw.viewport.X;
+            float yoffset = (float)orgView.Y - draw.viewport.Y;
             projm.M11 = (orgProj.M11 + orgProj.M14 * xoffset) * wfactor;
             projm.M21 = (orgProj.M21 + orgProj.M24 * xoffset) * wfactor;
             projm.M31 = (orgProj.M31 + orgProj.M34 * xoffset) * wfactor;
