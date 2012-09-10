@@ -28,6 +28,7 @@ using System.IO;
 using System.Runtime.Remoting;
 using System.ServiceProcess;
 using System.Threading;
+using System.Windows.Forms;
 using System.Xml;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
@@ -180,7 +181,7 @@ namespace Mediaportal.TV.Server.TVService
           RequestAdditionalTime(60000); // starting database can be slow so increase default timeout        
         }
 
-        _tvServiceThread = new TvServiceThread();
+        _tvServiceThread = new TvServiceThread(Application.ExecutablePath);
         _tvServiceThread.Start();        
       }      
     }    

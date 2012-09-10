@@ -72,59 +72,12 @@
     <Compile Include="..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="CardManagement\CardAllocation\AdvancedCardAllocation.cs" />
-    <Compile Include="CardManagement\CardAllocation\AdvancedCardAllocationTicket.cs" />
-    <Compile Include="CardManagement\CardAllocation\CardAllocationBase.cs" />
-    <Compile Include="CardManagement\CardAllocation\CardAllocationCache.cs" />
-    <Compile Include="CardManagement\CardAllocation\ChannelStates.cs" />
-    <Compile Include="CardManagement\CardAllocation\AdvancedCardAllocationStatic.cs" />
-    <Compile Include="CardManagement\CardHandler\AudioStreams.cs" />
-    <Compile Include="CardManagement\CardHandler\OwnerSubChannel.cs" />
-    <Compile Include="CardManagement\CardHandler\ParkedUser.cs" />
-    <Compile Include="CardManagement\CardHandler\ParkedUserManagement.cs" />
-    <Compile Include="CardManagement\CardHandler\TimeShifterBase.cs" />
-    <Compile Include="CardManagement\CardReservation\Ticket\CardReservationTicketBase.cs" />
-    <Compile Include="CardManagement\CardReservation\Ticket\CardStopReservationTicket.cs" />
-    <Compile Include="CardManagement\CardReservation\Implementations\CardReservationBase.cs" />
-    <Compile Include="CardManagement\CardReservation\CardReservationHelper.cs" />
-    <Compile Include="CardManagement\CardReservation\Ticket\CardTuneReservationTicket.cs" />
-    <Compile Include="CardManagement\CardHandler\CardTuner.cs" />
-    <Compile Include="CardManagement\CardHandler\ChannelScanning.cs" />
-    <Compile Include="CardManagement\CardHandler\CleanTimeshiftFilesThread.cs" />
-    <Compile Include="CardManagement\CardHandler\DisEqcManagement.cs" />
-    <Compile Include="CardManagement\CardHandler\EpgGrabbing.cs" />
-    <Compile Include="CardManagement\CardHandler\Recorder.cs" />
-    <Compile Include="CardManagement\CardHandler\TeletextManagement.cs" />
-    <Compile Include="CardManagement\CardHandler\TimeShifter.cs" />
-    <Compile Include="CardManagement\CardHandler\UserManagement.cs" />
-    <Compile Include="CardManagement\CardReservation\Implementations\CardReservationTimeshifting.cs" />
-    <Compile Include="CardManagement\CardReservation\Implementations\CardReservationRec.cs" />
-    <Compile Include="ChannelLinkage\ChannelLinkageGrabber.cs" />
-    <Compile Include="DiskManagement\RecordingFileHandler.cs" />
-    <Compile Include="DiskManagement\DiskManagement.cs" />
-    <Compile Include="DiskManagement\EpisodeManagement.cs" />
-    <Compile Include="DiskManagement\RecordingFileInfo.cs" />
-    <Compile Include="DiskManagement\RecordingManagement.cs" />
-    <Compile Include="Epg\EpgCard.cs" />
-    <Compile Include="Epg\Transponder.cs" />
-    <Compile Include="CardManagement\CardAllocation\ICardAllocation.cs" />
-    <Compile Include="EventDispatchers\CiMenuManager.cs" />
-    <Compile Include="EventDispatchers\EventDispatcher.cs" />
-    <Compile Include="EventDispatchers\HeartbeatManager.cs" />
-    <Compile Include="EventDispatchers\HeartbeatUser.cs" />
-    <Compile Include="EventDispatchers\TvServerEventDispatcher.cs" />
-    <Compile Include="Interfaces\ITvCardContext.cs" />
-    <Compile Include="PluginLoader.cs" />
-    <Compile Include="Scheduler\CardDetail.cs" />
-    <Compile Include="Epg\EpgGrabber.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ProjectInstaller.Designer.cs">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
-    <Compile Include="Scheduler\RecordingDetail.cs" />
-    <Compile Include="Scheduler\Scheduler.cs" />
     <Compile Include="Service1.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -132,26 +85,7 @@
       <DependentUpon>Service1.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CardManagement\CardHandler\TvCardHandler.cs" />
-    <Compile Include="Services\DiscoverService.cs" />
-    <Compile Include="Services\EventService.cs" />
-    <Compile Include="TsCopier.cs" />
-    <Compile Include="TvCardContext.cs" />
-    <Compile Include="TvController.cs" />
-    <Compile Include="TvServiceThread.cs" />
     <Compile Include="Util.cs" />
-    <Compile Include="Services\ChannelService.cs" />
-    <Compile Include="Services\ChannelGroupService.cs" />
-    <Compile Include="Services\CardService.cs" />
-    <Compile Include="Services\CanceledScheduleService.cs" />
-    <Compile Include="Services\ConflictService.cs" />
-    <Compile Include="Services\ProgramCategoryService.cs" />
-    <Compile Include="Services\ScheduleService.cs" />
-    <Compile Include="Services\RecordingService.cs" />
-    <Compile Include="Services\ServiceManager.cs" />
-    <Compile Include="Services\SettingsService.cs" />
-    <Compile Include="Services\ProgramService.cs" />
-    <Compile Include="Services\TvControllerService.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ProjectInstaller.resx">
@@ -187,6 +121,10 @@
     <ProjectReference Include="..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TvLibrary.Services\TvLibrary.Services.csproj">
+      <Project>{907F30DE-92D6-4F37-8E5D-2E428C259717}</Project>
+      <Name>TvLibrary.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\TVLibrary\TVLibrary.csproj">
       <Project>{59C2EBC8-0FEA-4B2E-B5D1-476347332331}</Project>
