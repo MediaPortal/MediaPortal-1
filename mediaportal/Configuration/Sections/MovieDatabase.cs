@@ -1542,9 +1542,10 @@ namespace MediaPortal.Configuration.Sections
         VideoDatabase.AddFile(details.ID, pathId, strFileName);
       }
 
+      bool nfoSaved = false;
       if (chbUseNfoScraperOnly.Checked)
       {
-        VideoDatabase.MakeNfo(details.ID);
+        nfoSaved = VideoDatabase.MakeNfo(details.ID);
       }
 
       string dvdLabel = string.Empty;
@@ -1575,8 +1576,14 @@ namespace MediaPortal.Configuration.Sections
                         MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
 
-      MessageBox.Show("Movie info saved");
-
+      if (nfoSaved)
+      {
+        MessageBox.Show("Movie info saved");
+      }
+      else
+      {
+        MessageBox.Show("Movie info save failed", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
       // Refresh movies if new is added manualy
       if (cbTitle.SelectedIndex == cbTitle.Items.Count - 1)
       {
