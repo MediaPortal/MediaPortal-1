@@ -1543,6 +1543,7 @@ namespace MediaPortal.Configuration.Sections
       }
 
       bool nfoSaved = false;
+      
       if (chbUseNfoScraperOnly.Checked)
       {
         nfoSaved = VideoDatabase.MakeNfo(details.ID);
@@ -1576,14 +1577,19 @@ namespace MediaPortal.Configuration.Sections
                         MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
 
-      if (nfoSaved)
+      if (chbUseNfoScraperOnly.Checked && nfoSaved)
       {
-        MessageBox.Show("Movie info saved");
+        MessageBox.Show("Movie nfo file saved");
+      }
+      else if (chbUseNfoScraperOnly.Checked && !nfoSaved)
+      {
+        MessageBox.Show("Movie nfo file save failed", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
       else
       {
-        MessageBox.Show("Movie info save failed", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show("Movie info saved");
       }
+      
       // Refresh movies if new is added manualy
       if (cbTitle.SelectedIndex == cbTitle.Items.Count - 1)
       {
