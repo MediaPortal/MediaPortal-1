@@ -4459,6 +4459,8 @@ namespace MediaPortal.Video.Database
           nfoFile = Path.ChangeExtension(cleanFile, ".nfo");
         }
 
+        Log.Debug("Importing nfo:{0} using video file:{1}", nfoFile, videoFile);
+
         if (!File.Exists(nfoFile))
         {
           return;
@@ -4466,18 +4468,19 @@ namespace MediaPortal.Video.Database
 
         IMDBMovie movie = new IMDBMovie();
         int id = GetMovieInfo(videoFile, ref movie);
-        movie = null;
-
+        
         if (skipExisting && id > 0)
         {
+          movie = null;
           return;
         }
 
         ImportNfo(nfoFile, skipExisting, refreshdbOnly);
+        movie = null;
       }
       catch (Exception ex)
       {
-        Log.Error("Error importing nfo for file {0}:{1} ", videoFile, ex);
+        Log.Error("Error importing nfo for file {0} Error:{1} ", videoFile, ex);
       }
     }
 
@@ -4489,15 +4492,17 @@ namespace MediaPortal.Video.Database
       {
         XmlDocument doc = new XmlDocument();
         doc.Load(nfoFile);
-        
+        Log.Debug("Importing nfo file:{0}", nfoFile);
+
         if (doc.DocumentElement != null)
         {
-          int id = 0;
+          int id = -1;
 
           XmlNodeList movieList = doc.DocumentElement.SelectNodes("/movie");
           
           if (movieList == null)
           {
+            Log.Debug("Movie tag for nfo file:{0} not exist. Nfo skipped.", nfoFile);
             return;
           }
 
@@ -4549,6 +4554,8 @@ namespace MediaPortal.Video.Database
 
             foreach (String file in files)
             {
+              Log.Debug("Import nfo-processing video file:{0} (Total files: {1})", file, files.Count);
+
               if ((file.ToUpperInvariant().Contains("VIDEO_TS.IFO") ||
                   file.ToUpperInvariant().Contains("INDEX.BDMV")) && files.Count == 1)
               {
@@ -4567,6 +4574,7 @@ namespace MediaPortal.Video.Database
                 }
                 if (digit > 1)
                 {
+                  Log.Debug("Import nfo-file: {0} is stack part.", file);
                   string filename;
                   string tmpPath = string.Empty;
                   DatabaseUtility.Split(file, out path, out filename);
@@ -4592,8 +4600,11 @@ namespace MediaPortal.Video.Database
                     VideoDatabase.AddFile(movieId, pathId, filename);
                     return;
                   }
-                  catch
-                  (Exception) { }
+                  catch(Exception ex)
+                  {
+                    Log.Error("Import nfo error-stack check for path {0} Error: {1}", path, ex.Message);
+                    return;
+                  }
                 }
 
                 id = VideoDatabase.AddMovie(file, true);
@@ -4621,12 +4632,13 @@ namespace MediaPortal.Video.Database
 
             #endregion
 
-            #region Check for existing or refreshign database only
+            #region Check for existing movie or refresh database only
             
             GetMovieInfoById(id, ref movie);
 
-            if (skipExisting && !movie.IsEmpty || refreshdbOnly && movie.IsEmpty)
+            if (skipExisting && !movie.IsEmpty || refreshdbOnly && movie.IsEmpty || id < 1)
             {
+              Log.Debug("Import nfo-Skipping import for movieId = {0}).", id);
               return;
             }
 
@@ -5047,7 +5059,10 @@ namespace MediaPortal.Video.Database
                     }
                   }
                 }
-                catch (Exception) { }
+                catch (Exception ex)
+                {
+                  Log.Error("Import nfo - Poster node: {0}", ex.Message);
+                }
                 movie.ThumbURL = nodePoster.InnerText;
               }
               else
@@ -5256,8 +5271,8 @@ namespace MediaPortal.Video.Database
               {
                 if (File.Exists(fanart))
                 {
-                  fa.GetLocalFanart(id, "file://" + faFile, faIndex);
-                  movie.FanartURL = faFile;
+                  fa.GetLocalFanart(id, "file://" + fanart, faIndex);
+                  movie.FanartURL = fanart;
                   faFound = true;
                   break;
                 }
@@ -5399,7 +5414,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        Log.Error("videodatabase exception error importing nfo file {0}:{1} ", nfoFile, ex);
+        Log.Error("videodatabase exception error importing nfo file {0}:{1} ", nfoFile, ex.Message);
       }
     }
 
@@ -5431,7 +5446,7 @@ namespace MediaPortal.Video.Database
           if (movieFile.ToUpperInvariant() == "VIDEO_TS.IFO" || movieFile.ToUpperInvariant() == "INDEX.BDMV")
           {
             // Remove \VIDEO_TS from directory structure
-            string directoryDVD = moviePath.Substring(0, moviePath.LastIndexOf("\\"));
+            string directoryDVD = moviePath.Substring(0, moviePath.LastIndexOf(@"\"));
 
             if (Directory.Exists(directoryDVD))
             {
@@ -5659,7 +5674,7 @@ namespace MediaPortal.Video.Database
       }
       catch(Exception ex)
       {
-        Log.Info("VideoDatabas: Error in creating nfo file:{0} {1}", nfoFile ,ex.Message);
+        Log.Info("VideoDatabase: Error in creating nfo file:{0} Error:{1}", nfoFile ,ex.Message);
         return false;
       }
 
@@ -5702,12 +5717,12 @@ namespace MediaPortal.Video.Database
           {
             if (item.Label != "..")
             {
-              if (item.Path.IndexOf("VIDEO_TS", StringComparison.InvariantCultureIgnoreCase) >= 0)
+              if (item.Path.ToUpperInvariant().IndexOf(@"\VIDEO_TS") >= 0)
               {
                 string strFile = String.Format(@"{0}\VIDEO_TS.IFO", item.Path);
                 availableFiles.Add(strFile);
               }
-              else if (item.Path.ToLower().IndexOf("bdmv", StringComparison.InvariantCultureIgnoreCase) >= 0)
+              else if (item.Path.ToUpperInvariant().IndexOf(@"\BDMV") >= 0)
               {
                 string strFile = String.Format(@"{0}\index.bdmv", item.Path);
                 availableFiles.Add(strFile);
@@ -5737,14 +5752,19 @@ namespace MediaPortal.Video.Database
             }
             if (!skipDuplicate)
             {
-              availableFiles.Add(item.Path);
+              string extension = Path.GetExtension(item.Path);
+
+              if (extension != null && extension.ToUpperInvariant() != @".IFO" && extension.ToUpperInvariant() != ".BDMV")
+              {
+                availableFiles.Add(item.Path);
+              }
             }
           }
         }
       }
       catch (Exception e)
       {
-        Log.Info("VideoDatabas: Exception counting video files:{0}", e);
+        Log.Info("VideoDatabase: Exception counting video files:{0}", e);
       }
       finally
       {
