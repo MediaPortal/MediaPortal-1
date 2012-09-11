@@ -665,11 +665,15 @@ namespace SetupTv.Sections
       {
         Channel channel = (Channel)item.Tag;
         IList<TuningDetail> details = channel.ReferringTuningDetail();
-        if (details.Count > 0)
+        foreach (TuningDetail detail in details)
         {
-          channel.ChannelNumber = (details[0]).ServiceId;
-          channel.Persist();
-          item.Tag = channel;
+          if (detail.ChannelType != 0)  // SID is not relevant for analog channels
+          {
+            channel.ChannelNumber = detail.ServiceId;
+            channel.Persist();
+            item.Tag = channel;
+            break;
+          }
         }
       }
       dlg.Close();
