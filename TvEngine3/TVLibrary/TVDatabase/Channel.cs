@@ -51,6 +51,7 @@ namespace TvDatabase
     [TableColumn("externalId", NotNull = true)] private string externalId;
     [TableColumn("displayName", NotNull = true)] private string displayName;
     [TableColumn("epgHasGaps")] private bool epgHasGaps;
+    [TableColumn("channelNumber", NotNull = true)] private int channelNumber;
 
     #endregion
 
@@ -61,7 +62,7 @@ namespace TvDatabase
     /// </summary> 
     public Channel(bool isRadio, bool isTv, int timesWatched, DateTime totalTimeWatched, bool grabEpg,
                    DateTime lastGrabTime, int sortOrder, bool visibleInGuide, string externalId,
-                   string displayName)
+                   string displayName, int channelNumber)
     {
       isChanged = true;
       this.isRadio = isRadio;
@@ -74,8 +75,10 @@ namespace TvDatabase
       this.visibleInGuide = visibleInGuide;
       this.externalId = externalId;
       this.displayName = displayName;
+      this.channelNumber = channelNumber;
       epgHasGaps = false;
     }
+
 
     /// <summary> 
     /// Create an object from an existing row of data. This will be used by Gentle to 
@@ -83,7 +86,7 @@ namespace TvDatabase
     /// </summary> 
     public Channel(int idChannel, bool isRadio, bool isTv, int timesWatched, DateTime totalTimeWatched,
                    bool grabEpg, DateTime lastGrabTime, int sortOrder, bool visibleInGuide, string externalId,
-                   string displayName)
+                   string displayName, int channelNumber)
     {
       this.idChannel = idChannel;
       this.isRadio = isRadio;
@@ -96,8 +99,23 @@ namespace TvDatabase
       this.visibleInGuide = visibleInGuide;
       this.externalId = externalId;
       this.displayName = displayName;
+      this.channelNumber = channelNumber;
       epgHasGaps = false;
     }
+
+    /// <summary> 
+    /// Obsolete constructor. Create a new object by specifying all fields (except the auto-generated primary key field) and the channelNumber. 
+    /// </summary> 
+    [System.Obsolete("Use the constructor with channelNumber")]
+    public Channel(bool isRadio, bool isTv, int timesWatched, DateTime totalTimeWatched, bool grabEpg,
+                   DateTime lastGrabTime, int sortOrder, bool visibleInGuide, string externalId,
+                   string displayName) : this(isRadio, isTv, timesWatched, totalTimeWatched, grabEpg,
+           lastGrabTime, sortOrder, visibleInGuide, externalId,
+           displayName, 10000) {
+
+    }
+
+
 
     #endregion
 
@@ -268,6 +286,16 @@ namespace TvDatabase
       {
         isChanged |= epgHasGaps != value;
         epgHasGaps = value;
+      }
+    }
+
+    public int ChannelNumber
+    {
+      get { return channelNumber; }
+      set
+      {
+        isChanged |= channelNumber != value;
+        channelNumber = value;
       }
     }
 

@@ -591,7 +591,7 @@ namespace SetupTv.Sections
         if (string.IsNullOrEmpty(item.Description))
           item.Description = item.FileName;
         Channel channel = new Channel(true, false, 0, Schedule.MinSchedule, false,
-                                      Schedule.MinSchedule, 10000, true, "", item.Description);
+                                      Schedule.MinSchedule, 10000, true, "", item.Description, 10000);
         channel.Persist();
         layer.AddWebStreamTuningDetails(channel, item.FileName, 0);
         layer.AddChannelToRadioGroup(channel, TvConstants.RadioGroupNames.AllChannels);
@@ -667,8 +667,13 @@ namespace SetupTv.Sections
         IList<TuningDetail> details = channel.ReferringTuningDetail();
         foreach (TuningDetail detail in details)
         {
-          detail.ChannelNumber = detail.ServiceId;
-          detail.Persist();
+          if (detail.ChannelType != 0)  // SID is not relevant for analog channels
+          {
+            channel.ChannelNumber = detail.ServiceId;
+            channel.Persist();
+            item.Tag = channel;
+            break;
+          }
         }
       }
       dlg.Close();

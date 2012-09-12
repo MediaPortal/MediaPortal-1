@@ -574,17 +574,12 @@ namespace TvPlugin
           Log.Debug("chan {0}", chan.DisplayName);
           if (chan.VisibleInGuide)
           {
-            foreach (TuningDetail detail in chan.ReferringTuningDetail())
+            if (chan.ChannelNumber == channelNr)
             {
-              Log.Debug("detail nr {0} id{1}", detail.ChannelNumber, detail.IdChannel);
-
-              if (detail.ChannelNumber == channelNr)
-              {
-                Log.Debug("find channel: iCounter {0}, detail.ChannelNumber {1}, detail.name {2}, channels.Count {3}",
-                          iCounter, detail.ChannelNumber, detail.Name, channels.Count);
-                found = true;
-                ZapToChannel(iCounter + 1, useZapDelay);
-              }
+              Log.Debug("find channel: iCounter {0}, chan.ChannelNumber {1}, chan.DisplayName {2}, channels.Count {3}",
+                        iCounter, chan.ChannelNumber, chan.DisplayName, channels.Count);
+              found = true;
+              ZapToChannel(iCounter + 1, useZapDelay);
             }
           }
           iCounter++;
