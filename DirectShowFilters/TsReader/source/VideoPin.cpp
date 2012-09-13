@@ -440,7 +440,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
             
       if(m_bDownstreamFlush)
       {
-        if( m_dRateSeeking == 1.0 ) //MS DTV video decoder can hang if we flush in FFWD
+        if( !m_bPinNoNewSegFlush ) //MS DTV video decoder can hang if we flush at the wrong time...
         {
           //Downstream flush
           //LogDebug("vidPin : Downstream flush") ;
