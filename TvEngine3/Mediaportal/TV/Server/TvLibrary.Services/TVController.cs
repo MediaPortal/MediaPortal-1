@@ -1853,19 +1853,19 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// <param name="idChannel">The id channel.</param>
     /// <returns>true if succeeded</returns>
     public TvResult Scan(string userName, int idCard, out IUser user, IChannel channel, int idChannel)
-    {     
+    {
       user = null;
       TvResult result = TvResult.UnknownError;
       try
       {
         if (ValidateTvControllerParams(userName) && ValidateTvControllerParams(channel))
         {
-          user = new User {Name = userName, CardId = idCard};
+          user = new User(userName, UserType.Scanner, idCard);
           ITvCardHandler cardHandler = _cards[idCard];
           if (cardHandler.DataBaseCard.enabled)
           {
             FireScanningStartedEvent(user, channel);
-            result = cardHandler.Tuner.Scan(ref user, channel, idChannel);  
+            result = cardHandler.Tuner.Scan(ref user, channel, idChannel);
           }
           else
           {
@@ -1873,7 +1873,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           }
         }
       }
-      catch(Exception e)
+      catch (Exception e)
       {
         HandleControllerException(e);
       }

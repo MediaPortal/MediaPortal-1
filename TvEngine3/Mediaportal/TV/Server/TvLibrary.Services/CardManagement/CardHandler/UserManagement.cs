@@ -735,7 +735,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         throw new InvalidOperationException("user is null");
       }
 
-      if (idChannel < 1)
+      if (idChannel < 1 && user.UserType != UserType.Scanner) // EGP scanner have no channel
       {
         throw new InvalidOperationException("idChannel is invalid");
       }
@@ -754,7 +754,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         {
           /*bool hasSubchannel = existingUser.SubChannels.ContainsKey(subChannelId);
           if (hasSubchannel)
-          {            
+          {
             throw new Exception("tried to add already existning subchannel to user");
           }
           existingUser.SubChannels.Add(subChannelId, subChannel);*/
@@ -773,8 +773,8 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         if (Context.OwnerSubChannel == null)
         {
           Context.OwnerSubChannel = new OwnerSubChannel(subChannelId, user.Name);
-        } 
-      }      
+        }
+      }
     }
 
     public void RemoveChannelFromUser(IUser user, int subChannelId)
