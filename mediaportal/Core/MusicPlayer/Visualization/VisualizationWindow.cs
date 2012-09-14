@@ -662,13 +662,8 @@ namespace MediaPortal.Visualization
     {
       try
       {
-        if (CurrentFilePath != filename || filename.ToLower().StartsWith("http") || filename.ToLower().StartsWith("mms"))
+        if (type == g_Player.MediaType.Music && (CurrentFilePath != filename || filename.ToLower().StartsWith("http") || filename.ToLower().StartsWith("mms")))
         {
-          if (type != g_Player.MediaType.Music)
-          {
-            return;
-          }
-
           CurrentFilePath = filename;
           PlayListItem curPlaylistItem = PlaylistPlayer.GetCurrentItem();
           if (curPlaylistItem == null)
