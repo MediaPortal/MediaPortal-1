@@ -3304,18 +3304,21 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
-      int idFile = VideoDatabase.GetFileId(filename);
-
-      if (idFile == -1)
+      if (!Util.Utils.IsRemoteUrl(filename))
       {
-        AddFileToDatabase(filename);
-        idFile = VideoDatabase.GetFileId(filename);
-      }
+        int idFile = VideoDatabase.GetFileId(filename);
 
-      if (idFile != -1)
-      {
-        int videoDuration = (int)g_Player.Duration;
-        VideoDatabase.SetVideoDuration(idFile, videoDuration);
+        if (idFile == -1)
+        {
+          AddFileToDatabase(filename);
+          idFile = VideoDatabase.GetFileId(filename);
+        }
+
+        if (idFile != -1)
+        {
+          int videoDuration = (int)g_Player.Duration;
+          VideoDatabase.SetVideoDuration(idFile, videoDuration);
+        }
       }
     }
 
