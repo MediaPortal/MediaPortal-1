@@ -4487,7 +4487,8 @@ namespace MediaPortal.Video.Database
     public void ImportNfo(string nfoFile, bool skipExisting, bool refreshdbOnly)
     {
       IMDBMovie movie = new IMDBMovie();
-      
+      bool isMovieFolder = Util.Utils.IsFolderDedicatedMovieFolder(Path.GetFullPath(nfoFile));
+
       try
       {
         XmlDocument doc = new XmlDocument();
@@ -4615,17 +4616,36 @@ namespace MediaPortal.Video.Database
               {
                 string tmpFile = string.Empty;
                 string tmpPath = string.Empty;
+                
                 // Read filename
                 Util.Utils.Split(file, out tmpPath, out tmpFile);
                 // Remove extension
                 tmpFile = Util.Utils.GetFilename(tmpFile, true);
                 // Remove stack endings (CD1...)
                 Util.Utils.RemoveStackEndings(ref tmpFile);
+                Util.Utils.RemoveStackEndings(ref fileName);
                 // Check and add to vdb and get movieId
                 if (tmpFile.Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
                 {
                   id = VideoDatabase.AddMovie(file, true);
                   movie.ID = id;
+                }
+                else if (isMovieFolder && tmpPath.Length > 0) // Every movie in it's own folder, compare by folder name
+                {
+                  try
+                  {
+                    tmpPath = tmpPath.Substring(tmpPath.LastIndexOf(@"\") + 1).Trim();
+
+                    if (tmpPath.Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                      id = VideoDatabase.AddMovie(file, true);
+                      movie.ID = id;
+                    }
+                  }
+                  catch (Exception ex)
+                  {
+                    Log.Error("Import nfo-Error comparing path name. File:{0} Err.:{1}", file, ex.Message);
+                  }
                 }
               }
             }
