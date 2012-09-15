@@ -124,6 +124,9 @@
     <EmbeddedResource Include="Model.MySQL.ssdl">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Model.MSSQLCE.ssdl">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
