@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>1018</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <controls>
+    <import>common.settings.xml</import>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>219</posX>
+      <posY>96</posY>
+      <height>416</height>
+      <width>275</width>
+      <texture>backslide.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>buttons</description>
+      <type>group</type>
+      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="70" end="-300,0">WindowClose</animation>
+      <posX>236</posX>
+      <posY>128</posY>
+      <layout>StackLayout(0, Horizontal, True)</layout>
+      <control>
+        <description>Log</description>
+        <type>button</type>
+        <id>2</id>
+        <width>225</width>
+        <label>300090</label>
+        <onup>17</onup>
+      </control>
+      <control>
+        <description>Process priority</description>
+        <type>button</type>
+        <id>3</id>
+        <width>225</width>
+        <label>300091</label>
+      </control>
+      <control>
+        <description>Watchdog</description>
+        <type>checkbutton</type>
+        <id>4</id>
+        <label>300092</label>
+        <width>225</width>
+        <align>right</align>
+      </control>
+      <control>
+        <description>Autorestart</description>
+        <type>checkbutton</type>
+        <id>5</id>
+        <posX>213</posX>
+        <posY>140</posY>
+        <label>300093</label>
+        <width>225</width>
+        <onright>6</onright>
+        <align>right</align>
+      </control>
+    </control>
+    <control>
+      <description>Seconds label</description>
+      <type>label</type>
+      <id>100</id>
+      <posX>244</posX>
+      <posY>280</posY>
+      <width>337</width>
+      <label>300094</label>
+      <visible>control.isvisible(6)</visible>
+    </control>
+    <control>
+      <description>Seconds</description>
+      <type>spincontrol</type>
+      <id>6</id>
+      <posX>244</posX>
+      <posY>316</posY>
+      <onup>5</onup>
+      <onleft>5</onleft>
+      <ondown>99</ondown>
+      <align>left</align>
+      <buddycontrolid>100</buddycontrolid>
+    </control>
+  </controls>
+</window>

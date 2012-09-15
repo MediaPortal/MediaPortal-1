@@ -81,6 +81,11 @@ namespace MpeMaker.Sections
     private void button1_Click(object sender, EventArgs e)
     {
       ParamEdit dlg = new ParamEdit();
+      // check if we have new parameters for this type of action that were not yet available previously
+      foreach (var param in MpeInstaller.ActionProviders[_actionItem.ActionType].GetDefaultParams().Items)
+        if (!_actionItem.Params.Contain(param.Name))
+          _actionItem.Params.Add(param);
+
       dlg.Set(_actionItem.Params);
       dlg.ShowDialog();
     }

@@ -815,5 +815,21 @@ namespace MediaPortal.GUI.Library
 
     #endregion
 
+    #region Skin behavior functions
+
+    [XMLSkinFunction("skin.setfocus")]
+    public static void SkinSetFocus(params object[] args)
+    {
+      // args[0] - skin window id
+      // args[1] - skin control id
+      if (args.Length == 2)
+      {
+        int windowId = (int)args[0];
+        int controlId = (int)args[1];
+        GUIControl.FocusControl(windowId, controlId);
+      }
+    }
+
+    #endregion
   }
 }

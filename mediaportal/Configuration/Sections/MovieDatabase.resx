@@ -120,4 +120,14 @@
   <metadata name="toolTipMPvdb.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="chbUseNfoScraperOnly.ToolTip" xml:space="preserve">
+    <value>Use this option if you want to use nfo file internal scraper only.
+This will prevent MP to fetch movie data from the Internet in
+configuration and GUI and only video files with corresponding
+nfo file will be imported.
+Refreshing movie info in Movie info screen will be only possible if
+nfo file is changed.
+Note: Saving movie info in editor will create new nfo file. If nfo file
+exist, it will be overwritten.</value>
+  </data>
 </root>

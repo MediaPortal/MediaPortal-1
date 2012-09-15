@@ -66,6 +66,7 @@ namespace MediaPortal.Configuration.Sections
     private string[] sortBy = new string[]
                                 {
                                   "Name",
+                                  "NameAll",
                                   "Date",
                                   "Size",
                                   "Year",

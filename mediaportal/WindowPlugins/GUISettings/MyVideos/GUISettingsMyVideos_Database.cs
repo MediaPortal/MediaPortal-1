@@ -61,9 +61,6 @@ namespace MediaPortal.GUI.Settings
     [SkinControl(16)] protected GUICheckButton btnUseSortTitle = null;
     [SkinControl(17)] protected GUICheckButton btnUseNfoScraper = null;
 
-    //[SkinControl(16)] protected GUIButtonControl btnUseSortTitle= null;
-    //[SkinControl(17)] protected GUIButtonControl btnUseInternalInfoScraper = null;
-
     private String _defaultShare;
     private bool _rememberLastFolder;
     private bool _addOpticalDiskDrives ;
@@ -473,8 +470,8 @@ namespace MediaPortal.GUI.Settings
       }
 
       // For 1.3.0B
-      //IMDB.InternalMovieInfoScraper _internalGrabber = new IMDB.InternalMovieInfoScraper();
-      //_internalGrabber.LoadScript();
+      IMDB.InternalMovieInfoScraper internalGrabber = new IMDB.InternalMovieInfoScraper();
+      internalGrabber.LoadScript();
 
       // read index file
       if (!File.Exists(_grabberIndexFile))
@@ -781,10 +778,7 @@ namespace MediaPortal.GUI.Settings
         string path = item.Path;
         availablePaths.Add(path);
       }
-      // Here goes check for nfo scraper only
-      //***************
-      //
-
+      
       // Clean covers and fanarts (only if refreshexisting cb is checked)
       if (btnRefreshexistingonly.Selected)
       {
@@ -806,8 +800,24 @@ namespace MediaPortal.GUI.Settings
         }
       }
       _conflictFiles = new ArrayList();
-      IMDBFetcher.ScanIMDB(this, availablePaths, btnNearestmatch.Selected, btnSkipalreadyexisting.Selected, false,
-                           btnRefreshexistingonly.Selected);
+
+      if (!btnUseNfoScraper.Selected)
+      {
+        IMDBFetcher.ScanIMDB(this, availablePaths, btnNearestmatch.Selected, btnSkipalreadyexisting.Selected, false,
+                             btnRefreshexistingonly.Selected);
+      }
+      else
+      {
+        ArrayList nfoFiles = new ArrayList();
+
+        foreach (string availablePath in availablePaths)
+        {
+          GetNfoFiles(availablePath, ref nfoFiles);
+        }
+
+        IMDBFetcher fetcher = new IMDBFetcher(this);
+        fetcher.FetchNfo(nfoFiles, btnSkipalreadyexisting.Selected, btnRefreshexistingonly.Selected);
+      }
     }
 
     private void OnResetDatabase()
@@ -907,6 +917,17 @@ namespace MediaPortal.GUI.Settings
       if (item != null)
       {
 
+      }
+    }
+
+    private void GetNfoFiles(string path, ref ArrayList nfoFiles)
+    {
+      string[] files = Directory.GetFiles(path, "*.nfo", SearchOption.AllDirectories);
+      var sortedFiles = files.OrderBy(f => f);
+
+      foreach (string file in sortedFiles)
+      {
+        nfoFiles.Add(file);
       }
     }
 

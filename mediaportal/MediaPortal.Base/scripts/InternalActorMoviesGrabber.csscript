@@ -1,0 +1,292 @@
+//css_reference "core.dll";
+//css_reference "Databases.dll";
+//css_reference "utils.dll";
+
+using System;
+using System.Text;
+using System.IO;
+using System.Net;
+using System.Web;
+using System.Text.RegularExpressions;
+using MediaPortal.GUI.Library;
+using MediaPortal.Util;
+using MediaPortal.Video.Database;
+
+internal class InternalGrabber : IIMDBInternalScriptGrabber
+{
+
+  private string _strBody = string.Empty;
+
+  bool IIMDBInternalScriptGrabber.GetPlotImdb(ref IMDBMovie movie)
+  {
+    string strUrl = String.Format("http://m.imdb.com/title/{0}", movie.IMDBNumber);
+    string regex = @"<h1>Plot\sSummary</h1>\s+<p>(?<moviePlot>.+?)</p>";
+
+    _strBody = string.Empty;
+    string shortPlot = GetPlot(strUrl, regex, ref _strBody);
+
+    string pageNotFound = @"<h1>Page not found</h1>";
+
+    if (Regex.Match(_strBody, pageNotFound, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+    {
+      Log.Warn("GUIVideoArtistInfo-Actor movielist update Page not found: {0}", strUrl);
+			return false;
+    }
+
+    // Full plot
+    strUrl = String.Format("http://m.imdb.com/title/{0}/plotsummary", movie.IMDBNumber);
+    regex = @"<section\sclass=""plot"".*?<p>(?<moviePlot>.*?)</p>";
+
+    string plotBody = string.Empty;
+    string fullPlot = GetPlot(strUrl, regex, ref plotBody);
+
+    if (fullPlot != string.Empty)
+    {
+      shortPlot = fullPlot;
+    }
+
+    movie.PlotOutline = shortPlot;
+
+    // Director, actors, rating....
+    GetExtraDataImdb(ref movie);
+		return true;
+  }
+
+  private void GetExtraDataImdb(ref IMDBMovie movie)
+  {
+    //Update title/Year
+		string rxTitleBlock = "<title>.*?</title>";
+		string titleBlock = Regex.Match(_strBody, rxTitleBlock, RegexOptions.Singleline | RegexOptions.IgnoreCase).Value.Trim();
+		string regex = @"<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\d{4})|<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\?{4})";
+    string title = Regex.Match(titleBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["movieTitle"].Value;
+    int year = 0;
+    int.TryParse(Regex.Match(titleBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["movieYear"].Value.Trim(), out year);
+    
+    if (title != string.Empty)
+    {
+      movie.Title = title.Replace("IMDb -", string.Empty).Trim();
+    }
+    
+    if (year == 0)
+    {
+      year = DateTime.Today.Year + 3;
+    }
+    
+    movie.Year = year;
+
+    // Director
+    string rxDirectorsBlock = @"<div>\s(<h1>Director</h1>|<h1>Directors</h1>).*?</div>";
+    string directorsBlock = Regex.Match(_strBody, rxDirectorsBlock, RegexOptions.Singleline | RegexOptions.IgnoreCase).Value;
+    regex = @"<a\shref=""/name/nm\d{7}/"">(?<director>.*?)</a>";
+    MatchCollection mc = Regex.Matches(directorsBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+    string director = string.Empty;
+    
+    foreach (Match m in mc)
+    {
+      if (!string.IsNullOrEmpty(m.Groups["director"].Value))
+      {
+        director += m.Groups["director"].Value + " / ";
+      }
+    }
+
+    if (director == string.Empty)
+    {
+      director = Strings.Unknown;
+    }
+    else
+    {
+      int iDirector = director.LastIndexOf(" /");
+
+      if (iDirector > 0)
+      {
+        director = director.Remove(iDirector);
+      }
+
+      movie.WritingCredits = director;
+    }
+
+
+    // Genre
+    regex = @"<h1>Genre</h1>\s+<p>(?<genre>.+?)</p>";
+    string genre = Regex.Match(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["genre"].Value.Trim();
+    genre = genre.Replace(", ", " / ");
+    
+    if (genre == string.Empty)
+    {
+      genre = Strings.Unknown;
+    }
+    
+    movie.SingleGenre = genre;
+
+    // Rating
+    regex = @"<h1>Rated</h1>\s+<p>(?<rating>.+?)</p>";
+    string mpaaRating = Regex.Match(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["rating"].Value.Trim();
+    if (mpaaRating == string.Empty)
+    {
+      mpaaRating = Strings.Unknown;
+    }
+    
+    movie.MPARating = mpaaRating;
+
+    // Actors
+    regex = @"<div\sclass=""label"">\s+<div\sclass=""title"">\s+<a\shref=""/name/.*?>(?<actor>.*?)<";
+    MatchCollection actors = Regex.Matches(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+    string strActor = string.Empty;
+    
+    foreach (Match actor in actors)
+    {
+      string tmpActor = actor.Groups["actor"].Value;
+      tmpActor = HttpUtility.HtmlDecode(tmpActor);
+
+      if (tmpActor != string.Empty)
+      {
+        strActor += tmpActor + " / ";
+      }
+    }
+    
+    int index = strActor.LastIndexOf(" /");
+    
+    if (index > 0)
+    {
+      strActor = strActor.Remove(index);
+    }
+    
+    movie.Cast = strActor;
+    _strBody = string.Empty;
+  }
+
+  string IIMDBInternalScriptGrabber.GetThumbImdb(string imdbId)
+  {
+    _strBody = string.Empty;
+    string thumb = string.Empty;
+
+    string uri;
+    string strUrl = String.Format("http://m.imdb.com/title/" + imdbId);
+    _strBody = GetPage(strUrl, "utf-8", out uri);
+    thumb = Regex.Match(_strBody, @"<div\sclass=""poster"">\s+<a\shref=""[^<]*<span\sclass=""retina-capable""><img\ssrc=""(?<poster>.*?_V1)",
+                                RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["poster"].Value;
+    if (!string.IsNullOrEmpty(thumb))
+    {
+      int thumbSize = 400; // pixels size of picture -> horizontal
+      thumb += "_SX" + thumbSize + ".jpg";
+    }
+    
+    _strBody = string.Empty;
+    return thumb;
+  }
+
+  private string GetPlot(string strUrl, string regex, ref string strBody)
+  {
+    string absoluteUri;
+    strBody = HttpUtility.HtmlDecode(GetPage(strUrl, "utf-8", out absoluteUri));
+
+    if (strBody != null)
+    {
+      string shortPlot = Regex.Match(strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["moviePlot"].Value.
+        Replace("&amp;", "&").
+        Replace("&lt;", "<").
+        Replace("&gt;", ">").
+        Replace("&quot;", "\"").
+        Replace("&apos;", "'").
+        Replace("No overview found.", string.Empty).Trim();
+
+
+      shortPlot = Utils.stripHTMLtags(shortPlot);
+
+      // extra cleanup
+      if (!string.IsNullOrEmpty(shortPlot))
+      {
+        int index = shortPlot.LastIndexOf(@"See full summary");
+
+        if (index > 0)
+        {
+          shortPlot = shortPlot.Remove(index);
+        }
+
+        index = shortPlot.LastIndexOf(@"See full synopsis");
+
+        if (index > 0)
+        {
+          shortPlot = shortPlot.Remove(index);
+        }
+
+        index = shortPlot.LastIndexOf("\n");
+
+        if (index > 0)
+        {
+          shortPlot = shortPlot.Remove(index);
+        }
+      }
+      return shortPlot;
+    }
+    return string.Empty;
+  }
+
+  private string GetPage(string strUrl, string strEncode, out string absoluteUri)
+  {
+    string strBody = "";
+    absoluteUri = string.Empty;
+    Stream receiveStream = null;
+    StreamReader sr = null;
+    WebResponse result = null;
+    try
+    {
+      // Make the Webrequest
+      HttpWebRequest req = (HttpWebRequest)WebRequest.Create(strUrl);
+
+      try
+      {
+        // Use the current user in case an NTLM Proxy or similar is used.
+        req.Headers.Add("Accept-Language", "en-US");
+        req.UserAgent = "Mozilla/8.0 (compatible; MSIE 9.0; Windows NT 6.1; .NET CLR 1.0.3705;)";
+        req.Proxy.Credentials = CredentialCache.DefaultCredentials;
+        req.Timeout = 10000;
+      }
+      catch (Exception) { }
+      result = req.GetResponse();
+      receiveStream = result.GetResponseStream();
+
+      // Encoding: depends on selected page
+      Encoding encode = Encoding.GetEncoding(strEncode);
+      using (sr = new StreamReader(receiveStream, encode))
+      {
+        strBody = sr.ReadToEnd();
+      }
+
+
+      absoluteUri = result.ResponseUri.AbsoluteUri;
+    }
+    catch (Exception)
+    {
+      //Log.Error("Error retreiving WebPage: {0} Encoding:{1} err:{2} stack:{3}", strURL, strEncode, ex.Message, ex.StackTrace);
+    }
+    finally
+    {
+      if (sr != null)
+      {
+        try
+        {
+          sr.Close();
+        }
+        catch (Exception) { }
+      }
+      if (receiveStream != null)
+      {
+        try
+        {
+          receiveStream.Close();
+        }
+        catch (Exception) { }
+      }
+      if (result != null)
+      {
+        try
+        {
+          result.Close();
+        }
+        catch (Exception) { }
+      }
+    }
+    return strBody;
+  }
+}

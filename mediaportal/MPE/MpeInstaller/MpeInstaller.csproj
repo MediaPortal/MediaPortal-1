@@ -71,12 +71,24 @@
     <Compile Include="..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="Classes\ProgramArguments.cs" />
-    <Compile Include="Controls\ExtensionControl.cs">
+    <Compile Include="ProgramArguments.cs" />
+    <Compile Include="Controls\ExtensionControlExpanded.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\ExtensionControl.Designer.cs">
-      <DependentUpon>ExtensionControl.cs</DependentUpon>
+    <Compile Include="Controls\ExtensionControlExpanded.Designer.cs">
+      <DependentUpon>ExtensionControlExpanded.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ExtensionControlCollapsed.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ExtensionControlCollapsed.Designer.cs">
+      <DependentUpon>ExtensionControlCollapsed.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ExtensionControlHost.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ExtensionControlHost.Designer.cs">
+      <DependentUpon>ExtensionControlHost.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\ExtensionListControl.cs">
       <SubType>UserControl</SubType>
@@ -90,18 +102,6 @@
     <Compile Include="Dialogs\DependencyForm.Designer.cs">
       <DependentUpon>DependencyForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\DownloadFile.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\DownloadFile.Designer.cs">
-      <DependentUpon>DownloadFile.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\DownloadInfo.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\DownloadInfo.Designer.cs">
-      <DependentUpon>DownloadInfo.cs</DependentUpon>
-    </Compile>
     <Compile Include="Dialogs\InfoForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -113,6 +113,12 @@
     </Compile>
     <Compile Include="Dialogs\ScreenShotNavigator.Designer.cs">
       <DependentUpon>ScreenShotNavigator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\SettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\SettingsForm.Designer.cs">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\SplashScreen.cs">
       <SubType>Form</SubType>
@@ -134,9 +140,15 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Controls\ExtensionControl.resx">
-      <DependentUpon>ExtensionControl.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\ExtensionControlExpanded.resx">
+      <DependentUpon>ExtensionControlExpanded.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ExtensionControlCollapsed.resx">
+      <DependentUpon>ExtensionControlCollapsed.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ExtensionControlHost.resx">
+      <DependentUpon>ExtensionControlHost.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ExtensionListControl.resx">
       <DependentUpon>ExtensionListControl.cs</DependentUpon>
@@ -146,14 +158,6 @@
       <DependentUpon>DependencyForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\DownloadFile.resx">
-      <DependentUpon>DownloadFile.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\DownloadInfo.resx">
-      <DependentUpon>DownloadInfo.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\InfoForm.resx">
       <DependentUpon>InfoForm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -161,6 +165,9 @@
     <EmbeddedResource Include="Dialogs\ScreenShotNavigator.resx">
       <DependentUpon>ScreenShotNavigator.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\SettingsForm.resx">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\SplashScreen.resx">
       <DependentUpon>SplashScreen.cs</DependentUpon>
@@ -199,14 +206,6 @@
       <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
       <Name>Common.Utils</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Core\Core.csproj">
-      <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
-      <Name>Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Utils\Utils.csproj">
-      <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
-      <Name>Utils</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MpeCore\MpeCore.csproj">
       <Project>{4458F642-6022-4A3F-996F-E8AA510FB7E8}</Project>
       <Name>MpeCore</Name>
@@ -223,6 +222,11 @@
     <None Include="MpeInstaller.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Icons\settings.png" />
+    <None Include="Icons\refresh.png" />
+    <None Include="Icons\recycle_bin.png" />
+    <None Include="Icons\help.png" />
+    <None Include="Icons\open.png" />
     <None Include="Icons\internet-group-chat.png" />
     <None Include="Icons\internet-web-browser.png" />
     <None Include="Icons\package-x-generic.png" />

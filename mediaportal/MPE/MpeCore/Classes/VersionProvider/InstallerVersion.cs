@@ -41,22 +41,7 @@ namespace MpeCore.Classes.VersionProvider
 
     public VersionInfo Version(string id)
     {
-      string file = MpeInstaller.TransformInRealPath("%Base%") + @"\MpeCore.dll";
-      try
-      {
-        var ver = AssemblyName.GetAssemblyName(file).Version;
-        return new VersionInfo()
-                 {
-                   Build = ver.Build.ToString(),
-                   Major = ver.Major.ToString(),
-                   Minor = ver.Minor.ToString(),
-                   Revision = ver.Revision.ToString()
-                 };
-      }
-      catch (Exception)
-      {
-        return new VersionInfo();
-      }
+      return new VersionInfo(typeof(InstallerVersion).Assembly.GetName().Version);
     }
   }
 }

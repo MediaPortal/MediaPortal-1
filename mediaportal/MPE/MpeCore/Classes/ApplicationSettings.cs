@@ -27,6 +27,18 @@ namespace MpeCore.Classes
 {
   public class ApplicationSettings
   {
+    protected static ApplicationSettings _instance = null;
+    public static ApplicationSettings Instance
+    {
+      get 
+      {
+        if (_instance == null)
+          _instance = Load();
+        return _instance;
+      }
+    }
+
+    [Obsolete("Use the static member Instance instead - class is now a singleton.")]
     public ApplicationSettings()
     {
       LastUpdate = DateTime.MinValue;
@@ -59,30 +71,23 @@ namespace MpeCore.Classes
       }
     }
 
+    [Obsolete("Use the static member Instance instead - class is now a singleton.")]
     public static ApplicationSettings Load()
     {
-      var apls = new ApplicationSettings();
       string filename = string.Format("{0}\\InstallerSettings.xml", MpeInstaller.BaseFolder);
-
       if (File.Exists(filename))
       {
-        FileStream fs = null;
         try
         {
-          var serializer = new XmlSerializer(typeof (ApplicationSettings));
-          fs = new FileStream(filename, FileMode.Open);
-          apls = (ApplicationSettings)serializer.Deserialize(fs);
-          fs.Close();
-          return apls;
+          using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
+          {
+            var serializer = new XmlSerializer(typeof(ApplicationSettings));
+            return (ApplicationSettings)serializer.Deserialize(fs);
+          }
         }
-        catch
-        {
-          if (fs != null)
-            fs.Dispose();
-          return new ApplicationSettings();
-        }
+        catch { }
       }
-      return apls;
+      return new ApplicationSettings();
     }
   }
 }

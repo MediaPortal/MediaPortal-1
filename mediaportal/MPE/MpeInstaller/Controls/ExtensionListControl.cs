@@ -55,30 +55,45 @@ namespace MpeInstaller.Controls
     {
       InitializeComponent();
       SelectedItem = null;
-      flowLayoutPanel1.VerticalScroll.Visible = true;
       TagList = new Dictionary<string, int>();
     }
 
-    public ExtensionControl SelectedItem { get; set; }
+    public ExtensionControlHost SelectedItem { get; set; }
 
-    public void Set(ExtensionCollection collection)
+    public void Set(ExtensionCollection collection, bool isListOfInstalledExtensions)
     {
-      collection.Sort();
-      comboBox1.Items.Clear();
-      comboBox1.Items.Add("All");
-      TagList.Clear();
-      flowLayoutPanel1.Controls.Clear();
-      foreach (PackageClass item in collection.Items)
+      var oldCursor = ParentForm.Cursor;
+      try
       {
-        flowLayoutPanel1.Controls.Add(new ExtensionControl(item));
-        AddTags(item.GeneralInfo.TagList);
+        ParentForm.Cursor = Cursors.WaitCursor;
+        flowLayoutPanel1.SuspendLayout();
+        collection.Sort(false);
+        comboBox1.Items.Clear();
+        comboBox1.Items.Add("All");
+        TagList.Clear();
+        toolTip1.RemoveAll(); // removes all created user-objects for the tooltip - reuse this tooltip instance, otherwise memory leak!
+        foreach (Control c in flowLayoutPanel1.Controls) c.Dispose();
+        flowLayoutPanel1.Controls.Clear();
+        foreach (PackageClass item in collection.Items)
+        {
+          var extHostCtrl = new ExtensionControlHost();
+          flowLayoutPanel1.Controls.Add(extHostCtrl);
+          extHostCtrl.Initialize(item, isListOfInstalledExtensions);
+          AddTags(item.GeneralInfo.TagList);
+        }
+        comboBox1.Text = "All";
+        textBox1.Text = string.Empty;
+        foreach (KeyValuePair<string, int> tagList in TagList)
+        {
+          if (tagList.Value > 1)
+            comboBox1.Items.Add(tagList.Key);
+        }
+        flowLayoutPanel1.ResumeLayout();
+        flowLayoutPanel1_SizeChanged(this, EventArgs.Empty);
       }
-      comboBox1.Text = "All";
-      textBox1.Text = string.Empty;
-      foreach (KeyValuePair<string, int> tagList in TagList)
+      finally
       {
-        if (tagList.Value > 1)
-          comboBox1.Items.Add(tagList.Key);
+        ParentForm.Cursor = oldCursor;
       }
     }
 
@@ -93,33 +108,31 @@ namespace MpeInstaller.Controls
       }
     }
 
-    private void flowLayoutPanel1_Click(object sender, EventArgs e) {}
-
-    public void OnUninstallExtension(ExtensionControl control)
+    public void OnUninstallExtension(ExtensionControlExpanded control)
     {
       if (UnInstallExtension != null)
         UnInstallExtension(control, control.Package);
     }
 
-    public void OnUpdateExtension(ExtensionControl control)
+    public void OnUpdateExtension(ExtensionControlExpanded control)
     {
       if (UpdateExtension != null)
         UpdateExtension(control, control.Package, control.UpdatePackage);
     }
 
-    public void OnConfigureExtension(ExtensionControl control)
+    public void OnConfigureExtension(ExtensionControlExpanded control)
     {
       if (ConfigureExtension != null)
         ConfigureExtension(control, control.Package);
     }
 
-    public void OnInstallExtension(ExtensionControl control, PackageClass pak)
+    public void OnInstallExtension(ExtensionControlExpanded control, PackageClass pak)
     {
       if (InstallExtension != null)
         InstallExtension(control, pak);
     }
 
-    public void OnShowScreenShot(ExtensionControl control, PackageClass pak)
+    public void OnShowScreenShot(ExtensionControlExpanded control, PackageClass pak)
     {
       if (ShowScreenShot != null)
         ShowScreenShot(control, pak);
@@ -127,14 +140,16 @@ namespace MpeInstaller.Controls
 
     public void Filter(string filter, string tag)
     {
+      flowLayoutPanel1.SuspendLayout();
       foreach (var control in flowLayoutPanel1.Controls)
       {
-        var cnt = control as ExtensionControl;
+        var cnt = control as ExtensionControlHost;
         if (cnt != null)
         {
           cnt.Visible = cnt.Filter(filter, tag);
         }
       }
+      flowLayoutPanel1.ResumeLayout();
     }
 
     private void textBox1_TextChanged(object sender, EventArgs e)
@@ -147,16 +162,28 @@ namespace MpeInstaller.Controls
       Filter(textBox1.Text, comboBox1.Text);
     }
 
-    private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e) {}
-
-    private void label1_Click(object sender, EventArgs e) {}
-
     private void flowLayoutPanel1_SizeChanged(object sender, EventArgs e)
     {
-      if (flowLayoutPanel1.Controls.Count > 1 && flowLayoutPanel1.Size.Width > flowLayoutPanel1.Controls[0].Width + 30)
+      // when the panel resizes, resize all children to fill the available width
+      // use the ClientSize with an extra 4 pixel 
+      // to make sure no horizontal scrollbar will show even when a vertical scrollbar is visible
+      if (flowLayoutPanel1.Controls.Count > 0 && flowLayoutPanel1.Controls[0].Width != flowLayoutPanel1.ClientSize.Width - 4)
+      {
+        foreach (Control control in flowLayoutPanel1.Controls)
+        {
+          control.Width = flowLayoutPanel1.ClientSize.Width - 4;
+        }
+      }
+      
+      /*if (flowLayoutPanel1.Controls.Count > 1 && flowLayoutPanel1.Size.Width > flowLayoutPanel1.Controls[0].Width + 30)
         flowLayoutPanel1.WrapContents = true;
       else
-        flowLayoutPanel1.WrapContents = false;
+        flowLayoutPanel1.WrapContents = false;*/
+    }
+
+    private void flowLayoutPanel1_MouseEnter(object sender, EventArgs e)
+    {
+      if (!flowLayoutPanel1.Focused) flowLayoutPanel1.Focus();
     }
   }
 }

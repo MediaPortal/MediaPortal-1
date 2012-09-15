@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>1014</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <controls>
+    <import>common.settings.xml</import>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>39</posX>
+      <posY>88</posY>
+      <height>392</height>
+      <width>663</width>
+      <texture>backslide2.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <!--Videos-->
+    <control>
+      <description>Videos playlist label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>56</posX>
+      <posY>120</posY>
+      <label>#playlisttype</label>
+    </control>
+    <control>
+      <description>Playlist folder btn</description>
+      <type>button</type>
+      <id>8</id>
+      <label>851</label>
+      <posX>56</posX>
+      <posY>156</posY>
+      <onup>17</onup>
+    </control>
+    <control>
+      <description>Videos playlist folder label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>225</posX>
+      <posY>160</posY>
+      <label>#videosPlaylist</label>
+      <width>478</width>
+      <visible>control.isvisible(8)</visible>
+    </control>
+    <control>
+      <description>Repeat/loop playlist</description>
+      <type>checkbutton</type>
+      <id>9</id>
+      <label>300066</label>
+      <posX>56</posX>
+      <posY>192</posY>
+      <width>303</width>
+      <ondown>8</ondown>
+      <font>font11</font>
+    </control>
+    <!--Music-->
+    <control>
+      <description>Playlist folder btn</description>
+      <type>button</type>
+      <id>2</id>
+      <label>851</label>
+      <posX>56</posX>
+      <posY>156</posY>
+      <onup>17</onup>
+    </control>
+    <control>
+      <description>Music playlist folder label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>225</posX>
+      <posY>160</posY>
+      <label>#musicPlaylist</label>
+      <visible>control.isvisible(2)</visible>
+      <width>478</width>
+    </control>
+    <control>
+      <description>Repeat</description>
+      <type>checkbutton</type>
+      <id>3</id>
+      <label>300066</label>
+      <posX>56</posX>
+      <posY>192</posY>
+      <width>303</width>
+      <onup>2</onup>
+      <ondown>4</ondown>
+      <font>font11</font>
+    </control>
+    <control>
+      <description>Autoshuffle</description>
+      <type>checkbutton</type>
+      <id>4</id>
+      <label>300067</label>
+      <posX>56</posX>
+      <posY>228</posY>
+      <width>303</width>
+      <onup>3</onup>
+      <ondown>5</ondown>
+      <font>font11</font>
+    </control>
+    <control>
+      <description>Save current</description>
+      <type>checkbutton</type>
+      <id>5</id>
+      <label>300068</label>
+      <posX>56</posX>
+      <posY>264</posY>
+      <width>303</width>
+      <onup>4</onup>
+      <ondown>6</ondown>
+      <font>font11</font>
+    </control>
+    <control>
+      <description>Load default</description>
+      <type>checkbutton</type>
+      <id>6</id>
+      <label>300069</label>
+      <posX>56</posX>
+      <posY>300</posY>
+      <width>303</width>
+      <onup>5</onup>
+      <ondown>7</ondown>
+      <font>font11</font>
+    </control>
+    <control>
+      <description>Playlist screen</description>
+      <type>checkbutton</type>
+      <id>7</id>
+      <label>300070</label>
+      <posX>56</posX>
+      <posY>336</posY>
+      <width>303</width>
+      <ondown>2</ondown>
+      <font>font11</font>
+    </control>
+  </controls>
+</window>

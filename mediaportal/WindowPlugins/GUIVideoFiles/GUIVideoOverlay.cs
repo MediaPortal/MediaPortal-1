@@ -415,7 +415,7 @@ namespace MediaPortal.GUI.Video
             path = Path.GetDirectoryName(fileName);
           }
           
-          GUIVideoFiles.FetchMovieNfo(path, fileName, ref movieDetails);
+          IMDBMovie.FetchMovieNfo(path, fileName, ref movieDetails);
 
           if (!movieDetails.IsEmpty)
           {
