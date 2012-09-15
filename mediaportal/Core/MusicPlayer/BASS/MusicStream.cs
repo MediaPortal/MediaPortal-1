@@ -20,8 +20,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player.DSP;
+using MediaPortal.TagReader;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Cd;
 using Un4seen.Bass.AddOn.Fx;
@@ -72,6 +74,14 @@ namespace MediaPortal.MusicPlayer.BASS
       public FileSubType FileSubType;
     }
 
+    public struct ReplayGainInfo
+    {
+      public float? AlbumGain;
+      public float? AlbumPeak;
+      public float? TrackGain;
+      public float? TrackPeak;
+    }
+
     #endregion
 
     #region Variables
@@ -85,7 +95,10 @@ namespace MediaPortal.MusicPlayer.BASS
     private int _cueTrackEndEventHandler;
 
     private TAG_INFO _tagInfo;
+    private MusicTag _musicTag = null;
     private bool _crossFading = false;
+
+    private ReplayGainInfo _replayGainInfo = new ReplayGainInfo();
 
     // DSP related Variables
     private DSP_Gain _gain = null;
@@ -202,6 +215,9 @@ namespace MediaPortal.MusicPlayer.BASS
 
     #region Private Methods
 
+    /// <summary>
+    /// Create the stream for the file assigned to the Musicstream
+    /// </summary>
     private void CreateStream()
     {
       BASSFlag streamFlags = BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE;
@@ -216,6 +232,8 @@ namespace MediaPortal.MusicPlayer.BASS
         case FileMainType.AudioFile:
         case FileMainType.MidiFile:
           _stream = Bass.BASS_StreamCreateFile(_filePath, 0, 0, streamFlags);
+          // Read the Tag
+          _musicTag = TagReader.TagReader.ReadTag(_filePath);
           break;
 
         case FileMainType.CDTrack:
@@ -293,8 +311,88 @@ namespace MediaPortal.MusicPlayer.BASS
       RegisterPlaybackEvents();
 
       AttachDspToStream();
+
+      if (Config.EnableReplayGain && _musicTag != null)
+      {
+        SetReplayGain();
+      }
     }
 
+    /// <summary>
+    /// Sets the ReplayGain Value, which is read from the Tag of the file
+    /// </summary>
+    private void SetReplayGain()
+    {
+      _replayGainInfo.AlbumGain = null;
+      _replayGainInfo.AlbumPeak = null;
+      _replayGainInfo.TrackGain = null;
+      _replayGainInfo.TrackPeak = null;
+
+      _replayGainInfo.AlbumGain = ParseReplayGainTagValue(_musicTag.ReplayGainAlbum);
+      _replayGainInfo.AlbumPeak = ParseReplayGainTagValue(_musicTag.ReplayGainAlbumPeak);
+      _replayGainInfo.TrackGain = ParseReplayGainTagValue(_musicTag.ReplayGainTrack);
+      _replayGainInfo.TrackPeak = ParseReplayGainTagValue(_musicTag.ReplayGainTrackPeak);
+
+      Log.Info("BASS: Replay Gain Data: Track Gain={0}dB, Track Peak={1}, Album Gain={2}dB, Album Peak={3}",
+            _replayGainInfo.TrackGain,
+            _replayGainInfo.TrackPeak,
+            _replayGainInfo.AlbumGain,
+            _replayGainInfo.AlbumPeak);
+
+      float? gain = null;
+      
+      if (Config.EnableAlbumReplayGain && _replayGainInfo.AlbumGain.HasValue)
+      {
+        gain = _replayGainInfo.AlbumGain;
+      }
+      else if (_replayGainInfo.TrackGain.HasValue)
+      {
+        gain = _replayGainInfo.TrackGain;
+      }
+
+      if (gain.HasValue)
+      {
+        Log.Info("BASS: Setting Replay Gain to {0}dB", gain.Value);
+        _gain = new DSP_Gain();
+        _gain.ChannelHandle = _stream;
+        _gain.Gain_dBV = gain.Value;
+        _gain.Start();
+      }
+
+    }
+
+    /// <summary>
+    /// Removes the "dB" value from the Replaygain tag
+    /// </summary>
+    /// <param name="s"></param>
+    /// <returns></returns>
+    private float? ParseReplayGainTagValue(string s)
+    {
+      if (s.Length == 0)
+      {
+        return null;
+      }
+
+      // Remove "dB"
+      int pos = s.IndexOf(" ");
+      if (pos > -1)
+        s = s.Substring(0, pos);
+
+      NumberFormatInfo formatInfo = new NumberFormatInfo();
+      formatInfo.NumberDecimalSeparator = ".";
+      formatInfo.PercentGroupSeparator = ",";
+      formatInfo.NegativeSign = "-";
+
+      float f;
+      if (float.TryParse(s, NumberStyles.Number, formatInfo, out f))
+        return new float?(f);
+      else
+        return new float?();
+    }
+
+    /// <summary>
+    /// Attach the various DSP Plugins and effects to the stream
+    /// </summary>
     private void AttachDspToStream()
     {
       bool dspActive = Config.DSPActive;
@@ -872,6 +970,11 @@ namespace MediaPortal.MusicPlayer.BASS
         }
       }
       catch (Exception) { }
+
+      if (_gain != null)
+      {
+        _gain.Stop();
+      }
 
       Bass.BASS_StreamFree(_stream);
     }

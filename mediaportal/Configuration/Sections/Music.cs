@@ -240,6 +240,8 @@ namespace MediaPortal.Configuration.Sections
 
         trackBarBuffering.Value = bufferingMS;
 
+        EnableReplayGainChkBox.Checked = xmlreader.GetValueAsBool("audioplayer", "enableReplayGain", false);
+        EnableAlbumReplayGainChkBox.Checked = xmlreader.GetValueAsBool("audioplayer", "enableAlbumReplayGain", false);
         GaplessPlaybackChkBox.Checked = xmlreader.GetValueAsBool("audioplayer", "gaplessPlayback", false);
         UseSkipStepsCheckBox.Checked = xmlreader.GetValueAsBool("audioplayer", "useSkipSteps", false);
         FadeOnStartStopChkbox.Checked = xmlreader.GetValueAsBool("audioplayer", "fadeOnStartStop", true);
@@ -438,6 +440,8 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("audioplayer", "useSkipSteps", UseSkipStepsCheckBox.Checked);
         xmlwriter.SetValueAsBool("audioplayer", "fadeOnStartStop", FadeOnStartStopChkbox.Checked);
         xmlwriter.SetValueAsBool("audioplayer", "gaplessPlayback", GaplessPlaybackChkBox.Checked);
+        xmlwriter.SetValueAsBool("audioplayer", "enableReplayGain", EnableReplayGainChkBox.Checked);
+        xmlwriter.SetValueAsBool("audioplayer", "enableAlbumReplayGain", EnableAlbumReplayGainChkBox.Checked);
         xmlwriter.SetValue("audioplayer", "streamOutputLevel", StreamOutputLevelNud.Value);
 
         xmlwriter.SetValue("audioplayer", "asiobalance", hScrollBarBalance.Value);

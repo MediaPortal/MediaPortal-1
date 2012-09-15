@@ -65,6 +65,8 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private static bool _softStop;
     private static bool _useSkipSteps;
+    private static bool _enableReplaygain;
+    private static bool _enableAlbumReplaygain;
     
     private static PlayBackType _playBackType;
 
@@ -72,13 +74,6 @@ namespace MediaPortal.MusicPlayer.BASS
 
     // DSP related variables
     private static bool _dspActive = false;
-
-    // DSP related Variables
-    private static DSP_Gain _gain = null;
-    private static BASS_BFX_DAMP _damp = null;
-    private static BASS_BFX_COMPRESSOR _comp = null;
-    private static int _dampPrio = 3;
-    private static int _compPrio = 2;
 
     // VST Related variables
     private static List<string> _vstPlugins = new List<string>();
@@ -143,6 +138,16 @@ namespace MediaPortal.MusicPlayer.BASS
     public static bool UseSkipSteps
     {
       get { return _useSkipSteps; }
+    }
+
+    public static bool EnableReplayGain
+    {
+      get { return _enableReplaygain; }
+    }
+
+    public static bool EnableAlbumReplayGain
+    {
+      get { return _enableAlbumReplaygain; }
     }
 
     public static PlayBackType PlayBack
@@ -258,6 +263,8 @@ namespace MediaPortal.MusicPlayer.BASS
 
         _softStop = xmlreader.GetValueAsBool("audioplayer", "fadeOnStartStop", true);
         _useSkipSteps = xmlreader.GetValueAsBool("audioplayer", "useSkipSteps", false);
+        _enableReplaygain = xmlreader.GetValueAsBool("audioplayer", "enableReplayGain", false);
+        _enableAlbumReplaygain = xmlreader.GetValueAsBool("audioplayer", "enableAlbumReplayGain", false);
 
         _asioBalance = (float)xmlreader.GetValueAsInt("audioplayer", "asiobalance", 0) / 100.00f;
 

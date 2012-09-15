@@ -19,12 +19,7 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Reflection;
-using System.Drawing;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.Configuration;
 using TagLib;
 
 namespace MediaPortal.TagReader
@@ -153,6 +148,10 @@ namespace MediaPortal.TagReader
         musictag.Channels = tag.Properties.AudioChannels;
         musictag.SampleRate = tag.Properties.AudioSampleRate;
         musictag.Year = (int)tag.Tag.Year;
+        musictag.ReplayGainTrack = tag.Tag.ReplayGainTrack ?? "";
+        musictag.ReplayGainTrackPeak = tag.Tag.ReplayGainTrackPeak ?? "";
+        musictag.ReplayGainAlbum = tag.Tag.ReplayGainAlbum ?? "";
+        musictag.ReplayGainAlbumPeak = tag.Tag.ReplayGainAlbumPeak ?? "";
 
         if (tag.MimeType == "taglib/mp3")
         {

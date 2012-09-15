@@ -52,10 +52,11 @@ namespace MediaPortal.Configuration.Sections
       this.PlayerTabPg = new System.Windows.Forms.TabPage();
       this.tabControlPlayerSettings = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageBassPlayerSettings = new System.Windows.Forms.TabPage();
+      this.EnableAlbumReplayGainChkBox = new System.Windows.Forms.CheckBox();
+      this.EnableReplayGainChkBox = new System.Windows.Forms.CheckBox();
       this.trackBarCrossfade = new System.Windows.Forms.TrackBar();
       this.trackBarBuffering = new System.Windows.Forms.TrackBar();
       this.UseSkipStepsCheckBox = new System.Windows.Forms.CheckBox();
-      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.BufferingSecondsLbl = new System.Windows.Forms.Label();
       this.CrossFadeSecondsLbl = new System.Windows.Forms.Label();
       this.label12 = new System.Windows.Forms.Label();
@@ -202,10 +203,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageBassPlayerSettings
       // 
+      this.tabPageBassPlayerSettings.Controls.Add(this.EnableAlbumReplayGainChkBox);
+      this.tabPageBassPlayerSettings.Controls.Add(this.EnableReplayGainChkBox);
       this.tabPageBassPlayerSettings.Controls.Add(this.trackBarCrossfade);
       this.tabPageBassPlayerSettings.Controls.Add(this.trackBarBuffering);
       this.tabPageBassPlayerSettings.Controls.Add(this.UseSkipStepsCheckBox);
-      this.tabPageBassPlayerSettings.Controls.Add(this.mpLabel3);
       this.tabPageBassPlayerSettings.Controls.Add(this.BufferingSecondsLbl);
       this.tabPageBassPlayerSettings.Controls.Add(this.CrossFadeSecondsLbl);
       this.tabPageBassPlayerSettings.Controls.Add(this.label12);
@@ -219,8 +221,30 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageBassPlayerSettings.Padding = new System.Windows.Forms.Padding(3);
       this.tabPageBassPlayerSettings.Size = new System.Drawing.Size(424, 280);
       this.tabPageBassPlayerSettings.TabIndex = 0;
-      this.tabPageBassPlayerSettings.Text = "General Settings";
+      this.tabPageBassPlayerSettings.Text = "General BASS Player Settings";
       this.tabPageBassPlayerSettings.UseVisualStyleBackColor = true;
+      // 
+      // EnableAlbumReplayGainChkBox
+      // 
+      this.EnableAlbumReplayGainChkBox.AutoSize = true;
+      this.EnableAlbumReplayGainChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.EnableAlbumReplayGainChkBox.Location = new System.Drawing.Point(166, 50);
+      this.EnableAlbumReplayGainChkBox.Name = "EnableAlbumReplayGainChkBox";
+      this.EnableAlbumReplayGainChkBox.Size = new System.Drawing.Size(209, 17);
+      this.EnableAlbumReplayGainChkBox.TabIndex = 19;
+      this.EnableAlbumReplayGainChkBox.Text = "Enable Album Replay Gain (if available)";
+      this.EnableAlbumReplayGainChkBox.UseVisualStyleBackColor = true;
+      // 
+      // EnableReplayGainChkBox
+      // 
+      this.EnableReplayGainChkBox.AutoSize = true;
+      this.EnableReplayGainChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.EnableReplayGainChkBox.Location = new System.Drawing.Point(17, 50);
+      this.EnableReplayGainChkBox.Name = "EnableReplayGainChkBox";
+      this.EnableReplayGainChkBox.Size = new System.Drawing.Size(118, 17);
+      this.EnableReplayGainChkBox.TabIndex = 18;
+      this.EnableReplayGainChkBox.Text = "Enable Replay Gain";
+      this.EnableReplayGainChkBox.UseVisualStyleBackColor = true;
       // 
       // trackBarCrossfade
       // 
@@ -259,15 +283,6 @@ namespace MediaPortal.Configuration.Sections
       this.UseSkipStepsCheckBox.TabIndex = 15;
       this.UseSkipStepsCheckBox.Text = "Use Skip steps on forward / rewind";
       this.UseSkipStepsCheckBox.UseVisualStyleBackColor = true;
-      // 
-      // mpLabel3
-      // 
-      this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(17, 18);
-      this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new System.Drawing.Size(188, 13);
-      this.mpLabel3.TabIndex = 14;
-      this.mpLabel3.Text = "Standard BASS Player via DirectShow";
       // 
       // BufferingSecondsLbl
       // 
@@ -310,7 +325,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // StreamOutputLevelNud
       // 
-      this.StreamOutputLevelNud.Location = new System.Drawing.Point(87, 45);
+      this.StreamOutputLevelNud.Location = new System.Drawing.Point(87, 14);
       this.StreamOutputLevelNud.Name = "StreamOutputLevelNud";
       this.StreamOutputLevelNud.Size = new System.Drawing.Size(52, 20);
       this.StreamOutputLevelNud.TabIndex = 1;
@@ -332,7 +347,7 @@ namespace MediaPortal.Configuration.Sections
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(14, 47);
+      this.mpLabel1.Location = new System.Drawing.Point(14, 16);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(67, 13);
       this.mpLabel1.TabIndex = 0;
@@ -439,7 +454,7 @@ namespace MediaPortal.Configuration.Sections
       this.WasapiExclusiveModeCkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.WasapiExclusiveModeCkBox.Location = new System.Drawing.Point(21, 53);
       this.WasapiExclusiveModeCkBox.Name = "WasapiExclusiveModeCkBox";
-      this.WasapiExclusiveModeCkBox.Size = new System.Drawing.Size(161, 17);
+      this.WasapiExclusiveModeCkBox.Size = new System.Drawing.Size(166, 17);
       this.WasapiExclusiveModeCkBox.TabIndex = 3;
       this.WasapiExclusiveModeCkBox.Text = "Use WASAPI Exclusive Mode";
       this.WasapiExclusiveModeCkBox.UseVisualStyleBackColor = true;
@@ -449,7 +464,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel5.AutoSize = true;
       this.mpLabel5.Location = new System.Drawing.Point(18, 22);
       this.mpLabel5.Name = "mpLabel5";
-      this.mpLabel5.Size = new System.Drawing.Size(346, 13);
+      this.mpLabel5.Size = new System.Drawing.Size(349, 13);
       this.mpLabel5.TabIndex = 0;
       this.mpLabel5.Text = "Playback via BASS using Windows Audio Session API (WASAPI) drivers";
       // 
@@ -1254,7 +1269,6 @@ namespace MediaPortal.Configuration.Sections
     private TabPage tabPageWASAPIPLayerSettings;
     private MPCheckBox checkBoxSwitchArtistOnLastFMSubmit;
     private MPButton btAsioDeviceSettings;
-    private MPLabel mpLabel3;
     private MPLabel mpLabel4;
     private MPLabel mpLabel5;
     private MPLabel lbBalance;
@@ -1275,5 +1289,7 @@ namespace MediaPortal.Configuration.Sections
     private CheckBox UseSkipStepsCheckBox;
     private TrackBar trackBarBuffering;
     private TrackBar trackBarCrossfade;
+    private CheckBox EnableAlbumReplayGainChkBox;
+    private CheckBox EnableReplayGainChkBox;
   }
 }

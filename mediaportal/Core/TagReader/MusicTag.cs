@@ -60,6 +60,10 @@ namespace MediaPortal.TagReader
     internal int m_BPM = 0;
     internal int m_Channels = 0;
     internal int m_SampleRate = 0;
+    internal string m_ReplayGainTrack = "";
+    internal string m_ReplayGainTrackPeak = "";
+    internal string m_ReplayGainAlbum = "";
+    internal string m_ReplayGainAlbumPeak = "";
 
     #endregion
 
@@ -93,6 +97,10 @@ namespace MediaPortal.TagReader
       AlbumArtist = tag.AlbumArtist;
       Lyrics = tag.Lyrics;
       Comment = tag.Comment;
+      ReplayGainTrack = tag.ReplayGainTrack;
+      ReplayGainTrackPeak = tag.ReplayGainTrackPeak;
+      ReplayGainAlbum = tag.ReplayGainAlbum;
+      ReplayGainAlbumPeak = tag.ReplayGainAlbumPeak;
 
       DateTimePlayed = tag.DateTimePlayed;
       DateTimeModified = tag.DateTimeModified;
@@ -134,6 +142,10 @@ namespace MediaPortal.TagReader
       m_SampleRate = 0;
       m_dateTimeModified = DateTime.MinValue;
       m_dateTimePlayed = DateTime.MinValue;
+      m_ReplayGainTrack = "";
+      m_ReplayGainTrackPeak = "";
+      m_ReplayGainAlbum = "";
+      m_ReplayGainAlbumPeak = "";
     }
 
     public bool IsMissingData
@@ -393,6 +405,30 @@ namespace MediaPortal.TagReader
     public string CoverArtFile
     {
       get { return Utils.GetImageFile(m_CoverArtImageBytes, String.Empty); }
+    }
+
+    public string ReplayGainTrack
+    {
+      get { return m_ReplayGainTrack; }
+      set { m_ReplayGainTrack = value; }
+    }
+
+    public string ReplayGainTrackPeak
+    {
+      get { return m_ReplayGainTrackPeak; }
+      set { m_ReplayGainTrackPeak = value; }
+    }
+
+    public string ReplayGainAlbum
+    {
+      get { return m_ReplayGainAlbum; }
+      set { m_ReplayGainAlbum = value; }
+    }
+
+    public string ReplayGainAlbumPeak
+    {
+      get { return m_ReplayGainAlbumPeak; }
+      set { m_ReplayGainAlbumPeak = value; }
     }
 
     #endregion
