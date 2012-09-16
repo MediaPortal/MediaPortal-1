@@ -64,20 +64,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Bass.Net">
-      <HintPath>..\..\..\..\..\..\Programme\Team MediaPortal\MediaPortal\Bass.Net.dll</HintPath>
-    </Reference>
-    <Reference Include="Core">
-      <HintPath>..\..\..\..\..\..\Programme\Team MediaPortal\MediaPortal\Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Dialogs">
-      <HintPath>..\..\..\..\..\..\Programme\Team MediaPortal\MediaPortal\plugins\Windows\Dialogs.dll</HintPath>
+      <Name>Bass.Net</Name>
+      <HintPath>..\MediaPortal.Base\Bass.Net.dll</HintPath>
     </Reference>
     <Reference Include="LibDriverCoreClient">
       <Name>LibDriverCoreClient</Name>
-      <HintPath>..\..\..\..\..\..\Programme\Team MediaPortal\MediaPortal\LibDriverCoreClient.dll</HintPath>
-    </Reference>
-    <Reference Include="RemotePlugins">
-      <HintPath>..\..\..\..\..\..\Programme\Team MediaPortal\MediaPortal\RemotePlugins.dll</HintPath>
+      <HintPath>..\MediaPortal.Base\LibDriverCoreClient.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -91,7 +83,6 @@
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
-    <Reference Include="System.Net" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
@@ -99,11 +90,11 @@
     <Reference Include="System.Xml">
       <Name>System.Xml</Name>
     </Reference>
-    <Reference Include="Utils">
-      <HintPath>..\..\..\..\..\..\Programme\Team MediaPortal\MediaPortal\Utils.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -339,6 +330,24 @@
     <Compile Include="xPL\XplSource.cs">
       <SubType>Code</SubType>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Dialogs\Dialogs.csproj">
+      <Project>{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}</Project>
+      <Name>Dialogs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlugins\RemotePlugins.csproj">
+      <Project>{0A234721-1F13-4DF8-9B1E-64D9E3111203}</Project>
+      <Name>RemotePlugins</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MiniDisplayPlugin\Drivers\FutabaMDM166A_AdvancedSetupForm.resx">

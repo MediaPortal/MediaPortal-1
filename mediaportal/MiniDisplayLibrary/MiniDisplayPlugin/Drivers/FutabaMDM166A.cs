@@ -774,7 +774,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         /// </summary>
         public string Description
         {
-            get { return "Futaba MDM166A VFD driver v0.22 by datenschredder"; }
+            get { return "Futaba MDM166A VFD driver v0.23 by datenschredder"; }
         }
 
         /// <summary>
