@@ -988,7 +988,18 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 		if (m_pcrPid<0 || m_vecPids.size()==0 || m_iPmtPid<0) return;
 
 		m_tsHeader.Decode(tsPacket);
-		if (m_tsHeader.TScrambling)	return ;
+		if (m_tsHeader.TScrambling)
+    {
+      // If the packet has no payload then don't drop it - it might have PCR in the adaption field
+      // that is not actually scrambled. This is a workaround for bad CAM behaviour.
+      if (!m_tsHeader.AdaptionFieldOnly())
+      {
+        return;
+      }
+      // Mark the packet as not scrambled.
+      m_tsHeader.TScrambling = 0;
+      tsPacket[3] = tsPacket[3] & 0x3f;
+    }
 		if (m_tsHeader.TransportError) 	{ LogDebug("Recorder:Pid %x : Transport error flag set!", m_tsHeader.Pid) ; return ; }
 
 		if (m_iPacketCounter>=100)
