@@ -763,7 +763,8 @@ namespace TvLibrary.Implementations.DVB
           // to allow the user to do what they want - "user knows best".
           if (!_currentChannel.FreeToAir)
           {
-            GrabCat();
+            //TODO fix this
+            //GrabCat();
           }
 
           // TODO: call _tuner.OnPmtReady().

@@ -21,10 +21,12 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
 using DirectShowLib.BDA;
+using MediaPortal.Common.Utils;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Device;
@@ -261,25 +263,24 @@ namespace TvEngine
 
     #endregion
 
-    #region DLL imports
+    #region delegates
 
     /// <summary>
-    /// Open the CI interface. This function can only be called once after the graph is built. The graph must be destroyed
-    /// and rebuilt if you want to reset the CI interface.
+    /// Open the conditional access interface for a specific Turbosight device.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
     /// <param name="deviceName">The corresponding DsDevice name.</param>
     /// <returns>a handle that the DLL can use to identify this device for future function calls</returns>
-    [DllImport("Resources\\TbsCIapi.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    private static extern IntPtr On_Start_CI(IBaseFilter tunerFilter, [MarshalAs(UnmanagedType.LPWStr)] String deviceName);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    private delegate IntPtr On_Start_CI(IBaseFilter tunerFilter, [MarshalAs(UnmanagedType.LPWStr)] String deviceName);
 
     /// <summary>
-    /// Check whether a CAM is present in the CI slot.
+    /// Check whether a CAM is present in the CI slot associated with a specific Turbosight device.
     /// </summary>
     /// <param name="handle">The handle allocated to this device.</param>
-    [DllImport("Resources\\TbsCIapi.dll", CallingConvention = CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static extern bool Camavailable(IntPtr handle);
+    private delegate bool Camavailable(IntPtr handle);
 
     /// <summary>
     /// Exchange MMI messages with the CAM.
@@ -287,8 +288,8 @@ namespace TvEngine
     /// <param name="handle">The handle allocated to this device.</param>
     /// <param name="command">The MMI command.</param>
     /// <param name="response">The MMI response.</param>
-    [DllImport("Resources\\TbsCIapi.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern void TBS_ci_MMI_Process(IntPtr handle, IntPtr command, IntPtr response);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    private delegate void TBS_ci_MMI_Process(IntPtr handle, IntPtr command, IntPtr response);
 
     /// <summary>
     /// Send PMT to the CAM.
@@ -296,16 +297,15 @@ namespace TvEngine
     /// <param name="handle">The handle allocated to this device.</param>
     /// <param name="pmt">The PMT command.</param>
     /// <param name="pmtLength">The length of the PMT.</param>
-    [DllImport("Resources\\TbsCIapi.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern void TBS_ci_SendPmt(IntPtr handle, IntPtr pmt, UInt16 pmtLength);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    private delegate void TBS_ci_SendPmt(IntPtr handle, IntPtr pmt, UInt16 pmtLength);
 
     /// <summary>
-    /// Close the CI interface.
+    /// Close the conditional access interface for a specific Turbosight device.
     /// </summary>
     /// <param name="handle">The handle allocated to this device.</param>
-    [DllImport("Resources\\TbsCIapi.dll", CallingConvention = CallingConvention.Cdecl)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool On_Exit_CI(IntPtr handle);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    private delegate void On_Exit_CI(IntPtr handle);
 
     #endregion
 
@@ -328,6 +328,21 @@ namespace TvEngine
     #endregion
 
     #region variables
+
+    // This variable tracks the number of open API instances which corresponds with used DLL indices.
+    private static int _apiCount = 0;
+
+    // Conditional access API instance variables.
+    private int _apiIndex = 0;
+    private bool _dllLoaded = false;
+    private IntPtr _libHandle = IntPtr.Zero;
+
+    // Delegate instances for each API DLL function.
+    private On_Start_CI _onStartCi = null;
+    private Camavailable _camAvailable = null;
+    private TBS_ci_MMI_Process _mmiProcess = null;
+    private TBS_ci_SendPmt _sendPmt = null;
+    private On_Exit_CI _onExitCi = null;
 
     // Buffers for use in conditional access related functions.
     private IntPtr _mmiMessageBuffer = IntPtr.Zero;
@@ -359,6 +374,132 @@ namespace TvEngine
     private List<MmiMessage> _mmiMessageQueue = null;
 
     #endregion
+
+    /// <summary>
+    /// Load a conditional access API instance. This involves obtaining delegate instances for
+    /// each of the member functions.
+    /// </summary>
+    /// <returns><c>true</c> if the instance is successfully loaded, otherwise <c>false</c></returns>
+    private bool LoadNewCaApiInstance()
+    {
+      // Load a new DLL. DLLs should not be reused to avoid issues when resetting interfaces and
+      // enable support for multiple tuners with CI slots.
+      _apiCount++;
+      _apiIndex = _apiCount;
+      Log.Debug("Turbosight: loading API, API index = {0}", _apiIndex);
+      if (!File.Exists("Plugins\\CustomDevices\\Resources\\tbsCIapi" + _apiIndex + ".dll"))
+      {
+        try
+        {
+          File.Copy("Plugins\\CustomDevices\\Resources\\tbsCIapi.dll", "Plugins\\CustomDevices\\Resources\\tbsCIapi" + _apiIndex + ".dll");
+        }
+        catch (Exception ex)
+        {
+          Log.Debug("Turbosight: failed to copy tbsCIapi.dll\r\n{0}", ex.ToString());
+          return false;
+        }
+      }
+      _libHandle = NativeMethods.LoadLibrary("Plugins\\CustomDevices\\Resources\\tbsCIapi" + _apiIndex + ".dll");
+      if (_libHandle == IntPtr.Zero || _libHandle == null)
+      {
+        Log.Debug("Turbosight: failed to load the DLL");
+        return false;
+      }
+
+      try
+      {
+        IntPtr function = NativeMethods.GetProcAddress(_libHandle, "On_Start_CI");
+        if (function == IntPtr.Zero)
+        {
+          Log.Debug("Turbosight: failed to locate the On_Start_CI function");
+          return false;
+        }
+        try
+        {
+          _onStartCi = (On_Start_CI)Marshal.GetDelegateForFunctionPointer(function, typeof(On_Start_CI));
+        }
+        catch (Exception ex)
+        {
+          Log.Debug("Turbosight: failed to load the On_Start_CI function\r\n{0}", ex.ToString());
+          return false;
+        }
+
+        function = NativeMethods.GetProcAddress(_libHandle, "Camavailable");
+        if (function == IntPtr.Zero)
+        {
+          Log.Debug("Turbosight: failed to locate the Camavailable function");
+          return false;
+        }
+        try
+        {
+          _camAvailable = (Camavailable)Marshal.GetDelegateForFunctionPointer(function, typeof(Camavailable));
+        }
+        catch (Exception ex)
+        {
+          Log.Debug("Turbosight: failed to load the Camavailable function\r\n{0}", ex.ToString());
+          return false;
+        }
+
+        function = NativeMethods.GetProcAddress(_libHandle, "TBS_ci_MMI_Process");
+        if (function == IntPtr.Zero)
+        {
+          Log.Debug("Turbosight: failed to locate the TBS_ci_MMI_Process function");
+          return false;
+        }
+        try
+        {
+          _mmiProcess = (TBS_ci_MMI_Process)Marshal.GetDelegateForFunctionPointer(function, typeof(TBS_ci_MMI_Process));
+        }
+        catch (Exception ex)
+        {
+          Log.Debug("Turbosight: failed to load the TBS_ci_MMI_Process function\r\n", ex.ToString());
+          return false;
+        }
+
+        function = NativeMethods.GetProcAddress(_libHandle, "TBS_ci_SendPmt");
+        if (function == IntPtr.Zero)
+        {
+          Log.Debug("Turbosight: failed to locate the TBS_ci_SendPmt function");
+          return false;
+        }
+        try
+        {
+          _sendPmt = (TBS_ci_SendPmt)Marshal.GetDelegateForFunctionPointer(function, typeof(TBS_ci_SendPmt));
+        }
+        catch (Exception ex)
+        {
+          Log.Debug("Turbosight: failed to load the TBS_ci_SendPmt function\r\n{0}", ex.ToString());
+          return false;
+        }
+
+        function = NativeMethods.GetProcAddress(_libHandle, "On_Exit_CI");
+        if (function == IntPtr.Zero)
+        {
+          Log.Debug("Turbosight: failed to locate the On_Exit_CI function");
+          return false;
+        }
+        try
+        {
+          _onExitCi = (On_Exit_CI)Marshal.GetDelegateForFunctionPointer(function, typeof(On_Exit_CI));
+        }
+        catch (Exception ex)
+        {
+          Log.Debug("Turbosight: failed to load the On_Exit_CI function\r\n{0}", ex.ToString());
+          return false;
+        }
+
+        _dllLoaded = true;
+        return true;
+      }
+      finally
+      {
+        if (!_dllLoaded)
+        {
+          NativeMethods.FreeLibrary(_libHandle);
+          _libHandle = IntPtr.Zero;
+        }
+      }
+    }
 
     #region MMI handler thread
 
@@ -418,7 +559,7 @@ namespace TvEngine
           bool newState;
           lock (this)
           {
-            newState = Camavailable(_ciHandle);
+            newState = _camAvailable(_ciHandle);
           }
           if (newState != _isCamPresent)
           {
@@ -472,7 +613,7 @@ namespace TvEngine
           // Send/resend the message.
           lock (this)
           {
-            TBS_ci_MMI_Process(_ciHandle, _mmiMessageBuffer, _mmiResponseBuffer);
+            _mmiProcess(_ciHandle, _mmiMessageBuffer, _mmiResponseBuffer);
           }
 
           // Do we expect a response to this message?
@@ -1102,7 +1243,7 @@ namespace TvEngine
         Log.Debug("Turbosight: device not initialised or interface not supported");
         return false;
       }
-      if (_ciHandle != IntPtr.Zero)
+      if (_dllLoaded || _ciHandle != IntPtr.Zero)
       {
         Log.Debug("Turbosight: interface is already open");
         return false;
@@ -1124,8 +1265,13 @@ namespace TvEngine
       }
       _isCiSlotPresent = true;
 
+      if (!LoadNewCaApiInstance())
+      {
+        return false;
+      }
+
       // Attempt to initialise the interface.
-      _ciHandle = On_Start_CI(_tunerFilter, _tunerFilterName);
+      _ciHandle = _onStartCi(_tunerFilter, _tunerFilterName);
       if (_ciHandle == IntPtr.Zero || _ciHandle.ToInt64() == 0)
       {
         Log.Debug("Turbosight: interface handle is null");
@@ -1135,9 +1281,10 @@ namespace TvEngine
 
       _mmiMessageBuffer = Marshal.AllocCoTaskMem(MmiMessageBufferSize);
       _mmiResponseBuffer = Marshal.AllocCoTaskMem(MmiResponseBufferSize);
-      _pmtBuffer = Marshal.AllocCoTaskMem(1026);  // MaxPmtSize + 2
+      _pmtBuffer = Marshal.AllocCoTaskMem(MaxPmtLength + 2);  // + 2 for TBS PMT header
       _mmiMessageQueue = new List<MmiMessage>();
-      _isCamPresent = Camavailable(_ciHandle);
+      _isCamPresent = _camAvailable(_ciHandle);
+      Log.Debug("Turbosight: CAM available = {0}", _isCamPresent);
 
       StartMmiHandlerThread();
 
@@ -1167,7 +1314,7 @@ namespace TvEngine
         String handleAddress = String.Format("0x{0:x}", _ciHandle.ToInt64());
         try
         {
-          On_Exit_CI(_ciHandle);
+          _onExitCi(_ciHandle);
         }
         catch (Exception ex)
         {
@@ -1195,6 +1342,12 @@ namespace TvEngine
         Marshal.FreeCoTaskMem(_pmtBuffer);
         _pmtBuffer = IntPtr.Zero;
       }
+      if (_libHandle != IntPtr.Zero)
+      {
+        NativeMethods.FreeLibrary(_libHandle);
+        _libHandle = IntPtr.Zero;
+      }
+      _dllLoaded = false;
 
       Log.Debug("Turbosight: result = true");
       return true;
@@ -1212,9 +1365,8 @@ namespace TvEngine
 
       // TBS have confirmed that it is not currently possible to call On_Start_CI() multiple times on a
       // filter instance ***even if On_Exit_CI() is called***. The graph must be rebuilt to reset the CI.
-      //return CloseInterface() && OpenInterface();
       rebuildGraph = true;
-      return true;
+      return CloseInterface() && OpenInterface();
     }
 
     /// <summary>
@@ -1239,7 +1391,7 @@ namespace TvEngine
       bool camPresent = false;
       lock (this)
       {
-        camPresent = Camavailable(_ciHandle);
+        camPresent = _camAvailable(_ciHandle);
       }
       Log.Debug("Turbosight: result = {0}", camPresent);
       return camPresent;
@@ -1287,9 +1439,9 @@ namespace TvEngine
         Marshal.WriteByte(_pmtBuffer, offset++, rawPmt[i]);
       }
 
-      //DVB_MMI.DumpBinary(_pmtBuffer, 0, 2 + rawPmt.Count);
+      //DVB_MMI.DumpBinary(_pmtBuffer, 0, rawPmt.Count + 2);
 
-      TBS_ci_SendPmt(_ciHandle, _pmtBuffer, (ushort)(rawPmt.Count + 2));
+      _sendPmt(_ciHandle, _pmtBuffer, (ushort)(rawPmt.Count + 2));
 
       Log.Debug("Turbosight: result = success");
       return true;
