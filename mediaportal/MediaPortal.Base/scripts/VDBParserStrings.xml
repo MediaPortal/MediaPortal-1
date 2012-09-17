@@ -1,41 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <section>
 	<!--28.03.2012 verified-->
 	<!--Do not edit or delete this file or MyVideos will stop to fetch movie data-->
 		
-	<GUIVideoArtistInfo>
-		<string><!--0-->
-			<![CDATA[http://m.imdb.com/title/{0}]]>
-		</string>
-		<string><!--1-->
-			<![CDATA[<h1>Plot\sSummary</h1>\s+<p>(?<moviePlot>.+?)</p>]]>
-		</string>
-		<string><!--2-->
-			<![CDATA[http://m.imdb.com/title/{0}/plotsummary]]>
-		</string>
-		<string><!--3-->
-			<![CDATA[<section\sclass="plot".*?<p>(?<moviePlot>.*?)</p>]]>
-		</string>
-		<string><!--4-->
-			<![CDATA[title"\scontent="(?<movieTitle>.*?)[(](?<movieYear>.{4})[)]]]>
-		</string>
-		<string><!--5-->
-			<![CDATA[(<h1>Director</h1>|<h1>Directors</h1>)\s+<p>\s+<a\shref=".*?>(?<director>.*?)</a>]]>
-		</string>
-		<string><!--6-->
-			<![CDATA[<h1>Genre</h1>\s+<p>(?<genre>.+?)</p>]]>
-		</string>
-		<string><!--7-->
-			<![CDATA[<h1>Rated</h1>\s+<p>(?<rating>.+?)</p>]]>
-		</string>
-		<string><!--8-->
-			<![CDATA[<div\sclass="label">\s+<div\sclass="title">\s+<a\shref="/name/.*?>(?<actor>.*?)<]]>
-		</string>
-		<string><!--9-->
-			<![CDATA[<div\sclass="poster">\s+<a\shref="(?<poster>.*?)"]]>
-		</string>
-	</GUIVideoArtistInfo>
-	
 	<FanArt>
 		<string><!--0 Normal link-->
 			<![CDATA[http://api.themoviedb.org/2.1/Movie.imdbLookup/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/]]>
@@ -467,6 +434,11 @@
 			<![CDATA["ratingCount">(?<moviePopularity>.*?)<]]>
 		</string>
 	</GUIVideoInfo>
+	
+	<CleanFilter>
+		<string><!--0-->		<![CDATA[(([\(\{\[]|\b)((576|720|1080)[pi]|dir(ectors)?cut|dvd([r59]|rip|scr(eener)?)|(avc)?hd|avc|wmv|ntsc|pal|truehd|[1-7][.][1]|mpeg|dsr|r[1-5]|bd[59]|dts|ac3|blu(-)?ray|[hp]dtv|stv|hddvd|xvid|divx|x264|dxva|(?-i)FEST[Ii]VAL|L[iI]M[iI]TED|[WF]S|PROPER|REPACK|RER[Ii]P|REAL|RETA[Ii]L|EXTENDED|REMASTERED|UNRATED|CHRONO|THEATR[Ii]CAL|DC|SE|UNCUT|[Ii]NTERNAL|V\d{1}|BR[Rr]ip|[DS]UBBED)([\]\)\}]|\b)(-[^\s]+$)?)]]>
+		</string>
+	</CleanFilter>
 </section>
 
 

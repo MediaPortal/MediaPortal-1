@@ -8,9 +8,6 @@ namespace MpeCore.Classes.VersionProvider
 {
   public class SkinVersion : IVersionProvider
   {
-
-    #region IVersionProvider Members
-
     public string DisplayName
     {
       get { return "Skin"; }
@@ -28,7 +25,5 @@ namespace MpeCore.Classes.VersionProvider
     {
       return new VersionInfo(MediaPortal.Common.Utils.CompatibilityManager.SkinVersion);
     }
-
-    #endregion
   }
 }

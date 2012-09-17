@@ -935,7 +935,7 @@ namespace SetupTv.Sections
           Channel dbChannel = null;
           if (checkBoxNoMerge.Checked)
           {
-            dbChannel = layer.AddNewChannel(channel.Name);
+            dbChannel = layer.AddNewChannel(channel.Name, channel.ChannelNumber);
           }
           else
           {
@@ -951,7 +951,7 @@ namespace SetupTv.Sections
             }
             else
             {
-              dbChannel = layer.AddNewChannel(channel.Name);
+              dbChannel = layer.AddNewChannel(channel.Name, 10000);
             }
           }
           dbChannel.IsTv = channel.IsTv;
@@ -1197,7 +1197,7 @@ namespace SetupTv.Sections
             }
             else
             {
-              dbChannel = layer.AddNewChannel(channel.Name);
+              dbChannel = layer.AddNewChannel(channel.Name, channel.ChannelNumber);
               line = String.Format("frequence:{0} MHz : New channel found - {1}", freqMHz.ToString("f2"), channel.Name);
               channelsNew++;
             }
@@ -1293,7 +1293,7 @@ namespace SetupTv.Sections
         }
         else
         {
-          dbChannel = layer.AddNewChannel(channelName);
+          dbChannel = layer.AddNewChannel(channelName, 10000);
         }
         dbChannel.IsTv = true;
         dbChannel.Persist();
@@ -1315,7 +1315,7 @@ namespace SetupTv.Sections
         }
         else
         {
-          dbChannel = layer.AddNewChannel(channelName);
+          dbChannel = layer.AddNewChannel(channelName, 10000);
         }
         dbChannel.IsTv = true;
         dbChannel.Persist();
@@ -1337,7 +1337,7 @@ namespace SetupTv.Sections
         }
         else
         {
-          dbChannel = layer.AddNewChannel(channelName);
+          dbChannel = layer.AddNewChannel(channelName, 10000);
         }
         dbChannel.IsTv = true;
         dbChannel.Persist();
@@ -1359,7 +1359,7 @@ namespace SetupTv.Sections
         }
         else
         {
-          dbChannel = layer.AddNewChannel(channelName);
+          dbChannel = layer.AddNewChannel(channelName, 10000);
         }
         dbChannel.IsTv = true;
         dbChannel.Persist();
@@ -1381,7 +1381,7 @@ namespace SetupTv.Sections
         }
         else
         {
-          dbChannel = layer.AddNewChannel(channelName);
+          dbChannel = layer.AddNewChannel(channelName, 10000);
         }
         dbChannel.IsTv = true;
         dbChannel.Persist();
@@ -1403,7 +1403,7 @@ namespace SetupTv.Sections
         }
         else
         {
-          dbChannel = layer.AddNewChannel(channelName);
+          dbChannel = layer.AddNewChannel(channelName, 10000);
         }
         dbChannel.IsTv = true;
         dbChannel.Persist();
@@ -1425,7 +1425,7 @@ namespace SetupTv.Sections
         }
         else
         {
-          dbChannel = layer.AddNewChannel(channelName);
+          dbChannel = layer.AddNewChannel(channelName, 10000);
         }
         dbChannel.IsTv = true;
         dbChannel.Persist();
@@ -1447,7 +1447,7 @@ namespace SetupTv.Sections
         }
         else
         {
-          dbChannel = layer.AddNewChannel(channelName);
+          dbChannel = layer.AddNewChannel(channelName, 10000);
         }
         dbChannel.IsTv = true;
         dbChannel.Persist();
@@ -1469,7 +1469,7 @@ namespace SetupTv.Sections
         }
         else
         {
-          dbChannel = layer.AddNewChannel(channelName);
+          dbChannel = layer.AddNewChannel(channelName, 10000);
         }
         dbChannel.IsTv = true;
         dbChannel.Persist();
@@ -1491,7 +1491,7 @@ namespace SetupTv.Sections
         }
         else
         {
-          dbChannel = layer.AddNewChannel(channelName);
+          dbChannel = layer.AddNewChannel(channelName, 10000);
         }
         dbChannel.IsTv = true;
         dbChannel.Persist();
@@ -1513,7 +1513,7 @@ namespace SetupTv.Sections
         }
         else
         {
-          dbChannel = layer.AddNewChannel(channelName);
+          dbChannel = layer.AddNewChannel(channelName, 10000);
         }
         dbChannel.IsTv = true;
         dbChannel.Persist();
@@ -1535,7 +1535,7 @@ namespace SetupTv.Sections
         }
         else
         {
-          dbChannel = layer.AddNewChannel(channelName);
+          dbChannel = layer.AddNewChannel(channelName, 10000);
         }
         dbChannel.IsTv = true;
         dbChannel.Persist();
@@ -1557,7 +1557,7 @@ namespace SetupTv.Sections
         }
         else
         {
-          dbChannel = layer.AddNewChannel(channelName);
+          dbChannel = layer.AddNewChannel(channelName, 10000);
         }
         dbChannel.IsTv = true;
         dbChannel.Persist();
@@ -1579,7 +1579,7 @@ namespace SetupTv.Sections
         }
         else
         {
-          dbChannel = layer.AddNewChannel(channelName);
+          dbChannel = layer.AddNewChannel(channelName, 10000);
         }
         dbChannel.IsTv = true;
         dbChannel.Persist();
@@ -1601,7 +1601,7 @@ namespace SetupTv.Sections
         }
         else
         {
-          dbChannel = layer.AddNewChannel(channelName);
+          dbChannel = layer.AddNewChannel(channelName, 10000);
         }
         dbChannel.IsTv = true;
         dbChannel.Persist();

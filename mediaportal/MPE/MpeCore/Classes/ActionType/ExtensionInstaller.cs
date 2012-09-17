@@ -33,6 +33,8 @@ namespace MpeCore.Classes.ActionType
     public event FileInstalledEventHandler ItemProcessed;
 
     private const string Const_Loc = "Extension package";
+    private const string Const_Guid = "Extension Id";
+    private const string Const_Version = "Extension Version";
     private const string Const_Silent = "Silent Install";
     //private const string Const_Remove = "Remove on Uninstall";
 
@@ -56,6 +58,10 @@ namespace MpeCore.Classes.ActionType
       var Params = new SectionParamCollection();
       Params.Add(new SectionParam(Const_Loc, "", ValueTypeEnum.File,
                                   "Location of the extension package"));
+      Params.Add(new SectionParam(Const_Guid, "", ValueTypeEnum.String,
+                                  "Global Id of the extension package - it will be downloaded when no file is set."));
+      Params.Add(new SectionParam(Const_Version, "", ValueTypeEnum.String,
+                                  "Minimum Version of the extension package - older versions will be updated (only used when downloading via Id)."));
       Params.Add(new SectionParam(Const_Silent, "", ValueTypeEnum.Bool,
                                   "Silent install, No wizard screen will be displayed "));
       return Params;
@@ -63,48 +69,99 @@ namespace MpeCore.Classes.ActionType
 
     public SectionResponseEnum Execute(PackageClass packageClass, ActionItem actionItem)
     {
-      PackageClass pak = new PackageClass();
-      pak = pak.ZipProvider.Load(actionItem.Params[Const_Loc].Value);
-      if (pak == null)
+      // load extension from zip if provided
+      PackageClass embeddedPackage = null;
+      if (!string.IsNullOrEmpty(actionItem.Params[Const_Loc].Value))
+      {
+        embeddedPackage = new PackageClass().ZipProvider.Load(actionItem.Params[Const_Loc].Value);
+        if (embeddedPackage == null && string.IsNullOrEmpty(actionItem.Params[Const_Guid].Value))
+          return SectionResponseEnum.Ok;
+      }
+
+      // check if there is already an installed version with a higher version than the embedded
+      PackageClass installedPak = MpeInstaller.InstalledExtensions.Get(embeddedPackage != null ? embeddedPackage.GeneralInfo.Id : actionItem.Params[Const_Guid].Value);
+      if (installedPak != null && embeddedPackage != null && installedPak.GeneralInfo.Version.CompareTo(embeddedPackage.GeneralInfo.Version) >= 0)
+      {
+          return SectionResponseEnum.Ok;
+      }
+
+      // download new version
+      if (embeddedPackage == null && !string.IsNullOrEmpty(actionItem.Params[Const_Guid].Value) &&
+        (installedPak == null ||
+        (!string.IsNullOrEmpty(actionItem.Params[Const_Version].Value) && installedPak.GeneralInfo.Version.CompareTo(new Version(actionItem.Params[Const_Version].Value)) >= 0)))
+      {
+        // we don't want incompatible versions
+        MpeInstaller.KnownExtensions.HideByDependencies();
+        PackageClass knownPackage = MpeInstaller.KnownExtensions.Get(actionItem.Params[Const_Guid].Value);
+        if (knownPackage == null && (DateTime.Now - ApplicationSettings.Instance.LastUpdate).TotalHours > 12)
+        {
+          // package unknown and last download of update info was over 12 hours ago -> update the list first
+          ExtensionUpdateDownloader.UpdateList(false, false, null, null);
+          // search for the package again - we don't want incompatible versions
+          MpeInstaller.KnownExtensions.HideByDependencies();
+          knownPackage = MpeInstaller.KnownExtensions.Get(actionItem.Params[Const_Guid].Value);
+        }
+        if (knownPackage != null)
+        {
+          // make sure the package has at least the asked version
+          if (knownPackage.GeneralInfo.Version.CompareTo(new Version(actionItem.Params[Const_Version].Value)) >= 0)
+          {
+            // download extension package
+            string newPackageLoacation = ExtensionUpdateDownloader.GetPackageLocation(knownPackage, null, null);
+            if (File.Exists(newPackageLoacation))
+              embeddedPackage = new PackageClass().ZipProvider.Load(newPackageLoacation);
+          }
+        }
+      }
+
+      if (embeddedPackage == null) // no package was embedded or downloaded
         return SectionResponseEnum.Ok;
 
       if (ItemProcessed != null)
-        ItemProcessed(this, new InstallEventArgs("Install extension " + pak.GeneralInfo.Name));
+        ItemProcessed(this, new InstallEventArgs("Install extension " + embeddedPackage.GeneralInfo.Name));
 
-      PackageClass installedPak = MpeInstaller.InstalledExtensions.Get(pak.GeneralInfo.Id);
       if (installedPak != null)
       {
-        int i = installedPak.GeneralInfo.Version.CompareTo(pak.GeneralInfo.Version);
-        if (installedPak.GeneralInfo.Version.CompareTo(pak.GeneralInfo.Version) >= 0)
-          return SectionResponseEnum.Ok;
-        installedPak.Silent = true;
-        installedPak.UnInstallInfo = new UnInstallInfoCollection(installedPak);
-        installedPak.UnInstallInfo = installedPak.UnInstallInfo.Load();
-        if (installedPak.UnInstallInfo == null)
-          installedPak.UnInstallInfo = new UnInstallInfoCollection();
-        installedPak.UnInstall();
-        pak.CopyGroupCheck(installedPak);
+        // uninstall previous version, if the new package has the setting to force uninstall of previous version on update
+        if (embeddedPackage.GeneralInfo.Params[ParamNamesConst.FORCE_TO_UNINSTALL_ON_UPDATE].GetValueAsBool())
+        {
+          installedPak.Silent = true;
+          installedPak.UnInstallInfo = new UnInstallInfoCollection(installedPak);
+          installedPak.UnInstallInfo = installedPak.UnInstallInfo.Load();
+          if (installedPak.UnInstallInfo == null)
+            installedPak.UnInstallInfo = new UnInstallInfoCollection();
+          installedPak.UnInstall();
+          embeddedPackage.CopyGroupCheck(installedPak);
+          installedPak = null;
+        }
       }
-      if (actionItem.Params[Const_Silent].GetValueAsBool())
+
+      embeddedPackage.Silent = actionItem.Params[Const_Silent].GetValueAsBool();
+      if (embeddedPackage.StartInstallWizard())
       {
-        pak.Silent = true;
+        if (installedPak != null)
+        {
+          MpeCore.MpeInstaller.InstalledExtensions.Remove(installedPak);
+          MpeCore.MpeInstaller.Save();
+        }
       }
-      pak.StartInstallWizard();
       return SectionResponseEnum.Ok;
     }
 
     public ValidationResponse Validate(PackageClass packageClass, ActionItem actionItem)
     {
-      if (!File.Exists(actionItem.Params[Const_Loc].Value))
+      if (string.IsNullOrEmpty(actionItem.Params[Const_Loc].Value) && string.IsNullOrEmpty(actionItem.Params[Const_Guid].Value))
+        return new ValidationResponse() 
+          { Valid = false, Message = "No file location and no Id specified" };
+      if (!string.IsNullOrEmpty(actionItem.Params[Const_Loc].Value) && !File.Exists(actionItem.Params[Const_Loc].Value))
         return new ValidationResponse()
-                 {Valid = false, Message = " [Install Extension] File not found " + actionItem.Params[Const_Loc].Value};
+          { Valid = false, Message = "File not found " + actionItem.Params[Const_Loc].Value};
+      if (!string.IsNullOrEmpty(actionItem.Params[Const_Guid].Value) && MpeInstaller.KnownExtensions.Get(actionItem.Params[Const_Guid].Value) == null)
+        return new ValidationResponse() 
+          { Valid = false, Message = "Extension with Id " + actionItem.Params[Const_Loc].Value + " unknown" };
       if (!string.IsNullOrEmpty(actionItem.ConditionGroup) && packageClass.Groups[actionItem.ConditionGroup] == null)
         return new ValidationResponse()
-                 {
-                   Message = actionItem.Name + " condition group not found " + actionItem.ConditionGroup,
-                   Valid = false
-                 };
-
+          { Valid = false,  Message = actionItem.Name + " condition group not found " + actionItem.ConditionGroup };
       return new ValidationResponse();
     }
 

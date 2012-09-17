@@ -412,8 +412,12 @@ Section "MediaPortal core files (required)" SecCore
   
   SetOutPath "$MPdir.Config\scripts\MovieInfo"
   File /nonfatal "${MEDIAPORTAL.BASE}\scripts\MovieInfo\IMDB.csscript"
-
-
+  File /nonfatal "${MEDIAPORTAL.BASE}\scripts\MovieInfo\IMDB_MP13x.csscript"
+  
+  SetOutPath "$MPdir.Config\scripts"
+  File /nonfatal "${MEDIAPORTAL.BASE}\scripts\InternalActorMoviesGrabber.csscript"
+  File /nonfatal "${MEDIAPORTAL.BASE}\scripts\VDBParserStrings.xml"
+  
   SetOutPath "$MPdir.Base"
   File "${git_MP}\MediaPortal.Base\MediaPortalDirs.xml"
   File "${git_MP}\MediaPortal.Base\BuiltInPlugins.xml"
@@ -550,7 +554,10 @@ SectionEnd
   Delete "$MPdir.Config\Installer\cleanup.xml"
   RMDir "$MPdir.Config\Installer"
   Delete "$MPdir.Config\scripts\MovieInfo\IMDB.csscript"
+  Delete "$MPdir.Config\scripts\MovieInfo\IMDB_MP13x.csscript"
   RMDir "$MPdir.Config\scripts\MovieInfo"
+  Delete "$MPdir.Config\scripts\InternalActorMoviesGrabber.csscript"
+  Delete "$MPdir.Config\scripts\VDBParserStrings.xml"
   RMDir "$MPdir.Config\scripts"
 
 

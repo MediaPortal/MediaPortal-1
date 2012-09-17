@@ -472,6 +472,13 @@ namespace MpeMaker.Sections
                             ? fileItem.Param1
                             : SelectedItem.Param1;
       }
+      
+      // now refresh tree nodes so the user can directly see his change
+      TreeNode selectedNode = GetSelectedGroupNode();
+      foreach (TreeNode node in selectedNode.Nodes)
+      {
+        node.Text = node.Tag.ToString();
+      }
     }
 
     private void mnu_add_folder_Click(object sender, EventArgs e)

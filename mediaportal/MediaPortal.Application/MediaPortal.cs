@@ -1150,6 +1150,11 @@ public class MediaPortalApp : D3DApp, IRender
       Log.Info("Main: reopen VideoDatabaseV5.db3 sqllite database.");
       MediaPortal.Video.Database.VideoDatabase.ReOpen();
     }
+    else
+    {
+      Log.Info("Main: VideoDatabaseV5.db3 sqllite database disk cache activated.");
+      MediaPortal.Video.Database.VideoDatabase.RevertFlushTransactionsToDisk();
+    }
 
     dbPath = MediaPortal.Music.Database.MusicDatabase.Instance.DatabaseName;
     isRemotePath = (string.IsNullOrEmpty(dbPath) || PathIsNetworkPath(dbPath));
@@ -1186,6 +1191,11 @@ public class MediaPortalApp : D3DApp, IRender
     {
       Log.Info("Main: disposing VideoDatabaseV5.db3 sqllite database.");
       MediaPortal.Video.Database.VideoDatabase.Dispose();
+    }
+    else
+    {
+      Log.Info("Main: VideoDatabaseV5.db3 sqllite database cache flushed to disk.");
+      MediaPortal.Video.Database.VideoDatabase.FlushTransactionsToDisk();
     }
 
     dbPath = MediaPortal.Music.Database.MusicDatabase.Instance.DatabaseName;

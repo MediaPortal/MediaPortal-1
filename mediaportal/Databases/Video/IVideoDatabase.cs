@@ -48,9 +48,11 @@ namespace MediaPortal.Video.Database
     void RemoveGenresForMovie(int lMovieId);
     
     // User groups
-    int AddUserGroup(string strUserGroup1);
+    int AddUserGroup(string userGroup);
+    void AddUserGroupDescription(string userGroup, string description);
     void GetUserGroups(ArrayList userGroups);
     string GetUserGroupById(int groupId);
+    string GetUserGroupDescriptionById(int groupId);
     void GetMovieUserGroups(int movieId, ArrayList userGroups);
     string GetUserGroupRule(string group);
     void AddUserGroupRuleByGroupId(int groupId, string rule);
@@ -155,8 +157,12 @@ namespace MediaPortal.Video.Database
     bool HasMediaInfo(string fileName);
     bool CheckMovieImdbId(string id);
     bool CheckActorImdbId(string id);
-    void ImportNfo(string nfoFile);
+    void ImportNfo(string nfoFile, bool skipExisting, bool refreshdbOnly);
     bool MakeNfo(int movieId);
+    void ImportNfoUsingVideoFile(string videoFile, bool skipExisting, bool refreshdbOnly);
     void GetVideoFiles(string path, ref ArrayList availableFiles);
+    void FlushTransactionsToDisk();
+    void RevertFlushTransactionsToDisk();
+
   }
 }

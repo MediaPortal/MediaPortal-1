@@ -76,6 +76,7 @@ namespace MpeCore.Classes
         //subsystemItem.Version = attr.Version.ToString();
         SubSystemsUsed.Add(subsystemItem);
       }
+      SubSystemsUsed.Sort();
       return true;
     }
   }

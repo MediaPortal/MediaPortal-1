@@ -21,11 +21,14 @@
 using System;
 using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using System.Diagnostics;
+using System.Threading;
 
 namespace MpeCore.Classes
 {
@@ -102,6 +105,11 @@ namespace MpeCore.Classes
       }
       catch (BadImageFormatException)
       {
+        //return false;
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show(string.Format("Error adding plugin depdendency for {0}.\nException message: {1}", pluginFile, ex.Message));
         return false;
       }
       if (pluginAssembly != null)
@@ -138,7 +146,7 @@ namespace MpeCore.Classes
             }
           }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           return false;
         }
@@ -223,6 +231,38 @@ namespace MpeCore.Classes
       string newPath = string.Join(System.IO.Path.DirectorySeparatorChar.ToString(), relativeParts);
 
       return newPath;
+    }
+
+    public static void KillAllMediaPortalProcesses()
+    {
+      KillProcces("Configuration");
+      KillProcces("MediaPortal");
+      KillProcces("SetupTv");
+    }
+
+    public static void KillProcces(string name)
+    {
+      Process pr = Process.GetProcesses().FirstOrDefault(p => p.ProcessName.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+      if (pr != null)
+      {
+        MessageBox.Show(name + " must be closed in order to continue!", "Close " + name, MessageBoxButtons.OK, MessageBoxIcon.Hand);
+        if (!pr.HasExited)
+        {
+          pr.CloseMainWindow();
+          pr.Close();
+          Thread.Sleep(500);
+          pr = Process.GetProcesses().FirstOrDefault(p => p.ProcessName.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+          if (pr != null)
+          {
+            try
+            {
+              Thread.Sleep(5000);
+              pr.Kill();
+            }
+            catch (Exception) { }
+          }
+        }
+      }
     }
   }
 }

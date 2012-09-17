@@ -52,6 +52,8 @@ namespace MediaPortal.Video.Database
     private static bool _foldercheck = true;
     private ArrayList _nfoFiles;
     private bool _addToDatabase = true;
+    private bool _skipExisting;
+    private bool _refreshdbOnly;
     
     public IMDBFetcher(IMDB.IProgress progress)
     {
@@ -114,7 +116,7 @@ namespace MediaPortal.Video.Database
 
     #region NfoFetch
 
-    public void FetchNfo(ArrayList nfoFiles)
+    public void FetchNfo(ArrayList nfoFiles, bool skipExisting, bool refreshdbOnly)
     {
       if (nfoFiles == null || nfoFiles.Count == 0)
       {
@@ -126,6 +128,8 @@ namespace MediaPortal.Video.Database
         return;
       }
 
+      _skipExisting = skipExisting;
+      _refreshdbOnly = refreshdbOnly;
       _nfoFiles = nfoFiles;
       _movieThread = new Thread(FetchNfoThread);
       _movieThread.Name = "NfoFetcher";
@@ -147,7 +151,7 @@ namespace MediaPortal.Video.Database
         foreach (string nfoFile in _nfoFiles)
         {
           OnProgress(nfoFile, string.Empty, string.Empty, 0);
-          VideoDatabase.ImportNfo(nfoFile);
+          VideoDatabase.ImportNfo(nfoFile, _skipExisting, _refreshdbOnly);
         }
       }
       catch (ThreadAbortException) { }
@@ -898,14 +902,17 @@ namespace MediaPortal.Video.Database
         OnProgress(line1, line2, line3, -1);
         DownloadCoverArt(Thumbs.MovieActors, _imdbActor.ThumbnailUrl, _actorId.ToString());
       }
-      //else
-      //{
-      //  // Sometimes we can have wrong actor pic (wrong actor selected in list before) so delete it
-      //  string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, _actorId.ToString());
-      //  string coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieActors, _actorId.ToString());
-      //  Util.Utils.FileDelete(largeCoverArtImage);
-      //  Util.Utils.FileDelete(coverArtImage);
-      //}
+      else
+      {
+        if (!userActorImage)
+        {
+          // Sometimes we can have wrong actor pic (wrong actor selected in list before) so delete it
+          string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, _actorId.ToString());
+          string coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieActors, _actorId.ToString());
+          Util.Utils.FileDelete(largeCoverArtImage);
+          Util.Utils.FileDelete(coverArtImage);
+        }
+      }
       _imdbActor = VideoDatabase.GetActorInfo(_actorId);
     }
 
@@ -1263,6 +1270,7 @@ namespace MediaPortal.Video.Database
       {
         strFileName = filename;
       }
+
       if ((strMovieName == string.Empty) || (strMovieName == Strings.Unknown))
       {
         strMovieName = currentMovie.Title;
@@ -1328,7 +1336,13 @@ namespace MediaPortal.Video.Database
       {
         currentMovie.ID = VideoDatabase.AddMovieFile(strFileName);
       }
-      
+
+      if (addToDatabase)
+      {
+        SearchForImdbId(path, filename, _foldercheck, ref strMovieName);
+      }
+
+      Util.Utils.RemoveStackEndings(ref strMovieName);
       currentMovie.SearchString = strMovieName;
       
       if (currentMovie.ID >= 0 || !addToDatabase)
@@ -1389,35 +1403,33 @@ namespace MediaPortal.Video.Database
           {
             if (fetcher.Count > 0)
             {
+              int iMoviesFound = fetcher.Count;
+              
               // EPG - one result, get movie without ask
-              if (fetcher.Count == 1 && !addToDatabase)
+              if (iMoviesFound == 1 && !addToDatabase)
               {
                 selectedMovie = 0;
                 break;
               }
               
-              int iMoviesFound = fetcher.Count;
               //GEMX 28.03.08: There should always be a choice to enter the movie manually 
               //               in case the 1 and only found name is wrong
-              if (iMoviesFound > 0)
+              if (!fetcher.OnSelectMovie(fetcher, out selectedMovie))
               {
-                if (!fetcher.OnSelectMovie(fetcher, out selectedMovie))
+                return false;
+              }
+
+              if (selectedMovie < 0)
+              {
+
+                if (!fetcher.OnRequestMovieTitle(fetcher, out strMovieName))
                 {
                   return false;
                 }
-                
-                if (selectedMovie < 0)
+
+                if (strMovieName == string.Empty)
                 {
-                  
-                  if (!fetcher.OnRequestMovieTitle(fetcher, out strMovieName))
-                  {
-                    return false;
-                  }
-                  
-                  if (strMovieName == string.Empty)
-                  {
-                    return false;
-                  }
+                  return false;
                 }
               }
             }
@@ -1549,12 +1561,15 @@ namespace MediaPortal.Video.Database
         int digit = 0; // Only first file in set will proceed (cd1, part1, dvd1...)
 
         var pattern = Util.Utils.StackExpression();
+        int stackSequence = 0; // seq 0 = [x-y], seq 1 = CD1, Part1....
         
         for (int i = 0; i < pattern.Length; i++)
         {
           if (pattern[i].IsMatch(file))
           {
             digit = Convert.ToInt16(pattern[i].Match(file).Groups["digit"].Value);
+            stackSequence = i;
+            break;
           }
         }
         try
@@ -1582,6 +1597,37 @@ namespace MediaPortal.Video.Database
               // Caution - Thumb creation spam no2 starts in GetInfoFromIMDB
               GetInfoFromIMDB(progress, ref movieDetails, fuzzyMatching, getActors);
             }
+            else if (digit > 1) // Add DVD or BD stack folders to existing movie
+            {
+              string path, filename;
+              string tmpPath = string.Empty;
+              DatabaseUtility.Split(file, out path, out filename);
+
+              if (path.ToUpperInvariant().Contains(@"\VIDEO_TS") || path.ToUpperInvariant().Contains(@"\BDMV"))
+              {
+                try
+                {
+                  if (stackSequence == 0)
+                  {
+                    string strReplace = "[" + digit;
+                    int stackIndex = path.LastIndexOf(strReplace);
+                    tmpPath = path.Remove(stackIndex, 2);
+                    tmpPath = tmpPath.Insert(stackIndex, "[1");
+                  }
+                  else
+                  {
+                    int stackIndex = path.LastIndexOf(digit.ToString());
+                    tmpPath = path.Remove(stackIndex, 1);
+                    tmpPath = tmpPath.Insert(stackIndex, "1");
+                  }
+
+                  int movieId = VideoDatabase.GetMovieId(tmpPath + filename);
+                  int pathId = VideoDatabase.AddPath(path);
+                  VideoDatabase.AddFile(movieId, pathId, filename);
+                }
+                catch (Exception){}
+              }
+            }
           }
         }
         catch (Exception ex)
@@ -1596,6 +1642,109 @@ namespace MediaPortal.Video.Database
           success = false;
           break;
         }
+      }
+
+      if (progress != null)
+      {
+        progress.OnScanEnd();
+      }
+      return success;
+    }
+
+    /// <summary>
+    /// Download IMDB info for videofile (file must be with full path)
+    /// </summary>
+    /// <param name="progress"></param>
+    /// <param name="file"></param>
+    /// <param name="fuzzyMatching"></param>
+    /// <param name="skipExisting"></param>
+    /// <param name="getActors"></param>
+    /// <param name="refreshDBonly"></param>
+    /// <returns></returns>
+    public static bool ScanIMDB(IMDB.IProgress progress, string file, bool fuzzyMatching, bool skipExisting,
+                                bool getActors, bool refreshDBonly)
+    {
+      bool success = true;
+      
+      if (progress != null)
+      {
+        progress.OnScanStart(1);
+      }
+
+      int digit = 0; // Only first file in set will proceed (cd1, part1, dvd1...)
+
+      var pattern = Util.Utils.StackExpression();
+      int stackSequence = 0; // seq 0 = [x-y], seq 1 = CD1, Part1....
+
+      for (int i = 0; i < pattern.Length; i++)
+      {
+        if (pattern[i].IsMatch(file))
+        {
+          digit = Convert.ToInt16(pattern[i].Match(file).Groups["digit"].Value);
+        }
+      }
+      try
+      {
+        IMDBMovie movieDetails = new IMDBMovie();
+        int id = VideoDatabase.GetMovieInfo(file, ref movieDetails);
+
+        if (refreshDBonly && id != -1 && digit < 2)
+        {
+          string path, filename;
+          Util.Utils.Split(file, out path, out filename);
+          movieDetails.Path = path;
+          movieDetails.File = filename;
+          // Caution - Thumb creation spam no2 starts in GetInfoFromIMDB
+          GetInfoFromIMDB(progress, ref movieDetails, fuzzyMatching, getActors);
+        }
+        else
+        {
+          if ((!skipExisting || id == -1) && refreshDBonly == false && digit < 2)
+          {
+            string path, filename;
+            Util.Utils.Split(file, out path, out filename);
+            movieDetails.Path = path;
+            movieDetails.File = filename;
+            // Caution - Thumb creation spam no2 starts in GetInfoFromIMDB
+            GetInfoFromIMDB(progress, ref movieDetails, fuzzyMatching, getActors);
+          }
+          else if (digit > 1) // Add DVD or BD stack folders to existing movie
+          {
+            string path, filename;
+            string tmpPath = string.Empty;
+            DatabaseUtility.Split(file, out path, out filename);
+
+            if (path.ToUpperInvariant().Contains(@"\VIDEO_TS") || path.ToUpperInvariant().Contains(@"\BDMV"))
+            {
+              try
+              {
+                if (stackSequence == 0)
+                {
+                  string strReplace = "[" + digit;
+                  int stackIndex = path.LastIndexOf(strReplace);
+                  tmpPath = path.Remove(stackIndex, 2);
+                  tmpPath = tmpPath.Insert(stackIndex, "[1");
+                }
+                else
+                {
+                  int stackIndex = path.LastIndexOf(digit.ToString());
+                  tmpPath = path.Remove(stackIndex, 1);
+                  tmpPath = tmpPath.Insert(stackIndex, "1");
+                }
+
+                int movieId = VideoDatabase.GetMovieId(tmpPath + filename);
+                int pathId = VideoDatabase.AddPath(path);
+                VideoDatabase.AddFile(movieId, pathId, filename);
+              }
+              catch (Exception) { }
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Scan IMDB err:{0} src:{1}, stack:{2}, ", ex.Message, ex.Source, ex.StackTrace);
+        success = false;
       }
 
       if (progress != null)
@@ -1693,6 +1842,132 @@ namespace MediaPortal.Video.Database
           return true;
         }
       }
+      return false;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="path">path without filename</param>
+    /// <param name="filename">filename without path</param>
+    /// <param name="dedicatedMovieFolders">is every movie in its own folder?</param>
+    /// <param name="searchString">returns tt1234567 if success</param>
+    private static void SearchForImdbId(string path, string filename, bool dedicatedMovieFolders, ref string searchString)
+    {
+      try
+      {
+      // First check for DVD/BD folders and take main path
+      bool isDvdBd = false;
+      if (path.ToUpperInvariant().Contains(@"\VIDEO_TS"))
+      {
+        path = path.Replace(@"\VIDEO_TS", string.Empty);
+        isDvdBd = true;
+      }
+      else if (path.ToUpperInvariant().Contains(@"\BDMV"))
+      {
+        path = path.Replace(@"\BDMV", string.Empty);
+        isDvdBd = true;
+      }
+
+      // DVD or BD
+      if (isDvdBd || dedicatedMovieFolders)
+      {
+        // Check for tt in path name
+        if (MatchImdb(ref path))
+        {
+          searchString = path;
+        }
+        else
+        {
+          // Get all txt and nfo files in main path directory
+          ArrayList files = new ArrayList();
+          string[] txtFiles = Directory.GetFiles(path, "*.txt", SearchOption.TopDirectoryOnly);
+          files.AddRange(txtFiles);
+          txtFiles = Directory.GetFiles(path, "*.nfo", SearchOption.TopDirectoryOnly);
+          files.AddRange(txtFiles);
+
+          foreach (string file in files)
+          {
+            if (File.Exists(file))
+            {
+              // Check for tt in txt or nfo filename
+              string strFile = file;
+              
+              if (MatchImdb(ref strFile))
+              {
+                searchString = strFile;
+                return;
+              }
+              
+              // check for tt in files content (firts match success will break loop))
+              string txt = string.Empty;
+              using (StreamReader reader = new StreamReader(file))
+              {
+                txt = reader.ReadToEnd();
+
+                if (MatchImdb(ref txt))
+                {
+                  searchString = txt;
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }
+      else
+      {
+        // normal videos (nfo or txt files must contain videofilename part)
+        string[] txtFile = {
+                               path + @"\" + Util.Utils.GetFilename(filename,true) + @"-IMDB.txt",
+                               path + @"\" + Util.Utils.GetFilename(filename,true) + @"-IMDB.nfo",
+                               path + @"\" + Util.Utils.GetFilename(filename,true) + @".nfo",
+                               path + @"\" + Util.Utils.GetFilename(filename,true) + @".txt",
+                             };
+
+        foreach (string file in txtFile)
+        {
+          if (File.Exists(file))
+          {
+            // check first tt in filename
+            string strFile = file;
+            if (MatchImdb(ref strFile))
+            {
+              searchString = strFile;
+              return;
+            }
+            // check filename content for tt
+            string txt = string.Empty;
+            using (StreamReader reader = new StreamReader(file))
+            {
+              txt = reader.ReadToEnd();
+
+              if (MatchImdb(ref txt))
+              {
+                searchString = txt;
+                break;
+              }
+            }
+          }
+        }
+      }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("IMDBFetcher SearchForImdbId exception {0}", ex.Message);
+      }
+    }
+
+    private static bool MatchImdb(ref string strToMatch)
+    {
+      Match match = Regex.Match(strToMatch, @"tt[\d]{7}?", RegexOptions.IgnoreCase);
+      
+      if (match.Success)
+      {
+        strToMatch = match.Value;
+        return true;
+      }
+
       return false;
     }
   }

@@ -263,8 +263,8 @@ namespace MediaPortal.GUI.Video
     {
       GUIPropertyManager.RemovePlayerProperties();
       GUIPropertyManager.SetProperty("#Play.Current.Title", Util.Utils.GetFilename(fileName));
-      GUIPropertyManager.SetProperty("#Play.Current.File", Path.GetFileName(fileName));
-      GUIPropertyManager.SetProperty("#Play.Current.Thumb", "");
+      GUIPropertyManager.SetProperty("#Play.Current.File", Util.Utils.GetFileNameWithExtension(fileName));
+      GUIPropertyManager.SetProperty("#Play.Current.Thumb", string.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.VideoCodec.Texture", string.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.VideoResolution", string.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.AudioCodec.Texture", string.Empty);
@@ -329,7 +329,7 @@ namespace MediaPortal.GUI.Video
       }
 
       bool isLive = g_Player.IsTimeShifting;
-      string extension = Path.GetExtension(fileName).ToLower();
+      string extension = Util.Utils.GetFileExtension(fileName).ToLower();
       if (extension.Equals(".sbe") || extension.Equals(".dvr-ms") ||
           (extension.Equals(".ts") && !isLive || g_Player.IsTVRecording))
       {
@@ -365,8 +365,9 @@ namespace MediaPortal.GUI.Video
         selectBdHandler = new SelectBDHandler();
         GlobalServiceProvider.Add<ISelectBDHandler>(selectBdHandler);
       }
-
-      if (!g_Player.IsTVRecording)
+      
+      bool playingRemoteUrl = Util.Utils.IsRemoteUrl(fileName);
+      if (!g_Player.IsTVRecording && !playingRemoteUrl)
       {
         // Check if we play image file to search db with the proper filename
         if (Util.Utils.IsISOImage(fileName))
@@ -415,7 +416,7 @@ namespace MediaPortal.GUI.Video
             path = Path.GetDirectoryName(fileName);
           }
           
-          GUIVideoFiles.FetchMovieNfo(path, fileName, ref movieDetails);
+          IMDBMovie.FetchMovieNfo(path, fileName, ref movieDetails);
 
           if (!movieDetails.IsEmpty)
           {

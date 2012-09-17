@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml.Serialization;
 
 namespace MpeCore.Classes
@@ -39,24 +40,47 @@ namespace MpeCore.Classes
     public List<string> IgnoredUpdates { get; set; }
 
     /// <summary>
-    /// Gets the unique list of extensions with hightess version
+    /// Gets the unique list of extensions with highest version
     /// </summary>
     /// <returns></returns>
     public ExtensionCollection GetUniqueList()
     {
-      List<string> ids = new List<string>();
+      return GetUniqueList(null);
+    }
+
+    /// <summary>
+    /// Gets the unique list of extensions with highest version
+    /// </summary>
+    /// <param name="exlude">Exlude these extensions</param>
+    /// <returns></returns>
+    public ExtensionCollection GetUniqueList(ExtensionCollection exlude)
+    {
+      HashSet<string> exludedIds = new HashSet<string>();
+      if (exlude != null) exlude.Items.ForEach(p => exludedIds.Add(p.GeneralInfo.Id));
+      Dictionary<string, PackageClass> ids = new Dictionary<string, PackageClass>();
+      
       foreach (PackageClass item in Items)
       {
-        if (item.IsHiden)
+        if (item.IsHiden || exludedIds.Contains(item.GeneralInfo.Id))
           continue;
-        if (!ids.Contains(item.GeneralInfo.Id))
-          ids.Add(item.GeneralInfo.Id);
+
+        PackageClass currentVersion = null;
+        if (!ids.TryGetValue(item.GeneralInfo.Id, out currentVersion))
+        {
+          ids.Add(item.GeneralInfo.Id, item);
+        }
+        else
+        {
+          // overwrite if has a higher version
+          if (item.GeneralInfo.Version.CompareTo(currentVersion.GeneralInfo.Version) > 0)
+          {
+            ids[item.GeneralInfo.Id] = item;
+          }
+        }
       }
+
       var collection = new ExtensionCollection();
-      foreach (string id in ids)
-      {
-        collection.Add(Get(id));
-      }
+      foreach (var package in ids.Values) collection.Add(package);
       return collection;
     }
 
@@ -102,7 +126,7 @@ namespace MpeCore.Classes
     }
 
     /// <summary>
-    /// Adds the specified package class. But without copy all the sructure the GeneralInfo and the group Names
+    /// Adds the specified package class. But without copy all the structure the GeneralInfo and the group Names
     /// If the package with same version number already exist, will be replaced
     /// </summary>
     /// <param name="packageClass">The package class.</param>
@@ -213,9 +237,12 @@ namespace MpeCore.Classes
     /// <summary>
     /// Sorts this instance.
     /// </summary>
-    public void Sort()
+    public void Sort(bool versionAscending)
     {
-      Items.Sort(PackageClass.Compare);
+      if (versionAscending)
+        Items.Sort(PackageClass.CompareVersionAscending);
+      else
+        Items.Sort(PackageClass.Compare);
     }
 
     /// <summary>
