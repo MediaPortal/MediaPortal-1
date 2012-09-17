@@ -22,6 +22,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using DirectShowLib;
+using MediaPortal.Common.Utils;
 using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.Analog
@@ -32,15 +33,6 @@ namespace TvLibrary.Implementations.Analog
   public class Hauppauge : IDisposable
   {
     private bool disposed;
-
-    [DllImport("kernel32.dll")]
-    internal static extern IntPtr LoadLibrary(String dllname);
-
-    [DllImport("kernel32.dll")]
-    internal static extern IntPtr GetProcAddress(IntPtr hModule, String procname);
-
-    [DllImport("kernel32.dll")]
-    internal static extern bool FreeLibrary(IntPtr hModule);
 
     private IntPtr hauppaugelib = IntPtr.Zero;
 
@@ -94,37 +86,37 @@ namespace TvLibrary.Implementations.Analog
         }
 
         //Load Library
-        hauppaugelib = LoadLibrary("hauppauge.dll");
+        hauppaugelib = NativeMethods.LoadLibrary("hauppauge.dll");
 
         //Get Proc addresses, and set the delegates for each function
-        IntPtr procaddr = GetProcAddress(hauppaugelib, "Init");
+        IntPtr procaddr = NativeMethods.GetProcAddress(hauppaugelib, "Init");
         _Init = (Init)Marshal.GetDelegateForFunctionPointer(procaddr, typeof (Init));
 
-        procaddr = GetProcAddress(hauppaugelib, "DeInit");
+        procaddr = NativeMethods.GetProcAddress(hauppaugelib, "DeInit");
         _DeInit = (DeInit)Marshal.GetDelegateForFunctionPointer(procaddr, typeof (DeInit));
 
-        procaddr = GetProcAddress(hauppaugelib, "IsHauppauge");
+        procaddr = NativeMethods.GetProcAddress(hauppaugelib, "IsHauppauge");
         _IsHauppauge = (IsHauppauge)Marshal.GetDelegateForFunctionPointer(procaddr, typeof (IsHauppauge));
 
-        procaddr = GetProcAddress(hauppaugelib, "SetVidBitRate");
+        procaddr = NativeMethods.GetProcAddress(hauppaugelib, "SetVidBitRate");
         _SetVidBitRate = (SetVidBitRate)Marshal.GetDelegateForFunctionPointer(procaddr, typeof (SetVidBitRate));
 
-        procaddr = GetProcAddress(hauppaugelib, "GetVidBitRate");
+        procaddr = NativeMethods.GetProcAddress(hauppaugelib, "GetVidBitRate");
         _GetVidBitRate = (GetVidBitRate)Marshal.GetDelegateForFunctionPointer(procaddr, typeof (GetVidBitRate));
 
-        procaddr = GetProcAddress(hauppaugelib, "SetAudBitRate");
+        procaddr = NativeMethods.GetProcAddress(hauppaugelib, "SetAudBitRate");
         _SetAudBitRate = (SetAudBitRate)Marshal.GetDelegateForFunctionPointer(procaddr, typeof (SetAudBitRate));
 
-        procaddr = GetProcAddress(hauppaugelib, "GetAudBitRate");
+        procaddr = NativeMethods.GetProcAddress(hauppaugelib, "GetAudBitRate");
         _GetAudBitRate = (GetAudBitRate)Marshal.GetDelegateForFunctionPointer(procaddr, typeof (GetAudBitRate));
 
-        procaddr = GetProcAddress(hauppaugelib, "SetStreamType");
+        procaddr = NativeMethods.GetProcAddress(hauppaugelib, "SetStreamType");
         _SetStreamType = (SetStreamType)Marshal.GetDelegateForFunctionPointer(procaddr, typeof (SetStreamType));
 
-        procaddr = GetProcAddress(hauppaugelib, "GetStreamType");
+        procaddr = NativeMethods.GetProcAddress(hauppaugelib, "GetStreamType");
         _GetStreamType = (GetStreamType)Marshal.GetDelegateForFunctionPointer(procaddr, typeof (GetStreamType));
 
-        procaddr = GetProcAddress(hauppaugelib, "SetDNRFilter");
+        procaddr = NativeMethods.GetProcAddress(hauppaugelib, "SetDNRFilter");
         _SetDNRFilter = (SetDNRFilter)Marshal.GetDelegateForFunctionPointer(procaddr, typeof (SetDNRFilter));
 
         //Hack
@@ -338,7 +330,7 @@ namespace TvLibrary.Implementations.Analog
             if (_IsHauppauge())
               _DeInit();
 
-            FreeLibrary(hauppaugelib);
+            NativeMethods.FreeLibrary(hauppaugelib);
             hauppaugelib = IntPtr.Zero;
           }
         }

@@ -87,6 +87,7 @@
     <Compile Include="Compatibility\CompatibleVersionAttribute.cs" />
     <Compile Include="Compatibility\SubsystemVersionAttribute.cs" />
     <Compile Include="Compatibility\UsesSubsystemAttribute.cs" />
+    <Compile Include="NativeMethods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

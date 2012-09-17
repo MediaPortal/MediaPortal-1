@@ -31,9 +31,6 @@ namespace TvEngine
   /// </summary>
   public class HCWIRBlaster
   {
-    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern IntPtr LoadLibraryEx(string fileName, IntPtr dummy, int flags);
-
     [DllImport("hcwIRblast.dll")]
     private static extern int UIR_Close();
 

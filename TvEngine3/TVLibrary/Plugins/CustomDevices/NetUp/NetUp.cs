@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
+using MediaPortal.Common.Utils;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Device;
@@ -149,36 +150,6 @@ namespace TvEngine
     /// </summary>
     private class NetUpCommand
     {
-      #region DLL imports
-
-      /// <summary>
-      /// Retrieves a module handle for the specified module. The module must have been loaded by the calling process.
-      /// </summary>
-      /// <param name="lpModuleName">The name of the loaded module (either a .dll or .exe file).</param>
-      /// <returns>If the function succeeds, the return value is a handle to the module.<br></br><br>If the function fails, the return value is NULL. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
-      [DllImport("kernel32.dll", EntryPoint = "GetModuleHandle", CharSet = CharSet.Ansi)]
-      private static extern IntPtr GetModuleHandle(string lpModuleName);
-
-      /// <summary>
-      /// The GetProcAddress function retrieves the address of an exported function or variable from the specified dynamic-link library (DLL).
-      /// </summary>
-      /// <param name="hModule">Handle to the DLL module that contains the function or variable. The LoadLibrary or GetModuleHandle function returns this handle.</param>
-      /// <param name="lpProcName">Pointer to a null-terminated string containing the function or variable name, or the function's ordinal value. If this parameter is an ordinal value, it must be in the low-order word; the high-order word must be zero.</param>
-      /// <returns>If the function succeeds, the return value is the address of the exported function or variable.<br></br><br>If the function fails, the return value is NULL. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
-      [DllImport("kernel32.dll", EntryPoint = "GetProcAddress", CharSet = CharSet.Ansi)]
-      private static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
-
-      /// <summary>
-      /// Determines whether the specified process is running under WOW64.
-      /// </summary>
-      /// <param name="hProcess">A handle to the process. The handle must have the PROCESS_QUERY_INFORMATION or PROCESS_QUERY_LIMITED_INFORMATION access right.</param>
-      /// <param name="Wow64Process">A pointer to a value that is set to TRUE if the process is running under WOW64. If the process is running under 32-bit Windows, the value is set to FALSE. If the process is a 64-bit application running under 64-bit Windows, the value is also set to FALSE.</param>
-      /// <returns>If the function succeeds, the return value is nonzero.<br></br><br>If the function fails, the return value is zero. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
-      [DllImport("kernel32.dll", EntryPoint = "IsWow64Process")]
-      private static extern bool IsWow64Process(IntPtr hProcess, out bool Wow64Process);      
-
-      #endregion
-
       #region variables
 
       private static int _operatingSystemIntSize = 0;
@@ -214,13 +185,15 @@ namespace TvEngine
         }
 
         // This isn't a 64 bit process, but it could be a 32 bit process under a 64 bit operating system.
-        IntPtr moduleHandle = GetModuleHandle("kernel32.dll");
+        // If the IsWow64Process() function isn't present in kernel32.dll then the OS doesn't have 64 bit
+        // support.
+        IntPtr moduleHandle = NativeMethods.GetModuleHandle("kernel32.dll");
         if (moduleHandle == IntPtr.Zero)
         {
           Log.Debug("NetUP: failed to get kernel32 module handle");
           return false;
         }
-        IntPtr functionHandle = GetProcAddress(moduleHandle, "IsWow64Process");
+        IntPtr functionHandle = NativeMethods.GetProcAddress(moduleHandle, "IsWow64Process");
         moduleHandle = IntPtr.Zero;
         if (functionHandle == IntPtr.Zero)
         {
@@ -232,7 +205,7 @@ namespace TvEngine
         bool is64bitOs = false;
         try
         {
-          if (IsWow64Process(Process.GetCurrentProcess().Handle, out is64bitOs))
+          if (NativeMethods.IsWow64Process(Process.GetCurrentProcess().Handle, out is64bitOs))
           {
             if (is64bitOs)
             {
