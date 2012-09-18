@@ -4488,6 +4488,13 @@ namespace MediaPortal.Video.Database
     {
       IMDBMovie movie = new IMDBMovie();
       bool isMovieFolder = Util.Utils.IsFolderDedicatedMovieFolder(Path.GetFullPath(nfoFile));
+      bool useInternalNfoScraper = false;
+      
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
+      {
+        // Use only nfo scrapper
+        useInternalNfoScraper = xmlreader.GetValueAsBool("moviedatabase", "useonlynfoscraper", false);
+      }
 
       try
       {
@@ -4555,7 +4562,8 @@ namespace MediaPortal.Video.Database
 
             foreach (String file in files)
             {
-              Log.Debug("Import nfo-processing video file:{0} (Total files: {1})", file, files.Count);
+              //Log.Debug("Import nfo-processing video file:{0} (Total files: {1})", file, files.Count);
+              string logFilename = Path.GetFileName(file);
 
               if ((file.ToUpperInvariant().Contains("VIDEO_TS.IFO") ||
                   file.ToUpperInvariant().Contains("INDEX.BDMV")) && files.Count == 1)
@@ -4598,6 +4606,7 @@ namespace MediaPortal.Video.Database
 
                     int movieId = VideoDatabase.GetMovieId(tmpPath + filename);
                     int pathId = VideoDatabase.AddPath(path);
+                    Log.Debug("Import nfo-Adding file: {0}", logFilename);
                     VideoDatabase.AddFile(movieId, pathId, filename);
                     return;
                   }
@@ -4624,9 +4633,11 @@ namespace MediaPortal.Video.Database
                 // Remove stack endings (CD1...)
                 Util.Utils.RemoveStackEndings(ref tmpFile);
                 Util.Utils.RemoveStackEndings(ref fileName);
+                
                 // Check and add to vdb and get movieId
                 if (tmpFile.Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
                 {
+                  Log.Debug("Import nfo-Adding file: {0}", logFilename);
                   id = VideoDatabase.AddMovie(file, true);
                   movie.ID = id;
                 }
@@ -4638,14 +4649,23 @@ namespace MediaPortal.Video.Database
 
                     if (tmpPath.Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
                     {
+                      Log.Debug("Import nfo-Adding file: {0}", logFilename);
                       id = VideoDatabase.AddMovie(file, true);
                       movie.ID = id;
+                    }
+                    else
+                    {
+                      Log.Debug("Import nfo-Skipping file:{0}", logFilename);
                     }
                   }
                   catch (Exception ex)
                   {
                     Log.Error("Import nfo-Error comparing path name. File:{0} Err.:{1}", file, ex.Message);
                   }
+                }
+                else
+                {
+                  Log.Debug("Import nfo-Skipping file: {0}", logFilename);
                 }
               }
             }
@@ -4778,7 +4798,7 @@ namespace MediaPortal.Video.Database
             string dirImdb = string.Empty;
             if (nodeDirectorImdb != null)
             {
-              dirImdb = nodeDirector.InnerText;
+              dirImdb = nodeDirectorImdb.InnerText;
               
               if (!CheckActorImdbId(dirImdb))
               {
@@ -5087,7 +5107,7 @@ namespace MediaPortal.Video.Database
               }
               else
               {
-                if (movie.ThumbURL == string.Empty)
+                if (movie.ThumbURL == string.Empty && !useInternalNfoScraper)
                 {
                   // IMPAwards
                   IMPAwardsSearch impSearch = new IMPAwardsSearch();
@@ -5186,7 +5206,7 @@ namespace MediaPortal.Video.Database
                                                 (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsLarge);
                 }
               }
-              else if (movie.ThumbURL == string.Empty)
+              else if (movie.ThumbURL == string.Empty && !useInternalNfoScraper)
               {
                 // IMPAwards
                 IMPAwardsSearch impSearch = new IMPAwardsSearch();
@@ -5298,7 +5318,7 @@ namespace MediaPortal.Video.Database
                 }
               }
               
-              if (!faFound)
+              if (!faFound && !useInternalNfoScraper)
               {
                 fa.GetTmdbFanartByApi(movie.ID, movie.IMDBNumber, string.Empty, false, 1, string.Empty);
               }
