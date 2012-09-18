@@ -19,11 +19,9 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.IO;
 using System.Collections.Generic;
-
-//using MediaPortal.GUI.Library;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.Profile
 {
@@ -41,7 +39,7 @@ namespace MediaPortal.Profile
       {
         if (string.IsNullOrEmpty(_configPathName))
         {
-          _configPathName = Configuration.Config.GetFile(Configuration.Config.Dir.Config, "MediaPortal.xml");
+          _configPathName = Config.GetFile(Config.Dir.Config, "MediaPortal.xml");
         }
         return _configPathName;
       }
@@ -52,7 +50,7 @@ namespace MediaPortal.Profile
           _configPathName = value;
           if (!Path.IsPathRooted(_configPathName))
           {
-            _configPathName = Configuration.Config.GetFile(Configuration.Config.Dir.Config, _configPathName);
+            _configPathName = Config.GetFile(Config.Dir.Config, _configPathName);
           }
         }
         else
@@ -88,7 +86,7 @@ namespace MediaPortal.Profile
       get
       {
         // Always form the path since switching between skins will cause different files to be returned.
-        _configPathName = Configuration.Config.GetFile(Configuration.Config.Dir.SelectedSkin, "SkinSettings.xml");
+        _configPathName = Config.GetFile(Config.Dir.Skin, Config.SkinName, "SkinSettings.xml");
         return _configPathName;
       }
       set
@@ -96,7 +94,7 @@ namespace MediaPortal.Profile
         _configPathName = value;
         if (!Path.IsPathRooted(_configPathName))
         {
-          _configPathName = Configuration.Config.GetFile(Configuration.Config.Dir.SelectedSkin, _configPathName);
+          _configPathName = Config.GetFile(Config.Dir.Skin, Config.SkinName, _configPathName);
         }
       }
     }

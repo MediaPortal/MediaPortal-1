@@ -462,6 +462,16 @@ namespace MediaPortal.Util
       return false;
     }
 
+    public static bool IsRemoteUrl(string strPath)
+    {
+      Uri playbackUri = null;
+      if (Uri.TryCreate(strPath, UriKind.Absolute, out playbackUri) && playbackUri.Scheme != "file")
+      {
+        return true;
+      }
+      return false;
+    }
+
     public static bool IsAudio(string strPath)
     {
       if (strPath == null) return false;
@@ -2397,6 +2407,28 @@ namespace MediaPortal.Util
       }
       catch (Exception) {}
       return strPath;
+    }
+
+    public static string GetFileNameWithExtension(string strPath)
+    {
+      if (string.IsNullOrEmpty(strPath)) return string.Empty;
+      try
+      {
+        return Path.GetFileName(strPath);
+      }
+      catch { }
+      return strPath;
+    }
+
+    public static string GetFileExtension(string strPath)
+    {
+      if (string.IsNullOrEmpty(strPath)) return string.Empty;
+      try
+      {
+        return Path.GetExtension(strPath);
+      }
+      catch { }
+      return string.Empty;
     }
 
     ///<summary>
