@@ -4945,6 +4945,12 @@ namespace MediaPortal.Configuration.Sections
         mpComboBoxAvailableDatabases.Enabled = false;
         mpButtonAddGrabber.Enabled = false;
       }
+
+      using (Settings xmlwriter = new MPSettings())
+      {
+        // nfo scraper only
+        xmlwriter.SetValueAsBool("moviedatabase", "useonlynfoscraper", chbUseNfoScraperOnly.Checked);
+      }
     }
 
     private void tbTitlePrefixes_TextChanged(object sender, EventArgs e)
