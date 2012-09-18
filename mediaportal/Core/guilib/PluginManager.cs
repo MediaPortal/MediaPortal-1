@@ -26,6 +26,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using MediaPortal.Configuration;
@@ -95,7 +97,7 @@ namespace MediaPortal.GUI.Library
         {
           writer.WriteStartDocument();
           writer.WriteStartElement("plugins");
-          foreach(var plugin in _incompatibilities)
+          foreach (var plugin in _incompatibilities)
           {
             writer.WriteElementString("plugin", plugin);
           }
@@ -103,10 +105,10 @@ namespace MediaPortal.GUI.Library
           writer.WriteEndDocument();
           writer.Close();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
           Log.Error("Failed to save known plugin incompatibilities:");
-          Log.Error(ex);          
+          Log.Error(ex);
         }
       }
 
@@ -141,6 +143,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    private static readonly ManualResetEvent _evt = new ManualResetEvent(false);    
     private static ArrayList _nonGuiPlugins = new ArrayList();
     private static ArrayList _guiPlugins = new ArrayList();
     private static ArrayList _setupForms = new ArrayList();
@@ -232,6 +235,19 @@ namespace MediaPortal.GUI.Library
         LoadPlugin(strFile);
       }
     }
+    
+    public static void WaitForPluginsLoaded()
+    {
+      if (!IsWaitHandleClosed())
+      {
+        _evt.WaitOne();
+      }
+    }
+
+    private static bool IsWaitHandleClosed()
+    {
+      return _evt.SafeWaitHandle.IsClosed;
+    }
 
     public static void LoadWindowPlugins()
     {
@@ -240,25 +256,63 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
-      _windowPluginsLoaded = true;
-      Log.Info("  LoadWindowPlugins()");
+      ThreadPool.QueueUserWorkItem(delegate
+      {
+        LoadWindowPluginsThread();
+      });      
+    }
+
+    private static void LoadWindowPluginsThread()
+    {
+      if (!IsWaitHandleClosed())
+      {
+        _evt.Reset();
+      }
+
       try
       {
-        Directory.CreateDirectory(Config.GetFolder(Config.Dir.Plugins));
-        Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Plugins, "windows"));
-      }
-      catch (Exception) { }
-      LoadWindowPlugin(Config.GetFile(Config.Dir.Plugins, @"windows\WindowPlugins.dll")); //need to load this first!!!
-
-      string[] strFiles = MediaPortal.Util.Utils.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "windows"), "dll");
-
-      foreach (string strFile in strFiles)
-      {
-        if (strFile.ToLower().IndexOf("windowplugins.dll") >= 0)
+        _windowPluginsLoaded = true;
+        Log.Info("  LoadWindowPlugins()");
+        try
         {
-          continue;
+          Directory.CreateDirectory(Config.GetFolder(Config.Dir.Plugins));
+          Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Plugins, "windows"));
         }
-        LoadWindowPlugin(strFile);
+        catch (Exception)
+        {
+        }
+
+        IList<string> strFilesList = new List<string>();
+        strFilesList.Add(Config.GetFile(Config.Dir.Plugins, @"windows\WindowPlugins.dll")); ////need to load this first!!!
+
+        string[] strFiles = MediaPortal.Util.Utils.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "windows"), "dll");
+        foreach (string strFile in strFiles)
+        {
+          if (strFile.ToLower().IndexOf("windowplugins.dll") == -1)
+          {
+            strFilesList.Add(strFile);
+          }
+        }
+
+        //System.Diagnostics.Debugger.Launch();
+        
+        Parallel.ForEach(strFilesList, LoadWindowPlugin);
+      }
+      catch (AggregateException ex)
+      {
+        //throw 1st exception back to main thread.
+        Exception e = ex.InnerExceptions.FirstOrDefault();
+        if (e != null)
+        {
+          Log.Error("could not load plugin: {0}", ex);
+        }
+      }
+      finally
+      {
+        if (!IsWaitHandleClosed())
+        {
+          _evt.Set();
+        }
       }
     }
 
@@ -338,7 +392,7 @@ namespace MediaPortal.GUI.Library
         {
           Type[] types = assem.GetExportedTypes();
 
-          if (types.Any(t => t.IsClass && !t.IsAbstract && pluginInterface.IsAssignableFrom(t)) 
+          if (types.Any(t => t.IsClass && !t.IsAbstract && pluginInterface.IsAssignableFrom(t))
               && !CompatibilityManager.IsPluginCompatible(assem))
           {
             Log.Error(
@@ -360,7 +414,7 @@ namespace MediaPortal.GUI.Library
                   _incompatibilities.Add(t);
                 }
               }
-              catch (NullReferenceException) {}
+              catch (NullReferenceException) { }
             }
           }
         }
@@ -394,7 +448,7 @@ namespace MediaPortal.GUI.Library
           Type[] types = assem.GetExportedTypes();
           TypeFilter myFilter2 = new TypeFilter(MyInterfaceFilter);
 
-          if (types.Any(t => t.IsClass && !t.IsAbstract && typeof(IPlugin).IsAssignableFrom(t)) 
+          if (types.Any(t => t.IsClass && !t.IsAbstract && typeof(IPlugin).IsAssignableFrom(t))
               && !CompatibilityManager.IsPluginCompatible(assem))
           {
             Log.Error(
@@ -509,7 +563,7 @@ namespace MediaPortal.GUI.Library
                   }
                 }
               }
-              catch (NullReferenceException) {}
+              catch (NullReferenceException) { }
             }
           }
         }
@@ -522,6 +576,8 @@ namespace MediaPortal.GUI.Library
         Log.Info("PluginManager: Exception: {0}", ex);
       }
     }
+    
+
 
     public static void LoadWindowPlugin(string strFile)
     {
@@ -564,7 +620,7 @@ namespace MediaPortal.GUI.Library
                   }
 
                   Object newObj = null;
-                  if (t.IsSubclassOf(typeof (GUIWindow)))
+                  if (t.IsSubclassOf(typeof(GUIWindow)))
                   {
                     try
                     {
@@ -594,6 +650,7 @@ namespace MediaPortal.GUI.Library
                         }
                         GUIWindowManager.Add(ref win);
                       }
+                      
                       //else Log.Info("  plugin:{0} not enabled",win.GetType().ToString());
                     }
                     catch (Exception guiWindowsException)
@@ -656,7 +713,7 @@ namespace MediaPortal.GUI.Library
                   }
                 }
               }
-              catch (NullReferenceException) {}
+              catch (NullReferenceException) { }
             }
           }
         }

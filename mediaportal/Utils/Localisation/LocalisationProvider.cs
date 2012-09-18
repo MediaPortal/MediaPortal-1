@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Threading;
 using System.Xml.Serialization;
 using MediaPortal.Localisation.LanguageStrings;
 using MediaPortal.Services;
@@ -31,10 +32,11 @@ using MediaPortal.Configuration;
 
 namespace MediaPortal.Localisation
 {
-  public class LocalisationProvider
+  public class LocalisationProvider : IDisposable
   {
     #region Variables
 
+    private readonly ManualResetEvent _evt;
     private Dictionary<string, Dictionary<int, StringLocalised>> _languageStrings;
     private Dictionary<string, CultureInfo> _availableLanguages;
     private List<string> _languageDirectories;
@@ -52,6 +54,7 @@ namespace MediaPortal.Localisation
 
     public LocalisationProvider(string systemDirectory, string userDirectory, string cultureName, bool prefix)
     {
+      _evt = new ManualResetEvent(true);
       // Base strings directory
       _systemDirectory = systemDirectory;
       // User strings directory
@@ -94,7 +97,12 @@ namespace MediaPortal.Localisation
 
     public void Dispose()
     {
+      WaitForLocalisationToBeLoaded();
       Clear();
+      if (_evt != null && !IsWaitHandleClosed())
+      {
+        _evt.Close();
+      }
     }
 
     #endregion
@@ -108,13 +116,21 @@ namespace MediaPortal.Localisation
 
     public int Characters
     {
-      get { return _characters; }
+      get
+      {
+        WaitForLocalisationToBeLoaded();
+        return _characters;
+      }
     }
 
     public bool UseRTL
-    {
-      get { return _useRTL; }
-    }
+     {
+      get
+      {
+        WaitForLocalisationToBeLoaded();
+        return _useRTL;
+      }
+     }
 
     #endregion
 
@@ -143,6 +159,7 @@ namespace MediaPortal.Localisation
 
     public StringLocalised Get(string section, int id)
     {
+      WaitForLocalisationToBeLoaded();
       Dictionary<int, StringLocalised> localList = null;
       if (_languageStrings.TryGetValue(section.ToLower(), out localList))
       {
@@ -158,6 +175,7 @@ namespace MediaPortal.Localisation
 
     public string GetString(string section, int id)
     {
+      WaitForLocalisationToBeLoaded();
       Dictionary<int, StringLocalised> localList = null;
       if (_languageStrings.TryGetValue(section.ToLower(), out localList))
       {
@@ -174,6 +192,14 @@ namespace MediaPortal.Localisation
       }
 
       return null;
+    }
+
+    private void WaitForLocalisationToBeLoaded()
+    {
+      if (!_evt.SafeWaitHandle.IsClosed)
+      {
+        _evt.WaitOne();
+      }
     }
 
     public string GetString(string section, int id, object[] parameters)
@@ -356,93 +382,130 @@ namespace MediaPortal.Localisation
       string filename = "strings_" + language + ".xml";
       GlobalServiceProvider.Get<ILog>().Info("    Loading strings file: {0}", filename);
 
-      string path = Path.Combine(directory, filename);
-      if (File.Exists(path))
+      ThreadPool.QueueUserWorkItem(delegate { LoadStringsThread(directory, language, log, loadRTL, filename); });      
+    }
+
+    private void LoadStringsThread(string directory, string language, bool log, bool loadRTL, string filename)
+    {
+      try
       {
-        StringFile strings;
-        try
+        string path = Path.Combine(directory, filename);
+        if (File.Exists(path))
         {
-          XmlSerializer s = new XmlSerializer(typeof (StringFile));
-          using (TextReader r = new StreamReader(path))
+          StringFile strings;
+          try
           {
-            strings = (StringFile)s.Deserialize(r);
-          }
-        }
-        catch (Exception)
-        {
-          return;
-        }
-
-        if (_characters < strings.characters)
-        {
-          _characters = strings.characters;
-        }
-
-        // Some chinese might prefer to use an english OS but still have all chars for media, etc
-        bool useChineseHack = false;
-        int useChineseHackNum = 0;
-        using (Settings reader = new MPSettings())
-        {
-          useChineseHack = reader.GetValueAsBool("debug", "useExtendedCharsWithStandardCulture", false);
-          if (useChineseHack)
-          {
-            _characters = 1536;
-          }
-
-          useChineseHackNum = reader.GetValueAsInt("debug", "useExtendedCharsWithStandardCulture", 0);
-          if (useChineseHackNum >= 128 && useChineseHackNum <= 1536)
-          {
-            useChineseHack = true;
-            _characters = useChineseHackNum;
-          }
-          else
-          {
-            if (useChineseHack)
-              useChineseHackNum = 1536;
-          }
-        }
-        GlobalServiceProvider.Get<ILog>().Debug("    ExtendedChars = {0}:{0}, StringChars = {1}", useChineseHack,
-                                                useChineseHackNum, strings.characters);
-
-        if (loadRTL)
-          _useRTL = strings.rtl;
-
-        foreach (StringSection section in strings.sections)
-        {
-          // convert section name tolower -> no case matching.
-          section.name = section.name.ToLower();
-
-          Dictionary<int, StringLocalised> newSection;
-          if (_languageStrings.TryGetValue(section.name, out newSection))
-          {
-            _languageStrings.Remove(section.name);
-          }
-          else
-          {
-            newSection = new Dictionary<int, StringLocalised>();
-          }
-
-          foreach (StringLocalised languageString in section.localisedStrings)
-          {
-            if (!newSection.ContainsKey(languageString.id))
+            XmlSerializer s = new XmlSerializer(typeof(StringFile));
+            using (TextReader r = new StreamReader(path))
             {
-              languageString.language = language;
-              newSection.Add(languageString.id, languageString);
-              if (log)
-              {
-                GlobalServiceProvider.Get<ILog>().Info("    String not found, using English: {0}",
-                                                       languageString.ToString());
-              }
+              strings = (StringFile)s.Deserialize(r);
             }
           }
-
-          if (newSection.Count > 0)
+          catch (Exception)
           {
-            _languageStrings.Add(section.name, newSection);
+            return;
+          }
+
+          WaitForLocalisationToBeLoaded();
+          if (!IsWaitHandleClosed())
+          {          
+            BlockWaitHandle();
+          }
+
+          if (_characters < strings.characters)
+          {
+            _characters = strings.characters;
+          }
+
+          // Some chinese might prefer to use an english OS but still have all chars for media, etc
+          bool useChineseHack = false;
+          int useChineseHackNum = 0;
+          using (Settings reader = new MPSettings())
+          {
+            useChineseHack = reader.GetValueAsBool("debug", "useExtendedCharsWithStandardCulture", false);
+            if (useChineseHack)
+            {
+              _characters = 1536;
+            }
+
+            useChineseHackNum = reader.GetValueAsInt("debug", "useExtendedCharsWithStandardCulture", 0);
+            if (useChineseHackNum >= 128 && useChineseHackNum <= 1536)
+            {
+              useChineseHack = true;
+              _characters = useChineseHackNum;
+            }
+            else
+            {
+              if (useChineseHack)
+                useChineseHackNum = 1536;
+            }
+          }
+          GlobalServiceProvider.Get<ILog>().Debug("    ExtendedChars = {0}:{0}, StringChars = {1}", useChineseHack,
+                                                  useChineseHackNum, strings.characters);
+
+          if (loadRTL)
+            _useRTL = strings.rtl;
+
+          foreach (StringSection section in strings.sections)
+          {
+            // convert section name tolower -> no case matching.
+            section.name = section.name.ToLower();
+
+            Dictionary<int, StringLocalised> newSection;
+            if (_languageStrings.TryGetValue(section.name, out newSection))
+            {
+              _languageStrings.Remove(section.name);
+            }
+            else
+            {
+              newSection = new Dictionary<int, StringLocalised>();
+            }
+
+            foreach (StringLocalised languageString in section.localisedStrings)
+            {
+              if (!newSection.ContainsKey(languageString.id))
+              {
+                languageString.language = language;
+                newSection.Add(languageString.id, languageString);
+                if (log)
+                {
+                  GlobalServiceProvider.Get<ILog>().Info("    String not found, using English: {0}",
+                                                         languageString.ToString());
+                }
+              }
+            }
+
+            if (newSection.Count > 0)
+            {
+              _languageStrings.Add(section.name, newSection);
+            }
           }
         }
       }
+      finally
+      {
+        if (!IsWaitHandleClosed())
+        {
+          ProceedWaitHandle();
+        }
+      }
+      
     }
+
+    private void ProceedWaitHandle()
+    {
+      _evt.Set();
+    }
+
+    private void BlockWaitHandle()
+    {
+      _evt.Reset();
+    }
+
+    private bool IsWaitHandleClosed()
+    {
+      return _evt.SafeWaitHandle.IsClosed;
+     }
 
     #endregion
   }

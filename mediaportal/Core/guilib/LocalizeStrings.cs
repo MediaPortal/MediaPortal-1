@@ -299,7 +299,7 @@ namespace MediaPortal.GUI.Library
 
         for (int i = 0; i < cultureList.Length; i++)
         {
-          _cultures.Add(cultureList[i].EnglishName, cultureList[i].Name);
+          _cultures[cultureList[i].EnglishName] = cultureList[i].Name;
         }
       }
       string cultures = null;

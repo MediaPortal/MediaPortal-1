@@ -219,9 +219,11 @@ namespace MediaPortal.GUI.Library
       return membersTable;
     }
 
+    private static readonly object _colCacheLock = new object();
     private static Dictionary<string, Color> colCache = new Dictionary<string, Color>();
     // colcon.fromhtml is weirdly slow, so we cache its result
 
+    private static readonly object _convCacheLock = new object();
     private static Dictionary<Type, TypeConverter> convCache = new Dictionary<Type, TypeConverter>();
     // colcon.fromhtml is weirdly slow, so we cache its result
 
@@ -282,7 +284,11 @@ namespace MediaPortal.GUI.Library
                 {
                   // FromHTML is strangly and unnessesarily slow, simple cache
                   //Color color = ColorTranslator.FromHtml(valueText.Substring(0, index));
-                  Color color = colCache.TryGetOrAdd(valueText.Substring(0, index), col => ColorTranslator.FromHtml(col));
+                  Color color;
+                  lock (_colCacheLock)
+                  {
+                    color = colCache.TryGetOrAdd(valueText.Substring(0, index), col => ColorTranslator.FromHtml(col)); 
+                  }                  
                   int alpha = 255;
 
                   if (index < valueText.Length)
@@ -299,16 +305,23 @@ namespace MediaPortal.GUI.Library
 
                   return Color.FromArgb(alpha, color).ToArgb();
                 }
-                return colCache.TryGetOrAdd(valueText, col => Color.FromName(valueText)).ToArgb();
+                lock (_colCacheLock)
+                {
+                  int convertXmlStringToObject = colCache.TryGetOrAdd(valueText, col => Color.FromName(valueText)).ToArgb();
+                  return convertXmlStringToObject; 
+                }                
                 //return Color.FromName(valueText).ToArgb();
               }
 
               try
               {
-                Color color = colCache.TryGetOrAdd('#' + valueText, col => ColorTranslator.FromHtml(col));
+                lock (_colCacheLock)
+                {
+                  Color color = colCache.TryGetOrAdd('#' + valueText, col => ColorTranslator.FromHtml(col));
+                  return color.ToArgb();
+                }                
                 //Color color = ColorTranslator.FromHtml('#' + valueText);
-
-                return color.ToArgb();
+                
               }
               catch
               {
@@ -371,7 +384,11 @@ namespace MediaPortal.GUI.Library
 
       // much of the above could be changed to use the following, needs time for thorough testing though
       //TypeConverter converter = TypeDescriptor.GetConverter(type);
-      TypeConverter converter = convCache.TryGetOrAdd(type, t => TypeDescriptor.GetConverter(t));
+      TypeConverter converter;
+      lock (_convCacheLock)
+      {
+        converter = convCache.TryGetOrAdd(type, t => TypeDescriptor.GetConverter(t)); 
+      }      
       if (converter.CanConvertFrom(typeof (string)))
       {
         return converter.ConvertFromString(null, CultureInfo.InvariantCulture, valueText);

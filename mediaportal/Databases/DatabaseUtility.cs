@@ -283,7 +283,8 @@ namespace MediaPortal.Database
           iCol = (int)results.ColumnIndices[aTimestampColum];
           if (arr.fields[iCol] != null)
           {
-            finalResult = Convert.ToDateTime((arr.fields[iCol]));
+            DateTime.TryParse(arr.fields[iCol], out finalResult);
+            //finalResult = Convert.ToDateTime((arr.fields[iCol])); // excpetions are expensive, use trypasrse instead.
           }
         }
       }
