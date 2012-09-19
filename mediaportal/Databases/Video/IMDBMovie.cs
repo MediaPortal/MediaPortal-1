@@ -1581,11 +1581,20 @@ namespace MediaPortal.Video.Database
         }
         GUIPropertyManager.SetProperty("#iswatched", strValue);
 
-        // Watched percent property
-        GUIPropertyManager.SetProperty("#watchedpercent", info.WatchedPercent.ToString());
-        // Watched count
-        GUIPropertyManager.SetProperty("#watchedcount", info.WatchedCount.ToString());
-        
+        if (!item.IsFolder && !VirtualDirectories.Instance.Movies.IsRootShare(info.VideoFileName))
+        {
+          // Watched percent property
+          GUIPropertyManager.SetProperty("#watchedpercent", info.WatchedPercent.ToString());
+          // Watched count
+          GUIPropertyManager.SetProperty("#watchedcount", info.WatchedCount.ToString());
+        }
+        else
+        {
+          // Watched percent property
+          GUIPropertyManager.SetProperty("#watchedpercent", "0");
+          // Watched count
+          GUIPropertyManager.SetProperty("#watchedcount", "-1");
+        }
         string hasSubtitles = "false";
         string videoMediaSource = string.Empty;
 
