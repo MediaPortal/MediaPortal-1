@@ -2657,11 +2657,13 @@ namespace MediaPortal.GUI.Video
             {
               if (selectDvdHandler.IsDvdDirectory(item.Path))
               {
-                item.Label3 = MediaTypes.DVD.ToString();
+                item.Label2 = MediaTypes.DVD.ToString();
+                item.Label3 = string.Empty;
               }
               else
               {
-                item.Label3 = MediaTypes.BD.ToString();
+                item.Label2 = MediaTypes.BD.ToString();
+                item.Label3 = string.Empty;
               }
             }
             else if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
@@ -2777,11 +2779,13 @@ namespace MediaPortal.GUI.Video
                 {
                   if (selectDvdHandler.IsDvdDirectory(item.Path))
                   {
-                    item.Label3 = MediaTypes.DVD.ToString();
+                    item.Label3 = string.Empty;
+                    item.Label2 = MediaTypes.DVD.ToString();
                   }
                   else
                   {
-                    item.Label3 = MediaTypes.BD.ToString();
+                    item.Label3 = string.Empty;
+                    item.Label2 = MediaTypes.BD.ToString();
                   }
                 }
                 else if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
