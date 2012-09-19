@@ -24,5 +24,9 @@ ALTER TABLE schedule
 GO
 
 UPDATE Version SET versionNumber=61
+<<<<<<< HEAD
 GO#
 >>>>>>> 7716a4f... Updated .sql files due to no CRLF being entered in notepad.
+=======
+GO
+>>>>>>> 0e809a4... Fixed small error in MSSQL update which prevented Database update.
