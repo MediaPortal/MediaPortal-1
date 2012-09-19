@@ -3903,7 +3903,7 @@ public class MediaPortalApp : D3DApp, IRender
     GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SKIN_CHANGED, 0, 0, 0, 0, 0, null);
     GUIGraphicsContext.SendMessage(msg);
 
-    Log.Info("Main: User skin is not compatable, using skin {0} with theme {1}", GUIGraphicsContext.SkinName, GUIThemeManager.CurrentTheme);
+    Log.Info("Main: User skin is not compatible, using skin {0} with theme {1}", GUIGraphicsContext.SkinName, GUIThemeManager.CurrentTheme);
   }
 
 
