@@ -756,13 +756,13 @@ namespace TvPlugin
     private static string GetSpokenViewDate(DateTime aStartTime)
     {
       DateTime compareDate = DateTime.Now.Subtract(DateTime.Now.Subtract(aStartTime));
-      if (DateTime.Today.Equals(aStartTime.Date))
+      if (DateTime.Now.Subtract(aStartTime) < new TimeSpan(24, 0, 0))
         return GUILocalizeStrings.Get(6030); // "Today"
-      else if (DateTime.Today.Subtract(aStartTime) < new TimeSpan(2, 0, 0, 0))
+      else if (DateTime.Now.Subtract(aStartTime) < new TimeSpan(48, 0, 0))
         return GUILocalizeStrings.Get(6040); // "Yesterday"
-      else if (DateTime.Today.Subtract(aStartTime) < new TimeSpan(3, 0, 0, 0))
+      else if (DateTime.Now.Subtract(aStartTime) < new TimeSpan(72, 0, 0))
         return GUILocalizeStrings.Get(6041); // "Two days ago"
-      else if (DateTime.Now.Subtract(aStartTime) < new TimeSpan(30, 0, 0, 0)) // current month (last 30 days)
+      else if (DateTime.Now.Subtract(aStartTime) < new TimeSpan(672, 0, 0)) // current month
         return GUILocalizeStrings.Get(6060); // "Current month";
       else if (DateTime.Now.Year.Equals(compareDate.Year))
         return GUILocalizeStrings.Get(6070); // "Current year";
