@@ -1,5 +1,5 @@
 /*
- *      Copyright (C) 2005-2011 Team XBMC
+ *      Copyright (C) 2010-2012 Team XBMC
  *      http://xbmc.org
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +18,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+// Modifications to channel layouts are done
 
 #include "..\source\stdafx.h"
 
@@ -46,7 +48,7 @@ CAEChannelInfo::~CAEChannelInfo()
 }
 
 void CAEChannelInfo::ResolveChannels(const CAEChannelInfo& rhs)
-{  
+{
   /* mono gets upmixed to dual mono */
   if (m_channelCount == 1 && m_channels[0] == AE_CH_FC)
   {
@@ -55,7 +57,7 @@ void CAEChannelInfo::ResolveChannels(const CAEChannelInfo& rhs)
     *this += AE_CH_FR;
     return;
   }
-  
+
   bool srcHasSL = false;
   bool srcHasSR = false;
   bool srcHasRL = false;
@@ -66,7 +68,7 @@ void CAEChannelInfo::ResolveChannels(const CAEChannelInfo& rhs)
   bool dstHasRL = false;
   bool dstHasRR = false;
 
-  for(unsigned int c = 0; c < rhs.m_channelCount; ++c)
+  for (unsigned int c = 0; c < rhs.m_channelCount; ++c)
     switch(rhs.m_channels[c])
     {
       case AE_CH_SL: dstHasSL = true; break;
@@ -78,9 +80,9 @@ void CAEChannelInfo::ResolveChannels(const CAEChannelInfo& rhs)
     }
 
   CAEChannelInfo newInfo;
-  for(unsigned int i = 0; i < m_channelCount; ++i)
+  for (unsigned int i = 0; i < m_channelCount; ++i)
   {
-    switch(m_channels[i])
+    switch (m_channels[i])
     {
       case AE_CH_SL: srcHasSL = true; break;
       case AE_CH_SR: srcHasSR = true; break;
@@ -91,7 +93,7 @@ void CAEChannelInfo::ResolveChannels(const CAEChannelInfo& rhs)
     }
 
     bool found = false;
-    for(unsigned int c = 0; c < rhs.m_channelCount; ++c)
+    for (unsigned int c = 0; c < rhs.m_channelCount; ++c)
       if (m_channels[i] == rhs.m_channels[c])
       {
         found = true;
@@ -103,10 +105,14 @@ void CAEChannelInfo::ResolveChannels(const CAEChannelInfo& rhs)
   }
 
   /* we need to ensure we end up with rear or side channels for downmix to work */
-  if (srcHasSL && !dstHasSL && dstHasRL) newInfo += AE_CH_BL;
-  if (srcHasSR && !dstHasSR && dstHasRR) newInfo += AE_CH_BR;
-  if (srcHasRL && !dstHasRL && dstHasSL) newInfo += AE_CH_SL;
-  if (srcHasRR && !dstHasRR && dstHasSR) newInfo += AE_CH_SR; 
+  if (srcHasSL && !dstHasSL && dstHasRL)
+    newInfo += AE_CH_BL;
+  if (srcHasSR && !dstHasSR && dstHasRR)
+    newInfo += AE_CH_BR;
+  if (srcHasRL && !dstHasRL && dstHasSL)
+    newInfo += AE_CH_SL;
+  if (srcHasRR && !dstHasRR && dstHasSR)
+    newInfo += AE_CH_SR;
 
   *this = newInfo;
 }
@@ -114,7 +120,7 @@ void CAEChannelInfo::ResolveChannels(const CAEChannelInfo& rhs)
 void CAEChannelInfo::Reset()
 {
   m_channelCount = 0;
-  for(unsigned int i = 0; i < AE_CH_MAX; ++i)
+  for (unsigned int i = 0; i < AE_CH_MAX; ++i)
     m_channels[i] = AE_CH_NULL;
 }
 
@@ -133,27 +139,26 @@ CAEChannelInfo& CAEChannelInfo::operator=(const CAEChannelInfo& rhs)
 CAEChannelInfo& CAEChannelInfo::operator=(const enum AEChannel* rhs)
 {
   Reset();
-  if(rhs == NULL)
+  if (rhs == NULL)
     return *this;
 
-  /* count the channels */
-  m_channelCount = 0;
-  while(m_channelCount < AE_CH_MAX && rhs[m_channelCount] != AE_CH_NULL)
+  while (m_channelCount < AE_CH_MAX && rhs[m_channelCount] != AE_CH_NULL)
   {
     m_channels[m_channelCount] = rhs[m_channelCount];
     ++m_channelCount;
   }
 
-  ASSERT(m_channelCount < AE_CH_MAX);
+  /* the last entry should be NULL, if not we were passed a non null terminated list */
+  ASSERT(rhs[m_channelCount] == AE_CH_NULL);
 
   return *this;
 }
 
 CAEChannelInfo& CAEChannelInfo::operator=(const enum AEStdChLayout rhs)
 {
-  ASSERT(rhs >= 0 && rhs < AE_CH_LAYOUT_MAX);
+  ASSERT(rhs > AE_CH_LAYOUT_INVALID && rhs < AE_CH_LAYOUT_MAX);
 
-  static enum AEChannel layouts[AE_CH_LAYOUT_MAX][17] = {
+  static enum AEChannel layouts[AE_CH_LAYOUT_MAX][18] = {
     {AE_CH_FC, AE_CH_NULL},
     {AE_CH_FL, AE_CH_FR, AE_CH_NULL},
     {AE_CH_FL, AE_CH_FR, AE_CH_LFE, AE_CH_NULL},
@@ -163,6 +168,8 @@ CAEChannelInfo& CAEChannelInfo::operator=(const enum AEStdChLayout rhs)
     {AE_CH_FL, AE_CH_FR, AE_CH_LFE, AE_CH_BL , AE_CH_BR , AE_CH_NULL},
     {AE_CH_FL, AE_CH_FR, AE_CH_FC , AE_CH_BL , AE_CH_BR , AE_CH_NULL},
     {AE_CH_FL, AE_CH_FR, AE_CH_FC , AE_CH_LFE, AE_CH_BL , AE_CH_BR , AE_CH_NULL},
+    {AE_CH_FL, AE_CH_FR, AE_CH_FC , AE_CH_LFE, AE_CH_SL , AE_CH_SR , AE_CH_BC, AE_CH_NULL}, // 6.1 Arsoft output
+    {AE_CH_FL, AE_CH_FR, AE_CH_FC , AE_CH_LFE, AE_CH_BC , AE_CH_SL , AE_CH_SR, AE_CH_NULL}, // 6.1 ffmpeg output
     {AE_CH_FL, AE_CH_FR, AE_CH_FC , AE_CH_BL , AE_CH_BR , AE_CH_SL , AE_CH_SR, AE_CH_NULL},
     {AE_CH_FL, AE_CH_FR, AE_CH_FC , AE_CH_LFE, AE_CH_BL , AE_CH_BR , AE_CH_SL , AE_CH_SR, AE_CH_NULL},
     
@@ -188,7 +195,7 @@ bool CAEChannelInfo::operator==(const CAEChannelInfo& rhs)
     return false;
 
   /* make sure the channel order is the same */
-  for(unsigned int i = 0; i < m_channelCount; ++i)
+  for (unsigned int i = 0; i < m_channelCount; ++i)
     if (m_channels[i] != rhs.m_channels[i])
       return false;
 
@@ -203,6 +210,8 @@ bool CAEChannelInfo::operator!=(const CAEChannelInfo& rhs)
 void CAEChannelInfo::operator+=(const enum AEChannel rhs)
 {
   ASSERT(m_channelCount < AE_CH_MAX);
+  ASSERT(rhs > AE_CH_NULL && rhs < AE_CH_MAX);
+
   m_channels[m_channelCount++] = rhs;
 }
 
@@ -212,13 +221,13 @@ const enum AEChannel CAEChannelInfo::operator[](unsigned int i) const
   return m_channels[i];
 }
 
-CAEChannelInfo::operator CStdString()
+CAEChannelInfo::operator std::string()
 {
   if (m_channelCount == 0)
     return "NULL";
 
-  CStdString s;
-  for(unsigned int i = 0; i < m_channelCount - 1; ++i)
+  std::string s;
+  for (unsigned int i = 0; i < m_channelCount - 1; ++i)
   {
     s.append(GetChName(m_channels[i]));
     s.append(",");
@@ -228,38 +237,42 @@ CAEChannelInfo::operator CStdString()
   return s;
 }
 
-unsigned int CAEChannelInfo::Count() const
-{
-  return m_channelCount;
-}
-
 const char* CAEChannelInfo::GetChName(const enum AEChannel ch)
 {
-  if (ch < 0 || ch >= AE_CH_MAX)
-    return "UNKNOWN";
+  ASSERT(ch >= 0 || ch < AE_CH_MAX);
 
   static const char* channels[AE_CH_MAX] =
   {
     "RAW" ,
-    "FL"  , "FR" , "FC" , "LFE", "BL" , "BR" , "FLOC",
-    "FROC", "BC" , "SL" , "SR" , "TFL", "TFR", "TFC" ,
-    "TC"  , "TBL", "TBR", "TBC"
+    "FL"  , "FR" , "FC" , "LFE", "BL"  , "BR"  , "FLOC",
+    "FROC", "BC" , "SL" , "SR" , "TFL" , "TFR" , "TFC" ,
+    "TC"  , "TBL", "TBR", "TBC", "BLOC", "BROC",
+
+    /* p16v devices */
+    "UNKNOWN1",
+    "UNKNOWN2",
+    "UNKNOWN3",
+    "UNKNOWN4",
+    "UNKNOWN5",
+    "UNKNOWN6",
+    "UNKNOWN7",
+    "UNKNOWN8"
   };
 
   return channels[ch];
 }
 
-bool CAEChannelInfo::HasChannel(const enum AEChannel ch)
+bool CAEChannelInfo::HasChannel(const enum AEChannel ch) const
 {
-  for(unsigned int i = 0; i < m_channelCount; ++i)
+  for (unsigned int i = 0; i < m_channelCount; ++i)
     if (m_channels[i] == ch)
       return true;
   return false;
 }
 
-bool CAEChannelInfo::ContainsChannels(CAEChannelInfo& rhs)
+bool CAEChannelInfo::ContainsChannels(CAEChannelInfo& rhs) const
 {
-  for(unsigned int i = 0; i < rhs.m_channelCount; ++i)
+  for (unsigned int i = 0; i < rhs.m_channelCount; ++i)
   {
     if (!HasChannel(rhs.m_channels[i]))
       return false;

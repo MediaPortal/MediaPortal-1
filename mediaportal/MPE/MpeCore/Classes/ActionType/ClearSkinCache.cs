@@ -63,7 +63,7 @@ namespace MpeCore.Classes.ActionType
       catch (Exception)
       {
         if (ItemProcessed != null)
-          ItemProcessed(this, new InstallEventArgs("Error to clear skin cache"));
+          ItemProcessed(this, new InstallEventArgs("Error clearing skin cache"));
         return SectionResponseEnum.Ok;
       }
       if (ItemProcessed != null)

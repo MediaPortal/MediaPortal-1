@@ -120,6 +120,7 @@ namespace MediaPortal.Configuration.Sections
     private TabPage tabPageTvGuideGeneral;
     private CheckBox cbBorderHighlight;
     private CheckBox cbColoredGuide;
+    private Label labelTVPluginNotInstalled;
 
     /// <summary>
     /// Required designer variable.
@@ -136,7 +137,20 @@ namespace MediaPortal.Configuration.Sections
       // If TV is not used then remove the tabs for TV guide settings.
       if (!UseTvServer)
       {
-        this.tabControlSkinSettings.Controls.Remove(this.tabPageTVGuideSettings);
+        this.tabControlTvGuideSettings.Enabled = false;
+        this.gbGenreSettings.Visible = false;
+
+        this.labelTVPluginNotInstalled.Text = GUILocalizeStrings.Get(59);
+        this.labelTVPluginNotInstalled.Visible = true;
+        this.labelTVPluginNotInstalled.Enabled = true;
+      }
+      else
+      {
+        this.tabControlTvGuideSettings.Enabled = true;
+        this.gbGenreSettings.Visible = true;
+
+        this.labelTVPluginNotInstalled.Visible = false;
+        this.labelTVPluginNotInstalled.Enabled = false;
       }
 
       // Identify the selected skin.
@@ -182,6 +196,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageTVGuideSettings = new System.Windows.Forms.TabPage();
       this.tabControlTvGuideSettings = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageTvGuideGeneral = new System.Windows.Forms.TabPage();
+      this.labelTVPluginNotInstalled = new System.Windows.Forms.Label();
       this.gbGenreSettings = new System.Windows.Forms.GroupBox();
       this.cbColoredGuide = new System.Windows.Forms.CheckBox();
       this.cbBorderHighlight = new System.Windows.Forms.CheckBox();
@@ -348,6 +363,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageTvGuideGeneral
       // 
+      this.tabPageTvGuideGeneral.Controls.Add(this.labelTVPluginNotInstalled);
       this.tabPageTvGuideGeneral.Controls.Add(this.gbGenreSettings);
       this.tabPageTvGuideGeneral.Location = new System.Drawing.Point(4, 22);
       this.tabPageTvGuideGeneral.Name = "tabPageTvGuideGeneral";
@@ -356,6 +372,16 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageTvGuideGeneral.TabIndex = 2;
       this.tabPageTvGuideGeneral.Text = "Settings";
       this.tabPageTvGuideGeneral.UseVisualStyleBackColor = true;
+      // 
+      // labelTVPluginNotInstalled
+      // 
+      this.labelTVPluginNotInstalled.AutoSize = true;
+      this.labelTVPluginNotInstalled.ForeColor = System.Drawing.SystemColors.ControlText;
+      this.labelTVPluginNotInstalled.Location = new System.Drawing.Point(6, 28);
+      this.labelTVPluginNotInstalled.Name = "labelTVPluginNotInstalled";
+      this.labelTVPluginNotInstalled.Size = new System.Drawing.Size(128, 13);
+      this.labelTVPluginNotInstalled.TabIndex = 1;
+      this.labelTVPluginNotInstalled.Text = "labelTVPluginNotInstalled";
       // 
       // gbGenreSettings
       // 
@@ -793,6 +819,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageTVGuideSettings.ResumeLayout(false);
       this.tabControlTvGuideSettings.ResumeLayout(false);
       this.tabPageTvGuideGeneral.ResumeLayout(false);
+      this.tabPageTvGuideGeneral.PerformLayout();
       this.gbGenreSettings.ResumeLayout(false);
       this.gbGenreSettings.PerformLayout();
       this.tabPageTvGuideColors.ResumeLayout(false);
@@ -1024,7 +1051,7 @@ namespace MediaPortal.Configuration.Sections
     public void PopulateThemesList(string selectedTheme)
     {
       // Get a list of available themes for the selected skin.
-      string selectedSkinFolderPath = Config.GetFolder(Config.Dir.SelectedSkin);
+      string selectedSkinFolderPath = Config.GetSubFolder(Config.Dir.Skin, Config.SkinName);
       ArrayList listAvailableThemes = GUIThemeManager.GetSkinThemesForSkin(selectedSkinFolderPath);
 
       // Transfer the list of themes to the drop down combo box and select the proper value.
@@ -1236,7 +1263,7 @@ namespace MediaPortal.Configuration.Sections
       }
 
       string selectedTheme = listViewAvailableThemes.SelectedItems[0].Text;
-      string selectedSkinFolderPath = Config.GetFolder(Config.Dir.SelectedSkin);
+      string selectedSkinFolderPath = Config.GetSubFolder(Config.Dir.Skin, Config.SkinName);
       string previewFile = selectedSkinFolderPath + @"\Themes\" + selectedTheme + @"\media\preview.png";
 
       if (!File.Exists(previewFile))

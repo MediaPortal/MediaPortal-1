@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>1017</id>
+  <defaultcontrol>17</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <controls>
+    <import>common.settings.xml</import>
+		<import>common.window.xml</import>
+		<import>common.time.xml</import>
+    <!-- Mask-->
+    <control>
+      <description>rectangle image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>160</posX>
+      <posY>110</posY>
+      <width>950</width>
+      <height>560</height>
+      <texture>backslide2.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <!-- Startup resume-->
+    <!--Right part-->
+    <control>
+      <description>buttons</description>
+      <type>group</type>
+      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="70" end="-300,0">WindowClose</animation>
+      <posX>200</posX>
+      <posY>150</posY>
+      <layout>StackLayout(0, Horizontal, True)</layout>
+      <control>
+        <description>Turn off monitor blank screen</description>
+        <type>checkbutton</type>
+        <id>17</id>
+        <label>300095</label>
+        <width>850</width>
+        <onup>123</onup>
+      </control>
+      <control>
+        <description>Turn monitor on resume</description>
+        <type>checkbutton</type>
+        <id>18</id>
+        <label>300096</label>
+        <width>850</width>
+      </control>
+      <control>
+        <description>S3 standby</description>
+        <type>checkbutton</type>
+        <id>19</id>
+        <label>300097</label>
+        <width>850</width>
+      </control>
+      <control>
+        <description>Workaround ifx</description>
+        <type>checkbutton</type>
+        <id>20</id>
+        <label>300098</label>
+        <width>850</width>
+      </control>
+      <control>
+        <description>Restart on resume</description>
+        <type>checkbutton</type>
+        <id>21</id>
+        <label>300099</label>
+        <width>850</width>
+      </control>
+      <control>
+        <description>Show last module</description>
+        <type>checkbutton</type>
+        <id>22</id>
+        <label>300100</label>
+        <width>850</width>
+      </control>
+      <control>
+        <description>Screen selector</description>
+        <type>checkbutton</type>
+        <id>23</id>
+        <label>300101</label>
+        <width>850</width>
+      </control>
+    </control>
+    <control>
+      <description>Screen button</description>
+      <type>button</type>
+      <id>24</id>
+      <posX>200</posX>
+      <posY>465</posY>
+      <width>40</width>
+      <textureFocus>osd_play_focus.png</textureFocus>
+      <textureNoFocus>osd_play_nofocus.png</textureNoFocus>
+    </control>
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>235</posX>
+      <posY>468</posY>
+      <label>#defScreen</label>
+      <align>left</align>
+			<font>font11</font>
+      <!--visible>control.isvisible(24)</visible-->
+    </control>
+    <!--Delay section-->
+    <!--Delay startup label-->
+    <control>
+      <description>Delay button</description>
+      <type>button</type>
+      <id>30</id>
+      <posX>200</posX>
+      <posY>520</posY>
+      <width>420</width>
+      <label>300102</label>
+    </control>
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>480</posX>
+      <posY>528</posY>
+      <label>#delayStartup</label>
+      <align>left</align>
+      <font>font11</font>
+    </control>
+    <control>
+      <description>Delay on MP start</description>
+      <type>checkbutton</type>
+      <id>31</id>
+      <posX>200</posX>
+      <posY>560</posY>
+      <label>300103</label>
+      <width>420</width>
+      <onup>30</onup>
+    </control>
+    <control>
+      <description>Delay on MP resume</description>
+      <type>checkbutton</type>
+      <id>32</id>
+      <posX>200</posX>
+      <posY>605</posY>
+      <label>300104</label>
+      <width>420</width>
+      <onup>31</onup>
+    </control>
+  </controls>
+</window>

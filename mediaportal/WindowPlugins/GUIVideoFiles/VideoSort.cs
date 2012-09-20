@@ -23,9 +23,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
-using MediaPortal.Services;
 using MediaPortal.Video.Database;
-using System.Collections;
 
 namespace MediaPortal.GUI.Video
 {
@@ -37,19 +35,21 @@ namespace MediaPortal.GUI.Video
     public enum SortMethod
     {
       Name = 0,
-      Date = 1,
-      Size = 2,
-      Year = 3,
-      Rating = 4,
-      Label = 5,
-      Unwatched = 6,
-      Modified = 7,
-      Created = 8,
+      NameAll = 1,
+      Date = 2,
+      Size = 3,
+      Watched = 4,
+      Year = 5,
+      Rating = 6,
+      Label = 7,
+      Modified = 8,
+      Created = 9,
     }
 
     protected SortMethod CurrentSortMethod;
     protected bool SortAscending;
     protected bool KeepFoldersTogether;
+    protected bool UseSortTitle;
     
     public VideoSort(SortMethod sortMethod, bool ascending)
     {
@@ -59,6 +59,7 @@ namespace MediaPortal.GUI.Video
       using (Profile.Settings xmlreader = new MPSettings())
       {
         KeepFoldersTogether = xmlreader.GetValueAsBool("movies", "keepfolderstogether", false);
+        UseSortTitle = xmlreader.GetValueAsBool("moviedatabase", "usesorttitle", false);
       }
     }
 
@@ -84,11 +85,11 @@ namespace MediaPortal.GUI.Video
       {
         return -1;
       }
-      if (item1.IsFolder && !item2.IsFolder)
+      if (item1.IsFolder && !item2.IsFolder && CurrentSortMethod != SortMethod.NameAll)
       {
         return -1;
       }
-      if (!item1.IsFolder && item2.IsFolder)
+      if (!item1.IsFolder && item2.IsFolder && CurrentSortMethod != SortMethod.NameAll)
       {
         return 1;
       }
@@ -160,14 +161,46 @@ namespace MediaPortal.GUI.Video
           }
 
         case SortMethod.Name:
+        case SortMethod.NameAll:
+
+          IMDBMovie movie1 = item1.AlbumInfoTag as IMDBMovie;
+          IMDBMovie movie2 = item2.AlbumInfoTag as IMDBMovie;
 
           if (SortAscending)
           {
-            return String.Compare(item1.Label, item2.Label, true);
+            if (!UseSortTitle)
+            {
+              return String.Compare(item1.Label, item2.Label, true);
+            }
+            else
+            {
+              if (movie1 != null && movie2 != null && movie1.ID > 0 && movie2.ID > 0)
+              {
+                return String.Compare(movie1.SortTitle, movie2.SortTitle, true);
+              }
+              else
+              {
+                return String.Compare(item1.Label, item2.Label, true);
+              }
+            }
           }
           else
           {
-            return String.Compare(item2.Label, item1.Label, true);
+            if (!UseSortTitle)
+            {
+              return String.Compare(item2.Label, item1.Label, true);
+            }
+            else
+            {
+              if (movie1 != null && movie2 != null && movie1.ID > 0 && movie2.ID > 0)
+              {
+                return String.Compare(movie2.SortTitle, movie1.SortTitle, true);
+              }
+              else
+              {
+                return String.Compare(item2.Label, item1.Label, true);
+              }
+            }
           }
 
         case SortMethod.Date: // Only recently added/watched->database view + date used for sort for title
@@ -306,7 +339,7 @@ namespace MediaPortal.GUI.Video
             return DateTime.Compare(item2.FileInfo.ModificationTime, item1.FileInfo.ModificationTime);
           }
         
-        case SortMethod.Unwatched:
+        case SortMethod.Watched:
           {
             int ret = 0;
             
@@ -322,13 +355,44 @@ namespace MediaPortal.GUI.Video
             }
             else
             {
+              movie1 = item1.AlbumInfoTag as IMDBMovie;
+              movie2 = item2.AlbumInfoTag as IMDBMovie;
+
               if (SortAscending)
               {
-                return String.Compare(item1.Label, item2.Label, true);
+                if (!UseSortTitle)
+                {
+                  return String.Compare(item1.Label, item2.Label, true);
+                }
+                else
+                {
+                  if (movie1 != null && movie2 != null && movie1.ID > 0 && movie2.ID > 0)
+                  {
+                    return String.Compare(movie1.SortTitle, movie2.SortTitle, true);
+                  }
+                  else
+                  {
+                    return String.Compare(item1.Label, item2.Label, true);
+                  }
+                }
               }
               else
               {
-                return String.Compare(item2.Label, item1.Label, true);
+                if (!UseSortTitle)
+                {
+                  return String.Compare(item2.Label, item1.Label, true);
+                }
+                else
+                {
+                  if (movie1 != null && movie2 != null && movie1.ID > 0 && movie2.ID > 0)
+                  {
+                    return String.Compare(movie2.SortTitle, movie1.SortTitle, true);
+                  }
+                  else
+                  {
+                    return String.Compare(item2.Label, item1.Label, true);
+                  }
+                }
               }
             }
             return ret;

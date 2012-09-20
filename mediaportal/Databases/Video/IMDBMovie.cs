@@ -20,13 +20,127 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Xml;
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using System.Web;
+using System.IO;
 
 namespace MediaPortal.Video.Database
 {
+  internal class MatroskaTagInfo
+  {
+    public string Title;
+    public string Description;
+    public string Genre;
+    public string ChannelName;
+    public string EpisodeName;
+    public DateTime StartTime;
+    public DateTime EndTime;
+  }
+
+  internal class MatroskaTagHandler
+  {
+    #region Private members
+
+    private static XmlNode AddSimpleTag(string tagName, string value, XmlDocument doc)
+    {
+      XmlNode rootNode = doc.CreateElement("SimpleTag");
+      XmlNode nameNode = doc.CreateElement("name");
+      nameNode.InnerText = tagName;
+      XmlNode valueNode = doc.CreateElement("value");
+      valueNode.InnerText = value;
+      rootNode.AppendChild(nameNode);
+      rootNode.AppendChild(valueNode);
+      return rootNode;
+    }
+
+    #endregion
+
+    #region Public members
+
+    public static MatroskaTagInfo Fetch(string filename)
+    {
+      MatroskaTagInfo info = new MatroskaTagInfo();
+      try
+      {
+        if (!File.Exists(filename))
+        {
+          return null;
+        }
+
+        XmlDocument doc = new XmlDocument();
+        doc.Load(filename);
+        XmlNodeList simpleTags = doc.SelectNodes("/tags/tag/SimpleTag");
+        foreach (XmlNode simpleTag in simpleTags)
+        {
+          string tagName = simpleTag.ChildNodes[0].InnerText;
+          switch (tagName)
+          {
+            case "TITLE":
+              info.Title = simpleTag.ChildNodes[1].InnerText;
+              break;
+            case "COMMENT":
+              info.Description = simpleTag.ChildNodes[1].InnerText;
+              break;
+            case "GENRE":
+              info.Genre = simpleTag.ChildNodes[1].InnerText;
+              break;
+            case "CHANNEL_NAME":
+              info.ChannelName = simpleTag.ChildNodes[1].InnerText;
+              break;
+            case "EPISODE_NAME":
+              info.EpisodeName = simpleTag.ChildNodes[1].InnerText;
+              break;
+            case "START_TIME":
+              info.StartTime = new DateTime(long.Parse(simpleTag.ChildNodes[1].InnerText));
+              break;
+            case "END_TIME":
+              info.EndTime = new DateTime(long.Parse(simpleTag.ChildNodes[1].InnerText));
+              break;
+          }
+        }
+      }
+      catch (Exception) { } // loading the XML doc could fail
+      return info;
+    }
+
+    public static void Persist(string filename, MatroskaTagInfo taginfo)
+    {
+      try
+      {
+        if (!Directory.Exists(Path.GetDirectoryName(filename)))
+        {
+          Directory.CreateDirectory(Path.GetDirectoryName(filename));
+        }
+
+        XmlDocument doc = new XmlDocument();
+        XmlDeclaration xmldecl = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
+        XmlNode tagsNode = doc.CreateElement("tags");
+        XmlNode tagNode = doc.CreateElement("tag");
+        tagNode.AppendChild(AddSimpleTag("TITLE", taginfo.Title, doc));
+        tagNode.AppendChild(AddSimpleTag("COMMENT", taginfo.Description, doc));
+        tagNode.AppendChild(AddSimpleTag("GENRE", taginfo.Genre, doc));
+        tagNode.AppendChild(AddSimpleTag("CHANNEL_NAME", taginfo.ChannelName, doc));
+        tagNode.AppendChild(AddSimpleTag("EPISODE_NAME", taginfo.EpisodeName, doc));
+        tagNode.AppendChild(AddSimpleTag("START_TIME", taginfo.StartTime.Ticks.ToString(), doc));
+        tagNode.AppendChild(AddSimpleTag("END_TIME", taginfo.EndTime.Ticks.ToString(), doc));
+        tagsNode.AppendChild(tagNode);
+        doc.AppendChild(tagsNode);
+        doc.InsertBefore(xmldecl, tagsNode);
+        doc.Save(filename);
+      }
+      catch (Exception) { }
+    }
+
+    #endregion
+  }
+
   /// <summary>
   /// @ 23.09.2004 by FlipGer
   /// new attribute string m_strDatabase, holds for example IMDB or OFDB
@@ -43,6 +157,7 @@ namespace MediaPortal.Video.Database
     private string _mStrPlot = string.Empty;
     private string _mStrPictureURL = string.Empty;
     private string _mStrTitle = string.Empty;
+    private string _mStrSortTitle = string.Empty;
     private string _mStrVotes = string.Empty;
     private string _mStrCast = string.Empty;
     private string _mStrSearchString = string.Empty;
@@ -63,27 +178,27 @@ namespace MediaPortal.Video.Database
     private int _mUserGroupID = -1;
     private string _mStrActor = string.Empty;
     private string _mStrgenre = string.Empty;
-    // Movie DirectorID
     private int _mDirectorID = -1;
-    // User review
     private string _mStrUserReview = string.Empty;
-    // Fanart
     private string _mStrFanartURL = string.Empty;
-    // Date added
-    private string _dateAdded = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-    // Date watched
+    private string _dateAdded = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
     private string _dateWatched = string.Empty;
-    // Studios
     private string _mStrStudios = string.Empty;
-    // Country
     private string _mStrCountry= string.Empty;
-    // Language
     private string _mStrLanguage = string.Empty;
-    // Info update date
     private string _lastUpdate = string.Empty;
     private bool _isEmpty = true;
-
+    // Variables for sharev view properties
+    private VideoFilesMediaInfo _mediaInfo = new VideoFilesMediaInfo();
+    private int _duration = 0;
+    private int _watchedPercent = 0;
+    private int _watchedCount = -1;
+    private string _videoFileName = string.Empty;
+    private string _videoFilePath = string.Empty;
+    
     public IMDBMovie() {}
+
+    #region Get/Set
 
     public int ID
     {
@@ -124,7 +239,6 @@ namespace MediaPortal.Video.Database
       set { _mUserGroupID = value; }
     }
 
-    // Added DirectorID
     public int DirectorID
     {
       get { return _mDirectorID; }
@@ -203,7 +317,6 @@ namespace MediaPortal.Video.Database
       set { _mStrPlot = value; }
     }
 
-    // Added UserReview
     public string UserReview
     {
       get { return _mStrUserReview; }
@@ -216,18 +329,22 @@ namespace MediaPortal.Video.Database
       set { _mStrPictureURL = value; }
     }
 
-    // Fanart
     public string FanartURL
     {
       get { return _mStrFanartURL; }
       set { _mStrFanartURL = value; }
     }
 
-    // Strip title prefix if needed
     public string Title
     {
       get { return _mStrTitle; }
       set { _mStrTitle = value; }
+    }
+
+    public string SortTitle
+    {
+      get { return _mStrSortTitle; }
+      set { _mStrSortTitle = value; }
     }
 
     public string Votes
@@ -338,6 +455,44 @@ namespace MediaPortal.Video.Database
       set { _lastUpdate = value; }
     }
 
+    public VideoFilesMediaInfo MediaInfo
+    {
+      get { return _mediaInfo; }
+      set { _mediaInfo = value; }
+    }
+
+    public int Duration
+    {
+      get { return _duration; }
+      set { _duration = value; }
+    }
+
+    public int WatchedPercent
+    {
+      get { return _watchedPercent; }
+      set { _watchedPercent = value; }
+    }
+
+    public int WatchedCount
+    {
+      get { return _watchedCount; }
+      set { _watchedCount = value; }
+    }
+
+    public string VideoFileName
+    {
+      get { return _videoFileName; }
+      set { _videoFileName = value; }
+    }
+
+    public string VideoFilePath
+    {
+      get { return _videoFilePath; }
+      set { _videoFilePath = value; }
+    }
+
+    #endregion
+
     public void Reset()
     {
       Reset(false);
@@ -363,6 +518,7 @@ namespace MediaPortal.Video.Database
       // Fanart
       _mStrFanartURL = string.Empty;
       _mStrTitle = string.Empty;
+      _mStrSortTitle = string.Empty;
       _mStrVotes = string.Empty;
       _mStrCast = string.Empty;
       _mStrSearchString = string.Empty;
@@ -381,7 +537,14 @@ namespace MediaPortal.Video.Database
       _mStrLanguage = string.Empty;
       _lastUpdate = string.Empty;
       _isEmpty = true;
+      _duration = 0;
+      _watchedPercent = 0;
+      _watchedCount = -1;
+      _videoFileName = string.Empty;
+      _videoFilePath = string.Empty;
     }
+
+    #region Database views skin properties
 
     [Obsolete("This method is obsolete; use method SetProperties(bool isFolder, string file) instead.")]
     public void SetProperties(bool isFolder)
@@ -405,29 +568,41 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#rating", Rating.ToString());
       GUIPropertyManager.SetProperty("#strrating", Rating.ToString(CultureInfo.CurrentCulture) + "/10");
       GUIPropertyManager.SetProperty("#tagline", TagLine);
+      
+      // Votes
       Int32 votes = 0;
       string strVotes = string.Empty;
+      
       if (Int32.TryParse(Votes.Replace(".", string.Empty).Replace(",", string.Empty), out votes))
       {
         strVotes = String.Format("{0:N0}", votes);
       }
+
       GUIPropertyManager.SetProperty("#votes", strVotes);
+      
       GUIPropertyManager.SetProperty("#credits", WritingCredits.Replace(" /", ","));
       GUIPropertyManager.SetProperty("#thumb", strThumb);
       GUIPropertyManager.SetProperty("#title", Title);
       GUIPropertyManager.SetProperty("#year", Year.ToString());
+      
+      // MPAA rating
       MPARating = Util.Utils.MakeFileName(MPARating);
       GUIPropertyManager.SetProperty("#mpaarating", MPARating);
+      
       GUIPropertyManager.SetProperty("#studios", Studios.Replace(" /", ","));
       GUIPropertyManager.SetProperty("#country", Country);
       GUIPropertyManager.SetProperty("#language", Language);
       DateTime lastUpdate;
-      DateTime.TryParseExact(LastUpdate, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out lastUpdate);
+      DateTime.TryParseExact(LastUpdate, "yyyy-MM-dd HH:mm:ss", 
+                             CultureInfo.CurrentCulture, 
+                             DateTimeStyles.None, 
+                             out lastUpdate);
       GUIPropertyManager.SetProperty("#lastupdate", lastUpdate.ToShortDateString());
 
+      // Show/hide movie info labels and values in skin, set movie duration and runtime value
       if (ID == -1)
       {
-        if (_isEmpty)
+        if (_isEmpty) // Could be xml recordings so we need to check if movie info data is empty (movieId is -1)
         {
           GUIPropertyManager.SetProperty("#hideinfo", "true");
         }
@@ -471,15 +646,12 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#iswatched", strValue);
 
       // Watched percent property
-      int percent = 0;
-      int timesWatched = 0;
-      VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(file), out percent, out timesWatched);
-      GUIPropertyManager.SetProperty("#watchedpercent", percent.ToString());
+      GUIPropertyManager.SetProperty("#watchedpercent", WatchedPercent.ToString());
       
       // Watched count
       if (!string.IsNullOrEmpty(file) && System.IO.File.Exists(file))
       {
-        GUIPropertyManager.SetProperty("#watchedcount", timesWatched.ToString());
+        GUIPropertyManager.SetProperty("#watchedcount", WatchedCount.ToString());
       }
       else
       {
@@ -489,7 +661,7 @@ namespace MediaPortal.Video.Database
       // MediaInfo Properties
       try
       {
-        ResetMediaInfoProperties();
+        ResetMediaInfoProperties(); // Clear previous values
 
         if (!string.IsNullOrEmpty(file))
         {
@@ -511,20 +683,21 @@ namespace MediaPortal.Video.Database
         VideoDatabase.GetMovieInfoById(movieId, ref movie);
         RunTime = movie.RunTime;
       }
+
       GUIPropertyManager.SetProperty("#runtime", RunTime + 
                               " " +
                               GUILocalizeStrings.Get(2998) +
-                              " (" + Util.Utils.SecondsToHMString(RunTime * 60) + ")");
+                              " (" + 
+                              Util.Utils.SecondsToHMString(RunTime * 60) + 
+                              ")");
 
-      int duration = VideoDatabase.GetMovieDuration(movieId);
-
-      if (duration <= 0)
+      if (Duration <= 0)
       {
         GUIPropertyManager.SetProperty("#videoruntime", string.Empty);
       }
       else
       {
-        GUIPropertyManager.SetProperty("#videoruntime", Util.Utils.SecondsToHMSString(duration));
+        GUIPropertyManager.SetProperty("#videoruntime", Util.Utils.SecondsToHMSString(Duration));
       }
     }
 
@@ -618,6 +791,7 @@ namespace MediaPortal.Video.Database
 
     private void ResetMediaInfoProperties()
     {
+      GUIPropertyManager.SetProperty("#VideoMediaSource", string.Empty);
       GUIPropertyManager.SetProperty("#VideoCodec", string.Empty);
       GUIPropertyManager.SetProperty("#VideoResolution", string.Empty);
       GUIPropertyManager.SetProperty("#AudioCodec", string.Empty);
@@ -633,27 +807,56 @@ namespace MediaPortal.Video.Database
 
     public void SetMediaInfoProperties(string file, bool refresh)
     {
-      try 
+      try
       {
-        VideoFilesMediaInfo mInfo = new VideoFilesMediaInfo();
-
-        VideoDatabase.GetVideoFilesMediaInfo(file, ref mInfo, refresh);
-
         string hasSubtitles = "false";
+        string videoMediaSource = string.Empty;
 
-        if (mInfo.HasSubtitles)
+        if (MediaInfo.HasSubtitles)
         {
           hasSubtitles = "true";
         }
 
-        GUIPropertyManager.SetProperty("#VideoCodec", Util.Utils.MakeFileName(mInfo.VideoCodec));
-        GUIPropertyManager.SetProperty("#VideoResolution", mInfo.VideoResolution);
-        GUIPropertyManager.SetProperty("#AudioCodec", Util.Utils.MakeFileName(mInfo.AudioCodec));
-        GUIPropertyManager.SetProperty("#AudioChannels", mInfo.AudioChannels);
+        //if (file.ToUpperInvariant().Contains(@"VIDEO_TS.IFO"))
+        //{
+        //  videoMediaSource = "DVD";
+        //}
+        //else if (file.ToUpperInvariant().Contains(@"INDEX.BDMV"))
+        //{
+        //  videoMediaSource = "Bluray";
+        //}
+        //else if (file.ToUpperInvariant().EndsWith(@".MKV"))
+        //{
+        //  videoMediaSource = "matroska";
+        //}
+        //else
+        //{
+        //  try
+        //  {
+        //    if (System.IO.Path.HasExtension(file))
+        //    {
+        //      string extension = System.IO.Path.GetExtension(file).Replace(".", string.Empty);
+        //      string extImage = GUIGraphicsContext.Skin +
+        //                          @"\Media\Logos\" + extension + @".png";
+
+        //      if (System.IO.File.Exists(extImage))
+        //      {
+        //        videoMediaSource = extension;
+        //      }
+        //    }
+        //  }
+        //  catch (Exception) { }
+        //}
+
+        GUIPropertyManager.SetProperty("#VideoMediaSource", videoMediaSource);
+        GUIPropertyManager.SetProperty("#VideoCodec", Util.Utils.MakeFileName(MediaInfo.VideoCodec));
+        GUIPropertyManager.SetProperty("#VideoResolution", MediaInfo.VideoResolution);
+        GUIPropertyManager.SetProperty("#AudioCodec", Util.Utils.MakeFileName(MediaInfo.AudioCodec));
+        GUIPropertyManager.SetProperty("#AudioChannels", MediaInfo.AudioChannels);
         GUIPropertyManager.SetProperty("#HasSubtitles", hasSubtitles);
-        GUIPropertyManager.SetProperty("#AspectRatio", mInfo.AspectRatio);
+        GUIPropertyManager.SetProperty("#AspectRatio", MediaInfo.AspectRatio);
       }
-      catch (Exception){}
+      catch (Exception) { }
     }
 
     private string GetStrThumb()
@@ -661,5 +864,925 @@ namespace MediaPortal.Video.Database
       string titleExt = Title + "{" + ID + "}";
       return Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
     }
+
+    #endregion
+
+    #region Share view movieinfo and skin properties
+
+    /// <summary>
+    /// Use only in share view
+    /// </summary>
+    /// <param name="item"></param>
+    public static void SetMovieData(GUIListItem item)
+    {
+      IMDBMovie info = new IMDBMovie();
+
+      if (item == null)
+      {
+        return;
+      }
+      
+      try
+      {
+        string path = string.Empty;
+        string fileName = string.Empty;
+
+        if (Util.Utils.IsVideo(item.Path))
+        {
+          Util.Utils.Split(item.Path, out path, out fileName);
+        }
+        else
+        {
+          path = item.Path;
+        }
+
+        if (item.Path != ".." && System.IO.File.Exists(item.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
+        {
+          fileName = item.Path + @"\VIDEO_TS\VIDEO_TS.IFO";
+        }
+        else if (item.Path != ".." && System.IO.File.Exists(item.Path + @"\BDMV\index.bdmv"))
+        {
+          fileName = item.Path + @"\BDMV\index.bdmv";
+        }
+        else
+        {
+          fileName = item.Path;
+        }
+
+        // Set
+        VideoFilesMediaInfo mInfo = new VideoFilesMediaInfo();
+
+        if (path == ".." || string.IsNullOrEmpty(path) || (!Directory.Exists(path) && !Util.Utils.IsVideo(fileName)))
+        {
+          info.MediaInfo = mInfo;
+          item.AlbumInfoTag = info;
+          return;
+        }
+
+        if (Directory.Exists(path) && !Util.Utils.IsVideo(fileName))
+        {
+          int rndMovieId = -1;
+
+          VirtualDirectory vDir = new VirtualDirectory();
+          int pin = 0;
+          vDir.LoadSettings("movies");
+
+          if (!vDir.IsProtectedShare(path, out pin))
+          {
+            ArrayList mList = new ArrayList();
+            VideoDatabase.GetMoviesByPath(path, ref mList);
+
+            if (mList.Count > 0)
+            {
+              Random rnd = new Random();
+              int r = rnd.Next(mList.Count);
+              IMDBMovie movieDetails = (IMDBMovie)mList[r];
+              mList.Clear();
+              VideoDatabase.GetFilesForMovie(movieDetails.ID, ref mList);
+
+              if (mList.Count > 0 && System.IO.File.Exists(mList[0].ToString()))
+              {
+                rndMovieId = movieDetails.ID;
+              }
+            }
+          }
+
+          info.ID = rndMovieId;
+          info.MediaInfo = mInfo;
+          item.AlbumInfoTag = info;
+          return;
+        }
+
+        try
+        {
+          VideoDatabase.GetMovieInfo(fileName, ref info);
+
+          // Get recording/nfo xml
+          if (info.IsEmpty)
+          {
+            FetchMatroskaInfo(fileName, false, ref info);
+
+            if (info.IsEmpty)
+            {
+              FetchMovieNfo(path, fileName, ref info);
+            }
+          }
+
+          VideoDatabase.GetVideoFilesMediaInfo(fileName, ref mInfo, false);
+          info.VideoFileName = fileName;
+
+          if (string.IsNullOrEmpty(info.VideoFilePath) || info.VideoFilePath == Strings.Unknown)
+          {
+            string tmpFile = string.Empty;
+            Util.Utils.Split(fileName, out path, out tmpFile);
+            info.VideoFilePath = path;
+          }
+
+          info.Path = path;
+          info.MediaInfo = mInfo;
+          info.Duration = VideoDatabase.GetMovieDuration(info.ID);
+          int percent = 0;
+          int watchedCount = 0;
+          VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(fileName), out percent, out watchedCount);
+          info.WatchedPercent = percent;
+          info.WatchedCount = watchedCount;
+          item.AlbumInfoTag = info;
+        }
+        catch (Exception ex)
+        {
+          Log.Error("IMDBMovie SetMovieData (GetMovieInfo) error: {0}", ex.Message);
+          item.AlbumInfoTag = info;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("IMDBMovie SetMovieData error: {0}", ex.Message);
+        item.AlbumInfoTag = info;
+      }
+    }
+
+    /// <summary>
+    /// Use for xml recordings
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="pathIsDirectory"></param>
+    /// <param name="movie"></param>
+    private static void FetchMatroskaInfo(string path, bool pathIsDirectory, ref IMDBMovie movie)
+    {
+      try
+      {
+        string xmlFile = string.Empty;
+        if (!pathIsDirectory)
+        {
+          xmlFile = System.IO.Path.ChangeExtension(path, ".xml");
+        }
+
+        MatroskaTagInfo minfo = MatroskaTagHandler.Fetch(xmlFile);
+        if (minfo != null)
+        {
+          movie.Title = minfo.Title;
+          movie.Plot = minfo.Description;
+          movie.Genre = minfo.Genre;
+        }
+      }
+      catch (Exception) { }
+    }
+
+    /// <summary>
+    /// Check and set movie info data from nfo file (must be in the same directory where is videofile and must have
+    /// the same name as video file.
+    /// Exceptions are DVD and BluRay folders where nfo file should have name as main folder
+    /// </summary>
+    /// <param name="path">path is checked only for DVD/BD folders, in case of single video files it is the same as filename</param>
+    /// <param name="filename">filename with full path</param>
+    /// <param name="movie"></param>
+    public static void FetchMovieNfo(string path, string filename, ref IMDBMovie movie)
+    {
+      try
+      {
+        string nfoFile = string.Empty;
+        
+        if (filename.ToUpperInvariant().Contains("VIDEO_TS.IFO") || filename.ToUpperInvariant().Contains("INDEX.BDMV"))
+        {
+          nfoFile = path + @"\" + System.IO.Path.GetFileNameWithoutExtension(filename) + ".nfo";
+
+          if (!System.IO.File.Exists(nfoFile))
+          {
+            string noStackPath = path;
+            Util.Utils.RemoveStackEndings(ref noStackPath);
+            nfoFile = path + @"\" + System.IO.Path.GetFileNameWithoutExtension(noStackPath) + ".nfo";
+          }
+        }
+        else
+        {
+          nfoFile = System.IO.Path.ChangeExtension(filename, ".nfo");
+          Util.Utils.RemoveStackEndings(ref nfoFile);
+        }
+        
+        if (!System.IO.File.Exists(nfoFile))
+        {
+          return;
+        }
+
+        XmlDocument doc = new XmlDocument();
+
+        try
+        {
+          doc.Load(nfoFile);
+        }
+        catch (Exception)
+        {
+          Log.Info("GUIVideoFiles.Load nfo file error: {0} is not a valid XML document", nfoFile);
+          return;
+        }
+
+        if (doc.DocumentElement != null)
+        {
+          XmlNodeList movieList = doc.DocumentElement.SelectNodes("/movie");
+
+          if (movieList == null)
+          {
+            return;
+          }
+
+          foreach (XmlNode nodeMovie in movieList)
+          {
+            string genre = string.Empty;
+
+            #region nodes
+
+            XmlNode nodeTitle = nodeMovie.SelectSingleNode("title");
+            XmlNode nodeRating = nodeMovie.SelectSingleNode("rating");
+            XmlNode nodeYear = nodeMovie.SelectSingleNode("year");
+            XmlNode nodeDuration = nodeMovie.SelectSingleNode("runtime");
+            XmlNode nodePlotShort = nodeMovie.SelectSingleNode("outline");
+            XmlNode nodePlot = nodeMovie.SelectSingleNode("plot");
+            XmlNode nodeTagline = nodeMovie.SelectSingleNode("tagline");
+            XmlNode nodeDirector = nodeMovie.SelectSingleNode("director");
+            XmlNode nodeImdbNumber = nodeMovie.SelectSingleNode("imdb");
+            XmlNode nodeMpaa = nodeMovie.SelectSingleNode("mpaa");
+            XmlNode nodeTop250 = nodeMovie.SelectSingleNode("top250");
+            XmlNode nodeVotes = nodeMovie.SelectSingleNode("votes");
+            XmlNode nodeStudio = nodeMovie.SelectSingleNode("studio");
+            XmlNode nodePoster = nodeMovie.SelectSingleNode("thumb");
+            XmlNode nodeLanguage = nodeMovie.SelectSingleNode("language");
+            XmlNode nodeCountry = nodeMovie.SelectSingleNode("country");
+            XmlNode nodeReview = nodeMovie.SelectSingleNode("review");
+            XmlNode nodeCredits = nodeMovie.SelectSingleNode("credits");
+
+
+            #endregion
+
+            #region Genre
+
+            XmlNodeList genres = nodeMovie.SelectNodes("genres/genre");
+
+            foreach (XmlNode nodeGenre in genres)
+            {
+              if (nodeGenre.InnerText != null)
+              {
+                if (genre.Length > 0)
+                {
+                  genre += " / ";
+                }
+                genre += nodeGenre.InnerText;
+              }
+            }
+
+            if (string.IsNullOrEmpty(genre))
+            {
+              XmlNode nodeGenre = nodeMovie.SelectSingleNode("genre");
+
+              if (nodeGenre != null)
+              {
+                genre = nodeGenre.InnerText;
+              }
+            }
+
+            // Genre
+            movie.Genre = genre;
+
+            #endregion
+
+            #region Credits (Writers)
+
+            // Writers
+            if (nodeCredits != null)
+            {
+              movie.WritingCredits = nodeCredits.InnerText;
+            }
+            #endregion
+
+            #region Moviefiles
+
+            // Need to fake movie to see it's properties (id = 0 is not used in vdb for movies)
+            movie.Path = path;
+            movie.File = nfoFile;
+            int movieId = VideoDatabase.GetMovieId(filename);
+
+            if (movieId < 0)
+            {
+              movie.ID = 0;
+            }
+            else
+            {
+              movie.ID = movieId;
+
+              #region Watched status
+
+              int percent = 0;
+              int watchedCount = 0;
+              VideoDatabase.GetmovieWatchedStatus(movieId, out percent, out watchedCount);
+
+              if (watchedCount > 0)
+              {
+                movie.Watched = 1;
+              }
+
+              #endregion
+            }
+
+            #endregion
+
+            #region Title
+
+            // Title
+            if (nodeTitle != null)
+            {
+              movie.Title = nodeTitle.InnerText;
+            }
+
+            #endregion
+
+            #region Language
+
+            // Title
+            if (nodeLanguage != null)
+            {
+              movie.Language = nodeLanguage.InnerText;
+            }
+
+            #endregion
+
+            #region Country
+
+            // Title
+            if (nodeCountry != null)
+            {
+              movie.Country = nodeCountry.InnerText;
+            }
+
+            #endregion
+
+            #region IMDB number
+
+            // IMDB number
+            if (nodeImdbNumber != null)
+            {
+              if (VideoDatabase.CheckMovieImdbId(nodeImdbNumber.InnerText))
+              {
+                movie.IMDBNumber = nodeImdbNumber.InnerText;
+              }
+            }
+
+            #endregion
+
+            #region Director
+
+            // Director
+            if (nodeDirector != null)
+            {
+              movie.Director = nodeDirector.InnerText;
+            }
+            #endregion
+
+            #region Studio
+
+            // Studio
+            if (nodeStudio != null)
+            {
+              movie.Studios = nodeStudio.InnerText;
+            }
+
+            #endregion
+
+            #region MPAA
+
+            // MPAA
+            if (nodeMpaa != null)
+            {
+              movie.MPARating = nodeMpaa.InnerText;
+            }
+            else
+            {
+              movie.MPARating = "NR";
+            }
+
+            #endregion
+
+            #region Plot/Short plot
+
+            // Plot
+            if (nodePlot != null)
+            {
+              movie.Plot = nodePlot.InnerText;
+            }
+            else
+            {
+              movie.Plot = string.Empty;
+            }
+            // Short plot
+            if (nodePlotShort != null)
+            {
+              movie.PlotOutline = nodePlotShort.InnerText;
+            }
+            else
+            {
+              movie.PlotOutline = string.Empty;
+            }
+
+            #endregion
+
+            #region Review
+
+            // Title
+            if (nodeReview != null)
+            {
+              movie.UserReview = nodeReview.InnerText;
+            }
+
+            #endregion
+
+            #region Rating (n.n/10)
+
+            // Rating
+            if (nodeRating != null)
+            {
+              double rating = 0;
+              if (Double.TryParse(nodeRating.InnerText.Replace(".", ","), out rating))
+              {
+                movie.Rating = (float)rating;
+
+                if (movie.Rating > 10.0f)
+                {
+                  movie.Rating /= 10.0f;
+                }
+              }
+            }
+
+            #endregion
+
+            #region Duration
+
+            // Duration
+            if (nodeDuration != null)
+            {
+              int runtime = 0;
+              if (Int32.TryParse(nodeDuration.InnerText, out runtime))
+              {
+                movie.RunTime = runtime;
+              }
+              else
+              {
+                string regex = "(?<h>[0-9]*)h.(?<m>[0-9]*)";
+                MatchCollection mc = Regex.Matches(nodeDuration.InnerText, regex, RegexOptions.Singleline);
+                if (mc.Count > 0)
+                {
+                  foreach (Match m in mc)
+                  {
+                    int hours = 0;
+                    Int32.TryParse(m.Groups["h"].Value, out hours);
+                    int minutes = 0;
+                    Int32.TryParse(m.Groups["m"].Value, out minutes);
+                    hours = hours * 60;
+                    minutes = hours + minutes;
+                    movie.RunTime = minutes;
+                  }
+                }
+              }
+            }
+            else
+            {
+              movie.RunTime = 0;
+            }
+
+            #endregion
+
+            #region Tagline
+
+            // Tagline
+            if (nodeTagline != null)
+            {
+              movie.TagLine = nodeTagline.InnerText;
+            }
+
+            #endregion
+
+            #region TOP250
+
+            // Top250
+            if (nodeTop250 != null)
+            {
+              int top250 = 0;
+              Int32.TryParse(nodeTop250.InnerText, out top250);
+              movie.Top250 = top250;
+            }
+            else
+            {
+              movie.Top250 = 0;
+            }
+
+
+            #endregion
+
+            #region votes
+
+            // Votes
+            if (nodeVotes != null)
+            {
+              movie.Votes = nodeVotes.InnerText;
+            }
+
+            #endregion
+
+            #region Year
+
+            // Year
+            if (nodeYear != null)
+            {
+              int year = 0;
+              Int32.TryParse(nodeYear.InnerText, out year);
+              movie.Year = year;
+            }
+
+            #endregion
+
+            #region poster
+
+            // Poster
+            string thumbJpgFile = string.Empty;
+            string thumbTbnFile = string.Empty;
+            string thumbJpgFileLocal = string.Empty;
+            string thumbTbnFileLocal = string.Empty;
+
+            if (nodePoster != null)
+            {
+              filename = System.IO.Path.GetFileNameWithoutExtension(filename);
+              Util.Utils.RemoveStackEndings(ref filename);
+
+              thumbJpgFile = path + @"\" + nodePoster.InnerText;
+              thumbTbnFile = path + @"\" + nodePoster.InnerText;
+              thumbJpgFileLocal = path + @"\" + filename + ".jpg";
+              thumbTbnFileLocal = path + @"\" + filename + ".tbn";
+
+              // local
+              if (System.IO.File.Exists(thumbJpgFileLocal))
+              {
+                movie.ThumbURL = thumbJpgFileLocal;
+              }
+              else if (System.IO.File.Exists(thumbTbnFileLocal))
+              {
+                movie.ThumbURL = thumbTbnFileLocal;
+              }
+              // XML
+              else if (System.IO.File.Exists(thumbJpgFile))
+              {
+                movie.ThumbURL = thumbJpgFile;
+              }
+              else if (System.IO.File.Exists(thumbTbnFile))
+              {
+                movie.ThumbURL = thumbTbnFile;
+              }
+            }
+            else
+            {
+              filename = System.IO.Path.GetFileNameWithoutExtension(filename);
+              Util.Utils.RemoveStackEndings(ref filename);
+
+              thumbJpgFileLocal = path + @"\" + filename + ".jpg";
+              thumbTbnFileLocal = path + @"\" + filename + ".tbn";
+
+              if (System.IO.File.Exists(thumbJpgFileLocal))
+              {
+                movie.ThumbURL = thumbJpgFileLocal;
+              }
+              else if (System.IO.File.Exists(thumbTbnFileLocal))
+              {
+                movie.ThumbURL = thumbTbnFileLocal;
+              }
+            }
+
+            #endregion
+
+          }
+        }
+      }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
+      }
+      catch (Exception ex)
+      {
+        Log.Error("GUIVideoFiles. Error in nfo xml document: {0}", ex.Message);
+      }
+    }
+
+    /// <summary>
+    /// Use only in share view
+    /// </summary>
+    /// <param name="item"></param>
+    public static void SetMovieProperties(GUIListItem item)
+    {
+      try
+      {
+        IMDBMovie info = item.AlbumInfoTag as IMDBMovie;
+
+        if (info == null)
+        {
+          return;
+        }
+      
+        string titleExt = info.Title + "{" + info.ID + "}";
+        string strThumb = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+
+        GUIPropertyManager.SetProperty("#director", info.Director);
+        GUIPropertyManager.SetProperty("#genre", info.Genre.Replace(" /", ","));
+        GUIPropertyManager.SetProperty("#cast", info.Cast);
+        GUIPropertyManager.SetProperty("#dvdlabel", info.DVDLabel);
+        GUIPropertyManager.SetProperty("#imdbnumber", info.IMDBNumber);
+        GUIPropertyManager.SetProperty("#file", info.File);
+        GUIPropertyManager.SetProperty("#plot", HttpUtility.HtmlDecode(info.Plot));
+        GUIPropertyManager.SetProperty("#plotoutline", info.PlotOutline);
+        GUIPropertyManager.SetProperty("#userreview", info.UserReview);
+        GUIPropertyManager.SetProperty("#rating", info.Rating.ToString());
+        GUIPropertyManager.SetProperty("#strrating", info.Rating.ToString(CultureInfo.CurrentCulture) + "/10");
+        GUIPropertyManager.SetProperty("#tagline", info.TagLine);
+        //Votes
+        Int32 votes = 0;
+        string strVotes = string.Empty;
+        if (Int32.TryParse(info.Votes.Replace(".", string.Empty).Replace(",", string.Empty), out votes))
+        {
+          strVotes = String.Format("{0:N0}", votes);
+        }
+        GUIPropertyManager.SetProperty("#votes", strVotes);
+        //
+        GUIPropertyManager.SetProperty("#credits", info.WritingCredits.Replace(" /", ","));
+        GUIPropertyManager.SetProperty("#thumb", strThumb);
+        GUIPropertyManager.SetProperty("#title", info.Title);
+        GUIPropertyManager.SetProperty("#year", info.Year.ToString());
+        // MPAA
+        info.MPARating = Util.Utils.MakeFileName(info.MPARating);
+        GUIPropertyManager.SetProperty("#mpaarating", info.MPARating);
+        //
+        GUIPropertyManager.SetProperty("#studios", info.Studios.Replace(" /", ","));
+        GUIPropertyManager.SetProperty("#country", info.Country);
+        GUIPropertyManager.SetProperty("#language", info.Language);
+        // Last update date
+        DateTime lastUpdate;
+        DateTime.TryParseExact(info.LastUpdate, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out lastUpdate);
+        GUIPropertyManager.SetProperty("#lastupdate", lastUpdate.ToShortDateString());
+        //
+        GUIPropertyManager.SetProperty("#movieid", info.ID.ToString());
+
+        if (info.ID == -1 || item.IsFolder)
+        {
+          if (info.IsEmpty)
+          {
+            GUIPropertyManager.SetProperty("#hideinfo", "true");
+
+            if (item.Label == "..") // No id for GoToPreviousFolder item
+            {
+              GUIPropertyManager.SetProperty("#movieid", "-1");
+            }
+          }
+          else
+          {
+            GUIPropertyManager.SetProperty("#hideinfo", "false");
+          }
+
+          GUIPropertyManager.SetProperty("#runtime", info.RunTime +
+                                " " +
+                                GUILocalizeStrings.Get(2998) +
+                                " (" + Util.Utils.SecondsToHMString(info.RunTime * 60) + ")");
+
+          if (info.Duration <= 0)
+          {
+            GUIPropertyManager.SetProperty("#videoruntime", string.Empty);
+          }
+          else
+          {
+            GUIPropertyManager.SetProperty("#videoruntime", Util.Utils.SecondsToHMSString(info.Duration));
+          }
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#hideinfo", "false");
+          GUIPropertyManager.SetProperty("#runtime", info.RunTime +
+                                " " +
+                                GUILocalizeStrings.Get(2998) +
+                                " (" + Util.Utils.SecondsToHMString(info.RunTime * 60) + ")");
+
+          if (info.Duration <= 0)
+          {
+            GUIPropertyManager.SetProperty("#videoruntime", string.Empty);
+          }
+          else
+          {
+            GUIPropertyManager.SetProperty("#videoruntime", Util.Utils.SecondsToHMSString(info.Duration));
+          }
+        }
+
+        // Watched property
+        string strValue = "no";
+
+        if (info.Watched > 0)
+        {
+          strValue = "yes";
+        }
+        GUIPropertyManager.SetProperty("#iswatched", strValue);
+
+        if (!item.IsFolder && !VirtualDirectories.Instance.Movies.IsRootShare(info.VideoFileName))
+        {
+          // Watched percent property
+          GUIPropertyManager.SetProperty("#watchedpercent", info.WatchedPercent.ToString());
+          // Watched count
+          GUIPropertyManager.SetProperty("#watchedcount", info.WatchedCount.ToString());
+        }
+        else
+        {
+          // Watched percent property
+          GUIPropertyManager.SetProperty("#watchedpercent", "0");
+          // Watched count
+          GUIPropertyManager.SetProperty("#watchedcount", "-1");
+        }
+        string hasSubtitles = "false";
+        string videoMediaSource = string.Empty;
+
+        if (info.MediaInfo.HasSubtitles)
+        {
+          hasSubtitles = "true";
+        }
+
+        // Maybe in the future
+        //if (!string.IsNullOrEmpty(info.VideoFileName) && System.IO.File.Exists(info.VideoFileName))
+        //{
+        //  if (info.VideoFileName.ToUpperInvariant().Contains(@"VIDEO_TS.IFO"))
+        //  {
+        //    videoMediaSource = "DVD";
+        //  }
+        //  else if (info.VideoFileName.ToUpperInvariant().Contains(@"INDEX.BDMV"))
+        //  {
+        //    videoMediaSource = "Bluray";
+        //  }
+        //  else if (info.VideoFileName.ToUpperInvariant().EndsWith(@".MKV"))
+        //  {
+        //    videoMediaSource = "matroska";
+        //  }
+        //  else
+        //  {
+        //    try
+        //    {
+        //      if (System.IO.Path.HasExtension(info.VideoFileName))
+        //      {
+        //        string extension = System.IO.Path.GetExtension(info.VideoFileName).Replace(".", string.Empty);
+        //        string extImage = GUIGraphicsContext.Skin +
+        //                          @"\Media\Logos\" + extension + @".png";
+
+        //        if (System.IO.File.Exists(extImage))
+        //        {
+        //          videoMediaSource = extension;
+        //        }
+        //      }
+        //    }
+        //    catch (Exception) { }
+        //  }
+        //}
+
+        GUIPropertyManager.SetProperty("#VideoMediaSource", videoMediaSource);
+        GUIPropertyManager.SetProperty("#VideoCodec", Util.Utils.MakeFileName(info.MediaInfo.VideoCodec));
+        GUIPropertyManager.SetProperty("#VideoResolution", info.MediaInfo.VideoResolution);
+        GUIPropertyManager.SetProperty("#AudioCodec", Util.Utils.MakeFileName(info.MediaInfo.AudioCodec));
+        GUIPropertyManager.SetProperty("#AudioChannels", info.MediaInfo.AudioChannels);
+        GUIPropertyManager.SetProperty("#HasSubtitles", hasSubtitles);
+        GUIPropertyManager.SetProperty("#AspectRatio", info.MediaInfo.AspectRatio);
+        GUIPropertyManager.SetProperty("#myvideosuserfanart", string.Empty);
+
+        try
+        {
+          if (info.ID < 1)
+          {
+            string strPath, strFilename;
+            Util.Utils.Split(info.VideoFileName, out  strPath, out strFilename);
+
+            if (string.IsNullOrEmpty(strPath))
+            {
+              if (string.IsNullOrEmpty(item.Path))
+              {
+                return;
+              }
+              strPath = item.Path;
+            }
+          
+            List<string> faFiles = new List<string>();
+            string faFile = strPath + @"\fanart.jpg";
+            faFiles.Add(faFile);
+            faFile = strPath + @"\backdrop.jpg";
+            faFiles.Add(faFile);
+          
+          
+            if (item.IsBdDvdFolder) // dvd/blu-ray
+            {
+              strPath = strPath.Remove(strPath.LastIndexOf(@"\"));
+
+              faFile = strPath + @"\" + Util.Utils.GetFilename(strFilename, true) + "-fanart.jpg";
+              faFiles.Add(faFile);
+              faFile = strPath + @"\" + "fanart.jpg";
+              faFiles.Add(faFile);
+              faFile = strPath + @"\" + "backdrop.jpg";
+              faFiles.Add(faFile);
+
+              string dvdBdPath = strPath.Substring(strPath.LastIndexOf(@"\") + 1);
+              Util.Utils.RemoveStackEndings(ref dvdBdPath);
+            
+              faFile = strPath + @"\" + dvdBdPath.Trim() + "-fanart.jpg";
+              faFiles.Add(faFile);
+
+              foreach (string file in faFiles)
+              {
+                if (System.IO.File.Exists(file))
+                {
+                  GUIPropertyManager.SetProperty("#myvideosuserfanart", file);
+                  break;
+                }
+              }
+            }
+            else if (!item.IsFolder && !string.IsNullOrEmpty(strFilename)) // video file
+            {
+              Util.Utils.RemoveStackEndings(ref strFilename);
+              faFile = strPath + @"\" + Util.Utils.GetFilename(strFilename, true) + "-fanart.jpg";
+              faFiles.Add(faFile);
+
+              foreach (string file in faFiles)
+              {
+                if (System.IO.File.Exists(file))
+                {
+                  GUIPropertyManager.SetProperty("#myvideosuserfanart", file);
+                  break;
+                }
+              }
+            }
+            else if (item.IsFolder && !VirtualDirectories.Instance.Movies.IsRootShare(item.Path) && Util.Utils.IsFolderDedicatedMovieFolder(strPath)) // folder & dedicated movie folder
+            {
+              string cleanPath = item.Path.Substring(item.Path.LastIndexOf(@"\") + 1);
+              Util.Utils.RemoveStackEndings(ref cleanPath);
+              faFile = strPath + @"\" + cleanPath + "-fanart.jpg";
+              faFiles.Add(faFile);
+
+              foreach (string file in faFiles)
+              {
+                if (System.IO.File.Exists(file))
+                {
+                  GUIPropertyManager.SetProperty("#myvideosuserfanart", file);
+                  break;
+                }
+              }
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("IMDBMovie Set user fanart file property error: {0}", ex.Message);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("IMDBMovie Set movie properties error: {0}", ex.Message);
+      }
+    }
+
+    public static void ResetMovieProperties()
+    {
+      GUIPropertyManager.SetProperty("#director", string.Empty);
+      GUIPropertyManager.SetProperty("#genre", string.Empty);
+      GUIPropertyManager.SetProperty("#cast", string.Empty);
+      GUIPropertyManager.SetProperty("#dvdlabel", string.Empty);
+      GUIPropertyManager.SetProperty("#imdbnumber", string.Empty);
+      GUIPropertyManager.SetProperty("#file", string.Empty);
+      GUIPropertyManager.SetProperty("#plot", string.Empty);
+      GUIPropertyManager.SetProperty("#plotoutline", string.Empty);
+      GUIPropertyManager.SetProperty("#userreview", string.Empty);
+      GUIPropertyManager.SetProperty("#rating", string.Empty);
+      GUIPropertyManager.SetProperty("#strrating", string.Empty);
+      GUIPropertyManager.SetProperty("#tagline", string.Empty);
+      GUIPropertyManager.SetProperty("#votes", string.Empty);
+      GUIPropertyManager.SetProperty("#credits", string.Empty);
+      GUIPropertyManager.SetProperty("#thumb", string.Empty);
+      GUIPropertyManager.SetProperty("#title", string.Empty);
+      GUIPropertyManager.SetProperty("#year", string.Empty);
+      GUIPropertyManager.SetProperty("#mpaarating", string.Empty);
+      GUIPropertyManager.SetProperty("#studios", string.Empty);
+      GUIPropertyManager.SetProperty("#country", string.Empty);
+      GUIPropertyManager.SetProperty("#language", string.Empty);
+      GUIPropertyManager.SetProperty("#lastupdate", string.Empty);
+      GUIPropertyManager.SetProperty("#movieid", "-1");
+      GUIPropertyManager.SetProperty("#hideinfo", "true");
+      GUIPropertyManager.SetProperty("#runtime", string.Empty);
+      GUIPropertyManager.SetProperty("#videoruntime", string.Empty);
+      GUIPropertyManager.SetProperty("#iswatched", string.Empty);
+      GUIPropertyManager.SetProperty("#watchedpercent", string.Empty);
+      GUIPropertyManager.SetProperty("#watchedcount", string.Empty);
+      GUIPropertyManager.SetProperty("#VideoMediaSource", string.Empty);
+      GUIPropertyManager.SetProperty("#VideoCodec", string.Empty);
+      GUIPropertyManager.SetProperty("#VideoResolution", string.Empty);
+      GUIPropertyManager.SetProperty("#AudioCodec", string.Empty);
+      GUIPropertyManager.SetProperty("#AudioChannels", string.Empty);
+      GUIPropertyManager.SetProperty("#HasSubtitles", string.Empty);
+      GUIPropertyManager.SetProperty("#AspectRatio", string.Empty);
+      GUIPropertyManager.SetProperty("#myvideosuserfanart", string.Empty);
+    }
+
+    #endregion
+
+    
   }
 }

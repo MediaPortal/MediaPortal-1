@@ -28,6 +28,8 @@ namespace MpeCore.Classes.SectionPanel
   {
     private const string Const_state = "State";
 
+    #region ISectionPanel Members
+
     public string DisplayName
     {
       get { return "[Group] Set state"; }
@@ -36,11 +38,6 @@ namespace MpeCore.Classes.SectionPanel
     public string Guid
     {
       get { return "{91B3F10F-B91F-4c17-98E4-5D53B47E2BBD}"; }
-    }
-
-    public SectionParamCollection Init()
-    {
-      throw new NotImplementedException();
     }
 
     public SectionParamCollection GetDefaultParams()
@@ -79,5 +76,7 @@ namespace MpeCore.Classes.SectionPanel
       _resp = ActionExecute(packageClass, sectionItem, ActionExecuteLocationEnum.AfterPanelHide);
       return _resp;
     }
+
+    #endregion
   }
 }

@@ -19,36 +19,22 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Threading;
-using System.Windows.Forms;
 using MpeCore.Interfaces;
-using MpeCore.Classes;
 
 namespace MpeCore.Classes.SectionPanel
 {
   public partial class InstallSection : BaseHorizontalLayout, ISectionPanel
   {
-    public InstallSection()
-    {
-      InitializeComponent();
-    }
-
     #region ISectionPanel Members
 
-    public bool Unique
+    public string DisplayName
     {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
+      get { return "Install Section"; }
     }
 
-    public SectionParamCollection Init()
+    public string Guid
     {
-      throw new NotImplementedException();
+      get { return "{839F908C-05A5-47ac-8AD4-BE8A7BC44DAE}"; }
     }
 
     public SectionParamCollection GetDefaultParams()
@@ -77,6 +63,13 @@ namespace MpeCore.Classes.SectionPanel
       ShowDialog();
       Base.ActionExecute(Package, Section, ActionExecuteLocationEnum.AfterPanelHide);
       return base.Resp;
+    }
+
+    #endregion
+
+    public InstallSection()
+    {
+      InitializeComponent();
     }
 
     private void packageClass_FileInstalled(object sender, Events.InstallEventArgs e)
@@ -111,20 +104,7 @@ namespace MpeCore.Classes.SectionPanel
     {
       button_back.Enabled = false;
       button_cancel.Enabled = false;
-      this.Width = 500;
     }
-
-    #endregion
-
-    private void timer1_Tick(object sender, EventArgs e)
-    {
-      progressBar1.Value++;
-      if (progressBar1.Value > progressBar1.Maximum - 2)
-        progressBar1.Value = 0;
-    }
-
-    private void InstallSection_Load(object sender, EventArgs e) {}
-
 
     private void InstallSection_Shown(object sender, EventArgs e)
     {
@@ -141,12 +121,16 @@ namespace MpeCore.Classes.SectionPanel
           if (!string.IsNullOrEmpty(actionItem.ConditionGroup) && !Package.Groups[actionItem.ConditionGroup].Checked)
             continue;
 
+          // use a new instance of the action, 
+          // because if we chain MPE installations, 
+          // reusing the action will result in multiple event subscription to advance the progress bar
+          var action = Activator.CreateInstance(MpeInstaller.ActionProviders[actionItem.ActionType].GetType()) as IActionType;
+
           progressBar1.Value = progressBar1.Minimum;
-          progressBar1.Maximum = MpeInstaller.ActionProviders[actionItem.ActionType].ItemsCount(Package,
-                                                                                                actionItem);
-          MpeInstaller.ActionProviders[actionItem.ActionType].ItemProcessed += packageClass_FileInstalled;
-          MpeInstaller.ActionProviders[actionItem.ActionType].Execute(Package, actionItem);
-          MpeInstaller.ActionProviders[actionItem.ActionType].ItemProcessed -= packageClass_FileInstalled;
+          progressBar1.Maximum = action.ItemsCount(Package, actionItem);
+          action.ItemProcessed += packageClass_FileInstalled;
+          action.Execute(Package, actionItem);
+          action.ItemProcessed -= packageClass_FileInstalled;
         }
         lbl_curr_file.Text = "Done";
         if (Package.Silent)
@@ -161,19 +145,12 @@ namespace MpeCore.Classes.SectionPanel
       }
     }
 
-    #region ISectionPanel Members
-
-    public string DisplayName
+    private void timer1_Tick(object sender, EventArgs e)
     {
-      get { return "Install Section"; }
+      progressBar1.Value++;
+      if (progressBar1.Value > progressBar1.Maximum - 2)
+        progressBar1.Value = 0;
     }
-
-    public string Guid
-    {
-      get { return "{839F908C-05A5-47ac-8AD4-BE8A7BC44DAE}"; }
-    }
-
-    #endregion
 
     private void timer2_Tick(object sender, EventArgs e)
     {

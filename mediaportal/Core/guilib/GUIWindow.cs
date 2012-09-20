@@ -71,17 +71,17 @@ namespace MediaPortal.GUI.Library
       WINDOW_MUSIC = 5,
       WINDOW_VIDEOS = 6,
       WINDOW_SYSTEM_INFORMATION = 7,
-      WINDOW_SETTINGS_SCREEN = 9,
+      WINDOW_SETTINGS_GUISCREENSETUP = 9,
       WINDOW_UI_CALIBRATION = 10,
       WINDOW_MOVIE_CALIBRATION = 11,
-      WINDOW_SETTINGS_SLIDESHOW = 12,
+      WINDOW_SETTINGS_PICTURES = 12,
       WINDOW_SETTINGS_MUSIC = 14,
       WINDOW_SETTINGS_WEATHER = 17,
       WINDOW_SCRIPTS = 20,
       WINDOW_VIDEO_TITLE = 25,
       WINDOW_VIDEO_PLAYLIST = 28,
       WINDOW_RADIO = 30,
-      WINDOW_SETTINGS_GUI = 31,
+      WINDOW_SETTINGS_GUICONTROL = 31,
       WINDOW_MYPLUGINS = 34,
       WINDOW_SECOND_HOME = 35,
       WINDOW_DIALOG_YES_NO = 100,
@@ -108,9 +108,9 @@ namespace MediaPortal.GUI.Library
       WINDOW_SETTINGS_SORT_CHANNELS = 702,
       WINDOW_SETTINGS_MOVIES = 703,
       WINDOW_SETTINGS_DVD = 704,
-      WINDOW_SETTINGS_SKIN = 705,
+      WINDOW_SETTINGS_GUISKIN = 705,
       WINDOW_SETTINGS_TV_EPG = 706,
-      WINDOW_SETTINGS_SKIPSTEPS = 708, // by rtv
+      WINDOW_SETTINGS_GUISKIPSTEPS = 708, // by rtv
       WINDOW_SETTINGS_TVENGINE = 709,
       WINDOW_TV_SEARCH = 747,
       WINDOW_TV_SEARCHTYPE = 746,
@@ -121,7 +121,28 @@ namespace MediaPortal.GUI.Library
       WINDOW_DIALOG_TVGUIDE = 761,
       WINDOW_RADIO_GUIDE = 762,
       WINDOW_RECORDEDRADIO = 763,
+      WINDOW_SETTINGS_FOLDERS = 1000,
+      WINDOW_SETTINGS_EXTENSIONS = 1001,
       WINDOW_VIRTUAL_KEYBOARD = 1002,
+      WINDOW_SETTINGS_GUITHUMBNAILS = 1005,
+      WINDOW_SETTINGS_GUIONSCREEN_DISPLAY= 1006,
+      WINDOW_SETTINGS_GENERALVOLUME = 1007,
+      WINDOW_SETTINGS_GENERALREFRESHRATE = 1008,
+      WINDOW_SETTINGS_VIDEODATABASE = 1010,
+      WINDOW_SETTINGS_MUSICDATABASE = 1011,
+      WINDOW_SETTINGS_PICTURESDATABASE = 1012,
+      WINDOW_SETTINGS_MUSICNOWPLAYING = 1013,
+      WINDOW_SETTINGS_PLAYLIST = 1014,
+      WINDOW_SETTINGS_PICTURES_SLIDESHOW = 1015,
+      WINDOW_SETTINGS_GENERALMAIN= 1016,
+      WINDOW_SETTINGS_GENERALRESUME = 1017,
+      WINDOW_SETTINGS_GENERALMP = 1018,
+      WINDOW_SETTINGS_GENERALSTARTUP = 1019,
+      WINDOW_SETTINGS_GUISCREENSAVER = 1020,
+      WINDOW_SETTINGS_GUIMAIN = 1021,
+      WINDOW_SETTINGS_GUIGENERAL = 1022,
+      WINDOW_SETTINGS_VIDEOOTHERSETTINGS = 1023,
+      WINDOW_SETTINGS_BLURAY = 1024,
       WINDOW_DIALOG_SELECT = 2000,
       WINDOW_MUSIC_INFO = 2001,
       WINDOW_DIALOG_OK = 2002,
@@ -644,7 +665,28 @@ namespace MediaPortal.GUI.Library
               break;
             case "include":
             case "import":
-              LoadInclude(node, defines);
+
+              // Allow an include to be conditionally loaded based on a 'condition' expression.
+              bool loadInclude = true;
+
+              if (node.Attributes["condition"] != null && !string.IsNullOrEmpty(node.Attributes["condition"].Value))
+              {
+                try
+                {
+                  loadInclude = bool.Parse(GUIPropertyManager.Parse(node.Attributes["condition"].Value, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS));
+                }
+                catch (FormatException)
+                {
+                  // The include will not be loaded if the expression could not be evaluated.
+                  loadInclude = false;
+                  Log.Debug("LoadSkin: {0}, could not evaluate include expression '{1}' ", _windowXmlFileName, node.Attributes["condition"].Value);
+                }
+              }
+
+              if (loadInclude)
+              {
+                LoadInclude(node, defines);
+              }
               break;
           }
         }
@@ -762,6 +804,9 @@ namespace MediaPortal.GUI.Library
 
       try
       {
+        bool createAsProperty;
+        bool evaluateNow;
+
         foreach (XmlNode node in document.SelectNodes("/window/define"))
         {
           string[] tokens = node.InnerText.Split(':');
@@ -771,9 +816,50 @@ namespace MediaPortal.GUI.Library
             continue;
           }
 
-          // Parse the #define value as an expression and promote the #define to a property.
-          table[tokens[0]] = GUIExpressionManager.Parse(tokens[1]);
-          GUIPropertyManager.SetProperty(tokens[0], table[tokens[0]]);
+          // Determine if the define should be promoted to a property.
+          createAsProperty = false;
+
+          if (node.Attributes["property"] != null && !string.IsNullOrEmpty(node.Attributes["property"].Value))
+          {
+            try
+            {
+              createAsProperty = bool.Parse(node.Attributes["property"].Value);
+            }
+            catch (FormatException)
+            {
+              Log.Debug("Window: LoadDefines() - failed to parse define attribute value for 'property'; {0} is not a boolean value", node.Attributes["property"].Value);
+            }
+          }
+
+          // Determine if the define should be evaluated now.
+          evaluateNow = false;
+          if (node.Attributes["evaluateNow"] != null && !string.IsNullOrEmpty(node.Attributes["evaluateNow"].Value))
+          {
+            try
+            {
+              evaluateNow = bool.Parse(node.Attributes["evaluateNow"].Value);
+            }
+            catch (FormatException)
+            {
+              Log.Debug("Window: LoadDefines() - failed to parse define attribute value for 'evaluateNow'; {0} is not a boolean value", node.Attributes["evaluateNow"].Value);
+            }
+          }
+
+          // If evaluateNow then parse and evaluate the define value expression now.
+          if (evaluateNow)
+          {
+            table[tokens[0]] = GUIExpressionManager.Parse(tokens[1], GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
+          }
+          else
+          {
+            table[tokens[0]] = tokens[1];
+          }
+
+          // Promote the define to a property if specified.
+          if (createAsProperty)
+          {
+            GUIPropertyManager.SetProperty(tokens[0], table[tokens[0]]);
+          }
         }
       }
       catch (Exception e)

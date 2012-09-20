@@ -151,8 +151,7 @@ namespace MediaPortal.Util
     private static HashSet<string> m_ImageExtensions = new HashSet<string>();
 
     private static string[] _artistNamePrefixes;
-    private static string[] _movieNamePrefixes;
-
+    
     private static bool m_bHideExtensions = false;
     private static bool enableGuiSounds;
 
@@ -178,10 +177,6 @@ namespace MediaPortal.Util
         m_bHideExtensions = xmlreader.GetValueAsBool("gui", "hideextensions", true);
         string artistNamePrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
         _artistNamePrefixes = artistNamePrefixes.Split(',');
-
-        // Movie title prefix strip
-        string movieNamePrefixes = xmlreader.GetValueAsString("moviedatabase", "titleprefixes", "The, Les, Die");
-        _movieNamePrefixes = movieNamePrefixes.Split(',');
 
         string strTmp = xmlreader.GetValueAsString("music", "extensions", AudioExtensionsDefault);
         Tokens tok = new Tokens(strTmp, new[] {','});
@@ -464,6 +459,16 @@ namespace MediaPortal.Util
       if (strPath.StartsWith("http:")) return true;
       if (strPath.StartsWith("https:")) return true;
       if (strPath.StartsWith("mms:")) return true;
+      return false;
+    }
+
+    public static bool IsRemoteUrl(string strPath)
+    {
+      Uri playbackUri = null;
+      if (Uri.TryCreate(strPath, UriKind.Absolute, out playbackUri) && playbackUri.Scheme != "file")
+      {
+        return true;
+      }
       return false;
     }
 
@@ -1514,6 +1519,36 @@ namespace MediaPortal.Util
       return false;
     }
 
+    public static bool PathShouldStack(string strPath1, string strPath2)
+    {
+      if (strPath1 == null) return false;
+      if (strPath2 == null) return false;
+      try
+      {
+        var stackReg = StackExpression();
+
+        // Check all the patterns
+        for (int i = 0; i < stackReg.Length; i++)
+        {
+          // See if we can find the special patterns in both paths
+          if (stackReg[i].IsMatch(strPath1) && stackReg[i].IsMatch(strPath2))
+          {
+            // Both strings had the special pattern. Now see if the paths are the same.
+            // Do this by removing the special pattern and compare the remains.
+            if (stackReg[i].Replace(strPath1, "") == stackReg[i].Replace(strPath2, ""))
+            {
+              // It was a match so stack it
+              return true;
+            }
+          }
+        }
+      }
+      catch (Exception) { }
+
+      // No matches were found, so no stacking
+      return false;
+    }
+
     public static void RemoveStackEndings(ref string strFileName)
     {
       if (strFileName == null) return;
@@ -1543,7 +1578,7 @@ namespace MediaPortal.Util
       //
       if (StackRegExpressions != null) return StackRegExpressions;
       string[] pattern = {
-                           "\\[(?<digit>[0-9]{1,2})-[0-9]{1,2}\\]",
+                           "\\s*\\[(?<digit>[0-9]{1,2})-[0-9]{1,2}\\]",
                            "\\s*[-_+ ]\\({0,1}(cd|dis[ck]|part|dvd)[-_+ ]{0,1}(?<digit>[0-9]{1,2})\\){0,1}"
                          };
 
@@ -2372,6 +2407,28 @@ namespace MediaPortal.Util
       }
       catch (Exception) {}
       return strPath;
+    }
+
+    public static string GetFileNameWithExtension(string strPath)
+    {
+      if (string.IsNullOrEmpty(strPath)) return string.Empty;
+      try
+      {
+        return Path.GetFileName(strPath);
+      }
+      catch { }
+      return strPath;
+    }
+
+    public static string GetFileExtension(string strPath)
+    {
+      if (string.IsNullOrEmpty(strPath)) return string.Empty;
+      try
+      {
+        return Path.GetExtension(strPath);
+      }
+      catch { }
+      return string.Empty;
     }
 
     ///<summary>
@@ -3802,9 +3859,15 @@ namespace MediaPortal.Util
     // Move the prefix of movie to the end of the string for better sorting
     public static bool StripMovieNamePrefix(ref string movieName, bool appendPrefix)
     {
+      string[] movieNamePrefixes;
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
+      {
+        // Movie title prefix strip
+        movieNamePrefixes = xmlreader.GetValueAsString("moviedatabase", "titleprefixes", "The, Les, Die").Split(',');
+      }
       string temp = movieName.ToLower();
 
-      foreach (string s in _movieNamePrefixes)
+      foreach (string s in movieNamePrefixes)
       {
         if (s.Length == 0)
           continue;
@@ -4450,6 +4513,56 @@ namespace MediaPortal.Util
         strFormattedString += String.Format("{0} | ", s.Trim());
       }
       return strFormattedString;
+    }
+
+    public static bool IsGUISettingsWindow(int windowId)
+    {
+      if (windowId == (int)GUIWindow.Window.WINDOW_SETTINGS ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_DVD ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_BLURAY ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_EXTENSIONS ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_FOLDERS ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GENERALMAIN ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GENERALMP ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GENERALSTARTUP ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GENERALRESUME ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GENERALREFRESHRATE ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_MOVIES ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_MUSIC ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_MUSICDATABASE ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_MUSICNOWPLAYING ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GUIMAIN ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GUISKIN ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GUIGENERAL ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GUIONSCREEN_DISPLAY ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GUICONTROL ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GUISKIPSTEPS ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GUITHUMBNAILS ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_PICTURES ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_PICTURES_SLIDESHOW ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_PICTURESDATABASE ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_PLAYLIST ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_RECORDINGS ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GUISCREENSETUP ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GUISCREENSAVER ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_SORT_CHANNELS ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_TV ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_TV_EPG ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_VIDEODATABASE ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_VIDEOOTHERSETTINGS ||
+          windowId == (int)GUIWindow.Window.WINDOW_SETTINGS_GENERALVOLUME ||
+        // Minidisplay (no enum values in GUIWindow)
+          windowId == 9000 ||
+          windowId == 9001 ||
+          windowId == 9002 ||
+          windowId == 9003 ||
+          windowId == 9004 ||
+          windowId == 9005 ||
+          windowId == 9006)
+      {
+        return true;
+      }
+      return false;
     }
   }
 

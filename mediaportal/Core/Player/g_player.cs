@@ -597,7 +597,7 @@ namespace MediaPortal.Player
         Log.Debug("g_Player.doStop() keepTimeShifting = {0} keepExclusiveModeOn = {1}", keepTimeShifting,
                   keepExclusiveModeOn);
         // Get playing file for unmount handling
-        string currentFile = g_Player.CurrentFile;
+        string currentFile = g_Player.currentFileName;
         OnStopped();
 
         //since plugins could stop playback, we need to make sure that _player is not null.
@@ -1258,12 +1258,13 @@ namespace MediaPortal.Player
           return false;
         }
 
-        string extension = Path.GetExtension(strFile).ToLower();
-        bool isImageFile = Util.VirtualDirectory.IsImageFile(extension);
+        bool playingRemoteUrl = Util.Utils.IsRemoteUrl(strFile);
+        string extension = Util.Utils.GetFileExtension(strFile).ToLower();
+        bool isImageFile = !playingRemoteUrl && Util.VirtualDirectory.IsImageFile(extension);
         if (isImageFile)
         {
           if (!File.Exists(Util.DaemonTools.GetVirtualDrive() + @"\VIDEO_TS\VIDEO_TS.IFO"))
-             if (!File.Exists(Util.DaemonTools.GetVirtualDrive() + @"\BDMV\index.bdmv"))
+            if (!File.Exists(Util.DaemonTools.GetVirtualDrive() + @"\BDMV\index.bdmv"))
             {
               _currentFilePlaying = strFile;
               MediaPortal.Ripper.AutoPlay.ExamineCD(Util.DaemonTools.GetVirtualDrive(), true);
@@ -1271,23 +1272,29 @@ namespace MediaPortal.Player
             }
         }
 
-        if (Util.Utils.IsDVD(strFile))
+        if (!playingRemoteUrl && Util.Utils.IsDVD(strFile))
         {
           ChangeDriveSpeed(strFile, DriveType.CD);
         }
 
-        _mediaInfo = new MediaInfoWrapper(strFile);
-        Starting = true;
+        if (!playingRemoteUrl) // MediaInfo can only be used on files (local or SMB)
+        {
+          _mediaInfo = new MediaInfoWrapper(strFile);
+        }
 
-        if (Util.Utils.IsVideo(strFile) || Util.Utils.IsLiveTv(strFile)) //video, tv, rtsp
+        if ((!playingRemoteUrl && Util.Utils.IsVideo(strFile)) || Util.Utils.IsLiveTv(strFile)) //local video, tv, rtsp
         {
           if (type == MediaType.Unknown)
           {
             Log.Debug("g_Player.Play - Mediatype Unknown, forcing detection as Video");
             type = MediaType.Video;
           }
-          // refreshrate change done here.
-          RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+
+          // Refreshrate change done here. Blu-ray player will handle the refresh rate changes by itself
+          if (strFile.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV") == -1)
+          {
+            RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+          }
 
           if (RefreshRateChanger.RefreshRateChangePending)
           {
@@ -1306,6 +1313,7 @@ namespace MediaPortal.Player
           }
         }
 
+        Starting = true;
         _currentStep = 0;
         _currentStepIndex = -1;
         _seekTimer = DateTime.MinValue;
@@ -1341,7 +1349,7 @@ namespace MediaPortal.Player
         }
 
         Log.Info("g_Player.Play({0} {1})", strFile, type);
-        if (!Util.Utils.IsAVStream(strFile) && Util.Utils.IsVideo(strFile))
+        if (!playingRemoteUrl && Util.Utils.IsVideo(strFile))
         {
           if (!Util.Utils.IsRTSP(strFile) && extension != ".ts") // do not play recorded tv with external player
           {
@@ -1393,7 +1401,7 @@ namespace MediaPortal.Player
           }
         }
         // Still for BDISO strFile = ISO filename, convert it
-        Util.Utils.IsBDImage(strFile, ref strFile);
+        if (!playingRemoteUrl) Util.Utils.IsBDImage(strFile, ref strFile);
 
         _currentFileName = strFile;
         _player = _factory.Create(strFile, type);
@@ -1406,7 +1414,7 @@ namespace MediaPortal.Player
           }
           else
           {
-            LoadChapters(strFile);
+            if (!playingRemoteUrl) LoadChapters(strFile);
           }
           _player = CachePreviousPlayer(_player);
           bool bResult = _player.Play(strFile);
@@ -3130,15 +3138,16 @@ namespace MediaPortal.Player
     {
       try
       {
-        if (_mediaInfo == null)
+        bool playingRemoteUrl = Util.Utils.IsRemoteUrl(FileName);
+        if (_mediaInfo == null && !playingRemoteUrl)
           _mediaInfo = new MediaInfoWrapper(FileName);
 
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CODEC_MISSING, 0, 0, 0, 0, 0, null);
-        msg.Label = string.Format("{0}: {1}", GUILocalizeStrings.Get(1451), Path.GetFileName(FileName));
-        msg.Label2 = string.IsNullOrEmpty(_mediaInfo.VideoCodec)
+        msg.Label = string.Format("{0}: {1}", GUILocalizeStrings.Get(1451), Util.Utils.GetFilename(FileName));
+        msg.Label2 = _mediaInfo == null || string.IsNullOrEmpty(_mediaInfo.VideoCodec)
                        ? string.Empty
                        : string.Format("Video codec: {0}", _mediaInfo.VideoCodec);
-        msg.Label3 = string.IsNullOrEmpty(_mediaInfo.AudioCodec)
+        msg.Label3 = _mediaInfo == null || string.IsNullOrEmpty(_mediaInfo.AudioCodec)
                        ? string.Empty
                        : string.Format("Audio codec: {0}", _mediaInfo.AudioCodec);
         GUIGraphicsContext.SendMessage(msg);

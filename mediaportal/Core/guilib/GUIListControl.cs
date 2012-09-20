@@ -164,6 +164,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("spinPosY")] protected int _spinControlPositionY;
 
     [XMLSkinElement("unfocusedAlpha")] protected int _unfocusedAlpha = 0xFF;
+    [XMLSkin("unfocusedAlpha", "applyToAll")] protected bool _unfocusedAlphaApplyToAll = false;
 
     [XMLSkinElement("spinCanFocus")] protected bool _spinCanFocus = true;
 
@@ -529,6 +530,10 @@ namespace MediaPortal.GUI.Library
         {
           pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
         }
+        if (!pItem.Selected && !gotFocus && _unfocusedAlphaApplyToAll)
+        {
+          pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
+        }
         pImage.DimColor = DimColor;
         pImage.Render(timePassed);
         pImage = null;
@@ -570,6 +575,10 @@ namespace MediaPortal.GUI.Library
           pinImage.ColourDiffuse = 0xffffffff;
         }
         else
+        {
+          pinImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
+        }
+        if (!pItem.Selected && !gotFocus && _unfocusedAlphaApplyToAll)
         {
           pinImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
         }
@@ -800,6 +809,10 @@ namespace MediaPortal.GUI.Library
             {
               label2.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
             }
+            if (!pItem.Selected && !gotFocus && _unfocusedAlphaApplyToAll)
+            {
+              label2.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
+            }
             label2.Label = _textLine;
             label2.TextAlignment = Alignment.ALIGN_RIGHT;
             label2.FontName = _fontName2Name;
@@ -876,6 +889,10 @@ namespace MediaPortal.GUI.Library
               label3.TextColor = dwColor;
             }
             else
+            {
+              label3.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
+            }
+            if (!pItem.Selected && !gotFocus && _unfocusedAlphaApplyToAll)
             {
               label3.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
             }
@@ -3359,8 +3376,8 @@ namespace MediaPortal.GUI.Library
       {
         _listItems.Add(item);
       }
-      int iPages = _listItems.Count / _itemsPerPage;
-      if ((_listItems.Count % _itemsPerPage) != 0)
+      int iPages = _itemsPerPage == 0 ? 0 : _listItems.Count / _itemsPerPage;
+      if (_itemsPerPage != 0 && (_listItems.Count % _itemsPerPage) != 0)
       {
         iPages++;
       }

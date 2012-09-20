@@ -395,7 +395,7 @@ namespace WindowPlugins
             {
               nNewWindow = (int)Window.WINDOW_VIDEO_TITLE;
               // Reset search variables
-              if (GUIVideoTitle.CurrentView != handler.CurrentLevelWhere)
+              if (GUIVideoTitle.CurrentViewHistory != handler.CurrentLevelWhere)
               {
                 GUIVideoTitle.IsActorSearch = false;
                 GUIVideoTitle.IsMovieSearch = false;

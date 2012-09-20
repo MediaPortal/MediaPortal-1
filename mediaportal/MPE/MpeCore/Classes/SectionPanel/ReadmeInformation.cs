@@ -18,11 +18,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using MpeCore.Interfaces;
@@ -31,28 +26,19 @@ namespace MpeCore.Classes.SectionPanel
 {
   public partial class ReadmeInformation : BaseHorizontalLayout, ISectionPanel
   {
-    //private SectionResponseEnum Resp = SectionResponseEnum.Cancel;
-
-
     private const string CONST_TEXT = "Readme text";
-    private const string CONST_TEXT_FILE = "Rreadme text file";
-
-    public ReadmeInformation()
-    {
-      InitializeComponent();
-    }
-
+    private const string CONST_TEXT_FILE = "Readme text file";
+    
     #region ISectionPanel Members
 
-    public bool Unique
+    public string DisplayName
     {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
+      get { return "Readme Information"; }
     }
 
-    public SectionParamCollection Init()
+    public string Guid
     {
-      throw new NotImplementedException();
+      get { return "{D8242EB9-0D28-4e67-B124-08E7B76266D2}"; }
     }
 
     public SectionParamCollection GetDefaultParams()
@@ -75,23 +61,6 @@ namespace MpeCore.Classes.SectionPanel
       ShowDialog();
     }
 
-    private void SetValues()
-    {
-      BaseHorizontalLayout_Shown(null, null);
-      if (File.Exists(Params[CONST_TEXT_FILE].Value))
-      {
-        if (Path.GetExtension(Params[CONST_TEXT_FILE].Value).CompareTo(".rtf") == 0)
-          richTextBox1.LoadFile(Params[CONST_TEXT_FILE].Value, RichTextBoxStreamType.RichText);
-        else
-          richTextBox1.LoadFile(Params[CONST_TEXT_FILE].Value, RichTextBoxStreamType.PlainText);
-      }
-      else
-      {
-        richTextBox1.Text = Params[CONST_TEXT].Value;
-      }
-    }
-
-
     public SectionResponseEnum Execute(PackageClass packageClass, SectionItem sectionItem)
     {
       Package = packageClass;
@@ -110,18 +79,25 @@ namespace MpeCore.Classes.SectionPanel
 
     #endregion
 
-    #region ISectionPanel Members
-
-    public string DisplayName
+    public ReadmeInformation()
     {
-      get { return "Readme Information"; }
+      InitializeComponent();
     }
 
-    public string Guid
+    private void SetValues()
     {
-      get { return "{D8242EB9-0D28-4e67-B124-08E7B76266D2}"; }
+      BaseHorizontalLayout_Shown(null, null);
+      if (File.Exists(Params[CONST_TEXT_FILE].Value))
+      {
+        if (Path.GetExtension(Params[CONST_TEXT_FILE].Value).CompareTo(".rtf") == 0)
+          richTextBox1.LoadFile(Params[CONST_TEXT_FILE].Value, RichTextBoxStreamType.RichText);
+        else
+          richTextBox1.LoadFile(Params[CONST_TEXT_FILE].Value, RichTextBoxStreamType.PlainText);
+      }
+      else
+      {
+        richTextBox1.Text = Params[CONST_TEXT].Value;
+      }
     }
-
-    #endregion
   }
 }

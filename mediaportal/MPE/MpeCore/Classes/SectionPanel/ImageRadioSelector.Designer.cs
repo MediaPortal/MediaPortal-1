@@ -37,19 +37,6 @@
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.SuspendLayout();
       // 
-      // button_back
-      // 
-      this.button_back.Location = new System.Drawing.Point(238, 10);
-      // 
-      // button_next
-      // 
-      this.button_next.Location = new System.Drawing.Point(319, 10);
-      this.button_next.Text = "Next>";
-      // 
-      // button_cancel
-      // 
-      this.button_cancel.Location = new System.Drawing.Point(414, 10);
-      // 
       // label1
       // 
       this.label1.Location = new System.Drawing.Point(13, 72);
@@ -68,7 +55,6 @@
       this.pictureBox3.TabIndex = 26;
       this.pictureBox3.TabStop = false;
       this.pictureBox3.WaitOnLoad = true;
-      this.pictureBox3.Click += new System.EventHandler(this.pictureBox3_Click);
       // 
       // radioButton2
       // 
@@ -104,13 +90,12 @@
       this.pictureBox1.TabIndex = 23;
       this.pictureBox1.TabStop = false;
       this.pictureBox1.WaitOnLoad = true;
-      this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
       // 
       // ImageRadioSelector
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(499, 354);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+      this.ClientSize = new System.Drawing.Size(494, 350);
       this.Controls.Add(this.label1);
       this.Controls.Add(this.pictureBox3);
       this.Controls.Add(this.radioButton2);

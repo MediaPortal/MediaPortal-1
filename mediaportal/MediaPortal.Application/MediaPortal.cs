@@ -1150,6 +1150,11 @@ public class MediaPortalApp : D3DApp, IRender
       Log.Info("Main: reopen VideoDatabaseV5.db3 sqllite database.");
       MediaPortal.Video.Database.VideoDatabase.ReOpen();
     }
+    else
+    {
+      Log.Info("Main: VideoDatabaseV5.db3 sqllite database disk cache activated.");
+      MediaPortal.Video.Database.VideoDatabase.RevertFlushTransactionsToDisk();
+    }
 
     dbPath = MediaPortal.Music.Database.MusicDatabase.Instance.DatabaseName;
     isRemotePath = (string.IsNullOrEmpty(dbPath) || PathIsNetworkPath(dbPath));
@@ -1186,6 +1191,11 @@ public class MediaPortalApp : D3DApp, IRender
     {
       Log.Info("Main: disposing VideoDatabaseV5.db3 sqllite database.");
       MediaPortal.Video.Database.VideoDatabase.Dispose();
+    }
+    else
+    {
+      Log.Info("Main: VideoDatabaseV5.db3 sqllite database cache flushed to disk.");
+      MediaPortal.Video.Database.VideoDatabase.FlushTransactionsToDisk();
     }
 
     dbPath = MediaPortal.Music.Database.MusicDatabase.Instance.DatabaseName;
@@ -1615,7 +1625,7 @@ public class MediaPortalApp : D3DApp, IRender
     bool currentmodulefullscreen = Currentmodulefullscreen();
     string currentmodulefullscreenstate = GUIPropertyManager.GetProperty("#currentmodulefullscreenstate");
     string currentmoduleid = GUIPropertyManager.GetProperty("#currentmoduleid");
-    if (showLastActiveModule)
+    if (showLastActiveModule && !Utils.IsGUISettingsWindow(GUIWindowManager.GetPreviousActiveWindow()))
     {
       using (Settings xmlreader = new MPSettings())
       {
@@ -3881,20 +3891,19 @@ public class MediaPortalApp : D3DApp, IRender
     }
 
     // Skin is incompatible, switch to default
-    _OutdatedSkinName = m_strSkin;
+    _OutdatedSkinName = GUIGraphicsContext.SkinName;
     float screenHeight = GUIGraphicsContext.currentScreen.Bounds.Height;
     float screenWidth = GUIGraphicsContext.currentScreen.Bounds.Width;
     float screenRatio = (screenWidth / screenHeight);
-    m_strSkin = screenRatio > 1.5 ? "DefaultWide" : "Default";
-    Config.SkinName = m_strSkin;
-    GUIGraphicsContext.Skin = m_strSkin;
+    GUIGraphicsContext.Skin = screenRatio > 1.5 ? "DefaultWide" : "Default";
+    Config.SkinName = GUIGraphicsContext.SkinName;
     SkinSettings.Load();
 
     // Send a message that the skin has changed.
     GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SKIN_CHANGED, 0, 0, 0, 0, 0, null);
     GUIGraphicsContext.SendMessage(msg);
 
-    Log.Info("Main: User skin is not compatable, using skin {0} with theme {1}", m_strSkin, GUIThemeManager.CurrentTheme);
+    Log.Info("Main: User skin is not compatible, using skin {0} with theme {1}", GUIGraphicsContext.SkinName, GUIThemeManager.CurrentTheme);
   }
 
 

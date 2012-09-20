@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>705</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <import>common.settings.xml</import>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>buttons</description>
+      <type>group</type>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <posX>99</posX>
+      <posY>160</posY>
+      <layout>StackLayout(0, Horizontal, True)</layout>
+      <control>
+        <description>Skin</description>
+        <type>button</type>
+        <id>10</id>
+        <width>450</width>
+        <label>166</label>
+        <onup>17</onup>
+      </control>
+      <control>
+        <description>theme</description>
+        <type>menubutton</type>
+        <id>15</id>
+        <!--posX>99</posX>
+        <posY>233</posY-->
+				<width>450</width>
+        <mode>dialoglist</mode>
+        <dialogTitle>90</dialogTitle>
+        <valueTextInButton>yes</valueTextInButton>
+        <valuePrefixText>94</valuePrefixText>
+        <textXOff>10</textXOff>
+        <onclick>#(skin.settheme(#selectedlabel15,15))</onclick>
+        <binding>#skin.currenttheme</binding>
+        <subitems>
+          <subitem>#skin.themes</subitem>
+        </subitems>
+      </control>
+      <control>
+        <description>Language</description>
+        <type>button</type>
+        <id>11</id>
+        <width>450</width>
+        <label>248</label>
+      </control>
+      <control>
+        <description>Prefix My</description>
+        <type>checkbutton</type>
+        <id>14</id>
+        <width>450</width>
+        <label>300137</label>
+        <ondown>10</ondown>
+      </control>
+    </control>
+    <control>
+      <description>Skin Preview</description>
+      <type>image</type>
+      <id>1</id>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <posX>600</posX>
+      <posY>163</posY>
+      <width>640</width>
+      <height>378</height>
+      <texture>LCD.png</texture>
+    </control>
+    <control>
+      <description>Skin Preview</description>
+      <type>image</type>
+      <id>20</id>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <posX>620</posX>
+      <posY>183</posY>
+      <width>600</width>
+      <height>338</height>
+      <texture>preview.png</texture>
+    </control>
+  </controls>
+</window>
