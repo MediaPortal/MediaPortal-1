@@ -830,6 +830,14 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    [XMLSkinFunction("plugin.isenabled")]
+    public static bool PluginIsEnabled(string name)
+    {
+      int condition = GUIInfoManager.TranslateString("plugin.isenabled(" + name + ")");
+      return GUIInfoManager.GetBool(condition, 0);
+    }
+
     #endregion
+
   }
 }
