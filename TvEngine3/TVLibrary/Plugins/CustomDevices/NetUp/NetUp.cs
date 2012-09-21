@@ -210,6 +210,7 @@ namespace TvEngine
             if (is64bitOs)
             {
               Log.Debug("NetUP: 32 bit process under 64 bit operating system");
+              is64bitOs = true;
             }
             else
             {
