@@ -7,7 +7,7 @@
     <entry name="#skin.tvguide.showgenrekey">True</entry>
   </section>
   <section name="theme">
-    <entry name="name">No Animation on BasicHome</entry>
+    <entry name="name">Skin default</entry>
   </section>
   <section name="tvguidecolors">
     <entry name="guidecolorchannelbutton">FF404040</entry>
