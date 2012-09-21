@@ -116,7 +116,7 @@ namespace MediaPortal.GUI.Music
     protected int _resumeAfter = 0;
     protected string _resumeSelect = "";
     protected string _resumeSearch = "";
-    
+
     protected static BackgroundWorker bw;
     protected static bool defaultPlaylistLoaded = false;
     protected static bool ignorePlaylistChange = false;
@@ -128,9 +128,12 @@ namespace MediaPortal.GUI.Music
 
     #region SkinControls
 
-    [SkinControl(8)] protected GUIButtonControl btnSearch = null;
-    [SkinControl(12)] protected GUIButtonControl btnPlayCd = null;
-    [SkinControl(10)] protected GUIButtonControl btnSavedPlaylists = null;
+    [SkinControl(8)]
+    protected GUIButtonControl btnSearch = null;
+    [SkinControl(12)]
+    protected GUIButtonControl btnPlayCd = null;
+    [SkinControl(10)]
+    protected GUIButtonControl btnSavedPlaylists = null;
 
     #endregion
 
@@ -334,80 +337,90 @@ namespace MediaPortal.GUI.Music
         return;
       }
 
-      if (_resumeEnabled && stoptime > _resumeAfter)
+      if (_resumeEnabled)
       {
-        Log.Info("GUIMusic: Song stopped at {0} seconds with resume support enabled", stoptime);
         Song song = new Song();
-
-        if (_resumeSelect.Length > 0)
+        // We might have reached the end of a song, then clear the resumeAt time
+        m_database.GetSongByFileName(filename, ref song);
+        int endTime = song.Duration - MusicPlayer.BASS.Config.CrossFadeIntervalMs / 1000;
+        if (song.Id > -1 && (endTime == stoptime || stoptime < _resumeAfter && song.ResumeAt > 0))
         {
-          MusicTag tag = null;
-          if (m_database.GetSongByFileName(filename, ref song))
-          {
-            tag = song.ToMusicTag();
-          }
-          else
-          {
-            tag = m_database.GetTag(filename);
-          }
-
-          string value = "";
-          switch (_resumeSelect)
-          {
-            case "Genre":
-              value = tag.Genre;
-              break;
-
-            case "Title":
-              value = tag.Title;
-              break;
-
-            case "Filename":
-              value = tag.FileName;
-              break;
-
-            case "Album":
-              value = tag.Album;
-              break;
-
-            case "Artist":
-              value = tag.Artist;
-              break;
-
-            case "AlbumArtist":
-              value = tag.AlbumArtist;
-              break;
-
-            case "Composer":
-              value = tag.Composer;
-              break;
-
-            case "Conductor":
-              value = tag.Conductor;
-              break;
-          }
-
-          if (!value.Contains(_resumeSearch))
-          {
-            Log.Info("GUIMusic: Tags not matching selection criteria. No resumetime stored.");
-            return;
-          }
+          song.ResumeAt = 0;
+          m_database.SetResume(song);
+          return;
         }
 
-        if (song.Id == -1)
+        if (stoptime > _resumeAfter)
         {
-          // No song loaded yet
-          if (!m_database.GetSongByFileName(filename, ref song))
+          Log.Info("GUIMusic: Song stopped at {0} seconds with resume support enabled", stoptime);
+          if (_resumeSelect.Length > 0)
+          {
+            MusicTag tag = null;
+            // We found a valid song, if the id is > -1
+            if (song.Id > -1)
+            {
+              tag = song.ToMusicTag();
+            }
+            else
+            {
+              // read tag from file
+              tag = m_database.GetTag(filename);
+            }
+
+            string value = "";
+            switch (_resumeSelect)
+            {
+              case "Genre":
+                value = tag.Genre;
+                break;
+
+              case "Title":
+                value = tag.Title;
+                break;
+
+              case "Filename":
+                value = tag.FileName;
+                break;
+
+              case "Album":
+                value = tag.Album;
+                break;
+
+              case "Artist":
+                value = tag.Artist;
+                break;
+
+              case "AlbumArtist":
+                value = tag.AlbumArtist;
+                break;
+
+              case "Composer":
+                value = tag.Composer;
+                break;
+
+              case "Conductor":
+                value = tag.Conductor;
+                break;
+            }
+
+            if (!value.Contains(_resumeSearch))
+            {
+              Log.Info("GUIMusic: Tags not matching selection criteria. No resumetime stored.");
+              return;
+            }
+          }
+
+          if (song.Id == -1)
           {
             // No Song found. Let's add it to the database and then retrieve it
             Log.Debug("GUIMusic: Song not found in database. Add to database");
             m_database.AddSong(filename);
             m_database.GetSongByFileName(filename, ref song);
           }
-        }
 
-        song.ResumeAt = stoptime;
-        m_database.SetResume(song);
+          song.ResumeAt = stoptime;
+          m_database.SetResume(song);
+        }
       }
     }
 
@@ -417,7 +430,7 @@ namespace MediaPortal.GUI.Music
       {
         return false;
       }
-      
+
       return true;
     }
 
@@ -463,7 +476,7 @@ namespace MediaPortal.GUI.Music
         // then queue track in that list
         if (_playlistIsCurrent || playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC_TEMP)
         {
-          AddSelectionToCurrentPlaylist(false,false);
+          AddSelectionToCurrentPlaylist(false, false);
         }
         else
         {
@@ -487,6 +500,7 @@ namespace MediaPortal.GUI.Music
         _currentPlaying = message.Label;
         facadeLayout.OnMessage(message);
       }
+
       return base.OnMessage(message);
     }
 
@@ -1205,7 +1219,7 @@ namespace MediaPortal.GUI.Music
 
         var scraper = new AllmusicSiteScraper();
         List<AllMusicArtistMatch> artists;
-        if(scraper.GetArtists(artistName, out artists))
+        if (scraper.GetArtists(artistName, out artists))
         {
           var selectedMatch = new AllMusicArtistMatch();
           if (artists.Count == 1)
@@ -1218,7 +1232,7 @@ namespace MediaPortal.GUI.Music
           {
             // need to get user to choose which one to use
             Log.Debug("Muliple Artist Match Found ({0}) prompting user", artists.Count);
-            var pDlg = (GUIDialogSelect2) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_SELECT2);
+            var pDlg = (GUIDialogSelect2)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_SELECT2);
             if (null != pDlg)
             {
               pDlg.Reset();
@@ -1312,7 +1326,7 @@ namespace MediaPortal.GUI.Music
           pDlgOK.SetLine(2, string.Empty);
           pDlgOK.DoModal(GetID);
         }
-      }    
+      }
     }
 
     public void FindCoverArt(bool isFolder, string artistName, string albumName, string strPath, MusicTag tag,
@@ -1515,7 +1529,7 @@ namespace MediaPortal.GUI.Music
           {
             // need to get user to choose which one to use
             Log.Debug("Muliple Artist Match Found ({0}) prompting user", artists.Count);
-            var pDlg = (GUIDialogSelect2) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_SELECT2);
+            var pDlg = (GUIDialogSelect2)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_SELECT2);
             if (null != pDlg)
             {
               pDlg.Reset();
@@ -1541,7 +1555,7 @@ namespace MediaPortal.GUI.Music
               }
               selectedMatch = artists[iSelectedMatch];
             }
-            
+
             if (null != dlgProgress)
             {
               dlgProgress.Reset();
@@ -2031,12 +2045,12 @@ namespace MediaPortal.GUI.Music
     /// </summary>
     /// <param name="clearPlaylist">If True then current playlist will be cleared</param>
     /// <param name="addAllTracks">Whether to add all tracks in folder</param>
-    protected virtual void AddSelectionToCurrentPlaylist(bool clearPlaylist, bool addAllTracks) {}
+    protected virtual void AddSelectionToCurrentPlaylist(bool clearPlaylist, bool addAllTracks) { }
 
     /// <summary>
     /// Adds songs to the playlist without affecting what is playing
     /// </summary>
-    protected virtual void AddSelectionToPlaylist() {}
+    protected virtual void AddSelectionToPlaylist() { }
 
 
     /// <summary>
@@ -2066,6 +2080,7 @@ namespace MediaPortal.GUI.Music
       PlayList pl = playlistPlayer.GetPlaylist(GetPlayListType());
       playlistPlayer.CurrentPlaylistType = GetPlayListType();
       int iStartFrom = 0; // where should we start in playlist
+      int resumeAt = 0;
 
       // clear the playlist if required
       if (clearPlaylist)
@@ -2082,6 +2097,36 @@ namespace MediaPortal.GUI.Music
       {
         // actually add items to the playlist
         pl.Add(pItem);
+      }
+
+      // If Resume has been enabled we need to check te first item for resume information
+      if (_resumeEnabled && facadeLayout.SelectedListItem != null)
+      {
+        GUIListItem item = facadeLayout.SelectedListItem;
+        if (!item.IsFolder)
+        {
+          Song song = new Song();
+          if (m_database.GetSongByFileName(item.Path, ref song))
+          {
+            if (song.ResumeAt > 0)
+            {
+              resumeAt = song.ResumeAt;
+              GUIResumeDialog.Result result =
+                GUIResumeDialog.ShowResumeDialog(song.Title, resumeAt,
+                                                 GUIResumeDialog.MediaType.Recording);
+
+              if (result == GUIResumeDialog.Result.Abort)
+              {
+                return;
+              }
+
+              if (result == GUIResumeDialog.Result.PlayFromBeginning)
+              {
+                resumeAt = 0;
+              }
+            }
+          }
+        }
       }
 
       // not null check is needed here because we can play a CD from menu button
@@ -2117,6 +2162,14 @@ namespace MediaPortal.GUI.Music
         // hence we are in playlist mode and only need to start if not
         // already playing
         playlistPlayer.Play(iStartFrom);
+      }
+
+      // Position the player, if we need to Resume
+      if (g_Player.Playing && resumeAt > 0)
+      {
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SEEK_POSITION, 0, 0, 0, 0, 0, null);
+        msg.Param1 = resumeAt;
+        GUIGraphicsContext.SendMessage(msg);
       }
 
       DoPlayNowJumpTo(pItems.Count);
