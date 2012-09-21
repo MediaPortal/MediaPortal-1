@@ -136,6 +136,14 @@ namespace MediaPortal.Configuration.Sections
       this.VisualizationFpsNud = new System.Windows.Forms.NumericUpDown();
       this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBox2 = new System.Windows.Forms.CheckBox();
+      this.mpGroupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.chkEnableResumeSupport = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.tbResumeAfter = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel12 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.cbResumeSelect = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel13 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tbResumeSearchValue = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.MusicSettingsTabCtl.SuspendLayout();
       this.PlayerTabPg.SuspendLayout();
       this.tabControlPlayerSettings.SuspendLayout();
@@ -161,6 +169,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.SuspendLayout();
       this.groupBoxWinampVis.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.VisualizationFpsNud)).BeginInit();
+      this.mpGroupBox4.SuspendLayout();
       this.SuspendLayout();
       // 
       // MusicSettingsTabCtl
@@ -633,6 +642,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // PlaySettingsTabPg
       // 
+      this.PlaySettingsTabPg.Controls.Add(this.mpGroupBox4);
       this.PlaySettingsTabPg.Controls.Add(this.groupBox3);
       this.PlaySettingsTabPg.Controls.Add(this.grpSelectOptions);
       this.PlaySettingsTabPg.Location = new System.Drawing.Point(4, 22);
@@ -1154,6 +1164,98 @@ namespace MediaPortal.Configuration.Sections
       this.checkBox2.Text = "Add All Tracks";
       this.checkBox2.UseVisualStyleBackColor = true;
       // 
+      // mpGroupBox4
+      // 
+      this.mpGroupBox4.Controls.Add(this.tbResumeSearchValue);
+      this.mpGroupBox4.Controls.Add(this.mpLabel13);
+      this.mpGroupBox4.Controls.Add(this.cbResumeSelect);
+      this.mpGroupBox4.Controls.Add(this.mpLabel12);
+      this.mpGroupBox4.Controls.Add(this.mpLabel3);
+      this.mpGroupBox4.Controls.Add(this.tbResumeAfter);
+      this.mpGroupBox4.Controls.Add(this.chkEnableResumeSupport);
+      this.mpGroupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBox4.Location = new System.Drawing.Point(14, 224);
+      this.mpGroupBox4.Name = "mpGroupBox4";
+      this.mpGroupBox4.Size = new System.Drawing.Size(432, 107);
+      this.mpGroupBox4.TabIndex = 8;
+      this.mpGroupBox4.TabStop = false;
+      this.mpGroupBox4.Text = "Playback Resume";
+      // 
+      // chkEnableResumeSupport
+      // 
+      this.chkEnableResumeSupport.AutoSize = true;
+      this.chkEnableResumeSupport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.chkEnableResumeSupport.Location = new System.Drawing.Point(19, 29);
+      this.chkEnableResumeSupport.Name = "chkEnableResumeSupport";
+      this.chkEnableResumeSupport.Size = new System.Drawing.Size(249, 17);
+      this.chkEnableResumeSupport.TabIndex = 0;
+      this.chkEnableResumeSupport.Text = "Enable Resume Support on Playback position >";
+      this.chkEnableResumeSupport.UseVisualStyleBackColor = true;
+      // 
+      // tbResumeAfter
+      // 
+      this.tbResumeAfter.BorderColor = System.Drawing.Color.Empty;
+      this.tbResumeAfter.Location = new System.Drawing.Point(274, 29);
+      this.tbResumeAfter.MaxLength = 5;
+      this.tbResumeAfter.Name = "tbResumeAfter";
+      this.tbResumeAfter.Size = new System.Drawing.Size(39, 20);
+      this.tbResumeAfter.TabIndex = 1;
+      this.tbResumeAfter.Text = "0";
+      this.tbResumeAfter.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+      // 
+      // mpLabel3
+      // 
+      this.mpLabel3.AutoSize = true;
+      this.mpLabel3.Location = new System.Drawing.Point(319, 33);
+      this.mpLabel3.Name = "mpLabel3";
+      this.mpLabel3.Size = new System.Drawing.Size(47, 13);
+      this.mpLabel3.TabIndex = 2;
+      this.mpLabel3.Text = "seconds";
+      // 
+      // mpLabel12
+      // 
+      this.mpLabel12.AutoSize = true;
+      this.mpLabel12.Location = new System.Drawing.Point(40, 62);
+      this.mpLabel12.Name = "mpLabel12";
+      this.mpLabel12.Size = new System.Drawing.Size(30, 13);
+      this.mpLabel12.TabIndex = 3;
+      this.mpLabel12.Text = "AND";
+      // 
+      // cbResumeSelect
+      // 
+      this.cbResumeSelect.BorderColor = System.Drawing.Color.Empty;
+      this.cbResumeSelect.FormattingEnabled = true;
+      this.cbResumeSelect.Items.AddRange(new object[] {
+            "Genre",
+            "Title",
+            "Filename",
+            "Album",
+            "Artist",
+            "Albumartist",
+            "Composer",
+            "Conductor"});
+      this.cbResumeSelect.Location = new System.Drawing.Point(76, 58);
+      this.cbResumeSelect.Name = "cbResumeSelect";
+      this.cbResumeSelect.Size = new System.Drawing.Size(104, 21);
+      this.cbResumeSelect.TabIndex = 4;
+      // 
+      // mpLabel13
+      // 
+      this.mpLabel13.AutoSize = true;
+      this.mpLabel13.Location = new System.Drawing.Point(196, 61);
+      this.mpLabel13.Name = "mpLabel13";
+      this.mpLabel13.Size = new System.Drawing.Size(47, 13);
+      this.mpLabel13.TabIndex = 5;
+      this.mpLabel13.Text = "contains";
+      // 
+      // tbResumeSearchValue
+      // 
+      this.tbResumeSearchValue.BorderColor = System.Drawing.Color.Empty;
+      this.tbResumeSearchValue.Location = new System.Drawing.Point(249, 59);
+      this.tbResumeSearchValue.Name = "tbResumeSearchValue";
+      this.tbResumeSearchValue.Size = new System.Drawing.Size(168, 20);
+      this.tbResumeSearchValue.TabIndex = 6;
+      // 
       // Music
       // 
       this.Controls.Add(this.MusicSettingsTabCtl);
@@ -1196,6 +1298,8 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.PerformLayout();
       this.groupBoxWinampVis.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.VisualizationFpsNud)).EndInit();
+      this.mpGroupBox4.ResumeLayout(false);
+      this.mpGroupBox4.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -1291,5 +1395,13 @@ namespace MediaPortal.Configuration.Sections
     private TrackBar trackBarCrossfade;
     private CheckBox EnableAlbumReplayGainChkBox;
     private CheckBox EnableReplayGainChkBox;
+    private MPGroupBox mpGroupBox4;
+    private MPLabel mpLabel3;
+    private MPTextBox tbResumeAfter;
+    private MPCheckBox chkEnableResumeSupport;
+    private MPTextBox tbResumeSearchValue;
+    private MPLabel mpLabel13;
+    private MPComboBox cbResumeSelect;
+    private MPLabel mpLabel12;
   }
 }

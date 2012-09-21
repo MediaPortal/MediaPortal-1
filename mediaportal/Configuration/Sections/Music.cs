@@ -252,6 +252,11 @@ namespace MediaPortal.Configuration.Sections
         cbUpmixQuadro.SelectedIndex = xmlreader.GetValueAsInt("audioplayer", "upMixQuadro", 0);
         cbUpmixFiveDotOne.SelectedIndex = xmlreader.GetValueAsInt("audioplayer", "upMixFiveDotOne", 0);
 
+        chkEnableResumeSupport.Checked = xmlreader.GetValueAsBool("audioplayer", "enableResume", false);
+        tbResumeAfter.Text = xmlreader.GetValueAsString("audioplayer", "resumeAfter", "0");
+        cbResumeSelect.Text = xmlreader.GetValueAsString("audioplayer", "resumeSelect", "");
+        tbResumeSearchValue.Text = xmlreader.GetValueAsString("audioplayer", "resumeSearch", "");
+
         #endregion
 
         #region BASS ASIO
@@ -453,9 +458,14 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("audioplayer", "upMixQuadro", cbUpmixQuadro.SelectedIndex );
         xmlwriter.SetValue("audioplayer", "upMixFiveDotOne", cbUpmixFiveDotOne.SelectedIndex);
 
+        xmlwriter.SetValueAsBool("audioplayer", "enableResume", chkEnableResumeSupport.Checked);
+        xmlwriter.SetValue("audioplayer", "resumeAfter", tbResumeAfter.Text);
+        xmlwriter.SetValue("audioplayer", "resumeSelect", cbResumeSelect.Text);
+        xmlwriter.SetValue("audioplayer", "resumeSearch", tbResumeSearchValue.Text);
+
         #endregion
 
-        #region Visualization Settings);
+        #region Visualization Settings););
         if (IVizMgr != null && VisualizationsCmbBox.SelectedIndex > 0) // Something else than "None" selected
         {
           List<VisualizationInfo> vizPluginsInfo = IVizMgr.VisualizationPluginsInfo;
