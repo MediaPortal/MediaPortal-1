@@ -111,6 +111,11 @@ namespace MediaPortal.GUI.Music
     protected string _selectOption = string.Empty;
     protected bool _addAllOnSelect;
     protected bool _playlistIsCurrent;
+
+    protected bool _resumeEnabled = false;
+    protected int _resumeAfter = 0;
+    protected string _resumeSelect = "";
+    protected string _resumeSearch = "";
     
     protected static BackgroundWorker bw;
     protected static bool defaultPlaylistLoaded = false;
@@ -140,7 +145,9 @@ namespace MediaPortal.GUI.Music
 
       playlistPlayer = PlayListPlayer.SingletonPlayer;
 
-      playlistPlayer.PlaylistChanged += new PlayListPlayer.PlaylistChangedEventHandler(playlistPlayer_PlaylistChanged); 
+      playlistPlayer.PlaylistChanged += playlistPlayer_PlaylistChanged;
+      g_Player.PlayBackChanged += OnPlaybackChangedOrStopped;
+      g_Player.PlayBackStopped += OnPlaybackChangedOrStopped;
 
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
@@ -217,6 +224,11 @@ namespace MediaPortal.GUI.Music
 
         m_strPlayListPath = xmlreader.GetValueAsString("music", "playlists", playListFolder);
         m_strPlayListPath = Util.Utils.RemoveTrailingSlash(m_strPlayListPath);
+
+        _resumeEnabled = xmlreader.GetValueAsBool("audioplayer", "enableResume", false);
+        _resumeAfter = Convert.ToInt32(xmlreader.GetValueAsString("audioplayer", "resumeAfter", "0"));
+        _resumeSelect = xmlreader.GetValueAsString("audioplayer", "resumeSelect", "");
+        _resumeSearch = xmlreader.GetValueAsString("audioplayer", "resumeSearch", "");
 
         _shareList.Clear();
 
@@ -307,6 +319,97 @@ namespace MediaPortal.GUI.Music
     }
 
     #endregion
+
+    /// <summary>
+    /// Invoked when a song is Stopped or Changed to next song
+    /// If "Resume" is configured and the meta matches the resume settings then the Resume time is stored in the DB
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="stoptime"></param>
+    /// <param name="filename"></param>
+    void OnPlaybackChangedOrStopped(g_Player.MediaType type, int stoptime, string filename)
+    {
+      if (type != g_Player.MediaType.Music)
+      {
+        return;
+      }
+
+      if (_resumeEnabled && stoptime > _resumeAfter)
+      {
+        Log.Info("GUIMusic: Song stopped at {0} seconds with resume support enabled", stoptime);
+        Song song = new Song();
+
+        if (_resumeSelect.Length > 0)
+        {
+          MusicTag tag = null;
+          if (m_database.GetSongByFileName(filename, ref song))
+          {
+            tag = song.ToMusicTag();
+          }
+          else
+          {
+            tag = m_database.GetTag(filename);
+          }
+
+          string value = "";
+          switch (_resumeSelect)
+          {
+            case "Genre":
+              value = tag.Genre;
+              break;
+
+            case "Title":
+              value = tag.Title;
+              break;
+
+            case "Filename":
+              value = tag.FileName;
+              break;
+
+            case "Album":
+              value = tag.Album;
+              break;
+
+            case "Artist":
+              value = tag.Artist;
+              break;
+
+            case "AlbumArtist":
+              value = tag.AlbumArtist;
+              break;
+
+            case "Composer":
+              value = tag.Composer;
+              break;
+
+            case "Conductor":
+              value = tag.Conductor;
+              break;
+          }
+
+          if (!value.Contains(_resumeSearch))
+          {
+            Log.Info("GUIMusic: Tags not matching selection criteria. No resumetime stored.");
+            return;
+          }
+        }
+
+        if (song.Id == -1)
+        {
+          // No song loaded yet
+          if (!m_database.GetSongByFileName(filename, ref song))
+          {
+            // No Song found. Let's add it to the database and then retrieve it
+            Log.Debug("GUIMusic: Song not found in database. Add to database");
+            m_database.AddSong(filename);
+            m_database.GetSongByFileName(filename, ref song);
+          }
+        }
+
+        song.ResumeAt = stoptime;
+        m_database.SetResume(song);
+      }
+    }
 
     protected override bool AllowLayout(Layout layout)
     {
