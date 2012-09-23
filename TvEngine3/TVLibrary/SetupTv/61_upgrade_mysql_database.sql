@@ -14,6 +14,8 @@ CREATE TABLE "LnbType"
 
 INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('Universal', 9750000, 10600000, 11700000, 0, 0);
 INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('C-Band', 5150000, 5650000, 18000000, 0, 0);
+INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('10700 MHz', 10700000, 11200000, 18000000, 0, 0);
+INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('10700 MHz [22 kHz on]', 10200000, 10700000, 11200000, 0, 0);
 INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('10750 MHz', 10750000, 11250000, 18000000, 0, 0);
 INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('10750 MHz [22 kHz on]', 10250000, 10750000, 11250000, 0, 0);
 INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchFrequency", "isBandStacked", "isToroidal") VALUES ('11250 MHz (NA Legacy)', 11250000, 11750000, 18000000, 0, 0);
@@ -30,15 +32,15 @@ INSERT INTO "LnbType" ("name", "lowBandFrequency", "highBandFrequency", "switchF
 ALTER TABLE "TuningDetail" CHANGE COLUMN "band" "idLnbType" INT(11) NOT NULL;
 ALTER TABLE "TuningDetail" DROP COLUMN "switchingFrequency";
 
-UPDATE "TuningDetail" SET "idLnbType" = 14 WHERE "idLnbType" = 7;
-UPDATE "TuningDetail" SET "idLnbType" = 12 WHERE "idLnbType" = 5;
-UPDATE "TuningDetail" SET "idLnbType" = 11 WHERE "idLnbType" = 6;
-UPDATE "TuningDetail" SET "idLnbType" = 5 WHERE "idLnbType" = 8;
-UPDATE "TuningDetail" SET "idLnbType" = 5 WHERE "idLnbType" = 9;
-UPDATE "TuningDetail" SET "idLnbType" = 6 WHERE "idLnbType" = 10;
-UPDATE "TuningDetail" SET "idLnbType" = 9 WHERE "idLnbType" = 4;
-UPDATE "TuningDetail" SET "idLnbType" = 10 WHERE "idLnbType" = 3;
-UPDATE "TuningDetail" SET "idLnbType" = 3 WHERE "idLnbType" = 1;
+UPDATE "TuningDetail" SET "idLnbType" = 16 WHERE "idLnbType" = 7;
+UPDATE "TuningDetail" SET "idLnbType" = 14 WHERE "idLnbType" = 5;
+UPDATE "TuningDetail" SET "idLnbType" = 13 WHERE "idLnbType" = 6;
+UPDATE "TuningDetail" SET "idLnbType" = 7 WHERE "idLnbType" = 8;
+UPDATE "TuningDetail" SET "idLnbType" = 7 WHERE "idLnbType" = 9;
+UPDATE "TuningDetail" SET "idLnbType" = 8 WHERE "idLnbType" = 10;
+UPDATE "TuningDetail" SET "idLnbType" = 11 WHERE "idLnbType" = 4;
+UPDATE "TuningDetail" SET "idLnbType" = 12 WHERE "idLnbType" = 3;
+UPDATE "TuningDetail" SET "idLnbType" = 5 WHERE "idLnbType" = 1;
 UPDATE "TuningDetail" SET "idLnbType" = 1 WHERE "idLnbType" = 0 AND "channelType" = 3;
 
 UPDATE "Version" SET "versionNumber" = 61;
