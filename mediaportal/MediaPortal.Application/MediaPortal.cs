@@ -406,7 +406,7 @@ public class MediaPortalApp : D3DApp, IRender
       if (OSInfo.OSInfo.VistaOrLater())
       {
         Log.Debug("Disabling process window ghosting");
-        NativeMethods.DisableProcessWindowsGhosting();
+        MediaPortal.NativeMethods.DisableProcessWindowsGhosting();
       }
 
       //Start MediaPortal
