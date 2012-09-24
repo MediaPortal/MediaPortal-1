@@ -2289,6 +2289,36 @@ namespace MediaPortal.Util
       }
     }
 
+    /// <summary>
+    /// This method will not check if downloaded image exists in cache.
+    /// Existing cached image will be overwritten with new one.
+    /// </summary>
+    /// <param name="strURL"></param>
+    /// <param name="strFile"></param>
+    public static void DownLoadAndOverwriteCachedImage(string strURL, string strFile)
+    {
+      if (strURL == null) return;
+      if (strURL.Length == 0) return;
+      if (strFile == null) return;
+      if (strFile.Length == 0) return;
+      string url = String.Format("mpcache-{0}", EncryptLine(strURL));
+
+      string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), url);
+      DownLoadImage(strURL, file);
+      
+      if (File.Exists(file))
+      {
+        try
+        {
+          File.Copy(file, strFile, true);
+        }
+        catch (Exception ex)
+        {
+          Log.Warn("Util: error after downloading thumbnail {0} - {1}", strFile, ex.Message);
+        }
+      }
+    }
+
     public static void DownLoadImage(string strURL, string strFile)
     {
       if (string.IsNullOrEmpty(strURL) || string.IsNullOrEmpty(strFile))

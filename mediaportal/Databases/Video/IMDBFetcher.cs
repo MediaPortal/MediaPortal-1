@@ -1507,7 +1507,7 @@ namespace MediaPortal.Video.Database
             }
             else
             {
-              Util.Utils.DownLoadAndCacheImage(imageUrl, temporaryFilename);
+              Util.Utils.DownLoadAndOverwriteCachedImage(imageUrl, temporaryFilename);
             }
             //Util.Utils.DownLoadAndCacheImage(imageUrl, temporaryFilename);
             if (File.Exists(temporaryFilename))
