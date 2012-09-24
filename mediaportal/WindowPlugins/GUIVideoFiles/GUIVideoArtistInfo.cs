@@ -838,7 +838,7 @@ namespace MediaPortal.GUI.Video
           
           if (!string.IsNullOrEmpty(thumb))
           {
-            Util.Utils.DownLoadAndCacheImage(thumb, temporaryFilename);
+            Util.Utils.DownLoadAndOverwriteCachedImage(thumb, temporaryFilename);
             // Convert downloaded image to large and small file and save on disk
             SaveCover(temporaryFilename, filenameL); // Temp file is deleted in SetCover method
           }
