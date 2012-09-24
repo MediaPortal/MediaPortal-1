@@ -5083,7 +5083,7 @@ namespace MediaPortal.Video.Database
                       temporaryFilename += imageExtension;
                       Util.Utils.FileDelete(temporaryFilename);
 
-                      Util.Utils.DownLoadAndCacheImage(imageUrl, temporaryFilename);
+                      Util.Utils.DownLoadAndOverwriteCachedImage(imageUrl, temporaryFilename);
                         
                       if (File.Exists(temporaryFilename))
                       {
