@@ -617,14 +617,14 @@ namespace MediaPortal.Video.Database
       return _database.GetResults(sql);
     }
 
-    public static void ExecuteSql(string sql, out bool error)
+    public static void ExecuteSql(string sql, out bool error, out string errorMessage)
     {
-      _database.ExecuteSQL(sql, out error);
+      _database.ExecuteSQL(sql, out error, out errorMessage);
     }
 
-    public static ArrayList ExecuteRuleSql(string sql, string fieldName, out bool error)
+    public static ArrayList ExecuteRuleSql(string sql, string fieldName, out bool error, out string errorMessage)
     {
-      return _database.ExecuteRuleSQL(sql, fieldName, out error);
+      return _database.ExecuteRuleSQL(sql, fieldName, out error, out errorMessage);
     }
 
     /// <summary>

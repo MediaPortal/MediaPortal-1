@@ -1343,16 +1343,16 @@ namespace MediaPortal.GUI.Video
             }
             else
             {
-              ArrayList mList = new ArrayList();
-              VideoDatabase.GetMoviesByUserGroup(movie.SingleUserGroup, ref mList);
-              IMDBMovie cMovie = GetRandomMovie(mList);
+              //ArrayList mList = new ArrayList();
+              //VideoDatabase.GetMoviesByUserGroup(movie.SingleUserGroup, ref mList);
+              //IMDBMovie cMovie = GetRandomMovie(mList);
 
-              if ( cMovie != null)
-              {
-                string titleExt = cMovie.Title + "{" + cMovie.ID + "}";
-                usergroupCover = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
-                SetItemThumb(item, usergroupCover);
-              }
+              //if ( cMovie != null)
+              //{
+              //  string titleExt = cMovie.Title + "{" + cMovie.ID + "}";
+              //  usergroupCover = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
+              //  SetItemThumb(item, usergroupCover);
+              //}
             }
           }
           else
@@ -2057,8 +2057,9 @@ namespace MediaPortal.GUI.Video
         movie.Title = movieTitle;
         // update db
         bool error;
+        string errorMessage = string.Empty;
         string sql = string.Format("UPDATE movieinfo SET strTitle = '{0}' WHERE idMovie = {1}", movieTitle, movie.ID);
-        VideoDatabase.ExecuteSql(sql, out error);
+        VideoDatabase.ExecuteSql(sql, out error, out errorMessage);
 
         if (error)
         {
@@ -2216,8 +2217,9 @@ namespace MediaPortal.GUI.Video
       movie.SortTitle = movieSortTitle;
       // update db
       bool error;
+      string errorMessage = string.Empty;
       string sql = string.Format("UPDATE movieinfo SET strSortTitle = '{0}' WHERE idMovie = {1}", movieSortTitle, movie.ID);
-      VideoDatabase.ExecuteSql(sql, out error);
+      VideoDatabase.ExecuteSql(sql, out error, out  errorMessage);
 
       if (error)
       {

@@ -150,8 +150,8 @@ namespace MediaPortal.Video.Database
     
     // Other
     SQLiteResultSet GetResults(string sql);
-    void ExecuteSQL (string sql, out bool error);
-    ArrayList ExecuteRuleSQL(string sql, string fieldName, out bool error);
+    void ExecuteSQL (string sql, out bool error, out string errorMessage);
+    ArrayList ExecuteRuleSQL(string sql, string fieldName, out bool error, out string errorMessage);
     string DatabaseName { get; }
     void GetVideoFilesMediaInfo(string strFilenameAndPath, ref VideoFilesMediaInfo mediaInfo, bool refresh);
     bool HasMediaInfo(string fileName);

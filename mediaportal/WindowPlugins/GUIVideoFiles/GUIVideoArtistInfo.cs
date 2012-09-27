@@ -867,7 +867,8 @@ namespace MediaPortal.GUI.Video
                                     columnData,
                                     ListItemMovieInfo(item).MovieImdbID);
         bool error = false;
-        VideoDatabase.ExecuteSql(sql, out error);
+        string errorMessage = string.Empty;
+        VideoDatabase.ExecuteSql(sql, out error, out errorMessage);
       }
       catch (Exception) {}
     }
