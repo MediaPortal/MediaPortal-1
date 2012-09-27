@@ -4212,6 +4212,11 @@ namespace MediaPortal.Configuration.Sections
     // Generate rule syntax
     private void btGenerateRuleSyntax_Click(object sender, EventArgs e)
     {
+      if (cbUserGroupFieldOperand.SelectedIndex == -1 || cbUserGroupType.SelectedIndex == -1)
+      {
+        return;
+      }
+      
       string comparer = string.Empty;
       string sql = string.Empty;
       string value = tbUserGroupFieldValue.Text;
