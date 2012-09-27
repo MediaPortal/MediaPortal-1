@@ -157,7 +157,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           ListViewItem newItem = mpListViewChannels.Items.Add(referencedChannel.DisplayName, item.ImageIndex);
           newItem.Tag = referencedChannel;
 
-          ServiceAgents.Instance.ChannelServiceAgent.DeleteChannelMap(map.idChannelMap);          
+          ServiceAgents.Instance.ChannelServiceAgent.DeleteChannelMap(map.IdChannelMap);          
         }
         mpListViewChannels.Sort();
         mpListViewMapped.Sort();
@@ -215,7 +215,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           {
             int imageIndex = GetImageIndex(tuningDetails);
             string displayName = channel.DisplayName;
-            if (map.epgOnly)
+            if (map.EpgOnly)
               displayName = channel.DisplayName + " (EPG Only)";
             ListViewItem item = new ListViewItem(displayName, imageIndex);
             item.Tag = map;
@@ -233,7 +233,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           }
           else
           {
-            ServiceAgents.Instance.ChannelServiceAgent.DeleteChannelMap(map.idChannelMap);            
+            ServiceAgents.Instance.ChannelServiceAgent.DeleteChannelMap(map.IdChannelMap);            
           }
         }
         mpListViewMapped.Items.AddRange(items.ToArray());
@@ -310,15 +310,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       ListViewItem item = mpListViewMapped.SelectedItems[0];
       ChannelMap map = (ChannelMap)item.Tag;
       Channel channel = map.Channel;
-      if (map.epgOnly)
+      if (map.EpgOnly)
       {
         item.Text = channel.DisplayName;
-        map.epgOnly = false;
+        map.EpgOnly = false;
       }
       else
       {
         item.Text = channel.DisplayName + " (EPG Only)";
-        map.epgOnly = true;
+        map.EpgOnly = true;
       }
       ServiceAgents.Instance.ChannelServiceAgent.SaveChannelMap(map);
     }

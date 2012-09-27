@@ -55,7 +55,7 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
 
     public static ChannelMap AddChannelToCard(Channel channel, Card card, bool epg)
     {      
-      foreach (ChannelMap channelMap in channel.ChannelMaps.Where(chMap => chMap.idCard == card.IdCard))
+      foreach (ChannelMap channelMap in channel.ChannelMaps.Where(chMap => chMap.IdCard == card.IdCard))
       {
         //already associated ?
         return channelMap;
@@ -63,15 +63,15 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
 
       var map = new ChannelMap()
       {
-        idChannel = channel.IdChannel,
-        idCard =  card.IdCard,
-        epgOnly = epg
+        IdChannel = channel.IdChannel,
+        IdCard =  card.IdCard,
+        EpgOnly = epg
       };
       
       channel.ChannelMaps.Add(map);
       channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
       channel.AcceptChanges();
-      return channel.ChannelMaps.FirstOrDefault(chMap => chMap.idCard == card.IdCard);
+      return channel.ChannelMaps.FirstOrDefault(chMap => chMap.IdCard == card.IdCard);
     }
   
   }

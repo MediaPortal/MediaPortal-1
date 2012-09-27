@@ -156,11 +156,11 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         if (forEpg)
         {
-          isChannelMappedToCard = channelRepository.Count<ChannelMap>(c => c.idCard == card.IdCard && c.idChannel == channel.IdChannel && c.epgOnly) > 0;
+          isChannelMappedToCard = channelRepository.Count<ChannelMap>(c => c.IdCard == card.IdCard && c.IdChannel == channel.IdChannel && c.EpgOnly) > 0;
         }
         else
         {
-          isChannelMappedToCard = channelRepository.Count<ChannelMap>(c => c.idCard == card.IdCard && c.idChannel == channel.IdChannel) > 0;          
+          isChannelMappedToCard = channelRepository.Count<ChannelMap>(c => c.IdCard == card.IdCard && c.IdChannel == channel.IdChannel) > 0;          
         }                
       }
       return isChannelMappedToCard;
@@ -692,7 +692,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository(true))
       {
-        channelRepository.Delete<ChannelMap>(p => p.idChannelMap == idChannelMap);
+        channelRepository.Delete<ChannelMap>(p => p.IdChannelMap == idChannelMap);
         channelRepository.UnitOfWork.SaveChanges();
       }
     }

@@ -216,9 +216,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
         IList<ChannelMap> maps = ch.ChannelMaps;
         foreach (ChannelMap map in maps)
         {
-          if (cards.ContainsKey(map.idCard))
+          if (cards.ContainsKey(map.IdCard))
           {
-            CardType type = cards[map.idCard];
+            CardType type = cards[map.IdCard];
             switch (type)
             {
               case CardType.Analog:

@@ -183,7 +183,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             continue;
 
           IList<ChannelMap> list = channel.ChannelMaps;
-          bool isMapped = list.Any(map => map.idCard == card.IdCard);
+          bool isMapped = list.Any(map => map.IdCard == card.IdCard);
           if (isMapped)
             continue;
 
@@ -238,7 +238,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         dlg.WaitForDisplay();
         foreach (ChannelMap map in selectedChannel2.ChannelMaps)
         {
-          map.idChannel = selectedChannel.IdChannel;
+          map.IdChannel = selectedChannel.IdChannel;
           ServiceAgents.Instance.ChannelServiceAgent.SaveChannelMap(map);
         }
         dlg.Close();

@@ -33,7 +33,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     public static bool CanViewTvChannel(Card card, int channelId)
     {
       IList<ChannelMap> cardChannels = card.ChannelMaps;
-      return cardChannels.Any(cmap => channelId == cmap.idChannel && !cmap.epgOnly);
+      return cardChannels.Any(cmap => channelId == cmap.IdChannel && !cmap.EpgOnly);
     }
 
     /// <summary>
@@ -45,7 +45,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     public static bool CanTuneTvChannel(Card card, int channelId)
     {
       IList<ChannelMap> cardChannels = card.ChannelMaps;
-      return cardChannels.Any(cmap => channelId == cmap.idChannel);
+      return cardChannels.Any(cmap => channelId == cmap.IdChannel);
     }
 
     public static Card GetCardByDevicePath(string devicePath)
