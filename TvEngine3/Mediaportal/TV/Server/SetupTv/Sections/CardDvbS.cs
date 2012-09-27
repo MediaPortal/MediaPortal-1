@@ -951,9 +951,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         foreach (DisEqcMotor motor in card.DisEqcMotors)
         {
-          if (motor.idSatellite == context.Satellite.idSatellite)
+          if (motor.IdSatellite == context.Satellite.idSatellite)
           {
-            position = motor.position;
+            position = motor.Position;
             break;
           }
         }
@@ -1320,10 +1320,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IList<DisEqcMotor> motorSettings = card.DisEqcMotors;
       foreach (DisEqcMotor motor in motorSettings)
       {
-        if (motor.idSatellite == sat.Satellite.idSatellite)
+        if (motor.IdSatellite == sat.Satellite.idSatellite)
         {
-          ServiceAgents.Instance.ControllerServiceAgent.DiSEqCGotoPosition(_cardNumber, (byte)motor.position);
-          MessageBox.Show("Satellite moving to position:" + motor.position, "Info", MessageBoxButtons.OK,
+          ServiceAgents.Instance.ControllerServiceAgent.DiSEqCGotoPosition(_cardNumber, (byte)motor.Position);
+          MessageBox.Show("Satellite moving to position:" + motor.Position, "Info", MessageBoxButtons.OK,
                           MessageBoxIcon.Information);
           comboBox1_SelectedIndexChanged(null, null);
           return;
@@ -1346,9 +1346,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IList<DisEqcMotor> motorSettings = card.DisEqcMotors;
       foreach (DisEqcMotor motor in motorSettings)
       {
-        if (motor.idSatellite == sat.Satellite.idSatellite)
+        if (motor.IdSatellite == sat.Satellite.idSatellite)
         {
-          index = motor.position;
+          index = motor.Position;
           break;
         }
       }
@@ -1356,9 +1356,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         index = motorSettings.Count + 1;
         DisEqcMotor motor = new DisEqcMotor();
-        motor.idCard = card.IdCard;
-        motor.idSatellite = sat.Satellite.idSatellite;
-        motor.position = index;
+        motor.IdCard = card.IdCard;
+        motor.IdSatellite = sat.Satellite.idSatellite;
+        motor.Position = index;
         ServiceAgents.Instance.CardServiceAgent.SaveDisEqcMotor(motor);
 
       }

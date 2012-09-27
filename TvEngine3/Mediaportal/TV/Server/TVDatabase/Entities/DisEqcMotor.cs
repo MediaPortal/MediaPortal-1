@@ -25,7 +25,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Primitive Properties
     
         [DataMember]
-        public int idDiSEqCMotor
+        public int IdDiSEqCMotor
         {
             get { return _idDiSEqCMotor; }
             set
@@ -44,7 +44,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idDiSEqCMotor;
     
         [DataMember]
-        public int idCard
+        public int IdCard
         {
             get { return _idCard; }
             set
@@ -67,7 +67,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idCard;
     
         [DataMember]
-        public int idSatellite
+        public int IdSatellite
         {
             get { return _idSatellite; }
             set
@@ -90,7 +90,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idSatellite;
     
         [DataMember]
-        public int position
+        public int Position
         {
             get { return _position; }
             set
@@ -255,7 +255,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Card.DisEqcMotors.Add(this);
                 }
     
-                idCard = Card.IdCard;
+                IdCard = Card.IdCard;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {
@@ -294,7 +294,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Satellite.DisEqcMotors.Add(this);
                 }
     
-                idSatellite = Satellite.idSatellite;
+                IdSatellite = Satellite.idSatellite;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {
