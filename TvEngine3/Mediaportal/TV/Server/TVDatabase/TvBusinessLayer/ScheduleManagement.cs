@@ -211,11 +211,11 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         foreach (CanceledSchedule canceledSchedule in schedule.CanceledSchedules)
         {
-          if (canceledSchedule.cancelDateTime == startTime && canceledSchedule.idChannel == idChannel)
+          if (canceledSchedule.CancelDateTime == startTime && canceledSchedule.IdChannel == idChannel)
           {
             scheduleRepository.Delete(canceledSchedule);
-            ProgramManagement.SetSingleStateSeriesPending(canceledSchedule.cancelDateTime,
-                                                           canceledSchedule.idChannel,
+            ProgramManagement.SetSingleStateSeriesPending(canceledSchedule.CancelDateTime,
+                                                           canceledSchedule.IdChannel,
                                                            canceledSchedule.Schedule.programName);
           }
         }

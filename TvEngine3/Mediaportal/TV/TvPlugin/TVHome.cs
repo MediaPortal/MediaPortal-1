@@ -904,7 +904,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           foreach (CanceledSchedule cancelSched in existingParentSchedule.CanceledSchedules)
           {
-            if (cancelSched.cancelDateTime == channel.CurrentProgram.startTime)
+            if (cancelSched.CancelDateTime == channel.CurrentProgram.startTime)
             {
               ServiceAgents.Instance.ScheduleServiceAgent.UnCancelSerie(existingParentSchedule, channel.CurrentProgram.startTime, channel.CurrentProgram.idChannel);
               ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();

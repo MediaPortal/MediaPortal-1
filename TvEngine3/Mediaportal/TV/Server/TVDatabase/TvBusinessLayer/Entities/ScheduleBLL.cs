@@ -249,12 +249,12 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
 
     public bool IsSerieIsCanceled(DateTime startTimeParam)
     {
-      return _entity.CanceledSchedules.Any(schedule => schedule.cancelDateTime == startTimeParam);
+      return _entity.CanceledSchedules.Any(schedule => schedule.CancelDateTime == startTimeParam);
     }
 
     public bool IsSerieIsCanceled(DateTime startTimeParam, int idChannel)
     {
-      return _entity.CanceledSchedules.Any(schedule => schedule.cancelDateTime == startTimeParam && schedule.idChannel == idChannel);
+      return _entity.CanceledSchedules.Any(schedule => schedule.CancelDateTime == startTimeParam && schedule.IdChannel == idChannel);
     }
 
     /// <summary>

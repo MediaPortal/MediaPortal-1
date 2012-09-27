@@ -24,7 +24,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Primitive Properties
     
         [DataMember]
-        public int idCanceledSchedule
+        public int IdCanceledSchedule
         {
             get { return _idCanceledSchedule; }
             set
@@ -43,7 +43,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idCanceledSchedule;
     
         [DataMember]
-        public int idSchedule
+        public int IdSchedule
         {
             get { return _idSchedule; }
             set
@@ -66,7 +66,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idSchedule;
     
         [DataMember]
-        public int idChannel
+        public int IdChannel
         {
             get { return _idChannel; }
             set
@@ -81,7 +81,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idChannel;
     
         [DataMember]
-        public System.DateTime cancelDateTime
+        public System.DateTime CancelDateTime
         {
             get { return _cancelDateTime; }
             set
@@ -228,7 +228,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Schedule.CanceledSchedules.Add(this);
                 }
     
-                idSchedule = Schedule.id_Schedule;
+                IdSchedule = Schedule.id_Schedule;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {

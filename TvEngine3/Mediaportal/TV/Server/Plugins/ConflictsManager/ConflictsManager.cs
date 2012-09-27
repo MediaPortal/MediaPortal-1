@@ -756,7 +756,7 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
       {
         foreach (Schedule sched in refFillList)
         {
-          if ((canceled.idSchedule == sched.id_Schedule) && (canceled.cancelDateTime == sched.startTime))
+          if ((canceled.IdSchedule == sched.id_Schedule) && (canceled.CancelDateTime == sched.startTime))
           {
             refFillList.Remove(sched);
             break;

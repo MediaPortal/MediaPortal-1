@@ -24,7 +24,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         canceledSchedule.AcceptChanges();
       }
       
-      Schedule schedule = ScheduleManagement.GetSchedule(canceledSchedule.idSchedule);
+      Schedule schedule = ScheduleManagement.GetSchedule(canceledSchedule.IdSchedule);
       ProgramManagement.SynchProgramStates(new ScheduleBLL(schedule));
       return canceledSchedule;
     }

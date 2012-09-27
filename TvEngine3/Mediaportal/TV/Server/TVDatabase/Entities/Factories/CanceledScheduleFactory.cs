@@ -17,9 +17,9 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Factories
     {
       var canceledSchedule = new CanceledSchedule
                        {
-                         idChannel = idChannel,
-                         idSchedule = idForScheduleToCancel,
-                         cancelDateTime = cancelDateTime
+                         IdChannel = idChannel,
+                         IdSchedule = idForScheduleToCancel,
+                         CancelDateTime = cancelDateTime
                        };
 
 
