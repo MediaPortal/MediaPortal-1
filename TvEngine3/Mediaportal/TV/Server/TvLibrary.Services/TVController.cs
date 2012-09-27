@@ -623,12 +623,12 @@ namespace Mediaportal.TV.Server.TVLibrary
           var hybridCardGroup = new HybridCardGroup();
           foreach (CardGroupMap card in cards)
           {
-            if (localcards.ContainsKey(card.idCard))
+            if (localcards.ContainsKey(card.IdCard))
             {
-              localcards[card.idCard].IsHybrid = true;
-              Log.WriteFile("Hybrid card: " + localcards[card.idCard].Name + " (" + group.Name + ")");
-              HybridCard hybridCard = hybridCardGroup.Add(card.idCard, localcards[card.idCard]);
-              localcards[card.idCard] = hybridCard;
+              localcards[card.IdCard].IsHybrid = true;
+              Log.WriteFile("Hybrid card: " + localcards[card.IdCard].Name + " (" + group.Name + ")");
+              HybridCard hybridCard = hybridCardGroup.Add(card.IdCard, localcards[card.IdCard]);
+              localcards[card.IdCard] = hybridCard;
             }
           }
         }

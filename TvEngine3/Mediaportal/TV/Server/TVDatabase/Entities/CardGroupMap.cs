@@ -25,7 +25,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Primitive Properties
     
         [DataMember]
-        public int idMapping
+        public int IdMapping
         {
             get { return _idMapping; }
             set
@@ -44,7 +44,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idMapping;
     
         [DataMember]
-        public int idCard
+        public int IdCard
         {
             get { return _idCard; }
             set
@@ -67,7 +67,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idCard;
     
         [DataMember]
-        public int idCardGroup
+        public int IdCardGroup
         {
             get { return _idCardGroup; }
             set
@@ -240,7 +240,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Card.CardGroupMaps.Add(this);
                 }
     
-                idCard = Card.IdCard;
+                IdCard = Card.IdCard;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {
@@ -279,7 +279,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     CardGroup.CardGroupMaps.Add(this);
                 }
     
-                idCardGroup = CardGroup.IdCardGroup;
+                IdCardGroup = CardGroup.IdCardGroup;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {

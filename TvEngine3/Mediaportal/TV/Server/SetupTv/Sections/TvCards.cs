@@ -118,8 +118,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         ListViewItem item = mpListView1.Items[indexes[i]];
         Card card = (Card)item.Tag;
         CardGroupMap map = new CardGroupMap();
-        map.idCard = card.IdCard;        
-        map.idCardGroup = group.IdCardGroup;
+        map.IdCard = card.IdCard;        
+        map.IdCardGroup = group.IdCardGroup;
         ServiceAgents.Instance.CardServiceAgent.SaveCardGroupMap(map);
         card.Preload = false;        
         ServiceAgents.Instance.CardServiceAgent.SaveCard(card);
@@ -455,7 +455,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
         IList<CardGroupMap> cards = group.CardGroupMaps;
         CardGroupMap cardGroupMap2Remove = null;
-        foreach (CardGroupMap map in cards.Where(map => map.idCard == card.IdCard))
+        foreach (CardGroupMap map in cards.Where(map => map.IdCard == card.IdCard))
         {
           cardGroupMap2Remove = map;
           //ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroupMap(map.idMap)          ;

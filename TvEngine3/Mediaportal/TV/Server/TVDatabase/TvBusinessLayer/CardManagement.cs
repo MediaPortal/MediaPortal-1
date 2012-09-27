@@ -208,7 +208,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (ICardRepository cardRepository = new CardRepository(true))
       {
-        cardRepository.Delete<CardGroupMap>(p => p.idMapping == idMap);
+        cardRepository.Delete<CardGroupMap>(p => p.IdMapping == idMap);
         cardRepository.UnitOfWork.SaveChanges();
       }
     }
