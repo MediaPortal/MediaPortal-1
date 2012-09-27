@@ -38,7 +38,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (var conflictRepository = new GenericRepository<Model>())
       {
-        return conflictRepository.Single<Conflict>(s => s.idConflict == idConflict);
+        return conflictRepository.Single<Conflict>(s => s.IdConflict == idConflict);
       }
     }
 
@@ -46,7 +46,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (var conflictRepository = new GenericRepository<Model>(true))
       {
-        conflictRepository.Delete<Conflict>(p => p.idConflict == idConflict);
+        conflictRepository.Delete<Conflict>(p => p.IdConflict == idConflict);
         conflictRepository.UnitOfWork.SaveChanges();
       }
     }

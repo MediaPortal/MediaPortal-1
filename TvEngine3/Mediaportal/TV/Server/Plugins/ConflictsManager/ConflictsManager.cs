@@ -234,7 +234,7 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
       IList<Conflict> conflictList = ConflictManagement.ListAllConflicts();
       foreach (Conflict aconflict in conflictList)
       {
-        ConflictManagement.DeleteConflict(aconflict.idConflict);        
+        ConflictManagement.DeleteConflict(aconflict.IdConflict);        
       }
     }
 
@@ -333,11 +333,11 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
           cardSchedules[0].Add(schedule);
           var newConflict = new Conflict
                               {
-                                idSchedule = schedule.id_Schedule,
-                                idConflictingSchedule = lastOverlappingSchedule.id_Schedule,
-                                idChannel = schedule.idChannel,
-                                conflictDate = schedule.startTime,
-                                idCard = lastBusyCard
+                                IdSchedule = schedule.id_Schedule,
+                                IdConflictingSchedule = lastOverlappingSchedule.id_Schedule,
+                                IdChannel = schedule.idChannel,
+                                ConflictDate = schedule.startTime,
+                                IdCard = lastBusyCard
                               };
 
           ConflictManagement.SaveConflict(newConflict);          

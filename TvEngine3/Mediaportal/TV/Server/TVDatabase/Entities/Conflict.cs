@@ -26,7 +26,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Primitive Properties
     
         [DataMember]
-        public int idConflict
+        public int IdConflict
         {
             get { return _idConflict; }
             set
@@ -45,7 +45,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idConflict;
     
         [DataMember]
-        public int idSchedule
+        public int IdSchedule
         {
             get { return _idSchedule; }
             set
@@ -68,7 +68,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idSchedule;
     
         [DataMember]
-        public int idConflictingSchedule
+        public int IdConflictingSchedule
         {
             get { return _idConflictingSchedule; }
             set
@@ -91,7 +91,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idConflictingSchedule;
     
         [DataMember]
-        public int idChannel
+        public int IdChannel
         {
             get { return _idChannel; }
             set
@@ -114,7 +114,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idChannel;
     
         [DataMember]
-        public System.DateTime conflictDate
+        public System.DateTime ConflictDate
         {
             get { return _conflictDate; }
             set
@@ -129,7 +129,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private System.DateTime _conflictDate;
     
         [DataMember]
-        public Nullable<int> idCard
+        public Nullable<int> IdCard
         {
             get { return _idCard; }
             set
@@ -338,11 +338,11 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Card.Conflicts.Add(this);
                 }
     
-                idCard = Card.IdCard;
+                IdCard = Card.IdCard;
             }
             else if (!skipKeys)
             {
-                idCard = null;
+                IdCard = null;
             }
     
             if (ChangeTracker.ChangeTrackingEnabled)
@@ -382,7 +382,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Channel.Conflicts.Add(this);
                 }
     
-                idChannel = Channel.IdChannel;
+                IdChannel = Channel.IdChannel;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {
@@ -421,7 +421,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Schedule.Conflicts.Add(this);
                 }
     
-                idSchedule = Schedule.id_Schedule;
+                IdSchedule = Schedule.id_Schedule;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {
@@ -460,7 +460,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     ConflictingSchedule.ConflictingSchedules.Add(this);
                 }
     
-                idConflictingSchedule = ConflictingSchedule.id_Schedule;
+                IdConflictingSchedule = ConflictingSchedule.id_Schedule;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {

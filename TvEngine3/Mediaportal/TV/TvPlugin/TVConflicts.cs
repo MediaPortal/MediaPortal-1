@@ -178,8 +178,8 @@ namespace Mediaportal.TV.TvPlugin
         IEnumerable<Conflict> conflictsList = ServiceAgents.Instance.ConflictServiceAgent.ListAllConflicts();
         foreach (Conflict conflict in conflictsList)
         {
-          Schedule schedule = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(conflict.idSchedule);
-          Schedule conflictingSchedule = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(conflict.idConflictingSchedule);
+          Schedule schedule = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(conflict.IdSchedule);
+          Schedule conflictingSchedule = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(conflict.IdConflictingSchedule);
 
           GUIListItem item = Schedule2ListItem(schedule);
           item.MusicTag = conflictingSchedule;
