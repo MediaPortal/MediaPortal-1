@@ -17,7 +17,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
       {
         return false;
       }
-      return details.Any(detail => detail.channelType == 5);
+      return details.Any(detail => detail.ChannelType == 5);
     }
   }
 }

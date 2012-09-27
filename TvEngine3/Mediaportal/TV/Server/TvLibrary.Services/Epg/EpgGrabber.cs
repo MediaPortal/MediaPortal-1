@@ -285,15 +285,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
           continue;
 
         //check if card type is the same as the channel type of the transponder
-        if (type == CardType.Atsc && TransponderList.Instance.CurrentTransponder.TuningDetail.channelType != 1)
+        if (type == CardType.Atsc && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 1)
           continue;
-        if (type == CardType.DvbC && TransponderList.Instance.CurrentTransponder.TuningDetail.channelType != 2)
+        if (type == CardType.DvbC && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 2)
           continue;
-        if (type == CardType.DvbS && TransponderList.Instance.CurrentTransponder.TuningDetail.channelType != 3)
+        if (type == CardType.DvbS && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 3)
           continue;
-        if (type == CardType.DvbT && TransponderList.Instance.CurrentTransponder.TuningDetail.channelType != 4)
+        if (type == CardType.DvbT && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 4)
           continue;
-        if (type == CardType.DvbIP && TransponderList.Instance.CurrentTransponder.TuningDetail.channelType != 7)
+        if (type == CardType.DvbIP && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 7)
           continue;
 
         //find next channel to grab

@@ -283,7 +283,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
                 {
                   if (userDVBchannel != null)
                   {
-                    subchannel.IdChannel = ChannelManagement.GetTuningDetail(userDVBchannel).idChannel;
+                    subchannel.IdChannel = ChannelManagement.GetTuningDetail(userDVBchannel).IdChannel;
                   }
 
                   bool isDiffTS = tuningDetail.IsDifferentTransponder(userChannel);

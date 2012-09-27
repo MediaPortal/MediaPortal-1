@@ -24,7 +24,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Primitive Properties
     
         [DataMember]
-        public int idTuning
+        public int IdTuning
         {
             get { return _idTuning; }
             set
@@ -43,7 +43,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idTuning;
     
         [DataMember]
-        public int idChannel
+        public int IdChannel
         {
             get { return _idChannel; }
             set
@@ -66,7 +66,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idChannel;
     
         [DataMember]
-        public string name
+        public string Name
         {
             get { return _name; }
             set
@@ -81,7 +81,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _name;
     
         [DataMember]
-        public string provider
+        public string Provider
         {
             get { return _provider; }
             set
@@ -96,7 +96,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _provider;
     
         [DataMember]
-        public int channelType
+        public int ChannelType
         {
             get { return _channelType; }
             set
@@ -111,7 +111,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _channelType;
     
         [DataMember]
-        public int channelNumber
+        public int ChannelNumber
         {
             get { return _channelNumber; }
             set
@@ -126,7 +126,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _channelNumber;
     
         [DataMember]
-        public int frequency
+        public int Frequency
         {
             get { return _frequency; }
             set
@@ -141,7 +141,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _frequency;
     
         [DataMember]
-        public int countryId
+        public int CountryId
         {
             get { return _countryId; }
             set
@@ -156,7 +156,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _countryId;
     
         [DataMember]
-        public int networkId
+        public int NetworkId
         {
             get { return _networkId; }
             set
@@ -171,7 +171,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _networkId;
     
         [DataMember]
-        public int transportId
+        public int TransportId
         {
             get { return _transportId; }
             set
@@ -186,7 +186,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _transportId;
     
         [DataMember]
-        public int serviceId
+        public int ServiceId
         {
             get { return _serviceId; }
             set
@@ -201,7 +201,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _serviceId;
     
         [DataMember]
-        public int pmtPid
+        public int PmtPid
         {
             get { return _pmtPid; }
             set
@@ -216,7 +216,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _pmtPid;
     
         [DataMember]
-        public bool freeToAir
+        public bool FreeToAir
         {
             get { return _freeToAir; }
             set
@@ -231,7 +231,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private bool _freeToAir;
     
         [DataMember]
-        public int modulation
+        public int Modulation
         {
             get { return _modulation; }
             set
@@ -246,7 +246,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _modulation;
     
         [DataMember]
-        public int polarisation
+        public int Polarisation
         {
             get { return _polarisation; }
             set
@@ -261,7 +261,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _polarisation;
     
         [DataMember]
-        public int symbolrate
+        public int Symbolrate
         {
             get { return _symbolrate; }
             set
@@ -276,22 +276,22 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _symbolrate;
     
         [DataMember]
-        public int diseqc
+        public int DiSEqC
         {
-            get { return _diseqc; }
+            get { return _diSeqC; }
             set
             {
-                if (_diseqc != value)
+                if (_diSeqC != value)
                 {
-                    _diseqc = value;
+                    _diSeqC = value;
                     OnPropertyChanged("diseqc");
                 }
             }
         }
-        private int _diseqc;
+        private int _diSeqC;
     
         [DataMember]
-        public int switchingFrequency
+        public int SwitchingFrequency
         {
             get { return _switchingFrequency; }
             set
@@ -306,7 +306,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _switchingFrequency;
     
         [DataMember]
-        public int bandwidth
+        public int Bandwidth
         {
             get { return _bandwidth; }
             set
@@ -321,7 +321,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _bandwidth;
     
         [DataMember]
-        public int majorChannel
+        public int MajorChannel
         {
             get { return _majorChannel; }
             set
@@ -336,7 +336,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _majorChannel;
     
         [DataMember]
-        public int minorChannel
+        public int MinorChannel
         {
             get { return _minorChannel; }
             set
@@ -351,7 +351,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _minorChannel;
     
         [DataMember]
-        public int videoSource
+        public int VideoSource
         {
             get { return _videoSource; }
             set
@@ -366,7 +366,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _videoSource;
     
         [DataMember]
-        public int tuningSource
+        public int TuningSource
         {
             get { return _tuningSource; }
             set
@@ -381,7 +381,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _tuningSource;
     
         [DataMember]
-        public int band
+        public int Band
         {
             get { return _band; }
             set
@@ -396,7 +396,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _band;
     
         [DataMember]
-        public int satIndex
+        public int SatIndex
         {
             get { return _satIndex; }
             set
@@ -411,7 +411,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _satIndex;
     
         [DataMember]
-        public int innerFecRate
+        public int InnerFecRate
         {
             get { return _innerFecRate; }
             set
@@ -426,7 +426,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _innerFecRate;
     
         [DataMember]
-        public int pilot
+        public int Pilot
         {
             get { return _pilot; }
             set
@@ -441,7 +441,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _pilot;
     
         [DataMember]
-        public int rollOff
+        public int RollOff
         {
             get { return _rollOff; }
             set
@@ -456,7 +456,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _rollOff;
     
         [DataMember]
-        public string url
+        public string Url
         {
             get { return _url; }
             set
@@ -471,7 +471,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _url;
     
         [DataMember]
-        public int bitrate
+        public int Bitrate
         {
             get { return _bitrate; }
             set
@@ -486,7 +486,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _bitrate;
     
         [DataMember]
-        public int audioSource
+        public int AudioSource
         {
             get { return _audioSource; }
             set
@@ -501,7 +501,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _audioSource;
     
         [DataMember]
-        public bool isVCRSignal
+        public bool IsVCRSignal
         {
             get { return _isVCRSignal; }
             set
@@ -516,7 +516,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private bool _isVCRSignal;
     
         [DataMember]
-        public int mediaType
+        public int MediaType
         {
             get { return _mediaType; }
             set
@@ -663,7 +663,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Channel.TuningDetails.Add(this);
                 }
     
-                idChannel = Channel.IdChannel;
+                IdChannel = Channel.IdChannel;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {

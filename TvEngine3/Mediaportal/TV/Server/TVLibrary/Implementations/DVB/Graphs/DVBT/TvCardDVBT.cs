@@ -311,10 +311,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBT
         {
           return false;
         }
-        foreach (TuningDetail detail in dbchannel.TuningDetails.Where(detail => detail.channelType == 4))
+        foreach (TuningDetail detail in dbchannel.TuningDetails.Where(detail => detail.ChannelType == 4))
         {
-          dvbtchannel.Frequency = detail.frequency;
-          dvbtchannel.BandWidth = detail.bandwidth;
+          dvbtchannel.Frequency = detail.Frequency;
+          dvbtchannel.BandWidth = detail.Bandwidth;
         }
         return this.CurrentChannel.IsDifferentTransponder(dvbtchannel);
       }

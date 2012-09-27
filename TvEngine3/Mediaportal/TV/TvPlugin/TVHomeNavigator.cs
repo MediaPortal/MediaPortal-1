@@ -540,12 +540,12 @@ namespace Mediaportal.TV.TvPlugin
           {
             foreach (TuningDetail detail in chan.TuningDetails)
             {
-              Log.Debug("detail nr {0} id{1}", detail.channelNumber, detail.idChannel);
+              Log.Debug("detail nr {0} id{1}", detail.ChannelNumber, detail.IdChannel);
 
-              if (detail.channelNumber == channelNr)
+              if (detail.ChannelNumber == channelNr)
               {
                 Log.Debug("find channel: iCounter {0}, detail.channelNumber {1}, detail.name {2}, _channels.Count {3}",
-                          iCounter, detail.channelNumber, detail.name, channels.Count);
+                          iCounter, detail.ChannelNumber, detail.Name, channels.Count);
                 found = true;
                 ZapToChannel(iCounter + 1, useZapDelay);
               }

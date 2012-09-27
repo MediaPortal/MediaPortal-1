@@ -324,11 +324,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBC
         }
         foreach (TuningDetail detail in dbchannel.TuningDetails)
         {
-          if (detail.channelType == 2)
+          if (detail.ChannelType == 2)
           {
-            dvbcchannel.Frequency = detail.frequency;
-            dvbcchannel.ModulationType = (ModulationType)detail.modulation;
-            dvbcchannel.SymbolRate = detail.symbolrate;
+            dvbcchannel.Frequency = detail.Frequency;
+            dvbcchannel.ModulationType = (ModulationType)detail.Modulation;
+            dvbcchannel.SymbolRate = detail.Symbolrate;
           }
         }
         return this.CurrentChannel.IsDifferentTransponder(dvbcchannel);

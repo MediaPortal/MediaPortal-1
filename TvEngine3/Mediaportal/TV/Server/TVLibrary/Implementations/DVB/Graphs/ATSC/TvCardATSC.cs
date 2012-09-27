@@ -329,11 +329,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
         {
           return false;
         }
-        foreach (TuningDetail detail in dbchannel.TuningDetails.Where(detail => detail.channelType == 1))
+        foreach (TuningDetail detail in dbchannel.TuningDetails.Where(detail => detail.ChannelType == 1))
         {
-          atscchannel.MajorChannel = detail.majorChannel;
-          atscchannel.MinorChannel = detail.minorChannel;
-          atscchannel.PhysicalChannel = detail.channelNumber;
+          atscchannel.MajorChannel = detail.MajorChannel;
+          atscchannel.MinorChannel = detail.MinorChannel;
+          atscchannel.PhysicalChannel = detail.ChannelNumber;
         }
         return this.CurrentChannel.IsDifferentTransponder(atscchannel);
       }

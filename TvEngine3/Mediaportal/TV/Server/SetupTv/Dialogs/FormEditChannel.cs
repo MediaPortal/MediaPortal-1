@@ -74,11 +74,11 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       {                
         if (detail.ChangeTracker.State != ObjectState.Deleted)
         {
-          detail.idChannel = _channel.IdChannel;
-          detail.mediaType = (int)_mediaType;
-          if (string.IsNullOrEmpty(detail.name))
+          detail.IdChannel = _channel.IdChannel;
+          detail.MediaType = (int)_mediaType;
+          if (string.IsNullOrEmpty(detail.Name))
           {
-            detail.name = _channel.DisplayName;
+            detail.Name = _channel.DisplayName;
           }
         }    
       }
@@ -128,60 +128,60 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
             continue;
           }
           int imageIndex = 1;
-          if (detail.freeToAir == false)
+          if (detail.FreeToAir == false)
             imageIndex = 2;
-          ListViewItem item = new ListViewItem(detail.idTuning.ToString(), imageIndex);
-          item.SubItems.Add(detail.name);
-          item.SubItems.Add(detail.provider);
-          string channelType = detail.channelType.ToString();
+          ListViewItem item = new ListViewItem(detail.IdTuning.ToString(), imageIndex);
+          item.SubItems.Add(detail.Name);
+          item.SubItems.Add(detail.Provider);
+          string channelType = detail.ChannelType.ToString();
           string description = "";
           float frequency;
-          switch (detail.channelType)
+          switch (detail.ChannelType)
           {
             case 0:
               channelType = "Analog";
-              if (detail.videoSource == (int)AnalogChannel.VideoInputType.Tuner)
+              if (detail.VideoSource == (int)AnalogChannel.VideoInputType.Tuner)
               {
-                frequency = detail.frequency;
+                frequency = detail.Frequency;
                 frequency /= 1000000.0f;
-                description = String.Format("#{0} {1} MHz", detail.channelNumber, frequency.ToString("f2"));
+                description = String.Format("#{0} {1} MHz", detail.ChannelNumber, frequency.ToString("f2"));
               }
               else
               {
-                description = detail.videoSource.ToString();
+                description = detail.VideoSource.ToString();
               }
               break;
             case 1:
               channelType = "ATSC";
-              description = String.Format("{0} {1}:{2}", detail.channelNumber, detail.majorChannel,
-                                          detail.minorChannel);
+              description = String.Format("{0} {1}:{2}", detail.ChannelNumber, detail.MajorChannel,
+                                          detail.MinorChannel);
               break;
             case 2:
               channelType = "DVB-C";
-              frequency = detail.frequency;
+              frequency = detail.Frequency;
               frequency /= 1000.0f;
-              description = String.Format("{0} MHz SR:{1}", frequency.ToString("f2"), detail.symbolrate);
+              description = String.Format("{0} MHz SR:{1}", frequency.ToString("f2"), detail.Symbolrate);
               break;
             case 3:
               channelType = "DVB-S";
-              frequency = detail.frequency;
+              frequency = detail.Frequency;
               frequency /= 1000.0f;
               description = String.Format("{0} MHz {1}", frequency.ToString("f2"),
-                                          (((Polarisation)detail.polarisation)));
+                                          (((Polarisation)detail.Polarisation)));
               break;
             case 4:
               channelType = "DVB-T";
-              frequency = detail.frequency;
+              frequency = detail.Frequency;
               frequency /= 1000.0f;
-              description = String.Format("{0} MHz BW:{1}", frequency.ToString("f2"), detail.bandwidth);
+              description = String.Format("{0} MHz BW:{1}", frequency.ToString("f2"), detail.Bandwidth);
               break;
             case 5:
               channelType = "Web-Stream";
-              description = detail.url;
+              description = detail.Url;
               break;
             case 7:
               channelType = "DVB-IP";
-              description = detail.url;
+              description = detail.Url;
               break;
           }
           item.SubItems.Add(channelType);
@@ -246,7 +246,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       {
         int index = mpListView1.SelectedIndices[0];
         TuningDetail tuningDetailToEdit = _channel.TuningDetails[index];
-        FormTuningDetailCommon form = CreateDialog(tuningDetailToEdit.channelType);
+        FormTuningDetailCommon form = CreateDialog(tuningDetailToEdit.ChannelType);
         form.TuningDetail = tuningDetailToEdit;
         form.ShowDialog(this);
         UpdateTuningDetailList();

@@ -279,15 +279,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       bool hasScrambled = false;
       foreach (TuningDetail detail in tuningDetails)
       {
-        if (!providers.Contains(detail.provider) && !String.IsNullOrEmpty(detail.provider))
+        if (!providers.Contains(detail.Provider) && !String.IsNullOrEmpty(detail.Provider))
         {
-          providers.Add(detail.provider);
+          providers.Add(detail.Provider);
         }
-        if (detail.freeToAir)
+        if (detail.FreeToAir)
         {
           hasFta = true;
         }
-        if (!detail.freeToAir)
+        if (!detail.FreeToAir)
         {
           hasScrambled = true;
         }

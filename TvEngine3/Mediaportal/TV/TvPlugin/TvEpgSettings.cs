@@ -64,7 +64,7 @@ namespace Mediaportal.TV.TvPlugin
         bool isDigital = false;
         foreach (TuningDetail detail in chan.TuningDetails)
         {
-          if (detail.channelType != 0)
+          if (detail.ChannelType != 0)
           {
             isDigital = true;
             break;

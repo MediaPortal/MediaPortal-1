@@ -268,7 +268,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             //We do not know how ATSC works to correctly implement this.
             TuningDetail currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetail(channel);
             if (currentDetail != null)
-              if (channel.Frequency != currentDetail.frequency)
+              if (channel.Frequency != currentDetail.Frequency)
                 currentDetail = null;
             bool exists;
             if (currentDetail == null)
@@ -307,7 +307,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             else
             {
               //update tuning details...
-              ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbChannel.IdChannel, currentDetail.idTuning, channel);
+              ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbChannel.IdChannel, currentDetail.IdTuning, channel);
             }
             if (channel.MediaType == MediaTypeEnum.TV)
             {

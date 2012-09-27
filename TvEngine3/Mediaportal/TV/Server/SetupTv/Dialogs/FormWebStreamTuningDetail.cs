@@ -34,8 +34,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       if (TuningDetail != null)
       {
-        edStreamURL.Text = TuningDetail.url;
-        nudStreamBitrate.Value = TuningDetail.bitrate;
+        edStreamURL.Text = TuningDetail.Url;
+        nudStreamBitrate.Value = TuningDetail.Bitrate;
       }
       else
       {
@@ -69,9 +69,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private void UpdateTuningDetail()
     {
-      TuningDetail.channelType = 5;
-      TuningDetail.url = edStreamURL.Text;
-      TuningDetail.bitrate = (int)nudStreamBitrate.Value;
+      TuningDetail.ChannelType = 5;
+      TuningDetail.Url = edStreamURL.Text;
+      TuningDetail.Bitrate = (int)nudStreamBitrate.Value;
     }
 
     private bool ValidateInput()

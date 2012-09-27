@@ -1418,7 +1418,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         {
           try
           {
-            currentDetail.pmtPid = pmtPid;            
+            currentDetail.PmtPid = pmtPid;            
             ChannelManagement.SaveTuningDetail(currentDetail);
             Log.Debug("Updated PMT Pid to {0:X}!", pmtPid);
           }

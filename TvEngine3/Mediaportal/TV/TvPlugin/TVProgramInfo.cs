@@ -687,7 +687,7 @@ namespace Mediaportal.TV.TvPlugin
         IList<TuningDetail> details = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(CurrentProgram.IdChannel).TuningDetails;
         foreach (TuningDetail detail in details)
         {
-          if (detail.channelType == 0)
+          if (detail.ChannelType == 0)
           {
             btnQuality.Disabled = false;
             break;

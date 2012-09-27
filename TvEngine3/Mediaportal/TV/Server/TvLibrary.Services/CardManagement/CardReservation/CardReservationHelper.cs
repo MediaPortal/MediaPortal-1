@@ -257,7 +257,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
         {
           TuningDetail currentDVBtuningDetail = ChannelManagement.GetTuningDetail(currentDVBchannel);
           TuningDetail userDVBtuningDetail = ChannelManagement.GetTuningDetail(userDVBchannel);
-          isUserOnSameChannel = (currentDVBtuningDetail != null && currentDVBtuningDetail.idChannel == userDVBtuningDetail.idChannel);
+          isUserOnSameChannel = (currentDVBtuningDetail != null && currentDVBtuningDetail.IdChannel == userDVBtuningDetail.IdChannel);
         }        
       }
       return isUserOnSameChannel;

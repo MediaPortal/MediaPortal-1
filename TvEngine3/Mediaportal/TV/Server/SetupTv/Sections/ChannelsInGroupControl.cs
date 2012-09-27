@@ -141,11 +141,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IList<TuningDetail> tuningDetails = channel.TuningDetails;
       foreach (TuningDetail detail in tuningDetails)
       {
-        if (detail.freeToAir)
+        if (detail.FreeToAir)
         {
           hasFta = true;
         }
-        if (!detail.freeToAir)
+        if (!detail.FreeToAir)
         {
           hasScrambled = true;
         }
@@ -173,7 +173,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IList<TuningDetail> details = channel.TuningDetails;
       if (details.Count > 0)
       {
-        item.SubItems.Add(details[0].channelNumber.ToString());
+        item.SubItems.Add(details[0].ChannelNumber.ToString());
       }
       return item;
     }

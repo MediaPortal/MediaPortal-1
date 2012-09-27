@@ -34,14 +34,14 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       if (TuningDetail != null)
       {
-        textBoxDVBIPChannel.Text = TuningDetail.channelNumber.ToString();
-        textBoxDVBIPUrl.Text = TuningDetail.url;
-        textBoxDVBIPNetworkId.Text = TuningDetail.networkId.ToString();
-        textBoxDVBIPTransportId.Text = TuningDetail.transportId.ToString();
-        textBoxDVBIPServiceId.Text = TuningDetail.serviceId.ToString();
-        textBoxDVBIPPmtPid.Text = TuningDetail.pmtPid.ToString();
-        textBoxDVBIPProvider.Text = TuningDetail.provider;
-        checkBoxDVBIPfta.Checked = TuningDetail.freeToAir;
+        textBoxDVBIPChannel.Text = TuningDetail.ChannelNumber.ToString();
+        textBoxDVBIPUrl.Text = TuningDetail.Url;
+        textBoxDVBIPNetworkId.Text = TuningDetail.NetworkId.ToString();
+        textBoxDVBIPTransportId.Text = TuningDetail.TransportId.ToString();
+        textBoxDVBIPServiceId.Text = TuningDetail.ServiceId.ToString();
+        textBoxDVBIPPmtPid.Text = TuningDetail.PmtPid.ToString();
+        textBoxDVBIPProvider.Text = TuningDetail.Provider;
+        checkBoxDVBIPfta.Checked = TuningDetail.FreeToAir;
       }
       else
       {
@@ -72,15 +72,15 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private void UpdateTuningDetail()
     {
-      TuningDetail.channelType = 7;
-      TuningDetail.channelNumber = Int32.Parse(textBoxDVBIPChannel.Text);
-      TuningDetail.url = textBoxDVBIPUrl.Text;
-      TuningDetail.networkId = Int32.Parse(textBoxDVBIPNetworkId.Text);
-      TuningDetail.transportId = Int32.Parse(textBoxDVBIPTransportId.Text);
-      TuningDetail.serviceId = Int32.Parse(textBoxDVBIPServiceId.Text);
-      TuningDetail.pmtPid = Int32.Parse(textBoxDVBIPPmtPid.Text);
-      TuningDetail.provider = textBoxDVBIPProvider.Text;
-      TuningDetail.freeToAir = checkBoxDVBIPfta.Checked;
+      TuningDetail.ChannelType = 7;
+      TuningDetail.ChannelNumber = Int32.Parse(textBoxDVBIPChannel.Text);
+      TuningDetail.Url = textBoxDVBIPUrl.Text;
+      TuningDetail.NetworkId = Int32.Parse(textBoxDVBIPNetworkId.Text);
+      TuningDetail.TransportId = Int32.Parse(textBoxDVBIPTransportId.Text);
+      TuningDetail.ServiceId = Int32.Parse(textBoxDVBIPServiceId.Text);
+      TuningDetail.PmtPid = Int32.Parse(textBoxDVBIPPmtPid.Text);
+      TuningDetail.Provider = textBoxDVBIPProvider.Text;
+      TuningDetail.FreeToAir = checkBoxDVBIPfta.Checked;
     }
 
     private bool ValidateInput()

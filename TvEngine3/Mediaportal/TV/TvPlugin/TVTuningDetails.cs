@@ -72,35 +72,35 @@ namespace Mediaportal.TV.TvPlugin
             case CardType.Analog:
               foreach (TuningDetail t in details)
               {
-                if (t.channelType == 0)
+                if (t.ChannelType == 0)
                   detail = t;
               }
               break;
             case CardType.Atsc:
               foreach (TuningDetail t in details)
               {
-                if (t.channelType == 1)
+                if (t.ChannelType == 1)
                   detail = t;
               }
               break;
             case CardType.DvbC:
               foreach (TuningDetail t in details)
               {
-                if (t.channelType == 2)
+                if (t.ChannelType == 2)
                   detail = t;
               }
               break;
             case CardType.DvbS:
               foreach (TuningDetail t in details)
               {
-                if (t.channelType == 3)
+                if (t.ChannelType == 3)
                   detail = t;
               }
               break;
             case CardType.DvbT:
               foreach (TuningDetail t in details)
               {
-                if (t.channelType == 4)
+                if (t.ChannelType == 4)
                   detail = t;
               }
               break;
@@ -108,9 +108,9 @@ namespace Mediaportal.TV.TvPlugin
               detail = details[0];
               break;
           }
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.Band", detail.band.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.BandWidth", detail.bandwidth.ToString());
-          switch (detail.channelType)
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.Band", detail.Band.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.BandWidth", detail.Bandwidth.ToString());
+          switch (detail.ChannelType)
           {
             case 0:
               GUIPropertyManager.SetProperty("#TV.TuningDetails.channelType", "Analog");
@@ -146,18 +146,18 @@ namespace Mediaportal.TV.TvPlugin
 		  
           videoPid = videoStream.Pid.ToString() + " (" + videoStream.StreamType + ")";
 
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.CountryId", detail.countryId.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.FreeToAir", detail.freeToAir.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.Frequency", detail.frequency.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.InnerFecRate", detail.innerFecRate.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.Modulation", detail.modulation.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.NetworkId", detail.networkId.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.PmtPid", detail.pmtPid.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.Polarisation", detail.polarisation.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.Provider", detail.provider);
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.ServiceId", detail.serviceId.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.SymbolRate", detail.symbolrate.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.TransportId", detail.transportId.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.CountryId", detail.CountryId.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.FreeToAir", detail.FreeToAir.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.Frequency", detail.Frequency.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.InnerFecRate", detail.InnerFecRate.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.Modulation", detail.Modulation.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.NetworkId", detail.NetworkId.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.PmtPid", detail.PmtPid.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.Polarisation", detail.Polarisation.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.Provider", detail.Provider);
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.ServiceId", detail.ServiceId.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.SymbolRate", detail.Symbolrate.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.TransportId", detail.TransportId.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.PcrPid", videoStream.PcrPid.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.VideoPid", videoPid);
           GUIPropertyManager.SetProperty("#TV.TuningDetails.AudioPid", audioPids);

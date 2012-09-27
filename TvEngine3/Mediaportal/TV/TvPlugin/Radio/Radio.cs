@@ -705,13 +705,13 @@ namespace Mediaportal.TV.TvPlugin.Radio
           {
             if (bAscending)
             {
-              if (detail1.bitrate > detail2.bitrate)
+              if (detail1.Bitrate > detail2.Bitrate)
               {
                 return 1;
               }
               return -1;
             }
-            if (detail2.bitrate > detail1.bitrate)
+            if (detail2.Bitrate > detail1.Bitrate)
             {
               return 1;
             }
@@ -786,10 +786,10 @@ namespace Mediaportal.TV.TvPlugin.Radio
       TuningDetail detail = details[0];
       if (channel.IsWebstream())
       {
-        return detail.url;
+        return detail.Url;
       }
       {
-        string fileName = String.Format("{0}.radio", detail.frequency);
+        string fileName = String.Format("{0}.radio", detail.Frequency);
         return fileName;
       }
     }

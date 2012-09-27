@@ -144,7 +144,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        var query = channelRepository.GetQuery<Channel>(c => c.TuningDetails.Any(t => t.networkId == networkId && t.transportId == transportId && t.serviceId == serviceId));
+        var query = channelRepository.GetQuery<Channel>(c => c.TuningDetails.Any(t => t.NetworkId == networkId && t.TransportId == transportId && t.ServiceId == serviceId));
         return channelRepository.IncludeAllRelations(query).FirstOrDefault();
       }     
     }
@@ -180,21 +180,21 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       int channelType = GetChannelType(dvbChannel);
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        var query = channelRepository.GetQuery<TuningDetail>(t => t.channelType == channelType);        
+        var query = channelRepository.GetQuery<TuningDetail>(t => t.ChannelType == channelType);        
 
         if ((tuningDetailSearchEnum.HasFlag(TuningDetailSearchEnum.NetworkId)))
         {
-          query = query.Where(t => t.networkId == dvbChannel.NetworkId);
+          query = query.Where(t => t.NetworkId == dvbChannel.NetworkId);
         }
 
         if ((tuningDetailSearchEnum.HasFlag(TuningDetailSearchEnum.ServiceId)))
         {
-          query = query.Where(t => t.serviceId == dvbChannel.ServiceId);
+          query = query.Where(t => t.ServiceId == dvbChannel.ServiceId);
         }
 
         if ((tuningDetailSearchEnum.HasFlag(TuningDetailSearchEnum.TransportId)))
         {
-          query = query.Where(t => t.transportId == dvbChannel.TransportId);
+          query = query.Where(t => t.TransportId == dvbChannel.TransportId);
         }
                
         query = channelRepository.IncludeAllRelations(query);
@@ -238,101 +238,101 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static IChannel GetTuningChannel(TuningDetail detail)
     {
-      switch (detail.channelType)
+      switch (detail.ChannelType)
       {
         case 0: //AnalogChannel
           AnalogChannel analogChannel = new AnalogChannel();
-          analogChannel.ChannelNumber = detail.channelNumber;
+          analogChannel.ChannelNumber = detail.ChannelNumber;
           CountryCollection collection = new CountryCollection();
-          analogChannel.Country = collection.Countries[detail.countryId];
-          analogChannel.Frequency = detail.frequency;
-          analogChannel.MediaType = (MediaTypeEnum) detail.mediaType;
-          analogChannel.Name = detail.name;
-          analogChannel.TunerSource = (TunerInputType)detail.tuningSource;
-          analogChannel.VideoSource = (AnalogChannel.VideoInputType)detail.videoSource;
-          analogChannel.AudioSource = (AnalogChannel.AudioInputType)detail.audioSource;
+          analogChannel.Country = collection.Countries[detail.CountryId];
+          analogChannel.Frequency = detail.Frequency;
+          analogChannel.MediaType = (MediaTypeEnum) detail.MediaType;
+          analogChannel.Name = detail.Name;
+          analogChannel.TunerSource = (TunerInputType)detail.TuningSource;
+          analogChannel.VideoSource = (AnalogChannel.VideoInputType)detail.VideoSource;
+          analogChannel.AudioSource = (AnalogChannel.AudioInputType)detail.AudioSource;
           return analogChannel;
         case 1: //ATSCChannel
           ATSCChannel atscChannel = new ATSCChannel();
-          atscChannel.MajorChannel = detail.majorChannel;
-          atscChannel.MinorChannel = detail.minorChannel;
-          atscChannel.PhysicalChannel = detail.channelNumber;
-          atscChannel.FreeToAir = detail.freeToAir;
-          atscChannel.Frequency = detail.frequency;
-          atscChannel.MediaType = (MediaTypeEnum)detail.mediaType;
-          atscChannel.Name = detail.name;
-          atscChannel.NetworkId = detail.networkId;
-          atscChannel.PmtPid = detail.pmtPid;
-          atscChannel.Provider = detail.provider;
-          atscChannel.ServiceId = detail.serviceId;
+          atscChannel.MajorChannel = detail.MajorChannel;
+          atscChannel.MinorChannel = detail.MinorChannel;
+          atscChannel.PhysicalChannel = detail.ChannelNumber;
+          atscChannel.FreeToAir = detail.FreeToAir;
+          atscChannel.Frequency = detail.Frequency;
+          atscChannel.MediaType = (MediaTypeEnum)detail.MediaType;
+          atscChannel.Name = detail.Name;
+          atscChannel.NetworkId = detail.NetworkId;
+          atscChannel.PmtPid = detail.PmtPid;
+          atscChannel.Provider = detail.Provider;
+          atscChannel.ServiceId = detail.ServiceId;
           //atscChannel.SymbolRate = detail.Symbolrate;
-          atscChannel.TransportId = detail.transportId;
-          atscChannel.ModulationType = (ModulationType)detail.modulation;
+          atscChannel.TransportId = detail.TransportId;
+          atscChannel.ModulationType = (ModulationType)detail.Modulation;
           return atscChannel;
         case 2: //DVBCChannel
           DVBCChannel dvbcChannel = new DVBCChannel();
-          dvbcChannel.ModulationType = (ModulationType)detail.modulation;
-          dvbcChannel.FreeToAir = detail.freeToAir;
-          dvbcChannel.Frequency = detail.frequency;
-          dvbcChannel.MediaType = (MediaTypeEnum)detail.mediaType;
-          dvbcChannel.Name = detail.name;
-          dvbcChannel.NetworkId = detail.networkId;
-          dvbcChannel.PmtPid = detail.pmtPid;
-          dvbcChannel.Provider = detail.provider;
-          dvbcChannel.ServiceId = detail.serviceId;
-          dvbcChannel.SymbolRate = detail.symbolrate;
-          dvbcChannel.TransportId = detail.transportId;
-          dvbcChannel.LogicalChannelNumber = detail.channelNumber;
+          dvbcChannel.ModulationType = (ModulationType)detail.Modulation;
+          dvbcChannel.FreeToAir = detail.FreeToAir;
+          dvbcChannel.Frequency = detail.Frequency;
+          dvbcChannel.MediaType = (MediaTypeEnum)detail.MediaType;
+          dvbcChannel.Name = detail.Name;
+          dvbcChannel.NetworkId = detail.NetworkId;
+          dvbcChannel.PmtPid = detail.PmtPid;
+          dvbcChannel.Provider = detail.Provider;
+          dvbcChannel.ServiceId = detail.ServiceId;
+          dvbcChannel.SymbolRate = detail.Symbolrate;
+          dvbcChannel.TransportId = detail.TransportId;
+          dvbcChannel.LogicalChannelNumber = detail.ChannelNumber;
           return dvbcChannel;
         case 3: //DVBSChannel
           DVBSChannel dvbsChannel = new DVBSChannel();
-          dvbsChannel.DisEqc = (DisEqcType)detail.diseqc;
-          dvbsChannel.Polarisation = (Polarisation)detail.polarisation;
-          dvbsChannel.SwitchingFrequency = detail.switchingFrequency;
-          dvbsChannel.FreeToAir = detail.freeToAir;
-          dvbsChannel.Frequency = detail.frequency;
-          dvbsChannel.MediaType = (MediaTypeEnum)detail.mediaType;
-          dvbsChannel.Name = detail.name;
-          dvbsChannel.NetworkId = detail.networkId;
-          dvbsChannel.PmtPid = detail.pmtPid;
-          dvbsChannel.Provider = detail.provider;
-          dvbsChannel.ServiceId = detail.serviceId;
-          dvbsChannel.SymbolRate = detail.symbolrate;
-          dvbsChannel.TransportId = detail.transportId;
-          dvbsChannel.BandType = (BandType)detail.band;
-          dvbsChannel.SatelliteIndex = detail.satIndex;
-          dvbsChannel.ModulationType = (ModulationType)detail.modulation;
-          dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)detail.innerFecRate;
-          dvbsChannel.Pilot = (Pilot)detail.pilot;
-          dvbsChannel.Rolloff = (RollOff)detail.rollOff;
-          dvbsChannel.LogicalChannelNumber = detail.channelNumber;
+          dvbsChannel.DisEqc = (DisEqcType)detail.DiSEqC;
+          dvbsChannel.Polarisation = (Polarisation)detail.Polarisation;
+          dvbsChannel.SwitchingFrequency = detail.SwitchingFrequency;
+          dvbsChannel.FreeToAir = detail.FreeToAir;
+          dvbsChannel.Frequency = detail.Frequency;
+          dvbsChannel.MediaType = (MediaTypeEnum)detail.MediaType;
+          dvbsChannel.Name = detail.Name;
+          dvbsChannel.NetworkId = detail.NetworkId;
+          dvbsChannel.PmtPid = detail.PmtPid;
+          dvbsChannel.Provider = detail.Provider;
+          dvbsChannel.ServiceId = detail.ServiceId;
+          dvbsChannel.SymbolRate = detail.Symbolrate;
+          dvbsChannel.TransportId = detail.TransportId;
+          dvbsChannel.BandType = (BandType)detail.Band;
+          dvbsChannel.SatelliteIndex = detail.SatIndex;
+          dvbsChannel.ModulationType = (ModulationType)detail.Modulation;
+          dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)detail.InnerFecRate;
+          dvbsChannel.Pilot = (Pilot)detail.Pilot;
+          dvbsChannel.Rolloff = (RollOff)detail.RollOff;
+          dvbsChannel.LogicalChannelNumber = detail.ChannelNumber;
           return dvbsChannel;
         case 4: //DVBTChannel
           DVBTChannel dvbtChannel = new DVBTChannel();
-          dvbtChannel.BandWidth = detail.bandwidth;
-          dvbtChannel.FreeToAir = detail.freeToAir;
-          dvbtChannel.Frequency = detail.frequency;
-          dvbtChannel.MediaType = (MediaTypeEnum)detail.mediaType;
-          dvbtChannel.Name = detail.name;
-          dvbtChannel.NetworkId = detail.networkId;
-          dvbtChannel.PmtPid = detail.pmtPid;
-          dvbtChannel.Provider = detail.provider;
-          dvbtChannel.ServiceId = detail.serviceId;
-          dvbtChannel.TransportId = detail.transportId;
-          dvbtChannel.LogicalChannelNumber = detail.channelNumber;
+          dvbtChannel.BandWidth = detail.Bandwidth;
+          dvbtChannel.FreeToAir = detail.FreeToAir;
+          dvbtChannel.Frequency = detail.Frequency;
+          dvbtChannel.MediaType = (MediaTypeEnum)detail.MediaType;
+          dvbtChannel.Name = detail.Name;
+          dvbtChannel.NetworkId = detail.NetworkId;
+          dvbtChannel.PmtPid = detail.PmtPid;
+          dvbtChannel.Provider = detail.Provider;
+          dvbtChannel.ServiceId = detail.ServiceId;
+          dvbtChannel.TransportId = detail.TransportId;
+          dvbtChannel.LogicalChannelNumber = detail.ChannelNumber;
           return dvbtChannel;
         case 7: //DVBIPChannel
           DVBIPChannel dvbipChannel = new DVBIPChannel();
-          dvbipChannel.FreeToAir = detail.freeToAir;
-          dvbipChannel.MediaType = (MediaTypeEnum)detail.mediaType;
-          dvbipChannel.Name = detail.name;
-          dvbipChannel.NetworkId = detail.networkId;
-          dvbipChannel.PmtPid = detail.pmtPid;
-          dvbipChannel.Provider = detail.provider;
-          dvbipChannel.ServiceId = detail.serviceId;
-          dvbipChannel.TransportId = detail.transportId;
-          dvbipChannel.LogicalChannelNumber = detail.channelNumber;
-          dvbipChannel.Url = detail.url;
+          dvbipChannel.FreeToAir = detail.FreeToAir;
+          dvbipChannel.MediaType = (MediaTypeEnum)detail.MediaType;
+          dvbipChannel.Name = detail.Name;
+          dvbipChannel.NetworkId = detail.NetworkId;
+          dvbipChannel.PmtPid = detail.PmtPid;
+          dvbipChannel.Provider = detail.Provider;
+          dvbipChannel.ServiceId = detail.ServiceId;
+          dvbipChannel.TransportId = detail.TransportId;
+          dvbipChannel.LogicalChannelNumber = detail.ChannelNumber;
+          dvbipChannel.Url = detail.Url;
           return dvbipChannel;
       }
       return null;
@@ -375,7 +375,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        TuningDetail tuningDetail = channelRepository.FindOne<TuningDetail>(t => t.channelType == channelType);
+        TuningDetail tuningDetail = channelRepository.FindOne<TuningDetail>(t => t.ChannelType == channelType);
 
         if (tuningDetail != null)
         {
@@ -443,7 +443,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       int channelType = GetChannelType(dvbChannel);
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        var query = channelRepository.GetQuery<TuningDetail>(t => t.channelType == channelType && t.url == url);
+        var query = channelRepository.GetQuery<TuningDetail>(t => t.ChannelType == channelType && t.Url == url);
         query = channelRepository.IncludeAllRelations(query);
         return query.FirstOrDefault();
       }
@@ -453,7 +453,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       TuningDetail tuningDetail = new TuningDetail();
       TuningDetail detail = UpdateTuningDetailWithChannelData(idChannel, channel, tuningDetail);
-      tuningDetail.idChannel = idChannel;
+      tuningDetail.IdChannel = idChannel;
       SaveTuningDetail(detail);  
     }
     public static void UpdateTuningDetail(int idChannel, int idTuning, IChannel channel)
@@ -461,7 +461,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        var query = channelRepository.GetQuery<TuningDetail>(t => t.idTuning == idTuning && t.idChannel == idChannel);        
+        var query = channelRepository.GetQuery<TuningDetail>(t => t.IdTuning == idTuning && t.IdChannel == idChannel);        
         TuningDetail tuningDetail = query.FirstOrDefault();
 
         TuningDetail detail = UpdateTuningDetailWithChannelData(idChannel, channel, tuningDetail);        
@@ -583,37 +583,37 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         freeToAir = dvbChannel.FreeToAir;
       }
 
-      tuningDetail.name = channelName;      
-      tuningDetail.provider = provider;
-      tuningDetail.channelType = channelType;
-      tuningDetail.channelNumber = channelNumber;
-      tuningDetail.frequency = (int)channelFrequency;
-      tuningDetail.countryId = country;
-      tuningDetail.mediaType = (int) mediaType;
-      tuningDetail.networkId = networkId;
-      tuningDetail.transportId = transportId;
-      tuningDetail.serviceId = serviceId;
-      tuningDetail.pmtPid = pmtPid;
-      tuningDetail.freeToAir = freeToAir;
-      tuningDetail.modulation = modulation;
-      tuningDetail.polarisation = polarisation;
-      tuningDetail.symbolrate = symbolRate;
-      tuningDetail.diseqc = diseqc;
-      tuningDetail.switchingFrequency = switchFrequency;
-      tuningDetail.bandwidth = bandwidth;
-      tuningDetail.majorChannel = majorChannel;
-      tuningDetail.minorChannel = minorChannel;
-      tuningDetail.videoSource = videoInputType;
-      tuningDetail.audioSource = audioInputType;
-      tuningDetail.isVCRSignal = isVCRSignal;
-      tuningDetail.tuningSource = tunerSource;
-      tuningDetail.band = band;
-      tuningDetail.satIndex = satIndex;
-      tuningDetail.innerFecRate = innerFecRate;
-      tuningDetail.pilot = pilot;
-      tuningDetail.rollOff = rollOff;
-      tuningDetail.url = url;
-      tuningDetail.bitrate = 0;      
+      tuningDetail.Name = channelName;      
+      tuningDetail.Provider = provider;
+      tuningDetail.ChannelType = channelType;
+      tuningDetail.ChannelNumber = channelNumber;
+      tuningDetail.Frequency = (int)channelFrequency;
+      tuningDetail.CountryId = country;
+      tuningDetail.MediaType = (int) mediaType;
+      tuningDetail.NetworkId = networkId;
+      tuningDetail.TransportId = transportId;
+      tuningDetail.ServiceId = serviceId;
+      tuningDetail.PmtPid = pmtPid;
+      tuningDetail.FreeToAir = freeToAir;
+      tuningDetail.Modulation = modulation;
+      tuningDetail.Polarisation = polarisation;
+      tuningDetail.Symbolrate = symbolRate;
+      tuningDetail.DiSEqC = diseqc;
+      tuningDetail.SwitchingFrequency = switchFrequency;
+      tuningDetail.Bandwidth = bandwidth;
+      tuningDetail.MajorChannel = majorChannel;
+      tuningDetail.MinorChannel = minorChannel;
+      tuningDetail.VideoSource = videoInputType;
+      tuningDetail.AudioSource = audioInputType;
+      tuningDetail.IsVCRSignal = isVCRSignal;
+      tuningDetail.TuningSource = tunerSource;
+      tuningDetail.Band = band;
+      tuningDetail.SatIndex = satIndex;
+      tuningDetail.InnerFecRate = innerFecRate;
+      tuningDetail.Pilot = pilot;
+      tuningDetail.RollOff = rollOff;
+      tuningDetail.Url = url;
+      tuningDetail.Bitrate = 0;      
 
       /*TuningDetail detail = TuningDetailFactory.CreateTuningDetail(idChannel, channelName, provider,
                                              channelType, channelNumber, (int)channelFrequency, country, mediaType,
@@ -632,7 +632,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        IQueryable<TuningDetail> query = channelRepository.GetQuery<TuningDetail>(t => t.name == channelName && t.channelType == channelType);
+        IQueryable<TuningDetail> query = channelRepository.GetQuery<TuningDetail>(t => t.Name == channelName && t.ChannelType == channelType);
         query = channelRepository.IncludeAllRelations(query);
         return query.ToList();
       }
@@ -659,7 +659,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository(true))
       {
-        channelRepository.Delete<TuningDetail>(p => p.idTuning == idTuning);
+        channelRepository.Delete<TuningDetail>(p => p.IdTuning == idTuning);
         channelRepository.UnitOfWork.SaveChanges();
       }
     }

@@ -572,7 +572,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
                   {
                     foreach (TuningDetail detail in tvGuidChannel.Channel.TuningDetails)
                     {
-                      tvGuidChannel.ChannelNum = detail.channelNumber;
+                      tvGuidChannel.ChannelNum = detail.ChannelNumber;
                     }
                   }
                 }
@@ -832,7 +832,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
         if (_showChannelNumber)
         {
           IList<TuningDetail> detail = chan.TuningDetails;
-          int channelNum = detail[0].channelNumber;
+          int channelNum = detail[0].ChannelNumber;
           GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.ChannelNumber", channelNum + "");
         }
         else
@@ -1530,7 +1530,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       {
         foreach (TuningDetail detail in channel.TuningDetails)
         {
-          channelNum = detail.channelNumber;
+          channelNum = detail.ChannelNumber;
         }
       }
       else
@@ -2747,14 +2747,14 @@ namespace Mediaportal.TV.TvPlugin.EPG
           Channel chan = _channelList[iCounter].Channel;
           foreach (TuningDetail detail in chan.TuningDetails)
           {
-            if (detail.channelNumber == searchChannel)
+            if (detail.ChannelNumber == searchChannel)
             {
               iChannelNr = iCounter;
               found = true;
             } //find closest channel number
-            else if (Math.Abs(detail.channelNumber - searchChannel) < channelDistance)
+            else if (Math.Abs(detail.ChannelNumber - searchChannel) < channelDistance)
             {
-              channelDistance = Math.Abs(detail.channelNumber - searchChannel);
+              channelDistance = Math.Abs(detail.ChannelNumber - searchChannel);
               iChannelNr = iCounter;
             }
           }

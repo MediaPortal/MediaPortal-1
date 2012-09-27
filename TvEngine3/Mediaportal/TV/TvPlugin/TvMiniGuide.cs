@@ -592,7 +592,7 @@ namespace Mediaportal.TV.TvPlugin
             {              
               foreach (TuningDetail detail in tvChannelList[i].TuningDetails)
               {
-                sb.Append(detail.channelNumber);
+                sb.Append(detail.ChannelNumber);
               }
             }
             else

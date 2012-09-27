@@ -1180,8 +1180,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           {
             //update tuning details...
             channel.SatelliteIndex = position; // context.Satellite.IdSatellite;
-            currentDetail.satIndex = position; //context.Satellite.IdSatellite;
-            ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbChannel.IdChannel, currentDetail.idTuning, channel);
+            currentDetail.SatIndex = position; //context.Satellite.IdSatellite;
+            ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbChannel.IdChannel, currentDetail.IdTuning, channel);
           }
           if (channel.MediaType == MediaTypeEnum.TV)
           {

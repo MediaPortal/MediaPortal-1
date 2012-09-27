@@ -664,11 +664,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           IList<TuningDetail> tuningDetails = ch.TuningDetails;
           foreach (TuningDetail detail in tuningDetails)
           {
-            if (detail.freeToAir)
+            if (detail.FreeToAir)
             {
               hasFta = true;
             }
-            if (!detail.freeToAir)
+            if (!detail.FreeToAir)
             {
               hasScrambled = true;
             }
@@ -706,11 +706,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           IList<TuningDetail> tuningDetails = ch.TuningDetails;
           foreach (TuningDetail detail in tuningDetails)
           {
-            if (detail.freeToAir)
+            if (detail.FreeToAir)
             {
               hasFta = true;
             }
-            if (!detail.freeToAir)
+            if (!detail.FreeToAir)
             {
               hasScrambled = true;
             }

@@ -35,21 +35,21 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       if (TuningDetail != null)
       {
-        textBoxFrequency.Text = TuningDetail.frequency.ToString();
-        textBoxNetworkId.Text = TuningDetail.networkId.ToString();
-        textBoxTransportId.Text = TuningDetail.transportId.ToString();
-        textBoxServiceId.Text = TuningDetail.serviceId.ToString();
-        textBoxSymbolRate.Text = TuningDetail.symbolrate.ToString();
-        textBoxDVBSChannel.Text = TuningDetail.channelNumber.ToString();
-        textBoxDVBSPmt.Text = TuningDetail.pmtPid.ToString();
-        textBoxDVBSProvider.Text = TuningDetail.provider;
-        checkBoxDVBSfta.Checked = TuningDetail.freeToAir;
-        comboBoxPol.SelectedIndex = TuningDetail.polarisation + 1;
-        comboBoxModulation.SelectedIndex = TuningDetail.modulation + 1;
-        comboBoxInnerFecRate.SelectedIndex = TuningDetail.innerFecRate + 1;
-        comboBoxPilot.SelectedIndex = TuningDetail.pilot + 1;
-        comboBoxRollOff.SelectedIndex = TuningDetail.rollOff + 1;
-        comboBoxDisEqc.SelectedIndex = TuningDetail.diseqc;
+        textBoxFrequency.Text = TuningDetail.Frequency.ToString();
+        textBoxNetworkId.Text = TuningDetail.NetworkId.ToString();
+        textBoxTransportId.Text = TuningDetail.TransportId.ToString();
+        textBoxServiceId.Text = TuningDetail.ServiceId.ToString();
+        textBoxSymbolRate.Text = TuningDetail.Symbolrate.ToString();
+        textBoxDVBSChannel.Text = TuningDetail.ChannelNumber.ToString();
+        textBoxDVBSPmt.Text = TuningDetail.PmtPid.ToString();
+        textBoxDVBSProvider.Text = TuningDetail.Provider;
+        checkBoxDVBSfta.Checked = TuningDetail.FreeToAir;
+        comboBoxPol.SelectedIndex = TuningDetail.Polarisation + 1;
+        comboBoxModulation.SelectedIndex = TuningDetail.Modulation + 1;
+        comboBoxInnerFecRate.SelectedIndex = TuningDetail.InnerFecRate + 1;
+        comboBoxPilot.SelectedIndex = TuningDetail.Pilot + 1;
+        comboBoxRollOff.SelectedIndex = TuningDetail.RollOff + 1;
+        comboBoxDisEqc.SelectedIndex = TuningDetail.DiSEqC;
       }
       else
       {
@@ -87,22 +87,22 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private void UpdateTuningDetail()
     {
-      TuningDetail.channelType = 3;
-      TuningDetail.frequency = Int32.Parse(textBoxFrequency.Text);
-      TuningDetail.networkId = Int32.Parse(textBoxNetworkId.Text);
-      TuningDetail.transportId = Int32.Parse(textBoxTransportId.Text);
-      TuningDetail.serviceId = Int32.Parse(textBoxServiceId.Text);
-      TuningDetail.symbolrate = Int32.Parse(textBoxSymbolRate.Text);
-      TuningDetail.polarisation = (int)(Polarisation)(comboBoxPol.SelectedIndex - 1);
-      TuningDetail.innerFecRate = (int)(BinaryConvolutionCodeRate)(comboBoxInnerFecRate.SelectedIndex - 1);
-      TuningDetail.pilot = (int)(Pilot)(comboBoxPilot.SelectedIndex - 1);
-      TuningDetail.rollOff = (int)(RollOff)(comboBoxRollOff.SelectedIndex - 1);
-      TuningDetail.modulation = (int)(ModulationType)(comboBoxModulation.SelectedIndex - 1);
-      TuningDetail.channelNumber = Int32.Parse(textBoxDVBSChannel.Text);
-      TuningDetail.pmtPid = Int32.Parse(textBoxDVBSPmt.Text);
-      TuningDetail.provider = textBoxDVBSProvider.Text;
-      TuningDetail.freeToAir = checkBoxDVBSfta.Checked;
-      TuningDetail.diseqc = comboBoxDisEqc.SelectedIndex;
+      TuningDetail.ChannelType = 3;
+      TuningDetail.Frequency = Int32.Parse(textBoxFrequency.Text);
+      TuningDetail.NetworkId = Int32.Parse(textBoxNetworkId.Text);
+      TuningDetail.TransportId = Int32.Parse(textBoxTransportId.Text);
+      TuningDetail.ServiceId = Int32.Parse(textBoxServiceId.Text);
+      TuningDetail.Symbolrate = Int32.Parse(textBoxSymbolRate.Text);
+      TuningDetail.Polarisation = (int)(Polarisation)(comboBoxPol.SelectedIndex - 1);
+      TuningDetail.InnerFecRate = (int)(BinaryConvolutionCodeRate)(comboBoxInnerFecRate.SelectedIndex - 1);
+      TuningDetail.Pilot = (int)(Pilot)(comboBoxPilot.SelectedIndex - 1);
+      TuningDetail.RollOff = (int)(RollOff)(comboBoxRollOff.SelectedIndex - 1);
+      TuningDetail.Modulation = (int)(ModulationType)(comboBoxModulation.SelectedIndex - 1);
+      TuningDetail.ChannelNumber = Int32.Parse(textBoxDVBSChannel.Text);
+      TuningDetail.PmtPid = Int32.Parse(textBoxDVBSPmt.Text);
+      TuningDetail.Provider = textBoxDVBSProvider.Text;
+      TuningDetail.FreeToAir = checkBoxDVBSfta.Checked;
+      TuningDetail.DiSEqC = comboBoxDisEqc.SelectedIndex;
     }
 
     private bool ValidateInput()

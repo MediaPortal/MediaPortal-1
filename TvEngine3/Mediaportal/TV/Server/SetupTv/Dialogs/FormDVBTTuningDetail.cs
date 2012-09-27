@@ -34,15 +34,15 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       if (TuningDetail != null)
       {
-        textBoxDVBTChannel.Text = TuningDetail.channelNumber.ToString();
-        textBoxDVBTfreq.Text = TuningDetail.frequency.ToString();
-        textBoxNetworkId.Text = TuningDetail.networkId.ToString();
-        textBoxTransportId.Text = TuningDetail.transportId.ToString();
-        textBoxServiceId.Text = TuningDetail.serviceId.ToString();
-        textBoxDVBTProvider.Text = TuningDetail.provider;
-        checkBoxDVBTfta.Checked = TuningDetail.freeToAir;
-        comboBoxBandWidth.SelectedIndex = TuningDetail.bandwidth == 7 ? 0 : 1;
-        textBoxPmt.Text = TuningDetail.pmtPid.ToString();
+        textBoxDVBTChannel.Text = TuningDetail.ChannelNumber.ToString();
+        textBoxDVBTfreq.Text = TuningDetail.Frequency.ToString();
+        textBoxNetworkId.Text = TuningDetail.NetworkId.ToString();
+        textBoxTransportId.Text = TuningDetail.TransportId.ToString();
+        textBoxServiceId.Text = TuningDetail.ServiceId.ToString();
+        textBoxDVBTProvider.Text = TuningDetail.Provider;
+        checkBoxDVBTfta.Checked = TuningDetail.FreeToAir;
+        comboBoxBandWidth.SelectedIndex = TuningDetail.Bandwidth == 7 ? 0 : 1;
+        textBoxPmt.Text = TuningDetail.PmtPid.ToString();
       }
       else
       {
@@ -74,16 +74,16 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private void UpdateTuningDetail()
     {
-      TuningDetail.channelType = 4;
-      TuningDetail.channelNumber = Int32.Parse(textBoxDVBTChannel.Text);
-      TuningDetail.frequency = Int32.Parse(textBoxDVBTfreq.Text);
-      TuningDetail.networkId = Int32.Parse(textBoxNetworkId.Text);
-      TuningDetail.transportId = Int32.Parse(textBoxTransportId.Text);
-      TuningDetail.serviceId = Int32.Parse(textBoxServiceId.Text);
-      TuningDetail.provider = textBoxDVBTProvider.Text;
-      TuningDetail.freeToAir = checkBoxDVBTfta.Checked;
-      TuningDetail.bandwidth = comboBoxBandWidth.SelectedIndex == 0 ? 7 : 8;
-      TuningDetail.pmtPid = Int32.Parse(textBoxPmt.Text);
+      TuningDetail.ChannelType = 4;
+      TuningDetail.ChannelNumber = Int32.Parse(textBoxDVBTChannel.Text);
+      TuningDetail.Frequency = Int32.Parse(textBoxDVBTfreq.Text);
+      TuningDetail.NetworkId = Int32.Parse(textBoxNetworkId.Text);
+      TuningDetail.TransportId = Int32.Parse(textBoxTransportId.Text);
+      TuningDetail.ServiceId = Int32.Parse(textBoxServiceId.Text);
+      TuningDetail.Provider = textBoxDVBTProvider.Text;
+      TuningDetail.FreeToAir = checkBoxDVBTfta.Checked;
+      TuningDetail.Bandwidth = comboBoxBandWidth.SelectedIndex == 0 ? 7 : 8;
+      TuningDetail.PmtPid = Int32.Parse(textBoxPmt.Text);
     }
 
     private bool ValidateInput()

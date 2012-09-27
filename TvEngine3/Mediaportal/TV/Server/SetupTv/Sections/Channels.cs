@@ -541,7 +541,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         bool hasFTA = false;
         foreach (TuningDetail tuningDetail in channel.TuningDetails)
         {
-          if (tuningDetail.freeToAir)
+          if (tuningDetail.FreeToAir)
           {
             hasFTA = true;
             break;
@@ -568,7 +568,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         bool hasFTA = false;
         foreach (TuningDetail tuningDetail in channel.TuningDetails)
         {
-          if (tuningDetail.freeToAir)
+          if (tuningDetail.FreeToAir)
           {
             hasFTA = true;
             break;
@@ -600,7 +600,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         IList<TuningDetail> details = channel.TuningDetails;
         if (details.Count > 0)
         {
-          channel.DisplayName = (details[0]).serviceId.ToString();
+          channel.DisplayName = (details[0]).ServiceId.ToString();
           channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
           channel.AcceptChanges();
           item.Tag = channel;
@@ -623,7 +623,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         IList<TuningDetail> details = channel.TuningDetails;
         if (details.Count > 0)
         {
-          channel.DisplayName = (details[0]).serviceId + " " + channel.DisplayName;
+          channel.DisplayName = (details[0]).ServiceId + " " + channel.DisplayName;
           channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
           channel.AcceptChanges();
           item.Tag = channel;
@@ -645,7 +645,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         IList<TuningDetail> details = channel.TuningDetails;
         foreach (TuningDetail detail in details)
         {
-          detail.channelNumber = detail.serviceId;
+          detail.ChannelNumber = detail.ServiceId;
           ServiceAgents.Instance.ChannelServiceAgent.SaveTuningDetail(detail);
           detail.AcceptChanges();
         }

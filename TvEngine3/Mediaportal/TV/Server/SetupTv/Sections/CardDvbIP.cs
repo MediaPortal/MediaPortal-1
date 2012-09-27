@@ -292,7 +292,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             else
             {
               //update tuning details...
-              ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbChannel.IdChannel, currentDetail.idTuning, channel);            
+              ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbChannel.IdChannel, currentDetail.IdTuning, channel);            
             }
 
             if (channel.MediaType == MediaTypeEnum.TV)

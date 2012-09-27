@@ -437,16 +437,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
         {
           return false;
         }
-        foreach (TuningDetail detail in dbchannel.TuningDetails.Where(detail => detail.channelType == 3))
+        foreach (TuningDetail detail in dbchannel.TuningDetails.Where(detail => detail.ChannelType == 3))
         {
-          dvbschannel.Frequency = detail.frequency;
-          dvbschannel.Polarisation = (Polarisation)detail.polarisation;
-          dvbschannel.ModulationType = (ModulationType)detail.modulation;
-          dvbschannel.SatelliteIndex = detail.satIndex;
-          dvbschannel.InnerFecRate = (BinaryConvolutionCodeRate)detail.innerFecRate;
-          dvbschannel.Pilot = (Pilot)detail.pilot;
-          dvbschannel.Rolloff = (RollOff)detail.rollOff;
-          dvbschannel.DisEqc = (DisEqcType)detail.diseqc;
+          dvbschannel.Frequency = detail.Frequency;
+          dvbschannel.Polarisation = (Polarisation)detail.Polarisation;
+          dvbschannel.ModulationType = (ModulationType)detail.Modulation;
+          dvbschannel.SatelliteIndex = detail.SatIndex;
+          dvbschannel.InnerFecRate = (BinaryConvolutionCodeRate)detail.InnerFecRate;
+          dvbschannel.Pilot = (Pilot)detail.Pilot;
+          dvbschannel.Rolloff = (RollOff)detail.RollOff;
+          dvbschannel.DisEqc = (DisEqcType)detail.DiSEqC;
         }
         return this.CurrentChannel.IsDifferentTransponder(dvbschannel);
       }

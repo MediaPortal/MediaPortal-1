@@ -229,7 +229,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         dlg.WaitForDisplay();
         foreach (TuningDetail detail in selectedChannel2.TuningDetails)
         {
-          detail.idChannel = selectedChannel.IdChannel;
+          detail.IdChannel = selectedChannel.IdChannel;
           ServiceAgents.Instance.ChannelServiceAgent.SaveTuningDetail(detail);
         }
         dlg.Close();
@@ -345,25 +345,25 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         switch (cardType)
         {
           case CardType.Analog:
-            if (tDetail.channelType == 0)
+            if (tDetail.ChannelType == 0)
               result.Add(tDetail);
             break;
           case CardType.Atsc:
-            if (tDetail.channelType == 1)
+            if (tDetail.ChannelType == 1)
               result.Add(tDetail);
             break;
           case CardType.DvbC:
-            if (tDetail.channelType == 2)
+            if (tDetail.ChannelType == 2)
               result.Add(tDetail);
             break;
           case CardType.DvbS:
-            if (tDetail.channelType == 3)
+            if (tDetail.ChannelType == 3)
             {
-              if (!enableDVBS2 && (tDetail.pilot > -1 || tDetail.rollOff > -1))
+              if (!enableDVBS2 && (tDetail.Pilot > -1 || tDetail.RollOff > -1))
               {
                 Log.Debug(String.Format(
                   "Imported channel {0} detected as DVB-S2. Skipped! \n Enable \"DVB-S2 tuning\" option in your TV-Card properties to be able to combine these channels.",
-                  tDetail.name));
+                  tDetail.Name));
               }
               else
               {
@@ -372,15 +372,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             }
             break;
           case CardType.DvbT:
-            if (tDetail.channelType == 4)
+            if (tDetail.ChannelType == 4)
               result.Add(tDetail);
             break;
           case CardType.DvbIP:
-            if (tDetail.channelType == 7)
+            if (tDetail.ChannelType == 7)
               result.Add(tDetail);
             break;
           case CardType.RadioWebStream:
-            if (tDetail.channelType == 5)
+            if (tDetail.ChannelType == 5)
               result.Add(tDetail);
             break;
           default:
@@ -396,11 +396,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       bool hasScrambled = false;
       foreach (TuningDetail detail in tuningDetails)
       {
-        if (detail.freeToAir)
+        if (detail.FreeToAir)
         {
           hasFta = true;
         }
-        if (!detail.freeToAir)
+        if (!detail.FreeToAir)
         {
           hasScrambled = true;
         }

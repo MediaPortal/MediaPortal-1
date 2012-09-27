@@ -218,7 +218,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
       {
         foreach (TuningDetail tun2 in tuningList2)
         {
-          if (tun1.frequency == tun2.frequency)
+          if (tun1.Frequency == tun2.Frequency)
           {
             return true;
           }
