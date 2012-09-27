@@ -23,7 +23,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Primitive Properties
     
         [DataMember]
-        public int idFavorite
+        public int IdFavorite
         {
             get { return _idFavorite; }
             set
@@ -42,7 +42,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idFavorite;
     
         [DataMember]
-        public int idProgram
+        public int IdProgram
         {
             get { return _idProgram; }
             set
@@ -57,7 +57,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idProgram;
     
         [DataMember]
-        public int priority
+        public int Priority
         {
             get { return _priority; }
             set
@@ -72,7 +72,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _priority;
     
         [DataMember]
-        public int timesWatched
+        public int TimesWatched
         {
             get { return _timesWatched; }
             set
