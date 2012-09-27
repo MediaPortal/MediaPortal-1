@@ -23,7 +23,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Primitive Properties
     
         [DataMember]
-        public int idEncoder
+        public int IdEncoder
         {
             get { return _idEncoder; }
             set
@@ -42,7 +42,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idEncoder;
     
         [DataMember]
-        public int priority
+        public int Priority
         {
             get { return _priority; }
             set
@@ -57,7 +57,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _priority;
     
         [DataMember]
-        public string name
+        public string Name
         {
             get { return _name; }
             set
@@ -72,7 +72,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _name;
     
         [DataMember]
-        public int type
+        public int Type
         {
             get { return _type; }
             set
@@ -87,7 +87,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _type;
     
         [DataMember]
-        public bool reusable
+        public bool Reusable
         {
             get { return _reusable; }
             set

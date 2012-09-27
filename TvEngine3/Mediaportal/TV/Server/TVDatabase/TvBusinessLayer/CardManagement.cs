@@ -160,7 +160,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (ICardRepository cardRepository = new CardRepository())
       {
-        return cardRepository.GetQuery<SoftwareEncoder>(s=>s.type == 0).OrderBy(s=>s.priority).ToList();                
+        return cardRepository.GetQuery<SoftwareEncoder>(s=>s.Type == 0).OrderBy(s=>s.Priority).ToList();                
       }
     }
 
@@ -168,7 +168,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (ICardRepository cardRepository = new CardRepository())
       {
-        return cardRepository.GetQuery<SoftwareEncoder>(s => s.type == 1).OrderBy(s => s.priority).ToList();
+        return cardRepository.GetQuery<SoftwareEncoder>(s => s.Type == 1).OrderBy(s => s.Priority).ToList();
       }
     }
 

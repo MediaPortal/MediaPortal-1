@@ -106,7 +106,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 
         // If the encoder is reusable then check
         // the existing usage against the cap.
-        if (dbEncoder.reusable)
+        if (dbEncoder.Reusable)
         {
           if (reuseLimit <= 0 || _encodersInUse[key] < reuseLimit)
           {

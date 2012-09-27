@@ -1523,7 +1523,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       {
         for (int x = 0; x < audioEncoders.Count; ++x)
         {
-          if (audioEncoders[x].name == devices1[i].Name)
+          if (audioEncoders[x].Name == devices1[i].Name)
           {
             audioDevices[x] = devices1[i];
             break;
@@ -1534,7 +1534,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       {
         for (int x = 0; x < audioEncoders.Count; ++x)
         {
-          if (audioEncoders[x].name == devices2[i].Name)
+          if (audioEncoders[x].Name == devices2[i].Name)
           {
             audioDevices[x] = devices2[i];
             break;
@@ -1632,7 +1632,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       {
         for (int x = 0; x < videoEncoders.Count; ++x)
         {
-          if (videoEncoders[x].name == devices1[i].Name)
+          if (videoEncoders[x].Name == devices1[i].Name)
           {
             videoDevices[x] = devices1[i];
             break;
@@ -1643,7 +1643,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       {
         for (int x = 0; x < videoEncoders.Count; ++x)
         {
-          if (videoEncoders[x].name == devices2[i].Name)
+          if (videoEncoders[x].Name == devices2[i].Name)
           {
             videoDevices[x] = devices2[i];
             break;

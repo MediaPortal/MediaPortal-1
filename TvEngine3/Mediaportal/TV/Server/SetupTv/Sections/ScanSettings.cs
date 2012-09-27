@@ -57,25 +57,25 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       public String Priority
       {
-        get { return _encoder.priority.ToString(); }
+        get { return _encoder.Priority.ToString(); }
         set
         {
-          _encoder.priority = Convert.ToInt32(value);
+          _encoder.Priority = Convert.ToInt32(value);
           NotifyPropertyChanged("Priority");
         }
       }
 
       public String Name
       {
-        get { return _encoder.name; }
+        get { return _encoder.Name; }
       }
 
       public bool Reusable
       {
-        get { return _encoder.reusable; }
+        get { return _encoder.Reusable; }
         set
         {
-          _encoder.reusable = value;
+          _encoder.Reusable = value;
           NotifyPropertyChanged("Reusable");
         }
       }
@@ -233,7 +233,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         found = false;
         DisplaySoftwareEncoder displayEncoder = new DisplaySoftwareEncoder(encoder);
-        if (devices1.Any(t => t.Name == encoder.name))
+        if (devices1.Any(t => t.Name == encoder.Name))
         {
           found = true;
           displayEncoder.Installed = "Yes";
@@ -242,7 +242,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         {
           for (int i = 0; i < devices3.Length; i++)
           {
-            if (devices3[i].Name == encoder.name)
+            if (devices3[i].Name == encoder.Name)
             {
               displayEncoder.Installed = "Yes";
               break;
@@ -261,7 +261,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         DisplaySoftwareEncoder displayEncoder = new DisplaySoftwareEncoder(encoder);
         for (int i = 0; i < devices2.Length; i++)
         {
-          if (devices2[i].Name == encoder.name)
+          if (devices2[i].Name == encoder.Name)
           {
             found = true;
             displayEncoder.Installed = "Yes";
@@ -272,7 +272,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         {
           for (int i = 0; i < devices3.Length; i++)
           {
-            if (devices3[i].Name == encoder.name)
+            if (devices3[i].Name == encoder.Name)
             {
               displayEncoder.Installed = "Yes";
               break;
