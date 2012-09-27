@@ -523,7 +523,8 @@ namespace MediaPortal.Video.Database
                 {
                   ArrayList values = new ArrayList();
                   bool error = false;
-                  values = VideoDatabase.ExecuteRuleSql(rule, "movieinfo.idMovie", out error);
+                  string errorMessage = string.Empty;
+                  values = VideoDatabase.ExecuteRuleSql(rule, "movieinfo.idMovie", out error, out errorMessage);
 
                   if (error)
                   {
@@ -874,7 +875,8 @@ namespace MediaPortal.Video.Database
                                   _imdbActor.IMDBActorID,
                                   _actorId);
       bool error = false;
-      VideoDatabase.ExecuteSql(sql, out error);
+      string errorMessage = string.Empty;
+      VideoDatabase.ExecuteSql(sql, out error, out errorMessage);
 
       // Keep user actor image
       bool userActorImage = false;
