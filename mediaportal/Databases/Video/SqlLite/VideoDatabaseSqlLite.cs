@@ -4316,10 +4316,11 @@ namespace MediaPortal.Video.Database
 
     #endregion
 
-    public void ExecuteSQL (string strSql, out bool error)
+    public void ExecuteSQL (string strSql, out bool error, out string errorMessage)
     {
       error = false;
-      
+      errorMessage = string.Empty;
+
       try
       {
         if (m_db == null)
@@ -4337,14 +4338,16 @@ namespace MediaPortal.Video.Database
       {
         Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         error = true;
+        errorMessage = ex.Message;
         Open();
       }
     }
 
-    public ArrayList ExecuteRuleSQL(string strSql, string fieldName, out bool error)
+    public ArrayList ExecuteRuleSQL(string strSql, string fieldName, out bool error, out string errorMessage)
     {
       ArrayList values = new ArrayList();
       error = false;
+      errorMessage = string.Empty;
 
       try
       {
@@ -4368,6 +4371,7 @@ namespace MediaPortal.Video.Database
       {
         Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         error = true;
+        errorMessage = ex.Message;
         Open();
       }
 
