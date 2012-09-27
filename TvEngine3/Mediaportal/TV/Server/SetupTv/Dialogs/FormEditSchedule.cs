@@ -282,13 +282,13 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       Enum.TryParse((string)mpComboBoxKeepMethods.SelectedItem, out enumKeepMethodType);
       var schedule = new RuleBasedSchedule
                        {
-                         scheduleName = mpTextBoxScheduleName.Text,
-                         maxAirings = int.MaxValue,
-                         priority = mpNumericTextBoxPriority.Value,
-                         keepMethod = (int) enumKeepMethodType,
-                         keepDate = dateTimePickerOnDate.MinDate,
-                         preRecordInterval = mpNumericTextBoxPreRec.Value,
-                         postRecordInterval = mpNumericTextBoxPostRec.Value
+                         ScheduleName = mpTextBoxScheduleName.Text,
+                         MaxAirings = int.MaxValue,
+                         Priority = mpNumericTextBoxPriority.Value,
+                         KeepMethod = (int) enumKeepMethodType,
+                         KeepDate = dateTimePickerOnDate.MinDate,
+                         PreRecordInterval = mpNumericTextBoxPreRec.Value,
+                         PostRecordInterval = mpNumericTextBoxPostRec.Value
                        };
 
       var rules = new ScheduleConditionList();
@@ -455,7 +455,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         rules.Add(onlyRecordNewTitlesCondition);
       }
 
-      schedule.rules = ScheduleConditionHelper.Serialize<ScheduleConditionList>(rules);      
+      schedule.Rules = ScheduleConditionHelper.Serialize<ScheduleConditionList>(rules);      
       ServiceAgents.Instance.ScheduleServiceAgent.SaveRuleBasedSchedule(schedule);
       Close();
     }
