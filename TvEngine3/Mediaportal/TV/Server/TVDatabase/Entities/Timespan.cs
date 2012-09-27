@@ -23,7 +23,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Primitive Properties
     
         [DataMember]
-        public int idTimespan
+        public int IdTimespan
         {
             get { return _idTimespan; }
             set
@@ -42,7 +42,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idTimespan;
     
         [DataMember]
-        public System.DateTime startTime
+        public System.DateTime StartTime
         {
             get { return _startTime; }
             set
@@ -57,7 +57,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private System.DateTime _startTime;
     
         [DataMember]
-        public System.DateTime endTime
+        public System.DateTime EndTime
         {
             get { return _endTime; }
             set
@@ -72,7 +72,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private System.DateTime _endTime;
     
         [DataMember]
-        public int dayOfWeek
+        public int DayOfWeek
         {
             get { return _dayOfWeek; }
             set
@@ -87,7 +87,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _dayOfWeek;
     
         [DataMember]
-        public int idKeyword
+        public int IdKeyword
         {
             get { return _idKeyword; }
             set
