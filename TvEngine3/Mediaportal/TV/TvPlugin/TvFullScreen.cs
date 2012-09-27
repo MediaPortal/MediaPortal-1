@@ -1005,7 +1005,7 @@ namespace Mediaportal.TV.TvPlugin
         Program prog = channel.CurrentProgram;
         IVirtualCard card;
         
-        if (ServiceAgents.Instance.ControllerServiceAgent.IsRecording(channel.Entity.idChannel, out card))
+        if (ServiceAgents.Instance.ControllerServiceAgent.IsRecording(channel.Entity.IdChannel, out card))
         {
           _dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
           _dlgYesNo.SetHeading(1449); // stop recording
@@ -1031,7 +1031,7 @@ namespace Mediaportal.TV.TvPlugin
           {
             return true;
           }
-          string logo = Utils.GetCoverArt(Thumbs.TVChannel, channel.Entity.displayName);
+          string logo = Utils.GetCoverArt(Thumbs.TVChannel, channel.Entity.DisplayName);
           dlgNotify.Reset();
           dlgNotify.ClearAll();
           dlgNotify.SetImage(logo);
@@ -1112,7 +1112,7 @@ namespace Mediaportal.TV.TvPlugin
           {
             return true;
           }
-          string logo = Utils.GetCoverArt(Thumbs.TVChannel, channel.Entity.displayName);
+          string logo = Utils.GetCoverArt(Thumbs.TVChannel, channel.Entity.DisplayName);
           dlgNotify.Reset();
           dlgNotify.ClearAll();
           dlgNotify.SetImage(logo);
@@ -1526,7 +1526,7 @@ namespace Mediaportal.TV.TvPlugin
       IList<ChannelLinkageMap> linkages;
       if (!g_Player.IsTVRecording)
       {        
-        linkages = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(TVHome.Navigator.Channel.Entity.idChannel).ChannelLinkMaps;        
+        linkages = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(TVHome.Navigator.Channel.Entity.IdChannel).ChannelLinkMaps;        
         if (linkages != null)
         {
           if (linkages.Count > 0)
@@ -1593,7 +1593,7 @@ namespace Mediaportal.TV.TvPlugin
       if (!g_Player.IsTVRecording)
       {
         IVirtualCard vc;
-        if (ServiceAgents.Instance.ControllerServiceAgent.IsRecording(TVHome.Navigator.Channel.Entity.idChannel, out vc))
+        if (ServiceAgents.Instance.ControllerServiceAgent.IsRecording(TVHome.Navigator.Channel.Entity.IdChannel, out vc))
         {
           dlg.AddLocalizedString(265); //stop rec.
         }
@@ -1696,7 +1696,7 @@ namespace Mediaportal.TV.TvPlugin
           break;
 
         case 200042: // Linked channels          
-          linkages = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(TVHome.Navigator.Channel.Entity.idChannel).ChannelLinkMaps;                  
+          linkages = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(TVHome.Navigator.Channel.Entity.IdChannel).ChannelLinkMaps;                  
           ShowLinkedChannelsMenu(linkages);
           break;
 
@@ -1962,7 +1962,7 @@ namespace Mediaportal.TV.TvPlugin
         return;
       }
       TVHome.Navigator.CheckChannelChange();
-      Program currentProgram = TVHome.Navigator.GetChannel(TVHome.Navigator.Channel.Entity.idChannel).CurrentProgram;
+      Program currentProgram = TVHome.Navigator.GetChannel(TVHome.Navigator.Channel.Entity.IdChannel).CurrentProgram;
 
       if (currentProgram == null)
       {
@@ -2143,7 +2143,7 @@ namespace Mediaportal.TV.TvPlugin
       foreach (ChannelLinkageMap map in linkages)
       {
         GUIListItem item = new GUIListItem(map.displayName);
-        if (map.idLinkedChannel == TVHome.Navigator.Channel.Entity.idChannel)
+        if (map.idLinkedChannel == TVHome.Navigator.Channel.Entity.IdChannel)
         {
           selected = counter;
         }
@@ -2317,7 +2317,7 @@ namespace Mediaportal.TV.TvPlugin
 
       if (!VideoRendererStatistics.IsVideoFound)
       {
-        if ((lastChannelWithNoSignal != TVHome.Navigator.Channel.Entity.idChannel) ||
+        if ((lastChannelWithNoSignal != TVHome.Navigator.Channel.Entity.IdChannel) ||
             (videoState != VideoRendererStatistics.VideoState))
         {
           if (!_zapOsdVisible)
@@ -2338,7 +2338,7 @@ namespace Mediaportal.TV.TvPlugin
                 message.Label = GUILocalizeStrings.Get(1036);
                 break;
             }
-            lastChannelWithNoSignal = TVHome.Navigator.Channel.Entity.idChannel;
+            lastChannelWithNoSignal = TVHome.Navigator.Channel.Entity.IdChannel;
             videoState = VideoRendererStatistics.VideoState;
             OnMessage(message);
           }
@@ -2472,7 +2472,7 @@ namespace Mediaportal.TV.TvPlugin
       // Set recorder status
       IVirtualCard card;
       
-      if (ServiceAgents.Instance.ControllerServiceAgent.IsRecording(TVHome.Navigator.Channel.Entity.idChannel, out card))
+      if (ServiceAgents.Instance.ControllerServiceAgent.IsRecording(TVHome.Navigator.Channel.Entity.IdChannel, out card))
       {
         ShowControl(GetID, (int)Control.REC_LOGO);
       }

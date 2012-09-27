@@ -276,10 +276,10 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                     // a guide channel can be mapped to multiple tvchannels
                     foreach (Channel ch in allChannels)
                     {
-                      if (ch.externalId == id)
+                      if (ch.ExternalId == id)
                       {
                         chan = ch;
-                        chan.externalId = id;
+                        chan.ExternalId = id;
                       }
 
                       if (chan == null)
@@ -289,16 +289,16 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                       }
 
                       ChannelPrograms newProgChan = new ChannelPrograms();
-                      newProgChan.Name = chan.displayName;
-                      newProgChan.externalId = chan.externalId;
+                      newProgChan.Name = chan.DisplayName;
+                      newProgChan.externalId = chan.ExternalId;
                       Programs.Add(newProgChan);
 
-                      Log.WriteFile("  channel#{0} xmlid:{1} name:{2} dbsid:{3}", iChannel, chan.externalId,
-                                    chan.displayName, chan.idChannel);
-                      if (!guideChannels.ContainsKey(chan.idChannel))
+                      Log.WriteFile("  channel#{0} xmlid:{1} name:{2} dbsid:{3}", iChannel, chan.ExternalId,
+                                    chan.DisplayName, chan.IdChannel);
+                      if (!guideChannels.ContainsKey(chan.IdChannel))
                       {
-                        guideChannels.Add(chan.idChannel, chan);
-                        dChannelPrograms.Add(chan.idChannel, newProgChan);
+                        guideChannels.Add(chan.IdChannel, chan);
+                        dChannelPrograms.Add(chan.IdChannel, newProgChan);
                       }
                     }
 
@@ -351,9 +351,9 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
             if (previousexternalId == null)
             {
               eidMappedChannels.Add(ch);
-              previousexternalId = ch.externalId;
+              previousexternalId = ch.ExternalId;
             }
-            else if (ch.externalId == previousexternalId)
+            else if (ch.ExternalId == previousexternalId)
             {
               eidMappedChannels.Add(ch);
             }
@@ -364,7 +364,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
               // new externalid, create a new List & add the channel to the new List
               eidMappedChannels = new List<Channel>();
               eidMappedChannels.Add(ch);
-              previousexternalId = ch.externalId;
+              previousexternalId = ch.ExternalId;
             }
 
             if (i == allChannels.Count - 1)
@@ -682,9 +682,9 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                       foreach (Channel chan in mappedChannels)
                       {
                         // get the channel program
-                        channelPrograms = dChannelPrograms[chan.idChannel];
+                        channelPrograms = dChannelPrograms[chan.IdChannel];
 
-                        if (chan.idChannel < 0)
+                        if (chan.IdChannel < 0)
                         {
                           continue;
                         }
@@ -708,7 +708,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                         episodeName = episodeName.Replace("  ", " ");
                     
                         var prg = new Program();
-                        prg.idChannel = chan.idChannel;
+                        prg.idChannel = chan.IdChannel;
                         prg.startTime = longtodate(startDate);
                         prg.endTime = longtodate(stopDate);
                         prg.title = title;
@@ -1195,7 +1195,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
       if (item1.idChannel != item2.idChannel)
       {
-        return String.Compare(item1.Channel.displayName, item2.Channel.displayName, true);
+        return String.Compare(item1.Channel.DisplayName, item2.Channel.DisplayName, true);
       }
       if (item1.startTime > item2.startTime) return 1;
       if (item1.startTime < item2.startTime) return -1;

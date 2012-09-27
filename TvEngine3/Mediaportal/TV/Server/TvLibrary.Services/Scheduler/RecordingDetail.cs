@@ -85,7 +85,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
         startTime = schedule.startTime;
       }
 
-      Program program = ProgramManagement.GetProgramAt(startTime, schedule.Channel.idChannel);
+      Program program = ProgramManagement.GetProgramAt(startTime, schedule.Channel.IdChannel);
       
       //no program? then treat this as a manual recording
       if (program == null)
@@ -273,7 +273,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       }
       
       string[] TagValues = {
-                             _schedule.Entity.Channel.displayName.Trim(),
+                             _schedule.Entity.Channel.DisplayName.Trim(),
                              Program.Entity.title.Trim(),
                              Program.Entity.episodeName.Trim(),
                              Program.Entity.seriesNum.Trim(),
@@ -332,7 +332,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       {
         DateTime dt = Program.Entity.startTime;
         fileName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}",
-                                 _schedule.Entity.Channel.displayName, Program.Entity.title,
+                                 _schedule.Entity.Channel.DisplayName, Program.Entity.title,
                                  dt.Year, dt.Month, dt.Day,
                                  dt.Hour,
                                  dt.Minute,

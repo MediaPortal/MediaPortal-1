@@ -560,7 +560,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
             {
               var tvGuidChannel = new GuideChannel {Channel = chan};
 
-              if (tvGuidChannel.Channel.visibleInGuide && IsChannelTypeCorrect(tvGuidChannel.Channel))
+              if (tvGuidChannel.Channel.VisibleInGuide && IsChannelTypeCorrect(tvGuidChannel.Channel))
               {
                 if (_showChannelNumber)
                 {
@@ -576,7 +576,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
                     }
                   }
                 }
-                tvGuidChannel.StrLogo = GetChannelLogo(tvGuidChannel.Channel.displayName);
+                tvGuidChannel.StrLogo = GetChannelLogo(tvGuidChannel.Channel.DisplayName);
                 _channelList.Add(tvGuidChannel);
               }
             }
@@ -626,7 +626,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
     protected bool IsRecordingNoEPG(Channel channel)
     {
       IVirtualCard vc;
-      ServiceAgents.Instance.ControllerServiceAgent.IsRecording(channel.idChannel, out vc);
+      ServiceAgents.Instance.ControllerServiceAgent.IsRecording(channel.IdChannel, out vc);
 
       if (vc != null)
       {
@@ -822,7 +822,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       {
         return;
       }
-      string strChannel = chan.displayName;
+      string strChannel = chan.DisplayName;
 
       if (!_singleChannelView)
       {
@@ -984,7 +984,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
         {
           Channel tvChan = _channelList[chan].Channel;
 
-          strLogo = GetChannelLogo(tvChan.displayName);
+          strLogo = GetChannelLogo(tvChan.DisplayName);
           var img = GetControl(iChannel + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
           if (img != null)
           {
@@ -992,7 +992,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
             {
               img.TexutureIcon = strLogo;
             }
-            img.Label1 = tvChan.displayName;
+            img.Label1 = tvChan.DisplayName;
             img.Data = tvChan;
             img.IsVisible = true;
           }
@@ -1003,7 +1003,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       var channelLabel = GetControl((int)Controls.SINGLE_CHANNEL_LABEL) as GUILabelControl;
       var channelImage = GetControl((int)Controls.SINGLE_CHANNEL_IMAGE) as GUIImage;
 
-      strLogo = GetChannelLogo(channel.displayName);
+      strLogo = GetChannelLogo(channel.DisplayName);
       if (channelImage == null)
       {
         if (strLogo.Length > 0)
@@ -1029,7 +1029,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
           channelLabel = new GUILabelControl(GetID, (int)Controls.SINGLE_CHANNEL_LABEL,
                                              channelImage.XPosition + 44,
                                              channelImage.YPosition + 10,
-                                             300, 40, "font16", channel.displayName, 4294967295, GUIControl.Alignment.Left,
+                                             300, 40, "font16", channel.DisplayName, 4294967295, GUIControl.Alignment.Left,
                                              GUIControl.VAlignment.Top,
                                              true, 0, 0, 0xFF000000);
         }
@@ -1045,7 +1045,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
       if (channelLabel != null)
       {
-        channelLabel.Label = channel.displayName;
+        channelLabel.Label = channel.DisplayName;
       }
       if (strLogo.Length > 0)
       {
@@ -1057,14 +1057,14 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
       if (channelLabel != null)
       {
-        channelLabel.Label = channel.displayName;
+        channelLabel.Label = channel.DisplayName;
       }
       if (_recalculateProgramOffset)
       {        
         DateTime dtStart = DateTime.Now;
         dtStart = dtStart.AddDays(-1);
         DateTime dtEnd = dtStart.AddDays(30);
-        _programs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByChannelAndStartEndTimes(channel.idChannel, dtStart, dtEnd).ToList();
+        _programs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByChannelAndStartEndTimes(channel.IdChannel, dtStart, dtEnd).ToList();
 
         _totalProgramCount = _programs.Count;
         if (_totalProgramCount == 0)
@@ -1152,7 +1152,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
           if (_programs.Count == 0)
           {
             program = new ProgramBLL(
-              ProgramFactory.CreateProgram(channel.idChannel, _viewingTime, _viewingTime, "-", string.Empty,
+              ProgramFactory.CreateProgram(channel.IdChannel, _viewingTime, _viewingTime, "-", string.Empty,
                                                    null,
                                                    ProgramState.None,
                                                    DateTime.MinValue, string.Empty, string.Empty, string.Empty,
@@ -1164,14 +1164,14 @@ namespace Mediaportal.TV.TvPlugin.EPG
             program = new ProgramBLL(_programs[_programs.Count - 1]);
             if (program.Entity.endTime.DayOfYear == _viewingTime.DayOfYear)
             {
-              program = new ProgramBLL(ProgramFactory.CreateProgram(channel.idChannel, program.Entity.endTime, program.Entity.endTime, "-", "-", null,
+              program = new ProgramBLL(ProgramFactory.CreateProgram(channel.IdChannel, program.Entity.endTime, program.Entity.endTime, "-", "-", null,
                                     ProgramState.None,
                                     DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1,
                                     string.Empty, -1));
             }
             else
             {
-              program = new ProgramBLL(ProgramFactory.CreateProgram(channel.idChannel, _viewingTime, _viewingTime, "-", "-", null,
+              program = new ProgramBLL(ProgramFactory.CreateProgram(channel.IdChannel, _viewingTime, _viewingTime, "-", "-", null,
                                     ProgramState.None,
                                     DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1,
                                     string.Empty, -1));
@@ -1547,11 +1547,11 @@ namespace Mediaportal.TV.TvPlugin.EPG
         }
         if (channelNum > 0 && _showChannelNumber)
         {
-          img.Label1 = channelNum + " " + channel.displayName;
+          img.Label1 = channelNum + " " + channel.DisplayName;
         }
         else
         {
-          img.Label1 = channel.displayName;
+          img.Label1 = channel.DisplayName;
         }
         img.Data = channel;
         img.IsVisible = true;
@@ -1559,9 +1559,9 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
 
       IList<ProgramBLL> programs = null;
-      if (mapPrograms.ContainsKey(channel.idChannel))
+      if (mapPrograms.ContainsKey(channel.IdChannel))
       {
-        programs = mapPrograms[channel.idChannel];
+        programs = mapPrograms[channel.IdChannel];
       }
 
       bool noEPG = (programs == null || programs.Count == 0);
@@ -1569,7 +1569,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       {
         DateTime dt = Utils.longtodate(iEnd);
         long iProgEnd = Utils.datetolong(dt);
-        var prog = ProgramFactory.CreateProgram(channel.idChannel, Utils.longtodate(iStart), Utils.longtodate(iProgEnd),
+        var prog = ProgramFactory.CreateProgram(channel.IdChannel, Utils.longtodate(iStart), Utils.longtodate(iProgEnd),
                                GUILocalizeStrings.Get(736), "", null, ProgramState.None, DateTime.MinValue,
                                string.Empty,
                                string.Empty, string.Empty, string.Empty, -1, string.Empty, -1);

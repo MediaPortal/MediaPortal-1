@@ -847,7 +847,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         IQueryable<Program> query = programRepository.GetQuery<Program>();
         query = programRepository.GetProgramsByDescription(query, searchCriteria, stringComparison);
-        query = query.Where(p => p.Channel.mediaType == (int)mediaType);
+        query = query.Where(p => p.Channel.MediaType == (int)mediaType);
         query = programRepository.IncludeAllRelations(query);
         return query.ToList();
       }
@@ -897,7 +897,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         IQueryable<Program> programsByTitle = programRepository.GetQuery<Program>();
         programsByTitle = programRepository.GetProgramsByTitle(programsByTitle, searchCriteria, stringComparisonEnum);
-        programsByTitle = programsByTitle.Where(p => p.Channel.mediaType == (int)mediaType);
+        programsByTitle = programsByTitle.Where(p => p.Channel.MediaType == (int)mediaType);
         programsByTitle = programRepository.IncludeAllRelations(programsByTitle);
         return programsByTitle.ToList();
       }
@@ -931,14 +931,14 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IProgramRepository programRepository = new ProgramRepository())
       {
-        IList<int> channelIds = channels.Select(channel => channel.idChannel).ToList();
-        var buildContainsExpression = programRepository.BuildContainsExpression<Channel, int>(e => e.idChannel,
+        IList<int> channelIds = channels.Select(channel => channel.IdChannel).ToList();
+        var buildContainsExpression = programRepository.BuildContainsExpression<Channel, int>(e => e.IdChannel,
                                                                                               channelIds);
 
         IQueryable<Program> query = programRepository.GetQuery<Program>(
           p => (
                programRepository.ObjectContext.Channels.Where(buildContainsExpression).Any(
-                 c => c.idChannel == p.idChannel)));
+                 c => c.IdChannel == p.idChannel)));
 
         return query.ToList();
       }
@@ -948,8 +948,8 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IProgramRepository programRepository = new ProgramRepository())
       {
-        IList<int> channelIds = channels.Select(channel => channel.idChannel).ToList();
-        var buildContainsExpression = programRepository.BuildContainsExpression<Channel, int>(e => e.idChannel,
+        IList<int> channelIds = channels.Select(channel => channel.IdChannel).ToList();
+        var buildContainsExpression = programRepository.BuildContainsExpression<Channel, int>(e => e.IdChannel,
                                                                                               channelIds);
 
         IQueryable<Program> query = programRepository.GetQuery<Program>(
@@ -958,7 +958,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
                (p.startTime <= startTime && p.endTime >= endTime)
                &&
                programRepository.ObjectContext.Channels.Where(buildContainsExpression).Any(
-                 c => c.idChannel == p.idChannel)).OrderBy(p => p.startTime).Include(p => p.ProgramCategory).Include(
+                 c => c.IdChannel == p.idChannel)).OrderBy(p => p.startTime).Include(p => p.ProgramCategory).Include(
                    p => p.Channel);
 
         IDictionary<int, IList<Program>> maps = new Dictionary<int, IList<Program>>();
@@ -982,7 +982,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         IQueryable<Program> query = programRepository.GetQuery<Program>();
         query = programRepository.GetProgramsByTitle(query, titleCriteria, stringComparisonTitle);
         query = programRepository.GetProgramsByCategory(query, categoryCriteriea, stringComparisonCategory);
-        query = query.Where(p => p.Channel.mediaType == (int)mediaType);
+        query = query.Where(p => p.Channel.MediaType == (int)mediaType);
         query = programRepository.IncludeAllRelations(query);
         return query.ToList();
       }

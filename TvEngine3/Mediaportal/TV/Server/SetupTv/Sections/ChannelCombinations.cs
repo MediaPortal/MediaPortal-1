@@ -140,12 +140,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           catch (Exception) {}
           if (channel == null)
             continue;
-          if (channel.mediaType != (decimal) _mediaTypeEnum)
+          if (channel.MediaType != (decimal) _mediaTypeEnum)
             continue;          
           bool enableDVBS2 = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + card.IdCard + "enabledvbs2", "false").value == "true");
           List<TuningDetail> tuningDetails = GetTuningDetailsByCardType(channel, cardType, enableDVBS2);
           int imageIndex = GetImageIndex(tuningDetails);
-          ListViewItem item = new ListViewItem(channel.displayName, imageIndex);
+          ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
           item.Tag = channel;
           items.Add(item);
         }
@@ -179,7 +179,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         dlg.WaitForDisplay();
         foreach (Channel channel in allChannels)
         {
-          if (channel.mediaType != (decimal)_mediaTypeEnum)
+          if (channel.MediaType != (decimal)_mediaTypeEnum)
             continue;
 
           IList<ChannelMap> list = channel.ChannelMaps;
@@ -188,13 +188,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             continue;
 
           Levenstein comparer = new Levenstein();
-          float result = comparer.getSimilarity(selectedChannel.displayName, channel.displayName);
+          float result = comparer.getSimilarity(selectedChannel.DisplayName, channel.DisplayName);
 
           IList<TuningDetail> details = channel.TuningDetails;
           int imageIndex = GetImageIndex(details);
           ListViewItem item = new ListViewItem((result * 100f).ToString("f2") + "%", imageIndex);
           item.Tag = channel;
-          item.SubItems.Add(channel.displayName);
+          item.SubItems.Add(channel.DisplayName);
           items.Add(item);
         }
         mpListViewMapped.Items.AddRange(items.ToArray());
@@ -229,7 +229,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         dlg.WaitForDisplay();
         foreach (TuningDetail detail in selectedChannel2.TuningDetails)
         {
-          detail.idChannel = selectedChannel.idChannel;
+          detail.idChannel = selectedChannel.IdChannel;
           ServiceAgents.Instance.ChannelServiceAgent.SaveTuningDetail(detail);
         }
         dlg.Close();
@@ -238,7 +238,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         dlg.WaitForDisplay();
         foreach (ChannelMap map in selectedChannel2.ChannelMaps)
         {
-          map.idChannel = selectedChannel.idChannel;
+          map.idChannel = selectedChannel.IdChannel;
           ServiceAgents.Instance.ChannelServiceAgent.SaveChannelMap(map);
         }
         dlg.Close();
@@ -259,7 +259,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           }
           if (!alreadyExistsInGroup)
           {
-            groupMap.idChannel = selectedChannel.idChannel;
+            groupMap.idChannel = selectedChannel.IdChannel;
             ServiceAgents.Instance.ChannelServiceAgent.SaveChannelGroupMap(groupMap);
 
           }
@@ -270,7 +270,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         dlg.WaitForDisplay();
         foreach (Program program in selectedChannel2.Programs)
         {
-          program.idChannel = selectedChannel.idChannel;
+          program.idChannel = selectedChannel.IdChannel;
           ServiceAgents.Instance.ProgramServiceAgent.SaveProgram(program);
         }
         dlg.Close();
@@ -279,7 +279,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         dlg.WaitForDisplay();
         foreach (Recording recording in selectedChannel2.Recordings)
         {
-          recording.idChannel = selectedChannel.idChannel;
+          recording.idChannel = selectedChannel.IdChannel;
           ServiceAgents.Instance.RecordingServiceAgent.SaveRecording(recording);
         }
         dlg.Close();
@@ -288,11 +288,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         dlg.WaitForDisplay();
         foreach (Schedule schedule in selectedChannel2.Schedules)
         {
-          schedule.idChannel = selectedChannel.idChannel;          
+          schedule.idChannel = selectedChannel.IdChannel;          
           ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(schedule);
         }
         dlg.Close();
-        ServiceAgents.Instance.ChannelServiceAgent.DeleteChannel(selectedChannel2.idChannel);
+        ServiceAgents.Instance.ChannelServiceAgent.DeleteChannel(selectedChannel2.IdChannel);
         mpListViewMapped.Items.Remove(listViewItem);
       }
     }

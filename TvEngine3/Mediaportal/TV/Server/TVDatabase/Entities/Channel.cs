@@ -33,7 +33,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Primitive Properties
     
         [DataMember]
-        public int idChannel
+        public int IdChannel
         {
             get { return _idChannel; }
             set
@@ -52,7 +52,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idChannel;
     
         [DataMember]
-        public int timesWatched
+        public int TimesWatched
         {
             get { return _timesWatched; }
             set
@@ -67,7 +67,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _timesWatched;
     
         [DataMember]
-        public Nullable<System.DateTime> totalTimeWatched
+        public Nullable<System.DateTime> TotalTimeWatched
         {
             get { return _totalTimeWatched; }
             set
@@ -82,7 +82,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private Nullable<System.DateTime> _totalTimeWatched;
     
         [DataMember]
-        public bool grabEpg
+        public bool GrabEpg
         {
             get { return _grabEpg; }
             set
@@ -97,7 +97,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private bool _grabEpg;
     
         [DataMember]
-        public Nullable<System.DateTime> lastGrabTime
+        public Nullable<System.DateTime> LastGrabTime
         {
             get { return _lastGrabTime; }
             set
@@ -112,7 +112,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private Nullable<System.DateTime> _lastGrabTime;
     
         [DataMember]
-        public int sortOrder
+        public int SortOrder
         {
             get { return _sortOrder; }
             set
@@ -127,7 +127,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _sortOrder;
     
         [DataMember]
-        public bool visibleInGuide
+        public bool VisibleInGuide
         {
             get { return _visibleInGuide; }
             set
@@ -142,7 +142,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private bool _visibleInGuide;
     
         [DataMember]
-        public string externalId
+        public string ExternalId
         {
             get { return _externalId; }
             set
@@ -157,7 +157,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _externalId;
     
         [DataMember]
-        public string displayName
+        public string DisplayName
         {
             get { return _displayName; }
             set
@@ -172,7 +172,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _displayName;
     
         [DataMember]
-        public bool epgHasGaps
+        public bool EpgHasGaps
         {
             get { return _epgHasGaps; }
             set
@@ -187,7 +187,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private bool _epgHasGaps;
     
         [DataMember]
-        public int mediaType
+        public int MediaType
         {
             get { return _mediaType; }
             set

@@ -54,7 +54,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     ChangeTracker.RecordOriginalValue("idChannel", _idChannel);
                     if (!IsDeserializing)
                     {
-                        if (Channel != null && Channel.idChannel != value)
+                        if (Channel != null && Channel.IdChannel != value)
                         {
                             Channel = null;
                         }
@@ -330,7 +330,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Channel.Histories.Add(this);
                 }
     
-                idChannel = Channel.idChannel;
+                idChannel = Channel.IdChannel;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {

@@ -233,7 +233,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
             foreach (Channel channel in mpChannelList)
             {
               //TreeNode[] subItems = new TreeNode[] { new TreeNode(channel.IdChannel.ToString()), new TreeNode(channel.DisplayName) };
-              TreeNode stationNode = new TreeNode(channel.displayName);
+              TreeNode stationNode = new TreeNode(channel.DisplayName);
               stationNode.Tag = channel;
               treeViewMpChannels.Nodes.Add(stationNode);
             }
@@ -331,7 +331,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
           TvMovieMapping mapping = null;
           try
           {
-            mapping = new TvMovieMapping(((Channel)channel.Tag).idChannel, channelInfo.Name, channelInfo.Start,
+            mapping = new TvMovieMapping(((Channel)channel.Tag).IdChannel, channelInfo.Name, channelInfo.Start,
                                          channelInfo.End);
           }
           catch (Exception exm)
@@ -437,7 +437,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
           Channel checkChannel = MpNode.Tag as Channel;
           if (checkChannel != null)
           {
-            if (checkChannel.idChannel == mpChannelId)
+            if (checkChannel.IdChannel == mpChannelId)
               return MpNode;
           }
           else

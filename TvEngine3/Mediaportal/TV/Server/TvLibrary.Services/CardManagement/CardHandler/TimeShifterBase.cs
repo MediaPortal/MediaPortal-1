@@ -230,14 +230,14 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       if (_timeshiftingEpgGrabberEnabled)
       {
         Channel channel = ChannelManagement.GetChannel(_cardHandler.UserManagement.GetRecentChannelId(user.Name));
-        if (channel.grabEpg)
+        if (channel.GrabEpg)
         {
           _cardHandler.Card.GrabEpg();
         }
         else
         {
           Log.Info("TimeshiftingEPG: channel {0} is not configured for grabbing epg",
-                   channel.displayName);
+                   channel.DisplayName);
         }
       }
     }

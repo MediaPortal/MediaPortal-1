@@ -142,9 +142,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     {
       if (Index < 0 || Index >= Channels.Count)
         return;
-      Channels[Index].lastGrabTime = DateTime.Now;
+      Channels[Index].LastGrabTime = DateTime.Now;
       ChannelManagement.SaveChannel(Channels[Index]);
-      Log.Write("EPG: database updated for #{0} {1}", Index, Channels[Index].displayName);
+      Log.Write("EPG: database updated for #{0} {1}", Index, Channels[Index].DisplayName);
     }
 
     /// <summary>
@@ -190,7 +190,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
                 TuningDetail.polarisation);
       foreach (Channel c in _channels)
       {
-        Log.Write(" {0}", c.displayName);
+        Log.Write(" {0}", c.DisplayName);
       }
     }
 
@@ -259,9 +259,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       foreach (Channel channel in channels)
       {
         //if epg grabbing is enabled and channel is a radio or tv channel
-        if (channel.grabEpg == false)
+        if (channel.GrabEpg == false)
           continue;
-        if (channel.mediaType == (int)MediaTypeEnum.Radio == false && channel.mediaType == (int)MediaTypeEnum.TV == false)
+        if (channel.MediaType == (int)MediaTypeEnum.Radio == false && channel.MediaType == (int)MediaTypeEnum.TV == false)
           continue;
 
         //for each tuning detail of the channel

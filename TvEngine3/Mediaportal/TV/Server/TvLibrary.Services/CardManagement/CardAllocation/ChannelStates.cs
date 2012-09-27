@@ -144,9 +144,9 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
           ICollection<ITvCardHandler> cardHandlers = cards.Values;
           foreach (Channel channel in channels)
           {
-            if (!channel.visibleInGuide)
+            if (!channel.VisibleInGuide)
             {
-              UpdateChannelStateUsers(allUsers, ChannelState.nottunable, channel.idChannel);
+              UpdateChannelStateUsers(allUsers, ChannelState.nottunable, channel.IdChannel);
               continue;
             }
 
@@ -154,7 +154,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
             bool isValidTuningDetails = IsValidTuningDetails(tuningDetails);
             if (!isValidTuningDetails)
             {
-              UpdateChannelStateUsers(allUsers, ChannelState.nottunable, channel.idChannel);
+              UpdateChannelStateUsers(allUsers, ChannelState.nottunable, channel.IdChannel);
               continue;
             }
 
@@ -166,14 +166,14 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
                 if (!cardHandler.DataBaseCard.Enabled)
                 {
                   //not enabled, so skip the card
-                  UpdateChannelStateUsers(allUsers, ChannelState.nottunable, channel.idChannel);
+                  UpdateChannelStateUsers(allUsers, ChannelState.nottunable, channel.IdChannel);
                   continue;
                 }
 
                 if (!cardHandler.Tuner.CanTune(tuningDetail))
                 {
                   //card cannot tune to this channel, so skip it
-                  UpdateChannelStateUsers(allUsers, ChannelState.nottunable, channel.idChannel);
+                  UpdateChannelStateUsers(allUsers, ChannelState.nottunable, channel.IdChannel);
                   continue;
                 }
 
@@ -181,13 +181,13 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
                 bool isChannelMappedToCard = CardAllocationCache.IsChannelMappedToCard(channel, cardHandler.DataBaseCard);
                 if (!isChannelMappedToCard)
                 {
-                  UpdateChannelStateUsers(allUsers, ChannelState.nottunable, channel.idChannel);
+                  UpdateChannelStateUsers(allUsers, ChannelState.nottunable, channel.IdChannel);
                   continue;
                 }
 
                 if (!tuningDetail.FreeToAir && !cardHandler.DataBaseCard.CAM)
                 {
-                  UpdateChannelStateUsers(allUsers, ChannelState.nottunable, channel.idChannel);
+                  UpdateChannelStateUsers(allUsers, ChannelState.nottunable, channel.IdChannel);
                   continue;
                 }
 
@@ -305,11 +305,11 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
                     bool checkTransponder = CheckTransponder(user, tvcard, tuningDetail);
                     if (checkTransponder)
                     {
-                      UpdateChannelStateUser(user, ChannelState.tunable, ch.idChannel);
+                      UpdateChannelStateUser(user, ChannelState.tunable, ch.IdChannel);
                     }
                     else
                     {
-                      UpdateChannelStateUser(user, ChannelState.nottunable, ch.idChannel);
+                      UpdateChannelStateUser(user, ChannelState.nottunable, ch.IdChannel);
                     }
                   }
                 }

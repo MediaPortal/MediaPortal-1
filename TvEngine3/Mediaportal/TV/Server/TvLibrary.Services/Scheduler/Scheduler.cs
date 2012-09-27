@@ -245,7 +245,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       for (int i = _recordingsInProgressList.Count - 1; i >= 0; i--)
       {
         RecordingDetail rec = _recordingsInProgressList[i];
-        if (rec.CardInfo.Id == cardId && rec.Channel.idChannel == channelId)
+        if (rec.CardInfo.Id == cardId && rec.Channel.IdChannel == channelId)
         {
           return rec.Schedule.Entity.id_Schedule;
         }
@@ -993,7 +993,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
     {
       IUser user = recDetail.User;
 
-      Log.Write("Scheduler: Time to record {0} {1}-{2} {3}", recDetail.Channel.displayName,
+      Log.Write("Scheduler: Time to record {0} {1}-{2} {3}", recDetail.Channel.DisplayName,
                 DateTime.Now.ToShortTimeString(), recDetail.EndTime.ToShortTimeString(),
                 recDetail.Schedule.Entity.programName);
       //get list of all cards we can use todo the recording      
@@ -1034,7 +1034,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
         bool recSucceded = false;
         while (moreCardsAvailable && !recSucceded)
         {
-          tickets = CardReservationHelper.RequestCardReservations(user, cardsForReservation, cardRes, cardsIterated, recDetail.Channel.idChannel);
+          tickets = CardReservationHelper.RequestCardReservations(user, cardsForReservation, cardRes, cardsIterated, recDetail.Channel.IdChannel);
           if (tickets.Count == 0)
           {
             //no free cards available
@@ -1140,7 +1140,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
 
           if (ticket == null)
           {
-            ticket = CardReservationHelper.RequestCardReservation(user, cardInfo, cardResImpl, recDetail.Channel.idChannel);
+            ticket = CardReservationHelper.RequestCardReservation(user, cardInfo, cardResImpl, recDetail.Channel.IdChannel);
             if (ticket != null)
             {
               tickets[cardInfo] = ticket;              
@@ -1204,7 +1204,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
             ICardTuneReservationTicket ticket = GetTicketByCardDetail(cardInfo, tickets);            
             if (ticket == null)
             {              
-              ticket = CardReservationHelper.RequestCardReservation(user, cardInfo, cardResImpl, recDetail.Channel.idChannel);
+              ticket = CardReservationHelper.RequestCardReservation(user, cardInfo, cardResImpl, recDetail.Channel.IdChannel);
               if (ticket != null)
               {
                 tickets[cardInfo] = ticket;
@@ -1294,7 +1294,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
           ServiceManager.Instance.InternalControllerService.StopTimeShifting(user.Name, out user);          
         }
 
-        Log.Write("Scheduler: stop failed record {0} {1}-{2} {3}", recording.Channel.displayName,
+        Log.Write("Scheduler: stop failed record {0} {1}-{2} {3}", recording.Channel.DisplayName,
                   recording.RecordingStartDateTime,
                   recording.EndTime, recording.Schedule.Entity.programName);
 
@@ -1493,7 +1493,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       cardResImpl.CardInfo = cardInfo;
       cardResImpl.RecDetail = recDetail;      
       
-      TvResult tuneResult = ServiceManager.Instance.InternalControllerService.Tune(ref user, cardInfo.TuningDetail, recDetail.Channel.idChannel, ticket, cardResImpl);      
+      TvResult tuneResult = ServiceManager.Instance.InternalControllerService.Tune(ref user, cardInfo.TuningDetail, recDetail.Channel.IdChannel, ticket, cardResImpl);      
       startRecordingOnDisc = (tuneResult == TvResult.Succeeded);
 
       return startRecordingOnDisc;
@@ -1561,7 +1561,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
                                    title = recDetail.Program.Entity.title,
                                    description = recDetail.Program.Entity.description,
                                    genre = category,
-                                   channelName = recDetail.Schedule.Entity.Channel.displayName,
+                                   channelName = recDetail.Schedule.Entity.Channel.DisplayName,
                                    episodeName = recDetail.Program.Entity.episodeName,
                                    seriesNum = recDetail.Program.Entity.seriesNum,
                                    episodeNum = recDetail.Program.Entity.episodeNum,
@@ -1593,7 +1593,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
           ServiceManager.Instance.InternalControllerService.StopTimeShifting(user.Name, out user);
         }
 
-        Log.Write("Scheduler: stop record {0} {1}-{2} {3}", recording.Channel.displayName,
+        Log.Write("Scheduler: stop record {0} {1}-{2} {3}", recording.Channel.DisplayName,
                   recording.RecordingStartDateTime,
                   recording.EndTime, recording.Schedule.Entity.programName);
 
@@ -1628,7 +1628,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
     private void RetryStopRecord(RecordingDetail recording)
     {
       Log.Write("Scheduler: stop record did not succeed (trying again in 1 min.) {0} {1}-{2} {3}",
-                recording.Channel.displayName, recording.RecordingStartDateTime, recording.EndTime,
+                recording.Channel.DisplayName, recording.RecordingStartDateTime, recording.EndTime,
                 recording.Schedule.Entity.programName);
       recording.Recording.endTime = recording.Recording.endTime.AddMinutes(1);
       //lets try and stop the recording in 1 min. again.      

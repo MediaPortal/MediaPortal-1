@@ -828,7 +828,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
         return "";
       }
 
-      return ch.displayName;
+      return ch.DisplayName;
     }
 
     public static bool IsRecordingActual(Recording aRecording)
@@ -855,7 +855,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
         catch (Exception) { }
         if (refCh != null)
         {
-          strChannelName = refCh.displayName;
+          strChannelName = refCh.DisplayName;
         }        
 
         // Log.Debug("RadioRecorded: BuildItemFromRecording [{0}]: {1} ({2}) on channel {3}", _currentDbView.ToString(), aRecording.title, aRecording.ProgramCategory.category, strChannelName);
@@ -1470,7 +1470,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
           case SortMethod.Channel:
             if (m_bSortAscending)
             {
-              iComp = string.Compare(rec1.Channel.displayName, rec2.Channel.displayName, true);
+              iComp = string.Compare(rec1.Channel.DisplayName, rec2.Channel.DisplayName, true);
               if (iComp == 0)
               {
                 goto case SortMethod.Date;
@@ -1482,7 +1482,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
             }
             else
             {
-              iComp = string.Compare(rec2.Channel.displayName, rec1.Channel.displayName, true);
+              iComp = string.Compare(rec2.Channel.DisplayName, rec1.Channel.DisplayName, true);
               if (iComp == 0)
               {
                 goto case SortMethod.Date;
@@ -1577,11 +1577,11 @@ namespace Mediaportal.TV.TvPlugin.Radio
             {
               if (m_bSortAscending)
               {
-                return string.Compare(rec1.Channel.displayName, rec2.Channel.displayName);
+                return string.Compare(rec1.Channel.DisplayName, rec2.Channel.DisplayName);
               }
               else
               {
-                return string.Compare(rec2.Channel.displayName, rec1.Channel.displayName);
+                return string.Compare(rec2.Channel.DisplayName, rec1.Channel.DisplayName);
               }
             }
             if (TVUtil.GetDisplayTitle(rec1) != TVUtil.GetDisplayTitle(rec2))

@@ -474,7 +474,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
         foreach (Channel ch in channels)
         {
-          if (ch.mediaType != (decimal) MediaTypeEnum.TV) continue;
+          if (ch.MediaType != (decimal) MediaTypeEnum.TV) continue;
           bool hasFta = false;
           bool hasScrambled = false;
           IList<TuningDetail> tuningDetails = ch.TuningDetails;
@@ -511,7 +511,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         foreach (GroupMap map in maps)
         {
           Channel ch = map.Channel;
-          if (ch.mediaType != (decimal) MediaTypeEnum.TV)
+          if (ch.MediaType != (decimal) MediaTypeEnum.TV)
           hasFta = false;
           bool hasScrambled = false;
           IList<TuningDetail> tuningDetails = ch.TuningDetails;
@@ -657,7 +657,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       var channel = mpComboBoxChannels.SelectedItem as TVDatabase.Entities.Channel;
       if (channel != null)
       {
-        AddToListBox(channel, channel.displayName, listBoxChannels);
+        AddToListBox(channel, channel.DisplayName, listBoxChannels);
       }
     }
 

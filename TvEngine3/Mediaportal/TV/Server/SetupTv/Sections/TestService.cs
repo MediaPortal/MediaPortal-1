@@ -218,7 +218,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
       foreach (Channel ch in channels)
       {
-        _channelNames.Add(ch.idChannel, ch.displayName);
+        _channelNames.Add(ch.IdChannel, ch.DisplayName);
       }
     }
 
@@ -573,7 +573,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
       foreach (Channel ch in channels)
       {
-        ch.lastGrabTime = Schedule.MinSchedule;        
+        ch.LastGrabTime = Schedule.MinSchedule;        
       }
       ServiceAgents.Instance.ChannelServiceAgent.SaveChannels(channels);
 
@@ -658,7 +658,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
         foreach (Channel ch in channels)
         {
-          if (ch.mediaType != (decimal) MediaTypeEnum.TV) continue;
+          if (ch.MediaType != (decimal) MediaTypeEnum.TV) continue;
           bool hasFta = false;
           bool hasScrambled = false;
           IList<TuningDetail> tuningDetails = ch.TuningDetails;
@@ -687,7 +687,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           {
             imageIndex = 3;
           }
-          ComboBoxExItem item = new ComboBoxExItem(ch.displayName, imageIndex, ch.idChannel);
+          ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);
 
           mpComboBoxChannels.Items.Add(item);
         }
@@ -700,7 +700,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         foreach (GroupMap map in maps)
         {
           Channel ch = map.Channel;
-          if (ch.mediaType != (decimal) MediaTypeEnum.TV)
+          if (ch.MediaType != (decimal) MediaTypeEnum.TV)
           hasFta = false;
           bool hasScrambled = false;
           IList<TuningDetail> tuningDetails = ch.TuningDetails;
@@ -729,7 +729,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           {
             imageIndex = 3;
           }
-          ComboBoxExItem item = new ComboBoxExItem(ch.displayName, imageIndex, ch.idChannel);
+          ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);
           mpComboBoxChannels.Items.Add(item);
         }
       }

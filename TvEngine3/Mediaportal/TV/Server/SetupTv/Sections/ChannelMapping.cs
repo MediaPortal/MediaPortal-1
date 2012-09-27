@@ -119,9 +119,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           Channel channel = (Channel)item.Tag;
           ChannelMap map = MappingHelper.AddChannelToCard(channel, card, mpCheckBoxMapForEpgOnly.Checked);          
           mpListViewChannels.Items.Remove(item);
-          string displayName = channel.displayName;
+          string displayName = channel.DisplayName;
           if (mpCheckBoxMapForEpgOnly.Checked)
-            displayName = channel.displayName + " (EPG Only)";
+            displayName = channel.DisplayName + " (EPG Only)";
           ListViewItem newItem = mpListViewMapped.Items.Add(displayName, item.ImageIndex);
           newItem.Tag = map;
         }
@@ -154,7 +154,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           ChannelMap map = (ChannelMap)item.Tag;
           mpListViewMapped.Items.Remove(item);
           Channel referencedChannel = map.Channel;
-          ListViewItem newItem = mpListViewChannels.Items.Add(referencedChannel.displayName, item.ImageIndex);
+          ListViewItem newItem = mpListViewChannels.Items.Add(referencedChannel.DisplayName, item.ImageIndex);
           newItem.Tag = referencedChannel;
 
           ServiceAgents.Instance.ChannelServiceAgent.DeleteChannelMap(map.idChannelMap);          
@@ -205,7 +205,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           catch (Exception) {}
           if (channel == null)
             continue;
-          if (channel.mediaType != (decimal)_mediaTypeEnum)
+          if (channel.MediaType != (decimal)_mediaTypeEnum)
             continue;
 
 
@@ -214,16 +214,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           if (foundValidTuningDetail)
           {
             int imageIndex = GetImageIndex(tuningDetails);
-            string displayName = channel.displayName;
+            string displayName = channel.DisplayName;
             if (map.epgOnly)
-              displayName = channel.displayName + " (EPG Only)";
+              displayName = channel.DisplayName + " (EPG Only)";
             ListViewItem item = new ListViewItem(displayName, imageIndex);
             item.Tag = map;
             items.Add(item);
 
             foreach (Channel ch in channels)
             {
-              if (ch.idChannel == channel.idChannel)
+              if (ch.IdChannel == channel.IdChannel)
               {
                 //No risk of concurrent modification so remove it directly.
                 channels.Remove(ch);
@@ -240,7 +240,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         items = new List<ListViewItem>();
         foreach (Channel channel in channels)
         {
-          if (channel.mediaType != (decimal)_mediaTypeEnum)
+          if (channel.MediaType != (decimal)_mediaTypeEnum)
             continue;
           List<TuningDetail> tuningDetails = GetTuningDetailsByCardType(channel, cardType, enableDVBS2);
           // only add channel that is tuneable on the device selected.
@@ -248,7 +248,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           if (foundValidTuningDetail)
           {
             int imageIndex = GetImageIndex(tuningDetails);
-            ListViewItem item = new ListViewItem(channel.displayName, imageIndex);
+            ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
             item.Tag = channel;
             items.Add(item);
           }
@@ -312,12 +312,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       Channel channel = map.Channel;
       if (map.epgOnly)
       {
-        item.Text = channel.displayName;
+        item.Text = channel.DisplayName;
         map.epgOnly = false;
       }
       else
       {
-        item.Text = channel.displayName + " (EPG Only)";
+        item.Text = channel.DisplayName + " (EPG Only)";
         map.epgOnly = true;
       }
       ServiceAgents.Instance.ChannelServiceAgent.SaveChannelMap(map);

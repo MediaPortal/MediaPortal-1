@@ -156,10 +156,10 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
           {
             Channel channel = ChannelManagement.GetChannel(recording.idChannel.GetValueOrDefault());
 
-            string parameters = ProcessParameters(_parameters, recording.fileName, channel.displayName);
+            string parameters = ProcessParameters(_parameters, recording.fileName, channel.DisplayName);
 
             Log.Info("ComSkipLauncher: Recording started ({0} on {1}), launching program ({2} {3}) ...",
-                     recording.fileName, channel.displayName, _program, parameters);
+                     recording.fileName, channel.DisplayName, _program, parameters);
 
             LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
           }
@@ -169,10 +169,10 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
           if (recording.idChannel.HasValue)
           {
             Channel channel = ChannelManagement.GetChannel(recording.idChannel.GetValueOrDefault());
-            string parameters = ProcessParameters(_parameters, recording.fileName, channel.displayName);
+            string parameters = ProcessParameters(_parameters, recording.fileName, channel.DisplayName);
 
             Log.Info("ComSkipLauncher: Recording ended ({0} on {1}), launching program ({2} {3}) ...",
-                     recording.fileName, channel.displayName, _program, parameters);
+                     recording.fileName, channel.DisplayName, _program, parameters);
 
             LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
           }

@@ -63,7 +63,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        var query = channelRepository.GetAll<Channel>().OrderBy(c=>c.sortOrder);
+        var query = channelRepository.GetAll<Channel>().OrderBy(c=>c.SortOrder);
         return channelRepository.IncludeAllRelations(query).ToList();
       }
     }
@@ -72,7 +72,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        IOrderedQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.visibleInGuide && c.mediaType == (int)mediaType).OrderBy(c=>c.sortOrder).OrderBy(c=>c.displayName);
+        IOrderedQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.VisibleInGuide && c.MediaType == (int)mediaType).OrderBy(c=>c.SortOrder).OrderBy(c=>c.DisplayName);
         return channelRepository.IncludeAllRelations(query).ToList();
       }
     }
@@ -82,8 +82,8 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
         IOrderedQueryable<Channel> query =
-          channelRepository.GetQuery<Channel>(c => c.externalId != null && c.externalId != "").OrderBy(
-            c => c.externalId);
+          channelRepository.GetQuery<Channel>(c => c.ExternalId != null && c.ExternalId != "").OrderBy(
+            c => c.ExternalId);
         return channelRepository.IncludeAllRelations(query).ToList();
       }
     }
@@ -104,7 +104,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        IOrderedQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.mediaType == (int)mediaType).OrderBy(c => c.sortOrder);
+        IOrderedQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.MediaType == (int)mediaType).OrderBy(c => c.SortOrder);
         return channelRepository.IncludeAllRelations(query).ToList();
       }
     }
@@ -113,7 +113,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        var query = channelRepository.GetQuery<Channel>(c => c.displayName == channelName);
+        var query = channelRepository.GetQuery<Channel>(c => c.DisplayName == channelName);
         return channelRepository.IncludeAllRelations(query).ToList();
       }
     }
@@ -126,7 +126,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         channelRepository.ApplyChanges(channelRepository.ObjectContext.Channels, channel);        
         channelRepository.UnitOfWork.SaveChanges();
         channel.AcceptChanges();
-        return GetChannel(channel.idChannel);
+        return GetChannel(channel.IdChannel);
       }
     }
 
@@ -135,7 +135,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       //lazy loading verified ok
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.idChannel == idChannel);
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.IdChannel == idChannel);
         return channelRepository.IncludeAllRelations(query).FirstOrDefault();        
       }
     }
@@ -156,11 +156,11 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         if (forEpg)
         {
-          isChannelMappedToCard = channelRepository.Count<ChannelMap>(c => c.idCard == card.IdCard && c.idChannel == channel.idChannel && c.epgOnly) > 0;
+          isChannelMappedToCard = channelRepository.Count<ChannelMap>(c => c.idCard == card.IdCard && c.idChannel == channel.IdChannel && c.epgOnly) > 0;
         }
         else
         {
-          isChannelMappedToCard = channelRepository.Count<ChannelMap>(c => c.idCard == card.IdCard && c.idChannel == channel.idChannel) > 0;          
+          isChannelMappedToCard = channelRepository.Count<ChannelMap>(c => c.idCard == card.IdCard && c.idChannel == channel.IdChannel) > 0;          
         }                
       }
       return isChannelMappedToCard;
@@ -404,7 +404,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IChannelRepository channelRepository = new ChannelRepository(true))
       {
         SetRelatedRecordingsToNull(idChannel, channelRepository);
-        channelRepository.Delete<Channel>(p => p.idChannel == idChannel);
+        channelRepository.Delete<Channel>(p => p.IdChannel == idChannel);
 
         /*Channel ch = new Channel();
         ch.idChannel = idChannel;
@@ -420,7 +420,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     private static void SetRelatedRecordingsToNull(int idChannel, IChannelRepository channelRepository)
     {
       // todo : since "on delete: set null" is not currently supported in EF, we have to do this manually - remove this ugly workaround once EF gets mature enough.
-      var channels = channelRepository.GetQuery<Channel>(s => s.idChannel == idChannel);
+      var channels = channelRepository.GetQuery<Channel>(s => s.IdChannel == idChannel);
       channels = channelRepository.IncludeAllRelations(channels).Include(r => r.Recordings);
       Channel channel = channels.FirstOrDefault();      
 
@@ -643,12 +643,12 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       Channel channel;
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        var query = channelRepository.GetQuery<Channel>(c => c.displayName == channelName);
+        var query = channelRepository.GetQuery<Channel>(c => c.DisplayName == channelName);
         channel = channelRepository.IncludeAllRelations(query, includeRelations).FirstOrDefault();
         
         if (channel == null)
         {
-          query = channelRepository.GetQuery<Channel>(c => c.displayName.Contains(channelName));
+          query = channelRepository.GetQuery<Channel>(c => c.DisplayName.Contains(channelName));
           channel = channelRepository.IncludeAllRelations(query, includeRelations).FirstOrDefault(); 
         }        
       }
@@ -714,7 +714,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        var query = channelRepository.GetQuery<Channel>(c => c.externalId == externalId);
+        var query = channelRepository.GetQuery<Channel>(c => c.ExternalId == externalId);
         return channelRepository.IncludeAllRelations(query).FirstOrDefault();
       }
     }
@@ -723,7 +723,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {        
-        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.mediaType == (int)mediaType).OrderBy(c => c.sortOrder);
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.MediaType == (int)mediaType).OrderBy(c => c.SortOrder);
         query = channelRepository.IncludeAllRelations(query, includeRelations);
         Log.Debug("ListAllChannelsByMediaType(MediaTypeEnum mediaType, ChannelIncludeRelationEnum includeRelations) SQL = {0}", query.ToTraceString());
         return query.ToList();        
@@ -734,7 +734,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        var query = channelRepository.GetAll<Channel>().OrderBy(c => c.sortOrder);
+        var query = channelRepository.GetAll<Channel>().OrderBy(c => c.SortOrder);
         return channelRepository.IncludeAllRelations(query, includeRelations).ToList();
       }
     }

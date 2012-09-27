@@ -20,15 +20,15 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Factories
     {
       var channel = new Channel
                           {
-                            mediaType = (int)mediaType,
-                            timesWatched = timesWatched,
-                            totalTimeWatched = totalTimeWatched,
-                            grabEpg = grabEpg,
-                            lastGrabTime = lastGrabTime,
-                            sortOrder = sortOrder,
-                            visibleInGuide = visibleInGuide,
-                            externalId = externalId,
-                            displayName = displayName
+                            MediaType = (int)mediaType,
+                            TimesWatched = timesWatched,
+                            TotalTimeWatched = totalTimeWatched,
+                            GrabEpg = grabEpg,
+                            LastGrabTime = lastGrabTime,
+                            SortOrder = sortOrder,
+                            VisibleInGuide = visibleInGuide,
+                            ExternalId = externalId,
+                            DisplayName = displayName
                           };         
       return channel;
     }
@@ -36,7 +36,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Factories
 
     public static Channel CreateChannel(string name)
     {
-      var newChannel = new Channel {visibleInGuide = true, displayName = name};
+      var newChannel = new Channel {VisibleInGuide = true, DisplayName = name};
       return newChannel;
     }
   }

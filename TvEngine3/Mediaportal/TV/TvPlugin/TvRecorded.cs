@@ -876,7 +876,7 @@ namespace Mediaportal.TV.TvPlugin
         return "";
       }
 
-      return ch.displayName;
+      return ch.DisplayName;
     }
 
     private static bool IsRecordingActual(Recording aRecording)
@@ -902,7 +902,7 @@ namespace Mediaportal.TV.TvPlugin
         catch (Exception) { }
         if (refCh != null)
         {
-          strChannelName = refCh.displayName;
+          strChannelName = refCh.DisplayName;
         }        
 
         // Log.Debug("TVRecorded: BuildItemFromRecording [{0}]: {1} ({2}) on channel {3}", _currentDbView.ToString(), aRecording.title, aRecording.ProgramCategory.category, strChannelName);
@@ -1472,11 +1472,11 @@ namespace Mediaportal.TV.TvPlugin
 
         if (rec1.Channel != null)
         {
-          rec1DisplayName = rec1.Channel.displayName;
+          rec1DisplayName = rec1.Channel.DisplayName;
         }        
         if (rec2.Channel != null)
         {
-          rec2DisplayName = rec2.Channel.displayName;
+          rec2DisplayName = rec2.Channel.DisplayName;
         }
         switch (_currentSortMethod)
         {

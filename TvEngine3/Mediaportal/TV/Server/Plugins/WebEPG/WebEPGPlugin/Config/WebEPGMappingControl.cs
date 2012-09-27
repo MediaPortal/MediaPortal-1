@@ -248,10 +248,10 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
 
       foreach (Channel chan in channels)
       {
-        if (!_channelMapping.ContainsKey(chan.displayName))
+        if (!_channelMapping.ContainsKey(chan.DisplayName))
         {
-          var channel = new ChannelMap {displayName = chan.displayName};
-          _channelMapping.Add(chan.displayName, channel);
+          var channel = new ChannelMap {displayName = chan.DisplayName};
+          _channelMapping.Add(chan.DisplayName, channel);
         }
       }
     }

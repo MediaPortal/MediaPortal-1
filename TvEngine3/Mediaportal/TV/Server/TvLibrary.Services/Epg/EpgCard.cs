@@ -246,7 +246,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       Channel channel = _currentTransponder.CurrentChannel;
 
       Log.Epg("EpgCard: grab epg on card: #{0} transponder: #{1} ch:{2} ", _card.IdCard,
-              TransponderList.Instance.CurrentIndex, channel.displayName);
+              TransponderList.Instance.CurrentIndex, channel.DisplayName);
 
       _state = EpgState.Idle;
       _isRunning = true;
@@ -262,7 +262,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
         return;
       }
       Log.Epg("EpgCard: unable to grab epg transponder: {0} ch: {1} started on {2}",
-              TransponderList.Instance.CurrentIndex, channel.displayName, _user.CardId);
+              TransponderList.Instance.CurrentIndex, channel.DisplayName, _user.CardId);
       Log.Epg("{0}", _currentTransponder.Tuning.ToString());
     }
 
@@ -507,7 +507,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
 
             if (ticket != null)
             {
-              result = ServiceManager.Instance.InternalControllerService.Tune(ref _user, tuning, channel.idChannel,
+              result = ServiceManager.Instance.InternalControllerService.Tune(ref _user, tuning, channel.IdChannel,
                                                                               ticket);
               if (result == TvResult.Succeeded)
               {

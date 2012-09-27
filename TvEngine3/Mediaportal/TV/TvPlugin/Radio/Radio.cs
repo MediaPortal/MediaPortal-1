@@ -195,7 +195,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
         xmlwriter.SetValue("myradio", "lastgroup", lastFolder);
         if (_currentChannel != null)
         {
-            xmlwriter.SetValue("myradio", "channel", _currentChannel.displayName);
+            xmlwriter.SetValue("myradio", "channel", _currentChannel.DisplayName);
         }
         
       }
@@ -450,13 +450,13 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
               if (_currentChannel != null)
               {
-                if (channel.idChannel == _currentChannel.idChannel)
+                if (channel.IdChannel == _currentChannel.IdChannel)
                 {
                   selectedItemIndex = totalItems-1;
                 }
               }
 
-              item.Label = channel.displayName;
+              item.Label = channel.DisplayName;
               item.IsFolder = false;
               item.MusicTag = channel;
               if (channel.IsWebstream())
@@ -469,7 +469,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
                 item.IconImageBig = "DefaultMyradioBig.png";
                 item.IconImage = "DefaultMyradio.png";
               }
-              string thumbnail = Utils.GetCoverArt(Thumbs.Radio, channel.displayName);
+              string thumbnail = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
               if (!string.IsNullOrEmpty(thumbnail))              
               {
                 item.IconImageBig = thumbnail;
@@ -509,7 +509,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
             if (channel != null)
             {
               item = new GUIListItem();
-              item.Label = channel.displayName;
+              item.Label = channel.DisplayName;
               item.IsFolder = false;
               item.MusicTag = channel;
               item.AlbumInfoTag = map;
@@ -523,7 +523,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
                 item.IconImageBig = "DefaultMyradioBig.png";
                 item.IconImage = "DefaultMyradio.png";
               }
-              string thumbnail = Utils.GetCoverArt(Thumbs.Radio, channel.displayName);
+              string thumbnail = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
               if (!string.IsNullOrEmpty(thumbnail))
               {
                 item.IconImageBig = thumbnail;
@@ -555,7 +555,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
           if ((channel != null) && (_currentChannel != null))
           {
-            if (channel.idChannel == _currentChannel.idChannel)
+            if (channel.IdChannel == _currentChannel.IdChannel)
             {
               selectedItemIndex = i++;
               break;
@@ -814,11 +814,11 @@ namespace Mediaportal.TV.TvPlugin.Radio
     {
       // We have the Station Name in there to retrieve the correct Coverart for the station in the Vis Window
       GUIPropertyManager.RemovePlayerProperties();
-      GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", _currentChannel.displayName);
-      GUIPropertyManager.SetProperty("#Play.Current.Album", _currentChannel.displayName);
-      GUIPropertyManager.SetProperty("#Play.Current.Title", _currentChannel.displayName);
+      GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", _currentChannel.DisplayName);
+      GUIPropertyManager.SetProperty("#Play.Current.Album", _currentChannel.DisplayName);
+      GUIPropertyManager.SetProperty("#Play.Current.Title", _currentChannel.DisplayName);
       
-      string strLogo = Utils.GetCoverArt(Thumbs.Radio, _currentChannel.displayName);
+      string strLogo = Utils.GetCoverArt(Thumbs.Radio, _currentChannel.DisplayName);
       if (string.IsNullOrEmpty(strLogo))
       {
           strLogo = "defaultMyRadioBig.png";
@@ -837,14 +837,14 @@ namespace Mediaportal.TV.TvPlugin.Radio
       if (_currentChannel.IsWebstream())
       {
         g_Player.PlayAudioStream(GetPlayPath(_currentChannel));
-        GUIPropertyManager.SetProperty("#Play.Current.Title", _currentChannel.displayName);
+        GUIPropertyManager.SetProperty("#Play.Current.Title", _currentChannel.DisplayName);
       }
       else
       {
         if (g_Player.IsRadio && g_Player.Playing)
         {
           Channel currentlyPlaying = TVHome.Navigator.Channel.Entity;
-          if (currentlyPlaying != null && currentlyPlaying.idChannel == _currentChannel.idChannel)
+          if (currentlyPlaying != null && currentlyPlaying.IdChannel == _currentChannel.IdChannel)
           {
             return;
           }

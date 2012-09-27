@@ -303,7 +303,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
           Channel ch = TransponderList.Instance.CurrentTransponder.CurrentChannel;
 
           //check if its time to grab the epg for this channel
-          TimeSpan ts = DateTime.Now - TransponderList.Instance.CurrentTransponder.CurrentChannel.lastGrabTime.GetValueOrDefault(DateTime.MinValue);
+          TimeSpan ts = DateTime.Now - TransponderList.Instance.CurrentTransponder.CurrentChannel.LastGrabTime.GetValueOrDefault(DateTime.MinValue);
           if (ts.TotalMinutes < _epgReGrabAfter)
           {
             //Log.Epg("Skip card:#{0} transponder #{1}/{2} channel: {3} - Less than regrab time",
@@ -311,11 +311,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
             continue; // less then 2 hrs ago
           }
 
-          if (TVDatabase.TVBusinessLayer.CardManagement.CanTuneTvChannel(epgCard.Card, ch.idChannel))
+          if (TVDatabase.TVBusinessLayer.CardManagement.CanTuneTvChannel(epgCard.Card, ch.IdChannel))
           {
             Log.Epg("Grab for card:#{0} transponder #{1}/{2} channel: {3}",
                     epgCard.Card.IdCard, TransponderList.Instance.CurrentIndex + 1, TransponderList.Instance.Count,
-                    ch.displayName);
+                    ch.DisplayName);
             //start grabbing
             epgCard.GrabEpg();
             return;

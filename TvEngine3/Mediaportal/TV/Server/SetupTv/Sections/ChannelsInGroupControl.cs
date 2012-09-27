@@ -165,9 +165,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         imageIndex = 3;
       }
 
-      ListViewItem item = new ListViewItem(channel.displayName, imageIndex);
+      ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
 
-      item.Checked = channel.visibleInGuide;
+      item.Checked = channel.VisibleInGuide;
       item.Tag = map;
 
       IList<TuningDetail> details = channel.TuningDetails;
@@ -289,7 +289,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           listView1.Items.RemoveAt(index);
           GroupMap map = (GroupMap)item.Tag;
           Channel channel = map.Channel;
-          ServiceAgents.Instance.ChannelServiceAgent.DeleteChannel(channel.idChannel);
+          ServiceAgents.Instance.ChannelServiceAgent.DeleteChannel(channel.IdChannel);
         }
       }
       dlg.Close();
@@ -330,7 +330,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (e.Label != null)
       {
         Channel channel = ((GroupMap)listView1.Items[e.Item].Tag).Channel;
-        channel.displayName = e.Label;
+        channel.DisplayName = e.Label;
         channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
         channel.AcceptChanges();
       }
@@ -341,9 +341,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (!_ignoreItemCheckedEvent)
       {
         Channel ch = ((GroupMap) e.Item.Tag).Channel;
-        if (ch.visibleInGuide != e.Item.Checked)
+        if (ch.VisibleInGuide != e.Item.Checked)
         {
-          ch.visibleInGuide = e.Item.Checked;          
+          ch.VisibleInGuide = e.Item.Checked;          
           ch = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(ch);
           ch.AcceptChanges();
           ((GroupMap) e.Item.Tag).Channel = ch;

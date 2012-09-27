@@ -26,10 +26,10 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
                        {
                          //Channel = channel, // causes : AcceptChanges cannot continue because the object's key values conflict with another object in the ObjectStateManager. Make sure that the key values are unique before calling AcceptChanges.
                          //ChannelGroup = group,
-                         idChannel = channel.idChannel,
+                         idChannel = channel.IdChannel,
                          idGroup = @group.idGroup,
                          mediaType = (int) mediaType,
-                         SortOrder = channel.sortOrder
+                         SortOrder = channel.SortOrder
                        };
       channel.GroupMaps.Add(groupMap);
     }
@@ -48,7 +48,7 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     {
       foreach (Channel channel in channels)
       {
-        DoAddChannelToGroup(channel, group, (MediaTypeEnum) channel.mediaType);
+        DoAddChannelToGroup(channel, group, (MediaTypeEnum) channel.MediaType);
       }
       ServiceAgents.Instance.ChannelServiceAgent.SaveChannels(channels);
     }
@@ -63,7 +63,7 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
 
       var map = new ChannelMap()
       {
-        idChannel = channel.idChannel,
+        idChannel = channel.IdChannel,
         idCard =  card.IdCard,
         epgOnly = epg
       };

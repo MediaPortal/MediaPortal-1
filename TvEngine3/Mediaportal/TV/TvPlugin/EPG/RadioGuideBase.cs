@@ -175,7 +175,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
           for (int i = 0; i < _channelList.Count; i++)
           {
             Channel chan = (_channelList[i]).Channel;
-            if (chan.idChannel == _currentChannel.idChannel)
+            if (chan.IdChannel == _currentChannel.IdChannel)
             {
               _cursorX = i;
               break;
@@ -339,7 +339,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
         {
           _updateTimerRecExpected = DateTime.Now;
           IVirtualCard card;
-          if (ServiceAgents.Instance.ControllerServiceAgent.IsRecording(_recordingExpected.idChannel, out card))
+          if (ServiceAgents.Instance.ControllerServiceAgent.IsRecording(_recordingExpected.IdChannel, out card))
           {
             _recordingExpected = null;
             GetChannels(true);
@@ -611,10 +611,10 @@ namespace Mediaportal.TV.TvPlugin.EPG
                       {
                         GUIPropertyManager.RemovePlayerProperties();
                         GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", recDB.description);
-                        GUIPropertyManager.SetProperty("#Play.Current.Album", recDB.Channel.displayName);
+                        GUIPropertyManager.SetProperty("#Play.Current.Album", recDB.Channel.DisplayName);
                         GUIPropertyManager.SetProperty("#Play.Current.Title", recDB.description);
 
-                        string strLogo = Utils.GetCoverArt(Thumbs.Radio, recDB.Channel.displayName);
+                        string strLogo = Utils.GetCoverArt(Thumbs.Radio, recDB.Channel.DisplayName);
                         if (string.IsNullOrEmpty(strLogo))
                         {
                           strLogo = "defaultMyRadioBig.png";
@@ -655,7 +655,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
             else //not recording
             {
               // clicked the show we're currently watching
-              if (Radio.Radio.CurrentChannel != null && Radio.Radio.CurrentChannel.idChannel == _currentChannel.idChannel &&
+              if (Radio.Radio.CurrentChannel != null && Radio.Radio.CurrentChannel.IdChannel == _currentChannel.IdChannel &&
                   g_Player.Playing)
               {
                 Log.Debug("RadioGuide: clicked on a currently running show");
@@ -773,7 +773,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
     protected override bool IsChannelTypeCorrect(Channel channel)
     {
-      return (channel.mediaType == (int)MediaTypeEnum.Radio);
+      return (channel.MediaType == (int)MediaTypeEnum.Radio);
     }
 
     #endregion

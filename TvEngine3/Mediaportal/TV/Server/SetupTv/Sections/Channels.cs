@@ -280,10 +280,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(_mediaTypeEnum, include);
       foreach (Channel channel in channels)
       {
-        if (channel.mediaType == (int)_mediaTypeEnum)
+        if (channel.MediaType == (int)_mediaTypeEnum)
         {
           //Broker.Execute("delete from TvMovieMappings WHERE idChannel=" + channel.idChannel);
-          ServiceAgents.Instance.ChannelServiceAgent.DeleteChannel(channel.idChannel);
+          ServiceAgents.Instance.ChannelServiceAgent.DeleteChannel(channel.IdChannel);
         }
       }
       dlg.Close();
@@ -325,7 +325,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             for (int i = schedules.Count - 1; i > -1; i--)
             {
               Schedule schedule = schedules[i];
-              if (schedule.idChannel == channel.idChannel)
+              if (schedule.idChannel == channel.IdChannel)
               {
                 ServiceAgents.Instance.ControllerServiceAgent.StopRecordingSchedule(schedule.id_Schedule);
                 ServiceAgents.Instance.ScheduleServiceAgent.DeleteSchedule(schedule.id_Schedule);
@@ -334,7 +334,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             }
           }
 
-          ServiceAgents.Instance.ChannelServiceAgent.DeleteChannel(channel.idChannel);
+          ServiceAgents.Instance.ChannelServiceAgent.DeleteChannel(channel.IdChannel);
           mpListView1.Items.Remove(item);
         }
 
@@ -358,9 +358,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         for (int i = 0; i < mpListView1.Items.Count; ++i)
         {
           Channel channel = (Channel)mpListView1.Items[i].Tag;
-          if (channel.sortOrder != i)
+          if (channel.SortOrder != i)
           {
-            channel.sortOrder = i;
+            channel.SortOrder = i;
             channel.UnloadAllUnchangedRelationsForEntity();
             channels.Add(channel);
             channel.AcceptChanges();
@@ -392,7 +392,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (e.Label != null)
       {
         Channel channel = (Channel)mpListView1.Items[e.Item].Tag;
-        channel.displayName = e.Label;
+        channel.DisplayName = e.Label;
         channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
         channel.AcceptChanges();
       }
@@ -403,9 +403,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (!_ignoreItemCheckedEvent)
       {
         Channel ch = (Channel) e.Item.Tag;
-        if (ch.visibleInGuide != e.Item.Checked && !_lvChannelHandler.PopulateRunning)
+        if (ch.VisibleInGuide != e.Item.Checked && !_lvChannelHandler.PopulateRunning)
         {
-          ch.visibleInGuide = e.Item.Checked;
+          ch.VisibleInGuide = e.Item.Checked;
           ch = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(ch);
           ch.AcceptChanges();
         }
@@ -576,7 +576,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
         if (!hasFTA)
         {
-          ServiceAgents.Instance.ChannelServiceAgent.DeleteChannel(channel.idChannel);
+          ServiceAgents.Instance.ChannelServiceAgent.DeleteChannel(channel.IdChannel);
           itemsToRemove.Add(item);
         }
       }
@@ -600,7 +600,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         IList<TuningDetail> details = channel.TuningDetails;
         if (details.Count > 0)
         {
-          channel.displayName = (details[0]).serviceId.ToString();
+          channel.DisplayName = (details[0]).serviceId.ToString();
           channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
           channel.AcceptChanges();
           item.Tag = channel;
@@ -623,7 +623,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         IList<TuningDetail> details = channel.TuningDetails;
         if (details.Count > 0)
         {
-          channel.displayName = (details[0]).serviceId + " " + channel.displayName;
+          channel.DisplayName = (details[0]).serviceId + " " + channel.DisplayName;
           channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
           channel.AcceptChanges();
           item.Tag = channel;
@@ -699,10 +699,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         Channel _channel = (Channel)item.Tag; // get channel
         dlg.SetMessage(
           string.Format("Please be patient...\n\nTesting channel {0} ( {1} of {2} )",
-                        _channel.displayName, item.Index + 1, mpListView1.Items.Count));
+                        _channel.DisplayName, item.Index + 1, mpListView1.Items.Count));
         Application.DoEvents();
         IVirtualCard _card;
-        TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(_user.Name, _channel.idChannel, out _card, out _user);
+        TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(_user.Name, _channel.IdChannel, out _card, out _user);
         if (result == TvResult.Succeeded)
         {
           _card.StopTimeShifting();
@@ -710,7 +710,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         else
         {
           item.Checked = false;
-          _channel.visibleInGuide = false;
+          _channel.VisibleInGuide = false;
           _channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(_channel);
           _channel.AcceptChanges();
         }

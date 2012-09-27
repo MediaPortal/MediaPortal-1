@@ -7,7 +7,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
   {
     public override string ToString()
     {
-      return displayName;
+      return DisplayName;
     }
 
     public bool IsWebstream()

@@ -81,7 +81,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
 
         DateTime date = DateTime.Now;
 
-        IList<Program> programs = GlobalServiceProvider.Instance.Get<IProgramService>().GetNowAndNextProgramsForChannel(_entity.idChannel).ToList();
+        IList<Program> programs = GlobalServiceProvider.Instance.Get<IProgramService>().GetNowAndNextProgramsForChannel(_entity.IdChannel).ToList();
         if (programs.Count == 0)
         {
           return;

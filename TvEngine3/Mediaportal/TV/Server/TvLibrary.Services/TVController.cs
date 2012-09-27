@@ -3274,7 +3274,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           return -1;
 
         Channel channel = ChannelManagement.GetChannel(idChannel);
-        Log.Write("Controller: TimeShiftingWouldUseCard {0} {1}", channel.displayName, channel.idChannel);
+        Log.Write("Controller: TimeShiftingWouldUseCard {0} {1}", channel.DisplayName, channel.IdChannel);
 
 
         IUser userCopy = GetUserFromContext(userName, idChannel);
@@ -3368,7 +3368,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         
         user.Priority = UserFactory.GetDefaultPriority(user.Name, user.Priority);
         Channel channel = ChannelManagement.GetChannel(idChannel);
-        Log.Write("Controller: StartTimeShifting {0} {1}", channel.displayName, channel.idChannel);
+        Log.Write("Controller: StartTimeShifting {0} {1}", channel.DisplayName, channel.IdChannel);
         StopEPGgrabber();
 
         IDictionary<CardDetail, ICardTuneReservationTicket> tickets = null;
@@ -3432,8 +3432,8 @@ namespace Mediaportal.TV.Server.TVLibrary
       ICollection<CardDetail> freeCardsIterated = UpdateCardsIteratedBasedOnForceCardId(user, forceCardId, freeCardsForReservation);
       while (moreCardsAvailable && !HasTvSucceeded(result))
       {
-        tickets = CardReservationHelper.RequestCardReservations(user, freeCardsForReservation, cardResImpl, freeCardsIterated, channel.idChannel);
-        AdjustCardReservations(user, tickets, channel.idChannel, cardResImpl);
+        tickets = CardReservationHelper.RequestCardReservations(user, freeCardsForReservation, cardResImpl, freeCardsIterated, channel.IdChannel);
+        AdjustCardReservations(user, tickets, channel.IdChannel, cardResImpl);
 
         List<ICardTuneReservationTicket> ticketsList = tickets.Values.ToList();
         if (HasTickets(ticketsList))
@@ -3560,7 +3560,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           ICardTuneReservationTicket ticket = GetTicketByCardDetail(cardInfo, tickets);
           if (ticket == null)
           {            
-            ticket = CardReservationHelper.RequestCardReservation(userBefore, cardInfo, cardResImpl, channel.idChannel);
+            ticket = CardReservationHelper.RequestCardReservation(userBefore, cardInfo, cardResImpl, channel.IdChannel);
             if (ticket == null)
             {
              Log.Write("Controller: StartTimeShifting - could not find cardreservation on card:{0}",
@@ -3620,7 +3620,7 @@ namespace Mediaportal.TV.Server.TVLibrary
             }
             else
             {              
-              if (!TransponderAcquired(maxCards, ticket, tvcard, cardIteration, channel.idChannel, kickCardId, ref kickableCards))
+              if (!TransponderAcquired(maxCards, ticket, tvcard, cardIteration, channel.IdChannel, kickCardId, ref kickableCards))
               {
                 if (kickableCards != null && kickableCards.Count > 0)
                 {
@@ -3646,7 +3646,7 @@ namespace Mediaportal.TV.Server.TVLibrary
             {              
               HandleTvException(tickets, cardInfo);                                             
               failedCardId = cardInfo.Id;
-              StopTimeShifting(ref userNow, channel.idChannel);
+              StopTimeShifting(ref userNow, channel.IdChannel);
               continue; //try next card            
             }
           }
@@ -3654,11 +3654,11 @@ namespace Mediaportal.TV.Server.TVLibrary
           //reset failedCardId incase previous card iteration failed.
           failedCardId = -1;
           CardReservationHelper.CancelAllCardReservations(tickets);
-          Log.Info("control2:{0} {1} {2}", userNow.Name, userNow.CardId, tvcard.UserManagement.GetSubChannelIdByChannelId(userNow.Name, channel.idChannel));
+          Log.Info("control2:{0} {1} {2}", userNow.Name, userNow.CardId, tvcard.UserManagement.GetSubChannelIdByChannelId(userNow.Name, channel.IdChannel));
           card = GetVirtualCard(userNow);
           card.NrOfOtherUsersTimeshiftingOnCard = ticket.NumberOfOtherUsersOnSameChannel;
 
-          StopTimeShiftingAllChannelsExcept(userNow, channel.idChannel);
+          StopTimeShiftingAllChannelsExcept(userNow, channel.IdChannel);
           UpdateChannelStatesForUsers();
         }
         catch (Exception)
@@ -3856,7 +3856,7 @@ namespace Mediaportal.TV.Server.TVLibrary
               Channel ch = ChannelManagement.GetChannel(subchannel.IdChannel);
               if (ch != null)
               {
-                channelInfo = ch.displayName;
+                channelInfo = ch.DisplayName;
               }
 
               Log.Write(
@@ -4979,7 +4979,7 @@ namespace Mediaportal.TV.Server.TVLibrary
                                                                                                  MediaTypeEnum.TV);
             foreach (Channel ch in tvChannelList)
             {
-              bool exists = _tvChannelListGroups.Exists(c => c.idChannel == ch.idChannel);
+              bool exists = _tvChannelListGroups.Exists(c => c.IdChannel == ch.IdChannel);
               if (!exists)
               {
                 _tvChannelListGroups.Add(ch);
@@ -5104,7 +5104,7 @@ namespace Mediaportal.TV.Server.TVLibrary
             cardResTS.OnStartCardTune -= CardResTsOnStartCardTune;
 
             Log.Info("Controller: {0} {1} {2}", user.Name, user.CardId,
-                     tvCardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, dbChannel.idChannel));
+                     tvCardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, dbChannel.IdChannel));
           }
         }
         finally
@@ -5782,7 +5782,7 @@ namespace Mediaportal.TV.Server.TVLibrary
                       Idle = false,
                       UserName = user.Name,
                       ChannelName =
-                        ChannelManagement.GetChannel(subchannel.IdChannel).displayName,
+                        ChannelManagement.GetChannel(subchannel.IdChannel).DisplayName,
                       IsScrambled = isScrambled ? "yes" : "no",
                       IsOwner = isOwner ? "yes" : "no",
                     };

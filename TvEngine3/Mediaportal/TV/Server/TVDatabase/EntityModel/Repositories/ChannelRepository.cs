@@ -31,13 +31,13 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
     public IQueryable<Channel> GetAllChannelsByGroupIdAndMediaType(int groupId, MediaTypeEnum mediaType)
     {     
-      IQueryable<Channel> channels = GetQuery<GroupMap>().Where(gm => gm.mediaType == (int)mediaType && gm.idGroup == groupId && gm.Channel.visibleInGuide && gm.Channel.mediaType == (int)mediaType).OrderBy(gm => gm.SortOrder).Select(gm => gm.Channel);
+      IQueryable<Channel> channels = GetQuery<GroupMap>().Where(gm => gm.mediaType == (int)mediaType && gm.idGroup == groupId && gm.Channel.VisibleInGuide && gm.Channel.MediaType == (int)mediaType).OrderBy(gm => gm.SortOrder).Select(gm => gm.Channel);
       return channels;  
     }
 
     public IQueryable<Channel> GetAllChannelsByGroupId(int groupId)
     {
-      IOrderedQueryable<Channel> channels = GetQuery<Channel>().Where(c => c.visibleInGuide && c.GroupMaps.Count > 0 && c.GroupMaps.Any(gm => gm.ChannelGroup.idGroup == groupId)).OrderBy(c => c.sortOrder);
+      IOrderedQueryable<Channel> channels = GetQuery<Channel>().Where(c => c.VisibleInGuide && c.GroupMaps.Count > 0 && c.GroupMaps.Any(gm => gm.ChannelGroup.idGroup == groupId)).OrderBy(c => c.SortOrder);
       return channels;     
     }
 

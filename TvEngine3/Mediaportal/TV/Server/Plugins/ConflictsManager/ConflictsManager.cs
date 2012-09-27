@@ -681,7 +681,7 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
         if (scheduleType != ScheduleRecordingType.EveryTimeOnThisChannel) continue;
         Channel channel = ChannelManagement.GetChannel(schedule.idChannel);
 
-        IList<Program> programsList = ProgramManagement.GetProgramsByChannelAndTitleAndStartEndTimes(channel.idChannel,
+        IList<Program> programsList = ProgramManagement.GetProgramsByChannelAndTitleAndStartEndTimes(channel.IdChannel,
                                                                         schedule.programName, DateTime.Now,
                                                                         DateTime.Now.AddMonths(1));          
         if (programsList != null)
@@ -718,7 +718,7 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
         if (scheduleType != ScheduleRecordingType.WeeklyEveryTimeOnThisChannel) continue;
         Channel channel = ChannelManagement.GetChannel(schedule.idChannel);
 
-        IList<Program> programsList = ProgramManagement.GetProgramsByChannelAndTitleAndStartEndTimes(channel.idChannel,
+        IList<Program> programsList = ProgramManagement.GetProgramsByChannelAndTitleAndStartEndTimes(channel.IdChannel,
                                                                         schedule.programName, DateTime.Now,
                                                                         DateTime.Now.AddMonths(1));          
        

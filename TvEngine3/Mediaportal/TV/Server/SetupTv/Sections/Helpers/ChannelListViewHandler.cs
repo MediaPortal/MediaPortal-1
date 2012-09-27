@@ -125,8 +125,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 
           Channel ch = _allChannels[i];
 
-          if (ch.displayName != null &&
-              (filterText.Equals("") || ContainsCaseInvariant(ch.displayName, filterText)))
+          if (ch.DisplayName != null &&
+              (filterText.Equals("") || ContainsCaseInvariant(ch.DisplayName, filterText)))
           {
             _listView.Invoke(new MethodInvoker(delegate() { items.Add(CreateListViewItemForChannel(ch, _allCards)); }));
           }
@@ -196,7 +196,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
     /// <returns>Listview item representing the channel</returns>
     internal ListViewItem CreateListViewItemForChannel(Channel ch, Dictionary<int, CardType> cards)
     {
-      if (_listViewCache.ContainsKey(ch.idChannel)) return _listViewCache[ch.idChannel];
+      if (_listViewCache.ContainsKey(ch.IdChannel)) return _listViewCache[ch.IdChannel];
 
       bool analog = false;
       bool dvbc = false;
@@ -249,8 +249,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
           }
         }
       }
-      ListViewItem item = new ListViewItem(ch.displayName);
-      item.Checked = ch.visibleInGuide;
+      ListViewItem item = new ListViewItem(ch.DisplayName);
+      item.Checked = ch.VisibleInGuide;
       item.Tag = ch;
 
       IList<string> groups = new List<string>();
@@ -381,7 +381,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       item.SubItems.Add(builder.ToString());
       item.SubItems.Add(tuningDetails.Count.ToString());
 
-      _listViewCache.Add(ch.idChannel, item);
+      _listViewCache.Add(ch.IdChannel, item);
 
       return item;
     }

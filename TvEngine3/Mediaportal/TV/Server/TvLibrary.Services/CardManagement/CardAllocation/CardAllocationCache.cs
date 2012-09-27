@@ -13,12 +13,12 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
     public static IList<IChannel> GetTuningDetailsByChannelId(Channel channel)
     {
       IList<IChannel> tuningDetails;
-      bool tuningChannelMappingFound = _tuningChannelMapping.TryGetValue(channel.idChannel, out tuningDetails);
+      bool tuningChannelMappingFound = _tuningChannelMapping.TryGetValue(channel.IdChannel, out tuningDetails);
 
       if (!tuningChannelMappingFound)
       {
         tuningDetails = ChannelManagement.GetTuningChannelsByDbChannel(channel);        
-        _tuningChannelMapping.Add(channel.idChannel, tuningDetails);
+        _tuningChannelMapping.Add(channel.IdChannel, tuningDetails);
       }
       return tuningDetails;
     }
@@ -29,7 +29,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 
       IDictionary<int, bool> cardIds;
 
-      bool isChannelFound = _channelMapping.TryGetValue(dbChannel.idChannel, out cardIds);
+      bool isChannelFound = _channelMapping.TryGetValue(dbChannel.IdChannel, out cardIds);
 
       bool channelMappingFound = false;
       if (isChannelFound)
@@ -49,7 +49,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         cardIds.Add(card.IdCard, isChannelMappedToCard);
       }
 
-      _channelMapping[dbChannel.idChannel] = cardIds;
+      _channelMapping[dbChannel.IdChannel] = cardIds;
       return isChannelMappedToCard;
     }
 

@@ -321,9 +321,9 @@ namespace Mediaportal.TV.TvPlugin
     {
       if (LastError != null)
       {
-        return LastError.FailingChannel.displayName;
+        return LastError.FailingChannel.DisplayName;
       }
-      return TVHome.Navigator.ZapChannel.displayName;
+      return TVHome.Navigator.ZapChannel.DisplayName;
     }
 
     private string GetChannelNumber()
@@ -340,9 +340,9 @@ namespace Mediaportal.TV.TvPlugin
     {
       if (LastError != null)
       {
-        return LastError.FailingChannel.idChannel;
+        return LastError.FailingChannel.IdChannel;
       }
-      return TVHome.Navigator.ZapChannel.idChannel;
+      return TVHome.Navigator.ZapChannel.IdChannel;
     }
 
     private void ShowPrograms()
@@ -377,7 +377,7 @@ namespace Mediaportal.TV.TvPlugin
         lblEndTime.Label = "";
         if (LastError.FailingChannel != null)
         {
-          lblCurrentChannel.Label = LastError.FailingChannel.displayName;
+          lblCurrentChannel.Label = LastError.FailingChannel.DisplayName;
         }
         if (LastError.Messages.Count > 0)
         {

@@ -262,12 +262,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               //add new channel
               exists = false;
               dbChannel = ChannelFactory.CreateChannel(channel.Name);
-              dbChannel.sortOrder = 10000;
+              dbChannel.SortOrder = 10000;
               if (channel.LogicalChannelNumber >= 1)
               {
-                dbChannel.sortOrder = channel.LogicalChannelNumber;
+                dbChannel.SortOrder = channel.LogicalChannelNumber;
               }
-              dbChannel.mediaType = (int) channel.MediaType;
+              dbChannel.MediaType = (int) channel.MediaType;
               dbChannel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
               dbChannel.AcceptChanges();
             }
@@ -287,12 +287,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             }
             if (currentDetail == null)
             {
-              ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.idChannel, channel);
+              ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel);
             }
             else
             {
               //update tuning details...
-              ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbChannel.idChannel, currentDetail.idTuning, channel);            
+              ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbChannel.IdChannel, currentDetail.idTuning, channel);            
             }
 
             if (channel.MediaType == MediaTypeEnum.TV)

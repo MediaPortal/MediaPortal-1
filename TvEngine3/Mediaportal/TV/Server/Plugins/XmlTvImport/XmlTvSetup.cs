@@ -206,18 +206,18 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         // convert to Dictionary
         foreach (Channel ch in lstTvGuideChannels)
         {
-          string tName = ch.displayName.Replace(" ", "").ToLowerInvariant();
+          string tName = ch.DisplayName.Replace(" ", "").ToLowerInvariant();
           if (!guideChannels.ContainsKey(tName))
             guideChannels.Add(tName, ch);
 
           // used to make sure that the available mapping is used by default
-          if (ch.externalId != null && !ch.externalId.Trim().Equals(""))
+          if (ch.ExternalId != null && !ch.ExternalId.Trim().Equals(""))
           {
             // need to check this because we can have channels with multiple display-names 
             // and they're currently handles as one channel/display-name.
             // only in the mapping procedure of course
-            if (!guideChannelsExternald.ContainsKey(ch.externalId))
-              guideChannelsExternald.Add(ch.externalId, ch);
+            if (!guideChannelsExternald.ContainsKey(ch.ExternalId))
+              guideChannelsExternald.Add(ch.ExternalId, ch);
           }
         }
 
@@ -269,9 +269,9 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           DataGridViewTextBoxCell providerCell = (DataGridViewTextBoxCell)gridRow.Cells["tuningChannel"];
           DataGridViewCheckBoxCell showInGuideCell = (DataGridViewCheckBoxCell)gridRow.Cells["ShowInGuide"];
 
-          channelCell.Value = ch.displayName;
-          idCell.Value = ch.idChannel;
-          showInGuideCell.Value = ch.visibleInGuide;
+          channelCell.Value = ch.DisplayName;
+          idCell.Value = ch.IdChannel;
+          showInGuideCell.Value = ch.VisibleInGuide;
 
           DataGridViewComboBoxCell guideChannelComboBox = (DataGridViewComboBoxCell)gridRow.Cells["guideChannel"];
 
@@ -282,15 +282,15 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           // Start by checking if there's an available mapping for this channel
           Channel matchingGuideChannel = null;
 
-          if (ch.externalId != null && guideChannelsExternald.ContainsKey(ch.externalId))
+          if (ch.ExternalId != null && guideChannelsExternald.ContainsKey(ch.ExternalId))
           {
-            matchingGuideChannel = guideChannelsExternald[ch.externalId];
+            matchingGuideChannel = guideChannelsExternald[ch.ExternalId];
             alreadyMapped = true;
           }
           // no externalId mapping available, try using the name
           if (matchingGuideChannel == null)
           {
-            string tName = ch.displayName.Replace(" ", "").ToLowerInvariant();
+            string tName = ch.DisplayName.Replace(" ", "").ToLowerInvariant();
             if (guideChannels.ContainsKey(tName))
               matchingGuideChannel = (Channel)guideChannels[tName];
           }
@@ -312,7 +312,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
               if (checkBoxPartialMatch.Checked)
               {
                 // do a search using the first word(s) (skipping the last) of the channelname
-                name = ch.displayName.Trim();
+                name = ch.DisplayName.Trim();
                 int spaceIdx = name.LastIndexOf(" ");
                 if (spaceIdx > 0)
                 {
@@ -362,13 +362,13 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           {
             Channel guideChannel = (Channel)de.Value;
 
-            String itemText = guideChannel.displayName + " (" + guideChannel.externalId + ")";
+            String itemText = guideChannel.DisplayName + " (" + guideChannel.ExternalId + ")";
 
             guideChannelComboBox.Items.Add(itemText);
 
             if (!gotMatch && matchingGuideChannel != null)
             {
-              if (guideChannel.displayName.ToLowerInvariant().Equals(matchingGuideChannel.displayName.ToLowerInvariant()))
+              if (guideChannel.DisplayName.ToLowerInvariant().Equals(matchingGuideChannel.DisplayName.ToLowerInvariant()))
               {
                 // set the matchtype row color according to the type of match(already mapped,exact, partial, none)
                 if (alreadyMapped)
@@ -392,7 +392,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                 }
 
                 guideChannelComboBox.Value = itemText;
-                guideChannelComboBox.Tag = ch.externalId;
+                guideChannelComboBox.Tag = ch.ExternalId;
 
                 gotMatch = true;
               }
@@ -620,7 +620,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                 {
                   if (displayName != null)
                   {
-                    Channel channel = new Channel {externalId = id, displayName = displayName};
+                    Channel channel = new Channel {ExternalId = id, DisplayName = displayName};
                     channels.Add(channel);
                   }
                 }
@@ -650,7 +650,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         // loading all Channels is much faster then loading them one by one
         // for each mapping
         IEnumerable<Channel> allChanels = _channelServiceAgent.ListAllChannels();
-        Dictionary<int, Channel> dAllChannels = allChanels.ToDictionary(ch => ch.idChannel);
+        Dictionary<int, Channel> dAllChannels = allChanels.ToDictionary(ch => ch.IdChannel);
 
         progressBar1.Value = 0;
         progressBar1.Minimum = 0;
@@ -672,7 +672,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           }
 
           Channel channel = dAllChannels[id];
-          channel.externalId = externalId == null ? "" : externalId;
+          channel.ExternalId = externalId == null ? "" : externalId;
           //channel.Persist();
           progressBar1.Value++;
         }

@@ -66,19 +66,19 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         MessageBox.Show("Please enter a name for this channel");
         return;
       }
-      _channel.displayName = textBoxName.Text;
-      _channel.visibleInGuide = checkBoxVisibleInTvGuide.Checked;
-      _channel.mediaType = (int) _mediaType;
+      _channel.DisplayName = textBoxName.Text;
+      _channel.VisibleInGuide = checkBoxVisibleInTvGuide.Checked;
+      _channel.MediaType = (int) _mediaType;
 
       foreach (TuningDetail detail in _channel.TuningDetails)
       {                
         if (detail.ChangeTracker.State != ObjectState.Deleted)
         {
-          detail.idChannel = _channel.idChannel;
+          detail.idChannel = _channel.IdChannel;
           detail.mediaType = (int)_mediaType;
           if (string.IsNullOrEmpty(detail.name))
           {
-            detail.name = _channel.displayName;
+            detail.name = _channel.DisplayName;
           }
         }    
       }
@@ -110,8 +110,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         _newChannel = true;
         _channel = ChannelFactory.CreateChannel(MediaTypeEnum.TV, 0, Schedule.MinSchedule, true, Schedule.MinSchedule, 10000, true, "", "");        
       }
-      textBoxName.Text = _channel.displayName;
-      checkBoxVisibleInTvGuide.Checked = _channel.visibleInGuide;            
+      textBoxName.Text = _channel.DisplayName;
+      checkBoxVisibleInTvGuide.Checked = _channel.VisibleInGuide;            
       UpdateTuningDetailList();
     }
 

@@ -105,7 +105,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
       foreach (Channel ch in channels)
       {
-        _channelNames.Add(ch.idChannel, ch.displayName);
+        _channelNames.Add(ch.IdChannel, ch.DisplayName);
       }
 
       _rndFrom = txtRndFrom.Value;
@@ -277,7 +277,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         channelTestThread.IsBackground = true;
         channelTestThread.Priority = ThreadPriority.Lowest;
         channelsO = channels as List<Channel>;
-        channelsO.AddRange(maps.Select(map => map.Channel).Where(ch => ch.mediaType == (int)MediaTypeEnum.TV));
+        channelsO.AddRange(maps.Select(map => map.Channel).Where(ch => ch.MediaType == (int)MediaTypeEnum.TV));
         _usersShareChannels = chkShareChannels.Checked;
         _tunedelay = txtTuneDelay.Value;
         _concurrentTunes = txtConcurrentTunes.Value;
@@ -387,7 +387,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             {
               cardId = card.Id;
             }
-            nextRowIndexForDiscUpdate = Add2Log("OK", channel.displayName, mSecsElapsed, user.Name,
+            nextRowIndexForDiscUpdate = Add2Log("OK", channel.DisplayName, mSecsElapsed, user.Name,
                                                 Convert.ToString(cardId), "");
             user.CardId = cardId;
             _succeeded++;
@@ -401,7 +401,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           {
             string err = GetErrMsgFromTVResult(result);
             nextRowIndexForDiscUpdate = -1;
-            nextRowIndexForDiscUpdate = Add2Log("INF", channel.displayName, mSecsElapsed, user.Name, "N/A", err);
+            nextRowIndexForDiscUpdate = Add2Log("INF", channel.DisplayName, mSecsElapsed, user.Name, "N/A", err);
             _ignored++;
           }
           else
@@ -412,14 +412,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             {
               _firstFail = mpListViewLog.Items.Count + 1;
             }
-            nextRowIndexForDiscUpdate = Add2Log("ERR", channel.displayName, mSecsElapsed, user.Name,
+            nextRowIndexForDiscUpdate = Add2Log("ERR", channel.DisplayName, mSecsElapsed, user.Name,
                                                 Convert.ToString(user.FailedCardId), err);
             _failed++;
           }
         }
         catch (Exception e)
         {
-          nextRowIndexForDiscUpdate = Add2Log("EXC", channel.displayName, mSecsElapsed, user.Name,
+          nextRowIndexForDiscUpdate = Add2Log("EXC", channel.DisplayName, mSecsElapsed, user.Name,
                                               Convert.ToString(user.FailedCardId), e.Message);
           _ignored++;
           if (_firstFail == 0 && _running)
@@ -445,7 +445,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       Stopwatch sw = Stopwatch.StartNew();
       UpdateDiscontinuityCounter(user, nextRowIndexForDiscUpdate);
-      result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, channel.idChannel, out card, out user);
+      result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, channel.IdChannel, out card, out user);
       mSecsElapsed = sw.ElapsedMilliseconds;
       _avg += mSecsElapsed;
       return user;
@@ -815,14 +815,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IUser low = UserFactory.CreateBasicUser("dr1", 1);
       IUser low2 = UserFactory.CreateBasicUser("dr2", 1);
 
-      TvResult tvresult = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(low.Name, dr1.idChannel, out card, out low);
+      TvResult tvresult = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(low.Name, dr1.IdChannel, out card, out low);
       low.CardId = card.Id;
       Thread.Sleep(2000);
 
-      result = ServiceAgents.Instance.ControllerServiceAgent.ParkTimeShifting(low.Name, 0, dr1.idChannel, out low);      
+      result = ServiceAgents.Instance.ControllerServiceAgent.ParkTimeShifting(low.Name, 0, dr1.IdChannel, out low);      
 
       Thread.Sleep(1000);
-      tvresult = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(low.Name, dr2.idChannel, out card, out low);
+      tvresult = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(low.Name, dr2.IdChannel, out card, out low);
       low.CardId = card.Id;
 
       //StartTimeshifting(tv3, low, 0, out mSecsElapsed, out result, out card);      

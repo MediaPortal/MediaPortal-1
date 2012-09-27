@@ -852,8 +852,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           lookupChannel = aRec.Channel;
           if (lookupChannel != null)
           {
-            channelName = lookupChannel.displayName;
-            lookupChannel.idChannel.ToString();
+            channelName = lookupChannel.DisplayName;
+            lookupChannel.IdChannel.ToString();
           }
         }
         catch (Exception) {}
@@ -932,7 +932,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
         if (channel != null)
         {
-          channelId = channel.idChannel;
+          channelId = channel.IdChannel;
         }
 
         tagRec = RecordingFactory.CreateRecording(channelId,

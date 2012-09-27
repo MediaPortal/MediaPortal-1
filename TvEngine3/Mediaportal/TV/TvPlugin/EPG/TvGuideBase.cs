@@ -137,7 +137,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
           for (int i = 0; i < _channelList.Count; i++)
           {
             Channel chan = (_channelList[i]).Channel;
-            if (chan.idChannel == _currentChannel.idChannel)
+            if (chan.IdChannel == _currentChannel.IdChannel)
             {
               _cursorX = i;
               break;
@@ -435,7 +435,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
             else //not recording
             {
               // clicked the show we're currently watching
-              if (TVHome.Navigator.Channel != null && TVHome.Navigator.Channel.Entity.idChannel == _currentChannel.idChannel &&
+              if (TVHome.Navigator.Channel != null && TVHome.Navigator.Channel.Entity.IdChannel == _currentChannel.IdChannel &&
                   g_Player.Playing && g_Player.IsTV)
               {
                 Log.Debug("TVGuide: clicked on a currently running show");
@@ -558,7 +558,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
     protected override bool IsChannelTypeCorrect(Channel channel)
     {
-      return (channel.mediaType == (int)MediaTypeEnum.TV);
+      return (channel.MediaType == (int)MediaTypeEnum.TV);
     }
 
     protected override IList<Channel> GetGuideChannelsForGroup()
@@ -721,7 +721,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
             foreach (Channel recordingExpected in _recordingsExpected)
             {
               IVirtualCard card;
-              if (ServiceAgents.Instance.ControllerServiceAgent.IsRecording(recordingExpected.idChannel, out card))
+              if (ServiceAgents.Instance.ControllerServiceAgent.IsRecording(recordingExpected.IdChannel, out card))
               {
                 wasAnyRecordingExpectedStarted = true;
                 recordingsExpectedToRemove.Add(recordingExpected);

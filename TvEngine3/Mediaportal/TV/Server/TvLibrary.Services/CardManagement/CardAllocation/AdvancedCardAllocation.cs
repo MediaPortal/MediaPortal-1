@@ -110,7 +110,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         //construct list of all cards we can use to tune to the new channel
         if (LogEnabled)
         {
-          Log.Info("Controller: find free card for channel {0}", dbChannel.displayName);
+          Log.Info("Controller: find free card for channel {0}", dbChannel.DisplayName);
         }
         var cardsAvailable = new List<CardDetail>();
 
@@ -199,7 +199,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         var cardsAvailable = new List<CardDetail>();        
         if (LogEnabled)
         {
-          Log.Info("Controller: find card for channel {0}", dbChannel.displayName);
+          Log.Info("Controller: find card for channel {0}", dbChannel.DisplayName);
         }
         //get the tuning details for the channel
         ICollection<IChannel> tuningDetails = CardAllocationCache.GetTuningDetailsByChannelId(dbChannel);
@@ -209,14 +209,14 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
           //no tuning details??
           if (LogEnabled)
           {
-            Log.Info("Controller:  No tuning details for channel:{0}", dbChannel.displayName);
+            Log.Info("Controller:  No tuning details for channel:{0}", dbChannel.DisplayName);
           }
           return cardsAvailable;
         }
 
         if (LogEnabled)
         {
-          Log.Info("Controller:   got {0} tuning details for {1}", tuningDetails.Count, dbChannel.displayName);
+          Log.Info("Controller:   got {0} tuning details for {1}", tuningDetails.Count, dbChannel.DisplayName);
         }
         int number = 0;
         ICollection<ITvCardHandler> cardHandlers = cards.Values;
@@ -261,7 +261,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
             }
             int nrOfOtherUsers = NumberOfOtherUsersOnCurrentCard(cardHandler, user);
             long? channelTimeshiftingOnOtherMux;
-            IsChannelTimeshiftingOnOtherMux(cardHandler, dbChannel.idChannel, tuningDetail, out channelTimeshiftingOnOtherMux);
+            IsChannelTimeshiftingOnOtherMux(cardHandler, dbChannel.IdChannel, tuningDetail, out channelTimeshiftingOnOtherMux);
             var cardInfo = new CardDetail(cardId, cardHandler.DataBaseCard, tuningDetail, isSameTransponder,
                                                  nrOfOtherUsers, channelTimeshiftingOnOtherMux);
             cardsAvailable.Add(cardInfo);

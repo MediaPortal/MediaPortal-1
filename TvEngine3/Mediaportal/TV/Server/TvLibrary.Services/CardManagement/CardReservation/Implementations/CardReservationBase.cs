@@ -133,14 +133,14 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
       {
         if (isTuningPending && ticketFound)
         {
-          Log.Debug("CardReservationBase: tvcard={0}, user={1}, dbChannel={2}, ticket={3}, tunestate={4}, stopstate={5}", tvcard.DataBaseCard.IdCard, user.Name, dbChannel.idChannel, ticket.Id, tvcard.Tuner.CardTuneState, tvcard.Tuner.CardStopState);
+          Log.Debug("CardReservationBase: tvcard={0}, user={1}, dbChannel={2}, ticket={3}, tunestate={4}, stopstate={5}", tvcard.DataBaseCard.IdCard, user.Name, dbChannel.IdChannel, ticket.Id, tvcard.Tuner.CardTuneState, tvcard.Tuner.CardStopState);
           tvResult = tvcard.Tuner.CardTune(ref user, channel, dbChannel);
 
           if (tvResult == TvResult.Succeeded)
           {
             if (OnStartCardTune != null)
             {
-              var subChannelByChannelId = tvcard.UserManagement.GetSubChannelIdByChannelId(user.Name, dbChannel.idChannel);
+              var subChannelByChannelId = tvcard.UserManagement.GetSubChannelIdByChannelId(user.Name, dbChannel.IdChannel);
               if (!ServiceManager.Instance.InternalControllerService.IsTimeShifting(user.Name))
               {
                 CleanTimeShiftFiles(tvcard.DataBaseCard.TimeshiftingFolder,
@@ -150,7 +150,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
               string timeshiftFileName = String.Format(@"{0}\live{1}-{2}.ts", tvcard.DataBaseCard.TimeshiftingFolder,
                                                        user.CardId,
                                                        subChannelByChannelId);
-              tvResult = OnStartCardTune(ref user, ref timeshiftFileName, dbChannel.idChannel);
+              tvResult = OnStartCardTune(ref user, ref timeshiftFileName, dbChannel.IdChannel);
             }
           }
 

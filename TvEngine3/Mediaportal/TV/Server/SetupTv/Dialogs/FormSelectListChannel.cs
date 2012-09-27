@@ -46,11 +46,11 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         if (listViewChannels.SelectedItems.Count == 1)
         {
           Channel selectedChannel = listViewChannels.SelectedItems[0].Tag as Channel;
-          if (selectedChannel.idChannel > -1)
+          if (selectedChannel.IdChannel > -1)
           {
-            Log.Debug("SelectListChannel: Channel '{0}' has been selected. ID = {1}", selectedChannel.displayName,
-                      selectedChannel.idChannel);
-            return selectedChannel.idChannel;
+            Log.Debug("SelectListChannel: Channel '{0}' has been selected. ID = {1}", selectedChannel.DisplayName,
+                      selectedChannel.IdChannel);
+            return selectedChannel.IdChannel;
           }
         }
         else
@@ -78,14 +78,14 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         else
         {
           channels =
-            ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.TV).OrderBy(c => c.sortOrder).
-              OrderBy(c => c.displayName).ToList();
+            ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.TV).OrderBy(c => c.SortOrder).
+              OrderBy(c => c.DisplayName).ToList();
         }                
 
         foreach (Channel t in channels)
         {
           // TODO: add imagelist with channel logos from MP :)
-          ListViewItem curItem = new ListViewItem(t.displayName) {Tag = t};
+          ListViewItem curItem = new ListViewItem(t.DisplayName) {Tag = t};
           listViewChannels.Items.Add(curItem);
         }
       }

@@ -400,13 +400,13 @@ namespace Mediaportal.TV.TvPlugin.Helper
     public static string GetChannelLogo (Channel channel)
     {
       string logo = String.Empty;
-      if (null != channel && channel.mediaType == (int)MediaTypeEnum.TV)
+      if (null != channel && channel.MediaType == (int)MediaTypeEnum.TV)
       {
-        logo = Utils.GetCoverArt(Thumbs.TVChannel, channel.displayName);
+        logo = Utils.GetCoverArt(Thumbs.TVChannel, channel.DisplayName);
       }
-      else if (null != channel && channel.mediaType == (int)MediaTypeEnum.Radio)
+      else if (null != channel && channel.MediaType == (int)MediaTypeEnum.Radio)
       {
-        logo = Utils.GetCoverArt(Thumbs.Radio, channel.displayName);
+        logo = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
       }
       return logo;
     }

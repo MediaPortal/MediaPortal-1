@@ -23,7 +23,7 @@ namespace Mediaportal.TV.Server.RuleBasedScheduler.ScheduleConditions
     }
     public IQueryable<Program> ApplyCondition(IQueryable<Program> baseQuery)
     {
-      return baseQuery.Where(program => !(_channels.Any(ch => ch.idChannel == program.Channel.idChannel)));
+      return baseQuery.Where(program => !(_channels.Any(ch => ch.IdChannel == program.Channel.IdChannel)));
     }
   }
 }

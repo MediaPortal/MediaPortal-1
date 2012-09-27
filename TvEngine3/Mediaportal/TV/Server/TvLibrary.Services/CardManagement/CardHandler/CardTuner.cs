@@ -537,11 +537,11 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
         TvResult result;
         Log.WriteFile("card: CardTune {0} {1} {2}:{3}:{4}", _cardHandler.DataBaseCard.IdCard, channel.Name, user.Name,
-                      user.CardId, _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, dbChannel.idChannel));
+                      user.CardId, _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, dbChannel.IdChannel));
         if (_cardHandler.IsScrambled(user.Name))
         {
-          result = Tune(ref user, channel, dbChannel.idChannel);
-          Log.Info("card2:{0} {1} {2}", user.Name, user.CardId, _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, dbChannel.idChannel));
+          result = Tune(ref user, channel, dbChannel.IdChannel);
+          Log.Info("card2:{0} {1} {2}", user.Name, user.CardId, _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, dbChannel.IdChannel));
           return result;
         }
         bool cardActive = true;
@@ -554,12 +554,12 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           }
         }
 
-        if (cardActive && _cardHandler.CurrentDbChannel(user.Name) == dbChannel.idChannel && dbChannel.idChannel >= 0)
+        if (cardActive && _cardHandler.CurrentDbChannel(user.Name) == dbChannel.IdChannel && dbChannel.IdChannel >= 0)
         {
           return TvResult.Succeeded;
         }
-        result = Tune(ref user, channel, dbChannel.idChannel);
-        Log.Info("card2:{0} {1} {2}", user.Name, user.CardId, _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, dbChannel.idChannel));
+        result = Tune(ref user, channel, dbChannel.IdChannel);
+        Log.Info("card2:{0} {1} {2}", user.Name, user.CardId, _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, dbChannel.IdChannel));
         return result;
       }
       catch (Exception ex)

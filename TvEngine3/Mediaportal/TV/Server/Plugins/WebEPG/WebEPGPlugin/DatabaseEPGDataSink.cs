@@ -227,7 +227,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
       {
         foreach (Channel chan in _currentChannels)
         {
-          _channelPrograms.Add(programData.ToTvProgram(chan.idChannel));
+          _channelPrograms.Add(programData.ToTvProgram(chan.IdChannel));
         }
       }
     }
@@ -257,7 +257,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
       }
       foreach (Channel chan in _currentChannels)
       {        
-        ProgramManagement.DeleteOldPrograms(chan.idChannel);
+        ProgramManagement.DeleteOldPrograms(chan.IdChannel);
       }
 
       DeleteBeforeImportOption programsToDelete = _deleteExisting

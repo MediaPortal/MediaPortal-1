@@ -220,7 +220,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           if (preNotifySecs > program.Entity.startTime)
           {
-            Log.Info("Notify {0} on {1} start {2}", program.Entity.title, program.Entity.Channel.displayName,
+            Log.Info("Notify {0} on {1} start {2}", program.Entity.title, program.Entity.Channel.DisplayName,
                      program.Entity.startTime);
             program.Notify = false;
             ServiceAgents.Instance.ProgramServiceAgent.SaveProgram(program.Entity);

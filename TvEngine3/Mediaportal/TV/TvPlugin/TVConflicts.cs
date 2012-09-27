@@ -155,7 +155,7 @@ namespace Mediaportal.TV.TvPlugin
       item.Label = schedule.programName;
 
       item.TVTag = schedule;
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.Channel.displayName);
+      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.Channel.DisplayName);
       if (string.IsNullOrEmpty(strLogo))                    
       {
         strLogo = "defaultVideoBig.png";
@@ -321,11 +321,11 @@ namespace Mediaportal.TV.TvPlugin
             }
 
             item.Label = rec.programName;
-            item.Label2 = GUILocalizeStrings.Get(990001, new object[] { day, rec.Channel.displayName });
+            item.Label2 = GUILocalizeStrings.Get(990001, new object[] { day, rec.Channel.DisplayName });
             break;
           case (int)ScheduleRecordingType.EveryTimeOnThisChannel:
             item.Label = rec.programName;
-            item.Label2 = GUILocalizeStrings.Get(650, new object[] {rec.Channel.displayName});
+            item.Label2 = GUILocalizeStrings.Get(650, new object[] {rec.Channel.DisplayName});
             break;
           case (int)ScheduleRecordingType.EveryTimeOnEveryChannel:
             item.Label = rec.programName;
@@ -374,7 +374,7 @@ namespace Mediaportal.TV.TvPlugin
         if (null != dlgYesNo)
         {
           dlgYesNo.SetHeading(GUILocalizeStrings.Get(653)); //Delete this recording?
-          dlgYesNo.SetLine(1, schedule.Channel.displayName);
+          dlgYesNo.SetLine(1, schedule.Channel.DisplayName);
           dlgYesNo.SetLine(2, schedule.programName);
           dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732)); //are you sure
           dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);

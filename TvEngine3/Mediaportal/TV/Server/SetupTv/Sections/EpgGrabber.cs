@@ -147,7 +147,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           bool dvbip = false;
           bool hasFta = false;
           bool hasScrambled = false;
-          if (ch.mediaType != (decimal)_mediaTypeEnum)
+          if (ch.MediaType != (decimal)_mediaTypeEnum)
             continue;
           if (ch.IsWebstream())
           {
@@ -181,7 +181,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             imageIndex = 3;
           }
 
-          ListViewItem item = mpListView1.Items.Add(ch.displayName, imageIndex);
+          ListViewItem item = mpListView1.Items.Add(ch.DisplayName, imageIndex);
           foreach (ChannelMap map in ch.ChannelMaps)
           {
             if (cards.ContainsKey(map.Card.DevicePath))
@@ -246,7 +246,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             line += "DVB-IP";
           }
           item.SubItems.Add(line);
-          item.Checked = ch.grabEpg;
+          item.Checked = ch.GrabEpg;
           item.Tag = ch;
         }
       }
@@ -303,7 +303,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         Channel channel = e.Item.Tag as Channel;
         if (channel == null)
           return;
-        channel.grabEpg = e.Item.Checked;
+        channel.GrabEpg = e.Item.Checked;
         ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
       }      
     }
@@ -323,7 +323,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           var channel = mpListView1.Items[i].Tag as Channel;
           if (channel != null)
           {
-            channel.grabEpg = true;
+            channel.GrabEpg = true;
             channels.Add(channel);
           }
         }
@@ -375,7 +375,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         for (int i = 0; i < mpListView1.Items.Count; ++i)
         {
           Channel ch = (Channel)mpListView1.Items[i].Tag;
-          mpListView1.Items[i].Checked = (ch.GroupMaps.Count > 1 && ch.visibleInGuide);
+          mpListView1.Items[i].Checked = (ch.GroupMaps.Count > 1 && ch.VisibleInGuide);
           channels.Add(ch);
           // if count > 1 we assume that the channel has one or more custom group(s) associated with it.
         }

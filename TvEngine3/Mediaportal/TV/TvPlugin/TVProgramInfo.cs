@@ -427,7 +427,7 @@ namespace Mediaportal.TV.TvPlugin
       {
         //Log.Debug("TVProgrammInfo.UpdateProgramDescription: {0} - {1}", episode.title, episode.description);
 
-        lblProgramChannel.Label = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(episode.IdChannel).displayName;
+        lblProgramChannel.Label = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(episode.IdChannel).DisplayName;
         string strTime = String.Format("{0} {1} - {2}",
                                        Utils.GetShortDayString(episode.StartTime),
                                        episode.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
@@ -549,10 +549,10 @@ namespace Mediaportal.TV.TvPlugin
         GUIListItem item = new GUIListItem();
         item.Label = TVUtil.GetDisplayTitle(episode.Entity);
         item.OnItemSelected += item_OnItemSelected;
-        string logo = Utils.GetCoverArt(Thumbs.TVChannel, episode.Entity.Channel.displayName);
+        string logo = Utils.GetCoverArt(Thumbs.TVChannel, episode.Entity.Channel.DisplayName);
         if (string.IsNullOrEmpty(logo))                      
         {
-          item.Label = String.Format("{0} {1}", episode.Entity.Channel.displayName, TVUtil.GetDisplayTitle(episode.Entity));
+          item.Label = String.Format("{0} {1}", episode.Entity.Channel.DisplayName, TVUtil.GetDisplayTitle(episode.Entity));
           logo = "defaultVideoBig.png";
         }
 
@@ -1042,8 +1042,8 @@ namespace Mediaportal.TV.TvPlugin
       {
         
         IVirtualCard card;
-        if (TVHome.Navigator.Channel.Entity.idChannel == program.idChannel &&
-            ServiceAgents.Instance.ControllerServiceAgent.IsRecording(TVHome.Navigator.Channel.Entity.idChannel, out card))
+        if (TVHome.Navigator.Channel.Entity.IdChannel == program.idChannel &&
+            ServiceAgents.Instance.ControllerServiceAgent.IsRecording(TVHome.Navigator.Channel.Entity.IdChannel, out card))
         {
           ScheduleBLL schedFromDB = new ScheduleBLL(ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(card.RecordingScheduleId));
           if (schedFromDB.IsManual)
@@ -1205,9 +1205,9 @@ namespace Mediaportal.TV.TvPlugin
             GUIListItem item = new GUIListItem(conflict.programName);
             item.Label2 = GetRecordingDateTime(conflict);
             Channel channel = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(conflict.idChannel);
-            if (channel != null && !string.IsNullOrEmpty(channel.displayName))
+            if (channel != null && !string.IsNullOrEmpty(channel.DisplayName))
             {
-              item.Label3 = channel.displayName;
+              item.Label3 = channel.DisplayName;
             }
             else
             {

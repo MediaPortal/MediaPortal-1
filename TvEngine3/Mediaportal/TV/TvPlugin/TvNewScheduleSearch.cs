@@ -260,7 +260,7 @@ namespace Mediaportal.TV.TvPlugin
       {
         GUIListItem item = new GUIListItem();
         item.Label = TVUtil.GetDisplayTitle(program);
-        string logo = Utils.GetCoverArt(Thumbs.TVChannel, program.Channel.displayName);
+        string logo = Utils.GetCoverArt(Thumbs.TVChannel, program.Channel.DisplayName);
         if (string.IsNullOrEmpty(logo))                            
         {
           logo = "defaultVideoBig.png";

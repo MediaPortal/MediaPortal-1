@@ -215,7 +215,7 @@ namespace Mediaportal.TV.TvPlugin
                 Server.TVDatabase.Entities.Channel changeChannel = null;
                 if (AutoZap)
                 {
-                  if ((TVHome.Navigator.Channel.Entity.idChannel != SelectedChannel.idChannel) || g_Player.IsTVRecording)
+                  if ((TVHome.Navigator.Channel.Entity.IdChannel != SelectedChannel.IdChannel) || g_Player.IsTVRecording)
                   {
                     List<Server.TVDatabase.Entities.Channel> tvChannelList = GetChannelListByGroup();
                     if (tvChannelList != null)
@@ -232,7 +232,7 @@ namespace Mediaportal.TV.TvPlugin
                 if (changeChannel != null)
                 {
                   //todo: remove gentle
-                  Channel ch = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(changeChannel.idChannel);
+                  Channel ch = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(changeChannel.IdChannel);
                   TVHome.ViewChannel(ch);
                 }
               }
@@ -466,10 +466,10 @@ namespace Mediaportal.TV.TvPlugin
       {
         Channel currentChan = tvChannelList[i];
 
-        if (currentChan.visibleInGuide)
+        if (currentChan.VisibleInGuide)
         {
           ChannelState currentChanState = ChannelState.tunable;
-          channelID = currentChan.idChannel;
+          channelID = currentChan.IdChannel;
           if (TVHome.ShowChannelStateIcons())
           {
             if (!tvChannelStatesList.TryGetValue(channelID, out currentChanState))
@@ -484,12 +484,12 @@ namespace Mediaportal.TV.TvPlugin
           // store here as it is not needed right now - please beat me later..
           item.TVTag = currentChan;
 
-          sb.Append(currentChan.displayName);
-          ChannelLogo = Utils.GetCoverArt(Thumbs.TVChannel, currentChan.displayName);
+          sb.Append(currentChan.DisplayName);
+          ChannelLogo = Utils.GetCoverArt(Thumbs.TVChannel, currentChan.DisplayName);
 
           // if we are watching this channel mark it
           if (TVHome.Navigator != null && TVHome.Navigator.Channel.Entity != null &&
-              TVHome.Navigator.Channel.Entity.idChannel == channelID)
+              TVHome.Navigator.Channel.Entity.IdChannel == channelID)
           {
             item.IsRemote = true;
             SelectedID = lstChannels.Count;

@@ -1181,7 +1181,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo))
       {
         Channel channel = channelMap[prog.idChannel];
-        strLogo = Utils.GetCoverArt(Thumbs.Radio, channel.displayName);
+        strLogo = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
       }
 
       if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo))
@@ -1371,7 +1371,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       GUIPropertyManager.SetProperty("#Radio.Search.Time", strTime);
       GUIPropertyManager.SetProperty("#Radio.Search.Description", prog.description);
       GUIPropertyManager.SetProperty("#Radio.Search.Genre", TVUtil.GetCategory(prog.ProgramCategory));
-      GUIPropertyManager.SetProperty("#Radio.Search.Channel", prog.Channel.displayName);
+      GUIPropertyManager.SetProperty("#Radio.Search.Channel", prog.Channel.DisplayName);
 
       // see comment at top of method
       //lblProgramTitle.Label = TVUtil.GetDisplayTitle(prog);
@@ -1381,10 +1381,10 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
       if (lblChannel != null)
       {
-        lblChannel.Label = prog.Channel.displayName;
+        lblChannel.Label = prog.Channel.DisplayName;
       }
 
-      string strLogo = Utils.GetCoverArt(Thumbs.Radio, prog.Channel.displayName);
+      string strLogo = Utils.GetCoverArt(Thumbs.Radio, prog.Channel.DisplayName);
       if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo))
       {
         strLogo = "defaultMyradioBig.png";
@@ -1433,7 +1433,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
     private static Dictionary<int, Channel> GetChannelMap()
     {
       IEnumerable<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
-      return channels.ToDictionary(channel => channel.idChannel);
+      return channels.ToDictionary(channel => channel.IdChannel);
     }
 
     private class Comparer : IComparer<GUIListItem>
@@ -1498,11 +1498,11 @@ namespace Mediaportal.TV.TvPlugin.Radio
               Channel ch2 = channelMap[prog2.idChannel];
               if (sortAscending)
               {
-                iComp = String.Compare(ch1.displayName, ch2.displayName, true);
+                iComp = String.Compare(ch1.DisplayName, ch2.DisplayName, true);
               }
               else
               {
-                iComp = String.Compare(ch2.displayName, ch1.displayName, true);
+                iComp = String.Compare(ch2.DisplayName, ch1.DisplayName, true);
               }
               return iComp;
             }

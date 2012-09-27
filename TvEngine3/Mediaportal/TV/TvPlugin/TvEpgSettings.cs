@@ -57,7 +57,7 @@ namespace Mediaportal.TV.TvPlugin
       IEnumerable<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
       foreach (Channel chan in channels)
       {
-        if (chan.mediaType == (int)MediaTypeEnum.TV)
+        if (chan.MediaType == (int)MediaTypeEnum.TV)
         {
           continue;
         }
@@ -73,12 +73,12 @@ namespace Mediaportal.TV.TvPlugin
         if (isDigital)
         {
           GUIListItem item = new GUIListItem();
-          item.Label = chan.displayName;
+          item.Label = chan.DisplayName;
           item.IsFolder = false;
-          item.ThumbnailImage = Utils.GetCoverArt(Thumbs.TVChannel, chan.displayName);
-          item.IconImage = Utils.GetCoverArt(Thumbs.TVChannel, chan.displayName);
-          item.IconImageBig = Utils.GetCoverArt(Thumbs.TVChannel, chan.displayName);
-          item.Selected = chan.grabEpg;
+          item.ThumbnailImage = Utils.GetCoverArt(Thumbs.TVChannel, chan.DisplayName);
+          item.IconImage = Utils.GetCoverArt(Thumbs.TVChannel, chan.DisplayName);
+          item.IconImageBig = Utils.GetCoverArt(Thumbs.TVChannel, chan.DisplayName);
+          item.Selected = chan.GrabEpg;
           item.TVTag = chan;
           listChannels.Add(item);
         }
@@ -90,22 +90,22 @@ namespace Mediaportal.TV.TvPlugin
       if (control == listChannels)
       {
         Channel chan = listChannels.SelectedListItem.TVTag as Channel;
-        chan.grabEpg = !chan.grabEpg;
+        chan.GrabEpg = !chan.GrabEpg;
         ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(chan);
-        listChannels.SelectedListItem.Selected = chan.grabEpg;
+        listChannels.SelectedListItem.Selected = chan.GrabEpg;
       }
       if (control == btnSelectAll)
       {
         IEnumerable<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
         foreach (Channel chan in channels)
         {
-          if (chan.mediaType == (int)MediaTypeEnum.TV)
+          if (chan.MediaType == (int)MediaTypeEnum.TV)
           {
             continue;
           }
-          if (!chan.grabEpg)
+          if (!chan.GrabEpg)
           {
-            chan.grabEpg = true;
+            chan.GrabEpg = true;
             ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(chan);            
           }
         }
@@ -116,13 +116,13 @@ namespace Mediaportal.TV.TvPlugin
         IEnumerable<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
         foreach (Channel chan in channels)
         {
-          if (chan.mediaType == (int)MediaTypeEnum.TV)
+          if (chan.MediaType == (int)MediaTypeEnum.TV)
           {
             continue;
           }
-          if (chan.grabEpg)
+          if (chan.GrabEpg)
           {
-            chan.grabEpg = false;
+            chan.GrabEpg = false;
             ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(chan);
           }
         }

@@ -133,7 +133,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         foreach (Schedule schedule in schedules)
         {
           ListViewItem item = new ListViewItem(schedule.priority.ToString());
-          item.SubItems.Add(schedule.Channel.displayName);
+          item.SubItems.Add(schedule.Channel.DisplayName);
           item.Tag = schedule;
           switch ((ScheduleRecordingType)schedule.scheduleType)
           {
@@ -386,7 +386,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelIncludeRelationEnum.TuningDetails);
         foreach (Channel ch in channels)
         {
-          if (ch.mediaType != (decimal) MediaTypeEnum.TV) continue;
+          if (ch.MediaType != (decimal) MediaTypeEnum.TV) continue;
           bool hasFta = false;
           bool hasScrambled = false;
           IList<TuningDetail> tuningDetails = ch.TuningDetails;
@@ -415,7 +415,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           {
             imageIndex = 3;
           }
-          ComboBoxExItem item = new ComboBoxExItem(ch.displayName, imageIndex, ch.idChannel);
+          ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);
 
           comboBoxChannels.Items.Add(item);
         }
@@ -429,7 +429,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         {
           Channel ch = map.Channel;
           bool hasFta = false;
-          if (ch.mediaType != (decimal) MediaTypeEnum.TV)          
+          if (ch.MediaType != (decimal) MediaTypeEnum.TV)          
           hasScrambled = false;
           IList<TuningDetail> tuningDetails = ch.TuningDetails;
           foreach (TuningDetail detail in tuningDetails)
@@ -457,7 +457,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           {
             imageIndex = 3;
           }
-          ComboBoxExItem item = new ComboBoxExItem(ch.displayName, imageIndex, ch.idChannel);
+          ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);
           comboBoxChannels.Items.Add(item);
         }
       }

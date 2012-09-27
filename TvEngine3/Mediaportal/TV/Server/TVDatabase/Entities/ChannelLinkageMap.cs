@@ -53,7 +53,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     ChangeTracker.RecordOriginalValue("idPortalChannel", _idPortalChannel);
                     if (!IsDeserializing)
                     {
-                        if (ChannelPortal != null && ChannelPortal.idChannel != value)
+                        if (ChannelPortal != null && ChannelPortal.IdChannel != value)
                         {
                             ChannelPortal = null;
                         }
@@ -76,7 +76,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     ChangeTracker.RecordOriginalValue("idLinkedChannel", _idLinkedChannel);
                     if (!IsDeserializing)
                     {
-                        if (ChannelLink != null && ChannelLink.idChannel != value)
+                        if (ChannelLink != null && ChannelLink.IdChannel != value)
                         {
                             ChannelLink = null;
                         }
@@ -254,7 +254,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     ChannelLink.ChannelLinkMaps.Add(this);
                 }
     
-                idLinkedChannel = ChannelLink.idChannel;
+                idLinkedChannel = ChannelLink.IdChannel;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {
@@ -293,7 +293,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     ChannelPortal.ChannelPortalMaps.Add(this);
                 }
     
-                idPortalChannel = ChannelPortal.idChannel;
+                idPortalChannel = ChannelPortal.IdChannel;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {

@@ -240,7 +240,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         IList<Channel> allChannels = ChannelManagement.ListAllChannelsByMediaType(MediaTypeEnum.TV);
         foreach (Channel channel in allChannels)
         {
-          if (channel.visibleInGuide)
+          if (channel.VisibleInGuide)
           {
             tvChannels.Add(channel);
           }
@@ -721,7 +721,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
           Channel progChannel = null;
           foreach (Channel MpChannel in allChannels)
           {
-            if (MpChannel.idChannel == channelMap.IdChannel)
+            if (MpChannel.IdChannel == channelMap.IdChannel)
             {
               progChannel = MpChannel;
               break;
@@ -830,7 +830,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
             _categories[genre] = programCategory;
           }
 
-          Program prog = ProgramFactory.CreateProgram(progChannel.idChannel, newStartDate, newEndDate, title, description, programCategory,
+          Program prog = ProgramFactory.CreateProgram(progChannel.IdChannel, newStartDate, newEndDate, title, description, programCategory,
                                      ProgramState.None, OnAirDate, String.Empty, String.Empty, episode,
                                      String.Empty, EPGStarRating, classification, parentalRating);
 
@@ -859,7 +859,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
             string newStart = mapping.timeSharingStart;
             string newEnd = mapping.timeSharingEnd;
             string newStation = mapping.stationName;
-            string newChannel = mapping.Channel.displayName;
+            string newChannel = mapping.Channel.DisplayName;
             int newIdChannel = mapping.idChannel;            
 
             mappingList.Add(new Mapping(newChannel, newIdChannel, newStation, newStart, newEnd));

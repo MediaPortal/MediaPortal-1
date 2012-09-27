@@ -421,7 +421,7 @@ namespace Mediaportal.TV.TvPlugin
         case SortMethod.Channel:
           if (m_bSortAscending)
           {
-            iComp = String.Compare(rec1.Channel.displayName, rec2.Channel.displayName, true);
+            iComp = String.Compare(rec1.Channel.DisplayName, rec2.Channel.DisplayName, true);
             if (iComp == 0)
             {
               goto case SortMethod.Date;
@@ -433,7 +433,7 @@ namespace Mediaportal.TV.TvPlugin
           }
           else
           {
-            iComp = String.Compare(rec2.Channel.displayName, rec1.Channel.displayName, true);
+            iComp = String.Compare(rec2.Channel.DisplayName, rec1.Channel.DisplayName, true);
             if (iComp == 0)
             {
               goto case SortMethod.Date;
@@ -487,7 +487,7 @@ namespace Mediaportal.TV.TvPlugin
       item.Label = schedule.programName;
 
       item.TVTag = schedule;
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.Channel.displayName);
+      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.Channel.DisplayName);
       
       if (string.IsNullOrEmpty(strLogo))                      
       {
@@ -757,7 +757,7 @@ namespace Mediaportal.TV.TvPlugin
               item.Label2 = String.Format("{0} {1} {2}", strType, day, strTime);
               break;
             case (int)ScheduleRecordingType.EveryTimeOnThisChannel:
-              item.Label2 = GUILocalizeStrings.Get(650, new object[] {rec.Channel.displayName});
+              item.Label2 = GUILocalizeStrings.Get(650, new object[] {rec.Channel.DisplayName});
               break;
             case (int)ScheduleRecordingType.EveryTimeOnEveryChannel:
               item.Label2 = GUILocalizeStrings.Get(651);
@@ -787,7 +787,7 @@ namespace Mediaportal.TV.TvPlugin
                      day = GUILocalizeStrings.Get(17);
                      break;
           }
-             item.Label2 = GUILocalizeStrings.Get(990001, new object[] { day, rec.Channel.displayName });
+             item.Label2 = GUILocalizeStrings.Get(990001, new object[] { day, rec.Channel.DisplayName });
              break;              
         }
         }
@@ -1143,7 +1143,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       else
       {
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel.displayName);
+        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel.DisplayName);
         if (string.IsNullOrEmpty(strLogo))                              
         {
           GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", "defaultVideoBig.png");          
@@ -1186,8 +1186,8 @@ namespace Mediaportal.TV.TvPlugin
         }
         else
         {
-          GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", schedule.Channel.displayName);
-          string logo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.Channel.displayName);
+          GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", schedule.Channel.DisplayName);
+          string logo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.Channel.DisplayName);
           if (string.IsNullOrEmpty(logo))                                
           {
             GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", "defaultVideoBig.png");

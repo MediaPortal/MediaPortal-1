@@ -445,7 +445,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
       if (x.idChannel != y.idChannel)
       {
-        int res = String.Compare(x.Channel.displayName, y.Channel.displayName, true);
+        int res = String.Compare(x.Channel.DisplayName, y.Channel.DisplayName, true);
         if (res == 0)
         {
           if (x.idChannel > y.idChannel)

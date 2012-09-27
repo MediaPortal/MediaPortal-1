@@ -100,7 +100,9 @@
     <Compile Include="Radio\Radio.cs" />
     <Compile Include="EPG\RadioGuide.cs" />
     <Compile Include="EPG\RadioGuideBase.cs" />
-    <Compile Include="Radio\RadioSetupForm.cs" />
+    <Compile Include="Radio\RadioSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Radio\RadioSetupForm.Designer.cs">
       <DependentUpon>RadioSetupForm.cs</DependentUpon>
     </Compile>
@@ -136,11 +138,15 @@
     <Compile Include="Teletext\TvTeletext.cs" />
     <Compile Include="TvRecordingSettings.cs" />
     <Compile Include="TvSetup.cs" />
-    <Compile Include="PluginSetup\TvSetupAudioLanguageForm.cs" />
+    <Compile Include="PluginSetup\TvSetupAudioLanguageForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="PluginSetup\TvSetupAudioLanguageForm.Designer.cs">
       <DependentUpon>TvSetupAudioLanguageForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="PluginSetup\TvSetupForm.cs" />
+    <Compile Include="PluginSetup\TvSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="PluginSetup\TvSetupForm.Designer.cs">
       <DependentUpon>TvSetupForm.cs</DependentUpon>
     </Compile>

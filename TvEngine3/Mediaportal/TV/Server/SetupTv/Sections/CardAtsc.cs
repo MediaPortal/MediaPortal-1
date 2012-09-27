@@ -276,10 +276,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               //add new channel
               exists = false;
               dbChannel = ChannelFactory.CreateChannel(channel.Name);
-              dbChannel.sortOrder = 10000;
+              dbChannel.SortOrder = 10000;
               if (channel.LogicalChannelNumber >= 1)
               {
-                dbChannel.sortOrder = channel.LogicalChannelNumber;
+                dbChannel.SortOrder = channel.LogicalChannelNumber;
               }
             }
             else
@@ -287,27 +287,27 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               exists = true;
               dbChannel = currentDetail.Channel;
             }
-            dbChannel.mediaType = (int)channel.MediaType;
+            dbChannel.MediaType = (int)channel.MediaType;
             dbChannel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
             dbChannel.AcceptChanges();
-            if (dbChannel.mediaType == (decimal) MediaTypeEnum.TV)
+            if (dbChannel.MediaType == (decimal) MediaTypeEnum.TV)
             {
               ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
               MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);              
             }
-            else if (dbChannel.mediaType == (decimal) MediaTypeEnum.Radio)
+            else if (dbChannel.MediaType == (decimal) MediaTypeEnum.Radio)
             {
               ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.AllChannels);
               MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.Radio);                            
             }
             if (currentDetail == null)
             {
-              ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.idChannel, channel);
+              ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel);
             }
             else
             {
               //update tuning details...
-              ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbChannel.idChannel, currentDetail.idTuning, channel);
+              ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbChannel.IdChannel, currentDetail.idTuning, channel);
             }
             if (channel.MediaType == MediaTypeEnum.TV)
             {

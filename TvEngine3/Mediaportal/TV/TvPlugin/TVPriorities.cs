@@ -232,7 +232,7 @@ namespace Mediaportal.TV.TvPlugin
         GUIListItem item = new GUIListItem();
         item.Label = String.Format("{0}.{1}", total, rec.Entity.programName);
         item.TVTag = rec;
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Entity.Channel.displayName);
+        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Entity.Channel.DisplayName);
         if (string.IsNullOrEmpty(strLogo))                      
         {
           strLogo = "defaultVideoBig.png";
@@ -678,7 +678,7 @@ namespace Mediaportal.TV.TvPlugin
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre", "");
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Time", strTime);
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Description", "");
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel.displayName);
+      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel.DisplayName);
       if (string.IsNullOrEmpty(strLogo))                    
       {
         GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", "defaultVideoBig.png");
@@ -707,7 +707,7 @@ namespace Mediaportal.TV.TvPlugin
       GUIPropertyManager.SetProperty("#TV.Scheduled.Time", strTime);
       if (prog != null)
       {
-        GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", prog.Channel.displayName);
+        GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", prog.Channel.DisplayName);
         GUIPropertyManager.SetProperty("#TV.Scheduled.Description", prog.description);
         GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", TVUtil.GetCategory(prog.ProgramCategory));
       }
@@ -718,7 +718,7 @@ namespace Mediaportal.TV.TvPlugin
       }
 
 
-      string logo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.Channel.displayName);
+      string logo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.Channel.DisplayName);
       if (string.IsNullOrEmpty(logo))              
       {
         GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", "defaultVideoBig.png");

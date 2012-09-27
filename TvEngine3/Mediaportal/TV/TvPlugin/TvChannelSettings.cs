@@ -71,11 +71,11 @@ namespace Mediaportal.TV.TvPlugin
       foreach (GroupMap map in maps)
       {
         Channel chan = map.Channel;
-        chan.sortOrder = count;
+        chan.SortOrder = count;
         GUIListItem item = new GUIListItem();
-        item.Label = chan.displayName;
+        item.Label = chan.DisplayName;
         item.MusicTag = chan;
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.displayName);
+        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.DisplayName);
         if (string.IsNullOrEmpty(strLogo))              
         {
           strLogo = "defaultVideoBig.png";
@@ -136,9 +136,9 @@ namespace Mediaportal.TV.TvPlugin
       GUIListItem item2 = listChannels[item + 1];
       Channel chan2 = (Channel)item2.MusicTag;
 
-      int prio = chan1.sortOrder;
-      chan1.sortOrder = chan2.sortOrder;
-      chan2.sortOrder = prio;
+      int prio = chan1.SortOrder;
+      chan1.SortOrder = chan2.SortOrder;
+      chan2.SortOrder = prio;
 
       if (_currentGroup == null)
       {
@@ -173,9 +173,9 @@ namespace Mediaportal.TV.TvPlugin
       GUIListItem item2 = listChannels[item - 1];
       Channel chan2 = (Channel)item2.MusicTag;
 
-      int prio = chan1.sortOrder;
-      chan1.sortOrder = chan2.sortOrder;
-      chan2.sortOrder = prio;
+      int prio = chan1.SortOrder;
+      chan1.SortOrder = chan2.SortOrder;
+      chan2.SortOrder = prio;
       if (_currentGroup == null)
       {
         ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(chan1);
@@ -212,11 +212,11 @@ namespace Mediaportal.TV.TvPlugin
     {
       Channel ch1 = x;
       Channel ch2 = y;
-      if (ch1.sortOrder < ch2.sortOrder)
+      if (ch1.SortOrder < ch2.SortOrder)
       {
         return -1;
       }
-      if (ch1.sortOrder > ch2.sortOrder)
+      if (ch1.SortOrder > ch2.SortOrder)
       {
         return 1;
       }

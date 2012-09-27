@@ -217,7 +217,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               foreach(var subchannel in u.Value.SubChannels.Values)
               {
                 Channel ch = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(subchannel.IdChannel);
-                if (ch.displayName == client.Description)
+                if (ch.DisplayName == client.Description)
                 {
                   user.CardId = card.IdCard;
                   break;

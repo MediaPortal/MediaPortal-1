@@ -442,11 +442,11 @@ namespace Mediaportal.TV.TvPlugin
             {
               if (iControl == btnPreviousProgram.GetID)
               {
-                Program prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(m_dateTime, GetChannel().Entity.idChannel);                
+                Program prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(m_dateTime, GetChannel().Entity.IdChannel);                
                 if (prog != null)
                 {
                   prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(
-                      prog.startTime.Subtract(new TimeSpan(0, 1, 0)), GetChannel().Entity.idChannel);
+                      prog.startTime.Subtract(new TimeSpan(0, 1, 0)), GetChannel().Entity.IdChannel);
                   if (prog != null)
                   {
                     m_dateTime = prog.startTime.AddMinutes(1);
@@ -456,10 +456,10 @@ namespace Mediaportal.TV.TvPlugin
               }
               if (iControl == btnNextProgram.GetID)
               {
-                Program prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(m_dateTime, GetChannel().Entity.idChannel);
+                Program prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(m_dateTime, GetChannel().Entity.IdChannel);
                 if (prog != null)
                 {
-                  prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(prog.endTime.AddMinutes(+1), GetChannel().Entity.idChannel);
+                  prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(prog.endTime.AddMinutes(+1), GetChannel().Entity.IdChannel);
                   if (prog != null)
                   {
                     m_dateTime = prog.startTime.AddMinutes(1);
@@ -1494,18 +1494,18 @@ namespace Mediaportal.TV.TvPlugin
       }
       else
       {
-        string tmpDisplayName = TVHome.Navigator.ZapChannel.displayName;
+        string tmpDisplayName = TVHome.Navigator.ZapChannel.DisplayName;
         Channel tmpChannel = TVHome.Navigator.ZapChannel;
 
         if (tmpChannel != null)
         {
-          return TVHome.Navigator.ZapChannel.displayName;
+          return TVHome.Navigator.ZapChannel.DisplayName;
         }
         else
         {
           TVHome.Navigator.ReLoad();
           // Let TvHome reload all channel information from the database. This makes sure that recently renamed linked subchannels handled the right way.
-          return TVHome.Navigator.ZapChannel.displayName;
+          return TVHome.Navigator.ZapChannel.DisplayName;
         }
       }
     }
@@ -1571,7 +1571,7 @@ namespace Mediaportal.TV.TvPlugin
         ChannelBLL chan = GetChannel();
         if (chan != null)
         {
-          prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(prog.endTime.AddMinutes(1), chan.Entity.idChannel);          
+          prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(prog.endTime.AddMinutes(1), chan.Entity.IdChannel);          
 
           if (prog != null)
           {
@@ -1603,7 +1603,7 @@ namespace Mediaportal.TV.TvPlugin
           }
           if (ch != null)
           {
-            string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.displayName);
+            string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.DisplayName);
             if (string.IsNullOrEmpty(strLogo))                          
             {
               strLogo = "defaultVideoBig.png";
@@ -1674,7 +1674,7 @@ namespace Mediaportal.TV.TvPlugin
           ChannelBLL channelBll = GetChannel();
           if (channelBll != null && channelBll.Entity != null)
           {
-            if (ServiceAgents.Instance.ControllerServiceAgent.IsRecording(channelBll.Entity.idChannel, out card))
+            if (ServiceAgents.Instance.ControllerServiceAgent.IsRecording(channelBll.Entity.IdChannel, out card))
             {
               if (g_Player.IsTVRecording)
               {
@@ -1740,7 +1740,7 @@ namespace Mediaportal.TV.TvPlugin
         }
         if (updateProperties)
         {
-          GUIPropertyManager.SetProperty("#TV.View.channel", prog.Channel.displayName);
+          GUIPropertyManager.SetProperty("#TV.View.channel", prog.Channel.DisplayName);
           GUIPropertyManager.SetProperty("#TV.View.start",
                                          prog.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
           GUIPropertyManager.SetProperty("#TV.View.stop",
