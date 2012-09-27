@@ -452,9 +452,9 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
                 if (recScheduleId > 0)
                 {
                   Schedule schedule = ScheduleManagement.GetSchedule(recScheduleId);
-                  Log.Info("removing schedule with id: {0}", schedule.id_Schedule);
-                  ServiceManager.Instance.InternalControllerService.StopRecordingSchedule(schedule.id_Schedule);
-                  ScheduleManagement.DeleteSchedule(schedule.id_Schedule);
+                  Log.Info("removing schedule with id: {0}", schedule.IdSchedule);
+                  ServiceManager.Instance.InternalControllerService.StopRecordingSchedule(schedule.IdSchedule);
+                  ScheduleManagement.DeleteSchedule(schedule.IdSchedule);
                 }
                 i++;
               }

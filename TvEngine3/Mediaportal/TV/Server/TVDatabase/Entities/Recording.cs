@@ -289,7 +289,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     ChangeTracker.RecordOriginalValue("idSchedule", _idSchedule);
                     if (!IsDeserializing)
                     {
-                        if (Schedule != null && Schedule.id_Schedule != value)
+                        if (Schedule != null && Schedule.IdSchedule != value)
                         {
                             Schedule = null;
                         }
@@ -590,7 +590,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Schedule.Recordings.Add(this);
                 }
     
-                IdSchedule = Schedule.id_Schedule;
+                IdSchedule = Schedule.IdSchedule;
             }
             else if (!skipKeys)
             {

@@ -325,10 +325,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             for (int i = schedules.Count - 1; i > -1; i--)
             {
               Schedule schedule = schedules[i];
-              if (schedule.idChannel == channel.IdChannel)
+              if (schedule.IdChannel == channel.IdChannel)
               {
-                ServiceAgents.Instance.ControllerServiceAgent.StopRecordingSchedule(schedule.id_Schedule);
-                ServiceAgents.Instance.ScheduleServiceAgent.DeleteSchedule(schedule.id_Schedule);
+                ServiceAgents.Instance.ControllerServiceAgent.StopRecordingSchedule(schedule.IdSchedule);
+                ServiceAgents.Instance.ScheduleServiceAgent.DeleteSchedule(schedule.IdSchedule);
                 schedules.RemoveAt(i);
               }
             }

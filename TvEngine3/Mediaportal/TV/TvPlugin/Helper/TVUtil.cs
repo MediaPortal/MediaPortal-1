@@ -113,17 +113,17 @@ namespace Mediaportal.TV.TvPlugin.Helper
         foreach (Program prg in programs)
         {
           Schedule recNew = ScheduleFactory.Clone(rec.Entity);          
-          recNew.scheduleType = (int)ScheduleRecordingType.Once;
-          recNew.startTime = prg.StartTime;
-          recNew.endTime = prg.EndTime;
-          recNew.idChannel = prg.IdChannel;
-          recNew.series = true;
-          recNew.idParentSchedule = rec.Entity.id_Schedule;
-          recNew.programName = prg.Title;
+          recNew.ScheduleType = (int)ScheduleRecordingType.Once;
+          recNew.StartTime = prg.StartTime;
+          recNew.EndTime = prg.EndTime;
+          recNew.IdChannel = prg.IdChannel;
+          recNew.Series = true;
+          recNew.IdParentSchedule = rec.Entity.IdSchedule;
+          recNew.ProgramName = prg.Title;
 
           if (rec.IsSerieIsCanceled(rec.GetSchedStartTimeForProg(prg)))
           {
-            recNew.canceled = recNew.startTime;
+            recNew.Canceled = recNew.StartTime;
           }
           
           recordings.Add(recNew);
@@ -135,8 +135,8 @@ namespace Mediaportal.TV.TvPlugin.Helper
     public static string GetDisplayTitle(Schedule schedule)
     {
       string displayname = "";
-      Program program = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleTimesAndChannel(schedule.programName, schedule.startTime,
-                                                                          schedule.endTime, schedule.idChannel);      
+      Program program = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleTimesAndChannel(schedule.ProgramName, schedule.StartTime,
+                                                                          schedule.EndTime, schedule.IdChannel);      
 
       //if we have found program details then use nicely formatted name
       if (program != null)
@@ -145,7 +145,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
       }
       else
       {
-        displayname = schedule.programName;
+        displayname = schedule.ProgramName;
       }
       return displayname;
     }
@@ -423,7 +423,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
     /// <returns>true if the schedule was deleted, otherwise false</returns>
     public static bool DeleteRecAndSchedQuietly(Schedule schedule, int idChannel)
     {
-      DateTime canceledStartTime = schedule.startTime;
+      DateTime canceledStartTime = schedule.StartTime;
       return (DeleteRecAndSchedQuietly(schedule, canceledStartTime, idChannel));
     }
     /// <summary>
@@ -455,7 +455,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
     /// <returns>true if the schedule was deleted, otherwise false</returns>
     public static bool DeleteRecAndEntireSchedQuietly(Schedule schedule)
     {
-      DateTime canceledStartTime = schedule.startTime;
+      DateTime canceledStartTime = schedule.StartTime;
       return (DeleteRecAndEntireSchedQuietly(schedule, canceledStartTime));      
     }
 
@@ -489,7 +489,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
     /// <returns>true if the schedule was deleted, otherwise false</returns>
     public static bool StopRecAndSchedWithPrompt(Schedule schedule, int idChannel)
     {
-      DateTime canceledStartTime = schedule.startTime;
+      DateTime canceledStartTime = schedule.StartTime;
       return (StopRecAndSchedWithPrompt(schedule, canceledStartTime, idChannel));
     }   
 
@@ -509,7 +509,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
         Schedule parentSchedule = null;
         bool confirmed = true;
         GetParentAndSpawnSchedule(ref schedule, out parentSchedule);
-        confirmed = PromptStopRecording(schedule.id_Schedule);
+        confirmed = PromptStopRecording(schedule.IdSchedule);
 
         if (confirmed)
         {
@@ -535,7 +535,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
         Schedule parentSchedule = null;
         bool confirmed = true;
         GetParentAndSpawnSchedule(ref schedule, out parentSchedule);
-        confirmed = PromptDeleteRecording(schedule.id_Schedule, prg);
+        confirmed = PromptDeleteRecording(schedule.IdSchedule, prg);
 
         if (confirmed)
         {
@@ -566,8 +566,8 @@ namespace Mediaportal.TV.TvPlugin.Helper
       bool wasDeleted = false;
       if (IsValidSchedule(schedule))
       {
-        Program prg = ServiceAgents.Instance.ProgramServiceAgent.GetProgramByTitleAndTimes(schedule.programName, schedule.startTime,
-                                                                     schedule.endTime);
+        Program prg = ServiceAgents.Instance.ProgramServiceAgent.GetProgramByTitleAndTimes(schedule.ProgramName, schedule.StartTime,
+                                                                     schedule.EndTime);
         wasDeleted = DeleteRecAndSchedWithPrompt(schedule, prg);
       }
       
@@ -584,7 +584,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
     /// <returns>true if the schedule was deleted, otherwise false</returns>
     public static bool DeleteRecAndEntireSchedWithPrompt(Schedule schedule)
     {
-      DateTime canceledStartTime = schedule.startTime;
+      DateTime canceledStartTime = schedule.StartTime;
       return (DeleteRecAndEntireSchedWithPrompt(schedule, canceledStartTime));          
     }
 
@@ -606,7 +606,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
         bool confirmed = true;
         GetParentAndSpawnSchedule(ref schedule, out parentSchedule);
         
-        confirmed = PromptDeleteRecording(schedule.id_Schedule);        
+        confirmed = PromptDeleteRecording(schedule.IdSchedule);        
         if (confirmed)
         {
           wasDeleted = StopRecAndDeleteEntireSchedule(schedule, parentSchedule, canceledStartTime);
@@ -619,14 +619,14 @@ namespace Mediaportal.TV.TvPlugin.Helper
     {
       bool wasCanceled = CancelEpisode(canceledStartTime, parentSchedule, idChannel);
       bool wasDeleted = false;
-      if (canceledStartTime == schedule.startTime)
+      if (canceledStartTime == schedule.StartTime)
       {
-        bool isScheduleTypeOnce = IsScheduleTypeOnce(schedule.id_Schedule);
+        bool isScheduleTypeOnce = IsScheduleTypeOnce(schedule.IdSchedule);
 
         wasDeleted = StopRecording(schedule);
         if (isScheduleTypeOnce && !wasDeleted)
         {
-          wasDeleted = DeleteSchedule(schedule.id_Schedule);
+          wasDeleted = DeleteSchedule(schedule.IdSchedule);
         }        
       }
             
@@ -637,7 +637,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
 
     private static bool StopRecAndDeleteEntireSchedule(Schedule schedule, Schedule parentSchedule, DateTime canceledStartTime)
     {
-      int idChannel = schedule.idChannel;      
+      int idChannel = schedule.IdChannel;      
       
       bool wasRecStopped = StopRecording(schedule);            
       bool wasDeleted = DeleteEntireOrOnceSchedule(schedule, parentSchedule);              
@@ -649,7 +649,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
     private static bool IsScheduleTypeOnce (int IdSchedule)
     {
       Schedule schedule = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(IdSchedule);
-      bool isOnce = (schedule.scheduleType == (int)ScheduleRecordingType.Once);
+      bool isOnce = (schedule.ScheduleType == (int)ScheduleRecordingType.Once);
       return isOnce;
     }
 
@@ -661,12 +661,12 @@ namespace Mediaportal.TV.TvPlugin.Helper
       {                
         if (parentSchedule != null)
         {
-          wasDeleted = DeleteSchedule(parentSchedule.id_Schedule);          
+          wasDeleted = DeleteSchedule(parentSchedule.IdSchedule);          
         }
 
         if (schedule != null)
         {
-          wasDeleted = DeleteSchedule(schedule.id_Schedule);          
+          wasDeleted = DeleteSchedule(schedule.IdSchedule);          
         } 
       }
       catch (Exception)
@@ -684,7 +684,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
         Schedule sched2del = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(idSchedule);
         if (sched2del != null)
         {          
-          ServiceAgents.Instance.ScheduleServiceAgent.DeleteSchedule(sched2del.id_Schedule);
+          ServiceAgents.Instance.ScheduleServiceAgent.DeleteSchedule(sched2del.IdSchedule);
         }
         scheduleDeleted = true;
       }
@@ -704,12 +704,12 @@ namespace Mediaportal.TV.TvPlugin.Helper
       {
         //create the canceled schedule to prevent the schedule from restarting again.
         // we only create cancelled recordings on series type schedules      
-        Schedule sched2cancel = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(scheduleToCancel.id_Schedule);
-        bool isOnce = IsScheduleTypeOnce(scheduleToCancel.id_Schedule);
+        Schedule sched2cancel = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(scheduleToCancel.IdSchedule);
+        bool isOnce = IsScheduleTypeOnce(scheduleToCancel.IdSchedule);
         if (!isOnce)
         {
           DateTime cancel = cancelStartTime;
-          int IdForScheduleToCancel = scheduleToCancel.id_Schedule;
+          int IdForScheduleToCancel = scheduleToCancel.IdSchedule;
           CanceledSchedule canceledSchedule = CanceledScheduleFactory.CreateCanceledSchedule(IdForScheduleToCancel, idChannel, cancel);          
           ServiceAgents.Instance.CanceledScheduleServiceAgent.SaveCanceledSchedule(canceledSchedule);
           episodeCanceled = true;
@@ -755,10 +755,10 @@ namespace Mediaportal.TV.TvPlugin.Helper
       Schedule schedule = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(IdSchedule);
       if (schedule != null)
       {
-        Schedule spawnedSchedule = ServiceAgents.Instance.ScheduleServiceAgent.RetrieveSpawnedSchedule(IdSchedule, schedule.startTime);        
+        Schedule spawnedSchedule = ServiceAgents.Instance.ScheduleServiceAgent.RetrieveSpawnedSchedule(IdSchedule, schedule.StartTime);        
         if (spawnedSchedule != null)
         {
-          recordingTitle = GetDisplayTitle(ServiceAgents.Instance.RecordingServiceAgent.GetActiveRecording(spawnedSchedule.id_Schedule));
+          recordingTitle = GetDisplayTitle(ServiceAgents.Instance.RecordingServiceAgent.GetActiveRecording(spawnedSchedule.IdSchedule));
         }
         else
         {
@@ -836,7 +836,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
       if (parentSchedule == null)
       {
         parentSchedule = schedule;
-        Schedule spawn = ServiceAgents.Instance.ScheduleServiceAgent.RetrieveSpawnedSchedule(parentSchedule.id_Schedule, parentSchedule.startTime);
+        Schedule spawn = ServiceAgents.Instance.ScheduleServiceAgent.RetrieveSpawnedSchedule(parentSchedule.IdSchedule, parentSchedule.StartTime);
         if (spawn != null)
         {
           schedule = spawn;
@@ -850,7 +850,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
       {
         return false;
       }
-      int scheduleId = schedule.id_Schedule;
+      int scheduleId = schedule.IdSchedule;
 
       if (scheduleId < 1)
       {
@@ -862,11 +862,11 @@ namespace Mediaportal.TV.TvPlugin.Helper
     private static bool StopRecording(Schedule schedule)
     {
       bool stoppedRec = false;      
-      bool isRec = ServiceAgents.Instance.ScheduleServiceAgent.IsScheduleRecording(schedule.id_Schedule);
+      bool isRec = ServiceAgents.Instance.ScheduleServiceAgent.IsScheduleRecording(schedule.IdSchedule);
       if (isRec)
       {
         
-        ServiceAgents.Instance.ControllerServiceAgent.StopRecordingSchedule(schedule.id_Schedule);
+        ServiceAgents.Instance.ControllerServiceAgent.StopRecordingSchedule(schedule.IdSchedule);
         stoppedRec = true;
       }
       return stoppedRec;

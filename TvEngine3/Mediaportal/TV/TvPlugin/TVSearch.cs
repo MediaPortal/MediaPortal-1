@@ -1219,8 +1219,8 @@ namespace Mediaportal.TV.TvPlugin
         }
         Schedule rec = ScheduleFactory.CreateSchedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
 
-        rec.preRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").value);
-        rec.postRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);
+        rec.PreRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").value);
+        rec.PostRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);
         switch (dlg.SelectedLabel)
         {
           case 0: //none
@@ -1228,17 +1228,17 @@ namespace Mediaportal.TV.TvPlugin
             {
               if (rec1.IsRecordingProgram(program, true))
               {
-                if (rec1.Entity.scheduleType != (int)ScheduleRecordingType.Once)
+                if (rec1.Entity.ScheduleType != (int)ScheduleRecordingType.Once)
                 {
                   //delete specific series
-                  Schedule sched = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(rec1.Entity.id_Schedule);
+                  Schedule sched = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(rec1.Entity.IdSchedule);
                   TVUtil.DeleteRecAndSchedWithPrompt(sched);
                 }
                 else
                 {
                   //cancel recording                                    
-                  ServiceAgents.Instance.ControllerServiceAgent.StopRecordingSchedule(rec1.Entity.id_Schedule);                  
-                  ServiceAgents.Instance.ScheduleServiceAgent.DeleteSchedule(rec1.Entity.id_Schedule);
+                  ServiceAgents.Instance.ControllerServiceAgent.StopRecordingSchedule(rec1.Entity.IdSchedule);                  
+                  ServiceAgents.Instance.ScheduleServiceAgent.DeleteSchedule(rec1.Entity.IdSchedule);
                   ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
                 }
               }
@@ -1247,28 +1247,28 @@ namespace Mediaportal.TV.TvPlugin
             Update();
             return;
           case 1: //once
-            rec.scheduleType = (int)ScheduleRecordingType.Once;
+            rec.ScheduleType = (int)ScheduleRecordingType.Once;
             break;
           case 2: //everytime, this channel
-            rec.scheduleType = (int)ScheduleRecordingType.EveryTimeOnThisChannel;
+            rec.ScheduleType = (int)ScheduleRecordingType.EveryTimeOnThisChannel;
             break;
           case 3: //everytime, all channels
-            rec.scheduleType = (int)ScheduleRecordingType.EveryTimeOnEveryChannel;
+            rec.ScheduleType = (int)ScheduleRecordingType.EveryTimeOnEveryChannel;
             break;
           case 4: //weekly
-            rec.scheduleType = (int)ScheduleRecordingType.Weekly;
+            rec.ScheduleType = (int)ScheduleRecordingType.Weekly;
             break;
           case 5: //daily
-            rec.scheduleType = (int)ScheduleRecordingType.Daily;
+            rec.ScheduleType = (int)ScheduleRecordingType.Daily;
             break;
           case 6: //WorkingDays
-            rec.scheduleType = (int)ScheduleRecordingType.WorkingDays;
+            rec.ScheduleType = (int)ScheduleRecordingType.WorkingDays;
             break;
           case 7: //Weekends
-            rec.scheduleType = (int)ScheduleRecordingType.Weekends;
+            rec.ScheduleType = (int)ScheduleRecordingType.Weekends;
             break;
           case 8://Weekly everytime, this channel
-            rec.scheduleType = (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel;
+            rec.ScheduleType = (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel;
             break;
         }        
         ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(rec);
@@ -1286,7 +1286,7 @@ namespace Mediaportal.TV.TvPlugin
       {
         if (record.IsRecordingProgram(program, true))
         {
-          if (record.Entity.scheduleType != (int)ScheduleRecordingType.Once)
+          if (record.Entity.ScheduleType != (int)ScheduleRecordingType.Once)
           {
             isSerie = true;
           }

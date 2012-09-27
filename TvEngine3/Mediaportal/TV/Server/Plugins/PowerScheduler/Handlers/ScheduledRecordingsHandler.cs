@@ -75,7 +75,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
       DateTime nextWakeuptime = DateTime.MaxValue;
       foreach (Schedule schedule in ScheduleManagement.ListAllSchedules())
       {
-        if (schedule.canceled != Schedule.MinSchedule) continue;
+        if (schedule.Canceled != Schedule.MinSchedule) continue;
         List<Schedule> schedules = ScheduleManagement.GetRecordingTimes(schedule);
         if (schedules.Count > 0)
         {
@@ -85,13 +85,13 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
           {
             recSchedule = schedules[i];
             var scheduleBll = new ScheduleBLL(recSchedule);
-            if (!scheduleBll.IsSerieIsCanceled(recSchedule.startTime))
+            if (!scheduleBll.IsSerieIsCanceled(recSchedule.StartTime))
               break;
             i++;
           }
           if (recSchedule != null)
           {
-            scheduleWakeupTime = recSchedule.startTime.AddMinutes(-recSchedule.preRecordInterval);
+            scheduleWakeupTime = recSchedule.StartTime.AddMinutes(-recSchedule.PreRecordInterval);
           }
         }
         if (recSchedule == null)
@@ -145,27 +145,27 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
     /// <returns>DateTime indicating the wakeup time for this Schedule</returns>
     private static DateTime GetWakeupTime(Schedule schedule)
     {
-      ScheduleRecordingType type = (ScheduleRecordingType)schedule.scheduleType;
+      ScheduleRecordingType type = (ScheduleRecordingType)schedule.ScheduleType;
       DateTime now = DateTime.Now;
-      DateTime start = new DateTime(now.Year, now.Month, now.Day, schedule.startTime.Hour, schedule.startTime.Minute,
-                                    schedule.startTime.Second);
-      DateTime stop = new DateTime(now.Year, now.Month, now.Day, schedule.endTime.Hour, schedule.endTime.Minute,
-                                   schedule.endTime.Second);
+      DateTime start = new DateTime(now.Year, now.Month, now.Day, schedule.StartTime.Hour, schedule.StartTime.Minute,
+                                    schedule.StartTime.Second);
+      DateTime stop = new DateTime(now.Year, now.Month, now.Day, schedule.EndTime.Hour, schedule.EndTime.Minute,
+                                   schedule.EndTime.Second);
       switch (type)
       {
         case ScheduleRecordingType.Once:
-          return schedule.startTime.AddMinutes(-schedule.preRecordInterval);
+          return schedule.StartTime.AddMinutes(-schedule.PreRecordInterval);
         case ScheduleRecordingType.Daily:
           // if schedule was already due today, then run tomorrow
-          if (now > stop.AddMinutes(schedule.postRecordInterval))
+          if (now > stop.AddMinutes(schedule.PostRecordInterval))
             start = start.AddDays(1);
-          return start.AddMinutes(-schedule.preRecordInterval);
+          return start.AddMinutes(-schedule.PreRecordInterval);
         case ScheduleRecordingType.Weekends:
           // check if it's a weekend currently
           if (WeekEndTool.IsWeekend(now.DayOfWeek))
           {
             // check if schedule has been due already today
-            if (now > stop.AddMinutes(schedule.postRecordInterval))
+            if (now > stop.AddMinutes(schedule.PostRecordInterval))
             {
               // if so, add appropriate days to wakeup time
               start = WeekEndTool.IsFirstWeekendDay(now.DayOfWeek) ? start.AddDays(1) : start.AddDays(6);
@@ -177,7 +177,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
             int days = (int)WeekEndTool.FirstWeekendDay - (int)now.DayOfWeek;
             start = start.AddDays(days);
           }
-          return start.AddMinutes(-schedule.preRecordInterval);
+          return start.AddMinutes(-schedule.PreRecordInterval);
         case ScheduleRecordingType.WorkingDays:
           // check if current time is in weekend; if so add appropriate number of days
           if (now.DayOfWeek == WeekEndTool.FirstWeekendDay)
@@ -187,19 +187,19 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
           else
           {
             // current time is on a working days; check if schedule has already been due
-            if (now > stop.AddMinutes(schedule.postRecordInterval))
+            if (now > stop.AddMinutes(schedule.PostRecordInterval))
             {
               // schedule has been due, so add appropriate number of days
               start = now.DayOfWeek < (WeekEndTool.FirstWeekendDay - 1) ? start.AddDays(1) : start.AddDays(3);
             }
           }
-          return start.AddMinutes(-schedule.preRecordInterval);
+          return start.AddMinutes(-schedule.PreRecordInterval);
         case ScheduleRecordingType.Weekly:
           // check if current day of week is same as schedule's day of week
-          if (now.DayOfWeek == schedule.startTime.DayOfWeek)
+          if (now.DayOfWeek == schedule.StartTime.DayOfWeek)
           {
             // check if schedule has been due
-            if (now > stop.AddMinutes(schedule.postRecordInterval))
+            if (now > stop.AddMinutes(schedule.PostRecordInterval))
             {
               // schedule has been due, so record again next week
               start = start.AddDays(7);
@@ -209,20 +209,20 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
           {
             // current day of week isn't schedule's day of week, so
             // add appropriate number of days
-            if (now.DayOfWeek < schedule.startTime.DayOfWeek)
+            if (now.DayOfWeek < schedule.StartTime.DayOfWeek)
             {
               // schedule is due this week
-              int days = schedule.startTime.DayOfWeek - now.DayOfWeek;
+              int days = schedule.StartTime.DayOfWeek - now.DayOfWeek;
               start = start.AddDays(days);
             }
             else
             {
               // schedule should start next week
-              int days = 7 - (now.DayOfWeek - schedule.startTime.DayOfWeek);
+              int days = 7 - (now.DayOfWeek - schedule.StartTime.DayOfWeek);
               start = start.AddDays(days);
             }
           }
-          return start.AddMinutes(-schedule.preRecordInterval);
+          return start.AddMinutes(-schedule.PreRecordInterval);
       }
       // other recording types cannot be determined manually (every time on ...)
       return DateTime.MaxValue;

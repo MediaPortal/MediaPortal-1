@@ -45,21 +45,21 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Factories
     {
       var schedule = new Schedule
                        {
-                         idChannel = idChannel,
-                         idParentSchedule = null,
-                         programName = programName,
-                         canceled = MinSchedule,
-                         directory = "",
-                         endTime = endTime,
-                         keepDate = MinSchedule,
-                         keepMethod = (int) KeepMethodType.UntilSpaceNeeded,
-                         maxAirings = Int32.MaxValue,
-                         postRecordInterval = 0,
-                         preRecordInterval = 0,
-                         priority = 0,
-                         quality = 0,
-                         series = false,
-                         startTime = startTime
+                         IdChannel = idChannel,
+                         IdParentSchedule = null,
+                         ProgramName = programName,
+                         Canceled = MinSchedule,
+                         Directory = "",
+                         EndTime = endTime,
+                         KeepDate = MinSchedule,
+                         KeepMethod = (int) KeepMethodType.UntilSpaceNeeded,
+                         MaxAirings = Int32.MaxValue,
+                         PostRecordInterval = 0,
+                         PreRecordInterval = 0,
+                         Priority = 0,
+                         Quality = 0,
+                         Series = false,
+                         StartTime = startTime
                        };
 
 

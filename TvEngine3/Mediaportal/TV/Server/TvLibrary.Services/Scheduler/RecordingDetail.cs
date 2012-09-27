@@ -66,7 +66,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
     /// 
     public RecordingDetail(Schedule schedule, Channel channel, DateTime endTime, bool isSerie)
     {
-      _user = UserFactory.CreateSchedulerUser(schedule.id_Schedule);
+      _user = UserFactory.CreateSchedulerUser(schedule.IdSchedule);
       _schedule = new ScheduleBLL(schedule);
       _channel = channel;
       _endTime = endTime;
@@ -77,12 +77,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
 
       if (isSerie)
       {
-        DateTime now = DateTime.Now.AddMinutes(schedule.preRecordInterval);
-        startTime = new DateTime(now.Year, now.Month, now.Day, schedule.startTime.Hour, schedule.startTime.Minute, 0);
+        DateTime now = DateTime.Now.AddMinutes(schedule.PreRecordInterval);
+        startTime = new DateTime(now.Year, now.Month, now.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, 0);
       }
       else
       {
-        startTime = schedule.startTime;
+        startTime = schedule.StartTime;
       }
 
       Program program = ProgramManagement.GetProgramAt(startTime, schedule.Channel.IdChannel);
@@ -180,10 +180,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
 
         try
         {
-          Schedule _sched = ScheduleManagement.GetSchedule(_schedule.Entity.id_Schedule); // Refresh();
+          Schedule _sched = ScheduleManagement.GetSchedule(_schedule.Entity.IdSchedule); // Refresh();
           if (_sched != null)
           {
-            isRecording = (DateTime.Now < EndTime.AddMinutes(_sched.postRecordInterval));
+            isRecording = (DateTime.Now < EndTime.AddMinutes(_sched.PostRecordInterval));
           }
         }
         catch (Exception e)

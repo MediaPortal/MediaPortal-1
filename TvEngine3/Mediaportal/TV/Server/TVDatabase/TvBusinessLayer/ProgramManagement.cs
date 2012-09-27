@@ -1017,7 +1017,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         else
         {
           bool isPartialRecording = schedule.IsPartialRecording(prog);
-          if (schedule.Entity.scheduleType == (int)ScheduleRecordingType.Once)
+          if (schedule.Entity.ScheduleType == (int)ScheduleRecordingType.Once)
           {
             // is one off recording that is still active so set pending flags accordingly
             programBll.IsRecordingOncePending = true;
@@ -1060,11 +1060,11 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     public static IList<Program> GetProgramsForSchedule(TVDatabase.Entities.Schedule schedule)
     {
       IList<Program> progsEntities = new List<Program>();
-      switch (schedule.scheduleType)
+      switch (schedule.ScheduleType)
       {
         case (int)ScheduleRecordingType.Once:
-          var prgOnce = RetrieveByTitleTimesAndChannel(schedule.programName, schedule.startTime, schedule.endTime,
-                                                        schedule.idChannel);
+          var prgOnce = RetrieveByTitleTimesAndChannel(schedule.ProgramName, schedule.StartTime, schedule.EndTime,
+                                                        schedule.IdChannel);
           if (prgOnce != null)
           {
             progsEntities.Add(prgOnce);
@@ -1072,31 +1072,31 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
           return progsEntities;
 
         case (int)ScheduleRecordingType.Daily:
-          progsEntities = RetrieveDaily(schedule.startTime, schedule.endTime, schedule.idChannel);
+          progsEntities = RetrieveDaily(schedule.StartTime, schedule.EndTime, schedule.IdChannel);
           break;
 
         case (int)ScheduleRecordingType.EveryTimeOnEveryChannel:
-          progsEntities = RetrieveEveryTimeOnEveryChannel(schedule.programName).ToList();
+          progsEntities = RetrieveEveryTimeOnEveryChannel(schedule.ProgramName).ToList();
           return progsEntities;
 
         case (int)ScheduleRecordingType.EveryTimeOnThisChannel:
-          progsEntities = RetrieveEveryTimeOnThisChannel(schedule.programName, schedule.idChannel).ToList();
+          progsEntities = RetrieveEveryTimeOnThisChannel(schedule.ProgramName, schedule.IdChannel).ToList();
           return progsEntities;
 
         case (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
-          progsEntities = RetrieveWeeklyEveryTimeOnThisChannel(schedule.startTime, schedule.programName, schedule.idChannel).ToList();
+          progsEntities = RetrieveWeeklyEveryTimeOnThisChannel(schedule.StartTime, schedule.ProgramName, schedule.IdChannel).ToList();
           return progsEntities;
 
         case (int)ScheduleRecordingType.Weekends:
-          progsEntities = RetrieveWeekends(schedule.startTime, schedule.endTime, schedule.idChannel);
+          progsEntities = RetrieveWeekends(schedule.StartTime, schedule.EndTime, schedule.IdChannel);
           break;
 
         case (int)ScheduleRecordingType.Weekly:
-          progsEntities = RetrieveWeekly(schedule.startTime, schedule.endTime, schedule.idChannel);
+          progsEntities = RetrieveWeekly(schedule.StartTime, schedule.EndTime, schedule.IdChannel);
           break;
 
         case (int)ScheduleRecordingType.WorkingDays:
-          progsEntities = RetrieveWorkingDays(schedule.startTime, schedule.endTime, schedule.idChannel);
+          progsEntities = RetrieveWorkingDays(schedule.StartTime, schedule.EndTime, schedule.IdChannel);
           break;
       }
       return progsEntities;

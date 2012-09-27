@@ -76,10 +76,10 @@ namespace Mediaportal.TV.TvPlugin
       Schedule failedSchedule = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(idSchedule);
       if (failedSchedule != null)
       {
-          Log.Debug("TVPlugIn: No free card available for {0}. Notifying user.", failedSchedule.programName);
+          Log.Debug("TVPlugIn: No free card available for {0}. Notifying user.", failedSchedule.ProgramName);
 
           Notify(GUILocalizeStrings.Get(1004),
-                 String.Format("{0}. {1}", failedSchedule.programName, GUILocalizeStrings.Get(200055)),
+                 String.Format("{0}. {1}", failedSchedule.ProgramName, GUILocalizeStrings.Get(200055)),
                  TVHome.Navigator.Channel.Entity);
       }
     }    
@@ -91,10 +91,10 @@ namespace Mediaportal.TV.TvPlugin
       if (startedRec != null)
       {
         Server.TVDatabase.Entities.Schedule parentSchedule = startedRec.Schedule;
-        if (parentSchedule != null && parentSchedule.id_Schedule > 0)
+        if (parentSchedule != null && parentSchedule.IdSchedule > 0)
         {
           string endTime = string.Empty;
-          endTime = parentSchedule.endTime.AddMinutes(parentSchedule.postRecordInterval).ToString("t",
+          endTime = parentSchedule.EndTime.AddMinutes(parentSchedule.PostRecordInterval).ToString("t",
                                                                                                   CultureInfo.
                                                                                                     CurrentCulture.
                                                                                                     DateTimeFormat);

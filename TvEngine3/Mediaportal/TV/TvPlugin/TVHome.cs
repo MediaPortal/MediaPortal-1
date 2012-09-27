@@ -889,8 +889,8 @@ namespace Mediaportal.TV.TvPlugin
                                                               GUILocalizeStrings.Get(413) + " (" + channel.Entity.DisplayName +
                                                               ")",
                                                               DateTime.Now, DateTime.Now.AddDays(1));
-        newSchedule.preRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").value);
-        newSchedule.postRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);
+        newSchedule.PreRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").value);
+        newSchedule.PostRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);
         ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(newSchedule);
         ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
       }
@@ -916,8 +916,8 @@ namespace Mediaportal.TV.TvPlugin
         // ok, no existing schedule found with matching canceled schedules found. proceeding to add the schedule normally
         Schedule newSchedule = ScheduleFactory.CreateSchedule(channel.Entity.IdChannel, channel.CurrentProgram.Title,
                                             channel.CurrentProgram.StartTime, channel.CurrentProgram.EndTime);
-        newSchedule.preRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").value);
-        newSchedule.postRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);
+        newSchedule.PreRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").value);
+        newSchedule.PostRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);
         ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(newSchedule);
         ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
       }
@@ -2060,7 +2060,7 @@ namespace Mediaportal.TV.TvPlugin
           TVProgramInfo.IsRecordingProgram(prog.Entity, out s, false);
           if (s != null)
           {
-            idChannel = s.idChannel;
+            idChannel = s.IdChannel;
           }
         }
         else
@@ -2207,7 +2207,7 @@ namespace Mediaportal.TV.TvPlugin
 
         Recording selectedRecording = activeRecordings[dlg.SelectedLabel];
         Schedule parentSchedule = selectedRecording.Schedule;
-        if (parentSchedule == null || parentSchedule.id_Schedule < 1)
+        if (parentSchedule == null || parentSchedule.IdSchedule < 1)
         {
           return;
         }
@@ -2572,7 +2572,7 @@ namespace Mediaportal.TV.TvPlugin
           Schedule schedule = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(scheduleId);
           if (schedule != null)
           {
-            if (schedule.scheduleType == (int)ScheduleRecordingType.Once)
+            if (schedule.ScheduleType == (int)ScheduleRecordingType.Once)
             {
               imgRecordingIcon.SetFileName(Thumbs.TvRecordingIcon);
             }

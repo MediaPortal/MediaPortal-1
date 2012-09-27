@@ -288,7 +288,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         dlg.WaitForDisplay();
         foreach (Schedule schedule in selectedChannel2.Schedules)
         {
-          schedule.idChannel = selectedChannel.IdChannel;          
+          schedule.IdChannel = selectedChannel.IdChannel;          
           ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(schedule);
         }
         dlg.Close();

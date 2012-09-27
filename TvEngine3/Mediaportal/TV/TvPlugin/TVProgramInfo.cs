@@ -327,7 +327,7 @@ namespace Mediaportal.TV.TvPlugin
         // to keep the dialog working at all
         if (CurrentProgram == null)
         {
-          ProgramFactory.CreateProgram(currentSchedule.idChannel, currentSchedule.startTime, currentSchedule.endTime, currentSchedule.programName, "",
+          ProgramFactory.CreateProgram(currentSchedule.IdChannel, currentSchedule.StartTime, currentSchedule.EndTime, currentSchedule.ProgramName, "",
                                        null, ProgramState.None, DateTime.MinValue, "", "", "", "", 0, "", 0);          
         }        
       }
@@ -340,9 +340,9 @@ namespace Mediaportal.TV.TvPlugin
     private static string GetRecordingDateTime(Schedule rec)
     {
       return String.Format("{0} {1} - {2}",
-                           Utils.GetShortDayString(rec.startTime),
-                           rec.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                           rec.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                           Utils.GetShortDayString(rec.StartTime),
+                           rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                           rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
     }
 
     public static bool IsRecordingProgram(Program program, out Schedule recordingSchedule,
@@ -354,16 +354,16 @@ namespace Mediaportal.TV.TvPlugin
       foreach (Schedule sched in schedules)
       {
         ScheduleBLL schedule = new ScheduleBLL (sched);
-        if (schedule.Entity.canceled != ScheduleFactory.MinSchedule || (filterCanceledRecordings && schedule.IsSerieIsCanceled(schedule.GetSchedStartTimeForProg(program), program.IdChannel)))
+        if (schedule.Entity.Canceled != ScheduleFactory.MinSchedule || (filterCanceledRecordings && schedule.IsSerieIsCanceled(schedule.GetSchedStartTimeForProg(program), program.IdChannel)))
         {
           continue;
         }
-        if (schedule.IsManual && schedule.Entity.idChannel == program.IdChannel && schedule.Entity.endTime >= program.EndTime)
+        if (schedule.IsManual && schedule.Entity.IdChannel == program.IdChannel && schedule.Entity.EndTime >= program.EndTime)
         {
           ScheduleBLL manual = new ScheduleBLL(ScheduleFactory.Clone(schedule.Entity));
-          manual.Entity.programName = TVUtil.GetDisplayTitle(program);
-          manual.Entity.endTime = program.EndTime;
-          manual.Entity.startTime = program.StartTime;
+          manual.Entity.ProgramName = TVUtil.GetDisplayTitle(program);
+          manual.Entity.EndTime = program.EndTime;
+          manual.Entity.StartTime = program.StartTime;
           if (manual.IsRecordingProgram(program, filterCanceledRecordings))
           {
             recordingSchedule = schedule.Entity;
@@ -495,7 +495,7 @@ namespace Mediaportal.TV.TvPlugin
       IList<Program> actualUpcomingEps = new List<Program>();      
       if (currentSchedule != null)
       {
-        int scheduletype = currentSchedule.scheduleType;        
+        int scheduletype = currentSchedule.ScheduleType;        
 
         switch (scheduletype)
         {
@@ -575,7 +575,7 @@ namespace Mediaportal.TV.TvPlugin
           {
             bool hasConflict = recordingSchedule.Entity.Conflicts.Count > 0;
             bool isPartialRecording = false;
-            bool isSeries = (recordingSchedule.Entity.scheduleType != (int)ScheduleRecordingType.Once);
+            bool isSeries = (recordingSchedule.Entity.ScheduleType != (int)ScheduleRecordingType.Once);
 
             //check for partial recordings.
             if (isActualUpcomingEps && currentSchedule != null)
@@ -660,7 +660,7 @@ namespace Mediaportal.TV.TvPlugin
       if (currentSchedule != null)
       {
         isRecording = true;
-        if ((ScheduleRecordingType)currentSchedule.scheduleType != ScheduleRecordingType.Once)
+        if ((ScheduleRecordingType)currentSchedule.ScheduleType != ScheduleRecordingType.Once)
         {
           isSeries = true;
         }
@@ -673,7 +673,7 @@ namespace Mediaportal.TV.TvPlugin
         Schedule recSched;
         isRecording = IsRecordingProgram(CurrentProgram, out recSched, true);
 
-        if (isRecording && (ScheduleRecordingType)recSched.scheduleType != ScheduleRecordingType.Once)
+        if (isRecording && (ScheduleRecordingType)recSched.ScheduleType != ScheduleRecordingType.Once)
         {
           isSeries = true;
         }
@@ -749,17 +749,17 @@ namespace Mediaportal.TV.TvPlugin
           }
         }
 
-        if (rec.preRecordInterval < 0)
+        if (rec.PreRecordInterval < 0)
         {
           dlg.SelectedLabel = 0;
         }
-        else if (RecordingIntervalValues.IndexOf(rec.preRecordInterval) == -1)
+        else if (RecordingIntervalValues.IndexOf(rec.PreRecordInterval) == -1)
         {
           RecordingIntervalValues.IndexOf(_preRec); // select default if the value is not part of the list
         }
         else
         {
-          dlg.SelectedLabel = RecordingIntervalValues.IndexOf(rec.preRecordInterval);
+          dlg.SelectedLabel = RecordingIntervalValues.IndexOf(rec.PreRecordInterval);
         }
 
         dlg.DoModal(GetID);
@@ -769,15 +769,15 @@ namespace Mediaportal.TV.TvPlugin
           return;
         }
 
-        rec.preRecordInterval = RecordingIntervalValues[dlg.SelectedLabel];
+        rec.PreRecordInterval = RecordingIntervalValues[dlg.SelectedLabel];
         ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(rec);        
         currentSchedule = rec;
 
-        Schedule assocSchedule = ServiceAgents.Instance.ScheduleServiceAgent.RetrieveSpawnedSchedule(rec.id_Schedule, rec.startTime);
+        Schedule assocSchedule = ServiceAgents.Instance.ScheduleServiceAgent.RetrieveSpawnedSchedule(rec.IdSchedule, rec.StartTime);
 
         if (assocSchedule != null)
         {
-          assocSchedule.preRecordInterval = rec.preRecordInterval;          
+          assocSchedule.PreRecordInterval = rec.PreRecordInterval;          
           ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(assocSchedule);
         }
 
@@ -831,17 +831,17 @@ namespace Mediaportal.TV.TvPlugin
           }
         }
 
-        if (rec.postRecordInterval < 0)
+        if (rec.PostRecordInterval < 0)
         {
           dlg.SelectedLabel = 0;
         }
-        else if (RecordingIntervalValues.IndexOf(rec.postRecordInterval) == -1)
+        else if (RecordingIntervalValues.IndexOf(rec.PostRecordInterval) == -1)
         {
           RecordingIntervalValues.IndexOf(_postRec); // select default if the value is not part of the list
         }
         else
         {
-          dlg.SelectedLabel = RecordingIntervalValues.IndexOf(rec.postRecordInterval);
+          dlg.SelectedLabel = RecordingIntervalValues.IndexOf(rec.PostRecordInterval);
         }
 
         dlg.DoModal(GetID);
@@ -850,15 +850,15 @@ namespace Mediaportal.TV.TvPlugin
           return;
         }
 
-        rec.postRecordInterval = RecordingIntervalValues[dlg.SelectedLabel];        
+        rec.PostRecordInterval = RecordingIntervalValues[dlg.SelectedLabel];        
         ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(rec);
         currentSchedule = rec;
 
-        Schedule assocSchedule = ServiceAgents.Instance.ScheduleServiceAgent.RetrieveSpawnedSchedule(rec.id_Schedule, rec.startTime);
+        Schedule assocSchedule = ServiceAgents.Instance.ScheduleServiceAgent.RetrieveSpawnedSchedule(rec.IdSchedule, rec.StartTime);
         
         if (assocSchedule != null)
         {
-          assocSchedule.postRecordInterval = rec.postRecordInterval;          
+          assocSchedule.PostRecordInterval = rec.PostRecordInterval;          
           ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(assocSchedule);
         }
       }
@@ -1068,24 +1068,24 @@ namespace Mediaportal.TV.TvPlugin
     {
       Log.Debug("TVProgammInfo.CancelProgram - programm = {0}", program.ToString());
       Log.Debug("                            - schedule = {0}", schedule.ToString());
-      Log.Debug(" ProgramID = {0}            ScheduleID = {1}", program.IdProgram, schedule.id_Schedule);
+      Log.Debug(" ProgramID = {0}            ScheduleID = {1}", program.IdProgram, schedule.IdSchedule);
 
       bool deleteEntireSched = false;
 
-      if (schedule.scheduleType == (int)ScheduleRecordingType.Once)
+      if (schedule.ScheduleType == (int)ScheduleRecordingType.Once)
       {
         TVUtil.DeleteRecAndSchedWithPrompt(schedule);        
         ResetCurrentScheduleAndProgram(schedule);
         return;
       }
 
-      if ((schedule.scheduleType == (int)ScheduleRecordingType.Daily)
-          || (schedule.scheduleType == (int)ScheduleRecordingType.Weekends)
-          || (schedule.scheduleType == (int)ScheduleRecordingType.Weekly)
-          || (schedule.scheduleType == (int)ScheduleRecordingType.WorkingDays)
-          || (schedule.scheduleType == (int)ScheduleRecordingType.EveryTimeOnEveryChannel)
-          || (schedule.scheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel)
-          || (schedule.scheduleType == (int) ScheduleRecordingType.WeeklyEveryTimeOnThisChannel))          
+      if ((schedule.ScheduleType == (int)ScheduleRecordingType.Daily)
+          || (schedule.ScheduleType == (int)ScheduleRecordingType.Weekends)
+          || (schedule.ScheduleType == (int)ScheduleRecordingType.Weekly)
+          || (schedule.ScheduleType == (int)ScheduleRecordingType.WorkingDays)
+          || (schedule.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnEveryChannel)
+          || (schedule.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel)
+          || (schedule.ScheduleType == (int) ScheduleRecordingType.WeeklyEveryTimeOnThisChannel))          
       {
         GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
         if (dlg == null)
@@ -1141,7 +1141,7 @@ namespace Mediaportal.TV.TvPlugin
         currentSchedule == null ||
         (
         currentSchedule != null &&
-        (currentSchedule.scheduleType == 0 || (currentSchedule.scheduleType > 0 && schedule.scheduleType > 0))
+        (currentSchedule.ScheduleType == 0 || (currentSchedule.ScheduleType > 0 && schedule.ScheduleType > 0))
         ))
       {
         ResetCurrentScheduleAndProgram();
@@ -1158,8 +1158,8 @@ namespace Mediaportal.TV.TvPlugin
       var schedule = new ScheduleBLL(scheduleOut);
       if (isRecordingProgram) // check if schedule is already existing
       {
-        Log.Debug("TVProgramInfo.CreateProgram - series schedule found ID={0}, Type={1}", schedule.Entity.id_Schedule,
-                  schedule.Entity.scheduleType);
+        Log.Debug("TVProgramInfo.CreateProgram - series schedule found ID={0}, Type={1}", schedule.Entity.IdSchedule,
+                  schedule.Entity.ScheduleType);
         Log.Debug("                            - schedule= {0}", schedule.ToString());
         //schedule = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(schedule.id_Schedule); // get the correct informations
         if (schedule.IsSerieIsCanceled(schedule.GetSchedStartTimeForProg(program), program.IdChannel))
@@ -1169,9 +1169,9 @@ namespace Mediaportal.TV.TvPlugin
           saveSchedule = schedule.Entity;
           schedule.Entity = ScheduleFactory.CreateSchedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
 
-          schedule.Entity.preRecordInterval = saveSchedule.preRecordInterval;
-          schedule.Entity.postRecordInterval = saveSchedule.postRecordInterval;
-          schedule.Entity.scheduleType = (int)ScheduleRecordingType.Once;
+          schedule.Entity.PreRecordInterval = saveSchedule.PreRecordInterval;
+          schedule.Entity.PostRecordInterval = saveSchedule.PostRecordInterval;
+          schedule.Entity.ScheduleType = (int)ScheduleRecordingType.Once;
         }
       }
       else
@@ -1179,9 +1179,9 @@ namespace Mediaportal.TV.TvPlugin
         Log.Debug("TVProgramInfo.CreateProgram - no series schedule");
         // no series schedule => create it
         schedule.Entity = ScheduleFactory.CreateSchedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
-        schedule.Entity.preRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").value);
-        schedule.Entity.postRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);
-        schedule.Entity.scheduleType = scheduleType;
+        schedule.Entity.PreRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").value);
+        schedule.Entity.PostRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);
+        schedule.Entity.ScheduleType = scheduleType;
       }
 
       // check if this program is conflicting with any other already scheduled recording
@@ -1202,16 +1202,16 @@ namespace Mediaportal.TV.TvPlugin
           {
             Log.Debug("TVProgramInfo.CreateProgram: Conflicts = " + conflict);
 
-            GUIListItem item = new GUIListItem(conflict.programName);
+            GUIListItem item = new GUIListItem(conflict.ProgramName);
             item.Label2 = GetRecordingDateTime(conflict);
-            Channel channel = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(conflict.idChannel);
+            Channel channel = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(conflict.IdChannel);
             if (channel != null && !string.IsNullOrEmpty(channel.DisplayName))
             {
               item.Label3 = channel.DisplayName;
             }
             else
             {
-              item.Label3 = conflict.idChannel.ToString();
+              item.Label3 = conflict.IdChannel.ToString();
             }
             item.TVTag = conflict;
             dlg.AddConflictRecording(item);
@@ -1231,11 +1231,11 @@ namespace Mediaportal.TV.TvPlugin
                 foreach (Schedule conflict in conflicts)
                 {
                   Program prog =
-                    ProgramFactory.CreateProgram(conflict.idChannel, conflict.startTime, conflict.endTime, conflict.programName, "-", null,
+                    ProgramFactory.CreateProgram(conflict.IdChannel, conflict.StartTime, conflict.EndTime, conflict.ProgramName, "-", null,
                                 ProgramState.None,
                                 DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1,
                                 string.Empty, -1);
-                  CancelProgram(prog, ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(conflict.id_Schedule), dialogId);
+                  CancelProgram(prog, ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(conflict.IdSchedule), dialogId);
                 }
                 break;
               }
@@ -1271,7 +1271,7 @@ namespace Mediaportal.TV.TvPlugin
         Log.Debug("TVProgramInfo.CreateProgram - create schedule = {0}", schedule.Entity.ToString());
         ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(schedule.Entity);
 
-        if (currentSchedule == null || (currentSchedule.scheduleType > 0 && schedule.Entity.scheduleType != (int)ScheduleRecordingType.Once))
+        if (currentSchedule == null || (currentSchedule.ScheduleType > 0 && schedule.Entity.ScheduleType != (int)ScheduleRecordingType.Once))
         {
           currentSchedule = schedule.Entity;
         }
@@ -1284,11 +1284,11 @@ namespace Mediaportal.TV.TvPlugin
 
         foreach (ScheduleBLL episode in episodesBLL)
         {
-          if (DateTime.Now > episode.Entity.endTime)
+          if (DateTime.Now > episode.Entity.EndTime)
           {
             continue;
           }
-          if (episode.IsSerieIsCanceled(episode.Entity.startTime, program.IdChannel))
+          if (episode.IsSerieIsCanceled(episode.Entity.StartTime, program.IdChannel))
           {
             continue;
           }
@@ -1297,7 +1297,7 @@ namespace Mediaportal.TV.TvPlugin
             if (episode.IsOverlapping(conflict))
             {
               Log.Debug("TVProgramInfo.CreateProgram - skip episode = {0}", episode.ToString());
-              CanceledSchedule canceledSchedule = CanceledScheduleFactory.CreateCanceledSchedule(schedule.Entity.id_Schedule, program.IdChannel, episode.Entity.startTime);
+              CanceledSchedule canceledSchedule = CanceledScheduleFactory.CreateCanceledSchedule(schedule.Entity.IdSchedule, program.IdChannel, episode.Entity.StartTime);
               ServiceAgents.Instance.CanceledScheduleServiceAgent.SaveCanceledSchedule(canceledSchedule);
             }
           }
@@ -1422,7 +1422,7 @@ namespace Mediaportal.TV.TvPlugin
       dlg.AddLocalizedString(1044); //Until space needed
       dlg.AddLocalizedString(1045); //Until date
       dlg.AddLocalizedString(1046); //Always
-      switch (rec.keepMethod)
+      switch (rec.KeepMethod)
       {
         case (int)KeepMethodType.UntilWatched:
           dlg.SelectedLabel = 0;
@@ -1445,14 +1445,14 @@ namespace Mediaportal.TV.TvPlugin
       switch (dlg.SelectedId)
       {
         case 1043:
-          rec.keepMethod = (int)KeepMethodType.UntilWatched;
+          rec.KeepMethod = (int)KeepMethodType.UntilWatched;
           break;
         case 1044:
-          rec.keepMethod = (int)KeepMethodType.UntilSpaceNeeded;
+          rec.KeepMethod = (int)KeepMethodType.UntilSpaceNeeded;
 
           break;
         case 1045:
-          rec.keepMethod = (int)KeepMethodType.TillDate;
+          rec.KeepMethod = (int)KeepMethodType.TillDate;
           dlg.Reset();
           dlg.ShowQuickNumbers = false;
           dlg.SetHeading(1045);
@@ -1461,7 +1461,7 @@ namespace Mediaportal.TV.TvPlugin
             DateTime dt = CurrentProgram.StartTime.AddDays(iDay);
             dlg.Add(dt.ToLongDateString());
           }
-          TimeSpan ts = (rec.keepDate.GetValueOrDefault(DateTime.MinValue) - CurrentProgram.StartTime);
+          TimeSpan ts = (rec.KeepDate.GetValueOrDefault(DateTime.MinValue) - CurrentProgram.StartTime);
           int days = (int)ts.TotalDays;
           if (days >= 100)
           {
@@ -1473,10 +1473,10 @@ namespace Mediaportal.TV.TvPlugin
           {
             return;
           }
-          rec.keepDate = CurrentProgram.StartTime.AddDays(dlg.SelectedLabel + 1);
+          rec.KeepDate = CurrentProgram.StartTime.AddDays(dlg.SelectedLabel + 1);
           break;
         case 1046:
-          rec.keepMethod = (int)KeepMethodType.Always;
+          rec.KeepMethod = (int)KeepMethodType.Always;
           break;
       }      
       ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(rec);

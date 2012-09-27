@@ -230,7 +230,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
       else if (_schedule != null)
       {
-        mpTextBoxScheduleName.Text = _schedule.programName;
+        mpTextBoxScheduleName.Text = _schedule.ProgramName;
       }
     }
 

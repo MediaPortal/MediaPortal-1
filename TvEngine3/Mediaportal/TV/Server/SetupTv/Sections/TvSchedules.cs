@@ -132,41 +132,41 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         IList<Schedule> schedules = ServiceAgents.Instance.ScheduleServiceAgent.ListAllSchedules();
         foreach (Schedule schedule in schedules)
         {
-          ListViewItem item = new ListViewItem(schedule.priority.ToString());
+          ListViewItem item = new ListViewItem(schedule.Priority.ToString());
           item.SubItems.Add(schedule.Channel.DisplayName);
           item.Tag = schedule;
-          switch ((ScheduleRecordingType)schedule.scheduleType)
+          switch ((ScheduleRecordingType)schedule.ScheduleType)
           {
             case ScheduleRecordingType.Daily:
               item.ImageIndex = 0;
               item.SubItems.Add("Daily");
-              item.SubItems.Add(String.Format("{0}", schedule.startTime.ToString("HH:mm:ss", mmddFormat)));
+              item.SubItems.Add(String.Format("{0}", schedule.StartTime.ToString("HH:mm:ss", mmddFormat)));
               break;
             case ScheduleRecordingType.Weekly:
               item.ImageIndex = 0;
               item.SubItems.Add("Weekly");
-              item.SubItems.Add(String.Format("{0} {1}", schedule.startTime.DayOfWeek,
-                                              schedule.startTime.ToString("HH:mm:ss", mmddFormat)));
+              item.SubItems.Add(String.Format("{0} {1}", schedule.StartTime.DayOfWeek,
+                                              schedule.StartTime.ToString("HH:mm:ss", mmddFormat)));
               break;
             case ScheduleRecordingType.Weekends:
               item.ImageIndex = 0;
               item.SubItems.Add("Weekends");
-              item.SubItems.Add(String.Format("{0}", schedule.startTime.ToString("HH:mm:ss", mmddFormat)));
+              item.SubItems.Add(String.Format("{0}", schedule.StartTime.ToString("HH:mm:ss", mmddFormat)));
               break;
             case ScheduleRecordingType.WorkingDays:
               item.ImageIndex = 0;
               item.SubItems.Add("WorkingDays");
-              item.SubItems.Add(String.Format("{0}", schedule.startTime.ToString("HH:mm:ss", mmddFormat)));
+              item.SubItems.Add(String.Format("{0}", schedule.StartTime.ToString("HH:mm:ss", mmddFormat)));
               break;
             case ScheduleRecordingType.Once:
               item.ImageIndex = 1;
               item.SubItems.Add("Once");
-              item.SubItems.Add(String.Format("{0}", schedule.startTime.ToString("dd-MM-yyyy HH:mm:ss", mmddFormat)));
+              item.SubItems.Add(String.Format("{0}", schedule.StartTime.ToString("dd-MM-yyyy HH:mm:ss", mmddFormat)));
               break;
             case ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
               item.ImageIndex = 0;
               item.SubItems.Add("Weekly Always");
-              item.SubItems.Add(schedule.startTime.DayOfWeek.ToString());
+              item.SubItems.Add(schedule.StartTime.DayOfWeek.ToString());
               break;
             case ScheduleRecordingType.EveryTimeOnThisChannel:
               item.ImageIndex = 0;
@@ -179,17 +179,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               item.SubItems.Add("All channels");
               break;
           }
-          item.SubItems.Add(schedule.programName);
-          item.SubItems.Add(String.Format("{0} mins", schedule.preRecordInterval));
-          item.SubItems.Add(String.Format("{0} mins", schedule.postRecordInterval));
+          item.SubItems.Add(schedule.ProgramName);
+          item.SubItems.Add(String.Format("{0} mins", schedule.PreRecordInterval));
+          item.SubItems.Add(String.Format("{0} mins", schedule.PostRecordInterval));
 
-          if (schedule.maxAirings.ToString() == int.MaxValue.ToString())
+          if (schedule.MaxAirings.ToString() == int.MaxValue.ToString())
             item.SubItems.Add("Keep all");
           else
-            item.SubItems.Add(schedule.maxAirings.ToString());
+            item.SubItems.Add(schedule.MaxAirings.ToString());
 
           var scheduleBLL = new ScheduleBLL(schedule);
-          if (scheduleBLL.IsSerieIsCanceled(schedule.startTime))
+          if (scheduleBLL.IsSerieIsCanceled(schedule.StartTime))
           {
             item.Font = new Font(item.Font, FontStyle.Strikeout);
           }
@@ -233,8 +233,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       foreach (ListViewItem item in listView1.SelectedItems)
       {
         Schedule schedule = (Schedule)item.Tag;
-        ServiceAgents.Instance.ControllerServiceAgent.StopRecordingSchedule(schedule.id_Schedule);
-        ServiceAgents.Instance.ScheduleServiceAgent.DeleteSchedule(schedule.id_Schedule);
+        ServiceAgents.Instance.ControllerServiceAgent.StopRecordingSchedule(schedule.IdSchedule);
+        ServiceAgents.Instance.ScheduleServiceAgent.DeleteSchedule(schedule.IdSchedule);
 
         listView1.Items.Remove(item);
       }

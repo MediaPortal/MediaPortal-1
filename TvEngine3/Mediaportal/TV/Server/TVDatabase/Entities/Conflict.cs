@@ -55,7 +55,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     ChangeTracker.RecordOriginalValue("idSchedule", _idSchedule);
                     if (!IsDeserializing)
                     {
-                        if (Schedule != null && Schedule.id_Schedule != value)
+                        if (Schedule != null && Schedule.IdSchedule != value)
                         {
                             Schedule = null;
                         }
@@ -78,7 +78,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     ChangeTracker.RecordOriginalValue("idConflictingSchedule", _idConflictingSchedule);
                     if (!IsDeserializing)
                     {
-                        if (ConflictingSchedule != null && ConflictingSchedule.id_Schedule != value)
+                        if (ConflictingSchedule != null && ConflictingSchedule.IdSchedule != value)
                         {
                             ConflictingSchedule = null;
                         }
@@ -421,7 +421,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Schedule.Conflicts.Add(this);
                 }
     
-                IdSchedule = Schedule.id_Schedule;
+                IdSchedule = Schedule.IdSchedule;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {
@@ -460,7 +460,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     ConflictingSchedule.ConflictingSchedules.Add(this);
                 }
     
-                IdConflictingSchedule = ConflictingSchedule.id_Schedule;
+                IdConflictingSchedule = ConflictingSchedule.IdSchedule;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {

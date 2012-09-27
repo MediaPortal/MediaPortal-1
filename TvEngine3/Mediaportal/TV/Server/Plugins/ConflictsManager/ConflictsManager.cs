@@ -253,18 +253,18 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
       // sch_2    s--------------------------------e
       // sch_2  ------------------e
       if (
-        ((schedule2.startTime.AddMinutes(-schedule2.preRecordInterval) >=
-          schedule1.startTime.AddMinutes(-schedule1.preRecordInterval)) &&
-         (schedule2.startTime.AddMinutes(-schedule2.preRecordInterval) <
-          schedule1.endTime.AddMinutes(schedule1.postRecordInterval))) ||
-        ((schedule2.startTime.AddMinutes(-schedule2.preRecordInterval) <=
-          schedule1.startTime.AddMinutes(-schedule1.preRecordInterval)) &&
-         (schedule2.endTime.AddMinutes(schedule2.postRecordInterval) >=
-          schedule1.endTime.AddMinutes(schedule1.postRecordInterval))) ||
-        ((schedule2.endTime.AddMinutes(schedule2.postRecordInterval) >
-          schedule1.startTime.AddMinutes(-schedule1.preRecordInterval)) &&
-         (schedule2.endTime.AddMinutes(schedule2.postRecordInterval) <=
-          schedule1.endTime.AddMinutes(schedule1.postRecordInterval)))
+        ((schedule2.StartTime.AddMinutes(-schedule2.PreRecordInterval) >=
+          schedule1.StartTime.AddMinutes(-schedule1.PreRecordInterval)) &&
+         (schedule2.StartTime.AddMinutes(-schedule2.PreRecordInterval) <
+          schedule1.EndTime.AddMinutes(schedule1.PostRecordInterval))) ||
+        ((schedule2.StartTime.AddMinutes(-schedule2.PreRecordInterval) <=
+          schedule1.StartTime.AddMinutes(-schedule1.PreRecordInterval)) &&
+         (schedule2.EndTime.AddMinutes(schedule2.PostRecordInterval) >=
+          schedule1.EndTime.AddMinutes(schedule1.PostRecordInterval))) ||
+        ((schedule2.EndTime.AddMinutes(schedule2.PostRecordInterval) >
+          schedule1.StartTime.AddMinutes(-schedule1.PreRecordInterval)) &&
+         (schedule2.EndTime.AddMinutes(schedule2.PostRecordInterval) <=
+          schedule1.EndTime.AddMinutes(schedule1.PostRecordInterval)))
         ) return true;
       return false;
     }
@@ -301,7 +301,7 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
 
         foreach (Card card in cardsList)
         {
-          if (CardManagement.CanViewTvChannel(card, schedule.id_Schedule))
+          if (CardManagement.CanViewTvChannel(card, schedule.IdSchedule))
           {
             // checks if any schedule assigned to this cards overlaps current parsed schedule
             bool free = true;
@@ -333,16 +333,16 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
           cardSchedules[0].Add(schedule);
           var newConflict = new Conflict
                               {
-                                IdSchedule = schedule.id_Schedule,
-                                IdConflictingSchedule = lastOverlappingSchedule.id_Schedule,
-                                IdChannel = schedule.idChannel,
-                                ConflictDate = schedule.startTime,
+                                IdSchedule = schedule.IdSchedule,
+                                IdConflictingSchedule = lastOverlappingSchedule.IdSchedule,
+                                IdChannel = schedule.IdChannel,
+                                ConflictDate = schedule.StartTime,
                                 IdCard = lastBusyCard
                               };
 
           ConflictManagement.SaveConflict(newConflict);          
-          Program prg = ProgramManagement.RetrieveByTitleTimesAndChannel(schedule.programName, schedule.startTime,
-                                                               schedule.endTime, schedule.idChannel);
+          Program prg = ProgramManagement.RetrieveByTitleTimesAndChannel(schedule.ProgramName, schedule.StartTime,
+                                                               schedule.EndTime, schedule.IdChannel);
 
           if (prg != null)
           {
@@ -365,7 +365,7 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
     /// <returns>int: number of cards</returns>
     private int howManyCardsCanView(Schedule _shedule)
     {
-      return _cards.Count(_card => CardManagement.CanViewTvChannel(_card, _shedule.idChannel));
+      return _cards.Count(_card => CardManagement.CanViewTvChannel(_card, _shedule.IdChannel));
     }
 
     /// <summary>
@@ -413,8 +413,8 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
     {
       foreach (Schedule schedule in schedulesList)
       {                
-        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.scheduleType;
-        if (schedule.canceled != Schedule.MinSchedule) continue;
+        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
+        if (schedule.Canceled != Schedule.MinSchedule) continue;
         if (scheduleType != ScheduleRecordingType.Once) continue;
         refFillList.Add(schedule);
       }
@@ -431,31 +431,31 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
     {
       foreach (Schedule schedule in schedulesList)
       {
-        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.scheduleType;
-        if (schedule.canceled != Schedule.MinSchedule) continue;
+        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
+        if (schedule.Canceled != Schedule.MinSchedule) continue;
         if (scheduleType != ScheduleRecordingType.Daily) continue;
         // create a temporay base schedule with today's date
         // (will be used to calculate incoming schedules)
         // and adjusts Endtime for schedules that overlap 2 days (eg : 23:00 - 00:30)
         Schedule baseSchedule = ScheduleFactory.Clone(schedule);
-        if (baseSchedule.startTime.Day != baseSchedule.endTime.Day)
+        if (baseSchedule.StartTime.Day != baseSchedule.EndTime.Day)
         {
-          baseSchedule.startTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
-                                                baseSchedule.startTime.Hour, baseSchedule.startTime.Minute,
-                                                baseSchedule.startTime.Second);
-          baseSchedule.endTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
-                                              baseSchedule.endTime.Hour, baseSchedule.endTime.Minute,
-                                              baseSchedule.endTime.Second);
-          baseSchedule.endTime = baseSchedule.endTime.AddDays(1);
+          baseSchedule.StartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
+                                                baseSchedule.StartTime.Hour, baseSchedule.StartTime.Minute,
+                                                baseSchedule.StartTime.Second);
+          baseSchedule.EndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
+                                              baseSchedule.EndTime.Hour, baseSchedule.EndTime.Minute,
+                                              baseSchedule.EndTime.Second);
+          baseSchedule.EndTime = baseSchedule.EndTime.AddDays(1);
         }
         else
         {
-          baseSchedule.startTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
-                                                baseSchedule.startTime.Hour, baseSchedule.startTime.Minute,
-                                                baseSchedule.startTime.Second);
-          baseSchedule.endTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
-                                              baseSchedule.endTime.Hour, baseSchedule.endTime.Minute,
-                                              baseSchedule.endTime.Second);
+          baseSchedule.StartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
+                                                baseSchedule.StartTime.Hour, baseSchedule.StartTime.Minute,
+                                                baseSchedule.StartTime.Second);
+          baseSchedule.EndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
+                                              baseSchedule.EndTime.Hour, baseSchedule.EndTime.Minute,
+                                              baseSchedule.EndTime.Second);
         }
 
         // generate the daily schedules for the next 30 days
@@ -463,11 +463,11 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
         for (int i = 0; i <= 30; i++)
         {
           tempDate = DateTime.Now.AddDays(i);
-          if (tempDate.Date >= schedule.startTime.Date)
+          if (tempDate.Date >= schedule.StartTime.Date)
           {
             Schedule incomingSchedule = ScheduleFactory.Clone(baseSchedule);
-            incomingSchedule.startTime = incomingSchedule.startTime.AddDays(i);
-            incomingSchedule.endTime = incomingSchedule.endTime.AddDays(i);
+            incomingSchedule.StartTime = incomingSchedule.StartTime.AddDays(i);
+            incomingSchedule.EndTime = incomingSchedule.EndTime.AddDays(i);
             refFillList.Add(incomingSchedule);
           } //if (_tempDate>=_Schedule.startTime)
         } //for (int i = 0; i <= 30; i++)
@@ -485,37 +485,37 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
     {
       foreach (Schedule schedule in schedulesList)
       {
-        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.scheduleType;
-        if (schedule.canceled != Schedule.MinSchedule) continue;
+        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
+        if (schedule.Canceled != Schedule.MinSchedule) continue;
         if (scheduleType != ScheduleRecordingType.Weekly) continue;
         DateTime tempDate;
         //  generate the weekly schedules for the next 30 days
         for (int i = 0; i <= 30; i++)
         {
           tempDate = DateTime.Now.AddDays(i);
-          if ((tempDate.DayOfWeek == schedule.startTime.DayOfWeek) && (tempDate.Date >= schedule.startTime.Date))
+          if ((tempDate.DayOfWeek == schedule.StartTime.DayOfWeek) && (tempDate.Date >= schedule.StartTime.Date))
           {
             Schedule tempSchedule = ScheduleFactory.Clone(schedule);
 
             #region Set Schedule Time & Date
 
             // adjusts Endtime for schedules that overlap 2 days (eg : 23:00 - 00:30)
-            if (tempSchedule.startTime.Day != tempSchedule.endTime.Day)
+            if (tempSchedule.StartTime.Day != tempSchedule.EndTime.Day)
             {
-              tempSchedule.startTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day,
-                                                    tempSchedule.startTime.Hour, tempSchedule.startTime.Minute,
-                                                    tempSchedule.startTime.Second);
-              tempSchedule.endTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.endTime.Hour,
-                                                  tempSchedule.endTime.Minute, tempSchedule.endTime.Second);
-              tempSchedule.endTime = tempSchedule.endTime.AddDays(1);
+              tempSchedule.StartTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day,
+                                                    tempSchedule.StartTime.Hour, tempSchedule.StartTime.Minute,
+                                                    tempSchedule.StartTime.Second);
+              tempSchedule.EndTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.EndTime.Hour,
+                                                  tempSchedule.EndTime.Minute, tempSchedule.EndTime.Second);
+              tempSchedule.EndTime = tempSchedule.EndTime.AddDays(1);
             }
             else
             {
-              tempSchedule.startTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day,
-                                                    tempSchedule.startTime.Hour, tempSchedule.startTime.Minute,
-                                                    tempSchedule.startTime.Second);
-              tempSchedule.endTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.endTime.Hour,
-                                                  tempSchedule.endTime.Minute, tempSchedule.endTime.Second);
+              tempSchedule.StartTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day,
+                                                    tempSchedule.StartTime.Hour, tempSchedule.StartTime.Minute,
+                                                    tempSchedule.StartTime.Second);
+              tempSchedule.EndTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.EndTime.Hour,
+                                                  tempSchedule.EndTime.Minute, tempSchedule.EndTime.Second);
             }
 
             #endregion
@@ -537,37 +537,37 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
     {
       foreach (Schedule schedule in schedulesList)
       {
-        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.scheduleType;
-        if (schedule.canceled != Schedule.MinSchedule) continue;
+        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
+        if (schedule.Canceled != Schedule.MinSchedule) continue;
         if (scheduleType != ScheduleRecordingType.Weekends) continue;
         DateTime tempDate;
         //  generate the weekly schedules for the next 30 days
         for (int i = 0; i <= 30; i++)
         {
           tempDate = DateTime.Now.AddDays(i);
-          if (WeekEndTool.IsWeekend(tempDate.DayOfWeek) && (tempDate.Date >= schedule.startTime.Date))
+          if (WeekEndTool.IsWeekend(tempDate.DayOfWeek) && (tempDate.Date >= schedule.StartTime.Date))
           {
             Schedule tempSchedule = ScheduleFactory.Clone(schedule);
 
             #region Set Schedule Time & Date
 
             // adjusts Endtime for schedules that overlap 2 days (eg : 23:00 - 00:30)
-            if (tempSchedule.startTime.Day != tempSchedule.endTime.Day)
+            if (tempSchedule.StartTime.Day != tempSchedule.EndTime.Day)
             {
-              tempSchedule.startTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day,
-                                                    tempSchedule.startTime.Hour, tempSchedule.startTime.Minute,
-                                                    tempSchedule.startTime.Second);
-              tempSchedule.endTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.endTime.Hour,
-                                                  tempSchedule.endTime.Minute, tempSchedule.endTime.Second);
-              tempSchedule.endTime = tempSchedule.endTime.AddDays(1);
+              tempSchedule.StartTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day,
+                                                    tempSchedule.StartTime.Hour, tempSchedule.StartTime.Minute,
+                                                    tempSchedule.StartTime.Second);
+              tempSchedule.EndTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.EndTime.Hour,
+                                                  tempSchedule.EndTime.Minute, tempSchedule.EndTime.Second);
+              tempSchedule.EndTime = tempSchedule.EndTime.AddDays(1);
             }
             else
             {
-              tempSchedule.startTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day,
-                                                    tempSchedule.startTime.Hour, tempSchedule.startTime.Minute,
-                                                    tempSchedule.startTime.Second);
-              tempSchedule.endTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.endTime.Hour,
-                                                  tempSchedule.endTime.Minute, tempSchedule.endTime.Second);
+              tempSchedule.StartTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day,
+                                                    tempSchedule.StartTime.Hour, tempSchedule.StartTime.Minute,
+                                                    tempSchedule.StartTime.Second);
+              tempSchedule.EndTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.EndTime.Hour,
+                                                  tempSchedule.EndTime.Minute, tempSchedule.EndTime.Second);
             }
 
             #endregion
@@ -589,37 +589,37 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
     {
       foreach (Schedule schedule in schedulesList)
       {
-        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.scheduleType;
-        if (schedule.canceled != Schedule.MinSchedule) continue;
+        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
+        if (schedule.Canceled != Schedule.MinSchedule) continue;
         if (scheduleType != ScheduleRecordingType.WorkingDays) continue;
         DateTime tempDate;
         //  generate the weekly schedules for the next 30 days
         for (int i = 0; i <= 30; i++)
         {
           tempDate = DateTime.Now.AddDays(i);
-          if ((WeekEndTool.IsWorkingDay(tempDate.DayOfWeek)) && (tempDate.Date >= schedule.startTime.Date))
+          if ((WeekEndTool.IsWorkingDay(tempDate.DayOfWeek)) && (tempDate.Date >= schedule.StartTime.Date))
           {
             Schedule tempSchedule = ScheduleFactory.Clone(schedule);
 
             #region Set Schedule Time & Date
 
             // adjusts Endtime for schedules that overlap 2 days (eg : 23:00 - 00:30)
-            if (tempSchedule.startTime.Day != tempSchedule.endTime.Day)
+            if (tempSchedule.StartTime.Day != tempSchedule.EndTime.Day)
             {
-              tempSchedule.startTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day,
-                                                    tempSchedule.startTime.Hour, tempSchedule.startTime.Minute,
-                                                    tempSchedule.startTime.Second);
-              tempSchedule.endTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.endTime.Hour,
-                                                  tempSchedule.endTime.Minute, tempSchedule.endTime.Second);
-              tempSchedule.endTime = tempSchedule.endTime.AddDays(1);
+              tempSchedule.StartTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day,
+                                                    tempSchedule.StartTime.Hour, tempSchedule.StartTime.Minute,
+                                                    tempSchedule.StartTime.Second);
+              tempSchedule.EndTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.EndTime.Hour,
+                                                  tempSchedule.EndTime.Minute, tempSchedule.EndTime.Second);
+              tempSchedule.EndTime = tempSchedule.EndTime.AddDays(1);
             }
             else
             {
-              tempSchedule.startTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day,
-                                                    tempSchedule.startTime.Hour, tempSchedule.startTime.Minute,
-                                                    tempSchedule.startTime.Second);
-              tempSchedule.endTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.endTime.Hour,
-                                                  tempSchedule.endTime.Minute, tempSchedule.endTime.Second);
+              tempSchedule.StartTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day,
+                                                    tempSchedule.StartTime.Hour, tempSchedule.StartTime.Minute,
+                                                    tempSchedule.StartTime.Second);
+              tempSchedule.EndTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.EndTime.Hour,
+                                                  tempSchedule.EndTime.Minute, tempSchedule.EndTime.Second);
             }
 
             #endregion
@@ -642,23 +642,23 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
       //IList programsList = Program.ListAll();
       foreach (Schedule schedule in schedulesList)
       {
-        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.scheduleType;
-        if (schedule.canceled != Schedule.MinSchedule) continue;
+        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
+        if (schedule.Canceled != Schedule.MinSchedule) continue;
         if (scheduleType != ScheduleRecordingType.EveryTimeOnEveryChannel) continue;
-        IList<Program> programsList = ProgramManagement.RetrieveByTitleAndTimesInterval(schedule.programName, schedule.startTime,
-                                                                              schedule.startTime.AddMonths(1));
+        IList<Program> programsList = ProgramManagement.RetrieveByTitleAndTimesInterval(schedule.ProgramName, schedule.StartTime,
+                                                                              schedule.StartTime.AddMonths(1));
         foreach (Program program in programsList)
         {
-          if ((program.Title == schedule.programName) && (program.IdChannel == schedule.idChannel) &&
+          if ((program.Title == schedule.ProgramName) && (program.IdChannel == schedule.IdChannel) &&
               (program.EndTime >= DateTime.Now))
           {
             Schedule incomingSchedule = ScheduleFactory.Clone(schedule);
-            incomingSchedule.idChannel = program.IdChannel;
-            incomingSchedule.programName = program.Title;
-            incomingSchedule.startTime = program.StartTime;
-            incomingSchedule.endTime = program.EndTime;
-            incomingSchedule.preRecordInterval = schedule.preRecordInterval;
-            incomingSchedule.postRecordInterval = schedule.postRecordInterval;
+            incomingSchedule.IdChannel = program.IdChannel;
+            incomingSchedule.ProgramName = program.Title;
+            incomingSchedule.StartTime = program.StartTime;
+            incomingSchedule.EndTime = program.EndTime;
+            incomingSchedule.PreRecordInterval = schedule.PreRecordInterval;
+            incomingSchedule.PostRecordInterval = schedule.PostRecordInterval;
             refFillList.Add(incomingSchedule);
           }
         } //foreach (Program _program in _programsList)
@@ -676,26 +676,26 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
       
       foreach (Schedule schedule in schedulesList)
       {
-        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.scheduleType;
-        if (schedule.canceled != Schedule.MinSchedule) continue;
+        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
+        if (schedule.Canceled != Schedule.MinSchedule) continue;
         if (scheduleType != ScheduleRecordingType.EveryTimeOnThisChannel) continue;
-        Channel channel = ChannelManagement.GetChannel(schedule.idChannel);
+        Channel channel = ChannelManagement.GetChannel(schedule.IdChannel);
 
         IList<Program> programsList = ProgramManagement.GetProgramsByChannelAndTitleAndStartEndTimes(channel.IdChannel,
-                                                                        schedule.programName, DateTime.Now,
+                                                                        schedule.ProgramName, DateTime.Now,
                                                                         DateTime.Now.AddMonths(1));          
         if (programsList != null)
         {
           foreach (Program program in programsList)
           {
             Schedule incomingSchedule = ScheduleFactory.Clone(schedule);
-            incomingSchedule.idChannel = program.IdChannel;
-            incomingSchedule.programName = program.Title;
-            incomingSchedule.startTime = program.StartTime;
-            incomingSchedule.endTime = program.EndTime;
+            incomingSchedule.IdChannel = program.IdChannel;
+            incomingSchedule.ProgramName = program.Title;
+            incomingSchedule.StartTime = program.StartTime;
+            incomingSchedule.EndTime = program.EndTime;
 
-            incomingSchedule.preRecordInterval = schedule.preRecordInterval;
-            incomingSchedule.postRecordInterval = schedule.postRecordInterval;
+            incomingSchedule.PreRecordInterval = schedule.PreRecordInterval;
+            incomingSchedule.PostRecordInterval = schedule.PostRecordInterval;
             refFillList.Add(incomingSchedule);
           }
         } //foreach (Program _program in _programsList)
@@ -713,29 +713,29 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
       
       foreach (Schedule schedule in schedulesList)
       {
-        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.scheduleType;
-        if (schedule.canceled != Schedule.MinSchedule) continue;
+        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
+        if (schedule.Canceled != Schedule.MinSchedule) continue;
         if (scheduleType != ScheduleRecordingType.WeeklyEveryTimeOnThisChannel) continue;
-        Channel channel = ChannelManagement.GetChannel(schedule.idChannel);
+        Channel channel = ChannelManagement.GetChannel(schedule.IdChannel);
 
         IList<Program> programsList = ProgramManagement.GetProgramsByChannelAndTitleAndStartEndTimes(channel.IdChannel,
-                                                                        schedule.programName, DateTime.Now,
+                                                                        schedule.ProgramName, DateTime.Now,
                                                                         DateTime.Now.AddMonths(1));          
        
         if (programsList != null)
         {
           foreach (Program program in programsList)
           {
-            if (program.StartTime.DayOfWeek == schedule.startTime.DayOfWeek)
+            if (program.StartTime.DayOfWeek == schedule.StartTime.DayOfWeek)
             {
               Schedule incomingSchedule = ScheduleFactory.Clone(schedule);
-              incomingSchedule.idChannel = program.IdChannel;
-              incomingSchedule.programName = program.Title;
-              incomingSchedule.startTime = program.StartTime;
-              incomingSchedule.endTime = program.EndTime;
+              incomingSchedule.IdChannel = program.IdChannel;
+              incomingSchedule.ProgramName = program.Title;
+              incomingSchedule.StartTime = program.StartTime;
+              incomingSchedule.EndTime = program.EndTime;
 
-              incomingSchedule.preRecordInterval = schedule.preRecordInterval;
-              incomingSchedule.postRecordInterval = schedule.postRecordInterval;
+              incomingSchedule.PreRecordInterval = schedule.PreRecordInterval;
+              incomingSchedule.PostRecordInterval = schedule.PostRecordInterval;
               refFillList.Add(incomingSchedule);
             }
           }
@@ -756,7 +756,7 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
       {
         foreach (Schedule sched in refFillList)
         {
-          if ((canceled.IdSchedule == sched.id_Schedule) && (canceled.CancelDateTime == sched.startTime))
+          if ((canceled.IdSchedule == sched.IdSchedule) && (canceled.CancelDateTime == sched.StartTime))
           {
             refFillList.Remove(sched);
             break;
