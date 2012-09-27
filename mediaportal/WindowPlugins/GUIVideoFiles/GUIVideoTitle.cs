@@ -1343,16 +1343,16 @@ namespace MediaPortal.GUI.Video
             }
             else
             {
-              ArrayList mList = new ArrayList();
-              VideoDatabase.GetMoviesByUserGroup(movie.SingleUserGroup, ref mList);
-              IMDBMovie cMovie = GetRandomMovie(mList);
+              //ArrayList mList = new ArrayList();
+              //VideoDatabase.GetMoviesByUserGroup(movie.SingleUserGroup, ref mList);
+              //IMDBMovie cMovie = GetRandomMovie(mList);
 
-              if ( cMovie != null)
-              {
-                string titleExt = cMovie.Title + "{" + cMovie.ID + "}";
-                usergroupCover = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
-                SetItemThumb(item, usergroupCover);
-              }
+              //if ( cMovie != null)
+              //{
+              //  string titleExt = cMovie.Title + "{" + cMovie.ID + "}";
+              //  usergroupCover = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
+              //  SetItemThumb(item, usergroupCover);
+              //}
             }
           }
           else
