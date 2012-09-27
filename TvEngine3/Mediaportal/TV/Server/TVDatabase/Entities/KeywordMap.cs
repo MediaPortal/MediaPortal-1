@@ -25,7 +25,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Primitive Properties
     
         [DataMember]
-        public int idKeywordMap
+        public int IdKeywordMap
         {
             get { return _idKeywordMap; }
             set
@@ -44,7 +44,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idKeywordMap;
     
         [DataMember]
-        public int idKeyword
+        public int IdKeyword
         {
             get { return _idKeyword; }
             set
@@ -67,7 +67,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idKeyword;
     
         [DataMember]
-        public int idChannelGroup
+        public int IdChannelGroup
         {
             get { return _idChannelGroup; }
             set
@@ -240,7 +240,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Keyword.KeywordMaps.Add(this);
                 }
     
-                idKeyword = Keyword.IdKeyword;
+                IdKeyword = Keyword.IdKeyword;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {
@@ -279,7 +279,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     ChannelGroups.KeywordMap.Add(this);
                 }
     
-                idChannelGroup = ChannelGroups.IdGroup;
+                IdChannelGroup = ChannelGroups.IdGroup;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {
