@@ -511,7 +511,7 @@
     <Property Name="Modulation" Type="int" Nullable="false" />
     <Property Name="Polarisation" Type="int" Nullable="false" />
     <Property Name="Symbolrate" Type="int" Nullable="false" />
-    <Property Name="Diseqc" Type="int" Nullable="false" />
+    <Property Name="DiSEqC" Type="int" Nullable="false" />
     <Property Name="SwitchingFrequency" Type="int" Nullable="false" />
     <Property Name="Bandwidth" Type="int" Nullable="false" />
     <Property Name="MajorChannel" Type="int" Nullable="false" />
@@ -524,7 +524,7 @@
     <Property Name="Pilot" Type="int" Nullable="false" />
     <Property Name="RollOff" Type="int" Nullable="false" />
     <Property Name="Url" Type="varchar" Nullable="false" MaxLength="200" />
-    <Property Name="bitrate" Type="int" Nullable="false" />
+    <Property Name="Bitrate" Type="int" Nullable="false" />
     <Property Name="AudioSource" Type="int" Nullable="false" />
     <Property Name="IsVCRSignal" Type="bit" Nullable="false" />
     <Property Name="MediaType" Type="int" Nullable="false" />
@@ -1556,7 +1556,7 @@
           <Property Name="Modulation" Type="Int32" Nullable="false" />
           <Property Name="Polarisation" Type="Int32" Nullable="false" />
           <Property Name="Symbolrate" Type="Int32" Nullable="false" />
-          <Property Name="Diseqc" Type="Int32" Nullable="false" />
+          <Property Name="DiSEqC" Type="Int32" Nullable="false" />
           <Property Name="SwitchingFrequency" Type="Int32" Nullable="false" />
           <Property Name="Bandwidth" Type="Int32" Nullable="false" />
           <Property Name="MajorChannel" Type="Int32" Nullable="false" />
@@ -2088,7 +2088,7 @@
           <ScalarProperty Name="Preload" ColumnName="Preload" />
           <ScalarProperty Name="CAM" ColumnName="CAM" />
           <ScalarProperty Name="NetProvider" ColumnName="NetProvider" />
-          <ScalarProperty Name="Stopgraph" ColumnName="Stopgraph" />
+          <ScalarProperty Name="StopGraph" ColumnName="StopGraph" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -2431,7 +2431,7 @@
           <ScalarProperty Name="Modulation" ColumnName="Modulation" />
           <ScalarProperty Name="Polarisation" ColumnName="Polarisation" />
           <ScalarProperty Name="Symbolrate" ColumnName="Symbolrate" />
-          <ScalarProperty Name="Diseqc" ColumnName="Diseqc" />
+          <ScalarProperty Name="DiSEqC" ColumnName="DiSEqC" />
           <ScalarProperty Name="SwitchingFrequency" ColumnName="SwitchingFrequency" />
           <ScalarProperty Name="Bandwidth" ColumnName="Bandwidth" />
           <ScalarProperty Name="MajorChannel" ColumnName="MajorChannel" />
@@ -2444,7 +2444,7 @@
           <ScalarProperty Name="Pilot" ColumnName="Pilot" />
           <ScalarProperty Name="RollOff" ColumnName="RollOff" />
           <ScalarProperty Name="Url" ColumnName="Url" />
-          <ScalarProperty Name="bitrate" ColumnName="bitrate" />
+          <ScalarProperty Name="Bitrate" ColumnName="Bitrate" />
           <ScalarProperty Name="AudioSource" ColumnName="AudioSource" />
           <ScalarProperty Name="IsVCRSignal" ColumnName="IsVCRSignal" />
           <ScalarProperty Name="MediaType" ColumnName="MediaType" />
