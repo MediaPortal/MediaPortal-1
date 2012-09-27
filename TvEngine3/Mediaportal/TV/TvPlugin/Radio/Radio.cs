@@ -502,7 +502,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
         IList<GroupMap> maps = group.GroupMaps;
         foreach (GroupMap map in maps)
         {
-          if (map.mediaType == (int)MediaTypeEnum.Radio)
+          if (map.MediaType == (int)MediaTypeEnum.Radio)
           {
             Channel channel = map.Channel;
 

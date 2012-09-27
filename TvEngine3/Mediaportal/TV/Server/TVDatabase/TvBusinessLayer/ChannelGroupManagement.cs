@@ -37,7 +37,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository())
       {
         var query =
-          channelGroupRepository.GetQuery<ChannelGroup>(g => g.GroupMaps.Any(gm => gm.mediaType == (int)mediaType));
+          channelGroupRepository.GetQuery<ChannelGroup>(g => g.GroupMaps.Any(gm => gm.MediaType == (int)mediaType));
 
         var listAllChannelGroupsByMediaType = channelGroupRepository.IncludeAllRelations(query).ToList();
         return listAllChannelGroupsByMediaType;
@@ -49,7 +49,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository())
       {
         var query =
-          channelGroupRepository.GetQuery<ChannelGroup>(g => g.GroupMaps.Any(gm => gm.mediaType == (int)mediaType));
+          channelGroupRepository.GetQuery<ChannelGroup>(g => g.GroupMaps.Any(gm => gm.MediaType == (int)mediaType));
 
         var listAllChannelGroupsByMediaType = channelGroupRepository.IncludeAllRelations(query, includeRelations).ToList();
         return listAllChannelGroupsByMediaType;
@@ -61,7 +61,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository())
       {
         var query = channelGroupRepository.GetQuery<ChannelGroup>(
-          g => g.GroupName == groupName && g.GroupMaps.Any(gm => gm.mediaType == (int) mediaType));
+          g => g.GroupName == groupName && g.GroupMaps.Any(gm => gm.MediaType == (int) mediaType));
 
         ChannelGroup channelGroupByNameAndMediaType = channelGroupRepository.IncludeAllRelations(query).FirstOrDefault();
         return channelGroupByNameAndMediaType;
@@ -87,7 +87,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository(true))
       {
-        channelGroupRepository.Delete<GroupMap>(g => g.idMap == idMap);
+        channelGroupRepository.Delete<GroupMap>(g => g.IdMap == idMap);
         channelGroupRepository.UnitOfWork.SaveChanges();
       }
     }

@@ -896,7 +896,7 @@ namespace Mediaportal.TV.TvPlugin
           if (groupMap.Channel.DisplayName == currentchannelName)
           {
             foundMatchingGroupName = true;
-            m_currentChannel = GetChannel(groupMap.idChannel);
+            m_currentChannel = GetChannel(groupMap.IdChannel);
             break;
           }
         }

@@ -250,16 +250,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           bool alreadyExistsInGroup = false;
           foreach (GroupMap groupMapMaster in selectedChannel.GroupMaps)
           {
-            if (groupMapMaster.idGroup == groupMap.idGroup)
+            if (groupMapMaster.IdGroup == groupMap.IdGroup)
             {
-              ServiceAgents.Instance.CardServiceAgent.DeleteGroupMap(groupMap.idMap);              
+              ServiceAgents.Instance.CardServiceAgent.DeleteGroupMap(groupMap.IdMap);              
               alreadyExistsInGroup = true;
               continue;
             }
           }
           if (!alreadyExistsInGroup)
           {
-            groupMap.idChannel = selectedChannel.IdChannel;
+            groupMap.IdChannel = selectedChannel.IdChannel;
             ServiceAgents.Instance.ChannelServiceAgent.SaveChannelGroupMap(groupMap);
 
           }

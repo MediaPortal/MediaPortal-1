@@ -111,7 +111,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         {
           foreach (var groupMap in channel.GroupMaps)
           {
-            if (groupMap.idGroup == _channelGroup.IdGroup)
+            if (groupMap.IdGroup == _channelGroup.IdGroup)
             {
               listView1.Items.Add(CreateItemForChannel(channel, groupMap));
               break;
@@ -450,7 +450,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           listView1.Items.RemoveAt(index);
           GroupMap map = (GroupMap)item.Tag;
           
-          ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroupMap(map.idMap);
+          ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroupMap(map.IdMap);
         }
       }
       dlg.Close();

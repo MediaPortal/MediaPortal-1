@@ -153,7 +153,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           Channel chan = map.Channel;
           channelsInGroup.Add(map.Channel);          
-          ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroupMap(map.idMap);
+          ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroupMap(map.IdMap);
         }
         SaveGroup(channelsInGroup);
       }
@@ -188,7 +188,7 @@ namespace Mediaportal.TV.TvPlugin
         foreach (GroupMap map in maps)
         {
           channelsInGroup.Add(map.Channel);          
-          ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroupMap(map.idMap);
+          ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroupMap(map.IdMap);
         }
         SaveGroup(channelsInGroup);
       }
