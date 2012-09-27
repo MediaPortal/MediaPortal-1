@@ -24,7 +24,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Primitive Properties
     
         [DataMember]
-        public int idSatellite
+        public int IdSatellite
         {
             get { return _idSatellite; }
             set
@@ -43,7 +43,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idSatellite;
     
         [DataMember]
-        public string satelliteName
+        public string SatelliteName
         {
             get { return _satelliteName; }
             set
@@ -58,7 +58,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _satelliteName;
     
         [DataMember]
-        public string transponderFileName
+        public string TransponderFileName
         {
             get { return _transponderFileName; }
             set

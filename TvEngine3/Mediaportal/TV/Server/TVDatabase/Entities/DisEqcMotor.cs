@@ -77,7 +77,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     ChangeTracker.RecordOriginalValue("idSatellite", _idSatellite);
                     if (!IsDeserializing)
                     {
-                        if (Satellite != null && Satellite.idSatellite != value)
+                        if (Satellite != null && Satellite.IdSatellite != value)
                         {
                             Satellite = null;
                         }
@@ -294,7 +294,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Satellite.DisEqcMotors.Add(this);
                 }
     
-                IdSatellite = Satellite.idSatellite;
+                IdSatellite = Satellite.IdSatellite;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {

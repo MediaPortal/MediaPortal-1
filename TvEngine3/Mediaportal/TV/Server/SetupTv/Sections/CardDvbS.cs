@@ -519,7 +519,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             if (ts.SatelliteName[i] >= (char)32 && ts.SatelliteName[i] < (char)127)
               name += ts.SatelliteName[i];
           }
-          if (String.Compare(name, dbSat.satelliteName, true) == 0)
+          if (String.Compare(name, dbSat.SatelliteName, true) == 0)
           {
             ts.Satellite = dbSat;
             break;
@@ -533,7 +533,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             if (ts.SatelliteName[i] >= (char)32 && ts.SatelliteName[i] < (char)127)
               name += ts.SatelliteName[i];
           }
-          ts.Satellite = new Satellite {satelliteName = name, transponderFileName = ts.FileName};
+          ts.Satellite = new Satellite {SatelliteName = name, TransponderFileName = ts.FileName};
           ts.FileName = ts.FileName;
         
           ServiceAgents.Instance.CardServiceAgent.SaveSatellite(ts.Satellite);
@@ -951,7 +951,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         foreach (DisEqcMotor motor in card.DisEqcMotors)
         {
-          if (motor.IdSatellite == context.Satellite.idSatellite)
+          if (motor.IdSatellite == context.Satellite.IdSatellite)
           {
             position = motor.Position;
             break;
@@ -1141,7 +1141,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             }
             if (checkBoxCreateGroupsSat.Checked)
             {
-              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(context.Satellite.satelliteName);
+              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(context.Satellite.SatelliteName);
               MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);                                                        
             }
             if (checkBoxCreateGroups.Checked)
@@ -1161,7 +1161,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             }
             if (checkBoxCreateGroupsSat.Checked)
             {
-              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(context.Satellite.satelliteName);
+              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(context.Satellite.SatelliteName);
               MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.Radio);                           
             }
             if (checkBoxCreateGroups.Checked)
@@ -1320,7 +1320,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IList<DisEqcMotor> motorSettings = card.DisEqcMotors;
       foreach (DisEqcMotor motor in motorSettings)
       {
-        if (motor.IdSatellite == sat.Satellite.idSatellite)
+        if (motor.IdSatellite == sat.Satellite.IdSatellite)
         {
           ServiceAgents.Instance.ControllerServiceAgent.DiSEqCGotoPosition(_cardNumber, (byte)motor.Position);
           MessageBox.Show("Satellite moving to position:" + motor.Position, "Info", MessageBoxButtons.OK,
@@ -1346,7 +1346,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IList<DisEqcMotor> motorSettings = card.DisEqcMotors;
       foreach (DisEqcMotor motor in motorSettings)
       {
-        if (motor.IdSatellite == sat.Satellite.idSatellite)
+        if (motor.IdSatellite == sat.Satellite.IdSatellite)
         {
           index = motor.Position;
           break;
@@ -1357,7 +1357,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         index = motorSettings.Count + 1;
         DisEqcMotor motor = new DisEqcMotor();
         motor.IdCard = card.IdCard;
-        motor.IdSatellite = sat.Satellite.idSatellite;
+        motor.IdSatellite = sat.Satellite.IdSatellite;
         motor.Position = index;
         ServiceAgents.Instance.CardServiceAgent.SaveDisEqcMotor(motor);
 
