@@ -133,7 +133,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
       {
         if (isTuningPending && ticketFound)
         {
-          Log.Debug("CardReservationBase: tvcard={0}, user={1}, dbChannel={2}, ticket={3}, tunestate={4}, stopstate={5}", tvcard.DataBaseCard.idCard, user.Name, dbChannel.idChannel, ticket.Id, tvcard.Tuner.CardTuneState, tvcard.Tuner.CardStopState);
+          Log.Debug("CardReservationBase: tvcard={0}, user={1}, dbChannel={2}, ticket={3}, tunestate={4}, stopstate={5}", tvcard.DataBaseCard.IdCard, user.Name, dbChannel.idChannel, ticket.Id, tvcard.Tuner.CardTuneState, tvcard.Tuner.CardStopState);
           tvResult = tvcard.Tuner.CardTune(ref user, channel, dbChannel);
 
           if (tvResult == TvResult.Succeeded)
@@ -143,11 +143,11 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
               var subChannelByChannelId = tvcard.UserManagement.GetSubChannelIdByChannelId(user.Name, dbChannel.idChannel);
               if (!ServiceManager.Instance.InternalControllerService.IsTimeShifting(user.Name))
               {
-                CleanTimeShiftFiles(tvcard.DataBaseCard.timeshiftingFolder,
+                CleanTimeShiftFiles(tvcard.DataBaseCard.TimeshiftingFolder,
                                     String.Format("live{0}-{1}.ts", user.CardId, subChannelByChannelId));
               }
 
-              string timeshiftFileName = String.Format(@"{0}\live{1}-{2}.ts", tvcard.DataBaseCard.timeshiftingFolder,
+              string timeshiftFileName = String.Format(@"{0}\live{1}-{2}.ts", tvcard.DataBaseCard.TimeshiftingFolder,
                                                        user.CardId,
                                                        subChannelByChannelId);
               tvResult = OnStartCardTune(ref user, ref timeshiftFileName, dbChannel.idChannel);
@@ -336,7 +336,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
               users, 
               ownerSubchannel, 
               isOwner, 
-              tvcard.DataBaseCard.idCard, 
+              tvcard.DataBaseCard.IdCard, 
               tvcard.NumberOfChannelsDecrypting, 
               isFreeToAir, 
               numberOfOtherUsersOnCurrentCard, 

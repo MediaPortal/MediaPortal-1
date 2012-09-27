@@ -60,7 +60,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       public override string ToString()
       {
-        return _card.name;
+        return _card.Name;
       }
     }
 
@@ -183,7 +183,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       _cards = new Dictionary<int, CardType>();
       foreach (Card card in dbsCards)
       {
-        _cards[card.idCard] = ServiceAgents.Instance.ControllerServiceAgent.Type(card.idCard);
+        _cards[card.IdCard] = ServiceAgents.Instance.ControllerServiceAgent.Type(card.IdCard);
       }
 
       //ChannelIncludeRelationEnum include = ChannelIncludeRelationEnum.None;
@@ -428,7 +428,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
         foreach (Card card in dbsCards)
         {
-          cards[card.idCard] = ServiceAgents.Instance.ControllerServiceAgent.Type(card.idCard);
+          cards[card.IdCard] = ServiceAgents.Instance.ControllerServiceAgent.Type(card.IdCard);
         }
         mpListView1.BeginUpdate();
         try
@@ -512,7 +512,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
         foreach (Card card in dbsCards)
         {
-          cards[card.idCard] = ServiceAgents.Instance.ControllerServiceAgent.Type(card.idCard);
+          cards[card.IdCard] = ServiceAgents.Instance.ControllerServiceAgent.Type(card.IdCard);
         }
         mpListView1.BeginUpdate();
         try

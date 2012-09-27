@@ -119,9 +119,9 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       ITvSubChannel result = null;
       try
       {
-        if (_cardHandler.DataBaseCard.enabled == false)
+        if (_cardHandler.DataBaseCard.Enabled == false)
           return TvResult.CardIsDisabled;
-        Log.Info("card: Scan {0} to {1}", _cardHandler.DataBaseCard.idCard, channel.Name);
+        Log.Info("card: Scan {0} to {1}", _cardHandler.DataBaseCard.IdCard, channel.Name);
 
         // fix mantis 0002776: Code locking in cardtuner can cause hangs 
         //lock (this)
@@ -202,11 +202,11 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
     public void CancelTune(int subchannel)
     {
-      if (_cardHandler.DataBaseCard.enabled == false || subchannel < 0)
+      if (_cardHandler.DataBaseCard.Enabled == false || subchannel < 0)
       {
         return;
       }
-      Log.Info("card: CancelTune {0} to {1}", _cardHandler.DataBaseCard.idCard);
+      Log.Info("card: CancelTune {0} to {1}", _cardHandler.DataBaseCard.IdCard);
       _cardHandler.Card.CancelTune(subchannel);
       RaiseOnAfterCancelTuneEvent(subchannel);
       WaitForCancelledTuneToFinish(subchannel);
@@ -250,7 +250,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
         lock (_tuneEvtLock)
         {
-          Log.Info("card: AddTuneEvent card: {0} / subch: {1}", _cardHandler.DataBaseCard.idCard, subchannel);
+          Log.Info("card: AddTuneEvent card: {0} / subch: {1}", _cardHandler.DataBaseCard.IdCard, subchannel);
           _tuneEvents[subchannel] = new ManualResetEvent(false);
         }
       }
@@ -266,7 +266,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           bool hasTuneEvt = _tuneEvents.TryGetValue(subchannel, out tuneEvt);
           if (hasTuneEvt && tuneEvt != null)
           {
-            Log.Info("card: SignalTuneEvent card: {0} / subch: {1}", _cardHandler.DataBaseCard.idCard, subchannel);            
+            Log.Info("card: SignalTuneEvent card: {0} / subch: {1}", _cardHandler.DataBaseCard.IdCard, subchannel);            
             tuneEvt.Set();
           }
         }
@@ -283,7 +283,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       if (hasTuneEvt && tuneEvt != null)
       {
-        Log.Info("card: WaitForCancelledTuneToFinish card: {0} / subch: {1}", _cardHandler.DataBaseCard.idCard, subchannel);                    
+        Log.Info("card: WaitForCancelledTuneToFinish card: {0} / subch: {1}", _cardHandler.DataBaseCard.IdCard, subchannel);                    
         tuneEvt.WaitOne();
         RemoveTuneEvent(tuneEvt, subchannel);
       }
@@ -301,11 +301,11 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       ITvSubChannel result = null;
       try
       {
-        if (_cardHandler.DataBaseCard.enabled == false)
+        if (_cardHandler.DataBaseCard.Enabled == false)
         {
           return TvResult.CardIsDisabled;
         }
-        Log.Info("card: Tune on card {0} to subchannel {1}", _cardHandler.DataBaseCard.idCard, channel.Name);
+        Log.Info("card: Tune on card {0} to subchannel {1}", _cardHandler.DataBaseCard.IdCard, channel.Name);
 
         int previousTimeShiftingSubChannel = _cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name);   
         TvResult tvResult = TvResult.UnknownError;
@@ -324,7 +324,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (TvExceptionTuneCancelled)
       {
-        user.FailedCardId = _cardHandler.DataBaseCard.idCard;
+        user.FailedCardId = _cardHandler.DataBaseCard.IdCard;
         if (result != null)
         {
           _cardHandler.Card.FreeSubChannel(result.SubChannelId);
@@ -333,7 +333,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (TvExceptionNoSignal)
       {
-        user.FailedCardId = _cardHandler.DataBaseCard.idCard;
+        user.FailedCardId = _cardHandler.DataBaseCard.IdCard;
         if (result != null)
         {
           _cardHandler.Card.FreeSubChannel(result.SubChannelId);
@@ -342,7 +342,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (TvExceptionSWEncoderMissing ex)
       {
-        user.FailedCardId = _cardHandler.DataBaseCard.idCard;
+        user.FailedCardId = _cardHandler.DataBaseCard.IdCard;
         Log.Write(ex);
         if (result != null)
         {
@@ -352,7 +352,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (TvExceptionGraphBuildingFailed ex2)
       {
-        user.FailedCardId = _cardHandler.DataBaseCard.idCard;
+        user.FailedCardId = _cardHandler.DataBaseCard.IdCard;
         Log.Write(ex2);
         if (result != null)
         {
@@ -362,7 +362,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (TvExceptionNoPMT)
       {
-        user.FailedCardId = _cardHandler.DataBaseCard.idCard;
+        user.FailedCardId = _cardHandler.DataBaseCard.IdCard;
         if (result != null)
         {
           _cardHandler.Card.FreeSubChannel(result.SubChannelId);
@@ -371,7 +371,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        user.FailedCardId = _cardHandler.DataBaseCard.idCard;
+        user.FailedCardId = _cardHandler.DataBaseCard.IdCard;
         Log.Write(ex);
         if (result != null)
         {
@@ -422,7 +422,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       //  return true;
       //}
       Log.Debug("card: user: {0}:{1}:{2} tune {3}", user.Name, user.CardId, _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel), channel.ToString());
-      _cardHandler.Card.CamType = (CamType)_cardHandler.DataBaseCard.camType;
+      _cardHandler.Card.CamType = (CamType)_cardHandler.DataBaseCard.CamType;
       _cardHandler.SetParameters();
 
       //check if transponder differs
@@ -530,13 +530,13 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_cardHandler.DataBaseCard.enabled == false)
+        if (_cardHandler.DataBaseCard.Enabled == false)
         {
           return TvResult.CardIsDisabled;
         }
 
         TvResult result;
-        Log.WriteFile("card: CardTune {0} {1} {2}:{3}:{4}", _cardHandler.DataBaseCard.idCard, channel.Name, user.Name,
+        Log.WriteFile("card: CardTune {0} {1} {2}:{3}:{4}", _cardHandler.DataBaseCard.IdCard, channel.Name, user.Name,
                       user.CardId, _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, dbChannel.idChannel));
         if (_cardHandler.IsScrambled(user.Name))
         {
@@ -598,7 +598,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_cardHandler.DataBaseCard.enabled == false)
+        if (_cardHandler.DataBaseCard.Enabled == false)
         {
           return false;
         }       

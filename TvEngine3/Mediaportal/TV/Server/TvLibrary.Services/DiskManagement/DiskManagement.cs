@@ -53,9 +53,9 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
       IList<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
       foreach (Card card in cards)
       {
-        if (card.recordingFolder.Length > 0)
+        if (card.RecordingFolder.Length > 0)
         {
-          string driveLetter = String.Format("{0}:", card.recordingFolder[0]);
+          string driveLetter = String.Format("{0}:", card.RecordingFolder[0]);
           if (Utils.getDriveType(driveLetter) == 3)
           {
             if (!drives.Contains(driveLetter))

@@ -204,12 +204,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
         foreach (Card card in dbsCards)
         {
-          if (!card.enabled)
+          if (!card.Enabled)
             continue;
-          if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.idCard))
+          if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.IdCard))
             continue;
 
-          IDictionary<string, IUser> users = ServiceAgents.Instance.ControllerServiceAgent.GetUsersForCard(card.idCard);
+          IDictionary<string, IUser> users = ServiceAgents.Instance.ControllerServiceAgent.GetUsersForCard(card.IdCard);
           foreach (KeyValuePair<string, IUser> u in users)
           {
             if (u.Value.Name == user.Name || u.Value.Name == "setuptv")
@@ -219,7 +219,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                 Channel ch = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(subchannel.IdChannel);
                 if (ch.displayName == client.Description)
                 {
-                  user.CardId = card.idCard;
+                  user.CardId = card.IdCard;
                   break;
                 } 
               }              

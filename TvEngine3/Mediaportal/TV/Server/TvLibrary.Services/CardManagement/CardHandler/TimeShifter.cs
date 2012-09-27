@@ -46,7 +46,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// <param name="cardHandler">The card handler.</param>
     public TimeShifter(ITvCardHandler cardHandler)
     {
-      string timeshiftingFolder = cardHandler.DataBaseCard.timeshiftingFolder;
+      string timeshiftingFolder = cardHandler.DataBaseCard.TimeshiftingFolder;
 
       bool hasFolder = TVDatabase.TVBusinessLayer.Common.IsFolderValid(timeshiftingFolder);
       if (!hasFolder)
@@ -89,7 +89,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_cardHandler.DataBaseCard.enabled == false)
+        if (_cardHandler.DataBaseCard.Enabled == false)
         {
           return "";
         }
@@ -116,7 +116,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_cardHandler.DataBaseCard.enabled == false)
+        if (_cardHandler.DataBaseCard.Enabled == false)
         {
           return false;
         }
@@ -216,7 +216,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
 #if DEBUG
 
-        if (File.Exists(@"\failts_" + _cardHandler.DataBaseCard.idCard))
+        if (File.Exists(@"\failts_" + _cardHandler.DataBaseCard.IdCard))
         {
           throw new Exception("failed ts on purpose");
         }
@@ -227,7 +227,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           return result;
         }
         _eventTimeshift.Reset();
-        if (_cardHandler.DataBaseCard.enabled)
+        if (_cardHandler.DataBaseCard.Enabled)
         {
           // Let's verify if hard disk drive has enough free space before we start time shifting. The function automatically handles both local and UNC paths
           if (!IsTimeShifting(user) && !HasFreeDiskSpace(fileName))
@@ -236,7 +236,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           }
           else
           {
-            Log.Write("card: StartTimeShifting {0} {1} ", _cardHandler.DataBaseCard.idCard, fileName);            
+            Log.Write("card: StartTimeShifting {0} {1} ", _cardHandler.DataBaseCard.IdCard, fileName);            
             
             _cardHandler.UserManagement.RefreshUser(ref user);
             ITvSubChannel subchannel = GetSubChannel(subChannelId);
@@ -302,7 +302,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       bool stop = false;
       try
       {
-        if (_cardHandler.DataBaseCard.enabled)
+        if (_cardHandler.DataBaseCard.Enabled)
         {
           ITvSubChannel subchannel = GetSubChannel(_cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel));
           DetachAudioVideoEventHandler(subchannel);
@@ -363,7 +363,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     private static string SetDefaultTimeshiftingFolder(ITvCardHandler cardHandler)
     {
       string timeshiftingFolder = TVDatabase.TVBusinessLayer.Common.GetDefaultTimeshiftingFolder();
-      cardHandler.DataBaseCard.timeshiftingFolder = timeshiftingFolder;
+      cardHandler.DataBaseCard.TimeshiftingFolder = timeshiftingFolder;
       TVDatabase.TVBusinessLayer.CardManagement.SaveCard(cardHandler.DataBaseCard);
       return timeshiftingFolder;
     }

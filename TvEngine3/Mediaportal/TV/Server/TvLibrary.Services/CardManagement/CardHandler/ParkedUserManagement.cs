@@ -62,7 +62,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
     public void ParkUser(ref IUser user, double duration, int idChannel)
     {
-      if (_cardHandler.DataBaseCard.enabled)
+      if (_cardHandler.DataBaseCard.Enabled)
       {
         SetSubChannelStatusParked(user, idChannel);
 
@@ -165,7 +165,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
     public void UnParkUser(ref IUser user, double duration, int idChannel)
     {
-      if (_cardHandler.DataBaseCard.enabled)
+      if (_cardHandler.DataBaseCard.Enabled)
       {
         bool hasParkedUser = false;
         lock (_parkedUsersLock)

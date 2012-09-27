@@ -27,7 +27,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Primitive Properties
     
         [DataMember]
-        public int idCard
+        public int IdCard
         {
             get { return _idCard; }
             set
@@ -46,7 +46,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idCard;
     
         [DataMember]
-        public string devicePath
+        public string DevicePath
         {
             get { return _devicePath; }
             set
@@ -61,7 +61,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _devicePath;
     
         [DataMember]
-        public string name
+        public string Name
         {
             get { return _name; }
             set
@@ -76,7 +76,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _name;
     
         [DataMember]
-        public int priority
+        public int Priority
         {
             get { return _priority; }
             set
@@ -91,7 +91,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _priority;
     
         [DataMember]
-        public bool grabEPG
+        public bool GrabEPG
         {
             get { return _grabEPG; }
             set
@@ -106,7 +106,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private bool _grabEPG;
     
         [DataMember]
-        public Nullable<System.DateTime> lastEpgGrab
+        public Nullable<System.DateTime> LastEpgGrab
         {
             get { return _lastEpgGrab; }
             set
@@ -121,7 +121,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private Nullable<System.DateTime> _lastEpgGrab;
     
         [DataMember]
-        public string recordingFolder
+        public string RecordingFolder
         {
             get { return _recordingFolder; }
             set
@@ -136,7 +136,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _recordingFolder;
     
         [DataMember]
-        public bool enabled
+        public bool Enabled
         {
             get { return _enabled; }
             set
@@ -151,7 +151,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private bool _enabled;
     
         [DataMember]
-        public int camType
+        public int CamType
         {
             get { return _camType; }
             set
@@ -166,7 +166,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _camType;
     
         [DataMember]
-        public string timeshiftingFolder
+        public string TimeshiftingFolder
         {
             get { return _timeshiftingFolder; }
             set
@@ -181,7 +181,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _timeshiftingFolder;
     
         [DataMember]
-        public int recordingFormat
+        public int RecordingFormat
         {
             get { return _recordingFormat; }
             set
@@ -196,7 +196,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _recordingFormat;
     
         [DataMember]
-        public int decryptLimit
+        public int DecryptLimit
         {
             get { return _decryptLimit; }
             set
@@ -211,7 +211,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _decryptLimit;
     
         [DataMember]
-        public bool preload
+        public bool Preload
         {
             get { return _preload; }
             set
@@ -256,19 +256,19 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _netProvider;
     
         [DataMember]
-        public bool stopgraph
+        public bool StopGraph
         {
-            get { return _stopgraph; }
+            get { return _stopGraph; }
             set
             {
-                if (_stopgraph != value)
+                if (_stopGraph != value)
                 {
-                    _stopgraph = value;
+                    _stopGraph = value;
                     OnPropertyChanged("stopgraph");
                 }
             }
         }
-        private bool _stopgraph;
+        private bool _stopGraph;
 
         #endregion
         #region Navigation Properties

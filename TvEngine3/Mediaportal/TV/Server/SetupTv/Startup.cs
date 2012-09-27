@@ -257,10 +257,10 @@ namespace Mediaportal.TV.Server.SetupTV
       IList<Card> TvCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
       foreach (Card card in TvCards)
       {
-        if (card.recordingFormat != 0)
+        if (card.RecordingFormat != 0)
         {
-          card.recordingFormat = 0;
-          Log.Info("Card {0} switched from .MPG to .TS format", card.name);
+          card.RecordingFormat = 0;
+          Log.Info("Card {0} switched from .MPG to .TS format", card.Name);
           ServiceAgents.Instance.CardServiceAgent.SaveCard(card);
         }
       }

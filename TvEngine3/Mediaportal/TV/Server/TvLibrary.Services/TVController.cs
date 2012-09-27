@@ -500,7 +500,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         foreach (ITVCard itvCard in _localCardCollection.Cards)
         {
           //for each card, check if its already mentioned in the database
-          bool found = allCards.Any(card => card.devicePath == itvCard.DevicePath);
+          bool found = allCards.Any(card => card.DevicePath == itvCard.DevicePath);
           if (!found)
           {
             // card is not yet in the database, so add it
@@ -508,17 +508,17 @@ namespace Mediaportal.TV.Server.TVLibrary
 
             var newCard = new Card
             {
-              timeshiftingFolder = "",
-              recordingFolder = "",
-              devicePath = itvCard.DevicePath,
-              name = itvCard.Name,
-              priority = 1,
-              grabEPG = true,
-              enabled = true,
-              camType = 0,
-              recordingFormat = 0,
-              decryptLimit = 0,
-              stopgraph = true,
+              TimeshiftingFolder = "",
+              RecordingFolder = "",
+              DevicePath = itvCard.DevicePath,
+              Name = itvCard.Name,
+              Priority = 1,
+              GrabEPG = true,
+              Enabled = true,
+              CamType = 0,
+              RecordingFormat = 0,
+              DecryptLimit = 0,
+              StopGraph = true,
               NetProvider = (int)DbNetworkProvider.Generic
             };
 
@@ -533,11 +533,11 @@ namespace Mediaportal.TV.Server.TVLibrary
             bool found = false;
             for (int cardNumber = 0; cardNumber < cardsInstalled; ++cardNumber)
             {
-              if (dbsCard.devicePath == _localCardCollection.Cards[cardNumber].DevicePath)
+              if (dbsCard.DevicePath == _localCardCollection.Cards[cardNumber].DevicePath)
               {
                 Card cardDB = TVDatabase.TVBusinessLayer.CardManagement.GetCardByDevicePath(_localCardCollection.Cards[cardNumber].DevicePath, CardIncludeRelationEnum.None);
 
-                bool cardEnabled = cardDB.enabled;
+                bool cardEnabled = cardDB.Enabled;
                 bool cardPresent = _localCardCollection.Cards[cardNumber].CardPresent;
 
                 if (cardEnabled && cardPresent)
@@ -580,18 +580,18 @@ namespace Mediaportal.TV.Server.TVLibrary
             }
             if (!found)
             {
-              Log.Info("Controller: card not found :{0}", dbsCard.name);
+              Log.Info("Controller: card not found :{0}", dbsCard.Name);
 
-              foreach (ITVCard t in _localCardCollection.Cards.Where(t => t.DevicePath == dbsCard.devicePath))
+              foreach (ITVCard t in _localCardCollection.Cards.Where(t => t.DevicePath == dbsCard.DevicePath))
               {
                 t.CardPresent = false;
                 break;
               }
 
               // Fix mantis 0002790: Bad behavior when card count for IPTV = 0 
-              if (dbsCard.name.StartsWith("MediaPortal IPTV Source Filter"))
+              if (dbsCard.Name.StartsWith("MediaPortal IPTV Source Filter"))
               {
-                CardRemove(dbsCard.idCard);
+                CardRemove(dbsCard.IdCard);
               }
             }
           }
@@ -606,9 +606,9 @@ namespace Mediaportal.TV.Server.TVLibrary
           {
             foreach (ITVCard t in _localCardCollection.Cards)
             {
-              if (t.DevicePath == card.devicePath)
+              if (t.DevicePath == card.DevicePath)
               {
-                localcards[card.idCard] = t;
+                localcards[card.IdCard] = t;
                 break;
               }
             }
@@ -636,29 +636,29 @@ namespace Mediaportal.TV.Server.TVLibrary
         allCards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
         foreach (Card dbsCard in allCards)
         {
-          if (localcards.ContainsKey(dbsCard.idCard))
+          if (localcards.ContainsKey(dbsCard.IdCard))
           {
-            ITVCard card = localcards[dbsCard.idCard];
+            ITVCard card = localcards[dbsCard.IdCard];
             var tvcard = new TvCardHandler(dbsCard, card);
-            _cards[dbsCard.idCard] = tvcard;
+            _cards[dbsCard.IdCard] = tvcard;
           }
 
           // remove any old timeshifting TS files	
           try
           {
-            string timeShiftPath = dbsCard.timeshiftingFolder;
-            if (string.IsNullOrEmpty(dbsCard.timeshiftingFolder))
+            string timeShiftPath = dbsCard.TimeshiftingFolder;
+            if (string.IsNullOrEmpty(dbsCard.TimeshiftingFolder))
             {
               timeShiftPath = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer",
                                             Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
             }
             if (!Directory.Exists(timeShiftPath))
             {
-              Log.Info("Controller: creating timeshifting folder {0} for card \"{1}\"", timeShiftPath, dbsCard.name);
+              Log.Info("Controller: creating timeshifting folder {0} for card \"{1}\"", timeShiftPath, dbsCard.Name);
               Directory.CreateDirectory(timeShiftPath);
             }
 
-            Log.Debug("Controller: card {0}: current timeshiftpath = {1}", dbsCard.name, timeShiftPath);
+            Log.Debug("Controller: card {0}: current timeshiftpath = {1}", dbsCard.Name, timeShiftPath);
             if (timeShiftPath != null)
             {
               string[] files = Directory.GetFiles(timeShiftPath);
@@ -886,7 +886,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     public int CardId(int cardIndex)
     {
       IList<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
-      return cards != null && cards.Count > cardIndex ? cards[cardIndex].idCard : -1;
+      return cards != null && cards.Count > cardIndex ? cards[cardIndex].IdCard : -1;
     }
 
     /// <summary>
@@ -899,7 +899,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       bool isCardEnabled = false;
       if (ValidateTvControllerParams(cardId))
       {
-        isCardEnabled = _cards[cardId].DataBaseCard.enabled;  
+        isCardEnabled = _cards[cardId].DataBaseCard.Enabled;  
       }
       return isCardEnabled;
     }
@@ -1426,7 +1426,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         {
           ITvCardHandler card = en.Current.Value;
           IUser user = new User();
-          user.CardId = card.DataBaseCard.idCard;
+          user.CardId = card.DataBaseCard.IdCard;
           if (card.Recorder.IsAnySubChannelRecording)
           {
             return true;
@@ -1862,7 +1862,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         {
           user = new User(userName, UserType.Scanner, idCard);
           ITvCardHandler cardHandler = _cards[idCard];
-          if (cardHandler.DataBaseCard.enabled)
+          if (cardHandler.DataBaseCard.Enabled)
           {
             FireScanningStartedEvent(user, channel);
             result = cardHandler.Tuner.Scan(ref user, channel, idChannel);
@@ -1958,7 +1958,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           RefreshUserFromSpecificContext(ref user);
           int cardId = user.CardId;
           ITvCardHandler cardHandler = _cards[cardId];
-          if (cardHandler.DataBaseCard.enabled)
+          if (cardHandler.DataBaseCard.Enabled)
           {
             FireStartZapChannelEvent(user, channel);
             var resTicket = ticket as ICardTuneReservationTicket;
@@ -2359,13 +2359,13 @@ namespace Mediaportal.TV.Server.TVLibrary
           ITvCardHandler cardHandler = GetCardHandlerByChannel(idChannel, TvUsage.Timeshifting);
           if (cardHandler != null)
           {
-            if (cardHandler.DataBaseCard.enabled)
+            if (cardHandler.DataBaseCard.Enabled)
             {
               user = GetUserFromContext(userName, TvUsage.Timeshifting);
               if (cardHandler.TimeShifter.IsTimeShifting(user))
               {
                 FireTimeShiftingParkedEvent(user);                
-                Log.Write("Controller: ParkTimeShifting {0}", cardHandler.DataBaseCard.idCard);
+                Log.Write("Controller: ParkTimeShifting {0}", cardHandler.DataBaseCard.IdCard);
                 cardHandler.ParkedUserManagement.ParkUser(ref user, duration, idChannel);
                 UpdateChannelStatesForUsers();
                 result = true;
@@ -2426,7 +2426,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         ITvCardHandler cardHandler = GetCardHandlerByParkedChannelAndDuration(idChannel, duration);
         if (cardHandler != null)
         {
-          if (cardHandler.DataBaseCard.enabled)
+          if (cardHandler.DataBaseCard.Enabled)
           {
             int timeshiftingChannelId;
             user = GetUserFromContext(userName, out timeshiftingChannelId, TvUsage.Timeshifting);
@@ -2436,7 +2436,7 @@ namespace Mediaportal.TV.Server.TVLibrary
               user = UserFactory.CreateBasicUser(userName);
             }
             
-            Log.Write("Controller: UnParkTimeShifting {0}", cardHandler.DataBaseCard.idCard);
+            Log.Write("Controller: UnParkTimeShifting {0}", cardHandler.DataBaseCard.IdCard);
             cardHandler.ParkedUserManagement.UnParkUser(ref user, duration, idChannel);
             StopTimeShiftingAllChannelsExcept(user, idChannel);
 
@@ -2500,7 +2500,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         try
         {
           RefreshUserFromSpecificContext(ref user);
-          if (_cards[user.CardId].DataBaseCard.enabled)
+          if (_cards[user.CardId].DataBaseCard.Enabled)
           {
             result = _cards[user.CardId].UserManagement.GetTimeshiftStoppedReason(user.Name);  
           }
@@ -2542,8 +2542,8 @@ namespace Mediaportal.TV.Server.TVLibrary
         ITvCardHandler tvcard = GetCardHandlerByUserAndChannel(user.Name, channelId);        
         if (tvcard != null)
         {
-          int cardId = tvcard.DataBaseCard.idCard;          
-          if (tvcard.DataBaseCard.enabled == false)
+          int cardId = tvcard.DataBaseCard.IdCard;          
+          if (tvcard.DataBaseCard.Enabled == false)
           {
             return true;
           }
@@ -3041,7 +3041,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         if (ValidateTvControllerParams(cardId))
         {
           ITvCardHandler tvCardHandler = _cards[cardId];
-          if (tvCardHandler.DataBaseCard.enabled)
+          if (tvCardHandler.DataBaseCard.Enabled)
           {
             IUser user = tvCardHandler.UserManagement.GetUserCopy(userName);
             int channelId = tvCardHandler.UserManagement.GetTimeshiftingChannelId(user.Name);
@@ -3112,7 +3112,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           if (userCopy != null)
           {
             ITvCardHandler tvCardHandler = _cards[userCopy.CardId];
-            if (tvCardHandler.DataBaseCard.enabled)
+            if (tvCardHandler.DataBaseCard.Enabled)
             {
               if (_streamer != null)
               {
@@ -3745,7 +3745,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         bool foundCandidateForKicking = FoundCandidateForKicking(ticket);
         if (foundCandidateForKicking)
         {
-          if (!kickCardId.HasValue || (kickCardId.Value == tvcard.DataBaseCard.idCard))
+          if (!kickCardId.HasValue || (kickCardId.Value == tvcard.DataBaseCard.IdCard))
           {
             bool usersKicked = KickLeechingUsersIfNoMoreCardsAvail(tvcard, ticket, cardIteration, maxCards, idChannel);
             bool cardsAvailable = ((cardIteration + 1) < maxCards);       
@@ -3753,7 +3753,7 @@ namespace Mediaportal.TV.Server.TVLibrary
             {
               Log.Write(
                 "Controller: skipping card:{0} since other users are present on the same channel and there are still cards available.",
-                tvcard.DataBaseCard.idCard);
+                tvcard.DataBaseCard.IdCard);
               //TODO: what if the following cards fail, should we then try and kick the leech user, in order to make room for a tune ?            
             }
             else
@@ -3768,9 +3768,9 @@ namespace Mediaportal.TV.Server.TVLibrary
             {
               kickableCards = new Dictionary<int, List<IUser>>();
             }
-            kickableCards[tvcard.DataBaseCard.idCard] = ticket.ActiveUsers.ToList();
+            kickableCards[tvcard.DataBaseCard.IdCard] = ticket.ActiveUsers.ToList();
             Log.Write("Controller: not allowed to kick users on card:{0}, politely asking client...",
-            tvcard.DataBaseCard.idCard);
+            tvcard.DataBaseCard.IdCard);
           }
           else
           {
@@ -3781,7 +3781,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         {
           Log.Write(
             "Controller: skipping card:{0} since it is busy (user(s) present with higher priority).",
-            tvcard.DataBaseCard.idCard);
+            tvcard.DataBaseCard.IdCard);
         }
       }
       else
@@ -3863,7 +3863,7 @@ namespace Mediaportal.TV.Server.TVLibrary
                 "Controller: kicking leech user '{0}' with prio={1} off card={2} on channel={3} (subchannel #{4}) since owner '{5}' with prio={6} (subchannel #{7}) changed transponder and there are no more cards available",
                 activeUser.Name,
                 activeUser.Priority,
-                tvcard.DataBaseCard.name,
+                tvcard.DataBaseCard.Name,
                 channelInfo,
                 subchannel.Id,
                 user.Name,
@@ -3993,28 +3993,28 @@ namespace Mediaportal.TV.Server.TVLibrary
     private void SetupTimeShiftingFolders(CardDetail cardInfo)
     {
       //setup folders
-      if (cardInfo.Card.recordingFolder == String.Empty)
+      if (cardInfo.Card.RecordingFolder == String.Empty)
       {
-        cardInfo.Card.recordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings",
+        cardInfo.Card.RecordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings",
                                                       Environment.GetFolderPath(
                                                         Environment.SpecialFolder.CommonApplicationData));
-        if (!Directory.Exists(cardInfo.Card.recordingFolder))
+        if (!Directory.Exists(cardInfo.Card.RecordingFolder))
         {
-          Log.Write("Controller: creating recording folder {0} for card {0}", cardInfo.Card.recordingFolder,
-                    cardInfo.Card.name);
-          Directory.CreateDirectory(cardInfo.Card.recordingFolder);
+          Log.Write("Controller: creating recording folder {0} for card {0}", cardInfo.Card.RecordingFolder,
+                    cardInfo.Card.Name);
+          Directory.CreateDirectory(cardInfo.Card.RecordingFolder);
         }
       }
-      if (cardInfo.Card.timeshiftingFolder == String.Empty)
+      if (cardInfo.Card.TimeshiftingFolder == String.Empty)
       {
-        cardInfo.Card.timeshiftingFolder = String.Format(
+        cardInfo.Card.TimeshiftingFolder = String.Format(
           @"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer",
           Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-        if (!Directory.Exists(cardInfo.Card.timeshiftingFolder))
+        if (!Directory.Exists(cardInfo.Card.TimeshiftingFolder))
         {
-          Log.Write("Controller: creating timeshifting folder {0} for card {0}", cardInfo.Card.timeshiftingFolder,
-                    cardInfo.Card.name);
-          Directory.CreateDirectory(cardInfo.Card.timeshiftingFolder);
+          Log.Write("Controller: creating timeshifting folder {0} for card {0}", cardInfo.Card.TimeshiftingFolder,
+                    cardInfo.Card.Name);
+          Directory.CreateDirectory(cardInfo.Card.TimeshiftingFolder);
         }
       }
     }
@@ -5084,7 +5084,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         try
         {         
           ITvCardHandler tvCardHandler = _cards[user.CardId];
-          if (tvCardHandler.DataBaseCard.enabled)
+          if (tvCardHandler.DataBaseCard.Enabled)
           {
             if (ticket.ConflictingSubchannelFound)
             {
@@ -5176,9 +5176,9 @@ namespace Mediaportal.TV.Server.TVLibrary
         RefreshUserFromSpecificContext(ref user);
         card = new VirtualCard(user)
         {
-          RecordingFormat = _cards[user.CardId].DataBaseCard.recordingFormat,
-          RecordingFolder = _cards[user.CardId].DataBaseCard.recordingFolder,
-          TimeshiftFolder = _cards[user.CardId].DataBaseCard.timeshiftingFolder,
+          RecordingFormat = _cards[user.CardId].DataBaseCard.RecordingFormat,
+          RecordingFolder = _cards[user.CardId].DataBaseCard.RecordingFolder,
+          TimeshiftFolder = _cards[user.CardId].DataBaseCard.TimeshiftingFolder,
           RemoteServer = Dns.GetHostName()
         }; 
       }      
@@ -5609,11 +5609,11 @@ namespace Mediaportal.TV.Server.TVLibrary
       {        
         foreach (ITvCardHandler cardHandler in _cards.Values)
         {
-          if (!cardHandler.DataBaseCard.enabled)
+          if (!cardHandler.DataBaseCard.Enabled)
           {
             continue;
           }
-          int idCard = cardHandler.DataBaseCard.idCard;
+          int idCard = cardHandler.DataBaseCard.IdCard;
           if (!IsCardPresent(idCard))
           {
             continue;
@@ -5671,18 +5671,18 @@ namespace Mediaportal.TV.Server.TVLibrary
         IEnumerable<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None);
         foreach (Card card in cards)
         {
-          if (!card.enabled)
+          if (!card.Enabled)
           {
             continue;
           }
-          if (!IsCardPresent(card.idCard))
+          if (!IsCardPresent(card.IdCard))
           {
             continue;
           }
-          IDictionary<string, IUser> users = GetUsersForCard(card.idCard);
+          IDictionary<string, IUser> users = GetUsersForCard(card.IdCard);
           if (users != null)
           {
-            foreach (IUser user in users.Values.Where(user => card.idCard == user.CardId))
+            foreach (IUser user in users.Values.Where(user => card.IdCard == user.CardId))
             {
               int cardId = user.CardId;
               ITvCardHandler tvcard = _cards[cardId];
@@ -5714,38 +5714,38 @@ namespace Mediaportal.TV.Server.TVLibrary
         foreach (Card card in cards)
         {
           ITvCardHandler cardHandler;
-          bool isAvailable = _cards.TryGetValue(card.idCard, out cardHandler);
+          bool isAvailable = _cards.TryGetValue(card.IdCard, out cardHandler);
           bool isEnabled = false;
 
           if (isAvailable)
           {
-            isEnabled = card.enabled;
-            isAvailable = IsCardPresent(card.idCard);
+            isEnabled = card.Enabled;
+            isAvailable = IsCardPresent(card.IdCard);
           }
 
           if (!isAvailable)
           {
-            var cardPresentation = new CardPresentation("n/a", card.idCard, card.name) { SubChannelsCountOk = true, SubChannels = 0, State = "n/a" };
+            var cardPresentation = new CardPresentation("n/a", card.IdCard, card.Name) { SubChannelsCountOk = true, SubChannels = 0, State = "n/a" };
             cardPresentations.Add(cardPresentation);
           }
           else if (!isEnabled)
           {
-            string cardType = Type(card.idCard).ToString();
-            var cardPresentation = new CardPresentation(cardType, card.idCard, card.name) { SubChannelsCountOk = true, SubChannels = 0, State = "disabled" };
+            string cardType = Type(card.IdCard).ToString();
+            var cardPresentation = new CardPresentation(cardType, card.IdCard, card.Name) { SubChannelsCountOk = true, SubChannels = 0, State = "disabled" };
             cardPresentations.Add(cardPresentation);
           }
 
           else
           {
-            string cardType = Type(card.idCard).ToString();
-            IDictionary<string, IUser> users = GetUsersForCard(card.idCard);
+            string cardType = Type(card.IdCard).ToString();
+            IDictionary<string, IUser> users = GetUsersForCard(card.IdCard);
 
-            int subChannels = GetSubChannels(card.idCard);
+            int subChannels = GetSubChannels(card.IdCard);
             if (users.Count == 0)
             {
-              var cardPresentation = new CardPresentation(cardType, card.idCard, card.name) { SubChannels = subChannels, SubChannelsCountOk = (subChannels == 0), Idle = true, State = "Idle" };
+              var cardPresentation = new CardPresentation(cardType, card.IdCard, card.Name) { SubChannels = subChannels, SubChannelsCountOk = (subChannels == 0), Idle = true, State = "Idle" };
 
-              bool isScanning = IsScanning(card.idCard);
+              bool isScanning = IsScanning(card.IdCard);
               if (isScanning)
               {
                 cardPresentation.State = "Scanning";
@@ -5763,7 +5763,7 @@ namespace Mediaportal.TV.Server.TVLibrary
               ICollection<IUser> usersCopy = new List<IUser>(users.Values); //avoid threading issues, make a copy.
               foreach (IUser user in usersCopy)
               {
-                if (user.CardId == card.idCard)
+                if (user.CardId == card.IdCard)
                 {
                   bool isOwner = IsOwner(user.CardId, user.Name);
                   foreach (ISubChannel subchannel in new List<ISubChannel>(user.SubChannels.Values)) //avoid threading issues, make a copy.
@@ -5775,7 +5775,7 @@ namespace Mediaportal.TV.Server.TVLibrary
                     }
 
                     bool isScrambled = IsScrambled(user.CardId, subchannel.Id);
-                    var cardPresentation = new CardPresentation(cardType, card.idCard, card.name)
+                    var cardPresentation = new CardPresentation(cardType, card.IdCard, card.Name)
                     {
                       SubChannels = subChannels,
                       SubChannelsCountOk = true,
@@ -5817,7 +5817,7 @@ namespace Mediaportal.TV.Server.TVLibrary
 
                     if (user.UserType != UserType.EPG)
                     {
-                      bool isGrabbingEpg = IsGrabbingEpg(card.idCard);
+                      bool isGrabbingEpg = IsGrabbingEpg(card.IdCard);
                       if (isGrabbingEpg)
                       {
                         state += " (Grabbing EPG)";
@@ -5833,7 +5833,7 @@ namespace Mediaportal.TV.Server.TVLibrary
               {
                 foreach (CardPresentation cardPresentation in cardPresentations)
                 {
-                  if (cardPresentation.CardId == card.idCard)
+                  if (cardPresentation.CardId == card.IdCard)
                     cardPresentation.SubChannelsCountOk = false;
                 }
               }

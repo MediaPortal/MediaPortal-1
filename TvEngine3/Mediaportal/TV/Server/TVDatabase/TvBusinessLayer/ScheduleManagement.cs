@@ -298,13 +298,13 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       foreach (Card card in cards)
       {        
         ScheduleBLL scheduleBll = new ScheduleBLL(schedule);
-        if (card.enabled && CardManagement.CanViewTvChannel(card, schedule.idChannel))
+        if (card.Enabled && CardManagement.CanViewTvChannel(card, schedule.idChannel))
         {
           // checks if any schedule assigned to this cards overlaps current parsed schedule
           bool free = true;
           foreach (Schedule assignedSchedule in cardSchedules[count])
           {
-            Log.Info("AssignSchedulesToCard: card {0}, ID = {1} has schedule = " + assignedSchedule, count, card.idCard);
+            Log.Info("AssignSchedulesToCard: card {0}, ID = {1} has schedule = " + assignedSchedule, count, card.IdCard);
             bool hasOverlappingSchedule = scheduleBll.IsOverlapping(assignedSchedule);
             if (hasOverlappingSchedule)
             {
@@ -313,7 +313,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
               {
                 overlappingSchedules.Add(assignedSchedule);
                 Log.Info("AssignSchedulesToCard: overlapping with " + assignedSchedule + " on card {0}, ID = {1}", count,
-                         card.idCard);
+                         card.IdCard);
                 free = false;
                 break;
               }
@@ -321,7 +321,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
           }
           if (free)
           {
-            Log.Info("AssignSchedulesToCard: free on card {0}, ID = {1}", count, card.idCard);
+            Log.Info("AssignSchedulesToCard: free on card {0}, ID = {1}", count, card.IdCard);
             cardSchedules[count].Add(schedule);
             assigned = true;
             break;

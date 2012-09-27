@@ -50,7 +50,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       public override string ToString()
       {
-        return card.name;
+        return card.Name;
       }
     }
 
@@ -114,7 +114,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void comboBoxCards_SelectedIndexChanged(object sender, EventArgs e)
     {
       CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
-      textBoxTimeShiftFolder.Text = info.card.timeshiftingFolder;
+      textBoxTimeShiftFolder.Text = info.card.TimeshiftingFolder;
 
       if (String.IsNullOrEmpty(textBoxTimeShiftFolder.Text))
       {
@@ -177,9 +177,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void textBoxTimeShiftFolder_TextChanged(object sender, EventArgs e)
     {
       CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
-      if (info.card.timeshiftingFolder != textBoxTimeShiftFolder.Text)
+      if (info.card.TimeshiftingFolder != textBoxTimeShiftFolder.Text)
       {
-        info.card.timeshiftingFolder = textBoxTimeShiftFolder.Text;
+        info.card.TimeshiftingFolder = textBoxTimeShiftFolder.Text;
         ServiceAgents.Instance.CardServiceAgent.SaveCard(info.card);
         _needRestart = true;
       }
@@ -192,9 +192,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       for (int iIndex = 0; iIndex < comboBoxCards.Items.Count; iIndex++)
       {
         CardInfo info = (CardInfo)comboBoxCards.Items[iIndex];
-        if (info.card.timeshiftingFolder != textBoxTimeShiftFolder.Text)
+        if (info.card.TimeshiftingFolder != textBoxTimeShiftFolder.Text)
         {
-          info.card.timeshiftingFolder = textBoxTimeShiftFolder.Text;
+          info.card.TimeshiftingFolder = textBoxTimeShiftFolder.Text;
           ServiceAgents.Instance.CardServiceAgent.SaveCard(info.card);
           if (!_needRestart)
           {

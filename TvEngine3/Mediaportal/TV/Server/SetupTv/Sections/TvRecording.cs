@@ -57,7 +57,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       public override string ToString()
       {
-        return card.name;
+        return card.Name;
       }
     }
 
@@ -335,7 +335,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void comboBoxCards_SelectedIndexChanged(object sender, EventArgs e)
     {
       CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
-      textBoxFolder.Text = info.card.recordingFolder;
+      textBoxFolder.Text = info.card.RecordingFolder;
       if (String.IsNullOrEmpty(textBoxFolder.Text))
       {
         var recPath = TVDatabase.TVBusinessLayer.Common.GetDefaultRecordingFolder();
@@ -372,10 +372,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         textBoxFolder.Text = dlg.SelectedPath;
         CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
-        if (info.card.recordingFolder != textBoxFolder.Text)
+        if (info.card.RecordingFolder != textBoxFolder.Text)
         {
           _needRestart = true;
-          info.card.recordingFolder = textBoxFolder.Text;
+          info.card.RecordingFolder = textBoxFolder.Text;
           ServiceAgents.Instance.CardServiceAgent.SaveCard(info.card);
           LoadComboBoxDrive();
         }
@@ -426,9 +426,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void textBoxFolder_TextChanged(object sender, EventArgs e)
     {
       CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
-      if (info.card.recordingFolder != textBoxFolder.Text)
+      if (info.card.RecordingFolder != textBoxFolder.Text)
       {
-        info.card.recordingFolder = textBoxFolder.Text;
+        info.card.RecordingFolder = textBoxFolder.Text;
         ServiceAgents.Instance.CardServiceAgent.SaveCard(info.card);
         _needRestart = true;
         LoadComboBoxDrive();
@@ -442,9 +442,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       for (int iIndex = 0; iIndex < comboBoxCards.Items.Count; iIndex++)
       {
         CardInfo info = (CardInfo)comboBoxCards.Items[iIndex];
-        if (info.card.recordingFolder != textBoxFolder.Text)
+        if (info.card.RecordingFolder != textBoxFolder.Text)
         {
-          info.card.recordingFolder = textBoxFolder.Text;
+          info.card.RecordingFolder = textBoxFolder.Text;
           ServiceAgents.Instance.CardServiceAgent.SaveCard(info.card);
           if (!_needRestart)
           {
@@ -574,9 +574,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
       foreach (Card card in cards)
       {
-        if (card.recordingFolder.Length > 0)
+        if (card.RecordingFolder.Length > 0)
         {
-          string driveLetter = String.Format("{0}:", card.recordingFolder[0]);
+          string driveLetter = String.Format("{0}:", card.RecordingFolder[0]);
           if (Utils.getDriveType(driveLetter) == 3)
           {
             if (!comboBoxDrive.Items.Contains(driveLetter))
@@ -650,8 +650,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         IList<Card> allCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
         foreach (Card tvCard in allCards)
         {
-          if (!string.IsNullOrEmpty(tvCard.recordingFolder) && !cbRecPaths.Items.Contains(tvCard.recordingFolder))
-            cbRecPaths.Items.Add(tvCard.recordingFolder);
+          if (!string.IsNullOrEmpty(tvCard.RecordingFolder) && !cbRecPaths.Items.Contains(tvCard.RecordingFolder))
+            cbRecPaths.Items.Add(tvCard.RecordingFolder);
         }
         if (cbRecPaths.Items.Count > 0)
         {

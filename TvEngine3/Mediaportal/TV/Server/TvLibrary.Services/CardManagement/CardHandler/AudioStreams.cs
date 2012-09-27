@@ -48,7 +48,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     public IAudioStream[] Streams(string userName, int idChannel)
     {
       var audioStreams = new List<IAudioStream>().ToArray();
-      if (_cardHandler.DataBaseCard.enabled)
+      if (_cardHandler.DataBaseCard.Enabled)
       {        
         int subChannelIdByChannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(userName, idChannel);
         if (subChannelIdByChannelId > -1)
@@ -71,7 +71,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     public IAudioStream GetCurrent(IUser user, int idChannel)
     {
       IAudioStream currentAudioStream = null;
-      if (_cardHandler.DataBaseCard.enabled)
+      if (_cardHandler.DataBaseCard.Enabled)
       {        
         _cardHandler.UserManagement.RefreshUser(ref user);
         int subChannelIdByChannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel);
@@ -95,7 +95,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// <param name="idChannel"> </param>
     public void Set(IUser user, IAudioStream stream, int idChannel)
     {
-      if (_cardHandler.DataBaseCard.enabled)
+      if (_cardHandler.DataBaseCard.Enabled)
       {
         _cardHandler.UserManagement.RefreshUser(ref user);
         ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(_cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel));

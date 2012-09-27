@@ -60,10 +60,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
       else
       {
-        ComboBoxCamType.SelectedIndex = _card.camType;
-        numericUpDownDecryptLimit.Value = _card.decryptLimit;
+        ComboBoxCamType.SelectedIndex = _card.CamType;
+        numericUpDownDecryptLimit.Value = _card.DecryptLimit;
         numericUpDownDecryptLimit.Enabled = true;
-        checkBoxAllowEpgGrab.Checked = _card.grabEPG;
+        checkBoxAllowEpgGrab.Checked = _card.GrabEPG;
         checkBoxAllowEpgGrab.Enabled = true;
       }
 
@@ -71,17 +71,17 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       if (GrpList.Count != 0)
       {
         checkBoxPreloadCard.Enabled = false;
-        _card.preload = false;
+        _card.Preload = false;
       }
 
-      checkBoxPreloadCard.Checked = _card.preload;
+      checkBoxPreloadCard.Checked = _card.Preload;
       checkBoxCAMenabled.Checked = _card.CAM;
 
-      radioStopCard.Checked = _card.stopgraph;
+      radioStopCard.Checked = _card.StopGraph;
       radioPauseCard.Checked = !radioStopCard.Checked;
 
       setCAMLimitVisibility();
-      Text += " " + _card.name;
+      Text += " " + _card.Name;
 
       // Add Network provider based on card type into combobox
       if (_cardType == "DvbT") comboBoxNetProvider.Items.Add((DbNetworkProvider.DVBT));
@@ -104,12 +104,12 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       if (!_cardType.Equals("Analog")) //analog does not have these settings
       {
-        _card.camType = ComboBoxCamType.SelectedIndex;
-        _card.decryptLimit = Convert.ToInt32(numericUpDownDecryptLimit.Value);
-        _card.grabEPG = checkBoxAllowEpgGrab.Checked;
+        _card.CamType = ComboBoxCamType.SelectedIndex;
+        _card.DecryptLimit = Convert.ToInt32(numericUpDownDecryptLimit.Value);
+        _card.GrabEPG = checkBoxAllowEpgGrab.Checked;
       }
-      _card.preload = checkBoxPreloadCard.Checked;
-      _card.stopgraph = radioStopCard.Checked;
+      _card.Preload = checkBoxPreloadCard.Checked;
+      _card.StopGraph = radioStopCard.Checked;
 
       _card.CAM = checkBoxCAMenabled.Checked;
       _card.NetProvider = (int)comboBoxNetProvider.SelectedItem;

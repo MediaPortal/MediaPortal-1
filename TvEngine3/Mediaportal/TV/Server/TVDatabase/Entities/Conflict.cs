@@ -139,7 +139,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     ChangeTracker.RecordOriginalValue("idCard", _idCard);
                     if (!IsDeserializing)
                     {
-                        if (Card != null && Card.idCard != value)
+                        if (Card != null && Card.IdCard != value)
                         {
                             Card = null;
                         }
@@ -338,7 +338,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Card.Conflicts.Add(this);
                 }
     
-                idCard = Card.idCard;
+                idCard = Card.IdCard;
             }
             else if (!skipKeys)
             {

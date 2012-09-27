@@ -37,9 +37,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     // Highest priority first
     public int Compare(EpgCard x, EpgCard y)
     {
-      if (x.Card.priority < y.Card.priority)
+      if (x.Card.Priority < y.Card.Priority)
         return 1;
-      if (x.Card.priority == y.Card.priority)
+      if (x.Card.Priority == y.Card.Priority)
         return 0;
       return -1;
     }
@@ -135,21 +135,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
 
       foreach (Card card in cards)
       {
-        if (!card.enabled || !card.grabEPG)
+        if (!card.Enabled || !card.GrabEPG)
         {
           continue;
         }
         try
         {
           RemoteControl.HostName = SettingsManagement.GetSetting("hostname").value;
-          if (!ServiceManager.Instance.InternalControllerService.IsCardPresent(card.idCard))
+          if (!ServiceManager.Instance.InternalControllerService.IsCardPresent(card.IdCard))
           {
             continue;
           }
         }
         catch (Exception e)
         {
-          Log.Error("card: unable to start job for card {0} at:{0}", e.Message, card.name, RemoteControl.HostName);
+          Log.Error("card: unable to start job for card {0} at:{0}", e.Message, card.Name, RemoteControl.HostName);
         }
 
         var epgCard = new EpgCard(card);
@@ -273,7 +273,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     /// <param name="epgCard">The epg card.</param>
     private void GrabEpgOnCard(EpgCard epgCard)
     {
-      CardType type = ServiceManager.Instance.InternalControllerService.Type(epgCard.Card.idCard);
+      CardType type = ServiceManager.Instance.InternalControllerService.Type(epgCard.Card.IdCard);
       //skip analog and webstream cards 
       if (type == CardType.Analog || type == CardType.RadioWebStream)
         return;
@@ -314,7 +314,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
           if (TVDatabase.TVBusinessLayer.CardManagement.CanTuneTvChannel(epgCard.Card, ch.idChannel))
           {
             Log.Epg("Grab for card:#{0} transponder #{1}/{2} channel: {3}",
-                    epgCard.Card.idCard, TransponderList.Instance.CurrentIndex + 1, TransponderList.Instance.Count,
+                    epgCard.Card.IdCard, TransponderList.Instance.CurrentIndex + 1, TransponderList.Instance.Count,
                     ch.displayName);
             //start grabbing
             epgCard.GrabEpg();

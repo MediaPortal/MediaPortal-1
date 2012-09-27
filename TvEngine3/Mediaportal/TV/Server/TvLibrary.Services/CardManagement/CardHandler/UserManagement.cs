@@ -111,7 +111,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           if (subchannel.IdChannel == idChannel)
           {
             Log.Debug("usermanagement.RemoveUser: {0}, subch: {1} of {2}, card: {3}", user.Name, subchannel.Id,
-                      _cardHandler.Card.SubChannels.Length, _cardHandler.DataBaseCard.idCard);
+                      _cardHandler.Card.SubChannels.Length, _cardHandler.DataBaseCard.IdCard);
             if (!ContainsUsersForSubchannel(subchannel.Id))
             {
               subchannelsId.Add(subchannel.Id);              
@@ -140,8 +140,8 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           }
           _cardHandler.Card.FreeSubChannel(subchannelId);
           var cleanTimeshiftFilesThread =
-            new CleanTimeshiftFilesThread(_cardHandler.DataBaseCard.timeshiftingFolder,
-                                          String.Format("live{0}-{1}.ts", _cardHandler.DataBaseCard.idCard,
+            new CleanTimeshiftFilesThread(_cardHandler.DataBaseCard.TimeshiftingFolder,
+                                          String.Format("live{0}-{1}.ts", _cardHandler.DataBaseCard.IdCard,
                                                         usedSubChannel));
           var cleanupThread = new Thread(cleanTimeshiftFilesThread.CleanTimeshiftFiles) { IsBackground = true, Name = "TS_File_Cleanup", Priority = ThreadPriority.Lowest };
           cleanupThread.Start();
@@ -744,7 +744,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
         throw new InvalidOperationException("subchannelid is invalid");
       }
-      user.CardId = _cardHandler.DataBaseCard.idCard;
+      user.CardId = _cardHandler.DataBaseCard.IdCard;
       Log.Info("user:{0} AddSubChannelOrUser", user.Name);
       lock (_usersLock)
       {

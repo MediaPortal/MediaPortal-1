@@ -288,7 +288,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
       IList<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
       foreach (Card card in cards)
       {
-        string currentCardPath = card.recordingFolder;
+        string currentCardPath = card.RecordingFolder;
         if (!recordingPaths.Contains(currentCardPath))
         {
           recordingPaths.Add(currentCardPath);

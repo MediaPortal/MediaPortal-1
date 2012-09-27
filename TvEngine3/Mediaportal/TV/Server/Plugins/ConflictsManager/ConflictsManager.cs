@@ -288,7 +288,7 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
       int n = 1;
       foreach (Card _card in _cards)
       {
-        cardno.Add(_card.idCard, n);
+        cardno.Add(_card.IdCard, n);
         n++;
       }
       //
@@ -305,7 +305,7 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
           {
             // checks if any schedule assigned to this cards overlaps current parsed schedule
             bool free = true;
-            foreach (Schedule assignedShedule in cardSchedules[cardno[card.idCard]])
+            foreach (Schedule assignedShedule in cardSchedules[cardno[card.IdCard]])
             {
               ScheduleBLL bll = new ScheduleBLL(schedule);
               if (bll.IsOverlapping(assignedShedule))
@@ -315,14 +315,14 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
                   free = false;
                   //_overlap = true;
                   lastOverlappingSchedule = assignedShedule;
-                  lastBusyCard = card.idCard;
+                  lastBusyCard = card.IdCard;
                   break;
                 }
               }
             }
             if (free)
             {
-              cardSchedules[cardno[card.idCard]].Add(schedule);
+              cardSchedules[cardno[card.IdCard]].Add(schedule);
               assigned = true;
               break;
             }

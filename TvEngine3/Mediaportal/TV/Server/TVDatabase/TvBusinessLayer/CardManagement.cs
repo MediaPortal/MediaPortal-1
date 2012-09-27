@@ -52,7 +52,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (ICardRepository cardRepository = new CardRepository())
       {
-        var query = cardRepository.GetQuery<Card>(c => c.devicePath == devicePath);
+        var query = cardRepository.GetQuery<Card>(c => c.DevicePath == devicePath);
         query = cardRepository.IncludeAllRelations(query);
         Card card = query.ToList().FirstOrDefault(); 
         return card;
@@ -64,7 +64,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (ICardRepository cardRepository = new CardRepository())
       {
-        var query = cardRepository.GetQuery<Card>(c => c.devicePath == devicePath);
+        var query = cardRepository.GetQuery<Card>(c => c.DevicePath == devicePath);
         query = cardRepository.IncludeAllRelations(query, includeRelations);
         Card card = query.ToList().FirstOrDefault();
         return card;
@@ -87,7 +87,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (ICardRepository cardRepository = new CardRepository(true))
       {
-        cardRepository.Delete<Card>(p => p.idCard == idCard);
+        cardRepository.Delete<Card>(p => p.IdCard == idCard);
         cardRepository.UnitOfWork.SaveChanges();
       }
     }
@@ -117,7 +117,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (ICardRepository cardRepository = new CardRepository())
       {
-        IQueryable<Card> query = cardRepository.GetQuery<Card>(c => c.idCard == idCard);
+        IQueryable<Card> query = cardRepository.GetQuery<Card>(c => c.IdCard == idCard);
         query = cardRepository.IncludeAllRelations(query);
         Card card = query.ToList().FirstOrDefault();
         return card;
@@ -128,7 +128,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (ICardRepository cardRepository = new CardRepository())
       {
-        IQueryable<Card> query = cardRepository.GetQuery<Card>(c => c.idCard == idCard);
+        IQueryable<Card> query = cardRepository.GetQuery<Card>(c => c.IdCard == idCard);
         query = cardRepository.IncludeAllRelations(query, includeRelations);
         Card card = query.ToList().FirstOrDefault();
         return card;

@@ -163,7 +163,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
               foreach (ITvCardHandler cardHandler in cardHandlers)
               {
                 //check if card is enabled
-                if (!cardHandler.DataBaseCard.enabled)
+                if (!cardHandler.DataBaseCard.Enabled)
                 {
                   //not enabled, so skip the card
                   UpdateChannelStateUsers(allUsers, ChannelState.nottunable, channel.idChannel);

@@ -49,7 +49,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       public override string ToString()
       {
-        return card.name;
+        return card.Name;
       }
     }
 

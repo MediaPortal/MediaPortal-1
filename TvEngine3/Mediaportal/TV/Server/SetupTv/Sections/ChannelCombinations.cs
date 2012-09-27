@@ -54,7 +54,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       public override string ToString()
       {
-        return _card.name;
+        return _card.Name;
       }
     }
 
@@ -99,11 +99,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       mpComboBoxCard.Items.Clear();
       foreach (Card card in dbsCards)
       {
-        if (card.enabled == false)
+        if (card.Enabled == false)
           continue;
-        if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.idCard))
+        if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.IdCard))
           continue;
-        cards[card.idCard] = ServiceAgents.Instance.ControllerServiceAgent.Type(card.idCard);
+        cards[card.IdCard] = ServiceAgents.Instance.ControllerServiceAgent.Type(card.IdCard);
         mpComboBoxCard.Items.Add(new CardInfo(card));
       }
       mpComboBoxCard.SelectedIndex = 0;
@@ -125,7 +125,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         CardInfo cardInfo = (CardInfo)mpComboBoxCard.SelectedItem;
 
         Card card = cardInfo.Card;
-        CardType cardType = cards[card.idCard];
+        CardType cardType = cards[card.IdCard];
         IList<ChannelMap> maps = card.ChannelMaps;
 
 
@@ -142,7 +142,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             continue;
           if (channel.mediaType != (decimal) _mediaTypeEnum)
             continue;          
-          bool enableDVBS2 = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + card.idCard + "enabledvbs2", "false").value == "true");
+          bool enableDVBS2 = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + card.IdCard + "enabledvbs2", "false").value == "true");
           List<TuningDetail> tuningDetails = GetTuningDetailsByCardType(channel, cardType, enableDVBS2);
           int imageIndex = GetImageIndex(tuningDetails);
           ListViewItem item = new ListViewItem(channel.displayName, imageIndex);
@@ -183,7 +183,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             continue;
 
           IList<ChannelMap> list = channel.ChannelMaps;
-          bool isMapped = list.Any(map => map.idCard == card.idCard);
+          bool isMapped = list.Any(map => map.idCard == card.IdCard);
           if (isMapped)
             continue;
 

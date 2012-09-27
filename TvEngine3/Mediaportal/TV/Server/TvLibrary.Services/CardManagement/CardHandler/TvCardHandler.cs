@@ -303,7 +303,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {      
-        return _dbsCard.devicePath;
+        return _dbsCard.DevicePath;
       }
       catch (ThreadAbortException)
       {
@@ -327,7 +327,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
         try
         {
-          if (_dbsCard.enabled == false)
+          if (_dbsCard.Enabled == false)
           {
             return false;
           }
@@ -355,7 +355,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
         try
         {
-          if (_dbsCard.enabled == false)
+          if (_dbsCard.Enabled == false)
           {
             return 0;
           }
@@ -383,7 +383,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
         try
         {
-          if (_dbsCard.enabled == false)
+          if (_dbsCard.Enabled == false)
           {
             return 0;
           }         
@@ -408,7 +408,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_dbsCard.enabled == false)
+        if (_dbsCard.Enabled == false)
         {
           return;
         }       
@@ -433,7 +433,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
         try
         {
-          if (_dbsCard.enabled == false)
+          if (_dbsCard.Enabled == false)
           {
             return 0;
           }
@@ -462,7 +462,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
         try
         {
-          if (_dbsCard.enabled == false)
+          if (_dbsCard.Enabled == false)
           {
             return 0;
           }
@@ -552,7 +552,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_dbsCard.enabled == false)
+        if (_dbsCard.Enabled == false)
         {
           return null;
         }
@@ -589,7 +589,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_dbsCard.enabled == false)
+        if (_dbsCard.Enabled == false)
         {
           return -1;
         }
@@ -622,7 +622,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_dbsCard.enabled == false)
+        if (_dbsCard.Enabled == false)
         {
           return "";
         }
@@ -663,7 +663,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_dbsCard.enabled == false)
+        if (_dbsCard.Enabled == false)
         {
           return true;
         }               
@@ -693,7 +693,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_dbsCard.enabled == false)
+        if (_dbsCard.Enabled == false)
         {
           return true;
         }
@@ -725,7 +725,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_dbsCard.enabled == false)
+        if (_dbsCard.Enabled == false)
         {
           return;
         }
@@ -772,7 +772,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (!_dbsCard.enabled)
+        if (!_dbsCard.Enabled)
         {
           return;
         }
@@ -819,7 +819,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// <returns></returns>
     public IVideoStream GetCurrentVideoStream(string userName)
     {
-      if (_dbsCard.enabled == false)
+      if (_dbsCard.Enabled == false)
       {
         return null;
       }

@@ -126,7 +126,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
         foreach (Card card in dbsCards)
         {
-          cards[card.devicePath] = ServiceAgents.Instance.ControllerServiceAgent.Type(card.idCard);
+          cards[card.DevicePath] = ServiceAgents.Instance.ControllerServiceAgent.Type(card.IdCard);
         }
         base.OnSectionActivated();
         mpListView1.Items.Clear();
@@ -184,9 +184,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           ListViewItem item = mpListView1.Items.Add(ch.displayName, imageIndex);
           foreach (ChannelMap map in ch.ChannelMaps)
           {
-            if (cards.ContainsKey(map.Card.devicePath))
+            if (cards.ContainsKey(map.Card.DevicePath))
             {
-              CardType type = cards[map.Card.devicePath];
+              CardType type = cards[map.Card.DevicePath];
               switch (type)
               {
                 case CardType.Analog:

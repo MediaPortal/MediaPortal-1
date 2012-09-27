@@ -34,7 +34,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
       bool channelMappingFound = false;
       if (isChannelFound)
       {
-        channelMappingFound = cardIds.TryGetValue(card.idCard, out isChannelMappedToCard);        
+        channelMappingFound = cardIds.TryGetValue(card.IdCard, out isChannelMappedToCard);        
       }      
 
       if (!channelMappingFound)
@@ -46,7 +46,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         {
           cardIds = new Dictionary<int, bool>();          
         }        
-        cardIds.Add(card.idCard, isChannelMappedToCard);
+        cardIds.Add(card.IdCard, isChannelMappedToCard);
       }
 
       _channelMapping[dbChannel.idChannel] = cardIds;

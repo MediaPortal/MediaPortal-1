@@ -628,11 +628,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       Color lineColor = Color.White;
       int subchannels = 0;
       IUser user;
-      bool cardInUse = ServiceAgents.Instance.ControllerServiceAgent.IsCardInUse(card.idCard, out user);
+      bool cardInUse = ServiceAgents.Instance.ControllerServiceAgent.IsCardInUse(card.IdCard, out user);
 
       if (!cardInUse)
       {
-        subchannels = ServiceAgents.Instance.ControllerServiceAgent.GetSubChannels(card.idCard);
+        subchannels = ServiceAgents.Instance.ControllerServiceAgent.GetSubChannels(card.IdCard);
         if (subchannels > 0)
         {
           lineColor = Color.Red;
@@ -651,7 +651,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       item.SubItems[3].Text = "";
       item.SubItems[4].Text = "";
       item.SubItems[5].Text = "";
-      item.SubItems[6].Text = card.name;
+      item.SubItems[6].Text = card.Name;
       item.SubItems[7].Text = Convert.ToString(subchannels);
     }
 

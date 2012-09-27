@@ -593,9 +593,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
       foreach (Card card in cards)
       {
-        if (card.enabled == false) continue;
-        if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.idCard)) continue;
-        IDictionary<string, IUser> usersForCard = ServiceAgents.Instance.ControllerServiceAgent.GetUsersForCard(card.idCard);
+        if (card.Enabled == false) continue;
+        if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.IdCard)) continue;
+        IDictionary<string, IUser> usersForCard = ServiceAgents.Instance.ControllerServiceAgent.GetUsersForCard(card.IdCard);
 
         foreach (IUser user1 in usersForCard.Values)
         {          
@@ -606,7 +606,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               var vcard = new VirtualCard(user1, RemoteControl.HostName);
               if (vcard.IsTimeShifting)
               {
-                vcard.RecordingFolder = card.recordingFolder;
+                vcard.RecordingFolder = card.RecordingFolder;
                 return vcard;
               }
             } 
@@ -626,9 +626,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
       foreach (Card card in cards)
       {
-        if (card.enabled == false) continue;
-        if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.idCard)) continue;
-        IDictionary<string, IUser> usersForCard = ServiceAgents.Instance.ControllerServiceAgent.GetUsersForCard(card.idCard);
+        if (card.Enabled == false) continue;
+        if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.IdCard)) continue;
+        IDictionary<string, IUser> usersForCard = ServiceAgents.Instance.ControllerServiceAgent.GetUsersForCard(card.IdCard);
 
         foreach (IUser user in usersForCard.Values)
         {
@@ -639,7 +639,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               var vcard = new VirtualCard(user, RemoteControl.HostName);
               if (vcard.IsRecording)
               {
-                vcard.RecordingFolder = card.recordingFolder;
+                vcard.RecordingFolder = card.RecordingFolder;
                 return vcard;
               }
             } 

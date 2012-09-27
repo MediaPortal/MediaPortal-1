@@ -49,7 +49,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       try
       {
         bool grabTeletext = false;
-        if (_cardHandler.DataBaseCard.enabled == false)
+        if (_cardHandler.DataBaseCard.Enabled == false)
         {
           return false;
         }        
@@ -81,7 +81,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     public bool HasTeletext(string userName)
     {
       bool hasTeletext = false;
-      if (_cardHandler.DataBaseCard.enabled == false)
+      if (_cardHandler.DataBaseCard.Enabled == false)
       {
         return false;
       }
@@ -105,7 +105,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_cardHandler.DataBaseCard.enabled == false)
+        if (_cardHandler.DataBaseCard.Enabled == false)
         {
           return new TimeSpan(0, 0, 0, 15);
         }                       
@@ -132,7 +132,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_cardHandler.DataBaseCard.enabled == false)
+        if (_cardHandler.DataBaseCard.Enabled == false)
         {
           return;
         }       
@@ -161,7 +161,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_cardHandler.DataBaseCard.enabled == false)
+        if (_cardHandler.DataBaseCard.Enabled == false)
         {
           return new byte[] {1};
         }      
@@ -191,7 +191,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_cardHandler.DataBaseCard.enabled == false)
+        if (_cardHandler.DataBaseCard.Enabled == false)
         {
           return -1;
         }
@@ -220,7 +220,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_cardHandler.DataBaseCard.enabled == false)
+        if (_cardHandler.DataBaseCard.Enabled == false)
         {
           return -1;
         }
@@ -250,7 +250,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_cardHandler.DataBaseCard.enabled == false)
+        if (_cardHandler.DataBaseCard.Enabled == false)
         {
           return -1;
         }
@@ -278,7 +278,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_cardHandler.DataBaseCard.enabled == false)
+        if (_cardHandler.DataBaseCard.Enabled == false)
         {
           return -1;
         }
@@ -307,7 +307,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_cardHandler.DataBaseCard.enabled == false)
+        if (_cardHandler.DataBaseCard.Enabled == false)
         {
           return -1;
         }

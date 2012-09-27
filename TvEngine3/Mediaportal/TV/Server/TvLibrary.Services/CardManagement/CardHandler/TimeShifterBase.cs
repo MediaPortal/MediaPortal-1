@@ -49,7 +49,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_cardHandler.DataBaseCard.enabled == false)
+        if (_cardHandler.DataBaseCard.Enabled == false)
         {
           return;
         }
@@ -85,7 +85,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     protected ITvSubChannel GetSubChannel(string userName, int idChannel)
     {
       ITvSubChannel subchannel = null;
-      if (_cardHandler.DataBaseCard.enabled)
+      if (_cardHandler.DataBaseCard.Enabled)
       {
            
         //_cardHandler.UserManagement.RefreshUser(ref user, out userExists);
@@ -124,7 +124,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       scrambled = false;
 
-      if (!_cardHandler.DataBaseCard.enabled)
+      if (!_cardHandler.DataBaseCard.Enabled)
       {
         return false;
       }

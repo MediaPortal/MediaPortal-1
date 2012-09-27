@@ -50,7 +50,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       Log.Epg("EpgGrabbing: Start");
       try
       {
-        if (_cardHandler.DataBaseCard.enabled == false)
+        if (_cardHandler.DataBaseCard.Enabled == false)
         {
           return false;
         }
@@ -77,7 +77,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       Log.Epg("EpgGrabbing: Abort");
       try
       {
-        if (_cardHandler.DataBaseCard.enabled == false)
+        if (_cardHandler.DataBaseCard.Enabled == false)
         {
           return;
         }
@@ -98,7 +98,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       get
       {
-        if (_cardHandler.DataBaseCard.enabled == false)
+        if (_cardHandler.DataBaseCard.Enabled == false)
         {
           return new List<EpgChannel>();
         }
@@ -117,7 +117,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
         try
         {
-          if (_cardHandler.DataBaseCard.enabled == false)
+          if (_cardHandler.DataBaseCard.Enabled == false)
           {
             return false;
           }

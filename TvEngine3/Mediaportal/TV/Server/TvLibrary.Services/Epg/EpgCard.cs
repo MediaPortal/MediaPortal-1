@@ -245,7 +245,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       _currentTransponder = TransponderList.Instance.CurrentTransponder;
       Channel channel = _currentTransponder.CurrentChannel;
 
-      Log.Epg("EpgCard: grab epg on card: #{0} transponder: #{1} ch:{2} ", _card.idCard,
+      Log.Epg("EpgCard: grab epg on card: #{0} transponder: #{1} ch:{2} ", _card.IdCard,
               TransponderList.Instance.CurrentIndex, channel.displayName);
 
       _state = EpgState.Idle;
@@ -394,7 +394,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       //remove following check to enable multi-card epg grabbing (still beta)
       if (ServiceManager.Instance.InternalControllerService.AllCardsIdle == false)
       {
-        Log.Epg("Epg: card:{0} cards are not idle", card.idCard);
+        Log.Epg("Epg: card:{0} cards are not idle", card.IdCard);
         return false;
       }
 
@@ -403,16 +403,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       ATSCChannel atscChannel = tuning as ATSCChannel;
       if (atscChannel != null)
       {
-        if (ServiceManager.Instance.InternalControllerService.Type(card.idCard) == CardType.Atsc)
+        if (ServiceManager.Instance.InternalControllerService.Type(card.IdCard) == CardType.Atsc)
         {
-          if (IsCardIdle(card.idCard) == false)
+          if (IsCardIdle(card.IdCard) == false)
           {
-            Log.Epg("Epg: card:{0} atsc card is not idle", card.idCard);
+            Log.Epg("Epg: card:{0} atsc card is not idle", card.IdCard);
             return false; //card is busy
           }
           return TuneEPGgrabber(channel, tuning, card, result);
         }
-        Log.Epg("Epg: card:{0} could not tune to atsc channel:{1}", card.idCard, tuning.ToString());
+        Log.Epg("Epg: card:{0} could not tune to atsc channel:{1}", card.IdCard, tuning.ToString());
         return false;
       }
 
@@ -420,16 +420,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       DVBCChannel dvbcChannel = tuning as DVBCChannel;
       if (dvbcChannel != null)
       {
-        if (ServiceManager.Instance.InternalControllerService.Type(card.idCard) == CardType.DvbC)
+        if (ServiceManager.Instance.InternalControllerService.Type(card.IdCard) == CardType.DvbC)
         {
-          if (IsCardIdle(card.idCard) == false)
+          if (IsCardIdle(card.IdCard) == false)
           {
-            Log.Epg("Epg: card:{0} dvbc card is not idle", card.idCard);
+            Log.Epg("Epg: card:{0} dvbc card is not idle", card.IdCard);
             return false; //card is busy
           }
           return TuneEPGgrabber(channel, tuning, card, result);
         }
-        Log.Epg("Epg: card:{0} could not tune to dvbc channel:{1}", card.idCard, tuning.ToString());
+        Log.Epg("Epg: card:{0} could not tune to dvbc channel:{1}", card.IdCard, tuning.ToString());
         return false;
       }
 
@@ -437,16 +437,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       DVBSChannel dvbsChannel = tuning as DVBSChannel;
       if (dvbsChannel != null)
       {
-        if (ServiceManager.Instance.InternalControllerService.Type(card.idCard) == CardType.DvbS)
+        if (ServiceManager.Instance.InternalControllerService.Type(card.IdCard) == CardType.DvbS)
         {
-          if (IsCardIdle(card.idCard) == false)
+          if (IsCardIdle(card.IdCard) == false)
           {
-            Log.Epg("Epg: card:{0} dvbs card is not idle", card.idCard);
+            Log.Epg("Epg: card:{0} dvbs card is not idle", card.IdCard);
             return false; //card is busy
           }
           return TuneEPGgrabber(channel, tuning, card, result);
         }
-        Log.Epg("Epg: card:{0} could not tune to dvbs channel:{1}", card.idCard, tuning.ToString());
+        Log.Epg("Epg: card:{0} could not tune to dvbs channel:{1}", card.IdCard, tuning.ToString());
         return false;
       }
 
@@ -454,17 +454,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       DVBTChannel dvbtChannel = tuning as DVBTChannel;
       if (dvbtChannel != null)
       {
-        if (ServiceManager.Instance.InternalControllerService.Type(card.idCard) == CardType.DvbT)
+        if (ServiceManager.Instance.InternalControllerService.Type(card.IdCard) == CardType.DvbT)
         {
-          if (IsCardIdle(card.idCard) == false)
+          if (IsCardIdle(card.IdCard) == false)
           {
-            Log.Epg("Epg: card:{0} dvbt card is not idle", card.idCard);
+            Log.Epg("Epg: card:{0} dvbt card is not idle", card.IdCard);
             return false; //card is busy
           }
 
           return TuneEPGgrabber(channel, tuning, card, result);
         }
-        Log.Epg("Epg: card:{0} could not tune to dvbt channel:{1}", card.idCard, tuning.ToString());
+        Log.Epg("Epg: card:{0} could not tune to dvbt channel:{1}", card.IdCard, tuning.ToString());
         return false;
       }
 
@@ -472,22 +472,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       DVBIPChannel dvbipChannel = tuning as DVBIPChannel;
       if (dvbipChannel != null)
       {
-        if (ServiceManager.Instance.InternalControllerService.Type(card.idCard) == CardType.DvbIP)
+        if (ServiceManager.Instance.InternalControllerService.Type(card.IdCard) == CardType.DvbIP)
         {
-          if (IsCardIdle(card.idCard) == false)
+          if (IsCardIdle(card.IdCard) == false)
           {
-            Log.Epg("Epg: card:{0} dvbip card is not idle", card.idCard);
+            Log.Epg("Epg: card:{0} dvbip card is not idle", card.IdCard);
             return false; //card is busy
           }
           return TuneEPGgrabber(channel, tuning, card, result);
         }
         else
         {
-          Log.Epg("Epg: card:{0} could not tune to dvbip channel:{1}", card.idCard, tuning.ToString());
+          Log.Epg("Epg: card:{0} could not tune to dvbip channel:{1}", card.IdCard, tuning.ToString());
         }
         return false;
       }
-      Log.Epg("Epg: card:{0} could not tune to channel:{1}", card.idCard, tuning.ToString());
+      Log.Epg("Epg: card:{0} could not tune to channel:{1}", card.IdCard, tuning.ToString());
       return false;
     }
 
@@ -495,9 +495,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     {
       try
       {
-        _user.CardId = card.idCard;
+        _user.CardId = card.IdCard;
         ITvCardHandler cardHandler;
-        if (ServiceManager.Instance.InternalControllerService.CardCollection.TryGetValue(card.idCard, out cardHandler))
+        if (ServiceManager.Instance.InternalControllerService.CardCollection.TryGetValue(card.IdCard, out cardHandler))
         {
           ICardTuneReservationTicket ticket = null;
           try
@@ -517,10 +517,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
                     Log.Epg("Tuning finished but EpgGrabber no longer enabled");
                   ServiceManager.Instance.InternalControllerService.StopGrabbingEpg(_user);
                   _user.CardId = -1;
-                  Log.Epg("Epg: card:{0} could not start dvbt grabbing", card.idCard);
+                  Log.Epg("Epg: card:{0} could not start dvbt grabbing", card.IdCard);
                   return false;
                 }
-                _user.CardId = card.idCard;
+                _user.CardId = card.IdCard;
                 return true;
               }
             }
@@ -532,7 +532,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
           }
         }
         _user.CardId = -1;
-        Log.Epg("Epg: card:{0} could not tune to channel:{1}", card.idCard, result.ToString());
+        Log.Epg("Epg: card:{0} could not tune to channel:{1}", card.IdCard, result.ToString());
         return false;
       }
       catch (Exception ex)

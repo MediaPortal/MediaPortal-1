@@ -62,8 +62,8 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
 
       foreach (Card card in cards)
       {
-        comboBoxBlaster1.Items.Add(card.name);
-        comboBoxBlaster2.Items.Add(card.name);
+        comboBoxBlaster1.Items.Add(card.Name);
+        comboBoxBlaster2.Items.Add(card.Name);
       }
       Log.WriteFile("CB1Size {0}, CB2Size {1}, BT1 {2}, BT2 {3}", comboBoxBlaster1.Items.Count,
                     comboBoxBlaster1.Items.Count, Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlaster1Card", "0").value),

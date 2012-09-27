@@ -634,7 +634,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       UpdateConfiguration();
       Configuration.writeConfiguration(_configuration);      
       Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
-      if (card.enabled)
+      if (card.Enabled)
       {
         try
         {
@@ -801,12 +801,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         
         Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
-        if (card.enabled == false)
+        if (card.Enabled == false)
         {
           MessageBox.Show(this, "Tuner is disabled. Please enable the tuner before scanning.");
           return;
         }
-        if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.idCard))
+        if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.IdCard))
         {
           MessageBox.Show(this, "Tuner is not found. Please make sure the tuner is present before scanning.");
           return;
@@ -1055,12 +1055,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         
         Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
-        if (card.enabled == false)
+        if (card.Enabled == false)
         {
           MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
           return;
         }
-        if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.idCard))
+        if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.IdCard))
         {
           MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
           return;
@@ -1296,7 +1296,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       Channel dbChannel;
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.VideoInput1))
       {
-        string channelName = "CVBS#1 on " + card.idCard;
+        string channelName = "CVBS#1 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
         if (tuningDetails != null && tuningDetails.Count > 0)
         {
@@ -1319,7 +1319,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.VideoInput2))
       {
-        string channelName = "CVBS#2 on " + card.idCard;
+        string channelName = "CVBS#2 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
         if (tuningDetails != null && tuningDetails.Count > 0)
         {
@@ -1344,7 +1344,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.VideoInput3))
       {
-        string channelName = "CVBS#3 on " + card.idCard;
+        string channelName = "CVBS#3 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
 
         if (tuningDetails != null && tuningDetails.Count > 0)
@@ -1370,7 +1370,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.SvhsInput1))
       {
-        string channelName = "S-Video#1 on " + card.idCard;
+        string channelName = "S-Video#1 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
         if (tuningDetails != null && tuningDetails.Count > 0)
         {
@@ -1394,7 +1394,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.SvhsInput2))
       {
-        string channelName = "S-Video#2 on " + card.idCard;
+        string channelName = "S-Video#2 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
         if (tuningDetails != null && tuningDetails.Count > 0)
         {
@@ -1418,7 +1418,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.SvhsInput3))
       {
-        string channelName = "S-Video#3 on " + card.idCard;
+        string channelName = "S-Video#3 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
         if (tuningDetails != null && tuningDetails.Count > 0)
         {
@@ -1441,7 +1441,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.RgbInput1))
       {
-        string channelName = "RGB#1 on " + card.idCard;
+        string channelName = "RGB#1 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
         if (tuningDetails != null && tuningDetails.Count > 0)
         {
@@ -1464,7 +1464,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.RgbInput2))
       {
-        string channelName = "RGB#2 on " + card.idCard;
+        string channelName = "RGB#2 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
         if (tuningDetails != null && tuningDetails.Count > 0)
         {
@@ -1487,7 +1487,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.RgbInput3))
       {
-        string channelName = "RGB#3 on " + card.idCard;
+        string channelName = "RGB#3 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
         if (tuningDetails != null && tuningDetails.Count > 0)
         {
@@ -1510,7 +1510,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.YRYBYInput1))
       {
-        string channelName = "YRYBY#1 on " + card.idCard;
+        string channelName = "YRYBY#1 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
         if (tuningDetails != null && tuningDetails.Count > 0)
         {
@@ -1533,7 +1533,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.YRYBYInput2))
       {
-        string channelName = "YRYBY#2 on " + card.idCard;
+        string channelName = "YRYBY#2 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
         if (tuningDetails != null && tuningDetails.Count > 0)
         {
@@ -1559,7 +1559,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.YRYBYInput3))
       {
-        string channelName = "YRYBY#3 on " + card.idCard;
+        string channelName = "YRYBY#3 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
         if (tuningDetails != null && tuningDetails.Count > 0)
         {
@@ -1582,7 +1582,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.HdmiInput1))
       {
-        string channelName = "HDMI#1 on " + card.idCard;
+        string channelName = "HDMI#1 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
         if (tuningDetails != null && tuningDetails.Count > 0)
         {
@@ -1605,7 +1605,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.HdmiInput2))
       {
-        string channelName = "HDMI#2 on " + card.idCard;
+        string channelName = "HDMI#2 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
         if (tuningDetails != null && tuningDetails.Count > 0)
         {
@@ -1628,7 +1628,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.HdmiInput3))
       {
-        string channelName = "HDMI#3 on " + card.idCard;
+        string channelName = "HDMI#3 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
         if (tuningDetails != null && tuningDetails.Count > 0)
         {
@@ -1678,12 +1678,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         
         Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
-        if (card.enabled == false)
+        if (card.Enabled == false)
         {
           MessageBox.Show(this, "Card is disabled, please enable the card before checking quality control");
           return;
         }
-        else if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.idCard))
+        else if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.IdCard))
         {
           MessageBox.Show(this, "Card is not found, please make sure card is present before checking quality control");
           return;

@@ -123,9 +123,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.ConditionalAccess
         {
           //fetch decrypt limit from DB and apply it.
           Card c = CardManagement.GetCardByDevicePath(card.DevicePath, CardIncludeRelationEnum.None);
-          _decryptLimit = c.decryptLimit;
+          _decryptLimit = c.DecryptLimit;
           _useCam = c.CAM;
-          _CamType = (CamType)c.camType;
+          _CamType = (CamType)c.CamType;
           Log.WriteFile("CAM is {0} model", _CamType);
         }
 

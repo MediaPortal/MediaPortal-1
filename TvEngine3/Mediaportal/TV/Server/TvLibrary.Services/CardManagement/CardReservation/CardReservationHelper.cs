@@ -409,7 +409,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
     public static ICardTuneReservationTicket RequestCardReservation(IUser user, CardDetail cardDetail, ICardReservation cardResImpl, int idChannel)
     {
       ICardTuneReservationTicket ticket = null;      
-      int idCard = cardDetail.Card.idCard;
+      int idCard = cardDetail.Card.IdCard;
       IUser userCopy = user.Clone() as User;
       if (userCopy != null)
       {
@@ -430,7 +430,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
       foreach (CardDetail cardDetail in availCardsForReservation)
       {
         ICardTuneReservationTicket ticket = null;
-        int idCard = cardDetail.Card.idCard;
+        int idCard = cardDetail.Card.IdCard;
         bool cardAlreadyHasTicket = cardIds.Contains(idCard);
         if (!cardAlreadyHasTicket)
         {
@@ -528,7 +528,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
       {
         if (isStopPending && ticketFound)
         {
-          Log.Info("Stop cardid={0}, ticket={1}, tunestate={2}, stopstate={3}", tvcard.DataBaseCard.idCard, ticket.Id, tvcard.Tuner.CardTuneState, tvcard.Tuner.CardStopState);
+          Log.Info("Stop cardid={0}, ticket={1}, tunestate={2}, stopstate={3}", tvcard.DataBaseCard.IdCard, ticket.Id, tvcard.Tuner.CardTuneState, tvcard.Tuner.CardStopState);
 
           result = tvcard.TimeShifter.Stop(ref user, idChannel);
 

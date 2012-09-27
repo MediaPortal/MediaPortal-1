@@ -56,7 +56,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
           int camDecrypting = NumberOfChannelsDecrypting(tvcard);
 
           //Check if the user is currently occupying a decoding slot and subtract that from the number of channels it is decoding.
-          if (user.CardId == tvcard.DataBaseCard.idCard)
+          if (user.CardId == tvcard.DataBaseCard.IdCard)
           {
             //todo gibman - could be buggy, needs looking at.
             //foreach(var subchannel in user.SubChannels.Values)
@@ -118,8 +118,8 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 
     public virtual bool CheckTransponder(IUser user, ITvCardHandler tvcard, IChannel tuningDetail)
     {
-      int decryptLimit = tvcard.DataBaseCard.decryptLimit;
-      int cardId = tvcard.DataBaseCard.idCard;      
+      int decryptLimit = tvcard.DataBaseCard.DecryptLimit;
+      int cardId = tvcard.DataBaseCard.IdCard;      
 
       bool checkTransponder = true;
       bool isOwnerOfCard = IsOwnerOfCard(tvcard, user);

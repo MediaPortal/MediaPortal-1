@@ -56,7 +56,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       public override string ToString()
       {
-        return _card.idCard + " - " + _card.name;
+        return _card.IdCard + " - " + _card.Name;
       }
     }
 
@@ -91,9 +91,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
       foreach (Card card in cards)
       {
-        if (card.enabled == false)
+        if (card.Enabled == false)
           continue;
-        if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.idCard))
+        if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.IdCard))
           continue;
         mpComboBoxCard.Items.Add(new CardInfo(card));
       }
@@ -184,14 +184,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
         List<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(_mediaTypeEnum, ChannelIncludeRelationEnum.TuningDetails).ToList();
 
-        Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(((CardInfo)mpComboBoxCard.SelectedItem).Card.idCard);        
+        Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(((CardInfo)mpComboBoxCard.SelectedItem).Card.IdCard);        
         IList<ChannelMap> maps = card.ChannelMaps;
 
         // get cardtype, dvb, analogue etc.		
-        CardType cardType = ServiceAgents.Instance.ControllerServiceAgent.Type(card.idCard);
+        CardType cardType = ServiceAgents.Instance.ControllerServiceAgent.Type(card.IdCard);
         //Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(card.idCard);
         
-        bool enableDVBS2 = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + card.idCard + "enabledvbs2", "false").value == "true");
+        bool enableDVBS2 = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + card.IdCard + "enabledvbs2", "false").value == "true");
 
 
         List<ListViewItem> items = new List<ListViewItem>();

@@ -1268,7 +1268,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
 
           Log.Write("Scheduler: recList: count: {0} add scheduleid: {1} card: {2}",
                     _recordingsInProgressList.Count,
-                    recDetail.Schedule.Entity.id_Schedule, recDetail.CardInfo.Card.name);
+                    recDetail.Schedule.Entity.id_Schedule, recDetail.CardInfo.Card.Name);
           result = true;
         }
       }
@@ -1387,7 +1387,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
     {
       Log.Write(
         "Scheduler : card is not tuned to the same transponder and not recording, kicking all users. record on card:{0} priority:{1}",
-        cardDetail.Id, cardDetail.Card.priority);
+        cardDetail.Id, cardDetail.Card.Priority);
       for (int i = 0; i < ticket.TimeshiftingUsers.Count; i++ )
       {
         IUser timeshiftingUser = ticket.TimeshiftingUsers[i];
@@ -1401,7 +1401,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
 
           Log.Write(
             "Scheduler : card is tuned to the same transponder but not free. record on card:{0} priority:{1}, kicking user:{2}",
-            cardDetail.Id, cardDetail.Card.priority, timeshiftingUser.Name);
+            cardDetail.Id, cardDetail.Card.Priority, timeshiftingUser.Name);
         }                
       }
     }
@@ -1440,7 +1440,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
           {
             Log.Write(
                "Scheduler : card is tuned to the same transponder but not free. record on card:{0} priority:{1}, kicking user:{2}",
-             cardDetail.Id, cardDetail.Card.priority, timeshiftingUser.Name);
+             cardDetail.Id, cardDetail.Card.Priority, timeshiftingUser.Name);
             ServiceManager.Instance.InternalControllerService.StopTimeShifting(ref timeshiftingUser, TvStoppedReason.RecordingStarted, subchannel.IdChannel);
             cardInfo = cardDetail;            
           }            
@@ -1474,12 +1474,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
 
     private void SetupRecordingFolder(CardDetail cardInfo)
     {
-      if (cardInfo.Card.recordingFolder == String.Empty)
-        cardInfo.Card.recordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings",
+      if (cardInfo.Card.RecordingFolder == String.Empty)
+        cardInfo.Card.RecordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings",
                                                       Environment.GetFolderPath(
                                                         Environment.SpecialFolder.CommonApplicationData));
-      if (cardInfo.Card.timeshiftingFolder == String.Empty)
-        cardInfo.Card.timeshiftingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer",
+      if (cardInfo.Card.TimeshiftingFolder == String.Empty)
+        cardInfo.Card.TimeshiftingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer",
                                                       Environment.GetFolderPath(
                                                         Environment.SpecialFolder.CommonApplicationData));
     }

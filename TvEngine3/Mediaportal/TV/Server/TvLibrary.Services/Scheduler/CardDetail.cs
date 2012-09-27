@@ -74,7 +74,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       _cardId = id;
       _card = card;
       _detail = detail;
-      _priority = _card.priority;
+      _priority = _card.Priority;
       _numberOfOtherUsers = numberOfOtherUsers;
       _channelTimeshiftingOnOtherMux = channelTimeshiftingOnOtherMux;
 

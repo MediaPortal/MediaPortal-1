@@ -836,12 +836,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           SaveSettings();
           
           Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
-          if (card.enabled == false)
+          if (card.Enabled == false)
           {
             MessageBox.Show(this, "Tuner is disabled. Please enable the tuner before scanning.");
             return;
           }
-          if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.idCard))
+          if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.IdCard))
           {
             MessageBox.Show(this, "Tuner is not found. Please make sure the tuner is present before scanning.");
             return;
@@ -1356,7 +1356,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         index = motorSettings.Count + 1;
         DisEqcMotor motor = new DisEqcMotor();
-        motor.idCard = card.idCard;
+        motor.idCard = card.IdCard;
         motor.idSatellite = sat.Satellite.idSatellite;
         motor.position = index;
         ServiceAgents.Instance.CardServiceAgent.SaveDisEqcMotor(motor);

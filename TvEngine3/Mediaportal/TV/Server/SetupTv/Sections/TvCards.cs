@@ -59,7 +59,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       public override string ToString()
       {
-        return card.name;
+        return card.Name;
       }
     }
 
@@ -118,10 +118,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         ListViewItem item = mpListView1.Items[indexes[i]];
         Card card = (Card)item.Tag;
         CardGroupMap map = new CardGroupMap();
-        map.idCard = card.idCard;        
+        map.idCard = card.IdCard;        
         map.idCardGroup = group.idCardGroup;
         ServiceAgents.Instance.CardServiceAgent.SaveCardGroupMap(map);
-        card.preload = false;        
+        card.Preload = false;        
         ServiceAgents.Instance.CardServiceAgent.SaveCard(card);
       }
       UpdateHybrids();
@@ -140,7 +140,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       CardInfo info = (CardInfo)mpComboBoxCard.SelectedItem;
       if (info != null)
       {
-        ServiceAgents.Instance.SettingServiceAgent.SaveSetting("winTvCiTuner", info.card.idCard.ToString());        
+        ServiceAgents.Instance.SettingServiceAgent.SaveSetting("winTvCiTuner", info.card.IdCard.ToString());        
       }
 
       if (_needRestart)
@@ -164,7 +164,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       mpComboBoxCard.SelectedIndex = -1;
       foreach (CardInfo cardInfo in mpComboBoxCard.Items)
       {
-        if (cardInfo.card.idCard == winTvTunerCardId)
+        if (cardInfo.card.IdCard == winTvTunerCardId)
         {
           mpComboBoxCard.SelectedItem = cardInfo;
           break;
@@ -184,24 +184,24 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
         foreach (Card card in cards)
         {
-          cardTypes[card.devicePath] = ServiceAgents.Instance.ControllerServiceAgent.Type(card.idCard);
+          cardTypes[card.DevicePath] = ServiceAgents.Instance.ControllerServiceAgent.Type(card.IdCard);
           mpComboBoxCard.Items.Add(new CardInfo(card));
         }
       }
       catch (Exception) {}
       try
       {
-        cards = cards.OrderByDescending(c => c.priority).ToList();
+        cards = cards.OrderByDescending(c => c.Priority).ToList();
         foreach (Card card in cards)
         {
           string cardType = "";
-          if (cardTypes.ContainsKey(card.devicePath))
+          if (cardTypes.ContainsKey(card.DevicePath))
           {
-            cardType = cardTypes[card.devicePath].ToString();
+            cardType = cardTypes[card.DevicePath].ToString();
           }
           ListViewItem item = mpListView1.Items.Add("", 0);
-          item.SubItems.Add(card.priority.ToString());
-          if (card.enabled)
+          item.SubItems.Add(card.Priority.ToString());
+          if (card.Enabled)
           {
             item.Checked = true;
             item.Font = new Font(item.Font, FontStyle.Regular);
@@ -227,7 +227,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               item.SubItems.Add("No");
             }
 
-            item.SubItems.Add(card.decryptLimit.ToString());
+            item.SubItems.Add(card.DecryptLimit.ToString());
           }
           else
           {
@@ -235,11 +235,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             item.SubItems.Add("");
           }
 
-          item.SubItems.Add(card.idCard.ToString());
-          item.SubItems.Add(card.name);
+          item.SubItems.Add(card.IdCard.ToString());
+          item.SubItems.Add(card.Name);
 
           //check if card is really available before setting to enabled.
-          bool cardPresent = ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.idCard);
+          bool cardPresent = ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.IdCard);
           if (!cardPresent)
           {
             item.SubItems.Add("No");
@@ -252,7 +252,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           //EPG grabbing doesn't apply to non-digital cards
           if (cardType.ToUpperInvariant().Contains("DVB") || cardType.ToUpperInvariant().Contains("ATSC"))
           {
-            if (!card.grabEPG)
+            if (!card.GrabEPG)
             {
               item.SubItems.Add("No");
             }
@@ -266,7 +266,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             item.SubItems.Add("");
           }
 
-          item.SubItems.Add(card.devicePath);
+          item.SubItems.Add(card.DevicePath);
           item.Tag = card;
         }
       }
@@ -375,11 +375,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         mpListView1.Items[i].SubItems[1].Text = (mpListView1.Items.Count - i).ToString();
 
         Card card = (Card)mpListView1.Items[i].Tag;
-        card.priority = mpListView1.Items.Count - i;
-        if (card.enabled != mpListView1.Items[i].Checked)
+        card.Priority = mpListView1.Items.Count - i;
+        if (card.Enabled != mpListView1.Items[i].Checked)
           _needRestart = true;
 
-        card.enabled = mpListView1.Items[i].Checked;
+        card.Enabled = mpListView1.Items[i].Checked;
         cards.Add(card);
         card.UnloadAllUnchangedRelationsForEntity();
       }
@@ -401,7 +401,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (enabled)
       {
         Card card = (Card)mpListView1.SelectedItems[0].Tag;
-        enabled = !ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.idCard);
+        enabled = !ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.IdCard);
       }
       UpdateEditButtonState();
       buttonRemove.Enabled = enabled;
@@ -435,7 +435,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         foreach (CardGroupMap map in cards)
         {
           Card card = map.Card;
-          TreeNode cardNode = node.Nodes.Add(card.name);
+          TreeNode cardNode = node.Nodes.Add(card.Name);
           cardNode.Tag = card;
         }
       }
@@ -455,7 +455,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
         IList<CardGroupMap> cards = group.CardGroupMaps;
         CardGroupMap cardGroupMap2Remove = null;
-        foreach (CardGroupMap map in cards.Where(map => map.idCard == card.idCard))
+        foreach (CardGroupMap map in cards.Where(map => map.idCard == card.IdCard))
         {
           cardGroupMap2Remove = map;
           //ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroupMap(map.idMap)          ;
@@ -495,7 +495,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       UpdateList();
       FormEditCard dlg = new FormEditCard();
       dlg.Card = (Card)item.Tag;
-      dlg.CardType = cardTypes[((Card)item.Tag).devicePath].ToString();
+      dlg.CardType = cardTypes[((Card)item.Tag).DevicePath].ToString();
       dlg.ShowDialog();      
       ServiceAgents.Instance.CardServiceAgent.SaveCard(dlg.Card);
       _needRestart = true;
@@ -532,7 +532,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           }
         }
         */
-        ServiceAgents.Instance.ControllerServiceAgent.CardRemove(card.idCard);
+        ServiceAgents.Instance.ControllerServiceAgent.CardRemove(card.IdCard);
         mpListView1.Items.Remove(mpListView1.SelectedItems[0]);
         _needRestart = true;
       }

@@ -545,8 +545,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       if (dbsCard != null)
       {
-        _preloadCard = dbsCard.preload;
-        _cardId = dbsCard.idCard;      
+        _preloadCard = dbsCard.Preload;
+        _cardId = dbsCard.IdCard;      
       }
     }
 
@@ -556,7 +556,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       Card dbsCard = CardManagement.GetCardByDevicePath(_devicePath, CardIncludeRelationEnum.None);
       if (dbsCard != null)
       {
-        _stopGraph = dbsCard.stopgraph;
+        _stopGraph = dbsCard.StopGraph;
       }
     }
 

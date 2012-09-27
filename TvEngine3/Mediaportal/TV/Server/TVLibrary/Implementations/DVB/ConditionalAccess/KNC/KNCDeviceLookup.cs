@@ -52,7 +52,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.ConditionalAccess.
     {
       // temporary list to hold device paths
       IList<Card> cards = CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
-      List<String> deviceids = (from card in cards where card.name.StartsWith("KNC BDA") || card.name.StartsWith("Mystique") select card.devicePath).ToList();            
+      List<String> deviceids = (from card in cards where card.Name.StartsWith("KNC BDA") || card.Name.StartsWith("Mystique") select card.DevicePath).ToList();            
 
       int idx = -1;
       int found = 0;

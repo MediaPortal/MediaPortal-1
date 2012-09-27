@@ -156,11 +156,11 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         if (forEpg)
         {
-          isChannelMappedToCard = channelRepository.Count<ChannelMap>(c => c.idCard == card.idCard && c.idChannel == channel.idChannel && c.epgOnly) > 0;
+          isChannelMappedToCard = channelRepository.Count<ChannelMap>(c => c.idCard == card.IdCard && c.idChannel == channel.idChannel && c.epgOnly) > 0;
         }
         else
         {
-          isChannelMappedToCard = channelRepository.Count<ChannelMap>(c => c.idCard == card.idCard && c.idChannel == channel.idChannel) > 0;          
+          isChannelMappedToCard = channelRepository.Count<ChannelMap>(c => c.idCard == card.IdCard && c.idChannel == channel.idChannel) > 0;          
         }                
       }
       return isChannelMappedToCard;
