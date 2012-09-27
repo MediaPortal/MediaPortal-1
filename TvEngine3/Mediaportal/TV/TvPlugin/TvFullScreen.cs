@@ -2142,8 +2142,8 @@ namespace Mediaportal.TV.TvPlugin
       int counter = 0;
       foreach (ChannelLinkageMap map in linkages)
       {
-        GUIListItem item = new GUIListItem(map.displayName);
-        if (map.idLinkedChannel == TVHome.Navigator.Channel.Entity.IdChannel)
+        GUIListItem item = new GUIListItem(map.DisplayName);
+        if (map.IdLinkedChannel == TVHome.Navigator.Channel.Entity.IdChannel)
         {
           selected = counter;
         }

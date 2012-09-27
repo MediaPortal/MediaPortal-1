@@ -87,9 +87,9 @@ namespace Mediaportal.TV.Server.TVLibrary.ChannelLinkage
 
         var map = new ChannelLinkageMap
                                   {
-                                    idLinkedChannel = dbLinkedChannnel.IdChannel,
-                                    idPortalChannel = dbPortalChannel.IdChannel,
-                                    displayName = lChannel.Name
+                                    IdLinkedChannel = dbLinkedChannnel.IdChannel,
+                                    IdPortalChannel = dbPortalChannel.IdChannel,
+                                    DisplayName = lChannel.Name
                                   };
 
         ChannelManagement.SaveChannelLinkageMap(map);

@@ -366,7 +366,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository(true))
       {
-        channelRepository.Delete<ChannelLinkageMap>(p => p.idPortalChannel == idPortalChannel);
+        channelRepository.Delete<ChannelLinkageMap>(p => p.IdPortalChannel == idPortalChannel);
         channelRepository.UnitOfWork.SaveChanges();
       }
     }
