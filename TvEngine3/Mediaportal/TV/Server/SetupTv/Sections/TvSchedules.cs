@@ -111,7 +111,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupIncludeRelationEnum.None);
       foreach (ChannelGroup group in groups)
       {
-        comboBoxGroups.Items.Add(new ComboBoxExItem(group.groupName, -1, group.idGroup));
+        comboBoxGroups.Items.Add(new ComboBoxExItem(group.GroupName, -1, group.IdGroup));
       }
       if (comboBoxGroups.Items.Count == 0)
       {

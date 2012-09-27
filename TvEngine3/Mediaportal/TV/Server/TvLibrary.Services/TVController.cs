@@ -4963,7 +4963,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         {
           // we will only update user created groups, since it will often have fewer channels than "all channels"
           // going into "all channels" group in mini EPG will always be slower.
-          if (group.groupName.Equals(TvConstants.TvGroupNames.AllChannels))
+          if (group.GroupName.Equals(TvConstants.TvGroupNames.AllChannels))
           {
             continue;
           }
@@ -4971,11 +4971,11 @@ namespace Mediaportal.TV.Server.TVLibrary
           if (_tvChannelListGroups == null)
           {
             _tvChannelListGroups =
-              ChannelManagement.GetAllChannelsByGroupIdAndMediaType(group.idGroup, MediaTypeEnum.TV).ToList();
+              ChannelManagement.GetAllChannelsByGroupIdAndMediaType(group.IdGroup, MediaTypeEnum.TV).ToList();
           }
           else
           {
-            IList<Channel> tvChannelList = ChannelManagement.GetAllChannelsByGroupIdAndMediaType(group.idGroup,
+            IList<Channel> tvChannelList = ChannelManagement.GetAllChannelsByGroupIdAndMediaType(group.IdGroup,
                                                                                                  MediaTypeEnum.TV);
             foreach (Channel ch in tvChannelList)
             {

@@ -411,23 +411,23 @@ namespace Mediaportal.TV.TvPlugin.Radio
         IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.Radio).ToList();
         foreach (ChannelGroup group in groups)
         {
-          if (hideAllChannelsGroup && group.groupName.Equals(TvConstants.RadioGroupNames.AllChannels) &&
+          if (hideAllChannelsGroup && group.GroupName.Equals(TvConstants.RadioGroupNames.AllChannels) &&
               groups.Count > 1)
           {
             continue;
           }
 
-          if (group.groupName == rootGroup)
+          if (group.GroupName == rootGroup)
           {
             continue;
           }
           GUIListItem item = new GUIListItem();
-          item.Label = group.groupName;
+          item.Label = group.GroupName;
           item.IsFolder = true;
           item.MusicTag = group;
           item.ThumbnailImage = String.Empty;
           Utils.SetDefaultIcons(item);
-          string thumbnail = Utils.GetCoverArt(Thumbs.Radio, "folder_" + group.groupName);
+          string thumbnail = Utils.GetCoverArt(Thumbs.Radio, "folder_" + group.GroupName);
           if (!string.IsNullOrEmpty(thumbnail))                            
           {
             item.IconImageBig = thumbnail;

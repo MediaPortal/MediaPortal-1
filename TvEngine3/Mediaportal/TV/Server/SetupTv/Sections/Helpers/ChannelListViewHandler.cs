@@ -256,7 +256,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       IList<string> groups = new List<string>();
       foreach (var gm in ch.GroupMaps)
       {
-        groups.Add((gm.ChannelGroup.groupName));
+        groups.Add((gm.ChannelGroup.GroupName));
       }
 
       

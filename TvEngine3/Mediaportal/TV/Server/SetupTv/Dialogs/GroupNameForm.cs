@@ -76,7 +76,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       _groupNames = new List<string>();
       foreach (ChannelGroup group in groups)
       {
-        _groupNames.Add(group.groupName);
+        _groupNames.Add(group.GroupName);
       }
     }
 

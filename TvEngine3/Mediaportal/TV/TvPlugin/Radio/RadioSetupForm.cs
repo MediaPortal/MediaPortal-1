@@ -90,8 +90,8 @@ namespace Mediaportal.TV.TvPlugin.Radio
       IEnumerable<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.Radio);
       foreach (ChannelGroup group in groups)
       {
-        int idx = comboBoxGroups.Items.Add(group.groupName);
-        if (group.groupName == _rootGroup)
+        int idx = comboBoxGroups.Items.Add(group.GroupName);
+        if (group.GroupName == _rootGroup)
         {
           selectedIdx = idx;
         }

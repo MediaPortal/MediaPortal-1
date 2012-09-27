@@ -600,8 +600,8 @@ namespace Mediaportal.TV.TvPlugin
       {
         if (Navigator.CurrentGroup != null && Navigator.Groups.Count > 0)
         {
-          Navigator.SetCurrentGroup(Navigator.Groups[0].groupName);
-          GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.Groups[0].groupName);
+          Navigator.SetCurrentGroup(Navigator.Groups[0].GroupName);
+          GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.Groups[0].GroupName);
         }
         if (Navigator.CurrentGroup != null)
         {
@@ -624,7 +624,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           _resumeChannel = channel;
         }
-        GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.CurrentGroup.groupName);
+        GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.CurrentGroup.GroupName);
         Log.Info("tv home init:{0} done", channel.DisplayName);
       }
 
@@ -1548,8 +1548,8 @@ namespace Mediaportal.TV.TvPlugin
 
       for (int i = 0; i < Navigator.Groups.Count; ++i)
       {
-        dlg.Add(Navigator.Groups[i].groupName);
-        if (Navigator.Groups[i].groupName == Navigator.CurrentGroup.groupName)
+        dlg.Add(Navigator.Groups[i].GroupName);
+        if (Navigator.Groups[i].GroupName == Navigator.CurrentGroup.GroupName)
         {
           selected = i;
         }

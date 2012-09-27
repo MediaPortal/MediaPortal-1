@@ -159,7 +159,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         IEnumerable<ChannelGroup> channelGroups = _channelGroupServiceAgent.ListAllChannelGroups();
         foreach (ChannelGroup cg in channelGroups)
         {
-          comboBoxGroup.Items.Add(new CBChannelGroup(cg.groupName, cg.idGroup));
+          comboBoxGroup.Items.Add(new CBChannelGroup(cg.GroupName, cg.IdGroup));
         }
       }
       catch (Exception e)

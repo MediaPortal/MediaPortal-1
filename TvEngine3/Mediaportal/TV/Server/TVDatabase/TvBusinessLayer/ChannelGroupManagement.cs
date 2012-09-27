@@ -61,7 +61,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository())
       {
         var query = channelGroupRepository.GetQuery<ChannelGroup>(
-          g => g.groupName == groupName && g.GroupMaps.Any(gm => gm.mediaType == (int) mediaType));
+          g => g.GroupName == groupName && g.GroupMaps.Any(gm => gm.mediaType == (int) mediaType));
 
         ChannelGroup channelGroupByNameAndMediaType = channelGroupRepository.IncludeAllRelations(query).FirstOrDefault();
         return channelGroupByNameAndMediaType;
@@ -72,10 +72,10 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository())
       {
-        ChannelGroup group = channelGroupRepository.Single<ChannelGroup>(g => g.groupName == groupName);
+        ChannelGroup group = channelGroupRepository.Single<ChannelGroup>(g => g.GroupName == groupName);
         if (group == null)
         {
-          group = new ChannelGroup {groupName = groupName, sortOrder = 9999};
+          group = new ChannelGroup {GroupName = groupName, SortOrder = 9999};
           channelGroupRepository.Add(group);
           channelGroupRepository.UnitOfWork.SaveChanges();
         }
@@ -96,7 +96,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository())
       {        
-        IQueryable<ChannelGroup> query = channelGroupRepository.GetQuery<ChannelGroup>(g => g.idGroup == idGroup);
+        IQueryable<ChannelGroup> query = channelGroupRepository.GetQuery<ChannelGroup>(g => g.IdGroup == idGroup);
         ChannelGroup group = channelGroupRepository.IncludeAllRelations(query).FirstOrDefault();
         return group;
       }
@@ -118,7 +118,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository(true))
       {
-        channelGroupRepository.Delete<ChannelGroup>(g => g.idGroup == idGroup);
+        channelGroupRepository.Delete<ChannelGroup>(g => g.IdGroup == idGroup);
         channelGroupRepository.UnitOfWork.SaveChanges();
       }      
     }
@@ -127,7 +127,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository(true))
       {
-        var query = channelGroupRepository.GetQuery<ChannelGroup>(g => g.groupName != TvConstants.TvGroupNames.AllChannels && g.groupName != TvConstants.RadioGroupNames.AllChannels);
+        var query = channelGroupRepository.GetQuery<ChannelGroup>(g => g.GroupName != TvConstants.TvGroupNames.AllChannels && g.GroupName != TvConstants.RadioGroupNames.AllChannels);
         var listAllChannelGroups = channelGroupRepository.IncludeAllRelations(query, includeRelations).ToList();
         return listAllChannelGroups;
       }

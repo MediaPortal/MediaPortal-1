@@ -77,7 +77,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     ChangeTracker.RecordOriginalValue("idChannelGroup", _idChannelGroup);
                     if (!IsDeserializing)
                     {
-                        if (ChannelGroups != null && ChannelGroups.idGroup != value)
+                        if (ChannelGroups != null && ChannelGroups.IdGroup != value)
                         {
                             ChannelGroups = null;
                         }
@@ -279,7 +279,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     ChannelGroups.KeywordMap.Add(this);
                 }
     
-                idChannelGroup = ChannelGroups.idGroup;
+                idChannelGroup = ChannelGroups.IdGroup;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {

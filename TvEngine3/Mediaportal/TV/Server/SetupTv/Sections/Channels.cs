@@ -129,7 +129,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       foreach (ChannelGroup group in groups)
       {
-        TabPage page = new TabPage(group.groupName);
+        TabPage page = new TabPage(group.GroupName);
         page.SuspendLayout();
 
         ChannelsInGroupControl channelsInRadioGroupControl = new ChannelsInGroupControl(_mediaTypeEnum);        
@@ -160,7 +160,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       foreach (ChannelGroup group in groups)
       {
-        ToolStripMenuItem item = new ToolStripMenuItem(group.groupName);
+        ToolStripMenuItem item = new ToolStripMenuItem(group.GroupName);
 
         item.Tag = group;
         item.Click += OnAddToFavoritesMenuItem_Click;
@@ -222,7 +222,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         {
           return;
         }
-        group = new ChannelGroup {groupName = dlg.GroupName, sortOrder = 9999};
+        group = new ChannelGroup {GroupName = dlg.GroupName, SortOrder = 9999};
         group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
         group.AcceptChanges();
 
@@ -246,11 +246,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         string groupString = item.SubItems[1].Text;
         if (groupString == string.Empty)
         {
-          groupString = group.groupName;
+          groupString = group.GroupName;
         }
         else
         {
-          groupString += ", " + group.groupName;
+          groupString += ", " + group.GroupName;
         }
 
         item.SubItems[1].Text = groupString;
@@ -380,7 +380,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       for (int i = 1; i < tabControl1.TabPages.Count; i++)
       {
         ChannelGroup group = (ChannelGroup)tabControl1.TabPages[i].Tag;
-        group.sortOrder = i - 1;        
+        group.SortOrder = i - 1;        
         group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
         group.AcceptChanges();
       }
@@ -787,7 +787,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         return;
       }
 
-      var group = new ChannelGroup { groupName = dlg.GroupName, sortOrder = 9999 };
+      var group = new ChannelGroup { GroupName = dlg.GroupName, SortOrder = 9999 };
 
       group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
       group.AcceptChanges();
@@ -812,13 +812,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         return;
       }
 
-      GroupNameForm dlgGrpName = new GroupNameForm(group.groupName);
+      GroupNameForm dlgGrpName = new GroupNameForm(group.GroupName);
       if (dlgGrpName.ShowDialog(this) != DialogResult.OK)
       {
         return;
       }
 
-      group.groupName = dlgGrpName.GroupName;
+      group.GroupName = dlgGrpName.GroupName;
       group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
       group.AcceptChanges();
 
@@ -849,7 +849,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       DialogResult result = MessageBox.Show(string.Format("Are you sure you want to delete the group '{0}'?",
-                                                          group.groupName), "", MessageBoxButtons.YesNo);
+                                                          group.GroupName), "", MessageBoxButtons.YesNo);
 
       if (result == DialogResult.No)
       {
@@ -858,7 +858,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       bool isGroupEmpty = (group.GroupMaps.Count <= 0);
 
-      ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroup(group.idGroup);      
+      ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroup(group.IdGroup);      
             
 
       if (!isGroupEmpty)
@@ -1006,15 +1006,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       bool isFixedGroupName = (
-                                group.groupName == TvConstants.TvGroupNames.AllChannels ||
-                                group.groupName == TvConstants.TvGroupNames.Analog ||
-                                group.groupName == TvConstants.TvGroupNames.DVBC ||
-                                group.groupName == TvConstants.TvGroupNames.DVBS ||
-                                group.groupName == TvConstants.TvGroupNames.DVBT
+                                group.GroupName == TvConstants.TvGroupNames.AllChannels ||
+                                group.GroupName == TvConstants.TvGroupNames.Analog ||
+                                group.GroupName == TvConstants.TvGroupNames.DVBC ||
+                                group.GroupName == TvConstants.TvGroupNames.DVBS ||
+                                group.GroupName == TvConstants.TvGroupNames.DVBT
                               );
 
       bool isGlobalChannelsGroup = (
-                                     group.groupName == TvConstants.TvGroupNames.AllChannels
+                                     group.GroupName == TvConstants.TvGroupNames.AllChannels
                                    );
 
       renameGroupToolStripMenuItem.Tag = tabControl1.TabPages[targetIndex];
@@ -1048,7 +1048,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         return;
       }
 
-      GroupNameForm dlg = new GroupNameForm(group.groupName);
+      GroupNameForm dlg = new GroupNameForm(group.GroupName);
 
       dlg.ShowDialog(this);
 
@@ -1057,7 +1057,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         return;
       }
 
-      group.groupName = dlg.GroupName;
+      group.GroupName = dlg.GroupName;
       group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
       group.AcceptChanges();
 
@@ -1095,7 +1095,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       DialogResult result = MessageBox.Show(string.Format("Are you sure you want to delete the group '{0}'?",
-                                                          group.groupName), "", MessageBoxButtons.YesNo);
+                                                          group.GroupName), "", MessageBoxButtons.YesNo);
 
       if (result == DialogResult.No)
       {
@@ -1104,7 +1104,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       bool groupIsEmpty = (group.GroupMaps.Count <= 0);
 
-      ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroup(group.idGroup);      
+      ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroup(group.IdGroup);      
       tabControl1.TabPages.Remove(tab);
 
       if (!groupIsEmpty && tabControl1.SelectedIndex == 0)

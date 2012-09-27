@@ -366,9 +366,9 @@ namespace Mediaportal.TV.TvPlugin
       for (int i = 0; i < _channelGroupList.Count; i++)
       {
         current = _channelGroupList[i];
-        spinGroup.AddLabel(current.groupName, i);
+        spinGroup.AddLabel(current.GroupName, i);
         // set selected
-        if (current.groupName.CompareTo(TVHome.Navigator.CurrentGroup.groupName) == 0)
+        if (current.GroupName.CompareTo(TVHome.Navigator.CurrentGroup.GroupName) == 0)
         {
           spinGroup.Value = i;
         }
@@ -385,7 +385,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private List<Server.TVDatabase.Entities.Channel> GetChannelListByGroup()
     {
-      int idGroup = TVHome.Navigator.CurrentGroup.idGroup;
+      int idGroup = TVHome.Navigator.CurrentGroup.IdGroup;
 
       if (_tvGroupChannelListCache == null)
       {
@@ -402,7 +402,7 @@ namespace Mediaportal.TV.TvPlugin
       {
         List<Server.TVDatabase.Entities.Channel> tvChannelList =
           ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(
-            TVHome.Navigator.CurrentGroup.idGroup, MediaTypeEnum.TV, ChannelIncludeRelationEnum.TuningDetails).ToList();
+            TVHome.Navigator.CurrentGroup.IdGroup, MediaTypeEnum.TV, ChannelIncludeRelationEnum.TuningDetails).ToList();
 
         if (tvChannelList != null)
         {
@@ -661,19 +661,19 @@ namespace Mediaportal.TV.TvPlugin
     private IDictionary<int, NowAndNext> GetNowAndNext(DateTime nextEPGupdate)
     {
       IDictionary<int, NowAndNext> getNowAndNext = new Dictionary<int, NowAndNext>();
-      int idGroup = TVHome.Navigator.CurrentGroup.idGroup;
+      int idGroup = TVHome.Navigator.CurrentGroup.IdGroup;
       if (_listNowNext.TryGetValue(idGroup, out getNowAndNext))
       {
         bool updateNow = (DateTime.Now >= nextEPGupdate);
         if (updateNow)
         {
-          getNowAndNext = ServiceAgents.Instance.ProgramServiceAgent.GetNowAndNextForChannelGroup(TVHome.Navigator.CurrentGroup.idGroup);
+          getNowAndNext = ServiceAgents.Instance.ProgramServiceAgent.GetNowAndNextForChannelGroup(TVHome.Navigator.CurrentGroup.IdGroup);
           _listNowNext[idGroup] = getNowAndNext;
         }
       }
       else
       {
-        getNowAndNext = ServiceAgents.Instance.ProgramServiceAgent.GetNowAndNextForChannelGroup(TVHome.Navigator.CurrentGroup.idGroup);
+        getNowAndNext = ServiceAgents.Instance.ProgramServiceAgent.GetNowAndNextForChannelGroup(TVHome.Navigator.CurrentGroup.IdGroup);
         _listNowNext.Add(idGroup, getNowAndNext);
       }
       return getNowAndNext;
@@ -681,7 +681,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private void SetNextEpgUpdate(DateTime nextEPGupdate)
     {
-      int idGroup = TVHome.Navigator.CurrentGroup.idGroup;
+      int idGroup = TVHome.Navigator.CurrentGroup.IdGroup;
       if (_nextEPGupdate.ContainsKey(idGroup))
       {
         _nextEPGupdate[idGroup] = nextEPGupdate;
@@ -695,7 +695,7 @@ namespace Mediaportal.TV.TvPlugin
     private DateTime GetNextEpgUpdate()
     {
       DateTime nextEPGupdate = DateTime.MinValue;
-      int idGroup = TVHome.Navigator.CurrentGroup.idGroup;
+      int idGroup = TVHome.Navigator.CurrentGroup.IdGroup;
 
       _nextEPGupdate.TryGetValue(idGroup, out nextEPGupdate);
       return nextEPGupdate;

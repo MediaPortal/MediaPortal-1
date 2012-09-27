@@ -25,7 +25,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Primitive Properties
     
         [DataMember]
-        public int idGroup
+        public int IdGroup
         {
             get { return _idGroup; }
             set
@@ -44,7 +44,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idGroup;
     
         [DataMember]
-        public string groupName
+        public string GroupName
         {
             get { return _groupName; }
             set
@@ -59,7 +59,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _groupName;
     
         [DataMember]
-        public int sortOrder
+        public int SortOrder
         {
             get { return _sortOrder; }
             set

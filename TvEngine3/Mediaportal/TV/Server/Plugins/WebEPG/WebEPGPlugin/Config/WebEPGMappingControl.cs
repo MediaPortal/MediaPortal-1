@@ -119,7 +119,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
           IList<ChannelGroup> channelGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups();
           foreach (ChannelGroup cg in channelGroups)
           {
-            GroupComboBox.Items.Add(new CBChannelGroup(cg.groupName, cg.idGroup));
+            GroupComboBox.Items.Add(new CBChannelGroup(cg.GroupName, cg.IdGroup));
           }
         }
         else
@@ -127,7 +127,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
           IList<ChannelGroup> channelGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.Radio);
           foreach (ChannelGroup cg in channelGroups)
           {
-            GroupComboBox.Items.Add(new CBChannelGroup(cg.groupName, cg.idGroup));
+            GroupComboBox.Items.Add(new CBChannelGroup(cg.GroupName, cg.IdGroup));
           }
         }
       }

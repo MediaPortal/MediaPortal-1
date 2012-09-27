@@ -105,13 +105,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         include |= ChannelIncludeRelationEnum.TuningDetails;
         include |= ChannelIncludeRelationEnum.GroupMaps;
         include |= ChannelIncludeRelationEnum.GroupMapsChannelGroup;
-        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(_channelGroup.idGroup, _mediaTypeEnum, include);
+        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(_channelGroup.IdGroup, _mediaTypeEnum, include);
 
         foreach (var channel in channels)
         {
           foreach (var groupMap in channel.GroupMaps)
           {
-            if (groupMap.idGroup == _channelGroup.idGroup)
+            if (groupMap.idGroup == _channelGroup.IdGroup)
             {
               listView1.Items.Add(CreateItemForChannel(channel, groupMap));
               break;
@@ -119,7 +119,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           }          
         }
 
-        bool isAllChannelsGroup = (_channelGroup.groupName == _allChannelsGroupName);
+        bool isAllChannelsGroup = (_channelGroup.GroupName == _allChannelsGroupName);
         removeChannelFromGroup.Enabled = !isAllChannelsGroup;
         mpButtonDel.Enabled = !isAllChannelsGroup;
       }
@@ -211,7 +211,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       foreach (ChannelGroup group in groups)
       {
-        ToolStripMenuItem item = new ToolStripMenuItem(group.groupName);
+        ToolStripMenuItem item = new ToolStripMenuItem(group.GroupName);
 
         item.Tag = group;
         item.Click += addToFavoritesToolStripMenuItem_Click;

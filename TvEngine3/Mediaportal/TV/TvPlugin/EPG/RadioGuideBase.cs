@@ -92,7 +92,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
     protected override string CurrentGroupName
     {
-      get { return Radio.Radio.SelectedGroup.groupName; }
+      get { return Radio.Radio.SelectedGroup.GroupName; }
     }
 
     #endregion
@@ -113,7 +113,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
       for (int i = 0; i < countGroups; ++i)
       {
-        if (Radio.Radio.AllRadioGroups[i].idGroup == Radio.Radio.SelectedGroup.idGroup)
+        if (Radio.Radio.AllRadioGroups[i].IdGroup == Radio.Radio.SelectedGroup.IdGroup)
         {
           newIndex = oldIndex = i;
           break;
@@ -142,7 +142,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
         // update list
         GUIWaitCursor.Show();
         Radio.Radio.SelectedGroup = Radio.Radio.AllRadioGroups[newIndex];
-        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Group", Radio.Radio.SelectedGroup.groupName);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Group", Radio.Radio.SelectedGroup.GroupName);
 
         _cursorY = 1; // cursor should be on the program guide item
         ChannelOffset = 0;
@@ -279,7 +279,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       // only if more groups present and not in singleChannelView
       if (Radio.Radio.AllRadioGroups.Count > 1 && !_singleChannelView)
       {
-        int prevGroup = Radio.Radio.SelectedGroup.idGroup;
+        int prevGroup = Radio.Radio.SelectedGroup.IdGroup;
 
         var dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
         if (dlg == null)
@@ -292,8 +292,8 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
         for (int i = 0; i < Radio.Radio.AllRadioGroups.Count; ++i)
         {
-          dlg.Add(Radio.Radio.AllRadioGroups[i].groupName);
-          if (Radio.Radio.AllRadioGroups[i].groupName == Radio.Radio.SelectedGroup.groupName)
+          dlg.Add(Radio.Radio.AllRadioGroups[i].GroupName);
+          if (Radio.Radio.AllRadioGroups[i].GroupName == Radio.Radio.SelectedGroup.GroupName)
           {
             selected = i;
           }
@@ -309,7 +309,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
         Radio.Radio.SelectedGroup = Radio.Radio.AllRadioGroups[dlg.SelectedId - 1];
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Group", dlg.SelectedLabelText);
 
-        if (prevGroup != Radio.Radio.SelectedGroup.idGroup)
+        if (prevGroup != Radio.Radio.SelectedGroup.IdGroup)
         {
           GUIWaitCursor.Show();
           _cursorY = 1; // cursor should be on the program guide item
@@ -763,7 +763,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
     protected override IList<Channel> GetGuideChannelsForGroup()
     {      
-      return ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(Radio.Radio.SelectedGroup.idGroup, MediaTypeEnum.Radio).ToList();      
+      return ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(Radio.Radio.SelectedGroup.IdGroup, MediaTypeEnum.Radio).ToList();      
     }
 
     protected override bool HasSelectedGroup()

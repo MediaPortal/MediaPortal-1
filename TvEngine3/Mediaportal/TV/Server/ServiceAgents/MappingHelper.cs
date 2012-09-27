@@ -10,14 +10,14 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
   {
     public static GroupMap AddChannelToGroup(ref Channel channel, ChannelGroup @group, MediaTypeEnum mediaType)
     {
-      foreach (GroupMap groupMap in channel.GroupMaps.Where(groupMap => groupMap.idGroup == @group.idGroup))
+      foreach (GroupMap groupMap in channel.GroupMaps.Where(groupMap => groupMap.idGroup == @group.IdGroup))
       {
         return groupMap;
       }
       DoAddChannelToGroup(channel, group, mediaType);
       channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
       channel.AcceptChanges();
-      return channel.GroupMaps.FirstOrDefault(gMap => gMap.idGroup == @group.idGroup);
+      return channel.GroupMaps.FirstOrDefault(gMap => gMap.idGroup == @group.IdGroup);
     }
 
     private static void DoAddChannelToGroup(Channel channel, ChannelGroup @group, MediaTypeEnum mediaType)
@@ -27,7 +27,7 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
                          //Channel = channel, // causes : AcceptChanges cannot continue because the object's key values conflict with another object in the ObjectStateManager. Make sure that the key values are unique before calling AcceptChanges.
                          //ChannelGroup = group,
                          idChannel = channel.IdChannel,
-                         idGroup = @group.idGroup,
+                         idGroup = @group.IdGroup,
                          mediaType = (int) mediaType,
                          SortOrder = channel.SortOrder
                        };

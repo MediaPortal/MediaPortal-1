@@ -93,14 +93,14 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         foreach (ChannelGroup group in tmp)
         {
           bool isFixedGroupName = (
-                                    group.groupName == TvConstants.TvGroupNames.AllChannels ||
+                                    group.GroupName == TvConstants.TvGroupNames.AllChannels ||
                                     (
                                       _SelectionType == SelectionType.ForRenaming &&
                                       (
-                                        group.groupName == TvConstants.TvGroupNames.Analog ||
-                                        group.groupName == TvConstants.TvGroupNames.DVBC ||
-                                        group.groupName == TvConstants.TvGroupNames.DVBS ||
-                                        group.groupName == TvConstants.TvGroupNames.DVBT)
+                                        group.GroupName == TvConstants.TvGroupNames.Analog ||
+                                        group.GroupName == TvConstants.TvGroupNames.DVBC ||
+                                        group.GroupName == TvConstants.TvGroupNames.DVBS ||
+                                        group.GroupName == TvConstants.TvGroupNames.DVBT)
                                     )
                                   );
 
@@ -116,14 +116,14 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         foreach (ChannelGroup group in tmp)
         {
           bool isFixedGroupName = (
-                                    group.groupName == TvConstants.RadioGroupNames.AllChannels ||
+                                    group.GroupName == TvConstants.RadioGroupNames.AllChannels ||
                                     (
                                       _SelectionType == SelectionType.ForRenaming &&
                                       (
-                                        group.groupName == TvConstants.RadioGroupNames.Analog ||
-                                        group.groupName == TvConstants.RadioGroupNames.DVBC ||
-                                        group.groupName == TvConstants.RadioGroupNames.DVBS ||
-                                        group.groupName == TvConstants.RadioGroupNames.DVBT)
+                                        group.GroupName == TvConstants.RadioGroupNames.Analog ||
+                                        group.GroupName == TvConstants.RadioGroupNames.DVBC ||
+                                        group.GroupName == TvConstants.RadioGroupNames.DVBS ||
+                                        group.GroupName == TvConstants.RadioGroupNames.DVBT)
                                     )
                                   );
 

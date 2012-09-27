@@ -97,7 +97,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
         // update list
         GUIWaitCursor.Show();
         TVHome.Navigator.SetCurrentGroup(newIndex);
-        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Group", TVHome.Navigator.CurrentGroup.groupName);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
 
         _cursorY = 1; // cursor should be on the program guide item
         ChannelOffset = 0;
@@ -242,11 +242,11 @@ namespace Mediaportal.TV.TvPlugin.EPG
       // only if more groups present and not in singleChannelView
       if (TVHome.Navigator.Groups.Count > 1 && !_singleChannelView)
       {
-        int prevGroup = TVHome.Navigator.CurrentGroup.idGroup;
+        int prevGroup = TVHome.Navigator.CurrentGroup.IdGroup;
 
         TVHome.OnSelectGroup();
 
-        if (prevGroup != TVHome.Navigator.CurrentGroup.idGroup)
+        if (prevGroup != TVHome.Navigator.CurrentGroup.IdGroup)
         {
           GUIWaitCursor.Show();          
           _cursorY = 1; // cursor should be on the program guide item
@@ -564,7 +564,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
     protected override IList<Channel> GetGuideChannelsForGroup()
     {
       return
-        ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(TVHome.Navigator.CurrentGroup.idGroup, MediaTypeEnum.TV).ToList();      
+        ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(TVHome.Navigator.CurrentGroup.IdGroup, MediaTypeEnum.TV).ToList();      
     }
 
     protected override bool HasSelectedGroup()
@@ -798,7 +798,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
     protected override string CurrentGroupName
     {
-      get { return TVHome.Navigator.CurrentGroup.groupName; }
+      get { return TVHome.Navigator.CurrentGroup.GroupName; }
     }
 
     protected override string Thumb

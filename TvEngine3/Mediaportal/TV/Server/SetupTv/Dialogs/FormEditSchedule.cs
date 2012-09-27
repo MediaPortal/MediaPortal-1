@@ -169,7 +169,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(include);
       //IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.TV);
       foreach (ChannelGroup group in groups)
-        mpComboBoxChannelsGroup.Items.Add(new ComboBoxExItem(group.groupName, -1, group.idGroup));
+        mpComboBoxChannelsGroup.Items.Add(new ComboBoxExItem(group.GroupName, -1, group.IdGroup));
       if (mpComboBoxChannelsGroup.Items.Count == 0)
         mpComboBoxChannelsGroup.Items.Add(new ComboBoxExItem("(no groups defined)", -1, -1));
       mpComboBoxChannelsGroup.SelectedIndex = 0;
