@@ -33,10 +33,10 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 {
                     if (ChangeTracker.ChangeTrackingEnabled && ChangeTracker.State != ObjectState.Added)
                     {
-                        throw new InvalidOperationException("The property 'idTuning' is part of the object's key and cannot be changed. Changes to key properties can only be made when the object is not being tracked or is in the Added state.");
+                        throw new InvalidOperationException("The property 'IdTuning' is part of the object's key and cannot be changed. Changes to key properties can only be made when the object is not being tracked or is in the Added state.");
                     }
                     _idTuning = value;
-                    OnPropertyChanged("idTuning");
+                    OnPropertyChanged("IdTuning");
                 }
             }
         }
@@ -50,7 +50,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             {
                 if (_idChannel != value)
                 {
-                    ChangeTracker.RecordOriginalValue("idChannel", _idChannel);
+                    ChangeTracker.RecordOriginalValue("IdChannel", _idChannel);
                     if (!IsDeserializing)
                     {
                         if (Channel != null && Channel.IdChannel != value)
@@ -59,7 +59,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                         }
                     }
                     _idChannel = value;
-                    OnPropertyChanged("idChannel");
+                    OnPropertyChanged("IdChannel");
                 }
             }
         }
@@ -74,7 +74,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_name != value)
                 {
                     _name = value;
-                    OnPropertyChanged("name");
+                    OnPropertyChanged("Name");
                 }
             }
         }
@@ -89,7 +89,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_provider != value)
                 {
                     _provider = value;
-                    OnPropertyChanged("provider");
+                    OnPropertyChanged("Provider");
                 }
             }
         }
@@ -104,7 +104,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_channelType != value)
                 {
                     _channelType = value;
-                    OnPropertyChanged("channelType");
+                    OnPropertyChanged("ChannelType");
                 }
             }
         }
@@ -119,7 +119,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_channelNumber != value)
                 {
                     _channelNumber = value;
-                    OnPropertyChanged("channelNumber");
+                    OnPropertyChanged("ChannelNumber");
                 }
             }
         }
@@ -134,7 +134,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_frequency != value)
                 {
                     _frequency = value;
-                    OnPropertyChanged("frequency");
+                    OnPropertyChanged("Frequency");
                 }
             }
         }
@@ -149,7 +149,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_countryId != value)
                 {
                     _countryId = value;
-                    OnPropertyChanged("countryId");
+                    OnPropertyChanged("CountryId");
                 }
             }
         }
@@ -164,7 +164,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_networkId != value)
                 {
                     _networkId = value;
-                    OnPropertyChanged("networkId");
+                    OnPropertyChanged("NetworkId");
                 }
             }
         }
@@ -179,7 +179,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_transportId != value)
                 {
                     _transportId = value;
-                    OnPropertyChanged("transportId");
+                    OnPropertyChanged("TransportId");
                 }
             }
         }
@@ -194,7 +194,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_serviceId != value)
                 {
                     _serviceId = value;
-                    OnPropertyChanged("serviceId");
+                    OnPropertyChanged("ServiceId");
                 }
             }
         }
@@ -209,7 +209,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_pmtPid != value)
                 {
                     _pmtPid = value;
-                    OnPropertyChanged("pmtPid");
+                    OnPropertyChanged("PmtPid");
                 }
             }
         }
@@ -224,7 +224,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_freeToAir != value)
                 {
                     _freeToAir = value;
-                    OnPropertyChanged("freeToAir");
+                    OnPropertyChanged("FreeToAir");
                 }
             }
         }
@@ -239,7 +239,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_modulation != value)
                 {
                     _modulation = value;
-                    OnPropertyChanged("modulation");
+                    OnPropertyChanged("Modulation");
                 }
             }
         }
@@ -254,7 +254,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_polarisation != value)
                 {
                     _polarisation = value;
-                    OnPropertyChanged("polarisation");
+                    OnPropertyChanged("Polarisation");
                 }
             }
         }
@@ -269,7 +269,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_symbolrate != value)
                 {
                     _symbolrate = value;
-                    OnPropertyChanged("symbolrate");
+                    OnPropertyChanged("Symbolrate");
                 }
             }
         }
@@ -284,7 +284,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_diSeqC != value)
                 {
                     _diSeqC = value;
-                    OnPropertyChanged("diseqc");
+                    OnPropertyChanged("DiSEqC");
                 }
             }
         }
@@ -299,7 +299,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_switchingFrequency != value)
                 {
                     _switchingFrequency = value;
-                    OnPropertyChanged("switchingFrequency");
+                    OnPropertyChanged("SwitchingFrequency");
                 }
             }
         }
@@ -314,7 +314,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_bandwidth != value)
                 {
                     _bandwidth = value;
-                    OnPropertyChanged("bandwidth");
+                    OnPropertyChanged("Bandwidth");
                 }
             }
         }
@@ -329,7 +329,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_majorChannel != value)
                 {
                     _majorChannel = value;
-                    OnPropertyChanged("majorChannel");
+                    OnPropertyChanged("MajorChannel");
                 }
             }
         }
@@ -344,7 +344,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_minorChannel != value)
                 {
                     _minorChannel = value;
-                    OnPropertyChanged("minorChannel");
+                    OnPropertyChanged("MinorChannel");
                 }
             }
         }
@@ -359,7 +359,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_videoSource != value)
                 {
                     _videoSource = value;
-                    OnPropertyChanged("videoSource");
+                    OnPropertyChanged("VideoSource");
                 }
             }
         }
@@ -374,7 +374,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_tuningSource != value)
                 {
                     _tuningSource = value;
-                    OnPropertyChanged("tuningSource");
+                    OnPropertyChanged("TuningSource");
                 }
             }
         }
@@ -389,7 +389,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_band != value)
                 {
                     _band = value;
-                    OnPropertyChanged("band");
+                    OnPropertyChanged("Band");
                 }
             }
         }
@@ -404,7 +404,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_satIndex != value)
                 {
                     _satIndex = value;
-                    OnPropertyChanged("satIndex");
+                    OnPropertyChanged("SatIndex");
                 }
             }
         }
@@ -419,7 +419,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_innerFecRate != value)
                 {
                     _innerFecRate = value;
-                    OnPropertyChanged("innerFecRate");
+                    OnPropertyChanged("InnerFecRate");
                 }
             }
         }
@@ -434,7 +434,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_pilot != value)
                 {
                     _pilot = value;
-                    OnPropertyChanged("pilot");
+                    OnPropertyChanged("Pilot");
                 }
             }
         }
@@ -449,7 +449,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_rollOff != value)
                 {
                     _rollOff = value;
-                    OnPropertyChanged("rollOff");
+                    OnPropertyChanged("RollOff");
                 }
             }
         }
@@ -464,7 +464,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_url != value)
                 {
                     _url = value;
-                    OnPropertyChanged("url");
+                    OnPropertyChanged("Url");
                 }
             }
         }
@@ -479,7 +479,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_bitrate != value)
                 {
                     _bitrate = value;
-                    OnPropertyChanged("bitrate");
+                    OnPropertyChanged("Bitrate");
                 }
             }
         }
@@ -494,7 +494,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_audioSource != value)
                 {
                     _audioSource = value;
-                    OnPropertyChanged("audioSource");
+                    OnPropertyChanged("AudioSource");
                 }
             }
         }
@@ -509,7 +509,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_isVCRSignal != value)
                 {
                     _isVCRSignal = value;
-                    OnPropertyChanged("isVCRSignal");
+                    OnPropertyChanged("IsVCRSignal");
                 }
             }
         }
@@ -524,7 +524,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (_mediaType != value)
                 {
                     _mediaType = value;
-                    OnPropertyChanged("mediaType");
+                    OnPropertyChanged("MediaType");
                 }
             }
         }
