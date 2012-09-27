@@ -1200,14 +1200,14 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
             {
               var history1 = new History
                                {
-                                 idChannel = channel.IdChannel,
-                                 startTime = p.startTime,
-                                 endTime = p.endTime,
-                                 title = p.title,
-                                 description = p.description,
+                                 IdChannel = channel.IdChannel,
+                                 StartTime = p.startTime,
+                                 EndTime = p.endTime,
+                                 Title = p.title,
+                                 Description = p.description,
                                  ProgramCategory = p.ProgramCategory,
-                                 recorded = false,
-                                 watched = 0
+                                 Recorded = false,
+                                 Watched = 0
                                };
               existingUser.History = history1;
             }
