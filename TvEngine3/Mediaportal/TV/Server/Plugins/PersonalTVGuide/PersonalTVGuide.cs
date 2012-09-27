@@ -137,22 +137,22 @@ namespace Mediaportal.TV.Server.Plugins.PersonalTVGuide
 
     private void UpdateKeyword(Keyword key)
     {      
-      if (_debugMode) Log.Debug("PersonalTVGuide: Updating Keyword: " + key.keywordName);
+      if (_debugMode) Log.Debug("PersonalTVGuide: Updating Keyword: " + key.KeywordName);
       if (key.SearchInTitle)
       {
-        SaveList(key.idKeyword, ContainsInTitle(key.keywordName));
+        SaveList(key.IdKeyword, ContainsInTitle(key.KeywordName));
         Thread.Sleep(100);
       }
       
       if (key.SearchInDescription)
       {
-        SaveList(key.idKeyword, ContainsInDescription(key.keywordName));
+        SaveList(key.IdKeyword, ContainsInDescription(key.KeywordName));
         Thread.Sleep(100);
       }
 
       if (key.SearchInGenre)
       {
-        SaveList(key.idKeyword, ContainsInDescription(key.keywordName));
+        SaveList(key.IdKeyword, ContainsInDescription(key.KeywordName));
         Thread.Sleep(100);
       }
     }

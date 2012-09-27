@@ -54,7 +54,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     ChangeTracker.RecordOriginalValue("idKeyword", _idKeyword);
                     if (!IsDeserializing)
                     {
-                        if (Keyword != null && Keyword.idKeyword != value)
+                        if (Keyword != null && Keyword.IdKeyword != value)
                         {
                             Keyword = null;
                         }
@@ -240,7 +240,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Keyword.KeywordMaps.Add(this);
                 }
     
-                idKeyword = Keyword.idKeyword;
+                idKeyword = Keyword.IdKeyword;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {

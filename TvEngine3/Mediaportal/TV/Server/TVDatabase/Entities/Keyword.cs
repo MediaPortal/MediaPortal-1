@@ -25,7 +25,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Primitive Properties
     
         [DataMember]
-        public int idKeyword
+        public int IdKeyword
         {
             get { return _idKeyword; }
             set
@@ -44,7 +44,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idKeyword;
     
         [DataMember]
-        public string keywordName
+        public string KeywordName
         {
             get { return _keywordName; }
             set
@@ -59,7 +59,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _keywordName;
     
         [DataMember]
-        public int rating
+        public int Rating
         {
             get { return _rating; }
             set
@@ -74,7 +74,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _rating;
     
         [DataMember]
-        public bool autoRecord
+        public bool AutoRecord
         {
             get { return _autoRecord; }
             set
@@ -89,7 +89,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private bool _autoRecord;
     
         [DataMember]
-        public int searchIn
+        public int SearchIn
         {
             get { return _searchIn; }
             set
