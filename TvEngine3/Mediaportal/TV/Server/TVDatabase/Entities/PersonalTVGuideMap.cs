@@ -44,7 +44,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idPersonalTVGuideMap;
     
         [DataMember]
-        public int idKeyword
+        public int IdKeyword
         {
             get { return _idKeyword; }
             set
@@ -67,7 +67,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idKeyword;
     
         [DataMember]
-        public int idProgram
+        public int IdProgram
         {
             get { return _idProgram; }
             set
@@ -240,7 +240,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Program.PersonalTVGuideMaps.Add(this);
                 }
     
-                idProgram = Program.idProgram;
+                IdProgram = Program.idProgram;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {
@@ -279,7 +279,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Keyword.PersonalTVGuideMaps.Add(this);
                 }
     
-                idKeyword = Keyword.IdKeyword;
+                IdKeyword = Keyword.IdKeyword;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {
