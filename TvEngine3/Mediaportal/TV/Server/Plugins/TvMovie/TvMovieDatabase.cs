@@ -856,18 +856,18 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         {
           try
           {
-            string newStart = mapping.timeSharingStart;
-            string newEnd = mapping.timeSharingEnd;
-            string newStation = mapping.stationName;
+            string newStart = mapping.TimeSharingStart;
+            string newEnd = mapping.TimeSharingEnd;
+            string newStation = mapping.StationName;
             string newChannel = mapping.Channel.DisplayName;
-            int newIdChannel = mapping.idChannel;            
+            int newIdChannel = mapping.IdChannel;            
 
             mappingList.Add(new Mapping(newChannel, newIdChannel, newStation, newStart, newEnd));
           }
           catch (Exception)
           {
             Log.Info("TVMovie: Error loading mappings - make sure tv channel: {0} (ID: {1}) still exists!",
-                     mapping.stationName, mapping.idChannel);
+                     mapping.StationName, mapping.IdChannel);
           }
         }
       }

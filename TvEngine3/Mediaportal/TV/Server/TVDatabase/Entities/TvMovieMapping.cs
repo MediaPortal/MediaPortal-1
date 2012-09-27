@@ -24,7 +24,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Primitive Properties
     
         [DataMember]
-        public int idMapping
+        public int IdMapping
         {
             get { return _idMapping; }
             set
@@ -43,7 +43,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idMapping;
     
         [DataMember]
-        public int idChannel
+        public int IdChannel
         {
             get { return _idChannel; }
             set
@@ -66,7 +66,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idChannel;
     
         [DataMember]
-        public string stationName
+        public string StationName
         {
             get { return _stationName; }
             set
@@ -81,7 +81,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _stationName;
     
         [DataMember]
-        public string timeSharingStart
+        public string TimeSharingStart
         {
             get { return _timeSharingStart; }
             set
@@ -96,7 +96,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _timeSharingStart;
     
         [DataMember]
-        public string timeSharingEnd
+        public string TimeSharingEnd
         {
             get { return _timeSharingEnd; }
             set
@@ -243,7 +243,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Channel.TvMovieMappings.Add(this);
                 }
     
-                idChannel = Channel.IdChannel;
+                IdChannel = Channel.IdChannel;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {

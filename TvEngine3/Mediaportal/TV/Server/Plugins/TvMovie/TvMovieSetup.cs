@@ -375,18 +375,18 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
               string MpChannelName = string.Empty;
               try
               {
-                TreeNode channelNode = FindChannel(mapping.idChannel);
+                TreeNode channelNode = FindChannel(mapping.IdChannel);
                 if (channelNode != null)
                 {
-                  string stationName = mapping.stationName;
+                  string stationName = mapping.StationName;
                   if (FindStation(stationName) != null)
                   {
                     TreeNode stationNode = (TreeNode)FindStation(stationName).Clone();
                     ChannelInfo channelInfo = new ChannelInfo();
                     if (stationNode != null)
                     {
-                      string start = mapping.timeSharingStart;
-                      string end = mapping.timeSharingEnd;
+                      string start = mapping.TimeSharingStart;
+                      string end = mapping.TimeSharingEnd;
 
                       if (start != "00:00" || end != "00:00")
                         stationNode.Text = string.Format("{0} ({1}-{2})", stationName, start, end);
