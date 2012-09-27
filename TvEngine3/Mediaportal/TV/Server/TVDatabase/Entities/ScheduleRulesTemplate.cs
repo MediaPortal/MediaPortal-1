@@ -23,7 +23,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Primitive Properties
     
         [DataMember]
-        public int idScheduleRulesTemplate
+        public int IdScheduleRulesTemplate
         {
             get { return _idScheduleRulesTemplate; }
             set
@@ -42,7 +42,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idScheduleRulesTemplate;
     
         [DataMember]
-        public string name
+        public string Name
         {
             get { return _name; }
             set
@@ -57,7 +57,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _name;
     
         [DataMember]
-        public string rules
+        public string Rules
         {
             get { return _rules; }
             set
@@ -72,7 +72,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _rules;
     
         [DataMember]
-        public bool enabled
+        public bool Enabled
         {
             get { return _enabled; }
             set
@@ -87,7 +87,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private bool _enabled;
     
         [DataMember]
-        public int usages
+        public int Usages
         {
             get { return _usages; }
             set
@@ -102,7 +102,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _usages;
     
         [DataMember]
-        public bool editable
+        public bool Editable
         {
             get { return _editable; }
             set

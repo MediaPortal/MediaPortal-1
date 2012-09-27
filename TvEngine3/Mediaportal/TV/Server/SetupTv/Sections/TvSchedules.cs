@@ -262,13 +262,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             var item = new ListViewItem();
             item.Tag = template;
 
-            item.SubItems.Add(Convert.ToString(template.name));
-            item.SubItems.Add(Convert.ToString(template.usages));
-            item.SubItems.Add(Convert.ToString(template.editable));
-            ScheduleConditionList rules = ScheduleConditionHelper.Deserialize<ScheduleConditionList>(template.rules);
+            item.SubItems.Add(Convert.ToString(template.Name));
+            item.SubItems.Add(Convert.ToString(template.Usages));
+            item.SubItems.Add(Convert.ToString(template.Editable));
+            ScheduleConditionList rules = ScheduleConditionHelper.Deserialize<ScheduleConditionList>(template.Rules);
             if (rules != null)
             {
-              item.SubItems.Add(template.rules.ToString());
+              item.SubItems.Add(template.Rules.ToString());
             }
             else
             {
@@ -276,7 +276,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             }
 
 
-            item.Checked = template.enabled;
+            item.Checked = template.Enabled;
 
             listViewTemplates.Items.Add(item);
             listViewTemplates.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
