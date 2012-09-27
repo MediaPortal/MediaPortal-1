@@ -23,7 +23,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Primitive Properties
     
         [DataMember]
-        public int idVersion
+        public int IdVersion
         {
             get { return _idVersion; }
             set
@@ -42,7 +42,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idVersion;
     
         [DataMember]
-        public int versionNumber
+        public int VersionNumber
         {
             get { return _versionNumber; }
             set
