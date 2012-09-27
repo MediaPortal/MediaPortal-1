@@ -114,12 +114,12 @@ namespace Mediaportal.TV.TvPlugin.Helper
         {
           Schedule recNew = ScheduleFactory.Clone(rec.Entity);          
           recNew.scheduleType = (int)ScheduleRecordingType.Once;
-          recNew.startTime = prg.startTime;
-          recNew.endTime = prg.endTime;
-          recNew.idChannel = prg.idChannel;
+          recNew.startTime = prg.StartTime;
+          recNew.endTime = prg.EndTime;
+          recNew.idChannel = prg.IdChannel;
           recNew.series = true;
           recNew.idParentSchedule = rec.Entity.id_Schedule;
-          recNew.programName = prg.title;
+          recNew.programName = prg.Title;
 
           if (rec.IsSerieIsCanceled(rec.GetSchedStartTimeForProg(prg)))
           {
@@ -161,7 +161,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
     public static string GetDisplayTitle(Program prog)
     {
       StringBuilder strBuilder = new StringBuilder();
-      TitleDisplay(strBuilder, prog.title, prog.episodeName, prog.seriesNum, prog.episodeNum, prog.episodePart);
+      TitleDisplay(strBuilder, prog.Title, prog.EpisodeName, prog.SeriesNum, prog.EpisodeNum, prog.EpisodePart);
       return strBuilder.ToString();
     }
 
@@ -542,7 +542,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
           if (prg != null)
           {                        
             DateTime canceledStartTime = new ScheduleBLL(schedule).GetSchedStartTimeForProg(prg);
-            int idChannel = prg.idChannel;
+            int idChannel = prg.IdChannel;
             wasDeleted = StopRecAndDeleteSchedule(schedule, parentSchedule, idChannel, canceledStartTime);             
           }
           else
@@ -811,7 +811,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
       bool isRec = false;
       if (prg != null)
       {
-        isRec = ServiceAgents.Instance.ScheduleServiceAgent.IsScheduleRecordingProgram(idSchedule, prg.idProgram);  
+        isRec = ServiceAgents.Instance.ScheduleServiceAgent.IsScheduleRecordingProgram(idSchedule, prg.IdProgram);  
       }
       else
       {

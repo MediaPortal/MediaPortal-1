@@ -175,8 +175,8 @@ namespace Mediaportal.TV.TvPlugin
       if (prog != null)
       {
         strTime = String.Format("{0}-{1}",
-                                prog.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                prog.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
       }
       if (lblCurrentTime != null)
       {
@@ -401,8 +401,8 @@ namespace Mediaportal.TV.TvPlugin
         if (prog != null)
         {
           string strTime = String.Format("{0}-{1}",
-                                         prog.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                         prog.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                         prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                         prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
           if (lblCurrentTime != null)
           {
@@ -411,26 +411,26 @@ namespace Mediaportal.TV.TvPlugin
 
           if (lblOnTvNow != null)
           {
-            lblOnTvNow.Label = prog.title;
+            lblOnTvNow.Label = prog.Title;
           }
           if (lblStartTime != null)
           {
-            strTime = String.Format("{0}", prog.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+            strTime = String.Format("{0}", prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
             lblStartTime.Label = strTime;
           }
           if (lblEndTime != null)
           {
-            strTime = String.Format("{0} ", prog.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+            strTime = String.Format("{0} ", prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
             lblEndTime.Label = strTime;
           }
 
           // next program
-          prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(prog.endTime.AddMinutes(1), idChannel);            
+          prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(prog.EndTime.AddMinutes(1), idChannel);            
           if (prog != null)
           {
             if (lblOnTvNext != null)
             {
-              lblOnTvNext.Label = prog.title;
+              lblOnTvNext.Label = prog.Title;
             }
           }
         }
@@ -463,12 +463,12 @@ namespace Mediaportal.TV.TvPlugin
         return;
       }
       string strTime = String.Format("{0}-{1}",
-                                     prog.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                     prog.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                     prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                     prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
-      TimeSpan ts = prog.endTime - prog.startTime;
+      TimeSpan ts = prog.EndTime - prog.StartTime;
       double iTotalSecs = ts.TotalSeconds;
-      ts = DateTime.Now - prog.startTime;
+      ts = DateTime.Now - prog.StartTime;
       double iCurSecs = ts.TotalSeconds;
       double fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
       fPercent *= 100.0d;

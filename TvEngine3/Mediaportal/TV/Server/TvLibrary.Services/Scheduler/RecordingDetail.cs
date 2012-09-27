@@ -274,25 +274,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       
       string[] TagValues = {
                              _schedule.Entity.Channel.DisplayName.Trim(),
-                             Program.Entity.title.Trim(),
-                             Program.Entity.episodeName.Trim(),
-                             Program.Entity.seriesNum.Trim(),
-                             Program.Entity.episodeNum.Trim(),
-                             Program.Entity.episodePart.Trim(),
-                             Program.Entity.startTime.ToString("yyyy-MM-dd"),
-                             Program.Entity.startTime.ToShortTimeString(),
-                             Program.Entity.endTime.ToShortTimeString(),
+                             Program.Entity.Title.Trim(),
+                             Program.Entity.EpisodeName.Trim(),
+                             Program.Entity.SeriesNum.Trim(),
+                             Program.Entity.EpisodeNum.Trim(),
+                             Program.Entity.EpisodePart.Trim(),
+                             Program.Entity.StartTime.ToString("yyyy-MM-dd"),
+                             Program.Entity.StartTime.ToShortTimeString(),
+                             Program.Entity.EndTime.ToShortTimeString(),
                              programCategory,
-                             Program.Entity.startTime.ToString("dd"),
-                             Program.Entity.startTime.ToString("MM"),
-                             Program.Entity.startTime.ToString("yyyy"),
-                             Program.Entity.startTime.ToString("HH"),
-                             Program.Entity.startTime.ToString("mm"),
-                             Program.Entity.endTime.ToString("dd"),
-                             Program.Entity.endTime.ToString("MM"),
-                             Program.Entity.endTime.ToString("yyyy"),
-                             Program.Entity.endTime.ToString("HH"),
-                             Program.Entity.endTime.ToString("mm")
+                             Program.Entity.StartTime.ToString("dd"),
+                             Program.Entity.StartTime.ToString("MM"),
+                             Program.Entity.StartTime.ToString("yyyy"),
+                             Program.Entity.StartTime.ToString("HH"),
+                             Program.Entity.StartTime.ToString("mm"),
+                             Program.Entity.EndTime.ToString("dd"),
+                             Program.Entity.EndTime.ToString("MM"),
+                             Program.Entity.EndTime.ToString("yyyy"),
+                             Program.Entity.EndTime.ToString("HH"),
+                             Program.Entity.EndTime.ToString("mm")
                            };
 
       for (int i = 0; i < TagNames.Length; i++)
@@ -330,9 +330,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       }
       if (fileName == string.Empty)
       {
-        DateTime dt = Program.Entity.startTime;
+        DateTime dt = Program.Entity.StartTime;
         fileName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}",
-                                 _schedule.Entity.Channel.DisplayName, Program.Entity.title,
+                                 _schedule.Entity.Channel.DisplayName, Program.Entity.Title,
                                  dt.Year, dt.Month, dt.Day,
                                  dt.Hour,
                                  dt.Minute,

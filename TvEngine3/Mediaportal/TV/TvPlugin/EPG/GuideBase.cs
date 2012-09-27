@@ -455,7 +455,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
             int idchannel = 0;
             foreach (var p in pList)
             {
-              idchannel = p.idChannel;
+              idchannel = p.IdChannel;
               var programBll = new ProgramBLL(p);
               programBlls.Add(programBll);              
             }
@@ -611,10 +611,10 @@ namespace Mediaportal.TV.TvPlugin.EPG
       // get the right db instance of current prog before we store it
       // currentProgram is not a ref to the real entity    
       ProgramBLL modifiedProg =
-        new ProgramBLL (ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleTimesAndChannel(_currentProgram.Entity.title,
-                                                              _currentProgram.Entity.startTime,
-                                                              _currentProgram.Entity.endTime,
-                                                              _currentProgram.Entity.idChannel))
+        new ProgramBLL (ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleTimesAndChannel(_currentProgram.Entity.Title,
+                                                              _currentProgram.Entity.StartTime,
+                                                              _currentProgram.Entity.EndTime,
+                                                              _currentProgram.Entity.IdChannel))
           {Notify = _currentProgram.Notify};
 
       ServiceAgents.Instance.ProgramServiceAgent.SaveProgram(modifiedProg.Entity);
@@ -865,31 +865,31 @@ namespace Mediaportal.TV.TvPlugin.EPG
       else if (_currentProgram != null)
       {
         string strTime = String.Format("{0}-{1}",
-                                       _currentProgram.Entity.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                       _currentProgram.Entity.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                       _currentProgram.Entity.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                       _currentProgram.Entity.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
-        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Title", _currentProgram.Entity.title);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Title", _currentProgram.Entity.Title);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.CompositeTitle",
                                        TVUtil.GetDisplayTitle(_currentProgram.Entity));
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Time", strTime);
-        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Description", _currentProgram.Entity.description);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Description", _currentProgram.Entity.Description);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Genre", TVUtil.GetCategory(_currentProgram.Entity.ProgramCategory));
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Duration", GetDuration(_currentProgram.Entity));
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.DurationMins", GetDurationAsMinutes(_currentProgram.Entity));
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.TimeFromNow", GetStartTimeFromNow(_currentProgram.Entity));
-        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Episode", _currentProgram.Entity.episodeNum);
-        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.SubTitle", _currentProgram.Entity.episodeName);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Episode", _currentProgram.Entity.EpisodeNum);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.SubTitle", _currentProgram.Entity.EpisodeName);
 
-        if (_currentProgram.Entity.classification == "")
+        if (_currentProgram.Entity.Classification == "")
         {
           GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Classification", "No Rating");
         }
         else
         {
-          GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Classification", _currentProgram.Entity.classification);
+          GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Classification", _currentProgram.Entity.Classification);
         }
 
-        _currentTitle = _currentProgram.Entity.title;
+        _currentTitle = _currentProgram.Entity.Title;
         _currentChannel = chan;
 
         bool bSeries = _currentProgram.IsRecordingSeries || _currentProgram.IsRecordingSeriesPending ||
@@ -1077,7 +1077,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
         for (int i = 0; i < _programs.Count; i++)
         {
           Program program = _programs[i];
-          if (program.startTime <= _viewingTime && program.endTime >= _viewingTime)
+          if (program.StartTime <= _viewingTime && program.EndTime >= _viewingTime)
           {
             _programOffset = i;
             found = true;
@@ -1091,7 +1091,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       }
       else if (_programOffset < _programs.Count)
       {
-        int day = (_programs[_programOffset]).startTime.DayOfYear;
+        int day = (_programs[_programOffset]).StartTime.DayOfYear;
         bool changed = false;
         while (day > _viewingTime.DayOfYear)
         {
@@ -1162,9 +1162,9 @@ namespace Mediaportal.TV.TvPlugin.EPG
           else
           {
             program = new ProgramBLL(_programs[_programs.Count - 1]);
-            if (program.Entity.endTime.DayOfYear == _viewingTime.DayOfYear)
+            if (program.Entity.EndTime.DayOfYear == _viewingTime.DayOfYear)
             {
-              program = new ProgramBLL(ProgramFactory.CreateProgram(channel.IdChannel, program.Entity.endTime, program.Entity.endTime, "-", "-", null,
+              program = new ProgramBLL(ProgramFactory.CreateProgram(channel.IdChannel, program.Entity.EndTime, program.Entity.EndTime, "-", "-", null,
                                     ProgramState.None,
                                     DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1,
                                     string.Empty, -1));
@@ -1289,11 +1289,11 @@ namespace Mediaportal.TV.TvPlugin.EPG
         img.Label1 = TVUtil.GetDisplayTitle(program.Entity);
 
         string strTimeSingle = String.Format("{0}",
-                                             program.Entity.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                             program.Entity.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
-        if (program.Entity.startTime.DayOfYear != _viewingTime.DayOfYear)
+        if (program.Entity.StartTime.DayOfYear != _viewingTime.DayOfYear)
         {
-          img.Label1 = String.Format("{0} {1}", Utils.GetShortDayString(program.Entity.startTime),
+          img.Label1 = String.Format("{0} {1}", Utils.GetShortDayString(program.Entity.StartTime),
                                      TVUtil.GetDisplayTitle(program.Entity));
         }
 
@@ -1592,17 +1592,17 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
       foreach (ProgramBLL program in programs)
       {
-        if (Utils.datetolong(program.Entity.endTime) <= iStart)
+        if (Utils.datetolong(program.Entity.EndTime) <= iStart)
           continue;
 
         string strTitle = TVUtil.GetDisplayTitle(program.Entity);
         bool bStartsBefore = false;
         bool bEndsAfter = false;
 
-        if (Utils.datetolong(program.Entity.startTime) < iStart)
+        if (Utils.datetolong(program.Entity.StartTime) < iStart)
           bStartsBefore = true;
 
-        if (Utils.datetolong(program.Entity.endTime) > iEnd)
+        if (Utils.datetolong(program.Entity.EndTime) > iEnd)
           bEndsAfter = true;
 
         DateTime dtBlokStart = _viewingTime;
@@ -1619,7 +1619,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
           bRecording = IsRecordingNoEPG(channel);
         }
 
-        bool programIsHd = program.Entity.description.Contains(_hdtvProgramText);
+        bool programIsHd = program.Entity.Description.Contains(_hdtvProgramText);
 
         int iStartXPos = 0;
         int iEndXPos = 0;
@@ -1629,9 +1629,9 @@ namespace Mediaportal.TV.TvPlugin.EPG
           DateTime dtBlokEnd = dtBlokStart.AddMinutes(_timePerBlock - 1);
           if (program.RunningAt(dtBlokStart, dtBlokEnd))
           {
-            if (program.Entity.endTime <= dtBlokEnd)
+            if (program.Entity.EndTime <= dtBlokEnd)
             {
-              TimeSpan dtSpan = dtBlokEnd - program.Entity.endTime;
+              TimeSpan dtSpan = dtBlokEnd - program.Entity.EndTime;
               int iEndMin = _timePerBlock - (dtSpan.Minutes);
 
               fWidthEnd = ((iEndMin) / ((float)_timePerBlock)) * ((width));
@@ -1643,7 +1643,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
             if (iStartXPos == 0)
             {
-              TimeSpan ts = program.Entity.startTime - dtBlokStart;
+              TimeSpan ts = program.Entity.StartTime - dtBlokStart;
               int iStartMin = ts.Hours * 60;
               iStartMin += ts.Minutes;
               if (ts.Seconds == 59)
@@ -2037,7 +2037,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
             {
               _cursorY = iProgram + 1;
               _currentProgram = program;
-              _startTime = program.Entity.startTime;
+              _startTime = program.Entity.StartTime;
               SetProperties();
             }
           }
@@ -2348,13 +2348,13 @@ namespace Mediaportal.TV.TvPlugin.EPG
     private static string GetStartTimeFromNow(Program program)
     {
       string timeFromNow = String.Empty;
-      if (program.title == "No TVGuide data available")
+      if (program.Title == "No TVGuide data available")
       {
         return timeFromNow;
       }
       const string space = " ";
       string strRemaining = String.Empty;
-      DateTime progStart = program.startTime;
+      DateTime progStart = program.StartTime;
       TimeSpan timeRelative = progStart.Subtract(DateTime.Now);
       if (timeRelative.Days == 0)
       {
@@ -2420,7 +2420,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
         }
         else //already started
         {
-          DateTime progEnd = program.endTime;
+          DateTime progEnd = program.EndTime;
           TimeSpan tsRemaining = DateTime.Now.Subtract(progEnd);
           if (tsRemaining.Minutes > 0)
           {
@@ -2557,12 +2557,12 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
     private static string GetDurationAsMinutes(Program program)
     {
-      if (program.title == "No TVGuide data available")
+      if (program.Title == "No TVGuide data available")
       {
         return "";
       }
-      DateTime progStart = program.startTime;
-      DateTime progEnd = program.endTime;
+      DateTime progStart = program.StartTime;
+      DateTime progEnd = program.EndTime;
       TimeSpan progDuration = progEnd.Subtract(progStart);
       return progDuration.TotalMinutes + " " + GUILocalizeStrings.Get(2998);
     }
@@ -2572,13 +2572,13 @@ namespace Mediaportal.TV.TvPlugin.EPG
     /// </summary>
     private static string GetDuration(Program program)
     {
-      if (program.title == "No TVGuide data available")
+      if (program.Title == "No TVGuide data available")
       {
         return "";
       }
       const string space = " ";
-      DateTime progStart = program.startTime;
-      DateTime progEnd = program.endTime;
+      DateTime progStart = program.StartTime;
+      DateTime progEnd = program.EndTime;
       TimeSpan progDuration = progEnd.Subtract(progStart);
       string duration = "";
       switch (progDuration.Hours)
@@ -2933,13 +2933,13 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
             bool isvalid = false;
             DateTime time = DateTime.Now;
-            if (time < prog.endTime) // present & future
+            if (time < prog.EndTime) // present & future
             {
-              if (_startTime <= prog.startTime)
+              if (_startTime <= prog.StartTime)
               {
                 isvalid = true;
               }
-              else if (_startTime >= prog.startTime && _startTime < prog.endTime)
+              else if (_startTime >= prog.StartTime && _startTime < prog.EndTime)
               {
                 isvalid = true;
               }
@@ -2949,9 +2949,9 @@ namespace Mediaportal.TV.TvPlugin.EPG
               }
             }
               // this one will skip past programs
-            else if (time > _currentProgram.Entity.endTime) // history
+            else if (time > _currentProgram.Entity.EndTime) // history
             {
-              if (prog.endTime > _startTime)
+              if (prog.EndTime > _startTime)
               {
                 isvalid = true;
               }
@@ -3315,7 +3315,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
         UpdateCurrentProgram();
         if (_currentProgram != null)
         {
-          _startTime = _currentProgram.Entity.startTime;
+          _startTime = _currentProgram.Entity.StartTime;
         }
         return;
       }
@@ -3324,7 +3324,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       SetFocus();
       if (_currentProgram != null)
       {
-        _startTime = _currentProgram.Entity.startTime;
+        _startTime = _currentProgram.Entity.StartTime;
       }
     }
 
@@ -3342,7 +3342,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
         UpdateCurrentProgram();
         if (_currentProgram != null)
         {
-          _startTime = _currentProgram.Entity.startTime;
+          _startTime = _currentProgram.Entity.StartTime;
         }
         return;
       }
@@ -3358,7 +3358,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       SetFocus();
       if (_currentProgram != null)
       {
-        _startTime = _currentProgram.Entity.startTime;
+        _startTime = _currentProgram.Entity.StartTime;
       }
     }
 

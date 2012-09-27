@@ -1167,7 +1167,7 @@ namespace Mediaportal.TV.TvPlugin
       if (prog != null)
       {
         GUIPropertyManager.SetProperty("#TV.Scheduled.Title", TVUtil.GetDisplayTitle(prog));
-        GUIPropertyManager.SetProperty("#TV.Scheduled.Gescription", prog.description);
+        GUIPropertyManager.SetProperty("#TV.Scheduled.Gescription", prog.Description);
         GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", TVUtil.GetCategory(prog.ProgramCategory));
       }
 

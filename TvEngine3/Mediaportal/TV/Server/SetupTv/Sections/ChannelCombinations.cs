@@ -270,7 +270,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         dlg.WaitForDisplay();
         foreach (Program program in selectedChannel2.Programs)
         {
-          program.idChannel = selectedChannel.IdChannel;
+          program.IdChannel = selectedChannel.IdChannel;
           ServiceAgents.Instance.ProgramServiceAgent.SaveProgram(program);
         }
         dlg.Close();

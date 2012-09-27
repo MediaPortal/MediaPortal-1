@@ -143,12 +143,12 @@ namespace Mediaportal.TV.TvPlugin
         DateTime current = DateTime.Now;
         current = current.AddMinutes((double)preRecordInterval);
         current = new DateTime(current.Year, current.Month, current.Day, current.Hour, current.Minute, 0);
-        DateTime dtProgEnd = chan.CurrentProgram.endTime;
+        DateTime dtProgEnd = chan.CurrentProgram.EndTime;
         dtProgEnd = new DateTime(dtProgEnd.Year, dtProgEnd.Month, dtProgEnd.Day, dtProgEnd.Hour, dtProgEnd.Minute, 0);
         Log.Debug("TvTimeShiftPositionWatcher: Checking {0} == {1}", current.ToString("dd.MM.yy HH:mm"), dtProgEnd.ToString("dd.MM.yy HH:mm"));
         if (current == dtProgEnd)
         {
-          Log.Debug("TvTimeShiftPositionWatcher: Next program starts within the configured Pre-Rec interval. Current program: [{0}] ending: {1}", chan.CurrentProgram.title, chan.CurrentProgram.endTime.ToString());
+          Log.Debug("TvTimeShiftPositionWatcher: Next program starts within the configured Pre-Rec interval. Current program: [{0}] ending: {1}", chan.CurrentProgram.Title, chan.CurrentProgram.EndTime.ToString());
           SnapshotTimeShiftBuffer();
         }
       }

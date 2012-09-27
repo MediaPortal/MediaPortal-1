@@ -332,25 +332,25 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           listView2.Items.Clear();
           foreach (var prg in prgs)
           {
-            var item = new ListViewItem(prg.title);
-            item.SubItems.Add(prg.startTime.ToString("HH:mm:ss", mmddFormat));
+            var item = new ListViewItem(prg.Title);
+            item.SubItems.Add(prg.StartTime.ToString("HH:mm:ss", mmddFormat));
             item.Tag = prg;
 
-            item.SubItems.Add(prg.endTime.ToString("HH:mm:ss", mmddFormat));
-            item.SubItems.Add(prg.description);
+            item.SubItems.Add(prg.EndTime.ToString("HH:mm:ss", mmddFormat));
+            item.SubItems.Add(prg.Description);
 
-            item.SubItems.Add(prg.seriesNum);
-            item.SubItems.Add(prg.episodeNum);
+            item.SubItems.Add(prg.SeriesNum);
+            item.SubItems.Add(prg.EpisodeNum);
             if (prg.ProgramCategory != null)
             {
               item.SubItems.Add(prg.ProgramCategory.category); 
             }            
-            item.SubItems.Add(prg.originalAirDate.GetValueOrDefault(DateTime.MinValue).ToString("HH:mm:ss", mmddFormat));
-            item.SubItems.Add(prg.classification);
-            item.SubItems.Add(Convert.ToString(prg.starRating));
-            item.SubItems.Add(Convert.ToString(prg.parentalRating));
-            item.SubItems.Add(prg.episodeName);
-            item.SubItems.Add(prg.episodePart);
+            item.SubItems.Add(prg.OriginalAirDate.GetValueOrDefault(DateTime.MinValue).ToString("HH:mm:ss", mmddFormat));
+            item.SubItems.Add(prg.Classification);
+            item.SubItems.Add(Convert.ToString(prg.StarRating));
+            item.SubItems.Add(Convert.ToString(prg.ParentalRating));
+            item.SubItems.Add(prg.EpisodeName);
+            item.SubItems.Add(prg.EpisodePart);
             item.SubItems.Add("state");
 
             listView2.Items.Add(item);

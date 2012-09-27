@@ -649,14 +649,14 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
                                                                               schedule.startTime.AddMonths(1));
         foreach (Program program in programsList)
         {
-          if ((program.title == schedule.programName) && (program.idChannel == schedule.idChannel) &&
-              (program.endTime >= DateTime.Now))
+          if ((program.Title == schedule.programName) && (program.IdChannel == schedule.idChannel) &&
+              (program.EndTime >= DateTime.Now))
           {
             Schedule incomingSchedule = ScheduleFactory.Clone(schedule);
-            incomingSchedule.idChannel = program.idChannel;
-            incomingSchedule.programName = program.title;
-            incomingSchedule.startTime = program.startTime;
-            incomingSchedule.endTime = program.endTime;
+            incomingSchedule.idChannel = program.IdChannel;
+            incomingSchedule.programName = program.Title;
+            incomingSchedule.startTime = program.StartTime;
+            incomingSchedule.endTime = program.EndTime;
             incomingSchedule.preRecordInterval = schedule.preRecordInterval;
             incomingSchedule.postRecordInterval = schedule.postRecordInterval;
             refFillList.Add(incomingSchedule);
@@ -689,10 +689,10 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
           foreach (Program program in programsList)
           {
             Schedule incomingSchedule = ScheduleFactory.Clone(schedule);
-            incomingSchedule.idChannel = program.idChannel;
-            incomingSchedule.programName = program.title;
-            incomingSchedule.startTime = program.startTime;
-            incomingSchedule.endTime = program.endTime;
+            incomingSchedule.idChannel = program.IdChannel;
+            incomingSchedule.programName = program.Title;
+            incomingSchedule.startTime = program.StartTime;
+            incomingSchedule.endTime = program.EndTime;
 
             incomingSchedule.preRecordInterval = schedule.preRecordInterval;
             incomingSchedule.postRecordInterval = schedule.postRecordInterval;
@@ -726,13 +726,13 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
         {
           foreach (Program program in programsList)
           {
-            if (program.startTime.DayOfWeek == schedule.startTime.DayOfWeek)
+            if (program.StartTime.DayOfWeek == schedule.startTime.DayOfWeek)
             {
               Schedule incomingSchedule = ScheduleFactory.Clone(schedule);
-              incomingSchedule.idChannel = program.idChannel;
-              incomingSchedule.programName = program.title;
-              incomingSchedule.startTime = program.startTime;
-              incomingSchedule.endTime = program.endTime;
+              incomingSchedule.idChannel = program.IdChannel;
+              incomingSchedule.programName = program.Title;
+              incomingSchedule.startTime = program.StartTime;
+              incomingSchedule.endTime = program.EndTime;
 
               incomingSchedule.preRecordInterval = schedule.preRecordInterval;
               incomingSchedule.postRecordInterval = schedule.postRecordInterval;

@@ -703,12 +703,12 @@ namespace Mediaportal.TV.TvPlugin
                                      schedule.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                      schedule.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
-      GUIPropertyManager.SetProperty("#TV.Scheduled.Title", prog.title);
+      GUIPropertyManager.SetProperty("#TV.Scheduled.Title", prog.Title);
       GUIPropertyManager.SetProperty("#TV.Scheduled.Time", strTime);
       if (prog != null)
       {
         GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", prog.Channel.DisplayName);
-        GUIPropertyManager.SetProperty("#TV.Scheduled.Description", prog.description);
+        GUIPropertyManager.SetProperty("#TV.Scheduled.Description", prog.Description);
         GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", TVUtil.GetCategory(prog.ProgramCategory));
       }
       else

@@ -343,7 +343,7 @@ namespace WebEPG
         {
           Program prog = (Program)_dbPrograms[i];
 
-          if (prog.title == title && prog.startTime == start)
+          if (prog.Title == title && prog.StartTime == start)
           {
             _dbLastProg = i;
             return prog;
@@ -354,7 +354,7 @@ namespace WebEPG
         {
           Program prog = (Program)_dbPrograms[i];
 
-          if (prog.title == title && prog.startTime == start)
+          if (prog.Title == title && prog.StartTime == start)
           {
             _dbLastProg = i;
             return prog;

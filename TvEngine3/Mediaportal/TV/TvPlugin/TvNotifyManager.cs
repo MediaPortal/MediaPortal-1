@@ -124,9 +124,9 @@ namespace Mediaportal.TV.TvPlugin
         if (prg != null)
         {
           textPrg = String.Format("{0} {1}-{2}",
-                                  prg.title,
-                                  prg.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                  prg.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                  prg.Title,
+                                  prg.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                  prg.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
         }
         else
         {          
@@ -218,20 +218,20 @@ namespace Mediaportal.TV.TvPlugin
       {
         foreach (ProgramBLL program in _notifiesList)
         {
-          if (preNotifySecs > program.Entity.startTime)
+          if (preNotifySecs > program.Entity.StartTime)
           {
-            Log.Info("Notify {0} on {1} start {2}", program.Entity.title, program.Entity.Channel.DisplayName,
-                     program.Entity.startTime);
+            Log.Info("Notify {0} on {1} start {2}", program.Entity.Title, program.Entity.Channel.DisplayName,
+                     program.Entity.StartTime);
             program.Notify = false;
             ServiceAgents.Instance.ProgramServiceAgent.SaveProgram(program.Entity);
             var tvProg = new TVProgramDescription
                            {
                              Channel = program.Entity.Channel,
-                             Title = program.Entity.title,
-                             Description = program.Entity.description,
+                             Title = program.Entity.Title,
+                             Description = program.Entity.Description,
                              Genre = TVUtil.GetCategory(program.Entity.ProgramCategory),
-                             StartTime = program.Entity.startTime,
-                             EndTime = program.Entity.endTime
+                             StartTime = program.Entity.StartTime,
+                             EndTime = program.Entity.EndTime
                            };
 
             _notifiesList.Remove(program);

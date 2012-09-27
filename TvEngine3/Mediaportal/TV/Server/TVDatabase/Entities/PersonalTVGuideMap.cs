@@ -77,7 +77,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     ChangeTracker.RecordOriginalValue("idProgram", _idProgram);
                     if (!IsDeserializing)
                     {
-                        if (Program != null && Program.idProgram != value)
+                        if (Program != null && Program.IdProgram != value)
                         {
                             Program = null;
                         }
@@ -240,7 +240,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Program.PersonalTVGuideMaps.Add(this);
                 }
     
-                IdProgram = Program.idProgram;
+                IdProgram = Program.IdProgram;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {

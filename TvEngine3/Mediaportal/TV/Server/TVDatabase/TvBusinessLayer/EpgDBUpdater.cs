@@ -154,10 +154,10 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
           {
             Program prev = infos[i - 1];
             Program current = infos[i];
-            TimeSpan diff = current.startTime - prev.endTime;
+            TimeSpan diff = current.StartTime - prev.EndTime;
             if (diff.TotalMinutes > 5)
             {
-              holes.Add(new EpgHole(prev.endTime, current.startTime));
+              holes.Add(new EpgHole(prev.EndTime, current.StartTime));
             }
           }
         }
@@ -214,9 +214,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
               {
                 try
                 {                  
-                  ProgramManagement.DeleteProgram(epgs[idx].idProgram);
-                  Log.Epg("- Deleted the epg entry {0} ({1} - {2})", epgs[idx].title, epgs[idx].startTime,
-                          epgs[idx].endTime);
+                  ProgramManagement.DeleteProgram(epgs[idx].IdProgram);
+                  Log.Epg("- Deleted the epg entry {0} ({1} - {2})", epgs[idx].Title, epgs[idx].StartTime,
+                          epgs[idx].EndTime);
                 }
                 catch (Exception ex)
                 {
@@ -449,25 +449,25 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         ProgramBLL prgBLL = new ProgramBLL(dbProg);
         // this prevents a more detailed description getting overriden by a short description from another transponder
-        if (prgBLL.Entity.title == title)
+        if (prgBLL.Entity.Title == title)
         {
-          if (prgBLL.Entity.description.Length < description.Length)
+          if (prgBLL.Entity.Description.Length < description.Length)
           {
-            prgBLL.Entity.description = description;
+            prgBLL.Entity.Description = description;
           }
         }
         else
         {
-          prgBLL.Entity.description = description;
+          prgBLL.Entity.Description = description;
         }
-        prgBLL.Entity.title = title;
-        prgBLL.Entity.startTime = ep.StartTime;
-        prgBLL.Entity.endTime = ep.EndTime;
+        prgBLL.Entity.Title = title;
+        prgBLL.Entity.StartTime = ep.StartTime;
+        prgBLL.Entity.EndTime = ep.EndTime;
         prgBLL.Entity.ProgramCategory = ProgramManagement.GetProgramCategoryByName(genre);
-        prgBLL.Entity.starRating = starRating;
-        prgBLL.Entity.classification = classification;
-        prgBLL.Entity.parentalRating = parentRating;
-        prgBLL.Entity.originalAirDate = SqlDateTime.MinValue.Value; // TODO: /!\ add implementation
+        prgBLL.Entity.StarRating = starRating;
+        prgBLL.Entity.Classification = classification;
+        prgBLL.Entity.ParentalRating = parentRating;
+        prgBLL.Entity.OriginalAirDate = SqlDateTime.MinValue.Value; // TODO: /!\ add implementation
         prgBLL.ClearRecordPendingState();
         ProgramManagement.SaveProgram(prgBLL.Entity);
       }      

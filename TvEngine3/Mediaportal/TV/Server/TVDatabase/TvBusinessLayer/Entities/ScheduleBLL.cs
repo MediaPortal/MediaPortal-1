@@ -98,7 +98,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
       {
         case ScheduleRecordingType.Once:
           {
-            if (program.startTime == _entity.startTime && program.endTime == _entity.endTime && program.idChannel == _entity.idChannel)
+            if (program.StartTime == _entity.startTime && program.EndTime == _entity.endTime && program.IdChannel == _entity.idChannel)
             {
               if (filterCanceledRecordings)
               {
@@ -112,9 +112,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
           }
           break;
         case ScheduleRecordingType.EveryTimeOnEveryChannel:
-          if (program.title == _entity.programName)
+          if (program.Title == _entity.programName)
           {
-            if (filterCanceledRecordings && IsSerieIsCanceled(GetSchedStartTimeForProg(program), program.idChannel))
+            if (filterCanceledRecordings && IsSerieIsCanceled(GetSchedStartTimeForProg(program), program.IdChannel))
             {
               return false;
             }
@@ -122,9 +122,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
           }
           break;
         case ScheduleRecordingType.EveryTimeOnThisChannel:
-          if (program.title == _entity.programName && program.idChannel == _entity.idChannel)
+          if (program.Title == _entity.programName && program.IdChannel == _entity.idChannel)
           {
-            if (filterCanceledRecordings && IsSerieIsCanceled(GetSchedStartTimeForProg(program), program.idChannel))
+            if (filterCanceledRecordings && IsSerieIsCanceled(GetSchedStartTimeForProg(program), program.IdChannel))
             {
               return false;
             }
@@ -132,10 +132,10 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
           }
           break;
         case ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
-          if (program.title == _entity.programName && program.idChannel == _entity.idChannel &&
-              _entity.startTime.DayOfWeek == program.startTime.DayOfWeek)
+          if (program.Title == _entity.programName && program.IdChannel == _entity.idChannel &&
+              _entity.startTime.DayOfWeek == program.StartTime.DayOfWeek)
           {
-            if (filterCanceledRecordings && IsSerieIsCanceled(program.startTime))
+            if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime))
             {
               return false;
             }
@@ -143,15 +143,15 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
           }
           break;
         case ScheduleRecordingType.Daily:
-          if (program.idChannel == _entity.idChannel)
+          if (program.IdChannel == _entity.idChannel)
           {
             return IsRecordingProgramWithinTimeRange(program, filterCanceledRecordings);
           }
           break;
         case ScheduleRecordingType.WorkingDays:
-          if (WeekEndTool.IsWorkingDay(program.startTime.DayOfWeek))
+          if (WeekEndTool.IsWorkingDay(program.StartTime.DayOfWeek))
           {
-            if (program.idChannel == _entity.idChannel)
+            if (program.IdChannel == _entity.idChannel)
             {
               return IsRecordingProgramWithinTimeRange(program, filterCanceledRecordings);
             }
@@ -159,9 +159,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
           break;
 
         case ScheduleRecordingType.Weekends:
-          if (WeekEndTool.IsWeekend(program.startTime.DayOfWeek))
+          if (WeekEndTool.IsWeekend(program.StartTime.DayOfWeek))
           {
-            if (program.idChannel == _entity.idChannel)
+            if (program.IdChannel == _entity.idChannel)
             {
               return IsRecordingProgramWithinTimeRange(program, filterCanceledRecordings);
             }
@@ -169,9 +169,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
           break;
 
         case ScheduleRecordingType.Weekly:
-          if (program.idChannel == _entity.idChannel)
+          if (program.IdChannel == _entity.idChannel)
           {
-            return (_entity.startTime.DayOfWeek == program.startTime.DayOfWeek &&
+            return (_entity.startTime.DayOfWeek == program.StartTime.DayOfWeek &&
                     IsRecordingProgramWithinTimeRange(program, filterCanceledRecordings));
           }
           break;
@@ -193,13 +193,13 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
 
       if (GetAdjustedScheduleTimeRange(prg, out schStart, out schEnd))
       {
-        return (prg.startTime < schStart || prg.endTime > schEnd);
+        return (prg.StartTime < schStart || prg.EndTime > schEnd);
       }
       else
       {
         Log.Info(
           "IsPartialRecording: program ({0} {1} - {2} is not (at least partially) included in the schedule {3:hh:mm} - {4:hh:mm}",
-          prg.title, prg.startTime, prg.endTime, _entity.startTime, _entity.endTime);
+          prg.Title, prg.StartTime, prg.EndTime, _entity.startTime, _entity.endTime);
         return false;
       }
     }
@@ -279,7 +279,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
       {
         return dtSchedStart;
       }
-      return prog.startTime;
+      return prog.StartTime;
     }
 
     /// <summary>
@@ -292,26 +292,26 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
     /// <returns>True if a suitable adjustment was found</returns>
     private bool GetAdjustedScheduleTimeRange(Program program, out DateTime scheduleStart, out DateTime scheduleEnd)
     {
-      scheduleStart = new DateTime(program.startTime.Year, program.startTime.Month, program.startTime.Day,
+      scheduleStart = new DateTime(program.StartTime.Year, program.StartTime.Month, program.StartTime.Day,
                                    _entity.startTime.Hour, _entity.startTime.Minute, 0).AddDays(-1);
       scheduleEnd = scheduleStart.Add(_entity.endTime.Subtract(_entity.startTime));
 
       // Try to find on which day schedule should start in order to overlap the program
       // First try <program start day>-1
       // e.g. schedule 23:00-01:00, program 00:30-01:30
-      if (program.startTime >= scheduleEnd || program.endTime <= scheduleStart)
+      if (program.StartTime >= scheduleEnd || program.EndTime <= scheduleStart)
       {
         // Then try <program start day>
         // e.g. schedule 18:00-20:00, program 17:30-19:30 (this is the most usual case)
         scheduleEnd = scheduleEnd.AddDays(1);
         scheduleStart = scheduleStart.AddDays(1);
-        if (program.startTime >= scheduleEnd || program.endTime <= scheduleStart)
+        if (program.StartTime >= scheduleEnd || program.EndTime <= scheduleStart)
         {
           // Finally try <program start day>+1
           // e.g. schedule 00:30-01:30, program 23:00-01:00
           scheduleEnd = scheduleEnd.AddDays(1);
           scheduleStart = scheduleStart.AddDays(1);
-          if (program.startTime >= scheduleEnd || program.endTime <= scheduleStart)
+          if (program.StartTime >= scheduleEnd || program.EndTime <= scheduleStart)
           {
             return false; // no overlap found
           }

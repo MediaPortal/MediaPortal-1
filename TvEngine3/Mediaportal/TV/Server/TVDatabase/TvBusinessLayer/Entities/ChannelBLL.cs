@@ -62,7 +62,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
       {
         if (_currentProgram != null)
         {
-          if (DateTime.Now >= _currentProgram.startTime && DateTime.Now <= _currentProgram.endTime)
+          if (DateTime.Now >= _currentProgram.StartTime && DateTime.Now <= _currentProgram.EndTime)
           {
             return;
           }
@@ -87,7 +87,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
           return;
         }
         _currentProgram = programs[0];
-        if (_currentProgram.startTime >= date)
+        if (_currentProgram.StartTime >= date)
         {
           _nextProgram = _currentProgram;
           _currentProgram = null;

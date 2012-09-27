@@ -95,12 +95,12 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private void PreFillInProgramDataForDates()
     {
-      dateTimePickerOnDate.Value = Program.startTime;      
-      dateTimePickerStartingBetweenFrom.Value = Program.startTime;
-      dateTimePickerStartingBetweenTo.Value = Program.endTime;
+      dateTimePickerOnDate.Value = Program.StartTime;      
+      dateTimePickerStartingBetweenFrom.Value = Program.StartTime;
+      dateTimePickerStartingBetweenTo.Value = Program.EndTime;
       dateTimePickerStartingBetweenFrom.Checked = false;
       dateTimePickerStartingBetweenTo.Checked = false;      
-      dateTimePickerStartingAround.Value = Program.startTime;      
+      dateTimePickerStartingAround.Value = Program.StartTime;      
       mpNumericTextBoxStartingAroundDeviation.Value = 0;
       SetStartingBetweenState();
     }
@@ -120,7 +120,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         {
           var prgField = new ProgramField(prop.Name, prop.PropertyType);
           ConditionOperator op = ConditionOperator.Equals;          
-          var prgCond = new SelectedProgramCondition<string>(prgField.Name, Program.title, op);
+          var prgCond = new SelectedProgramCondition<string>(prgField.Name, Program.Title, op);
           AddToListBox(prgCond, prgField.Name, listBoxPrograms);
           break;
         }
@@ -226,7 +226,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       if (_program != null)
       {
-        mpTextBoxScheduleName.Text = _program.title;
+        mpTextBoxScheduleName.Text = _program.Title;
       }
       else if (_schedule != null)
       {

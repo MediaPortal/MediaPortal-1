@@ -594,14 +594,14 @@ namespace Mediaportal.TV.TvPlugin.Radio
             foreach (Program program in titles)
             {
               //dont show programs which have ended
-              if (program.endTime < DateTime.Now)
+              if (program.EndTime < DateTime.Now)
               {
                 continue;
               }
               bool add = true;
               foreach (Program prog in programs)
               {
-                if (prog.title == program.title)
+                if (prog.Title == program.Title)
                 {
                   add = false;
                 }
@@ -617,29 +617,29 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
               if (filterShow != String.Empty)
               {
-                if (program.title == filterShow)
+                if (program.Title == filterShow)
                 {
                   episodes.Add(program);
                 }
               }
 
-              if (filterShow != String.Empty && program.title != filterShow)
+              if (filterShow != String.Empty && program.Title != filterShow)
               {
                 continue;
               }
 
               string strTime = String.Format("{0} {1}",
-                                             Utils.GetShortDayString(program.startTime),
-                                             program.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                             Utils.GetShortDayString(program.StartTime),
+                                             program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
               if (filterEpisode != String.Empty && strTime != filterEpisode)
               {
                 continue;
               }
 
               strTime = String.Format("{0} {1} - {2}",
-                                      Utils.GetShortDayString(program.startTime),
-                                      program.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                      program.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                      Utils.GetShortDayString(program.StartTime),
+                                      program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                      program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
               item = new GUIListItem();
               
@@ -647,7 +647,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
               if (filterShow == String.Empty)
               {
                   //not searching for episode data so show just title
-                  item.Label = program.title;
+                  item.Label = program.Title;
                   item.Label2 = String.Empty;
                   item.IsFolder = true;
               }
@@ -658,7 +658,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
                   item.Label2 = strTime;
                   item.IsFolder = false;
               }
-              item.Path = program.title;
+              item.Path = program.Title;
               item.TVTag = program;
               item.ItemId = currentItemId;
               currentItemId++;
@@ -733,7 +733,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
                 bool add = true;
                 foreach (Program prog in programs)
                 {
-                  if (prog.title == program.title)
+                  if (prog.Title == program.Title)
                   {
                     add = false;
                   }
@@ -749,7 +749,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
                 if (filterShow != String.Empty)
                 {
-                  if (program.title == filterShow)
+                  if (program.Title == filterShow)
                   {
                     episodes.Add(program);
                   }
@@ -760,7 +760,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
                 bool add = true;
                 foreach (Program prog in programs)
                 {
-                  if (prog.title == program.title)
+                  if (prog.Title == program.Title)
                   {
                     add = false;
                   }
@@ -776,21 +776,21 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
                 if (filterShow != String.Empty)
                 {
-                  if (program.title == filterShow)
+                  if (program.Title == filterShow)
                   {
                     episodes.Add(program);
                   }
                 }
               }
-              if (filterShow != String.Empty && program.title != filterShow)
+              if (filterShow != String.Empty && program.Title != filterShow)
               {
                 continue;
               }
 
               string strTime = String.Format("{0} {1} - {2}",
-                                             Utils.GetShortDayString(program.startTime),
-                                             program.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                             program.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                             Utils.GetShortDayString(program.StartTime),
+                                             program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                             program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
               GUIListItem item = new GUIListItem();
               
@@ -799,7 +799,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
               if (filterShow == String.Empty)
               {
                   //not searching for episode data so show just title
-                  item.Label = program.title;
+                  item.Label = program.Title;
                   item.Label2 = String.Empty;
                   item.IsFolder = true;
               }
@@ -815,7 +815,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
                   //}
               }
 
-              item.Path = program.title;
+              item.Path = program.Title;
               item.TVTag = program;
               item.ItemId = currentItemId;
               currentItemId++;
@@ -866,7 +866,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
             }
             foreach (Program program in titles)
             {
-              if (program.description.Length == 0)
+              if (program.Description.Length == 0)
               {
                 continue;
               }
@@ -876,30 +876,30 @@ namespace Mediaportal.TV.TvPlugin.Radio
                 
                 if (filterShow != String.Empty)
                 {
-                  if (program.title == filterShow)
+                  if (program.Title == filterShow)
                   {
                     episodes.Add(program);
                   }
                 }
               }
 
-              if (filterShow != String.Empty && program.title != filterShow)
+              if (filterShow != String.Empty && program.Title != filterShow)
               {
                 continue;
               }
 
               string strTime = String.Format("{0} {1}",
-                                             Utils.GetShortDayString(program.startTime),
-                                             program.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                             Utils.GetShortDayString(program.StartTime),
+                                             program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
               if (filterEpisode != String.Empty && strTime != filterEpisode)
               {
                 continue;
               }
 
               strTime = String.Format("{0} {1} - {2}",
-                                      Utils.GetShortDayString(program.startTime),
-                                      program.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                      program.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                      Utils.GetShortDayString(program.StartTime),
+                                      program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                      program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
               GUIListItem item = new GUIListItem();
               item.IsFolder = false;
@@ -907,7 +907,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
               item.Label2 = strTime;
               
 
-              item.Path = program.title;
+              item.Path = program.Title;
               item.TVTag = program;
               item.ItemId = currentItemId;
               currentItemId++;
@@ -948,8 +948,8 @@ namespace Mediaportal.TV.TvPlugin.Radio
       {
         foreach (Program prog in programs)
         {
-          btnShow.Add(prog.title.ToString());
-          if (filterShow == prog.title)
+          btnShow.Add(prog.Title.ToString());
+          if (filterShow == prog.Title)
           {
             selItem = count;
           }
@@ -967,8 +967,8 @@ namespace Mediaportal.TV.TvPlugin.Radio
         foreach (Program prog in episodes)
         {
           string strTime = String.Format("{0} {1}",
-                                         Utils.GetShortDayString(prog.startTime),
-                                         prog.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                         Utils.GetShortDayString(prog.StartTime),
+                                         prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
           btnEpisode.Add(strTime.ToString());
           if (filterEpisode == strTime)
           {
@@ -1117,7 +1117,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
               }
               else
               {
-                filterShow = program.title;
+                filterShow = program.Title;
               }
               Update();
             }
@@ -1148,7 +1148,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
             Program program = item.TVTag as Program;
             if (filterShow == String.Empty)
             {
-              filterShow = program.title;
+              filterShow = program.Title;
               Update();
               return;
             }
@@ -1176,11 +1176,11 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
       if (filterShow == String.Empty)
       {
-        strLogo = Utils.GetCoverArt(Thumbs.TVShows, prog.title);
+        strLogo = Utils.GetCoverArt(Thumbs.TVShows, prog.Title);
       }
       if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo))
       {
-        Channel channel = channelMap[prog.idChannel];
+        Channel channel = channelMap[prog.IdChannel];
         strLogo = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
       }
 
@@ -1226,7 +1226,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
         {
           return;
         }
-        Schedule rec = ScheduleFactory.CreateSchedule(program.idChannel, program.title, program.startTime, program.endTime);
+        Schedule rec = ScheduleFactory.CreateSchedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
 
         rec.preRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").value);
         rec.postRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);
@@ -1356,27 +1356,27 @@ namespace Mediaportal.TV.TvPlugin.Radio
           // see comment at top of method
           //lblProgramTitle.Label = prog.title;
           lblProgramGenre.Label = TVUtil.GetCategory(prog.ProgramCategory);
-          GUIPropertyManager.SetProperty("#Radio.Search.Title", prog.title);
+          GUIPropertyManager.SetProperty("#Radio.Search.Title", prog.Title);
           GUIPropertyManager.SetProperty("#Radio.Search.Genre", TVUtil.GetCategory(prog.ProgramCategory));
         }
         return;
       }
       
       string strTime = String.Format("{0} {1} - {2}",
-                                     Utils.GetShortDayString(prog.startTime),
-                                     prog.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                     prog.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                     Utils.GetShortDayString(prog.StartTime),
+                                     prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                     prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
       
       GUIPropertyManager.SetProperty("#Radio.Search.Title", TVUtil.GetDisplayTitle(prog));      
       GUIPropertyManager.SetProperty("#Radio.Search.Time", strTime);
-      GUIPropertyManager.SetProperty("#Radio.Search.Description", prog.description);
+      GUIPropertyManager.SetProperty("#Radio.Search.Description", prog.Description);
       GUIPropertyManager.SetProperty("#Radio.Search.Genre", TVUtil.GetCategory(prog.ProgramCategory));
       GUIPropertyManager.SetProperty("#Radio.Search.Channel", prog.Channel.DisplayName);
 
       // see comment at top of method
       //lblProgramTitle.Label = TVUtil.GetDisplayTitle(prog);
       lblProgramTime.Label = strTime;
-      lblProgramDescription.Label = prog.description;
+      lblProgramDescription.Label = prog.Description;
       lblProgramGenre.Label = TVUtil.GetCategory(prog.ProgramCategory);
 
       if (lblChannel != null)
@@ -1494,8 +1494,8 @@ namespace Mediaportal.TV.TvPlugin.Radio
           case SortMethod.Channel:
             if (prog1 != null && prog2 != null)
             {
-              Channel ch1 = channelMap[prog1.idChannel];
-              Channel ch2 = channelMap[prog2.idChannel];
+              Channel ch1 = channelMap[prog1.IdChannel];
+              Channel ch2 = channelMap[prog2.IdChannel];
               if (sortAscending)
               {
                 iComp = String.Compare(ch1.DisplayName, ch2.DisplayName, true);
@@ -1513,11 +1513,11 @@ namespace Mediaportal.TV.TvPlugin.Radio
             {
               if (sortAscending)
               {
-                iComp = prog1.startTime.CompareTo(prog2.startTime);
+                iComp = prog1.StartTime.CompareTo(prog2.StartTime);
               }
               else
               {
-                iComp = prog2.startTime.CompareTo(prog1.startTime);
+                iComp = prog2.StartTime.CompareTo(prog1.StartTime);
               }
               return iComp;
             }

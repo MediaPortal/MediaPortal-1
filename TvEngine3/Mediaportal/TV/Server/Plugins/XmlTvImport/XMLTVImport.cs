@@ -708,21 +708,21 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                         episodeName = episodeName.Replace("  ", " ");
                     
                         var prg = new Program();
-                        prg.idChannel = chan.IdChannel;
-                        prg.startTime = longtodate(startDate);
-                        prg.endTime = longtodate(stopDate);
-                        prg.title = title;
-                        prg.description = description;                        
-                        prg.state = (int)ProgramState.None;
-                        prg.originalAirDate = System.Data.SqlTypes.SqlDateTime.MinValue.Value;
-                        prg.seriesNum = seriesNum;
-                        prg.episodeNum = episodeNum;
-                        prg.episodeName = episodeName;
-                        prg.episodePart = episodePart;
-                        prg.starRating = starRating;
-                        prg.classification = classification;
-                        prg.parentalRating = -1;
-                        prg.previouslyShown = repeat;
+                        prg.IdChannel = chan.IdChannel;
+                        prg.StartTime = longtodate(startDate);
+                        prg.EndTime = longtodate(stopDate);
+                        prg.Title = title;
+                        prg.Description = description;                        
+                        prg.State = (int)ProgramState.None;
+                        prg.OriginalAirDate = System.Data.SqlTypes.SqlDateTime.MinValue.Value;
+                        prg.SeriesNum = seriesNum;
+                        prg.EpisodeNum = episodeNum;
+                        prg.EpisodeName = episodeName;
+                        prg.EpisodePart = episodePart;
+                        prg.StarRating = starRating;
+                        prg.Classification = classification;
+                        prg.ParentalRating = -1;
+                        prg.PreviouslyShown = repeat;
                         if (credits != null && credits.Count > 0)
                         {
                           foreach (var credit in credits)
@@ -739,7 +739,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                           ProgramCategoryManagement.AddCategory(programCategory);
                           _categories[category] = programCategory;
                         }
-                        prg.idProgramCategory = programCategory.idProgramCategory;
+                        prg.IdProgramCategory = programCategory.idProgramCategory;
                         channelPrograms.programs.Add(prg);
                         
                         //programs.Add(prg);                                              
@@ -775,7 +775,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                 progChan.programs.RemoveOverlappingPrograms(); // be sure that we do not have any overlapping
 
                 // get the id of the channel, just get the idChannel of the first program
-                int idChannel = progChan.programs[0].idChannel;
+                int idChannel = progChan.programs[0].IdChannel;
 
                 if (!deleteBeforeImport)
                 {                  
@@ -788,7 +788,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                 {
                   var prog = progChan.programs[i];
                   // don't import programs which have already ended...
-                  if (prog.endTime <= dtStartDate)
+                  if (prog.EndTime <= dtStartDate)
                   {
                     progChan.programs.RemoveAt(i);
                     i--;
@@ -797,20 +797,20 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                   DateTime airDate = System.Data.SqlTypes.SqlDateTime.MinValue.Value;
                   try
                   {
-                    airDate = prog.originalAirDate.GetValueOrDefault(DateTime.MinValue);
+                    airDate = prog.OriginalAirDate.GetValueOrDefault(DateTime.MinValue);
                     if (airDate > System.Data.SqlTypes.SqlDateTime.MinValue.Value &&
                         airDate < System.Data.SqlTypes.SqlDateTime.MaxValue.Value)
-                      prog.originalAirDate = airDate;
+                      prog.OriginalAirDate = airDate;
                   }
                   catch (Exception)
                   {
-                    Log.Info("XMLTVImport: Invalid year for OnAirDate - {0}", prog.originalAirDate);
+                    Log.Info("XMLTVImport: Invalid year for OnAirDate - {0}", prog.OriginalAirDate);
                   }
 
-                  if (prog.startTime < _status.startTime)
-                    _status.startTime = prog.startTime;
-                  if (prog.endTime > _status.endTime)
-                    _status.endTime = prog.endTime;
+                  if (prog.StartTime < _status.startTime)
+                    _status.startTime = prog.StartTime;
+                  if (prog.EndTime > _status.endTime)
+                    _status.endTime = prog.EndTime;
                   _status.Programs++;
                   if (showProgress && ShowProgress != null && (_status.Programs % 100) == 0) ShowProgress(_status);
                 }
@@ -1017,10 +1017,10 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         for (int i = 1; i < Programs.Count; i++)
         {
           Program newProg = (Program)Programs[i];
-          if (newProg.startTime < prevProg.endTime) // we have an overlap here
+          if (newProg.StartTime < prevProg.EndTime) // we have an overlap here
           {
             // let us find out which one is the correct one
-            if (newProg.startTime > prevProg.startTime) // newProg will create hole -> delete it
+            if (newProg.StartTime > prevProg.StartTime) // newProg will create hole -> delete it
             {
               Programs.Remove(newProg);
               i--; // stay at the same position
@@ -1036,11 +1036,11 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
             for (int j = i + 1; j < Programs.Count; j++)
             {
               Program syncNew = (Program)Programs[j];
-              if (syncPrev.endTime == syncNew.startTime)
+              if (syncPrev.EndTime == syncNew.StartTime)
               {
                 prevList.Add(syncNew);
                 syncPrev = syncNew;
-                if (syncNew.startTime > syncProg.endTime)
+                if (syncNew.StartTime > syncProg.EndTime)
                 {
                   // stop point reached => delete Programs in newList
                   foreach (Program Prog in newList) Programs.Remove(Prog);
@@ -1051,11 +1051,11 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                   break;
                 }
               }
-              else if (syncProg.endTime == syncNew.startTime)
+              else if (syncProg.EndTime == syncNew.StartTime)
               {
                 newList.Add(syncNew);
                 syncProg = syncNew;
-                if (syncNew.startTime > syncPrev.endTime)
+                if (syncNew.StartTime > syncPrev.EndTime)
                 {
                   // stop point reached => delete Programs in prevList
                   foreach (Program Prog in prevList) Programs.Remove(Prog);
@@ -1092,18 +1092,18 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       for (int i = 1; i < Programs.Count; i++)
       {
         Program newProg = (Program)Programs[i];
-        if (newProg.startTime > prevProg.endTime) // we have a gab here
+        if (newProg.StartTime > prevProg.EndTime) // we have a gab here
         {
           // try to find data in the database
           foreach (Program dbProg in dbEPG)
           {
-            if ((dbProg.startTime >= prevProg.endTime) && (dbProg.endTime <= newProg.startTime))
+            if ((dbProg.StartTime >= prevProg.EndTime) && (dbProg.EndTime <= newProg.StartTime))
             {
               Programs.Insert(i, dbProg.Clone());
               i++;
               prevProg = dbProg;
             }
-            if (dbProg.startTime >= newProg.endTime) break; // no more data available
+            if (dbProg.StartTime >= newProg.EndTime) break; // no more data available
           }
         }
         prevProg = newProg;
@@ -1193,12 +1193,12 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       if (item1 == null) return -1;
       if (item2 == null) return -1;
 
-      if (item1.idChannel != item2.idChannel)
+      if (item1.IdChannel != item2.IdChannel)
       {
         return String.Compare(item1.Channel.DisplayName, item2.Channel.DisplayName, true);
       }
-      if (item1.startTime > item2.startTime) return 1;
-      if (item1.startTime < item2.startTime) return -1;
+      if (item1.StartTime > item2.StartTime) return 1;
+      if (item1.StartTime < item2.StartTime) return -1;
       return 0;
     }
 

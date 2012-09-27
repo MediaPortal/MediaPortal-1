@@ -28,7 +28,7 @@ namespace Mediaportal.TV.Server.RuleBasedScheduler.ScheduleConditions
     {
       if (_onDate.HasValue)
       {
-        return baseQuery.Where(program => (program.startTime.Equals(_onDate)));  
+        return baseQuery.Where(program => (program.StartTime.Equals(_onDate)));  
       }
       return baseQuery;
     }

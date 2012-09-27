@@ -57,23 +57,23 @@ public class BookingMetadata
     public Program Clone()
     {
       var p = new Program();
-      p.idProgram = idProgram;
-      p.idChannel = idChannel;
-      p.startTime = startTime;
-      p.endTime = endTime;
-      p.title = title;
-      p.description = description;
+      p.IdProgram = IdProgram;
+      p.IdChannel = IdChannel;
+      p.StartTime = StartTime;
+      p.EndTime = EndTime;
+      p.Title = Title;
+      p.Description = Description;
       p.ProgramCategory = ProgramCategory;
-      p.state = state;
-      p.originalAirDate = originalAirDate;
-      p.seriesNum = seriesNum;
-      p.episodeNum = episodeNum;
-      p.state = state;
-      p.episodeName = episodeName;
-      p.episodePart = episodePart;
-      p.starRating = starRating;
-      p.classification = classification;
-      p.classification = classification;
+      p.State = State;
+      p.OriginalAirDate = OriginalAirDate;
+      p.SeriesNum = SeriesNum;
+      p.EpisodeNum = EpisodeNum;
+      p.State = State;
+      p.EpisodeName = EpisodeName;
+      p.EpisodePart = EpisodePart;
+      p.StarRating = StarRating;
+      p.Classification = Classification;
+      p.Classification = Classification;
       return p;
     }
    

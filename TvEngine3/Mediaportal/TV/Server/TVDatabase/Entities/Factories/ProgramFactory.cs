@@ -29,20 +29,20 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Factories
       //todo gibman handle genre
       var program = new Program
                       {
-                        idChannel = idChannel,
-                        startTime = startTime,
-                        endTime = endTime,
-                        title = title,
-                        description = description,
-                        state = (int)state,
-                        originalAirDate = originalAirDate,
-                        seriesNum = seriesNum,
-                        episodeNum = episodeNum,
-                        episodeName = episodeName,
-                        episodePart = episodePart,
-                        starRating = starRating,
-                        classification = classification,
-                        parentalRating = parentalRating,
+                        IdChannel = idChannel,
+                        StartTime = startTime,
+                        EndTime = endTime,
+                        Title = title,
+                        Description = description,
+                        State = (int)state,
+                        OriginalAirDate = originalAirDate,
+                        SeriesNum = seriesNum,
+                        EpisodeNum = episodeNum,
+                        EpisodeName = episodeName,
+                        EpisodePart = episodePart,
+                        StarRating = starRating,
+                        Classification = classification,
+                        ParentalRating = parentalRating,
                         ProgramCategory = category
                       };
       return program;

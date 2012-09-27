@@ -1012,7 +1012,7 @@ namespace Mediaportal.TV.TvPlugin
           _dlgYesNo.SetLine(1, 1450); // are you sure to stop recording?
           if (prog != null)
           {
-            _dlgYesNo.SetLine(2, prog.title);
+            _dlgYesNo.SetLine(2, prog.Title);
           }
           _dialogYesNoVisible = true;
           _dlgYesNo.DoModal(GetID);
@@ -1039,9 +1039,9 @@ namespace Mediaportal.TV.TvPlugin
           if (prog != null)
           {
             dlgNotify.SetText(String.Format("{0} {1}-{2}",
-                                            prog.title,
-                                            prog.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                            prog.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat)));
+                                            prog.Title,
+                                            prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                            prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat)));
           }
           else
           {
@@ -1120,9 +1120,9 @@ namespace Mediaportal.TV.TvPlugin
           if (prog != null)
           {
             dlgNotify.SetText(String.Format("{0} {1}-{2}",
-                                            prog.title,
-                                            prog.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                            prog.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat)));
+                                            prog.Title,
+                                            prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                            prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat)));
           }
           else
           {

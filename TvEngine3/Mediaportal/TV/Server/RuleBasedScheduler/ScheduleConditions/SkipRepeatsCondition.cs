@@ -9,7 +9,7 @@ namespace Mediaportal.TV.Server.RuleBasedScheduler.ScheduleConditions
   {    
     public IQueryable<Program> ApplyCondition(IQueryable<Program> baseQuery)
     {
-       return baseQuery.Where(program => !program.previouslyShown);
+       return baseQuery.Where(program => !program.PreviouslyShown);
     }
   }
 }

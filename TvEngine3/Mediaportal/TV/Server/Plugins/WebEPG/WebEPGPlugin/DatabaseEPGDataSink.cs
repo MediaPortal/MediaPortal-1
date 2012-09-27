@@ -94,15 +94,15 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
       for (int i = 0; i < _channelPrograms.Count; ++i)
       {
         Program prog = _channelPrograms[i];
-        DateTime windowEnd = new DateTime(prog.startTime.Year, prog.startTime.Month, prog.startTime.Day,
+        DateTime windowEnd = new DateTime(prog.StartTime.Year, prog.StartTime.Month, prog.StartTime.Day,
                                           _timeWindow.End.Hour, _timeWindow.End.Minute, 0);
-        if (windowEnd < prog.startTime)
+        if (windowEnd < prog.StartTime)
         {
           windowEnd = windowEnd.AddDays(1);
         }
-        if (prog.endTime > windowEnd)
+        if (prog.EndTime > windowEnd)
         {
-          prog.endTime = windowEnd;
+          prog.EndTime = windowEnd;
         }
       }
     }
@@ -114,18 +114,18 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
       {
         _channelPrograms.SortIfNeeded();
         // First implementation: scan programs
-        DateTimeRange range = new DateTimeRange(_channelPrograms[0].startTime, _channelPrograms[0].endTime);
+        DateTimeRange range = new DateTimeRange(_channelPrograms[0].StartTime, _channelPrograms[0].EndTime);
         for (int i = 1; i < _channelPrograms.Count; i++)
         {
           Program currProg = _channelPrograms[i];
-          if (range.End.Equals(currProg.startTime))
+          if (range.End.Equals(currProg.StartTime))
           {
-            range.End = currProg.endTime;
+            range.End = currProg.EndTime;
           }
           else
           {
             ranges.Add(range);
-            range = new DateTimeRange(currProg.startTime, currProg.endTime);
+            range = new DateTimeRange(currProg.StartTime, currProg.EndTime);
           }
         }
         ranges.Add(range);

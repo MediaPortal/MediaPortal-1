@@ -897,16 +897,16 @@ namespace Mediaportal.TV.TvPlugin
       else // current program
       {
         // lets find any canceled episodes that match this one we want to create, if found uncancel it.
-        Schedule existingParentSchedule = ServiceAgents.Instance.ScheduleServiceAgent.RetrieveSeriesByStartEndTimes(channel.Entity.IdChannel, channel.CurrentProgram.title,
-                                                          channel.CurrentProgram.startTime,
-                                                          channel.CurrentProgram.endTime);
+        Schedule existingParentSchedule = ServiceAgents.Instance.ScheduleServiceAgent.RetrieveSeriesByStartEndTimes(channel.Entity.IdChannel, channel.CurrentProgram.Title,
+                                                          channel.CurrentProgram.StartTime,
+                                                          channel.CurrentProgram.EndTime);
         if (existingParentSchedule != null)
         {
           foreach (CanceledSchedule cancelSched in existingParentSchedule.CanceledSchedules)
           {
-            if (cancelSched.CancelDateTime == channel.CurrentProgram.startTime)
+            if (cancelSched.CancelDateTime == channel.CurrentProgram.StartTime)
             {
-              ServiceAgents.Instance.ScheduleServiceAgent.UnCancelSerie(existingParentSchedule, channel.CurrentProgram.startTime, channel.CurrentProgram.idChannel);
+              ServiceAgents.Instance.ScheduleServiceAgent.UnCancelSerie(existingParentSchedule, channel.CurrentProgram.StartTime, channel.CurrentProgram.IdChannel);
               ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
               return;
             }
@@ -914,8 +914,8 @@ namespace Mediaportal.TV.TvPlugin
         }
 
         // ok, no existing schedule found with matching canceled schedules found. proceeding to add the schedule normally
-        Schedule newSchedule = ScheduleFactory.CreateSchedule(channel.Entity.IdChannel, channel.CurrentProgram.title,
-                                            channel.CurrentProgram.startTime, channel.CurrentProgram.endTime);
+        Schedule newSchedule = ScheduleFactory.CreateSchedule(channel.Entity.IdChannel, channel.CurrentProgram.Title,
+                                            channel.CurrentProgram.StartTime, channel.CurrentProgram.EndTime);
         newSchedule.preRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").value);
         newSchedule.postRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);
         ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(newSchedule);
@@ -2004,7 +2004,7 @@ namespace Mediaportal.TV.TvPlugin
       if (hasProgram)
       {
         //refresh the states from db
-        prog = new ProgramBLL(ServiceAgents.Instance.ProgramServiceAgent.GetProgram(channel.CurrentProgram.idProgram));
+        prog = new ProgramBLL(ServiceAgents.Instance.ProgramServiceAgent.GetProgram(channel.CurrentProgram.IdProgram));
         isRecording = (prog.IsRecording || prog.IsRecordingOncePending);
       }
       else
@@ -2766,21 +2766,21 @@ namespace Mediaportal.TV.TvPlugin
       else
       {
         GUIPropertyManager.SetProperty("#TV.View.channel", ch.Entity.DisplayName);
-        GUIPropertyManager.SetProperty("#TV.View.title", current.title);
+        GUIPropertyManager.SetProperty("#TV.View.title", current.Title);
         GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(current));
         GUIPropertyManager.SetProperty("#TV.View.start",
-                                       current.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                       current.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
         GUIPropertyManager.SetProperty("#TV.View.stop",
-                                       current.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-        GUIPropertyManager.SetProperty("#TV.View.description", current.description);
-        GUIPropertyManager.SetProperty("#TV.View.subtitle", current.episodeName);
-        GUIPropertyManager.SetProperty("#TV.View.episode", current.episodeNum);
+                                       current.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+        GUIPropertyManager.SetProperty("#TV.View.description", current.Description);
+        GUIPropertyManager.SetProperty("#TV.View.subtitle", current.EpisodeName);
+        GUIPropertyManager.SetProperty("#TV.View.episode", current.EpisodeNum);
         GUIPropertyManager.SetProperty("#TV.View.genre", TVUtil.GetCategory(current.ProgramCategory));
         GUIPropertyManager.SetProperty("#TV.View.remaining",
-                                       Utils.SecondsToHMSString(current.endTime - current.startTime));
+                                       Utils.SecondsToHMSString(current.EndTime - current.StartTime));
         SetTvThumbProperty(ch.Entity);
 
-        TimeSpan ts = current.endTime - current.startTime;
+        TimeSpan ts = current.EndTime - current.StartTime;
 
         if (ts.TotalSeconds > 0)
         {
@@ -2788,7 +2788,7 @@ namespace Mediaportal.TV.TvPlugin
           double programDuration = ts.TotalSeconds;
 
           //calculate where the program is at this time
-          ts = (DateTime.Now - current.startTime);
+          ts = (DateTime.Now - current.StartTime);
           double livePoint = ts.TotalSeconds;
 
           //calculate when timeshifting was started
@@ -2862,17 +2862,17 @@ namespace Mediaportal.TV.TvPlugin
 
       if (next != null)
       {
-        GUIPropertyManager.SetProperty("#TV.Next.title", next.title);
+        GUIPropertyManager.SetProperty("#TV.Next.title", next.Title);
         GUIPropertyManager.SetProperty("#TV.Next.compositetitle", TVUtil.GetDisplayTitle(next));
         GUIPropertyManager.SetProperty("#TV.Next.start",
-                                       next.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                       next.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
         GUIPropertyManager.SetProperty("#TV.Next.stop",
-                                       next.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-        GUIPropertyManager.SetProperty("#TV.Next.description", next.description);
-        GUIPropertyManager.SetProperty("#TV.Next.subtitle", next.episodeName);
-        GUIPropertyManager.SetProperty("#TV.Next.episode", next.episodeNum);
+                                       next.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+        GUIPropertyManager.SetProperty("#TV.Next.description", next.Description);
+        GUIPropertyManager.SetProperty("#TV.Next.subtitle", next.EpisodeName);
+        GUIPropertyManager.SetProperty("#TV.Next.episode", next.EpisodeNum);
         GUIPropertyManager.SetProperty("#TV.Next.genre", TVUtil.GetCategory(next.ProgramCategory));
-        GUIPropertyManager.SetProperty("#TV.Next.remaining", Utils.SecondsToHMSString(next.endTime - next.startTime));
+        GUIPropertyManager.SetProperty("#TV.Next.remaining", Utils.SecondsToHMSString(next.EndTime - next.StartTime));
       }
       else
       {

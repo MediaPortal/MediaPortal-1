@@ -162,7 +162,7 @@ namespace Mediaportal.TV.Server.Plugins.PersonalTVGuide
       if ((list == null) || (list.Count < 1)) return;
       foreach (Program prog in list)
       {
-        PersonalTVGuideMap map = new PersonalTVGuideMap(IdKeyword, prog.idProgram);
+        PersonalTVGuideMap map = new PersonalTVGuideMap(IdKeyword, prog.IdProgram);
         map.Persist();
       }
     }

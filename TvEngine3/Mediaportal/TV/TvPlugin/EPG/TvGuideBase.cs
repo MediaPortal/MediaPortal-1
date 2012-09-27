@@ -229,7 +229,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
       if (_currentProgram != null)
       {
-        _startTime = _currentProgram.Entity.startTime;
+        _startTime = _currentProgram.Entity.StartTime;
       }
       UpdateCurrentProgram();
     }
@@ -349,7 +349,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       }
       if (isItemSelected)
       {
-        if (_currentProgram.IsRunningAt(DateTime.Now) || _currentProgram.Entity.endTime <= DateTime.Now)
+        if (_currentProgram.IsRunningAt(DateTime.Now) || _currentProgram.Entity.EndTime <= DateTime.Now)
         {
           //view this channel
           if (g_Player.Playing && g_Player.IsTVRecording)
@@ -364,7 +364,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
             Recording rec = null;
             if (isRec)
             {
-              rec = ServiceAgents.Instance.RecordingServiceAgent.GetActiveRecordingByTitleAndChannel(_currentProgram.Entity.title, _currentProgram.Entity.idChannel);
+              rec = ServiceAgents.Instance.RecordingServiceAgent.GetActiveRecordingByTitleAndChannel(_currentProgram.Entity.Title, _currentProgram.Entity.IdChannel);
             }
 
             if (rec != null)
@@ -382,7 +382,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
               }
 
               dlg.Reset();
-              dlg.SetHeading(_currentProgram.Entity.title);
+              dlg.SetHeading(_currentProgram.Entity.Title);
               dlg.AddLocalizedString(979); //Play recording from beginning
               dlg.AddLocalizedString(938); //View this channel
               dlg.DoModal(GetID);
@@ -446,7 +446,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
                 }
 
                 dlg.Reset();
-                dlg.SetHeading(_currentProgram.Entity.title);
+                dlg.SetHeading(_currentProgram.Entity.Title);
                 dlg.AddLocalizedString(938); //View this channel
                 dlg.AddLocalizedString(1041); //Upcoming episodes
                 dlg.DoModal(GetID);
@@ -521,7 +521,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
         return;
       }
       if ((_currentProgram.IsRunningAt(DateTime.Now) ||
-           (_currentProgram.Entity.endTime <= DateTime.Now)))
+           (_currentProgram.Entity.EndTime <= DateTime.Now)))
       {
         //record current programme
         GUIWindow tvHome = GUIWindowManager.GetWindow((int)Window.WINDOW_TV);
@@ -585,12 +585,12 @@ namespace Mediaportal.TV.TvPlugin.EPG
           dlg.AddLocalizedString(938); // View this channel
         }
 
-        if (_currentProgram.Entity.idProgram != 0)
+        if (_currentProgram.Entity.IdProgram != 0)
         {
           dlg.AddLocalizedString(1041); //Upcoming episodes
         }
 
-        if (_currentProgram != null && _currentProgram.Entity.startTime > DateTime.Now)
+        if (_currentProgram != null && _currentProgram.Entity.StartTime > DateTime.Now)
         {
           if (_currentProgram.Notify)
           {
@@ -606,7 +606,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
         if (_currentProgram != null && _currentChannel != null && _currentTitle.Length > 0)
         {
-          if (_currentProgram.Entity.idProgram == 0) // no EPG program recording., only allow to stop it.
+          if (_currentProgram.Entity.IdProgram == 0) // no EPG program recording., only allow to stop it.
           {
             bool isRecordingNoEPG = IsRecordingNoEPG(_currentProgram.Entity.Channel);
             if (isRecordingNoEPG)
@@ -664,7 +664,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
             if (_currentProgram != null) 
             {
               TVHome.ViewChannelAndCheck(_currentProgram.Entity.Channel, 0);
-              if (TVHome.Card.IsTimeShifting && TVHome.Card.IdChannel == _currentProgram.Entity.idChannel)
+              if (TVHome.Card.IsTimeShifting && TVHome.Card.IdChannel == _currentProgram.Entity.IdChannel)
               {
                 g_Player.ShowFullScreenWindow();
               }
@@ -678,7 +678,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
           case 629: //stop recording
             if (_currentProgram != null)
             {
-              Schedule schedule = ServiceAgents.Instance.ScheduleServiceAgent.GetScheduleWithNoEPG(_currentProgram.Entity.idChannel);              
+              Schedule schedule = ServiceAgents.Instance.ScheduleServiceAgent.GetScheduleWithNoEPG(_currentProgram.Entity.IdChannel);              
               TVUtil.DeleteRecAndEntireSchedWithPrompt(schedule);
             }
             Update(true); //remove RED marker
@@ -686,7 +686,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
           case 637: // edit recording
           case 264: // record
-            if (_currentProgram != null && _currentProgram.Entity.idProgram == 0)
+            if (_currentProgram != null && _currentProgram.Entity.IdProgram == 0)
             {
               TVHome.StartRecordingSchedule(new ChannelBLL(_currentProgram.Entity.Channel), true);
               _currentProgram.IsRecordingOncePending = true;
@@ -742,22 +742,22 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
     private void OnGetIMDBInfo()
     {
-      var movieDetails = new IMDBMovie {SearchString = _currentProgram.Entity.title};
+      var movieDetails = new IMDBMovie {SearchString = _currentProgram.Entity.Title};
       if (IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, true, false))
       {
-        IList<Program> progs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByChannelAndStartEndTimes(_currentProgram.Entity.idChannel,
-          _currentProgram.Entity.startTime, _currentProgram.Entity.endTime).ToList();
+        IList<Program> progs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByChannelAndStartEndTimes(_currentProgram.Entity.IdChannel,
+          _currentProgram.Entity.StartTime, _currentProgram.Entity.EndTime).ToList();
 
         if (progs != null && progs.Count > 0)
         {
           Program prog = progs[0];
-          prog.description = movieDetails.Plot;
+          prog.Description = movieDetails.Plot;
           
           //todo gibman: handle new genre here.. simply add it.
           prog.ProgramCategory.category = movieDetails.Genre;
 
 
-          prog.starRating = (int)movieDetails.Rating;          
+          prog.StarRating = (int)movieDetails.Rating;          
           ServiceAgents.Instance.ProgramServiceAgent.SaveProgram(prog);
         }
         var videoInfo = (GUIVideoInfo)GUIWindowManager.GetWindow((int)Window.WINDOW_VIDEO_INFO);

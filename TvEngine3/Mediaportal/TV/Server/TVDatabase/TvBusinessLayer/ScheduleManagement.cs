@@ -178,7 +178,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
             Schedule schedule = scheduleRepository.FindOne<Schedule>(s => s.id_Schedule == idSchedule);
             if (schedule != null)
             {
-              Schedule spawnedSchedule = RetrieveSpawnedSchedule(idSchedule, prg.startTime);
+              Schedule spawnedSchedule = RetrieveSpawnedSchedule(idSchedule, prg.StartTime);
               if (spawnedSchedule != null)
               {
                 schedule = spawnedSchedule;
@@ -427,12 +427,12 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         foreach (Program prog in progList)
         {
           if ((recBLL.IsRecordingProgram(prog, false)) &&
-              (WeekEndTool.IsWeekend(prog.startTime.DayOfWeek)))
+              (WeekEndTool.IsWeekend(prog.StartTime.DayOfWeek)))
           {
             Schedule recNew = ScheduleFactory.Clone(recBLL.Entity);
             recNew.scheduleType = (int)ScheduleRecordingType.Once;
-            recNew.startTime = prog.startTime;
-            recNew.endTime = prog.endTime;
+            recNew.startTime = prog.StartTime;
+            recNew.endTime = prog.EndTime;
             recNew.series = true;
 
             if (recBLL.IsSerieIsCanceled(recNew.startTime))
@@ -489,13 +489,13 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         {
           // dtDay.DayOfWeek == rec.startTime.DayOfWeek
           // Log.Debug("BusinessLayer.cs Program prog in programs WeeklyEveryTimeOnThisChannel: {0} {1} prog.startTime.DayOfWeek == rec.startTime.DayOfWeek {2} == {3}", rec.ProgramName, rec.ReferencedChannel().Name, prog.startTime.DayOfWeek, rec.startTime.DayOfWeek);
-          if (prog.startTime.DayOfWeek == recBLL.Entity.startTime.DayOfWeek && recBLL.IsRecordingProgram(prog, false))
+          if (prog.StartTime.DayOfWeek == recBLL.Entity.startTime.DayOfWeek && recBLL.IsRecordingProgram(prog, false))
           {
             Schedule recNew = ScheduleFactory.Clone(recBLL.Entity);
             recNew.scheduleType = (int)ScheduleRecordingType.Once;
-            recNew.idChannel = prog.idChannel;
-            recNew.startTime = prog.startTime;
-            recNew.endTime = prog.endTime;
+            recNew.idChannel = prog.IdChannel;
+            recNew.startTime = prog.StartTime;
+            recNew.endTime = prog.EndTime;
             recNew.series = true;
             if (recBLL.IsSerieIsCanceled(recNew.startTime))
             {
@@ -520,11 +520,11 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         {
           Schedule recNew = ScheduleFactory.Clone(recBLL.Entity);
           recNew.scheduleType = (int)ScheduleRecordingType.Once;
-          recNew.idChannel = prog.idChannel;
-          recNew.startTime = prog.startTime;
-          recNew.endTime = prog.endTime;
+          recNew.idChannel = prog.IdChannel;
+          recNew.startTime = prog.StartTime;
+          recNew.endTime = prog.EndTime;
           recNew.series = true;
-          if (recBLL.IsSerieIsCanceled(recBLL.GetSchedStartTimeForProg(prog), prog.idChannel))
+          if (recBLL.IsSerieIsCanceled(recBLL.GetSchedStartTimeForProg(prog), prog.IdChannel))
           {
             recNew.canceled = recNew.startTime;
           }

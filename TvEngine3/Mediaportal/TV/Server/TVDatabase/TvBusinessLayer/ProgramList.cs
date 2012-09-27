@@ -118,10 +118,10 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       for (int i = 1; i < Count; i++)
       {
         Program newProg = this[i];
-        if (newProg.startTime < prevProg.endTime) // we have an overlap here
+        if (newProg.StartTime < prevProg.EndTime) // we have an overlap here
         {
           // let us find out which one is the correct one
-          if (newProg.startTime > prevProg.startTime) // newProg will create hole -> delete it
+          if (newProg.StartTime > prevProg.StartTime) // newProg will create hole -> delete it
           {
             Remove(newProg);
             i--; // stay at the same position
@@ -137,11 +137,11 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
           for (int j = i + 1; j < Count; j++)
           {
             Program syncNew = this[j];
-            if (syncPrev.endTime == syncNew.startTime)
+            if (syncPrev.EndTime == syncNew.StartTime)
             {
               prevList.Add(syncNew);
               syncPrev = syncNew;
-              if (syncNew.startTime > syncProg.endTime)
+              if (syncNew.StartTime > syncProg.EndTime)
               {
                 // stop point reached => delete Programs in newList
                 foreach (Program prog in newList) Remove(prog);
@@ -152,11 +152,11 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
                 break;
               }
             }
-            else if (syncProg.endTime == syncNew.startTime)
+            else if (syncProg.EndTime == syncNew.StartTime)
             {
               newList.Add(syncNew);
               syncProg = syncNew;
-              if (syncNew.startTime > syncPrev.endTime)
+              if (syncNew.StartTime > syncPrev.EndTime)
               {
                 // stop point reached => delete Programs in prevList
                 foreach (Program prog in prevList) Remove(prog);
@@ -224,14 +224,14 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         Program prog = this[i];
         Program existProg = existingPrograms[j];
-        if (prog.idChannel == existProg.idChannel)
+        if (prog.IdChannel == existProg.IdChannel)
         {
-          if (prog.endTime <= existProg.startTime)
+          if (prog.EndTime <= existProg.StartTime)
           {
             i++;
             //prog = this[i];
           }
-          else if (prog.startTime >= existProg.endTime)
+          else if (prog.StartTime >= existProg.EndTime)
           {
             j++;
             //existProg = existingPrograms[j];
@@ -287,18 +287,18 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       for (int i = 1; i < Count; i++)
       {
         Program newProg = this[i];
-        if (newProg.startTime > prevProg.endTime) // we have a gap here
+        if (newProg.StartTime > prevProg.EndTime) // we have a gap here
         {
           // try to find data in the database
           foreach (Program dbProg in sourceList)
           {
-            if ((dbProg.startTime >= prevProg.endTime) && (dbProg.endTime <= newProg.startTime))
+            if ((dbProg.StartTime >= prevProg.EndTime) && (dbProg.EndTime <= newProg.StartTime))
             {
               Insert(i, ProgramFactory.Clone(dbProg));
               i++;
               prevProg = dbProg;
             }
-            if (dbProg.startTime >= newProg.endTime) break; // no more data available
+            if (dbProg.StartTime >= newProg.EndTime) break; // no more data available
           }
         }
         prevProg = newProg;
@@ -315,17 +315,17 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         {
           //correct the times of the current program using the times of the next one
           Program progNext = this[i + 1];
-          if (prog.idChannel == progNext.idChannel)
+          if (prog.IdChannel == progNext.IdChannel)
           {
-            if (prog.startTime >= prog.endTime)
+            if (prog.StartTime >= prog.EndTime)
             {
-              prog.endTime = progNext.startTime;
+              prog.EndTime = progNext.StartTime;
             }
-            if (prog.endTime > progNext.startTime)
+            if (prog.EndTime > progNext.StartTime)
             {
               //if the endTime of this program is later that the start of the next program 
               //it probably needs to be corrected (only needed when the grabber )
-              prog.endTime = progNext.startTime;
+              prog.EndTime = progNext.StartTime;
             }
           }
         }
@@ -343,18 +343,18 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       if (Count != 0)
       {
         SortIfNeeded();
-        ProgramListPartition partition = new ProgramListPartition(this[0].idChannel, this[0].startTime, this[0].endTime);
+        ProgramListPartition partition = new ProgramListPartition(this[0].IdChannel, this[0].StartTime, this[0].EndTime);
         for (int i = 1; i < Count; i++)
         {
           Program currProg = this[i];
-          if (partition.IdChannel.Equals(currProg.idChannel) && partition.End.Equals(currProg.startTime))
+          if (partition.IdChannel.Equals(currProg.IdChannel) && partition.End.Equals(currProg.StartTime))
           {
-            partition.End = currProg.endTime;
+            partition.End = currProg.EndTime;
           }
           else
           {
             partitions.Add(partition);
-            partition = new ProgramListPartition(currProg.idChannel, currProg.startTime, currProg.endTime);
+            partition = new ProgramListPartition(currProg.IdChannel, currProg.StartTime, currProg.EndTime);
           }
         }
         partitions.Add(partition);
@@ -372,14 +372,14 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       if (Count != 0)
       {
         SortIfNeeded();
-        int lastChannelId = this[0].idChannel;
+        int lastChannelId = this[0].IdChannel;
         channelIds.Add(lastChannelId);
         for (int i = 1; i < Count; i++)
         {
           Program currProg = this[i];
-          if (lastChannelId != currProg.idChannel)
+          if (lastChannelId != currProg.IdChannel)
           {
-            lastChannelId = currProg.idChannel;
+            lastChannelId = currProg.IdChannel;
             channelIds.Add(lastChannelId);
           }
         }
@@ -443,12 +443,12 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       if (x == null) return -1;
       if (y == null) return -1;
 
-      if (x.idChannel != y.idChannel)
+      if (x.IdChannel != y.IdChannel)
       {
         int res = String.Compare(x.Channel.DisplayName, y.Channel.DisplayName, true);
         if (res == 0)
         {
-          if (x.idChannel > y.idChannel)
+          if (x.IdChannel > y.IdChannel)
           {
             return 1;
           }
@@ -458,8 +458,8 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
           }
         }
       }
-      if (x.startTime > y.startTime) return 1;
-      if (x.startTime < y.startTime) return -1;
+      if (x.StartTime > y.StartTime) return 1;
+      if (x.StartTime < y.StartTime) return -1;
       return 0;
     }
 

@@ -281,10 +281,10 @@ namespace WebEPG.Parser
 
     public void InitFromProgram(Program dbProgram)
     {
-      _startTime = new WorldDateTime(dbProgram.startTime);
-      _endTime = new WorldDateTime(dbProgram.endTime);
-      _title = dbProgram.title;
-      _description = dbProgram.description;
+      _startTime = new WorldDateTime(dbProgram.StartTime);
+      _endTime = new WorldDateTime(dbProgram.EndTime);
+      _title = dbProgram.Title;
+      _description = dbProgram.Description;
       if (dbProgram.ProgramCategory != null)
       {
         _genre = dbProgram.ProgramCategory.category;
@@ -293,9 +293,9 @@ namespace WebEPG.Parser
       {
         _genre = "";
       }
-      _subTitle = dbProgram.episodeName;
-      int.TryParse(dbProgram.episodeNum, out _episode);
-      int.TryParse(dbProgram.seriesNum, out _season);
+      _subTitle = dbProgram.EpisodeName;
+      int.TryParse(dbProgram.EpisodeNum, out _episode);
+      int.TryParse(dbProgram.SeriesNum, out _season);
     }
 
     //public Program ToTvProgram(string channelName)
@@ -328,11 +328,11 @@ namespace WebEPG.Parser
                                     _subTitle, String.Empty, -1, String.Empty, 0);
       if (_episode > 0)
       {
-        program.episodeNum = _episode.ToString();
+        program.EpisodeNum = _episode.ToString();
       }
       if (_season > 0)
       {
-        program.seriesNum = _season.ToString();
+        program.SeriesNum = _season.ToString();
       }
       //if (_repeat)
       //{

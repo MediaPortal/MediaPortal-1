@@ -53,7 +53,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     ChangeTracker.RecordOriginalValue("idProgram", _idProgram);
                     if (!IsDeserializing)
                     {
-                        if (Program != null && Program.idProgram != value)
+                        if (Program != null && Program.IdProgram != value)
                         {
                             Program = null;
                         }
@@ -228,7 +228,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Program.ProgramCredits.Add(this);
                 }
     
-                idProgram = Program.idProgram;
+                idProgram = Program.IdProgram;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {

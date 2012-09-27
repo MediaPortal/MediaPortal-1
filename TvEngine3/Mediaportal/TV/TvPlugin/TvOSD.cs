@@ -446,10 +446,10 @@ namespace Mediaportal.TV.TvPlugin
                 if (prog != null)
                 {
                   prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(
-                      prog.startTime.Subtract(new TimeSpan(0, 1, 0)), GetChannel().Entity.IdChannel);
+                      prog.StartTime.Subtract(new TimeSpan(0, 1, 0)), GetChannel().Entity.IdChannel);
                   if (prog != null)
                   {
-                    m_dateTime = prog.startTime.AddMinutes(1);
+                    m_dateTime = prog.StartTime.AddMinutes(1);
                   }
                 }
                 ShowPrograms();
@@ -459,10 +459,10 @@ namespace Mediaportal.TV.TvPlugin
                 Program prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(m_dateTime, GetChannel().Entity.IdChannel);
                 if (prog != null)
                 {
-                  prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(prog.endTime.AddMinutes(+1), GetChannel().Entity.IdChannel);
+                  prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(prog.EndTime.AddMinutes(+1), GetChannel().Entity.IdChannel);
                   if (prog != null)
                   {
-                    m_dateTime = prog.startTime.AddMinutes(1);
+                    m_dateTime = prog.StartTime.AddMinutes(1);
                   }
                 }
                 ShowPrograms();
@@ -776,8 +776,8 @@ namespace Mediaportal.TV.TvPlugin
         if (prog != null)
         {
           strTime = String.Format("{0}-{1}",
-                                  prog.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                  prog.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                  prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                  prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
         }
       }
       else
@@ -1544,8 +1544,8 @@ namespace Mediaportal.TV.TvPlugin
       if (prog != null && !g_Player.IsTVRecording)
       {
         string strTime = String.Format("{0}-{1}",
-                                       prog.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                       prog.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                       prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                       prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
         if (lblCurrentTime != null)
         {
@@ -1554,24 +1554,24 @@ namespace Mediaportal.TV.TvPlugin
         // On TV Now
         if (tbOnTvNow != null)
         {
-          strTime = String.Format("{0} ", prog.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+          strTime = String.Format("{0} ", prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
           tbOnTvNow.Label = strTime + TVUtil.GetDisplayTitle(prog);
           GUIPropertyManager.SetProperty("#TV.View.start", strTime);
 
-          strTime = String.Format("{0} ", prog.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+          strTime = String.Format("{0} ", prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
           GUIPropertyManager.SetProperty("#TV.View.stop", strTime);
-          GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.endTime - prog.startTime));
+          GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
         }
         if (tbProgramDescription != null)
         {
-          tbProgramDescription.Label = prog.description;
+          tbProgramDescription.Label = prog.Description;
         }
 
         // next program
         ChannelBLL chan = GetChannel();
         if (chan != null)
         {
-          prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(prog.endTime.AddMinutes(1), chan.Entity.IdChannel);          
+          prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(prog.EndTime.AddMinutes(1), chan.Entity.IdChannel);          
 
           if (prog != null)
           {
@@ -1711,12 +1711,12 @@ namespace Mediaportal.TV.TvPlugin
           return;
         }
         string strTime = String.Format("{0}-{1}",
-                                       prog.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                       prog.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                       prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                       prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
-        TimeSpan ts = prog.endTime - prog.startTime;
+        TimeSpan ts = prog.EndTime - prog.StartTime;
         double iTotalSecs = ts.TotalSeconds;
-        ts = DateTime.Now - prog.startTime;
+        ts = DateTime.Now - prog.StartTime;
         double iCurSecs = ts.TotalSeconds;
         fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
         fPercent *= 100.0d;
@@ -1731,7 +1731,7 @@ namespace Mediaportal.TV.TvPlugin
           ShowPrograms();
           updateProperties = true;
         }
-        else if (previousProgram.startTime != prog.startTime || previousProgram.idChannel != prog.idChannel)
+        else if (previousProgram.StartTime != prog.StartTime || previousProgram.IdChannel != prog.IdChannel)
         {
           m_dateTime = DateTime.Now;
           previousProgram = ProgramFactory.Clone(prog);
@@ -1742,16 +1742,16 @@ namespace Mediaportal.TV.TvPlugin
         {
           GUIPropertyManager.SetProperty("#TV.View.channel", prog.Channel.DisplayName);
           GUIPropertyManager.SetProperty("#TV.View.start",
-                                         prog.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                         prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
           GUIPropertyManager.SetProperty("#TV.View.stop",
-                                         prog.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-          GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.endTime - prog.startTime));
+                                         prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+          GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
           GUIPropertyManager.SetProperty("#TV.View.genre", TVUtil.GetCategory(prog.ProgramCategory));
-          GUIPropertyManager.SetProperty("#TV.View.title", prog.title);
+          GUIPropertyManager.SetProperty("#TV.View.title", prog.Title);
           GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(prog));
-          GUIPropertyManager.SetProperty("#TV.View.subtitle", prog.episodeName);
-          GUIPropertyManager.SetProperty("#TV.View.description", prog.description);
-          GUIPropertyManager.SetProperty("#TV.View.episode", prog.episodeNum);
+          GUIPropertyManager.SetProperty("#TV.View.subtitle", prog.EpisodeName);
+          GUIPropertyManager.SetProperty("#TV.View.description", prog.Description);
+          GUIPropertyManager.SetProperty("#TV.View.episode", prog.EpisodeNum);
         }
       }
 

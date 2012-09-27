@@ -1201,10 +1201,10 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
               var history1 = new History
                                {
                                  IdChannel = channel.IdChannel,
-                                 StartTime = p.startTime,
-                                 EndTime = p.endTime,
-                                 Title = p.title,
-                                 Description = p.description,
+                                 StartTime = p.StartTime,
+                                 EndTime = p.EndTime,
+                                 Title = p.Title,
+                                 Description = p.Description,
                                  ProgramCategory = p.ProgramCategory,
                                  Recorded = false,
                                  Watched = 0
