@@ -5382,14 +5382,14 @@ namespace Mediaportal.TV.Server.TVLibrary
 
         foreach (PendingDeletion pendingDelition in pendingDeletions)
         {
-          Log.Debug("ExecutePendingDeletions: trying to remove file : " + pendingDelition.fileName);
+          Log.Debug("ExecutePendingDeletions: trying to remove file : " + pendingDelition.FileName);
 
           bool wasPendingDeletionAdded = false;
-          bool wasDeleted = RecordingFileHandler.DeleteRecordingOnDisk(pendingDelition.fileName,
+          bool wasDeleted = RecordingFileHandler.DeleteRecordingOnDisk(pendingDelition.FileName,
                                                                        out wasPendingDeletionAdded);
           if (wasDeleted && !wasPendingDeletionAdded)
           {
-            pendingDelitionRemove.Add(pendingDelition.idPendingDeletion);
+            pendingDelitionRemove.Add(pendingDelition.IdPendingDeletion);
           }
         }
 
@@ -5399,7 +5399,7 @@ namespace Mediaportal.TV.Server.TVLibrary
 
           if (pendingDelition != null)
           {
-            RecordingManagement.DeletePendingRecordingDeletion(pendingDelition.idPendingDeletion);
+            RecordingManagement.DeletePendingRecordingDeletion(pendingDelition.IdPendingDeletion);
           }
         }
       }

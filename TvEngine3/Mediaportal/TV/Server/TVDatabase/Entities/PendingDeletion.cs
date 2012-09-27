@@ -23,7 +23,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Primitive Properties
     
         [DataMember]
-        public int idPendingDeletion
+        public int IdPendingDeletion
         {
             get { return _idPendingDeletion; }
             set
@@ -42,7 +42,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idPendingDeletion;
     
         [DataMember]
-        public string fileName
+        public string FileName
         {
             get { return _fileName; }
             set

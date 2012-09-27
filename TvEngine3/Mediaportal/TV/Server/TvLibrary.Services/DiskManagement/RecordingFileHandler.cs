@@ -104,7 +104,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
         if (!doesPendingDeletionExist)
         {
           Log.Error("RecordingFileHandler: adding filename to list of pending deletions: {0}", fileNameForRec);
-          var addNewPendingDeletion = new PendingDeletion {fileName = fileNameForRec};
+          var addNewPendingDeletion = new PendingDeletion {FileName = fileNameForRec};
           TVDatabase.TVBusinessLayer.RecordingManagement.SaveRecordingPendingDeletion(addNewPendingDeletion);                  
         }
       }

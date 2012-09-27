@@ -107,7 +107,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IRecordingRepository recordingRepository = new RecordingRepository())
       {
         hasRecordingPendingDeletion =
-          recordingRepository.Count<PendingDeletion>(c => c.fileName == filename) > 0;      
+          recordingRepository.Count<PendingDeletion>(c => c.FileName == filename) > 0;      
       }
       return hasRecordingPendingDeletion;
     }
@@ -128,7 +128,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IRecordingRepository recordingRepository = new RecordingRepository(true))
       {
-        recordingRepository.Delete<PendingDeletion>(s => s.idPendingDeletion == idPendingDeletion);
+        recordingRepository.Delete<PendingDeletion>(s => s.IdPendingDeletion == idPendingDeletion);
         recordingRepository.UnitOfWork.SaveChanges();
       }
     }
@@ -137,7 +137,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IRecordingRepository recordingRepository = new RecordingRepository())
       {
-        PendingDeletion pendingDeletion = recordingRepository.FindOne<PendingDeletion>(p => p.idPendingDeletion == idPendingDeletion);
+        PendingDeletion pendingDeletion = recordingRepository.FindOne<PendingDeletion>(p => p.IdPendingDeletion == idPendingDeletion);
         return pendingDeletion;
       }
     }
