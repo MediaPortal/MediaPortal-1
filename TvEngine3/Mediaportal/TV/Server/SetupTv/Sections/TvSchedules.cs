@@ -343,7 +343,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             item.SubItems.Add(prg.EpisodeNum);
             if (prg.ProgramCategory != null)
             {
-              item.SubItems.Add(prg.ProgramCategory.category); 
+              item.SubItems.Add(prg.ProgramCategory.Category); 
             }            
             item.SubItems.Add(prg.OriginalAirDate.GetValueOrDefault(DateTime.MinValue).ToString("HH:mm:ss", mmddFormat));
             item.SubItems.Add(prg.Classification);

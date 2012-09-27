@@ -287,7 +287,7 @@ namespace WebEPG.Parser
       _description = dbProgram.Description;
       if (dbProgram.ProgramCategory != null)
       {
-        _genre = dbProgram.ProgramCategory.category;
+        _genre = dbProgram.ProgramCategory.Category;
       }
       else
       {
@@ -317,7 +317,7 @@ namespace WebEPG.Parser
       if (category == null)
       {
         category = new ProgramCategory();
-        category.category = _genre;
+        category.Category = _genre;
       }
 
       WorldDateTime endTime = _endTime ?? _startTime;

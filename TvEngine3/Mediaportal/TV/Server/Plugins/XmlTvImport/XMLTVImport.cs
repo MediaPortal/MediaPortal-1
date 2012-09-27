@@ -108,7 +108,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
       foreach (var programCategory in categories)
       {
-        _categories.Add(programCategory.category, programCategory);
+        _categories.Add(programCategory.Category, programCategory);
       }
 
       _backgroundDelay = backgroundDelay;
@@ -735,11 +735,11 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                         bool hasCategory = _categories.TryGetValue(category, out programCategory);
                         if (!hasCategory)
                         {
-                          programCategory = new ProgramCategory {category = category};
+                          programCategory = new ProgramCategory {Category = category};
                           ProgramCategoryManagement.AddCategory(programCategory);
                           _categories[category] = programCategory;
                         }
-                        prg.IdProgramCategory = programCategory.idProgramCategory;
+                        prg.IdProgramCategory = programCategory.IdProgramCategory;
                         channelPrograms.programs.Add(prg);
                         
                         //programs.Add(prg);                                              

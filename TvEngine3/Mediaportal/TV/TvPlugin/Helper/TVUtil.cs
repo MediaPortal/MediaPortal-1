@@ -879,7 +879,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
       string category = "";
       if (programCategory != null)
       {
-        category = programCategory.category;
+        category = programCategory.Category;
       }
       return category;
     }

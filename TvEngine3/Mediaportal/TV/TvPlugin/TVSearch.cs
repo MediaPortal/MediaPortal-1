@@ -559,8 +559,8 @@ namespace Mediaportal.TV.TvPlugin
             {
               GUIListItem item = new GUIListItem();
               item.IsFolder = true;
-              item.Label = genre.category;
-              item.Path = genre.category;
+              item.Label = genre.Category;
+              item.Path = genre.Category;
               item.ItemId = currentItemId;
               currentItemId++;
               Utils.SetDefaultIcons(item);

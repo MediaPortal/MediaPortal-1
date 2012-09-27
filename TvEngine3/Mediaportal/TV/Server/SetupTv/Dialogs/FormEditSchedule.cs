@@ -676,7 +676,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       var categoryDto = mpComboBoxCategories.SelectedItem as TVDatabase.Entities.ProgramCategory;
       if (categoryDto != null)
       {
-        AddToCheckedListBox(categoryDto, categoryDto.category, listBoxCategories, true);        
+        AddToCheckedListBox(categoryDto, categoryDto.Category, listBoxCategories, true);        
       }      
     }
 

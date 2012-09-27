@@ -100,7 +100,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       IEnumerable<ProgramCategory> categories = ProgramCategoryManagement.ListAllProgramCategories();
       foreach (var programCategory in categories)
       {
-        _categories.Add(programCategory.category, programCategory);
+        _categories.Add(programCategory.Category, programCategory);
       }
     }
 
@@ -825,7 +825,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
           bool hasCategory = _categories.TryGetValue(genre, out programCategory);
           if (!hasCategory)
           {
-            programCategory = new ProgramCategory { category = genre };
+            programCategory = new ProgramCategory { Category = genre };
             ProgramCategoryManagement.AddCategory(programCategory);
             _categories[genre] = programCategory;
           }

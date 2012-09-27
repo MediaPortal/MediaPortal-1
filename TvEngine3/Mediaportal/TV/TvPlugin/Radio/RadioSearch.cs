@@ -562,8 +562,8 @@ namespace Mediaportal.TV.TvPlugin.Radio
               GUIListItem item = new GUIListItem
                                    {
                                      IsFolder = true,
-                                     Label = genre.category,
-                                     Path = genre.category,
+                                     Label = genre.Category,
+                                     Path = genre.Category,
                                      ItemId = currentItemId
                                    };
               currentItemId++;

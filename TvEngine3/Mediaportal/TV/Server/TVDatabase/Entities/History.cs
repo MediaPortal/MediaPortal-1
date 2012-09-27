@@ -167,7 +167,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     ChangeTracker.RecordOriginalValue("idProgramCategory", _idProgramCategory);
                     if (!IsDeserializing)
                     {
-                        if (ProgramCategory != null && ProgramCategory.idProgramCategory != value)
+                        if (ProgramCategory != null && ProgramCategory.IdProgramCategory != value)
                         {
                             ProgramCategory = null;
                         }
@@ -369,7 +369,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     ProgramCategory.Histories.Add(this);
                 }
     
-                IdProgramCategory = ProgramCategory.idProgramCategory;
+                IdProgramCategory = ProgramCategory.IdProgramCategory;
             }
             else if (!skipKeys)
             {

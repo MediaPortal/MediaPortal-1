@@ -1554,7 +1554,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
         var category = "";
         if (recDetail.Program.Entity.ProgramCategory != null)
         {
-          category = recDetail.Program.Entity.ProgramCategory.category;
+          category = recDetail.Program.Entity.ProgramCategory.Category;
         }
         var info = new MatroskaTagInfo
                                  {

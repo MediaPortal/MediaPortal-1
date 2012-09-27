@@ -148,19 +148,19 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
         if (startsWith && endsWith)
         {
-          query = query.Where(p => p.ProgramCategory.category.Contains(searchCriteria));
+          query = query.Where(p => p.ProgramCategory.Category.Contains(searchCriteria));
         }
         else if (!startsWith && !endsWith)
         {
-          query = query.Where(p => p.ProgramCategory.category == searchCriteria);
+          query = query.Where(p => p.ProgramCategory.Category == searchCriteria);
         }
         else if (startsWith)
         {
-          query = query.Where(p => p.ProgramCategory.category.StartsWith(searchCriteria));
+          query = query.Where(p => p.ProgramCategory.Category.StartsWith(searchCriteria));
         }
         else
         {
-          query = query.Where(p => p.ProgramCategory.category.EndsWith(searchCriteria));
+          query = query.Where(p => p.ProgramCategory.Category.EndsWith(searchCriteria));
         }
       }
 

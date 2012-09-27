@@ -1149,7 +1149,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IProgramRepository programRepository = new ProgramRepository())
       {
-        return programRepository.FindOne<ProgramCategory>(p => p.category == category);
+        return programRepository.FindOne<ProgramCategory>(p => p.Category == category);
       }
     }
 

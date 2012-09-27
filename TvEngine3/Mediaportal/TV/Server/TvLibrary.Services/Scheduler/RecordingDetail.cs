@@ -269,7 +269,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       var programCategory = "";
       if (Program.Entity.ProgramCategory != null)
       {
-        programCategory = Program.Entity.ProgramCategory.category.Trim();  
+        programCategory = Program.Entity.ProgramCategory.Category.Trim();  
       }
       
       string[] TagValues = {

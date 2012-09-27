@@ -754,7 +754,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
           prog.Description = movieDetails.Plot;
           
           //todo gibman: handle new genre here.. simply add it.
-          prog.ProgramCategory.category = movieDetails.Genre;
+          prog.ProgramCategory.Category = movieDetails.Genre;
 
 
           prog.StarRating = (int)movieDetails.Rating;          

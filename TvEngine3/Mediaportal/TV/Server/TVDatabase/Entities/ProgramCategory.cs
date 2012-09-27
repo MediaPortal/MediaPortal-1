@@ -26,7 +26,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Primitive Properties
     
         [DataMember]
-        public int idProgramCategory
+        public int IdProgramCategory
         {
             get { return _idProgramCategory; }
             set
@@ -45,7 +45,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idProgramCategory;
     
         [DataMember]
-        public string category
+        public string Category
         {
             get { return _category; }
             set
