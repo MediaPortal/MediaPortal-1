@@ -24,7 +24,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Primitive Properties
     
         [DataMember]
-        public int idRecordingCredit
+        public int IdRecordingCredit
         {
             get { return _idRecordingCredit; }
             set
@@ -43,7 +43,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idRecordingCredit;
     
         [DataMember]
-        public int idRecording
+        public int IdRecording
         {
             get { return _idRecording; }
             set
@@ -66,7 +66,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idRecording;
     
         [DataMember]
-        public string person
+        public string Person
         {
             get { return _person; }
             set
@@ -81,7 +81,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _person;
     
         [DataMember]
-        public string role
+        public string Role
         {
             get { return _role; }
             set
@@ -228,7 +228,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Recording.RecordingCredits.Add(this);
                 }
     
-                idRecording = Recording.IdRecording;
+                IdRecording = Recording.IdRecording;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {
