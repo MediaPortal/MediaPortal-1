@@ -189,7 +189,7 @@ namespace Mediaportal.TV.TvPlugin
         return;
       if (preRecordInterval == -1)
       {
-        preRecordInterval = Decimal.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").value);
+        preRecordInterval = Decimal.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").Value);
       }
       Log.Debug("TvTimeShiftPositionWatcher: SetNewChannel(" + idChannel.ToString() + ")");
       idChannelToWatch = idChannel;

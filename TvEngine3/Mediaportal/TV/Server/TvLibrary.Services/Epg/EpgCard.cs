@@ -238,7 +238,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     {
       ServiceManager.Instance.InternalControllerService.OnTvServerEvent += _eventHandler;
       Setting s = SettingsManagement.GetSetting("timeoutEPG", "10");
-      if (Int32.TryParse(s.value, out _epgTimeOut) == false)
+      if (Int32.TryParse(s.Value, out _epgTimeOut) == false)
       {
         _epgTimeOut = 10;
       }

@@ -45,52 +45,52 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     public override void LoadSettings()
     {     
       Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PowerSchedulerShutdownActive", "false");
-      checkBox1.Checked = Convert.ToBoolean(setting.value);
+      checkBox1.Checked = Convert.ToBoolean(setting.Value);
 
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PowerSchedulerIdleTimeout", "5");
-      numericUpDown1.Value = Convert.ToDecimal(setting.value);
+      numericUpDown1.Value = Convert.ToDecimal(setting.Value);
 
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PowerSchedulerStandbyAllowedStart", "0");
-      numUpDownStandbyAllowedStartHour.Value = Convert.ToDecimal(setting.value);
+      numUpDownStandbyAllowedStartHour.Value = Convert.ToDecimal(setting.Value);
 
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PowerSchedulerStandbyAllowedEnd", "24");
-      numUpDownStandbyAllowedEndHour.Value = Convert.ToDecimal(setting.value);
+      numUpDownStandbyAllowedEndHour.Value = Convert.ToDecimal(setting.Value);
 
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PowerSchedulerWakeupActive", "false");
-      checkBox2.Checked = Convert.ToBoolean(setting.value);
+      checkBox2.Checked = Convert.ToBoolean(setting.Value);
 
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PowerSchedulerShutdownMode", "2");
-      comboBox1.SelectedIndex = Convert.ToInt32(setting.value);
+      comboBox1.SelectedIndex = Convert.ToInt32(setting.Value);
 
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PowerSchedulerForceShutdown", "false");
-      checkBox3.Checked = Convert.ToBoolean(setting.value);
+      checkBox3.Checked = Convert.ToBoolean(setting.Value);
 
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PowerSchedulerExtensiveLogging", "false");
-      checkBox4.Checked = Convert.ToBoolean(setting.value);
+      checkBox4.Checked = Convert.ToBoolean(setting.Value);
 
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PowerSchedulerPreWakeupTime", "60");
-      numericUpDown2.Value = Convert.ToDecimal(setting.value);
+      numericUpDown2.Value = Convert.ToDecimal(setting.Value);
 
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PowerSchedulerPreNoShutdownTime", "300");
-      numericUpDown4.Value = Convert.ToDecimal(setting.value);
+      numericUpDown4.Value = Convert.ToDecimal(setting.Value);
 
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PowerSchedulerCheckInterval", "60");
-      numericUpDown3.Value = Convert.ToDecimal(setting.value);
+      numericUpDown3.Value = Convert.ToDecimal(setting.Value);
 
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PowerSchedulerReinitializeController", "false");
-      checkBox5.Checked = Convert.ToBoolean(setting.value);
+      checkBox5.Checked = Convert.ToBoolean(setting.Value);
 
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PowerSchedulerCommand", string.Empty);
-      textBox2.Text = setting.value;
+      textBox2.Text = setting.Value;
 
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PreventStandbyWhenGrabbingEPG", "false");
-      checkBox6.Checked = Convert.ToBoolean(setting.value);
+      checkBox6.Checked = Convert.ToBoolean(setting.Value);
 
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("WakeupSystemForEPGGrabbing", "false");
-      checkBox7.Checked = Convert.ToBoolean(setting.value);
+      checkBox7.Checked = Convert.ToBoolean(setting.Value);
 
 
-      EPGWakeupConfig config = new EPGWakeupConfig(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("EPGWakeupConfig", String.Empty).value);
+      EPGWakeupConfig config = new EPGWakeupConfig(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("EPGWakeupConfig", String.Empty).Value);
       foreach (EPGGrabDays day in config.Days)
       {
         switch (day)
@@ -130,18 +130,18 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       maskedTextBox1.Text = String.Format(hFormat, config.Hour) + ":" + String.Format(mFormat, config.Minutes);
 
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PowerSchedulerEpgCommand", String.Empty);
-      tbEpgCmd.Text = setting.value;
+      tbEpgCmd.Text = setting.Value;
 
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PowerSchedulerProcesses", "SetupTv, Configuration");
-      textBox1.Text = setting.value;
+      textBox1.Text = setting.Value;
 
       // Load share monitoring configuration for standby prevention
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PreventStandybyWhenSharesInUse", "true");
-      shareMonitoring.Checked = Convert.ToBoolean(setting.value);
+      shareMonitoring.Checked = Convert.ToBoolean(setting.Value);
 
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PreventStandybyWhenSpecificSharesInUse", "");
       inhibitStandbyShares.Rows.Clear();
-      string[] shares = setting.value.Split(';');
+      string[] shares = setting.Value.Split(';');
       foreach (string share in shares)
       {
         string[] shareItem = share.Split(',');
@@ -155,10 +155,10 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       }
 
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("NetworkMonitorEnabled", "false");
-      checkBox15.Checked = Convert.ToBoolean(setting.value);
+      checkBox15.Checked = Convert.ToBoolean(setting.Value);
 
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("NetworkMonitorIdleLimit", "2");
-      numericUpDown5.Value = Convert.ToDecimal(setting.value);
+      numericUpDown5.Value = Convert.ToDecimal(setting.Value);
     }
 
     public override void SaveSettings()
@@ -181,7 +181,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       
 
       Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("EPGWakeupConfig", String.Empty);
-      var cfg = new EPGWakeupConfig(setting.value);
+      var cfg = new EPGWakeupConfig(setting.Value);
       var newcfg = new EPGWakeupConfig {Hour = cfg.Hour, Minutes = cfg.Minutes, LastRun = cfg.LastRun};
       // newcfg.Days = cfg.Days;
       string[] time = maskedTextBox1.Text.Split(System.Globalization.DateTimeFormatInfo.CurrentInfo.TimeSeparator[0]);

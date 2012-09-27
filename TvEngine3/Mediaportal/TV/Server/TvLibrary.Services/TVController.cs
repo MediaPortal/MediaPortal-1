@@ -490,10 +490,10 @@ namespace Mediaportal.TV.Server.TVLibrary
           }
         }
 
-        _rtspStreamingPort = Int32.Parse(SettingsManagement.GetSetting("rtspPort", RtspStreaming.DefaultPort.ToString()).value);
+        _rtspStreamingPort = Int32.Parse(SettingsManagement.GetSetting("rtspPort", RtspStreaming.DefaultPort.ToString()).Value);
 
         //enumerate all tv cards in this pc...
-        _maxFreeCardsToTry = Int32.Parse(SettingsManagement.GetSetting("timeshiftMaxFreeCardsToTry", "0").value);
+        _maxFreeCardsToTry = Int32.Parse(SettingsManagement.GetSetting("timeshiftMaxFreeCardsToTry", "0").Value);
 
         IList<Card> allCards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None);
 
@@ -2825,12 +2825,12 @@ namespace Mediaportal.TV.Server.TVLibrary
         {
           ScanParameters settings = new ScanParameters();
 
-          settings.TimeOutTune = Int32.Parse(SettingsManagement.GetSetting("timeoutTune", "2").value);
-          settings.TimeOutPAT = Int32.Parse(SettingsManagement.GetSetting("timeoutPAT", "5").value);
-          settings.TimeOutCAT = Int32.Parse(SettingsManagement.GetSetting("timeoutCAT", "5").value);
-          settings.TimeOutPMT = Int32.Parse(SettingsManagement.GetSetting("timeoutPMT", "10").value);
-          settings.TimeOutSDT = Int32.Parse(SettingsManagement.GetSetting("timeoutSDT", "20").value);
-          settings.TimeOutAnalog = Int32.Parse(SettingsManagement.GetSetting("timeoutAnalog", "20").value);
+          settings.TimeOutTune = Int32.Parse(SettingsManagement.GetSetting("timeoutTune", "2").Value);
+          settings.TimeOutPAT = Int32.Parse(SettingsManagement.GetSetting("timeoutPAT", "5").Value);
+          settings.TimeOutCAT = Int32.Parse(SettingsManagement.GetSetting("timeoutCAT", "5").Value);
+          settings.TimeOutPMT = Int32.Parse(SettingsManagement.GetSetting("timeoutPMT", "10").Value);
+          settings.TimeOutSDT = Int32.Parse(SettingsManagement.GetSetting("timeoutSDT", "20").Value);
+          settings.TimeOutAnalog = Int32.Parse(SettingsManagement.GetSetting("timeoutAnalog", "20").Value);
           channels = _cards[cardId].Scanner.Scan(channel, settings); 
         }        
       }
@@ -2849,7 +2849,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         if (ValidateTvControllerParams(cardId))
         {
           ScanParameters settings = new ScanParameters();
-          settings.TimeOutTune = Int32.Parse(SettingsManagement.GetSetting("timeoutTune", "2").value);
+          settings.TimeOutTune = Int32.Parse(SettingsManagement.GetSetting("timeoutTune", "2").Value);
           _cards[cardId].SetParameters();
           scanNit = _cards[cardId].Scanner.ScanNIT(channel, settings);
         }
@@ -4229,7 +4229,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           {
             if (_epgGrabber != null)
             {
-              if (SettingsManagement.GetSetting("idleEPGGrabberEnabled", "yes").value == "yes")
+              if (SettingsManagement.GetSetting("idleEPGGrabberEnabled", "yes").Value == "yes")
               {
                 StartEPGgrabber();
               }
@@ -4239,7 +4239,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           {
             if (_epgGrabber != null)
             {
-              if (SettingsManagement.GetSetting("idleEPGGrabberEnabled", "yes").value == "yes")
+              if (SettingsManagement.GetSetting("idleEPGGrabberEnabled", "yes").Value == "yes")
               {
                 StopEPGgrabber();
               }

@@ -54,11 +54,11 @@ namespace Mediaportal.TV.TvPlugin
       spinPreRecord.SetRange(0, 30);
       spinPostRecord.SetRange(0, 30);
 
-      spinPreRecord.Value = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").value);
-      spinPostRecord.Value = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);
+      spinPreRecord.Value = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").Value);
+      spinPostRecord.Value = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").Value);
 
-      cbAutoDeleteRecordings.Selected = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("autodeletewatchedrecordings", "no").value == "yes");
-      cbCreateTagInfoXML.Selected = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("createtaginfoxml", "yes").value == "yes");
+      cbAutoDeleteRecordings.Selected = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("autodeletewatchedrecordings", "no").Value == "yes");
+      cbCreateTagInfoXML.Selected = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("createtaginfoxml", "yes").Value == "yes");
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)

@@ -46,20 +46,20 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       base.OnSectionActivated();
       
 
-      checkBoxAlwaysFillHoles.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("generalEPGAlwaysFillHoles", "no").value == "yes");
-      checkBoxAlwaysUpdate.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("generalEPGAlwaysReplace", "no").value == "yes");
-      checkboxSameTransponder.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("generalGrapOnlyForSameTransponder", "no").value == "yes");
+      checkBoxAlwaysFillHoles.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("generalEPGAlwaysFillHoles", "no").Value == "yes");
+      checkBoxAlwaysUpdate.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("generalEPGAlwaysReplace", "no").Value == "yes");
+      checkboxSameTransponder.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("generalGrapOnlyForSameTransponder", "no").Value == "yes");
 
-      checkBoxEnableEPGWhileIdle.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("idleEPGGrabberEnabled", "yes").value == "yes");
+      checkBoxEnableEPGWhileIdle.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("idleEPGGrabberEnabled", "yes").Value == "yes");
       checkBoxEnableCRCCheck.Checked = !DebugSettings.DisableCRCCheck;
-      numericUpDownEpgTimeOut.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutEPG", "10").value);
-      numericUpDownEpgRefresh.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutEPGRefresh", "240").value);
-      checkBoxEnableEpgWhileTimeshifting.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeshiftingEpgGrabberEnabled", "no").value ==
+      numericUpDownEpgTimeOut.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutEPG", "10").Value);
+      numericUpDownEpgRefresh.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutEPGRefresh", "240").Value);
+      checkBoxEnableEpgWhileTimeshifting.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeshiftingEpgGrabberEnabled", "no").Value ==
                                                     "yes");
-      numericUpDownTSEpgTimeout.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeshiftingEpgGrabberTimeout", "2").value);
+      numericUpDownTSEpgTimeout.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeshiftingEpgGrabberTimeout", "2").Value);
 
-      edTitleTemplate.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("epgTitleTemplate", "%TITLE%").value;
-      edDescriptionTemplate.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("epgDescriptionTemplate", "%DESCRIPTION%").value;
+      edTitleTemplate.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("epgTitleTemplate", "%TITLE%").Value;
+      edDescriptionTemplate.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("epgDescriptionTemplate", "%DESCRIPTION%").Value;
     }
 
     public override void OnSectionDeActivated()

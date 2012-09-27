@@ -889,8 +889,8 @@ namespace Mediaportal.TV.TvPlugin
                                                               GUILocalizeStrings.Get(413) + " (" + channel.Entity.DisplayName +
                                                               ")",
                                                               DateTime.Now, DateTime.Now.AddDays(1));
-        newSchedule.PreRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").value);
-        newSchedule.PostRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);
+        newSchedule.PreRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").Value);
+        newSchedule.PostRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").Value);
         ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(newSchedule);
         ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
       }
@@ -916,8 +916,8 @@ namespace Mediaportal.TV.TvPlugin
         // ok, no existing schedule found with matching canceled schedules found. proceeding to add the schedule normally
         Schedule newSchedule = ScheduleFactory.CreateSchedule(channel.Entity.IdChannel, channel.CurrentProgram.Title,
                                             channel.CurrentProgram.StartTime, channel.CurrentProgram.EndTime);
-        newSchedule.PreRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").value);
-        newSchedule.PostRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);
+        newSchedule.PreRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").Value);
+        newSchedule.PostRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").Value);
         ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(newSchedule);
         ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
       }

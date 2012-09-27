@@ -197,19 +197,19 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       
 
       numericUpDownMaxFreeCardsToTry.Value = ValueSanityCheck(
-        Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("recordMaxFreeCardsToTry", "0").value), 0, 100);
+        Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("recordMaxFreeCardsToTry", "0").Value), 0, 100);
 
-      comboBoxWeekend.SelectedIndex = Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("FirstDayOfWeekend", "0").value);
+      comboBoxWeekend.SelectedIndex = Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("FirstDayOfWeekend", "0").Value);
       //default is Saturday=0
 
-      checkBoxAutoDelete.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("autodeletewatchedrecordings", "no").value == "yes");
-      checkBoxPreventDupes.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PreventDuplicates", "no").value == "yes");
-      comboBoxEpisodeKey.SelectedIndex = Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("EpisodeKey", "0").value);
+      checkBoxAutoDelete.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("autodeletewatchedrecordings", "no").Value == "yes");
+      checkBoxPreventDupes.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PreventDuplicates", "no").Value == "yes");
+      comboBoxEpisodeKey.SelectedIndex = Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("EpisodeKey", "0").Value);
       // default EpisodeName
       //checkBoxCreateTagInfoXML.Checked = true; // (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("createtaginfoxml", "yes").value == "yes");
 
-      numericUpDownPreRec.Value = int.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "7").value);
-      numericUpDownPostRec.Value = int.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "10").value);
+      numericUpDownPreRec.Value = int.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "7").Value);
+      numericUpDownPostRec.Value = int.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "10").Value);
 
       // Movies formats
       _formatString[0] = new string[4];
@@ -226,16 +226,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       _formatString[1][3] = @"%title% - %channel%\%title% - %date% - %start%";
       _formatString[1][4] = @"[User custom value]"; // Must be the last one in the array list
 
-      Int32.TryParse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("moviesformatindex", "0").value, out _formatIndex[0]);
-      Int32.TryParse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("seriesformatindex", "0").value, out _formatIndex[1]);
+      Int32.TryParse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("moviesformatindex", "0").Value, out _formatIndex[0]);
+      Int32.TryParse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("seriesformatindex", "0").Value, out _formatIndex[1]);
 
-      _customFormat[0] = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("moviesformat", "").value;
-      _customFormat[1] = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("seriesformat", "").value;
+      _customFormat[0] = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("moviesformat", "").Value;
+      _customFormat[1] = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("seriesformat", "").Value;
 
       comboBoxMovies.SelectedIndex = 0;
       UpdateFieldDisplay();
 
-      enableDiskQuota.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("diskQuotaEnabled", "False").value == "True");
+      enableDiskQuota.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("diskQuotaEnabled", "False").Value == "True");
       enableDiskQuotaControls();
 
       LoadComboBoxDrive();
@@ -526,7 +526,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSetting("freediskspace" + drive[0]);
         try
         {
-          long quota = Int64.Parse(setting.value);
+          long quota = Int64.Parse(setting.Value);
           mpNumericTextBoxDiskQuota.Value = (int)quota / 1024;
         }
         catch (Exception)

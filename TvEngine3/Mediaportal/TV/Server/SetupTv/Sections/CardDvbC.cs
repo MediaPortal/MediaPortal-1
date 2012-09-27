@@ -243,32 +243,32 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void SetDefaults()
     {
       
-      int index = Math.Max(Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbc" + _cardNumber + "Country", "0").value), 0);
+      int index = Math.Max(Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbc" + _cardNumber + "Country", "0").Value), 0);
       // limit to >= 0
       if (index < mpComboBoxCountry.Items.Count)
       {
         mpComboBoxCountry.SelectedIndex = index;
       }
 
-      index = Math.Max(Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbc" + _cardNumber + "Region", "0").value), 0); // limit to >= 0
+      index = Math.Max(Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbc" + _cardNumber + "Region", "0").Value), 0); // limit to >= 0
       if (index < mpComboBoxRegion.Items.Count)
       {
         mpComboBoxRegion.SelectedIndex = index;
       }
 
-      textBoxFreq.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbc" + _cardNumber + "Freq", "306000").value;
-      textBoxSymbolRate.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbc" + _cardNumber + "Symbolrate", "6900").value;
+      textBoxFreq.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbc" + _cardNumber + "Freq", "306000").Value;
+      textBoxSymbolRate.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbc" + _cardNumber + "Symbolrate", "6900").Value;
 
-      index = Math.Max(Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbc" + _cardNumber + "Modulation", "3").value), 0);
+      index = Math.Max(Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbc" + _cardNumber + "Modulation", "3").Value), 0);
       // limit to >= 0
       if (index < mpComboBoxMod.Items.Count)
       {
         mpComboBoxMod.SelectedIndex = index;
       }
 
-      checkBoxCreateGroups.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbc" + _cardNumber + "creategroups", "false").value == "true");
+      checkBoxCreateGroups.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbc" + _cardNumber + "creategroups", "false").Value == "true");
       checkBoxCreateSignalGroup.Checked =
-        (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbc" + _cardNumber + "createsignalgroup", "false").value == "true");
+        (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbc" + _cardNumber + "createsignalgroup", "false").Value == "true");
     }
 
     /// <summary>

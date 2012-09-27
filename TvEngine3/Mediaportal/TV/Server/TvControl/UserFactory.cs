@@ -72,20 +72,20 @@ namespace Mediaportal.TV.Server.TVControl
       {
         var settingService = GlobalServiceProvider.Get<ISettingService>();
         _priorityEpg = (int)ValueSanityCheck(
-        Convert.ToDecimal(settingService.GetSettingWithDefaultValue(EPG_TAGNAME, EPG_PRIORITY.ToString()).value), PRIORITY_MIN_VALUE, PRIORITY_MAX_VALUE);        
+        Convert.ToDecimal(settingService.GetSettingWithDefaultValue(EPG_TAGNAME, EPG_PRIORITY.ToString()).Value), PRIORITY_MIN_VALUE, PRIORITY_MAX_VALUE);        
 
         Log.Debug("UserFactory setting PriorityEPG : {0}", _priorityEpg);
 
         _priorityUser = (int)ValueSanityCheck(
-          Convert.ToDecimal(settingService.GetSettingWithDefaultValue(USER_TAGNAME, USER_PRIORITY.ToString()).value), PRIORITY_MIN_VALUE, PRIORITY_MAX_VALUE);
+          Convert.ToDecimal(settingService.GetSettingWithDefaultValue(USER_TAGNAME, USER_PRIORITY.ToString()).Value), PRIORITY_MIN_VALUE, PRIORITY_MAX_VALUE);
         Log.Debug("UserFactory setting PriorityUser : {0}", _priorityUser);
 
         _priorityScheduler = (int)ValueSanityCheck(
-          Convert.ToDecimal(settingService.GetSettingWithDefaultValue(SCHEDULER_TAGNAME, SCHEDULER_PRIORITY.ToString()).value), PRIORITY_MIN_VALUE, PRIORITY_MAX_VALUE);
+          Convert.ToDecimal(settingService.GetSettingWithDefaultValue(SCHEDULER_TAGNAME, SCHEDULER_PRIORITY.ToString()).Value), PRIORITY_MIN_VALUE, PRIORITY_MAX_VALUE);
         Log.Debug("UserFactory setting PriorityScheduler : {0}", _priorityScheduler);
 
         Setting setting = settingService.GetSettingWithDefaultValue(CUSTOM_TAGNAME, "");
-        string[] users = setting.value.Split(';');
+        string[] users = setting.Value.Split(';');
         foreach (string user in users)
         {
           string[] shareItem = user.Split(',');

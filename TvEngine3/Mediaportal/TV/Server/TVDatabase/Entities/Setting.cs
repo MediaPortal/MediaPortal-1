@@ -23,7 +23,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Primitive Properties
     
         [DataMember]
-        public int idSetting
+        public int IdSetting
         {
             get { return _idSetting; }
             set
@@ -42,7 +42,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idSetting;
     
         [DataMember]
-        public string tag
+        public string Tag
         {
             get { return _tag; }
             set
@@ -57,7 +57,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _tag;
     
         [DataMember]
-        public string value
+        public string Value
         {
             get { return _value; }
             set

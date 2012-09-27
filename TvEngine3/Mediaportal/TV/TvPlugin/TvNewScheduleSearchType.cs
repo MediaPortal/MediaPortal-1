@@ -138,8 +138,8 @@ namespace Mediaportal.TV.TvPlugin
       dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WeekendDays)));
 
       Schedule rec = ScheduleFactory.CreateSchedule(selectedChannel.IdChannel, "", ScheduleFactory.MinSchedule, ScheduleFactory.MinSchedule);      
-      rec.PreRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").value);
-      rec.PostRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);
+      rec.PreRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").Value);
+      rec.PostRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").Value);
       rec.ScheduleType = (int)ScheduleRecordingType.Once;
 
       DateTime dtNow = DateTime.Now;
@@ -267,8 +267,8 @@ namespace Mediaportal.TV.TvPlugin
 
       Schedule rec = ScheduleFactory.CreateSchedule(selectedChannel.IdChannel, "", ScheduleFactory.MinSchedule, ScheduleFactory.MinSchedule);
 
-      rec.PreRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").value);
-      rec.PostRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);
+      rec.PreRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").Value);
+      rec.PostRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").Value);
 
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel == -1)

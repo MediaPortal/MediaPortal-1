@@ -206,7 +206,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       if (card != null)
       {
         Setting setting = SettingsManagement.GetSetting("dvbs" + card.IdCard + "motorEnabled", "no");
-        if (setting.value == "yes")
+        if (setting.Value == "yes")
         {
           _useDISEqCMotor = true;
         }

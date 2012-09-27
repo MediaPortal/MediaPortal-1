@@ -74,7 +74,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         return false;
       }
 
-      int reuseLimit = Convert.ToInt32(SettingsManagement.GetSetting("softwareEncoderReuseLimit", "0").value);
+      int reuseLimit = Convert.ToInt32(SettingsManagement.GetSetting("softwareEncoderReuseLimit", "0").Value);
       lock (_encodersInUse)
       {
         DsDevice key = null;

@@ -192,14 +192,14 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
       try
       {
         
-        _sendSelect = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlasterSendSelect", "False").value == "True");
+        _sendSelect = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlasterSendSelect", "False").Value == "True");
         _sleepTime = 100; //xmlreader.GetValueAsInt("ServerBlaster", "delay", 100);
         _sendPort = 1; //xmlreader.GetValueAsInt("ServerBlaster", "forceport", 1);
-        _blaster1Card = Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlaster1Card", "0").value);
-        _blaster2Card = Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlaster2Card", "0").value);
-        _deviceType = Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlasterType", "0").value);
-        _deviceSpeed = Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlasterSpeed", "0").value);
-        _advandeLogging = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlasterLog", "False").value == "True");
+        _blaster1Card = Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlaster1Card", "0").Value);
+        _blaster2Card = Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlaster2Card", "0").Value);
+        _deviceType = Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlasterType", "0").Value);
+        _deviceSpeed = Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlasterSpeed", "0").Value);
+        _advandeLogging = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlasterLog", "False").Value == "True");
         _sendPort = Math.Max(1, Math.Min(2, _sendPort));
 
         Log.WriteFile("ServerBlaster.LoadRemoteCodes: Default port {0}", _sendPort);

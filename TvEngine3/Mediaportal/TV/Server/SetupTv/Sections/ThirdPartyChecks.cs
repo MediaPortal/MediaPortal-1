@@ -266,7 +266,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       STREAMING_PORT = RtspPort;
       if (STREAMING_PORT == 0)
       {        
-        STREAMING_PORT = Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSetting("rtspport").value);
+        STREAMING_PORT = Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSetting("rtspport").Value);
         return false;
       }
 

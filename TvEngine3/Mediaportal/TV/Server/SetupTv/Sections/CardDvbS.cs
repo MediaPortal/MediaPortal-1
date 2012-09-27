@@ -668,7 +668,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         if (curBox.Items.Count > 0)
         {
           int selIdx =
-            Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("dvbs{0}SatteliteContext{1}", _cardNumber, idx), "0").value);
+            Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("dvbs{0}SatteliteContext{1}", _cardNumber, idx), "0").Value);
           if (selIdx < curBox.Items.Count)
           {
             curBox.SelectedIndex = selIdx;
@@ -685,14 +685,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         curBox.Items.Add(DisEqcType.Level1BA);
         curBox.Items.Add(DisEqcType.Level1BB);
         curBox.SelectedIndex =
-          Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("dvbs{0}DiSEqC{1}", _cardNumber, idx), "0").value);
+          Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("dvbs{0}DiSEqC{1}", _cardNumber, idx), "0").Value);
 
         curBox = mpBands[ctlIndex];
         curBox.SelectedIndex =
-          Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("dvbs{0}band{1}", _cardNumber, idx), "0").value);
+          Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("dvbs{0}band{1}", _cardNumber, idx), "0").Value);
 
         curCheck = mpLNBs[ctlIndex];
-        curCheck.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("dvbs{0}LNB{1}", _cardNumber, idx), "0").value == "true");
+        curCheck.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("dvbs{0}LNB{1}", _cardNumber, idx), "0").Value == "true");
       }
 
       mpLNB1_CheckedChanged(null, null);
@@ -700,19 +700,19 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       mpLNB3_CheckedChanged(null, null);
       mpLNB4_CheckedChanged(null, null);
 
-      chkOverrideLNB.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("lnbDefault", "true").value != "true");
-      textBoxLNBLo.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("LnbLowFrequency", "0").value;
-      textBoxLNBHi.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("LnbHighFrequency", "0").value;
-      textBoxLNBSwitch.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("LnbSwitchFrequency", "0").value;
+      chkOverrideLNB.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("lnbDefault", "true").Value != "true");
+      textBoxLNBLo.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("LnbLowFrequency", "0").Value;
+      textBoxLNBHi.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("LnbHighFrequency", "0").Value;
+      textBoxLNBSwitch.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("LnbSwitchFrequency", "0").Value;
       chkOverrideLNB_CheckedChanged(null, null);
 
-      checkBoxCreateGroups.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "creategroups", "false").value == "true");
-      checkBoxCreateGroupsSat.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "creategroupssat", "false").value ==
+      checkBoxCreateGroups.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "creategroups", "false").Value == "true");
+      checkBoxCreateGroupsSat.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "creategroupssat", "false").Value ==
                                          "true");
       checkBoxCreateSignalGroup.Checked =
-        (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "createsignalgroup", "false").value == "true");
+        (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "createsignalgroup", "false").Value == "true");
 
-      checkBoxEnableDVBS2.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "enabledvbs2", "false").value == "true");
+      checkBoxEnableDVBS2.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "enabledvbs2", "false").Value == "true");
 
       _enableEvents = true;
       mpLNB1_CheckedChanged(null, null);
@@ -764,28 +764,28 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       bool restart = false;
       Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("lnbDefault", "true");
-      if (setting.value != (chkOverrideLNB.Checked ? "false" : "true"))
+      if (setting.Value != (chkOverrideLNB.Checked ? "false" : "true"))
       {
         restart = true;
       }
       ServiceAgents.Instance.SettingServiceAgent.SaveSetting("lnbDefault", chkOverrideLNB.Checked ? "false" : "true");
 
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("LnbLowFrequency", "0");
-      if (setting.value != textBoxLNBLo.Text)
+      if (setting.Value != textBoxLNBLo.Text)
       {
         restart = true;
       }
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("LnbLowFrequency", textBoxLNBLo.Text);      
 
       ServiceAgents.Instance.SettingServiceAgent.SaveSetting("LnbHighFrequency", "0");
-      if (setting.value != textBoxLNBHi.Text)
+      if (setting.Value != textBoxLNBHi.Text)
       {
         restart = true;
       }
       ServiceAgents.Instance.SettingServiceAgent.SaveSetting("LnbHighFrequency", textBoxLNBHi.Text);
 
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("LnbSwitchFrequency", "0");
-      if (setting.value != textBoxLNBSwitch.Text)
+      if (setting.Value != textBoxLNBSwitch.Text)
       {
         restart = true;
       }
@@ -947,7 +947,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       int position = -1;
       Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "motorEnabled", "no");
-      if (setting.value == "yes")
+      if (setting.Value == "yes")
       {
         foreach (DisEqcMotor motor in card.DisEqcMotors)
         {
@@ -1230,7 +1230,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       
       Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "motorEnabled", "no");
       bool enabled = false;
-      if (setting.value == "yes")
+      if (setting.Value == "yes")
       {
         enabled = true;
       }
@@ -1243,7 +1243,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "motorStepSize", "10");
       int stepsize;
-      if (Int32.TryParse(setting.value, out stepsize))
+      if (Int32.TryParse(setting.Value, out stepsize))
         comboBoxStepSize.SelectedIndex = stepsize - 1;
       else
         comboBoxStepSize.SelectedIndex = 9;
@@ -1252,7 +1252,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "selectedMotorSat", "0");
       int index;
-      Int32.TryParse(setting.value, out index);
+      Int32.TryParse(setting.Value, out index);
 
       List<SatelliteContext> satellites = LoadSatellites();
 
@@ -1435,9 +1435,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void LoadMotorTransponder()
     {      
       Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "limitsEnabled", "yes");
-      if (setting.value == "yes")
+      if (setting.Value == "yes")
         checkBoxEnabled.Checked = true;
-      if (setting.value == "no")
+      if (setting.Value == "no")
         checkBoxEnabled.Checked = false;
       comboBox1.Items.Clear();
       SatelliteContext sat = (SatelliteContext)comboBoxSat.SelectedItem;

@@ -198,7 +198,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       timer1.Enabled = true;
 
 
-      string prio = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PriorityUser", "2").value;
+      string prio = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PriorityUser", "2").Value;
       txtPrio.Text = prio;
 
       UpdateAdvMode();
@@ -209,7 +209,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       mpButtonRec.Enabled = false;
       //mpButtonPark.Enabled = false;
       
-      if (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("idleEPGGrabberEnabled", "yes").value != "yes")
+      if (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("idleEPGGrabberEnabled", "yes").Value != "yes")
       {
         mpButtonReGrabEpg.Enabled = false;
       }

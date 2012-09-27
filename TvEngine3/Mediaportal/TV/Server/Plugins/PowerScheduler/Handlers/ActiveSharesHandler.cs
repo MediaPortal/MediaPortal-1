@@ -239,11 +239,11 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
         
 
         // Load share monitoring configuration for standby prevention 
-        if (Convert.ToBoolean(SettingsManagement.GetSetting("PreventStandybyWhenSharesInUse", "false").value))
+        if (Convert.ToBoolean(SettingsManagement.GetSetting("PreventStandybyWhenSharesInUse", "false").Value))
         {
           Setting setting = SettingsManagement.GetSetting("PreventStandybyWhenSpecificSharesInUse", "");
 
-          string[] shares = setting.value.Split(';');
+          string[] shares = setting.Value.Split(';');
           foreach (string share in shares)
           {
             string[] shareItem = share.Split(',');

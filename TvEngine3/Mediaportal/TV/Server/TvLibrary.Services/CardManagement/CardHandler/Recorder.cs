@@ -65,7 +65,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
 
       _cardHandler = cardHandler;
-      _timeshiftingEpgGrabberEnabled = (SettingsManagement.GetSetting("timeshiftingEpgGrabberEnabled", "no").value ==
+      _timeshiftingEpgGrabberEnabled = (SettingsManagement.GetSetting("timeshiftingEpgGrabberEnabled", "no").Value ==
                                         "yes");
     }
 

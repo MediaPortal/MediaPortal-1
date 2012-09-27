@@ -1203,8 +1203,8 @@ namespace Mediaportal.TV.TvPlugin
     private void UpdateDescription()
     {
       Schedule rec = ScheduleFactory.CreateSchedule(-1, "", ScheduleFactory.MinSchedule, ScheduleFactory.MinSchedule);      
-      rec.PreRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").value);
-      rec.PostRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);
+      rec.PreRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").Value);
+      rec.PostRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").Value);
       SetProperties(rec);
       GUIListItem pItem = GetItem(GetSelectedItemNo());
       if (pItem == null)

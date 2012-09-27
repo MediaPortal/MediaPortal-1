@@ -139,14 +139,14 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
 
     private void LoadDbSettings()
     {
-      checkBoxEnableImport.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieEnabled", "false").value == "true";
-      checkBoxUseShortDesc.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieShortProgramDesc", "false").value == "true";
-      checkBoxAdditionalInfo.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieExtendDescription", "true").value == "true";
-      checkBoxShowRatings.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieShowRatings", "true").value == "true";
-      checkBoxShowAudioFormat.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieShowAudioFormat", "false").value == "true";
-      checkBoxSlowImport.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieSlowImport", "true").value == "true";
+      checkBoxEnableImport.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieEnabled", "false").Value == "true";
+      checkBoxUseShortDesc.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieShortProgramDesc", "false").Value == "true";
+      checkBoxAdditionalInfo.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieExtendDescription", "true").Value == "true";
+      checkBoxShowRatings.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieShowRatings", "true").Value == "true";
+      checkBoxShowAudioFormat.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieShowAudioFormat", "false").Value == "true";
+      checkBoxSlowImport.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieSlowImport", "true").Value == "true";
 
-      var tvMovieLimitActors = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieLimitActors", "5").value);
+      var tvMovieLimitActors = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieLimitActors", "5").Value);
       if (tvMovieLimitActors < numericUpDownActorCount.Minimum || tvMovieLimitActors > numericUpDownActorCount.Maximum)
       {
         checkBoxLimitActors.Checked = false;
@@ -158,9 +158,9 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         numericUpDownActorCount.Value = tvMovieLimitActors;
       }
 
-      checkBoxShowLive.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieShowLive", "true").value == "true";
-      checkBoxShowRepeat.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieShowRepeating", "false").value == "true";
-      SetRestPeriod(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieRestPeriod", "24").value);
+      checkBoxShowLive.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieShowLive", "true").Value == "true";
+      checkBoxShowRepeat.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieShowRepeating", "false").Value == "true";
+      SetRestPeriod(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieRestPeriod", "24").Value);
     }
 
     #endregion

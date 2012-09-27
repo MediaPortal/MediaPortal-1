@@ -17,11 +17,11 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           {
             string folder =
               SettingsManagement.GetSetting("xmlTv", XmlTvImporter.DefaultOutputFolder).
-                value;
+                Value;
             bool importXML =
-              SettingsManagement.GetSetting("xmlTvImportXML", "true").value == "true";
+              SettingsManagement.GetSetting("xmlTvImportXML", "true").Value == "true";
             bool importLST =
-              SettingsManagement.GetSetting("xmlTvImportLST", "false").value == "true";
+              SettingsManagement.GetSetting("xmlTvImportLST", "false").Value == "true";
 
             var importer = new XmlTvImporter();
             importer.ForceImport(folder, importXML, importLST);

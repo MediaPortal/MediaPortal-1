@@ -99,7 +99,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     /// </summary>
     public void Start()
     {
-      if (SettingsManagement.GetSetting("idleEPGGrabberEnabled", "yes").value != "yes")
+      if (SettingsManagement.GetSetting("idleEPGGrabberEnabled", "yes").Value != "yes")
       {
         Log.Epg("EPG: grabber disabled");
         return;
@@ -110,7 +110,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       }            
 
       Setting s = SettingsManagement.GetSetting("timeoutEPGRefresh", "240");      
-      if (Int32.TryParse(s.value, out _epgReGrabAfter) == false)
+      if (Int32.TryParse(s.Value, out _epgReGrabAfter) == false)
       {
         _epgReGrabAfter = 240;
       }
@@ -141,7 +141,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
         }
         try
         {
-          RemoteControl.HostName = SettingsManagement.GetSetting("hostname").value;
+          RemoteControl.HostName = SettingsManagement.GetSetting("hostname").Value;
           if (!ServiceManager.Instance.InternalControllerService.IsCardPresent(card.IdCard))
           {
             continue;

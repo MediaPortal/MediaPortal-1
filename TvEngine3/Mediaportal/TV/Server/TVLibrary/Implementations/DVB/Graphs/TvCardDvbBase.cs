@@ -1134,7 +1134,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
 
       //add logic to check if WinTV device should be built with this DVB graph.
       
-      int winTvTunerCardId = Int32.Parse(SettingsManagement.GetSetting("winTvCiTuner", "-1").value);
+      int winTvTunerCardId = Int32.Parse(SettingsManagement.GetSetting("winTvCiTuner", "-1").Value);
       if (winTvTunerCardId != this._cardId)
       {
         Log.Info("dvb:  WinTv CI module not assigned to card: {0}", _tunerDevice.Name);

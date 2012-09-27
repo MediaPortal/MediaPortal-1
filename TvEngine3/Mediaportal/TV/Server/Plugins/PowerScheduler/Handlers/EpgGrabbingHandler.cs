@@ -138,7 +138,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 
           // Check if standby should be prevented when grabbing EPG
           setting = ps.Settings.GetSetting("PreventStandbyWhenGrabbingEPG");
-          enabled = Convert.ToBoolean(SettingsManagement.GetSetting("PreventStandbyWhenGrabbingEPG", "false").value);
+          enabled = Convert.ToBoolean(SettingsManagement.GetSetting("PreventStandbyWhenGrabbingEPG", "false").Value);
           if (setting.Get<bool>() != enabled)
           {
             setting.Set<bool>(enabled);
@@ -157,7 +157,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 
           // Check if system should wakeup for EPG grabs
           setting = ps.Settings.GetSetting("WakeupSystemForEPGGrabbing");
-          enabled = Convert.ToBoolean(SettingsManagement.GetSetting("WakeupSystemForEPGGrabbing", "false").value);
+          enabled = Convert.ToBoolean(SettingsManagement.GetSetting("WakeupSystemForEPGGrabbing", "false").Value);
           if (setting.Get<bool>() != enabled)
           {
             setting.Set<bool>(enabled);
@@ -176,7 +176,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 
           // Check if a wakeup time is set
           setting = ps.Settings.GetSetting("EPGWakeupConfig");
-          EPGWakeupConfig config = new EPGWakeupConfig((SettingsManagement.GetSetting("EPGWakeupConfig", String.Empty).value));
+          EPGWakeupConfig config = new EPGWakeupConfig((SettingsManagement.GetSetting("EPGWakeupConfig", String.Empty).Value));
 
           if (!config.Equals(setting.Get<EPGWakeupConfig>()))
           {
@@ -237,7 +237,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
     public void RunExternalCommand(String action)
     {
       
-      String cmd = SettingsManagement.GetSetting("PowerSchedulerEpgCommand", String.Empty).value;
+      String cmd = SettingsManagement.GetSetting("PowerSchedulerEpgCommand", String.Empty).Value;
       if (cmd.Equals(String.Empty))
         return;
       using (Process p = new Process())
@@ -277,7 +277,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
       // shutdown is disallowed until then
 
       
-      EPGWakeupConfig config = new EPGWakeupConfig((SettingsManagement.GetSetting("EPGWakeupConfig", String.Empty).value));
+      EPGWakeupConfig config = new EPGWakeupConfig((SettingsManagement.GetSetting("EPGWakeupConfig", String.Empty).Value));
 
       Log.Info("PowerScheduler: EPG schedule {0}:{1} is due: {2}:{3}",
                config.Hour, config.Minutes, DateTime.Now.Hour, DateTime.Now.Minute);
@@ -317,7 +317,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
     private bool ShouldRunNow()
     {
       
-      EPGWakeupConfig config = new EPGWakeupConfig((SettingsManagement.GetSetting("EPGWakeupConfig", String.Empty).value));
+      EPGWakeupConfig config = new EPGWakeupConfig((SettingsManagement.GetSetting("EPGWakeupConfig", String.Empty).Value));
 
       // check if schedule is due
       // check if we've already run today

@@ -234,9 +234,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       string strInput = "title%";
       if (setting != null)
       {
-        if (setting.value != null)
+        if (setting.Value != null)
         {
-          strInput = setting.value;
+          strInput = setting.Value;
         }
       }
       string subDirectory = string.Empty;

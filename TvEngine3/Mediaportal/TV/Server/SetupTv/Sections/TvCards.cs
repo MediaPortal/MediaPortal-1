@@ -157,10 +157,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       UpdateList();
 
       //IPTV
-      iptvUpDown.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("iptvCardCount", "1").value);
+      iptvUpDown.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("iptvCardCount", "1").Value);
 
       //WinTV CI
-      int winTvTunerCardId = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("winTvCiTuner", "-1").value);
+      int winTvTunerCardId = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("winTvCiTuner", "-1").Value);
       mpComboBoxCard.SelectedIndex = -1;
       foreach (CardInfo cardInfo in mpComboBoxCard.Items)
       {

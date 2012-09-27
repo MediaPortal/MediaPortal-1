@@ -174,7 +174,7 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
       removeCanceledSchedules(scheduleListToParse);
 
       // test section
-      bool cmDebug = SettingsManagement.GetSetting("CMDebugMode", "false").value == "true"; // activate debug mode
+      bool cmDebug = SettingsManagement.GetSetting("CMDebugMode", "false").Value == "true"; // activate debug mode
 
       #region debug informations
 

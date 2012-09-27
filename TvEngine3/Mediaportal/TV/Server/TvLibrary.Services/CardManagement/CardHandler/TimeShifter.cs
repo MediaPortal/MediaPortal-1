@@ -69,10 +69,10 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
       _cardHandler = cardHandler;
 
-      _linkageScannerEnabled = (SettingsManagement.GetSetting("linkageScannerEnabled", "no").value == "yes");
+      _linkageScannerEnabled = (SettingsManagement.GetSetting("linkageScannerEnabled", "no").Value == "yes");
 
       _linkageGrabber = new ChannelLinkageGrabber(cardHandler.Card);
-      _timeshiftingEpgGrabberEnabled = (SettingsManagement.GetSetting("timeshiftingEpgGrabberEnabled", "no").value ==
+      _timeshiftingEpgGrabberEnabled = (SettingsManagement.GetSetting("timeshiftingEpgGrabberEnabled", "no").Value ==
                                         "yes");
 
       _timeAudioEvent = DateTime.MinValue;
@@ -441,7 +441,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       ulong freeDiskSpace = Utils.GetFreeDiskSpace(fileName);
 
 
-      UInt32 maximumFileSize = UInt32.Parse(SettingsManagement.GetSetting("timeshiftMaxFileSize", "256").value);
+      UInt32 maximumFileSize = UInt32.Parse(SettingsManagement.GetSetting("timeshiftMaxFileSize", "256").Value);
         // in MB
       ulong diskSpaceNeeded = Convert.ToUInt64(maximumFileSize);
       diskSpaceNeeded *= 1000000*2; // Convert to bytes; 2 times of timeshiftMaxFileSize

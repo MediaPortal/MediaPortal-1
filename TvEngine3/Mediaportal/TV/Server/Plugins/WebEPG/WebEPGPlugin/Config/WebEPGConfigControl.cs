@@ -125,7 +125,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       Initialize();
 
 
-      switch (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgDestination", "db").value)
+      switch (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgDestination", "db").Value)
       {
         case "db":
           DestinationComboBox.SelectedIndex = 0;
@@ -141,15 +141,15 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
           break;
       }
 
-      textBoxFolder.Text = ServiceAgents.Instance.SettingServiceAgent.GetSetting("webepgDestinationFolder").value;
-      checkBoxDeleteBeforeImport.Checked = Convert.ToBoolean(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgDeleteBeforeImport", "true").value);
+      textBoxFolder.Text = ServiceAgents.Instance.SettingServiceAgent.GetSetting("webepgDestinationFolder").Value;
+      checkBoxDeleteBeforeImport.Checked = Convert.ToBoolean(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgDeleteBeforeImport", "true").Value);
 
       LoadWebepgConfigFile();
       //RedrawList(null);
 
       // Schedule
-      ScheduleGrabCheckBox.Checked = Convert.ToBoolean(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgScheduleEnabled", "true").value);
-      EPGWakeupConfig config = new EPGWakeupConfig(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgSchedule", String.Empty).value);
+      ScheduleGrabCheckBox.Checked = Convert.ToBoolean(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgScheduleEnabled", "true").Value);
+      EPGWakeupConfig config = new EPGWakeupConfig(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgSchedule", String.Empty).Value);
       foreach (EPGGrabDays day in config.Days)
       {
         switch (day)
@@ -234,7 +234,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
 
 
       Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgSchedule", String.Empty);
-      EPGWakeupConfig cfg = new EPGWakeupConfig(setting.value);
+      EPGWakeupConfig cfg = new EPGWakeupConfig(setting.Value);
       EPGWakeupConfig newcfg = new EPGWakeupConfig();
       newcfg.Hour = cfg.Hour;
       newcfg.Minutes = cfg.Minutes;
@@ -292,10 +292,10 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
     private void ShowStatus()
     {
 
-      labelLastImport.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgResultLastImport", "").value;
-      labelChannels.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgResultChannels", "").value;
-      labelPrograms.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgResultPrograms", "").value;
-      labelStatus.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgResultStatus", "").value;
+      labelLastImport.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgResultLastImport", "").Value;
+      labelChannels.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgResultChannels", "").Value;
+      labelPrograms.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgResultPrograms", "").Value;
+      labelStatus.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgResultStatus", "").Value;
     }
 
     private void LoadCountries()

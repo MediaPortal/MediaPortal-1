@@ -104,20 +104,20 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     public void ReloadConfig()
     {      
       
-      _titleTemplate = SettingsManagement.GetSetting("epgTitleTemplate", "%TITLE%").value;
-      _descriptionTemplate = SettingsManagement.GetSetting("epgDescriptionTemplate", "%DESCRIPTION%").value;
-      _epgLanguages = SettingsManagement.GetSetting("epgLanguages").value;
+      _titleTemplate = SettingsManagement.GetSetting("epgTitleTemplate", "%TITLE%").Value;
+      _descriptionTemplate = SettingsManagement.GetSetting("epgDescriptionTemplate", "%DESCRIPTION%").Value;
+      _epgLanguages = SettingsManagement.GetSetting("epgLanguages").Value;
       Setting setting = SettingsManagement.GetSetting("epgStoreOnlySelected");
-      _storeOnlySelectedChannels = (setting.value == "yes");
+      _storeOnlySelectedChannels = (setting.Value == "yes");
       Setting settingRadio = SettingsManagement.GetSetting("epgRadioStoreOnlySelected");
-      _storeOnlySelectedChannelsRadio = (settingRadio.value == "yes");
+      _storeOnlySelectedChannelsRadio = (settingRadio.Value == "yes");
       Setting s = SettingsManagement.GetSetting("timeoutEPGRefresh", "240");
-      if (Int32.TryParse(s.value, out _epgReGrabAfter) == false)
+      if (Int32.TryParse(s.Value, out _epgReGrabAfter) == false)
       {
         _epgReGrabAfter = 240;
       }
-      _alwaysFillHoles = (SettingsManagement.GetSetting("generalEPGAlwaysFillHoles", "no").value == "yes");
-      _alwaysReplace = (SettingsManagement.GetSetting("generalEPGAlwaysReplace", "no").value == "yes");
+      _alwaysFillHoles = (SettingsManagement.GetSetting("generalEPGAlwaysFillHoles", "no").Value == "yes");
+      _alwaysReplace = (SettingsManagement.GetSetting("generalEPGAlwaysReplace", "no").Value == "yes");
     }
 
     public void UpdateEpgForChannel(EpgChannel epgChannel)

@@ -114,16 +114,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       base.OnSectionActivated();
       
 
-      numericUpDownTune.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutTune", "2").value);
-      numericUpDownPAT.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutPAT", "5").value);
-      numericUpDownCAT.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutCAT", "5").value);
-      numericUpDownPMT.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutPMT", "10").value);
-      numericUpDownSDT.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutSDT", "20").value);
-      numericUpDownAnalog.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutAnalog", "20").value);
+      numericUpDownTune.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutTune", "2").Value);
+      numericUpDownPAT.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutPAT", "5").Value);
+      numericUpDownCAT.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutCAT", "5").Value);
+      numericUpDownPMT.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutPMT", "10").Value);
+      numericUpDownSDT.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutSDT", "20").Value);
+      numericUpDownAnalog.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutAnalog", "20").Value);
 
-      delayDetectUpDown.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("delayCardDetect", "0").value);
+      delayDetectUpDown.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("delayCardDetect", "0").Value);
 
-      checkBoxEnableLinkageScanner.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("linkageScannerEnabled", "no").value == "yes");
+      checkBoxEnableLinkageScanner.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("linkageScannerEnabled", "no").Value == "yes");
 
       mpComboBoxPrio.Items.Clear();
       mpComboBoxPrio.Items.Add("Realtime");
@@ -135,7 +135,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       try
       {
-        mpComboBoxPrio.SelectedIndex = Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("processPriority", "3").value);
+        mpComboBoxPrio.SelectedIndex = Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("processPriority", "3").Value);
         //default is normal=3       
       }
       catch (Exception)
@@ -144,7 +144,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       BuildLists();
-      numericUpDownReuseLimit.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("softwareEncoderReuseLimit", "0").value);
+      numericUpDownReuseLimit.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("softwareEncoderReuseLimit", "0").Value);
     }
 
     public override void OnSectionDeActivated()

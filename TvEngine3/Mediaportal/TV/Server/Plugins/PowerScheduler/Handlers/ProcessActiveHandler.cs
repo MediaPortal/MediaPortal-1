@@ -69,7 +69,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
             return;
           PowerSetting setting = ps.Settings.GetSetting("Processes");
           
-          string processString = SettingsManagement.GetSetting("PowerSchedulerProcesses").value;
+          string processString = SettingsManagement.GetSetting("PowerSchedulerProcesses").Value;
           List<string> processes = new List<string>();
           foreach (string process in processString.Split(','))
             processes.Add(process.Trim());

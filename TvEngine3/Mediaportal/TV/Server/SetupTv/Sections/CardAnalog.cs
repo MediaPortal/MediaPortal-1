@@ -95,10 +95,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       
       
         
-      mpComboBoxCountry.SelectedIndex = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("analog" + _cardNumber + "Country", "0").value);
-      mpComboBoxSource.SelectedIndex = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("analog" + _cardNumber + "Source", "0").value);
+      mpComboBoxCountry.SelectedIndex = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("analog" + _cardNumber + "Country", "0").Value);
+      mpComboBoxSource.SelectedIndex = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("analog" + _cardNumber + "Source", "0").Value);
       checkBoxCreateSignalGroup.Checked =
-        (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("analog" + _cardNumber + "createsignalgroup", "false").value == "true");
+        (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("analog" + _cardNumber + "createsignalgroup", "false").Value == "true");
       checkBoxCreateSignalGroup.Text = "Create \"" + TvConstants.TvGroupNames.Analog + "\" group";
 
       _cardName = ServiceAgents.Instance.ControllerServiceAgent.CardName(_cardNumber);

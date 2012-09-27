@@ -75,14 +75,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           ListViewItem item = new ListViewItem(new string[] { list[j], codes[j] });
           mpListView2.Items.Add(item);
           item.Tag = codes[j];
-          if (setting.value == "")
+          if (setting.Value == "")
           {
             values += item.Tag;
             values += ",";
           }
           else
           {
-            if (setting.value.IndexOf((string)item.Tag) >= 0)
+            if (setting.Value.IndexOf((string)item.Tag) >= 0)
             {
               item.Checked = true;
             }
@@ -90,10 +90,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
         mpListView2.Sort();
 
-        if (setting.value == "")
+        if (setting.Value == "")
         {
-          setting.value = values;
-          ServiceAgents.Instance.SettingServiceAgent.SaveSetting(setting.tag, setting.value);
+          setting.Value = values;
+          ServiceAgents.Instance.SettingServiceAgent.SaveSetting(setting.Tag, setting.Value);
           //DatabaseManager.Instance.SaveChanges();
         }
       }
@@ -121,7 +121,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         _ignoreItemCheckedEvent = true;
         LoadLanguages();
         Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSetting("epgStoreOnlySelected");
-        mpCheckBoxStoreOnlySelected.Checked = (setting.value == "yes");
+        mpCheckBoxStoreOnlySelected.Checked = (setting.Value == "yes");
         Dictionary<string, CardType> cards = new Dictionary<string, CardType>();
         IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
         foreach (Card card in dbsCards)
@@ -452,7 +452,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           mpListView2.Items[i].Checked = false;
         }
         Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("epgLanguages", ",");
-        Log.WriteFile("tvsetup:epggrabber:none: epglang={0}", setting.value);
+        Log.WriteFile("tvsetup:epggrabber:none: epglang={0}", setting.Value);
       }
       finally
       {

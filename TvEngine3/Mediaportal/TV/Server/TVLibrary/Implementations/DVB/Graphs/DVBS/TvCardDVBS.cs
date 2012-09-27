@@ -428,7 +428,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
     /// <value></value>
     protected override bool FilterOutEPGChannel(EpgChannel epgChannel)
     {
-      if (SettingsManagement.GetSetting("generalGrapOnlyForSameTransponder", "no").value == "yes")
+      if (SettingsManagement.GetSetting("generalGrapOnlyForSameTransponder", "no").Value == "yes")
       {
         var chan = epgChannel.Channel as DVBBaseChannel;
         Channel dbchannel = ChannelManagement.GetChannelByTuningDetail(chan.NetworkId, chan.TransportId, chan.ServiceId);

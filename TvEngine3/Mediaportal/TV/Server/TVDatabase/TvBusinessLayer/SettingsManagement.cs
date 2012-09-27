@@ -49,7 +49,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         {
           // first time query settings, caching
           Setting duration = GetSetting("epgKeepDuration", "24");          
-          _epgKeepDuration = Convert.ToInt32(duration.value);
+          _epgKeepDuration = Convert.ToInt32(duration.Value);
         }
         return _epgKeepDuration;
       }

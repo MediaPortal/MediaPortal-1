@@ -65,7 +65,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
     public DateTime GetNextWakeupTime(DateTime earliestWakeupTime)
     {
       
-      bool remoteSchedulerEnabled = (SettingsManagement.GetSetting("xmlTvRemoteSchedulerEnabled", "false").value == "true");
+      bool remoteSchedulerEnabled = (SettingsManagement.GetSetting("xmlTvRemoteSchedulerEnabled", "false").Value == "true");
       if (!remoteSchedulerEnabled)
       {
         return DateTime.MaxValue;
@@ -74,7 +74,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
       DateTime now = DateTime.Now;
       DateTime defaultRemoteScheduleTime = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0);
       string remoteScheduleTimeStr =
-        SettingsManagement.GetSetting("xmlTvRemoteScheduleTime", defaultRemoteScheduleTime.ToString()).value;
+        SettingsManagement.GetSetting("xmlTvRemoteScheduleTime", defaultRemoteScheduleTime.ToString()).Value;
 
       DateTime remoteScheduleTime =
         (DateTime)

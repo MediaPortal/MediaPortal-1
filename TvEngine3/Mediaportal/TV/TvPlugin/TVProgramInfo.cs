@@ -203,8 +203,8 @@ namespace Mediaportal.TV.TvPlugin
         _preRec = 0;
         _postRec = 0;
 
-        int.TryParse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "7").value, out _preRec);
-        int.TryParse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "10").value, out _postRec);
+        int.TryParse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "7").Value, out _preRec);
+        int.TryParse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "10").Value, out _postRec);
 
         if (!RecordingIntervalValues.Contains(_preRec))
         {
@@ -1179,8 +1179,8 @@ namespace Mediaportal.TV.TvPlugin
         Log.Debug("TVProgramInfo.CreateProgram - no series schedule");
         // no series schedule => create it
         schedule.Entity = ScheduleFactory.CreateSchedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
-        schedule.Entity.PreRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").value);
-        schedule.Entity.PostRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);
+        schedule.Entity.PreRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").Value);
+        schedule.Entity.PostRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").Value);
         schedule.Entity.ScheduleType = scheduleType;
       }
 

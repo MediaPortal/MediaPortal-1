@@ -240,25 +240,25 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     /// </summary>
     private void SetDefaults()
     {
-      int index = Math.Max(Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbt" + _cardNumber + "Country", "0").value), 0);
+      int index = Math.Max(Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbt" + _cardNumber + "Country", "0").Value), 0);
       // limit to >= 0
       if (index < mpComboBoxCountry.Items.Count)
       {
         mpComboBoxCountry.SelectedIndex = index;
       }
 
-      index = Math.Max(Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbt" + _cardNumber + "Region", "0").value), 0); // limit to >= 0
+      index = Math.Max(Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbt" + _cardNumber + "Region", "0").Value), 0); // limit to >= 0
       if (index < mpComboBoxRegion.Items.Count)
       {
         mpComboBoxRegion.SelectedIndex = index;
       }
 
-      textBoxFreq.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbt" + _cardNumber + "Freq", "306000").value;
-      textBoxBandwidth.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbt" + _cardNumber + "Bandwidth", "8").value ;
+      textBoxFreq.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbt" + _cardNumber + "Freq", "306000").Value;
+      textBoxBandwidth.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbt" + _cardNumber + "Bandwidth", "8").Value ;
 
-      checkBoxCreateGroups.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbt" + _cardNumber + "creategroups", "false").value == "true");
+      checkBoxCreateGroups.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbt" + _cardNumber + "creategroups", "false").Value == "true");
       checkBoxCreateSignalGroup.Checked =
-        (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbt" + _cardNumber + "createsignalgroup", "false").value == "true");
+        (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbt" + _cardNumber + "createsignalgroup", "false").Value == "true");
     }
 
     /// <summary>

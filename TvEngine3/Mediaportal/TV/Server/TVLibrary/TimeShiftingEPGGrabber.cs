@@ -54,7 +54,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     {
       
       double timeout;
-      if (!double.TryParse(SettingsManagement.GetSetting("timeshiftingEpgGrabberTimeout", "2").value, out timeout))
+      if (!double.TryParse(SettingsManagement.GetSetting("timeshiftingEpgGrabberTimeout", "2").Value, out timeout))
         timeout = 2;
       _epgTimer.Interval = timeout * 60000;
     }

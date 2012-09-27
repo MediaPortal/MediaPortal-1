@@ -194,7 +194,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
         Setting setting;
 
         
-        string destination = SettingsManagement.GetSetting("webepgDestination", "db").value;
+        string destination = SettingsManagement.GetSetting("webepgDestination", "db").Value;
         string webepgDirectory = PathManager.GetDataPath;
         string configFile = webepgDirectory + @"\WebEPG\WebEPG.xml";
 
@@ -211,7 +211,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
 
           if (destination == "db")
           {
-            bool deleteBeforeImport = Convert.ToBoolean(SettingsManagement.GetSetting("webepgDeleteBeforeImport", "true").value);
+            bool deleteBeforeImport = Convert.ToBoolean(SettingsManagement.GetSetting("webepgDeleteBeforeImport", "true").Value);
             //// Allow for deleting of all existing programs before adding the new ones. 
             //// Already imported programs might have incorrect data depending on the grabber & setup
             //// f.e when grabbing programs many days ahead
@@ -229,12 +229,12 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
             string xmltvDirectory = string.Empty;
             if (destination == "xmltv")
             {
-              xmltvDirectory = SettingsManagement.GetSetting("webepgDestinationFolder", string.Empty).value;
+              xmltvDirectory = SettingsManagement.GetSetting("webepgDestinationFolder", string.Empty).Value;
             }
             if (xmltvDirectory == string.Empty)
             {
               // Do not use XmlTvImporter.DefaultOutputFolder to avoid reference to XmlTvImport
-              xmltvDirectory = SettingsManagement.GetSetting("xmlTv", PathManager.GetDataPath + @"\xmltv").value;
+              xmltvDirectory = SettingsManagement.GetSetting("xmlTv", PathManager.GetDataPath + @"\xmltv").Value;
             }
             Log.Info("Writing to tvguide.xml in {0}", xmltvDirectory);
             // Open XMLTV output file
@@ -282,11 +282,11 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
     private void _scheduleTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
       
-      bool scheduleEnabled = Convert.ToBoolean(SettingsManagement.GetSetting("webepgScheduleEnabled", "true").value);
+      bool scheduleEnabled = Convert.ToBoolean(SettingsManagement.GetSetting("webepgScheduleEnabled", "true").Value);
       if (scheduleEnabled)
       {
         Setting configSetting = SettingsManagement.GetSetting("webepgSchedule", String.Empty);
-        EPGWakeupConfig config = new EPGWakeupConfig(configSetting.value);
+        EPGWakeupConfig config = new EPGWakeupConfig(configSetting.Value);
         if (ShouldRunNow())
         {
           Log.Info("WebEPGImporter: WebEPG schedule {0}:{1} is due: {2}:{3}",
@@ -356,7 +356,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
     private bool ShouldRunNow()
     {
       
-      EPGWakeupConfig config = new EPGWakeupConfig(SettingsManagement.GetSetting("webepgSchedule", String.Empty).value);
+      EPGWakeupConfig config = new EPGWakeupConfig(SettingsManagement.GetSetting("webepgSchedule", String.Empty).Value);
 
       // check if schedule is due
       // check if we've already run today
@@ -403,7 +403,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
     {
 
 
-      EPGWakeupConfig cfg = new EPGWakeupConfig(SettingsManagement.GetSetting("webepgSchedule", String.Empty).value);
+      EPGWakeupConfig cfg = new EPGWakeupConfig(SettingsManagement.GetSetting("webepgSchedule", String.Empty).Value);
 
       // Start by thinking we should run today
       DateTime nextRun = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, cfg.Hour, cfg.Minutes, 0);
@@ -446,7 +446,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
     public DateTime GetNextWakeupTime(DateTime earliestWakeupTime)
     {
 
-      bool scheduleEnabled = Convert.ToBoolean(SettingsManagement.GetSetting("webepgScheduleEnabled", "true").value);
+      bool scheduleEnabled = Convert.ToBoolean(SettingsManagement.GetSetting("webepgScheduleEnabled", "true").Value);
       if (!scheduleEnabled)
       {
         return DateTime.MaxValue;

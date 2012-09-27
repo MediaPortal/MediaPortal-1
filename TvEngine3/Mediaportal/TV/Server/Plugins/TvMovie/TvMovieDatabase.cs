@@ -372,8 +372,8 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       {
         try
         {
-          TimeSpan restTime = new TimeSpan(Convert.ToInt32(SettingsManagement.GetSetting("TvMovieRestPeriod", "24").value), 0, 0);
-          DateTime lastUpdated = Convert.ToDateTime(SettingsManagement.GetSetting("TvMovieLastUpdate", "0").value);          
+          TimeSpan restTime = new TimeSpan(Convert.ToInt32(SettingsManagement.GetSetting("TvMovieRestPeriod", "24").Value), 0, 0);
+          DateTime lastUpdated = Convert.ToDateTime(SettingsManagement.GetSetting("TvMovieLastUpdate", "0").Value);          
           if (lastUpdated >= (DateTime.Now - restTime))
           {
             return false;
@@ -517,14 +517,14 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
 
     private void LoadMemberSettings()
     {
-      _useShortProgramDesc = SettingsManagement.GetSetting("TvMovieShortProgramDesc", "false").value == "true";
-      _extendDescription = SettingsManagement.GetSetting("TvMovieExtendDescription", "true").value == "true";
-      _showRatings = SettingsManagement.GetSetting("TvMovieShowRatings", "true").value == "true";
-      _showAudioFormat = SettingsManagement.GetSetting("TvMovieShowAudioFormat", "false").value == "true";
-      _slowImport = SettingsManagement.GetSetting("TvMovieSlowImport", "true").value == "true";
-      _actorCount = Convert.ToInt32(SettingsManagement.GetSetting("TvMovieLimitActors", "5").value);
-      _showLive = SettingsManagement.GetSetting("TvMovieShowLive", "true").value == "true";
-      _showRepeat = SettingsManagement.GetSetting("TvMovieShowRepeating", "false").value == "true";
+      _useShortProgramDesc = SettingsManagement.GetSetting("TvMovieShortProgramDesc", "false").Value == "true";
+      _extendDescription = SettingsManagement.GetSetting("TvMovieExtendDescription", "true").Value == "true";
+      _showRatings = SettingsManagement.GetSetting("TvMovieShowRatings", "true").Value == "true";
+      _showAudioFormat = SettingsManagement.GetSetting("TvMovieShowAudioFormat", "false").Value == "true";
+      _slowImport = SettingsManagement.GetSetting("TvMovieSlowImport", "true").Value == "true";
+      _actorCount = Convert.ToInt32(SettingsManagement.GetSetting("TvMovieLimitActors", "5").Value);
+      _showLive = SettingsManagement.GetSetting("TvMovieShowLive", "true").Value == "true";
+      _showRepeat = SettingsManagement.GetSetting("TvMovieShowRepeating", "false").Value == "true";
       _xmlFile = String.Format(@"{0}\TVMovieMapping.xml", PathManager.GetDataPath);
     }
 

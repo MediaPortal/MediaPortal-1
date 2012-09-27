@@ -393,7 +393,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       foreach (ITvServerPlugin plugin in _plugins.Plugins)
       {
         Setting setting = SettingsManagement.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
-        if (setting.value == "true")
+        if (setting.Value == "true")
         {
           if (plugin is ITvServerPluginCommunciation)
           {
@@ -499,7 +499,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     {
       try
       {
-        int processPriority = Convert.ToInt32(SettingsManagement.GetSetting("processPriority", "3").value);
+        int processPriority = Convert.ToInt32(SettingsManagement.GetSetting("processPriority", "3").Value);
 
         switch (processPriority)
         {

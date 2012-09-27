@@ -46,8 +46,8 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
     public override void OnSectionActivated()
     {
       
-      analyzeMode.SelectedIndex = Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("CMAnalyzeMode", "0").value);
-      debug.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("CMDebugMode", "false").value == "true";
+      analyzeMode.SelectedIndex = Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("CMAnalyzeMode", "0").Value);
+      debug.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("CMDebugMode", "false").Value == "true";
     }
 
     public override void OnSectionDeActivated()

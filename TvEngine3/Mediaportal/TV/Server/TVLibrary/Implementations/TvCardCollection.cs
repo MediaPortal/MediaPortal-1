@@ -65,7 +65,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       // Logic here to delay detection of cards
       // Ideally this should occur after standby event.
       Setting setting = SettingsManagement.GetSetting("delayCardDetect", "0");
-      int delayDetect = Convert.ToInt32(setting.value);
+      int delayDetect = Convert.ToInt32(setting.Value);
       if (delayDetect >= 1)
       {
         Log.WriteFile("Detecting Cards in {0} seconds", delayDetect);
@@ -106,7 +106,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         {
           Setting setting;
           setting = SettingsManagement.GetSetting("iptvCardCount", "1");
-          int iptvCardCount = Convert.ToInt32(setting.value);
+          int iptvCardCount = Convert.ToInt32(setting.Value);
           for (int cardNum = 0; cardNum < iptvCardCount; cardNum++)
           {
             Log.WriteFile("Detected IP TV Card " + cardNum);
@@ -118,7 +118,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         {          
           Setting setting;
           setting = SettingsManagement.GetSetting("iptvCardCount", "1");
-          int iptvCardCount = Convert.ToInt32(setting.value);
+          int iptvCardCount = Convert.ToInt32(setting.Value);
           for (int cardNum = 0; cardNum < iptvCardCount; cardNum++)
           {
             Log.WriteFile("Detected IP TV Card " + cardNum);

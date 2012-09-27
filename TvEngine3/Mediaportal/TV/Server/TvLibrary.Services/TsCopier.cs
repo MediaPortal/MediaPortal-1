@@ -57,7 +57,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         int idStart = idCurrent;
         int idStop = Int32.Parse(Path.GetFileNameWithoutExtension(_fileEnd).Remove(0, 19));
         
-        decimal maxFiles = Convert.ToDecimal(SettingsManagement.GetSetting("timeshiftMaxFiles", "20").value);
+        decimal maxFiles = Convert.ToDecimal(SettingsManagement.GetSetting("timeshiftMaxFiles", "20").Value);
         Log.Info("TsCopier: baseTs={0} idCurrent={1} idStop={2} maxFiles={3}", baseTs, idCurrent, idStop, maxFiles);
         Directory.CreateDirectory(Path.GetDirectoryName(_recording) + "\\" +
                                   Path.GetFileNameWithoutExtension(_recording) + "_tsbuffers");

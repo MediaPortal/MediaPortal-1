@@ -37,8 +37,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class StreamingServer : SectionSettings
   {
-    private int _rtspPort = Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSetting("rtspport").value);
-    private string _hostname = ServiceAgents.Instance.SettingServiceAgent.GetSetting("hostname").value;
+    private int _rtspPort = Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSetting("rtspport").Value);
+    private string _hostname = ServiceAgents.Instance.SettingServiceAgent.GetSetting("hostname").Value;
 
     private class IpAddressOption
     {

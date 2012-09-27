@@ -106,7 +106,7 @@ namespace Mediaportal.TV.Server.SetupTV
       bool connected = false;
       while (!connected)
       {
-        RemoteControl.HostName = ServiceAgents.Instance.SettingServiceAgent.GetSetting("hostname").value;
+        RemoteControl.HostName = ServiceAgents.Instance.SettingServiceAgent.GetSetting("hostname").Value;
 
         if (cards.Count > 0)
         {
@@ -194,7 +194,7 @@ namespace Mediaportal.TV.Server.SetupTV
           {
             Setting isActive = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("plugin{0}", plugin.Name), "false");
             settings.Text = plugin.Name;
-            if (isActive.value == "true")
+            if (isActive.Value == "true")
             {
               AddChildSection(pluginsRoot, settings);
             }
@@ -315,7 +315,7 @@ namespace Mediaportal.TV.Server.SetupTV
           RemoveAllChildSections((SectionTreeNode)settingSections[servers.Text]);
 
           // re-add tvservers and cards to tree          
-          AddServerTvCards(ServiceAgents.Instance.SettingServiceAgent.GetSetting("hostname").value, true);
+          AddServerTvCards(ServiceAgents.Instance.SettingServiceAgent.GetSetting("hostname").Value, true);
         }
         finally
         {
@@ -440,17 +440,17 @@ namespace Mediaportal.TV.Server.SetupTV
     /// <param name="e">eventarg will always retrun empty</param>
     public void SectChanged(object sender, EventArgs e)
     {
-      string name = ((Setting)sender).tag.Substring(6);
+      string name = ((Setting)sender).Tag.Substring(6);
 
       foreach (ITvServerPlugin plugin in _pluginLoader.Plugins)
       {
         SectionSettings settings = plugin.Setup;
         if (settings != null && plugin.Name == name)
         {
-          Setting isActive = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(((Setting)sender).tag, "false");
+          Setting isActive = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(((Setting)sender).Tag, "false");
           settings.Text = name;
 
-          if (isActive.value == "true")
+          if (isActive.Value == "true")
           {
             AddChildSection(pluginsRoot, settings);
             LoadChildSettingsFromNode(pluginsRoot, settings);

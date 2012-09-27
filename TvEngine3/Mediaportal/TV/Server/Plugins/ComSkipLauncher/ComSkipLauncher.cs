@@ -190,9 +190,9 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
       {
         
         _runAtStart =
-          Convert.ToBoolean(SettingsManagement.GetSetting("ComSkipLauncher_RunAtStart", DefaultRunAtStrart.ToString()).value);
-        _program = SettingsManagement.GetSetting("ComSkipLauncher_Program", DefaultProgram).value;
-        _parameters = SettingsManagement.GetSetting("ComSkipLauncher_Parameters", DefaultParameters).value;
+          Convert.ToBoolean(SettingsManagement.GetSetting("ComSkipLauncher_RunAtStart", DefaultRunAtStrart.ToString()).Value);
+        _program = SettingsManagement.GetSetting("ComSkipLauncher_Program", DefaultProgram).Value;
+        _parameters = SettingsManagement.GetSetting("ComSkipLauncher_Parameters", DefaultParameters).Value;
       }
       catch (Exception ex)
       {

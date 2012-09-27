@@ -332,10 +332,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
 
     private void LoadSettings()
     {
-      _createTagInfoXML = (SettingsManagement.GetSetting("createtaginfoxml", "yes").value == "yes");
-      _preventDuplicateEpisodes = (SettingsManagement.GetSetting("PreventDuplicates", "no").value == "yes");
-      _preventDuplicateEpisodesKey = Convert.ToInt32(SettingsManagement.GetSetting("EpisodeKey", "0").value);
-      _maxRecordFreeCardsToTry = Int32.Parse(SettingsManagement.GetSetting("recordMaxFreeCardsToTry", "0").value);
+      _createTagInfoXML = (SettingsManagement.GetSetting("createtaginfoxml", "yes").Value == "yes");
+      _preventDuplicateEpisodes = (SettingsManagement.GetSetting("PreventDuplicates", "no").Value == "yes");
+      _preventDuplicateEpisodesKey = Convert.ToInt32(SettingsManagement.GetSetting("EpisodeKey", "0").Value);
+      _maxRecordFreeCardsToTry = Int32.Parse(SettingsManagement.GetSetting("recordMaxFreeCardsToTry", "0").Value);
     }
 
     private static void ResetRecordingStates()

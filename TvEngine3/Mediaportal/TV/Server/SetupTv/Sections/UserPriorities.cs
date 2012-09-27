@@ -80,17 +80,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
             
       numEpgGrabber.Value = ValueSanityCheck(
-        Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(UserFactory.EPG_TAGNAME, UserFactory.EPG_PRIORITY.ToString()).value), 1, 100);
+        Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(UserFactory.EPG_TAGNAME, UserFactory.EPG_PRIORITY.ToString()).Value), 1, 100);
 
       numDefaultUser.Value = ValueSanityCheck(
-        Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(UserFactory.USER_TAGNAME, UserFactory.USER_PRIORITY.ToString()).value), 1, 100);
+        Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(UserFactory.USER_TAGNAME, UserFactory.USER_PRIORITY.ToString()).Value), 1, 100);
 
       numScheduler.Value = ValueSanityCheck(
-        Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(UserFactory.SCHEDULER_TAGNAME, UserFactory.SCHEDULER_PRIORITY.ToString()).value), 1, 100);
+        Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(UserFactory.SCHEDULER_TAGNAME, UserFactory.SCHEDULER_PRIORITY.ToString()).Value), 1, 100);
 
       Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(UserFactory.CUSTOM_TAGNAME, "");
       gridUserPriorities.Rows.Clear();
-      string[] users = setting.value.Split(';');
+      string[] users = setting.Value.Split(';');
       foreach (string user in users)
       {
         string[] shareItem = user.Split(',');

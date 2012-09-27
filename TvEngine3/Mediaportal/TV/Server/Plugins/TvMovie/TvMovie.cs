@@ -105,12 +105,12 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       get
       {
         var setting = SettingsManagement.GetSetting("TvMovieInstallPath", string.Empty);
-        string path = setting.value;
+        string path = setting.Value;
 
         if (!File.Exists(path))
         {
           path = GetRegistryValueFromValueName("ProgrammPath");
-          setting.value = path;
+          setting.Value = path;
         }
         return path;
       }
@@ -123,7 +123,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
     {
       get
       {
-        string path = SettingsManagement.GetSetting("TvMoviedatabasepath", string.Empty).value;
+        string path = SettingsManagement.GetSetting("TvMoviedatabasepath", string.Empty).Value;
 
         if (!File.Exists(path))
           path = GetRegistryValueFromValueName("DBDatei");
@@ -274,7 +274,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       try
       {
         
-        if (SettingsManagement.GetSetting("TvMovieEnabled", "false").value != "true")
+        if (SettingsManagement.GetSetting("TvMovieEnabled", "false").Value != "true")
         {
           return;
         }

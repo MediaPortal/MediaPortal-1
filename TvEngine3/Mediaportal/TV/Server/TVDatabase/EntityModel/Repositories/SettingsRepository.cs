@@ -31,15 +31,15 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     /// </summary>    
     public void SaveSetting(string tagName, string value)
     {            
-      Setting setting = First<Setting>(s => s.tag == tagName);
+      Setting setting = First<Setting>(s => s.Tag == tagName);
       if (setting == null)
       {
-        setting = new Setting { value = value, tag = tagName };
+        setting = new Setting { Value = value, Tag = tagName };
         Add(setting);
       }
       else
       {
-        setting.value = value;
+        setting.Value = value;
       }
 
       UnitOfWork.SaveChanges();
@@ -61,10 +61,10 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
         return null;
       }
 
-      Setting setting = First<Setting>(s => s.tag == tagName);
+      Setting setting = First<Setting>(s => s.Tag == tagName);
       if (setting == null)
       {
-        setting = new Setting {value = defaultValue, tag = tagName};
+        setting = new Setting {Value = defaultValue, Tag = tagName};
         Add(setting);
         UnitOfWork.SaveChanges();
       }

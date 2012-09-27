@@ -103,24 +103,24 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     public override void OnSectionActivated()
     {
       UpdateRadioButtonsState();
-      textBoxFolder.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTv", XmlTvImporter.DefaultOutputFolder).value;
-      checkBox1.Checked = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvUseTimeZone", "false").value == "true";
-      cbImportXML.Checked = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvImportXML", "true").value == "true";
-      cbImportLST.Checked = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvImportLST", "false").value == "true";
-      checkBoxDeleteBeforeImport.Checked = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvDeleteBeforeImport", "true").value == "true";
-      textBoxHours.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvTimeZoneHours", "0").value;
-      textBoxMinutes.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvTimeZoneMins", "0").value;
-      labelLastImport.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvResultLastImport", "").value;
-      labelChannels.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvResultChannels", "").value;
-      labelPrograms.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvResultPrograms", "").value;
-      labelStatus.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvResultStatus", "").value;
+      textBoxFolder.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTv", XmlTvImporter.DefaultOutputFolder).Value;
+      checkBox1.Checked = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvUseTimeZone", "false").Value == "true";
+      cbImportXML.Checked = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvImportXML", "true").Value == "true";
+      cbImportLST.Checked = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvImportLST", "false").Value == "true";
+      checkBoxDeleteBeforeImport.Checked = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvDeleteBeforeImport", "true").Value == "true";
+      textBoxHours.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvTimeZoneHours", "0").Value;
+      textBoxMinutes.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvTimeZoneMins", "0").Value;
+      labelLastImport.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvResultLastImport", "").Value;
+      labelChannels.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvResultChannels", "").Value;
+      labelPrograms.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvResultPrograms", "").Value;
+      labelStatus.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvResultStatus", "").Value;
 
-      chkScheduler.Checked = (_settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteSchedulerEnabled", "false").value == "true");
-      radioDownloadOnWakeUp.Checked = (_settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteSchedulerDownloadOnWakeUpEnabled", "false").value ==
+      chkScheduler.Checked = (_settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteSchedulerEnabled", "false").Value == "true");
+      radioDownloadOnWakeUp.Checked = (_settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteSchedulerDownloadOnWakeUpEnabled", "false").Value ==
                                        "true");
       radioDownloadOnSchedule.Checked = !radioDownloadOnWakeUp.Checked;
 
-      txtRemoteURL.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteURL", "http://www.mysite.com/TVguide.xml").value;
+      txtRemoteURL.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteURL", "http://www.mysite.com/TVguide.xml").Value;
 
       DateTime dt = DateTime.Now;
       DateTimeFormatInfo DTFI = new DateTimeFormatInfo();
@@ -128,7 +128,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
       try
       {
-        dt = DateTime.Parse(_settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteScheduleTime", "06:30").value, DTFI);
+        dt = DateTime.Parse(_settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteScheduleTime", "06:30").Value, DTFI);
       }
       catch
       {
@@ -136,7 +136,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         try
         {
           DTFI.ShortDatePattern = _shortTimePattern12Hrs;
-          dt = DateTime.Parse(_settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteScheduleTime", "06:30").value, DTFI);
+          dt = DateTime.Parse(_settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteScheduleTime", "06:30").Value, DTFI);
         }
         catch
         {
@@ -146,8 +146,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
       dateTimePickerScheduler.Value = dt;
 
-      lblLastTransferAt.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteScheduleLastTransfer", "").value;
-      lblTransferStatus.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteScheduleTransferStatus", "").value;
+      lblLastTransferAt.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteScheduleLastTransfer", "").Value;
+      lblTransferStatus.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteScheduleTransferStatus", "").Value;
 
       // load all distinct groups
       try
@@ -419,7 +419,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     private List<Channel> readChannelsFromTVGuide()
     {
       var listChannels = new List<Channel>();
-      string folder = _settingServiceAgent.GetSettingWithDefaultValue("xmlTv", XmlTvImporter.DefaultOutputFolder).value;
+      string folder = _settingServiceAgent.GetSettingWithDefaultValue("xmlTv", XmlTvImporter.DefaultOutputFolder).Value;
       string selFolder = textBoxFolder.Text;
 
       // use the folder set in the gui if it doesn't match the one set in the database
@@ -697,17 +697,17 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       IXMLTVImportService pluginServiceAgent = ServiceAgents.Instance.PluginService<IXMLTVImportService>();
       pluginServiceAgent.ImportNow();
       
-      labelLastImport.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvResultLastImport", "").value;
-      labelChannels.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvResultChannels", "").value;
-      labelPrograms.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvResultPrograms", "").value;
-      labelStatus.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvResultStatus", "").value;
+      labelLastImport.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvResultLastImport", "").Value;
+      labelChannels.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvResultChannels", "").Value;
+      labelPrograms.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvResultPrograms", "").Value;
+      labelStatus.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvResultStatus", "").Value;
     }
 
     private void panel1_Paint(object sender, PaintEventArgs e) {}
 
     private void buttonExport_Click(object sender, EventArgs e)
     {
-      string folder = _settingServiceAgent.GetSettingWithDefaultValue("xmlTv", XmlTvImporter.DefaultOutputFolder).value;
+      string folder = _settingServiceAgent.GetSettingWithDefaultValue("xmlTv", XmlTvImporter.DefaultOutputFolder).Value;
       string selFolder = textBoxFolder.Text;
 
       // use the folder set in the gui if it doesn't match the one set in the database
@@ -778,8 +778,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     {
       XmlTvImporter importer = new XmlTvImporter();
       importer.RetrieveRemoteFile(textBoxFolder.Text, txtRemoteURL.Text);
-      lblLastTransferAt.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteScheduleLastTransfer", "").value;
-      lblTransferStatus.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteScheduleTransferStatus", "").value;
+      lblLastTransferAt.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteScheduleLastTransfer", "").Value;
+      lblTransferStatus.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteScheduleTransferStatus", "").Value;
     }
 
     private void btnGetNow_Click(object sender, EventArgs e)

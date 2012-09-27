@@ -207,22 +207,22 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         return;
       }
 
-      bool downloadGuideOnWakeUp = (SettingsManagement.GetSetting("xmlTvRemoteSchedulerDownloadOnWakeUpEnabled", "false").value ==
+      bool downloadGuideOnWakeUp = (SettingsManagement.GetSetting("xmlTvRemoteSchedulerDownloadOnWakeUpEnabled", "false").Value ==
                                     "true");
 
       if (downloadGuideOnWakeUp)
       {
         Setting setting = SettingsManagement.GetSetting("xmlTvRemoteScheduleLastTransfer", "");
         DateTime lastTransfer;
-        DateTime.TryParse(setting.value, out lastTransfer);
+        DateTime.TryParse(setting.Value, out lastTransfer);
 
         //lastTime = DateTime.Parse(SettingsManagement.GetSetting("xmlTvLastUpdate", "").Value);
         TimeSpan ts = DateTime.Now - lastTransfer;
 
         if (ts.TotalMinutes > 1440) //1440 mins = 1 day. - we only want to update once per day.
         {
-          string folder = SettingsManagement.GetSetting("xmlTv", DefaultOutputFolder).value;
-          string URL = SettingsManagement.GetSetting("xmlTvRemoteURL", "").value;
+          string folder = SettingsManagement.GetSetting("xmlTv", DefaultOutputFolder).Value;
+          string URL = SettingsManagement.GetSetting("xmlTvRemoteURL", "").Value;
           Log.Debug("downloadGuideOnWakeUp");
           RetrieveRemoteFile(folder, URL);
         }
@@ -297,7 +297,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
             filename = fI.Name;
 
             //check if file can be opened for writing....																		
-            string path = SettingsManagement.GetSetting("xmlTv", "").value;
+            string path = SettingsManagement.GetSetting("xmlTv", "").Value;
 
             if (isTvGuide || isZip)
             {
@@ -341,7 +341,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
               {
                 try
                 {
-                  string newLoc = SettingsManagement.GetSetting("xmlTv", "").value + @"\";
+                  string newLoc = SettingsManagement.GetSetting("xmlTv", "").Value + @"\";
                   Log.Info("extracting zip file {0} to location {1}", path, newLoc);
                   ZipFile zip = new ZipFile(path);
                   zip.ExtractAll(newLoc, true);
@@ -563,7 +563,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         return;
       }      
 
-      bool remoteSchedulerEnabled = (SettingsManagement.GetSetting("xmlTvRemoteSchedulerEnabled", "false").value == "true");
+      bool remoteSchedulerEnabled = (SettingsManagement.GetSetting("xmlTvRemoteSchedulerEnabled", "false").Value == "true");
       if (!remoteSchedulerEnabled)
       {
         _remoteFileDownloadInProgress = false;
@@ -575,7 +575,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       DateTime defaultRemoteScheduleTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 6, 30,
                                                         0);
       string remoteScheduleTimeStr =
-        SettingsManagement.GetSetting("xmlTvRemoteScheduleTime", defaultRemoteScheduleTime.ToString()).value;
+        SettingsManagement.GetSetting("xmlTvRemoteScheduleTime", defaultRemoteScheduleTime.ToString()).Value;
       DateTime remoteScheduleTime = DateTime.Now;
       try
       {
@@ -596,8 +596,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       //1440 mins = 1 day. - we only want to update once per day.
       if (tsLastTransfer.TotalMinutes > 1440 && tsSchedule.TotalMinutes < 5)
       {
-        string folder = SettingsManagement.GetSetting("xmlTv", DefaultOutputFolder).value;
-        string URL = SettingsManagement.GetSetting("xmlTvRemoteURL", "").value;
+        string folder = SettingsManagement.GetSetting("xmlTv", DefaultOutputFolder).Value;
+        string URL = SettingsManagement.GetSetting("xmlTvRemoteURL", "").Value;
         RetrieveRemoteFile(folder, URL);
       }
       else
@@ -611,12 +611,12 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     {
       FileStream streamIn = null;
       StreamReader fileIn = null;      
-      string folder = SettingsManagement.GetSetting("xmlTv", DefaultOutputFolder).value;
+      string folder = SettingsManagement.GetSetting("xmlTv", DefaultOutputFolder).Value;
       DateTime lastTime;
 
       try
       {
-        lastTime = DateTime.Parse(SettingsManagement.GetSetting("xmlTvLastUpdate", "").value);
+        lastTime = DateTime.Parse(SettingsManagement.GetSetting("xmlTvLastUpdate", "").Value);
       }
       catch (Exception e)
       {
@@ -625,8 +625,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       }
 
 
-      bool importXML = SettingsManagement.GetSetting("xmlTvImportXML", "true").value == "true";
-      bool importLST = SettingsManagement.GetSetting("xmlTvImportLST", "true").value == "true";
+      bool importXML = SettingsManagement.GetSetting("xmlTvImportXML", "true").Value == "true";
+      bool importLST = SettingsManagement.GetSetting("xmlTvImportLST", "true").Value == "true";
       DateTime importDate = DateTime.MinValue; // gets the date of the newest file
 
       string fileName = folder + @"\tvguide.xml";
@@ -707,7 +707,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       if (_workerThreadRunning)
         return;
       
-      string folder = SettingsManagement.GetSetting("xmlTv", DefaultOutputFolder).value;
+      string folder = SettingsManagement.GetSetting("xmlTv", DefaultOutputFolder).Value;
 
       Thread.Sleep(500); // give time to the external prog to close file handle
 
@@ -819,12 +819,12 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         var param = (ThreadParams)aparam;
 
         Setting setting;        
-        string folder = SettingsManagement.GetSetting("xmlTv", DefaultOutputFolder).value;
+        string folder = SettingsManagement.GetSetting("xmlTv", DefaultOutputFolder).Value;
 
         // Allow for deleting of all existing programs before adding the new ones. 
         // Already imported programs might have incorrect data depending on the grabber & setup
         // f.e when grabbing programs many days ahead
-        bool deleteBeforeImport = (SettingsManagement.GetSetting("xmlTvDeleteBeforeImport", "true").value == "true");        
+        bool deleteBeforeImport = (SettingsManagement.GetSetting("xmlTvDeleteBeforeImport", "true").Value == "true");        
         int numChannels = 0, numPrograms = 0;
         string errors = "";
 
