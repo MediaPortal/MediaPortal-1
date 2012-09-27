@@ -27,7 +27,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IRecordingRepository recordingRepository = new RecordingRepository(true))
       {
-        recordingRepository.Delete<Recording>(s => s.idRecording == idRecording);
+        recordingRepository.Delete<Recording>(s => s.IdRecording == idRecording);
         recordingRepository.UnitOfWork.SaveChanges();
       }
     }
@@ -58,7 +58,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       //lazy loading verified ok
       using (var recordingRepository = new RecordingRepository())
       {
-        IQueryable<Recording> recordingsByFileName = recordingRepository.GetQuery<Recording>(r => r.fileName == filename);
+        IQueryable<Recording> recordingsByFileName = recordingRepository.GetQuery<Recording>(r => r.FileName == filename);
         Recording recordingByFileName = recordingRepository.IncludeAllRelations(recordingsByFileName).FirstOrDefault();
         return recordingByFileName;
       }
@@ -70,7 +70,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IRecordingRepository recordingRepository = new RecordingRepository())
       {
         IQueryable<Recording> recordings =
-          recordingRepository.GetQuery<Recording>(r => r.isRecording && r.idSchedule == idSchedule);
+          recordingRepository.GetQuery<Recording>(r => r.IsRecording && r.IdSchedule == idSchedule);
         Recording activeRecording = recordingRepository.IncludeAllRelations(recordings).FirstOrDefault();
         return activeRecording;
       }
@@ -82,7 +82,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IRecordingRepository recordingRepository = new RecordingRepository())
       {
         IQueryable<Recording> recordings =
-          recordingRepository.GetQuery<Recording>(r => r.isRecording && r.idChannel == idChannel && r.title == title);
+          recordingRepository.GetQuery<Recording>(r => r.IsRecording && r.IdChannel == idChannel && r.Title == title);
         Recording activeRecordingByTitleAndChannel =
           recordingRepository.IncludeAllRelations(recordings).FirstOrDefault();
         return activeRecordingByTitleAndChannel;
@@ -95,7 +95,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IRecordingRepository recordingRepository = new RecordingRepository())
       {
         IQueryable<Recording> allActiveRecordingsByMediaType =
-          recordingRepository.GetQuery<Recording>(c => c.mediaType == (int) mediaType && c.isRecording);
+          recordingRepository.GetQuery<Recording>(c => c.MediaType == (int) mediaType && c.IsRecording);
         allActiveRecordingsByMediaType = recordingRepository.IncludeAllRelations(allActiveRecordingsByMediaType);
         return allActiveRecordingsByMediaType.ToList();
       }
@@ -158,7 +158,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         IQueryable<Recording> activeRecordings = recordingRepository.GetAll<Recording>();
         foreach (Recording rec in activeRecordings)
         {
-          rec.isRecording = false;          
+          rec.IsRecording = false;          
         }
 
         recordingRepository.ApplyChanges(recordingRepository.ObjectContext.Recordings, activeRecordings);

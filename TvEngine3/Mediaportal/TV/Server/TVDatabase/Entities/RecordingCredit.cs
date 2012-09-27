@@ -53,7 +53,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     ChangeTracker.RecordOriginalValue("idRecording", _idRecording);
                     if (!IsDeserializing)
                     {
-                        if (Recording != null && Recording.idRecording != value)
+                        if (Recording != null && Recording.IdRecording != value)
                         {
                             Recording = null;
                         }
@@ -228,7 +228,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Recording.RecordingCredits.Add(this);
                 }
     
-                idRecording = Recording.idRecording;
+                idRecording = Recording.IdRecording;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {

@@ -58,21 +58,21 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
       foreach (Recording recording in recordings.Where(ShouldBeDeleted))
       {
         Log.Write("Recorder: delete old recording:{0} date:{1}",
-                  recording.fileName,
-                  recording.startTime.ToShortDateString());
+                  recording.FileName,
+                  recording.StartTime.ToShortDateString());
         recordings.Remove(recording);        
-        TVDatabase.TVBusinessLayer.RecordingManagement.DeleteRecording(recording.idRecording);
+        TVDatabase.TVBusinessLayer.RecordingManagement.DeleteRecording(recording.IdRecording);
         break;
       }
     }
 
     private static bool ShouldBeDeleted(Recording recording)
     {
-      if (recording.keepUntil != (int)KeepMethodType.TillDate)
+      if (recording.KeepUntil != (int)KeepMethodType.TillDate)
       {
         return false;
       }
-      if (recording.keepUntilDate.GetValueOrDefault(DateTime.MinValue) > DateTime.Now)
+      if (recording.KeepUntilDate.GetValueOrDefault(DateTime.MinValue) > DateTime.Now)
       {
         return false;
       }

@@ -34,7 +34,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
       List<Recording> episodes = new List<Recording>();
       foreach (Recording recording in recordings)
       {
-        if (String.Compare(title, recording.title, true) == 0)
+        if (String.Compare(title, recording.Title, true) == 0)
         {
           episodes.Add(recording);
         }
@@ -48,9 +48,9 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
       DateTime oldestDateTime = DateTime.MaxValue;
       foreach (Recording rec in episodes)
       {
-        if (rec.startTime < oldestDateTime)
+        if (rec.StartTime < oldestDateTime)
         {
-          oldestDateTime = rec.startTime;
+          oldestDateTime = rec.StartTime;
           oldestEpisode = rec;
         }
       }
@@ -89,15 +89,15 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
           return;
         Log.Write("diskmanagement:   Delete episode {0} {1} {2} {3}",
                   oldestEpisode.Channel,
-                  oldestEpisode.title,
-                  oldestEpisode.startTime.ToLongDateString(),
-                  oldestEpisode.startTime.ToLongTimeString());
+                  oldestEpisode.Title,
+                  oldestEpisode.StartTime.ToLongDateString(),
+                  oldestEpisode.StartTime.ToLongTimeString());
 
         // Delete the file from disk and the recording entry from the database.        
-        bool result = RecordingFileHandler.DeleteRecordingOnDisk(oldestEpisode.fileName);
+        bool result = RecordingFileHandler.DeleteRecordingOnDisk(oldestEpisode.FileName);
         if (result)
         {
-          TVDatabase.TVBusinessLayer.RecordingManagement.DeleteRecording(oldestEpisode.idRecording);
+          TVDatabase.TVBusinessLayer.RecordingManagement.DeleteRecording(oldestEpisode.IdRecording);
         }
       }
     }

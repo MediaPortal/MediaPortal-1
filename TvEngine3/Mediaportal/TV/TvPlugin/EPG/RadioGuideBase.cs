@@ -577,7 +577,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
             if (rec != null)
             {
-              fileName = rec.fileName;
+              fileName = rec.FileName;
             }
 
             if (!string.IsNullOrEmpty(fileName)) //are we really recording ?
@@ -610,9 +610,9 @@ namespace Mediaportal.TV.TvPlugin.EPG
                       if (recDB != null)
                       {
                         GUIPropertyManager.RemovePlayerProperties();
-                        GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", recDB.description);
+                        GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", recDB.Description);
                         GUIPropertyManager.SetProperty("#Play.Current.Album", recDB.Channel.DisplayName);
-                        GUIPropertyManager.SetProperty("#Play.Current.Title", recDB.description);
+                        GUIPropertyManager.SetProperty("#Play.Current.Title", recDB.Description);
 
                         string strLogo = Utils.GetCoverArt(Thumbs.Radio, recDB.Channel.DisplayName);
                         if (string.IsNullOrEmpty(strLogo))

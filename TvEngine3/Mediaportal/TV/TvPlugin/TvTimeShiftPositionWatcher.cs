@@ -118,8 +118,8 @@ namespace Mediaportal.TV.TvPlugin
           if (scheduleId > 0)
           {
             Recording rec = ServiceAgents.Instance.RecordingServiceAgent.GetActiveRecording(scheduleId);
-            Log.Debug("TvTimeShiftPositionWatcher: Detected a started recording. ProgramName: {0}", rec.title);
-            InitiateBufferFilesCopyProcess(rec.fileName);
+            Log.Debug("TvTimeShiftPositionWatcher: Detected a started recording. ProgramName: {0}", rec.Title);
+            InitiateBufferFilesCopyProcess(rec.FileName);
             SetNewChannel(-1);
           }
         }

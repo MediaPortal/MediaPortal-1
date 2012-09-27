@@ -2931,12 +2931,12 @@ namespace Mediaportal.TV.Server.TVLibrary
 
         if (_streamer != null)
         {
-          _streamer.RemoveFile(rec.fileName);
+          _streamer.RemoveFile(rec.FileName);
         }
-        bool result = RecordingFileHandler.DeleteRecordingOnDisk(rec.fileName);
+        bool result = RecordingFileHandler.DeleteRecordingOnDisk(rec.FileName);
         if (result)
         {
-          RecordingManagement.DeleteRecording(rec.idRecording);
+          RecordingManagement.DeleteRecording(rec.IdRecording);
           return true;
         }
       }
@@ -2959,7 +2959,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         {
           return false;
         }
-        return (File.Exists(rec.fileName));
+        return (File.Exists(rec.FileName));
       }
       catch (Exception)
       {
@@ -2981,7 +2981,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         {
           try
           {
-            RecordingManagement.DeleteRecording(rec.idRecording);
+            RecordingManagement.DeleteRecording(rec.IdRecording);
           }
           catch (Exception e)
           {
@@ -3008,11 +3008,11 @@ namespace Mediaportal.TV.Server.TVLibrary
         IList<Recording> itemlist = TVDatabase.TVBusinessLayer.RecordingManagement.ListAllRecordingsByMediaType(MediaTypeEnum.TV);        
         foreach (Recording rec in itemlist)
         {
-          if (rec.timesWatched > 0)
+          if (rec.TimesWatched > 0)
           {
-            if (currentTitle == null || currentTitle == rec.title)
+            if (currentTitle == null || currentTitle == rec.Title)
             {
-              DeleteRecording(rec.idRecording);
+              DeleteRecording(rec.IdRecording);
               foundWatchedRecordings = true;
             }
           }
@@ -3137,21 +3137,21 @@ namespace Mediaportal.TV.Server.TVLibrary
         Recording recording = TVDatabase.TVBusinessLayer.RecordingManagement.GetRecording(idRecording);
         if (recording == null)
           return "";
-        if (recording.fileName == null)
+        if (recording.FileName == null)
           return "";
-        if (recording.fileName.Length == 0)
+        if (recording.FileName.Length == 0)
           return "";
 
         try
         {
-          if (File.Exists(recording.fileName))
+          if (File.Exists(recording.FileName))
           {            
             _streamer.Start();
-            string streamName = String.Format("{0:X}", recording.fileName.GetHashCode());
-            RtspStream stream = new RtspStream(streamName, recording.fileName, recording.title);
+            string streamName = String.Format("{0:X}", recording.FileName.GetHashCode());
+            RtspStream stream = new RtspStream(streamName, recording.FileName, recording.Title);
             _streamer.AddStream(stream);
             string url = String.Format("rtsp://{0}:{1}/{2}", _hostName, _streamer.Port, streamName);
-            Log.Info("Controller: streaming url:{0} file:{1}", url, recording.fileName);
+            Log.Info("Controller: streaming url:{0} file:{1}", url, recording.FileName);
             return url;
           }
         }
@@ -3179,14 +3179,14 @@ namespace Mediaportal.TV.Server.TVLibrary
         Recording recording = TVDatabase.TVBusinessLayer.RecordingManagement.GetRecording(idRecording);
         if (recording == null)
           return "";
-        if (recording.fileName == null)
+        if (recording.FileName == null)
           return "";
-        if (recording.fileName.Length == 0)
+        if (recording.FileName.Length == 0)
           return "";
 
         try
         {
-          string chapterFile = Path.ChangeExtension(recording.fileName, ".txt");
+          string chapterFile = Path.ChangeExtension(recording.FileName, ".txt");
           if (File.Exists(chapterFile))
           {
             using (var chapters = new StreamReader(chapterFile))

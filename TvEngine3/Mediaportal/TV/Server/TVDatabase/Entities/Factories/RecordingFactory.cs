@@ -16,22 +16,22 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Factories
     {
       var recording = new Recording
                           {
-                            idChannel = idChannel,
-                            idSchedule = idSchedule,
-                            isRecording = isRecording,
-                            startTime = startTime,
-                            endTime = endTime,
-                            title = title,
-                            description = description,
+                            IdChannel = idChannel,
+                            IdSchedule = idSchedule,
+                            IsRecording = isRecording,
+                            StartTime = startTime,
+                            EndTime = endTime,
+                            Title = title,
+                            Description = description,
                             ProgramCategory = programCategory,
-                            fileName = fileName,
-                            keepUntil = keepUntil,
-                            keepUntilDate = keepUntilDate,
-                            timesWatched = timesWatched,
-                            episodeName = episodeName,
-                            seriesNum = seriesNum,
-                            episodeNum = episodeNum,
-                            episodePart = episodePart
+                            FileName = fileName,
+                            KeepUntil = keepUntil,
+                            KeepUntilDate = keepUntilDate,
+                            TimesWatched = timesWatched,
+                            EpisodeName = episodeName,
+                            SeriesNum = seriesNum,
+                            EpisodeNum = episodeNum,
+                            EpisodePart = episodePart
 
                           };
       return recording;

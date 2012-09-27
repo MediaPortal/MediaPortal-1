@@ -153,7 +153,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
     public static string GetDisplayTitle(Recording rec)
     {
       StringBuilder strBuilder = new StringBuilder();
-      TitleDisplay(strBuilder, rec.title, rec.episodeName, rec.seriesNum, rec.episodeNum, rec.episodePart);
+      TitleDisplay(strBuilder, rec.Title, rec.EpisodeName, rec.SeriesNum, rec.EpisodeNum, rec.EpisodePart);
 
       return strBuilder.ToString();
     }
@@ -300,14 +300,14 @@ namespace Mediaportal.TV.TvPlugin.Helper
 
       if (!useRTSP) //SMB mode
       {
-        bool fileExists = File.Exists(rec.fileName);
+        bool fileExists = File.Exists(rec.FileName);
         if (!fileExists)
           // fileName does not exist b/c it points to the local folder on the tvserver, which is ofcourse invalid on the tv client.
         {
           if (TVHome.RecordingPath().Length > 0)
           {
             //use user defined recording folder as either UNC or network drive
-            fileName = Path.GetFileName(rec.fileName);
+            fileName = Path.GetFileName(rec.FileName);
             string fileNameSimple = TVHome.RecordingPath() + "\\" + fileName;
 
             fileExists = File.Exists(fileNameSimple);
@@ -315,7 +315,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
             if (!fileExists)
               //maybe file exist in folder, schedules recs often appear in folders, no way to intelligently determine this.
             {
-              DirectoryInfo dirInfo = Directory.GetParent(rec.fileName);
+              DirectoryInfo dirInfo = Directory.GetParent(rec.FileName);
 
               if (dirInfo != null)
               {
@@ -330,18 +330,18 @@ namespace Mediaportal.TV.TvPlugin.Helper
           }
           else // use automatic UNC path
           {
-            fileName = rec.fileName.Replace(":", "");
+            fileName = rec.FileName.Replace(":", "");
             fileName = "\\\\" + ServiceAgents.Instance.Hostname + "\\" + fileName;
           }
         }
         else //file exists, return it.
         {
-          fileName = rec.fileName;
+          fileName = rec.FileName;
         }
       }
       else //RTSP mode, get RTSP url for file.
       {
-        fileName = ServiceAgents.Instance.ControllerServiceAgent.GetRecordingUrl(rec.idRecording);
+        fileName = ServiceAgents.Instance.ControllerServiceAgent.GetRecordingUrl(rec.IdRecording);
       }
 
       return fileName;
@@ -363,7 +363,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
       string fileName = GetFileNameForRecording(rec);
 
       bool useRTSP = TVHome.UseRTSP();
-      string chapters = useRTSP ? ServiceAgents.Instance.ControllerServiceAgent.GetRecordingChapters(rec.idRecording) : null;
+      string chapters = useRTSP ? ServiceAgents.Instance.ControllerServiceAgent.GetRecordingChapters(rec.IdRecording) : null;
 
       Log.Info("PlayRecording:{0} - using rtsp mode:{1}", fileName, useRTSP);
       if (g_Player.Play(fileName, mediaType, chapters))
@@ -386,11 +386,11 @@ namespace Mediaportal.TV.TvPlugin.Helper
         TvRecorded.SetActiveRecording(rec);
 
         //populates recording metadata to g_player;
-        g_Player.currentFileName = rec.fileName;
+        g_Player.currentFileName = rec.FileName;
         g_Player.currentTitle = GetDisplayTitle(rec);
-        g_Player.currentDescription = rec.description;
+        g_Player.currentDescription = rec.Description;
 
-        rec.timesWatched++;
+        rec.TimesWatched++;
         ServiceAgents.Instance.RecordingServiceAgent.SaveRecording(rec);        
         return true;
       }

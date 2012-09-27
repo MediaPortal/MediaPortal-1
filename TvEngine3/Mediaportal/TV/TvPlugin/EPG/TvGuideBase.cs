@@ -369,7 +369,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
             if (rec != null)
             {
-              fileName = rec.fileName;
+              fileName = rec.FileName;
             }
 
             if (!string.IsNullOrEmpty(fileName)) //are we really recording ?

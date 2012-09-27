@@ -80,13 +80,13 @@ namespace Mediaportal.TV.TvPlugin
       }
 
       string strTime = String.Format("{0} {1} - {2}",
-                                     Utils.GetShortDayString(currentProgram.startTime),
-                                     currentProgram.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                     currentProgram.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));      
+                                     Utils.GetShortDayString(currentProgram.StartTime),
+                                     currentProgram.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                     currentProgram.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));      
       lblProgramGenre.Label = TVUtil.GetCategory(currentProgram.ProgramCategory);
       lblProgramTime.Label = strTime;
-      lblProgramDescription.Label = currentProgram.description;
-      lblProgramTitle.Label = currentProgram.title;
+      lblProgramDescription.Label = currentProgram.Description;
+      lblProgramTitle.Label = currentProgram.Title;
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -111,7 +111,7 @@ namespace Mediaportal.TV.TvPlugin
       dlg.AddLocalizedString(1044); //Until space needed
       dlg.AddLocalizedString(1045); //Until date
       dlg.AddLocalizedString(1046); //Always
-      switch ((KeepMethodType)currentProgram.keepUntil)
+      switch ((KeepMethodType)currentProgram.KeepUntil)
       {
         case KeepMethodType.UntilWatched:
           dlg.SelectedLabel = 0;
@@ -134,31 +134,31 @@ namespace Mediaportal.TV.TvPlugin
       switch (dlg.SelectedId)
       {
         case 1043:
-          currentProgram.keepUntil = (int)KeepMethodType.UntilWatched;
+          currentProgram.KeepUntil = (int)KeepMethodType.UntilWatched;
           break;
         case 1044:
-          currentProgram.keepUntil = (int)KeepMethodType.UntilSpaceNeeded;
+          currentProgram.KeepUntil = (int)KeepMethodType.UntilSpaceNeeded;
 
           break;
         case 1045:
-          currentProgram.keepUntil = (int)KeepMethodType.TillDate;
+          currentProgram.KeepUntil = (int)KeepMethodType.TillDate;
           dlg.Reset();
           dlg.ShowQuickNumbers = false;
           dlg.SetHeading(1045);
           for (int iDay = 1; iDay <= 100; iDay++)
           {
-            DateTime dt = currentProgram.startTime.AddDays(iDay);
-            if (currentProgram.startTime < DateTime.Now)
+            DateTime dt = currentProgram.StartTime.AddDays(iDay);
+            if (currentProgram.StartTime < DateTime.Now)
             {
               dt = DateTime.Now.AddDays(iDay);
             }
 
             dlg.Add(dt.ToLongDateString());
           }
-          TimeSpan ts = (currentProgram.keepUntilDate.GetValueOrDefault(DateTime.MinValue) - currentProgram.startTime);
-          if (currentProgram.startTime < DateTime.Now)
+          TimeSpan ts = (currentProgram.KeepUntilDate.GetValueOrDefault(DateTime.MinValue) - currentProgram.StartTime);
+          if (currentProgram.StartTime < DateTime.Now)
           {
-            ts = (currentProgram.keepUntilDate.GetValueOrDefault(DateTime.MinValue) - DateTime.Now);
+            ts = (currentProgram.KeepUntilDate.GetValueOrDefault(DateTime.MinValue) - DateTime.Now);
           }
           int days = (int)ts.TotalDays;
           if (days >= 100)
@@ -171,17 +171,17 @@ namespace Mediaportal.TV.TvPlugin
           {
             return;
           }
-          if (currentProgram.startTime < DateTime.Now)
+          if (currentProgram.StartTime < DateTime.Now)
           {
-            currentProgram.keepUntilDate = DateTime.Now.AddDays(dlg.SelectedLabel + 1);
+            currentProgram.KeepUntilDate = DateTime.Now.AddDays(dlg.SelectedLabel + 1);
           }
           else
           {
-            currentProgram.keepUntilDate = currentProgram.startTime.AddDays(dlg.SelectedLabel + 1);
+            currentProgram.KeepUntilDate = currentProgram.StartTime.AddDays(dlg.SelectedLabel + 1);
           }
           break;
         case 1046:
-          currentProgram.keepUntil = (int)KeepMethodType.Always;
+          currentProgram.KeepUntil = (int)KeepMethodType.Always;
           break;
       }      
       ServiceAgents.Instance.RecordingServiceAgent.SaveRecording(currentProgram);

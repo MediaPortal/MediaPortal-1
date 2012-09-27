@@ -145,7 +145,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
 
       foreach (Recording recorded in recordedTvShows)
       {
-        if (recorded.fileName.ToUpperInvariant()[0] != drive.ToUpperInvariant()[0])
+        if (recorded.FileName.ToUpperInvariant()[0] != drive.ToUpperInvariant()[0])
         {
           continue;
         }
@@ -153,7 +153,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
         bool add = true;
         foreach (RecordingFileInfo fi in recordings)
         {
-          if (String.Compare(fi.filename, recorded.fileName, true) == 0)
+          if (String.Compare(fi.filename, recorded.FileName, true) == 0)
           {
             add = false;
           }
@@ -162,16 +162,16 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
         {
           try
           {
-            FileInfo info = new FileInfo(recorded.fileName);
+            FileInfo info = new FileInfo(recorded.FileName);
             RecordingFileInfo fi = new RecordingFileInfo();
             fi.info = info;
-            fi.filename = recorded.fileName;
+            fi.filename = recorded.FileName;
             fi.record = recorded;
             recordings.Add(fi);
           }
           catch (Exception e)
           {
-            Log.Error("DiskManagement: Exception at building FileInfo ({0})", recorded.fileName);
+            Log.Error("DiskManagement: Exception at building FileInfo ({0})", recorded.FileName);
             Log.Write(e);
           }
         }
@@ -203,13 +203,13 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
       while (OutOfDiskSpace(drive) && recordings.Count > 0)
       {
         RecordingFileInfo fi = recordings[0];
-        if (fi.record.keepUntil == (int)KeepMethodType.UntilSpaceNeeded)
+        if (fi.record.KeepUntil == (int)KeepMethodType.UntilSpaceNeeded)
         {
           // Delete the file from disk and the recording entry from the database.          
-          bool result = RecordingFileHandler.DeleteRecordingOnDisk(fi.record.fileName);
+          bool result = RecordingFileHandler.DeleteRecordingOnDisk(fi.record.FileName);
           if (result)
           {
-            TVDatabase.TVBusinessLayer.RecordingManagement.DeleteRecording(fi.record.idRecording);            
+            TVDatabase.TVBusinessLayer.RecordingManagement.DeleteRecording(fi.record.IdRecording);            
           }
         }
         recordings.RemoveAt(0);

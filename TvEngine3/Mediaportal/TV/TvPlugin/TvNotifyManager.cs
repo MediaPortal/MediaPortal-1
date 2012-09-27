@@ -99,8 +99,8 @@ namespace Mediaportal.TV.TvPlugin
                                                                                                     CurrentCulture.
                                                                                                     DateTimeFormat);
           string text = String.Format("{0} {1}-{2}",
-                                      startedRec.title,
-                                      startedRec.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                      startedRec.Title,
+                                      startedRec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                       endTime);
           //Recording started                            
           Notify(GUILocalizeStrings.Get(1446), text, startedRec.Channel);
@@ -114,8 +114,8 @@ namespace Mediaportal.TV.TvPlugin
       if (stoppedRec != null)
       {
         string textPrg;
-        IList<Program> prgs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndTimesInterval(stoppedRec.title, stoppedRec.startTime,
-                                                                      stoppedRec.endTime).ToList();        
+        IList<Program> prgs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndTimesInterval(stoppedRec.Title, stoppedRec.StartTime,
+                                                                      stoppedRec.EndTime).ToList();        
         Program prg = null;
         if (prgs != null && prgs.Count > 0)
         {
@@ -131,8 +131,8 @@ namespace Mediaportal.TV.TvPlugin
         else
         {          
           textPrg = String.Format("{0} {1}-{2}",
-                                  stoppedRec.title,
-                                  stoppedRec.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                  stoppedRec.Title,
+                                  stoppedRec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                   DateTime.Now.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
         }
         //Recording stopped:                                    

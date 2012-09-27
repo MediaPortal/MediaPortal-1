@@ -2174,7 +2174,7 @@ namespace Mediaportal.TV.TvPlugin
           {
             GUIListItem item = new GUIListItem();
             string channelName = activeRecording.Channel.DisplayName;
-            string programTitle = activeRecording.title.Trim(); // default is current EPG info
+            string programTitle = activeRecording.Title.Trim(); // default is current EPG info
 
             item.Label = channelName;
             item.Label2 = programTitle;
@@ -2211,7 +2211,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           return;
         }
-        bool deleted = TVUtil.StopRecAndSchedWithPrompt(parentSchedule, selectedRecording.idChannel.GetValueOrDefault());
+        bool deleted = TVUtil.StopRecAndSchedWithPrompt(parentSchedule, selectedRecording.IdChannel.GetValueOrDefault());
         if (deleted && !ignoreActiveRecordings.Contains(selectedRecording))
         {
           ignoreActiveRecordings.Add(selectedRecording);
@@ -2671,10 +2671,10 @@ namespace Mediaportal.TV.TvPlugin
 
       if (rec != null)
       {
-        GUIPropertyManager.SetProperty("#TV.View.title", rec.title);
+        GUIPropertyManager.SetProperty("#TV.View.title", rec.Title);
         GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(rec));
-        GUIPropertyManager.SetProperty("#TV.View.subtitle", rec.episodeName);
-        GUIPropertyManager.SetProperty("#TV.View.episode", rec.episodeNum);
+        GUIPropertyManager.SetProperty("#TV.View.subtitle", rec.EpisodeName);
+        GUIPropertyManager.SetProperty("#TV.View.episode", rec.EpisodeNum);
       }
       else
       {

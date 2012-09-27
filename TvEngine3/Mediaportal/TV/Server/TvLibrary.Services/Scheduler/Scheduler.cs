@@ -533,7 +533,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
           Schedule schedule = newRecording.Schedule.Entity;
           if (IsIncompleteRecording(pastRecording, newRecording))
           {
-            if (AlreadyHasValidRecordingFile(pastRecording.fileName))
+            if (AlreadyHasValidRecordingFile(pastRecording.FileName))
             {
               shouldRecordEpisode = false;
               HandleOnceScheduleTypes(newRecording, currentEpisodeTitle, pastRecording, currentEpisodeName, schedule,
@@ -564,8 +564,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       // and simply took care of creating a unique filename.                    
       // Check if new program overlaps with existing recording
       // if so assume previous failure and recording needs to be resumed
-      var startExisting = rec.startTime;
-      var endExisting = rec.endTime;
+      var startExisting = rec.StartTime;
+      var endExisting = rec.EndTime;
       var startNew = newRec.Program.Entity.StartTime.AddMinutes(-newRec.Schedule.Entity.preRecordInterval);
       var endNew = newRec.Program.Entity.EndTime.AddMinutes(newRec.Schedule.Entity.postRecordInterval);
 
@@ -584,7 +584,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
     {
       // Checking the record "title" itself to avoid unnecessary checks.
       // Furthermore some EPG sources could misuse the episode field for other, non-unique information              
-      string pastEpisodeTitle = CleanEpisodeTitle(pastRecording.title);
+      string pastEpisodeTitle = CleanEpisodeTitle(pastRecording.Title);
       return pastEpisodeTitle.Equals(currentEpisodeTitle, StringComparison.CurrentCultureIgnoreCase);
     }
 
@@ -619,7 +619,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
 
       Log.Info("Scheduler: Schedule {0}-{1} ({2}) has already been recorded ({3}) - aborting...",
                program.StartTime.ToString(CultureInfo.InvariantCulture), episodeTitle, episodeName,
-               pastRecording.startTime.ToString(CultureInfo.InvariantCulture));
+               pastRecording.StartTime.ToString(CultureInfo.InvariantCulture));
     }
 
     private void FireScheduleDeletedEvent(RecordingDetail newRecording)
@@ -654,11 +654,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       switch (_preventDuplicateEpisodesKey)
       {
         case 1: // Episode Number
-          pastRecordEpisode = pastRecording.seriesNum + "." + pastRecording.episodeNum + "." +
-                              pastRecording.episodePart;
+          pastRecordEpisode = pastRecording.SeriesNum + "." + pastRecording.EpisodeNum + "." +
+                              pastRecording.EpisodePart;
           break;
         default: // 0 EpisodeName
-          pastRecordEpisode = CleanEpisodeTitle(pastRecording.episodeName);
+          pastRecordEpisode = CleanEpisodeTitle(pastRecording.EpisodeName);
           break;
       }
       return pastRecordEpisode;
@@ -1306,7 +1306,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
             if (recording.Recording != null)
             {
               
-              TVDatabase.TVBusinessLayer.RecordingManagement.DeleteRecording(recording.Recording.idRecording);
+              TVDatabase.TVBusinessLayer.RecordingManagement.DeleteRecording(recording.Recording.IdRecording);
               recording.Recording = null;
             }
 
@@ -1461,7 +1461,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       IUser user = recDetail.User;
       ServiceManager.Instance.InternalControllerService.Fire(this,
                          new TvServerEventArgs(TvServerEventType.RecordingStarted, new VirtualCard(user), (User)user,
-                                               recDetail.Schedule.Entity.id_Schedule, recDetail.Recording.idRecording));
+                                               recDetail.Schedule.Entity.id_Schedule, recDetail.Recording.IdRecording));
     }
 
     private void StartRecordingNotification(RecordingDetail recDetail)
@@ -1568,7 +1568,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
                                    episodePart = recDetail.Program.Entity.EpisodePart,
                                    startTime = recDetail.RecordingStartDateTime,
                                    endTime = recDetail.EndTime,
-                                   mediaType = Convert.ToString(recDetail.Recording.mediaType)
+                                   mediaType = Convert.ToString(recDetail.Recording.MediaType)
                                  };
 
         MatroskaTagHandler.WriteTag(Path.ChangeExtension(fileName, ".xml"), info);
@@ -1630,7 +1630,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       Log.Write("Scheduler: stop record did not succeed (trying again in 1 min.) {0} {1}-{2} {3}",
                 recording.Channel.DisplayName, recording.RecordingStartDateTime, recording.EndTime,
                 recording.Schedule.Entity.programName);
-      recording.Recording.endTime = recording.Recording.endTime.AddMinutes(1);
+      recording.Recording.EndTime = recording.Recording.EndTime.AddMinutes(1);
       //lets try and stop the recording in 1 min. again.      
       TVDatabase.TVBusinessLayer.RecordingManagement.SaveRecording(recording.Recording);
     }
@@ -1640,7 +1640,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       IUser user = recording.User;
       ServiceManager.Instance.InternalControllerService.Fire(this,
                          new TvServerEventArgs(TvServerEventType.RecordingEnded, new VirtualCard(user), (User)user,
-                                               recording.Schedule.Entity.id_Schedule, recording.Recording.idRecording));
+                                               recording.Schedule.Entity.id_Schedule, recording.Recording.IdRecording));
     }
 
     private void StopRecordOnSeriesSchedule(RecordingDetail recording)
@@ -1675,14 +1675,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
     {
       try
       {
-        Recording rec = TVDatabase.TVBusinessLayer.RecordingManagement.GetRecording(recording.Recording.idRecording);        
-        rec.endTime = DateTime.Now;
-        rec.isRecording = false;        
+        Recording rec = TVDatabase.TVBusinessLayer.RecordingManagement.GetRecording(recording.Recording.IdRecording);        
+        rec.EndTime = DateTime.Now;
+        rec.IsRecording = false;        
         TVDatabase.TVBusinessLayer.RecordingManagement.SaveRecording(rec);
       }
       catch (Exception ex)
       {
-        Log.Error("StopRecord - updating record id={0} failed {1}", recording.Recording.idRecording, ex.StackTrace);
+        Log.Error("StopRecord - updating record id={0} failed {1}", recording.Recording.IdRecording, ex.StackTrace);
       }
     }
 

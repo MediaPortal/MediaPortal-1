@@ -152,27 +152,27 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
         var recording = RecordingManagement.GetRecording(tvEvent.Recording);
         if (tvEvent.EventType == TvServerEventType.RecordingStarted && _runAtStart)
         {
-          if (recording.idChannel.HasValue)
+          if (recording.IdChannel.HasValue)
           {
-            Channel channel = ChannelManagement.GetChannel(recording.idChannel.GetValueOrDefault());
+            Channel channel = ChannelManagement.GetChannel(recording.IdChannel.GetValueOrDefault());
 
-            string parameters = ProcessParameters(_parameters, recording.fileName, channel.DisplayName);
+            string parameters = ProcessParameters(_parameters, recording.FileName, channel.DisplayName);
 
             Log.Info("ComSkipLauncher: Recording started ({0} on {1}), launching program ({2} {3}) ...",
-                     recording.fileName, channel.DisplayName, _program, parameters);
+                     recording.FileName, channel.DisplayName, _program, parameters);
 
             LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
           }
         }
         else if (tvEvent.EventType == TvServerEventType.RecordingEnded && !_runAtStart)
         {
-          if (recording.idChannel.HasValue)
+          if (recording.IdChannel.HasValue)
           {
-            Channel channel = ChannelManagement.GetChannel(recording.idChannel.GetValueOrDefault());
-            string parameters = ProcessParameters(_parameters, recording.fileName, channel.DisplayName);
+            Channel channel = ChannelManagement.GetChannel(recording.IdChannel.GetValueOrDefault());
+            string parameters = ProcessParameters(_parameters, recording.FileName, channel.DisplayName);
 
             Log.Info("ComSkipLauncher: Recording ended ({0} on {1}), launching program ({2} {3}) ...",
-                     recording.fileName, channel.DisplayName, _program, parameters);
+                     recording.FileName, channel.DisplayName, _program, parameters);
 
             LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
           }

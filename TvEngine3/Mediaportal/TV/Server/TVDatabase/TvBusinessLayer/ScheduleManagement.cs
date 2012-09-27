@@ -157,7 +157,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         for (int i = schedule.Recordings.Count - 1; i >= 0; i--)
         {
           Recording recording = schedule.Recordings[i];
-          recording.idSchedule = null;
+          recording.IdSchedule = null;
         }
         scheduleRepository.ApplyChanges<Schedule>(scheduleRepository.ObjectContext.Schedules, schedule);
       }

@@ -279,7 +279,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         dlg.WaitForDisplay();
         foreach (Recording recording in selectedChannel2.Recordings)
         {
-          recording.idChannel = selectedChannel.IdChannel;
+          recording.IdChannel = selectedChannel.IdChannel;
           ServiceAgents.Instance.RecordingServiceAgent.SaveRecording(recording);
         }
         dlg.Close();

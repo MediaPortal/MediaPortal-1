@@ -1594,12 +1594,12 @@ namespace Mediaportal.TV.TvPlugin
         rec = TvRecorded.ActiveRecording();
         if (rec != null)
         {
-          description = rec.description;
-          title = rec.title;
+          description = rec.Description;
+          title = rec.Title;
           Channel ch = null;
-          if (rec.idChannel.HasValue)
+          if (rec.IdChannel.HasValue)
           {
-            ch = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(rec.idChannel.GetValueOrDefault());
+            ch = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(rec.IdChannel.GetValueOrDefault());
           }
           if (ch != null)
           {
@@ -1784,11 +1784,11 @@ namespace Mediaportal.TV.TvPlugin
           GUIPropertyManager.SetProperty("#TV.View.start", startTime);
           GUIPropertyManager.SetProperty("#TV.View.stop", endTime);
           GUIPropertyManager.SetProperty("#TV.View.genre", TVUtil.GetCategory(rec.ProgramCategory));
-          GUIPropertyManager.SetProperty("#TV.View.title", rec.title);
+          GUIPropertyManager.SetProperty("#TV.View.title", rec.Title);
           GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(rec));
-          GUIPropertyManager.SetProperty("#TV.View.description", rec.description);
-          GUIPropertyManager.SetProperty("#TV.View.subtitle", rec.episodeName);
-          GUIPropertyManager.SetProperty("#TV.View.episode", rec.episodeNum);
+          GUIPropertyManager.SetProperty("#TV.View.description", rec.Description);
+          GUIPropertyManager.SetProperty("#TV.View.subtitle", rec.EpisodeName);
+          GUIPropertyManager.SetProperty("#TV.View.episode", rec.EpisodeNum);
         }
       }
     }

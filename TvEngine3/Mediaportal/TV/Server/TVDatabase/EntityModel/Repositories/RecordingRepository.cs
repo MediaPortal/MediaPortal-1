@@ -30,7 +30,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
     public Recording GetRecording (int idRecording)
     {      
-      Recording recording =  GetQuery<Recording>(c => c.idRecording == idRecording)
+      Recording recording =  GetQuery<Recording>(c => c.IdRecording == idRecording)
         .Include(r => r.Channel)
         .Include(r => r.RecordingCredits)
         .Include(r => r.Schedule)
@@ -41,7 +41,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
     public IQueryable<Recording> ListAllRecordingsByMediaType(MediaTypeEnum mediaType)
     {
-      IQueryable<Recording> recordings = GetQuery<Recording>(r => r.mediaType == (int)mediaType)
+      IQueryable<Recording> recordings = GetQuery<Recording>(r => r.MediaType == (int)mediaType)
         .Include(r => r.Channel)
         .Include(r => r.RecordingCredits)
         .Include(c => c.Schedule)        

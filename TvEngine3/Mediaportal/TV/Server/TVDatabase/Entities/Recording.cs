@@ -27,7 +27,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Primitive Properties
     
         [DataMember]
-        public int idRecording
+        public int IdRecording
         {
             get { return _idRecording; }
             set
@@ -46,7 +46,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idRecording;
     
         [DataMember]
-        public Nullable<int> idChannel
+        public Nullable<int> IdChannel
         {
             get { return _idChannel; }
             set
@@ -69,7 +69,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private Nullable<int> _idChannel;
     
         [DataMember]
-        public System.DateTime startTime
+        public System.DateTime StartTime
         {
             get { return _startTime; }
             set
@@ -84,7 +84,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private System.DateTime _startTime;
     
         [DataMember]
-        public System.DateTime endTime
+        public System.DateTime EndTime
         {
             get { return _endTime; }
             set
@@ -99,7 +99,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private System.DateTime _endTime;
     
         [DataMember]
-        public string title
+        public string Title
         {
             get { return _title; }
             set
@@ -114,7 +114,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _title;
     
         [DataMember]
-        public string description
+        public string Description
         {
             get { return _description; }
             set
@@ -129,7 +129,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _description;
     
         [DataMember]
-        public string fileName
+        public string FileName
         {
             get { return _fileName; }
             set
@@ -144,7 +144,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _fileName;
     
         [DataMember]
-        public int keepUntil
+        public int KeepUntil
         {
             get { return _keepUntil; }
             set
@@ -159,7 +159,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _keepUntil;
     
         [DataMember]
-        public Nullable<System.DateTime> keepUntilDate
+        public Nullable<System.DateTime> KeepUntilDate
         {
             get { return _keepUntilDate; }
             set
@@ -174,7 +174,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private Nullable<System.DateTime> _keepUntilDate;
     
         [DataMember]
-        public int timesWatched
+        public int TimesWatched
         {
             get { return _timesWatched; }
             set
@@ -189,7 +189,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _timesWatched;
     
         [DataMember]
-        public int stopTime
+        public int StopTime
         {
             get { return _stopTime; }
             set
@@ -204,7 +204,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _stopTime;
     
         [DataMember]
-        public string episodeName
+        public string EpisodeName
         {
             get { return _episodeName; }
             set
@@ -219,7 +219,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _episodeName;
     
         [DataMember]
-        public string seriesNum
+        public string SeriesNum
         {
             get { return _seriesNum; }
             set
@@ -234,7 +234,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _seriesNum;
     
         [DataMember]
-        public string episodeNum
+        public string EpisodeNum
         {
             get { return _episodeNum; }
             set
@@ -249,7 +249,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _episodeNum;
     
         [DataMember]
-        public string episodePart
+        public string EpisodePart
         {
             get { return _episodePart; }
             set
@@ -264,7 +264,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _episodePart;
     
         [DataMember]
-        public bool isRecording
+        public bool IsRecording
         {
             get { return _isRecording; }
             set
@@ -279,7 +279,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private bool _isRecording;
     
         [DataMember]
-        public Nullable<int> idSchedule
+        public Nullable<int> IdSchedule
         {
             get { return _idSchedule; }
             set
@@ -302,7 +302,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private Nullable<int> _idSchedule;
     
         [DataMember]
-        public int mediaType
+        public int MediaType
         {
             get { return _mediaType; }
             set
@@ -317,7 +317,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _mediaType;
     
         [DataMember]
-        public Nullable<int> idProgramCategory
+        public Nullable<int> IdProgramCategory
         {
             get { return _idProgramCategory; }
             set
@@ -546,11 +546,11 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Channel.Recordings.Add(this);
                 }
     
-                idChannel = Channel.IdChannel;
+                IdChannel = Channel.IdChannel;
             }
             else if (!skipKeys)
             {
-                idChannel = null;
+                IdChannel = null;
             }
     
             if (ChangeTracker.ChangeTrackingEnabled)
@@ -590,11 +590,11 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Schedule.Recordings.Add(this);
                 }
     
-                idSchedule = Schedule.id_Schedule;
+                IdSchedule = Schedule.id_Schedule;
             }
             else if (!skipKeys)
             {
-                idSchedule = null;
+                IdSchedule = null;
             }
     
             if (ChangeTracker.ChangeTrackingEnabled)
@@ -634,11 +634,11 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     ProgramCategory.Recordings.Add(this);
                 }
     
-                idProgramCategory = ProgramCategory.IdProgramCategory;
+                IdProgramCategory = ProgramCategory.IdProgramCategory;
             }
             else if (!skipKeys)
             {
-                idProgramCategory = null;
+                IdProgramCategory = null;
             }
     
             if (ChangeTracker.ChangeTrackingEnabled)

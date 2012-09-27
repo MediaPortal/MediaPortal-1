@@ -787,8 +787,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                 Recording currentDbRec = dbRec.Tag as Recording;
                 if (currentDbRec != null)
                 {
-                  if (Path.GetFileNameWithoutExtension(currentDbRec.fileName) ==
-                      Path.GetFileNameWithoutExtension(TagRec.fileName))
+                  if (Path.GetFileNameWithoutExtension(currentDbRec.FileName) ==
+                      Path.GetFileNameWithoutExtension(TagRec.FileName))
                   {
                     RecFileFound = true;
                     break;
@@ -798,9 +798,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               if (!RecFileFound)
               {
                 // only add those tags which specify a still valid filename
-                if (File.Exists(TagRec.fileName))
+                if (File.Exists(TagRec.FileName))
                 {
-                  if (TagRec.idChannel == -1)
+                  if (TagRec.IdChannel == -1)
                   {
                     TagNode.ForeColor = SystemColors.GrayText;
                     TagNode.Checked = false;
@@ -845,8 +845,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         Channel lookupChannel;
         string channelName = "unknown";
-        string startTime = SqlDateTime.MinValue.Value == aRec.startTime ? "unknown" : aRec.startTime.ToString();
-        string endTime = SqlDateTime.MinValue.Value == aRec.endTime ? "unknown" : aRec.endTime.ToString();
+        string startTime = SqlDateTime.MinValue.Value == aRec.StartTime ? "unknown" : aRec.StartTime.ToString();
+        string endTime = SqlDateTime.MinValue.Value == aRec.EndTime ? "unknown" : aRec.EndTime.ToString();
         try
         {
           lookupChannel = aRec.Channel;
@@ -876,10 +876,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
         string NodeTitle;
         if (startTime != "unknown" && endTime != "unknown")
-          NodeTitle = string.Format("Title: {0} / Channel: {1} / Time: {2}-{3}", aRec.title, channelName, startTime,
+          NodeTitle = string.Format("Title: {0} / Channel: {1} / Time: {2}-{3}", aRec.Title, channelName, startTime,
                                     endTime);
         else
-          NodeTitle = string.Format("Title: {0} / Channel: {1} / Time: {2}", aRec.title, channelName, startTime);
+          NodeTitle = string.Format("Title: {0} / Channel: {1} / Time: {2}", aRec.Title, channelName, startTime);
 
         TreeNode recItem = new TreeNode(NodeTitle);
         recItem.Tag = aRec;
@@ -888,7 +888,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       catch (Exception ex)
       {
-        MessageBox.Show(string.Format("Could not build TreeNode from recording: {0}\n{1}", aRec.title, ex.Message));
+        MessageBox.Show(string.Format("Could not build TreeNode from recording: {0}\n{1}", aRec.Title, ex.Message));
         return null;
       }
     }
@@ -952,7 +952,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                                aTag.episodeNum,
                                aTag.episodePart);                               
 
-        tagRec.mediaType = Convert.ToInt32(aTag.mediaType);
+        tagRec.MediaType = Convert.ToInt32(aTag.mediaType);
         tagRec.Channel = channel;
       }
       catch (Exception ex)
@@ -1059,7 +1059,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               {
                 try
                 {
-                  currentTagRec.idChannel = newId;                  
+                  currentTagRec.IdChannel = newId;                  
                   ServiceAgents.Instance.RecordingServiceAgent.SaveRecording(currentTagRec);
                 }
                 catch (Exception ex)
@@ -1093,7 +1093,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         if (tagRec.Checked) // only import the recordings which the user has selected
         {
           Recording currentTagRec = tagRec.Tag as Recording;
-          if (currentTagRec != null && currentTagRec.idChannel != -1)
+          if (currentTagRec != null && currentTagRec.IdChannel != -1)
           {
             //if (MessageBox.Show(this, string.Format("Import {0} now? \n{1}", currentTagRec.title, currentTagRec.FileName), "Recording not found in DB", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             //{
@@ -1126,17 +1126,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         Recording currentDbRec = dbRec.Tag as Recording;
         if (currentDbRec != null)
         {
-          if (!File.Exists(currentDbRec.fileName))
+          if (!File.Exists(currentDbRec.FileName))
           {
             if (
               MessageBox.Show(this,
-                              string.Format("Delete entry {0} now? \n{1}", currentDbRec.title, currentDbRec.fileName),
+                              string.Format("Delete entry {0} now? \n{1}", currentDbRec.Title, currentDbRec.FileName),
                               "Recording not found on disk!", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
                               MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
               try
               {
-                ServiceAgents.Instance.RecordingServiceAgent.DeleteRecording(currentDbRec.idRecording);                
+                ServiceAgents.Instance.RecordingServiceAgent.DeleteRecording(currentDbRec.IdRecording);                
               }
               catch (Exception ex)
               {
