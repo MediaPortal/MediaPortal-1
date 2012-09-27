@@ -4,7 +4,7 @@
   {
     public override string ToString()
     {
-      return ("[" + role + "] = [" + person + "]");
+      return ("[" + Role + "] = [" + Person + "]");
     }
   }
 }

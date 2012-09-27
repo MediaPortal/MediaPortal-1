@@ -33,8 +33,8 @@ namespace Mediaportal.TV.Server.RuleBasedScheduler.ScheduleConditions
             c =>
             (_credits.Any(
               d =>
-              d.role.ToUpperInvariant().Contains(c.role.ToUpperInvariant()) &&
-              d.person.ToUpperInvariant().Contains(c.person.ToUpperInvariant())))));
+              d.Role.ToUpperInvariant().Contains(c.Role.ToUpperInvariant()) &&
+              d.Person.ToUpperInvariant().Contains(c.Person.ToUpperInvariant())))));
     }   
   }
 }

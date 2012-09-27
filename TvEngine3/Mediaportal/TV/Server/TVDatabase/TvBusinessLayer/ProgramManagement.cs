@@ -1157,7 +1157,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IProgramRepository programRepository = new ProgramRepository())
       {
-        return programRepository.GetQuery<ProgramCredit>().Select(p => p.role).Distinct().ToList();
+        return programRepository.GetQuery<ProgramCredit>().Select(p => p.Role).Distinct().ToList();
       }
     }
 

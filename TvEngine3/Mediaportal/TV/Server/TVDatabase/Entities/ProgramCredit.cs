@@ -24,7 +24,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Primitive Properties
     
         [DataMember]
-        public int idProgramCredit
+        public int IdProgramCredit
         {
             get { return _idProgramCredit; }
             set
@@ -43,7 +43,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idProgramCredit;
     
         [DataMember]
-        public int idProgram
+        public int IdProgram
         {
             get { return _idProgram; }
             set
@@ -66,7 +66,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idProgram;
     
         [DataMember]
-        public string person
+        public string Person
         {
             get { return _person; }
             set
@@ -81,7 +81,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _person;
     
         [DataMember]
-        public string role
+        public string Role
         {
             get { return _role; }
             set
@@ -228,7 +228,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     Program.ProgramCredits.Add(this);
                 }
     
-                idProgram = Program.IdProgram;
+                IdProgram = Program.IdProgram;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {

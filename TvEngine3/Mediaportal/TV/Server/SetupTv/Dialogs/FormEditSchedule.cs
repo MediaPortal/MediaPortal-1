@@ -711,7 +711,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private void mpButtonCreditAdd_Click(object sender, EventArgs e)
     {
       TVDatabase.Entities.ProgramCredit credit = new TVDatabase.Entities.ProgramCredit
-                                  {role = mpComboBoxRoles.SelectedItem as string, person = mpTextBoxPerson.Text};
+                                  {Role = mpComboBoxRoles.SelectedItem as string, Person = mpTextBoxPerson.Text};
 
       AddToCheckedListBox(credit, credit.ToString(), listBoxCredits, true);
     }

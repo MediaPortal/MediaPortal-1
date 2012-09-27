@@ -890,7 +890,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
             {
               creditPerson = creditPerson.Substring(0, 200);
             }
-            var credit = new ProgramCredit {role = creditRole, person = creditPerson};
+            var credit = new ProgramCredit {Role = creditRole, Person = creditPerson};
             programcredits.Add(credit);
           }
           nodeCredits.Read();
