@@ -626,7 +626,7 @@ namespace Mediaportal.TV.Server.TVLibrary
             if (localcards.ContainsKey(card.idCard))
             {
               localcards[card.idCard].IsHybrid = true;
-              Log.WriteFile("Hybrid card: " + localcards[card.idCard].Name + " (" + group.name + ")");
+              Log.WriteFile("Hybrid card: " + localcards[card.idCard].Name + " (" + group.Name + ")");
               HybridCard hybridCard = hybridCardGroup.Add(card.idCard, localcards[card.idCard]);
               localcards[card.idCard] = hybridCard;
             }

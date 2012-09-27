@@ -80,7 +80,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IList<CardGroup> groups = ServiceAgents.Instance.CardServiceAgent.ListAllCardGroups();
       foreach (CardGroup group in groups)
       {
-        ToolStripMenuItem item = new ToolStripMenuItem(group.name);
+        ToolStripMenuItem item = new ToolStripMenuItem(group.Name);
         item.Tag = group;
         item.Click += placeInHybridCardToolStripMenuItem_Click;
         placeInHybridCardToolStripMenuItem.DropDownItems.Add(item);
@@ -102,7 +102,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           return;
         }
 
-        group = new CardGroup {name = dlg.GroupName};
+        group = new CardGroup {Name = dlg.GroupName};
         ServiceAgents.Instance.CardServiceAgent.SaveCardGroup(group);
         UpdateMenu();
       }
@@ -119,7 +119,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         Card card = (Card)item.Tag;
         CardGroupMap map = new CardGroupMap();
         map.idCard = card.IdCard;        
-        map.idCardGroup = group.idCardGroup;
+        map.idCardGroup = group.IdCardGroup;
         ServiceAgents.Instance.CardServiceAgent.SaveCardGroupMap(map);
         card.Preload = false;        
         ServiceAgents.Instance.CardServiceAgent.SaveCard(card);
@@ -429,7 +429,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IList<CardGroup> cardGroups = ServiceAgents.Instance.CardServiceAgent.ListAllCardGroups();
       foreach (CardGroup group in cardGroups)
       {
-        TreeNode node = treeView1.Nodes.Add(group.name);
+        TreeNode node = treeView1.Nodes.Add(group.Name);
         node.Tag = group;
         IList<CardGroupMap> cards = group.CardGroupMaps;
         foreach (CardGroupMap map in cards)
@@ -480,7 +480,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       CardGroup group = node.Tag as CardGroup;
       if (group == null)
         return;
-      ServiceAgents.Instance.CardServiceAgent.DeleteCardGroup(group.idCardGroup);
+      ServiceAgents.Instance.CardServiceAgent.DeleteCardGroup(group.IdCardGroup);
       UpdateHybrids();
       ServiceAgents.Instance.ControllerServiceAgent.Restart();
     }

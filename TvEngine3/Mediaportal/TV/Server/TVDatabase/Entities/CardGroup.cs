@@ -24,7 +24,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Primitive Properties
     
         [DataMember]
-        public int idCardGroup
+        public int IdCardGroup
         {
             get { return _idCardGroup; }
             set
@@ -43,7 +43,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _idCardGroup;
     
         [DataMember]
-        public string name
+        public string Name
         {
             get { return _name; }
             set

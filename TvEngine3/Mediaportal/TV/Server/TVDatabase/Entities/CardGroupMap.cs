@@ -77,7 +77,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     ChangeTracker.RecordOriginalValue("idCardGroup", _idCardGroup);
                     if (!IsDeserializing)
                     {
-                        if (CardGroup != null && CardGroup.idCardGroup != value)
+                        if (CardGroup != null && CardGroup.IdCardGroup != value)
                         {
                             CardGroup = null;
                         }
@@ -279,7 +279,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     CardGroup.CardGroupMaps.Add(this);
                 }
     
-                idCardGroup = CardGroup.idCardGroup;
+                idCardGroup = CardGroup.IdCardGroup;
             }
             if (ChangeTracker.ChangeTrackingEnabled)
             {
