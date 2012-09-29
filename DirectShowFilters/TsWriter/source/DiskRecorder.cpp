@@ -1103,53 +1103,55 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 					}                        
 				}
 	 
-				if (info.seenStart)
-				{
-				 	// Video / Audio / subtitles.
-					int pid=info.fakePid;
-					info.m_Pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
-					info.m_Pkt[2]=(pid&0xff);
-					if (m_tsHeader.Pid==m_pcrPid) PatchPcr(info.m_Pkt,m_tsHeader);
+        // Overwrite the PCR timestamps.
+        if (m_tsHeader.Pid == m_pcrPid)
+        {
+          PatchPcr(info.m_Pkt, m_tsHeader);
+        }
+        else if (info.fakePid == DR_FAKE_PCR_PID && m_tsHeader.HasAdaptionField && m_tsHeader.AdaptionFieldLength >= 7 && (info.m_Pkt[5] & PCR_FLAG_BIT) != 0)
+        {
+          // If this packet is from the stream that we are *inserting* PCR timestamps
+          // into then we need to make sure that we don't leave random PCR timestamps
+          // from the broadcaster in the the adaption field. If we don't remove them,
+          // it messes up TsReader's ability to skip, fast-forward and rewind.
+          info.m_Pkt[5] &= 0xef;                                                      // Clear the PCR flag.
+          memcpy(&info.m_Pkt[6], &tsPacket[12], m_tsHeader.AdaptionFieldLength - 7);  // Overwrite the PCR with the rest of the adaption field.
+          memset(&info.m_Pkt[6 + m_tsHeader.AdaptionFieldLength - 7], 0xff, 6);       // The end of the adaption field is now stuffing.
+        }
 
-	      	if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
-					{						
-						if ((PayLoadUnitStart) || info.NPktQ)
-						{
-							int i=0 ;
-							switch(GetPesHeader(info.m_Pkt, m_tsHeader, info))
-							{
-								case 2:	break ;				// Wait for next ts packet
-								case 1:	PatchPtsDts(info.PesHeader, m_tsHeader, info) ;
-												UpdatePesHeader(info) ;
-								case 0:	do
-												{
-													Write(&info.TsPktQ[i++][0],188);
-													m_iPacketCounter++ ;	
-												} while (--info.NPktQ) ;
-							}
-						}
-						else
-						{
-							Write(info.m_Pkt,188);
-							m_iPacketCounter++;
-						}
-					}
-				}
-				else
+	      if (!m_bDetermineNewStartPcr && m_bStartPcrFound) 
 				{
-					//private pid...
-					int pid=info.fakePid;
-					info.m_Pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
-					info.m_Pkt[2]=(pid&0xff);
-					if (m_tsHeader.Pid==m_pcrPid) PatchPcr(info.m_Pkt,m_tsHeader);
+          // Overwrite the PID.
+          int pid = info.fakePid;
+					info.m_Pkt[1] = (PayLoadUnitStart << 6) + ((pid >> 8) & 0x1f);
+					info.m_Pkt[2] = (pid & 0xff);
 
-					if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
-				  	{							  
-						Write(info.m_Pkt,188);
-						m_iPacketCounter++;
-				  	}
-				}
-				return;
+				  if (info.seenStart && (PayLoadUnitStart || info.NPktQ))
+          {
+            int i = 0;
+            switch (GetPesHeader(info.m_Pkt, m_tsHeader, info))
+            {
+              case 2:
+                break;    // Wait for the next TS packet.
+              case 1:
+                PatchPtsDts(info.PesHeader, m_tsHeader, info);
+                UpdatePesHeader(info);
+              case 0:
+                do
+                {
+                  Write(&info.TsPktQ[i++][0], 188);
+                  m_iPacketCounter++;
+                }
+                while (--info.NPktQ);
+            }
+          }
+          else
+          {
+            Write(info.m_Pkt, 188);
+            m_iPacketCounter++;
+          }
+        }
+        return;
 			}
 			++it;
 		}
