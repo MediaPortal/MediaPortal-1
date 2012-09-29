@@ -665,7 +665,28 @@ namespace MediaPortal.GUI.Library
               break;
             case "include":
             case "import":
-              LoadInclude(node, defines);
+
+              // Allow an include to be conditionally loaded based on a 'condition' expression.
+              bool loadInclude = true;
+
+              if (node.Attributes["condition"] != null && !string.IsNullOrEmpty(node.Attributes["condition"].Value))
+              {
+                try
+                {
+                  loadInclude = bool.Parse(GUIPropertyManager.Parse(node.Attributes["condition"].Value, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS));
+                }
+                catch (FormatException)
+                {
+                  // The include will not be loaded if the expression could not be evaluated.
+                  loadInclude = false;
+                  Log.Debug("LoadSkin: {0}, could not evaluate include expression '{1}' ", _windowXmlFileName, node.Attributes["condition"].Value);
+                }
+              }
+
+              if (loadInclude)
+              {
+                LoadInclude(node, defines);
+              }
               break;
           }
         }
@@ -783,6 +804,9 @@ namespace MediaPortal.GUI.Library
 
       try
       {
+        bool createAsProperty;
+        bool evaluateNow;
+
         foreach (XmlNode node in document.SelectNodes("/window/define"))
         {
           string[] tokens = node.InnerText.Split(':');
@@ -792,9 +816,50 @@ namespace MediaPortal.GUI.Library
             continue;
           }
 
-          // Parse the #define value as an expression and promote the #define to a property.
-          table[tokens[0]] = GUIExpressionManager.Parse(tokens[1]);
-          GUIPropertyManager.SetProperty(tokens[0], table[tokens[0]]);
+          // Determine if the define should be promoted to a property.
+          createAsProperty = false;
+
+          if (node.Attributes["property"] != null && !string.IsNullOrEmpty(node.Attributes["property"].Value))
+          {
+            try
+            {
+              createAsProperty = bool.Parse(node.Attributes["property"].Value);
+            }
+            catch (FormatException)
+            {
+              Log.Debug("Window: LoadDefines() - failed to parse define attribute value for 'property'; {0} is not a boolean value", node.Attributes["property"].Value);
+            }
+          }
+
+          // Determine if the define should be evaluated now.
+          evaluateNow = false;
+          if (node.Attributes["evaluateNow"] != null && !string.IsNullOrEmpty(node.Attributes["evaluateNow"].Value))
+          {
+            try
+            {
+              evaluateNow = bool.Parse(node.Attributes["evaluateNow"].Value);
+            }
+            catch (FormatException)
+            {
+              Log.Debug("Window: LoadDefines() - failed to parse define attribute value for 'evaluateNow'; {0} is not a boolean value", node.Attributes["evaluateNow"].Value);
+            }
+          }
+
+          // If evaluateNow then parse and evaluate the define value expression now.
+          if (evaluateNow)
+          {
+            table[tokens[0]] = GUIExpressionManager.Parse(tokens[1], GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
+          }
+          else
+          {
+            table[tokens[0]] = tokens[1];
+          }
+
+          // Promote the define to a property if specified.
+          if (createAsProperty)
+          {
+            GUIPropertyManager.SetProperty(tokens[0], table[tokens[0]]);
+          }
         }
       }
       catch (Exception e)

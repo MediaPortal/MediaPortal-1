@@ -26,8 +26,10 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using CSScriptLibrary;
@@ -175,6 +177,17 @@ namespace MediaPortal.Configuration.Sections
 
     private List<BaseShares.ShareData> _sharesData = null;
 
+    private string _tableField = string.Empty;
+    private string _tableFieldType = string.Empty;
+    private enum TableFieldTypes
+    {
+      String,
+      Integer,
+      Boolean,
+      Float,
+      DateTime
+    }
+
     #endregion
 
     #region ctor
@@ -224,6 +237,7 @@ namespace MediaPortal.Configuration.Sections
       {
         _sharesData = (List<BaseShares.ShareData>)section.GetSetting("sharesdata");
         int dgRows = 0;
+        section.SaveSettings();
         
         foreach (BaseShares.ShareData share in _sharesData)
         {
@@ -278,6 +292,12 @@ namespace MediaPortal.Configuration.Sections
         BaseShares.ShareData share = _sharesData[e.RowIndex];
         share.ScanShare = Convert.ToBoolean(dgShares[e.ColumnIndex, e.RowIndex].Value.ToString());
         UpdateControlStatus();
+        
+        using (Settings xmlwriter = new MPSettings())
+        {
+          string shareScan = String.Format("sharescan{0}", e.RowIndex);
+          xmlwriter.SetValueAsBool("movies", shareScan, share.ScanShare);
+        }
       }
 
       if (e.ColumnIndex == 3)
@@ -285,6 +305,12 @@ namespace MediaPortal.Configuration.Sections
         BaseShares.ShareData share = _sharesData[e.RowIndex];
         share.EachFolderIsMovie = Convert.ToBoolean(dgShares[e.ColumnIndex, e.RowIndex].Value.ToString());
         UpdateControlStatus();
+
+        using (Settings xmlwriter = new MPSettings())
+        {
+          string folderMovie = String.Format("eachfolderismovie{0}", e.RowIndex);
+          xmlwriter.SetValueAsBool("movies", folderMovie, share.EachFolderIsMovie);
+        }
       }
     }
     
@@ -320,9 +346,30 @@ namespace MediaPortal.Configuration.Sections
         }
       }
       
-      _conflictFiles = new ArrayList();
-      IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, skipCheckBox.Checked, true,
-                           refreshdbCheckBox.Checked);
+      if (chbUseNfoScraperOnly.Checked)
+      {
+        _nfoFiles = new ArrayList();
+
+        foreach (string availablePath in availablePaths)
+        {
+          GetNfoFiles(availablePath, ref _nfoFiles);
+        }
+        
+        if (_nfoFiles.Count == 0)
+        {
+          MessageBox.Show("No nfo files found in share folders!");
+          return;
+        }
+
+        ImportNfo();
+      }
+      else
+      {
+        _conflictFiles = new ArrayList();
+        IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, skipCheckBox.Checked, true,
+                             refreshdbCheckBox.Checked);
+      }
+      
       LoadMovies(0);
     }
 
@@ -757,6 +804,7 @@ namespace MediaPortal.Configuration.Sections
                          ? Convert.ToString(Convert.ToInt16(movie.DVDLabel.Substring(4)))
                          : string.Empty);
       tbTitle.Text = movie.Title;
+      tbSortTitle.Text = movie.SortTitle;
       tbTagline.Text = movie.TagLine;
       tbYear.Text = movie.Year.ToString();
       tbVotes.Text = movie.Votes;
@@ -1294,7 +1342,6 @@ namespace MediaPortal.Configuration.Sections
         strFilenameAndPath = listViewFiles.Items[0].Text;
       }
       
-      string title = cbTitle.Items[cbTitle.SelectedIndex].ToString();
       buttonLookupMovie.Enabled = false;
       btnSave.Enabled = false;
       tabControl2.Enabled = false; // Subtab options for main
@@ -1319,8 +1366,14 @@ namespace MediaPortal.Configuration.Sections
       movieDetails.Path = path;
       movieDetails.File = filename;
       
+      if (chbUseNfoScraperOnly.Checked)
+      {
+        VideoDatabase.ImportNfoUsingVideoFile(strFilenameAndPath, false, false);
+        VideoDatabase.GetMovieInfoById(movieDetails.ID, ref movieDetails);
+        MessageBox.Show("Nfo file imported");
+      }
       // Search by IMDB ID number 
-      if (_refreshByImdBid == false)
+      else if (_refreshByImdBid == false)
       {
         // Clean old actors info
         if (CurrentMovie.ID > 0)
@@ -1348,6 +1401,9 @@ namespace MediaPortal.Configuration.Sections
       btnSave.Enabled = true;
       tabControl2.Enabled = true; // Subtab options for main
       tabControl1.Enabled = true; // Main tab (settings, scan, editor)
+
+      UpdateActiveMovieImageAndThumbs(tbImageLocation.Text, CurrentMovie.ID, CurrentMovie.Title);
+      RefreshMovie(movieDetails.ID, cbTitle.SelectedIndex);
     }
 
     private void GetInfoFromIMDB(ref IMDBMovie movieDetails, bool fuzzyMatch)
@@ -1482,8 +1538,10 @@ namespace MediaPortal.Configuration.Sections
       details.IMDBNumber = tbIMDBNr.Text;
 
       VideoDatabase.SetMovieInfoById(details.ID, ref details, true);
+      
       // Add files to movie
       string strPath = string.Empty;
+      
       foreach (ListViewItem item in listViewFiles.Items)
       {
         string strFileName;
@@ -1491,11 +1549,19 @@ namespace MediaPortal.Configuration.Sections
         DatabaseUtility.Split(item.Text, out strPath, out strFileName);
         DatabaseUtility.RemoveInvalidChars(ref strPath);
         DatabaseUtility.RemoveInvalidChars(ref strFileName);
-
         int pathId = VideoDatabase.AddPath(strPath);
         VideoDatabase.AddFile(details.ID, pathId, strFileName);
       }
+
+      bool nfoSaved = false;
+      
+      if (chbUseNfoScraperOnly.Checked)
+      {
+        nfoSaved = VideoDatabase.MakeNfo(details.ID);
+      }
+
       string dvdLabel = string.Empty;
+
       if (GetValidatedDVDLabel(ref dvdLabel))
       {
         if (dvdLabel.Length > 0)
@@ -1521,6 +1587,20 @@ namespace MediaPortal.Configuration.Sections
         MessageBox.Show("Disc # is invalid and has not been stored. Enter an integer between 0 and 999", "Information",
                         MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
+
+      if (chbUseNfoScraperOnly.Checked && nfoSaved)
+      {
+        MessageBox.Show("Movie nfo file saved");
+      }
+      else if (chbUseNfoScraperOnly.Checked && !nfoSaved)
+      {
+        MessageBox.Show("Movie nfo file save failed", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
+      else
+      {
+        MessageBox.Show("Movie info saved");
+      }
+      
       // Refresh movies if new is added manualy
       if (cbTitle.SelectedIndex == cbTitle.Items.Count - 1)
       {
@@ -1756,6 +1836,7 @@ namespace MediaPortal.Configuration.Sections
           }
 
           movie.Title = tbTitle.Text;
+          movie.SortTitle = tbSortTitle.Text;
           //if (movie.DirectorID <= 0)
           movie.Director = tbDirector.Text;
           movie.DirectorID = Convert.ToInt32(tbDirectorId.Text);
@@ -1840,10 +1921,14 @@ namespace MediaPortal.Configuration.Sections
           btnUpgradeCovers.Enabled = true;
           btnDowngradeCovers.Enabled = false;
         }
-
+        
         _isFuzzyMatching = xmlreader.GetValueAsBool("movies", "fuzzyMatching", true);
-
         _fuzzyMatchingCheckBox.Checked = _isFuzzyMatching;
+
+        // Sort by "Sort title" db field
+        chbUseSortTitle.Checked = xmlreader.GetValueAsBool("moviedatabase", "usesorttitle", false);
+        // Use only nfo scrapper
+        chbUseNfoScraperOnly.Checked = xmlreader.GetValueAsBool("moviedatabase", "useonlynfoscraper", false);
 
         // FanArt setting
         string configDir;
@@ -1930,9 +2015,17 @@ namespace MediaPortal.Configuration.Sections
 
       using (Settings xmlwriter = new MPSettings())
       {
+        // Hidden setting - movie cover size (in pixels) for actor movie list
+        xmlwriter.SetValue("moviedatabase", "actormoviecoversize", 400);
+
         // Cover upgrade
         xmlwriter.SetValueAsBool("moviedatabase", "coversupgraded", _coversUpgraded);
 
+        // SortTitle
+        xmlwriter.SetValueAsBool("moviedatabase", "usesorttitle", chbUseSortTitle.Checked);
+        // nfo scraper only
+        xmlwriter.SetValueAsBool("moviedatabase", "useonlynfoscraper", chbUseNfoScraperOnly.Checked);
+        
         xmlwriter.SetValueAsBool("movies", "fuzzyMatching", _isFuzzyMatching);
         // FanArt
         xmlwriter.SetValueAsBool("moviedatabase", "usefanart", _useFanArt);
@@ -2175,10 +2268,7 @@ namespace MediaPortal.Configuration.Sections
                         MessageBoxIcon.Error);
         return;
       }
-
-      string parserIndexFile = Config.GetFile(Config.Dir.Config, "scripts\\VDBParserStrings.xml");
-      string parserIndexUrl = @"http://install.team-mediaportal.com/MP1/VDBParserStrings.xml";
-
+      
       _progressDialog = new DlgProgress();
       _progressDialog.SetHeading("Updating MovieInfo grabber scripts...");
       _progressDialog.TopMost = true;
@@ -2190,17 +2280,6 @@ namespace MediaPortal.Configuration.Sections
       _progressDialog.Count = 1;
       _progressDialog.Show();
       if (DownloadFile(_grabberIndexFile, GrabberIndexUrl) == false)
-      {
-        _progressDialog.CloseProgress();
-        return;
-      }
-
-      _progressDialog.SetLine1("Downloading the VDBparser file...");
-      _progressDialog.SetLine2("Downloading...");
-      _progressDialog.Total = 1;
-      _progressDialog.Count = 1;
-      _progressDialog.Show();
-      if (DownloadFile(parserIndexFile, parserIndexUrl) == false)
       {
         _progressDialog.CloseProgress();
         return;
@@ -2276,6 +2355,51 @@ namespace MediaPortal.Configuration.Sections
       ReloadGrabberScripts();
     }
 
+    private void mpButtonUpdateInternalGrabber_Click(object sender, EventArgs e)
+    {
+      string parserIndexFile = Config.GetFile(Config.Dir.Config, "scripts\\VDBParserStrings.xml");
+      string parserIndexUrl = @"http://install.team-mediaportal.com/MP1/VDBParserStrings.xml";
+      string internalGrabberScriptFile = Config.GetFile(Config.Dir.Config, "scripts\\InternalActorMoviesGrabber.csscript");
+      string internalGrabberScriptUrl = @"http://install.team-mediaportal.com/MP1/InternalGrabber/InternalActorMoviesGrabber.csscript";
+
+      if (!Win32API.IsConnectedToInternet())
+      {
+        MessageBox.Show("Update failed. Please check your internet connection!", "", MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+        return;
+      }
+
+      _progressDialog = new DlgProgress();
+      _progressDialog.SetHeading("Updating Internal grabber scripts...");
+      _progressDialog.TopMost = true;
+
+      _progressDialog.SetLine1("Downloading the VDBparser file...");
+      _progressDialog.SetLine2("Downloading...");
+      _progressDialog.Total = 1;
+      _progressDialog.Count = 1;
+      _progressDialog.Show();
+      if (DownloadFile(parserIndexFile, parserIndexUrl) == false)
+      {
+        _progressDialog.CloseProgress();
+        return;
+      }
+
+      _progressDialog.SetLine1("Downloading the InternalGrabberScript file...");
+      _progressDialog.SetLine2("Downloading...");
+      _progressDialog.Total = 1;
+      _progressDialog.Count = 1;
+      _progressDialog.Show();
+      if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl) == false)
+      {
+        _progressDialog.CloseProgress();
+        return;
+      }
+
+      _progressDialog.CloseProgress();
+
+      MessageBox.Show("Update of internal grabbers sucessfully finished.");
+    }
+
     private void mpNumericUpDownLimit_Leave(object sender, EventArgs e)
     {
       // cell editor losing focus
@@ -2317,36 +2441,54 @@ namespace MediaPortal.Configuration.Sections
       mpNumericUpDownLimit.Visible = false;
     }
 
+    private void ReloadGrabberScripts()
+    {
+      mpComboBoxAvailableDatabases.Items.Clear();
+      mpComboBoxAvailableDatabases.Items.Add("Loading grabber scripts...");
+      mpComboBoxAvailableDatabases.SelectedIndex = 0;
+      Thread loadScripts = new Thread(ReloadGrabberScriptsThread);
+      loadScripts.Priority = ThreadPriority.Lowest;
+      loadScripts.IsBackground = true;
+      loadScripts.Start();
+    }
+
     /// <summary>
     /// Search for all valid GrabberScript files found in scriptDirectory.
     /// </summary>
-    private void ReloadGrabberScripts()
+    private void ReloadGrabberScriptsThread()
     {
-      _grabberList = new Dictionary<string, IIMDBScriptGrabber>();
-
-      Directory.CreateDirectory(IMDB.ScriptDirectory);
-      DirectoryInfo di = new DirectoryInfo(IMDB.ScriptDirectory);
-
-      FileInfo[] fileList = di.GetFiles("*.csscript", SearchOption.AllDirectories);
-      foreach (FileInfo f in fileList)
+      try
       {
-        try
-        {
-          AsmHelper script = new AsmHelper(CSScript.Load(f.FullName, null, false));
-          IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
+        _grabberList = new Dictionary<string, IIMDBScriptGrabber>();
 
-          _grabberList.Add(Path.GetFileNameWithoutExtension(f.FullName), grabber);
-        }
-        catch (Exception ex)
+        Directory.CreateDirectory(IMDB.ScriptDirectory);
+        DirectoryInfo di = new DirectoryInfo(IMDB.ScriptDirectory);
+
+        FileInfo[] fileList = di.GetFiles("*.csscript", SearchOption.AllDirectories);
+        foreach (FileInfo f in fileList)
         {
-          //textBox3.Text = ex.Message;
-          Log.Error("Script grabber error file: {0}, message : {1}", f.FullName, ex.Message);
+          try
+          {
+            AsmHelper script = new AsmHelper(CSScript.Load(f.FullName, null, false));
+            IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
+
+            _grabberList.Add(Path.GetFileNameWithoutExtension(f.FullName), grabber);
+          }
+          catch (Exception ex)
+          {
+            //textBox3.Text = ex.Message;
+            Log.Error("Script grabber error file: {0}, message : {1}", f.FullName, ex.Message);
+          }
         }
+        
+        UpdateAvailableScripts();
       }
-
-      UpdateAvailableScripts();
+      catch (Exception ex)
+      {
+        Log.Error("Reload database scripts error {0}", ex.Message);
+      }
     }
-
+    
     /// <summary>
     /// Reloads all grabber in the combobox, which are not used atm.
     /// </summary>
@@ -3291,7 +3433,6 @@ namespace MediaPortal.Configuration.Sections
       {
         // Strip movie title prefix
         xmlwriter.SetValueAsBool("moviedatabase", "striptitleprefixes", checkBoxStripTitlePrefix.Checked);
-        xmlwriter.SetValue("moviedatabase", "titleprefixes", tbTitlePrefixes.Text);
       }
     }
 
@@ -3745,13 +3886,38 @@ namespace MediaPortal.Configuration.Sections
       tbUserGroupFieldValue.Text = string.Empty;
       tbUserGroupRuleSyntax.Text = VideoDatabase.GetUserGroupRule(cbUserGroups.SelectedItem.ToString());
       cbUserGroupType.Items.Clear();
-      cbUserGroupType.Items.Add("MediaInfo");
-      cbUserGroupType.Items.Add("MovieInfo");
+      cbUserGroupType.Items.Add("Media Info");
+      cbUserGroupType.Items.Add("Movie Info");
       cbUserGroupType.Items.Add("Actor");
       cbUserGroupType.Items.Add("Folder");
       pbUserGroupImage.ImageLocation = string.Empty;
       pbUserGroupImage.ImageLocation = Util.Utils.GetLargeCoverArtName(Thumbs.MovieUserGroups,
                                                                        cbUserGroups.SelectedItem.ToString());
+    }
+
+    private void cbUserGroupsMiscList_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (cbUserGroupsMiscList.SelectedIndex == -1)
+      {
+        return;
+      }
+
+      int idGroup = VideoDatabase.AddUserGroup(cbUserGroupsMiscList.SelectedItem.ToString());
+      tbUserGroupDescription.Text = VideoDatabase.GetUserGroupDescriptionById(idGroup);
+    }
+
+    private void btSaveUserGroupMisc_Click(object sender, EventArgs e)
+    {
+      if (!string.IsNullOrEmpty(tbUserGroupDescription.Text) && 
+        tbUserGroupDescription.Text != Strings.Unknown)
+      {
+        if (cbUserGroupsMiscList.SelectedIndex == -1)
+        {
+          return;
+        }
+
+        VideoDatabase.AddUserGroupDescription(cbUserGroupsMiscList.SelectedItem.ToString(), tbUserGroupDescription.Text);
+      }
     }
 
     private void cbGroupType_SelectedIndexChanged(object sender, EventArgs e)
@@ -3765,25 +3931,32 @@ namespace MediaPortal.Configuration.Sections
 
       switch (cbUserGroupType.SelectedItem.ToString())
       {
-        case "MediaInfo":
-          cbUserGroupFieldName.Items.Add("videoCodec");
-          cbUserGroupFieldName.Items.Add("videoResolution");
-          cbUserGroupFieldName.Items.Add("aspectRatio");
-          cbUserGroupFieldName.Items.Add("audioCodec");
-          cbUserGroupFieldName.Items.Add("audioChannels");
+        case "Media Info":
+          cbUserGroupFieldName.Items.Add("Video Codec");
+          cbUserGroupFieldName.Items.Add("Video Resolution");
+          cbUserGroupFieldName.Items.Add("Aspect Ratio");
+          cbUserGroupFieldName.Items.Add("Audio Codec");
+          cbUserGroupFieldName.Items.Add("Audio Channels");
           break;
 
-        case "MovieInfo":
-          cbUserGroupFieldName.Items.Add("strTitle");
-          cbUserGroupFieldName.Items.Add("strDirector");
+        case "Movie Info":
+          cbUserGroupFieldName.Items.Add("Title");
+          cbUserGroupFieldName.Items.Add("Genre");
+          cbUserGroupFieldName.Items.Add("Director");
+          cbUserGroupFieldName.Items.Add("Year");
+          cbUserGroupFieldName.Items.Add("MPAA rating");
+          cbUserGroupFieldName.Items.Add("Runtime");
+          cbUserGroupFieldName.Items.Add("Watched");
+          cbUserGroupFieldName.Items.Add("Country");
+          cbUserGroupFieldName.Items.Add("Language");
           break;
 
         case "Actor":
-          cbUserGroupFieldName.Items.Add("strActor");
+          cbUserGroupFieldName.Items.Add("Actor");
           break;
 
         case "Folder":
-          cbUserGroupFieldName.Items.Add("strPath");
+          cbUserGroupFieldName.Items.Add("Folder path");
           break;
       }
     }
@@ -3797,54 +3970,115 @@ namespace MediaPortal.Configuration.Sections
 
       cbUserGroupFieldOperand.Items.Clear();
       cbUserGroupFieldValues.Items.Clear();
+      string fieldName = cbUserGroupFieldName.SelectedItem.ToString();
 
       switch (cbUserGroupType.SelectedItem.ToString())
       {
-        case "MediaInfo":
-          cbUserGroupFieldOperand.Items.Add("equals");
-          cbUserGroupFieldOperand.Items.Add("not equals");
-          cbUserGroupFieldOperand.Items.Add("contains");
+        case "Media Info":
+          cbUserGroupFieldOperand.Items.Add("Equals");
+          cbUserGroupFieldOperand.Items.Add("Not equals");
+          cbUserGroupFieldOperand.Items.Add("Contains");
           break;
 
-        case "MovieInfo":
-          cbUserGroupFieldOperand.Items.Add("equals");
-          cbUserGroupFieldOperand.Items.Add("not equals");
-          cbUserGroupFieldOperand.Items.Add("contains");
-          cbUserGroupFieldOperand.Items.Add("starts with");
-          cbUserGroupFieldOperand.Items.Add("ends with");
+        case "Movie Info":
+          cbUserGroupFieldOperand.Items.Add("Equals");
+          // Strings
+          if (fieldName != "Year" && fieldName != "Runtime" && fieldName != "Watched")
+          {
+            cbUserGroupFieldOperand.Items.Add("Not equals");
+            cbUserGroupFieldOperand.Items.Add("Contains");
+            cbUserGroupFieldOperand.Items.Add("Starts with");
+            cbUserGroupFieldOperand.Items.Add("Ends with");
+          }
+          // Integers
+          if (fieldName == "Year" || fieldName == "Runtime" || fieldName == "Watched")
+          {
+            cbUserGroupFieldOperand.Items.Add("Greater than");
+            cbUserGroupFieldOperand.Items.Add("Less than");
+            cbUserGroupFieldOperand.Items.Add("Greater than or equal");
+            cbUserGroupFieldOperand.Items.Add("Less than or equal");
+          }
+
           break;
 
         case "Actor":
-          cbUserGroupFieldOperand.Items.Add("equals");
-          cbUserGroupFieldOperand.Items.Add("not equals");
-          cbUserGroupFieldOperand.Items.Add("contains");
-          cbUserGroupFieldOperand.Items.Add("starts with");
-          cbUserGroupFieldOperand.Items.Add("ends with");
+          cbUserGroupFieldOperand.Items.Add("Equals");
+          cbUserGroupFieldOperand.Items.Add("Not equals");
+          cbUserGroupFieldOperand.Items.Add("Contains");
+          cbUserGroupFieldOperand.Items.Add("Starts with");
+          cbUserGroupFieldOperand.Items.Add("Ends with");
           break;
 
         case "Folder":
-          cbUserGroupFieldOperand.Items.Add("equals");
-          cbUserGroupFieldOperand.Items.Add("not equals");
-          cbUserGroupFieldOperand.Items.Add("contains");
-          cbUserGroupFieldOperand.Items.Add("starts with");
+          cbUserGroupFieldOperand.Items.Add("Equals");
+          cbUserGroupFieldOperand.Items.Add("Not equals");
+          cbUserGroupFieldOperand.Items.Add("Contains");
+          cbUserGroupFieldOperand.Items.Add("Starts with");
           break;
       }
 
       ArrayList values = new ArrayList();
       bool error = false;
-      string fieldName = cbUserGroupFieldName.SelectedItem.ToString();
+      string errorMessage = string.Empty;
       string sql = string.Empty;
+      _tableField = string.Empty;
 
+      // Some predefined values + field types and real SQL column names
       switch (fieldName)
       {
-        case "videoCodec":
-        case "videoResolution":
-        case "aspectRatio":
-        case "audioCodec":
-        case "audioChannels":
+        case "Video Codec":
+          _tableField = "filesmediainfo.videocodec";
+          _tableFieldType = TableFieldTypes.String.ToString();
+          sql = "SELECT DISTINCT " + _tableField + " FROM filesmediainfo";
+          values = VideoDatabase.ExecuteRuleSql(sql, _tableField, out error, out  errorMessage);
 
-          sql = "SELECT DISTINCT " + fieldName + " FROM filesmediainfo";
-          values = VideoDatabase.ExecuteRuleSql(sql, fieldName, out error);
+          foreach (string value in values)
+          {
+            cbUserGroupFieldValues.Items.Add(value);
+          }
+          break;
+          
+        case "Video Resolution":
+          _tableField = "filesmediainfo.videoresolution";
+          _tableFieldType = TableFieldTypes.String.ToString();
+          sql = "SELECT DISTINCT " + _tableField + " FROM filesmediainfo";
+          values = VideoDatabase.ExecuteRuleSql(sql, _tableField, out error, out  errorMessage);
+
+          foreach (string value in values)
+          {
+            cbUserGroupFieldValues.Items.Add(value);
+          }
+          break;
+          
+        case "Aspect Ratio":
+          _tableField = "filesmediainfo.aspectration";
+          _tableFieldType = TableFieldTypes.String.ToString();
+          sql = "SELECT DISTINCT " + _tableField + " FROM filesmediainfo";
+          values = VideoDatabase.ExecuteRuleSql(sql, _tableField, out error, out  errorMessage);
+
+          foreach (string value in values)
+          {
+            cbUserGroupFieldValues.Items.Add(value);
+          }
+          break;
+          
+        case "Audio Codec":
+          _tableField = "filesmediainfo.audiocodec";
+          _tableFieldType = TableFieldTypes.String.ToString();
+          sql = "SELECT DISTINCT " + _tableField + " FROM filesmediainfo";
+          values = VideoDatabase.ExecuteRuleSql(sql, _tableField, out error, out  errorMessage);
+
+          foreach (string value in values)
+          {
+            cbUserGroupFieldValues.Items.Add(value);
+          }
+          break;
+          
+        case "Audio Channels":
+          _tableField = "filesmediainfo.audiochannels";
+          _tableFieldType = TableFieldTypes.String.ToString();
+          sql = "SELECT DISTINCT " + _tableField + " FROM filesmediainfo";
+          values = VideoDatabase.ExecuteRuleSql(sql, _tableField, out error, out  errorMessage);
 
           foreach (string value in values)
           {
@@ -3852,10 +4086,11 @@ namespace MediaPortal.Configuration.Sections
           }
           break;
 
-        case "strTitle":
-        case "strDirector":
-          sql = "SELECT DISTINCT " + fieldName + " FROM movieinfo";
-          values = VideoDatabase.ExecuteRuleSql(sql, fieldName, out error);
+        case "Title":
+          _tableField = "movieinfo.strTitle";
+          _tableFieldType = TableFieldTypes.String.ToString();
+          sql = "SELECT DISTINCT " + _tableField + " FROM movieinfo";
+          values = VideoDatabase.ExecuteRuleSql(sql, _tableField, out error, out  errorMessage);
 
           foreach (string value in values)
           {
@@ -3863,14 +4098,103 @@ namespace MediaPortal.Configuration.Sections
           }
           break;
 
-        case "strPath":
-          sql = "SELECT DISTINCT " + fieldName + " FROM path";
-          values = VideoDatabase.ExecuteRuleSql(sql, fieldName, out error);
+        case "Genre":
+          _tableField = "strGenre";
+          _tableFieldType = TableFieldTypes.String.ToString();
+          sql = "SELECT DISTINCT " + _tableField + " FROM genre";
+          values = VideoDatabase.ExecuteRuleSql(sql, _tableField, out error, out  errorMessage);
 
           foreach (string value in values)
           {
             cbUserGroupFieldValues.Items.Add(value);
           }
+          break;
+          
+        case "Director":
+          _tableField = "movieinfo.strDirector";
+          _tableFieldType = TableFieldTypes.String.ToString();
+          sql = "SELECT DISTINCT " + _tableField + " FROM movieinfo";
+          values = VideoDatabase.ExecuteRuleSql(sql, _tableField, out error, out  errorMessage);
+
+          foreach (string value in values)
+          {
+            cbUserGroupFieldValues.Items.Add(value);
+          }
+          break;
+
+        case "Year":
+          _tableField = "movieinfo.iYear";
+          _tableFieldType = TableFieldTypes.Integer.ToString();
+          sql = "SELECT DISTINCT " + _tableField + " FROM movieinfo";
+          values = VideoDatabase.ExecuteRuleSql(sql, _tableField, out error, out  errorMessage);
+
+          foreach (string value in values)
+          {
+            cbUserGroupFieldValues.Items.Add(value);
+          }
+          break;
+
+        case "MPAA rating":
+          _tableField = "movieinfo.mpaa";
+          _tableFieldType = TableFieldTypes.String.ToString();
+          sql = "SELECT DISTINCT " + _tableField + " FROM movieinfo";
+          values = VideoDatabase.ExecuteRuleSql(sql, _tableField, out error, out  errorMessage);
+
+          foreach (string value in values)
+          {
+            cbUserGroupFieldValues.Items.Add(value);
+          }
+          break;
+
+        case "Runtime":
+          _tableField = "movieinfo.runtime";
+          _tableFieldType = TableFieldTypes.Integer.ToString();
+          break;
+
+        case "Watched":
+          _tableField = "movieinfo.iswatched";
+          _tableFieldType = TableFieldTypes.Integer.ToString();
+          break;
+
+        case "Country":
+          _tableField = "movieinfo.country";
+          _tableFieldType = TableFieldTypes.String.ToString();
+          sql = "SELECT DISTINCT " + _tableField + " FROM movieinfo";
+          values = VideoDatabase.ExecuteRuleSql(sql, _tableField, out error, out  errorMessage);
+
+          foreach (string value in values)
+          {
+            cbUserGroupFieldValues.Items.Add(value);
+          }
+          break;
+
+        case "Language":
+          _tableField = "movieinfo.language";
+          _tableFieldType = TableFieldTypes.String.ToString();
+          sql = "SELECT DISTINCT " + _tableField + " FROM movieinfo";
+          values = VideoDatabase.ExecuteRuleSql(sql, _tableField, out error, out  errorMessage);
+
+          foreach (string value in values)
+          {
+            cbUserGroupFieldValues.Items.Add(value);
+          }
+          break;
+
+        case "Folder path":
+          _tableField = "path.strPath";
+          _tableFieldType = TableFieldTypes.String.ToString();
+          sql = "SELECT DISTINCT " + _tableField + " FROM path";
+          values = VideoDatabase.ExecuteRuleSql(sql, _tableField, out error, out  errorMessage);
+
+          foreach (string value in values)
+          {
+            cbUserGroupFieldValues.Items.Add(value);
+          }
+          break;
+
+        case "Actor":
+          _tableField = "actors.strActor";
+          _tableFieldType = TableFieldTypes.String.ToString();
           break;
       }
     }
@@ -3888,54 +4212,83 @@ namespace MediaPortal.Configuration.Sections
     // Generate rule syntax
     private void btGenerateRuleSyntax_Click(object sender, EventArgs e)
     {
-      string operand = string.Empty;
+      if (cbUserGroupFieldOperand.SelectedIndex == -1 || cbUserGroupType.SelectedIndex == -1)
+      {
+        return;
+      }
+      
+      string comparer = string.Empty;
       string sql = string.Empty;
-      string fieldName = cbUserGroupFieldName.SelectedItem.ToString();
+      string value = tbUserGroupFieldValue.Text;
+      DatabaseUtility.RemoveInvalidChars(ref value);
 
       switch (cbUserGroupFieldOperand.SelectedItem.ToString())
       {
-        case "equals":
-          operand = " = '" + tbUserGroupFieldValue.Text + "'";
+        case "Equals":
+          if (_tableFieldType == TableFieldTypes.String.ToString())
+          {
+            comparer = " = '" + value + "'";
+          }
+          if (_tableFieldType == TableFieldTypes.Integer.ToString())
+          {
+            comparer = " = " + value;
+          }
           break;
 
-        case "not equals":
-          operand = " <> '" + tbUserGroupFieldValue.Text + "'";
+        case "Not equals":
+          comparer = " <> '" + value + "'";
           break;
 
-        case "contains":
-          operand = " LIKE '%" + tbUserGroupFieldValue.Text + "%'";
+        case "Contains":
+          comparer = " LIKE '%" + value + "%'";
           break;
 
-        case "starts with":
-          operand = " LIKE '" + tbUserGroupFieldValue.Text + "%'";
+        case "Starts with":
+          comparer = " LIKE '" + value + "%'";
           break;
 
-        case "ends with":
-          operand = " LIKE '%" + tbUserGroupFieldValue.Text + "'";
+        case "Ends with":
+          comparer = " LIKE '%" + value + "'";
+          break;
+
+        case "Greater than":
+          comparer = " > " + value;
+          break;
+
+        case "Less than":
+          comparer = " < " + value;
+          break;
+
+        case "Greater than or equal":
+          comparer = " >= " + value;
+          break;
+
+        case "Less than or equal":
+          comparer = " <= " + value;
           break;
       }
 
       switch (cbUserGroupType.SelectedItem.ToString())
       {
-        case "MediaInfo":
+        case "Media Info":
           sql =
-              "SELECT movieinfo.idMovie FROM filesmediainfo INNER JOIN files ON filesmediainfo.idFile = files.idFile INNER JOIN movieinfo ON files.idMovie = movieinfo.idMovie where " + fieldName + operand;
+              "SELECT DISTINCT movieinfo.idMovie FROM filesmediainfo INNER JOIN files ON filesmediainfo.idFile = files.idFile INNER JOIN movieinfo ON files.idMovie = movieinfo.idMovie where " + _tableField + comparer;
 
           tbUserGroupRuleSyntax.Text = sql;
           break;
 
-        case "MovieInfo":
-          sql = "SELECT movieinfo.idMovie FROM movieinfo where " + fieldName + operand;
+        case "Movie Info":
+          sql = "SELECT DISTINCT movieinfo.idMovie FROM movieinfo where " + _tableField + comparer;
           tbUserGroupRuleSyntax.Text = sql;
           break;
 
         case "Actor":
-          sql = "SELECT DISTINCT movieinfo.idMovie FROM actors , movieinfo INNER JOIN actorlinkmovie ON actors.idActor = actorlinkmovie.idActor AND actorlinkmovie.idMovie = movieinfo.idMovie WHERE " + fieldName + operand; ;
+          sql = "SELECT DISTINCT movieinfo.idMovie FROM actors , movieinfo INNER JOIN actorlinkmovie ON actors.idActor = actorlinkmovie.idActor AND actorlinkmovie.idMovie = movieinfo.idMovie WHERE " + _tableField + comparer; ;
           tbUserGroupRuleSyntax.Text = sql;
           break;
 
         case "Folder":
-          sql = "SELECT DISTINCT movieinfo.idMovie FROM path INNER JOIN files ON files.idPath = path.idPath INNER JOIN movieinfo ON files.idMovie = movieinfo.idMovie where " + fieldName + operand;
+          sql = "SELECT DISTINCT movieinfo.idMovie FROM path INNER JOIN files ON files.idPath = path.idPath INNER JOIN movieinfo ON files.idMovie = movieinfo.idMovie where " + _tableField + comparer;
           tbUserGroupRuleSyntax.Text = sql;
           break;
       }
@@ -3945,10 +4298,11 @@ namespace MediaPortal.Configuration.Sections
     private void btUserGroupCheckSyntax_Click(object sender, EventArgs e)
     {
       bool error = false;
+      string errorMessage = string.Empty;
 
       if (!string.IsNullOrEmpty(tbUserGroupRuleSyntax.Text))
       {
-        VideoDatabase.ExecuteSql(tbUserGroupRuleSyntax.Text, out error);
+        VideoDatabase.ExecuteSql(tbUserGroupRuleSyntax.Text, out error, out errorMessage);
       }
       else
       {
@@ -3961,7 +4315,8 @@ namespace MediaPortal.Configuration.Sections
       }
       else
       {
-        MessageBox.Show("Error in rule syntax!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show("Error in rule syntax! \r\n\r\n" + 
+          errorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
     }
 
@@ -3973,10 +4328,11 @@ namespace MediaPortal.Configuration.Sections
         string userGroup = cbUserGroups.SelectedItem.ToString();
         ArrayList values = new ArrayList();
         bool error = false;
+        string errorMessage = string.Empty;
 
         if (!string.IsNullOrEmpty(tbUserGroupRuleSyntax.Text))
         {
-          values = VideoDatabase.ExecuteRuleSql(tbUserGroupRuleSyntax.Text, "movieinfo.idMovie", out error);
+          values = VideoDatabase.ExecuteRuleSql(tbUserGroupRuleSyntax.Text, "movieinfo.idMovie", out error, out  errorMessage);
         }
         else
         {
@@ -3985,7 +4341,8 @@ namespace MediaPortal.Configuration.Sections
 
         if (error)
         {
-          MessageBox.Show("Error in rule syntax!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          MessageBox.Show("Error in rule syntax! \r\n\r\n" + 
+            errorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
           return;
         }
 
@@ -4022,10 +4379,11 @@ namespace MediaPortal.Configuration.Sections
     {
       ArrayList values = new ArrayList();
       bool error = false;
+      string errorMessage = string.Empty;
 
       if (!string.IsNullOrEmpty(tbUserGroupRuleSyntax.Text))
       {
-        values = VideoDatabase.ExecuteRuleSql(tbUserGroupRuleSyntax.Text, "movieinfo.idMovie", out error);
+        values = VideoDatabase.ExecuteRuleSql(tbUserGroupRuleSyntax.Text, "movieinfo.idMovie", out error, out  errorMessage);
       }
       else
       {
@@ -4069,6 +4427,20 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
+    private void lvUserGroups_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      GetThumb(lvUserGroups, Thumbs.MovieUserGroups, pbUserGroupImage);
+    }
+
+    private void lvMovieUserGroups_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      GetThumb(lvMovieUserGroups, Thumbs.MovieUserGroups, pbUserGroupImage);
+    }
+
+    #endregion
+
+    #region Genres
+
     // Add genre image
     private void btAddGenreImage_Click(object sender, EventArgs e)
     {
@@ -4082,69 +4454,14 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void AddThumbImage(ListView lView, string thumbFolder, PictureBox pBox)
-    {
-      try
-      {
-        OpenFileDialog dlg = new OpenFileDialog();
-        string smallThumb = string.Empty;
-        string largeThumb = string.Empty;
-        dlg.AddExtension = true;
-        dlg.Filter = "JPEG Image (*.jpg,*.jpeg)|*.jpg;*.jpeg|All files (*.*)|*.*";
-        dlg.RestoreDirectory = false;
-        int selectedGroupIndex = -1;
-
-        string strFilename = lView.SelectedItems[0].Text;
-        selectedGroupIndex = lView.SelectedItems[0].Index;
-        smallThumb = Util.Utils.GetCoverArtName(thumbFolder, strFilename);
-        largeThumb = Util.Utils.GetLargeCoverArtName(thumbFolder, strFilename);
-        // open dialog
-        if (dlg.ShowDialog(this) == DialogResult.OK)
-        {
-          if (Util.Picture.CreateThumbnail(dlg.FileName, smallThumb, (int)Thumbs.ThumbResolution,
-                                           (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
-          {
-            Util.Picture.CreateThumbnail(dlg.FileName, largeThumb, (int)Thumbs.ThumbLargeResolution,
-                                         (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
-          }
-          pBox.ImageLocation = largeThumb;
-          lView.Select();
-          lView.Items[selectedGroupIndex].Selected = true;
-        }
-      }
-      catch (Exception)
-      {
-      }
-    }
-
-    private void lvUserGroups_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      GetThumb(lvUserGroups, Thumbs.MovieUserGroups, pbUserGroupImage);
-    }
-
     private void listViewAllGenres_SelectedIndexChanged(object sender, EventArgs e)
     {
       GetThumb(listViewAllGenres, Thumbs.MovieGenre, pbGenreImage);
     }
 
-    private void lvMovieUserGroups_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      GetThumb(lvMovieUserGroups, Thumbs.MovieUserGroups, pbUserGroupImage);
-    }
-
     private void listViewGenres_SelectedIndexChanged(object sender, EventArgs e)
     {
       GetThumb(listViewGenres, Thumbs.MovieGenre, pbGenreImage);
-    }
-
-    private void GetThumb(ListView lView, string thumbsFolder, PictureBox pBox)
-    {
-      if (lView.SelectedItems.Count > 0)
-      {
-        string strFilename = lView.SelectedItems[0].Text;
-        string largeThumb = Util.Utils.GetLargeCoverArtName(thumbsFolder, strFilename);
-        pBox.ImageLocation = largeThumb;
-      }
     }
 
     #endregion
@@ -4181,9 +4498,6 @@ namespace MediaPortal.Configuration.Sections
         ProgressBarAdvance(ref pbTools, string.Empty, false);
       }
       pbTools.Value = 0;
-      // Refresh actors list view
-      //listViewAllActors.Items.Clear();
-      //listViewAllActors.BeginUpdate();
       listActors = new ArrayList();
       VideoDatabase.GetActors(listActors);
 
@@ -4398,6 +4712,18 @@ namespace MediaPortal.Configuration.Sections
 
       _nfoFiles = new ArrayList();
       GetNfoFiles(fBrowser.SelectedPath, ref _nfoFiles);
+
+      if (_nfoFiles.Count == 0)
+      {
+        MessageBox.Show("No nfo files found!");
+        return;
+      }
+
+      ImportNfo();
+    }
+
+    private void ImportNfo()
+    {
       notFoundMovie = new ArrayList();
 
       // Set refresh status for background worker
@@ -4452,7 +4778,7 @@ namespace MediaPortal.Configuration.Sections
 
         _progressDialog.SetLine1("Importing: " + nfoFile);
 
-        VideoDatabase.ImportNfo(nfoFile);
+        VideoDatabase.ImportNfo(nfoFile, skipCheckBox.Checked, refreshdbCheckBox.Checked);
 
         // Update progress
         if (_progressDialog.Count < _nfoFiles.Count)
@@ -4536,8 +4862,9 @@ namespace MediaPortal.Configuration.Sections
     private void GetNfoFiles(string path, ref ArrayList availableFiles)
     {
       string[] files = Directory.GetFiles(path, "*.nfo", SearchOption.AllDirectories);
+      var sortedFiles = files.OrderBy(f => f);
 
-      foreach (string file in files)
+      foreach (string file in sortedFiles)
       {
         availableFiles.Add(file);
       }
@@ -4576,10 +4903,32 @@ namespace MediaPortal.Configuration.Sections
         tbUserGroupFieldValue.Text = string.Empty;
         tbUserGroupRuleSyntax.Text = string.Empty;
         
-        
         foreach (string userGroup in userGroups)
         {
           cbUserGroups.Items.Add(userGroup);
+        }
+
+        if (cbUserGroups.Items.Count > 0)
+        {
+          cbUserGroups.SelectedIndex = 0;
+        }
+      }
+
+      if (tabControl2.SelectedTab == tabPageUserGroupDescription)
+      {
+        ArrayList userGroups = new ArrayList();
+        VideoDatabase.GetUserGroups(userGroups);
+        cbUserGroupsMiscList.Items.Clear();
+        tbUserGroupDescription.Text = string.Empty;
+
+        foreach (string userGroup in userGroups)
+        {
+          cbUserGroupsMiscList.Items.Add(userGroup);
+        }
+
+        if (cbUserGroupsMiscList.Items.Count > 0)
+        {
+          cbUserGroupsMiscList.SelectedIndex = 0;
         }
       }
     }
@@ -4731,8 +5080,105 @@ namespace MediaPortal.Configuration.Sections
       SaveSettings();
     }
 
-    #endregion
+    private void chbUseNfoScraperOnly_CheckedChanged(object sender, EventArgs e)
+    {
+      DisableScraperControls();
+    }
 
+    private void DisableScraperControls()
+    {
+      if (!chbUseNfoScraperOnly.Checked)
+      {
+        lvDatabase.Enabled = true;
+        bDatabaseUp.Enabled = true;
+        bDatabaseDown.Enabled = true;
+        mpNumericUpDownLimit.Enabled = true;
+        mpDeleteGrabber.Enabled = true;
+        mpComboBoxAvailableDatabases.Enabled = true;
+        mpButtonAddGrabber.Enabled = true;
+      }
+      else
+      {
+        lvDatabase.Enabled = false;
+        bDatabaseUp.Enabled = false;
+        bDatabaseDown.Enabled = false;
+        mpNumericUpDownLimit.Enabled = false;
+        mpDeleteGrabber.Enabled = false;
+        mpComboBoxAvailableDatabases.Enabled = false;
+        mpButtonAddGrabber.Enabled = false;
+      }
+
+      using (Settings xmlwriter = new MPSettings())
+      {
+        // nfo scraper only
+        xmlwriter.SetValueAsBool("moviedatabase", "useonlynfoscraper", chbUseNfoScraperOnly.Checked);
+      }
+    }
+
+    private void tbTitlePrefixes_TextChanged(object sender, EventArgs e)
+    {
+      using (Settings xmlwriter = new MPSettings())
+      {
+        // Strip movie title prefix
+        xmlwriter.SetValue("moviedatabase", "titleprefixes", tbTitlePrefixes.Text);
+      }
+    }
+
+    private void preferFileNameCheckBox_CheckedChanged_1(object sender, EventArgs e)
+    {
+      using (Settings xmlwriter = new MPSettings())
+      {
+        // Folder movie title
+        xmlwriter.SetValueAsBool("moviedatabase", "preferfilenameforsearch", preferFileNameCheckBox.Checked);
+      }
+    }
+
+    private void AddThumbImage(ListView lView, string thumbFolder, PictureBox pBox)
+    {
+      try
+      {
+        OpenFileDialog dlg = new OpenFileDialog();
+        string smallThumb = string.Empty;
+        string largeThumb = string.Empty;
+        dlg.AddExtension = true;
+        dlg.Filter = "JPEG Image (*.jpg,*.jpeg)|*.jpg;*.jpeg|All files (*.*)|*.*";
+        dlg.RestoreDirectory = false;
+        int selectedGroupIndex = -1;
+
+        string strFilename = lView.SelectedItems[0].Text;
+        selectedGroupIndex = lView.SelectedItems[0].Index;
+        smallThumb = Util.Utils.GetCoverArtName(thumbFolder, strFilename);
+        largeThumb = Util.Utils.GetLargeCoverArtName(thumbFolder, strFilename);
+        // open dialog
+        if (dlg.ShowDialog(this) == DialogResult.OK)
+        {
+          if (Util.Picture.CreateThumbnail(dlg.FileName, smallThumb, (int)Thumbs.ThumbResolution,
+                                           (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+          {
+            Util.Picture.CreateThumbnail(dlg.FileName, largeThumb, (int)Thumbs.ThumbLargeResolution,
+                                         (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
+          }
+          pBox.ImageLocation = largeThumb;
+          lView.Select();
+          lView.Items[selectedGroupIndex].Selected = true;
+        }
+      }
+      catch (Exception)
+      {
+      }
+    }
+
+    private void GetThumb(ListView lView, string thumbsFolder, PictureBox pBox)
+    {
+      if (lView.SelectedItems.Count > 0)
+      {
+        string strFilename = lView.SelectedItems[0].Text;
+        string largeThumb = Util.Utils.GetLargeCoverArtName(thumbsFolder, strFilename);
+        pBox.ImageLocation = largeThumb;
+      }
+    }
+    #endregion
+    
     #endregion
   }
 }

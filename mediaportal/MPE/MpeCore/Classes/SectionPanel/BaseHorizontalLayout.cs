@@ -19,12 +19,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
 
 namespace MpeCore.Classes.SectionPanel
@@ -83,7 +78,7 @@ namespace MpeCore.Classes.SectionPanel
       pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
       Text = string.Format("Extension Installer for  {0} - {1}", Package.GeneralInfo.Name,
                            Package.GeneralInfo.Version);
-      button_next.Text = "Next>";
+      button_next.Text = "Next >";
       switch (Section.WizardButtonsEnum)
       {
         case WizardButtonsEnum.BackNextCancel:

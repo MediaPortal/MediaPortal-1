@@ -45,7 +45,7 @@ namespace MpeMaker.Classes
           if (s.StartsWith("/V="))
           {
             string ver = s.Remove(0, 3); // remove /?= from the argument          
-            Version = VersionInfo.Pharse(ver);
+            Version = VersionInfo.Parse(ver);
             SetVersion = true;
           }
 

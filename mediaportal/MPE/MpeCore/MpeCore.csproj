@@ -92,6 +92,9 @@
     <Compile Include="Classes\ApplicationSettings.cs" />
     <Compile Include="Classes\CompatibleVersionCollection.cs" />
     <Compile Include="Classes\CompatibleVersionItem.cs" />
+    <Compile Include="Classes\CompressionWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Classes\DependencyItemCollection.cs" />
     <Compile Include="Classes\DependencyItem.cs" />
     <Compile Include="Classes\DownloadItem.cs" />
@@ -101,6 +104,7 @@
     <Compile Include="Classes\Events\UnInstallEventArgs.cs" />
     <Compile Include="Classes\ExtensionCollection.cs" />
     <Compile Include="Classes\ActionType\InstallFiles.cs" />
+    <Compile Include="Classes\ExtensionUpdateDownloader.cs" />
     <Compile Include="Classes\InstallerType\CopyFont.cs" />
     <Compile Include="Classes\InstallerType\GenericSkinFile.cs" />
     <Compile Include="Classes\ParamNamesConst.cs" />
@@ -213,6 +217,18 @@
     <Compile Include="Classes\WizardButtonsEnum.cs" />
     <Compile Include="Classes\WizardNavigator.cs" />
     <Compile Include="Classes\ZipProvider\ZipProviderClass.cs" />
+    <Compile Include="Dialogs\DownloadFile.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\DownloadFile.Designer.cs">
+      <DependentUpon>DownloadFile.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\DownloadInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\DownloadInfo.Designer.cs">
+      <DependentUpon>DownloadInfo.cs</DependentUpon>
+    </Compile>
     <Compile Include="Interfaces\IActionType.cs" />
     <Compile Include="Interfaces\IInstallerTypeProvider.cs" />
     <Compile Include="Interfaces\IPathProvider.cs" />
@@ -284,8 +300,19 @@
       <DependentUpon>TreeViewSelector.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Classes\SectionPanel\UserVericalLayout.resx">
+      <DependentUpon>UserVericalLayout.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Classes\SectionPanel\Welcome.resx">
       <DependentUpon>Welcome.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\DownloadFile.resx">
+      <DependentUpon>DownloadFile.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\DownloadInfo.resx">
+      <DependentUpon>DownloadInfo.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -294,6 +321,13 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TopFadeOut.png" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

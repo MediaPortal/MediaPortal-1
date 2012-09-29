@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>12</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <controls>
+    <import>common.settings.xml</import>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>244</posX>
+      <posY>96</posY>
+      <height>416</height>
+      <width>244</width>
+      <texture>backslide.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>buttons</description>
+      <type>group</type>
+      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="70" end="-300,0">WindowClose</animation>
+      <posX>261</posX>
+      <posY>128</posY>
+      <layout>StackLayout(0, Horizontal, True)</layout>
+      <control>
+        <description>Slideshow</description>
+        <type>button</type>
+        <id>2</id>
+        <label>129</label>
+        <width>196</width>
+        <onup>17</onup>
+      </control>
+      <control>
+        <description>Folders button</description>
+        <type>button</type>
+        <id>4</id>
+        <label>300071</label>
+        <width>196</width>
+      </control>
+      <control>
+        <description>Database button</description>
+        <type>button</type>
+        <id>5</id>
+        <label>300161</label>
+        <width>196</width>
+      </control>
+      <control>
+        <description>Extensions</description>
+        <type>button</type>
+        <id>3</id>
+        <label>300162</label>
+        <ondown>2</ondown>
+        <width>196</width>
+      </control>
+    </control>
+  </controls>
+</window>

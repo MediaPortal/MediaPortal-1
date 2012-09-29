@@ -40,16 +40,17 @@
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage_group = new System.Windows.Forms.TabPage();
-      this.btn_clearat = new System.Windows.Forms.Button();
-      this.label8 = new System.Windows.Forms.Label();
-      this.list_folder = new System.Windows.Forms.ListBox();
-      this.label5 = new System.Windows.Forms.Label();
-      this.cmb_parentGroup = new System.Windows.Forms.ComboBox();
-      this.txt_displlayName = new System.Windows.Forms.TextBox();
+      this.panel1 = new System.Windows.Forms.Panel();
       this.label4 = new System.Windows.Forms.Label();
-      this.chk_default = new System.Windows.Forms.CheckBox();
-      this.label3 = new System.Windows.Forms.Label();
+      this.btn_clearat = new System.Windows.Forms.Button();
       this.txt_description = new System.Windows.Forms.TextBox();
+      this.label8 = new System.Windows.Forms.Label();
+      this.label3 = new System.Windows.Forms.Label();
+      this.list_folder = new System.Windows.Forms.ListBox();
+      this.chk_default = new System.Windows.Forms.CheckBox();
+      this.label5 = new System.Windows.Forms.Label();
+      this.txt_displlayName = new System.Windows.Forms.TextBox();
+      this.cmb_parentGroup = new System.Windows.Forms.ComboBox();
       this.tabPage_file = new System.Windows.Forms.TabPage();
       this.btnSelectSourceFile = new System.Windows.Forms.Button();
       this.label9 = new System.Windows.Forms.Label();
@@ -65,13 +66,12 @@
       this.label1 = new System.Windows.Forms.Label();
       this.cmb_installtype = new System.Windows.Forms.ComboBox();
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-      this.panel1 = new System.Windows.Forms.Panel();
       this.treeView1 = new CodersLab.Windows.Controls.TreeView();
       this.toolStrip.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage_group.SuspendLayout();
-      this.tabPage_file.SuspendLayout();
       this.panel1.SuspendLayout();
+      this.tabPage_file.SuspendLayout();
       this.SuspendLayout();
       // 
       // imageList
@@ -179,6 +179,33 @@
       this.tabPage_group.Text = "Group";
       this.tabPage_group.UseVisualStyleBackColor = true;
       // 
+      // panel1
+      // 
+      this.panel1.Controls.Add(this.label4);
+      this.panel1.Controls.Add(this.btn_clearat);
+      this.panel1.Controls.Add(this.txt_description);
+      this.panel1.Controls.Add(this.label8);
+      this.panel1.Controls.Add(this.label3);
+      this.panel1.Controls.Add(this.list_folder);
+      this.panel1.Controls.Add(this.chk_default);
+      this.panel1.Controls.Add(this.label5);
+      this.panel1.Controls.Add(this.txt_displlayName);
+      this.panel1.Controls.Add(this.cmb_parentGroup);
+      this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.panel1.Location = new System.Drawing.Point(3, 3);
+      this.panel1.Name = "panel1";
+      this.panel1.Size = new System.Drawing.Size(346, 371);
+      this.panel1.TabIndex = 11;
+      // 
+      // label4
+      // 
+      this.label4.AutoSize = true;
+      this.label4.Location = new System.Drawing.Point(3, 14);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(70, 13);
+      this.label4.TabIndex = 4;
+      this.label4.Text = "Display name";
+      // 
       // btn_clearat
       // 
       this.btn_clearat.Location = new System.Drawing.Point(3, 300);
@@ -189,6 +216,17 @@
       this.btn_clearat.UseVisualStyleBackColor = true;
       this.btn_clearat.Click += new System.EventHandler(this.btn_clearat_Click);
       // 
+      // txt_description
+      // 
+      this.txt_description.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.txt_description.Location = new System.Drawing.Point(3, 69);
+      this.txt_description.Multiline = true;
+      this.txt_description.Name = "txt_description";
+      this.txt_description.Size = new System.Drawing.Size(343, 63);
+      this.txt_description.TabIndex = 1;
+      this.txt_description.TextChanged += new System.EventHandler(this.txt_description_TextChanged);
+      // 
       // label8
       // 
       this.label8.AutoSize = true;
@@ -197,6 +235,15 @@
       this.label8.Size = new System.Drawing.Size(84, 13);
       this.label8.TabIndex = 9;
       this.label8.Text = "Attached folders";
+      // 
+      // label3
+      // 
+      this.label3.AutoSize = true;
+      this.label3.Location = new System.Drawing.Point(3, 53);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(60, 13);
+      this.label3.TabIndex = 0;
+      this.label3.Text = "Description";
       // 
       // list_folder
       // 
@@ -209,6 +256,17 @@
       this.list_folder.TabIndex = 8;
       this.toolTip.SetToolTip(this.list_folder, "All files in this directory will be recursively added to this group.");
       // 
+      // chk_default
+      // 
+      this.chk_default.AutoSize = true;
+      this.chk_default.Location = new System.Drawing.Point(3, 165);
+      this.chk_default.Name = "chk_default";
+      this.chk_default.Size = new System.Drawing.Size(103, 17);
+      this.chk_default.TabIndex = 2;
+      this.chk_default.Text = "Default selected";
+      this.chk_default.UseVisualStyleBackColor = true;
+      this.chk_default.CheckedChanged += new System.EventHandler(this.txt_description_TextChanged);
+      // 
       // label5
       // 
       this.label5.AutoSize = true;
@@ -217,6 +275,16 @@
       this.label5.Size = new System.Drawing.Size(68, 13);
       this.label5.TabIndex = 7;
       this.label5.Text = "Parent group";
+      // 
+      // txt_displlayName
+      // 
+      this.txt_displlayName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.txt_displlayName.Location = new System.Drawing.Point(3, 30);
+      this.txt_displlayName.Name = "txt_displlayName";
+      this.txt_displlayName.Size = new System.Drawing.Size(343, 20);
+      this.txt_displlayName.TabIndex = 5;
+      this.txt_displlayName.TextChanged += new System.EventHandler(this.txt_description_TextChanged);
       // 
       // cmb_parentGroup
       // 
@@ -229,56 +297,6 @@
       this.cmb_parentGroup.Size = new System.Drawing.Size(266, 21);
       this.cmb_parentGroup.TabIndex = 6;
       this.cmb_parentGroup.SelectedIndexChanged += new System.EventHandler(this.txt_description_TextChanged);
-      // 
-      // txt_displlayName
-      // 
-      this.txt_displlayName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.txt_displlayName.Location = new System.Drawing.Point(3, 30);
-      this.txt_displlayName.Name = "txt_displlayName";
-      this.txt_displlayName.Size = new System.Drawing.Size(343, 20);
-      this.txt_displlayName.TabIndex = 5;
-      this.txt_displlayName.TextChanged += new System.EventHandler(this.txt_description_TextChanged);
-      // 
-      // label4
-      // 
-      this.label4.AutoSize = true;
-      this.label4.Location = new System.Drawing.Point(3, 14);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(70, 13);
-      this.label4.TabIndex = 4;
-      this.label4.Text = "Display name";
-      // 
-      // chk_default
-      // 
-      this.chk_default.AutoSize = true;
-      this.chk_default.Location = new System.Drawing.Point(3, 165);
-      this.chk_default.Name = "chk_default";
-      this.chk_default.Size = new System.Drawing.Size(103, 17);
-      this.chk_default.TabIndex = 2;
-      this.chk_default.Text = "Default selected";
-      this.chk_default.UseVisualStyleBackColor = true;
-      this.chk_default.CheckedChanged += new System.EventHandler(this.txt_description_TextChanged);
-      // 
-      // label3
-      // 
-      this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(3, 53);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(60, 13);
-      this.label3.TabIndex = 0;
-      this.label3.Text = "Description";
-      // 
-      // txt_description
-      // 
-      this.txt_description.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.txt_description.Location = new System.Drawing.Point(3, 69);
-      this.txt_description.Multiline = true;
-      this.txt_description.Name = "txt_description";
-      this.txt_description.Size = new System.Drawing.Size(343, 63);
-      this.txt_description.TabIndex = 1;
-      this.txt_description.TextChanged += new System.EventHandler(this.txt_description_TextChanged);
       // 
       // tabPage_file
       // 
@@ -355,8 +373,7 @@
       // 
       // btn_set
       // 
-      this.btn_set.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btn_set.Location = new System.Drawing.Point(311, 122);
+      this.btn_set.Location = new System.Drawing.Point(9, 163);
       this.btn_set.Name = "btn_set";
       this.btn_set.Size = new System.Drawing.Size(35, 20);
       this.btn_set.TabIndex = 7;
@@ -370,9 +387,9 @@
       this.label6.AutoSize = true;
       this.label6.Location = new System.Drawing.Point(6, 78);
       this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(76, 13);
+      this.label6.Size = new System.Drawing.Size(52, 13);
       this.label6.TabIndex = 6;
-      this.label6.Text = "Update Option";
+      this.label6.Text = "Overwrite";
       // 
       // cmb_overwrite
       // 
@@ -381,9 +398,9 @@
       this.cmb_overwrite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cmb_overwrite.FormattingEnabled = true;
       this.cmb_overwrite.Items.AddRange(new object[] {
-            "Newer overwrite",
-            "Always overwrite",
-            "Overwrite if older"});
+            "Never",
+            "Always",
+            "If older"});
       this.cmb_overwrite.Location = new System.Drawing.Point(95, 70);
       this.cmb_overwrite.Name = "cmb_overwrite";
       this.cmb_overwrite.Size = new System.Drawing.Size(210, 21);
@@ -446,24 +463,6 @@
       // 
       this.toolTip.IsBalloon = true;
       // 
-      // panel1
-      // 
-      this.panel1.Controls.Add(this.label4);
-      this.panel1.Controls.Add(this.btn_clearat);
-      this.panel1.Controls.Add(this.txt_description);
-      this.panel1.Controls.Add(this.label8);
-      this.panel1.Controls.Add(this.label3);
-      this.panel1.Controls.Add(this.list_folder);
-      this.panel1.Controls.Add(this.chk_default);
-      this.panel1.Controls.Add(this.label5);
-      this.panel1.Controls.Add(this.txt_displlayName);
-      this.panel1.Controls.Add(this.cmb_parentGroup);
-      this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.panel1.Location = new System.Drawing.Point(3, 3);
-      this.panel1.Name = "panel1";
-      this.panel1.Size = new System.Drawing.Size(346, 371);
-      this.panel1.TabIndex = 11;
-      // 
       // treeView1
       // 
       this.treeView1.AllowDrop = true;
@@ -500,10 +499,10 @@
       this.toolStrip.PerformLayout();
       this.tabControl1.ResumeLayout(false);
       this.tabPage_group.ResumeLayout(false);
-      this.tabPage_file.ResumeLayout(false);
-      this.tabPage_file.PerformLayout();
       this.panel1.ResumeLayout(false);
       this.panel1.PerformLayout();
+      this.tabPage_file.ResumeLayout(false);
+      this.tabPage_file.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
 

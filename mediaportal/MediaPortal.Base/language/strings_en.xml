@@ -45,6 +45,7 @@
     <String id="44">Dec</String>
     <String id="50" prefix="My ">DVDs</String>
     <String id="51">Play disc</String>
+    <String id="59">Note: These settings are not available because the TV plugin is not installed.</String>
     <String id="60">Waiting for startup of TV service...</String>
     <String id="61">Waiting {0} second(s) before startup...</String>
     <String id="62">Initialising DirectX...</String>
@@ -1078,7 +1079,13 @@
     <String id="1300" prefix="My ">TV Shows</String>
     <String id="1301">Downloading movie actors and roles</String>
     <String id="1302">Downloading actor info</String>
-	<String id="1303">Select Artist</String>
+    <String id="1303">Select Artist</String>
+    <String id="1304">Create nfo file</String>
+    <String id="1305">Nfo crated!</String>
+    <String id="1306">Create nfo files for all movies</String>
+    <String id="1307">Update internal Grabber scripts</String>
+    <String id="1308">Rename SortTitle</String>
+    <String id="1309">Name-Full</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
     <String id="1442">Scroll speed (horizontal)</String>
