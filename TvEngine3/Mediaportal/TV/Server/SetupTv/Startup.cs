@@ -121,9 +121,9 @@ namespace Mediaportal.TV.Server.SetupTV
         {
           ServiceAgents.Instance.Hostname = appSetting;
         }
-      }
-
-      bool tvserviceInstalled = WaitAndQueryForTvserviceUntilFound();
+      }      
+      
+      bool tvserviceInstalled = WaitAndQueryForTvserviceUntilFound();      
 
       if (tvserviceInstalled)
       {
@@ -304,6 +304,17 @@ namespace Mediaportal.TV.Server.SetupTV
         tvserviceInstalled = ServiceHelper.IsInstalled(ServiceHelper.SERVICENAME_TVSERVICE, ServiceAgents.Instance.Hostname);
         if (!tvserviceInstalled)
         {
+          //maybe tvservice is started as a console app or as MP2TV server ?
+          try
+          {
+            IEnumerable<string> ipAdresses = ServiceAgents.Instance.ControllerServiceAgent.ServerIpAdresses;
+            ServiceHelper.IsRestrictedMode = true;
+            break;
+          }
+          catch (Exception)
+          {
+          }            
+
           if (ServiceHelper.IsRestrictedMode)
           {
             break;

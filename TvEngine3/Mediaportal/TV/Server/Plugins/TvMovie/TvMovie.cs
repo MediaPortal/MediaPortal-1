@@ -24,7 +24,9 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Timers;
+using Castle.Core;
 using Mediaportal.TV.Server.Plugins.Base;
+using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.Interfaces;
@@ -36,6 +38,7 @@ using Microsoft.Win32;
 
 namespace Mediaportal.TV.Server.Plugins.TvMovie
 {
+  [Interceptor("PluginExceptionInterceptor")]
   public class TvMovie : ITvServerPlugin, ITvServerPluginStartedAll
   {
     #region Members

@@ -655,4 +655,9 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>xcopy "$(SolutionDir)TVServer.Base\TuningParameters" "%25ProgramData%25\Team MediaPortal\\MediaPortal TV Server\TuningParameters\" /C/Y/S
+
+</PreBuildEvent>
+  </PropertyGroup>
 </Project>

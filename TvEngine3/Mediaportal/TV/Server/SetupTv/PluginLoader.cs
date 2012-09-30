@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Mediaportal.TV.Server.Plugins.Base;
+using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Common.Utils;

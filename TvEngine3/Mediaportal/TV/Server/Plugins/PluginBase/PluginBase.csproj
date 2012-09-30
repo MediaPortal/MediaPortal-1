@@ -52,6 +52,9 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\..\..\ExternalBinaries\Castle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -66,10 +69,17 @@
       <Link>SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="Interfaces\IPowerEventHandler.cs" />
-    <Compile Include="PluginBase.cs" />
+    <Compile Include="Interfaces\ITvServerPlugin.cs" />
+    <Compile Include="Interfaces\ITvServerPluginCommunciation.cs" />
+    <Compile Include="Interfaces\ITvServerPluginStartedAll.cs" />
+    <Compile Include="PluginExceptionInterceptor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
+      <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
+      <Name>Common.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\SetupControls\SetupControls.csproj">
       <Project>{A2792D3C-04C1-4A92-9383-A33D59C54D8D}</Project>
       <Name>SetupControls</Name>

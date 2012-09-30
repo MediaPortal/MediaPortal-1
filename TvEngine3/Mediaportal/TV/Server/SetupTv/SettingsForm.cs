@@ -26,6 +26,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Net;
 using Mediaportal.TV.Server.Plugins.Base;
+using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupTV.Sections;
 using Mediaportal.TV.Server.TVControl;

@@ -21,7 +21,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Castle.Core;
 using Mediaportal.TV.Server.Plugins.Base;
+using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.Events;
@@ -38,6 +40,7 @@ using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.Plugins.ConflictsManager
 {
+  [Interceptor("PluginExceptionInterceptor")]
   public class ConflictsManager : ITvServerPlugin
   {
     #region variables

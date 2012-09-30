@@ -21,8 +21,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Castle.Core;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.Base;
+using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.Events;
@@ -36,6 +38,7 @@ using Mediaportal.TV.Server.TVControl.Interfaces;
 
 namespace Mediaportal.TV.Server.Plugins.PersonalTVGuide
 {
+  [Interceptor("PluginExceptionInterceptor")]
   public class PersonalTVGuide : ITvServerPlugin, IStandbyHandler
   {
     #region variables

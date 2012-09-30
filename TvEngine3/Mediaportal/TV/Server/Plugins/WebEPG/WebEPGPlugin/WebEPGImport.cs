@@ -22,7 +22,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.IO;
+using Castle.Core;
 using Mediaportal.TV.Server.Plugins.Base;
+using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using Mediaportal.TV.Server.Plugins.WebEPGImport.Config;
@@ -40,6 +42,7 @@ using WebEPG.Utils;
 
 namespace Mediaportal.TV.Server.Plugins.WebEPGImport
 {
+  [Interceptor("PluginExceptionInterceptor")]
   public class WebEPGImport : ITvServerPlugin, ITvServerPluginStartedAll, IWakeupHandler 
   {
     #region constants

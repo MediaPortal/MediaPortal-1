@@ -20,8 +20,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using Castle.MicroKernel.Registration;
+using Castle.Windsor;
+using Castle.Windsor.Configuration.Interpreters;
 using Mediaportal.TV.Server.Plugins.Base;
+using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Common.Utils;
 
@@ -29,7 +34,7 @@ namespace Mediaportal.TV.Server.TVLibrary
 {
   internal class PluginLoader
   {
-    private readonly List<ITvServerPlugin> _plugins = new List<ITvServerPlugin>();
+    private List<ITvServerPlugin> _plugins = new List<ITvServerPlugin>();
 
     /// <summary>
     /// returns a list of all plugins loaded.
@@ -45,96 +50,47 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// </summary>
     public void Load()
     {
+       /*   
+       var container = new WindsorContainer();
+       container.Register(Component.For<IService>().ImplementedBy<Service>()
+       */
+                 
       _plugins.Clear();
-      try
-      {
-        string[] strFiles = System.IO.Directory.GetFiles("plugins", "*.dll");
-        foreach (string strFile in strFiles)
-          LoadPlugin(strFile);
-      }
-      catch (Exception)
-      {
-        Log.WriteFile("PluginManager: Error while loading dll's");
-      }
-    }
-
-    /// <summary>
-    /// Loads the plugin.
-    /// </summary>
-    /// <param name="strFile">The STR file.</param>
-    private void LoadPlugin(string strFile)
-    {
-      Type[] foundInterfaces;
 
       try
       {
-        Assembly assem = Assembly.LoadFrom(strFile);
-        if (assem != null)
+        var container = new WindsorContainer(new XmlInterpreter());        
+        var assemblyFilter = new AssemblyFilter("plugins");                
+        container.Register(
+        AllTypes.FromAssemblyInDirectory(assemblyFilter).                        
+            BasedOn<ITvServerPlugin>().
+            If(t => IsPluginCompatible(t)).            
+            WithServiceBase().            
+            LifestyleSingleton()
+            );
+
+        _plugins = new List<ITvServerPlugin>(container.ResolveAll<ITvServerPlugin>());
+
+        foreach (ITvServerPlugin plugin in _plugins)
         {
-          Type[] types = assem.GetExportedTypes();
-
-          foreach (Type t in types)
-          {
-            try
-            {
-              if (t.IsClass)
-              {
-                if (t.IsAbstract)
-                  continue;
-
-                ITvServerPlugin plugin;
-                TypeFilter myFilter2 = MyInterfaceFilter;
-                try
-                {
-                  foundInterfaces = t.FindInterfaces(myFilter2, "Mediaportal.TV.Server.Plugins.Base.ITvServerPlugin");
-                  if (foundInterfaces.Length > 0)
-                  {
-                    if (!CompatibilityManager.IsPluginCompatible(t))
-                    {
-                      Log.WriteFile(
-                        "PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!",
-                        t.FullName);
-                      continue;                      
-                    }
-                    Object newObj = Activator.CreateInstance(t);
-                    plugin = (ITvServerPlugin)newObj;
-                    _plugins.Add(plugin);
-                    Log.WriteFile("PluginManager: Loaded {0} version:{1} author:{2}", plugin.Name, plugin.Version,
-                                  plugin.Author);
-                  }
-                }
-                catch (TargetInvocationException)
-                {
-                  Log.WriteFile(
-                    "PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!",
-                    t.FullName);
-                  continue;
-                }
-                catch (Exception ex)
-                {
-                  Log.WriteFile("Exception while loading ITvServerPlugin instances: {0}", t.FullName);
-                  Log.WriteFile(ex.ToString());
-                  Log.WriteFile(ex.Message);
-                  Log.WriteFile(ex.StackTrace);
-                }
-              }
-            }
-            catch (NullReferenceException) {}
-          }
-        }
+          Log.WriteFile("PluginManager: Loaded {0} version:{1} author:{2}", plugin.Name, plugin.Version,
+                        plugin.Author);
+        }      
       }
       catch (Exception ex)
       {
-        Log.WriteFile(
-          "PluginManager: Plugin file {0} is broken or incompatible with the current tvserver version and won't be loaded!",
-          strFile.Substring(strFile.LastIndexOf(@"\") + 1));
-        Log.WriteFile("PluginManager: Exception: {0}", ex);
+        Log.WriteFile("PluginManager: Error while loading dll's.", ex);
       }
     }
 
-    private static bool MyInterfaceFilter(Type typeObj, Object criteriaObj)
+    private bool IsPluginCompatible(Type type)
     {
-      return (typeObj.ToString().Equals(criteriaObj.ToString()));
-    }
+      bool isPluginCompatible = CompatibilityManager.IsPluginCompatible(type);
+      if (!isPluginCompatible)
+      {
+        Log.WriteFile("PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!", type.FullName);
+      }
+      return isPluginCompatible;
+    }    
   }
 }

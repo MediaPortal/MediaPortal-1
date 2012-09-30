@@ -23,7 +23,9 @@ using System.IO;
 using System.Threading;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;
+using Castle.Core;
 using Mediaportal.TV.Server.Plugins.Base;
+using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces;
@@ -41,6 +43,7 @@ using Mediaportal.TV.Server.TVService.ServiceAgents;
 
 namespace Mediaportal.TV.Server.Plugins.ServerBlaster
 {
+  [Interceptor("PluginExceptionInterceptor")]
   public class ServerBlaster : AnalogChannel, ITvServerPlugin
   {
     #region properties

@@ -219,7 +219,8 @@ namespace MediaPortal.Common.Utils
 
       Version ver;
       // Have all used subsystem known versions and prior to the one the plugin was designed for?
-      return subsystemsUsed.All(attr => SubSystemVersions.TryGetValue(attr.Subsystem, out ver) && CompareVersions(ver, designedForVersion) <= 0);
+      bool isPluginCompatible = subsystemsUsed.All(attr => SubSystemVersions.TryGetValue(attr.Subsystem, out ver) && CompareVersions(ver, designedForVersion) <= 0);
+      return isPluginCompatible;
     }
 
     /// <summary>

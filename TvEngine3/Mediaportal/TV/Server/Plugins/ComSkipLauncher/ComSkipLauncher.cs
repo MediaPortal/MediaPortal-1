@@ -21,7 +21,9 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using Castle.Core;
 using Mediaportal.TV.Server.Plugins.Base;
+using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces;
@@ -35,6 +37,7 @@ using Mediaportal.TV.Server.TVService.ServiceAgents;
 
 namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
 {
+  [Interceptor("PluginExceptionInterceptor")]
   public class ComSkipLauncher : ITvServerPlugin
   {
     #region Constants

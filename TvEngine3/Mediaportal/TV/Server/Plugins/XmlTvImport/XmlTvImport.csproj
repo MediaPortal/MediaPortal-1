@@ -35,6 +35,12 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\..\..\ExternalBinaries\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor">
+      <HintPath>..\..\..\ExternalBinaries\Castle.Windsor.dll</HintPath>
+    </Reference>
     <Reference Include="Ionic.Zip, Version=1.7.2.18, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\TVServer.Base\Ionic.Zip.dll</HintPath>

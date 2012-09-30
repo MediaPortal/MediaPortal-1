@@ -15,7 +15,7 @@
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{3BE4F3AA-36EB-4956-B000-E29C74FC6AB0}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Mediaportal.TV.Server.TVService</RootNamespace>
     <AssemblyName>TVService</AssemblyName>
@@ -53,6 +53,9 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Mediaportal.TV.Server.TVService.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -72,6 +75,7 @@
     <Compile Include="..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Program.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -174,7 +178,27 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>rem "$(ProjectDir)PostBuild.bat" "$(SolutionDir)" $(ConfigurationName)
-xcopy "$(SolutionDir)\..\ExternalBinaries\mysql*"  /s /i /y</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>xcopy "$(SolutionDir)\..\ExternalBinaries\mysql*"  /s /i /y
+xcopy "$(SolutionDir)TVServer.Base\*.*" "$(TargetDir)" /C/Y/S
+xcopy "$(SolutionDir)Plugins\XmlTvImport\$(OutDir)Mediaportal.TV.Server.Plugins.XmlTvImport.*" "$(TargetDir)"Plugins\ /C/Y/S
+xcopy "$(SolutionDir)Plugins\XmlTvImport\$(OutDir)Ionic.Zip.dll" "$(TargetDir)" /C/Y/S
+xcopy "$(SolutionDir)Plugins\ComSkipLauncher\$(OutDir)Mediaportal.TV.Server.Plugins.ComSkipLauncher.*" "$(TargetDir)"Plugins\ /C/Y/S
+xcopy "$(SolutionDir)Plugins\ConflictsManager\$(OutDir)Mediaportal.TV.Server.Plugins.ConflictsManager.*" "$(TargetDir)"Plugins\ /C/Y/S
+xcopy "$(SolutionDir)Plugins\PluginBase\$(OutDir)Mediaportal.TV.Server.Plugins.Base.*" "$(TargetDir)"Plugins\ /C/Y/S
+xcopy "$(SolutionDir)Plugins\PowerScheduler\$(OutDir)Mediaportal.TV.Server.Plugins.PowerScheduler.dll" "$(TargetDir)"Plugins\ /C/Y/S
+xcopy "$(SolutionDir)Plugins\PowerScheduler\$(OutDir)Mediaportal.TV.Server.Plugins.PowerScheduler.pdb" "$(TargetDir)"Plugins\ /C/Y/S
+xcopy "$(SolutionDir)Plugins\PowerScheduler\$(OutDir)Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll" "$(TargetDir)" /C/Y/S
+xcopy "$(SolutionDir)Plugins\PowerScheduler\$(OutDir)Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.pdb" "$(TargetDir)" /C/Y/S
+xcopy "$(SolutionDir)Plugins\ServerBlaster\ServerBlaster\$(OutDir)Mediaportal.TV.Server.Plugins.ServerBlaster.*" "$(TargetDir)"Plugins\ /C/Y/S
+xcopy "$(SolutionDir)Plugins\ServerBlaster\ServerBlaster.Learn\$(OutDir)Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.*" "$(TargetDir)"Plugins\ /C/Y/S
+xcopy "$(SolutionDir)Plugins\WebEPG\$(OutDir)Mediaportal.TV.Server.Plugins.WebEPG.*" "$(TargetDir)"Plugins\ /C/Y/S
+xcopy "$(SolutionDir)\ServiceAgents\$(OutDir)Mediaportal.TV.Server.Plugins.WebEPG.*" "$(TargetDir)" /C/Y/S
+xcopy "$(SolutionDir)\SetupControls\$(OutDir)Mediaportal.TV.Server.SetupControls.*" "$(TargetDir)" /C/Y/S
+rem xcopy "$(SolutionDir)..\..\..\..\Common-MP-TVE3\PowerScheduler.Interfaces\$(OutDir)Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces" "$(TargetDir)" /C/Y/S
+</PreBuildEvent>
   </PropertyGroup>
 </Project>

@@ -45,6 +45,7 @@ namespace Mediaportal.TV.Server.SetupTV
     public static bool IsRestrictedMode
     {
       get { return _isRestrictedMode; }
+      set { _isRestrictedMode = value; }
     }
 
     /// <summary>

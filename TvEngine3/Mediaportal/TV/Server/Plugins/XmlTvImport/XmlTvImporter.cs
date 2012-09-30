@@ -25,6 +25,7 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading;
 using System.IO;
+using Castle.Core;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.Base;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
@@ -42,6 +43,7 @@ using Ionic.Zip;
 
 namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 {
+  [Interceptor("PluginExceptionInterceptor")]
   public class XmlTvImporter : ITvServerPlugin, ITvServerPluginStartedAll, ITvServerPluginCommunciation
   {
     #region constants        
@@ -117,7 +119,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     /// Starts the plugin
     /// </summary>
     public void Start(IInternalControllerService controllerService)
-    {
+    {      
       Log.WriteFile("plugin: xmltv started");
 
       //System.Diagnostics.Debugger.Launch();      
