@@ -95,7 +95,7 @@ void CCaGrabber::OnNewSection(CSection& section)
 {
   try
   {
-    if (section.table_id != 2)
+    if (section.table_id != 1)
     {
       // Ignore non-CAT sections.
       return;
