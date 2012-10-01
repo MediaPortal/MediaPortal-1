@@ -234,7 +234,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void mpButtonTimeShift_Click(object sender, EventArgs e)
     {
-      if (!ServiceHelper.IsRestrictedMode && ServiceHelper.IsStopped) return;
+      if (!ServiceHelper.IsAvailable) return;
       if (mpComboBoxChannels.SelectedItem == null) return;
       int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
       
@@ -365,7 +365,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void mpButtonRec_Click(object sender, EventArgs e)
     {
-      if (!ServiceHelper.IsRestrictedMode && ServiceHelper.IsStopped) return;
+      if (!ServiceHelper.IsAvailable) return;
       if (mpComboBoxChannels.SelectedItem == null) return;
       string channel = mpComboBoxChannels.SelectedItem.ToString();
       int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
@@ -739,7 +739,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void mpButtonPark_Click(object sender, EventArgs e)
     {
-      if (!ServiceHelper.IsRestrictedMode && ServiceHelper.IsStopped) return;
+      if (!ServiceHelper.IsAvailable) return;
       if (mpComboBoxChannels.SelectedItem == null) return;
       string channel = mpComboBoxChannels.SelectedItem.ToString();
       int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
@@ -775,7 +775,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void mpButtonUnPark_Click(object sender, EventArgs e)
     {
-      if (!ServiceHelper.IsRestrictedMode && ServiceHelper.IsStopped) return;
+      if (!ServiceHelper.IsAvailable) return;
       if (mpComboBoxChannels.SelectedItem == null) return;
       string channel = mpComboBoxChannels.SelectedItem.ToString();
       int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
@@ -791,7 +791,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void mpButtonAdvStartTimeshift_Click(object sender, EventArgs e)
     {
-      if (!ServiceHelper.IsRestrictedMode && ServiceHelper.IsStopped) return;
+      if (!ServiceHelper.IsAvailable) return;
       if (mpComboBoxChannels.SelectedItem == null) return;
       string channel = mpComboBoxChannels.SelectedItem.ToString();
       int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
@@ -803,7 +803,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void mpButtonAdvStopTimeshift_Click(object sender, EventArgs e)
     {
-      if (!ServiceHelper.IsRestrictedMode && ServiceHelper.IsStopped) return;
+      if (!ServiceHelper.IsAvailable) return;
       if (mpComboBoxChannels.SelectedItem == null) return;
       string channel = mpComboBoxChannels.SelectedItem.ToString();
       int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;

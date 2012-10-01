@@ -20,13 +20,10 @@
 
 using System;
 using System.Net;
-using System.Security.AccessControl;
 using System.ServiceProcess;
-using System.Threading;
 using MediaPortal.Common.Utils;
 using MediaPortal.Util;
 using Mediaportal.TV.Server.TVControl;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.ServiceAgents;
 using Microsoft.Win32;
@@ -42,10 +39,21 @@ namespace Mediaportal.TV.Server.SetupTV
     private static bool _isRestrictedMode;
     private static bool _ignoreDisconnections;
 
+    /// <summary>
+    /// Indicates if the connection to TvService is done using WCF services.
+    /// </summary>
     public static bool IsRestrictedMode
     {
       get { return _isRestrictedMode; }
       set { _isRestrictedMode = value; }
+    }
+
+    /// <summary>
+    /// Indicates if the connection with the TvService is available, which can be local service (<see cref="IsRunning"/>) or remote service via WCF (<see cref="IsRestrictedMode"/>).
+    /// </summary>
+    public static bool IsAvailable
+    {
+      get { return IsRestrictedMode || IsRunning; }
     }
 
     /// <summary>
@@ -54,7 +62,6 @@ namespace Mediaportal.TV.Server.SetupTV
     /// <returns>number of seconds</returns>
     public static int DefaultInitTimeOut()
     {
-      
       return Convert.ToInt16(Singleton<ServiceAgents>.Instance.SettingServiceAgent.GetSettingWithDefaultValue("delayCardDetect", "0").Value) + 10;
     }
 

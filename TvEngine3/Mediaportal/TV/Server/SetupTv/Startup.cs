@@ -128,7 +128,7 @@ namespace Mediaportal.TV.Server.SetupTV
       if (tvserviceInstalled)
       {
         Log.Info("---- check if tvservice is running ----");
-        if (!ServiceHelper.IsRunning)
+        if (!ServiceHelper.IsRestrictedMode && !ServiceHelper.IsRunning)
         {
           Log.Info("---- tvservice is not running ----");
           if (_startupMode != StartupMode.DeployMode)
@@ -301,20 +301,20 @@ namespace Mediaportal.TV.Server.SetupTV
       bool tvserviceInstalled = false;
       while (!tvserviceInstalled)
       {
+        //maybe tvservice is started as a console app or as MP2TV server ?
+        try
+        {
+          IEnumerable<string> ipAdresses = ServiceAgents.Instance.ControllerServiceAgent.ServerIpAdresses;
+          ServiceHelper.IsRestrictedMode = true;
+          break;
+        }
+        catch (Exception)
+        {
+        }
+        
         tvserviceInstalled = ServiceHelper.IsInstalled(ServiceHelper.SERVICENAME_TVSERVICE, ServiceAgents.Instance.Hostname);
         if (!tvserviceInstalled)
         {
-          //maybe tvservice is started as a console app or as MP2TV server ?
-          try
-          {
-            IEnumerable<string> ipAdresses = ServiceAgents.Instance.ControllerServiceAgent.ServerIpAdresses;
-            ServiceHelper.IsRestrictedMode = true;
-            break;
-          }
-          catch (Exception)
-          {
-          }            
-
           if (ServiceHelper.IsRestrictedMode)
           {
             break;

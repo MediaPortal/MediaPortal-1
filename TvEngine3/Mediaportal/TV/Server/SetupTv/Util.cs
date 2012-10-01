@@ -957,7 +957,7 @@ namespace Mediaportal.TV.Server.SetupTV
 
     public static void UpdateCardStatus(MPListView mpListView1)
     {
-      if (!ServiceHelper.IsRestrictedMode && ServiceHelper.IsStopped)
+      if (!ServiceHelper.IsAvailable)
       {
         return;
       }

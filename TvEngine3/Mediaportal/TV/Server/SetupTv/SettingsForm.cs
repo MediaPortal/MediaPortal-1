@@ -505,7 +505,7 @@ namespace Mediaportal.TV.Server.SetupTV
 
       if (!e.Cancel)
       {
-        if (!ServiceHelper.IsRestrictedMode && !ServiceHelper.IsRunning)
+        if (!ServiceHelper.IsAvailable)
         {
           MessageBox.Show("TvService not started.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
           e.Cancel = true;
