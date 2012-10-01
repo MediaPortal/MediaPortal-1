@@ -66,7 +66,6 @@ namespace MediaPortal
     protected static bool    FullscreenOverride;       //
     protected static bool    WindowedOverride;         //
     protected static string  SkinOverride;             //
-    protected string         Skin;                     // Skin Name
     protected string         FrameStatsLine1;          // 1st string to hold frame stats
     protected string         FrameStatsLine2;          // 2nd string to hold frame stats
     protected bool           MinimizeOnStartup;        // minimize to tray on startup?
@@ -139,7 +138,6 @@ namespace MediaPortal
     /// </summary>
     protected D3DApp()
     {
-      Skin                      = "Default";
       SkinOverride              = string.Empty;
       WindowedOverride          = false;
       FullscreenOverride        = false;
@@ -383,10 +381,6 @@ namespace MediaPortal
           GUIGraphicsContext.DX9Device.Reset(_presentParams);
           if (GUIGraphicsContext.IsDirectX9ExUsed() && !UseEnhancedVideoRenderer)
           {
-            if (!Skin.Equals(GUIGraphicsContext.Skin))
-            {
-              Skin = GUIGraphicsContext.Skin;
-            }
             GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
             GUIFontManager.InitializeDeviceObjects();
           }
