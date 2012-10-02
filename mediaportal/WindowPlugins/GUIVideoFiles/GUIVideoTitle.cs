@@ -1769,26 +1769,10 @@ namespace MediaPortal.GUI.Video
         {
           GUIPropertyManager.SetProperty("#title", item.Label);
 
-          //if (strView != "director" && strView != "actor")
-          //{
-            if (item.MusicTag != null)
-            {
-              GUIPropertyManager.SetProperty("#groupmovielist", item.MusicTag.ToString());
-            }
-          //}
-
-          //if (strView == "director" || strView == "actor")
-          //{
-          //  if (item.MusicTag == null)
-          //  {
-          //    item.MusicTag = SetMovieListGroupedBy(item);
-          //    GUIPropertyManager.SetProperty("#groupmovielist", item.MusicTag.ToString());
-          //  }
-          //  else
-          //  {
-          //    GUIPropertyManager.SetProperty("#groupmovielist", item.MusicTag.ToString());
-          //  }
-          //}
+          if (item.MusicTag != null)
+          {
+            GUIPropertyManager.SetProperty("#groupmovielist", item.MusicTag.ToString());
+          }
         }
       }
       
