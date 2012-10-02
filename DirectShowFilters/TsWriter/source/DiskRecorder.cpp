@@ -44,8 +44,10 @@
 #define TABLE_ID_PAT                          0     // TABLE ID for PAT
 #define TABLE_ID_SDT                        0x42    // TABLE ID for SDT
 
-#define ADAPTION_FIELD_LENGTH_OFFSET        0x4     // offset in TS header to the adaption field length
-#define PCR_FLAG_OFFSET                     0x5     // offset in TS header to the PCR 
+#define ADAPTION_FIELD_LENGTH_OFFSET        0x4     // byte offset from the start of a TS packet to the adaption field length byte
+#define PCR_OFFSET                          0x6     // byte offset from the start of a TS packet to the start of the PCR
+#define PCR_LENGTH                          0x6     // the length of a PCR timestamp in bytes
+#define ADAPTION_FIELD_FLAG_OFFSET          0x5     // byte offset from the start of a TS packet to the adaption field flags byte
 #define DISCONTINUITY_FLAG_BIT              0x80    // bitmask for the DISCONTINUITY flag
 #define RANDOM_ACCESS_FLAG_BIT              0x40    // bitmask for the RANDOM_ACCESS_FLAG flag
 #define ES_PRIORITY_FLAG_BIT                0x20    // bitmask for the ES_PRIORITY_FLAG flag
@@ -1103,53 +1105,60 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 					}                        
 				}
 	 
-				if (info.seenStart)
-				{
-				 	// Video / Audio / subtitles.
-					int pid=info.fakePid;
-					info.m_Pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
-					info.m_Pkt[2]=(pid&0xff);
-					if (m_tsHeader.Pid==m_pcrPid) PatchPcr(info.m_Pkt,m_tsHeader);
+        if (m_tsHeader.Pid == m_pcrPid)
+        {
+          // Overwrite the PCR timestamps.
+          PatchPcr(info.m_Pkt, m_tsHeader);
+        }
+        else if (info.fakePid == DR_FAKE_PCR_PID && m_tsHeader.HasAdaptionField && m_tsHeader.AdaptionFieldLength >= 7 && (info.m_Pkt[ADAPTION_FIELD_FLAG_OFFSET] & PCR_FLAG_BIT) != 0)
+        {
+          // If this packet is from the stream that we are *inserting* PCR timestamps
+          // into then we need to make sure that we don't leave random PCR timestamps
+          // from the broadcaster in the the adaption field. If we don't remove them,
+          // it messes up TsReader's ability to skip, fast-forward and rewind.
+          // If we get to here then we've found a PCR timestamp that needs to be wiped...
 
-	      	if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
-					{						
-						if ((PayLoadUnitStart) || info.NPktQ)
-						{
-							int i=0 ;
-							switch(GetPesHeader(info.m_Pkt, m_tsHeader, info))
-							{
-								case 2:	break ;				// Wait for next ts packet
-								case 1:	PatchPtsDts(info.PesHeader, m_tsHeader, info) ;
-												UpdatePesHeader(info) ;
-								case 0:	do
-												{
-													Write(&info.TsPktQ[i++][0],188);
-													m_iPacketCounter++ ;	
-												} while (--info.NPktQ) ;
-							}
-						}
-						else
-						{
-							Write(info.m_Pkt,188);
-							m_iPacketCounter++;
-						}
-					}
-				}
-				else
-				{
-					//private pid...
-					int pid=info.fakePid;
-					info.m_Pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
-					info.m_Pkt[2]=(pid&0xff);
-					if (m_tsHeader.Pid==m_pcrPid) PatchPcr(info.m_Pkt,m_tsHeader);
+          // Clear the PCR flag.
+          info.m_Pkt[ADAPTION_FIELD_FLAG_OFFSET] &= (~PCR_FLAG_BIT);
+          // Overwrite the PCR with the rest of the adaption field. The -1 is for the adaption field flag byte.
+          memcpy(&info.m_Pkt[PCR_OFFSET], &tsPacket[PCR_OFFSET + PCR_LENGTH], m_tsHeader.AdaptionFieldLength - PCR_LENGTH - 1);
+          // The end of the adaption field is now stuffing.
+          memset(&info.m_Pkt[PCR_OFFSET + m_tsHeader.AdaptionFieldLength - PCR_LENGTH - 1], 0xff, PCR_LENGTH);
+        }
 
-					if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
-				  	{							  
-						Write(info.m_Pkt,188);
-						m_iPacketCounter++;
-				  	}
-				}
-				return;
+	      if (!m_bDetermineNewStartPcr && m_bStartPcrFound) 
+				{
+          // Overwrite the PID.
+          int pid = info.fakePid;
+					info.m_Pkt[1] = (PayLoadUnitStart << 6) + ((pid >> 8) & 0x1f);
+					info.m_Pkt[2] = (pid & 0xff);
+
+				  if (info.seenStart && (PayLoadUnitStart || info.NPktQ))
+          {
+            int i = 0;
+            switch (GetPesHeader(info.m_Pkt, m_tsHeader, info))
+            {
+              case 2:
+                break;    // Wait for the next TS packet.
+              case 1:
+                PatchPtsDts(info.PesHeader, m_tsHeader, info);
+                UpdatePesHeader(info);
+              case 0:
+                do
+                {
+                  Write(&info.TsPktQ[i++][0], 188);
+                  m_iPacketCounter++;
+                }
+                while (--info.NPktQ);
+            }
+          }
+          else
+          {
+            Write(info.m_Pkt, 188);
+            m_iPacketCounter++;
+          }
+        }
+        return;
 			}
 			++it;
 		}
