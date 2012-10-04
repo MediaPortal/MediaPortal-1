@@ -180,7 +180,7 @@
     <Property Name="Name" Type="varchar" Nullable="false" MaxLength="200" />
     <Property Name="Priority" Type="int" Nullable="false" />
     <Property Name="GrabEPG" Type="bit" Nullable="false" />
-    <Property Name="lastEpgGrab" Type="datetime" Nullable="true" />
+    <Property Name="LastEpgGrab" Type="datetime" Nullable="true" />
     <Property Name="RecordingFolder" Type="varchar" Nullable="false" MaxLength="256" />
     <Property Name="Enabled" Type="bit" Nullable="false" />
     <Property Name="CamType" Type="int" Nullable="false" />
@@ -215,7 +215,7 @@
     <Property Name="TimesWatched" Type="int" Nullable="false" />
     <Property Name="TotalTimeWatched" Type="datetime" Nullable="true" />
     <Property Name="GrabEpg" Type="bit" Nullable="false" />
-    <Property Name="lastGrabTime" Type="datetime" Nullable="true" />
+    <Property Name="LastGrabTime" Type="datetime" Nullable="true" />
     <Property Name="SortOrder" Type="int" Nullable="false" />
     <Property Name="VisibleInGuide" Type="bit" Nullable="false" />
     <Property Name="ExternalId" Type="varchar" Nullable="true" MaxLength="200" />
