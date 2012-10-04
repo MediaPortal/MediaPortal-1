@@ -124,8 +124,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // bugfix for tab removal, RemoveAt fails sometimes
       tabControl1.TabPages.Clear();
       tabControl1.TabPages.Add(tabPage1);
-      
-      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupIncludeRelationEnum.None);
+
+      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(_mediaTypeEnum, ChannelGroupIncludeRelationEnum.None);
 
       foreach (ChannelGroup group in groups)
       {
@@ -156,7 +156,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       addToFavoritesToolStripMenuItem.DropDownItems.Clear();
 
-      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupIncludeRelationEnum.None);
+      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(_mediaTypeEnum, ChannelGroupIncludeRelationEnum.None);
 
       foreach (ChannelGroup group in groups)
       {
@@ -222,7 +222,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         {
           return;
         }
-        group = new ChannelGroup {GroupName = dlg.GroupName, SortOrder = 9999};
+        group = new ChannelGroup {GroupName = dlg.GroupName, SortOrder = 9999, MediaType = (int)_mediaTypeEnum};
         group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
         group.AcceptChanges();
 
@@ -241,7 +241,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         ListViewItem item = mpListView1.Items[indexes[i]];
 
         Channel channel = (Channel)item.Tag;
-        MappingHelper.AddChannelToGroup(ref channel, @group, _mediaTypeEnum);        
+        MappingHelper.AddChannelToGroup(ref channel, @group);        
 
         string groupString = item.SubItems[1].Text;
         if (groupString == string.Empty)
@@ -380,7 +380,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       for (int i = 1; i < tabControl1.TabPages.Count; i++)
       {
         ChannelGroup group = (ChannelGroup)tabControl1.TabPages[i].Tag;
-        group.SortOrder = i - 1;        
+        group.SortOrder = i - 1;
+        group.MediaType = (int) _mediaTypeEnum;
         group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
         group.AcceptChanges();
       }
@@ -787,7 +788,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         return;
       }
 
-      var group = new ChannelGroup { GroupName = dlg.GroupName, SortOrder = 9999 };
+      var group = new ChannelGroup { GroupName = dlg.GroupName, SortOrder = 9999, MediaType = (int)_mediaTypeEnum};
 
       group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
       group.AcceptChanges();
@@ -819,6 +820,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       group.GroupName = dlgGrpName.GroupName;
+      group.MediaType = (int) _mediaTypeEnum;
       group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
       group.AcceptChanges();
 
@@ -1058,6 +1060,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       group.GroupName = dlg.GroupName;
+      group.MediaType = (int)_mediaTypeEnum;
       group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
       group.AcceptChanges();
 

@@ -694,7 +694,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private DateTime GetNextEpgUpdate()
     {
-      DateTime nextEPGupdate = DateTime.MinValue;
+      DateTime nextEPGupdate = DateTime.MinValue;      
       int idGroup = TVHome.Navigator.CurrentGroup.IdGroup;
 
       _nextEPGupdate.TryGetValue(idGroup, out nextEPGupdate);

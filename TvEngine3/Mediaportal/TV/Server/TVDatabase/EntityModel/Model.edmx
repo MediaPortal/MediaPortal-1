@@ -235,6 +235,7 @@
     <Property Name="IdGroup" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="GroupName" Type="varchar" Nullable="false" MaxLength="200" />
     <Property Name="SortOrder" Type="int" Nullable="false" />
+    <Property Name="MediaType" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="ChannelLinkageMaps">
     <Key>
@@ -290,8 +291,7 @@
     <Property Name="IdMap" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="IdGroup" Type="int" Nullable="false" />
     <Property Name="IdChannel" Type="int" Nullable="false" />
-    <Property Name="SortOrder" Type="int" Nullable="false" />
-    <Property Name="MediaType" Type="int" Nullable="false" />
+    <Property Name="SortOrder" Type="int" Nullable="false" />    
   </EntityType>
   <EntityType Name="Histories">
     <Key>
@@ -1240,6 +1240,7 @@
           <Property Name="SortOrder" Type="Int32" Nullable="false" />
           <NavigationProperty Name="GroupMaps" Relationship="TVDatabaseModel.GroupMapChannelGroup" FromRole="ChannelGroup" ToRole="GroupMap" />
           <NavigationProperty Name="KeywordMap" Relationship="TVDatabaseModel.KeywordMapChannelGroup" FromRole="ChannelGroup" ToRole="KeywordMap" />
+          <Property Type="Int32" Name="MediaType" Nullable="false" />
         </EntityType>
         <EntityType Name="ChannelLinkageMap">
           <Key>
@@ -1308,7 +1309,6 @@
           <Property Name="SortOrder" Type="Int32" Nullable="false" />
           <NavigationProperty Name="ChannelGroup" Relationship="TVDatabaseModel.GroupMapChannelGroup" FromRole="GroupMap" ToRole="ChannelGroup" />
           <NavigationProperty Name="Channel" Relationship="TVDatabaseModel.GroupMapChannel" FromRole="GroupMap" ToRole="Channel" />
-          <Property Type="Int32" Name="MediaType" Nullable="false" />
         </EntityType>
         <EntityType Name="History">
           <Key>
@@ -2132,6 +2132,7 @@
           <ScalarProperty Name="IdGroup" ColumnName="IdGroup" />
           <ScalarProperty Name="GroupName" ColumnName="GroupName" />
           <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />
+          <ScalarProperty Name="MediaType" ColumnName="MediaType" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -2194,7 +2195,6 @@
           <ScalarProperty Name="IdGroup" ColumnName="IdGroup" />
           <ScalarProperty Name="IdChannel" ColumnName="IdChannel" />
           <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />
-          <ScalarProperty Name="MediaType" ColumnName="MediaType" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -2507,13 +2507,13 @@
         <EntityTypeShape EntityType="TVDatabaseModel.CardGroup" Width="1.5" PointX="7" PointY="3" Height="1.5956835937499996" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.CardGroupMap" Width="1.5" PointX="5" PointY="2.75" Height="1.9802864583333326" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Channel" Width="1.5" PointX="9.5" PointY="0.5" Height="4.8648079427083317" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.ChannelGroup" Width="2.125" PointX="4.875" PointY="0.5" Height="1.5956835937499996" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVDatabaseModel.ChannelGroup" Width="2.125" PointX="4.875" PointY="0.5" Height="2.172587890625" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.ChannelLinkageMap" Width="1.5" PointX="4" PointY="6.375" Height="1.9802864583333317" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.ChannelMap" Width="1.5" PointX="5.875" PointY="5.25" Height="2.1725878906249996" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Conflict" Width="1.5" PointX="7.5" PointY="16.625" Height="2.1725878906249996" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.DisEqcMotor" Width="1.5" PointX="0.625" PointY="2.625" Height="2.1725878906249996" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Favorite" Width="1.5" PointX="0.5" PointY="7.375" Height="1.7879850260416674" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.GroupMap" Width="1.5" PointX="7.5" PointY="0.5" Height="2.1725878906249996" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVDatabaseModel.GroupMap" Width="1.5" PointX="7.5" PointY="0.5" Height="2.172587890625" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.History" Width="1.5" PointX="1.25" PointY="12" Height="2.9417936197916656" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Keyword" Width="1.5" PointX="4.875" PointY="9.875" Height="2.1725878906249996" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.KeywordMap" Width="1.5" PointX="11.375" PointY="10.75" Height="1.9802864583333335" IsExpanded="true" />
@@ -2534,12 +2534,14 @@
         <EntityTypeShape EntityType="TVDatabaseModel.TvMovieMapping" Width="1.5" PointX="0.75" PointY="15.75" Height="1.9802864583333246" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Version" Width="1.5" PointX="10" PointY="17" Height="1.4033821614583246" IsExpanded="true" />
         <AssociationConnector Association="TVDatabaseModel.GroupMapChannelGroup">
-          <ConnectorPoint PointX="7.5" PointY="1.3939925130208335" />
-          <ConnectorPoint PointX="7" PointY="1.3939925130208335" />
+          <ConnectorPoint PointX="7.5" PointY="1.5862939453124998" />
+          <ConnectorPoint PointX="7.177083333333333" PointY="1.5862939453124991" />
+          <ConnectorPoint PointX="7.010416666666667" PointY="1.5862939453124998" />
+          <ConnectorPoint PointX="7" PointY="1.5862939453124998" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.GroupMapChannel">
-          <ConnectorPoint PointX="9" PointY="1.6824446614583331" />
-          <ConnectorPoint PointX="9.5" PointY="1.6824446614583331" />
+          <ConnectorPoint PointX="9" PointY="1.5862939453124998" />
+          <ConnectorPoint PointX="9.5" PointY="1.5862939453124998" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.CardGroupMapCard">
           <ConnectorPoint PointX="5" PointY="3.7401432291666663" />
@@ -2573,6 +2575,8 @@
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ChannelChannelMap">
           <ConnectorPoint PointX="9.5" PointY="5.4997054036458328" />
+          <ConnectorPoint PointX="9.1458333333333339" PointY="5.4997054036458319" />
+          <ConnectorPoint PointX="8.9791666666666661" PointY="5.4997054036458328" />
           <ConnectorPoint PointX="8.8333333333333339" PointY="5.4997054036458319" />
           <ConnectorPoint PointX="8.6666666666666661" PointY="5.4997054036458328" />
           <ConnectorPoint PointX="7.375" PointY="5.4997054036458328" />
@@ -2595,6 +2599,8 @@
         <AssociationConnector Association="TVDatabaseModel.ProgramProgramCategory">
           <ConnectorPoint PointX="12.84375" PointY="6.3263151041666656" />
           <ConnectorPoint PointX="12.84375" PointY="10.324036458333332" />
+          <ConnectorPoint PointX="11.802081333333334" PointY="10.324036458333332" />
+          <ConnectorPoint PointX="11.635414666666666" PointY="10.324036458333332" />
           <ConnectorPoint PointX="10.625" PointY="10.324036458333332" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ProgramProgramCredit">
@@ -2602,23 +2608,23 @@
           <ConnectorPoint PointX="12.0625" PointY="8" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ChannelHistory">
-          <ConnectorPoint PointX="9.5" PointY="3.7182833578491197" />
-          <ConnectorPoint PointX="8.5625" PointY="3.7182833578491197" />
+          <ConnectorPoint PointX="9.5" PointY="3.7495358578491205" />
+          <ConnectorPoint PointX="9.1458333333333339" PointY="3.74953585784912" />
+          <ConnectorPoint PointX="8.9791666666666661" PointY="3.7495358578491205" />
+          <ConnectorPoint PointX="8.5625" PointY="3.7495358578491205" />
           <ConnectorPoint PointX="8.5625" PointY="4.7927864583333326" />
           <ConnectorPoint PointX="4.6875" PointY="4.7927864583333326" />
           <ConnectorPoint PointX="4.6875" PointY="5.6773079427083317" />
           <ConnectorPoint PointX="2.0625" PointY="5.6773079427083317" />
           <ConnectorPoint PointX="2.0625" PointY="11.90625" />
-          <ConnectorPoint PointX="1.8281252499999998" PointY="11.90625" />
-          <ConnectorPoint PointX="1.8281252499999998" PointY="12" />
+          <ConnectorPoint PointX="2" PointY="11.90625" />
+          <ConnectorPoint PointX="2" PointY="12" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ChannelTuningDetail">
-          <ConnectorPoint PointX="9.5" PointY="4.6724194409179685" />
-          <ConnectorPoint PointX="9" PointY="4.6724194409179685" />
-          <ConnectorPoint PointX="9" PointY="4.9802864583333326" />
-          <ConnectorPoint PointX="5.895833333333333" PointY="4.9802864583333317" />
-          <ConnectorPoint PointX="5.729166666666667" PointY="4.9802864583333326" />
-          <ConnectorPoint PointX="4.875" PointY="4.9802864583333326" />
+          <ConnectorPoint PointX="9.5" PointY="4.634180392781575" />
+          <ConnectorPoint PointX="9" PointY="4.634180392781575" />
+          <ConnectorPoint PointX="9" PointY="4.9802864583333317" />
+          <ConnectorPoint PointX="4.875" PointY="4.9802864583333317" />
           <ConnectorPoint PointX="4.875" PointY="5.8648079427083317" />
           <ConnectorPoint PointX="3.7864585833333337" PointY="5.8648079427083308" />
           <ConnectorPoint PointX="3.6197919166666668" PointY="5.8648079427083317" />
@@ -2626,8 +2632,8 @@
           <ConnectorPoint PointX="3.4687505" PointY="8.75" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ChannelTvMovieMapping">
-          <ConnectorPoint PointX="10.201557824064075" PointY="5.7494108072916656" />
-          <ConnectorPoint PointX="10.201557824064075" PointY="8.5625" />
+          <ConnectorPoint PointX="10.20934801785028" PointY="5.7494108072916656" />
+          <ConnectorPoint PointX="10.20934801785028" PointY="8.5625" />
           <ConnectorPoint PointX="7.0625" PointY="8.5625" />
           <ConnectorPoint PointX="7.0625" PointY="17.146057442708333" />
           <ConnectorPoint PointX="4.645833333333333" PointY="17.146057442708333" />
@@ -2639,33 +2645,31 @@
           <ConnectorPoint PointX="1.3125" PointY="5.25" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ProgramPersonalTVGuideMap">
-          <ConnectorPoint PointX="11.75" PointY="4.4968829280598879" />
-          <ConnectorPoint PointX="11.25" PointY="4.4968829280598879" />
+          <ConnectorPoint PointX="11.75" PointY="5.25174619189453" />
+          <ConnectorPoint PointX="11.583333333333334" PointY="5.2517461918945294" />
+          <ConnectorPoint PointX="11.416666666666666" PointY="5.25174619189453" />
+          <ConnectorPoint PointX="11.25" PointY="5.25174619189453" />
           <ConnectorPoint PointX="11.25" PointY="5.9994108072916656" />
-          <ConnectorPoint PointX="10.833333333333334" PointY="5.9994108072916648" />
+          <ConnectorPoint PointX="10.895833333333334" PointY="5.9994108072916648" />
           <ConnectorPoint PointX="10.666666666666666" PointY="5.9994108072916656" />
-          <ConnectorPoint PointX="10.559112245365371" PointY="5.9994108072916648" />
-          <ConnectorPoint PointX="10.392445578698704" PointY="5.9994108072916656" />
-          <ConnectorPoint PointX="10.284891157397409" PointY="5.9994108072916648" />
-          <ConnectorPoint PointX="10.118224490730741" PointY="5.9994108072916656" />
-          <ConnectorPoint PointX="10.026250457001856" PointY="5.9994108072916648" />
-          <ConnectorPoint PointX="9.8595837903351882" PointY="5.9994108072916656" />
-          <ConnectorPoint PointX="9.7676097566063014" PointY="5.9994108072916648" />
-          <ConnectorPoint PointX="9.6009430899396335" PointY="5.9994108072916656" />
+          <ConnectorPoint PointX="10.563981116481751" PointY="5.9994108072916648" />
+          <ConnectorPoint PointX="10.397314449815083" PointY="5.9994108072916656" />
+          <ConnectorPoint PointX="10.294628899630165" PointY="5.9994108072916648" />
+          <ConnectorPoint PointX="10.127962232963498" PointY="5.9994108072916656" />
+          <ConnectorPoint PointX="10.034084147398881" PointY="5.9994108072916648" />
+          <ConnectorPoint PointX="9.8674174807322128" PointY="5.9994108072916656" />
+          <ConnectorPoint PointX="9.7735393951675942" PointY="5.9994108072916648" />
+          <ConnectorPoint PointX="9.6068727285009263" PointY="5.9994108072916656" />
           <ConnectorPoint PointX="8.75" PointY="5.9994108072916656" />
           <ConnectorPoint PointX="8.75" PointY="5.125" />
-          <ConnectorPoint PointX="5.895833333333333" PointY="5.1249999999999991" />
-          <ConnectorPoint PointX="5.729166666666667" PointY="5.125" />
           <ConnectorPoint PointX="5.625" PointY="5.125" />
           <ConnectorPoint PointX="5.625" PointY="6.125" />
           <ConnectorPoint PointX="5.75" PointY="6.125" />
           <ConnectorPoint PointX="5.75" PointY="9.625" />
-          <ConnectorPoint PointX="6.354166666666667" PointY="9.625" />
-          <ConnectorPoint PointX="6.520833333333333" PointY="9.625" />
           <ConnectorPoint PointX="6.625" PointY="9.625" />
           <ConnectorPoint PointX="6.625" PointY="12.75" />
-          <ConnectorPoint PointX="6.070315" PointY="12.75" />
-          <ConnectorPoint PointX="6.070315" PointY="13.125" />
+          <ConnectorPoint PointX="6.156252" PointY="12.75" />
+          <ConnectorPoint PointX="6.156252" PointY="13.125" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.KeywordPersonalTVGuideMap">
           <ConnectorPoint PointX="5.625" PointY="12.047587890625" />
@@ -2685,21 +2689,15 @@
           <ConnectorPoint PointX="12.125" PointY="10.75" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.KeywordMapChannelGroup">
-          <ConnectorPoint PointX="11.375" PointY="11.740143229166666" />
-          <ConnectorPoint PointX="9.5625" PointY="11.740143229166666" />
-          <ConnectorPoint PointX="9.5625" PointY="10.6875" />
-          <ConnectorPoint PointX="7.145833333333333" PointY="10.6875" />
-          <ConnectorPoint PointX="6.979166666666667" PointY="10.6875" />
-          <ConnectorPoint PointX="6.708333333333333" PointY="10.6875" />
-          <ConnectorPoint PointX="6.541666666666667" PointY="10.6875" />
-          <ConnectorPoint PointX="6.4375" PointY="10.6875" />
-          <ConnectorPoint PointX="6.4375" PointY="7.485087890625" />
-          <ConnectorPoint PointX="5.8125" PointY="7.485087890625" />
-          <ConnectorPoint PointX="5.8125" PointY="4.8552864583333326" />
-          <ConnectorPoint PointX="6.5625" PointY="4.8552864583333326" />
-          <ConnectorPoint PointX="6.5625" PointY="2.5740364583333335" />
-          <ConnectorPoint PointX="5.9375" PointY="2.5740364583333335" />
-          <ConnectorPoint PointX="5.9375" PointY="2.4802864583333335" />
+          <ConnectorPoint PointX="11.718748" PointY="10.75" />
+          <ConnectorPoint PointX="11.718748" PointY="10.042786458333332" />
+          <ConnectorPoint PointX="10.8125" PointY="10.042786458333332" />
+          <ConnectorPoint PointX="10.8125" PointY="5.8119108072916656" />
+          <ConnectorPoint PointX="9.0625" PointY="5.8119108072916656" />
+          <ConnectorPoint PointX="9.0625" PointY="0.4375" />
+          <ConnectorPoint PointX="7.09375" PointY="0.4375" />
+          <ConnectorPoint PointX="7.09375" PointY="2.1606929179687504" />
+          <ConnectorPoint PointX="7" PointY="2.1606929179687504" />
         </AssociationConnector>
         <EntityTypeShape EntityType="TVDatabaseModel.RecordingCredit" Width="1.5" PointX="16.5" PointY="3.875" Height="1.9802864583333335" />
         <AssociationConnector Association="TVDatabaseModel.RecordingRecordingCredit">
@@ -2711,47 +2709,45 @@
           <ConnectorPoint PointX="16" PointY="7.9901432291666659" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ChannelLinkMap">
-          <ConnectorPoint PointX="10.475778912032038" PointY="5.7494108072916656" />
-          <ConnectorPoint PointX="10.475778912032038" PointY="7.8233676029480135" />
-          <ConnectorPoint PointX="10.284891157397409" PointY="7.8233676029480126" />
-          <ConnectorPoint PointX="10.118224490730741" PointY="7.8233676029480135" />
-          <ConnectorPoint PointX="10.026250457001856" PointY="7.8233676029480126" />
-          <ConnectorPoint PointX="9.8595837903351882" PointY="7.8233676029480135" />
-          <ConnectorPoint PointX="9.4879720449698173" PointY="7.8233676029480126" />
-          <ConnectorPoint PointX="9.32130537830315" PointY="7.8233676029480135" />
-          <ConnectorPoint PointX="6.520833333333333" PointY="7.8233676029480126" />
-          <ConnectorPoint PointX="6.354166666666667" PointY="7.8233676029480135" />
-          <ConnectorPoint PointX="5.833333333333333" PointY="7.8233676029480126" />
-          <ConnectorPoint PointX="5.666666666666667" PointY="7.8233676029480135" />
-          <ConnectorPoint PointX="5.5" PointY="7.8233676029480135" />
+          <ConnectorPoint PointX="10.479674008925141" PointY="5.7494108072916656" />
+          <ConnectorPoint PointX="10.479674008925141" PointY="7.82400888452255" />
+          <ConnectorPoint PointX="10.292681351183614" PointY="7.8240088845225495" />
+          <ConnectorPoint PointX="10.126014684516946" PointY="7.82400888452255" />
+          <ConnectorPoint PointX="10.033110373175605" PointY="7.8240088845225495" />
+          <ConnectorPoint PointX="9.866443706508937" PointY="7.82400888452255" />
+          <ConnectorPoint PointX="9.4909368642504628" PointY="7.8240088845225495" />
+          <ConnectorPoint PointX="9.3242701975837949" PointY="7.82400888452255" />
+          <ConnectorPoint PointX="5.833333333333333" PointY="7.8240088845225495" />
+          <ConnectorPoint PointX="5.666666666666667" PointY="7.82400888452255" />
+          <ConnectorPoint PointX="5.5" PointY="7.82400888452255" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ChannelPortalMap">
-          <ConnectorPoint PointX="9.6842764232729674" PointY="5.7494108072916656" />
-          <ConnectorPoint PointX="9.6842764232729674" PointY="7.6229752467865062" />
-          <ConnectorPoint PointX="9.4879720449698173" PointY="7.6229752467865053" />
-          <ConnectorPoint PointX="9.32130537830315" PointY="7.6229752467865062" />
-          <ConnectorPoint PointX="6.520833333333333" PointY="7.6229752467865053" />
-          <ConnectorPoint PointX="6.354166666666667" PointY="7.6229752467865062" />
-          <ConnectorPoint PointX="5.833333333333333" PointY="7.6229752467865053" />
-          <ConnectorPoint PointX="5.666666666666667" PointY="7.6229752467865062" />
-          <ConnectorPoint PointX="5.5" PointY="7.6229752467865062" />
+          <ConnectorPoint PointX="9.69020606183426" PointY="5.7494108072916656" />
+          <ConnectorPoint PointX="9.69020606183426" PointY="7.6232958875737822" />
+          <ConnectorPoint PointX="9.4909368642504628" PointY="7.6232958875737813" />
+          <ConnectorPoint PointX="9.3242701975837949" PointY="7.6232958875737822" />
+          <ConnectorPoint PointX="5.833333333333333" PointY="7.6232958875737813" />
+          <ConnectorPoint PointX="5.666666666666667" PointY="7.6232958875737822" />
+          <ConnectorPoint PointX="5.5" PointY="7.6232958875737822" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.RecordingProgramCategory">
           <ConnectorPoint PointX="13.625" PointY="3.2208561197916659" />
           <ConnectorPoint PointX="13.3125" PointY="3.2208561197916659" />
-          <ConnectorPoint PointX="13.3125" PointY="6.3888151041666656" />
-          <ConnectorPoint PointX="10.833333333333334" PointY="6.3888151041666648" />
-          <ConnectorPoint PointX="10.666666666666666" PointY="6.3888151041666656" />
-          <ConnectorPoint PointX="10.559112245365371" PointY="6.3888151041666648" />
-          <ConnectorPoint PointX="10.392445578698704" PointY="6.3888151041666656" />
-          <ConnectorPoint PointX="10.284891157397409" PointY="6.3888151041666648" />
-          <ConnectorPoint PointX="10.118224490730741" PointY="6.3888151041666656" />
-          <ConnectorPoint PointX="10.026250457001856" PointY="6.3888151041666648" />
-          <ConnectorPoint PointX="9.8595837903351882" PointY="6.3888151041666656" />
-          <ConnectorPoint PointX="9.7676097566063014" PointY="6.3888151041666648" />
-          <ConnectorPoint PointX="9.6009430899396335" PointY="6.3888151041666656" />
-          <ConnectorPoint PointX="9.4046387116364834" PointY="6.3888151041666656" />
-          <ConnectorPoint PointX="9.4046387116364834" PointY="8.625" />
+          <ConnectorPoint PointX="13.3125" PointY="6.3888151041666665" />
+          <ConnectorPoint PointX="11.583333333333334" PointY="6.3888151041666656" />
+          <ConnectorPoint PointX="11.416666666666666" PointY="6.3888151041666665" />
+          <ConnectorPoint PointX="10.895833333333334" PointY="6.3888151041666656" />
+          <ConnectorPoint PointX="10.666666666666666" PointY="6.3888151041666665" />
+          <ConnectorPoint PointX="10.563981116481751" PointY="6.3888151041666656" />
+          <ConnectorPoint PointX="10.397314449815083" PointY="6.3888151041666665" />
+          <ConnectorPoint PointX="10.294628899630165" PointY="6.3888151041666656" />
+          <ConnectorPoint PointX="10.127962232963498" PointY="6.3888151041666665" />
+          <ConnectorPoint PointX="10.034084147398881" PointY="6.3888151041666656" />
+          <ConnectorPoint PointX="9.8674174807322128" PointY="6.3888151041666665" />
+          <ConnectorPoint PointX="9.7735393951675942" PointY="6.3888151041666656" />
+          <ConnectorPoint PointX="9.6068727285009263" PointY="6.3888151041666665" />
+          <ConnectorPoint PointX="9.4076035309171289" PointY="6.3888151041666665" />
+          <ConnectorPoint PointX="9.4076035309171289" PointY="8.625" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.CardConflict">
           <ConnectorPoint PointX="3.7031252500000003" PointY="5.6148079427083317" />
@@ -2785,8 +2781,6 @@
           <ConnectorPoint PointX="9.125" PointY="9.15625" />
           <ConnectorPoint PointX="7.145833333333333" PointY="9.15625" />
           <ConnectorPoint PointX="6.979166666666667" PointY="9.15625" />
-          <ConnectorPoint PointX="6.520833333333333" PointY="9.15625" />
-          <ConnectorPoint PointX="6.354166666666667" PointY="9.15625" />
           <ConnectorPoint PointX="5.833333333333333" PointY="9.15625" />
           <ConnectorPoint PointX="5.666666666666667" PointY="9.15625" />
           <ConnectorPoint PointX="4.5625" PointY="9.15625" />

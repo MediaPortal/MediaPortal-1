@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.ServiceAgents;
@@ -89,7 +90,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       if (groupType == typeof (ChannelGroup))
       {
-        IList<ChannelGroup> tmp = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups();
+        IList<ChannelGroup> tmp = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.TV);
         foreach (ChannelGroup group in tmp)
         {
           bool isFixedGroupName = (
@@ -112,7 +113,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
       else if (groupType == typeof (ChannelGroup))
       {
-        IList<ChannelGroup> tmp = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups();
+        IList<ChannelGroup> tmp = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.Radio);
         foreach (ChannelGroup group in tmp)
         {
           bool isFixedGroupName = (

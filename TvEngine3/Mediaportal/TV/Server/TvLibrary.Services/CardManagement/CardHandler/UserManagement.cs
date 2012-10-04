@@ -1165,17 +1165,20 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
     public void OnStopUser(IUser user)
     {
-      if (user.UserType != UserType.Scheduler)
+      if (user != null)
       {
-        Context.UsersHistory[user.Name] = user;
-      }
+        if (user.UserType != UserType.Scheduler)
+        {
+          Context.UsersHistory[user.Name] = user;
+        }
 
-      var history = user.History as History;
-      if (history != null)
-      {
-        ChannelManagement.SaveChannelHistory(history);
+        var history = user.History as History;
+        if (history != null)
+        {
+          ChannelManagement.SaveChannelHistory(history);
+        }
+        user.History = null;  
       }
-      user.History = null;
     }
 
     public void OnZap(IUser user, int idChannel)

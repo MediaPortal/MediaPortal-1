@@ -550,32 +550,32 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
             if (dbChannel.MediaType == (int)MediaTypeEnum.TV)
             {
-              ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
-              MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);
+              ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
+              MappingHelper.AddChannelToGroup(ref dbChannel, @group);
               if (checkBoxCreateSignalGroup.Checked)
               {
-                group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.DVBT);
-                MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);
+                group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.DVBT, MediaTypeEnum.TV);
+                MappingHelper.AddChannelToGroup(ref dbChannel, @group);
               }
               if (checkBoxCreateGroups.Checked)
               {
-                group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(channel.Provider);
-                MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);
+                group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(channel.Provider, MediaTypeEnum.TV);
+                MappingHelper.AddChannelToGroup(ref dbChannel, @group);
               }
             }
             else if (dbChannel.MediaType == (int)MediaTypeEnum.Radio)
             {
-              ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.AllChannels);
-              MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.Radio);
+              ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.Radio);
+              MappingHelper.AddChannelToGroup(ref dbChannel, @group);
               if (checkBoxCreateSignalGroup.Checked)
               {
-                group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.DVBT);
-                MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.Radio);
+                group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.DVBT, MediaTypeEnum.Radio);
+                MappingHelper.AddChannelToGroup(ref dbChannel, @group);
               }
               if (checkBoxCreateGroups.Checked)
               {
-                group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(channel.Provider);
-                MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.Radio);
+                group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(channel.Provider, MediaTypeEnum.Radio);
+                MappingHelper.AddChannelToGroup(ref dbChannel, @group);
               }
             }
 

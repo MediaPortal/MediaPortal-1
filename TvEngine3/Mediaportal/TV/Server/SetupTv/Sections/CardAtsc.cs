@@ -292,13 +292,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             dbChannel.AcceptChanges();
             if (dbChannel.MediaType == (decimal) MediaTypeEnum.TV)
             {
-              ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
-              MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);              
+              ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
+              MappingHelper.AddChannelToGroup(ref dbChannel, @group);              
             }
             else if (dbChannel.MediaType == (decimal) MediaTypeEnum.Radio)
             {
-              ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.AllChannels);
-              MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.Radio);                            
+              ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.Radio);
+              MappingHelper.AddChannelToGroup(ref dbChannel, @group);                            
             }
             if (currentDetail == null)
             {

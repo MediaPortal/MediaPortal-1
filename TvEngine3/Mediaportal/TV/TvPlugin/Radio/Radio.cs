@@ -306,7 +306,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       {
         ChannelGroupIncludeRelationEnum include = ChannelGroupIncludeRelationEnum.GroupMaps;
         include |= ChannelGroupIncludeRelationEnum.GroupMapsChannel;
-        AllRadioGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllCustomChannelGroups(include).ToList();        
+        AllRadioGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllCustomChannelGroups(include, MediaTypeEnum.Radio).ToList();        
       }
     }
 
@@ -502,8 +502,6 @@ namespace Mediaportal.TV.TvPlugin.Radio
         IList<GroupMap> maps = group.GroupMaps;
         foreach (GroupMap map in maps)
         {
-          if (map.MediaType == (int)MediaTypeEnum.Radio)
-          {
             Channel channel = map.Channel;
 
             if (channel != null)
@@ -533,7 +531,6 @@ namespace Mediaportal.TV.TvPlugin.Radio
               facadeLayout.Add(item);
               totalItems++;
             }
-          }
         }
       }
 

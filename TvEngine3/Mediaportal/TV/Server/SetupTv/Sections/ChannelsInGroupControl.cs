@@ -234,7 +234,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           return;
         }
 
-        group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(dlg.GroupName);        
+        group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(dlg.GroupName, _mediaTypeEnum);        
         UpdateMenuAndTabs();
       }
       else
@@ -250,7 +250,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         ListViewItem item = listView1.Items[indexes[i]];
         GroupMap map = (GroupMap)item.Tag;
         Channel channel = map.Channel;
-        MappingHelper.AddChannelToGroup(ref channel, group, _mediaTypeEnum);
+        MappingHelper.AddChannelToGroup(ref channel, @group);
       }
     }
 

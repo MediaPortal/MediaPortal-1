@@ -37,7 +37,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository())
       {
         var query =
-          channelGroupRepository.GetQuery<ChannelGroup>(g => g.GroupMaps.Any(gm => gm.MediaType == (int)mediaType));
+          channelGroupRepository.GetQuery<ChannelGroup>(g => g.MediaType == (int)mediaType);
 
         var listAllChannelGroupsByMediaType = channelGroupRepository.IncludeAllRelations(query).ToList();
         return listAllChannelGroupsByMediaType;
@@ -49,7 +49,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository())
       {
         var query =
-          channelGroupRepository.GetQuery<ChannelGroup>(g => g.GroupMaps.Any(gm => gm.MediaType == (int)mediaType));
+          channelGroupRepository.GetQuery<ChannelGroup>(g => g.MediaType == (int)mediaType);
 
         var listAllChannelGroupsByMediaType = channelGroupRepository.IncludeAllRelations(query, includeRelations).ToList();
         return listAllChannelGroupsByMediaType;
@@ -61,21 +61,21 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository())
       {
         var query = channelGroupRepository.GetQuery<ChannelGroup>(
-          g => g.GroupName == groupName && g.GroupMaps.Any(gm => gm.MediaType == (int) mediaType));
+          g => g.GroupName == groupName && g.MediaType == (int)mediaType);
 
         ChannelGroup channelGroupByNameAndMediaType = channelGroupRepository.IncludeAllRelations(query).FirstOrDefault();
         return channelGroupByNameAndMediaType;
       }
     }    
     
-    public static ChannelGroup GetOrCreateGroup(string groupName)
+    public static ChannelGroup GetOrCreateGroup(string groupName, MediaTypeEnum mediaType)
     {
       using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository())
       {
-        ChannelGroup group = channelGroupRepository.Single<ChannelGroup>(g => g.GroupName == groupName);
+        ChannelGroup group = channelGroupRepository.Single<ChannelGroup>(g => g.GroupName == groupName && g.MediaType == (int)mediaType);
         if (group == null)
         {
-          group = new ChannelGroup {GroupName = groupName, SortOrder = 9999};
+          group = new ChannelGroup {GroupName = groupName, SortOrder = 9999, MediaType = (int)mediaType};
           channelGroupRepository.Add(group);
           channelGroupRepository.UnitOfWork.SaveChanges();
         }

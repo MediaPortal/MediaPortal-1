@@ -968,22 +968,22 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
           if (dbChannel.MediaType == (decimal) MediaTypeEnum.TV)
           {
-            ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.AllChannels);
-            MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);            
+            ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.TV);
+            MappingHelper.AddChannelToGroup(ref dbChannel, @group);            
             if (checkBoxCreateSignalGroup.Checked)
             {
-              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.Analog);
-              MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);                          
+              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.Analog, MediaTypeEnum.TV);
+              MappingHelper.AddChannelToGroup(ref dbChannel, @group);                          
             }
           }
           else if (dbChannel.MediaType == (decimal) MediaTypeEnum.Radio)
           {
-            ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.AllChannels);
-            MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.Radio);
+            ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.Radio);
+            MappingHelper.AddChannelToGroup(ref dbChannel, @group);
             if (checkBoxCreateSignalGroup.Checked)
             {
-              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.Analog);
-              MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.Radio);              
+              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.Analog, MediaTypeEnum.Radio);
+              MappingHelper.AddChannelToGroup(ref dbChannel, @group);              
             }
           }
                    
@@ -1217,13 +1217,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             item.Text = line;
             dbChannel.MediaType = (int) channel.MediaType;
             ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
-            ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.AllChannels);
-            MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.Radio);            
+            ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.Radio);
+            MappingHelper.AddChannelToGroup(ref dbChannel, @group);            
               
             if (checkBoxCreateSignalGroup.Checked)
             {
-              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.Analog);
-              MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.Radio);                          
+              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.Analog, MediaTypeEnum.Radio);
+              MappingHelper.AddChannelToGroup(ref dbChannel, @group);                          
             }
 
             ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel);            
@@ -1338,8 +1338,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
 
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
-        MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);        
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
+        MappingHelper.AddChannelToGroup(ref dbChannel, @group);        
 
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.VideoInput3))
@@ -1364,8 +1364,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
 
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
-        MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);        
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
+        MappingHelper.AddChannelToGroup(ref dbChannel, @group);        
         
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.SvhsInput1))
@@ -1389,8 +1389,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
 
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
-        MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
+        MappingHelper.AddChannelToGroup(ref dbChannel, @group);
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.SvhsInput2))
       {
@@ -1413,8 +1413,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
 
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
-        MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
+        MappingHelper.AddChannelToGroup(ref dbChannel, @group);
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.SvhsInput3))
       {
@@ -1436,8 +1436,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput3;
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
-        MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
+        MappingHelper.AddChannelToGroup(ref dbChannel, @group);
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.RgbInput1))
       {
@@ -1459,8 +1459,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput1;
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
-        MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
+        MappingHelper.AddChannelToGroup(ref dbChannel, @group);
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.RgbInput2))
       {
@@ -1482,8 +1482,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput2;
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
-        MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
+        MappingHelper.AddChannelToGroup(ref dbChannel, @group);
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.RgbInput3))
       {
@@ -1505,8 +1505,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput3;
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
-        MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
+        MappingHelper.AddChannelToGroup(ref dbChannel, @group);
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.YRYBYInput1))
       {
@@ -1528,8 +1528,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.YRYBYInput1;
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
-        MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
+        MappingHelper.AddChannelToGroup(ref dbChannel, @group);
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.YRYBYInput2))
       {
@@ -1554,8 +1554,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);  //todo gibman ?? why called 2 times ?      
         MappingHelper.AddChannelToCard(dbChannel, card, false);
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
-        MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);        
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
+        MappingHelper.AddChannelToGroup(ref dbChannel, @group);        
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.YRYBYInput3))
       {
@@ -1577,8 +1577,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.YRYBYInput3;
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
-        MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
+        MappingHelper.AddChannelToGroup(ref dbChannel, @group);
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.HdmiInput1))
       {
@@ -1600,8 +1600,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.HdmiInput1;
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
-        MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
+        MappingHelper.AddChannelToGroup(ref dbChannel, @group);
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.HdmiInput2))
       {
@@ -1623,8 +1623,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.HdmiInput2;
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
-        MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
+        MappingHelper.AddChannelToGroup(ref dbChannel, @group);
       }
       if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.HdmiInput3))
       {
@@ -1646,8 +1646,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.HdmiInput3;
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
-        MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);        
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
+        MappingHelper.AddChannelToGroup(ref dbChannel, @group);        
       }
       MessageBox.Show(this, "Channels added.");
     }

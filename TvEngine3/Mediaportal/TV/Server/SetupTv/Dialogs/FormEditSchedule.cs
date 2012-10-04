@@ -163,11 +163,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private void AddTvGroups()
     {
       mpComboBoxChannelsGroup.Items.Clear();
-      ChannelGroupIncludeRelationEnum include = ChannelGroupIncludeRelationEnum.GroupMaps;
-      //include |= ChannelGroupIncludeRelationEnum.GroupMapsChannel;
-      //include |= ChannelGroupIncludeRelationEnum.GroupMapsTuningDetails;
-      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(include);
-      //IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.TV);
+      ChannelGroupIncludeRelationEnum include = ChannelGroupIncludeRelationEnum.GroupMaps;      
+      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.TV, include);      
       foreach (ChannelGroup group in groups)
         mpComboBoxChannelsGroup.Items.Add(new ComboBoxExItem(group.GroupName, -1, group.IdGroup));
       if (mpComboBoxChannelsGroup.Items.Count == 0)

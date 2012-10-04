@@ -8,8 +8,18 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
   [ServiceContract(Namespace = "http://www.team-mediaportal.com")]
   public interface IChannelGroupService
   {
-    [OperationContract]    
+    [OperationContract]
     IList<ChannelGroup> ListAllChannelGroups();
+
+    [OperationContract(Name = "ListAllChannelGroupsWithSpecificRelations")]
+    IList<ChannelGroup> ListAllChannelGroups(ChannelGroupIncludeRelationEnum includeRelations);
+
+    [OperationContract]
+    IList<ChannelGroup> ListAllCustomChannelGroups(ChannelGroupIncludeRelationEnum includeRelations, MediaTypeEnum mediaType);
+
+    [OperationContract(Name = "ListAllChannelGroupsByMediaTypeWithSpecificRelations")]
+    IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaTypeEnum mediaType, ChannelGroupIncludeRelationEnum includeRelations);
+
     [OperationContract]    
     IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaTypeEnum mediaType);
 
@@ -17,7 +27,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     ChannelGroup GetChannelGroupByNameAndMediaType(string groupName, MediaTypeEnum mediaType);
     
     [OperationContract]
-    ChannelGroup GetOrCreateGroup(string groupName);
+    ChannelGroup GetOrCreateGroup(string groupName, MediaTypeEnum mediaType);
 
     
 
@@ -28,15 +38,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     [OperationContract]
     ChannelGroup SaveGroup(ChannelGroup @group);
     [OperationContract]
-    void DeleteChannelGroup(int idGroup);
-
-    [OperationContract(Name = "ListAllChannelGroupsWithSpecificRelations")]    
-    IList<ChannelGroup> ListAllChannelGroups(ChannelGroupIncludeRelationEnum includeRelations);
-
-    [OperationContract(Name = "ListAllChannelGroupsByMediaTypeWithSpecificRelations")]
-    IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaTypeEnum mediaType, ChannelGroupIncludeRelationEnum includeRelations);
-
-    [OperationContract]
-    IList<ChannelGroup> ListAllCustomChannelGroups(ChannelGroupIncludeRelationEnum includeRelations);
+    void DeleteChannelGroup(int idGroup);    
+        
   }
 }

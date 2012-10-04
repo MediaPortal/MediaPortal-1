@@ -26,7 +26,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       return listAllChannelGroupsByMediaType;
     }
 
-    public IList<ChannelGroup> ListAllCustomChannelGroups(ChannelGroupIncludeRelationEnum includeRelations)
+    public IList<ChannelGroup> ListAllCustomChannelGroups(ChannelGroupIncludeRelationEnum includeRelations, MediaTypeEnum mediaType)
     {
       var listAllCustomChannelGroups = ChannelGroupManagement.ListAllCustomChannelGroups(includeRelations);
       return listAllCustomChannelGroups;
@@ -64,9 +64,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       ChannelGroupManagement.DeleteChannelGroup(idGroup);
     }
 
-    public ChannelGroup GetOrCreateGroup(string groupName)
+    public ChannelGroup GetOrCreateGroup(string groupName, MediaTypeEnum mediaType)
     {
-      var orCreateGroup = ChannelGroupManagement.GetOrCreateGroup(groupName);
+      var orCreateGroup = ChannelGroupManagement.GetOrCreateGroup(groupName, mediaType);
       return orCreateGroup;
     }
   }

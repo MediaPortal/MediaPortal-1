@@ -230,6 +230,7 @@
     <Property Name="IdGroup" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="GroupName" Type="varchar" Nullable="false" MaxLength="200" />
     <Property Name="SortOrder" Type="int" Nullable="false" />
+    <Property Name="MediaType" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="ChannelLinkageMaps">
     <Key>
@@ -285,8 +286,7 @@
     <Property Name="IdMap" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="IdGroup" Type="int" Nullable="false" />
     <Property Name="IdChannel" Type="int" Nullable="false" />
-    <Property Name="SortOrder" Type="int" Nullable="false" />
-    <Property Name="MediaType" Type="int" Nullable="false" />
+    <Property Name="SortOrder" Type="int" Nullable="false" />    
   </EntityType>
   <EntityType Name="Histories">
     <Key>

@@ -155,7 +155,7 @@ namespace Mediaportal.TV.TvPlugin
         Task taskGetAllChannels = Task.Factory.StartNew(GetAllChannels);
         Task taskGetOrCreateGroup = Task.Factory.StartNew(delegate
         {
-          ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
+          ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
         });
         
         Task taskGetAllGroups = Task.Factory.StartNew(GetAllGroups);                
@@ -186,7 +186,7 @@ namespace Mediaportal.TV.TvPlugin
     }
 
     private void GetAllGroups()
-    {
+    {      
       if (_groups.Count == 0)
       {
         bool hideAllChannelsGroup;
@@ -202,13 +202,13 @@ namespace Mediaportal.TV.TvPlugin
         if (hideAllChannelsGroup)
         {
           _groups =
-            ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllCustomChannelGroups(include).OrderBy(g => g.GroupName).
+            ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllCustomChannelGroups(include, MediaTypeEnum.TV).OrderBy(g => g.GroupName).
               ToList();
         }
         else
         {
           _groups =
-            ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(include).OrderBy(g => g.GroupName).ToList();
+            ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.TV, include).OrderBy(g => g.GroupName).ToList();
         }
         Log.Info("loaded {0} tv groups", _groups.Count);
       }

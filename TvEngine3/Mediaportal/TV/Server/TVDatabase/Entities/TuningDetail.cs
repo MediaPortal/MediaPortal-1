@@ -278,17 +278,17 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         [DataMember]
         public int DiSEqC
         {
-            get { return _diSeqC; }
+            get { return _diSEqC; }
             set
             {
-                if (_diSeqC != value)
+                if (_diSEqC != value)
                 {
-                    _diSeqC = value;
+                    _diSEqC = value;
                     OnPropertyChanged("DiSEqC");
                 }
             }
         }
-        private int _diSeqC;
+        private int _diSEqC;
     
         [DataMember]
         public int SwitchingFrequency

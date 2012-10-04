@@ -13,12 +13,7 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     public ChannelGroupServiceAgent(string hostname) : base(hostname)
     {
     }
-
-    public IList<ChannelGroup> ListAllChannelGroups()
-    {
-      return _channel.ListAllChannelGroups();
-    }
-
+  
     public IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaTypeEnum mediaType)
     {
       return _channel.ListAllChannelGroupsByMediaType(mediaType);
@@ -29,9 +24,9 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
       return _channel.GetChannelGroupByNameAndMediaType(groupName, mediaType);
     }
 
-    public ChannelGroup GetOrCreateGroup(string groupName)
+    public ChannelGroup GetOrCreateGroup(string groupName, MediaTypeEnum mediaType)
     {
-      return _channel.GetOrCreateGroup(groupName);
+      return _channel.GetOrCreateGroup(groupName, mediaType);
     }
 
     public void DeleteChannelGroupMap(int idMap)
@@ -53,6 +48,16 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     public void DeleteChannelGroup(int idGroup)
     {
       _channel.DeleteChannelGroup(idGroup);
+    }   
+
+    public IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaTypeEnum mediaType, ChannelGroupIncludeRelationEnum includeRelations)
+    {
+      return _channel.ListAllChannelGroupsByMediaType(mediaType, includeRelations);
+    }
+
+    public IList<ChannelGroup> ListAllChannelGroups()
+    {
+      return _channel.ListAllChannelGroups();
     }
 
     public IList<ChannelGroup> ListAllChannelGroups(ChannelGroupIncludeRelationEnum includeRelations)
@@ -60,14 +65,9 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
       return _channel.ListAllChannelGroups(includeRelations);
     }
 
-    public IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaTypeEnum mediaType, ChannelGroupIncludeRelationEnum includeRelations)
+    public IList<ChannelGroup> ListAllCustomChannelGroups(ChannelGroupIncludeRelationEnum includeRelations, MediaTypeEnum mediaType)
     {
-      return _channel.ListAllChannelGroupsByMediaType(mediaType, includeRelations);
-    }
-
-    public IList<ChannelGroup> ListAllCustomChannelGroups(ChannelGroupIncludeRelationEnum includeRelations)
-    {
-      return _channel.ListAllCustomChannelGroups(includeRelations);
+      return _channel.ListAllCustomChannelGroups(includeRelations, mediaType);
     }
   }
 }
