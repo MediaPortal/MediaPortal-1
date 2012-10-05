@@ -2197,7 +2197,10 @@ namespace MediaPortal.Util
         File.Delete(strFile);
         return true;
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("Util: FileDelete(string strFile) error: {0}", ex.Message);
+      }
       return false;
     }
 

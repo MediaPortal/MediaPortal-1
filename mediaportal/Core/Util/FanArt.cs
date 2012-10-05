@@ -112,6 +112,7 @@ namespace MediaPortal.Util
             {
               DeleteFanart(movieId, index);
               File.Copy(localFile, dbFile, true);
+              File.SetAttributes(dbFile, FileAttributes.Normal);
             }
           }
           catch (Exception ex)

@@ -5529,10 +5529,10 @@ namespace MediaPortal.Video.Database
                       {
                         imageExtension = ".jpg";
                       }
-                      string temporaryFilename = "temp";
+                      string temporaryFilename = "MPTempImage";
                       temporaryFilename += imageExtension;
+                      temporaryFilename = Path.Combine(Path.GetTempPath(), temporaryFilename);
                       Util.Utils.FileDelete(temporaryFilename);
-
                       Util.Utils.DownLoadAndOverwriteCachedImage(imageUrl, temporaryFilename);
                         
                       if (File.Exists(temporaryFilename))
@@ -6051,11 +6051,12 @@ namespace MediaPortal.Video.Database
             try
             {
               File.Copy(largeCoverArtImage, coverFilename, true);
+              File.SetAttributes(coverFilename, FileAttributes.Normal);
               CreateXmlNode(mainNode, doc, "thumb", movieFile + ".jpg");
             }
             catch (Exception ex)
             {
-              Log.Info("VideoDatabas: Error in creating nfo - poster section:{0}", ex.Message);
+              Log.Info("VideoDatabase: Error in creating nfo - poster node:{0}", ex.Message);
             }
           }
 
@@ -6079,6 +6080,7 @@ namespace MediaPortal.Video.Database
               {
                 string faFilename = moviePath + @"\" + movieFile + "-fanart" + index + ".jpg";
                 File.Copy(faFile, faFilename, true);
+                File.SetAttributes(faFilename, FileAttributes.Normal);
                 CreateXmlNode(subNode, doc, "thumb", movieFile + "-fanart" + index + ".jpg");
               }
               catch (Exception ex)

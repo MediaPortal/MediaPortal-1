@@ -840,6 +840,7 @@ namespace MediaPortal.GUI.Video
               {
                 // Local image, don't download, just copy
                 File.Copy(imageUrl.Substring(7), temporaryFilename);
+                File.SetAttributes(temporaryFilename, FileAttributes.Normal);
               }
               else
               {
