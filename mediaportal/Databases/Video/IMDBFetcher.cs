@@ -1531,7 +1531,10 @@ namespace MediaPortal.Video.Database
           }
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("IMDBFetcher: DownloadCoverArt({0}, {1}, {2}) error: {3}", type, imageUrl, title, ex.Message);
+      }
     }
 
     /// <summary>
