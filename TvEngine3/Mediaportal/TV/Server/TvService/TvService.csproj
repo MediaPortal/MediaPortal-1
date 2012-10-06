@@ -200,6 +200,8 @@ xcopy "$(SolutionDir)\ServiceAgents\$(OutDir)Mediaportal.TV.Server.Plugins.WebEP
 xcopy "$(SolutionDir)\SetupControls\$(OutDir)Mediaportal.TV.Server.SetupControls.*" "$(TargetDir)" /C/Y/S
 rem xcopy "$(SolutionDir)..\..\..\..\Common-MP-TVE3\PowerScheduler.Interfaces\$(OutDir)Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces" "$(TargetDir)" /C/Y/S
 xcopy "$(SolutionDir)..\..\..\..\DirectShowFilters\TsWriter\bin\Release\*.ax" "$(TargetDir)" /C/Y/S
-regsvr32 "$(TargetDir)tswriter.ax" /s</PreBuildEvent>
+xcopy "$(SolutionDir)..\..\..\..\DirectShowFilters\streamingserver\bin\Release\*.dll" "$(TargetDir)" /C/Y/S
+regsvr32 "$(TargetDir)tswriter.ax" /s
+</PreBuildEvent>
   </PropertyGroup>
 </Project>

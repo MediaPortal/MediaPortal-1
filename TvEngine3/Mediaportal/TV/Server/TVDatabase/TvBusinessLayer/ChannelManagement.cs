@@ -25,6 +25,25 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {
   public static class ChannelManagement
   {
+    public delegate void OnStateChangedTuningDetailDelegate(TuningDetail tuningDetail, ObjectState state);
+    public static event OnStateChangedTuningDetailDelegate OnStateChangedTuningDetailEvent;
+
+    public delegate void OnStateChangedChannelMapDelegate(ChannelMap map, ObjectState state);
+    public static event OnStateChangedChannelMapDelegate OnStateChangedChannelMapEvent;
+     
+    /*public delegate void OnAddTuningDetailDelegate(TuningDetail tuningDetail);
+    public static event OnAddTuningDetailDelegate OnAddTuningDetailEvent;
+
+    public delegate void OnDeleteTuningDetailDelegate(TuningDetail tuningDetail);
+    public static event OnDeleteTuningDetailDelegate OnDeleteTuningDetailEvent;
+
+    public delegate void OnAddChannelMapDelegate(ChannelMap map);
+    public static event OnAddChannelMapDelegate OnAddChannelMapEvent;
+
+    public delegate void OnDeleteChannelMapDelegate(ChannelMap map);
+    public static event OnDeleteChannelMapDelegate OnDeleteChannelMapEvent;
+    */
+
     public static IList<Channel> GetAllChannelsByGroupId(int idGroup)
     {
       try
@@ -120,19 +139,84 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static Channel SaveChannel(Channel channel)
     {      
+      if (OnStateChangedChannelMapEvent != null || OnStateChangedTuningDetailEvent != null)
+      {
+        Dictionary<string, ObjectList>.ValueCollection deletedProperties = channel.ChangeTracker.ObjectsRemovedFromCollectionProperties.Values;
+        foreach (ObjectList deletedProperty in deletedProperties)
+        {
+          if (OnStateChangedTuningDetailEvent != null)
+          {
+            IEnumerable<TuningDetail> deletedTuningDetails = deletedProperty.OfType<TuningDetail>();
+            foreach (TuningDetail deletedTuningDetail in deletedTuningDetails)
+            {
+              OnStateChangedTuningDetailEvent(deletedTuningDetail, ObjectState.Deleted);
+            }
+          }
+
+          if (OnStateChangedChannelMapEvent != null)
+          {
+            IEnumerable<ChannelMap> deletedChannelMaps = deletedProperty.OfType<ChannelMap>();
+            foreach (ChannelMap deletedChannelMap in deletedChannelMaps)
+            {
+              OnStateChangedChannelMapEvent(deletedChannelMap, ObjectState.Deleted);
+            } 
+          }          
+        }               
+      }  
+
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
+        
         channelRepository.AttachEntityIfChangeTrackingDisabled(channelRepository.ObjectContext.Channels, channel);
         channelRepository.ApplyChanges(channelRepository.ObjectContext.Channels, channel);        
         channelRepository.UnitOfWork.SaveChanges();
+
+        IList<Action> events = new List<Action>();
+
+        if (OnStateChangedChannelMapEvent != null || OnStateChangedTuningDetailEvent != null)
+        {
+          Dictionary<string, ObjectList>.ValueCollection addedProperties =
+            channel.ChangeTracker.ObjectsAddedToCollectionProperties.Values;
+          foreach (ObjectList addedProperty in addedProperties)
+          {
+            if (OnStateChangedTuningDetailEvent != null)
+            {
+              IEnumerable<TuningDetail> addedTuningDetails = addedProperty.OfType<TuningDetail>();
+              foreach (TuningDetail addedTuningDetail in addedTuningDetails)
+              {
+                TuningDetail detail = addedTuningDetail;
+                //events.Add(() => OnStateChangedTuningDetailEvent(detail, ObjectState.Added));
+                OnStateChangedTuningDetailEvent(detail, ObjectState.Added);
+              }
+            }
+
+            if (OnStateChangedChannelMapEvent != null)
+            {
+              IEnumerable<ChannelMap> addedChannelMaps = addedProperty.OfType<ChannelMap>();
+              foreach (ChannelMap addedChannelMap in addedChannelMaps)
+              {
+                ChannelMap map = addedChannelMap;
+                //events.Add(() => OnStateChangedChannelMapEvent(map, ObjectState.Added));
+                OnStateChangedChannelMapEvent(map, ObjectState.Added);
+              }
+            }
+          }
+        }
+
         channel.AcceptChanges();
-        return GetChannel(channel.IdChannel);
+        Channel updatedChannel = GetChannel(channel.IdChannel);
+
+        /*foreach (Action action in events)
+        {
+          action();
+        }*/
+
+        return updatedChannel;
       }
     }
 
     public static Channel GetChannel(int idChannel)
-    {
-      //lazy loading verified ok
+    {      
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
         IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.IdChannel == idChannel);
@@ -149,18 +233,18 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }     
     }
 
-    public static bool IsChannelMappedToCard(Channel channel, Card card, bool forEpg)
+    public static bool IsChannelMappedToCard(int idChannel, int idCard, bool forEpg)
     {
       bool isChannelMappedToCard;
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
         if (forEpg)
         {
-          isChannelMappedToCard = channelRepository.Count<ChannelMap>(c => c.IdCard == card.IdCard && c.IdChannel == channel.IdChannel && c.EpgOnly) > 0;
+          isChannelMappedToCard = channelRepository.Count<ChannelMap>(c => c.IdCard == idCard && c.IdChannel == idChannel && c.EpgOnly) > 0;
         }
         else
         {
-          isChannelMappedToCard = channelRepository.Count<ChannelMap>(c => c.IdCard == card.IdCard && c.IdChannel == channel.IdChannel) > 0;          
+          isChannelMappedToCard = channelRepository.Count<ChannelMap>(c => c.IdCard == idCard && c.IdChannel == idChannel) > 0;          
         }                
       }
       return isChannelMappedToCard;
@@ -447,14 +531,18 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         query = channelRepository.IncludeAllRelations(query);
         return query.FirstOrDefault();
       }
-    }
+    }    
 
     public static void AddTuningDetail(int idChannel, IChannel channel)
-    {
-      TuningDetail tuningDetail = new TuningDetail();
+    {      
+      TuningDetail tuningDetail = new TuningDetail();      
       TuningDetail detail = UpdateTuningDetailWithChannelData(idChannel, channel, tuningDetail);
       tuningDetail.IdChannel = idChannel;
       SaveTuningDetail(detail);  
+      if (OnStateChangedTuningDetailEvent != null)
+      {
+        OnStateChangedTuningDetailEvent(tuningDetail, ObjectState.Added);
+      }
     }
     public static void UpdateTuningDetail(int idChannel, int idTuning, IChannel channel)
     {
@@ -466,7 +554,12 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
         TuningDetail detail = UpdateTuningDetailWithChannelData(idChannel, channel, tuningDetail);        
         SaveTuningDetail(detail);
-      }       
+
+        if (OnStateChangedTuningDetailEvent != null)
+        {
+          OnStateChangedTuningDetailEvent(detail, ObjectState.Modified);
+        }
+      }      
     }
 
     private static TuningDetail UpdateTuningDetailWithChannelData(int idChannel, IChannel channel, TuningDetail tuningDetail)
@@ -656,11 +749,20 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     }
 
     public static void DeleteTuningDetail(int idTuning)
-    {
-      using (IChannelRepository channelRepository = new ChannelRepository(true))
+    {      
+      if (OnStateChangedTuningDetailEvent != null)
       {
+        TuningDetail tuningDetail = GetTuningDetail(idTuning);
+        if (tuningDetail != null)
+        {
+          OnStateChangedTuningDetailEvent(tuningDetail, ObjectState.Deleted);
+        }
+      }
+
+      using (IChannelRepository channelRepository = new ChannelRepository(true))
+      {                
         channelRepository.Delete<TuningDetail>(p => p.IdTuning == idTuning);
-        channelRepository.UnitOfWork.SaveChanges();
+        channelRepository.UnitOfWork.SaveChanges();        
       }
     }
 
@@ -690,21 +792,44 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static void DeleteChannelMap(int idChannelMap)
     {
-      using (IChannelRepository channelRepository = new ChannelRepository(true))
+      if (OnStateChangedChannelMapEvent != null)
       {
-        channelRepository.Delete<ChannelMap>(p => p.IdChannelMap == idChannelMap);
-        channelRepository.UnitOfWork.SaveChanges();
+        ChannelMap channelMap = GetChannelMap(idChannelMap);
+        if (channelMap != null)
+        {
+          OnStateChangedChannelMapEvent(channelMap, ObjectState.Deleted); 
+        }        
       }
+
+      using (IChannelRepository channelRepository = new ChannelRepository(true))
+      {        
+        channelRepository.Delete<ChannelMap>(p => p.IdChannelMap == idChannelMap);
+        channelRepository.UnitOfWork.SaveChanges();        
+      }
+    }
+
+    public static ChannelMap GetChannelMap(int idChannelMap)
+    {
+      using (IChannelRepository channelRepository = new ChannelRepository())
+      {
+        IQueryable<ChannelMap> query = channelRepository.GetQuery<ChannelMap>(c => c.IdChannelMap == idChannelMap);
+        return channelRepository.IncludeAllRelations(query).FirstOrDefault();
+      }      
     }
 
     public static ChannelMap SaveChannelMap(ChannelMap map)
     {
+      if (OnStateChangedChannelMapEvent != null)
+      {
+        OnStateChangedChannelMapEvent(map, map.ChangeTracker.State);
+      }
+
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
         channelRepository.AttachEntityIfChangeTrackingDisabled(channelRepository.ObjectContext.ChannelMaps, map);
         channelRepository.ApplyChanges(channelRepository.ObjectContext.ChannelMaps, map);
         channelRepository.UnitOfWork.SaveChanges();
-        map.AcceptChanges();
+        map.AcceptChanges();        
         return map;
       }
     }
@@ -754,6 +879,15 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         Log.Error("ChannelManagement.GetAllChannelsByGroupIdAndMediaType ex={0}", ex);
         throw;
       }
-    }    
+    }
+
+    public static TuningDetail GetTuningDetail(int tuningDetailId)
+    {
+      using (IChannelRepository channelRepository = new ChannelRepository())
+      {
+        IQueryable<TuningDetail> query = channelRepository.GetQuery<TuningDetail>(t => t.IdTuning == tuningDetailId);
+        return channelRepository.IncludeAllRelations(query).FirstOrDefault();
+      }
+    }
   }
 }

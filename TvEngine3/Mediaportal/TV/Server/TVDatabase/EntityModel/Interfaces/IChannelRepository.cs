@@ -12,7 +12,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces
     IQueryable<Channel> GetAllChannelsByGroupId(int groupId);
     IQueryable<Channel> IncludeAllRelations(IQueryable<Channel> query);
     IQueryable<Channel> IncludeAllRelations(IQueryable<Channel> query, ChannelIncludeRelationEnum includeRelations);
-
-    IQueryable<TuningDetail> IncludeAllRelations(IQueryable<TuningDetail> query);    
+    IQueryable<TuningDetail> IncludeAllRelations(IQueryable<TuningDetail> query);
+    IQueryable<ChannelMap> IncludeAllRelations(IQueryable<ChannelMap> query);
   }
 }

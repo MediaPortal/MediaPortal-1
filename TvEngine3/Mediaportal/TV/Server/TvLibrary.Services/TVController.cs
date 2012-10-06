@@ -3406,10 +3406,13 @@ namespace Mediaportal.TV.Server.TVLibrary
           {
             StartEPGgrabber();
           }
-          cardChanged = card.Id != oldCardId;
-          if (!cardChanged)
+          if (card != null)
           {
-            cardChanged = initialTimeshiftingFile != card.TimeShiftFileName;
+            cardChanged = card.Id != oldCardId;
+            if (!cardChanged)
+            {
+              cardChanged = initialTimeshiftingFile != card.TimeShiftFileName;
+            }
           }
         }
       }

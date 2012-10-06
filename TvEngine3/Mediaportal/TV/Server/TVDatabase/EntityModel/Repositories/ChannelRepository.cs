@@ -109,5 +109,16 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
       return includeRelations;
     }
+
+    public IQueryable<ChannelMap> IncludeAllRelations(IQueryable<ChannelMap> query)
+    {
+      IQueryable<ChannelMap> includeRelations =
+        query.
+          Include(c => c.Channel).
+          Include(c => c.Card)
+        ;
+
+      return includeRelations;
+    }
   }  
 }
