@@ -44,7 +44,7 @@ namespace Mediaportal.TV.Server.SetupTV
   /// </summary>
   public class SetupTvSettingsForm : SettingsForm
   {
-    private readonly PluginLoader _pluginLoader = new PluginLoader();
+    private readonly PluginLoaderSetupTv _pluginLoader = new PluginLoaderSetupTv();
     private Sections.Plugins pluginsRoot;
     private Servers servers;
     private TvCards cardPage;

@@ -20,21 +20,19 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Castle.Windsor.Configuration.Interpreters;
-using Mediaportal.TV.Server.Plugins.Base;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using MediaPortal.Common.Utils;
 
-namespace Mediaportal.TV.Server.TVLibrary
+namespace Mediaportal.TV.Server.Plugins.Base
 {
-  internal class PluginLoader
+  public class PluginLoader
   {
     private List<ITvServerPlugin> _plugins = new List<ITvServerPlugin>();
+    private readonly List<Type> _incompatiblePlugins = new List<Type>();
 
     /// <summary>
     /// returns a list of all plugins loaded.
@@ -46,9 +44,18 @@ namespace Mediaportal.TV.Server.TVLibrary
     }
 
     /// <summary>
+    /// returns a list of plugins not loaded as incompatible.
+    /// </summary>
+    /// <value>The plugins.</value>
+    public List<Type> IncompatiblePlugins
+    {
+      get { return _incompatiblePlugins; }
+    }
+
+    /// <summary>
     /// Loads all plugins.
     /// </summary>
-    public void Load()
+    public virtual void Load()
     {
        /*   
        var container = new WindsorContainer();
@@ -56,6 +63,7 @@ namespace Mediaportal.TV.Server.TVLibrary
        */
                  
       _plugins.Clear();
+      _incompatiblePlugins.Clear();
 
       try
       {
@@ -88,6 +96,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       bool isPluginCompatible = CompatibilityManager.IsPluginCompatible(type);
       if (!isPluginCompatible)
       {
+        _incompatiblePlugins.Add(type);
         Log.WriteFile("PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!", type.FullName);
       }
       return isPluginCompatible;

@@ -191,8 +191,8 @@ xcopy "$(SolutionDir)Plugins\ConflictsManager\$(OutDir)Mediaportal.TV.Server.Plu
 xcopy "$(SolutionDir)Plugins\PluginBase\$(OutDir)Mediaportal.TV.Server.Plugins.Base.*" "$(TargetDir)"Plugins\ /C/Y/S
 xcopy "$(SolutionDir)Plugins\PowerScheduler\$(OutDir)Mediaportal.TV.Server.Plugins.PowerScheduler.dll" "$(TargetDir)"Plugins\ /C/Y/S
 xcopy "$(SolutionDir)Plugins\PowerScheduler\$(OutDir)Mediaportal.TV.Server.Plugins.PowerScheduler.pdb" "$(TargetDir)"Plugins\ /C/Y/S
-xcopy "$(SolutionDir)Plugins\PowerScheduler\$(OutDir)Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll" "$(TargetDir)" /C/Y/S
-xcopy "$(SolutionDir)Plugins\PowerScheduler\$(OutDir)Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.pdb" "$(TargetDir)" /C/Y/S
+xcopy "$(SolutionDir)Plugins\PowerScheduler\$(OutDir)Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll" "$(TargetDir)"\Plugins\ /C/Y/S
+xcopy "$(SolutionDir)Plugins\PowerScheduler\$(OutDir)Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.pdb" "$(TargetDir)"\Plugins\ /C/Y/S
 xcopy "$(SolutionDir)Plugins\ServerBlaster\ServerBlaster\$(OutDir)Mediaportal.TV.Server.Plugins.ServerBlaster.*" "$(TargetDir)"Plugins\ /C/Y/S
 xcopy "$(SolutionDir)Plugins\ServerBlaster\ServerBlaster.Learn\$(OutDir)Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.*" "$(TargetDir)"Plugins\ /C/Y/S
 xcopy "$(SolutionDir)Plugins\WebEPG\$(OutDir)Mediaportal.TV.Server.Plugins.WebEPG.*" "$(TargetDir)"Plugins\ /C/Y/S

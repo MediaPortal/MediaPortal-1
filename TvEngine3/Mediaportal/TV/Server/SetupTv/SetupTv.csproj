@@ -245,7 +245,7 @@
     <Compile Include="PlaylistSupport\PlayListPLSIO.cs" />
     <Compile Include="PlaylistSupport\PlayListType.cs" />
     <Compile Include="PlaylistSupport\PlayListWPLIO.cs" />
-    <Compile Include="PluginLoader.cs" />
+    <Compile Include="PluginLoaderSetupTv.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Dialogs\FormEditSchedule.resx">
       <DependentUpon>FormEditSchedule.cs</DependentUpon>

@@ -104,7 +104,6 @@
     <Compile Include="EventDispatchers\HeartbeatUser.cs" />
     <Compile Include="EventDispatchers\TvServerEventDispatcher.cs" />
     <Compile Include="Interfaces\ITvCardContext.cs" />
-    <Compile Include="PluginLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scheduler\CardDetail.cs" />
     <Compile Include="Scheduler\RecordingDetail.cs" />
