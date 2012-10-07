@@ -2435,10 +2435,9 @@ namespace Mediaportal.TV.Server.TVLibrary
           {
             int timeshiftingChannelId;
             user = GetUserFromContext(userName, out timeshiftingChannelId, TvUsage.Timeshifting);
-
             if (user == null)
             {
-              user = UserFactory.CreateBasicUser(userName);
+              user = CreateTimeshiftingUserWithPriority(userName);
             }
             
             Log.Write("Controller: UnParkTimeShifting {0}", cardHandler.DataBaseCard.IdCard);
@@ -2788,8 +2787,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     public bool StopRecording(string userName, int idCard, out IUser user)
     {
       user = null;
-      bool stopRecording = false;
-      bool result = stopRecording;
+      bool result = false;
       try
       {
         if (ValidateTvControllerParams(userName))
@@ -3337,7 +3335,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         user = GetUserFromContext(userName, TvUsage.Timeshifting);
         if (user == null)
         {
-          user = UserFactory.CreateBasicUser(userName);
+          user = CreateTimeshiftingUserWithPriority(userName);
         }
         double? parkedDuration;
         bool cardChanged;
@@ -4036,6 +4034,32 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
     }
 
+    // userPriority mainly used for setupTV stress test, as it has the ability to customize user priorities during testing
+    public TvResult StartTimeShifting(string userName, int userPriority, int idChannel, out IVirtualCard card, out IUser user)
+    {
+      card = null;
+      user = null;
+      TvResult result = TvResult.UnknownError;
+      try
+      {
+        bool cardChanged;
+        Dictionary<int, List<IUser>> kickableCards;
+        double? parkedDuration;
+
+        user = GetUserFromContext(userName, TvUsage.Timeshifting);
+        if (user == null)
+        {
+          user = UserFactory.CreateBasicUser(userName, userPriority);
+        }
+        result = StartTimeShifting(ref user, idChannel, null, out card, out kickableCards, false, out cardChanged, out parkedDuration);
+      }
+      catch (Exception e)
+      {
+        HandleControllerException(e);
+      }
+      return result;
+    }
+
     /// <summary>
     /// Start timeshifting on a specific channel
     /// </summary>
@@ -4060,7 +4084,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         user = GetUserFromContext(userName, TvUsage.Timeshifting);
         if (user == null)
         {
-          user = new User { Name = userName };
+          user = CreateTimeshiftingUserWithPriority(userName);
         }
         result = StartTimeShifting(ref user, idChannel, null, out card, out kickableCards, false, out cardChanged, out parkedDuration);        
       }
@@ -4069,6 +4093,12 @@ namespace Mediaportal.TV.Server.TVLibrary
         HandleControllerException(e);
       }      
       return result;
+    }
+
+    private static IUser CreateTimeshiftingUserWithPriority(string userName)
+    {
+      IUser user = UserFactory.CreateBasicUser(userName, UserFactory.GetDefaultPriority(userName));
+      return user;
     }
 
     /// <summary>
@@ -4098,7 +4128,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         user = GetUserFromContext(userName, TvUsage.Timeshifting);
         if (user == null)
         {
-          user = new User { Name = userName };
+          user = CreateTimeshiftingUserWithPriority(userName);
         }
         result = StartTimeShifting(ref user, idChannel, kickCardId, out card, out kickableCards, false, out cardChanged, out parkedDuration);        
       }

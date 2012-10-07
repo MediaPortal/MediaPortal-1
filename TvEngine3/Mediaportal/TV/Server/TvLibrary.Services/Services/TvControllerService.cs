@@ -884,6 +884,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       return Service.StartTimeShifting(userName, idChannel, out card, out user);
     }
 
+    public TvResult StartTimeShifting(string userName, int userPriority, int idChannel, out IVirtualCard card, out IUser user)
+    {
+      return Service.StartTimeShifting(userName, userPriority, idChannel, out card, out user);
+    }
+
     /// <summary>
     /// Stops the time shifting.
     /// </summary>

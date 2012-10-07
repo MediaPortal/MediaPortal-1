@@ -445,7 +445,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       Stopwatch sw = Stopwatch.StartNew();
       UpdateDiscontinuityCounter(user, nextRowIndexForDiscUpdate);
-      result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, channel.IdChannel, out card, out user);
+      if (user.Priority.HasValue)
+      {
+        result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, user.Priority.GetValueOrDefault(), channel.IdChannel, out card, out user); 
+      }
+      else
+      {
+        result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, channel.IdChannel, out card, out user); 
+      }      
       mSecsElapsed = sw.ElapsedMilliseconds;
       _avg += mSecsElapsed;
       return user;

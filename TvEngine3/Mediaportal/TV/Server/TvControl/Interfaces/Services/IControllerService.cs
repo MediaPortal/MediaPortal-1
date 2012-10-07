@@ -766,6 +766,9 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     [OperationContract(Name = "StartTimeShiftingGetCard")]
     TvResult StartTimeShifting(string userName, int idChannel, out IVirtualCard card, out IUser user);
 
+    [OperationContract(Name = "StartTimeShiftingPriorityGetCard")]
+    TvResult StartTimeShifting(string userName, int userPriority, int idChannel, out IVirtualCard card, out IUser user);
+
 
     /// <summary>
     /// Stops the time shifting.

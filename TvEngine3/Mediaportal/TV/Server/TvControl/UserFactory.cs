@@ -125,6 +125,7 @@ namespace Mediaportal.TV.Server.TVControl
     public static IUser CreateSchedulerUser()
     {
       IUser schedulerUser = new User("", UserType.Scheduler);
+      schedulerUser.Priority = _priorityScheduler;
       return schedulerUser;
     }
 

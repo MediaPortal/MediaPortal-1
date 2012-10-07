@@ -266,79 +266,80 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             cardId = Convert.ToInt32(listViewItem.SubItems[0].Tag);
             break; // Keep the first card enabled selected only
           }
-        }
-        IUser user = UserFactory.CreateBasicUser(GetUserName(cardId, id), cardId);        
-        
+        }                   
         IHeartbeatEventCallbackClient handler = new HeartbeatEventCallback();
         ServiceAgents.Instance.EventServiceAgent.RegisterHeartbeatCallbacks(handler);
         ICiMenuEventCallback menuHandler = new CiMenuEventCallback();
         ServiceAgents.Instance.EventServiceAgent.UnRegisterCiMenuCallbacks(menuHandler, false);
-
-
-
-        TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, id, out card, out user);
+        IUser user;
+        TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(GetUserName(cardId, id), id, out card, out user);
         if (result != TvResult.Succeeded)
         {
-          switch (result)
-          {
-            case TvResult.NoPmtFound:
-              MessageBox.Show(this, "No PMT found");
-              break;
-            case TvResult.NoSignalDetected:
-              MessageBox.Show(this, "No signal");
-              break;
-            case TvResult.CardIsDisabled:
-              MessageBox.Show(this, "Card is not enabled");
-              break;
-            case TvResult.AllCardsBusy:
-              MessageBox.Show(this, "All cards are busy");
-              break;
-            case TvResult.ChannelIsScrambled:
-              MessageBox.Show(this, "Channel is scrambled");
-              break;
-            case TvResult.NoVideoAudioDetected:
-              MessageBox.Show(this, "No Video/Audio detected");
-              break;
-            case TvResult.UnableToStartGraph:
-              MessageBox.Show(this, "Unable to create/start graph");
-              break;
-            case TvResult.ChannelNotMappedToAnyCard:
-              MessageBox.Show(this, "Channel is not mapped to any card");
-              break;
-            case TvResult.NoTuningDetails:
-              MessageBox.Show(this, "No tuning information available for this channel");
-              break;
-            case TvResult.UnknownChannel:
-              MessageBox.Show(this, "Unknown channel");
-              break;
-            case TvResult.UnknownError:
-              MessageBox.Show(this, "Unknown error occured");
-              break;
-            case TvResult.ConnectionToSlaveFailed:
-              MessageBox.Show(this, "Cannot connect to slave server");
-              break;
-            case TvResult.NotTheOwner:
-              MessageBox.Show(this, "Failed since card is in use and we are not the owner");
-              break;
-            case TvResult.GraphBuildingFailed:
-              MessageBox.Show(this, "Unable to create graph");
-              break;
-            case TvResult.SWEncoderMissing:
-              MessageBox.Show(this, "No suppported software encoder installed");
-              break;
-            case TvResult.NoFreeDiskSpace:
-              MessageBox.Show(this, "No free disk space");
-              break;
-            case TvResult.TuneCancelled:
-              MessageBox.Show(this, "Tune cancelled");
-              break;
-          }
+          HandleTvResult(result);
         }
         else
         {
           mpButtonRec.Enabled = true;
           //mpButtonPark.Enabled = true;
         }
+      }
+    }
+
+    private void HandleTvResult(TvResult result)
+    {
+      switch (result)
+      {
+        case TvResult.NoPmtFound:
+          MessageBox.Show(this, "No PMT found");
+          break;
+        case TvResult.NoSignalDetected:
+          MessageBox.Show(this, "No signal");
+          break;
+        case TvResult.CardIsDisabled:
+          MessageBox.Show(this, "Card is not enabled");
+          break;
+        case TvResult.AllCardsBusy:
+          MessageBox.Show(this, "All cards are busy");
+          break;
+        case TvResult.ChannelIsScrambled:
+          MessageBox.Show(this, "Channel is scrambled");
+          break;
+        case TvResult.NoVideoAudioDetected:
+          MessageBox.Show(this, "No Video/Audio detected");
+          break;
+        case TvResult.UnableToStartGraph:
+          MessageBox.Show(this, "Unable to create/start graph");
+          break;
+        case TvResult.ChannelNotMappedToAnyCard:
+          MessageBox.Show(this, "Channel is not mapped to any card");
+          break;
+        case TvResult.NoTuningDetails:
+          MessageBox.Show(this, "No tuning information available for this channel");
+          break;
+        case TvResult.UnknownChannel:
+          MessageBox.Show(this, "Unknown channel");
+          break;
+        case TvResult.UnknownError:
+          MessageBox.Show(this, "Unknown error occured");
+          break;
+        case TvResult.ConnectionToSlaveFailed:
+          MessageBox.Show(this, "Cannot connect to slave server");
+          break;
+        case TvResult.NotTheOwner:
+          MessageBox.Show(this, "Failed since card is in use and we are not the owner");
+          break;
+        case TvResult.GraphBuildingFailed:
+          MessageBox.Show(this, "Unable to create graph");
+          break;
+        case TvResult.SWEncoderMissing:
+          MessageBox.Show(this, "No suppported software encoder installed");
+          break;
+        case TvResult.NoFreeDiskSpace:
+          MessageBox.Show(this, "No free disk space");
+          break;
+        case TvResult.TuneCancelled:
+          MessageBox.Show(this, "Tune cancelled");
+          break;
       }
     }
 
@@ -350,11 +351,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private string GetUserName(int cardId, int id)
     {
-      var userName = "setuptv-" + id + "-" + cardId;
-      if (txtUsername.Text.Length > 0)
+      string userName;
+      if (txtUsername.Text.Length > 0 && mpCheckBoxAdvMode.Checked)
       {
         userName = txtUsername.Text;
-      }      
+      }
+      else
+      {
+        userName = "setuptv-" + id + "-" + cardId;
+      }
       return userName;
     }
 
@@ -796,9 +801,24 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       string channel = mpComboBoxChannels.SelectedItem.ToString();
       int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
 
-      IUser user = new User(txtUsername.Text, UserType.Normal);
+
+      
       IVirtualCard card;
-      TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, id, out card, out user);
+
+      int prio;
+      bool parsed = int.TryParse(txtPrio.Text, out prio);
+      TvResult result;
+      IUser user;
+      if (parsed)
+      {
+        result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(txtUsername.Text, prio, id, out card, out user);
+      }
+      else
+      {
+        result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(txtUsername.Text, id, out card, out user);
+      }
+      
+      HandleTvResult(result);
     }
 
     private void mpButtonAdvStopTimeshift_Click(object sender, EventArgs e)
@@ -806,10 +826,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (!ServiceHelper.IsAvailable) return;
       if (mpComboBoxChannels.SelectedItem == null) return;
       string channel = mpComboBoxChannels.SelectedItem.ToString();
-      int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
-
-      IUser user = new User(txtUsername.Text, UserType.Normal);
-      bool result = ServiceAgents.Instance.ControllerServiceAgent.StopTimeShifting(user.Name, out user);
+      IUser user;
+      bool result = ServiceAgents.Instance.ControllerServiceAgent.StopTimeShifting(txtUsername.Text, out user);
     }
 
     private void mpCheckBoxAdvMode_CheckedChanged(object sender, EventArgs e)
