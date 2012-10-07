@@ -18,10 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#include <windows.h>
-#include <bdatypes.h>
 #include "BatParser.h"
-
 
 extern void LogDebug(const char *fmt, ...) ;
 extern bool DisableCRCCheck();
@@ -40,4 +37,19 @@ CBatParser::CBatParser(void)
 
 CBatParser::~CBatParser(void)
 {
+}
+
+void CBatParser::GetBouquetIds(int originalNetworkId, int transportStreamId, int serviceId, vector<int>* bouquetIds)
+{
+  GetNetworkIds(originalNetworkId, transportStreamId, serviceId, bouquetIds);
+}
+
+int CBatParser::GetBouquetNameCount(int bouquetId)
+{
+  return GetNetworkNameCount(bouquetId);
+}
+
+void CBatParser::GetBouquetName(int bouquetId, int index, unsigned int* language, char** name)
+{
+  GetNetworkName(bouquetId, index, language, name);
 }

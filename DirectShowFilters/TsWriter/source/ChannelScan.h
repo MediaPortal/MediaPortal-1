@@ -18,6 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#include <Windows.h>
 #include <map>
 #include <vector>
 #include "criticalsection.h"
@@ -61,35 +62,62 @@ DECLARE_INTERFACE_(ITsChannelScan, IUnknown)
   STDMETHOD(StopStreamScan)(THIS_)PURE;
   STDMETHOD(GetServiceCount)(THIS_ int* serviceCount)PURE;
   STDMETHOD(GetServiceDetail)(THIS_ int index,
-                         long* networkId,
-                         long* transportStreamId,
-                         long* serviceId,
-                         char** serviceName,
-                         char** providerName,
-                         char** networkNames,
-                         char** bouquetNames,
-                         char** logicalChannelNumber,
-                         int* serviceType,
-                         int* hasVideo,
-                         int* hasAudio,
-                         int* isEncrypted,
-                         int* pmtPid)PURE;
+                               int* originalNetworkId,
+                               int* transportStreamId,
+                               int* serviceId,
+                               char** serviceName,
+                               char** providerName,
+                               char** logicalChannelNumber,
+                               int* serviceType,
+                               int* hasVideo,
+                               int* hasAudio,
+                               bool* isHighDefinition,
+                               int* isEncrypted,
+                               int* isRunning,
+                               int* pmtPid,
+                               int* previousOriginalNetworkId,
+                               int* previousTransportStreamId,
+                               int* previousServiceId,
+                               int* networkIdCount,
+                               byte** networkIds,
+                               int* bouquetIdCount,
+                               byte** bouquetIds,
+                               int* languageCount,
+                               byte** languages,
+                               int* availableInCellCount,
+                               byte** availableInCells,
+                               int* unavailableInCellCount,
+                               byte** unavailableInCells,
+                               int* targetRegionCount,
+                               byte** targetRegions,
+                               int* availableInCountryCount,
+                               byte** availableInCountries,
+                               int* unavailableInCountryCount,
+                               byte** unavailableInCountries)PURE;
 
   // NIT scanning
   STDMETHOD(ScanNetwork)(THIS_)PURE;
   STDMETHOD(StopNetworkScan)(THIS_ bool* isOtherMuxServiceInfoAvailable)PURE;
   STDMETHOD(GetMultiplexCount)(THIS_ int* multiplexCount)PURE;
   STDMETHOD(GetMultiplexDetail)(THIS_ int index,
-                            int* networkId,
-                            int* transportStreamId,
-                            int* type,
-                            int* frequency,
-                            int *polarisation,
-                            int* modulation,
-                            int* symbolRate,
-                            int* bandwidth,
-                            int* innerFecRate,
-                            int* rollOff)PURE;
+                                int* originalNetworkId,
+                                int* transportStreamId,
+                                int* type,
+                                int* frequency,
+                                int* polarisation,
+                                int* modulation,
+                                int* symbolRate,
+                                int* bandwidth,
+                                int* innerFecRate,
+                                int* rollOff,
+                                int* longitude,
+                                int* cellId,
+                                int* cellIdExtension,
+                                int* plpId)PURE;
+
+  STDMETHOD(GetTargetRegionName)(THIS_ __int64 targetRegionId, char** name);
+  STDMETHOD(GetBouquetName)(THIS_ int bouquetId, char** name);
+  STDMETHOD(GetNetworkName)(THIS_ int networkId, char** name);
 };
 
 class CMpTsFilter;
@@ -108,35 +136,62 @@ class CChannelScan : public CUnknown, public ITsChannelScan, IPatCallBack, IPmtC
     STDMETHODIMP StopStreamScan();
     STDMETHODIMP GetServiceCount(int* serviceCount);
     STDMETHODIMP GetServiceDetail(int index,
-                             long* networkId,
-                             long* transportStreamId,
-                             long* serviceId,
-                             char** serviceName,
-                             char** providerName,
-                             char** networkNames,
-                             char** bouquetNames,
-                             char** logicalChannelNumber,
-                             int* serviceType,
-                             int* hasVideo,
-                             int* hasAudio,
-                             int* isEncrypted,
-                             int* pmtPid);
+                                  int* originalNetworkId,
+                                  int* transportStreamId,
+                                  int* serviceId,
+                                  char** serviceName,
+                                  char** providerName,
+                                  char** logicalChannelNumber,
+                                  int* serviceType,
+                                  int* hasVideo,
+                                  int* hasAudio,
+                                  bool* isHighDefinition,
+                                  int* isEncrypted,
+                                  int* isRunning,
+                                  int* pmtPid,
+                                  int* previousOriginalNetworkId,
+                                  int* previousTransportStreamId,
+                                  int* previousServiceId,
+                                  int* networkIdCount,
+                                  byte** networkIds,
+                                  int* bouquetIdCount,
+                                  byte** bouquetIds,
+                                  int* languageCount,
+                                  byte** languages,
+                                  int* availableInCellCount,
+                                  byte** availableInCells,
+                                  int* unavailableInCellCount,
+                                  byte** unavailableInCells,
+                                  int* targetRegionCount,
+                                  byte** targetRegions,
+                                  int* availableInCountryCount,
+                                  byte** availableInCountries,
+                                  int* unavailableInCountryCount,
+                                  byte** unavailableInCountries);
 
 
     STDMETHODIMP ScanNetwork();
     STDMETHODIMP StopNetworkScan(bool* isOtherMuxServiceInfoAvailable);
     STDMETHODIMP GetMultiplexCount(int* multiplexCount);
     STDMETHODIMP GetMultiplexDetail(int index,
-                                int* networkId,
-                                int* transportStreamId,
-                                int* type,
-                                int* frequency,
-                                int* polarisation,
-                                int* modulation,
-                                int* symbolRate,
-                                int* bandwidth,
-                                int* innerFecRate,
-                                int* rollOff);
+                                    int* originalNetworkId,
+                                    int* transportStreamId,
+                                    int* type,
+                                    int* frequency,
+                                    int* polarisation,
+                                    int* modulation,
+                                    int* symbolRate,
+                                    int* bandwidth,
+                                    int* innerFecRate,
+                                    int* rollOff,
+                                    int* longitude,
+                                    int* cellId,
+                                    int* cellIdExtension,
+                                    int* plpId);
+
+    STDMETHODIMP GetTargetRegionName(__int64 targetRegionId, char** name);
+    STDMETHODIMP GetBouquetName(int bouquetId, char** name);
+    STDMETHODIMP GetNetworkName(int networkId, char** name);
 
     void OnTsPacket(byte* tsPacket);
     void OnPatReceived(int serviceId, int pmtPid);
@@ -147,7 +202,6 @@ class CChannelScan : public CUnknown, public ITsChannelScan, IPatCallBack, IPmtC
 
   private:
     void CleanUp();
-    void ConcatNames(vector<char*>* names, char* destination, int maxLength, int* length);
 
     CMpTsFilter* m_pFilter;
     CCriticalSection m_section;
@@ -158,7 +212,6 @@ class CChannelScan : public CUnknown, public ITsChannelScan, IPatCallBack, IPmtC
     bool m_bIsOtherMuxServiceInfoSeen;
 
     map<int, CChannelInfo*> m_mServices;
-    vector<NitMultiplexDetail*> m_vMultiplexes;
 
     CPatParser m_patParser;
     vector<CPmtParser*> m_vPmtParsers;

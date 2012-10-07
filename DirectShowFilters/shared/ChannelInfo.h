@@ -19,8 +19,8 @@
  *
  */
 #pragma once
-#define CHANNEL_INFO_MAX_STRING_LENGTH 4095
-#define DESCRIPTOR_MAX_STRING_LENGTH 255
+#include <vector>
+using namespace std;
 
 class CChannelInfo
 {
@@ -31,23 +31,36 @@ class CChannelInfo
     CChannelInfo& operator = (const CChannelInfo &info);
     void Copy(const CChannelInfo &info);
     void Reset();
+    void ClearStrings();
 
-    int NetworkId;
+    int OriginalNetworkId;
     int TransportStreamId;
     int ServiceId;
-    char ServiceName[CHANNEL_INFO_MAX_STRING_LENGTH + 1];
-    char ProviderName[CHANNEL_INFO_MAX_STRING_LENGTH + 1];
-    char NetworkNames[CHANNEL_INFO_MAX_STRING_LENGTH + 1];
-    char LogicalChannelNumber[CHANNEL_INFO_MAX_STRING_LENGTH + 1];
+    char* ServiceName;
+    char* ProviderName;
+    char* LogicalChannelNumber;
     int ServiceType;
     int HasVideo;
     int HasAudio;
+    bool IsHighDefinition;
     bool IsEncrypted;
     bool IsRunning;
     bool IsOtherMux;
     int PmtPid;
+    int PreviousOriginalNetworkId;
+    int PreviousTransportStreamId;
+    int PreviousServiceId;
+
+    vector<int> NetworkIds;
+    vector<int> BouquetIds;
+    vector<unsigned int> Languages;                 // 3 x 1 byte characters with a NULL byte on the end
+    vector<int> AvailableInCells;
+    vector<int> UnavailableInCells;
+    vector<__int64> TargetRegions;
+    vector<unsigned int> AvailableInCountries;      // 3 x 1 byte characters with a NULL byte on the end
+    vector<unsigned int> UnavailableInCountries;    // 3 x 1 byte characters with a NULL byte on the end
+
     bool IsPmtReceived;
     bool IsServiceInfoReceived;
     bool IsPidReceived;
-    int PatVersion;
 };

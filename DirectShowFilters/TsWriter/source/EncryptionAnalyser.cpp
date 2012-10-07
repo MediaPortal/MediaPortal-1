@@ -29,7 +29,7 @@
 extern void LogDebug(const char *fmt, ...) ;
 
 CEncryptionAnalyser::CEncryptionAnalyser(LPUNKNOWN pUnk, HRESULT *phr) 
-  : CUnknown( NAME ("MpTsEncryptionAnalyser"), pUnk)
+  : CUnknown(NAME("MpTsEncryptionAnalyser"), pUnk)
 {
   m_mPids.clear();
   m_pCallBack = NULL;
@@ -168,9 +168,9 @@ void CEncryptionAnalyser::OnTsPacket(byte* tsPacket)
       return;
     }
 
-    // Does the packet look okay?
+    // Does the packet look okay, and does it contain payload?
     m_tsHeader.Decode(tsPacket);
-    if (m_tsHeader.SyncByte != TS_PACKET_SYNC || m_tsHeader.TransportError)
+    if (m_tsHeader.SyncByte != TS_PACKET_SYNC || m_tsHeader.TransportError || m_tsHeader.AdaptionFieldOnly())
     {
       return;
     }

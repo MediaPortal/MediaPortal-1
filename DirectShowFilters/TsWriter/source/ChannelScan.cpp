@@ -23,6 +23,7 @@
 #include <commdlg.h>
 #include <bdatypes.h>
 #include <streams.h>
+#include <algorithm>
 
 #include "ChannelScan.h"
 #include "..\..\shared\ChannelInfo.h"
@@ -31,7 +32,7 @@
 extern void LogDebug(const char *fmt, ...) ;
 
 CChannelScan::CChannelScan(LPUNKNOWN pUnk, HRESULT *phr, CMpTsFilter* filter) 
-  : CUnknown( NAME ("MpTsChannelScan"), pUnk)
+  : CUnknown(NAME("MpTsChannelScan"), pUnk)
 {
   m_bIsScanning = false;
   m_bIsScanningNetwork = false;
@@ -57,21 +58,12 @@ void CChannelScan::CleanUp()
   while (serviceIt != m_mServices.end())
   {
     CChannelInfo* info = serviceIt->second;
+    // The CChannelInfo destructor takes care of the char* members.
     delete info;
     info = NULL;
     serviceIt++;
   }
   m_mServices.clear();
-
-  /*vector<NitMultiplexDetail*>::iterator muxIt = m_vMultiplexes.begin();
-  while (muxIt != m_vMultiplexes.end())
-  {
-    NitMultiplexDetail* mux = *muxIt;
-    delete mux;
-    mux = NULL;
-    muxIt++;
-  }
-  m_vMultiplexes.clear();*/
 
   vector<CPmtParser*>::iterator pmtIt = m_vPmtParsers.begin();
   while (pmtIt != m_vPmtParsers.end())
@@ -82,33 +74,6 @@ void CChannelScan::CleanUp()
     pmtIt++;
   }
   m_vPmtParsers.clear();
-}
-
-void CChannelScan::ConcatNames(vector<char*>* names, char* destination, int maxLength, int* length)
-{
-  *length = 0;
-  if (names == NULL || names->size() == 0 || maxLength < 5)
-  {
-    return;
-  }
-
-  unsigned int i = 0;
-  while (i < names->size())
-  {
-    int stringLength = strlen((*names)[i]);
-    if (*length + stringLength + 2 >= maxLength)  // + 2 for the ",," separator; maxLength already takes the NULL terminator byte into account
-    {
-      continue;
-    }
-    if (*length != 0)
-    {
-      strcat(destination, ",,");
-      *length += 2;
-    }
-    strcat(destination, (*names)[i]);
-    *length += stringLength;
-    i++;
-  }
 }
 
 STDMETHODIMP CChannelScan::SetCallBack(IChannelScanCallBack* callBack)
@@ -186,25 +151,39 @@ STDMETHODIMP CChannelScan::GetServiceCount(int* serviceCount)
 }
 
 STDMETHODIMP CChannelScan::GetServiceDetail(int index,
-                                       long* networkId,
-                                       long* transportStreamId,
-                                       long* serviceId,
-                                       char** serviceName,
-                                       char** providerName,
-                                       char** networkNames,
-                                       char** bouquetNames,
-                                       char** logicalChannelNumber,
-                                       int* serviceType,
-                                       int* hasVideo,
-                                       int* hasAudio,
-                                       int* isEncrypted,
-                                       int* pmtPid)
+                                            int* originalNetworkId,
+                                            int* transportStreamId,
+                                            int* serviceId,
+                                            char** serviceName,
+                                            char** providerName,
+                                            char** logicalChannelNumber,
+                                            int* serviceType,
+                                            int* hasVideo,
+                                            int* hasAudio,
+                                            bool* isHighDefinition,
+                                            int* isEncrypted,
+                                            int* isRunning,
+                                            int* pmtPid,
+                                            int* previousOriginalNetworkId,
+                                            int* previousTransportStreamId,
+                                            int* previousServiceId,
+                                            int* networkIdCount,
+                                            byte** networkIds,
+                                            int* bouquetIdCount,
+                                            byte** bouquetIds,
+                                            int* languageCount,
+                                            byte** languages,
+                                            int* availableInCellCount,
+                                            byte** availableInCells,
+                                            int* unavailableInCellCount,
+                                            byte** unavailableInCells,
+                                            int* targetRegionCount,
+                                            byte** targetRegions,
+                                            int* availableInCountryCount,
+                                            byte** availableInCountries,
+                                            int* unavailableInCountryCount,
+                                            byte** unavailableInCountries)
 {
-  static char sServiceName[CHANNEL_INFO_MAX_STRING_LENGTH + 1];
-  static char sProviderName[CHANNEL_INFO_MAX_STRING_LENGTH + 1];
-  static char sNetworkNames[CHANNEL_INFO_MAX_STRING_LENGTH + 1];
-  static char sBouquetNames[CHANNEL_INFO_MAX_STRING_LENGTH + 1];
-  static char sLogicalChannelNumber[CHANNEL_INFO_MAX_STRING_LENGTH + 1];
   CEnterCriticalSection enter(m_section);
   try
   {
@@ -223,86 +202,141 @@ STDMETHODIMP CChannelScan::GetServiceDetail(int index,
     }
 
     CChannelInfo* info = it->second;
-    *networkId = info->NetworkId;
+    *originalNetworkId = info->OriginalNetworkId;
     *transportStreamId = info->TransportStreamId;
     *serviceId = info->ServiceId;
-    strcpy(sServiceName, info->ServiceName);
-    *serviceName = sServiceName;
-    strcpy(sProviderName, info->ProviderName);
-    *providerName = sProviderName;
+    *serviceName = info->ServiceName;
+    *providerName = info->ProviderName;
 
-    strcpy(sNetworkNames, "");
-    strcpy(sBouquetNames, "");
-    if (m_broadcastStandard == Atsc || m_broadcastStandard == Scte)
+    if (m_broadcastStandard == Dvb)
     {
-      strcpy(sLogicalChannelNumber, info->LogicalChannelNumber);
-    }
-    else
-    {
-      // Concatenate available network names for this service.
-      int maxLength = CHANNEL_INFO_MAX_STRING_LENGTH - 1;   // -1 for the NULL termination
-      int stringLength = 0;
-      sNetworkNames[0] = 0; // Start with a zero-length string.
-      vector<char*>* names = m_nitParser.GetGroupNames(info->NetworkId, info->TransportStreamId, info->ServiceId);
-      ConcatNames(names, (char*)&sNetworkNames, maxLength, &stringLength);
-      maxLength -= stringLength;
-
-      // Do we have any other network names that apply to all services, and do we have spare buffer space to hold them?
-      names = m_nitParser.GetGroupNames(info->NetworkId, info->TransportStreamId, 0);
-      if (names != NULL && names->size() > 0 && maxLength > 2)
-      {
-        if (stringLength != 0)
-        {
-          strcat((char*)&sNetworkNames, ",,");
-          stringLength += 2;
-        }
-        ConcatNames(names, (char*)&sNetworkNames, maxLength, &stringLength);
-      }
-
-      // Concatenate available bouquet names for this service.
-      maxLength = CHANNEL_INFO_MAX_STRING_LENGTH - 1;   // -1 for the NULL termination
-      stringLength = 0;
-      sBouquetNames[0] = 0; // Start with a zero-length string.
-      names = m_batParser.GetGroupNames(info->NetworkId, info->TransportStreamId, info->ServiceId);
-      ConcatNames(names, (char*)&sBouquetNames, maxLength, &stringLength);
-      maxLength -= stringLength;
-
-      // Do we have any other bouquet names that apply to all services, and do we have spare buffer space to hold them?
-      names = m_batParser.GetGroupNames(info->NetworkId, info->TransportStreamId, 0);
-      if (names != NULL && names->size() > 0 && maxLength > 2)
-      {
-        if (stringLength != 0)
-        {
-          strcat((char*)&sBouquetNames, ",,");
-          stringLength += 2;
-        }
-        ConcatNames(names, (char*)&sBouquetNames, maxLength, &stringLength);
-      }
-
-      int tempLcn = m_nitParser.GetLogicialChannelNumber(info->NetworkId, info->TransportStreamId, info->ServiceId);
+      int tempLcn = m_nitParser.GetLogicialChannelNumber(info->OriginalNetworkId, info->TransportStreamId, info->ServiceId);
       if (tempLcn <= 0 || tempLcn == 10000)
       {
-        tempLcn = m_batParser.GetLogicialChannelNumber(info->NetworkId, info->TransportStreamId, info->ServiceId);
+        tempLcn = m_batParser.GetLogicialChannelNumber(info->OriginalNetworkId, info->TransportStreamId, info->ServiceId);
       }
-      sprintf(sLogicalChannelNumber, "%d", tempLcn);
+      info->LogicalChannelNumber = new char[10];
+      if (info->LogicalChannelNumber != NULL)
+      {
+        if (tempLcn == 0)
+        {
+          strcpy(info->LogicalChannelNumber, "");
+        }
+        else
+        {
+          sprintf(info->LogicalChannelNumber, "%d", tempLcn);
+        }
+      }
     }
+    *logicalChannelNumber = info->LogicalChannelNumber;
 
-    *networkNames = sNetworkNames;
-    *bouquetNames = sBouquetNames;
-    *logicalChannelNumber = sLogicalChannelNumber;
     *serviceType = info->ServiceType;
     *hasVideo = info->HasVideo;
     *hasAudio = info->HasAudio;
-    *isEncrypted = info->IsEncrypted ? 1 : 0;
+    *isHighDefinition = info->IsHighDefinition;
+    *isEncrypted = info->IsEncrypted;
+    *isRunning = info->IsRunning;
     *pmtPid = info->PmtPid;
+    *previousOriginalNetworkId = info->PreviousOriginalNetworkId;
+    *previousTransportStreamId = info->PreviousTransportStreamId;
+    *previousServiceId = info->ServiceId;
+
+    // Make the language list distinct.
+    map<unsigned int, bool> tempLangs;
+    vector<unsigned int>::iterator langIt = (info->Languages).begin();
+    while (langIt != (info->Languages).end())
+    {
+      tempLangs[*langIt] = true;
+      langIt++;
+    }
+    (info->Languages).clear();
+    map<unsigned int, bool>::iterator langIt2 = tempLangs.begin();
+    while (langIt2 != tempLangs.end())
+    {
+      (info->Languages).push_back(langIt2->first);
+      langIt2++;
+    }
+
+    if (m_broadcastStandard == Dvb)
+    {
+      // Add network and bouquet IDs from the NIT and BAT.
+      m_nitParser.GetNetworkIds(info->OriginalNetworkId, info->TransportStreamId, info->ServiceId, &(info->NetworkIds));
+      m_batParser.GetBouquetIds(info->OriginalNetworkId, info->TransportStreamId, info->ServiceId, &(info->BouquetIds));
+
+      // Add available-in-cell information from the NIT.
+      vector<int> nitAvailableInCells;
+      m_nitParser.GetAvailableInCells(info->OriginalNetworkId, info->TransportStreamId, info->ServiceId, &nitAvailableInCells);
+      vector<int>::iterator cellIt = nitAvailableInCells.begin();
+      while (cellIt != nitAvailableInCells.end())
+      {
+        if (find((info->AvailableInCells).begin(), (info->AvailableInCells).end(), *cellIt) == (info->AvailableInCells).end())
+        {
+          (info->AvailableInCells).push_back(*cellIt);
+        }
+        cellIt++;
+      }
+
+      // The target region information is scoped. Currently the channel info only contains information from the SDT.
+      // If there is no information from the SDT, try the BAT; if there is no information from the BAT, try the NIT.
+      if (info->TargetRegions.size() == 0)
+      {
+        m_batParser.GetTargetRegionIds(info->OriginalNetworkId, info->TransportStreamId, info->ServiceId, &(info->TargetRegions));
+        if (info->TargetRegions.size() == 0)
+        {
+          m_nitParser.GetTargetRegionIds(info->OriginalNetworkId, info->TransportStreamId, info->ServiceId, &(info->TargetRegions));
+        }
+      }
+
+      // Add country availability from the BAT.
+      vector<unsigned int> batCountries;
+      m_batParser.GetAvailableInCountries(info->OriginalNetworkId, info->TransportStreamId, info->ServiceId, &batCountries);
+      vector<unsigned int>::iterator countryIt = batCountries.begin();
+      while (countryIt != batCountries.end())
+      {
+        if (find((info->AvailableInCountries).begin(), (info->AvailableInCountries).end(), *countryIt) == (info->AvailableInCountries).end())
+        {
+          (info->AvailableInCountries).push_back(*countryIt);
+        }
+        countryIt++;
+      }
+      m_batParser.GetUnavailableInCountries(info->OriginalNetworkId, info->TransportStreamId, info->ServiceId, &batCountries);
+      countryIt = batCountries.begin();
+      while (countryIt != batCountries.end())
+      {
+        if (find((info->UnavailableInCountries).begin(), (info->UnavailableInCountries).end(), *countryIt) == (info->UnavailableInCountries).end())
+        {
+          (info->UnavailableInCountries).push_back(*countryIt);
+        }
+        countryIt++;
+      }
+    }
+
+    *networkIdCount = (info->NetworkIds).size();
+    *networkIds = (byte*)&(info->NetworkIds);
+    *bouquetIdCount = (info->BouquetIds).size();
+    *bouquetIds = (byte*)&(info->BouquetIds);
+    *availableInCellCount = (info->AvailableInCells).size();
+    *availableInCells = (byte*)&(info->AvailableInCells);
+    *unavailableInCellCount = (info->UnavailableInCells).size();
+    *unavailableInCells = (byte*)&(info->UnavailableInCells);
+    *targetRegionCount = (info->TargetRegions).size();
+    *targetRegions = (byte*)&(info->TargetRegions);
+    *availableInCountryCount = (info->AvailableInCountries).size();
+    *availableInCountries = (byte*)&(info->AvailableInCountries);
+    *unavailableInCountryCount = (info->UnavailableInCountries).size();
+    *unavailableInCountries = (byte*)&(info->UnavailableInCountries);
+
     LogDebug("%4d) %-25s provider = %-15s, ONID = 0x%-4x, TSID = 0x%-4x, SID = 0x%-4x, LCN = %-7s",
-            originalIndex, sServiceName, sProviderName, info->NetworkId, info->TransportStreamId, info->ServiceId, sLogicalChannelNumber);
-    LogDebug("       type = %-3d, has video = %1d, has audio = %1d, is encrypted = %1d, is running = %1d, is other mux = %1d",
-            info->ServiceType, info->HasVideo, info->HasAudio, info->IsEncrypted, info->IsRunning, info->IsOtherMux);
+            originalIndex, info->ServiceName, info->ProviderName, info->OriginalNetworkId, info->TransportStreamId, info->ServiceId, info->LogicalChannelNumber);
+    LogDebug("       type = %-3d, has video = %1d, has audio = %1d, is high definition = %1d, is encrypted = %1d, is running = %1d, is other mux = %1d",
+            info->ServiceType, info->HasVideo, info->HasAudio, info->IsHighDefinition, info->IsEncrypted, info->IsRunning, info->IsOtherMux);
     LogDebug("       is PMT received = %1d, is SDT/VCT received = %1d, is PID received = %1d",
             info->IsPmtReceived, info->IsServiceInfoReceived, info->IsPidReceived);
-    LogDebug("       network name(s) = %s", sNetworkNames);
-    LogDebug("       bouquet name(s) = %s", sBouquetNames);
+    if (info->PreviousServiceId != 0)
+    {
+      LogDebug("***[Moved from SID 0x%4x, TSID 0x%4x, ONID 0x%4x]***",
+              info->PreviousServiceId, info->PreviousTransportStreamId, info->PreviousOriginalNetworkId);
+    }
   }
   catch (...)
   {
@@ -319,7 +353,6 @@ STDMETHODIMP CChannelScan::ScanNetwork()
   {
     CleanUp();
     m_mPids.clear();
-    m_vMultiplexes.clear();
 
     LogDebug("ChannelScan: start scanning network");
     m_bIsScanning = true;
@@ -358,77 +391,6 @@ STDMETHODIMP CChannelScan::StopNetworkScan(bool* isOtherMuxServiceInfoAvailable)
     m_vctParser.SetCallBack(NULL);
 
     *isOtherMuxServiceInfoAvailable = m_bIsOtherMuxServiceInfoSeen;
-
-    // Merge the results from the NIT and BAT scanner. The NIT and BAT result sets are distinct
-    // within themselves so we only need to check whether items in the second set are already
-    // present in the first set.
-    int nitMuxCount = m_nitParser.GetMultiplexCount();
-    for (int i = 0; i < nitMuxCount; i++)
-    {
-      NitMultiplexDetail* mux = m_nitParser.GetMultiplexDetail(i);
-      if (mux != NULL)
-      {
-        m_vMultiplexes.push_back(mux);
-      }
-    }
-    int batMuxCount = m_batParser.GetMultiplexCount();
-    for (int i = 0; i < batMuxCount; i++)
-    {
-      bool alreadyAdded = false;
-      NitMultiplexDetail* mux = m_batParser.GetMultiplexDetail(i);
-      NitCableMultiplexDetail* cableMux = dynamic_cast<NitCableMultiplexDetail*>(mux);
-      if (cableMux != NULL)
-      {
-        for (int j = 0; j < nitMuxCount; j++)
-        {
-          if (cableMux->Equals(m_vMultiplexes[j]))
-          {
-            alreadyAdded = true;
-            break;
-          }
-        }
-      }
-      else
-      {
-        NitSatelliteMultiplexDetail* satelliteMux = dynamic_cast<NitSatelliteMultiplexDetail*>(mux);
-        if (satelliteMux != NULL)
-        {
-          for (int j = 0; j < nitMuxCount; j++)
-          {
-            if (satelliteMux->Equals(m_vMultiplexes[j]))
-            {
-              alreadyAdded = true;
-              break;
-            }
-          }
-        }
-        else
-        {
-          NitTerrestrialMultiplexDetail* terrestrialMux = dynamic_cast<NitTerrestrialMultiplexDetail*>(mux);
-          if (terrestrialMux != NULL)
-          {
-            for (int j = 0; j < nitMuxCount; j++)
-            {
-              if (terrestrialMux->Equals(m_vMultiplexes[j]))
-              {
-                alreadyAdded = true;
-                break;
-              }
-            }
-          }
-          else
-          {
-            LogDebug("ChannelScan: unhandled multiplex type in StopNetworkScan()");
-            alreadyAdded = true;
-          }
-        }
-      }
-
-      if (!alreadyAdded)
-      {
-        m_vMultiplexes.push_back(mux);
-      }
-    }
   }
   catch (...)
   {
@@ -443,7 +405,7 @@ STDMETHODIMP CChannelScan::GetMultiplexCount(int* multiplexCount)
   CEnterCriticalSection enter(m_section);
   try
   {
-    *multiplexCount = (int)m_vMultiplexes.size();
+    *multiplexCount = m_nitParser.GetMultiplexCount();
   }
   catch (...)
   {
@@ -455,33 +417,38 @@ STDMETHODIMP CChannelScan::GetMultiplexCount(int* multiplexCount)
 }
 
 STDMETHODIMP CChannelScan::GetMultiplexDetail(int index,
-                                          int* networkId,
-                                          int* transportStreamId,
-                                          int* type,
-                                          int* frequency,
-                                          int *polarisation,
-                                          int* modulation,
-                                          int* symbolRate,
-                                          int* bandwidth,
-                                          int* innerFecRate,
-                                          int* rollOff)
+                                              int* networkId,
+                                              int* transportStreamId,
+                                              int* type,
+                                              int* frequency,
+                                              int *polarisation,
+                                              int* modulation,
+                                              int* symbolRate,
+                                              int* bandwidth,
+                                              int* innerFecRate,
+                                              int* rollOff,
+                                              int* longitude,
+                                              int* cellId,
+                                              int* cellIdExtension,
+                                              int* plpId)
 {
   CEnterCriticalSection enter(m_section);
   try
   {
-    if (index < 0 || index >= (int)m_vMultiplexes.size())
+    int multiplexCount = m_nitParser.GetMultiplexCount();
+    if (index < 0 || index >= multiplexCount)
     {
-      LogDebug("ChannelScan: attempted to retrieve multiplex details with invalid index %d, multiplex count = %d", index, m_vMultiplexes.size());
+      LogDebug("ChannelScan: attempted to retrieve multiplex details with invalid index %d, multiplex count = %d", index, multiplexCount);
       return S_FALSE;
     }
-    NitMultiplexDetail* mux = m_vMultiplexes[index];
+    NitMultiplexDetail* mux = m_nitParser.GetMultiplexDetail(index);
     if (mux == NULL)
     {
-      LogDebug("ChannelScan: multiplex is NULL, index = %d, multiplex count = %d", index, m_vMultiplexes.size());
+      LogDebug("ChannelScan: multiplex is NULL, index = %d, multiplex count = %d", index, multiplexCount);
       return S_FALSE;
     }
 
-    *networkId = mux->NetworkId;
+    *networkId = mux->OriginalNetworkId;
     *transportStreamId = mux->TransportStreamId;
 
     NitCableMultiplexDetail* cableMux = dynamic_cast<NitCableMultiplexDetail*>(mux);
@@ -496,6 +463,10 @@ STDMETHODIMP CChannelScan::GetMultiplexDetail(int index,
       *polarisation = BDA_POLARISATION_NOT_SET;
       *bandwidth = 0;
       *rollOff = BDA_ROLL_OFF_NOT_SET;
+      *longitude = 0;
+      *cellId = 0;
+      *cellIdExtension = 0;
+      *plpId = 0;
       return S_OK;
     }
 
@@ -508,9 +479,13 @@ STDMETHODIMP CChannelScan::GetMultiplexDetail(int index,
       *symbolRate = satelliteMux->SymbolRate;
       *innerFecRate = satelliteMux->InnerFecRate;
       *rollOff = satelliteMux->RollOff;
+      *longitude = ((satelliteMux->WestEastFlag == 1 ? 1 : -1) * satelliteMux->OrbitalPosition);
+      *plpId = satelliteMux->InputStreamIdentifier;
       *type = 3;  // This is as-per the TV Server database channel types.
 
       *bandwidth = 0;
+      *cellId = 0;
+      *cellIdExtension = 0;
       return S_OK;
     }
 
@@ -519,6 +494,9 @@ STDMETHODIMP CChannelScan::GetMultiplexDetail(int index,
     {
       *frequency = terrestrialMux->CentreFrequency;
       *bandwidth = terrestrialMux->Bandwidth;
+      *cellId = terrestrialMux->CellId;
+      *cellIdExtension = terrestrialMux->CellIdExtension;
+      *plpId = terrestrialMux->PlpId;
       *type = 4;  // This is as-per the TV Server database channel types.
 
       *polarisation = BDA_POLARISATION_NOT_SET;
@@ -526,6 +504,7 @@ STDMETHODIMP CChannelScan::GetMultiplexDetail(int index,
       *symbolRate = 0;
       *innerFecRate = BDA_BCC_RATE_NOT_SET;
       *rollOff = BDA_ROLL_OFF_NOT_SET;
+      *longitude = 0;
       return S_OK;
     }
 
@@ -535,6 +514,66 @@ STDMETHODIMP CChannelScan::GetMultiplexDetail(int index,
   catch (...)
   {
     LogDebug("ChannelScan: unhandled exception in GetMultiplexDetail()");
+    return S_FALSE;
+  }
+  return S_OK;
+}
+
+STDMETHODIMP CChannelScan::GetTargetRegionName(__int64 targetRegionId, char** name)
+{
+  CEnterCriticalSection enter(m_section);
+  try
+  {
+    // According to EN 300 468, BAT names take precidence over NIT names.
+    unsigned int lang;
+    m_batParser.GetTargetRegionName(targetRegionId, 0, &lang, name);
+    if (*name == NULL)
+    {
+      m_nitParser.GetTargetRegionName(targetRegionId, 0, &lang, name);
+    }
+  }
+  catch (...)
+  {
+    LogDebug("ChannelScan: unhandled exception in GetTargetRegionName()");
+    *name = NULL;
+    return S_FALSE;
+  }
+  return S_OK;
+}
+
+STDMETHODIMP CChannelScan::GetBouquetName(int bouquetId, char** name)
+{
+  CEnterCriticalSection enter(m_section);
+  try
+  {
+    *name = m_sdtParser.GetBouquetName(bouquetId);
+    if (*name == NULL)
+    {
+      unsigned int lang;
+      m_batParser.GetBouquetName(bouquetId, 0, &lang, name);
+    }
+  }
+  catch (...)
+  {
+    LogDebug("ChannelScan: unhandled exception in GetBouquetName()");
+    *name = NULL;
+    return S_FALSE;
+  }
+  return S_OK;
+}
+
+STDMETHODIMP CChannelScan::GetNetworkName(int networkId, char** name)
+{
+  CEnterCriticalSection enter(m_section);
+  try
+  {
+    unsigned int lang;
+    m_nitParser.GetNetworkName(networkId, 0, &lang, name);
+  }
+  catch (...)
+  {
+    LogDebug("ChannelScan: unhandled exception in GetNetworkName()");
+    *name = NULL;
     return S_FALSE;
   }
   return S_OK;
@@ -693,10 +732,18 @@ void CChannelScan::OnSdtReceived(const CChannelInfo& sdtInfo)
       m_mServices[sdtInfo.ServiceId] = info;
     }
 
-    info->NetworkId = sdtInfo.NetworkId;
+    info->OriginalNetworkId = sdtInfo.OriginalNetworkId;
     info->TransportStreamId = sdtInfo.TransportStreamId;
     info->ServiceId = sdtInfo.ServiceId;
     info->ServiceType = sdtInfo.ServiceType;
+    // We trust PMT information more than we trust component descriptors
+    // in the SDT.
+    if (!info->IsPmtReceived)
+    {
+      info->HasVideo = sdtInfo.HasVideo;
+      info->HasAudio = sdtInfo.HasAudio;
+    }
+    info->IsHighDefinition |= sdtInfo.IsHighDefinition;
     // We trust running_status and free_ca_mode over PMT being
     // received (or not) and CA descriptors being found in the PMT
     // (or not). However, information from the encryption analyser
@@ -711,8 +758,57 @@ void CChannelScan::OnSdtReceived(const CChannelInfo& sdtInfo)
     {
       m_bIsOtherMuxServiceInfoSeen = true;
     }
-    strcpy(info->ProviderName, sdtInfo.ProviderName);
-    strcpy(info->ServiceName, sdtInfo.ServiceName);
+
+    // Be careful not to wipe these details as they're really important.
+    if (sdtInfo.PreviousServiceId != 0)
+    {
+      info->PreviousServiceId = sdtInfo.PreviousServiceId;
+      info->PreviousTransportStreamId = sdtInfo.PreviousTransportStreamId;
+      info->PreviousOriginalNetworkId = sdtInfo.PreviousOriginalNetworkId;
+    }
+
+    // Free the memory associated with previous strings, then allocate
+    // new memory and copy. We can't just take a pointer as the strings
+    // in sdtInfo will be deleted.
+    info->ClearStrings();
+    info->ServiceName = new char[strlen(sdtInfo.ServiceName) + 1];
+    if (info->ServiceName == NULL)
+    {
+      LogDebug("ChannelScan: failed to allocate memory for a service name from the SDT");
+    }
+    else
+    {
+      strcpy(info->ServiceName, sdtInfo.ServiceName);
+    }
+    info->ProviderName = new char[strlen(sdtInfo.ProviderName) + 1];
+    if (info->ProviderName == NULL)
+    {
+      LogDebug("ChannelScan: failed to allocate memory for a provider name from the SDT");
+    }
+    else
+    {
+      strcpy(info->ProviderName, sdtInfo.ProviderName);
+    }
+
+    // The SDT is the primary source of information for the following fields.
+    // We suppliment with details from the NIT and BAT when the channel is
+    // retrieved.
+    info->BouquetIds = sdtInfo.BouquetIds;
+    info->AvailableInCells = sdtInfo.AvailableInCells;
+    info->UnavailableInCells = sdtInfo.UnavailableInCells;
+    info->TargetRegions = sdtInfo.TargetRegions;
+    info->AvailableInCountries = sdtInfo.AvailableInCountries;
+    info->UnavailableInCountries = sdtInfo.UnavailableInCountries;
+
+    // Add the languages. We don't want to overwrite languages found in
+    // the PMT. We'll take care of making the list distinct later.
+    vector<unsigned int>::const_iterator langIt = sdtInfo.Languages.begin();
+    while (langIt != sdtInfo.Languages.end())
+    {
+      info->Languages.push_back(*langIt);
+      langIt++;
+    }
+
     info->IsServiceInfoReceived = true;
     LogDebug("ChannelScan: received SDT information for service 0x%x", sdtInfo.ServiceId);
   }
@@ -745,7 +841,7 @@ void CChannelScan::OnVctReceived(const CChannelInfo& vctInfo)
       m_mServices[vctInfo.ServiceId] = info;
     }
 
-    info->NetworkId = vctInfo.NetworkId;
+    info->OriginalNetworkId = vctInfo.OriginalNetworkId;
     info->TransportStreamId = vctInfo.TransportStreamId;
     info->ServiceId = vctInfo.ServiceId;
     info->ServiceType = vctInfo.ServiceType;
@@ -770,9 +866,52 @@ void CChannelScan::OnVctReceived(const CChannelInfo& vctInfo)
     {
       m_bIsOtherMuxServiceInfoSeen = true;
     }
+
+    // Free the memory associated with previous strings, then allocate
+    // new memory and copy. We can't just take a pointer as the strings
+    // in vctInfo will be deleted.
+    info->ClearStrings();
+    info->ServiceName = new char[strlen(vctInfo.ServiceName) + 1];
+    if (info->ServiceName == NULL)
+    {
+      LogDebug("ChannelScan: failed to allocate memory for a service name from the VCT");
+    }
+    else
+    {
+      strcpy(info->ServiceName, vctInfo.ServiceName);
+    }
+    info->ProviderName = new char[strlen(vctInfo.ProviderName) + 1];
+    if (info->ProviderName == NULL)
+    {
+      LogDebug("ChannelScan: failed to allocate memory for a provider name from the VCT");
+    }
+    else
+    {
+      strcpy(info->ProviderName, vctInfo.ProviderName);
+    }
+    info->LogicalChannelNumber = new char[strlen(vctInfo.LogicalChannelNumber) + 1];
+    if (info->LogicalChannelNumber == NULL)
+    {
+      LogDebug("ChannelScan: failed to allocate memory for a logical channel number from the VCT");
+    }
+    else
+    {
+      strcpy(info->LogicalChannelNumber, vctInfo.LogicalChannelNumber);
+    }
+
     strcpy(info->ProviderName, vctInfo.ProviderName);
     strcpy(info->ServiceName, vctInfo.ServiceName);
     strcpy(info->LogicalChannelNumber, vctInfo.LogicalChannelNumber);
+
+    // Add the languages. We don't want to overwrite languages found in
+    // the PMT. We'll take care of making the list distinct later.
+    vector<unsigned int>::const_iterator langIt = vctInfo.Languages.begin();
+    while (langIt != vctInfo.Languages.end())
+    {
+      info->Languages.push_back(*langIt);
+      langIt++;
+    }
+
     info->IsServiceInfoReceived = true;
     LogDebug("ChannelScan: received VCT information for service 0x%x", vctInfo.ServiceId);
   }
@@ -819,9 +958,12 @@ void CChannelScan::OnPmtReceived(const CPidTable& pidTable)
     }
     info->IsOtherMux = false;
     info->IsPmtReceived = true;
+
     LogDebug("ChannelScan: PMT information for service 0x%x received from PID 0x%x", pidTable.ServiceId, pidTable.PmtPid);
 
-    // Add an analyser for each video and audio PID.
+    // Register each video and audio PID with our encryption analyser.
+    // The analyser takes care of avoiding double-registry.
+    // At the same time, add languages from the audio and subtitle PIDs.
     vector<VideoPid>::const_iterator vPidIt = pidTable.videoPids.begin();
     while (vPidIt != pidTable.videoPids.end())
     {
@@ -834,7 +976,24 @@ void CChannelScan::OnPmtReceived(const CPidTable& pidTable)
     {
       m_pEncryptionAnalyser->AddPid(aPidIt->Pid);
       m_mPids[aPidIt->Pid] = pidTable.ServiceId;
+
+      unsigned int lang = ((*aPidIt).Lang[0] << 24) + ((*aPidIt).Lang[1] << 16) + ((*aPidIt).Lang[2] << 8);
+      (info->Languages).push_back(lang);
+      if ((*aPidIt).Lang[3] != 0)
+      {
+        lang = ((*aPidIt).Lang[3] << 24) + ((*aPidIt).Lang[4] << 16) + ((*aPidIt).Lang[5] << 8);
+        (info->Languages).push_back(lang);
+      }
+
       aPidIt++;
+    }
+
+    vector<SubtitlePid>::const_iterator sPidIt = pidTable.subtitlePids.begin();
+    while (sPidIt != pidTable.subtitlePids.end())
+    {
+      unsigned int lang = ((*sPidIt).Lang[0] << 24) + ((*sPidIt).Lang[1] << 16) + ((*sPidIt).Lang[2] << 8);
+      (info->Languages).push_back(lang);
+      sPidIt++;
     }
   }
   catch (...)

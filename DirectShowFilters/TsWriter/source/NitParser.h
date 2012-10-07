@@ -19,8 +19,8 @@
  *
  */
 #pragma once
-#include "..\..\shared\sectiondecoder.h"
-#include "..\..\shared\section.h"
+#include <Windows.h>
+#include "..\..\shared\SectionDecoder.h"
 #include "..\..\shared\ChannelInfo.h"
 #include <vector>
 #include <map>
@@ -39,32 +39,16 @@ extern void LogDebug(const char *fmt, ...);
 #define MIN_TERRESTRIAL_FREQUENCY_KHZ 40000
 #define MAX_TERRESTRIAL_FREQUENCY_KHZ 900000
 
-typedef struct NitLcn
-{
-  int NetworkId;
-  int TransportStreamId;
-  int ServiceId;
-  int Lcn;
-}NitLcn;
-
-typedef struct NitNameSet
-{
-  int NetworkId;
-  int TransportStreamId;
-  int ServiceId;
-  vector<char*> Names;
-}NitNameSet;
-
 typedef struct NitMultiplexDetail
 {
-  int NetworkId;
+  int OriginalNetworkId;
   int TransportStreamId;
 
   virtual bool Equals(NitMultiplexDetail* mux)
   {
     try
     {
-      if (mux != NULL && mux->NetworkId == NetworkId && mux->TransportStreamId == TransportStreamId)
+      if (mux != NULL && mux->OriginalNetworkId == OriginalNetworkId && mux->TransportStreamId == TransportStreamId)
       {
         return true;
       }
@@ -84,7 +68,7 @@ typedef struct NitMultiplexDetail
       {
         return;
       }
-      clone->NetworkId = NetworkId;
+      clone->OriginalNetworkId = OriginalNetworkId;
       clone->TransportStreamId = TransportStreamId;
     }
     catch (...)
@@ -96,10 +80,10 @@ typedef struct NitMultiplexDetail
 
 typedef struct NitCableMultiplexDetail : public NitMultiplexDetail
 {
-  int Frequency;
+  int Frequency;        // unit = kHz
   int OuterFecMethod;
   int Modulation;
-  int SymbolRate;
+  int SymbolRate;       // unit = ks/s
   int InnerFecRate;
 
   bool Equals(NitMultiplexDetail* mux)
@@ -152,15 +136,19 @@ typedef struct NitCableMultiplexDetail : public NitMultiplexDetail
 
 typedef struct NitSatelliteMultiplexDetail : public NitMultiplexDetail
 {
-  int Frequency;
-  float OrbitalPosition;
-  int WestEastFlag;
+  int Frequency;        // unit = kHz
+  int OrbitalPosition;  // unit = tenths of a degree
+  bool WestEastFlag;
   int Polarisation;
   int Modulation;
-  int SymbolRate;
+  int SymbolRate;       // unit = ks/s
   int InnerFecRate;
   int RollOff;
-  int IsS2;
+  bool IsS2;
+  bool MultipleInputStreamFlag;
+  bool BackwardsCompatibilityIndicator;
+  int ScramblingSequenceIndex;
+  int InputStreamIdentifier;
 
   bool Equals(NitMultiplexDetail* mux)
   {
@@ -173,7 +161,9 @@ typedef struct NitSatelliteMultiplexDetail : public NitMultiplexDetail
       NitSatelliteMultiplexDetail* satelliteMux = dynamic_cast<NitSatelliteMultiplexDetail*>(mux);
       if (satelliteMux != NULL && satelliteMux->Frequency == Frequency && satelliteMux->Modulation == Modulation &&
         satelliteMux->Polarisation == Polarisation && satelliteMux->SymbolRate == SymbolRate &&
-        satelliteMux->InnerFecRate == InnerFecRate && satelliteMux->IsS2 == IsS2)
+        satelliteMux->InnerFecRate == InnerFecRate && satelliteMux->IsS2 == IsS2 &&
+        satelliteMux->OrbitalPosition == OrbitalPosition && satelliteMux->WestEastFlag == WestEastFlag &&
+        satelliteMux->InputStreamIdentifier == InputStreamIdentifier)
       {
         return true;
       }
@@ -208,6 +198,10 @@ typedef struct NitSatelliteMultiplexDetail : public NitMultiplexDetail
       satelliteMuxClone->InnerFecRate = InnerFecRate;
       satelliteMuxClone->RollOff = RollOff;
       satelliteMuxClone->IsS2 = IsS2;
+      satelliteMuxClone->MultipleInputStreamFlag = MultipleInputStreamFlag;
+      satelliteMuxClone->BackwardsCompatibilityIndicator = BackwardsCompatibilityIndicator;
+      satelliteMuxClone->ScramblingSequenceIndex = ScramblingSequenceIndex;
+      satelliteMuxClone->InputStreamIdentifier = InputStreamIdentifier;
     }
     catch (...)
     {
@@ -218,8 +212,8 @@ typedef struct NitSatelliteMultiplexDetail : public NitMultiplexDetail
 
 typedef struct NitTerrestrialMultiplexDetail : public NitMultiplexDetail
 {
-  int CentreFrequency;
-  int Bandwidth;
+  int CentreFrequency;  // unit = kHz
+  int Bandwidth;        // unit = kHz
   bool IsHighPriority;
   bool TimeSlicingIndicator;
   bool MpeFecIndicator;
@@ -230,7 +224,13 @@ typedef struct NitTerrestrialMultiplexDetail : public NitMultiplexDetail
   int CoderateLpStream;
   int GuardInterval;
   int TransmissionMode;
-  int OtherFrequencyFlag;
+  bool OtherFrequencyFlag;
+  int CellId;
+  int CellIdExtension;
+  bool MultipleInputStreamFlag;
+  bool TimeFrequencySlicingFlag;
+  int PlpId;
+  int T2SystemId;
 
   bool Equals(NitMultiplexDetail* mux)
   {
@@ -241,7 +241,9 @@ typedef struct NitTerrestrialMultiplexDetail : public NitMultiplexDetail
         return false;
       }
       NitTerrestrialMultiplexDetail* terrestrialMux = dynamic_cast<NitTerrestrialMultiplexDetail*>(mux);
-      if (terrestrialMux != NULL && terrestrialMux->CentreFrequency == CentreFrequency && terrestrialMux->Bandwidth == Bandwidth)
+      if (terrestrialMux != NULL && terrestrialMux->CentreFrequency == CentreFrequency && terrestrialMux->Bandwidth == Bandwidth &&
+        terrestrialMux->CellId == CellId && terrestrialMux->CellIdExtension == CellIdExtension &&
+        terrestrialMux->PlpId == PlpId)
       {
         return true;
       }
@@ -280,6 +282,12 @@ typedef struct NitTerrestrialMultiplexDetail : public NitMultiplexDetail
       terrestrialMuxClone->GuardInterval = GuardInterval;
       terrestrialMuxClone->TransmissionMode = TransmissionMode;
       terrestrialMuxClone->OtherFrequencyFlag = OtherFrequencyFlag;
+      terrestrialMuxClone->CellId = CellId;
+      terrestrialMuxClone->CellIdExtension = CellIdExtension;
+      terrestrialMuxClone->MultipleInputStreamFlag = MultipleInputStreamFlag;
+      terrestrialMuxClone->TimeFrequencySlicingFlag = TimeFrequencySlicingFlag;
+      terrestrialMuxClone->PlpId = PlpId;
+      terrestrialMuxClone->T2SystemId = T2SystemId;
     }
     catch (...)
     {
@@ -296,8 +304,19 @@ class CNitParser : public CSectionDecoder
     void Reset();
     void OnNewSection(CSection& sections);
     bool IsReady();
-    int GetLogicialChannelNumber(int networkId, int transportStreamId, int serviceId);
-    vector<char*>* GetGroupNames(int networkId, int transportStreamId, int serviceId);
+
+    int GetLogicialChannelNumber(int originalNetworkId, int transportStreamId, int serviceId);
+    void GetNetworkIds(int originalNetworkId, int transportStreamId, int serviceId, vector<int>* networkIds);
+    void GetAvailableInCells(int originalNetworkId, int transportStreamId, int serviceId, vector<int>* cellIds);
+    void GetTargetRegionIds(int originalNetworkId, int transportStreamId, int serviceId, vector<__int64>* targetRegionIds);
+    void GetAvailableInCountries(int originalNetworkId, int transportStreamId, int serviceId, vector<unsigned int>* availableInCountries);
+    void GetUnavailableInCountries(int originalNetworkId, int transportStreamId, int serviceId, vector<unsigned int>* unavailableInCountries);
+
+    int GetNetworkNameCount(int networkId);
+    void GetNetworkName(int networkId, int index, unsigned int* language, char** name);
+    int GetTargetRegionNameCount(__int64 regionId);
+    void GetTargetRegionName(__int64 regionId, int index, unsigned int* language, char** name);
+
     int GetMultiplexCount();
     NitMultiplexDetail* GetMultiplexDetail(int idx);
 
@@ -305,31 +324,49 @@ class CNitParser : public CSectionDecoder
     void CleanUp();
 
     void DecodeLogicalChannelNumberDescriptor(byte* b, int length, map<int, int>* lcns);
-    void DecodeCableDeliverySystemDescriptor(byte* b, int length, NitCableMultiplexDetail* mux);
-    void DecodeSatelliteDeliverySystemDescriptor(byte* b, int length, NitSatelliteMultiplexDetail* mux);
-    void DecodeTerrestrialDeliverySystemDescriptor(byte* b, int length, NitTerrestrialMultiplexDetail* mux);
-    void DecodeFrequencyListDescriptor(byte* b, int length, vector<int>* frequencies, int* frequencyType);
+    bool DecodeCableDeliverySystemDescriptor(byte* b, int length, NitCableMultiplexDetail* mux);
+    bool DecodeSatelliteDeliverySystemDescriptor(byte* b, int length, NitSatelliteMultiplexDetail* mux);
+    bool DecodeS2SatelliteDeliverySystemDescriptor(byte* b, int length, NitSatelliteMultiplexDetail* mux);
+    bool DecodeTerrestrialDeliverySystemDescriptor(byte* b, int length, NitTerrestrialMultiplexDetail* mux);
+    bool DecodeT2TerrestrialDeliverySystemDescriptor(byte* b, int length, NitTerrestrialMultiplexDetail* mux, map<int, int>* frequencies);
+    void DecodeFrequencyListDescriptor(byte* b, int length, vector<int>* frequencies);
     void DecodeServiceListDescriptor(byte* b, int length, vector<int>* services);
     void DecodeNameDescriptor(byte* b, int length, char** name);
-    void DecodeMultilingualNameDescriptor(byte* b, int length, vector<char*>* names);
-    void DecodeCellFrequencyLinkDescriptor(byte* b, int length, vector<int>* frequencies);
+    void DecodeMultilingualNameDescriptor(byte* b, int length, map<unsigned int, char*>* names);
+    void DecodeCellFrequencyLinkDescriptor(byte* b, int length, map<int, int>* frequencies);
+    void DecodeCountryAvailabilityDescriptor(byte* b, int length, vector<unsigned int>* availableInCountries, vector<unsigned int>* unavailableInCountries);
+    void DecodeTargetRegionDescriptor(byte* b, int length, vector<__int64>* targetRegions);
+    void DecodeTargetRegionNameDescriptor(byte* b, int length, map<__int64, char*>* names, unsigned int* language);
 
     int DecodeCableFrequency(byte* b);
     int DecodeSatelliteFrequency(byte* b);
     int DecodeTerrestrialFrequency(byte* b);
 
-    void AddLogicalChannelNumbers(int nid, int tsid, map<int, int>* lcns);
-    void AddGroupNames(int nid, int tsid, int sid, vector<char*>* names);
-    void AddSatelliteMux(NitSatelliteMultiplexDetail* mux, vector<int>* frequencies);
-    void AddCableMux(NitCableMultiplexDetail* mux, vector<int>* frequencies);
-    void AddTerrestrialMux(NitTerrestrialMultiplexDetail* mux, vector<int>* frequencies);
+    void AddLogicalChannelNumbers(int originalNetworkId, int transportStreamId, map<int, int>* lcns);
+    void AddGroupNames(int groupId, map<unsigned int, char*>* names);
+    void AddTargetRegionNames(map<__int64, char*>* names, unsigned int language);
+    void AddServiceDetails(int groupId, int originalNetworkId, int transportStreamId, vector<int>* serviceIds,
+                            map<int, int>* cellFrequencies, vector<__int64>* targetRegions,
+                            vector<unsigned int>* availableInCountries, vector<unsigned int>* unavailableInCountries);
+    void AddMultiplexDetails(NitCableMultiplexDetail* cableMux, NitSatelliteMultiplexDetail* satelliteMux,
+                              NitTerrestrialMultiplexDetail* terrestrialMux,
+                              map<int, int>* cellFrequencies, vector<int>* frequencies);
+    void AddCableMux(NitCableMultiplexDetail* mux);
+    void AddSatelliteMux(NitSatelliteMultiplexDetail* mux);
+    void AddTerrestrialMux(NitTerrestrialMultiplexDetail* mux);
 
     char* m_sName;
     vector<int> m_vTableIds;
     map<unsigned int, bool> m_mSeenSections;
     bool m_bIsReady;
-    vector<NitLcn*> m_vLcns;
-    vector<NitNameSet*> m_vGroupNames;
+    map<int, map<unsigned int, char*>*> m_mGroupNames;                  // network/bouquet ID -> [language -> name]
+    map<__int64, map<unsigned int, char*>*> m_mTargetRegionNames;       // target region composite ID -> [language -> name]
+    map<__int64, int> m_mLogicalChannelNumbers;                         // ONID | TSID | SID -> LCN
+    map<__int64, map<int, bool>*> m_mGroupIds;                          // ONID | TSID | SID -> [network/bouquet ID -> TRUE]
+    map<__int64, map<int, bool>*> m_mAvailableInCells;                  // ONID | TSID | SID -> [cell ID | cell ID extension -> TRUE]
+    map<__int64, map<__int64, bool>*> m_mTargetRegions;                 // ONID | TSID | SID -> [target region composite ID -> TRUE]
+    map<__int64, map<unsigned int, bool>*> m_mAvailableInCountries;     // ONID | TSID | SID -> [country ID -> TRUE]
+    map<__int64, map<unsigned int, bool>*> m_mUnavailableInCountries;   // ONID | TSID | SID -> [country ID -> TRUE]
     vector<NitCableMultiplexDetail*> m_vCableMuxes;
     vector<NitSatelliteMultiplexDetail*> m_vSatelliteMuxes;
     vector<NitTerrestrialMultiplexDetail*> m_vTerrestrialMuxes;

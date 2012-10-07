@@ -21,15 +21,13 @@
 #pragma warning(disable : 4995)
 #include <windows.h>
 #include <commdlg.h>
-#include <time.h>
 #include <streams.h>
-#include <initguid.h>
 #include "CaGrabber.h"
 
 extern void LogDebug(const char *fmt, ...) ;
 
 CCaGrabber::CCaGrabber(LPUNKNOWN pUnk, HRESULT *phr) 
-  : CUnknown( NAME ("MpTsCaGrabber"), pUnk)
+  : CUnknown(NAME("MpTsCaGrabber"), pUnk)
 {
   CSectionDecoder::SetPid(PID_CAT);
   m_pCallBack = NULL;

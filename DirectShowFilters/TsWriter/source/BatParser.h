@@ -19,6 +19,7 @@
  *
  */
 #pragma once
+#include <vector>
 #include "NitParser.h"
 using namespace std;
 
@@ -29,4 +30,7 @@ class CBatParser : public CNitParser
   public:
     CBatParser(void);
     virtual ~CBatParser(void);
+    void GetBouquetIds(int originalNetworkId, int transportStreamId, int serviceId, vector<int>* bouquetIds);
+    int GetBouquetNameCount(int bouquetId);
+    void GetBouquetName(int bouquetId, int index, unsigned int* language, char** name);
 };

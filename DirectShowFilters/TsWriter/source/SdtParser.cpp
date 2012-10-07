@@ -38,11 +38,27 @@ CSdtParser::CSdtParser(void)
 
 CSdtParser::~CSdtParser(void)
 {
+  CleanUp();
+}
+
+void CSdtParser::CleanUp()
+{
+  map<int, char*>::iterator it = m_mBouquetNames.begin();
+  while (it != m_mBouquetNames.end())
+  {
+    char* name = it->second;
+    delete[] name;
+    name = NULL;
+    it++;
+  }
+  m_mBouquetNames.clear();
 }
 
 void CSdtParser::Reset(bool parseSdtOther)
 {
   LogDebug("SdtParser: reset, parse SDT other = %d", parseSdtOther);
+  CleanUp();
+  m_iNextBouquetId = 0x10000;   // normal bouquet IDs have a maximum length of 16 bits
   CSectionDecoder::Reset();
   m_mSeenSections.clear();
   m_bIsReady = false;
@@ -145,8 +161,6 @@ void CSdtParser::OnNewSection(CSection& sections)
       }
     }
 
-    bool error = false;
-
     int pointer = 11; // points to the first byte in the service loop
     while (pointer + 4 < endOfSection)
     {
@@ -159,7 +173,7 @@ void CSdtParser::OnNewSection(CSection& sections)
       int free_ca_mode = (section[pointer] >> 4) & 1;
 
       CChannelInfo info;
-      info.NetworkId = original_network_id;
+      info.OriginalNetworkId = original_network_id;
       info.TransportStreamId = transport_stream_id;
       info.ServiceId = service_id;
       info.IsOtherMux = (sections.table_id == 0x46);
@@ -175,7 +189,6 @@ void CSdtParser::OnNewSection(CSection& sections)
       if (endOfDescriptorLoop > endOfSection)
       {
         LogDebug("SdtParser: invalid descriptor loop length = %d, pointer = %d, end of descriptor loop = %d, end of section = %d, section length = %d", descriptors_loop_length, pointer, endOfDescriptorLoop, endOfSection, section_length);
-        error = true;
         if (m_pCallBack != NULL)
         {
           m_pCallBack->OnSdtReceived(info);
@@ -194,35 +207,83 @@ void CSdtParser::OnNewSection(CSection& sections)
           LogDebug("SdtParser: invalid descriptor length = %d, pointer = %d, end of descriptor = %d, end of descriptor loop = %d, section length = %d", length, pointer, endOfDescriptor, endOfDescriptorLoop, section_length);
           return;
         }
-        if (tag == 0x48)  // service descriptor
+
+        if (tag == 0x47)  // bouquet name descriptor
         {
-          info.ServiceType = section[pointer++];
-          int service_provider_name_length = section[pointer++];
-          if (pointer + service_provider_name_length + 1 <= endOfDescriptor)
+          char* name = NULL;
+          DecodeBouquetNameDescriptor(&section[pointer], length, &name);
+          if (name != NULL)
           {
-            getString468A(&section[pointer], service_provider_name_length, info.ProviderName, CHANNEL_INFO_MAX_STRING_LENGTH);
-            pointer += service_provider_name_length;
-            int service_name_length = section[pointer++];
-            if (pointer + service_name_length <= endOfDescriptor)
-            {
-              getString468A(&section[pointer], service_name_length, info.ServiceName, CHANNEL_INFO_MAX_STRING_LENGTH);
-              pointer += service_name_length;
-              //LogDebug("SdtParser: service type = 0x%x, service name = %s, provider name = %s", info.ServiceType, info.ServiceName, info.ProviderName);
-            }
-            else
-            {
-              error = true;
-            }
-          }
-          else
-          {
-            error = true;
+            m_mBouquetNames[m_iNextBouquetId] = name;
+            info.BouquetIds.push_back(m_iNextBouquetId++);
           }
         }
+        else if (tag == 0x48) // service descriptor
+        {
+          DecodeServiceDescriptor(&section[pointer], length, &(info.ServiceType), (char**)&(info.ProviderName), (char**)&(info.ServiceName));
+          //LogDebug("SdtParser: service type = 0x%x, service name = %s, provider name = %s", info.ServiceType, info.ServiceName, info.ProviderName);
+          if (info.ServiceType == 0x19 || info.ServiceType == 0x1a || info.ServiceType == 0x1b)
+          {
+            info.IsHighDefinition = true;
+          }
+        }
+        else if (tag == 0x49) // country availability descriptor
+        {
+          DecodeCountryAvailabilityDescriptor(&section[pointer], length, &info.AvailableInCountries, &info.UnavailableInCountries);
+        }
+        else if (tag == 0x50) // component descriptor
+        {
+          bool hasVideo;
+          bool hasAudio;
+          bool isHighDefinition;
+          unsigned int language;
+          if (DecodeComponentDescriptor(&section[pointer], length, &hasVideo, &hasAudio, &isHighDefinition, &language))
+          {
+            if (hasVideo)
+            {
+              info.HasVideo++;
+            }
+            else if (hasAudio)
+            {
+              info.HasAudio++;
+            }
+            info.IsHighDefinition |= isHighDefinition;
+            if (language != 0)
+            {
+              info.Languages.push_back(language);
+            }
+          }
+        }
+        else if (tag == 0x72) // service availability descriptor
+        {
+          DecodeServiceAvailabilityDescriptor(&section[pointer], length, &info.AvailableInCells, &info.UnavailableInCells);
+        }
+        // Extended descriptors...
+        else if (tag == 0x7f)
+        {
+          if (length < 1)
+          {
+            LogDebug("SdtParser: invalid extended descriptor length = %d, pointer = %d, end of descriptor loop = %d, end of section = %d, section length = %d", length, pointer, endOfDescriptorLoop, endOfSection, section_length);
+            return;
+          }
+
+          int tag_extension = section[pointer];
+          if (tag_extension == 0x09)  // target region descriptor
+          {
+            DecodeTargetRegionDescriptor(&section[pointer], length, &info.TargetRegions);
+          }
+          else if (tag_extension == 0x0b) // service relocated descriptor
+          {
+            DecodeServiceRelocatedDescriptor(&section[pointer], length, &info.PreviousOriginalNetworkId, &info.PreviousTransportStreamId, &info.PreviousServiceId);
+          }
+        }
+
         pointer = endOfDescriptor;
       }
+
       pointer = endOfDescriptorLoop;
-      if (m_pCallBack != NULL && !error)
+
+      if (m_pCallBack != NULL)
       {
         m_pCallBack->OnSdtReceived(info);
       }
@@ -231,17 +292,278 @@ void CSdtParser::OnNewSection(CSection& sections)
     if (pointer != endOfSection)
     {
       LogDebug("SdtParser: section parsing error");
-      error = true;
     }
-    else if (!error)
+    else
     {
       m_mSeenSections[key] = true;
     }
   }
-  catch(...)
+  catch (...)
   {
     LogDebug("SdtParser: unhandled exception in OnNewSection()");
   }
 }
 
+char* CSdtParser::GetBouquetName(int bouquetId)
+{
+  map<int, char*>::iterator it = m_mBouquetNames.find(bouquetId);
+  if (it == m_mBouquetNames.end())
+  {
+    return NULL;
+  }
+  return it->second;
+}
 
+void CSdtParser::DecodeServiceDescriptor(byte* b, int length, int* serviceType, char** providerName, char** serviceName)
+{
+  if (length < 3)
+  {
+    LogDebug("SdtParser: invalid service descriptor length = %d", length);
+    return;
+  }
+  try
+  {
+    *serviceType = b[0];
+    int service_provider_name_length = b[1];
+    int pointer = 2;
+    if (pointer + service_provider_name_length + 1 > length)
+    {
+      LogDebug("SdtParser: invalid service provider name length = %d, pointer = %d, descriptor length = %d", service_provider_name_length, pointer, length);
+      return;
+    }
+    *providerName = new char[service_provider_name_length + 1];
+    if (*providerName == NULL)
+    {
+      LogDebug("SdtParser: failed to allocate %d bytes for the provider name in DecodeServiceDescriptor()", service_provider_name_length + 1);
+    }
+    else
+    {
+      getString468A(&b[pointer], service_provider_name_length, *providerName, service_provider_name_length + 1);
+    }
+    pointer += service_provider_name_length;
+
+    int service_name_length = b[pointer++];
+    if (pointer + service_name_length > length)
+    {
+      LogDebug("SdtParser: invalid service name length = %d, pointer = %d, descriptor length = %d", service_name_length, pointer, length);
+      return;
+    }
+    *serviceName = new char[service_name_length + 1];
+    if (*serviceName == NULL)
+    {
+      LogDebug("SdtParser: failed to allocate %d bytes for the service name in DecodeServiceDescriptor()", service_name_length + 1);
+    }
+    else
+    {
+      getString468A(&b[pointer], service_name_length, *serviceName, service_name_length + 1);
+    }
+  }
+  catch (...)
+  {
+    LogDebug("SdtParser: unhandled exception in DecodeServiceDescriptor()");
+  }
+}
+
+bool CSdtParser::DecodeComponentDescriptor(byte* b, int length, bool* isVideo, bool* isAudio, bool* isHighDefinition, unsigned int* language)
+{
+  if (length < 6)
+  {
+    LogDebug("SdtParser: invalid component descriptor length = %d", length);
+    return false;
+  }
+  try
+  {
+    *isVideo = false;
+    *isAudio = false;
+    *isHighDefinition = false;
+
+    int stream_content = b[0] & 0x0f;
+    int component_type = b[1];
+    int component_tag = b[2];
+    int iso_639_language_code = (b[3] << 16) + (b[4] << 8) + b[5];
+    // (component description not read)
+
+    *language = (iso_639_language_code << 8);
+
+    if (stream_content == 1 || stream_content == 5)
+    {
+      *isVideo = true;
+      if (component_type >= 0x09 && component_type <= 0x10)
+      {
+        *isHighDefinition = true;
+      }
+    }
+    else if (stream_content == 2 || stream_content == 4 || stream_content == 6 || stream_content == 7)
+    {
+      *isAudio = true;
+    }
+    return true;
+  }
+  catch (...)
+  {
+    LogDebug("SdtParser: unhandled exception in DecodeComponentDescriptor()");
+    return false;
+  }
+}
+
+void CSdtParser::DecodeServiceAvailabilityDescriptor(byte* b, int length, vector<int>* availableInCells, vector<int>* unavailableInCells)
+{
+  if (length < 1)
+  {
+    LogDebug("SdtParser: invalid service availability descriptor length = %d", length);
+    return;
+  }
+  try
+  {
+    int pointer = 0;
+    bool availability_flag = (b[pointer++] & 0x80) != 0;
+    while (pointer + 1 < length)
+    {
+      int cell_id = (b[pointer] << 8) + b[pointer + 1];
+      pointer += 2;
+      if (availability_flag)
+      {
+        availableInCells->push_back(cell_id);
+      }
+      else
+      {
+        unavailableInCells->push_back(cell_id);
+      }
+    }
+  }
+  catch (...)
+  {
+    LogDebug("SdtParser: unhandled exception in DecodeServiceAvailabilityDescriptor()");
+  }
+}
+
+void CSdtParser::DecodeCountryAvailabilityDescriptor(byte* b, int length, vector<unsigned int>* availableInCountries, vector<unsigned int>* unavailableInCountries)
+{
+  if (length < 1)
+  {
+    LogDebug("SdtParser: invalid country availability descriptor length = %d", length);
+    return;
+  }
+  try
+  {
+    int pointer = 0;
+    bool country_availability_flag = (b[pointer++] & 0x80) != 0;
+    while (pointer + 2 < length)
+    {
+      unsigned int country_code = (b[pointer] << 24) + (b[pointer + 1] << 16) + (b[pointer + 2] << 8);
+      pointer += 3;
+      if (country_availability_flag)
+      {
+        availableInCountries->push_back(country_code);
+      }
+      else
+      {
+        unavailableInCountries->push_back(country_code);
+      }
+    }
+  }
+  catch (...)
+  {
+    LogDebug("SdtParser: unhandled exception in DecodeCountryAvailabilityDescriptor()");
+  }
+}
+
+void CSdtParser::DecodeBouquetNameDescriptor(byte* b, int length, char** name)
+{
+  *name = new char[length + 1];
+  if (*name == NULL)
+  {
+    LogDebug("SdtParser: failed to allocate %d bytes in DecodeBouquetNameDescriptor()", length + 1);
+    return;
+  }
+  getString468A(b, length, *name, length + 1);
+}
+
+void CSdtParser::DecodeTargetRegionDescriptor(byte* b, int length, vector<__int64>* targetRegions)
+{
+  if (length < 4)
+  {
+    LogDebug("SdtParser: invalid target region descriptor length = %d", length);
+    return;
+  }
+  try
+  {
+    int country_code = (b[1] << 16) + (b[2] << 8) + b[3];
+    if (length == 4)
+    {
+      targetRegions->push_back((__int64)country_code << 32);
+      return;
+    }
+
+    int pointer = 4;
+    while (pointer < length)
+    {
+      bool country_code_flag = (b[pointer] & 0x04) != 0;
+      int region_depth = b[pointer++] & 0x03;
+
+      // How many bytes are we expecting in this loop?
+      int byteCount = 0;
+      if (country_code_flag)
+      {
+        byteCount += 3;
+      }
+      byteCount += region_depth;
+      if (region_depth == 3)
+      {
+        byteCount++;
+      }
+
+      if (pointer + byteCount > length)
+      {
+        LogDebug("SdtParser: invalid target region descriptor length = %d, pointer = %d, country code flag = %d, region depth = %d", length, pointer, country_code_flag, region_depth);
+        return;
+      }
+
+      if (country_code_flag)
+      {
+        country_code = (b[pointer] << 16) + (b[pointer + 1] << 8) + b[pointer + 2];
+        pointer += 3;
+      }
+
+      __int64 targetRegionId = ((__int64)country_code << 32);
+      if (region_depth > 0)
+      {
+        targetRegionId += (b[pointer++] << 24);
+        if (region_depth > 1)
+        {
+          targetRegionId += (b[pointer++] << 16);
+          if (region_depth > 2)
+          {
+            targetRegionId += (b[pointer] << 8) + b[pointer + 1];
+            pointer += 2;
+          }
+        }
+      }
+
+      targetRegions->push_back(targetRegionId);
+    }
+  }
+  catch (...)
+  {
+    LogDebug("SdtParser: unhandled exception in DecodeTargetRegionDescriptor()");
+  }
+}
+
+void CSdtParser::DecodeServiceRelocatedDescriptor(byte* b, int length, int* previousOriginalNetworkId, int* previousTransportStreamId, int* previousServiceId)
+{
+  if (length != 7)
+  {
+    LogDebug("SdtParser: invalid service relocated descriptor length = %d", length);
+    return;
+  }
+  try
+  {
+    *previousOriginalNetworkId = (b[1] << 8) + b[2];
+    *previousTransportStreamId = (b[3] << 8) + b[4];
+    *previousServiceId = (b[5] << 8) + b[6];
+  }
+  catch (...)
+  {
+    LogDebug("SdtParser: unhandled exception in DecodeServiceRelocatedDescriptor()");
+  }
+}

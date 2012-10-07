@@ -19,9 +19,10 @@
  *
  */
 #pragma once
-#include "..\..\shared\sectiondecoder.h"
+#include "..\..\shared\SectionDecoder.h"
 #include "..\..\shared\ChannelInfo.h"
 #include <map>
+#include <vector>
 using namespace std;
 
 class ISdtCallBack
@@ -38,13 +39,26 @@ class CSdtParser : public CSectionDecoder
     CSdtParser(void);
     virtual ~CSdtParser(void);
     void Reset(bool parseSdtOther);
-    void SetCallBack(ISdtCallBack* callback);
+    void SetCallBack(ISdtCallBack* callBack);
     void OnNewSection(CSection& sections);
     bool IsReady();
+    char* GetBouquetName(int bouquetId);
 
   private:
+    void CleanUp();
+
+    void DecodeServiceDescriptor(byte* b, int length, int* serviceType, char** providerName, char** serviceName);
+    bool DecodeComponentDescriptor(byte* b, int length, bool* isVideo, bool* isAudio, bool* isHighDefinition, unsigned int* language);
+    void DecodeServiceAvailabilityDescriptor(byte* b, int length, vector<int>* availableInCells, vector<int>* unavailableInCells);
+    void DecodeCountryAvailabilityDescriptor(byte* b, int length, vector<unsigned int>* availableInCountries, vector<unsigned int>* unavailableInCountries);
+    void DecodeBouquetNameDescriptor(byte* b, int length, char** name);
+    void DecodeTargetRegionDescriptor(byte* b, int length, vector<__int64>* targetRegions);
+    void DecodeServiceRelocatedDescriptor(byte* b, int length, int* previousOriginalNetworkId, int* previousTransportStreamId, int* previousServiceId);
+
     ISdtCallBack* m_pCallBack;
     map<unsigned __int64, bool> m_mSeenSections;
     bool m_bIsReady;
     bool m_bParseSdtOther;
+    map<int, char*> m_mBouquetNames;  // fake bouquet ID -> bouquet name; we use fake bouquet IDs because the real ID is not available from the SDT
+    int m_iNextBouquetId;             // next fake bouquet ID
 };

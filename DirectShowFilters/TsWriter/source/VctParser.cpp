@@ -20,9 +20,7 @@
  */
 #pragma warning(disable : 4995)
 #include <windows.h>
-#include <streams.h>
-#include <bdatypes.h>
-#include "PMTParser.h"
+#include "..\..\shared\BasePmtParser.h"
 #include "VctParser.h"
 
 extern void LogDebug(const char *fmt, ...);
@@ -154,18 +152,19 @@ void CVctParser::OnNewSection(CSection& sections)
     for (int i = 0; i < num_channels_in_section && pointer + 31 < endOfSection; i++)
     {
       // short_name = 7*16 bits (14 bytes), UTF-16 encoding
-      static char short_name[CHANNEL_INFO_MAX_STRING_LENGTH];
-      for (int count = 0; count < 7; count++)
+      char* short_name = new char[8];
+      if (short_name == NULL)
       {
-        pointer++;
-        if (count < CHANNEL_INFO_MAX_STRING_LENGTH)
+        LogDebug("VctParser: failed to allocate 8 bytes for the short name");
+      }
+      else
+      {
+        for (int count = 0; count < 7; count++)
         {
-          short_name[count] = section[pointer++];  // take every second byte as a rough ASCII conversion
+          // Take every second byte as a rough ASCII conversion.
+          pointer++;  // skip the UTF-16 high byte
+          short_name[count] = section[pointer++];
           short_name[count + 1] = 0; // NULL terminate
-        }
-        else
-        {
-          pointer++;
         }
       }
 
@@ -212,6 +211,7 @@ void CVctParser::OnNewSection(CSection& sections)
       vector<char*> extendedNames;
       int hasVideo = 0;
       int hasAudio = 0;
+      vector<unsigned int> languages;
       while (pointer + 1 < endOfDescriptors)
       {
         int tag = section[pointer++];
@@ -229,7 +229,7 @@ void CVctParser::OnNewSection(CSection& sections)
         }
         else if (tag == 0xa1) // service location descriptor
         {
-          DecodeServiceLocationDescriptor(&section[pointer], length, &hasVideo, &hasAudio);
+          DecodeServiceLocationDescriptor(&section[pointer], length, &hasVideo, &hasAudio, &languages);
         }
         pointer += length;
       }
@@ -238,11 +238,13 @@ void CVctParser::OnNewSection(CSection& sections)
       {
         // The service is inactive. program_number is the equivalent of the DVB service ID. There is
         // no way we can properly handle channels with service ID not set.
+        LogDebug("VctParser: program number is zero, service is inactive");
         continue;
       }
       if (out_of_band == 1)
       {
         // The service is delivered via some out-of-band mechanism that we don't have access to.
+        LogDebug("VctParser: service is carried out of band");
         continue;
       }
 
@@ -251,53 +253,83 @@ void CVctParser::OnNewSection(CSection& sections)
       info.ServiceId = program_number;
       if (extendedNames.size() == 0)
       {
-        strcpy(info.ServiceName, short_name);
+        info.ServiceName = short_name;  // copy the pointer address - CChannelInfo now becomes responsible for the memory
       }
       else
       {
-        // Find the first extended name that can fit on the end of the short name.
-        unsigned int maxNameLength = CHANNEL_INFO_MAX_STRING_LENGTH - 7 - 3 - 1; // - 7 for the length of the short name, - 3 for " (...)", - 1 for NULL termination
+        // The name is the short name plus the first extended name.
+        bool isFirst = true;
         for (vector<char*>::iterator it = extendedNames.begin(); it != extendedNames.end(); it++)
         {
-          if (strlen(*it) <= maxNameLength)
+          if (isFirst)
           {
-            strcat(short_name, " (");
-            strcat(short_name, *it);
-            strcat(short_name, ")");
-            break;
+            isFirst = false;
+            int bufferSize = strlen(short_name) + strlen(*it) + 3 + 1;  // + 3 for " (" and ")", + 1 for NULL termination
+            info.ServiceName = new char[bufferSize];
+            if (info.ServiceName == NULL)
+            {
+              LogDebug("VctParser: failed to allocate %d bytes for the service name", bufferSize);
+            }
+            else
+            {
+              strcpy(info.ServiceName, short_name);
+              strcat(info.ServiceName, " (");
+              strcat(info.ServiceName, *it);
+              strcat(info.ServiceName, ")");
+            }
+
+            // Don't forget to free the short name buffer.
+            delete[] short_name;
+            short_name = NULL;
           }
+
+          // Free the extended name buffer(s). We have no need for them anymore.
+          delete[] *it;
         }
       }
-      if (sections.table_id == 0xc8)
+
+      info.ProviderName = new char[6];
+      if (info.ProviderName == NULL)
       {
-        strcpy(info.ProviderName, "ATSC");
+        LogDebug("VctParser: failed to allocate 6 bytes for the provider name");
       }
       else
       {
-        strcpy(info.ProviderName, "Cable");
+        if (sections.table_id == 0xc8)
+        {
+          strcpy(info.ProviderName, "ATSC");
+        }
+        else
+        {
+          strcpy(info.ProviderName, "Cable");
+        }
       }
 
       // The LCN can be two part or one part for cable channels. For terrestrial channels
       // the LCN is meant to be two part with major 1..99 and minor 0..999. Cable extends
       // the major channel limit to 1..999.
-      if (CHANNEL_INFO_MAX_STRING_LENGTH > 10)
+      info.LogicalChannelNumber = new char[10]; // allow for <4 digits>.<4 digits><NULL>
+      if (info.LogicalChannelNumber == NULL)
       {
-        static char lcn[CHANNEL_INFO_MAX_STRING_LENGTH];
+        LogDebug("VctParser: failed to allocate 10 bytes for the logical channel number");
+      }
+      else
+      {
         if (((major_channel >> 4) & 0x3f) == 0x3f)
         {
-          sprintf(lcn, "%d", ((major_channel & 0xf) << 10) + minor_channel);
+          sprintf(info.LogicalChannelNumber, "%d", ((major_channel & 0xf) << 10) + minor_channel);
         }
         else
         {
-          sprintf(lcn, "%d.%d", major_channel, minor_channel);
+          sprintf(info.LogicalChannelNumber, "%d.%d", major_channel, minor_channel);
         }
-        strcpy((char*)info.LogicalChannelNumber, lcn);
       }
 
       info.ServiceType = service_type;
       info.HasVideo = hasVideo;
       info.HasAudio = hasAudio;
       info.IsEncrypted = access_controlled == 1;
+      info.Languages = languages;
 
       // According to the standard, the program_number would be set to zero if the
       // service is "inactive". We checked for that above. If we get to here then
@@ -351,7 +383,7 @@ void CVctParser::OnNewSection(CSection& sections)
   }
 }
 
-void CVctParser::DecodeServiceLocationDescriptor(byte* b, int length, int* hasVideo, int* hasAudio)
+void CVctParser::DecodeServiceLocationDescriptor(byte* b, int length, int* hasVideo, int* hasAudio, vector<unsigned int>* languages)
 {
   if (length < 3)
   {
@@ -372,6 +404,10 @@ void CVctParser::DecodeServiceLocationDescriptor(byte* b, int length, int* hasVi
       int elementary_pid = ((b[pointer] & 0x1f) << 8) + b[pointer + 1];
       pointer += 2;
       int iso_639_language_code = (b[pointer] << 16) + (b[pointer + 1] << 8) + b[pointer + 2];
+      if (iso_639_language_code != 0)
+      {
+        languages->push_back(iso_639_language_code << 8);
+      }
       pointer += 3;
       //LogDebug("VctParser: stream type = 0x%x, elementary PID = 0x%x", stream_type, elementary_pid);
 
@@ -400,6 +436,7 @@ void CVctParser::DecodeServiceLocationDescriptor(byte* b, int length, int* hasVi
     LogDebug("VctParser: unhandled exception in DecodeServiceLocationDescriptor()");
     *hasVideo = 0;
     *hasAudio = 0;
+    languages->clear();
   }
 }
 
@@ -456,10 +493,14 @@ void CVctParser::DecodeString(byte* b, int compression_type, int mode, int numbe
   //LogDebug("VctParser: decode string, compression type = 0x%x, mode = 0x%x, number of bytes = %d", compression_type, mode, number_bytes);
   if (compression_type == 0 && mode == 0)
   {
-    *string = new char[DESCRIPTOR_MAX_STRING_LENGTH + 1];
-    int stringLength = min(number_bytes, DESCRIPTOR_MAX_STRING_LENGTH);
-    memcpy(*string, b, stringLength);
-    (*string)[stringLength] = 0;  // NULL terminate
+    *string = new char[number_bytes + 1];
+    if (*string == NULL)
+    {
+      LogDebug("VctParser: failed to allocate %d bytes in DecodeString()", number_bytes + 1);
+      return;
+    }
+    memcpy(*string, b, number_bytes);
+    (*string)[number_bytes] = 0;  // NULL terminate
     return;
   }
   LogDebug("VctParser: unsupported compression type or mode in DecodeString(), compression type = 0x%x, mode = 0x%x", compression_type, mode);

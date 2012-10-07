@@ -22,7 +22,6 @@
 #include <bdatypes.h>
 #include "NitParser.h"
 
-
 extern bool DisableCRCCheck();
 
 CNitParser::CNitParser(void)
@@ -45,37 +44,84 @@ CNitParser::~CNitParser(void)
 
 void CNitParser::CleanUp()
 {
-  vector<NitLcn*>::iterator lcnIt = m_vLcns.begin();
-  while (lcnIt != m_vLcns.end())
+  map<int, map<unsigned int, char*>*>::iterator groupNameSetIt = m_mGroupNames.begin();
+  while (groupNameSetIt != m_mGroupNames.end())
   {
-    NitLcn* lcn = *lcnIt;
-    delete lcn;
-    lcn = NULL;
-    lcnIt++;
-  }
-  m_vLcns.clear();
-
-  vector<NitNameSet*>::iterator nameSetIt = m_vGroupNames.begin();
-  while (nameSetIt != m_vGroupNames.end())
-  {
-    NitNameSet* nameSet = *nameSetIt;
-
-    // Each of the names held in the name set were new'd individually, so
-    // they must also be deleted individually.
-    for (vector<char*>::iterator nameIt = nameSet->Names.begin(); nameIt != nameSet->Names.end(); nameIt++)
+    map<unsigned int, char*>* nameSet = groupNameSetIt->second;
+    map<unsigned int, char*>::iterator nameIt = nameSet->begin();
+    while (nameIt != nameSet->end())
     {
-      char* name = *nameIt;
+      char* name = nameIt->second;
       delete[] name;
       name = NULL;
+      nameIt++;
     }
-    nameSet->Names.clear();
-
-    // Now we can delete the name set.
     delete nameSet;
     nameSet = NULL;
-    nameSetIt++;
+    groupNameSetIt++;
   }
-  m_vGroupNames.clear();
+
+  map<__int64, map<unsigned int, char*>*>::iterator regionNameIt = m_mTargetRegionNames.begin();
+  while (regionNameIt != m_mTargetRegionNames.end())
+  {
+    map<unsigned int, char*>* nameSet = regionNameIt->second;
+    map<unsigned int, char*>::iterator nameIt = nameSet->begin();
+    while (nameIt != nameSet->end())
+    {
+      char* name = nameIt->second;
+      delete[] name;
+      name = NULL;
+      nameIt++;
+    }
+    delete nameSet;
+    nameSet = NULL;
+    regionNameIt++;
+  }
+
+  map<__int64, map<int, bool>*>::iterator groupIdIt = m_mGroupIds.begin();
+  while (groupIdIt != m_mGroupIds.end())
+  {
+    map<int, bool>* list = groupIdIt->second;
+    delete list;
+    list = NULL;
+    groupIdIt++;
+  }
+
+  map<__int64, map<int, bool>*>::iterator cellIt = m_mAvailableInCells.begin();
+  while (cellIt != m_mAvailableInCells.end())
+  {
+    map<int, bool>* list = cellIt->second;
+    delete list;
+    list = NULL;
+    cellIt++;
+  }
+
+  map<__int64, map<__int64, bool>*>::iterator regionIt = m_mTargetRegions.begin();
+  while (regionIt != m_mTargetRegions.end())
+  {
+    map<__int64, bool>* list = regionIt->second;
+    delete list;
+    list = NULL;
+    regionIt++;
+  }
+
+  map<__int64, map<unsigned int, bool>*>::iterator countryIt = m_mAvailableInCountries.begin();
+  while (countryIt != m_mAvailableInCountries.end())
+  {
+    map<unsigned int, bool>* list = countryIt->second;
+    delete list;
+    list = NULL;
+    countryIt++;
+  }
+
+  countryIt = m_mUnavailableInCountries.begin();
+  while (countryIt != m_mUnavailableInCountries.end())
+  {
+    map<unsigned int, bool>* list = countryIt->second;
+    delete list;
+    list = NULL;
+    countryIt++;
+  }
 
   vector<NitCableMultiplexDetail*>::iterator cableMuxIt = m_vCableMuxes.begin();
   while (cableMuxIt != m_vCableMuxes.end())
@@ -111,7 +157,7 @@ void CNitParser::CleanUp()
 void CNitParser::OnNewSection(CSection& sections)
 {
   bool isValidTableId = false;
-  for (int i = 0; i < (int)m_vTableIds.size(); i++)
+  for (unsigned int i = 0; i < m_vTableIds.size(); i++)
   {
     if (m_vTableIds[i] == sections.table_id)
     {
@@ -205,7 +251,9 @@ void CNitParser::OnNewSection(CSection& sections)
       return;
     }
     int pointer = 10; // points to the first byte in the extension descriptor loop
-    vector<char*> names;
+    vector<unsigned int> availableInCountries;
+    vector<unsigned int> unavailableInCountries;
+    vector<__int64> groupTargetRegions;
     while (pointer + 1 < endOfExtensionDescriptorLoop)
     {
       int tag = section[pointer++];
@@ -217,31 +265,45 @@ void CNitParser::OnNewSection(CSection& sections)
         return;
       }
 
-      if (tag == 0x40)  // network name descriptor
+      if (tag == 0x40 || tag == 0x47) // network name descriptor, bouquet name descriptor
       {
         char* name = NULL;
         DecodeNameDescriptor(&section[pointer], length, &name);
-        if (name != NULL)
+        map<unsigned int, char*> tempNames;
+        tempNames[0] = name;
+        AddGroupNames(extension_id, &tempNames);
+      }
+      else if (tag == 0x49) // country availability descriptor
+      {
+        DecodeCountryAvailabilityDescriptor(&section[pointer], length, &availableInCountries, &unavailableInCountries);
+      }
+      else if (tag == 0x5b || tag == 0x5c)  // multilingual network name descriptor, multilingual bouquet name descriptor
+      {
+        map<unsigned int, char*> tempNames;
+        DecodeMultilingualNameDescriptor(&section[pointer], length, &tempNames);
+        AddGroupNames(extension_id, &tempNames);
+      }
+      // Extended descriptors...
+      else if (tag == 0x7f)
+      {
+        if (length < 1)
         {
-          names.push_back(name);
+          LogDebug("%s: invalid extended descriptor length = %d, pointer = %d, end of extension descriptors = %d, end of section = %d, section length = %d", m_sName, length, pointer, endOfExtensionDescriptorLoop, endOfSection, section_length);
+          return;
         }
-      }
-      else if (tag == 0x47) // bouquet name descriptor
-      {
-        char* name = NULL;
-        DecodeNameDescriptor(&section[pointer], length, &name);
-        if (name != NULL)
+
+        int tag_extension = section[pointer];
+        if (tag_extension == 0x09)  // target region descriptor
         {
-          names.push_back(name);
+          DecodeTargetRegionDescriptor(&section[pointer], length, &groupTargetRegions);
         }
-      }
-      else if (tag == 0x5b) // multilingual network name descriptor
-      {
-        DecodeMultilingualNameDescriptor(&section[pointer], length, &names);
-      }
-      else if (tag == 0x5c) // multilingual bouquet name descriptor
-      {
-        DecodeMultilingualNameDescriptor(&section[pointer], length, &names);
+        else if (tag_extension == 0x0a) // target region name descriptor
+        {
+          map<__int64, char*> targetRegionNames;
+          unsigned int language;
+          DecodeTargetRegionNameDescriptor(&section[pointer], length, &targetRegionNames, &language);
+          AddTargetRegionNames(&targetRegionNames, language);
+        }
       }
 
       pointer += length;
@@ -280,7 +342,9 @@ void CNitParser::OnNewSection(CSection& sections)
       NitTerrestrialMultiplexDetail terrestrialMux;
       map<int, int> lcns;
       vector<int> frequencies;
-      bool seenServiceList = false;
+      map<int, int> cellFrequencies;  // cell ID | cell ID extension => frequency
+      vector<int> serviceIds;
+      vector<__int64> transportStreamTargetRegions;
       while (pointer + 1 < endOfTransportDescriptors)
       {
         int tag = section[pointer++];
@@ -294,57 +358,47 @@ void CNitParser::OnNewSection(CSection& sections)
 
         if (tag == 0x41)  // service list descriptor
         {
-          seenServiceList = true;
-          vector<int> serviceIds;
           DecodeServiceListDescriptor(&section[pointer], length, &serviceIds);
-          for (vector<int>::iterator it = serviceIds.begin(); it != serviceIds.end(); it++)
-          {
-            AddGroupNames(original_network_id, transport_stream_id, *it, &names);
-          }
         }
         else if (tag == 0x43) // satellite delivery system descriptor
         {
-          DecodeSatelliteDeliverySystemDescriptor(&section[pointer], length, &satelliteMux);
-          satelliteMux.NetworkId = original_network_id;
-          satelliteMux.TransportStreamId = transport_stream_id;
-          AddSatelliteMux(&satelliteMux, &frequencies);
+          if (DecodeSatelliteDeliverySystemDescriptor(&section[pointer], length, &satelliteMux))
+          {
+            satelliteMux.OriginalNetworkId = original_network_id;
+            satelliteMux.TransportStreamId = transport_stream_id;
+          }
         }
         else if (tag == 0x44) // cable delivery system descriptor
         {
-          DecodeCableDeliverySystemDescriptor(&section[pointer], length, &cableMux);
-          cableMux.NetworkId = original_network_id;
-          cableMux.TransportStreamId = transport_stream_id;
-          AddCableMux(&cableMux, &frequencies);
+          if (DecodeCableDeliverySystemDescriptor(&section[pointer], length, &cableMux))
+          {
+            cableMux.OriginalNetworkId = original_network_id;
+            cableMux.TransportStreamId = transport_stream_id;
+          }
         }
         else if (tag == 0x5a) // terrestrial delivery system descriptor
         {
-          DecodeTerrestrialDeliverySystemDescriptor(&section[pointer], length, &terrestrialMux);
-          terrestrialMux.NetworkId = original_network_id;
-          terrestrialMux.TransportStreamId = transport_stream_id;
-          AddTerrestrialMux(&terrestrialMux, &frequencies);
+          if (DecodeTerrestrialDeliverySystemDescriptor(&section[pointer], length, &terrestrialMux))
+          {
+            terrestrialMux.OriginalNetworkId = original_network_id;
+            terrestrialMux.TransportStreamId = transport_stream_id;
+          }
         }
         else if (tag == 0x62) // frequency list descriptor
         {
-          int frequencyType = 0;
-          DecodeFrequencyListDescriptor(&section[pointer], length, &frequencies, &frequencyType);
-          if (frequencyType == 1)
-          {
-            AddSatelliteMux(&satelliteMux, &frequencies);
-          }
-          else if (frequencyType == 2)
-          {
-            AddCableMux(&cableMux, &frequencies);
-          }
-          else if (frequencyType == 3)
-          {
-            AddTerrestrialMux(&terrestrialMux, &frequencies);
-          }
+          DecodeFrequencyListDescriptor(&section[pointer], length, &frequencies);
         }
         else if (tag == 0x6d) // cell frequency link descriptor
         {
-          DecodeCellFrequencyLinkDescriptor(&section[pointer], length, &frequencies);
-          // According to EN 300 468, this descriptor only applies for terrestrial networks.
-          AddTerrestrialMux(&terrestrialMux, &frequencies);
+          DecodeCellFrequencyLinkDescriptor(&section[pointer], length, &cellFrequencies);
+        }
+        else if (tag == 0x79) // S2 satellite delivery system descriptor
+        {
+          if (DecodeS2SatelliteDeliverySystemDescriptor(&section[pointer], length, &satelliteMux))
+          {
+            satelliteMux.OriginalNetworkId = original_network_id;
+            satelliteMux.TransportStreamId = transport_stream_id;
+          }
         }
         else if (tag == 0x83) // logical channel number descriptor
         {
@@ -356,27 +410,46 @@ void CNitParser::OnNewSection(CSection& sections)
           DecodeLogicalChannelNumberDescriptor(&section[pointer], length, &lcns);
           AddLogicalChannelNumbers(original_network_id, transport_stream_id, &lcns);
         }
+        // Extended descriptors...
+        else if (tag == 0x7f)
+        {
+          if (length < 1)
+          {
+            LogDebug("%s: invalid extended descriptor length = %d, pointer = %d, end of transport descriptors = %d, end of section = %d, section length = %d", m_sName, length, pointer, endOfTransportDescriptors, endOfSection, section_length);
+            return;
+          }
+
+          int tag_extension = section[pointer];
+          if (tag_extension == 0x04)  // T2 delivery system descriptor
+          {
+            if (DecodeT2TerrestrialDeliverySystemDescriptor(&section[pointer], length, &terrestrialMux, &cellFrequencies))
+            {
+              terrestrialMux.OriginalNetworkId = original_network_id;
+              terrestrialMux.TransportStreamId = transport_stream_id;
+            }
+          }
+          else if (tag_extension == 0x09) // target region descriptor
+          {
+            DecodeTargetRegionDescriptor(&section[pointer], length, &transportStreamTargetRegions);
+          }
+        }
 
         pointer += length;
       }
 
-      // If we didn't see a service list descriptor, assume that the network/bouquet name(s)
-      // apply to all services with the given ONID + TSID combination.
-      if (!seenServiceList && names.size() > 0)
+      // We now have a bunch of network, bouquet and transport stream details that have to be
+      // recorded per-service.
+      if (serviceIds.size() == 0)
       {
-        AddGroupNames(original_network_id, transport_stream_id, 0, &names);
+        serviceIds.push_back(0);  // For when properties apply to all services in a transport stream...
       }
-    }
+      AddServiceDetails(extension_id, original_network_id, transport_stream_id, &serviceIds,
+                        &cellFrequencies, ((transportStreamTargetRegions.size() > 0) ? &transportStreamTargetRegions : &groupTargetRegions),
+                        &availableInCountries, &unavailableInCountries);
 
-    // Free strings held in the names vector. These have been new'd in DecodeNameDescriptor()
-    // and copied to new memory for each related service in AddGroupNames().
-    for (vector<char*>::iterator it = names.begin(); it != names.end(); it++)
-    {
-      char* name = *it;
-      delete[] name;
-      name = NULL;
+      // We also have multiplex tuning details and frequencies that have to be combined.
+      AddMultiplexDetails(&cableMux, &satelliteMux, &terrestrialMux, &cellFrequencies, &frequencies);
     }
-    names.clear();
 
     if (pointer != endOfSection)
     {
@@ -387,7 +460,7 @@ void CNitParser::OnNewSection(CSection& sections)
       m_mSeenSections[key] = true;
     }
   }
-  catch(...)
+  catch (...)
   {
     LogDebug("%s: unhandled exception in OnNewSection()", m_sName);
   }
@@ -436,34 +509,200 @@ NitMultiplexDetail* CNitParser::GetMultiplexDetail(int idx)
   return NULL;
 }
 
-int CNitParser::GetLogicialChannelNumber(int networkId, int transportStreamId, int serviceId)
+int CNitParser::GetLogicialChannelNumber(int originalNetworkId, int transportStreamId, int serviceId)
 {
-  for (unsigned int i = 0; i < m_vLcns.size(); i++)
-  {
-    NitLcn& lcn = *m_vLcns[i];
-    if (lcn.NetworkId == networkId &&
-        lcn.TransportStreamId == transportStreamId &&
-        lcn.ServiceId == serviceId)
-    {
-      return lcn.Lcn;
-    }
-  }
-  return 10000;
+  __int64 serviceKey = ((__int64)originalNetworkId << 32) + (transportStreamId << 16) + serviceId;
+  return m_mLogicalChannelNumbers[serviceKey];
 }
 
-vector<char*>* CNitParser::GetGroupNames(int networkId, int transportStreamId, int serviceId)
+void CNitParser::GetNetworkIds(int originalNetworkId, int transportStreamId, int serviceId, vector<int>* networkIds)
 {
-  for (unsigned int i = 0; i < m_vGroupNames.size(); i++)
+  if (networkIds == NULL)
   {
-    NitNameSet& nameSet = *m_vGroupNames[i];
-    if (nameSet.NetworkId == networkId &&
-        nameSet.TransportStreamId == transportStreamId &&
-        nameSet.ServiceId == serviceId)
-    {
-      return &(nameSet.Names);
-    }
+    return;
   }
-  return NULL;
+  __int64 serviceKey = ((__int64)originalNetworkId << 32) + (transportStreamId << 16) + serviceId;
+  map<int, bool>* serviceNetworkIds = m_mGroupIds[serviceKey];
+  if (serviceNetworkIds == NULL)
+  {
+    serviceNetworkIds = m_mGroupIds[serviceKey - serviceId];
+  }
+  if (serviceNetworkIds == NULL)
+  {
+    return;
+  }
+  map<int, bool>::iterator it = serviceNetworkIds->begin();
+  while (it != serviceNetworkIds->end())
+  {
+    networkIds->push_back(it->first);
+    it++;
+  }
+}
+
+void CNitParser::GetAvailableInCells(int originalNetworkId, int transportStreamId, int serviceId, vector<int>* cellIds)
+{
+  if (cellIds == NULL)
+  {
+    return;
+  }
+  __int64 serviceKey = ((__int64)originalNetworkId << 32) + (transportStreamId << 16) + serviceId;
+  map<int, bool>* serviceCellIds = m_mAvailableInCells[serviceKey];
+  if (serviceCellIds == NULL)
+  {
+    serviceCellIds = m_mAvailableInCells[serviceKey - serviceId];
+  }
+  if (serviceCellIds == NULL)
+  {
+    return;
+  }
+  map<int, bool>::iterator it = serviceCellIds->begin();
+  while (it != serviceCellIds->end())
+  {
+    cellIds->push_back(it->first);
+    it++;
+  }
+}
+
+void CNitParser::GetTargetRegionIds(int originalNetworkId, int transportStreamId, int serviceId, vector<__int64>* targetRegionIds)
+{
+  if (targetRegionIds == NULL)
+  {
+    return;
+  }
+  __int64 serviceKey = ((__int64)originalNetworkId << 32) + (transportStreamId << 16) + serviceId;
+  map<__int64, bool>* serviceRegionIds = m_mTargetRegions[serviceKey];
+  if (serviceRegionIds == NULL)
+  {
+    serviceRegionIds = m_mTargetRegions[serviceKey - serviceId];
+  }
+  if (serviceRegionIds == NULL)
+  {
+    return;
+  }
+  map<__int64, bool>::iterator it = serviceRegionIds->begin();
+  while (it != serviceRegionIds->end())
+  {
+    targetRegionIds->push_back(it->first);
+    it++;
+  }
+}
+
+void CNitParser::GetAvailableInCountries(int originalNetworkId, int transportStreamId, int serviceId, vector<unsigned int>* availableInCountries)
+{
+  if (availableInCountries == NULL)
+  {
+    return;
+  }
+  __int64 serviceKey = ((__int64)originalNetworkId << 32) + (transportStreamId << 16) + serviceId;
+  map<unsigned int, bool>* serviceAvailableInCountries = m_mAvailableInCountries[serviceKey];
+  if (serviceAvailableInCountries == NULL)
+  {
+    serviceAvailableInCountries = m_mAvailableInCountries[serviceKey - serviceId];
+  }
+  if (serviceAvailableInCountries == NULL)
+  {
+    return;
+  }
+  map<unsigned int, bool>::iterator it = serviceAvailableInCountries->begin();
+  while (it != serviceAvailableInCountries->end())
+  {
+    availableInCountries->push_back(it->first);
+    it++;
+  }
+}
+
+void CNitParser::GetUnavailableInCountries(int originalNetworkId, int transportStreamId, int serviceId, vector<unsigned int>* unavailableInCountries)
+{
+  if (unavailableInCountries == NULL)
+  {
+    return;
+  }
+  __int64 serviceKey = ((__int64)originalNetworkId << 32) + (transportStreamId << 16) + serviceId;
+  map<unsigned int, bool>* serviceUnavailableInCountries = m_mUnavailableInCountries[serviceKey];
+  if (serviceUnavailableInCountries == NULL)
+  {
+    serviceUnavailableInCountries = m_mUnavailableInCountries[serviceKey - serviceId];
+  }
+  if (serviceUnavailableInCountries == NULL)
+  {
+    return;
+  }
+  map<unsigned int, bool>::iterator it = serviceUnavailableInCountries->begin();
+  while (it != serviceUnavailableInCountries->end())
+  {
+    unavailableInCountries->push_back(it->first);
+    it++;
+  }
+}
+
+int CNitParser::GetNetworkNameCount(int networkId)
+{
+  int count = 0;
+  map<unsigned int, char*>* networkNames = m_mGroupNames[networkId];
+  if (networkNames != NULL)
+  {
+    count = networkNames->size();
+  }
+  return count;
+}
+
+void CNitParser::GetNetworkName(int networkId, int index, unsigned int* language, char** name)
+{
+  *language = 0;
+  *name = NULL;
+  int count = 0;
+  map<unsigned int, char*>* networkNames = m_mGroupNames[networkId];
+  if (networkNames == NULL)
+  {
+    return;
+  }
+  map<unsigned int, char*>::iterator nameIt = networkNames->begin();
+  while (nameIt != networkNames->end())
+  {
+    if (count == index)
+    {
+      *language = nameIt->first;
+      *name = nameIt->second;
+      return;
+    }
+    count++;
+    nameIt++;
+  }
+}
+
+int CNitParser::GetTargetRegionNameCount(__int64 regionId)
+{
+  int count = 0;
+  map<unsigned int, char*>* targetRegionNames = m_mTargetRegionNames[regionId];
+  if (targetRegionNames != NULL)
+  {
+    count = targetRegionNames->size();
+  }
+  return count;
+}
+
+void CNitParser::GetTargetRegionName(__int64 regionId, int index, unsigned int* language, char** name)
+{
+  *language = 0;
+  *name = NULL;
+  int count = 0;
+  map<unsigned int, char*>* targetRegionNames = m_mTargetRegionNames[regionId];
+  if (targetRegionNames == NULL)
+  {
+    return;
+  }
+  map<unsigned int, char*>::iterator nameIt = targetRegionNames->begin();
+  while (nameIt != targetRegionNames->end())
+  {
+    if (count == index)
+    {
+      *language = nameIt->first;
+      *name = nameIt->second;
+      return;
+    }
+    count++;
+    nameIt++;
+  }
 }
 
 void CNitParser::DecodeLogicalChannelNumberDescriptor(byte* b, int length, map<int, int>* lcns)
@@ -489,17 +728,15 @@ void CNitParser::DecodeLogicalChannelNumberDescriptor(byte* b, int length, map<i
   catch (...)
   {
     LogDebug("%s: unhandled exception in DecodeLogicalChannelNumberDescriptor()", m_sName);
-    lcns = NULL;
   }
 }
 
-void CNitParser::DecodeCableDeliverySystemDescriptor(byte* b, int length, NitCableMultiplexDetail* mux)
+bool CNitParser::DecodeCableDeliverySystemDescriptor(byte* b, int length, NitCableMultiplexDetail* mux)
 {
   if (length != 11)
   {
     LogDebug("%s: invalid cable delivery system descriptor length = %d", m_sName, length);
-    mux = NULL;
-    return;
+    return false;
   }
   try
   {
@@ -600,17 +837,17 @@ void CNitParser::DecodeCableDeliverySystemDescriptor(byte* b, int length, NitCab
   catch (...)
   {
     LogDebug("%s: unhandled exception in DecodeCableDeliverySystemDescriptor()", m_sName);
-    mux = NULL;
+    return false;
   }
+  return true;
 }
 
-void CNitParser::DecodeSatelliteDeliverySystemDescriptor(byte* b, int length, NitSatelliteMultiplexDetail* mux)
+bool CNitParser::DecodeSatelliteDeliverySystemDescriptor(byte* b, int length, NitSatelliteMultiplexDetail* mux)
 {
   if (length != 11)
   {
     LogDebug("%s: invalid satellite delivery system descriptor length = %d", m_sName, length);
-    mux = NULL;
-    return;
+    return false;
   }
   try
   {
@@ -622,7 +859,7 @@ void CNitParser::DecodeSatelliteDeliverySystemDescriptor(byte* b, int length, Ni
     mux->OrbitalPosition += (10 * ((b[5] >> 4) & 0xf));
     mux->OrbitalPosition += (b[5] & 0xf);
 
-    mux->WestEastFlag = (b[6] & 0x80) >> 7;
+    mux->WestEastFlag = (b[6] & 0x80) != 0;
 
     mux->Polarisation = (b[6] & 0x60) >> 5;
     switch (mux->Polarisation)
@@ -644,7 +881,7 @@ void CNitParser::DecodeSatelliteDeliverySystemDescriptor(byte* b, int length, Ni
         break;
     }
 
-    mux->IsS2 = (b[6] & 0x4) >> 2;
+    mux->IsS2 = (b[6] & 0x4) != 0;
     if (mux->IsS2)
     {
       mux->RollOff = (b[6] & 0x18) >> 3;
@@ -711,21 +948,88 @@ void CNitParser::DecodeSatelliteDeliverySystemDescriptor(byte* b, int length, Ni
         mux->InnerFecRate = BDA_BCC_RATE_9_10;
         break;
     }
+
+    // DVB-S2 properties, available from the S2 satellite delivery descriptor.
+    mux->MultipleInputStreamFlag = false;
+    mux->BackwardsCompatibilityIndicator = false;
+    mux->ScramblingSequenceIndex = 0;
+    mux->InputStreamIdentifier = 0;
   }
   catch (...)
   {
     LogDebug("%s: unhandled exception in DecodeSatelliteDeliverySystemDescriptor()", m_sName);
-    mux = NULL;
+    return false;
   }
+  return true;
 }
 
-void CNitParser::DecodeTerrestrialDeliverySystemDescriptor(byte* b, int length, NitTerrestrialMultiplexDetail* mux)
+bool CNitParser::DecodeS2SatelliteDeliverySystemDescriptor(byte* b, int length, NitSatelliteMultiplexDetail* mux)
+{
+  if (length < 1 || length > 5)
+  {
+    LogDebug("%s: invalid S2 satellite delivery system descriptor length = %d", m_sName, length);
+    return false;
+  }
+  try
+  {
+    bool scrambling_sequence_selector = (b[0] & 0x80) != 0;
+    if (scrambling_sequence_selector)
+    {
+      if (length < 4)
+      {
+        LogDebug("%s: invalid S2 satellite delivery system descriptor length = %d", m_sName, length);
+        return false;
+      }
+      mux->ScramblingSequenceIndex = ((b[1] & 0x3) << 16) + (b[2] << 8) + b[3];
+    }
+    else
+    {
+      mux->ScramblingSequenceIndex = 0;
+    }
+
+    mux->MultipleInputStreamFlag = (b[0] & 0x40) != 0;
+    mux->BackwardsCompatibilityIndicator = (b[0] & 0x20) != 0;
+
+    if (mux->MultipleInputStreamFlag)
+    {
+      if (scrambling_sequence_selector)
+      {
+        if (length != 5)
+        {
+          LogDebug("%s: invalid S2 satellite delivery system descriptor length = %d", m_sName, length);
+          return false;
+        }
+        mux->InputStreamIdentifier = b[4];
+      }
+      else
+      {
+        if (length < 2)
+        {
+          LogDebug("%s: invalid S2 satellite delivery system descriptor length = %d", m_sName, length);
+          return false;
+        }
+        mux->InputStreamIdentifier = b[2];
+      }
+    }
+    else
+    {
+      mux->InputStreamIdentifier = 0;
+    }
+  }
+  catch (...)
+  {
+    LogDebug("%s: unhandled exception in DecodeS2SatelliteDeliverySystemDescriptor()", m_sName);
+    return false;
+  }
+  return true;
+}
+
+bool CNitParser::DecodeTerrestrialDeliverySystemDescriptor(byte* b, int length, NitTerrestrialMultiplexDetail* mux)
 {
   if (length != 11)
   {
     LogDebug("%s: invalid terrestrial delivery system descriptor length = %d", m_sName, length);
-    mux = NULL;
-    return;
+    return false;
   }
   try
   {
@@ -735,16 +1039,16 @@ void CNitParser::DecodeTerrestrialDeliverySystemDescriptor(byte* b, int length, 
     switch (mux->Bandwidth)
     {
       case 1:
-        mux->Bandwidth = 7;
+        mux->Bandwidth = 7000;
         break;
       case 2:
-        mux->Bandwidth = 6;
+        mux->Bandwidth = 6000;
         break;
       case 3:
-        mux->Bandwidth = 5;
+        mux->Bandwidth = 5000;
         break;
       default:
-        mux->Bandwidth = 8;
+        mux->Bandwidth = 8000;
         break;
     }
 
@@ -874,27 +1178,196 @@ void CNitParser::DecodeTerrestrialDeliverySystemDescriptor(byte* b, int length, 
         break;
     }
       
-    mux->OtherFrequencyFlag = (b[6] & 1);
+    mux->OtherFrequencyFlag = (b[6] & 1) != 0;
+
+    // DVB-T2 properties, not applicable for DVB-T.
+    mux->MultipleInputStreamFlag = false;
+    mux->TimeFrequencySlicingFlag = false;
+    mux->PlpId = 0;
+    mux->T2SystemId = 0;
   }
   catch (...)
   {
     LogDebug("%s: unhandled exception in DecodeTerrestrialDeliverySystemDescriptor()", m_sName);
-    mux = NULL;
+    return false;
   }
+  return true;
 }
 
-void CNitParser::DecodeFrequencyListDescriptor(byte* b, int length, vector<int>* frequencies, int* frequencyType)
+bool CNitParser::DecodeT2TerrestrialDeliverySystemDescriptor(byte* b, int length, NitTerrestrialMultiplexDetail* mux, map<int, int>* frequencies)
+{
+  if (length == 4)
+  {
+    LogDebug("%s: ignoring short form T2 terrestrial delivery system descriptor", m_sName);
+    return false;
+  }
+  if (length < 6)
+  {
+    LogDebug("%s: invalid T2 terrestrial delivery system descriptor length = %d", m_sName, length);
+    return false;
+  }
+  try
+  {
+    mux->PlpId = b[1];
+    mux->T2SystemId = (b[2] << 8) + b[3];
+    mux->MultipleInputStreamFlag = (b[4] & 0xc0) != 0;
+
+    mux->Bandwidth = (b[4] & 0x3c) >> 2;
+    switch (mux->Bandwidth)
+    {
+      case 1:
+        mux->Bandwidth = 7000;
+        break;
+      case 2:
+        mux->Bandwidth = 6000;
+        break;
+      case 3:
+        mux->Bandwidth = 5000;
+        break;
+      case 4:
+        mux->Bandwidth = 10000;
+        break;
+      case 5:
+        mux->Bandwidth = 1712;
+        break;
+      default:
+        mux->Bandwidth = 8000;
+        break;
+    }
+
+    mux->GuardInterval = (b[5] >> 5);
+    switch (mux->GuardInterval)
+    {
+      case 0:
+        mux->GuardInterval = BDA_GUARD_1_32;
+        break;
+      case 1:
+        mux->GuardInterval = BDA_GUARD_1_16;
+        break;
+      case 2:
+        mux->GuardInterval = BDA_GUARD_1_8;
+        break;
+      case 3:
+        mux->GuardInterval = BDA_GUARD_1_4;
+        break;
+      case 4:
+        mux->GuardInterval = BDA_GUARD_1_128;
+        break;
+      case 5:
+        mux->GuardInterval = BDA_GUARD_19_128;
+        break;
+      case 6:
+        mux->GuardInterval = BDA_GUARD_19_256;
+        break;
+      default:
+        mux->GuardInterval = BDA_GUARD_NOT_SET;
+        break;
+    }
+
+    mux->TransmissionMode = (b[5] >> 2) & 0x7;
+    switch (mux->TransmissionMode)
+    {
+      case 0:
+        mux->TransmissionMode = BDA_XMIT_MODE_2K;
+        break;
+      case 1:
+        mux->TransmissionMode = BDA_XMIT_MODE_8K;
+        break;
+      case 2:
+        mux->TransmissionMode = BDA_XMIT_MODE_4K;
+        break;
+      case 3:
+        mux->TransmissionMode = BDA_XMIT_MODE_1K;
+        break;
+      case 4:
+        mux->TransmissionMode = BDA_XMIT_MODE_16K;
+        break;
+      case 5:
+        mux->TransmissionMode = BDA_XMIT_MODE_32K;
+        break;
+      default:
+        mux->TransmissionMode = BDA_XMIT_MODE_NOT_SET;
+        break;
+    }
+
+    mux->OtherFrequencyFlag = (b[5] & 0x02) != 0;
+    mux->TimeSlicingIndicator = (b[5] & 1) != 0;
+
+    int pointer = 6;
+    while (pointer + 3 < length)
+    {
+      int cell_id = (b[pointer] << 8) + b[pointer + 1];
+      pointer += 2;
+
+      int frequency;
+      if (mux->TimeSlicingIndicator)
+      {
+        // TFS is not supported by the wider TV Server at this time.
+        LogDebug("%s: warning, unsupported time-frequency slicing frequency set found in T2 terrestrial delivery system descriptor", m_sName);
+        int frequency_loop_length = b[pointer++];
+        int endOfFrequencyLoop = pointer + frequency_loop_length;
+        if (endOfFrequencyLoop + 1 > length)
+        {
+          LogDebug("%s: invalid frequency loop length in T2 terrestrial delivery system descriptor, length = %d, pointer = %d, end of frequency loop = %d, descriptor length = %d", m_sName, frequency_loop_length, pointer, endOfFrequencyLoop, length);
+          return false;
+        }
+        while (pointer + 3 < endOfFrequencyLoop)
+        {
+          frequency = (b[pointer] << 24) + (b[pointer + 1] << 16) + (b[pointer + 2] << 8) + b[pointer + 3];
+          pointer += 4;
+
+          // We'll end up recording the last frequency in the set.
+          (*frequencies)[(cell_id << 8)] = frequency;
+        }
+      }
+      else
+      {
+        if (pointer + 3 + 1 > length)
+        {
+          LogDebug("%s: invalid T2 terrestrial delivery system descriptor detected in cell loop - not enough bytes left, pointer = %d, descriptor length = %d", m_sName, pointer, length);
+          return false;
+        }
+        frequency = (b[pointer] << 24) + (b[pointer + 1] << 16) + (b[pointer + 2] << 8) + b[pointer + 3];
+        pointer += 4;
+
+        (*frequencies)[(cell_id << 8)] = frequency;
+      }
+
+      int subcell_info_loop_length = b[pointer++];
+      int endOfSubCellInfoLoop = pointer + subcell_info_loop_length;
+      if (endOfSubCellInfoLoop > length)
+      {
+        LogDebug("%s: invalid sub-cell info loop length in T2 terrestrial delivery system descriptor, length = %d, pointer = %d, end of sub-cell info loop = %d, descriptor length = %d", m_sName, subcell_info_loop_length, pointer, endOfSubCellInfoLoop, length);
+        return false;
+      }
+      while (pointer + 4 < endOfSubCellInfoLoop)
+      {
+        int cell_id_extension = b[pointer++];
+        frequency = (b[pointer] << 24) + (b[pointer + 1] << 16) + (b[pointer + 2] << 8) + b[pointer + 3];
+        pointer += 4;
+
+        (*frequencies)[(cell_id << 8) + cell_id_extension] = frequency;
+      }
+    }
+  }
+  catch (...)
+  {
+    LogDebug("%s: unhandled exception in DecodeT2TerrestrialDeliverySystemDescriptor()", m_sName);
+    return false;
+  }
+  return true;
+}
+
+void CNitParser::DecodeFrequencyListDescriptor(byte* b, int length, vector<int>* frequencies)
 {
   if (length < 1)
   {
     LogDebug("%s: invalid frequency list descriptor length = %d", m_sName, length);
-    frequencies = NULL;
     return;
   }
   try
   {
     int coding_type = b[0] & 0x3;
-    *frequencyType = coding_type;
     if (coding_type != 1 && coding_type != 2 && coding_type != 3)
     {
       LogDebug("%s: unsupported coding type %d in DecodeFrequencyListDescriptor()", m_sName, coding_type);
@@ -935,7 +1408,6 @@ void CNitParser::DecodeFrequencyListDescriptor(byte* b, int length, vector<int>*
   catch (...)
   {
     LogDebug("%s: unhandled exception in DecodeFrequencyListDescriptor()", m_sName);
-    frequencies = NULL;
   }
 }
 
@@ -953,16 +1425,16 @@ void CNitParser::DecodeServiceListDescriptor(byte* b, int length, vector<int>* s
 
 void CNitParser::DecodeNameDescriptor(byte* b, int length, char** name)
 {
-  *name = new char[DESCRIPTOR_MAX_STRING_LENGTH + 1];
+  *name = new char[length + 1];
   if (*name == NULL)
   {
     LogDebug("%s: failed to allocate memory in DecodeNameDescriptor()", m_sName);
     return;
   }
-  getString468A(b, length, *name, DESCRIPTOR_MAX_STRING_LENGTH);
+  getString468A(b, length, *name, length);
 }
 
-void CNitParser::DecodeMultilingualNameDescriptor(byte* b, int length, vector<char*>* names)
+void CNitParser::DecodeMultilingualNameDescriptor(byte* b, int length, map<unsigned int, char*>* names)
 {
   int pointer = 0;
   while (pointer + 3 < length)
@@ -971,20 +1443,20 @@ void CNitParser::DecodeMultilingualNameDescriptor(byte* b, int length, vector<ch
     pointer += 3;
     int network_name_length = b[pointer++];
 
-    char* name = new char[DESCRIPTOR_MAX_STRING_LENGTH + 1];
+    char* name = new char[network_name_length + 1];
     if (name == NULL)
     {
       LogDebug("%s: failed to allocate memory in DecodeMultilingualNameDescriptor()", m_sName);
       return;
     }
-    getString468A(&b[pointer], network_name_length, name, DESCRIPTOR_MAX_STRING_LENGTH);
-    names->push_back(name);
+    getString468A(&b[pointer], network_name_length, name, network_name_length);
+    (*names)[iso_639_language_code << 8] = name;
 
     pointer += network_name_length;
   }
 }
 
-void CNitParser::DecodeCellFrequencyLinkDescriptor(byte* b, int length, vector<int>* frequencies)
+void CNitParser::DecodeCellFrequencyLinkDescriptor(byte* b, int length, map<int, int>* frequencies)
 {
   try
   {
@@ -995,22 +1467,10 @@ void CNitParser::DecodeCellFrequencyLinkDescriptor(byte* b, int length, vector<i
       pointer += 2;
       int frequency = DecodeTerrestrialFrequency(&b[pointer]);
       pointer += 4;
+
+      (*frequencies)[cell_id << 8] = frequency;
+
       int subcell_info_loop_length = b[pointer++];
-
-      bool alreadyAdded = false;
-      for (unsigned int i = 0; i < frequencies->size(); i++)
-      {
-        if (frequency == (*frequencies)[i])
-        {
-          alreadyAdded = true;
-          break;
-        }
-      }
-      if (!alreadyAdded && frequency > 0)
-      {
-        frequencies->push_back(frequency);
-      }
-
       if (subcell_info_loop_length > 0)
       {
         int endOfSubCellInfoLoop = pointer + subcell_info_loop_length;
@@ -1025,19 +1485,7 @@ void CNitParser::DecodeCellFrequencyLinkDescriptor(byte* b, int length, vector<i
           frequency = DecodeTerrestrialFrequency(&b[pointer]);
           pointer += 4;
 
-          alreadyAdded = false;
-          for (unsigned int i = 0; i < frequencies->size(); i++)
-          {
-            if (frequency == (*frequencies)[i])
-            {
-              alreadyAdded = true;
-              break;
-            }
-          }
-          if (!alreadyAdded && frequency > 0)
-          {
-            frequencies->push_back(frequency);
-          }
+          (*frequencies)[(cell_id << 8) + cell_id_extension] = frequency;
         }
       }
     }
@@ -1045,7 +1493,167 @@ void CNitParser::DecodeCellFrequencyLinkDescriptor(byte* b, int length, vector<i
   catch (...)
   {
     LogDebug("%s: unhandled exception in DecodeCellFrequencyLinkDescriptor()", m_sName);
-    frequencies = NULL;
+  }
+}
+
+void CNitParser::DecodeCountryAvailabilityDescriptor(byte* b, int length, vector<unsigned int>* availableInCountries, vector<unsigned int>* unavailableInCountries)
+{
+  if (length < 1)
+  {
+    LogDebug("%s: invalid country availability descriptor length = %d", m_sName, length);
+    return;
+  }
+  try
+  {
+    int pointer = 0;
+    bool country_availability_flag = (b[pointer++] & 0x80) != 0;
+    while (pointer + 2 < length)
+    {
+      int country_code = (b[pointer] << 16) + (b[pointer + 1] << 8) + b[pointer + 2];
+      pointer += 3;
+      if (country_availability_flag)
+      {
+        availableInCountries->push_back(country_code << 8);
+      }
+      else
+      {
+        unavailableInCountries->push_back(country_code << 8);
+      }
+    }
+  }
+  catch (...)
+  {
+    LogDebug("%s: unhandled exception in DecodeCountryAvailabilityDescriptor()", m_sName);
+  }
+}
+
+void CNitParser::DecodeTargetRegionDescriptor(byte* b, int length, vector<__int64>* targetRegions)
+{
+  if (length < 4)
+  {
+    LogDebug("%s: invalid target region descriptor length = %d", m_sName, length);
+    return;
+  }
+  try
+  {
+    int country_code = (b[1] << 16) + (b[2] << 8) + b[3];
+    if (length == 4)
+    {
+      targetRegions->push_back((__int64)country_code << 32);
+      return;
+    }
+
+    int pointer = 4;
+    while (pointer < length)
+    {
+      bool country_code_flag = (b[pointer] & 0x04) != 0;
+      int region_depth = b[pointer++] & 0x03;
+
+      // How many bytes are we expecting in this loop?
+      int byteCount = 0;
+      if (country_code_flag)
+      {
+        byteCount += 3;
+      }
+      byteCount += region_depth;
+      if (region_depth == 3)
+      {
+        byteCount++;
+      }
+
+      if (pointer + byteCount > length)
+      {
+        LogDebug("%s: invalid target region descriptor length = %d, pointer = %d, country code flag = %d, region depth = %d", m_sName, length, pointer, country_code_flag, region_depth);
+        return;
+      }
+
+      if (country_code_flag)
+      {
+        country_code = (b[pointer] << 16) + (b[pointer + 1] << 8) + b[pointer + 2];
+        pointer += 3;
+      }
+
+      __int64 targetRegionId = ((__int64)country_code << 32);
+      if (region_depth > 0)
+      {
+        targetRegionId += (b[pointer++] << 24);
+        if (region_depth > 1)
+        {
+          targetRegionId += (b[pointer++] << 16);
+          if (region_depth > 2)
+          {
+            targetRegionId += (b[pointer] << 8) + b[pointer + 1];
+            pointer += 2;
+          }
+        }
+      }
+
+      targetRegions->push_back(targetRegionId);
+    }
+  }
+  catch (...)
+  {
+    LogDebug("%s: unhandled exception in DecodeTargetRegionDescriptor()", m_sName);
+  }
+}
+
+void CNitParser::DecodeTargetRegionNameDescriptor(byte* b, int length, map<__int64, char*>* names, unsigned int* language)
+{
+  if (length < 7)
+  {
+    LogDebug("%s: invalid target region name descriptor length = %d", m_sName, length);
+    return;
+  }
+  try
+  {
+    int country_code = (b[1] << 16) + (b[2] << 8) + b[3];
+    int iso_639_language_code = (b[4] << 16) + (b[5] << 8) + b[6];
+    *language = iso_639_language_code << 8;
+    int pointer = 7;
+    while (pointer + 1 < length)
+    {
+      int region_depth = b[pointer] >> 6;
+      int region_name_length = (b[pointer++] & 0x3);
+
+      // How many bytes are we expecting in this loop?
+      int byteCount = region_name_length + region_depth;
+      if (region_depth == 3)
+      {
+        byteCount++;
+      }
+
+      if (pointer + byteCount > length)
+      {
+        LogDebug("%s: invalid target region name descriptor length = %d, pointer = %d, region depth = %d, region name length = %d", m_sName, length, pointer, region_depth, region_name_length);
+        return;
+      }
+
+      char* targetRegionName = new char[region_name_length + 1];
+      if (*targetRegionName == NULL)
+      {
+        LogDebug("%s: failed to allocate memory in DecodeTargetRegionNameDescriptor()", m_sName);
+        return;
+      }
+      getString468A(&b[pointer], region_name_length, targetRegionName, region_name_length);
+      pointer += region_name_length;
+
+      __int64 targetRegionId = ((__int64)country_code << 32) + (b[pointer++] << 24);
+      if (region_depth > 1)
+      {
+        targetRegionId += (b[pointer++] << 16);
+        if (region_depth > 2)
+        {
+          targetRegionId += (b[pointer] << 8) + b[pointer + 1];
+          pointer += 2;
+        }
+      }
+
+      (*names)[targetRegionId] = targetRegionName;
+    }
+  }
+  catch (...)
+  {
+    LogDebug("%s: unhandled exception in DecodeTargetRegionNameDescriptor()", m_sName);
   }
 }
 
@@ -1082,267 +1690,321 @@ int CNitParser::DecodeTerrestrialFrequency(byte* b)
   return ((b[0] << 24) + (b[1] << 16) + (b[2] << 8) + b[3]) / 100;
 }
 
-void CNitParser::AddLogicalChannelNumbers(int nid, int tsid, map<int, int>* lcns)
+void CNitParser::AddLogicalChannelNumbers(int originalNetworkId, int transportStreamId, map<int, int>* lcns)
 {
   if (lcns != NULL)
   {
-    for (map<int, int>::iterator it = lcns->begin(); it != lcns->end(); it++)
+    map<int, int>::iterator it = lcns->begin();
+    while (it != lcns->end())
     {
-      NitLcn* lcn = new NitLcn();
-      lcn->Lcn = it->second;
-      lcn->NetworkId = nid;
-      lcn->TransportStreamId = tsid;
-      lcn->ServiceId = it->first;
-      m_vLcns.push_back(lcn);
-      LogDebug("%s: logical channel number, ONID = 0x%x, TSID = 0x%x, SID = 0x%x, LCN = %d", m_sName, nid, tsid, it->first, it->second);
+      __int64 serviceKey = ((__int64)originalNetworkId << 32) + (transportStreamId << 16) + it->first;
+      if (m_mLogicalChannelNumbers[serviceKey] != 0)
+      {
+        LogDebug("%s: replacing existing logical channel number, ONID = 0x%x, TSID = 0x%x, SID = 0x%x, LCN = %d", m_sName, originalNetworkId, transportStreamId, it->first, it->second);
+      }
+      else
+      {
+        LogDebug("%s: logical channel number, ONID = 0x%x, TSID = 0x%x, SID = 0x%x, LCN = %d", m_sName, originalNetworkId, transportStreamId, it->first, it->second);
+      }
+      m_mLogicalChannelNumbers[serviceKey] = it->second;
+      it++;
     }
   }
 }
 
-void CNitParser::AddGroupNames(int nid, int tsid, int sid, vector<char*>* names)
+void CNitParser::AddGroupNames(int groupId, map<unsigned int, char*>* names)
 {
-  if (names == NULL)
+  map<unsigned int, char*>* existingNames = m_mGroupNames[groupId];
+  if (existingNames == NULL)
+  {
+    existingNames = new map<unsigned int, char*>();
+  }
+  map<unsigned int, char*>::iterator nameIt = names->begin();
+  while (nameIt != names->end())
+  {
+    unsigned int language = nameIt->first;
+    if ((*existingNames)[language] != NULL)
+    {
+      LogDebug("%s: replacing existing group name, group ID = 0x%x, language = %d, name = %s", m_sName, groupId, language, nameIt->second);
+      delete[] (*existingNames)[language];
+    }
+    else
+    {
+      LogDebug("%s: group name, group ID = 0x%x, language = %d, name = %s", m_sName, groupId, language, nameIt->second);
+    }
+    (*existingNames)[language] = nameIt->second;
+    nameIt++;
+  }
+}
+
+void CNitParser::AddTargetRegionNames(map<__int64, char*>* names, unsigned int language)
+{
+  map<__int64, char*>::iterator nameIt = names->begin();
+  while (nameIt != names->end())
+  {
+    map<unsigned int, char*>* existingNames = m_mTargetRegionNames[nameIt->first];
+    if (existingNames == NULL)
+    {
+      existingNames = new map<unsigned int, char*>();
+    }
+    else if ((*existingNames)[language] != NULL)
+    {
+      LogDebug("%s: replacing existing target region name, region ID = 0x%x, language = %d, name = %s", m_sName, nameIt->first, language, nameIt->second);
+      delete[] (*existingNames)[language];
+    }
+    else
+    {
+      LogDebug("%s: target region name, region ID = 0x%x, language = %d, name = %s", m_sName, nameIt->first, language, nameIt->second);
+    }
+    (*existingNames)[language] = nameIt->second;
+    nameIt++;
+  }
+}
+
+void CNitParser::AddServiceDetails(int groupId, int originalNetworkId, int transportStreamId, vector<int>* serviceIds,
+                        map<int, int>* cellFrequencies, vector<__int64>* targetRegions,
+                        vector<unsigned int>* availableInCountries, vector<unsigned int>* unavailableInCountries)
+{
+  vector<int>::iterator serviceIt = serviceIds->begin();
+  while (serviceIt != serviceIds->end())
+  {
+    __int64 serviceKey = ((__int64)originalNetworkId << 32) + (transportStreamId << 16) + *serviceIt;
+
+    map<int, bool>* serviceGroups = m_mGroupIds[serviceKey];
+    if (serviceGroups == NULL)
+    {
+      serviceGroups = new map<int, bool>();
+    }
+    (*serviceGroups)[groupId] = true;
+
+    map<int, bool>* serviceAvailableInCells = m_mAvailableInCells[serviceKey];
+    if (serviceAvailableInCells == NULL)
+    {
+      serviceAvailableInCells = new map<int, bool>();
+    }
+    map<int, int>::iterator cellIt = cellFrequencies->begin();
+    while (cellIt != cellFrequencies->end())
+    {
+      (*serviceAvailableInCells)[cellIt->first] = true;
+      cellIt++;
+    }
+
+    map<__int64, bool>* serviceTargetRegions = m_mTargetRegions[serviceKey];
+    if (serviceTargetRegions == NULL)
+    {
+      serviceTargetRegions = new map<__int64, bool>();
+    }
+    vector<__int64>::iterator regionIt = targetRegions->begin();
+    while (regionIt != targetRegions->end())
+    {
+      (*serviceTargetRegions)[*regionIt] = true;
+      regionIt++;
+    }
+
+    map<unsigned int, bool>* serviceAvailableInCountries = m_mAvailableInCountries[serviceKey];
+    if (serviceAvailableInCountries == NULL)
+    {
+      serviceAvailableInCountries = new map<unsigned int, bool>();
+    }
+    vector<unsigned int>::iterator countryIt = availableInCountries->begin();
+    while (countryIt != availableInCountries->end())
+    {
+      (*serviceAvailableInCountries)[*countryIt] = true;
+      countryIt++;
+    }
+
+    map<unsigned int, bool>* serviceUnavailableInCountries = m_mUnavailableInCountries[serviceKey];
+    if (serviceUnavailableInCountries == NULL)
+    {
+      serviceUnavailableInCountries = new map<unsigned int, bool>();
+    }
+    countryIt = unavailableInCountries->begin();
+    while (countryIt != unavailableInCountries->end())
+    {
+      (*serviceUnavailableInCountries)[*countryIt] = true;
+      countryIt++;
+    }
+
+    serviceIt++;
+  }
+}
+
+void CNitParser::AddMultiplexDetails(NitCableMultiplexDetail* cableMux, NitSatelliteMultiplexDetail* satelliteMux,
+                          NitTerrestrialMultiplexDetail* terrestrialMux,
+                          map<int, int>* cellFrequencies, vector<int>* frequencies)
+{
+  if (terrestrialMux != NULL && cellFrequencies != NULL && cellFrequencies->size() > 0)
+  {
+    // The cell frequency map is populated from cell frequency link and T2 delivery
+    // system descriptors. Both of those descriptors only apply for terrestrial networks.
+    map<int, int>::iterator cellIt = cellFrequencies->begin();
+    while (cellIt != cellFrequencies->end())
+    {
+      terrestrialMux->CellId = (cellIt->first >> 8);
+      terrestrialMux->CellIdExtension = (cellIt->first & 0xff);
+      terrestrialMux->CentreFrequency = cellIt->second;
+      AddTerrestrialMux(terrestrialMux);
+
+      cellIt++;
+    }
+  }
+  else if (frequencies != NULL && frequencies->size() > 0)
+  {
+    // We have seen a frequency list descriptor. Technically that could be a list of frequencies
+    // for cable, satellite or terrestrial multiplexes.
+    vector<int>::iterator frequencyIt = frequencies->begin();
+    if (cableMux != NULL && cableMux->SymbolRate != 0)
+    {
+      while (frequencyIt != frequencies->end())
+      {
+        cableMux->Frequency = *frequencyIt;
+        AddCableMux(cableMux);
+
+        frequencyIt++;
+      }
+    }
+    else if (satelliteMux != NULL && satelliteMux->SymbolRate != 0)
+    {
+      while (frequencyIt != frequencies->end())
+      {
+        satelliteMux->Frequency = *frequencyIt;
+        AddSatelliteMux(satelliteMux);
+
+        frequencyIt++;
+      }
+    }
+    else if (terrestrialMux != NULL && terrestrialMux->Bandwidth != 0)
+    {
+      while (frequencyIt != frequencies->end())
+      {
+        terrestrialMux->CentreFrequency = *frequencyIt;
+        AddTerrestrialMux(terrestrialMux);
+
+        frequencyIt++;
+      }
+    }
+  }
+  else
+  {
+    if (cableMux != NULL && cableMux->SymbolRate != 0)
+    {
+      AddCableMux(cableMux);
+    }
+    else if (satelliteMux != NULL && satelliteMux->SymbolRate != 0)
+    {
+      AddSatelliteMux(satelliteMux);
+    }
+    else if (terrestrialMux != NULL && terrestrialMux->Bandwidth != 0)
+    {
+      AddTerrestrialMux(terrestrialMux);
+    }
+  }
+}
+
+void CNitParser::AddCableMux(NitCableMultiplexDetail* mux)
+{
+  // Do we actually have the multiplex tuning details?
+  if (mux == NULL || mux->SymbolRate == 0)
   {
     return;
   }
-  for (vector<NitNameSet*>::iterator it = m_vGroupNames.begin(); it != m_vGroupNames.end(); it++)
-  {
-    NitNameSet* nameSet = *it;
-    if (nid == nameSet->NetworkId && tsid == nameSet->TransportStreamId && sid == nameSet->ServiceId)
-    {
-      for (vector<char*>::iterator it2 = names->begin(); it2 != names->end(); it2++)
-      {
-        char* name = new char[DESCRIPTOR_MAX_STRING_LENGTH + 1];
-        if (name == NULL)
-        {
-          LogDebug("%s: failed to allocate memory in AddGroupNames()", m_sName);
-          return;
-        }
-        strcpy(name, *it2);
-        LogDebug("%s: group name, ONID = 0x%x, TSID = 0x%x, SID = 0x%x, name = %s", m_sName, nid, tsid, sid, name);
-        nameSet->Names.push_back(name);
-      }
-      return;
-    }
-  }
-  NitNameSet* nameSet = new NitNameSet();
-  nameSet->NetworkId = nid;
-  nameSet->TransportStreamId = tsid;
-  nameSet->ServiceId = sid;
-  for (vector<char*>::iterator it = names->begin(); it != names->end(); it++)
-  {
-    char* name = new char[DESCRIPTOR_MAX_STRING_LENGTH + 1];
-    if (name == NULL)
-    {
-      LogDebug("%s: failed to allocate memory in AddGroupNames()", m_sName);
-      return;
-    }
-    strcpy(name, *it);
-    LogDebug("%s: group name, ONID = 0x%x, TSID = 0x%x, SID = 0x%x, name = %s", m_sName, nid, tsid, sid, name);
-    nameSet->Names.push_back(name);
-  }
-  m_vGroupNames.push_back(nameSet);
-}
 
-void CNitParser::AddCableMux(NitCableMultiplexDetail* mux, vector<int>* frequencies)
-{
-  // Do we actually have the multiplex tuning details? This function might have been called
-  // on receipt of a frequency list descriptor, without having yet received the cable delivery
-  // system descriptor.
-  if (mux != NULL && mux->SymbolRate != 0)
+  if (mux->Frequency > MIN_CABLE_FREQUENCY_KHZ && mux->Frequency < MAX_CABLE_FREQUENCY_KHZ)
   {
-    // Is the frequency specified in the cable delivery system descriptor, or should we expect
-    // a frequency list descriptor to give us the list of all possible frequencies?
-    if (mux->Frequency > MIN_CABLE_FREQUENCY_KHZ && mux->Frequency < MAX_CABLE_FREQUENCY_KHZ)
+    bool alreadyAdded = false;
+    for (vector<NitCableMultiplexDetail*>::iterator it = m_vCableMuxes.begin(); it != m_vCableMuxes.end(); it++)
     {
-      bool alreadyAdded = false;
-      for (vector<NitCableMultiplexDetail*>::iterator it = m_vCableMuxes.begin(); it != m_vCableMuxes.end(); it++)
+      if ((*it)->Equals(mux))
       {
-        if ((*it)->Equals(mux))
-        {
-          alreadyAdded = true;
-          break;
-        }
-      }
-      if (!alreadyAdded)
-      {
-        NitCableMultiplexDetail* cableMux = new NitCableMultiplexDetail();
-        if (cableMux == NULL)
-        {
-          LogDebug("%s: failed to allocate memory in AddCableMux()", m_sName);
-          return;
-        }
-        mux->Clone(cableMux);
-        m_vCableMuxes.push_back(cableMux);
-        LogDebug("%s: cable multiplex, ONID = 0x%x, TSID = 0x%x, frequency = %d kHz, modulation = %d, symbol rate = %d ks/s",
-                  m_sName, mux->NetworkId, mux->TransportStreamId, mux->Frequency, mux->Modulation, mux->SymbolRate);
+        alreadyAdded = true;
+        break;
       }
     }
-    // Do we have the required frequency list yet?
-    else if (frequencies != NULL && frequencies->size() > 0)
+    if (!alreadyAdded)
     {
-      for (unsigned int i = 0; i < frequencies->size(); i++)
+      NitCableMultiplexDetail* cableMux = new NitCableMultiplexDetail();
+      if (cableMux == NULL)
       {
-        mux->Frequency = (*frequencies)[i];
-        bool alreadyAdded = false;
-        for (vector<NitCableMultiplexDetail*>::iterator it = m_vCableMuxes.begin(); it != m_vCableMuxes.end(); it++)
-        {
-          if ((*it)->Equals(mux))
-          {
-            alreadyAdded = true;
-            break;
-          }
-        }
-        if (!alreadyAdded)
-        {
-          NitCableMultiplexDetail* clone = new NitCableMultiplexDetail();
-          if (clone == NULL)
-          {
-            LogDebug("%s: failed to allocate memory in AddCableMux()", m_sName);
-            return;
-          }
-          mux->Clone(clone);
-          m_vCableMuxes.push_back(clone);
-          LogDebug("%s: cable multiplex, ONID = 0x%x, TSID = 0x%x, frequency = %d kHz, modulation = %d, symbol rate = %d ks/s",
-                    m_sName, clone->NetworkId, clone->TransportStreamId, clone->Frequency, clone->Modulation, clone->SymbolRate);
-        }
+        LogDebug("%s: failed to allocate memory in AddCableMux()", m_sName);
+        return;
       }
+      mux->Clone(cableMux);
+      m_vCableMuxes.push_back(cableMux);
+      LogDebug("%s: cable multiplex, ONID = 0x%x, TSID = 0x%x, frequency = %d kHz, modulation = %d, symbol rate = %d ks/s",
+                m_sName, mux->OriginalNetworkId, mux->TransportStreamId, mux->Frequency, mux->Modulation, mux->SymbolRate);
     }
   }
 }
 
-void CNitParser::AddSatelliteMux(NitSatelliteMultiplexDetail* mux, vector<int>* frequencies)
+void CNitParser::AddSatelliteMux(NitSatelliteMultiplexDetail* mux)
 {
-  // Do we actually have the multiplex tuning details? This function might have been called
-  // on receipt of a frequency list descriptor, without having yet received the satellite delivery
-  // system descriptor.
-  if (mux != NULL && mux->SymbolRate != 0)
+  // Do we actually have the multiplex tuning details?
+  if (mux == NULL || mux->SymbolRate == 0)
   {
-    // Is the frequency specified in the satellite delivery system descriptor, or should we expect
-    // a frequency list descriptor to give us the list of all possible frequencies?
-    if (mux->Frequency > MIN_SATELLITE_FREQUENCY_KHZ && mux->Frequency < MAX_SATELLITE_FREQUENCY_KHZ)
+    return;
+  }
+
+  if (mux->Frequency > MIN_SATELLITE_FREQUENCY_KHZ && mux->Frequency < MAX_SATELLITE_FREQUENCY_KHZ)
+  {
+    bool alreadyAdded = false;
+    for (vector<NitSatelliteMultiplexDetail*>::iterator it = m_vSatelliteMuxes.begin(); it != m_vSatelliteMuxes.end(); it++)
     {
-      bool alreadyAdded = false;
-      for (vector<NitSatelliteMultiplexDetail*>::iterator it = m_vSatelliteMuxes.begin(); it != m_vSatelliteMuxes.end(); it++)
+      if ((*it)->Equals(mux))
       {
-        if ((*it)->Equals(mux))
-        {
-          alreadyAdded = true;
-          break;
-        }
-      }
-      if (!alreadyAdded)
-      {
-        NitSatelliteMultiplexDetail* satMux = new NitSatelliteMultiplexDetail();
-        if (satMux == NULL)
-        {
-          LogDebug("%s: failed to allocate memory in AddSatelliteMux()", m_sName);
-          return;
-        }
-        mux->Clone(satMux);
-        m_vSatelliteMuxes.push_back(satMux);
-        LogDebug("%s: satellite multiplex, ONID = 0x%x, TSID = 0x%x, frequency = %d kHz, polarisation = %d, modulation = %d, symbol rate = %d ks/s, inner FEC rate = %d, is DVB-S2 = %d, roll-off = %d",
-                  m_sName, mux->NetworkId, mux->TransportStreamId, mux->Frequency, mux->Polarisation,
-                  mux->Modulation, mux->SymbolRate, mux->InnerFecRate, mux->IsS2, mux->RollOff);
+        alreadyAdded = true;
+        break;
       }
     }
-    // Do we have the required frequency list yet?
-    else if (frequencies != NULL && frequencies->size() > 0)
+    if (!alreadyAdded)
     {
-      for (unsigned int i = 0; i < frequencies->size(); i++)
+      NitSatelliteMultiplexDetail* satMux = new NitSatelliteMultiplexDetail();
+      if (satMux == NULL)
       {
-        mux->Frequency = (*frequencies)[i];
-        bool alreadyAdded = false;
-        for (vector<NitSatelliteMultiplexDetail*>::iterator it = m_vSatelliteMuxes.begin(); it != m_vSatelliteMuxes.end(); it++)
-        {
-          if ((*it)->Equals(mux))
-          {
-            alreadyAdded = true;
-            break;
-          }
-        }
-        if (!alreadyAdded)
-        {
-          NitSatelliteMultiplexDetail* clone = new NitSatelliteMultiplexDetail();
-          if (clone == NULL)
-          {
-            LogDebug("%s: failed to allocate memory in AddSatelliteMux()", m_sName);
-            return;
-          }
-          mux->Clone(clone);
-          m_vSatelliteMuxes.push_back(clone);
-          LogDebug("%s: satellite multiplex, ONID = 0x%x, TSID = 0x%x, frequency = %d kHz, polarisation = %d, modulation = %d, symbol rate = %d ks/s, inner FEC rate = %d, is DVB-S2 = %d, roll-off = %d",
-                    m_sName, clone->NetworkId, clone->TransportStreamId, clone->Frequency, clone->Polarisation,
-                    clone->Modulation, clone->SymbolRate, clone->InnerFecRate, clone->IsS2, clone->RollOff);
-        }
+        LogDebug("%s: failed to allocate memory in AddSatelliteMux()", m_sName);
+        return;
       }
+      mux->Clone(satMux);
+      m_vSatelliteMuxes.push_back(satMux);
+      LogDebug("%s: satellite multiplex, ONID = 0x%x, TSID = 0x%x, frequency = %d kHz, polarisation = %d, modulation = %d, symbol rate = %d ks/s, inner FEC rate = %d, orbital position = %f, is east = %d, is DVB-S2 = %d, roll-off = %d, ISI = %d",
+                m_sName, mux->OriginalNetworkId, mux->TransportStreamId, mux->Frequency, mux->Polarisation,
+                mux->Modulation, mux->SymbolRate, mux->InnerFecRate, mux->OrbitalPosition,
+                mux->WestEastFlag, mux->IsS2, mux->RollOff, mux->InputStreamIdentifier);
     }
   }
 }
 
-void CNitParser::AddTerrestrialMux(NitTerrestrialMultiplexDetail* mux, vector<int>* frequencies)
+void CNitParser::AddTerrestrialMux(NitTerrestrialMultiplexDetail* mux)
 {
-  // Do we actually have the multiplex tuning details? This function might have been called
-  // on receipt of a frequency list descriptor, without having yet received the terrestrial delivery
-  // system descriptor.
-  if (mux != NULL && mux->Bandwidth != 0)
+  // Do we actually have the multiplex tuning details?
+  if (mux == NULL || mux->Bandwidth == 0)
   {
-    // Is the frequency specified in the terrestrial delivery system descriptor, or should we expect
-    // a frequency list descriptor to give us the list of all possible frequencies?
-    if (mux->CentreFrequency > MIN_TERRESTRIAL_FREQUENCY_KHZ && mux->CentreFrequency < MAX_TERRESTRIAL_FREQUENCY_KHZ)
+    return;
+  }
+
+  if (mux->CentreFrequency > MIN_TERRESTRIAL_FREQUENCY_KHZ && mux->CentreFrequency < MAX_TERRESTRIAL_FREQUENCY_KHZ)
+  {
+    bool alreadyAdded = false;
+    for (vector<NitTerrestrialMultiplexDetail*>::iterator it = m_vTerrestrialMuxes.begin(); it != m_vTerrestrialMuxes.end(); it++)
     {
-      bool alreadyAdded = false;
-      for (vector<NitTerrestrialMultiplexDetail*>::iterator it = m_vTerrestrialMuxes.begin(); it != m_vTerrestrialMuxes.end(); it++)
+      if ((*it)->Equals(mux))
       {
-        if ((*it)->Equals(mux))
-        {
-          alreadyAdded = true;
-          break;
-        }
-      }
-      if (!alreadyAdded)
-      {
-        NitTerrestrialMultiplexDetail* terrMux = new NitTerrestrialMultiplexDetail();
-        if (terrMux == NULL)
-        {
-          LogDebug("%s: failed to allocate memory in AddTerrestrialMux()", m_sName);
-          return;
-        }
-        mux->Clone(terrMux);
-        m_vTerrestrialMuxes.push_back(terrMux);
-        LogDebug("%s: terrestrial multiplex, ONID = 0x%x, TSID = 0x%x, frequency = %d kHz, bandwidth = %d MHz",
-                  m_sName, mux->NetworkId, mux->TransportStreamId, mux->CentreFrequency, mux->Bandwidth);
+        alreadyAdded = true;
+        break;
       }
     }
-    // Do we have the required frequency list yet?
-    else if (frequencies != NULL && frequencies->size() > 0)
+    if (!alreadyAdded)
     {
-      for (unsigned int i = 0; i < frequencies->size(); i++)
+      NitTerrestrialMultiplexDetail* terrMux = new NitTerrestrialMultiplexDetail();
+      if (terrMux == NULL)
       {
-        mux->CentreFrequency = (*frequencies)[i];
-        bool alreadyAdded = false;
-        for (vector<NitTerrestrialMultiplexDetail*>::iterator it = m_vTerrestrialMuxes.begin(); it != m_vTerrestrialMuxes.end(); it++)
-        {
-          if ((*it)->Equals(mux))
-          {
-            alreadyAdded = true;
-            break;
-          }
-        }
-        if (!alreadyAdded)
-        {
-          NitTerrestrialMultiplexDetail* clone = new NitTerrestrialMultiplexDetail();
-          if (clone == NULL)
-          {
-            LogDebug("%s: failed to allocate memory in AddTerrestrialMux()", m_sName);
-            return;
-          }
-          mux->Clone(clone);
-          m_vTerrestrialMuxes.push_back(clone);
-          LogDebug("%s: terrestrial multiplex, ONID = 0x%x, TSID = 0x%x, frequency = %d kHz, bandwidth = %d MHz",
-                    m_sName, clone->NetworkId, clone->TransportStreamId, clone->CentreFrequency, clone->Bandwidth);
-        }
+        LogDebug("%s: failed to allocate memory in AddTerrestrialMux()", m_sName);
+        return;
       }
+      mux->Clone(terrMux);
+      m_vTerrestrialMuxes.push_back(terrMux);
+      LogDebug("%s: terrestrial multiplex, ONID = 0x%x, TSID = 0x%x, frequency = %d kHz, bandwidth = %d kHz, cell ID = 0x%x, cell ID extension = 0x%x, PLP ID = %d",
+                m_sName, mux->OriginalNetworkId, mux->TransportStreamId, mux->CentreFrequency, mux->Bandwidth,
+                mux->CellId, mux->CellIdExtension, mux->PlpId);
     }
   }
 }

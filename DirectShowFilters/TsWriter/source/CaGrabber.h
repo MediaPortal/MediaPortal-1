@@ -19,8 +19,8 @@
  *
  */
 #pragma once
-#include "..\..\shared\sectiondecoder.h"
-#include "..\..\shared\section.h"
+#include "..\..\shared\SectionDecoder.h"
+#include "..\..\shared\Section.h"
 #include "criticalsection.h"
 #include "entercriticalsection.h"
 #include "..\..\shared\TsHeader.h"
