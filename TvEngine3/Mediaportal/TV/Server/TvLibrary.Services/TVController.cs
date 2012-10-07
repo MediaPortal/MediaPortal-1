@@ -1860,6 +1860,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       {
         if (ValidateTvControllerParams(userName) && ValidateTvControllerParams(channel))
         {
+          StopEPGgrabber();
           user = new User(userName, UserType.Scanner, idCard);
           ITvCardHandler cardHandler = _cards[idCard];
           if (cardHandler.DataBaseCard.Enabled)
@@ -1880,6 +1881,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       finally
       {
         FireScanningStoppedEvent(user, channel);
+        StartEPGgrabber();
       }
       return result;
     }
@@ -2823,6 +2825,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       {
         if (ValidateTvControllerParams(cardId))
         {
+          StopEPGgrabber();
           ScanParameters settings = new ScanParameters();
 
           settings.TimeOutTune = Int32.Parse(SettingsManagement.GetSetting("timeoutTune", "2").Value);
@@ -2838,6 +2841,10 @@ namespace Mediaportal.TV.Server.TVLibrary
       {
         HandleControllerException(e);
       }
+      finally
+      {
+        StartEPGgrabber();
+      }
       return channels;
     }
 
@@ -2848,6 +2855,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       {
         if (ValidateTvControllerParams(cardId))
         {
+          StopEPGgrabber();
           ScanParameters settings = new ScanParameters();
           settings.TimeOutTune = Int32.Parse(SettingsManagement.GetSetting("timeoutTune", "2").Value);
           _cards[cardId].SetParameters();
@@ -2857,6 +2865,10 @@ namespace Mediaportal.TV.Server.TVLibrary
       catch (Exception e)
       {
         HandleControllerException(e);
+      }
+      finally
+      {
+        StartEPGgrabber();
       }
       return scanNit;
     }
