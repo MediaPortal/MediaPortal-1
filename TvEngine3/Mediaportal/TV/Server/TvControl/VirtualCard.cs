@@ -153,28 +153,28 @@ namespace Mediaportal.TV.Server.TVControl
       string userName = _user.Name;
       int cardId = _user.CardId;
 
-
+      var controllerService = GlobalServiceProvider.Get<IControllerService>();
       if (!string.IsNullOrWhiteSpace(userName))
       {
-        _isTimeshifting = GlobalServiceProvider.Get<IControllerService>().IsTimeShifting(userName);
-        _isScrambled = GlobalServiceProvider.Get<IControllerService>().IsScrambled(userName);
-        _hasTeletext = GlobalServiceProvider.Get<IControllerService>().HasTeletext(userName);
-        _rtspUrl = GlobalServiceProvider.Get<IControllerService>().GetStreamingUrl(userName);
-        _recordingFileName = GlobalServiceProvider.Get<IControllerService>().RecordingFileName(userName);
-        _idChannel = GlobalServiceProvider.Get<IControllerService>().CurrentDbChannel(userName);
-        _channelName = GlobalServiceProvider.Get<IControllerService>().CurrentChannelName(userName);
+        _isTimeshifting = controllerService.IsTimeShifting(userName);
+        _isScrambled = controllerService.IsScrambled(userName);
+        _hasTeletext = controllerService.HasTeletext(userName);
+        _rtspUrl = controllerService.GetStreamingUrl(userName);
+        _recordingFileName = controllerService.RecordingFileName(userName);
+        _idChannel = controllerService.CurrentDbChannel(userName);
+        _channelName = controllerService.CurrentChannelName(userName);
 
         if (_idChannel > 0)
         {
-          IChannel channel = GlobalServiceProvider.Get<IControllerService>().CurrentChannel(userName, _idChannel);
+          IChannel channel = controllerService.CurrentChannel(userName, _idChannel);
           if (channel != null)
           {
             _mediaType = channel.MediaType;
           }
         }
-        if (cardId > 0)
+        if (cardId > 0 && _user.UserType == UserType.Normal)
         {
-          _timeShiftFileName = GlobalServiceProvider.Get<IControllerService>().TimeShiftFileName(userName, cardId);
+          _timeShiftFileName = controllerService.TimeShiftFileName(userName, cardId);
         }
       }
 
@@ -182,13 +182,13 @@ namespace Mediaportal.TV.Server.TVControl
       {               
         if (_idChannel > 0)
         {
-          _isRecording = GlobalServiceProvider.Get<IControllerService>().IsRecording(_idChannel, cardId);
+          _isRecording = controllerService.IsRecording(_idChannel, cardId);
         }
 
-        _isScanning = GlobalServiceProvider.Get<IControllerService>().IsScanning(cardId);
-        _isGrabbingEpg = GlobalServiceProvider.Get<IControllerService>().IsGrabbingEpg(cardId);
-        _name = GlobalServiceProvider.Get<IControllerService>().CardName(cardId);
-        _cardType = GlobalServiceProvider.Get<IControllerService>().Type(cardId);        
+        _isScanning = controllerService.IsScanning(cardId);
+        _isGrabbingEpg = controllerService.IsGrabbingEpg(cardId);
+        _name = controllerService.CardName(cardId);
+        _cardType = controllerService.Type(cardId);        
       }                        
     }
 
