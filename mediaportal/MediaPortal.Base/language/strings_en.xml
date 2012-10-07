@@ -1520,6 +1520,7 @@
     <String id="6042">Enter a skip step number of seconds</String>
     <String id="6050">Current week</String>
     <String id="6060">Current month</String>
+	<String id="6065">Last month</String>
     <String id="6070">Current year</String>
     <String id="6080">Last year</String>
     <String id="6090">Older</String>
