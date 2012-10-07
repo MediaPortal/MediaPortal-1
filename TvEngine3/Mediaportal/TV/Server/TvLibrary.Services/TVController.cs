@@ -151,7 +151,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       return initConditionalAccess;
     }
 
-    private Dictionary<int, ITvCardHandler> _cards;
+    private Dictionary<int, ITvCardHandler> _cards = new Dictionary<int, ITvCardHandler>();
 
     /// 
     // contains a cached copy of all the channels in the user defined groups (excl. the all channels group)
@@ -987,15 +987,18 @@ namespace Mediaportal.TV.Server.TVLibrary
       {        
         if (cardId > 0)
         {
-          if (_cards.ContainsKey(cardId))
+          if (_cards != null)
           {
-            string devicePath = _cards[cardId].Card.DevicePath;
-            if (devicePath.Length > 0)
+            if (_cards.ContainsKey(cardId))
             {
-              // RemoveUser it from the local card collection
-              cardPresent =
-                (from t in _localCardCollection.Cards where t.DevicePath == devicePath select t.CardPresent).
-                  FirstOrDefault();
+              string devicePath = _cards[cardId].Card.DevicePath;
+              if (devicePath.Length > 0)
+              {
+                // RemoveUser it from the local card collection
+                cardPresent =
+                  (from t in _localCardCollection.Cards where t.DevicePath == devicePath select t.CardPresent).
+                    FirstOrDefault();
+              }
             }
           }
         }        
@@ -1282,7 +1285,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         if (IsValidTvControllerParams(userName, cardId))
         {
           IUser user = GetUserFromSpecificContext(userName, cardId);
-          if (ValidateTvControllerParams(user))
+          if (user != null)
           {
             timeShiftFileName = _cards[user.CardId].TimeShifter.FileName(ref user);
           }
@@ -2886,7 +2889,6 @@ namespace Mediaportal.TV.Server.TVLibrary
       Log.Info("Controller: GrabEpg on card ID == {0}", cardId);
       if (ValidateTvControllerParams(cardId))
       {
-        Log.Error("Controller: GrabEpg - invalid cardId");
         grabEpg = _cards[cardId].Epg.Start(grabber); 
       }
       if (grabEpg)
@@ -5476,10 +5478,12 @@ namespace Mediaportal.TV.Server.TVLibrary
       try
       {
         IUser user = GetUserFromContext(userName, TvUsage.Timeshifting);
-        int cardId = user.CardId;
-        ITvCardHandler cardHandler = _cards[cardId];
-
-        cardHandler.TimeShifter.GetStreamQualityCounters(userName, out totalTSpackets, out discontinuityCounter);
+        if (user != null)
+        {
+          int cardId = user.CardId;
+          ITvCardHandler cardHandler = _cards[cardId];
+          cardHandler.TimeShifter.GetStreamQualityCounters(userName, out totalTSpackets, out discontinuityCounter);
+        }                
       }
       catch (Exception e)
       {
@@ -5719,7 +5723,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     }
 
     public IList<CardPresentation> ListAllCards()
-    {
+    {      
       IList<CardPresentation> cardPresentations = new List<CardPresentation>();
 
       try
