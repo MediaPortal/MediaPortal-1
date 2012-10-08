@@ -104,41 +104,87 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="serviceCount">The number of services found by the scanner.</param>
     /// <returns>an HRESULT indicating whether the service count was successfully retrieved</returns>
     [PreserveSig]
-    int GetServiceCount(out int channelCount);
+    int GetServiceCount(out int serviceCount);
 
     /// <summary>
     /// Retrieve the details for a specific service from the scanner.
     /// </summary>
+    /// <remarks>
+    /// Many of the parameters for this method are not applicable for North American television transmission standards.
+    /// Specifically: isHighDefinition, previous service identifiers and all of the lists except the language list will
+    /// not be populated for ATSC, SCTE cable and clear QAM services.
+    /// </remarks>
     /// <param name="index">The service index. The value of this parameter should be in the range 0..[GetServiceCount() - 1] (inclusive).</param>
-    /// <param name="networkId">The service's network ID.</param>
+    /// <param name="originalNetworkId">The service's original network ID.</param>
     /// <param name="transportStreamId">The service's transport stream ID.</param>
-    /// <param name="serviceId">The service's ID.</param>
+    /// <param name="serviceId">The service's identifier.</param>
     /// <param name="serviceName">The name of the service.</param>
     /// <param name="providerName">The name of the service's provider.</param>
-    /// <param name="networkNames">The names of the networks that the service is included in. Names are ",," separated.</param>
-    /// <param name="bouquetNames">The names of the bouquets that the service is included in. Names are ",," separated.</param>
     /// <param name="logicalChannelNumber">The logical channel number associated with the service.</param>
-    /// <param name="serviceType">The type of the service (eg. TV, radio).</param>
-    /// <param name="hasVideo">The number of video streams associated with the service.</param>
-    /// <param name="hasAudio">The number of audio streams associated with the service.</param>
-    /// <param name="isEncrypted"><c>One</c> if the service is encrypted, otherwise <c>zero</c>.</param>
+    /// <param name="serviceType">The standard-specific type code for the service (eg. for DVB, 1 is digital television).</param>
+    /// <param name="videoStreamCount">The number of video streams associated with the service.</param>
+    /// <param name="audioStreamCount">The number of audio streams associated with the service.</param>
+    /// <param name="isHighDefinition"><c>True</c> if the service has high resolution video, otherwise <c>false</c>.</param>
+    /// <param name="isEncrypted"><c>True</c> if the service is encrypted, otherwise <c>false</c>.</param>
+    /// <param name="isRunning"><c>True</c> if the service is currently active, otherwise <c>false</c>.</param>
     /// <param name="pmtPid">The service's PMT PID.</param>
+    /// <param name="previousOriginalNetworkId">The service's previous original network ID. Only populated when it can
+    ///     be determined that the service identifier changed recently.</param>
+    /// <param name="previousTransportStreamId">The service's previous transport stream ID. Only populated when it can
+    ///     be determined that the service identifier changed recently.</param>
+    /// <param name="previousServiceId">The service's previous service ID. Only populated when it can be determined that
+    ///     the service identifier changed recently.</param>
+    /// <param name="networkIdCount">The number of networks that the service is included in.</param>
+    /// <param name="networkIds">A buffer containing the Int32 identifiers of each network that the service is included in.</param>
+    /// <param name="bouquetIdCount">The number of bouquets that the service is included in.</param>
+    /// <param name="bouquetIds">A buffer containing the Int32 identifiers of each bouquet that the service is included in.</param>
+    /// <param name="languageCount">The distinct number of audio and subtitle languages that are transmitted as part of the service.</param>
+    /// <param name="languages">A buffer containing the ISO 639 3 byte language codes associated with the audio and subtitle stream languages.</param>
+    /// <param name="availableInCellCount">The number of cells in which the service may be received.</param>
+    /// <param name="availableInCells">A buffer containing the Int32 identifiers of each cell in which the service may be received.</param>
+    /// <param name="unavailableInCellCount">The number of cells in which the service may not be received.</param>
+    /// <param name="unavailableInCells">A buffer containing the Int32 identifiers of each cell in which the service may not be received.</param>
+    /// <param name="targetRegionCount">The number of regions in which the service is intended to be received.</param>
+    /// <param name="targetRegions">A buffer containing the Int64 identifiers of each region in which the service is intended to be received.</param>
+    /// <param name="availableInCountryCount">The number of countries in which the service is intended to be available.</param>
+    /// <param name="availableInCountries">A buffer containing the ISO 3166 3 byte code for each country in which the service is intended to be available.</param>
+    /// <param name="unavailableInCountryCount">The number of countries in which the service is not intended to be available.</param>
+    /// <param name="unavailableInCountries">A buffer containing the ISO 3166 3 byte code for each country in which the service is not intended to be available.</param>
     /// <returns>an HRESULT indicating whether the service details were successfully retrieved</returns>
     [PreserveSig]
     int GetServiceDetail(int index,
-                          out int networkId,
+                          out int originalNetworkId,
                           out int transportStreamId,
                           out int serviceId,
                           out IntPtr serviceName,
                           out IntPtr providerName,
-                          out IntPtr networkNames,
-                          out IntPtr bouquetNames,
                           out IntPtr logicalChannelNumber,
                           out int serviceType,
-                          out int hasVideo,
-                          out int hasAudio,
-                          out int isEncrypted,
-                          out int pmtPid);
+                          out int videoStreamCount,
+                          out int audioStreamCount,
+                          [MarshalAs(UnmanagedType.I1)] out bool isHighDefinition,
+                          [MarshalAs(UnmanagedType.I1)] out bool isEncrypted,
+                          [MarshalAs(UnmanagedType.I1)] out bool isRunning,
+                          out int pmtPid,
+                          out int previousOriginalNetworkId,
+                          out int previousTransportStreamId,
+                          out int previousServiceId,
+                          out int networkIdCount,
+                          out IntPtr networkIds,
+                          out int bouquetIdCount,
+                          out IntPtr bouquetIds,
+                          out int languageCount,
+                          out IntPtr languages,
+                          out int availableInCellCount,
+                          out IntPtr availableInCells,
+                          out int unavailableInCellCount,
+                          out IntPtr unavailableInCells,
+                          out int targetRegionCount,
+                          out IntPtr targetRegions,
+                          out int availableInCountryCount,
+                          out IntPtr availableInCountries,
+                          out int unavailableInCountryCount,
+                          out IntPtr unavailableInCountries);
 
     /// <summary>
     /// Start scanning for network information in the stream that is currently being received.
@@ -173,7 +219,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// Retrieve the details for a specific multiplex from the scanner.
     /// </summary>
     /// <param name="index">The multiplex index. The value of this parameter should be in the range 0..[GetMultiplexCount() - 1] (inclusive).</param>
-    /// <param name="networkId">The multiplex's network ID.</param>
+    /// <param name="originalNetworkId">The multiplex's network ID.</param>
     /// <param name="transportStreamId">The multiplex's transport stream ID.</param>
     /// <param name="type">The multiplex type (eg. cable, satellite, terrestrial), as per the TV database tuning detail type.</param>
     /// <param name="frequency">The multiplex frequency, in kHz.</param>
@@ -183,10 +229,16 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="bandwidth">The multiplex bandwith, in MHz. Only applicable for DVB-T multiplexes.</param>
     /// <param name="innerFecRate">The multiplex inner FEC rate. Only applicable for DVB-S/2 multiplexes.</param>
     /// <param name="rollOff">The multiplex roll-off parameter. Only applicable for DVB-S2 multiplexes.</param>
+    /// <param name="longitude">The longitude of the geostationary satellite that the multiplex is transmitted from, in
+    ///     tenths of a degree. Positive longitude values specify East position; negative longitude values specify West
+    ///     position. Only applicable for DVB-S/S2 multiplexes.</param>
+    /// <param name="cellId">The cell ID of the multiplex transmitter. Only applicable for DVB-T/T2 multiplexes.</param>
+    /// <param name="cellIdExtension">The cell ID extension of the multiplex transmitter. Only applicable for DVB-T/T2 multiplexes.</param>
+    /// <param name="plpId">The physical layer pipe ID of multiplex. Only applicable for DVB-S2 and DVB-T2 multiplexes.</param>
     /// <returns>an HRESULT indicating whether the multiplex details were successfully retrieved</returns>
     [PreserveSig]
     int GetMultiplexDetail(int index,
-                            out int networkId,
+                            out int originalNetworkId,
                             out int transportStreamId,
                             out int type,
                             out int frequency,
@@ -195,6 +247,37 @@ namespace TvLibrary.Interfaces.Analyzer
                             out int symbolRate,
                             out int bandwidth,
                             out int innerFecRate,
-                            out int rollOff);
+                            out int rollOff,
+                            out int longitude,
+                            out int cellId,
+                            out int cellIdExtension,
+                            out int plpId);
+
+    /// <summary>
+    /// Retrieve the name of a specific target region.
+    /// </summary>
+    /// <param name="targetRegionId">The region identifier.</param>
+    /// <param name="name">The name of the region.</param>
+    /// <returns>an HRESULT indicating whether the target region name was successfully retrieved</returns>
+    [PreserveSig]
+    int GetTargetRegionName(Int64 targetRegionId, out IntPtr name);
+
+    /// <summary>
+    /// Retrieve the name of a specific bouquet.
+    /// </summary>
+    /// <param name="bouquetId">The bouquet identifier.</param>
+    /// <param name="name">The name of the bouquet.</param>
+    /// <returns>an HRESULT indicating whether the bouquet name was successfully retrieved</returns>
+    [PreserveSig]
+    int GetBouquetName(int bouquetId, out IntPtr name);
+
+    /// <summary>
+    /// Retrieve the name of a specific network.
+    /// </summary>
+    /// <param name="networkId">The network identifier.</param>
+    /// <param name="name">The name of the network.</param>
+    /// <returns>an HRESULT indicating whether the network name was successfully retrieved</returns>
+    [PreserveSig]
+    int GetNetworkName(int networkId, out IntPtr name);
   }
 }

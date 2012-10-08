@@ -22,7 +22,6 @@
 #pragma warning(disable:4995)
 #include <windows.h>
 #include "BasePmtParser.h"
-#include "channelinfo.h"
 #include <cassert>
 
 void LogDebug(const char *fmt, ...) ; 
@@ -98,7 +97,7 @@ bool CBasePmtParser::DecodePmtSection(CSection& sections)
     int current_next_indicator = section[5] & 1;
     if (current_next_indicator == 0)
     {
-      // Details do not yet apply...
+      // Details do not apply yet...
       return false;
     }
     int section_number = section[6];

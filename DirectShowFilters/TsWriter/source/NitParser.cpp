@@ -56,10 +56,13 @@ void CNitParser::CleanUp()
       name = NULL;
       nameIt++;
     }
+    nameSet->clear();
+
     delete nameSet;
     nameSet = NULL;
     groupNameSetIt++;
   }
+  m_mGroupNames.clear();
 
   map<__int64, map<unsigned int, char*>*>::iterator regionNameIt = m_mTargetRegionNames.begin();
   while (regionNameIt != m_mTargetRegionNames.end())
@@ -73,10 +76,13 @@ void CNitParser::CleanUp()
       name = NULL;
       nameIt++;
     }
+    nameSet->clear();
+
     delete nameSet;
     nameSet = NULL;
     regionNameIt++;
   }
+  m_mTargetRegionNames.clear();
 
   map<__int64, map<int, bool>*>::iterator groupIdIt = m_mGroupIds.begin();
   while (groupIdIt != m_mGroupIds.end())
@@ -86,6 +92,7 @@ void CNitParser::CleanUp()
     list = NULL;
     groupIdIt++;
   }
+  m_mGroupIds.clear();
 
   map<__int64, map<int, bool>*>::iterator cellIt = m_mAvailableInCells.begin();
   while (cellIt != m_mAvailableInCells.end())
@@ -95,6 +102,7 @@ void CNitParser::CleanUp()
     list = NULL;
     cellIt++;
   }
+  m_mAvailableInCells.clear();
 
   map<__int64, map<__int64, bool>*>::iterator regionIt = m_mTargetRegions.begin();
   while (regionIt != m_mTargetRegions.end())
@@ -104,6 +112,7 @@ void CNitParser::CleanUp()
     list = NULL;
     regionIt++;
   }
+  m_mTargetRegions.clear();
 
   map<__int64, map<unsigned int, bool>*>::iterator countryIt = m_mAvailableInCountries.begin();
   while (countryIt != m_mAvailableInCountries.end())
@@ -113,6 +122,7 @@ void CNitParser::CleanUp()
     list = NULL;
     countryIt++;
   }
+  m_mAvailableInCountries.clear();
 
   countryIt = m_mUnavailableInCountries.begin();
   while (countryIt != m_mUnavailableInCountries.end())
@@ -122,6 +132,7 @@ void CNitParser::CleanUp()
     list = NULL;
     countryIt++;
   }
+  m_mUnavailableInCountries.clear();
 
   vector<NitCableMultiplexDetail*>::iterator cableMuxIt = m_vCableMuxes.begin();
   while (cableMuxIt != m_vCableMuxes.end())
@@ -186,7 +197,7 @@ void CNitParser::OnNewSection(CSection& sections)
     int current_next_indicator = section[5] & 1;
     if (current_next_indicator == 0)
     {
-      // Details do not yet apply...
+      // Details do not apply yet...
       return;
     }
     int section_number = section[6];
@@ -637,13 +648,12 @@ void CNitParser::GetUnavailableInCountries(int originalNetworkId, int transportS
 
 int CNitParser::GetNetworkNameCount(int networkId)
 {
-  int count = 0;
   map<unsigned int, char*>* networkNames = m_mGroupNames[networkId];
   if (networkNames != NULL)
   {
-    count = networkNames->size();
+    return networkNames->size();
   }
-  return count;
+  return 0;
 }
 
 void CNitParser::GetNetworkName(int networkId, int index, unsigned int* language, char** name)
@@ -1439,7 +1449,7 @@ void CNitParser::DecodeMultilingualNameDescriptor(byte* b, int length, map<unsig
   int pointer = 0;
   while (pointer + 3 < length)
   {
-    int iso_639_language_code = (b[pointer] << 16) + (b[pointer + 1] << 8) + b[pointer + 2];
+    unsigned int iso_639_language_code = b[pointer] + (b[pointer + 1] << 8) + (b[pointer + 2] << 16);
     pointer += 3;
     int network_name_length = b[pointer++];
 
@@ -1450,7 +1460,7 @@ void CNitParser::DecodeMultilingualNameDescriptor(byte* b, int length, map<unsig
       return;
     }
     getString468A(&b[pointer], network_name_length, name, network_name_length);
-    (*names)[iso_639_language_code << 8] = name;
+    (*names)[iso_639_language_code] = name;
 
     pointer += network_name_length;
   }
@@ -1509,15 +1519,15 @@ void CNitParser::DecodeCountryAvailabilityDescriptor(byte* b, int length, vector
     bool country_availability_flag = (b[pointer++] & 0x80) != 0;
     while (pointer + 2 < length)
     {
-      int country_code = (b[pointer] << 16) + (b[pointer + 1] << 8) + b[pointer + 2];
+      unsigned int country_code = b[pointer] + (b[pointer + 1] << 8) + (b[pointer + 2] << 16);
       pointer += 3;
       if (country_availability_flag)
       {
-        availableInCountries->push_back(country_code << 8);
+        availableInCountries->push_back(country_code);
       }
       else
       {
-        unavailableInCountries->push_back(country_code << 8);
+        unavailableInCountries->push_back(country_code);
       }
     }
   }
@@ -1607,8 +1617,8 @@ void CNitParser::DecodeTargetRegionNameDescriptor(byte* b, int length, map<__int
   try
   {
     int country_code = (b[1] << 16) + (b[2] << 8) + b[3];
-    int iso_639_language_code = (b[4] << 16) + (b[5] << 8) + b[6];
-    *language = iso_639_language_code << 8;
+    unsigned int iso_639_language_code = b[4] + (b[5] << 8) + (b[6] << 16);
+    *language = iso_639_language_code;
     int pointer = 7;
     while (pointer + 1 < length)
     {
@@ -1718,6 +1728,7 @@ void CNitParser::AddGroupNames(int groupId, map<unsigned int, char*>* names)
   if (existingNames == NULL)
   {
     existingNames = new map<unsigned int, char*>();
+    m_mGroupNames[groupId] = existingNames;
   }
   map<unsigned int, char*>::iterator nameIt = names->begin();
   while (nameIt != names->end())
@@ -1746,6 +1757,7 @@ void CNitParser::AddTargetRegionNames(map<__int64, char*>* names, unsigned int l
     if (existingNames == NULL)
     {
       existingNames = new map<unsigned int, char*>();
+      m_mTargetRegionNames[nameIt->first] = existingNames;
     }
     else if ((*existingNames)[language] != NULL)
     {
@@ -1774,6 +1786,7 @@ void CNitParser::AddServiceDetails(int groupId, int originalNetworkId, int trans
     if (serviceGroups == NULL)
     {
       serviceGroups = new map<int, bool>();
+      m_mGroupIds[serviceKey] = serviceGroups;
     }
     (*serviceGroups)[groupId] = true;
 
@@ -1781,6 +1794,7 @@ void CNitParser::AddServiceDetails(int groupId, int originalNetworkId, int trans
     if (serviceAvailableInCells == NULL)
     {
       serviceAvailableInCells = new map<int, bool>();
+      m_mAvailableInCells[serviceKey] = serviceAvailableInCells;
     }
     map<int, int>::iterator cellIt = cellFrequencies->begin();
     while (cellIt != cellFrequencies->end())
@@ -1793,6 +1807,7 @@ void CNitParser::AddServiceDetails(int groupId, int originalNetworkId, int trans
     if (serviceTargetRegions == NULL)
     {
       serviceTargetRegions = new map<__int64, bool>();
+      m_mTargetRegions[serviceKey] = serviceTargetRegions;
     }
     vector<__int64>::iterator regionIt = targetRegions->begin();
     while (regionIt != targetRegions->end())
@@ -1805,6 +1820,7 @@ void CNitParser::AddServiceDetails(int groupId, int originalNetworkId, int trans
     if (serviceAvailableInCountries == NULL)
     {
       serviceAvailableInCountries = new map<unsigned int, bool>();
+      m_mAvailableInCountries[serviceKey] = serviceAvailableInCountries;
     }
     vector<unsigned int>::iterator countryIt = availableInCountries->begin();
     while (countryIt != availableInCountries->end())
@@ -1817,6 +1833,7 @@ void CNitParser::AddServiceDetails(int groupId, int originalNetworkId, int trans
     if (serviceUnavailableInCountries == NULL)
     {
       serviceUnavailableInCountries = new map<unsigned int, bool>();
+      m_mUnavailableInCountries[serviceKey] = serviceUnavailableInCountries;
     }
     countryIt = unavailableInCountries->begin();
     while (countryIt != unavailableInCountries->end())

@@ -30,6 +30,9 @@ CChannelInfo::CChannelInfo(const CChannelInfo& info)
 
 CChannelInfo::CChannelInfo(void)
 {
+  ServiceName = NULL;
+  ProviderName = NULL;
+  LogicalChannelNumber = NULL;
   Reset();
 }
 
@@ -92,8 +95,8 @@ void CChannelInfo::Copy(const CChannelInfo &info)
   TransportStreamId = info.TransportStreamId;
   ServiceId = info.ServiceId;
   ServiceType = info.ServiceType;
-  HasVideo = info.HasVideo;
-  HasAudio = info.HasAudio;
+  VideoStreamCount = info.VideoStreamCount;
+  AudioStreamCount = info.AudioStreamCount;
   IsHighDefinition = info.IsHighDefinition;
   IsEncrypted = info.IsEncrypted;
   IsRunning = info.IsRunning;
@@ -114,8 +117,8 @@ void CChannelInfo::Reset()
   TransportStreamId = 0;
   ServiceId = 0;
   ServiceType = 0;
-  HasVideo = 0;
-  HasAudio = 0;
+  VideoStreamCount = 0;
+  AudioStreamCount = 0;
   IsHighDefinition = false;
   IsEncrypted = false;
   IsRunning = false;

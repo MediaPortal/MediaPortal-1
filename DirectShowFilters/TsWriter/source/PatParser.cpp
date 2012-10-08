@@ -118,7 +118,7 @@ void CPatParser::OnNewSection(CSection& sections)
     int current_next_indicator = section[5] & 1;
     if (current_next_indicator == 0)
     {
-      // Details do not yet apply...
+      // Details do not apply yet...
       return;
     }
     int section_number = section[6];
@@ -208,7 +208,7 @@ void CPatParser::OnNewSection(CSection& sections)
       m_mSeenSections[key] = true;
     }
   }
-  catch(...)
+  catch (...)
   {
     LogDebug("PatParser: unhandled exception in OnNewSection()");
   }

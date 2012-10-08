@@ -78,6 +78,7 @@ void CChannelScan::CleanUp()
 
 STDMETHODIMP CChannelScan::SetCallBack(IChannelScanCallBack* callBack)
 {
+  LogDebug("ChannelScan: set callback 0x%x", callBack);
   m_pCallBack = callBack;
   return S_OK;
 }
@@ -158,11 +159,11 @@ STDMETHODIMP CChannelScan::GetServiceDetail(int index,
                                             char** providerName,
                                             char** logicalChannelNumber,
                                             int* serviceType,
-                                            int* hasVideo,
-                                            int* hasAudio,
+                                            int* videoStreamCount,
+                                            int* audioStreamCount,
                                             bool* isHighDefinition,
-                                            int* isEncrypted,
-                                            int* isRunning,
+                                            bool* isEncrypted,
+                                            bool* isRunning,
                                             int* pmtPid,
                                             int* previousOriginalNetworkId,
                                             int* previousTransportStreamId,
@@ -231,31 +232,15 @@ STDMETHODIMP CChannelScan::GetServiceDetail(int index,
     *logicalChannelNumber = info->LogicalChannelNumber;
 
     *serviceType = info->ServiceType;
-    *hasVideo = info->HasVideo;
-    *hasAudio = info->HasAudio;
+    *videoStreamCount = info->VideoStreamCount;
+    *audioStreamCount = info->AudioStreamCount;
     *isHighDefinition = info->IsHighDefinition;
     *isEncrypted = info->IsEncrypted;
     *isRunning = info->IsRunning;
     *pmtPid = info->PmtPid;
     *previousOriginalNetworkId = info->PreviousOriginalNetworkId;
     *previousTransportStreamId = info->PreviousTransportStreamId;
-    *previousServiceId = info->ServiceId;
-
-    // Make the language list distinct.
-    map<unsigned int, bool> tempLangs;
-    vector<unsigned int>::iterator langIt = (info->Languages).begin();
-    while (langIt != (info->Languages).end())
-    {
-      tempLangs[*langIt] = true;
-      langIt++;
-    }
-    (info->Languages).clear();
-    map<unsigned int, bool>::iterator langIt2 = tempLangs.begin();
-    while (langIt2 != tempLangs.end())
-    {
-      (info->Languages).push_back(langIt2->first);
-      langIt2++;
-    }
+    *previousServiceId = info->PreviousServiceId;
 
     if (m_broadcastStandard == Dvb)
     {
@@ -311,25 +296,69 @@ STDMETHODIMP CChannelScan::GetServiceDetail(int index,
       }
     }
 
-    *networkIdCount = (info->NetworkIds).size();
-    *networkIds = (byte*)&(info->NetworkIds);
-    *bouquetIdCount = (info->BouquetIds).size();
-    *bouquetIds = (byte*)&(info->BouquetIds);
-    *availableInCellCount = (info->AvailableInCells).size();
-    *availableInCells = (byte*)&(info->AvailableInCells);
-    *unavailableInCellCount = (info->UnavailableInCells).size();
-    *unavailableInCells = (byte*)&(info->UnavailableInCells);
-    *targetRegionCount = (info->TargetRegions).size();
-    *targetRegions = (byte*)&(info->TargetRegions);
-    *availableInCountryCount = (info->AvailableInCountries).size();
-    *availableInCountries = (byte*)&(info->AvailableInCountries);
-    *unavailableInCountryCount = (info->UnavailableInCountries).size();
-    *unavailableInCountries = (byte*)&(info->UnavailableInCountries);
+    // Make the language list distinct.
+    map<unsigned int, bool> tempLangs;
+    vector<unsigned int>::iterator langIt = (info->Languages).begin();
+    while (langIt != (info->Languages).end())
+    {
+      tempLangs[*langIt] = true;
+      langIt++;
+    }
+    (info->Languages).clear();
+    map<unsigned int, bool>::iterator langIt2 = tempLangs.begin();
+    while (langIt2 != tempLangs.end())
+    {
+      LogDebug("ChannelScan: add language '%s' for service 0x%x", (char*)&(langIt2->first), info->ServiceId);
+      (info->Languages).push_back(langIt2->first);
+      langIt2++;
+    }
 
-    LogDebug("%4d) %-25s provider = %-15s, ONID = 0x%-4x, TSID = 0x%-4x, SID = 0x%-4x, LCN = %-7s",
-            originalIndex, info->ServiceName, info->ProviderName, info->OriginalNetworkId, info->TransportStreamId, info->ServiceId, info->LogicalChannelNumber);
-    LogDebug("       type = %-3d, has video = %1d, has audio = %1d, is high definition = %1d, is encrypted = %1d, is running = %1d, is other mux = %1d",
-            info->ServiceType, info->HasVideo, info->HasAudio, info->IsHighDefinition, info->IsEncrypted, info->IsRunning, info->IsOtherMux);
+    // Pass vectors. Vector elements are guaranteed to be stored in contiguous memory.
+    *networkIdCount = (info->NetworkIds).size();
+    if (*networkIdCount != 0)
+    {
+      *networkIds = (byte*)&(info->NetworkIds)[0];
+    }
+    *bouquetIdCount = (info->BouquetIds).size();
+    if (*bouquetIdCount != 0)
+    {
+      *bouquetIds = (byte*)&(info->BouquetIds)[0];
+    }
+    *languageCount = (info->Languages).size();
+    if (*languageCount)
+    {
+      *languages = (byte*)&(info->Languages)[0];
+    }
+    *availableInCellCount = (info->AvailableInCells).size();
+    if (*availableInCellCount != 0)
+    {
+      *availableInCells = (byte*)&(info->AvailableInCells)[0];
+    }
+    *unavailableInCellCount = (info->UnavailableInCells).size();
+    if (*unavailableInCellCount != 0)
+    {
+      *unavailableInCells = (byte*)&(info->UnavailableInCells)[0];
+    }
+    *targetRegionCount = (info->TargetRegions).size();
+    if (*targetRegionCount != 0)
+    {
+      *targetRegions = (byte*)&(info->TargetRegions)[0];
+    }
+    *availableInCountryCount = (info->AvailableInCountries).size();
+    if (*availableInCountryCount != 0)
+    {
+      *availableInCountries = (byte*)&(info->AvailableInCountries)[0];
+    }
+    *unavailableInCountryCount = (info->UnavailableInCountries).size();
+    if (*unavailableInCountryCount != 0)
+    {
+      *unavailableInCountries = (byte*)&(info->UnavailableInCountries)[0];
+    }
+
+    LogDebug("%4d) %-25s provider = %-15s, ONID = 0x%-4x, TSID = 0x%-4x, SID = 0x%-4x, PMT PID = 0x%-4x, LCN = %-7s",
+            originalIndex, info->ServiceName, info->ProviderName, info->OriginalNetworkId, info->TransportStreamId, info->ServiceId, info->PmtPid, info->LogicalChannelNumber);
+    LogDebug("       type = %-3d, video stream count = %1d, audio stream count = %1d, is high definition = %1d, is encrypted = %1d, is running = %1d, is other mux = %1d",
+            info->ServiceType, info->VideoStreamCount, info->AudioStreamCount, info->IsHighDefinition, info->IsEncrypted, info->IsRunning, info->IsOtherMux);
     LogDebug("       is PMT received = %1d, is SDT/VCT received = %1d, is PID received = %1d",
             info->IsPmtReceived, info->IsServiceInfoReceived, info->IsPidReceived);
     if (info->PreviousServiceId != 0)
@@ -740,8 +769,8 @@ void CChannelScan::OnSdtReceived(const CChannelInfo& sdtInfo)
     // in the SDT.
     if (!info->IsPmtReceived)
     {
-      info->HasVideo = sdtInfo.HasVideo;
-      info->HasAudio = sdtInfo.HasAudio;
+      info->VideoStreamCount = sdtInfo.VideoStreamCount;
+      info->AudioStreamCount = sdtInfo.AudioStreamCount;
     }
     info->IsHighDefinition |= sdtInfo.IsHighDefinition;
     // We trust running_status and free_ca_mode over PMT being
@@ -805,6 +834,7 @@ void CChannelScan::OnSdtReceived(const CChannelInfo& sdtInfo)
     vector<unsigned int>::const_iterator langIt = sdtInfo.Languages.begin();
     while (langIt != sdtInfo.Languages.end())
     {
+      //LogDebug("ChannelScan:   add component language '%s'", (char*)&(*langIt));
       info->Languages.push_back(*langIt);
       langIt++;
     }
@@ -849,8 +879,8 @@ void CChannelScan::OnVctReceived(const CChannelInfo& vctInfo)
     // status.
     if (!info->IsPmtReceived)
     {
-      info->HasVideo = vctInfo.HasVideo;
-      info->HasAudio = vctInfo.HasAudio;
+      info->VideoStreamCount = vctInfo.VideoStreamCount;
+      info->AudioStreamCount = vctInfo.AudioStreamCount;
     }
     // We trust VCT info and access_controlled over PMT being
     // received (or not) and CA descriptors being found in the PMT
@@ -908,6 +938,7 @@ void CChannelScan::OnVctReceived(const CChannelInfo& vctInfo)
     vector<unsigned int>::const_iterator langIt = vctInfo.Languages.begin();
     while (langIt != vctInfo.Languages.end())
     {
+      //LogDebug("ChannelScan:   add component language '%s'", (char*)&(*langIt));
       info->Languages.push_back(*langIt);
       langIt++;
     }
@@ -947,8 +978,8 @@ void CChannelScan::OnPmtReceived(const CPidTable& pidTable)
     info->ServiceId = pidTable.ServiceId;
     // We trust PMT information over anything else for A/V present
     // status.
-    info->HasVideo = (int)pidTable.videoPids.size();
-    info->HasAudio = (int)pidTable.audioPids.size();
+    info->VideoStreamCount = (int)pidTable.videoPids.size();
+    info->AudioStreamCount = (int)pidTable.audioPids.size();
     // We trust service and encryption analyser information over the PMT information
     // for encryption and running status.
     if (!info->IsServiceInfoReceived && !info->IsPidReceived)
@@ -977,11 +1008,13 @@ void CChannelScan::OnPmtReceived(const CPidTable& pidTable)
       m_pEncryptionAnalyser->AddPid(aPidIt->Pid);
       m_mPids[aPidIt->Pid] = pidTable.ServiceId;
 
-      unsigned int lang = ((*aPidIt).Lang[0] << 24) + ((*aPidIt).Lang[1] << 16) + ((*aPidIt).Lang[2] << 8);
+      unsigned int lang = (*aPidIt).Lang[0] + ((*aPidIt).Lang[1] << 8) + ((*aPidIt).Lang[2] << 16);
       (info->Languages).push_back(lang);
-      if ((*aPidIt).Lang[3] != 0)
+      //LogDebug("ChannelScan:   add audio language '%s'", (char*)&lang);
+      if ((*aPidIt).Lang[3] != NULL)
       {
-        lang = ((*aPidIt).Lang[3] << 24) + ((*aPidIt).Lang[4] << 16) + ((*aPidIt).Lang[5] << 8);
+        lang = (*aPidIt).Lang[3] + ((*aPidIt).Lang[4] << 8) + ((*aPidIt).Lang[5] << 16);
+        //LogDebug("ChannelScan:   add dual-mono language '%s'", (char*)&lang);
         (info->Languages).push_back(lang);
       }
 
@@ -991,7 +1024,8 @@ void CChannelScan::OnPmtReceived(const CPidTable& pidTable)
     vector<SubtitlePid>::const_iterator sPidIt = pidTable.subtitlePids.begin();
     while (sPidIt != pidTable.subtitlePids.end())
     {
-      unsigned int lang = ((*sPidIt).Lang[0] << 24) + ((*sPidIt).Lang[1] << 16) + ((*sPidIt).Lang[2] << 8);
+      unsigned int lang = (*sPidIt).Lang[0] + ((*sPidIt).Lang[1] << 8) + ((*sPidIt).Lang[2] << 16);
+      //LogDebug("ChannelScan:   add subtitle language '%s'", (char*)&lang);
       (info->Languages).push_back(lang);
       sPidIt++;
     }
@@ -1031,6 +1065,7 @@ HRESULT CChannelScan::OnEncryptionStateChange(int pid, EncryptionState encryptio
     {
       info->IsEncrypted = (encryptionState == Encrypted);
     }
+    info->IsPidReceived = true;
   }
   catch (...)
   {

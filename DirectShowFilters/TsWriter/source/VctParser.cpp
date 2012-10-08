@@ -89,7 +89,7 @@ void CVctParser::OnNewSection(CSection& sections)
     int current_next_indicator = section[5] & 1;
     if (current_next_indicator == 0)
     {
-      // Details do not yet apply...
+      // Details do not apply yet...
       return;
     }
     int section_number = section[6];
@@ -209,8 +209,8 @@ void CVctParser::OnNewSection(CSection& sections)
       LogDebug("VctParser: pointer = %d, descriptors length = %d, end of descriptors = %d", pointer, descriptors_length, endOfDescriptors);
 
       vector<char*> extendedNames;
-      int hasVideo = 0;
-      int hasAudio = 0;
+      int videoStreamCount = 0;
+      int audioStreamCount = 0;
       vector<unsigned int> languages;
       while (pointer + 1 < endOfDescriptors)
       {
@@ -229,7 +229,7 @@ void CVctParser::OnNewSection(CSection& sections)
         }
         else if (tag == 0xa1) // service location descriptor
         {
-          DecodeServiceLocationDescriptor(&section[pointer], length, &hasVideo, &hasAudio, &languages);
+          DecodeServiceLocationDescriptor(&section[pointer], length, &videoStreamCount, &audioStreamCount, &languages);
         }
         pointer += length;
       }
@@ -326,8 +326,8 @@ void CVctParser::OnNewSection(CSection& sections)
       }
 
       info.ServiceType = service_type;
-      info.HasVideo = hasVideo;
-      info.HasAudio = hasAudio;
+      info.VideoStreamCount = videoStreamCount;
+      info.AudioStreamCount = audioStreamCount;
       info.IsEncrypted = access_controlled == 1;
       info.Languages = languages;
 
@@ -383,13 +383,13 @@ void CVctParser::OnNewSection(CSection& sections)
   }
 }
 
-void CVctParser::DecodeServiceLocationDescriptor(byte* b, int length, int* hasVideo, int* hasAudio, vector<unsigned int>* languages)
+void CVctParser::DecodeServiceLocationDescriptor(byte* b, int length, int* videoStreamCount, int* audioStreamCount, vector<unsigned int>* languages)
 {
   if (length < 3)
   {
     LogDebug("VctParser: invalid service location descriptor length = %d", length);
-    *hasVideo = 0;
-    *hasAudio = 0;
+    *videoStreamCount = 0;
+    *audioStreamCount = 0;
     return;
   }
   try
@@ -403,10 +403,10 @@ void CVctParser::DecodeServiceLocationDescriptor(byte* b, int length, int* hasVi
       int stream_type = b[pointer++];
       int elementary_pid = ((b[pointer] & 0x1f) << 8) + b[pointer + 1];
       pointer += 2;
-      int iso_639_language_code = (b[pointer] << 16) + (b[pointer + 1] << 8) + b[pointer + 2];
+      unsigned int iso_639_language_code = b[pointer] + (b[pointer + 1] << 8) + (b[pointer + 2] << 16);
       if (iso_639_language_code != 0)
       {
-        languages->push_back(iso_639_language_code << 8);
+        languages->push_back(iso_639_language_code);
       }
       pointer += 3;
       //LogDebug("VctParser: stream type = 0x%x, elementary PID = 0x%x", stream_type, elementary_pid);
@@ -417,7 +417,7 @@ void CVctParser::DecodeServiceLocationDescriptor(byte* b, int length, int* hasVi
           stream_type == STREAM_TYPE_VIDEO_H264 ||
           stream_type == STREAM_TYPE_VIDEO_MPEG2_DCII)
       {
-        *hasVideo++;
+        *videoStreamCount++;
       }
       else if (stream_type == STREAM_TYPE_AUDIO_MPEG1 ||
           stream_type == STREAM_TYPE_AUDIO_MPEG2 ||
@@ -426,16 +426,16 @@ void CVctParser::DecodeServiceLocationDescriptor(byte* b, int length, int* hasVi
           stream_type == STREAM_TYPE_AUDIO_AC3 ||
           stream_type == STREAM_TYPE_AUDIO_E_AC3_ATSC)
       {
-        *hasAudio++;
+        *audioStreamCount++;
       }
     }
-    //LogDebug("VctParser: has video = %d, has audio = %d", *hasVideo, *hasAudio);
+    //LogDebug("VctParser: video stream count = %d, audio stream count = %d", *videoStreamCount, *audioStreamCount);
   }
   catch (...)
   {
     LogDebug("VctParser: unhandled exception in DecodeServiceLocationDescriptor()");
-    *hasVideo = 0;
-    *hasAudio = 0;
+    *videoStreamCount = 0;
+    *audioStreamCount = 0;
     languages->clear();
   }
 }
@@ -455,7 +455,7 @@ void CVctParser::DecodeMultipleStrings(byte* b, int length, vector<char*>* strin
     int pointer = 1;
     for (int i = 0; i < number_of_strings && pointer + 3 < length; i++)
     {
-      int iso_639_language_code = (b[pointer] << 16) + (b[pointer + 1] << 8) + b[pointer + 2];
+      unsigned int iso_639_language_code = b[pointer] + (b[pointer + 1] << 8) + (b[pointer + 2] << 16);
       pointer += 3;
       int number_of_segments = b[pointer++];
       //LogDebug("VctParser: string %d, number of segments = %d", i, number_of_segments);

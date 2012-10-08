@@ -44,18 +44,18 @@ namespace TvLibrary.Implementations.DVB
     /// Set the service type for services which do not supply a service type.
     /// </summary>
     /// <param name="serviceType">The service type to check/update.</param>
-    /// <param name="hasVideo">Non-zero if the corresponding service has at least one video stream.</param>
-    /// <param name="hasAudio">Non-zero if the corresponding service has at least one audio stream.</param>
+    /// <param name="videoStreamCount">The number of video streams associated with the service.</param>
+    /// <param name="audioStreamCount">The number of audio streams associated with the service.</param>
     /// <returns>the updated service type</returns>
-    protected override int SetMissingServiceType(int serviceType, int hasVideo, int hasAudio)
+    protected override int SetMissingServiceType(int serviceType, int videoStreamCount, int audioStreamCount)
     {
       if (serviceType <= 0)
       {
-        if (hasVideo != 0)
+        if (videoStreamCount != 0)
         {
           return (int)AtscServiceType.DigitalTelevision;
         }
-        else if (hasAudio != 0)
+        else if (audioStreamCount != 0)
         {
           return (int)AtscServiceType.Audio;
         }

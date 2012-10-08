@@ -22,7 +22,7 @@
 #include <windows.h>
 #include "SdtParser.h"
 
-void LogDebug(const char *fmt, ...) ;
+void LogDebug(const char* fmt, ...);
 extern bool DisableCRCCheck();
 
 CSdtParser::CSdtParser(void)
@@ -104,7 +104,7 @@ void CSdtParser::OnNewSection(CSection& sections)
     int current_next_indicator = section[5] & 1;
     if (current_next_indicator == 0)
     {
-      // Details do not yet apply...
+      // Details do not apply yet...
       return;
     }
     int section_number = section[6];
@@ -233,19 +233,19 @@ void CSdtParser::OnNewSection(CSection& sections)
         }
         else if (tag == 0x50) // component descriptor
         {
-          bool hasVideo;
-          bool hasAudio;
+          bool isVideo;
+          bool isAudio;
           bool isHighDefinition;
           unsigned int language;
-          if (DecodeComponentDescriptor(&section[pointer], length, &hasVideo, &hasAudio, &isHighDefinition, &language))
+          if (DecodeComponentDescriptor(&section[pointer], length, &isVideo, &isAudio, &isHighDefinition, &language))
           {
-            if (hasVideo)
+            if (isVideo)
             {
-              info.HasVideo++;
+              info.VideoStreamCount++;
             }
-            else if (hasAudio)
+            else if (isAudio)
             {
-              info.HasAudio++;
+              info.AudioStreamCount++;
             }
             info.IsHighDefinition |= isHighDefinition;
             if (language != 0)
@@ -380,10 +380,10 @@ bool CSdtParser::DecodeComponentDescriptor(byte* b, int length, bool* isVideo, b
     int stream_content = b[0] & 0x0f;
     int component_type = b[1];
     int component_tag = b[2];
-    int iso_639_language_code = (b[3] << 16) + (b[4] << 8) + b[5];
+    int iso_639_language_code = b[3] + (b[4] << 8) + (b[5] << 16);
     // (component description not read)
 
-    *language = (iso_639_language_code << 8);
+    *language = iso_639_language_code;
 
     if (stream_content == 1 || stream_content == 5)
     {
@@ -450,7 +450,7 @@ void CSdtParser::DecodeCountryAvailabilityDescriptor(byte* b, int length, vector
     bool country_availability_flag = (b[pointer++] & 0x80) != 0;
     while (pointer + 2 < length)
     {
-      unsigned int country_code = (b[pointer] << 24) + (b[pointer + 1] << 16) + (b[pointer + 2] << 8);
+      unsigned int country_code = b[pointer] + (b[pointer + 1] << 8) + (b[pointer + 2] << 16);
       pointer += 3;
       if (country_availability_flag)
       {

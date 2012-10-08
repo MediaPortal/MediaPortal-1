@@ -40,7 +40,7 @@ namespace TvLibrary.Interfaces.Analyzer
     ///   The grabber will not wait for PMT to be received if it thinks the service is not running.</param>
     /// <returns>an HRESULT indicating whether the PMT section was successfully handled</returns>
     [PreserveSig]
-    int OnPmtReceived(int pmtPid, int serviceId, bool isServiceRunning);
+    int OnPmtReceived(int pmtPid, int serviceId, [MarshalAs(UnmanagedType.I1)] bool isServiceRunning);
   }
 
   /// <summary>

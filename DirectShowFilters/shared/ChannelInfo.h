@@ -40,8 +40,8 @@ class CChannelInfo
     char* ProviderName;
     char* LogicalChannelNumber;
     int ServiceType;
-    int HasVideo;
-    int HasAudio;
+    int VideoStreamCount;
+    int AudioStreamCount;
     bool IsHighDefinition;
     bool IsEncrypted;
     bool IsRunning;
