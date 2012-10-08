@@ -1130,7 +1130,7 @@ namespace TvEngine
         }
 
         // Calculate the address of the first medium.
-        IntPtr addr = new IntPtr(raw.ToInt32() + 8);
+        IntPtr addr = new IntPtr(raw.ToInt64() + 8);
         // Marshal the data into an RPM structure.
         RegPinMedium rpm = (RegPinMedium)Marshal.PtrToStructure(addr, typeof(RegPinMedium));
         return rpm.dw1;
@@ -1396,7 +1396,7 @@ namespace TvEngine
         byte charChode;
         for (int i = 0; i < totalMenuLength - 1; i++)   // There is an extra NULL character to indicate the end of the menu.
         {
-          charChode = Marshal.ReadByte((IntPtr)(entries.ToInt32() + i));
+          charChode = Marshal.ReadByte((IntPtr)(entries.ToInt64() + i));
           // Start of a new entry?
           if (strings[idx] == null)
           {
@@ -1632,7 +1632,7 @@ namespace TvEngine
       }
 
       _deviceHandle = bdaapiOpenHWIdx(_deviceCategory, (uint)deviceId);
-      if (_deviceHandle == IntPtr.Zero || _deviceHandle.ToInt32() == -1)
+      if (_deviceHandle == IntPtr.Zero || _deviceHandle.ToInt64() == -1)
       {
         Log.Debug("TechnoTrend: hardware interface could not be opened");
         return false;

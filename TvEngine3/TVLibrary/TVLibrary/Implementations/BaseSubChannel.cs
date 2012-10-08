@@ -400,7 +400,7 @@ namespace TvLibrary.Implementations
       {
         for (int i = 0; i < packetCount; ++i)
         {
-          IntPtr packetPtr = new IntPtr(data.ToInt32() + i * 188);
+          IntPtr packetPtr = new IntPtr(data.ToInt64() + i * 188);
           ProcessPacket(packetPtr);
         }
       }

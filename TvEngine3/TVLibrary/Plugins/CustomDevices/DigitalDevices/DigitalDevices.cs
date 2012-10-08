@@ -412,7 +412,7 @@ namespace TvEngine
       int offset = 16;
       for (int i = 0; i < menu.EntryCount + 3; i++)
       {
-        IntPtr stringPtr = new IntPtr(_mmiBuffer.ToInt32() + offset);
+        IntPtr stringPtr = new IntPtr(_mmiBuffer.ToInt64() + offset);
         String entry = Marshal.PtrToStringAnsi(stringPtr);
         switch (i)
         {

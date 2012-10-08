@@ -487,7 +487,6 @@ namespace TvLibrary.Implementations.DVB
     {
       Log.Log.Debug("TvDvbChannel: subchannel {0} cancel tune", _subChannelId);
       _cancelTune = true;
-      _cancelTune = true;
       if (_eventCa != null)
       {
         _eventCa.Set();

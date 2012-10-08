@@ -136,8 +136,6 @@ namespace TvLibrary.Implementations.DVB
 
     private readonly TimeShiftingEPGGrabber _timeshiftingEPGGrabber;
 
-    protected bool _cancelTune;
-
     #endregion
 
     #region ctor
