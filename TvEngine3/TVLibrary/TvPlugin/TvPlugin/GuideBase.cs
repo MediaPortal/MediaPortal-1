@@ -77,7 +77,7 @@ namespace TvPlugin
     protected long _guideColorProgramEnded = 0;
     protected long _guideColorProgramSelected = 0;
     protected long _guideColorBorderHighlight = 0;
-    protected IList<IMpGenre> _mpGenres = new List<IMpGenre>(); // The list of MediaPortal genre objects
+    protected IList<MpGenre> _mpGenres = new List<MpGenre>(); // The list of MediaPortal genre objects
     protected Dictionary<string, long> _genreColorsOnNow = new Dictionary<string, long>();
     protected Dictionary<string, long> _genreColorsOnLater = new Dictionary<string, long>();
 
