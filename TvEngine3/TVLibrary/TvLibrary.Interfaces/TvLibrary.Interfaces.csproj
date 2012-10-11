@@ -86,6 +86,7 @@
     <Compile Include="Implementations\Channels\DVBIPChannel.cs" />
     <Compile Include="Implementations\Channels\RadioWebStreamChannel.cs" />
     <Compile Include="Implementations\VideoStream\VideoStream.cs" />
+    <Compile Include="Interfaces\IMpGenre.cs" />
     <Compile Include="Interfaces\ICiMenuActions.cs" />
     <Compile Include="Interfaces\ICiMenuCallbacks.cs" />
     <Compile Include="Interfaces\IDiSEqCMotor.cs" />

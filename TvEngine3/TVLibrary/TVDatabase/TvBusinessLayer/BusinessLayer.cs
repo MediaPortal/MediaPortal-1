@@ -1551,7 +1551,7 @@ namespace TvDatabase
                : GetProgramsByTitle(startTime, endTime, programName);
     }
 
-    public IList<string> GetGenres()
+    public IList<string> GetProgramGenres()
     {
       List<string> genres = new List<string>();
       string connectString = ProviderFactory.GetDefaultProvider().ConnectionString;
@@ -1600,6 +1600,121 @@ namespace TvDatabase
         }
       }
       return genres;
+    }
+
+    private IList<string> GetDefaultMpGenreNames()
+    {
+      // Return a list of default names of MP genres.
+      List<string> defaultGenreList = new List<string>();
+      defaultGenreList.Add("Documentary");
+      defaultGenreList.Add("Kids");
+      defaultGenreList.Add("Movie");
+      defaultGenreList.Add("Music");
+      defaultGenreList.Add("News");
+      defaultGenreList.Add("Special");
+      defaultGenreList.Add("Sports");
+      return defaultGenreList;
+    }
+
+    /// <summary>
+    /// Returns a list of MediaPortal genres.
+    /// </summary>
+    /// <returns>A list of MediaPortal genres</returns>
+    public IList<MpGenre> GetMpGenres()
+    {
+      string genre;
+      bool enabled;
+      IList<MpGenre> mpGenres = new List<MpGenre>();
+      List<string> mappedProgramGenres;
+      List<string> defaultGenreNames = (List<string>)GetDefaultMpGenreNames();
+
+      // Get the id of the mp genre identified as the movie genre.
+      int genreMapMovieGenreId = -1;
+      try
+      {
+        genreMapMovieGenreId = int.Parse(GetSetting("genreMapMovieGenreId", "-1").Value);
+      }
+      catch (Exception)
+      { 
+      }
+
+      // Each genre map value is a '{' delimited list of "program" genre names (those that may be compared with the genre from the program listings).
+      // It is an error if a single "program" genre is mapped to more than one guide genre; behavior is undefined for this condition.
+      for (int i = 0; i < defaultGenreNames.Count; i++)
+      {
+        // The genremap key is an integer value that is added to a base value in order to locate the correct localized genre name string.
+        genre = GetSetting("genreMapName" + i, defaultGenreNames[i]).Value;
+
+        // Get the status of the mp genre.
+        try
+        {
+          enabled = bool.Parse(GetSetting("genreMapNameEnabled" + i, "True").Value);
+        }
+        catch (Exception)
+        {
+          enabled = true;
+        }
+
+        // Create a mp genre object.
+        MpGenre mpg = new MpGenre(genre, i);
+        mpg.IsMovie = (i == genreMapMovieGenreId);
+        mpg.Enabled = enabled;
+
+        string genreMapEntry = GetSetting("genreMapEntry" + i, "").Value;
+        mappedProgramGenres = new List<string>(genreMapEntry.Split(new char[] { '{' }, StringSplitOptions.RemoveEmptyEntries));
+
+        foreach (string programGenre in mappedProgramGenres)
+        {
+          try
+          {
+            mpg.MapToProgramGenre(programGenre);
+          }
+          catch (ArgumentException)
+          {
+            Log.Error("BusinessLayer: The following genre name appears more than once in the genre map: {0}", programGenre);
+          }
+        }
+
+        mpGenres.Add(mpg);
+      }
+
+      return mpGenres;
+    }
+
+    /// <summary>
+    /// Save the specified list of MediaPortal genres to the database.
+    /// </summary>
+    /// <param name="mpGenres">A list of MediaPortal genre objects</param>
+    public void SaveMpGenres(List<MpGenre> mpGenres)
+    {
+      Setting setting;
+      foreach (var genre in mpGenres)
+      {
+        setting = GetSetting("genreMapName" + genre.Id, "");
+        setting.Value = genre.Name;
+        setting.Persist();
+
+        string mappedProgramGenres = "";
+        foreach (var programGenre in genre.MappedProgramGenres)
+        {
+          mappedProgramGenres += programGenre + '{';
+        }
+
+        setting = GetSetting("genreMapEntry" + genre.Id, "");
+        setting.Value = mappedProgramGenres.TrimEnd('{');
+        setting.Persist();
+
+        setting = GetSetting("genreMapNameEnabled" + genre.Id, "true");
+        setting.Value = genre.Enabled.ToString();
+        setting.Persist();
+
+        if (genre.IsMovie)
+        {
+          setting = GetSetting("genreMapMovieGenreId", "-1");
+          setting.Value = genre.Id.ToString();
+          setting.Persist();
+        }
+      }
     }
 
     //GEMX: for downwards compatibility
@@ -2505,7 +2620,6 @@ namespace TvDatabase
       {
         Log.Info("BusinessLayer: ExecuteInsertProgramsMySqlCommand - Prepare caused an Exception - {0}", ex.Message);
       }
-
       foreach (Program prog in currentInserts)
       {
         sqlCmd.Parameters["?idChannel"].Value = prog.IdChannel;
