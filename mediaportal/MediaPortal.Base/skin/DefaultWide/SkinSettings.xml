@@ -8,7 +8,6 @@
   </section>
   <section name="theme">
     <entry name="name">Skin default</entry>
-    <entry name="name">No Animation on BasicHome</entry>
   </section>
   <section name="tvguidecolors">
     <entry name="guidecolorchannelbutton">FF404040</entry>

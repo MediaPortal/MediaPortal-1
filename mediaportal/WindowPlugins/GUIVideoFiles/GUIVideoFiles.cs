@@ -2657,11 +2657,13 @@ namespace MediaPortal.GUI.Video
             {
               if (selectDvdHandler.IsDvdDirectory(item.Path))
               {
-                item.Label3 = MediaTypes.DVD.ToString();
+                item.Label2 = MediaTypes.DVD.ToString();
+                item.Label3 = string.Empty;
               }
               else
               {
-                item.Label3 = MediaTypes.BD.ToString();
+                item.Label2 = MediaTypes.BD.ToString();
+                item.Label3 = string.Empty;
               }
             }
             else if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
@@ -2777,11 +2779,13 @@ namespace MediaPortal.GUI.Video
                 {
                   if (selectDvdHandler.IsDvdDirectory(item.Path))
                   {
-                    item.Label3 = MediaTypes.DVD.ToString();
+                    item.Label3 = string.Empty;
+                    item.Label2 = MediaTypes.DVD.ToString();
                   }
                   else
                   {
-                    item.Label3 = MediaTypes.BD.ToString();
+                    item.Label3 = string.Empty;
+                    item.Label2 = MediaTypes.BD.ToString();
                   }
                 }
                 else if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
@@ -3165,10 +3169,13 @@ namespace MediaPortal.GUI.Video
         IMDBMovie movie = new IMDBMovie();
         VideoDatabase.GetMovieInfo(filename, ref movie);
 
-        if (!movie.IsEmpty && (playTimePercentage >= _watchedPercentage || g_Player.IsDVDMenu))
+        if (!movie.IsEmpty)
         //Flag movie "watched" status only if user % value or higher played time (database view)
         {
-          movie.Watched = 1;
+          if (playTimePercentage >= _watchedPercentage || g_Player.IsDVDMenu)
+          {
+            movie.Watched = 1;
+          }
           movie.DateWatched = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
           VideoDatabase.SetMovieInfoById(movie.ID, ref movie);
         }
@@ -3304,18 +3311,21 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
-      int idFile = VideoDatabase.GetFileId(filename);
-
-      if (idFile == -1)
+      if (!Util.Utils.IsRemoteUrl(filename))
       {
-        AddFileToDatabase(filename);
-        idFile = VideoDatabase.GetFileId(filename);
-      }
+        int idFile = VideoDatabase.GetFileId(filename);
 
-      if (idFile != -1)
-      {
-        int videoDuration = (int)g_Player.Duration;
-        VideoDatabase.SetVideoDuration(idFile, videoDuration);
+        if (idFile == -1)
+        {
+          AddFileToDatabase(filename);
+          idFile = VideoDatabase.GetFileId(filename);
+        }
+
+        if (idFile != -1)
+        {
+          int videoDuration = (int)g_Player.Duration;
+          VideoDatabase.SetVideoDuration(idFile, videoDuration);
+        }
       }
     }
 
