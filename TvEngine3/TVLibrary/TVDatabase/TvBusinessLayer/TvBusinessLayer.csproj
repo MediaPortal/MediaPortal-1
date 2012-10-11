@@ -82,6 +82,7 @@
     <Compile Include="BusinessLayer.cs" />
     <Compile Include="EpgDBUpdater.cs" />
     <Compile Include="MatroskaTagLib.cs" />
+    <Compile Include="MpGenre.cs" />
     <Compile Include="NowAndNext.cs" />
     <Compile Include="ProgramList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

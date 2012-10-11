@@ -192,6 +192,12 @@
     </Compile>
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="HelpSystem.cs" />
+    <Compile Include="Sections\EpgGenreMap.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\EpgGenreMap.Designer.cs">
+      <DependentUpon>EpgGenreMap.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\UserPriorities.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -312,6 +318,10 @@
     <EmbeddedResource Include="Sections\CardDvbT.resx">
       <SubType>Designer</SubType>
       <DependentUpon>CardDvbT.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\EpgGenreMap.resx">
+      <DependentUpon>EpgGenreMap.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\UserPriorities.resx">
       <DependentUpon>UserPriorities.cs</DependentUpon>

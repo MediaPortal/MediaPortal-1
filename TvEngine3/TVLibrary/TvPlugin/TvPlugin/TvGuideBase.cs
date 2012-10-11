@@ -153,13 +153,10 @@ namespace TvPlugin
         _loopDelay = xmlreader.GetValueAsInt("gui", "listLoopDelay", 0);
 
         // Load the genre map.
-        if (_genreMap.Count == 0)
+        if (_mpGenres.Count == 0)
         {
-          LoadGenreMap(xmlreader);
+          _mpGenres = layer.GetMpGenres();
         }
-
-        // Special genre rules.
-        _specifyMpaaRatedAsMovie = xmlreader.GetValueAsBool("genreoptions", "specifympaaratedasmovie", false);
       }
 
       // Load settings defined by the skin.
@@ -212,39 +209,6 @@ namespace TvPlugin
       }
     }
 
-    private bool LoadGenreMap(Settings xmlreader)
-    {
-      int genreId;
-      string genre;
-      List<string> programGenres;
-      IDictionary<string, string> allGenres = xmlreader.GetSection<string>("genremap");
-
-      // Each genre map entry is a '{' delimited list of "program" genre names (those that may be compared with the genre from the program listings).
-      // It is an error if a single "program" genre is mapped to more than one genre color category; behavior is undefined for this condition.
-      foreach (var genreMapEntry in allGenres)
-      {
-        genreId = int.Parse(genreMapEntry.Key);
-        genre = GUILocalizeStrings.Get(LOCALIZED_GENRE_STRING_BASE + genreId);
-        _genreList.Add(genre);
-
-        programGenres = new List<string>(genreMapEntry.Value.Split(new char[] { '{' }, StringSplitOptions.RemoveEmptyEntries));
-
-        foreach (string programGenre in programGenres)
-        {
-          try
-          {
-            _genreMap.Add(programGenre, genre);
-          }
-          catch (ArgumentException)
-          {
-            Log.Warn("TvGuideBase.cs: The following genre name appears more than once in the genre map: {0}", programGenre);
-          }
-        }
-      }
-
-      return _genreMap.Count > 0;
-    }
-
     private bool LoadGuideColors(Settings xmlreader)
     {
       List<string> temp;
@@ -281,7 +245,7 @@ namespace TvPlugin
       long color0;
       long color1;
 
-      for (int i = 0; i < _genreList.Count; i++)
+      for (int i = 0; i < _mpGenres.Count; i++)
       {
         temp = new List<string>((xmlreader.GetValueAsString("tvguidecolors", i.ToString(), String.Empty)).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
 
@@ -292,13 +256,13 @@ namespace TvPlugin
           if (temp.Count == 2)
           {
             color1 = GetColorFromString(temp[1]);
-            _genreColorsOnNow.Add(_genreList[i], color0);
-            _genreColorsOnLater.Add(_genreList[i], color1);
+            _genreColorsOnNow.Add(_mpGenres[i].Name, color0);
+            _genreColorsOnLater.Add(_mpGenres[i].Name, color1);
           }
           else if (temp.Count == 1)
           {
-            _genreColorsOnNow.Add(_genreList[i], color0);
-            _genreColorsOnLater.Add(_genreList[i], color1);
+            _genreColorsOnNow.Add(_mpGenres[i].Name, color0);
+            _genreColorsOnLater.Add(_mpGenres[i].Name, color1);
           }
         }
       }
@@ -1232,11 +1196,23 @@ namespace TvPlugin
                                        _currentProgram.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                        _currentProgram.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
+        // Lookup the MediaPortal genre for this program.  If found use it, if not found then use the program genre.
+        string mpg = "";
+        foreach (var mpGenre in _mpGenres)
+        {
+          if (mpGenre.MappedProgramGenres.Contains(_currentProgram.Genre))
+          {
+            mpg = mpGenre.Name;
+            break;
+          }
+        }
+
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Title", _currentProgram.Title);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.CompositeTitle", TVUtil.GetDisplayTitle(_currentProgram));
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Time", strTime);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Description", _currentProgram.Description);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Genre", _currentProgram.Genre);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.MpGenre", mpg);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Duration", GetDuration(_currentProgram));
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.DurationMins", GetDurationAsMinutes(_currentProgram));
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.TimeFromNow", GetStartTimeFromNow(_currentProgram));
@@ -3908,17 +3884,26 @@ namespace TvPlugin
         return defaultColor;
       }
 
-      // Lookup the category genre for the specified program genre.
+      // Lookup the movie genre for the specified program genre.
+      MpGenre movieGenre = ((List<MpGenre>)_mpGenres).Find(x => x.IsMovie == true);
+
       string genre = "";
-      if (_specifyMpaaRatedAsMovie && IsMPAA(program.Classification))
+      if (IsMPAA(program.Classification) && movieGenre != null)
       {
-        genre = GUILocalizeStrings.Get(LOCALIZED_GENRE_STRING_MOVIE);
+        genre = movieGenre.Name;
       }
       else
       {
-        if (!_genreMap.TryGetValue(program.Genre, out genre))
+        foreach (var mpGenre in _mpGenres)
         {
-          return defaultColor;
+          if (mpGenre.MappedProgramGenres.Contains(program.Genre))
+          {
+            genre = mpGenre.Name;
+          }
+          else
+          {
+            return defaultColor;
+          }
         }
       }
 
