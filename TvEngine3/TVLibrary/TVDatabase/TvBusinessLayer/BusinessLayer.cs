@@ -1620,11 +1620,11 @@ namespace TvDatabase
     /// Returns a list of MediaPortal genres.
     /// </summary>
     /// <returns>A list of MediaPortal genres</returns>
-    public IList<MpGenre> GetMpGenres()
+    public IList<IMpGenre> GetMpGenres()
     {
       string genre;
       bool enabled;
-      IList<MpGenre> mpGenres = new List<MpGenre>();
+      List<MpGenre> mpGenres = new List<MpGenre>();
       List<string> mappedProgramGenres;
       List<string> defaultGenreNames = (List<string>)GetDefaultMpGenreNames();
 
@@ -1656,7 +1656,7 @@ namespace TvDatabase
         }
 
         // Create a mp genre object.
-        MpGenre mpg = new MpGenre(genre, i);
+        IMpGenre mpg = new MpGenre(genre, i);
         mpg.IsMovie = (i == genreMapMovieGenreId);
         mpg.Enabled = enabled;
 
@@ -1675,10 +1675,11 @@ namespace TvDatabase
           }
         }
 
-        mpGenres.Add(mpg);
+        mpGenres.Add((MpGenre)mpg);
       }
 
-      return mpGenres;
+      IList<IMpGenre> mpGenresReturn = mpGenres.ConvertAll(x => (IMpGenre)x);
+      return mpGenresReturn;
     }
 
     /// <summary>

@@ -58,8 +58,8 @@ namespace SetupTv.Sections
       // Load the list of all EPG provided program genres.
       _allProgramGenres = (List<string>)layer.GetProgramGenres();
 
-      // Load the list of MP genres and the map of MP genres to program genres.
-      _mpGenres = (List<MpGenre>)layer.GetMpGenres();
+      // Load the list of MP genres.
+      _mpGenres = ((List<IMpGenre>)layer.GetMpGenres()).ConvertAll(x => (MpGenre)x);
 
       // Populate the guide genre and program genre lists.
       PopulateGuideGenreList();

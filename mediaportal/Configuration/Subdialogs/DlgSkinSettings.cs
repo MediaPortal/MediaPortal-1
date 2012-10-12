@@ -95,7 +95,7 @@ namespace MediaPortal.Configuration.Sections
     protected long _guideColorProgramEnded = 0;
     protected long _guideColorProgramSelected = 0;
     protected long _guideColorBorderHighlight = 0;
-    protected IList<IMpGenre> _mpGenres = new List<IMpGenre>();
+    protected IList<IMpGenre> _mpGenres = null;
     protected IDictionary<string, long> _genreColorsOnNow = new Dictionary<string, long>();
     protected IDictionary<string, long> _genreColorsOnLater = new Dictionary<string, long>();
     private Button mpButtonOk;
@@ -134,7 +134,7 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
 
       // If TV is not used then remove the tabs for TV guide settings.
-      if (!UseTvServer)
+      if (!TvServerRemote.TvPluginInstalled)
       {
         this.tabControlTvGuideSettings.Enabled = false;
         this.gbGenreSettings.Visible = false;
@@ -834,11 +834,6 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #endregion
-
-    public static bool UseTvServer
-    {
-      get { return File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"); }
-    }
 
     private bool LoadGuideColors(Settings xmlreader)
     {

@@ -73,7 +73,7 @@ namespace SetupTv.Sections
       // mpButtonGenreIsMovie
       // 
       this.mpButtonGenreIsMovie.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButtonGenreIsMovie.Location = new System.Drawing.Point(368, 113);
+      this.mpButtonGenreIsMovie.Location = new System.Drawing.Point(364, 125);
       this.mpButtonGenreIsMovie.MinimumSize = new System.Drawing.Size(36, 22);
       this.mpButtonGenreIsMovie.Name = "mpButtonGenreIsMovie";
       this.mpButtonGenreIsMovie.Size = new System.Drawing.Size(100, 23);
@@ -85,7 +85,7 @@ namespace SetupTv.Sections
       // mpButtonEnableGenre
       // 
       this.mpButtonEnableGenre.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButtonEnableGenre.Location = new System.Drawing.Point(368, 142);
+      this.mpButtonEnableGenre.Location = new System.Drawing.Point(364, 154);
       this.mpButtonEnableGenre.Name = "mpButtonEnableGenre";
       this.mpButtonEnableGenre.Size = new System.Drawing.Size(100, 23);
       this.mpButtonEnableGenre.TabIndex = 89;
@@ -98,9 +98,9 @@ namespace SetupTv.Sections
       this.label26.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.label26.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label26.Location = new System.Drawing.Point(10, 7);
+      this.label26.Location = new System.Drawing.Point(10, 10);
       this.label26.Name = "label26";
-      this.label26.Size = new System.Drawing.Size(457, 55);
+      this.label26.Size = new System.Drawing.Size(457, 79);
       this.label26.TabIndex = 88;
       this.label26.Text = resources.GetString("label26.Text");
       // 
@@ -118,11 +118,11 @@ namespace SetupTv.Sections
       this.listViewGuideGenres.HideSelection = false;
       this.listViewGuideGenres.IsChannelListView = false;
       this.listViewGuideGenres.LabelEdit = true;
-      this.listViewGuideGenres.Location = new System.Drawing.Point(10, 89);
+      this.listViewGuideGenres.Location = new System.Drawing.Point(10, 101);
       this.listViewGuideGenres.MultiSelect = false;
       this.listViewGuideGenres.Name = "listViewGuideGenres";
       this.listViewGuideGenres.OwnerDraw = true;
-      this.listViewGuideGenres.Size = new System.Drawing.Size(350, 148);
+      this.listViewGuideGenres.Size = new System.Drawing.Size(350, 130);
       this.listViewGuideGenres.TabIndex = 20;
       this.listViewGuideGenres.UseCompatibleStateImageBehavior = false;
       this.listViewGuideGenres.View = System.Windows.Forms.View.Details;

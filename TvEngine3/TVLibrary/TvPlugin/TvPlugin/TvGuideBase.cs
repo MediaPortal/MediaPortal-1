@@ -155,7 +155,7 @@ namespace TvPlugin
         // Load the genre map.
         if (_mpGenres.Count == 0)
         {
-          _mpGenres = layer.GetMpGenres();
+          _mpGenres = RemoteControl.Instance.GetMpGenres();
         }
       }
 

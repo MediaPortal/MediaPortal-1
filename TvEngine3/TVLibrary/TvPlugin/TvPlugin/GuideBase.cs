@@ -77,7 +77,7 @@ namespace TvPlugin
     protected long _guideColorProgramEnded = 0;
     protected long _guideColorProgramSelected = 0;
     protected long _guideColorBorderHighlight = 0;
-    protected IList<MpGenre> _mpGenres = new List<MpGenre>(); // The list of MediaPortal genre objects
+    protected IList<IMpGenre> _mpGenres = null; // The list of MediaPortal genre objects
     protected Dictionary<string, long> _genreColorsOnNow = new Dictionary<string, long>();
     protected Dictionary<string, long> _genreColorsOnLater = new Dictionary<string, long>();
 
@@ -112,10 +112,12 @@ namespace TvPlugin
       genreKeys.Sort();
 
       // Loop through genre names.
+      MpGenre genreObj;
       foreach (var genreName in genreKeys)
 	    {
-        // If the genre name is unused then skip it.  This can occur if the user desires to have less than the maximum number of MP genres available.
-        if (genreName.Contains("<unused"))
+        // If the genre is not enabled then skip it.  This can occur if the user desires to have less than the maximum number of MP genres available.
+        genreObj = ((List<MpGenre>)_mpGenres).Find(x => x.Name.Equals(genreName));
+        if (!genreObj.Enabled)
         {
           continue;
         }

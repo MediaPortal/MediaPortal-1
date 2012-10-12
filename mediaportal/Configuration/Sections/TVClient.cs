@@ -37,14 +37,14 @@ namespace MediaPortal.Configuration.Sections
 
     private string _preferredAudioLanguages;
     private string _preferredSubLanguages;
-    private IList<string> _languageCodes;
+    private List<string> _languageCodes;
 
     private MPGroupBox mpGroupBox2;
     private MPTextBox mpTextBoxHostname;
     private MPLabel mpLabel3;
     private MPGroupBox mpGroupBox1;
     private MPCheckBox mpCheckBoxPrefAC3;
-    private IList<string> _languagesAvail;
+    private List<string> _languagesAvail;
     private MPCheckBox mpCheckBoxPrefAudioOverLang;
     private MPTabControl tabControlTVGeneral;
     private MPTabPage tabPageGeneralSettings;
@@ -178,138 +178,100 @@ namespace MediaPortal.Configuration.Sections
       // Enable this Panel if the TvPlugin exists in the plug-in Directory
       Enabled = true;
 
-      try
+      // Retrieve the languages and language codes for the Epg.
+      TvServerRemote.GetLanguages(out _languagesAvail, out _languageCodes);
+
+      if (_languagesAvail == null || _languageCodes == null)
       {
-        Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvLibrary.Interfaces.dll");
-        if (assem != null)
+        Log.Debug("Failed to load languages");
+        return;
+      }
+      else
+      {
+        mpListViewAvailAudioLang.Items.Clear();
+        mpListViewPreferredAudioLang.Items.Clear();
+        for (int i = 0; i < _languagesAvail.Count; i++)
         {
-          Type[] types = assem.GetExportedTypes();
-          foreach (Type exportedType in types)
+          ListViewItem item = new ListViewItem(new string[] { _languagesAvail[i], _languageCodes[i] });
+          item.Name = _languageCodes[i];
+          if (!_preferredAudioLanguages.Contains(item.Name))
           {
-            try
+            if (!mpListViewAvailAudioLang.Items.ContainsKey(item.Name))
             {
-              if (exportedType.Name == "Languages")
+              mpListViewAvailAudioLang.Items.Add(item);
+            }
+          }
+        }
+        mpListViewAvailAudioLang.ListViewItemSorter = _columnSorter = new ListViewColumnSorter();
+        _columnSorter.SortColumn = 0;
+        _columnSorter.Order = SortOrder.Ascending;
+        mpListViewAvailAudioLang.Sort();
+
+        if (_preferredAudioLanguages.Length > 0)
+        {
+          string[] langArr = _preferredAudioLanguages.Split(';');
+
+          for (int i = 0; i < langArr.Length; i++)
+          {
+            string langStr = langArr[i];
+            if (langStr.Trim().Length > 0)
+            {
+              for (int j = 0; j < _languagesAvail.Count; j++)
               {
-                // Load available languages into variables. 
-                Object languageObject = null;
-                languageObject = Activator.CreateInstance(exportedType);
-                MethodInfo methodInfo = exportedType.GetMethod("GetLanguages",
-                                                               BindingFlags.Public | BindingFlags.Instance);
-                _languagesAvail = methodInfo.Invoke(languageObject, null) as List<String>;
-                methodInfo = exportedType.GetMethod("GetLanguageCodes", BindingFlags.Public | BindingFlags.Instance);
-                _languageCodes = (List<String>)methodInfo.Invoke(languageObject, null);
-
-                if (_languagesAvail == null || _languageCodes == null)
+                if (_languageCodes[j].Contains(langStr))
                 {
-                  Log.Debug("Failed to load languages");
-                  return;
-                }
-                else
-                {
-                  mpListViewAvailAudioLang.Items.Clear();
-                  mpListViewPreferredAudioLang.Items.Clear();
-                  for (int i = 0; i < _languagesAvail.Count; i++)
-                  {
-                    ListViewItem item = new ListViewItem(new string[] { _languagesAvail[i], _languageCodes[i] });
-                    item.Name = _languageCodes[i];
-                    if (!_preferredAudioLanguages.Contains(item.Name))
-                    {
-                      if (!mpListViewAvailAudioLang.Items.ContainsKey(item.Name))
-                      {
-                        mpListViewAvailAudioLang.Items.Add(item);
-                      }
-                    }
-                  }
-                  mpListViewAvailAudioLang.ListViewItemSorter = _columnSorter = new ListViewColumnSorter();
-                  _columnSorter.SortColumn = 0;
-                  _columnSorter.Order = SortOrder.Ascending;
-                  mpListViewAvailAudioLang.Sort();
-
-                  if (_preferredAudioLanguages.Length > 0)
-                  {
-                    string[] langArr = _preferredAudioLanguages.Split(';');
-
-                    for (int i = 0; i < langArr.Length; i++)
-                    {
-                      string langStr = langArr[i];
-                      if (langStr.Trim().Length > 0)
-                      {
-                        for (int j = 0; j < _languagesAvail.Count; j++)
-                        {
-                          if (_languageCodes[j].Contains(langStr))
-                          {
-                            ListViewItem item = new ListViewItem(new string[] {_languagesAvail[j], _languageCodes[j]});
-                            item.Name = _languageCodes[j];
-                            mpListViewPreferredAudioLang.Items.Add(item);
-                            break;
-                          }
-                        }
-                      }
-                    }
-                  }
-
-                  mpListViewAvailSubLang.Items.Clear();
-                  mpListViewPreferredSubLang.Items.Clear();
-                  for (int i = 0; i < _languagesAvail.Count; i++)
-                  {
-                    ListViewItem item = new ListViewItem(new string[] { _languagesAvail[i], _languageCodes[i] });
-                    item.Name = _languageCodes[i];
-                    if (!_preferredSubLanguages.Contains(item.Name))
-                    {
-                      if (!mpListViewAvailSubLang.Items.ContainsKey(item.Name))
-                      {
-                        mpListViewAvailSubLang.Items.Add(item);
-                      }
-                    }
-                  }
-                  mpListViewAvailSubLang.ListViewItemSorter = _columnSorter = new ListViewColumnSorter();
-                  _columnSorter.SortColumn = 0;
-                  _columnSorter.Order = SortOrder.Ascending;
-                  mpListViewAvailSubLang.Sort();
-
-                  if (_preferredSubLanguages.Length > 0)
-                  {
-                    string[] langArr = _preferredSubLanguages.Split(';');
-
-                    for (int i = 0; i < langArr.Length; i++)
-                    {
-                      string langStr = langArr[i];
-                      if (langStr.Trim().Length > 0)
-                      {
-                        for (int j = 0; j < _languagesAvail.Count; j++)
-                        {
-                          if (_languageCodes[j].Contains(langStr))
-                          {
-                            ListViewItem item = new ListViewItem(new string[] {_languagesAvail[j], _languageCodes[j]});
-                            item.Name = _languageCodes[j];
-                            mpListViewPreferredSubLang.Items.Add(item);
-                            break;
-                          }
-                        }
-                      }
-                    }
-                  }
+                  ListViewItem item = new ListViewItem(new string[] {_languagesAvail[j], _languageCodes[j]});
+                  item.Name = _languageCodes[j];
+                  mpListViewPreferredAudioLang.Items.Add(item);
+                  break;
                 }
               }
             }
-            catch (TargetInvocationException ex)
+          }
+        }
+
+        mpListViewAvailSubLang.Items.Clear();
+        mpListViewPreferredSubLang.Items.Clear();
+        for (int i = 0; i < _languagesAvail.Count; i++)
+        {
+          ListViewItem item = new ListViewItem(new string[] { _languagesAvail[i], _languageCodes[i] });
+          item.Name = _languageCodes[i];
+          if (!_preferredSubLanguages.Contains(item.Name))
+          {
+            if (!mpListViewAvailSubLang.Items.ContainsKey(item.Name))
             {
-              Log.Warn("TVClient: Failed to load languages {0}", ex.ToString());
-              continue;
+              mpListViewAvailSubLang.Items.Add(item);
             }
-            catch (Exception gex)
+          }
+        }
+        mpListViewAvailSubLang.ListViewItemSorter = _columnSorter = new ListViewColumnSorter();
+        _columnSorter.SortColumn = 0;
+        _columnSorter.Order = SortOrder.Ascending;
+        mpListViewAvailSubLang.Sort();
+
+        if (_preferredSubLanguages.Length > 0)
+        {
+          string[] langArr = _preferredSubLanguages.Split(';');
+
+          for (int i = 0; i < langArr.Length; i++)
+          {
+            string langStr = langArr[i];
+            if (langStr.Trim().Length > 0)
             {
-              Log.Warn("TVClient: Failed to load settings {0}", gex.Message);
+              for (int j = 0; j < _languagesAvail.Count; j++)
+              {
+                if (_languageCodes[j].Contains(langStr))
+                {
+                  ListViewItem item = new ListViewItem(new string[] {_languagesAvail[j], _languageCodes[j]});
+                  item.Name = _languageCodes[j];
+                  mpListViewPreferredSubLang.Items.Add(item);
+                  break;
+                }
+              }
             }
           }
         }
       }
-      catch (Exception ex)
-      {
-        Log.Debug("Configuration: Loading TVLibrary.Interface assembly");
-        Log.Debug("Configuration: Exception: {0}", ex);
-      }
-
       _SingleSeat = Network.IsSingleSeat();
     }
 
