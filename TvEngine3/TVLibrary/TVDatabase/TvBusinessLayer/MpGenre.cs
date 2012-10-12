@@ -26,6 +26,7 @@ using TvLibrary.Interfaces;
 
 namespace TvDatabase
 {
+  [Serializable]
   public class MpGenre : IMpGenre
   {
 

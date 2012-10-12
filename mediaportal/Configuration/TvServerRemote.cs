@@ -34,18 +34,27 @@ using TvLibrary.Interfaces;
 namespace MediaPortal.Configuration
 {
   /// <summary>
-  /// This class provides TV server remote method calls.
+  /// This class provides TV server remote method calls using late binding to TvControl.dll.
+  /// The late binding prevents MediaPortal from depending on TvControl and TvDatabase projects.
   /// </summary>
   public static class TvServerRemote
   {
 
     /// <summary>
+    /// Returns true if the TvPlugin is installed on the client.
+    /// </summary>
+    public static bool TvPluginInstalled
+    {
+      get { return File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"); }
+    }
+
+    /// <summary>
     /// Retrieve a list of MediaPortal genres from the TV server (calls TvBusinessLayer.GetMpGenres()).
     /// </summary>
     /// <returns>List of genre strings</returns>
-    public static List<IMpGenre> GetMpGenres()
+    public static IList<IMpGenre> GetMpGenres()
     {
-      List<IMpGenre> genres = new List<IMpGenre>();
+      IList<IMpGenre> genres = null;
       try
       {
         Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvControl.dll");
@@ -63,7 +72,8 @@ namespace MediaPortal.Configuration
                 exportedObject = Activator.CreateInstance(exportedType);
                 MethodInfo methodInfo = exportedType.GetMethod("GetMpGenres",
                                                                 BindingFlags.Public | BindingFlags.Instance);
-                genres = methodInfo.Invoke(exportedObject, null) as List<IMpGenre>;
+                genres = methodInfo.Invoke(exportedObject, null) as IList<IMpGenre>;
+                break;
               }
             }
             catch (TargetInvocationException ex)
@@ -85,5 +95,57 @@ namespace MediaPortal.Configuration
       }
       return genres;
     }
+
+    /// <summary>
+    /// Retrieves a list of available languages and language codes from the TvServer.
+    /// Calls TvLibrary.Epg.Languages.GetLanguages() and TvLibrary.Epg.Languages.GetLanguageCode().
+    /// </summary>
+    /// <param name="languagesAvailable">A list of available Epg languages</param>
+    /// <param name="languageCodes">A list of Epg language codes</param>
+    public static void GetLanguages(out List<string> languagesAvailable, out List<string> languageCodes)
+    {
+      languagesAvailable = null;
+      languageCodes = null;
+      try
+      {
+        Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvLibrary.Interfaces.dll");
+        if (assem != null)
+        {
+          Type[] types = assem.GetExportedTypes();
+          foreach (Type exportedType in types)
+          {
+            try
+            {
+              if (exportedType.Name == "Languages")
+              {
+                // Load available languages into variables. 
+                Object languageObject = null;
+                languageObject = Activator.CreateInstance(exportedType);
+                MethodInfo methodInfo = exportedType.GetMethod("GetLanguages",
+                                                               BindingFlags.Public | BindingFlags.Instance);
+                languagesAvailable = methodInfo.Invoke(languageObject, null) as List<String>;
+                methodInfo = exportedType.GetMethod("GetLanguageCodes", BindingFlags.Public | BindingFlags.Instance);
+                languageCodes = (List<String>)methodInfo.Invoke(languageObject, null);
+              }
+            }
+            catch (TargetInvocationException ex)
+            {
+              Log.Warn("TVClient: Failed to load languages {0}", ex.ToString());
+              continue;
+            }
+            catch (Exception gex)
+            {
+              Log.Warn("TVClient: Failed to load settings {0}", gex.Message);
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Debug("Configuration: Loading TVLibrary.Interface assembly");
+        Log.Debug("Configuration: Exception: {0}", ex);
+      }
+    }
+
   }
 }
