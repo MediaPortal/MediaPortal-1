@@ -46,7 +46,7 @@
 ##### path definitions
 
 !define git_MP "${git_ROOT}\mediaportal"
-!define git_TVServer "${git_ROOT}\TvEngine3\TVLibrary"
+!define git_TVServer "${git_ROOT}\TvEngine3\Mediaportal\TV"
 !define git_Common_MP_TVE3 "${git_ROOT}\Common-MP-TVE3"
 !define git_DeployTool "${git_ROOT}\Tools\MediaPortal.DeployTool"
 !define git_DirectShowFilters "${git_ROOT}\DirectShowFilters"
