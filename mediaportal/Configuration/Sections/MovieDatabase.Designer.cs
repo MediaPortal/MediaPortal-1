@@ -199,7 +199,6 @@ namespace MediaPortal.Configuration.Sections
       this.tbUserGroupDescription = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.cbUserGroupsMiscList = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.tabPageUserGroupRules = new System.Windows.Forms.TabPage();
-      this.mpLabel34 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel33 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tbUserGroupFieldValue = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.mpLabel32 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -923,6 +922,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // btUserGroupGenerateSyntax
       // 
+      this.btUserGroupGenerateSyntax.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btUserGroupGenerateSyntax.Location = new System.Drawing.Point(272, 158);
       this.btUserGroupGenerateSyntax.Name = "btUserGroupGenerateSyntax";
       this.btUserGroupGenerateSyntax.Size = new System.Drawing.Size(165, 22);
@@ -2383,7 +2383,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageUserGroupRules
       // 
-      this.tabPageUserGroupRules.Controls.Add(this.mpLabel34);
       this.tabPageUserGroupRules.Controls.Add(this.btUserGroupDeleteRule);
       this.tabPageUserGroupRules.Controls.Add(this.btUserGroupCheckSyntax);
       this.tabPageUserGroupRules.Controls.Add(this.btUserGroupGenerateSyntax);
@@ -2408,16 +2407,6 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageUserGroupRules.Text = "User Groups rules";
       this.tabPageUserGroupRules.UseVisualStyleBackColor = true;
       // 
-      // mpLabel34
-      // 
-      this.mpLabel34.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpLabel34.ForeColor = System.Drawing.Color.MidnightBlue;
-      this.mpLabel34.Location = new System.Drawing.Point(272, 16);
-      this.mpLabel34.Name = "mpLabel34";
-      this.mpLabel34.Size = new System.Drawing.Size(165, 136);
-      this.mpLabel34.TabIndex = 78;
-      // 
       // mpLabel33
       // 
       this.mpLabel33.AutoSize = true;
@@ -2429,6 +2418,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tbUserGroupFieldValue
       // 
+      this.tbUserGroupFieldValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tbUserGroupFieldValue.BorderColor = System.Drawing.Color.Empty;
       this.tbUserGroupFieldValue.Location = new System.Drawing.Point(79, 158);
       this.tbUserGroupFieldValue.Multiline = true;
@@ -2461,6 +2452,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbUserGroupFieldValues
       // 
+      this.cbUserGroupFieldValues.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.cbUserGroupFieldValues.BorderColor = System.Drawing.Color.Empty;
       this.cbUserGroupFieldValues.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbUserGroupFieldValues.Location = new System.Drawing.Point(79, 131);
@@ -4146,7 +4139,6 @@ namespace MediaPortal.Configuration.Sections
     private UserInterface.Controls.MPTextBox tbNewActorImdbId;
     private UserInterface.Controls.MPButton btUserGroupCheckSyntax;
     private UserInterface.Controls.MPButton btUserGroupDeleteRule;
-    private UserInterface.Controls.MPLabel mpLabel34;
     private UserInterface.Controls.MPLabel mpLabel36;
     private UserInterface.Controls.MPLabel mpLabel35;
     private System.Windows.Forms.PictureBox pbGenreImage;

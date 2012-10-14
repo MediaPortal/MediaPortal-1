@@ -930,20 +930,13 @@ namespace MediaPortal.Video.Database
           if (!vDir.IsProtectedShare(path, out pin))
           {
             ArrayList mList = new ArrayList();
-            VideoDatabase.GetMoviesByPath(path, ref mList);
+            VideoDatabase.GetRandomMoviesByPath(path, ref mList, 1);
 
             if (mList.Count > 0)
             {
-              Random rnd = new Random();
-              int r = rnd.Next(mList.Count);
-              IMDBMovie movieDetails = (IMDBMovie)mList[r];
+              IMDBMovie movieDetails = (IMDBMovie)mList[0];
               mList.Clear();
-              VideoDatabase.GetFilesForMovie(movieDetails.ID, ref mList);
-
-              if (mList.Count > 0 && System.IO.File.Exists(mList[0].ToString()))
-              {
-                rndMovieId = movieDetails.ID;
-              }
+              rndMovieId = movieDetails.ID;
             }
           }
 
@@ -1581,11 +1574,20 @@ namespace MediaPortal.Video.Database
         }
         GUIPropertyManager.SetProperty("#iswatched", strValue);
 
-        // Watched percent property
-        GUIPropertyManager.SetProperty("#watchedpercent", info.WatchedPercent.ToString());
-        // Watched count
-        GUIPropertyManager.SetProperty("#watchedcount", info.WatchedCount.ToString());
-        
+        if (!item.IsFolder && !VirtualDirectories.Instance.Movies.IsRootShare(info.VideoFileName))
+        {
+          // Watched percent property
+          GUIPropertyManager.SetProperty("#watchedpercent", info.WatchedPercent.ToString());
+          // Watched count
+          GUIPropertyManager.SetProperty("#watchedcount", info.WatchedCount.ToString());
+        }
+        else
+        {
+          // Watched percent property
+          GUIPropertyManager.SetProperty("#watchedpercent", "0");
+          // Watched count
+          GUIPropertyManager.SetProperty("#watchedcount", "-1");
+        }
         string hasSubtitles = "false";
         string videoMediaSource = string.Empty;
 

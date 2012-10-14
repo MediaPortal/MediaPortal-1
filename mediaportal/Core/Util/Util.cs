@@ -496,6 +496,16 @@ namespace MediaPortal.Util
       return false;
     }
 
+    public static bool IsRemoteUrl(string strPath)
+    {
+      Uri playbackUri = null;
+      if (Uri.TryCreate(strPath, UriKind.Absolute, out playbackUri) && playbackUri.Scheme != "file")
+      {
+        return true;
+      }
+      return false;
+    }
+
     public static bool IsAudio(string strPath)
     {
       if (strPath == null) return false;
@@ -2221,7 +2231,10 @@ namespace MediaPortal.Util
         File.Delete(strFile);
         return true;
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("Util: FileDelete(string strFile) error: {0}", ex.Message);
+      }
       return false;
     }
 
@@ -2304,6 +2317,36 @@ namespace MediaPortal.Util
           //Util.Picture.CreateThumbnail(file, strFile, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
           //string strFileL = ConvertToLargeCoverArt(strFile);
           //Util.Picture.CreateThumbnail(file, strFileL, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+          File.Copy(file, strFile, true);
+        }
+        catch (Exception ex)
+        {
+          Log.Warn("Util: error after downloading thumbnail {0} - {1}", strFile, ex.Message);
+        }
+      }
+    }
+
+    /// <summary>
+    /// This method will not check if downloaded image exists in cache.
+    /// Existing cached image will be overwritten with new one.
+    /// </summary>
+    /// <param name="strURL"></param>
+    /// <param name="strFile"></param>
+    public static void DownLoadAndOverwriteCachedImage(string strURL, string strFile)
+    {
+      if (strURL == null) return;
+      if (strURL.Length == 0) return;
+      if (strFile == null) return;
+      if (strFile.Length == 0) return;
+      string url = String.Format("mpcache-{0}", EncryptLine(strURL));
+
+      string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), url);
+      DownLoadImage(strURL, file);
+      
+      if (File.Exists(file))
+      {
+        try
+        {
           File.Copy(file, strFile, true);
         }
         catch (Exception ex)
@@ -2431,6 +2474,28 @@ namespace MediaPortal.Util
       }
       catch (Exception) {}
       return strPath;
+    }
+
+    public static string GetFileNameWithExtension(string strPath)
+    {
+      if (string.IsNullOrEmpty(strPath)) return string.Empty;
+      try
+      {
+        return Path.GetFileName(strPath);
+      }
+      catch { }
+      return strPath;
+    }
+
+    public static string GetFileExtension(string strPath)
+    {
+      if (string.IsNullOrEmpty(strPath)) return string.Empty;
+      try
+      {
+        return Path.GetExtension(strPath);
+      }
+      catch { }
+      return string.Empty;
     }
 
     ///<summary>
