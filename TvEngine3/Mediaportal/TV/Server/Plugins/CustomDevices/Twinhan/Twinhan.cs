@@ -21,17 +21,17 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using TvLibrary;
-using TvLibrary.Channels;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Device;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvEngine
+namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
 {
   /// <summary>
   /// A class for handling conditional access and DiSEqC for Twinhan devices, including clones from TerraTec,
@@ -1983,7 +1983,7 @@ namespace TvEngine
       {
         DVBTChannel ch = channel as DVBTChannel;
         tuningParams.Frequency = (UInt32)ch.Frequency;
-        tuningParams.Bandwidth = (UInt32)ch.Bandwidth;
+        tuningParams.Bandwidth = (UInt32)ch.BandWidth;
         tuningParams.Modulation = 0;  // ???
       }
       else

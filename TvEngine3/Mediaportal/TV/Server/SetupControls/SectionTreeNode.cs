@@ -20,7 +20,7 @@
 
 using System.Windows.Forms;
 
-namespace SetupTv
+namespace Mediaportal.TV.Server.SetupControls
 {
   public class SectionTreeNode : TreeNode
   {

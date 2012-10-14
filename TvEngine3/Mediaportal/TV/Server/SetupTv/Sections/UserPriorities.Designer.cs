@@ -1,4 +1,6 @@
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   partial class UserPriorities
   {
@@ -35,8 +37,8 @@ namespace SetupTv.Sections
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.tabPageApplication = new System.Windows.Forms.TabPage();
       this.groupBox8 = new System.Windows.Forms.GroupBox();
-      this.lblPriority = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpComboBoxPrio = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.lblPriority = new MPLabel();
+      this.mpComboBoxPrio = new MPComboBox();
       this.groupBox6 = new System.Windows.Forms.GroupBox();
       this.label45 = new System.Windows.Forms.Label();
       this.label44 = new System.Windows.Forms.Label();
@@ -45,7 +47,7 @@ namespace SetupTv.Sections
       this.numericUpDownAnalog = new System.Windows.Forms.NumericUpDown();
       this.label21 = new System.Windows.Forms.Label();
       this.groupBox4 = new System.Windows.Forms.GroupBox();
-      this.checkBoxEnableLinkageScanner = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxEnableLinkageScanner = new MPCheckBox();
       this.label24 = new System.Windows.Forms.Label();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.numericUpDownSDT = new System.Windows.Forms.NumericUpDown();
@@ -77,17 +79,17 @@ namespace SetupTv.Sections
       this.edDescriptionTest = new System.Windows.Forms.TextBox();
       this.btnTest = new System.Windows.Forms.Button();
       this.groupBox7 = new System.Windows.Forms.GroupBox();
-      this.checkBoxAlwaysUpdate = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxAlwaysFillHoles = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxAlwaysUpdate = new MPCheckBox();
+      this.checkBoxAlwaysFillHoles = new MPCheckBox();
       this.groupBox5 = new System.Windows.Forms.GroupBox();
       this.numericUpDownTSEpgTimeout = new System.Windows.Forms.NumericUpDown();
-      this.checkBoxEnableEpgWhileTimeshifting = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxEnableEpgWhileTimeshifting = new MPCheckBox();
       this.label2 = new System.Windows.Forms.Label();
       this.label23 = new System.Windows.Forms.Label();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.numericUpDownEpgRefresh = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownEpgTimeOut = new System.Windows.Forms.NumericUpDown();
-      this.checkBoxEnableEPGWhileIdle = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxEnableEPGWhileIdle = new MPCheckBox();
       this.label15 = new System.Windows.Forms.Label();
       this.label14 = new System.Windows.Forms.Label();
       this.label8 = new System.Windows.Forms.Label();
@@ -1300,8 +1302,8 @@ namespace SetupTv.Sections
     private System.Windows.Forms.OpenFileDialog openFileDialog1;
     private System.Windows.Forms.TabPage tabPageApplication;
     private System.Windows.Forms.GroupBox groupBox8;
-    private MediaPortal.UserInterface.Controls.MPLabel lblPriority;
-    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxPrio;
+    private MPLabel lblPriority;
+    private MPComboBox mpComboBoxPrio;
     private System.Windows.Forms.GroupBox groupBox6;
     private System.Windows.Forms.Label label45;
     private System.Windows.Forms.Label label44;
@@ -1310,7 +1312,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.NumericUpDown numericUpDownAnalog;
     private System.Windows.Forms.Label label21;
     private System.Windows.Forms.GroupBox groupBox4;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableLinkageScanner;
+    private MPCheckBox checkBoxEnableLinkageScanner;
     private System.Windows.Forms.Label label24;
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.NumericUpDown numericUpDownSDT;
@@ -1342,17 +1344,17 @@ namespace SetupTv.Sections
     private System.Windows.Forms.TextBox edDescriptionTest;
     private System.Windows.Forms.Button btnTest;
     private System.Windows.Forms.GroupBox groupBox7;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAlwaysUpdate;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAlwaysFillHoles;
+    private MPCheckBox checkBoxAlwaysUpdate;
+    private MPCheckBox checkBoxAlwaysFillHoles;
     private System.Windows.Forms.GroupBox groupBox5;
     private System.Windows.Forms.NumericUpDown numericUpDownTSEpgTimeout;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableEpgWhileTimeshifting;
+    private MPCheckBox checkBoxEnableEpgWhileTimeshifting;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label23;
     private System.Windows.Forms.GroupBox groupBox2;
     private System.Windows.Forms.NumericUpDown numericUpDownEpgRefresh;
     private System.Windows.Forms.NumericUpDown numericUpDownEpgTimeOut;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableEPGWhileIdle;
+    private MPCheckBox checkBoxEnableEPGWhileIdle;
     private System.Windows.Forms.Label label15;
     private System.Windows.Forms.Label label14;
     private System.Windows.Forms.Label label8;

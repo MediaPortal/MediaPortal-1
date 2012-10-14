@@ -24,15 +24,21 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Timers;
+using Castle.Core;
+using Mediaportal.TV.Server.Plugins.Base;
+using Mediaportal.TV.Server.Plugins.Base.Interfaces;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVControl.Interfaces;
+using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Microsoft.Win32;
-using TvControl;
-using TvDatabase;
-using TvEngine.PowerScheduler.Interfaces;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
 
-namespace TvEngine
+namespace Mediaportal.TV.Server.Plugins.TvMovie
 {
+  [Interceptor("PluginExceptionInterceptor")]
   public class TvMovie : ITvServerPlugin, ITvServerPluginStartedAll
   {
     #region Members
@@ -98,16 +104,14 @@ namespace TvEngine
     {
       get
       {
-        var setting = TvMovieDatabase.TvBLayer.GetSetting("TvMovieInstallPath", string.Empty);
+        var setting = SettingsManagement.GetSetting("TvMovieInstallPath", string.Empty);
         string path = setting.Value;
 
         if (!File.Exists(path))
         {
           path = GetRegistryValueFromValueName("ProgrammPath");
           setting.Value = path;
-          setting.Persist();
         }
-
         return path;
       }
     }
@@ -119,7 +123,7 @@ namespace TvEngine
     {
       get
       {
-        string path = TvMovieDatabase.TvBLayer.GetSetting("TvMoviedatabasepath", string.Empty).Value;
+        string path = SettingsManagement.GetSetting("TvMoviedatabasepath", string.Empty).Value;
 
         if (!File.Exists(path))
           path = GetRegistryValueFromValueName("DBDatei");
@@ -135,10 +139,7 @@ namespace TvEngine
         {
           path = DatabasePath;
         }
-
-        var setting = TvMovieDatabase.TvBLayer.GetSetting("TvMoviedatabasepath");
-        setting.Value = path;
-        setting.Persist();
+        SettingsManagement.SaveSetting("TvMoviedatabasepath", path);
       }
     }
 
@@ -272,9 +273,11 @@ namespace TvEngine
     {
       try
       {
-        TvBusinessLayer layer = new TvBusinessLayer();
-        if (layer.GetSetting("TvMovieEnabled", "false").Value != "true")
+        
+        if (SettingsManagement.GetSetting("TvMovieEnabled", "false").Value != "true")
+        {
           return;
+        }
       }
       catch (Exception ex1)
       {
@@ -346,7 +349,7 @@ namespace TvEngine
       get { return false; }
     }
 
-    public void Start(IController controller)
+    public void Start(IInternalControllerService controllerService)
     {
       StartStopTimer(true);
     }
@@ -367,9 +370,9 @@ namespace TvEngine
       }
     }
 
-    public SetupTv.SectionSettings Setup
+    public SectionSettings Setup
     {
-      get { return new SetupTv.Sections.TvMovieSetup(); }
+      get { return new TvMovieSetup(); }
     }
 
     #endregion

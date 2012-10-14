@@ -24,15 +24,38 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
-using TvDatabase;
-using TvControl;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
 #endregion
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class TvTimeshifting : SectionSettings
   {
+    #region CardInfo class
+
+    public class CardInfo
+    {
+      public Card card;
+
+      public CardInfo(Card newcard)
+      {
+        card = newcard;
+      }
+
+      public override string ToString()
+      {
+        return card.Name;
+      }
+    }
+
+    #endregion
+
     #region Vars
 
     private bool _needRestart;
@@ -56,48 +79,32 @@ namespace SetupTv.Sections
 
     public override void LoadSettings()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
+      
 
       numericUpDownMinFiles.Value = ValueSanityCheck(
-        Convert.ToDecimal(layer.GetSetting("timeshiftMinFiles", "6").Value), 3, 100);
+        Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeshiftMinFiles", "6").Value), 3, 100);
       numericUpDownMaxFiles.Value =
-        ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftMaxFiles", "20").Value), 3, 100);
+        ValueSanityCheck(Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeshiftMaxFiles", "20").Value), 3, 100);
       numericUpDownMaxFileSize.Value =
-        ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftMaxFileSize", "256").Value), 20, 1024);
+        ValueSanityCheck(Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeshiftMaxFileSize", "256").Value), 20, 1024);
       numericUpDownWaitUnscrambled.Value =
-        ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftWaitForUnscrambled", "5").Value), 1, 30);
+        ValueSanityCheck(Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeshiftWaitForUnscrambled", "5").Value), 1, 30);
       numericUpDownWaitTimeshifting.Value =
-        ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftWaitForTimeshifting", "15").Value), 1, 30);
+        ValueSanityCheck(Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeshiftWaitForTimeshifting", "15").Value), 1, 30);
       numericUpDownMaxFreeCardsToTry.Value = ValueSanityCheck(
-        Convert.ToDecimal(layer.GetSetting("timeshiftMaxFreeCardsToTry", "0").Value), 0, 100);
+        Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeshiftMaxFreeCardsToTry", "0").Value), 0, 100);
+      numericParkedStreamTimeout.Value = ValueSanityCheck(Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("parkedStreamTimeout", "5").Value), 1, 300);
     }
 
     public override void SaveSettings()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting s = layer.GetSetting("timeshiftMinFiles", "6");
-      s.Value = numericUpDownMinFiles.Value.ToString();
-      s.Persist();
-
-      s = layer.GetSetting("timeshiftMaxFiles", "20");
-      s.Value = numericUpDownMaxFiles.Value.ToString();
-      s.Persist();
-
-      s = layer.GetSetting("timeshiftMaxFileSize", "256");
-      s.Value = numericUpDownMaxFileSize.Value.ToString();
-      s.Persist();
-
-      s = layer.GetSetting("timeshiftWaitForUnscrambled", "5");
-      s.Value = numericUpDownWaitUnscrambled.Value.ToString();
-      s.Persist();
-
-      s = layer.GetSetting("timeshiftWaitForTimeshifting", "15");
-      s.Value = numericUpDownWaitTimeshifting.Value.ToString();
-      s.Persist();
-
-      s = layer.GetSetting("timeshiftMaxFreeCardsToTry", "0");
-      s.Value = numericUpDownMaxFreeCardsToTry.Value.ToString();
-      s.Persist();
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeshiftMinFiles", numericUpDownMinFiles.Value.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeshiftMaxFiles", numericUpDownMaxFiles.Value.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeshiftMaxFileSize", numericUpDownMaxFileSize.Value.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeshiftWaitForUnscrambled", numericUpDownWaitUnscrambled.Value.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeshiftWaitForTimeshifting", numericUpDownWaitTimeshifting.Value.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeshiftMaxFreeCardsToTry", numericUpDownMaxFreeCardsToTry.Value.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("parkedStreamTimeout", numericParkedStreamTimeout.Value.ToString());
     }
 
     #endregion
@@ -106,13 +113,12 @@ namespace SetupTv.Sections
 
     private void comboBoxCards_SelectedIndexChanged(object sender, EventArgs e)
     {
-      textBoxTimeShiftFolder.Text = ((Card)comboBoxCards.SelectedItem).TimeShiftFolder;
+      CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
+      textBoxTimeShiftFolder.Text = info.card.TimeshiftingFolder;
 
       if (String.IsNullOrEmpty(textBoxTimeShiftFolder.Text))
       {
-        textBoxTimeShiftFolder.Text = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer",
-                                                    Environment.GetFolderPath(
-                                                      Environment.SpecialFolder.CommonApplicationData));
+        textBoxTimeShiftFolder.Text = TVDatabase.TVBusinessLayer.Common.GetDefaultTimeshiftingFolder();
         if (!Directory.Exists(textBoxTimeShiftFolder.Text))
         {
           Directory.CreateDirectory(textBoxTimeShiftFolder.Text);
@@ -121,14 +127,16 @@ namespace SetupTv.Sections
       }
     }
 
+  
+
     public override void OnSectionActivated()
     {
       _needRestart = false;
       comboBoxCards.Items.Clear();
-      IList<Card> cards = Card.ListAll();
+      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
       foreach (Card card in cards)
       {
-        comboBoxCards.Items.Add(card);
+        comboBoxCards.Items.Add(new CardInfo(card));
       }
 
       if (comboBoxCards.Items.Count > 0)
@@ -147,9 +155,8 @@ namespace SetupTv.Sections
 
       SaveSettings();
       if (_needRestart)
-      {
-        RemoteControl.Instance.ClearCache();
-        RemoteControl.Instance.Restart();
+      {        
+        ServiceAgents.Instance.ControllerServiceAgent.Restart();
       }
     }
 
@@ -169,11 +176,11 @@ namespace SetupTv.Sections
     // When TimeShift folder has been changed
     private void textBoxTimeShiftFolder_TextChanged(object sender, EventArgs e)
     {
-      Card card = (Card)comboBoxCards.SelectedItem;
-      if (card.TimeShiftFolder != textBoxTimeShiftFolder.Text)
+      CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
+      if (info.card.TimeshiftingFolder != textBoxTimeShiftFolder.Text)
       {
-        card.TimeShiftFolder = textBoxTimeShiftFolder.Text;
-        card.Persist();
+        info.card.TimeshiftingFolder = textBoxTimeShiftFolder.Text;
+        ServiceAgents.Instance.CardServiceAgent.SaveCard(info.card);
         _needRestart = true;
       }
     }
@@ -184,12 +191,15 @@ namespace SetupTv.Sections
       // Change timeshiftFolder for all cards
       for (int iIndex = 0; iIndex < comboBoxCards.Items.Count; iIndex++)
       {
-        Card card = (Card)comboBoxCards.Items[iIndex];
-        if (card != null && card.TimeShiftFolder != textBoxTimeShiftFolder.Text)
+        CardInfo info = (CardInfo)comboBoxCards.Items[iIndex];
+        if (info.card.TimeshiftingFolder != textBoxTimeShiftFolder.Text)
         {
-          card.TimeShiftFolder = textBoxTimeShiftFolder.Text;
-          card.Persist();
-          _needRestart = true;
+          info.card.TimeshiftingFolder = textBoxTimeShiftFolder.Text;
+          ServiceAgents.Instance.CardServiceAgent.SaveCard(info.card);
+          if (!_needRestart)
+          {
+            _needRestart = true;
+          }
         }
       }
     }

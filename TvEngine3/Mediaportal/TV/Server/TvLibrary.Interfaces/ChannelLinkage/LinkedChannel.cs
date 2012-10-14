@@ -20,7 +20,7 @@
 
 using System;
 
-namespace TvLibrary.ChannelLinkage
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage
 {
   /// <summary>
   /// class which holds all linked channels

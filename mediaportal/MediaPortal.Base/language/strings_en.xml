@@ -1360,10 +1360,17 @@
     <String id="2514">Back to the text</String>
     <String id="2515">Images</String>
     <String id="2516" prefix="My ">Wikipedia</String>
+    <String id="2549">or PARK live TV and resume later?</String>
     <String id="2550">Do you really want to STOP live TV ?</String>
     <String id="2551">(timeshift buffer will be lost)</String>
     <String id="2552">Stop</String>
     <String id="2553">Play</String>
+    <String id="2554">Park</String>    
+    <String id="2555">Unpark channel by [{0}]</String>
+    <String id="2556">Unpark and resume channel?</String>
+    <String id="2557">If not you will watch TV from live point.</String>    
+    <String id="2558">Kick user(s) from card?</String>
+    <String id="2559">card</String>
     <String id="2599">Undetermined</String>
     <String id="2600">English</String>
     <String id="2601">German</String>

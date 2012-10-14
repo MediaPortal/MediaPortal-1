@@ -20,15 +20,15 @@
 
 #region Usings
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using TvControl;
-using TvEngine.PowerScheduler.Interfaces;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVControl.Interfaces;
+using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
 #endregion
 
-namespace TvEngine.PowerScheduler.Handlers
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 {
   /// <summary>
   /// Prevent standby when the TVController has active streaming clients
@@ -37,15 +37,15 @@ namespace TvEngine.PowerScheduler.Handlers
   {
     #region Variables
 
-    private IController _controller;
+    private readonly IInternalControllerService _controllerService;
 
     #endregion
 
     #region Constructor
 
-    public ActiveStreamsHandler(IController controller)
+    public ActiveStreamsHandler(IInternalControllerService controllerService)
     {
-      _controller = controller;
+      _controllerService = controllerService;
     }
 
     #endregion
@@ -54,7 +54,7 @@ namespace TvEngine.PowerScheduler.Handlers
 
     public bool DisAllowShutdown
     {
-      get { return (_controller.ActiveStreams > 0); }
+      get { return (_controllerService.ActiveStreams > 0); }
     }
 
     public void UserShutdownNow() {}

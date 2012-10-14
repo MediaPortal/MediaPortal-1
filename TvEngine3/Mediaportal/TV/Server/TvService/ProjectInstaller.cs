@@ -23,7 +23,7 @@ using System.ComponentModel;
 using System.Configuration.Install;
 using Microsoft.Win32;
 
-namespace TvService
+namespace Mediaportal.TV.Server.TVService
 {
   [RunInstaller(true)]
   public partial class ProjectInstaller : Installer

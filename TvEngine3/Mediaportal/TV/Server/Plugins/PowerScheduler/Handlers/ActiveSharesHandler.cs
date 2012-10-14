@@ -23,15 +23,16 @@
 using System;
 using System.Management;
 using System.Collections.Generic;
-using System.Text;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using TvEngine.PowerScheduler.Interfaces;
-using TvLibrary.Interfaces;
-using TvDatabase;
-using TvLibrary.Log;
 
 #endregion
 
-namespace TvEngine.PowerScheduler.Handlers
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 {
   /// <summary>
   /// Prevent standby if a (configured) share has open files
@@ -235,12 +236,12 @@ namespace TvEngine.PowerScheduler.Handlers
       {
         _sharesToMonitor.Clear();
 
-        TvBusinessLayer layer = new TvBusinessLayer();
+        
 
         // Load share monitoring configuration for standby prevention 
-        if (Convert.ToBoolean(layer.GetSetting("PreventStandybyWhenSharesInUse", "false").Value))
+        if (Convert.ToBoolean(SettingsManagement.GetSetting("PreventStandybyWhenSharesInUse", "false").Value))
         {
-          Setting setting = layer.GetSetting("PreventStandybyWhenSpecificSharesInUse", "");
+          Setting setting = SettingsManagement.GetSetting("PreventStandybyWhenSpecificSharesInUse", "");
 
           string[] shares = setting.Value.Split(';');
           foreach (string share in shares)

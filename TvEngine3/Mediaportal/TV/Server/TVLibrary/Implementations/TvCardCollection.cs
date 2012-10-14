@@ -24,17 +24,28 @@ using System.Runtime.InteropServices;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using TvDatabase;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBC;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBT;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Implementations.RadioWebStream;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 using TvLibrary.Implementations.DVB;
-using TvLibrary.Implementations.Analog;
-using TvLibrary.Implementations.RadioWebStream;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Microsoft.Win32;
-using TvLibrary.Interfaces.Analyzer;
 
-namespace TvLibrary.Implementations
+namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
   /// <summary>
   /// this class will enumerate all TV devices
@@ -50,19 +61,19 @@ namespace TvLibrary.Implementations
     /// </summary>
     public TvCardCollection(IEpgEvents epgEvents)
     {
-      Log.Log.WriteFile("----------------------------");
+      Log.WriteFile("----------------------------");
       _epgEvents = epgEvents;
       // Logic here to delay detection of cards
       // Ideally this should occur after standby event.
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("delayCardDetect", "0");
+
+      Setting setting = SettingsManagement.GetSetting("delayCardDetect", "0");
       int delayDetect = Convert.ToInt32(setting.Value);
       if (delayDetect >= 1)
       {
-        Log.Log.WriteFile("Detecting Cards in {0} seconds", delayDetect);
+        Log.WriteFile("Detecting Cards in {0} seconds", delayDetect);
         System.Threading.Thread.Sleep(delayDetect * 1000);
       }
-      Log.Log.WriteFile("Detecting Cards");
+      Log.WriteFile("Detecting Cards");
       _cards = new List<ITVCard>();
       DetectCards();
     }
@@ -88,7 +99,7 @@ namespace TvLibrary.Implementations
       {
         if (String.Compare(devices[i].Name, "B2C2 MPEG-2 Source", true) == 0)
         {
-          Log.Log.WriteFile("Detected B2C2 source filter");
+          Log.WriteFile("Detected B2C2 source filter");
           object[] deviceContexts = TvCardDvbSS2.DetectDevices();
           if (deviceContexts != null)
           {
@@ -100,26 +111,26 @@ namespace TvLibrary.Implementations
         }
         else if (String.Compare(devices[i].Name, "Elecard NWSource-Plus", true) == 0)
         {
-          TvBusinessLayer layer = new TvBusinessLayer();
+
           Setting setting;
-          setting = layer.GetSetting("iptvCardCount", "1");
+          setting = SettingsManagement.GetSetting("iptvCardCount", "1");
           int iptvCardCount = Convert.ToInt32(setting.Value);
           for (int cardNum = 0; cardNum < iptvCardCount; cardNum++)
           {
-            Log.Log.WriteFile("Detected Elecard IP TV Card " + cardNum);
+            Log.WriteFile("Detected Elecard IP TV Card " + cardNum);
             TvCardDVBIP card = new TvCardDVBIPElecard(_epgEvents, devices[i], cardNum);
             _cards.Add(card);
           }
         }
         else if (String.Compare(devices[i].Name, "MediaPortal IPTV Source Filter", true) == 0)
         {
-          TvBusinessLayer layer = new TvBusinessLayer();
           Setting setting;
-          setting = layer.GetSetting("iptvCardCount", "1");
+          setting = SettingsManagement.GetSetting("iptvCardCount", "1");
+
           int iptvCardCount = Convert.ToInt32(setting.Value);
           for (int cardNum = 0; cardNum < iptvCardCount; cardNum++)
           {
-            Log.Log.WriteFile("Detected MediaPortal IP TV Card " + cardNum);
+            Log.WriteFile("Detected MediaPortal IP TV Card " + cardNum);
             TvCardDVBIP card = new TvCardDVBIP(_epgEvents, devices[i], cardNum);
             _cards.Add(card);
           }
@@ -135,13 +146,13 @@ namespace TvLibrary.Implementations
         }
         if (devices[i].Name.Equals("Hauppauge HD PVR Crossbar"))
         {
-          Log.Log.WriteFile("Detected Hauppauge HD PVR");
+          Log.WriteFile("Detected Hauppauge HD PVR");
           TvCardHDPVR card = new TvCardHDPVR(devices[i]);
           _cards.Add(card);
         }
         else if (devices[i].Name.Contains("Hauppauge Colossus Crossbar"))
         {
-          Log.Log.WriteFile("Detected Hauppauge Colossus");
+          Log.WriteFile("Detected Hauppauge Colossus");
           TvCardHDPVR card = new TvCardHDPVR(devices[i]);
           _cards.Add(card);
         }
@@ -167,13 +178,13 @@ namespace TvLibrary.Implementations
           IBaseFilter networkDVBT = null;
           try
           {
-            networkProviderClsId = typeof (DVBTNetworkProvider).GUID;
+            networkProviderClsId = typeof(DVBTNetworkProvider).GUID;
             networkDVBT = FilterGraphTools.AddFilterFromClsid(graphBuilder, networkProviderClsId,
                                                               "DVBT Network Provider");
             tuningSpace = (ITuningSpace)new DVBTuningSpace();
             tuningSpace.put_UniqueName("DVBT TuningSpace");
             tuningSpace.put_FriendlyName("DVBT TuningSpace");
-            tuningSpace.put__NetworkType(typeof (DVBTNetworkProvider).GUID);
+            tuningSpace.put__NetworkType(typeof(DVBTNetworkProvider).GUID);
             ((IDVBTuningSpace)tuningSpace).put_SystemType(DVBSystemType.Terrestrial);
             locator = (ILocator)new DVBTLocator();
             locator.put_CarrierFrequency(-1);
@@ -188,17 +199,17 @@ namespace TvLibrary.Implementations
           }
           catch (Exception ex)
           {
-            Log.Log.Error("DVBT card detection error: {0}", ex.ToString());
+            Log.Error("DVBT card detection error: {0}", ex.ToString());
           }
 
           //DVBS
-          networkProviderClsId = typeof (DVBSNetworkProvider).GUID;
+          networkProviderClsId = typeof(DVBSNetworkProvider).GUID;
           IBaseFilter networkDVBS = FilterGraphTools.AddFilterFromClsid(graphBuilder, networkProviderClsId,
                                                                         "DVBS Network Provider");
           tuningSpace = (ITuningSpace)new DVBSTuningSpace();
           tuningSpace.put_UniqueName("DVBS TuningSpace");
           tuningSpace.put_FriendlyName("DVBS TuningSpace");
-          tuningSpace.put__NetworkType(typeof (DVBSNetworkProvider).GUID);
+          tuningSpace.put__NetworkType(typeof(DVBSNetworkProvider).GUID);
           ((IDVBSTuningSpace)tuningSpace).put_SystemType(DVBSystemType.Satellite);
           locator = (ILocator)new DVBTLocator();
           locator.put_CarrierFrequency(-1);
@@ -212,7 +223,7 @@ namespace TvLibrary.Implementations
           ((ITuner)networkDVBS).put_TuningSpace(tuningSpace);
 
           //ATSC
-          networkProviderClsId = typeof (ATSCNetworkProvider).GUID;
+          networkProviderClsId = typeof(ATSCNetworkProvider).GUID;
           IBaseFilter networkATSC = FilterGraphTools.AddFilterFromClsid(graphBuilder, networkProviderClsId,
                                                                         "ATSC Network Provider");
           tuningSpace = (ITuningSpace)new ATSCTuningSpace();
@@ -239,13 +250,13 @@ namespace TvLibrary.Implementations
           ((ITuner)networkATSC).put_TuningSpace(tuningSpace);
 
           //DVBC
-          networkProviderClsId = typeof (DVBCNetworkProvider).GUID;
+          networkProviderClsId = typeof(DVBCNetworkProvider).GUID;
           IBaseFilter networkDVBC = FilterGraphTools.AddFilterFromClsid(graphBuilder, networkProviderClsId,
                                                                         "DVBC Network Provider");
           tuningSpace = (ITuningSpace)new DVBTuningSpace();
           tuningSpace.put_UniqueName("DVBC TuningSpace");
           tuningSpace.put_FriendlyName("DVBC TuningSpace");
-          tuningSpace.put__NetworkType(typeof (DVBCNetworkProvider).GUID);
+          tuningSpace.put__NetworkType(typeof(DVBCNetworkProvider).GUID);
           ((IDVBTuningSpace)tuningSpace).put_SystemType(DVBSystemType.Cable);
           locator = (ILocator)new DVBCLocator();
           locator.put_CarrierFrequency(-1);
@@ -259,7 +270,7 @@ namespace TvLibrary.Implementations
           ((ITuner)networkDVBC).put_TuningSpace(tuningSpace);
 
           //MS Network Provider - MCE Roll-up 2 or better
-          networkProviderClsId = typeof (NetworkProvider).GUID;
+          networkProviderClsId = typeof(NetworkProvider).GUID;
           // First test if the Generic Network Provider is available (only on MCE 2005 + Update Rollup 2)
           if (FilterGraphTools.IsThisComObjectInstalled(networkProviderClsId))
           {
@@ -271,12 +282,12 @@ namespace TvLibrary.Implementations
             bool isCablePreferred = false;
             string name = devices[i].Name ?? "unknown";
             name = name.ToLowerInvariant();
-            Log.Log.WriteFile("Found card:{0}", name);
+            Log.WriteFile("Found card:{0}", name);
             //silicondust work-around for dvb type detection issue. generic provider would always use dvb-t
             if (name.Contains("silicondust hdhomerun tuner"))
             {
               isCablePreferred = CheckHDHomerunCablePrefered(name);
-              Log.Log.WriteFile("silicondust hdhomerun detected - prefer cable mode: {0}", isCablePreferred);
+              Log.WriteFile("silicondust hdhomerun detected - prefer cable mode: {0}", isCablePreferred);
             }
             IBaseFilter tmp;
             try
@@ -286,7 +297,7 @@ namespace TvLibrary.Implementations
             catch (InvalidComObjectException)
             {
               //ignore bad card
-              Log.Log.WriteFile("cannot add filter {0} to graph", devices[i].Name);
+              Log.WriteFile("cannot add filter {0} to graph", devices[i].Name);
               continue;
             }
             //Use the Microsoft Network Provider method first but only if available
@@ -296,7 +307,7 @@ namespace TvLibrary.Implementations
                                                                            "Microsoft Network Provider");
               if (ConnectFilter(graphBuilder, networkDVB, tmp))
               {
-                Log.Log.WriteFile("Detected DVB card:{0}", name);
+                Log.WriteFile("Detected DVB card:{0}", name);
                 // determine the DVB card supported GUIDs here!
                 _providerType = networkDVB as ITunerCap;
                 int ulcNetworkTypesMax = 5;
@@ -306,32 +317,32 @@ namespace TvLibrary.Implementations
                                                                  pguidNetworkTypes);
                 for (int n = 0; n < pulcNetworkTypes; n++)
                 {
-                  Log.Log.Debug("Detecting type by MSNP {0}: {1}", n, pguidNetworkTypes[n]);
+                  Log.Debug("Detecting type by MSNP {0}: {1}", n, pguidNetworkTypes[n]);
                   //test the first found guid to determine the DVB card type
-                  if (pguidNetworkTypes[n] == (typeof (DVBTNetworkProvider).GUID) && !isCablePreferred)
+                  if (pguidNetworkTypes[n] == (typeof(DVBTNetworkProvider).GUID) && !isCablePreferred)
                   {
-                    Log.Log.WriteFile("Detected DVB-T* card:{0}", name);
+                    Log.WriteFile("Detected DVB-T* card:{0}", name);
                     TvCardDVBT dvbtCard = new TvCardDVBT(_epgEvents, devices[i]);
                     _cards.Add(dvbtCard);
                     connected = true;
                   }
-                  else if (pguidNetworkTypes[n] == (typeof (DVBSNetworkProvider).GUID) && !isCablePreferred)
+                  else if (pguidNetworkTypes[n] == (typeof(DVBSNetworkProvider).GUID) && !isCablePreferred)
                   {
-                    Log.Log.WriteFile("Detected DVB-S* card:{0}", name);
+                    Log.WriteFile("Detected DVB-S* card:{0}", name);
                     TvCardDVBS dvbsCard = new TvCardDVBS(_epgEvents, devices[i]);
                     _cards.Add(dvbsCard);
                     connected = true;
                   }
-                  else if (pguidNetworkTypes[n] == (typeof (DVBCNetworkProvider).GUID))
+                  else if (pguidNetworkTypes[n] == (typeof(DVBCNetworkProvider).GUID))
                   {
-                    Log.Log.WriteFile("Detected DVB-C* card:{0}", name);
+                    Log.WriteFile("Detected DVB-C* card:{0}", name);
                     TvCardDVBC dvbcCard = new TvCardDVBC(_epgEvents, devices[i]);
                     _cards.Add(dvbcCard);
                     connected = true;
                   }
-                  else if (pguidNetworkTypes[n] == (typeof (ATSCNetworkProvider).GUID))
+                  else if (pguidNetworkTypes[n] == (typeof(ATSCNetworkProvider).GUID))
                   {
-                    Log.Log.WriteFile("Detected ATSC* card:{0}", name);
+                    Log.WriteFile("Detected ATSC* card:{0}", name);
                     TvCardATSC dvbsCard = new TvCardATSC(_epgEvents, devices[i]);
                     _cards.Add(dvbsCard);
                     connected = true;
@@ -344,13 +355,13 @@ namespace TvLibrary.Implementations
                   }
                   else if (n == (pulcNetworkTypes - 1))
                   {
-                    Log.Log.WriteFile("Connected with generic MS Network Provider however network types don't match, using the original method");
+                    Log.WriteFile("Connected with generic MS Network Provider however network types don't match, using the original method");
                   }
                 }
               }
               else
               {
-                Log.Log.WriteFile("Not connected with generic MS Network Provider, using the original method");
+                Log.WriteFile("Not connected with generic MS Network Provider, using the original method");
                 connected = false;
               }
               graphBuilder.RemoveFilter(networkDVB);
@@ -360,25 +371,25 @@ namespace TvLibrary.Implementations
             {
               if (ConnectFilter(graphBuilder, networkDVBT, tmp))
               {
-                Log.Log.WriteFile("Detected DVB-T card:{0}", name);
+                Log.WriteFile("Detected DVB-T card:{0}", name);
                 TvCardDVBT dvbtCard = new TvCardDVBT(_epgEvents, devices[i]);
                 _cards.Add(dvbtCard);
               }
               else if (ConnectFilter(graphBuilder, networkDVBC, tmp))
               {
-                Log.Log.WriteFile("Detected DVB-C card:{0}", name);
+                Log.WriteFile("Detected DVB-C card:{0}", name);
                 TvCardDVBC dvbcCard = new TvCardDVBC(_epgEvents, devices[i]);
                 _cards.Add(dvbcCard);
               }
               else if (ConnectFilter(graphBuilder, networkDVBS, tmp))
               {
-                Log.Log.WriteFile("Detected DVB-S card:{0}", name);
+                Log.WriteFile("Detected DVB-S card:{0}", name);
                 TvCardDVBS dvbsCard = new TvCardDVBS(_epgEvents, devices[i]);
                 _cards.Add(dvbsCard);
               }
               else if (ConnectFilter(graphBuilder, networkATSC, tmp))
               {
-                Log.Log.WriteFile("Detected ATSC card:{0}", name);
+                Log.WriteFile("Detected ATSC card:{0}", name);
                 TvCardATSC dvbsCard = new TvCardATSC(_epgEvents, devices[i]);
                 _cards.Add(dvbsCard);
               }
@@ -401,7 +412,7 @@ namespace TvLibrary.Implementations
       {
         string name = devices[i].Name ?? "unknown";
         name = name.ToLowerInvariant();
-        Log.Log.WriteFile("Detected analog card:{0}", name);
+        Log.WriteFile("Detected analog card:{0}", name);
         TvCardAnalog analogCard = new TvCardAnalog(devices[i]);
         _cards.Add(analogCard);
       }
@@ -418,12 +429,12 @@ namespace TvLibrary.Implementations
         bool isCablePreferred = false;
         string name = devices[i].Name ?? "unknown";
         name = name.ToLowerInvariant();
-        Log.Log.WriteFile("Found card:{0}", name);
+        Log.WriteFile("Found card:{0}", name);
         //silicondust work-around for dvb type detection issue. generic provider would always use dvb-t
         if (name.Contains("silicondust hdhomerun tuner"))
         {
           isCablePreferred = CheckHDHomerunCablePrefered(name);
-          Log.Log.WriteFile("silicondust hdhomerun detected - prefer cable mode: {0}", isCablePreferred);
+          Log.WriteFile("silicondust hdhomerun detected - prefer cable mode: {0}", isCablePreferred);
         }
         IBaseFilter tmp;
         graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, name, out tmp);
@@ -435,31 +446,31 @@ namespace TvLibrary.Implementations
         interfaceNetworkProvider.ConfigureLogging(GetFileName(devices[i].DevicePath), hash, LogLevelOption.Debug);
         if (ConnectFilter(graphBuilder, networkDVB, tmp))
         {
-          Log.Log.WriteFile("Detected DVB card:{0}- Hash: {1}", name, hash);
+          Log.WriteFile("Detected DVB card:{0}- Hash: {1}", name, hash);
           interfaceNetworkProvider.GetAvailableTuningTypes(out tuningTypes);
-          Log.Log.WriteFile("TuningTypes: " + tuningTypes);
+          Log.WriteFile("TuningTypes: " + tuningTypes);
           // determine the DVB card supported GUIDs here!
           if ((tuningTypes & TuningType.DvbT) != 0 && !isCablePreferred)
           {
-            Log.Log.WriteFile("Detected DVB-T* card:{0}", name);
+            Log.WriteFile("Detected DVB-T* card:{0}", name);
             TvCardDVBT dvbtCard = new TvCardDVBT(_epgEvents, devices[i]);
             _cards.Add(dvbtCard);
           }
           if ((tuningTypes & TuningType.DvbS) != 0 && !isCablePreferred)
           {
-            Log.Log.WriteFile("Detected DVB-S* card:{0}", name);
+            Log.WriteFile("Detected DVB-S* card:{0}", name);
             TvCardDVBS dvbsCard = new TvCardDVBS(_epgEvents, devices[i]);
             _cards.Add(dvbsCard);
           }
           if ((tuningTypes & TuningType.DvbC) != 0)
           {
-            Log.Log.WriteFile("Detected DVB-C* card:{0}", name);
+            Log.WriteFile("Detected DVB-C* card:{0}", name);
             TvCardDVBC dvbcCard = new TvCardDVBC(_epgEvents, devices[i]);
             _cards.Add(dvbcCard);
           }
           if ((tuningTypes & TuningType.Atsc) != 0 && !isCablePreferred)
           {
-            Log.Log.WriteFile("Detected ATSC* card:{0}", name);
+            Log.WriteFile("Detected ATSC* card:{0}", name);
             TvCardATSC dvbsCard = new TvCardATSC(_epgEvents, devices[i]);
             _cards.Add(dvbsCard);
           }
@@ -484,7 +495,7 @@ namespace TvLibrary.Implementations
       string hash = GetHash(devicePath);
       String pathName = PathManager.GetDataPath;
       String fileName = String.Format(@"{0}\Log\NetworkProvider-{1}.log", pathName, hash);
-      Log.Log.WriteFile("NetworkProvider logfilename: " + fileName);
+      Log.WriteFile("NetworkProvider logfilename: " + fileName);
       Directory.CreateDirectory(Path.GetDirectoryName(fileName));
       return fileName;
     }
@@ -531,7 +542,7 @@ namespace TvLibrary.Implementations
           }
         }
       }
-      catch {}
+      catch { }
       return false;
     }
 

@@ -21,9 +21,9 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using MediaPortal.UserInterface.Controls;
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 {
   partial class DigitalDevicesConfig
   {

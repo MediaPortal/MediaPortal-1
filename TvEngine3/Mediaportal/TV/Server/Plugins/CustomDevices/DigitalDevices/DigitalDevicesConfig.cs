@@ -20,19 +20,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using DigitalDevices;
 using DirectShowLib;
-using MediaPortal.UserInterface.Controls;
-using TvDatabase;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 {
   public partial class DigitalDevicesConfig : SectionSettings
   {
@@ -40,6 +39,8 @@ namespace SetupTv.Sections
     private NumericUpDown[] _decryptLimits = null;
     private MPTextBox[] _providerLists = null;
     private bool _isFirstActivation = true;
+
+    private readonly ISettingService _settingServiceAgent = ServiceAgents.Instance.SettingServiceAgent;
 
     public DigitalDevicesConfig()
       : this("Digital Devices CI")
@@ -126,41 +127,31 @@ namespace SetupTv.Sections
     public override void SaveSettings()
     {
       Log.Debug("Digital Devices config: saving settings, slot count = {0}", _ciSlots.Count);
-      TvBusinessLayer layer = new TvBusinessLayer();
+      
       byte i = 0;
       foreach (DigitalDevicesCiSlot slot in _ciSlots)
       {
         Log.Debug("Digital Devices config: slot {0}...", slot.CamRootMenuTitle);
-
+        _settingServiceAgent.SaveSetting("digitalDevicesCiDeviceName" + i, slot.DeviceName);
         // Persist the slot related settings. The other struct properties are dynamic.
-        Setting deviceName = layer.GetSetting("digitalDevicesCiDeviceName" + i, String.Empty);
-        deviceName.Value = slot.DeviceName;
-        deviceName.Persist();
-        Log.Debug("  device name   = {0}", deviceName.Value);
+        Log.Debug("  device name   = {0}", slot.DeviceName);
 
-        Setting devicePath = layer.GetSetting("digitalDevicesCiDevicePath" + i, String.Empty);
-        devicePath.Value = slot.DevicePath;
-        devicePath.Persist();
-        Log.Debug("  device path   = {0}", devicePath.Value);
+        _settingServiceAgent.SaveSetting("digitalDevicesCiDevicePath" + i, slot.DevicePath);
+        Log.Debug("  device path   = {0}", slot.DevicePath);
 
-        Setting decryptLimit = layer.GetSetting("digitalDevicesCiDecryptLimit" + i, "0");
-        decryptLimit.Value = _decryptLimits[i].Value.ToString();
-        decryptLimit.Persist();
-        Log.Debug("  decrypt limit = {0}", decryptLimit.Value);
+        string decryptLimitValue = _decryptLimits[i].Value.ToString();
+        _settingServiceAgent.SaveSetting("digitalDevicesCiDecryptLimit" + i, decryptLimitValue);
+        Log.Debug("  decrypt limit = {0}", decryptLimitValue);
 
-        Setting providerList = layer.GetSetting("digitalDevicesCiProviderList" + i, String.Empty);
-        // (Convert comma-separated list in the UI to pipe separated for the DB, removing extra spaces).
-        providerList.Value = String.Join("|", Regex.Split(_providerLists[i].Text.Trim(), @"\s*,\s*"));
-        providerList.Persist();
-        Log.Debug("  provider list = {0}", providerList.Value);
+        string digitalDevicesCiProviderList = String.Join("|", Regex.Split(_providerLists[i].Text.Trim(), @"\s*,\s*"));
+        _settingServiceAgent.SaveSetting("digitalDevicesCiProviderList" + i, digitalDevicesCiProviderList);
+        Log.Debug("  provider list = {0}", digitalDevicesCiProviderList);
 
         i++;
       }
 
       // Invalidate any other settings in the DB.
-      Setting nextDevicePath = layer.GetSetting("digitalDevicesCiDevicePath" + i, String.Empty);
-      nextDevicePath.Value = String.Empty;
-      nextDevicePath.Persist();
+      _settingServiceAgent.SaveSetting("digitalDevicesCiDevicePath" + i, String.Empty);
 
       base.SaveSettings();
     }

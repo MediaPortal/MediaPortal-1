@@ -8,56 +8,54 @@
     <ProjectGuid>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TvLibrary.Interfaces</RootNamespace>
-    <AssemblyName>TvLibrary.Interfaces</AssemblyName>
+    <RootNamespace>Mediaportal.TV.Server.TVLibrary.Interfaces</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.TVLibrary.Interfaces</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\TvLibrary.Interfaces.XML</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\TvLibrary.Interfaces.XML</DocumentationFile>
-    <PlatformTarget>x86</PlatformTarget>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>bin\Debug\TvLibrary.Interfaces.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\Mediaportal.TV.Server.TVLibrary.Interfaces.xml</DocumentationFile>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>bin\Release\TvLibrary.Interfaces.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\Mediaportal.TV.Server.TVLibrary.Interfaces.xml</DocumentationFile>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net">
-      <HintPath>..\TVDatabase\references\log4net.dll</HintPath>
+      <HintPath>..\..\ExternalBinaries\log4net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -65,18 +63,31 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="TvEnums.cs" />
     <Compile Include="ChannelLinkage\LinkedChannel.cs" />
     <Compile Include="ChannelLinkage\PortalChannel.cs" />
+    <Compile Include="CiMenu\CiMenu.cs" />
+    <Compile Include="CiMenu\CiMenuEventCallbackSink.cs" />
+    <Compile Include="CiMenu\CiMenuEntry.cs" />
     <Compile Include="DvbConditionalAccess.cs" />
+    <Compile Include="Interfaces\Device\IAddOnDevice.cs" />
+    <Compile Include="Interfaces\Device\IConditionalAccessProvider.cs" />
+    <Compile Include="Interfaces\Device\ICustomDevice.cs" />
+    <Compile Include="Interfaces\Device\ICustomTuner.cs" />
+    <Compile Include="Interfaces\Device\IDiseqcController.cs" />
+    <Compile Include="Interfaces\Device\IDiseqcDevice.cs" />
+    <Compile Include="Interfaces\Device\IPidFilterController.cs" />
+    <Compile Include="Interfaces\Device\IPowerDevice.cs" />
+    <Compile Include="Interfaces\ICiMenuEventCallback.cs" />
     <Compile Include="DvbTextConverter.cs" />
-    <Compile Include="HResult.cs" />
+    <Compile Include="HardwareProviders\IHardwareProvider.cs" />
     <Compile Include="Implementations\Analog\Configuration.cs" />
     <Compile Include="Implementations\Analog\GraphComponents\Capture.cs" />
     <Compile Include="Implementations\Analog\GraphComponents\Crossbar.cs" />
@@ -86,19 +97,14 @@
     <Compile Include="Implementations\Analog\GraphComponents\Tuner.cs" />
     <Compile Include="Implementations\Channels\DVBIPChannel.cs" />
     <Compile Include="Implementations\Channels\RadioWebStreamChannel.cs" />
-    <Compile Include="Interfaces\Device\IAddOnDevice.cs" />
-    <Compile Include="Interfaces\Device\IConditionalAccessProvider.cs" />
-    <Compile Include="Interfaces\Device\ICustomDevice.cs" />
-    <Compile Include="Interfaces\Device\ICustomTuner.cs" />
-    <Compile Include="Interfaces\Device\IDiseqcDevice.cs" />
-    <Compile Include="Interfaces\Device\IPidFilterController.cs" />
-    <Compile Include="Interfaces\Device\IPowerDevice.cs" />
+    <Compile Include="Implementations\VideoStream\VideoStream.cs" />
     <Compile Include="Interfaces\ICiMenuActions.cs" />
     <Compile Include="Interfaces\ICiMenuCallbacks.cs" />
-    <Compile Include="Interfaces\Device\IDiseqcController.cs" />
+    <Compile Include="Interfaces\IDiSEqCMotor.cs" />
     <Compile Include="Interfaces\ILnbType.cs" />
     <Compile Include="Interfaces\ITVChannelLinkage.cs" />
     <Compile Include="Interfaces\ITvSubChannel.cs" />
+    <Compile Include="Interfaces\IVideoStream.cs" />
     <Compile Include="Interfaces\TvPluginCallback.cs" />
     <Compile Include="Logging\FileLogger.cs" />
     <Compile Include="Logging\ILogger.cs" />
@@ -108,10 +114,11 @@
     <Compile Include="PathManager.cs" />
     <Compile Include="RtspClient.cs" />
     <Compile Include="ScanParameters.cs" />
-    <Compile Include="ServiceProvider\ServiceProvider.cs" />
     <Compile Include="Epg\Languages.cs" />
+    <Compile Include="Implementations\AudioStream\AnalogAudioStream.cs" />
     <Compile Include="Implementations\Channels\AnalogChannel.cs" />
     <Compile Include="Implementations\Channels\ATSCChannel.cs" />
+    <Compile Include="Implementations\AudioStream\DVBAudioStream.cs" />
     <Compile Include="Implementations\Channels\DVBBaseChannel.cs" />
     <Compile Include="Implementations\Channels\DVBCChannel.cs" />
     <Compile Include="Implementations\Channels\DVBSChannel.cs" />
@@ -121,6 +128,7 @@
     <Compile Include="Epg\EpgChannel.cs" />
     <Compile Include="Epg\EpgLanguageText.cs" />
     <Compile Include="Epg\EpgProgram.cs" />
+    <Compile Include="Interfaces\IAudioStream.cs" />
     <Compile Include="Interfaces\IChannel.cs" />
     <Compile Include="Interfaces\IQuality.cs" />
     <Compile Include="Interfaces\ITeletext.cs" />
@@ -128,7 +136,6 @@
     <Compile Include="Interfaces\ITVEPG.cs" />
     <Compile Include="Interfaces\ITVScanning.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServiceProvider\GlobalServiceProvider.cs" />
     <Compile Include="Simmetrics\AbstractStringMetric.cs" />
     <Compile Include="Simmetrics\AbstractSubstitutionCost.cs" />
     <Compile Include="Simmetrics\InterfaceStringMetric.cs" />
@@ -137,12 +144,34 @@
     <Compile Include="Simmetrics\MathFuncs.cs" />
     <Compile Include="Simmetrics\SubCost01.cs" />
     <Compile Include="TvConstants.cs" />
+    <Compile Include="TvEnums.cs" />
     <Compile Include="TvException.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TVDatabase\Entities\Entities.csproj">
+      <Project>{4C2D9698-AF44-4157-99B6-48F5269F20CC}</Project>
+      <Name>Entities</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

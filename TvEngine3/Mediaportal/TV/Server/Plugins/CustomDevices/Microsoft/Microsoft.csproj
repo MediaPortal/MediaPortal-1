@@ -8,9 +8,9 @@
     <ProjectGuid>{4345B8A4-5656-4C50-8457-EDCF761E72E6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Microsoft</RootNamespace>
-    <AssemblyName>Microsoft</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <RootNamespace>Mediaportal.TV.Server.Plugins.CustomDevices.Microsoft</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.Plugins.CustomDevices.Microsoft</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -51,6 +51,10 @@
     <ProjectReference Include="..\..\..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\TVLibrary\TVLibrary.csproj">
+      <Project>{59C2EBC8-0FEA-4B2E-B5D1-476347332331}</Project>
+      <Name>TVLibrary %28TVLibrary\TVLibrary%29</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

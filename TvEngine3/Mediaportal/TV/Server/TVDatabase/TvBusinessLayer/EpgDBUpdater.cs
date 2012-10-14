@@ -22,12 +22,16 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data.SqlTypes;
-using TvLibrary.Channels;
-using TvLibrary.Epg;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvDatabase
+namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {
   public class EpgHole
   {
@@ -76,7 +80,6 @@ namespace TvDatabase
     private int _epgReGrabAfter = 240; //4 hours
     private bool _alwaysFillHoles;
     private bool _alwaysReplace;
-    private TvBusinessLayer _layer;
 
     #endregion
 
@@ -99,22 +102,22 @@ namespace TvDatabase
     #region Public members
 
     public void ReloadConfig()
-    {
-      _layer = new TvBusinessLayer();
-      _titleTemplate = _layer.GetSetting("epgTitleTemplate", "%TITLE%").Value;
-      _descriptionTemplate = _layer.GetSetting("epgDescriptionTemplate", "%DESCRIPTION%").Value;
-      _epgLanguages = _layer.GetSetting("epgLanguages").Value;
-      Setting setting = _layer.GetSetting("epgStoreOnlySelected");
+    {      
+      
+      _titleTemplate = SettingsManagement.GetSetting("epgTitleTemplate", "%TITLE%").Value;
+      _descriptionTemplate = SettingsManagement.GetSetting("epgDescriptionTemplate", "%DESCRIPTION%").Value;
+      _epgLanguages = SettingsManagement.GetSetting("epgLanguages").Value;
+      Setting setting = SettingsManagement.GetSetting("epgStoreOnlySelected");
       _storeOnlySelectedChannels = (setting.Value == "yes");
-      Setting settingRadio = _layer.GetSetting("epgRadioStoreOnlySelected");
+      Setting settingRadio = SettingsManagement.GetSetting("epgRadioStoreOnlySelected");
       _storeOnlySelectedChannelsRadio = (settingRadio.Value == "yes");
-      Setting s = _layer.GetSetting("timeoutEPGRefresh", "240");
+      Setting s = SettingsManagement.GetSetting("timeoutEPGRefresh", "240");
       if (Int32.TryParse(s.Value, out _epgReGrabAfter) == false)
       {
         _epgReGrabAfter = 240;
       }
-      _alwaysFillHoles = (_layer.GetSetting("generalEPGAlwaysFillHoles", "no").Value == "yes");
-      _alwaysReplace = (_layer.GetSetting("generalEPGAlwaysReplace", "no").Value == "yes");
+      _alwaysFillHoles = (SettingsManagement.GetSetting("generalEPGAlwaysFillHoles", "no").Value == "yes");
+      _alwaysReplace = (SettingsManagement.GetSetting("generalEPGAlwaysReplace", "no").Value == "yes");
     }
 
     public void UpdateEpgForChannel(EpgChannel epgChannel)
@@ -137,13 +140,14 @@ namespace TvDatabase
       int iInserted = 0;
       bool hasGaps = false;
 
-      _layer.RemoveOldPrograms(dbChannel.IdChannel);
+      ProgramManagement.DeleteOldPrograms(dbChannel.IdChannel);
 
       EpgHoleCollection holes = new EpgHoleCollection();
       if ((dbChannel.EpgHasGaps || _alwaysFillHoles) && !_alwaysReplace)
       {
         Log.Epg("{0}: {1} is marked to have epg gaps. Calculating them...", _grabberName, dbChannel.DisplayName);
-        IList<Program> infos = _layer.GetPrograms(dbChannel, DateTime.Now);
+
+        IList<Program> infos = ProgramManagement.GetPrograms(dbChannel.IdChannel, DateTime.Now);
         if (infos.Count > 1)
         {
           for (int i = 1; i < infos.Count; i++)
@@ -159,7 +163,7 @@ namespace TvDatabase
         }
         Log.Epg("{0}: {1} Found {2} epg holes.", _grabberName, dbChannel.DisplayName, holes.Count);
       }
-      DateTime dbLastProgram = _layer.GetNewestProgramForChannel(dbChannel.IdChannel);
+      DateTime dbLastProgram = ProgramManagement.GetNewestProgramForChannel(dbChannel.IdChannel);
       EpgProgram lastProgram = null;
       for (int i = 0; i < epgPrograms.Count; i++)
       {
@@ -183,7 +187,7 @@ namespace TvDatabase
           {
             continue;
           }
-          if (!holes.FitsInAnyHole(epgProgram.StartTime, epgProgram.EndTime))
+          if (!holes.FitsInAnyHole(epgProgram.StartTime, epgProgram.StartTime))
           {
             continue;
           }
@@ -196,7 +200,7 @@ namespace TvDatabase
         {
           try
           {
-            IList<Program> epgs = _layer.GetProgramExists(dbChannel, epgProgram.StartTime, epgProgram.EndTime);
+            IList<Program> epgs = ProgramManagement.GetProgramExists(dbChannel.IdChannel, epgProgram.StartTime, epgProgram.EndTime);
 
             if (epgs.Count > 0)
             {
@@ -209,8 +213,8 @@ namespace TvDatabase
               for (int idx = 1; idx < epgs.Count; idx++)
               {
                 try
-                {
-                  epgs[idx].Delete();
+                {                  
+                  ProgramManagement.DeleteProgram(epgs[idx].IdProgram);
                   Log.Epg("- Deleted the epg entry {0} ({1} - {2})", epgs[idx].Title, epgs[idx].StartTime,
                           epgs[idx].EndTime);
                 }
@@ -232,7 +236,7 @@ namespace TvDatabase
       }
       dbChannel.LastGrabTime = DateTime.Now;
       dbChannel.EpgHasGaps = hasGaps;
-      dbChannel.Persist();
+      ChannelManagement.SaveChannel(dbChannel);      
 
       //_layer.StartResetProgramStatesThread(System.Threading.ThreadPriority.Lowest);
 
@@ -256,9 +260,11 @@ namespace TvDatabase
       }
       //do we know a channel with these tuning details?
       Channel dbChannel = null;
-      TuningDetail tuningDetail = _layer.GetTuningDetail(dvbChannel);
+      TuningDetail tuningDetail = ChannelManagement.GetTuningDetail(dvbChannel);      
       if (tuningDetail != null)
-        dbChannel = tuningDetail.ReferencedChannel();
+      {
+        dbChannel = tuningDetail.Channel;
+      }
 
       if (dbChannel == null)
       {
@@ -271,12 +277,13 @@ namespace TvDatabase
           {
             title = ei.Text[0].Title;
           }
-          Log.Epg("                   -> {0}-{1}  {2}", ei.StartTime, ei.EndTime, title);
+          Log.Epg("                   -> {0}-{1}  {2}", ei.startTime, ei.endTime, title);
         }*/
         return null;
       }
       //should we store epg for this channel?
-      if ((dbChannel.IsRadio && _storeOnlySelectedChannelsRadio) || (!dbChannel.IsRadio && _storeOnlySelectedChannels))
+      var isRadio = dbChannel.MediaType == (decimal) MediaTypeEnum.Radio;
+      if ((isRadio && _storeOnlySelectedChannelsRadio) || (!isRadio && _storeOnlySelectedChannels))
       {
         if (!dbChannel.GrabEpg)
         {
@@ -287,7 +294,7 @@ namespace TvDatabase
       if (_checkForLastUpdate)
       {
         //is the regrab time reached?
-        TimeSpan ts = DateTime.Now - dbChannel.LastGrabTime;
+        TimeSpan ts = DateTime.Now - dbChannel.LastGrabTime.GetValueOrDefault(DateTime.MinValue);
         if (ts.TotalMinutes < _epgReGrabAfter)
         {
           Log.Epg("{0}: {1} not needed lastUpdate:{2}", _grabberName, dbChannel.DisplayName, dbChannel.LastGrabTime);
@@ -431,37 +438,39 @@ namespace TvDatabase
       description = EvalTemplate(_descriptionTemplate, values);
       if (dbProg == null)
       {
-        dbProg = new Program(dbChannel.IdChannel, ep.StartTime, ep.EndTime, title, description, genre,
-                             Program.ProgramState.None,
-                             SqlDateTime.MinValue.Value, string.Empty, string.Empty, string.Empty, string.Empty,
-                             starRating, classification,
-                             parentRating);
+        dbProg = ProgramFactory.CreateProgram(dbChannel.IdChannel, ep.StartTime, ep.EndTime, title, description, ProgramManagement.GetProgramCategoryByName(genre),
+                                     ProgramState.None,
+                                     SqlDateTime.MinValue.Value, string.Empty, string.Empty, string.Empty, string.Empty,
+                                     starRating, classification,
+                                     parentRating);
+        ProgramManagement.SaveProgram(dbProg);
       }
       else
       {
+        ProgramBLL prgBLL = new ProgramBLL(dbProg);
         // this prevents a more detailed description getting overriden by a short description from another transponder
-        if (dbProg.Title == title)
+        if (prgBLL.Entity.Title == title)
         {
-          if (dbProg.Description.Length < description.Length)
+          if (prgBLL.Entity.Description.Length < description.Length)
           {
-            dbProg.Description = description;
+            prgBLL.Entity.Description = description;
           }
         }
         else
         {
-          dbProg.Description = description;
+          prgBLL.Entity.Description = description;
         }
-        dbProg.Title = title;
-        dbProg.StartTime = ep.StartTime;
-        dbProg.EndTime = ep.EndTime;
-        dbProg.Genre = genre;
-        dbProg.StarRating = starRating;
-        dbProg.Classification = classification;
-        dbProg.ParentalRating = parentRating;
-        dbProg.OriginalAirDate = SqlDateTime.MinValue.Value; // TODO: /!\ add implementation
-        dbProg.ClearRecordPendingState();
-      }
-      dbProg.Persist();
+        prgBLL.Entity.Title = title;
+        prgBLL.Entity.StartTime = ep.StartTime;
+        prgBLL.Entity.EndTime = ep.EndTime;
+        prgBLL.Entity.ProgramCategory = ProgramManagement.GetProgramCategoryByName(genre);
+        prgBLL.Entity.StarRating = starRating;
+        prgBLL.Entity.Classification = classification;
+        prgBLL.Entity.ParentalRating = parentRating;
+        prgBLL.Entity.OriginalAirDate = SqlDateTime.MinValue.Value; // TODO: /!\ add implementation
+        prgBLL.ClearRecordPendingState();
+        ProgramManagement.SaveProgram(prgBLL.Entity);
+      }      
     }
 
     #endregion

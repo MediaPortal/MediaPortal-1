@@ -20,8 +20,9 @@
 
 using System;
 using System.Runtime.InteropServices;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvLibrary.Interfaces.Analyzer
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
 {
   /// <summary>
   /// Interface to the channel linkage scanner com object

@@ -1,4 +1,4 @@
-namespace TestApp
+namespace Mediaportal.TV.Server.TestApp
 {
   partial class FormDVBSChannel
   {
@@ -44,6 +44,7 @@ namespace TestApp
       this.comboBoxDisEqc = new System.Windows.Forms.ComboBox();
       this.label7 = new System.Windows.Forms.Label();
       this.label8 = new System.Windows.Forms.Label();
+      this.textBoxSwitch = new System.Windows.Forms.TextBox();
       this.SuspendLayout();
       // 
       // textBoxSymbolRate
@@ -168,31 +169,12 @@ namespace TestApp
       this.comboBoxDisEqc.FormattingEnabled = true;
       this.comboBoxDisEqc.Items.AddRange(new object[] {
             "None",
-            // Simple DiSEqC (burst)
-            "Simple A (tone burst)",
-            "Simple B (data burst)",
-            // DiSEqC 1.0
-            "Port A (option A, position A)",
-            "Port B (option A, position B)",
-            "Port C (option B, position A)",
-            "Port D (option B, position B)",
-            // DiSEqC 1.1+
-            "Port 1",
-            "Port 2",
-            "Port 3",
-            "Port 4",
-            "Port 5",
-            "Port 6",
-            "Port 7",
-            "Port 8",
-            "Port 9",
-            "Port 10",
-            "Port 11",
-            "Port 12",
-            "Port 13",
-            "Port 14",
-            "Port 15",
-            "Port 16"});
+            "Simple A",
+            "Simple B",
+            "Level 1 A/A",
+            "Level 1 B/A",
+            "Level 1 A/B",
+            "Level 1 B/B"});
       this.comboBoxDisEqc.Location = new System.Drawing.Point(106, 204);
       this.comboBoxDisEqc.Name = "comboBoxDisEqc";
       this.comboBoxDisEqc.Size = new System.Drawing.Size(146, 21);
@@ -217,11 +199,21 @@ namespace TestApp
       this.label8.TabIndex = 39;
       this.label8.Text = "LBN Switch";
       // 
+      // textBoxSwitch
+      // 
+      this.textBoxSwitch.Location = new System.Drawing.Point(106, 150);
+      this.textBoxSwitch.Name = "textBoxSwitch";
+      this.textBoxSwitch.Size = new System.Drawing.Size(146, 20);
+      this.textBoxSwitch.TabIndex = 40;
+      this.textBoxSwitch.Text = "11700000";
+      this.textBoxSwitch.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+      // 
       // FormDVBSChannel
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(292, 306);
+      this.Controls.Add(this.textBoxSwitch);
       this.Controls.Add(this.label8);
       this.Controls.Add(this.comboBoxDisEqc);
       this.Controls.Add(this.label7);
@@ -263,5 +255,6 @@ namespace TestApp
     private System.Windows.Forms.ComboBox comboBoxDisEqc;
     private System.Windows.Forms.Label label7;
     private System.Windows.Forms.Label label8;
+    private System.Windows.Forms.TextBox textBoxSwitch;
   }
 }

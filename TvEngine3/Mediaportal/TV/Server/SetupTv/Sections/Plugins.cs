@@ -20,14 +20,18 @@
 
 using System;
 using System.Windows.Forms;
-using TvDatabase;
-using TvEngine;
+using Mediaportal.TV.Server.Plugins.Base;
+using Mediaportal.TV.Server.Plugins.Base.Interfaces;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class Plugins : SectionSettings
   {
-    private readonly PluginLoader _loader;
+    private readonly PluginLoaderSetupTv _loader;
     private bool _needRestart;
     private bool _ignoreEvents;
 
@@ -36,7 +40,7 @@ namespace SetupTv.Sections
     public event ChangedEventHandler ChangedActivePlugins;
 
 
-    public Plugins(string name, PluginLoader loader)
+    public Plugins(string name, PluginLoaderSetupTv loader)
       : base(name)
     {
       _loader = loader;
@@ -47,7 +51,7 @@ namespace SetupTv.Sections
     {
       _needRestart = false;
       _ignoreEvents = true;
-      TvBusinessLayer layer = new TvBusinessLayer();
+      
       base.OnSectionActivated();
       listView1.Items.Clear();
       ListViewGroup listGroup = listView1.Groups["listViewGroupAvailable"];
@@ -58,7 +62,7 @@ namespace SetupTv.Sections
         item.SubItems.Add(plugin.Name);
         item.SubItems.Add(plugin.Author);
         item.SubItems.Add(plugin.Version);
-        Setting setting = layer.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
+        Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("plugin{0}", plugin.Name), "false");
         item.Checked = setting.Value == "true";
         item.Tag = setting;
       }
@@ -80,7 +84,7 @@ namespace SetupTv.Sections
     {
       if (_needRestart)
       {
-        // RemoteControl.Instance.Restart();
+        // ServiceAgents.Instance.ControllerService.Restart();
       }
       base.OnSectionDeActivated();
     }
@@ -95,9 +99,8 @@ namespace SetupTv.Sections
         e.Item.Checked = false;
         return;
       }
-
-      setting.Value = e.Item.Checked ? "true" : "false";
-      setting.Persist();
+      
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting(setting.Tag, e.Item.Checked ? "true" : "false");
       _needRestart = true;
 
       OnChanged(setting, EventArgs.Empty);

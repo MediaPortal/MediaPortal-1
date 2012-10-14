@@ -25,7 +25,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace TvLibrary.Log
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Logging
 {
   /// <summary>
   /// An implementation of a log mechanism for the GUI library.
@@ -248,14 +248,13 @@ namespace TvLibrary.Log
       try
       {
         using (StreamWriter sw = File.CreateText(aFileName))
-        {
-          sw.Close();
-          try
-          {
-            File.SetCreationTime(aFileName, DateTime.Now);
-          }
-          catch (Exception) {}
+        {                    
         }
+        try
+        {
+          File.SetCreationTime(aFileName, DateTime.Now);
+        }
+        catch (Exception) { }
       }
       catch (Exception) {}
     }
@@ -417,7 +416,7 @@ namespace TvLibrary.Log
 
           if (CheckLogPrepared(logFileName))
           {
-            using (StreamWriter writer = new StreamWriter(logFileName, true, Encoding.UTF8))
+            using (var writer = new StreamWriter(logFileName, true, Encoding.UTF8))
             {
               string threadName = Thread.CurrentThread.Name;
               int threadId = Thread.CurrentThread.ManagedThreadId;
@@ -425,7 +424,6 @@ namespace TvLibrary.Log
               writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of file
               writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}({2})]: {3}", DateTime.Now, threadName, threadId,
                                logLine);
-              writer.Close();
             }
           }
         }

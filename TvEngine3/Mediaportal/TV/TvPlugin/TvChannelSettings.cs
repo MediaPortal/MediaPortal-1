@@ -18,16 +18,14 @@
 
 #endregion
 
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using Gentle.Framework;
-using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using TvDatabase;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace TvPlugin
+
+namespace Mediaportal.TV.TvPlugin
 {
   public class ChannelSettings : GUIInternalWindow, IComparer<Channel>
   {
@@ -50,7 +48,7 @@ namespace TvPlugin
        * <type>updownlistcontrol</type> 
        * <!-- type>playlistcontrol</type-->
        */
-      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\settings_tvSort.xml"));
+      return Load(GUIGraphicsContext.Skin + @"\settings_tvSort.xml");
     }
 
     protected override void OnPageLoad()
@@ -68,11 +66,11 @@ namespace TvPlugin
     private void UpdateList()
     {
       listChannels.Clear();
-      int count = 0;
-      IList<GroupMap> maps = TVHome.Navigator.CurrentGroup.ReferringGroupMap();
+      int count = 0;      
+      IList<GroupMap> maps = TVHome.Navigator.CurrentGroup.GroupMaps;
       foreach (GroupMap map in maps)
       {
-        Channel chan = map.ReferencedChannel();
+        Channel chan = map.Channel;
         chan.SortOrder = count;
         GUIListItem item = new GUIListItem();
         item.Label = chan.DisplayName;
@@ -144,18 +142,18 @@ namespace TvPlugin
 
       if (_currentGroup == null)
       {
-        chan1.Persist();
-        chan2.Persist();
+        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(chan1);
+        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(chan2);        
       }
       else
       {
         List<Channel> channelsInGroup = new List<Channel>();
-        IList<GroupMap> maps = TVHome.Navigator.CurrentGroup.ReferringGroupMap();
+        IList<GroupMap> maps = TVHome.Navigator.CurrentGroup.GroupMaps;
         foreach (GroupMap map in maps)
         {
-          Channel chan = map.ReferencedChannel();
-          channelsInGroup.Add(map.ReferencedChannel());
-          map.Remove();
+          Channel chan = map.Channel;
+          channelsInGroup.Add(map.Channel);          
+          ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroupMap(map.IdMap);
         }
         SaveGroup(channelsInGroup);
       }
@@ -180,34 +178,22 @@ namespace TvPlugin
       chan2.SortOrder = prio;
       if (_currentGroup == null)
       {
-        chan1.Persist();
-        chan2.Persist();
+        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(chan1);
+        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(chan2);        
       }
       else
       {
         List<Channel> channelsInGroup = new List<Channel>();
-        IList<GroupMap> maps = TVHome.Navigator.CurrentGroup.ReferringGroupMap();
+        IList<GroupMap> maps = TVHome.Navigator.CurrentGroup.GroupMaps;
         foreach (GroupMap map in maps)
         {
-          Channel chan = map.ReferencedChannel();
-          channelsInGroup.Add(map.ReferencedChannel());
-          map.Remove();
+          channelsInGroup.Add(map.Channel);          
+          ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroupMap(map.IdMap);
         }
         SaveGroup(channelsInGroup);
       }
       UpdateList();
       listChannels.SelectedListItemIndex = item - 1;
-    }
-
-    private void OnTvGroup()
-    {
-      List<ChannelGroup> tvGroups = TVHome.Navigator.Groups;
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
-      if (dlg != null)
-      {
-        TVHome.OnSelectGroup();
-        UpdateList();
-      }
     }
 
     private void SaveGroup(List<Channel> channelsInGroup)
@@ -217,19 +203,15 @@ namespace TvPlugin
         return;
       }
       channelsInGroup.Sort(this);
-      TvBusinessLayer layer = new TvBusinessLayer();
-      foreach (Channel ch in channelsInGroup)
-      {
-        layer.AddChannelToGroup(ch, _currentGroup.GroupName);
-      }
+      MappingHelper.AddChannelsToGroup(channelsInGroup, _currentGroup);      
     }
 
     #region IComparer Members
 
     public int Compare(Channel x, Channel y)
     {
-      Channel ch1 = (Channel)x;
-      Channel ch2 = (Channel)y;
+      Channel ch1 = x;
+      Channel ch2 = y;
       if (ch1.SortOrder < ch2.SortOrder)
       {
         return -1;

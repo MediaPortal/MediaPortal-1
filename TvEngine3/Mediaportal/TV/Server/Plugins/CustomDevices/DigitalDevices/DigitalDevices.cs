@@ -21,18 +21,19 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Security;
 using System.Threading;
-using DigitalDevices;
 using DirectShowLib;
-using TvControl;
-using TvLibrary.Channels;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Device;
-using TvLibrary.Log;
 using DirectShowLib.BDA;
+using Mediaportal.TV.Server.Plugins.Base.Interfaces;
+using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvEngine
+namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 {
   /// <summary>
   /// A class for handling conditional access and DiSEqC for Digital Devices devices (and clones from Mystique).
@@ -780,15 +781,15 @@ namespace TvEngine
     /// <summary>
     /// Get an instance of the configuration section for use in TV Server configuration (SetupTv).
     /// </summary>
-    public SetupTv.SectionSettings Setup
+    public Mediaportal.TV.Server.SetupControls.SectionSettings Setup
     {
-      get { return new SetupTv.Sections.DigitalDevicesConfig(); }
+      get { return new DigitalDevicesConfig(); }
     }
 
     /// <summary>
     /// Start this TV Server plugin.
     /// </summary>
-    public void Start(IController controller)
+    public void Start(IInternalControllerService controllerService)
     {
     }
 

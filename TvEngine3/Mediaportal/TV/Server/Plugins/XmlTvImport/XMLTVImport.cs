@@ -20,19 +20,27 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Xml;
-using TvDatabase;
-using TvLibrary.Log;
-using Gentle.Framework;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvEngine
+namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 {
   internal class XMLTVImport : IComparer
   {
+
+    private readonly IDictionary<string, ProgramCategory> _categories = new ConcurrentDictionary<string, ProgramCategory>();
+
+    private readonly ProgramManagement _programManagement = new ProgramManagement();
+    
     public delegate void ShowProgressHandler(Stats stats);
 
     public event ShowProgressHandler ShowProgress;
@@ -40,9 +48,9 @@ namespace TvEngine
     private class ChannelPrograms
     {
       public string Name;
-      public string ExternalId;
+      public string externalId;
       //public ArrayList programs = new ArrayList();
-      public ProgramList programs = new ProgramList();
+      public readonly ProgramList programs = new ProgramList();
     } ;
 
     public class Stats
@@ -71,13 +79,13 @@ namespace TvEngine
         set { _channels = value; }
       }
 
-      public DateTime StartTime
+      public DateTime startTime
       {
         get { return _startTime; }
         set { _startTime = value; }
       }
 
-      public DateTime EndTime
+      public DateTime endTime
       {
         get { return _endTime; }
         set { _endTime = value; }
@@ -87,7 +95,7 @@ namespace TvEngine
     private string _errorMessage = "";
     private Stats _status = new Stats();
     private int _backgroundDelay = 0;
-    private TvBusinessLayer layer = new TvBusinessLayer();
+    
 
     private static bool _isImporting = false;
 
@@ -96,6 +104,13 @@ namespace TvEngine
 
     public XMLTVImport(int backgroundDelay)
     {
+      IEnumerable<ProgramCategory> categories = ProgramCategoryManagement.ListAllProgramCategories();
+
+      foreach (var programCategory in categories)
+      {
+        _categories.Add(programCategory.Category, programCategory);
+      }
+
       _backgroundDelay = backgroundDelay;
     }
 
@@ -167,46 +182,22 @@ namespace TvEngine
       _status.Status = "Removing old programs";
       _status.Channels = 0;
       _status.Programs = 0;
-      _status.StartTime = DateTime.Now;
-      _status.EndTime = new DateTime(1971, 11, 6);
+      _status.startTime = DateTime.Now;
+      _status.endTime = new DateTime(1971, 11, 6);
       if (showProgress && ShowProgress != null) ShowProgress(_status);
 
-      layer.RemoveOldPrograms();
-
-      /*
-      // for each channel, get the last program's time
-      Dictionary<int, DateTime> lastProgramForChannel = new Dictionary<int, DateTime>();
-      IList channels = Channel.ListAll();
-      foreach (Channel ch in channels)
-      {
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(TvDatabase.Program));
-        sb.AddConstraint(Operator.Equals, "idChannel", ch.IdChannel);
-        sb.AddOrderByField(false, "starttime");
-        sb.SetRowLimit(1);
-        SqlStatement stmt = sb.GetStatement(true);
-        IList programsInDbs = ObjectFactory.GetCollection(typeof(TvDatabase.Program), stmt.Execute());
-
-        DateTime lastProgram = DateTime.MinValue;
-        if (programsInDbs.Count > 0)
-        {
-          TvDatabase.IProgram p = (TvDatabase.Program)programsInDbs[0];
-          lastProgram = p.EndTime;
-        }
-        lastProgramForChannel[ch.IdChannel] = lastProgram;
-      }*/
-
-      //TVDatabase.SupressEvents = true;
-      bool useTimeZone = layer.GetSetting("xmlTvUseTimeZone", "false").Value == "true";
-      int hours = Int32.Parse(layer.GetSetting("xmlTvTimeZoneHours", "0").Value);
-      int mins = Int32.Parse(layer.GetSetting("xmlTvTimeZoneMins", "0").Value);
+      bool useTimeZone = SettingsManagement.GetSetting("xmlTvUseTimeZone", "false").Value == "true";
+      int hours = Int32.Parse(SettingsManagement.GetSetting("xmlTvTimeZoneHours", "0").Value);
+      int mins = Int32.Parse(SettingsManagement.GetSetting("xmlTvTimeZoneMins", "0").Value);
       int timeZoneCorrection = hours * 60 + mins;
 
-      ArrayList Programs = new ArrayList();
-      Dictionary<int, ChannelPrograms> dChannelPrograms = new Dictionary<int, ChannelPrograms>();
+      var Programs = new ArrayList();
+      var dChannelPrograms = new Dictionary<int, ChannelPrograms>();
       try
       {
-        Log.WriteFile("xmltv import {0}", fileName);
-
+        //layer.RemoveOldPrograms();        
+        ProgramManagement.DeleteOldPrograms();        
+        Log.WriteFile("xmltv import {0}", fileName);        
         //
         // Make sure the file exists before we try to do any processing
         //
@@ -215,13 +206,12 @@ namespace TvEngine
           _status.Status = "Loading channel list";
           _status.Channels = 0;
           _status.Programs = 0;
-          _status.StartTime = DateTime.Now;
-          _status.EndTime = new DateTime(1971, 11, 6);
+          _status.startTime = DateTime.Now;
+          _status.endTime = new DateTime(1971, 11, 6);
           if (showProgress && ShowProgress != null) ShowProgress(_status);
 
-          Dictionary<int, Channel> guideChannels = new Dictionary<int, Channel>();
-
-          IList<Channel> allChannels = Channel.ListAll();
+          var guideChannels = new Dictionary<int, Channel>();
+          IList<Channel> allChannels = ChannelManagement.ListAllChannels().ToList();
 
           int iChannel = 0;
 
@@ -300,7 +290,7 @@ namespace TvEngine
 
                       ChannelPrograms newProgChan = new ChannelPrograms();
                       newProgChan.Name = chan.DisplayName;
-                      newProgChan.ExternalId = chan.ExternalId;
+                      newProgChan.externalId = chan.ExternalId;
                       Programs.Add(newProgChan);
 
                       Log.WriteFile("  channel#{0} xmlid:{1} name:{2} dbsid:{3}", iChannel, chan.ExternalId,
@@ -326,13 +316,7 @@ namespace TvEngine
 
           #endregion
 
-          SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
-          sb.AddOrderByField(true, "externalId");
-          sb.AddConstraint("externalId IS NOT null");
-          sb.AddConstraint(Operator.NotEquals, "externalId", "");
-
-          SqlStatement stmt = sb.GetStatement(true);
-          allChannels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
+          allChannels = ChannelManagement.GetAllChannelsWithExternalId().ToList();          
           if (allChannels.Count == 0)
           {
             _isImporting = false;
@@ -354,38 +338,38 @@ namespace TvEngine
            * 3. Create a program for each mapped channel
            */
           ///////////////////////////////////////////////////////////////////////////
-          Dictionary<string, List<Channel>> allChannelMappingsByExternalId = new Dictionary<string, List<Channel>>();
+          Dictionary<string, List<Channel>> allChannelMappingsByexternalId = new Dictionary<string, List<Channel>>();
 
-          string previousExternalId = null;
+          string previousexternalId = null;
           // one-to-many so we need a collection of channels for each externalId
           List<Channel> eidMappedChannels = new List<Channel>();
 
           for (int i = 0; i < allChannels.Count; i++)
           {
-            Channel ch = (Channel)allChannels[i];
+            Channel ch = allChannels[i];
 
-            if (previousExternalId == null)
+            if (previousexternalId == null)
             {
               eidMappedChannels.Add(ch);
-              previousExternalId = ch.ExternalId;
+              previousexternalId = ch.ExternalId;
             }
-            else if (ch.ExternalId == previousExternalId)
+            else if (ch.ExternalId == previousexternalId)
             {
               eidMappedChannels.Add(ch);
             }
             else
             {
               // got all channels for this externalId. Add the mappings
-              allChannelMappingsByExternalId.Add(previousExternalId, eidMappedChannels);
+              allChannelMappingsByexternalId.Add(previousexternalId, eidMappedChannels);
               // new externalid, create a new List & add the channel to the new List
               eidMappedChannels = new List<Channel>();
               eidMappedChannels.Add(ch);
-              previousExternalId = ch.ExternalId;
+              previousexternalId = ch.ExternalId;
             }
 
             if (i == allChannels.Count - 1)
             {
-              allChannelMappingsByExternalId.Add(previousExternalId, eidMappedChannels);
+              allChannelMappingsByexternalId.Add(previousexternalId, eidMappedChannels);
             }
           }
 
@@ -415,6 +399,8 @@ namespace TvEngine
                 String nodeStop = xmlReader.GetAttribute("stop");
                 String nodeChannel = xmlReader.GetAttribute("channel");
 
+                List<ProgramCredit> credits = null;
+                XmlReader nodeCredits = null;
                 String nodeTitle = null;
                 String nodeCategory = null;
                 String nodeDescription = null;
@@ -441,6 +427,17 @@ namespace TvEngine
                         break;
                       case "category":
                         if (nodeCategory == null) nodeCategory = xmlProg.ReadString();
+                        else xmlProg.Skip();
+                        break;
+                      case "credits":
+                        if (nodeCredits == null)
+                        {
+                          nodeCredits = xmlProg.ReadSubtree();
+                          if (nodeCredits != null)
+                          {
+                            credits = ParseCredits(nodeCredits);
+                          }
+                        }
                         else xmlProg.Skip();
                         break;
                       case "desc":
@@ -497,6 +494,7 @@ namespace TvEngine
                 if (nodeStart != null && nodeChannel != null && nodeTitle != null &&
                     nodeStart.Length > 0 && nodeChannel.Length > 0 && nodeTitle.Length > 0)
                 {
+                  
                   string description = "";
                   string category = "-";
                   string serEpNum = "";
@@ -507,6 +505,7 @@ namespace TvEngine
                   string episodePart = "";
                   int starRating = -1;
                   string classification = "";
+                  bool repeat = false;
 
                   string title = ConvertHTMLToAnsi(nodeTitle);
 
@@ -574,7 +573,6 @@ namespace TvEngine
 
                     dateTimeStart = dateTimeStart.AddHours(-h);
                     dateTimeStart = dateTimeStart.AddMinutes(-m);
-                    dateTimeStart = dateTimeStart.ToLocalTime();
                   }
                   startDate = datetolong(dateTimeStart);
 
@@ -592,7 +590,6 @@ namespace TvEngine
 
                       dateTimeEnd = dateTimeEnd.AddHours(-h);
                       dateTimeEnd = dateTimeEnd.AddMinutes(-m);
-                      dateTimeEnd = dateTimeEnd.ToLocalTime();
                     }
                     stopDate = datetolong(dateTimeEnd);
                   }
@@ -656,6 +653,8 @@ namespace TvEngine
                     date = nodeDate;
                   }
 
+                  repeat = (nodeRepeat != null);                  
+
                   if (nodeStarRating != null)
                   {
                     starRating = ParseStarRating(nodeStarRating);
@@ -673,10 +672,11 @@ namespace TvEngine
                   #region create a program for every mapped channel
 
                   List<Channel> mappedChannels;
+                  //var programs = new List<TVDatabase.Entities.Program>();
 
-                  if (allChannelMappingsByExternalId.ContainsKey(nodeChannel))
+                  if (allChannelMappingsByexternalId.ContainsKey(nodeChannel))
                   {
-                    mappedChannels = allChannelMappingsByExternalId[nodeChannel];
+                    mappedChannels = allChannelMappingsByexternalId[nodeChannel];
                     if (mappedChannels != null && mappedChannels.Count > 0)
                     {
                       foreach (Channel chan in mappedChannels)
@@ -706,35 +706,51 @@ namespace TvEngine
                         episodeName = episodeName.Replace("\r", " ");
                         episodeName = episodeName.Replace("\n", " ");
                         episodeName = episodeName.Replace("  ", " ");
+                    
+                        var prg = new Program();
+                        prg.IdChannel = chan.IdChannel;
+                        prg.StartTime = longtodate(startDate);
+                        prg.EndTime = longtodate(stopDate);
+                        prg.Title = title;
+                        prg.Description = description;                        
+                        prg.State = (int)ProgramState.None;
+                        prg.OriginalAirDate = System.Data.SqlTypes.SqlDateTime.MinValue.Value;
+                        prg.SeriesNum = seriesNum;
+                        prg.EpisodeNum = episodeNum;
+                        prg.EpisodeName = episodeName;
+                        prg.EpisodePart = episodePart;
+                        prg.StarRating = starRating;
+                        prg.Classification = classification;
+                        prg.ParentalRating = -1;
+                        prg.PreviouslyShown = repeat;
+                        if (credits != null && credits.Count > 0)
+                        {
+                          foreach (var credit in credits)
+                          {
+                            prg.ProgramCredits.Add(credit);                            
+                          }                          
+                        }                        
 
-                        Program prog = new Program(chan.IdChannel, longtodate(startDate), longtodate(stopDate), title,
-                                                   description, category, Program.ProgramState.None,
-                                                   System.Data.SqlTypes.SqlDateTime.MinValue.Value, seriesNum,
-                                                   episodeNum, episodeName, episodePart, starRating, classification, -1);
-                        channelPrograms.programs.Add(prog);
-                        programIndex++;
-                        //prog.Description = ConvertHTMLToAnsi(strDescription);
-                        //prog.StartTime = iStart;
-                        //prog.EndTime = iStop;
-                        //prog.Title = ConvertHTMLToAnsi(strTitle);
-                        //prog.Genre = ConvertHTMLToAnsi(strCategory);
-                        //prog.Channel = ConvertHTMLToAnsi(strChannelName);
-                        //prog.Date = strDate;
-                        //prog.Episode = ConvertHTMLToAnsi(strEpisode);
-                        //prog.Repeat = ConvertHTMLToAnsi(strRepeat);
-                        //prog.SeriesNum = ConvertHTMLToAnsi(strSeriesNum);
-                        //prog.EpisodeNum = ConvertHTMLToAnsi(strEpisodeNum);
-                        //prog.EpisodePart = ConvertHTMLToAnsi(strEpisodePart);
-                        //prog.StarRating = ConvertHTMLToAnsi(strStarRating);
-                        //prog.Classification = ConvertHTMLToAnsi(strClasification);
+                        ProgramCategory programCategory;
+                        bool hasCategory = _categories.TryGetValue(category, out programCategory);
+                        if (!hasCategory)
+                        {
+                          programCategory = new ProgramCategory {Category = category};
+                          ProgramCategoryManagement.AddCategory(programCategory);
+                          _categories[category] = programCategory;
+                        }
+                        prg.IdProgramCategory = programCategory.IdProgramCategory;
+                        channelPrograms.programs.Add(prg);
+                        
+                        //programs.Add(prg);                                              
+                        programIndex++;                      
                         _status.Programs++;
-                      }
+                      }                      
                     }
                   }
                 }
                 // get the next programme
               } while (xmlReader.ReadToNextSibling("programme"));
-              //if (xmlReader != null) xmlReader.Close();
 
               #endregion
 
@@ -758,24 +774,19 @@ namespace TvEngine
                 progChan.programs.FixEndTimes();
                 progChan.programs.RemoveOverlappingPrograms(); // be sure that we do not have any overlapping
 
-                // get the id of the channel, just get the IdChannel of the first program
+                // get the id of the channel, just get the idChannel of the first program
                 int idChannel = progChan.programs[0].IdChannel;
 
                 if (!deleteBeforeImport)
-                {
-                  // retrieve all programs for this channel
-                  SqlBuilder sb2 = new SqlBuilder(StatementType.Select, typeof (Program));
-                  sb2.AddConstraint(Operator.Equals, "idChannel", idChannel);
-                  sb2.AddOrderByField(false, "starttime");
-                  SqlStatement stmt2 = sb2.GetStatement(true);
-                  ProgramList dbPrograms = new ProgramList();
-                  ObjectFactory.GetCollection<Program>(stmt2.Execute(), dbPrograms);
-                  progChan.programs.RemoveOverlappingPrograms(dbPrograms, true);
+                {                  
+                  _programManagement.DeleteAllProgramsWithChannelId(idChannel);
+                  List<Program> programs = _programManagement.FindAllProgramsByChannelId(idChannel).ToList();
+                  progChan.programs.RemoveOverlappingPrograms(programs, true);
                 }
 
                 for (int i = 0; i < progChan.programs.Count; ++i)
                 {
-                  Program prog = progChan.programs[i];
+                  var prog = progChan.programs[i];
                   // don't import programs which have already ended...
                   if (prog.EndTime <= dtStartDate)
                   {
@@ -783,13 +794,10 @@ namespace TvEngine
                     i--;
                     continue;
                   }
-
-                  DateTime start = prog.StartTime;
-                  DateTime end = prog.EndTime;
                   DateTime airDate = System.Data.SqlTypes.SqlDateTime.MinValue.Value;
                   try
                   {
-                    airDate = prog.OriginalAirDate;
+                    airDate = prog.OriginalAirDate.GetValueOrDefault(DateTime.MinValue);
                     if (airDate > System.Data.SqlTypes.SqlDateTime.MinValue.Value &&
                         airDate < System.Data.SqlTypes.SqlDateTime.MaxValue.Value)
                       prog.OriginalAirDate = airDate;
@@ -799,16 +807,16 @@ namespace TvEngine
                     Log.Info("XMLTVImport: Invalid year for OnAirDate - {0}", prog.OriginalAirDate);
                   }
 
-                  if (prog.StartTime < _status.StartTime)
-                    _status.StartTime = prog.StartTime;
-                  if (prog.EndTime > _status.EndTime)
-                    _status.EndTime = prog.EndTime;
+                  if (prog.StartTime < _status.startTime)
+                    _status.startTime = prog.StartTime;
+                  if (prog.EndTime > _status.endTime)
+                    _status.endTime = prog.EndTime;
                   _status.Programs++;
                   if (showProgress && ShowProgress != null && (_status.Programs % 100) == 0) ShowProgress(_status);
                 }
                 Log.Info("XMLTVImport: Inserting {0} programs for {1}", progChan.programs.Count.ToString(),
                          progChan.Name);
-                layer.InsertPrograms(progChan.programs,
+                _programManagement.InsertPrograms(progChan.programs,
                                      deleteBeforeImport
                                        ? DeleteBeforeImportOption.OverlappingPrograms
                                        : DeleteBeforeImportOption.None, ThreadPriority.BelowNormal);
@@ -844,11 +852,14 @@ namespace TvEngine
 
         //TVDatabase.RollbackTransaction();
       }
+      finally
+      {
+        _isImporting = false;        
+      }
 
       Programs.Clear();
       Programs = null;
-
-      _isImporting = false;
+      
       //      TVDatabase.SupressEvents = false;
       if (xmlReader != null)
       {
@@ -856,6 +867,36 @@ namespace TvEngine
         xmlReader = null;
       }
       return result;
+    }
+
+    private static List<ProgramCredit> ParseCredits(XmlReader nodeCredits)
+    {
+      var programcredits = new List<ProgramCredit>();
+
+      using (nodeCredits)
+      {
+        nodeCredits.ReadStartElement();
+        while (!nodeCredits.EOF)
+        {
+          if (nodeCredits.NodeType == XmlNodeType.Element)
+          {
+            string creditRole = nodeCredits.Name;
+            if (creditRole.Length > 50)
+            {
+              creditRole = creditRole.Substring(0, 50);  
+            }
+            string creditPerson = nodeCredits.ReadString();
+            if (creditPerson.Length > 200)
+            {
+              creditPerson = creditPerson.Substring(0, 200);
+            }
+            var credit = new ProgramCredit {Role = creditRole, Person = creditPerson};
+            programcredits.Add(credit);
+          }
+          nodeCredits.Read();
+        }
+      }
+      return programcredits;
     }
 
     /// <summary>
@@ -1133,14 +1174,13 @@ namespace TvEngine
         return;
       }
       //int iAnsiPos=0;
-      StringWriter writer = new StringWriter();
+      using (var writer = new StringWriter())
+      {
 
-      System.Web.HttpUtility.HtmlDecode(html, writer);
-
-      String DecodedString = writer.ToString();
-      strippedHtml = DecodedString.Replace("<br>", "\n");
-      if (true)
-        return;
+        System.Web.HttpUtility.HtmlDecode(html, writer);
+        String DecodedString = writer.ToString();
+        strippedHtml = DecodedString.Replace("<br>", "\n");
+      }            
     }
 
     #region Sort Members
@@ -1155,7 +1195,7 @@ namespace TvEngine
 
       if (item1.IdChannel != item2.IdChannel)
       {
-        return String.Compare(item1.ReferencedChannel().DisplayName, item2.ReferencedChannel().DisplayName, true);
+        return String.Compare(item1.Channel.DisplayName, item2.Channel.DisplayName, true);
       }
       if (item1.StartTime > item2.StartTime) return 1;
       if (item1.StartTime < item2.StartTime) return -1;

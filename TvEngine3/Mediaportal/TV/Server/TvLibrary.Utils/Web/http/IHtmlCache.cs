@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace MediaPortal.Utils.Web
+namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
 {
   /// <summary>
   /// Interface to enable HTML caching

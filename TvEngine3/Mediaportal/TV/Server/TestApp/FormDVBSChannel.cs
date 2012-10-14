@@ -20,11 +20,11 @@
 
 using System;
 using System.Windows.Forms;
-using TvLibrary.Interfaces;
-using TvLibrary.Channels;
 using DirectShowLib.BDA;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TestApp
+namespace Mediaportal.TV.Server.TestApp
 {
   public partial class FormDVBSChannel : Form
   {
@@ -44,7 +44,9 @@ namespace TestApp
     {
       get
       {
-        _channel.LnbType = LnbType.Universal;
+        _channel.BandType = BandType.Universal;
+        _channel.SwitchingFrequency = -1;
+
         return _channel;
       }
       set
@@ -55,7 +57,8 @@ namespace TestApp
         textBoxTSID.Text = _channel.TransportId.ToString();
         textBoxSID.Text = _channel.ServiceId.ToString();
         textBoxSymbolRate.Text = _channel.SymbolRate.ToString();
-        comboBoxDisEqc.SelectedIndex = (int)_channel.Diseqc;
+        textBoxSwitch.Text = _channel.SwitchingFrequency.ToString();
+        comboBoxDisEqc.SelectedIndex = (int)_channel.DisEqc;
         comboBoxPol.SelectedIndex = _channel.Polarisation == Polarisation.LinearH ? 0 : 1;
       }
     }
@@ -67,7 +70,8 @@ namespace TestApp
       _channel.TransportId = Int32.Parse(textBoxTSID.Text);
       _channel.ServiceId = Int32.Parse(textBoxSID.Text);
       _channel.SymbolRate = Int32.Parse(textBoxSymbolRate.Text);
-      _channel.Diseqc = (DiseqcPort)comboBoxDisEqc.SelectedIndex;
+      _channel.SwitchingFrequency = Int32.Parse(textBoxSwitch.Text);
+      _channel.DisEqc = (DisEqcType)comboBoxDisEqc.SelectedIndex;
       _channel.Polarisation = comboBoxPol.SelectedIndex == 0 ? Polarisation.LinearH : Polarisation.LinearV;
 
       Close();

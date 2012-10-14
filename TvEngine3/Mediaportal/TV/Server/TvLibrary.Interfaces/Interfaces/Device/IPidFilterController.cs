@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using DirectShowLib.BDA;
 
-namespace TvLibrary.Interfaces.Device
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
 {
   /// <summary>
   /// An interface for devices that are capable of filtering the MPEG 2 stream to reduce the bandwidth on

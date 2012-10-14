@@ -1,19 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using TvControl;
-using TvDatabase;
-using TvLibrary.Implementations;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Implementations;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
+using Mediaportal.TV.Server.TVService.Interfaces.Enums;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
-namespace TvService
+namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public abstract class TimeShifterBase
-  {
+  {    
     protected ITvCardHandler _cardHandler;
     protected bool _timeshiftingEpgGrabberEnabled;
     private readonly int _waitForTimeshifting = 15;
@@ -23,13 +24,13 @@ namespace TvService
     protected readonly ManualResetEvent _eventTimeshift = new ManualResetEvent(true);
     protected ITvSubChannel _subchannel; // the active sub channel to record        
 
-    protected TimeShifterBase(ITvCardHandler cardHandler)
+    protected TimeShifterBase()
     {
       _eventAudio.Reset();
       _eventVideo.Reset();
 
-      var layer = new TvBusinessLayer();
-      _waitForTimeshifting = Int32.Parse(layer.GetSetting("timeshiftWaitForTimeshifting", "15").Value);
+      
+      _waitForTimeshifting = Int32.Parse(SettingsManagement.GetSetting("timeshiftWaitForTimeshifting", "15").Value);
 
       if (_cardHandler != null && _cardHandler.Tuner != null)
       {
@@ -38,7 +39,7 @@ namespace TvService
 
       if (_cardHandler != null && _cardHandler.Tuner != null)
       {
-        _cardHandler.Tuner.OnAfterCancelTuneEvent += new CardTuner.OnAfterCancelTuneDelegate(Tuner_OnAfterCancelTuneEvent);
+        _cardHandler.Tuner.OnAfterCancelTuneEvent += new OnAfterCancelTuneDelegate(Tuner_OnAfterCancelTuneEvent);
       }
     }
 
@@ -81,21 +82,18 @@ namespace TvService
       return _cancelled;
     }
 
-    protected ITvSubChannel GetSubChannel(ref IUser user)
+    protected ITvSubChannel GetSubChannel(string userName, int idChannel)
     {
       ITvSubChannel subchannel = null;
       if (_cardHandler.DataBaseCard.Enabled)
       {
-        var context = _cardHandler.Card.Context as TvCardContext;
-        if (context != null)
+           
+        //_cardHandler.UserManagement.RefreshUser(ref user, out userExists);
+        bool userExists = _cardHandler.UserManagement.DoesUserExist(userName);
+        if (userExists)
         {
-          bool userExists;
-          context.GetUser(ref user, out userExists);
-          if (userExists)
-          {
-            subchannel = GetSubChannel(user.SubChannel);
-          }          
-        }        
+          subchannel = GetSubChannel(_cardHandler.UserManagement.GetSubChannelIdByChannelId(userName, idChannel));
+        }          
       }
       
       return subchannel;
@@ -105,7 +103,7 @@ namespace TvService
     {
       bool isScrambled = false;
       //lets check if stream is initially scrambled, if it is and the card has no CA, then we are unable to decrypt stream.
-      if (_cardHandler.IsScrambled(ref user))
+      if (_cardHandler.IsScrambled(user.Name))
       {
         if (!_cardHandler.IsConditionalAccessSupported)
         {
@@ -126,7 +124,7 @@ namespace TvService
     {
       scrambled = false;
 
-      if (_cardHandler.DataBaseCard.Enabled == false)
+      if (!_cardHandler.DataBaseCard.Enabled)
       {
         return false;
       }
@@ -145,7 +143,7 @@ namespace TvService
         return false;
 
       IChannel channel = _subchannel.CurrentChannel;
-      bool isRadio = channel.IsRadio;
+      bool isRadio = (channel.MediaType == MediaTypeEnum.Radio);
 
       if (isRadio)
       {
@@ -167,7 +165,7 @@ namespace TvService
         {
           TimeSpan ts = DateTime.Now - timeStart;
           Log.Write("card: WaitForRecordingFile - no audio was found after {0} seconds", ts.TotalSeconds);
-          if (_cardHandler.IsScrambled(ref user))
+          if (_cardHandler.IsScrambled(user.Name))
           {
             Log.Write("card: WaitForFile - audio stream is scrambled");
             scrambled = true;
@@ -201,7 +199,7 @@ namespace TvService
             TimeSpan ts = DateTime.Now - timeStart;
             Log.Write("card: WaitForFile - video was found, but audio was not found after {0} seconds",
                       ts.TotalSeconds);
-            if (_cardHandler.IsScrambled(ref user))
+            if (_cardHandler.IsScrambled(user.Name))
             {
               Log.Write("card: WaitForFile - audio stream is scrambled");
               scrambled = true;
@@ -212,7 +210,7 @@ namespace TvService
         {
           TimeSpan ts = DateTime.Now - timeStart;
           Log.Write("card: WaitForFile - no audio was found after {0} seconds", ts.TotalSeconds);
-          if (_cardHandler.IsScrambled(ref user))
+          if (_cardHandler.IsScrambled(user.Name))
           {
             Log.Write("card: WaitForFile - audio and video stream is scrambled");
             scrambled = true;
@@ -231,7 +229,7 @@ namespace TvService
     {
       if (_timeshiftingEpgGrabberEnabled)
       {
-        Channel channel = Channel.Retrieve(user.IdChannel);
+        Channel channel = ChannelManagement.GetChannel(_cardHandler.UserManagement.GetRecentChannelId(user.Name));
         if (channel.GrabEpg)
         {
           _cardHandler.Card.GrabEpg();

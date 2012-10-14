@@ -18,20 +18,14 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
-using System.Windows.Forms;
-using TvDatabase;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.Plugins.PersonalTVGuide
 {
-  public partial class PTVGSetup : SetupTv.SectionSettings
+  public partial class PTVGSetup : SectionSettings
   {
     #region constructor
 
@@ -53,20 +47,14 @@ namespace SetupTv.Sections
 
     public override void OnSectionActivated()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      debug.Checked = layer.GetSetting("PTVGDebugMode", "false").Value == "true";
+
+      debug.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PTVGDebugMode", "false").Value == "true";
       base.OnSectionActivated();
     }
 
     public override void OnSectionDeActivated()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("PTVGDebugMode", "false");
-      if (debug.Checked)
-        setting.Value = "true";
-      else
-        setting.Value = "false";
-      setting.Persist();
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("PTVGDebugMode", debug.Checked ? "true" : "false");
       base.OnSectionDeActivated();
     }
 

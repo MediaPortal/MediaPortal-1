@@ -20,14 +20,17 @@
 
 using System;
 using System.Collections.Generic;
-using Gentle.Framework;
-using MediaPortal.WebEPG.Parser;
-using TvDatabase;
+using System.Linq;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TvLibrary.Utils.Time;
 using System.Threading;
-using TvLibrary.Log;
-using MediaPortal.Utils.Time;
+using WebEPG.Parser;
+using WebEPG.Utils;
 
-namespace MediaPortal.WebEPG
+namespace Mediaportal.TV.Server.Plugins.WebEPGImport
 {
   internal class DatabaseEPGDataSink
     : IEpgDataSink
@@ -51,12 +54,12 @@ namespace MediaPortal.WebEPG
     #region Variables
 
     private bool _deleteExisting;
-    private Dictionary<string, List<Channel>> _channels;
-    private List<Channel> _currentChannels;
+    private Dictionary<string, IList<Channel>> _channels;
+    private IList<Channel> _currentChannels;
     private ProgramList _channelPrograms;
     private TimeRange _timeWindow;
 
-    private TvBusinessLayer layer = new TvBusinessLayer();
+    private ProgramManagement _programManagement = new ProgramManagement();
 
     #endregion
 
@@ -127,8 +130,8 @@ namespace MediaPortal.WebEPG
         }
         ranges.Add(range);
         // Alternate implementation: use time window 
-        //DateTimeRange fullRange = new DateTimeRange(_channelPrograms[0].StartTime,
-        //                                            _channelPrograms[_channelPrograms.Count - 1].EndTime);
+        //DateTimeRange fullRange = new DateTimeRange(_channelPrograms[0].startTime,
+        //                                            _channelPrograms[_channelPrograms.Count - 1].endTime);
         //if (_timeWindow == null)
         //{
         //  ranges.Add(fullRange);
@@ -163,13 +166,13 @@ namespace MediaPortal.WebEPG
 
     void IEpgDataSink.Open()
     {
-      _channels = new Dictionary<string, List<Channel>>();
+      _channels = new Dictionary<string, IList<Channel>>();
     }
 
     void IEpgDataSink.Close()
     {
       Log.Info("WebEPG: Waiting for database to be updated...");
-      layer.WaitForInsertPrograms();
+      ProgramManagement.InitiateInsertPrograms();
       Log.Info("WebEPG: Database update finished.");
     }
 
@@ -180,9 +183,7 @@ namespace MediaPortal.WebEPG
       {
         try
         {
-          Key dbKey = new Key(false, "displayName", name);
-          //Channel dbChannel = Broker.TryRetrieveInstance<Channel>(dbKey);
-          List<Channel> dbChannels = (List<Channel>)Broker.RetrieveList<Channel>(dbKey);
+          IList<Channel> dbChannels = ChannelManagement.GetChannelsByName(name);          
           if (dbChannels.Count > 0)
           {
             _channels.Add(channelKey, dbChannels);
@@ -204,8 +205,7 @@ namespace MediaPortal.WebEPG
 
       if (_channels.TryGetValue(channelKey, out _currentChannels))
       {
-        _channelPrograms = new ProgramList();
-        _channelPrograms.AlreadySorted = false;
+        _channelPrograms = new ProgramList {AlreadySorted = false};
         return true;
       }
       else
@@ -251,27 +251,22 @@ namespace MediaPortal.WebEPG
       if (!_deleteExisting)
       {
         // Remove programs overlapping ones in DB:
-        // First retrieve all programs for current channels 
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
-        sb.AddConstraint(Operator.In, "idChannel", _currentChannels, "IdChannel");
-        //sb.AddConstraint(Operator.Equals, "idChannel", _currentChannels.IdChannel);
-        //sb.AddOrderByField(false, "starttime");
-        SqlStatement stmt = sb.GetStatement(true);
-        ProgramList dbPrograms = new ProgramList(ObjectFactory.GetCollection<Program>(stmt.Execute()));
-
+        // First retrieve all programs for current channels                         
+        var dbPrograms = new ProgramList(ProgramManagement.GetProgramsForAllChannels(_currentChannels));
         _channelPrograms.RemoveOverlappingPrograms(dbPrograms);
       }
       foreach (Channel chan in _currentChannels)
-      {
-        layer.RemoveOldPrograms(chan.IdChannel);
+      {        
+        ProgramManagement.DeleteOldPrograms(chan.IdChannel);
       }
 
       DeleteBeforeImportOption programsToDelete = _deleteExisting
                                                     ? DeleteBeforeImportOption.OverlappingPrograms
                                                     : DeleteBeforeImportOption.None;
-      layer.InsertPrograms(_channelPrograms, programsToDelete, ThreadPriority.BelowNormal);
 
-      //_channelPrograms.Clear();
+      var prgManagement = new ProgramManagement();
+      prgManagement.InsertPrograms(_channelPrograms, programsToDelete, ThreadPriority.BelowNormal);
+
       _channelPrograms = null;
       _currentChannels = null;
     }

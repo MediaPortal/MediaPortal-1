@@ -7,6 +7,7 @@
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -14,34 +15,34 @@
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{3BE4F3AA-36EB-4956-B000-E29C74FC6AB0}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TvService</RootNamespace>
-    <AssemblyName>TvService</AssemblyName>
+    <RootNamespace>Mediaportal.TV.Server.TVService</RootNamespace>
+    <AssemblyName>TVService</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <ApplicationManifest>TvService.exe.manifest</ApplicationManifest>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -50,24 +51,12 @@
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Mediaportal.TV.Server.TVService.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Gentle.Common, Version=1.2.9.1285, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TVDatabase\references\Gentle.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Gentle.Framework, Version=1.2.9.1286, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TVDatabase\references\Gentle.Framework.dll</HintPath>
-    </Reference>
-    <Reference Include="Gentle.Provider.MySQL, Version=1.2.9.1288, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TVDatabase\references\Gentle.Provider.MySQL.dll</HintPath>
-    </Reference>
-    <Reference Include="Gentle.Provider.SQLServer, Version=1.2.9.1289, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TVDatabase\references\Gentle.Provider.SQLServer.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Configuration.Install" />
@@ -76,78 +65,30 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Management" />
-    <Reference Include="System.Runtime.Remoting, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Reference Assemblies\Microsoft\WinFX\v3.0\System.Runtime.Remoting.dll</HintPath>
-    </Reference>
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardAllocation\AdvancedCardAllocation.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardAllocation\AdvancedCardAllocationStatic.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardAllocation\AdvancedCardAllocationTicket.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardAllocation\CardAllocationBase.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardAllocation\CardAllocationCache.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardAllocation\ChannelStates.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardAllocation\ICardAllocation.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardHandler\CardTuner.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardHandler\ChannelScanning.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardHandler\CleanTimeshiftFilesThread.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardHandler\DisEqcManagement.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardHandler\EpgGrabbing.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardHandler\ITvCardHandler.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardHandler\Recorder.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardHandler\TeletextManagement.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardHandler\TimeShifter.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardHandler\TimeShifterBase.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardHandler\TvCardHandler.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardHandler\UserManagement.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardReservation\CardReservationHelper.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardReservation\Implementations\CardReservationBase.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardReservation\Implementations\CardReservationRec.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardReservation\Implementations\CardReservationTimeshifting.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardReservation\Ticket\CardReservationTicketBase.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardReservation\Ticket\CardStopReservationTicket.cs" />
-    <Compile Include="..\TvLibrary.Services\CardManagement\CardReservation\Ticket\CardTuneReservationTicket.cs" />
-    <Compile Include="..\TvLibrary.Services\ChannelLinkage\ChannelLinkageGrabber.cs" />
-    <Compile Include="..\TvLibrary.Services\DiskManagement\DiskManagement.cs" />
-    <Compile Include="..\TvLibrary.Services\DiskManagement\EpisodeManagement.cs" />
-    <Compile Include="..\TvLibrary.Services\DiskManagement\RecordingFileHandler.cs" />
-    <Compile Include="..\TvLibrary.Services\DiskManagement\RecordingFileInfo.cs" />
-    <Compile Include="..\TvLibrary.Services\DiskManagement\RecordingManagement.cs" />
-    <Compile Include="..\TvLibrary.Services\Epg\EpgCard.cs" />
-    <Compile Include="..\TvLibrary.Services\Epg\EpgGrabber.cs" />
-    <Compile Include="..\TvLibrary.Services\Epg\Transponder.cs" />
-    <Compile Include="..\TvLibrary.Services\Interfaces\ICardReservation.cs" />
-    <Compile Include="..\TvLibrary.Services\Interfaces\ICardStopReservationTicket.cs" />
-    <Compile Include="..\TvLibrary.Services\Interfaces\ICardTuneReservationTicket.cs" />
-    <Compile Include="..\TvLibrary.Services\Interfaces\ITvCardContext.cs" />
-    <Compile Include="..\Plugins\PluginBase\PluginLoader.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ProjectInstaller.Designer.cs">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
-    <Compile Include="..\TvLibrary.Services\Scheduler\CardDetail.cs" />
-    <Compile Include="..\TvLibrary.Services\Scheduler\RecordingDetail.cs" />
-    <Compile Include="..\TvLibrary.Services\Scheduler\Scheduler.cs" />
     <Compile Include="Service1.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Service1.Designer.cs">
       <DependentUpon>Service1.cs</DependentUpon>
     </Compile>
-    <Compile Include="..\TvLibrary.Services\Properties\AssemblyInfo.cs" />
-    <Compile Include="..\TvLibrary.Services\TsCopier.cs" />
-    <Compile Include="..\TvLibrary.Services\TvCardContext.cs" />
-    <Compile Include="..\TvLibrary.Services\TVController.cs" />
-    <Compile Include="..\TvControl\UserFactory.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -169,32 +110,39 @@
       <Project>{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}</Project>
       <Name>TvControl</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TVDatabase\Entities\Entities.csproj">
+      <Project>{4C2D9698-AF44-4157-99B6-48F5269F20CC}</Project>
+      <Name>Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TVDatabase\Presentation\Presentation.csproj">
+      <Project>{FB53D159-8115-4155-921D-F64E0072A633}</Project>
+      <Name>Presentation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj">
       <Project>{58C35C9D-F18D-40F2-8024-24E50D01E9C5}</Project>
       <Name>TvBusinessLayer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TVDatabase\TVDatabase.csproj">
-      <Project>{0FD8DEAE-37A4-49CC-A7BE-E86E0E0D85BD}</Project>
-      <Name>TVDatabase</Name>
     </ProjectReference>
     <ProjectReference Include="..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TvLibrary.Utils\TvLibrary.Utils.csproj">
-      <Project>{954F9929-7FDA-4F59-88E3-FD2B9A7B6E6E}</Project>
-      <Name>TvLibrary.Utils</Name>
+    <ProjectReference Include="..\TvLibrary.Services\TvLibrary.Services.csproj">
+      <Project>{907F30DE-92D6-4F37-8E5D-2E428C259717}</Project>
+      <Name>TvLibrary.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\TVLibrary\TVLibrary.csproj">
       <Project>{59C2EBC8-0FEA-4B2E-B5D1-476347332331}</Project>
-      <Name>TVLibrary</Name>
+      <Name>TVLibrary %28TVLibrary\TVLibrary%29</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TvService.Interfaces\TvService.Interfaces.csproj">
+      <Project>{A2BFFBDD-3BEA-4B68-94F1-C34D2BE10AEB}</Project>
+      <Name>TvService.Interfaces</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\..\Common-MP-TVE3\Gentle.config">
-      <Link>Gentle.config</Link>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
     </None>
-    <None Include="..\TvLibrary.Services\App.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Service1.resx">
@@ -202,6 +150,23 @@
       <DependentUpon>Service1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TvService.exe.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -213,6 +178,30 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>"$(ProjectDir)PostBuild.bat" "$(SolutionDir)" $(ConfigurationName)</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>xcopy "$(SolutionDir)\..\ExternalBinaries\mysql*"  /s /i /y
+xcopy "$(SolutionDir)TVServer.Base\*.*" "$(TargetDir)" /C/Y/S
+xcopy "$(SolutionDir)Plugins\XmlTvImport\$(OutDir)Mediaportal.TV.Server.Plugins.XmlTvImport.*" "$(TargetDir)"Plugins\ /C/Y/S
+xcopy "$(SolutionDir)Plugins\XmlTvImport\$(OutDir)Ionic.Zip.dll" "$(TargetDir)" /C/Y/S
+xcopy "$(SolutionDir)Plugins\ComSkipLauncher\$(OutDir)Mediaportal.TV.Server.Plugins.ComSkipLauncher.*" "$(TargetDir)"Plugins\ /C/Y/S
+xcopy "$(SolutionDir)Plugins\ConflictsManager\$(OutDir)Mediaportal.TV.Server.Plugins.ConflictsManager.*" "$(TargetDir)"Plugins\ /C/Y/S
+xcopy "$(SolutionDir)Plugins\PluginBase\$(OutDir)Mediaportal.TV.Server.Plugins.Base.*" "$(TargetDir)"Plugins\ /C/Y/S
+xcopy "$(SolutionDir)Plugins\PowerScheduler\$(OutDir)Mediaportal.TV.Server.Plugins.PowerScheduler.dll" "$(TargetDir)"Plugins\ /C/Y/S
+xcopy "$(SolutionDir)Plugins\PowerScheduler\$(OutDir)Mediaportal.TV.Server.Plugins.PowerScheduler.pdb" "$(TargetDir)"Plugins\ /C/Y/S
+xcopy "$(SolutionDir)Plugins\PowerScheduler\$(OutDir)Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll" "$(TargetDir)"\Plugins\ /C/Y/S
+xcopy "$(SolutionDir)Plugins\PowerScheduler\$(OutDir)Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.pdb" "$(TargetDir)"\Plugins\ /C/Y/S
+xcopy "$(SolutionDir)Plugins\ServerBlaster\ServerBlaster\$(OutDir)Mediaportal.TV.Server.Plugins.ServerBlaster.*" "$(TargetDir)"Plugins\ /C/Y/S
+xcopy "$(SolutionDir)Plugins\ServerBlaster\ServerBlaster.Learn\$(OutDir)Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.*" "$(TargetDir)"Plugins\ /C/Y/S
+xcopy "$(SolutionDir)Plugins\WebEPG\$(OutDir)Mediaportal.TV.Server.Plugins.WebEPG.*" "$(TargetDir)"Plugins\ /C/Y/S
+xcopy "$(SolutionDir)\ServiceAgents\$(OutDir)Mediaportal.TV.Server.Plugins.WebEPG.*" "$(TargetDir)" /C/Y/S
+xcopy "$(SolutionDir)\SetupControls\$(OutDir)Mediaportal.TV.Server.SetupControls.*" "$(TargetDir)" /C/Y/S
+rem xcopy "$(SolutionDir)..\..\..\..\Common-MP-TVE3\PowerScheduler.Interfaces\$(OutDir)Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces" "$(TargetDir)" /C/Y/S
+xcopy "$(SolutionDir)..\..\..\..\DirectShowFilters\TsWriter\bin\Release\*.ax" "$(TargetDir)" /C/Y/S
+xcopy "$(SolutionDir)..\..\..\..\DirectShowFilters\streamingserver\bin\Release\*.dll" "$(TargetDir)" /C/Y/S
+regsvr32 "$(TargetDir)tswriter.ax" /s
+</PreBuildEvent>
   </PropertyGroup>
 </Project>

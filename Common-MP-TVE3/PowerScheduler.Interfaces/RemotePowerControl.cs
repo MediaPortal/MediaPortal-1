@@ -21,6 +21,8 @@
 #region Usings
 
 using System;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
 #endregion
 
@@ -36,30 +38,11 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// <summary>
     /// IPowerController singleton
     /// </summary>
-    private static IPowerController _powerController;
-
-    private static string _hostName = "localhost";
+    private static IPowerController _powerController;    
 
     #endregion
 
-    #region Public Properties
-
-    /// <summary>
-    /// Gets or sets the name the hostname of the master tv-server.
-    /// </summary>
-    /// <value>The name of the host.</value>
-    public static string HostName
-    {
-      get { return _hostName; }
-      set
-      {
-        if (_hostName != value)
-        {
-          _powerController = null;
-          _hostName = value;
-        }
-      }
-    }
+    #region Public Properties   
 
     /// <summary>
     /// Returns the one and only instance of the IPowerController (PowerScheduler)
@@ -70,14 +53,13 @@ namespace TvEngine.PowerScheduler.Interfaces
       {
         try
         {
+          
           if (_powerController != null)
           {
             return _powerController;
           }
-          _powerController =
-            (IPowerController)
-            Activator.GetObject(typeof (IPowerController), String.Format("http://{0}:31457/PowerControl", _hostName));
-          bool connected = _powerController.IsConnected;
+          //_powerController = PluginServiceAgent.Instance<IPowerController, PowerScheduler>();
+          bool connected = _powerController.IsConnected();
           return _powerController;
         }
         catch (Exception)
@@ -100,7 +82,7 @@ namespace TvEngine.PowerScheduler.Interfaces
           {
             return false;
           }
-          return _powerController.IsConnected;
+          return _powerController.IsConnected();
         }
         catch (Exception)
         {
@@ -110,17 +92,6 @@ namespace TvEngine.PowerScheduler.Interfaces
     }
 
     #endregion
-
-    #region Public methods
-
-    /// <summary>
-    /// Reinitializes the IPowercontroller singleton
-    /// </summary>
-    public static void Clear()
-    {
-      _powerController = null;
-    }
-
-    #endregion
+   
   }
 }

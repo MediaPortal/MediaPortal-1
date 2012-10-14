@@ -19,13 +19,13 @@
 #endregion
 
 using System.Collections.Generic;
-using TvLibrary.Interfaces;
-using TvLibrary.Epg;
-using TvLibrary.ChannelLinkage;
-using System;
-using TvLibrary.Interfaces.Device;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 
-namespace TvLibrary.Implementations.Hybrid
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
 {
   /// <summary>
   /// This class is a wrapper for all cards that are part of a hybrid card group
@@ -117,6 +117,19 @@ namespace TvLibrary.Implementations.Hybrid
     #endregion
 
     #region properties
+
+    /// <summary>
+    /// Sets the after tune event listener on the internal card.
+    /// </summary>
+    /// <value>the delegate</value>
+    public OnAfterTuneDelegate AfterTuneEvent
+    {
+      set
+      {
+        (_internalCard as TvCardBase).AfterTuneEvent -= value;
+        (_internalCard as TvCardBase).AfterTuneEvent += value;
+      }
+    }
 
     /// <summary>
     /// returns true if card is currently present
@@ -468,6 +481,15 @@ namespace TvLibrary.Implementations.Hybrid
     public ITvSubChannel GetSubChannel(int id)
     {
       return _group.GetSubChannel(id);
+    }
+
+    /// <summary>
+    /// Gets the first sub channel.
+    /// </summary>    
+    /// <returns></returns>
+    public ITvSubChannel GetFirstSubChannel()
+    {
+      return _group.GetFirstSubChannel();
     }
 
     /// <summary>

@@ -19,10 +19,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin.Helper
 {
   /// <summary>
   /// Helper class for bitwise operations on flags

@@ -21,12 +21,11 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 using DirectShowLib;
-using TvDatabase;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 
-namespace DigitalDevices
+namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 {
   /// <summary>
   /// A struct that is capable of holding the relevant details for a Digital Devices CI slot.
@@ -118,20 +117,19 @@ namespace DigitalDevices
     public static Dictionary<String, DigitalDevicesCiSlot> GetDatabaseSettings()
     {
       Dictionary<String, DigitalDevicesCiSlot> slotSettings = new Dictionary<String, DigitalDevicesCiSlot>();
-      TvBusinessLayer layer = new TvBusinessLayer();
       byte i = 0;
       while (true)  // Loop until we don't find any more settings.
       {
-        Setting devicePath = layer.GetSetting("digitalDevicesCiDevicePath" + i, String.Empty);
+        Setting devicePath = SettingsManagement.GetSetting("digitalDevicesCiDevicePath" + i, String.Empty);        
         if (devicePath.Value.Equals(String.Empty))
         {
           break;
         }
 
         DigitalDevicesCiSlot slot = new DigitalDevicesCiSlot(devicePath.Value);
-        Setting deviceName = layer.GetSetting("digitalDevicesCiDeviceName" + i, String.Empty);
+        Setting deviceName = SettingsManagement.GetSetting("digitalDevicesCiDeviceName" + i, String.Empty);
         slot.DeviceName = deviceName.Value;
-        Setting decryptLimit = layer.GetSetting("digitalDevicesCiDecryptLimit" + i, "0");
+        Setting decryptLimit = SettingsManagement.GetSetting("digitalDevicesCiDecryptLimit" + i, "0");
         try
         {
           slot.DecryptLimit = Int32.Parse(decryptLimit.Value);
@@ -140,7 +138,7 @@ namespace DigitalDevices
         {
           slot.DecryptLimit = 0;
         }
-        Setting providerList = layer.GetSetting("digitalDevicesCiProviderList" + i, String.Empty);
+        Setting providerList = SettingsManagement.GetSetting("digitalDevicesCiProviderList" + i, String.Empty);
         slot.Providers = new HashSet<String>(providerList.Value.Split('|'));
 
         // Use the first settings found. Settings found later could be invalid left-overs.
@@ -217,8 +215,7 @@ namespace DigitalDevices
     /// <returns><c>true</c> if the plugin is enabled, otherwise <c>false</c></returns>
     public static bool IsPluginEnabled()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting s = layer.GetSetting("pluginDigital Devices", "false");
+      Setting s = SettingsManagement.GetSetting("pluginDigital Devices", "false");
       if (s.Value.Equals("true"))
       {
         return true;

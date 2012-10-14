@@ -24,7 +24,7 @@ using System.Drawing;
 using System.Collections;
 using System.Runtime.InteropServices;
 
-namespace MediaPortal.UserInterface.Controls
+namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 {
   /// <summary>
   /// Summary description for ListView.

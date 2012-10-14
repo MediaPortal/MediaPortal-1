@@ -1,8 +1,11 @@
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
 #pragma warning disable 108
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
-  public partial class Project : SetupTv.SectionSettings
+  public partial class Project : SectionSettings
   {
     /// <summary> 
     /// Required designer variable.
@@ -30,22 +33,22 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.groupBoxInfo = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.labelInfo2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.labelInfo1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.groupBoxContact = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBoxInfo = new MPGroupBox();
+      this.labelInfo2 = new MPLabel();
+      this.labelInfo1 = new MPLabel();
+      this.groupBoxContact = new MPGroupBox();
       this.linkLabelSourceforge = new System.Windows.Forms.LinkLabel();
-      this.labelSourceForge = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelSourceForge = new MPLabel();
       this.linkLabelOnlineDocumentation = new System.Windows.Forms.LinkLabel();
-      this.labelOnlineDocumentation = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.labelIrcChannelData = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.labelIrcChannel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelOnlineDocumentation = new MPLabel();
+      this.labelIrcChannelData = new MPLabel();
+      this.labelIrcChannel = new MPLabel();
       this.linkLabelForums = new System.Windows.Forms.LinkLabel();
-      this.labelForums = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelForums = new MPLabel();
       this.linkLabelHomepage = new System.Windows.Forms.LinkLabel();
-      this.labelHomepage = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.labelMePo = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpGroupBoxAbout = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.labelHomepage = new MPLabel();
+      this.labelMePo = new MPLabel();
+      this.mpGroupBoxAbout = new MPGroupBox();
       this.labelVersion3 = new System.Windows.Forms.Label();
       this.labelVersion2 = new System.Windows.Forms.Label();
       this.labelVersion1 = new System.Windows.Forms.Label();
@@ -213,7 +216,7 @@ namespace SetupTv.Sections
       // 
       // labelMePo
       // 
-      this.labelMePo.Image = global::SetupTv.Properties.Resources.logo_MePo;
+      this.labelMePo.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.logo_MePo;
       this.labelMePo.Location = new System.Drawing.Point(16, 112);
       this.labelMePo.Name = "labelMePo";
       this.labelMePo.Size = new System.Drawing.Size(164, 239);
@@ -265,7 +268,7 @@ namespace SetupTv.Sections
       // paypalPictureBox
       // 
       this.paypalPictureBox.Cursor = System.Windows.Forms.Cursors.Hand;
-      this.paypalPictureBox.Image = global::SetupTv.Properties.Resources.logo_PayPal;
+      this.paypalPictureBox.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.logo_PayPal;
       this.paypalPictureBox.Location = new System.Drawing.Point(133, 315);
       this.paypalPictureBox.Name = "paypalPictureBox";
       this.paypalPictureBox.Size = new System.Drawing.Size(72, 29);
@@ -296,22 +299,22 @@ namespace SetupTv.Sections
 
     #endregion
 
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxInfo;
-    private MediaPortal.UserInterface.Controls.MPLabel labelInfo1;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxContact;
-    private MediaPortal.UserInterface.Controls.MPLabel labelIrcChannelData;
-    private MediaPortal.UserInterface.Controls.MPLabel labelIrcChannel;
+    private MPGroupBox groupBoxInfo;
+    private MPLabel labelInfo1;
+    private MPGroupBox groupBoxContact;
+    private MPLabel labelIrcChannelData;
+    private MPLabel labelIrcChannel;
     private System.Windows.Forms.LinkLabel linkLabelForums;
-    private MediaPortal.UserInterface.Controls.MPLabel labelForums;
+    private MPLabel labelForums;
     private System.Windows.Forms.LinkLabel linkLabelHomepage;
-    private MediaPortal.UserInterface.Controls.MPLabel labelHomepage;
-    private MediaPortal.UserInterface.Controls.MPLabel labelOnlineDocumentation;
+    private MPLabel labelHomepage;
+    private MPLabel labelOnlineDocumentation;
     private System.Windows.Forms.LinkLabel linkLabelOnlineDocumentation;
-    private MediaPortal.UserInterface.Controls.MPLabel labelSourceForge;
+    private MPLabel labelSourceForge;
     private System.Windows.Forms.LinkLabel linkLabelSourceforge;
-    private MediaPortal.UserInterface.Controls.MPLabel labelInfo2;
-    private MediaPortal.UserInterface.Controls.MPLabel labelMePo;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBoxAbout;
+    private MPLabel labelInfo2;
+    private MPLabel labelMePo;
+    private MPGroupBox mpGroupBoxAbout;
     private System.Windows.Forms.Label labelVersion3;
     private System.Windows.Forms.Label labelVersion2;
     private System.Windows.Forms.Label labelVersion1;

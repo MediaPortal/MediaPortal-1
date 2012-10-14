@@ -23,14 +23,17 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using DirectShowLib;
-using SmarDtvUsbCi;
-using TvControl;
-using TvDatabase;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Device;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.Plugins.Base.Interfaces;
+using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvEngine
+namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
 {
   /// <summary>
   /// A class for handling conditional access with the Hauppauge WinTV-CI and TerraTec USB CI. Both devices are
@@ -57,7 +60,7 @@ namespace TvEngine
     /// <param name="ciFilter">The CI filter.</param>
     /// <param name="state">The new state of the slot.</param>
     /// <returns>an HRESULT indicating whether the state change was successfully handled</returns>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate Int32 OnSmarDtvUsbCiState(IBaseFilter ciFilter, SmarDtvCiState state);
 
     /// <summary>
@@ -66,7 +69,7 @@ namespace TvEngine
     /// <param name="ciFilter">The CI filter.</param>
     /// <param name="info">A buffer containing the application information.</param>
     /// <returns>an HRESULT indicating whether the application information was successfully processed</returns>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate Int32 OnSmarDtvUsbCiApplicationInfo(IBaseFilter ciFilter, IntPtr info);
 
     /// <summary>
@@ -74,7 +77,7 @@ namespace TvEngine
     /// </summary>
     /// <param name="ciFilter">The CI filter.</param>
     /// <returns>an HRESULT indicating whether the MMI session was successfully closed</returns>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate Int32 OnSmarDtvUsbCiCloseMmi(IBaseFilter ciFilter);
 
     /// <summary>
@@ -84,7 +87,7 @@ namespace TvEngine
     /// <param name="apduLength">The length of the APDU buffer in bytes.</param>
     /// <param name="apdu">A buffer containing the APDU.</param>
     /// <returns>an HRESULT indicating whether the APDU was successfully processed</returns>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate Int32 OnSmarDtvUsbCiApdu(IBaseFilter ciFilter, Int32 apduLength, IntPtr apdu);
 
     #endregion
@@ -289,8 +292,7 @@ namespace TvEngine
       // products (we don't prevent explicitly prevent this). The TV Server plugin allows each OEM CI product
       // to be linked to a single tuner. Here we need to know whether this tuner (ie. the one associated with
       // the tuner filter and tuner device path) is currently linked to any of the products.
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Card tuner = layer.GetCardByDevicePath(tunerDevicePath);
+      Card tuner = CardManagement.GetCardByDevicePath(tunerDevicePath);
       if (tuner == null)
       {
         Log.Debug("SmarDTV USB CI: tuner device ID not found in database");
@@ -301,7 +303,7 @@ namespace TvEngine
       ReadOnlyCollection<SmarDtvUsbCiProduct> productList = SmarDtvUsbCiProducts.GetProductList();
       foreach (SmarDtvUsbCiProduct p in productList)
       {
-        if (!layer.GetSetting(p.DbSettingName, "-1").Value.Equals(tunerIdAsString))
+        if (SettingsManagement.GetSetting(p.DbSettingName, "-1").Value.Equals(tunerIdAsString))
         {
           continue;
         }
@@ -493,15 +495,15 @@ namespace TvEngine
     /// <summary>
     /// Get an instance of the configuration section for use in TV Server configuration (SetupTv).
     /// </summary>
-    public SetupTv.SectionSettings Setup
+    public Mediaportal.TV.Server.SetupControls.SectionSettings Setup
     {
-      get { return new SetupTv.Sections.SmarDtvUsbCiConfig(); }
+      get { return new SmarDtvUsbCiConfig(); }
     }
 
     /// <summary>
     /// Start this TV Server plugin.
     /// </summary>
-    public void Start(IController controller)
+    public void Start(IInternalControllerService controllerService)
     {
     }
 

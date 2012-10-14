@@ -24,12 +24,14 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using TvLibrary.Channels;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Device;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvEngine
+namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
 {
   /// <summary>
   /// A class for handling conditional access and DiSEqC for KNC One devices, including compatible models
@@ -323,7 +325,7 @@ namespace TvEngine
     /// <param name="menuTitle">The CAM root menu title. This will be blank when the CAM has not been completely
     ///   initialised. Typically this will be the same string as can be retrieved by KNCBDA_CI_GetName().</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnKncCiState(
       byte slotIndex, KncCiState state, [MarshalAs(UnmanagedType.LPStr)] String menuTitle, IntPtr context);
 
@@ -332,7 +334,7 @@ namespace TvEngine
     /// </summary>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnKncCiOpenDisplay(byte slotIndex, IntPtr context);
 
     /// <summary>
@@ -344,7 +346,7 @@ namespace TvEngine
     /// <param name="footer">The menu footer.</param>
     /// <param name="numEntries">The number of entries in the menu.</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnKncCiMenu(byte slotIndex, [MarshalAs(UnmanagedType.LPStr)] String title,
                                             [MarshalAs(UnmanagedType.LPStr)] String subTitle,
                                             [MarshalAs(UnmanagedType.LPStr)] String footer,
@@ -357,7 +359,7 @@ namespace TvEngine
     /// <param name="entryIndex">The index of the entry within the menu.</param>
     /// <param name="text">The text associated with the entry.</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnKncCiMenuEntry(
       byte slotIndex, UInt32 entryIndex, [MarshalAs(UnmanagedType.LPStr)] String text, IntPtr context);
 
@@ -369,7 +371,7 @@ namespace TvEngine
     /// <param name="answerLength">The expected answer length.</param>
     /// <param name="text">The request context text from the CAM.</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnKncCiRequest(
       byte slotIndex, bool blind, UInt32 answerLength, [MarshalAs(UnmanagedType.LPStr)] String text, IntPtr context);
 
@@ -379,7 +381,7 @@ namespace TvEngine
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="delay">The delay (in milliseconds) after which the menu should be closed.</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnKncCiCloseDisplay(byte slotIndex, UInt32 delay, IntPtr context);
 
     #endregion

@@ -19,14 +19,15 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using DirectShowLib;
-using TvLibrary.Implementations.Analog.Components;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
-using TvLibrary.Implementations;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.Analog
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
 {
   /// <summary>
   /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles analog tv cards
@@ -69,7 +70,7 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     public override void OnBeforeTune()
     {
-      Log.Log.WriteFile("analog subch:{0} OnBeforeTune", _subChannelId);
+      Log.WriteFile("analog subch:{0} OnBeforeTune", _subChannelId);
       if (IsTimeShifting)
       {
         if (_subChannelId >= 0)
@@ -85,7 +86,7 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     public override void OnAfterTune()
     {
-      Log.Log.WriteFile("analog subch:{0} OnAfterTune", _subChannelId);
+      Log.WriteFile("analog subch:{0} OnAfterTune", _subChannelId);
       if (IsTimeShifting)
       {
         if (_subChannelId >= 0)
@@ -100,7 +101,7 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     public override void OnGraphRunning()
     {
-      Log.Log.WriteFile("analog subch:{0} OnGraphRunning", _subChannelId);
+      Log.WriteFile("analog subch:{0} OnGraphRunning", _subChannelId);
       if (_teletextDecoder != null)
       {
         _teletextDecoder.ClearBuffer();
@@ -125,7 +126,7 @@ namespace TvLibrary.Implementations.Analog
     /// should be called when graph has been stopped
     /// Resets the graph state
     /// </summary>
-    public override void OnGraphStopped() {}
+    public override void OnGraphStopped() { }
 
     #endregion
 
@@ -141,7 +142,7 @@ namespace TvLibrary.Implementations.Analog
       {
         _card.Quality.StartPlayback();
       }
-      Log.Log.WriteFile("analog:SetTimeShiftFileName:{0}", fileName);
+      Log.WriteFile("analog:SetTimeShiftFileName:{0}", fileName);
       ScanParameters parameters = _card.Parameters;
       _mpRecord.SetVideoAudioObserver(_subChannelId, this);
       _mpRecord.SetTimeShiftParams(_subChannelId, parameters.MinimumFiles, parameters.MaximumFiles,
@@ -151,12 +152,12 @@ namespace TvLibrary.Implementations.Analog
       //  Set the channel type
       if (CurrentChannel == null)
       {
-        Log.Log.Error("Error, CurrentChannel is null when trying to start timeshifting");
+        Log.Error("Error, CurrentChannel is null when trying to start timeshifting");
         throw new Exception("AnalogSubChannel: current channel is null");
       }
 
       // Important: this call needs to be made *before* the call to StartTimeShifting().
-      _mpRecord.SetChannelType(_subChannelId, (CurrentChannel.IsTv ? 0 : 1));
+      _mpRecord.SetChannelType(_subChannelId, (CurrentChannel.MediaType == MediaTypeEnum.TV ? 0 : 1));
 
       _mpRecord.StartTimeShifting(_subChannelId);
     }
@@ -167,7 +168,7 @@ namespace TvLibrary.Implementations.Analog
     /// <returns></returns>
     protected override void OnStopTimeShifting()
     {
-      Log.Log.WriteFile("analog: StopTimeShifting()");
+      Log.WriteFile("analog: StopTimeShifting()");
       _mpRecord.SetVideoAudioObserver(_subChannelId, null);
       _mpRecord.StopTimeShifting(_subChannelId);
     }
@@ -183,12 +184,12 @@ namespace TvLibrary.Implementations.Analog
       {
         _card.Quality.StartRecord();
       }
-      Log.Log.WriteFile("analog:StartRecord({0})", fileName);
+      Log.WriteFile("analog:StartRecord({0})", fileName);
       _mpRecord.SetRecordingFileNameW(_subChannelId, fileName);
       _mpRecord.SetRecorderVideoAudioObserver(_subChannelId, this);
 
       // Important: this call needs to be made *before* the call to StartRecord().
-      _mpRecord.SetChannelType(_subChannelId, (CurrentChannel.IsTv ? 0 : 1));
+      _mpRecord.SetChannelType(_subChannelId, (CurrentChannel.MediaType == MediaTypeEnum.TV ? 0 : 1));
 
       _mpRecord.StartRecord(_subChannelId);
     }
@@ -199,7 +200,7 @@ namespace TvLibrary.Implementations.Analog
     /// <returns></returns>
     protected override void OnStopRecording()
     {
-      Log.Log.WriteFile("analog:StopRecord()");
+      Log.WriteFile("analog:StopRecord()");
       _mpRecord.StopRecord(_subChannelId);
       if (_card.SupportsQualityControl && IsTimeShifting)
       {

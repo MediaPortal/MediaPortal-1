@@ -21,8 +21,9 @@
 using System;
 using System.Collections;
 using System.Text.RegularExpressions;
+using Mediaportal.TV.Server.TvLibrary.Utils.Web.html;
 
-namespace MediaPortal.Utils.Web
+namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.Parser
 {
   /// <summary>
   /// Parses a section of HTML source for elements from a given template

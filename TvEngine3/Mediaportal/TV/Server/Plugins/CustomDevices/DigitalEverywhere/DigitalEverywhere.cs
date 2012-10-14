@@ -22,17 +22,17 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using TvLibrary;
-using TvLibrary.Channels;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Device;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvEngine
+namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
 {
   /// <summary>
   /// A class for handling conditional access, DiSEqC and PID filtering for Digital Everywhere devices.
@@ -1358,11 +1358,11 @@ namespace TvEngine
           DvbtMultiplexParams tuneRequest = new DvbtMultiplexParams();
           tuneRequest.Frequency = (UInt32)dvbtChannel.Frequency;
           tuneRequest.Bandwidth = DeOfdmBandwidth.Bandwidth8;
-          if (dvbtChannel.Bandwidth == 7)
+          if (dvbtChannel.BandWidth == 7)
           {
             tuneRequest.Bandwidth = DeOfdmBandwidth.Bandwidth7;
           }
-          else if (dvbtChannel.Bandwidth == 6)
+          else if (dvbtChannel.BandWidth == 6)
           {
             tuneRequest.Bandwidth = DeOfdmBandwidth.Bandwidth6;
           }

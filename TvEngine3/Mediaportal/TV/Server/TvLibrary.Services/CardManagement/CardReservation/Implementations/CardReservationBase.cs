@@ -24,56 +24,35 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using TvControl;
-using TvDatabase;
-using TvLibrary.Channels;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation;
+using Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Ticket;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Services;
+using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
+using Mediaportal.TV.Server.TVService.Interfaces.CardReservation;
+using Mediaportal.TV.Server.TVService.Interfaces.Enums;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
+
 #endregion
 
-namespace TvService
+namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Implementations
 {
   #region public enums
-  public enum CardTuneState
-  {
-    Idle,
-    TunePending,
-    Tuning,
-    Tuned,
-    TuneCancelled,
-    TuneFailed    
-  }
-
-  public enum CardStopState
-  {
-    Idle,
-    StopPending,
-    Stopping,
-    Stopped,
-    StopFailed
-  }
 
   #endregion
 
   public abstract class CardReservationBase : ICardReservation
-  {    
-    #region vars
-    protected readonly TVController _tvController;
-    #endregion
-
-    #region ctors
-    protected CardReservationBase(TVController tvController)
-    {
-      _tvController = tvController;
-    }
-    #endregion
-
+  {            
     #region events & delegates
 
-    public delegate TvResult StartCardTuneDelegate(ref IUser user, ref string fileName);
-    public event StartCardTuneDelegate OnStartCardTune;    
-
-    protected abstract bool OnStartTune(IUser user);
+    public delegate TvResult StartCardTuneDelegate(ref IUser user, ref string fileName, int idChannel);
+    public event StartCardTuneDelegate OnStartCardTune;
+   
+    protected abstract bool OnStartTune(ITvCardHandler tvcard, IUser user, int idChannel);
 
     #endregion    
 
@@ -119,12 +98,13 @@ namespace TvService
       {
         if (isTuningPending && ticketFound)
         {
+          //tvcard.ParkedUserManagement.CancelAllParkedChannelsForUser(user.Name); //we dont want to keep the old parked channel state, since we have changed channel now.
           tvResult = tvcard.Tuner.Tune(ref user, channel, idChannel);
 
           bool succes = (tvResult == TvResult.Succeeded);
           if (succes)
           {
-            if (!OnStartTune(user))
+            if (!OnStartTune(tvcard, user, idChannel))
             {
               tvResult = TvResult.AllCardsBusy;
             }
@@ -160,16 +140,17 @@ namespace TvService
           {
             if (OnStartCardTune != null)
             {
-              if (!_tvController.IsTimeShifting(ref user))
+              var subChannelByChannelId = tvcard.UserManagement.GetSubChannelIdByChannelId(user.Name, dbChannel.IdChannel);
+              if (!ServiceManager.Instance.InternalControllerService.IsTimeShifting(user.Name))
               {
-                CleanTimeShiftFiles(tvcard.DataBaseCard.TimeShiftFolder,
-                                    String.Format("live{0}-{1}.ts", user.CardId, user.SubChannel));
+                CleanTimeShiftFiles(tvcard.DataBaseCard.TimeshiftingFolder,
+                                    String.Format("live{0}-{1}.ts", user.CardId, subChannelByChannelId));
               }
 
-              string timeshiftFileName = String.Format(@"{0}\live{1}-{2}.ts", tvcard.DataBaseCard.TimeShiftFolder,
+              string timeshiftFileName = String.Format(@"{0}\live{1}-{2}.ts", tvcard.DataBaseCard.TimeshiftingFolder,
                                                        user.CardId,
-                                                       user.SubChannel);
-              tvResult = OnStartCardTune(ref user, ref timeshiftFileName);
+                                                       subChannelByChannelId);
+              tvResult = OnStartCardTune(ref user, ref timeshiftFileName, dbChannel.IdChannel);
             }
           }
 
@@ -187,11 +168,11 @@ namespace TvService
       return tvResult;
     }
 
-    public ICardTuneReservationTicket RequestCardTuneReservation(ITvCardHandler tvcard, IChannel tuningDetail, IUser user)
-    {
-      ICardTuneReservationTicket cardTuneReservationTicket = null;
-      var layer = new TvBusinessLayer();
 
+
+    public ICardTuneReservationTicket RequestCardTuneReservation(ITvCardHandler tvcard, IChannel tuningDetail, IUser user, int idChannel)
+    {
+      ICardTuneReservationTicket cardTuneReservationTicket = null;      
       CardTuneState cardTuneState;
       int ticketId = 0;
       bool isCardAvail;
@@ -231,12 +212,15 @@ namespace TvService
           tvcard.Tuner.CardTuneState = CardTuneState.TunePending;            
           bool isTunedToTransponder = IsTunedToTransponder(tvcard, tuningDetail);
 
-          if (isTunedToTransponder)
+          /*if (isTunedToTransponder)
           {
-            CheckTransponder(tvcard, tuningDetail, layer, user);
-          }
-
-          int ownerSubchannel = -1;
+           // no point here, as we dont check the bool return value ???
+            CheckTransponder(tvcard, tuningDetail, user);
+          }*/
+          long? channelTimeshiftingOnOtherMux;
+          var cardAllocation = new AdvancedCardAllocation();
+          cardAllocation.IsChannelTimeshiftingOnOtherMux(tvcard, idChannel, tuningDetail, out channelTimeshiftingOnOtherMux);
+          ISubChannel ownerSubchannel = null;
           int numberOfUsersOnSameCurrentChannel = 0;
           int numberOfOtherUsersOnSameChannel = 0;
           int numberOfOtherUsersOnCurrentCard = 0;
@@ -247,100 +231,99 @@ namespace TvService
           bool conflictingSubchannelFound = false;
           bool isRecordingAnyUser = false;
           bool isAnySubChannelTimeshifting = tvcard.TimeShifter.IsAnySubChannelTimeshifting;
-          bool isOwner = tvcard.Users.IsOwner(user);
-          var users = new List<IUser>(tvcard.Users.GetUsers());
+          bool isOwner = IsOwner(tvcard, user, idChannel);
+
+          List<KeyValuePair<string, IUser>> users = new Dictionary<string, IUser>(tvcard.UserManagement.UsersCopy).ToList();
           var inactiveUsers = new List<IUser>();
           var activeUsers = new List<IUser>();
           var recUsers = new List<IUser>();
           var tsUsers = new List<IUser>();
 
-          var context = tvcard.Card.Context as ITvCardContext;
-          if (context != null)
-          {
-            context.GetUser(ref user);
-            hasUserHighestPriority = context.HasUserHighestPriority(user);
-            hasUserEqualOrHigherPriority = context.HasUserEqualOrHigherPriority(user);
-          }          
+          
+          tvcard.UserManagement.RefreshUser(ref user);
+          hasUserHighestPriority = tvcard.UserManagement.HasUserHighestPriority(user);
+          hasUserEqualOrHigherPriority = tvcard.UserManagement.HasUserEqualOrHigherPriority(user);
+                    
 
-          int currentChannelId = tvcard.CurrentDbChannel(ref user);
+          int currentChannelId = tvcard.CurrentDbChannel(user.Name);          
+          int subChannelId = tvcard.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel);          
 
           for (int i = users.Count - 1; i > -1; i--)
           {
-            IUser actualUser = users[i];                           
-            CardReservationHelper.AddUserIfRecording(tvcard, ref actualUser, recUsers);
+            IUser actualUser = users[i].Value;
+            CardReservationHelper.AddUserIfRecording(tvcard, actualUser, recUsers);
             CardReservationHelper.AddUserIfTimeshifting(tvcard, ref actualUser, tsUsers);
 
             bool isCurrentUser = user.Name.Equals(actualUser.Name);
 
-            IChannel userChannel = tvcard.CurrentChannel(ref actualUser);
-            var userDVBchannel = userChannel as DVBBaseChannel;
-
-            if (!isCurrentUser)
+            foreach (ISubChannel subchannel in actualUser.SubChannels.Values)
             {
-              if (!isRecordingAnyUser)
-              {
-                isRecordingAnyUser = CardReservationHelper.IsRecordingUser(tvcard, user, ref actualUser);
-              }
+              bool isParked = subchannel != null && subchannel.TvUsage == TvUsage.Parked;
+              IChannel userChannel = tvcard.CurrentChannel(actualUser.Name, subchannel.IdChannel);
+              var userDVBchannel = userChannel as DVBBaseChannel;
 
-              if (actualUser.SubChannel == user.SubChannel && user.IdChannel > 0)
+              if (!isCurrentUser || (isCurrentUser && isParked))
               {
-                conflictingSubchannelFound = true;
-              }
-              numberOfOtherUsersOnCurrentCard = CardReservationHelper.GetNumberOfOtherUsersOnCurrentCard(user,
-                                                                                                         numberOfOtherUsersOnCurrentCard);
-
-              
-              if (userChannel == null)
-              {
-                inactiveUsers.Add(actualUser);
-              }
-              else
-              {                
-                if (userDVBchannel != null)
+                if (!isRecordingAnyUser)
                 {
-                  actualUser.IdChannel = layer.GetTuningDetail(userDVBchannel).IdChannel;
+                  isRecordingAnyUser = CardReservationHelper.IsRecordingUser(tvcard, user.UserType, actualUser.Name);
                 }
 
-                bool isDiffTS = tuningDetail.IsDifferentTransponder(userChannel);
-
-                if (isDiffTS)
+                if (idChannel > 0 && actualUser.SubChannels.ContainsKey(subChannelId))
                 {
-                  activeUsers.Add(actualUser);
+                  conflictingSubchannelFound = true;
+                }
+                numberOfOtherUsersOnCurrentCard = CardReservationHelper.GetNumberOfOtherUsersOnCurrentCard(user, numberOfOtherUsersOnCurrentCard);
+
+                if (userChannel == null)
+                {
+                  inactiveUsers.Add(actualUser);
                 }
                 else
                 {
-                  if (!isOwner)
+                  if (userDVBchannel != null)
                   {
-                    bool isUserOnSameChannel = CardReservationHelper.IsUserOnSameChannel(tuningDetail, layer,
-                                                                                         userDVBchannel);
+                    subchannel.IdChannel = ChannelManagement.GetTuningDetail(userDVBchannel).IdChannel;
+                  }
+
+                  bool isDiffTS = tuningDetail.IsDifferentTransponder(userChannel);
+
+                  if (isDiffTS)
+                  {
+                    activeUsers.Add(actualUser); 
+                  }                                    
+                  else if (!isOwner)
+                  {
+                    bool isUserOnSameChannel = CardReservationHelper.IsUserOnSameChannel(tuningDetail, userDVBchannel);
                     if (isUserOnSameChannel)
                     {
                       numberOfOtherUsersOnSameChannel++;
                       //we do not want to hook up on schedulers existing subchannel
-                      if (!actualUser.IsAdmin)
+                      if (actualUser.UserType != UserType.Scheduler)
                       {
-                        ownerSubchannel = actualUser.SubChannel;
+                        ownerSubchannel = subchannel;
                       }
-                    }                    
-                  }                  
+                    }
+                  }
                 }
               }
-            }
 
-            bool isUserOnSameCurrentChannel = CardReservationHelper.IsUserOnSameCurrentChannel(currentChannelId, actualUser);
-            if (isUserOnSameCurrentChannel)
-            {
-              numberOfUsersOnSameCurrentChannel++;
-            }
+              bool isUserOnSameCurrentChannel = CardReservationHelper.IsUserOnSameCurrentChannel(currentChannelId, actualUser);
+              if (isUserOnSameCurrentChannel)
+              {
+                numberOfUsersOnSameCurrentChannel++;
+              }
 
-            if (!isCamAlreadyDecodingChannel)
-            {
-              isCamAlreadyDecodingChannel = IsCamAlreadyDecodingChannel(tuningDetail, userChannel);
+              if (!isCamAlreadyDecodingChannel)
+              {
+                isCamAlreadyDecodingChannel = IsCamAlreadyDecodingChannel(tuningDetail, userChannel);
+              }
             }
           }
 
-          bool isFreeToAir = CardReservationHelper.IsFreeToAir(tvcard, user);
+          bool isFreeToAir = CardReservationHelper.IsFreeToAir(tvcard, user.Name, idChannel);
 
+          
           cardTuneReservationTicket = new CardTuneReservationTicket
               (                
               user,
@@ -363,10 +346,11 @@ namespace TvService
               numberOfUsersOnSameCurrentChannel,
               isCamAlreadyDecodingChannel,
               hasUserHighestPriority,
-              hasUserEqualOrHigherPriority);
+              hasUserEqualOrHigherPriority,
+              channelTimeshiftingOnOtherMux);
           tvcard.Tuner.ActiveCardTuneReservationTicket = cardTuneReservationTicket;
           tvcard.Tuner.ReservationsForTune.Add(cardTuneReservationTicket);          
-        }
+        }        
 
         cardTuneState = tvcard.Tuner.CardTuneState;        
         if (tvcard.Tuner.ActiveCardTuneReservationTicket != null)
@@ -392,7 +376,23 @@ namespace TvService
         }
       }              
       return cardTuneReservationTicket;
-    }    
+    }
+
+    
+
+    private static bool IsOwner(ITvCardHandler tvcard, IUser user, int idChannel)
+    {
+      bool isOwner = tvcard.UserManagement.IsOwner(user.Name);
+
+      if (isOwner)
+      {
+        if (tvcard.ParkedUserManagement.IsUserParkedOnChannel(user.Name, idChannel))
+        {
+          isOwner = false;
+        }
+      }
+      return isOwner;
+    }
 
     private static bool IsCardAvail(ITvCardHandler tvcard)
     {
@@ -423,7 +423,7 @@ namespace TvService
       if (blockingUser != null)
       {
         hasUserHigherPriority = (user.Priority > blockingUser.Priority);
-        Log.Debug("CardReservationBase.HasUserHigherPriorityThanBlockingUser: {0} - user '{1}' with prio={2} vs blocking user '{3}' with prio={4}", hasUserHigherPriority, 
+        Log.Debug("CardReservationBase.HasUserHigherPriorityThanBlockingUser: {0} - user '{1}' with prio={2} vs blocking user '{3}' with prio={4}", hasUserHigherPriority,
           user.Name, user.Priority, blockingUser.Name, blockingUser.Priority);
       }
 
@@ -445,11 +445,11 @@ namespace TvService
       return isCamAlreadyDecodingChannel;
     }
 
-    private void CheckTransponder(ITvCardHandler tvcard, IChannel tuningDetail, TvBusinessLayer layer, IUser user)
+    /*private void CheckTransponder(ITvCardHandler tvcard, IChannel tuningDetail, IUser user)
     {
-      var cardAlloc = new AdvancedCardAllocation(layer, _tvController);
+      var cardAlloc = new AdvancedCardAllocation();
       cardAlloc.CheckTransponder(user, tvcard, tuningDetail);
-    }      
+    } */     
 
     #endregion
 

@@ -21,23 +21,24 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using TvControl;
-using SetupTv;
+using Castle.Core;
+using Mediaportal.TV.Server.Plugins.Base;
+using Mediaportal.TV.Server.Plugins.Base.Interfaces;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVControl.Interfaces;
+using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
 #endregion
 
-namespace TvEngine.PowerScheduler
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler
 {
-  public class PowerSchedulerPlugin : ITvServerPlugin
+  [Interceptor("PluginExceptionInterceptor")]
+  public class PowerSchedulerPlugin : ITvServerPlugin, ITvServerPluginCommunciation
   {
     #region Variables
-
-    /// <summary>
-    /// Reference to the tvservice's TVcontroller
-    /// </summary>
-    private IController _controller;
 
     #endregion
 
@@ -55,11 +56,10 @@ namespace TvEngine.PowerScheduler
     /// <summary>
     /// Called by the tvservice PluginLoader to start the PowerScheduler plugin
     /// </summary>
-    /// <param name="controller">Reference to the tvservice's TVController</param>
-    public void Start(IController controller)
+    /// <param name="controllerService">Reference to the tvservice's TVController</param>
+    public void Start(IInternalControllerService controllerService)
     {
-      _controller = controller;
-      PowerScheduler.Instance.Start(controller);
+      PowerScheduler.Instance.Start(controllerService);
     }
 
     /// <summary>
@@ -118,6 +118,26 @@ namespace TvEngine.PowerScheduler
     public string Version
     {
       get { return "0.1.0.0"; }
+    }
+
+    #endregion
+
+    #region ITvServerPluginCommunciation
+
+    public object GetServiceInstance
+    {
+      get
+      {
+        return PowerScheduler.Instance;
+      }
+    }
+
+    /// <summary>
+    /// Supply a service class interface for client-server plugin communication
+    /// </summary>
+    public Type GetServiceInterfaceForContractType
+    {
+      get { return typeof(IPowerController); }
     }
 
     #endregion

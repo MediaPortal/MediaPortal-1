@@ -19,9 +19,9 @@
 #endregion
 
 using System;
-using TvLibrary.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 
-namespace TvLibrary.Interfaces.Device
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
 {
   #region enums
 
@@ -680,7 +680,7 @@ namespace TvLibrary.Interfaces.Device
     /// </summary>
     /// <param name="direction">The direction to move in.</param>
     /// <param name="steps">The number of position steps to move.</param>
-    void DriveMotor(DiseqcDirection direction, byte steps);
+    void DriveMotor(DiSEqCDirection direction, byte steps);
 
     /// <summary>
     /// Store the current position of a positioner device for later use.

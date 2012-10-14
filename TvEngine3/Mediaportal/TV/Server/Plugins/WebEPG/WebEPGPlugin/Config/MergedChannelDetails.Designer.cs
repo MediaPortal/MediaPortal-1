@@ -1,4 +1,6 @@
-namespace SetupTv.Sections.WebEPGConfig
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
 {
   partial class MergedChannelDetails
   {
@@ -28,15 +30,15 @@ namespace SetupTv.Sections.WebEPGConfig
     /// </summary>
     private void InitializeComponent()
     {
-      this.gbGrabber = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.tbGrabDays = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.lGuideDays = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.bGrabber = new MediaPortal.UserInterface.Controls.MPButton();
-      this.Grabber = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbGrabSite = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.bChannelID = new MediaPortal.UserInterface.Controls.MPButton();
-      this.l_cID = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbChannelName = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.gbGrabber = new MPGroupBox();
+      this.tbGrabDays = new MPTextBox();
+      this.lGuideDays = new MPLabel();
+      this.bGrabber = new MPButton();
+      this.Grabber = new MPLabel();
+      this.tbGrabSite = new MPTextBox();
+      this.bChannelID = new MPButton();
+      this.l_cID = new MPLabel();
+      this.tbChannelName = new MPTextBox();
       this.bOk = new System.Windows.Forms.Button();
       this.bCancel = new System.Windows.Forms.Button();
       this.gbMergeTime = new System.Windows.Forms.GroupBox();
@@ -227,15 +229,15 @@ namespace SetupTv.Sections.WebEPGConfig
 
     #endregion
 
-    private MediaPortal.UserInterface.Controls.MPGroupBox gbGrabber;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbGrabDays;
-    private MediaPortal.UserInterface.Controls.MPLabel lGuideDays;
-    private MediaPortal.UserInterface.Controls.MPButton bGrabber;
-    private MediaPortal.UserInterface.Controls.MPLabel Grabber;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbGrabSite;
-    private MediaPortal.UserInterface.Controls.MPButton bChannelID;
-    private MediaPortal.UserInterface.Controls.MPLabel l_cID;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbChannelName;
+    private MPGroupBox gbGrabber;
+    private MPTextBox tbGrabDays;
+    private MPLabel lGuideDays;
+    private MPButton bGrabber;
+    private MPLabel Grabber;
+    private MPTextBox tbGrabSite;
+    private MPButton bChannelID;
+    private MPLabel l_cID;
+    private MPTextBox tbChannelName;
     private System.Windows.Forms.Button bOk;
     private System.Windows.Forms.Button bCancel;
     private System.Windows.Forms.GroupBox gbMergeTime;

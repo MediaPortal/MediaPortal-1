@@ -20,17 +20,20 @@
 
 using System;
 using System.Runtime.InteropServices;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 //using MediaPortal.GUI.Library;
 
-namespace TvEngine
+namespace Mediaportal.TV.Server.Plugins.ServerBlaster
 {
   /// <summary>
   /// Summary description for HCWIRBlaster.
   /// </summary>
   public class HCWIRBlaster
   {
+    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern IntPtr LoadLibraryEx(string fileName, IntPtr dummy, int flags);
+
     [DllImport("hcwIRblast.dll")]
     private static extern int UIR_Close();
 

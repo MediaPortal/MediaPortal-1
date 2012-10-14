@@ -21,7 +21,7 @@
 using System;
 using System.Xml;
 
-namespace TvLibrary.Implementations.Analog.GraphComponents
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.GraphComponents
 {
 
   #region enum
@@ -79,7 +79,7 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
 
     #region cotr
 
-    private Tuner() {}
+    private Tuner() { }
 
     #endregion
 

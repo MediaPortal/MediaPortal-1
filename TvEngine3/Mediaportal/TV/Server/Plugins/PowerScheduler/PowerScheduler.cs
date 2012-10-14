@@ -22,27 +22,25 @@
 
 using System;
 using System.Collections;
-using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Http;
-using TvControl;
-using TvDatabase;
-using TvEngine.Interfaces;
-using TvEngine.PowerScheduler.Handlers;
-using TvEngine.PowerScheduler.Interfaces;
-using TvLibrary.Log;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.Plugins.Base.Interfaces;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVControl.Interfaces;
+using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using System.Runtime.InteropServices;
 using System.Threading;
-using Gentle.Common;
+using TvEngine.PowerScheduler.Interfaces;
 
 #endregion
 
-namespace TvEngine.PowerScheduler
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler
 {
   /// <summary>
   /// PowerScheduler: tvservice plugin which controls power management
@@ -67,7 +65,7 @@ namespace TvEngine.PowerScheduler
     /// <summary>
     /// Reference to tvservice's TVController
     /// </summary>
-    private IController _controller;
+    private IInternalControllerService _controllerService;
 
     /// <summary>
     /// Factory for creating various IStandbyHandlers/IWakeupHandlers
@@ -163,7 +161,7 @@ namespace TvEngine.PowerScheduler
     /// <summary>
     /// Creates a new PowerScheduler plugin and performs the one-time initialization
     /// </summary>
-    private PowerScheduler()
+    internal PowerScheduler()
     {
       _standbyHandlers = new List<IStandbyHandler>();
       _wakeupHandlers = new List<IWakeupHandler>();
@@ -186,8 +184,11 @@ namespace TvEngine.PowerScheduler
       try
       {
         // disable the wakeup timer
-        _wakeupTimer.SecondsToWait = -1;
-        _wakeupTimer.Close();
+        if (_wakeupTimer != null)
+        {
+          _wakeupTimer.SecondsToWait = -1;
+          _wakeupTimer.Close();
+        }
       }
       catch (ObjectDisposedException) {}
       catch (AppDomainUnloadedException appex)
@@ -205,9 +206,9 @@ namespace TvEngine.PowerScheduler
     /// <summary>
     /// Called by the PowerSchedulerPlugin to start the PowerScheduler
     /// </summary>
-    /// <param name="controller">TVController from the tvservice</param>
+    /// <param name="controllerService">TVController from the tvservice</param>
     [MethodImpl(MethodImplOptions.Synchronized)]
-    public void Start(IController controller)
+    public void Start(IInternalControllerService controllerService)
     {
       try
       {
@@ -220,7 +221,7 @@ namespace TvEngine.PowerScheduler
         Log.Error("Powerscheduler: Error naming thread - {0}", ex.Message);
       }
 
-      _controller = controller;
+      _controllerService = controllerService;
 
       Register(_clientStandbyHandler);
       Register(_clientWakeupHandler);
@@ -241,13 +242,13 @@ namespace TvEngine.PowerScheduler
       }
 
       // Configure remoting if not already done
-      StartRemoting();
+      //StartRemoting();
 
       LoadSettings();
 
       // Create the default set of standby/resume handlers
       if (_factory == null)
-        _factory = new PowerSchedulerFactory(controller);
+        _factory = new PowerSchedulerFactory(controllerService);
       _factory.CreateDefaultSet();
 
       SendPowerSchedulerEvent(PowerSchedulerEventType.Started);
@@ -319,7 +320,7 @@ namespace TvEngine.PowerScheduler
     /// <summary>
     /// Configure remoting for power control from MP
     /// </summary>
-    private void StartRemoting()
+    /*private void StartRemoting()
     {
       if (_remotingStarted)
         return;
@@ -336,12 +337,11 @@ namespace TvEngine.PowerScheduler
       }
       catch (RemotingException) {}
       catch (System.Net.Sockets.SocketException) {}
-      // RemotingConfiguration.RegisterWellKnownServiceType(typeof(PowerScheduler), "PowerControl", WellKnownObjectMode.Singleton);
       ObjRef objref = RemotingServices.Marshal(this, "PowerControl", typeof (IPowerController));
       RemotePowerControl.Clear();
       Log.Debug("PowerScheduler: Registered PowerScheduler as \"PowerControl\" remoting service");
       _remotingStarted = true;
-    }
+    }*/
 
     #endregion
 
@@ -442,10 +442,10 @@ namespace TvEngine.PowerScheduler
       switch (_settings.ShutdownMode)
       {
         case ShutdownMode.Suspend:
-          SuspendSystem(source, (int)RestartOptions.Suspend, force);
+          SuspendSystemWithOptions(source, (int)RestartOptions.Suspend, force);
           break;
         case ShutdownMode.Hibernate:
-          SuspendSystem(source, (int)RestartOptions.Hibernate, force);
+          SuspendSystemWithOptions(source, (int)RestartOptions.Hibernate, force);
           break;
         case ShutdownMode.StayOn:
           Log.Debug("PowerScheduler: Standby requested but system is configured to stay on");
@@ -478,7 +478,7 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     /// <param name="force">should the system be forced to enter standby?</param>
     /// <returns>bool indicating whether or not the request was honoured</returns>
-    public void SuspendSystem(string source, int how, bool force)
+    public void SuspendSystemWithOptions(string source, int how, bool force)
     {
       lock (this)
       {
@@ -638,14 +638,14 @@ namespace TvEngine.PowerScheduler
     /// <summary>
     /// Indicates whether or not the client is connected to the server (or not)
     /// </summary>
-    public bool IsConnected
+    public bool IsConnected()
     {
-      get { return true; }
+      return true;
     }
 
-    public IPowerSettings PowerSettings
+    public IPowerSettings PowerSettings()
     {
-      get { return _settings; }
+      return _settings;
     }
 
     private int _remoteTags = 0;
@@ -835,9 +835,7 @@ namespace TvEngine.PowerScheduler
             if (reload++ == _reloadInterval)
             {
               reload = 0;
-              CheckForStandby(true);
-              // Clear cache
-              CacheManager.Clear();
+              CheckForStandby(true);              
               GC.Collect();
               LoadSettings();
               SendPowerSchedulerEvent(PowerSchedulerEventType.Elapsed);
@@ -869,11 +867,11 @@ namespace TvEngine.PowerScheduler
       if (_settings == null)
         _settings = new PowerSettings();
 
-      TvBusinessLayer layer = new TvBusinessLayer();
+      
 
       // Check if PowerScheduler should log verbose debug messages
       if (_settings.ExtensiveLogging !=
-          Convert.ToBoolean(layer.GetSetting("PowerSchedulerExtensiveLogging", "false").Value))
+          Convert.ToBoolean(SettingsManagement.GetSetting("PowerSchedulerExtensiveLogging", "false").Value))
       {
         _settings.ExtensiveLogging = !_settings.ExtensiveLogging;
         Log.Debug("PowerScheduler: extensive logging enabled: {0}", _settings.ExtensiveLogging);
@@ -881,21 +879,21 @@ namespace TvEngine.PowerScheduler
       }
       // Check if PowerScheduler should actively put the system into standby
       if (_settings.ShutdownEnabled !=
-          Convert.ToBoolean(layer.GetSetting("PowerSchedulerShutdownActive", "false").Value))
+          Convert.ToBoolean(SettingsManagement.GetSetting("PowerSchedulerShutdownActive", "false").Value))
       {
         _settings.ShutdownEnabled = !_settings.ShutdownEnabled;
         LogVerbose("PowerScheduler: entering standby is enabled: {0}", _settings.ShutdownEnabled);
         changed = true;
       }
       // Check if PowerScheduler should wakeup the system automatically
-      if (_settings.WakeupEnabled != Convert.ToBoolean(layer.GetSetting("PowerSchedulerWakeupActive", "false").Value))
+      if (_settings.WakeupEnabled != Convert.ToBoolean(SettingsManagement.GetSetting("PowerSchedulerWakeupActive", "false").Value))
       {
         _settings.WakeupEnabled = !_settings.WakeupEnabled;
         LogVerbose("PowerScheduler: automatic wakeup is enabled: {0}", _settings.WakeupEnabled);
         changed = true;
       }
       // Check if PowerScheduler should force the system into suspend/hibernate
-      if (_settings.ForceShutdown != Convert.ToBoolean(layer.GetSetting("PowerSchedulerForceShutdown", "false").Value))
+      if (_settings.ForceShutdown != Convert.ToBoolean(SettingsManagement.GetSetting("PowerSchedulerForceShutdown", "false").Value))
       {
         _settings.ForceShutdown = !_settings.ForceShutdown;
         LogVerbose("PowerScheduler: force shutdown enabled: {0}", _settings.ForceShutdown);
@@ -903,7 +901,7 @@ namespace TvEngine.PowerScheduler
       }
       // Check if PowerScheduler should reinitialize the TVController after wakeup
       if (_settings.ReinitializeController !=
-          Convert.ToBoolean(layer.GetSetting("PowerSchedulerReinitializeController", "false").Value))
+          Convert.ToBoolean(SettingsManagement.GetSetting("PowerSchedulerReinitializeController", "false").Value))
       {
         _settings.ReinitializeController = !_settings.ReinitializeController;
         LogVerbose("PowerScheduler: Reinitialize controller on wakeup: {0}", _settings.ReinitializeController);
@@ -911,7 +909,7 @@ namespace TvEngine.PowerScheduler
       }
 
       PowerSetting pSetting = _settings.GetSetting("ExternalCommand");
-      string sSetting = layer.GetSetting("PowerSchedulerCommand", String.Empty).Value;
+      string sSetting = SettingsManagement.GetSetting("PowerSchedulerCommand", String.Empty).Value;
       if (!sSetting.Equals(pSetting.Get<string>()))
       {
         pSetting.Set<string>(sSetting);
@@ -920,7 +918,7 @@ namespace TvEngine.PowerScheduler
       }
 
       // Check configured PowerScheduler idle timeout
-      setting = Int32.Parse(layer.GetSetting("PowerSchedulerIdleTimeout", "5").Value);
+      setting = Int32.Parse(SettingsManagement.GetSetting("PowerSchedulerIdleTimeout", "5").Value);
       if (_settings.IdleTimeout != setting)
       {
         _settings.IdleTimeout = setting;
@@ -928,7 +926,7 @@ namespace TvEngine.PowerScheduler
         changed = true;
       }
       // Check configured pre-wakeup time
-      setting = Int32.Parse(layer.GetSetting("PowerSchedulerPreWakeupTime", "60").Value);
+      setting = Int32.Parse(SettingsManagement.GetSetting("PowerSchedulerPreWakeupTime", "60").Value);
       if (_settings.PreWakeupTime != setting)
       {
         _settings.PreWakeupTime = setting;
@@ -937,7 +935,7 @@ namespace TvEngine.PowerScheduler
       }
 
       // Check configured pre-no-shutdown time
-      setting = Int32.Parse(layer.GetSetting("PowerSchedulerPreNoShutdownTime", "120").Value);
+      setting = Int32.Parse(SettingsManagement.GetSetting("PowerSchedulerPreNoShutdownTime", "120").Value);
       if (_settings.PreNoShutdownTime != setting)
       {
         _settings.PreNoShutdownTime = setting;
@@ -946,7 +944,7 @@ namespace TvEngine.PowerScheduler
       }
 
       // Check if check interval needs to be updated
-      setting = Int32.Parse(layer.GetSetting("PowerSchedulerCheckInterval", "60").Value);
+      setting = Int32.Parse(SettingsManagement.GetSetting("PowerSchedulerCheckInterval", "60").Value);
       if (_settings.CheckInterval != setting)
       {
         _settings.CheckInterval = setting;
@@ -955,7 +953,7 @@ namespace TvEngine.PowerScheduler
         changed = true;
       }
       // Check configured shutdown mode
-      setting = Int32.Parse(layer.GetSetting("PowerSchedulerShutdownMode", "2").Value);
+      setting = Int32.Parse(SettingsManagement.GetSetting("PowerSchedulerShutdownMode", "2").Value);
       if ((int)_settings.ShutdownMode != setting)
       {
         _settings.ShutdownMode = (ShutdownMode)setting;
@@ -964,7 +962,7 @@ namespace TvEngine.PowerScheduler
       }
 
       // Check allowed stop time
-      setting = Int32.Parse(layer.GetSetting("PowerSchedulerStandbyAllowedEnd", "24").Value);
+      setting = Int32.Parse(SettingsManagement.GetSetting("PowerSchedulerStandbyAllowedEnd", "24").Value);
       if (_settings.AllowedSleepStopTime != setting)
       {
         _settings.AllowedSleepStopTime = setting;
@@ -973,7 +971,7 @@ namespace TvEngine.PowerScheduler
       }
 
       // Check configured allowed start time
-      setting = Int32.Parse(layer.GetSetting("PowerSchedulerStandbyAllowedStart", "0").Value);
+      setting = Int32.Parse(SettingsManagement.GetSetting("PowerSchedulerStandbyAllowedStart", "0").Value);
       if (_settings.AllowedSleepStartTime != setting)
       {
         _settings.AllowedSleepStartTime = setting;
@@ -1113,7 +1111,7 @@ namespace TvEngine.PowerScheduler
           {
             Log.Debug("PowerScheduler: Suspend queried, starting suspend sequence");
             // Always try to Hibernate (S4). If system is set to S3, then Hibernate will fail and result will be S3
-            SuspendSystem("System", (int)RestartOptions.Hibernate, false);
+            SuspendSystemWithOptions("System", (int)RestartOptions.Hibernate, false);
             return false;
           }
           return true;
@@ -1145,7 +1143,7 @@ namespace TvEngine.PowerScheduler
         Log.Debug("PowerScheduler: System is going to standby");
       _denySuspendQuery = true; // reset the flag
       _standby = true;
-      _controller.EpgGrabberEnabled = false;
+      _controllerService.EpgGrabberEnabled = false;
       SetWakeupTimer();
       DeInitController();
       RunExternalCommand("suspend");
@@ -1184,8 +1182,8 @@ namespace TvEngine.PowerScheduler
         ReInitController();
       }
 
-      if (!_controller.EpgGrabberEnabled)
-        _controller.EpgGrabberEnabled = true;
+      if (!_controllerService.EpgGrabberEnabled)
+        _controllerService.EpgGrabberEnabled = true;
       SendPowerSchedulerEvent(PowerSchedulerEventType.ResumedFromStandby);
     }
 
@@ -1358,11 +1356,11 @@ namespace TvEngine.PowerScheduler
       if (!_settings.ReinitializeController)
         return;
 
-      TvService.TVController controller = _controller as TvService.TVController;
-      if (controller != null)
+
+      if (_controllerService != null)
       {
         Log.Debug("PowerScheduler: DeInit controller");
-        controller.DeInit();
+        _controllerService.DeInit();
         _cardsStopped = true;
         _reinitializeController = true;
       }
@@ -1379,12 +1377,12 @@ namespace TvEngine.PowerScheduler
       if (!_settings.ReinitializeController)
         return;
 
-      TvService.TVController controller = _controller as TvService.TVController;
-      if (controller != null && _reinitializeController)
+
+      if (_controllerService != null && _reinitializeController)
       {
         Log.Debug("PowerScheduler: ReInit Controller");
         Thread.Sleep(5000); // Give it a few seconds.
-        controller.Init();
+        _controllerService.Init();
         _reinitializeController = false;
         _cardsStopped = false;
       }

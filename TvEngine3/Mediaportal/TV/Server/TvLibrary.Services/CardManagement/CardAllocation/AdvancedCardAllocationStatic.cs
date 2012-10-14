@@ -17,20 +17,14 @@
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 #endregion
 
-using System.Collections.Generic;
-using TvControl;
-using TvDatabase;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
-namespace TvService
+namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 {
   public class AdvancedCardAllocationStatic : AdvancedCardAllocation
   {
-    public AdvancedCardAllocationStatic(TvBusinessLayer businessLayer, TVController controller)
-      : base(businessLayer, controller)
-    {      
-    }    
-
     #region overrides
 
     public override bool CheckTransponder(IUser user, ITvCardHandler tvcard, IChannel tuningDetail)

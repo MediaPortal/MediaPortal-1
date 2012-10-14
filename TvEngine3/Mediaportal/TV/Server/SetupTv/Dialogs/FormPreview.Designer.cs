@@ -1,4 +1,4 @@
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   partial class FormPreview
   {

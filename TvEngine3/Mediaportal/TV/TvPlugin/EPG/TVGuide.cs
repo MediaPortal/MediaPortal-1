@@ -24,17 +24,16 @@ using MediaPortal.GUI.Library;
 
 #endregion
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin.EPG
 {
-  public class TVGuide : TvGuideBase
+  public sealed class TVGuide : TvGuideBase
   {
-    [SkinControl(98)] protected GUIImage videoBackground;
-    [SkinControl(99)] protected GUIVideoControl videoWindow;
+    [SkinControl(98)] private GUIImage _videoBackground;
+    [SkinControl(99)] private GUIVideoControl _videoWindow;
 
     #region Ctor
 
     public TVGuide()
-      : base()
     {
       GetID = (int)Window.WINDOW_TVGUIDE;
     }
@@ -45,9 +44,8 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      bool result = Load(GUIGraphicsContext.GetThemedSkinFile(@"\mytvguide.xml"));
+      bool result = Load(GUIGraphicsContext.Skin + @"\mytvguide.xml");
       GetID = (int)Window.WINDOW_TVGUIDE;
-      Initialize();
       return result;
     }
 

@@ -20,7 +20,7 @@
 
 using System.Xml;
 
-namespace TvLibrary.Implementations.Analog.GraphComponents
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.GraphComponents
 {
   /// <summary>
   /// An analog graph

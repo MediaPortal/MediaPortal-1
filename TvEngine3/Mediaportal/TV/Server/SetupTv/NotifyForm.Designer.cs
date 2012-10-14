@@ -1,4 +1,4 @@
-namespace SetupTv
+namespace Mediaportal.TV.Server.SetupTV
 {
   partial class NotifyForm
   {

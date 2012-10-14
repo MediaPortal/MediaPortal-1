@@ -18,9 +18,10 @@
 
 #endregion
 
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvLibrary.Streaming
+namespace Mediaportal.TV.Server.TVLibrary.Streaming
 {
   /// <summary>
   /// Class describing a single rtsp stream
@@ -33,7 +34,7 @@ namespace TvLibrary.Streaming
     private readonly string _streamName;
     private readonly ITVCard _card;
     private readonly string _recording;
-    private readonly bool _isTv;
+    private readonly MediaTypeEnum _mediaType;
 
     #endregion
 
@@ -46,13 +47,13 @@ namespace TvLibrary.Streaming
     /// <param name="fileName">Name of the file.</param>
     /// <param name="card">The card.</param>
     /// <param name="bool">True if the stream originates from a tv channel, false for a radio channel</param>
-    public RtspStream(string streamName, string fileName, ITVCard card, bool isTv)
+    public RtspStream(string streamName, string fileName, ITVCard card, MediaTypeEnum mediaType)
     {
       _streamName = streamName;
       _fileName = fileName;
       _recording = "";
       _card = card;
-      _isTv = isTv;
+      _mediaType = mediaType;
     }
 
     /// <summary>
@@ -108,13 +109,11 @@ namespace TvLibrary.Streaming
     {
       get { return _card; }
     }
+   
 
-    /// <summary>
-    /// Gets if the stream originates from a tv channel (false for radio)
-    /// </summary>
-    public bool IsTv
+    public MediaTypeEnum MediaType
     {
-      get { return _isTv; }
+      get { return _mediaType; }      
     }
 
     #endregion

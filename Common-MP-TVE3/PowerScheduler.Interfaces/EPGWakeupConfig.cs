@@ -27,7 +27,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 #endregion
 
-namespace TvEngine.PowerScheduler
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces
 {
 
   #region Enums

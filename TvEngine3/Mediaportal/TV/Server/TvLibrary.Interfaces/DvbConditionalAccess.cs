@@ -24,8 +24,10 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Interfaces
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
   #region enums
 
@@ -1674,26 +1676,26 @@ namespace TvLibrary.Interfaces
     /// <returns>a fully populated cat instance if the section is valid, otherwise <c>null</c></returns>
     public static Cat Decode(byte[] data)
     {
-      Log.Log.Debug("CAT: decode");
+      Log.Debug("CAT: decode");
       if (data == null || data.Length < 12)
       {
-        Log.Log.Debug("CAT: CAT not supplied or too short");
+        Log.Debug("CAT: CAT not supplied or too short");
         return null;
       }
 
       if (data[0] != 0x01)
       {
-        Log.Log.Debug("CAT: invalid table ID");
+        Log.Debug("CAT: invalid table ID");
         return null;
       }
       if ((data[1] & 0x80) != 0x80)
       {
-        Log.Log.Debug("CAT: section syntax indicator is not 1");
+        Log.Debug("CAT: section syntax indicator is not 1");
         return null;
       }
       if ((data[1] & 0x40) != 0)
       {
-        Log.Log.Debug("CAT: corruption detected (zero)");
+        Log.Debug("CAT: corruption detected (zero)");
         return null;
       }
 
@@ -1703,7 +1705,7 @@ namespace TvLibrary.Interfaces
       cat._sectionLength = (UInt16)(((data[1] & 0x0f) << 8) + data[2]);
       if (3 + cat._sectionLength > data.Length)
       {
-        Log.Log.Debug("CAT: section length is invalid");
+        Log.Debug("CAT: section length is invalid");
         return null;
       }
 
@@ -1722,7 +1724,7 @@ namespace TvLibrary.Interfaces
         IDescriptor d = Descriptor.Decode(data, offset);
         if (d == null)
         {
-          Log.Log.Debug("CAT: descriptor {0} is invalid", cat._descriptors.Count + cat._caDescriptors.Count + 1);
+          Log.Debug("CAT: descriptor {0} is invalid", cat._descriptors.Count + cat._caDescriptors.Count + 1);
           return null;
         }
         offset += d.Length + 2;
@@ -1737,7 +1739,7 @@ namespace TvLibrary.Interfaces
       }
       if (offset != endDescriptors)
       {
-        Log.Log.Debug("CAT: corruption detected (descriptors)");
+        Log.Debug("CAT: corruption detected (descriptors)");
         return null;
       }
 
@@ -1768,17 +1770,17 @@ namespace TvLibrary.Interfaces
     /// </summary>
     public void Dump()
     {
-      Log.Log.Debug("CAT: dump...");
+      Log.Debug("CAT: dump...");
       DVB_MMI.DumpBinary(_rawCat, 0, _rawCat.Length);
-      Log.Log.Debug("  table ID                 = {0}", _tableId);
-      Log.Log.Debug("  section syntax indicator = {0}", _sectionSyntaxIndicator);
-      Log.Log.Debug("  section length           = {0}", _sectionLength);
-      Log.Log.Debug("  version                  = {0}", _version);
-      Log.Log.Debug("  current next indicator   = {0}", _currentNextIndicator);
-      Log.Log.Debug("  section number           = {0}", _sectionNumber);
-      Log.Log.Debug("  last section number      = {0}", _lastSectionNumber);
-      Log.Log.Debug("  CRC                      = 0x{0:x}{1:x}{2:x}{3:x}", _crc[0], _crc[1], _crc[2], _crc[3]);
-      Log.Log.Debug("  {0} descriptor(s)...", _descriptors.Count + _caDescriptors.Count);
+      Log.Debug("  table ID                 = {0}", _tableId);
+      Log.Debug("  section syntax indicator = {0}", _sectionSyntaxIndicator);
+      Log.Debug("  section length           = {0}", _sectionLength);
+      Log.Debug("  version                  = {0}", _version);
+      Log.Debug("  current next indicator   = {0}", _currentNextIndicator);
+      Log.Debug("  section number           = {0}", _sectionNumber);
+      Log.Debug("  last section number      = {0}", _lastSectionNumber);
+      Log.Debug("  CRC                      = 0x{0:x}{1:x}{2:x}{3:x}", _crc[0], _crc[1], _crc[2], _crc[3]);
+      Log.Debug("  {0} descriptor(s)...", _descriptors.Count + _caDescriptors.Count);
       foreach (IDescriptor d in _descriptors)
       {
         d.Dump();
@@ -1992,36 +1994,36 @@ namespace TvLibrary.Interfaces
     /// <returns>a fully populated Pmt instance if the section is valid, otherwise <c>null</c></returns>
     public static Pmt Decode(byte[] data, CamType camType)
     {
-      Log.Log.Debug("PMT: decode, CAM type = {0}", camType);
+      Log.Debug("PMT: decode, CAM type = {0}", camType);
       if (data == null || data.Length < 16)
       {
-        Log.Log.Debug("PMT: PMT not supplied or too short");
+        Log.Debug("PMT: PMT not supplied or too short");
         return null;
       }
 
       if (data[0] != 0x02)
       {
-        Log.Log.Debug("PMT: invalid table ID");
+        Log.Debug("PMT: invalid table ID");
         return null;
       }
       if ((data[1] & 0x80) != 0x80)
       {
-        Log.Log.Debug("PMT: section syntax indicator is not 1");
+        Log.Debug("PMT: section syntax indicator is not 1");
         return null;
       }
       if ((data[1] & 0x40) != 0)
       {
-        Log.Log.Debug("PMT: corruption detected (zero)");
+        Log.Debug("PMT: corruption detected (zero)");
         return null;
       }
       if (data[6] != 0)
       {
-        Log.Log.Debug("PMT: section number is not zero");
+        Log.Debug("PMT: section number is not zero");
         return null;
       }
       if (data[7] != 0)
       {
-        Log.Log.Debug("PMT: last section number is not zero");
+        Log.Debug("PMT: last section number is not zero");
         return null;
       }
 
@@ -2031,7 +2033,7 @@ namespace TvLibrary.Interfaces
       pmt._sectionLength = (UInt16)(((data[1] & 0x0f) << 8) + data[2]);
       if (3 + pmt._sectionLength != data.Length)
       {
-        Log.Log.Debug("PMT: section length is invalid");
+        Log.Debug("PMT: section length is invalid");
         return null;
       }
 
@@ -2044,7 +2046,7 @@ namespace TvLibrary.Interfaces
       pmt._programInfoLength = (UInt16)(((data[10] & 0x0f) << 8) + data[11]);
       if (12 + pmt._programInfoLength + 4 > data.Length)
       {
-        Log.Log.Debug("PMT: program info length is invalid");
+        Log.Debug("PMT: program info length is invalid");
         return null;
       }
 
@@ -2058,7 +2060,7 @@ namespace TvLibrary.Interfaces
         IDescriptor d = Descriptor.Decode(data, offset);
         if (d == null)
         {
-          Log.Log.Debug("PMT: program descriptor {0} is invalid", pmt._programDescriptors.Count + pmt._programCaDescriptors.Count + 1);
+          Log.Debug("PMT: program descriptor {0} is invalid", pmt._programDescriptors.Count + pmt._programCaDescriptors.Count + 1);
           return null;
         }
         offset += d.Length + 2;
@@ -2073,7 +2075,7 @@ namespace TvLibrary.Interfaces
       }
       if (offset != endProgramDescriptors)
       {
-        Log.Log.Debug("PMT: corruption detected (program descriptors)");
+        Log.Debug("PMT: corruption detected (program descriptors)");
         return null;
       }
 
@@ -2101,7 +2103,7 @@ namespace TvLibrary.Interfaces
         int endEsDescriptors = offset + es.EsInfoLength;
         if (endEsDescriptors > endEsData)
         {
-          Log.Log.Debug("PMT: elementary stream info length for PID {0} (0x{0:x}) is invalid", es.Pid);
+          Log.Debug("PMT: elementary stream info length for PID {0} (0x{0:x}) is invalid", es.Pid);
           return null;
         }
         es.Descriptors = new List<IDescriptor>();
@@ -2111,7 +2113,7 @@ namespace TvLibrary.Interfaces
           IDescriptor d = Descriptor.Decode(data, offset);
           if (d == null)
           {
-            Log.Log.Debug("PMT: elementary stream descriptor {0} for PID {1} (0x{1:x}) is invalid", es.Descriptors.Count + es.CaDescriptors.Count + 1, es.Pid);
+            Log.Debug("PMT: elementary stream descriptor {0} for PID {1} (0x{1:x}) is invalid", es.Descriptors.Count + es.CaDescriptors.Count + 1, es.Pid);
             return null;
           }
 
@@ -2165,7 +2167,7 @@ namespace TvLibrary.Interfaces
         }
         if (offset != endEsDescriptors)
         {
-          Log.Log.Debug("PMT: corruption detected (elementary stream descriptors)");
+          Log.Debug("PMT: corruption detected (elementary stream descriptors)");
           return null;
         }
 
@@ -2173,7 +2175,7 @@ namespace TvLibrary.Interfaces
       }
       if (offset != endEsData)
       {
-        Log.Log.Debug("PMT: corruption detected (elementary stream data)");
+        Log.Debug("PMT: corruption detected (elementary stream data)");
         return null;
       }
 
@@ -2225,7 +2227,7 @@ namespace TvLibrary.Interfaces
     /// <returns></returns>
     public byte[] GetCaPmt(CaPmtListManagementAction listAction, CaPmtCommand command)
     {
-      Log.Log.Debug("PMT: get CA PMT, list action = {0}, command = {1}", listAction, command);
+      Log.Debug("PMT: get CA PMT, list action = {0}, command = {1}", listAction, command);
       byte[] tempCaPmt = new byte[4096];  // Max PMT length is 1024, and since CA PMT is a cut-down version of PMT this should be very safe.
       tempCaPmt[0] = (byte)listAction;
       tempCaPmt[1] = _rawPmt[3];
@@ -2306,20 +2308,20 @@ namespace TvLibrary.Interfaces
     /// </summary>
     public void Dump()
     {
-      Log.Log.Debug("PMT: dump...");
+      Log.Debug("PMT: dump...");
       DVB_MMI.DumpBinary(_rawPmt, 0, _rawPmt.Length);
-      Log.Log.Debug("  table ID                 = {0}", _tableId);
-      Log.Log.Debug("  section syntax indicator = {0}", _sectionSyntaxIndicator);
-      Log.Log.Debug("  section length           = {0}", _sectionLength);
-      Log.Log.Debug("  program number           = {0} (0x{0:x})", _programNumber);
-      Log.Log.Debug("  version                  = {0}", _version);
-      Log.Log.Debug("  current next indicator   = {0}", _currentNextIndicator);
-      Log.Log.Debug("  section number           = {0}", _sectionNumber);
-      Log.Log.Debug("  last section number      = {0}", _lastSectionNumber);
-      Log.Log.Debug("  PCR PID                  = {0} (0x{0:x})", _pcrPid);
-      Log.Log.Debug("  program info length      = {0}", _programInfoLength);
-      Log.Log.Debug("  CRC                      = 0x{0:x}{1:x}{2:x}{3:x}", _crc[0], _crc[1], _crc[2], _crc[3]);
-      Log.Log.Debug("  {0} descriptor(s)...", _programDescriptors.Count + _programCaDescriptors.Count);
+      Log.Debug("  table ID                 = {0}", _tableId);
+      Log.Debug("  section syntax indicator = {0}", _sectionSyntaxIndicator);
+      Log.Debug("  section length           = {0}", _sectionLength);
+      Log.Debug("  program number           = {0} (0x{0:x})", _programNumber);
+      Log.Debug("  version                  = {0}", _version);
+      Log.Debug("  current next indicator   = {0}", _currentNextIndicator);
+      Log.Debug("  section number           = {0}", _sectionNumber);
+      Log.Debug("  last section number      = {0}", _lastSectionNumber);
+      Log.Debug("  PCR PID                  = {0} (0x{0:x})", _pcrPid);
+      Log.Debug("  program info length      = {0}", _programInfoLength);
+      Log.Debug("  CRC                      = 0x{0:x}{1:x}{2:x}{3:x}", _crc[0], _crc[1], _crc[2], _crc[3]);
+      Log.Debug("  {0} descriptor(s)...", _programDescriptors.Count + _programCaDescriptors.Count);
       foreach (IDescriptor d in _programDescriptors)
       {
         d.Dump();
@@ -2328,7 +2330,7 @@ namespace TvLibrary.Interfaces
       {
         cad.Dump();
       }
-      Log.Log.Debug("  {0} elementary stream(s)...", _elementaryStreams.Count);
+      Log.Debug("  {0} elementary stream(s)...", _elementaryStreams.Count);
       foreach (PmtElementaryStream es in _elementaryStreams)
       {
         es.Dump();
@@ -2457,12 +2459,12 @@ namespace TvLibrary.Interfaces
     /// </summary>
     public void Dump()
     {
-      Log.Log.Debug("Elementary Stream: dump...");
-      Log.Log.Debug("  stream type         = {0}", _streamType);
-      Log.Log.Debug("  PID                 = {0} (0x{0:x})", _pid);
-      Log.Log.Debug("  length              = {0}", _esInfoLength);
-      Log.Log.Debug("  logical stream type = {0}", _logicalStreamType);
-      Log.Log.Debug("  {0} descriptor(s)...", _descriptors.Count + _caDescriptors.Count);
+      Log.Debug("Elementary Stream: dump...");
+      Log.Debug("  stream type         = {0}", _streamType);
+      Log.Debug("  PID                 = {0} (0x{0:x})", _pid);
+      Log.Debug("  length              = {0}", _esInfoLength);
+      Log.Debug("  logical stream type = {0}", _logicalStreamType);
+      Log.Debug("  {0} descriptor(s)...", _descriptors.Count + _caDescriptors.Count);
       foreach (IDescriptor d in _descriptors)
       {
         d.Dump();
@@ -2655,9 +2657,9 @@ namespace TvLibrary.Interfaces
     /// </summary>
     public virtual void Dump()
     {
-      Log.Log.Debug("Descriptor: dump...");
-      Log.Log.Debug("  tag    = {0}", _tag);
-      Log.Log.Debug("  length = {0}", _length);
+      Log.Debug("Descriptor: dump...");
+      Log.Debug("  tag    = {0}", _tag);
+      Log.Debug("  length = {0}", _length);
       DVB_MMI.DumpBinary(_data, 0, _data.Length);
     }
   }
@@ -2948,11 +2950,11 @@ namespace TvLibrary.Interfaces
     /// </summary>
     public override void Dump()
     {
-      Log.Log.Debug("CA Descriptor: dump...");
-      Log.Log.Debug("  tag          = {0}", _tag);
-      Log.Log.Debug("  length       = {0}", _length);
-      Log.Log.Debug("  CA system ID = {0} (0x{0:x})", _caSystemId);
-      Log.Log.Debug("  CA PID       = {0} (0x{0:x})", _caPid);
+      Log.Debug("CA Descriptor: dump...");
+      Log.Debug("  tag          = {0}", _tag);
+      Log.Debug("  length       = {0}", _length);
+      Log.Debug("  CA system ID = {0} (0x{0:x})", _caSystemId);
+      Log.Debug("  CA PID       = {0} (0x{0:x})", _caPid);
       foreach (UInt16 pid in _pids.Keys)
       {
         List<String> providerIds = new List<String>(_pids[pid].Count);
@@ -2960,7 +2962,7 @@ namespace TvLibrary.Interfaces
         {
           providerIds.Add(String.Format("{0} (0x{0:x})", providerId));
         }
-        Log.Log.Debug("  PID = {0} (0x{0:x}), provider IDs = {1}", pid, String.Join(", ", providerIds.ToArray()));
+        Log.Debug("  PID = {0} (0x{0:x}), provider IDs = {1}", pid, String.Join(", ", providerIds.ToArray()));
       }
       DVB_MMI.DumpBinary(_data, 0, _data.Length);
     }
@@ -2982,10 +2984,10 @@ namespace TvLibrary.Interfaces
     /// <param name="ciMenuHandler">A set of callback handler functions.</param>
     public static void HandleMmiData(byte[] mmi, ref ICiMenuCallbacks ciMenuHandler)
     {
-      Log.Log.Debug("DvbMmiHandler: handle MMI data");
+      Log.Debug("DvbMmiHandler: handle MMI data");
       if (mmi == null || mmi.Length < 4)
       {
-        Log.Log.Debug("DvbMmiHandler: data not supplied or too short");
+        Log.Debug("DvbMmiHandler: data not supplied or too short");
       }
 
       //DVB_MMI.DumpBinary(mmi, 0, mmi.Length);
@@ -2994,11 +2996,11 @@ namespace TvLibrary.Interfaces
       MmiTag tag = DvbMmiHandler.ReadMmiTag(mmi, 0);
       int countLengthBytes;
       int apduLength = ReadLength(mmi, 3, out countLengthBytes);
-      Log.Log.Debug("DvbMmiHandler: data length = {0}, first APDU tag = {1}, length = {2}", mmi.Length, tag, apduLength);
+      Log.Debug("DvbMmiHandler: data length = {0}, first APDU tag = {1}, length = {2}", mmi.Length, tag, apduLength);
       int offset = 3 + countLengthBytes;
       if (apduLength < 0 || offset + apduLength != mmi.Length)
       {
-        Log.Log.Debug("DvbMmiHandler: APDU length is invalid");
+        Log.Debug("DvbMmiHandler: APDU length is invalid");
         DVB_MMI.DumpBinary(mmi, 0, mmi.Length);
         return;
       }
@@ -3021,18 +3023,18 @@ namespace TvLibrary.Interfaces
       }
       else
       {
-        Log.Log.Debug("DvbMmiHandler: unexpected MMI tag {0}", tag);
+        Log.Debug("DvbMmiHandler: unexpected MMI tag {0}", tag);
         DVB_MMI.DumpBinary(mmi, 0, mmi.Length);
       }
     }
 
     private static void HandleClose(byte[] apdu, int offset, int apduLength, ref ICiMenuCallbacks ciMenuHandler)
     {
-      Log.Log.Debug("DvbMmiHandler: handle close");
+      Log.Debug("DvbMmiHandler: handle close");
 
       if (offset >= apdu.Length)
       {
-        Log.Log.Debug("DvbMmiHandler: invalid APDU");
+        Log.Debug("DvbMmiHandler: invalid APDU");
         return;
       }
 
@@ -3042,14 +3044,14 @@ namespace TvLibrary.Interfaces
       {
         if (offset >= apdu.Length)
         {
-          Log.Log.Debug("DvbMmiHandler: invalid APDU (delayed close)");
+          Log.Debug("DvbMmiHandler: invalid APDU (delayed close)");
           return;
         }
         delay = apdu[offset];
       }
 
-      Log.Log.Debug("  command = {0}", command);
-      Log.Log.Debug("  delay   = {0} s", delay);
+      Log.Debug("  command = {0}", command);
+      Log.Debug("  delay   = {0} s", delay);
 
       if (ciMenuHandler != null)
       {
@@ -3059,22 +3061,22 @@ namespace TvLibrary.Interfaces
         }
         catch (Exception ex)
         {
-          Log.Log.Debug("DvbMmiHandler: close menu callback exception\r\n{0}", ex.ToString());
+          Log.Debug("DvbMmiHandler: close menu callback exception\r\n{0}", ex.ToString());
         }
       }
       else
       {
-        Log.Log.Debug("DvbMmiHandler: menu callbacks are not set");
+        Log.Debug("DvbMmiHandler: menu callbacks are not set");
       }
     }
 
     private static void HandleEnquiry(byte[] apdu, int offset, int apduLength, ref ICiMenuCallbacks ciMenuHandler)
     {
-      Log.Log.Debug("DvbMmiHandler: handle enquiry");
+      Log.Debug("DvbMmiHandler: handle enquiry");
 
       if (offset + 4 >= apdu.Length)
       {
-        Log.Log.Debug("DvbMmiHandler: invalid APDU");
+        Log.Debug("DvbMmiHandler: invalid APDU");
         return;
       }
 
@@ -3083,9 +3085,9 @@ namespace TvLibrary.Interfaces
       // Note: there are 2 other bytes before text starts.
       String prompt = System.Text.Encoding.ASCII.GetString(apdu, offset + 2, apdu.Length - offset - 2);
 
-      Log.Log.Debug("  text   = {0}", prompt);
-      Log.Log.Debug("  length = {0}", expectedAnswerLength);
-      Log.Log.Debug("  blind  = {0}", passwordMode);
+      Log.Debug("  text   = {0}", prompt);
+      Log.Debug("  length = {0}", expectedAnswerLength);
+      Log.Debug("  blind  = {0}", passwordMode);
 
       if (ciMenuHandler != null)
       {
@@ -3095,18 +3097,18 @@ namespace TvLibrary.Interfaces
         }
         catch (Exception ex)
         {
-          Log.Log.Debug("DvbMmiHandler: request callback exception\r\n{0}", ex.ToString());
+          Log.Debug("DvbMmiHandler: request callback exception\r\n{0}", ex.ToString());
         }
       }
       else
       {
-        Log.Log.Debug("DvbMmiHandler: menu callbacks are not set");
+        Log.Debug("DvbMmiHandler: menu callbacks are not set");
       }
     }
 
     private static void HandleMenu(byte[] apdu, int offset, int apduLength, ref ICiMenuCallbacks ciMenuHandler)
     {
-      Log.Log.Debug("DvbMmiHandler: handle menu");
+      Log.Debug("DvbMmiHandler: handle menu");
 
       byte entryCount = apdu[offset++];
       List<String> entries = new List<String>();
@@ -3116,7 +3118,7 @@ namespace TvLibrary.Interfaces
       {
         if (apdu[offset] != 0x9f)
         {
-          Log.Log.Debug("DvbMmiHandler: unexpected APDU format, expected MMI tag at offset {0}", offset);
+          Log.Debug("DvbMmiHandler: unexpected APDU format, expected MMI tag at offset {0}", offset);
           DVB_MMI.DumpBinary(apdu, 0, apdu.Length);
           return;
         }
@@ -3124,7 +3126,7 @@ namespace TvLibrary.Interfaces
         String entry = ReadText(apdu, offset, out bytesRead);
         if (entry == null)
         {
-          Log.Log.Debug("DvbMmiHandler: unexpected APDU format, null entry at offset {0}", offset);
+          Log.Debug("DvbMmiHandler: unexpected APDU format, null entry at offset {0}", offset);
           DVB_MMI.DumpBinary(apdu, 0, apdu.Length);
           return;
         }
@@ -3133,21 +3135,21 @@ namespace TvLibrary.Interfaces
       }
       if (entries.Count < 3)
       {
-        Log.Log.Debug("DvbMmiHandler: unexpected MMI format, less than 3 entries");
+        Log.Debug("DvbMmiHandler: unexpected MMI format, less than 3 entries");
         DVB_MMI.DumpBinary(apdu, 0, apdu.Length);
         return;
       }
 
       if (ciMenuHandler == null)
       {
-        Log.Log.Debug("DvbMmiHandler: menu callbacks are not set");
+        Log.Debug("DvbMmiHandler: menu callbacks are not set");
       }
 
       entryCount = (byte)(entries.Count - 3);
-      Log.Log.Debug("  title     = {0}", entries[0]);
-      Log.Log.Debug("  sub-title = {0}", entries[1]);
-      Log.Log.Debug("  footer    = {0}", entries[2]);
-      Log.Log.Debug("  # entries = {0}", entryCount);
+      Log.Debug("  title     = {0}", entries[0]);
+      Log.Debug("  sub-title = {0}", entries[1]);
+      Log.Debug("  footer    = {0}", entries[2]);
+      Log.Debug("  # entries = {0}", entryCount);
       if (ciMenuHandler != null)
       {
         try
@@ -3156,7 +3158,7 @@ namespace TvLibrary.Interfaces
         }
         catch (Exception ex)
         {
-          Log.Log.Debug("DvbMmiHandler: menu callback exception\r\n{0}", ex.ToString());
+          Log.Debug("DvbMmiHandler: menu callback exception\r\n{0}", ex.ToString());
         }
       }
 
@@ -3164,14 +3166,14 @@ namespace TvLibrary.Interfaces
       {
         if (ciMenuHandler != null)
         {
-          Log.Log.Debug("  entry {0,-2}  = {1}", i + 1, entries[i + 3]);
+          Log.Debug("  entry {0,-2}  = {1}", i + 1, entries[i + 3]);
           try
           {
             ciMenuHandler.OnCiMenuChoice(i, entries[i + 3]);
           }
           catch (Exception ex)
           {
-            Log.Log.Debug("DvbMmiHandler: menu entry callback exception\r\n{0}", ex.ToString());
+            Log.Debug("DvbMmiHandler: menu entry callback exception\r\n{0}", ex.ToString());
           }
         }
       }
@@ -3207,7 +3209,7 @@ namespace TvLibrary.Interfaces
     {
       if (outputData == null || offset + 2 >= outputData.Length)
       {
-        Log.Log.Debug("DvbMmiHandler: failed to write tag");
+        Log.Debug("DvbMmiHandler: failed to write tag");
         return;
       }
       outputData[offset++] = (byte)(((int)tag >> 16) & 0xff);
@@ -3234,7 +3236,7 @@ namespace TvLibrary.Interfaces
 
       if (sourceData == null || offset >= sourceData.Length)
       {
-        Log.Log.Debug("DvbMmiHandler: offset is out of range");
+        Log.Debug("DvbMmiHandler: offset is out of range");
         return -1;
       }
 
@@ -3251,12 +3253,12 @@ namespace TvLibrary.Interfaces
       bytesRead = byte1 & 0x7f;
       if (bytesRead > 4)
       {
-        Log.Log.Debug("DvbMmiHandler: length encoded in {0} bytes, can't be interpretted", bytesRead);
+        Log.Debug("DvbMmiHandler: length encoded in {0} bytes, can't be interpretted", bytesRead);
         return -1;
       }
       if (offset + bytesRead >= sourceData.Length)
       {
-        Log.Log.Debug("DvbMmiHandler: number of length bytes is invalid", bytesRead);
+        Log.Debug("DvbMmiHandler: number of length bytes is invalid", bytesRead);
         return -1;
       }
 
@@ -3299,7 +3301,7 @@ namespace TvLibrary.Interfaces
 
       if (outputData == null || offset + bytesWritten >= outputData.Length)
       {
-        Log.Log.Debug("DvbMmiHandler: failed to write length");
+        Log.Debug("DvbMmiHandler: failed to write length");
         return;
       }
 
@@ -3333,7 +3335,7 @@ namespace TvLibrary.Interfaces
       MmiTag tag = ReadMmiTag(sourceData, offset);
       if (tag != MmiTag.TextMore && tag != MmiTag.TextLast)
       {
-        Log.Log.Debug("DvbMmiHandler: invalid text tag {0}", tag);
+        Log.Debug("DvbMmiHandler: invalid text tag {0}", tag);
         return null;
       }
 
@@ -3494,7 +3496,7 @@ namespace TvLibrary.Interfaces
         {
           if (row.Length > 0)
           {
-            Log.Log.WriteFile(String.Format("{0}|{1}", row.ToString().PadRight(55, ' '),
+            Log.WriteFile(String.Format("{0}|{1}", row.ToString().PadRight(55, ' '),
                                             rowText.ToString().PadRight(16, ' ')));
           }
           rowText.Length = 0;
@@ -3506,7 +3508,7 @@ namespace TvLibrary.Interfaces
       }
       if (row.Length > 0)
       {
-        Log.Log.WriteFile(String.Format("{0}|{1}", row.ToString().PadRight(55, ' '),
+        Log.WriteFile(String.Format("{0}|{1}", row.ToString().PadRight(55, ' '),
                                         rowText.ToString().PadRight(16, ' ')));
       }
     }

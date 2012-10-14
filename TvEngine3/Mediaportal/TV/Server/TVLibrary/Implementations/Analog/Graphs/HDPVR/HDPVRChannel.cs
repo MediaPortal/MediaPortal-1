@@ -18,17 +18,12 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Threading;
 using DirectShowLib;
-using TvLibrary.Channels;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.Analog
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
 {
   /// <summary>
   /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles analog tv cards
@@ -66,7 +61,7 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     public override void OnGraphRunning()
     {
-      Log.Log.Debug("HDPVRChannel: subchannel {0} OnGraphRunning()", _subChannelId);
+      Log.Debug("HDPVRChannel: subchannel {0} OnGraphRunning()", _subChannelId);
 
       if (!WaitForPmt(ServiceId, PmtPid))
       {

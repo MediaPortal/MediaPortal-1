@@ -21,16 +21,24 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.Presentation;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 using Microsoft.Win32;
+using Version = System.Version;
 
-
-namespace SetupTv
+namespace Mediaportal.TV.Server.SetupTV
 {
   /// <summary>
   /// 
@@ -247,7 +255,7 @@ namespace SetupTv
         return String.Empty;
       if (strHTML.Length == 0)
         return String.Empty;
-      string stripped = Regex.Replace(strHTML, @"<(.|\n)*?>", string.Empty);
+      string stripped = Regex.Replace(strHTML, @"<(.|\n)*?>", String.Empty);
       return stripped.Trim();
     }
 
@@ -745,7 +753,7 @@ namespace SetupTv
 
     public static string ReplaceTag(string line, string tag, string value)
     {
-      return ReplaceTag(line, tag, value, string.Empty);
+      return ReplaceTag(line, tag, value, String.Empty);
     }
 
     public static ulong GetFreeDiskSpace(string drive)
@@ -791,33 +799,33 @@ namespace SetupTv
         {
           if (CheckFileVersion(dllPath, "6.5.2710.2732", out aParamVersion))
             validDllFound = true;
-          TvLibrary.Log.Log.Info("Util: Version of installed Psisdecd.dll: {0} Path: {1}", aParamVersion.ToString(),
+          Log.Info("Util: Version of installed Psisdecd.dll: {0} Path: {1}", aParamVersion.ToString(),
                                  dllPath);
           if (aParamVersion > mostRecentVer)
             mostRecentVer = aParamVersion;
         }
         else
-          TvLibrary.Log.Log.Info("Util: Registered Psisdecd.dll does not exist in path: {0}", dllPath);
+          Log.Info("Util: Registered Psisdecd.dll does not exist in path: {0}", dllPath);
       }
       if (!validDllFound)
       {
         try
         {
-          string ErrorMsg = string.Empty;
+          string ErrorMsg = String.Empty;
           if (dllPaths.Count == 1)
             ErrorMsg =
-              string.Format(
+              String.Format(
                 "Your version {0} of Psisdecd.dll has too many bugs! \nPlease check our Wiki's requirements page.",
                 mostRecentVer);
           if (dllPaths.Count > 1)
             ErrorMsg =
-              string.Format(
+              String.Format(
                 "Found {0} occurences of outdated Psisdecd.dll! \nMost recent installed version: {1} \nPlease clean up your system and check our Wiki's requirements page.",
                 dllPaths.Count.ToString(), mostRecentVer.ToString());
           if (dllPaths.Count < 1)
             ErrorMsg = "Psisdecd.dll may not be registered properly! \nPlease check our Wiki's requirements page.";
 
-          TvLibrary.Log.Log.Info("Util: Psisdecd.dll error - {0}", ErrorMsg);
+          Log.Info("Util: Psisdecd.dll error - {0}", ErrorMsg);
           if (
             MessageBox.Show(ErrorMsg, "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OKCancel,
                             MessageBoxIcon.Exclamation) == DialogResult.OK)
@@ -841,7 +849,7 @@ namespace SetupTv
       {
         Version desiredVersion = new Version(aMinimumVersion);
         FileVersionInfo fileVersion = FileVersionInfo.GetVersionInfo(aFilePath);
-        if (!string.IsNullOrEmpty(fileVersion.ProductVersion))
+        if (!String.IsNullOrEmpty(fileVersion.ProductVersion))
         {
           aCurrentVersion = new Version(fileVersion.ProductVersion);
           return aCurrentVersion >= desiredVersion;
@@ -883,7 +891,7 @@ namespace SetupTv
                       {
                         string friendlyName = (string)defaultkey.GetValue(null);
                         // Gets the (Default) value from this key            
-                        if (!string.IsNullOrEmpty(friendlyName) &&
+                        if (!String.IsNullOrEmpty(friendlyName) &&
                             friendlyName.ToLowerInvariant().IndexOf(aFilename.ToLowerInvariant()) >= 0)
                         {
                           if (!resultPaths.Contains(friendlyName))
@@ -901,7 +909,7 @@ namespace SetupTv
       }
       catch (Exception ex)
       {
-        MessageBox.Show(string.Format("Error checking registry for registered Assembly: {0} - {1}", aFilename,
+        MessageBox.Show(String.Format("Error checking registry for registered Assembly: {0} - {1}", aFilename,
                                       ex.Message));
       }
       return resultPaths;
@@ -942,27 +950,110 @@ namespace SetupTv
       }
       catch (Exception ex)
       {
-        MessageBox.Show(string.Format("Error checking registry for installed components: {0}", ex.Message));
+        MessageBox.Show(String.Format("Error checking registry for installed components: {0}", ex.Message));
       }
       return AppFound;
+    }    
+
+    public static void UpdateCardStatus(MPListView mpListView1)
+    {
+      if (!ServiceHelper.IsAvailable)
+      {
+        return;
+      }
+      
+      try
+      {
+        IList<CardPresentation> cards = ServiceAgents.Instance.ControllerServiceAgent.ListAllCards();
+
+        int i = 0;
+
+        while (mpListView1.Items.Count > cards.Count)
+        {
+          mpListView1.Items.RemoveAt(mpListView1.Items.Count - 1);
+        }
+
+        IDictionary<int, int> cardIds = new Dictionary<int, int>();
+
+        foreach (CardPresentation card in cards)
+        {
+          ListViewItem item;
+          if (mpListView1.Items.Count < cards.Count)
+          {
+            item = mpListView1.Items.Add(""); // 0 card id
+            item.SubItems.Add("");//1 card type
+            item.SubItems.Add("");//2 state
+            item.SubItems.Add("");//3 channelname
+            item.SubItems.Add("");//4 scrambled
+            item.SubItems.Add("");//5 user
+            item.SubItems.Add("");//6 cardname
+            item.SubItems.Add("");//7 subchannels 
+            item.SubItems.Add("");//7 owner
+          }
+          else
+          {            
+            item = mpListView1.Items[i];
+          }
+
+          string cardId = "n/a";
+          if (card.CardId.HasValue)
+          {
+            cardId = card.CardId.Value.ToString(CultureInfo.InvariantCulture);
+          }
+
+          item.SubItems[0].Text = cardId;
+          item.SubItems[0].Tag = cardId;
+          item.SubItems[1].Text = card.CardType;
+          item.SubItems[2].Text = card.State;
+          item.SubItems[3].Text = card.ChannelName;
+          item.SubItems[4].Text = card.IsScrambled;
+          item.SubItems[5].Text = card.UserName;
+          item.SubItems[6].Text = card.CardName;
+          item.SubItems[7].Text = card.SubChannels.ToString(CultureInfo.InvariantCulture);
+          item.SubItems[8].Text = card.IsOwner;
+
+          /*if (!card.Idle)
+          {
+            int nrOfusers = 0;
+            bool hasCardId = cardIds.TryGetValue(card.CardId.GetValueOrDefault(), out nrOfusers);
+            if (hasCardId)
+            {
+              nrOfusers++;
+              cardIds[card.CardId.GetValueOrDefault()] = nrOfusers;
+            }
+            else
+            {
+              nrOfusers = 1;
+              cardIds.Add(card.CardId.GetValueOrDefault(), nrOfusers);
+            }            
+          } */         
+
+          if (card.SubChannelsCountOk)
+          {
+            ColorLine(Color.White, item);               
+          }
+          else
+          {
+            ColorLine(Color.Red, item);
+          }
+          i++;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+      }
     }
 
-    /// <summary>
-    /// Checks whether a given regPath+regValue exist
-    /// </summary>
-    /// <param name="regPath">The main path to search for (e.g. "SOFTWARE\Microsoft\Windows\CurrentVersion\MediaCenter\Service\Recording")</param>
-    /// <param name="regValue">The key to get the value of (e.g. "RecordPath")</param>
-    /// <returns>null is not found, otherwise the value converted to a string</returns>
-    public static string ReturnRegistryValue(string regPath, string regValue)
+    private static void ColorLine(Color lineColor, ListViewItem item)
     {
-      RegistryKey key = Registry.LocalMachine.OpenSubKey(regPath);
-      if (key != null)
+      item.UseItemStyleForSubItems = false;
+      item.BackColor = lineColor;
+
+      foreach (ListViewItem.ListViewSubItem lvi in item.SubItems)
       {
-        string strKeyValue = key.GetValue(regValue).ToString();
-        key.Close();
-        return strKeyValue;
+        lvi.BackColor = lineColor;
       }
-      return String.Empty;
     }
   }
 }

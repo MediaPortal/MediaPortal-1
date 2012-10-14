@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using MediaPortal.UserInterface.Controls;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin.PluginSetup
 {
   public partial class TvSetupAudioLanguageForm : MPConfigForm
   {

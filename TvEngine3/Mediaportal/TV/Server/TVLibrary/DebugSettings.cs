@@ -20,8 +20,9 @@
 
 using System;
 using System.IO;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary
+namespace Mediaportal.TV.Server.TVLibrary
 {
   /// <summary>
   /// This class is responsible for managing debug settings 
@@ -84,8 +85,8 @@ namespace TvLibrary
       }
       catch (System.IO.IOException ex)
       {
-        Log.Log.Error("Failed to write debug setting '{0}'", setting);
-        Log.Log.Write(ex);
+        Log.Error("Failed to write debug setting '{0}'", setting);
+        Log.Write(ex);
       }
     }
 

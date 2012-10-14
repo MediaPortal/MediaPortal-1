@@ -18,9 +18,7 @@
 
 #endregion
 
-using TvLibrary.Channels;
-
-namespace TvLibrary.Interfaces.Device
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
 {
   /// <summary>
   /// An interface for devices that implement the DiSEqC device communication and control standard.

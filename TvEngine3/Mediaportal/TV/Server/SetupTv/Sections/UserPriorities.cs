@@ -21,17 +21,18 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using TvDatabase;
-using TvControl;
-using TvService;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVService;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
 #endregion
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class UserPriorities : SectionSettings
   {
@@ -77,17 +78,17 @@ namespace SetupTv.Sections
 
     public override void LoadSettings()
     {
-      var layer = new TvBusinessLayer();      
+            
       numEpgGrabber.Value = ValueSanityCheck(
-        Convert.ToDecimal(layer.GetSetting(UserFactory.EPG_TAGNAME, UserFactory.EPG_PRIORITY.ToString()).Value), 1, 100);
+        Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(UserFactory.EPG_TAGNAME, UserFactory.EPG_PRIORITY.ToString()).Value), 1, 100);
 
       numDefaultUser.Value = ValueSanityCheck(
-        Convert.ToDecimal(layer.GetSetting(UserFactory.USER_TAGNAME, UserFactory.USER_PRIORITY.ToString()).Value), 1, 100);
+        Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(UserFactory.USER_TAGNAME, UserFactory.USER_PRIORITY.ToString()).Value), 1, 100);
 
       numScheduler.Value = ValueSanityCheck(
-        Convert.ToDecimal(layer.GetSetting(UserFactory.SCHEDULER_TAGNAME, UserFactory.SCHEDULER_PRIORITY.ToString()).Value), 1, 100);
+        Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(UserFactory.SCHEDULER_TAGNAME, UserFactory.SCHEDULER_PRIORITY.ToString()).Value), 1, 100);
 
-      Setting setting = layer.GetSetting(UserFactory.CUSTOM_TAGNAME, "");
+      Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(UserFactory.CUSTOM_TAGNAME, "");
       gridUserPriorities.Rows.Clear();
       string[] users = setting.Value.Split(';');
       foreach (string user in users)
@@ -104,27 +105,19 @@ namespace SetupTv.Sections
 
     public override void SaveSettings()
     {
-      var layer = new TvBusinessLayer();
-      Setting s = layer.GetSetting("PriorityEPG", UserFactory.EPG_PRIORITY.ToString());
-      s.Value = numEpgGrabber.Value.ToString();
-      s.Persist();
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("PriorityEPG", numEpgGrabber.Value.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("PriorityUser", numDefaultUser.Value.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("PriorityScheduler", numScheduler.Value.ToString());
+      
 
-      s = layer.GetSetting("PriorityUser", UserFactory.USER_PRIORITY.ToString());
-      s.Value = numDefaultUser.Value.ToString();
-      s.Persist();
-
-      s = layer.GetSetting("PriorityScheduler", UserFactory.SCHEDULER_PRIORITY.ToString());
-      s.Value = numScheduler.Value.ToString();
-      s.Persist();
-
-      Setting setting = layer.GetSetting("PrioritiesCustom", "");
+      
       var shares = new StringBuilder();
       foreach (DataGridViewRow row in gridUserPriorities.Rows)
       {
         shares.AppendFormat("{0},{1};", row.Cells[0].Value, row.Cells[1].Value);
       }
-      setting.Value = shares.ToString();
-      setting.Persist();
+
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("PrioritiesCustom", shares.ToString());
     }
 
     #endregion
@@ -146,8 +139,7 @@ namespace SetupTv.Sections
       SaveSettings();
       if (_needRestart)
       {
-        RemoteControl.Instance.ClearCache();
-        RemoteControl.Instance.Restart();
+        ServiceAgents.Instance.ControllerServiceAgent.Restart();
       }
     }
     

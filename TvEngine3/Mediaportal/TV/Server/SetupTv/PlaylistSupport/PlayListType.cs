@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace MediaPortal.Playlists
+namespace Mediaportal.TV.Server.SetupTV.PlaylistSupport
 {
   public enum PlayListType
   {

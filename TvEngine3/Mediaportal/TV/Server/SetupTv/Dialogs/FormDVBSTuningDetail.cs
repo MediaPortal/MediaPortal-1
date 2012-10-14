@@ -22,11 +22,12 @@ using System;
 using System.Collections;
 using System.Windows.Forms;
 using DirectShowLib.BDA;
-using TvDatabase;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 
-namespace SetupTv.Dialogs
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
-  public partial class FormDVBSTuningDetail : SetupControls.FormTuningDetailCommon
+  public partial class FormDVBSTuningDetail : FormTuningDetailCommon
   {
     public FormDVBSTuningDetail()
     {
@@ -51,7 +52,7 @@ namespace SetupTv.Dialogs
         comboBoxInnerFecRate.SelectedIndex = TuningDetail.InnerFecRate + 1;
         comboBoxPilot.SelectedIndex = TuningDetail.Pilot + 1;
         comboBoxRollOff.SelectedIndex = TuningDetail.RollOff + 1;
-        comboBoxDiseqc.SelectedIndex = TuningDetail.Diseqc;
+        comboBoxDiseqc.SelectedIndex = TuningDetail.DiSEqC;
         IEnumerator en = comboBoxLnbType.Items.GetEnumerator();
         while (en.MoveNext())
         {
@@ -115,7 +116,7 @@ namespace SetupTv.Dialogs
       TuningDetail.PmtPid = Int32.Parse(textBoxDVBSPmt.Text);
       TuningDetail.Provider = textBoxDVBSProvider.Text;
       TuningDetail.FreeToAir = checkBoxDVBSfta.Checked;
-      TuningDetail.Diseqc = comboBoxDiseqc.SelectedIndex;
+      TuningDetail.DiSEqC = comboBoxDiseqc.SelectedIndex;
       // This should be safe because we've validated the selection in ValidateInput().
       TuningDetail.IdLnbType = ((LnbType)comboBoxLnbType.SelectedItem).IdLnbType;
     }

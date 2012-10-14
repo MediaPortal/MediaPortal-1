@@ -20,7 +20,7 @@
 
 using System;
 
-namespace MediaPortal.Utils.Web
+namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
 {
   /// <summary>
   /// Interface for HTTP statistics class.

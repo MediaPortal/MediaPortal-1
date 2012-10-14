@@ -21,11 +21,13 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using TvDatabase;
-using TvLibrary.Log;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class GroupSelectionForm : Form
   {
@@ -88,7 +90,7 @@ namespace SetupTv.Sections
     {
       if (groupType == typeof (ChannelGroup))
       {
-        IList<ChannelGroup> tmp = ChannelGroup.ListAll();
+        IList<ChannelGroup> tmp = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.TV);
         foreach (ChannelGroup group in tmp)
         {
           bool isFixedGroupName = (
@@ -109,10 +111,10 @@ namespace SetupTv.Sections
           }
         }
       }
-      else if (groupType == typeof (RadioChannelGroup))
+      else if (groupType == typeof (ChannelGroup))
       {
-        IList<RadioChannelGroup> tmp = RadioChannelGroup.ListAll();
-        foreach (RadioChannelGroup group in tmp)
+        IList<ChannelGroup> tmp = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.Radio);
+        foreach (ChannelGroup group in tmp)
         {
           bool isFixedGroupName = (
                                     group.GroupName == TvConstants.RadioGroupNames.AllChannels ||

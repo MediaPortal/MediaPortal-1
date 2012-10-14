@@ -22,7 +22,7 @@ using System;
 using MediaPortal.GUI.Library;
 using Action = MediaPortal.GUI.Library.Action;
 
-namespace TvPlugin.teletext
+namespace Mediaportal.TV.TvPlugin.Teletext
 {
   /// <summary>
   /// Teletext window of TVE3
@@ -53,7 +53,7 @@ namespace TvPlugin.teletext
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\myteletext.xml"));
+      return Load(GUIGraphicsContext.Skin + @"\myteletext.xml");
     }
 
     protected override void OnPageDestroy(int newWindowId)

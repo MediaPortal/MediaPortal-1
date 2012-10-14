@@ -19,11 +19,12 @@
 #endregion
 
 using System;
-using System.Runtime.InteropServices;
 using DirectShowLib;
-using TvLibrary.Implementations.Analog.GraphComponents;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.GraphComponents;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.Analog.Components
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
 {
   /// <summary>
   /// The teletext component of the graph
@@ -98,8 +99,8 @@ namespace TvLibrary.Implementations.Analog.Components
     /// <returns>true, if the building was successful; false otherwise</returns>
     public bool CreateFilterInstance(Graph graph, IFilterGraph2 graphBuilder, Capture capture)
     {
-      Log.Log.WriteFile("analog: SetupTeletext()");
-      Guid guidBaseFilter = typeof (IBaseFilter).GUID;
+      Log.WriteFile("analog: SetupTeletext()");
+      Guid guidBaseFilter = typeof(IBaseFilter).GUID;
       object obj;
       //find and add tee/sink to sink filter
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSSplitter);
@@ -108,7 +109,7 @@ namespace TvLibrary.Implementations.Analog.Components
       int hr = graphBuilder.AddFilter(_teeSink, devices[0].Name);
       if (hr != 0)
       {
-        Log.Log.Error("analog:SinkGraphEx.SetupTeletext(): Unable to add tee/sink filter");
+        Log.Error("analog:SinkGraphEx.SetupTeletext(): Unable to add tee/sink filter");
         return false;
       }
       //connect capture filter -> tee sink filter
@@ -118,7 +119,7 @@ namespace TvLibrary.Implementations.Analog.Components
       if (hr != 0)
       {
         //failed...
-        Log.Log.Error("analog: unable  to connect capture->tee/sink");
+        Log.Error("analog: unable  to connect capture->tee/sink");
         graphBuilder.RemoveFilter(_teeSink);
         Release.ComObject(_teeSink);
         _teeSink = _filterWstDecoder = null;
@@ -126,21 +127,21 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       if (!string.IsNullOrEmpty(graph.Teletext.Name))
       {
-        Log.Log.WriteFile("analog: Using Teletext-Component configuration from stored graph");
+        Log.WriteFile("analog: Using Teletext-Component configuration from stored graph");
         devices = DsDevice.GetDevicesOfCat(graph.Teletext.Category);
         foreach (DsDevice device in devices)
         {
           if (device.Name != null && device.Name.Equals(graph.Teletext.Name))
           {
             //found it, add it to the graph
-            Log.Log.Info("analog:Using teletext component - {0}", graph.Teletext.Name);
+            Log.Info("analog:Using teletext component - {0}", graph.Teletext.Name);
             device.Mon.BindToObject(null, null, ref guidBaseFilter, out obj);
             _filterWstDecoder = (IBaseFilter)obj;
             hr = graphBuilder.AddFilter(_filterWstDecoder, device.Name);
             if (hr != 0)
             {
               //failed...
-              Log.Log.Error("analog:SinkGraphEx.SetupTeletext(): Unable to add WST Codec filter");
+              Log.Error("analog:SinkGraphEx.SetupTeletext(): Unable to add WST Codec filter");
               graphBuilder.RemoveFilter(_filterWstDecoder);
               _filterWstDecoder = null;
             }
@@ -150,7 +151,7 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       if (_filterWstDecoder == null)
       {
-        Log.Log.WriteFile("analog: No stored or invalid graph for Teletext component - Trying to detect");
+        Log.WriteFile("analog: No stored or invalid graph for Teletext component - Trying to detect");
 
         //find the WST codec filter
         devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSVBICodec);
@@ -159,14 +160,14 @@ namespace TvLibrary.Implementations.Analog.Components
           if (device.Name != null && device.Name.IndexOf("WST") >= 0)
           {
             //found it, add it to the graph
-            Log.Log.Info("analog:Found WST Codec filter");
+            Log.Info("analog:Found WST Codec filter");
             device.Mon.BindToObject(null, null, ref guidBaseFilter, out obj);
             _filterWstDecoder = (IBaseFilter)obj;
             hr = graphBuilder.AddFilter(_filterWstDecoder, device.Name);
             if (hr != 0)
             {
               //failed...
-              Log.Log.Error("analog:Unable to add WST Codec filter");
+              Log.Error("analog:Unable to add WST Codec filter");
               graphBuilder.RemoveFilter(_teeSink);
               Release.ComObject(_teeSink);
               _teeSink = _filterWstDecoder = null;
@@ -185,14 +186,14 @@ namespace TvLibrary.Implementations.Analog.Components
             if (device.Name != null && device.Name.IndexOf("VBI") >= 0)
             {
               //found it, add it to the graph
-              Log.Log.Info("analog:Found VBI Codec filter");
+              Log.Info("analog:Found VBI Codec filter");
               device.Mon.BindToObject(null, null, ref guidBaseFilter, out obj);
               _filterWstDecoder = (IBaseFilter)obj;
               hr = graphBuilder.AddFilter(_filterWstDecoder, device.Name);
               if (hr != 0)
               {
                 //failed...
-                Log.Log.Error("analog:Unable to add VBI Codec filter");
+                Log.Error("analog:Unable to add VBI Codec filter");
                 graphBuilder.RemoveFilter(_teeSink);
                 Release.ComObject(_teeSink);
                 _teeSink = _filterWstDecoder = null;
@@ -206,7 +207,7 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       if (_filterWstDecoder == null)
       {
-        Log.Log.Error("analog: unable to find WST Codec or VBI Codec filter");
+        Log.Error("analog: unable to find WST Codec or VBI Codec filter");
         graphBuilder.RemoveFilter(_teeSink);
         Release.ComObject(_teeSink);
         _teeSink = _filterWstDecoder = null;
@@ -221,7 +222,7 @@ namespace TvLibrary.Implementations.Analog.Components
       if (hr != 0)
       {
         //failed
-        Log.Log.Error("analog: unable  to tee/sink->wst codec");
+        Log.Error("analog: unable  to tee/sink->wst codec");
         graphBuilder.RemoveFilter(_filterWstDecoder);
         graphBuilder.RemoveFilter(_teeSink);
         Release.ComObject(_filterWstDecoder);
@@ -233,11 +234,11 @@ namespace TvLibrary.Implementations.Analog.Components
         return false;
       }
       //done
-      Log.Log.WriteFile("analog: teletext setup");
+      Log.WriteFile("analog: teletext setup");
 
       if (_filterWstDecoder != null)
       {
-        Log.Log.WriteFile("analog:connect wst/vbi codec->tsfilesink");
+        Log.WriteFile("analog:connect wst/vbi codec->tsfilesink");
         _pinWST_VBI = DsFindPin.ByDirection(_filterWstDecoder, PinDirection.Output, 0);
       }
 

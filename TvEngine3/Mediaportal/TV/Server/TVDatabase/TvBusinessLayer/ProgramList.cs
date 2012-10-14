@@ -22,11 +22,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+//
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 
 #endregion
 
-namespace TvDatabase
+namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {
   /// <summary>
   /// Holds program list partition info. A partition is a contiguous series of programs on the same channel
@@ -45,8 +47,7 @@ namespace TvDatabase
     }
   }
 
-  public class ProgramList
-    : List<Program>, IComparer<Program>
+  public class ProgramList : List<Program>, IComparer<Program>
   {
     #region variables
 
@@ -67,7 +68,7 @@ namespace TvDatabase
       //_alreadySorted = false;
     }
 
-    public ProgramList(IList<Program> source)
+    public ProgramList(IEnumerable<Program> source)
       : base(source)
     {
       //_alreadySorted = false;
@@ -235,7 +236,7 @@ namespace TvDatabase
             j++;
             //existProg = existingPrograms[j];
           }
-          else // prog.StratTime < existProg.EndTime && prog.EndTime > existProg.StartTime
+          else // prog.StratTime < existProg.endTime && prog.endTime > existProg.startTime
           {
             RemoveAt(i);
             //prog = this[i];
@@ -293,7 +294,7 @@ namespace TvDatabase
           {
             if ((dbProg.StartTime >= prevProg.EndTime) && (dbProg.EndTime <= newProg.StartTime))
             {
-              Insert(i, dbProg.Clone());
+              Insert(i, ProgramFactory.Clone(dbProg));
               i++;
               prevProg = dbProg;
             }
@@ -444,7 +445,7 @@ namespace TvDatabase
 
       if (x.IdChannel != y.IdChannel)
       {
-        int res = String.Compare(x.ReferencedChannel().DisplayName, y.ReferencedChannel().DisplayName, true);
+        int res = String.Compare(x.Channel.DisplayName, y.Channel.DisplayName, true);
         if (res == 0)
         {
           if (x.IdChannel > y.IdChannel)

@@ -19,10 +19,15 @@
 #endregion
 
 using System;
-using TvDatabase;
-using TvLibrary.Log;
+using System.Collections.Generic;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
+using Setting = Mediaportal.TV.Server.TVDatabase.Entities.Setting;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.Plugins.ServerBlaster
 {
   public partial class BlasterSetup : SectionSettings
   {
@@ -33,51 +38,40 @@ namespace SetupTv.Sections
 
     public override void OnSectionDeActivated()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("SrvBlasterType");
-      setting.Value = comboBoxType.SelectedIndex.ToString();
-      setting.Persist();
-      setting = layer.GetSetting("SrvBlasterSpeed");
-      setting.Value = comboBoxSpeed.SelectedIndex.ToString();
-      setting.Persist();
-      setting = layer.GetSetting("SrvBlaster1Card");
-      setting.Value = comboBoxBlaster1.SelectedIndex.ToString();
-      setting.Persist();
-      setting = layer.GetSetting("SrvBlaster2Card");
-      setting.Value = comboBoxBlaster2.SelectedIndex.ToString();
-      setting.Persist();
-      setting = layer.GetSetting("SrvBlasterLog");
-      setting.Value = Convert.ToString(checkBoxExtLog.Checked);
-      setting.Persist();
-      setting = layer.GetSetting("SrvBlasterSendSelect");
-      setting.Value = Convert.ToString(checkSendSelect.Checked);
-      setting.Persist();
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("SrvBlasterType", comboBoxType.SelectedIndex.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("SrvBlasterSpeed", comboBoxSpeed.SelectedIndex.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("SrvBlaster1Card", comboBoxBlaster1.SelectedIndex.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("SrvBlaster2Card", comboBoxBlaster2.SelectedIndex.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("SrvBlasterLog", Convert.ToString(checkBoxExtLog.Checked));
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("SrvBlasterSendSelect", Convert.ToString(checkSendSelect.Checked));            
 
       base.OnSectionDeActivated();
     }
 
     public override void OnSectionActivated()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      comboBoxType.SelectedIndex = Convert.ToInt16(layer.GetSetting("SrvBlasterType", "0").Value);
-      comboBoxSpeed.SelectedIndex = Convert.ToInt16(layer.GetSetting("SrvBlasterSpeed", "0").Value);
+      
+      comboBoxType.SelectedIndex = Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlasterType", "0").Value);
+      comboBoxSpeed.SelectedIndex = Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlasterSpeed", "0").Value);
       comboBoxBlaster1.Items.Clear();
       comboBoxBlaster2.Items.Clear();
       comboBoxBlaster1.Items.Add("None");
       comboBoxBlaster2.Items.Add("None");
-      for (int i = 0; i < layer.Cards.Count; ++i)
+
+      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
+
+      foreach (Card card in cards)
       {
-        Card card = layer.Cards[i];
         comboBoxBlaster1.Items.Add(card.Name);
         comboBoxBlaster2.Items.Add(card.Name);
       }
       Log.WriteFile("CB1Size {0}, CB2Size {1}, BT1 {2}, BT2 {3}", comboBoxBlaster1.Items.Count,
-                    comboBoxBlaster1.Items.Count, Convert.ToInt16(layer.GetSetting("SrvBlaster1Card", "0").Value),
-                    Convert.ToInt16(layer.GetSetting("SrvBlaster2Card", "0").Value));
-      comboBoxBlaster1.SelectedIndex = Convert.ToInt16(layer.GetSetting("SrvBlaster1Card", "0").Value);
-      comboBoxBlaster2.SelectedIndex = Convert.ToInt16(layer.GetSetting("SrvBlaster2Card", "0").Value);
-      checkBoxExtLog.Checked = (layer.GetSetting("SrvBlasterLog").Value == "True");
-      checkSendSelect.Checked = (layer.GetSetting("SrvBlasterSendSelect").Value == "True");
+                    comboBoxBlaster1.Items.Count, Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlaster1Card", "0").Value),
+                    Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlaster2Card", "0").Value));
+      comboBoxBlaster1.SelectedIndex = Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlaster1Card", "0").Value);
+      comboBoxBlaster2.SelectedIndex = Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlaster2Card", "0").Value);
+      checkBoxExtLog.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSetting("SrvBlasterLog").Value == "True");
+      checkSendSelect.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSetting("SrvBlasterSendSelect").Value == "True");
     }
 
     private void ComboBox1SelectedIndexChanged(object sender, EventArgs e)

@@ -20,7 +20,7 @@
 
 using System.Runtime.InteropServices;
 
-namespace TvLibrary.Interfaces.Analyzer
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
 {
   /// <summary>
   /// Enumeration of pid's for the video/audio observer

@@ -25,9 +25,11 @@ using System.Configuration;
 using MediaPortal.Configuration;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
-using TvDatabase;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin.Radio
 {
   public partial class RadioSetupForm : MPConfigForm
   {
@@ -85,8 +87,8 @@ namespace TvPlugin
       comboBoxGroups.Items.Clear();
       comboBoxGroups.Items.Add("(none)");
       int selectedIdx = 0;
-      IList<RadioChannelGroup> groups = RadioChannelGroup.ListAll();
-      foreach (RadioChannelGroup group in groups)
+      IEnumerable<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.Radio);
+      foreach (ChannelGroup group in groups)
       {
         int idx = comboBoxGroups.Items.Add(group.GroupName);
         if (group.GroupName == _rootGroup)

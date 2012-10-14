@@ -20,7 +20,7 @@
 
 using System.Xml.Serialization;
 
-namespace MediaPortal.WebEPG.Config
+namespace WebEPG.config.WebEPG
 {
   /// <summary>
   /// The information for a Channel.

@@ -19,15 +19,18 @@
 #endregion
 
 using System;
+using System.Runtime.Serialization;
 using DirectShowLib;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Countries;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvLibrary.Implementations
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
 {
   /// <summary>
   /// class holding all tuning details for analog channels
   /// </summary>
-  [Serializable]
+  [DataContract]
   public class AnalogChannel : IChannel
   {
     #region enums
@@ -158,17 +161,35 @@ namespace TvLibrary.Implementations
 
     #region variables
 
+    [DataMember]
     private string _channelName = String.Empty;
+
+    [DataMember]
     private long _channelFrequency = -1;  // Used for FM radio; analog TV is usually tuned by channel number.
+
+    [DataMember]
     private int _channelNumber = -1;
+
+    [DataMember]
     private Country _country;
+
+    [DataMember]
     private TunerInputType _tunerSource = TunerInputType.Cable;
+
+    [DataMember]
     private VideoInputType _videoInputType = VideoInputType.Tuner;
+
+    [DataMember]
     private AudioInputType _audioInputType = AudioInputType.Tuner;
+
+    [DataMember]
     private bool _isVcrSignal;
-    private bool _isTv = true;
-    private bool _isRadio = false;
+    
+    [DataMember]
     private bool _freeToAir = true;
+
+    [DataMember]
+    private MediaTypeEnum _mediaType;
 
     #endregion
 
@@ -188,8 +209,7 @@ namespace TvLibrary.Implementations
       _videoInputType = VideoInputType.Tuner;
       _audioInputType = AudioInputType.Tuner;
       _isVcrSignal = false;
-      _isTv = true;
-      _isRadio = false;
+      _mediaType = MediaTypeEnum.TV;
       _freeToAir = true;
     }
 
@@ -207,8 +227,7 @@ namespace TvLibrary.Implementations
       _videoInputType = channel.VideoSource;
       _audioInputType = channel.AudioSource;
       _isVcrSignal = channel.IsVcrSignal;
-      _isTv = channel.IsTv;
-      _isRadio = channel.IsRadio;
+      _mediaType= channel.MediaType;      
       _freeToAir = channel.FreeToAir;
     }
 
@@ -292,23 +311,7 @@ namespace TvLibrary.Implementations
       set { _isVcrSignal = value; }
     }
 
-    /// <summary>
-    /// Get/set whether the channel is a television channel.
-    /// </summary>
-    public bool IsTv
-    {
-      get { return _isTv; }
-      set { _isTv = value; }
-    }
-
-    /// <summary>
-    /// Get/set whether the channel is a radio channel.
-    /// </summary>
-    public bool IsRadio
-    {
-      get { return _isRadio; }
-      set { _isRadio = value; }
-    }
+   
 
     /// <summary>
     /// Get/set whether the channel is a free-to-air or encrypted channel.
@@ -317,6 +320,12 @@ namespace TvLibrary.Implementations
     {
       get { return _freeToAir; }
       set { _freeToAir = value; }
+    }
+
+    public MediaTypeEnum MediaType
+    {
+      get { return _mediaType; }
+      set { _mediaType = value; }
     }
 
     #endregion
@@ -331,7 +340,7 @@ namespace TvLibrary.Implementations
     /// </returns>
     public override string ToString()
     {
-      string line = IsRadio ? "radio:" : "tv:";
+      string line = MediaType.ToString();
       line += String.Format("{0} Freq:{1} Channel:{2} Country:{3} Tuner:{4} Video:{5} Audio:{6}",
                             Name, Frequency, ChannelNumber, Country.Name, TunerSource, VideoSource, AudioSource);
       return line;
@@ -386,14 +395,10 @@ namespace TvLibrary.Implementations
       {
         return false;
       }
-      if (ch.IsRadio != _isRadio)
+      if (ch.MediaType != MediaType)
       {
         return false;
-      }
-      if (ch.IsTv != _isTv)
-      {
-        return false;
-      }
+      }   
       if (ch.FreeToAir != _freeToAir)
       {
         return false;
@@ -411,7 +416,7 @@ namespace TvLibrary.Implementations
     public override int GetHashCode()
     {
       return base.GetHashCode() ^ _channelName.GetHashCode() ^ _channelFrequency.GetHashCode() ^
-             _channelNumber.GetHashCode() ^ _country.GetHashCode() ^ _isRadio.GetHashCode() ^
+             _channelNumber.GetHashCode() ^ _country.GetHashCode() ^ _mediaType.GetHashCode() ^
              _tunerSource.GetHashCode() ^ _videoInputType.GetHashCode() ^ _audioInputType.GetHashCode() ^
              _isVcrSignal.GetHashCode();
     }
@@ -443,13 +448,12 @@ namespace TvLibrary.Implementations
       {
         return true;
       }
-      return analogChannel.IsTv != IsTv ||
-             analogChannel.IsRadio != IsRadio ||
-             analogChannel.Country.Id != Country.Id ||
-             analogChannel.VideoSource != VideoSource ||
-             analogChannel.TunerSource != TunerSource ||
-             analogChannel.ChannelNumber != ChannelNumber ||
-             analogChannel.Frequency != Frequency;
+      return analogChannel.MediaType != MediaType ||
+           analogChannel.Country.Id != Country.Id ||
+           analogChannel.VideoSource != VideoSource ||
+           analogChannel.TunerSource != TunerSource ||
+           analogChannel.ChannelNumber != ChannelNumber ||
+           analogChannel.Frequency != Frequency;
     }
 
     /// <summary>

@@ -21,9 +21,8 @@
 using System;
 using System.Collections;
 using System.Windows.Forms;
-using SetupTv;
 
-namespace SetupControls
+namespace Mediaportal.TV.Server.SetupControls
 {
   public partial class SettingsForm : MPForm
   {
@@ -38,11 +37,11 @@ namespace SetupControls
       get { return settingSections; }
     }
 
-    public SettingsForm()
+    public SettingsForm(bool isRestrictedMode)
     {
       InitializeComponent();
-
       linkLabel1.Links.Add(0, linkLabel1.Text.Length, "http://www.team-mediaportal.com/donate.html");
+      btnRestrictedMode.Visible = isRestrictedMode;
     }
 
     public virtual void AddSection(SectionSettings section)
@@ -138,5 +137,16 @@ namespace SetupControls
     public virtual void helpToolStripSplitButton_ButtonClick(object sender, EventArgs e) {}
 
     public virtual void configToolStripSplitButton_ButtonClick(object sender, EventArgs e) {}
+   
+    private void btnRestrictedMode_Click(object sender, EventArgs e)
+    {
+      MessageBox.Show("In order for SetupTV to interact with the TV Service when running SetupTV in a multiseat environment a few things are required...\n\n" +
+        "Interacting with a remote windows service in a workgroup environment (not joined in a domain)\n" +
+        "requires that the user is logged on the machine hosting the TV service using an administrative user account that has a password.\n" +
+        "Create an administrator user account on the TV Service host and make sure you match both the username and password.\n\n" +
+        "If these prerequisite cannot be met then the SetupTV application will run in a so called restricted mode.\n" +
+        "In this mode you will be unable to restart/stop the tvservice."
+        , "What is restricted mode ?", MessageBoxButtons.OK, MessageBoxIcon.Information);
+    }
   }
 }

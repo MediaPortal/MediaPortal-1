@@ -21,7 +21,7 @@
 using System.Collections.Generic;
 using System.Net;
 
-namespace MediaPortal.Utils.Web
+namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
 {
   /// <summary>
   /// Service Class that provided Authenication details for HTTP requests/transactions

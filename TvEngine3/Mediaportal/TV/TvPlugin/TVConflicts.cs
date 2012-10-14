@@ -21,15 +21,18 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using TvControl;
-using TvDatabase;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 using Action = MediaPortal.GUI.Library.Action;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   public class GUITVConflicts : GUIInternalWindow
   {
@@ -51,7 +54,7 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\mytvconflicts.xml"));
+      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvconflicts.xml");
       return bResult;
     }
 
@@ -152,7 +155,7 @@ namespace TvPlugin
       item.Label = schedule.ProgramName;
 
       item.TVTag = schedule;
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.ReferencedChannel().DisplayName);
+      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.Channel.DisplayName);
       if (string.IsNullOrEmpty(strLogo))                    
       {
         strLogo = "defaultVideoBig.png";
@@ -172,11 +175,11 @@ namespace TvPlugin
 
       if (selectedItem == null)
       {
-        IList<Conflict> conflictsList = Conflict.ListAll();
+        IEnumerable<Conflict> conflictsList = ServiceAgents.Instance.ConflictServiceAgent.ListAllConflicts();
         foreach (Conflict conflict in conflictsList)
         {
-          Schedule schedule = Schedule.Retrieve(conflict.IdSchedule);
-          Schedule conflictingSchedule = Schedule.Retrieve(conflict.IdConflictingSchedule);
+          Schedule schedule = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(conflict.IdSchedule);
+          Schedule conflictingSchedule = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(conflict.IdConflictingSchedule);
 
           GUIListItem item = Schedule2ListItem(schedule);
           item.MusicTag = conflictingSchedule;
@@ -318,11 +321,11 @@ namespace TvPlugin
             }
 
             item.Label = rec.ProgramName;
-            item.Label2 = GUILocalizeStrings.Get(990001, new object[] { day, rec.ReferencedChannel().DisplayName });
+            item.Label2 = GUILocalizeStrings.Get(990001, new object[] { day, rec.Channel.DisplayName });
             break;
           case (int)ScheduleRecordingType.EveryTimeOnThisChannel:
             item.Label = rec.ProgramName;
-            item.Label2 = GUILocalizeStrings.Get(650, new object[] {rec.ReferencedChannel().DisplayName});
+            item.Label2 = GUILocalizeStrings.Get(650, new object[] {rec.Channel.DisplayName});
             break;
           case (int)ScheduleRecordingType.EveryTimeOnEveryChannel:
             item.Label = rec.ProgramName;
@@ -371,7 +374,7 @@ namespace TvPlugin
         if (null != dlgYesNo)
         {
           dlgYesNo.SetHeading(GUILocalizeStrings.Get(653)); //Delete this recording?
-          dlgYesNo.SetLine(1, schedule.ReferencedChannel().DisplayName);
+          dlgYesNo.SetLine(1, schedule.Channel.DisplayName);
           dlgYesNo.SetLine(2, schedule.ProgramName);
           dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732)); //are you sure
           dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
@@ -380,7 +383,7 @@ namespace TvPlugin
           {
             if (schedule.ScheduleType == (int)ScheduleRecordingType.Once)
             {
-              schedule.Delete();
+              ServiceAgents.Instance.ScheduleServiceAgent.DeleteSchedule(schedule.IdSchedule);                            
               selectedItem = null;
             }
           }
@@ -403,14 +406,14 @@ namespace TvPlugin
           switch (dlg.SelectedId)
           {
             case 981: //delete specific series
-              CanceledSchedule canceledSchedule = new CanceledSchedule(schedule.IdSchedule, schedule.IdChannel, schedule.StartTime);
-              canceledSchedule.Persist();
+              CanceledSchedule canceledSchedule = CanceledScheduleFactory.CreateCanceledSchedule(schedule.IdSchedule, schedule.IdChannel, schedule.StartTime);              
+              ServiceAgents.Instance.CanceledScheduleServiceAgent.SaveCanceledSchedule(canceledSchedule);
               selectedItem = null;
-              TvServer server = new TvServer();
-              server.OnNewSchedule();
+              
+              ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
               break;
-            case 982: //Delete entire recording
-              schedule.Delete();
+            case 982: //Delete entire recording              
+              ServiceAgents.Instance.ScheduleServiceAgent.DeleteSchedule(schedule.IdSchedule);                            
               selectedItem = null;
               break;
           }

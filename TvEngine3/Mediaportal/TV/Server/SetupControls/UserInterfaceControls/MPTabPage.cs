@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace MediaPortal.UserInterface.Controls
+namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 {
   /// <summary>
   /// Summary description for MPTabPage.

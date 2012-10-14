@@ -25,24 +25,36 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using Gentle.Framework;
-using Tst;
-using TvDatabase;
-using TvEngine;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.Plugins.XmlTvImport.util;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVControl.Interfaces;
+using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 {
   public partial class XmlTvSetup : SectionSettings
   {
     private const string _shortTimePattern24Hrs = "HH:mm";
     private const string _shortTimePattern12Hrs = "hh:mm";
 
+    private readonly IChannelGroupService _channelGroupServiceAgent = ServiceAgents.Instance.ChannelGroupServiceAgent;
+    private readonly ISettingService _settingServiceAgent = ServiceAgents.Instance.SettingServiceAgent;
+    private readonly IChannelService _channelServiceAgent = ServiceAgents.Instance.ChannelServiceAgent;
+
     public XmlTvSetup()
-      : this("XmlTv") {}
+      : this("XmlTv")
+    {
+      ServiceAgents.Instance.AddGenericService<IXMLTVImportService>(); //XMLTVImportService
+    }
 
     public XmlTvSetup(string name)
       : base(name)
@@ -52,54 +64,21 @@ namespace SetupTv.Sections
 
     public override void OnSectionDeActivated()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("xmlTv");
-      setting.Value = textBoxFolder.Text;
-      setting.Persist();
+      _settingServiceAgent.SaveSetting("xmlTv", textBoxFolder.Text);
+      _settingServiceAgent.SaveSetting("xmlTvUseTimeZone", checkBox1.Checked ? "true" : "false");
+      _settingServiceAgent.SaveSetting("xmlTvImportXML", cbImportXML.Checked ? "true" : "false");
+      _settingServiceAgent.SaveSetting("xmlTvImportLST", cbImportLST.Checked ? "true" : "false");
+      _settingServiceAgent.SaveSetting("xmlTvTimeZoneHours", textBoxHours.Text);
+      _settingServiceAgent.SaveSetting("xmlTvTimeZoneMins", textBoxMinutes.Text);
+      _settingServiceAgent.SaveSetting("xmlTvDeleteBeforeImport", checkBoxDeleteBeforeImport.Checked ? "true" : "false");
+      _settingServiceAgent.SaveSetting("xmlTvRemoteURL", txtRemoteURL.Text);
 
-      setting = layer.GetSetting("xmlTvUseTimeZone", "true");
-      setting.Value = checkBox1.Checked ? "true" : "false";
-      setting.Persist();
-
-      setting = layer.GetSetting("xmlTvImportXML", "true");
-      setting.Value = cbImportXML.Checked ? "true" : "false";
-      setting.Persist();
-
-      setting = layer.GetSetting("xmlTvImportLST", "true");
-      setting.Value = cbImportLST.Checked ? "true" : "false";
-      setting.Persist();
-
-      setting = layer.GetSetting("xmlTvTimeZoneHours", "0");
-      setting.Value = textBoxHours.Text;
-      setting.Persist();
-
-      setting = layer.GetSetting("xmlTvTimeZoneMins", "0");
-      setting.Value = textBoxMinutes.Text;
-      setting.Persist();
-
-      setting = layer.GetSetting("xmlTvDeleteBeforeImport", "true");
-      setting.Value = checkBoxDeleteBeforeImport.Checked ? "true" : "false";
-      setting.Persist();
-
-      setting = layer.GetSetting("xmlTvRemoteURL", "http://www.mysite.com/TVguide.xml");
-      setting.Value = txtRemoteURL.Text;
-      setting.Persist();
-
-      setting = layer.GetSetting("xmlTvRemoteScheduleTime", "06:30");
-      DateTimeFormatInfo DTFI = new DateTimeFormatInfo();
+      var DTFI = new DateTimeFormatInfo();
       DTFI.ShortDatePattern = _shortTimePattern24Hrs;
       DateTime xmlTvRemoteScheduleTime = dateTimePickerScheduler.Value;
-      setting.Value = xmlTvRemoteScheduleTime.ToString("t", DTFI);
-      setting.Persist();
-
-      setting = layer.GetSetting("xmlTvRemoteSchedulerEnabled", "false");
-      setting.Value = chkScheduler.Checked ? "true" : "false";
-      setting.Persist();
-
-      setting = layer.GetSetting("xmlTvRemoteSchedulerDownloadOnWakeUpEnabled", "false");
-      setting.Value = radioDownloadOnWakeUp.Checked ? "true" : "false";
-      setting.Persist();
-
+      _settingServiceAgent.SaveSetting("xmlTvRemoteScheduleTime", xmlTvRemoteScheduleTime.ToString("t", DTFI));
+      _settingServiceAgent.SaveSetting("xmlTvRemoteSchedulerEnabled", chkScheduler.Checked ? "true" : "false");
+      _settingServiceAgent.SaveSetting("xmlTvRemoteSchedulerDownloadOnWakeUpEnabled", radioDownloadOnWakeUp.Checked ? "true" : "false");            
 
       base.OnSectionDeActivated();
     }
@@ -124,27 +103,24 @@ namespace SetupTv.Sections
     public override void OnSectionActivated()
     {
       UpdateRadioButtonsState();
+      textBoxFolder.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTv", XmlTvImporter.DefaultOutputFolder).Value;
+      checkBox1.Checked = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvUseTimeZone", "false").Value == "true";
+      cbImportXML.Checked = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvImportXML", "true").Value == "true";
+      cbImportLST.Checked = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvImportLST", "false").Value == "true";
+      checkBoxDeleteBeforeImport.Checked = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvDeleteBeforeImport", "true").Value == "true";
+      textBoxHours.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvTimeZoneHours", "0").Value;
+      textBoxMinutes.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvTimeZoneMins", "0").Value;
+      labelLastImport.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvResultLastImport", "").Value;
+      labelChannels.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvResultChannels", "").Value;
+      labelPrograms.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvResultPrograms", "").Value;
+      labelStatus.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvResultStatus", "").Value;
 
-      TvBusinessLayer layer = new TvBusinessLayer();
-      textBoxFolder.Text = layer.GetSetting("xmlTv", XmlTvImporter.DefaultOutputFolder).Value;
-      checkBox1.Checked = layer.GetSetting("xmlTvUseTimeZone", "false").Value == "true";
-      cbImportXML.Checked = layer.GetSetting("xmlTvImportXML", "true").Value == "true";
-      cbImportLST.Checked = layer.GetSetting("xmlTvImportLST", "false").Value == "true";
-      checkBoxDeleteBeforeImport.Checked = layer.GetSetting("xmlTvDeleteBeforeImport", "true").Value == "true";
-
-      textBoxHours.Text = layer.GetSetting("xmlTvTimeZoneHours", "0").Value;
-      textBoxMinutes.Text = layer.GetSetting("xmlTvTimeZoneMins", "0").Value;
-      labelLastImport.Text = layer.GetSetting("xmlTvResultLastImport", "").Value;
-      labelChannels.Text = layer.GetSetting("xmlTvResultChannels", "").Value;
-      labelPrograms.Text = layer.GetSetting("xmlTvResultPrograms", "").Value;
-      labelStatus.Text = layer.GetSetting("xmlTvResultStatus", "").Value;
-
-      chkScheduler.Checked = (layer.GetSetting("xmlTvRemoteSchedulerEnabled", "false").Value == "true");
-      radioDownloadOnWakeUp.Checked = (layer.GetSetting("xmlTvRemoteSchedulerDownloadOnWakeUpEnabled", "false").Value ==
+      chkScheduler.Checked = (_settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteSchedulerEnabled", "false").Value == "true");
+      radioDownloadOnWakeUp.Checked = (_settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteSchedulerDownloadOnWakeUpEnabled", "false").Value ==
                                        "true");
       radioDownloadOnSchedule.Checked = !radioDownloadOnWakeUp.Checked;
 
-      txtRemoteURL.Text = layer.GetSetting("xmlTvRemoteURL", "http://www.mysite.com/TVguide.xml").Value;
+      txtRemoteURL.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteURL", "http://www.mysite.com/TVguide.xml").Value;
 
       DateTime dt = DateTime.Now;
       DateTimeFormatInfo DTFI = new DateTimeFormatInfo();
@@ -152,7 +128,7 @@ namespace SetupTv.Sections
 
       try
       {
-        dt = DateTime.Parse(layer.GetSetting("xmlTvRemoteScheduleTime", "06:30").Value, DTFI);
+        dt = DateTime.Parse(_settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteScheduleTime", "06:30").Value, DTFI);
       }
       catch
       {
@@ -160,7 +136,7 @@ namespace SetupTv.Sections
         try
         {
           DTFI.ShortDatePattern = _shortTimePattern12Hrs;
-          dt = DateTime.Parse(layer.GetSetting("xmlTvRemoteScheduleTime", "06:30").Value, DTFI);
+          dt = DateTime.Parse(_settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteScheduleTime", "06:30").Value, DTFI);
         }
         catch
         {
@@ -170,8 +146,8 @@ namespace SetupTv.Sections
 
       dateTimePickerScheduler.Value = dt;
 
-      lblLastTransferAt.Text = layer.GetSetting("xmlTvRemoteScheduleLastTransfer", "").Value;
-      lblTransferStatus.Text = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "").Value;
+      lblLastTransferAt.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteScheduleLastTransfer", "").Value;
+      lblTransferStatus.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteScheduleTransferStatus", "").Value;
 
       // load all distinct groups
       try
@@ -180,7 +156,7 @@ namespace SetupTv.Sections
         comboBoxGroup.Items.Add(new CBChannelGroup("", -1));
         comboBoxGroup.Tag = "";
 
-        IList<ChannelGroup> channelGroups = ChannelGroup.ListAll();
+        IEnumerable<ChannelGroup> channelGroups = _channelGroupServiceAgent.ListAllChannelGroups();
         foreach (ChannelGroup cg in channelGroups)
         {
           comboBoxGroup.Items.Add(new CBChannelGroup(cg.GroupName, cg.IdGroup));
@@ -251,29 +227,15 @@ namespace SetupTv.Sections
 
         IList<Channel> channels;
 
-        bool loadRadio = checkBoxLoadRadio.Checked;
-
-        if (chGroup != null && chGroup.idGroup != -1)
+        bool loadRadio = checkBoxLoadRadio.Checked;               
+        if (loadRadio)
         {
-          SqlBuilder sb1 = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof (Channel));
-          SqlStatement stmt1 = sb1.GetStatement(true);
-          SqlStatement ManualJoinSQL = new SqlStatement(stmt1.StatementType, stmt1.Command,
-                                                        String.Format(
-                                                          "select c.* from Channel c join GroupMap g on c.idChannel=g.idChannel where " +
-                                                          (loadRadio ? "" : " c.isTv = 1 and ") +
-                                                          " g.idGroup = '{0}' order by g.sortOrder", chGroup.idGroup),
-                                                        typeof (Channel));
-          channels = ObjectFactory.GetCollection<Channel>(ManualJoinSQL.Execute());
+          channels = _channelServiceAgent.GetAllChannelsByGroupId(chGroup.idGroup).ToList();
         }
         else
         {
-          SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
-          sb.AddOrderByField(true, "sortOrder");
-          if (!loadRadio)
-            sb.AddConstraint(" isTv = 1");
-          SqlStatement stmt = sb.GetStatement(true);
-          channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
-        }
+          channels = _channelServiceAgent.GetAllChannelsByGroupIdAndMediaType(chGroup.idGroup, MediaTypeEnum.TV).ToList();          
+        }        
 
         progressBar1.Minimum = 0;
         progressBar1.Maximum = channels.Count;
@@ -320,12 +282,12 @@ namespace SetupTv.Sections
           // Start by checking if there's an available mapping for this channel
           Channel matchingGuideChannel = null;
 
-          if (guideChannelsExternald.ContainsKey(ch.ExternalId))
+          if (ch.ExternalId != null && guideChannelsExternald.ContainsKey(ch.ExternalId))
           {
             matchingGuideChannel = guideChannelsExternald[ch.ExternalId];
             alreadyMapped = true;
           }
-          // no externalid mapping available, try using the name
+          // no externalId mapping available, try using the name
           if (matchingGuideChannel == null)
           {
             string tName = ch.DisplayName.Replace(" ", "").ToLowerInvariant();
@@ -456,9 +418,8 @@ namespace SetupTv.Sections
 
     private List<Channel> readChannelsFromTVGuide()
     {
-      List<Channel> listChannels = new List<Channel>();
-      TvBusinessLayer layer = new TvBusinessLayer();
-      string folder = layer.GetSetting("xmlTv", XmlTvImporter.DefaultOutputFolder).Value;
+      var listChannels = new List<Channel>();
+      string folder = _settingServiceAgent.GetSettingWithDefaultValue("xmlTv", XmlTvImporter.DefaultOutputFolder).Value;
       string selFolder = textBoxFolder.Text;
 
       // use the folder set in the gui if it doesn't match the one set in the database
@@ -659,8 +620,7 @@ namespace SetupTv.Sections
                 {
                   if (displayName != null)
                   {
-                    Channel channel = new Channel(false, false, -1, new DateTime(), false, new DateTime(),
-                                                  -1, false, id, displayName, false);
+                    Channel channel = new Channel {ExternalId = id, DisplayName = displayName};
                     channels.Add(channel);
                   }
                 }
@@ -689,14 +649,8 @@ namespace SetupTv.Sections
       {
         // loading all Channels is much faster then loading them one by one
         // for each mapping
-        IList<Channel> allChanels = Channel.ListAll();
-
-        Dictionary<int, Channel> dAllChannels = new Dictionary<int, Channel>();
-
-        foreach (Channel ch in allChanels)
-        {
-          dAllChannels.Add(ch.IdChannel, ch);
-        }
+        IEnumerable<Channel> allChanels = _channelServiceAgent.ListAllChannels();
+        Dictionary<int, Channel> dAllChannels = allChanels.ToDictionary(ch => ch.IdChannel);
 
         progressBar1.Value = 0;
         progressBar1.Minimum = 0;
@@ -706,24 +660,24 @@ namespace SetupTv.Sections
         foreach (DataGridViewRow row in dataGridChannelMappings.Rows)
         {
           int id = (int)row.Cells["Id"].Value;
-          string guideChannelAndExternalId = (string)row.Cells["guideChannel"].Value;
+          string guideChannelAndexternalId = (string)row.Cells["guideChannel"].Value;
 
           string externalId = null;
 
-          if (guideChannelAndExternalId != null)
+          if (guideChannelAndexternalId != null)
           {
-            int startIdx = guideChannelAndExternalId.LastIndexOf("(") + 1;
+            int startIdx = guideChannelAndexternalId.LastIndexOf("(") + 1;
             // the length is the same as the length - startingidex -1 (-1 -> remove trailing )) 
-            externalId = guideChannelAndExternalId.Substring(startIdx, guideChannelAndExternalId.Length - startIdx - 1);
+            externalId = guideChannelAndexternalId.Substring(startIdx, guideChannelAndexternalId.Length - startIdx - 1);
           }
 
           Channel channel = dAllChannels[id];
           channel.ExternalId = externalId == null ? "" : externalId;
-
-          channel.Persist();
-          //}
+          //channel.Persist();
           progressBar1.Value++;
         }
+        _channelServiceAgent.SaveChannels(dAllChannels.Values.ToList());
+
         textBoxAction.Text = "Mappings saved";
       }
       catch (Exception ex)
@@ -736,27 +690,24 @@ namespace SetupTv.Sections
 
     private void buttonManualImport_Click(object sender, EventArgs e)
     {
-      XmlTvImporter importer = new XmlTvImporter();
+      _settingServiceAgent.SaveSetting("xmlTv", textBoxFolder.Text);
+      _settingServiceAgent.SaveSetting("xmlTvImportXML", cbImportXML.Checked ? "true" : "false");
+      _settingServiceAgent.SaveSetting("xmlTvImportLST", cbImportLST.Checked ? "true" : "false");
 
-      string folder = textBoxFolder.Text;
-      bool importXml = cbImportXML.Checked;
-      bool importLst = cbImportLST.Checked;
-
-      importer.ForceImport(folder, importXml, importLst);
-
-      TvBusinessLayer layer = new TvBusinessLayer();
-      labelLastImport.Text = layer.GetSetting("xmlTvResultLastImport", "").Value;
-      labelChannels.Text = layer.GetSetting("xmlTvResultChannels", "").Value;
-      labelPrograms.Text = layer.GetSetting("xmlTvResultPrograms", "").Value;
-      labelStatus.Text = layer.GetSetting("xmlTvResultStatus", "").Value;
+      IXMLTVImportService pluginServiceAgent = ServiceAgents.Instance.PluginService<IXMLTVImportService>();
+      pluginServiceAgent.ImportNow();
+      
+      labelLastImport.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvResultLastImport", "").Value;
+      labelChannels.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvResultChannels", "").Value;
+      labelPrograms.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvResultPrograms", "").Value;
+      labelStatus.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvResultStatus", "").Value;
     }
 
     private void panel1_Paint(object sender, PaintEventArgs e) {}
 
     private void buttonExport_Click(object sender, EventArgs e)
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      string folder = layer.GetSetting("xmlTv", XmlTvImporter.DefaultOutputFolder).Value;
+      string folder = _settingServiceAgent.GetSettingWithDefaultValue("xmlTv", XmlTvImporter.DefaultOutputFolder).Value;
       string selFolder = textBoxFolder.Text;
 
       // use the folder set in the gui if it doesn't match the one set in the database
@@ -784,14 +735,14 @@ namespace SetupTv.Sections
 
         foreach (DataGridViewRow row in dataGridChannelMappings.Rows)
         {
-          string guideChannelAndExternalId = (string)row.Cells["guideChannel"].Value;
+          string guideChannelAndexternalId = (string)row.Cells["guideChannel"].Value;
           string externalId = null;
 
-          if (guideChannelAndExternalId != null)
+          if (guideChannelAndexternalId != null)
           {
-            int startIdx = guideChannelAndExternalId.LastIndexOf("(") + 1;
+            int startIdx = guideChannelAndexternalId.LastIndexOf("(") + 1;
             // the length is the same as the length - startingidex -1 (-1 -> remove trailing )) 
-            externalId = guideChannelAndExternalId.Substring(startIdx, guideChannelAndExternalId.Length - startIdx - 1);
+            externalId = guideChannelAndexternalId.Substring(startIdx, guideChannelAndexternalId.Length - startIdx - 1);
             fileOut.WriteLine("channel=" + externalId);
           }
         }
@@ -827,11 +778,8 @@ namespace SetupTv.Sections
     {
       XmlTvImporter importer = new XmlTvImporter();
       importer.RetrieveRemoteFile(textBoxFolder.Text, txtRemoteURL.Text);
-
-      TvBusinessLayer layer = new TvBusinessLayer();
-
-      lblLastTransferAt.Text = layer.GetSetting("xmlTvRemoteScheduleLastTransfer", "").Value;
-      lblTransferStatus.Text = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "").Value;
+      lblLastTransferAt.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteScheduleLastTransfer", "").Value;
+      lblTransferStatus.Text = _settingServiceAgent.GetSettingWithDefaultValue("xmlTvRemoteScheduleTransferStatus", "").Value;
     }
 
     private void btnGetNow_Click(object sender, EventArgs e)

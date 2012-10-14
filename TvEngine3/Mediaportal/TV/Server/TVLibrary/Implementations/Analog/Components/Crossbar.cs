@@ -21,10 +21,12 @@
 using System;
 using System.Collections.Generic;
 using DirectShowLib;
-using TvLibrary.Implementations.Analog.GraphComponents;
-using TvLibrary.Implementations.DVB;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.GraphComponents;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.Analog.Components
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
 {
   /// <summary>
   /// The crossbar component of the graph
@@ -141,11 +143,20 @@ namespace TvLibrary.Implementations.Analog.Components
 
     #region Dispose
 
-    /// <summary>
-    /// Disposes the crossbar component
-    /// </summary>
-    public void Dispose()
+    protected virtual void Dispose(bool disposing)
     {
+      if (disposing)
+      {
+        // get rid of managed resources
+        if (_crossBarDevice != null)
+        {
+          DevicesInUse.Instance.Remove(_crossBarDevice);
+          _crossBarDevice.Dispose();
+          _crossBarDevice = null;
+        }
+      }
+
+      // get rid of unmanaged resources
       if (_audioTunerIn != null)
       {
         Release.ComObject("_audioTunerIn", _audioTunerIn);
@@ -160,14 +171,24 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       if (_filterCrossBar != null)
       {
-        Release.ComObject("crossbar filter", _filterCrossBar);
+        Release.ComObject("crossbar filter", _filterCrossBar);        
         _filterCrossBar = null;
       }
-      if (_crossBarDevice != null)
-      {
-        DevicesInUse.Instance.Remove(_crossBarDevice);
-        _crossBarDevice = null;
-      }
+    }
+
+
+    /// <summary>
+    /// Disposes the crossbar component
+    /// </summary>   
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    ~Crossbar()
+    {
+      Dispose(false);
     }
 
     #endregion
@@ -187,14 +208,14 @@ namespace TvLibrary.Implementations.Analog.Components
     {
       if (!string.IsNullOrEmpty(graph.Crossbar.Name))
       {
-        Log.Log.WriteFile("analog: Using Crossbar configuration from stored graph");
+        Log.WriteFile("analog: Using Crossbar configuration from stored graph");
         if (CreateConfigurationBasedFilterInstance(graph, graphBuilder, tuner))
         {
-          Log.Log.WriteFile("analog: Using Crossbar configuration from stored graph succeeded");
+          Log.WriteFile("analog: Using Crossbar configuration from stored graph succeeded");
           return true;
         }
       }
-      Log.Log.WriteFile("analog: No stored or invalid graph for Crossbar component - Trying to detect");
+      Log.WriteFile("analog: No stored or invalid graph for Crossbar component - Trying to detect");
       return CreateAutomaticFilterInstance(graph, graphBuilder, tuner);
     }
 
@@ -222,12 +243,12 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       catch (Exception)
       {
-        Log.Log.WriteFile("analog: AddCrossBarFilter no crossbar devices found");
+        Log.WriteFile("analog: AddCrossBarFilter no crossbar devices found");
         return false;
       }
       if (devices == null || devices.Length == 0)
       {
-        Log.Log.WriteFile("analog: AddCrossBarFilter no crossbar devices found");
+        Log.WriteFile("analog: AddCrossBarFilter no crossbar devices found");
         return false;
       }
       //try each crossbar
@@ -239,7 +260,7 @@ namespace TvLibrary.Implementations.Analog.Components
           continue;
         if (!deviceName.Equals(devices[i].Name))
           continue;
-        Log.Log.WriteFile("analog: AddCrossBarFilter use:{0} {1}", devices[i].Name, i);
+        Log.WriteFile("analog: AddCrossBarFilter use:{0} {1}", devices[i].Name, i);
         int hr;
         try
         {
@@ -248,7 +269,7 @@ namespace TvLibrary.Implementations.Analog.Components
         }
         catch (Exception)
         {
-          Log.Log.WriteFile("analog: cannot add filter to graph");
+          Log.WriteFile("analog: cannot add filter to graph");
           continue;
         }
         if (hr != 0)
@@ -269,7 +290,7 @@ namespace TvLibrary.Implementations.Analog.Components
         _audioOutPinIndex = graph.Crossbar.AudioOut;
         if (_videoOutPinIndex == -1)
         {
-          Log.Log.WriteFile("analog: AddCrossbarFilter no video output found");
+          Log.WriteFile("analog: AddCrossbarFilter no video output found");
           graphBuilder.RemoveFilter(tmp);
           _crossBarFilter = null;
           Release.ComObject("CrossBarFilter", tmp);
@@ -296,7 +317,7 @@ namespace TvLibrary.Implementations.Analog.Components
           {
             _audioOut = DsFindPin.ByDirection(_filterCrossBar, PinDirection.Output, _audioOutPinIndex);
           }
-          Log.Log.WriteFile("analog: AddCrossBarFilter succeeded");
+          Log.WriteFile("analog: AddCrossBarFilter succeeded");
           break;
         }
         // cannot connect tv tuner to crossbar, try next crossbar device
@@ -332,19 +353,19 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       catch (Exception)
       {
-        Log.Log.WriteFile("analog: AddCrossBarFilter no crossbar devices found");
+        Log.WriteFile("analog: AddCrossBarFilter no crossbar devices found");
         return false;
       }
       if (devices == null || devices.Length == 0)
       {
-        Log.Log.WriteFile("analog: AddCrossBarFilter no crossbar devices found");
+        Log.WriteFile("analog: AddCrossBarFilter no crossbar devices found");
         return false;
       }
       //try each crossbar
       for (int i = 0; i < devices.Length; i++)
       {
         IBaseFilter tmp;
-        Log.Log.WriteFile("analog: AddCrossBarFilter try:{0} {1}", devices[i].Name, i);
+        Log.WriteFile("analog: AddCrossBarFilter try:{0} {1}", devices[i].Name, i);
         //if crossbar is already in use then we can skip it
         if (DevicesInUse.Instance.IsUsed(devices[i]))
           continue;
@@ -356,7 +377,7 @@ namespace TvLibrary.Implementations.Analog.Components
         }
         catch (Exception)
         {
-          Log.Log.WriteFile("analog: cannot add filter to graph");
+          Log.WriteFile("analog: cannot add filter to graph");
           continue;
         }
         if (hr != 0)
@@ -373,7 +394,7 @@ namespace TvLibrary.Implementations.Analog.Components
         CheckCapabilities();
         if (_videoOutPinIndex == -1)
         {
-          Log.Log.WriteFile("analog: AddCrossbarFilter no video output found");
+          Log.WriteFile("analog: AddCrossbarFilter no video output found");
           graphBuilder.RemoveFilter(tmp);
           _crossBarFilter = null;
           Release.ComObject("CrossBarFilter", tmp);
@@ -389,7 +410,7 @@ namespace TvLibrary.Implementations.Analog.Components
         if (pinIn == null)
         {
           // no pin found, continue with next crossbar
-          Log.Log.WriteFile("analog: AddCrossBarFilter no video tuner input pin detected");
+          Log.WriteFile("analog: AddCrossBarFilter no video tuner input pin detected");
           if (tmp != null)
           {
             graphBuilder.RemoveFilter(tmp);
@@ -417,7 +438,7 @@ namespace TvLibrary.Implementations.Analog.Components
           {
             _audioOut = DsFindPin.ByDirection(_filterCrossBar, PinDirection.Output, _audioOutPinIndex);
           }
-          Log.Log.WriteFile("analog: AddCrossBarFilter succeeded");
+          Log.WriteFile("analog: AddCrossBarFilter succeeded");
           graph.Crossbar.AudioOut = _audioOutPinIndex;
           graph.Crossbar.AudioPinMap = _audioPinMap;
           graph.Crossbar.Name = _crossBarDevice.Name;
@@ -474,7 +495,7 @@ namespace TvLibrary.Implementations.Analog.Components
       for (int i = 0; i < inputs; ++i)
       {
         _crossBarFilter.get_CrossbarPinInfo(true, i, out relatedPinIndex, out connectorType);
-        Log.Log.WriteFile(" crossbar pin:{0} type:{1}, related:{2}", i, connectorType, relatedPinIndex);
+        Log.WriteFile(" crossbar pin:{0} type:{1}, related:{2}", i, connectorType, relatedPinIndex);
         switch (connectorType)
         {
           case PhysicalConnectorType.Audio_Tuner:
@@ -635,7 +656,7 @@ namespace TvLibrary.Implementations.Analog.Components
     {
       if (_currentChannel != null)
       {
-        bool updateRequired = _currentChannel.IsTv == channel.IsTv;
+        bool updateRequired = _currentChannel.MediaType == channel.MediaType;        
         if (updateRequired ||
             (_currentChannel.VideoSource != channel.VideoSource && _videoPinMap.ContainsKey(channel.VideoSource)))
         {

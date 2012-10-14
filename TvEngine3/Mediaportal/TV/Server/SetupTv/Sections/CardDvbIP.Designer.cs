@@ -1,4 +1,6 @@
-﻿namespace SetupTv.Sections
+﻿using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   partial class CardDvbIP
   {
@@ -36,9 +38,9 @@
       this.label2 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
-      this.mpButtonScanTv = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpComboBoxService = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpButtonScanTv = new MPButton();
+      this.mpLabel1 = new MPLabel();
+      this.mpComboBoxService = new MPComboBox();
       this.checkBoxEnableChannelMoveDetection = new System.Windows.Forms.CheckBox();
       this.SuspendLayout();
       // 
@@ -187,9 +189,9 @@
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.ProgressBar progressBar1;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonScanTv;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxService;
+    private MPButton mpButtonScanTv;
+    private MPLabel mpLabel1;
+    private MPComboBox mpComboBoxService;
     private System.Windows.Forms.CheckBox checkBoxEnableChannelMoveDetection;
 
   }

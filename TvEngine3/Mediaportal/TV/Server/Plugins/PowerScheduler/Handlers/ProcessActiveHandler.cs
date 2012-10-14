@@ -22,16 +22,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
-using TvDatabase;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using TvEngine.PowerScheduler.Interfaces;
 
 #endregion
 
-namespace TvEngine.PowerScheduler.Handlers
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 {
   /// <summary>
   /// Prevents standby when the given process is active
@@ -68,8 +68,8 @@ namespace TvEngine.PowerScheduler.Handlers
           if (ps == null)
             return;
           PowerSetting setting = ps.Settings.GetSetting("Processes");
-          TvBusinessLayer layer = new TvBusinessLayer();
-          string processString = layer.GetSetting("PowerSchedulerProcesses").Value;
+          
+          string processString = SettingsManagement.GetSetting("PowerSchedulerProcesses").Value;
           List<string> processes = new List<string>();
           foreach (string process in processString.Split(','))
             processes.Add(process.Trim());

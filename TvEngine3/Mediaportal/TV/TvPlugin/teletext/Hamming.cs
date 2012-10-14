@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace TvLibrary.Teletext
+namespace Mediaportal.TV.TvPlugin.Teletext
 {
   public class Hamming
   {

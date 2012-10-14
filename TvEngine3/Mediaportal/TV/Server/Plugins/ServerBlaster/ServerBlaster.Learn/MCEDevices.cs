@@ -23,10 +23,8 @@ using System.Runtime.InteropServices;
 using System.IO;
 using System.Windows.Forms;
 using System.Collections;
-using System.Threading;
-using MediaPortal.GUI.Library;
 
-namespace MediaPortal.Devices
+namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
 {
 
   #region Delegates

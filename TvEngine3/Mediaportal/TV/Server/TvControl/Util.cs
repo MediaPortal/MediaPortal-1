@@ -19,11 +19,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
-namespace TvControl
+namespace Mediaportal.TV.Server.TVControl
 {
   public delegate TResult Func<TResult>();
 
@@ -72,11 +70,11 @@ namespace TvControl
                                    if (!isCompleted)
                                    {
                                      Monitor.Wait(sync, _timeout);
-                                   }
-                                   if (!isCompleted)
-                                   {
-                                     watchedThread.Abort();
-                                   }
+                                   }                                   
+                                 }
+                                 if (!isCompleted)
+                                 {
+                                   watchedThread.Abort();
                                  }
                                };
       try

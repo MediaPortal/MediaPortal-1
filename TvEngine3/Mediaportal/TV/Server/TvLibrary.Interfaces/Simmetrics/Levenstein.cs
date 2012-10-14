@@ -19,11 +19,8 @@
 #endregion
 
 using System;
-using api;
-using mathSimmetrics;
-using similaritymetrics.costfunctions;
 
-namespace similaritymetrics
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Simmetrics
 {
   ///<summary>
   /// Levenstein metric

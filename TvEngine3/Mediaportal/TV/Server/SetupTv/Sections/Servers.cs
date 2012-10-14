@@ -21,13 +21,21 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using TvControl;
-using TvDatabase;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.SetupTV.Dialogs;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class Servers : SectionSettings
   {
+    private class Server
+    {
+      public string Hostname { get; set; }
+      public int RtspPort { get; set; }
+    }
+
     public Servers()
       : this("TV Servers") {}
 
@@ -39,65 +47,22 @@ namespace SetupTv.Sections
 
     public override void OnSectionActivated()
     {
-      IList<Server> servers = Server.ListAll();
+      var hostname = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("hostname", System.Net.Dns.GetHostName()).Value;
+      var rtspPort = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("rtspport", "554").Value;
       mpListView1.Items.Clear();
-      foreach (Server server in servers)
-      {
-        ListViewItem item = mpListView1.Items.Add(server.HostName, 0);
-        if (server.IsMaster)
-        {
-          item.SubItems.Add("Master");
-        }
-        else
-        {
-          item.SubItems.Add("Slave");
-        }
-        item.SubItems.Add(server.RtspPort.ToString());
-        item.Tag = server;
-      }
+      var server = new Server {Hostname = hostname, RtspPort = Convert.ToInt32(rtspPort)};
+
+      ListViewItem item = mpListView1.Items.Add(hostname, 0);      
+      item.SubItems.Add(rtspPort);
+      
+      item.Tag = server;
+
       mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
     }
 
     private void Servers_Load(object sender, EventArgs e) {}
 
-    private void buttonDelete_Click(object sender, EventArgs e)
-    {
-      if (mpListView1.SelectedIndices.Count < 1)
-        return;
-      int index = mpListView1.SelectedIndices[0];
-      ListViewItem item = mpListView1.Items[index];
-      Server server = (Server)item.Tag;
-      server.Delete();
-      MessageBox.Show(this, "Changes made require TvService to restart. Please restart the tvservice");
-      RemoteControl.Instance.Restart();
-      OnSectionActivated();
-    }
 
-    private void buttonMaster_Click(object sender, EventArgs e)
-    {
-      if (mpListView1.SelectedIndices.Count < 1)
-        return;
-      int index = mpListView1.SelectedIndices[0];
-      for (int i = 0; i < mpListView1.Items.Count; ++i)
-      {
-        ListViewItem item = mpListView1.Items[i];
-        Server server = (Server)item.Tag;
-        if (i != index)
-        {
-          item.SubItems[0].Text = "Slave";
-          server.IsMaster = false;
-        }
-        else
-        {
-          item.SubItems[0].Text = "Master";
-          server.IsMaster = true;
-          RemoteControl.HostName = server.HostName;
-        }
-        server.Persist();
-      }
-      RemoteControl.Instance.Restart();
-      MessageBox.Show(this, "Changes made require TvService to restart. Please restart the tvservice");
-    }
 
     private void buttonChooseIp_Click(object sender, EventArgs e)
     {
@@ -105,20 +70,17 @@ namespace SetupTv.Sections
         return;
       int index = mpListView1.SelectedIndices[0];
       ListViewItem item = mpListView1.Items[index];
-      Server server = (Server)item.Tag;
+      var server = (Server)item.Tag;
 
-      FormEditIpAdress dlg = new FormEditIpAdress();
-      dlg.HostName = server.HostName;
-      dlg.PortNo = server.RtspPort;
+      var dlg = new FormEditIpAdress {HostName = server.Hostname, PortNo = server.RtspPort};
       if (dlg.ShowDialog(this) == DialogResult.OK)
       {
-        if (dlg.HostName.Equals(server.HostName) == false || dlg.PortNo != server.RtspPort)
+        if (dlg.HostName.Equals(server.Hostname) == false || dlg.PortNo != server.RtspPort)
         {
           item.Text = dlg.HostName;
           item.SubItems[2].Text = dlg.PortNo.ToString();
-          server.HostName = dlg.HostName;
-          server.RtspPort = dlg.PortNo;
-          server.Persist();
+          ServiceAgents.Instance.SettingServiceAgent.SaveSetting("hostname", dlg.HostName);
+          ServiceAgents.Instance.SettingServiceAgent.SaveSetting("rtspport", dlg.PortNo.ToString());                    
           ServiceNeedsToRestart();
         }
       }
@@ -134,7 +96,7 @@ namespace SetupTv.Sections
         dlgNotify.Show();
         dlgNotify.WaitForDisplay();
 
-        RemoteControl.Instance.Restart();
+        ServiceAgents.Instance.ControllerServiceAgent.Restart();
 
         dlgNotify.Close();
       }

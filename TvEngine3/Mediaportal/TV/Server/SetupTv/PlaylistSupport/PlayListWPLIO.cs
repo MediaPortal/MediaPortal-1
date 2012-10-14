@@ -21,9 +21,9 @@
 using System;
 using System.Xml;
 using System.IO;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace MediaPortal.Playlists
+namespace Mediaportal.TV.Server.SetupTV.PlaylistSupport
 {
   public class PlayListWPLIO : IPlayListIO
   {

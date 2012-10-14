@@ -21,35 +21,43 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using System.Net;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
-using TvControl;
-using TvDatabase;
-using SetupTv.Sections;
-using TvEngine;
+using Mediaportal.TV.Server.Plugins.Base;
+using Mediaportal.TV.Server.Plugins.Base.Interfaces;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.SetupTV.Sections;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace SetupTv
+namespace Mediaportal.TV.Server.SetupTV
 {
   /// <summary>
   /// Summary description for Settings.
   /// </summary>
-  public class SetupTvSettingsForm : SetupControls.SettingsForm
+  public class SetupTvSettingsForm : SettingsForm
   {
-    private readonly PluginLoader _pluginLoader = new PluginLoader();
-    private Plugins pluginsRoot;
-    private TvBusinessLayer layer;
+    private readonly PluginLoaderSetupTv _pluginLoader = new PluginLoaderSetupTv();
+    private Sections.Plugins pluginsRoot;
     private Servers servers;
     private TvCards cardPage;
     private bool showAdvancedSettings;
 
     public SetupTvSettingsForm()
-      : this(false) {}
+      : this(false)
+    {
+      
+    }
 
     public SetupTvSettingsForm(bool ShowAdvancedSettings)
+      : base(ServiceHelper.IsRestrictedMode)
     {
       showAdvancedSettings = ShowAdvancedSettings;
       InitializeComponent();
@@ -74,121 +82,94 @@ namespace SetupTv
 
       //
       // Build options tree
-      //
-      try
-      {
-        XmlDocument doc = new XmlDocument();
-        doc.Load(String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
-        XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
-        XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
-        XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
-
-        Gentle.Framework.ProviderFactory.ResetGentle(true);
-        Gentle.Framework.GentleSettings.DefaultProviderName = nodeProvider.InnerText;
-        Gentle.Framework.ProviderFactory.GetDefaultProvider();
-        Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(node.InnerText);
-      }
-      catch (Exception ex)
-      {
-        MessageBox.Show("Unable to open:" + String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
-        Log.Write(ex);
-      }
+      //    
 
       try
       {
-        Server.ListAll();
+        ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
       }
       catch (Exception ex)
       {
-        MessageBox.Show("Failed to open database");
+        MessageBox.Show("Failed to open WCF connection to server");
         Log.Error("Unable to get list of servers");
         Log.Write(ex);
       }
 
       Project project = new Project();
       AddSection(project);
-
-      layer = new TvBusinessLayer();
+      
       servers = new Servers();
       AddSection(servers);
-      IList<Server> dbsServers = Server.ListAll();
 
-      if (dbsServers != null)
+      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
+      
+      bool connected = false;
+      while (!connected)
       {
-        foreach (Server server in dbsServers)
-        {
-          if (server.IsMaster)
-          {
-            bool connected = false;
-            while (!connected)
-            {
-              RemoteControl.HostName = server.HostName;
+        RemoteControl.HostName = ServiceAgents.Instance.SettingServiceAgent.GetSetting("hostname").Value;
 
-              if (server.ReferringCard().Count > 0)
+        if (cards.Count > 0)
+        {
+          try
+          {
+            Card c = cards.First();
+            ServiceAgents.Instance.ControllerServiceAgent.Type(c.IdCard);
+            connected = true;
+          }
+          catch (Exception ex)
+          {
+            string localHostname = Dns.GetHostName();
+            if (localHostname != RemoteControl.HostName)
+            {
+              DialogResult dlg = MessageBox.Show(String.Format("Unable to connect to <{0}>.\n" +
+                                                                "Do you want to try the current computer name ({1}) instead?",
+                                                                RemoteControl.HostName, localHostname),
+                                                  "Wrong config detected",
+                                                  MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+              if (dlg == DialogResult.Yes)
               {
-                try
+                Log.Info("Controller: server {0} changed to {1}", RemoteControl.HostName, localHostname);                      
+                ServiceAgents.Instance.SettingServiceAgent.SaveSetting("hostname", localHostname);
+                if (!ServiceHelper.IsRestrictedMode)
                 {
-                  Card c = (Card)server.ReferringCard()[0];
-                  RemoteControl.Instance.Type(c.IdCard);
-                  connected = true;
-                }
-                catch (Exception ex)
-                {
-                  string localHostname = Dns.GetHostName();
-                  if (localHostname != server.HostName)
-                  {
-                    DialogResult dlg = MessageBox.Show(String.Format("Unable to connect to <{0}>.\n" +
-                                                                     "Do you want to try the current comupter name ({1}) instead?",
-                                                                     server.HostName, localHostname),
-                                                       "Wrong config detected",
-                                                       MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
-                    if (dlg == DialogResult.Yes)
-                    {
-                      Log.Info("Controller: server {0} changed to {1}", server.HostName, localHostname);
-                      server.HostName = localHostname;
-                      server.Persist();
-                      RemoteControl.Clear();
-                      ServiceHelper.Restart();
-                      ServiceHelper.WaitInitialized();
-                    }
-                    else
-                    {
-                      MessageBox.Show("Setup will now close");
-                      Environment.Exit(-1);
-                    }
-                  }
-                  else
-                  {
-                    Log.Error("Cannot connect to server {0}", server.HostName);
-                    Log.Write(ex);
-                    DialogResult dlg = MessageBox.Show("Unable to connect to <" + server.HostName + ">.\n" +
-                                                       "Please check the TV Server logs for details.\n\n" +
-                                                       "Setup will now close.");
-                    Environment.Exit(-1);
-                  }
-                }
+                  ServiceHelper.Restart();
+                  ServiceHelper.WaitInitialized(); 
+                }                
+              }
+              else
+              {
+                MessageBox.Show("Setup will now close");
+                Environment.Exit(-1);
               }
             }
-            break;
+            else
+            {
+              Log.Error("Cannot connect to server {0}", RemoteControl.HostName);
+              Log.Write(ex);
+              DialogResult dlg = MessageBox.Show("Unable to connect to <" + RemoteControl.HostName + ">.\n" +
+                                                  "Please check the TV Server logs for details.\n\n" +
+                                                  "Setup will now close.");
+              Environment.Exit(-1);
+            }
           }
         }
+        
+        AddServerTvCards(RemoteControl.HostName, false);
 
-        AddServerTvCards(servers, dbsServers, false);
+        Channels channels = new Channels("TV Channels", MediaTypeEnum.TV);            
+        AddSection(channels);
+        AddChildSection(channels, new ChannelCombinations("TV Combinations", MediaTypeEnum.TV));
+        AddChildSection(channels, new ChannelMapping("TV Mapping", MediaTypeEnum.TV));
 
-        TvChannels tvChannels = new TvChannels();
-        AddSection(tvChannels);
-        AddChildSection(tvChannels, new TvCombinations("TV Combinations"));
-        AddChildSection(tvChannels, new TvChannelMapping());
-
-        RadioChannels radioChannels = new RadioChannels();
+        Channels radioChannels = new Channels("Radio Channels", MediaTypeEnum.Radio);        
         AddSection(radioChannels);
-        AddChildSection(radioChannels, new RadioCombinations("Radio Combinations"));
-        AddChildSection(radioChannels, new RadioChannelMapping());
+        AddChildSection(radioChannels, new ChannelCombinations("Radio Combinations", MediaTypeEnum.Radio));
+        AddChildSection(radioChannels, new ChannelMapping("Radio Mapping", MediaTypeEnum.Radio));
 
         Epg EpgSection = new Epg();
         AddSection(EpgSection);
-        AddChildSection(EpgSection, new TvEpgGrabber());
-        AddChildSection(EpgSection, new RadioEpgGrabber());
+        AddChildSection(EpgSection, new EpgGrabber("TV Epg grabber", MediaTypeEnum.TV));
+        AddChildSection(EpgSection, new EpgGrabber("Radio Epg grabber", MediaTypeEnum.Radio)); ;
 
         AddSection(new ScanSettings());
         AddSection(new TvRecording());
@@ -201,7 +182,7 @@ namespace SetupTv
         AddSection(new TestChannels("Test Channels"));
 
         _pluginLoader.Load();
-        pluginsRoot = new Plugins("Plugins", _pluginLoader);
+        pluginsRoot = new Sections.Plugins("Plugins", _pluginLoader);
         AddSection(pluginsRoot);
 
         pluginsRoot.ChangedActivePlugins += SectChanged;
@@ -211,7 +192,7 @@ namespace SetupTv
           SectionSettings settings = plugin.Setup;
           if (settings != null)
           {
-            Setting isActive = layer.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
+            Setting isActive = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("plugin{0}", plugin.Name), "false");
             settings.Text = plugin.Name;
             if (isActive.Value == "true")
             {
@@ -223,7 +204,7 @@ namespace SetupTv
         {
           AddSection(new DebugOptions());
         }
-        AddSection(new ImportExport());
+        //AddSection(new ImportExport());
         AddSection(new ThirdPartyChecks());
 
         sectionTree.SelectedNode = sectionTree.Nodes[0];
@@ -232,23 +213,24 @@ namespace SetupTv
       BringToFront();
     }
 
-    private void AddServerTvCards(Servers servers, IList<Server> dbsServers, bool reloaded)
+    private void AddServerTvCards(string hostName,  bool reloaded)
     {
-      foreach (Server server in dbsServers)
+      //foreach (TVDatabase.Gentle.Server server in dbsServers)
       {
-        bool isLocal = (server.HostName.ToLowerInvariant() == Dns.GetHostName().ToLowerInvariant() ||
-                        server.HostName.ToLowerInvariant() == Dns.GetHostName().ToLowerInvariant() + "."
+        bool isLocal = (hostName.ToLowerInvariant() == Dns.GetHostName().ToLowerInvariant() ||
+                        hostName.ToLowerInvariant() == Dns.GetHostName().ToLowerInvariant() + "."
                         +
                         System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().DomainName.
                           ToLowerInvariant());
-        cardPage = new TvCards(server.HostName);
+        cardPage = new TvCards(hostName);
         cardPage.TvCardsChanged += OnTvCardsChanged;
         AddChildSection(servers, cardPage, 0);
-        foreach (Card dbsCard in server.ReferringCard())
+        IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
+        foreach (Card dbsCard in cards)
         {
-          if (dbsCard.Enabled == true && RemoteControl.Instance.CardPresent(dbsCard.IdCard))
+          if (dbsCard.Enabled && ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(dbsCard.IdCard))
           {
-            CardType type = RemoteControl.Instance.Type(dbsCard.IdCard);
+            CardType type = ServiceAgents.Instance.ControllerServiceAgent.Type(dbsCard.IdCard);
             int cardId = dbsCard.IdCard;
             string cardName = dbsCard.Name;
             switch (type)
@@ -297,7 +279,7 @@ namespace SetupTv
         }
         if (reloaded)
         {
-          SectionTreeNode activeNode = (SectionTreeNode)settingSections[server.HostName];
+          SectionTreeNode activeNode = (SectionTreeNode)settingSections[hostName];
           if (activeNode != null)
           {
             activeNode.Expand();
@@ -316,7 +298,7 @@ namespace SetupTv
       bool isAnyUserTS;
       bool isRec;
       bool isUserTS;
-      bool isRecOrTS = RemoteControl.Instance.IsAnyCardRecordingOrTimeshifting(new User(), out isUserTS, out isAnyUserTS,
+      bool isRecOrTS = ServiceAgents.Instance.ControllerServiceAgent.IsAnyCardRecordingOrTimeshifting(new User().Name, out isUserTS, out isAnyUserTS,
                                                                                out isRec);
 
       if (!isAnyUserTS && !isRec && !isRecOrTS && !isUserTS)
@@ -327,14 +309,13 @@ namespace SetupTv
           dlgNotify.Show();
           dlgNotify.WaitForDisplay();
 
-          RemoteControl.Instance.Restart();
+          ServiceAgents.Instance.ControllerServiceAgent.Restart();
 
           // remove all tv servers / cards, add current ones back later
           RemoveAllChildSections((SectionTreeNode)settingSections[servers.Text]);
 
-          // re-add tvservers and cards to tree
-          IList<Server> dbsServers = Server.ListAll();
-          AddServerTvCards(servers, dbsServers, true);
+          // re-add tvservers and cards to tree          
+          AddServerTvCards(ServiceAgents.Instance.SettingServiceAgent.GetSetting("hostname").Value, true);
         }
         finally
         {
@@ -362,10 +343,7 @@ namespace SetupTv
           settingSections.Remove(childNode.Text);
         }
         // first remove all children and sections, then nodes themself (otherwise collection changes during iterate)
-        foreach (SectionTreeNode childNode in parentTreeNode.Nodes)
-        {
-          parentTreeNode.Nodes.Remove(childNode);
-        }
+        parentTreeNode.Nodes.Clear();       
       }
     }
 
@@ -469,7 +447,7 @@ namespace SetupTv
         SectionSettings settings = plugin.Setup;
         if (settings != null && plugin.Name == name)
         {
-          Setting isActive = layer.GetSetting(((Setting)sender).Tag, "false");
+          Setting isActive = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(((Setting)sender).Tag, "false");
           settings.Text = name;
 
           if (isActive.Value == "true")
@@ -526,11 +504,13 @@ namespace SetupTv
       base.sectionTree_BeforeSelect(sender, e);
 
       if (!e.Cancel)
-        if (!ServiceHelper.IsRunning)
+      {
+        if (!ServiceHelper.IsAvailable)
         {
           MessageBox.Show("TvService not started.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
           e.Cancel = true;
-        }
+        } 
+      }        
     }
 
     public override bool ActivateSection(SectionSettings section)
@@ -543,22 +523,23 @@ namespace SetupTv
         }
         try
         {
-          RemoteControl.Instance.EpgGrabberEnabled = false;
+          ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = false;
         }
         catch (Exception) {}
         //DatabaseManager.Instance.SaveChanges();
         //DatabaseManager.Instance.ClearQueryCache();
         Cursor = Cursors.WaitCursor;
         section.Dock = DockStyle.Fill;
+        
+        holderPanel.Controls.Clear();
+        holderPanel.Controls.Add(section);
+
         section.OnSectionActivated();
         if (section != _previousSection && _previousSection != null)
         {
           _previousSection.OnSectionDeActivated();
         }
         _previousSection = section;
-
-        holderPanel.Controls.Clear();
-        holderPanel.Controls.Add(section);
       }
       catch (Exception ex)
       {
@@ -578,8 +559,8 @@ namespace SetupTv
       {
         if (RemoteControl.IsConnected)
         {
-          RemoteControl.Instance.EpgGrabberEnabled = true;
-          RemoteControl.Instance.OnNewSchedule();
+          ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
+          ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
         }
       }
       catch (Exception) {}
@@ -698,11 +679,15 @@ namespace SetupTv
     {
       try
       {
-        applyButton_Click(sender, e);
-        if (null != _previousSection)
+        if (!ServiceHelper.IsStopped)
         {
-          _previousSection.OnSectionDeActivated();
-          _previousSection = null;
+          applyButton_Click(sender, e);
+
+          if (null != _previousSection)
+          {
+            _previousSection.OnSectionDeActivated();
+            _previousSection = null;
+          }
         }
         Close();
       }

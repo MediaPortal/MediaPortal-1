@@ -1,4 +1,4 @@
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin.PluginSetup
 {
   partial class TvSetupForm
   {

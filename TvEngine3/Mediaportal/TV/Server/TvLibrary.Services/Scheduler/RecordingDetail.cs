@@ -20,11 +20,16 @@
 
 using System;
 using System.Text.RegularExpressions;
-using TvControl;
-using TvDatabase;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
-namespace TvService
+namespace Mediaportal.TV.Server.TVLibrary.Scheduler
 {
   /// <summary>
   /// class which holds all details about a schedule which is current being recorded
@@ -32,12 +37,13 @@ namespace TvService
   public class RecordingDetail
   {
     #region variables
-
-    private readonly Schedule _schedule;
+    
+    
+    private readonly ScheduleBLL _schedule;
     private readonly Channel _channel;
     private string _fileName;
     private readonly DateTime _endTime;
-    private readonly TvDatabase.Program _program;
+    private readonly ProgramBLL _program;
     private CardDetail _cardInfo;
     private DateTime _dateTimeRecordingStarted;
     private Recording _recording;
@@ -61,13 +67,7 @@ namespace TvService
     public RecordingDetail(Schedule schedule, Channel channel, DateTime endTime, bool isSerie)
     {
       _user = UserFactory.CreateSchedulerUser(schedule.IdSchedule);
-      /*User.Name = string.Format("scheduler{0}", schedule.IdSchedule);
-      User.CardId = -1;
-      User.SubChannel = -1;
-      User.IsAdmin = true;
-      User.Priority = UserFactory.SCHEDULER_PRIORITY;*/
-
-      _schedule = schedule;
+      _schedule = new ScheduleBLL(schedule);
       _channel = channel;
       _endTime = endTime;
       _program = null;
@@ -85,16 +85,17 @@ namespace TvService
         startTime = schedule.StartTime;
       }
 
-      _program = schedule.ReferencedChannel().GetProgramAt(startTime);
-
+      Program program = ProgramManagement.GetProgramAt(startTime, schedule.Channel.IdChannel);
+      
       //no program? then treat this as a manual recording
-      if (_program == null)
+      if (program == null)
       {
-        _program = new TvDatabase.Program(0, DateTime.Now, endTime, "manual", "", "",
-                                          TvDatabase.Program.ProgramState.None,
-                                          System.Data.SqlTypes.SqlDateTime.MinValue.Value, string.Empty, string.Empty,
-                                          string.Empty, string.Empty, -1, string.Empty, 0);
+        program = ProgramFactory.CreateProgram(0, DateTime.Now, endTime, "manual", "", null,
+                                                   ProgramState.None,
+                                                   System.Data.SqlTypes.SqlDateTime.MinValue.Value, string.Empty, string.Empty,
+                                                   string.Empty, string.Empty, -1, string.Empty, 0);        
       }
+      _program = new ProgramBLL(program);
     }
 
     #endregion
@@ -129,7 +130,7 @@ namespace TvService
     /// <summary>
     /// gets the Schedule belonging to this recording
     /// </summary>
-    public Schedule Schedule
+    public ScheduleBLL Schedule
     {
       get { return _schedule; }
     }
@@ -162,7 +163,7 @@ namespace TvService
     /// <summary>
     /// Gets the Program which is being recorded
     /// </summary>
-    public TvDatabase.Program Program
+    public ProgramBLL Program
     {
       get { return _program; }
     }
@@ -179,7 +180,7 @@ namespace TvService
 
         try
         {
-          Schedule _sched = Schedule.Retrieve((int)_schedule.IdSchedule); // Refresh();
+          Schedule _sched = ScheduleManagement.GetSchedule(_schedule.Entity.IdSchedule); // Refresh();
           if (_sched != null)
           {
             isRecording = (DateTime.Now < EndTime.AddMinutes(_sched.PostRecordInterval));
@@ -217,18 +218,17 @@ namespace TvService
     /// <param name="recordingPath"></param>
     public void MakeFileName(string recordingPath)
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
 
       Setting setting;
       if (!IsSerie)
       {
         Log.Debug("Scheduler: MakeFileName() using \"moviesformat\" (_isSerie={0})", _isSerie);
-        setting = layer.GetSetting("moviesformat", "%title%");
+        setting = SettingsManagement.GetSetting("moviesformat", "%title%");
       }
       else
       {
         Log.Debug("Scheduler: MakeFileName() using \"seriesformat\" (_isSerie={0})", _isSerie);
-        setting = layer.GetSetting("seriesformat", "%title%");
+        setting = SettingsManagement.GetSetting("seriesformat", "%title%");
       }
 
       string strInput = "title%";
@@ -266,27 +266,33 @@ namespace TvService
                             "%endhh%",
                             "%endmm%"
                           };
+      var programCategory = "";
+      if (Program.Entity.ProgramCategory != null)
+      {
+        programCategory = Program.Entity.ProgramCategory.Category.Trim();  
+      }
+      
       string[] TagValues = {
-                             _schedule.ReferencedChannel().DisplayName.Trim(),
-                             Program.Title.Trim(),
-                             Program.EpisodeName.Trim(),
-                             Program.SeriesNum.Trim(),
-                             Program.EpisodeNum.Trim(),
-                             Program.EpisodePart.Trim(),
-                             Program.StartTime.ToString("yyyy-MM-dd"),
-                             Program.StartTime.ToShortTimeString(),
-                             Program.EndTime.ToShortTimeString(),
-                             Program.Genre.Trim(),
-                             Program.StartTime.ToString("dd"),
-                             Program.StartTime.ToString("MM"),
-                             Program.StartTime.ToString("yyyy"),
-                             Program.StartTime.ToString("HH"),
-                             Program.StartTime.ToString("mm"),
-                             Program.EndTime.ToString("dd"),
-                             Program.EndTime.ToString("MM"),
-                             Program.EndTime.ToString("yyyy"),
-                             Program.EndTime.ToString("HH"),
-                             Program.EndTime.ToString("mm")
+                             _schedule.Entity.Channel.DisplayName.Trim(),
+                             Program.Entity.Title.Trim(),
+                             Program.Entity.EpisodeName.Trim(),
+                             Program.Entity.SeriesNum.Trim(),
+                             Program.Entity.EpisodeNum.Trim(),
+                             Program.Entity.EpisodePart.Trim(),
+                             Program.Entity.StartTime.ToString("yyyy-MM-dd"),
+                             Program.Entity.StartTime.ToShortTimeString(),
+                             Program.Entity.EndTime.ToShortTimeString(),
+                             programCategory,
+                             Program.Entity.StartTime.ToString("dd"),
+                             Program.Entity.StartTime.ToString("MM"),
+                             Program.Entity.StartTime.ToString("yyyy"),
+                             Program.Entity.StartTime.ToString("HH"),
+                             Program.Entity.StartTime.ToString("mm"),
+                             Program.Entity.EndTime.ToString("dd"),
+                             Program.Entity.EndTime.ToString("MM"),
+                             Program.Entity.EndTime.ToString("yyyy"),
+                             Program.Entity.EndTime.ToString("HH"),
+                             Program.Entity.EndTime.ToString("mm")
                            };
 
       for (int i = 0; i < TagNames.Length; i++)
@@ -324,9 +330,9 @@ namespace TvService
       }
       if (fileName == string.Empty)
       {
-        DateTime dt = Program.StartTime;
+        DateTime dt = Program.Entity.StartTime;
         fileName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}",
-                                 _schedule.ReferencedChannel().DisplayName, Program.Title,
+                                 _schedule.Entity.Channel.DisplayName, Program.Entity.Title,
                                  dt.Year, dt.Month, dt.Day,
                                  dt.Hour,
                                  dt.Minute,

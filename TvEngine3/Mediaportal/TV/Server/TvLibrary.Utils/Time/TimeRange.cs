@@ -20,7 +20,7 @@
 
 using System;
 
-namespace MediaPortal.Utils.Time
+namespace Mediaportal.TV.Server.TvLibrary.Utils.Time
 {
   public class TimeRange
   {

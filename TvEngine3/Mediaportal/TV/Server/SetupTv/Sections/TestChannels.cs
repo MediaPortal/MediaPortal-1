@@ -29,16 +29,20 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using SetupControls;
-using TvControl;
-using TvDatabase;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
-using TvService;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService;
+using Mediaportal.TV.Server.TVService.Interfaces;
+using Mediaportal.TV.Server.TVService.Interfaces.Enums;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
 #endregion
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class TestChannels : SectionSettings
   {
@@ -80,12 +84,12 @@ namespace SetupTv.Sections
 
     public override void OnSectionActivated()
     {
-      _cards = Card.ListAll();
+      _cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
       base.OnSectionActivated();
-      RemoteControl.Instance.EpgGrabberEnabled = true;
+      ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
 
       comboBoxGroups.Items.Clear();
-      IList<ChannelGroup> groups = ChannelGroup.ListAll();
+      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups();
       foreach (ChannelGroup group in groups)
         comboBoxGroups.Items.Add(new ComboBoxExItem(group.GroupName, -1, group.IdGroup));
       if (comboBoxGroups.Items.Count == 0)
@@ -98,7 +102,7 @@ namespace SetupTv.Sections
       _repeat = chkRepeatTest.Checked;
 
       _channelNames = new Dictionary<int, string>();
-      IList<Channel> channels = Channel.ListAll();
+      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
       foreach (Channel ch in channels)
       {
         _channelNames.Add(ch.IdChannel, ch.DisplayName);
@@ -116,7 +120,7 @@ namespace SetupTv.Sections
       timer1.Enabled = false;
       if (RemoteControl.IsConnected)
       {
-        RemoteControl.Instance.EpgGrabberEnabled = false;
+        ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = false;
       }
     }
 
@@ -180,13 +184,13 @@ namespace SetupTv.Sections
               channelsForUser = channelsForUser.Randomize();
 
               int priority = GetUserPriority();
-              string name = "stress-" + Convert.ToString(rnd.Next(1, 500)) + " [" + priority + "]";
-              IUser user = UserFactory.CreateBasicUser(name, priority);              
+              string name = "stress-" + Convert.ToString(rnd.Next(1, 500)) + " [" + priority + "]";              
+              IUser user = UserFactory.CreateBasicUser(name, priority);
 
               while (_users.ContainsKey(user.Name))
               {
                 user.Name = "stress-" + Convert.ToString(rnd.Next(1, 500)) + " [" + priority + "]";
-              }              
+              }
 
               _users.Add(user.Name, true);
               ThreadPool.QueueUserWorkItem(delegate { TuneChannelsForUser(user, channelsForUser); });
@@ -243,7 +247,7 @@ namespace SetupTv.Sections
 
     private void mpButtonTimeShift_Click(object sender, EventArgs e)
     {
-      if (ServiceHelper.IsStopped) return;
+      if (!ServiceHelper.IsAvailable) return;
 
       _running = !_running;
 
@@ -264,8 +268,8 @@ namespace SetupTv.Sections
         IEnumerable<Channel> channels = new List<Channel>();
         ComboBoxExItem idItem = (ComboBoxExItem)comboBoxGroups.Items[comboBoxGroups.SelectedIndex];
 
-        ChannelGroup group = ChannelGroup.Retrieve(idItem.Id);
-        IList<GroupMap> maps = group.ReferringGroupMap();
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroup(idItem.Id);
+        IList<GroupMap> maps = group.GroupMaps;
 
         List<Channel> channelsO = null;
         Thread channelTestThread = new Thread(new ParameterizedThreadStart(delegate { ChannelTestThread(channelsO); }));
@@ -273,7 +277,7 @@ namespace SetupTv.Sections
         channelTestThread.IsBackground = true;
         channelTestThread.Priority = ThreadPriority.Lowest;
         channelsO = channels as List<Channel>;
-        channelsO.AddRange(maps.Select(map => map.ReferencedChannel()).Where(ch => ch.IsTv));
+        channelsO.AddRange(maps.Select(map => map.Channel).Where(ch => ch.MediaType == (int)MediaTypeEnum.TV));
         _usersShareChannels = chkShareChannels.Checked;
         _tunedelay = txtTuneDelay.Value;
         _concurrentTunes = txtConcurrentTunes.Value;
@@ -305,13 +309,13 @@ namespace SetupTv.Sections
             lock (_lock)
             {
               UpdateDiscontinuityCounter(user, nextRowIndexForDiscUpdate);
-              RemoteControl.Instance.StopTimeShifting(ref user);
+              ServiceAgents.Instance.ControllerServiceAgent.StopTimeShifting(user.Name, out user);
             }
           }
           else
           {
             UpdateDiscontinuityCounter(user, nextRowIndexForDiscUpdate);
-            RemoteControl.Instance.StopTimeShifting(ref user);
+            ServiceAgents.Instance.ControllerServiceAgent.StopTimeShifting(user.Name, out user);
           }
         }
         catch (Exception) {}
@@ -363,7 +367,7 @@ namespace SetupTv.Sections
 
           _lastTune = DateTime.Now;
 
-          VirtualCard card = null;
+          IVirtualCard card = null;
           TvResult result;
           if (chkSynch.Checked)
           {
@@ -437,11 +441,18 @@ namespace SetupTv.Sections
     }
 
     private IUser StartTimeshifting(Channel channel, IUser user, int nextRowIndexForDiscUpdate, out long mSecsElapsed,
-                                    out TvResult result, out VirtualCard card)
+                                    out TvResult result, out IVirtualCard card)
     {
       Stopwatch sw = Stopwatch.StartNew();
       UpdateDiscontinuityCounter(user, nextRowIndexForDiscUpdate);
-      result = RemoteControl.Instance.StartTimeShifting(ref user, channel.IdChannel, out card);
+      if (user.Priority.HasValue)
+      {
+        result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, user.Priority.GetValueOrDefault(), channel.IdChannel, out card, out user); 
+      }
+      else
+      {
+        result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, channel.IdChannel, out card, out user); 
+      }      
       mSecsElapsed = sw.ElapsedMilliseconds;
       _avg += mSecsElapsed;
       return user;
@@ -526,7 +537,7 @@ namespace SetupTv.Sections
         {
           int discCounter = 0;
           int totalBytes = 0;
-          RemoteControl.Instance.GetStreamQualityCounters(user, out totalBytes, out discCounter);
+          ServiceAgents.Instance.ControllerServiceAgent.GetStreamQualityCounters(user.Name, out totalBytes, out discCounter);
           item.SubItems[7].Text = Convert.ToString(discCounter);
 
           txtDisc.Value += discCounter;
@@ -536,7 +547,7 @@ namespace SetupTv.Sections
           item.SubItems[7].Text = "N/A";
         }
       }
-    }    
+    }
 
     private int Add2Log(string state, string channel, double msec, string name, string card, string details)
     {
@@ -568,7 +579,7 @@ namespace SetupTv.Sections
 
     private void timer1_Tick(object sender, EventArgs e)
     {
-      if (!ServiceHelper.IsRunning)
+      if (!ServiceHelper.IsAvailable)
       {
         mpListView1.Items.Clear();
         _running = false;
@@ -576,8 +587,8 @@ namespace SetupTv.Sections
 
       UpdateButtonCaption();
 
-      mpButtonTimeShift.Enabled = ServiceHelper.IsRunning;
-      comboBoxGroups.Enabled = ServiceHelper.IsRunning;
+      mpButtonTimeShift.Enabled = ServiceHelper.IsAvailable;
+      comboBoxGroups.Enabled = ServiceHelper.IsAvailable;
 
       UpdateCardStatus();
     }
@@ -607,184 +618,16 @@ namespace SetupTv.Sections
 
     private void UpdateCardStatus()
     {
-      if (ServiceHelper.IsStopped) return;
-      if (_cards == null) return;
-      if (_cards.Count == 0) return;
-      try
+      if (_cards == null)
       {
-        ListViewItem item;
-        int off = 0;
-        foreach (Card card in _cards)
-        {
-          IUser user = new User();
-          user.CardId = card.IdCard;
-          if (off >= mpListView1.Items.Count)
-          {
-            item = mpListView1.Items.Add("");
-            item.SubItems.Add("");
-            item.SubItems.Add("");
-            item.SubItems.Add("");
-            item.SubItems.Add("");
-            item.SubItems.Add("");
-            item.SubItems.Add("");
-            item.SubItems.Add("");
-          }
-          else
-          {
-            item = mpListView1.Items[off];
-          }
-
-          bool cardPresent = RemoteControl.Instance.CardPresent(card.IdCard);
-          if (!cardPresent)
-          {
-            item.SubItems[0].Text = card.IdCard.ToString();
-            item.SubItems[1].Text = "n/a";
-            item.SubItems[2].Text = "n/a";
-            item.SubItems[3].Text = "";
-            item.SubItems[4].Text = "";
-            item.SubItems[5].Text = "";
-            item.SubItems[6].Text = card.Name;
-            item.SubItems[7].Text = "0";
-            off++;
-            continue;
-          }
-
-          ColorLine(card, item);
-          VirtualCard vcard = new VirtualCard(user);
-          item.SubItems[0].Text = card.IdCard.ToString();
-          item.SubItems[0].Tag = card.IdCard;
-          item.SubItems[1].Text = vcard.Type.ToString();
-
-          if (card.Enabled == false)
-          {
-            item.SubItems[0].Text = card.IdCard.ToString();
-            item.SubItems[1].Text = vcard.Type.ToString();
-            item.SubItems[2].Text = "disabled";
-            item.SubItems[3].Text = "";
-            item.SubItems[4].Text = "";
-            item.SubItems[5].Text = "";
-            item.SubItems[6].Text = card.Name;
-            item.SubItems[7].Text = "0";
-            off++;
-            continue;
-          }
-
-          IUser[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
-          if (usersForCard == null)
-          {
-            string tmp = "idle";
-            if (vcard.IsScanning) tmp = "Scanning";
-            if (vcard.IsGrabbingEpg) tmp = "Grabbing EPG";
-            item.SubItems[2].Text = tmp;
-            item.SubItems[3].Text = "";
-            item.SubItems[4].Text = "";
-            item.SubItems[5].Text = "";
-            item.SubItems[6].Text = card.Name;
-            item.SubItems[7].Text = Convert.ToString(RemoteControl.Instance.GetSubChannels(card.IdCard));
-            off++;
-            continue;
-          }
-          if (usersForCard.Length == 0)
-          {
-            string tmp = "idle";
-            if (vcard.IsScanning) tmp = "Scanning";
-            if (vcard.IsGrabbingEpg) tmp = "Grabbing EPG";
-            item.SubItems[2].Text = tmp;
-            item.SubItems[3].Text = "";
-            item.SubItems[4].Text = "";
-            item.SubItems[5].Text = "";
-            item.SubItems[6].Text = card.Name;
-            item.SubItems[7].Text = Convert.ToString(RemoteControl.Instance.GetSubChannels(card.IdCard));
-            off++;
-            continue;
-          }
-
-
-          bool userFound = false;
-          for (int i = 0; i < usersForCard.Length; ++i)
-          {
-            string tmp = "idle";
-            // Check if the card id fits. Hybrid cards share the context and therefor have
-            // the same users.
-            if (usersForCard[i].CardId != card.IdCard)
-            {
-              continue;
-            }
-            userFound = true;
-            vcard = new VirtualCard(usersForCard[i]);
-            item.SubItems[0].Text = card.IdCard.ToString();
-            item.SubItems[0].Tag = card.IdCard;
-            item.SubItems[1].Text = vcard.Type.ToString();
-            if (vcard.IsTimeShifting) tmp = "Timeshifting";
-            if (vcard.IsRecording && vcard.User.IsAdmin) tmp = "Recording";
-            if (vcard.IsScanning) tmp = "Scanning";
-            if (vcard.IsGrabbingEpg) tmp = "Grabbing EPG";
-            if (vcard.IsTimeShifting && vcard.IsGrabbingEpg) tmp = "Timeshifting (Grabbing EPG)";
-            if (vcard.IsRecording && vcard.User.IsAdmin && vcard.IsGrabbingEpg) tmp = "Recording (Grabbing EPG)";
-            item.SubItems[2].Text = tmp;
-            tmp = vcard.IsScrambled ? "yes" : "no";
-            item.SubItems[4].Text = tmp;
-            string channelDisplayName;
-            if (_channelNames.TryGetValue(vcard.IdChannel, out channelDisplayName))
-            {
-              item.SubItems[3].Text = channelDisplayName;
-            }
-            else
-            {
-              item.SubItems[3].Text = vcard.ChannelName;
-            }
-            item.SubItems[5].Text = usersForCard[i].Name;
-            item.SubItems[6].Text = card.Name;
-            item.SubItems[7].Text = Convert.ToString(RemoteControl.Instance.GetSubChannels(card.IdCard));
-            off++;
-
-            if (off >= mpListView1.Items.Count)
-            {
-              item = mpListView1.Items.Add("");
-              item.SubItems.Add("");
-              item.SubItems.Add("");
-              item.SubItems.Add("");
-              item.SubItems.Add("");
-              item.SubItems.Add("");
-              item.SubItems.Add("");
-              item.SubItems.Add("");
-            }
-            else
-            {
-              item = mpListView1.Items[off];
-            }
-          }
-          // If we haven't found a user that fits, than it is a hybrid card which is inactive
-          // This means that the card is idle.
-          if (!userFound)
-          {
-            item.SubItems[2].Text = "idle";
-            item.SubItems[3].Text = "";
-            item.SubItems[4].Text = "";
-            item.SubItems[5].Text = "";
-            item.SubItems[6].Text = card.Name;
-            item.SubItems[7].Text = Convert.ToString(RemoteControl.Instance.GetSubChannels(card.IdCard));
-            ;
-            off++;
-          }
-        }
-        for (int i = off; i < mpListView1.Items.Count; ++i)
-        {
-          item = mpListView1.Items[i];
-          item.SubItems[0].Text = "";
-          item.SubItems[1].Text = "";
-          item.SubItems[2].Text = "";
-          item.SubItems[3].Text = "";
-          item.SubItems[4].Text = "";
-          item.SubItems[5].Text = "";
-          item.SubItems[6].Text = "";
-          item.SubItems[7].Text = "";
-        }
+        return;
       }
-      catch (Exception ex)
+      if (_cards.Count == 0)
       {
-        Log.Write(ex);
+        return;
       }
+
+      Utils.UpdateCardStatus(mpListView1);      
     }
 
     private void ColorLine(Card card, ListViewItem item)
@@ -792,11 +635,11 @@ namespace SetupTv.Sections
       Color lineColor = Color.White;
       int subchannels = 0;
       IUser user;
-      bool cardInUse = RemoteControl.Instance.IsCardInUse(card.IdCard, out user);
+      bool cardInUse = ServiceAgents.Instance.ControllerServiceAgent.IsCardInUse(card.IdCard, out user);
 
       if (!cardInUse)
       {
-        subchannels = RemoteControl.Instance.GetSubChannels(card.IdCard);
+        subchannels = ServiceAgents.Instance.ControllerServiceAgent.GetSubChannels(card.IdCard);
         if (subchannels > 0)
         {
           lineColor = Color.Red;
@@ -964,22 +807,30 @@ namespace SetupTv.Sections
     private void chkRndPrio_CheckedChanged(object sender, EventArgs e)
     {
       _rndPrio = chkRndPrio.Checked;
-    }
+  }
 
     private void btnCustom_Click(object sender, EventArgs e)
     {
-      TvResult result;
-      long mSecsElapsed;
-      VirtualCard card;      
+      bool result;      
+      IVirtualCard card;      
 
-      Channel tv3_plus = Channel.Retrieve(9);
-      Channel tv3 = Channel.Retrieve(125);
+      Channel dr1 = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(1);
+      Channel dr2 = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(2);
 
-      Channel nosignal = Channel.Retrieve(5651);
+      
 
-      IUser low = UserFactory.CreateBasicUser("low", 1);
-      IUser low2 = UserFactory.CreateBasicUser("low2", 1);
-      IUser high = UserFactory.CreateBasicUser("high", 5);
+      IUser low = UserFactory.CreateBasicUser("dr1", 1);
+      IUser low2 = UserFactory.CreateBasicUser("dr2", 1);
+
+      TvResult tvresult = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(low.Name, dr1.IdChannel, out card, out low);
+      low.CardId = card.Id;
+      Thread.Sleep(2000);
+
+      result = ServiceAgents.Instance.ControllerServiceAgent.ParkTimeShifting(low.Name, 0, dr1.IdChannel, out low);      
+
+      Thread.Sleep(1000);
+      tvresult = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(low.Name, dr2.IdChannel, out card, out low);
+      low.CardId = card.Id;
 
       //StartTimeshifting(tv3, low, 0, out mSecsElapsed, out result, out card);      
 
@@ -993,7 +844,7 @@ namespace SetupTv.Sections
 
       //StartTimeshifting(tv3_plus, low2, 0, out mSecsElapsed, out result, out card);      
 
-      StartTimeshifting(tv3, high, 0, out mSecsElapsed, out result, out card);
+      //StartTimeshifting(tv3, high, 0, out mSecsElapsed, out result, out card);
 
       //Thread.Sleep(3000);
 

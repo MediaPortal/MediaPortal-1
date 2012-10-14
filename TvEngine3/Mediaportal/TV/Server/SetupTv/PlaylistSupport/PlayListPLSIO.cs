@@ -20,9 +20,8 @@
 
 using System.Text;
 using System.IO;
-using SetupTv;
 
-namespace MediaPortal.Playlists
+namespace Mediaportal.TV.Server.SetupTV.PlaylistSupport
 {
   public class PlayListPLSIO : IPlayListIO
   {
@@ -127,7 +126,7 @@ namespace MediaPortal.Playlists
             PlayListItem newItem = new PlayListItem(infoLine, fileName, duration);
             if (tmp.IndexOf("http:") < 0 && tmp.IndexOf("mms:") < 0 && tmp.IndexOf("rtp:") < 0)
             {
-              SetupTv.Utils.GetQualifiedFilename(basePath, ref fileName);
+              Utils.GetQualifiedFilename(basePath, ref fileName);
               newItem.Type = PlayListItem.PlayListItemType.AudioStream;
             }
             playlist.Add(newItem);

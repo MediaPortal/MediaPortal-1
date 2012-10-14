@@ -20,15 +20,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using DirectShowLib;
-using TvDatabase;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class ScanSettings : SectionSettings
   {
@@ -88,7 +90,8 @@ namespace SetupTv.Sections
 
       public void Persist()
       {
-        _encoder.Persist();
+        //_encoder.Persist();
+        ServiceAgents.Instance.CardServiceAgent.SaveSoftwareEncoder(_encoder);
       }
     }
 
@@ -109,17 +112,18 @@ namespace SetupTv.Sections
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
-      TvBusinessLayer layer = new TvBusinessLayer();
+      
 
-      numericUpDownTune.Value = Convert.ToDecimal(layer.GetSetting("timeoutTune", "2").Value);
-      numericUpDownCAT.Value = Convert.ToDecimal(layer.GetSetting("timeoutCAT", "5").Value);
-      numericUpDownPMT.Value = Convert.ToDecimal(layer.GetSetting("timeoutPMT", "10").Value);
-      numericUpDownSDT.Value = Convert.ToDecimal(layer.GetSetting("timeoutSDT", "20").Value);
-      numericUpDownAnalog.Value = Convert.ToDecimal(layer.GetSetting("timeoutAnalog", "20").Value);
+      numericUpDownTune.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutTune", "2").Value);
+      numericUpDownPAT.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutPAT", "5").Value);
+      numericUpDownCAT.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutCAT", "5").Value);
+      numericUpDownPMT.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutPMT", "10").Value);
+      numericUpDownSDT.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutSDT", "20").Value);
+      numericUpDownAnalog.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutAnalog", "20").Value);
 
-      delayDetectUpDown.Value = Convert.ToDecimal(layer.GetSetting("delayCardDetect", "0").Value);
+      delayDetectUpDown.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("delayCardDetect", "0").Value);
 
-      checkBoxEnableLinkageScanner.Checked = (layer.GetSetting("linkageScannerEnabled", "no").Value == "yes");
+      checkBoxEnableLinkageScanner.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("linkageScannerEnabled", "no").Value == "yes");
 
       mpComboBoxPrio.Items.Clear();
       mpComboBoxPrio.Items.Add("Realtime");
@@ -131,7 +135,7 @@ namespace SetupTv.Sections
 
       try
       {
-        mpComboBoxPrio.SelectedIndex = Convert.ToInt32(layer.GetSetting("processPriority", "3").Value);
+        mpComboBoxPrio.SelectedIndex = Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("processPriority", "3").Value);
         //default is normal=3       
       }
       catch (Exception)
@@ -139,49 +143,23 @@ namespace SetupTv.Sections
         mpComboBoxPrio.SelectedIndex = 3; //fall back to default which is normal=3
       }
 
-      BuildLists(layer);
-      numericUpDownReuseLimit.Value = Convert.ToDecimal(layer.GetSetting("softwareEncoderReuseLimit", "0").Value);
+      BuildLists();
+      numericUpDownReuseLimit.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("softwareEncoderReuseLimit", "0").Value);
     }
 
     public override void OnSectionDeActivated()
     {
       base.OnSectionDeActivated();
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting s = layer.GetSetting("timeoutTune", "2");
-      s.Value = numericUpDownTune.Value.ToString();
-      s.Persist();
-
-      s = layer.GetSetting("timeoutCAT", "5");
-      s.Value = numericUpDownCAT.Value.ToString();
-      s.Persist();
-
-      s = layer.GetSetting("timeoutPMT", "10");
-      s.Value = numericUpDownPMT.Value.ToString();
-      s.Persist();
-
-      s = layer.GetSetting("timeoutSDT", "20");
-      s.Value = numericUpDownSDT.Value.ToString();
-      s.Persist();
-
-      s = layer.GetSetting("timeoutAnalog", "20");
-      s.Value = numericUpDownAnalog.Value.ToString();
-      s.Persist();
-
-      s = layer.GetSetting("linkageScannerEnabled", "no");
-      s.Value = checkBoxEnableLinkageScanner.Checked ? "yes" : "no";
-      s.Persist();
-
-      s = layer.GetSetting("processPriority", "3");
-      s.Value = mpComboBoxPrio.SelectedIndex.ToString();
-      s.Persist();
-
-      s = layer.GetSetting("delayCardDetect", "0");
-      s.Value = delayDetectUpDown.Value.ToString();
-      s.Persist();
-
-      s = layer.GetSetting("softwareEncoderReuseLimit", "0");
-      s.Value = numericUpDownReuseLimit.Value.ToString();
-      s.Persist();
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeoutTune", numericUpDownTune.Value.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeoutPAT", numericUpDownPAT.Value.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeoutCAT", numericUpDownCAT.Value.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeoutPMT", numericUpDownPMT.Value.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeoutSDT", numericUpDownSDT.Value.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeoutAnalog", numericUpDownAnalog.Value.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("linkageScannerEnabled", checkBoxEnableLinkageScanner.Checked ? "yes" : "no");
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("processPriority", mpComboBoxPrio.SelectedIndex.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("delayCardDetect", delayDetectUpDown.Value.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("softwareEncoderReuseLimit", numericUpDownReuseLimit.Value.ToString());      
 
       foreach (DisplaySoftwareEncoder encoder in _bindingVideoEncoders)
       {
@@ -242,27 +220,23 @@ namespace SetupTv.Sections
       }
     }
 
-    private void BuildLists(TvBusinessLayer layer)
+    private void BuildLists()
     {
       DsDevice[] devices1 = DsDevice.GetDevicesOfCat(FilterCategory.VideoCompressorCategory);
       DsDevice[] devices2 = DsDevice.GetDevicesOfCat(FilterCategory.AudioCompressorCategory);
       DsDevice[] devices3 = DsDevice.GetDevicesOfCat(FilterCategory.LegacyAmFilterCategory);
 
-      bool found;
-      IList<SoftwareEncoder> encoders = layer.GetSofwareEncodersVideo();
+      bool found;      
+      IList<SoftwareEncoder> encoders = ServiceAgents.Instance.CardServiceAgent.ListAllSofwareEncodersVideo();
       _bindingVideoEncoders = new BindingList<DisplaySoftwareEncoder>();
       foreach (SoftwareEncoder encoder in encoders)
       {
         found = false;
         DisplaySoftwareEncoder displayEncoder = new DisplaySoftwareEncoder(encoder);
-        for (int i = 0; i < devices1.Length; i++)
+        if (devices1.Any(t => t.Name == encoder.Name))
         {
-          if (devices1[i].Name == encoder.Name)
-          {
-            found = true;
-            displayEncoder.Installed = "Yes";
-            break;
-          }
+          found = true;
+          displayEncoder.Installed = "Yes";
         }
         if (!found)
         {
@@ -270,7 +244,6 @@ namespace SetupTv.Sections
           {
             if (devices3[i].Name == encoder.Name)
             {
-              found = true;
               displayEncoder.Installed = "Yes";
               break;
             }
@@ -280,7 +253,7 @@ namespace SetupTv.Sections
       }
       mpListViewVideo.DataSource = _bindingVideoEncoders;
 
-      encoders = layer.GetSofwareEncodersAudio();
+      encoders = ServiceAgents.Instance.CardServiceAgent.ListAllSofwareEncodersAudio();
       _bindingAudioEncoders = new BindingList<DisplaySoftwareEncoder>();
       foreach (SoftwareEncoder encoder in encoders)
       {
@@ -301,7 +274,6 @@ namespace SetupTv.Sections
           {
             if (devices3[i].Name == encoder.Name)
             {
-              found = true;
               displayEncoder.Installed = "Yes";
               break;
             }

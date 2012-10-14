@@ -21,9 +21,9 @@
 using System;
 using System.Windows.Forms;
 using DirectShowLib;
-using TvLibrary;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Countries;
 
-namespace SetupTv.Dialogs
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class FormAnalogTuningDetail : SetupControls.FormTuningDetailCommon
   {
@@ -86,7 +86,7 @@ namespace SetupTv.Dialogs
                                           ? TunerInputType.Cable
                                           : TunerInputType.Antenna);
       TuningDetail.VideoSource = comboBoxVideoSource.SelectedIndex;
-      TuningDetail.AudioSource = comboBoxAudioSource.SelectedIndex;
+      TuningDetail.AudioSource  = comboBoxAudioSource.SelectedIndex;
       TuningDetail.Frequency = (int)GetFrequency(textBoxAnalogFrequency.Text, "2");
       TuningDetail.IsVCRSignal = checkBoxVCR.Checked;
       TuningDetail.ChannelType = 0;

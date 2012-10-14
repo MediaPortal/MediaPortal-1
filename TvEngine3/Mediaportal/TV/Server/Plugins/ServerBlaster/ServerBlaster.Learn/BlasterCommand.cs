@@ -22,7 +22,7 @@ using System;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 
-namespace BlasterTest
+namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
 {
   public enum Port
   {

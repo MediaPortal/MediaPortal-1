@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace TvLibrary.Interfaces.Device
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
 {
   /// <summary>
   /// An interface for devices that are capable of supplying power to other connected elements such as

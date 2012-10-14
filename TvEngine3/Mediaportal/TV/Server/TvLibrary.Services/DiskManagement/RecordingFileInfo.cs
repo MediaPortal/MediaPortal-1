@@ -20,9 +20,9 @@
 
 using System;
 using System.IO;
-using TvDatabase;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 
-namespace TvService
+namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
 {
   public class RecordingFileInfo : IComparable<RecordingFileInfo>
   {

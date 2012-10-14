@@ -20,7 +20,7 @@
 
 using System;
 
-namespace Tst
+namespace Mediaportal.TV.Server.Plugins.XmlTvImport.util
 {
   /// <summary>
   /// Defines a Ternary Search Tree node pair that can be set or retrieved.

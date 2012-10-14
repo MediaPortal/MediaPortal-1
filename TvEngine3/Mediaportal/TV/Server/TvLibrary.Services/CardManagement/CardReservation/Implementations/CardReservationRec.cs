@@ -19,18 +19,20 @@
 #endregion
 
 using System;
-using TvControl;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Scheduler;
+using Mediaportal.TV.Server.TVLibrary.Services;
+using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
+using Mediaportal.TV.Server.TVService.Interfaces.Enums;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
-namespace TvService
+namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Implementations
 {
   public class CardReservationRec : CardReservationBase
   {    
     private CardDetail _cardInfo;
-    private RecordingDetail _recDetail;    
-
-    public CardReservationRec(TVController tvController) : base(tvController) { }
+    private RecordingDetail _recDetail;
 
 
     protected override bool IsTunedToTransponder(ITvCardHandler tvcard, IChannel tuningDetail)
@@ -50,15 +52,15 @@ namespace TvService
       set { _recDetail = value; }
     }  
     
-    protected override bool OnStartTune(IUser user)
+    protected override bool OnStartTune(ITvCardHandler tvcard, IUser user, int idChannel)
     {
       bool startRecordingOnDisc = true;
-      if (_tvController.SupportsSubChannels(_cardInfo.Card.IdCard) == false)
-      {
+      if (ServiceManager.Instance.InternalControllerService.SupportsSubChannels(_cardInfo.Card.IdCard) == false)
+      {        
         Log.Write("Scheduler : record, now start timeshift");
-        string timeshiftFileName = String.Format(@"{0}\live{1}-{2}.ts", _cardInfo.Card.TimeShiftFolder, _cardInfo.Id,
-                                                 user.SubChannel);
-        startRecordingOnDisc = (TvResult.Succeeded == _tvController.StartTimeShifting(ref user, ref timeshiftFileName));
+        string timeshiftFileName = String.Format(@"{0}\live{1}-{2}.ts", _cardInfo.Card.TimeshiftingFolder, _cardInfo.Id,
+                                                 tvcard.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel));
+        startRecordingOnDisc = (TvResult.Succeeded == ServiceManager.Instance.InternalControllerService.StartTimeShifting(ref user, ref timeshiftFileName, idChannel));
       }
 
       if (startRecordingOnDisc)
@@ -67,7 +69,7 @@ namespace TvService
         _recDetail.CardInfo = _cardInfo;
         Log.Write("Scheduler : record to {0}", _recDetail.FileName);
         string fileName = _recDetail.FileName;
-        startRecordingOnDisc = (TvResult.Succeeded == _tvController.StartRecording(ref user, ref fileName));
+        startRecordingOnDisc = (TvResult.Succeeded == ServiceManager.Instance.InternalControllerService.StartRecording(user.Name, user.CardId, out user, ref fileName));
 
         if (startRecordingOnDisc)
         {
@@ -75,9 +77,9 @@ namespace TvService
           _recDetail.RecordingStartDateTime = DateTime.Now;
         }
       }
-      if (!startRecordingOnDisc && _tvController.AllCardsIdle)
+      if (!startRecordingOnDisc && ServiceManager.Instance.InternalControllerService.AllCardsIdle)
       {
-        _tvController.EpgGrabberEnabled = true;
+        ServiceManager.Instance.InternalControllerService.EpgGrabberEnabled = true;
       }
 
       return startRecordingOnDisc;

@@ -19,17 +19,18 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Globalization;
-using System.IO;
-using Gentle.Framework;
+
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using TvControl;
-using TvDatabase;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
+using Mediaportal.TV.Server.TVService.Interfaces;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
+using Mediaportal.TV.TvPlugin.Helper;
 using Action = MediaPortal.GUI.Library.Action;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   /// <summary>
   /// 
@@ -77,7 +78,7 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\tvZAPOSD.xml"));
+      bool bResult = Load(GUIGraphicsContext.Skin + @"\tvZAPOSD.xml");
       GetID = (int)Window.WINDOW_TVZAPOSD;
       return bResult;
     }
@@ -153,14 +154,6 @@ namespace TvPlugin
     protected override void OnPageLoad()
     {
       Log.Debug("zaposd pageload");
-      // following line should stay. Problems with OSD not
-      // appearing are already fixed elsewhere
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
-      sb.AddConstraint(Operator.Equals, "istv", 1);
-      sb.AddOrderByField(true, "sortOrder");
-      SqlStatement stmt = sb.GetStatement(true);
-      ObjectFactory.GetCollection(typeof (Channel), stmt.Execute());
-
       AllocResources();
       // if (g_application.m_pPlayer) g_application.m_pPlayer.ShowOSD(false);
       ResetAllControls(); // make sure the controls are positioned relevant to the OSD Y offset
@@ -282,7 +275,7 @@ namespace TvPlugin
 
     public void UpdateChannelInfo()
     {
-      if (LastError == null)
+      if (LastError != null)
       {
         channelNr = GetChannelNumber();
       }
@@ -368,9 +361,9 @@ namespace TvPlugin
       // Set recorder status
       if (imgRecIcon != null)
       {
-        VirtualCard card;
-        TvServer server = new TvServer();
-        imgRecIcon.IsVisible = server.IsRecording(idChannel, out card);
+        IVirtualCard card;
+        
+        imgRecIcon.IsVisible = ServiceAgents.Instance.ControllerServiceAgent.IsRecording(idChannel, out card);
       }
       
       if (lblZapToCannelNo != null)
@@ -403,8 +396,8 @@ namespace TvPlugin
         {
           lblCurrentChannel.Label = channelName;
         }
-        Channel chan = TVHome.Navigator.GetChannel(idChannel, true);
-        Program prog = chan.GetProgramAt(m_dateTime);
+
+        Program prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(m_dateTime, idChannel);        
         if (prog != null)
         {
           string strTime = String.Format("{0}-{1}",
@@ -432,8 +425,7 @@ namespace TvPlugin
           }
 
           // next program
-          prog = chan.GetProgramAt(prog.EndTime.AddMinutes(1));
-          //prog = TVHome.Navigator.GetChannel(channelName).GetProgramAt(prog.EndTime.AddMinutes(1));
+          prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(prog.EndTime.AddMinutes(1), idChannel);            
           if (prog != null)
           {
             if (lblOnTvNext != null)
@@ -465,7 +457,6 @@ namespace TvPlugin
 
     private void UpdateProgressBar()
     {
-      double fPercent;
       Program prog = TVHome.Navigator.GetChannel(idChannel, true).CurrentProgram;
       if (prog == null)
       {
@@ -479,7 +470,7 @@ namespace TvPlugin
       double iTotalSecs = ts.TotalSeconds;
       ts = DateTime.Now - prog.StartTime;
       double iCurSecs = ts.TotalSeconds;
-      fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
+      double fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
       fPercent *= 100.0d;
       GUIPropertyManager.SetProperty("#TV.View.Percentage", fPercent.ToString());
     }

@@ -18,15 +18,15 @@
 
 #endregion
 
-using System;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using TvDatabase;
-using TvLibrary.Channels;
-using TvLibrary.Epg;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.DVB
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBC
 {
   /// <summary>
   /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles DVB-C tuners with BDA drivers.
@@ -69,14 +69,14 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected override void CreateTuningSpace()
     {
-      Log.Log.Debug("TvCardDvbC: create tuning space");
+      Log.Debug("TvCardDvbC: create tuning space");
 
       // Check if the system already has an appropriate tuning space.
       SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();
       ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
       if (container == null)
       {
-        Log.Log.Error("TvCardDvbC: failed to get the tuning space container");
+        Log.Error("TvCardDvbC: failed to get the tuning space container");
         return;
       }
 
@@ -100,7 +100,7 @@ namespace TvLibrary.Implementations.DVB
           spaces[0].get_UniqueName(out name);
           if (name.Equals("MediaPortal DVBC TuningSpace"))
           {
-            Log.Log.Debug("TvCardDvbC: found correct tuningspace");
+            Log.Debug("TvCardDvbC: found correct tuningspace");
             _tuningSpace = (IDVBTuningSpace)spaces[0];
             tuner.put_TuningSpace(_tuningSpace);
             _tuningSpace.CreateTuneRequest(out request);
@@ -117,7 +117,7 @@ namespace TvLibrary.Implementations.DVB
       }
 
       // We didn't find our tuning space registered in the system, so create a new one.
-      Log.Log.Debug("TvCardDvbC: create new tuningspace");
+      Log.Debug("TvCardDvbC: create new tuningspace");
       _tuningSpace = (IDVBTuningSpace)new DVBTuningSpace();
       _tuningSpace.put_UniqueName("MediaPortal DVBC TuningSpace");
       _tuningSpace.put_FriendlyName("MediaPortal DVBC TuningSpace");
@@ -158,7 +158,7 @@ namespace TvLibrary.Implementations.DVB
       DVBCChannel dvbcChannel = channel as DVBCChannel;
       if (dvbcChannel == null)
       {
-        Log.Log.Debug("TvCardDvbC: channel is not a DVB-C channel!!! {0}", channel.GetType().ToString());
+        Log.Debug("TvCardDvbC: channel is not a DVB-C channel!!! {0}", channel.GetType().ToString());
         return null;
       }
 

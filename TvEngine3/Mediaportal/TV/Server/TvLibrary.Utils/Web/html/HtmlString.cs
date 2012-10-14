@@ -20,7 +20,7 @@
 
 using System.Web;
 
-namespace MediaPortal.Utils.Web
+namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.html
 {
   /// <summary>
   /// Class of static HTML helper methods

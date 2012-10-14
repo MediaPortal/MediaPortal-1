@@ -21,7 +21,7 @@
 using System;
 using DirectShowLib;
 
-namespace TvLibrary.Interfaces.Device
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
 {
   /// <summary>
   /// A base interface for devices that support extended functions.

@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 
-namespace MediaPortal.Playlists
+namespace Mediaportal.TV.Server.SetupTV.PlaylistSupport
 {
   //public class PlayList : IEnumerable<PlayListItem>
   [Serializable]

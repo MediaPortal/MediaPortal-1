@@ -1,4 +1,6 @@
-﻿namespace SetupControls
+﻿using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupControls
 {
   partial class SettingsForm
   {
@@ -28,23 +30,24 @@
     protected void InitializeComponent()
     {
       this.sectionTree = new System.Windows.Forms.TreeView();
-      this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.headerLabel = new MediaPortal.UserInterface.Controls.MPGradientLabel();
+      this.cancelButton = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.okButton = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.headerLabel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGradientLabel();
       this.holderPanel = new System.Windows.Forms.Panel();
-      this.beveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
-      this.applyButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.beveledLine1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPBeveledLine();
+      this.applyButton = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.linkLabel1 = new System.Windows.Forms.LinkLabel();
       this.toolStrip1 = new System.Windows.Forms.ToolStrip();
       this.helpToolStripSplitButton = new System.Windows.Forms.ToolStripButton();
       this.configToolStripSplitButton = new System.Windows.Forms.ToolStripButton();
+      this.btnRestrictedMode = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.toolStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
       // sectionTree
       // 
-      this.sectionTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.sectionTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
       this.sectionTree.FullRowSelect = true;
       this.sectionTree.HideSelection = false;
       this.sectionTree.HotTracking = true;
@@ -54,8 +57,8 @@
       this.sectionTree.Name = "sectionTree";
       this.sectionTree.Size = new System.Drawing.Size(184, 455);
       this.sectionTree.TabIndex = 3;
-      this.sectionTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.sectionTree_AfterSelect);
       this.sectionTree.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.sectionTree_BeforeSelect);
+      this.sectionTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.sectionTree_AfterSelect);
       // 
       // cancelButton
       // 
@@ -82,8 +85,8 @@
       // 
       // headerLabel
       // 
-      this.headerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.headerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.headerLabel.Caption = "";
       this.headerLabel.FirstColor = System.Drawing.SystemColors.InactiveCaption;
       this.headerLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -99,9 +102,9 @@
       // 
       // holderPanel
       // 
-      this.holderPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.holderPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.holderPanel.AutoScroll = true;
       this.holderPanel.BackColor = System.Drawing.SystemColors.Control;
       this.holderPanel.Location = new System.Drawing.Point(216, 58);
@@ -112,8 +115,8 @@
       // 
       // beveledLine1
       // 
-      this.beveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.beveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.beveledLine1.Location = new System.Drawing.Point(8, 496);
       this.beveledLine1.Name = "beveledLine1";
       this.beveledLine1.Size = new System.Drawing.Size(700, 2);
@@ -159,22 +162,33 @@
       // helpToolStripSplitButton
       // 
       this.helpToolStripSplitButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-      this.helpToolStripSplitButton.Image = global::SetupControls.Properties.Resources.icon_help;
       this.helpToolStripSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.helpToolStripSplitButton.Name = "helpToolStripSplitButton";
-      this.helpToolStripSplitButton.Size = new System.Drawing.Size(52, 22);
+      this.helpToolStripSplitButton.Size = new System.Drawing.Size(36, 22);
       this.helpToolStripSplitButton.Text = "Help";
       this.helpToolStripSplitButton.ToolTipText = "Opens the online wiki page for the active configuration section.";
       this.helpToolStripSplitButton.Click += new System.EventHandler(this.helpToolStripSplitButton_ButtonClick);
       // 
       // configToolStripSplitButton
       // 
-      this.configToolStripSplitButton.Image = global::SetupControls.Properties.Resources.icon_folder;
       this.configToolStripSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.configToolStripSplitButton.Name = "configToolStripSplitButton";
-      this.configToolStripSplitButton.Size = new System.Drawing.Size(129, 22);
+      this.configToolStripSplitButton.Size = new System.Drawing.Size(113, 22);
       this.configToolStripSplitButton.Text = "Open Log directory";
       this.configToolStripSplitButton.Click += new System.EventHandler(this.configToolStripSplitButton_ButtonClick);
+      // 
+      // btnRestrictedMode
+      // 
+      this.btnRestrictedMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnRestrictedMode.Location = new System.Drawing.Point(151, 504);
+      this.btnRestrictedMode.Name = "btnRestrictedMode";
+      this.btnRestrictedMode.Size = new System.Drawing.Size(159, 23);
+      this.btnRestrictedMode.TabIndex = 15;
+      this.btnRestrictedMode.TabStop = false;
+      this.btnRestrictedMode.Text = "*Restricted mode active.*";
+      this.btnRestrictedMode.UseVisualStyleBackColor = true;
+      this.btnRestrictedMode.Visible = false;
+      this.btnRestrictedMode.Click += new System.EventHandler(this.btnRestrictedMode_Click);
       // 
       // SettingsForm
       // 
@@ -183,6 +197,7 @@
       this.AutoScroll = true;
       this.CancelButton = this.cancelButton;
       this.ClientSize = new System.Drawing.Size(716, 537);
+      this.Controls.Add(this.btnRestrictedMode);
       this.Controls.Add(this.toolStrip1);
       this.Controls.Add(this.linkLabel1);
       this.Controls.Add(this.applyButton);
@@ -195,8 +210,8 @@
       this.Name = "SettingsForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "Settings";
-      this.Load += new System.EventHandler(this.SettingsForm_Load);
       this.Closed += new System.EventHandler(this.SettingsForm_Closed);
+      this.Load += new System.EventHandler(this.SettingsForm_Load);
       this.toolStrip1.ResumeLayout(false);
       this.toolStrip1.PerformLayout();
       this.ResumeLayout(false);
@@ -206,16 +221,17 @@
 
     #endregion
 
-    private MediaPortal.UserInterface.Controls.MPButton cancelButton;
-    private MediaPortal.UserInterface.Controls.MPButton okButton;
-    private MediaPortal.UserInterface.Controls.MPButton applyButton;
-    private MediaPortal.UserInterface.Controls.MPBeveledLine beveledLine1;
+    private MPButton cancelButton;
+    private MPButton okButton;
+    private MPButton applyButton;
+    private MPBeveledLine beveledLine1;
     protected System.Windows.Forms.TreeView sectionTree;
     protected System.Windows.Forms.Panel holderPanel;
-    private MediaPortal.UserInterface.Controls.MPGradientLabel headerLabel;
+    private MPGradientLabel headerLabel;
     private System.Windows.Forms.LinkLabel linkLabel1;
     protected System.Windows.Forms.ToolStrip toolStrip1;
     protected System.Windows.Forms.ToolStripButton helpToolStripSplitButton;
     protected System.Windows.Forms.ToolStripButton configToolStripSplitButton;
+    private MPButton btnRestrictedMode;
   }
 }

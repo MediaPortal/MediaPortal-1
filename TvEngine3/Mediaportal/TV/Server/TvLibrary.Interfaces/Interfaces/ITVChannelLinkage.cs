@@ -20,7 +20,7 @@
 
 using System.Runtime.InteropServices;
 
-namespace TvLibrary.Interfaces
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 {
   /// <summary>
   /// callback interface for the ChannelLinkageScanner

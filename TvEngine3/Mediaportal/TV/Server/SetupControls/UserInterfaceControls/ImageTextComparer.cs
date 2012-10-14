@@ -22,7 +22,7 @@ using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.Collections;
 
-namespace MediaPortal.UserInterface.Controls
+namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 {
   public class ImageTextComparer : IComparer
   {

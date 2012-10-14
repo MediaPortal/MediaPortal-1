@@ -19,14 +19,13 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using TvLibrary.Implementations.Analog;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
-using TvLibrary.Teletext;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Teletext.Implementations;
 
-namespace TvLibrary.Implementations
+namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
   /// <summary>
   /// Base class for a sub channel of a tv card
@@ -287,7 +286,7 @@ namespace TvLibrary.Implementations
     /// <returns></returns>
     public bool StartTimeShifting(string fileName)
     {
-      Log.Log.Debug("BaseSubChannel: subchannel {0} start timeshifting to {1}", _subChannelId, fileName);
+      Log.Debug("BaseSubChannel: subchannel {0} start timeshifting to {1}", _subChannelId, fileName);
       try
       {
         OnStartTimeShifting(fileName);
@@ -296,7 +295,7 @@ namespace TvLibrary.Implementations
       }
       catch (Exception ex)
       {
-        Log.Log.Debug("BaseSubChannel: failed to start timeshifting\r\n{0}", ex.ToString());
+        Log.Debug("BaseSubChannel: failed to start timeshifting\r\n{0}", ex.ToString());
         StopTimeShifting();
         return false;
       }
@@ -310,7 +309,7 @@ namespace TvLibrary.Implementations
     /// <returns></returns>
     public bool StopTimeShifting()
     {
-      Log.Log.Debug("BaseSubChannel: subchannel {0} stop timeshifting", _subChannelId);
+      Log.Debug("BaseSubChannel: subchannel {0} stop timeshifting", _subChannelId);
       OnStopTimeShifting();
       _timeshiftFileName = String.Empty;
       _dateTimeShiftStarted = DateTime.MinValue;
@@ -324,7 +323,7 @@ namespace TvLibrary.Implementations
     /// <returns></returns>
     public bool StartRecording(string fileName)
     {
-      Log.Log.Debug("BaseSubChannel: subchannel {0} start recording to {1}", _subChannelId, fileName);
+      Log.Debug("BaseSubChannel: subchannel {0} start recording to {1}", _subChannelId, fileName);
       try
       {
         OnStartRecording(fileName);
@@ -333,7 +332,7 @@ namespace TvLibrary.Implementations
       }
       catch (Exception ex)
       {
-        Log.Log.Debug("BaseSubChannel: failed to start recording\r\n{0}", ex.ToString());
+        Log.Debug("BaseSubChannel: failed to start recording\r\n{0}", ex.ToString());
         StopRecording();
         return false;
       }
@@ -347,7 +346,7 @@ namespace TvLibrary.Implementations
     /// <returns></returns>
     public bool StopRecording()
     {
-      Log.Log.Debug("BaseSubChannel: subchannel {0} stop recording", _subChannelId);
+      Log.Debug("BaseSubChannel: subchannel {0} stop recording", _subChannelId);
       OnStopRecording();
       _recordingFileName = String.Empty;
       _dateRecordingStarted = DateTime.MinValue;
@@ -369,7 +368,7 @@ namespace TvLibrary.Implementations
     /// </summary>
     public virtual void CancelTune()
     {
-      Log.Log.Debug("BaseSubChannel: subchannel {0} cancel tune", _subChannelId);
+      Log.Debug("BaseSubChannel: subchannel {0} cancel tune", _subChannelId);
       _cancelTune = true;
     }
 
@@ -406,7 +405,7 @@ namespace TvLibrary.Implementations
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile(ex.ToString());
+        Log.WriteFile(ex.ToString());
       }
       return 0;
     }
@@ -436,12 +435,12 @@ namespace TvLibrary.Implementations
     {
       try
       {
-        Log.Log.WriteFile("PID seen - type = {0}", pidType);
+        Log.WriteFile("PID seen - type = {0}", pidType);
         OnAudioVideoEvent(pidType);
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        Log.Write(ex);
       }
       return 0;
     }
@@ -455,7 +454,7 @@ namespace TvLibrary.Implementations
     /// </summary>
     public void Decompose()
     {
-      Log.Log.Debug("BaseSubChannel: subchannel {0} decompose", _subChannelId);
+      Log.Debug("BaseSubChannel: subchannel {0} decompose", _subChannelId);
 
       if (IsRecording)
       {

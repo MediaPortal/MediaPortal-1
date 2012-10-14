@@ -22,13 +22,17 @@
 
 using System;
 using System.Collections.Generic;
-using TvDatabase;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
+using MediaPortal.Common.Utils;
 using TvEngine.PowerScheduler.Interfaces;
 
 #endregion
 
-namespace TvEngine.PowerScheduler.Handlers
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 {
   /// <summary>
   /// Handles wakeup of the system for scheduled recordings
@@ -65,14 +69,14 @@ namespace TvEngine.PowerScheduler.Handlers
 
     public DateTime GetNextWakeupTime(DateTime earliestWakeupTime)
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
+      
       Schedule recSchedule = null;
       DateTime scheduleWakeupTime = DateTime.MaxValue;
       DateTime nextWakeuptime = DateTime.MaxValue;
-      foreach (Schedule schedule in Schedule.ListAll())
+      foreach (Schedule schedule in ScheduleManagement.ListAllSchedules())
       {
         if (schedule.Canceled != Schedule.MinSchedule) continue;
-        List<Schedule> schedules = layer.GetRecordingTimes(schedule);
+        List<Schedule> schedules = ScheduleManagement.GetRecordingTimes(schedule);
         if (schedules.Count > 0)
         {
           int i = 0;
@@ -80,7 +84,8 @@ namespace TvEngine.PowerScheduler.Handlers
           while (i < schedules.Count)
           {
             recSchedule = schedules[i];
-            if (!recSchedule.IsSerieIsCanceled(recSchedule.StartTime))
+            var scheduleBll = new ScheduleBLL(recSchedule);
+            if (!scheduleBll.IsSerieIsCanceled(recSchedule.StartTime))
               break;
             i++;
           }

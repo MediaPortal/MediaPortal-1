@@ -18,16 +18,19 @@
 
 #endregion
 
-using System;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using TvDatabase;
-using TvLibrary.Channels;
-using TvLibrary.Epg;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Device;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 
-namespace TvLibrary.Implementations.DVB
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
 {
   /// <summary>
   /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles DVB-S/S2 tuners with BDA drivers.
@@ -79,8 +82,7 @@ namespace TvLibrary.Implementations.DVB
       _tunerType = CardType.DvbS;
       if (_devicePath != null)
       {
-        TvBusinessLayer layer = new TvBusinessLayer();
-        Card c = layer.GetCardByDevicePath(_devicePath);
+        Card c = CardManagement.GetCardByDevicePath(_devicePath, CardIncludeRelationEnum.None);        
         if (c != null)
         {
           _alwaysSendDiseqcCommands = c.AlwaysSendDiseqcCommands;
@@ -104,7 +106,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public override void BuildGraph()
     {
-      Log.Log.Debug("TvCardDvbS: build graph");
+      Log.Debug("TvCardDvbS: build graph");
       base.BuildGraph();
 
       // Check if one of the supported interfaces is capable of sending DiSEqC commands.
@@ -113,7 +115,7 @@ namespace TvLibrary.Implementations.DVB
         IDiseqcDevice diseqcDevice = deviceInterface as IDiseqcDevice;
         if (diseqcDevice != null)
         {
-          Log.Log.Debug("TvCardDvbS: found DiSEqC command interface");
+          Log.Debug("TvCardDvbS: found DiSEqC command interface");
           _diseqcController = new DiseqcController(diseqcDevice, _alwaysSendDiseqcCommands, _diseqcCommandRepeatCount);
           break;
         }
@@ -125,14 +127,14 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected override void CreateTuningSpace()
     {
-      Log.Log.Debug("TvCardDvbS: create tuning space");
+      Log.Debug("TvCardDvbS: create tuning space");
 
       // Check if the system already has an appropriate tuning space.
       SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();
       ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
       if (container == null)
       {
-        Log.Log.Error("TvCardDvbS: failed to get the tuning space container");
+        Log.Error("TvCardDvbS: failed to get the tuning space container");
         return;
       }
 
@@ -160,7 +162,7 @@ namespace TvLibrary.Implementations.DVB
           spaces[0].get_UniqueName(out name);
           if (name.Equals("MediaPortal DVBS TuningSpace"))
           {
-            Log.Log.Debug("TvCardDvbS: found correct tuningspace");
+            Log.Debug("TvCardDvbS: found correct tuningspace");
             _tuningSpace = (IDVBSTuningSpace)spaces[0];
             _tuningSpace.put_SpectralInversion(SpectralInversion.Automatic);
             _tuningSpace.put_LowOscillator(lowOsc);
@@ -179,7 +181,7 @@ namespace TvLibrary.Implementations.DVB
       }
 
       // We didn't find our tuning space registered in the system, so create a new one.
-      Log.Log.Debug("TvCardDvbS: create new tuningspace");
+      Log.Debug("TvCardDvbS: create new tuningspace");
       _tuningSpace = (IDVBSTuningSpace)new DVBSTuningSpace();
       _tuningSpace.put_UniqueName("MediaPortal DVBS TuningSpace");
       _tuningSpace.put_FriendlyName("MediaPortal DVBS TuningSpace");
@@ -236,7 +238,7 @@ namespace TvLibrary.Implementations.DVB
       DVBSChannel dvbsChannel = channel as DVBSChannel;
       if (dvbsChannel == null)
       {
-        Log.Log.Debug("TvCardDvbS: channel is not a DVB-S channel!!! {0}", channel.GetType().ToString());
+        Log.Debug("TvCardDvbS: channel is not a DVB-S channel!!! {0}", channel.GetType().ToString());
         return null;
       }
 

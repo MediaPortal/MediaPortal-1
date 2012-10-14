@@ -19,7 +19,9 @@
 #endregion
 
 using System;
-namespace TvLibrary.Interfaces
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 {
   /// <summary>
   /// interface which describes a tv/radio channel
@@ -32,16 +34,6 @@ namespace TvLibrary.Interfaces
     string Name { get; set; }
 
     /// <summary>
-    /// boolean indication if this is a radio channel
-    /// </summary>
-    bool IsRadio { get; set; }
-
-    /// <summary>
-    /// boolean indication if this is a tv channel
-    /// </summary>
-    bool IsTv { get; set; }
-
-    /// <summary>
     /// Check if the given channel and this instance are on different transponders.
     /// </summary>
     /// <param name="channel">The channel to check.</param>
@@ -52,6 +44,13 @@ namespace TvLibrary.Interfaces
     /// Get/set whether the channel is a free-to-air or encrypted channel.
     /// </summary>
     bool FreeToAir { get; set; }
+
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    MediaTypeEnum MediaType { get; set; }
 
     /// <summary>
     /// Get a channel instance with properties set to enable tuning of this channel.

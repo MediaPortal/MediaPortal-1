@@ -18,13 +18,12 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using TvControl;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVService.Interfaces.CardReservation;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
-namespace TvService
+namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Ticket
 {
   public class CardTuneReservationTicket : CardReservationTicketBase, ICardTuneReservationTicket
   {
@@ -39,8 +38,8 @@ namespace TvService
     private readonly bool _isAnySubChannelTimeshifting;    
     private readonly List<IUser> _inactiveUsers = new List<IUser>();
     private readonly List<IUser> _activeUsers = new List<IUser>();
-    private readonly List<IUser> _users = new List<IUser>();
-    private readonly int _ownerSubchannel = -1;
+    private readonly List<KeyValuePair<string, IUser>> _users = new List<KeyValuePair<string, IUser>>();
+    private readonly ISubChannel _ownerSubchannel = null;
     private readonly bool _isOwner;    
     private readonly int _idCard;
     private readonly int _numberOfChannelsDecrypting;
@@ -53,9 +52,10 @@ namespace TvService
     private int _pendingSubchannel;
     private readonly bool _hasHighestPriority;
     private readonly bool _hasEqualOrHigherPriority;
+    private readonly long? _channelTimeshiftingOnOtherMux;
 
     #endregion
-
+    
     public CardTuneReservationTicket(
       IUser user, 
       IChannel tuningDetail, 
@@ -64,8 +64,8 @@ namespace TvService
       bool isAnySubChannelTimeshifting, 
       List<IUser> inactiveUsers, 
       List<IUser> activeUsers, 
-      List<IUser> users, 
-      int ownerSubchannel, 
+      List<KeyValuePair<string, IUser>> users, 
+      ISubChannel ownerSubchannel, 
       bool isOwner, 
       int idCard, 
       int numberOfChannelsDecrypting, 
@@ -77,7 +77,8 @@ namespace TvService
       int numberOfUsersOnSameCurrentChannel, 
       bool isCamAlreadyDecodingChannel,
       bool hasHighestPriority,
-      bool hasEqualOrHigherPriority)
+      bool hasEqualOrHigherPriority,
+      long? channelTimeshiftingOnOtherMux)
     {
       _pendingSubchannel = -1;
       _user = user;
@@ -100,7 +101,8 @@ namespace TvService
       _activeUsers = activeUsers;
       _users = users;
       _hasHighestPriority = hasHighestPriority;
-      _hasEqualOrHigherPriority = hasEqualOrHigherPriority;               
+      _hasEqualOrHigherPriority = hasEqualOrHigherPriority;
+      _channelTimeshiftingOnOtherMux = channelTimeshiftingOnOtherMux;
     }    
 
     public IChannel TuningDetail
@@ -133,12 +135,12 @@ namespace TvService
       get { return _activeUsers; }
     }
 
-    public IList<IUser> Users
+    public List<KeyValuePair<string, IUser>> Users
     {
       get { return _users; }
     }
 
-    public int OwnerSubchannel
+    public ISubChannel OwnerSubchannel
     {
       get { return _ownerSubchannel; }
     }
@@ -157,6 +159,11 @@ namespace TvService
       {
         return _hasEqualOrHigherPriority;        
       }
+    }
+
+    public long? ChannelTimeshiftingOnOtherMux
+    {
+      get { return _channelTimeshiftingOnOtherMux; }
     }
 
     public bool IsOwner

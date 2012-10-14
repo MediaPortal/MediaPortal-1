@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace MediaPortal.Utils.Web
+namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.Parser
 {
   /// <summary>
   /// Interface for Storing the Parser Data

@@ -22,9 +22,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
-using System.Text;
 
-namespace SmarDtvUsbCi
+namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
 {
   /// <summary>
   /// A struct that is capable of holding the relevant details for a product that this plugin supports.

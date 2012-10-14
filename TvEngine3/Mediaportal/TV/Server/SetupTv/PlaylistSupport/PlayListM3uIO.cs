@@ -20,10 +20,9 @@
 
 using System;
 using System.IO;
-using SetupTv;
 using System.Text;
 
-namespace MediaPortal.Playlists
+namespace Mediaportal.TV.Server.SetupTV.PlaylistSupport
 {
   public class PlayListM3uIO : IPlayListIO
   {
@@ -130,7 +129,7 @@ namespace MediaPortal.Playlists
       }
       else
       {
-        SetupTv.Utils.GetQualifiedFilename(basePath, ref fileName);
+        Utils.GetQualifiedFilename(basePath, ref fileName);
         newItem.FileName = fileName;
         newItem.Type = PlayListItem.PlayListItemType.Audio;
       }

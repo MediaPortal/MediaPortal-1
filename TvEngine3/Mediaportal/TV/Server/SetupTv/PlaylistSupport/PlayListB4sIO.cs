@@ -21,9 +21,8 @@
 using System.Xml;
 using System.IO;
 using System;
-using SetupTv;
 
-namespace MediaPortal.Playlists
+namespace Mediaportal.TV.Server.SetupTV.PlaylistSupport
 {
   public class PlayListB4sIO : IPlayListIO
   {
@@ -67,7 +66,7 @@ namespace MediaPortal.Playlists
           string infoLine = ReadInfoLine(node, file);
           int duration = ReadLength(node);
 
-          SetupTv.Utils.GetQualifiedFilename(basePath, ref file);
+          Utils.GetQualifiedFilename(basePath, ref file);
           PlayListItem newItem = new PlayListItem(infoLine, file, duration);
           playlist.Add(newItem);
         }

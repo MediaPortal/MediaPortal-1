@@ -18,11 +18,10 @@
 
 #endregion
 
-using System;
-using MediaPortal.WebEPG.Parser;
-using MediaPortal.Utils.Time;
+using Mediaportal.TV.Server.TvLibrary.Utils.Time;
+using WebEPG.Parser;
 
-namespace MediaPortal.WebEPG
+namespace WebEPG.Utils
 {
   public interface IEpgDataSink
   {

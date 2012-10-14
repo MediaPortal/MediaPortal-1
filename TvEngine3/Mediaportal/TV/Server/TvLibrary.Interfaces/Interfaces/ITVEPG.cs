@@ -20,9 +20,9 @@
 
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using TvLibrary.Epg;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 
-namespace TvLibrary.Interfaces
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 {
   /// <summary>
   /// callback interface for the EPG

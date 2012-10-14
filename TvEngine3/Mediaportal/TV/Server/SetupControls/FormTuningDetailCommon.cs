@@ -22,9 +22,9 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using DirectShowLib.BDA;
-using TvDatabase;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 
-namespace SetupControls
+namespace Mediaportal.TV.Server.SetupControls
 {
   public partial class FormTuningDetailCommon : Form
   {
@@ -75,12 +75,41 @@ namespace SetupControls
       var rollOff = (int)RollOff.NotSet;
       string url = "";
       int bitrate = 0;
-      return new TuningDetail(-1, channelName, provider,
-                              channelType, channelNumber, channelFrequency, country, isRadio, isTv,
-                              networkId, transportId, serviceId, pmtPid, freeToAir, modulation,
-                              polarisation, symbolRate, diseqc, bandwidth, majorChannel, minorChannel,
-                              videoInputType, audioInputType, isVcrSignal, tunerSource, idLnbType,
-                              satIndex, innerFecRate, pilot, rollOff, url, bitrate);
+
+      var initialTuningDetail = new TuningDetail
+      {
+        Name = channelName,
+        Provider = provider,
+        ChannelType = channelType,
+        ChannelNumber = channelNumber,
+        Frequency = (int)channelFrequency,
+        CountryId = country,
+        NetworkId = networkId,
+        TransportId = transportId,
+        ServiceId = serviceId,
+        PmtPid = pmtPid,
+        FreeToAir = true,
+        Modulation = modulation,
+        Polarisation = polarisation,
+        Symbolrate = symbolRate,
+        DiSEqC = diseqc,
+        Bandwidth = bandwidth,
+        MajorChannel = majorChannel,
+        MinorChannel = minorChannel,
+        VideoSource = videoInputType,
+        AudioSource = audioInputType,
+        IsVCRSignal = false,
+        TuningSource = tunerSource,
+        SatIndex = satIndex,
+        InnerFecRate = innerFecRate,
+        Pilot = pilot,
+        RollOff = rollOff,
+        Url = url,
+        Bitrate = 0,
+        IdLnbType = idLnbType
+      };
+
+      return initialTuningDetail;
     }
   }
 }

@@ -8,9 +8,9 @@
     <ProjectGuid>{6603395A-4BCE-487E-8FD8-C1BCA56C1149}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DigitalDevices</RootNamespace>
-    <AssemblyName>DigitalDevices</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <RootNamespace>Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -65,6 +65,10 @@
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\ServiceAgents\ServiceAgents.csproj">
+      <Project>{DB873507-8095-4877-A489-DA39AB55A9A2}</Project>
+      <Name>ServiceAgents</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\SetupControls\SetupControls.csproj">
       <Project>{A2792D3C-04C1-4A92-9383-A33D59C54D8D}</Project>
       <Name>SetupControls</Name>
@@ -73,17 +77,21 @@
       <Project>{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}</Project>
       <Name>TvControl</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\TVDatabase\Entities\Entities.csproj">
+      <Project>{4C2D9698-AF44-4157-99B6-48F5269F20CC}</Project>
+      <Name>Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj">
       <Project>{58C35C9D-F18D-40F2-8024-24E50D01E9C5}</Project>
       <Name>TvBusinessLayer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\TVDatabase\TVDatabase.csproj">
-      <Project>{0FD8DEAE-37A4-49CC-A7BE-E86E0E0D85BD}</Project>
-      <Name>TVDatabase</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\TVLibrary\TVLibrary.csproj">
+      <Project>{59C2EBC8-0FEA-4B2E-B5D1-476347332331}</Project>
+      <Name>TVLibrary %28TVLibrary\TVLibrary%29</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\PluginBase\PluginBase.csproj">
       <Project>{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}</Project>

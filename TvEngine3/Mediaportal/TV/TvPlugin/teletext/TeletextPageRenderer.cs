@@ -23,7 +23,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Text;
 
-namespace TvLibrary.Teletext
+namespace Mediaportal.TV.TvPlugin.Teletext
 {
   public class TeletextPageRenderer
   {

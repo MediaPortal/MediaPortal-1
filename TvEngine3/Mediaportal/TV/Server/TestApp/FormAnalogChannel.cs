@@ -20,12 +20,12 @@
 
 using System;
 using System.Windows.Forms;
-using TvLibrary;
-using TvLibrary.Implementations;
-using TvLibrary.Interfaces;
 using DirectShowLib;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Countries;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TestApp
+namespace Mediaportal.TV.Server.TestApp
 {
   public partial class FormAnalogChannel : Form
   {

@@ -21,7 +21,7 @@
 using System;
 using DirectShowLib;
 
-namespace TvLibrary
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Countries
 {
   /// <summary>
   /// class which holds a collection of all countries
@@ -314,7 +314,7 @@ namespace TvLibrary
     /// Returns a country specified by name
     /// </summary>
     /// <param name="countryName">name of country</param>
-    /// <returns><see cref="T:TvLibrary.Country"/> object or null if country is not found</returns>
+    /// <returns><see cref="T:Mediaportal.TV.Server.TVLibrary.Interfaces.Countries.Country"/> object or null if country is not found</returns>
     public Country GetTunerCountry(string countryName)
     {
       foreach (Country country in _countryList)
@@ -331,7 +331,7 @@ namespace TvLibrary
     /// Returns a country specified by id
     /// </summary>
     /// <param name="countryId">id of country</param>
-    /// <returns><see cref="T:TvLibrary.Country"/>  object or null if country is not found</returns>
+    /// <returns><see cref="T:Mediaportal.TV.Server.TVLibrary.Interfaces.Countries.Country"/>  object or null if country is not found</returns>
     public Country GetTunerCountryFromID(int countryId)
     {
       foreach (Country country in _countryList)
@@ -348,7 +348,7 @@ namespace TvLibrary
     /// Returns a country specified by id
     /// </summary>
     /// <param name="code">country code</param>
-    /// <returns><see cref="T:TvLibrary.Country"/>  object or null if country is not found</returns>
+    /// <returns><see cref="T:Mediaportal.TV.Server.TVLibrary.Interfaces.Countries.Country"/>  object or null if country is not found</returns>
     public Country GetTunerCountryFromCode(string code)
     {
       foreach (Country country in _countryList)

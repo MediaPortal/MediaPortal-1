@@ -51,6 +51,7 @@
 
 # additional path definitions
 !define TVSERVER.BASE "${git_TVServer}\Server\TVServer.Base"
+!define EXTBIN "${git_TVServer}\ExternalBinaries"
 !ifdef GIT_BUILD
   !define MEDIAPORTAL.BASE "E:\compile\compare_mp1_test"
 !else
@@ -71,6 +72,7 @@
 !define MEMENTO_REGISTRY_KEY  "${REG_UNINSTALL}"
 !define COMMON_APPDATA        "$APPDATA\Team MediaPortal\MediaPortal TV Server"
 !define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server"
+!define SETUP_TV_FOLDER       "$PROGRAMFILES\Team MediaPortal\SetupTV"
 
 ; import version from shared file
 !include "${git_InstallScripts}\include\MediaPortalCurrentVersion.nsh"
@@ -97,8 +99,8 @@ Var PREVIOUS_VERSION
 Var PREVIOUS_VERSION_STATE
 Var EXPRESS_UPDATE
 
-Var PREVIOUS_GENTLE_CONFIG
-Var PREVIOUS_GENTLE_CONFIG_PLUGIN
+Var PREVIOUS_TVSERVICE_CONFIG
+Var PREVIOUS_TVSERVICE_CONFIG_PLUGIN
 
 Var frominstall
 
@@ -148,7 +150,7 @@ Var frominstall
 ;!define MUI_STARTMENUPAGE_REGISTRY_KEY        "${REG_UNINSTALL}"
 ;!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME  StartMenuGroup
 !define MUI_FINISHPAGE_NOAUTOCLOSE
-!define MUI_FINISHPAGE_RUN      "$INSTDIR\SetupTV.exe"
+!define MUI_FINISHPAGE_RUN      "${SETUP_TV_FOLDER}\SetupTV.exe"
 !define MUI_FINISHPAGE_RUN_TEXT "Run TV-Server Configuration"
 #!define MUI_FINISHPAGE_SHOWREADME $INSTDIR\readme.txt
 #!define MUI_FINISHPAGE_SHOWREADME_TEXT "View Readme"
@@ -252,29 +254,29 @@ ShowUninstDetails show
   ${EndIf}
 !macroend
 
-!macro BackupGentleConfig
-  ${If} ${FileExists} "${COMMON_APPDATA}\Gentle.config"
-    GetTempFileName $PREVIOUS_GENTLE_CONFIG
-    ${LOG_TEXT} "INFO" "Backup Gentle.Config (${COMMON_APPDATA}\Gentle.config)"
-    CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\Gentle.config" "$PREVIOUS_GENTLE_CONFIG"
+!macro BackupTVServiceConfig
+  ${If} ${FileExists} "$INSTDIR\TVService.exe.config"
+    GetTempFileName $PREVIOUS_TVSERVICE_CONFIG
+    ${LOG_TEXT} "INFO" "Backup TVService.exe.config ($INSTDIR\TVService.exe.config)"
+    CopyFiles /SILENT /FILESONLY "$INSTDIR\TVService.exe.config" "$PREVIOUS_TVSERVICE_CONFIG"
   ${EndIf}
 
-  ${If} ${FileExists} "$MPdir.Config\Gentle.config"
-    GetTempFileName $PREVIOUS_GENTLE_CONFIG_PLUGIN        
-    ${LOG_TEXT} "INFO" "Backup Gentle.Config ($MPdir.Config\Gentle.config)"
-    CopyFiles /SILENT /FILESONLY "$MPdir.Config\Gentle.config" "$PREVIOUS_GENTLE_CONFIG_PLUGIN"
+  ${If} ${FileExists} "$MPdir.Config\TVService.exe.config"
+    GetTempFileName $PREVIOUS_TVSERVICE_CONFIG_PLUGIN        
+    ${LOG_TEXT} "INFO" "Backup TVService.exe.config ($MPdir.Config\TVService.exe.config)"
+    CopyFiles /SILENT /FILESONLY "$MPdir.Config\TVService.exe.config" "$PREVIOUS_TVSERVICE_CONFIG_PLUGIN"
   ${EndIf}
 !macroend
 
-!macro RestoreGentleConfig
-  ${If} ${FileExists} "$PREVIOUS_GENTLE_CONFIG"
-    ${LOG_TEXT} "INFO" "Restore Gentle.Config (${COMMON_APPDATA}\Gentle.config)"
-    CopyFiles /SILENT /FILESONLY "$PREVIOUS_GENTLE_CONFIG" "${COMMON_APPDATA}\Gentle.config" 
+!macro RestoreTVServiceConfig
+  ${If} ${FileExists} "$PREVIOUS_TVSERVICE_CONFIG"
+    ${LOG_TEXT} "INFO" "Restore TVService.exe.config ($INSTDIR\TVService.exe.config)"
+    CopyFiles /SILENT /FILESONLY "$PREVIOUS_TVSERVICE_CONFIG" "$INSTDIR\TVService.exe.config" 
   ${EndIf}
 
-  ${If} ${FileExists} "$PREVIOUS_GENTLE_CONFIG_PLUGIN"
-    ${LOG_TEXT} "INFO" "Restore Gentle.Config ($MPdir.Config\Gentle.config)"
-    CopyFiles /SILENT /FILESONLY "$PREVIOUS_GENTLE_CONFIG_PLUGIN" "$MPdir.Config\Gentle.config"
+  ${If} ${FileExists} "$PREVIOUS_TVSERVICE_CONFIG_PLUGIN"
+    ${LOG_TEXT} "INFO" "Restore TVService.exe.config ($MPdir.Config\TVService.exe.config)"
+    CopyFiles /SILENT /FILESONLY "$PREVIOUS_TVSERVICE_CONFIG_PLUGIN" "$MPdir.Config\TVService.exe.config"
   ${EndIf}
 !macroend
 
@@ -298,7 +300,7 @@ Section "-prepare" SecPrepare
   ${LOG_TEXT} "INFO" "Prepare installation..."
   SetShellVarContext all
 
-  !insertmacro BackupGentleConfig
+  !insertmacro BackupTVServiceConfig
 	
   ; uninstall old version if necessary
   ${If} $UpdateMode = 1
@@ -385,74 +387,49 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   SetOutPath "${COMMON_APPDATA}\xmltv"
   File /r /x .git "${TVSERVER.BASE}\xmltv\*"
 
-  ; The Plugin Directory
-  SetOutPath "$INSTDIR\Plugins"
-  File "${git_TVServer}\Server\Plugins\ComSkipLauncher\bin\${BUILD_TYPE}\ComSkipLauncher.dll"
-  File "${git_TVServer}\Server\Plugins\ConflictsManager\bin\${BUILD_TYPE}\ConflictsManager.dll"
-  File "${git_TVServer}\Server\Plugins\PowerScheduler\bin\${BUILD_TYPE}\PowerScheduler.dll"
-  File "${git_TVServer}\Server\Plugins\ServerBlaster\ServerBlaster\bin\${BUILD_TYPE}\ServerBlaster.dll"
-  File "${git_TVServer}\Server\Plugins\TvMovie\bin\${BUILD_TYPE}\TvMovie.dll"
-  File "${git_TVServer}\Server\Plugins\XmlTvImport\bin\${BUILD_TYPE}\XmlTvImport.dll"
-  File "${git_TVServer}\Server\Plugins\WebEPG\WebEPG\bin\${BUILD_TYPE}\WebEPG.dll"
-  File "${git_TVServer}\Server\Plugins\WebEPG\WebEPGPlugin\bin\${BUILD_TYPE}\WebEPGImport.dll"
-
-  ; CustomDevice Plugin Directory
-  SetOutPath "$INSTDIR\Plugins\CustomDevices"
-  File "${git_TVServer}\Server\Plugins\CustomDevices\Anysee\bin\${BUILD_TYPE}\Anysee.dll" 
-  File "${git_TVServer}\Server\Plugins\CustomDevices\Conexant\bin\${BUILD_TYPE}\Conexant.dll"
-  File "${git_TVServer}\Server\Plugins\CustomDevices\DigitalDevices\bin\${BUILD_TYPE}\DigitalDevices.dll"
-  File "${git_TVServer}\Server\Plugins\CustomDevices\DigitalEverywhere\bin\${BUILD_TYPE}\DigitalEverywhere.dll"
-  File "${git_TVServer}\Server\Plugins\CustomDevices\DvbSky\bin\${BUILD_TYPE}\DvbSky.dll"
-  File "${git_TVServer}\Server\Plugins\CustomDevices\Geniatech\bin\${BUILD_TYPE}\Geniatech.dll"
-  File "${git_TVServer}\Server\Plugins\CustomDevices\Genpix\bin\${BUILD_TYPE}\Genpix.dll"
-  File "${git_TVServer}\Server\Plugins\CustomDevices\GenpixOpenSource\bin\${BUILD_TYPE}\GenpixOpenSource.dll"
-  File "${git_TVServer}\Server\Plugins\CustomDevices\Hauppauge\bin\${BUILD_TYPE}\Hauppauge.dll"
-  File "${git_TVServer}\Server\Plugins\CustomDevices\Knc\bin\${BUILD_TYPE}\Knc.dll"
-  File "${git_TVServer}\Server\Plugins\CustomDevices\MdPlugin\bin\${BUILD_TYPE}\MdPlugin.dll"
-  File "${git_TVServer}\Server\Plugins\CustomDevices\Microsoft\bin\${BUILD_TYPE}\Microsoft.dll"
-  File "${git_TVServer}\Server\Plugins\CustomDevices\NetUp\bin\${BUILD_TYPE}\NetUp.dll"
-  File "${git_TVServer}\Server\Plugins\CustomDevices\Omicom\bin\${BUILD_TYPE}\Omicom.dll"
-  File "${git_TVServer}\Server\Plugins\CustomDevices\Prof\bin\${BUILD_TYPE}\Prof.dll"
-  File "${git_TVServer}\Server\Plugins\CustomDevices\ProfUsb\bin\${BUILD_TYPE}\ProfUsb.dll"
-  File "${git_TVServer}\Server\Plugins\CustomDevices\SmarDtvUsbCi\bin\${BUILD_TYPE}\SmarDtvUsbCi.dll"
-  File "${git_TVServer}\Server\Plugins\CustomDevices\TechnoTrend\bin\${BUILD_TYPE}\TechnoTrend.dll"
-  File "${git_TVServer}\Server\Plugins\CustomDevices\TeVii\bin\${BUILD_TYPE}\TeVii.dll"
-  File "${git_TVServer}\Server\Plugins\CustomDevices\Turbosight\bin\${BUILD_TYPE}\Turbosight.dll"
-  File "${git_TVServer}\Server\Plugins\CustomDevices\Twinhan\bin\${BUILD_TYPE}\Twinhan.dll"
-  File "${git_TVServer}\Server\Plugins\CustomDevices\ViXS\bin\${BUILD_TYPE}\ViXS.dll"
-
   ; Rest of Files
   SetOutPath "$INSTDIR"
   File "${git_Common_MP_TVE3}\DirectShowLib\bin\${BUILD_TYPE}\DirectShowLib.dll"
   File "${git_Common_MP_TVE3}\Common.Utils\bin\${BUILD_TYPE}\Common.Utils.dll"
-  File "${git_TVServer}\Server\Plugins\PluginBase\bin\${BUILD_TYPE}\PluginBase.dll"
-  File "${git_Common_MP_TVE3}\PowerScheduler.Interfaces\bin\${BUILD_TYPE}\PowerScheduler.Interfaces.dll"
-  File "${git_TVServer}\Server\Plugins\ServerBlaster\ServerBlaster.Learn\bin\${BUILD_TYPE}\Blaster.exe"
-  File "${git_TVServer}\Server\SetupTv\bin\${BUILD_TYPE}\SetupTv.exe"
-  File "${git_TVServer}\Server\SetupTv\bin\${BUILD_TYPE}\SetupTv.exe.config"
-  File "${git_TVServer}\Server\TvControl\bin\${BUILD_TYPE}\TvControl.dll"
-  File "${git_TVServer}\Server\TVDatabase\bin\${BUILD_TYPE}\TVDatabase.dll"
-  File "${git_TVServer}\Server\TVDatabase\references\Gentle.Common.DLL"
-  File "${git_TVServer}\Server\TVDatabase\references\Gentle.Framework.DLL"
-  File "${git_TVServer}\Server\TVDatabase\references\Gentle.Provider.MySQL.dll"
-  File "${git_TVServer}\Server\TVDatabase\references\Gentle.Provider.SQLServer.dll"
-  File "${git_TVServer}\Server\TVDatabase\references\log4net.dll"
-  File "${git_TVServer}\Server\TVDatabase\references\MySql.Data.dll"
-  File "${git_TVServer}\Server\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\TvBusinessLayer.dll"
-  File "${git_TVServer}\Server\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
-  File "${git_TVServer}\Server\TVLibrary\bin\${BUILD_TYPE}\TVLibrary.dll"
+  File "${git_TVServer}\Server\Plugins\PluginBase\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.Base.dll"  
+  File "${git_TVServer}\Server\Plugins\ServerBlaster\ServerBlaster.Learn\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.exe"
+  File "${git_TVServer}\Server\Plugins\ServerBlaster\ServerBlaster\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.ServerBlaster.dll"
+  File "${git_TVServer}\Server\TvControl\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TvControl.dll"
+  File "${git_TVServer}\Server\TVDatabase\Entities\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Entities.dll"
+  File "${git_TVServer}\Server\TVDatabase\EntityModel\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.EntityModel.dll"
+  File "${git_TVServer}\Server\TvLibrary.Services\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVService.Interfaces.dll"
+  File "${git_TVServer}\Server\TvLibrary.Services\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Services.dll"
+  File "${git_TVServer}\Server\ServiceAgents\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVService.ServiceAgents.dll"
+  File "${git_TVServer}\Server\RuleBasedScheduler\bin\${BUILD_TYPE}\Mediaportal.TV.Server.RuleBasedScheduler.dll"
+  File "${EXTBIN}\log4net.dll"
+  File "${EXTBIN}\MySql.Data.dll"
+  File "${EXTBIN}\MySql.Data.Entity.dll"
+  File "${EXTBIN}\EntityFramework.dll"
+  File "${EXTBIN}\EntityFramework.xml"
+  File "${EXTBIN}\Castle.Core.dll"
+  File "${EXTBIN}\Castle.Facilities.EventWiring.dll"
+  File "${EXTBIN}\Castle.Facilities.FactorySupport.dll"
+  File "${EXTBIN}\Castle.Facilities.Logging.dll"
+  File "${EXTBIN}\Castle.Facilities.Remoting.dll"
+  File "${EXTBIN}\Castle.Facilities.Synchronize.dll"
+  File "${EXTBIN}\Castle.Facilities.WcfIntegration.dll"
+  File "${EXTBIN}\Castle.Services.Logging.Log4netIntegration.dll"
+  File "${EXTBIN}\Castle.Services.Logging.NLogIntegration.dll"
+  File "${EXTBIN}\Castle.Windsor.dll"
+  File "${git_TVServer}\Server\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.TvBusinessLayer.dll"
+  File "${git_TVServer}\Server\TvLibrary.Interfaces\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TvLibrary.Interfaces.dll"
+  File "${git_TVServer}\Server\TVLibrary\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.dll"
   File "${git_TVServer}\Server\TvService\bin\${BUILD_TYPE}\TvService.exe"
   File "${git_TVServer}\Server\TvService\bin\${BUILD_TYPE}\TvService.exe.config"
-  File "${git_TVServer}\Server\SetupControls\bin\${BUILD_TYPE}\SetupControls.dll"
-  File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\TVLibrary.Utils.dll"
+  File "${git_TVServer}\Server\SetupControls\bin\${BUILD_TYPE}\Mediaportal.TV.Server.SetupControls.dll"
+  File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Utils.dll"
   File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
+  File "${git_TVServer}\Server\TVDatabase\Presentation\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
 
   ; 3rd party assemblies
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
-  File "${TVSERVER.BASE}\hauppauge.dll"  
-
+  File "${TVSERVER.BASE}\hauppauge.dll"
   File "${git_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
-  
   File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\dxerr9.dll"
   
   ; CustomDevice plugin 3rd party resource assemblies
@@ -463,12 +440,76 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\tevii.dll"
   File "${TVSERVER.BASE}\ttBdaDrvApi_Dll.dll"
   File "${TVSERVER.BASE}\ttdvbacc.dll"
+  
+  File "${git_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
+
+  File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\dxerr9.dll"
 
   ; Common App Data Files
   SetOutPath "${COMMON_APPDATA}"
-  File "${git_Common_MP_TVE3}\Gentle.config"
+;  File "${TVSERVER.BASE}\TVService.exe.config"
   File "${TVSERVER.BASE}\log4net.config"
   File "${TVSERVER.BASE}\TvSetupLog.config"
+  
+    ; The Plugin Directory
+  SetOutPath "$INSTDIR\Plugins"
+  File "${git_TVServer}\Server\Plugins\ComSkipLauncher\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.ComSkipLauncher.dll"
+  File "${git_TVServer}\Server\Plugins\ConflictsManager\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.ConflictsManager.dll"
+  File "${git_TVServer}\Server\Plugins\PowerScheduler\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.PowerScheduler.dll"
+  File "${git_TVServer}\Server\Plugins\PowerScheduler\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll"
+  File "${git_TVServer}\Server\Plugins\ServerBlaster\ServerBlaster\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.ServerBlaster.dll"
+;  File "${git_TVServer}\Server\Plugins\TvMovie\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.TvMovie.dll"
+  File "${git_TVServer}\Server\Plugins\XmlTvImport\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.XmlTvImport.dll"
+  File "${git_TVServer}\Server\Plugins\WebEPG\WebEPG\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.WebEPG.dll"
+  File "${git_TVServer}\Server\Plugins\WebEPG\WebEPGPlugin\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.WebEPGImport.dll"
+  
+    ; CustomDevice Plugin Directory
+  SetOutPath "$INSTDIR\Plugins\CustomDevices"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\Anysee\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Anysee.dll" 
+  File "${git_TVServer}\Server\Plugins\CustomDevices\Conexant\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Conexant.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\DigitalDevices\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\DigitalEverywhere\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\DvbSky\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\Geniatech\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Geniatech.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\Genpix\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Genpix.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\GenpixOpenSource\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\Hauppauge\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Hauppauge.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\Knc\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Knc.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\MdPlugin\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\Microsoft\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Microsoft.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\NetUp\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.NetUp.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\Omicom\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Omicom.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\Prof\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Prof.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\ProfUsb\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\SmarDtvUsbCi\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\TechnoTrend\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\TeVii\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.TeVii.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\Turbosight\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\Twinhan\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\ViXS\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.ViXS.dll"
+  
+    ; Rest of Files
+  SetOutPath "${SETUP_TV_FOLDER}"
+  File "${git_Common_MP_TVE3}\DirectShowLib\bin\${BUILD_TYPE}\DirectShowLib.dll"
+  File "${git_Common_MP_TVE3}\Common.Utils\bin\${BUILD_TYPE}\Common.Utils.dll"
+  File "${git_TVServer}\Server\Plugins\PluginBase\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.Base.dll"
+  File "${git_TVServer}\Server\SetupTv\bin\${BUILD_TYPE}\SetupTv.exe"
+  File "${git_TVServer}\Server\SetupTv\bin\${BUILD_TYPE}\SetupTv.exe.config"
+  File "${git_TVServer}\Server\SetupTv\bin\${BUILD_TYPE}\Core.dll"
+  File "${git_TVServer}\Server\TvControl\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TvControl.dll"
+  File "${git_TVServer}\Server\TVDatabase\Entities\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Entities.dll"
+  File "${git_TVServer}\Server\TVDatabase\EntityModel\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.EntityModel.dll"
+  File "${git_TVServer}\Server\TvLibrary.Services\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVService.Interfaces.dll"
+  File "${git_TVServer}\Server\TvLibrary.Services\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Services.dll"
+  File "${git_TVServer}\Server\ServiceAgents\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVService.ServiceAgents.dll"
+  File "${git_TVServer}\Server\RuleBasedScheduler\bin\${BUILD_TYPE}\Mediaportal.TV.Server.RuleBasedScheduler.dll"
+  File "${git_TVServer}\Server\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.TvBusinessLayer.dll"
+  File "${git_TVServer}\Server\TvLibrary.Interfaces\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TvLibrary.Interfaces.dll"
+  File "${git_TVServer}\Server\TVLibrary\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.dll"
+  File "${git_TVServer}\Server\SetupControls\bin\${BUILD_TYPE}\Mediaportal.TV.Server.SetupControls.dll"
+  File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Utils.dll"
+  File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
+  File "${git_TVServer}\Server\TVDatabase\Presentation\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
   
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION   for TVServer
@@ -494,16 +535,16 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ExecWait '"$INSTDIR\TVService.exe" /install'
   ${LOG_TEXT} "INFO" "Finished Installing TVService"
 
-  SetOutPath $INSTDIR
+  SetOutPath "${SETUP_TV_FOLDER}"
   ${If} $noDesktopSC != 1
-    CreateShortCut "$DESKTOP\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
+    CreateShortCut "$DESKTOP\TV-Server Configuration.lnk" "${SETUP_TV_FOLDER}\SetupTV.exe" "" "${SETUP_TV_FOLDER}\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
   ${EndIf}
 
   ;${If} $noStartMenuSC != 1
     ;!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
     CreateDirectory "${STARTMENU_GROUP}"
-    CreateShortCut "${STARTMENU_GROUP}\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe"  "" "$INSTDIR\SetupTV.exe"  0 "" "" "TV-Server Configuration"
+    CreateShortCut "${STARTMENU_GROUP}\TV-Server Configuration.lnk" "${SETUP_TV_FOLDER}\SetupTV.exe"  "" "${SETUP_TV_FOLDER}\SetupTV.exe"  0 "" "" "TV-Server Configuration"
     CreateDirectory "${COMMON_APPDATA}\log"
     CreateShortCut "${STARTMENU_GROUP}\TV-Server Log-Files.lnk"     "${COMMON_APPDATA}\log" "" "${COMMON_APPDATA}\log" 0 "" "" "TV-Server Log-Files"
 
@@ -527,7 +568,7 @@ ${MementoSectionEnd}
   #---------------------------------------------------------------------------
   ${If} $UnInstallMode == 1
   ${OrIf} $UnInstallMode == 2
-    ExecWait '"$INSTDIR\SetupTv.exe" /Delete-db'
+    ExecWait '"${SETUP_TV_FOLDER}\SetupTv.exe" /Delete-db'
   ${EndIf}
 
   #---------------------------------------------------------------------------
@@ -535,6 +576,7 @@ ${MementoSectionEnd}
   #---------------------------------------------------------------------------
   ${LOG_TEXT} "INFO" "DeInstalling TVService"
   ExecWait '"$INSTDIR\TVService.exe" /uninstall'
+  ;ExecWait '"msiexec" /qn /x "$INSTDIR\EF_JUNE_2011_CTP.msi" /msicl ACCEPTEFJUNE2011CTPEULA=1'
   ${LOG_TEXT} "INFO" "Finished DeInstalling TVService"
 
   #---------------------------------------------------------------------------
@@ -585,28 +627,28 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\Plugins\WebEPG.dll"
   Delete "$INSTDIR\Plugins\WebEPGImport.dll"
   Delete "$INSTDIR\Plugins\XmlTvImport.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\Anysee.dll" 
-  Delete "$INSTDIR\Plugins\CustomDevices\Conexant.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\DigitalDevices.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\DigitalEverywhere.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\DvbSky.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\Geniatech.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\Genpix.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\GenpixOpenSource.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\Hauppauge.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\Knc.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\MdPlugin.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\Microsoft.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\NetUp.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\Omicom.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\Prof.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\ProfUsb.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\SmarDtvUsbCi.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\TechnoTrend.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\TeVii.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\Turbosight.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\Twinhan.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\ViXS.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Anysee.dll" 
+  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Conexant.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Geniatech.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Genpix.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Hauppauge.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Knc.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Microsoft.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.NetUp.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Omicom.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Prof.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.TeVii.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.ViXS.dll"
   RMDir "$INSTDIR\Plugins\CustomDevices"
   RMDir "$INSTDIR\Plugins"
 
@@ -614,26 +656,39 @@ ${MementoSectionEnd}
   ; Leave the directory in place, as it might contain user modified files
   Delete "$INSTDIR\DirectShowLib.dll"
   Delete "$INSTDIR\Common.Utils.dll"
-  Delete "$INSTDIR\PluginBase.dll"
-  Delete "$INSTDIR\PowerScheduler.Interfaces.DLL"
-  Delete "$INSTDIR\Blaster.exe"
-  Delete "$INSTDIR\SetupTv.exe"
-  Delete "$INSTDIR\SetupTv.exe.config"
-  Delete "$INSTDIR\TvControl.dll"
-  Delete "$INSTDIR\TVDatabase.dll"
-  Delete "$INSTDIR\Gentle.Common.DLL"
-  Delete "$INSTDIR\Gentle.Framework.DLL"
-  Delete "$INSTDIR\Gentle.Provider.MySQL.dll"
-  Delete "$INSTDIR\Gentle.Provider.SQLServer.dll"
+  Delete "$INSTDIR\Mediaportal.TV.Server.Plugins.Base.dll"
+  Delete "$INSTDIR\Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.exe"
+  Delete "$INSTDIR\Mediaportal.TV.Server.Plugins.ServerBlaster.dll"
+  Delete "$INSTDIR\Mediaportal.TV.Server.TVService.Interfaces.dll"
+  Delete "$INSTDIR\Mediaportal.TV.Server.TVLibrary.Services.dll"
+  Delete "$INSTDIR\Mediaportal.TV.Server.TvControl.dll"
+  Delete "$INSTDIR\Mediaportal.TV.Server.TVDatabase.Entities.dll"
+  Delete "$INSTDIR\Mediaportal.TV.Server.TVDatabase.EntityModel.dll"
   Delete "$INSTDIR\log4net.dll"
   Delete "$INSTDIR\MySql.Data.dll"
-  Delete "$INSTDIR\TvBusinessLayer.dll"
-  Delete "$INSTDIR\TvLibrary.Interfaces.dll"
-  Delete "$INSTDIR\TVLibrary.dll"
-  Delete "$INSTDIR\TvLibrary.Utils.dll"
+  Delete "$INSTDIR\MySql.Data.Entity.dll"
+  Delete "$INSTDIR\Mediaportal.TV.Server.TVDatabase.TvBusinessLayer.dll"
+  Delete "$INSTDIR\Mediaportal.TV.Server.TvLibrary.Interfaces.dll"
+  Delete "$INSTDIR\Mediaportal.TV.Server.TVLibrary.dll"
+  Delete "$INSTDIR\Mediaportal.TV.Server.TVLibrary.Utils.dll"
   Delete "$INSTDIR\TvService.exe"
   Delete "$INSTDIR\TvService.exe.config"
-  Delete "$INSTDIR\SetupControls.dll"
+  Delete "$INSTDIR\Mediaportal.TV.Server.TVService.ServiceAgents.dll"
+  Delete "$INSTDIR\Mediaportal.TV.Server.RuleBasedScheduler.dll"
+  Delete "$INSTDIR\Mediaportal.TV.Server.SetupControls.dll"
+  Delete "$INSTDIR\EntityFramework.dll"
+  Delete "$INSTDIR\EntityFramework.xml"
+  Delete "$INSTDIR\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
+  Delete "$INSTDIR\Castle.Core.dll"
+  Delete "$INSTDIR\Castle.Facilities.EventWiring.dll"
+  Delete "$INSTDIR\Castle.Facilities.FactorySupport.dll"
+  Delete "$INSTDIR\Castle.Facilities.Logging.dll"
+  Delete "$INSTDIR\Castle.Facilities.Remoting.dll"
+  Delete "$INSTDIR\Castle.Facilities.Synchronize.dll"
+  Delete "$INSTDIR\Castle.Facilities.WcfIntegration.dll"
+  Delete "$INSTDIR\Castle.Services.Logging.Log4netIntegration.dll"
+  Delete "$INSTDIR\Castle.Services.Logging.NLogIntegration.dll"
+  Delete "$INSTDIR\Castle.Windsor.dll"
 
   ; 3rd party assembliess
   Delete "$INSTDIR\dxerr9.dll"
@@ -642,6 +697,78 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\Ionic.Zip.dll"
   Delete "$INSTDIR\Interop.SHDocVw.dll"
   
+  ; Remove SetupTV Plugins files installed
+  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.ComSkipLauncher.dll"
+  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.ConflictsManager.dll"
+  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.PowerScheduler.dll"
+  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll"
+  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.ServerBlaster.dll"
+;  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.TvMovie.dll"
+  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.WebEPG.dll"
+  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.WebEPGImport.dll"
+  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.XmlTvImport.dll"
+
+  ; Remove SetupTV Plugins files installed
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.ComSkipLauncher.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.ConflictsManager.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.PowerScheduler.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.ServerBlaster.dll"
+;  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.TvMovie.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.WebEPG.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.WebEPGImport.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.XmlTvImport.dll"
+
+  ; Remove Plugins
+  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Anysee.dll" 
+  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Conexant.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.igitalDevices.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Geniatech.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Genpix.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Hauppauge.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Knc.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Microsoft.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.NetUp.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Omicom.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Prof.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.TeVii.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.ViXS.dll"
+  RMDir "${SETUP_TV_FOLDER}\Plugins\CustomDevices"
+  RMDir "${SETUP_TV_FOLDER}\Plugins"
+  
+  ; And finally remove SetupTV files installed
+  ; Leave the directory in place, as it might contain user modified files
+  Delete "${SETUP_TV_FOLDER}\DirectShowLib.dll"
+  Delete "${SETUP_TV_FOLDER}\Common.Utils.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.Plugins.Base.dll"
+  Delete "${SETUP_TV_FOLDER}\SetupTv.exe"
+  Delete "${SETUP_TV_FOLDER}\SetupTv.exe.config"
+  Delete "${SETUP_TV_FOLDER}\Core.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TvControl.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.Entities.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.EntityModel.dll"
+  Delete "${SETUP_TV_FOLDER}\log4net.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.TvBusinessLayer.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TvLibrary.Interfaces.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVService.Interfaces.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.Services.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.Utils.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVService.ServiceAgents.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.RuleBasedScheduler.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.SetupControls.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
+  Delete "${SETUP_TV_FOLDER}\Interop.SHDocVw.dll"
+
   ; remove Start Menu shortcuts
   Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"
   Delete "${STARTMENU_GROUP}\TV-Server Log-Files.lnk"
@@ -656,37 +783,161 @@ ${MementoSectionEnd}
 ${MementoSection} "MediaPortal TV Client plugin" SecClient
   ${LOG_TEXT} "INFO" "Installing MediaPortal TV Client plugin..."
 
+
+  SetOutPath "${SETUP_TV_FOLDER}"
+  ${If} $noDesktopSC != 1
+    CreateShortCut "$DESKTOP\TV-Server Configuration.lnk" "${SETUP_TV_FOLDER}\SetupTV.exe" "" "${SETUP_TV_FOLDER}\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
+  ${EndIf}
+
+  ;${If} $noStartMenuSC != 1
+    ;!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+    ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
+    CreateDirectory "${STARTMENU_GROUP}"
+    CreateShortCut "${STARTMENU_GROUP}\TV-Server Configuration.lnk" "${SETUP_TV_FOLDER}\SetupTV.exe"  "" "${SETUP_TV_FOLDER}\SetupTV.exe"  0 "" "" "TV-Server Configuration"
+    CreateDirectory "${COMMON_APPDATA}\log"
+    CreateShortCut "${STARTMENU_GROUP}\TV-Server Log-Files.lnk"     "${COMMON_APPDATA}\log" "" "${COMMON_APPDATA}\log" 0 "" "" "TV-Server Log-Files"
+
+    WriteINIStr "${STARTMENU_GROUP}\Quick Setup Guide.url"  "InternetShortcut" "URL" "http://wiki.team-mediaportal.com/TeamMediaPortal/MP1QuickSetupGuide"
+    WriteINIStr "${STARTMENU_GROUP}\Help.url"               "InternetShortcut" "URL" "http://wiki.team-mediaportal.com/"
+    WriteINIStr "${STARTMENU_GROUP}\web site.url"           "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
+    # [OBSOLETE] CreateShortcut "${STARTMENU_GROUP}\MCE Blaster Learn.lnk" "$INSTDIR\Blaster.exe" "" "$INSTDIR\Blaster.exe" 0 "" "" "MCE Blaster Learn"
+    ;!insertmacro MUI_STARTMENU_WRITE_END
+  ;${EndIf}
+
   ; Kill running Programs
   ${LOG_TEXT} "INFO" "Terminating processes ..."
   ${KillProcess} "MediaPortal.exe"
   ${KillProcess} "configuration.exe"
+  ${KillProcess} "SetupTv.exe"
 
   SetOverwrite on
 
   ${LOG_TEXT} "INFO" "MediaPortal Installed at: $MPdir.Base"
+  ${LOG_TEXT} "INFO" "MediaPortal SetupTV Installed at: ${SETUP_TV_FOLDER}"
   ${LOG_TEXT} "INFO" "MediaPortalPlugins are at: $MPdir.Plugins"
   
   #---------------------------- File Copy ----------------------
+  ; Tuning Parameter Directory
+  SetOutPath "${COMMON_APPDATA}\TuningParameters"
+  File /r /x .git "${TVSERVER.BASE}\TuningParameters\*"
+  ; WebEPG Grabbers Directory
+  SetOutPath "${COMMON_APPDATA}\WebEPG"
+  File /r /x .git "${TVSERVER.BASE}\WebEPG\*"
+  ; XMLTV Data Directory
+  SetOutPath "${COMMON_APPDATA}\xmltv"
+  File /r /x .git "${TVSERVER.BASE}\xmltv\*"
+
   ; Common Files
   SetOutPath "$MPdir.Base"
-  File "${git_TVServer}\Server\TvControl\bin\${BUILD_TYPE}\TvControl.dll"
-  File "${git_TVServer}\Server\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
-  File "${git_TVServer}\Server\TVDatabase\bin\${BUILD_TYPE}\TVDatabase.dll"
-  File "${git_TVServer}\Server\TVDatabase\references\Gentle.Common.DLL"
-  File "${git_TVServer}\Server\TVDatabase\references\Gentle.Framework.DLL"
-  File "${git_TVServer}\Server\TVDatabase\references\Gentle.Provider.MySQL.dll"
-  File "${git_TVServer}\Server\TVDatabase\references\Gentle.Provider.SQLServer.dll"
-  File "${git_TVServer}\Server\TVDatabase\references\log4net.dll"
-  File "${git_TVServer}\Server\TVDatabase\references\MySql.Data.dll"
-  File "${git_TVServer}\Server\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\TvBusinessLayer.dll"
-
-  ;Gentle.Config
-  SetOutPath "$MPdir.Config"
-  File "${git_Common_MP_TVE3}\Gentle.config"
+  File "${git_TVServer}\Server\TvControl\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TvControl.dll"
+  File "${git_TVServer}\Server\TvLibrary.Interfaces\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TvLibrary.Interfaces.dll"
+  File "${git_TVServer}\Server\TVDatabase\Entities\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Entities.dll"
+  File "${git_TVServer}\Server\TVDatabase\EntityModel\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.EntityModel.dll"
+  File "${git_TVServer}\Server\TvLibrary.Services\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVService.Interfaces.dll"
+  File "${git_TVServer}\Server\TvLibrary.Services\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Services.dll"
+  File "${git_TVServer}\Server\ServiceAgents\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVService.ServiceAgents.dll"
+  File "${git_TVServer}\Server\RuleBasedScheduler\bin\${BUILD_TYPE}\Mediaportal.TV.Server.RuleBasedScheduler.dll"
+  File "${git_TVServer}\Server\Plugins\PluginBase\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.Base.dll"
+  File "${git_TVServer}\Server\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.TvBusinessLayer.dll"
+  File "${git_TVServer}\Server\TVDatabase\Presentation\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
+  File "${EXTBIN}\log4net.dll"
+  File "${EXTBIN}\MySql.Data.dll"
+  File "${EXTBIN}\MySql.Data.Entity.dll"
+  File "${EXTBIN}\EntityFramework.dll"
+  File "${EXTBIN}\EntityFramework.xml"
+  ;File "${EXTBIN}\Castle.Core.dll"
+  ;File "${EXTBIN}\Castle.Facilities.EventWiring.dll"
+  ;File "${EXTBIN}\Castle.Facilities.FactorySupport.dll"
+  ;File "${EXTBIN}\Castle.Facilities.Logging.dll"
+  ;File "${EXTBIN}\Castle.Facilities.Remoting.dll"
+  ;File "${EXTBIN}\Castle.Facilities.Synchronize.dll"
+  ;File "${EXTBIN}\Castle.Facilities.WcfIntegration.dll"
+  ;File "${EXTBIN}\Castle.Services.Logging.Log4netIntegration.dll"
+  ;File "${EXTBIN}\Castle.Services.Logging.NLogIntegration.dll"
+  ;File "${EXTBIN}\Castle.Windsor.dll"
 
   ; The Plugins
   SetOutPath "$MPdir.Plugins\Windows"
   File "${git_TVServer}\TvPlugin\bin\${BUILD_TYPE}\TvPlugin.dll"
+  
+  ; Rest of Files
+  SetOutPath "${SETUP_TV_FOLDER}"
+  File "${git_Common_MP_TVE3}\DirectShowLib\bin\${BUILD_TYPE}\DirectShowLib.dll"
+  File "${git_Common_MP_TVE3}\Common.Utils\bin\${BUILD_TYPE}\Common.Utils.dll"
+  File "${git_TVServer}\Server\Plugins\PluginBase\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.Base.dll"
+  File "${git_TVServer}\Server\SetupTv\bin\${BUILD_TYPE}\SetupTv.exe"
+  File "${git_TVServer}\Server\SetupTv\bin\${BUILD_TYPE}\SetupTv.exe.config"
+  File "${git_TVServer}\Server\SetupTv\bin\${BUILD_TYPE}\Core.dll"
+  File "${git_TVServer}\Server\TvControl\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TvControl.dll"
+  File "${git_TVServer}\Server\TVDatabase\Entities\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Entities.dll"
+  File "${git_TVServer}\Server\TVDatabase\EntityModel\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.EntityModel.dll"
+  File "${git_TVServer}\Server\TvLibrary.Services\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVService.Interfaces.dll"
+  File "${git_TVServer}\Server\TvLibrary.Services\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Services.dll"
+  File "${git_TVServer}\Server\ServiceAgents\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVService.ServiceAgents.dll"
+  File "${git_TVServer}\Server\RuleBasedScheduler\bin\${BUILD_TYPE}\Mediaportal.TV.Server.RuleBasedScheduler.dll"
+  File "${git_TVServer}\Server\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.TvBusinessLayer.dll"
+  File "${git_TVServer}\Server\TvLibrary.Interfaces\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TvLibrary.Interfaces.dll"
+  File "${git_TVServer}\Server\TVLibrary\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.dll"
+  File "${git_TVServer}\Server\SetupControls\bin\${BUILD_TYPE}\Mediaportal.TV.Server.SetupControls.dll"
+  File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Utils.dll"
+  File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
+  File "${git_TVServer}\Server\TVDatabase\Presentation\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
+  File "${EXTBIN}\Castle.Core.dll"
+  File "${EXTBIN}\Castle.Facilities.EventWiring.dll"
+  File "${EXTBIN}\Castle.Facilities.FactorySupport.dll"
+  File "${EXTBIN}\Castle.Facilities.Logging.dll"
+  File "${EXTBIN}\Castle.Facilities.Remoting.dll"
+  File "${EXTBIN}\Castle.Facilities.Synchronize.dll"
+  File "${EXTBIN}\Castle.Facilities.WcfIntegration.dll"
+  File "${EXTBIN}\Castle.Services.Logging.Log4netIntegration.dll"
+  File "${EXTBIN}\Castle.Services.Logging.NLogIntegration.dll"
+  File "${EXTBIN}\Castle.Windsor.dll"
+  
+  ; The Plugin Directory
+  SetOutPath "${SETUP_TV_FOLDER}\Plugins"
+  File "${git_TVServer}\Server\Plugins\ComSkipLauncher\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.ComSkipLauncher.dll"
+  File "${git_TVServer}\Server\Plugins\ConflictsManager\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.ConflictsManager.dll"
+  File "${git_TVServer}\Server\Plugins\PowerScheduler\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.PowerScheduler.dll"
+  File "${git_TVServer}\Server\Plugins\PowerScheduler\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll"
+  File "${git_TVServer}\Server\Plugins\ServerBlaster\ServerBlaster\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.ServerBlaster.dll"
+;  File "${git_TVServer}\Server\Plugins\TvMovie\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.TvMovie.dll"
+  File "${git_TVServer}\Server\Plugins\XmlTvImport\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.XmlTvImport.dll"
+  File "${git_TVServer}\Server\Plugins\WebEPG\WebEPG\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.WebEPG.dll"
+  File "${git_TVServer}\Server\Plugins\WebEPG\WebEPGPlugin\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.WebEPGImport.dll"
+
+  ; CustomDevice Plugin Directory
+  SetOutPath "${SETUP_TV_FOLDER}\Plugins\CustomDevices"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\Anysee\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Anysee.dll" 
+  File "${git_TVServer}\Server\Plugins\CustomDevices\Conexant\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Conexant.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\DigitalDevices\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\DigitalEverywhere\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\DvbSky\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\Geniatech\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Geniatech.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\Genpix\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Genpix.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\GenpixOpenSource\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\Hauppauge\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Hauppauge.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\Knc\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Knc.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\MdPlugin\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\Microsoft\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Microsoft.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\NetUp\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.NetUp.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\Omicom\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Omicom.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\Prof\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Prof.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\ProfUsb\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\SmarDtvUsbCi\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\TechnoTrend\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\TeVii\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.TeVii.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\Turbosight\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\Twinhan\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\ViXS\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.ViXS.dll"
+  
+  ; CustomDevice plugin 3rd party resource assemblies
+  SetOutPath "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Resources"
+  File "${TVSERVER.BASE}\CIAPI.dll"
+  File "${TVSERVER.BASE}\KNCBDACTRL.dll"
+  File "${TVSERVER.BASE}\TbsCIapi.dll"
+  File "${TVSERVER.BASE}\tevii.dll"
+  File "${TVSERVER.BASE}\ttBdaDrvApi_Dll.dll"
+  File "${TVSERVER.BASE}\ttdvbacc.dll"
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION       for TVClient
@@ -727,16 +978,84 @@ ${MementoSectionEnd}
   Delete "$MPdir.Plugins\Windows\TvPlugin.dll"
 
   ; Common Files
-  Delete "$MPdir.Base\TVDatabase.dll"
-  Delete "$MPdir.Base\Gentle.Common.DLL"
-  Delete "$MPdir.Base\Gentle.Framework.DLL"
-  Delete "$MPdir.Base\Gentle.Provider.MySQL.dll"
-  Delete "$MPdir.Base\Gentle.Provider.SQLServer.dll"
-  Delete "$MPdir.Base\log4net.dll"
-  Delete "$MPdir.Base\MySql.Data.dll"
-  Delete "$MPdir.Base\TvBusinessLayer.dll"
-  Delete "$MPdir.Base\TvControl.dll"
-  Delete "$MPdir.Base\TvLibrary.Interfaces.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TvControl.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TvLibrary.Interfaces.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.Entities.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.EntityModel.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVService.Interfaces.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.Services.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVService.ServiceAgents.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.RuleBasedScheduler.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.Plugins.Base.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.TvBusinessLayer.dll" 
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
+  Delete "${SETUP_TV_FOLDER}\log4net.dll"
+  Delete "${SETUP_TV_FOLDER}\MySql.Data.dll"
+  Delete "${SETUP_TV_FOLDER}\MySql.Data.Entity.dll"
+  Delete "${SETUP_TV_FOLDER}\EntityFramework.dll"
+  Delete "${SETUP_TV_FOLDER}\EntityFramework.xml"
+  Delete "${SETUP_TV_FOLDER}\Castle.Core.dll"
+  Delete "${SETUP_TV_FOLDER}\Castle.Facilities.EventWiring.dll"
+  Delete "${SETUP_TV_FOLDER}\Castle.Facilities.FactorySupport.dll"
+  Delete "${SETUP_TV_FOLDER}\Castle.Facilities.Logging.dll"
+  Delete "${SETUP_TV_FOLDER}\Castle.Facilities.Remoting.dll"
+  Delete "${SETUP_TV_FOLDER}\Castle.Facilities.Synchronize.dll"
+  Delete "${SETUP_TV_FOLDER}\Castle.Facilities.WcfIntegration.dll"
+  Delete "${SETUP_TV_FOLDER}\Castle.Services.Logging.Log4netIntegration.dll"
+  Delete "${SETUP_TV_FOLDER}\Castle.Services.Logging.NLogIntegration.dll"
+  Delete "${SETUP_TV_FOLDER}\Castle.Windsor.dll"
+  
+  ${LOG_TEXT} "INFO" "remove files..."
+  ; Remove TuningParameters
+  RMDir /r "${COMMON_APPDATA}\TuningParameters"
+  ; Remove WebEPG subdirs (grabbers & channels)
+  RMDir /r "${COMMON_APPDATA}\WebEPG\channels"
+  RMDir /r "${COMMON_APPDATA}\WebEPG\grabbers"
+  ; Remove XMLTV data dir
+  Delete "${COMMON_APPDATA}\xmltv\xmltv.dtd"
+
+  ; Remove SetupTV Plugins files installed
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.ComSkipLauncher.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.ConflictsManager.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.PowerScheduler.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.ServerBlaster.dll"
+;  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.TvMovie.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.WebEPG.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.WebEPGImport.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.XmlTvImport.dll"
+  RMDir "${SETUP_TV_FOLDER}\Plugins"
+  
+  ; And finally remove SetupTV files installed
+  ; Leave the directory in place, as it might contain user modified files
+  Delete "${SETUP_TV_FOLDER}\DirectShowLib.dll"
+  Delete "${SETUP_TV_FOLDER}\Common.Utils.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.Plugins.Base.dll"
+  Delete "${SETUP_TV_FOLDER}\SetupTv.exe"
+  Delete "${SETUP_TV_FOLDER}\SetupTv.exe.config"
+  Delete "${SETUP_TV_FOLDER}\Core.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TvControl.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.Entities.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.EntityModel.dll"
+  Delete "${SETUP_TV_FOLDER}\log4net.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.TvBusinessLayer.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TvLibrary.Interfaces.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVService.Interfaces.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.Services.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.Utils.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVService.ServiceAgents.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.RuleBasedScheduler.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.SetupControls.dll"
+  Delete "${SETUP_TV_FOLDER}\Interop.SHDocVw.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
+
+  ; remove Start Menu shortcuts
+  Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"
+  Delete "${STARTMENU_GROUP}\TV-Server Log-Files.lnk"
+
+  ; remove SetupTV folder
+  RMDir "${SETUP_TV_FOLDER}"
 !macroend
 
 ${MementoSectionDone}
@@ -809,7 +1128,7 @@ Section -Post
   WriteRegStr HKLM "${REG_UNINSTALL}" DisplayVersion     "${VERSION_DISP}"
   WriteRegStr HKLM "${REG_UNINSTALL}" Publisher          "${PRODUCT_PUBLISHER}"
   WriteRegStr HKLM "${REG_UNINSTALL}" URLInfoAbout       "${PRODUCT_WEB_SITE}"
-  WriteRegStr HKLM "${REG_UNINSTALL}" DisplayIcon        "$INSTDIR\SetupTv.exe,0"
+  WriteRegStr HKLM "${REG_UNINSTALL}" DisplayIcon        "${SETUP_TV_FOLDER}\SetupTv.exe,0"
   WriteRegStr HKLM "${REG_UNINSTALL}" UninstallString    "$INSTDIR\uninstall-tve3.exe"
   WriteRegDWORD HKLM "${REG_UNINSTALL}" NoModify 1
   WriteRegDWORD HKLM "${REG_UNINSTALL}" NoRepair 1
@@ -819,7 +1138,7 @@ Section -Post
   ; set rights to programmdata directory and reg keys
   !insertmacro SetRights
   
-  !insertmacro RestoreGentleConfig
+  !insertmacro RestoreTVServiceConfig
   
   
   ;if TV Server was installed exec SetupTv with correct parameters    
@@ -832,7 +1151,7 @@ Section -Post
 	  ${EndIf}
 	
 	  ${LOG_TEXT} "INFO" "Starting SetupTv.exe $R0..."
-	  ExecWait '"$INSTDIR\SetupTV.exe" $R0'
+	  ExecWait '"${SETUP_TV_FOLDER}\SetupTV.exe" $R0'
   ${EndIf}
       
 SectionEnd

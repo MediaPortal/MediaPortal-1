@@ -18,9 +18,9 @@
 
 #endregion
 
-using TvLibrary.Implementations.Analog;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog;
 
-namespace TvLibrary.Interfaces
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 {
   /// <summary>
   /// used by the IVideoEncoder interface getvalue(ENCAPIPARAM_BITRATE_MODE)

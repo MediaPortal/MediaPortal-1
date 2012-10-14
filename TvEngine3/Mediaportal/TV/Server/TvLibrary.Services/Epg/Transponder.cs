@@ -20,11 +20,13 @@
 
 using System;
 using System.Collections.Generic;
-using TvDatabase;
-using TvLibrary.Log;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvService
+namespace Mediaportal.TV.Server.TVLibrary.Epg
 {
   /// <summary>
   /// Class which holds all channels for a transponder
@@ -124,9 +126,8 @@ namespace TvService
         {
           Log.Error("transponder index out of range:{0}/{1}", Index, Channels.Count);
           return null;
-        }
-        TvBusinessLayer layer = new TvBusinessLayer();
-        return layer.GetTuningChannelByType(Channels[Index], TuningDetail.ChannelType);
+        }                
+        return ChannelManagement.GetTuningChannelByType(Channels[Index], TuningDetail.ChannelType);
       }
     }
 
@@ -142,7 +143,7 @@ namespace TvService
       if (Index < 0 || Index >= Channels.Count)
         return;
       Channels[Index].LastGrabTime = DateTime.Now;
-      Channels[Index].Persist();
+      ChannelManagement.SaveChannel(Channels[Index]);
       Log.Write("EPG: database updated for #{0} {1}", Index, Channels[Index].DisplayName);
     }
 
@@ -251,20 +252,20 @@ namespace TvService
     /// </summary>
     public void RefreshTransponders()
     {
-      Gentle.Common.CacheManager.Clear();
+      ////Gentle.Common.CacheManager.Clear();
       Reset();
       //get all channels
-      IList<Channel> channels = Channel.ListAll();
+      IList<Channel> channels = ChannelManagement.ListAllChannels(ChannelIncludeRelationEnum.TuningDetails);
       foreach (Channel channel in channels)
       {
         //if epg grabbing is enabled and channel is a radio or tv channel
         if (channel.GrabEpg == false)
           continue;
-        if (channel.IsRadio == false && channel.IsTv == false)
+        if (channel.MediaType == (int)MediaTypeEnum.Radio == false && channel.MediaType == (int)MediaTypeEnum.TV == false)
           continue;
 
         //for each tuning detail of the channel
-        foreach (TuningDetail detail in channel.ReferringTuningDetail())
+        foreach (TuningDetail detail in channel.TuningDetails)
         {
           //skip analog channels and webstream channels
           if (detail.ChannelType == 0 || detail.ChannelType == 5)

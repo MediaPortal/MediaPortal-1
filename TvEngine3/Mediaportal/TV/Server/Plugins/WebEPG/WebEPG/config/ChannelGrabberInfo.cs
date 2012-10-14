@@ -19,9 +19,9 @@
 #endregion
 
 using System.Collections.Generic;
-using MediaPortal.WebEPG.Config.Grabber;
+using WebEPG.config.Grabber;
 
-namespace MediaPortal.EPG.config
+namespace WebEPG.config
 {
   /// <summary>
   /// Summary description for ChannelInfo.

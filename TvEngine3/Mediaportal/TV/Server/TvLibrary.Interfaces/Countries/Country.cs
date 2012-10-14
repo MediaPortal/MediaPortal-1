@@ -21,7 +21,7 @@
 using System;
 using DirectShowLib;
 
-namespace TvLibrary
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Countries
 {
   /// <summary>
   /// Class which holds the details about a country like the 

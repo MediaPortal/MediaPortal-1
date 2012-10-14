@@ -22,12 +22,12 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using DirectShowLib;
-using TvDatabase;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class FormEditCard : Form
   {
@@ -95,7 +95,7 @@ namespace SetupTv.Sections
       setConditionalAccessFieldVisibility();
 
       // Devices can't be preloaded if they're part of a hybrid group.
-      IList<CardGroupMap> groupList = _card.ReferringCardGroupMap();
+      IList<CardGroupMap> groupList = _card.CardGroupMaps;
       if (groupList.Count != 0)
       {
         checkBoxPreloadCard.Enabled = false;

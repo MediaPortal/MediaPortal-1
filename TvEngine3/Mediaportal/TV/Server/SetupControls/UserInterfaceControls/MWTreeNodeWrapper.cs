@@ -32,7 +32,7 @@ using System.Windows.Forms;
 ///	Use this code at your own risk. If your machine blows up while using it - don't blame me.
 /// </summary>
 
-namespace MWCommon
+namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 {
   /// <summary>
   /// This class encapsulates a TreeNode and keeps track and deals with its ImageIndex and SelectedImageIndex properties.

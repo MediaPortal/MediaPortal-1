@@ -20,21 +20,25 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using MediaPortal.Playlists;
-using TvControl;
-using TvDatabase;
-using TvLibrary.Channels;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.SetupTV.PlaylistSupport;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class CardDvbIP : SectionSettings
   {
@@ -75,35 +79,27 @@ namespace SetupTv.Sections
 
     private void UpdateStatus()
     {
-      progressBarLevel.Value = Math.Min(100, RemoteControl.Instance.SignalLevel(_cardNumber));
-      progressBarQuality.Value = Math.Min(100, RemoteControl.Instance.SignalQuality(_cardNumber));
+      progressBarLevel.Value = Math.Min(100, ServiceAgents.Instance.ControllerServiceAgent.SignalLevel(_cardNumber));
+      progressBarQuality.Value = Math.Min(100, ServiceAgents.Instance.ControllerServiceAgent.SignalQuality(_cardNumber));
     }
 
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
       UpdateStatus();
-      TvBusinessLayer layer = new TvBusinessLayer();
-      int index = Int32.Parse(layer.GetSetting("dvbip" + _cardNumber.ToString() + "Service", "0").Value);
+      
+      int index = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbip" + _cardNumber.ToString() + "Service", "0").Value);
       if (index < mpComboBoxService.Items.Count) mpComboBoxService.SelectedIndex = index;
-
-
-      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+      
       checkBoxCreateGroups.Checked =
-        (layer.GetSetting("dvbip" + _cardNumber.ToString() + "creategroups", "false").Value == "true");
+        (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbip" + _cardNumber.ToString() + "creategroups", "false").Value == "true");
     }
 
     public override void OnSectionDeActivated()
     {
       base.OnSectionDeActivated();
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("dvbip" + _cardNumber.ToString() + "Service", "0");
-      setting.Value = mpComboBoxService.SelectedIndex.ToString();
-      setting.Persist();
-
-      setting = layer.GetSetting("dvbip" + _cardNumber.ToString() + "creategroups", "false");
-      setting.Value = checkBoxCreateGroups.Checked ? "true" : "false";
-      setting.Persist();
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbip" + _cardNumber.ToString() + "Service", mpComboBoxService.SelectedIndex.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbip" + _cardNumber.ToString() + "creategroups", checkBoxCreateGroups.Checked ? "true" : "false");
     }
 
     private void CardDvbIP_Load(object sender, EventArgs e) {}
@@ -112,21 +108,21 @@ namespace SetupTv.Sections
     {
       if (_isScanning == false)
       {
-        TvBusinessLayer layer = new TvBusinessLayer();
-        Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+        
+        Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
         if (card.Enabled == false)
         {
           MessageBox.Show(this, "Tuner is disabled. Please enable the tuner before scanning.");
           return;
         }
-        else if (!RemoteControl.Instance.CardPresent(card.IdCard))
+        else if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.IdCard))
         {
           MessageBox.Show(this, "Tuner is not found. Please make sure the tuner is present before scanning.");
           return;
         }
         // Check if the card is locked for scanning.
         IUser user;
-        if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
+        if (ServiceAgents.Instance.ControllerServiceAgent.IsCardInUse(_cardNumber, out user))
         {
           MessageBox.Show(this,
                           "Tuner is locked. Scanning is not possible at the moment. Perhaps you are using another part of a hybrid card?");
@@ -158,7 +154,7 @@ namespace SetupTv.Sections
         _isScanning = true;
         _stopScanning = false;
         mpButtonScanTv.Text = "Cancel...";
-        RemoteControl.Instance.EpgGrabberEnabled = false;
+        ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = false;
         listViewStatus.Items.Clear();
 
         PlayList playlist = new PlayList();
@@ -180,8 +176,8 @@ namespace SetupTv.Sections
         mpComboBoxService.Enabled = false;
         checkBoxCreateGroups.Enabled = false;
         checkBoxEnableChannelMoveDetection.Enabled = false;
-        TvBusinessLayer layer = new TvBusinessLayer();
-        Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+        
+        Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
 
         int index = -1;
         IEnumerator<PlayListItem> enumerator = playlist.GetEnumerator();
@@ -204,13 +200,13 @@ namespace SetupTv.Sections
           string line = String.Format("{0}- {1} - {2}", 1 + index, tuneChannel.Name, tuneChannel.Url);
           ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
-          RemoteControl.Instance.Tune(ref user, tuneChannel, -1);
+          ServiceAgents.Instance.ControllerServiceAgent.Tune(user.Name, user.CardId, out user, tuneChannel, -1);
           IChannel[] channels;
-          channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
+          channels = ServiceAgents.Instance.ControllerServiceAgent.Scan(_cardNumber, tuneChannel);
           UpdateStatus();
           if (channels == null || channels.Length == 0)
           {
-            if (RemoteControl.Instance.TunerLocked(_cardNumber) == false)
+            if (ServiceAgents.Instance.ControllerServiceAgent.TunerLocked(_cardNumber) == false)
             {
               line = String.Format("{0}- {1} :No Signal", 1 + index, tuneChannel.Url);
               item.Text = line;
@@ -252,52 +248,54 @@ namespace SetupTv.Sections
             //ONID + SID identification and channel move detection...
             if (checkBoxEnableChannelMoveDetection.Checked)
             {
-              currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.ServiceId,
-                                                                 TvBusinessLayer.GetChannelType(channel));
+              TuningDetailSearchEnum tuningDetailSearchEnum = TuningDetailSearchEnum.NetworkId;
+              tuningDetailSearchEnum |= TuningDetailSearchEnum.ServiceId;
+              currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailCustom(channel, tuningDetailSearchEnum);              
             }
             else
             {
-              currentDetail = layer.GetTuningDetail(channel.Url, TvBusinessLayer.GetChannelType(channel));
+              currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailByURL(channel, channel.Url);
             }
 
             if (currentDetail == null)
             {
               //add new channel
               exists = false;
-              dbChannel = layer.AddNewChannel(channel.Name);
+              dbChannel = ChannelFactory.CreateChannel(channel.Name);
               dbChannel.SortOrder = 10000;
               if (channel.LogicalChannelNumber >= 1)
               {
                 dbChannel.SortOrder = channel.LogicalChannelNumber;
               }
-              dbChannel.IsTv = channel.IsTv;
-              dbChannel.IsRadio = channel.IsRadio;
-              dbChannel.Persist();
+              dbChannel.MediaType = (int) channel.MediaType;
+              dbChannel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
+              dbChannel.AcceptChanges();
             }
             else
             {
               exists = true;
-              dbChannel = currentDetail.ReferencedChannel();
+              dbChannel = currentDetail.Channel;
             }
 
-            layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
+            ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, channel.MediaType);
+            MappingHelper.AddChannelToGroup(ref dbChannel, @group);                                          
 
             if (checkBoxCreateGroups.Checked)
             {
-              layer.AddChannelToGroup(dbChannel, channel.Provider);
+              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(channel.Provider, channel.MediaType);
+              MappingHelper.AddChannelToGroup(ref dbChannel, @group);
             }
             if (currentDetail == null)
             {
-              layer.AddTuningDetails(dbChannel, channel);
+              ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel);
             }
             else
             {
               //update tuning details...
-              TuningDetail td = layer.UpdateTuningDetails(dbChannel, channel, currentDetail);
-              td.Persist();
+              ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbChannel.IdChannel, currentDetail.IdTuning, channel);            
             }
 
-            if (channel.IsTv)
+            if (channel.MediaType == MediaTypeEnum.TV)
             {
               if (exists)
               {
@@ -310,7 +308,7 @@ namespace SetupTv.Sections
                 newChannels++;
               }
             }
-            if (channel.IsRadio)
+            if (channel.MediaType == MediaTypeEnum.Radio)
             {
               if (exists)
               {
@@ -322,8 +320,8 @@ namespace SetupTv.Sections
                 radioChannelsNew++;
                 newChannels++;
               }
-            }
-            layer.MapChannelToCard(card, dbChannel, false);
+            }            
+            MappingHelper.AddChannelToCard(dbChannel, card, false);
             line = String.Format("{0}- {1} :New:{2} Updated:{3}", 1 + index, tuneChannel.Name, newChannels,
                                  updatedChannels);
             item.Text = line;
@@ -337,8 +335,8 @@ namespace SetupTv.Sections
       }
       finally
       {
-        RemoteControl.Instance.StopCard(user);
-        RemoteControl.Instance.EpgGrabberEnabled = true;
+        ServiceAgents.Instance.ControllerServiceAgent.StopCard(user.CardId);
+        ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
         progressBar1.Value = 100;
         mpComboBoxService.Enabled = true;
         checkBoxCreateGroups.Enabled = true;

@@ -20,16 +20,16 @@
 
 using System;
 using DirectShowLib;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvEngine
+namespace Mediaportal.TV.Server.Plugins.CustomDevices.ViXS
 {
   /// <summary>
   /// This class provides clear QAM tuning support for ATSC/QAM devices that use ViXS chipsets/demodulators, such
   /// as Saber (DA-1N1-E, DA-1N1-I), VistaView and Asus tuners.
   /// </summary>
-  public class ViXS : Microsoft
+  public class ViXS : Microsoft.Microsoft
   {
     #region constants
 

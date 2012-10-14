@@ -21,10 +21,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using TvDatabase;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvService
+namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
 {
   public class RecordingFileHandler
   {
@@ -99,12 +100,12 @@ namespace TvService
     {
       try
       {
-        bool doesPendingDeletionExist = (PendingDeletion.Retrieve(fileNameForRec) != null);
+        bool doesPendingDeletionExist = TVDatabase.TVBusinessLayer.RecordingManagement.HasRecordingPendingDeletion(fileNameForRec);        
         if (!doesPendingDeletionExist)
         {
           Log.Error("RecordingFileHandler: adding filename to list of pending deletions: {0}", fileNameForRec);
-          PendingDeletion addNewPendingDeletion = new PendingDeletion(fileNameForRec);
-          addNewPendingDeletion.Persist();
+          var addNewPendingDeletion = new PendingDeletion {FileName = fileNameForRec};
+          TVDatabase.TVBusinessLayer.RecordingManagement.SaveRecordingPendingDeletion(addNewPendingDeletion);                  
         }
       }
       catch (Exception ex2)
@@ -282,8 +283,9 @@ namespace TvService
 
     private static List<string> GetRecordingPaths()
     {
-      List<string> recordingPaths = new List<string>();
-      IList<Card> cards = Card.ListAll();
+      
+      var recordingPaths = new List<string>();
+      IList<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
       foreach (Card card in cards)
       {
         string currentCardPath = card.RecordingFolder;

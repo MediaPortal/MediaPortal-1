@@ -1,4 +1,4 @@
-namespace TvService
+namespace Mediaportal.TV.Server.TVService
 {
   partial class Service1
   {

@@ -21,11 +21,13 @@
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using TvDatabase;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
 //using MediaPortal.Utils.Services;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   public class TvEpgSettings : GUIInternalWindow
   {
@@ -40,27 +42,27 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\settings_tvEpg.xml"));
+      return Load(GUIGraphicsContext.Skin + @"\settings_tvEpg.xml");
     }
 
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
       Update();
-    }
+    }    
 
     private void Update()
     {
-      listChannels.Clear();
-      IList<Channel> channels = Channel.ListAll();
+      listChannels.Clear();      
+      IEnumerable<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
       foreach (Channel chan in channels)
       {
-        if (chan.IsTv)
+        if (chan.MediaType == (int)MediaTypeEnum.TV)
         {
           continue;
         }
         bool isDigital = false;
-        foreach (TuningDetail detail in chan.ReferringTuningDetail())
+        foreach (TuningDetail detail in chan.TuningDetails)
         {
           if (detail.ChannelType != 0)
           {
@@ -89,39 +91,39 @@ namespace TvPlugin
       {
         Channel chan = listChannels.SelectedListItem.TVTag as Channel;
         chan.GrabEpg = !chan.GrabEpg;
-        chan.Persist();
+        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(chan);
         listChannels.SelectedListItem.Selected = chan.GrabEpg;
       }
       if (control == btnSelectAll)
       {
-        IList<Channel> channels = Channel.ListAll();
+        IEnumerable<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
         foreach (Channel chan in channels)
         {
-          if (chan.IsTv)
+          if (chan.MediaType == (int)MediaTypeEnum.TV)
           {
             continue;
           }
           if (!chan.GrabEpg)
           {
             chan.GrabEpg = true;
-            chan.Persist();
+            ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(chan);            
           }
         }
         Update();
       }
       if (control == btnSelectNone)
       {
-        IList<Channel> channels = Channel.ListAll();
+        IEnumerable<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
         foreach (Channel chan in channels)
         {
-          if (chan.IsTv)
+          if (chan.MediaType == (int)MediaTypeEnum.TV)
           {
             continue;
           }
           if (chan.GrabEpg)
           {
             chan.GrabEpg = false;
-            chan.Persist();
+            ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(chan);
           }
         }
         Update();

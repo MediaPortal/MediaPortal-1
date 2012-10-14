@@ -25,13 +25,13 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
 using MediaPortal.Common.Utils;
-using TvLibrary;
-using TvLibrary.Channels;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Device;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvEngine
+namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
 {
   /// <summary>
   /// A class for handling conditional access and DiSEqC for Anysee tuners. Smart card slots are not
@@ -1082,7 +1082,7 @@ namespace TvEngine
     /// <param name="state">The new CI state.</param>
     /// <param name="message">A short description of the CI state.</param>
     /// <returns>an HRESULT to indicate whether the state change was successfully handled</returns>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate Int32 OnAnyseeCiState(Int32 slotIndex, AnyseeCiState state, [MarshalAs(UnmanagedType.LPStr)] String message);
 
     /// <summary>
@@ -1091,7 +1091,7 @@ namespace TvEngine
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="message">The message from the CAM.</param>
     /// <returns>an HRESULT to indicate whether the message was successfully processed</returns>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate Int32 OnAnyseeMmiMessage(Int32 slotIndex, IntPtr message);
 
     #endregion
@@ -1760,6 +1760,7 @@ namespace TvEngine
     /// <param name="pmt">The programme map table for the service.</param>
     /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
+    //public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       Log.Debug("Anysee: send conditional access command, list action = {0}, command = {1}", listAction, command);
@@ -2134,5 +2135,6 @@ namespace TvEngine
     }
 
     #endregion
+
   }
 }

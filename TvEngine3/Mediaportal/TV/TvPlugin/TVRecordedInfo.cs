@@ -23,10 +23,13 @@ using System.Globalization;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using TvDatabase;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
+using Mediaportal.TV.TvPlugin.Helper;
 using Action = MediaPortal.GUI.Library.Action;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   /// <summary>
   /// Summary description for TvRecordedInfo.
@@ -53,7 +56,7 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\mytvRecordedInfo.xml"));
+      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvRecordedInfo.xml");
       return bResult;
     }
 
@@ -79,9 +82,8 @@ namespace TvPlugin
       string strTime = String.Format("{0} {1} - {2}",
                                      Utils.GetShortDayString(currentProgram.StartTime),
                                      currentProgram.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                     currentProgram.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
-      lblProgramGenre.Label = currentProgram.Genre;
+                                     currentProgram.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));      
+      lblProgramGenre.Label = TVUtil.GetCategory(currentProgram.ProgramCategory);
       lblProgramTime.Label = strTime;
       lblProgramDescription.Label = currentProgram.Description;
       lblProgramTitle.Label = currentProgram.Title;
@@ -153,10 +155,10 @@ namespace TvPlugin
 
             dlg.Add(dt.ToLongDateString());
           }
-          TimeSpan ts = (currentProgram.KeepUntilDate - currentProgram.StartTime);
+          TimeSpan ts = (currentProgram.KeepUntilDate.GetValueOrDefault(DateTime.MinValue) - currentProgram.StartTime);
           if (currentProgram.StartTime < DateTime.Now)
           {
-            ts = (currentProgram.KeepUntilDate - DateTime.Now);
+            ts = (currentProgram.KeepUntilDate.GetValueOrDefault(DateTime.MinValue) - DateTime.Now);
           }
           int days = (int)ts.TotalDays;
           if (days >= 100)
@@ -181,8 +183,8 @@ namespace TvPlugin
         case 1046:
           currentProgram.KeepUntil = (int)KeepMethodType.Always;
           break;
-      }
-      currentProgram.Persist();
+      }      
+      ServiceAgents.Instance.RecordingServiceAgent.SaveRecording(currentProgram);
     }
 
     public override void Process()

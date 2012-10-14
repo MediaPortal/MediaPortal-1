@@ -24,22 +24,21 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Http;
 using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using MediaPortal.Plugins.Process;
 using MediaPortal.Profile;
 using MediaPortal.Services;
 using MediaPortal.Util;
-using TvEngine.PowerScheduler;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 using TvEngine.PowerScheduler.Interfaces;
 using Action = MediaPortal.GUI.Library.Action;
 using Timer = System.Timers.Timer;
@@ -50,7 +49,7 @@ using Timer = System.Timers.Timer;
 // - there are still some race conditions when a timer event is processed while the remote control is dettached (RemotePowerControl.Instance set to null)
 //  -> should either sync or build try-catchs around
 
-namespace MediaPortal.Plugins.Process
+namespace Mediaportal.TV.PowerSchedulerClientPlugin
 {
   public class PowerScheduler : MarshalByRefObject, IPowerScheduler, IStandbyHandler, IWakeupHandler
   {
@@ -251,11 +250,11 @@ namespace MediaPortal.Plugins.Process
       {
         case ShutdownMode.Suspend:
           Log.Debug("locally suspending system (force={0})", force);
-          SuspendSystem(source, (int)RestartOptions.Suspend, force);
+          SuspendSystemWithOptions(source, (int)RestartOptions.Suspend, force);
           break;
         case ShutdownMode.Hibernate:
           Log.Debug("locally hibernating system (force={0})", force);
-          SuspendSystem(source, (int)RestartOptions.Hibernate, force);
+          SuspendSystemWithOptions(source, (int)RestartOptions.Hibernate, force);
           break;
         case ShutdownMode.StayOn:
           Log.Debug("standby requested but system is configured to stay on");
@@ -266,7 +265,7 @@ namespace MediaPortal.Plugins.Process
       }
     }
 
-    public void SuspendSystem(string source, int how, bool force)
+    public void SuspendSystemWithOptions(string source, int how, bool force)
     {
       SafeExitWindows((RestartOptions)how, force, null);
     }
@@ -315,7 +314,7 @@ namespace MediaPortal.Plugins.Process
 
           if (RemotePowerControl.Isconnected)
           {
-            RemotePowerControl.Instance.SuspendSystem("PowerSchedulerClientPlugin", (int)how, force);
+            ServiceAgents.PluginService<IPowerController>().SuspendSystemWithOptions("PowerSchedulerClientPlugin", (int)how, force);
           }
         }
         catch (Exception e)
@@ -494,7 +493,7 @@ namespace MediaPortal.Plugins.Process
       {
         if (RemotePowerControl.Isconnected)
         {
-          RemotePowerControl.Instance.GetCurrentState(refresh, out unattended, out disAllowShutdown,
+          ServiceAgents.PluginService<IPowerController>().GetCurrentState(refresh, out unattended, out disAllowShutdown,
                                                       out disAllowShutdownHandler, out nextWakeupTime,
                                                       out nextWakeupHandler);
           return;
@@ -732,7 +731,7 @@ namespace MediaPortal.Plugins.Process
         {
           setting = _settings.GetSetting("SingleSeat");
           string stringSetting = reader.GetValueAsString("tvservice", "hostname", String.Empty);
-                    
+
           if (stringSetting == String.Empty)
           {
             Log.Info("Detected client-only setup - using local methods to suspend/hibernate system");
@@ -749,7 +748,7 @@ namespace MediaPortal.Plugins.Process
             setting.Set<bool>(false);
 
             stringSetting = reader.GetValueAsString("tvservice", "hostname", String.Empty);
-            RemotePowerControl.HostName = stringSetting;
+            //RemotePowerControl.HostName = stringSetting;
             Log.Info("PowerScheduler: set hostname to {0}", stringSetting);
           }
           changed = true;
@@ -885,7 +884,7 @@ namespace MediaPortal.Plugins.Process
           bool dummy = Unattended; // this will update _lastUserTime in case a player was running
           if (RemotePowerControl.Isconnected)
           {
-            RemotePowerControl.Instance.UserActivityDetected(_lastUserTime);
+            ServiceAgents.PluginService<IPowerController>().UserActivityDetected(_lastUserTime);
           }
         }
         else
@@ -893,7 +892,7 @@ namespace MediaPortal.Plugins.Process
           try
           {
             Log.Info("PowerScheduler: Keep server alive");
-            RemotePowerControl.Instance.UserActivityDetected(DateTime.Now);
+            ServiceAgents.PluginService<IPowerController>().UserActivityDetected(DateTime.Now);
           }
           catch (Exception ex)
           {
@@ -906,11 +905,11 @@ namespace MediaPortal.Plugins.Process
         }
         SendPowerSchedulerEvent(PowerSchedulerEventType.Elapsed);
       }
-        // explicitly catch exceptions and log them otherwise they are ignored by the Timer object
+      // explicitly catch exceptions and log them otherwise they are ignored by the Timer object
       catch (Exception ex)
       {
         Log.Error(ex);
-        RemotePowerControl.Clear();
+        //RemotePowerControl.Clear();
       }
       if (!_standby)
       {
@@ -1157,22 +1156,22 @@ namespace MediaPortal.Plugins.Process
 
     private void RefreshStateDisplay()
     {
-/*
-      if (Unattended)
-      {
-        _fastTimer.Interval = 300;
-        if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED)
-        {
-          Log.Info("PSClientPlugin: Showing unattended window.");
-          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED);
-        }
-      }
-      else if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED)
-      {
-        _fastTimer.Interval = 2000;
-        Log.Info("PSClientPlugin: Deshowing unattended window.");
-        GUIWindowManager.ShowPreviousWindow();
-      }*/
+      /*
+            if (Unattended)
+            {
+              _fastTimer.Interval = 300;
+              if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED)
+              {
+                Log.Info("PSClientPlugin: Showing unattended window.");
+                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED);
+              }
+            }
+            else if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED)
+            {
+              _fastTimer.Interval = 2000;
+              Log.Info("PSClientPlugin: Deshowing unattended window.");
+              GUIWindowManager.ShowPreviousWindow();
+            }*/
     }
 
     private bool _reentrant = false;
@@ -1216,18 +1215,10 @@ namespace MediaPortal.Plugins.Process
     {
       if (_settings.GetSetting("SingleSeat").Get<bool>())
       {
-        if (_remotingURI == null)
-        {
-          ChannelServices.RegisterChannel(new HttpChannel(31458), false);
-
-          RemotingServices.Marshal(this);
-          _remotingURI = "http://localhost:31458" + RemotingServices.GetObjectUri(this);
-          Log.Debug("PSClientPlugin: marshalled handlers as {0}", _remotingURI);
-        }
         // (re-)register with the TVServer
         try
         {
-          int newTag = RemotePowerControl.Instance.RegisterRemote(_remotingURI, _remotingURI);
+          int newTag = ServiceAgents.PluginService<IPowerController>().RegisterRemote(_remotingURI, _remotingURI);
           if (_remotingTag != newTag)
           {
             if (_remotingTag != 0)
@@ -1298,13 +1289,13 @@ namespace MediaPortal.Plugins.Process
           LogVerbose("PSClientPlugin: unregister handlers with tvservice with tag {0}", _remotingTag);
           if (RemotePowerControl.Isconnected)
           {
-            RemotePowerControl.Instance.UnregisterRemote(_remotingTag);
+            ServiceAgents.PluginService<IPowerController>().UnregisterRemote(_remotingTag);
           }
           _remotingTag = 0;
         }
         // unreference remoting singletons as they'll be reinitialized after suspend
         LogVerbose("resetting PowerScheduler RemotePowerControl interface");
-        RemotePowerControl.Clear();
+        //RemotePowerControl.Clear();
         LogVerbose("resetting TVServer RemoteControl interface");
         GUIMessage message = new GUIMessage(GUIMessage.MessageType.PS_ONSTANDBY, 0, 0, 0, 0, 0, null);
         GUIGraphicsContext.SendMessage(message);
@@ -1412,7 +1403,7 @@ namespace MediaPortal.Plugins.Process
             if (_denySuspendQuery)
             {
               Log.Debug("PowerScheduler: Suspend queried, starting suspend sequence");
-              SuspendSystem("",
+              SuspendSystemWithOptions("",
                             (int)
                             (msg.WParam.ToInt32() == PBT_APMQUERYSUSPEND
                                ? RestartOptions.Hibernate

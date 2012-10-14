@@ -25,13 +25,13 @@ using System.Security;
 using System.Text;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using TvLibrary;
-using TvLibrary.Channels;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Device;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvEngine
+namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
 {
   /// <summary>
   /// A class for handling conditional access and DiSEqC for TechnoTrend Budget and Connect series devices.
@@ -816,7 +816,7 @@ namespace TvEngine
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="code">A buffer containing the remote code. If the code is an RC5 code then it can be found in the lower 2 bytes. RC6 codes use 4 bytes.</param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnTtIrCode(IntPtr context, IntPtr code);
 
     /// <summary>
@@ -826,7 +826,7 @@ namespace TvEngine
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="state">The new state of the slot.</param>
     /// <param name="slotInfo">A pointer to a CiSlotInfo struct containing extended information about the interface state.</param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnTtSlotStatus(IntPtr context, byte slotIndex, TtCiState state, IntPtr slotInfo);
 
     /// <summary>
@@ -836,7 +836,7 @@ namespace TvEngine
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="reply">A reply message from the CAM.</param>
     /// <param name="error">An error message from the CAM.</param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnTtCaStatus(IntPtr context, byte slotIndex, TtMmiMessage reply, TtCiError error);
 
     /// <summary>
@@ -847,7 +847,7 @@ namespace TvEngine
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="text">The request context text from the CAM.</param>
     /// <param name="textLength">The length of the context text in bytes.</param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnTtDisplayString(IntPtr context, byte slotIndex, IntPtr text, Int16 textLength);
 
     /// <summary>
@@ -858,7 +858,7 @@ namespace TvEngine
     /// <param name="numEntries">The number of entries in the menu/list.</param>
     /// <param name="entries">The menu/list entries. Each entry is NULL terminated.</param>
     /// <param name="totalMenuLength">The length of the menu (ie. the sum of the lengths of all entries) in bytes.</param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnTtDisplayMenuOrList(IntPtr context, byte slotIndex, Int16 numEntries, IntPtr entries, Int16 totalMenuLength);
 
     /// <summary>
@@ -866,7 +866,7 @@ namespace TvEngine
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnTtSwitchOsdOff(IntPtr context, byte slotIndex);
 
     /// <summary>
@@ -877,7 +877,7 @@ namespace TvEngine
     /// <param name="blind"><c>True</c> if the input should be hidden (eg. password).</param>
     /// <param name="answerLength">The expected answer length.</param>
     /// <param name="keyMask"></param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnTtInputRequest(IntPtr context, byte slotIndex, [MarshalAs(UnmanagedType.Bool)] bool blind, byte answerLength, Int16 keyMask);
 
     /// <summary>
@@ -888,7 +888,7 @@ namespace TvEngine
     /// <param name="tag">The type of message received.</param>
     /// <param name="buffer">A buffer containing the CAM message/response.</param>
     /// <param name="bufferSize">The size of the buffer.</param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnTtCiMessage(byte slotIndex, TtCiMessageHandlerTag tag, IntPtr buffer, Int16 bufferSize);
 
     #region low speed communication interface callback definitions
@@ -899,7 +899,7 @@ namespace TvEngine
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="descriptor">???</param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnTtLscSetDescriptor(IntPtr context, byte slotIndex, IntPtr descriptor);
 
     /// <summary>
@@ -907,7 +907,7 @@ namespace TvEngine
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnTtLscConnect(IntPtr context, byte slotIndex);
 
     /// <summary>
@@ -915,7 +915,7 @@ namespace TvEngine
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnTtLscDisconnect(IntPtr context, byte slotIndex);
 
     /// <summary>
@@ -925,7 +925,7 @@ namespace TvEngine
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="bufferSize"></param>
     /// <param name="timeout">A timeout in units of ten milliseconds.</param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnTtLscSetParams(IntPtr context, byte slotIndex, byte bufferSize, byte timeout);
 
     /// <summary>
@@ -933,7 +933,7 @@ namespace TvEngine
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnTtLscEnquireStatus(IntPtr context, byte slotIndex);
 
     /// <summary>
@@ -942,7 +942,7 @@ namespace TvEngine
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="phaseId"></param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnTtLscGetNextBuffer(IntPtr context, byte slotIndex, byte phaseId);
 
     /// <summary>
@@ -953,7 +953,7 @@ namespace TvEngine
     /// <param name="phaseId"></param>
     /// <param name="buffer"></param>
     /// <param name="bufferSize"></param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnTtLscTransmitBuffer(IntPtr context, byte slotIndex, byte phaseId, IntPtr buffer, Int16 bufferSize);
 
     #endregion
@@ -1805,7 +1805,7 @@ namespace TvEngine
             // Frequency is already specified in kHz (the base unit) so the
             // multiplier is set to 1.
             tuneRequest.FrequencyMultiplier = 1;
-            tuneRequest.Bandwidth = (uint)(1000 * dvbtChannel.Bandwidth);
+            tuneRequest.Bandwidth = (uint)(1000 * dvbtChannel.BandWidth);
             tuneRequest.Modulation = ModulationType.ModNotSet;
             tuneRequest.SpectralInversion = SpectralInversion.Automatic;
 

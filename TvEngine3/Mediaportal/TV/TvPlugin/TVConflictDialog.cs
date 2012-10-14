@@ -18,13 +18,11 @@
 
 #endregion
 
-using System;
-using System.Globalization;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   public class TVConflictDialog: GUIDialogWindow
   {
@@ -109,21 +107,13 @@ namespace TvPlugin
       // to be implemented
     }
 
-    private static string GetRecordingDateTime(TVProgramDescription rec)
-    {
-      return String.Format("{0} {1} - {2}",
-                           MediaPortal.Util.Utils.GetShortDayString(rec.StartTime),
-                           rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                           rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-    }
-
     #endregion
 
     #region <Base class> Overloads
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\DialogTVConflict.xml"));
+      return Load(GUIGraphicsContext.Skin + @"\DialogTVConflict.xml");
     }
 
     public override void Reset()

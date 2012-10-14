@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace TvLibrary.Interfaces.Device
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
 {
   /// <summary>
   /// An interface for devices that have drivers which expose a non-BDA tuning interface, or that require

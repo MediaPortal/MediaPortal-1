@@ -22,7 +22,7 @@ using System;
 using System.Windows.Forms;
 using System.Globalization;
 
-namespace MediaPortal.UserInterface.Controls
+namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 {
   /// <summary>
   /// Define a TextBox that allow only integer numbers.
@@ -74,7 +74,12 @@ namespace MediaPortal.UserInterface.Controls
 
     public int Value
     {
-      get { return int.Parse(Text, NumberStyles.Integer); }
+      get
+      {
+        int val = 0;
+        int.TryParse(Text, out val);
+        return val;
+      }
       set { Text = value.ToString(); }
     }
   }

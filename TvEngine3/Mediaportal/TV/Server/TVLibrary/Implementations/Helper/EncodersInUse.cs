@@ -20,11 +20,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using DirectShowLib;
-using TvDatabase;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 {
   /// <summary>
   /// This is a class which is used to remember which
@@ -35,7 +36,6 @@ namespace TvLibrary.Implementations
   {
     private static EncodersInUse _instance;
     private readonly Dictionary<DsDevice, int> _encodersInUse;
-    private readonly TvBusinessLayer _layer;
 
     /// <summary>
     /// static method to access this class
@@ -57,8 +57,7 @@ namespace TvLibrary.Implementations
     /// </summary>
     private EncodersInUse()
     {
-      _encodersInUse = new Dictionary<DsDevice, int>();
-      _layer = new TvBusinessLayer();
+      _encodersInUse = new Dictionary<DsDevice, int>();      
     }
 
     /// <summary>
@@ -75,7 +74,7 @@ namespace TvLibrary.Implementations
         return false;
       }
 
-      int reuseLimit = Convert.ToInt32(_layer.GetSetting("softwareEncoderReuseLimit", "0").Value);
+      int reuseLimit = Convert.ToInt32(SettingsManagement.GetSetting("softwareEncoderReuseLimit", "0").Value);
       lock (_encodersInUse)
       {
         DsDevice key = null;
@@ -83,7 +82,7 @@ namespace TvLibrary.Implementations
         {
           if (dev.Name == device.Name && device.Mon.IsEqual(dev.Mon) == 0 && dev.DevicePath == device.DevicePath)
           {
-            Log.Log.WriteFile("analog:  compressor {0} is in use, checking reuse limit...", dev.Name);
+            Log.WriteFile("analog:  compressor {0} is in use, checking reuse limit...", dev.Name);
             key = dev;
             break;
           }
@@ -92,7 +91,7 @@ namespace TvLibrary.Implementations
         // Encoder not yet used -> always okay to use.
         if (key == null)
         {
-          Log.Log.WriteFile("analog:  compressor {0} is usable", device.Name);
+          Log.WriteFile("analog:  compressor {0} is usable", device.Name);
           _encodersInUse.Add(device, 1);
           return true;
         }
@@ -100,7 +99,7 @@ namespace TvLibrary.Implementations
         // Encoder not yet in DB -> assume reusable.
         if (dbEncoder == null)
         {
-          Log.Log.WriteFile("analog:  unrecognised compressor, assuming usable");
+          Log.WriteFile("analog:  unrecognised compressor, assuming usable");
           _encodersInUse[key]++;
           return true;
         }
@@ -111,14 +110,14 @@ namespace TvLibrary.Implementations
         {
           if (reuseLimit <= 0 || _encodersInUse[key] < reuseLimit)
           {
-            Log.Log.WriteFile("analog:  reusable compressor, usage under limit (usage: {0}, limit: {1})",
+            Log.WriteFile("analog:  reusable compressor, usage under limit (usage: {0}, limit: {1})",
                               _encodersInUse[key], reuseLimit == 0 ? "[unlimited]" : reuseLimit.ToString());
             _encodersInUse[key]++;
             return true;
           }
           else
           {
-            Log.Log.WriteFile("analog:  reusable compressor, usage already at limit (usage: {0}, limit: {1})",
+            Log.WriteFile("analog:  reusable compressor, usage already at limit (usage: {0}, limit: {1})",
                               _encodersInUse[key], reuseLimit);
             return false;
           }
@@ -129,7 +128,7 @@ namespace TvLibrary.Implementations
       // and it is in use, which means the limit has already
       // been reached. The encoder wouldn't be in _encodersInUse
       // if it wasn't in use...
-      Log.Log.WriteFile("analog:  non-reusable compressor, already used");
+      Log.WriteFile("analog:  non-reusable compressor, already used");
       return false;
     }
 
@@ -150,11 +149,11 @@ namespace TvLibrary.Implementations
         {
           if (dev.Name == device.Name && device.Mon.IsEqual(dev.Mon) == 0 && dev.DevicePath == device.DevicePath)
           {
-            Log.Log.WriteFile("analog: removing instance of compressor {0} from use", dev.Name);
+            Log.WriteFile("analog: removing instance of compressor {0} from use", dev.Name);
             _encodersInUse[dev]--;
             if (_encodersInUse[dev] == 0)
             {
-              Log.Log.WriteFile("analog: compressor is no longer in use");
+              Log.WriteFile("analog: compressor is no longer in use");
               _encodersInUse.Remove(dev);
             }
             break;

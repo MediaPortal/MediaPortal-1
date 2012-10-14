@@ -1,4 +1,6 @@
-namespace SetupTv.Dialogs
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   partial class FormChooseTuningDetailType
   {
@@ -28,16 +30,16 @@ namespace SetupTv.Dialogs
     /// </summary>
     private void InitializeComponent()
     {
-      this.mpButtonCancel = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonOk = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.mpRadioButton7 = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.mpRadioButton6 = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.mpRadioButton5 = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.mpRadioButton4 = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.mpRadioButton3 = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.mpRadioButton2 = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.mpRadioButton1 = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.mpButtonCancel = new MPButton();
+      this.mpButtonOk = new MPButton();
+      this.mpGroupBox1 = new MPGroupBox();
+      this.mpRadioButton7 = new MPRadioButton();
+      this.mpRadioButton6 = new MPRadioButton();
+      this.mpRadioButton5 = new MPRadioButton();
+      this.mpRadioButton4 = new MPRadioButton();
+      this.mpRadioButton3 = new MPRadioButton();
+      this.mpRadioButton2 = new MPRadioButton();
+      this.mpRadioButton1 = new MPRadioButton();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -181,15 +183,15 @@ namespace SetupTv.Dialogs
 
     #endregion
 
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonCancel;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonOk;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-    private MediaPortal.UserInterface.Controls.MPRadioButton mpRadioButton6;
-    private MediaPortal.UserInterface.Controls.MPRadioButton mpRadioButton5;
-    private MediaPortal.UserInterface.Controls.MPRadioButton mpRadioButton4;
-    private MediaPortal.UserInterface.Controls.MPRadioButton mpRadioButton3;
-    private MediaPortal.UserInterface.Controls.MPRadioButton mpRadioButton2;
-    private MediaPortal.UserInterface.Controls.MPRadioButton mpRadioButton1;
-    private MediaPortal.UserInterface.Controls.MPRadioButton mpRadioButton7;
+    private MPButton mpButtonCancel;
+    private MPButton mpButtonOk;
+    private MPGroupBox mpGroupBox1;
+    private MPRadioButton mpRadioButton6;
+    private MPRadioButton mpRadioButton5;
+    private MPRadioButton mpRadioButton4;
+    private MPRadioButton mpRadioButton3;
+    private MPRadioButton mpRadioButton2;
+    private MPRadioButton mpRadioButton1;
+    private MPRadioButton mpRadioButton7;
   }
 }

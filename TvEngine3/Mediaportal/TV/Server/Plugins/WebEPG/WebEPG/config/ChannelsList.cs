@@ -22,11 +22,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
-using MediaPortal.WebEPG.Config.Grabber;
-using MediaPortal.WebEPG.Profile;
-using similaritymetrics;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Simmetrics;
+using WebEPG.MPCode;
+using WebEPG.config.Grabber;
 
-namespace MediaPortal.EPG.config
+namespace WebEPG.config
 {
   //<summary>
   //Summary description for config.
@@ -300,28 +300,30 @@ namespace MediaPortal.EPG.config
       if (File.Exists(_strChannelsFile))
       {
         //Log.WriteFile(LogType.Log, false, "WebEPG Config: Loading Existing channels.xml");
-        Xml xmlreader = new Xml(_strChannelsFile);
-        int channelCount = xmlreader.GetValueAsInt("ChannelInfo", "TotalChannels", 0);
-
-        if (channelCount > 0)
+        using (var xmlreader = new Xml(_strChannelsFile)) 
         {
-          if (_ChannelList == null)
-          {
-            _ChannelList = new Dictionary<string, ChannelGrabberInfo>();
-          }
+          int channelCount = xmlreader.GetValueAsInt("ChannelInfo", "TotalChannels", 0);
 
-          for (int ich = 0; ich < channelCount; ich++)
+          if (channelCount > 0)
           {
-            ChannelGrabberInfo channel = new ChannelGrabberInfo();
-            channel.ChannelID = xmlreader.GetValueAsString(ich.ToString(), "ChannelID", "");
-            channel.FullName = xmlreader.GetValueAsString(ich.ToString(), "FullName", "");
-            if (channel.FullName == "")
+            if (_ChannelList == null)
             {
-              channel.FullName = channel.ChannelID;
+              _ChannelList = new Dictionary<string, ChannelGrabberInfo>();
             }
-            if (channel.ChannelID != "" && !_ChannelList.ContainsKey(channel.ChannelID))
+
+            for (int ich = 0; ich < channelCount; ich++)
             {
-              _ChannelList.Add(channel.ChannelID, channel);
+              ChannelGrabberInfo channel = new ChannelGrabberInfo();
+              channel.ChannelID = xmlreader.GetValueAsString(ich.ToString(), "ChannelID", "");
+              channel.FullName = xmlreader.GetValueAsString(ich.ToString(), "FullName", "");
+              if (channel.FullName == "")
+              {
+                channel.FullName = channel.ChannelID;
+              }
+              if (channel.ChannelID != "" && !_ChannelList.ContainsKey(channel.ChannelID))
+              {
+                _ChannelList.Add(channel.ChannelID, channel);
+              }
             }
           }
         }
@@ -333,9 +335,11 @@ namespace MediaPortal.EPG.config
       GrabberConfigFile grabber;
       try
       {
-        XmlSerializer s = new XmlSerializer(typeof (GrabberConfigFile));
-        TextReader r = new StreamReader(file.FullName);
-        grabber = (GrabberConfigFile)s.Deserialize(r);
+        var s = new XmlSerializer(typeof (GrabberConfigFile));
+        using (var r = new StreamReader(file.FullName)) 
+        {
+          grabber = (GrabberConfigFile)s.Deserialize(r);
+        }
       }
       catch (InvalidOperationException)
       {

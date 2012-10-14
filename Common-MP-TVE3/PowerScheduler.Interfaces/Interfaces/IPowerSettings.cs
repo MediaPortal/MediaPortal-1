@@ -22,7 +22,9 @@
 
 #endregion
 
-namespace TvEngine.PowerScheduler.Interfaces
+using TvEngine.PowerScheduler.Interfaces;
+
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces
 {
   /// <summary>
   /// Provides access to PowerScheduler's settings

@@ -21,15 +21,23 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using TvLibrary.Log;
-using TvControl;
-using SetupTv;
-using TvEngine.Events;
-using TvLibrary.Interfaces;
-using TvDatabase;
+using Castle.Core;
+using Mediaportal.TV.Server.Plugins.Base;
+using Mediaportal.TV.Server.Plugins.Base.Interfaces;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVControl.Events;
+using Mediaportal.TV.Server.TVControl.Interfaces;
+using Mediaportal.TV.Server.TVControl.Interfaces.Events;
+using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace TvEngine
+namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
 {
+  [Interceptor("PluginExceptionInterceptor")]
   public class ComSkipLauncher : ITvServerPlugin
   {
     #region Constants
@@ -106,8 +114,8 @@ namespace TvEngine
     #region IPlugin Members
 
     [CLSCompliant(false)]
-    public void Start(IController controller)
-    {
+    public void Start(IInternalControllerService controllerService)
+    {      
       Log.Info("plugin: ComSkipLauncher start");
 
       LoadSettings();
@@ -128,7 +136,7 @@ namespace TvEngine
     [CLSCompliant(false)]
     public SectionSettings Setup
     {
-      get { return new SetupTv.Sections.ComSkipSetup(); }
+      get { return new ComSkipSetup(); }
     }
 
     #endregion
@@ -140,28 +148,34 @@ namespace TvEngine
       try
       {
         TvServerEventArgs tvEvent = (TvServerEventArgs)eventArgs;
-
+        
+        var recording = RecordingManagement.GetRecording(tvEvent.Recording);
         if (tvEvent.EventType == TvServerEventType.RecordingStarted && _runAtStart)
         {
-          Channel channel = Channel.Retrieve(tvEvent.Recording.IdChannel);
+          if (recording.IdChannel.HasValue)
+          {
+            Channel channel = ChannelManagement.GetChannel(recording.IdChannel.GetValueOrDefault());
 
-          string parameters = ProcessParameters(_parameters, tvEvent.Recording.FileName, channel.DisplayName);
+            string parameters = ProcessParameters(_parameters, recording.FileName, channel.DisplayName);
 
-          Log.Info("ComSkipLauncher: Recording started ({0} on {1}), launching program ({2} {3}) ...",
-                   tvEvent.Recording.FileName, channel.DisplayName, _program, parameters);
+            Log.Info("ComSkipLauncher: Recording started ({0} on {1}), launching program ({2} {3}) ...",
+                     recording.FileName, channel.DisplayName, _program, parameters);
 
-          LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
+            LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
+          }
         }
         else if (tvEvent.EventType == TvServerEventType.RecordingEnded && !_runAtStart)
         {
-          Channel channel = Channel.Retrieve(tvEvent.Recording.IdChannel);
+          if (recording.IdChannel.HasValue)
+          {
+            Channel channel = ChannelManagement.GetChannel(recording.IdChannel.GetValueOrDefault());
+            string parameters = ProcessParameters(_parameters, recording.FileName, channel.DisplayName);
 
-          string parameters = ProcessParameters(_parameters, tvEvent.Recording.FileName, channel.DisplayName);
+            Log.Info("ComSkipLauncher: Recording ended ({0} on {1}), launching program ({2} {3}) ...",
+                     recording.FileName, channel.DisplayName, _program, parameters);
 
-          Log.Info("ComSkipLauncher: Recording ended ({0} on {1}), launching program ({2} {3}) ...",
-                   tvEvent.Recording.FileName, channel.DisplayName, _program, parameters);
-
-          LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
+            LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
+          }
         }
       }
       catch (Exception ex)
@@ -174,12 +188,11 @@ namespace TvEngine
     {
       try
       {
-        TvBusinessLayer layer = new TvBusinessLayer();
-
+        
         _runAtStart =
-          Convert.ToBoolean(layer.GetSetting("ComSkipLauncher_RunAtStart", DefaultRunAtStrart.ToString()).Value);
-        _program = layer.GetSetting("ComSkipLauncher_Program", DefaultProgram).Value;
-        _parameters = layer.GetSetting("ComSkipLauncher_Parameters", DefaultParameters).Value;
+          Convert.ToBoolean(SettingsManagement.GetSetting("ComSkipLauncher_RunAtStart", DefaultRunAtStrart.ToString()).Value);
+        _program = SettingsManagement.GetSetting("ComSkipLauncher_Program", DefaultProgram).Value;
+        _parameters = SettingsManagement.GetSetting("ComSkipLauncher_Parameters", DefaultParameters).Value;
       }
       catch (Exception ex)
       {
@@ -195,19 +208,9 @@ namespace TvEngine
     {
       try
       {
-        TvBusinessLayer layer = new TvBusinessLayer();
-
-        Setting setting = layer.GetSetting("ComSkipLauncher_RunAtStart");
-        setting.Value = _runAtStart.ToString();
-        setting.Persist();
-
-        setting = layer.GetSetting("ComSkipLauncher_Program");
-        setting.Value = _program;
-        setting.Persist();
-
-        setting = layer.GetSetting("ComSkipLauncher_Parameters");
-        setting.Value = _parameters;
-        setting.Persist();
+        SettingsManagement.SaveSetting("ComSkipLauncher_RunAtStart", _runAtStart.ToString());
+        SettingsManagement.SaveSetting("ComSkipLauncher_Program", _program);
+        SettingsManagement.SaveSetting("ComSkipLauncher_Parameters", _parameters);        
       }
       catch (Exception ex)
       {
@@ -245,18 +248,20 @@ namespace TvEngine
     {
       try
       {
-        Process process = new Process();
-        process.StartInfo = new ProcessStartInfo();
-        process.StartInfo.Arguments = parameters;
-        process.StartInfo.FileName = program;
-        process.StartInfo.WindowStyle = windowStyle;
-        process.StartInfo.WorkingDirectory = workingFolder;
-        if (OSInfo.OSInfo.VistaOrLater())
+        using (var process = new Process()) 
         {
-          process.StartInfo.Verb = "runas";
-        }
+          process.StartInfo = new ProcessStartInfo();
+          process.StartInfo.Arguments = parameters;
+          process.StartInfo.FileName = program;
+          process.StartInfo.WindowStyle = windowStyle;
+          process.StartInfo.WorkingDirectory = workingFolder;
+          if (OSInfo.OSInfo.VistaOrLater())
+          {
+            process.StartInfo.Verb = "runas";
+          }
 
-        process.Start();
+          process.Start();
+        }
       }
       catch (Exception ex)
       {

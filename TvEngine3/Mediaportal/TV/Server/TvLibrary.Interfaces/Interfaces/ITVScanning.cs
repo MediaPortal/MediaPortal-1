@@ -20,7 +20,7 @@
 
 using System.Collections.Generic;
 
-namespace TvLibrary.Interfaces
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 {
   /// <summary>
   /// Interface for scanning new channels

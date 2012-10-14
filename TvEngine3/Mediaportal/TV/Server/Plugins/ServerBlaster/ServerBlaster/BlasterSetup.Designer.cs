@@ -1,4 +1,6 @@
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.Plugins.ServerBlaster
 {
   partial class BlasterSetup
   {
@@ -30,7 +32,7 @@ namespace SetupTv.Sections
     {
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.mpLabelAdditionalNotes = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabelAdditionalNotes = new MPLabel();
       this.checkSendSelect = new System.Windows.Forms.CheckBox();
       this.checkBoxExtLog = new System.Windows.Forms.CheckBox();
       this.comboBoxBlaster2 = new System.Windows.Forms.ComboBox();
@@ -196,7 +198,7 @@ namespace SetupTv.Sections
       this.ResumeLayout(false);
 
     }
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelAdditionalNotes;
+    private MPLabel mpLabelAdditionalNotes;
 
     #endregion
 

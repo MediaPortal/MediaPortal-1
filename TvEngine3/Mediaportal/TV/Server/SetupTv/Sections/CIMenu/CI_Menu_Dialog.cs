@@ -19,22 +19,23 @@
 #endregion
 
 using System;
-using TvControl;
-using TvLibrary.Log;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Implementations;
-using TvLibrary.Interfaces;
+using System.Net;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
 {
   /// <summary>
   /// CI Menu Section for DVB cards
   /// </summary>
-  public partial class CI_Menu_Dialog : SetupTv.SectionSettings
+  public partial class CI_Menu_Dialog : SectionSettings
   {
-    private CiMenuHandler ciMenuHandler;
+    private CiMenuEventHandler _ciMenuEventHandler;
     private CiMenuState ciMenuState = CiMenuState.Closed;
     private int ciMenuChoices = 0;
     private int cardNumber = 0;
@@ -58,8 +59,8 @@ namespace SetupTv.Sections
 
       InitSuccess = false;
 
-      ciMenuHandler = new CiMenuHandler();
-      ciMenuHandler.SetCaller(this);
+      _ciMenuEventHandler = new CiMenuEventHandler();
+      _ciMenuEventHandler.SetCaller(this);
     }
 
     private void CI_Menu_Dialog_Load(object sender, EventArgs e)
@@ -69,14 +70,15 @@ namespace SetupTv.Sections
 
     public override void OnSectionActivated()
     {
+      
       // attach local eventhandler to server event
-      RemoteControl.RegisterCiMenuCallbacks(ciMenuHandler);
+      ServiceAgents.Instance.EventServiceAgent.RegisterCiMenuCallbacks(_ciMenuEventHandler);      
     }
 
     public override void OnSectionDeActivated()
     {
-      // remove local eventhandler from server event
-      RemoteControl.UnRegisterCiMenuCallbacks(ciMenuHandler);
+      // remove local eventhandler from server event      
+      ServiceAgents.Instance.EventServiceAgent.UnRegisterCiMenuCallbacks(_ciMenuEventHandler, false);      
     }
 
     private void InitMenu()
@@ -93,9 +95,9 @@ namespace SetupTv.Sections
     {
       if (InitSuccess) return true;
       // call only once
-      if (RemoteControl.Instance.InitConditionalAccess(cardNumber))
+      if (ServiceAgents.Instance.ControllerServiceAgent.InitConditionalAccess(cardNumber))
       {
-        if (!RemoteControl.Instance.CiMenuSupported(cardNumber))
+        if (!ServiceAgents.Instance.ControllerServiceAgent.CiMenuSupported(cardNumber))
         {
           MessageBox.Show(
             "The selected card doesn't support CI menu or CAM is not ready yet\r\n(Inititialization of CAM may require >10 seconds)");
@@ -112,8 +114,8 @@ namespace SetupTv.Sections
       {
         if (IsCAReady())
         {
-          RemoteControl.Instance.SetCiMenuHandler(cardNumber, null);
-          RemoteControl.Instance.EnterCiMenu(cardNumber);
+          ServiceAgents.Instance.ControllerServiceAgent.SetCiMenuHandler(cardNumber, null);
+          ServiceAgents.Instance.ControllerServiceAgent.EnterCiMenu(cardNumber);
         }
       }
       catch (Exception ex)
@@ -128,12 +130,12 @@ namespace SetupTv.Sections
       {
         if (ciMenuState == CiMenuState.NoChoices || ciMenuState == CiMenuState.Ready)
         {
-          RemoteControl.Instance.SelectMenu(cardNumber, 0); // back
+          ServiceAgents.Instance.ControllerServiceAgent.SelectMenu(cardNumber, 0); // back
           ciMenuState = CiMenuState.Closed;
         }
         if (ciMenuState == CiMenuState.Request)
         {
-          RemoteControl.Instance.SendMenuAnswer(cardNumber, true, null);
+          ServiceAgents.Instance.ControllerServiceAgent.SendMenuAnswer(cardNumber, true, null);
           ciMenuState = CiMenuState.Ready;
         }
         SetButtonState();
@@ -150,11 +152,11 @@ namespace SetupTv.Sections
       {
         if (ciMenuState == CiMenuState.Ready && Choices.SelectedIndex != -1)
         {
-          RemoteControl.Instance.SelectMenu(cardNumber, Convert.ToByte(Choices.SelectedIndex + 1));
+          ServiceAgents.Instance.ControllerServiceAgent.SelectMenu(cardNumber, Convert.ToByte(Choices.SelectedIndex + 1));
         }
         if (ciMenuState == CiMenuState.Request)
         {
-          RemoteControl.Instance.SendMenuAnswer(cardNumber, false, CiAnswer.Text);
+          ServiceAgents.Instance.ControllerServiceAgent.SendMenuAnswer(cardNumber, false, CiAnswer.Text);
           ciMenuState = CiMenuState.Ready;
         }
         SetButtonState();
@@ -176,7 +178,7 @@ namespace SetupTv.Sections
       switch (ciMenuState)
       {
           // choices available, so show them
-        case TvLibrary.Interfaces.CiMenuState.Ready:
+        case CiMenuState.Ready:
           //ciMenuState = CiMenuState.Opened;
           Title.Text = Menu.Title;
           Subtitle.Text = Menu.Subtitle;
@@ -201,8 +203,8 @@ namespace SetupTv.Sections
           break;
 
           // errors and menu options with no choices
-        case TvLibrary.Interfaces.CiMenuState.Error:
-        case TvLibrary.Interfaces.CiMenuState.NoChoices:
+        case CiMenuState.Error:
+        case CiMenuState.NoChoices:
           Title.Text = Menu.Title;
           Subtitle.Text = Menu.Subtitle;
           BottomText.Text = Menu.BottomText;
@@ -210,7 +212,7 @@ namespace SetupTv.Sections
           break;
 
           // requests require users input so open keyboard
-        case TvLibrary.Interfaces.CiMenuState.Request:
+        case CiMenuState.Request:
           ciMenuState = CiMenuState.Request;
           SetButtonState();
           CiRequest.Text = String.Format("{0} ({1} Zeichen)", Menu.RequestText, Menu.AnswerLength);

@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.Win32;
 
-namespace MediaPortal.Utils.Time
+namespace Mediaportal.TV.Server.TvLibrary.Utils.Time
 {
   /// <summary>
   /// A World Time Zone

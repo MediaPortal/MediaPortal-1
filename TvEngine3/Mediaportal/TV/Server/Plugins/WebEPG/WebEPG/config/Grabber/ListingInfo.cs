@@ -19,9 +19,9 @@
 #endregion
 
 using System.Xml.Serialization;
-using MediaPortal.Utils.Web;
+using Mediaportal.TV.Server.TvLibrary.Utils.Web.http;
 
-namespace MediaPortal.WebEPG.Config.Grabber
+namespace WebEPG.config.Grabber
 {
   /// <summary>
   /// Information about the listing

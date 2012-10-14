@@ -23,8 +23,10 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.IO;
 using System.Drawing;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Teletext
+namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
 {
   /// <summary>
   /// Zusammenfassung für DVBTeletext.
@@ -415,19 +417,7 @@ namespace TvLibrary.Teletext
     public void SaveData(IntPtr dataPtr)
     {
       if (dataPtr == IntPtr.Zero)
-      {
         return;
-      }
-      if (Marshal.ReadByte(dataPtr, 0) != 0x47)
-      {
-        Log.Log.WriteFile("packet sync error");
-        return;
-      }
-      if ((Marshal.ReadByte(dataPtr, 1) & 0x80) != 0)
-      {
-        Log.Log.WriteFile("packet sync error");
-        return;
-      }
       int dataAdd = (int)dataPtr;
       try
       {
@@ -449,7 +439,7 @@ namespace TvLibrary.Teletext
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile("Error while saving teletext data: ", ex);
+        Log.WriteFile("Error while saving teletext data: ", ex);
       }
     }
 

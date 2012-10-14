@@ -19,11 +19,11 @@
 #endregion
 
 using System.Collections.Generic;
-using TvLibrary.ChannelLinkage;
-using TvLibrary.Epg;
-using TvLibrary.Interfaces.Device;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 
-namespace TvLibrary.Interfaces
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 {
   #region event delegates
 
@@ -45,6 +45,9 @@ namespace TvLibrary.Interfaces
   /// </summary>
   public interface ITVCard
   {
+
+
+
     #region events
     // Note: events are handled as set-only properties to enable clean hybrid tuner handling.
 
@@ -121,6 +124,8 @@ namespace TvLibrary.Interfaces
     /// Gets/sets the card type
     /// </summary>
     CardType CardType { get; }
+
+
 
     /// <summary>
     /// Get the device's DiSEqC control interface. This interface is only applicable for satellite tuners.
@@ -316,6 +321,7 @@ namespace TvLibrary.Interfaces
     /// <returns></returns>
     ITvSubChannel GetSubChannel(int id);
 
+    ITvSubChannel GetFirstSubChannel();
 
     /// <summary>
     /// Frees the sub channel.

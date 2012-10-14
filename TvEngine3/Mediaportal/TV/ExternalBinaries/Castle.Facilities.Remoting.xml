@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Castle.Facilities.Remoting</name>
+    </assembly>
+    <members>
+        <member name="T:Castle.Facilities.Remoting.CustomActivators.RemoteActivator">
+            <summary>
+              Activates a object connecting to the remote server.
+            </summary>
+        </member>
+        <member name="M:Castle.Facilities.Remoting.CustomActivators.RemoteActivator.#ctor(Castle.Core.ComponentModel,Castle.MicroKernel.IKernel,Castle.MicroKernel.ComponentInstanceDelegate,Castle.MicroKernel.ComponentInstanceDelegate)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Castle.Facilities.Remoting.CustomActivators.RemoteActivator"/> class.
+            </summary>
+            <param name="model">The model.</param>
+            <param name="kernel">The kernel.</param>
+            <param name="onCreation">The oncreation event handler.</param>
+            <param name="onDestruction">The ondestruction event handler.</param>
+        </member>
+        <member name="T:Castle.Facilities.Remoting.CustomActivators.RemoteActivatorThroughConnector">
+            <summary>
+              Activates a client connecting to the remote server, enforcing the uri and the server activation.
+            </summary>
+        </member>
+        <member name="M:Castle.Facilities.Remoting.CustomActivators.RemoteActivatorThroughConnector.#ctor(Castle.Core.ComponentModel,Castle.MicroKernel.IKernel,Castle.MicroKernel.ComponentInstanceDelegate,Castle.MicroKernel.ComponentInstanceDelegate)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Castle.Facilities.Remoting.CustomActivators.RemoteActivatorThroughConnector"/> class.
+            </summary>
+            <param name="model">The model.</param>
+            <param name="kernel">The kernel.</param>
+            <param name="onCreation">The oncreation event handler.</param>
+            <param name="onDestruction">The ondestruction event handler.</param>
+        </member>
+        <member name="T:Castle.Facilities.Remoting.CustomActivators.RemoteActivatorThroughRegistry">
+            <summary>
+              Activates a client connecting to the remote server through the <see cref="T:Castle.Facilities.Remoting.RemotingRegistry"/>.
+            </summary>
+        </member>
+        <member name="M:Castle.Facilities.Remoting.CustomActivators.RemoteActivatorThroughRegistry.#ctor(Castle.Core.ComponentModel,Castle.MicroKernel.IKernel,Castle.MicroKernel.ComponentInstanceDelegate,Castle.MicroKernel.ComponentInstanceDelegate)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Castle.Facilities.Remoting.CustomActivators.RemoteActivatorThroughRegistry"/> class.
+            </summary>
+            <param name="model">The model.</param>
+            <param name="kernel">The kernel.</param>
+            <param name="onCreation">The oncreation event handler.</param>
+            <param name="onDestruction">The ondestruction event handler.</param>
+        </member>
+        <member name="T:Castle.Facilities.Remoting.CustomActivators.RemoteClientActivatedActivator">
+            <summary>
+              Activates a client activated object.
+            </summary>
+        </member>
+        <member name="M:Castle.Facilities.Remoting.CustomActivators.RemoteClientActivatedActivator.#ctor(Castle.Core.ComponentModel,Castle.MicroKernel.IKernel,Castle.MicroKernel.ComponentInstanceDelegate,Castle.MicroKernel.ComponentInstanceDelegate)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Castle.Facilities.Remoting.CustomActivators.RemoteClientActivatedActivator"/> class.
+            </summary>
+            <param name="model">The model.</param>
+            <param name="kernel">The kernel.</param>
+            <param name="onCreation">The oncreation event handler.</param>
+            <param name="onDestruction">The ondestruction event handler.</param>
+        </member>
+        <member name="T:Castle.Facilities.Remoting.CustomActivators.RemoteMarshallerActivator">
+            <summary>
+              Activates and publishes a server object.
+            </summary>
+        </member>
+        <member name="M:Castle.Facilities.Remoting.CustomActivators.RemoteMarshallerActivator.#ctor(Castle.Core.ComponentModel,Castle.MicroKernel.IKernel,Castle.MicroKernel.ComponentInstanceDelegate,Castle.MicroKernel.ComponentInstanceDelegate)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Castle.Facilities.Remoting.CustomActivators.RemoteMarshallerActivator"/> class.
+            </summary>
+            <param name="model">The model.</param>
+            <param name="kernel">The kernel.</param>
+            <param name="onCreation">The oncreation event handler.</param>
+            <param name="onDestruction">The ondestruction event handler.</param>
+        </member>
+        <member name="T:Castle.Facilities.Remoting.RemotingFacility">
+            <summary>
+              Facility to allow the communication with remote kernel, using the .NET Remoting infrastructure.
+            </summary>
+            <remarks>
+              TODO
+            </remarks>
+            <example>
+              TODO
+            </example>
+        </member>
+        <member name="F:Castle.Facilities.Remoting.RemotingFacility.baseUri">
+            <summary>
+              Used for client side (Expand explanation)
+            </summary>
+        </member>
+        <member name="F:Castle.Facilities.Remoting.RemotingFacility.localRegistry">
+            <summary>
+              Used for server side. 
+              Holds the local registry
+            </summary>
+        </member>
+        <member name="F:Castle.Facilities.Remoting.RemotingFacility.remoteRegistry">
+            <summary>
+              Used for client side. 
+              Holds a remote proxy to the server registry
+            </summary>
+        </member>
+        <member name="M:Castle.Facilities.Remoting.RemotingFacility.Dispose">
+            <summary>
+              Performs the tasks associated with freeing, releasing, or resetting
+              the facility resources.
+            </summary>
+            <remarks>
+              It can be overridden.
+            </remarks>
+        </member>
+        <member name="T:Castle.Facilities.Remoting.RemotingInspector">
+            <summary>
+              Inspects the model looking for remote component configuration. If found, 
+              do the component Remoting configuration.
+            </summary>
+        </member>
+        <member name="M:Castle.Facilities.Remoting.RemotingInspector.#ctor(Castle.MicroKernel.SubSystems.Conversion.ITypeConverter,System.Boolean,System.Boolean,System.String,Castle.Facilities.Remoting.RemotingRegistry,Castle.Facilities.Remoting.RemotingRegistry)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Castle.Facilities.Remoting.RemotingInspector"/> class.
+            </summary>
+            <param name="converter">The converter.</param>
+            <param name="isServer">if set to <c>true</c> is a server.</param>
+            <param name="isClient">if set to <c>true</c> is a client.</param>
+            <param name="baseUri">The base URI.</param>
+            <param name="remoteRegistry">The remote registry.</param>
+            <param name="localRegistry">The local registry.</param>
+        </member>
+        <member name="M:Castle.Facilities.Remoting.RemotingRegistry.GetModel(System.Type)">
+            <summary>
+              Used in case of generics:
+            </summary>
+            <param name = "serviceType"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

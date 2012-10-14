@@ -19,17 +19,16 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+using System.Linq;
 using System.Windows.Forms;
-using Gentle.Framework;
-using TvDatabase;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace SetupTv.Dialogs
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class FormSelectListChannel : Form
   {
@@ -70,22 +69,23 @@ namespace SetupTv.Dialogs
       listViewChannels.BeginUpdate();
       try
       {
-        SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof (Channel));
+        IList<Channel> channels = new List<Channel>();
+        
         if (checkBoxGuideChannels.Checked)
         {
-          sb.AddConstraint(Operator.Equals, "visibleInGuide", 1);
+          channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByMediaType(MediaTypeEnum.TV);
         }
-        sb.AddConstraint(Operator.Equals, "isTv", 1);
-        sb.AddOrderByField(true, "sortOrder");
-        sb.AddOrderByField(true, "displayName");
-        SqlStatement stmt = sb.GetStatement(true);
-        IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
+        else
+        {
+          channels =
+            ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.TV).OrderBy(c => c.SortOrder).
+              OrderBy(c => c.DisplayName).ToList();
+        }                
 
-        for (int i = 0; i < channels.Count; i++)
+        foreach (Channel t in channels)
         {
           // TODO: add imagelist with channel logos from MP :)
-          ListViewItem curItem = new ListViewItem(channels[i].DisplayName);
-          curItem.Tag = channels[i];
+          ListViewItem curItem = new ListViewItem(t.DisplayName) {Tag = t};
           listViewChannels.Items.Add(curItem);
         }
       }

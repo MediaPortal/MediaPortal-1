@@ -1,4 +1,6 @@
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   partial class StreamingServer
   {
@@ -34,14 +36,14 @@ namespace SetupTv.Sections
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.SettingsGroupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.ApplyButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.SettingsGroupBox = new MPGroupBox();
+      this.ApplyButton = new MPButton();
       this.PortNoNumericUpDown = new System.Windows.Forms.NumericUpDown();
-      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.IpAddressComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabelChannelCount = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.ClientsGroupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpLabel2 = new MPLabel();
+      this.IpAddressComboBox = new MPComboBox();
+      this.mpLabel1 = new MPLabel();
+      this.mpLabelChannelCount = new MPLabel();
+      this.ClientsGroupBox = new MPGroupBox();
       this.listView1 = new System.Windows.Forms.ListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
@@ -51,7 +53,7 @@ namespace SetupTv.Sections
       this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-      this.mpButtonKick = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonKick = new MPButton();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.SettingsGroupBox.SuspendLayout();
@@ -306,17 +308,17 @@ namespace SetupTv.Sections
 		private System.Windows.Forms.ColumnHeader columnHeader3;
 		private System.Windows.Forms.ColumnHeader columnHeader4;
 		private System.Windows.Forms.ColumnHeader columnHeader5;
-		private MediaPortal.UserInterface.Controls.MPLabel mpLabelChannelCount;
-		private MediaPortal.UserInterface.Controls.MPButton mpButtonKick;
+		private MPLabel mpLabelChannelCount;
+		private MPButton mpButtonKick;
 		private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
 		private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
-    private MediaPortal.UserInterface.Controls.MPGroupBox SettingsGroupBox;
-    private MediaPortal.UserInterface.Controls.MPGroupBox ClientsGroupBox;
-    private MediaPortal.UserInterface.Controls.MPButton ApplyButton;
+    private MPGroupBox SettingsGroupBox;
+    private MPGroupBox ClientsGroupBox;
+    private MPButton ApplyButton;
     private System.Windows.Forms.NumericUpDown PortNoNumericUpDown;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
-    private MediaPortal.UserInterface.Controls.MPComboBox IpAddressComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
+    private MPLabel mpLabel2;
+    private MPComboBox IpAddressComboBox;
+    private MPLabel mpLabel1;
   }
 }

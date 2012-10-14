@@ -19,15 +19,14 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using TvLibrary.Log;
 using System.Diagnostics;
 using System.Threading;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvEngine.PowerScheduler
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler
 {
   /// <summary>
   /// Specifies the type of restart options that an application can use.

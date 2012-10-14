@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace TvLibrary.Interfaces.Device
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
 {
   /// <summary>
   /// An interface for devices that implement conditional access features (most commonly service decryption).

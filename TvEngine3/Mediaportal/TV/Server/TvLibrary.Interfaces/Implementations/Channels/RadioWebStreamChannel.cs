@@ -19,9 +19,10 @@
 #endregion
 
 using System;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvLibrary.Implementations
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
 {
   /// <summary>
   /// A class capable of holding the tuning parameter details required to tune a radio web stream.
@@ -182,6 +183,12 @@ namespace TvLibrary.Implementations
     {
       // No adjustments required.
       return (IChannel)this.Clone();
+    }
+
+    public MediaTypeEnum MediaType
+    {
+      get { return MediaTypeEnum.Radio; }
+      set { }
     }
   }
 }

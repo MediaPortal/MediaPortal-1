@@ -1,4 +1,4 @@
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   partial class CardDvbS
   {
@@ -1176,7 +1176,7 @@ namespace SetupTv.Sections
       // 
       // pictureBox1
       // 
-      this.pictureBox1.Image = global::SetupTv.Properties.Resources.animation_SatDish;
+      this.pictureBox1.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.animation_SatDish;
       this.pictureBox1.InitialImage = null;
       this.pictureBox1.Location = new System.Drawing.Point(363, 71);
       this.pictureBox1.Name = "pictureBox1";

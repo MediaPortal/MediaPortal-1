@@ -20,7 +20,7 @@
 
 using MediaPortal.GUI.Library;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin.Teletext
 {
   /// <summary>
   /// Fullscreen teletext window of TVE3
@@ -46,7 +46,7 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\myfsteletext.xml"));
+      return Load(GUIGraphicsContext.Skin + @"\myfsteletext.xml");
     }
 
     protected override void OnPageDestroy(int newWindowId)

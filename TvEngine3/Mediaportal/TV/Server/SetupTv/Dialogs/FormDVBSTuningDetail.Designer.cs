@@ -1,6 +1,8 @@
 using System.Collections.Generic;
-using TvDatabase;
-namespace SetupTv.Dialogs
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   partial class FormDVBSTuningDetail
   {
@@ -447,7 +449,7 @@ namespace SetupTv.Dialogs
       // 
       this.comboBoxLnbType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxLnbType.FormattingEnabled = true;
-      IList<LnbType> tempLnbTypes = LnbType.ListAll();
+      IList<LnbType> tempLnbTypes = LnbTypeManagement.ListAllLnbTypes();
       LnbType[] lnbTypes = new LnbType[tempLnbTypes.Count];
       tempLnbTypes.CopyTo(lnbTypes, 0);
       this.comboBoxLnbType.Items.AddRange(lnbTypes);

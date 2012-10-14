@@ -22,18 +22,25 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Linq;
 using System.Text;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Util;
-using TvDatabase;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 using MediaPortal.Profile;
 using System.IO;
-using TvControl;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
+using Mediaportal.TV.Server.TVService.Interfaces;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin.Helper
 {
   /// <summary>
   /// Helper class which can be used to determine which tv program is
@@ -90,31 +97,28 @@ namespace TvPlugin
         throw;
       }
     }
-
-    public IList<Schedule> GetRecordingTimes(Schedule rec)
+    
+    public IList<Schedule> GetRecordingTimes(ScheduleBLL rec)
     {
-      DateTime startTime = DateTime.Now;
-      DateTime endTime = startTime.AddDays(_days);
-
-      IList<Program> programs = Schedule.GetProgramsForSchedule(rec);
-      IList<Schedule> recordings = recordings = AddProgramsToSchedulesList(rec, programs);
+      IList<Program> programs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsForSchedule(rec.Entity).ToList();
+      IList<Schedule> recordings = AddProgramsToSchedulesList(rec, programs);
       return recordings;
     }
 
-    private IList<Schedule> AddProgramsToSchedulesList(Schedule rec, IList<Program> programs)
+    private IList<Schedule> AddProgramsToSchedulesList(ScheduleBLL rec, IList<Program> programs)
     {
       IList<Schedule> recordings = new List<Schedule>();
       if (programs != null && programs.Count > 0)
       {
         foreach (Program prg in programs)
         {
-          Schedule recNew = rec.Clone();          
+          Schedule recNew = ScheduleFactory.Clone(rec.Entity);          
           recNew.ScheduleType = (int)ScheduleRecordingType.Once;
           recNew.StartTime = prg.StartTime;
           recNew.EndTime = prg.EndTime;
           recNew.IdChannel = prg.IdChannel;
           recNew.Series = true;
-          recNew.IdParentSchedule = rec.IdSchedule;
+          recNew.IdParentSchedule = rec.Entity.IdSchedule;
           recNew.ProgramName = prg.Title;
 
           if (rec.IsSerieIsCanceled(rec.GetSchedStartTimeForProg(prg)))
@@ -126,28 +130,18 @@ namespace TvPlugin
         }
       }
       return recordings;
-    }
-
-    private static void UpdateCurrentProgramTitle(ref Schedule recNew)
-    {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      IList<Program> programs = layer.GetPrograms(recNew.ReferencedChannel(), recNew.StartTime, recNew.EndTime);
-      if (programs != null && programs.Count > 0)
-      {
-        recNew.ProgramName = programs[0].Title;
-      }
-    }
+    }    
 
     public static string GetDisplayTitle(Schedule schedule)
     {
       string displayname = "";
-      Program program = Program.RetrieveByTitleTimesAndChannel(schedule.ProgramName, schedule.StartTime,
-                                                       schedule.EndTime, schedule.IdChannel);
+      Program program = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleTimesAndChannel(schedule.ProgramName, schedule.StartTime,
+                                                                          schedule.EndTime, schedule.IdChannel);      
 
       //if we have found program details then use nicely formatted name
       if (program != null)
       {
-        displayname = TVUtil.GetDisplayTitle(program);
+        displayname = GetDisplayTitle(program);
       }
       else
       {
@@ -278,7 +272,7 @@ namespace TvPlugin
           else // use automatic UNC path
           {
             fileName = TVHome.Card.TimeShiftFileName.Replace(":", "");
-            fileName = "\\\\" + RemoteControl.HostName + "\\" + fileName;
+            fileName = "\\\\" + ServiceAgents.Instance.Hostname + "\\" + fileName;
           }
         }
         else
@@ -337,7 +331,7 @@ namespace TvPlugin
           else // use automatic UNC path
           {
             fileName = rec.FileName.Replace(":", "");
-            fileName = "\\\\" + RemoteControl.HostName + "\\" + fileName;
+            fileName = "\\\\" + ServiceAgents.Instance.Hostname + "\\" + fileName;
           }
         }
         else //file exists, return it.
@@ -347,7 +341,7 @@ namespace TvPlugin
       }
       else //RTSP mode, get RTSP url for file.
       {
-        fileName = TVHome.TvServer.GetStreamUrlForFileName(rec.IdRecording);
+        fileName = ServiceAgents.Instance.ControllerServiceAgent.GetRecordingUrl(rec.IdRecording);
       }
 
       return fileName;
@@ -369,7 +363,7 @@ namespace TvPlugin
       string fileName = GetFileNameForRecording(rec);
 
       bool useRTSP = TVHome.UseRTSP();
-      string chapters = useRTSP ? TVHome.TvServer.GetChaptersForFileName(rec.IdRecording) : null;
+      string chapters = useRTSP ? ServiceAgents.Instance.ControllerServiceAgent.GetRecordingChapters(rec.IdRecording) : null;
 
       Log.Info("PlayRecording:{0} - using rtsp mode:{1}", fileName, useRTSP);
       if (g_Player.Play(fileName, mediaType, chapters))
@@ -397,8 +391,7 @@ namespace TvPlugin
         g_Player.currentDescription = rec.Description;
 
         rec.TimesWatched++;
-        rec.Persist();
-
+        ServiceAgents.Instance.RecordingServiceAgent.SaveRecording(rec);        
         return true;
       }
       return false;
@@ -406,12 +399,12 @@ namespace TvPlugin
 
     public static string GetChannelLogo (Channel channel)
     {
-      string logo = string.Empty;
-      if (null != channel && channel.IsTv)
+      string logo = String.Empty;
+      if (null != channel && channel.MediaType == (int)MediaTypeEnum.TV)
       {
         logo = Utils.GetCoverArt(Thumbs.TVChannel, channel.DisplayName);
       }
-      else if (null != channel && channel.IsRadio)
+      else if (null != channel && channel.MediaType == (int)MediaTypeEnum.Radio)
       {
         logo = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
       }
@@ -498,20 +491,7 @@ namespace TvPlugin
     {
       DateTime canceledStartTime = schedule.StartTime;
       return (StopRecAndSchedWithPrompt(schedule, canceledStartTime, idChannel));
-    }
-
-        /// <summary>
-    /// Deletes a single or a complete schedule.
-    /// The user is being prompted if the schedule is currently recording.
-    /// If the schedule is currently recording, then this is stopped also.    
-    /// </summary>
-    /// <param name="Schedule">schedule id to be deleted</param>        
-    /// <returns>true if the schedule was deleted, otherwise false</returns>
-    public static bool DeleteRecAndSchedWithPrompt(Schedule schedule, int idChannel)
-    {
-      DateTime canceledStartTime = schedule.StartTime;
-      return (DeleteRecAndSchedWithPrompt(schedule, canceledStartTime, idChannel));
-    }
+    }   
 
     /// <summary>
     /// Deletes a single or a complete schedule.
@@ -560,8 +540,8 @@ namespace TvPlugin
         if (confirmed)
         {
           if (prg != null)
-          {
-            DateTime canceledStartTime = schedule.GetSchedStartTimeForProg(prg);
+          {                        
+            DateTime canceledStartTime = new ScheduleBLL(schedule).GetSchedStartTimeForProg(prg);
             int idChannel = prg.IdChannel;
             wasDeleted = StopRecAndDeleteSchedule(schedule, parentSchedule, idChannel, canceledStartTime);             
           }
@@ -572,22 +552,22 @@ namespace TvPlugin
         }
       }
       return wasDeleted;
-    }   
+    }
 
     /// <summary>
     /// Deletes a single or a complete schedule.
     /// The user is being prompted if the schedule is currently recording.
     /// If the schedule is currently recording, then this is stopped also.    
     /// </summary>
-    /// <param name="Schedule">schedule id to be deleted</param>    
-    /// <param name="canceledStartTime">start time of the schedule to cancel</param>    
+    /// <param name="Schedule">schedule id to be deleted</param>
     /// <returns>true if the schedule was deleted, otherwise false</returns>
-    public static bool DeleteRecAndSchedWithPrompt(Schedule schedule, DateTime canceledStartTime, int idChannel)
+    public static bool DeleteRecAndSchedWithPrompt(Schedule schedule)
     {
       bool wasDeleted = false;
       if (IsValidSchedule(schedule))
       {
-        Program prg = Program.RetrieveByTitleAndTimes(schedule.ProgramName, schedule.StartTime, schedule.EndTime);
+        Program prg = ServiceAgents.Instance.ProgramServiceAgent.GetProgramByTitleAndTimes(schedule.ProgramName, schedule.StartTime,
+                                                                     schedule.EndTime);
         wasDeleted = DeleteRecAndSchedWithPrompt(schedule, prg);
       }
       
@@ -650,26 +630,25 @@ namespace TvPlugin
         }        
       }
             
-      TvServer server = new TvServer();
-      server.OnNewSchedule();
+      
+      ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
       return wasDeleted || wasCanceled;
     }
 
     private static bool StopRecAndDeleteEntireSchedule(Schedule schedule, Schedule parentSchedule, DateTime canceledStartTime)
     {
       int idChannel = schedule.IdChannel;      
-      CancelEpisode(canceledStartTime, parentSchedule, idChannel);
-      TvServer server = new TvServer();
+      
       bool wasRecStopped = StopRecording(schedule);            
       bool wasDeleted = DeleteEntireOrOnceSchedule(schedule, parentSchedule);              
                         
-      server.OnNewSchedule();
+      ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
       return wasRecStopped || wasDeleted;
     }
 
     private static bool IsScheduleTypeOnce (int IdSchedule)
     {
-      Schedule schedule = Schedule.Retrieve(IdSchedule);
+      Schedule schedule = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(IdSchedule);
       bool isOnce = (schedule.ScheduleType == (int)ScheduleRecordingType.Once);
       return isOnce;
     }
@@ -679,11 +658,7 @@ namespace TvPlugin
       //is the schedule recording, then stop it now.
       bool wasDeleted = false;
       try
-      {
-        bool isRec = TvDatabase.Schedule.IsScheduleRecording(schedule.IdSchedule);
-        bool isOnce = IsScheduleTypeOnce(parentSchedule.IdSchedule);
-                
-
+      {                
         if (parentSchedule != null)
         {
           wasDeleted = DeleteSchedule(parentSchedule.IdSchedule);          
@@ -701,15 +676,15 @@ namespace TvPlugin
       return wasDeleted;
     }
 
-    private static bool DeleteSchedule (int IdSchedule)
+    private static bool DeleteSchedule (int idSchedule)
     {
       bool scheduleDeleted = false;
-      if (IdSchedule > 0)
+      if (idSchedule > 0)
       {
-        Schedule sched2del = Schedule.Retrieve(IdSchedule);
+        Schedule sched2del = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(idSchedule);
         if (sched2del != null)
-        {
-          sched2del.Delete();          
+        {          
+          ServiceAgents.Instance.ScheduleServiceAgent.DeleteSchedule(sched2del.IdSchedule);
         }
         scheduleDeleted = true;
       }
@@ -729,14 +704,14 @@ namespace TvPlugin
       {
         //create the canceled schedule to prevent the schedule from restarting again.
         // we only create cancelled recordings on series type schedules      
-        Schedule sched2cancel = Schedule.Retrieve(scheduleToCancel.IdSchedule);
+        Schedule sched2cancel = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(scheduleToCancel.IdSchedule);
         bool isOnce = IsScheduleTypeOnce(scheduleToCancel.IdSchedule);
         if (!isOnce)
         {
           DateTime cancel = cancelStartTime;
           int IdForScheduleToCancel = scheduleToCancel.IdSchedule;
-          CanceledSchedule canceledSchedule = new CanceledSchedule(IdForScheduleToCancel, idChannel, cancel);
-          canceledSchedule.Persist();
+          CanceledSchedule canceledSchedule = CanceledScheduleFactory.CreateCanceledSchedule(IdForScheduleToCancel, idChannel, cancel);          
+          ServiceAgents.Instance.CanceledScheduleServiceAgent.SaveCanceledSchedule(canceledSchedule);
           episodeCanceled = true;
         }
       }
@@ -746,7 +721,7 @@ namespace TvPlugin
     private static bool PromptStopRecording(int IdSchedule)
     {
       bool confirmed = false;
-      bool isRec = TvDatabase.Schedule.IsScheduleRecording(IdSchedule);
+      bool isRec = ServiceAgents.Instance.ScheduleServiceAgent.IsScheduleRecording(IdSchedule);
 
       if (isRec)
       {
@@ -777,17 +752,17 @@ namespace TvPlugin
     private static string GetRecordingTitle(int IdSchedule) {
       string recordingTitle = "";          
 
-      Schedule schedule = Schedule.Retrieve(IdSchedule);
+      Schedule schedule = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(IdSchedule);
       if (schedule != null)
       {
-        Schedule spawnedSchedule = Schedule.RetrieveSpawnedSchedule(IdSchedule, schedule.StartTime);
+        Schedule spawnedSchedule = ServiceAgents.Instance.ScheduleServiceAgent.RetrieveSpawnedSchedule(IdSchedule, schedule.StartTime);        
         if (spawnedSchedule != null)
         {
-          recordingTitle = TVUtil.GetDisplayTitle(Recording.ActiveRecording(spawnedSchedule.IdSchedule));
+          recordingTitle = GetDisplayTitle(ServiceAgents.Instance.RecordingServiceAgent.GetActiveRecording(spawnedSchedule.IdSchedule));
         }
         else
         {
-          recordingTitle = TVUtil.GetDisplayTitle(Recording.ActiveRecording(IdSchedule));
+          recordingTitle = GetDisplayTitle(ServiceAgents.Instance.RecordingServiceAgent.GetActiveRecording(IdSchedule));
         }
       }
       return recordingTitle;
@@ -797,7 +772,7 @@ namespace TvPlugin
     {
       bool confirmed = false;
 
-      bool isRec = TvDatabase.Schedule.IsScheduleRecording(IdSchedule);
+      bool isRec = ServiceAgents.Instance.ScheduleServiceAgent.IsScheduleRecording(IdSchedule);
 
       if (isRec)
       {
@@ -836,13 +811,12 @@ namespace TvPlugin
       bool isRec = false;
       if (prg != null)
       {
-        isRec = TvDatabase.Schedule.IsScheduleRecording(idSchedule, prg);  
+        isRec = ServiceAgents.Instance.ScheduleServiceAgent.IsScheduleRecordingProgram(idSchedule, prg.IdProgram);  
       }
       else
       {
-        var tvServer = new TvServer();
-        VirtualCard vCard;
-        isRec = tvServer.IsRecordingSchedule(idSchedule, out vCard);
+        IVirtualCard vCard;
+        isRec = ServiceAgents.Instance.ControllerServiceAgent.IsRecordingSchedule(idSchedule, out vCard);
       }      
 
       if (isRec)
@@ -858,11 +832,11 @@ namespace TvPlugin
 
     private static void GetParentAndSpawnSchedule(ref Schedule schedule, out Schedule parentSchedule)
     {
-      parentSchedule = schedule.ReferencedSchedule();
+      parentSchedule = schedule.ParentSchedule;
       if (parentSchedule == null)
       {
         parentSchedule = schedule;
-        Schedule spawn = Schedule.RetrieveSpawnedSchedule(parentSchedule.IdSchedule, parentSchedule.StartTime);
+        Schedule spawn = ServiceAgents.Instance.ScheduleServiceAgent.RetrieveSpawnedSchedule(parentSchedule.IdSchedule, parentSchedule.StartTime);
         if (spawn != null)
         {
           schedule = spawn;
@@ -887,17 +861,27 @@ namespace TvPlugin
 
     private static bool StopRecording(Schedule schedule)
     {
-      bool stoppedRec = false;
-      bool isRec = TvDatabase.Schedule.IsScheduleRecording(schedule.IdSchedule);
+      bool stoppedRec = false;      
+      bool isRec = ServiceAgents.Instance.ScheduleServiceAgent.IsScheduleRecording(schedule.IdSchedule);
       if (isRec)
       {
-        TvServer server = new TvServer();
-        server.StopRecordingSchedule(schedule.IdSchedule);
+        
+        ServiceAgents.Instance.ControllerServiceAgent.StopRecordingSchedule(schedule.IdSchedule);
         stoppedRec = true;
       }
       return stoppedRec;
     }
 
     #endregion
+
+    public static string GetCategory(ProgramCategory programCategory)
+    {
+      string category = "";
+      if (programCategory != null)
+      {
+        category = programCategory.Category;
+      }
+      return category;
+    }
   }
 }

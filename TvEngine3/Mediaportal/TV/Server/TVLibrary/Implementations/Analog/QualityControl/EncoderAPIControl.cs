@@ -20,9 +20,11 @@
 
 using System;
 using DirectShowLib;
-using TvLibrary.Implementations.DVB;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.Analog.QualityControl
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
 {
   /// <summary>
   /// Class which implements control of quality trough the use of the IEncoderAPI interface
@@ -50,7 +52,7 @@ namespace TvLibrary.Implementations.Analog.QualityControl
       : base(configuration)
     {
       _encoderAPI = encoderAPI;
-      Log.Log.WriteFile("analog: IEncoderAPI supported by: " +
+      Log.WriteFile("analog: IEncoderAPI supported by: " +
                         FilterGraphTools.GetFilterName(_encoderAPI as IBaseFilter) + "; Checking capabilities ");
       CheckCapabilities();
     }

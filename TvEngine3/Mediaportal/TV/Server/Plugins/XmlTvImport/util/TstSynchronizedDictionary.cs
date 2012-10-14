@@ -21,7 +21,7 @@
 using System;
 using System.Collections;
 
-namespace Tst
+namespace Mediaportal.TV.Server.Plugins.XmlTvImport.util
 {
   /// <summary>
   /// A synchronized (thread-safe) wrapper for the <see cref="TstDictionary"/>.

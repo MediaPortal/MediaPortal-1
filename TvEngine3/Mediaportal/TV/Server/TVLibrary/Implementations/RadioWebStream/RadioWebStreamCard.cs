@@ -19,14 +19,13 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using DirectShowLib;
-using TvLibrary.Interfaces;
-using TvLibrary.Epg;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.ChannelLinkage;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.RadioWebStream
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.RadioWebStream
 {
   /// <summary>
   /// Dummy card for radio web streams
@@ -70,7 +69,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public override bool CanTune(IChannel channel)
     {
-      if (channel is RadioWebStreamChannel && channel.IsRadio)
+      if (channel is RadioWebStreamChannel && channel.MediaType == MediaTypeEnum.Radio)
       {
         return true;
       }
@@ -85,7 +84,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <returns>the subchannel associated with the tuned channel</returns>
     public override ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
-      Log.Log.WriteFile("RadioWebStream:  Tune:{0}", channel);
+      Log.WriteFile("RadioWebStream:  Tune:{0}", channel);
       return null;
     }
 
@@ -97,7 +96,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <returns>the subchannel associated with the scanned channel</returns>
     public override ITvSubChannel Scan(int subChannelId, IChannel channel)
     {
-      Log.Log.WriteFile("RadioWebStream:  Scan:{0}", channel);
+      Log.WriteFile("RadioWebStream:  Scan:{0}", channel);
       return null;
     }
 
@@ -107,7 +106,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <param name="channel">The channel to tune to.</param>
     protected override void PerformTuning(IChannel channel)
     {
-      Log.Log.WriteFile("RadioWebStream: perform tuning");
+      Log.WriteFile("RadioWebStream: perform tuning");
     }
 
     /// <summary>
@@ -152,7 +151,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// </summary>
     public override void Dispose()
     {
-      Log.Log.WriteFile("RadioWebStream:Dispose()");
+      Log.WriteFile("RadioWebStream:Dispose()");
     }
 
     #endregion

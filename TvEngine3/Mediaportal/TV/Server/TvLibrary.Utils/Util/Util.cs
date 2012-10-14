@@ -20,7 +20,7 @@
 
 using System.IO;
 
-namespace Mediaportal.Util
+namespace Mediaportal.TV.Server.TvLibrary.Utils.Util
 {
   public class FileUtils
   {

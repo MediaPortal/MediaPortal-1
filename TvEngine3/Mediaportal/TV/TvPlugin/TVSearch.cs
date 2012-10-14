@@ -22,16 +22,23 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
-using TvControl;
-using TvDatabase;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
+using Mediaportal.TV.TvPlugin.Helper;
 using Action = MediaPortal.GUI.Library.Action;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   /// <summary>
   /// </summary>
@@ -77,7 +84,7 @@ namespace TvPlugin
     private SortMethod currentSortMethod = SortMethod.Name;
     private SortMethod chosenSortMethod = SortMethod.Auto;
     private bool sortAscending = true;
-    private IList<Schedule> listRecordings;
+    private IList<ScheduleBLL> listRecordings;
 
     private SearchMode currentSearchMode = SearchMode.Title;
     private int currentLevel = 0;
@@ -130,7 +137,7 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\mytvsearch.xml"));
+      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvsearch.xml");
       LoadSettings();
       return bResult;
     }
@@ -169,10 +176,10 @@ namespace TvPlugin
 
     protected override void OnPageLoad()
     {
-      TVHome.WaitForGentleConnection();
+      TVHome.ShowTvEngineSettingsUIIfConnectionDown();
 
       base.OnPageLoad();
-      listRecordings = Schedule.ListAll();
+      LoadSchedules();
 
       if (btnShow != null) btnShow.RestoreSelection = false;
       if (btnEpisode != null) btnEpisode.RestoreSelection = false;
@@ -195,6 +202,16 @@ namespace TvPlugin
 
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
       if (btnSearchByDescription != null) btnSearchByDescription.Disabled = true;
+    }
+
+    private void LoadSchedules()
+    {
+      listRecordings = new List<ScheduleBLL>();
+      foreach (var schedule in ServiceAgents.Instance.ScheduleServiceAgent.ListAllSchedules())
+      {
+        var scheduleBll = new ScheduleBLL(schedule);
+        listRecordings.Add(scheduleBll);
+      }
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -536,16 +553,14 @@ namespace TvPlugin
       {
         case SearchMode.Genre:
           if (currentLevel == 0)
-          {
-            IList<string> genres;
-            TvBusinessLayer layer = new TvBusinessLayer();
-            genres = layer.GetGenres();
-            foreach (string genre in genres)
+          {            
+            IEnumerable<ProgramCategory> genres = ServiceAgents.Instance.ProgramCategoryServiceAgent.ListAllProgramCategories();
+            foreach (ProgramCategory genre in genres)
             {
               GUIListItem item = new GUIListItem();
               item.IsFolder = true;
-              item.Label = genre;
-              item.Path = genre;
+              item.Label = genre.Category;
+              item.Path = genre.Category;
               item.ItemId = currentItemId;
               currentItemId++;
               Utils.SetDefaultIcons(item);
@@ -563,14 +578,14 @@ namespace TvPlugin
             item.Label2 = String.Empty;
             item.Path = String.Empty;
             Utils.SetDefaultIcons(item);
-            //item.IconImage = "defaultFolderBig.png";
-            //item.IconImageBig = "defaultFolderBig.png";
             listView.Add(item);
             titleView.Add(item);
 
-            IList<Program> titles;
-            TvBusinessLayer layer = new TvBusinessLayer();
-            titles = layer.SearchProgramsPerGenre(currentGenre, filterShow,ChannelType.Tv);
+            IEnumerable<Program> titles = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndCategoryAndMediaType(currentGenre, filterShow,
+                                                                                      MediaTypeEnum.TV,
+                                                                                      StringComparisonEnum.StartsWith,
+                                                                                      StringComparisonEnum.StartsWith);   
+
             foreach (Program program in titles)
             {
               //dont show programs which have ended
@@ -677,29 +692,29 @@ namespace TvPlugin
               listView.Add(item);
               titleView.Add(item);
             }
-            IList<Program> titles = new List<Program>();
-            TvBusinessLayer layer = new TvBusinessLayer();
+            IEnumerable<Program> titles = new List<Program>();
+            StringComparisonEnum stringComparison = StringComparisonEnum.StartsWith;
+            stringComparison |= StringComparisonEnum.EndsWith;
             if (filterLetter == "#")
             {
               if (filterShow == String.Empty)
               {
-                titles = layer.SearchPrograms("%[^a-z]", ChannelType.Tv);
-                //titles = layer.SearchPrograms("");
+                titles = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndMediaType("[^a-z]", MediaTypeEnum.TV, stringComparison);                
               }
               else
               {
-                titles = layer.SearchPrograms("%" + filterShow, ChannelType.Tv);
+                titles = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndMediaType(filterShow, MediaTypeEnum.TV, stringComparison);                                
               }
             }
             else
             {
               if (filterShow == String.Empty)
               {
-                titles = layer.SearchPrograms(filterLetter, ChannelType.Tv);
+                titles = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndMediaType(filterLetter, MediaTypeEnum.TV, StringComparisonEnum.StartsWith);                                                
               }
               else
               {
-                titles = layer.SearchPrograms("%" + filterShow, ChannelType.Tv);
+                titles = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndMediaType(filterShow, MediaTypeEnum.TV, stringComparison);                                                                
               }
             }
             foreach (Program program in titles)
@@ -785,7 +800,7 @@ namespace TvPlugin
                   item.Label = TVUtil.GetDisplayTitle(program);
                   item.IsFolder = false;
                   //moved this if statement but can not see it is doing anything?
-                  //if (program.StartTime > DateTime.MinValue)
+                  //if (program.startTime > DateTime.MinValue)
                   //{
                       item.Label2 = strTime;
                   //}
@@ -817,31 +832,27 @@ namespace TvPlugin
           break;
         case SearchMode.Description:
           {
-            IList<Program> titles = new List<Program>();
-            long start = Utils.datetolong(DateTime.Now);
-            long end = Utils.datetolong(DateTime.Now.AddMonths(1));
-            TvBusinessLayer layer = new TvBusinessLayer();
-
+            IEnumerable<Program> titles = new List<Program>();            
             if (filterLetter == "#")
             {
               if (filterShow == String.Empty)
               {
-                titles = layer.SearchProgramsByDescription("", ChannelType.Tv);
+                titles = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByDescriptionAndMediaType("", MediaTypeEnum.TV, StringComparisonEnum.StartsWith);
               }
               else
               {
-                titles = layer.SearchProgramsByDescription(filterShow, ChannelType.Tv);
+                titles = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByDescriptionAndMediaType(filterShow, MediaTypeEnum.TV, StringComparisonEnum.StartsWith); 
               }
             }
             else
             {
               if (filterShow == String.Empty)
               {
-                titles = layer.SearchProgramsByDescription(filterLetter, ChannelType.Tv);
+                ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByDescriptionAndMediaType(filterLetter, MediaTypeEnum.TV, StringComparisonEnum.StartsWith);
               }
               else
               {
-                titles = layer.SearchProgramsByDescription(filterShow, ChannelType.Tv);
+                titles = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByDescriptionAndMediaType(filterShow, MediaTypeEnum.TV, StringComparisonEnum.StartsWith);
               }
             }
             foreach (Program program in titles)
@@ -1140,7 +1151,7 @@ namespace TvPlugin
             Program program = item.TVTag as Program;
             /*if (filterShow == String.Empty)
             {
-              filterShow = program.Title;
+              filterShow = program.title;
               Update();
               return;
             }*/
@@ -1176,7 +1187,7 @@ namespace TvPlugin
 
     private void OnRecord(Program program)
     {
-      TvServer server = new TvServer();
+      
       if (program == null)
       {
         return;
@@ -1206,34 +1217,33 @@ namespace TvPlugin
         {
           return;
         }
-        Schedule rec = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
+        Schedule rec = ScheduleFactory.CreateSchedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
 
-        TvBusinessLayer layer = new TvBusinessLayer();
-        rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
-        rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+        rec.PreRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").Value);
+        rec.PostRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").Value);
         switch (dlg.SelectedLabel)
         {
           case 0: //none
-            foreach (Schedule rec1 in listRecordings)
+            foreach (ScheduleBLL rec1 in listRecordings)
             {
               if (rec1.IsRecordingProgram(program, true))
               {
-                if (rec1.ScheduleType != (int)ScheduleRecordingType.Once)
+                if (rec1.Entity.ScheduleType != (int)ScheduleRecordingType.Once)
                 {
                   //delete specific series
-                  Schedule sched = Schedule.Retrieve(rec1.IdSchedule);
-                  TVUtil.DeleteRecAndSchedWithPrompt(sched, program.IdChannel);
+                  Schedule sched = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(rec1.Entity.IdSchedule);
+                  TVUtil.DeleteRecAndSchedWithPrompt(sched);
                 }
                 else
                 {
                   //cancel recording                                    
-                  server.StopRecordingSchedule(rec1.IdSchedule);
-                  rec1.Delete();
-                  server.OnNewSchedule();
+                  ServiceAgents.Instance.ControllerServiceAgent.StopRecordingSchedule(rec1.Entity.IdSchedule);                  
+                  ServiceAgents.Instance.ScheduleServiceAgent.DeleteSchedule(rec1.Entity.IdSchedule);
+                  ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
                 }
               }
             }
-            listRecordings = Schedule.ListAll();
+            LoadSchedules();
             Update();
             return;
           case 1: //once
@@ -1260,10 +1270,10 @@ namespace TvPlugin
           case 8://Weekly everytime, this channel
             rec.ScheduleType = (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel;
             break;
-        }
-        rec.Persist();
-        server.OnNewSchedule();
-        listRecordings = Schedule.ListAll();
+        }        
+        ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(rec);
+        ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
+        LoadSchedules();
         Update();
       }
     }
@@ -1272,11 +1282,11 @@ namespace TvPlugin
     {
       bool isRecording = false;
       isSerie = false;
-      foreach (Schedule record in listRecordings)
+      foreach (ScheduleBLL record in listRecordings)
       {
         if (record.IsRecordingProgram(program, true))
         {
-          if (record.ScheduleType != (int)ScheduleRecordingType.Once)
+          if (record.Entity.ScheduleType != (int)ScheduleRecordingType.Once)
           {
             isSerie = true;
           }
@@ -1305,7 +1315,7 @@ namespace TvPlugin
     {
       // have commented out setting lblProgramTitle.Label
       // this is because this label was never actually set in 
-      // previous versions of code (Skins are using #TV.Search.Title)
+      // previous versions of code (Skins are using #TV.Search.title)
       // also there is a bug with FadeLabels being set to String.Empty
       // which leads to this label not being updated when it should be
       GUIListItem item = GetSelectedItem();
@@ -1335,10 +1345,10 @@ namespace TvPlugin
         else
         {
           // see comment at top of method
-          //lblProgramTitle.Label = prog.Title;
-          lblProgramGenre.Label = prog.Genre;
+          //lblProgramTitle.Label = prog.title;
+          lblProgramGenre.Label = TVUtil.GetCategory(prog.ProgramCategory);
           GUIPropertyManager.SetProperty("#TV.Search.Title", prog.Title);
-          GUIPropertyManager.SetProperty("#TV.Search.Genre", prog.Genre);
+          GUIPropertyManager.SetProperty("#TV.Search.Genre", TVUtil.GetCategory(prog.ProgramCategory));
         }
         return;
       }
@@ -1351,21 +1361,21 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.Search.Title", TVUtil.GetDisplayTitle(prog));      
       GUIPropertyManager.SetProperty("#TV.Search.Time", strTime);
       GUIPropertyManager.SetProperty("#TV.Search.Description", prog.Description);
-      GUIPropertyManager.SetProperty("#TV.Search.Genre", prog.Genre);
-      GUIPropertyManager.SetProperty("#TV.Search.Channel", prog.ReferencedChannel().DisplayName);
+      GUIPropertyManager.SetProperty("#TV.Search.Genre", TVUtil.GetCategory(prog.ProgramCategory));
+      GUIPropertyManager.SetProperty("#TV.Search.Channel", prog.Channel.DisplayName);
 
       // see comment at top of method
       //lblProgramTitle.Label = TVUtil.GetDisplayTitle(prog);
       lblProgramTime.Label = strTime;
       lblProgramDescription.Label = prog.Description;
-      lblProgramGenre.Label = prog.Genre;
+      lblProgramGenre.Label = TVUtil.GetCategory(prog.ProgramCategory);
 
       if (lblChannel != null)
       {
-        lblChannel.Label = prog.ReferencedChannel().DisplayName;
+        lblChannel.Label = prog.Channel.DisplayName;
       }
 
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, prog.ReferencedChannel().DisplayName);
+      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, prog.Channel.DisplayName);
       if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo))
       {
         strLogo = "defaultVideoBig.png";
@@ -1413,13 +1423,8 @@ namespace TvPlugin
 
     private static Dictionary<int, Channel> GetChannelMap()
     {
-      Dictionary<int, Channel>  channelMap = new Dictionary<int, Channel>();
-      IList<Channel> channels = Channel.ListAll();
-      foreach (Channel channel in channels)
-      {
-        channelMap.Add(channel.IdChannel, channel);
-      }
-      return channelMap;
+      IEnumerable<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
+      return channels.ToDictionary(channel => channel.IdChannel);
     }
 
     private class Comparer : IComparer<GUIListItem>

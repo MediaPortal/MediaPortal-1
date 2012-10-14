@@ -20,16 +20,13 @@
 
 #region Usings
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using TvControl;
-using TvService;
-using TvEngine.PowerScheduler.Interfaces;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVControl.Interfaces;
+using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 
 #endregion
 
-namespace TvEngine.PowerScheduler.Handlers
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 {
   /// <summary>
   /// Handles standby when the TVController is active
@@ -38,15 +35,15 @@ namespace TvEngine.PowerScheduler.Handlers
   {
     #region Variables
 
-    private TVController _controller;
+    private readonly IInternalControllerService _controllerService;
 
     #endregion
 
     #region Constructor
 
-    public ControllerActiveHandler(IController controller)
+    public ControllerActiveHandler(IInternalControllerService controllerService)
     {
-      _controller = controller as TVController;
+      _controllerService = controllerService;
     }
 
     #endregion
@@ -57,7 +54,7 @@ namespace TvEngine.PowerScheduler.Handlers
     {
       get
       {
-        if (_controller != null && _controller.CanSuspend)
+        if (_controllerService != null && _controllerService.CanSuspend)
           return false;
         return true;
       }

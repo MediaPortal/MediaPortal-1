@@ -22,7 +22,7 @@ using System;
 using System.Windows.Forms;
 using DirectShowLib.BDA;
 
-namespace SetupTv.Dialogs
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class FormDVBCTuningDetail : SetupControls.FormTuningDetailCommon
   {

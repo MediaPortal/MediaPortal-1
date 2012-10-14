@@ -21,10 +21,11 @@
 #region Usings
 
 using System;
+using TvEngine.PowerScheduler.Interfaces;
 
 #endregion
 
-namespace TvEngine.PowerScheduler.Interfaces
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces
 {
   /// <summary>
   /// EvenHandler delegate for PowerScheduler events
@@ -93,7 +94,7 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// <param name="source"></param>
     /// <param name="how">How to suspend, see MediaPortal.Util.RestartOptions</param>
     /// <param name="force"></param>
-    void SuspendSystem(string source, int how, bool force);
+    void SuspendSystemWithOptions(string source, int how, bool force);
 
     /// <summary>
     /// Resets the idle timer of the PowerScheduler. When enough time has passed (IdleTimeout), the system

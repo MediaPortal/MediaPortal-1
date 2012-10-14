@@ -26,18 +26,26 @@ using System.Windows.Forms;
 using System.Threading;
 using System.Xml;
 using System.Net;
-using TvDatabase;
-using TvControl;
-using TvLibrary;
-using TvLibrary.Log;
-using TvLibrary.Channels;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Device;
 using DirectShowLib.BDA;
 using System.Xml.Serialization;
 using MediaPortal.UserInterface.Controls;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.SetupTV.Sections.CIMenu;
+using Mediaportal.TV.Server.SetupTV.Sections.Helpers;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class CardDvbS : SectionSettings
   {
@@ -197,7 +205,7 @@ namespace SetupTv.Sections
 
       InitializeComponent();
       //insert complete ci menu dialog to tab
-      Card dbCard = Card.Retrieve(_cardNumber);
+      Card dbCard = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber, CardIncludeRelationEnum.None);
       if (dbCard.UseConditionalAccess == true)
       {
         ciMenuDialog = new CI_Menu_Dialog(_cardNumber);
@@ -498,7 +506,7 @@ namespace SetupTv.Sections
           satellites.Add(ts);
         }
       }
-      IList<Satellite> dbSats = Satellite.ListAll();
+      IList<Satellite> dbSats = ServiceAgents.Instance.CardServiceAgent.ListAllSatellites(); 
       foreach (SatelliteContext ts in satellites)
       {
         foreach (Satellite dbSat in dbSats)
@@ -523,8 +531,12 @@ namespace SetupTv.Sections
             if (ts.SatelliteName[i] >= (char)32 && ts.SatelliteName[i] < (char)127)
               name += ts.SatelliteName[i];
           }
-          ts.Satellite = new Satellite(name, ts.FileName);
-          ts.Satellite.Persist();
+          
+
+          ts.Satellite = new Satellite { SatelliteName = name, TransponderFileName = ts.FileName };
+          ts.FileName = ts.FileName;
+
+          ServiceAgents.Instance.CardServiceAgent.SaveSatellite(ts.Satellite);
         }
       }
       return satellites;
@@ -541,7 +553,6 @@ namespace SetupTv.Sections
 
       _enableEvents = false;
 
-      TvBusinessLayer layer = new TvBusinessLayer();
       int idx = 0;
 
       mpComboBoxPolarisation.Items.AddRange(new object[]
@@ -638,7 +649,7 @@ namespace SetupTv.Sections
 
       //List<SimpleFileName> satellites = fileFilters.AllFiles;
       List<SatelliteContext> satellites = LoadSatellites();
-      IList<LnbType> tempLnbTypes = LnbType.ListAll();
+      IList<LnbType> tempLnbTypes = LnbTypeManagement.ListAllLnbTypes();
       LnbType[] lnbTypes = new LnbType[tempLnbTypes.Count];
       tempLnbTypes.CopyTo(lnbTypes, 0);
 
@@ -660,7 +671,7 @@ namespace SetupTv.Sections
         if (curBox.Items.Count > 0)
         {
           int selIdx =
-            Int32.Parse(layer.GetSetting(String.Format("dvbs{0}SatteliteContext{1}", _cardNumber, idx), "0").Value);
+            Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("dvbs{0}SatteliteContext{1}", _cardNumber, idx), "0").Value);
           if (selIdx < curBox.Items.Count)
           {
             curBox.SelectedIndex = selIdx;
@@ -697,16 +708,16 @@ namespace SetupTv.Sections
             "Port 15",
             "Port 16"});
         curBox.SelectedIndex =
-          Int32.Parse(layer.GetSetting(String.Format("dvbs{0}DiSEqC{1}", _cardNumber, idx), "0").Value);
+          Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("dvbs{0}DiSEqC{1}", _cardNumber, idx), "0").Value);
 
         curBox = mpComboLnbType[ctlIndex];
         curBox.Items.Clear();
         curBox.Items.AddRange((object[])lnbTypes);
         curBox.SelectedIndex =
-          Int32.Parse(layer.GetSetting(String.Format("dvbs{0}band{1}", _cardNumber, idx), "0").Value);
+          Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("dvbs{0}band{1}", _cardNumber, idx), "0").Value);
 
-        curCheck = mpLNBs[ctlIndex];
-        curCheck.Checked = (layer.GetSetting(String.Format("dvbs{0}LNB{1}", _cardNumber, idx), "0").Value == "true");
+        curCheck = mpLNBs[ctlIndex];        
+        curCheck.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("dvbs{0}LNB{1}", _cardNumber, idx), "0").Value == "true");
       }
 
       mpLNB1_CheckedChanged(null, null);
@@ -714,13 +725,14 @@ namespace SetupTv.Sections
       mpLNB3_CheckedChanged(null, null);
       mpLNB4_CheckedChanged(null, null);
 
-      checkBoxCreateGroups.Checked = (layer.GetSetting("dvbs" + _cardNumber + "creategroups", "false").Value == "true");
-      checkBoxCreateGroupsSat.Checked = (layer.GetSetting("dvbs" + _cardNumber + "creategroupssat", "false").Value ==
+      checkBoxCreateGroups.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "creategroups", "false").Value == "true");
+      checkBoxCreateGroupsSat.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "creategroupssat", "false").Value ==
                                          "true");
       checkBoxCreateSignalGroup.Checked =
-        (layer.GetSetting("dvbs" + _cardNumber + "createsignalgroup", "false").Value == "true");
+        (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "createsignalgroup", "false").Value == "true");
 
-      checkBoxEnableDVBS2.Checked = (layer.GetSetting("dvbs" + _cardNumber + "enabledvbs2", "false").Value == "true");
+      checkBoxEnableDVBS2.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "enabledvbs2", "false").Value == "true");
+
 
       _enableEvents = true;
       mpLNB1_CheckedChanged(null, null);
@@ -747,83 +759,37 @@ namespace SetupTv.Sections
 
     public override void SaveSettings()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("dvbs" + _cardNumber + "creategroups", "false");
-      setting.Value = checkBoxCreateGroups.Checked ? "true" : "false";
-      setting.Persist();
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "creategroups", checkBoxCreateGroups.Checked ? "true" : "false");
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "creategroupssat", checkBoxCreateGroupsSat.Checked ? "true" : "false");
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "createsignalgroup", checkBoxCreateSignalGroup.Checked ? "true" : "false");
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "SatteliteContext1", mpTransponder1.SelectedIndex.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "SatteliteContext2", mpTransponder2.SelectedIndex.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "SatteliteContext3", mpTransponder3.SelectedIndex.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "SatteliteContext4", mpTransponder4.SelectedIndex.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "DisEqc1", mpComboDiseqc1.SelectedIndex.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "DisEqc2", mpComboDiseqc2.SelectedIndex.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "DisEqc3", mpComboDiseqc3.SelectedIndex.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "DisEqc4", mpComboDiseqc4.SelectedIndex.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "band1", mpComboLnbType1.SelectedIndex.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "band2", mpComboLnbType2.SelectedIndex.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "band3", mpComboLnbType3.SelectedIndex.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "band4", mpComboLnbType4.SelectedIndex.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "LNB1", mpLNB1.Checked ? "true" : "false");
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "LNB2", mpLNB2.Checked ? "true" : "false");
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "LNB3", mpLNB3.Checked ? "true" : "false");
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "LNB4", mpLNB4.Checked ? "true" : "false");
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "enabledvbs2", checkBoxEnableDVBS2.Checked ? "true" : "false");
 
-      setting = layer.GetSetting("dvbs" + _cardNumber + "creategroupssat", "false");
-      setting.Value = checkBoxCreateGroupsSat.Checked ? "true" : "false";
-      setting.Persist();
-
-      setting = layer.GetSetting("dvbs" + _cardNumber + "createsignalgroup", "false");
-      setting.Value = checkBoxCreateSignalGroup.Checked ? "true" : "false";
-      setting.Persist();
-
-      setting = layer.GetSetting("dvbs" + _cardNumber + "SatteliteContext1", "0");
-      setting.Value = mpTransponder1.SelectedIndex.ToString();
-      setting.Persist();
-      setting = layer.GetSetting("dvbs" + _cardNumber + "SatteliteContext2", "0");
-      setting.Value = mpTransponder2.SelectedIndex.ToString();
-      setting.Persist();
-      setting = layer.GetSetting("dvbs" + _cardNumber + "SatteliteContext3", "0");
-      setting.Value = mpTransponder3.SelectedIndex.ToString();
-      setting.Persist();
-      setting = layer.GetSetting("dvbs" + _cardNumber + "SatteliteContext4", "0");
-      setting.Value = mpTransponder4.SelectedIndex.ToString();
-      setting.Persist();
-
-      setting = layer.GetSetting("dvbs" + _cardNumber + "DisEqc1", "0");
-      setting.Value = mpComboDiseqc1.SelectedIndex.ToString();
-      setting.Persist();
-      setting = layer.GetSetting("dvbs" + _cardNumber + "DisEqc2", "0");
-      setting.Value = mpComboDiseqc2.SelectedIndex.ToString();
-      setting.Persist();
-      setting = layer.GetSetting("dvbs" + _cardNumber + "DisEqc3", "0");
-      setting.Value = mpComboDiseqc3.SelectedIndex.ToString();
-      setting.Persist();
-      setting = layer.GetSetting("dvbs" + _cardNumber + "DisEqc4", "0");
-      setting.Value = mpComboDiseqc4.SelectedIndex.ToString();
-      setting.Persist();
-
-      setting = layer.GetSetting("dvbs" + _cardNumber + "band1", "0");
-      setting.Value = mpComboLnbType1.SelectedIndex.ToString();
-      setting.Persist();
-      setting = layer.GetSetting("dvbs" + _cardNumber + "band2", "0");
-      setting.Value = mpComboLnbType2.SelectedIndex.ToString();
-      setting.Persist();
-      setting = layer.GetSetting("dvbs" + _cardNumber + "band3", "0");
-      setting.Value = mpComboLnbType3.SelectedIndex.ToString();
-      setting.Persist();
-      setting = layer.GetSetting("dvbs" + _cardNumber + "band4", "0");
-      setting.Value = mpComboLnbType4.SelectedIndex.ToString();
-      setting.Persist();
-
-      setting = layer.GetSetting("dvbs" + _cardNumber + "LNB1", "false");
-      setting.Value = mpLNB1.Checked ? "true" : "false";
-      setting.Persist();
-      setting = layer.GetSetting("dvbs" + _cardNumber + "LNB2", "false");
-      setting.Value = mpLNB2.Checked ? "true" : "false";
-      setting.Persist();
-      setting = layer.GetSetting("dvbs" + _cardNumber + "LNB3", "false");
-      setting.Value = mpLNB3.Checked ? "true" : "false";
-      setting.Persist();
-      setting = layer.GetSetting("dvbs" + _cardNumber + "LNB4", "false");
-      setting.Value = mpLNB4.Checked ? "true" : "false";
-      setting.Persist();
-
-      setting = layer.GetSetting("dvbs" + _cardNumber + "enabledvbs2", "false");
-      setting.Value = checkBoxEnableDVBS2.Checked ? "true" : "false";
-      setting.Persist();
+    
     }
 
     private void UpdateStatus()
     {
-      progressBarLevel.Value = Math.Min(100, RemoteControl.Instance.SignalLevel(_cardNumber));
-      progressBarQuality.Value = Math.Min(100, RemoteControl.Instance.SignalQuality(_cardNumber));
-      progressBarSatLevel.Value = Math.Min(100, RemoteControl.Instance.SignalLevel(_cardNumber));
-      progressBarSatQuality.Value = Math.Min(100, RemoteControl.Instance.SignalQuality(_cardNumber));
-      labelTunerLock.Text = RemoteControl.Instance.TunerLocked(_cardNumber) ? "Yes" : "No";
+      progressBarLevel.Value = Math.Min(100, ServiceAgents.Instance.ControllerServiceAgent.SignalLevel(_cardNumber));
+      progressBarQuality.Value = Math.Min(100, ServiceAgents.Instance.ControllerServiceAgent.SignalQuality(_cardNumber));
+      progressBarSatLevel.Value = Math.Min(100, ServiceAgents.Instance.ControllerServiceAgent.SignalLevel(_cardNumber));
+      progressBarSatQuality.Value = Math.Min(100, ServiceAgents.Instance.ControllerServiceAgent.SignalQuality(_cardNumber));
+      labelTunerLock.Text = ServiceAgents.Instance.ControllerServiceAgent.TunerLocked(_cardNumber) ? "Yes" : "No";
     }
 
     public override void OnSectionActivated()
@@ -854,22 +820,22 @@ namespace SetupTv.Sections
           return;
 
         case ScanState.Initialized:
-          SaveSettings();
-          TvBusinessLayer layer = new TvBusinessLayer();
-          Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+         SaveSettings();
+          
+          Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
           if (card.Enabled == false)
           {
             MessageBox.Show(this, "Tuner is disabled. Please enable the tuner before scanning.");
             return;
           }
-          if (!RemoteControl.Instance.CardPresent(card.IdCard))
+          if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.IdCard))
           {
             MessageBox.Show(this, "Tuner is not found. Please make sure the tuner is present before scanning.");
             return;
           }
           // Check if the card is locked for scanning.
           IUser user;
-          if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
+          if (ServiceAgents.Instance.ControllerServiceAgent.IsCardInUse(_cardNumber, out user))
           {
             MessageBox.Show(this,
                             "Tuner is locked. Scanning is not possible at the moment. Perhaps you are using another part of a hybrid card?");
@@ -903,7 +869,7 @@ namespace SetupTv.Sections
       {
         scanState = ScanState.Scanning;
         Invoke(updateControls);
-        RemoteControl.Instance.EpgGrabberEnabled = false;
+        ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = false;
 
         listViewStatus.Items.Clear();
         _tvChannelsNew = 0;
@@ -949,8 +915,8 @@ namespace SetupTv.Sections
       {
         IUser user = new User();
         user.CardId = _cardNumber;
-        RemoteControl.Instance.StopCard(user);
-        RemoteControl.Instance.EpgGrabberEnabled = true;
+        ServiceAgents.Instance.ControllerServiceAgent.StopCard(user.CardId);
+        ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
         progressBar1.Value = 100;
         scanState = ScanState.Done;
         Invoke(updateControls);
@@ -963,14 +929,14 @@ namespace SetupTv.Sections
       List<DVBSChannel> _channels = new List<DVBSChannel>();
 
       // get default sat position from DB
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+
+      Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
 
       int position = -1;
-      Setting setting = layer.GetSetting("dvbs" + _cardNumber + "motorEnabled", "no");
+      Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "motorEnabled", "no");
       if (setting.Value == "yes")
       {
-        foreach (DiSEqCMotor motor in card.ReferringDiSEqCMotor())
+        foreach (DisEqcMotor motor in card.DisEqcMotors)
         {
           if (motor.IdSatellite == context.Satellite.IdSatellite)
           {
@@ -1006,7 +972,7 @@ namespace SetupTv.Sections
           ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
 
-          IChannel[] channels = RemoteControl.Instance.ScanNIT(_cardNumber, tuneChannel);
+          IChannel[] channels = ServiceAgents.Instance.ControllerServiceAgent.ScanNIT(_cardNumber, tuneChannel);
           if (channels != null)
           {
             for (int i = 0; i < channels.Length; ++i)
@@ -1073,17 +1039,17 @@ namespace SetupTv.Sections
 
         if (scanIndex == 1) // first scanned
         {
-          RemoteControl.Instance.Scan(ref user, tuneChannel, -1);
+          ServiceAgents.Instance.ControllerServiceAgent.Scan(user.Name, user.CardId, out user, tuneChannel, -1);
         }
         UpdateStatus();
 
-        IChannel[] channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
+        IChannel[] channels = ServiceAgents.Instance.ControllerServiceAgent.Scan(_cardNumber, tuneChannel);
 
         UpdateStatus();
 
         if (channels == null || channels.Length == 0)
         {
-          if (RemoteControl.Instance.TunerLocked(_cardNumber) == false)
+          if (ServiceAgents.Instance.ControllerServiceAgent.TunerLocked(_cardNumber) == false)
           {
             line = String.Format("lnb:{0} {1}tp- {2} {3} {4}:No signal", lnb, scanIndex, tuneChannel.Frequency,
                                  tuneChannel.Polarisation, tuneChannel.SymbolRate);
@@ -1112,85 +1078,92 @@ namespace SetupTv.Sections
             //According to the DVB specs ONID + SID is unique, therefore we do not need to use the TSID to identify a service.
             //The DVB spec recommends that the SID should not change if a service moves. This theoretically allows us to
             //track channel movements.
-            currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.ServiceId,
-                                                               TvBusinessLayer.GetChannelType(channel));
+            TuningDetailSearchEnum tuningDetailSearchEnum = TuningDetailSearchEnum.NetworkId;
+            tuningDetailSearchEnum |= TuningDetailSearchEnum.ServiceId;
+            currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailCustom(channel, tuningDetailSearchEnum);                             
           }
           else
           {
             //There are certain providers that do not maintain unique ONID + SID combinations.
             //In those cases, ONID + TSID + SID is generally unique. The consequence of using the TSID to identify
             //a service is that channel movement tracking won't work (each transponder/mux should have its own TSID).
-            currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.TransportId, channel.ServiceId,
-                                                               TvBusinessLayer.GetChannelType(channel));
+            currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetail(channel);
           }
 
           if (currentDetail == null)
           {
             //add new channel
             exists = false;
-            dbChannel = layer.AddNewChannel(channel.Name);
+            dbChannel = ChannelFactory.CreateChannel(channel.Name);
             dbChannel.SortOrder = 10000;
             if (channel.LogicalChannelNumber >= 1)
             {
               dbChannel.SortOrder = channel.LogicalChannelNumber;
             }
-            dbChannel.IsTv = channel.IsTv;
-            dbChannel.IsRadio = channel.IsRadio;
-            dbChannel.Persist();
+            dbChannel.MediaType = (int)channel.MediaType;
+            dbChannel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
+            dbChannel.AcceptChanges();
           }
           else
           {
             exists = true;
-            dbChannel = currentDetail.ReferencedChannel();
+            dbChannel = currentDetail.Channel;
           }
 
-          if (dbChannel.IsTv)
+          if (dbChannel.MediaType == (int)MediaTypeEnum.TV)
           {
-            layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
+            ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
+            MappingHelper.AddChannelToGroup(ref dbChannel, @group);
             if (checkBoxCreateSignalGroup.Checked)
             {
-              layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.DVBS);
+              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.DVBS, MediaTypeEnum.TV);
+              MappingHelper.AddChannelToGroup(ref dbChannel, @group);
             }
             if (checkBoxCreateGroupsSat.Checked)
             {
-              layer.AddChannelToGroup(dbChannel, context.Satellite.SatelliteName);
+              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(context.Satellite.SatelliteName, MediaTypeEnum.TV);
+              MappingHelper.AddChannelToGroup(ref dbChannel, @group);
             }
             if (checkBoxCreateGroups.Checked)
             {
-              layer.AddChannelToGroup(dbChannel, channel.Provider);
+              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(channel.Provider, MediaTypeEnum.TV);
+              MappingHelper.AddChannelToGroup(ref dbChannel, @group);
             }
           }
-          if (dbChannel.IsRadio)
+          if (dbChannel.MediaType == (int)MediaTypeEnum.Radio)
           {
-            layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.AllChannels);
+            ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.Radio);
+            MappingHelper.AddChannelToGroup(ref dbChannel, @group);
             if (checkBoxCreateSignalGroup.Checked)
             {
-              layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.DVBS);
+              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.DVBS, MediaTypeEnum.Radio);
+              MappingHelper.AddChannelToGroup(ref dbChannel, @group);
             }
             if (checkBoxCreateGroupsSat.Checked)
             {
-              layer.AddChannelToRadioGroup(dbChannel, context.Satellite.SatelliteName);
+              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(context.Satellite.SatelliteName, MediaTypeEnum.Radio);
+              MappingHelper.AddChannelToGroup(ref dbChannel, @group);
             }
             if (checkBoxCreateGroups.Checked)
             {
-              layer.AddChannelToRadioGroup(dbChannel, channel.Provider);
+              group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(channel.Provider, MediaTypeEnum.Radio);
+              MappingHelper.AddChannelToGroup(ref dbChannel, @group);
             }
           }
 
           if (currentDetail == null)
           {
             channel.SatelliteIndex = position; // context.Satellite.IdSatellite;
-            layer.AddTuningDetails(dbChannel, channel);
+            ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel);
           }
           else
           {
             //update tuning details...
             channel.SatelliteIndex = position; // context.Satellite.IdSatellite;
             currentDetail.SatIndex = position; //context.Satellite.IdSatellite;
-            TuningDetail td = layer.UpdateTuningDetails(dbChannel, channel, currentDetail);
-            td.Persist();
+            ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbChannel.IdChannel, currentDetail.IdTuning, channel);
           }
-          if (channel.IsTv)
+          if (channel.MediaType == MediaTypeEnum.TV)
           {
             if (exists)
             {
@@ -1203,7 +1176,7 @@ namespace SetupTv.Sections
               newChannels++;
             }
           }
-          if (channel.IsRadio)
+          if (channel.MediaType == MediaTypeEnum.Radio)
           {
             if (exists)
             {
@@ -1216,7 +1189,7 @@ namespace SetupTv.Sections
               newChannels++;
             }
           }
-          layer.MapChannelToCard(card, dbChannel, false);
+          MappingHelper.AddChannelToCard(dbChannel, card, false);
           line = String.Format("lnb:{0} {1}tp- {2} {3} {4}:New:{5} Updated:{6}",
                                lnb, 1 + index, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate,
                                newChannels, updatedChannels);
@@ -1234,8 +1207,8 @@ namespace SetupTv.Sections
     private void SetupMotor()
     {
       _enableEvents = false;
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("dvbs" + _cardNumber + "motorEnabled", "no");
+
+      Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "motorEnabled", "no");
       bool enabled = false;
       if (setting.Value == "yes")
       {
@@ -1248,7 +1221,7 @@ namespace SetupTv.Sections
       for (int i = 1; i < 127; ++i)
         comboBoxStepSize.Items.Add(i.ToString());
 
-      setting = layer.GetSetting("dvbs" + _cardNumber + "motorStepSize", "10");
+      setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "motorStepSize", "10");
       int stepsize;
       if (Int32.TryParse(setting.Value, out stepsize))
         comboBoxStepSize.SelectedIndex = stepsize - 1;
@@ -1257,7 +1230,7 @@ namespace SetupTv.Sections
 
       comboBoxSat.Items.Clear();
 
-      setting = layer.GetSetting("dvbs" + _cardNumber + "selectedMotorSat", "0");
+      setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "selectedMotorSat", "0");
       int index;
       Int32.TryParse(setting.Value, out index);
 
@@ -1295,7 +1268,7 @@ namespace SetupTv.Sections
       if (checkBox1.Checked == false)
         return;
       //move motor west
-      RemoteControl.Instance.DiSEqCDriveMotor(_cardNumber, DiseqcDirection.West,
+      ServiceAgents.Instance.ControllerServiceAgent.DiSEqCDriveMotor(_cardNumber, DiSEqCDirection.West,
                                               (byte)(1 + comboBoxStepSize.SelectedIndex));
       comboBox1_SelectedIndexChanged(null, null); //tune..;
     }
@@ -1307,7 +1280,7 @@ namespace SetupTv.Sections
       if (checkBox1.Checked == false)
         return;
       //set motor west limit
-      RemoteControl.Instance.DiSEqCSetWestLimit(_cardNumber);
+      ServiceAgents.Instance.ControllerServiceAgent.DiSEqCSetWestLimit(_cardNumber);
     }
 
     private void tabPage2_Click(object sender, EventArgs e) {}
@@ -1323,13 +1296,13 @@ namespace SetupTv.Sections
         return;
       SatelliteContext sat = (SatelliteContext)comboBoxSat.Items[comboBoxSat.SelectedIndex];
 
-      Card card = Card.Retrieve(_cardNumber);
-      IList<DiSEqCMotor> motorSettings = card.ReferringDiSEqCMotor();
-      foreach (DiSEqCMotor motor in motorSettings)
+      Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber);
+      IList<DisEqcMotor> motorSettings = card.DisEqcMotors;
+      foreach (DisEqcMotor motor in motorSettings)
       {
         if (motor.IdSatellite == sat.Satellite.IdSatellite)
         {
-          RemoteControl.Instance.DiSEqCGotoPosition(_cardNumber, (byte)motor.Position);
+          ServiceAgents.Instance.ControllerServiceAgent.DiSEqCGotoPosition(_cardNumber, (byte)motor.Position);
           MessageBox.Show("Satellite moving to position:" + motor.Position, "Info", MessageBoxButtons.OK,
                           MessageBoxIcon.Information);
           comboBox1_SelectedIndexChanged(null, null);
@@ -1349,9 +1322,9 @@ namespace SetupTv.Sections
       //store motor position..
       int index = -1;
       SatelliteContext sat = (SatelliteContext)comboBoxSat.SelectedItem;
-      Card card = Card.Retrieve(_cardNumber);
-      IList<DiSEqCMotor> motorSettings = card.ReferringDiSEqCMotor();
-      foreach (DiSEqCMotor motor in motorSettings)
+      Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber);
+      IList<DisEqcMotor> motorSettings = card.DisEqcMotors;
+      foreach (DisEqcMotor motor in motorSettings)
       {
         if (motor.IdSatellite == sat.Satellite.IdSatellite)
         {
@@ -1362,10 +1335,14 @@ namespace SetupTv.Sections
       if (index < 0)
       {
         index = motorSettings.Count + 1;
-        DiSEqCMotor motor = new DiSEqCMotor(card.IdCard, sat.Satellite.IdSatellite, index);
-        motor.Persist();
+        DisEqcMotor motor = new DisEqcMotor();
+        motor.IdCard = card.IdCard;
+        motor.IdSatellite = sat.Satellite.IdSatellite;
+        motor.Position = index;
+        ServiceAgents.Instance.CardServiceAgent.SaveDisEqcMotor(motor);
+
       }
-      RemoteControl.Instance.DiSEqCStorePosition(_cardNumber, (byte)(index));
+      ServiceAgents.Instance.ControllerServiceAgent.DiSEqCStorePosition(_cardNumber, (byte)(index));
       MessageBox.Show("Satellite position stored to:" + index, "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
@@ -1376,7 +1353,7 @@ namespace SetupTv.Sections
       if (checkBox1.Checked == false)
         return;
       //move motor east
-      RemoteControl.Instance.DiSEqCDriveMotor(_cardNumber, DiseqcDirection.East,
+      ServiceAgents.Instance.ControllerServiceAgent.DiSEqCDriveMotor(_cardNumber, DiSEqCDirection.East,
                                               (byte)(1 + comboBoxStepSize.SelectedIndex));
       comboBox1_SelectedIndexChanged(null, null); //tune..
     }
@@ -1388,7 +1365,7 @@ namespace SetupTv.Sections
       if (checkBox1.Checked == false)
         return;
       //set motor east limit
-      RemoteControl.Instance.DiSEqCSetEastLimit(_cardNumber);
+      ServiceAgents.Instance.ControllerServiceAgent.DiSEqCSetEastLimit(_cardNumber);
     }
 
     private void comboBoxSat_SelectedIndexChanged(object sender, EventArgs e)
@@ -1397,13 +1374,12 @@ namespace SetupTv.Sections
         return;
       if (checkBox1.Checked == false)
         return;
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("dvbs" + _cardNumber + "selectedMotorSat", "0");
-      setting.Value = comboBoxSat.SelectedIndex.ToString();
-      setting.Persist();
+
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "selectedMotorSat", comboBoxSat.SelectedIndex.ToString());
       LoadMotorTransponder();
       comboBox1_SelectedIndexChanged(null, null);
     }
+
 
     private void checkBoxEnabled_CheckedChanged(object sender, EventArgs e)
     {
@@ -1411,13 +1387,10 @@ namespace SetupTv.Sections
         return;
       if (checkBox1.Checked == false)
         return;
-      TvBusinessLayer layer = new TvBusinessLayer();
       if (checkBoxEnabled.Checked)
       {
-        RemoteControl.Instance.DiSEqCForceLimit(_cardNumber, true);
-        Setting setting = layer.GetSetting("dvbs" + _cardNumber + "limitsEnabled", "yes");
-        setting.Value = "yes";
-        setting.Persist();
+        ServiceAgents.Instance.ControllerServiceAgent.DiSEqCForceLimit(_cardNumber, true);
+        ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "limitsEnabled", "yes");
       }
       else
       {
@@ -1425,28 +1398,23 @@ namespace SetupTv.Sections
           MessageBox.Show("Disabling the east/west limits could damage your dish!!! Are you sure?", "Warning",
                           MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
         {
-          RemoteControl.Instance.DiSEqCForceLimit(_cardNumber, false);
-          Setting setting = layer.GetSetting("dvbs" + _cardNumber + "limitsEnabled", "yes");
-          setting.Value = "no";
-          setting.Persist();
+          ServiceAgents.Instance.ControllerServiceAgent.DiSEqCForceLimit(_cardNumber, false);
+          ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "limitsEnabled", "no");
+
         }
         else
         {
           _enableEvents = false;
           checkBoxEnabled.Checked = true;
-          RemoteControl.Instance.DiSEqCForceLimit(_cardNumber, true);
-          Setting setting = layer.GetSetting("dvbs" + _cardNumber + "limitsEnabled", "yes");
-          setting.Value = "yes";
-          setting.Persist();
+          ServiceAgents.Instance.ControllerServiceAgent.DiSEqCForceLimit(_cardNumber, true);
+          ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "limitsEnabled", "yes");
           _enableEvents = true;
         }
       }
     }
-
     private void LoadMotorTransponder()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("dvbs" + _cardNumber + "limitsEnabled", "yes");
+      Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "limitsEnabled", "yes");
       if (setting.Value == "yes")
         checkBoxEnabled.Checked = true;
       if (setting.Value == "no")
@@ -1488,9 +1456,9 @@ namespace SetupTv.Sections
       if (mpComboDiseqc1.SelectedIndex >= 0)
         tuneChannel.Diseqc = (DiseqcPort)mpComboDiseqc1.SelectedIndex;
       _user.CardId = _cardNumber;
-      RemoteControl.Instance.StopCard(_user);
+      ServiceAgents.Instance.ControllerServiceAgent.StopCard(_user.CardId);
       _user.CardId = _cardNumber;
-      RemoteControl.Instance.Tune(ref _user, tuneChannel, -1);
+      ServiceAgents.Instance.ControllerServiceAgent.Tune(_user.Name, _user.CardId, out _user, tuneChannel, -1);
       progressBarLevel.Value = 1;
       progressBarQuality.Value = 1;
       progressBarSatLevel.Value = 1;
@@ -1504,7 +1472,7 @@ namespace SetupTv.Sections
         return;
       if (checkBox1.Checked == false)
         return;
-      RemoteControl.Instance.DiSEqCStopMotor(_cardNumber);
+      ServiceAgents.Instance.ControllerServiceAgent.DiSEqCStopMotor(_cardNumber);
       comboBox1_SelectedIndexChanged(null, null);
     }
 
@@ -1514,7 +1482,7 @@ namespace SetupTv.Sections
         return;
       if (checkBox1.Checked == false)
         return;
-      RemoteControl.Instance.DiSEqCGotoReferencePosition(_cardNumber);
+      ServiceAgents.Instance.ControllerServiceAgent.DiSEqCGotoReferencePosition(_cardNumber);
       comboBox1_SelectedIndexChanged(null, null);
     }
 
@@ -1525,7 +1493,7 @@ namespace SetupTv.Sections
       if (checkBox1.Checked == false)
         return;
       //move motor up
-      RemoteControl.Instance.DiSEqCDriveMotor(_cardNumber, DiseqcDirection.Up,
+      ServiceAgents.Instance.ControllerServiceAgent.DiSEqCDriveMotor(_cardNumber, DiSEqCDirection.Up,
                                               (byte)(1 + comboBoxStepSize.SelectedIndex));
     }
 
@@ -1536,7 +1504,7 @@ namespace SetupTv.Sections
       if (checkBox1.Checked == false)
         return;
       //move motor up
-      RemoteControl.Instance.DiSEqCDriveMotor(_cardNumber, DiseqcDirection.Down,
+      ServiceAgents.Instance.ControllerServiceAgent.DiSEqCDriveMotor(_cardNumber, DiSEqCDirection.Down,
                                               (byte)(1 + comboBoxStepSize.SelectedIndex));
     }
 
@@ -1546,10 +1514,7 @@ namespace SetupTv.Sections
         return;
       if (checkBox1.Checked == false)
         return;
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("dvbs" + _cardNumber + "motorStepSize", "10");
-      setting.Value = String.Format("{0}", (1 + comboBoxStepSize.SelectedIndex));
-      setting.Persist();
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "motorStepSize", String.Format("{0}", (1 + comboBoxStepSize.SelectedIndex)));            
     }
 
     private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -1570,10 +1535,7 @@ namespace SetupTv.Sections
       buttonSetEastLimit.Enabled = checkBox1.Checked;
       buttonReset.Enabled = checkBox1.Checked;
 
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("dvbs" + _cardNumber + "motorEnabled", "no");
-      setting.Value = checkBox1.Checked ? "yes" : "no";
-      setting.Persist();
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "motorEnabled", checkBox1.Checked ? "yes" : "no");      
     }
 
     private bool reentrant;
@@ -1592,10 +1554,10 @@ namespace SetupTv.Sections
           if (checkBox1.Checked == false)
             return;
 
-          RemoteControl.Instance.UpdateSignalSate(_cardNumber);
+          ServiceAgents.Instance.ControllerServiceAgent.UpdateSignalSate(_cardNumber);
           _signalTimer = DateTime.Now;
           int satPos, stepsAzimuth, stepsElevation;
-          RemoteControl.Instance.DiSEqCGetPosition(_cardNumber, out satPos, out stepsAzimuth, out stepsElevation);
+          ServiceAgents.Instance.ControllerServiceAgent.DiSEqCGetPosition(_cardNumber, out satPos, out stepsAzimuth, out stepsElevation);
           if (satPos < 0)
             labelCurrentPosition.Text = "unknown";
           else
@@ -1635,7 +1597,7 @@ namespace SetupTv.Sections
     {
       if (checkBox1.Checked == false)
         return;
-      RemoteControl.Instance.DiSEqCReset(_cardNumber);
+      ServiceAgents.Instance.ControllerServiceAgent.DiSEqCReset(_cardNumber);
     }
 
     #endregion

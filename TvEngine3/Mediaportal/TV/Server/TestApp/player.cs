@@ -20,12 +20,12 @@
 
 using System;
 using System.Runtime.InteropServices;
-using DirectShowLib;
-using TvLibrary.Log;
-using TvLibrary;
 using System.Windows.Forms;
+using DirectShowLib;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TestApp
+namespace Mediaportal.TV.Server.TestApp
 {
   internal class Player
   {

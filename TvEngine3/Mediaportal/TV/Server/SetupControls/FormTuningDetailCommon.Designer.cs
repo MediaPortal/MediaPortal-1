@@ -1,4 +1,6 @@
-namespace SetupControls
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupControls
 {
   partial class FormTuningDetailCommon
   {
@@ -28,8 +30,8 @@ namespace SetupControls
     /// </summary>
     private void InitializeComponent()
     {
-      this.mpButtonCancel = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonOk = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonCancel = new MPButton();
+      this.mpButtonOk = new MPButton();
       this.SuspendLayout();
       // 
       // mpButtonCancel
@@ -73,7 +75,7 @@ namespace SetupControls
 
     #endregion
 
-    protected MediaPortal.UserInterface.Controls.MPButton mpButtonCancel;
-    protected MediaPortal.UserInterface.Controls.MPButton mpButtonOk;
+    protected MPButton mpButtonCancel;
+    protected MPButton mpButtonOk;
   }
 }

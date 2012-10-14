@@ -24,11 +24,12 @@ using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
-using TvLibrary.Interfaces;
+using MediaPortal.Common.Utils;
+
 
 // for Service Framework
 
-namespace MediaPortal.Utils.Web
+namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
 {
   /// <summary>
   /// Creates an HTTP request and gets response data from web site.
@@ -64,8 +65,8 @@ namespace MediaPortal.Utils.Web
     /// </summary>
     public HTTPTransaction()
     {
-      _auth = GlobalServiceProvider.Instance.TryGet<IHttpAuthentication>();
-      _stats = GlobalServiceProvider.Instance.TryGet<IHttpStatistics>();
+      _auth = GlobalServiceProvider.Instance.Get<IHttpAuthentication>();
+      _stats = GlobalServiceProvider.Instance.Get<IHttpStatistics>();
     }
 
     /// <summary>

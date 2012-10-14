@@ -20,9 +20,9 @@
 
 using System;
 using System.Windows.Forms;
-using MediaPortal.WebEPG.Config;
+using WebEPG.config.WebEPG;
 
-namespace SetupTv.Sections.WebEPGConfig
+namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
 {
   public partial class MergedChannelDetails : Form
   {

@@ -21,15 +21,17 @@
 #region Usings
 
 using System;
+using System.ServiceModel;
 
 #endregion
 
-namespace TvEngine.PowerScheduler.Interfaces
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces
 {
   /// <summary>
   /// Public interface to PowerScheduler power control
   /// Intented to be used by singleseat setups
   /// </summary>
+  [ServiceContract(Namespace = "http://www.team-mediaportal.com")]
   public interface IPowerController
   {
     /// <summary>
@@ -37,6 +39,7 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// </summary>
     /// <param name="source">description of who wants to suspend the system</param>
     /// <param name="force">force the system to suspend (not recommended)</param>
+    [OperationContract]
     void SuspendSystem(string source, bool force);
 
     /// <summary>
@@ -45,7 +48,8 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// <param name="source"></param>
     /// <param name="how">How to suspend, see MediaPortal.Util.RestartOptions</param>
     /// <param name="force"></param>
-    void SuspendSystem(string source, int how, bool force);
+    [OperationContract]
+    void SuspendSystemWithOptions(string source, int how, bool force);
 
     /// <summary>
     /// Enables clients on singleseat setups to indicate whether or not the system
@@ -53,6 +57,7 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// </summary>
     /// <param name="standbyAllowed">is standby allowed?</param>
     /// <param name="handlerName">client handlername which prevents standby</param>
+    [OperationContract]
     void SetStandbyAllowed(bool standbyAllowed, string handlerName);
 
     /// <summary>
@@ -61,6 +66,7 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// </summary>
     /// <param name="nextWakeupTime">DateTime when to wakeup the system</param>
     /// <param name="handlerName">client handlername which is responsible for this wakeup time</param>
+    [OperationContract]
     void SetNextWakeupTime(DateTime nextWakeupTime, string handlerName);
 
     /// <summary>
@@ -68,6 +74,7 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// is suspended as soon as possible (no handler disallows shutdown).
     /// Note that the idle timer is automatically reset to now when the user moves the mouse or touchs the keyboard.
     /// </summary>
+    [OperationContract]
     void UserActivityDetected(DateTime when);
 
     /// <summary>
@@ -76,33 +83,39 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// </summary>
     /// <param name="standbyHandlerURI"></param>
     /// <param name="wakeupHandlerURI"></param>
+    [OperationContract]
     int RegisterRemote(String standbyHandlerURI, String wakeupHandlerURI);
 
     /// <summary>
     /// Unregister remote handlers.
     /// </summary>
+    [OperationContract]
     void UnregisterRemote(int tag);
 
     /// <summary>
     /// Indicates whether or not we're connected to the PowerScheduler power control interfaces
     /// </summary>
-    bool IsConnected { get; }
+    [OperationContract]
+    bool IsConnected();
 
     /// <summary>
     /// Get the current state. If refresh is true, the state is the most current state, otherwise the state could be some seconds old.
     /// Special case: If shutdown is not allowed because an event is almost due, the handler name is "EVENT-DUE".
     /// </summary>
     /// <param name="refresh"></param>
+    /// <param name="unattended"></param>
     /// <param name="disAllowShutdown"></param>
     /// <param name="disAllowShutdownHandler"></param>
     /// <param name="nextWakeupTime"></param>
     /// <param name="nextWakeupHandler"></param>
+    [OperationContract]
     void GetCurrentState(bool refresh, out bool unattended, out bool disAllowShutdown,
                          out String disAllowShutdownHandler, out DateTime nextWakeupTime, out String nextWakeupHandler);
 
     /// <summary>
     /// Provides access to PowerScheduler's settings
     /// </summary>
-    IPowerSettings PowerSettings { get; }
+    [OperationContract]
+    IPowerSettings PowerSettings();
   }
 }

@@ -8,9 +8,9 @@
     <ProjectGuid>{D27D51F7-F01E-45FD-864A-8A0E334179CF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ViXS</RootNamespace>
-    <AssemblyName>ViXS</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <RootNamespace>Mediaportal.TV.Server.Plugins.CustomDevices.ViXS</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.Plugins.CustomDevices.ViXS</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>

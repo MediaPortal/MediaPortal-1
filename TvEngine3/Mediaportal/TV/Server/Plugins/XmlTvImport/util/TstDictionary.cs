@@ -22,7 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 
-namespace Tst
+namespace Mediaportal.TV.Server.Plugins.XmlTvImport.util
 {
   /// <summary>
   /// Ternary Search Tree Dictionary

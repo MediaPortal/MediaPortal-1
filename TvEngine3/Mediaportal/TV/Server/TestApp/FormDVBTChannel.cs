@@ -20,10 +20,10 @@
 
 using System;
 using System.Windows.Forms;
-using TvLibrary.Interfaces;
-using TvLibrary.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TestApp
+namespace Mediaportal.TV.Server.TestApp
 {
   public partial class FormDVBTChannel : Form
   {
@@ -45,7 +45,7 @@ namespace TestApp
         textBoxONID.Text = _channel.NetworkId.ToString();
         textBoxTSID.Text = _channel.TransportId.ToString();
         textBoxSID.Text = _channel.ServiceId.ToString();
-        comboBoxBandWidth.SelectedIndex = _channel.Bandwidth == 7 ? 0 : 1;
+        comboBoxBandWidth.SelectedIndex = _channel.BandWidth == 7 ? 0 : 1;
       }
     }
 
@@ -55,7 +55,7 @@ namespace TestApp
       _channel.NetworkId = Int32.Parse(textBoxONID.Text);
       _channel.TransportId = Int32.Parse(textBoxTSID.Text);
       _channel.ServiceId = Int32.Parse(textBoxSID.Text);
-      _channel.Bandwidth = comboBoxBandWidth.SelectedIndex == 0 ? 7 : 8;
+      _channel.BandWidth = comboBoxBandWidth.SelectedIndex == 0 ? 7 : 8;
       Close();
     }
   }

@@ -54,6 +54,7 @@ using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.Win32;
 using Action = MediaPortal.GUI.Library.Action;
+using GlobalServiceProvider = MediaPortal.Services.GlobalServiceProvider;
 using Timer = System.Timers.Timer;
 
 #endregion

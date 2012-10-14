@@ -23,6 +23,7 @@
 using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using Mediaportal.TV.PowerSchedulerClientPlugin;
 
 #endregion
 

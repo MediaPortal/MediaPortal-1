@@ -18,10 +18,7 @@
 
 #endregion
 
-using System;
-using System.Runtime.InteropServices;
-
-namespace TvLibrary.Interfaces
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 {
   /// <summary>
   /// State of ci menu

@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
@@ -27,16 +28,17 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.Util;
-using TvControl;
-using TvDatabase;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
+using Mediaportal.TV.TvPlugin.Helper;
 using WindowPlugins;
 using Action = MediaPortal.GUI.Library.Action;
-using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin.Radio
 {
-  [PluginIcons("TvPlugin.Radio.gif", "TvPlugin.Radio_disabled.gif")]
+  [PluginIcons("Resources\\TvPlugin.Radio.gif", "Resources\\TvPlugin.Radio_disabled.gif")]
   public class Radio : WindowPluginBase, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
     #region constants    
@@ -67,8 +69,8 @@ namespace TvPlugin
     private int selectedItemIndex = -1;
     private static bool hideAllChannelsGroup = false;
     private string rootGroup = "(none)";
-    private static RadioChannelGroup selectedGroup;
-    public static List<RadioChannelGroup> AllRadioGroups= new List<RadioChannelGroup>();
+    private static ChannelGroup selectedGroup;
+    public static List<ChannelGroup> AllRadioGroups = new List<ChannelGroup>();
 
     #endregion
     
@@ -79,7 +81,8 @@ namespace TvPlugin
       set { _currentChannel = value; }
     }
     
-    public static RadioChannelGroup SelectedGroup {
+    public static ChannelGroup SelectedGroup 
+    {
       get { 
         if(selectedGroup == null)
         { // if user is at the root level then no group is selected
@@ -112,7 +115,7 @@ namespace TvPlugin
 
     public override bool Init()
     {      
-      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\MyRadio.xml"));
+      return Load(GUIGraphicsContext.Skin + @"\MyRadio.xml");
     }
 
     #region Serialisation
@@ -122,7 +125,7 @@ namespace TvPlugin
       base.LoadSettings();
       using (Settings xmlreader = new MPSettings())
       {
-        currentLayout = (Layout)xmlreader.GetValueAsInt(SerializeName, "layout", (int)Layout.List);
+        currentLayout = (GUIFacadeControl.Layout)xmlreader.GetValueAsInt(SerializeName, "layout", (int)GUIFacadeControl.Layout.List);
         m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
         
         string tmpLine;
@@ -292,10 +295,8 @@ namespace TvPlugin
     private static void LoadChannelGroups()
     {
       Settings xmlreader = new MPSettings();
-      string currentchannelName = xmlreader.GetValueAsString("myradio", "channel", String.Empty);
-
-      TvBusinessLayer layer = new TvBusinessLayer();
-      IList<Channel> channels = layer.GetChannelsByName(currentchannelName);
+      string currentchannelName = xmlreader.GetValueAsString("myradio", "channel", String.Empty);      
+      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.GetChannelsByName(currentchannelName); 
       if (channels != null && channels.Count > 0)
       {
         _currentChannel = channels[0];
@@ -303,18 +304,9 @@ namespace TvPlugin
 
       if (AllRadioGroups.Count == 0)
       {
-        IList<RadioChannelGroup> allGroups = RadioChannelGroup.ListAll();
-
-        foreach (RadioChannelGroup group in allGroups)
-        {
-          if (hideAllChannelsGroup && group.GroupName.Equals(TvConstants.RadioGroupNames.AllChannels) &&
-              allGroups.Count > 1)
-          {
-            continue;
-          }
-
-          AllRadioGroups.Add(group);
-        }
+        ChannelGroupIncludeRelationEnum include = ChannelGroupIncludeRelationEnum.GroupMaps;
+        include |= ChannelGroupIncludeRelationEnum.GroupMapsChannel;
+        AllRadioGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllCustomChannelGroups(include, MediaTypeEnum.Radio).ToList();        
       }
     }
 
@@ -387,13 +379,13 @@ namespace TvPlugin
         facadeLayout.EnableScrollLabel = currentSortMethod == SortMethod.Name;
     }
 
-    protected override bool AllowLayout(Layout layout)
+    protected override bool AllowLayout(GUIFacadeControl.Layout layout)
     {
       switch (layout)
       {
-        case Layout.List:
-        case Layout.SmallIcons:
-        case Layout.LargeIcons:
+        case GUIFacadeControl.Layout.List:
+        case GUIFacadeControl.Layout.SmallIcons:
+        case GUIFacadeControl.Layout.LargeIcons:
           return true;
       }
       return false;
@@ -415,8 +407,9 @@ namespace TvPlugin
       int totalItems = 0;
       if (currentFolder == null || currentFolder == "..")
       {
-        IList<RadioChannelGroup> groups = RadioChannelGroup.ListAll();
-        foreach (RadioChannelGroup group in groups)
+ 
+        IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.Radio).ToList();
+        foreach (ChannelGroup group in groups)
         {
           if (hideAllChannelsGroup && group.GroupName.Equals(TvConstants.RadioGroupNames.AllChannels) &&
               groups.Count > 1)
@@ -446,14 +439,13 @@ namespace TvPlugin
         }
         if (rootGroup != "(none)")
         {
-          TvBusinessLayer layer = new TvBusinessLayer();
-          RadioChannelGroup root = layer.GetRadioChannelGroupByName(rootGroup);
+          ChannelGroup root = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroupByNameAndMediaType(rootGroup, MediaTypeEnum.Radio);
           if (root != null)
           {
-            IList<RadioGroupMap> maps = root.ReferringRadioGroupMap();            
-            foreach (RadioGroupMap map in maps)
+            IList<GroupMap> maps = root.GroupMaps;            
+            foreach (GroupMap map in maps)
             {
-              Channel channel = map.ReferencedChannel();
+              Channel channel = map.Channel;
               GUIListItem item = new GUIListItem();
 
               if (_currentChannel != null)
@@ -493,8 +485,7 @@ namespace TvPlugin
       }
       else
       {
-        TvBusinessLayer layer = new TvBusinessLayer();
-        RadioChannelGroup group = layer.GetRadioChannelGroupByName(currentFolder);
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroupByNameAndMediaType(currentFolder, MediaTypeEnum.Radio);
         if (group == null)
         {
           return;
@@ -508,38 +499,38 @@ namespace TvPlugin
         item.ThumbnailImage = String.Empty;
         Utils.SetDefaultIcons(item);
         facadeLayout.Add(item);
-        IList<RadioGroupMap> maps = group.ReferringRadioGroupMap();
-        foreach (RadioGroupMap map in maps)
+        IList<GroupMap> maps = group.GroupMaps;
+        foreach (GroupMap map in maps)
         {
-          Channel channel = map.ReferencedChannel();
+            Channel channel = map.Channel;
 
-          if (channel != null)
-          {          
-            item = new GUIListItem();
-            item.Label = channel.DisplayName;
-            item.IsFolder = false;
-            item.MusicTag = channel;
-            item.AlbumInfoTag = map;
-            if (channel.IsWebstream())
+            if (channel != null)
             {
-              item.IconImageBig = "DefaultMyradioStreamBig.png";
-              item.IconImage = "DefaultMyradioStream.png";
+              item = new GUIListItem();
+              item.Label = channel.DisplayName;
+              item.IsFolder = false;
+              item.MusicTag = channel;
+              item.AlbumInfoTag = map;
+              if (channel.IsWebstream())
+              {
+                item.IconImageBig = "DefaultMyradioStreamBig.png";
+                item.IconImage = "DefaultMyradioStream.png";
+              }
+              else
+              {
+                item.IconImageBig = "DefaultMyradioBig.png";
+                item.IconImage = "DefaultMyradio.png";
+              }
+              string thumbnail = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
+              if (!string.IsNullOrEmpty(thumbnail))
+              {
+                item.IconImageBig = thumbnail;
+                item.IconImage = thumbnail;
+                item.ThumbnailImage = thumbnail;
+              }
+              facadeLayout.Add(item);
+              totalItems++;
             }
-            else
-            {
-              item.IconImageBig = "DefaultMyradioBig.png";
-              item.IconImage = "DefaultMyradio.png";
-            }
-            string thumbnail = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
-            if (!string.IsNullOrEmpty(thumbnail))            
-            {
-              item.IconImageBig = thumbnail;
-              item.IconImage = thumbnail;
-              item.ThumbnailImage = thumbnail;
-            }
-            facadeLayout.Add(item);
-            totalItems++;
-          }
         }
       }
 
@@ -583,34 +574,7 @@ namespace TvPlugin
 
     private static void SetLabels()
     {
-      // TODO: why this is disabled?      
       return;
-      /*SortMethod method = currentSortMethod;
-
-      for (int i = 0; i < GetItemCount(); ++i)
-      {
-        GUIListItem item = GetItem(i);
-        if (item.MusicTag != null && !item.IsFolder)
-        {
-          Channel channel = (Channel)item.MusicTag;
-          IList details=channel.ReferringTuningDetail();
-          TuningDetail detail=(TuningDetail)details[0];
-          if (method == SortMethod.Bitrate)
-          {
-            if (detail.Bitrate > 0)
-              item.Label2 = detail.Bitrate.ToString();
-            else
-            {
-              double frequency = detail.Frequency;
-              if (detail.ChannelType==6)
-                frequency /= 1000000d;
-              else
-                frequency /= 1000d;
-              item.Label2 = System.String.Format("{0:###.##} MHz.", frequency);
-            }
-          }
-        }
-      }*/
     }
 
     #region Sort Members
@@ -704,8 +668,8 @@ namespace TvPlugin
         case SortMethod.Number:
           if (channel1 != null && channel2 != null)
           {
-            RadioGroupMap channel1GroupMap = (RadioGroupMap)item1.AlbumInfoTag;
-            RadioGroupMap channel2GroupMap = (RadioGroupMap)item2.AlbumInfoTag;
+            GroupMap channel1GroupMap = (GroupMap)item1.AlbumInfoTag;
+            GroupMap channel2GroupMap = (GroupMap)item2.AlbumInfoTag;
             int channel1GroupSort = channel1GroupMap.SortOrder;
             int channel2GroupSort = channel2GroupMap.SortOrder;
             if (bAscending)
@@ -730,9 +694,9 @@ namespace TvPlugin
           return channel2 != null ? 1 : 0;
           //break;
         case SortMethod.Bitrate:
-          IList<TuningDetail> details1 = channel1.ReferringTuningDetail();
+          IList<TuningDetail> details1 = channel1.TuningDetails;
           TuningDetail detail1 = details1[0];
-          IList<TuningDetail> details2 = channel2.ReferringTuningDetail();
+          IList<TuningDetail> details2 = channel2.TuningDetails;
           TuningDetail detail2 = details2[0];
           if (detail1 != null && detail2 != null)
           {
@@ -815,7 +779,7 @@ namespace TvPlugin
 
     private static string GetPlayPath(Channel channel)
     {
-      IList<TuningDetail> details = channel.ReferringTuningDetail();
+      IList<TuningDetail> details = channel.TuningDetails;
       TuningDetail detail = details[0];
       if (channel.IsWebstream())
       {
@@ -876,13 +840,13 @@ namespace TvPlugin
       {
         if (g_Player.IsRadio && g_Player.Playing)
         {
-          Channel currentlyPlaying = TVHome.Navigator.Channel;
+          Channel currentlyPlaying = TVHome.Navigator.Channel.Entity;
           if (currentlyPlaying != null && currentlyPlaying.IdChannel == _currentChannel.IdChannel)
           {
             return;
           }
         }
-        TVHome.ViewChannelAndCheck(_currentChannel);
+        TVHome.ViewChannelAndCheck(_currentChannel, 0);
       }
     }
 

@@ -1,4 +1,4 @@
-﻿namespace SetupTv
+﻿namespace Mediaportal.TV.Server.SetupControls
 {
   partial class SectionSettings
   {

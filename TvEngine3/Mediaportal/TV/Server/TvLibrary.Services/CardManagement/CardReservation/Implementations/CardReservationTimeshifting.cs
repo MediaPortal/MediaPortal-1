@@ -18,19 +18,17 @@
 
 #endregion
 
-using System;
-using TvControl;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
-namespace TvService
+namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Implementations
 {
   public class CardReservationTimeshifting : CardReservationBase
   {
-    public CardReservationTimeshifting(TVController tvController) : base(tvController) {}
-
     #region Overrides of CardReservationBase    
 
-    protected override bool OnStartTune(IUser user)
+    protected override bool OnStartTune(ITvCardHandler tvcard, IUser user, int idChannel)
     {
       return true;
     }

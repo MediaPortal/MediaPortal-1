@@ -21,7 +21,6 @@
 #region Usings
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
@@ -34,21 +33,37 @@ using System.Text;
 using System.Threading;
 using DirectShowLib;
 using DirectShowLib.BDA;
+using Gentle.Common;
 using Gentle.Framework;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.Gentle;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Countries;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MySql.Data.MySqlClient;
-using TvDatabase;
-using TvLibrary;
-using TvLibrary.Channels;
-using TvLibrary.Implementations;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Device;
-using TvLibrary.Log;
+using Card = Mediaportal.TV.Server.TVDatabase.Gentle.Card;
+using Channel = Mediaportal.TV.Server.TVDatabase.Gentle.Channel;
+using ChannelGroup = Mediaportal.TV.Server.TVDatabase.Gentle.ChannelGroup;
+using ChannelLinkageMap = Mediaportal.TV.Server.TVDatabase.Gentle.ChannelLinkageMap;
+using ChannelMap = Mediaportal.TV.Server.TVDatabase.Gentle.ChannelMap;
+using DbNetworkProvider = Mediaportal.TV.Server.TVDatabase.Gentle.DbNetworkProvider;
+using GroupMap = Mediaportal.TV.Server.TVDatabase.Gentle.GroupMap;
+using Program = Mediaportal.TV.Server.TVDatabase.Gentle.Program;
+using Recording = Mediaportal.TV.Server.TVDatabase.Gentle.Recording;
+using Schedule = Mediaportal.TV.Server.TVDatabase.Gentle.Schedule;
+using ScheduleRecordingType = Mediaportal.TV.Server.TVDatabase.Gentle.ScheduleRecordingType;
+using Setting = Mediaportal.TV.Server.TVDatabase.Gentle.Setting;
+using SoftwareEncoder = Mediaportal.TV.Server.TVDatabase.Gentle.SoftwareEncoder;
 using StatementType = Gentle.Framework.StatementType;
 using ThreadState = System.Threading.ThreadState;
+using TuningDetail = Mediaportal.TV.Server.TVDatabase.Gentle.TuningDetail;
+using WeekEndTool = Mediaportal.TV.Server.TVDatabase.Gentle.WeekEndTool;
 
 #endregion
 
-namespace TvDatabase
+namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {
 
   #region enums
@@ -72,51 +87,761 @@ namespace TvDatabase
   #endregion
 
   public class TvBusinessLayer
-  {
-    #region delegates
+  {      
+    #region remove obsolete gentle stuff once tvmovie  + web epg plugins have been refactored into using EF4.1 instead of gentle.
 
-    private delegate void DeleteProgramsDelegate();
+    public void RemoveOldPrograms()
+    {
+      SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Program));
+      DateTime dtYesterday = DateTime.Now.AddHours(-EpgKeepDuration);
+      IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
+      sb.AddConstraint(String.Format("endTime < '{0}'", dtYesterday.ToString(GetDateTimeString(), mmddFormat)));
+      SqlStatement stmt = sb.GetStatement(true);
+      ObjectFactory.GetCollection<Program>(stmt.Execute());
+    }
 
-    private delegate void InsertProgramsDelegate(ImportParams aImportParam);
+    public class ProgramList
+    : List<Program>, IComparer<Program>
+    {
+      #region variables
 
-    #endregion
+      private bool _alreadySorted;
 
-    #region vars
+      #endregion
+
+      #region ctor
+
+      public ProgramList()
+      {
+        //_alreadySorted = false;
+      }
+
+      public ProgramList(int capacity)
+        : base(capacity)
+      {
+        //_alreadySorted = false;
+      }
+
+      public ProgramList(IList<Program> source)
+        : base(source)
+      {
+        //_alreadySorted = false;
+      }
+
+      #endregion
+
+      #region public properties
+
+      /// <summary>
+      /// Indicates whether the <see cref="ProgramList"/> is already sorted or not.
+      /// </summary>
+      /// <remarks>
+      /// When this property is <value>true</value> methods that 
+      /// need the list to be sorted, will assume it is already sorted
+      /// and will not sort it again
+      /// </remarks>
+      public bool AlreadySorted
+      {
+        get { return _alreadySorted; }
+        set { _alreadySorted = value; }
+      }
+
+      #endregion
+
+      #region public methods
+
+      public void SortIfNeeded()
+      {
+        if (!_alreadySorted)
+        {
+          Sort(this);
+        }
+      }
+
+      /// <summary>
+      /// Removes overlappin programs withing the list
+      /// </summary>
+      /// <remarks>
+      /// This method will try to remove programs without leaving gaps in the list.
+      /// </remarks>
+      public void RemoveOverlappingPrograms()
+      {
+        if (Count == 0) return;
+        SortIfNeeded();
+        Program prevProg = this[0];
+        for (int i = 1; i < Count; i++)
+        {
+          Program newProg = this[i];
+          if (newProg.StartTime < prevProg.EndTime) // we have an overlap here
+          {
+            // let us find out which one is the correct one
+            if (newProg.StartTime > prevProg.StartTime) // newProg will create hole -> delete it
+            {
+              Remove(newProg);
+              i--; // stay at the same position
+              continue;
+            }
+
+            List<Program> prevList = new List<Program>();
+            List<Program> newList = new List<Program>();
+            prevList.Add(prevProg);
+            newList.Add(newProg);
+            Program syncPrev = prevProg;
+            Program syncProg = newProg;
+            for (int j = i + 1; j < Count; j++)
+            {
+              Program syncNew = this[j];
+              if (syncPrev.EndTime == syncNew.StartTime)
+              {
+                prevList.Add(syncNew);
+                syncPrev = syncNew;
+                if (syncNew.StartTime > syncProg.EndTime)
+                {
+                  // stop point reached => delete Programs in newList
+                  foreach (Program prog in newList) Remove(prog);
+                  i = j - 1;
+                  prevProg = syncPrev;
+                  newList.Clear();
+                  prevList.Clear();
+                  break;
+                }
+              }
+              else if (syncProg.EndTime == syncNew.StartTime)
+              {
+                newList.Add(syncNew);
+                syncProg = syncNew;
+                if (syncNew.StartTime > syncPrev.EndTime)
+                {
+                  // stop point reached => delete Programs in prevList
+                  foreach (Program prog in prevList) Remove(prog);
+                  i = j - 1;
+                  prevProg = syncProg;
+                  newList.Clear();
+                  prevList.Clear();
+                  break;
+                }
+              }
+            }
+            // check if a stop point was reached => if not delete newList
+            if (newList.Count > 0)
+            {
+              foreach (Program prog in prevList) Remove(prog);
+              i = Count;
+              break;
+            }
+          }
+          prevProg = newProg;
+        }
+      }
+
+      /// <summary>
+      /// Removes programs from the list that overlap programs in <paramref name="existingPrograms"/>.
+      /// </summary>
+      /// <param name="existingPrograms">a list of programs to check against</param>
+      /// <remarks>
+      /// The list will be sorted if needed according to <seealso cref="AlreadySorted"/> property.
+      /// The <paramref name="existingPrograms"/> list is assumed unsorted and will be sorted.
+      /// Both list may contain programs from multiple channels.
+      /// Programs are assumed to not overlap within each list.
+      /// </remarks>
+      public void RemoveOverlappingPrograms(List<Program> existingPrograms)
+      {
+        RemoveOverlappingPrograms(existingPrograms, false);
+      }
+
+      /// <summary>
+      /// Removes programs from the list that overlap programs in <paramref name="existingPrograms"/>.
+      /// </summary>
+      /// <param name="existingPrograms">a list of programs to check against</param>
+      /// <param name="alreadySorted">if <value>true</value> <paramref name="existsinPrograms"/> is assumed to be sorted</param>
+      /// <remarks>
+      /// The list will be sorted if needed according to <seealso cref="AlreadySorted"/> property.
+      /// The <paramref name="existingPrograms"/> list will be sorted if <paramref name="alreadySorted"/> is <value>false</value>.
+      /// Both list may contain programs from multiple channels.
+      /// Programs are assumed to not overlap within each list.
+      /// </remarks>
+      public void RemoveOverlappingPrograms(List<Program> existingPrograms, bool alreadySorted)
+      {
+        if (Count == 0 || existingPrograms.Count == 0) return;
+
+        if (!alreadySorted)
+        {
+          existingPrograms.Sort(this);
+        }
+        SortIfNeeded();
+        IComparer<Program> comparer = this;
+
+        // Traverse both lists in parallel in a "Merge Join" style.
+        int i = 0;
+        int j = 0;
+        for (; i < Count && j < existingPrograms.Count; )
+        {
+          Program prog = this[i];
+          Program existProg = existingPrograms[j];
+          if (prog.IdChannel == existProg.IdChannel)
+          {
+            if (prog.EndTime <= existProg.StartTime)
+            {
+              i++;
+              //prog = this[i];
+            }
+            else if (prog.StartTime >= existProg.EndTime)
+            {
+              j++;
+              //existProg = existingPrograms[j];
+            }
+            else // prog.StratTime < existProg.EndTime && prog.EndTime > existProg.StartTime
+            {
+              RemoveAt(i);
+              //prog = this[i];
+            }
+          }
+          else
+          {
+            if (comparer.Compare(prog, existProg) < 0)
+            {
+              i++;
+              //prog = this[i];
+            }
+            else
+            {
+              j++;
+              //existProg = existingPrograms[j];
+            }
+          }
+        }
+      }
+
+      /// <summary>
+      /// Fill in gaps in the <see cref="ProgramList"/> using data from <paramref name="sourceList"/>.
+      /// </summary>
+      /// <param name="sourceList">The list to get data from</param>
+      /// <remarks>
+      /// Programs in <paramref name="sourceList"/> are assumed unsorted.
+      /// </remarks>
+      public void FillInMissingDataFromList(List<Program> sourceList)
+      {
+        FillInMissingDataFromList(sourceList, false);
+      }
+
+      /// <summary>
+      /// Fill in gaps in the <see cref="ProgramList"/> using data from <paramref name="sourceList"/>.
+      /// </summary>
+      /// <param name="sourceList">The list to get data from</param>
+      /// <param name="sourceAlreadySorted">If true <paramref name="sourceList"/> 
+      /// is assumed to be already sorted and will not be sorted again</param>
+      public void FillInMissingDataFromList(List<Program> sourceList, bool sourceAlreadySorted)
+      {
+        SortIfNeeded();
+        if (!sourceAlreadySorted)
+        {
+          sourceList.Sort(this);
+        }
+        Program prevProg = this[0];
+        for (int i = 1; i < Count; i++)
+        {
+          Program newProg = this[i];
+          if (newProg.StartTime > prevProg.EndTime) // we have a gap here
+          {
+            // try to find data in the database
+            foreach (Program dbProg in sourceList)
+            {
+              if ((dbProg.StartTime >= prevProg.EndTime) && (dbProg.EndTime <= newProg.StartTime))
+              {
+                Insert(i, dbProg.Clone());
+                i++;
+                prevProg = dbProg;
+              }
+              if (dbProg.StartTime >= newProg.EndTime) break; // no more data available
+            }
+          }
+          prevProg = newProg;
+        }
+      }
+
+      public void FixEndTimes()
+      {
+        SortIfNeeded();
+        for (int i = 0; i < Count; ++i)
+        {
+          Program prog = this[i];
+          if (i + 1 < Count)
+          {
+            //correct the times of the current program using the times of the next one
+            Program progNext = this[i + 1];
+            if (prog.IdChannel == progNext.IdChannel)
+            {
+              if (prog.StartTime >= prog.EndTime)
+              {
+                prog.EndTime = progNext.StartTime;
+              }
+              if (prog.EndTime > progNext.StartTime)
+              {
+                //if the endTime of this program is later that the start of the next program 
+                //it probably needs to be corrected (only needed when the grabber )
+                prog.EndTime = progNext.StartTime;
+              }
+            }
+          }
+        }
+      }
+
+      /// <summary>
+      /// Parse the program list and find partitions of chained programs 
+      /// (each program starts at the end of the previous one and is on the same channel).
+      /// </summary>
+      /// <returns>A list of partition data</returns>
+      public List<ProgramListPartition> GetPartitions()
+      {
+        List<ProgramListPartition> partitions = new List<ProgramListPartition>();
+        if (Count != 0)
+        {
+          SortIfNeeded();
+          ProgramListPartition partition = new ProgramListPartition(this[0].IdChannel, this[0].StartTime, this[0].EndTime);
+          for (int i = 1; i < Count; i++)
+          {
+            Program currProg = this[i];
+            if (partition.IdChannel.Equals(currProg.IdChannel) && partition.End.Equals(currProg.StartTime))
+            {
+              partition.End = currProg.EndTime;
+            }
+            else
+            {
+              partitions.Add(partition);
+              partition = new ProgramListPartition(currProg.IdChannel, currProg.StartTime, currProg.EndTime);
+            }
+          }
+          partitions.Add(partition);
+        }
+        return partitions;
+      }
+
+      /// <summary>
+      /// Parse the program list and find the unique channel IDs
+      /// </summary>
+      /// <returns>A list of channel IDs</returns>
+      public List<int> GetChannelIds()
+      {
+        List<int> channelIds = new List<int>();
+        if (Count != 0)
+        {
+          SortIfNeeded();
+          int lastChannelId = this[0].IdChannel;
+          channelIds.Add(lastChannelId);
+          for (int i = 1; i < Count; i++)
+          {
+            Program currProg = this[i];
+            if (lastChannelId != currProg.IdChannel)
+            {
+              lastChannelId = currProg.IdChannel;
+              channelIds.Add(lastChannelId);
+            }
+          }
+        }
+        return channelIds;
+      }
+
+      #endregion
+
+      #region Base overrides
+
+      public new void Add(Program item)
+      {
+        _alreadySorted = false;
+        base.Add(item);
+      }
+
+      public new void AddRange(IEnumerable<Program> collection)
+      {
+        _alreadySorted = false;
+        base.AddRange(collection);
+      }
+
+      public new void Insert(int index, Program item)
+      {
+        _alreadySorted = false;
+        base.Insert(index, item);
+      }
+
+      public new void InsertRange(int index, IEnumerable<Program> collection)
+      {
+        _alreadySorted = false;
+        base.InsertRange(index, collection);
+      }
+
+      public new void Reverse(int index, int count)
+      {
+        _alreadySorted = false;
+        base.Reverse(index, count);
+      }
+
+      public new void Reverse()
+      {
+        _alreadySorted = false;
+        base.Reverse();
+      }
+
+      public new void Sort()
+      {
+        Sort(this);
+        _alreadySorted = true;
+      }
+
+      #endregion
+
+      #region IComparer<Program> Members
+
+      int IComparer<Program>.Compare(Program x, Program y)
+      {
+        if (x == y) return 0;
+        if (x == null) return -1;
+        if (y == null) return -1;
+
+        if (x.IdChannel != y.IdChannel)
+        {
+          int res = String.Compare(x.ReferencedChannel().DisplayName, y.ReferencedChannel().DisplayName, true);
+          if (res == 0)
+          {
+            if (x.IdChannel > y.IdChannel)
+            {
+              return 1;
+            }
+            else
+            {
+              return -1;
+            }
+          }
+        }
+        if (x.StartTime > y.StartTime) return 1;
+        if (x.StartTime < y.StartTime) return -1;
+        return 0;
+      }
+
+      #endregion
+    }
+
+    public class ImportParams
+    {
+      public ProgramList ProgramList;
+      public DeleteBeforeImportOption ProgamsToDelete;
+      public string ConnectString;
+      public ThreadPriority Priority;
+      public int SleepTime;
+    } ;
 
     private static Thread _insertProgramsThread = null;
 
     private static Queue<ImportParams> _programInsertsQueue = new Queue<ImportParams>();
     private static AutoResetEvent _pendingProgramInserts = new AutoResetEvent(false);
 
+    /// <summary>
+    /// Batch inserts programs - intended for faster EPG import. You must make sure before that there are no duplicates 
+    /// (e.g. delete all program data of the current channel).
+    /// Also you MUST provide a true copy of "aProgramList". If you update it's reference in your own code the values will get overwritten
+    /// (possibly before they are written to disk)!
+    /// </summary>
+    /// <param name="aProgramList">A list of persistable gentle.NET Program objects mapping to the Programs table</param>
+    /// <param name="aThreadPriority">Use "Lowest" for Background imports allowing LiveTV, AboveNormal for full speed</param>
+    /// <returns>The record count of programs if successful, 0 on errors</returns>
+    public int InsertPrograms(List<Program> aProgramList, ThreadPriority aThreadPriority)
+    {
+      return InsertPrograms(aProgramList, DeleteBeforeImportOption.None, aThreadPriority);
+    }
+
+    /// <summary>
+    /// Batch inserts programs - intended for faster EPG import. You must make sure before that there are no duplicates 
+    /// (e.g. delete all program data of the current channel).
+    /// Also you MUST provide a true copy of "aProgramList". If you update it's reference in your own code the values will get overwritten
+    /// (possibly before they are written to disk)!
+    /// </summary>
+    /// <param name="aProgramList">A list of persistable gentle.NET Program objects mapping to the Programs table</param>
+    /// <param name="progamsToDelete">Flag specifying which existing programs to delete before the insert</param>
+    /// <param name="aThreadPriority">Use "Lowest" for Background imports allowing LiveTV, AboveNormal for full speed</param>
+    /// <returns>The record count of programs if successful, 0 on errors</returns>
+    /// <remarks><para>Inserts are queued to be performed in the background. Each batch of inserts is executed in a single transaction.
+    /// You may also optionally specify to delete either all existing programs in the same channel(s) as the programs to be inserted 
+    /// (<see cref="DeleteBeforeImportOption.ProgramsOnSameChannel"/>), or existing programs that would otherwise overlap new programs
+    /// (<see cref="DeleteBeforeImportOption.OverlappingPrograms"/>), or none (<see cref="DeleteBeforeImportOption.None"/>).
+    /// The deletion is also performed in the same transaction as the inserts so that EPG will not be at any time empty.</para>
+    /// <para>After all insert have completed and the background thread is idle for 60 seconds, the program states are
+    /// automatically updated to reflect the changes.</para></remarks>
+    public int InsertPrograms(List<Program> aProgramList, DeleteBeforeImportOption progamsToDelete,
+                              ThreadPriority aThreadPriority)
+    {
+      try
+      {
+        int sleepTime = 10;
+
+        switch (aThreadPriority)
+        {
+          case ThreadPriority.Highest:
+          case ThreadPriority.AboveNormal:
+            aThreadPriority = ThreadPriority.Normal;
+            sleepTime = 0;
+            break;
+          case ThreadPriority.Normal:
+            // this is almost enough on dualcore systems for one cpu to gather epg and the other to insert it
+            sleepTime = 10;
+            break;
+          case ThreadPriority.BelowNormal: // on faster systems this might be enough for background importing
+            sleepTime = 20;
+            break;
+          case ThreadPriority.Lowest: // even a single core system is enough to use MP while importing.
+            sleepTime = 40;
+            break;
+        }
+
+        ImportParams param = new ImportParams();
+        param.ProgramList = new ProgramList(aProgramList);
+        param.ProgamsToDelete = progamsToDelete;
+        param.SleepTime = sleepTime;
+        param.Priority = aThreadPriority;
+
+        lock (_programInsertsQueue)
+        {
+          _programInsertsQueue.Enqueue(param);
+          _pendingProgramInserts.Set();
+
+          if (_insertProgramsThread == null)
+          {
+            _insertProgramsThread = new Thread(InsertProgramsThreadStart)
+            {
+              Priority = ThreadPriority.Lowest,
+              Name = "SQL EPG importer",
+              IsBackground = true
+            };
+            _insertProgramsThread.Start();
+          }
+        }
+
+        return aProgramList.Count;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("BusinessLayer: InsertPrograms error - {0}, {1}", ex.Message, ex.StackTrace);
+        return 0;
+      }
+    }
+    private delegate void DeleteProgramsDelegate();
+
+    private delegate void InsertProgramsDelegate(ImportParams aImportParam);
+    private static void InsertProgramsThreadStart()
+    {
+      try
+      {
+        Log.Debug("BusinessLayer: InsertProgramsThread started");
+
+        IGentleProvider prov = ProviderFactory.GetDefaultProvider();
+        string provider = prov.Name.ToLowerInvariant();
+        string defaultConnectString = prov.ConnectionString;
+        DateTime lastImport = DateTime.Now;
+        InsertProgramsDelegate insertProgams;
+
+        switch (provider)
+        {
+          case "mysql":
+            insertProgams = InsertProgramsMySql;
+            break;
+          case "sqlserver":
+            insertProgams = InsertProgramsSqlServer;
+            break;
+          default:
+            Log.Info("BusinessLayer: InsertPrograms unknown provider - {0}", provider);
+            return;
+        }
+
+        while (true)
+        {
+          if (lastImport.AddSeconds(60) < DateTime.Now)
+          {
+            // Done importing and 60 seconds since last import
+            // Remove old programs
+            TvBusinessLayer layer = new TvBusinessLayer();
+            layer.RemoveOldPrograms();
+            // Let's update states
+            Schedule.SynchProgramStatesForAll();
+            // and exit
+            lock (_programInsertsQueue)
+            {
+              //  Has new work been queued in the meantime?
+              if (_programInsertsQueue.Count == 0)
+              {
+                Log.Debug("BusinessLayer: InsertProgramsThread exiting");
+                _insertProgramsThread = null;
+                break;
+              }
+            }
+          }
+
+          _pendingProgramInserts.WaitOne(10000); // Check every 10 secs
+          while (_programInsertsQueue.Count > 0)
+          {
+            try
+            {
+              ImportParams importParams;
+              lock (_programInsertsQueue)
+              {
+                importParams = _programInsertsQueue.Dequeue();
+              }
+              importParams.ConnectString = defaultConnectString;
+              Thread.CurrentThread.Priority = importParams.Priority;
+              insertProgams(importParams);
+              Log.Debug("BusinessLayer: Inserted {0} programs to the database", importParams.ProgramList.Count);
+              lastImport = DateTime.Now;
+              Thread.CurrentThread.Priority = ThreadPriority.Lowest;
+            }
+            catch (Exception ex)
+            {
+              Log.Error("BusinessLayer: InsertMySQL/InsertMSSQL caused an exception:");
+              Log.Write(ex);
+            }
+          }
+          // Now all queued inserts have been processed, clear Gentle cache
+          CacheManager.ClearQueryResultsByType(typeof(Program));
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("BusinessLayer: InsertProgramsThread error - {0}, {1}", ex.Message, ex.StackTrace);
+      }
+    }
+
+    private static void InsertProgramsMySql(ImportParams aImportParam)
+    {
+      MySqlTransaction transact = null;
+      try
+      {
+        using (MySqlConnection connection = new MySqlConnection(aImportParam.ConnectString))
+        {
+          DeleteProgramsDelegate deletePrograms = null;
+
+          switch (aImportParam.ProgamsToDelete)
+          {
+            case DeleteBeforeImportOption.OverlappingPrograms:
+              IEnumerable<ProgramListPartition> partitions = aImportParam.ProgramList.GetPartitions();
+              deletePrograms =
+                () => ExecuteDeleteProgramsMySqlCommand(partitions, connection, transact, aImportParam.SleepTime);
+              break;
+            case DeleteBeforeImportOption.ProgramsOnSameChannel:
+              IEnumerable<int> channelIds = aImportParam.ProgramList.GetChannelIds();
+              deletePrograms =
+                () => ExecuteDeleteProgramsMySqlCommand(channelIds, connection, transact, aImportParam.SleepTime);
+              break;
+          }
+          connection.Open();
+          transact = connection.BeginTransaction();
+          if (deletePrograms != null)
+          {
+            deletePrograms();
+          }
+          ExecuteInsertProgramsMySqlCommand(aImportParam.ProgramList, connection, transact, aImportParam.SleepTime);
+          transact.Commit();
+          //OptimizeMySql("Program");
+        }
+      }
+      catch (Exception ex)
+      {
+        try
+        {
+          if (transact != null)
+          {
+            transact.Rollback();
+          }
+        }
+        catch (Exception ex2)
+        {
+          Log.Info("BusinessLayer: InsertSqlServer unsuccessful - ROLLBACK - {0}, {1}", ex2.Message, ex2.StackTrace);
+        }
+        Log.Info("BusinessLayer: InsertMySql caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
+      }
+    }
+
+    private static void InsertProgramsSqlServer(ImportParams aImportParam)
+    {
+      SqlTransaction transact = null;
+      try
+      {
+        using (SqlConnection connection = new SqlConnection(aImportParam.ConnectString))
+        {
+          DeleteProgramsDelegate deletePrograms = null;
+
+          switch (aImportParam.ProgamsToDelete)
+          {
+            case DeleteBeforeImportOption.OverlappingPrograms:
+              IEnumerable<ProgramListPartition> partitions = aImportParam.ProgramList.GetPartitions();
+              deletePrograms =
+                () => ExecuteDeleteProgramsSqlServerCommand(partitions, connection, transact, aImportParam.SleepTime);
+              break;
+            case DeleteBeforeImportOption.ProgramsOnSameChannel:
+              IEnumerable<int> channelIds = aImportParam.ProgramList.GetChannelIds();
+              deletePrograms =
+                () => ExecuteDeleteProgramsSqlServerCommand(channelIds, connection, transact, aImportParam.SleepTime);
+              break;
+          }
+          connection.Open();
+          transact = connection.BeginTransaction();
+          if (deletePrograms != null)
+          {
+            deletePrograms();
+          }
+          ExecuteInsertProgramsSqlServerCommand(aImportParam.ProgramList, connection, transact, aImportParam.SleepTime);
+          transact.Commit();
+        }
+      }
+      catch (Exception ex)
+      {
+        try
+        {
+          if (transact != null)
+          {
+            transact.Rollback();
+          }
+        }
+        catch (Exception ex2)
+        {
+          Log.Info("BusinessLayer: InsertSqlServer unsuccessful - ROLLBACK - {0}, {1}", ex2.Message, ex2.StackTrace);
+        }
+        Log.Info("BusinessLayer: InsertSqlServer caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
+      }
+    }
+
+    public void WaitForInsertPrograms(int millisecondsTimeout)
+    {
+      Thread currentInsertThread = _insertProgramsThread;
+      if (currentInsertThread != null &&
+          (currentInsertThread.ThreadState & ThreadState.Unstarted) != ThreadState.Unstarted)
+        currentInsertThread.Join(millisecondsTimeout);
+    }
+
+    public void WaitForInsertPrograms()
+    {
+      Thread currentInsertThread = _insertProgramsThread;
+      if (currentInsertThread != null &&
+          (currentInsertThread.ThreadState & ThreadState.Unstarted) != ThreadState.Unstarted)
+        currentInsertThread.Join();
+    }
+
+    #endregion
+
+
+    #region vars
+
+
     //private Thread _resetProgramStatesThread = null;
 
     //private readonly object SingleInsert = new object();
     //private readonly object SingleProgramStateUpdate = new object();
 
-    // maximum hours to keep old program info
-    private int _EpgKeepDuration = 0;
+    
     //private DateTime _lastProgramUpdate = DateTime.MinValue; //when was the last time we changed anything in the program table ?
 
-    public int EpgKeepDuration
-    {
-      get
-      {
-        if (_EpgKeepDuration == 0)
-        {
-          // first time query settings, caching
-          Setting duration = GetSetting("epgKeepDuration", "24");
-          duration.Persist();
-          _EpgKeepDuration = Convert.ToInt32(duration.Value);
-        }
-        return _EpgKeepDuration;
-      }
-    }
+    
 
     #endregion
 
     #region cards
 
-    public Card AddCard(string name, string devicePath, Server server)
+    public Card AddCard(string name, string devicePath, Gentle.Server server)
     {
       Card card = GetCardByDevicePath(devicePath);
       if (card != null)
@@ -126,15 +851,10 @@ namespace TvDatabase
         return card;
       }
       //
-      // Card(devicePath, name, priority, grabEPG, lastEpgGrab, recordingFolder, idServer, enabled, camType,
-      //      timeshiftingFolder, decryptLimit, preloadCard, netProvider, idleMode, multiChannelDecryptMode,
-      //      alwaysSendDiseqcCommands, diseqcCommandRepeatCount, pidFilterMode, useCustomTuning,
-      //      useConditionalAccess)
+      // Card(devicePath, name, priority, grabEPG, lastEpgGrab, recordingFolder, idServer, enabled, camType, timeshiftingFolder, recordingFormat, decryptLimit)
       //
-      Card newCard = new Card(devicePath, name, 1, true, new DateTime(2000, 1, 1), "", server.IdServer, true,
-                              (int)CamType.Default, "", 0, false, (int)TvDatabase.DbNetworkProvider.Generic,
-                              (int)DeviceIdleMode.Stop, (int)MultiChannelDecryptMode.Disabled, false, 0,
-                              (int)PidFilterMode.Auto, false, false);
+      Card newCard = new Card(devicePath, name, 1, true, new DateTime(2000, 1, 1), "", server.IdServer, true, 0, "", 0,
+                              0, false, true, false, (int)DbNetworkProvider.Generic);
       newCard.Persist();
       return newCard;
     }
@@ -192,7 +912,7 @@ namespace TvDatabase
     public Channel AddNewChannel(string name)
     {
       Channel newChannel = new Channel(false, false, 0, new DateTime(2000, 1, 1), false, new DateTime(2000, 1, 1),
-                                       -1, true, "", name, false);
+                                       -1, true, "", name);
       return newChannel;
     }
 
@@ -472,7 +1192,7 @@ namespace TvDatabase
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
       SqlStatement origStmt = sb.GetStatement(true);
-      string sql = "select c.* from channel c inner join groupmap gm on (c.idChannel = gm.idChannel and gm.idGroup =" +
+      string sql = "select c.* from channels c inner join groupmaps gm on (c.idChannel = gm.idChannel and gm.idGroup =" +
                    group.IdGroup + ") order by gm.SortOrder asc";
       SqlStatement statement = new SqlStatement(StatementType.Select, origStmt.Command, sql,
                                                 typeof (Channel));
@@ -591,129 +1311,12 @@ namespace TvDatabase
         {
           continue;
         }
-        return GetTuningChannel(detail);
+        //return GetTuningChannel(detail);
       }
       return null;
     }
 
-    public List<IChannel> GetTuningChannelsByDbChannel(Channel channel)
-    {
-      List<IChannel> tvChannels = new List<IChannel>();
-      IList<TuningDetail> tuningDetails = channel.ReferringTuningDetail();
-      for (int i = 0; i < tuningDetails.Count; ++i)
-      {
-        TuningDetail detail = tuningDetails[i];
-        tvChannels.Add(GetTuningChannel(detail));
-      }
-      return tvChannels;
-    }
-
-    public IChannel GetTuningChannel(TuningDetail detail)
-    {
-      switch (detail.ChannelType)
-      {
-        case 0: //AnalogChannel
-          AnalogChannel analogChannel = new AnalogChannel();
-          analogChannel.ChannelNumber = detail.ChannelNumber;
-          CountryCollection collection = new CountryCollection();
-          analogChannel.Country = collection.Countries[detail.CountryId];
-          analogChannel.Frequency = detail.Frequency;
-          analogChannel.IsRadio = detail.IsRadio;
-          analogChannel.IsTv = detail.IsTv;
-          analogChannel.Name = detail.Name;
-          analogChannel.TunerSource = (TunerInputType)detail.TuningSource;
-          analogChannel.VideoSource = (AnalogChannel.VideoInputType)detail.VideoSource;
-          analogChannel.AudioSource = (AnalogChannel.AudioInputType)detail.AudioSource;
-          return analogChannel;
-        case 1: //ATSCChannel
-          ATSCChannel atscChannel = new ATSCChannel();
-          atscChannel.MajorChannel = detail.MajorChannel;
-          atscChannel.MinorChannel = detail.MinorChannel;
-          atscChannel.PhysicalChannel = detail.ChannelNumber;
-          atscChannel.FreeToAir = detail.FreeToAir;
-          atscChannel.Frequency = detail.Frequency;
-          atscChannel.IsRadio = detail.IsRadio;
-          atscChannel.IsTv = detail.IsTv;
-          atscChannel.Name = detail.Name;
-          atscChannel.NetworkId = detail.NetworkId;
-          atscChannel.PmtPid = detail.PmtPid;
-          atscChannel.Provider = detail.Provider;
-          atscChannel.ServiceId = detail.ServiceId;
-          //atscChannel.SymbolRate = detail.Symbolrate;
-          atscChannel.TransportId = detail.TransportId;
-          atscChannel.ModulationType = (ModulationType)detail.Modulation;
-          return atscChannel;
-        case 2: //DVBCChannel
-          DVBCChannel dvbcChannel = new DVBCChannel();
-          dvbcChannel.ModulationType = (ModulationType)detail.Modulation;
-          dvbcChannel.FreeToAir = detail.FreeToAir;
-          dvbcChannel.Frequency = detail.Frequency;
-          dvbcChannel.IsRadio = detail.IsRadio;
-          dvbcChannel.IsTv = detail.IsTv;
-          dvbcChannel.Name = detail.Name;
-          dvbcChannel.NetworkId = detail.NetworkId;
-          dvbcChannel.PmtPid = detail.PmtPid;
-          dvbcChannel.Provider = detail.Provider;
-          dvbcChannel.ServiceId = detail.ServiceId;
-          dvbcChannel.SymbolRate = detail.Symbolrate;
-          dvbcChannel.TransportId = detail.TransportId;
-          dvbcChannel.LogicalChannelNumber = detail.ChannelNumber;
-          return dvbcChannel;
-        case 3: //DVBSChannel
-          DVBSChannel dvbsChannel = new DVBSChannel();
-          dvbsChannel.Diseqc = (DiseqcPort)detail.Diseqc;
-          dvbsChannel.Polarisation = (Polarisation)detail.Polarisation;
-          dvbsChannel.FreeToAir = detail.FreeToAir;
-          dvbsChannel.Frequency = detail.Frequency;
-          dvbsChannel.IsRadio = detail.IsRadio;
-          dvbsChannel.IsTv = detail.IsTv;
-          dvbsChannel.Name = detail.Name;
-          dvbsChannel.NetworkId = detail.NetworkId;
-          dvbsChannel.PmtPid = detail.PmtPid;
-          dvbsChannel.Provider = detail.Provider;
-          dvbsChannel.ServiceId = detail.ServiceId;
-          dvbsChannel.SymbolRate = detail.Symbolrate;
-          dvbsChannel.TransportId = detail.TransportId;
-          dvbsChannel.LnbType = LnbType.Retrieve(detail.IdLnbType);
-          dvbsChannel.SatelliteIndex = detail.SatIndex;
-          dvbsChannel.ModulationType = (ModulationType)detail.Modulation;
-          dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)detail.InnerFecRate;
-          dvbsChannel.Pilot = (Pilot)detail.Pilot;
-          dvbsChannel.RollOff = (RollOff)detail.RollOff;
-          dvbsChannel.LogicalChannelNumber = detail.ChannelNumber;
-          return dvbsChannel;
-        case 4: //DVBTChannel
-          DVBTChannel dvbtChannel = new DVBTChannel();
-          dvbtChannel.Bandwidth = detail.Bandwidth;
-          dvbtChannel.FreeToAir = detail.FreeToAir;
-          dvbtChannel.Frequency = detail.Frequency;
-          dvbtChannel.IsRadio = detail.IsRadio;
-          dvbtChannel.IsTv = detail.IsTv;
-          dvbtChannel.Name = detail.Name;
-          dvbtChannel.NetworkId = detail.NetworkId;
-          dvbtChannel.PmtPid = detail.PmtPid;
-          dvbtChannel.Provider = detail.Provider;
-          dvbtChannel.ServiceId = detail.ServiceId;
-          dvbtChannel.TransportId = detail.TransportId;
-          dvbtChannel.LogicalChannelNumber = detail.ChannelNumber;
-          return dvbtChannel;
-        case 7: //DVBIPChannel
-          DVBIPChannel dvbipChannel = new DVBIPChannel();
-          dvbipChannel.FreeToAir = detail.FreeToAir;
-          dvbipChannel.IsRadio = detail.IsRadio;
-          dvbipChannel.IsTv = detail.IsTv;
-          dvbipChannel.Name = detail.Name;
-          dvbipChannel.NetworkId = detail.NetworkId;
-          dvbipChannel.PmtPid = detail.PmtPid;
-          dvbipChannel.Provider = detail.Provider;
-          dvbipChannel.ServiceId = detail.ServiceId;
-          dvbipChannel.TransportId = detail.TransportId;
-          dvbipChannel.LogicalChannelNumber = detail.ChannelNumber;
-          dvbipChannel.Url = detail.Url;
-          return dvbipChannel;
-      }
-      return null;
-    }
+    
 
     public ChannelMap MapChannelToCard(Card card, Channel channel, bool epgOnly)
     {
@@ -741,7 +1344,7 @@ namespace TvDatabase
       SqlStatement stmt1 = sb1.GetStatement(true);
       SqlStatement ManualJoinSQL = new SqlStatement(stmt1.StatementType, stmt1.Command,
                                                     String.Format(
-                                                      "select c.* from Channel c inner join RadioGroupMap g on (c.idChannel=g.idChannel and g.idGroup = '{0}') where visibleInGuide = 1 and isRadio = 1 order by g.sortOrder",
+                                                      "select c.* from Channels c inner join RadioGroupMaps g on (c.idChannel=g.idChannel and g.idGroup = '{0}') where visibleInGuide = 1 and isRadio = 1 order by g.sortOrder",
                                                       groupID), typeof (Channel));
       return ObjectFactory.GetCollection<Channel>(ManualJoinSQL.Execute()) as List<Channel>;
     }
@@ -756,7 +1359,7 @@ namespace TvDatabase
       SqlStatement stmt1 = sb1.GetStatement(true);
       SqlStatement ManualJoinSQL = new SqlStatement(stmt1.StatementType, stmt1.Command,
                                                     String.Format(
-                                                      "select c.* from Channel c inner join GroupMap g on (c.idChannel=g.idChannel and g.idGroup = '{0}') where visibleInGuide = 1 and isTv = 1 order by g.sortOrder",
+                                                      "select c.* from Channels c inner join GroupMaps g on (c.idChannel=g.idChannel and g.idGroup = '{0}') where visibleInGuide = 1 and c.mediaType = "+ (int) MediaTypeEnum.TV + " order by g.sortOrder",
                                                       groupID), typeof (Channel));
       return ObjectFactory.GetCollection<Channel>(ManualJoinSQL.Execute()) as List<Channel>;
     }
@@ -797,6 +1400,7 @@ namespace TvDatabase
       int symbolRate = 0;
       int modulation = 0;
       int polarisation = 0;
+      int switchFrequency = 0;
       int diseqc = 0;
       int bandwidth = 8;
       bool freeToAir = true;
@@ -808,13 +1412,12 @@ namespace TvDatabase
       int majorChannel = -1;
       string provider = "";
       int channelType = 0;
-      int idLnbType = 0;
+      int band = 0;
       int satIndex = -1;
       int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
       int pilot = (int)Pilot.NotSet;
       int rollOff = (int)RollOff.NotSet;
       string url = "";
-      int bitrate = 0;
 
       AnalogChannel analogChannel = tvChannel as AnalogChannel;
       if (analogChannel != null)
@@ -823,12 +1426,12 @@ namespace TvDatabase
         channelFrequency = analogChannel.Frequency;
         channelNumber = analogChannel.ChannelNumber;
         country = analogChannel.Country.Index;
-        isRadio = analogChannel.IsRadio;
-        isTv = analogChannel.IsTv;
+        //isRadio = analogChannel.IsRadio;
+        //isTv = analogChannel.IsTv;
         tunerSource = (int)analogChannel.TunerSource;
         videoInputType = (int)analogChannel.VideoSource;
         audioInputType = (int)analogChannel.AudioSource;
-        isVCRSignal = analogChannel.IsVcrSignal;
+        isVCRSignal = analogChannel.IsVCRSignal;
         channelType = 0;
       }
 
@@ -838,6 +1441,8 @@ namespace TvDatabase
         majorChannel = atscChannel.MajorChannel;
         minorChannel = atscChannel.MinorChannel;
         channelNumber = atscChannel.PhysicalChannel;
+        //videoPid = atscChannel.VideoPid;
+        //audioPid = atscChannel.AudioPid;
         modulation = (int)atscChannel.ModulationType;
         channelType = 1;
       }
@@ -847,7 +1452,7 @@ namespace TvDatabase
       {
         symbolRate = dvbcChannel.SymbolRate;
         modulation = (int)dvbcChannel.ModulationType;
-        channelNumber = dvbcChannel.LogicalChannelNumber;
+        channelNumber = dvbcChannel.LogicalChannelNumber > 999 ? channel.IdChannel : dvbcChannel.LogicalChannelNumber;
         channelType = 2;
       }
 
@@ -856,21 +1461,22 @@ namespace TvDatabase
       {
         symbolRate = dvbsChannel.SymbolRate;
         polarisation = (int)dvbsChannel.Polarisation;
-        diseqc = (int)dvbsChannel.Diseqc;
-        idLnbType = ((LnbType)dvbsChannel.LnbType).IdLnbType;
+        switchFrequency = dvbsChannel.SwitchingFrequency;
+        diseqc = (int)dvbsChannel.DisEqc;
+        band = (int)dvbsChannel.BandType;
         satIndex = dvbsChannel.SatelliteIndex;
         modulation = (int)dvbsChannel.ModulationType;
         innerFecRate = (int)dvbsChannel.InnerFecRate;
         pilot = (int)dvbsChannel.Pilot;
-        rollOff = (int)dvbsChannel.RollOff;
-        channelNumber = dvbsChannel.LogicalChannelNumber;
+        rollOff = (int)dvbsChannel.Rolloff;
+        channelNumber = dvbsChannel.LogicalChannelNumber > 999 ? channel.IdChannel : dvbsChannel.LogicalChannelNumber;
         channelType = 3;
       }
 
       DVBTChannel dvbtChannel = tvChannel as DVBTChannel;
       if (dvbtChannel != null)
       {
-        bandwidth = dvbtChannel.Bandwidth;
+        bandwidth = dvbtChannel.BandWidth;
         channelNumber = dvbtChannel.LogicalChannelNumber;
         channelType = 4;
       }
@@ -893,18 +1499,19 @@ namespace TvDatabase
         channelName = dvbChannel.Name;
         provider = dvbChannel.Provider;
         channelFrequency = dvbChannel.Frequency;
-        isRadio = dvbChannel.IsRadio;
-        isTv = dvbChannel.IsTv;
+        //isRadio = dvbChannel.IsRadio;
+        //isTv = dvbChannel.IsTv;
         freeToAir = dvbChannel.FreeToAir;
       }
 
       TuningDetail detail = new TuningDetail(channel.IdChannel, channelName, provider,
-                                             channelType, channelNumber, (int)channelFrequency, country,
-                                             isRadio, isTv, networkId, transportId, serviceId, pmtPid,
-                                             freeToAir, modulation, polarisation, symbolRate, diseqc,
+                                             channelType, channelNumber, (int)channelFrequency, country, isRadio, isTv,
+                                             networkId, transportId, serviceId, pmtPid, freeToAir,
+                                             modulation, polarisation, symbolRate, diseqc, switchFrequency,
                                              bandwidth, majorChannel, minorChannel, videoInputType,
-                                             audioInputType, isVCRSignal, tunerSource, idLnbType,
-                                             satIndex, innerFecRate, pilot, rollOff, url, bitrate);
+                                             audioInputType, isVCRSignal, tunerSource, band,
+                                             satIndex,
+                                             innerFecRate, pilot, rollOff, url, 0);
       detail.Persist();
       return detail;
     }
@@ -924,6 +1531,7 @@ namespace TvDatabase
       int symbolRate = 0;
       int modulation = 0;
       int polarisation = 0;
+      int switchFrequency = 0;
       int diseqc = 0;
       int bandwidth = 8;
       bool freeToAir = true;
@@ -935,7 +1543,7 @@ namespace TvDatabase
       int majorChannel = -1;
       string provider = "";
       int channelType = 0;
-      int idLnbType = 0;
+      int band = 0;
       int satIndex = -1;
       int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
       int pilot = (int)Pilot.NotSet;
@@ -949,12 +1557,12 @@ namespace TvDatabase
         channelFrequency = analogChannel.Frequency;
         channelNumber = analogChannel.ChannelNumber;
         country = analogChannel.Country.Index;
-        isRadio = analogChannel.IsRadio;
-        isTv = analogChannel.IsTv;
+        //isRadio = analogChannel.IsRadio;
+        //isTv = analogChannel.IsTv;
         tunerSource = (int)analogChannel.TunerSource;
         videoInputType = (int)analogChannel.VideoSource;
         audioInputType = (int)analogChannel.AudioSource;
-        isVCRSignal = analogChannel.IsVcrSignal;
+        isVCRSignal = analogChannel.IsVCRSignal;
         channelType = 0;
       }
       ATSCChannel atscChannel = tvChannel as ATSCChannel;
@@ -963,6 +1571,8 @@ namespace TvDatabase
         majorChannel = atscChannel.MajorChannel;
         minorChannel = atscChannel.MinorChannel;
         channelNumber = atscChannel.PhysicalChannel;
+        //videoPid = atscChannel.VideoPid;
+        //audioPid = atscChannel.AudioPid;
         modulation = (int)atscChannel.ModulationType;
         channelType = 1;
       }
@@ -972,7 +1582,7 @@ namespace TvDatabase
       {
         symbolRate = dvbcChannel.SymbolRate;
         modulation = (int)dvbcChannel.ModulationType;
-        channelNumber = dvbcChannel.LogicalChannelNumber;
+        channelNumber = dvbcChannel.LogicalChannelNumber > 999 ? channel.IdChannel : dvbcChannel.LogicalChannelNumber;
         channelType = 2;
       }
 
@@ -981,21 +1591,22 @@ namespace TvDatabase
       {
         symbolRate = dvbsChannel.SymbolRate;
         polarisation = (int)dvbsChannel.Polarisation;
-        diseqc = (int)dvbsChannel.Diseqc;
-        idLnbType = ((LnbType)dvbsChannel.LnbType).IdLnbType;
+        switchFrequency = dvbsChannel.SwitchingFrequency;
+        diseqc = (int)dvbsChannel.DisEqc;
+        band = (int)dvbsChannel.BandType;
         satIndex = dvbsChannel.SatelliteIndex;
         modulation = (int)dvbsChannel.ModulationType;
         innerFecRate = (int)dvbsChannel.InnerFecRate;
         pilot = (int)dvbsChannel.Pilot;
-        rollOff = (int)dvbsChannel.RollOff;
-        channelNumber = dvbsChannel.LogicalChannelNumber;
+        rollOff = (int)dvbsChannel.Rolloff;
+        channelNumber = dvbsChannel.LogicalChannelNumber > 999 ? channel.IdChannel : dvbsChannel.LogicalChannelNumber;
         channelType = 3;
       }
 
       DVBTChannel dvbtChannel = tvChannel as DVBTChannel;
       if (dvbtChannel != null)
       {
-        bandwidth = dvbtChannel.Bandwidth;
+        bandwidth = dvbtChannel.BandWidth;
         channelNumber = dvbtChannel.LogicalChannelNumber;
         channelType = 4;
       }
@@ -1018,41 +1629,42 @@ namespace TvDatabase
         channelName = dvbChannel.Name;
         provider = dvbChannel.Provider;
         channelFrequency = dvbChannel.Frequency;
-        isRadio = dvbChannel.IsRadio;
-        isTv = dvbChannel.IsTv;
+        //isRadio = dvbChannel.IsRadio;
+        //isTv = dvbChannel.IsTv;
         freeToAir = dvbChannel.FreeToAir;
       }
 
-      detail.Name = channelName;
-      detail.Provider = provider;
-      detail.ChannelType = channelType;
-      detail.ChannelNumber = channelNumber;
-      detail.Frequency = (int)channelFrequency;
-      detail.CountryId = country;
-      detail.IsRadio = isRadio;
-      detail.IsTv = isTv;
-      detail.NetworkId = networkId;
-      detail.TransportId = transportId;
-      detail.ServiceId = serviceId;
-      detail.PmtPid = pmtPid;
-      detail.FreeToAir = freeToAir;
-      detail.Modulation = modulation;
-      detail.Polarisation = polarisation;
-      detail.Symbolrate = symbolRate;
-      detail.Diseqc = diseqc;
-      detail.Bandwidth = bandwidth;
-      detail.MajorChannel = majorChannel;
-      detail.MinorChannel = minorChannel;
-      detail.VideoSource = videoInputType;
-      detail.AudioSource = audioInputType;
-      detail.IsVCRSignal = isVCRSignal;
-      detail.TuningSource = tunerSource;
-      detail.IdLnbType = idLnbType;
-      detail.SatIndex = satIndex;
-      detail.InnerFecRate = innerFecRate;
-      detail.Pilot = pilot;
-      detail.RollOff = rollOff;
-      detail.Url = url;
+      detail.Name = channelName;//
+      detail.Provider = provider;//
+      detail.ChannelType = channelType;//
+      detail.ChannelNumber = channelNumber;//
+      detail.Frequency = (int)channelFrequency;//
+      detail.CountryId = country;//
+      detail.IsRadio = isRadio;//
+      detail.IsTv = isTv;//
+      detail.NetworkId = networkId;//
+      detail.TransportId = transportId;//
+      detail.ServiceId = serviceId;//
+      detail.PmtPid = pmtPid;//
+      detail.FreeToAir = freeToAir;//
+      detail.Modulation = modulation;//
+      detail.Polarisation = polarisation;//
+      detail.Symbolrate = symbolRate;//
+      detail.Diseqc = diseqc;//
+      detail.SwitchingFrequency = switchFrequency;//
+      detail.Bandwidth = bandwidth;//
+      detail.MajorChannel = majorChannel;//
+      detail.MinorChannel = minorChannel;//
+      detail.VideoSource = videoInputType;//
+      detail.AudioSource = audioInputType;//
+      detail.IsVCRSignal = isVCRSignal;//
+      detail.TuningSource = tunerSource;//
+      detail.Band = band;//
+      detail.SatIndex = satIndex;//
+      detail.InnerFecRate = innerFecRate;//
+      detail.Pilot = pilot;//
+      detail.RollOff = rollOff;//
+      detail.Url = url;//
       return detail;
     }
 
@@ -1069,9 +1681,10 @@ namespace TvDatabase
       const int audioInputType = 0;
       const bool isVCRSignal = false;
       const int symbolRate = 0;
-      const int modulation = (int)ModulationType.ModNotSet;
-      const int polarisation = (int)Polarisation.NotSet;
-      const int diseqc = (int)DiseqcPort.None;
+      const int modulation = 0;
+      const int polarisation = 0;
+      const int switchFrequency = 0;
+      const int diseqc = 0;
       const int bandwidth = 8;
       const bool freeToAir = true;
       const int pmtPid = -1;
@@ -1082,7 +1695,7 @@ namespace TvDatabase
       const int majorChannel = -1;
       const string provider = "";
       const int channelType = 5;
-      const int idLnbType = 0;
+      const int band = 0;
       const int satIndex = -1;
       const int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
       const int pilot = (int)Pilot.NotSet;
@@ -1092,12 +1705,13 @@ namespace TvDatabase
         url = "";
       }
       TuningDetail detail = new TuningDetail(channel.IdChannel, channelName, provider,
-                                             channelType, channelNumber, (int)channelFrequency, country,
-                                             isRadio, isTv, networkId, transportId, serviceId, pmtPid,
-                                             freeToAir, modulation, polarisation, symbolRate, diseqc,
+                                             channelType, channelNumber, (int)channelFrequency, country, isRadio, isTv,
+                                             networkId, transportId, serviceId, pmtPid, freeToAir,
+                                             modulation, polarisation, symbolRate, diseqc, switchFrequency,
                                              bandwidth, majorChannel, minorChannel, videoInputType,
-                                             audioInputType, isVCRSignal, tunerSource, idLnbType,
-                                             satIndex, innerFecRate, pilot, rollOff, url, bitrate);
+                                             audioInputType, isVCRSignal, tunerSource, band,
+                                             satIndex,
+                                             innerFecRate, pilot, rollOff, url, bitrate);
       detail.Persist();
       return detail;
     }
@@ -1147,15 +1761,23 @@ namespace TvDatabase
       }
     }
 
-    public void RemoveOldPrograms()
+    // maximum hours to keep old program info
+    private int _EpgKeepDuration = 0;
+
+    public int EpgKeepDuration
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof (Program));
-      DateTime dtYesterday = DateTime.Now.AddHours(-EpgKeepDuration);
-      IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
-      sb.AddConstraint(String.Format("endTime < '{0}'", dtYesterday.ToString(GetDateTimeString(), mmddFormat)));
-      SqlStatement stmt = sb.GetStatement(true);
-      ObjectFactory.GetCollection<Program>(stmt.Execute());
-    }
+      get
+      {
+        if (_EpgKeepDuration == 0)
+        {
+          // first time query settings, caching
+          Setting duration = GetSetting("epgKeepDuration", "24");
+          duration.Persist();
+          _EpgKeepDuration = Convert.ToInt32(duration.Value);
+        }
+        return _EpgKeepDuration;
+      }
+    }    
 
     public void RemoveOldPrograms(int idChannel)
     {
@@ -1213,9 +1835,11 @@ namespace TvDatabase
       string sub1 = String.Format("(EndTime > '{0}' and EndTime < '{1}')",
                                   startTime.ToString(GetDateTimeString(), mmddFormat),
                                   endTime.ToString(GetDateTimeString(), mmddFormat));
+
       string sub2 = String.Format("(StartTime >= '{0}' and StartTime <= '{1}')",
                                   startTime.ToString(GetDateTimeString(), mmddFormat),
                                   endTime.ToString(GetDateTimeString(), mmddFormat));
+
       string sub3 = String.Format("(StartTime <= '{0}' and EndTime >= '{1}')",
                                   startTime.ToString(GetDateTimeString(), mmddFormat),
                                   endTime.ToString(GetDateTimeString(), mmddFormat));
@@ -1280,7 +1904,7 @@ namespace TvDatabase
           case "sqlserver":
             MsSqlConnect = new SqlConnection(connectString);
             MsSqlAdapter = new SqlDataAdapter();
-            MsSqlAdapter.TableMappings.Add("Table", "Program");
+            MsSqlAdapter.TableMappings.Add("Table", "Programs");
             MsSqlConnect.Open();
             MsSqlCmd = new SqlCommand(BuildEpgSelect(channelList, provider), MsSqlConnect);
             MsSqlCmd.Parameters.Add("startTime", SqlDbType.DateTime).Value = startTime;
@@ -1290,7 +1914,7 @@ namespace TvDatabase
           case "mysql":
             MySQLConnect = new MySqlConnection(connectString);
             MySQLAdapter = new MySqlDataAdapter(MySQLCmd);
-            MySQLAdapter.TableMappings.Add("Table", "Program");
+            MySQLAdapter.TableMappings.Add("Table", "Programs");
             MySQLConnect.Open();
             MySQLCmd = new MySqlCommand(BuildEpgSelect(channelList, provider), MySQLConnect);
             MySQLCmd.Parameters.Add("?startTime", MySqlDbType.DateTime).Value = startTime;
@@ -1301,7 +1925,7 @@ namespace TvDatabase
             return new Dictionary<int, List<Program>>();
         }
 
-        using (DataSet dataSet = new DataSet("Program"))
+        using (DataSet dataSet = new DataSet("Programs"))
         {
           switch (provider)
           {
@@ -1379,7 +2003,7 @@ namespace TvDatabase
 
     private static string BuildEpgSelect(IEnumerable<Channel> channelList, string aProvider)
     {
-      StringBuilder sbSelect = new StringBuilder("SELECT * FROM Program WHERE ");
+      StringBuilder sbSelect = new StringBuilder("SELECT * FROM Programs WHERE ");
 
       if (aProvider == "mysql")
       {
@@ -1436,8 +2060,7 @@ namespace TvDatabase
           Convert.ToDateTime(prog["startTime"]),
           Convert.ToDateTime(prog["endTime"]),
           Convert.ToString(prog["title"]),
-          Convert.ToString(prog["description"]),
-          Convert.ToString(prog["genre"]),
+          Convert.ToString(prog["description"]),          
           (Program.ProgramState)Convert.ToInt32(prog["state"]),
           Convert.ToDateTime(prog["originalAirDate"]),
           Convert.ToString(prog["seriesNum"]),
@@ -1468,7 +2091,7 @@ namespace TvDatabase
       string StartTimeString = startTime.ToString(GetDateTimeString(), mmddFormat);
       string EndTimeString = endTime.ToString(GetDateTimeString(), mmddFormat);
       StringBuilder SqlSelectCommand = new StringBuilder();
-      SqlSelectCommand.Append("select p.* from Program p inner join Channel c on c.idChannel = p.idChannel ");
+      SqlSelectCommand.Append("select p.* from Programs p inner join Channels c on c.idChannel = p.idChannel ");
       SqlSelectCommand.AppendFormat(
         "where ((EndTime > '{0}' and EndTime < '{1}') or (StartTime >= '{0}' and StartTime <= '{1}') or (StartTime <= '{0}' and EndTime >= '{1}')) and c.visibleInGuide = 1 order by startTime",
         StartTimeString, EndTimeString
@@ -1520,7 +2143,7 @@ namespace TvDatabase
       string StartTimeString = startTime.ToString(GetDateTimeString(), mmddFormat);
       string EndTimeString = endTime.ToString(GetDateTimeString(), mmddFormat);
       StringBuilder SqlSelectCommand = new StringBuilder();
-      SqlSelectCommand.Append("select p.* from Program p inner join Channel c on c.idChannel = p.idChannel ");
+      SqlSelectCommand.Append("select p.* from Programs p inner join Channels c on c.idChannel = p.idChannel ");
       SqlSelectCommand.AppendFormat(
         "where ((EndTime > '{0}' and EndTime < '{1}') or (StartTime >= '{0}' and StartTime <= '{1}') or (StartTime <= '{0}' and EndTime >= '{1}')) and title = '{2}' and c.visibleInGuide = 1 order by startTime",
         StartTimeString, EndTimeString, EscapeSQLString(title)
@@ -1552,7 +2175,7 @@ namespace TvDatabase
           connect.Open();
           using (MySqlCommand cmd = connect.CreateCommand())
           {
-            cmd.CommandText = "select distinct(genre) from Program order by genre";
+            cmd.CommandText = "select distinct(genre) from Programs order by genre";
             cmd.CommandType = CommandType.Text;
             using (IDataReader reader = cmd.ExecuteReader())
             {
@@ -1573,7 +2196,7 @@ namespace TvDatabase
           connect.Open();
           using (OleDbCommand cmd = connect.CreateCommand())
           {
-            cmd.CommandText = "select distinct(genre) from Program order by genre";
+            cmd.CommandText = "select distinct(genre) from Programs order by genre";
             cmd.CommandType = CommandType.Text;
             using (IDataReader reader = cmd.ExecuteReader())
             {
@@ -1600,7 +2223,7 @@ namespace TvDatabase
     {
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       StringBuilder SqlSelectCommand = new StringBuilder();
-      SqlSelectCommand.Append("select p.* from Program p inner join Channel c on c.idChannel = p.idChannel ");
+      SqlSelectCommand.Append("select p.* from Programs p inner join Channel c on c.idChannel = p.idChannel ");
       SqlSelectCommand.AppendFormat("where endTime > '{0}'", DateTime.Now.ToString(GetDateTimeString(), mmddFormat));
       if (currentGenre.Length > 0)
       {
@@ -1636,7 +2259,7 @@ namespace TvDatabase
     {
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       StringBuilder SqlSelectCommand = new StringBuilder();
-      SqlSelectCommand.Append("select p.* from Program p inner join Channel c on c.idChannel = p.idChannel ");
+      SqlSelectCommand.Append("select p.* from Programs p inner join Channel c on c.idChannel = p.idChannel ");
       SqlSelectCommand.AppendFormat("where endTime > '{0}' ", DateTime.Now.ToString(GetDateTimeString(), mmddFormat));
 
       if (searchCriteria.Length > 0)
@@ -1669,7 +2292,7 @@ namespace TvDatabase
     {
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       StringBuilder SqlSelectCommand = new StringBuilder();
-      SqlSelectCommand.Append("select p.* from Program p inner join Channel c on c.idChannel = p.idChannel ");
+      SqlSelectCommand.Append("select p.* from Programs p inner join Channel c on c.idChannel = p.idChannel ");
       SqlSelectCommand.AppendFormat("where endTime > '{0}'", DateTime.Now.ToString(GetDateTimeString(), mmddFormat));
       if (searchCriteria.Length > 0)
       {
@@ -1698,7 +2321,7 @@ namespace TvDatabase
       // no channel = no EPG but we need a valid command text
       if (aEpgChannelList.Count < 1)
       {
-        completeStatement = "SELECT * FROM Program WHERE 0=1";
+        completeStatement = "SELECT * FROM Programs WHERE 0=1";
       }
       else
       {
@@ -1725,7 +2348,7 @@ namespace TvDatabase
           //completeStatement = completeStatement + " ORDER BY idChannel, startTime";   // MSSQL does not support order by in single UNION selects
 
           sbSelect.Append(
-            "SELECT idChannel,idProgram,starttime,endtime,title,episodeName,seriesNum,episodeNum,episodePart FROM Program ");
+            "SELECT idChannel,idProgram,starttime,endtime,title,episodeName,seriesNum,episodeNum,episodePart FROM Programs ");
           sbSelect.Append("WHERE (Program.endtime >= getdate() AND Program.endtime < DATEADD(day, 1, getdate()))");
 
           StringBuilder whereChannel = new StringBuilder(" AND (");
@@ -1769,7 +2392,7 @@ namespace TvDatabase
           case "mysql":
             MySQLConnect = new MySqlConnection(connectString);
             MySQLAdapter = new MySqlDataAdapter();
-            MySQLAdapter.TableMappings.Add("Table", "Program");
+            MySQLAdapter.TableMappings.Add("Table", "Programs");
             MySQLConnect.Open();
             MySQLCmd = new MySqlCommand(BuildCommandTextMiniGuide(provider, aEpgChannelList), MySQLConnect);
             MySQLAdapter.SelectCommand = MySQLCmd;
@@ -1778,7 +2401,7 @@ namespace TvDatabase
             //MSSQLConnect = new System.Data.OleDb.OleDbConnection("Provider=SQLOLEDB;" + connectString);
             MsSqlConnect = new SqlConnection(connectString);
             MsSqlAdapter = new SqlDataAdapter();
-            MsSqlAdapter.TableMappings.Add("Table", "Program");
+            MsSqlAdapter.TableMappings.Add("Table", "Programs");
             MsSqlConnect.Open();
             MsSqlCmd = new SqlCommand(BuildCommandTextMiniGuide(provider, aEpgChannelList), MsSqlConnect);
             MsSqlAdapter.SelectCommand = MsSqlCmd;
@@ -1789,7 +2412,7 @@ namespace TvDatabase
             return nowNextList;
         }
 
-        using (DataSet dataSet = new DataSet("Program"))
+        using (DataSet dataSet = new DataSet("Programs"))
         {
           // ToDo: check if column fetching wastes performance
           switch (provider)
@@ -1927,119 +2550,9 @@ namespace TvDatabase
 
     #region EPG Insert
 
-    private class ImportParams
-    {
-      public ProgramList ProgramList;
-      public DeleteBeforeImportOption ProgamsToDelete;
-      public string ConnectString;
-      public ThreadPriority Priority;
-      public int SleepTime;
-    } ;
+    
 
-    /// <summary>
-    /// Batch inserts programs - intended for faster EPG import. You must make sure before that there are no duplicates 
-    /// (e.g. delete all program data of the current channel).
-    /// Also you MUST provide a true copy of "aProgramList". If you update it's reference in your own code the values will get overwritten
-    /// (possibly before they are written to disk)!
-    /// </summary>
-    /// <param name="aProgramList">A list of persistable gentle.NET Program objects mapping to the Programs table</param>
-    /// <param name="aThreadPriority">Use "Lowest" for Background imports allowing LiveTV, AboveNormal for full speed</param>
-    /// <returns>The record count of programs if successful, 0 on errors</returns>
-    public int InsertPrograms(List<Program> aProgramList, ThreadPriority aThreadPriority)
-    {
-      return InsertPrograms(aProgramList, DeleteBeforeImportOption.None, aThreadPriority);
-    }
-
-    /// <summary>
-    /// Batch inserts programs - intended for faster EPG import. You must make sure before that there are no duplicates 
-    /// (e.g. delete all program data of the current channel).
-    /// Also you MUST provide a true copy of "aProgramList". If you update it's reference in your own code the values will get overwritten
-    /// (possibly before they are written to disk)!
-    /// </summary>
-    /// <param name="aProgramList">A list of persistable gentle.NET Program objects mapping to the Programs table</param>
-    /// <param name="progamsToDelete">Flag specifying which existing programs to delete before the insert</param>
-    /// <param name="aThreadPriority">Use "Lowest" for Background imports allowing LiveTV, AboveNormal for full speed</param>
-    /// <returns>The record count of programs if successful, 0 on errors</returns>
-    /// <remarks><para>Inserts are queued to be performed in the background. Each batch of inserts is executed in a single transaction.
-    /// You may also optionally specify to delete either all existing programs in the same channel(s) as the programs to be inserted 
-    /// (<see cref="DeleteBeforeImportOption.ProgramsOnSameChannel"/>), or existing programs that would otherwise overlap new programs
-    /// (<see cref="DeleteBeforeImportOption.OverlappingPrograms"/>), or none (<see cref="DeleteBeforeImportOption.None"/>).
-    /// The deletion is also performed in the same transaction as the inserts so that EPG will not be at any time empty.</para>
-    /// <para>After all insert have completed and the background thread is idle for 60 seconds, the program states are
-    /// automatically updated to reflect the changes.</para></remarks>
-    public int InsertPrograms(List<Program> aProgramList, DeleteBeforeImportOption progamsToDelete,
-                              ThreadPriority aThreadPriority)
-    {
-      try
-      {
-        int sleepTime = 10;
-
-        switch (aThreadPriority)
-        {
-          case ThreadPriority.Highest:
-          case ThreadPriority.AboveNormal:
-            aThreadPriority = ThreadPriority.Normal;
-            sleepTime = 0;
-            break;
-          case ThreadPriority.Normal:
-            // this is almost enough on dualcore systems for one cpu to gather epg and the other to insert it
-            sleepTime = 10;
-            break;
-          case ThreadPriority.BelowNormal: // on faster systems this might be enough for background importing
-            sleepTime = 20;
-            break;
-          case ThreadPriority.Lowest: // even a single core system is enough to use MP while importing.
-            sleepTime = 40;
-            break;
-        }
-
-        ImportParams param = new ImportParams();
-        param.ProgramList = new ProgramList(aProgramList);
-        param.ProgamsToDelete = progamsToDelete;
-        param.SleepTime = sleepTime;
-        param.Priority = aThreadPriority;
-
-        lock (_programInsertsQueue)
-        {
-          _programInsertsQueue.Enqueue(param);
-          _pendingProgramInserts.Set();
-
-          if (_insertProgramsThread == null)
-          {
-            _insertProgramsThread = new Thread(InsertProgramsThreadStart)
-                                      {
-                                        Priority = ThreadPriority.Lowest,
-                                        Name = "SQL EPG importer",
-                                        IsBackground = true
-                                      };
-            _insertProgramsThread.Start();
-          }
-        }
-
-        return aProgramList.Count;
-      }
-      catch (Exception ex)
-      {
-        Log.Error("BusinessLayer: InsertPrograms error - {0}, {1}", ex.Message, ex.StackTrace);
-        return 0;
-      }
-    }
-
-    public void WaitForInsertPrograms(int millisecondsTimeout)
-    {
-      Thread currentInsertThread = _insertProgramsThread;
-      if (currentInsertThread != null &&
-          (currentInsertThread.ThreadState & ThreadState.Unstarted) != ThreadState.Unstarted)
-        currentInsertThread.Join(millisecondsTimeout);
-    }
-
-    public void WaitForInsertPrograms()
-    {
-      Thread currentInsertThread = _insertProgramsThread;
-      if (currentInsertThread != null &&
-          (currentInsertThread.ThreadState & ThreadState.Unstarted) != ThreadState.Unstarted)
-        currentInsertThread.Join();
-    }
+   
 
     //public void StartResetProgramStatesThread(ThreadPriority aThreadPriority)
     //{
@@ -2105,86 +2618,8 @@ namespace TvDatabase
     //  }
     //}
 
-    private static void InsertProgramsThreadStart()
-    {
-      try
-      {
-        Log.Debug("BusinessLayer: InsertProgramsThread started");
-
-        IGentleProvider prov = ProviderFactory.GetDefaultProvider();
-        string provider = prov.Name.ToLowerInvariant();
-        string defaultConnectString = prov.ConnectionString;
-        DateTime lastImport = DateTime.Now;
-        InsertProgramsDelegate insertProgams;
-
-        switch (provider)
-        {
-          case "mysql":
-            insertProgams = InsertProgramsMySql;
-            break;
-          case "sqlserver":
-            insertProgams = InsertProgramsSqlServer;
-            break;
-          default:
-            Log.Info("BusinessLayer: InsertPrograms unknown provider - {0}", provider);
-            return;
-        }
-
-        while (true)
-        {
-          if (lastImport.AddSeconds(60) < DateTime.Now)
-          {
-            // Done importing and 60 seconds since last import
-            // Remove old programs
-            TvBusinessLayer layer = new TvBusinessLayer();
-            layer.RemoveOldPrograms();
-            // Let's update states
-            Schedule.SynchProgramStatesForAll();
-            // and exit
-            lock (_programInsertsQueue)
-            {
-              //  Has new work been queued in the meantime?
-              if (_programInsertsQueue.Count == 0)
-              {
-                Log.Debug("BusinessLayer: InsertProgramsThread exiting");
-                _insertProgramsThread = null;
-                break;
-              }
-            }
-          }
-
-          _pendingProgramInserts.WaitOne(10000); // Check every 10 secs
-          while (_programInsertsQueue.Count > 0)
-          {
-            try
-            {
-              ImportParams importParams;
-              lock (_programInsertsQueue)
-              {
-                importParams = _programInsertsQueue.Dequeue();
-              }
-              importParams.ConnectString = defaultConnectString;
-              Thread.CurrentThread.Priority = importParams.Priority;
-              insertProgams(importParams);
-              Log.Debug("BusinessLayer: Inserted {0} programs to the database", importParams.ProgramList.Count);
-              lastImport = DateTime.Now;
-              Thread.CurrentThread.Priority = ThreadPriority.Lowest;
-            }
-            catch (Exception ex)
-            {
-              Log.Error("BusinessLayer: InsertMySQL/InsertMSSQL caused an exception:");
-              Log.Write(ex);
-            }
-          }
-          // Now all queued inserts have been processed, clear Gentle cache
-          Gentle.Common.CacheManager.ClearQueryResultsByType(typeof (Program));
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("BusinessLayer: InsertProgramsThread error - {0}, {1}", ex.Message, ex.StackTrace);
-      }
-    }
+    
+   
 
     #region SQL methods
 
@@ -2252,7 +2687,7 @@ namespace TvDatabase
       }
     }
 
-    private static void InsertProgramsMySql(ImportParams aImportParam)
+    /*private static void InsertProgramsMySql(ImportParams aImportParam)
     {
       MySqlTransaction transact = null;
       try
@@ -2301,8 +2736,9 @@ namespace TvDatabase
         Log.Info("BusinessLayer: InsertMySql caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
       }
     }
-
-    private static void InsertProgramsSqlServer(ImportParams aImportParam)
+    */
+    
+   /* private static void InsertProgramsSqlServer(ImportParams aImportParam)
     {
       SqlTransaction transact = null;
       try
@@ -2350,7 +2786,7 @@ namespace TvDatabase
         Log.Info("BusinessLayer: InsertSqlServer caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
       }
     }
-
+    */
     #endregion
 
     #region SQL Builder
@@ -2363,7 +2799,7 @@ namespace TvDatabase
       MySqlCommand sqlCmd = new MySqlCommand();
 
       sqlCmd.CommandText =
-        "DELETE FROM Program WHERE idChannel = ?idChannel AND ((endTime > ?rangeStart AND startTime < ?rangeEnd) OR (startTime = endTime AND startTime BETWEEN ?rangeStart AND ?rangeEnd))";
+        "DELETE FROM Programs WHERE idChannel = ?idChannel AND ((endTime > ?rangeStart AND startTime < ?rangeEnd) OR (startTime = endTime AND startTime BETWEEN ?rangeStart AND ?rangeEnd))";
 
       sqlCmd.Parameters.Add("?idChannel", MySqlDbType.Int32);
       sqlCmd.Parameters.Add("?rangeStart", MySqlDbType.DateTime);
@@ -2415,7 +2851,7 @@ namespace TvDatabase
       MySqlCommand sqlCmd = new MySqlCommand();
 
       sqlCmd.CommandText =
-        "DELETE FROM Program WHERE idChannel = ?idChannel";
+        "DELETE FROM Programs WHERE idChannel = ?idChannel";
 
       sqlCmd.Parameters.Add("?idChannel", MySqlDbType.Int32);
 
@@ -2558,7 +2994,7 @@ namespace TvDatabase
       SqlCommand sqlCmd = new SqlCommand();
 
       sqlCmd.CommandText =
-        "DELETE FROM Program WHERE idChannel = @idChannel AND ((endTime > @rangeStart AND startTime < @rangeEnd) OR (startTime = endTime AND startTime BETWEEN @rangeStart AND @rangeEnd))";
+        "DELETE FROM Programs WHERE idChannel = @idChannel AND ((endTime > @rangeStart AND startTime < @rangeEnd) OR (startTime = endTime AND startTime BETWEEN @rangeStart AND @rangeEnd))";
 
       sqlCmd.Parameters.Add("idChannel", SqlDbType.Int);
       sqlCmd.Parameters.Add("rangeStart", SqlDbType.DateTime);
@@ -2607,7 +3043,7 @@ namespace TvDatabase
       SqlCommand sqlCmd = new SqlCommand();
 
       sqlCmd.CommandText =
-        "DELETE FROM Program WHERE idChannel = @idChannel";
+        "DELETE FROM Programs WHERE idChannel = @idChannel";
 
       sqlCmd.Parameters.Add("idChannel", SqlDbType.Int);
 
@@ -2827,7 +3263,8 @@ namespace TvDatabase
             bool hasOverlappingSchedule = schedule.IsOverlapping(assignedSchedule);
             if (hasOverlappingSchedule)
             {
-              if (!schedule.isSameTransponder(assignedSchedule))
+              bool isSameTransponder = (schedule.isSameTransponder(assignedSchedule) && card.supportSubChannels);
+              if (!isSameTransponder)
               {
                 overlappingSchedules.Add(assignedSchedule);
                 Log.Info("AssignSchedulesToCard: overlapping with " + assignedSchedule + " on card {0}, ID = {1}", count,
@@ -2840,7 +3277,7 @@ namespace TvDatabase
           if (free)
           {
             Log.Info("AssignSchedulesToCard: free on card {0}, ID = {1}", count, card.IdCard);
-            cardSchedules[count].Add(schedule);                                                
+            cardSchedules[count].Add(schedule);
             assigned = true;
             break;
           }
@@ -3191,12 +3628,14 @@ namespace TvDatabase
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (ChannelMap));
       SqlStatement origStmt = sb.GetStatement(true);
-      string sql = "select cm.* from ChannelMap cm where cm.idChannel =" +
+      string sql = "select cm.* from ChannelMaps cm where cm.idChannel =" +
                    dbChannel.IdChannel + " and cm.idCard=" + card.IdCard + (forEpg ? "" : " and cm.epgOnly=0");
       SqlStatement statement = new SqlStatement(StatementType.Select, origStmt.Command, sql,
                                                 typeof (Channel));
       IList<ChannelMap> maps = ObjectFactory.GetCollection<ChannelMap>(statement.Execute());
       return maps != null && maps.Count > 0;
     }
+
+   
   }
 }

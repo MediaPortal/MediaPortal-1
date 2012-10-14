@@ -21,12 +21,11 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using MediaPortal.Configuration;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
-using TvLibrary.Epg;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin.PluginSetup
 {
   public partial class TvSetupForm : MPConfigForm
   {

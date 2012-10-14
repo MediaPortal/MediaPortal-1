@@ -29,7 +29,7 @@
 ///	Feel free to donate any amount of money if this code makes you happy ;)
 ///	Use this code at your own risk. If your machine blows up while using it - don't blame me.
 /// </summary>
-namespace MWCommon
+namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 {
 
   #region TextDir Enum

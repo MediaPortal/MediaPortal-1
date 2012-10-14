@@ -19,28 +19,49 @@
 #endregion
 
 using System;
+using System.Runtime.Serialization;
 using DirectShowLib.BDA;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Device;
 
-namespace TvLibrary.Channels
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
 {
   /// <summary>
   /// A class capable of holding the tuning parameter details required to tune a DVB-S or DVB-S2 channel.
   /// </summary>
-  [Serializable]
+  [DataContract]
   public class DVBSChannel : DVBBaseChannel
   {
     #region variables
 
+    [DataMember]
     private DiseqcPort _diseqc = DiseqcPort.None;
-    private ILnbType _lnbType = null;
+
+    [DataMember]
+    private LnbType _lnbType = null;
+
+    [DataMember]
     private int _satelliteIndex = -1;
+
+    [DataMember]
     private Polarisation _polarisation = Polarisation.NotSet;
+
+    [DataMember]
     private int _symbolRate = -1;
+
+    [DataMember]
     private ModulationType _modulation = ModulationType.ModQpsk;
+
+    [DataMember]
     private BinaryConvolutionCodeRate _innerFecRate = BinaryConvolutionCodeRate.RateNotSet;
+
+    [DataMember]
     private Pilot _pilot = Pilot.NotSet;
+
+    [DataMember]
     private RollOff _rollOff = RollOff.NotSet;
 
     #endregion
@@ -98,7 +119,7 @@ namespace TvLibrary.Channels
     /// <summary>
     /// Get/set the type of LNB used to receive the channel.
     /// </summary>
-    public ILnbType LnbType
+    public LnbType LnbType
     {
       get { return _lnbType; }
       set { _lnbType = value; }
@@ -270,7 +291,7 @@ namespace TvLibrary.Channels
       DVBSChannel ch = (DVBSChannel)this.MemberwiseClone();
       if (this.LnbType != null)
       {
-        ch.LnbType = (ILnbType)this.LnbType.Clone();
+        ch.LnbType = this.LnbType.Clone();
       }
       return ch;
     }
@@ -298,7 +319,7 @@ namespace TvLibrary.Channels
              dvbsChannel.ModulationType != _modulation ||
              dvbsChannel.InnerFecRate != _innerFecRate ||
              dvbsChannel.Pilot != _pilot ||
-             dvbsChannel.RollOff != _rollOff;             
+             dvbsChannel.RollOff != _rollOff;
     }
 
     /// <summary>
@@ -315,7 +336,7 @@ namespace TvLibrary.Channels
       }
 
       // 1: Log the default frequency settings for the LNB.
-      Log.Log.Debug("DvbsChannel: LNB settings, low = {0} kHz, high = {1} kHz, switch = {2} kHz, bandstacked = {3}, toroidal = {4}, polarisation = {5}",
+      Log.Debug("DvbsChannel: LNB settings, low = {0} kHz, high = {1} kHz, switch = {2} kHz, bandstacked = {3}, toroidal = {4}, polarisation = {5}",
           dvbsChannel.LnbType.LowBandFrequency, dvbsChannel.LnbType.HighBandFrequency, dvbsChannel.LnbType.SwitchFrequency,
           dvbsChannel.LnbType.IsBandStacked, dvbsChannel.LnbType.IsToroidal, dvbsChannel.Polarisation);
 
@@ -370,7 +391,7 @@ namespace TvLibrary.Channels
       // This value is *not* arbitrary. Some drivers (for example Genpix SkyWalker) will treat 20 GHz as a signal to
       // always use high voltage (useful for bandstacked LNBs).
 
-      Log.Log.Debug("DvbsChannel: translated LNB settings, low = {0} kHz, high = {1} kHz, switch = {2} kHz, polarisation = {3}",
+      Log.Debug("DvbsChannel: translated LNB settings, low = {0} kHz, high = {1} kHz, switch = {2} kHz, polarisation = {3}",
           dvbsChannel.LnbType.LowBandFrequency, dvbsChannel.LnbType.HighBandFrequency, dvbsChannel.LnbType.SwitchFrequency,
           dvbsChannel.Polarisation);
       return dvbsChannel;

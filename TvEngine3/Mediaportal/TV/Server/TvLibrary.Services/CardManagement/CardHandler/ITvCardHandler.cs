@@ -31,10 +31,13 @@ namespace TvService
     TeletextManagement Teletext { get; }
     ChannelScanning Scanner { get; }
     EpgGrabbing Epg { get; }
+    AudioStreams Audio { get; }
     Recorder Recorder { get; }
     TimeShifter TimeShifter { get; }
     CardTuner Tuner { get; }
     ICiMenuActions CiMenuActions { get; }
+
+    bool CiMenuSupported { get; }
 
     ITVCard Card { get; set; }
     bool IsLocal { get; set; }
@@ -43,9 +46,8 @@ namespace TvService
     CardType Type { get; }
     string CardName { get; }
     string CardDevice();
-    bool IsConditionalAccessSupported { get; }
-    bool CiMenuSupported { get; }
     int NumberOfChannelsDecrypting { get; }
+    bool HasCA { get; }
 
     bool SupportsSubChannels { get; }
 
@@ -59,9 +61,11 @@ namespace TvService
     IChannel CurrentChannel(ref IUser user);
     int CurrentDbChannel(ref IUser user);
     string CurrentChannelName(ref IUser user);
+    IVideoStream GetCurrentVideoStream(IUser user);
     bool IsScrambled(ref IUser user);
 
     void StopCard(IUser user);
+    void PauseCard(IUser user);
     void SetParameters();
     void Dispose();
   }

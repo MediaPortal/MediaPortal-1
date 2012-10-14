@@ -18,9 +18,10 @@
 
 #endregion
 
-using MediaPortal.Utils.Web;
+using Mediaportal.TV.Server.TvLibrary.Utils.Web.Parser;
+using Mediaportal.TV.Server.TvLibrary.Utils.Web.http;
 
-namespace MediaPortal.WebEPG.Parser
+namespace WebEPG.Parser
 {
   /// <summary>
   /// Parser Interface

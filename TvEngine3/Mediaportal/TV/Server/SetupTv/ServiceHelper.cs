@@ -19,29 +19,87 @@
 #endregion
 
 using System;
-using System.Security.AccessControl;
+using System.Net;
 using System.ServiceProcess;
-using System.Threading;
+using MediaPortal.Common.Utils;
+using MediaPortal.Util;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 using Microsoft.Win32;
-using TvDatabase;
-using TvControl;
-using TvLibrary.Log;
 
-namespace SetupTv
+namespace Mediaportal.TV.Server.SetupTV
 {
   /// <summary>
   /// Offers basic control functions for services
   /// </summary>
-  public class ServiceHelper
+  public static class ServiceHelper
   {
+    public const string SERVICENAME_TVSERVICE = @"TvService";
+    private static bool _isRestrictedMode;
+    private static bool _ignoreDisconnections;
+
+    /// <summary>
+    /// Indicates if the connection to TvService is done using WCF services.
+    /// </summary>
+    public static bool IsRestrictedMode
+    {
+      get { return _isRestrictedMode; }
+      set { _isRestrictedMode = value; }
+    }
+
+    /// <summary>
+    /// Indicates if the connection with the TvService is available, which can be local service (<see cref="IsRunning"/>) or remote service via WCF (<see cref="IsRestrictedMode"/>).
+    /// </summary>
+    public static bool IsAvailable
+    {
+      get { return IsRestrictedMode || IsRunning; }
+    }
+
     /// <summary>
     /// Read from DB card detection delay 
     /// </summary>
     /// <returns>number of seconds</returns>
     public static int DefaultInitTimeOut()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      return Convert.ToInt16(layer.GetSetting("delayCardDetect", "0").Value) + 10;
+      return Convert.ToInt16(Singleton<ServiceAgents>.Instance.SettingServiceAgent.GetSettingWithDefaultValue("delayCardDetect", "0").Value) + 10;
+    }
+
+    /// <summary>
+    /// Does a given service exist
+    /// </summary>
+    /// <param name="serviceToFind"></param>
+    /// <param name="hostname"></param>
+    /// <returns></returns>
+    public static bool IsInstalled(string serviceToFind, string hostname)
+    {
+      try
+      {
+        Log.Error("serviceToFind ={0}, hostname={1}", serviceToFind, hostname);
+
+        ServiceController[] services = ServiceController.GetServices(hostname);
+
+        Log.Error("services count = {0}", services.Length);
+        
+
+        foreach (ServiceController service in services)
+        {
+          Log.Error("services name= {0}", service.ServiceName);
+          if (String.Compare(service.ServiceName, serviceToFind, true) == 0)
+          {
+            return true;
+          }
+        }
+        return false;
+      }
+      catch (Exception ex)
+      {
+        _isRestrictedMode = !Network.IsSingleSeat();
+        
+        Log.Error(
+          "ServiceHelper: Check hostname the tvservice is running failed. Try another hostname. {0}", ex);
+        return false;
+      }
     }
 
     /// <summary>
@@ -51,15 +109,7 @@ namespace SetupTv
     /// <returns></returns>
     public static bool IsInstalled(string serviceToFind)
     {
-      ServiceController[] services = ServiceController.GetServices();
-      foreach (ServiceController service in services)
-      {
-        if (String.Compare(service.ServiceName, serviceToFind, true) == 0)
-        {
-          return true;
-        }
-      }
-      return false;
+      return IsInstalled(serviceToFind, Dns.GetHostName());
     }
 
     /// <summary>
@@ -71,7 +121,7 @@ namespace SetupTv
       {
         try
         {
-          using (ServiceController sc = new ServiceController("TvService"))
+          using (ServiceController sc = new ServiceController("TvService", Singleton<ServiceAgents>.Instance.Hostname))
           {
             return sc.Status == ServiceControllerStatus.Running;
           }
@@ -114,15 +164,23 @@ namespace SetupTv
     {
       try
       {
+        using (ServiceController sc = new ServiceController("TvService", Singleton<ServiceAgents>.Instance.Hostname))
+        {
+          sc.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 0, 0, 0, millisecondsTimeout));
+          return (sc.Status == ServiceControllerStatus.Running);
+        }
+        /*
         EventWaitHandle initialized = EventWaitHandle.OpenExisting(RemoteControl.InitializedEventName,
-                                                                   EventWaitHandleRights.Synchronize);
-        return initialized.WaitOne(millisecondsTimeout);
+                                                                    EventWaitHandleRights.Synchronize);
+        return initialized.WaitOne(millisecondsTimeout);*/
       }
       catch (Exception ex) // either we have no right, or the event does not exist
       {
         Log.Error("Failed to wait for {0}", RemoteControl.InitializedEventName);
         Log.Write(ex);
       }
+
+      /*
       // Fall back: try to call a method on the server (for earlier versions of TvService)
       DateTime expires = millisecondsTimeout == -1
                            ? DateTime.MaxValue
@@ -134,8 +192,7 @@ namespace SetupTv
       {
         try
         {
-          RemoteControl.Clear();
-          int cards = RemoteControl.Instance.Cards;
+          int cards = ServiceAgents.Instance.ControllerServiceAgent.Cards;
           return true;
         }
         catch (System.Runtime.Remoting.RemotingException)
@@ -154,7 +211,7 @@ namespace SetupTv
           break;
         }
         Thread.Sleep(250);
-      }
+      }*/
       return false;
     }
 
@@ -167,7 +224,7 @@ namespace SetupTv
       {
         try
         {
-          using (ServiceController sc = new ServiceController("TvService"))
+          using (ServiceController sc = new ServiceController("TvService", Singleton<ServiceAgents>.Instance.Hostname))
           {
             return sc.Status == ServiceControllerStatus.Stopped; // should we consider Stopping as stopped?
           }
@@ -182,6 +239,12 @@ namespace SetupTv
       }
     }
 
+    public static bool IgnoreDisconnections
+    {
+      get { return _ignoreDisconnections; }
+      set { _ignoreDisconnections = value; }
+    }
+
     /// <summary>
     /// Stop the TvService
     /// </summary>
@@ -190,7 +253,7 @@ namespace SetupTv
     {
       try
       {
-        using (ServiceController sc = new ServiceController("TvService"))
+        using (ServiceController sc = new ServiceController("TvService", Singleton<ServiceAgents>.Instance.Hostname))
         {
           switch (sc.Status)
           {
@@ -230,12 +293,13 @@ namespace SetupTv
     {
       try
       {
-        using (ServiceController sc = new ServiceController(aServiceName))
+        using (ServiceController sc = new ServiceController(aServiceName, Singleton<ServiceAgents>.Instance.Hostname))
         {
           switch (sc.Status)
           {
             case ServiceControllerStatus.Stopped:
               sc.Start();
+              _ignoreDisconnections = false;
               break;
             case ServiceControllerStatus.StartPending:
               break;
@@ -263,7 +327,7 @@ namespace SetupTv
     /// <returns>Always true</returns>
     public static bool Restart()
     {
-      if (!IsInstalled(@"TvService"))
+      if (!IsInstalled(SERVICENAME_TVSERVICE, Singleton<ServiceAgents>.Instance.Hostname))
       {
         return false;
       }
@@ -278,7 +342,7 @@ namespace SetupTv
     /// <returns>true when search was successfull - modifies the search pattern to return the correct full name</returns>
     public static bool GetDBServiceName(ref string partOfSvcNameToComplete)
     {
-      ServiceController[] services = ServiceController.GetServices();
+      ServiceController[] services = ServiceController.GetServices(Singleton<ServiceAgents>.Instance.Hostname);
       foreach (ServiceController service in services)
       {
         if (service.ServiceName.Contains(partOfSvcNameToComplete))

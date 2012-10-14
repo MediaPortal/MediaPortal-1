@@ -1,4 +1,4 @@
-namespace SetupTv.Dialogs
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   partial class FormWebStreamTuningDetail
   {

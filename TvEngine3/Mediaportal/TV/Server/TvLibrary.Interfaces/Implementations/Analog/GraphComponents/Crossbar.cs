@@ -21,8 +21,9 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 
-namespace TvLibrary.Implementations.Analog.GraphComponents
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.GraphComponents
 {
   /// <summary>
   /// Bean class for a Crossbar in the analog graph

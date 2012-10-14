@@ -19,9 +19,10 @@
 #endregion
 
 using System;
-using TvLibrary.Interfaces;
+using System.Runtime.Serialization;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvLibrary.Channels
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
 {
   /// <summary>
   /// Tuning part of DVB-T required for scanning
@@ -33,27 +34,27 @@ namespace TvLibrary.Channels
     /// CTOR
     /// </summary>
     /// <param name="p_Frequency">Frequency</param>
-    /// <param name="p_Bandwidth">Bandwidth</param>
+    /// <param name="p_BandWidth">BandWidth</param>
     /// <param name="p_Offset">Offset</param>
-    public DVBTTuning(long p_Frequency, int p_Bandwidth, int p_Offset)
+    public DVBTTuning(long p_Frequency, int p_BandWidth, int p_Offset)
     {
       Frequency = p_Frequency;
-      Bandwidth = p_Bandwidth;
+      BandWidth = p_BandWidth;
       Offset = p_Offset;
     }
 
     /// <summary>
-    /// Frequency, in kHz.
+    /// Frequency
     /// </summary>
     public long Frequency;
 
     /// <summary>
-    /// Bandwidth, in MHz.
+    /// BandWidth
     /// </summary>
-    public int Bandwidth;
+    public int BandWidth;
 
     /// <summary>
-    /// Offset, in kHz.
+    /// Offset
     /// </summary>
     public int Offset;
 
@@ -63,104 +64,97 @@ namespace TvLibrary.Channels
     /// <returns></returns>
     public override string ToString()
     {
-      return String.Format("freq:{0}/{2} bandwidth:{1}", Frequency, Bandwidth, Offset);
+      return String.Format("freq:{0}/{2} bandwidth:{1}", Frequency, BandWidth, Offset);
     }
   }
-
+  
   /// <summary>
-  /// A class capable of holding the tuning parameter details required to tune a DVB-T channel.
-  /// </summary>
-  [Serializable]
+  /// class holding all tuning details for DVBT
+  /// </summary>  
+  [DataContract]
   public class DVBTChannel : DVBBaseChannel
   {
     #region variables
 
-    private int _bandwidth = 8;
+    [DataMember]
+    private int _bandWidth;
+
+    [DataMember]
+    private int _offset;
 
     #endregion
 
-    #region constructors
-
     /// <summary>
-    /// Initialise a new instance of the <see cref="DVBTChannel"/> class.
+    /// Initializes a new instance of the <see cref="DVBTChannel"/> class.
     /// </summary>
     public DVBTChannel()
-      : base()
     {
-      _bandwidth = 8;
+      BandWidth = 8;
     }
 
     /// <summary>
-    /// Initialise a new instance of the <see cref="DVBTChannel"/> class using an existing instance.
+    /// Initializes a new instance of the <see cref="DVBTChannel"/> class.
     /// </summary>
-    /// <param name="channel">The existing channel instance.</param>
-    public DVBTChannel(DVBTChannel channel)
-      : base(channel)
+    /// <param name="tuning">Tuning detail</param>
+    public DVBTChannel(DVBTTuning tuning)
     {
-      _bandwidth = channel.Bandwidth;
+      TuningInfo = tuning;
     }
 
     /// <summary>
-    /// Initialise a new instance of the <see cref="DVBTChannel"/> class using a <see cref="DVBTTuning"/>
-    /// instance.
-    /// </summary>
-    /// <param name="tuningParameters">Core channel tuning parameters.</param>
-    public DVBTChannel(DVBTTuning tuningParameters)
-    {
-      TuningInfo = tuningParameters;
-    }
-
-    #endregion
-
-    #region properties
-
-    /// <summary>
-    /// Get/set the bandwidth for this channel's transmitter. The bandwidth unit is MHz.
-    /// </summary>
-    public int Bandwidth
-    {
-      get { return _bandwidth; }
-      set { _bandwidth = value; }
-    }
-
-    /// <summary>
-    /// Get/set the core tuning parameters for the channel's transmitter.
+    /// returns basic tuning info for current channel
     /// </summary>
     public DVBTTuning TuningInfo
     {
-      get { return new DVBTTuning(Frequency, _bandwidth, 0); }
+      get { return new DVBTTuning(Frequency, BandWidth, Offset); }
       set
       {
         Frequency = value.Frequency;
-        _bandwidth = value.Bandwidth;
+        BandWidth = value.BandWidth;
+        Offset = value.Offset;
       }
     }
 
-    #endregion
+    /// <summary>
+    /// gets/sets the bandwidth for this channel
+    /// </summary>
+    public int Offset
+    {
+      get { return _offset; }
+      set { _offset = value; }
+    }
 
     /// <summary>
-    /// Get a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// gets/sets the bandwidth for this channel
+    /// </summary>
+    public int BandWidth
+    {
+      get { return _bandWidth; }
+      set { _bandWidth = value; }
+    }
+
+    /// <summary>
+    /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
     /// </summary>
     /// <returns>
-    /// a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>
+    /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
     /// </returns>
     public override string ToString()
     {
-      string line = String.Format("DVBT:{0} Bandwidth:{1}", base.ToString(), Bandwidth);
+      string line = String.Format("DVBT:{0} BandWidth:{1}", base.ToString(), BandWidth);
       return line;
     }
 
     /// <summary>
-    /// Determine whether the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>.
+    /// Determines whether the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>.
     /// </summary>
     /// <param name="obj">The <see cref="T:System.Object"></see> to compare with the current <see cref="T:System.Object"></see>.</param>
     /// <returns>
-    /// <c>true</c> if the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>, otherwise <c>false</c>
+    /// true if the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>; otherwise, false.
     /// </returns>
     public override bool Equals(object obj)
     {
-      DVBTChannel ch = obj as DVBTChannel;
-      if (ch == null)
+      if ((obj as DVBTChannel) == null)
       {
         return false;
       }
@@ -168,8 +162,8 @@ namespace TvLibrary.Channels
       {
         return false;
       }
-
-      if (ch.Bandwidth != _bandwidth)
+      DVBTChannel ch = obj as DVBTChannel;
+      if (ch.BandWidth != BandWidth)
       {
         return false;
       }
@@ -180,17 +174,19 @@ namespace TvLibrary.Channels
     /// <summary>
     /// Serves as a hash function for a particular type. <see cref="M:System.Object.GetHashCode"></see> is suitable for use in hashing algorithms and data structures like a hash table.
     /// </summary>
-    /// <returns>a hash code for the current <see cref="T:System.Object"></see></returns>
+    /// <returns>
+    /// A hash code for the current <see cref="T:System.Object"></see>.
+    /// </returns>
     public override int GetHashCode()
     {
-      return base.GetHashCode() ^ _bandwidth.GetHashCode();
+      return base.GetHashCode() ^ _bandWidth.GetHashCode();
     }
 
     /// <summary>
-    /// Check if the given channel and this instance are on different transponders.
+    /// Checks if the given channel and this instance are on the different transponder
     /// </summary>
-    /// <param name="channel">The channel to check.</param>
-    /// <returns><c>false</c> if the channels are on the same transponder, otherwise <c>true</c></returns>
+    /// <param name="channel">Channel to check</param>
+    /// <returns>true, if the channels are on the same transponder</returns>
     public override bool IsDifferentTransponder(IChannel channel)
     {
       DVBTChannel dvbtChannel = channel as DVBTChannel;
@@ -199,7 +195,7 @@ namespace TvLibrary.Channels
         return true;
       }
       return dvbtChannel.Frequency != Frequency ||
-             dvbtChannel.Bandwidth != _bandwidth;
+             dvbtChannel.BandWidth != BandWidth;
     }
   }
 }

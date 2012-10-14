@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2010 Team MediaPortal
 
 // Copyright (C) 2005-2010 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -20,13 +20,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TvControl;
-using TvDatabase;
-using TvLibrary.Log;
+using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.Interfaces.Enums;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
-namespace TvService
+namespace Mediaportal.TV.Server.TVControl
 {
   public static class UserFactory
   {
@@ -38,22 +39,21 @@ namespace TvService
     public const string SCHEDULER_TAGNAME = "PriorityScheduler";
     public const string CUSTOM_TAGNAME = "PrioritiesCustom";
 
-    private const string NAME_EPG = "epg";
-    private const bool IS_ADMIN_EPG = false;
+    public const string NAME_EPG = "epg";
+    //private const bool IS_ADMIN_EPG = false;
 
-    private const string NAME_SCHEDULER = "scheduler";
+    public const string NAME_SCHEDULER = "scheduler";
     
     private const int PRIORITY_MAX_VALUE = 100;
     private const int PRIORITY_MIN_VALUE = 1;
 
-    private const bool IS_ADMIN_SCHEDULER = true;
-    private const bool IS_ADMIN_USER = false;    
+    //private const bool IS_ADMIN_SCHEDULER = true;
+    //private const bool IS_ADMIN_USER = false;    
 
     private static readonly int _priorityEpg;
     private static readonly int _priorityUser;
     private static readonly int _priorityScheduler;
-    private static readonly IDictionary<string, int> _priorityCustomUsers = new Dictionary<string, int>();    
-
+    private static readonly IDictionary<string, int> _priorityCustomUsers = new Dictionary<string, int>();
 
     private static decimal ValueSanityCheck(decimal value, int min, int max)
     {
@@ -66,23 +66,25 @@ namespace TvService
 
     static UserFactory()
     {
-      var layer = new TvBusinessLayer();  
-
+        
+      
       try
       {
+        var settingService = GlobalServiceProvider.Get<ISettingService>();
         _priorityEpg = (int)ValueSanityCheck(
-        Convert.ToDecimal(layer.GetSetting(EPG_TAGNAME, EPG_PRIORITY.ToString()).Value), PRIORITY_MIN_VALUE, PRIORITY_MAX_VALUE);
+        Convert.ToDecimal(settingService.GetSettingWithDefaultValue(EPG_TAGNAME, EPG_PRIORITY.ToString()).Value), PRIORITY_MIN_VALUE, PRIORITY_MAX_VALUE);        
+
         Log.Debug("UserFactory setting PriorityEPG : {0}", _priorityEpg);
 
         _priorityUser = (int)ValueSanityCheck(
-          Convert.ToDecimal(layer.GetSetting(USER_TAGNAME, USER_PRIORITY.ToString()).Value), PRIORITY_MIN_VALUE, PRIORITY_MAX_VALUE);
+          Convert.ToDecimal(settingService.GetSettingWithDefaultValue(USER_TAGNAME, USER_PRIORITY.ToString()).Value), PRIORITY_MIN_VALUE, PRIORITY_MAX_VALUE);
         Log.Debug("UserFactory setting PriorityUser : {0}", _priorityUser);
 
         _priorityScheduler = (int)ValueSanityCheck(
-          Convert.ToDecimal(layer.GetSetting(SCHEDULER_TAGNAME, SCHEDULER_PRIORITY.ToString()).Value), PRIORITY_MIN_VALUE, PRIORITY_MAX_VALUE);
+          Convert.ToDecimal(settingService.GetSettingWithDefaultValue(SCHEDULER_TAGNAME, SCHEDULER_PRIORITY.ToString()).Value), PRIORITY_MIN_VALUE, PRIORITY_MAX_VALUE);
         Log.Debug("UserFactory setting PriorityScheduler : {0}", _priorityScheduler);
 
-        Setting setting = layer.GetSetting(CUSTOM_TAGNAME, "");
+        Setting setting = settingService.GetSettingWithDefaultValue(CUSTOM_TAGNAME, "");
         string[] users = setting.Value.Split(';');
         foreach (string user in users)
         {
@@ -109,20 +111,21 @@ namespace TvService
 
     public static IUser CreateEpgUser()
     {
-      IUser egpUser = new User(NAME_EPG, IS_ADMIN_EPG, -1, _priorityEpg);
+      IUser egpUser = new User(NAME_EPG, UserType.EPG, -1, _priorityEpg);
       return egpUser;
     }
 
     public static IUser CreateSchedulerUser(int scheduleId, int cardId)
     {
       string name = NAME_SCHEDULER + scheduleId;
-      IUser schedulerUser = new User(name, IS_ADMIN_SCHEDULER, cardId, _priorityScheduler);
+      IUser schedulerUser = new User(name, UserType.Scheduler, cardId, _priorityScheduler);
       return schedulerUser;  
     }
 
     public static IUser CreateSchedulerUser()
     {
-      IUser schedulerUser = new User("", true);
+      IUser schedulerUser = new User("", UserType.Scheduler);
+      schedulerUser.Priority = _priorityScheduler;
       return schedulerUser;
     }
 
@@ -133,13 +136,13 @@ namespace TvService
 
     public static IUser CreateBasicUser(string name, int cardId, int? defaultPriority)
     {
-      return CreateBasicUser(name, cardId, defaultPriority, IS_ADMIN_USER);
+      return CreateBasicUser(name, cardId, defaultPriority, UserType.Normal); //used by setuptv-testchannels
     }
 
-    public static IUser CreateBasicUser(string name, int cardId, int? defaultPriority, bool isAdmin)
+    public static IUser CreateBasicUser(string name, int cardId, int? defaultPriority, UserType userType)
     {
       int priorityCustomUser = GetDefaultPriority(name, defaultPriority);
-      IUser basicUser = new User(name, isAdmin, cardId, priorityCustomUser);
+      IUser basicUser = new User(name, userType, cardId, priorityCustomUser);
       return basicUser;  
     }
 

@@ -1,4 +1,6 @@
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   partial class FormEditIpAdress
   {
@@ -28,12 +30,12 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpButtonOK = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonCancel = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpComboBox1 = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.PortNoNumericTextBox = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
+      this.mpLabel1 = new MPLabel();
+      this.mpButtonOK = new MPButton();
+      this.mpButtonCancel = new MPButton();
+      this.mpComboBox1 = new MPComboBox();
+      this.mpLabel2 = new MPLabel();
+      this.PortNoNumericTextBox = new MPNumericTextBox();
       this.SuspendLayout();
       // 
       // mpLabel1
@@ -125,11 +127,11 @@ namespace SetupTv.Sections
 
     #endregion
 
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBox1;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonOK;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonCancel;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
-    private MediaPortal.UserInterface.Controls.MPNumericTextBox PortNoNumericTextBox;
+    private MPLabel mpLabel1;
+    private MPComboBox mpComboBox1;
+    private MPButton mpButtonOK;
+    private MPButton mpButtonCancel;
+    private MPLabel mpLabel2;
+    private MPNumericTextBox PortNoNumericTextBox;
   }
 }

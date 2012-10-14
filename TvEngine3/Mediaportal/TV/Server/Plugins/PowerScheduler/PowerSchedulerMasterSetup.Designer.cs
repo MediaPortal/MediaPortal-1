@@ -1,4 +1,4 @@
-namespace TvEngine.PowerScheduler
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler
 {
   partial class PowerSchedulerMasterSetup
   {
@@ -131,7 +131,7 @@ namespace TvEngine.PowerScheduler
       this.inhibitStandbyShares = new System.Windows.Forms.DataGridView();
       this.Sharename = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.Hostname = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.Username = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.Username = new System.Windows.Forms.DataGridViewTextBoxColumn();      
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.tabControl1.SuspendLayout();
@@ -912,19 +912,19 @@ namespace TvEngine.PowerScheduler
       this.checkBox15.UseVisualStyleBackColor = true;
       // 
       // tabPage5_as
-      // 
+      //
       this.tabPage5_as.Controls.Add(this.shareMonitoring);
       this.tabPage5_as.Controls.Add(this.groupBox8_as);
       this.tabPage5_as.Location = new System.Drawing.Point(4, 22);
       this.tabPage5_as.Name = "tabPage5_as";
       this.tabPage5_as.Padding = new System.Windows.Forms.Padding(3);
       this.tabPage5_as.Size = new System.Drawing.Size(459, 362);
-      this.tabPage5_as.TabIndex = 4;
+      this.tabPage5_as.TabIndex = 4;      
       this.tabPage5_as.Text = "Shares";
       this.tabPage5_as.UseVisualStyleBackColor = true;
-      // 
+      //
       // shareMonitoring
-      // 
+      //
       this.shareMonitoring.AutoSize = true;
       this.shareMonitoring.Location = new System.Drawing.Point(12, 16);
       this.shareMonitoring.Name = "shareMonitoring";
@@ -932,9 +932,9 @@ namespace TvEngine.PowerScheduler
       this.shareMonitoring.TabIndex = 6;
       this.shareMonitoring.Text = "Enable share monitoring to inhibit standby (restart required)";
       this.shareMonitoring.UseVisualStyleBackColor = true;
-      // 
+      //
       // groupBox8_as
-      // 
+      //
       this.groupBox8_as.Controls.Add(this.inhibitStandbyShares);
       this.groupBox8_as.Location = new System.Drawing.Point(6, 39);
       this.groupBox8_as.Name = "groupBox8_as";
@@ -942,9 +942,9 @@ namespace TvEngine.PowerScheduler
       this.groupBox8_as.TabIndex = 4;
       this.groupBox8_as.TabStop = false;
       this.groupBox8_as.Text = "Specific host-user combinations using a share that can prevent standby";
-      // 
+      //
       // inhibitStandbyShares
-      // 
+      //
       this.inhibitStandbyShares.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.inhibitStandbyShares.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Sharename,
@@ -954,21 +954,21 @@ namespace TvEngine.PowerScheduler
       this.inhibitStandbyShares.Name = "inhibitStandbyShares";
       this.inhibitStandbyShares.Size = new System.Drawing.Size(435, 292);
       this.inhibitStandbyShares.TabIndex = 6;
-      // 
+      //
       // Sharename
-      // 
+      //
       this.Sharename.HeaderText = "Share";
       this.Sharename.Name = "Sharename";
-      // 
+      //
       // Hostname
-      // 
+      //
       this.Hostname.HeaderText = "Host";
       this.Hostname.Name = "Hostname";
-      // 
+      //
       // Username
-      // 
+      //      
       this.Username.HeaderText = "User";
-      this.Username.Name = "Username";
+      this.Username.Name = "Username";      
       // 
       // toolTip1
       // 
@@ -1021,7 +1021,7 @@ namespace TvEngine.PowerScheduler
       this.groupBox5.ResumeLayout(false);
       this.groupBox5.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).EndInit();
-      this.tabPage5_as.ResumeLayout(false);
+      this.tabPage5_as.ResumeLayout(false);      
       this.tabPage5_as.PerformLayout();
       this.groupBox8_as.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.inhibitStandbyShares)).EndInit();

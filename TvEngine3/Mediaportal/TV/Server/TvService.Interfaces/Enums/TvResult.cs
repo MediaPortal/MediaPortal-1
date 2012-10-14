@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace TvControl
+namespace Mediaportal.TV.Server.TVService.Interfaces.Enums
 {
   /// <summary>
   /// enum describing the possible result codes for the tv engine
@@ -96,6 +96,8 @@ namespace TvControl
     /// <summary>
     /// A tune operation was cancelled
     /// </summary>
-    TuneCancelled
+    TuneCancelled,
+    UsersBlocking,
+    AlreadyParked
   }
 }

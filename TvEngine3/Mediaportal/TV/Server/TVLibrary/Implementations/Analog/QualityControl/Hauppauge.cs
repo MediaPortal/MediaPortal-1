@@ -22,10 +22,10 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using DirectShowLib;
-using MediaPortal.Common.Utils;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.Analog
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
 {
   ///<summary>
   /// Hauppauge quality control
@@ -33,6 +33,15 @@ namespace TvLibrary.Implementations.Analog
   public class Hauppauge : IDisposable
   {
     private bool disposed;
+
+    [DllImport("kernel32.dll")]
+    internal static extern IntPtr LoadLibrary(String dllname);
+
+    [DllImport("kernel32.dll")]
+    internal static extern IntPtr GetProcAddress(IntPtr hModule, String procname);
+
+    [DllImport("kernel32.dll")]
+    internal static extern bool FreeLibrary(IntPtr hModule);
 
     private IntPtr hauppaugelib = IntPtr.Zero;
 
@@ -86,37 +95,37 @@ namespace TvLibrary.Implementations.Analog
         }
 
         //Load Library
-        hauppaugelib = NativeMethods.LoadLibrary("hauppauge.dll");
+        hauppaugelib = LoadLibrary("hauppauge.dll");
 
         //Get Proc addresses, and set the delegates for each function
-        IntPtr procaddr = NativeMethods.GetProcAddress(hauppaugelib, "Init");
+        IntPtr procaddr = GetProcAddress(hauppaugelib, "Init");
         _Init = (Init)Marshal.GetDelegateForFunctionPointer(procaddr, typeof (Init));
 
-        procaddr = NativeMethods.GetProcAddress(hauppaugelib, "DeInit");
+        procaddr = GetProcAddress(hauppaugelib, "DeInit");
         _DeInit = (DeInit)Marshal.GetDelegateForFunctionPointer(procaddr, typeof (DeInit));
 
-        procaddr = NativeMethods.GetProcAddress(hauppaugelib, "IsHauppauge");
+        procaddr = GetProcAddress(hauppaugelib, "IsHauppauge");
         _IsHauppauge = (IsHauppauge)Marshal.GetDelegateForFunctionPointer(procaddr, typeof (IsHauppauge));
 
-        procaddr = NativeMethods.GetProcAddress(hauppaugelib, "SetVidBitRate");
+        procaddr = GetProcAddress(hauppaugelib, "SetVidBitRate");
         _SetVidBitRate = (SetVidBitRate)Marshal.GetDelegateForFunctionPointer(procaddr, typeof (SetVidBitRate));
 
-        procaddr = NativeMethods.GetProcAddress(hauppaugelib, "GetVidBitRate");
+        procaddr = GetProcAddress(hauppaugelib, "GetVidBitRate");
         _GetVidBitRate = (GetVidBitRate)Marshal.GetDelegateForFunctionPointer(procaddr, typeof (GetVidBitRate));
 
-        procaddr = NativeMethods.GetProcAddress(hauppaugelib, "SetAudBitRate");
+        procaddr = GetProcAddress(hauppaugelib, "SetAudBitRate");
         _SetAudBitRate = (SetAudBitRate)Marshal.GetDelegateForFunctionPointer(procaddr, typeof (SetAudBitRate));
 
-        procaddr = NativeMethods.GetProcAddress(hauppaugelib, "GetAudBitRate");
+        procaddr = GetProcAddress(hauppaugelib, "GetAudBitRate");
         _GetAudBitRate = (GetAudBitRate)Marshal.GetDelegateForFunctionPointer(procaddr, typeof (GetAudBitRate));
 
-        procaddr = NativeMethods.GetProcAddress(hauppaugelib, "SetStreamType");
+        procaddr = GetProcAddress(hauppaugelib, "SetStreamType");
         _SetStreamType = (SetStreamType)Marshal.GetDelegateForFunctionPointer(procaddr, typeof (SetStreamType));
 
-        procaddr = NativeMethods.GetProcAddress(hauppaugelib, "GetStreamType");
+        procaddr = GetProcAddress(hauppaugelib, "GetStreamType");
         _GetStreamType = (GetStreamType)Marshal.GetDelegateForFunctionPointer(procaddr, typeof (GetStreamType));
 
-        procaddr = NativeMethods.GetProcAddress(hauppaugelib, "SetDNRFilter");
+        procaddr = GetProcAddress(hauppaugelib, "SetDNRFilter");
         _SetDNRFilter = (SetDNRFilter)Marshal.GetDelegateForFunctionPointer(procaddr, typeof (SetDNRFilter));
 
         //Hack
@@ -127,11 +136,11 @@ namespace TvLibrary.Implementations.Analog
         string card = Encoding.Unicode.GetString(encodedstring);
 
         hr = new HResult(_Init(filter, card));
-        Log.Log.WriteFile("Hauppauge Quality Control Initializing " + hr.ToDXString());
+        Log.WriteFile("Hauppauge Quality Control Initializing " + hr.ToDXString());
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile("Hauppauge Init failed " + ex.Message);
+        Log.WriteFile("Hauppauge Init failed " + ex.Message);
       }
     }
 
@@ -153,7 +162,7 @@ namespace TvLibrary.Implementations.Analog
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile("Hauppauge SetDNR failed " + ex.Message);
+        Log.WriteFile("Hauppauge SetDNR failed " + ex.Message);
       }
       return false;
     }
@@ -177,7 +186,7 @@ namespace TvLibrary.Implementations.Analog
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile("Hauppauge Error GetBitrate " + ex.Message);
+        Log.WriteFile("Hauppauge Error GetBitrate " + ex.Message);
       }
 
       return true;
@@ -195,14 +204,14 @@ namespace TvLibrary.Implementations.Analog
           if (_IsHauppauge())
           {
             hr.Set(_SetVidBitRate(maxKbps, minKbps, isVBR));
-            Log.Log.WriteFile("Hauppauge Set Bit Rate " + hr.ToDXString());
+            Log.WriteFile("Hauppauge Set Bit Rate " + hr.ToDXString());
             return true;
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile("Hauppauge Set Vid Rate " + ex.Message);
+        Log.WriteFile("Hauppauge Set Vid Rate " + ex.Message);
       }
       return false;
     }
@@ -226,7 +235,7 @@ namespace TvLibrary.Implementations.Analog
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile("Hauppauge Get Audio Bitrate " + ex.Message);
+        Log.WriteFile("Hauppauge Get Audio Bitrate " + ex.Message);
       }
       return false;
     }
@@ -249,7 +258,7 @@ namespace TvLibrary.Implementations.Analog
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile("Hauppauge Set Audio Bit Rate " + ex.Message);
+        Log.WriteFile("Hauppauge Set Audio Bit Rate " + ex.Message);
       }
       return false;
     }
@@ -273,7 +282,7 @@ namespace TvLibrary.Implementations.Analog
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile("Hauppauge Get Stream " + ex.Message);
+        Log.WriteFile("Hauppauge Get Stream " + ex.Message);
       }
       return false;
     }
@@ -296,7 +305,7 @@ namespace TvLibrary.Implementations.Analog
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile("Hauppauge Set Stream Type " + ex.Message);
+        Log.WriteFile("Hauppauge Set Stream Type " + ex.Message);
       }
       return false;
     }
@@ -330,14 +339,14 @@ namespace TvLibrary.Implementations.Analog
             if (_IsHauppauge())
               _DeInit();
 
-            NativeMethods.FreeLibrary(hauppaugelib);
+            FreeLibrary(hauppaugelib);
             hauppaugelib = IntPtr.Zero;
           }
         }
         catch (Exception ex)
         {
-          Log.Log.WriteFile("Hauppauge exception " + ex.Message);
-          Log.Log.WriteFile("Hauppauge Disposed hcw.txt");
+          Log.WriteFile("Hauppauge exception " + ex.Message);
+          Log.WriteFile("Hauppauge Disposed hcw.txt");
         }
       }
       disposed = true;

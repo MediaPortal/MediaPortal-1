@@ -20,9 +20,8 @@
 
 using System;
 using MediaPortal.GUI.Library;
-using TvControl;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   /// <summary>
   /// 
@@ -40,7 +39,7 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\tvOverlay.xml"));
+      bool bResult = Load(GUIGraphicsContext.Skin + @"\tvOverlay.xml");
       GetID = (int)Window.WINDOW_TV_OVERLAY;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.TvOverlay);
       return bResult;

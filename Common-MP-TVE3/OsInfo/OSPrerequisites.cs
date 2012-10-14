@@ -20,12 +20,12 @@
 
 using System;
 using System.Windows.Forms;
+
 #if MediaPortal
 using MediaPortal.ServiceImplementations;
 
 #else
-using TvLibrary.Log;
-
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 #endif
 
 namespace OSPrerequisites

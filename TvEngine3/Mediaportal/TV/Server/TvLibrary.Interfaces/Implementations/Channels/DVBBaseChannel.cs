@@ -19,29 +19,54 @@
 #endregion
 
 using System;
-using TvLibrary.Interfaces;
+using System.Runtime.Serialization;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvLibrary.Channels
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
 {
   /// <summary>
   /// A base class for holding DVB (and ATSC) channel tuning details.
   /// </summary>
-  [Serializable]
+  [DataContract]
+  [KnownType(typeof(DVBTChannel))]
+  [KnownType(typeof(DVBCChannel))]
+  [KnownType(typeof(DVBSChannel))]
+  [KnownType(typeof(DVBIPChannel))]
+  [KnownType(typeof(ATSCChannel))]
   public abstract class DVBBaseChannel : IChannel
   {
     #region variables
 
+    [DataMember]
     private string _channelName = String.Empty;
+
+    [DataMember]
     private string _providerName = String.Empty;
+
+    [DataMember]
     private long _channelFrequency = -1;
+
+    [DataMember]
     private int _networkId = -1;
+
+    [DataMember]
     private int _transportId = -1;
+
+    [DataMember]
     private int _serviceId = -1;
+
+    [DataMember]
     private int _pmtPid = -1;
+
+    [DataMember]
     private int _lcn = 10000;
-    private bool _isTv = true;
-    private bool _isRadio = false;
+        
+    [DataMember]
     private bool _freeToAir = true;
+
+    [DataMember]
+    private MediaTypeEnum _mediaType;
 
     #endregion
 
@@ -60,8 +85,7 @@ namespace TvLibrary.Channels
       _serviceId = -1;
       _pmtPid = -1;
       _lcn = 10000;
-      _isTv = true;
-      _isRadio = false;
+      _mediaType = MediaTypeEnum.TV;
       _freeToAir = true;
     }
 
@@ -80,8 +104,7 @@ namespace TvLibrary.Channels
       _serviceId = channel.ServiceId;
       _pmtPid = channel.PmtPid;
       _lcn = channel.LogicalChannelNumber;
-      _isTv = channel.IsTv;
-      _isRadio = channel.IsRadio;
+      _mediaType = channel._mediaType;      
       _freeToAir = channel.FreeToAir;
     }
 
@@ -161,23 +184,6 @@ namespace TvLibrary.Channels
       set { _lcn = value; }
     }
 
-    /// <summary>
-    /// Get/set whether the channel is a television channel.
-    /// </summary>
-    public bool IsTv
-    {
-      get { return _isTv; }
-      set { _isTv = value; }
-    }
-
-    /// <summary>
-    /// Get/set whether the channel is a radio channel.
-    /// </summary>
-    public bool IsRadio
-    {
-      get { return _isRadio; }
-      set { _isRadio = value; }
-    }
 
     /// <summary>
     /// Get/set whether the channel is a free-to-air or encrypted channel.
@@ -186,6 +192,12 @@ namespace TvLibrary.Channels
     {
       get { return _freeToAir; }
       set { _freeToAir = value; }
+    }
+
+    public MediaTypeEnum MediaType
+    {
+      get { return _mediaType; }
+      set { _mediaType = value; }
     }
 
     #endregion
@@ -200,7 +212,7 @@ namespace TvLibrary.Channels
     /// </returns>
     public override string ToString()
     {
-      string line = IsRadio ? "radio:" : "tv:";
+      string line = MediaType.ToString();
       line += String.Format("{0} {1} Freq:{2} ONID:{3} TSID:{4} SID:{5} PMT:0x{6:X} FTA:{7} LCN:{8}",
                             Provider, Name, Frequency, NetworkId, TransportId, ServiceId, PmtPid, FreeToAir,
                             LogicalChannelNumber);
@@ -254,14 +266,10 @@ namespace TvLibrary.Channels
       {
         return false;
       }
-      if (ch.IsTv != _isTv)
+      if (ch.MediaType != MediaType)
       {
         return false;
-      }
-      if (ch.IsRadio != _isRadio)
-      {
-        return false;
-      }
+      }      
       if (ch.FreeToAir != _freeToAir)
       {
         return false;
@@ -278,8 +286,8 @@ namespace TvLibrary.Channels
     {
       return base.GetHashCode() ^ _channelName.GetHashCode() ^ _providerName.GetHashCode() ^
             _channelFrequency.GetHashCode() ^ _networkId.GetHashCode() ^ _transportId.GetHashCode() ^
-            _serviceId.GetHashCode() ^ _pmtPid.GetHashCode() ^ _lcn.GetHashCode() ^ _isTv.GetHashCode() ^
-            _isRadio.GetHashCode() ^ _freeToAir.GetHashCode();
+            _serviceId.GetHashCode() ^ _pmtPid.GetHashCode() ^ _lcn.GetHashCode() ^ _mediaType.GetHashCode() 
+             ^ _freeToAir.GetHashCode();
     }
 
     #endregion

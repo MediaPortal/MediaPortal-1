@@ -21,10 +21,11 @@
 using System;
 using System.Windows.Forms;
 using DirectShowLib.BDA;
+using Mediaportal.TV.Server.SetupControls;
 
-namespace SetupTv.Dialogs
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
-  public partial class FormATSCTuningDetail : SetupControls.FormTuningDetailCommon
+  public partial class FormATSCTuningDetail : FormTuningDetailCommon
   {
     public FormATSCTuningDetail()
     {

@@ -19,12 +19,13 @@
 #endregion
 
 using System.Collections.Generic;
-using TvLibrary.Interfaces;
-using TvLibrary.Epg;
-using TvLibrary.ChannelLinkage;
-using TvLibrary.Implementations.Analog;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvLibrary.Implementations.Hybrid
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
 {
   /// <summary>
   /// Hybrid card group wrapper
@@ -288,6 +289,16 @@ namespace TvLibrary.Implementations.Hybrid
     public ITvSubChannel GetSubChannel(int id)
     {
       return _cards[_currentCardIndex].GetSubChannel(id);
+    }
+
+    /// <summary>
+    /// Gets the first sub channel.
+    /// </summary>
+    /// <param name="id">The id.</param>
+    /// <returns></returns>
+    public ITvSubChannel GetFirstSubChannel()
+    {
+      return _cards[_currentCardIndex].GetFirstSubChannel();
     }
 
     /// <summary>

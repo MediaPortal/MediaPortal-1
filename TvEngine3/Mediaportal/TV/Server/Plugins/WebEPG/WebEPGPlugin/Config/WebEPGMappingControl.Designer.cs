@@ -1,4 +1,7 @@
-﻿namespace SetupTv.Sections.WebEPGConfig
+﻿using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+using WebEPG.config.WebEPG;
+
+namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
 {
   partial class WebEPGMappingControl
   {
@@ -29,28 +32,28 @@
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      this.gbChannels = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.gbChannels = new MPGroupBox();
       this.bAutoMap = new System.Windows.Forms.Button();
-      this.bImport = new MediaPortal.UserInterface.Controls.MPButton();
+      this.bImport = new MPButton();
       this.lvMapping = new System.Windows.Forms.ListView();
       this.bClearMapping = new System.Windows.Forms.Button();
-      this.lCount = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbCount = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.bRemove = new MediaPortal.UserInterface.Controls.MPButton();
+      this.lCount = new MPLabel();
+      this.tbCount = new MPTextBox();
+      this.bRemove = new MPButton();
       this.label1 = new System.Windows.Forms.Label();
       this.GroupComboBox = new System.Windows.Forms.ComboBox();
-      this.gbChannelDetails = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.gbChannelDetails = new MPGroupBox();
       this.tcMappingDetails = new System.Windows.Forms.TabControl();
       this.tpSingle = new System.Windows.Forms.TabPage();
-      this.gbGrabber = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.tbGrabDays = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.lGuideDays = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.bGrabber = new MediaPortal.UserInterface.Controls.MPButton();
-      this.Grabber = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbGrabSite = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.bChannelID = new MediaPortal.UserInterface.Controls.MPButton();
-      this.l_cID = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbChannelName = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.gbGrabber = new MPGroupBox();
+      this.tbGrabDays = new MPTextBox();
+      this.lGuideDays = new MPLabel();
+      this.bGrabber = new MPButton();
+      this.Grabber = new MPLabel();
+      this.tbGrabSite = new MPTextBox();
+      this.bChannelID = new MPButton();
+      this.l_cID = new MPLabel();
+      this.tbChannelName = new MPTextBox();
       this.tpMultiple = new System.Windows.Forms.TabPage();
       this.bMergedEdit = new System.Windows.Forms.Button();
       this.bMergedRemove = new System.Windows.Forms.Button();
@@ -441,7 +444,7 @@
       // 
       // bsMergedChannel
       // 
-      this.bsMergedChannel.DataSource = typeof(MediaPortal.WebEPG.Config.MergedChannel);
+      this.bsMergedChannel.DataSource = typeof(MergedChannel);
       // 
       // WebEPGMappingControl
       // 
@@ -470,27 +473,27 @@
 
     #endregion
 
-    private MediaPortal.UserInterface.Controls.MPGroupBox gbChannels;
-    private MediaPortal.UserInterface.Controls.MPButton bImport;
+    private MPGroupBox gbChannels;
+    private MPButton bImport;
     private System.Windows.Forms.ListView lvMapping;
     private System.Windows.Forms.Button bClearMapping;
-    private MediaPortal.UserInterface.Controls.MPLabel lCount;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbCount;
-    private MediaPortal.UserInterface.Controls.MPButton bRemove;
+    private MPLabel lCount;
+    private MPTextBox tbCount;
+    private MPButton bRemove;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.ComboBox GroupComboBox;
-    private MediaPortal.UserInterface.Controls.MPGroupBox gbChannelDetails;
+    private MPGroupBox gbChannelDetails;
     private System.Windows.Forms.TabControl tcMappingDetails;
     private System.Windows.Forms.TabPage tpSingle;
-    private MediaPortal.UserInterface.Controls.MPGroupBox gbGrabber;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbGrabDays;
-    private MediaPortal.UserInterface.Controls.MPLabel lGuideDays;
-    private MediaPortal.UserInterface.Controls.MPButton bGrabber;
-    private MediaPortal.UserInterface.Controls.MPLabel Grabber;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbGrabSite;
-    private MediaPortal.UserInterface.Controls.MPButton bChannelID;
-    private MediaPortal.UserInterface.Controls.MPLabel l_cID;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbChannelName;
+    private MPGroupBox gbGrabber;
+    private MPTextBox tbGrabDays;
+    private MPLabel lGuideDays;
+    private MPButton bGrabber;
+    private MPLabel Grabber;
+    private MPTextBox tbGrabSite;
+    private MPButton bChannelID;
+    private MPLabel l_cID;
+    private MPTextBox tbChannelName;
     private System.Windows.Forms.TabPage tpMultiple;
     private System.Windows.Forms.Button bMergedEdit;
     private System.Windows.Forms.Button bMergedRemove;

@@ -20,7 +20,7 @@
 
 using System;
 
-namespace TvLibrary.Teletext
+namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
 {
   /// <summary>
   /// class which can decode toptext

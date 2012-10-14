@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace TvControl
+namespace Mediaportal.TV.Server.TVService.Interfaces.Enums
 {
   /// <summary>
   /// current availability of a specific channel

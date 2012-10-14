@@ -21,7 +21,7 @@
 using System;
 using System.Drawing;
 
-namespace TvLibrary.Teletext
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 {
   /// <summary>
   /// delegate which is called when a teletext page has been received,modified or deleted

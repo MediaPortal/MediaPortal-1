@@ -8,9 +8,9 @@
     <ProjectGuid>{20EF43D2-7B66-47BA-864C-E9123C3A69F8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DvbSky</RootNamespace>
-    <AssemblyName>DvbSky</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <RootNamespace>Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>

@@ -1,4 +1,7 @@
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+using WebEPG.config.WebEPG;
+
+namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
 {
   partial class WebEPGSetup
   {
@@ -38,11 +41,11 @@ namespace SetupTv.Sections
       this.checkBoxDeleteBeforeImport = new System.Windows.Forms.CheckBox();
       this.buttonBrowse = new System.Windows.Forms.Button();
       this.textBoxFolder = new System.Windows.Forms.TextBox();
-      this.DestinationComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.DestinationComboBox = new MPComboBox();
+      this.mpLabel1 = new MPLabel();
       this.nMaxGrab = new System.Windows.Forms.NumericUpDown();
-      this.lGrabDay = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.bSave = new MediaPortal.UserInterface.Controls.MPButton();
+      this.lGrabDay = new MPLabel();
+      this.bSave = new MPButton();
       this.tabMain = new System.Windows.Forms.TabControl();
       this.tabGeneral = new System.Windows.Forms.TabPage();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -56,9 +59,9 @@ namespace SetupTv.Sections
       this.label11 = new System.Windows.Forms.Label();
       this.label12 = new System.Windows.Forms.Label();
       this.tabTVMappings = new System.Windows.Forms.TabPage();
-      this.TvMappings = new SetupTv.Sections.WebEPGConfig.WebEPGMappingControl();
+      this.TvMappings = new WebEPGMappingControl();
       this.tabRadioMappings = new System.Windows.Forms.TabPage();
-      this.RadioMappings = new SetupTv.Sections.WebEPGConfig.WebEPGMappingControl();
+      this.RadioMappings = new WebEPGMappingControl();
       this.tabSchedule = new System.Windows.Forms.TabPage();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
       this.mpLabel2 = new System.Windows.Forms.Label();
@@ -90,7 +93,7 @@ namespace SetupTv.Sections
       // 
       // bsMergedChannel
       // 
-      this.bsMergedChannel.DataSource = typeof(MediaPortal.WebEPG.Config.MergedChannel);
+      this.bsMergedChannel.DataSource = typeof(MergedChannel);
       // 
       // gbMapping
       // 
@@ -609,8 +612,8 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Button bAutoMap;
     private System.Windows.Forms.GroupBox gbGlobal;
     private System.Windows.Forms.NumericUpDown nMaxGrab;
-    private MediaPortal.UserInterface.Controls.MPLabel lGrabDay;
-    private MediaPortal.UserInterface.Controls.MPButton bSave;
+    private MPLabel lGrabDay;
+    private MPButton bSave;
     private System.Windows.Forms.TabControl tabMain;
     private System.Windows.Forms.TabPage tabGeneral;
     private System.Windows.Forms.Button buttonManualImport;
@@ -624,8 +627,8 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label11;
     private System.Windows.Forms.Label label12;
     private System.Windows.Forms.Timer StatusTimer;
-    private MediaPortal.UserInterface.Controls.MPComboBox DestinationComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
+    private MPComboBox DestinationComboBox;
+    private MPLabel mpLabel1;
     private System.Windows.Forms.Button buttonBrowse;
     private System.Windows.Forms.TextBox textBoxFolder;
     private System.Windows.Forms.CheckBox checkBoxDeleteBeforeImport;
@@ -634,8 +637,8 @@ namespace SetupTv.Sections
     private System.Windows.Forms.TabPage tabTVMappings;
     private System.Windows.Forms.TabPage tabRadioMappings;
     private System.Windows.Forms.TabPage tabSchedule;
-    private SetupTv.Sections.WebEPGConfig.WebEPGMappingControl RadioMappings;
-    private SetupTv.Sections.WebEPGConfig.WebEPGMappingControl TvMappings;
+    private WebEPGMappingControl RadioMappings;
+    private WebEPGMappingControl TvMappings;
     private System.Windows.Forms.GroupBox groupBox3;
     private System.Windows.Forms.Panel panel1;
     private System.Windows.Forms.CheckBox SundayCheckBox;

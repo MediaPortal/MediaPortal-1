@@ -25,13 +25,10 @@ using System.Management;
 using System.Diagnostics;
 using System.Text;
 using System.Runtime.InteropServices;
-using System.ServiceProcess;
 using System.Windows.Forms;
-using TvLibrary.Log;
-using System.Threading;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-
-namespace TvService
+namespace Mediaportal.TV.Server.TVService
 {
   /// <summary>
   /// 
@@ -716,11 +713,11 @@ namespace TvService
       Match match = r.Match(line);
       if (match.Success)
       {
-        // Remove [ xxx ] completly
+        // RemoveUser [ xxx ] completly
         line = line.Remove(match.Index, match.Length);
         if (!String.IsNullOrEmpty(value))
         {
-          // Add again xxx if value != null
+          // AddSubChannelOrUser again xxx if value != null
           string m = match.Value.Substring(1, match.Value.Length - 2);
           line = line.Insert(match.Index, m);
         }

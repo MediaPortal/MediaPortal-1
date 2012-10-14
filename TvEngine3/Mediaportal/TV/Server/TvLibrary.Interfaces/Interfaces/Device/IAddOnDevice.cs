@@ -20,7 +20,7 @@
 
 using DirectShowLib;
 
-namespace TvLibrary.Interfaces.Device
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
 {
   /// <summary>
   /// An interface for devices that require one or more additional filters to be connected into the BDA tuner

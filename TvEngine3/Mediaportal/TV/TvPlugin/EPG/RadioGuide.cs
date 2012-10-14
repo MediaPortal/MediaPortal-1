@@ -24,12 +24,12 @@ using MediaPortal.GUI.Library;
 
 #endregion
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin.EPG
 {
   /// <summary>
   /// 
   /// </summary>
-  public class RadioGuide : RadioGuideBase
+  public sealed class RadioGuide : RadioGuideBase
   {
     public RadioGuide()
     {
@@ -38,8 +38,7 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      bool result = Load(GUIGraphicsContext.GetThemedSkinFile(@"\myradioguide.xml"));
-      Initialize();
+      bool result = Load(GUIGraphicsContext.Skin + @"\myradioguide.xml");      
       GetID = (int)Window.WINDOW_RADIO_GUIDE;
       return result;
     }

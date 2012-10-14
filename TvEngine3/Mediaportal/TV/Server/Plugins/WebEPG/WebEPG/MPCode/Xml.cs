@@ -22,9 +22,9 @@ using System;
 using System.IO;
 using System.Text;
 using System.Xml;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace MediaPortal.WebEPG.Profile
+namespace WebEPG.MPCode
 {
   public class Xml : IDisposable
   {
@@ -174,8 +174,7 @@ namespace MediaPortal.WebEPG.Profile
             {
               _doc.Save(stream);
               _doc = null;
-              stream.Flush();
-              stream.Close();
+              stream.Flush();              
             }
             _bChanged = false;
           }
@@ -204,24 +203,25 @@ namespace MediaPortal.WebEPG.Profile
         // If the file does not exist, use the writer to quickly create it
         if (!File.Exists(_strFileName))
         {
-          XmlTextWriter writer = new XmlTextWriter(_strFileName, _encoding);
-          writer.Formatting = Formatting.Indented;
-
-          writer.WriteStartDocument();
-
-          writer.WriteStartElement(_rootName);
-          writer.WriteStartElement("section");
-          writer.WriteAttributeString("name", null, section);
-          writer.WriteStartElement("entry");
-          writer.WriteAttributeString("name", null, entry);
-          if (valueString != "")
+          using (var writer = new XmlTextWriter(_strFileName, _encoding)) 
           {
-            writer.WriteString(valueString);
+            writer.Formatting = Formatting.Indented;
+
+            writer.WriteStartDocument();
+
+            writer.WriteStartElement(_rootName);
+            writer.WriteStartElement("section");
+            writer.WriteAttributeString("name", null, section);
+            writer.WriteStartElement("entry");
+            writer.WriteAttributeString("name", null, entry);
+            if (valueString != "")
+            {
+              writer.WriteString(valueString);
+            }
+            writer.WriteEndElement();
+            writer.WriteEndElement();
+            writer.WriteEndElement();            
           }
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.WriteEndElement();
-          writer.Close();
           _doc = null;
           return;
         }

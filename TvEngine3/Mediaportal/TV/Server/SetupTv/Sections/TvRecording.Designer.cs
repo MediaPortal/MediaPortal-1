@@ -1,4 +1,6 @@
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   partial class TvRecording
   {
@@ -36,39 +38,39 @@ namespace SetupTv.Sections
       this.label48 = new System.Windows.Forms.Label();
       this.numericUpDownMaxFreeCardsToTry = new System.Windows.Forms.NumericUpDown();
       this.lblMaxFreeCards = new System.Windows.Forms.Label();
-      this.groupBoxScheduler = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBoxScheduler = new MPGroupBox();
       this.lblWeekend = new System.Windows.Forms.Label();
       this.comboBoxWeekend = new System.Windows.Forms.ComboBox();
-      this.checkBoxPreventDupes = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxPreventDupes = new MPCheckBox();
       this.comboBoxEpisodeKey = new System.Windows.Forms.ComboBox();
       this.labelEpisodeKey = new System.Windows.Forms.Label();
-      this.groupBoxGap = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBoxGap = new MPGroupBox();
       this.label1 = new System.Windows.Forms.Label();
       this.label2 = new System.Windows.Forms.Label();
       this.numericUpDownPostRec = new System.Windows.Forms.NumericUpDown();
       this.label3 = new System.Windows.Forms.Label();
       this.numericUpDownPreRec = new System.Windows.Forms.NumericUpDown();
       this.label4 = new System.Windows.Forms.Label();
-      this.checkBoxAutoDelete = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxAutoDelete = new MPCheckBox();
       this.tpCustom = new System.Windows.Forms.TabPage();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.labelCustomFormat = new System.Windows.Forms.Label();
       this.textBoxCustomFormat = new System.Windows.Forms.TextBox();
       this.comboBoxFormat = new System.Windows.Forms.ComboBox();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel1 = new MPLabel();
+      this.mpLabel2 = new MPLabel();
+      this.mpLabel3 = new MPLabel();
+      this.mpLabel4 = new MPLabel();
       this.textBoxSample = new System.Windows.Forms.TextBox();
       this.label8 = new System.Windows.Forms.Label();
       this.label7 = new System.Windows.Forms.Label();
       this.label5 = new System.Windows.Forms.Label();
       this.comboBoxMovies = new System.Windows.Forms.ComboBox();
       this.tpDiskQuota = new System.Windows.Forms.TabPage();
-      this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel5 = new MPLabel();
       this.enableDiskQuota = new System.Windows.Forms.CheckBox();
-      this.mpNumericTextBoxDiskQuota = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
+      this.mpNumericTextBoxDiskQuota = new MPNumericTextBox();
       this.label14 = new System.Windows.Forms.Label();
       this.comboBoxDrive = new System.Windows.Forms.ComboBox();
       this.labelFreeDiskspace = new System.Windows.Forms.Label();
@@ -116,9 +118,9 @@ namespace SetupTv.Sections
       // 
       // tabControl1
       // 
-      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tpSettings);
       this.tabControl1.Controls.Add(this.tpCustom);
       this.tabControl1.Controls.Add(this.tpDiskQuota);
@@ -144,9 +146,9 @@ namespace SetupTv.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.groupBoxRecording);
       this.groupBox1.Controls.Add(this.groupBoxScheduler);
       this.groupBox1.Controls.Add(this.groupBoxGap);
@@ -159,8 +161,8 @@ namespace SetupTv.Sections
       // 
       // groupBoxRecording
       // 
-      this.groupBoxRecording.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxRecording.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxRecording.Controls.Add(this.label48);
       this.groupBoxRecording.Controls.Add(this.numericUpDownMaxFreeCardsToTry);
       this.groupBoxRecording.Controls.Add(this.lblMaxFreeCards);
@@ -200,8 +202,8 @@ namespace SetupTv.Sections
       // 
       // groupBoxScheduler
       // 
-      this.groupBoxScheduler.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxScheduler.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxScheduler.Controls.Add(this.lblWeekend);
       this.groupBoxScheduler.Controls.Add(this.comboBoxWeekend);
       this.groupBoxScheduler.Controls.Add(this.checkBoxPreventDupes);
@@ -253,7 +255,7 @@ namespace SetupTv.Sections
       this.checkBoxPreventDupes.Size = new System.Drawing.Size(335, 30);
       this.checkBoxPreventDupes.TabIndex = 13;
       this.checkBoxPreventDupes.Text = "Check episode of already recorded programs to prevent duplicate \r\nrecording of re" +
-          "peated broadcasts";
+    "peated broadcasts";
       this.checkBoxPreventDupes.UseVisualStyleBackColor = true;
       this.checkBoxPreventDupes.CheckedChanged += new System.EventHandler(this.checkBoxPreventDupes_CheckedChanged);
       // 
@@ -281,8 +283,8 @@ namespace SetupTv.Sections
       // 
       // groupBoxGap
       // 
-      this.groupBoxGap.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxGap.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxGap.Controls.Add(this.label1);
       this.groupBoxGap.Controls.Add(this.label2);
       this.groupBoxGap.Controls.Add(this.numericUpDownPostRec);
@@ -384,9 +386,9 @@ namespace SetupTv.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.AutoSize = true;
       this.groupBox2.Controls.Add(this.labelCustomFormat);
       this.groupBox2.Controls.Add(this.textBoxCustomFormat);
@@ -405,8 +407,8 @@ namespace SetupTv.Sections
       // 
       // labelCustomFormat
       // 
-      this.labelCustomFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelCustomFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.labelCustomFormat.AutoSize = true;
       this.labelCustomFormat.Location = new System.Drawing.Point(85, 124);
       this.labelCustomFormat.Name = "labelCustomFormat";
@@ -416,8 +418,8 @@ namespace SetupTv.Sections
       // 
       // textBoxCustomFormat
       // 
-      this.textBoxCustomFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxCustomFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxCustomFormat.Location = new System.Drawing.Point(88, 101);
       this.textBoxCustomFormat.Name = "textBoxCustomFormat";
       this.textBoxCustomFormat.Size = new System.Drawing.Size(331, 20);
@@ -427,8 +429,8 @@ namespace SetupTv.Sections
       // 
       // comboBoxFormat
       // 
-      this.comboBoxFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxFormat.FormattingEnabled = true;
       this.comboBoxFormat.Location = new System.Drawing.Point(88, 74);
@@ -439,8 +441,8 @@ namespace SetupTv.Sections
       // 
       // groupBox3
       // 
-      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox3.Controls.Add(this.mpLabel1);
       this.groupBox3.Controls.Add(this.mpLabel2);
       this.groupBox3.Controls.Add(this.mpLabel3);
@@ -460,7 +462,7 @@ namespace SetupTv.Sections
       this.mpLabel1.Size = new System.Drawing.Size(66, 130);
       this.mpLabel1.TabIndex = 19;
       this.mpLabel1.Text = "start day\r\nstart month\r\nstart year\r\nstart hours\r\nstart minutes\r\nend day\r\nend mont" +
-          "h\r\nend year\r\nend hours\r\nend minutes";
+    "h\r\nend year\r\nend hours\r\nend minutes";
       // 
       // mpLabel2
       // 
@@ -470,7 +472,7 @@ namespace SetupTv.Sections
       this.mpLabel2.Size = new System.Drawing.Size(82, 130);
       this.mpLabel2.TabIndex = 17;
       this.mpLabel2.Text = "channel name\r\ntitle\r\nepisode name\r\ngenre\r\nseries number\r\nepisode number\r\nepisode " +
-          "part\r\ndate\r\nstart time\r\nend time";
+    "part\r\ndate\r\nstart time\r\nend time";
       // 
       // mpLabel3
       // 
@@ -480,7 +482,7 @@ namespace SetupTv.Sections
       this.mpLabel3.Size = new System.Drawing.Size(70, 130);
       this.mpLabel3.TabIndex = 16;
       this.mpLabel3.Text = "%channel% =\r\n%title% =\r\n%name% =\r\n%genre% =\r\n%series% =\r\n%episode% =\r\n%part% =\r\n%" +
-          "date% =\r\n%start% =\r\n%end% =\r\n";
+    "date% =\r\n%start% =\r\n%end% =\r\n";
       this.mpLabel3.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
       // mpLabel4
@@ -491,13 +493,13 @@ namespace SetupTv.Sections
       this.mpLabel4.Size = new System.Drawing.Size(81, 130);
       this.mpLabel4.TabIndex = 18;
       this.mpLabel4.Text = "%startday% =\r\n%startmonth% =\r\n%startyear% =\r\n%starthh% =\r\n%startmm% =\r\n%endday% =" +
-          "\r\n%endmonth% =\r\n%endyear% =\r\n%endhh% =\r\n%endmm% =\r\n";
+    "\r\n%endmonth% =\r\n%endyear% =\r\n%endhh% =\r\n%endmm% =\r\n";
       this.mpLabel4.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
       // textBoxSample
       // 
-      this.textBoxSample.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxSample.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxSample.Enabled = false;
       this.textBoxSample.Location = new System.Drawing.Point(88, 148);
       this.textBoxSample.Name = "textBoxSample";
@@ -534,8 +536,8 @@ namespace SetupTv.Sections
       // 
       // comboBoxMovies
       // 
-      this.comboBoxMovies.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxMovies.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxMovies.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxMovies.FormattingEnabled = true;
       this.comboBoxMovies.Items.AddRange(new object[] {
@@ -675,9 +677,9 @@ namespace SetupTv.Sections
       // 
       // groupBoxRecordSettings
       // 
-      this.groupBoxRecordSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxRecordSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxRecordSettings.AutoSize = true;
       this.groupBoxRecordSettings.Controls.Add(this.buttonSameRecFolder);
       this.groupBoxRecordSettings.Controls.Add(this.textBoxRecordingFormat);
@@ -726,8 +728,8 @@ namespace SetupTv.Sections
       // 
       // comboBoxCards
       // 
-      this.comboBoxCards.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxCards.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxCards.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxCards.FormattingEnabled = true;
       this.comboBoxCards.Location = new System.Drawing.Point(74, 43);
@@ -747,8 +749,8 @@ namespace SetupTv.Sections
       // 
       // textBoxFolder
       // 
-      this.textBoxFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxFolder.Location = new System.Drawing.Point(23, 186);
       this.textBoxFolder.Name = "textBoxFolder";
       this.textBoxFolder.ReadOnly = true;
@@ -837,9 +839,9 @@ namespace SetupTv.Sections
       // 
       // tvTagRecs
       // 
-      this.tvTagRecs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tvTagRecs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tvTagRecs.CheckBoxes = true;
       this.tvTagRecs.FullRowSelect = true;
       this.tvTagRecs.Location = new System.Drawing.Point(30, 94);
@@ -862,8 +864,8 @@ namespace SetupTv.Sections
       // 
       // cbRecPaths
       // 
-      this.cbRecPaths.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbRecPaths.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.cbRecPaths.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbRecPaths.FormattingEnabled = true;
       this.cbRecPaths.Location = new System.Drawing.Point(30, 43);
@@ -922,7 +924,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.TabPage tpSettings;
     private System.Windows.Forms.TabPage tpCustom;
     private System.Windows.Forms.GroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAutoDelete;
+    private MPCheckBox checkBoxAutoDelete;
     private System.Windows.Forms.Label label4;
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.Label label2;
@@ -942,10 +944,10 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label10;
     private System.Windows.Forms.ComboBox comboBoxDrive;
     private System.Windows.Forms.Label label9;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
+    private MPLabel mpLabel1;
+    private MPLabel mpLabel2;
+    private MPLabel mpLabel3;
+    private MPLabel mpLabel4;
     private System.Windows.Forms.TabPage tpRecording;
     private System.Windows.Forms.ComboBox comboBoxCards;
     private System.Windows.Forms.Button buttonBrowse;
@@ -954,8 +956,8 @@ namespace SetupTv.Sections
     private System.Windows.Forms.OpenFileDialog openFileDialog1;
     private System.Windows.Forms.PictureBox pictureBox1;
     private System.Windows.Forms.Label label23;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel5;
-    private MediaPortal.UserInterface.Controls.MPNumericTextBox mpNumericTextBoxDiskQuota;
+    private MPLabel mpLabel5;
+    private MPNumericTextBox mpNumericTextBoxDiskQuota;
     private System.Windows.Forms.NumericUpDown numericUpDownPostRec;
     private System.Windows.Forms.NumericUpDown numericUpDownPreRec;
     private System.Windows.Forms.CheckBox enableDiskQuota;
@@ -972,9 +974,9 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ComboBox comboBoxEpisodeKey;
     private System.Windows.Forms.Label labelEpisodeKey;
     private System.Windows.Forms.Button buttonSameRecFolder;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxScheduler;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxGap;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxPreventDupes;
+    private MPGroupBox groupBoxScheduler;
+    private MPGroupBox groupBoxGap;
+    private MPCheckBox checkBoxPreventDupes;
     private System.Windows.Forms.ComboBox comboBoxFormat;
     private System.Windows.Forms.TextBox textBoxCustomFormat;
     private System.Windows.Forms.Label labelCustomFormat;

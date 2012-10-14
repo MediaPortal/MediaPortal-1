@@ -21,7 +21,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace SetupTv.Dialogs
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class FormDVBTTuningDetail : SetupControls.FormTuningDetailCommon
   {
@@ -105,11 +105,6 @@ namespace SetupTv.Dialogs
         return false;
       }
       if (!Int32.TryParse(textBoxDVBTfreq.Text, out freq))
-      {
-        MessageBox.Show(this, "Please enter a valid frequency!", "Incorrect input");
-        return false;
-      }
-      if (freq <= 0)
       {
         MessageBox.Show(this, "Please enter a valid frequency!", "Incorrect input");
         return false;

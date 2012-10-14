@@ -22,14 +22,17 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using TvLibrary.Log;
-using TvDatabase;
-using MediaPortal.Utils.Time;
-using MediaPortal.Utils.Web;
-using MediaPortal.WebEPG.Config.Grabber;
-using Gentle.Framework;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TvLibrary.Utils.Time;
+using Mediaportal.TV.Server.TvLibrary.Utils.Web.Parser;
+using Mediaportal.TV.Server.TvLibrary.Utils.Web.http;
+using WebEPG.config.Grabber;
 
-namespace MediaPortal.WebEPG.Parser
+namespace WebEPG.Parser
 {
   /// <summary>
   /// Program data used by IParses to stored the data for each program
@@ -282,7 +285,14 @@ namespace MediaPortal.WebEPG.Parser
       _endTime = new WorldDateTime(dbProgram.EndTime);
       _title = dbProgram.Title;
       _description = dbProgram.Description;
-      _genre = dbProgram.Genre;
+      if (dbProgram.ProgramCategory != null)
+      {
+        _genre = dbProgram.ProgramCategory.Category;
+      }
+      else
+      {
+        _genre = "";
+      }
       _subTitle = dbProgram.EpisodeName;
       int.TryParse(dbProgram.EpisodeNum, out _episode);
       int.TryParse(dbProgram.SeriesNum, out _season);
@@ -302,10 +312,18 @@ namespace MediaPortal.WebEPG.Parser
 
     public Program ToTvProgram(int dbIdChannel)
     {
-      WorldDateTime endTime = (_endTime == null) ? _startTime : _endTime;
-      Program program = new Program(dbIdChannel, _startTime.ToLocalTime(), endTime.ToLocalTime(), _title, _description,
-                                    _genre,
-                                    Program.ProgramState.None, System.Data.SqlTypes.SqlDateTime.MinValue.Value,
+
+      ProgramCategory category = ProgramManagement.GetProgramCategoryByName(_genre);
+      if (category == null)
+      {
+        category = new ProgramCategory();
+        category.Category = _genre;
+      }
+
+      WorldDateTime endTime = _endTime ?? _startTime;
+      Program program = ProgramFactory.CreateProgram(dbIdChannel, _startTime.ToLocalTime(), endTime.ToLocalTime(), _title, _description,
+                                    category,
+                                    ProgramState.None, System.Data.SqlTypes.SqlDateTime.MinValue.Value,
                                     String.Empty, String.Empty,
                                     _subTitle, String.Empty, -1, String.Empty, 0);
       if (_episode > 0)

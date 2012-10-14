@@ -237,7 +237,7 @@ ShowUninstDetails show
   ${LOG_TEXT} "DEBUG" "MACRO SectionList ${MacroName}"
   ; This macro used to perform operation on multiple sections.
   ; List all of your components in following manner here.
-  !insertmacro "${MacroName}" "SecPowerScheduler"
+;  !insertmacro "${MacroName}" "SecPowerScheduler"
   !insertmacro "${MacroName}" "SecMpeInstaller"
 !macroend
 
@@ -619,22 +619,22 @@ SectionEnd
   RMDir /r "$MPdir.Base\Wizards"
 !macroend
 
-Section "-Powerscheduler Client plugin" SecPowerScheduler
-  ${LOG_TEXT} "INFO" "Installing Powerscheduler client plugin..."
+;Section "-Powerscheduler Client plugin" SecPowerScheduler
+;  ${LOG_TEXT} "INFO" "Installing Powerscheduler client plugin..."
 
-  SetOutPath "$MPdir.Base"
-  File "${git_Common_MP_TVE3}\PowerScheduler.Interfaces\bin\${BUILD_TYPE}\PowerScheduler.Interfaces.dll"
+;  SetOutPath "$MPdir.Base"
+;  File "${git_Common_MP_TVE3}\PowerScheduler.Interfaces\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll"
 
-  SetOutPath "$MPdir.Plugins\Process"
-  File "${git_MP}\PowerSchedulerClientPlugin\bin\${BUILD_TYPE}\PowerSchedulerClientPlugin.dll"
-SectionEnd
-!macro Remove_${SecPowerScheduler}
-  ${LOG_TEXT} "INFO" "Uninstalling Powerscheduler client plugin..."
+;  SetOutPath "$MPdir.Plugins\Process"
+;  File "${git_MP}\PowerSchedulerClientPlugin\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.PowerSchedulerClientPlugin.dll"
+;SectionEnd
+;!macro Remove_${SecPowerScheduler}
+;  ${LOG_TEXT} "INFO" "Uninstalling Powerscheduler client plugin..."
 
-  Delete "$MPdir.Base\PowerScheduler.Interfaces.dll"
+;  Delete "$MPdir.Base\Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll"
 
-  Delete "$MPdir.Plugins\Process\PowerSchedulerClientPlugin.dll"
-!macroend
+;  Delete "$MPdir.Plugins\Process\Mediaportal.TV.Server.Plugins.PowerSchedulerClientPlugin.dll"
+;!macroend
 
 Section "-MediaPortal Extension Installer" SecMpeInstaller
   ${LOG_TEXT} "INFO" "MediaPortal Extension Installer..."
