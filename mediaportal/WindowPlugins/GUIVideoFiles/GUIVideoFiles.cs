@@ -3169,10 +3169,13 @@ namespace MediaPortal.GUI.Video
         IMDBMovie movie = new IMDBMovie();
         VideoDatabase.GetMovieInfo(filename, ref movie);
 
-        if (!movie.IsEmpty && (playTimePercentage >= _watchedPercentage || g_Player.IsDVDMenu))
+        if (!movie.IsEmpty)
         //Flag movie "watched" status only if user % value or higher played time (database view)
         {
-          movie.Watched = 1;
+          if (playTimePercentage >= _watchedPercentage || g_Player.IsDVDMenu)
+          {
+            movie.Watched = 1;
+          }
           movie.DateWatched = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
           VideoDatabase.SetMovieInfoById(movie.ID, ref movie);
         }

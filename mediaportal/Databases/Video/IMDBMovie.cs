@@ -930,20 +930,13 @@ namespace MediaPortal.Video.Database
           if (!vDir.IsProtectedShare(path, out pin))
           {
             ArrayList mList = new ArrayList();
-            VideoDatabase.GetMoviesByPath(path, ref mList);
+            VideoDatabase.GetRandomMoviesByPath(path, ref mList, 1);
 
             if (mList.Count > 0)
             {
-              Random rnd = new Random();
-              int r = rnd.Next(mList.Count);
-              IMDBMovie movieDetails = (IMDBMovie)mList[r];
+              IMDBMovie movieDetails = (IMDBMovie)mList[0];
               mList.Clear();
-              VideoDatabase.GetFilesForMovie(movieDetails.ID, ref mList);
-
-              if (mList.Count > 0 && System.IO.File.Exists(mList[0].ToString()))
-              {
-                rndMovieId = movieDetails.ID;
-              }
+              rndMovieId = movieDetails.ID;
             }
           }
 

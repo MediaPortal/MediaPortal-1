@@ -418,9 +418,9 @@ namespace MediaPortal.GUI.Video
         if (movie1 != null && movie1.ID > 0)
         {
           item.FileInfo = new Util.FileInformation();
-          DateTime dateAdded;
-          DateTime.TryParseExact(movie1.DateAdded, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out dateAdded);
-          item.FileInfo.CreationTime = dateAdded;
+          DateTime dateAddedWatched;
+          DateTime.TryParseExact(item.Label2, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out dateAddedWatched);
+          item.FileInfo.CreationTime = dateAddedWatched;
         }
       }
       catch (Exception exp)
