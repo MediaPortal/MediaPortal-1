@@ -1193,6 +1193,7 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Time", String.Empty);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Description", String.Empty);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Genre", String.Empty);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.MpGenre", String.Empty);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.SubTitle", String.Empty);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Episode", String.Empty);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.EpisodeDetail", String.Empty);
@@ -1218,12 +1219,18 @@ namespace TvPlugin
 
         // Lookup the MediaPortal genre for this program.  If found use it, if not found then use the program genre.
         string mpg = "";
-        foreach (var mpGenre in _mpGenres)
+        MpGenre mpGenre = _mpGenres.Find(x => x.MappedProgramGenres.Contains(_currentProgram.Genre));
+        if (mpGenre != null && mpGenre.Enabled)
         {
-          if (mpGenre.MappedProgramGenres.Contains(_currentProgram.Genre))
+          mpg = mpGenre.Name;
+        }
+        // Try to apply the "movie" genre.
+        else if (IsMPAA(_currentProgram.Classification))
+        {
+          mpGenre = _mpGenres.Find(x => x.IsMovie == true);
+          if (mpGenre != null && mpGenre.Enabled)
           {
             mpg = mpGenre.Name;
-            break;
           }
         }
 
