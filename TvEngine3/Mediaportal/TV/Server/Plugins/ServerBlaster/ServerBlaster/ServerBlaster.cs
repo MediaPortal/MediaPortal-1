@@ -24,18 +24,16 @@ using System.Threading;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;
 using Castle.Core;
-using Mediaportal.TV.Server.Plugins.Base;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.Events;
-using Mediaportal.TV.Server.TVControl.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Common.Utils;
-using Mediaportal.TV.Server.TVService.ServiceAgents;
 
 // Modified to include Hauppauge Blasting
 // Uses code from prior MP versions for HCWIRBlaster
@@ -192,14 +190,14 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
       try
       {
         
-        _sendSelect = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlasterSendSelect", "False").Value == "True");
+        _sendSelect = (SettingsManagement.GetSetting("SrvBlasterSendSelect", "False").Value == "True");
         _sleepTime = 100; //xmlreader.GetValueAsInt("ServerBlaster", "delay", 100);
         _sendPort = 1; //xmlreader.GetValueAsInt("ServerBlaster", "forceport", 1);
-        _blaster1Card = Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlaster1Card", "0").Value);
-        _blaster2Card = Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlaster2Card", "0").Value);
-        _deviceType = Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlasterType", "0").Value);
-        _deviceSpeed = Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlasterSpeed", "0").Value);
-        _advandeLogging = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlasterLog", "False").Value == "True");
+        _blaster1Card = Convert.ToInt16(SettingsManagement.GetSetting("SrvBlaster1Card", "0").Value);
+        _blaster2Card = Convert.ToInt16(SettingsManagement.GetSetting("SrvBlaster2Card", "0").Value);
+        _deviceType = Convert.ToInt16(SettingsManagement.GetSetting("SrvBlasterType", "0").Value);
+        _deviceSpeed = Convert.ToInt16(SettingsManagement.GetSetting("SrvBlasterSpeed", "0").Value);
+        _advandeLogging = (SettingsManagement.GetSetting("SrvBlasterLog", "False").Value == "True");
         _sendPort = Math.Max(1, Math.Min(2, _sendPort));
 
         Log.WriteFile("ServerBlaster.LoadRemoteCodes: Default port {0}", _sendPort);
