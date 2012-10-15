@@ -72,7 +72,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonGenreIsMovie
       // 
-      this.mpButtonGenreIsMovie.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.mpButtonGenreIsMovie.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonGenreIsMovie.Location = new System.Drawing.Point(364, 125);
       this.mpButtonGenreIsMovie.MinimumSize = new System.Drawing.Size(36, 22);
       this.mpButtonGenreIsMovie.Name = "mpButtonGenreIsMovie";
@@ -84,7 +84,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonEnableGenre
       // 
-      this.mpButtonEnableGenre.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.mpButtonEnableGenre.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonEnableGenre.Location = new System.Drawing.Point(364, 154);
       this.mpButtonEnableGenre.Name = "mpButtonEnableGenre";
       this.mpButtonEnableGenre.Size = new System.Drawing.Size(100, 23);
