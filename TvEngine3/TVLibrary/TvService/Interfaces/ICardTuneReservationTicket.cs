@@ -33,7 +33,7 @@ namespace TvService
     IList<IUser> ActiveUsers { get; }
     IList<IUser> Users { get; }
     List<IUser> RecordingUsers { get; }
-    IList<IUser> TimeshiftingUsers { get; }        
+    IList<IUser> TimeshiftingUsers { get; }
 
     bool IsSameTransponder  { get; }
     bool IsOwner { get; }
