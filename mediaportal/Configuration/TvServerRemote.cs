@@ -78,20 +78,20 @@ namespace MediaPortal.Configuration
             }
             catch (TargetInvocationException ex)
             {
-              Log.Warn("DlgSkinSettings: Failed to load program genres {0}", ex.ToString());
+              Log.Error("DlgSkinSettings: Failed to load program genres {0}", ex.ToString());
               continue;
             }
             catch (Exception gex)
             {
-              Log.Warn("DlgSkinSettings: Failed to load settings {0}", gex.Message);
+              Log.Error("DlgSkinSettings: Failed to load settings {0}", gex.Message);
             }
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Debug("Configuration: Loading TvControl assembly");
-        Log.Debug("Configuration: Exception: {0}", ex);
+        Log.Error("Configuration: Loading TvControl assembly");
+        Log.Error("Configuration: Exception: {0}", ex);
       }
       return genres;
     }
@@ -130,20 +130,20 @@ namespace MediaPortal.Configuration
             }
             catch (TargetInvocationException ex)
             {
-              Log.Warn("TVClient: Failed to load languages {0}", ex.ToString());
+              Log.Error("TVClient: Failed to load languages {0}", ex.ToString());
               continue;
             }
             catch (Exception gex)
             {
-              Log.Warn("TVClient: Failed to load settings {0}", gex.Message);
+              Log.Error("TVClient: Failed to load settings {0}", gex.Message);
             }
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Debug("Configuration: Loading TvLibrary.Interface assembly");
-        Log.Debug("Configuration: Exception: {0}", ex);
+        Log.Error("Configuration: Loading TvLibrary.Interface assembly");
+        Log.Error("Configuration: Exception: {0}", ex);
       }
     }
 
