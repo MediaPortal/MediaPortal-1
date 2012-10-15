@@ -100,7 +100,7 @@ namespace TvService
       _activeUsers = activeUsers;
       _users = users;
       _hasHighestPriority = hasHighestPriority;
-      _hasEqualOrHigherPriority = hasEqualOrHigherPriority;               
+      _hasEqualOrHigherPriority = hasEqualOrHigherPriority;
     }    
 
     public IChannel TuningDetail

@@ -296,6 +296,16 @@ namespace TvLibrary.Implementations.Hybrid
     }
 
     /// <summary>
+    /// Gets the first sub channel.
+    /// </summary>
+    /// <param name="id">The id.</param>
+    /// <returns></returns>
+    public ITvSubChannel GetFirstSubChannel()
+    {
+      return _cards[_currentCardIndex].GetFirstSubChannel();
+    }
+
+    /// <summary>
     /// Gets the sub channels.
     /// </summary>
     /// <value>The sub channels.</value>

@@ -22,6 +22,8 @@ using System;
 using System.Net;
 using System.Threading;
 using TvLibrary;
+using TvLibrary.Channels;
+using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Log;
@@ -664,7 +666,6 @@ namespace TvService
       settings.MaximumFileSize *= 1000;
       _card.Parameters = settings;
     }
-
 
     /// <summary>
     /// Gets the current channel.

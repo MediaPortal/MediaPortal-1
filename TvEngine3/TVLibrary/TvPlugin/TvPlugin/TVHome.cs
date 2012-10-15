@@ -1081,7 +1081,7 @@ namespace TvPlugin
       {
         if (_card == null)
         {
-          User user = new User();
+          IUser user = new User();
           _card = TvServer.CardByIndex(user, 0);
         }
         return _card;
@@ -1090,19 +1090,6 @@ namespace TvPlugin
       {
         if (_card != null)
         {
-          bool stop = true;
-          if (value != null)
-          {
-            if (value.Id == _card.Id || value.Id == -1)
-            {
-              stop = false;
-            }
-          }
-          if (stop)
-          {
-            _card.User.Name = new User().Name;
-            _card.StopTimeShifting();
-          }
           _card = value;
         }
       }
