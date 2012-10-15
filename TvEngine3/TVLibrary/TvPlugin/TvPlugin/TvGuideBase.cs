@@ -37,6 +37,7 @@ using MediaPortal.Video.Database;
 using TvControl;
 using TvDatabase;
 using Action = MediaPortal.GUI.Library.Action;
+using TvLibrary.Epg;
 
 #endregion
 
@@ -153,7 +154,7 @@ namespace TvPlugin
         _loopDelay = xmlreader.GetValueAsInt("gui", "listLoopDelay", 0);
 
         // Load the genre map.
-        if (_mpGenres.Count == 0)
+        if (_mpGenres == null)
         {
           _mpGenres = RemoteControl.Instance.GetMpGenres();
         }
@@ -207,6 +208,13 @@ namespace TvPlugin
       {
         _useColorsForGenres = bool.Parse(temp);
       }
+
+      _showGenreKey = false;
+      temp = GUIPropertyManager.GetProperty("#skin.tvguide.showgenrekey");
+      if (temp != null && temp.Length != 0)
+      {
+        _showGenreKey = bool.Parse(temp);
+      }
     }
 
     private bool LoadGuideColors(Settings xmlreader)
@@ -244,10 +252,20 @@ namespace TvPlugin
       // If only one value is provided then that value is used for both.
       long color0;
       long color1;
+      MpGenre genreObj;
 
       for (int i = 0; i < _mpGenres.Count; i++)
       {
-        temp = new List<string>((xmlreader.GetValueAsString("tvguidecolors", i.ToString(), String.Empty)).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+        // If the genre is disabled then set the program colors to the default colors.
+        genreObj = _mpGenres.Find(x => x.Id == i);
+        if (!genreObj.Enabled)
+        {
+          _genreColorsOnNow.Add(_mpGenres[i].Name, _defaultGenreColorOnNow);
+          _genreColorsOnLater.Add(_mpGenres[i].Name, _defaultGenreColorOnLater);
+          continue;
+        }
+
+        temp = new List<string>((xmlreader.GetValueAsString("tvguidecolors", "genre" + i.ToString(), String.Empty)).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
 
         if (temp.Count > 0)
         {
@@ -267,7 +285,7 @@ namespace TvPlugin
         }
       }
 
-      return _genreColorsOnNow.Count > 0;
+      return true;
     }
 
     private void SaveSettings()
@@ -857,6 +875,8 @@ namespace TvPlugin
               {
                 Log.Debug("TvGuideBase: SpinControl cntlTimeInterval is null!");
               }
+
+              InitGenreKey();
 
               if (message.Param1 != (int)Window.WINDOW_TV_PROGRAM_INFO)
               {
@@ -3884,27 +3904,21 @@ namespace TvPlugin
         return defaultColor;
       }
 
-      // Lookup the movie genre for the specified program genre.
-      MpGenre movieGenre = ((List<MpGenre>)_mpGenres).Find(x => x.IsMovie == true);
-
-      string genre = "";
-      if (IsMPAA(program.Classification) && movieGenre != null)
+      // If the program has a movie rating then choose the user specified "movie" genre if it exists.
+      MpGenre mpGenre = null;
+      if (IsMPAA(program.Classification))
       {
-        genre = movieGenre.Name;
+        mpGenre = _mpGenres.Find(x => x.IsMovie == true);
       }
       else
       {
-        foreach (var mpGenre in _mpGenres)
-        {
-          if (mpGenre.MappedProgramGenres.Contains(program.Genre))
-          {
-            genre = mpGenre.Name;
-          }
-          else
-          {
-            return defaultColor;
-          }
-        }
+        mpGenre = _mpGenres.Find(x => x.MappedProgramGenres.Contains(program.Genre));
+      }
+
+      // If no mapped mp genre could be found or the found genre is disabled then return the default genre color.
+      if (mpGenre == null || !mpGenre.Enabled)
+      {
+        return defaultColor;
       }
 
       // Return a valid default color if the specified genre does not have a color association.
@@ -3912,11 +3926,11 @@ namespace TvPlugin
       bool found = false;
       if (onNow)
       {
-        found = _genreColorsOnNow.TryGetValue(genre, out color);
+        found = _genreColorsOnNow.TryGetValue(mpGenre.Name, out color);
       }
       else
       {
-        found = _genreColorsOnLater.TryGetValue(genre, out color);
+        found = _genreColorsOnLater.TryGetValue(mpGenre.Name, out color);
       }
 
       if (!found)

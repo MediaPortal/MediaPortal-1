@@ -75,6 +75,7 @@
     <Compile Include="ChannelLinkage\LinkedChannel.cs" />
     <Compile Include="ChannelLinkage\PortalChannel.cs" />
     <Compile Include="DvbTextConverter.cs" />
+    <Compile Include="Epg\MpGenre.cs" />
     <Compile Include="HardwareProviders\IHardwareProvider.cs" />
     <Compile Include="Implementations\Analog\Configuration.cs" />
     <Compile Include="Implementations\Analog\GraphComponents\Capture.cs" />
@@ -86,7 +87,6 @@
     <Compile Include="Implementations\Channels\DVBIPChannel.cs" />
     <Compile Include="Implementations\Channels\RadioWebStreamChannel.cs" />
     <Compile Include="Implementations\VideoStream\VideoStream.cs" />
-    <Compile Include="Interfaces\IMpGenre.cs" />
     <Compile Include="Interfaces\ICiMenuActions.cs" />
     <Compile Include="Interfaces\ICiMenuCallbacks.cs" />
     <Compile Include="Interfaces\IDiSEqCMotor.cs" />

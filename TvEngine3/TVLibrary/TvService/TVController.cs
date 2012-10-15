@@ -3735,7 +3735,7 @@ namespace TvService
     /// Returns an ordered, distinct list of all program genres.
     /// </summary>
     /// <returns></returns>
-    public IList<string> GetProgramGenres()
+    public List<string> GetProgramGenres()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       return layer.GetProgramGenres();
@@ -3745,10 +3745,10 @@ namespace TvService
     /// Returns a list of MediaPortal genre objects.
     /// </summary>
     /// <returns></returns>
-    public IList<IMpGenre> GetMpGenres()
+    public List<MpGenre> GetMpGenres()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
-      return (IList<IMpGenre>)layer.GetMpGenres();
+      return (List<MpGenre>)layer.GetMpGenres();
     }
 
     #endregion

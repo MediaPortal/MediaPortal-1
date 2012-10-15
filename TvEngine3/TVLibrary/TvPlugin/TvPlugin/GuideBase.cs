@@ -27,7 +27,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using TvDatabase;
-using TvLibrary.Interfaces;
+using TvLibrary.Epg;
 
 namespace TvPlugin
 {
@@ -67,6 +67,7 @@ namespace TvPlugin
     protected bool _useBorderHighlight = false;
     protected bool _useColorsForButtons = false;
     protected bool _useColorsForGenres = false;
+    protected bool _showGenreKey = false;
     protected bool _guideColorsLoaded = false;
     protected long _defaultGenreColorOnNow = 0;
     protected long _defaultGenreColorOnLater = 0;
@@ -77,7 +78,7 @@ namespace TvPlugin
     protected long _guideColorProgramEnded = 0;
     protected long _guideColorProgramSelected = 0;
     protected long _guideColorBorderHighlight = 0;
-    protected IList<IMpGenre> _mpGenres = null; // The list of MediaPortal genre objects
+    protected List<MpGenre> _mpGenres = null; // The list of MediaPortal genre objects
     protected Dictionary<string, long> _genreColorsOnNow = new Dictionary<string, long>();
     protected Dictionary<string, long> _genreColorsOnLater = new Dictionary<string, long>();
 
@@ -94,25 +95,41 @@ namespace TvPlugin
       }
     }
 
+    protected void InitGenreKey()
+    {
+      // Ensure genre key controls are not rendered visible when they shouldn't be.
+      // Force controls to be hidden at initialization; make them visible later if needed.
+      GUIImage imgGenreColor = (GUIImage)GetControl((int)Controls.GENRE_COLOR_KEY_PAIR);
+      if (imgGenreColor != null)
+      {
+        imgGenreColor.Visible = false;
+      }
+
+      GUIFadeLabel labelGenreName = (GUIFadeLabel)GetControl((int)Controls.GENRE_COLOR_KEY_PAIR + 1);
+      if (labelGenreName != null)
+      {
+        labelGenreName.Visible = false;
+      }
+    }
+
     protected void RenderGenreKey()
     {
       GUIImage imgGenreColor = (GUIImage)GetControl((int)Controls.GENRE_COLOR_KEY_PAIR);
       GUIFadeLabel labelGenreName = (GUIFadeLabel)GetControl((int)Controls.GENRE_COLOR_KEY_PAIR + 1);
 
-      // Do not render the key if not required or the template controls are not present or are specified as not visible.
-      if (imgGenreColor == null || labelGenreName == null || !imgGenreColor.Visible)
+      MpGenre genreObj = _mpGenres.Find(x => x.Enabled == true);
+
+      // Do not render the key if the template controls are not present or there are no enabled mp genres.
+      if (imgGenreColor == null || labelGenreName == null || genreObj == null)
       {
         return;
       }
 
-      int xpos, i = 0;
-      int xoffset = 0;
-
+      // Display the genre key.
       var genreKeys = _genreColorsOnLater.Keys.ToList();
       genreKeys.Sort();
-
-      // Loop through genre names.
-      MpGenre genreObj;
+      int xpos, i = 0;
+      int xoffset = 0;
       foreach (var genreName in genreKeys)
 	    {
         // If the genre is not enabled then skip it.  This can occur if the user desires to have less than the maximum number of MP genres available.
@@ -564,7 +581,11 @@ namespace TvPlugin
           }
         }
         UpdateVerticalScrollbar();
-        RenderGenreKey();
+
+        if (_showGenreKey)
+        {
+          RenderGenreKey();
+        }
       }
     }
 
