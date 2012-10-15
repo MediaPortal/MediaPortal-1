@@ -40,6 +40,7 @@ using TvDatabase;
 using TvLibrary;
 using TvLibrary.Channels;
 using TvLibrary.Implementations;
+using TvLibrary.Epg;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using StatementType = Gentle.Framework.StatementType;
@@ -1551,7 +1552,7 @@ namespace TvDatabase
                : GetProgramsByTitle(startTime, endTime, programName);
     }
 
-    public IList<string> GetProgramGenres()
+    public List<string> GetProgramGenres()
     {
       List<string> genres = new List<string>();
       string connectString = ProviderFactory.GetDefaultProvider().ConnectionString;
@@ -1620,7 +1621,7 @@ namespace TvDatabase
     /// Returns a list of MediaPortal genres.
     /// </summary>
     /// <returns>A list of MediaPortal genres</returns>
-    public IList<IMpGenre> GetMpGenres()
+    public List<MpGenre> GetMpGenres()
     {
       string genre;
       bool enabled;
@@ -1656,7 +1657,7 @@ namespace TvDatabase
         }
 
         // Create a mp genre object.
-        IMpGenre mpg = new MpGenre(genre, i);
+        MpGenre mpg = new MpGenre(genre, i);
         mpg.IsMovie = (i == genreMapMovieGenreId);
         mpg.Enabled = enabled;
 
@@ -1678,8 +1679,7 @@ namespace TvDatabase
         mpGenres.Add((MpGenre)mpg);
       }
 
-      IList<IMpGenre> mpGenresReturn = mpGenres.ConvertAll(x => (IMpGenre)x);
-      return mpGenresReturn;
+      return mpGenres;
     }
 
     /// <summary>

@@ -26,7 +26,7 @@ using TvControl;
 using Gentle.Framework;
 using TvDatabase;
 using TvLibrary.Log;
-using TvLibrary.Interfaces;
+using TvLibrary.Epg;
 using MediaPortal.UserInterface.Controls;
 
 namespace SetupTv.Sections
@@ -59,7 +59,7 @@ namespace SetupTv.Sections
       _allProgramGenres = (List<string>)layer.GetProgramGenres();
 
       // Load the list of MP genres.
-      _mpGenres = ((List<IMpGenre>)layer.GetMpGenres()).ConvertAll(x => (MpGenre)x);
+      _mpGenres = layer.GetMpGenres();
 
       // Populate the guide genre and program genre lists.
       PopulateGuideGenreList();

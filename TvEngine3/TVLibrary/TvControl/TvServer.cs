@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using TvLibrary.Epg;
 using TvLibrary.Interfaces;
 
 namespace TvControl
@@ -623,7 +624,7 @@ namespace TvControl
     /// Returns an ordered, distinct list of all program genres.
     /// </summary>
     /// <returns></returns>
-    public IList<string> GetProgramGenres()
+    public List<string> GetProgramGenres()
     {
       try
       {
@@ -640,7 +641,7 @@ namespace TvControl
     /// Returns a list of all MediaPortal genre objects.
     /// </summary>
     /// <returns></returns>
-    public IList<IMpGenre> GetMpGenres()
+    public List<MpGenre> GetMpGenres()
     {
       try
       {
@@ -650,7 +651,7 @@ namespace TvControl
       {
         HandleFailure();
       }
-      return new List<IMpGenre>();
+      return new List<MpGenre>();
     }
 
     #endregion

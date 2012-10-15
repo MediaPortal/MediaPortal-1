@@ -33,8 +33,7 @@ using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.Util;
 using MediaPortal.WinCustomControls;
-using TvLibrary.Interfaces;
-
+using TvLibrary.Epg;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -95,7 +94,7 @@ namespace MediaPortal.Configuration.Sections
     protected long _guideColorProgramEnded = 0;
     protected long _guideColorProgramSelected = 0;
     protected long _guideColorBorderHighlight = 0;
-    protected IList<IMpGenre> _mpGenres = null;
+    protected List<MpGenre> _mpGenres = null;
     protected IDictionary<string, long> _genreColorsOnNow = new Dictionary<string, long>();
     protected IDictionary<string, long> _genreColorsOnLater = new Dictionary<string, long>();
     private Button mpButtonOk;
@@ -487,7 +486,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // columnHeader9
       // 
-      this.columnHeader9.Text = "Guide Genre";
+      this.columnHeader9.Text = "MediaPortal Genre";
       this.columnHeader9.Width = 190;
       // 
       // columnHeader1
@@ -951,6 +950,10 @@ namespace MediaPortal.Configuration.Sections
 
         ListViewItem item = new ListViewItem(new string[] { genre.Name, colorOnNow, colorOnLater });
         item.Name = genre.Name;
+        if (!genre.Enabled)
+        {
+          item.ForeColor = SystemColors.GrayText;  // Dim disabled mp genres.
+        }
         item.UseItemStyleForSubItems = false;
         item.SubItems[1].BackColor = Color.FromArgb((int)lColorOnNow);
         item.SubItems[2].BackColor = Color.FromArgb((int)lColorOnLater);

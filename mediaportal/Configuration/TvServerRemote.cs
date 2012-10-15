@@ -29,7 +29,7 @@ using System.Windows.Forms;
 using System.Reflection;
 using System.Xml;
 using MediaPortal.GUI.Library;
-using TvLibrary.Interfaces;
+using TvLibrary.Epg;
 
 namespace MediaPortal.Configuration
 {
@@ -52,9 +52,9 @@ namespace MediaPortal.Configuration
     /// Retrieve a list of MediaPortal genres from the TV server (calls TvBusinessLayer.GetMpGenres()).
     /// </summary>
     /// <returns>List of genre strings</returns>
-    public static IList<IMpGenre> GetMpGenres()
+    public static List<MpGenre> GetMpGenres()
     {
-      IList<IMpGenre> genres = null;
+      List<MpGenre> genres = null;
       try
       {
         Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvControl.dll");
@@ -72,7 +72,7 @@ namespace MediaPortal.Configuration
                 exportedObject = Activator.CreateInstance(exportedType);
                 MethodInfo methodInfo = exportedType.GetMethod("GetMpGenres",
                                                                 BindingFlags.Public | BindingFlags.Instance);
-                genres = methodInfo.Invoke(exportedObject, null) as IList<IMpGenre>;
+                genres = methodInfo.Invoke(exportedObject, null) as List<MpGenre>;
                 break;
               }
             }
