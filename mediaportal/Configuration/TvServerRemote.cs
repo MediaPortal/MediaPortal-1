@@ -51,7 +51,7 @@ namespace MediaPortal.Configuration
     /// <summary>
     /// Retrieve a list of MediaPortal genres from the TV server (calls TvBusinessLayer.GetMpGenres()).
     /// </summary>
-    /// <returns>List of genre strings</returns>
+    /// <returns>List of MediaPortal genre objects</returns>
     public static List<MpGenre> GetMpGenres()
     {
       List<MpGenre> genres = null;
@@ -90,7 +90,7 @@ namespace MediaPortal.Configuration
       }
       catch (Exception ex)
       {
-        Log.Debug("Configuration: Loading TVLibrary.Interface assembly");
+        Log.Debug("Configuration: Loading TvControl assembly");
         Log.Debug("Configuration: Exception: {0}", ex);
       }
       return genres;
@@ -142,7 +142,7 @@ namespace MediaPortal.Configuration
       }
       catch (Exception ex)
       {
-        Log.Debug("Configuration: Loading TVLibrary.Interface assembly");
+        Log.Debug("Configuration: Loading TvLibrary.Interface assembly");
         Log.Debug("Configuration: Exception: {0}", ex);
       }
     }
