@@ -414,9 +414,9 @@ namespace MediaPortal.Player
             Log.Info("VideoPlayer9: found H264 video out pin");
             h264Codec = true;
           }
-          if (mediaTypes[0].subType == MpMediaSubType.XVID || mediaTypes[0].subType == MpMediaSubType.xvid ||
-              mediaTypes[0].subType == MpMediaSubType.dx50 || mediaTypes[0].subType == MpMediaSubType.DX50 ||
-              mediaTypes[0].subType == MpMediaSubType.divx || mediaTypes[0].subType == MpMediaSubType.DIVX)
+          if (mediaTypes[0].subType == MpMediaSubType.XVID1 || mediaTypes[0].subType == MpMediaSubType.XVID2 ||
+              mediaTypes[0].subType == MpMediaSubType.DX50_2 || mediaTypes[0].subType == MpMediaSubType.DX50_1 ||
+              mediaTypes[0].subType == MpMediaSubType.DIVX2 || mediaTypes[0].subType == MpMediaSubType.DIVX1)
           {
             Log.Info("VideoPlayer9: found XVID video out pin");
             xvidCodec = true;

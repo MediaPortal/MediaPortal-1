@@ -65,7 +65,7 @@ namespace MediaPortal.Configuration.Sections
         ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
         ArrayList availableVC1VideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.VC1);
         ArrayList availableVC1IVideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.VC1);
-        ArrayList availableXVIDVideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.XVID);
+        ArrayList availableXVIDVideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.XVID1);
         ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MpMediaSubType.AAC);
         ArrayList availableFileSyncFilters = FilterHelper.GetFilters(MediaType.Stream, MediaSubType.Null);
         ArrayList availableVC1CyberlinkVideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.CyberlinkVC1);
@@ -225,7 +225,7 @@ namespace MediaPortal.Configuration.Sections
         }
         if (xvidvideoCodec == string.Empty)
         {
-          ArrayList availableXVIDVideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.XVID);
+          ArrayList availableXVIDVideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.XVID1);
           xvidvideoCodec = SetCodecBox(availableXVIDVideoFilters, "LAV Video Decoder", "DivX Decoder Filter", "");
         }
         if (audioCodec == string.Empty)

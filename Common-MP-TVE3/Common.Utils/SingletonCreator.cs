@@ -29,7 +29,7 @@ namespace MediaPortal.Common.Utils
         {
           return SingletonCreator.Instance;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
 #if DEBUG
           System.Diagnostics.Debugger.Launch();

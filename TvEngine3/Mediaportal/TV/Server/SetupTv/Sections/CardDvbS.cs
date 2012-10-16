@@ -28,7 +28,6 @@ using System.Xml;
 using System.Net;
 using DirectShowLib.BDA;
 using System.Xml.Serialization;
-using MediaPortal.UserInterface.Controls;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupTV.Sections.CIMenu;
 using Mediaportal.TV.Server.SetupTV.Sections.Helpers;
@@ -44,6 +43,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
