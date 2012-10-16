@@ -53,5 +53,4 @@ using System.Security.Permissions;
 [assembly: AssemblyKeyName("")]
 [assembly: ComVisible(false)]
 [assembly: CLSCompliant(true)]
-[assembly: SecurityPermission(SecurityAction.RequestMinimum, UnmanagedCode = true)]
 [assembly: AssemblyFileVersion("2.1.0.0")]

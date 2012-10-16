@@ -106,8 +106,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityModel", "TVDatabase\E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceAgents", "ServiceAgents\ServiceAgents.csproj", "{DB873507-8095-4877-A489-DA39AB55A9A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvPlugin", "..\TvPlugin\TvPlugin.csproj", "{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvService.Interfaces", "TvService.Interfaces\TvService.Interfaces.csproj", "{A2BFFBDD-3BEA-4B68-94F1-C34D2BE10AEB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentation", "TVDatabase\Presentation\Presentation.csproj", "{FB53D159-8115-4155-921D-F64E0072A633}"
@@ -432,16 +430,6 @@ Global
 		{DB873507-8095-4877-A489-DA39AB55A9A2}.Release|Mixed Platforms.Build.0 = Release|x86
 		{DB873507-8095-4877-A489-DA39AB55A9A2}.Release|x86.ActiveCfg = Release|x86
 		{DB873507-8095-4877-A489-DA39AB55A9A2}.Release|x86.Build.0 = Release|x86
-		{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}.Debug|x86.ActiveCfg = Debug|x86
-		{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}.Debug|x86.Build.0 = Debug|x86
-		{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}.Release|Any CPU.ActiveCfg = Release|x86
-		{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}.Release|Mixed Platforms.Build.0 = Release|x86
-		{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}.Release|x86.ActiveCfg = Release|x86
-		{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}.Release|x86.Build.0 = Release|x86
 		{A2BFFBDD-3BEA-4B68-94F1-C34D2BE10AEB}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{A2BFFBDD-3BEA-4B68-94F1-C34D2BE10AEB}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{A2BFFBDD-3BEA-4B68-94F1-C34D2BE10AEB}.Debug|Mixed Platforms.Build.0 = Debug|x86

@@ -22,7 +22,6 @@ using System;
 using System.Net;
 using System.ServiceProcess;
 using MediaPortal.Common.Utils;
-using MediaPortal.Util;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.ServiceAgents;

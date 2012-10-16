@@ -27,7 +27,6 @@ using System.Configuration;
 using System.Reflection;
 using System.Threading;
 using System.Diagnostics;
-using MediaPortal.Util;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;

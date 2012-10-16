@@ -544,7 +544,7 @@ namespace WindowPlugins.GUISettings.TV
 
     private void OnDivX()
     {
-      ArrayList availableXVIDVideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.XVID);
+      ArrayList availableXVIDVideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.XVID1);
       availableXVIDVideoFilters.Sort();
 
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
