@@ -654,6 +654,22 @@ namespace TvControl
       return new List<MpGenre>();
     }
 
+    /// <summary>
+    /// Sets the TV server hostname directly.  Used in the MP configuration tool.
+    /// </summary>
+    /// <param name="hostname">The master TV server hostname</param>
+    public void SetHostName(string hostname)
+    {
+      try
+      {
+        RemoteControl.HostName = hostname;
+      }
+      catch (Exception)
+      {
+        HandleFailure();
+      }
+    }
+
     #endregion
   }
 }

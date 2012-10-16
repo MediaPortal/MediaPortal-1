@@ -34,18 +34,57 @@ using TvLibrary.Epg;
 namespace MediaPortal.Configuration
 {
   /// <summary>
-  /// This class provides TV server remote method calls using late binding to TvControl.dll.
+  /// This class provides TV server remote method calls using late binding to TvControl.dll and TvLibrary.Interfaces.dll.
   /// The late binding prevents MediaPortal from depending on TvControl and TvDatabase projects.
   /// </summary>
   public static class TvServerRemote
   {
 
     /// <summary>
-    /// Returns true if the TvPlugin is installed on the client.
+    /// Sets the master TV server hostname for the TV server RemoteControl.  Used by the configuration tool only.
     /// </summary>
-    public static bool TvPluginInstalled
+    public static string HostName
     {
-      get { return File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"); }
+      set {
+        try
+        {
+          Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvControl.dll");
+          if (assem != null)
+          {
+            Type[] types = assem.GetExportedTypes();
+            foreach (Type exportedType in types)
+            {
+              try
+              {
+                if (exportedType.Name == "TvServer")
+                {
+                  // Execute the remote method call to the tv server.
+                  Object exportedObject = null;
+                  exportedObject = Activator.CreateInstance(exportedType);
+                  MethodInfo methodInfo = exportedType.GetMethod("SetHostName",
+                                                                  BindingFlags.Public | BindingFlags.Instance);
+                  object[] parameters = new object[] { value };
+                  methodInfo.Invoke(exportedObject, parameters);
+                  break;
+                }
+              }
+              catch (TargetInvocationException ex)
+              {
+                Log.Error("DlgSkinSettings: Failed to set TV server hostname {0}", ex.ToString());
+              }
+              catch (Exception gex)
+              {
+                Log.Error("DlgSkinSettings: Failed to load settings {0}", gex.Message);
+              }
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Configuration: Loading TvControl assembly");
+          Log.Error("Configuration: Exception: {0}", ex);
+        }
+      }
     }
 
     /// <summary>
@@ -79,7 +118,6 @@ namespace MediaPortal.Configuration
             catch (TargetInvocationException ex)
             {
               Log.Error("DlgSkinSettings: Failed to load program genres {0}", ex.ToString());
-              continue;
             }
             catch (Exception gex)
             {
@@ -131,7 +169,6 @@ namespace MediaPortal.Configuration
             catch (TargetInvocationException ex)
             {
               Log.Error("TVClient: Failed to load languages {0}", ex.ToString());
-              continue;
             }
             catch (Exception gex)
             {
