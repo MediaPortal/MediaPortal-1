@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.IO;
 using TvLibrary.Epg;
 using TvLibrary.Interfaces;
+using TvLibrary.Log;
 
 namespace TvControl
 {
@@ -31,9 +32,10 @@ namespace TvControl
   /// </summary>
   public class TvServer
   {
-    private static void HandleFailure()
+    private static void HandleFailure(string operation, Exception e)
     {
       RemoteControl.Clear();
+      Log.Error("TvServer: Failed to execute remote TV server operation ({0}) {1}", operation, e.Message);
     }
 
     #region public interface
@@ -49,9 +51,9 @@ namespace TvControl
         {
           return RemoteControl.Instance.Cards;
         }
-        catch (Exception)
+        catch (Exception e)
         {
-          HandleFailure();
+          HandleFailure("Count", e);
         }
         return 0;
       }
@@ -73,15 +75,15 @@ namespace TvControl
             return fileName;
           }
         }
-        catch (Exception)
+        catch (Exception e)
         {
-          HandleFailure();
+          HandleFailure("GetRtspUrlForFile", e);
         }
         return RemoteControl.Instance.GetUrlForFile(fileName);
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("GetRtspUrlForFile", e);
       }
       return "";
     }
@@ -96,9 +98,9 @@ namespace TvControl
       {
         return RemoteControl.Instance.DeleteRecording(idRecording);
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("DeleteRecording", e);
       }
       return false;
     }
@@ -130,9 +132,9 @@ namespace TvControl
       {
         return RemoteControl.Instance.GetUserForCard(cardId);
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("GetUserForCard", e);
       }
       return null;
     }
@@ -151,9 +153,9 @@ namespace TvControl
         RemoteControl.Instance.CardId(index);
         return new VirtualCard(user, RemoteControl.HostName);
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("CardByIndex", e);
       }
       return null;
     }
@@ -176,9 +178,9 @@ namespace TvControl
         card = vc;
         return result;
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("IsRecording", e);
       }
       return false;
     }
@@ -193,9 +195,9 @@ namespace TvControl
       {
         return WaitFor<bool>.Run(VirtualCard.CommandTimeOut, () => RemoteControl.Instance.IsAnyCardRecording());
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("IsAnyCardRecording", e);
       }
 
       return false;
@@ -224,9 +226,9 @@ namespace TvControl
           return true;
         }
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("IsAnyCardRecordingOrTimeshifting", e);
       }
 
       return false;
@@ -245,9 +247,9 @@ namespace TvControl
           return true;
         }
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("IsAnyCardIdle", e);
       }
 
       return false;
@@ -267,9 +269,9 @@ namespace TvControl
       {
         return RemoteControl.Instance.TimeShiftingWouldUseCard(ref user, idChannel);
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("TimeShiftingWouldUseCard", e);
       }
       return -1;
     }
@@ -291,9 +293,9 @@ namespace TvControl
         TvResult result = RemoteControl.Instance.StartTimeShifting(ref user, idChannel, out card);
         return result;
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("StartTimeShifting.1", e);
       }
       return TvResult.UnknownError;
     }
@@ -317,9 +319,9 @@ namespace TvControl
         TvResult result = RemoteControl.Instance.StartTimeShifting(ref user, idChannel, out card, out cardChanged);
         return result;
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("StartTimeShifting.2", e);
       }
       return TvResult.UnknownError;
     }
@@ -342,9 +344,9 @@ namespace TvControl
         TvResult result = RemoteControl.Instance.StartTimeShifting(ref user, idChannel, out card, forceCardId);
         return result;
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("StartTimeShifting.3", e);
       }
       return TvResult.UnknownError;
     }
@@ -364,9 +366,9 @@ namespace TvControl
       {
         return RemoteControl.Instance.IsRecordingSchedule(idSchedule, out card);
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("IsRecordingSchedule", e);
       }
       return false;
     }
@@ -382,9 +384,9 @@ namespace TvControl
       {
         RemoteControl.Instance.StopRecordingSchedule(idSchedule);
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("StopRecordingSchedule", e);
       }
     }
 
@@ -398,9 +400,9 @@ namespace TvControl
       {
         RemoteControl.Instance.OnNewSchedule();
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("OnNewSchedule", e);
       }
     }
 
@@ -415,9 +417,9 @@ namespace TvControl
       {
         return RemoteControl.Instance.IsTimeToRecord(time);
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("IsTimeToRecord.1", e);
       }
       return false;
     }
@@ -432,9 +434,9 @@ namespace TvControl
       {
         return RemoteControl.Instance.IsTimeToRecord(time, recordingId);
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("IsTimeToRecord.2", e);
       }
       return false;
     }
@@ -450,9 +452,9 @@ namespace TvControl
       {
         RemoteControl.Instance.OnNewSchedule(args);
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("OnNewSchedule", e);
       }
     }
 
@@ -467,9 +469,9 @@ namespace TvControl
         {
           return RemoteControl.Instance.EpgGrabberEnabled;
         }
-        catch (Exception)
+        catch (Exception e)
         {
-          HandleFailure();
+          HandleFailure("EpgGrabberEnabled.get", e);
         }
         return false;
       }
@@ -479,9 +481,9 @@ namespace TvControl
         {
           RemoteControl.Instance.EpgGrabberEnabled = value;
         }
-        catch (Exception)
+        catch (Exception e)
         {
-          HandleFailure();
+          HandleFailure("EpgGrabberEnabled.set", e);
         }
       }
     }
@@ -497,9 +499,9 @@ namespace TvControl
       {
         RemoteControl.Instance.GetDatabaseConnectionString(out connectionString, out provider);
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("GetDatabaseConnectionString", e);
       }
     }
 
@@ -515,9 +517,9 @@ namespace TvControl
       {
         return RemoteControl.Instance.GetRecordingUrl(idRecording);
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("GetStreamUrlForFileName", e);
       }
       return "";
     }
@@ -533,9 +535,9 @@ namespace TvControl
       {
         return RemoteControl.Instance.GetRecordingChapters(idRecording);
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("GetChaptersForFileName", e);
       }
       return "";
     }
@@ -550,9 +552,9 @@ namespace TvControl
       {
         return RemoteControl.Instance.GetAllChannelStatesCached(user);
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("GetAllChannelStatesCached", e);
       }
       return null;
     }
@@ -569,9 +571,9 @@ namespace TvControl
       {
         return RemoteControl.Instance.GetAllChannelStatesForGroup(idGroup, user);
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("GetAllChannelStatesForGroup", e);
       }
       return null;
     }
@@ -588,9 +590,9 @@ namespace TvControl
       {
         return RemoteControl.Instance.GetChannelState(idChannel, user);
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("GetChannelState", e);
       }
       return ChannelState.nottunable;
     }
@@ -614,9 +616,9 @@ namespace TvControl
         RemoteControl.Instance.GetAllRecordingChannels(out currentRecChannels, out currentTSChannels,
                                                        out currentUnavailChannels, out currentAvailChannels);
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("GetAllRecordingChannels", e);
       }
     }
 
@@ -630,9 +632,9 @@ namespace TvControl
       {
         return RemoteControl.Instance.GetProgramGenres();
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("GetProgramGenres", e);
       }
       return new List<string>();
     }
@@ -647,9 +649,9 @@ namespace TvControl
       {
         return RemoteControl.Instance.GetMpGenres();
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("GetMpGenres", e);
       }
       return new List<MpGenre>();
     }
@@ -664,9 +666,9 @@ namespace TvControl
       {
         RemoteControl.HostName = hostname;
       }
-      catch (Exception)
+      catch (Exception e)
       {
-        HandleFailure();
+        HandleFailure("SetHostName", e);
       }
     }
 
