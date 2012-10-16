@@ -70,6 +70,19 @@ namespace Mediaportal.TV.Server.SetupTV
             fileStream.Write(stream.Value, 0, stream.Value.Length);
           }
         }
+        IDictionary<string, byte[]> streamListCustomDevices = ServiceAgents.Instance.ControllerServiceAgent.GetPluginBinariesCustomDevices();
+        if (!Directory.Exists(@"plugins\CustomDevices"))
+        {
+          Directory.CreateDirectory(@"plugins\CustomDevices");
+        }
+        foreach (KeyValuePair<string, byte[]> stream in streamListCustomDevices)
+        {
+          string fileFullPath = @"plugins\CustomDevices\" + stream.Key;
+          using (FileStream fileStream = File.Create(fileFullPath, stream.Value.Length))
+          {
+            fileStream.Write(stream.Value, 0, stream.Value.Length);
+          }
+        }
       }
     }
   }

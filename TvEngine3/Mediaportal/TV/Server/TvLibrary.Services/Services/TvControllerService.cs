@@ -1162,6 +1162,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     {
       Service.RegisterUserForTvServerEvents(username);
     }
+
     public void UnRegisterUserForTvServerEvents(string username)
     {
       Service.UnRegisterUserForTvServerEvents(username);
@@ -1173,12 +1174,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       return Service.GetPluginBinaries();
     }
 
+    public IDictionary<string, byte[]> GetPluginBinariesCustomDevices()
+    {
+      return Service.GetPluginBinariesCustomDevices();
+    }
+
     public IList<StreamPresentation> ListAllStreamingChannels()
     {
       return Service.ListAllStreamingChannels();
     }
-
-   
 
     public bool IsAnyCardParkedByUser(string userName)
     {

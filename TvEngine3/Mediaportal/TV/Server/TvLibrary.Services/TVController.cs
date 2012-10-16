@@ -5564,13 +5564,11 @@ namespace Mediaportal.TV.Server.TVLibrary
       }      
     }
 
-    
-
     public IDictionary<string, byte[]> GetPluginBinaries()
     {
       var fileStreams = new Dictionary<string, byte[]>();
       try
-      {        
+      {
         var dirInfo = new DirectoryInfo("plugins");
 
         FileInfo[] files = dirInfo.GetFiles("*.dll");
@@ -5584,7 +5582,34 @@ namespace Mediaportal.TV.Server.TVLibrary
             filestream.Read(data, 0, (int)length);
             fileStreams.Add(fileInfo.Name, data);
           }
-        }        
+        }
+      }
+      catch (Exception e)
+      {
+        HandleControllerException(e);
+      }
+      return fileStreams;
+    }
+
+    public IDictionary<string, byte[]> GetPluginBinariesCustomDevices()
+    {
+      var fileStreams = new Dictionary<string, byte[]>();
+      try
+      { 
+        var dirInfoCustomDevices = new DirectoryInfo(@"plugins\CustomDevices");
+
+        FileInfo[] filesCustomDevices = dirInfoCustomDevices.GetFiles("*.dll");
+
+        foreach (FileInfo fileInfo in filesCustomDevices)
+        {
+          using (var filestream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read))
+          {
+            long length = filestream.Length;
+            var data = new byte[length];
+            filestream.Read(data, 0, (int)length);
+            fileStreams.Add(fileInfo.Name, data);
+          }
+        }      
       }
       catch (Exception e)
       {
