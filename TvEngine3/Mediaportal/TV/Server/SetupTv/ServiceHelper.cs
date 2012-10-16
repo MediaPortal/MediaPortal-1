@@ -93,7 +93,7 @@ namespace Mediaportal.TV.Server.SetupTV
       }
       catch (Exception ex)
       {
-        _isRestrictedMode = !Network.IsSingleSeat();
+        //_isRestrictedMode = !Network.IsSingleSeat();
         
         Log.Error(
           "ServiceHelper: Check hostname the tvservice is running failed. Try another hostname. {0}", ex);

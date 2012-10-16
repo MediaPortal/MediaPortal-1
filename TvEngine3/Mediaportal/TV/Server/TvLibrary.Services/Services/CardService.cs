@@ -2,6 +2,7 @@
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 
 namespace Mediaportal.TV.Server.TVLibrary.Services
 {
@@ -109,6 +110,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     public CardGroupMap SaveCardGroupMap(CardGroupMap map)
     {
       return TVDatabase.TVBusinessLayer.CardManagement.SaveCardGroupMap(map);
+    }
+
+    
+    public LnbType GetLnbType(int idLnbType)
+    {
+      return LnbTypeManagement.GetLnbType(idLnbType);
+    }
+
+    public IList<LnbType> ListAllLnbTypes()
+    {
+      return LnbTypeManagement.ListAllLnbTypes();
     }
   }
 }

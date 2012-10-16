@@ -649,7 +649,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       //List<SimpleFileName> satellites = fileFilters.AllFiles;
       List<SatelliteContext> satellites = LoadSatellites();
-      IList<LnbType> tempLnbTypes = LnbTypeManagement.ListAllLnbTypes();
+      IList<LnbType> tempLnbTypes = ServiceAgents.Instance.CardServiceAgent.ListAllLnbTypes();
       LnbType[] lnbTypes = new LnbType[tempLnbTypes.Count];
       tempLnbTypes.CopyTo(lnbTypes, 0);
 

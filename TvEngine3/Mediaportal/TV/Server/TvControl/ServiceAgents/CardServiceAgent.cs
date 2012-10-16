@@ -97,6 +97,16 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       return _channel.SaveCardGroupMap(map);
     }
 
+    public LnbType GetLnbType(int idLnbType)
+    {
+      return _channel.GetLnbType(idLnbType);
+    }
+
+    public IList<LnbType> ListAllLnbTypes()
+    {
+      return _channel.ListAllLnbTypes();
+    }
+
     public IList<Card> ListAllCards(CardIncludeRelationEnum includeRelations)
     {
       return _channel.ListAllCards(includeRelations);

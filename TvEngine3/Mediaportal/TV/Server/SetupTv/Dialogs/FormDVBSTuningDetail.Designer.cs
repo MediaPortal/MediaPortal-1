@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 
@@ -449,7 +450,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       this.comboBoxLnbType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxLnbType.FormattingEnabled = true;
-      IList<LnbType> tempLnbTypes = LnbTypeManagement.ListAllLnbTypes();
+      IList<LnbType> tempLnbTypes = ServiceAgents.Instance.CardServiceAgent.ListAllLnbTypes();
       LnbType[] lnbTypes = new LnbType[tempLnbTypes.Count];
       tempLnbTypes.CopyTo(lnbTypes, 0);
       this.comboBoxLnbType.Items.AddRange(lnbTypes);

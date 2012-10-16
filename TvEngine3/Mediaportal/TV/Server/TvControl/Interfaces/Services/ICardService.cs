@@ -8,46 +8,27 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
   [ServiceContract(Namespace = "http://www.team-mediaportal.com")]
   public interface ICardService
   {
-    [OperationContract]
     IList<Card> ListAllCards();
-
-    [OperationContract]
-    Card GetCardByDevicePath(string cardDevice);
-    [OperationContract]
-    Card SaveCard(Card card);
-    [OperationContract]
-    void DeleteCard(int idCard);
-    [OperationContract]
-    DisEqcMotor SaveDisEqcMotor(DisEqcMotor motor);
-    [OperationContract]
-    Card GetCard(int idCard);
-    [OperationContract]
-    CardGroup SaveCardGroup(CardGroup @group);
-    [OperationContract]
-    void DeleteCardGroup(int idCardGroup);
-    [OperationContract]
-    IList<CardGroup> ListAllCardGroups();
-    [OperationContract]
-    IList<SoftwareEncoder> ListAllSofwareEncodersVideo();
-    [OperationContract]
-    IList<SoftwareEncoder> ListAllSofwareEncodersAudio();
-    [OperationContract]
-    IList<Satellite> ListAllSatellites();
-    [OperationContract]
-    Satellite SaveSatellite(Satellite satellite);
-    [OperationContract]
-    SoftwareEncoder SaveSoftwareEncoder(SoftwareEncoder encoder);
-    [OperationContract]
-    void DeleteGroupMap(int idMap);
-    [OperationContract]
-    CardGroupMap SaveCardGroupMap(CardGroupMap map);
-    [OperationContract(Name = "ListAllCardsWithSpecificRelations")]
     IList<Card> ListAllCards(CardIncludeRelationEnum includeRelations);
-    [OperationContract(Name = "GetCardsWithSpecificRelations")]
-    Card GetCard(int idCard, CardIncludeRelationEnum includeRelations);
-    [OperationContract(Name = "GetCardByDevicePathWithSpecificRelations")]
-    Card GetCardByDevicePath(string cardDevice, CardIncludeRelationEnum includeRelations);
-    [OperationContract]
     IList<Card> SaveCards(IEnumerable<Card> cards);
+    Card GetCardByDevicePath(string cardDevice);
+    Card GetCardByDevicePath(string cardDevice, CardIncludeRelationEnum includeRelations);
+    Card SaveCard(Card card);
+    void DeleteCard(int idCard);
+    DisEqcMotor SaveDisEqcMotor(DisEqcMotor motor);
+    Card GetCard(int idCard);
+    Card GetCard(int idCard, CardIncludeRelationEnum includeRelations);
+    CardGroup SaveCardGroup(CardGroup @group);
+    void DeleteCardGroup(int idCardGroup);
+    IList<CardGroup> ListAllCardGroups();
+    IList<SoftwareEncoder> ListAllSofwareEncodersVideo();
+    IList<SoftwareEncoder> ListAllSofwareEncodersAudio();
+    IList<Satellite> ListAllSatellites();
+    Satellite SaveSatellite(Satellite satellite);
+    SoftwareEncoder SaveSoftwareEncoder(SoftwareEncoder encoder);
+    void DeleteGroupMap(int idMap);
+    CardGroupMap SaveCardGroupMap(CardGroupMap map);
+    LnbType GetLnbType(int idLnbType);
+    IList<LnbType> ListAllLnbTypes();
   }
 }
