@@ -133,7 +133,7 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
 
       // If TV is not used then remove the tabs for TV guide settings.
-      if (!TvServerRemote.TvPluginInstalled)
+      if (!MediaPortal.Util.Utils.UsingTvServer)
       {
         this.tabControlTvGuideSettings.Enabled = false;
         this.gbGenreSettings.Visible = false;
@@ -974,6 +974,12 @@ namespace MediaPortal.Configuration.Sections
 
     public void LoadSettings(string selectedSkin)
     {
+      // We must specify the hostname of the TV server since MP is not running and their is no active communication with the TV server.
+      using (Settings xmlreader = new MPSettings())
+      {
+        TvServerRemote.HostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
+      }
+
       // Get the MediaPortal genres from the TV server.
       _mpGenres = TvServerRemote.GetMpGenres();
 
