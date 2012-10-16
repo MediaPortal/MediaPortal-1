@@ -31,8 +31,8 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-
 using DirectShowLib;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
@@ -495,10 +495,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       FormEditCard dlg = new FormEditCard();
       dlg.Card = (Card)item.Tag;
       dlg.CardType = cardTypes[((Card)item.Tag).DevicePath].ToString();
-      dlg.ShowDialog();      
-      ServiceAgents.Instance.CardServiceAgent.SaveCard(dlg.Card);
-      _needRestart = true;
-      UpdateList();
+      if (dlg.ShowDialog() == DialogResult.OK)
+      {
+        // User clicked save...
+        ServiceAgents.Instance.CardServiceAgent.SaveCard(dlg.Card);
+        Log.Debug("Saving settings for device {0}...", dlg.Card.Name);
+        _needRestart = true;
+        UpdateList();
+      }
     }
 
     private void buttonRemove_Click(object sender, EventArgs e)

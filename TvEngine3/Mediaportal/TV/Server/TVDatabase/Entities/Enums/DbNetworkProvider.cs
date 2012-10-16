@@ -6,9 +6,9 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Enums
   public enum DbNetworkProvider
   {
     Generic,
-    DVBT,
-    DVBS,
-    DVBC,
+    DvbT,
+    DvbS,
+    DvbC,
     ATSC
   }
 }

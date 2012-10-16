@@ -537,11 +537,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
           // The generic network provider is not installed. Fall back...
           if (_tunerType == CardType.DvbT)
           {
-            c.NetProvider = (int)DbNetworkProvider.DVBT;
+            c.NetProvider = (int)DbNetworkProvider.DvbT;
           }
           else if (_tunerType == CardType.DvbS)
           {
-            c.NetProvider = (int)DbNetworkProvider.DVBS;
+            c.NetProvider = (int)DbNetworkProvider.DvbS;
           }
           else if (_tunerType == CardType.Atsc)
           {
@@ -549,7 +549,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
           }
           else if (_tunerType == CardType.DvbC)
           {
-            c.NetProvider = (int)DbNetworkProvider.DVBC;
+            c.NetProvider = (int)DbNetworkProvider.DvbC;
           }
           CardManagement.SaveCard(c);
         }
@@ -559,15 +559,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       Guid networkProviderClsId;
       switch ((DbNetworkProvider)c.NetProvider)
       {
-        case DbNetworkProvider.DVBT:
+        case DbNetworkProvider.DvbT:
           networkProviderName = "DVBT Network Provider";
           networkProviderClsId = typeof(DVBTNetworkProvider).GUID;
           break;
-        case DbNetworkProvider.DVBS:
+        case DbNetworkProvider.DvbS:
           networkProviderName = "DVBS Network Provider";
           networkProviderClsId = typeof(DVBSNetworkProvider).GUID;
           break;
-        case DbNetworkProvider.DVBC:
+        case DbNetworkProvider.DvbC:
           networkProviderName = "DVBC Network Provider";
           networkProviderClsId = typeof(DVBCNetworkProvider).GUID;
           break;
