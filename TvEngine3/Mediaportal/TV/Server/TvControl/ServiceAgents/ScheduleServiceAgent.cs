@@ -1,11 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 
-namespace Mediaportal.TV.Server.TVService.ServiceAgents
+namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 {
   public class ScheduleServiceAgent : ServiceAgent<IScheduleService>, IScheduleService
   {

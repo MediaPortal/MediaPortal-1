@@ -8,7 +8,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <StartWorkingDirectory>
     </StartWorkingDirectory>
-    <StartArguments>/debug</StartArguments>
+    <StartArguments>-console</StartArguments>
     <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
   </PropertyGroup>
   <PropertyGroup>

@@ -33,7 +33,6 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Common.Utils;
-using Mediaportal.TV.Server.TVService.ServiceAgents;
 
 namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
 {

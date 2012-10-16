@@ -29,6 +29,7 @@ using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Events;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Presentation;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
@@ -40,8 +41,6 @@ using Mediaportal.TV.Server.TVService;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
-using Mediaportal.TV.Server.TVService.ServiceAgents;
-using Mediaportal.TV.Server.TVService.ServiceAgents.Interfaces;
 
 
 namespace Mediaportal.TV.Server.SetupTV.Sections

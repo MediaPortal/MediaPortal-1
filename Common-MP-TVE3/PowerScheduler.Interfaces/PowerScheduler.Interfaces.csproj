@@ -114,10 +114,4 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\TVEngine3\Mediaportal\TV\Server\ServiceAgents\ServiceAgents.csproj">
-      <Project>{DB873507-8095-4877-A489-DA39AB55A9A2}</Project>
-      <Name>ServiceAgents</Name>
-    </ProjectReference>
-  </ItemGroup>
 </Project>

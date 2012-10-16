@@ -1,4 +1,4 @@
-namespace Mediaportal.TV.Server.TVService.ServiceAgents.Interfaces
+namespace Mediaportal.TV.Server.TVControl.Interfaces.Events
 {
   public interface IHeartbeatEventCallbackClient
   {

@@ -24,13 +24,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 using System.Globalization;
-using Mediaportal.TV.Server.TVService.ServiceAgents;
 using WebEPG.config.WebEPG;
 using ChannelMap = WebEPG.config.WebEPG.ChannelMap;
 //using System.Data;

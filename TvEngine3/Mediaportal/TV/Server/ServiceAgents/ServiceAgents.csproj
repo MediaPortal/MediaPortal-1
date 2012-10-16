@@ -31,24 +31,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CanceledScheduleServiceAgent.cs" />
-    <Compile Include="CardServiceAgent.cs" />
-    <Compile Include="ChannelGroupServiceAgent.cs" />
-    <Compile Include="ChannelServiceAgent.cs" />
-    <Compile Include="ConflictServiceAgent.cs" />
-    <Compile Include="DiscoverServiceAgent.cs" />
-    <Compile Include="EventServiceAgent.cs" />
-    <Compile Include="EventServiceClient.cs" />
-    <Compile Include="Interfaces\IEventServiceAgent.cs" />
-    <Compile Include="Interfaces\IHeartbeatEventCallbackClient.cs" />
-    <Compile Include="Interfaces\ITvServerEventCallbackClient.cs" />
-    <Compile Include="MappingHelper.cs" />
-    <Compile Include="ProgramServiceAgent.cs" />
-    <Compile Include="RecordingServiceAgent.cs" />
-    <Compile Include="ScheduleServiceAgent.cs" />
-    <Compile Include="ServerMonitor.cs" />
-    <Compile Include="ServiceAgent.cs" />
-    <Compile Include="ServiceAgents.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -77,7 +59,9 @@
       <Name>TvService.Interfaces</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

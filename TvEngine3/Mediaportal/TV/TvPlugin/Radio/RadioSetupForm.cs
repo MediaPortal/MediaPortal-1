@@ -25,9 +25,10 @@ using System.Configuration;
 using MediaPortal.Configuration;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVService.ServiceAgents;
 
 namespace Mediaportal.TV.TvPlugin.Radio
 {

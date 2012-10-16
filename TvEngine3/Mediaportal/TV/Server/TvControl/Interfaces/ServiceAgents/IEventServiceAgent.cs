@@ -1,7 +1,7 @@
-using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVControl.Interfaces.Events;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace Mediaportal.TV.Server.TVService.ServiceAgents.Interfaces
+namespace Mediaportal.TV.Server.TVControl.Interfaces.ServiceAgents
 {
   public interface IEventServiceAgent
   {

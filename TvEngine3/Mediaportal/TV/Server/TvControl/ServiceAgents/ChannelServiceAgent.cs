@@ -1,16 +1,11 @@
-﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.ServiceModel;
-using System.Text;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVDatabase.Presentation;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace Mediaportal.TV.Server.TVService.ServiceAgents
+namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 {
   public class ChannelServiceAgent : ServiceAgent<IChannelService>, IChannelService
   {

@@ -21,10 +21,11 @@
 using System;
 using System.Collections.Generic;
 using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVService.ServiceAgents;
 using Setting = Mediaportal.TV.Server.TVDatabase.Entities.Setting;
 
 namespace Mediaportal.TV.Server.Plugins.ServerBlaster

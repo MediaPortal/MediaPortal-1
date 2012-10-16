@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System;
 using System.ServiceModel;
 using System.ServiceModel.Description;
-using System.Text;
-using MediaPortal.Common.Utils;
-using Mediaportal.TV.Server.TVControl;
-using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 
-namespace Mediaportal.TV.Server.TVService.ServiceAgents
+namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 { 
   public abstract class ServiceAgent<T> : IDisposable
   {

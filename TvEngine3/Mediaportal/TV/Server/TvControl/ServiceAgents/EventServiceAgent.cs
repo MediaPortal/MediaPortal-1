@@ -1,14 +1,12 @@
-﻿using System;
-using System.Net;
+using System;
 using System.ServiceModel;
-using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace Mediaportal.TV.Server.TVService.ServiceAgents
+namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 {
   public class EventServiceAgent : ServiceAgent<IEventService>, IEventService, IServerEventCallback
   {

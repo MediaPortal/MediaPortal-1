@@ -2,12 +2,13 @@ using System;
 using System.ServiceModel;
 using System.Threading;
 using Mediaportal.TV.Server.TVControl.Events;
+using Mediaportal.TV.Server.TVControl.Interfaces.Events;
+using Mediaportal.TV.Server.TVControl.Interfaces.ServiceAgents;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVService.ServiceAgents.Interfaces;
 
-namespace Mediaportal.TV.Server.TVService.ServiceAgents
+namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 {
   public class EventServiceClient : IEventServiceAgent
   {

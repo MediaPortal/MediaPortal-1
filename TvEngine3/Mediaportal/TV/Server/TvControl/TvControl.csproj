@@ -75,10 +75,10 @@
       <Link>SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="Constants\TCPconsts.cs" />
-    <Compile Include="Events\ServerEventEnum.cs" />
     <Compile Include="Events\TvServerEventArgs.cs" />
-    <Compile Include="Events\TvServerEventArgsTranslator.cs" />
     <Compile Include="Events\TvServerEventTypeEnum.cs" />
+    <Compile Include="Interfaces\ServiceAgents\IEventServiceAgent.cs" />
+    <Compile Include="Interfaces\Events\IHeartbeatEventCallbackClient.cs" />
     <Compile Include="Interfaces\Events\ITvServerEvent.cs" />
     <Compile Include="Interfaces\Events\IServerEventCallback.cs" />
     <Compile Include="Interfaces\Services\ICanceledScheduleService.cs" />
@@ -95,7 +95,23 @@
     <Compile Include="Interfaces\Services\IRecordingService.cs" />
     <Compile Include="Interfaces\Services\IScheduleService.cs" />
     <Compile Include="Interfaces\Services\ISettingService.cs" />
+    <Compile Include="Interfaces\Events\ITvServerEventCallbackClient.cs" />
     <Compile Include="RemoteControl.cs" />
+    <Compile Include="ServiceAgents\CanceledScheduleServiceAgent.cs" />
+    <Compile Include="ServiceAgents\CardServiceAgent.cs" />
+    <Compile Include="ServiceAgents\ChannelGroupServiceAgent.cs" />
+    <Compile Include="ServiceAgents\ChannelServiceAgent.cs" />
+    <Compile Include="ServiceAgents\ConflictServiceAgent.cs" />
+    <Compile Include="ServiceAgents\DiscoverServiceAgent.cs" />
+    <Compile Include="ServiceAgents\EventServiceAgent.cs" />
+    <Compile Include="ServiceAgents\EventServiceClient.cs" />
+    <Compile Include="ServiceAgents\MappingHelper.cs" />
+    <Compile Include="ServiceAgents\ProgramServiceAgent.cs" />
+    <Compile Include="ServiceAgents\RecordingServiceAgent.cs" />
+    <Compile Include="ServiceAgents\ScheduleServiceAgent.cs" />
+    <Compile Include="ServiceAgents\ServerMonitor.cs" />
+    <Compile Include="ServiceAgents\ServiceAgent.cs" />
+    <Compile Include="ServiceAgents\ServiceAgents.cs" />
     <Compile Include="ServiceHelper.cs" />
     <Compile Include="SubChannel.cs" />
     <Compile Include="User.cs" />

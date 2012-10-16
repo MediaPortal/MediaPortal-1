@@ -211,10 +211,6 @@
       <Project>{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}</Project>
       <Name>PluginBase</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Server\ServiceAgents\ServiceAgents.csproj">
-      <Project>{DB873507-8095-4877-A489-DA39AB55A9A2}</Project>
-      <Name>ServiceAgents</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Server\TvControl\TvControl.csproj">
       <Project>{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}</Project>
       <Name>TvControl</Name>

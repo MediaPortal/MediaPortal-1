@@ -24,8 +24,8 @@ using System.ServiceProcess;
 using MediaPortal.Common.Utils;
 using MediaPortal.Util;
 using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVService.ServiceAgents;
 using Microsoft.Win32;
 
 namespace Mediaportal.TV.Server.SetupTV

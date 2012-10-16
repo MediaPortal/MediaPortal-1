@@ -29,6 +29,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Util;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using MediaPortal.Profile;
 using System.IO;
@@ -38,7 +39,6 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVService.Interfaces;
-using Mediaportal.TV.Server.TVService.ServiceAgents;
 
 namespace Mediaportal.TV.TvPlugin.Helper
 {

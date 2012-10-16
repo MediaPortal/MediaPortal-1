@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace Mediaportal.TV.Server.TVService.ServiceAgents
+namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 {
   public class ServerMonitor
   {

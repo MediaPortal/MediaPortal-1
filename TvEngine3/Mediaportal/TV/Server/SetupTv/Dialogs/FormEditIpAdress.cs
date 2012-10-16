@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.TVControl;
-using Mediaportal.TV.Server.TVService.ServiceAgents;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
 
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
