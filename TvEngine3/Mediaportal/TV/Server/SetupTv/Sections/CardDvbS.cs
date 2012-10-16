@@ -713,8 +713,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         curBox = mpComboLnbType[ctlIndex];
         curBox.Items.Clear();
         curBox.Items.AddRange((object[])lnbTypes);
-        curBox.SelectedIndex =
-          Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("dvbs{0}band{1}", _cardNumber, idx), "0").Value);
+        if (curBox.Items.Count > 0)
+        {
+          curBox.SelectedIndex =
+            Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("dvbs{0}band{1}", _cardNumber, idx), "0").Value);
+        }
 
         curCheck = mpLNBs[ctlIndex];        
         curCheck.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("dvbs{0}LNB{1}", _cardNumber, idx), "0").Value == "true");
