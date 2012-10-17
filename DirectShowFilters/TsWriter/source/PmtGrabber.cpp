@@ -69,8 +69,8 @@ STDMETHODIMP CPmtGrabber::SetPmtPid(int pmtPid, int serviceId)
       }
       m_sdtParser.Reset(false);
       m_sdtParser.SetCallBack(this);
-      m_vctParser.Reset();
-      m_vctParser.SetCallBack(this);
+      m_lvctParser.Reset();
+      m_lvctParser.SetCallBack(this);
     }
     SetPid(pmtPid);   // Note: if the PMT PID is zero, we'll receive PAT sections.
     m_patParser.Reset();
@@ -164,7 +164,7 @@ void CPmtGrabber::OnSdtReceived(const CChannelInfo& sdtInfo)
         LogDebug("PmtGrabber: do callback (SDT)...");
         m_pCallBack->OnPmtReceived(GetPid(), m_iCurrentServiceId, 0);
         m_sdtParser.SetCallBack(NULL);
-        m_vctParser.SetCallBack(NULL);
+        m_lvctParser.SetCallBack(NULL);
       }
       else
       {
@@ -178,7 +178,7 @@ void CPmtGrabber::OnSdtReceived(const CChannelInfo& sdtInfo)
   }
 }
 
-void CPmtGrabber::OnVctReceived(const CChannelInfo& vctInfo)
+void CPmtGrabber::OnLvctReceived(const CChannelInfo& vctInfo)
 {
   CEnterCriticalSection enter(m_section);
   try
@@ -193,15 +193,15 @@ void CPmtGrabber::OnVctReceived(const CChannelInfo& vctInfo)
     {
       return;
     }
-    LogDebug("PmtGrabber: VCT information for service 0x%x received, is running = %d", vctInfo.ServiceId, vctInfo.IsRunning);
+    LogDebug("PmtGrabber: L-VCT information for service 0x%x received, is running = %d", vctInfo.ServiceId, vctInfo.IsRunning);
     if (!vctInfo.IsRunning)
     {
       if (m_pCallBack != NULL)
       {
-        LogDebug("PmtGrabber: do callback (VCT)...");
+        LogDebug("PmtGrabber: do callback (L-VCT)...");
         m_pCallBack->OnPmtReceived(GetPid(), m_iCurrentServiceId, 0);
         m_sdtParser.SetCallBack(NULL);
-        m_vctParser.SetCallBack(NULL);
+        m_lvctParser.SetCallBack(NULL);
       }
       else
       {
@@ -211,7 +211,7 @@ void CPmtGrabber::OnVctReceived(const CChannelInfo& vctInfo)
   }
   catch (...)
   {
-    LogDebug("PmtGrabber: unhandled exception in OnVctReceived()");
+    LogDebug("PmtGrabber: unhandled exception in OnLvctReceived()");
   }
 }
 
@@ -227,7 +227,7 @@ void CPmtGrabber::OnTsPacket(byte* tsPacket)
     if (m_iCurrentServiceId != 0)
     {
       m_sdtParser.OnTsPacket(tsPacket);
-      m_vctParser.OnTsPacket(tsPacket);
+      m_lvctParser.OnTsPacket(tsPacket);
     }
     if (GetPid() != 0)
     {
@@ -268,7 +268,7 @@ void CPmtGrabber::OnNewSection(CSection& section)
           LogDebug("PmtGrabber: do callback (PAT)...");
           m_pCallBack->OnPmtReceived(GetPid(), m_iOriginalServiceId, 0);
           m_sdtParser.SetCallBack(NULL);
-          m_vctParser.SetCallBack(NULL);
+          m_lvctParser.SetCallBack(NULL);
         }
         else
         {
@@ -365,7 +365,7 @@ void CPmtGrabber::OnNewSection(CSection& section)
 
       // We're not interested in continually monitoring if the service is running.
       m_sdtParser.SetCallBack(NULL);
-      m_vctParser.SetCallBack(NULL);
+      m_lvctParser.SetCallBack(NULL);
     }
     else 
     {

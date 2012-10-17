@@ -19,27 +19,27 @@
  *
  */
 #pragma once
-#include "..\..\shared\sectiondecoder.h"
+#include "..\..\shared\SectionDecoder.h"
 #include "..\..\shared\ChannelInfo.h"
 #include <map>
 #include <vector>
 using namespace std;
 
-class IVctCallBack
+class ILvctCallBack
 {
   public:
-    virtual void OnVctReceived(const CChannelInfo& info) = 0;
+    virtual void OnLvctReceived(const CChannelInfo& info) = 0;
 };
 
 #define PID_VCT 0x1ffb
 
-class CVctParser : public CSectionDecoder
+class CLvctParser : public CSectionDecoder
 {
   public:
-    CVctParser(void);
-    virtual ~CVctParser(void);
+    CLvctParser(void);
+    virtual ~CLvctParser(void);
     void Reset();
-    void SetCallBack(IVctCallBack* callBack);
+    void SetCallBack(ILvctCallBack* callBack);
     void OnNewSection(CSection& section);
     bool IsReady();
 
@@ -48,7 +48,7 @@ class CVctParser : public CSectionDecoder
     void DecodeMultipleStrings(byte* b, int length, vector<char*>* strings);
     void DecodeString(byte* b, int compression_type, int mode, int number_bytes, char** string);
 
-    IVctCallBack* m_pCallBack;
+    ILvctCallBack* m_pCallBack;
     map<unsigned int, bool> m_mSeenSections;
     bool m_bIsReady;
 };

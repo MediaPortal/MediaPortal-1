@@ -100,11 +100,11 @@ STDMETHODIMP CChannelScan::ScanStream(BroadcastStandard broadcastStandard)
     m_sdtParser.Reset(false);
     m_nitParser.Reset();
     m_batParser.Reset();
-    m_vctParser.Reset();
+    m_lvctParser.Reset();
     m_patParser.SetCallBack(this);
     m_pEncryptionAnalyser->SetCallBack(this);
     m_sdtParser.SetCallBack(this);
-    m_vctParser.SetCallBack(this);
+    m_lvctParser.SetCallBack(this);
   }
   catch (...)
   {
@@ -125,7 +125,7 @@ STDMETHODIMP CChannelScan::StopStreamScan()
     m_patParser.SetCallBack(NULL);
     m_pEncryptionAnalyser->SetCallBack(NULL);
     m_sdtParser.SetCallBack(NULL);
-    m_vctParser.SetCallBack(NULL);
+    m_lvctParser.SetCallBack(NULL);
   }
   catch (...)
   {
@@ -284,6 +284,7 @@ STDMETHODIMP CChannelScan::GetServiceDetail(int index,
         }
         countryIt++;
       }
+      batCountries.clear();
       m_batParser.GetUnavailableInCountries(info->OriginalNetworkId, info->TransportStreamId, info->ServiceId, &batCountries);
       countryIt = batCountries.begin();
       while (countryIt != batCountries.end())
@@ -417,7 +418,7 @@ STDMETHODIMP CChannelScan::StopNetworkScan(bool* isOtherMuxServiceInfoAvailable)
     m_patParser.SetCallBack(NULL);
     m_pEncryptionAnalyser->SetCallBack(NULL);
     m_sdtParser.SetCallBack(NULL);
-    m_vctParser.SetCallBack(NULL);
+    m_lvctParser.SetCallBack(NULL);
 
     *isOtherMuxServiceInfoAvailable = m_bIsOtherMuxServiceInfoSeen;
   }
@@ -623,7 +624,7 @@ void CChannelScan::OnTsPacket(byte* tsPacket)
     bool isReady = true;
     if (m_broadcastStandard == Atsc || m_broadcastStandard == Scte)
     {
-      isReady = m_vctParser.IsReady();
+      isReady = m_lvctParser.IsReady();
     }
     else
     {
@@ -661,7 +662,7 @@ void CChannelScan::OnTsPacket(byte* tsPacket)
 
     if (m_broadcastStandard == Atsc || m_broadcastStandard == Scte)
     {
-      m_vctParser.OnTsPacket(tsPacket);
+      m_lvctParser.OnTsPacket(tsPacket);
     }
     else
     {
@@ -796,28 +797,8 @@ void CChannelScan::OnSdtReceived(const CChannelInfo& sdtInfo)
       info->PreviousOriginalNetworkId = sdtInfo.PreviousOriginalNetworkId;
     }
 
-    // Free the memory associated with previous strings, then allocate
-    // new memory and copy. We can't just take a pointer as the strings
-    // in sdtInfo will be deleted.
-    info->ClearStrings();
-    info->ServiceName = new char[strlen(sdtInfo.ServiceName) + 1];
-    if (info->ServiceName == NULL)
-    {
-      LogDebug("ChannelScan: failed to allocate memory for a service name from the SDT");
-    }
-    else
-    {
-      strcpy(info->ServiceName, sdtInfo.ServiceName);
-    }
-    info->ProviderName = new char[strlen(sdtInfo.ProviderName) + 1];
-    if (info->ProviderName == NULL)
-    {
-      LogDebug("ChannelScan: failed to allocate memory for a provider name from the SDT");
-    }
-    else
-    {
-      strcpy(info->ProviderName, sdtInfo.ProviderName);
-    }
+    info->ReplaceServiceName(sdtInfo.ServiceName);
+    info->ReplaceProviderName(sdtInfo.ProviderName);
 
     // The SDT is the primary source of information for the following fields.
     // We suppliment with details from the NIT and BAT when the channel is
@@ -848,7 +829,7 @@ void CChannelScan::OnSdtReceived(const CChannelInfo& sdtInfo)
   }
 }
 
-void CChannelScan::OnVctReceived(const CChannelInfo& vctInfo)
+void CChannelScan::OnLvctReceived(const CChannelInfo& vctInfo)
 {
   CEnterCriticalSection enter(m_section);
   try
@@ -862,7 +843,7 @@ void CChannelScan::OnVctReceived(const CChannelInfo& vctInfo)
       info = it->second;
       if (info->IsServiceInfoReceived)
       {
-        LogDebug("ChannelScan: VCT information for service 0x%x received multiple times", vctInfo.ServiceId);
+        LogDebug("ChannelScan: L-VCT information for service 0x%x received multiple times", vctInfo.ServiceId);
       }
     }
     else
@@ -882,7 +863,7 @@ void CChannelScan::OnVctReceived(const CChannelInfo& vctInfo)
       info->VideoStreamCount = vctInfo.VideoStreamCount;
       info->AudioStreamCount = vctInfo.AudioStreamCount;
     }
-    // We trust VCT info and access_controlled over PMT being
+    // We trust L-VCT info and access_controlled over PMT being
     // received (or not) and CA descriptors being found in the PMT
     // (or not). However, information from the encryption analyser
     // takes higher precedence.
@@ -897,41 +878,9 @@ void CChannelScan::OnVctReceived(const CChannelInfo& vctInfo)
       m_bIsOtherMuxServiceInfoSeen = true;
     }
 
-    // Free the memory associated with previous strings, then allocate
-    // new memory and copy. We can't just take a pointer as the strings
-    // in vctInfo will be deleted.
-    info->ClearStrings();
-    info->ServiceName = new char[strlen(vctInfo.ServiceName) + 1];
-    if (info->ServiceName == NULL)
-    {
-      LogDebug("ChannelScan: failed to allocate memory for a service name from the VCT");
-    }
-    else
-    {
-      strcpy(info->ServiceName, vctInfo.ServiceName);
-    }
-    info->ProviderName = new char[strlen(vctInfo.ProviderName) + 1];
-    if (info->ProviderName == NULL)
-    {
-      LogDebug("ChannelScan: failed to allocate memory for a provider name from the VCT");
-    }
-    else
-    {
-      strcpy(info->ProviderName, vctInfo.ProviderName);
-    }
-    info->LogicalChannelNumber = new char[strlen(vctInfo.LogicalChannelNumber) + 1];
-    if (info->LogicalChannelNumber == NULL)
-    {
-      LogDebug("ChannelScan: failed to allocate memory for a logical channel number from the VCT");
-    }
-    else
-    {
-      strcpy(info->LogicalChannelNumber, vctInfo.LogicalChannelNumber);
-    }
-
-    strcpy(info->ProviderName, vctInfo.ProviderName);
-    strcpy(info->ServiceName, vctInfo.ServiceName);
-    strcpy(info->LogicalChannelNumber, vctInfo.LogicalChannelNumber);
+    info->ReplaceServiceName(vctInfo.ServiceName);
+    info->ReplaceProviderName(vctInfo.ProviderName);
+    info->ReplaceLogicalChannelNumber(vctInfo.LogicalChannelNumber);
 
     // Add the languages. We don't want to overwrite languages found in
     // the PMT. We'll take care of making the list distinct later.
@@ -944,11 +893,11 @@ void CChannelScan::OnVctReceived(const CChannelInfo& vctInfo)
     }
 
     info->IsServiceInfoReceived = true;
-    LogDebug("ChannelScan: received VCT information for service 0x%x", vctInfo.ServiceId);
+    LogDebug("ChannelScan: received L-VCT information for service 0x%x", vctInfo.ServiceId);
   }
   catch (...)
   {
-    LogDebug("ChannelScan: unhandled exception in OnVctReceived()");
+    LogDebug("ChannelScan: unhandled exception in OnLvctReceived()");
   }
 }
 

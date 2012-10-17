@@ -28,7 +28,7 @@
 #include "SdtParser.h"
 #include "NitParser.h"
 #include "BatParser.h"
-#include "VctParser.h"
+#include "LvctParser.h"
 #include "EncryptionAnalyser.h"
 
 using namespace Mediaportal;
@@ -122,7 +122,7 @@ DECLARE_INTERFACE_(ITsChannelScan, IUnknown)
 
 class CMpTsFilter;
 
-class CChannelScan : public CUnknown, public ITsChannelScan, IPatCallBack, IPmtCallBack2, ISdtCallBack, IVctCallBack, public IEncryptionStateChangeCallBack
+class CChannelScan : public CUnknown, public ITsChannelScan, IPatCallBack, IPmtCallBack2, ISdtCallBack, ILvctCallBack, public IEncryptionStateChangeCallBack
 {
   public:
     CChannelScan(LPUNKNOWN pUnk, HRESULT *phr, CMpTsFilter* filter);
@@ -197,7 +197,7 @@ class CChannelScan : public CUnknown, public ITsChannelScan, IPatCallBack, IPmtC
     void OnPatReceived(int serviceId, int pmtPid);
     void OnPmtReceived(const CPidTable& pidTable);
     void OnSdtReceived(const CChannelInfo& sdtInfo);
-    void OnVctReceived(const CChannelInfo& vctInfo);
+    void OnLvctReceived(const CChannelInfo& vctInfo);
     STDMETHODIMP OnEncryptionStateChange(int pid, EncryptionState encryptionState);
 
   private:
@@ -220,5 +220,5 @@ class CChannelScan : public CUnknown, public ITsChannelScan, IPatCallBack, IPmtC
     CSdtParser m_sdtParser;
     CNitParser m_nitParser;
     CBatParser m_batParser;
-    CVctParser m_vctParser;
+    CLvctParser m_lvctParser;
 };

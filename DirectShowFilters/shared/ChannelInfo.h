@@ -32,6 +32,9 @@ class CChannelInfo
     void Copy(const CChannelInfo &info);
     void Reset();
     void ClearStrings();
+    void ReplaceServiceName(char* name);
+    void ReplaceProviderName(char* name);
+    void ReplaceLogicalChannelNumber(char* lcn);
 
     int OriginalNetworkId;
     int TransportStreamId;

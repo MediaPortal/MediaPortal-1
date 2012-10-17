@@ -21,12 +21,12 @@
 #pragma warning(disable : 4995)
 #include <windows.h>
 #include "..\..\shared\BasePmtParser.h"
-#include "VctParser.h"
+#include "LvctParser.h"
 
 extern void LogDebug(const char *fmt, ...);
 extern bool DisableCRCCheck();
 
-CVctParser::CVctParser(void)
+CLvctParser::CLvctParser(void)
 {
   SetPid(PID_VCT);
   if (DisableCRCCheck())
@@ -37,33 +37,33 @@ CVctParser::CVctParser(void)
   m_pCallBack = NULL;
 }
 
-CVctParser::~CVctParser(void)
+CLvctParser::~CLvctParser(void)
 {
 }
 
-void CVctParser::SetCallBack(IVctCallBack* callBack)
+void CLvctParser::SetCallBack(ILvctCallBack* callBack)
 {
   m_pCallBack = callBack;
 }
 
-bool CVctParser::IsReady()
+bool CLvctParser::IsReady()
 {
   return m_bIsReady;
 }
 
-void CVctParser::Reset()
+void CLvctParser::Reset()
 {
-  LogDebug("VctParser: reset");
+  LogDebug("LvctParser: reset");
   CSectionDecoder::Reset();
   m_mSeenSections.clear();
   m_bIsReady = false;
-  LogDebug("VctParser: reset done");
+  LogDebug("LvctParser: reset done");
 }
 
-void CVctParser::OnNewSection(CSection& sections)
+void CLvctParser::OnNewSection(CSection& sections)
 {
-  // 0xc8 = terrestrial virtual channel table
-  // 0xc9 = cable virtual channel table
+  // 0xc8 = terrestrial long form virtual channel table
+  // 0xc9 = cable long form virtual channel table
   if (sections.table_id != 0xc8 && sections.table_id != 0xc9)
   {
     return;
@@ -81,7 +81,7 @@ void CVctParser::OnNewSection(CSection& sections)
     int section_length = ((section[1] & 0xf) << 8) + section[2];
     if ((sections.table_id == 0xc8 && section_length > 1021) || section_length > 4093 || section_length < 13)
     {
-      LogDebug("VctParser: invalid section length = %d", section_length);
+      LogDebug("LvctParser: invalid section length = %d", section_length);
       return;
     }
     int transport_stream_id = (section[3] << 8) + section[4];
@@ -96,7 +96,7 @@ void CVctParser::OnNewSection(CSection& sections)
     int last_section_number = section[7];
 
     int endOfSection = section_length - 1;
-    //LogDebug("VctParser: TSID = 0x%x, table ID = 0x%x, section number = %d, version = %d, last section number = %d, section length = %d, end of section = %d",
+    //LogDebug("LvctParser: TSID = 0x%x, table ID = 0x%x, section number = %d, version = %d, last section number = %d, section length = %d, end of section = %d",
     //          transport_stream_id, sections.table_id, section_number, version_number, last_section_number, section_length, endOfSection);
 
     unsigned int key = (sections.table_id << 24) + (transport_stream_id << 8) + section_number;
@@ -115,7 +115,7 @@ void CVctParser::OnNewSection(CSection& sections)
           {
             if (!it->second)
             {
-              //LogDebug("VctParser: not yet seen %x", it->first);
+              //LogDebug("LvctParser: not yet seen %x", it->first);
               ready = false;
               break;
             }
@@ -123,7 +123,7 @@ void CVctParser::OnNewSection(CSection& sections)
           m_bIsReady = ready;
           if (ready)
           {
-            LogDebug("VctParser: ready, sections parsed = %d", m_mSeenSections.size());
+            LogDebug("LvctParser: ready, sections parsed = %d", m_mSeenSections.size());
           }
         }
         return;
@@ -131,14 +131,14 @@ void CVctParser::OnNewSection(CSection& sections)
     }
     else
     {
-      //LogDebug("VctParser: new section %x", key);
+      //LogDebug("LvctParser: new section %x", key);
       m_bIsReady = false;
       unsigned int k = (sections.table_id << 24) + (transport_stream_id << 8);
       while ((int)(k & 0xff) <= last_section_number)
       {
         if (m_mSeenSections.find(k) == m_mSeenSections.end())
         {
-          //LogDebug("VctParser: add section %x", k);
+          //LogDebug("LvctParser: add section %x", k);
           m_mSeenSections[k] = false;
         }
         k++;
@@ -147,7 +147,7 @@ void CVctParser::OnNewSection(CSection& sections)
 
     int protocol_version = section[8];
     int num_channels_in_section = section[9];
-    //LogDebug("VctParser: protocol version = %d, number of channels = %d", protocol_version, num_channels_in_section);
+    //LogDebug("LvctParser: protocol version = %d, number of channels = %d", protocol_version, num_channels_in_section);
     int pointer = 10;
     for (int i = 0; i < num_channels_in_section && pointer + 31 < endOfSection; i++)
     {
@@ -155,7 +155,7 @@ void CVctParser::OnNewSection(CSection& sections)
       char* short_name = new char[8];
       if (short_name == NULL)
       {
-        LogDebug("VctParser: failed to allocate 8 bytes for the short name");
+        LogDebug("LvctParser: failed to allocate 8 bytes for the short name");
       }
       else
       {
@@ -198,7 +198,7 @@ void CVctParser::OnNewSection(CSection& sections)
       int service_type = (section[pointer++] & 0x3f);
       int source_id = ((section[pointer]) << 8) + section[pointer + 1];
       pointer += 2;
-      LogDebug("VctParser: short name = %s, major channel = %d, minor channel = %d, modulation = %d, carrier frequency = %d, channel TSID = 0x%x, program number = 0x%x, ETM location = %d, access controlled = %d, hidden = %d, path select = %d, out of band = %d, hide guide = %d, service type = 0x%x, source ID = 0x%x",
+      LogDebug("LvctParser: short name = %s, major channel = %d, minor channel = %d, modulation = %d, carrier frequency = %d, channel TSID = 0x%x, program number = 0x%x, ETM location = %d, access controlled = %d, hidden = %d, path select = %d, out of band = %d, hide guide = %d, service type = 0x%x, source ID = 0x%x",
                   short_name, major_channel, minor_channel, modulation_mode, carrier_frequency, channel_tsid, program_number,
                   etm_location, access_controlled, hidden, path_select, out_of_band, hide_guide, service_type, source_id);
 
@@ -206,7 +206,7 @@ void CVctParser::OnNewSection(CSection& sections)
       int descriptors_length = ((section[pointer] & 0x3) << 8) + section[pointer + 1];
       pointer += 2;
       int endOfDescriptors = pointer + descriptors_length;
-      LogDebug("VctParser: pointer = %d, descriptors length = %d, end of descriptors = %d", pointer, descriptors_length, endOfDescriptors);
+      LogDebug("LvctParser: pointer = %d, descriptors length = %d, end of descriptors = %d", pointer, descriptors_length, endOfDescriptors);
 
       vector<char*> extendedNames;
       int videoStreamCount = 0;
@@ -216,10 +216,10 @@ void CVctParser::OnNewSection(CSection& sections)
       {
         int tag = section[pointer++];
         int length = section[pointer++];
-        //LogDebug("VctParser: descriptor, tag = 0x%x, length = %d, pointer = %d, end of descriptor = %d", tag, length, pointer, pointer + length);
+        //LogDebug("LvctParser: descriptor, tag = 0x%x, length = %d, pointer = %d, end of descriptor = %d", tag, length, pointer, pointer + length);
         if (pointer + length > endOfDescriptors)
         {
-          LogDebug("VctParser: invalid descriptor length = %d, pointer = %d, end of descriptor = %d, end of descriptors = %d, end of section = %d, section length = %d", length, pointer, pointer + length, endOfDescriptors, endOfSection, section_length);
+          LogDebug("LvctParser: invalid descriptor length = %d, pointer = %d, end of descriptor = %d, end of descriptors = %d, end of section = %d, section length = %d", length, pointer, pointer + length, endOfDescriptors, endOfSection, section_length);
           return;
         }
 
@@ -238,13 +238,13 @@ void CVctParser::OnNewSection(CSection& sections)
       {
         // The service is inactive. program_number is the equivalent of the DVB service ID. There is
         // no way we can properly handle channels with service ID not set.
-        LogDebug("VctParser: program number is zero, service is inactive");
+        LogDebug("LvctParser: program number is zero, service is inactive");
         continue;
       }
       if (out_of_band == 1)
       {
         // The service is delivered via some out-of-band mechanism that we don't have access to.
-        LogDebug("VctParser: service is carried out of band");
+        LogDebug("LvctParser: service is carried out of band");
         continue;
       }
 
@@ -264,23 +264,34 @@ void CVctParser::OnNewSection(CSection& sections)
           if (isFirst)
           {
             isFirst = false;
-            int bufferSize = strlen(short_name) + strlen(*it) + 3 + 1;  // + 3 for " (" and ")", + 1 for NULL termination
+            int bufferSize = strlen(*it) + 1; // + 1 for NULL termination
+            if (short_name != NULL)
+            {
+              bufferSize += strlen(short_name) + 3; // + 3 for " (" and ")"
+            }
             info.ServiceName = new char[bufferSize];
             if (info.ServiceName == NULL)
             {
-              LogDebug("VctParser: failed to allocate %d bytes for the service name", bufferSize);
+              LogDebug("LvctParser: failed to allocate %d bytes for the service name", bufferSize);
             }
             else
             {
-              strcpy(info.ServiceName, short_name);
-              strcat(info.ServiceName, " (");
-              strcat(info.ServiceName, *it);
-              strcat(info.ServiceName, ")");
-            }
+              if (short_name != NULL)
+              {
+                strcpy(info.ServiceName, short_name);
+                strcat(info.ServiceName, " (");
+                strcat(info.ServiceName, *it);
+                strcat(info.ServiceName, ")");
 
-            // Don't forget to free the short name buffer.
-            delete[] short_name;
-            short_name = NULL;
+                // Don't forget to free the short name buffer.
+                delete[] short_name;
+                short_name = NULL;
+              }
+              else
+              {
+                strcpy(info.ServiceName, *it);
+              }
+            }
           }
 
           // Free the extended name buffer(s). We have no need for them anymore.
@@ -291,7 +302,7 @@ void CVctParser::OnNewSection(CSection& sections)
       info.ProviderName = new char[6];
       if (info.ProviderName == NULL)
       {
-        LogDebug("VctParser: failed to allocate 6 bytes for the provider name");
+        LogDebug("LvctParser: failed to allocate 6 bytes for the provider name");
       }
       else
       {
@@ -311,7 +322,7 @@ void CVctParser::OnNewSection(CSection& sections)
       info.LogicalChannelNumber = new char[10]; // allow for <4 digits>.<4 digits><NULL>
       if (info.LogicalChannelNumber == NULL)
       {
-        LogDebug("VctParser: failed to allocate 10 bytes for the logical channel number");
+        LogDebug("LvctParser: failed to allocate 10 bytes for the logical channel number");
       }
       else
       {
@@ -345,7 +356,7 @@ void CVctParser::OnNewSection(CSection& sections)
 
       if (m_pCallBack != NULL)
       {
-        m_pCallBack->OnVctReceived(info);
+        m_pCallBack->OnLvctReceived(info);
       }
     }
 
@@ -353,15 +364,15 @@ void CVctParser::OnNewSection(CSection& sections)
     int additional_descriptors_length = ((section[pointer] & 0x3) << 8) + section[pointer + 1];
     pointer += 2;
     int endOfDescriptors = pointer + additional_descriptors_length;
-    LogDebug("VctParser: pointer = %d, additional descriptors length = %d, end of descriptors = %d", pointer, additional_descriptors_length, endOfDescriptors);
+    LogDebug("LvctParser: pointer = %d, additional descriptors length = %d, end of descriptors = %d", pointer, additional_descriptors_length, endOfDescriptors);
     while (pointer + 1 < endOfDescriptors)
     {
       int tag = section[pointer++];
       int length = section[pointer++];
-      //LogDebug("VctParser: descriptor, tag = 0x%x, length = %d, pointer = %d, end of descriptor = %d", tag, length, pointer, pointer + length);
+      //LogDebug("LvctParser: descriptor, tag = 0x%x, length = %d, pointer = %d, end of descriptor = %d", tag, length, pointer, pointer + length);
       if (pointer + length > endOfDescriptors)
       {
-        LogDebug("VctParser: invalid descriptor length = %d, pointer = %d, end of descriptor = %d, end of descriptors = %d, end of section = %d, section length = %d", length, pointer, pointer + length, endOfDescriptors, endOfSection, section_length);
+        LogDebug("LvctParser: invalid descriptor length = %d, pointer = %d, end of descriptor = %d, end of descriptors = %d, end of section = %d, section length = %d", length, pointer, pointer + length, endOfDescriptors, endOfSection, section_length);
         return;
       }
 
@@ -370,7 +381,7 @@ void CVctParser::OnNewSection(CSection& sections)
 
     if (pointer != endOfSection)
     {
-      LogDebug("VctParser: section parsing error");
+      LogDebug("LvctParser: section parsing error");
     }
     else
     {
@@ -379,15 +390,15 @@ void CVctParser::OnNewSection(CSection& sections)
   }
   catch (...)
   {
-    LogDebug("VctParser: unhandled exception in OnNewSection()");
+    LogDebug("LvctParser: unhandled exception in OnNewSection()");
   }
 }
 
-void CVctParser::DecodeServiceLocationDescriptor(byte* b, int length, int* videoStreamCount, int* audioStreamCount, vector<unsigned int>* languages)
+void CLvctParser::DecodeServiceLocationDescriptor(byte* b, int length, int* videoStreamCount, int* audioStreamCount, vector<unsigned int>* languages)
 {
   if (length < 3)
   {
-    LogDebug("VctParser: invalid service location descriptor length = %d", length);
+    LogDebug("LvctParser: invalid service location descriptor length = %d", length);
     *videoStreamCount = 0;
     *audioStreamCount = 0;
     return;
@@ -396,7 +407,7 @@ void CVctParser::DecodeServiceLocationDescriptor(byte* b, int length, int* video
   {
     int pcr_pid = ((b[0] & 0x1f) << 8) + b[1];
     int number_elements = b[2];
-    //LogDebug("VctParser: PCR PID = 0x%x, number of elements = %d", pcr_pid, number_elements);
+    //LogDebug("LvctParser: PCR PID = 0x%x, number of elements = %d", pcr_pid, number_elements);
     int pointer = 3;
     for (int i = 0; i < number_elements && pointer + 5 < length; i++)
     {
@@ -409,7 +420,7 @@ void CVctParser::DecodeServiceLocationDescriptor(byte* b, int length, int* video
         languages->push_back(iso_639_language_code);
       }
       pointer += 3;
-      //LogDebug("VctParser: stream type = 0x%x, elementary PID = 0x%x", stream_type, elementary_pid);
+      //LogDebug("LvctParser: stream type = 0x%x, elementary PID = 0x%x", stream_type, elementary_pid);
 
       if (stream_type == STREAM_TYPE_VIDEO_MPEG1 ||
           stream_type == STREAM_TYPE_VIDEO_MPEG2 ||
@@ -429,45 +440,45 @@ void CVctParser::DecodeServiceLocationDescriptor(byte* b, int length, int* video
         *audioStreamCount++;
       }
     }
-    //LogDebug("VctParser: video stream count = %d, audio stream count = %d", *videoStreamCount, *audioStreamCount);
+    //LogDebug("LvctParser: video stream count = %d, audio stream count = %d", *videoStreamCount, *audioStreamCount);
   }
   catch (...)
   {
-    LogDebug("VctParser: unhandled exception in DecodeServiceLocationDescriptor()");
+    LogDebug("LvctParser: unhandled exception in DecodeServiceLocationDescriptor()");
     *videoStreamCount = 0;
     *audioStreamCount = 0;
     languages->clear();
   }
 }
 
-void CVctParser::DecodeMultipleStrings(byte* b, int length, vector<char*>* strings)
+void CLvctParser::DecodeMultipleStrings(byte* b, int length, vector<char*>* strings)
 {
   if (length < 1)
   {
-    LogDebug("VctParser: invalid multiple strings structure length = %d", length);
+    LogDebug("LvctParser: invalid multiple strings structure length = %d", length);
     return;
   }
   try
   {
     int number_of_strings = b[0];
 
-    //LogDebug("VctParser: parse multiple strings, number of strings = %d", number_of_strings);  
+    //LogDebug("LvctParser: parse multiple strings, number of strings = %d", number_of_strings);  
     int pointer = 1;
     for (int i = 0; i < number_of_strings && pointer + 3 < length; i++)
     {
       unsigned int iso_639_language_code = b[pointer] + (b[pointer + 1] << 8) + (b[pointer + 2] << 16);
       pointer += 3;
       int number_of_segments = b[pointer++];
-      //LogDebug("VctParser: string %d, number of segments = %d", i, number_of_segments);
+      //LogDebug("LvctParser: string %d, number of segments = %d", i, number_of_segments);
       for (int j = 0; j < number_of_segments && pointer + 2 < length; j++)
       {
         int compression_type = b[pointer++];
         int mode = b[pointer++];
         int number_bytes = b[pointer++];
-        //LogDebug("VctParser: segment %d, compression type = 0x%x, mode = 0x%x, number of bytes = %d", j, compression_type, mode, number_bytes);
+        //LogDebug("LvctParser: segment %d, compression type = 0x%x, mode = 0x%x, number of bytes = %d", j, compression_type, mode, number_bytes);
         if (pointer + number_bytes >= length)
         {
-          LogDebug("VctParser: invalid string length %d in multiple string structure, pointer = %d, structure length = %d", number_bytes, pointer, length);
+          LogDebug("LvctParser: invalid string length %d in multiple string structure, pointer = %d, structure length = %d", number_bytes, pointer, length);
           return;
         }
 
@@ -484,26 +495,26 @@ void CVctParser::DecodeMultipleStrings(byte* b, int length, vector<char*>* strin
   }
   catch (...)
   {
-    LogDebug("VctParser: unhandled exception in ParseMultipleStrings()");
+    LogDebug("LvctParser: unhandled exception in ParseMultipleStrings()");
   }
 }
 
-void CVctParser::DecodeString(byte* b, int compression_type, int mode, int number_bytes, char** string)
+void CLvctParser::DecodeString(byte* b, int compression_type, int mode, int number_bytes, char** string)
 {
-  //LogDebug("VctParser: decode string, compression type = 0x%x, mode = 0x%x, number of bytes = %d", compression_type, mode, number_bytes);
+  //LogDebug("LvctParser: decode string, compression type = 0x%x, mode = 0x%x, number of bytes = %d", compression_type, mode, number_bytes);
   if (compression_type == 0 && mode == 0)
   {
     *string = new char[number_bytes + 1];
     if (*string == NULL)
     {
-      LogDebug("VctParser: failed to allocate %d bytes in DecodeString()", number_bytes + 1);
+      LogDebug("LvctParser: failed to allocate %d bytes in DecodeString()", number_bytes + 1);
       return;
     }
     memcpy(*string, b, number_bytes);
     (*string)[number_bytes] = 0;  // NULL terminate
     return;
   }
-  LogDebug("VctParser: unsupported compression type or mode in DecodeString(), compression type = 0x%x, mode = 0x%x", compression_type, mode);
+  LogDebug("LvctParser: unsupported compression type or mode in DecodeString(), compression type = 0x%x, mode = 0x%x", compression_type, mode);
   for (int i = 0; i < number_bytes; i++)
   {
     LogDebug("  %d: 0x%x", b[i]);

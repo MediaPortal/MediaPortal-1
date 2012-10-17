@@ -48,18 +48,21 @@ void CNitParser::CleanUp()
   while (groupNameSetIt != m_mGroupNames.end())
   {
     map<unsigned int, char*>* nameSet = groupNameSetIt->second;
-    map<unsigned int, char*>::iterator nameIt = nameSet->begin();
-    while (nameIt != nameSet->end())
+    if (nameSet != NULL)
     {
-      char* name = nameIt->second;
-      delete[] name;
-      name = NULL;
-      nameIt++;
-    }
-    nameSet->clear();
+      map<unsigned int, char*>::iterator nameIt = nameSet->begin();
+      while (nameIt != nameSet->end())
+      {
+        char* name = nameIt->second;
+        delete[] name;
+        name = NULL;
+        nameIt++;
+      }
+      nameSet->clear();
 
-    delete nameSet;
-    nameSet = NULL;
+      delete nameSet;
+      nameSet = NULL;
+    }
     groupNameSetIt++;
   }
   m_mGroupNames.clear();
@@ -68,18 +71,21 @@ void CNitParser::CleanUp()
   while (regionNameIt != m_mTargetRegionNames.end())
   {
     map<unsigned int, char*>* nameSet = regionNameIt->second;
-    map<unsigned int, char*>::iterator nameIt = nameSet->begin();
-    while (nameIt != nameSet->end())
+    if (nameSet != NULL)
     {
-      char* name = nameIt->second;
-      delete[] name;
-      name = NULL;
-      nameIt++;
-    }
-    nameSet->clear();
+      map<unsigned int, char*>::iterator nameIt = nameSet->begin();
+      while (nameIt != nameSet->end())
+      {
+        char* name = nameIt->second;
+        delete[] name;
+        name = NULL;
+        nameIt++;
+      }
+      nameSet->clear();
 
-    delete nameSet;
-    nameSet = NULL;
+      delete nameSet;
+      nameSet = NULL;
+    }
     regionNameIt++;
   }
   m_mTargetRegionNames.clear();
@@ -487,6 +493,7 @@ void CNitParser::Reset()
   LogDebug("%s: reset", m_sName);
   CSectionDecoder::Reset();
   CleanUp();
+  m_mLogicalChannelNumbers.clear();
   m_mSeenSections.clear();
   m_bIsReady = false;
   LogDebug("%s: reset done", m_sName);
@@ -1441,7 +1448,7 @@ void CNitParser::DecodeNameDescriptor(byte* b, int length, char** name)
     LogDebug("%s: failed to allocate memory in DecodeNameDescriptor()", m_sName);
     return;
   }
-  getString468A(b, length, *name, length);
+  getString468A(b, length, *name, length + 1);
 }
 
 void CNitParser::DecodeMultilingualNameDescriptor(byte* b, int length, map<unsigned int, char*>* names)
@@ -1459,7 +1466,7 @@ void CNitParser::DecodeMultilingualNameDescriptor(byte* b, int length, map<unsig
       LogDebug("%s: failed to allocate memory in DecodeMultilingualNameDescriptor()", m_sName);
       return;
     }
-    getString468A(&b[pointer], network_name_length, name, network_name_length);
+    getString468A(&b[pointer], network_name_length, name, network_name_length + 1);
     (*names)[iso_639_language_code] = name;
 
     pointer += network_name_length;
@@ -1644,7 +1651,7 @@ void CNitParser::DecodeTargetRegionNameDescriptor(byte* b, int length, map<__int
         LogDebug("%s: failed to allocate memory in DecodeTargetRegionNameDescriptor()", m_sName);
         return;
       }
-      getString468A(&b[pointer], region_name_length, targetRegionName, region_name_length);
+      getString468A(&b[pointer], region_name_length, targetRegionName, region_name_length + 1);
       pointer += region_name_length;
 
       __int64 targetRegionId = ((__int64)country_code << 32) + (b[pointer++] << 24);

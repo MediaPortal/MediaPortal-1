@@ -181,7 +181,7 @@
     <ClCompile Include="source\PatParser.cpp" />
     <ClCompile Include="source\PmtParser.cpp" />
     <ClCompile Include="source\SdtParser.cpp" />
-    <ClCompile Include="source\VctParser.cpp" />
+    <ClCompile Include="source\LvctParser.cpp" />
     <ClCompile Include="source\PcrDecoder.cpp" />
     <ClCompile Include="source\FileWriter.cpp" />
     <ClCompile Include="source\MultiFileWriter.cpp" />
@@ -217,7 +217,7 @@
     <ClInclude Include="source\PatParser.h" />
     <ClInclude Include="source\PmtParser.h" />
     <ClInclude Include="source\SdtParser.h" />
-    <ClInclude Include="source\VctParser.h" />
+    <ClInclude Include="source\LvctParser.h" />
     <ClInclude Include="source\FileWriter.h" />
     <ClInclude Include="source\MultiFileWriter.h" />
     <ClInclude Include="source\autoString.h" />

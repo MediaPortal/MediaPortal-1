@@ -23,6 +23,8 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\alloctracing.h"
 
+void LogDebug(const char* fmt, ...);
+
 CChannelInfo::CChannelInfo(const CChannelInfo& info)
 {
   Copy(info);
@@ -55,30 +57,9 @@ void CChannelInfo::Copy(const CChannelInfo &info)
 {
   // Copy char* buffer members...
   ClearStrings();   // Remember to free the memory from the existing buffers.
-  if (info.ServiceName != NULL)
-  {
-    ServiceName = new char[strlen(info.ServiceName) + 1];
-    if (ServiceName != NULL)
-    {
-      strcpy(ServiceName, info.ServiceName);
-    }
-  }
-  if (info.ProviderName != NULL)
-  {
-    ProviderName = new char[strlen(info.ProviderName) + 1];
-    if (ProviderName != NULL)
-    {
-      strcpy(ProviderName, info.ProviderName);
-    }
-  }
-  if (info.LogicalChannelNumber != NULL)
-  {
-    LogicalChannelNumber = new char[strlen(info.LogicalChannelNumber) + 1];
-    if (LogicalChannelNumber != NULL)
-    {
-      strcpy(LogicalChannelNumber, info.LogicalChannelNumber);
-    }
-  }
+  ReplaceServiceName(info.ServiceName);
+  ReplaceProviderName(info.ProviderName);
+  ReplaceLogicalChannelNumber(info.LogicalChannelNumber);
 
   // Copy vector members...
   NetworkIds = info.NetworkIds;
@@ -157,4 +138,69 @@ void CChannelInfo::ClearStrings()
     delete[] LogicalChannelNumber;
     LogicalChannelNumber = NULL;
   }
+}
+
+void CChannelInfo::ReplaceServiceName(char* name)
+{
+  // If we have new strings, free the memory associated with previous
+  // strings, then allocate new memory and copy.
+  if (name == NULL)
+  {
+    return;
+  }
+  char* tempName = new char[strlen(name) + 1];
+  if (tempName == NULL)
+  {
+    LogDebug("ChannelInfo: failed to allocate memory for service name");
+    return;
+  }
+  if (ServiceName != NULL)
+  {
+    delete[] ServiceName;
+    ServiceName = NULL;
+  }
+  ServiceName = tempName;
+  strcpy(ServiceName, name);
+}
+
+void CChannelInfo::ReplaceProviderName(char* name)
+{
+  if (name == NULL)
+  {
+    return;
+  }
+  char* tempName = new char[strlen(name) + 1];
+  if (tempName == NULL)
+  {
+    LogDebug("ChannelInfo: failed to allocate memory for provider name");
+    return;
+  }
+  if (ProviderName != NULL)
+  {
+    delete[] ProviderName;
+    ProviderName = NULL;
+  }
+  ProviderName = tempName;
+  strcpy(ProviderName, name);
+}
+
+void CChannelInfo::ReplaceLogicalChannelNumber(char* lcn)
+{
+  if (lcn == NULL)
+  {
+    return;
+  }
+  char* tempLcn = new char[strlen(lcn) + 1];
+  if (tempLcn == NULL)
+  {
+    LogDebug("ChannelInfo: failed to allocate memory for logical channel number");
+    return;
+  }
+  if (LogicalChannelNumber != NULL)
+  {
+    delete[] LogicalChannelNumber;
+    LogicalChannelNumber = NULL;
+  }
+  LogicalChannelNumber = tempLcn;
+  strcpy(LogicalChannelNumber, lcn);
 }

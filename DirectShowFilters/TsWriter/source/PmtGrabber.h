@@ -19,13 +19,13 @@
  *
  */
 #pragma once
-#include "..\..\shared\sectiondecoder.h"
+#include "..\..\shared\SectionDecoder.h"
 #include "..\..\shared\section.h"
 #include "criticalsection.h"
 #include "PmtParser.h"
 #include "PatParser.h"
 #include "SdtParser.h"
-#include "VctParser.h"
+#include "LvctParser.h"
 #include "entercriticalsection.h"
 
 using namespace Mediaportal;
@@ -45,7 +45,7 @@ DECLARE_INTERFACE_(IPmtGrabber, IUnknown)
   STDMETHOD(GetPmtData)(THIS_ BYTE* pmtData)PURE;
 };
 
-class CPmtGrabber : public CUnknown, public CSectionDecoder, public IPmtGrabber, IPatCallBack, ISdtCallBack, IVctCallBack
+class CPmtGrabber : public CUnknown, public CSectionDecoder, public IPmtGrabber, IPatCallBack, ISdtCallBack, ILvctCallBack
 {
   public:
     CPmtGrabber(LPUNKNOWN pUnk, HRESULT *phr);
@@ -60,7 +60,7 @@ class CPmtGrabber : public CUnknown, public CSectionDecoder, public IPmtGrabber,
     virtual void OnNewSection(CSection& section);
     void OnPatReceived(int serviceId, int pmtPid);
     void OnSdtReceived(const CChannelInfo& sdtInfo);
-    void OnVctReceived(const CChannelInfo& vctInfo);
+    void OnLvctReceived(const CChannelInfo& vctInfo);
 
   private:
     IPmtCallBack* m_pCallBack;
@@ -72,6 +72,6 @@ class CPmtGrabber : public CUnknown, public CSectionDecoder, public IPmtGrabber,
     CSection m_pmtPrevSection;
     CPatParser m_patParser;
     CSdtParser m_sdtParser;
-    CVctParser m_vctParser;
+    CLvctParser m_lvctParser;
     CCriticalSection m_section;
 };
