@@ -183,7 +183,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>xcopy "$(SolutionDir)\..\ExternalBinaries\mysql*"  /s /i /y
-xcopy "$(SolutionDir)TVServer.Base\*.*" "$(TargetDir)" /C/Y/S
+rem xcopy "$(SolutionDir)TVServer.Base\*.*" "$(TargetDir)" /C/Y/S
 xcopy "$(SolutionDir)Plugins\XmlTvImport\$(OutDir)Mediaportal.TV.Server.Plugins.XmlTvImport.*" "$(TargetDir)"Plugins\ /C/Y/S
 xcopy "$(SolutionDir)Plugins\XmlTvImport\$(OutDir)Ionic.Zip.dll" "$(TargetDir)" /C/Y/S
 xcopy "$(SolutionDir)Plugins\ComSkipLauncher\$(OutDir)Mediaportal.TV.Server.Plugins.ComSkipLauncher.*" "$(TargetDir)"Plugins\ /C/Y/S
@@ -203,6 +203,7 @@ xcopy "$(SolutionDir)..\..\..\..\DirectShowFilters\TsWriter\bin\Release\*.ax" "$
 xcopy "$(SolutionDir)..\..\..\..\DirectShowFilters\streamingserver\bin\Release\*.dll" "$(TargetDir)" /C/Y/S
 regsvr32 "$(TargetDir)tswriter.ax" /s
 xcopy "$(SolutionDir)Plugins\CustomDevices\Anysee\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.Anysee.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
+xcopy "$(SolutionDir)Plugins\CustomDevices\Compro\$(OutDir)Compro.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
 xcopy "$(SolutionDir)Plugins\CustomDevices\Conexant\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
 xcopy "$(SolutionDir)Plugins\CustomDevices\DigitalDevices\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
 xcopy "$(SolutionDir)Plugins\CustomDevices\DigitalEverywhere\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
@@ -224,6 +225,6 @@ xcopy "$(SolutionDir)Plugins\CustomDevices\TeVii\$(OutDir)Mediaportal.TV.Server.
 xcopy "$(SolutionDir)Plugins\CustomDevices\Turbosight\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
 xcopy "$(SolutionDir)Plugins\CustomDevices\Twinhan\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
 xcopy "$(SolutionDir)Plugins\CustomDevices\ViXS\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-</PreBuildEvent>
+xcopy "$(SolutionDir)TVServer.Base\*.dll" "$(TargetDir)Plugins\CustomDevices\Resources\" /C/Y/S</PreBuildEvent>
   </PropertyGroup>
 </Project>

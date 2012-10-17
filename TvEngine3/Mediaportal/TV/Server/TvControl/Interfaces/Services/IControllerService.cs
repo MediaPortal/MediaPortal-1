@@ -1015,6 +1015,9 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     [OperationContract]
     IDictionary<string, byte[]> GetPluginBinariesCustomDevices();
 
+    [OperationContract]
+    IDictionary<string, byte[]> GetPluginBinariesResources();
+
     [OperationContract]    
     IList<StreamPresentation> ListAllStreamingChannels();
 

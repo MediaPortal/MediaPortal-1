@@ -1179,6 +1179,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       return Service.GetPluginBinariesCustomDevices();
     }
 
+    public IDictionary<string, byte[]> GetPluginBinariesResources()
+    {
+      return Service.GetPluginBinariesResources();
+    }
+
     public IList<StreamPresentation> ListAllStreamingChannels()
     {
       return Service.ListAllStreamingChannels();

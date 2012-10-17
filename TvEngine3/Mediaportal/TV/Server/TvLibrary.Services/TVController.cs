@@ -5618,6 +5618,33 @@ namespace Mediaportal.TV.Server.TVLibrary
       return fileStreams;
     }
 
+    public IDictionary<string, byte[]> GetPluginBinariesResources()
+    {
+      var fileStreams = new Dictionary<string, byte[]>();
+      try
+      {
+        var dirInfoResources = new DirectoryInfo(@"plugins\CustomDevices\Resources");
+
+        FileInfo[] filesResources = dirInfoResources.GetFiles("*.dll");
+
+        foreach (FileInfo fileInfo in filesResources)
+        {
+          using (var filestream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read))
+          {
+            long length = filestream.Length;
+            var data = new byte[length];
+            filestream.Read(data, 0, (int)length);
+            fileStreams.Add(fileInfo.Name, data);
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        HandleControllerException(e);
+      }
+      return fileStreams;
+    }
+
     public IList<StreamPresentation> ListAllStreamingChannels()
     {
       IList<StreamPresentation> streams = new List<StreamPresentation>();
