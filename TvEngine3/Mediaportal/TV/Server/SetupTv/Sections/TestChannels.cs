@@ -134,22 +134,28 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     /// <returns>A list of chunks.</returns>
     private static List<List<T>> SplitIntoChunks<T>(List<T> source, int chunkSize)
     {
-      if (chunkSize <= 0)
+      try
       {
-        throw new ArgumentException("chunkSize must be greater than 0.");
+        if (chunkSize <= 0)
+        {
+          Log.Debug("chunkSize must be greater than 0.");
+          return null;
+          //throw new ArgumentException("chunkSize must be greater than 0.");
+        }
+
+        var retVal = new List<List<T>>();
+        int index = 0;
+        while (index < source.Count)
+        {
+          int count = source.Count - index > chunkSize ? chunkSize : source.Count - index;
+          retVal.Add(source.GetRange(index, count));
+
+          index += chunkSize;
+        }
+        return retVal;
       }
-
-      var retVal = new List<List<T>>();
-      int index = 0;
-      while (index < source.Count)
-      {
-        int count = source.Count - index > chunkSize ? chunkSize : source.Count - index;
-        retVal.Add(source.GetRange(index, count));
-
-        index += chunkSize;
-      }
-
-      return retVal;
+      catch (Exception) { }
+      return null;
     }
 
     private void ChannelTestThread(List<Channel> channelsO)
@@ -178,7 +184,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
           for (int i = 0; i < _concurrentTunes; i++)
           {
-            if (channelChunks.Count >= i + 1)
+            if (channelChunks != null && channelChunks.Count >= i + 1)
             {
               IEnumerable<Channel> channelsForUser = channelChunks[i];
               channelsForUser = channelsForUser.Randomize();
@@ -319,7 +325,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           }
         }
         catch (Exception) {}
-        _users[user.Name] = false;
+        if (user != null)
+        {
+          _users[user.Name] = false;
+        }
       }
     }
 
