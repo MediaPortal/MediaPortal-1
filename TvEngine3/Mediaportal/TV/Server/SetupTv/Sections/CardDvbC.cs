@@ -471,9 +471,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
 
+          UpdateStatus();
           if (index == 0)
           {
             ServiceAgents.Instance.ControllerServiceAgent.Scan(user.Name, user.CardId, out user, tuneChannel, -1);
+            UpdateStatus();
           }
 
           IChannel[] channels = ServiceAgents.Instance.ControllerServiceAgent.Scan(_cardNumber, tuneChannel);

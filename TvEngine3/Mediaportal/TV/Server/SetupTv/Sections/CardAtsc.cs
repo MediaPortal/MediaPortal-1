@@ -222,9 +222,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                                       tuneChannel.Frequency, tuneChannel.ModulationType);
           ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
+          UpdateStatus();
           if (index == minchan)
           {
             ServiceAgents.Instance.ControllerServiceAgent.Scan(user.Name, user.CardId, out user, tuneChannel, -1);
+            UpdateStatus();
           }
           IChannel[] channels = ServiceAgents.Instance.ControllerServiceAgent.Scan(_cardNumber, tuneChannel);
           UpdateStatus();
@@ -241,7 +243,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               channels = ServiceAgents.Instance.ControllerService.Scan(_cardNumber, tuneChannel);
             }
           }*/
-          UpdateStatus();
           if (channels == null || channels.Length == 0)
           {
             if (ServiceAgents.Instance.ControllerServiceAgent.TunerLocked(_cardNumber) == false)
