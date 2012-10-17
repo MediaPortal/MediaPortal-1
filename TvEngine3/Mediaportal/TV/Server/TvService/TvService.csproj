@@ -225,6 +225,7 @@ xcopy "$(SolutionDir)Plugins\CustomDevices\TeVii\$(OutDir)Mediaportal.TV.Server.
 xcopy "$(SolutionDir)Plugins\CustomDevices\Turbosight\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
 xcopy "$(SolutionDir)Plugins\CustomDevices\Twinhan\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
 xcopy "$(SolutionDir)Plugins\CustomDevices\ViXS\$(OutDir)Mediaportal.TV.Server.Plugins.CustomDevices.*" "$(TargetDir)Plugins\CustomDevices\" /C/Y/S
-xcopy "$(SolutionDir)TVServer.Base\*.dll" "$(TargetDir)Plugins\CustomDevices\Resources\" /C/Y/S</PreBuildEvent>
+xcopy "$(SolutionDir)TVServer.Base\*.dll" "$(TargetDir)Plugins\CustomDevices\Resources\" /C/Y/S
+xcopy "$(SolutionDir)..\..\..\..\DirectShowFilters\DXErr9\$(OutDir)dxerr9.*" "$(TargetDir)" /C/Y/S</PreBuildEvent>
   </PropertyGroup>
 </Project>
