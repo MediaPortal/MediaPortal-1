@@ -918,14 +918,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     protected void AddTsWriterFilterToGraph()
     {
       Log.Debug("TvCardDvbBase: add Mediaportal TsWriter filter");
-      //_filterTsWriter = (IBaseFilter)new MpTsAnalyzer();
-      IntPtr filter = MediaPortal.Common.Utils.NativeMethods.LoadLibrary("TsWriter.ax");
-      if (filter == IntPtr.Zero || filter == null)
-      {
-        Log.Error("TvCardDvbBase: failed to load TsWriter filter");
-        throw new TvExceptionGraphBuildingFailed("TvCardDvbBase: failed to load TsWriter filter");
-      }
-      _filterTsWriter = (IBaseFilter)Marshal.GetTypedObjectForIUnknown(filter, typeof(IBaseFilter));
+
+      _filterTsWriter = FilterLoader.LoadFilterFromDll("TsWriter.ax", typeof(MpTsAnalyzer).GUID);
       if (_filterTsWriter == null)
       {
         Log.Error("TvCardDvbBase: failed to marshal TsWriter filter");

@@ -89,6 +89,7 @@
     <Compile Include="Implementations\Analog\Graphs\HDPVR\TVCardHDPVR.cs" />
     <Compile Include="Implementations\BaseSubChannel.cs" />
     <Compile Include="Implementations\DVB\DiseqcController.cs" />
+    <Compile Include="Implementations\Helper\COMHelper.cs" />
     <Compile Include="Implementations\DVB\Graphs\DvbBaseScanning.cs" />
     <Compile Include="Implementations\DVB\Graphs\DVBIP\DVBIPScanning.cs" />
     <Compile Include="Implementations\DVB\Graphs\DVBIP\TvCardDVBIP.cs" />
@@ -106,6 +107,7 @@
     <Compile Include="Implementations\DVB\Graphs\Iso6937ToUnicode.cs" />
     <Compile Include="Implementations\Helper\EncodersInUse.cs" />
     <Compile Include="Implementations\Helper\FilterGraphTools.cs" />
+    <Compile Include="Implementations\Helper\FilterLoader.cs" />
     <Compile Include="Implementations\Helper\Release.cs" />
     <Compile Include="Implementations\Hybrid\HybridCardGroup.cs" />
     <Compile Include="Implementations\Hybrid\HybridCard.cs" />
