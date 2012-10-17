@@ -52,10 +52,6 @@
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\TVLibrary\TVLibrary.csproj">
-      <Project>{59C2EBC8-0FEA-4B2E-B5D1-476347332331}</Project>
-      <Name>TVLibrary %28TVLibrary\TVLibrary%29</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -20,12 +20,10 @@
 
 using System;
 using DirectShowLib;
-using TvLibrary.Interfaces;
 using System.Runtime.InteropServices;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 
 namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
 {

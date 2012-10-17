@@ -22,13 +22,13 @@ using System;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 
-namespace TvLibrary.Interfaces
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
   /// <summary>
-  ///  This class handles HResult codes returned by com class
+  /// This class handles HRESULT codes returned by COM classes and assemblies.
   /// </summary>
   /// <remarks>
-  /// A HResult code is a 32 bit value layed out as follows:
+  /// An HRESULT code is a 32 bit value layed out as follows:
   ///
   ///   3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1
   ///   1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
@@ -58,28 +58,28 @@ namespace TvLibrary.Interfaces
     #region Enums
 
     /// <summary>
-    /// HResult serverity enum
+    /// HResult severity enum
     /// </summary>
-    public enum Serverity
+    public enum Severity
     {
       /// <summary>
-      /// Unknown serverity
+      /// Unknown severity
       /// </summary>
       Unknown = -1,
       /// <summary>
-      /// Success serverity
+      /// Success severity
       /// </summary>
       Success = 0,
       /// <summary>
-      /// Info serverity
+      /// Info severity
       /// </summary>
       Info = 1,
       /// <summary>
-      /// Warning serverity
+      /// Warning severity
       /// </summary>
       Warning = 2,
       /// <summary>
-      /// Errror serverity
+      /// Errror severity
       /// </summary>
       Error = 3
     }
@@ -214,8 +214,8 @@ namespace TvLibrary.Interfaces
     private uint _hresult;
     private int _facilityCode;
     private Facility _facility = Facility.Unknown;
-    private int _serverityCode;
-    private Serverity _serverity = Serverity.Unknown;
+    private int _severityCode;
+    private Severity _severity = Severity.Unknown;
     private int _code;
 
     #endregion
@@ -254,12 +254,12 @@ namespace TvLibrary.Interfaces
     }
 
     /// <summary>
-    /// Gets the serverity level.
+    /// Gets the severity level.
     /// </summary>
-    /// <value>The serverity level.</value>
-    public Serverity ServerityLevel
+    /// <value>The severity level.</value>
+    public Severity severityLevel
     {
-      get { return _serverity; }
+      get { return _severity; }
     }
 
     /// <summary>
@@ -301,8 +301,8 @@ namespace TvLibrary.Interfaces
     {
       _hresult = (uint)hresult;
 
-      _serverityCode = (int)(_hresult >> 30);
-      _serverity = (Serverity)_serverityCode;
+      _severityCode = (int)(_hresult >> 30);
+      _severity = (Severity)_severityCode;
 
       _facilityCode = (int)(_hresult >> 16);
       _facilityCode = _facilityCode & 0x0FFF;
@@ -333,9 +333,9 @@ namespace TvLibrary.Interfaces
     public override string ToString()
     {
       return _facility == Facility.Unknown
-               ? String.Format("0x{0} - {1}:Unknown(0x{2}):0x{3}", _hresult.ToString("X").PadLeft(8, '0'), _serverity,
+               ? String.Format("0x{0} - {1}:Unknown(0x{2}):0x{3}", _hresult.ToString("X").PadLeft(8, '0'), _severity,
                                _facilityCode.ToString("X").PadLeft(3, '0'), _code.ToString("X").PadLeft(4, '0'))
-               : String.Format("0x{0} - {1}:{2}:0x{3}", _hresult.ToString("X").PadLeft(8, '0'), _serverity, _facility,
+               : String.Format("0x{0} - {1}:{2}:0x{3}", _hresult.ToString("X").PadLeft(8, '0'), _severity, _facility,
                                _code.ToString("X").PadLeft(4, '0'));
     }
 

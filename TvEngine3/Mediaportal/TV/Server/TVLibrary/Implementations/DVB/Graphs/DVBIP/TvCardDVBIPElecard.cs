@@ -23,7 +23,6 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.DVB
 {

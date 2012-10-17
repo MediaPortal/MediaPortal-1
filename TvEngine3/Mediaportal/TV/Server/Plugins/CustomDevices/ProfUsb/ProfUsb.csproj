@@ -56,10 +56,6 @@
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\TVLibrary\TVLibrary.csproj">
-      <Project>{59C2EBC8-0FEA-4B2E-B5D1-476347332331}</Project>
-      <Name>TVLibrary %28TVLibrary\TVLibrary%29</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Prof\Prof.csproj">
       <Project>{EA11F4FD-B41D-4F19-A756-F322828224B0}</Project>
       <Name>Prof</Name>

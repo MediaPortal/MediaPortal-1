@@ -25,7 +25,6 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using TvLibrary.Interfaces;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
 {

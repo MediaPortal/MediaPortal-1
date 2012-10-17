@@ -30,7 +30,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using TvLibrary.Interfaces;
 using System.Collections;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
