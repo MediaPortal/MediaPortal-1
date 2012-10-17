@@ -456,8 +456,8 @@ Global
 		{4EA595FF-5FCD-4CE3-9338-2F91983E1962}.Debug|x86.Build.0 = Debug|Any CPU
 		{4EA595FF-5FCD-4CE3-9338-2F91983E1962}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4EA595FF-5FCD-4CE3-9338-2F91983E1962}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4EA595FF-5FCD-4CE3-9338-2F91983E1962}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{4EA595FF-5FCD-4CE3-9338-2F91983E1962}.Release|Mixed Platforms.Build.0 = Release|x86
+		{4EA595FF-5FCD-4CE3-9338-2F91983E1962}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{4EA595FF-5FCD-4CE3-9338-2F91983E1962}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{4EA595FF-5FCD-4CE3-9338-2F91983E1962}.Release|x86.ActiveCfg = Release|Any CPU
 		{4EA595FF-5FCD-4CE3-9338-2F91983E1962}.Release|x86.Build.0 = Release|Any CPU
 		{C2D16A07-744D-41DA-8030-778407BE83DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
