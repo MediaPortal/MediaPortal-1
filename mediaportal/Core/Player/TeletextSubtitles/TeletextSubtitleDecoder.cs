@@ -62,7 +62,7 @@ namespace MediaPortal.Player.Subtitles
     {
       if (!ok)
       {
-        Log.Error("Assertion failed in TeletextSubtitleDecoder : " + msg);
+        throw new Exception("Assertion failed in TeletextSubtitleDecoder : " + msg);
       }
     }
 
@@ -78,95 +78,101 @@ namespace MediaPortal.Player.Subtitles
 
     public void OnTeletextPacket(byte[] data, UInt64 presentTime)
     {
-      assert(data.Length == DATA_FIELD_SIZE, "Data length not as expected! " + data.Length);
-      // data_field
-      byte reserved_parity_offset = data[0]; // parity/offset etc
-
-      //LogDebug("first data_field byte: %s", ToBinary(reserved_parity_offset).c_str()); 
-      byte reserved_future_use = (byte)(data[0] & 0xC0); // first two bits
-      assert(reserved_future_use == 0xC0, "Reserved future use unexpected value");
-
-      byte field_parity = (byte)((data[0] & 0x20) >> 5); // 3rd bit
-      //LogDebug("field parity %i", field_parity);
-
-      byte line_offset = (byte)(data[0] & 0x1F); // last 5 bits
-      assert(line_offset == 0x00 || (line_offset >= 0x07 && line_offset <= 0x16), "Line offset wrong!");
-
-      byte framing_code = data[1];
-      assert(framing_code == 0xE4, "Framing code wrong " + framing_code);
-
-      // what is this for? (A: reverse bit ordering)
-      for (int j = 2; j < DATA_FIELD_SIZE; j++)
+      try
       {
-        data[j] = invtab[data[j]];
-      }
+        assert(data.Length == DATA_FIELD_SIZE, "Data length not as expected! " + data.Length);
+        // data_field
+        byte reserved_parity_offset = data[0]; // parity/offset etc
 
-      byte magazine_and_packet_address1 = data[2];
-      byte magazine_and_packet_address2 = data[3];
-      byte magazine_and_packet_address = Hamming.unham(magazine_and_packet_address1, magazine_and_packet_address2);
+        //LogDebug("first data_field byte: %s", ToBinary(reserved_parity_offset).c_str()); 
+        byte reserved_future_use = (byte)(data[0] & 0xC0); // first two bits
+        assert(reserved_future_use == 0xC0, "Reserved future use unexpected value");
 
-      byte mag = (byte)(magazine_and_packet_address & 7);
+        byte field_parity = (byte)((data[0] & 0x20) >> 5); // 3rd bit
+        //LogDebug("field parity %i", field_parity);
 
-      // mag == 0 means page is 8nn
-      if (mag == 0)
-      {
-        mag = 8;
-      }
+        byte line_offset = (byte)(data[0] & 0x1F); // last 5 bits
+        assert(line_offset == 0x00 || (line_offset >= 0x07 && line_offset <= 0x16), "Line offset wrong!");
 
-      int magIndex = mag - 1;
+        byte framing_code = data[1];
+        assert(framing_code == 0xE4, "Framing code wrong " + framing_code);
 
-      assert(magIndex >= 0 && magIndex <= 7, "Magindex out of range " + magIndex);
-
-      byte Y = (byte)((magazine_and_packet_address >> 3) & 0x1f); // Y is the packet number
-
-      int offset = 4; // start of data differs between packet types
-
-      if (Y == 0)
-      {
-        // teletext packet header
-        //Log.Debug("Header package : Data length is {0} , offset is {1}", data.Length, offset);
-        byte[] offsetdata = new byte[data.Length - offset];
-        Array.Copy(data, offset, offsetdata, 0, offsetdata.Length);
-
-        TeletextPageHeader header = new TeletextPageHeader(mag, offsetdata);
-
-        if (header.isSerial())
+        // what is this for? (A: reverse bit ordering)
+        for (int j = 2; j < DATA_FIELD_SIZE; j++)
         {
-          // to support serial mode, just end all pages in progress (there should be only one)
-          int inProgress = 0;
-          for (int i = 0; i < 8; i++)
-          {
-            if (magazines[i].PageInProgress())
-            {
-              inProgress++;
-            }
-            magazines[i].EndPage();
-          }
-          assert(inProgress <= 1, "Serial mode: too many pages in progress : " + inProgress);
-          // at most one page should be in progress
-          if (inProgress > 1)
-          {
-            Log.Debug("Pages in progress at same time exceeds one ! (%i)", inProgress);
-          }
+          data[j] = invtab[data[j]];
         }
 
-        /*if (header.isSubtitle())
-                {*/
-        magazines[magIndex].StartPage(header, presentTime);
-        //}
+        byte magazine_and_packet_address1 = data[2];
+        byte magazine_and_packet_address2 = data[3];
+        byte magazine_and_packet_address = Hamming.unham(magazine_and_packet_address1, magazine_and_packet_address2);
+
+        byte mag = (byte)(magazine_and_packet_address & 7);
+
+        // mag == 0 means page is 8nn
+        if (mag == 0)
+        {
+          mag = 8;
+        }
+
+        int magIndex = mag - 1;
+
+        assert(magIndex >= 0 && magIndex <= 7, "Magindex out of range " + magIndex);
+
+        byte Y = (byte)((magazine_and_packet_address >> 3) & 0x1f); // Y is the packet number
+
+        int offset = 4; // start of data differs between packet types
+
+        if (Y == 0)
+        {
+          // teletext packet header
+          //Log.Debug("Header package : Data length is {0} , offset is {1}", data.Length, offset);
+          byte[] offsetdata = new byte[data.Length - offset];
+          Array.Copy(data, offset, offsetdata, 0, offsetdata.Length);
+
+          TeletextPageHeader header = new TeletextPageHeader(mag, offsetdata);
+
+          if (header.isSerial())
+          {
+            // to support serial mode, just end all pages in progress (there should be only one)
+            int inProgress = 0;
+            for (int i = 0; i < 8; i++)
+            {
+              if (magazines[i].PageInProgress())
+              {
+                inProgress++;
+              }
+              magazines[i].EndPage();
+            }
+            assert(inProgress <= 1, "Serial mode: too many pages in progress : " + inProgress);
+            // at most one page should be in progress
+            if (inProgress > 1)
+            {
+              Log.Debug("Pages in progress at same time exceeds one ! (%i)", inProgress);
+            }
+          }
+
+          /*if (header.isSubtitle())
+                  {*/
+          magazines[magIndex].StartPage(header, presentTime);
+          //}
+        }
+        else if (Y >= 1 && Y <= 25)
+        {
+          // display content
+          //Log.Debug("Content package : Data length is {0} , offset is {1}", data.Length, offset);
+          byte[] offsetdata = new byte[data.Length - offset];
+          Array.Copy(data, offset, offsetdata, 0, offsetdata.Length);
+          magazines[magIndex].SetLine(Y, offsetdata);
+          //WAS: magazines[magIndex].SetLine(Y,&data[offset]);
+        }
+        else
+        {
+          //LogDebug("Packet %i for magazine %i (discarded)", Y, mag);
+        }
       }
-      else if (Y >= 1 && Y <= 25)
+      catch (Exception)
       {
-        // display content
-        //Log.Debug("Content package : Data length is {0} , offset is {1}", data.Length, offset);
-        byte[] offsetdata = new byte[data.Length - offset];
-        Array.Copy(data, offset, offsetdata, 0, offsetdata.Length);
-        magazines[magIndex].SetLine(Y, offsetdata);
-        //WAS: magazines[magIndex].SetLine(Y,&data[offset]);
-      }
-      else
-      {
-        //LogDebug("Packet %i for magazine %i (discarded)", Y, mag);
       }
     }
 
