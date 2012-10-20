@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 
 using NUnit.Framework;
-using TvPlugin;
 using MediaPortal.Player;
 using TvPluginTests.IPlayerStubs;
+using Mediaportal.TV.TvPlugin;
 
 #endregion
 
@@ -1157,6 +1157,38 @@ namespace TvPluginTests
 
     #endregion
 
+    #region multiple AC3 audiostreams with preferred language
+
+    ///<summary>
+    /// test for fix : http://mantis.team-mediaportal.com/view.php?id=3803
+    /// streams : 4
+    /// stream1 : AC3, lang: fin.
+    /// stream2 : AC3, lang: eng.
+    /// stream3 : AC3, lang: swe.
+    /// stream4 : AC3, lang: fra.
+    /// pref_lang : swe
+    /// PreferAC3 : false
+    /// PreferAudioTypeOverLang : false
+    ///</summary>
+    public static void GetPreferedAudioStreamIndexTest40()
+    {
+      g_Player.Player = new PlayerMultipleAudioStreamsAC3OnlyAdvanced();
+
+      List<string> prefLangs = new List<string>();
+      prefLangs.Add("swe");
+      TVHome.PreferredLanguages = prefLangs;
+      TVHome.PreferAC3 = false;
+      TVHome.PreferAudioTypeOverLang = false;
+
+      eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
+
+      int index = GetPreferedAudioStreamIndex(out dualMonoMode);
+
+      Assert.AreEqual(2, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
+    }
+
+    #endregion
 
     #endregion
 
