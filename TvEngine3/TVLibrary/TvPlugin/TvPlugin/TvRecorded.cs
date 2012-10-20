@@ -36,12 +36,11 @@ using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
 using Action = MediaPortal.GUI.Library.Action;
-using WindowPlugins;
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
 namespace TvPlugin
 {
-  public class TvRecorded : WindowPluginBase, IComparer<GUIListItem>
+  public class TvRecorded : RecordedBase, IComparer<GUIListItem>
   {
     #region ThumbCacher
 
@@ -747,33 +746,6 @@ namespace TvPlugin
         Log.Error("TvRecorded: Error in ShowUpcomingEpisodes - {0}", ex.ToString());
       }
     }
-
-    /// <summary>
-    /// Build an Outlook / Thunderbird like view grouped by date
-    /// </summary>
-    /// <param name="aStartTime">A recordings start time</param>
-    /// <returns>The spoken date label</returns>
-    private static string GetSpokenViewDate(DateTime aStartTime)
-    {
-      var thisMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-      var lastMonth = thisMonth.AddMonths(-1);
-
-      if (DateTime.Today.Equals(aStartTime.Date))
-        return GUILocalizeStrings.Get(6030); // "Today"
-      else if (DateTime.Today.Subtract(aStartTime) < new TimeSpan(1, 0, 0, 0))
-        return GUILocalizeStrings.Get(6040); // "Yesterday"
-      else if (DateTime.Today.Subtract(aStartTime) < new TimeSpan(2, 0, 0, 0))
-        return GUILocalizeStrings.Get(6041); // "Two days ago"
-      else if (thisMonth.Equals(new DateTime(aStartTime.Year, aStartTime.Month, 1)))
-        return GUILocalizeStrings.Get(6060); // "Current month";
-      else if (lastMonth.Equals(new DateTime(aStartTime.Year, aStartTime.Month, 1)))
-        return GUILocalizeStrings.Get(6065); // "Last month";
-      else if (DateTime.Now.Year.Equals(aStartTime.Year))
-        return GUILocalizeStrings.Get(6070); // "Current year";
-      else if (DateTime.Now.Year.Equals(aStartTime.AddYears(1).Year))
-        return GUILocalizeStrings.Get(6080); // "Last year";
-      else return GUILocalizeStrings.Get(6090); // "Older";
-    }        
 
     private void LoadDirectory()
     {
