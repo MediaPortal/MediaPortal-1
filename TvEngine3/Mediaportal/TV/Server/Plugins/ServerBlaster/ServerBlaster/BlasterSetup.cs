@@ -25,13 +25,22 @@ using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Setting = Mediaportal.TV.Server.TVDatabase.Entities.Setting;
 
 namespace Mediaportal.TV.Server.Plugins.ServerBlaster
 {
   public partial class BlasterSetup : SectionSettings
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(BlasterSetup)); }
+    }
+
+    #endregion
+
     public BlasterSetup()
     {
       InitializeComponent();
@@ -66,7 +75,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
         comboBoxBlaster1.Items.Add(card.Name);
         comboBoxBlaster2.Items.Add(card.Name);
       }
-      Log.WriteFile("CB1Size {0}, CB2Size {1}, BT1 {2}, BT2 {3}", comboBoxBlaster1.Items.Count,
+      Log.DebugFormat("CB1Size {0}, CB2Size {1}, BT1 {2}, BT2 {3}", comboBoxBlaster1.Items.Count,
                     comboBoxBlaster1.Items.Count, Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlaster1Card", "0").Value),
                     Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlaster2Card", "0").Value));
       comboBoxBlaster1.SelectedIndex = Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlaster1Card", "0").Value);

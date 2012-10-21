@@ -26,7 +26,7 @@ using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
@@ -39,6 +39,15 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
   /// </summary>
   public class PowerSchedulerFactory
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+      get { return LogHelper.GetLogger(typeof(PowerSchedulerFactory)); }
+    }
+
+    #endregion
+
     #region Variables
 
     /// <summary>
@@ -66,7 +75,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     /// <param name="controllerService">Reference to tvservice's TVController</param>
     public PowerSchedulerFactory(IInternalControllerService controllerService)
     {
-      Log.Info("PowerSchedulerFactory CTOR");
+      Log.InfoFormat("PowerSchedulerFactory CTOR");
 
       IStandbyHandler standbyHandler;
 

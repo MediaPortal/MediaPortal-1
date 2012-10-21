@@ -26,7 +26,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using System.Threading;
 using Mediaportal.TV.Server.TVLibrary.Services;
 
@@ -54,6 +54,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
   /// </summary>
   public class EpgGrabber : IDisposable
   {
+    // TODO log4net gibman : we want fileappender specifically for EPG / Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EpgGrabber
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(EpgGrabber)); }
+    }
+
+    #endregion
+
     #region variables    
     
     private int _epgReGrabAfter = 4 * 60; //hours
@@ -101,7 +111,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     {
       if (SettingsManagement.GetSetting("idleEPGGrabberEnabled", "yes").Value != "yes")
       {
-        Log.Epg("EPG: grabber disabled");
+        Log.InfoFormat("EPG: grabber disabled");
         return;
       }
       if (_isRunning)
@@ -119,7 +129,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       {
         return;
       }
-      Log.Epg("EPG: grabber initialized for {0} transponders..", TransponderList.Instance.Count);
+      Log.InfoFormat("EPG: grabber initialized for {0} transponders..", TransponderList.Instance.Count);
       _isRunning = true;
       IList<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.ChannelMaps);
 
@@ -149,7 +159,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
         }
         catch (Exception e)
         {
-          Log.Error("card: unable to start job for card {0} at:{0}", e.Message, card.Name, RemoteControl.HostName);
+          Log.ErrorFormat("card: unable to start job for card {0} at:{0}", e.Message, card.Name, RemoteControl.HostName);
         }
 
         var epgCard = new EpgCard(card);
@@ -169,7 +179,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       {
         return;
       }
-      Log.Epg("EPG: grabber stopped..");
+      Log.InfoFormat("EPG: grabber stopped..");
       _epgTimer.Enabled = false;
       _isRunning = false;
       foreach (EpgCard epgCard in _epgCards)
@@ -247,7 +257,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
           return;
         foreach (EpgCard card in _epgCards)
         {
-          //Log.Epg("card:{0} grabbing:{1}", card.Card.idCard, card.IsGrabbing);
+          //Log.InfoFormat("card:{0} grabbing:{1}", card.Card.idCard, card.IsGrabbing);
           if (!_isRunning)
             return;
           if (card.IsGrabbing)
@@ -259,7 +269,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
       }
       finally
       {
@@ -306,14 +316,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
           TimeSpan ts = DateTime.Now - TransponderList.Instance.CurrentTransponder.CurrentChannel.LastGrabTime.GetValueOrDefault(DateTime.MinValue);
           if (ts.TotalMinutes < _epgReGrabAfter)
           {
-            //Log.Epg("Skip card:#{0} transponder #{1}/{2} channel: {3} - Less than regrab time",
+            //Log.InfoFormat("Skip card:#{0} transponder #{1}/{2} channel: {3} - Less than regrab time",
             //         epgCard.Card.idCard, TransponderList.Instance.CurrentIndex + 1, TransponderList.Instance.Count, ch.displayName);
             continue; // less then 2 hrs ago
           }
 
           if (TVDatabase.TVBusinessLayer.CardManagement.CanTuneTvChannel(epgCard.Card, ch.IdChannel))
           {
-            Log.Epg("Grab for card:#{0} transponder #{1}/{2} channel: {3}",
+            Log.InfoFormat("Grab for card:#{0} transponder #{1}/{2} channel: {3}",
                     epgCard.Card.IdCard, TransponderList.Instance.CurrentIndex + 1, TransponderList.Instance.Count,
                     ch.DisplayName);
             //start grabbing

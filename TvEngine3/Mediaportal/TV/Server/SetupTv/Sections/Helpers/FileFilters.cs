@@ -25,7 +25,7 @@ using System.Xml;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 {
@@ -111,6 +111,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
   /// </summary>
   internal class FileFilters
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(FileFilters)); }
+    }
+
+    #endregion
+
     private String[] files;
     private MPComboBox m_cbxCountries;
     private MPComboBox m_cbxRegions;
@@ -131,7 +140,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       }
       catch (Exception ex)
       {
-        Log.Error("Error loading tuningdetails: {0}", ex.ToString());
+        Log.ErrorFormat(ex, "Error loading tuningdetails");
         MessageBox.Show("Transponder list could not be loaded, check error.log for details.");
         return null;
       }

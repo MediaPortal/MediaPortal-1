@@ -21,12 +21,21 @@
 using System;
 using System.Xml;
 using System.IO;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.SetupTV.PlaylistSupport
 {
   public class PlayListWPLIO : IPlayListIO
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(PlayListWPLIO)); }
+    }
+
+    #endregion
+
     public bool Load(PlayList playlist, string playlistFileName)
     {
       playlist.Clear();
@@ -67,7 +76,7 @@ namespace Mediaportal.TV.Server.SetupTV.PlaylistSupport
       }
       catch (Exception e)
       {
-        Log.Error(e.StackTrace);
+        Log.ErrorFormat(e.StackTrace);
       }
       return false;
     }

@@ -22,7 +22,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using MediaPortal.Common.Utils;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using mshtml;
 using SHDocVw;
 
@@ -33,6 +33,14 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
   /// </summary>
   public class HTMLPage
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(HTMLPage)); }
+    }
+
+    #endregion
     #region Variables
 
     private string _strPageHead = string.Empty;
@@ -266,7 +274,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
           }
         }
 
-        Log.Debug("HTMLPage: GetInternal encoding: {0}", _pageEncodingMessage);
+        Log.DebugFormat("HTMLPage: GetInternal encoding: {0}", _pageEncodingMessage);
         // Encoding: depends on selected page
         if (string.IsNullOrEmpty(_strPageSource) || strEncode.ToLower() != _defaultEncode)
         {
@@ -277,7 +285,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
           }
           catch (System.ArgumentException e)
           {
-            Log.Write(e);
+            Log.Error("", e);
           }
         }
         return true;
@@ -285,7 +293,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
       _error = Page.GetError();
       if (!string.IsNullOrEmpty(_error))
       {
-        Log.Error("HTMLPage: GetInternal error: {0}", _error);
+        Log.ErrorFormat("HTMLPage: GetInternal error: {0}", _error);
       }
       return false;
     }

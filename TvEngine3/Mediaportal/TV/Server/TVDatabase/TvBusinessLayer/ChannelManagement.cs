@@ -18,7 +18,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Countries;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Channel = Mediaportal.TV.Server.TVDatabase.Entities.Channel;
 using Mediaportal.TV.Server.TVDatabase.EntityModel;
 
@@ -26,6 +26,14 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {
   public static class ChannelManagement
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(ChannelManagement)); }
+    }
+
+    #endregion
     public delegate void OnStateChangedTuningDetailDelegate(TuningDetail tuningDetail, ObjectState state);
     public static event OnStateChangedTuningDetailDelegate OnStateChangedTuningDetailEvent;
 
@@ -57,7 +65,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
       catch (Exception ex)
       {
-        Log.Error("ChannelManagement.GetAllChannelsByGroupIdAndMediaType ex={0}", ex);
+        Log.ErrorFormat("ChannelManagement.GetAllChannelsByGroupIdAndMediaType ex={0}", ex);
         throw;
       }
     }
@@ -74,7 +82,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
       catch (Exception ex)
       {
-        Log.Error("ChannelManagement.GetAllChannelsByGroupIdAndMediaType ex={0}", ex);
+        Log.ErrorFormat("ChannelManagement.GetAllChannelsByGroupIdAndMediaType ex={0}", ex);
         throw;
       }
     }
@@ -845,7 +853,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.MediaType == (int)mediaType).OrderBy(c => c.SortOrder);
         query = channelRepository.IncludeAllRelations(query, includeRelations);
-        //Log.Debug("ListAllChannelsByMediaType(MediaTypeEnum mediaType, ChannelIncludeRelationEnum includeRelations) SQL = {0}", query.ToTraceString());
+        //Log.DebugFormat("ListAllChannelsByMediaType(MediaTypeEnum mediaType, ChannelIncludeRelationEnum includeRelations) SQL = {0}", query.ToTraceString());
         return query.ToList();
       }
     }
@@ -871,7 +879,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
       catch (Exception ex)
       {
-        Log.Error("ChannelManagement.GetAllChannelsByGroupIdAndMediaType ex={0}", ex);
+        Log.ErrorFormat("ChannelManagement.GetAllChannelsByGroupIdAndMediaType ex={0}", ex);
         throw;
       }
     }

@@ -32,7 +32,7 @@ using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using MediaPortal.Common.Utils;
 
 // Modified to include Hauppauge Blasting
@@ -44,6 +44,15 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
   [Interceptor("PluginExceptionInterceptor")]
   public class ServerBlaster : AnalogChannel, ITvServerPlugin
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(ServerBlaster)); }
+    }
+
+    #endregion
+
     #region properties
 
     private const string _Author = "joboehl with ralphy mods";
@@ -92,7 +101,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
 
     public void Start(IInternalControllerService controllerService)
     {
-      Log.WriteFile("ServerBlaster.Start Version {0}: Starting", _version);
+      Log.DebugFormat("ServerBlaster.Start Version {0}: Starting", _version);
       ITvServerEvent events = GlobalServiceProvider.Instance.Get<ITvServerEvent>();
       events.OnTvServerEvent += events_OnTvServerEvent;
 
@@ -100,7 +109,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
       Blaster.DeviceRemoval += OnDeviceRemoval;
       LoadRemoteCodes();
 
-      Log.WriteFile("plugin: ServerBlaster start sender");
+      Log.DebugFormat("plugin: ServerBlaster start sender");
       Thread thread = new Thread(Sender);
       thread.SetApartmentState(ApartmentState.STA);
       thread.IsBackground = true;
@@ -109,19 +118,19 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
       thread.Start();
 
 
-      Log.WriteFile("plugin: ServerBlaster.Start started");
+      Log.DebugFormat("plugin: ServerBlaster.Start started");
     }
 
     public void Stop()
     {
-      Log.WriteFile("plugin: ServerBlaster.Stop stopping");
+      Log.DebugFormat("plugin: ServerBlaster.Stop stopping");
       _running = false;
 
       if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
       {
         GlobalServiceProvider.Instance.Get<ITvServerEvent>().OnTvServerEvent -= events_OnTvServerEvent;
       }
-      Log.WriteFile("plugin: ServerBlaster.Stop stopped");
+      Log.DebugFormat("plugin: ServerBlaster.Stop stopped");
     }
 
     public SectionSettings Setup
@@ -140,25 +149,25 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
       if (analogChannel == null) return;
       if (tvEvent.EventType == TvServerEventType.StartZapChannel)
       {
-        Log.WriteFile("ServerBlaster - CardId: {0}, Channel: {1} - Channel:{2} - VideoSource: {3}",
+        Log.DebugFormat("ServerBlaster - CardId: {0}, Channel: {1} - Channel:{2} - VideoSource: {3}",
                       tvEvent.Card.Id, analogChannel.ChannelNumber, analogChannel.Name,
                       analogChannel.VideoSource.ToString());
         _send = true;
         _channel = analogChannel.ChannelNumber;
         _card = tvEvent.Card.Id;
         _videoInputType = analogChannel.VideoSource; // ralphy
-        Log.WriteFile("ServerBlaster - Done");
+        Log.DebugFormat("ServerBlaster - Done");
       }
     }
 
     private static void OnDeviceArrival()
     {
-      Log.WriteFile("ServerBlaster.OnDeviceArrival: Device installed");
+      Log.DebugFormat("ServerBlaster.OnDeviceArrival: Device installed");
     }
 
     private static void OnDeviceRemoval()
     {
-      Log.WriteFile("ServerBlaster.OnDeviceRemoval: Device removed");
+      Log.DebugFormat("ServerBlaster.OnDeviceRemoval: Device removed");
     }
 
     private void LoadRemoteCodes()
@@ -176,7 +185,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
           {
             foreach (string buttonName in _packetCollection.Keys)
             {
-              Log.WriteFile("ServerBlaster.LoadRemoteCodes: Packet '{0}' ({1} bytes)", buttonName,
+              Log.DebugFormat("ServerBlaster.LoadRemoteCodes: Packet '{0}' ({1} bytes)", buttonName,
                             ((byte[])_packetCollection[buttonName]).Length);
             }
           }
@@ -184,7 +193,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
       }
       catch (Exception e)
       {
-        Log.WriteFile("ServerBlaster.LoadRemoteCodes: {0}", e.Message);
+        Log.DebugFormat("ServerBlaster.LoadRemoteCodes: {0}", e.Message);
       }
 
       try
@@ -200,18 +209,18 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
         _advandeLogging = (SettingsManagement.GetSetting("SrvBlasterLog", "False").Value == "True");
         _sendPort = Math.Max(1, Math.Min(2, _sendPort));
 
-        Log.WriteFile("ServerBlaster.LoadRemoteCodes: Default port {0}", _sendPort);
-        Log.WriteFile("ServerBlaster.RemoteType {0}", _deviceType);
-        Log.WriteFile("ServerBlaster.DeviceSpeed {0}", _deviceSpeed);
-        Log.WriteFile("ServerBlaster.Blaster1Card {0}", _blaster1Card);
-        Log.WriteFile("ServerBlaster.Blaster2Card {0}", _blaster2Card);
-        Log.WriteFile("ServerBlaster.Type {0}", _deviceType);
-        Log.WriteFile("ServerBlaster.AdvancedLogging {0}", _advandeLogging);
-        Log.WriteFile("ServerBlaster.SendSelect {0}", _sendSelect);
+        Log.DebugFormat("ServerBlaster.LoadRemoteCodes: Default port {0}", _sendPort);
+        Log.DebugFormat("ServerBlaster.RemoteType {0}", _deviceType);
+        Log.DebugFormat("ServerBlaster.DeviceSpeed {0}", _deviceSpeed);
+        Log.DebugFormat("ServerBlaster.Blaster1Card {0}", _blaster1Card);
+        Log.DebugFormat("ServerBlaster.Blaster2Card {0}", _blaster2Card);
+        Log.DebugFormat("ServerBlaster.Type {0}", _deviceType);
+        Log.DebugFormat("ServerBlaster.AdvancedLogging {0}", _advandeLogging);
+        Log.DebugFormat("ServerBlaster.SendSelect {0}", _sendSelect);
       }
       catch (Exception e)
       {
-        Log.WriteFile("ServerBlaster.LoadRemoteCodes: {0}", e.Message);
+        Log.DebugFormat("ServerBlaster.LoadRemoteCodes: {0}", e.Message);
       }
 
       return;
@@ -228,7 +237,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
           continue;
         }
         _sending = true;
-        Log.WriteFile("Blaster Sending: Channel:{0}, Card:{1}, VideoInput:{2}", _channel, _card,
+        Log.DebugFormat("Blaster Sending: Channel:{0}, Card:{1}, VideoInput:{2}", _channel, _card,
                       _videoInputType.ToString());
         switch (_deviceType)
         {
@@ -239,24 +248,24 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
             Send(_channel, _card);
             break;
           case 2:
-            Log.WriteFile("ServerBlaster.Send: Case 2");
+            Log.DebugFormat("ServerBlaster.Send: Case 2");
             if (_videoInputType.ToString() == "Tuner")
             {
-              Log.WriteFile("ServerBlaster.Send: Channel {0} not blasted}", _channel);
+              Log.DebugFormat("ServerBlaster.Send: Channel {0} not blasted}", _channel);
             }
             else
             {
-              Log.WriteFile("ServerBlaster.Send: Channel {0} blasted}", _channel);
+              Log.DebugFormat("ServerBlaster.Send: Channel {0} blasted}", _channel);
               Send(_channel); // Hauppauge blasting
             }
             break;
           default:
-            Log.WriteFile("ServerBlaster: Invalid _deviceType {0}", _deviceType);
+            Log.DebugFormat("ServerBlaster: Invalid _deviceType {0}", _deviceType);
             break;
         }
         _sending = false;
         _send = false;
-        Log.WriteFile("ServerBlaster:Send Finished");
+        Log.DebugFormat("ServerBlaster:Send Finished");
       }
       irblaster = null;
     }
@@ -279,7 +288,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
       else if (_blaster1Card == _blaster2Card) _sendPort = 0;
 
       if (_advandeLogging)
-        Log.WriteFile("ServerBlaster.Send: C {0} - B1{1} - B2{2}. Channel is {3}", card, _blaster1Card, _blaster2Card,
+        Log.DebugFormat("ServerBlaster.Send: C {0} - B1{1} - B2{2}. Channel is {3}", card, _blaster1Card, _blaster2Card,
                       externalChannel);
 
       try
@@ -287,27 +296,27 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
         foreach (char ch in externalChannel.ToString())
         {
           if (char.IsDigit(ch) == false) continue;
-          if (_advandeLogging) Log.WriteFile("ServerBlaster.Sending {0} on blaster {1}", ch, _sendPort);
+          if (_advandeLogging) Log.DebugFormat("ServerBlaster.Sending {0} on blaster {1}", ch, _sendPort);
 
           byte[] packet = _packetCollection[ch.ToString()] as byte[];
 
-          if (packet == null) Log.WriteFile("ServerBlaster.Send: Missing packet for '{0}'", ch);
+          if (packet == null) Log.DebugFormat("ServerBlaster.Send: Missing packet for '{0}'", ch);
           if (packet != null) Blaster.Send(_sendPort, packet, _deviceType, _deviceSpeed, _advandeLogging);
           if (packet != null && _sleepTime != 0) Thread.Sleep(_sleepTime);
-          if (_advandeLogging) Log.WriteFile("ServerBlaster.Send logic is done");
+          if (_advandeLogging) Log.DebugFormat("ServerBlaster.Send logic is done");
         }
 
         if (_sendSelect)
         {
           //byte[] packet = _packetCollection["Select"] as byte[];
-          if (_advandeLogging) Log.Write("ServerBlaster.Send: Sending Select");
+          if (_advandeLogging) Log.DebugFormat("ServerBlaster.Send: Sending Select");
           byte[] packet = _packetCollection["Select"] as byte[];
           if (packet != null) Blaster.Send(_sendPort, packet, _deviceType, _deviceSpeed, _advandeLogging);
         }
       }
       catch (Exception e)
       {
-        Log.WriteFile("ServerBlaster.Send: {0}", e.Message);
+        Log.DebugFormat("ServerBlaster.Send: {0}", e.Message);
       }
     }
 

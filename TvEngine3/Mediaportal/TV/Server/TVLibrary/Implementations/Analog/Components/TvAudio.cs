@@ -25,7 +25,7 @@ using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.GraphComponents;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.AudioStream;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
 {
@@ -34,6 +34,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
   /// </summary>
   internal class TvAudio : IDisposable
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(TvAudio)); }
+    }
+
+    #endregion
+
     #region variables
 
     /// <summary>
@@ -144,21 +153,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       streams = new List<IAudioStream>();
       if (!string.IsNullOrEmpty(graph.TvAudio.Name) && graph.TvAudio.Mode != TvAudioVariant.Unavailable)
       {
-        Log.WriteFile("analog: Using TvAudio configuration from stored graph");
+        Log.DebugFormat("analog: Using TvAudio configuration from stored graph");
 
         if (CreateConfigurationBasedFilterInstance(graph, tuner, crossbar, graphBuilder))
         {
-          Log.WriteFile("analog: Using TvAudio configuration from stored graph succeeded");
+          Log.DebugFormat("analog: Using TvAudio configuration from stored graph succeeded");
           return true;
         }
       }
       if (tuner.AudioPin == null)
       {
-        Log.WriteFile("analog: AddTvAudioFilter no tv audio device needed!");
+        Log.DebugFormat("analog: AddTvAudioFilter no tv audio device needed!");
         mode = TvAudioVariant.Unavailable;
         return true;
       }
-      Log.WriteFile("analog: No stored graph for TvAudio component - Trying to detect");
+      Log.DebugFormat("analog: No stored graph for TvAudio component - Trying to detect");
       return CreateAutomaticFilterInstance(graph, tuner, crossbar, graphBuilder);
     }
 
@@ -179,20 +188,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
     {
       if (graph.TvAudio.Mode == TvAudioVariant.TvTuner || graph.TvAudio.Mode == TvAudioVariant.TvTunerConnection)
       {
-        Log.WriteFile("analog: AddTvAudioFilter no tv audio devices found - Trying TvTuner filter");
+        Log.DebugFormat("analog: AddTvAudioFilter no tv audio devices found - Trying TvTuner filter");
         int hr = graphBuilder.Connect(tuner.AudioPin, crossbar.AudioTunerIn);
         if (hr != 0)
         {
-          Log.Error("analog: unable to add TvAudioTuner to graph - even TvTuner as TvAudio fails");
+          Log.ErrorFormat("analog: unable to add TvAudioTuner to graph - even TvTuner as TvAudio fails");
           return false;
         }
         if (graph.TvAudio.Mode == TvAudioVariant.TvTuner)
         {
-          Log.WriteFile("analog: AddTvAudioFilter connected TvTuner with Crossbar directly succeeded!");
+          Log.DebugFormat("analog: AddTvAudioFilter connected TvTuner with Crossbar directly succeeded!");
           _tvAudioTunerInterface = tuner.Filter as IAMTVAudio;
           if (_tvAudioTunerInterface != null)
           {
-            Log.WriteFile("analog: AddTvAudioFilter succeeded - TvTuner is also TvAudio");
+            Log.DebugFormat("analog: AddTvAudioFilter succeeded - TvTuner is also TvAudio");
             _filterTvAudioTuner = tuner.Filter;
             mode = TvAudioVariant.TvTuner;
             streams = new List<IAudioStream>();
@@ -213,7 +222,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       }
       catch (Exception)
       {
-        Log.WriteFile("analog: AddTvAudioFilter no tv audio devices found - Trying TvTuner filter");
+        Log.DebugFormat("analog: AddTvAudioFilter no tv audio devices found - Trying TvTuner filter");
       }
       if (devices != null && devices.Length > 0)
       {
@@ -226,7 +235,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             continue;
           if (!deviceName.Equals(devices[i].Name))
             continue;
-          Log.WriteFile("analog: AddTvAudioFilter use:{0} {1}", devices[i].Name, i);
+          Log.DebugFormat("analog: AddTvAudioFilter use:{0} {1}", devices[i].Name, i);
           int hr;
           try
           {
@@ -235,7 +244,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           }
           catch (Exception)
           {
-            Log.WriteFile("analog: cannot add filter to graph");
+            Log.DebugFormat("analog: cannot add filter to graph");
             continue;
           }
           if (hr != 0)
@@ -265,7 +274,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             else
             {
               //succeeded. we're done
-              Log.WriteFile("analog: AddTvAudioFilter succeeded:{0}", devices[i].Name);
+              Log.DebugFormat("analog: AddTvAudioFilter succeeded:{0}", devices[i].Name);
               Release.ComObject("audiotuner pinin", pin);
               _filterTvAudioTuner = tmp;
               _audioDevice = devices[i];
@@ -310,7 +319,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       }
       catch (Exception)
       {
-        Log.WriteFile("analog: AddTvAudioFilter no tv audio devices found - Trying TvTuner filter");
+        Log.DebugFormat("analog: AddTvAudioFilter no tv audio devices found - Trying TvTuner filter");
       }
       if (devices != null && devices.Length > 0)
       {
@@ -318,7 +327,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         for (int i = 0; i < devices.Length; i++)
         {
           IBaseFilter tmp;
-          Log.WriteFile("analog: AddTvAudioFilter try:{0} {1}", devices[i].Name, i);
+          Log.DebugFormat("analog: AddTvAudioFilter try:{0} {1}", devices[i].Name, i);
           //if tv audio tuner is currently in use we can skip it
           if (DevicesInUse.Instance.IsUsed(devices[i]))
             continue;
@@ -330,7 +339,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           }
           catch (Exception)
           {
-            Log.WriteFile("analog: cannot add filter to graph");
+            Log.DebugFormat("analog: cannot add filter to graph");
             continue;
           }
           if (hr != 0)
@@ -360,7 +369,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             else
             {
               //succeeded. we're done
-              Log.WriteFile("analog: AddTvAudioFilter succeeded:{0}", devices[i].Name);
+              Log.DebugFormat("analog: AddTvAudioFilter succeeded:{0}", devices[i].Name);
               Release.ComObject("audiotuner pinin", pin);
               _filterTvAudioTuner = tmp;
               _audioDevice = devices[i];
@@ -379,21 +388,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       }
       if (_filterTvAudioTuner == null)
       {
-        Log.WriteFile("analog: AddTvAudioFilter no tv audio devices found - Trying TvTuner filter");
+        Log.DebugFormat("analog: AddTvAudioFilter no tv audio devices found - Trying TvTuner filter");
         int hr = graphBuilder.Connect(tuner.AudioPin, crossbar.AudioTunerIn);
         if (hr != 0)
         {
-          Log.Error("analog: unable to add TvAudioTuner to graph - even TvTuner as TvAudio fails");
+          Log.ErrorFormat("analog: unable to add TvAudioTuner to graph - even TvTuner as TvAudio fails");
           mode = TvAudioVariant.Unavailable;
         }
         else
         {
-          Log.WriteFile("analog: AddTvAudioFilter connected TvTuner with Crossbar directly succeeded!");
+          Log.DebugFormat("analog: AddTvAudioFilter connected TvTuner with Crossbar directly succeeded!");
           mode = TvAudioVariant.TvTunerConnection;
           _tvAudioTunerInterface = tuner.Filter as IAMTVAudio;
           if (_tvAudioTunerInterface != null)
           {
-            Log.WriteFile("analog: AddTvAudioFilter succeeded - TvTuner is also TvAudio");
+            Log.DebugFormat("analog: AddTvAudioFilter succeeded - TvTuner is also TvAudio");
             _filterTvAudioTuner = tuner.Filter;
             mode = TvAudioVariant.TvTuner;
           }

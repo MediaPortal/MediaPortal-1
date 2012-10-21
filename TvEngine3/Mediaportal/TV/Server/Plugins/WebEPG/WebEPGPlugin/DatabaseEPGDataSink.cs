@@ -24,7 +24,7 @@ using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TvLibrary.Utils.Time;
 using System.Threading;
 using WebEPG.Parser;
@@ -35,6 +35,15 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
   internal class DatabaseEPGDataSink
     : IEpgDataSink
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(DatabaseEPGDataSink)); }
+    }
+
+    #endregion
+
     #region Types
 
     private struct DateTimeRange
@@ -171,9 +180,9 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
 
     void IEpgDataSink.Close()
     {
-      Log.Info("WebEPG: Waiting for database to be updated...");
+      Log.InfoFormat("WebEPG: Waiting for database to be updated...");
       ProgramManagement.InitiateInsertPrograms();
-      Log.Info("WebEPG: Database update finished.");
+      Log.InfoFormat("WebEPG: Database update finished.");
     }
 
     void IEpgDataSink.WriteChannel(string id, string name)
@@ -191,8 +200,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
         }
         catch (Exception ex)
         {
-          Log.Error("WebEPG: failed to retrieve channels with display name '{0}':", name);
-          Log.Write(ex);
+          Log.ErrorFormat(ex, "WebEPG: failed to retrieve channels with display name '{0}':", name);          
         }
       }
     }
@@ -211,7 +219,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
       else
       {
         _currentChannels = null;
-        Log.Info("WebEPG: Unknown channel (display name = {0}, channel id = {1}) - skipping...", name, id);
+        Log.InfoFormat("WebEPG: Unknown channel (display name = {0}, channel id = {1}) - skipping...", name, id);
         return false;
       }
     }

@@ -24,7 +24,7 @@ using System.Reflection;
 using System.IO;
 using System.Drawing;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
 {
@@ -33,6 +33,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
   /// </summary>
   public class DVBTeletext : ITeletext
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(DVBTeletext)); }
+    }
+
+    #endregion
+
     #region constants
 
     private const int MIN_PAGE = 0x100;
@@ -379,7 +388,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
 
       Assembly assm = Assembly.GetExecutingAssembly();
       //for (int x = 0; x < names.Length; x++)
-      //  Log.Write("res:{0}", names[x]);
+      //  Log.DebugFormat("res:{0}", names[x]);
 
       Stream stream = assm.GetManifestResourceStream("TVCapture.teletext.LogoPage");
       if (stream != null)
@@ -439,7 +448,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
       }
       catch (Exception ex)
       {
-        Log.WriteFile("Error while saving teletext data: ", ex);
+        Log.DebugFormat("Error while saving teletext data: ", ex);
       }
     }
 

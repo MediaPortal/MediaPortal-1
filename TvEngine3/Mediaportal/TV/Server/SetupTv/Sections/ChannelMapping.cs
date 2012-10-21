@@ -31,13 +31,22 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class ChannelMapping : SectionSettings
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(ChannelMapping)); }
+    }
+
+    #endregion
+
     private MediaTypeEnum _mediaTypeEnum = MediaTypeEnum.TV;
 
     public class CardInfo
@@ -347,7 +356,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             {
               if (!enableDVBS2 && (tDetail.Pilot > -1 || tDetail.RollOff > -1))
               {
-                Log.Debug(String.Format(
+                Log.DebugFormat(String.Format(
                   "Imported channel {0} detected as DVB-S2. Skipped! \n Enable \"DVB-S2 tuning\" option in your TV-Card properties to be able to map these channels.",
                   tDetail.Name));
               }

@@ -26,7 +26,7 @@ using Mediaportal.TV.Server.TVControl.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVControl
 {
@@ -35,9 +35,18 @@ namespace Mediaportal.TV.Server.TVControl
   /// </summary>
   public class RemoteControl
   {
-    #region consts
+    #region logging
 
-    public const string InitializedEventName = @"Global\MPTVServiceInitializedEvent";
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(RemoteControl)); }
+    }
+
+    #endregion
+
+      #region consts
+
+      public const string InitializedEventName = @"Global\MPTVServiceInitializedEvent";
     private const int MAX_TCP_TIMEOUT = 1000; //msecs
     private const int REMOTING_PORT = 8000;
 
@@ -144,7 +153,7 @@ namespace Mediaportal.TV.Server.TVControl
       finally
       {
         benchClock.Stop();
-        Log.Debug("TCP connect took : {0}", benchClock.ElapsedMilliseconds);
+        Log.DebugFormat("TCP connect took : {0}", benchClock.ElapsedMilliseconds);
       }
     }
 

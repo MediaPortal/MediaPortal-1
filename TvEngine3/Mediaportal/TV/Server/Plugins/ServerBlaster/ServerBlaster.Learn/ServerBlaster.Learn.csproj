@@ -49,7 +49,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
-  <ItemGroup>
+  <ItemGroup>    
     <Reference Include="System">
       <Name>System</Name>
     </Reference>

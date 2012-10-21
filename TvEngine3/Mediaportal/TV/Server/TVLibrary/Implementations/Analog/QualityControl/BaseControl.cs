@@ -23,7 +23,7 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
 {
@@ -32,6 +32,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
   /// </summary>
   public abstract class BaseControl : IQuality
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(BaseControl)); }
+    }
+
+    #endregion
+
     #region variables
 
     /// <summary>
@@ -230,24 +239,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
         // Set new bit rate mode
         if (_supported_BitRateMode)
         {
-          Log.Info("analog: Encoder mode setting to {0}", _bitRateMode);
+          Log.InfoFormat("analog: Encoder mode setting to {0}", _bitRateMode);
           int newMode = (int)_bitRateMode;
           object newBitRateModeO = newMode;
           Marshal.WriteInt32(newBitRateModeO, 0, newMode);
           int hr = SetValue(PropSetID.ENCAPIPARAM_BitRateMode, ref newBitRateModeO);
           if (hr == 0)
           {
-            Log.Info("analog: Encoder mode set to {0}", _bitRateMode);
+            Log.InfoFormat("analog: Encoder mode set to {0}", _bitRateMode);
           }
           else
           {
-            Log.Debug("analog: Encoder mode setTo FAILresult: {0}", hr);
+            Log.DebugFormat("analog: Encoder mode setTo FAILresult: {0}", hr);
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Error("analog: BitRate Mode ERROR: " + ex.Message);
+        Log.ErrorFormat(ex, "analog: BitRate Mode ERROR");
       }
     }
 
@@ -260,7 +269,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
       {
         if (_supported_BitRate)
         {
-          Log.Info("analog: Encoder BitRate setting to {0}", _qualityType);
+          Log.InfoFormat("analog: Encoder BitRate setting to {0}", _qualityType);
           object valueMin, valueMax, steppingDelta;
           int hr = GetParameterRange(PropSetID.ENCAPIPARAM_BitRate, out valueMin, out valueMax, out steppingDelta);
           if (hr == 0)
@@ -269,7 +278,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
             int valMax = Marshal.ReadInt32(valueMax, 0);
             int valStepDelta = Marshal.ReadInt32(steppingDelta, 0);
 
-            Log.Info("analog: Encoder BitRate Min {0:D} Max {1:D} Delta {2:D}", valMin, valMax, valStepDelta);
+            Log.InfoFormat("analog: Encoder BitRate Min {0:D} Max {1:D} Delta {2:D}", valMin, valMax, valStepDelta);
 
             Int32 newBitrate;
 
@@ -277,7 +286,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
             {
               case QualityType.Custom:
                 int qualityToSet = _configuration.CustomQualityValue;
-                Log.Info("analog: Encoder custom quality:{0}", qualityToSet);
+                Log.InfoFormat("analog: Encoder custom quality:{0}", qualityToSet);
                 newBitrate = CalcQualityBitrate(qualityToSet, valMin, valMax, valStepDelta);
                 break;
               case QualityType.Portable:
@@ -309,16 +318,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
             hr = SetValue(PropSetID.ENCAPIPARAM_BitRate, ref newQualityO);
             if (hr == 0)
             {
-              Log.Info("analog: Encoder BitRate set to {0:D}", newQualityO);
+              Log.InfoFormat("analog: Encoder BitRate set to {0:D}", newQualityO);
             }
             else
             {
-              Log.Debug("analog: Range SetEncoder(BitRate) FAILresult: 0x{0:x}", hr);
+              Log.DebugFormat("analog: Range SetEncoder(BitRate) FAILresult: 0x{0:x}", hr);
             }
           }
           else
           {
-            Log.Debug("analog: Range GetParameterRange(BitRate) FAILresult: 0x{0:x}", hr);
+            Log.DebugFormat("analog: Range GetParameterRange(BitRate) FAILresult: 0x{0:x}", hr);
           }
 
           if (_bitRateMode == VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak && _supported_PeakBitRate)
@@ -330,7 +339,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
               int valMax = Marshal.ReadInt32(valueMax, 0);
               int valStepDelta = Marshal.ReadInt32(steppingDelta, 0);
 
-              Log.Info("analog: Encoder BitRatePeak Min {0:D} Max {1:D} Delta {2:D}", valMin, valMax, valStepDelta);
+              Log.InfoFormat("analog: Encoder BitRatePeak Min {0:D} Max {1:D} Delta {2:D}", valMin, valMax, valStepDelta);
 
               Int32 newBitrate;
 
@@ -338,7 +347,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
               {
                 case QualityType.Custom:
                   int qualityToSet = _configuration.CustomPeakQualityValue;
-                  Log.Info("analog: Encoder custom quality:{0}", qualityToSet);
+                  Log.InfoFormat("analog: Encoder custom quality:{0}", qualityToSet);
                   newBitrate = CalcQualityBitrate(qualityToSet, valMin, valMax, valStepDelta);
                   break;
                 case QualityType.Portable:
@@ -370,23 +379,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
               hr = SetValue(PropSetID.ENCAPIPARAM_PeakBitRate, ref newQualityO);
               if (hr == 0)
               {
-                Log.Info("analog: Encoder BitRatePeak setTo {0:D}", newQualityO);
+                Log.InfoFormat("analog: Encoder BitRatePeak setTo {0:D}", newQualityO);
               }
               else
               {
-                Log.Debug("analog: Range SetEncoder(BitRatePeak) FAILresult: 0x{0:x}", hr);
+                Log.DebugFormat("analog: Range SetEncoder(BitRatePeak) FAILresult: 0x{0:x}", hr);
               }
             }
             else
             {
-              Log.Debug("analog: Range GetParameterRange(BitRatePeak) FAILresult: 0x{0:x}", hr);
+              Log.DebugFormat("analog: Range GetParameterRange(BitRatePeak) FAILresult: 0x{0:x}", hr);
             }
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Error("analog: BitRate ERROR: " + ex.Message);
+        Log.ErrorFormat(ex, "analog: BitRate ERROR");
       }
     }
 
@@ -406,26 +415,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
         int hr = IsSupported(PropSetID.ENCAPIPARAM_BitRateMode);
         _supported_BitRateMode = hr == 0;
         if (_supported_BitRateMode)
-          Log.Debug("analog: Encoder supports ENCAPIPARAM_BitRateMode");
+          Log.DebugFormat("analog: Encoder supports ENCAPIPARAM_BitRateMode");
 
         // Can we specify the bitrate?
         //ENCAPIPARAM_BITRATE 	Specifies the bit rate, in bits per second. In constant bit rate (CBR) mode, the value gives the constant bitrate. In either variable bit rate mode, it gives the average bit rate. The value is a 32-bit unsigned long.
         hr = IsSupported(PropSetID.ENCAPIPARAM_BitRate);
         _supported_BitRate = hr == 0;
         if (_supported_BitRate)
-          Log.Debug("analog: Encoder supports ENCAPIPARAM_BitRate");
+          Log.DebugFormat("analog: Encoder supports ENCAPIPARAM_BitRate");
 
         // Can we specify the peak bitrate for variable bit rate peak
         //ENCAPIPARAM_PEAK_BITRATE 	Secifies the peak bit rate. This parameter is relevant only when ENCAPIPARAM_BITRATE_MODE has been set to VariableBitRatePeak.
         hr = IsSupported(PropSetID.ENCAPIPARAM_PeakBitRate);
         _supported_PeakBitRate = hr == 0;
         if (_supported_PeakBitRate)
-          Log.Debug("analog: Encoder supports ENCAPIPARAM_PeakBitRate");
+          Log.DebugFormat("analog: Encoder supports ENCAPIPARAM_PeakBitRate");
       }
       catch (Exception e)
       {
-        Log.WriteFile("analog: Encoder CheckCapabilities", e);
-        Log.Write(e);
+        Log.ErrorFormat(e, "analog: Encoder CheckCapabilities");        
       }
     }
 

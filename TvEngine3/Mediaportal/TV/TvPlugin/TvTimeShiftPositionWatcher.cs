@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
@@ -34,6 +35,15 @@ namespace Mediaportal.TV.TvPlugin
 {
   internal class TvTimeShiftPositionWatcher
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+      get { return LogHelper.GetLogger(typeof(TvTimeShiftPositionWatcher)); }
+    }
+
+    #endregion
+
     #region Variables
     private static int idChannelToWatch = -1;
     private static Int64 snapshotBuferPosition = -1;
@@ -85,28 +95,28 @@ namespace Mediaportal.TV.TvPlugin
         _timer.Tick += new EventHandler(_timer_Tick);
         g_Player.PlayBackStopped += new g_Player.StoppedHandler(g_Player_PlayBackStopped);
       }
-      Log.Debug("TvTimeShiftPositionWatcher: Channel changed.");
+      Log.DebugFormat("TvTimeShiftPositionWatcher: Channel changed.");
       SnapshotTimeShiftBuffer();
       secondsElapsed = 0;
       _timer.Enabled = true;
     }
     private static void SnapshotTimeShiftBuffer()
     {
-      Log.Debug("TvTimeShiftPositionWatcher: Snapshotting timeshift buffer");
+      Log.DebugFormat("TvTimeShiftPositionWatcher: Snapshotting timeshift buffer");
       IUser u = TVHome.Card.User;
       if (u == null)
       {
-        Log.Error("TvTimeShiftPositionWatcher: Snapshot buffer failed. TvHome.Card.User==null");
+        Log.ErrorFormat("TvTimeShiftPositionWatcher: Snapshot buffer failed. TvHome.Card.User==null");
         return;
       }
       long bufferId = 0;
       if (!ServiceAgents.Instance.ControllerServiceAgent.TimeShiftGetCurrentFilePosition(u.Name, ref snapshotBuferPosition, ref bufferId))
       {
-        Log.Error("TvTimeShiftPositionWatcher: TimeShiftGetCurrentFilePosition failed.");
+        Log.ErrorFormat("TvTimeShiftPositionWatcher: TimeShiftGetCurrentFilePosition failed.");
         return;
       }
       snapshotBufferFile = ServiceAgents.Instance.ControllerServiceAgent.TimeShiftFileName(u.Name, u.CardId) + bufferId.ToString() + ".ts";
-      Log.Debug("TvTimeShiftPositionWatcher: Snapshot done - position: {0}, filename: {1}", snapshotBuferPosition, snapshotBufferFile);
+      Log.DebugFormat("TvTimeShiftPositionWatcher: Snapshot done - position: {0}, filename: {1}", snapshotBuferPosition, snapshotBufferFile);
     }
     private static void CheckRecordingStatus()
     {
@@ -118,7 +128,7 @@ namespace Mediaportal.TV.TvPlugin
           if (scheduleId > 0)
           {
             Recording rec = ServiceAgents.Instance.RecordingServiceAgent.GetActiveRecording(scheduleId);
-            Log.Debug("TvTimeShiftPositionWatcher: Detected a started recording. ProgramName: {0}", rec.Title);
+            Log.DebugFormat("TvTimeShiftPositionWatcher: Detected a started recording. ProgramName: {0}", rec.Title);
             InitiateBufferFilesCopyProcess(rec.FileName);
             SetNewChannel(-1);
           }
@@ -126,7 +136,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Error("TvTimeshiftPositionWatcher.CheckRecordingStatus exception : {0}", ex);
+        Log.ErrorFormat("TvTimeshiftPositionWatcher.CheckRecordingStatus exception : {0}", ex);
       }
     }
     private static void CheckOrUpdateTimeShiftPosition()
@@ -145,16 +155,16 @@ namespace Mediaportal.TV.TvPlugin
         current = new DateTime(current.Year, current.Month, current.Day, current.Hour, current.Minute, 0);
         DateTime dtProgEnd = chan.CurrentProgram.EndTime;
         dtProgEnd = new DateTime(dtProgEnd.Year, dtProgEnd.Month, dtProgEnd.Day, dtProgEnd.Hour, dtProgEnd.Minute, 0);
-        Log.Debug("TvTimeShiftPositionWatcher: Checking {0} == {1}", current.ToString("dd.MM.yy HH:mm"), dtProgEnd.ToString("dd.MM.yy HH:mm"));
+        Log.DebugFormat("TvTimeShiftPositionWatcher: Checking {0} == {1}", current.ToString("dd.MM.yy HH:mm"), dtProgEnd.ToString("dd.MM.yy HH:mm"));
         if (current == dtProgEnd)
         {
-          Log.Debug("TvTimeShiftPositionWatcher: Next program starts within the configured Pre-Rec interval. Current program: [{0}] ending: {1}", chan.CurrentProgram.Title, chan.CurrentProgram.EndTime.ToString());
+          Log.DebugFormat("TvTimeShiftPositionWatcher: Next program starts within the configured Pre-Rec interval. Current program: [{0}] ending: {1}", chan.CurrentProgram.Title, chan.CurrentProgram.EndTime.ToString());
           SnapshotTimeShiftBuffer();
         }
       }
       catch (Exception ex)
       {
-        Log.Error("TvTimeshiftPositionWatcher.CheckOrUpdateTimeShiftPosition exception : {0}", ex);
+        Log.ErrorFormat("TvTimeshiftPositionWatcher.CheckOrUpdateTimeShiftPosition exception : {0}", ex);
       }
     }
     private static void InitiateBufferFilesCopyProcess(string recordingFilename)
@@ -169,13 +179,13 @@ namespace Mediaportal.TV.TvPlugin
         if (ServiceAgents.Instance.ControllerServiceAgent.TimeShiftGetCurrentFilePosition(u.Name, ref currentPosition, ref bufferId))
         {
           string currentFile = ServiceAgents.Instance.ControllerServiceAgent.TimeShiftFileName(u.Name, u.CardId) + bufferId.ToString() + ".ts";
-          Log.Info("**");
-          Log.Info("**");
-          Log.Info("**");
-          Log.Info("TvTimeshiftPositionWatcher: Starting to copy buffer files for recording {0}", recordingFilename);
-          Log.Info("**");
-          Log.Info("**");
-          Log.Info("**");
+          Log.InfoFormat("**");
+          Log.InfoFormat("**");
+          Log.InfoFormat("**");
+          Log.InfoFormat("TvTimeshiftPositionWatcher: Starting to copy buffer files for recording {0}", recordingFilename);
+          Log.InfoFormat("**");
+          Log.InfoFormat("**");
+          Log.InfoFormat("**");
           ServiceAgents.Instance.ControllerServiceAgent.CopyTimeShiftFile(snapshotBuferPosition, snapshotBufferFile, currentPosition,
                                                    currentFile, recordingFilename);
         }
@@ -191,14 +201,14 @@ namespace Mediaportal.TV.TvPlugin
       {
         preRecordInterval = Decimal.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").Value);
       }
-      Log.Debug("TvTimeShiftPositionWatcher: SetNewChannel(" + idChannel.ToString() + ")");
+      Log.DebugFormat("TvTimeShiftPositionWatcher: SetNewChannel(" + idChannel.ToString() + ")");
       idChannelToWatch = idChannel;
       if (idChannel == -1)
       {
         snapshotBuferPosition = -1;
         snapshotBufferFile = "";
         _timer.Enabled = false;
-        Log.Debug("TvTimeShiftPositionBuffer: Timer stopped because recording on this channel started or tv stopped.");
+        Log.DebugFormat("TvTimeShiftPositionBuffer: Timer stopped because recording on this channel started or tv stopped.");
       }
       else
         StartTimer();

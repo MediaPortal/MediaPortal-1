@@ -421,6 +421,10 @@
     <Compile Include="ServiceHelper.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Util.cs" />
+    <None Include="log4net.config">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
@@ -650,7 +654,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>xcopy "$(SolutionDir)TVServer.Base\TuningParameters" "%25ProgramData%25\Team MediaPortal\\MediaPortal TV Server\TuningParameters\" /C/Y/S
-
-</PreBuildEvent>
+xcopy "$(SolutionDir)\..\ExternalBinaries\*castle*.*"  /s /i /y
+xcopy "$(SolutionDir)\..\ExternalBinaries\*log4net*.*"  /s /i /y</PreBuildEvent>
   </PropertyGroup>
 </Project>

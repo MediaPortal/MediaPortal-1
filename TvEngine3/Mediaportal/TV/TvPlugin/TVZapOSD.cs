@@ -20,7 +20,7 @@
 
 using System;
 using System.Globalization;
-
+using MediaPortal.Common.Utils;
 using MediaPortal.GUI.Library;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
@@ -38,6 +38,14 @@ namespace Mediaportal.TV.TvPlugin
   /// 
   public class TvZapOsd : GUIInternalWindow
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+      get { return LogHelper.GetLogger(typeof(TvZapOsd)); }
+    }
+
+    #endregion
     [SkinControl(35)] protected GUILabelControl lblCurrentChannel = null;
     [SkinControl(36)] protected GUITextControl lblOnTvNow = null;
     [SkinControl(37)] protected GUITextControl lblOnTvNext = null;
@@ -144,7 +152,7 @@ namespace Mediaportal.TV.TvPlugin
 
     protected override void OnPageDestroy(int newWindowId)
     {
-      Log.Debug("zaposd pagedestroy");
+      Log.DebugFormat("zaposd pagedestroy");
       Dispose();
       base.OnPageDestroy(newWindowId);
 
@@ -153,7 +161,7 @@ namespace Mediaportal.TV.TvPlugin
 
     protected override void OnPageLoad()
     {
-      Log.Debug("zaposd pageload");
+      Log.DebugFormat("zaposd pageload");
       AllocResources();
       // if (g_application.m_pPlayer) g_application.m_pPlayer.ShowOSD(false);
       ResetAllControls(); // make sure the controls are positioned relevant to the OSD Y offset
@@ -244,7 +252,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private void OnPreviousChannel()
     {
-      Log.Debug("GUITV OSD: OnNextChannel");
+      Log.DebugFormat("GUITV OSD: OnNextChannel");
       if (!TVHome.Card.IsTimeShifting)
       {
         return;
@@ -259,7 +267,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private void OnNextChannel()
     {
-      Log.Debug("GUITV ZAPOSD: OnNextChannel");
+      Log.DebugFormat("GUITV ZAPOSD: OnNextChannel");
       if (!TVHome.Card.IsTimeShifting)
       {
         return;

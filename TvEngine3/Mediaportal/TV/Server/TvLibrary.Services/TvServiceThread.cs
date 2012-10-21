@@ -12,13 +12,22 @@ using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Services;
 
 namespace Mediaportal.TV.Server.TVLibrary
 {
   public class TvServiceThread : IPowerEventHandler
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(TvServiceThread)); }
+    }
+
+    #endregion
+
     #region variables
 
     private Thread _tvServiceThread;
@@ -46,7 +55,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       AddPowerEventHandler(OnPowerEventHandler);
       try
       {
-        Log.Debug("Setting up EventWaitHandle with name: {0}", RemoteControl.InitializedEventName);
+        Log.DebugFormat("Setting up EventWaitHandle with name: {0}", RemoteControl.InitializedEventName);
 
         EventWaitHandleAccessRule rule =
           new EventWaitHandleAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null),
@@ -58,12 +67,12 @@ namespace Mediaportal.TV.Server.TVLibrary
                                                 out eventCreated, sec);
         if (!eventCreated)
         {
-          Log.Info("{0} was not created", RemoteControl.InitializedEventName);
+          Log.InfoFormat("{0} was not created", RemoteControl.InitializedEventName);
         }
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
       }
     }
 
@@ -170,7 +179,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     {
       if (msg == WM_POWERBROADCAST)
       {
-        Log.Debug("TV service PowerEventThread received WM_POWERBROADCAST {1}", wParam.ToInt32());
+        Log.DebugFormat("TV service PowerEventThread received WM_POWERBROADCAST {1}", wParam.ToInt32());
         switch (wParam.ToInt32())
         {
           case PBT_APMQUERYSUSPENDFAILED:
@@ -212,7 +221,7 @@ namespace Mediaportal.TV.Server.TVLibrary
 
     private void PowerEventThread()
     {
-      //Log.Debug( "Service1.PowerEventThread started" );
+      //Log.DebugFormat( "Service1.PowerEventThread started" );
 
       Thread.BeginThreadAffinity();
       try
@@ -238,12 +247,12 @@ namespace Mediaportal.TV.Server.TVLibrary
 
         if (handle.Equals(IntPtr.Zero))
         {
-          Log.Error("TV service PowerEventThread cannot create window handle, exiting thread");
+          Log.ErrorFormat("TV service PowerEventThread cannot create window handle, exiting thread");
           return;
         }
 
         // this thread needs an message loop
-        Log.Debug("TV service PowerEventThread message loop is running");
+        Log.DebugFormat("TV service PowerEventThread message loop is running");
         while (true)
         {
           try
@@ -255,21 +264,21 @@ namespace Mediaportal.TV.Server.TVLibrary
 
             TranslateMessage(ref msgApi);
 
-            Log.Debug("TV service PowerEventThread {0}", msgApi.message);
+            Log.DebugFormat("TV service PowerEventThread {0}", msgApi.message);
 
 
             DispatchMessageA(ref msgApi);
           }
           catch (Exception ex)
           {
-            Log.Error("TV service PowerEventThread: Exception: {0}", ex.ToString());
+            Log.ErrorFormat(ex, "TV service PowerEventThread");
           }
         }
       }
       finally
       {
         Thread.EndThreadAffinity();
-        Log.Debug("TV service PowerEventThread finished");
+        Log.DebugFormat("TV service PowerEventThread finished");
       }
     }
 
@@ -283,7 +292,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     [MethodImpl(MethodImplOptions.Synchronized)]
     protected bool OnPowerEvent(PowerEventType powerStatus)
     {
-      Log.Debug("OnPowerEvent: PowerStatus: {0}", powerStatus);
+      Log.DebugFormat("OnPowerEvent: PowerStatus: {0}", powerStatus);
 
       bool accept = true;
       List<PowerEventHandler> powerEventPreventers = new List<PowerEventHandler>();
@@ -312,7 +321,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         return true;
       if (powerEventPreventers.Count > 0)
         foreach (PowerEventHandler handler in powerEventPreventers)
-          Log.Debug("PowerStatus:{0} rejected by {1}", powerStatus, handler.Target.ToString());
+          Log.DebugFormat("PowerStatus:{0} rejected by {1}", powerStatus, handler.Target.ToString());
 
       // if query suspend: 
       // everybody that allowed the standby now must receive a deny event
@@ -344,7 +353,7 @@ namespace Mediaportal.TV.Server.TVLibrary
 
     private bool OnPowerEventHandler(PowerEventType powerStatus)
     {
-      Log.Debug("OnPowerEventHandler: PowerStatus: {0}", powerStatus);
+      Log.DebugFormat("OnPowerEventHandler: PowerStatus: {0}", powerStatus);
 
       switch (powerStatus)
       {
@@ -383,12 +392,12 @@ namespace Mediaportal.TV.Server.TVLibrary
 
     private void StartPlugins()
     {
-      Log.Info("TV Service: Load plugins");
+      Log.InfoFormat("TV Service: Load plugins");
 
       _plugins = new PluginLoader();
       _plugins.Load();
 
-      Log.Info("TV Service: Plugins loaded");
+      Log.InfoFormat("TV Service: Plugins loaded");
       // start plugins
       foreach (ITvServerPlugin plugin in _plugins.Plugins)
       {
@@ -404,7 +413,7 @@ namespace Mediaportal.TV.Server.TVLibrary
             ServiceManager.Instance.AddService(interfaceType, instance);
           }
 
-          Log.Info("TV Service: Plugin: {0} started", plugin.Name);
+          Log.InfoFormat("TV Service: Plugin: {0} started", plugin.Name);
           try
           {
             plugin.Start(ServiceManager.Instance.InternalControllerService);
@@ -412,32 +421,30 @@ namespace Mediaportal.TV.Server.TVLibrary
           }
           catch (Exception ex)
           {
-            Log.Info("TV Service:  Plugin: {0} failed to start", plugin.Name);
-            Log.Write(ex);
+            Log.ErrorFormat(ex, "TV Service:  Plugin: {0} failed to start", plugin.Name);            
           }
         }
         else
         {
-          Log.Info("TV Service: Plugin: {0} disabled", plugin.Name);
+          Log.InfoFormat("TV Service: Plugin: {0} disabled", plugin.Name);
         }
       }
 
-      Log.Info("TV Service: Plugins started");
+      Log.InfoFormat("TV Service: Plugins started");
 
       // fire off startedAll on plugins
       foreach (ITvServerPlugin plugin in _pluginsStarted)
       {
         if (plugin is ITvServerPluginStartedAll)
         {
-          Log.Info("TV Service: Plugin: {0} started all", plugin.Name);
+          Log.InfoFormat("TV Service: Plugin: {0} started all", plugin.Name);
           try
           {
             (plugin as ITvServerPluginStartedAll).StartedAll();
           }
           catch (Exception ex)
           {
-            Log.Info("TV Service: Plugin: {0} failed to startedAll", plugin.Name);
-            Log.Write(ex);
+            Log.ErrorFormat(ex, "TV Service: Plugin: {0} failed to startedAll", plugin.Name);            
           }
         }
       }
@@ -445,7 +452,7 @@ namespace Mediaportal.TV.Server.TVLibrary
 
     private void StopPlugins()
     {
-      Log.Info("TV Service: Stop plugins");
+      Log.InfoFormat("TV Service: Stop plugins");
       if (_pluginsStarted != null)
       {
         foreach (ITvServerPlugin plugin in _pluginsStarted)
@@ -456,13 +463,12 @@ namespace Mediaportal.TV.Server.TVLibrary
           }
           catch (Exception ex)
           {
-            Log.Info("TV Service: plugin: {0} failed to stop", plugin.Name);
-            Log.Write(ex);
+            Log.ErrorFormat(ex, "TV Service: plugin: {0} failed to stop", plugin.Name);            
           }
         }
         _pluginsStarted = new List<ITvServerPlugin>();
       }
-      Log.Info("TV Service: Plugins stopped");
+      Log.InfoFormat("TV Service: Plugins stopped");
     }
 
    
@@ -471,7 +477,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     {
 //if (!Started)
       //  return;
-      Log.WriteFile("TV Service: stopping");
+      Log.DebugFormat("TV Service: stopping");
 
       if (_initializedEvent != null)
       {
@@ -485,14 +491,14 @@ namespace Mediaportal.TV.Server.TVLibrary
       StopPlugins();
       if (_powerEventThreadId != 0)
       {
-        Log.Debug("TV Service: OnStop asking PowerEventThread to exit");
+        Log.DebugFormat("TV Service: OnStop asking PowerEventThread to exit");
         PostThreadMessage(_powerEventThreadId, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
         _powerEventThread.Join();
       }
       _powerEventThreadId = 0;
       _powerEventThread = null;
       _started = false;
-      Log.WriteFile("TV Service: stopped");
+      Log.DebugFormat("TV Service: stopped");
     }    
 
     private void ApplyProcessPriority()
@@ -535,7 +541,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       catch (Exception ex)
       {
-        Log.Error("applyProcessPriority: exception is {0}", ex.StackTrace);
+        Log.ErrorFormat("applyProcessPriority: exception is {0}", ex.StackTrace);
       }
     }
 
@@ -555,7 +561,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         }
         catch (Exception ex)
         {          
-          Log.Error("OnStart: exception applying process priority: {0}", ex.StackTrace);
+          Log.ErrorFormat("OnStart: exception applying process priority: {0}", ex.StackTrace);
         }
       }
 
@@ -569,14 +575,14 @@ namespace Mediaportal.TV.Server.TVLibrary
 
       if (_tvServiceThread != null && _tvServiceThread.IsAlive)
       {
-        Log.Write("waiting for tvService to join...");
+        Log.DebugFormat("waiting for tvService to join...");
         bool joined = _tvServiceThread.Join(maxWaitMsecs);
         if (!joined)
         {
-          Log.Write("aborting tvService thread.");
+          Log.DebugFormat("aborting tvService thread.");
           _tvServiceThread.Abort();
           _tvServiceThread.Join();
-          Log.Write("tvService thread aborted.");
+          Log.DebugFormat("tvService thread aborted.");
         }
         _tvServiceThread = null; 
       }      
@@ -588,13 +594,13 @@ namespace Mediaportal.TV.Server.TVLibrary
       {
         if (!Started)
         {
-          Log.Info("TV service: Starting");
+          Log.InfoFormat("TV service: Starting");
 
           Thread.CurrentThread.Name = "TVService";
 
           FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(_applicationPath);
 
-          Log.WriteFile("TVService v" + versionInfo.FileVersion + " is starting up on " +
+          Log.DebugFormat("TVService v" + versionInfo.FileVersion + " is starting up on " +
                         OSInfo.OSInfo.GetOSDisplayVersion());
 
           //Check for unsupported operating systems
@@ -610,7 +616,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           {
             _initializedEvent.Set();
           }
-          Log.Info("TV service: Started");
+          Log.InfoFormat("TV service: Started");
           _tvServiceThreadEvt.WaitOne();
           DoStop();
         }
@@ -618,7 +624,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       catch (Exception ex)
       {
         //wait for thread to exit. eg. when stopping tvservice       
-        Log.Error("TvService OnStart failed : {0}", ex.ToString());
+        Log.ErrorFormat(ex, "TvService OnStart failed");
         //_started = true; // otherwise the onstop code will not complete.
         DoStop();
         throw;

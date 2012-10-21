@@ -5,13 +5,18 @@ using System.ServiceModel.Description;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVControl.Interfaces.ServiceAgents;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 {
 
   public class ServiceAgents : Singleton<ServiceAgents>, IDisposable
   {
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(ServiceAgents)); }
+    }
+
     public delegate void ServiceAgentRemovedDelegate(Type service);    
     private static string _hostname = Dns.GetHostName();
 
@@ -353,7 +358,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 
     private void ServiceAgents_Closed(object sender, EventArgs e)
     {
-      Log.Debug("ServiceAgents.ServiceAgents_Closed: {0}", sender.GetType());
+      Log.DebugFormat("ServiceAgents.ServiceAgents_Closed: {0}", sender.GetType());
       RemoveService(sender);
     }
 
@@ -383,12 +388,12 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
         GlobalServiceProvider.Remove(type);
       }
 
-      Log.Debug("ServiceAgents.RemoveService: removed service:{0}", type);      
+      Log.DebugFormat("ServiceAgents.RemoveService: removed service:{0}", type);      
     }
 
     private void ServiceAgents_Faulted(object sender, EventArgs e)
     {
-      Log.Debug("ServiceAgents.ServiceAgents_Faulted: {0}", sender.GetType());
+      Log.DebugFormat("ServiceAgents.ServiceAgents_Faulted: {0}", sender.GetType());
       RemoveService(sender);
     }
 

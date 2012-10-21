@@ -22,10 +22,11 @@ using System;
 using System.Windows.Forms;
 
 #if MediaPortal
+using MediaPortal.Common.Utils;
 using MediaPortal.ServiceImplementations;
 
 #else
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 #endif
 
 namespace OSPrerequisites
@@ -35,6 +36,15 @@ namespace OSPrerequisites
   ///</summary>
   public class OSPrerequisites
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(OSPrerequisites)); }
+    }
+
+    #endregion
+
     private const string MSG_NOT_SUPPORTED =
       "Your platform is not supported by MediaPortal Team because it lacks critical hotfixes! \nPlease check our Wiki's requirements page.";
 
@@ -54,9 +64,9 @@ namespace OSPrerequisites
       switch (OSInfo.OSInfo.GetOSSupported())
       {
         case OSInfo.OSInfo.OsSupport.Blocked:
-          Log.Error("*******************************************");
-          Log.Error("* ERROR, OS can't be used for MediaPortal *");
-          Log.Error("*******************************************");
+          Log.ErrorFormat("*******************************************");
+          Log.ErrorFormat("* ERROR, OS can't be used for MediaPortal *");
+          Log.ErrorFormat("*******************************************");
           if (dispMessage)
           {
             MessageBox.Show(MSG_NOT_INSTALLABLE, OSInfo.OSInfo.GetOSDisplayVersion(), MessageBoxButtons.OK,
@@ -66,9 +76,9 @@ namespace OSPrerequisites
           break;
         case OSInfo.OSInfo.OsSupport.NotSupported:
           //Used .Info as .Warning is missing
-          Log.Info("*******************************************");
-          Log.Info("* WARNING, OS not officially supported    *");
-          Log.Info("*******************************************");
+          Log.InfoFormat("*******************************************");
+          Log.InfoFormat("* WARNING, OS not officially supported    *");
+          Log.InfoFormat("*******************************************");
           if (dispMessage)
           {
             res = MessageBox.Show(MSG_NOT_SUPPORTED, OSInfo.OSInfo.GetOSDisplayVersion(), MessageBoxButtons.OKCancel,

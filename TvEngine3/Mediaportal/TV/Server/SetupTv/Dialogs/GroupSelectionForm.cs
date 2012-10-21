@@ -26,12 +26,22 @@ using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class GroupSelectionForm : Form
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(GroupSelectionForm)); }
+    }
+
+    #endregion
+
+
     private string _preselectedGroupName = string.Empty;
     private List<object> _groups = new List<object>();
 
@@ -158,7 +168,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
       catch (Exception exp)
       {
-        Log.Error("LoadGroups error: {0}", exp.Message);
+        Log.ErrorFormat("LoadGroups error: {0}", exp.Message);
       }
 
       if (listBox1.SelectedIndex <= -1 && listBox1.Items.Count > 0)

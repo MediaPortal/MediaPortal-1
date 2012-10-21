@@ -28,7 +28,7 @@ using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
@@ -37,6 +37,15 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public class UserManagement : IUserManagement
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(UserManagement)); }
+    }
+
+    #endregion
+
     private readonly ITvCardHandler _cardHandler;
     private readonly object _usersLock = new object();
     private readonly object _ownerLock = new object();
@@ -110,7 +119,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         {
           if (subchannel.IdChannel == idChannel)
           {
-            Log.Debug("usermanagement.RemoveUser: {0}, subch: {1} of {2}, card: {3}", user.Name, subchannel.Id,
+            Log.DebugFormat("usermanagement.RemoveUser: {0}, subch: {1} of {2}, card: {3}", user.Name, subchannel.Id,
                       _cardHandler.Card.SubChannels.Length, _cardHandler.DataBaseCard.IdCard);
             if (!ContainsUsersForSubchannel(subchannel.Id))
             {
@@ -738,7 +747,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         throw new InvalidOperationException("subchannelid is invalid");
       }
       user.CardId = _cardHandler.DataBaseCard.IdCard;
-      Log.Info("user:{0} AddSubChannelOrUser", user.Name);
+      Log.InfoFormat("user:{0} AddSubChannelOrUser", user.Name);
       lock (_usersLock)
       {
         IUser existingUser = GetUser(user.Name);
@@ -773,7 +782,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     public void RemoveChannelFromUser(IUser user, int subChannelId)
     {
       string username = user.Name;
-      Log.Info("user:{0} RemoveChannelFromUser", username);
+      Log.InfoFormat("user:{0} RemoveChannelFromUser", username);
 
       lock (_usersLock)
       {
@@ -823,7 +832,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     public void RemoveUser(IUser user)
     {
       string username = user.Name;
-      Log.Info("user:{0} remove", username);
+      Log.InfoFormat("user:{0} remove", username);
 
       lock (_usersLock)
       {

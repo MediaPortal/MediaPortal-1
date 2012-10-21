@@ -35,13 +35,23 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class CardDvbIP : SectionSettings
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(CardDvbIP)); }
+    }
+
+    #endregion
+
+
     private int _cardNumber;
     private bool _isScanning = false;
     private bool _stopScanning = false;
@@ -331,7 +341,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
       }
       finally
       {

@@ -140,7 +140,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
         return false;
       //if (pageNumber == 0x100)
       //{
-      //  Log.Log.WriteFile("del {0:X} {1}-{2}", pageNumber, subPageNumber, _numberOfSubPages);
+      //  Log.Log.DebugFormat("del {0:X} {1}-{2}", pageNumber, subPageNumber, _numberOfSubPages);
       //}
       //subpage removed
       for (int i = subPageNumber; i <= _numberOfSubPages; ++i)

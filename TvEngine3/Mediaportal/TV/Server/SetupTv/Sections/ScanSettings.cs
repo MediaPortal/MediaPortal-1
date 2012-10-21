@@ -29,12 +29,21 @@ using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class ScanSettings : SectionSettings
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(ScanSettings)); }
+    }
+
+    #endregion
+
     #region private classes
 
     private class DisplaySoftwareEncoder
@@ -182,7 +191,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       catch (Exception ex)
       {
-        Log.Write("could not set priority on tvservice - the process might be terminated : " + ex.Message);
+        Log.ErrorFormat(ex, "could not set priority on tvservice - the process might be terminated");
         return;
       }
 
@@ -215,7 +224,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       catch (Exception exp)
       {
-        Log.Write(string.Format("Could not set priority on tvservice. Error on setting process.PriorityClass: {0}",
+        Log.DebugFormat(string.Format("Could not set priority on tvservice. Error on setting process.PriorityClass: {0}",
                                 exp.Message));
         return;
       }

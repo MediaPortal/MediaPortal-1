@@ -32,7 +32,7 @@ using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using WebEPG.MPCode;
 using WebEPG.config;
 using WebEPG.config.Grabber;
@@ -43,6 +43,15 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
 {
   public partial class WebEPGSetup : SectionSettings
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(WebEPGSetup)); }
+    }
+
+    #endregion
+
     private class CBChannelGroup
     {
       public string groupName;
@@ -199,7 +208,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
         _configFile.RadioChannels.Add(channel);
       }
 
-      Log.Info("WebEPG Config: Button: Save");
+      Log.InfoFormat("WebEPG Config: Button: Save");
       string confFile = _configFileDir + "\\WebEPG.xml";
       FileInfo config = new FileInfo(confFile);
       if (config.Exists)
@@ -331,14 +340,14 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
 
     private void LoadConfig()
     {
-      Log.Info("WebEPG Config: Loading Channels");
+      Log.InfoFormat("WebEPG Config: Loading Channels");
       hChannelConfigInfo = new Hashtable();
       TvMappings.HChannelConfigInfo = hChannelConfigInfo;
       RadioMappings.HChannelConfigInfo = hChannelConfigInfo;
 
       if (File.Exists(_webepgFilesDir + "\\channels\\channels.xml"))
       {
-        Log.Info("WebEPG Config: Loading Existing channels.xml");
+        Log.InfoFormat("WebEPG Config: Loading Existing channels.xml");
         Xml xmlreader = new Xml(_webepgFilesDir + "\\channels\\channels.xml");
         int channelCount = xmlreader.GetValueAsInt("ChannelInfo", "TotalChannels", 0);
 
@@ -351,7 +360,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
         }
       }
 
-      Log.Info("WebEPG Config: Loading Grabbers");
+      Log.InfoFormat("WebEPG Config: Loading Grabbers");
       hGrabberConfigInfo = new Hashtable();
       CountryList = new SortedList();
       tGrabbers = new TreeNode("Web Sites");
@@ -361,7 +370,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       }
       else
       {
-        Log.Info("WebEPG Config: Cannot find grabbers directory");
+        Log.InfoFormat("WebEPG Config: Cannot find grabbers directory");
       }
 
       IDictionaryEnumerator Enumerator = hChannelConfigInfo.GetEnumerator();
@@ -393,7 +402,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
     {
       if (File.Exists(_configFileDir + "\\WebEPG.xml"))
       {
-        Log.Info("WebEPG Config: Loading Existing WebEPG.xml");
+        Log.InfoFormat("WebEPG Config: Loading Existing WebEPG.xml");
 
         XmlSerializer s = new XmlSerializer(typeof (WebepgConfigFile));
         TextReader r = null;
@@ -409,8 +418,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
           {
             r.Close();
           }
-          Log.Error("WebEPG: Error loading config {0}: {1}", _configFileDir + "\\WebEPG.xml",
-                    ex.Message);
+          Log.ErrorFormat(ex, "WebEPG: Error loading config {0}", _configFileDir + "\\WebEPG.xml");
           LoadOldConfigFile();
         }
       }
@@ -452,7 +460,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
 
     private void LoadOldConfigFile()
     {
-      Log.Info("Trying to load old config file format");
+      Log.InfoFormat("Trying to load old config file format");
 
       _configFile = new WebepgConfigFile();
 
@@ -535,7 +543,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
     private void GetGrabbers(ref TreeNode Main, string Location)
     {
       DirectoryInfo dir = new DirectoryInfo(Location);
-      Log.Debug("WebEPG Config: Directory: {0}", Location);
+      Log.DebugFormat("WebEPG Config: Directory: {0}", Location);
       GrabberConfigInfo gInfo;
       foreach (FileInfo file in dir.GetFiles("*.xml"))
       {
@@ -544,7 +552,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
         GrabberConfigFile grabberXml;
         try
         {
-          Log.Debug("WebEPG Config: File: {0}", file.Name);
+          Log.DebugFormat("WebEPG Config: File: {0}", file.Name);
 
           XmlSerializer s = new XmlSerializer(typeof (GrabberConfigFile));
           TextReader r = new StreamReader(file.FullName);
@@ -552,7 +560,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
         }
         catch (Exception)
         {
-          Log.Info("WebEPG Config: File open failed - XML error");
+          Log.InfoFormat("WebEPG Config: File open failed - XML error");
           return;
         }
 

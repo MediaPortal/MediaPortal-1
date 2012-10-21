@@ -38,7 +38,7 @@ using Mediaportal.TV.Server.TVLibrary.Implementations.RadioWebStream;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using TvLibrary.Implementations.DVB;
 using DirectShowLib;
@@ -53,6 +53,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
   /// </summary>
   public class TvCardCollection
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(TvCardCollection)); }
+    }
+
+    #endregion
+
     private readonly List<ITVCard> _cards;
     private readonly IEpgEvents _epgEvents;
 
@@ -61,7 +70,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public TvCardCollection(IEpgEvents epgEvents)
     {
-      Log.WriteFile("----------------------------");
+      Log.DebugFormat("----------------------------");
       _epgEvents = epgEvents;
       // Logic here to delay detection of cards
       // Ideally this should occur after standby event.
@@ -70,10 +79,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       int delayDetect = Convert.ToInt32(setting.Value);
       if (delayDetect >= 1)
       {
-        Log.WriteFile("Detecting Cards in {0} seconds", delayDetect);
+        Log.DebugFormat("Detecting Cards in {0} seconds", delayDetect);
         System.Threading.Thread.Sleep(delayDetect * 1000);
       }
-      Log.WriteFile("Detecting Cards");
+      Log.DebugFormat("Detecting Cards");
       _cards = new List<ITVCard>();
       DetectCards();
     }
@@ -99,7 +108,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         if (String.Compare(devices[i].Name, "B2C2 MPEG-2 Source", true) == 0)
         {
-          Log.WriteFile("Detected B2C2 source filter");
+          Log.DebugFormat("Detected B2C2 source filter");
           object[] deviceContexts = TvCardDvbSS2.DetectDevices();
           if (deviceContexts != null)
           {
@@ -117,7 +126,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           int iptvCardCount = Convert.ToInt32(setting.Value);
           for (int cardNum = 0; cardNum < iptvCardCount; cardNum++)
           {
-            Log.WriteFile("Detected Elecard IP TV Card " + cardNum);
+            Log.DebugFormat("Detected Elecard IP TV Card " + cardNum);
             TvCardDVBIP card = new TvCardDVBIPElecard(_epgEvents, devices[i], cardNum);
             _cards.Add(card);
           }
@@ -130,7 +139,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           int iptvCardCount = Convert.ToInt32(setting.Value);
           for (int cardNum = 0; cardNum < iptvCardCount; cardNum++)
           {
-            Log.WriteFile("Detected MediaPortal IP TV Card " + cardNum);
+            Log.DebugFormat("Detected MediaPortal IP TV Card " + cardNum);
             TvCardDVBIP card = new TvCardDVBIP(_epgEvents, devices[i], cardNum);
             _cards.Add(card);
           }
@@ -146,13 +155,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         }
         if (devices[i].Name.Equals("Hauppauge HD PVR Crossbar"))
         {
-          Log.WriteFile("Detected Hauppauge HD PVR");
+          Log.DebugFormat("Detected Hauppauge HD PVR");
           TvCardHDPVR card = new TvCardHDPVR(devices[i]);
           _cards.Add(card);
         }
         else if (devices[i].Name.Contains("Hauppauge Colossus Crossbar"))
         {
-          Log.WriteFile("Detected Hauppauge Colossus");
+          Log.DebugFormat("Detected Hauppauge Colossus");
           TvCardHDPVR card = new TvCardHDPVR(devices[i]);
           _cards.Add(card);
         }
@@ -199,7 +208,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           }
           catch (Exception ex)
           {
-            Log.Error("DVBT card detection error: {0}", ex.ToString());
+            Log.ErrorFormat(ex, "DVBT card detection error");
           }
 
           //DVBS
@@ -282,12 +291,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             bool isCablePreferred = false;
             string name = devices[i].Name ?? "unknown";
             name = name.ToLowerInvariant();
-            Log.WriteFile("Found card:{0}", name);
+            Log.DebugFormat("Found card:{0}", name);
             //silicondust work-around for dvb type detection issue. generic provider would always use dvb-t
             if (name.Contains("silicondust hdhomerun tuner"))
             {
               isCablePreferred = CheckHDHomerunCablePrefered(name);
-              Log.WriteFile("silicondust hdhomerun detected - prefer cable mode: {0}", isCablePreferred);
+              Log.DebugFormat("silicondust hdhomerun detected - prefer cable mode: {0}", isCablePreferred);
             }
             IBaseFilter tmp;
             try
@@ -297,7 +306,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             catch (InvalidComObjectException)
             {
               //ignore bad card
-              Log.WriteFile("cannot add filter {0} to graph", devices[i].Name);
+              Log.DebugFormat("cannot add filter {0} to graph", devices[i].Name);
               continue;
             }
             //Use the Microsoft Network Provider method first but only if available
@@ -307,7 +316,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
                                                                            "Microsoft Network Provider");
               if (ConnectFilter(graphBuilder, networkDVB, tmp))
               {
-                Log.WriteFile("Detected DVB card:{0}", name);
+                Log.DebugFormat("Detected DVB card:{0}", name);
                 // determine the DVB card supported GUIDs here!
                 _providerType = networkDVB as ITunerCap;
                 int ulcNetworkTypesMax = 5;
@@ -317,32 +326,32 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
                                                                  pguidNetworkTypes);
                 for (int n = 0; n < pulcNetworkTypes; n++)
                 {
-                  Log.Debug("Detecting type by MSNP {0}: {1}", n, pguidNetworkTypes[n]);
+                  Log.DebugFormat("Detecting type by MSNP {0}: {1}", n, pguidNetworkTypes[n]);
                   //test the first found guid to determine the DVB card type
                   if (pguidNetworkTypes[n] == (typeof(DVBTNetworkProvider).GUID) && !isCablePreferred)
                   {
-                    Log.WriteFile("Detected DVB-T* card:{0}", name);
+                    Log.DebugFormat("Detected DVB-T* card:{0}", name);
                     TvCardDVBT dvbtCard = new TvCardDVBT(_epgEvents, devices[i]);
                     _cards.Add(dvbtCard);
                     connected = true;
                   }
                   else if (pguidNetworkTypes[n] == (typeof(DVBSNetworkProvider).GUID) && !isCablePreferred)
                   {
-                    Log.WriteFile("Detected DVB-S* card:{0}", name);
+                    Log.DebugFormat("Detected DVB-S* card:{0}", name);
                     TvCardDVBS dvbsCard = new TvCardDVBS(_epgEvents, devices[i]);
                     _cards.Add(dvbsCard);
                     connected = true;
                   }
                   else if (pguidNetworkTypes[n] == (typeof(DVBCNetworkProvider).GUID))
                   {
-                    Log.WriteFile("Detected DVB-C* card:{0}", name);
+                    Log.DebugFormat("Detected DVB-C* card:{0}", name);
                     TvCardDVBC dvbcCard = new TvCardDVBC(_epgEvents, devices[i]);
                     _cards.Add(dvbcCard);
                     connected = true;
                   }
                   else if (pguidNetworkTypes[n] == (typeof(ATSCNetworkProvider).GUID))
                   {
-                    Log.WriteFile("Detected ATSC* card:{0}", name);
+                    Log.DebugFormat("Detected ATSC* card:{0}", name);
                     TvCardATSC dvbsCard = new TvCardATSC(_epgEvents, devices[i]);
                     _cards.Add(dvbsCard);
                     connected = true;
@@ -355,13 +364,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
                   }
                   else if (n == (pulcNetworkTypes - 1))
                   {
-                    Log.WriteFile("Connected with generic MS Network Provider however network types don't match, using the original method");
+                    Log.DebugFormat("Connected with generic MS Network Provider however network types don't match, using the original method");
                   }
                 }
               }
               else
               {
-                Log.WriteFile("Not connected with generic MS Network Provider, using the original method");
+                Log.DebugFormat("Not connected with generic MS Network Provider, using the original method");
                 connected = false;
               }
               graphBuilder.RemoveFilter(networkDVB);
@@ -371,25 +380,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             {
               if (ConnectFilter(graphBuilder, networkDVBT, tmp))
               {
-                Log.WriteFile("Detected DVB-T card:{0}", name);
+                Log.DebugFormat("Detected DVB-T card:{0}", name);
                 TvCardDVBT dvbtCard = new TvCardDVBT(_epgEvents, devices[i]);
                 _cards.Add(dvbtCard);
               }
               else if (ConnectFilter(graphBuilder, networkDVBC, tmp))
               {
-                Log.WriteFile("Detected DVB-C card:{0}", name);
+                Log.DebugFormat("Detected DVB-C card:{0}", name);
                 TvCardDVBC dvbcCard = new TvCardDVBC(_epgEvents, devices[i]);
                 _cards.Add(dvbcCard);
               }
               else if (ConnectFilter(graphBuilder, networkDVBS, tmp))
               {
-                Log.WriteFile("Detected DVB-S card:{0}", name);
+                Log.DebugFormat("Detected DVB-S card:{0}", name);
                 TvCardDVBS dvbsCard = new TvCardDVBS(_epgEvents, devices[i]);
                 _cards.Add(dvbsCard);
               }
               else if (ConnectFilter(graphBuilder, networkATSC, tmp))
               {
-                Log.WriteFile("Detected ATSC card:{0}", name);
+                Log.DebugFormat("Detected ATSC card:{0}", name);
                 TvCardATSC dvbsCard = new TvCardATSC(_epgEvents, devices[i]);
                 _cards.Add(dvbsCard);
               }
@@ -412,7 +421,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         string name = devices[i].Name ?? "unknown";
         name = name.ToLowerInvariant();
-        Log.WriteFile("Detected analog card:{0}", name);
+        Log.DebugFormat("Detected analog card:{0}", name);
         TvCardAnalog analogCard = new TvCardAnalog(devices[i]);
         _cards.Add(analogCard);
       }
@@ -429,12 +438,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         bool isCablePreferred = false;
         string name = devices[i].Name ?? "unknown";
         name = name.ToLowerInvariant();
-        Log.WriteFile("Found card:{0}", name);
+        Log.DebugFormat("Found card:{0}", name);
         //silicondust work-around for dvb type detection issue. generic provider would always use dvb-t
         if (name.Contains("silicondust hdhomerun tuner"))
         {
           isCablePreferred = CheckHDHomerunCablePrefered(name);
-          Log.WriteFile("silicondust hdhomerun detected - prefer cable mode: {0}", isCablePreferred);
+          Log.DebugFormat("silicondust hdhomerun detected - prefer cable mode: {0}", isCablePreferred);
         }
         IBaseFilter tmp;
         graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, name, out tmp);
@@ -446,31 +455,31 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         interfaceNetworkProvider.ConfigureLogging(GetFileName(devices[i].DevicePath), hash, LogLevelOption.Debug);
         if (ConnectFilter(graphBuilder, networkDVB, tmp))
         {
-          Log.WriteFile("Detected DVB card:{0}- Hash: {1}", name, hash);
+          Log.DebugFormat("Detected DVB card:{0}- Hash: {1}", name, hash);
           interfaceNetworkProvider.GetAvailableTuningTypes(out tuningTypes);
-          Log.WriteFile("TuningTypes: " + tuningTypes);
+          Log.DebugFormat("TuningTypes: " + tuningTypes);
           // determine the DVB card supported GUIDs here!
           if ((tuningTypes & TuningType.DvbT) != 0 && !isCablePreferred)
           {
-            Log.WriteFile("Detected DVB-T* card:{0}", name);
+            Log.DebugFormat("Detected DVB-T* card:{0}", name);
             TvCardDVBT dvbtCard = new TvCardDVBT(_epgEvents, devices[i]);
             _cards.Add(dvbtCard);
           }
           if ((tuningTypes & TuningType.DvbS) != 0 && !isCablePreferred)
           {
-            Log.WriteFile("Detected DVB-S* card:{0}", name);
+            Log.DebugFormat("Detected DVB-S* card:{0}", name);
             TvCardDVBS dvbsCard = new TvCardDVBS(_epgEvents, devices[i]);
             _cards.Add(dvbsCard);
           }
           if ((tuningTypes & TuningType.DvbC) != 0)
           {
-            Log.WriteFile("Detected DVB-C* card:{0}", name);
+            Log.DebugFormat("Detected DVB-C* card:{0}", name);
             TvCardDVBC dvbcCard = new TvCardDVBC(_epgEvents, devices[i]);
             _cards.Add(dvbcCard);
           }
           if ((tuningTypes & TuningType.Atsc) != 0 && !isCablePreferred)
           {
-            Log.WriteFile("Detected ATSC* card:{0}", name);
+            Log.DebugFormat("Detected ATSC* card:{0}", name);
             TvCardATSC dvbsCard = new TvCardATSC(_epgEvents, devices[i]);
             _cards.Add(dvbsCard);
           }
@@ -495,7 +504,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       string hash = GetHash(devicePath);
       String pathName = PathManager.GetDataPath;
       String fileName = String.Format(@"{0}\Log\NetworkProvider-{1}.log", pathName, hash);
-      Log.WriteFile("NetworkProvider logfilename: " + fileName);
+      Log.DebugFormat("NetworkProvider logfilename: " + fileName);
       Directory.CreateDirectory(Path.GetDirectoryName(fileName));
       return fileName;
     }

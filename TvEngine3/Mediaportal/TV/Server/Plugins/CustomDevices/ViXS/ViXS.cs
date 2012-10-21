@@ -21,7 +21,7 @@
 using System;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.Plugins.CustomDevices.ViXS
 {
@@ -31,6 +31,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ViXS
   /// </summary>
   public class ViXS : Microsoft.Microsoft
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(ViXS)); }
+    }
+
+    #endregion
+
     #region constants
 
     private static readonly Guid BdaExtensionPropertySet = new Guid(0x02779308, 0x77d8, 0x4914, 0x9f, 0x15, 0x7f, 0xa6, 0xe1, 0x55, 0x84, 0xc7);
@@ -91,27 +100,27 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ViXS
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
     {
-      Log.Debug("ViXS: initialising device");
+      Log.DebugFormat("ViXS: initialising device");
 
       if (_isVixs)
       {
-        Log.Debug("ViXS: device is already initialised");
+        Log.DebugFormat("ViXS: device is already initialised");
         return true;
       }
 
       if (tunerType != CardType.Atsc)
       {
-        Log.Debug("ViXS: tuner type {0} is not supported", tunerType);
+        Log.DebugFormat("ViXS: tuner type {0} is not supported", tunerType);
         return false;
       }
       bool result = base.Initialise(tunerFilter, tunerType, tunerDevicePath);
       if (!result)
       {
-        Log.Debug("ViXS: base Microsoft interface not supported");
+        Log.DebugFormat("ViXS: base Microsoft interface not supported");
         return false;
       }
 
-      Log.Debug("ViXS: supported device detected");
+      Log.DebugFormat("ViXS: supported device detected");
       _isVixs = true;
       return true;
     }

@@ -25,7 +25,7 @@ using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using System.Windows.Forms;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
@@ -35,6 +35,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
   /// </summary>
   public partial class CI_Menu_Dialog : SectionSettings
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(CI_Menu_Dialog)); }
+    }
+
+    #endregion
+
     private CiMenuEventHandler _ciMenuEventHandler;
     private CiMenuState ciMenuState = CiMenuState.Closed;
     private int ciMenuChoices = 0;
@@ -120,7 +129,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
       }
     }
 
@@ -142,7 +151,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
       }
     }
 
@@ -163,7 +172,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
       }
     }
 

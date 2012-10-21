@@ -25,7 +25,7 @@ using Mediaportal.TV.Server.TVLibrary.ChannelLinkage;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
@@ -33,7 +33,16 @@ using Mediaportal.TV.Server.TVService.Interfaces.Services;
 namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public class TimeShifter : TimeShifterBase, ITimeShifter
-  {    
+  {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(TimeShifter)); }
+    }
+
+    #endregion
+
     private readonly ChannelLinkageGrabber _linkageGrabber;
     private readonly bool _linkageScannerEnabled;
     private DateTime _timeAudioEvent;
@@ -101,7 +110,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
         return "";
       }
     }
@@ -129,7 +138,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
         return false;
       }
     }
@@ -172,7 +181,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
       }
       return isTimeShifting;
     }
@@ -195,7 +204,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
       }
       return timeShiftStarted;
     }
@@ -236,7 +245,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           }
           else
           {
-            Log.Write("card: StartTimeShifting {0} {1} ", _cardHandler.DataBaseCard.IdCard, fileName);            
+            Log.DebugFormat("card: StartTimeShifting {0} {1} ", _cardHandler.DataBaseCard.IdCard, fileName);            
             
             _cardHandler.UserManagement.RefreshUser(ref user);
             ITvSubChannel subchannel = GetSubChannel(subChannelId);
@@ -244,7 +253,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
             if (subchannel != null)
             {
               _subchannel = subchannel;
-              Log.Write("card: CAM enabled : {0}", _cardHandler.IsConditionalAccessSupported);
+              Log.DebugFormat("card: CAM enabled : {0}", _cardHandler.IsConditionalAccessSupported);
               AttachAudioVideoEventHandler(subchannel);
               if (subchannel.IsTimeShifting)
               {
@@ -266,7 +275,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
             }
             else
             {
-              Log.Info("start subch:{0} No PMT received. Timeshifting failed", subchannel.SubChannelId);
+              Log.InfoFormat("start subch:{0} No PMT received. Timeshifting failed", subchannel.SubChannelId);
               result = TvResult.UnableToStartGraph;
             }
           }
@@ -278,7 +287,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
         result = TvResult.UnknownError;
       }
       finally
@@ -306,7 +315,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         {
           ITvSubChannel subchannel = GetSubChannel(_cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel));
           DetachAudioVideoEventHandler(subchannel);
-          Log.Write("card {2}: StopTimeShifting user:{0} sub:{1}", user.Name, _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel),
+          Log.DebugFormat("card {2}: StopTimeShifting user:{0} sub:{1}", user.Name, _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel),
                     _cardHandler.Card.Name);          
           ResetLinkageScanner();          
           _cardHandler.UserManagement.RemoveUser(user, idChannel);
@@ -315,7 +324,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
       }
       return stop;
     }
@@ -343,7 +352,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
     public void OnBeforeTune()
     {
-      Log.Debug("TimeShifter.OnBeforeTune: resetting audio/video events");
+      Log.DebugFormat("TimeShifter.OnBeforeTune: resetting audio/video events");
       _tuneInProgress = true;
       _eventAudio.Reset();
       _eventVideo.Reset();
@@ -351,7 +360,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
     public void OnAfterTune()
     {
-      Log.Debug("TimeShifter.OnAfterTune: resetting audio/video time");
+      Log.DebugFormat("TimeShifter.OnAfterTune: resetting audio/video time");
       _timeAudioEvent = DateTime.MinValue;
       _timeVideoEvent = DateTime.MinValue;
 
@@ -372,7 +381,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       if (_tuneInProgress)
       {
-        Log.Info("audioVideoEventHandler - tune in progress");
+        Log.InfoFormat("audioVideoEventHandler - tune in progress");
         return;
       }
 
@@ -383,12 +392,12 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         if (ts.TotalMilliseconds > 1000)
         {
           // Avoid repetitive events that are kept for next channel change, so trig only once.
-          Log.Info("audioVideoEventHandler {0}", pidType);
+          Log.InfoFormat("audioVideoEventHandler {0}", pidType);
           _eventAudio.Set();
         }
         else
         {
-          Log.Info("audio last seen at {0}", _timeAudioEvent);
+          Log.InfoFormat("audio last seen at {0}", _timeAudioEvent);
         }
         _timeAudioEvent = DateTime.Now;
       }
@@ -399,12 +408,12 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         if (ts.TotalMilliseconds > 1000)
         {
           // Avoid repetitive events that are kept for next channel change, so trig only once.
-          Log.Info("audioVideoEventHandler {0}", pidType);
+          Log.InfoFormat("audioVideoEventHandler {0}", pidType);
           _eventVideo.Set();
         }
         else
         {
-          Log.Info("video last seen at {0}", _timeVideoEvent);
+          Log.InfoFormat("video last seen at {0}", _timeVideoEvent);
         }
         _timeVideoEvent = DateTime.Now;
       }

@@ -26,7 +26,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.Plugins.CustomDevices.TeVii
 {
@@ -35,6 +35,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TeVii
   /// </summary>
   public class TeVii : BaseCustomDevice, ICustomTuner, IDiseqcDevice
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(TeVii)); }
+    }
+
+    #endregion
+
     #region enums
 
     private enum TeViiPolarisation
@@ -374,24 +383,24 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TeVii
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
     {
-      Log.Debug("TeVii: initialising device");
+      Log.DebugFormat("TeVii: initialising device");
 
       if (String.IsNullOrEmpty(tunerDevicePath))
       {
-        Log.Debug("TeVii: tuner device path is not set");
+        Log.DebugFormat("TeVii: tuner device path is not set");
         return false;
       }
       if (_isTeVii)
       {
-        Log.Debug("TeVii: device is already initialised");
+        Log.DebugFormat("TeVii: device is already initialised");
         return true;
       }
 
       Int32 deviceCount = FindDevices();
-      Log.Debug("TeVii: number of devices = {0}, tuner device path = {1}", deviceCount, tunerDevicePath);
+      Log.DebugFormat("TeVii: number of devices = {0}, tuner device path = {1}", deviceCount, tunerDevicePath);
       if (deviceCount == 0)
       {
-        Log.Debug("TeVii: TeVii devices not present");
+        Log.DebugFormat("TeVii: TeVii devices not present");
         return false;
       }
 
@@ -402,10 +411,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TeVii
         deviceName = Marshal.PtrToStringAnsi(GetDeviceName(deviceIdx));
         devicePath = Marshal.PtrToStringAnsi(GetDevicePath(deviceIdx));
 
-        //Log.Debug("TeVii: compare to {0} {1}", deviceName, devicePath);
+        //Log.DebugFormat("TeVii: compare to {0} {1}", deviceName, devicePath);
         if (devicePath.Equals(tunerDevicePath))
         {
-          Log.Debug("TeVii: device recognised, index = {0}, name = {1}, API version = {2}", deviceIdx, deviceName, GetAPIVersion());
+          Log.DebugFormat("TeVii: device recognised, index = {0}, name = {1}, API version = {2}", deviceIdx, deviceName, GetAPIVersion());
           _deviceIndex = deviceIdx;
           break;
         }
@@ -413,16 +422,16 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TeVii
 
       if (_deviceIndex == -1)
       {
-        Log.Debug("TeVii: device not recognised as a TeVii device");
+        Log.DebugFormat("TeVii: device not recognised as a TeVii device");
         return false;
       }
 
       if (!OpenDevice(_deviceIndex, IntPtr.Zero, IntPtr.Zero))
       {
-        Log.Debug("TeVii: failed to open device");
+        Log.DebugFormat("TeVii: failed to open device");
         return false;
       }
-      Log.Debug("TeVii: supported device detected");
+      Log.DebugFormat("TeVii: supported device detected");
       _isTeVii = true;
       _tunerType = tunerType;
       return true;
@@ -454,16 +463,16 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TeVii
     /// <returns><c>true</c> if the channel is successfully tuned, otherwise <c>false</c></returns>
     public bool Tune(IChannel channel)
     {
-      Log.Debug("TeVii: tune to channel");
+      Log.DebugFormat("TeVii: tune to channel");
 
       if (!_isTeVii || _deviceIndex < 0)
       {
-        Log.Debug("TeVii: device not initialised or interface not supported");
+        Log.DebugFormat("TeVii: device not initialised or interface not supported");
         return false;
       }
       if (!CanTuneChannel(channel))
       {
-        Log.Debug("TeVii: tuning is not supported for this channel");
+        Log.DebugFormat("TeVii: tuning is not supported for this channel");
         return false;
       }
 
@@ -490,11 +499,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TeVii
         Translate(ch.Polarisation), toneOn, Translate(true, ch.ModulationType), Translate(ch.InnerFecRate));
       if (result)
       {
-        Log.Debug("TeVii: result = success");
+        Log.DebugFormat("TeVii: result = success");
       }
       else
       {
-        Log.Debug("TeVii: result = failure");
+        Log.DebugFormat("TeVii: result = failure");
       }
 
       // Reset the tone state to auto. SetToneState() must be called again to override the default logic.
@@ -518,16 +527,16 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TeVii
     /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
     public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
     {
-      Log.Debug("TeVii: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
+      Log.DebugFormat("TeVii: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
 
       if (!_isTeVii || _deviceIndex < 0)
       {
-        Log.Debug("TeVii: device not initialised or interface not supported");
+        Log.DebugFormat("TeVii: device not initialised or interface not supported");
         return false;
       }
 
       _toneState = tone22kState;
-      Log.Debug("TeVii: result = success");
+      Log.DebugFormat("TeVii: result = success");
       return true;
     }
 
@@ -538,27 +547,27 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TeVii
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
     public bool SendCommand(byte[] command)
     {
-      Log.Debug("TeVii: send DiSEqC command");
+      Log.DebugFormat("TeVii: send DiSEqC command");
 
       if (!_isTeVii || _deviceIndex < 0)
       {
-        Log.Debug("TeVii: device not initialised or interface not supported");
+        Log.DebugFormat("TeVii: device not initialised or interface not supported");
         return false;
       }
       if (command == null || command.Length == 0)
       {
-        Log.Debug("TeVii: command not supplied");
+        Log.DebugFormat("TeVii: command not supplied");
         return true;
       }
 
       bool result = SendDiSEqC(_deviceIndex, command, command.Length, 0, false);
       if (result)
       {
-        Log.Debug("TeVii: result = success");
+        Log.DebugFormat("TeVii: result = success");
         return true;
       }
 
-      Log.Debug("TeVii: result = failure");
+      Log.DebugFormat("TeVii: result = failure");
       return false;
     }
 

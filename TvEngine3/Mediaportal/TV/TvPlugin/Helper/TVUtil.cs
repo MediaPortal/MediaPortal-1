@@ -24,6 +24,7 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.Linq;
 using System.Text;
+using MediaPortal.Common.Utils;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -48,6 +49,15 @@ namespace Mediaportal.TV.TvPlugin.Helper
   /// </summary>
   public class TVUtil
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+      get { return LogHelper.GetLogger(typeof(TVUtil)); }
+    }
+
+    #endregion
+
     #region vars
 
     private int _days;
@@ -93,7 +103,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
       }
       catch (Exception ex)
       {
-        Log.Error("TVUtil.SetGentleConfigFile: Error occured while setting the gentle configuration store: {0}", ex);
+        Log.ErrorFormat("TVUtil.SetGentleConfigFile: Error occured while setting the gentle configuration store: {0}", ex);
         throw;
       }
     }
@@ -365,7 +375,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
       bool useRTSP = TVHome.UseRTSP();
       string chapters = useRTSP ? ServiceAgents.Instance.ControllerServiceAgent.GetRecordingChapters(rec.IdRecording) : null;
 
-      Log.Info("PlayRecording:{0} - using rtsp mode:{1}", fileName, useRTSP);
+      Log.InfoFormat("PlayRecording:{0} - using rtsp mode:{1}", fileName, useRTSP);
       if (g_Player.Play(fileName, mediaType, chapters))
       {
         if (Utils.IsVideo(fileName) && !g_Player.IsRadio)
@@ -728,7 +738,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
         GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_YES_NO);
         if (null == dlgYesNo)
         {
-          Log.Error("TVProgramInfo.DeleteRecordingPrompt: ERROR no GUIDialogYesNo found !!!!!!!!!!");
+          Log.ErrorFormat("TVProgramInfo.DeleteRecordingPrompt: ERROR no GUIDialogYesNo found !!!!!!!!!!");
         }
         else
         {
@@ -791,7 +801,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (null == dlgYesNo)
       {
-        Log.Error("TVProgramInfo.DeleteRecordingPrompt: ERROR no GUIDialogYesNo found !!!!!!!!!!");
+        Log.ErrorFormat("TVProgramInfo.DeleteRecordingPrompt: ERROR no GUIDialogYesNo found !!!!!!!!!!");
       }
       else
       {

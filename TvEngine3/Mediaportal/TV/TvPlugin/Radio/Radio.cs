@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using MediaPortal.Common.Utils;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -42,6 +43,14 @@ namespace Mediaportal.TV.TvPlugin.Radio
   [PluginIcons("Resources\\TvPlugin.Radio.gif", "Resources\\TvPlugin.Radio_disabled.gif")]
   public class Radio : WindowPluginBase, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+      get { return LogHelper.GetLogger(typeof(Radio)); }
+    }
+
+    #endregion
     #region constants    
 
     #endregion
@@ -249,7 +258,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
     public override void OnAdded()
     {
-      Log.Info("RadioHome:OnAdded");
+      Log.InfoFormat("RadioHome:OnAdded");
 
       LoadSettings();
       LoadChannelGroups();
@@ -257,7 +266,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
     protected override void OnPageLoad()
     {
-      Log.Info("RadioHome:OnPageLoad");
+      Log.InfoFormat("RadioHome:OnPageLoad");
       base.OnPageLoad();
       GUIMessage msgStopRecorder = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP, 0, 0, 0, 0, 0, null);
       GUIWindowManager.SendMessage(msgStopRecorder);      
@@ -330,7 +339,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
     protected override void OnClick(int iItem)
     {
-      Log.Info("OnClick");
+      Log.InfoFormat("OnClick");
       GUIListItem item = facadeLayout[iItem];
       if (item.MusicTag == null)
       {

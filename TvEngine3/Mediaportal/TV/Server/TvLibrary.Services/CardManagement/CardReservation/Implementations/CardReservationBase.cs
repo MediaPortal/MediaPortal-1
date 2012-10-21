@@ -30,7 +30,7 @@ using Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation;
 using Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Ticket;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Services;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.CardReservation;
@@ -46,7 +46,16 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
   #endregion
 
   public abstract class CardReservationBase : ICardReservation
-  {            
+  {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(CardReservationBase)); }
+    }
+
+    #endregion
+
     #region events & delegates
 
     public delegate TvResult StartCardTuneDelegate(ref IUser user, ref string fileName, int idChannel);
@@ -67,24 +76,24 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
     {
       try
       {
-        Log.Write(@"Controller: delete timeshift files {0}\{1}", folder, fileName);
+        Log.DebugFormat(@"Controller: delete timeshift files {0}\{1}", folder, fileName);
         string[] files = Directory.GetFiles(folder);
         foreach (string t in files.Where(t => t.IndexOf(fileName) >= 0)) 
         {
           try
           {
-            Log.Write("Controller:   delete {0}", t);
+            Log.DebugFormat("Controller:   delete {0}", t);
             File.Delete(t);
           }
           catch (Exception e)
           {
-            Log.Debug("Controller: Error \"{0}\" on delete in CleanTimeshiftFiles", e.Message);
+            Log.DebugFormat("Controller: Error \"{0}\" on delete in CleanTimeshiftFiles", e.Message);
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
       }
     }
 
@@ -133,7 +142,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
       {
         if (isTuningPending && ticketFound)
         {
-          Log.Debug("CardReservationBase: tvcard={0}, user={1}, dbChannel={2}, ticket={3}, tunestate={4}, stopstate={5}", tvcard.DataBaseCard.IdCard, user.Name, dbChannel.IdChannel, ticket.Id, tvcard.Tuner.CardTuneState, tvcard.Tuner.CardStopState);
+          Log.DebugFormat("CardReservationBase: tvcard={0}, user={1}, dbChannel={2}, ticket={3}, tunestate={4}, stopstate={5}", tvcard.DataBaseCard.IdCard, user.Name, dbChannel.IdChannel, ticket.Id, tvcard.Tuner.CardTuneState, tvcard.Tuner.CardStopState);
           tvResult = tvcard.Tuner.CardTune(ref user, channel, dbChannel);
 
           if (tvResult == TvResult.Succeeded)
@@ -362,17 +371,17 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
 
       if (cardTuneReservationTicket != null)
       {
-        Log.Debug("CardReservationBase.RequestCardTuneReservation: placed reservation with id={0}, tuningdetails={1}", cardTuneReservationTicket.Id, cardTuneReservationTicket.TuningDetail);
+        Log.DebugFormat("CardReservationBase.RequestCardTuneReservation: placed reservation with id={0}, tuningdetails={1}", cardTuneReservationTicket.Id, cardTuneReservationTicket.TuningDetail);
       }
       else
       {
         if (ticketId > 0)
         {
-          Log.Debug("CardReservationBase.RequestCardTuneReservation: failed reservation tuningdetails={0}, res id blocking={1}, state={2}", tuningDetail, ticketId, cardTuneState);
+          Log.DebugFormat("CardReservationBase.RequestCardTuneReservation: failed reservation tuningdetails={0}, res id blocking={1}, state={2}", tuningDetail, ticketId, cardTuneState);
         }
         else
         {
-          Log.Debug("CardReservationBase.RequestCardTuneReservation: failed reservation tuningdetails={0}, res id blocking={1}, state={2}", tuningDetail, "n/a", cardTuneState);          
+          Log.DebugFormat("CardReservationBase.RequestCardTuneReservation: failed reservation tuningdetails={0}, res id blocking={1}, state={2}", tuningDetail, "n/a", cardTuneState);          
         }
       }              
       return cardTuneReservationTicket;
@@ -423,7 +432,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
       if (blockingUser != null)
       {
         hasUserHigherPriority = (user.Priority > blockingUser.Priority);
-        Log.Debug("CardReservationBase.HasUserHigherPriorityThanBlockingUser: {0} - user '{1}' with prio={2} vs blocking user '{3}' with prio={4}", hasUserHigherPriority,
+        Log.DebugFormat("CardReservationBase.HasUserHigherPriorityThanBlockingUser: {0} - user '{1}' with prio={2} vs blocking user '{3}' with prio={4}", hasUserHigherPriority,
           user.Name, user.Priority, blockingUser.Name, blockingUser.Priority);
       }
 

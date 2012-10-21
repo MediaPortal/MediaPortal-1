@@ -63,6 +63,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       if (tuningDetails)
       {
         query = query.Include(c => c.TuningDetails);
+        query = query.Include(c => c.TuningDetails.Select(l => l.LnbType));
       }
 
       if (channelLinkMapsChannelLink)
@@ -99,6 +100,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       IQueryable<Channel> includeRelations =
         query.          
           Include(c => c.TuningDetails).
+          Include(c => c.TuningDetails.Select(l=>l.LnbType)).
           Include(c => c.ChannelMaps).
           Include(c => c.ChannelMaps.Select(card => card.Card)).
           Include(c => c.GroupMaps).

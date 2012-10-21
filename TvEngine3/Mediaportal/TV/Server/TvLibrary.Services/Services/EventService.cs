@@ -8,7 +8,7 @@ using Mediaportal.TV.Server.TVControl.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Services
 {
@@ -21,6 +21,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
   [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, ConcurrencyMode = ConcurrencyMode.Multiple)]
   public class EventService : IEventService, IDisposable
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(EventService)); }
+    }
+
+    #endregion
+
     private static readonly IDictionary<string, Subscriber> _subscribers = new ConcurrentDictionary<string, Subscriber>();
     private static readonly object _subscribersLock = new object();
 
@@ -58,14 +67,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     /// <filterpriority>2</filterpriority>
     public void Dispose()
     {
-      Log.Debug("EventService.Dispose");
+      Log.DebugFormat("EventService.Dispose");
     }
 
     #endregion
 
     public void Subscribe(string username)
     {
-      Log.Debug("EventService.Subscribe user:{0}", username);
+      Log.DebugFormat("EventService.Subscribe user:{0}", username);
       bool alreadySubscribed;
       lock (_subscribersLock)
       {
@@ -93,14 +102,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
         }
         catch (Exception e)
         {
-          Log.Error("EventService.Subscribe failed for user '{0}' with ex '{1}'", username, e);
+          Log.ErrorFormat("EventService.Subscribe failed for user '{0}' with ex '{1}'", username, e);
         }
       }      
     }
 
     public void Unsubscribe(string username)
     {
-      Log.Debug("EventService.Unsubscribe user:{0}", username);
+      Log.DebugFormat("EventService.Unsubscribe user:{0}", username);
       Subscriber subscriber;
       bool found;
       lock (_subscribersLock)
@@ -115,13 +124,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 
     private static void EventService_Faulted(object sender, EventArgs e)
     {
-      Log.Debug("EventService.EventService_Faulted");
+      Log.DebugFormat("EventService.EventService_Faulted");
       FireUserDisconnectedFromService(sender as IServerEventCallback);
     }
 
     private static void EventService_Closed(object sender, EventArgs e)
     {
-      Log.Debug("EventService.EventService_Closed");
+      Log.DebugFormat("EventService.EventService_Closed");
       FireUserDisconnectedFromService(sender as IServerEventCallback);
     }
 
@@ -156,7 +165,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
             {
               if (_subscribers.ContainsKey(username))
               {
-                Log.Debug("EventService.FireUserDisconnectedFromService user:{0}", username);
+                Log.DebugFormat("EventService.FireUserDisconnectedFromService user:{0}", username);
                 _subscribers.Remove(username);
               }
             }
@@ -201,14 +210,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
                       }
                       catch (Exception ex)
                       {
-                        Log.Error("EventService.EndOnCallbackTvServerEvent failed for user:{0} ex:{1}", username, ex);
+                        Log.ErrorFormat("EventService.EndOnCallbackTvServerEvent failed for user:{0} ex:{1}", username, ex);
                       }
                     },
                     null);
                   }
                   catch (Exception ex)
                   {
-                    Log.Error("EventService.BeginOnCallbackTvServerEvent failed for user:{0} ex:{1}", username, ex);        
+                    Log.ErrorFormat("EventService.BeginOnCallbackTvServerEvent failed for user:{0} ex:{1}", username, ex);        
                   }
                 }
               );             
@@ -221,7 +230,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       }
       catch (Exception ex)
       {
-        Log.Error("EventService.CallbackTvServerEvent failed for user:{0} ex:{1}", username, ex);
+        Log.ErrorFormat("EventService.CallbackTvServerEvent failed for user:{0} ex:{1}", username, ex);
       }      
     }
 
@@ -255,7 +264,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
                                                           }
                                                           catch (Exception ex)
                                                           {
-                                                            Log.Error(
+                                                            Log.ErrorFormat(
                                                               "EventService.EndOnCallbackCiMenuEvent failed for user:{0} ex:{1}",
                                                               username, ex);
                                                           }
@@ -264,7 +273,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
                 }
                 catch (Exception ex)
                 {                  
-                  Log.Error("EventService.BeginOnCallbackCiMenuEvent failed for user:{0} ex:{1}", username, ex);
+                  Log.ErrorFormat("EventService.BeginOnCallbackCiMenuEvent failed for user:{0} ex:{1}", username, ex);
                 }
               }
              ); 
@@ -277,7 +286,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       }
       catch (Exception ex)
       {
-        Log.Error("EventService.CallbackCiMenuEvent failed for user:{0} ex:{1}", username, ex);
+        Log.ErrorFormat("EventService.CallbackCiMenuEvent failed for user:{0} ex:{1}", username, ex);
       }   
     }
 
@@ -312,7 +321,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
                                                         }
                                                         catch (Exception ex)
                                                         {
-                                                          Log.Error(
+                                                          Log.ErrorFormat(
                                                             "EventService.EndOnCallbackHeartBeatEvent failed for user:{0} ex:{1}",
                                                             username, ex);
                                                         }
@@ -321,7 +330,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
                 }
                 catch (Exception ex)
                 {
-                  Log.Error("EventService.BeginOnCallbackHeartBeatEvent failed for user:{0} ex:{1}", username, ex);
+                  Log.ErrorFormat("EventService.BeginOnCallbackHeartBeatEvent failed for user:{0} ex:{1}", username, ex);
                 }
               }
              ); 
@@ -336,7 +345,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       }
       catch (Exception ex)
       {
-        Log.Error("EventService.CallbackRequestHeartbeat failed for user:{0} ex:{1}", username, ex);                
+        Log.ErrorFormat("EventService.CallbackRequestHeartbeat failed for user:{0} ex:{1}", username, ex);                
       }
       
       return heartbeatSent;

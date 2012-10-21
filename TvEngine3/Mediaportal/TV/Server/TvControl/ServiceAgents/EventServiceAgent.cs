@@ -4,12 +4,22 @@ using Mediaportal.TV.Server.TVControl.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 {
   public class EventServiceAgent : ServiceAgent<IEventService>, IEventService, IServerEventCallback
   {
+
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(EventServiceAgent)); }
+    }
+
+    #endregion
+
     #region events & delegates
 
     public delegate void HeartbeatRequestReceivedDelegate();
@@ -137,7 +147,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
                                           }
                                           catch (Exception ex)
                                           {
-                                            Log.Error("BeginOnCallbackTvServerEvent exception : {0}", ex);
+                                            Log.ErrorFormat("BeginOnCallbackTvServerEvent exception : {0}", ex);
                                           }                
                                         };
       try
@@ -159,7 +169,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       }
       catch (Exception ex)
       {
-        Log.Error("EndOnCallbackTvServerEvent exception : {0}", ex);
+        Log.ErrorFormat("EndOnCallbackTvServerEvent exception : {0}", ex);
       }              
     }
 
@@ -176,7 +186,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
         }
         catch (Exception ex)
         {
-          Log.Error("BeginOnCallbackCiMenuEvent exception : {0}", ex);
+          Log.ErrorFormat("BeginOnCallbackCiMenuEvent exception : {0}", ex);
         }        
       };
       return act.BeginInvoke(menu, callback, asyncState); 
@@ -191,7 +201,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       }
       catch (Exception ex)
       {
-        Log.Error("EndOnCallbackCiMenuEvent exception : {0}", ex);
+        Log.ErrorFormat("EndOnCallbackCiMenuEvent exception : {0}", ex);
       }        
     }
 
@@ -207,7 +217,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
           }
           catch (Exception ex)
           {
-            Log.Error("BeginOnCallbackHeartBeatEvent exception : {0}", ex);
+            Log.ErrorFormat("BeginOnCallbackHeartBeatEvent exception : {0}", ex);
           }          
         }
       };
@@ -223,7 +233,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       }
       catch (Exception ex)
       {
-        Log.Error("EndOnCallbackHeartBeatEvent exception : {0}", ex);
+        Log.ErrorFormat("EndOnCallbackHeartBeatEvent exception : {0}", ex);
       }                
     }
 

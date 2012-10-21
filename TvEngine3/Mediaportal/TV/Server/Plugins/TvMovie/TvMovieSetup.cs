@@ -29,7 +29,7 @@ using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.Plugins.TvMovie
 {
@@ -217,7 +217,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
               }
               catch (Exception exstat)
               {
-                Log.Info("TvMovieSetup: Error loading TV Movie station - {0}", exstat.Message);
+                Log.InfoFormat("TvMovieSetup: Error loading TV Movie station - {0}", exstat.Message);
               }
             }
           }
@@ -241,7 +241,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
           }
           catch (Exception exdb)
           {
-            Log.Info("TvMovieSetup: Error loading MP's channels from database - {0}", exdb.Message);
+            Log.InfoFormat("TvMovieSetup: Error loading MP's channels from database - {0}", exdb.Message);
           }
           finally
           {
@@ -250,7 +250,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         }
         catch (Exception ex)
         {
-          Log.Info("TvMovieSetup: Unhandled error in  LoadStations - {0}\n{1}", ex.Message, ex.StackTrace);
+          Log.InfoFormat("TvMovieSetup: Unhandled error in  LoadStations - {0}\n{1}", ex.Message, ex.StackTrace);
         }
       }
     }
@@ -318,17 +318,17 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
           mapping.Remove();
       }
       else
-        Log.Info("TvMovieSetup: SaveMapping - no mappingList items");
+        Log.InfoFormat("TvMovieSetup: SaveMapping - no mappingList items");
 
       
 
       foreach (TreeNode channel in treeViewMpChannels.Nodes)
       {
-        //Log.Debug("TvMovieSetup: Processing channel {0}", channel.Text);
+        //Log.DebugFormat("TvMovieSetup: Processing channel {0}", channel.Text);
         foreach (TreeNode station in channel.Nodes)
         {
           ChannelInfo channelInfo = (ChannelInfo)station.Tag;
-          //Log.Debug("TvMovieSetup: Processing channelInfo {0}", channelInfo.Name);
+          //Log.DebugFormat("TvMovieSetup: Processing channelInfo {0}", channelInfo.Name);
           TvMovieMapping mapping = null;
           try
           {
@@ -337,17 +337,17 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
           }
           catch (Exception exm)
           {
-            Log.Error("TvMovieSetup: Error on new TvMovieMapping for channel {0} - {1}", channel.Text, exm.Message);
+            Log.ErrorFormat("TvMovieSetup: Error on new TvMovieMapping for channel {0} - {1}", channel.Text, exm.Message);
           }
-          //Log.Write("TvMovieSetup: SaveMapping - new mapping for {0}/{1}", channel.Text, channelInfo.Name);
+          //Log.DebugFormat("TvMovieSetup: SaveMapping - new mapping for {0}/{1}", channel.Text, channelInfo.Name);
           try
           {
-            Log.Debug("TvMovieSetup: Persisting TvMovieMapping for channel {0}", channel.Text);
+            Log.DebugFormat("TvMovieSetup: Persisting TvMovieMapping for channel {0}", channel.Text);
             mapping.Persist();
           }
           catch (Exception ex)
           {
-            Log.Error("TvMovieSetup: Error on mapping.Persist() {0},{1}", ex.Message, ex.StackTrace);
+            Log.ErrorFormat("TvMovieSetup: Error on mapping.Persist() {0},{1}", ex.Message, ex.StackTrace);
           }
         }
       }
@@ -405,22 +405,22 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
                     }
                   }
                   else
-                    Log.Debug("TVMovie plugin: Channel {0} no longer present in Database - ignoring", stationName);
+                    Log.DebugFormat("TVMovie plugin: Channel {0} no longer present in Database - ignoring", stationName);
                 }
               }
               catch (Exception exInner)
               {
-                Log.Debug("TVMovie plugin: Mapping of station {0} failed; maybe it has been deleted / changed ({1})",
+                Log.DebugFormat("TVMovie plugin: Mapping of station {0} failed; maybe it has been deleted / changed ({1})",
                           MpChannelName, exInner.Message);
               }
             }
           }
           else
-            Log.Debug("TVMovie plugin: LoadMapping did not find any mapped channels");
+            Log.DebugFormat("TVMovie plugin: LoadMapping did not find any mapped channels");
         }
         catch (Exception ex)
         {
-          Log.Debug("TVMovie plugin: LoadMapping failed - {0},{1}", ex.Message, ex.StackTrace);
+          Log.DebugFormat("TVMovie plugin: LoadMapping failed - {0},{1}", ex.Message, ex.StackTrace);
         }
         ColorTree();
       }
@@ -442,7 +442,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
               return MpNode;
           }
           else
-            Log.Debug("TVMovie plugin: FindChannel failed - no Channel in Node tag of {0}", MpNode.Text);
+            Log.DebugFormat("TVMovie plugin: FindChannel failed - no Channel in Node tag of {0}", MpNode.Text);
         }
       return null;
     }
@@ -626,7 +626,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
                           "Please make sure a supported TV Movie Clickfinder release has been successfully installed.",
                           "Error loading TV Movie stations", MessageBoxButtons.OK, MessageBoxIcon.Error);
           checkBoxEnableImport.Checked = false;
-          Log.Info("TVMovie plugin: Error enabling TV Movie import in LoadStations() - {0},{1}", ex1.Message,
+          Log.InfoFormat("TVMovie plugin: Error enabling TV Movie import in LoadStations() - {0},{1}", ex1.Message,
                    ex1.StackTrace);
           return;
         }
@@ -640,7 +640,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
           MessageBox.Show(this, "Please make sure your using a valid channel mapping.",
                           "Error loading TVM <-> MP channel mapping", MessageBoxButtons.OK, MessageBoxIcon.Error);
           checkBoxEnableImport.Checked = false;
-          Log.Info("TVMovie plugin: Error enabling TV Movie import in LoadMapping() - {0},{1}", ex2.Message,
+          Log.InfoFormat("TVMovie plugin: Error enabling TV Movie import in LoadMapping() - {0},{1}", ex2.Message,
                    ex2.StackTrace);
           return;
         }
@@ -672,7 +672,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       }
       catch (Exception ex2)
       {
-        Log.Error("TVMovie: Error spawing import thread - {0},{1}", ex2.Message, ex2.StackTrace);
+        Log.ErrorFormat("TVMovie: Error spawing import thread - {0},{1}", ex2.Message, ex2.StackTrace);
         buttonImportNow.Enabled = true;
       }
     }
@@ -690,8 +690,8 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       }
       catch (Exception ex)
       {
-        Log.Info("TvMovie plugin error:");
-        Log.Write(ex);
+        Log.InfoFormat("TvMovie plugin error:");
+        Log.ErrorFormat(ex, "");
         buttonImportNow.Enabled = true;
       }
     }

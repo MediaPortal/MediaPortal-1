@@ -4,12 +4,16 @@ using System.Data;
 using System.Data.Common;
 using System.Data.Entity.Infrastructure;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 {
   internal class UnitOfWork : IUnitOfWork
   {
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(UnitOfWork)); }
+    }
     private DbTransaction _transaction;
     private readonly ObjectContext _objectContext;
 
@@ -91,7 +95,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       }
 
       string traceString = _objectContext.ToTraceString();
-      Log.Debug("EF SaveChanges SQL = {0}", traceString);
+      Log.DebugFormat("EF SaveChanges SQL = {0}", traceString);
 
       _objectContext.SaveChanges();
     }

@@ -53,10 +53,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="log4net">
-      <HintPath>..\..\ExternalBinaries\log4net.dll</HintPath>
-    </Reference>
+  <ItemGroup>        
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -107,11 +104,6 @@
     <Compile Include="Interfaces\ITvSubChannel.cs" />
     <Compile Include="Interfaces\IVideoStream.cs" />
     <Compile Include="Interfaces\TvPluginCallback.cs" />
-    <Compile Include="Logging\FileLogger.cs" />
-    <Compile Include="Logging\ILogger.cs" />
-    <Compile Include="Logging\Log.cs" />
-    <Compile Include="Logging\Log4netLogger.cs" />
-    <Compile Include="Logging\LogLevel.cs" />
     <Compile Include="PathManager.cs" />
     <Compile Include="RtspClient.cs" />
     <Compile Include="ScanParameters.cs" />
@@ -166,6 +158,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
+      <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
+      <Name>Common.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>

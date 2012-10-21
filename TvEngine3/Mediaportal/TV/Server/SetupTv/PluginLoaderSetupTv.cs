@@ -26,7 +26,7 @@ using Mediaportal.TV.Server.Plugins.Base;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.SetupTV
@@ -46,7 +46,7 @@ namespace Mediaportal.TV.Server.SetupTV
       }
       catch (Exception ex)
       {
-        Log.Error("PluginLoaderSetupTv.Load - could not load plugins {0}", ex);
+        Log.ErrorFormat("PluginLoaderSetupTv.Load - could not load plugins {0}", ex);
       }
     }
 

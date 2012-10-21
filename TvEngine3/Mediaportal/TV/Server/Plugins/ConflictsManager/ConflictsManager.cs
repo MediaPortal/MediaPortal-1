@@ -35,7 +35,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.Plugins.ConflictsManager
@@ -43,6 +43,15 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
   [Interceptor("PluginExceptionInterceptor")]
   public class ConflictsManager : ITvServerPlugin
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(ConflictsManager)); }
+    }
+
+    #endregion
+
     #region variables
 
     private IList<Schedule> _schedules = null;
@@ -96,7 +105,7 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
     /// </summary>
     public void Start(IInternalControllerService controllerService)
     {
-      Log.WriteFile("plugin: ConflictsManager started");
+      Log.DebugFormat("plugin: ConflictsManager started");
 
       _schedules = ScheduleManagement.ListAllSchedules();
       _cards = CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
@@ -111,7 +120,7 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
     /// </summary>
     public void Stop()
     {
-      Log.WriteFile("plugin: ConflictsManager stopped");
+      Log.DebugFormat("plugin: ConflictsManager stopped");
       ClearConflictTable();
       ClearConflictPrograms();
 
@@ -153,7 +162,7 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
     /// </summary>
     public void UpdateConflicts()
     {
-      Log.Info("ConflictManager: Updating conflicts list");
+      Log.InfoFormat("ConflictManager: Updating conflicts list");
       DateTime startUpdate = DateTime.Now;
       TimeSpan ts;
       // hmm... 
@@ -181,20 +190,20 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
       /*
       if (cmDebug)
       {
-        foreach (Schedule schedule in scheduleOnceList) Log.Debug("Record Once schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
-        Log.Debug("------------------------------------------------");
-        foreach (Schedule schedule in scheduleDailyList) Log.Debug("Daily schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
-        Log.Debug("------------------------------------------------");
-        foreach (Schedule schedule in scheduleWeeklyList) Log.Debug("Weekly schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
-        Log.Debug("------------------------------------------------");
-        foreach (Schedule schedule in scheduleWeekendsList) Log.Debug("Weekend schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
-        Log.Debug("------------------------------------------------");
-        foreach (Schedule schedule in scheduleWorkingDaysList) Log.Debug("Working days schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
-        Log.Debug("------------------------------------------------");
-        foreach (Schedule schedule in scheduleEveryTimeEveryChannelList) Log.Debug("Evry time on evry chan. schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
-        Log.Debug("------------------------------------------------");
-        foreach (Schedule schedule in scheduleEveryTimeThisChannelList) Log.Debug("Evry time on this chan. schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
-        Log.Debug("------------------------------------------------");
+        foreach (Schedule schedule in scheduleOnceList) Log.DebugFormat("Record Once schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
+        Log.DebugFormat("------------------------------------------------");
+        foreach (Schedule schedule in scheduleDailyList) Log.DebugFormat("Daily schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
+        Log.DebugFormat("------------------------------------------------");
+        foreach (Schedule schedule in scheduleWeeklyList) Log.DebugFormat("Weekly schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
+        Log.DebugFormat("------------------------------------------------");
+        foreach (Schedule schedule in scheduleWeekendsList) Log.DebugFormat("Weekend schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
+        Log.DebugFormat("------------------------------------------------");
+        foreach (Schedule schedule in scheduleWorkingDaysList) Log.DebugFormat("Working days schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
+        Log.DebugFormat("------------------------------------------------");
+        foreach (Schedule schedule in scheduleEveryTimeEveryChannelList) Log.DebugFormat("Evry time on evry chan. schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
+        Log.DebugFormat("------------------------------------------------");
+        foreach (Schedule schedule in scheduleEveryTimeThisChannelList) Log.DebugFormat("Evry time on this chan. schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
+        Log.DebugFormat("------------------------------------------------");
        * 
       }*/
 
@@ -202,12 +211,12 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
 
       scheduleList.Clear();
       ts = DateTime.Now - startUpdate;
-      Log.Info("Schedules List built {0} ms", ts.TotalMilliseconds);
+      Log.InfoFormat("Schedules List built {0} ms", ts.TotalMilliseconds);
       // try to assign all schedules to existing cards
-      if (cmDebug) Log.Debug("Calling assignSchedulestoCards with {0} schedules", scheduleListToParse.Count);
+      if (cmDebug) Log.DebugFormat("Calling assignSchedulestoCards with {0} schedules", scheduleListToParse.Count);
       List<Schedule>[] assignedList = AssignSchedulesToCards(scheduleListToParse);
       ts = DateTime.Now - startUpdate;
-      Log.Info("ConflictManager: Update done within {0} ms", ts.TotalMilliseconds);
+      Log.InfoFormat("ConflictManager: Update done within {0} ms", ts.TotalMilliseconds);
       //List<Conflict> _conflicts = new List<Conflict>();
     }
 

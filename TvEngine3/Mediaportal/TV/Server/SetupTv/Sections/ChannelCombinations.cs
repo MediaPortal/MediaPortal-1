@@ -30,7 +30,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Simmetrics;
 
 
@@ -38,6 +38,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class ChannelCombinations : SectionSettings
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(ChannelCombinations)); }
+    }
+
+    #endregion
+
     public class CardInfo
     {
       protected Card _card;
@@ -361,7 +370,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             {
               if (!enableDVBS2 && (tDetail.Pilot > -1 || tDetail.RollOff > -1))
               {
-                Log.Debug(String.Format(
+                Log.DebugFormat(String.Format(
                   "Imported channel {0} detected as DVB-S2. Skipped! \n Enable \"DVB-S2 tuning\" option in your TV-Card properties to be able to combine these channels.",
                   tDetail.Name));
               }

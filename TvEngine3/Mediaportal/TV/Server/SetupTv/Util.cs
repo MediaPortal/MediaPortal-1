@@ -35,7 +35,7 @@ using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Presentation;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Microsoft.Win32;
 using Version = System.Version;
 
@@ -46,6 +46,15 @@ namespace Mediaportal.TV.Server.SetupTV
   /// </summary>
   public class Utils
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(Utils)); }
+    }
+
+    #endregion
+
     [DllImport("kernel32.dll")]
     private static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, out UInt64 lpFreeBytesAvailable,
                                                   out UInt64 lpTotalNumberOfBytes, out UInt64 lpTotalNumberOfFreeBytes);
@@ -800,13 +809,13 @@ namespace Mediaportal.TV.Server.SetupTV
         {
           if (CheckFileVersion(dllPath, "6.5.2710.2732", out aParamVersion))
             validDllFound = true;
-          Log.Info("Util: Version of installed Psisdecd.dll: {0} Path: {1}", aParamVersion.ToString(),
+          Log.InfoFormat("Util: Version of installed Psisdecd.dll: {0} Path: {1}", aParamVersion.ToString(),
                                  dllPath);
           if (aParamVersion > mostRecentVer)
             mostRecentVer = aParamVersion;
         }
         else
-          Log.Info("Util: Registered Psisdecd.dll does not exist in path: {0}", dllPath);
+          Log.InfoFormat("Util: Registered Psisdecd.dll does not exist in path: {0}", dllPath);
       }
       if (!validDllFound)
       {
@@ -826,7 +835,7 @@ namespace Mediaportal.TV.Server.SetupTV
           if (dllPaths.Count < 1)
             ErrorMsg = "Psisdecd.dll may not be registered properly! \nPlease check our Wiki's requirements page.";
 
-          Log.Info("Util: Psisdecd.dll error - {0}", ErrorMsg);
+          Log.InfoFormat("Util: Psisdecd.dll error - {0}", ErrorMsg);
           if (
             MessageBox.Show(ErrorMsg, "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OKCancel,
                             MessageBoxIcon.Exclamation) == DialogResult.OK)
@@ -1042,7 +1051,7 @@ namespace Mediaportal.TV.Server.SetupTV
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
       }
     }
 

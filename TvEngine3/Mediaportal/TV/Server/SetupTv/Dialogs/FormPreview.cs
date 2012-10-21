@@ -26,7 +26,7 @@ using Mediaportal.TV.Server.SetupTV.Sections;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVService;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
@@ -36,6 +36,16 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class FormPreview : MPForm
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(FormPreview)); }
+    }
+
+    #endregion
+
+
     private Channel _channel;
     private IVirtualCard _card;
     private Player _player;
@@ -64,7 +74,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         return DialogResult.None;
       }
 
-      Log.Info("preview {0} user:{1} {2} {3} {4}", _channel.DisplayName, user.CardId, "n/a", user.Name,
+      Log.InfoFormat("preview {0} user:{1} {2} {3} {4}", _channel.DisplayName, user.CardId, "n/a", user.Name,
                _card.TimeShiftFileName);
       _player = new Player();
       _player.Play(_card.TimeShiftFileName, this);

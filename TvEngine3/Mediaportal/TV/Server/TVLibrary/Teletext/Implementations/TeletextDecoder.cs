@@ -149,12 +149,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
               continue;
             }
              */
-            //Log.Write("Packet Number:{0}, type:{1}", packetNumber, type);
+            //Log.DebugFormat("Packet Number:{0}, type:{1}", packetNumber, type);
             string channelName = "";
             for (int i = 0; i < 20; i++)
             {
               char char1 = (char)(rowData[off + 22 + i] & 127);
-              //Log.Write("{0}-{1:x}", char1, (byte)(rowData[off + 22 + i] & 127));
+              //Log.DebugFormat("{0}-{1:x}", char1, (byte)(rowData[off + 22 + i] & 127));
               channelName += char1;
             }
             int pos = channelName.LastIndexOf("teletext", StringComparison.InvariantCultureIgnoreCase);
@@ -346,11 +346,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
       catch (Exception)
       {
         System.Diagnostics.Trace.WriteLine("EXCEPTION");
-        //        Log.WriteFile(Log.LogType.Error,true,"Exception while decoding teletext");
-        //        Log.Write(ex);
+        //        Log.DebugFormat(Log.LogType.Error,true,"Exception while decoding teletext");
+        //        Log.ErrorFormat(ex, "");
       }
       //System.Diagnostics.Trace.WriteLine(_line);
-      //Log.Log.WriteFile(_line);
+      //Log.Log.DebugFormat(_line);
     }
 
 //void Decode(byte[] rowData)

@@ -32,12 +32,21 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using DirectShowLib;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class TvCards : SectionSettings
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(TvCards)); }
+    }
+
+    #endregion
+
     private bool _needRestart;
     private readonly Dictionary<string, CardType> cardTypes = new Dictionary<string, CardType>();
     private TabPage usbWINTV_tabpage;
@@ -499,7 +508,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         // User clicked save...
         ServiceAgents.Instance.CardServiceAgent.SaveCard(dlg.Card);
-        Log.Debug("Saving settings for device {0}...", dlg.Card.Name);
+        Log.DebugFormat("Saving settings for device {0}...", dlg.Card.Name);
         _needRestart = true;
         UpdateList();
       }

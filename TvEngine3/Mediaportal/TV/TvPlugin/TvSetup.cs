@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.ServiceProcess;
-
+using MediaPortal.Common.Utils;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
@@ -37,6 +37,14 @@ namespace Mediaportal.TV.TvPlugin
 {
   public class TvSetup : GUIInternalWindow
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+      get { return LogHelper.GetLogger(typeof(TvSetup)); }
+    }
+
+    #endregion
     #region Variables
 
     private string _hostName;
@@ -220,7 +228,7 @@ namespace Mediaportal.TV.TvPlugin
       // check if we are in a single seat environment, if so check if TvService is started - if not start it
       if (Network.IsSingleSeat())
       {
-        Log.Info("TvSetup: Seems we are in a single seat environment - Checking if tvservice is running");
+        Log.InfoFormat("TvSetup: Seems we are in a single seat environment - Checking if tvservice is running");
         ServiceController ctrl = null;
         try
         {
@@ -228,13 +236,13 @@ namespace Mediaportal.TV.TvPlugin
         }
         catch (Exception ex)
         {
-          Log.Info("TvSetup: We can't get an instance of the tvservice service with error: " + ex.Message);
+          Log.ErrorFormat(ex, "TvSetup: We can't get an instance of the tvservice service with error");
         }
         if (ctrl != null)
         {
           if (ctrl.Status == ServiceControllerStatus.Stopped)
           {
-            Log.Info("TvSetup: TvService is stopped - trying to start...");
+            Log.InfoFormat("TvSetup: TvService is stopped - trying to start...");
             ctrl.Start();
             // Wait until service started but no longer than 30 seconds
             try
@@ -244,20 +252,20 @@ namespace Mediaportal.TV.TvPlugin
             catch (Exception) {}
             if (ctrl.Status == ServiceControllerStatus.Running)
             {
-              Log.Info("TvSetup: TvService started.");
+              Log.InfoFormat("TvSetup: TvService started.");
             }
             else
             {
-              Log.Info("TvSetup: Failed to start TvService");
+              Log.InfoFormat("TvSetup: Failed to start TvService");
             }
           }
           else if (ctrl.Status == ServiceControllerStatus.Running)
           {
-            Log.Info("TvSetup: TvService already started.");
+            Log.InfoFormat("TvSetup: TvService already started.");
           }
           else
           {
-            Log.Info("TvSetup: TvService seems to be in an unusual state. Please check. Current state={0}",
+            Log.InfoFormat("TvSetup: TvService seems to be in an unusual state. Please check. Current state={0}",
                      ctrl.Status.ToString());
           }
         }

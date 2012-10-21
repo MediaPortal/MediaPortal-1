@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using MediaPortal.Common.Utils;
 using TvEngine.PowerScheduler.Interfaces;
 
@@ -38,6 +38,15 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
   /// </summary>
   public class ProcessActiveHandler : IStandbyHandler
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+      get { return LogHelper.GetLogger(typeof(ProcessActiveHandler)); }
+    }
+
+    #endregion
+
     #region Variables
 
     private List<string> _processes = new List<string>();
@@ -78,7 +87,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
             setting.Set<List<string>>(processes);
             _processes = processes;
             foreach (string process in processes)
-              Log.Debug("PowerScheduler: preventing standby for process: {0}", process);
+              Log.DebugFormat("PowerScheduler: preventing standby for process: {0}", process);
           }
           break;
       }

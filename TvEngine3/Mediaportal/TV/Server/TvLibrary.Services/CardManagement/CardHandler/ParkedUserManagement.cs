@@ -24,7 +24,7 @@ using System.Linq;
 using System.Threading;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Services;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
@@ -34,6 +34,15 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public class ParkedUserManagement : IParkedUserManagement, IDisposable
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(ParkedUserManagement)); }
+    }
+
+    #endregion
+
     private readonly TvCardHandler _cardHandler;
     private readonly object _parkedUsersLock = new object();
     private readonly int _parkedStreamTimeout;
@@ -116,7 +125,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
                                           }
                                           catch (Exception ex)
                                           {
-                                            Log.Error("HandleParkedUserTimeOutThread exception : {0}", ex);
+                                            Log.ErrorFormat("HandleParkedUserTimeOutThread exception : {0}", ex);
                                           }
                                         });
         
@@ -147,17 +156,17 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
         if (!evt.WaitOne(_parkedStreamTimeout))
         {
-          Log.Debug("HandleParkedUserTimeOutThread: removing idle parked channel '{0}' for user '{1}'", channelId,
+          Log.DebugFormat("HandleParkedUserTimeOutThread: removing idle parked channel '{0}' for user '{1}'", channelId,
                     parkedUser.Name);
           var user = parkedUser as IUser;
           ServiceManager.Instance.InternalControllerService.StopTimeShifting(ref user, channelId);
         }
         else
         {
-          Log.Debug("HandleParkedUserTimeOutThread: stopping timeout event for channel '{0}' for user '{1}'", channelId,
+          Log.DebugFormat("HandleParkedUserTimeOutThread: stopping timeout event for channel '{0}' for user '{1}'", channelId,
                     parkedUser.Name);
         }
-        Log.Debug("HandleParkedUserTimeOutThread: dispose event");        
+        Log.DebugFormat("HandleParkedUserTimeOutThread: dispose event");        
         RemoveChannelOrParkedUser(parkedUser, channelId);
         evt.Dispose();
       }
@@ -201,7 +210,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
                     user = userUpdated;
                     HandleUserOwnerShip(user, subchannel, parkedUser);
 
-                    Log.Info("UnParkUser: {0} - {1} - {2}", user.Name, duration, idChannel);
+                    Log.InfoFormat("UnParkUser: {0} - {1} - {2}", user.Name, duration, idChannel);
                     CancelParkedTimeoutEvent(subchannel.Id, parkedUser);
                     RemoveChannelFromParkedUser(idChannel, parkedUser);
                     break;
@@ -233,7 +242,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       bool hasEvent = parkedUser.Events.TryGetValue(subchannelId, out evt);
       if (hasEvent)
       {
-        Log.Debug("CancelParkedTimeoutEvent on subch={0} - parkeduser={}", subchannelId, parkedUser.Name);
+        Log.DebugFormat("CancelParkedTimeoutEvent on subch={0} - parkeduser={}", subchannelId, parkedUser.Name);
         evt.Set();
       }
       else
@@ -403,7 +412,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       foreach (ManualResetEvent evt in parkedUser.Events.Values)
       {
-        Log.Info("CancelParkedUserByChannelId: {0}", userName);
+        Log.InfoFormat("CancelParkedUserByChannelId: {0}", userName);
         evt.Set();
       }
     }
@@ -520,7 +529,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           int removeSubChId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(parkedUser.Name, idChannel);          
           if (removeSubChId > -1)
           {
-            Log.Debug("RemoveChannelOrParkedUser: removing event from list.");
+            Log.DebugFormat("RemoveChannelOrParkedUser: removing event from list.");
             //parkedUser.SubChannels.Remove(removeSubChId);
             parkedUser.Events.Remove(removeSubChId);
             parkedUser.ParkedAtList.Remove(removeSubChId);
@@ -528,7 +537,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           }
           else
           {
-            Log.Error("RemoveChannelOrParkedUser - could not find subchannel id for user: {0} - channel: {1}", parkedUser.Name, idChannel);
+            Log.ErrorFormat("RemoveChannelOrParkedUser - could not find subchannel id for user: {0} - channel: {1}", parkedUser.Name, idChannel);
           }
           if (parkedUser.Events.Count == 0)
           {

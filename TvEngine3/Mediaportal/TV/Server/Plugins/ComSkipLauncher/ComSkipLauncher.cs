@@ -31,7 +31,7 @@ using Mediaportal.TV.Server.TVControl.Interfaces.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
@@ -39,6 +39,15 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
   [Interceptor("PluginExceptionInterceptor")]
   public class ComSkipLauncher : ITvServerPlugin
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(ComSkipLauncher)); }
+    }
+
+    #endregion
+
     #region Constants
 
     private const bool DefaultRunAtStrart = true;
@@ -115,7 +124,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
     [CLSCompliant(false)]
     public void Start(IInternalControllerService controllerService)
     {      
-      Log.Info("plugin: ComSkipLauncher start");
+      Log.InfoFormat("plugin: ComSkipLauncher start");
 
       LoadSettings();
 
@@ -124,7 +133,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
 
     public void Stop()
     {
-      Log.Info("plugin: ComSkipLauncher stop");
+      Log.InfoFormat("plugin: ComSkipLauncher stop");
 
       if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
       {
@@ -157,7 +166,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
 
             string parameters = ProcessParameters(_parameters, recording.FileName, channel.DisplayName);
 
-            Log.Info("ComSkipLauncher: Recording started ({0} on {1}), launching program ({2} {3}) ...",
+            Log.InfoFormat("ComSkipLauncher: Recording started ({0} on {1}), launching program ({2} {3}) ...",
                      recording.FileName, channel.DisplayName, _program, parameters);
 
             LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
@@ -170,7 +179,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
             Channel channel = ChannelManagement.GetChannel(recording.IdChannel.GetValueOrDefault());
             string parameters = ProcessParameters(_parameters, recording.FileName, channel.DisplayName);
 
-            Log.Info("ComSkipLauncher: Recording ended ({0} on {1}), launching program ({2} {3}) ...",
+            Log.InfoFormat("ComSkipLauncher: Recording ended ({0} on {1}), launching program ({2} {3}) ...",
                      recording.FileName, channel.DisplayName, _program, parameters);
 
             LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
@@ -179,7 +188,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
       }
       catch (Exception ex)
       {
-        Log.Error("ComSkipLauncher - ComSkipLauncher_OnTvServerEvent(): {0}", ex.Message);
+        Log.ErrorFormat(ex, "ComSkipLauncher - ComSkipLauncher_OnTvServerEvent()");
       }
     }
 
@@ -199,7 +208,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
         _program = DefaultProgram;
         _parameters = DefaultParameters;
 
-        Log.Error("ComSkipLauncher - LoadSettings(): {0}", ex.Message);
+        Log.ErrorFormat(ex, "ComSkipLauncher - LoadSettings()");
       }
     }
 
@@ -213,7 +222,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
       }
       catch (Exception ex)
       {
-        Log.Error("ComSkipLauncher - SaveSettings(): {0}", ex.Message);
+        Log.ErrorFormat(ex, "ComSkipLauncher - SaveSettings()");
       }
     }
 
@@ -236,7 +245,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
       }
       catch (Exception ex)
       {
-        Log.Error("ComSkipLauncher - ProcessParameters(): {0}", ex.Message);
+        Log.ErrorFormat(ex, "ComSkipLauncher - ProcessParameters()");
       }
 
       return output;
@@ -264,7 +273,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
       }
       catch (Exception ex)
       {
-        Log.Error("ComSkipLauncher - LaunchProcess(): {0}", ex.Message);
+        Log.ErrorFormat(ex, "ComSkipLauncher - LaunchProcess()");
       }
     }
 

@@ -23,7 +23,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using DirectShowLib.BDA;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB
 {
@@ -32,6 +32,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB
   /// </summary>
   public class DiseqcController : IDiseqcController
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(DiseqcController)); }
+    }
+
+    #endregion
+
     #region variables
 
     private IDiseqcDevice _device = null;
@@ -74,35 +83,35 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB
       // the reset is not applied to "any" device, but it might be to prevent loosing all
       // stored positions in a positioner or something like that.
       byte[] cmd = new byte[3];
-      Log.Debug("DiSEqC Controller: clear reset");
+      Log.DebugFormat("DiSEqC Controller: clear reset");
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AnySwitch;
       cmd[2] = (byte)DiseqcCommand.ClearReset;
       _device.SendCommand(cmd);
       System.Threading.Thread.Sleep(_commandDelay);
 
-      Log.Debug("DiSEqC Controller: power on");
+      Log.DebugFormat("DiSEqC Controller: power on");
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AnySwitch;
       cmd[2] = (byte)DiseqcCommand.PowerOn;
       _device.SendCommand(cmd);
       System.Threading.Thread.Sleep(_commandDelay);
 
-      Log.Debug("DiSEqC Controller: reset");
+      Log.DebugFormat("DiSEqC Controller: reset");
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AnySwitch;
       cmd[2] = (byte)DiseqcCommand.Reset;
       _device.SendCommand(cmd);
       System.Threading.Thread.Sleep(_commandDelay);
 
-      Log.Debug("DiSEqC Controller: clear reset");
+      Log.DebugFormat("DiSEqC Controller: clear reset");
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AnySwitch;
       cmd[2] = (byte)DiseqcCommand.ClearReset;
       _device.SendCommand(cmd);
       System.Threading.Thread.Sleep(_commandDelay);
 
-      Log.Debug("DiSEqC Controller: power on");
+      Log.DebugFormat("DiSEqC Controller: power on");
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AnySwitch;
       cmd[2] = (byte)DiseqcCommand.PowerOn;
@@ -125,13 +134,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB
 
       // There is a well defined order in which commands may be sent:
       // "raw" DiSEqC commands -> DiSEqC 1.0 (committed) -> tone burst (simple DiSEqC) -> 22 kHz tone on/off
-      Log.Debug("DiSEqC Controller: switch to channel");
+      Log.DebugFormat("DiSEqC Controller: switch to channel");
 
       // We send a "power on" command before anything else if the previous channel is not set. This is
       // sometimes necessary to wake the switch.
       if (_previousChannel == null)
       {
-        Log.Debug("DiSEqC Controller: power on");
+        Log.DebugFormat("DiSEqC Controller: power on");
         byte[] command = new byte[3];
         command[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
         command[1] = (byte)DiseqcAddress.Any;
@@ -175,7 +184,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB
       }
       if (!sendCommand)
       {
-        Log.Debug("DiSEqC Controller: no need to send switch command");
+        Log.DebugFormat("DiSEqC Controller: no need to send switch command");
       }
       else
       {
@@ -189,7 +198,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB
           channel.Diseqc == DiseqcPort.PortC ||
           channel.Diseqc == DiseqcPort.PortD)
         {
-          Log.Debug("DiSEqC Controller: DiSEqC 1.0 switch command");
+          Log.DebugFormat("DiSEqC Controller: DiSEqC 1.0 switch command");
           command[2] = (byte)DiseqcCommand.WriteN0;
           bool isHorizontal = channel.Polarisation == Polarisation.LinearH || channel.Polarisation == Polarisation.CircularL;
           command[3] |= (byte)(isHighBand ? 1 : 0);
@@ -198,7 +207,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB
         }
         else
         {
-          Log.Debug("DiSEqC Controller: DiSEqC 1.1 switch command");
+          Log.DebugFormat("DiSEqC Controller: DiSEqC 1.1 switch command");
           command[2] = (byte)DiseqcCommand.WriteN1;
           command[3] |= (byte)(portNumber - 1);
         }
@@ -220,11 +229,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB
       }
       if (!sendCommand)
       {
-        Log.Debug("DiSEqC Controller: no need to send positioner command");
+        Log.DebugFormat("DiSEqC Controller: no need to send positioner command");
       }
       else
       {
-        Log.Debug("DiSEqC Controller: positioner command(s)");
+        Log.DebugFormat("DiSEqC Controller: positioner command(s)");
         GotoPosition((byte)channel.SatelliteIndex);
       }
 
@@ -286,7 +295,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB
       for (int i = 0; i < _repeatCount; i++)
       {
         System.Threading.Thread.Sleep(_commandDelay);
-        Log.Debug("  repeat {0}...", i + 1);
+        Log.DebugFormat("  repeat {0}...", i + 1);
         _device.SendCommand(command);
       }
     }
@@ -298,7 +307,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB
     /// </summary>
     public void Stop()
     {
-      Log.Debug("DiSEqC Controller: stop positioner");
+      Log.DebugFormat("DiSEqC Controller: stop positioner");
       byte[] cmd = new byte[3];
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AnyPositioner;
@@ -312,7 +321,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB
     /// </summary>
     public void SetEastLimit()
     {
-      Log.Debug("DiSEqC Controller: set east limit");
+      Log.DebugFormat("DiSEqC Controller: set east limit");
       byte[] cmd = new byte[3];
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AzimuthPositioner;
@@ -326,7 +335,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB
     /// </summary>
     public void SetWestLimit()
     {
-      Log.Debug("DiSEqC Controller: set west limit");
+      Log.DebugFormat("DiSEqC Controller: set west limit");
       byte[] cmd = new byte[3];
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AzimuthPositioner;
@@ -344,7 +353,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB
       {
         if (value)
         {
-          Log.Debug("DiSEqC Controller: enable limits");
+          Log.DebugFormat("DiSEqC Controller: enable limits");
           byte[] cmd = new byte[4];
           cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
           cmd[1] = (byte)DiseqcAddress.AzimuthPositioner;
@@ -355,7 +364,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB
         }
         else
         {
-          Log.Debug("DiSEqC Controller: disable limits");
+          Log.DebugFormat("DiSEqC Controller: disable limits");
           byte[] cmd = new byte[3];
           cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
           cmd[1] = (byte)DiseqcAddress.AzimuthPositioner;
@@ -373,7 +382,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB
     /// <param name="steps">The number of position steps to move.</param>
     public void DriveMotor(DiSEqCDirection direction, byte steps)
     {
-      Log.Debug("DiSEqC Controller: drive motor {0} for {1} steps", direction.ToString(), steps);
+      Log.DebugFormat("DiSEqC Controller: drive motor {0} for {1} steps", direction.ToString(), steps);
       if (steps == 0)
       {
         return;
@@ -419,7 +428,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB
     /// <param name="position">The identifier to use for the position.</param>
     public void StorePosition(byte position)
     {
-      Log.Debug("DiSEqC Controller: store current position as position {0}", position);
+      Log.DebugFormat("DiSEqC Controller: store current position as position {0}", position);
       if (position <= 0)
       {
         throw new ArgumentException("DiSEqC Controller: position cannot be less than or equal to zero");
@@ -444,7 +453,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB
     /// </summary>
     public void GotoReferencePosition()
     {
-      Log.Debug("DiSEqC Controller: go to reference position");
+      Log.DebugFormat("DiSEqC Controller: go to reference position");
 
       byte[] cmd = new byte[4];
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
@@ -466,7 +475,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB
     /// <param name="position">The position to drive to.</param>
     public void GotoPosition(byte position)
     {
-      Log.Debug("DiSEqC Controller: go to position {0}", position);
+      Log.DebugFormat("DiSEqC Controller: go to position {0}", position);
       if (position <= 0)
       {
         throw new ArgumentException("DiSEqC Controller: position cannot be less than or equal to zero");

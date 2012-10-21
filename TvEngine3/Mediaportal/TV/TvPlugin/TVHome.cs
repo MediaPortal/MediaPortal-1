@@ -38,6 +38,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Dialogs.Dialogs;
 using MediaPortal;
+using MediaPortal.Common.Utils;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -74,6 +75,15 @@ namespace Mediaportal.TV.TvPlugin
   [PluginIcons("Resources\\TvPlugin.TVPlugin.gif", "Resources\\TvPlugin.TVPluginDisabled.gif")]
   public class TVHome : GUIInternalWindow, ISetupForm, IShowPlugin, IPluginReceiver, ITvServerEventCallbackClient
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+      get { return LogHelper.GetLogger(typeof(TVHome)); }
+    }
+
+    #endregion
+
     #region constants
 
     private const int MAX_WAIT_FOR_SERVER_CONNECTION = 10; //seconds
@@ -301,7 +311,7 @@ namespace Mediaportal.TV.TvPlugin
         System.Diagnostics.Debugger.Launch();
       }
 #endif
-      Log.Info("TVHome:OnAdded");
+      Log.InfoFormat("TVHome:OnAdded");
 
       GUIGraphicsContext.OnBlackImageRendered += new BlackImageRenderedHandler(OnBlackImageRendered);
       GUIGraphicsContext.OnVideoReceived += new VideoReceivedHandler(OnVideoReceived);
@@ -347,16 +357,16 @@ namespace Mediaportal.TV.TvPlugin
           string strLine = "TvPlugin and TvServer don't have the same version.\r\n";
           strLine += "TvServer Version: " + tvServerVersion + "\r\n";
           strLine += "TvPlugin Version: " + pluginVersion;
-          Log.Error(strLine);
+          Log.ErrorFormat(strLine);
         }
         else
         {
-          Log.Info("TVHome V" + pluginVersion + ":ctor");
+          Log.InfoFormat("TVHome V" + pluginVersion + ":ctor");
         }
       }
       catch (Exception ex)
       {
-        Log.Error("TVHome: Error occured in Init(): {0}, st {1}", ex.Message, Environment.StackTrace);
+        Log.ErrorFormat(ex, "TVHome: Error occured in Init()");
       }
       finally
       {
@@ -395,7 +405,7 @@ namespace Mediaportal.TV.TvPlugin
 
         if (tvStoppedReason != TvStoppedReason.UnknownReason)
         {
-          Log.Debug("TVHome: Timeshifting seems to have stopped - TvStoppedReason:{0}", tvStoppedReason);
+          Log.DebugFormat("TVHome: Timeshifting seems to have stopped - TvStoppedReason:{0}", tvStoppedReason);
           string errMsg = "";
 
           switch (tvStoppedReason)
@@ -545,7 +555,7 @@ namespace Mediaportal.TV.TvPlugin
 
     protected override void OnPageLoad()
     {
-      Log.Info("TVHome:OnPageLoad");
+      Log.InfoFormat("TVHome:OnPageLoad");
 
       if (GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow).PreviousWindowId != (int)Window.WINDOW_TVFULLSCREEN)
       {
@@ -616,7 +626,7 @@ namespace Mediaportal.TV.TvPlugin
 
       if (channel != null)
       {
-        Log.Info("tv home init:{0}", channel.DisplayName);
+        Log.InfoFormat("tv home init:{0}", channel.DisplayName);
         if (!_suspended)
         {
           AutoTurnOnTv(channel);
@@ -626,7 +636,7 @@ namespace Mediaportal.TV.TvPlugin
           _resumeChannel = channel;
         }
         GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.CurrentGroup.GroupName);
-        Log.Info("tv home init:{0} done", channel.DisplayName);
+        Log.InfoFormat("tv home init:{0} done", channel.DisplayName);
       }
 
       if (!_suspended)
@@ -666,14 +676,14 @@ namespace Mediaportal.TV.TvPlugin
           bool isTvOrRec = (g_Player.IsTV || g_Player.IsTVRecording);
           if (isTvOrRec)
           {
-            Log.Debug("GUIGraphicsContext.IsFullScreenVideo {0}", GUIGraphicsContext.IsFullScreenVideo);
+            Log.DebugFormat("GUIGraphicsContext.IsFullScreenVideo {0}", GUIGraphicsContext.IsFullScreenVideo);
             bool wasFullScreenTV = (PreviousWindowId == (int)Window.WINDOW_TVFULLSCREEN);
 
             if (!wasFullScreenTV)
             {
               if (!wasPrevWinTVplugin())
               {
-                Log.Debug("TVHome.AutoFullScreenTv(): setting autoFullScreen");
+                Log.DebugFormat("TVHome.AutoFullScreenTv(): setting autoFullScreen");
                 bool showlastActModFS = (_showlastactivemodule && _showlastactivemoduleFullscreen && !_suspended &&
                                          _autoTurnOnTv);
                 if (!showlastActModFS)
@@ -744,14 +754,14 @@ namespace Mediaportal.TV.TvPlugin
         {
           // tv off
           g_Player.Stop();
-          Log.Warn("TVHome.OnClicked(): EndTvOff {0} ms", benchClock.ElapsedMilliseconds.ToString());
+          Log.WarnFormat("TVHome.OnClicked(): EndTvOff {0} ms", benchClock.ElapsedMilliseconds.ToString());
           benchClock.Stop();
           return;
         }
         else
         {
           // tv on
-          Log.Info("TVHome:turn tv on {0}", Navigator.CurrentChannel);
+          Log.InfoFormat("TVHome:turn tv on {0}", Navigator.CurrentChannel);
 
           // stop playing anything
           if (g_Player.Playing)
@@ -762,7 +772,7 @@ namespace Mediaportal.TV.TvPlugin
             }
             else
             {
-              Log.Warn("TVHome.OnClicked: Stop Called - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+              Log.WarnFormat("TVHome.OnClicked: Stop Called - {0} ms", benchClock.ElapsedMilliseconds.ToString());
               g_Player.Stop(true);
             }
           }
@@ -786,7 +796,7 @@ namespace Mediaportal.TV.TvPlugin
         UpdateGUIonPlaybackStateChange();
         //UpdateProgressPercentageBar();
         benchClock.Stop();
-        Log.Warn("TVHome.OnClicked(): Total Time - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+        Log.WarnFormat("TVHome.OnClicked(): Total Time - {0} ms", benchClock.ElapsedMilliseconds.ToString());
       }
 
       if (control == btnTeletext)
@@ -818,7 +828,7 @@ namespace Mediaportal.TV.TvPlugin
             if (_autoTurnOnTv && !wasPrevWinTVplugin())
             {
               //restart viewing...  
-              Log.Info("tv home msg resume tv:{0}", Navigator.CurrentChannel);
+              Log.InfoFormat("tv home msg resume tv:{0}", Navigator.CurrentChannel);
               ViewChannel(Navigator.Channel.Entity);
             }
           }
@@ -1084,7 +1094,7 @@ namespace Mediaportal.TV.TvPlugin
       catch (Exception e)
       {
         //we assume that server is disconnected.
-        Log.Error("TVHome.HandleServerNotConnected caused an error {0},{1}", e.Message, e.StackTrace);
+        Log.ErrorFormat(e, "TVHome.HandleServerNotConnected caused an error");
         return true;
       }
       finally
@@ -1206,7 +1216,7 @@ namespace Mediaportal.TV.TvPlugin
 
         string preferredLanguages = xmlreader.GetValueAsString("tvservice", "preferredaudiolanguages", "");
         _preferredLanguages = new List<string>();
-        Log.Debug("TVHome.LoadSettings(): Preferred Audio Languages: " + preferredLanguages);
+        Log.DebugFormat("TVHome.LoadSettings(): Preferred Audio Languages: " + preferredLanguages);
 
         StringTokenizer st = new StringTokenizer(preferredLanguages, ";");
         while (st.HasMore)
@@ -1214,12 +1224,12 @@ namespace Mediaportal.TV.TvPlugin
           string lang = st.NextToken();
           if (lang.Length != 3)
           {
-            Log.Warn("Language {0} is not in the correct format!", lang);
+            Log.WarnFormat("Language {0} is not in the correct format!", lang);
           }
           else
           {
             _preferredLanguages.Add(lang);
-            Log.Info("Prefered language {0} is {1}", _preferredLanguages.Count, lang);
+            Log.InfoFormat("Prefered language {0} is {1}", _preferredLanguages.Count, lang);
           }
         }
         _usertsp = xmlreader.GetValueAsBool("tvservice", "usertsp", !Network.IsSingleSeat());
@@ -1266,20 +1276,20 @@ namespace Mediaportal.TV.TvPlugin
           {
             hostName = Dns.GetHostName();
 
-            Log.Info("TVHome: No valid hostname specified in mediaportal.xml!");
+            Log.InfoFormat("TVHome: No valid hostname specified in mediaportal.xml!");
             xmlreader.SetValue("tvservice", "hostname", hostName);
             hostName = "localhost";
             Settings.SaveCache();
           }
           catch (Exception ex)
           {
-            Log.Info("TVHome: Error resolving hostname - {0}", ex.Message);
+            Log.ErrorFormat(ex, "TVHome: Error resolving hostname");
             return;
           }
         }
       }
       ServiceAgents.Instance.Hostname = hostName;
-      Log.Info("Remote control:master server :{0}", ServiceAgents.Instance.Hostname);
+      Log.InfoFormat("Remote control:master server :{0}", ServiceAgents.Instance.Hostname);
     }
 
     private static void HandleWakeUpTvServer()
@@ -1318,11 +1328,11 @@ namespace Mediaportal.TV.TvPlugin
 
                 ips = Dns.GetHostAddresses(ServiceAgents.Instance.Hostname);
 
-                Log.Debug("TVHome: WOL - GetHostAddresses({0}) returns:", ServiceAgents.Instance.Hostname);
+                Log.DebugFormat("TVHome: WOL - GetHostAddresses({0}) returns:", ServiceAgents.Instance.Hostname);
 
                 foreach (IPAddress ip in ips)
                 {
-                  Log.Debug("    {0}", ip);
+                  Log.DebugFormat("    {0}", ip);
                 }
 
                 // Use first valid IP address
@@ -1330,7 +1340,7 @@ namespace Mediaportal.TV.TvPlugin
               }
               catch (Exception ex)
               {
-                Log.Error("TVHome: WOL - Failed GetHostAddress - {0}", ex.Message);
+                Log.ErrorFormat(ex, "TVHome: WOL - Failed GetHostAddress");
               }
             }
 
@@ -1342,13 +1352,13 @@ namespace Mediaportal.TV.TvPlugin
 
               if (wakeOnLanManager.IsValidEthernetAddress(hwAddress))
               {
-                Log.Debug("TVHome: WOL - Valid auto MAC address: {0:x}:{1:x}:{2:x}:{3:x}:{4:x}:{5:x}"
+                Log.DebugFormat("TVHome: WOL - Valid auto MAC address: {0:x}:{1:x}:{2:x}:{3:x}:{4:x}:{5:x}"
                           , hwAddress[0], hwAddress[1], hwAddress[2], hwAddress[3], hwAddress[4], hwAddress[5]);
 
                 // Store MAC address
                 macAddress = BitConverter.ToString(hwAddress).Replace("-", ":");
 
-                Log.Debug("TVHome: WOL - Store MAC address: {0}", macAddress);
+                Log.DebugFormat("TVHome: WOL - Store MAC address: {0}", macAddress);
 
                 using (
                   MediaPortal.Profile.Settings xmlwriter =
@@ -1366,27 +1376,27 @@ namespace Mediaportal.TV.TvPlugin
             macAddress = xmlreader.GetValueAsString("tvservice", "macAddress", null);
           }
 
-          Log.Debug("TVHome: WOL - Use stored MAC address: {0}", macAddress);
+          Log.DebugFormat("TVHome: WOL - Use stored MAC address: {0}", macAddress);
 
           try
           {
             hwAddress = wakeOnLanManager.GetHwAddrBytes(macAddress);
 
             // Finally, start up the TV server
-            Log.Info("TVHome: WOL - Start the TV server");
+            Log.InfoFormat("TVHome: WOL - Start the TV server");
 
             if (wakeOnLanManager.WakeupSystem(hwAddress, ServiceAgents.Instance.Hostname, intTimeOut))
             {
-              Log.Info("TVHome: WOL - The TV server started successfully!");
+              Log.InfoFormat("TVHome: WOL - The TV server started successfully!");
             }
             else
             {
-              Log.Error("TVHome: WOL - Failed to start the TV server");
+              Log.ErrorFormat("TVHome: WOL - Failed to start the TV server");
             }
           }
           catch (Exception ex)
           {
-            Log.Error("TVHome: WOL - Failed to start the TV server - {0}", ex.Message);
+            Log.ErrorFormat(ex, "TVHome: WOL - Failed to start the TV server");
           }
         }
       }
@@ -1399,7 +1409,7 @@ namespace Mediaportal.TV.TvPlugin
     //{
     //  if (ciMenuHandler == null)
     //  {
-    //    Log.Debug("CiMenu: PrepareCiMenu");
+    //    Log.DebugFormat("CiMenu: PrepareCiMenu");
     //    ciMenuHandler = new CiMenuHandler();
     //    // opens remoting and attach local eventhandler to server event, call only once
     //    RemoteControl.RegisterCiMenuCallbacks(ciMenuHandler);
@@ -1409,7 +1419,7 @@ namespace Mediaportal.TV.TvPlugin
     //  {
     //    // Enable CI menu handling in card
     //    ServiceAgents.Instance.ControllerService.SetCiMenuHandler(newCardId, null);
-    //    Log.Debug("TvPlugin: CiMenuHandler attached to new card {0}", newCardId);
+    //    Log.DebugFormat("TvPlugin: CiMenuHandler attached to new card {0}", newCardId);
     //  }
     //}
 
@@ -1418,7 +1428,7 @@ namespace Mediaportal.TV.TvPlugin
       bool recovered = false;
       if (!Connected)
       {
-        Log.Info("TVHome: OnServerConnected, recovered from a disconnection");
+        Log.InfoFormat("TVHome: OnServerConnected, recovered from a disconnection");
         recovered = true;
       }
 
@@ -1452,7 +1462,7 @@ namespace Mediaportal.TV.TvPlugin
 #if !DEBUG
       if (Connected)
       {
-        Log.Info("TVHome: OnServerDisconnected");
+        Log.InfoFormat("TVHome: OnServerDisconnected");
       }
       Connected = false;
 
@@ -1585,7 +1595,7 @@ namespace Mediaportal.TV.TvPlugin
       }
 
       benchClock.Stop();
-      Log.Debug("TVHome.OnSelecChannel(): Total Time {0} ms", benchClock.ElapsedMilliseconds.ToString());
+      Log.DebugFormat("TVHome.OnSelecChannel(): Total Time {0} ms", benchClock.ElapsedMilliseconds.ToString());
     }
 
     private void TvDelayThread()
@@ -1597,7 +1607,7 @@ namespace Mediaportal.TV.TvPlugin
       int waits = 0;
       while (_playbackStopped && waits < 100)
       {
-        //Log.Debug("TVHome.OnPageLoad(): waiting for timeshifting to start");
+        //Log.DebugFormat("TVHome.OnPageLoad(): waiting for timeshifting to start");
         Thread.Sleep(100);
         waits++;
       }
@@ -1610,7 +1620,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private void OnSuspend()
     {
-      Log.Debug("TVHome.OnSuspend()");
+      Log.DebugFormat("TVHome.OnSuspend()");
 
       try
       {
@@ -1636,7 +1646,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private void OnResume()
     {
-      Log.Debug("TVHome.OnResume()");
+      Log.DebugFormat("TVHome.OnResume()");
       try
       {
         Connected = false;
@@ -1647,7 +1657,7 @@ namespace Mediaportal.TV.TvPlugin
         _notifyManager.Start();
         if (_resumeChannel != null)
         {
-          Log.Debug("TVHome.OnResume() - automatically turning on TV: {0}", _resumeChannel.DisplayName);
+          Log.DebugFormat("TVHome.OnResume() - automatically turning on TV: {0}", _resumeChannel.DisplayName);
           AutoTurnOnTv(_resumeChannel);
           AutoFullScreenTv();
           _resumeChannel = null;
@@ -1676,7 +1686,7 @@ namespace Mediaportal.TV.TvPlugin
         }
         catch (Exception ex)
         {
-          Log.Error("TvHome.RegisterUserForHeartbeatMonitoring exception = {0}", ex);
+          Log.ErrorFormat(ex, "TvHome.RegisterUserForHeartbeatMonitoring exception");
           
         }        
       }
@@ -1703,7 +1713,7 @@ namespace Mediaportal.TV.TvPlugin
         }
         catch (Exception ex)
         {
-          Log.Error("TvHome.UnRegisterUserForHeartbeatMonitoring exception = {0}", ex);          
+          Log.ErrorFormat(ex, "TvHome.UnRegisterUserForHeartbeatMonitoring exception");          
         }        
       }
 #endif
@@ -1711,12 +1721,12 @@ namespace Mediaportal.TV.TvPlugin
 
     public void Start()
     {
-      Log.Debug("TVHome.Start()");
+      Log.DebugFormat("TVHome.Start()");
     }
 
     public void Stop()
     {
-      Log.Debug("TVHome.Stop()");
+      Log.DebugFormat("TVHome.Stop()");
     }
 
     public bool WndProc(ref Message msg)
@@ -1726,24 +1736,24 @@ namespace Mediaportal.TV.TvPlugin
         switch (msg.WParam.ToInt32())
         {
           case PBT_APMSTANDBY:
-            Log.Info("TVHome.WndProc(): Windows is going to standby");
+            Log.InfoFormat("TVHome.WndProc(): Windows is going to standby");
             OnSuspend();
             break;
           case PBT_APMSUSPEND:
-            Log.Info("TVHome.WndProc(): Windows is suspending");
+            Log.InfoFormat("TVHome.WndProc(): Windows is suspending");
             OnSuspend();
             break;
           case PBT_APMQUERYSUSPEND:
           case PBT_APMQUERYSTANDBY:
-            Log.Info("TVHome.WndProc(): Windows is going into powerstate (hibernation/standby)");
+            Log.InfoFormat("TVHome.WndProc(): Windows is going into powerstate (hibernation/standby)");
 
             break;
           case PBT_APMRESUMESUSPEND:
-            Log.Info("TVHome.WndProc(): Windows has resumed from hibernate mode");
+            Log.InfoFormat("TVHome.WndProc(): Windows has resumed from hibernate mode");
             OnResume();
             break;
           case PBT_APMRESUMESTANDBY:
-            Log.Info("TVHome.WndProc(): Windows has resumed from standby mode");
+            Log.InfoFormat("TVHome.WndProc(): Windows has resumed from standby mode");
             OnResume();
             break;
         }
@@ -1805,7 +1815,7 @@ namespace Mediaportal.TV.TvPlugin
           string heading = message.Label;
           string text = message.Label2;
           Channel ch = message.Object as Channel;
-          //Log.Debug("Received rec notify message: {0}, {1}, {2}", heading, text, (ch != null).ToString()); //remove later
+          //Log.DebugFormat("Received rec notify message: {0}, {1}, {2}", heading, text, (ch != null).ToString()); //remove later
           string logo = TVUtil.GetChannelLogo(ch);
           GUIDialogNotify pDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
           if (pDlgNotify != null)
@@ -1895,7 +1905,7 @@ namespace Mediaportal.TV.TvPlugin
               }
               catch (Exception e)
               {
-                Log.Error("TVHome: TVNotification: Error on starting channel {0} after notification: {1} {2} {3}", notify.Channel.DisplayName, e.Message, e.Source, e.StackTrace);
+                Log.ErrorFormat(e, "TVHome: TVNotification: Error on starting channel {0} after notification", notify.Channel.DisplayName);
               }
 
             }
@@ -1906,7 +1916,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private void OnAudioTracksReady()
     {
-      Log.Debug("TVHome.OnAudioTracksReady()");
+      Log.DebugFormat("TVHome.OnAudioTracksReady()");
 
       eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
       int prefLangIdx = GetPreferedAudioStreamIndex(out dualMonoMode);
@@ -1974,7 +1984,7 @@ namespace Mediaportal.TV.TvPlugin
       }
 
       //tv off
-      Log.Info("TVHome:turn tv off");
+      Log.InfoFormat("TVHome:turn tv off");
       SaveSettings();
       Card.User.Name = new User().Name;
       Card.StopTimeShifting();
@@ -1986,7 +1996,7 @@ namespace Mediaportal.TV.TvPlugin
     {
       if (GUIWindowManager.ActiveWindowEx == (int)(int)Window.WINDOW_TVFULLSCREEN)
       {
-        Log.Info("send message to fullscreen tv");
+        Log.InfoFormat("send message to fullscreen tv");
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORD, GUIWindowManager.ActiveWindow, 0, 0, 0, 0,
                                         null);
         msg.SendToTargetWindow = true;
@@ -1995,7 +2005,7 @@ namespace Mediaportal.TV.TvPlugin
         return false;
       }
 
-      Log.Info("TVHome:Record action");
+      Log.InfoFormat("TVHome:Record action");
 
 
       IVirtualCard card = null;
@@ -2139,7 +2149,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           return true;
         }
-        Log.Info("TVHome: ShowFullScreenWindow switching to fullscreen tv");
+        Log.InfoFormat("TVHome: ShowFullScreenWindow switching to fullscreen tv");
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_TVFULLSCREEN);
         GUIGraphicsContext.IsFullScreenVideo = true;
         return true;
@@ -2384,10 +2394,10 @@ namespace Mediaportal.TV.TvPlugin
         // we need to stop player HERE if card has changed.        
         if (_status.AllSet(LiveTvStatus.WasPlaying | LiveTvStatus.CardChange))
         {
-          Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. CardId:{0}/{1}, RTSP:{2}", Card.Id, newCardId,
+          Log.DebugFormat("TVHome.ViewChannelAndCheck(): Stopping player. CardId:{0}/{1}, RTSP:{2}", Card.Id, newCardId,
                     Card.RTSPUrl);
-          Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. Timeshifting:{0}", Card.TimeShiftFileName);
-          Log.Debug("TVHome.ViewChannelAndCheck(): rebuilding graph (card changed) - timeshifting continueing.");
+          Log.DebugFormat("TVHome.ViewChannelAndCheck(): Stopping player. Timeshifting:{0}", Card.TimeShiftFileName);
+          Log.DebugFormat("TVHome.ViewChannelAndCheck(): rebuilding graph (card changed) - timeshifting continueing.");
         }
         if (_status.IsSet(LiveTvStatus.WasPlaying))
         {
@@ -2446,7 +2456,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           Navigator.LastViewedChannel = Navigator.Channel.Entity;
         }
-        Log.Info("succeeded:{0} {1}", succeeded, card);
+        Log.InfoFormat("succeeded:{0} {1}", succeeded, card);
         Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
 
         // continue graph
@@ -2496,7 +2506,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Debug("TvPlugin:ViewParkedChannelAndCheck Exception {0}", ex.ToString());
+        Log.ErrorFormat(ex, "TvPlugin:ViewParkedChannelAndCheck Exception");
         _doingChannelChange = false;
         Card.User.Name = new User().Name;
         g_Player.Stop();
@@ -2563,7 +2573,7 @@ namespace Mediaportal.TV.TvPlugin
     private void UpdateRecordingIndicator()
     {
       DateTime now = DateTime.Now;
-      //Log.Debug("updaterec: conn:{0}, rec:{1}", Connected, Card.IsRecording);
+      //Log.DebugFormat("updaterec: conn:{0}, rec:{1}", Connected, Card.IsRecording);
       // if we're recording tv, update gui with info
       if (Connected && Card.IsRecording)
       {
@@ -2756,7 +2766,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           GUIPropertyManager.SetProperty("#TV.View.channel", String.Empty);
           GUIPropertyManager.SetProperty("#TV.View.thumb", String.Empty);
-          Log.Debug("UpdateCurrentEpgProperties: no channel, returning");
+          Log.DebugFormat("UpdateCurrentEpgProperties: no channel, returning");
         }
         else
         {
@@ -2850,14 +2860,14 @@ namespace Mediaportal.TV.TvPlugin
       Program next = null;
       if (ch == null)
       {
-        Log.Debug("UpdateNextEpgProperties: no channel, returning");
+        Log.DebugFormat("UpdateNextEpgProperties: no channel, returning");
       }
       else
       {
         next = ch.NextProgram;
         if (next == null)
         {
-          Log.Debug("UpdateNextEpgProperties: no EPG data, returning");
+          Log.DebugFormat("UpdateNextEpgProperties: no EPG data, returning");
         }
       }
 
@@ -2893,7 +2903,7 @@ namespace Mediaportal.TV.TvPlugin
     /// </summary>
     public static void OnPreviousChannel()
     {
-      Log.Info("TVHome:OnPreviousChannel()");
+      Log.InfoFormat("TVHome:OnPreviousChannel()");
       if (GUIGraphicsContext.IsFullScreenVideo)
       {
         // where in fullscreen so delayzap channel instead of immediatly tune..
@@ -2928,7 +2938,7 @@ namespace Mediaportal.TV.TvPlugin
       bool haveLangPreferences = (_preferredLanguages != null && _preferredLanguages.Count > 0);
       bool isDualMonoModeEnabled = (g_Player.GetAudioDualMonoMode() != eAudioDualMonoMode.UNSUPPORTED);
 
-      Log.Debug("TvHome: GetPreferedAudioStreamIndex(), preferred languages = {0}, prefer AC3 = {1}, prefer audio type over language = {2}, dual mono switching enabled = {3}",
+      Log.DebugFormat("TvHome: GetPreferedAudioStreamIndex(), preferred languages = {0}, prefer AC3 = {1}, prefer audio type over language = {2}, dual mono switching enabled = {3}",
                   (haveLangPreferences ? String.Join(";", _preferredLanguages.ToArray()) : "N/A"), _preferAC3, _preferAudioTypeOverLang, isDualMonoModeEnabled);
 
       for (int i = 0; i < g_Player.AudioStreams; i++)
@@ -2991,13 +3001,13 @@ namespace Mediaportal.TV.TvPlugin
         // Choice by language...
         else if (langPriority < currentPreferredLangPriority && (!_preferAudioTypeOverLang || !_preferAC3 || isAc3 || !isCurrentPreferredAc3))
         {
-          Log.Debug("TvHome: choosing stream {0} (is AC3 {1}, lang = {2}, lang priority = {3}) over {4} (is AC3 = {5}, lang = {6}, lang priority = {7})", i, isAc3, lang, langPriority, currentPreferredIndex, isCurrentPreferredAc3, currentPreferredLang, currentPreferredLangPriority);
+          Log.DebugFormat("TvHome: choosing stream {0} (is AC3 {1}, lang = {2}, lang priority = {3}) over {4} (is AC3 = {5}, lang = {6}, lang priority = {7})", i, isAc3, lang, langPriority, currentPreferredIndex, isCurrentPreferredAc3, currentPreferredLang, currentPreferredLangPriority);
           isPreferred = true;
         }
         // Choice by AC3...
         else if (isAc3 && _preferAC3 && !isCurrentPreferredAc3 && (currentPreferredLangPriority == AUDIO_STREAM_PRIORITY_NOT_DEFINED || langPriority <= currentPreferredLangPriority || (_preferAudioTypeOverLang && langPriority != AUDIO_STREAM_PRIORITY_NOT_DEFINED)))
         {
-          Log.Debug("TvHome: choosing AC3 stream {0} (lang = {1}, lang priority = {2}) over {3} (is AC3 = {4}, lang = {5}, lang priority = {6})", i, lang, langPriority, currentPreferredIndex, isCurrentPreferredAc3, currentPreferredLang, currentPreferredLangPriority);
+          Log.DebugFormat("TvHome: choosing AC3 stream {0} (lang = {1}, lang priority = {2}) over {3} (is AC3 = {4}, lang = {5}, lang priority = {6})", i, lang, langPriority, currentPreferredIndex, isCurrentPreferredAc3, currentPreferredLang, currentPreferredLangPriority);
           isPreferred = true;
         }
         if (isPreferred)
@@ -3115,7 +3125,7 @@ namespace Mediaportal.TV.TvPlugin
       if (GUIWindowManager.ActiveWindow == (int)(int)Window.WINDOW_TVFULLSCREEN)
       {
         // If failed and wasPlaying TV, left screen as it is and show osd with error message 
-        Log.Info("send message to fullscreen tv");
+        Log.InfoFormat("send message to fullscreen tv");
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_TV_ERROR_NOTIFY, GUIWindowManager.ActiveWindow, 0,
                                         0, 0, 0,
                                         null);
@@ -3137,7 +3147,7 @@ namespace Mediaportal.TV.TvPlugin
     {
       if (GUIGraphicsContext.RenderBlackImage)
       {
-        //MediaPortal.GUI.Library.Log.Debug("TvHome.OnBlackImageRendered()");
+        //MediaPortal.GUI.Library.Log.DebugFormat("TvHome.OnBlackImageRendered()");
         _waitForBlackScreen.Set();
       }
     }
@@ -3146,14 +3156,14 @@ namespace Mediaportal.TV.TvPlugin
     {
       if (GUIGraphicsContext.RenderBlackImage)
       {
-        Log.Debug("TvHome.OnVideoReceived() {0}", FramesBeforeStopRenderBlackImage);
+        Log.DebugFormat("TvHome.OnVideoReceived() {0}", FramesBeforeStopRenderBlackImage);
         if (FramesBeforeStopRenderBlackImage != 0)
         {
           FramesBeforeStopRenderBlackImage--;
           if (FramesBeforeStopRenderBlackImage == 0)
           {
             GUIGraphicsContext.RenderBlackImage = false;
-            Log.Debug("TvHome.StopRenderBlackImage()");
+            Log.DebugFormat("TvHome.StopRenderBlackImage()");
           }
         }
       }
@@ -3174,7 +3184,7 @@ namespace Mediaportal.TV.TvPlugin
     {
       if (GUIGraphicsContext.RenderBlackImage == false)
       {
-        Log.Debug("TvHome.RenderBlackImage()");
+        Log.DebugFormat("TvHome.RenderBlackImage()");
         _waitForBlackScreen.Reset();
         GUIGraphicsContext.RenderBlackImage = true;
         _waitForBlackScreen.WaitOne(1000, false);
@@ -3192,7 +3202,7 @@ namespace Mediaportal.TV.TvPlugin
       doContinue = false;
       if (_suspended && _waitonresume > 0)
       {
-        Log.Info("TVHome.ViewChannelAndCheck(): system just woke up...waiting {0} ms., suspended {2}", _waitonresume,
+        Log.InfoFormat("TVHome.ViewChannelAndCheck(): system just woke up...waiting {0} ms., suspended {2}", _waitonresume,
                  _suspended);
         Thread.Sleep(_waitonresume);
       }
@@ -3201,17 +3211,17 @@ namespace Mediaportal.TV.TvPlugin
 
       if (channel == null)
       {
-        Log.Info("TVHome.ViewChannelAndCheck(): channel==null");
+        Log.InfoFormat("TVHome.ViewChannelAndCheck(): channel==null");
         return false;
       }
-      Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.DisplayName);
+      Log.InfoFormat("TVHome.ViewChannelAndCheck(): View channel={0}", channel.DisplayName);
 
       //if a channel is untunable, then there is no reason to carry on or even stop playback.            
 
       //BAV: fixing mantis bug 1263: TV starts with no video if Radio is previously ON & channel selected from TV guide
       if ((channel.MediaType != (int)MediaTypeEnum.Radio && g_Player.IsRadio) || (channel.MediaType == (int)MediaTypeEnum.Radio && !g_Player.IsRadio))
       {
-        Log.Info("TVHome.ViewChannelAndCheck(): Stop g_Player");
+        Log.InfoFormat("TVHome.ViewChannelAndCheck(): Stop g_Player");
         g_Player.Stop(true);
       }
       // do we stop the player when changing channel ?
@@ -3320,10 +3330,10 @@ namespace Mediaportal.TV.TvPlugin
         // we need to stop player HERE if card has changed.        
         if (_status.AllSet(LiveTvStatus.WasPlaying | LiveTvStatus.CardChange))
         {
-          Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. CardId:{0}/{1}, RTSP:{2}", Card.Id, newCardId,
+          Log.DebugFormat("TVHome.ViewChannelAndCheck(): Stopping player. CardId:{0}/{1}, RTSP:{2}", Card.Id, newCardId,
                     Card.RTSPUrl);
-          Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. Timeshifting:{0}", Card.TimeShiftFileName);
-          Log.Debug("TVHome.ViewChannelAndCheck(): rebuilding graph (card changed) - timeshifting continueing.");
+          Log.DebugFormat("TVHome.ViewChannelAndCheck(): Stopping player. Timeshifting:{0}", Card.TimeShiftFileName);
+          Log.DebugFormat("TVHome.ViewChannelAndCheck(): rebuilding graph (card changed) - timeshifting continueing.");
         }
         if (_status.IsSet(LiveTvStatus.WasPlaying))
         {
@@ -3391,7 +3401,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           Navigator.LastViewedChannel = Navigator.Channel.Entity;
         }
-        Log.Info("succeeded:{0} {1}", succeeded, card);
+        Log.InfoFormat("succeeded:{0} {1}", succeeded, card);
         if (card != null)
         {
           Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
@@ -3434,7 +3444,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Debug("TvPlugin:ViewChannelandCheckV2 Exception {0}", ex.ToString());
+        Log.ErrorFormat(ex, "TvPlugin:ViewChannelandCheckV2 Exception");
         _doingChannelChange = false;
         Card.User.Name = new User().Name;
         g_Player.Stop();
@@ -3542,7 +3552,7 @@ namespace Mediaportal.TV.TvPlugin
     /// </summary>
     public static void OnNextChannel()
     {
-      Log.Info("TVHome:OnNextChannel()");
+      Log.InfoFormat("TVHome:OnNextChannel()");
       if (GUIGraphicsContext.IsFullScreenVideo)
       {
         // where in fullscreen so delayzap channel instead of immediatly tune..
@@ -3614,22 +3624,22 @@ namespace Mediaportal.TV.TvPlugin
       benchClock = Stopwatch.StartNew();
       if (Card == null)
       {
-        Log.Info("tvhome:startplay card=null");
+        Log.InfoFormat("tvhome:startplay card=null");
         return;
       }
       if (Card.IsScrambled)
       {
-        Log.Info("tvhome:startplay scrambled");
+        Log.InfoFormat("tvhome:startplay scrambled");
         return;
       }
-      Log.Info("tvhome:startplay");
+      Log.InfoFormat("tvhome:startplay");
       string timeshiftFileName = Card.TimeShiftFileName;
-      Log.Info("tvhome:file:{0}", timeshiftFileName);
+      Log.InfoFormat("tvhome:file:{0}", timeshiftFileName);
 
       MediaTypeEnum? mediaTypeCard = Card.MediaType;
       if (!mediaTypeCard.HasValue)
       {
-        Log.Info("tvhome:startplay channel=null");
+        Log.InfoFormat("tvhome:startplay channel=null");
         return;
       }
       g_Player.MediaType mediaType = g_Player.MediaType.TV;
@@ -3639,7 +3649,7 @@ namespace Mediaportal.TV.TvPlugin
       }
 
       benchClock.Stop();
-      Log.Warn("tvhome:startplay.  Phase 1 - {0} ms - Done method initialization",
+      Log.WarnFormat("tvhome:startplay.  Phase 1 - {0} ms - Done method initialization",
                benchClock.ElapsedMilliseconds.ToString());
       benchClock.Reset();
       benchClock.Start();
@@ -3647,7 +3657,7 @@ namespace Mediaportal.TV.TvPlugin
       timeshiftFileName = TVUtil.GetFileNameForTimeshifting();
       bool useRTSP = UseRTSP();
 
-      Log.Info("tvhome:startplay:{0} - using rtsp mode:{1}", timeshiftFileName, useRTSP);
+      Log.InfoFormat("tvhome:startplay:{0} - using rtsp mode:{1}", timeshiftFileName, useRTSP);
 
       if (!useRTSP)
       {
@@ -3658,7 +3668,7 @@ namespace Mediaportal.TV.TvPlugin
           tsFileExists = File.Exists(timeshiftFileName);
           if (!tsFileExists)
           {
-            Log.Info("tvhome:startplay: waiting for TS file {0}", timeshiftFileName);
+            Log.InfoFormat("tvhome:startplay: waiting for TS file {0}", timeshiftFileName);
             timeout++;
             Thread.Sleep(10);
           }
@@ -3671,12 +3681,12 @@ namespace Mediaportal.TV.TvPlugin
       }
 
       benchClock.Stop();
-      Log.Warn("tvhome:startplay.  Phase 2 - {0} ms - Done starting g_Player.Play()",
+      Log.WarnFormat("tvhome:startplay.  Phase 2 - {0} ms - Done starting g_Player.Play()",
                benchClock.ElapsedMilliseconds.ToString());
       benchClock.Reset();
       //benchClock.Start();
       //SeekToEnd(true);
-      //Log.Warn("tvhome:startplay.  Phase 3 - {0} ms - Done seeking.", benchClock.ElapsedMilliseconds.ToString());
+      //Log.WarnFormat("tvhome:startplay.  Phase 3 - {0} ms - Done seeking.", benchClock.ElapsedMilliseconds.ToString());
       //SeekToEnd(true);
 
       benchClock.Stop();
@@ -3694,7 +3704,7 @@ namespace Mediaportal.TV.TvPlugin
 
       bool useRtsp = UseRTSP();
 
-      Log.Info("tvhome:SeektoEnd({0}/{1}),{2},rtsp={3}", position, duration, zapping, useRtsp);
+      Log.InfoFormat("tvhome:SeektoEnd({0}/{1}),{2},rtsp={3}", position, duration, zapping, useRtsp);
       if (duration > 0 || position > 0)
       {
         try
@@ -3707,7 +3717,7 @@ namespace Mediaportal.TV.TvPlugin
         }
         catch (Exception e)
         {
-          Log.Error("tvhome:SeektoEnd({0}, rtsp={1} exception: {2}", zapping, useRtsp, e.Message);
+          Log.ErrorFormat(e, "tvhome:SeektoEnd({0}, rtsp={1}", zapping, useRtsp);
           g_Player.Stop();
         }
       }
@@ -3722,7 +3732,7 @@ namespace Mediaportal.TV.TvPlugin
     {
       if (_ciMenuEventEventHandler == null)
       {
-        Log.Debug("CiMenu: PrepareCiMenu");
+        Log.DebugFormat("CiMenu: PrepareCiMenu");
         _ciMenuEventEventHandler = new CiMenuEventEventHandler();
       }
       // Check if card supports CI menu
@@ -3733,7 +3743,7 @@ namespace Mediaportal.TV.TvPlugin
 
         // Enable CI menu handling in card
         ServiceAgents.Instance.ControllerServiceAgent.SetCiMenuHandler(newCardId, null);
-        Log.Debug("TvPlugin: CiMenuHandler attached to new card {0}", newCardId);
+        Log.DebugFormat("TvPlugin: CiMenuHandler attached to new card {0}", newCardId);
       }
     }
 
@@ -3785,7 +3795,7 @@ namespace Mediaportal.TV.TvPlugin
         CiMenuList.Add(Menu);
         if (CiMenuActive)       // Just suppose if a new menu is coming from CAM, last one can be trashed.
           dlgCiMenu.Reset();
-        Log.Debug("ProcessCiMenu {0} {1} ", Menu, CiMenuList.Count);
+        Log.DebugFormat("ProcessCiMenu {0} {1} ", Menu, CiMenuList.Count);
       }
     }
 

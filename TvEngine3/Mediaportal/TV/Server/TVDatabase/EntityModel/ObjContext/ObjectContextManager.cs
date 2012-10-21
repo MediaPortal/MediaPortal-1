@@ -3,13 +3,18 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Objects;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
 {
     public static class ObjectContextManager
     {
+        private static ILogManager Log
+        {
+            get { return LogHelper.GetLogger(typeof(ObjectContextManager)); }
+        }
+
       static ObjectContextManager ()
       {
         try
@@ -18,7 +23,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
 
           if (!model.DatabaseExists())
           {
-            Log.Info("DataBase does not exist. Creating database...");
+            Log.InfoFormat("DataBase does not exist. Creating database...");
             model.CreateDatabase();
             SetupStaticValues(model);
           }
@@ -28,7 +33,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
         }
         catch(Exception ex)
         {
-          Log.Error("ObjectContextManager : error opening database. Is the SQL engine running ?", ex);
+          Log.ErrorFormat(ex, "ObjectContextManager : error opening database. Is the SQL engine running ?");
           throw;
         }        
       }

@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
@@ -31,6 +31,11 @@ namespace Mediaportal.TV.Server.TVControl
 {
   public static class UserFactory
   {
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(UserFactory)); }
+    }
+
     public const int EPG_PRIORITY = 1;    
     public const int USER_PRIORITY = 2;
     public const int SCHEDULER_PRIORITY = 101;
@@ -74,15 +79,15 @@ namespace Mediaportal.TV.Server.TVControl
         _priorityEpg = (int)ValueSanityCheck(
         Convert.ToDecimal(settingService.GetSettingWithDefaultValue(EPG_TAGNAME, EPG_PRIORITY.ToString()).Value), PRIORITY_MIN_VALUE, PRIORITY_MAX_VALUE);        
 
-        Log.Debug("UserFactory setting PriorityEPG : {0}", _priorityEpg);
+        Log.DebugFormat("UserFactory setting PriorityEPG : {0}", _priorityEpg);
 
         _priorityUser = (int)ValueSanityCheck(
           Convert.ToDecimal(settingService.GetSettingWithDefaultValue(USER_TAGNAME, USER_PRIORITY.ToString()).Value), PRIORITY_MIN_VALUE, PRIORITY_MAX_VALUE);
-        Log.Debug("UserFactory setting PriorityUser : {0}", _priorityUser);
+        Log.DebugFormat("UserFactory setting PriorityUser : {0}", _priorityUser);
 
         _priorityScheduler = (int)ValueSanityCheck(
           Convert.ToDecimal(settingService.GetSettingWithDefaultValue(SCHEDULER_TAGNAME, SCHEDULER_PRIORITY.ToString()).Value), PRIORITY_MIN_VALUE, PRIORITY_MAX_VALUE);
-        Log.Debug("UserFactory setting PriorityScheduler : {0}", _priorityScheduler);
+        Log.DebugFormat("UserFactory setting PriorityScheduler : {0}", _priorityScheduler);
 
         Setting setting = settingService.GetSettingWithDefaultValue(CUSTOM_TAGNAME, "");
         string[] users = setting.Value.Split(';');
@@ -96,7 +101,7 @@ namespace Mediaportal.TV.Server.TVControl
             int priority;
             if (host.Length > 0 && Int32.TryParse(shareItem[1].Trim(), out priority))
             {
-              Log.Debug("UserFactory setting PriorityCustomUser : {0} - {1}", host, priority);
+              Log.DebugFormat("UserFactory setting PriorityCustomUser : {0} - {1}", host, priority);
               _priorityCustomUsers[host] = priority;
             }
           }
@@ -104,7 +109,7 @@ namespace Mediaportal.TV.Server.TVControl
       }
       catch (Exception ex)
       {
-        Log.Error("UserFactory - error reading priority settings from database", ex);        
+        Log.ErrorFormat("UserFactory - error reading priority settings from database", ex);        
       }
       
     }

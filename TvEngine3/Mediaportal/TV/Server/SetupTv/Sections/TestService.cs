@@ -36,7 +36,7 @@ using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVService;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
@@ -53,6 +53,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private class ServerMonitor
     {
+        #region logging
+
+        private static ILogManager Log
+        {
+            get { return LogHelper.GetLogger(typeof(ServerMonitor)); }
+        }
+
+        #endregion
+
       #region events & delegates
 
       public delegate void ServerDisconnectedDelegate();
@@ -84,7 +93,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         if (_serverMonitorThread == null || !_serverMonitorThread.IsAlive)
         {
           _evtHeartbeatCtrl.Reset();
-          Log.Debug("ServerMonitor: ServerMonitor thread started.");
+          Log.DebugFormat("ServerMonitor: ServerMonitor thread started.");
           _serverMonitorThread = new Thread(ServerMonitorThread) { IsBackground = true, Name = "ServerMonitor thread" };
           _serverMonitorThread.Start();
         }
@@ -98,7 +107,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           {
             _evtHeartbeatCtrl.Set();
             _serverMonitorThread.Join();
-            Log.Debug("ServerMonitor: ServerMonitor thread stopped.");
+            Log.DebugFormat("ServerMonitor: ServerMonitor thread stopped.");
           }
           catch (Exception) { }
         }

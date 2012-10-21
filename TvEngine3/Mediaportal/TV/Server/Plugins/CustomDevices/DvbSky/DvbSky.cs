@@ -22,7 +22,7 @@ using System;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky
 {
@@ -34,6 +34,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky
   /// </summary>
   public class DvbSky : NetUp.NetUp
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(DvbSky)); }
+    }
+
+    #endregion
+
     #region enums
 
     private enum BdaExtensionProperty
@@ -111,39 +120,39 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
     {
-      Log.Debug("DVBSky: initialising device");
+      Log.DebugFormat("DVBSky: initialising device");
 
       if (tunerFilter == null)
       {
-        Log.Debug("DVBSky: tuner filter is null");
+        Log.DebugFormat("DVBSky: tuner filter is null");
         return false;
       }
       if (_isDvbSky)
       {
-        Log.Debug("DVBSky: device is already initialised");
+        Log.DebugFormat("DVBSky: device is already initialised");
         return true;
       }
 
-      Log.Debug("DVBSky: checking base Conexant interface support");
+      Log.DebugFormat("DVBSky: checking base Conexant interface support");
       _conexantInterface = new Conexant.Conexant(DvbSkyGeneralBdaExtensionPropertySet);
       if (!_conexantInterface.Initialise(tunerFilter, tunerType, tunerDevicePath))
       {
-        Log.Debug("DVBSky: base Conexant interface not supported");
+        Log.DebugFormat("DVBSky: base Conexant interface not supported");
         _conexantInterface.Dispose();
         _conexantInterface = null;
         return false;
       }
-      Log.Debug("DVBSky: base Conexant interface supported");
+      Log.DebugFormat("DVBSky: base Conexant interface supported");
       _isDvbSky = true;
 
-      Log.Debug("DVBSky: checking base NetUP conditional access support");
+      Log.DebugFormat("DVBSky: checking base NetUP conditional access support");
       if (base.Initialise(tunerFilter, tunerType, tunerDevicePath))
       {
-        Log.Debug("DVBSky: conditional access interface supported");
+        Log.DebugFormat("DVBSky: conditional access interface supported");
       }
       else
       {
-        Log.Debug("DVBSky: conditional access interface not supported");
+        Log.DebugFormat("DVBSky: conditional access interface not supported");
       }
       return true;
     }
@@ -160,11 +169,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky
     /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
     public override bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
     {
-      Log.Debug("DVBSky: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
+      Log.DebugFormat("DVBSky: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
 
       if (!_isDvbSky || _conexantInterface == null)
       {
-        Log.Debug("DVBSky: device not initialised or interface not supported");
+        Log.DebugFormat("DVBSky: device not initialised or interface not supported");
         return false;
       }
 
@@ -178,11 +187,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
     public override bool SendCommand(byte[] command)
     {
-      Log.Debug("DVBSky: send DiSEqC command");
+      Log.DebugFormat("DVBSky: send DiSEqC command");
 
       if (!_isDvbSky || _conexantInterface == null)
       {
-        Log.Debug("DVBSky: device not initialised or interface not supported");
+        Log.DebugFormat("DVBSky: device not initialised or interface not supported");
         return false;
       }
 
@@ -197,12 +206,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky
     /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
     public override bool ReadResponse(out byte[] response)
     {
-      Log.Debug("DVBSky: read DiSEqC response");
+      Log.DebugFormat("DVBSky: read DiSEqC response");
       response = null;
 
       if (!_isDvbSky || _conexantInterface == null)
       {
-        Log.Debug("DVBSky: device not initialised or interface not supported");
+        Log.DebugFormat("DVBSky: device not initialised or interface not supported");
         return false;
       }
 

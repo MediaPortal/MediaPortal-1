@@ -34,7 +34,7 @@ using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVService;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
@@ -46,6 +46,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class TestChannels : SectionSettings
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(TestChannels)); }
+    }
+
+    #endregion
+
     private DateTime _lastTune;
     private readonly Dictionary<string, bool> _users = new Dictionary<string, bool>();
     private double _avg;
@@ -138,7 +147,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         if (chunkSize <= 0)
         {
-          Log.Debug("chunkSize must be greater than 0.");
+          Log.DebugFormat("chunkSize must be greater than 0.");
           return null;
           //throw new ArgumentException("chunkSize must be greater than 0.");
         }
@@ -616,12 +625,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           txtAvgMsec.Value = Convert.ToInt32(_avg / _total);
         }
         Application.DoEvents();
-        Log.Debug("TestChannels: Succeeded={0}", _succeeded);
-        Log.Debug("TestChannels: Failed={0}", _failed);
-        Log.Debug("TestChannels: Ignored={0}", _ignored);
-        Log.Debug("TestChannels: Total={0}", _total);
-        Log.Debug("TestChannels: Avg mSec={0}", txtAvgMsec.Value);
-        Log.Debug("TestChannels: First Fail={0}", _firstFail);
+        Log.DebugFormat("TestChannels: Succeeded={0}", _succeeded);
+        Log.DebugFormat("TestChannels: Failed={0}", _failed);
+        Log.DebugFormat("TestChannels: Ignored={0}", _ignored);
+        Log.DebugFormat("TestChannels: Total={0}", _total);
+        Log.DebugFormat("TestChannels: Avg mSec={0}", txtAvgMsec.Value);
+        Log.DebugFormat("TestChannels: First Fail={0}", _firstFail);
       }
     }
 

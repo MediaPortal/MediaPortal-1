@@ -2,13 +2,22 @@ using System;
 using System.Collections.Generic;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Services;
 
 namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
 {
   public class CiMenuManager : EventDispatcher, ICiMenuCallbacks
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(CiMenuManager)); }
+    }
+
+    #endregion
+
     #region CI Menu Event handling
 
     /// <summary>
@@ -61,7 +70,7 @@ namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
 
           if (ActiveCiMenuCard != -1 && ServiceManager.Instance.InternalControllerService.CardCollection[ActiveCiMenuCard].DataBaseCard.CamType == 1 && !IsCiMenuInteractive)
           {
-            Log.Debug("AstonCrypt2: unrequested CI menu received, no action done. Menu Title: {0}", _curMenu.Title);
+            Log.DebugFormat("AstonCrypt2: unrequested CI menu received, no action done. Menu Title: {0}", _curMenu.Title);
             return;
           }
 
@@ -75,7 +84,7 @@ namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
             return;
           }
           
-          Log.Debug("CI menu received but no listeners available");
+          Log.DebugFormat("CI menu received but no listeners available");
         }
       }
     }
@@ -112,7 +121,7 @@ namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
     {
       if (_curMenu == null)
       {
-        Log.Debug("Error in OnCiMenuChoice: menu choice sent before menu started");
+        Log.DebugFormat("Error in OnCiMenuChoice: menu choice sent before menu started");
         return 0;
       }
       _curMenu.AddEntry(nChoice + 1, lpszText); // choices for display +1 

@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MediaPortal.Common.Utils;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Video;
@@ -45,7 +46,16 @@ namespace Mediaportal.TV.TvPlugin.EPG
   /// 
   /// </summary>
   public class TvGuideBase : GuideBase, IMDB.IProgress
-  {    
+  {
+    #region logging
+
+    private static ILogManager Log
+    {
+      get { return LogHelper.GetLogger(typeof(TvGuideBase)); }
+    }
+
+    #endregion
+
     #region constants
 
     private const string SKIN_PROPERTY_PREFIX = "#TV";
@@ -198,7 +208,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       }
       else
       {
-        Log.Debug("TvGuideBase: SpinControl cntlDay is null!");
+        Log.DebugFormat("TvGuideBase: SpinControl cntlDay is null!");
       }
 
       var cntlTimeInterval = GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL) as GUISpinControl;
@@ -213,7 +223,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       }
       else
       {
-        Log.Debug("TvGuideBase: SpinControl cntlTimeInterval is null!");
+        Log.DebugFormat("TvGuideBase: SpinControl cntlTimeInterval is null!");
       }
 
       if (!isPreviousWindowTvGuideRelated)
@@ -374,7 +384,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
             if (!string.IsNullOrEmpty(fileName)) //are we really recording ?
             {
-              Log.Info("TVGuide: clicked on a currently running recording");
+              Log.InfoFormat("TVGuide: clicked on a currently running recording");
               var dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
               if (dlg == null)
               {
@@ -393,7 +403,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
               }
               if (_recordingList != null)
               {
-                Log.Debug("TVGuide: Found current program {0} in recording list", _currentTitle);
+                Log.DebugFormat("TVGuide: Found current program {0} in recording list", _currentTitle);
                 switch (dlg.SelectedId)
                 {
                   case 979: // Play recording from beginning
@@ -419,7 +429,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
               }
               else
               {
-                Log.Info("EPG: _recordingList was not available");
+                Log.InfoFormat("EPG: _recordingList was not available");
               }
 
 
@@ -438,7 +448,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
               if (TVHome.Navigator.Channel != null && TVHome.Navigator.Channel.Entity.IdChannel == _currentChannel.IdChannel &&
                   g_Player.Playing && g_Player.IsTV)
               {
-                Log.Debug("TVGuide: clicked on a currently running show");
+                Log.DebugFormat("TVGuide: clicked on a currently running show");
                 var dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
                 if (dlg == null)
                 {
@@ -460,10 +470,10 @@ namespace Mediaportal.TV.TvPlugin.EPG
                 {
                   case 1041:
                     ShowProgramInfo();
-                    Log.Debug("TVGuide: show episodes or repeatings for current show");
+                    Log.DebugFormat("TVGuide: show episodes or repeatings for current show");
                     break;
                   case 938:
-                    Log.Debug("TVGuide: switch currently running show to fullscreen");
+                    Log.DebugFormat("TVGuide: switch currently running show to fullscreen");
                     GUIWaitCursor.Show();
                     TVHome.ViewChannelAndCheck(_currentProgram.Entity.Channel, 0);
                     GUIWaitCursor.Hide();
@@ -473,7 +483,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
                     }
                     else
                     {
-                      Log.Debug("TVGuide: no show currently running to switch to fullscreen");
+                      Log.DebugFormat("TVGuide: no show currently running to switch to fullscreen");
                     }
                     break;
                 }
@@ -645,7 +655,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
         {
           case 1041:
             ShowProgramInfo();
-            Log.Debug("TVGuide: show episodes or repeatings for current show");
+            Log.DebugFormat("TVGuide: show episodes or repeatings for current show");
             break;
           case 368: // IMDB
             OnGetIMDBInfo();
@@ -660,7 +670,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
           case 938: // view channel
 
-            Log.Debug("viewch channel:{0}", _currentChannel);
+            Log.DebugFormat("viewch channel:{0}", _currentChannel);
             if (_currentProgram != null) 
             {
               TVHome.ViewChannelAndCheck(_currentProgram.Entity.Channel, 0);
@@ -768,7 +778,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       }
       else
       {
-        Log.Info("IMDB Fetcher: Nothing found");
+        Log.InfoFormat("IMDB Fetcher: Nothing found");
       }
     }
 
@@ -884,7 +894,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
     public bool OnMovieNotFound(IMDBFetcher fetcher)
     {
-      Log.Info("IMDB Fetcher: OnMovieNotFound");
+      Log.InfoFormat("IMDB Fetcher: OnMovieNotFound");
       // show dialog...
       var dlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
       dlgOK.SetHeading(195);
@@ -965,7 +975,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
     public bool OnDetailsNotFound(IMDBFetcher fetcher)
     {
-      Log.Info("IMDB Fetcher: OnDetailsNotFound");
+      Log.InfoFormat("IMDB Fetcher: OnDetailsNotFound");
       // show dialog...
       var dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
       // show dialog...

@@ -25,7 +25,7 @@ using Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
 {
@@ -34,6 +34,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
   /// </summary>
   public class AnalogSubChannel : BaseSubChannel, ITvSubChannel, IAnalogTeletextCallBack, IAnalogVideoAudioObserver
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(AnalogSubChannel)); }
+    }
+
+    #endregion
+
     #region variables
 
     private readonly TvCardAnalog _card;
@@ -70,7 +79,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
     /// </summary>
     public override void OnBeforeTune()
     {
-      Log.WriteFile("analog subch:{0} OnBeforeTune", _subChannelId);
+      Log.DebugFormat("analog subch:{0} OnBeforeTune", _subChannelId);
       if (IsTimeShifting)
       {
         if (_subChannelId >= 0)
@@ -86,7 +95,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
     /// </summary>
     public override void OnAfterTune()
     {
-      Log.WriteFile("analog subch:{0} OnAfterTune", _subChannelId);
+      Log.DebugFormat("analog subch:{0} OnAfterTune", _subChannelId);
       if (IsTimeShifting)
       {
         if (_subChannelId >= 0)
@@ -101,7 +110,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
     /// </summary>
     public override void OnGraphRunning()
     {
-      Log.WriteFile("analog subch:{0} OnGraphRunning", _subChannelId);
+      Log.DebugFormat("analog subch:{0} OnGraphRunning", _subChannelId);
       if (_teletextDecoder != null)
       {
         _teletextDecoder.ClearBuffer();
@@ -142,7 +151,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
       {
         _card.Quality.StartPlayback();
       }
-      Log.WriteFile("analog:SetTimeShiftFileName:{0}", fileName);
+      Log.DebugFormat("analog:SetTimeShiftFileName:{0}", fileName);
       ScanParameters parameters = _card.Parameters;
       _mpRecord.SetVideoAudioObserver(_subChannelId, this);
       _mpRecord.SetTimeShiftParams(_subChannelId, parameters.MinimumFiles, parameters.MaximumFiles,
@@ -152,7 +161,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
       //  Set the channel type
       if (CurrentChannel == null)
       {
-        Log.Error("Error, CurrentChannel is null when trying to start timeshifting");
+        Log.ErrorFormat("Error, CurrentChannel is null when trying to start timeshifting");
         throw new Exception("AnalogSubChannel: current channel is null");
       }
 
@@ -168,7 +177,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
     /// <returns></returns>
     protected override void OnStopTimeShifting()
     {
-      Log.WriteFile("analog: StopTimeShifting()");
+      Log.DebugFormat("analog: StopTimeShifting()");
       _mpRecord.SetVideoAudioObserver(_subChannelId, null);
       _mpRecord.StopTimeShifting(_subChannelId);
     }
@@ -184,7 +193,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
       {
         _card.Quality.StartRecord();
       }
-      Log.WriteFile("analog:StartRecord({0})", fileName);
+      Log.DebugFormat("analog:StartRecord({0})", fileName);
       _mpRecord.SetRecordingFileNameW(_subChannelId, fileName);
       _mpRecord.SetRecorderVideoAudioObserver(_subChannelId, this);
 
@@ -200,7 +209,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
     /// <returns></returns>
     protected override void OnStopRecording()
     {
-      Log.WriteFile("analog:StopRecord()");
+      Log.DebugFormat("analog:StopRecord()");
       _mpRecord.StopRecord(_subChannelId);
       if (_card.SupportsQualityControl && IsTimeShifting)
       {

@@ -143,6 +143,10 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Service1.resx">
@@ -182,7 +186,7 @@
     </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>xcopy "$(SolutionDir)\..\ExternalBinaries\mysql*"  /s /i /y
+    <PreBuildEvent>xcopy "$(SolutionDir)\..\ExternalBinaries\*.*"  /s /i /y
 rem xcopy "$(SolutionDir)TVServer.Base\*.*" "$(TargetDir)" /C/Y/S
 xcopy "$(SolutionDir)Plugins\XmlTvImport\$(OutDir)Mediaportal.TV.Server.Plugins.XmlTvImport.*" "$(TargetDir)"Plugins\ /C/Y/S
 xcopy "$(SolutionDir)Plugins\XmlTvImport\$(OutDir)Ionic.Zip.dll" "$(TargetDir)" /C/Y/S

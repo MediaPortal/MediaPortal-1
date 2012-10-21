@@ -33,7 +33,7 @@ using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVControl.Interfaces;
 
 namespace Mediaportal.TV.Server.Plugins.PersonalTVGuide
@@ -73,7 +73,7 @@ namespace Mediaportal.TV.Server.Plugins.PersonalTVGuide
     /// </summary>
     public void UpdatePersonalTVGuide()
     {
-      if (_debugMode) Log.Info("PersonalTVGuide: Updating list");
+      if (_debugMode) Log.InfoFormat("PersonalTVGuide: Updating list");
       if (!_isUpdating)
       {
         try
@@ -86,12 +86,12 @@ namespace Mediaportal.TV.Server.Plugins.PersonalTVGuide
         }
         catch (Exception ex)
         {
-          Log.Error("PersonalTVGuide: Error spawing update thread - {0},{1}", ex.Message, ex.StackTrace);
+          Log.ErrorFormat("PersonalTVGuide: Error spawing update thread - {0},{1}", ex.Message, ex.StackTrace);
         }
       }
       else
       {
-        Log.Error("PersonalTVGuide: Update already started");
+        Log.ErrorFormat("PersonalTVGuide: Update already started");
       }
     }
 
@@ -107,21 +107,21 @@ namespace Mediaportal.TV.Server.Plugins.PersonalTVGuide
     {
       _isUpdating = true;
 
-      if (_debugMode) Log.Info("PersonalTVGuide: UpdateThread - Start: " + DateTime.Now.ToLongTimeString());
+      if (_debugMode) Log.InfoFormat("PersonalTVGuide: UpdateThread - Start: " + DateTime.Now.ToLongTimeString());
       ClearPersonalTVGuideMap();
       IList<Keyword> list = Keyword.ListAll();
       foreach (Keyword key in list)
       {
         if (_stopService)
         {
-          Log.Info("PersonalTVGuide: Stop Update loop");
+          Log.InfoFormat("PersonalTVGuide: Stop Update loop");
           break;
         }
         UpdateKeyword(key);      
       }
 
       SettingsManagement.SaveSetting("PTVGLastUpdateTime", DateTime.Now.ToString());      
-      if (_debugMode) Log.Info("PersonalTVGuide: UpdateThread - Stop : " + DateTime.Now.ToLongTimeString());
+      if (_debugMode) Log.InfoFormat("PersonalTVGuide: UpdateThread - Stop : " + DateTime.Now.ToLongTimeString());
       _isUpdating = false;
     }
 
@@ -137,7 +137,7 @@ namespace Mediaportal.TV.Server.Plugins.PersonalTVGuide
 
     private void UpdateKeyword(Keyword key)
     {      
-      if (_debugMode) Log.Debug("PersonalTVGuide: Updating Keyword: " + key.KeywordName);
+      if (_debugMode) Log.DebugFormat("PersonalTVGuide: Updating Keyword: " + key.KeywordName);
       if (key.SearchInTitle)
       {
         SaveList(key.IdKeyword, ContainsInTitle(key.KeywordName));
@@ -191,7 +191,7 @@ namespace Mediaportal.TV.Server.Plugins.PersonalTVGuide
     private void LoadSettings()
     {
       //_debugMode = (cmLayer.GetSetting("PTVGDebugMode", "true").Value == "true");
-      if (_debugMode) Log.Debug("PersonalTVGuide: Extensive Logging switched on");
+      if (_debugMode) Log.DebugFormat("PersonalTVGuide: Extensive Logging switched on");
     }
 
     #endregion
@@ -245,7 +245,7 @@ namespace Mediaportal.TV.Server.Plugins.PersonalTVGuide
     public void Start(IInternalControllerService controllerService)
     {
       LoadSettings();
-      Log.WriteFile("plugin: PersonalTVGuide started");
+      Log.DebugFormat("plugin: PersonalTVGuide started");
       _stopService = false;
       ITvServerEvent events = GlobalServiceProvider.Instance.Get<ITvServerEvent>();
       events.OnTvServerEvent += new TvServerEventHandler(events_OnTvServerEvent);
@@ -258,7 +258,7 @@ namespace Mediaportal.TV.Server.Plugins.PersonalTVGuide
     public void Stop()
     {
       _stopService = true;
-      Log.WriteFile("plugin: PersonalTVGuide stopped");
+      Log.DebugFormat("plugin: PersonalTVGuide stopped");
 
       if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
       {

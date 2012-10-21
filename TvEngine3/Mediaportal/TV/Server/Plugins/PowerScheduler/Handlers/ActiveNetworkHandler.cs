@@ -25,7 +25,7 @@ using System.Timers;
 using System.Collections;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using MediaPortal.Common.Utils;
 using System.Threading;
 using TvEngine.PowerScheduler.Interfaces;
@@ -38,6 +38,14 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
   /// </summary>
   internal class NetworkAdapter
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+      get { return LogHelper.GetLogger(typeof(NetworkAdapter)); }
+    }
+
+    #endregion
     private PerformanceCounter dlCounter, ulCounter; // Performance counters to monitor download and upload speed.
     //private long dlSpeed, ulSpeed;			  	          // Download Upload speed in bytes per second.
     //private long dlValue, ulValue;				            // Download Upload counter value in bytes.
@@ -103,6 +111,15 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 
   public class NetworkMonitorHandler : IStandbyHandler
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+      get { return LogHelper.GetLogger(typeof(NetworkMonitorHandler)); }
+    }
+
+    #endregion
+
     #region Constants
 
     private const int MonitorInteval = 10; // seconds
@@ -157,13 +174,13 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
             setting.Set<bool>(enabled);
             if (enabled) // Start
             {
-              Log.Debug("NetworkMonitorHandler: networkMonitor started");
+              Log.DebugFormat("NetworkMonitorHandler: networkMonitor started");
               Thread netmonThr = new Thread(new ThreadStart(StartNetworkMonitor));
               netmonThr.Start();
             }
             else // Stop
             {
-              Log.Debug("NetworkMonitorHandler: networkMonitor stopped");
+              Log.DebugFormat("NetworkMonitorHandler: networkMonitor stopped");
               StopNetworkMonitor();
             }
           }
@@ -171,7 +188,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
           if (enabled) // Get minimum transferrate considered as network activity
           {
             idleLimit = Int32.Parse(SettingsManagement.GetSetting("NetworkMonitorIdleLimit", "2").Value);
-            Log.Debug("NetworkMonitorHandler: idle limit in KB/s: {0}", idleLimit);
+            Log.DebugFormat("NetworkMonitorHandler: idle limit in KB/s: {0}", idleLimit);
           }
 
           break;
@@ -206,7 +223,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
       }
       catch (Exception netmonEx)
       {
-        Log.Error("NetworkMonitorHandler: networkMonitor died -> {0}", netmonEx.Message);
+        Log.ErrorFormat(netmonEx, "NetworkMonitorHandler: networkMonitor died");
       }
     }
 
@@ -237,9 +254,9 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
         foreach (NetworkAdapter adapter in monitoredAdapters)
           if ((adapter.ulSpeedPeak >= idleLimit) || (adapter.dlSpeedPeak >= idleLimit))
           {
-            Log.Debug("NetworkMonitorHandler: standby prevented: {0}", adapter.name);
-            Log.Debug("NetworkMonitorHandler: ulSpeed: {0}", adapter.ulSpeedPeak);
-            Log.Debug("NetworkMonitorHandler: dlSpeed: {0}", adapter.dlSpeedPeak);
+            Log.DebugFormat("NetworkMonitorHandler: standby prevented: {0}", adapter.name);
+            Log.DebugFormat("NetworkMonitorHandler: ulSpeed: {0}", adapter.ulSpeedPeak);
+            Log.DebugFormat("NetworkMonitorHandler: dlSpeed: {0}", adapter.dlSpeedPeak);
 
             adapter.ulSpeedPeak = 0; // Clear peak values
             adapter.dlSpeedPeak = 0;

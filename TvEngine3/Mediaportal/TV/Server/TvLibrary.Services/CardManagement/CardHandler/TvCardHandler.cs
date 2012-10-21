@@ -27,13 +27,22 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 
 namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public class TvCardHandler : ITvCardHandler
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(TvCardHandler)); }
+    }
+
+    #endregion
+
     #region variables
 
     private ITVCard _card;
@@ -258,7 +267,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
         catch (Exception ex)
         {
-          Log.Write(ex);
+          Log.ErrorFormat(ex, "");
           return CardType.Analog;
         }
       }
@@ -282,7 +291,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
         catch (Exception ex)
         {
-          Log.Write(ex);
+          Log.ErrorFormat(ex, "");
           return "";
         }
       }
@@ -304,7 +313,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
         return "";
       }
     }
@@ -332,7 +341,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
         catch (Exception ex)
         {
-          Log.Write(ex);
+          Log.ErrorFormat(ex, "");
           return false;
         }
       }
@@ -360,7 +369,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
         catch (Exception ex)
         {
-          Log.Write(ex);
+          Log.ErrorFormat(ex, "");
           return 0;
         }
       }
@@ -388,7 +397,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
         catch (Exception ex)
         {
-          Log.Write(ex);
+          Log.ErrorFormat(ex, "");
           return 0;
         }
       }
@@ -412,7 +421,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
       }
     }
 
@@ -439,7 +448,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
         catch (Exception ex)
         {
-          Log.Write(ex);
+          Log.ErrorFormat(ex, "");
           return 0;
         }
       }
@@ -467,7 +476,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
         catch (Exception ex)
         {
-          Log.Write(ex);
+          Log.ErrorFormat(ex, "");
           return 0;
         }
       }
@@ -568,7 +577,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
         return null;
       }
     }
@@ -595,7 +604,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
         return -1;
       }
     }
@@ -642,7 +651,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
         return "";
       }
     }
@@ -677,7 +686,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
         return false;
       }
     }
@@ -705,7 +714,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
         return false;
       }
     }
@@ -729,11 +738,11 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
         if (_parkedUserManagement.HasAnyParkedUsers())
         {
-          Log.Info("unable to Stopcard since there are parked channels");
+          Log.InfoFormat("unable to Stopcard since there are parked channels");
           return;
         }
       
-        Log.Info("Stopcard");
+        Log.InfoFormat("Stopcard");
 
         //remove all subchannels, except for this user...
         FreeAllSubChannels();        
@@ -749,7 +758,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
       }
     }
 

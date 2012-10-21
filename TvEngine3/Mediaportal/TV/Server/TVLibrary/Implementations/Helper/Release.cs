@@ -19,7 +19,7 @@
 #endregion
 
 using DirectShowLib;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 {
@@ -28,6 +28,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
   /// </summary>
   public class Release
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(Release)); }
+    }
+
+    #endregion
+
     public static int ComObject(object o)
     {
       int hr = 0;
@@ -37,7 +46,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         if (hr != 0)
         {
           //StackTrace st = new StackTrace(true);
-          //Log.Log.Debug("  Release {0} returns {1}", o, hr);
+          //Log.Log.DebugFormat("  Release {0} returns {1}", o, hr);
         }
       }
       return hr;
@@ -53,7 +62,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       if (o != null)
       {
         DsUtils.ReleaseComObject(o);
-        //Log.Log.Debug("  Release {0} returns {1}", line, hr);
+        //Log.Log.DebugFormat("  Release {0} returns {1}", line, hr);
       }
     }
     /// <summary>
@@ -75,12 +84,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         }
         catch (System.Exception ex)
         {
-          Log.Error("  Error in Dispose of {0}: {1}", line, ex.Message);
+          Log.ErrorFormat(ex, "  Error in Dispose of {0}", line);
         }
 
         int remainingReferences = Release.ComObject(o);
         //if (remainingReferences > 0)
-        Log.WriteFile("  Release {0} leaves {1} references", line, remainingReferences);
+        Log.DebugFormat("  Release {0} leaves {1} references", line, remainingReferences);
 
         o = default(E);
       }

@@ -36,7 +36,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 #endregion
 
@@ -44,6 +44,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class TvRecording : SectionSettings
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(TvRecording)); }
+    }
+
+    #endregion
+
     #region CardInfo class
 
     public class CardInfo
@@ -491,7 +500,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void comboBoxWeekend_SelectedIndexChanged(object sender, EventArgs e)
     {
-      Log.Debug("Weekend Updated to : {0}", comboBoxWeekend.SelectedItem);
+      Log.DebugFormat("Weekend Updated to : {0}", comboBoxWeekend.SelectedItem);
       _needRestart = true;
     }
 

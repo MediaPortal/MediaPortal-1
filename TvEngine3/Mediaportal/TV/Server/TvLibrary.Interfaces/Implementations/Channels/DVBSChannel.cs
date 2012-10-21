@@ -24,7 +24,7 @@ using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
 {
@@ -35,6 +35,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
   public class DVBSChannel : DVBBaseChannel
   {
     #region variables
+
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(DVBSChannel)); }
+    }
 
     [DataMember]
     private DiseqcPort _diseqc = DiseqcPort.None;
@@ -335,7 +341,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
       }
 
       // 1: Log the default frequency settings for the LNB.
-      Log.Debug("DvbsChannel: LNB settings, low = {0} kHz, high = {1} kHz, switch = {2} kHz, bandstacked = {3}, toroidal = {4}, polarisation = {5}",
+      Log.DebugFormat("DvbsChannel: LNB settings, low = {0} kHz, high = {1} kHz, switch = {2} kHz, bandstacked = {3}, toroidal = {4}, polarisation = {5}",
           dvbsChannel.LnbType.LowBandFrequency, dvbsChannel.LnbType.HighBandFrequency, dvbsChannel.LnbType.SwitchFrequency,
           dvbsChannel.LnbType.IsBandStacked, dvbsChannel.LnbType.IsToroidal, dvbsChannel.Polarisation);
 
@@ -390,7 +396,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
       // This value is *not* arbitrary. Some drivers (for example Genpix SkyWalker) will treat 20 GHz as a signal to
       // always use high voltage (useful for bandstacked LNBs).
 
-      Log.Debug("DvbsChannel: translated LNB settings, low = {0} kHz, high = {1} kHz, switch = {2} kHz, polarisation = {3}",
+      Log.DebugFormat("DvbsChannel: translated LNB settings, low = {0} kHz, high = {1} kHz, switch = {2} kHz, polarisation = {3}",
           dvbsChannel.LnbType.LowBandFrequency, dvbsChannel.LnbType.HighBandFrequency, dvbsChannel.LnbType.SwitchFrequency,
           dvbsChannel.Polarisation);
       return dvbsChannel;

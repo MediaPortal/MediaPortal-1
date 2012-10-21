@@ -24,7 +24,7 @@ using System;
 using System.Runtime.CompilerServices;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 #endregion
 
@@ -35,6 +35,15 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
   /// </summary>
   public class XmlTvImportWakeupHandler : IWakeupHandler
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(XmlTvImportWakeupHandler)); }
+    }
+
+    #endregion
+
     #region Variables    
 
     private string _handlerName = "XmlTvImportWakeupHandler";
@@ -91,7 +100,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
         remoteScheduleTime.AddDays(1);
       }
 
-      Log.Debug(this._handlerName + ".GetNextWakeupTime {0}", remoteScheduleTime);
+      Log.DebugFormat(this._handlerName + ".GetNextWakeupTime {0}", remoteScheduleTime);
 
       remoteScheduleTime.AddMinutes(-1); // resume 60sec before      
 

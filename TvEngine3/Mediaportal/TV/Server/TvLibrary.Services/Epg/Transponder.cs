@@ -24,7 +24,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Epg
 {
@@ -32,6 +32,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
   /// Class which holds all channels for a transponder
   public class Transponder
   {
+
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(Transponder)); }
+    }
+
+    #endregion
+
     #region variables
 
     private TuningDetail _detail;
@@ -124,7 +134,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       {
         if (Index < 0 || Index >= Channels.Count)
         {
-          Log.Error("transponder index out of range:{0}/{1}", Index, Channels.Count);
+          Log.ErrorFormat("transponder index out of range:{0}/{1}", Index, Channels.Count);
           return null;
         }                
         return ChannelManagement.GetTuningChannelByType(Channels[Index], TuningDetail.ChannelType);
@@ -144,7 +154,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
         return;
       Channels[Index].LastGrabTime = DateTime.Now;
       ChannelManagement.SaveChannel(Channels[Index]);
-      Log.Write("EPG: database updated for #{0} {1}", Index, Channels[Index].DisplayName);
+      Log.DebugFormat("EPG: database updated for #{0} {1}", Index, Channels[Index].DisplayName);
     }
 
     /// <summary>
@@ -185,12 +195,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     /// </summary>
     public void Dump()
     {
-      Log.Write("Transponder:{0} {1} {2} {3} {4} {5}", _currentChannelIndex, TuningDetail.ChannelType,
+      Log.DebugFormat("Transponder:{0} {1} {2} {3} {4} {5}", _currentChannelIndex, TuningDetail.ChannelType,
                 TuningDetail.Frequency, TuningDetail.Modulation, TuningDetail.Symbolrate, TuningDetail.Bandwidth,
                 TuningDetail.Polarisation);
       foreach (Channel c in _channels)
       {
-        Log.Write(" {0}", c.DisplayName);
+        Log.DebugFormat(" {0}", c.DisplayName);
       }
     }
 

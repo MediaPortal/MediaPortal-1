@@ -1,11 +1,16 @@
 using System;
 using System.Threading;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 {
   public class ServerMonitor
   {
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(ServerMonitor)); }
+    }
+
     #region events & delegates
 
     public delegate void ServerDisconnectedDelegate();
@@ -45,7 +50,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       if (_serverMonitorThread == null || !_serverMonitorThread.IsAlive)
       {
         _evtHeartbeatCtrl.Reset();
-        Log.Debug("ServerMonitor: ServerMonitor thread started.");
+        Log.DebugFormat("ServerMonitor: ServerMonitor thread started.");
         _serverMonitorThread = new Thread(ServerMonitorThread) { IsBackground = true, Name = "ServerMonitor thread" };
         _serverMonitorThread.Start();
       }
@@ -59,7 +64,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
         {
           _evtHeartbeatCtrl.Set();
           _serverMonitorThread.Join();
-          Log.Debug("ServerMonitor: ServerMonitor thread stopped.");
+          Log.DebugFormat("ServerMonitor: ServerMonitor thread stopped.");
         }
         catch (Exception) { }
       }

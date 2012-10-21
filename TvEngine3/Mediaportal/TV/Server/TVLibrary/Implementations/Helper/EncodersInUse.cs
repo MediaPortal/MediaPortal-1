@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 {
@@ -34,6 +34,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
   /// </summary>
   public class EncodersInUse
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(EncodersInUse)); }
+    }
+
+    #endregion
+
     private static EncodersInUse _instance;
     private readonly Dictionary<DsDevice, int> _encodersInUse;
 
@@ -82,7 +91,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         {
           if (dev.Name == device.Name && device.Mon.IsEqual(dev.Mon) == 0 && dev.DevicePath == device.DevicePath)
           {
-            Log.WriteFile("analog:  compressor {0} is in use, checking reuse limit...", dev.Name);
+            Log.DebugFormat("analog:  compressor {0} is in use, checking reuse limit...", dev.Name);
             key = dev;
             break;
           }
@@ -91,7 +100,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         // Encoder not yet used -> always okay to use.
         if (key == null)
         {
-          Log.WriteFile("analog:  compressor {0} is usable", device.Name);
+          Log.DebugFormat("analog:  compressor {0} is usable", device.Name);
           _encodersInUse.Add(device, 1);
           return true;
         }
@@ -99,7 +108,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         // Encoder not yet in DB -> assume reusable.
         if (dbEncoder == null)
         {
-          Log.WriteFile("analog:  unrecognised compressor, assuming usable");
+          Log.DebugFormat("analog:  unrecognised compressor, assuming usable");
           _encodersInUse[key]++;
           return true;
         }
@@ -110,14 +119,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         {
           if (reuseLimit <= 0 || _encodersInUse[key] < reuseLimit)
           {
-            Log.WriteFile("analog:  reusable compressor, usage under limit (usage: {0}, limit: {1})",
+            Log.DebugFormat("analog:  reusable compressor, usage under limit (usage: {0}, limit: {1})",
                               _encodersInUse[key], reuseLimit == 0 ? "[unlimited]" : reuseLimit.ToString());
             _encodersInUse[key]++;
             return true;
           }
           else
           {
-            Log.WriteFile("analog:  reusable compressor, usage already at limit (usage: {0}, limit: {1})",
+            Log.DebugFormat("analog:  reusable compressor, usage already at limit (usage: {0}, limit: {1})",
                               _encodersInUse[key], reuseLimit);
             return false;
           }
@@ -128,7 +137,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       // and it is in use, which means the limit has already
       // been reached. The encoder wouldn't be in _encodersInUse
       // if it wasn't in use...
-      Log.WriteFile("analog:  non-reusable compressor, already used");
+      Log.DebugFormat("analog:  non-reusable compressor, already used");
       return false;
     }
 
@@ -149,11 +158,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         {
           if (dev.Name == device.Name && device.Mon.IsEqual(dev.Mon) == 0 && dev.DevicePath == device.DevicePath)
           {
-            Log.WriteFile("analog: removing instance of compressor {0} from use", dev.Name);
+            Log.DebugFormat("analog: removing instance of compressor {0} from use", dev.Name);
             _encodersInUse[dev]--;
             if (_encodersInUse[dev] == 0)
             {
-              Log.WriteFile("analog: compressor is no longer in use");
+              Log.DebugFormat("analog: compressor is no longer in use");
               _encodersInUse.Remove(dev);
             }
             break;

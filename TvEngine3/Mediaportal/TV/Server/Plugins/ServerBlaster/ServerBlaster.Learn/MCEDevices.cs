@@ -23,6 +23,7 @@ using System.Runtime.InteropServices;
 using System.IO;
 using System.Windows.Forms;
 using System.Collections;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
 {
@@ -112,6 +113,15 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
   /// </summary>
   internal sealed class Remote : Device
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(Remote)); }
+    }
+
+    #endregion
+
     #region Constructor
 
     static Remote()
@@ -145,7 +155,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
       }
       catch (Exception e)
       {
-        Log.Write("Remote.Init: {0}", e.Message);
+        Log.DebugFormat("Remote.Init: {0}", e.Message);
       }
     }
 
@@ -234,6 +244,15 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
   /// </summary>
   internal sealed class Blaster : Device
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(Blaster)); }
+    }
+
+    #endregion
+
     #region Constructor
 
     static Blaster()
@@ -379,7 +398,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
       }
       catch (Exception e)
       {
-        Log.Write("Blaster.OnReadComplete: {0}", e.Message);
+        Log.DebugFormat("Blaster.OnReadComplete: {0}", e.Message);
       }
     }
 
@@ -402,7 +421,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
         foreach (byte packetByte in packetBytes) packetFinal[packetOffset++] = packetByte;
       }
 
-      Log.Write("Blaster.FinalizePacket: {0} ({1} bytes)", BitConverter.ToString(packetFinal).Replace("-", ""),
+      Log.DebugFormat("Blaster.FinalizePacket: {0} ({1} bytes)", BitConverter.ToString(packetFinal).Replace("-", ""),
                 packetFinal.Length);
 
       lock (this) _packetArray = new ArrayList();
@@ -435,7 +454,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
         }
       }
 
-      Log.Write("Blaster.FinalizePacket: {0}", BitConverter.ToString(packetFinal).Replace("-", ""));
+      Log.DebugFormat("Blaster.FinalizePacket: {0}", BitConverter.ToString(packetFinal).Replace("-", ""));
 
       _packetArray = new ArrayList();
 
@@ -472,7 +491,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
         }
       }
 
-      Log.Write("Blaster.FinalizePacket: {0} ({1} bytes)", BitConverter.ToString(packetFinal).Replace("-", ""),
+      Log.DebugFormat("Blaster.FinalizePacket: {0} ({1} bytes)", BitConverter.ToString(packetFinal).Replace("-", ""),
                 packetFinal.Length);
 
       _packetArray = new ArrayList();
@@ -516,6 +535,15 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
   /// </summary>
   internal abstract class Device
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(Device)); }
+    }
+
+    #endregion
+
     #region Implementation
 
     protected void OnDeviceArrival()
@@ -603,7 +631,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
           throw new Exception(string.Format("Failed in call to SetupDiGetDeviceInterfaceDetail ({0})", GetLastError()));
         }
 
-        if (_dumpDevices) Log.Write("Device.FindDevice: {0}", deviceInterfaceDetailData.DevicePath);
+        if (_dumpDevices) Log.DebugFormat("Device.FindDevice: {0}", deviceInterfaceDetailData.DevicePath);
 
         if (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_0471&pid_0815") != -1)
         {

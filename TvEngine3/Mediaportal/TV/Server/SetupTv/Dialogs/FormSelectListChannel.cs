@@ -27,12 +27,22 @@ using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class FormSelectListChannel : Form
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(FormSelectListChannel)); }
+    }
+
+    #endregion
+
+
     public FormSelectListChannel()
     {
       InitializeComponent();
@@ -49,14 +59,14 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           Channel selectedChannel = listViewChannels.SelectedItems[0].Tag as Channel;
           if (selectedChannel.IdChannel > -1)
           {
-            Log.Debug("SelectListChannel: Channel '{0}' has been selected. ID = {1}", selectedChannel.DisplayName,
+            Log.DebugFormat("SelectListChannel: Channel '{0}' has been selected. ID = {1}", selectedChannel.DisplayName,
                       selectedChannel.IdChannel);
             return selectedChannel.IdChannel;
           }
         }
         else
         {
-          Log.Debug("SelectListChannel: Invalid channel selection.");
+          Log.DebugFormat("SelectListChannel: Invalid channel selection.");
         }
       }
 

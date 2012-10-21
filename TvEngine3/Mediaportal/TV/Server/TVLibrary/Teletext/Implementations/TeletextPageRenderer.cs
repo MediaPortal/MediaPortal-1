@@ -20,7 +20,7 @@
 
 using System;
 using System.Drawing;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
 {
@@ -29,6 +29,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
   ///</summary>
   public class TeletextPageRenderer
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(TeletextPageRenderer)); }
+    }
+
+    #endregion
+
     #region constructors
 
     ///<summary>
@@ -624,7 +633,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
                       }
                       catch (Exception ex)
                       {
-                        Log.Info("Error in teletext page renderer: ", ex);
+                        Log.InfoFormat("Error in teletext page renderer: ", ex);
                       }
                     }
                   }

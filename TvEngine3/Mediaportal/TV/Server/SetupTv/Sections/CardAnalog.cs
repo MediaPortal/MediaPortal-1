@@ -38,7 +38,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.GraphComponents;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
@@ -46,6 +46,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class CardAnalog : SectionSettings
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(CardAnalog)); }
+    }
+
+    #endregion
+
     private readonly int _cardNumber;
     private bool _isScanning;
     private bool _stopScanning;
@@ -642,7 +651,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
         catch
         {
-          Log.WriteFile("Could not reload card configuration");
+          Log.DebugFormat("Could not reload card configuration");
         }
         return;
       }
@@ -865,14 +874,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         TvResult tuneResult = ServiceAgents.Instance.ControllerServiceAgent.Tune(user.Name, user.CardId, out user, temp, -1);
         if (tuneResult == TvResult.SWEncoderMissing)
         {
-          Log.Error("analog: DoTvScan error (missing software encoder)");
+          Log.ErrorFormat("analog: DoTvScan error (missing software encoder)");
           MessageBox.Show("Please install a supported audio/video encoder for your software analog card",
                           "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
           return;
         }
         if (tuneResult == TvResult.GraphBuildingFailed)
         {
-          Log.Error("analog: DoTvScan error (missing software encoder)");
+          Log.ErrorFormat("analog: DoTvScan error (missing software encoder)");
           MessageBox.Show(
             "The graph building. Mostly your card is not supported by TvServer. Please create a report in our forum",
             "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -891,7 +900,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
         if (minChannel < 0)
           minChannel = 1;
-        Log.Info("Min channel = {0}. Max channel = {1}", minChannel, maxChannel);
+        Log.InfoFormat("Min channel = {0}. Max channel = {1}", minChannel, maxChannel);
         for (int channelNr = minChannel; channelNr <= maxChannel; channelNr++)
         {
           if (_stopScanning)
@@ -1005,20 +1014,20 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       catch (TvExceptionSWEncoderMissing)
       {
-        Log.Error("analog: DoTvScan error (missing software encoder)");
+        Log.ErrorFormat("analog: DoTvScan error (missing software encoder)");
         MessageBox.Show("Please install a supported audio/video encoder for your software analog card", "Unable to scan",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
       catch (TvExceptionGraphBuildingFailed)
       {
-        Log.Error("analog: DoTvScan error (missing software encoder)");
+        Log.ErrorFormat("analog: DoTvScan error (missing software encoder)");
         MessageBox.Show(
           "The graph building. Mostly your card is not supported by TvServer. Please create a report in our forum",
           "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
       catch (Exception ex)
       {
-        Log.Error("analog: DoTvScan error ({0})", ex.StackTrace);
+        Log.ErrorFormat("analog: DoTvScan error ({0})", ex.StackTrace);
         MessageBox.Show(string.Format("Generic error: {0}", ex.Message), "Unable to scan", MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
       }
@@ -1178,14 +1187,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           TvResult tuneResult = ServiceAgents.Instance.ControllerServiceAgent.Tune(user.Name, user.CardId, out user, channel, -1);
           if (tuneResult == TvResult.SWEncoderMissing)
           {
-            Log.Error("analog: DoTvScan error (missing software encoder)");
+            Log.ErrorFormat("analog: DoTvScan error (missing software encoder)");
             MessageBox.Show("Please install a supported audio/video encoder for your software analog card",
                             "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
             break;
           }
           if (tuneResult == TvResult.GraphBuildingFailed)
           {
-            Log.Error("analog: DoTvScan error (missing software encoder)");
+            Log.ErrorFormat("analog: DoTvScan error (missing software encoder)");
             MessageBox.Show(
               "The graph building. Mostly your card is not supported by TvServer. Please create a report in our forum",
               "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1240,7 +1249,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
       }
       finally
       {
@@ -1741,7 +1750,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
         else
         {
-          Log.WriteFile("Card doesn't support quality control");
+          Log.DebugFormat("Card doesn't support quality control");
           MessageBox.Show("The used encoder doesn't support quality control.",
                           "MediaPortal - TV Server management console", MessageBoxButtons.OK, MessageBoxIcon.Information);
           if (string.IsNullOrEmpty(_configuration.Graph.Capture.Name))

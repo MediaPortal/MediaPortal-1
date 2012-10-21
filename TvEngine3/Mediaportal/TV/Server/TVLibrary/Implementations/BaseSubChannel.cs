@@ -22,7 +22,7 @@ using System;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Teletext.Implementations;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
@@ -76,6 +76,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         AfterTuneEvent();
       }
+    }
+
+    #endregion
+
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(BaseSubChannel)); }
     }
 
     #endregion
@@ -286,7 +295,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <returns></returns>
     public bool StartTimeShifting(string fileName)
     {
-      Log.Debug("BaseSubChannel: subchannel {0} start timeshifting to {1}", _subChannelId, fileName);
+      Log.DebugFormat("BaseSubChannel: subchannel {0} start timeshifting to {1}", _subChannelId, fileName);
       try
       {
         OnStartTimeShifting(fileName);
@@ -295,7 +304,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       catch (Exception ex)
       {
-        Log.Debug("BaseSubChannel: failed to start timeshifting\r\n{0}", ex.ToString());
+        Log.ErrorFormat(ex, "BaseSubChannel: failed to start timeshifting");
         StopTimeShifting();
         return false;
       }
@@ -309,7 +318,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <returns></returns>
     public bool StopTimeShifting()
     {
-      Log.Debug("BaseSubChannel: subchannel {0} stop timeshifting", _subChannelId);
+      Log.DebugFormat("BaseSubChannel: subchannel {0} stop timeshifting", _subChannelId);
       OnStopTimeShifting();
       _timeshiftFileName = String.Empty;
       _dateTimeShiftStarted = DateTime.MinValue;
@@ -323,7 +332,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <returns></returns>
     public bool StartRecording(string fileName)
     {
-      Log.Debug("BaseSubChannel: subchannel {0} start recording to {1}", _subChannelId, fileName);
+      Log.DebugFormat("BaseSubChannel: subchannel {0} start recording to {1}", _subChannelId, fileName);
       try
       {
         OnStartRecording(fileName);
@@ -332,7 +341,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       catch (Exception ex)
       {
-        Log.Debug("BaseSubChannel: failed to start recording\r\n{0}", ex.ToString());
+        Log.ErrorFormat(ex, "BaseSubChannel: failed to start recording");
         StopRecording();
         return false;
       }
@@ -346,7 +355,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <returns></returns>
     public bool StopRecording()
     {
-      Log.Debug("BaseSubChannel: subchannel {0} stop recording", _subChannelId);
+      Log.DebugFormat("BaseSubChannel: subchannel {0} stop recording", _subChannelId);
       OnStopRecording();
       _recordingFileName = String.Empty;
       _dateRecordingStarted = DateTime.MinValue;
@@ -368,7 +377,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public virtual void CancelTune()
     {
-      Log.Debug("BaseSubChannel: subchannel {0} cancel tune", _subChannelId);
+      Log.DebugFormat("BaseSubChannel: subchannel {0} cancel tune", _subChannelId);
       _cancelTune = true;
     }
 
@@ -405,7 +414,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       catch (Exception ex)
       {
-        Log.WriteFile(ex.ToString());
+        Log.ErrorFormat(ex, "");
       }
       return 0;
     }
@@ -435,12 +444,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       try
       {
-        Log.WriteFile("PID seen - type = {0}", pidType);
+        Log.DebugFormat("PID seen - type = {0}", pidType);
         OnAudioVideoEvent(pidType);
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
       }
       return 0;
     }
@@ -454,7 +463,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public void Decompose()
     {
-      Log.Debug("BaseSubChannel: subchannel {0} decompose", _subChannelId);
+      Log.DebugFormat("BaseSubChannel: subchannel {0} decompose", _subChannelId);
 
       if (IsRecording)
       {

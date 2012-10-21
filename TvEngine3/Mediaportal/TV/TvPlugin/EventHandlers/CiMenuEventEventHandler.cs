@@ -1,3 +1,4 @@
+using MediaPortal.Common.Utils;
 using MediaPortal.GUI.Library;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
@@ -9,6 +10,15 @@ namespace Mediaportal.TV.TvPlugin.EventHandlers
   /// </summary>
   public class CiMenuEventEventHandler : CiMenuEventCallbackSink
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+      get { return LogHelper.GetLogger(typeof(CiMenuEventEventHandler)); }
+    }
+
+    #endregion
+
     /// <summary>
     /// eventhandler to show CI Menu dialog
     /// </summary>
@@ -17,7 +27,7 @@ namespace Mediaportal.TV.TvPlugin.EventHandlers
     {
       try
       {
-        Log.Debug("Callback from tvserver {0}", menu.Title);
+        Log.DebugFormat("Callback from tvserver {0}", menu.Title);
 
         // pass menu to calling dialog
         TvPlugin.TVHome.ProcessCiMenu(menu);

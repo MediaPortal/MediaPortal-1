@@ -23,7 +23,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
@@ -33,6 +33,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
   ///</summary>
   public class Hauppauge : IDisposable
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(Hauppauge)); }
+    }
+
+    #endregion
+
     private bool disposed;
 
     [DllImport("kernel32.dll")]
@@ -137,11 +146,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
         string card = Encoding.Unicode.GetString(encodedstring);
 
         hr = new HResult(_Init(filter, card));
-        Log.WriteFile("Hauppauge Quality Control Initializing " + hr.ToDXString());
+        Log.DebugFormat("Hauppauge Quality Control Initializing " + hr.ToDXString());
       }
       catch (Exception ex)
       {
-        Log.WriteFile("Hauppauge Init failed " + ex.Message);
+        Log.ErrorFormat(ex, "Hauppauge Init failed");
       }
     }
 
@@ -163,7 +172,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
       }
       catch (Exception ex)
       {
-        Log.WriteFile("Hauppauge SetDNR failed " + ex.Message);
+        Log.ErrorFormat(ex, "Hauppauge SetDNR failed");
       }
       return false;
     }
@@ -187,7 +196,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
       }
       catch (Exception ex)
       {
-        Log.WriteFile("Hauppauge Error GetBitrate " + ex.Message);
+        Log.ErrorFormat(ex, "Hauppauge Error GetBitrate");
       }
 
       return true;
@@ -205,14 +214,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
           if (_IsHauppauge())
           {
             hr.Set(_SetVidBitRate(maxKbps, minKbps, isVBR));
-            Log.WriteFile("Hauppauge Set Bit Rate " + hr.ToDXString());
+            Log.DebugFormat("Hauppauge Set Bit Rate " + hr.ToDXString());
             return true;
           }
         }
       }
       catch (Exception ex)
       {
-        Log.WriteFile("Hauppauge Set Vid Rate " + ex.Message);
+        Log.ErrorFormat(ex, "Hauppauge Set Vid Rate");
       }
       return false;
     }
@@ -236,7 +245,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
       }
       catch (Exception ex)
       {
-        Log.WriteFile("Hauppauge Get Audio Bitrate " + ex.Message);
+        Log.ErrorFormat(ex, "Hauppauge Get Audio Bitrate");
       }
       return false;
     }
@@ -259,7 +268,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
       }
       catch (Exception ex)
       {
-        Log.WriteFile("Hauppauge Set Audio Bit Rate " + ex.Message);
+        Log.ErrorFormat(ex, "Hauppauge Set Audio Bit Rate");
       }
       return false;
     }
@@ -283,7 +292,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
       }
       catch (Exception ex)
       {
-        Log.WriteFile("Hauppauge Get Stream " + ex.Message);
+        Log.ErrorFormat(ex, "Hauppauge Get Stream");
       }
       return false;
     }
@@ -306,7 +315,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
       }
       catch (Exception ex)
       {
-        Log.WriteFile("Hauppauge Set Stream Type " + ex.Message);
+        Log.ErrorFormat(ex, "Hauppauge Set Stream Type");
       }
       return false;
     }
@@ -346,8 +355,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
         }
         catch (Exception ex)
         {
-          Log.WriteFile("Hauppauge exception " + ex.Message);
-          Log.WriteFile("Hauppauge Disposed hcw.txt");
+          Log.ErrorFormat(ex, "Hauppauge exception");
+          Log.ErrorFormat("Hauppauge Disposed hcw.txt");
         }
       }
       disposed = true;

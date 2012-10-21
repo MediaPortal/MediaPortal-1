@@ -26,7 +26,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using System.Threading;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
@@ -37,6 +37,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
   /// </summary>
   internal class ChannelListViewHandler
   {
+
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(ChannelListViewHandler)); }
+    }
+
+    #endregion
+
     private const int MS_SLEEP_BEFORE_FILTERING = 150;
 
     internal ListView _listView = null; //the listview control that displays the items
@@ -106,7 +116,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 
       try
       {
-        Log.Debug("Filter listview for " + filterText);
+        Log.DebugFormat("Filter listview for " + filterText);
         _listView.Invoke(new MethodInvoker(delegate()
                                              {
                                                _listView.Items.Clear();
@@ -119,7 +129,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
           if (InvokeHasTextChanged(filterText))
           {
 //the search term changed while we were filtering
-            Log.Debug("Cancel filtering for " + filterText);
+            Log.DebugFormat("Cancel filtering for " + filterText);
             break;
           }
 
@@ -142,7 +152,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
                                                  _listView.Items.AddRange(items.ToArray());
                                                  _listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
                                                }));
-          Log.Debug("Finished filtering " + items.Count + " items for " + filterText);
+          Log.DebugFormat("Finished filtering " + items.Count + " items for " + filterText);
         }
         else
         {
@@ -151,7 +161,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       }
       catch (Exception exp)
       {
-        Log.Error("RefreshAllChannels error: {0}", exp.StackTrace);
+        Log.ErrorFormat("RefreshAllChannels error: {0}", exp.StackTrace);
       }
       finally
       {

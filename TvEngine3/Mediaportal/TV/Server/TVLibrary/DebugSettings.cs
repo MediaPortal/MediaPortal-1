@@ -20,7 +20,7 @@
 
 using System;
 using System.IO;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary
 {
@@ -32,6 +32,15 @@ namespace Mediaportal.TV.Server.TVLibrary
   /// </summary>
   public class DebugSettings
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(DebugSettings)); }
+    }
+
+    #endregion
+
     private static string SettingsPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
                                          @"\Team MediaPortal\MediaPortal TV Server\debug\";
 
@@ -85,8 +94,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       catch (System.IO.IOException ex)
       {
-        Log.Error("Failed to write debug setting '{0}'", setting);
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "Failed to write debug setting '{0}'", setting);        
       }
     }
 

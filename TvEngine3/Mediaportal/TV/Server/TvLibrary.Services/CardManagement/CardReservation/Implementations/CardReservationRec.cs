@@ -20,7 +20,7 @@
 
 using System;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Scheduler;
 using Mediaportal.TV.Server.TVLibrary.Services;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
@@ -30,7 +30,16 @@ using Mediaportal.TV.Server.TVService.Interfaces.Services;
 namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Implementations
 {
   public class CardReservationRec : CardReservationBase
-  {    
+  {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(CardReservationRec)); }
+    }
+
+    #endregion
+
     private CardDetail _cardInfo;
     private RecordingDetail _recDetail;
 
@@ -57,7 +66,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
       bool startRecordingOnDisc = true;
       if (ServiceManager.Instance.InternalControllerService.SupportsSubChannels(_cardInfo.Card.IdCard) == false)
       {        
-        Log.Write("Scheduler : record, now start timeshift");
+        Log.DebugFormat("Scheduler : record, now start timeshift");
         string timeshiftFileName = String.Format(@"{0}\live{1}-{2}.ts", _cardInfo.Card.TimeshiftingFolder, _cardInfo.Id,
                                                  tvcard.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel));
         startRecordingOnDisc = (TvResult.Succeeded == ServiceManager.Instance.InternalControllerService.StartTimeShifting(ref user, ref timeshiftFileName, idChannel));
@@ -67,7 +76,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
       {
         _recDetail.MakeFileName(_cardInfo.Card.RecordingFolder);
         _recDetail.CardInfo = _cardInfo;
-        Log.Write("Scheduler : record to {0}", _recDetail.FileName);
+        Log.DebugFormat("Scheduler : record to {0}", _recDetail.FileName);
         string fileName = _recDetail.FileName;
         startRecordingOnDisc = (TvResult.Succeeded == ServiceManager.Instance.InternalControllerService.StartRecording(user.Name, user.CardId, out user, ref fileName));
 

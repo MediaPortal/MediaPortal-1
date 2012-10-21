@@ -23,12 +23,21 @@ using System.Collections.Generic;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
 {
   public class EpisodeManagement
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(EpisodeManagement)); }
+    }
+
+    #endregion
+
     public List<Recording> GetEpisodes(string title, IList<Recording> recordings)
     {
       List<Recording> episodes = new List<Recording>();
@@ -61,7 +70,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
 
     public void OnScheduleEnded(string recordingFilename, Schedule recording, Program program)
     {
-      Log.Write("diskmanagement: recording {0} ended. type:{1} max episodes:{2}",
+      Log.DebugFormat("diskmanagement: recording {0} ended. type:{1} max episodes:{2}",
                 program.Title, (ScheduleRecordingType)recording.ScheduleType, recording.MaxAirings);
 
       CheckEpsiodesForRecording(recording, program);
@@ -87,7 +96,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
         Recording oldestEpisode = GetOldestEpisode(episodes);
         if (oldestEpisode == null)
           return;
-        Log.Write("diskmanagement:   Delete episode {0} {1} {2} {3}",
+        Log.DebugFormat("diskmanagement:   Delete episode {0} {1} {2} {3}",
                   oldestEpisode.Channel,
                   oldestEpisode.Title,
                   oldestEpisode.StartTime.ToLongDateString(),

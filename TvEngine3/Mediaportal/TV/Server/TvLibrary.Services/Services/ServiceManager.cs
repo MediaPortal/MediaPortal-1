@@ -5,12 +5,21 @@ using System.ServiceModel.Description;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Services
 {
   public class ServiceManager : Singleton<ServiceManager>, IDisposable
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(ServiceManager)); }
+    }
+
+    #endregion
+
     private readonly object _lock = new object();    
     private readonly IDictionary<Type, ServiceHost> _serviceHosts = new Dictionary<Type, ServiceHost>();
 
@@ -47,7 +56,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       }
       catch (Exception ex)
       {
-        Log.Error("ServiceManager: exception - {0}", ex);
+        Log.ErrorFormat("ServiceManager: exception - {0}", ex);
       }      
     }  
 
@@ -84,7 +93,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       serviceMetaDataBehaviour.HttpGetUrl = httpUri;
       serviceHost.Open();
       SetMaxItemsInObjectGraph(serviceHost);
-      Log.Debug("Service '{0}' succesfully started.", endpointUrl);
+      Log.DebugFormat("Service '{0}' succesfully started.", endpointUrl);
       return serviceHost;
     }
 
@@ -115,7 +124,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 
       serviceHost.Open();
       SetMaxItemsInObjectGraph(serviceHost);
-      Log.Debug("Service '{0}' succesfully started.", endpointUrl);
+      Log.DebugFormat("Service '{0}' succesfully started.", endpointUrl);
       return serviceHost;
     }
 
@@ -262,7 +271,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     /// <filterpriority>2</filterpriority>
     public void Dispose()
     {
-      Log.Debug("closing WCF service.");
+      Log.DebugFormat("closing WCF service.");
       try
       {
         Services.EventService.CleanUp();
@@ -274,11 +283,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
           }
         }
         _serviceHosts.Clear();
-        Log.Debug("WCF service(s) closed.");
+        Log.DebugFormat("WCF service(s) closed.");
       }
       catch (Exception ex)
       {
-        Log.Error("error closing WCF service", ex);
+        Log.ErrorFormat("error closing WCF service", ex);
         throw;
       }      
     }

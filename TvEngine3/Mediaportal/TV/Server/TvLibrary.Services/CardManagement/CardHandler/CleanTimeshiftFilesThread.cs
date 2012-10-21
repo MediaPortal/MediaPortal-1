@@ -20,7 +20,7 @@
 
 using System.IO;
 using System.Threading;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
@@ -29,6 +29,14 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
   /// </summary>
   internal class CleanTimeshiftFilesThread
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(CleanTimeshiftFilesThread)); }
+    }
+
+    #endregion
     /// <summary>
     /// The folder
     /// </summary>
@@ -83,15 +91,15 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        Log.Write(@"card: delete timeshift files {0}\{1}", _folder, _fileName);
+        Log.DebugFormat(@"card: delete timeshift files {0}\{1}", _folder, _fileName);
         string[] files = Directory.GetFiles(_folder);
         for (int i = 0; i < files.Length; ++i)
         {
           if (files[i].IndexOf(_fileName) >= 0)
           {
-            Log.Write("card:   trying to delete {0}", files[i]);
+            Log.DebugFormat("card:   trying to delete {0}", files[i]);
             File.Delete(files[i]);
-            Log.Write("card:   deleted file {0}", files[i]);
+            Log.DebugFormat("card:   deleted file {0}", files[i]);
           }
         }
       }

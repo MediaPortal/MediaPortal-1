@@ -25,7 +25,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-
+using MediaPortal.Common.Utils;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
@@ -44,6 +44,15 @@ namespace Mediaportal.TV.TvPlugin.Radio
 {
   public class RadioRecorded : WindowPluginBase, IComparer<GUIListItem>
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+      get { return LogHelper.GetLogger(typeof(RadioRecorded)); }
+    }
+
+    #endregion
+
     #region Variables
 
     private enum Controls
@@ -481,7 +490,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
       catch (Exception ex)
       {
-        Log.Error("RadioRecorded: Error in ShowViews - {0}", ex.ToString());
+        Log.ErrorFormat("RadioRecorded: Error in ShowViews - {0}", ex.ToString());
       }
     }*/
 
@@ -527,7 +536,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
       catch (Exception ex)
       {
-        Log.Warn("RadioRecorded: Error updating button states - {0}", ex.ToString());
+        Log.ErrorFormat(ex, "RadioRecorded: Error updating button states");
       }
     }
     
@@ -573,7 +582,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
         {
           return true;
         }
-        Log.Info("RadioRecorded: ShowFullScreenWindow switching to fullscreen video");
+        Log.InfoFormat("RadioRecorded: ShowFullScreenWindow switching to fullscreen video");
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_TVFULLSCREEN);
         GUIGraphicsContext.IsFullScreenVideo = true;
         return true;
@@ -593,7 +602,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
       catch (Exception ex)
       {
-        Log.Error("RadioRecorded: Error in ShowUpcomingEpisodes - {0}", ex.ToString());
+        Log.ErrorFormat(ex, "RadioRecorded: Error in ShowUpcomingEpisodes");
       }
     }
 
@@ -730,7 +739,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
             }
             catch (Exception recex)
             {
-              Log.Error("RadioRecorded: error processing recordings - {0}", recex.Message);
+              Log.ErrorFormat(recex, "RadioRecorded: error processing recordings");
             }
           }
         }
@@ -742,7 +751,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
           Utils.SetDefaultIcons(item);
           itemlist.Add(item);
 
-          // Log.Debug("RadioRecorded: Currently showing the virtual folder contents of {0}", _currentLabel);
+          // Log.DebugFormat("RadioRecorded: Currently showing the virtual folder contents of {0}", _currentLabel);
           foreach (Recording rec in recordings)
           {
             bool addToList = true;
@@ -780,7 +789,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
       catch (Exception ex)
       {
-        Log.Error("RadioRecorded: Error fetching recordings from database {0}", ex.Message);
+        Log.ErrorFormat(ex, "RadioRecorded: Error fetching recordings from database");
       }
 
       try
@@ -804,7 +813,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
       catch (Exception ex2)
       {
-        Log.Error("RadioRecorded: Error adding recordings to list - {0}", ex2.Message);
+        Log.ErrorFormat("RadioRecorded: Error adding recordings to list - {0}", ex2.Message);
       }
 
       //set object count label
@@ -858,7 +867,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
           strChannelName = refCh.DisplayName;
         }        
 
-        // Log.Debug("RadioRecorded: BuildItemFromRecording [{0}]: {1} ({2}) on channel {3}", _currentDbView.ToString(), aRecording.title, aRecording.ProgramCategory.category, strChannelName);
+        // Log.DebugFormat("RadioRecorded: BuildItemFromRecording [{0}]: {1} ({2}) on channel {3}", _currentDbView.ToString(), aRecording.title, aRecording.ProgramCategory.category, strChannelName);
         item = new GUIListItem();
         switch (_currentDbView)
         {
@@ -907,7 +916,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       catch (Exception singleex)
       {
         item = null;
-        Log.Warn("RadioRecorded: Error building item from recording {0}\n{1}", aRecording.FileName, singleex.ToString());
+        Log.ErrorFormat(singleex, "RadioRecorded: Error building item from recording {0}", aRecording.FileName);
       }
 
       return item;
@@ -969,11 +978,11 @@ namespace Mediaportal.TV.TvPlugin.Radio
               item1.IsPlayed = true;
             }
           }
-          //Log.Debug("RadioRecorded: SetLabels - 1: {0}, 2: {1}, 3: {2}", item1.Label, item1.Label2, item1.Label3);
+          //Log.DebugFormat("RadioRecorded: SetLabels - 1: {0}, 2: {1}, 3: {2}", item1.Label, item1.Label2, item1.Label3);
         }
         catch (Exception ex)
         {
-          Log.Warn("RadioRecorded: error in SetLabels - {0}", ex.Message);
+          Log.WarnFormat(ex, "RadioRecorded: error in SetLabels");
         }
       }
     }
@@ -1121,7 +1130,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       {
         if (isRecPlaying)
         {
-          Log.Info("g_Player.Stopped {0}", g_Player.Stopped);
+          Log.InfoFormat("g_Player.Stopped {0}", g_Player.Stopped);
           g_Player.Stop();
         }
         DeleteRecordingAndUpdateGUI(rec);
@@ -1283,7 +1292,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
       catch (Exception ex)
       {
-        Log.Error("RadioRecorded: Error updating properties - {0}", ex.ToString());
+        Log.ErrorFormat(ex, "RadioRecorded: Error updating properties");
       }
     }
 
@@ -1327,7 +1336,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
       catch (Exception ex)
       {
-        Log.Error("RadioRecorded: Error setting item properties - {0}", ex.ToString());
+        Log.ErrorFormat(ex, "RadioRecorded: Error setting item properties");
       }
     }
 
@@ -1380,7 +1389,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
       catch (Exception ex)
       {
-        Log.Error("RadioRecorded: Error sorting items - {0}", ex.ToString());
+        Log.ErrorFormat(ex, "RadioRecorded: Error sorting items");
       }
     }
 
@@ -1601,7 +1610,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
       catch (Exception ex)
       {
-        Log.Error("RadioRecorded: Error comparing files - {0}", ex.ToString());
+        Log.ErrorFormat(ex, "RadioRecorded: Error comparing files");
         return 0;
       }
     }
@@ -1618,7 +1627,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
     private void doOnPlayBackStoppedOrChanged(g_Player.MediaType type, int stoptime, string filename, string caller)
     {
-      Log.Info("RadioRecorded:{0} {1} {2}", caller, type, filename);
+      Log.InfoFormat("RadioRecorded:{0} {1} {2}", caller, type, filename);
       if (type != g_Player.MediaType.Recording)
       {
         return;
@@ -1638,7 +1647,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
       else
       {
-        Log.Info("RadioRecorded:{0} no recording found with filename {1}", caller, filename);
+        Log.InfoFormat("RadioRecorded:{0} no recording found with filename {1}", caller, filename);
       }
 
       /*
@@ -1698,7 +1707,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
       int prefLangIdx = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Log.Debug("RadioRecorded.OnPlayRecordingBackStarted(): setting audioIndex on tsreader {0}", prefLangIdx);
+      Log.DebugFormat("RadioRecorded.OnPlayRecordingBackStarted(): setting audioIndex on tsreader {0}", prefLangIdx);
       g_Player.CurrentAudioStream = prefLangIdx;
 
       if (dualMonoMode != eAudioDualMonoMode.UNSUPPORTED)

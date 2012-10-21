@@ -27,7 +27,7 @@ using System.Net.Sockets;
 using System.Management;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Streaming
 {
@@ -36,6 +36,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
   /// </summary>
   public class RtspStreaming
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(RtspStreaming)); }
+    }
+
+    #endregion
+
+
     #region imports
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -146,7 +156,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
       }
     }
 
@@ -230,7 +240,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
         return;
       if (_running)
         return;
-      Log.WriteFile("RTSP: start streamer");
+      Log.DebugFormat("RTSP: start streamer");
       _running = true;
       Thread thread = new Thread(workerThread);
       thread.SetApartmentState(ApartmentState.STA);
@@ -245,7 +255,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
     /// </summary>
     public void Stop()
     {
-      Log.WriteFile("RTSP: stop streamer");
+      Log.DebugFormat("RTSP: stop streamer");
       if (_initialized == false)
         return;
       StopAllStreams();
@@ -254,7 +264,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
 
     private void StopAllStreams()
     {
-      Log.WriteFile("RTSP: stop all streams ({0})", _streams.Count);
+      Log.DebugFormat("RTSP: stop all streams ({0})", _streams.Count);
 
       List<string> removals = new List<string>();
       foreach (string key in _streams.Keys)
@@ -281,7 +291,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
       }
       if (System.IO.File.Exists(stream.FileName))
       {
-        Log.WriteFile("RTSP: add stream {0} file:{1}", stream.Name, stream.FileName);
+        Log.DebugFormat("RTSP: add stream {0} file:{1}", stream.Name, stream.FileName);
         if (stream.Card != null)
         {
           StreamAddTimeShiftFile(stream.Name, stream.FileName, false, (stream.MediaType == MediaTypeEnum.TV ? 0 : 1));
@@ -302,7 +312,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
     {
       if (_initialized == false)
         return;
-      Log.WriteFile("RTSP: remove stream {0}", streamName);
+      Log.DebugFormat("RTSP: remove stream {0}", streamName);
       if (_streams.ContainsKey(streamName))
       {
         StreamRemove(streamName);
@@ -338,7 +348,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
     /// </summary>
     protected void workerThread()
     {
-      Log.WriteFile("RTSP: Streamer started");
+      Log.DebugFormat("RTSP: Streamer started");
       try
       {
         while (_running)
@@ -348,9 +358,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.ErrorFormat(ex, "");
       }
-      Log.WriteFile("RTSP: Streamer stopped");
+      Log.DebugFormat("RTSP: Streamer stopped");
       _running = false;
     }
 
@@ -403,7 +413,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
       }
       catch (ManagementException e)
       {
-        Log.Error("Failed to retrieve ip addresses with default gateway, WMI error: " + e.ToString());
+        Log.ErrorFormat("Failed to retrieve ip addresses with default gateway, WMI error: " + e.ToString());
       }
       return addresses;
     }

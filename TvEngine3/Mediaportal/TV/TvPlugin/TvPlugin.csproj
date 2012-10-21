@@ -63,14 +63,6 @@
     <Reference Include="Dialogs">
       <HintPath>..\..\..\..\mediaportal\Dialogs\bin\Release\Dialogs.dll</HintPath>
     </Reference>
-    <Reference Include="Mediaportal.TV.Server.TVDatabase.Entities, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Server\TVDatabase\Entities\bin\Release\Mediaportal.TV.Server.TVDatabase.Entities.dll</HintPath>
-    </Reference>
-    <Reference Include="Mediaportal.TV.Server.TVDatabase.Presentation, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Server\TvControl\bin\Release\Mediaportal.TV.Server.TVDatabase.Presentation.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
@@ -217,6 +209,14 @@
     <ProjectReference Include="..\Server\TvControl\TvControl.csproj">
       <Project>{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}</Project>
       <Name>TvControl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Server\TVDatabase\Entities\Entities.csproj">
+      <Project>{4C2D9698-AF44-4157-99B6-48F5269F20CC}</Project>
+      <Name>Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Server\TVDatabase\Presentation\Presentation.csproj">
+      <Project>{FB53D159-8115-4155-921D-F64E0072A633}</Project>
+      <Name>Presentation</Name>
     </ProjectReference>
     <ProjectReference Include="..\Server\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj">
       <Project>{58C35C9D-F18D-40F2-8024-24E50D01E9C5}</Project>

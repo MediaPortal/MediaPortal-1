@@ -25,6 +25,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
+using MediaPortal.Common.Utils;
 using MediaPortal.GUI.Library;
 using Mediaportal.TV.Server.TVControl;
 
@@ -34,6 +35,15 @@ namespace Mediaportal.TV.TvPlugin
 {
   public class WakeOnLanManager
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+      get { return LogHelper.GetLogger(typeof(WakeOnLanManager)); }
+    }
+
+    #endregion
+
     #region Constants
 
     // Maximum length of a physical address
@@ -174,7 +184,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       else
       {
-        Log.Debug("WOLMgr: Invalid ethernet address!");
+        Log.DebugFormat("WOLMgr: Invalid ethernet address!");
         return false;
       }
     }
@@ -192,7 +202,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Error("WOLMgr: Ping failed - {0}", ex.Message);
+        Log.ErrorFormat(ex, "WOLMgr: Ping failed");
       }
 
       return false;
@@ -274,30 +284,30 @@ namespace Mediaportal.TV.TvPlugin
 
       // we have to make sure the remoting system knows that we have resumed the server by means of WOL.
       // this will make sure the connection timeout for the remoting framework is increased.
-      Log.Debug("WOLMgr: Increasing timeout for RemoteControl");
+      Log.DebugFormat("WOLMgr: Increasing timeout for RemoteControl");
       RemoteControl.UseIncreasedTimeoutForInitialConnection = true;
 
-      Log.Debug("WOLMgr: Ping {0}", wakeupTarget);
+      Log.DebugFormat("WOLMgr: Ping {0}", wakeupTarget);
       if (Ping(wakeupTarget, timeout))
       {
-        Log.Debug("WOLMgr: {0} already started", wakeupTarget);
+        Log.DebugFormat("WOLMgr: {0} already started", wakeupTarget);
         return true;
       }
 
       if (!SendWakeOnLanPacket(hwAddress, IPAddress.Broadcast))
       {
-        Log.Debug("WOLMgr: FAILED to send wake-on-lan packet!");
+        Log.DebugFormat("WOLMgr: FAILED to send wake-on-lan packet!");
         return false;
       }
 
       while (waited < timeout * 1000)
       {
-        Log.Debug("WOLMgr: Ping {0}", wakeupTarget);
+        Log.DebugFormat("WOLMgr: Ping {0}", wakeupTarget);
         if (Ping(wakeupTarget, 1000))
         {
           return true;
         }
-        Log.Debug("WOLMgr: System {0} still not reachable, waiting...", wakeupTarget);
+        Log.DebugFormat("WOLMgr: System {0} still not reachable, waiting...", wakeupTarget);
         System.Threading.Thread.Sleep(1000);
         waited += 2000;
       }

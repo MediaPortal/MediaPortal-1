@@ -22,7 +22,7 @@ using System;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
 {
@@ -31,6 +31,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
   /// </summary>
   public class CodecAPIControl : BaseControl
   {
+    #region logging
+
+    private static ILogManager Log
+    {
+        get { return LogHelper.GetLogger(typeof(CodecAPIControl)); }
+    }
+
+    #endregion
+
     #region variable
 
     /// <summary>
@@ -51,7 +60,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
       : base(configuration)
     {
       _codecAPI = codecAPI;
-      Log.WriteFile("analog: ICodecAPI supported by: " + FilterGraphTools.GetFilterName(_codecAPI as IBaseFilter) +
+      Log.DebugFormat("analog: ICodecAPI supported by: " + FilterGraphTools.GetFilterName(_codecAPI as IBaseFilter) +
                         "; Checking capabilities ");
       CheckCapabilities();
     }
