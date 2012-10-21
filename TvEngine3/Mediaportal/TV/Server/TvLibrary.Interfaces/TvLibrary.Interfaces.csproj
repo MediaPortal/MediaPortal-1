@@ -78,6 +78,7 @@
     <Compile Include="Integration\IIntegrationProvider.cs" />
     <Compile Include="Integration\ILogger.cs" />
     <Compile Include="Integration\IPathManager.cs" />
+    <Compile Include="Integration\LogExtensions.cs" />
     <Compile Include="Integration\LogLevel.cs" />
     <Compile Include="Interfaces\Device\IAddOnDevice.cs" />
     <Compile Include="Interfaces\Device\IConditionalAccessProvider.cs" />
