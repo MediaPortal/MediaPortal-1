@@ -35,14 +35,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Logging
     #endregion
 
     #region Constructors/Destructors
-    public Log4netLogger(string ConfigName)
+    public Log4netLogger(string configName)
     {
       string logPath = PathManager.GetDataPath;
       string appPath = logPath;
       logPath = logPath + "\\log";
 
       XmlDocument xmlDoc = new XmlDocument();
-      using (var fs = new FileStream(Path.Combine(appPath, ConfigName), FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) 
+      using (var fs = new FileStream(Path.Combine(appPath, configName), FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) 
       {
         xmlDoc.Load(fs);
       }
