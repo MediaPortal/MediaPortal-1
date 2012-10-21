@@ -34,6 +34,8 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
+using TvLibrary.Integration.MP1;
 
 namespace Mediaportal.TV.Server.SetupTV
 {
@@ -74,6 +76,9 @@ namespace Mediaportal.TV.Server.SetupTV
     public Startup()
     {
       _startupMode = StartupMode.Normal;
+      // Initialize hosting environment
+      // TODO: use CW to find and load a matching provider and register it here!
+      GlobalServiceProvider.Instance.Add<IIntegrationProvider>(new MP1IntegrationProvider());
     }
 
     /// <summary>
