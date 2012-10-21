@@ -349,7 +349,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        Log.Error(ex);
       }
       finally
       {

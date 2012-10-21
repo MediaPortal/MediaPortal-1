@@ -1710,7 +1710,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         if (!(ex is TvException))
         {
-          Log.Error(ex, "");
+          Log.Error(ex);
         }
 
         // One potential reason for getting here is that signal could not be locked, and the reason for

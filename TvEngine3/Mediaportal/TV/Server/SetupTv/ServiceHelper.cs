@@ -176,7 +176,7 @@ namespace Mediaportal.TV.Server.SetupTV
       catch (Exception ex) // either we have no right, or the event does not exist
       {
         Log.Error("Failed to wait for {0}", RemoteControl.InitializedEventName);
-        Log.Error(ex, "");
+        Log.Error(ex);
       }
 
       /*

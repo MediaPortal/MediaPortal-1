@@ -1504,7 +1504,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "");
+          Log.Error(ex);
           return new List<PortalChannel>();
         }
       }
@@ -1821,7 +1821,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
                 }
                 catch (Exception ex)
                 {
-                  Log.Error(ex, "");
+                  Log.Error(ex);
                 }
               } //for (uint i = 0; i < eventCount; ++i)
               if (epgChannel.Programs.Count > 0)
@@ -1842,7 +1842,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "");
+          Log.Error(ex);
           return new List<EpgChannel>();
         }
       }

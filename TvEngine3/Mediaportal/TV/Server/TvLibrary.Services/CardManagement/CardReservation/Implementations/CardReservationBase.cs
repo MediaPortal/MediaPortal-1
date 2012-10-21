@@ -86,7 +86,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        Log.Error(ex);
       }
     }
 

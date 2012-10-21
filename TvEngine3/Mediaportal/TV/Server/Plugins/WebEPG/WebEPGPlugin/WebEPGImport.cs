@@ -267,7 +267,8 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
         }
         catch (Exception ex)
         {
-          Log.Error(ex, @"plugin:webepg import failed");          
+          Log.Error(ex, @"plugin:webepg import failed");
+
         }
 
         SettingsManagement.SaveSetting("webepgResultLastImport", DateTime.Now.ToString());

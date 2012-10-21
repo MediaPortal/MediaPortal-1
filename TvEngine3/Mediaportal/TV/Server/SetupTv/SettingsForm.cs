@@ -68,7 +68,7 @@ namespace Mediaportal.TV.Server.SetupTV
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "Failed to startup cause of exception");        
+        Log.Error(ex, "Failed to startup cause of exception");
       }
     }
 
@@ -92,7 +92,7 @@ namespace Mediaportal.TV.Server.SetupTV
       {
         MessageBox.Show("Failed to open WCF connection to server");
         Log.Error("Unable to get list of servers");
-        Log.Error(ex, "");
+        Log.Error(ex);
       }
 
       Project project = new Project();
@@ -145,7 +145,7 @@ namespace Mediaportal.TV.Server.SetupTV
             else
             {
               Log.Error("Cannot connect to server {0}", RemoteControl.HostName);
-              Log.Error(ex, "");
+              Log.Error(ex);
               DialogResult dlg = MessageBox.Show("Unable to connect to <" + RemoteControl.HostName + ">.\n" +
                                                   "Please check the TV Server logs for details.\n\n" +
                                                   "Setup will now close.");
@@ -543,7 +543,7 @@ namespace Mediaportal.TV.Server.SetupTV
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        Log.Error(ex);
       }
       finally
       {
@@ -693,7 +693,7 @@ namespace Mediaportal.TV.Server.SetupTV
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        Log.Error(ex);
       }
     }
 

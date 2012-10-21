@@ -264,7 +264,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
         }
         catch (Exception e)
         {
-          Log.Debug(e, "");
+          Log.Error(e);
         }
         Log.Debug("EpgGrabbingHandler: External command finished");
       }

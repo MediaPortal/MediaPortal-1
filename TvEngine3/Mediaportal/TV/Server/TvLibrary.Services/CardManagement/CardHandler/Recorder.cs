@@ -182,7 +182,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        Log.Error(ex);
         result = TvResult.UnknownError;
       }
       finally
@@ -241,7 +241,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        Log.Error(ex);
       }
       return stop;
     }
@@ -326,7 +326,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        Log.Error(ex);
       }
       return isRecording;
     }
@@ -349,7 +349,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        Log.Error(ex);
       }
       return recordingFileName;
     }
@@ -372,7 +372,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        Log.Error(ex);
       }
       return recordingStarted;
     }

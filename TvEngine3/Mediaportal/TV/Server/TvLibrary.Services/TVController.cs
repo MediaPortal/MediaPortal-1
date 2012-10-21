@@ -2328,7 +2328,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "");
+          Log.Error(ex);
         }  
       }
 
@@ -2496,7 +2496,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "");
+          Log.Error(ex);
         }
       }
       return result;
@@ -2567,7 +2567,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        Log.Error(ex);
       }
 
       return false;
@@ -3211,7 +3211,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "");
+          Log.Error(ex);
         }
       }      
     }
@@ -3354,7 +3354,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "");
+          Log.Error(ex);
           result = TvResult.UnknownError;
         }
         finally
@@ -4171,7 +4171,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        Log.Error(ex);
         return;
       }
     }
@@ -4190,7 +4190,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        Log.Error(ex);
         return;
       }
     }
@@ -4280,7 +4280,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        Log.Error(ex);
       }
     }
 
@@ -5152,7 +5152,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        Log.Error(ex);
       }
     }
 

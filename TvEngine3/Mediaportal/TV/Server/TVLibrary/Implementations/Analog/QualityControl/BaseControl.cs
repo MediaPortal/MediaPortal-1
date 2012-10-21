@@ -426,7 +426,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
       }
       catch (Exception e)
       {
-        Log.Error(e, "analog: Encoder CheckCapabilities");        
+        Log.Error(e, "analog: Encoder CheckCapabilities");
       }
     }
 

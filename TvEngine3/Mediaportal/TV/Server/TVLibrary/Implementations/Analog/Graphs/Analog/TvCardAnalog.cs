@@ -448,14 +448,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
       }
       catch (TvExceptionSWEncoderMissing ex)
       {
-        Log.Error(ex, "");
+        Log.Error(ex);
         Dispose();
         _isDeviceInitialised = false;
         throw;
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        Log.Error(ex);
         Dispose();
         _isDeviceInitialised = false;
         throw new TvExceptionGraphBuildingFailed("Graph building failed", ex);

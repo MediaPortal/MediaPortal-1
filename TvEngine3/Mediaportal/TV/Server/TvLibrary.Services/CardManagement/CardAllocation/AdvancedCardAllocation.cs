@@ -150,7 +150,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
       catch (Exception ex)
       {
         result = TvResult.UnknownError;
-        Log.Error(ex, "");
+        Log.Error(ex);
         return null;
       }
       finally
@@ -282,7 +282,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        Log.Error(ex);
         return null;
       }
       finally

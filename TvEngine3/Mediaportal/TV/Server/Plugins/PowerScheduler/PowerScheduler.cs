@@ -805,7 +805,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     /// </summary>
     private void OnWakeupTimerException(WaitableTimer sender, TimerException exception)
     {
-      Log.Error(exception, "PowerScheduler: WaitableTimer had an exception:");      
+      Log.Error(exception, "PowerScheduler: WaitableTimer had an exception:");
     }
 
     /// <summary>
@@ -846,7 +846,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
           }
           catch (Exception ex)
           {
-            Log.Error(ex, "");
+            Log.Error(ex);
           }
         }
         if (_stopThread.WaitOne(1000)) // Wait one sec / exit
@@ -1323,7 +1323,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
         }
         catch (Exception e)
         {
-          Log.Debug(e, "");
+          Log.Error(e);
         }
         LogVerbose("External command finished");
       }

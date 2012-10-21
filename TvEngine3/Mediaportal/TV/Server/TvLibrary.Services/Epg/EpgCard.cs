@@ -224,7 +224,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        Log.Error(ex);
       }
       return 0;
     }
@@ -539,7 +539,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        Log.Error(ex);
         throw;
       }
     }
@@ -586,7 +586,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        Log.Error(ex);
       }
       finally
       {
@@ -598,7 +598,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
           }
           catch (Exception ex)
           {
-            Log.Error(ex, "");
+            Log.Error(ex);
           }          
         }
         if (_state != EpgState.Idle && _user.CardId >= 0)

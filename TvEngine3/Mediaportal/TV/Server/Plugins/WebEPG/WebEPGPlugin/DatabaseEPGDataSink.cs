@@ -193,7 +193,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "WebEPG: failed to retrieve channels with display name '{0}':", name);          
+          Log.Error(ex, "WebEPG: failed to retrieve channels with display name '{0}':", name);
         }
       }
     }

@@ -441,7 +441,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        Log.Error(ex);
       }
       return 0;
     }

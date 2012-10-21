@@ -83,7 +83,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       catch (Exception ex)
       {
         Log.Error("Failed to get our server host name");
-        Log.Error(ex, "");
+        Log.Error(ex);
       }
       IEnumerable<string> ipAdresses = ServiceAgents.Instance.ControllerServiceAgent.ServerIpAdresses;
       IpAddressComboBox.Items.Clear();

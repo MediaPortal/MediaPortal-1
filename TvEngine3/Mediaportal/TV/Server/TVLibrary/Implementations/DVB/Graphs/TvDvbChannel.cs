@@ -682,7 +682,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        Log.Error(ex);
       }
     }
 

@@ -103,7 +103,7 @@ namespace Mediaportal.TV.Server.SetupTV
 
     public static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
     {
-      Log.Error(e.Exception, "Exception in setuptv");      
+      Log.Error(e.Exception, "Exception in setuptv");
     }
 
     [STAThread]
@@ -273,7 +273,7 @@ namespace Mediaportal.TV.Server.SetupTV
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        Log.Error(ex);
       }
       _serverMonitor.Stop();
     }

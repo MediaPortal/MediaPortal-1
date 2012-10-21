@@ -261,7 +261,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        Log.Error(ex);
       }
       finally
       {
