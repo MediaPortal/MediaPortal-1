@@ -331,16 +331,19 @@ void CSdtParser::DecodeServiceDescriptor(byte* b, int length, int* serviceType, 
       LogDebug("SdtParser: invalid service provider name length = %d, pointer = %d, descriptor length = %d", service_provider_name_length, pointer, length);
       return;
     }
-    *providerName = new char[service_provider_name_length + 1];
-    if (*providerName == NULL)
+    if (service_provider_name_length > 0)
     {
-      LogDebug("SdtParser: failed to allocate %d bytes for the provider name in DecodeServiceDescriptor()", service_provider_name_length + 1);
+      *providerName = new char[service_provider_name_length + 1];
+      if (*providerName == NULL)
+      {
+        LogDebug("SdtParser: failed to allocate %d bytes for the provider name in DecodeServiceDescriptor()", service_provider_name_length + 1);
+      }
+      else
+      {
+        getString468A(&b[pointer], service_provider_name_length, *providerName, service_provider_name_length + 1);
+      }
+      pointer += service_provider_name_length;
     }
-    else
-    {
-      getString468A(&b[pointer], service_provider_name_length, *providerName, service_provider_name_length + 1);
-    }
-    pointer += service_provider_name_length;
 
     int service_name_length = b[pointer++];
     if (pointer + service_name_length > length)
@@ -348,14 +351,17 @@ void CSdtParser::DecodeServiceDescriptor(byte* b, int length, int* serviceType, 
       LogDebug("SdtParser: invalid service name length = %d, pointer = %d, descriptor length = %d", service_name_length, pointer, length);
       return;
     }
-    *serviceName = new char[service_name_length + 1];
-    if (*serviceName == NULL)
+    if (service_name_length > 0)
     {
-      LogDebug("SdtParser: failed to allocate %d bytes for the service name in DecodeServiceDescriptor()", service_name_length + 1);
-    }
-    else
-    {
-      getString468A(&b[pointer], service_name_length, *serviceName, service_name_length + 1);
+      *serviceName = new char[service_name_length + 1];
+      if (*serviceName == NULL)
+      {
+        LogDebug("SdtParser: failed to allocate %d bytes for the service name in DecodeServiceDescriptor()", service_name_length + 1);
+      }
+      else
+      {
+        getString468A(&b[pointer], service_name_length, *serviceName, service_name_length + 1);
+      }
     }
   }
   catch (...)
@@ -470,6 +476,10 @@ void CSdtParser::DecodeCountryAvailabilityDescriptor(byte* b, int length, vector
 
 void CSdtParser::DecodeBouquetNameDescriptor(byte* b, int length, char** name)
 {
+  if (length <= 0)
+  {
+    return;
+  }
   *name = new char[length + 1];
   if (*name == NULL)
   {

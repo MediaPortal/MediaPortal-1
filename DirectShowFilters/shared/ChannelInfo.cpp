@@ -142,8 +142,8 @@ void CChannelInfo::ClearStrings()
 
 void CChannelInfo::ReplaceServiceName(char* name)
 {
-  // If we have new strings, free the memory associated with previous
-  // strings, then allocate new memory and copy.
+  // If we have a new string, free the memory associated with previous
+  // string, then allocate new memory and copy.
   if (name == NULL)
   {
     return;

@@ -1442,6 +1442,10 @@ void CNitParser::DecodeServiceListDescriptor(byte* b, int length, vector<int>* s
 
 void CNitParser::DecodeNameDescriptor(byte* b, int length, char** name)
 {
+  if (length <= 0)
+  {
+    return;
+  }
   *name = new char[length + 1];
   if (*name == NULL)
   {
@@ -1459,17 +1463,19 @@ void CNitParser::DecodeMultilingualNameDescriptor(byte* b, int length, map<unsig
     unsigned int iso_639_language_code = b[pointer] + (b[pointer + 1] << 8) + (b[pointer + 2] << 16);
     pointer += 3;
     int network_name_length = b[pointer++];
-
-    char* name = new char[network_name_length + 1];
-    if (name == NULL)
+    if (network_name_length > 0)
     {
-      LogDebug("%s: failed to allocate memory in DecodeMultilingualNameDescriptor()", m_sName);
-      return;
-    }
-    getString468A(&b[pointer], network_name_length, name, network_name_length + 1);
-    (*names)[iso_639_language_code] = name;
+      char* name = new char[network_name_length + 1];
+      if (name == NULL)
+      {
+        LogDebug("%s: failed to allocate memory in DecodeMultilingualNameDescriptor()", m_sName);
+        return;
+      }
+      getString468A(&b[pointer], network_name_length, name, network_name_length + 1);
+      (*names)[iso_639_language_code] = name;
 
-    pointer += network_name_length;
+      pointer += network_name_length;
+    }
   }
 }
 
@@ -1645,27 +1651,30 @@ void CNitParser::DecodeTargetRegionNameDescriptor(byte* b, int length, map<__int
         return;
       }
 
-      char* targetRegionName = new char[region_name_length + 1];
-      if (*targetRegionName == NULL)
+      if (region_name_length > 0)
       {
-        LogDebug("%s: failed to allocate memory in DecodeTargetRegionNameDescriptor()", m_sName);
-        return;
-      }
-      getString468A(&b[pointer], region_name_length, targetRegionName, region_name_length + 1);
-      pointer += region_name_length;
-
-      __int64 targetRegionId = ((__int64)country_code << 32) + (b[pointer++] << 24);
-      if (region_depth > 1)
-      {
-        targetRegionId += (b[pointer++] << 16);
-        if (region_depth > 2)
+        char* targetRegionName = new char[region_name_length + 1];
+        if (*targetRegionName == NULL)
         {
-          targetRegionId += (b[pointer] << 8) + b[pointer + 1];
-          pointer += 2;
+          LogDebug("%s: failed to allocate memory in DecodeTargetRegionNameDescriptor()", m_sName);
+          return;
         }
-      }
+        getString468A(&b[pointer], region_name_length, targetRegionName, region_name_length + 1);
+        pointer += region_name_length;
 
-      (*names)[targetRegionId] = targetRegionName;
+        __int64 targetRegionId = ((__int64)country_code << 32) + (b[pointer++] << 24);
+        if (region_depth > 1)
+        {
+          targetRegionId += (b[pointer++] << 16);
+          if (region_depth > 2)
+          {
+            targetRegionId += (b[pointer] << 8) + b[pointer + 1];
+            pointer += 2;
+          }
+        }
+
+        (*names)[targetRegionId] = targetRegionName;
+      }
     }
   }
   catch (...)

@@ -504,14 +504,17 @@ void CLvctParser::DecodeString(byte* b, int compression_type, int mode, int numb
   //LogDebug("LvctParser: decode string, compression type = 0x%x, mode = 0x%x, number of bytes = %d", compression_type, mode, number_bytes);
   if (compression_type == 0 && mode == 0)
   {
-    *string = new char[number_bytes + 1];
-    if (*string == NULL)
+    if (number_bytes > 0)
     {
-      LogDebug("LvctParser: failed to allocate %d bytes in DecodeString()", number_bytes + 1);
-      return;
+      *string = new char[number_bytes + 1];
+      if (*string == NULL)
+      {
+        LogDebug("LvctParser: failed to allocate %d bytes in DecodeString()", number_bytes + 1);
+        return;
+      }
+      memcpy(*string, b, number_bytes);
+      (*string)[number_bytes] = 0;  // NULL terminate
     }
-    memcpy(*string, b, number_bytes);
-    (*string)[number_bytes] = 0;  // NULL terminate
     return;
   }
   LogDebug("LvctParser: unsupported compression type or mode in DecodeString(), compression type = 0x%x, mode = 0x%x", compression_type, mode);
