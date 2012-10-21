@@ -110,6 +110,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       base.OnSectionActivated();
       UpdateStatus();
       checkBoxQAM.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("atsc" + _cardNumber + "supportsqam", "false").Value == "true");
+      checkBoxQAM_CheckedChanged(null, null);
     }
 
     public override void OnSectionDeActivated()
@@ -366,7 +367,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
         progressBar1.Value = 100;
         checkBoxQAM.Enabled = true;
-        mpComboBoxFrequencies.Enabled = true;
+        checkBoxQAM_CheckedChanged(null, null);
         mpButtonScanTv.Text = buttonText;
         _isScanning = false;
       }
