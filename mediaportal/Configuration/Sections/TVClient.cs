@@ -431,10 +431,10 @@ namespace MediaPortal.Configuration.Sections
                   mpListViewPreferredAudioLang.Items.Clear();
                   for (int i = 0; i < _languagesAvail.Count; i++)
                   {
-                    if (!_preferredAudioLanguages.Contains(_languagesAvail[i]))
+                    ListViewItem item = new ListViewItem(new string[] { _languagesAvail[i], _languageCodes[i] });
+                    item.Name = _languageCodes[i];
+                    if (!_preferredAudioLanguages.Contains(item.Name))
                     {
-                      ListViewItem item = new ListViewItem(new string[] {_languagesAvail[i], _languageCodes[i]});
-                      item.Name = _languageCodes[i];
                       if (!mpListViewAvailAudioLang.Items.ContainsKey(item.Name))
                       {
                         mpListViewAvailAudioLang.Items.Add(item);
@@ -473,10 +473,10 @@ namespace MediaPortal.Configuration.Sections
                   mpListViewPreferredSubLang.Items.Clear();
                   for (int i = 0; i < _languagesAvail.Count; i++)
                   {
-                    if (!_preferredSubLanguages.Contains(_languagesAvail[i]))
+                    ListViewItem item = new ListViewItem(new string[] { _languagesAvail[i], _languageCodes[i] });
+                    item.Name = _languageCodes[i];
+                    if (!_preferredSubLanguages.Contains(item.Name))
                     {
-                      ListViewItem item = new ListViewItem(new string[] {_languagesAvail[i], _languageCodes[i]});
-                      item.Name = _languageCodes[i];
                       if (!mpListViewAvailSubLang.Items.ContainsKey(item.Name))
                       {
                         mpListViewAvailSubLang.Items.Add(item);

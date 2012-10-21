@@ -94,6 +94,8 @@ namespace MediaPortal.Music.Database
     private static readonly Regex HTMLListRegEx = new Regex(HTMLListRegExp, RegexOptions.Singleline | RegexOptions.IgnoreCase);
     private const string HTMLRegExp = @"<.*?>";
     private static readonly Regex HTMLRegEx = new Regex(HTMLRegExp, RegexOptions.Singleline | RegexOptions.Compiled);
+    private const string SpaceRegExp = @"\s\s+";
+    private static readonly Regex SpaceRegex = new Regex(SpaceRegExp, RegexOptions.Singleline | RegexOptions.Compiled);
 
     #endregion
 
@@ -414,6 +416,8 @@ namespace MediaPortal.Music.Database
       if (bornMatch.Success)
       {
         strBorn = bornMatch.Groups["born"].Value.Trim();
+        strBorn = strBorn.Replace("\n", ""); 
+        strBorn = SpaceRegex.Replace(strBorn, " ");
       }
 
       // build up tones into one string

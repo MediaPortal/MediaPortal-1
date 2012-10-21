@@ -64,9 +64,9 @@ namespace MediaPortal.GUI.Video
     
     #endregion
 
-    public delegate void AmazonLookupCompleted(string[] coverThumbURLs);
+    public delegate void CoversLookupCompleted(string[] coverThumbURLs);
 
-    public static event AmazonLookupCompleted AmazonImagesDownloaded;
+    public static event CoversLookupCompleted CoverImagesDownloaded;
 
     private enum ViewMode
     {
@@ -85,7 +85,7 @@ namespace MediaPortal.GUI.Video
     private ArrayList _actors = new ArrayList();
     // Saved state settings
     private string _viewModeState = string.Empty;
-    private int _selectedItemState = -1;
+    private int _currentSelectedItem = -1;
     private int _movieIdState = -1;
 
     private Thread _imageSearchThread;
@@ -105,7 +105,7 @@ namespace MediaPortal.GUI.Video
 
     public override bool Init()
     {
-      AmazonImagesDownloaded += new AmazonLookupCompleted(OnAmazonImagesDownloaded);
+      CoverImagesDownloaded += OnCoverImagesDownloaded;
       return Load(GUIGraphicsContext.GetThemedSkinFile(@"\DialogVideoInfo.xml"));
     }
 
@@ -326,6 +326,7 @@ namespace MediaPortal.GUI.Video
           {
             // Canceled fetch (maybe will be needed in the future
             SetActorGUIListItems();
+            
             if (tbCastTextArea.IsVisible)
             {
               ShowActors(true);
@@ -614,16 +615,19 @@ namespace MediaPortal.GUI.Video
         {
           if (tbCastTextArea != null) tbCastTextArea.IsVisible = false;
           listActors.Visible = true;
-          
+
           if (!listActors.IsEnabled)
+          {
             GUIControl.EnableControl(GetID, listActors.GetID);
-          
+          }
+
           GUIControl.SelectControl(GetID, listActors.GetID);
           GUIControl.FocusControl(GetID, listActors.GetID);
+          
           if (listActors.Count > 0)
           {
-            listActors.SelectedListItemIndex = 0;
-            OnItemSelected(listActors[0], listActors);
+            _currentSelectedItem = 0;
+            SelectItem();
           }
         }
       }
@@ -696,6 +700,9 @@ namespace MediaPortal.GUI.Video
 
             GUIControl.SelectControl(GetID, listActors.GetID);
             GUIControl.FocusControl(GetID, listActors.GetID);
+            GUIPropertyManager.SetProperty("#itemcount", listActors.Count.ToString());
+            listActors.SelectedListItemIndex = _currentSelectedItem;
+            SelectItem();
           }
 
           if (imgActorArt != null) imgActorArt.IsVisible = true;
@@ -728,7 +735,12 @@ namespace MediaPortal.GUI.Video
 
           if (btnCast != null) btnCast.Selected = false;
 
-          if (listActors != null) listActors.IsVisible = false;
+          if (listActors != null)
+          {
+            listActors.IsVisible = false;
+            _currentSelectedItem = listActors.SelectedListItemIndex;
+            GUIPropertyManager.SetProperty("#itemcount", string.Empty);
+          }
 
           if (imgActorArt != null) imgActorArt.IsVisible = false;
         }
@@ -753,26 +765,19 @@ namespace MediaPortal.GUI.Video
 
           if (btnCast != null) btnCast.Selected = false;
 
-          if (listActors != null) listActors.IsVisible = false;
+          if (listActors != null)
+          {
+            listActors.IsVisible = false;
+            _currentSelectedItem = listActors.SelectedListItemIndex;
+            GUIPropertyManager.SetProperty("#itemcount", string.Empty);
+          }
 
           if (imgActorArt != null) imgActorArt.IsVisible = false;
 
         }
 
         btnWatched.Selected = (_currentMovie.Watched != 0);
-        // Set skin control properties
-        //ArrayList files = new ArrayList();
-        //VideoDatabase.GetFilesForMovie(_currentMovie.ID, ref files);
         
-        //if (files.Count > 0)
-        //{
-        //  _currentMovie.SetProperties(false, (string) files[0]);
-        //}
-        //else
-        //{
-        //  _currentMovie.SetProperties(false, string.Empty);
-        //}
-
         if (imgCoverArt != null)
         {
           imgCoverArt.Dispose();
@@ -788,6 +793,14 @@ namespace MediaPortal.GUI.Video
       catch (Exception ex)
       {
         Log.Error("GUIVideoInfo Update controls Error: {1}", ex.Message);
+      }
+    }
+
+    private void SelectItem()
+    {
+      if (_currentSelectedItem >= 0 && listActors != null)
+      {
+        GUIControl.SelectItemControl(GetID, listActors.GetID, _currentSelectedItem);
       }
     }
 
@@ -827,6 +840,7 @@ namespace MediaPortal.GUI.Video
               {
                 // Local image, don't download, just copy
                 File.Copy(imageUrl.Substring(7), temporaryFilename);
+                File.SetAttributes(temporaryFilename, FileAttributes.Normal);
               }
               else
               {
@@ -1035,7 +1049,7 @@ namespace MediaPortal.GUI.Video
       spinImages.UpDownType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
     }
 
-    private void OnAmazonImagesDownloaded(string[] aThumbArray)
+    private void OnCoverImagesDownloaded(string[] aThumbArray)
     {
       lock (this)
       {
@@ -1115,8 +1129,12 @@ namespace MediaPortal.GUI.Video
           item.OnItemSelected += OnItemSelected;
           listActors.Add(item);
         }
+
         if (listActors.Count > 0)
+        {
           listActors.SelectedListItemIndex = 0;
+          _currentSelectedItem = 0;
+        }
       }
       catch (Exception ex)
       {
@@ -1699,9 +1717,9 @@ namespace MediaPortal.GUI.Video
               }
             }
           }
-          if (AmazonImagesDownloaded != null)
+          if (CoverImagesDownloaded != null)
           {
-            AmazonImagesDownloaded(thumbUrls);
+            CoverImagesDownloaded(thumbUrls);
           }
           return;
         }
@@ -1731,9 +1749,9 @@ namespace MediaPortal.GUI.Video
           }
         }
 
-        if (AmazonImagesDownloaded != null)
+        if (CoverImagesDownloaded != null)
         {
-          AmazonImagesDownloaded(thumbUrls);
+          CoverImagesDownloaded(thumbUrls);
         }
 
         if (VideoDatabase.CheckMovieImdbId(movie.IMDBNumber))
@@ -1931,24 +1949,25 @@ namespace MediaPortal.GUI.Video
       {
         _viewModeState = xmlreader.GetValueAsString("VideoInfo", "lastview", string.Empty);
         _movieIdState = xmlreader.GetValueAsInt("VideoInfo", "movieid", -1);
-        _selectedItemState = xmlreader.GetValueAsInt("VideoInfo", "itemid", -1);
-
+        
         if (_viewModeState == "Cast" &&
               GUIWindowManager.GetPreviousActiveWindow() != (int)Window.WINDOW_VIDEO_TITLE &&
               GUIWindowManager.GetPreviousActiveWindow() != (int)Window.WINDOW_VIDEOS &&
               _movieIdState == _currentMovie.ID)
         {
-          if (_selectedItemState >= 0 && listActors != null && listActors.Count >= _selectedItemState)
+          if (_currentSelectedItem >= 0 && listActors != null && listActors.Count >= _currentSelectedItem)
           {
+            _currentSelectedItem = xmlreader.GetValueAsInt("VideoInfo", "itemid", -1);
             _viewmode = ViewMode.Cast;
             Update();
 
             if (!listActors.IsEnabled)
+            {
               GUIControl.EnableControl(GetID, listActors.GetID);
+            }
 
             GUIControl.FocusControl(GetID, listActors.GetID);
-            listActors.SelectedListItemIndex = _selectedItemState;
-            OnItemSelected(listActors[_selectedItemState], listActors);
+            SelectItem();
           }
         }
       }

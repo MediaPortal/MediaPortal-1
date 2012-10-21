@@ -495,7 +495,10 @@ namespace MediaPortal.Video.Database
                 }
               }
             }
-            catch (Exception) {}
+            catch (Exception ex)
+            {
+              Log.Error("IMDBFetcher.FetchDetailsThread() folder.jpg copy error: {0}", ex.Message);
+            }
             
             // Check movie table if there is an entry that new movie is already played as share
             int percentage = 0;
@@ -523,7 +526,8 @@ namespace MediaPortal.Video.Database
                 {
                   ArrayList values = new ArrayList();
                   bool error = false;
-                  values = VideoDatabase.ExecuteRuleSql(rule, "movieinfo.idMovie", out error);
+                  string errorMessage = string.Empty;
+                  values = VideoDatabase.ExecuteRuleSql(rule, "movieinfo.idMovie", out error, out errorMessage);
 
                   if (error)
                   {
@@ -874,7 +878,8 @@ namespace MediaPortal.Video.Database
                                   _imdbActor.IMDBActorID,
                                   _actorId);
       bool error = false;
-      VideoDatabase.ExecuteSql(sql, out error);
+      string errorMessage = string.Empty;
+      VideoDatabase.ExecuteSql(sql, out error, out errorMessage);
 
       // Keep user actor image
       bool userActorImage = false;
@@ -1495,8 +1500,9 @@ namespace MediaPortal.Video.Database
             {
               imageExtension = ".jpg";
             }
-            string temporaryFilename = "temp";
+            string temporaryFilename = "MPTempImage";
             temporaryFilename += imageExtension;
+            temporaryFilename = Path.Combine(Path.GetTempPath(), temporaryFilename);
             Util.Utils.FileDelete(temporaryFilename);
 
             // Check if image is file
@@ -1504,10 +1510,11 @@ namespace MediaPortal.Video.Database
             {
               // Local image, don't download, just copy
               File.Copy(imageUrl.Substring(7), temporaryFilename);
+              File.SetAttributes(temporaryFilename, FileAttributes.Normal);
             }
             else
             {
-              Util.Utils.DownLoadAndCacheImage(imageUrl, temporaryFilename);
+              Util.Utils.DownLoadAndOverwriteCachedImage(imageUrl, temporaryFilename);
             }
             //Util.Utils.DownLoadAndCacheImage(imageUrl, temporaryFilename);
             if (File.Exists(temporaryFilename))
@@ -1524,7 +1531,10 @@ namespace MediaPortal.Video.Database
           }
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("IMDBFetcher: DownloadCoverArt({0}, {1}, {2}) error: {3}", type, imageUrl, title, ex.Message);
+      }
     }
 
     /// <summary>
