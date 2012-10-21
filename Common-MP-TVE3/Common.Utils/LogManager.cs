@@ -212,7 +212,7 @@ namespace MediaPortal.Common.Utils
         }
 
         public bool IsDebugEnabled { get { return Instance.IsDebugEnabled; } }
-        public bool IsErrorEnabled { get { return Instance.IsDebugEnabled; } }
+        public bool IsErrorEnabled { get { return Instance.IsErrorEnabled; } }
         public bool IsFatalEnabled { get { return Instance.IsFatalEnabled; } }
         public bool IsInfoEnabled { get { return Instance.IsInfoEnabled; } }
         public bool IsWarnEnabled { get { return Instance.IsWarnEnabled; } }
