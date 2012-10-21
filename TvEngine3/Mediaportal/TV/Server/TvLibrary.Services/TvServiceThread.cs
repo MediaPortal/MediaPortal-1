@@ -13,7 +13,9 @@ using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
 using Mediaportal.TV.Server.TVLibrary.Services;
+using TvLibrary.Integration.MP1;
 
 namespace Mediaportal.TV.Server.TVLibrary
 {
@@ -52,6 +54,11 @@ namespace Mediaportal.TV.Server.TVLibrary
 
       _powerEventHandlers = new List<PowerEventHandler>();
       GlobalServiceProvider.Instance.Add<IPowerEventHandler>(this);
+
+      // Initialize hosting environment
+      // TODO: use CW to find and load a matching provider and register it here!
+      GlobalServiceProvider.Instance.Add<IIntegrationProvider>(new MP1IntegrationProvider());
+
       AddPowerEventHandler(OnPowerEventHandler);
       try
       {

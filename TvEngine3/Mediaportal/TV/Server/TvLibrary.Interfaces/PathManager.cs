@@ -1,4 +1,6 @@
 ﻿using System;
+using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
@@ -12,11 +14,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     {
       get
       {
-        return String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server",
-                 Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-        ;
+        return GlobalServiceProvider.Instance.Get<IIntegrationProvider>().PathManager.GetPath(null);
       }
     }
-
   }
 }
