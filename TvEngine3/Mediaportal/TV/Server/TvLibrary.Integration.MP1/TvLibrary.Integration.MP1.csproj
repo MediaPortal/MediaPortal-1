@@ -72,6 +72,11 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /Y "$(TargetDir)$(ProjectName).dll"  "$(SolutionDir)\TvService\Bin\Debug\"
+xcopy /Y "$(TargetDir)$(ProjectName).dll"  "$(SolutionDir)\SetupTv\Bin\Debug\"
+</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -14,7 +14,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     {
       get
       {
-        return GlobalServiceProvider.Instance.Get<IIntegrationProvider>().PathManager.GetPath(null);
+        return GlobalServiceProvider.Instance.Get<IIntegrationProvider>().PathManager.GetPath("<TVCORE>");
       }
     }
   }
