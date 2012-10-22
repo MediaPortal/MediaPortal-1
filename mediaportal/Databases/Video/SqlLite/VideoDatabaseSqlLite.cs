@@ -1132,6 +1132,10 @@ namespace MediaPortal.Video.Database
           int movieId = VideoDatabase.GetMovieId(strFilenameAndPath);
           VideoDatabase.GetFilesForMovie(movieId, ref movieFiles);
           SetMovieDuration(movieId, MovieDuration(movieFiles));
+
+          //Update movie subtitle field
+          strSQL = String.Format("UPDATE movie SET hasSubtitles={0} WHERE idMovie={1} ", subtitles, movieId);
+          m_db.Execute(strSQL);
         }
         catch (ThreadAbortException)
         {
