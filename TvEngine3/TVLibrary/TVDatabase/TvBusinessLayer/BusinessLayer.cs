@@ -203,6 +203,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
       IList<ChannelGroup> groups = ObjectFactory.GetCollection<ChannelGroup>(stmt.Execute());
       ChannelGroup group;
+      int GroupSelected = 0;
       if (groups.Count == 0)
       {
         group = new ChannelGroup(groupName, 9999);
@@ -210,7 +211,14 @@ namespace TvDatabase
       }
       else
       {
-        group = groups[0];
+        for (int i = 0; i < groups.Count; ++i)
+        {
+          if (groups[i].GroupName == groupName)
+          {
+            GroupSelected = i;
+          }
+        }
+        group = groups[GroupSelected];
       }
       return group;
     }
