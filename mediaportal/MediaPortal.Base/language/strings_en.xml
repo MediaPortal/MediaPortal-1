@@ -1520,6 +1520,7 @@
     <String id="6042">Enter a skip step number of seconds</String>
     <String id="6050">Current week</String>
     <String id="6060">Current month</String>
+	<String id="6065">Last month</String>
     <String id="6070">Current year</String>
     <String id="6080">Last year</String>
     <String id="6090">Older</String>
@@ -1950,7 +1951,7 @@
     <String id="101021">GUI</String>
     <String id="101022">GUI - General</String>
     <String id="101023">Videos - Other</String>
-    <String id="101024">BluRay</String>
+    <String id="101024">Blu-ray</String>
     <String id="102000">Select dialog</String>
     <String id="102001" prefix="My ">Music/info</String>
     <String id="102002">Dialog OK</String>
@@ -2296,7 +2297,7 @@
     <String id="300202">Strip title prefix</String>
     <String id="300203">Other</String>
     <String id="300204">Mark every already watched file</String>
-    <String id="300205">Keep DVD and BluRay folders together</String>
+    <String id="300205">Keep DVD and Blu-ray folders together</String>
     <String id="300206">Use comskip data to skip commercials</String>
     <String id="300207">Watched percentage (%)</String>
     <String id="300208">Audio Video Delay (ms)</String>
@@ -2308,7 +2309,7 @@
     <String id="300214">DivX/Xvid video codec</String>
     <String id="300215">Splitter source</String>
     <String id="300216">Splitter filesync</String>
-    <String id="300217">BluRay</String>
+    <String id="300217">Blu-ray</String>
     <String id="300218">Region</String>
     <String id="300219">Audio Type</String>
     <String id="300220">Parental age limit</String>
