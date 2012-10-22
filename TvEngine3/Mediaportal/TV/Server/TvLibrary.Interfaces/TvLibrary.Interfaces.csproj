@@ -54,6 +54,9 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Windsor">
+      <HintPath>..\..\ExternalBinaries\Castle.Windsor.dll</HintPath>
+    </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\ExternalBinaries\log4net.dll</HintPath>
     </Reference>
@@ -80,6 +83,7 @@
     <Compile Include="HResult.cs" />
     <Compile Include="Integration\IIntegrationProvider.cs" />
     <Compile Include="Integration\ILogger.cs" />
+    <Compile Include="Integration\IntegrationProviderHelper.cs" />
     <Compile Include="Integration\IPathManager.cs" />
     <Compile Include="Integration\LogExtensions.cs" />
     <Compile Include="Integration\LogLevel.cs" />

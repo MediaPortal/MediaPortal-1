@@ -49,8 +49,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       GlobalServiceProvider.Instance.Add<IPowerEventHandler>(this);
 
       // Initialize hosting environment
-      // TODO: use CW to find and load a matching provider and register it here!
-      GlobalServiceProvider.Instance.Add<IIntegrationProvider>(new MP1IntegrationProvider());
+      IntegrationProviderHelper.Register();
 
       AddPowerEventHandler(OnPowerEventHandler);
       try
