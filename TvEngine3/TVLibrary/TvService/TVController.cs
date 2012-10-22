@@ -3732,6 +3732,15 @@ namespace TvService
     }
 
     /// <summary>
+    /// Returns an ordered, distinct list of all program genres.  Maintained for backward compatibility.
+    /// </summary>
+    /// <returns></returns>
+    public List<string> GetGenres()
+    {
+      return GetProgramGenres();
+    }
+
+    /// <summary>
     /// Returns an ordered, distinct list of all program genres.
     /// </summary>
     /// <returns></returns>

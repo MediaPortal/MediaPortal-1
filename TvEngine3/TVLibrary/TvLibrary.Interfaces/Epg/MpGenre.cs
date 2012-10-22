@@ -94,7 +94,11 @@ namespace TvLibrary.Epg
     /// <param name="programGenre">The program genre to map</param>
     public void MapToProgramGenre(string programGenre)
     {
-      _mappedProgramGenres.Add(programGenre);
+      // Don't allow duplicate entries.
+      if (!_mappedProgramGenres.Contains(programGenre))
+      {
+        _mappedProgramGenres.Add(programGenre);
+      }
     }
 
     /// <summary>

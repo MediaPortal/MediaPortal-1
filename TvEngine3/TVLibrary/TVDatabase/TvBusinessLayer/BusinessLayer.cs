@@ -1560,6 +1560,12 @@ namespace TvDatabase
                : GetProgramsByTitle(startTime, endTime, programName);
     }
 
+    // Maintained for backward compatibility.
+    public List<string> GetGenres()
+    {
+      return GetProgramGenres();
+    }
+
     public List<string> GetProgramGenres()
     {
       List<string> genres = new List<string>();
@@ -1638,13 +1644,10 @@ namespace TvDatabase
       List<string> defaultGenreNames = (List<string>)GetDefaultMpGenreNames();
 
       // Get the id of the mp genre identified as the movie genre.
-      int genreMapMovieGenreId = -1;
-      try
+      int genreMapMovieGenreId;
+      if (!int.TryParse(GetSetting("genreMapMovieGenreId", "-1").Value, out genreMapMovieGenreId))
       {
-        genreMapMovieGenreId = int.Parse(GetSetting("genreMapMovieGenreId", "-1").Value);
-      }
-      catch (Exception)
-      { 
+        genreMapMovieGenreId = -1;
       }
 
       // Each genre map value is a '{' delimited list of "program" genre names (those that may be compared with the genre from the program listings).
@@ -1655,11 +1658,7 @@ namespace TvDatabase
         genre = GetSetting("genreMapName" + i, defaultGenreNames[i]).Value;
 
         // Get the status of the mp genre.
-        try
-        {
-          enabled = bool.Parse(GetSetting("genreMapNameEnabled" + i, "True").Value);
-        }
-        catch (Exception)
+        if (!bool.TryParse(GetSetting("genreMapNameEnabled" + i, "True").Value, out enabled))
         {
           enabled = true;
         }
@@ -1674,14 +1673,7 @@ namespace TvDatabase
 
         foreach (string programGenre in mappedProgramGenres)
         {
-          try
-          {
-            mpg.MapToProgramGenre(programGenre);
-          }
-          catch (ArgumentException)
-          {
-            Log.Error("BusinessLayer: The following genre name appears more than once in the genre map: {0}", programGenre);
-          }
+          mpg.MapToProgramGenre(programGenre);
         }
 
         mpGenres.Add((MpGenre)mpg);
