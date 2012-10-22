@@ -376,6 +376,12 @@ namespace TvControl
     List<string> ServerIpAdresses { get; }
 
     /// <summary>
+    /// Returns an ordered, distict list of all program genres.  Maintained for backward compatibility.
+    /// </summary>
+    /// <returns></returns>
+    List<string> GetGenres();
+
+    /// <summary>
     /// Returns an ordered, distict list of all program genres.
     /// </summary>
     /// <returns></returns>
