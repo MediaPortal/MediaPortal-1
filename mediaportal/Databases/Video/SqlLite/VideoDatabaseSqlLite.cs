@@ -1191,6 +1191,7 @@ namespace MediaPortal.Video.Database
 
         mediaInfo.AudioCodec = DatabaseUtility.Get(results, 0, "audioCodec");
         mediaInfo.AudioChannels = DatabaseUtility.Get(results, 0, "audioChannels");
+        mediaInfo.Duration = GetVideoDuration(fileID);
       }
       catch (ThreadAbortException)
       {
@@ -6472,15 +6473,28 @@ namespace MediaPortal.Video.Database
       }
     }
 
-    public void FlushTransactionsToDisk ()
+    public void FlushTransactionsToDisk()
     {
-      m_db.Execute("PRAGMA synchronous='FULL'");
+      try
+      {
+        m_db.Execute("PRAGMA synchronous='FULL'");
+      }
+      catch (Exception ex)
+      {
+        Log.Error("VideoDatabase FlushTransactionsToDisk() exception: {0}", ex.Message);
+      }
     }
 
     public void RevertFlushTransactionsToDisk()
     {
-      m_db.Execute("PRAGMA synchronous='OFF'");
-      
+      try
+      {
+        m_db.Execute("PRAGMA synchronous='OFF'");
+      }
+      catch (Exception ex)
+      {
+        Log.Error("VideoDatabase RevertFlushTransactionsToDisk() exception: {0}", ex.Message);
+      }
     }
   }
 }
