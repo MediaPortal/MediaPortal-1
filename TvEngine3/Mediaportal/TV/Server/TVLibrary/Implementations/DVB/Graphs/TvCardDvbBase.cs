@@ -922,7 +922,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     {
       Log.Debug("TvCardDvbBase: add Mediaportal TsWriter filter");
 
-      _filterTsWriter = FilterLoader.LoadFilterFromDll("TsWriter.ax", typeof(MpTsAnalyzer).GUID);
+      _filterTsWriter = FilterLoader.LoadFilterFromDll("TsWriter.ax", typeof(MpTsAnalyzer).GUID, true);
       if (_filterTsWriter == null)
       {
         Log.Error("TvCardDvbBase: failed to marshal TsWriter filter");

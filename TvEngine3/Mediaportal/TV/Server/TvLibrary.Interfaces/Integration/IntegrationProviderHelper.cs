@@ -33,10 +33,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Integration
     /// <summary>
     /// Finds an assembly with matching type <see cref="IIntegrationProvider"/> and adds it into <seealso cref="GlobalServiceProvider"/>.
     /// </summary>
-    public static void Register()
+    public static void Register(string searchPath = ".")
     {
+      // If there is already a provider registered, use this instance
+      if (GlobalServiceProvider.Get<IIntegrationProvider>() != null)
+        return;
       var container = new WindsorContainer(new XmlInterpreter());
-      var assemblyFilter = new AssemblyFilter(".", "*.Integration.*.dll");
+      var assemblyFilter = new AssemblyFilter(searchPath, "*.Integration.*.dll");
       container.Register(AllTypes.FromAssemblyInDirectory(assemblyFilter).BasedOn<IIntegrationProvider>().WithServiceBase().LifestyleSingleton());
       GlobalServiceProvider.Add(container.Resolve<IIntegrationProvider>());
     }
