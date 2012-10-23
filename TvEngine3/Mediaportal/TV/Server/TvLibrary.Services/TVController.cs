@@ -667,8 +667,7 @@ namespace Mediaportal.TV.Server.TVLibrary
             string timeShiftPath = dbsCard.TimeshiftingFolder;
             if (string.IsNullOrEmpty(dbsCard.TimeshiftingFolder))
             {
-              timeShiftPath = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer",
-                                            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+              timeShiftPath = Path.Combine(PathManager.GetDataPath, "timeshiftbuffer");
             }
             if (!Directory.Exists(timeShiftPath))
             {
@@ -3956,9 +3955,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       //setup folders
       if (cardInfo.Card.RecordingFolder == String.Empty)
       {
-        cardInfo.Card.RecordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings",
-                                                      Environment.GetFolderPath(
-                                                        Environment.SpecialFolder.CommonApplicationData));
+        cardInfo.Card.RecordingFolder = Path.Combine(PathManager.GetDataPath, "recordings");
         if (!Directory.Exists(cardInfo.Card.RecordingFolder))
         {
           Log.Debug("Controller: creating recording folder {0} for card {0}", cardInfo.Card.RecordingFolder,
@@ -3968,9 +3965,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       if (cardInfo.Card.TimeshiftingFolder == String.Empty)
       {
-        cardInfo.Card.TimeshiftingFolder = String.Format(
-          @"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer",
-          Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+        cardInfo.Card.TimeshiftingFolder = Path.Combine(PathManager.GetDataPath, "timeshiftbuffer");
         if (!Directory.Exists(cardInfo.Card.TimeshiftingFolder))
         {
           Log.Debug("Controller: creating timeshifting folder {0} for card {0}", cardInfo.Card.TimeshiftingFolder,

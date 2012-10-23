@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
@@ -285,8 +286,7 @@ namespace Mediaportal.TV.Server.TVControl
         _timeShiftFolder = value;
         if (_timeShiftFolder == String.Empty)
         {
-          _timeShiftFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer",
-                                           Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+          _timeShiftFolder = Path.Combine(PathManager.GetDataPath, "timeshiftbuffer");
         }
       }
     }

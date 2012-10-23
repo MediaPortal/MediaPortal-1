@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Microsoft.Win32;
 
 namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
@@ -28,9 +29,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static string GetDefaultTimeshiftingFolder()
     {
-      return String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer",
-                           Environment.GetFolderPath(
-                             Environment.SpecialFolder.CommonApplicationData));
+      return Path.Combine(PathManager.GetDataPath, "timeshiftbuffer");
     }
 
     public static string GetDefaultRecordingFolder()
