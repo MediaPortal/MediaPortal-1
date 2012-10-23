@@ -44,7 +44,7 @@ namespace TvLibrary.Integration.MP1
     public string GetPath (string pathPattern)
     {
       string rootPath = GetRootPath();
-      if (string.IsNullOrEmpty(pathPattern))
+      if (string.IsNullOrEmpty(pathPattern) || pathPattern == "<TVCORE>")
         return rootPath;
 
       return Path.Combine(rootPath, pathPattern.Replace("<", "").Replace(">", ""));
