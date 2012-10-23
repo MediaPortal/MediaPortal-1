@@ -558,7 +558,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
         Log.Debug("MD Plugin: identifying primary ECM PID");
 
         // Load configuration (if we have any).
-        String configFile = AppDomain.CurrentDomain.BaseDirectory + "MDPLUGINS\\MDAPIProvID.xml";
+        String configFile = PathManager.BuildAssemblyRelativePath("MDPLUGINS\\MDAPIProvID.xml");
         XmlDocument doc = new XmlDocument();
         bool configFound = false;
         if (File.Exists(configFile))
@@ -870,7 +870,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
       try
       {
         // Look for a configuration file.
-        String configFile = AppDomain.CurrentDomain.BaseDirectory + "MDPLUGINS\\MDAPICards.xml";
+        String configFile= PathManager.BuildAssemblyRelativePath("MDPLUGINS\\MDAPICards.xml");
         int slotCount = 1;
         String providerList = "all";
         XmlDocument doc = new XmlDocument();

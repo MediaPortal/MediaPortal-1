@@ -19,9 +19,8 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Reflection;
 using DirectShowLib;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 {
@@ -40,7 +39,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     public static IBaseFilter LoadFilterFromDll(string dllName, Guid interfaceId, bool useAssemblyRelativeLocation = false)
     {
       //Get a classFactory for our classID
-      string dllPath = useAssemblyRelativeLocation ? BuildAssemblyRelativePath(dllName) : dllName;
+      string dllPath = useAssemblyRelativeLocation ? PathManager.BuildAssemblyRelativePath(dllName) : dllName;
       IClassFactory classFactory = ComHelper.GetClassFactory(dllPath, interfaceId);
       if (classFactory == null)
         return null;
@@ -50,17 +49,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       Object obj;
       classFactory.CreateInstance(null, ref baseFilterGuid, out obj);
       return (obj as IBaseFilter);
-    }
-
-    /// <summary>
-    /// Builds a full path for a given <paramref name="fileName"/> that is located in the same folder as the <see cref="Assembly.GetCallingAssembly"/>.
-    /// </summary>
-    /// <param name="fileName">File name</param>
-    /// <returns>Combined path</returns>
-    public static string BuildAssemblyRelativePath(string fileName)
-    {
-      string executingPath = Assembly.GetCallingAssembly().Location;
-      return Path.Combine(Path.GetDirectoryName(executingPath), fileName);
     }
   }
 }

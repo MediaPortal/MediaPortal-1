@@ -26,6 +26,8 @@ using Mediaportal.TV.Server.Plugins.Base;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Common.Utils;
 using MediaPortal.Common.Utils;
 
@@ -57,40 +59,43 @@ namespace Mediaportal.TV.Server.SetupTV
       if (!tvserviceExists)
       {
         IDictionary<string, byte[]> streamList = ServiceAgents.Instance.ControllerServiceAgent.GetPluginBinaries();
-        if (!Directory.Exists("plugins"))
+        string pluginsFolder = PathManager.BuildAssemblyRelativePath("plugins");
+        if (!Directory.Exists(pluginsFolder))
         {
-          Directory.CreateDirectory("plugins");
+          Directory.CreateDirectory(pluginsFolder);
         }
 
         foreach (KeyValuePair<string, byte[]> stream in streamList)
         {
-          string fileFullPath = @"plugins\" + stream.Key;
+          string fileFullPath = Path.Combine(pluginsFolder, stream.Key);
           using (FileStream fileStream = File.Create(fileFullPath, stream.Value.Length))
           {
             fileStream.Write(stream.Value, 0, stream.Value.Length);
           }
         }
         IDictionary<string, byte[]> streamListCustomDevices = ServiceAgents.Instance.ControllerServiceAgent.GetPluginBinariesCustomDevices();
-        if (!Directory.Exists(@"plugins\CustomDevices"))
+        string customDevicesFolder = Path.Combine(pluginsFolder, "CustomDevices");
+        if (!Directory.Exists(customDevicesFolder))
         {
-          Directory.CreateDirectory(@"plugins\CustomDevices");
+          Directory.CreateDirectory(customDevicesFolder);
         }
         foreach (KeyValuePair<string, byte[]> stream in streamListCustomDevices)
         {
-          string fileFullPath = @"plugins\CustomDevices\" + stream.Key;
+          string fileFullPath = Path.Combine(customDevicesFolder, stream.Key);
           using (FileStream fileStream = File.Create(fileFullPath, stream.Value.Length))
           {
             fileStream.Write(stream.Value, 0, stream.Value.Length);
           }
         }
         IDictionary<string, byte[]> streamListResources = ServiceAgents.Instance.ControllerServiceAgent.GetPluginBinariesResources();
-        if (!Directory.Exists(@"plugins\CustomDevices\Resources"))
+        string resourceFolder = Path.Combine(customDevicesFolder, "Resources");
+        if (!Directory.Exists(resourceFolder))
         {
-          Directory.CreateDirectory(@"plugins\CustomDevices\Resources");
+          Directory.CreateDirectory(resourceFolder);
         }
         foreach (KeyValuePair<string, byte[]> stream in streamListResources)
         {
-          string fileFullPath = @"plugins\CustomDevices\Resources\" + stream.Key;
+          string fileFullPath = Path.Combine(resourceFolder, stream.Key);
           using (FileStream fileStream = File.Create(fileFullPath, stream.Value.Length))
           {
             fileStream.Write(stream.Value, 0, stream.Value.Length);

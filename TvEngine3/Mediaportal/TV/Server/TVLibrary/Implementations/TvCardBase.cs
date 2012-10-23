@@ -781,7 +781,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         Log.Debug("TvCardBase: the main filter is null");
         return;
       }
-      if (!Directory.Exists("plugins") || !Directory.Exists("plugins\\CustomDevices"))
+      string customDevicesFolder = PathManager.BuildAssemblyRelativePath("plugins\\CustomDevices");
+      if (!Directory.Exists(customDevicesFolder))
       {
         Log.Debug("TvCardBase: plugin directory doesn't exist or is not accessible");
         return;
@@ -789,7 +790,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       // Load all available and compatible plugins.
       List<ICustomDevice> plugins = new List<ICustomDevice>();
-      String[] dllNames = Directory.GetFiles("plugins\\CustomDevices", "*.dll");
+      String[] dllNames = Directory.GetFiles(customDevicesFolder, "*.dll");
       foreach (String dllName in dllNames)
       {
         Assembly dll = Assembly.LoadFrom(dllName);

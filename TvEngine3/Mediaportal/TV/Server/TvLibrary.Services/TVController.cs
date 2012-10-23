@@ -5598,8 +5598,9 @@ namespace Mediaportal.TV.Server.TVLibrary
     {
       var fileStreams = new Dictionary<string, byte[]>();
       try
-      { 
-        var dirInfoCustomDevices = new DirectoryInfo(@"plugins\CustomDevices");
+      {
+        string customDevicesFolder = PathManager.BuildAssemblyRelativePath("plugins\\CustomDevices");
+        var dirInfoCustomDevices = new DirectoryInfo(customDevicesFolder);
 
         FileInfo[] filesCustomDevices = dirInfoCustomDevices.GetFiles("*.dll");
 
@@ -5626,7 +5627,8 @@ namespace Mediaportal.TV.Server.TVLibrary
       var fileStreams = new Dictionary<string, byte[]>();
       try
       {
-        var dirInfoResources = new DirectoryInfo(@"plugins\CustomDevices\Resources");
+        string resourcesFolder = PathManager.BuildAssemblyRelativePath("plugins\\CustomDevices\\Resources");
+        var dirInfoResources = new DirectoryInfo(resourcesFolder);
 
         FileInfo[] filesResources = dirInfoResources.GetFiles("*.dll");
 

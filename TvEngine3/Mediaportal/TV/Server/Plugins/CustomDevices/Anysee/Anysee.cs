@@ -735,11 +735,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
         _apiCount++;
         _apiIndex = _apiCount;
         Log.Debug("Anysee: loading API, API index = {0}", _apiIndex);
-        if (!File.Exists("Plugins\\CustomDevices\\Resources\\CIAPI" + _apiIndex + ".dll"))
+        string resourcesFolder = PathManager.BuildAssemblyRelativePath("plugins\\CustomDevices\\Resources");
+        string sourceFilename = Path.Combine(resourcesFolder, "CIAPI.dll");
+        string targetFilename = Path.Combine(resourcesFolder, "CIAPI" + _apiIndex + ".dll");
+        if (!File.Exists(targetFilename))
         {
           try
           {
-            File.Copy("Plugins\\CustomDevices\\Resources\\CIAPI.dll", "Plugins\\CustomDevices\\Resources\\CIAPI" + _apiIndex + ".dll");
+            File.Copy(sourceFilename, targetFilename);
           }
           catch (Exception ex)
           {
@@ -747,7 +750,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
             return;
           }
         }
-        _libHandle = NativeMethods.LoadLibrary("Plugins\\CustomDevices\\Resources\\CIAPI" + _apiIndex + ".dll");
+        _libHandle = NativeMethods.LoadLibrary(targetFilename);
         if (_libHandle == IntPtr.Zero || _libHandle == null)
         {
           Log.Debug("Anysee: failed to load the DLL");
