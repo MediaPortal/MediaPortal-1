@@ -1,38 +1,39 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Schema Namespace="TVDatabaseModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+<Schema Namespace="TVDatabaseModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator">
   <EntityContainer Name="TVDatabaseModelStoreContainer">
-    <EntitySet Name="CanceledSchedules" EntityType="TVDatabaseModel.Store.CanceledSchedules" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="Cards" EntityType="TVDatabaseModel.Store.Cards" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="CardGroups" EntityType="TVDatabaseModel.Store.CardGroups" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="CardGroupMaps" EntityType="TVDatabaseModel.Store.CardGroupMaps" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="Channels" EntityType="TVDatabaseModel.Store.Channels" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="ChannelGroups" EntityType="TVDatabaseModel.Store.ChannelGroups" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="ChannelLinkageMaps" EntityType="TVDatabaseModel.Store.ChannelLinkageMaps" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="ChannelMaps" EntityType="TVDatabaseModel.Store.ChannelMaps" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="Conflicts" EntityType="TVDatabaseModel.Store.Conflicts" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="DisEqcMotors" EntityType="TVDatabaseModel.Store.DisEqcMotors" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="Favorites" EntityType="TVDatabaseModel.Store.Favorites" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="GroupMaps" EntityType="TVDatabaseModel.Store.GroupMaps" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="Histories" EntityType="TVDatabaseModel.Store.Histories" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="Keywords" EntityType="TVDatabaseModel.Store.Keywords" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="KeywordMaps" EntityType="TVDatabaseModel.Store.KeywordMaps" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="PendingDeletions" EntityType="TVDatabaseModel.Store.PendingDeletions" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="PersonalTVGuideMaps" EntityType="TVDatabaseModel.Store.PersonalTVGuideMaps" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="Programs" EntityType="TVDatabaseModel.Store.Programs" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="ProgramCategories" EntityType="TVDatabaseModel.Store.ProgramCategories" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="ProgramCredits" EntityType="TVDatabaseModel.Store.ProgramCredits" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="Recordings" EntityType="TVDatabaseModel.Store.Recordings" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="RuleBasedSchedules" EntityType="TVDatabaseModel.Store.RuleBasedSchedules" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="Satellites" EntityType="TVDatabaseModel.Store.Satellites" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="Schedules" EntityType="TVDatabaseModel.Store.Schedules" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="ScheduleRulesTemplates" EntityType="TVDatabaseModel.Store.ScheduleRulesTemplates" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="Settings" EntityType="TVDatabaseModel.Store.Settings" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="SoftwareEncoders" EntityType="TVDatabaseModel.Store.SoftwareEncoders" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="Timespans" EntityType="TVDatabaseModel.Store.Timespans" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="TuningDetails" EntityType="TVDatabaseModel.Store.TuningDetails" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="TvMovieMappings" EntityType="TVDatabaseModel.Store.TvMovieMappings" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="Versions" EntityType="TVDatabaseModel.Store.Versions" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-    <EntitySet Name="RecordingCredits" EntityType="TVDatabaseModel.Store.RecordingCredits" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />    
+    <EntitySet Name="CanceledSchedules" EntityType="TVDatabaseModel.Store.CanceledSchedules" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Cards" EntityType="TVDatabaseModel.Store.Cards" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="CardGroups" EntityType="TVDatabaseModel.Store.CardGroups" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="CardGroupMaps" EntityType="TVDatabaseModel.Store.CardGroupMaps" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Channels" EntityType="TVDatabaseModel.Store.Channels" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="ChannelGroups" EntityType="TVDatabaseModel.Store.ChannelGroups" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="ChannelLinkageMaps" EntityType="TVDatabaseModel.Store.ChannelLinkageMaps" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="ChannelMaps" EntityType="TVDatabaseModel.Store.ChannelMaps" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Conflicts" EntityType="TVDatabaseModel.Store.Conflicts" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="DisEqcMotors" EntityType="TVDatabaseModel.Store.DisEqcMotors" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Favorites" EntityType="TVDatabaseModel.Store.Favorites" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="GroupMaps" EntityType="TVDatabaseModel.Store.GroupMaps" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Histories" EntityType="TVDatabaseModel.Store.Histories" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Keywords" EntityType="TVDatabaseModel.Store.Keywords" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="KeywordMaps" EntityType="TVDatabaseModel.Store.KeywordMaps" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="PendingDeletions" EntityType="TVDatabaseModel.Store.PendingDeletions" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="PersonalTVGuideMaps" EntityType="TVDatabaseModel.Store.PersonalTVGuideMaps" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Programs" EntityType="TVDatabaseModel.Store.Programs" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="ProgramCategories" EntityType="TVDatabaseModel.Store.ProgramCategories" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="ProgramCredits" EntityType="TVDatabaseModel.Store.ProgramCredits" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Recordings" EntityType="TVDatabaseModel.Store.Recordings" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="RuleBasedSchedules" EntityType="TVDatabaseModel.Store.RuleBasedSchedules" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Satellites" EntityType="TVDatabaseModel.Store.Satellites" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Schedules" EntityType="TVDatabaseModel.Store.Schedules" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="ScheduleRulesTemplates" EntityType="TVDatabaseModel.Store.ScheduleRulesTemplates" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Settings" EntityType="TVDatabaseModel.Store.Settings" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="SoftwareEncoders" EntityType="TVDatabaseModel.Store.SoftwareEncoders" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Timespans" EntityType="TVDatabaseModel.Store.Timespans" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="TuningDetails" EntityType="TVDatabaseModel.Store.TuningDetails" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="TvMovieMappings" EntityType="TVDatabaseModel.Store.TvMovieMappings" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Versions" EntityType="TVDatabaseModel.Store.Versions" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="LnbTypes" EntityType="TVDatabaseModel.Store.LnbTypes" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="RecordingCredits" EntityType="TVDatabaseModel.Store.RecordingCredits" store:Type="Tables" Schema="dbo" />    
     
     <AssociationSet Name="GroupMapChannelGroup" Association="TVDatabaseModel.Store.GroupMapChannelGroup">
       <End Role="GroupMap" EntitySet="GroupMaps" />
@@ -186,12 +187,17 @@
     <Property Name="Enabled" Type="bit" Nullable="false" />
     <Property Name="CamType" Type="int" Nullable="false" />
     <Property Name="TimeshiftingFolder" Type="varchar" Nullable="false" MaxLength="256" />
-    <Property Name="RecordingFormat" Type="int" Nullable="false" />
     <Property Name="DecryptLimit" Type="int" Nullable="false" />
-    <Property Name="Preload" Type="bit" Nullable="false" />
-    <Property Name="CAM" Type="bit" Nullable="false" />
+    <Property Name="PreloadCard" Type="bit" Nullable="false" />
     <Property Name="NetProvider" Type="int" Nullable="false" />
-    <Property Name="StopGraph" Type="bit" Nullable="false" />
+    <Property Name="IdleMode" Type="int" Nullable="false" />    
+   	<Property Name="MultiChannelDecryptMode" Type="int" Nullable="false" />
+    <Property Name="AlwaysSendDiseqcCommands" Type="bit" Nullable="false" />
+    <Property Name="DiseqcCommandRepeatCount" Type="int" Nullable="false" />
+    <Property Name="PidFilterMode" Type="int" Nullable="false" />
+    <Property Name="UseCustomTuning" Type="bit" Nullable="false" />
+    <Property Name="UseConditionalAccess" Type="bit" Nullable="false" />
+
   </EntityType>
   <EntityType Name="CardGroups">
     <Key>
@@ -508,7 +514,6 @@
     <Property Name="Polarisation" Type="int" Nullable="false" />
     <Property Name="Symbolrate" Type="int" Nullable="false" />
     <Property Name="DiSEqC" Type="int" Nullable="false" />
-    <Property Name="SwitchingFrequency" Type="int" Nullable="false" />
     <Property Name="Bandwidth" Type="int" Nullable="false" />
     <Property Name="MajorChannel" Type="int" Nullable="false" />
     <Property Name="MinorChannel" Type="int" Nullable="false" />
@@ -524,6 +529,7 @@
     <Property Name="AudioSource" Type="int" Nullable="false" />
     <Property Name="IsVCRSignal" Type="bit" Nullable="false" />
     <Property Name="MediaType" Type="int" Nullable="false" />
+    <Property Name="IdLnbType" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="TvMovieMappings">
     <Key>
@@ -550,6 +556,19 @@
     <Property Name="IdRecording" Type="int" Nullable="false" />
     <Property Name="Person" Type="varchar" Nullable="false" MaxLength="200" />
     <Property Name="Role" Type="varchar" Nullable="false" MaxLength="50" />
+  </EntityType>
+  
+  <EntityType Name="LnbTypes">
+    <Key>
+      <PropertyRef Name="IdLnbType" />
+    </Key>
+    <Property Name="IdLnbType" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" Nullable="false" MaxLength="200" />
+    <Property Name="LowBandFrequency" Type="int" Nullable="false" />    
+    <Property Name="HighBandFrequency" Type="int" Nullable="false" />
+    <Property Name="SwitchFrequency" Type="int" Nullable="false" />
+    <Property Name="IsBandStacked" Type="bit" Nullable="false" />
+    <Property Name="IsToroidal" Type="bit" Nullable="false" />
   </EntityType>
   <Association Name="GroupMapChannelGroup">
     <End Role="GroupMap" Type="TVDatabaseModel.Store.GroupMaps" Multiplicity="*" />
