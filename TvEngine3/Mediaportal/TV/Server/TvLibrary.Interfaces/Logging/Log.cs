@@ -151,16 +151,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Logging
       Info(message, args);
     }
 
-    public static void Epg(string message, int cardId, params object[] args)
-    {
-      // TODO: support different logfiles
-      Epg(string.Format("EPG card {0}: {1}", cardId, message), args);
-    }
-
     public static void Epg(string message, params object[] args)
     {
       // TODO: support different logfiles
-      Debug(message, args);
+      Debug("EPG: "+ message, args);
     }
   }
 }
