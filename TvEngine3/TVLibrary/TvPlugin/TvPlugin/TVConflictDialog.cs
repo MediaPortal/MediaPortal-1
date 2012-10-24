@@ -47,6 +47,7 @@ namespace TvPlugin
     // Private Variables
     // Protected Variables
     protected bool _conflictingEpisodes;
+    protected bool _conflictingRecording;
     // Public Variables
 
     #endregion
@@ -66,6 +67,12 @@ namespace TvPlugin
     {
       get { return _conflictingEpisodes; }
       set { _conflictingEpisodes = value; }
+    }
+
+    public bool ConflictingRecording
+    {
+      get { return _conflictingRecording; }
+      set { _conflictingRecording = value; }
     }
 
     #endregion
@@ -177,6 +184,15 @@ namespace TvPlugin
       else
       {
         HideControl(GetID, (int)Controls.BUTTON_CONFLICT_EPISODE);
+      }
+
+      if (_conflictingRecording)
+      {
+        ShowControl(GetID, (int)Controls.BUTTON_CONFLICT_REC);
+      }
+      else
+      {
+        HideControl(GetID, (int)Controls.BUTTON_CONFLICT_REC);
       }
 
       base.DoModal(ParentID);
