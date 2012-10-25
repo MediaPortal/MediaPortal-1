@@ -3,7 +3,7 @@
 <window>
   <id>7700</id>
   <defaultcontrol>502</defaultcontrol>
-  <allowoverlay>no</allowoverlay>
+  <allowoverlay>yes</allowoverlay>
   <define>#header.label:Teletext</define>
   <define>#header.hover:hover_my tv.png</define>
   <controls>
@@ -11,29 +11,39 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <width>720</width>
-      <height>576</height>
+      <width>960</width>
+      <height>720</height>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>30</posY>
+      <width>960</width>
+      <height>720</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
       <description>tele-text rendering image</description>
       <type>image</type>
       <id>500</id>
-      <posX>244</posX>
-      <posY>96</posY>
-      <width>427</width>
-      <height>456</height>
+      <posX>326</posX>
+      <posY>170</posY>
+      <width>495</width>
+      <height>440</height>
       <texture>black.png</texture>
     </control>
     <control>
       <description>tele-text rendering image 2</description>
       <type>image</type>
       <id>501</id>
-      <posX>244</posX>
-      <posY>96</posY>
-      <width>427</width>
-      <height>456</height>
+      <posX>326</posX>
+      <posY>170</posY>
+      <width>495</width>
+      <height>440</height>
       <texture>black.png</texture>
     </control>
     <control>
@@ -49,8 +59,8 @@
       <description>template for program title darkarea</description>
       <type>label</type>
       <visible>no</visible>
-      <posX>299</posX>
-      <posY>200</posY>
+      <posX>399</posX>
+      <posY>250</posY>
       <id>27</id>
       <label>-</label>
       <font>font13</font>
@@ -58,16 +68,16 @@
     </control>
     <control>
       <type>group</type>
-      <posX>39</posX>
-      <posY>96</posY>
+      <posX>37</posX>
+      <posY>170</posY>
       <layout>StackLayout</layout>
       <description>group element</description>
       <control>
         <description>Page100</description>
         <type>button</type>
         <id>502</id>
-        <posX>59</posX>
-        <posY>96</posY>
+        <posX>79</posX>
+        <posY>121</posY>
         <label>590</label>
         <onup>17</onup>
         <ondown>503</ondown>
@@ -77,8 +87,8 @@
         <description>Page200</description>
         <type>button</type>
         <id>503</id>
-        <posX>59</posX>
-        <posY>130</posY>
+        <posX>79</posX>
+        <posY>163</posY>
         <label>591</label>
         <onup>502</onup>
         <ondown>504</ondown>
@@ -88,8 +98,8 @@
         <description>Page300</description>
         <type>button</type>
         <id>504</id>
-        <posX>59</posX>
-        <posY>164</posY>
+        <posX>79</posX>
+        <posY>206</posY>
         <label>592</label>
         <onup>503</onup>
         <ondown>505</ondown>
@@ -99,8 +109,8 @@
         <description>hidden mode</description>
         <type>togglebutton</type>
         <id>505</id>
-        <posX>59</posX>
-        <posY>198</posY>
+        <posX>79</posX>
+        <posY>248</posY>
         <label>593</label>
         <font>font13</font>
         <textcolor>ffffffff</textcolor>
@@ -113,8 +123,8 @@
         <description>subpage</description>
         <type>selectbutton</type>
         <id>506</id>
-        <posX>59</posX>
-        <posY>232</posY>
+        <posX>79</posX>
+        <posY>291</posY>
         <label>594</label>
         <onup>505</onup>
         <ondown>507</ondown>
@@ -162,36 +172,13 @@
         <description>Fullscreen</description>
         <type>button</type>
         <id>507</id>
-        <posX>59</posX>
-        <posY>266</posY>
+        <posX>79</posX>
+        <posY>333</posY>
         <label>595</label>
         <onup>506</onup>
         <ondown>502</ondown>
         <onright>507</onright>
       </control>
-    </control>
-    <control>
-      <description>video rectangle</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>43</posX>
-      <posY>442</posY>
-      <width>123</width>
-      <height>99</height>
-      <texture>Picture_cover.png</texture>
-    </control>
-    <control>
-      <description>video preview window</description>
-      <type>videowindow</type>
-      <id>508</id>
-      <posX>48</posX>
-      <posY>446</posY>
-      <width>114</width>
-      <height>92</height>
-      <keepaspectratio>yes</keepaspectratio>
-      <centered>yes</centered>
-      <action>18</action>
-      <textureFocus>tv_green_border.png</textureFocus>
     </control>
   </controls>
 </window>

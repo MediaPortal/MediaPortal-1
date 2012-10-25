@@ -6,8 +6,7 @@
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
-		<import>common.window.xml</import>
-    <import>common.time.xml</import>
+		<import>common.time.xml</import>
     <control>
       <description>background</description>
       <type>image</type>
@@ -17,13 +16,13 @@
       <height>520</height>
       <width>435</width>
       <texture>backslide.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <control>
       <description>buttons</description>
       <type>group</type>
-      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="-300,0">WindowClose</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <posX>465</posX>
       <posY>160</posY>
       <layout>StackLayout(0, Horizontal, True)</layout>
@@ -33,7 +32,7 @@
         <id>2</id>
         <label>300080</label>
         <width>350</width>
-        <onup>42</onup>
+        <onup>21</onup>
       </control>
       <control>
         <description>Startup settings</description>
@@ -69,6 +68,7 @@
         <id>7</id>
         <label>713</label>
         <width>350</width>
+        <ondown>2</ondown>
       </control>
     </control>
   </controls>

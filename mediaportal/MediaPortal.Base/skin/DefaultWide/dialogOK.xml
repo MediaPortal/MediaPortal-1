@@ -9,13 +9,13 @@
       <description>OK button</description>
       <type>button</type>
       <id>10</id>
-      <posX>887</posX>
-      <posY>263</posY>
+      <posX>915</posX>
+      <posY>275</posY>
       <textYOff>8</textYOff>
-      <width>50</width>
-      <height>50</height>
-      <textureFocus>dialogue_ok_focus.png</textureFocus>
-      <textureNoFocus>dialogue_ok_nofocus.png</textureNoFocus>
+      <width>30</width>
+      <height>30</height>
+      <textureFocus>top_exit_enabled.png</textureFocus>
+      <textureNoFocus>top_exit_disabled.png</textureNoFocus>
       <label>-</label>
       <onleft>10</onleft>
       <onright>10</onright>

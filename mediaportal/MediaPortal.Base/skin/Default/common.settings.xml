@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
@@ -6,9 +6,29 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
+      <texture>settings.jpg</texture>
+      <width>960</width>
+      <height>720</height>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
       <texture>background.png</texture>
-      <width>720</width>
-      <height>576</height>
+      <width>960</width>
+      <height>720</height>
+      <visible>skin.hassetting(#skin.no.category.fanart)</visible>
+    </control>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>-70</posY>
+      <width>960</width>
+      <height>970</height>
+      <texture>general_overlay.png</texture>
     </control>
     <control>
       <description>background top overlay</description>
@@ -16,79 +36,19 @@
       <id>1</id>
       <posX>0</posX>
       <posY>0</posY>
-      <width>720</width>
-      <height>216</height>
+      <width>960</width>
+      <height>180</height>
       <texture>overlay_top.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <colordiffuse>ccffffff</colordiffuse>
     </control>
     <control>
       <type>label</type>
       <id>1</id>
-      <posX>16</posX>
-      <posY>8</posY>
+      <posX>22</posX>
+      <posY>10</posY>
       <label>#(iif(and(neq(L(102012), #currentmodule), neq(L(102002), #currentmodule), neq(L(100100), #currentmodule), neq(L(102015), #currentmodule)), #currentmodule, ' '))</label>
-      <font>font14</font>
-      <align>left</align>
-      <textcolor>ivory</textcolor>
-    </control>
-    <control>
-      <description>Number of Files Label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>699</posX>
-      <posY>32</posY>
-      <label>#selectedindex/#itemcount #(iif(and(neq(L(102012), #currentmodule), neq(L(102002), #currentmodule), neq(L(100100), #currentmodule), neq(L(102015), #currentmodule)), #currentmodule, ' '))</label>
-      <align>right</align>
-      <textcolor>ivory</textcolor>
-      <font>font10</font>
-      <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
-    </control>
-    <control>
-      <description>Total duration Label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>641</posX>
-      <posY>48</posY>
-      <label>180</label>
-      <align>right</align>
-      <textcolor>ivory</textcolor>
-      <font>font10</font>
-      <visible>string.equals(#totalduration)+[window.isvisible(500)|window.isvisible(501)|window.isvisible(504)]</visible>
-    </control>
-    <control>
-      <description>Total duration Label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>699</posX>
-      <posY>48</posY>
-      <label>#totalduration</label>
-      <align>right</align>
-      <textcolor>ivory</textcolor>
-      <font>font10</font>
-      <visible>string.equals(#totalduration)+[window.isvisible(500)|window.isvisible(501)|window.isvisible(504)]</visible>
-    </control>
-    <control>
-      <description>Selected item Label</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>16</posX>
-      <posY>32</posY>
-      <width>399</width>
-      <label>#selecteditem</label>
-      <font>font13</font>
-      <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-      <visible>!window.isvisible(6)+!window.isvisible(25)</visible>
-    </control>
-    <control>
-      <description>Date Time</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>699</posX>
-      <posY>8</posY>
-      <label>#date | #time</label>
-      <align>right</align>
       <font>font11</font>
+      <align>left</align>
       <textcolor>ff6FAFE1</textcolor>
     </control>
   </controls>

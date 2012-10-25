@@ -22,8 +22,8 @@
       <posY>182</posY>
       <width>55</width>
       <height>38</height>
-      <textureFocus>dialogue_shutdown_focus.png</textureFocus>
-      <textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
+      <textureFocus>top_exit_enabled.png</textureFocus>
+      <textureNoFocus>top_exit_disabled.png</textureNoFocus>
       <label>-</label>
       <ondown>6</ondown>
       <onup>34</onup>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>3003</id>
@@ -7,41 +7,47 @@
   <define>#currentplaytime:#TV.View.start</define>
   <define>#currentremaining:#TV.View.stop</define>
   <controls>
-    <import>common.expanded.tv.osd.xml</import>
-    <!--#################   THIS IS THE EXPANDING OSD BACKGROUND     ##################-->
     <control>
-      <description>background top</description>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>60</posX>
+      <posY>465</posY>
+      <height>239</height>
+      <width>843</width>
+      <texture>osd_mask.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+    </control>
+    <control>
+      <description>Time BG</description>
       <type>image</type>
       <id>0</id>
-      <posX>0</posX>
-      <posY>409</posY>
-      <width>725</width>
-      <height>240</height>
-      <texture>blue.png</texture>
-      <colordiffuse>eeffffff</colordiffuse>
-      <visible>!Control.HasFocus(1237)</visible>
+      <posX>787</posX>
+      <posY>470</posY>
+      <width>108</width>
+      <height>35</height>
+      <texture>button_focus.png</texture>
+      <colordiffuse>90ffffff</colordiffuse>
     </control>
-    <!--###################     HERE ARE THE DISPLAYED OSD DATA    ###################################-->
     <control>
       <description>Time Info</description>
       <type>label</type>
       <id>110</id>
-      <posX>703</posX>
-      <posY>416</posY>
+      <posX>884</posX>
+      <posY>471</posY>
       <label>#time</label>
       <align>right</align>
-      <font>font14</font>
+      <font>font16</font>
       <textcolor>ivory</textcolor>
-      <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
       <description>background</description>
       <type>image</type>
       <id>0</id>
-      <posX>90</posX>
-      <posY>481</posY>
-      <width>362</width>
-      <height>21</height>
+      <posX>164</posX>
+      <posY>552</posY>
+      <width>591</width>
+      <height>19</height>
       <texture>osd_progress_background.png</texture>
       <visible>!control.hasfocus(1237)</visible>
     </control>
@@ -49,31 +55,31 @@
       <description>TV Progress Bar</description>
       <type>tvprogress</type>
       <id>1</id>
-      <posX>90</posX>
-      <posY>485</posY>
-      <width>362</width>
-      <height>14</height>
+      <posX>165</posX>
+      <posY>553</posY>
+      <width>591</width>
+      <height>17</height>
       <toptexture>osd_progress_indicator.png</toptexture>
-      <TextureOffsetY>16</TextureOffsetY>
+      <TextureOffsetY>22</TextureOffsetY>
       <bottomtexture>-</bottomtexture>
       <texturetick>-</texturetick>
-      <lefttexture>-</lefttexture>
+      <lefttexture>osd_progress_left.png</lefttexture>
       <midtexture>-</midtexture>
       <righttexture>-</righttexture>
       <logotexture>-</logotexture>
       <fillbackgroundtexture>-</fillbackgroundtexture>
-      <fillbgxoff>0</fillbgxoff>
+      <fillbgxoff>-3</fillbgxoff>
       <fillbgyoff>0</fillbgyoff>
-      <filltexture1>osd_progress_mid_red.png</filltexture1>
-      <filltexture2>osd_progress_mid_green.png</filltexture2>
+      <filltexture1>osd_progress_mid.png</filltexture1>
+      <filltexture2>osd_progress_mid.png</filltexture2>
       <filltexture3>osd_progress_mid_orange.png</filltexture3>
       <markertexture>osd_progress_mid_orange.png</markertexture>
-      <fillheight>14</fillheight>
+      <fillheight>17</fillheight>
       <label>#TV.Record.percent1</label>
       <label1>#TV.Record.percent2</label1>
       <label2>#TV.Record.percent3</label2>
       <labelmarkerstarts>#TV.Record.jumppoints</labelmarkerstarts>
-	    <labelmarkerends>#TV.Record.chapters</labelmarkerends>
+      <labelmarkerends>#TV.Record.chapters</labelmarkerends>
       <startlabel />
       <endlabel />
       <toplabel />
@@ -82,52 +88,145 @@
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
-      <description>Current Time Info</description>
+      <description>Actual Program Info</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>164</posX>
+      <posY>506</posY>
+      <width>591</width>
+      <label>#TV.View.title</label>
+      <align>left</align>
+      <font>font16</font>
+      <textcolor>ivory</textcolor>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>On tv NEXT</description>
+      <id>37</id>
+      <type>textbox</type>
+      <posX>164</posX>
+      <posY>585</posY>
+      <height>29</height>
+      <width>711</width>
+      <align>left</align>
+      <font>font16</font>
+      <textcolor>ivory</textcolor>
+      <shadowAngle>0</shadowAngle>
+      <shadowDistance>0</shadowDistance>
+      <visible>!control.hasfocus(1237)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
+    </control>
+    <control>
+      <description>TV Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>78</posX>
+      <posY>481</posY>
+      <width>69</width>
+      <height>92</height>
+      <texture>#TV.View.thumb</texture>
+      <centered>yes</centered>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>yes</visible>
+    </control>
+    <control>
+      <description>Channel</description>
+      <id>100</id>
       <type>label</type>
-      <id>101</id>
-      <posX>22</posX>
-      <posY>480</posY>
-      <label>-</label>
+      <posX>1589</posX>
+      <posY>604</posY>
+      <width>74</width>
+      <height>29</height>
+    </control>
+    <control>
+      <description>Current channel</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>164</posX>
+      <posY>477</posY>
+      <width>554</width>
+      <label>#TV.View.channel    #TV.View.start - #TV.View.stop</label>
       <align>left</align>
       <font>font14</font>
       <textcolor>ivory</textcolor>
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
-      <description>End Time Info</description>
-      <type>label</type>
-      <posX>455</posX>
-      <posY>480</posY>
-      <label>#currentremaining</label>
+      <description>rec logo</description>
+      <type>image</type>
+      <id>39</id>
+      <posX>832</posX>
+      <posY>510</posY>
+      <width>36</width>
+      <height>49</height>
+      <texture>rec.png</texture>
+      <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
+    </control>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>164</posX>
+      <posY>285</posY>
+      <height>350</height>
+      <width>606</width>
+      <texture>osd_mask2.png</texture>
+      <visible>control.hasfocus(1237)</visible>
+      <colordiffuse>ff203661</colordiffuse>
+      <animation effect="slide" start="0,50" time="100" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>Plot</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <posX>179</posX>
+      <posY>305</posY>
+      <height>312</height>
+      <width>590</width>
       <align>left</align>
-      <font>font14</font>
-      <textcolor>ffffffff</textcolor>
+      <label>#TV.View.description</label>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <visible>control.hasfocus(1237)</visible>
+      <shadowAngle>0</shadowAngle>
+      <shadowDistance>0</shadowDistance>
+      <animation effect="slide" start="0,50" time="100" reversible="true">visible</animation>
+    </control>
+    <import>common.osd.buttons.xml</import>
+    <!-- ***************************** THESE CONTROLS ARE NOT USED IN THIS OSD  ********************************** -->
+    <!-- ***************************** BUT ARE ESSENTIAL TO KEEP COMPATABILITY  ********************************** -->
+    <!-- ***************************** AND KEEP ERROR.LOG FREE OF ERRORS  **************************************** -->
+    <control>
+      <description>Current Time Info</description>
+      <type>label</type>
+      <id>101</id>
+      <posX>1604</posX>
+      <posY>596</posY>
+      <label>-</label>
+      <align>left</align>
+      <font>font16</font>
+      <textcolor>ivory</textcolor>
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
-      <description>Start Time Info</description>
+      <description>Channel Info</description>
       <type>label</type>
-      <posX>22</posX>
-      <posY>480</posY>
-      <label>#currentplaytime</label>
-      <align>left</align>
-      <font>font14</font>
-      <textcolor>ffffffff</textcolor>
-      <visible>!control.hasfocus(1237)</visible>
+      <id>35</id>
+      <posX>2159</posX>
+      <posY>596</posY>
+      <label>-</label>
     </control>
     <control>
       <description>Plot</description>
       <type>textboxscrollup</type>
       <id>38</id>
-      <posX>22</posX>
-      <posY>511</posY>
-      <width>506</width>
+      <posX>104</posX>
+      <posY>638</posY>
+      <width>674</width>
       <height>0</height>
       <align>left</align>
       <label>#TV.View.description</label>
-      <seperator>⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅	⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅	⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅</seperator>
-      <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <font>font12B</font>
+      <textcolor>black</textcolor>
       <shadowAngle>0</shadowAngle>
       <shadowDistance>0</shadowDistance>
     </control>
@@ -135,114 +234,12 @@
       <description>On tv NOW</description>
       <id>36</id>
       <type>textbox</type>
-      <posX>1209</posX>
-      <posY>445</posY>
-      <width>416</width>
-      <height>24</height>
+      <posX>1664</posX>
+      <posY>556</posY>
+      <width>554</width>
+      <height>29</height>
       <align>left</align>
-      <font>font14</font>
-      <textcolor>ivory</textcolor>
-      <visible>!control.hasfocus(1237)</visible>
-    </control>
-    <control>
-      <description>On tv NOW</description>
-      <id>1</id>
-      <type>fadelabel</type>
-      <width>433</width>
-      <height>24</height>
-      <posX>67</posX>
-      <posY>444</posY>
-      <align>left</align>
-      <label>#TV.View.title</label>
-      <font>font18</font>
-      <textcolor>ff6FAFE1</textcolor>
-      <visible>!control.hasfocus(1237)</visible>
-    </control>
-    <control>
-      <description>horizontal divider</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>22</posX>
-      <posY>512</posY>
-      <height>0</height>
-      <width>495</width>
-      <texture>hbar1white.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
-      <visible>!control.hasfocus(1237)</visible>
-    </control>
-    <control>
-      <description>On tv NEXT</description>
-      <id>37</id>
-      <type>textbox</type>
-      <posX>22</posX>
-      <posY>516</posY>
-      <height>24</height>
-      <width>466</width>
-      <align>left</align>
-      <font>font14</font>
-      <textcolor>ivory</textcolor>
-      <shadowAngle>0</shadowAngle>
-      <shadowDistance>0</shadowDistance>
-      <visible>!control.hasfocus(1237)</visible>
-    </control>
-    <control>
-      <description>Program Button Up</description>
-      <type>button</type>
-      <id>33</id>
-      <posX>39</posX>
-      <posY>472</posY>
-      <width>14</width>
-      <height>20</height>
-      <textureFocus>scroll-up-focus-ivory.png</textureFocus>
-      <textureNoFocus>scroll-up-ivory.png</textureNoFocus>
-      <label>-</label>
-      <onleft>31</onleft>
-      <onright>34</onright>
-      <onup>210</onup>
-      <ondown>31</ondown>
-      <visible>no</visible>
-    </control>
-    <control>
-      <description>Program Button Down</description>
-      <type>button</type>
-      <id>34</id>
-      <posX>98</posX>
-      <posY>462</posY>
-      <width>14</width>
-      <height>20</height>
-      <textureFocus>scroll-down-focus-ivory.png</textureFocus>
-      <textureNoFocus>scroll-down-ivory.png</textureNoFocus>
-      <label>-</label>
-      <onleft>33</onleft>
-      <onright>31</onright>
-      <onup>210</onup>
-      <ondown>31</ondown>
-      <visible>no</visible>
-    </control>
-    <control>
-      <description>TV Logo</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>22</posX>
-      <posY>424</posY>
-      <width>34</width>
-      <height>49</height>
-      <texture>#TV.View.thumb</texture>
-      <centered>yes</centered>
-      <keepaspectratio>yes</keepaspectratio>
-      <visible>!control.hasfocus(1237)</visible>
-    </control>
-    <control>
-      <description>Channel</description>
-      <id>1</id>
-      <type>label</type>
-      <posX>1192</posX>
-      <posY>484</posY>
-      <width>56</width>
-      <height>24</height>
-      <align>right</align>
-      <label>602</label>
-      <font>font12</font>
+      <font>font20</font>
       <textcolor>ivory</textcolor>
       <visible>!control.hasfocus(1237)</visible>
     </control>
@@ -250,10 +247,10 @@
       <description>Channel Button Up</description>
       <type>button</type>
       <id>31</id>
-      <posX>1198</posX>
-      <posY>484</posY>
-      <width>22</width>
-      <height>24</height>
+      <posX>1597</posX>
+      <posY>605</posY>
+      <width>29</width>
+      <height>29</height>
       <textureFocus>scroll-up-focus.png</textureFocus>
       <textureNoFocus>scroll-up.png</textureNoFocus>
       <label>-</label>
@@ -267,10 +264,10 @@
       <description>Channel Button Down</description>
       <type>button</type>
       <id>32</id>
-      <posX>1222</posX>
-      <posY>482</posY>
-      <width>22</width>
-      <height>24</height>
+      <posX>1629</posX>
+      <posY>602</posY>
+      <width>29</width>
+      <height>29</height>
       <textureFocus>scroll-down-focus.png</textureFocus>
       <textureNoFocus>scroll-down.png</textureNoFocus>
       <label>-</label>
@@ -281,43 +278,38 @@
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
-      <description>Current channel</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>67</posX>
-      <posY>421</posY>
-      <width>416</width>
-      <label>#TV.View.channel</label>
-      <align>left</align>
-      <font>font14</font>
-      <textcolor>ivory</textcolor>
-      <visible>!control.hasfocus(1237)</visible>
+      <description>Program Button Up</description>
+      <type>button</type>
+      <id>33</id>
+      <posX>1604</posX>
+      <posY>589</posY>
+      <width>18</width>
+      <height>24</height>
+      <textureFocus>scroll-up-focus-black.png</textureFocus>
+      <textureNoFocus>scroll-up-black.png</textureNoFocus>
+      <label>-</label>
+      <onleft>31</onleft>
+      <onright>34</onright>
+      <onup>210</onup>
+      <ondown>31</ondown>
+      <visible>no</visible>
     </control>
     <control>
-      <description>vertical divider</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>528</posX>
-      <posY>420</posY>
-      <height>140</height>
-      <width>0</width>
-      <texture>slider_vertical.png</texture>
-      <colordiffuse>90ffffff</colordiffuse>
-      <visible>!control.hasfocus(1237)</visible>
+      <description>Program Button Down</description>
+      <type>button</type>
+      <id>34</id>
+      <posX>1630</posX>
+      <posY>577</posY>
+      <width>18</width>
+      <height>24</height>
+      <textureFocus>scroll-down-focus-black.png</textureFocus>
+      <textureNoFocus>scroll-down-black.png</textureNoFocus>
+      <label>-</label>
+      <onleft>33</onleft>
+      <onright>31</onright>
+      <onup>210</onup>
+      <ondown>31</ondown>
+      <visible>no</visible>
     </control>
-    <control>
-      <description>rec logo</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>483</posX>
-      <posY>424</posY>
-      <width>22</width>
-      <height>32</height>
-      <texture>tv_is_recording.png</texture>
-      <animation effect="zoom" start="100,100" end="110,110" time="70" condition="true" pulse="true">conditional</animation>
-      <visible>player.recording+!control.hasfocus(1237)</visible>
-    </control>
-    <import>common.osd.buttons.xml</import>
-    <import>common.logos.xml</import>
   </controls>
 </window>

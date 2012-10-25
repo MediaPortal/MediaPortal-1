@@ -4,22 +4,34 @@
   <id>759</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#useSelectedFanart:Yes</define>
   <controls>
     <control>
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <width>720</width>
-      <height>576</height>
+      <width>960</width>
+      <height>720</height>
     </control>
+    <import>common.video.fanart.xml</import>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>30</posY>
+      <width>960</width>
+      <height>720</height>
+      <texture>general_overlay.png</texture>
+    </control>
     <control>
       <type>button</type>
       <description>Keep</description>
       <id>2</id>
-      <posX>39</posX>
-      <posY>120</posY>
+      <posX>37</posX>
+      <posY>170</posY>
       <onright>10</onright>
       <onup>2</onup>
       <ondown>2</ondown>
@@ -29,47 +41,49 @@
       <description>Current program title</description>
       <type>fadelabel</type>
       <id>13</id>
-      <posX>45</posX>
-      <posY>184</posY>
-      <width>556</width>
+      <posX>0</posX>
+      <posY>240</posY>
+      <width>960</width>
       <label>#TV.RecordedTV.Title</label>
       <font>font14</font>
+      <align>center</align>
       <textcolor>ivory</textcolor>
     </control>
     <control>
       <description>Current program time</description>
       <type>label</type>
       <id>14</id>
-      <posX>45</posX>
-      <posY>220</posY>
+      <posX>0</posX>
+      <posY>270</posY>
+      <width>960</width>
       <label>#TV.RecordedTV.Time</label>
       <font>font12</font>
-      <align>left</align>
+      <align>center</align>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>genre</description>
+      <type>label</type>
+      <id>17</id>
+      <posX>1672</posX>
+      <posY>275</posY>
+      <label>#TV.RecordedTV.Genre</label>
+      <font>font10</font>
+      <align>right</align>
       <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Description1</description>
       <type>textboxscrollup</type>
       <id>15</id>
-      <posX>45</posX>
-      <posY>248</posY>
-      <width>618</width>
-      <height>184</height>
+      <posX>60</posX>
+      <posY>290</posY>
+      <width>825</width>
+      <height>305</height>
       <font>font11</font>
       <label>#TV.RecordedTV.Description</label>
       <seperator>⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅	⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅	⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅</seperator>
       <textcolor>ivory</textcolor>
-    </control>
-    <control>
-      <description>genre</description>
-      <type>label</type>
-      <id>17</id>
-      <posX>691</posX>
-      <posY>220</posY>
-      <label>#TV.RecordedTV.Genre</label>
-      <font>font10</font>
-      <align>right</align>
-      <textcolor>ff6FAFE1</textcolor>
     </control>
   </controls>
 </window>

@@ -10,19 +10,29 @@
       <type>image</type>
       <id>1</id>
       <texture>background.png</texture>
-      <width>720</width>
-      <height>576</height>
+      <width>960</width>
+      <height>720</height>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>30</posY>
+      <width>960</width>
+      <height>720</height>
+      <texture>general_overlay.png</texture>
+    </control>
     <control>
       <type>group</type>
       <description>group element</description>
       <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
       <animation effect="slide" time="70" end="0,-300">WindowClose</animation>
-      <layout>StackLayout</layout>
-      <posX>39</posX>
-      <posY>96</posY>
+      <layout>StackLayout(0, Vertical, true)</layout>
+      <posX>37</posX>
+      <posY>170</posY>
       <control>
         <description>Search Button</description>
         <type>button</type>
@@ -61,48 +71,53 @@
       <description>Article title/searchterm</description>
       <type>label</type>
       <id>4</id>
-      <posX>33</posX>
-      <posY>56</posY>
+      <posX>0</posX>
+      <posY>100</posY>
       <visible>no</visible>
       <label>Article title/searchterm</label>
-      <font>font14</font>
-      <align>left</align>
+      <font>font16</font>
+      <align>center</align>
+      <width>960</width>
       <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Image description</description>
       <type>label</type>
       <id>5</id>
-      <posX>33</posX>
-      <posY>56</posY>
+      <posX>0</posX>
+      <posY>100</posY>
       <visible>no</visible>
       <label>Image description</label>
       <font>font16</font>
-      <align>left</align>
+      <align>center</align>
+      <width>960</width>
       <textcolor>ff6FAFE1</textcolor>
     </control>
     <control style="NoShadow">
       <description>Here is the article text displayed</description>
       <type>textbox</type>
       <id>20</id>
-      <posX>279</posX>
-      <posY>92</posY>
+      <posX>300</posX>
+      <posY>170</posY>
       <visible>no</visible>
-      <width>379</width>
-      <height>444</height>
+      <width>600</width>
+      <height>450</height>
+      <spinWidth>21</spinWidth>
+      <spinHeight>29</spinHeight>
+      <spinPosX>840</spinPosX>
+      <spinPosY>590</spinPosY>
+      <textcolor>ivory</textcolor>
     </control>
     <control>
       <description>Article Image</description>
       <type>image</type>
       <id>25</id>
-      <posX>263</posX>
-      <posY>72</posY>
+      <posX>300</posX>
+      <posY>170</posY>
       <visible>no</visible>
-      <width>439</width>
-      <height>465</height>
+      <width>600</width>
+      <height>450</height>
       <texture />
-      <colorkey>0</colorkey>
-      <colordiffuse>ivory</colordiffuse>
       <centered>yes</centered>
       <keepaspectratio>yes</keepaspectratio>
     </control>

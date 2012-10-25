@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2018</id>
@@ -8,26 +8,40 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>black.png</texture>
-      <colordiffuse>40ffffff</colordiffuse>
+      <width>960</width>
+      <height>720</height>
+      <texture>white.png</texture>
+      <colordiffuse>201e90ff</colordiffuse>
+      <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
     </control>
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>115</posX>
-      <posY>64</posY>
-      <width>545</width>
-      <height>365</height>
-      <texture>cimenu_background.png</texture>
+      <posX>154</posX>
+      <posY>80</posY>
+      <width>727</width>
+      <height>457</height>
+      <texture>context_background.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>154</posX>
+      <posY>80</posY>
+      <width>727</width>
+      <height>457</height>
+      <texture>context_background.png</texture>
+      <colordiffuse>bbffffff</colordiffuse>
+      <visible>window.isvisible(602)|window.isvisible(2005)</visible>
     </control>
     <control>
       <description>Heading text label</description>
       <type>label</type>
       <id>4</id>
-      <posX>247</posX>
-      <posY>86</posY>
+      <posX>330</posX>
+      <posY>108</posY>
       <label />
       <font>font14</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -36,9 +50,9 @@
       <description>Subtitle text label</description>
       <type>label</type>
       <id>5</id>
-      <posX>247</posX>
-      <posY>124</posY>
-      <width>239</width>
+      <posX>330</posX>
+      <posY>156</posY>
+      <width>319</width>
       <label />
       <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -47,9 +61,9 @@
       <description>bottom text label</description>
       <type>label</type>
       <id>6</id>
-      <posX>247</posX>
-      <posY>388</posY>
-      <width>239</width>
+      <posX>330</posX>
+      <posY>485</posY>
+      <width>319</width>
       <label />
       <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -58,12 +72,12 @@
       <description>Exit button</description>
       <type>button</type>
       <id>2</id>
-      <posX>599</posX>
-      <posY>76</posY>
-      <width>38</width>
-      <height>47</height>
-      <textureFocus>dialogue_shutdown_focus.png</textureFocus>
-      <textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
+      <posX>798</posX>
+      <posY>96</posY>
+      <width>40</width>
+      <height>40</height>
+      <textureFocus>top_exit_enabled.png</textureFocus>
+      <textureNoFocus>top_exit_disabled.png</textureNoFocus>
       <label>-</label>
       <onleft>3</onleft>
       <onright>3</onright>
@@ -74,24 +88,24 @@
       <description>options listcontrol</description>
       <type>listcontrol</type>
       <id>3</id>
-      <posX>159</posX>
-      <posY>156</posY>
-      <width>450</width>
-      <height>260</height>
+      <posX>213</posX>
+      <posY>195</posY>
+      <width>600</width>
+      <height>325</height>
       <onleft>2</onleft>
       <onright>2</onright>
-      <spinPosX>549</spinPosX>
-      <spinPosY>387</spinPosY>
-      <textXOff>49</textXOff>
-      <PinIconXOff>60</PinIconXOff>
+      <spinPosX>732</spinPosX>
+      <spinPosY>484</spinPosY>
+      <textXOff>66</textXOff>
+      <PinIconXOff>45</PinIconXOff>
       <PinIconYOff>10</PinIconYOff>
       <PinIconWidth>40</PinIconWidth>
       <PinIconHeight>25</PinIconHeight>
       <keepaspectratio>yes</keepaspectratio>
-      <itemHeight>27</itemHeight>
-      <itemWidth>29</itemWidth>
-      <IconXOff>9</IconXOff>
-      <IconYOff>2</IconYOff>
+      <itemHeight>34</itemHeight>
+      <itemWidth>39</itemWidth>
+      <IconXOff>12</IconXOff>
+      <IconYOff>3</IconYOff>
     </control>
   </controls>
 </window>

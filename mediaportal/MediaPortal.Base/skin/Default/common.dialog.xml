@@ -5,27 +5,41 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>black.png</texture>
-      <colordiffuse>40ffffff</colordiffuse>
+      <width>960</width>
+      <height>720</height>
+      <texture>white.png</texture>
+      <colordiffuse>201e90ff</colordiffuse>
+      <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
     </control>
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>157</posX>
-      <posY>186</posY>
-      <width>403</width>
-      <height>232</height>
+      <posX>210</posX>
+      <posY>233</posY>
+      <width>538</width>
+      <height>290</height>
       <texture>dialog_background.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>210</posX>
+      <posY>233</posY>
+      <width>538</width>
+      <height>290</height>
+      <texture>dialog_background.png</texture>
+      <colordiffuse>bbffffff</colordiffuse>
+      <visible>window.isvisible(602)|window.isvisible(2005)</visible>
     </control>
     <control>
       <description>dialog Heading</description>
       <type>label</type>
       <id>1</id>
-      <posX>192</posX>
-      <posY>217</posY>
-      <width>294</width>
+      <posX>257</posX>
+      <posY>272</posY>
+      <width>393</width>
       <label>0</label>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
@@ -34,9 +48,9 @@
       <description>dialog line 1</description>
       <type>fadelabel</type>
       <id>2</id>
-      <posX>209</posX>
-      <posY>256</posY>
-      <width>294</width>
+      <posX>279</posX>
+      <posY>320</posY>
+      <width>393</width>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
     </control>
@@ -44,10 +58,10 @@
       <description>dialog line 2</description>
       <type>label</type>
       <id>3</id>
-      <posX>209</posX>
-      <posY>278</posY>
+      <posX>279</posX>
+      <posY>348</posY>
       <label>0</label>
-      <width>294</width>
+      <width>393</width>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
     </control>
@@ -55,10 +69,10 @@
       <description>dialog line 3</description>
       <type>label</type>
       <id>4</id>
-      <posX>209</posX>
-      <posY>301</posY>
+      <posX>279</posX>
+      <posY>377</posY>
       <label>0</label>
-      <width>294</width>
+      <width>393</width>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
     </control>
@@ -66,10 +80,10 @@
       <description>dialog line 4</description>
       <type>label</type>
       <id>5</id>
-      <posX>209</posX>
-      <posY>332</posY>
+      <posX>279</posX>
+      <posY>415</posY>
       <label>0</label>
-      <width>294</width>
+      <width>393</width>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
     </control>

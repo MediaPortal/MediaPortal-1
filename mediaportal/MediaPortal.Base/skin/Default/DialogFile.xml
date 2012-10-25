@@ -10,37 +10,37 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>157</posX>
-      <posY>186</posY>
-      <width>403</width>
-      <height>241</height>
+      <posX>210</posX>
+      <posY>233</posY>
+      <width>538</width>
+      <height>302</height>
       <texture>dialog_background.png</texture>
     </control>
     <control>
       <type>image</type>
       <id>100</id>
-      <posX>205</posX>
-      <posY>296</posY>
-      <width>299</width>
+      <posX>274</posX>
+      <posY>370</posY>
+      <width>399</width>
       <texture>osd_progress_background.png</texture>
     </control>
     <control>
       <description>progress control</description>
       <type>progress</type>
       <id>20</id>
-      <posX>194</posX>
-      <posY>294</posY>
-      <width>299</width>
+      <posX>259</posX>
+      <posY>368</posY>
+      <width>399</width>
     </control>
     <control>
       <description>Yes button</description>
       <type>button</type>
       <id>11</id>
-      <posX>204</posX>
-      <posY>329</posY>
-      <width>79</width>
-      <height>29</height>
-      <textYOff>1</textYOff>
+      <posX>273</posX>
+      <posY>412</posY>
+      <width>106</width>
+      <height>37</height>
+      <textYOff>2</textYOff>
       <textureFocus>button_focus.png</textureFocus>
       <textureNoFocus>button_nofocus.png</textureNoFocus>
       <label>107</label>
@@ -53,11 +53,11 @@
       <description>No button</description>
       <type>button</type>
       <id>10</id>
-      <posX>319</posX>
-      <posY>329</posY>
-      <width>79</width>
-      <height>29</height>
-      <textYOff>1</textYOff>
+      <posX>426</posX>
+      <posY>412</posY>
+      <width>106</width>
+      <height>37</height>
+      <textYOff>2</textYOff>
       <textureFocus>button_focus.png</textureFocus>
       <textureNoFocus>button_nofocus.png</textureNoFocus>
       <label>106</label>
@@ -70,11 +70,11 @@
       <description>Always</description>
       <type>button</type>
       <id>12</id>
-      <posX>204</posX>
-      <posY>364</posY>
-      <width>79</width>
-      <height>29</height>
-      <textYOff>1</textYOff>
+      <posX>273</posX>
+      <posY>456</posY>
+      <width>106</width>
+      <height>37</height>
+      <textYOff>2</textYOff>
       <textureFocus>button_focus.png</textureFocus>
       <textureNoFocus>button_nofocus.png</textureNoFocus>
       <label>511</label>
@@ -87,11 +87,11 @@
       <description>Never</description>
       <type>button</type>
       <id>13</id>
-      <posX>319</posX>
-      <posY>364</posY>
-      <width>79</width>
-      <height>29</height>
-      <textYOff>1</textYOff>
+      <posX>426</posX>
+      <posY>456</posY>
+      <width>106</width>
+      <height>37</height>
+      <textYOff>2</textYOff>
       <textureFocus>button_focus.png</textureFocus>
       <textureNoFocus>button_nofocus.png</textureNoFocus>
       <label>512</label>
@@ -104,11 +104,11 @@
       <description>Cancel button</description>
       <type>button</type>
       <id>14</id>
-      <posX>419</posX>
-      <posY>329</posY>
-      <width>79</width>
-      <height>29</height>
-      <textYOff>1</textYOff>
+      <posX>559</posX>
+      <posY>412</posY>
+      <width>106</width>
+      <height>37</height>
+      <textYOff>2</textYOff>
       <textureFocus>button_focus.png</textureFocus>
       <textureNoFocus>button_nofocus.png</textureNoFocus>
       <label>510</label>
