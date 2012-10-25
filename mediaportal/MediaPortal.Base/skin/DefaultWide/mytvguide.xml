@@ -2,7 +2,7 @@
 <window>
   <id>600</id>
   <defaultcontrol>2</defaultcontrol>
-  <allowoverlay>no</allowoverlay>
+  <allowoverlay>yes</allowoverlay>
   <controls>
     <control>
       <description>BG</description>
@@ -24,35 +24,57 @@
       <colordiffuse>ffffffff</colordiffuse>
     </control>
     <control>
+      <description>background genre colour</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>65</posY>
+      <width>1350</width>
+      <height>60</height>
+      <texture>general_overlay_selecteditem.png</texture>
+      <colordiffuse>aaffffff</colordiffuse>
+    </control>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>25</posY>
+      <width>1280</width>
+      <height>755</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
       <description>Date Time</description>
       <type>label</type>
       <id>0</id>
       <posX>1244</posX>
-      <posY>12</posY>
+      <posY>10</posY>
       <label>#date | #time</label>
       <align>right</align>
-      <font>font13</font>
-      <textcolor>ffa9d0f7</textcolor>
+      <font>font11</font>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Guide Group Label</description>
       <type>label</type>
       <id>11</id>
-      <posX>60</posX>
-      <posY>12</posY>
+      <posX>30</posX>
+      <posY>10</posY>
       <width>700</width>
-      <font>font14</font>
+      <font>font11</font>
       <align>left</align>
       <label>#TV.Guide.Group</label>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>TVGUIDE Panel</description>
       <type>image</type>
       <id>2</id>
       <posX>146</posX>
-      <posY>112</posY>
+      <posY>115</posY>
       <width>1097</width>
-      <height>425</height>
+      <height>410</height>
       <colordiffuse>ffffffff</colordiffuse>
       <texture>-</texture>
     </control>
@@ -60,8 +82,8 @@
       <description>Single Channel Label</description>
       <type>label</type>
       <id>32</id>
-      <posX>400</posX>
-      <posY>40</posY>
+      <posX>600</posX>
+      <posY>125</posY>
       <font>font14</font>
       <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
@@ -70,10 +92,10 @@
       <description>Single Channel Image</description>
       <type>image</type>
       <id>33</id>
-      <posX>350</posX>
-      <posY>30</posY>
-      <width>40</width>
-      <height>40</height>
+      <posX>85</posX>
+      <posY>520</posY>
+      <width>80</width>
+      <height>80</height>
       <keepaspectratio>yes</keepaspectratio>
       <texture>defaultVideoBig.png</texture>
     </control>
@@ -84,7 +106,7 @@
       <type>image</type>
       <id>90</id>
       <posX>341</posX>
-      <posY>45</posY>
+      <posY>125</posY>
       <width>204</width>
       <height>35</height>
       <texture>button_small_settings_nofocus.png</texture>
@@ -94,7 +116,7 @@
       <type>label</type>
       <id>40</id>
       <posX>341</posX>
-      <posY>45</posY>
+      <posY>125</posY>
       <font>font13</font>
     </control>
     <control>
@@ -102,7 +124,7 @@
       <type>spincontrol</type>
       <id>6</id>
       <posX>39</posX>
-      <posY>50</posY>
+      <posY>125</posY>
       <width>39</width>
       <height>27</height>
       <showrange>no</showrange>
@@ -121,7 +143,7 @@
       <type>spincontrol</type>
       <id>8</id>
       <posX>248</posX>
-      <posY>50</posY>
+      <posY>125</posY>
       <width>39</width>
       <height>27</height>
       <showrange>no</showrange>
@@ -140,9 +162,9 @@
       <type>image</type>
       <id>20</id>
       <posX>79</posX>
-      <posY>81</posY>
+      <posY>160</posY>
       <width>262</width>
-      <height>43</height>
+      <height>37</height>
     </control>
     <control>
       <description>Channel image template</description>
@@ -150,8 +172,8 @@
       <id>7</id>
       <posX>1</posX>
       <posY>1</posY>
-      <width>53</width>
-      <height>37</height>
+      <width>34</width>
+      <height>34</height>
       <zoom>no</zoom>
       <keepaspectratio>yes</keepaspectratio>
       <texture>defaultVideoBig.png</texture>
@@ -168,21 +190,34 @@
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>85</posX>
+      <posY>520</posY>
+      <width>80</width>
+      <height>80</height>
+      <texture>#TV.Guide.thumb</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <visible>!control.isvisible(33)</visible>
+    </control>
+    <control>
       <description>Current program title</description>
       <type>fadelabel</type>
       <id>13</id>
-      <posX>350</posX>
-      <posY>553</posY>
-      <width>610</width>
+      <posX>180</posX>
+      <posY>520</posY>
+      <width>1020</width>
       <font>font12</font>
-      <label>#TV.Guide.CompositeTitle</label>
+      <textcolor>ffa9d0f7</textcolor>
+      <label>#TV.Guide.Time  |  #TV.Guide.CompositeTitle  |  #TV.Guide.Genre</label>
     </control>
     <control Style="NoShadow">
       <description>Current program time</description>
       <type>label</type>
       <id>14</id>
-      <posX>1224</posX>
-      <posY>553</posY>
+      <posX>2224</posX>
+      <posY>540</posY>
       <align>right</align>
       <font>font12</font>
       <textcolor>ffa9d0f7</textcolor>
@@ -192,8 +227,8 @@
       <description>Current program genre</description>
       <type>label</type>
       <id>27</id>
-      <posX>1224</posX>
-      <posY>683</posY>
+      <posX>2224</posX>
+      <posY>580</posY>
       <width>850</width>
       <font>font12</font>
       <align>right</align>
@@ -204,10 +239,10 @@
       <description>Description1</description>
       <type>textboxscrollup</type>
       <id>15</id>
-      <posX>350</posX>
-      <posY>592</posY>
-      <width>850</width>
-      <height>85</height>
+      <posX>180</posX>
+      <posY>550</posY>
+      <width>1060</width>
+      <height>80</height>
       <font>font11</font>
       <label>#TV.Guide.Description</label>
       <shadowAngle>0</shadowAngle>
@@ -223,15 +258,15 @@
       <font>font12</font>
       <textcolor>ccffffff</textcolor>
       <posX>10</posX>
-      <posY>6</posY>
+      <posY>4</posY>
     </control>
     <control>
       <description>vertical timeline</description>
       <type>image</type>
       <id>25</id>
       <posX>53</posX>
-      <posY>78</posY>
-      <height>443</height>
+      <posY>155</posY>
+      <height>363</height>
       <colordiffuse>ffffffff</colordiffuse>
       <texture>tvguide_slider.png</texture>
     </control>
@@ -244,32 +279,7 @@
       <font>font12</font>
       <textcolor>ffffffff</textcolor>
       <posX>10</posX>
-      <posY>6</posY>
-    </control>
-    <control>
-      <description>TV background</description>
-      <type>image</type>
-      <id>98</id>
-      <posX>78</posX>
-      <posY>553</posY>
-      <width>216</width>
-      <height>126</height>
-      <texture>LCD.png</texture>
-      <visible>Player.HasVideo</visible>
-    </control>
-    <control>
-      <description>TV preview window</description>
-      <type>videowindow</type>
-      <id>99</id>
-      <posX>86</posX>
-      <posY>558</posY>
-      <width>203</width>
-      <height>115</height>
-      <keepaspectratio>yes</keepaspectratio>
-      <centered>yes</centered>
-      <action>18</action>
-      <textureFocus>tv_green_border.png</textureFocus>
-      <visible>Player.HasVideo</visible>
+      <posY>4</posY>
     </control>
     <control>
       <description>template for program on now button</description>
@@ -379,9 +389,9 @@
       <type>button3part</type>
       <id>100</id>
       <posX>32</posX>
-      <posY>83</posY>
+      <posY>161</posY>
       <width>45</width>
-      <height>425</height>
+      <height>332</height>
       <textureFocusedLeft>small_vbutton_lr_colorize.png</textureFocusedLeft>
       <textureNonFocusedLeft>small_vbutton_lr_colorize.png</textureNonFocusedLeft>
       <textureFocusedMid>small_vbutton_focus.png</textureFocusedMid>
@@ -403,7 +413,7 @@
       <type>label</type>
       <id>0</id>
       <posX>70</posX>
-      <posY>90</posY>
+      <posY>190</posY>
       <label>#TV.Guide.ChangeGroup</label>
       <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -414,7 +424,7 @@
       <type>image</type>
       <id>110</id>
       <posX>80</posX>
-      <posY>522</posY>
+      <posY>82</posY>
       <width>32</width>
       <height>18</height>
       <texture overlay="tvguide_button_middle_colorize_overlay.png">tvguide_button_middle_colorize.png</texture>
@@ -424,7 +434,7 @@
       <description>Template for genre key name</description>
       <type>fadelabel</type>
       <id>111</id>
-      <posY>520</posY>
+      <posY>80</posY>
       <width>170</width>
       <scrollStartDelaySec>10000</scrollStartDelaySec>
       <textcolor>FF6aa5cb</textcolor>

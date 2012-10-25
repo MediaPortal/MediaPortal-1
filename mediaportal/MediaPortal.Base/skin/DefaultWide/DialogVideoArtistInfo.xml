@@ -3,7 +3,7 @@
   <id>614</id>
   <defaultcontrol>3</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <define>#selecteditem:</define>
+  <define>#selecteditem:#Actor.Name</define>
   <define>#useSelectedFanart:Yes</define>
   <controls>
     <control>
@@ -12,111 +12,113 @@
       <id>1</id>
       <width>1280</width>
       <height>720</height>
+      <texture>BH Videos.jpg</texture>
     </control>
+    <import>common.video.fanart.xml</import>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
-    <import>common.video.fanart.xml</import>
     <control>
-      <description>Overlay to darken FanArt</description>
+      <description>General Overlay</description>
       <id>0</id>
       <type>image</type>
       <posX>0</posX>
-      <posY>0</posY>
+      <posY>30</posY>
       <width>1280</width>
       <height>720</height>
-      <texture>black.png</texture>
-      <colordiffuse>aaffffff</colordiffuse>
-      <visible>control.isvisible(91919293)</visible>
-      <animation effect="fade" time="70">visible</animation>
-      <animation effect="fade" time="300" delay="500">hidden</animation>
+      <texture>general_overlay.png</texture>
     </control>
     <control>
-      <description>Actor Name value</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>0</posX>
-      <posY>60</posY>
-      <width>1280</width>
-      <label>#Actor.Name</label>
-      <font>font17</font>
-      <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>    
+      <description>Overlay video info</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>265</posX>
+      <posY>156</posY>
+      <width>720</width>
+      <height>465</height>
+      <texture mask="picturethumbmask.png">black.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+    </control>
     <control>
       <description>Born Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>250</posX>
-      <posY>92</posY>
+      <posX>285</posX>
+      <posY>180</posY>
       <label>686</label>
       <font>font13</font>
       <textcolor>ff6FAFE1</textcolor>
-      <align>right</align>
+      <align>left</align>
+      <visible>!control.isvisible(24)</visible>
     </control>
     <control>
       <description>Born/Date of Birth/Place of Birth Value</description>
       <type>fadelabel</type>
       <id>1</id>
-      <posX>285</posX>
-      <posY>92</posY>
-      <width>960</width>
+      <posX>485</posX>
+      <posY>180</posY>
+      <width>480</width>
       <label>#Actor.DateOfBirth - #Actor.PlaceOfBirth</label>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
+      <visible>!control.isvisible(24)</visible>
     </control>
     <control>
       <description>Died Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>250</posX>
-      <posY>120</posY>
+      <posX>285</posX>
+      <posY>210</posY>
       <label>1277</label>
       <font>font13</font>
       <textcolor>ff6FAFE1</textcolor>
-      <align>right</align>
+      <align>left</align>
+      <visible>!control.isvisible(24)</visible>
     </control>
     <control>
       <description>Died/Date of Death/Place of Death Value</description>
       <type>fadelabel</type>
       <id>1</id>
-      <posX>285</posX>
-      <posY>120</posY>
-      <width>960</width>
+      <posX>485</posX>
+      <posY>210</posY>
+      <width>480</width>
       <label>#Actor.DateOfDeath - #Actor.PlaceOfDeath</label>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
+      <visible>!control.isvisible(24)</visible>
     </control>
     <control>
       <description>Last update Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>250</posX>
-      <posY>148</posY>      
+      <posX>285</posX>
+      <posY>240</posY>
       <label>1279</label>
       <font>font10</font>
-      <align>right</align>
+      <align>left</align>
       <textcolor>ff6FAFE1</textcolor>
+      <visible>!control.isvisible(24)</visible>
     </control>
     <control>
       <description>Last update Value Actor data</description>
       <type>label</type>
       <id>1</id>
-      <posX>285</posX>
-      <posY>148</posY>
-      <width>1000</width>
+      <posX>485</posX>
+      <posY>240</posY>
+      <width>480</width>
       <label>#Actor.LastUpdate</label>
       <font>font10</font>      
       <textcolor>ffffffff</textcolor>
+      <visible>!control.isvisible(24)</visible>
     </control>
     <!--  **********  Cast / Movie Actor Image **********  -->
     <control>
       <description>Actor Image Missing Art</description>
       <id>1</id>
       <type>image</type>
-      <posX>50</posX>
-      <posY>190</posY>
-      <width>190</width>
-      <height>270</height>
+       <posX>1010</posX>
+    <posY>180</posY>
+    <width>240</width>
+    <height>340</height>
       <keepaspectratio>no</keepaspectratio>
       <texture mask="videothumbmask.png">defaultActorBig.png</texture>
     </control>
@@ -124,10 +126,10 @@
       <description>Actor Image</description>
       <type>image</type>
       <id>21</id>
-      <posX>50</posX>
-      <posY>190</posY>
-      <width>190</width>
-      <height>270</height>
+       <posX>1010</posX>
+    <posY>180</posY>
+    <width>240</width>
+    <height>340</height>
       <keepaspectratio>no</keepaspectratio>
       <texture mask="videothumbmask.png">#thumb</texture>
     </control>
@@ -135,20 +137,20 @@
       <description>Actor Image Cover</description>
       <type>image</type>
       <id>1</id>
-      <posX>50</posX>
-      <posY>190</posY>
-      <width>190</width>
-      <height>270</height>
+       <posX>1010</posX>
+    <posY>180</posY>
+    <width>240</width>
+    <height>340</height>
       <texture>Videothumbframe.png</texture>
     </control>
     <control>
       <description>Actor Movie Image</description>
       <type>image</type>
       <id>25</id>
-      <posX>1050</posX>
-      <posY>190</posY>
-      <width>190</width>
-      <height>270</height>
+       <posX>1010</posX>
+    <posY>180</posY>
+    <width>240</width>
+    <height>340</height>
       <keepaspectratio>no</keepaspectratio>
       <texture mask="videothumbmask.png">#Actor.MovieImage</texture>
       <visible>control.isvisible(24)</visible>
@@ -157,10 +159,10 @@
       <description>Actor Movie Image Cover</description>
       <type>image</type>
       <id>1</id>
-      <posX>1050</posX>
-      <posY>190</posY>
-      <width>190</width>
-      <height>270</height>
+       <posX>1010</posX>
+    <posY>180</posY>
+    <width>240</width>
+    <height>340</height>
       <texture>Videothumbframe.png</texture>
       <visible>control.isvisible(24)+control.hasthumb(25)</visible>
     </control>
@@ -171,7 +173,7 @@
       <type>group</type>
       <layout>StackLayout</layout>
       <posX>45</posX>
-      <posY>500</posY>
+      <posY>180</posY>
       <control>
         <description>Biography Button</description>
         <type>togglebutton</type>
@@ -216,15 +218,15 @@
         <visible>plugin.isenabled(OnlineVideos)+control.isvisible(24)</visible>
       </control>
     </control>
-    <!--  **********  Cast Biography **********  -->
+    <!--  **********  Actor Biography **********  -->
     <control Style="NoShadow">
       <description>Cast Biography value</description>
       <type>textboxscrollup</type>
       <id>20</id>
       <posX>285</posX>
-      <posY>185</posY>
-      <width>960</width>
-      <height>500</height>
+      <posY>270</posY>
+      <width>700</width>
+      <height>345</height>
       <label>#Actor.Biography</label>
       <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -236,12 +238,12 @@
       <id>24</id>
       <posX>285</posX>
       <posY>175</posY>
-      <width>730</width>
-      <height>393</height>
+      <width>660</width>
+      <height>293</height>
       <onleft>4</onleft>
       <onright>4</onright>
       <scrollOffset>4</scrollOffset>
-      <spinPosX>950</spinPosX>
+      <spinPosX>2950</spinPosX>
       <spinPosY>495</spinPosY>
       <spinCanFocus>no</spinCanFocus>
       <unfocusedAlpha>160</unfocusedAlpha>
@@ -253,8 +255,8 @@
       <type>image</type>
       <id>1</id>
       <posX>283</posX>
-      <posY>535</posY>
-      <width>961</width>
+      <posY>435</posY>
+      <width>700</width>
       <height>1</height>
       <texture>hbar1white.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
@@ -265,8 +267,8 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>285</posX>
-      <posY>540</posY>
-      <width>960</width>
+      <posY>440</posY>
+      <width>700</width>
       <label>#Actor.MovieExtraDetails</label>
       <font>font12</font>
       <visible>control.isvisible(24)</visible>
@@ -277,9 +279,9 @@
       <type>textboxscrollup</type>
       <id>26</id>
       <posX>285</posX>
-      <posY>585</posY>
-      <width>960</width>
-      <height>110</height>
+      <posY>485</posY>
+      <width>700</width>
+      <height>105</height>
       <onleft>4</onleft>
       <onright>4</onright>
       <onup>4</onup>

@@ -6,7 +6,7 @@
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
-		<import>common.window.xml</import>
+		
 		<import>common.time.xml</import>
     <control>
       <description>background</description>
@@ -17,7 +17,7 @@
       <height>240</height>
       <width>780</width>
       <texture>backslide2.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <control>
       <description>Enable screen saver</description>

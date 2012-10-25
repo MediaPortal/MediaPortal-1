@@ -31,8 +31,8 @@
       <description>FANART IMAGE 1</description>
       <id>897688</id>
       <type>image</type>
-      <posx>0</posx>
-      <posy>0</posy>
+      <posX>0</posX>
+      <posY>0</posY>
       <width>1280</width>
       <height>720</height>
       <colordiffuse>ffffffff</colordiffuse>
@@ -45,8 +45,8 @@
       <description>FANART IMAGE 2</description>
       <id>897689</id>
       <type>image</type>
-      <posx>0</posx>
-      <posy>0</posy>
+      <posX>0</posX>
+      <posY>0</posY>
       <width>1280</width>
       <height>720</height>
       <colordiffuse>ffffffff</colordiffuse>
@@ -56,33 +56,17 @@
       <animation effect="fade" time="300">hidden</animation>
     </control>
     <control>
-      <description>Overlay for FanArt</description>
+      <description>General Overlay</description>
       <id>0</id>
       <type>image</type>
-      <posx>0</posx>
-      <posy>0</posy>
+      <posX>0</posX>
+      <posY>30</posY>
       <width>1280</width>
       <height>720</height>
-      <texture>black.png</texture>
-      <colordiffuse>aaffffff</colordiffuse>
-      <visible>control.isvisible(91919294)+player.hasaudio</visible>
-      <animation effect="fade" time="70">visible</animation>
-      <animation effect="fade" time="300" delay="500">hidden</animation>
+      <texture>general_overlay.png</texture>
+      <colordiffuse>90ffffff</colordiffuse>
+      <animation effect="fade" time="300">visible</animation>
+      <animation effect="fade" time="300">hidden</animation>
     </control>
-    <!--control>
-      <description>Overlay for FanArt</description>
-      <id>0</id>
-      <type>image</type>
-      <posx>0</posx>
-      <posy>0</posy>
-      <width>1280</width>
-      <height>720</height>
-      <texture>backgroundthumbsview.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
-      <visible>control.isvisible(91919294)+player.hasaudio</visible>
-      <animation effect="fade" time="70">visible</animation>
-      <animation effect="fade" time="300" delay="500">hidden</animation>
-    </control-->
-    
   </controls>
 </window>

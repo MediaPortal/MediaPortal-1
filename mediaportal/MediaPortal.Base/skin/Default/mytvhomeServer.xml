@@ -2,26 +2,47 @@
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>1</id>
-  <defaultcontrol>2</defaultcontrol>
+  <defaultcontrol>8</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <define>#header.label:#(L(605))  #TV.View.channel</define>
+  <define>#header.label:</define>
   <controls>
     <control>
       <description>BG</description>
       <type>image</type>
       <id>1</id>
       <texture>background.png</texture>
-      <width>720</width>
-      <height>576</height>
+      <width>960</width>
+      <height>720</height>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>30</posY>
+      <width>960</width>
+      <height>765</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <!--control>
+    <description>Overlay buttons left</description>
+    <id>0</id>
+    <type>image</type>
+    <posX>50</posX>
+    <posY>156</posY>
+    <width>300</width>
+    <height>265</height>
+    <texture mask="picturethumbmask.png">black.png</texture>
+    <colordiffuse>60ffffff</colordiffuse>
+  </control-->
+    <control>
       <type>group</type>
       <layout>StackLayout(0,Vertical,true)</layout>
       <description>group element</description>
-      <posX>39</posX>
-      <posY>90</posY>
+      <posX>52</posX>
+      <posY>170</posY>
       <control>
         <description>TV On/Off button</description>
         <type>togglebutton</type>
@@ -85,7 +106,7 @@
         <label>692</label>
         <onup>14</onup>
         <ondown>10</ondown>
-        <onright>99</onright>
+        <onleft>99</onleft>
       </control>
       <control>
         <description>Scheduler</description>
@@ -95,7 +116,7 @@
         <hyperlink>601</hyperlink>
         <onup>9</onup>
         <ondown>12</ondown>
-        <onright>99</onright>
+        <onleft>99</onleft>
       </control>
       <control>
         <description>Search</description>
@@ -105,7 +126,7 @@
         <hyperlink>604</hyperlink>
         <onup>10</onup>
         <ondown>13</ondown>
-        <onright>99</onright>
+        <onleft>99</onleft>
       </control>
       <control>
         <description>Teletext</description>
@@ -114,7 +135,7 @@
         <label>1441</label>
         <onup>12</onup>
         <ondown>76</ondown>
-        <onright>99</onright>
+        <onleft>99</onleft>
         <visible>no</visible>
       </control>
       <control>
@@ -125,6 +146,7 @@
         <label>3</label>
         <onup>13</onup>
         <ondown>77</ondown>
+        <onleft>99</onleft>
         <visible>plugin.isenabled(MP-TV Series)</visible>
       </control>
       <control>
@@ -135,6 +157,7 @@
         <label>1300</label>
         <onup>76</onup>
         <ondown>8</ondown>
+        <onleft>99</onleft>
         <visible>plugin.isenabled(Videos)</visible>
       </control>
     </control>
@@ -142,98 +165,107 @@
       <description>LCD image</description>
       <type>image</type>
       <id>0</id>
-      <posX>312</posX>
-      <posY>92</posY>
-      <width>326</width>
-      <height>271</height>
+      <posX>375</posX>
+      <posY>80</posY>
+      <width>360</width>
+      <height>279</height>
       <texture>LCD.png</texture>
     </control>
     <control>
       <description>video window</description>
       <type>videowindow</type>
       <id>99</id>
-      <posX>321</posX>
-      <posY>104</posY>
-      <width>309</width>
-      <height>247</height>
-      <onleft>2</onleft>
-      <onright>2</onright>
+      <posX>382</posX>
+      <posY>90</posY>
+      <width>345</width>
+      <height>259</height>
+      <onleft>8</onleft>
+      <onright>9</onright>
       <action>18</action>
       <textureFocus>tv_green_border.png</textureFocus>
     </control>
     <control>
-      <description>Current program title</description>
-      <type>fadelabel</type>
-      <id>131</id>
-      <posX>289</posX>
-      <posY>392</posY>
-      <width>406</width>
-      <label>#TV.View.start - #TV.View.stop  #TV.View.title</label>
-      <font>font13</font>
-      <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
-    <control>
-      <description>Seperator</description>
+      <description>background</description>
       <type>image</type>
-      <id>1</id>
-      <posX>289</posX>
-      <posY>453</posY>
-      <width>405</width>
-      <height>0</height>
-      <texture>hbar1white.png</texture>
-      <colordiffuse>60ffffff</colordiffuse>
-    </control>
-    <control>
-      <description>Description1</description>
-      <type>textboxscrollup</type>
-      <id>15</id>
-      <posX>241</posX>
-      <posY>468</posY>
-      <width>466</width>
-      <height>72</height>
-      <label>#TV.View.description</label>
-      <font>font11</font>
-      <textcolor>ivory</textcolor>
-      <seperator>⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅	⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅	⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅</seperator>
-      <animation effect="zoom" start="100,100" end="1,1" center="863,635" time="70">WindowClose</animation>
+      <id>0</id>
+      <posX>457</posX>
+      <posY>380</posY>
+      <width>190</width>
+      <height>19</height>
+      <texture>osd_progress_background_medium.png</texture>
+      <visible>yes</visible>
     </control>
     <control>
       <description>Progress Bar</description>
       <type>progress</type>
       <id>1</id>
-      <posX>289</posX>
-      <posY>424</posY>
-      <width>405</width>
+      <posX>446</posX>
+      <posY>381</posY>
+      <width>208</width>
       <height>17</height>
       <label>#TV.View.Percentage</label>
-      <texturebg>osd_progress_background.png</texturebg>
-      <onlymidtexture>yes</onlymidtexture>
-      <midwidth>405</midwidth>
-      <midheight>16</midheight>
-      <midoffsetX>4</midoffsetX>
-      <midoffsetY>3</midoffsetY>
+      <texturebg>-</texturebg>
+      <onlymidtexture>no</onlymidtexture>
+      <midwidth>591</midwidth>
+      <midheight>17</midheight>
+      <midoffsetX>0</midoffsetX>
+      <midoffsetY>0</midoffsetY>
       <midtexture>osd_progress_mid.png</midtexture>
       <visible>yes</visible>
+    </control>
+    <control>
+      <description>Seperator</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>300</posX>
+      <posY>425</posY>
+      <width>615</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
     </control>
     <control>
       <description>Playing Channel</description>
       <type>image</type>
       <id>1</id>
-      <posX>222</posX>
-      <posY>395</posY>
-      <width>59</width>
+      <posX>300</posX>
+      <posY>440</posY>
+      <width>45</width>
       <height>60</height>
       <align>right</align>
       <keepaspectratio>yes</keepaspectratio>
       <texture>#TV.View.thumb</texture>
     </control>
     <control>
+      <description>Current program title</description>
+      <type>fadelabel</type>
+      <id>131</id>
+      <posX>360</posX>
+      <posY>440</posY>
+      <width>540</width>
+      <label>#TV.View.start - #TV.View.stop  #TV.View.title</label>
+      <font>font13</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Description1</description>
+      <type>textboxscrollup</type>
+      <id>15</id>
+      <posX>360</posX>
+      <posY>480</posY>
+      <width>562</width>
+      <height>155</height>
+      <label>#TV.View.description</label>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+    </control>
+    <control>
       <description>record pin</description>
       <type>image</type>
       <id>24</id>
-      <posX>233</posX>
-      <posY>488</posY>
+      <posX>311</posX>
+      <posY>610</posY>
       <texture>tvguide_record_button.png</texture>
       <visible>no</visible>
     </control>

@@ -4,10 +4,11 @@
   <defaultcontrol>4</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <disabletopbar>no</disabletopbar>
-  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <rememberLastFocusedControl>no</rememberLastFocusedControl>
   <define>#selecteditem:</define>
   <define>#selectedindex:</define>
   <define>#indexcount:</define>
+  <define>#usePlayFanart:Yes</define>
   <controls>
     <control>
       <description>BG</description>
@@ -18,6 +19,122 @@
       <height>720</height>
     </control>
     <control>
+      <description>background Pictures</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1280</width>
+      <height>720</height>
+      <texture>BH Pictures.jpg</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>[control.hasfocus(2)|control.isvisible(29)]+!skin.hassetting(#skin.no.category.fanart)</visible>
+      <animation effect="fade" time="300">visible</animation>
+      <animation effect="fade" time="300">hidden</animation>
+    </control>
+    <control>
+      <description>background Video</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1280</width>
+      <height>720</height>
+      <texture>BH Videos.jpg</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>!control.isvisible(456)+[control.hasfocus(3)|control.isvisible(39)]+!skin.hassetting(#skin.no.category.fanart)</visible>
+      <animation effect="fade" time="300">visible</animation>
+      <animation effect="fade" time="300">hidden</animation>
+    </control>
+    <control>
+      <description>background TV</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1280</width>
+      <height>720</height>
+      <texture>BH TV.jpg</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>[control.hasfocus(4)|control.isvisible(49)]+!skin.hassetting(#skin.no.category.fanart)</visible>
+      <animation effect="fade" time="300">visible</animation>
+      <animation effect="fade" time="300">hidden</animation>
+    </control>
+    <control>
+      <description>background Music</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1280</width>
+      <height>720</height>
+      <texture>BH Music.jpg</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>[control.hasfocus(5)|control.isvisible(59)]+!skin.hassetting(#skin.no.category.fanart)</visible>
+      <animation effect="fade" time="300">visible</animation>
+      <animation effect="fade" time="300">hidden</animation>
+    </control>
+    <control>
+      <description>background Weather</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1280</width>
+      <height>720</height>
+      <texture>BH Weather.jpg</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>control.hasfocus(6)+!skin.hassetting(#skin.no.category.fanart)</visible>
+      <animation effect="fade" time="300">visible</animation>
+      <animation effect="fade" time="300">hidden</animation>
+    </control>
+    <control>
+      <description>background Radio</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1280</width>
+      <height>720</height>
+      <texture>BH Radio.jpg</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>[control.hasfocus(7)|control.isvisible(79)]+!skin.hassetting(#skin.no.category.fanart)</visible>
+      <animation effect="fade" time="300">visible</animation>
+      <animation effect="fade" time="300">hidden</animation>
+    </control>
+    <control>
+      <description>background Menu</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1280</width>
+      <height>720</height>
+      <texture>BH Menu.jpg</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>!Control.hasFocus(2)+!Control.hasFocus(3)+!Control.hasFocus(4)+!Control.hasFocus(5)+!Control.hasFocus(6)+!Control.hasFocus(7)+!control.isvisible(29)+!control.isvisible(39)+!control.isvisible(49)+!control.isvisible(59)+!control.isvisible(79)+!skin.hassetting(#skin.no.category.fanart)</visible>
+      <animation effect="fade" time="300">visible</animation>
+      <animation effect="fade" time="300">hidden</animation>
+    </control>
+    <control>
+      <type>multiimage</type>
+      <id>456</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1280</width>
+      <height>720</height>
+      <imagepath>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\Skin Fanart\Scraper\movies</imagepath>
+      <timeperimage>5000</timeperimage>
+      <fadetime>1000</fadetime>
+      <loop>yes</loop>
+      <randomize>true</randomize>
+      <keepaspectratio>no</keepaspectratio>
+      <visible>control.isvisible(39)+skin.hassetting(#skin.fanart.basichome)</visible>
+      <animation effect="fade" time="300">visible</animation>
+      <animation effect="fade" time="300">hidden</animation>
+    </control>
+    <import>common.music.play.fanart.BasicHome.xml</import>
+    <control>
       <description>background top overlay</description>
       <type>image</type>
       <id>1</id>
@@ -26,331 +143,444 @@
       <width>1280</width>
       <height>270</height>
       <texture>overlay_top.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <colordiffuse>ccffffff</colordiffuse>
     </control>
     <control>
+      <description>background overlay</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1280</width>
+      <height>720</height>
+      <texture>black.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>!skin.hassetting(#skin.no.category.fanart)</visible>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     *************************     Horizontal Menu      ****************************************  -->
+    <!--     *******************************************************************************************  -->
+    <control Style="BasicHomeFade">
+      <description>Buttons Background</description>
       <type>image</type>
       <id>1</id>
-      <posX>60</posX>
-      <posY>20</posY>
-      <width>80</width>
-      <height>58</height>
-      <texture>mplogo1.png</texture>
-      <colordiffuse>90ffffff</colordiffuse>
+      <posX>-20</posX>
+      <posY>550</posY>
+      <width>1350</width>
+      <height>60</height>
+      <texture>BH background.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
       <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
       <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
     </control>
-    <!--     *******************************************************************************************  -->
-    <!--     *************************     Horizontal 3D-Menu      *************************************  -->
-    <!--     *******************************************************************************************  -->
     <control>
       <description>group element</description>
       <type>group</type>
       <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
       <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
-      <!--     *******************************************************************************************  -->
-      <!--     *************************     MUSIC COVERS     ********************************************  -->
-      <!--     *******************************************************************************************  -->
-      <control>
-        <description>music logo</description>
-        <type>image</type>
-        <id>1</id>
-        <posX>845</posX>
-        <posY>340</posY>
-        <width>122</width>
-        <height>122</height>
-        <keepaspectratio>no</keepaspectratio>
-        <centered>yes</centered>
-        <texture mask="picturethumbmask.png">missing_coverart.png</texture>
-        <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(5)">conditional</animation>
-      </control>
-      <control>
-        <type>multiimage</type>
-        <id>0</id>
-        <posX>847</posX>
-        <posY>342</posY>
-        <width>118</width>
-        <height>118</height>
-        <imagepath>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\Music\Albums</imagepath>
-        <timeperimage>3000</timeperimage>
-        <fadetime>1000</fadetime>
-        <loop>yes</loop>
-        <randomize>false</randomize>
-        <keepaspectratio>no</keepaspectratio>
-        <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(5)">conditional</animation>
-        <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
-        <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
-      </control>
-      <control>
-        <type>multiimage</type>
-        <id>0</id>
-        <posX>847</posX>
-        <posY>342</posY>
-        <width>118</width>
-        <height>118</height>
-        <imagepath>C:\Documents and Settings\All Users\Team MediaPortal\MediaPortal\thumbs\Music\Albums</imagepath>
-        <timeperimage>3000</timeperimage>
-        <fadetime>1000</fadetime>
-        <loop>yes</loop>
-        <randomize>false</randomize>
-        <keepaspectratio>no</keepaspectratio>
-        <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(5)">conditional</animation>
-        <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
-        <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
-      </control>
-      <control>
-        <description>music logo</description>
-        <type>image</type>
-        <id>31</id>
-        <posX>845</posX>
-        <posY>340</posY>
-        <width>122</width>
-        <height>122</height>
-        <keepaspectratio>no</keepaspectratio>
-        <centered>yes</centered>
-        <texture mask="picturethumbmask.png">#Play.Current.Thumb</texture>
-        <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(5)">conditional</animation>
-        <visible>Player.HasAudio+!Player.HasVideo</visible>
-      </control>
-      <control>
-        <description>music logo</description>
-        <type>image</type>
-        <id>77</id>
-        <posX>845</posX>
-        <posY>340</posY>
-        <width>122</width>
-        <height>122</height>
-        <keepaspectratio>no</keepaspectratio>
-        <centered>yes</centered>
-        <texture mask="picturethumbmask.png">#Play.Current.ArtistThumb</texture>
-        <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(5)">conditional</animation>
-        <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(31)</visible>
-      </control>
-      <!--     *******************************************************************************************  -->
-      <!--     *************************     Horizontal 3D-Menu Buttons     ******************************  -->
-      <!--     *******************************************************************************************  -->
+      <layout>StackLayout(5, Horizontal, true)</layout>
+      <posX>30</posX>
+      <posY>555</posY>
       <control Style="BasicHomeButton">
         <description>BasicHome Pictures</description>
         <type>button</type>
         <id>2</id>
-        <posX>45</posX>
-        <posY>335</posY>
-        <width>170</width>
-        <height>220</height>
-        <textureFocus>BH_pictures.png</textureFocus>
-        <textureNoFocus>BH_pictures.png</textureNoFocus>
         <hyperlink>2</hyperlink>
         <label>1</label>
-        <textYOff>-130</textYOff>
+        <onup>21</onup>
         <onleft>8</onleft>
         <onright>3</onright>
+        <ondown>201</ondown>
       </control>
       <control Style="BasicHomeButton">
         <description>BasicHome Videos</description>
         <type>button</type>
         <id>3</id>
-        <posX>310</posX>
-        <posY>320</posY>
-        <width>110</width>
-        <height>158</height>
-        <textureFocus></textureFocus>
-        <textureNoFocus></textureNoFocus>
         <hyperlink>6</hyperlink>
         <label>3</label>
-        <textYOff>-100</textYOff>
         <onleft>2</onleft>
         <onright>4</onright>
+        <onup>21</onup>
+        <ondown>32</ondown>
       </control>
       <control Style="BasicHomeButton">
         <description>BasicHome TV</description>
         <type>button</type>
         <id>4</id>
-        <posX>513</posX>
-        <posY>320</posY>
-        <width>242</width>
-        <height>170</height>
-        <textureFocus>BH_tv.png</textureFocus>
-        <textureNoFocus>BH_tv.png</textureNoFocus>
         <hyperlink>1</hyperlink>
         <label>605</label>
-        <textYOff>-100</textYOff>
         <onleft>3</onleft>
         <onright>5</onright>
+        <onup>21</onup>
+        <ondown>42</ondown>
       </control>
       <control Style="BasicHomeButton">
         <description>BasicHome Music</description>
         <type>button</type>
         <id>5</id>
-        <posX>845</posX>
-        <posY>340</posY>
-        <width>122</width>
-        <height>122</height>
         <hyperlink>501</hyperlink>
         <label>2</label>
-        <textYOff>-90</textYOff>
         <onleft>4</onleft>
-        <textureFocus>picturethumbframe.png</textureFocus>
-        <textureNoFocus>picturethumbframe.png</textureNoFocus>
-        <centered>yes</centered>
+        <onup>21</onup>
+        <ondown>52</ondown>
       </control>
       <control Style="BasicHomeButton">
         <description>BasicHomeWeather</description>
         <type>button</type>
         <id>6</id>
-        <posX>1060</posX>
-        <posY>350</posY>
-        <width>150</width>
-        <height>110</height>
-        <textureFocus>BH_weather.png</textureFocus>
-        <textureNoFocus>BH_weather.png</textureNoFocus>
         <hyperlink>7977</hyperlink>
         <label>8</label>
-        <textYOff>-80</textYOff>
         <onleft>5</onleft>
         <onright>2</onright>
+        <onup>21</onup>
+        <ondown>6</ondown>
         <visible>plugin.isenabled(World Weather)</visible>
       </control>
       <control Style="BasicHomeButton">
         <description>BasicHome Radio</description>
         <type>button</type>
         <id>7</id>
-        <posX>1060</posX>
-        <posY>340</posY>
-        <width>165</width>
-        <height>165</height>
-        <textureFocus>BH_radio.png</textureFocus>
-        <textureNoFocus>BH_radio.png</textureNoFocus>
         <hyperlink>30</hyperlink>
         <label>665</label>
-        <textYOff>-100</textYOff>
         <onleft>5</onleft>
         <onright>2</onright>
+        <onup>21</onup>
+        <ondown>73</ondown>
         <visible>!plugin.isenabled(World Weather)</visible>
       </control>
     </control>
     <!--     *******************************************************************************************  -->
-    <!--     *************************  MULTIIMAGES SHOWN IN TV BUTTON  ********************************  -->
+    <!--     *************************     Submenus  Pictures  *****************************************  -->
     <!--     *******************************************************************************************  -->
     <control>
-      <type>multiimage</type>
-      <id>0</id>
-      <posX>528</posX>
-      <posY>338</posY>
-      <width>210</width>
-      <height>118</height>
-      <imagepath>BasicHome TV</imagepath>
-      <timeperimage>3000</timeperimage>
-      <fadetime>1000</fadetime>
-      <loop>yes</loop>
-      <randomize>false</randomize>
-      <keepaspectratio>no</keepaspectratio>
-      <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(4)">conditional</animation>
-      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
-      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
-      <visible>!player.hasvideo</visible>
-    </control>
-    <control>
-      <type>multiimage</type>
-      <id>0</id>
-      <posX>528</posX>
-      <posY>338</posY>
-      <width>210</width>
-      <height>118</height>
-      <imagepath>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\tv\Recorded</imagepath>
-      <timeperimage>3000</timeperimage>
-      <fadetime>1000</fadetime>
-      <loop>yes</loop>
-      <randomize>false</randomize>
-      <keepaspectratio>no</keepaspectratio>
-      <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(4)">conditional</animation>
-      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
-      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
-      <visible>!player.hasvideo</visible>
-    </control>
-    <control>
-      <type>multiimage</type>
-      <id>0</id>
-      <posX>528</posX>
-      <posY>338</posY>
-      <width>210</width>
-      <height>118</height>
-      <imagepath>C:\Documents and Settings\All Users\Team MediaPortal\MediaPortal\thumbs\tv\Recorded</imagepath>
-      <timeperimage>3000</timeperimage>
-      <fadetime>1000</fadetime>
-      <loop>yes</loop>
-      <randomize>false</randomize>
-      <keepaspectratio>no</keepaspectratio>
-      <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(4)">conditional</animation>
-      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
-      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
-      <visible>!player.hasvideo</visible>
-    </control>
-    <!--     *******************************************************************************************  -->
-    <!--     *************************  MULTIIMAGES SHOWN VIDEOS BUTTON  *******************************  -->
-    <!--     *******************************************************************************************  -->
-    <control>
-      <description>Video logo</description>
+      <description>Submenu Buttons Background</description>
       <type>image</type>
       <id>1</id>
-      <posX>310</posX>
-      <posY>320</posY>
-      <width>110</width>
-      <height>158</height>
-      <keepaspectratio>no</keepaspectratio>
-      <centered>yes</centered>
-      <texture mask="videothumbmask.png">missing_coverart_video.png</texture>
-      <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(3)">conditional</animation>
-      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
-      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <posX>15</posX>
+      <posY>610</posY>
+      <width>270</width>
+      <height>40</height>
+      <texture>BH background.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>control.isvisible(29)</visible>
+      <animation effect="fade" delay="500" time="500">visible</animation>
     </control>
     <control>
-      <type>multiimage</type>
-      <id>0</id>
-      <posX>310</posX>
-      <posY>320</posY>
-      <width>110</width>
-      <height>158</height>
-      <imagepath>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\Videos\Title</imagepath>
-      <timeperimage>3000</timeperimage>
-      <fadetime>1000</fadetime>
-      <loop>yes</loop>
-      <randomize>false</randomize>
-      <keepaspectratio>no</keepaspectratio>
-      <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(3)">conditional</animation>
-      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
-      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <description>Pictures button image</description>
+      <type>image</type>
+      <id>29</id>
+      <posX>6</posX>
+      <posY>549</posY>
+      <width>288</width>
+      <height>60</height>
+      <texture>button_focus.png</texture>
+      <animation effect="zoom" start="100,100" end="120,120" time="0">focus</animation>
+      <visible>control.hasFocus(2)|control.hasfocus(201)+[!control.hasfocus(3)+!control.hasfocus(4)+!control.hasfocus(5)+!control.hasfocus(6)+!control.hasfocus(7)]</visible>
     </control>
     <control>
-      <type>multiimage</type>
-      <id>0</id>
-      <posX>310</posX>
-      <posY>320</posY>
-      <width>110</width>
-      <height>158</height>
-      <imagepath>C:\Documents and Settings\All Users\Team MediaPortal\MediaPortal\thumbs\Videos\Title</imagepath>
-      <timeperimage>3000</timeperimage>
-      <fadetime>1000</fadetime>
-      <loop>yes</loop>
-      <randomize>false</randomize>
-      <keepaspectratio>no</keepaspectratio>
-      <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(3)">conditional</animation>
-      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
-      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <description>group element</description>
+      <type>group</type>
+      <animation effect="fade" delay="500" time="500">visible</animation>
+      <visible>control.isVisible(29)</visible>
+      <layout>StackLayout(5, Horizontal, true)</layout>
+      <posX>25</posX>
+      <posY>615</posY>
+      <control Style="BasicHomeSubmenu">
+        <description>Submenu Settings</description>
+        <type>button</type>
+        <id>201</id>
+        <hyperlink>12</hyperlink>
+        <label>5</label>
+        <onleft>201</onleft>
+        <onright>201</onright>
+        <onup>2</onup>
+        <ondown>201</ondown>
+      </control>
     </control>
+    <!--     *******************************************************************************************  -->
+    <!--     *************************     Submenus  Video   *******************************************  -->
+    <!--     *******************************************************************************************  -->
     <control>
-      <description>Video logo cover</description>
+      <description>Submenu Buttons Background</description>
       <type>image</type>
       <id>1</id>
-      <posX>308</posX>
-      <posY>318</posY>
-      <width>114</width>
-      <height>162</height>
-      <keepaspectratio>no</keepaspectratio>
-      <centered>yes</centered>
-      <texture>videothumbframe.png</texture>
-      <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(3)">conditional</animation>
-      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
-      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <posX>5</posX>
+      <posY>610</posY>
+      <width>780</width>
+      <height>40</height>
+      <texture>BH background.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>control.isvisible(39)</visible>
+      <animation effect="fade" delay="500" time="500">visible</animation>
+    </control>
+    <control>
+      <description>Video button image</description>
+      <type>image</type>
+      <id>39</id>
+      <posX>249</posX>
+      <posY>549</posY>
+      <width>288</width>
+      <height>60</height>
+      <texture>button_focus.png</texture>
+      <animation effect="zoom" start="100,100" end="120,120" time="0">focus</animation>
+      <visible>control.hasFocus(3)|control.hasfocus(31)|control.hasfocus(32)|control.hasfocus(33)+[!control.hasfocus(2)+!control.isvisible(49)+!control.hasfocus(5)+!control.hasfocus(6)+!control.hasfocus(7)]</visible>
+    </control>
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <animation effect="fade" delay="500" time="500">visible</animation>
+      <visible>control.isVisible(39)</visible>
+      <layout>StackLayout(5, Horizontal, true)</layout>
+      <posX>15</posX>
+      <posY>615</posY>
+      <control Style="BasicHomeSubmenu">
+        <description>Submenu TVSeries</description>
+        <type>button</type>
+        <id>31</id>
+        <hyperlink>9811</hyperlink>
+        <label>1300</label>
+        <onup>3</onup>
+        <onleft>33</onleft>
+        <onright>32</onright>
+        <ondown>31</ondown>
+        <onup>3</onup>
+        <visible>plugin.isenabled(MP-TV Series)</visible>
+      </control>
+      <control Style="BasicHomeSubmenu">
+        <description>Submenu Settings</description>
+        <type>button</type>
+        <id>32</id>
+        <hyperlink>703</hyperlink>
+        <label>5</label>
+        <onleft>31</onleft>
+        <onright>33</onright>
+        <onup>3</onup>
+        <ondown>32</ondown>
+      </control>
+      <control Style="BasicHomeSubmenu">
+        <description>Submenu OnlineVideos</description>
+        <type>button</type>
+        <id>33</id>
+        <hyperlink>4755</hyperlink>
+        <label>Online Videos</label>
+        <onleft>32</onleft>
+        <onright>31</onright>
+        <onup>3</onup>
+        <ondown>33</ondown>
+        <visible>plugin.isenabled(OnlineVideos)</visible>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     *************************     Submenus  TV   ****************************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <description>Submenu Buttons Background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>250</posX>
+      <posY>610</posY>
+      <width>780</width>
+      <height>40</height>
+      <texture>BH background.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>control.isvisible(49)</visible>
+      <animation effect="fade" delay="500" time="500">visible</animation>
+    </control>
+    <control>
+      <description>TV button image</description>
+      <type>image</type>
+      <id>49</id>
+      <posX>492</posX>
+      <posY>549</posY>
+      <width>289</width>
+      <height>60</height>
+      <texture>button_focus.png</texture>
+      <animation effect="zoom" start="100,100" end="120,120" time="0">focus</animation>
+      <visible>control.hasFocus(4)|control.hasfocus(41)|control.hasfocus(42)|control.hasfocus(43)+[!control.hasfocus(2)+!control.hasfocus(3)+!control.hasfocus(5)+!control.hasfocus(6)+!control.hasfocus(7)]</visible>
+    </control>
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <animation effect="fade" delay="500" time="500">visible</animation>
+      <visible>control.isVisible(49)</visible>
+      <layout>StackLayout(5, Horizontal, true)</layout>
+      <posX>260</posX>
+      <posY>615</posY>
+      <control Style="BasicHomeSubmenu">
+        <description>Submenu Recordings</description>
+        <type>button</type>
+        <id>41</id>
+        <hyperlink>603</hyperlink>
+        <label>604</label>
+        <onup>4</onup>
+        <onleft>43</onleft>
+        <onright>42</onright>
+        <ondown>41</ondown>
+        <onup>4</onup>
+      </control>
+      <control Style="BasicHomeSubmenu">
+        <description>Submenu TVGuide</description>
+        <type>button</type>
+        <id>42</id>
+        <hyperlink>600</hyperlink>
+        <label>600</label>
+        <onleft>41</onleft>
+        <onright>43</onright>
+        <onup>4</onup>
+        <ondown>42</ondown>
+      </control>
+      <control Style="BasicHomeSubmenu">
+        <description>Submenu Timer</description>
+        <type>button</type>
+        <id>43</id>
+        <hyperlink>601</hyperlink>
+        <label>603</label>
+        <onleft>42</onleft>
+        <onright>41</onright>
+        <onup>4</onup>
+        <ondown>43</ondown>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     *************************     Submenus  Music   *******************************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <description>Submenu Buttons Background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>495</posX>
+      <posY>610</posY>
+      <width>780</width>
+      <height>40</height>
+      <texture>BH background.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>control.isvisible(59)</visible>
+      <animation effect="fade" delay="500" time="500">visible</animation>
+    </control>
+    <control>
+      <description>Music button image</description>
+      <type>image</type>
+      <id>59</id>
+      <posX>735</posX>
+      <posY>549</posY>
+      <width>289</width>
+      <height>60</height>
+      <texture>button_focus.png</texture>
+      <animation effect="zoom" start="100,100" end="120,120" time="0">focus</animation>
+      <visible>control.hasFocus(5)|control.hasfocus(51)|control.hasfocus(52)|control.hasfocus(53)+[!control.hasfocus(2)+!control.hasfocus(3)+!control.hasfocus(4)+!control.hasfocus(6)+!control.hasfocus(7)]</visible>
+    </control>
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <animation effect="fade" delay="500" time="500">visible</animation>
+      <visible>control.isVisible(59)</visible>
+      <layout>StackLayout(5, Horizontal, true)</layout>
+      <posX>505</posX>
+      <posY>615</posY>
+      <control Style="BasicHomeSubmenu">
+        <description>Submenu Settings</description>
+        <type>button</type>
+        <id>51</id>
+        <hyperlink>14</hyperlink>
+        <label>5</label>
+        <onup>5</onup>
+        <onleft>53</onleft>
+        <onright>52</onright>
+        <ondown>5</ondown>
+        <onup>5</onup>
+      </control>
+      <control Style="BasicHomeSubmenu">
+        <description>Submenu NowPlaying</description>
+        <type>button</type>
+        <id>52</id>
+        <hyperlink>510</hyperlink>
+        <label>4540</label>
+        <onleft>51</onleft>
+        <onright>53</onright>
+        <onup>5</onup>
+        <ondown>52</ondown>
+      </control>
+      <control Style="BasicHomeSubmenu">
+        <description>Submenu Last.Fm</description>
+        <type>button</type>
+        <id>53</id>
+        <hyperlink>7890</hyperlink>
+        <label>Last.FM</label>
+        <onleft>52</onleft>
+        <onright>51</onright>
+        <onup>5</onup>
+        <ondown>53</ondown>
+        <visible>plugin.isenabled(Last.fm Radio)</visible>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     *************************     Submenus  Radio   *******************************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <description>Submenu Buttons Background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>495</posX>
+      <posY>610</posY>
+      <width>780</width>
+      <height>40</height>
+      <texture>BH background.png</texture>
+      <visible>control.isvisible(79)</visible>
+      <animation effect="fade" delay="500" time="500">visible</animation>
+    </control>
+    <control>
+      <description>Radio button image</description>
+      <type>image</type>
+      <id>79</id>
+      <posX>979</posX>
+      <posY>549</posY>
+      <width>289</width>
+      <height>60</height>
+      <texture>button_focus.png</texture>
+      <animation effect="zoom" start="100,100" end="120,120" time="0">focus</animation>
+      <visible>control.hasFocus(7)|control.hasfocus(71)|control.hasfocus(72)|control.hasfocus(73)+[!control.hasfocus(2)+!control.hasfocus(3)+!control.hasfocus(4)+!control.hasfocus(5)+!control.hasfocus(6)]</visible>
+    </control>
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <animation effect="fade" delay="500" time="500">visible</animation>
+      <visible>control.isVisible(79)</visible>
+      <layout>StackLayout(5, Horizontal, true)</layout>
+      <posX>505</posX>
+      <posY>615</posY>
+      <control Style="BasicHomeSubmenu">
+        <description>Submenu Radio Search</description>
+        <type>button</type>
+        <id>71</id>
+        <hyperlink>8900</hyperlink>
+        <label>#(L(665)) #(L(137))</label>
+        <onup>7</onup>
+        <onleft>73</onleft>
+        <onright>72</onright>
+        <ondown>7</ondown>
+      </control>
+      <control Style="BasicHomeSubmenu">
+        <description>Submenu Recorded Radio</description>
+        <type>button</type>
+        <id>72</id>
+        <hyperlink>763</hyperlink>
+        <label>811</label>
+        <onleft>71</onleft>
+        <onright>73</onright>
+        <onup>7</onup>
+        <ondown>72</ondown>
+      </control>
+      <control Style="BasicHomeSubmenu">
+        <description>Submenu ProgramGuide</description>
+        <type>button</type>
+        <id>73</id>
+        <hyperlink>762</hyperlink>
+        <label>533</label>
+        <onleft>72</onleft>
+        <onright>71</onright>
+        <onup>7</onup>
+        <ondown>73</ondown>
+      </control>
     </control>
     <import>common.time.xml</import>
     <!--     *******************************************************************************************  -->
@@ -373,29 +603,41 @@
       <control>
         <type>image</type>
         <posX>26</posX>
-        <posY>128</posY>
-        <width>367</width>
-        <height>431</height>
+        <posY>78</posY>
+        <width>320</width>
+        <height>591</height>
         <texture>Backslide.png</texture>
         <colorDiffuse>fffffffff</colorDiffuse>
-        <visible>!Control.hasFocus(2)+!Control.hasFocus(3)+!Control.hasFocus(4)+!Control.hasFocus(5)+[!Control.hasFocus(6)|!Control.hasFocus(7)]</visible>
+        <visible>!Control.hasFocus(2)+!Control.hasFocus(3)+!Control.hasFocus(4)+!Control.hasFocus(5)+!Control.hasFocus(6)|!Control.hasFocus(7)]</visible>
+        <animation effect="slide" time="70" start="-300,0" reversible="true">visiblechange</animation>
+      </control>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>150</posX>
+        <posY>580</posY>
+        <width>55</width>
+        <height>38</height>
+        <texture>mplogo1.png</texture>
+        <colordiffuse>80ffffff</colordiffuse>
+        <visible>!Control.hasFocus(2)+!Control.hasFocus(3)+!Control.hasFocus(4)+!Control.hasFocus(5)+!Control.hasFocus(6)|!Control.hasFocus(7)]</visible>
         <animation effect="slide" time="70" start="-300,0" reversible="true">visiblechange</animation>
       </control>
       <control>
         <description>group element</description>
         <type>group</type>
         <animation effect="slide" time="70" start="-300,0" reversible="true">visiblechange</animation>
-        <posX>71</posX>
-        <posY>160</posY>
-        <layout>StackLayout</layout>
-        <visible>!Control.hasFocus(2)+!Control.hasFocus(3)+!Control.hasFocus(4)+!Control.hasFocus(5)+[!Control.hasFocus(6)|!Control.hasFocus(7)]</visible>
+        <posX>50</posX>
+        <posY>121</posY>
+        <layout>StackLayout(0,Vertical,true)</layout>
+        <visible>!Control.hasFocus(2)+!Control.hasFocus(3)+!Control.hasFocus(4)+!Control.hasFocus(5)+!Control.hasFocus(6)|!Control.hasFocus(7)]</visible>
         <control>
           <description>Home Menu</description>
           <type>button</type>
           <id>8</id>
           <label>974</label>
           <hyperlink>0</hyperlink>
-          <onup>15</onup>
+          <onup>16</onup>
           <ondown>9</ondown>
         </control>
         <control>
@@ -406,16 +648,18 @@
           <label>665</label>
           <onup>8</onup>
           <ondown>10</ondown>
+          <visible>plugin.isenabled(World Weather)+plugin.isenabled(Radio)</visible>
         </control>
         <control>
           <description>Last.Fm</description>
           <type>button</type>
           <id>10</id>
-          <posX>71</posX>
+          <posX>50</posX>
           <hyperlink>7890</hyperlink>
           <label>Last.FM</label>
           <onup>9</onup>
           <ondown>11</ondown>
+          <visible>plugin.isenabled(Last.fm Radio)</visible>
         </control>
         <control>
           <description>RSS Feeds</description>
@@ -426,6 +670,7 @@
           <onright>3</onright>
           <onup>10</onup>
           <ondown>12</ondown>
+          <visible>plugin.isenabled(RSS news)</visible>
         </control>
         <control>
           <description>Wikipedia</description>
@@ -435,6 +680,7 @@
           <label>Wikipedia</label>
           <onup>11</onup>
           <ondown>13</ondown>
+          <visible>plugin.isenabled(Wikipedia)</visible>
         </control>
         <control>
           <description>Tetris</description>
@@ -444,6 +690,7 @@
           <label>19001</label>
           <onup>12</onup>
           <ondown>14</ondown>
+          <visible>plugin.isenabled(Tetris)</visible>
         </control>
         <control>
           <description>Sudoku</description>
@@ -453,6 +700,7 @@
           <label>19101</label>
           <onup>13</onup>
           <ondown>15</ondown>
+          <visible>plugin.isenabled(Sudoku)</visible>
         </control>
         <control>
           <description>Settings</description>
@@ -461,7 +709,54 @@
           <hyperlink>4</hyperlink>
           <label>5</label>
           <onup>14</onup>
+          <ondown>17</ondown>
+        </control>
+        <control>
+          <description>Standard Background</description>
+          <type>checkbutton</type>
+          <id>17</id>
+          <label>Standard Background</label>
+          <selected>#(skin.hassetting('#skin.no.category.fanart'))</selected>
+          <onclick>#(skin.togglesetting('#skin.no.category.fanart'))</onclick>
+          <onup>15</onup>
+          <ondown>16</ondown>
+        </control>
+        <control>
+          <description>blank</description>
+          <type>image</type>
+          <id>0</id>
+          <width>260</width>
+          <height>30</height>
+          <texture></texture>
+          <colordiffuse>30ffffff</colordiffuse>
+        </control>
+        <control>
+          <description>divider horizontal</description>
+          <type>image</type>
+          <id>0</id>
+          <width>260</width>
+          <height>1</height>
+          <texture>hbar1white.png</texture>
+          <colordiffuse>20ffffff</colordiffuse>
+        </control>
+        <control>
+          <description>EXIT</description>
+          <type>button</type>
+          <id>16</id>
+          <action>99</action>
+          <label>EXIT</label>
+          <onup>17</onup>
           <ondown>8</ondown>
+          <colordiffuse>red</colordiffuse>
+        </control>
+        <control>
+          <description>divider horizontal</description>
+          <type>image</type>
+          <id>0</id>
+          <width>260</width>
+          <height>1</height>
+          <texture>hbar1white.png</texture>
+          <colordiffuse>20ffffff</colordiffuse>
         </control>
       </control>
     </control>
@@ -469,244 +764,223 @@
     <!--     *******************************************************************************************  -->
     <!--     *************************    NOW PLAYING OVERLAYS          ********************************  -->
     <!--     *******************************************************************************************  -->
-    <!--     *******************************************************************************************  -->
-    <!--     *************************    NOW PLAYING OVERLAYS TV + VIDEO      *************************  -->
-    <!--     *******************************************************************************************  -->
+    <!-- ******************************************************************************************* -->
+    <!-- ************************* INFOS ON BASIC HOME (NOW PLAYING VIDEO) ********************* -->
+    <!-- ******************************************************************************************* -->
     <control>
-      <description>play logo</description>
+      <description>video area</description>
       <type>image</type>
-      <id>23</id>
-      <posX>560</posX>
-      <posY>465</posY>
-      <width>52</width>
-      <height>52</height>
-      <texture>play_enabled.png</texture>
-      <visible>Player.HasVideo+player.playing</visible>
-    </control>
-    <control>
-      <description>Pause logo</description>
-      <type>image</type>
-      <id>24</id>
-      <posX>560</posX>
-      <posY>465</posY>
-      <width>52</width>
-      <height>52</height>
-      <texture>pause_enabled.png</texture>
-      <visible>Player.HasVideo+player.paused</visible>
-    </control>
-    <control>
-      <description>FF logo</description>
-      <type>image</type>
-      <id>27</id>
-      <posX>560</posX>
-      <posY>465</posY>
-      <width>52</width>
-      <height>52</height>
-      <texture>fastforward_enabled.png</texture>
-      <visible>Player.HasVideo+player.forwarding</visible>
-    </control>
-    <control>
-      <description>RW logo</description>
-      <type>image</type>
-      <id>28</id>
-      <posX>560</posX>
-      <posY>465</posY>
-      <width>52</width>
-      <height>52</height>
-      <texture>rew_enabled.png</texture>
-      <visible>Player.HasVideo+player.rewinding</visible>
-    </control>
-    <control>
-      <description>NowPlaying Fadelabel TV</description>
-      <id>25</id>
-      <type>fadelabel</type>
-      <width>880</width>
-      <posX>200</posX>
-      <posY>530</posY>
-      <font>font12</font>
-      <align>center</align>
-      <wrapString></wrapString>
-      <label>#TV.View.channel\r#TV.View.title\r#(L(135)): #TV.View.genre\r#(L(635)): #TV.View.start - #TV.View.stop</label>
-      <textcolor>EFFFFFFF</textcolor>
-      <visible>player.hasvideo+!control.hasthumb(987)</visible>
-    </control>
-    <control>
-      <description>NowPlaying Fadelabel Video</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <width>880</width>
-      <posX>200</posX>
-      <posY>530</posY>
-      <font>font12</font>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>470</posY>
+      <width>1350</width>
+      <height>60</height>
+      <texture>BH background.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
       <visible>Player.HasVideo</visible>
-      <label>#Play.Current.Title\r#(L(135)): #Play.Current.Genre\r#(L(201)) #Play.Current.Year\r#(L(199)) #Play.Current.Director</label>
-      <align>center</align>
-      <wrapString></wrapString>
-      <textcolor>ivory</textcolor>
-      <visible>Player.HasVideo+control.hasthumb(987)</visible>
+      <texture>BH background.png</texture>
     </control>
     <control>
-      <description>Video logo</description>
+      <description>NowPlaying Background TV/Video</description>
       <type>image</type>
-      <id>987</id>
-      <posX>1435</posX>
-      <posY>178</posY>
-      <width>134</width>
-      <height>203</height>
-      <keepaspectratio>no</keepaspectratio>
+      <id>0</id>
+      <posX>555</posX>
+      <posY>435</posY>
+      <width>170</width>
+      <height>100</height>
+      <texture>LCD.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
       <visible>Player.HasVideo</visible>
-      <texture mask="cdcase_mask.png">#Play.Current.Thumb</texture>
-    </control>
-    <control>
-      <description>play time label</description>
-      <type>label</type>
-      <id>22</id>
-      <width>880</width>
-      <posX>200</posX>
-      <posY>560</posY>
-      <label>#currentplaytime</label>
-      <align>center</align>
-      <font>font14</font>
-      <textcolor>80ffffff</textcolor>
-      <visible>player.hasvideo</visible>
     </control>
     <control>
       <description>video preview window</description>
       <type>videowindow</type>
       <id>99</id>
-      <posX>528</posX>
-      <posY>338</posY>
-      <width>210</width>
-      <height>118</height>
+      <posX>560</posX>
+      <posY>440</posY>
+      <width>160</width>
+      <height>90</height>
+      <visible>player.HasVideo</visible>
       <action>18</action>
-      <onleft>3</onleft>
-      <onright>5</onright>
-      <onup>4</onup>
-      <ondown>4</ondown>
       <textureFocus>tv_green_border.png</textureFocus>
-      <visible>player.hasvideo|player.hasaudio</visible>
-      <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(4)">conditional</animation>
     </control>
-    <!--control>
-    <description>TV preview window</description>
-    <type>image</type>
-    <id>0</id>
-    <posX>528</posX>
-    <posY>338</posY>
-    <width>210</width>
-    <height>118</height>
-    <texture>preview.png</texture>
-  </control-->
-  <!--     *******************************************************************************************  -->
-  <!--     *************************    NOW PLAYING OVERLAYS AUDIO      *************************  -->
-  <!--     *******************************************************************************************  -->
-  <control>
-    <description>play logo</description>
-    <type>image</type>
-    <id>43</id>
-    <posX>860</posX>
-    <posY>472</posY>
-    <width>52</width>
-    <height>52</height>
-    <texture>play_enabled.png</texture>
-    <visible>Player.HasAudio+!Player.HasVideo+player.playing</visible>
-  </control>
-  <control>
-    <description>Pause logo</description>
-    <type>image</type>
-    <id>44</id>
-    <posX>860</posX>
-    <posY>472</posY>
-    <width>52</width>
-    <height>52</height>
-    <texture>pause_enabled.png</texture>
-    <visible>Player.HasAudio+!Player.HasVideo+player.paused</visible>
-  </control>
-  <control>
-    <description>FF logo</description>
-    <type>image</type>
-    <id>47</id>
-    <posX>860</posX>
-    <posY>472</posY>
-    <width>52</width>
-    <height>52</height>
-    <texture>fastforward_enabled.png</texture>
-    <visible>Player.HasAudio+!Player.HasVideo+player.forwarding</visible>
-  </control>
-  <control>
-    <description>RW logo</description>
-    <type>image</type>
-    <id>48</id>
-    <posX>860</posX>
-    <posY>472</posY>
-    <width>52</width>
-    <height>52</height>
-    <texture>rew_enabled.png</texture>
-    <visible>Player.HasAudio+!Player.HasVideo+player.rewinding</visible>
-  </control>
-  <control>
-    <description>Gap / Normal Icon</description>
-    <type>image</type>
-    <id>40</id>
-    <posX>920</posX>
-    <posY>480</posY>
-    <width>43</width>
-    <height>27</height>
-    <texture>logo_gap.png</texture>
-    <keepaspectratio>yes</keepaspectratio>
-    <visible>Player.HasAudio+!Player.HasVideo</visible>
-  </control>
-  <control>
-    <description>Gapless Icon</description>
-    <type>image</type>
-    <id>41</id>
-    <posX>920</posX>
-    <posY>480</posY>
-    <width>43</width>
-    <height>27</height>
-    <keepaspectratio>yes</keepaspectratio>
-    <texture>logo_gapless.png</texture>
-    <visible>Player.HasAudio+!Player.HasVideo</visible>
-  </control>
-  <control>
-    <description>Crossfade Icon</description>
-    <type>image</type>
-    <id>42</id>
-    <posX>920</posX>
-    <posY>480</posY>
-    <width>43</width>
-    <height>27</height>
-    <keepaspectratio>yes</keepaspectratio>
-    <texture>logo_crossfade.png</texture>
-    <visible>Player.HasAudio+!Player.HasVideo</visible>
-  </control>
-  <control>
-    <description>play time label</description>
-    <type>label</type>
-    <id>32</id>
-    <width>1420</width>
-    <posX>200</posX>
-    <posY>560</posY>
-    <label>#currentplaytime</label>
-    <align>center</align>
-    <font>font14</font>
-    <textcolor>80ffffff</textcolor>
-    <visible>Player.HasAudio+!Player.HasVideo</visible>
-  </control>
-  <control>
-    <description>album/artist/genre etc info label</description>
-    <type>fadelabel</type>
-    <width>1420</width>
-    <posX>200</posX>
-    <posY>534</posY>
-    <font>font12</font>
-    <label>#(L(179)): #Play.Current.Title\r#(L(171)) #Play.Current.Artist\r#(L(170)) #Play.Current.Album\r#(L(435)) #Play.Current.Track\r#(L(436)) #Play.Current.Year</label>
-    <textcolor>EFFFFFFF</textcolor>
-    <id>45</id>
-    <wrapString></wrapString>
-    <align>center</align>
-    <visible>Player.HasAudio+!Player.HasVideo</visible>
-    <animation effect="fade" time="400" condition="true">conditional</animation>
-  </control>
-</controls>
+    <control>
+      <description>scrolling info label Video</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>535</posX>
+      <posY>473</posY>
+      <width>480</width>
+      <align>right</align>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#Play.Current.Title</label>
+      <visible>Player.HasVideo</visible>
+    </control>
+    <control>
+      <description>scrolling info label Video</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>535</posX>
+      <posY>497</posY>
+      <width>550</width>
+      <align>right</align>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#Play.Current.Genre</label>
+      <visible>Player.HasVideo</visible>
+    </control>
+    <control>
+      <description>scrolling info label Video</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>473</posY>
+      <width>480</width>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#Play.Current.Year</label>
+      <visible>Player.HasVideo</visible>
+    </control>
+    <control>
+      <description>scrolling info label Video</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>497</posY>
+      <width>550</width>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#Play.Current.Director</label>
+      <visible>Player.HasVideo</visible>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     ******************   INFOS ON BASIC HOME (NOW PLAYING AUDIO) W FANART  ********************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <description>music area</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>-20</posX>
+      <posY>470</posY>
+      <width>1350</width>
+      <height>60</height>
+      <texture>BH background.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>Player.HasAudio+!Player.HasVideo</visible>
+    </control>
+    <control>
+      <description>music logo when no thumb</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>595</posX>
+      <posY>440</posY>
+      <width>90</width>
+      <height>90</height>
+      <centered>no</centered>
+      <keepaspectratio>no</keepaspectratio>
+      <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(12345)+!control.hasthumb(77)</visible>
+      <texture mask="Picturethumbmask.png">defaultArtistBig.png</texture>
+    </control>
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>12345</id>
+      <posX>595</posX>
+      <posY>440</posY>
+      <width>90</width>
+      <height>90</height>
+      <centered>no</centered>
+      <keepaspectratio>no</keepaspectratio>
+      <visible>Player.HasAudio+!Player.HasVideo</visible>
+      <texture mask="Picturethumbmask.png">#Play.Current.Thumb</texture>
+    </control>
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>77</id>
+      <posX>595</posX>
+      <posY>440</posY>
+      <width>90</width>
+      <height>90</height>
+      <centered>no</centered>
+      <keepaspectratio>no</keepaspectratio>
+      <texture mask="Picturethumbmask.png">#Play.Current.ArtistThumb</texture>
+      <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(12345)</visible>
+    </control>
+    <control>
+      <description>CD Cover</description>
+      <type>image</type>
+      <id>790</id>
+      <posX>595</posX>
+      <posY>440</posY>
+      <width>90</width>
+      <height>90</height>
+      <centered>no</centered>
+      <visible>Player.HasAudio+!Player.HasVideo</visible>
+      <texture>picturethumbframe.png</texture>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>585</posX>
+      <posY>473</posY>
+      <width>560</width>
+      <visible>Player.HasAudio+!Player.HasVideo</visible>
+      <label>#(L(171)) #Play.Current.Artist</label>
+      <align>right</align>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>585</posX>
+      <posY>497</posY>
+      <visible>Player.HasAudio+!Player.HasVideo</visible>
+      <label>#(L(179)): #Play.Current.Title</label>
+      <width>560</width>
+      <align>right</align>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>695</posX>
+      <posY>473</posY>
+      <width>560</width>
+      <visible>Player.HasAudio+!Player.HasVideo</visible>
+      <label>#(L(170)) #Play.Current.Album</label>
+      <align>left</align>
+      <textcolor>ivory</textcolor>
+      <font>font11</font>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>695</posX>
+      <posY>497</posY>
+      <width>560</width>
+      <label>#(L(435)) #Play.Current.Track  |  #(L(436)) #Play.Current.Year  |  #currentplaytime &gt; #currentremaining</label>
+      <align>left</align>
+      <textcolor>ivory</textcolor>
+      <font>font11</font>
+      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#Play.Current.Lastfm.CurrentStream,)</visible>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>695</posX>
+      <posY>497</posY>
+      <width>560</width>
+      <label>#Play.Current.Lastfm.CurrentStream  |  #currentplaytime &gt; #currentremaining</label>
+      <align>left</align>
+      <textcolor>ivory</textcolor>
+      <font>font11</font>
+      <visible>Player.HasAudio+!Player.HasVideo+!string.equals(#Play.Current.Lastfm.CurrentStream,)</visible>
+    </control>
+  </controls>
 </window>
