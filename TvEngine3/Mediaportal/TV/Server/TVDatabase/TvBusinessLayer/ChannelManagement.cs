@@ -19,6 +19,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Channel = Mediaportal.TV.Server.TVDatabase.Entities.Channel;
 using Mediaportal.TV.Server.TVDatabase.EntityModel;
 

@@ -837,7 +837,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
       }
       catch (Exception ex)
       {
-        Log.Debug(ex, "Form1.LoadConfig");
+        Log.Write("Form1.LoadConfig: " + ex);
       }
     }
   }

@@ -21,6 +21,7 @@
 using System;
 using System.Runtime.InteropServices;
 using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 //using MediaPortal.GUI.Library;
 

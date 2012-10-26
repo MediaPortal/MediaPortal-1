@@ -25,6 +25,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using MediaPortal.Common.Utils;
 using System.Threading;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.ChannelLinkage
 {

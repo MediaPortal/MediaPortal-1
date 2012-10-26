@@ -26,9 +26,9 @@ using System.Threading;
 using DirectShowLib;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
-using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
 {

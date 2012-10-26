@@ -38,6 +38,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using MediaPortal.Common.Utils;
 using MediaPortal.Common.Utils;
 using System.Runtime.CompilerServices;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using WebEPG.Utils;
 
 namespace Mediaportal.TV.Server.Plugins.WebEPGImport

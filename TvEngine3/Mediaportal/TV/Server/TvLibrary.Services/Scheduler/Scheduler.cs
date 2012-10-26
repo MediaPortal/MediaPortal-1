@@ -41,6 +41,7 @@ using Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Implementat
 using Mediaportal.TV.Server.TVLibrary.DiskManagement;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Services;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;

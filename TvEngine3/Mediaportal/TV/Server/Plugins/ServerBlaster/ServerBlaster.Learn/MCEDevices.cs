@@ -23,7 +23,6 @@ using System.Runtime.InteropServices;
 using System.IO;
 using System.Windows.Forms;
 using System.Collections;
-using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
 {

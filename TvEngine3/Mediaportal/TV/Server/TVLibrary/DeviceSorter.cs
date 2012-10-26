@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using DirectShowLib;
 using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Simmetrics;
 
 namespace Mediaportal.TV.Server.TVLibrary

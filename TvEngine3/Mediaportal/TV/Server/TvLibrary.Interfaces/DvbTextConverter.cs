@@ -23,6 +23,7 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {

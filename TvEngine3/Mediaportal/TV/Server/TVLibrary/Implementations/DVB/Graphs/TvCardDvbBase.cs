@@ -35,6 +35,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using LNB_Source = DirectShowLib.BDA.LNB_Source;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
@@ -492,7 +493,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       catch (Exception ex)
       {
         const string graphBuildingFailed = "Graph building failed.";
-        Log.Debug(ex, graphBuildingFailed);
+        Log.Error(ex, graphBuildingFailed);
         Dispose();
         _isDeviceInitialised = false;        
         throw new TvExceptionGraphBuildingFailed(graphBuildingFailed, ex);

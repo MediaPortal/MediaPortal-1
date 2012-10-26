@@ -23,6 +23,7 @@ using System.Text;
 using System.Threading;
 using MediaPortal.Common.Utils;
 using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using mshtml;
 using SHDocVw;
 

@@ -40,6 +40,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using MediaPortal.Common.Utils;
 using System.Runtime.CompilerServices;
 using Ionic.Zip;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 {

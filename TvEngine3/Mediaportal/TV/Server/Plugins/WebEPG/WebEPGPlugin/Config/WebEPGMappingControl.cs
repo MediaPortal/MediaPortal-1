@@ -32,6 +32,7 @@ using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using MediaPortal.Common.Utils;
 
 using System.Globalization;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using WebEPG.config.WebEPG;
 using ChannelMap = WebEPG.config.WebEPG.ChannelMap;
 //using System.Data;

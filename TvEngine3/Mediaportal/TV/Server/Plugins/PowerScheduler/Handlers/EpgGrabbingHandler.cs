@@ -23,18 +23,14 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVControl;
-using Mediaportal.TV.Server.TVControl.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
-using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using MediaPortal.Common.Utils;
-using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using System.Threading;
 using System.Diagnostics;
-using Mediaportal.TV.Server.TVService.Interfaces.Services;
 using TvEngine.PowerScheduler.Interfaces;
 
 #endregion

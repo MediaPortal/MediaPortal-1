@@ -23,10 +23,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Timers;
 using System.Collections;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using MediaPortal.Common.Utils;
-using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using System.Threading;
 using TvEngine.PowerScheduler.Interfaces;
 

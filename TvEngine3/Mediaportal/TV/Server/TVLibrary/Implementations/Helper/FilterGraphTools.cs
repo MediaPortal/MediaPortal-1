@@ -27,6 +27,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using MediaPortal.Common.Utils;
 using DirectShowLib;
 using System.Runtime.InteropServices.ComTypes;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TvLibrary.Utils.Util;
 
 #if !USING_NET11

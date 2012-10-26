@@ -23,6 +23,8 @@ using DirectShowLib;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+
 //using DShowNET.TsFileSink;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections

@@ -21,15 +21,13 @@
 using System;
 using System.Collections.Generic;
 using Castle.MicroKernel.Registration;
-using Castle.Windsor;
-using Castle.Windsor.Configuration.Interpreters;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
-using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.Plugins.Base
 {
-  public class PluginLoader : LogProvider
+  public class PluginLoader //: LogProvider
   {
     private List<ITvServerPlugin> _plugins = new List<ITvServerPlugin>();
     private readonly List<Type> _incompatiblePlugins = new List<Type>();

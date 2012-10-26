@@ -21,6 +21,7 @@
 using System.Collections.Generic;
 using DirectShowLib;
 using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 {

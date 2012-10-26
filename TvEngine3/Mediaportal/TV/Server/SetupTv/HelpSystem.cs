@@ -20,7 +20,7 @@
 
 using System;
 using System.Diagnostics;
-using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.SetupTV
 {

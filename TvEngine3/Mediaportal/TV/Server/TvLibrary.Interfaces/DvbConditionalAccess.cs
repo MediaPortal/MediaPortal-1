@@ -26,6 +26,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
@@ -2463,12 +2464,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     public void Dump()
     {
-      Log.Debug("Elementary Stream: dump...");
-      Log.Debug("  stream type         = {0}", _streamType);
-      Log.Debug("  PID                 = {0} (0x{0:x})", _pid);
-      Log.Debug("  length              = {0}", _esInfoLength);
-      Log.Debug("  logical stream type = {0}", _logicalStreamType);
-      Log.Debug("  {0} descriptor(s)...", _descriptors.Count + _caDescriptors.Count);
+      Log.DebugFormat("Elementary Stream: dump...");
+      Log.DebugFormat("  stream type         = {0}", _streamType);
+      Log.DebugFormat("  PID                 = {0} (0x{0:x})", _pid);
+      Log.DebugFormat("  length              = {0}", _esInfoLength);
+      Log.DebugFormat("  logical stream type = {0}", _logicalStreamType);
+      Log.DebugFormat("  {0} descriptor(s)...", _descriptors.Count + _caDescriptors.Count);
       foreach (IDescriptor d in _descriptors)
       {
         d.Dump();

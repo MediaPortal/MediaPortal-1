@@ -34,6 +34,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using MediaPortal.Common.Utils;
 using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 // Modified to include Hauppauge Blasting
 // Uses code from prior MP versions for HCWIRBlaster

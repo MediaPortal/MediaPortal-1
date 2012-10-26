@@ -23,7 +23,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.SetupControls;
-using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
 {

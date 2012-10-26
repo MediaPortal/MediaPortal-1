@@ -26,6 +26,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
 {
@@ -188,7 +189,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
       catch (Exception ex)
       {
         const string tvcarddvbipGraphBuildingFailed = "TvCardDvbIp: graph building failed";
-        Log.Debug(ex, tvcarddvbipGraphBuildingFailed);
+        Log.Error(ex, tvcarddvbipGraphBuildingFailed);
         Dispose();
         _isDeviceInitialised = false;          
         throw new TvExceptionGraphBuildingFailed(tvcarddvbipGraphBuildingFailed, ex);

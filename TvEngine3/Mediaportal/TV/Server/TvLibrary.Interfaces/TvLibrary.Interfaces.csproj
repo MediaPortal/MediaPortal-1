@@ -116,6 +116,11 @@
     <Compile Include="Interfaces\ITvSubChannel.cs" />
     <Compile Include="Interfaces\IVideoStream.cs" />
     <Compile Include="Interfaces\TvPluginCallback.cs" />
+    <Compile Include="Logging\FileLogger.cs" />
+    <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\Log.cs" />
+    <Compile Include="Logging\Log4netLogger.cs" />
+    <Compile Include="Logging\LogLevel.cs" />
     <Compile Include="PathManager.cs" />
     <Compile Include="RtspClient.cs" />
     <Compile Include="ScanParameters.cs" />

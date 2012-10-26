@@ -48,6 +48,10 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
       lock (typeof (Log)) if (File.Exists(_logFilename)) File.Delete(_logFilename);
     }
 
+    public static void Debug(string strFormat, params object[] arg)
+    {
+      Write(strFormat, arg);
+    }
     public static void Write(string strFormat, params object[] arg)
     {
       if (_logEnabled == false) return;

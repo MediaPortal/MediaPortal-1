@@ -25,7 +25,7 @@ using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.Text;
 using System.Runtime.InteropServices;
-using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary
 {

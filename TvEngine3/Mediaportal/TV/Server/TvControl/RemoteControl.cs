@@ -21,12 +21,7 @@
 using System;
 using System.Diagnostics;
 using System.Net.Sockets;
-using System.Runtime.Remoting;
-using Mediaportal.TV.Server.TVControl.Interfaces;
-using Mediaportal.TV.Server.TVControl.Interfaces.Services;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVControl
 {
