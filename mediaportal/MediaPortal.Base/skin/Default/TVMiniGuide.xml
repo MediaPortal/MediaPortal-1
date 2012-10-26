@@ -8,68 +8,59 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>black.png</texture>
-      <colordiffuse>40ffffff</colordiffuse>
+      <width>960</width>
+      <height>720</height>
+      <texture>white.png</texture>
+      <colordiffuse>201e90ff</colordiffuse>
+      <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
     </control>
     <control>
-      <description>background image</description>
       <type>image</type>
-      <id>0</id>
+      <id>1</id>
+      <posX>217</posX>
+      <posY>25</posY>
+      <width>585</width>
+      <height>675</height>
       <texture>context_background.png</texture>
-      <width>599</width>
-      <height>445</height>
-      <posX>59</posX>
-      <posY>60</posY>
+      <colordiffuse>aaffffff</colordiffuse>
+      <visible>window.isvisible(602)|window.isvisible(2005)</visible>
     </control>
     <control>
-      <description>exit button</description>
-      <type>button</type>
-      <id>34</id>
-      <posX>588</posX>
-      <posY>77</posY>
-      <width>43</width>
-      <height>54</height>
-      <textureFocus>dialogue_shutdown_focus.png</textureFocus>
-      <textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
-      <animation effect="zoom" start="100,100" end="100,100" time="100">focus</animation>
-      <animation effect="zoom" start="100,100" end="100,100" time="70">unfocus</animation>
-      <label>-</label>
-      <onleft>36</onleft>
-      <onright>34</onright>
-      <ondown>35</ondown>
-      <onup>34</onup>
+      <type>image</type>
+      <id>1</id>
+      <posX>217</posX>
+      <posY>25</posY>
+      <width>585</width>
+      <height>675</height>
+      <texture>context_background.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
     </control>
     <control>
       <description>list to show channels without channel state logos</description>
       <type>listcontrol</type>
       <id>35</id>
-      <posX>81</posX>
-      <posY>140</posY>
-      <width>550</width>
-      <height>360</height>
-      <textYOff>20</textYOff>
-      <textXOff>0</textXOff>
-      <textXOff2>510</textXOff2>
-      <textYOff2>4</textYOff2>
-      <textXOff3>44</textXOff3>
-      <textYOff3>0</textYOff3>
-      <IconXOff>5</IconXOff>
-      <IconYOff>4</IconYOff>
-      <PinIconXOff>510</PinIconXOff>
-      <PinIconYOff>3</PinIconYOff>
-      <PinIconWidth>35</PinIconWidth>
-      <PinIconHeight>35</PinIconHeight>
-      <spinPosX>581</spinPosX>
-      <spinPosY>464</spinPosY>
-      <spinWidth>21</spinWidth>
-      <spinHeight>21</spinHeight>
-      <itemWidth>34</itemWidth>
-      <itemHeight>34</itemHeight>
-      <spaceBetweenItems>1</spaceBetweenItems>
-      <textureHeight>44</textureHeight>
-      <keepaspectratio>yes</keepaspectratio>
+      <posX>247</posX>
+      <posY>110</posY>
+      <height>620</height>
+      <width>521</width>
+      <textXOff>43</textXOff>
+      <textYOff>29</textYOff>
+      <textXOff2>517</textXOff2>
+      <textYOff2>29</textYOff2>
+      <textXOff3>88</textXOff3>
+      <textYOff3>5</textYOff3>
+      <IconXOff>4</IconXOff>
+      <IconYOff>11</IconYOff>
+      <spinPosX>1972</spinPosX>
+      <spinPosY>665</spinPosY>
+      <itemWidth>36</itemWidth>
+      <itemHeight>36</itemHeight>
+      <textureFocus>list_sub_focus.png</textureFocus>
+      <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
+      <spaceBetweenItems>0</spaceBetweenItems>
+      <textureHeight>60</textureHeight>
+      <keepaspectratio>no</keepaspectratio>
       <font>font11</font>
       <font2>font11</font2>
       <font3>font12</font3>
@@ -88,39 +79,42 @@
       <remoteColor2>ffff00ff00</remoteColor2>
       <downloadColor>ff666666</downloadColor>
       <downloadColor2>ff80ff80</downloadColor2>
+      <scrollOffset>2</scrollOffset>
       <!-- used for selected channel -->
       <onleft>36</onleft>
       <onright>34</onright>
+      <scrollbarXOff>1526</scrollbarXOff>
+      <showScrollbar>no</showScrollbar>
     </control>
     <control>
       <description>list to show channels with channel state logos</description>
       <type>listcontrol</type>
       <id>37</id>
-      <posX>81</posX>
-      <posY>140</posY>
-      <width>550</width>
-      <height>360</height>
-      <textYOff>20</textYOff>
-      <textXOff>0</textXOff>
-      <textXOff2>510</textXOff2>
-      <textYOff2>4</textYOff2>
-      <textXOff3>44</textXOff3>
-      <textYOff3>0</textYOff3>
-      <IconXOff>5</IconXOff>
-      <IconYOff>4</IconYOff>
-      <PinIconXOff>510</PinIconXOff>
-      <PinIconYOff>3</PinIconYOff>
+      <posX>247</posX>
+      <posY>110</posY>
+      <height>620</height>
+      <width>521</width>
+      <textXOff>43</textXOff>
+      <textYOff>29</textYOff>
+      <textXOff2>517</textXOff2>
+      <textYOff2>29</textYOff2>
+      <textXOff3>88</textXOff3>
+      <textYOff3>5</textYOff3>
+      <IconXOff>4</IconXOff>
+      <IconYOff>11</IconYOff>
+      <PinIconXOff>46</PinIconXOff>
+      <PinIconYOff>12</PinIconYOff>
       <PinIconWidth>35</PinIconWidth>
       <PinIconHeight>35</PinIconHeight>
-      <spinPosX>581</spinPosX>
-      <spinPosY>464</spinPosY>
-      <spinWidth>21</spinWidth>
-      <spinHeight>21</spinHeight>
-      <itemWidth>34</itemWidth>
-      <itemHeight>34</itemHeight>
-      <spaceBetweenItems>1</spaceBetweenItems>
-      <textureHeight>44</textureHeight>
-      <keepaspectratio>yes</keepaspectratio>
+      <spinPosX>1972</spinPosX>
+      <spinPosY>665</spinPosY>
+      <itemWidth>36</itemWidth>
+      <itemHeight>36</itemHeight>
+      <textureFocus>list_sub_focus.png</textureFocus>
+      <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
+      <spaceBetweenItems>0</spaceBetweenItems>
+      <textureHeight>60</textureHeight>
+      <keepaspectratio>no</keepaspectratio>
       <font>font11</font>
       <font2>font11</font2>
       <font3>font12</font3>
@@ -139,49 +133,54 @@
       <remoteColor2>ffff00ff00</remoteColor2>
       <downloadColor>ff666666</downloadColor>
       <downloadColor2>ff80ff80</downloadColor2>
+      <scrollbarXOff>1526</scrollbarXOff>
+      <scrollOffset>2</scrollOffset>
       <!-- used for selected channel -->
       <onleft>36</onleft>
       <onright>34</onright>
-    </control>
-    <control>
-      <description>Heading text label</description>
-      <type>label</type>
-      <id>4</id>
-      <posX>95</posX>
-      <posY>89</posY>
-      <width>239</width>
-      <label>10105</label>
-      <font>font14</font>
-      <textcolor>ffa9d0f7</textcolor>
+      <showScrollbar>no</showScrollbar>
     </control>
     <control>
       <description>groups spin control</description>
       <type>spincontrol</type>
       <id>36</id>
-      <posX>237</posX>
-      <posY>97</posY>
+      <posX>255</posX>
+      <posY>67</posY>
       <showrange>no</showrange>
       <orientation>horizontal</orientation>
-      <font>font14</font>
-      <textureUp>arrow_round_right_nofocus.png</textureUp>
-      <textureDown>arrow_round_left_nofocus.png</textureDown>
-      <textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
-      <textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>fff5deb3</textcolor>
       <ondown>35</ondown>
       <onup>36</onup>
       <onright>34</onright>
       <onleft>36</onleft>
     </control>
     <control>
-      <description>time label</description>
-      <id>0</id>
+      <description>Current Time Info</description>
       <type>label</type>
-      <posX>562</posX>
-      <posY>89</posY>
-      <align>right</align>
-      <font>font14</font>
-      <textcolor>ffa9d0f7</textcolor>
+      <id>110</id>
+      <posX>765</posX>
+      <posY>64</posY>
       <label>#time</label>
+      <align>right</align>
+      <font>font12</font>
+      <textcolor>fff5deb3</textcolor>
+    </control>
+    <control>
+      <description>exit button</description>
+      <type>button</type>
+      <id>34</id>
+      <posX>1534</posX>
+      <posY>72</posY>
+      <width>58</width>
+      <height>68</height>
+      <textureFocus>top_exit_enabled.png</textureFocus>
+      <textureNoFocus>top_exit_disabled.png</textureNoFocus>
+      <onleft>36</onleft>
+      <onright>34</onright>
+      <ondown>35</ondown>
+      <onup>34</onup>
     </control>
   </controls>
 </window>

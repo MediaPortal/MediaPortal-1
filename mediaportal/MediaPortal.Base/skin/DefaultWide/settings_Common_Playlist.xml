@@ -6,7 +6,7 @@
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
-		<import>common.window.xml</import>
+		
     <import>common.time.xml</import>
     <control>
       <description>background</description>
@@ -17,7 +17,7 @@
       <height>490</height>
       <width>1180</width>
       <texture>backslide2.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <!--Videos-->
     <control>
@@ -27,6 +27,7 @@
       <posX>100</posX>
       <posY>150</posY>
       <label>#playlisttype</label>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Playlist folder btn</description>

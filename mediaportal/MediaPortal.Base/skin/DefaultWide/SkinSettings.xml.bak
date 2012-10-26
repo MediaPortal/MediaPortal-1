@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<profile>
+  <section name="booleansettings">
+    <entry name="#skin.tvguide.usecolorsforbuttons">True</entry>
+    <entry name="#skin.tvguide.usecolorsforgenre">True</entry>
+    <entry name="#skin.tvguide.useborderhighlight">False</entry>
+    <entry name="#skin.tvguide.showgenrekey">True</entry>
+    <entry name="#skin.fanart.basichome">False</entry>
+    <entry name="#skin.theme.backdrops">False</entry>
+    <entry name="#skin.category.fanart">False</entry>
+    <entry name="#skin.no.category.fanart">True</entry>
+    <entry name="#skin.no.latestmedia">False</entry>
+  </section>
+  <section name="theme">
+    <entry name="name">Skin default</entry>
+    <entry name="name">No Animation on BasicHome</entry>
+  </section>
+  <section name="tvguidecolors">
+    <entry name="guidecolorchannelbutton">FF404040</entry>
+    <entry name="guidecolorchannelbuttonselected">FF6495ED</entry>
+    <entry name="guidecolorgroupbutton">FF404040</entry>
+    <entry name="guidecolorgroupbuttonselected">FF6495ED</entry>
+    <entry name="guidecolorprogramselected">FF6495ED</entry>
+    <entry name="guidecolorprogramended">FF202020</entry>
+    <entry name="guidecolorborderhighlight">FF6DF0FF</entry>
+    <entry name="defaultgenre">FF83A17D,FF404040</entry>
+    <entry name="0">FF18D22E,FF18D22E</entry>
+    <entry name="1">FFFF69B4,FFFF69B4</entry>
+    <entry name="2">FFFA1919,FFFA1919</entry>
+    <entry name="3">FF800000,FF800000</entry>
+    <entry name="4">FF2169EE,FF2169EE</entry>
+    <entry name="5">FFFFD700,FFFFD700</entry>
+    <entry name="6">FF006400,FF006400</entry>
+  </section>
+</profile>

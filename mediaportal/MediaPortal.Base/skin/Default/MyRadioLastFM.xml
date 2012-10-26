@@ -4,40 +4,52 @@
   <id>7890</id>
   <defaultcontrol>10</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <define>#selecteditem:#Play.Current.Lastfm.CurrentStream</define>
+  <define>#selecteditem:#Play.Current.Title  |  #Play.Current.Artist  |  #Play.Current.Album</define>
   <controls>
     <control>
+      <description>BG</description>
       <type>image</type>
-      <description>background image</description>
-      <id>0</id>
-      <width>720</width>
-      <height>576</height>
+      <id>1</id>
+      <texture>BH Radio.jpg</texture>
+      <posX>-160</posX>
+      <posY>0</posY>
+      <width>1280</width>
+      <height>720</height>
     </control>
+    <import>common.music.play.fanart.xml</import>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
-    <import>common.music.play.fanart.xml</import>
     <control>
+      <type>label</type>
+      <description>stream label</description>
       <id>0</id>
-      <description>album/artist/genre etc info label</description>
-      <type>fadelabel</type>
+      <posX>22</posX>
+      <posY>30</posY>
+      <width>533</width>
+      <label>#Play.Current.Lastfm.CurrentStream</label>
+      <font>font11</font>
+      <align>left</align>
+      <textcolor>ivory</textcolor>
+    </control>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
       <posX>0</posX>
-      <posY>68</posY>
-      <width>720</width>
-      <font>font17</font>
-      <align>center</align>
-      <label>#(L(179)): #Play.Current.Title\r#(L(171)) #Play.Current.Artist\r#(L(170)) #Play.Current.Album</label>
-      <textcolor>ff6FAFE1</textcolor>
-      <visible>player.hasaudio</visible>
+      <posY>30</posY>
+      <width>960</width>
+      <height>720</height>
+      <texture>general_overlay.png</texture>
     </control>
     <control>
       <type>image</type>
       <description>artist art image</description>
       <id>112</id>
-      <posX>505</posX>
-      <posY>115</posY>
-      <width>174</width>
-      <height>174</height>
-      <texture mask="picturethumbmask.png">#Play.Current.ArtistThumb</texture>
+      <posX>708</posX>
+      <posY>245</posY>
+      <width>195</width>
+      <height>195</height>
+      <texture mask="cdthumbmask.png">#Play.Current.ArtistThumb</texture>
       <centered>yes</centered>
       <visible>player.hasmedia</visible>
     </control>
@@ -45,11 +57,11 @@
       <type>image</type>
       <description>artist art image</description>
       <id>0</id>
-      <posX>505</posX>
-      <posY>115</posY>
-      <width>174</width>
-      <height>174</height>
-      <texture mask="picturethumbmask.png">picturethumbframe.png</texture>
+      <posX>708</posX>
+      <posY>245</posY>
+      <width>195</width>
+      <height>195</height>
+      <texture mask="cdthumbmask.png">cdthumbframe.png</texture>
       <centered>yes</centered>
       <visible>player.hasmedia</visible>
     </control>
@@ -57,14 +69,14 @@
       <description>group element</description>
       <type>group</type>
       <layout>StackLayout</layout>
-      <posX>39</posX>
-      <posY>109</posY>
+      <posX>37</posX>
+      <posY>180</posY>
       <control>
         <description>start a stream</description>
         <type>button</type>
         <id>10</id>
-        <posX>59</posX>
-        <posY>109</posY>
+        <posX>79</posX>
+        <posY>137</posY>
         <label>34001</label>
         <onleft>10</onleft>
         <onright>123</onright>
@@ -125,86 +137,76 @@
       </control>
     </control>
     <control>
-      <type>label</type>
-      <description>stream label</description>
-      <id>0</id>
-      <posX>821</posX>
-      <posY>76</posY>
-      <width>399</width>
-      <label>#Play.Current.Lastfm.CurrentStream</label>
-      <font>font12</font>
-      <align>left</align>
-      <textcolor>ffffffff</textcolor>
-    </control>
-    <control>
-      <type>label</type>
-      <description>track progress label</description>
-      <id>0</id>
-      <posX>489</posX>
-      <posY>372</posY>
-      <label>#currentplaytime</label>
-      <font>font14</font>
-      <align>left</align>
-      <textcolor>ivory</textcolor>
-      <visible>player.hasmedia</visible>
-    </control>
-    <control>
       <type>image</type>
-      <id>0</id>
-      <posX>540</posX>
-      <posY>374</posY>
-      <width>101</width>
-      <height>21</height>
-      <texture>osd_progress_background.png</texture>
-      <visible>player.hasmedia</visible>
+      <id>117</id>
+      <posX>711</posX>
+      <posY>452</posY>
+      <width>190</width>
+      <height>18</height>
+      <texture>osd_progress_background_medium.png</texture>
+      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
     </control>
     <control>
       <description>progress bar</description>
       <type>progress</type>
-      <id>1</id>
-      <posX>540</posX>
-      <posY>377</posY>
-      <width>101</width>
-      <offset>0</offset>
+      <id>118</id>
+      <posX>701</posX>
+      <posY>453</posY>
+      <width>205</width>
       <height>16</height>
-      <innerheight>16</innerheight>
-      <texturebg>-</texturebg>
-      <lefttexture>-</lefttexture>
-      <midtexture>osd_progress_mid.png</midtexture>
-      <righttexture>-</righttexture>
       <label>#percentage</label>
-      <visible>player.hasmedia</visible>
+      <texturebg>-</texturebg>
+      <onlymidtexture>no</onlymidtexture>
+      <midwidth>205</midwidth>
+      <midheight>16</midheight>
+      <midoffsetX>0</midoffsetX>
+      <midoffsetY>0</midoffsetY>
+      <lefttexture>osd_progress_left.png</lefttexture>
+      <midtexture>osd_progress_mid.png</midtexture>
+      <righttexture>osd_progress_right.png</righttexture>
+      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
+    </control>
+    <control>
+      <type>label</type>
+      <description>track progress label</description>
+      <id>119</id>
+      <posX>704</posX>
+      <posY>445</posY>
+      <label>#currentplaytime</label>
+      <font>font14</font>
+      <align>right</align>
+      <textcolor>ivory</textcolor>
+      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
     </control>
     <control>
       <type>label</type>
       <description>track duration label</description>
-      <id>0</id>
-      <posX>691</posX>
-      <posY>372</posY>
-      <label>#trackduration</label>
+      <id>110</id>
+      <posX>909</posX>
+      <posY>445</posY>
+      <label>#currentremaining</label>
       <font>font14</font>
-      <align>right</align>
+      <align>left</align>
       <textcolor>ivory</textcolor>
-      <visible>player.hasmedia</visible>
+      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
     </control>
-    <control Style="BasicHomeFade">
-      <description>background for hints/tags</description>
+    <control>
+      <description>Seperator</description>
       <type>image</type>
-      <id>0</id>
-      <posX>28</posX>
-      <posY>450</posY>
-      <width>663</width>
-      <height>104</height>
-      <texture mask="osd_mask.png">black.png</texture>
-      <colordiffuse>80ffffff</colordiffuse>
-      <visible>control.hastext(444)|control.hastext(333)</visible>
+      <id>1</id>
+      <posX>60</posX>
+      <posY>515</posY>
+      <width>855</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
     </control>
     <control>
       <type>label</type>
       <description>similar hint</description>
       <id>443</id>
-      <posX>42</posX>
-      <posY>461</posY>
+      <posX>57</posX>
+      <posY>527</posY>
       <label>34039</label>
       <font>font12</font>
       <align>left</align>
@@ -215,10 +217,10 @@
       <type>textbox</type>
       <description>Similar artists box</description>
       <id>444</id>
-      <posX>42</posX>
-      <posY>484</posY>
-      <width>337</width>
-      <height>72</height>
+      <posX>57</posX>
+      <posY>556</posY>
+      <width>400</width>
+      <height>90</height>
       <label>#Play.Current.Lastfm.SimilarArtists</label>
       <font>font11</font>
       <align>left</align>
@@ -228,8 +230,8 @@
       <type>label</type>
       <description>tag hint</description>
       <id>332</id>
-      <posX>470</posX>
-      <posY>461</posY>
+      <posX>527</posX>
+      <posY>527</posY>
       <label>34041</label>
       <font>font12</font>
       <align>left</align>
@@ -240,10 +242,10 @@
       <type>textbox</type>
       <description>Track tags box</description>
       <id>333</id>
-      <posX>470</posX>
-      <posY>484</posY>
-      <width>209</width>
-      <height>72</height>
+      <posX>527</posX>
+      <posY>556</posY>
+      <width>379</width>
+      <height>90</height>
       <label>#Play.Current.Lastfm.TrackTags</label>
       <font>font11</font>
       <align>left</align>
@@ -253,30 +255,31 @@
       <type>listcontrol</type>
       <description>current playlist control</description>
       <id>123</id>
-      <posX>208</posX>
-      <posY>112</posY>
-      <height>355</height>
-      <width>281</width>
+      <posX>277</posX>
+      <posY>180</posY>
+      <height>444</height>
+      <width>375</width>
       <onleft>10</onleft>
       <onright>123</onright>
-      <font>font11</font>
-      <font2>font11</font2>
-      <font3>font11</font3>
+      <font>font12</font>
+      <font2>font12</font2>
+      <font3>font12</font3>
       <textcolor2>ffffffff</textcolor2>
-      <textXOff>24</textXOff>
-      <textXOff2>42</textXOff2>
-      <textXOff3>124</textXOff3>
-      <textYOff>11</textYOff>
-      <textYOff2>17</textYOff2>
-      <textYOff3>17</textYOff3>
-      <IconXOff>25</IconXOff>
-      <textureFocus>lastfm_focus.png</textureFocus>
+      <textXOff>3</textXOff>
+      <textXOff2>56</textXOff2>
+      <textXOff3>166</textXOff3>
+      <textYOff>14</textYOff>
+      <textYOff2>22</textYOff2>
+      <textYOff3>22</textYOff3>
+      <IconXOff>4</IconXOff>
+      <IconYOff>7</IconYOff>
+      <textureFocus>list_sub_focus.png</textureFocus>
       <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
-      <keepaspectratio>no</keepaspectratio>
-      <textureHeight>48</textureHeight>
-      <itemHeight>40</itemHeight>
-      <itemWidth>28</itemWidth>
-      <spaceBetweenItems>1</spaceBetweenItems>
+      <keepaspectratio>yes</keepaspectratio>
+      <textureHeight>50</textureHeight>
+      <itemHeight>50</itemHeight>
+      <itemWidth>37</itemWidth>
+      <spaceBetweenItems>2</spaceBetweenItems>
       <visible>player.hasmedia</visible>
     </control>
   </controls>

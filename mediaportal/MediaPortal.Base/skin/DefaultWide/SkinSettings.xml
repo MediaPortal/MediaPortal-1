@@ -5,9 +5,15 @@
     <entry name="#skin.tvguide.usecolorsforgenre">True</entry>
     <entry name="#skin.tvguide.useborderhighlight">False</entry>
     <entry name="#skin.tvguide.showgenrekey">True</entry>
+    <entry name="#skin.fanart.basichome">False</entry>
+    <entry name="#skin.theme.backdrops">False</entry>
+    <entry name="#skin.category.fanart">False</entry>
+    <entry name="#skin.no.category.fanart">False</entry>
+    <entry name="#skin.no.latestmedia">False</entry>
   </section>
   <section name="theme">
     <entry name="name">Skin default</entry>
+    <entry name="name">No Animation on BasicHome</entry>
   </section>
   <section name="tvguidecolors">
     <entry name="guidecolorchannelbutton">FF404040</entry>

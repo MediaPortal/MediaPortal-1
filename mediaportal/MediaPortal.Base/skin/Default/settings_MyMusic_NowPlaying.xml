@@ -7,25 +7,24 @@
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
-    <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
       <description>background</description>
       <type>image</type>
       <id>1</id>
-      <posX>146</posX>
-      <posY>108</posY>
-      <height>312</height>
-      <width>438</width>
+      <posX>195</posX>
+      <posY>135</posY>
+      <height>390</height>
+      <width>585</width>
       <texture>backslide2.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <control>
       <description>Dynamic content label</description>
       <type>label</type>
       <id>1</id>
-      <posX>168</posX>
-      <posY>136</posY>
+      <posX>225</posX>
+      <posY>170</posY>
       <label>300175</label>
     </control>
     <control>
@@ -33,9 +32,9 @@
       <type>checkbutton</type>
       <id>2</id>
       <label>300176</label>
-      <posX>168</posX>
-      <posY>172</posY>
-      <width>388</width>
+      <posX>225</posX>
+      <posY>215</posY>
+      <width>517</width>
       <onup>17</onup>
     </control>
     <control>
@@ -43,35 +42,35 @@
       <type>checkbutton</type>
       <id>3</id>
       <label>300177</label>
-      <posX>168</posX>
-      <posY>208</posY>
-      <width>388</width>
+      <posX>225</posX>
+      <posY>260</posY>
+      <width>517</width>
     </control>
     <control>
       <description>Disable interent lookups for track suggestions</description>
       <type>checkbutton</type>
       <id>4</id>
       <label>300178</label>
-      <posX>168</posX>
-      <posY>244</posY>
-      <width>388</width>
+      <posX>225</posX>
+      <posY>305</posY>
+      <width>517</width>
     </control>
     <control>
       <description>Switch artists</description>
       <type>checkbutton</type>
       <id>5</id>
       <label>300179</label>
-      <posX>168</posX>
-      <posY>280</posY>
-      <width>388</width>
+      <posX>225</posX>
+      <posY>350</posY>
+      <width>517</width>
     </control>
     <control>
       <description>VuMeter label</description>
       <type>label</type>
       <id>1</id>
-      <posX>168</posX>
-      <posY>328</posY>
-      <width>388</width>
+      <posX>225</posX>
+      <posY>410</posY>
+      <width>517</width>
       <label>300180</label>
     </control>
     <control>
@@ -79,8 +78,8 @@
       <type>button</type>
       <id>6</id>
       <label>#vumeter</label>
-      <posX>168</posX>
-      <posY>364</posY>
+      <posX>225</posX>
+      <posY>455</posY>
       <ondown>2</ondown>
     </control>
   </controls>
