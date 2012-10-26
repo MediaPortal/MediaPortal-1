@@ -332,7 +332,17 @@ namespace TvLibrary.Implementations.DVB
           //move diseqc motor to correct satellite
           if (dvbsChannel != null && dvbsChannel.SatelliteIndex > 0 && _conditionalAccess.DiSEqCMotor != null)
           {
-            _conditionalAccess.DiSEqCMotor.GotoPosition((byte)dvbsChannel.SatelliteIndex);
+              if (_conditionalAccess.DiSEqCMotor.UsalsEnabled)
+              {
+                  double SatLong;
+                  SatLong = Satellite.Retrieve(dvbsChannel.SatelliteIndex).SatelliteLongitude;
+                  if (SatLong != 9999)
+                      _conditionalAccess.DiSEqCMotor.GotoUSALSPosition(SatLong, false);
+              }
+              else
+              {
+                  _conditionalAccess.DiSEqCMotor.GotoPosition((byte)dvbsChannel.SatelliteIndex);
+              }      
           }
         }
         return true;
@@ -393,7 +403,17 @@ namespace TvLibrary.Implementations.DVB
           //move diseqc motor to correct satellite
           if (dvbsChannel != null && dvbsChannel.SatelliteIndex > 0 && _conditionalAccess.DiSEqCMotor != null)
           {
-            _conditionalAccess.DiSEqCMotor.GotoPosition((byte)dvbsChannel.SatelliteIndex);
+              if (_conditionalAccess.DiSEqCMotor.UsalsEnabled)
+              {
+                  double SatLong;
+                  SatLong = Satellite.Retrieve(dvbsChannel.SatelliteIndex).SatelliteLongitude;
+                  if (SatLong != 9999)
+                      _conditionalAccess.DiSEqCMotor.GotoUSALSPosition(SatLong, false);
+              }
+              else
+              {
+                  _conditionalAccess.DiSEqCMotor.GotoPosition((byte)dvbsChannel.SatelliteIndex);
+              }
           }
         }
       }

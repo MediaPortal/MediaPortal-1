@@ -1186,6 +1186,11 @@ namespace TvLibrary.Implementations.DVB
       _disEqcMotor.GotoPosition(position);
     }
 
+    private void DisEqcGotoUSALSPosition(double SatLong, bool IsSetup)
+    {
+        _disEqcMotor.GotoUSALSPosition(SatLong, IsSetup);
+    }
+
     /// <summary>
     /// Handles DiSEqC motor operations
     /// </summary>

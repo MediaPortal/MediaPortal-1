@@ -3458,16 +3458,45 @@ namespace TvService
       _cards[cardId].DisEqC.GotoReferencePosition();
     }
 
-    public void DiSEqCGotoPosition(int cardId, byte position)
+    public void DiSEqCGotoUSALSPosition(int cardId, double SatLong, bool IsSetup)
     {
       if (ValidateTvControllerParams(cardId))
       {
         return;
       }
 
-      _cards[cardId].DisEqC.GotoStoredPosition(position);
+      _cards[cardId].DisEqC.GotoUsalsPosition(SatLong,IsSetup);
     }
 
+    public void DiSEqCSetSiteLat(int cardId, double Lat)
+    {
+        if (ValidateTvControllerParams(cardId))
+        {
+            return;
+        }
+
+        _cards[cardId].DisEqC.SetSiteLat(Lat);
+    }
+
+    public void DiSEqCSetSiteLong(int cardId, double Long)
+    {
+        if (ValidateTvControllerParams(cardId))
+        {
+            return;
+        }
+
+        _cards[cardId].DisEqC.SetSiteLong(Long);
+    }
+
+    public void DiSEqCGotoPosition(int cardId, byte position)
+    {
+        if (ValidateTvControllerParams(cardId))
+        {
+            return;
+        }
+
+        _cards[cardId].DisEqC.GotoStoredPosition(position);
+    }
     #endregion
 
     /// <summary>

@@ -460,6 +460,27 @@ namespace TvControl
     /// <param name="position">position</param>
     void DiSEqCGotoPosition(int cardId, byte position);
 
+    // <summary>
+    /// Go to the DiSEqC position for the given card
+    /// </summary>
+    /// <param name="cardId">card id</param>
+    /// <param name="position">position</param>
+    void DiSEqCGotoUSALSPosition(int cardId, double SatLong, bool IsSetup);
+
+    /// <summary>
+    /// Go to the DiSEqC position for the given card
+    /// </summary>
+    /// <param name="cardId">card id</param>
+    /// <param name="Lat">Latitude</param>
+    void DiSEqCSetSiteLat(int cardId, double Lat);
+
+    /// <summary>
+    /// Go to the DiSEqC position for the given card
+    /// </summary>
+    /// <param name="cardId">card id</param>
+    /// <param name="Long">Longitude</param>
+    void DiSEqCSetSiteLong(int cardId, double Long);
+
     /// <summary>
     /// Gets the DiSEqC position for the given card
     /// </summary>

@@ -97,6 +97,36 @@ namespace TvDatabase
     }
 
     /// <summary>
+    /// Property relating to database column idServer
+    /// </summary>
+    public double SatelliteLongitude
+    {
+        get
+        {
+
+            if (satelliteName == "")
+                return 9999;
+
+            double returnvalue = 9999;
+
+            for (int i = 0; i <= 6; i++)
+            {
+                if (satelliteName[i] == 'E' || satelliteName[i] == 'W')
+                {
+                    string toconvert = satelliteName.Substring(0, i);
+                    returnvalue = Convert.ToDouble(toconvert);
+                    if (satelliteName[i] == 'W')
+                    {
+                        returnvalue = -returnvalue;
+                    }
+                    break;
+                }
+            }
+            return returnvalue;
+        }
+    }
+
+    /// <summary>
     /// Property relating to database column hostName
     /// </summary>
     public string TransponderFileName

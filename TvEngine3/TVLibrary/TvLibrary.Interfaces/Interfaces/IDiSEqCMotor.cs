@@ -82,6 +82,11 @@ namespace TvLibrary.Interfaces
     bool ForceLimits { set; }
 
     /// <summary>
+    /// Enable/disables the west/east limits.
+    /// </summary>
+    bool UsalsEnabled { get; }
+
+    /// <summary>
     /// Drives the motor.
     /// </summary>
     /// <param name="direction">The direction.</param>
@@ -104,8 +109,24 @@ namespace TvLibrary.Interfaces
     void GotoPosition(byte position);
 
     /// <summary>
+    /// Goto's the position.
+    /// </summary>
+    void GotoUSALSPosition(double SatLong, bool IsSetup);
+
+    /// <summary>
     /// Gets the current motor position.
     /// </summary>
     void GetPosition(out int satellitePosition, out int stepsAzimuth, out int stepsElevation);
+
+    /// <summary>
+    /// Sets the Site Latitude of the Motor
+    /// </summary>
+    double SiteLat { set; }
+
+    /// <summary>
+    /// Sets the Site Longitude of the Motor
+    /// </summary>
+    double SiteLong { set; }
+
   }
 }

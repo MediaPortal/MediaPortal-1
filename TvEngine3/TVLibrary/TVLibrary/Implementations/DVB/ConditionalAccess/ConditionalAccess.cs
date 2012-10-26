@@ -102,11 +102,34 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
+
+        double siteLat = 0;
+        double siteLong = 0;
+        bool UseUsals = false;
+
         //System.Diagnostics.Debugger.Launch();        
         if (card != null && card.DevicePath != null)
         {
           //fetch decrypt limit from DB and apply it.
           TvBusinessLayer layer = new TvBusinessLayer();
+
+          // Get Usals value's 
+          Setting setting = layer.GetSetting("dvbs" + card.CardId + "useUsals", "0");
+          Log.Log.Debug("dvbs" + card.CardId + "useUsals" + "-" + setting.Value);
+
+          if (setting.Value.ToUpper() == "TRUE")
+          {
+              UseUsals = true;
+              //Usals enabled, get Site Lat and Long
+              setting = layer.GetSetting("dvbs" + card.CardId + "siteLat", "0");
+              Double.TryParse(setting.Value, out siteLat);
+
+              siteLat = Convert.ToDouble(setting.Value);
+              setting = layer.GetSetting("dvbs" + card.CardId + "siteLong", "0");
+              Double.TryParse(setting.Value, out siteLong);
+              Log.Log.Debug(siteLong.ToString() + "-" + siteLat.ToString());
+          }
+
           Card c = layer.GetCardByDevicePath(card.DevicePath);
           _decryptLimit = c.DecryptLimit;
           _useCam = c.CAM;
@@ -143,6 +166,9 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.WriteFile("Digital Everywhere card detected");
             _diSEqCMotor = new DiSEqCMotor(_digitalEveryWhere);
+            _diSEqCMotor.UsalsEnabled = UseUsals;
+            _diSEqCMotor.SiteLat = siteLat;
+            _diSEqCMotor.SiteLong = siteLong;
 
             if (_digitalEveryWhere.IsCamReady())
             {
@@ -160,10 +186,14 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.WriteFile("Twinhan card detected");
             _diSEqCMotor = new DiSEqCMotor(_twinhan);
+            _diSEqCMotor.UsalsEnabled = UseUsals;
+            _diSEqCMotor.SiteLat = siteLat;
+            _diSEqCMotor.SiteLong = siteLong;
             Log.Log.WriteFile("Twinhan registering CI menu capabilities");
             _ciMenu = _twinhan; // Register Twinhan CI Menu capabilities when CAM detected and ready
             return;
           }
+
           Release.DisposeToNull(ref _twinhan);
 
           Log.Log.WriteFile("Check for TechnoTrend");
@@ -192,6 +222,9 @@ namespace TvLibrary.Implementations.DVB
               _ciMenu = _winTvCiModule; // WinTv CI Menu capabilities 
             }
             _diSEqCMotor = new DiSEqCMotor(_hauppauge);
+            _diSEqCMotor.UsalsEnabled = UseUsals;
+            _diSEqCMotor.SiteLat = siteLat;
+            _diSEqCMotor.SiteLong = siteLong;
             return;
           }
           Release.DisposeToNull(ref _hauppauge);
@@ -211,6 +244,9 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.WriteFile("ProfRed card detected");
             _diSEqCMotor = new DiSEqCMotor(_profred);
+            _diSEqCMotor.UsalsEnabled = UseUsals;
+            _diSEqCMotor.SiteLat = siteLat;
+            _diSEqCMotor.SiteLong = siteLong;            
             return;
           }
           Release.DisposeToNull(ref _profred);
