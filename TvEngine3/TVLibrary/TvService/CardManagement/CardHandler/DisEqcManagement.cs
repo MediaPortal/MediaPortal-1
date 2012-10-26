@@ -208,7 +208,56 @@ namespace TvService
         return;
       motor.GotoPosition(position);
     }
+    /// <summary>
+    /// Drives the diseqc motor to the specified position
+    /// </summary>
+    /// <param name="position">The position.</param>
+    public void GotoUsalsPosition(double SatLong, bool IsSetup)
+    {
+        if (_cardHandler.IsLocal == false)
+        {
+            return;
+        }
 
+        IDiSEqCMotor motor = _cardHandler.Card.DiSEqCMotor;
+        if (motor == null)
+            return;
+        motor.GotoUSALSPosition(SatLong, IsSetup);
+    }
+
+    /// <summary>
+    /// Set Site Latitude
+    /// </summary>
+    /// <param name="Lat">Latitude</param>
+    public void SetSiteLat(double Lat)
+    {
+        if (_cardHandler.IsLocal == false)
+        {
+            return;
+        }
+
+        IDiSEqCMotor motor = _cardHandler.Card.DiSEqCMotor;
+        if (motor == null)
+            return;
+        motor.SiteLat = Lat;
+    }
+
+    /// <summary>
+    /// Set Site Longitude
+    /// </summary>
+    /// <param name="Long">Longitude</param>
+    public void SetSiteLong(double Long)
+    {
+        if (_cardHandler.IsLocal == false)
+        {
+            return;
+        }
+
+        IDiSEqCMotor motor = _cardHandler.Card.DiSEqCMotor;
+        if (motor == null)
+            return;
+        motor.SiteLong = Long;
+    }  
     #endregion
   }
 }

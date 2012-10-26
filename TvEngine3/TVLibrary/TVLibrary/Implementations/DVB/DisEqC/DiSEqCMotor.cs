@@ -211,6 +211,10 @@ namespace TvLibrary.Implementations.DVB
     private int _currentPosition = -1;
     private int _currentStepsAzimuth;
     private int _currentStepsElevation;
+    private double _siteLat = 0;
+    private double _siteLong = 0;
+    private bool _usalsEnabled = false;
+    private double _currentSatLong = 0;
 
     #endregion
 
@@ -339,6 +343,15 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
+    /// Get's or Set's whether to use Usals
+    /// </summary>
+    public bool UsalsEnabled
+    {
+        set { _usalsEnabled = value; }
+        get { return _usalsEnabled; }
+    }
+
+    /// <summary>
     /// Drives the motor.
     /// </summary>
     /// <param name="direction">The direction.</param>
@@ -460,5 +473,257 @@ namespace TvLibrary.Implementations.DVB
       stepsAzimuth = _currentStepsAzimuth;
       stepsElevation = _currentStepsElevation;
     }
+
+          /// <summary>
+    /// Goto the USALS position.
+    /// </summary>
+    public void GotoUSALSPosition(double satLong, bool IsSetup)
+    {
+        if (satLong == _currentSatLong)
+            return;
+
+        Log.Log.Write("DiSEqC: gotoUSALS Satellite Longitude {0}", satLong);
+        
+        double WaitOut = 25000;
+
+        if (_currentSatLong != 0)
+        {
+            WaitOut = (Math.Abs(_currentSatLong - satLong) * 600);
+        }
+
+        int[] gotoXTable;
+
+        gotoXTable = new int[10];
+        gotoXTable[0] = 0x00;
+        gotoXTable[1] = 0x02;
+        gotoXTable[2] = 0x03;
+        gotoXTable[3] = 0x05;
+        gotoXTable[4] = 0x06;
+        gotoXTable[5] = 0x08;
+        gotoXTable[6] = 0x0A;
+        gotoXTable[7] = 0x0B;
+        gotoXTable[8] = 0x0D;
+        gotoXTable[9] = 0x0E;
+
+        double SatLon = satLong;
+
+        Int32 RotorCmd;
+
+       
+        double SiteLat = _siteLat;
+        double SiteLon = _siteLong;
+
+        if (SiteLon < 0)
+            SiteLon = 360 - Math.Abs(SiteLon);
+
+        if (SatLon < 0)
+            SatLon = 360 - Math.Abs(SatLon);
+
+        double azimuth = calcAzimuth(SatLon, SiteLat, SiteLon);
+        double elevation = calcElevation(SatLon, SiteLat, SiteLon);
+        double declination = calcDeclination(SiteLat, azimuth, elevation);
+        double satHourAngle = calcSatHourangle(azimuth, elevation, declination, SiteLat);
+
+        if (SiteLat >= 0)
+        {
+            // Northern Hemisphere
+            int tmp = (int)Math.Round(Math.Abs(180 - satHourAngle) * 10.0);
+            RotorCmd = (tmp / 10) * 0x10 + gotoXTable[tmp % 10];
+
+            if (satHourAngle < 180)  // the east
+                RotorCmd |= 0xE000;
+            else                     // west
+                RotorCmd |= 0xD000;
+        }
+        else
+        {
+            // Southern Hemisphere
+            if (satHourAngle < 180)  // the east
+            {
+                int tmp = (int)Math.Round(Math.Abs(satHourAngle) * 10.0);
+                RotorCmd = (tmp / 10) * 0x10 + gotoXTable[tmp % 10];
+                RotorCmd |= 0xD000;
+            }
+            else
+            {                     // west
+                int tmp = (int)Math.Round(Math.Abs(360 - satHourAngle) * 10.0);
+                RotorCmd = (tmp / 10) * 0x10 + gotoXTable[tmp % 10];
+                RotorCmd |= 0xE000;
+            }
+        }
+        
+        byte[] cmd = new byte[5];
+        cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
+        cmd[1] = (byte)DiSEqCMovement.Azimutal;
+        cmd[2] = (byte)DiSEqCCommands.GotoAngularPosition;
+        cmd[3] = (byte)(RotorCmd >> 8);
+        cmd[4] = (byte)(RotorCmd & 0xFF);
+        _controller.SendDiSEqCCommand(cmd);
+        System.Threading.Thread.Sleep(100);
+        cmd[0] = (byte)DiSEqCFraming.RepeatedTransmission;
+        _controller.SendDiSEqCCommand(cmd);
+        if (IsSetup)
+            WaitOut = 100;
+        System.Threading.Thread.Sleep(Convert.ToInt32(WaitOut));
+        _currentSatLong = satLong;
+        _currentStepsAzimuth = 0;
+        _currentStepsElevation = 0;
+    }
+
+    /// <summary>
+    /// Set Site Latitude
+    /// </summary>
+    /// <param name="Lat">Latitude</param>
+    public double SiteLat
+    {
+        set
+        {
+            Log.Log.Debug("Site Latitude Changed to - " + value);
+            _siteLat = value;
+        }
+    }
+
+    /// <summary>
+    /// Set Site Longitude
+    /// </summary>
+    /// <param name="Long">Longitude</param>
+    public double SiteLong
+    {
+        set
+        {
+            Log.Log.Debug("Site Longitude Changed to - " + value);
+            _siteLong = value;
+        }
+    }
+
+    /// <summary>
+    /// Convert Degrees to Radians
+    /// </summary>
+    double Radians( double number )
+    {
+        return number * Math.PI / 180;
+    }
+
+    /// <summary>
+    /// Convert Radians to Degrees
+    /// </summary>
+    double Deg( double number )
+    {
+        return number*180/Math.PI;
+    }
+
+    /// <summary>
+    /// Reverse Longitude
+    /// </summary>
+    double Rev(double number)
+    {
+        return number - Math.Floor(number / 360.0) * 360;
+    }
+
+    /// <summary>
+    /// Calculates Elevation
+    /// </summary>
+    double calcElevation(double SatLon, double SiteLat, double SiteLon)
+    {
+    int Height_over_ocean = 0;
+    const double a0 = 0.58804392, a1 = -0.17941557, a2 = 0.29906946E-1, a3 = -0.25187400E-2, a4 = 0.82622101E-4;
+	const double f = 1.00 / 298.257;	// Earth flattning factor
+	const double r_sat = 42164.57;		// Distance from earth centre to satellite
+	const double r_eq = 6378.14;		// Earth radius
+	double sinRadSiteLat = Math.Sin(Radians(SiteLat)), cosRadSiteLat = Math.Cos(Radians(SiteLat));
+	double Rstation = r_eq / (Math.Sqrt(1.00 - f * (2.00 - f) * sinRadSiteLat * sinRadSiteLat));
+	double Ra = (Rstation + Height_over_ocean) * cosRadSiteLat;
+	double Rz = Rstation * (1.00 - f) * (1.00 - f) * sinRadSiteLat;
+	double alfa_rx = r_sat * Math.Cos(Radians(SatLon - SiteLon)) - Ra;
+	double alfa_ry = r_sat * Math.Sin(Radians(SatLon - SiteLon));
+	double alfa_rz = -Rz, alfa_r_north = -alfa_rx * sinRadSiteLat + alfa_rz * cosRadSiteLat;
+	double alfa_r_zenith = alfa_rx * cosRadSiteLat + alfa_rz * sinRadSiteLat;
+	double El_geometric = Deg(Math.Atan(alfa_r_zenith / Math.Sqrt(alfa_r_north * alfa_r_north + alfa_ry * alfa_ry)));
+	double x = Math.Abs(El_geometric + 0.589);
+	double refraction = Math.Abs(a0 + a1 * x + a2 * x * x + a3 * x * x * x + a4 * x * x * x * x);
+	double El_observed = 0.00;
+
+	if (El_geometric > 10.2)
+        El_observed = El_geometric + 0.01617 * (Math.Cos(Radians(Math.Abs(El_geometric))) / Math.Sin(Radians(Math.Abs(El_geometric))));
+	else {
+		El_observed = El_geometric + refraction;
+	}
+
+	if (alfa_r_zenith < -3000)
+		El_observed = -99;
+
+	return El_observed;
+    }
+
+    /// <summary>
+    /// Calculates Azimuth
+    /// </summary>
+    double calcAzimuth(double SatLon, double SiteLat, double SiteLon)
+    {
+        int Height_over_ocean = 0;
+	    const double f = 1.00 / 298.257;	// Earth flattning factor
+	    const double r_sat = 42164.57;		// Distance from earth centre to satellite
+	    const double r_eq = 6378.14;		// Earth radius
+    
+    	double sinRadSiteLat = Math.Sin(Radians(SiteLat)), cosRadSiteLat = Math.Cos(Radians(SiteLat));
+    	double Rstation = r_eq / (Math.Sqrt(1 - f * (2 - f) * sinRadSiteLat * sinRadSiteLat));
+    	double Ra = (Rstation + Height_over_ocean) * cosRadSiteLat;
+    	double Rz = Rstation * (1 - f) * (1 - f) * sinRadSiteLat;
+    	double alfa_rx = r_sat * Math.Cos(Radians(SatLon - SiteLon)) - Ra;
+    	double alfa_ry = r_sat * Math.Sin(Radians(SatLon - SiteLon));
+    	double alfa_rz = -Rz;
+    	double alfa_r_north = -alfa_rx * sinRadSiteLat + alfa_rz * cosRadSiteLat;
+    	double Azimuth = 0.00;
+    
+    	if (alfa_r_north < 0)
+		    Azimuth = 180 + Deg(Math.Atan(alfa_ry / alfa_r_north));
+	    else
+            Azimuth = Rev(360 + Deg(Math.Atan(alfa_ry / alfa_r_north)));
+    
+    	return Azimuth;
+    }
+
+    /// <summary>
+    /// Calculates Declination
+    /// </summary>
+    double calcDeclination(double SiteLat, double Azimuth, double Elevation)
+    {
+        return Deg(Math.Asin(Math.Sin(Radians(Elevation)) *
+                    Math.Sin(Radians(SiteLat)) +
+                    Math.Cos(Radians(Elevation)) *
+                    Math.Cos(Radians(SiteLat)) +
+                    Math.Cos(Radians(Azimuth))));
+    }
+
+    /// <summary>
+    /// Calculates Satellite Hour Angle
+    /// </summary>
+    double calcSatHourangle( double Azimuth, double Elevation, double Declination, double Lat )
+    {
+    	double a = - Math.Cos(Radians(Elevation)) *
+					 Math.Sin(Radians(Azimuth)),
+               b =   Math.Sin(Radians(Elevation)) *
+					 Math.Cos(Radians(Lat)) -
+					 Math.Cos(Radians(Elevation)) *
+					 Math.Sin(Radians(Lat)) *
+					 Math.Cos(Radians(Azimuth)),
+
+        // Works for all azimuths (northern & sourhern hemisphere)
+					 returnvalue = 180 + Deg(Math.Atan(a/b));
+        if ( Azimuth > 270 )
+	    {
+		    returnvalue = ( (returnvalue-180) + 360 );
+		    if (returnvalue>360)
+			    returnvalue = 360 - (returnvalue-360);
+        }
+
+	    if ( Azimuth < 90 )
+		    returnvalue = ( 180 - returnvalue );
+
+	    return returnvalue;
+    }
+  
   }
+
+
 }
