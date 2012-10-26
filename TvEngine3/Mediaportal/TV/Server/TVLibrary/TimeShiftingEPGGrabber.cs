@@ -64,11 +64,11 @@ namespace Mediaportal.TV.Server.TVLibrary
     {
       if (_updateThreadRunning)
       {
-        Log.InfoFormat("Timeshifting epg grabber not started because the db update thread is still running.");
+        Log.Info("Timeshifting epg grabber not started because the db update thread is still running.");
         return false;
       }
       LoadSettings();
-      Log.InfoFormat("Timeshifting epg grabber started.");
+      Log.Info("Timeshifting epg grabber started.");
       _grabStartTime = DateTime.Now;
       _epgTimer.Enabled = true;
       return true;
@@ -90,7 +90,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// </summary>
     public new void OnEpgCancelled()
     {
-      Log.InfoFormat("Timeshifting epg grabber stopped.");
+      Log.Info("Timeshifting epg grabber stopped.");
       _card.IsEpgGrabbing = false;
       _epgTimer.Enabled = false;
     }

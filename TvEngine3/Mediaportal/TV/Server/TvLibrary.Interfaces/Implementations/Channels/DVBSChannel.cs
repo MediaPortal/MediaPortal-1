@@ -335,7 +335,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
       }
 
       // 1: Log the default frequency settings for the LNB.
-      Log.DebugFormat("DvbsChannel: LNB settings, low = {0} kHz, high = {1} kHz, switch = {2} kHz, bandstacked = {3}, toroidal = {4}, polarisation = {5}",
+      Log.Debug("DvbsChannel: LNB settings, low = {0} kHz, high = {1} kHz, switch = {2} kHz, bandstacked = {3}, toroidal = {4}, polarisation = {5}",
           dvbsChannel.LnbType.LowBandFrequency, dvbsChannel.LnbType.HighBandFrequency, dvbsChannel.LnbType.SwitchFrequency,
           dvbsChannel.LnbType.IsBandStacked, dvbsChannel.LnbType.IsToroidal, dvbsChannel.Polarisation);
 
@@ -390,7 +390,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
       // This value is *not* arbitrary. Some drivers (for example Genpix SkyWalker) will treat 20 GHz as a signal to
       // always use high voltage (useful for bandstacked LNBs).
 
-      Log.DebugFormat("DvbsChannel: translated LNB settings, low = {0} kHz, high = {1} kHz, switch = {2} kHz, polarisation = {3}",
+      Log.Debug("DvbsChannel: translated LNB settings, low = {0} kHz, high = {1} kHz, switch = {2} kHz, polarisation = {3}",
           dvbsChannel.LnbType.LowBandFrequency, dvbsChannel.LnbType.HighBandFrequency, dvbsChannel.LnbType.SwitchFrequency,
           dvbsChannel.Polarisation);
       return dvbsChannel;

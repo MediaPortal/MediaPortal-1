@@ -108,7 +108,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 
       try
       {
-        Log.DebugFormat("Filter listview for " + filterText);
+        Log.Debug("Filter listview for " + filterText);
         _listView.Invoke(new MethodInvoker(delegate()
                                              {
                                                _listView.Items.Clear();
@@ -121,7 +121,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
           if (InvokeHasTextChanged(filterText))
           {
 //the search term changed while we were filtering
-            Log.DebugFormat("Cancel filtering for " + filterText);
+            Log.Debug("Cancel filtering for " + filterText);
             break;
           }
 
@@ -144,7 +144,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
                                                  _listView.Items.AddRange(items.ToArray());
                                                  _listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
                                                }));
-          Log.DebugFormat("Finished filtering " + items.Count + " items for " + filterText);
+          Log.Debug("Finished filtering " + items.Count + " items for " + filterText);
         }
         else
         {
@@ -153,7 +153,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       }
       catch (Exception exp)
       {
-        Log.ErrorFormat("RefreshAllChannels error: {0}", exp.StackTrace);
+        Log.Error("RefreshAllChannels error: {0}", exp.StackTrace);
       }
       finally
       {

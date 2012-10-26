@@ -95,17 +95,17 @@ namespace Mediaportal.TV.TvPlugin
                 Thread.Sleep(250);             
                 if (VideoThumbCreator.CreateVideoThumb(recFileName, thumbNail, true, true))
                 {
-                  Log.InfoFormat("RecordedTV: Thumbnail successfully created for - {0}", Utils.SplitFilename(recFileName));
+                  Log.Info("RecordedTV: Thumbnail successfully created for - {0}", Utils.SplitFilename(recFileName));
                 }
                 else
                 {
-                  Log.InfoFormat("RecordedTV: No thumbnail created for - {0}", Utils.SplitFilename(recFileName));
+                  Log.Info("RecordedTV: No thumbnail created for - {0}", Utils.SplitFilename(recFileName));
                 }
                 Thread.Sleep(250);
               }
               catch (Exception ex)
               {
-                Log.ErrorFormat(ex, "RecordedTV: No thumbnail created for {0}", Utils.SplitFilename(recFileName));
+                Log.Error(ex, "RecordedTV: No thumbnail created for {0}", Utils.SplitFilename(recFileName));
               }
             }
           }
@@ -365,7 +365,7 @@ namespace Mediaportal.TV.TvPlugin
 
           if (!_createRecordedThumbs)
           {
-            Log.InfoFormat("GUIRecordedTV: skipping thumbworker thread - RTSP mode is in use");
+            Log.Info("GUIRecordedTV: skipping thumbworker thread - RTSP mode is in use");
           }
           else
           {
@@ -375,7 +375,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       else
       {
-        Log.InfoFormat("GUIRecordedTV: thumbworker already running - didn't start another one");
+        Log.Info("GUIRecordedTV: thumbworker already running - didn't start another one");
       }
     }
 
@@ -582,7 +582,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat("TvRecorded: Error in ShowViews - {0}", ex.ToString());
+        Log.Error("TvRecorded: Error in ShowViews - {0}", ex.ToString());
       }
     }*/
 
@@ -628,7 +628,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "TVRecorded: Error updating button states");
+        Log.Error(ex, "TVRecorded: Error updating button states");
       }
     }
 
@@ -674,7 +674,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           return true;
         }
-        Log.InfoFormat("TVRecorded: ShowFullScreenWindow switching to fullscreen video");
+        Log.Info("TVRecorded: ShowFullScreenWindow switching to fullscreen video");
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_TVFULLSCREEN);
         GUIGraphicsContext.IsFullScreenVideo = true;
         return true;
@@ -694,7 +694,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "TvRecorded: Error in ShowUpcomingEpisodes");
+        Log.Error(ex, "TvRecorded: Error in ShowUpcomingEpisodes");
       }
     }
 
@@ -792,7 +792,7 @@ namespace Mediaportal.TV.TvPlugin
           Utils.SetDefaultIcons(item);
           itemlist.Add(item);
 
-          // Log.DebugFormat("TVRecorded: Currently showing the virtual folder contents of {0}", _currentLabel);
+          // Log.Debug("TVRecorded: Currently showing the virtual folder contents of {0}", _currentLabel);
           foreach (Recording rec in recordings)
           {
             bool addToList = true;
@@ -830,7 +830,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "TvRecorded: Error fetching recordings from database");
+        Log.Error(ex, "TvRecorded: Error fetching recordings from database");
       }
 
       try
@@ -854,7 +854,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex2)
       {
-        Log.ErrorFormat("TvRecorded: Error adding recordings to list - {0}", ex2.Message);
+        Log.Error("TvRecorded: Error adding recordings to list - {0}", ex2.Message);
       }
 
       //set object count label
@@ -908,7 +908,7 @@ namespace Mediaportal.TV.TvPlugin
           strChannelName = refCh.DisplayName;
         }        
 
-        // Log.DebugFormat("TVRecorded: BuildItemFromRecording [{0}]: {1} ({2}) on channel {3}", _currentDbView.ToString(), aRecording.title, aRecording.ProgramCategory.category, strChannelName);
+        // Log.Debug("TVRecorded: BuildItemFromRecording [{0}]: {1} ({2}) on channel {3}", _currentDbView.ToString(), aRecording.title, aRecording.ProgramCategory.category, strChannelName);
         item = new GUIListItem();
         switch (_currentDbView)
         {
@@ -969,7 +969,7 @@ namespace Mediaportal.TV.TvPlugin
       catch (Exception singleex)
       {
         item = null;
-        Log.ErrorFormat(singleex, "TVRecorded: Error building item from recording {0}", aRecording.FileName);
+        Log.Error(singleex, "TVRecorded: Error building item from recording {0}", aRecording.FileName);
       }
 
       return item;
@@ -1031,11 +1031,11 @@ namespace Mediaportal.TV.TvPlugin
               item1.IsPlayed = true;
             }
           }
-          //Log.DebugFormat("TvRecorded: SetLabels - 1: {0}, 2: {1}, 3: {2}", item1.Label, item1.Label2, item1.Label3);
+          //Log.Debug("TvRecorded: SetLabels - 1: {0}, 2: {1}, 3: {2}", item1.Label, item1.Label2, item1.Label3);
         }
         catch (Exception ex)
         {
-          Log.ErrorFormat(ex, "TVRecorded: error in SetLabels");
+          Log.Error(ex, "TVRecorded: error in SetLabels");
         }
       }
     }
@@ -1176,7 +1176,7 @@ namespace Mediaportal.TV.TvPlugin
       {
         if (isRecPlaying)
         {
-          Log.InfoFormat("g_Player.Stopped {0}", g_Player.Stopped);
+          Log.Info("g_Player.Stopped {0}", g_Player.Stopped);
           g_Player.Stop();
         }
         DeleteRecordingAndUpdateGUI(rec);
@@ -1331,7 +1331,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "TvRecorded: Error updating properties");
+        Log.Error(ex, "TvRecorded: Error updating properties");
       }
     }
 
@@ -1375,7 +1375,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "TvRecorded: Error setting item properties");
+        Log.Error(ex, "TvRecorded: Error setting item properties");
       }
     }
 
@@ -1428,7 +1428,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "TvRecorded: Error sorting items");
+        Log.Error(ex, "TvRecorded: Error sorting items");
       }
     }
 
@@ -1662,7 +1662,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "TvRecorded: Error comparing files");
+        Log.Error(ex, "TvRecorded: Error comparing files");
         return 0;
       }
     }
@@ -1679,7 +1679,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private void doOnPlayBackStoppedOrChanged(g_Player.MediaType type, int stoptime, string filename, string caller)
     {
-      Log.InfoFormat("TvRecorded:{0} {1} {2}", caller, type, filename);
+      Log.Info("TvRecorded:{0} {1} {2}", caller, type, filename);
       if (type != g_Player.MediaType.Recording)
       {
         return;
@@ -1699,7 +1699,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       else
       {
-        Log.InfoFormat("TvRecorded:{0} no recording found with filename {1}", caller, filename);
+        Log.Info("TvRecorded:{0} no recording found with filename {1}", caller, filename);
       }     
     }
 
@@ -1759,7 +1759,7 @@ namespace Mediaportal.TV.TvPlugin
       eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
       int prefLangIdx = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Log.DebugFormat("TVRecorded.OnPlayRecordingBackStarted(): setting audioIndex on tsreader {0}", prefLangIdx);
+      Log.Debug("TVRecorded.OnPlayRecordingBackStarted(): setting audioIndex on tsreader {0}", prefLangIdx);
       g_Player.CurrentAudioStream = prefLangIdx;
 
       if (dualMonoMode != eAudioDualMonoMode.UNSUPPORTED)

@@ -58,7 +58,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat("ChannelManagement.GetAllChannelsByGroupIdAndMediaType ex={0}", ex);
+        Log.Error("ChannelManagement.GetAllChannelsByGroupIdAndMediaType ex={0}", ex);
         throw;
       }
     }
@@ -75,7 +75,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat("ChannelManagement.GetAllChannelsByGroupIdAndMediaType ex={0}", ex);
+        Log.Error("ChannelManagement.GetAllChannelsByGroupIdAndMediaType ex={0}", ex);
         throw;
       }
     }
@@ -846,7 +846,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.MediaType == (int)mediaType).OrderBy(c => c.SortOrder);
         query = channelRepository.IncludeAllRelations(query, includeRelations);
-        //Log.DebugFormat("ListAllChannelsByMediaType(MediaTypeEnum mediaType, ChannelIncludeRelationEnum includeRelations) SQL = {0}", query.ToTraceString());
+        //Log.Debug("ListAllChannelsByMediaType(MediaTypeEnum mediaType, ChannelIncludeRelationEnum includeRelations) SQL = {0}", query.ToTraceString());
         return query.ToList();
       }
     }
@@ -872,7 +872,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat("ChannelManagement.GetAllChannelsByGroupIdAndMediaType ex={0}", ex);
+        Log.Error("ChannelManagement.GetAllChannelsByGroupIdAndMediaType ex={0}", ex);
         throw;
       }
     }

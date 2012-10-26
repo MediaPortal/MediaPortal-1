@@ -95,10 +95,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         if (_devicesInUse[i].Mon == device.Mon && _devicesInUse[i].Name == device.Name &&
             _devicesInUse[i].DevicePath == device.DevicePath)
         {
-          Log.DebugFormat("device in use", device.Name);
-          Log.DebugFormat("  moniker   :{0} ", device.Mon);
-          Log.DebugFormat("  name      :{0} ", device.Name);
-          Log.DebugFormat("  devicepath:{0} ", device.DevicePath);
+          Log.Debug("device in use", device.Name);
+          Log.Debug("  moniker   :{0} ", device.Mon);
+          Log.Debug("  name      :{0} ", device.Name);
+          Log.Debug("  devicepath:{0} ", device.DevicePath);
           return true;
         }
       }

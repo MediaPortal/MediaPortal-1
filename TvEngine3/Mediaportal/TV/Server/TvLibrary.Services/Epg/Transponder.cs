@@ -126,7 +126,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       {
         if (Index < 0 || Index >= Channels.Count)
         {
-          Log.ErrorFormat("transponder index out of range:{0}/{1}", Index, Channels.Count);
+          Log.Error("transponder index out of range:{0}/{1}", Index, Channels.Count);
           return null;
         }                
         return ChannelManagement.GetTuningChannelByType(Channels[Index], TuningDetail.ChannelType);
@@ -146,7 +146,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
         return;
       Channels[Index].LastGrabTime = DateTime.Now;
       ChannelManagement.SaveChannel(Channels[Index]);
-      Log.DebugFormat("EPG: database updated for #{0} {1}", Index, Channels[Index].DisplayName);
+      Log.Debug("EPG: database updated for #{0} {1}", Index, Channels[Index].DisplayName);
     }
 
     /// <summary>
@@ -187,12 +187,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     /// </summary>
     public void Dump()
     {
-      Log.DebugFormat("Transponder:{0} {1} {2} {3} {4} {5}", _currentChannelIndex, TuningDetail.ChannelType,
+      Log.Debug("Transponder:{0} {1} {2} {3} {4} {5}", _currentChannelIndex, TuningDetail.ChannelType,
                 TuningDetail.Frequency, TuningDetail.Modulation, TuningDetail.Symbolrate, TuningDetail.Bandwidth,
                 TuningDetail.Polarisation);
       foreach (Channel c in _channels)
       {
-        Log.DebugFormat(" {0}", c.DisplayName);
+        Log.Debug(" {0}", c.DisplayName);
       }
     }
 

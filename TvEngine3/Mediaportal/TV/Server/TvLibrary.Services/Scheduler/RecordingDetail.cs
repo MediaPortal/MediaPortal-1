@@ -190,7 +190,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
         }
         catch (Exception e)
         {
-          Log.ErrorFormat("RecordingDetail: exception occured {0}", e);
+          Log.Error("RecordingDetail: exception occured {0}", e);
         }
 
         return isRecording;
@@ -224,12 +224,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       Setting setting;
       if (!IsSerie)
       {
-        Log.DebugFormat("Scheduler: MakeFileName() using \"moviesformat\" (_isSerie={0})", _isSerie);
+        Log.Debug("Scheduler: MakeFileName() using \"moviesformat\" (_isSerie={0})", _isSerie);
         setting = SettingsManagement.GetSetting("moviesformat", "%title%");
       }
       else
       {
-        Log.DebugFormat("Scheduler: MakeFileName() using \"seriesformat\" (_isSerie={0})", _isSerie);
+        Log.Debug("Scheduler: MakeFileName() using \"seriesformat\" (_isSerie={0})", _isSerie);
         setting = SettingsManagement.GetSetting("seriesformat", "%title%");
       }
 

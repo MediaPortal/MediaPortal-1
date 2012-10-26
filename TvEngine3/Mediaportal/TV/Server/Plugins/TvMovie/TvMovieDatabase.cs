@@ -248,7 +248,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       }
       catch (Exception ex)
       {
-        Log.InfoFormat("TVMovie: Exception in GetChannels: {0}\n{1}", ex.Message, ex.StackTrace);
+        Log.Info("TVMovie: Exception in GetChannels: {0}\n{1}", ex.Message, ex.StackTrace);
       }
       return tvChannels;
     }
@@ -270,7 +270,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       }
       catch (Exception connex)
       {
-        Log.ErrorFormat(connex, "TVMovie: Exception creating OleDbConnection");
+        Log.Error(connex, "TVMovie: Exception creating OleDbConnection");
         return false;
       }
 
@@ -293,7 +293,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
               }
               catch (Exception dsex)
               {
-                Log.InfoFormat("TVMovie: Exception filling Sender DataSet - {0}\n{1}", dsex.Message, dsex.StackTrace);
+                Log.Info("TVMovie: Exception filling Sender DataSet - {0}\n{1}", dsex.Message, dsex.StackTrace);
                 return false;
               }
             }
@@ -301,13 +301,13 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         }
         catch (System.Data.OleDb.OleDbException ex)
         {
-          Log.ErrorFormat(ex, "TVMovie: Error accessing TV Movie Clickfinder database while reading stations);          
+          Log.Error(ex, "TVMovie: Error accessing TV Movie Clickfinder database while reading stations);          
           _canceled = true;
           return false;
         }
         catch (Exception ex2)
         {
-          Log.ErrorFormat(ex2, "TVMovie: Exception");
+          Log.Error(ex2, "TVMovie: Exception");
           _canceled = true;
           return false;
         }
@@ -357,7 +357,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         }
         catch (Exception ex)
         {
-          Log.InfoFormat("TVMovie: Exception: {0}, {1}", ex.Message, ex.StackTrace);
+          Log.Info("TVMovie: Exception: {0}, {1}", ex.Message, ex.StackTrace);
         }
       }
 
@@ -379,13 +379,13 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
           }
           else
           {
-            Log.DebugFormat("TVMovie: Last update was at {0} - new import scheduled", Convert.ToString(lastUpdated));
+            Log.Debug("TVMovie: Last update was at {0} - new import scheduled", Convert.ToString(lastUpdated));
             return true;
           }
         }
         catch (Exception ex)
         {
-          Log.ErrorFormat(ex, "TVMovie: An error occured checking the last import time");          
+          Log.Error(ex, "TVMovie: An error occured checking the last import time");          
           return true;
         }
       }
@@ -402,12 +402,12 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       List<Mapping> mappingList = GetMappingList();
       if (mappingList == null || mappingList.Count < 1)
       {
-        Log.InfoFormat("TVMovie: Cannot import from TV Movie database - no mappings found");
+        Log.Info("TVMovie: Cannot import from TV Movie database - no mappings found");
         return;
       }
 
       DateTime ImportStartTime = DateTime.Now;
-      Log.DebugFormat("TVMovie: Importing database");
+      Log.Debug("TVMovie: Importing database");
       int maximum = 0;
 
       foreach (TVMChannel tvmChan in _tvmEpgChannels)
@@ -418,13 +418,13 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
             break;
           }
 
-      Log.DebugFormat("TVMovie: Calculating stations done");
+      Log.Debug("TVMovie: Calculating stations done");
 
       // setting update time of epg import to avoid that the background thread triggers another import
       // if the process lasts longer than the timer's update check interval
       SettingsManagement.SaveSetting("TvMovieLastUpdate", DateTime.Now.ToString());
 
-      Log.DebugFormat("TVMovie: Mapped {0} stations for EPG import", Convert.ToString(maximum));
+      Log.Debug("TVMovie: Mapped {0} stations for EPG import", Convert.ToString(maximum));
       int counter = 0;
 
       _tvmEpgProgs.Clear();
@@ -437,7 +437,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         if (_canceled)
           return;
 
-        Log.InfoFormat("TVMovie: Searching time share mappings for station: {0}", station.TvmEpgDescription);
+        Log.Info("TVMovie: Searching time share mappings for station: {0}", station.TvmEpgDescription);
         // get all tv movie channels
         List<Mapping> channelNames = new List<Mapping>();
 
@@ -458,7 +458,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
               OnStationsChanged(counter, maximum, display);
             counter++;
 
-            Log.InfoFormat("TVMovie: Importing {3} time frame(s) for MP channel [{0}/{1}] - {2}", Convert.ToString(counter),
+            Log.Info("TVMovie: Importing {3} time frame(s) for MP channel [{0}/{1}] - {2}", Convert.ToString(counter),
                      Convert.ToString(maximum), display, Convert.ToString(channelNames.Count));
 
             _tvmEpgProgs.Clear();
@@ -473,19 +473,19 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
             List<Program> InsertCopy = new List<Program>(_tvmEpgProgs);            
             int debugCount = TvBLayer.InsertPrograms(InsertCopy, DeleteBeforeImportOption.OverlappingPrograms,
                                                      importPrio);
-            Log.InfoFormat("TVMovie: Inserted {0} programs", debugCount);
+            Log.Info("TVMovie: Inserted {0} programs", debugCount);
           }
           catch (Exception ex)
           {
-            Log.InfoFormat("TVMovie: Error inserting programs - {0}", ex.StackTrace);
+            Log.Info("TVMovie: Error inserting programs - {0}", ex.StackTrace);
           }
         }
       }
 
-      Log.DebugFormat("TVMovie: Waiting for database to be updated...");
+      Log.Debug("TVMovie: Waiting for database to be updated...");
       //ProgramManagement.WaitForInsertPrograms
       TvBLayer.WaitForInsertPrograms();
-      Log.DebugFormat("TVMovie: Database update finished.");
+      Log.Debug("TVMovie: Database update finished.");
 
 
       if (OnStationsChanged != null)
@@ -498,12 +498,12 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
           SettingsManagement.SaveSetting("TvMovieLastUpdate", DateTime.Now.ToString());                    
 
           TimeSpan ImportDuration = (DateTime.Now - ImportStartTime);
-          Log.DebugFormat("TVMovie: Imported {0} database entries for {1} stations in {2} seconds", _programsCounter, counter,
+          Log.Debug("TVMovie: Imported {0} database entries for {1} stations in {2} seconds", _programsCounter, counter,
                     Convert.ToString(ImportDuration.TotalSeconds));
         }
         catch (Exception)
         {
-          Log.InfoFormat("TVMovie: Error updating the database with last import date");
+          Log.Info("TVMovie: Error updating the database with last import date");
         }
       }
       GC.Collect();
@@ -580,8 +580,8 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         catch (OleDbException ex)
         {
           databaseTransaction.Rollback();
-          Log.InfoFormat("TVMovie: Error accessing TV Movie Clickfinder database - import of current station canceled");
-          Log.ErrorFormat("TVMovie: Exception: {0}", ex);
+          Log.Info("TVMovie: Error accessing TV Movie Clickfinder database - import of current station canceled");
+          Log.Error("TVMovie: Exception: {0}", ex);
           return 0;
         }
         catch (Exception ex1)
@@ -591,7 +591,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
             databaseTransaction.Rollback();
           }
           catch (Exception) {}
-          Log.InfoFormat("TVMovie: Exception: {0}", ex1);
+          Log.Info("TVMovie: Exception: {0}", ex1);
           return 0;
         }
         finally
@@ -641,7 +641,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       }
       catch (Exception ex2)
       {
-        Log.InfoFormat("TVMovie: Error parsing EPG time data - {0}", ex2.ToString());
+        Log.Info("TVMovie: Error parsing EPG time data - {0}", ex2.ToString());
       }
 
       string title = Sendung;
@@ -734,7 +734,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
             }
             catch (Exception)
             {
-              Log.InfoFormat("TVMovie: Invalid year for OnAirDate - {0}", date);
+              Log.Info("TVMovie: Invalid year for OnAirDate - {0}", date);
             }
           }
 
@@ -864,14 +864,14 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
           }
           catch (Exception)
           {
-            Log.InfoFormat("TVMovie: Error loading mappings - make sure tv channel: {0} (ID: {1}) still exists!",
+            Log.Info("TVMovie: Error loading mappings - make sure tv channel: {0} (ID: {1}) still exists!",
                      mapping.StationName, mapping.IdChannel);
           }
         }
       }
       catch (Exception ex)
       {
-        Log.InfoFormat("TVMovie: Error in GetMappingList - {0}\n{1}", ex.Message, ex.StackTrace);
+        Log.Info("TVMovie: Error in GetMappingList - {0}\n{1}", ex.Message, ex.StackTrace);
       }
       return mappingList;
     }
@@ -1133,7 +1133,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
             processes[0].WaitForExit(1200000);
             BenchClock.Stop();
             UpdateDuration = (BenchClock.ElapsedMilliseconds / 1000);
-            Log.InfoFormat("TVMovie: tvuptodate was already running - waited {0} seconds for internet update to finish",
+            Log.Info("TVMovie: tvuptodate was already running - waited {0} seconds for internet update to finish",
                      Convert.ToString(UpdateDuration));
             return UpdateDuration;
           }
@@ -1152,18 +1152,18 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
 
           BenchClock.Stop();
           UpdateDuration = (BenchClock.ElapsedMilliseconds / 1000);
-          Log.InfoFormat("TVMovie: tvuptodate finished internet update in {0} seconds", Convert.ToString(UpdateDuration));
+          Log.Info("TVMovie: tvuptodate finished internet update in {0} seconds", Convert.ToString(UpdateDuration));
         }
         catch (Exception ex)
         {
           BenchClock.Stop();
           UpdateDuration = (BenchClock.ElapsedMilliseconds / 1000);
-          Log.ErrorFormat(ex, "TVMovie: LaunchTVMUpdater failed");
+          Log.Error(ex, "TVMovie: LaunchTVMUpdater failed");
         }
       }
       else
       {
-        Log.InfoFormat("TVMovie: tvuptodate.exe not found in default location: {0}", UpdaterPath);
+        Log.Info("TVMovie: tvuptodate.exe not found in default location: {0}", UpdaterPath);
         UpdateDuration = 30; // workaround for systems without tvuptodate
       }
 

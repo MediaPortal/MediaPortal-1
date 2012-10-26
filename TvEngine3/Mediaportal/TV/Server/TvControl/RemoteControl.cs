@@ -146,7 +146,7 @@ namespace Mediaportal.TV.Server.TVControl
       finally
       {
         benchClock.Stop();
-        Log.DebugFormat("TCP connect took : {0}", benchClock.ElapsedMilliseconds);
+        Log.Debug("TCP connect took : {0}", benchClock.ElapsedMilliseconds);
       }
     }
 

@@ -251,7 +251,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
     public override void OnAdded()
     {
-      Log.InfoFormat("RadioHome:OnAdded");
+      Log.Info("RadioHome:OnAdded");
 
       LoadSettings();
       LoadChannelGroups();
@@ -259,7 +259,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
     protected override void OnPageLoad()
     {
-      Log.InfoFormat("RadioHome:OnPageLoad");
+      Log.Info("RadioHome:OnPageLoad");
       base.OnPageLoad();
       GUIMessage msgStopRecorder = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP, 0, 0, 0, 0, 0, null);
       GUIWindowManager.SendMessage(msgStopRecorder);      
@@ -332,7 +332,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
     protected override void OnClick(int iItem)
     {
-      Log.InfoFormat("OnClick");
+      Log.Info("OnClick");
       GUIListItem item = facadeLayout[iItem];
       if (item.MusicTag == null)
       {

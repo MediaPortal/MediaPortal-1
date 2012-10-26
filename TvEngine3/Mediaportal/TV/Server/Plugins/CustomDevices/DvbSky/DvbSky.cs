@@ -113,39 +113,39 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
     {
-      Log.DebugFormat("DVBSky: initialising device");
+      Log.Debug("DVBSky: initialising device");
 
       if (tunerFilter == null)
       {
-        Log.DebugFormat("DVBSky: tuner filter is null");
+        Log.Debug("DVBSky: tuner filter is null");
         return false;
       }
       if (_isDvbSky)
       {
-        Log.DebugFormat("DVBSky: device is already initialised");
+        Log.Debug("DVBSky: device is already initialised");
         return true;
       }
 
-      Log.DebugFormat("DVBSky: checking base Conexant interface support");
+      Log.Debug("DVBSky: checking base Conexant interface support");
       _conexantInterface = new Conexant.Conexant(DvbSkyGeneralBdaExtensionPropertySet);
       if (!_conexantInterface.Initialise(tunerFilter, tunerType, tunerDevicePath))
       {
-        Log.DebugFormat("DVBSky: base Conexant interface not supported");
+        Log.Debug("DVBSky: base Conexant interface not supported");
         _conexantInterface.Dispose();
         _conexantInterface = null;
         return false;
       }
-      Log.DebugFormat("DVBSky: base Conexant interface supported");
+      Log.Debug("DVBSky: base Conexant interface supported");
       _isDvbSky = true;
 
-      Log.DebugFormat("DVBSky: checking base NetUP conditional access support");
+      Log.Debug("DVBSky: checking base NetUP conditional access support");
       if (base.Initialise(tunerFilter, tunerType, tunerDevicePath))
       {
-        Log.DebugFormat("DVBSky: conditional access interface supported");
+        Log.Debug("DVBSky: conditional access interface supported");
       }
       else
       {
-        Log.DebugFormat("DVBSky: conditional access interface not supported");
+        Log.Debug("DVBSky: conditional access interface not supported");
       }
       return true;
     }
@@ -162,11 +162,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky
     /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
     public override bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
     {
-      Log.DebugFormat("DVBSky: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
+      Log.Debug("DVBSky: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
 
       if (!_isDvbSky || _conexantInterface == null)
       {
-        Log.DebugFormat("DVBSky: device not initialised or interface not supported");
+        Log.Debug("DVBSky: device not initialised or interface not supported");
         return false;
       }
 
@@ -180,11 +180,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
     public override bool SendCommand(byte[] command)
     {
-      Log.DebugFormat("DVBSky: send DiSEqC command");
+      Log.Debug("DVBSky: send DiSEqC command");
 
       if (!_isDvbSky || _conexantInterface == null)
       {
-        Log.DebugFormat("DVBSky: device not initialised or interface not supported");
+        Log.Debug("DVBSky: device not initialised or interface not supported");
         return false;
       }
 
@@ -199,12 +199,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky
     /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
     public override bool ReadResponse(out byte[] response)
     {
-      Log.DebugFormat("DVBSky: read DiSEqC response");
+      Log.Debug("DVBSky: read DiSEqC response");
       response = null;
 
       if (!_isDvbSky || _conexantInterface == null)
       {
-        Log.DebugFormat("DVBSky: device not initialised or interface not supported");
+        Log.Debug("DVBSky: device not initialised or interface not supported");
         return false;
       }
 

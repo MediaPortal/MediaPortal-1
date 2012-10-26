@@ -182,7 +182,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.Parser
       }
       catch (ArgumentException) // ex)
       {
-        //_Log.ErrorFormat("Html Parser: Regex error: {0} {1}", regex, ex.ToString());
+        //_Log.Error("Html Parser: Regex error: {0} {1}", regex, ex.ToString());
         return string.Empty;
       }
 

@@ -55,7 +55,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.Check
       ConnectionState Description = 0;
       string connState = InternetGetConnectedState(ref Description, 0).ToString();
       _connected = Convert.ToBoolean(connState);
-      //        Log.InfoFormat("AudioscrobblerEngine: check connection - {0}", Description.ToString());
+      //        Log.Info("AudioscrobblerEngine: check connection - {0}", Description.ToString());
       _currentState = Description;
 
       return _connected;

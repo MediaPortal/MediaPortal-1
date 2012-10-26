@@ -118,7 +118,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
       }
       catch (InvalidOperationException tex)
       {
-        Log.ErrorFormat("ChannelState: Possible race condition occured when getting users - {0}", tex);
+        Log.Error("ChannelState: Possible race condition occured when getting users - {0}", tex);
       }
 
       return allUsers;
@@ -134,7 +134,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         try
         {
           //construct list of all cards we can use to tune to the new channel
-          Log.DebugFormat("Controller: DoSetChannelStatesForAllUsers for {0} channels", channels.Count);
+          Log.Debug("Controller: DoSetChannelStatesForAllUsers for {0} channels", channels.Count);
 
           if (allUsers == null || allUsers.Count == 0)
           {
@@ -205,7 +205,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
               Stopwatch stopwatchTimeshiftingAndRecording = Stopwatch.StartNew();
               timeshiftingAndRecordingStates = tvControllerService.GetAllTimeshiftingAndRecordingChannels();
               stopwatchTimeshiftingAndRecording.Stop();
-              Log.InfoFormat("ChannelStates.GetAllTimeshiftingAndRecordingChannels took {0} msec",
+              Log.Info("ChannelStates.GetAllTimeshiftingAndRecordingChannels took {0} msec",
                          stopwatchTimeshiftingAndRecording.ElapsedMilliseconds);
             }
             UpdateRecOrTSChannelStateForUsers(channel, allUsers, timeshiftingAndRecordingStates);*/
@@ -215,21 +215,21 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         }
         catch (ThreadAbortException)
         {
-          Log.InfoFormat("ChannelState.DoSetChannelStatesForAllUsers: thread obsolete and aborted.");
+          Log.Info("ChannelState.DoSetChannelStatesForAllUsers: thread obsolete and aborted.");
         }
         catch (InvalidOperationException tex)
         {
-            Log.ErrorFormat("ChannelState.DoSetChannelStatesForAllUsers: Possible race condition occured setting channel states - {0}", tex);
+            Log.Error("ChannelState.DoSetChannelStatesForAllUsers: Possible race condition occured setting channel states - {0}", tex);
         }
         catch (Exception ex)
         {
-            Log.ErrorFormat("ChannelState.DoSetChannelStatesForAllUsers: An unknown error occured while setting channel states - {0}\n{1}", ex.Message,
+            Log.Error("ChannelState.DoSetChannelStatesForAllUsers: An unknown error occured while setting channel states - {0}\n{1}", ex.Message,
                       ex);
         }
         finally
         {
           stopwatch.Stop();
-          Log.InfoFormat("ChannelStates.DoSetChannelStatesForAllUsers took {0} msec", stopwatch.ElapsedMilliseconds);
+          Log.Info("ChannelStates.DoSetChannelStatesForAllUsers took {0} msec", stopwatch.ElapsedMilliseconds);
 
           if (OnChannelStatesSet != null)
           {
@@ -237,7 +237,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
             {
               foreach (var user in allUsers)
               {
-                Log.DebugFormat("DoSetChannelStatesForAllUsers OnChannelStatesSet user={0}", user.Name);
+                Log.Debug("DoSetChannelStatesForAllUsers OnChannelStatesSet user={0}", user.Name);
                 OnChannelStatesSet(user);
                 try
                 {
@@ -249,7 +249,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
                 }
                 catch (Exception e)
                 {
-                  Log.ErrorFormat("ChannelState.DoSetChannelStatesForAllUsers: could not set channel state for user: {0}, exc: {1}", user.Name, e);
+                  Log.Error("ChannelState.DoSetChannelStatesForAllUsers: could not set channel state for user: {0}, exc: {1}", user.Name, e);
                 }
               } 
             }              
@@ -278,7 +278,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
       Stopwatch stopwatchTimeshiftingAndRecording = Stopwatch.StartNew();
       IDictionary<int, ChannelState> timeshiftingAndRecordingStates = tvControllerService.GetAllTimeshiftingAndRecordingChannels();
       stopwatchTimeshiftingAndRecording.Stop();
-      Log.InfoFormat("ChannelStates.GetAllTimeshiftingAndRecordingChannels took {0} msec",
+      Log.Info("ChannelStates.GetAllTimeshiftingAndRecordingChannels took {0} msec",
                   stopwatchTimeshiftingAndRecording.ElapsedMilliseconds);
 
       foreach (KeyValuePair<int, ChannelState> kvp in timeshiftingAndRecordingStates)
@@ -368,7 +368,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         DoSetChannelStatesForAllUsers(channels, allUsers);
         if (OnChannelStatesSet != null)
         {
-          Log.DebugFormat("SetChannelStatesForUser OnChannelStatesSet user={0}", user.Name);
+          Log.Debug("SetChannelStatesForUser OnChannelStatesSet user={0}", user.Name);
           OnChannelStatesSet(user);
         }
       }           

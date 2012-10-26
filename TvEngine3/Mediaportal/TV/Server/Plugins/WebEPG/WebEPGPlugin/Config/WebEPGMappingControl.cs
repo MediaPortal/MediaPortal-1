@@ -136,22 +136,22 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       }
       catch (Exception e)
       {
-        Log.ErrorFormat("Failed to load groups {0}", e.Message);
+        Log.Error("Failed to load groups {0}", e.Message);
       }
     }
 
     public void DoImportChannels()
     {
-      Log.InfoFormat("WebEPG Config: Button: Import");
+      Log.Info("WebEPG Config: Button: Import");
       try
       {
-        Log.InfoFormat("WebEPG Config: Importing from TV Server Database");
+        Log.Info("WebEPG Config: Importing from TV Server Database");
         getTvServerChannels();
         RedrawList(null);
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "WebEPG Config: Import failed");
+        Log.Error(ex, "WebEPG Config: Import failed");
         MessageBox.Show("An error occured while trying to import channels. See log for more details.", "Import Error",
                         MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
@@ -406,7 +406,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
         if (info != null)
         {
           tbChannelName.Text = info.FullName;
-          Log.InfoFormat("WebEPG Config: Selection: {0}", info.FullName);
+          Log.Info("WebEPG Config: Selection: {0}", info.FullName);
 
           GrabberConfigInfo gInfo = (GrabberConfigInfo)info.GrabberList[grabberId];
           if (gInfo != null)

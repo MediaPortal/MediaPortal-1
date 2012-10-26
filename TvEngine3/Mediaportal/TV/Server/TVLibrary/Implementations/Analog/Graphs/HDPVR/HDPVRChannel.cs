@@ -62,7 +62,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
     /// </summary>
     public override void OnGraphRunning()
     {
-      Log.DebugFormat("HDPVRChannel: subchannel {0} OnGraphRunning()", _subChannelId);
+      Log.Debug("HDPVRChannel: subchannel {0} OnGraphRunning()", _subChannelId);
 
       if (!WaitForPmt(ServiceId, PmtPid))
       {

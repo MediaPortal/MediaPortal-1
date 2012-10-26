@@ -268,7 +268,7 @@ namespace Mediaportal.TV.TvPlugin
           {
             if (g_Player.IsTimeShifting)
             {
-              Log.DebugFormat("TvOSD: user request to stop");
+              Log.Debug("TvOSD: user request to stop");
               GUIDialogPlayStop dlgPlayStop =
                 (GUIDialogPlayStop)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PLAY_STOP);
               if (dlgPlayStop != null)
@@ -280,14 +280,14 @@ namespace Mediaportal.TV.TvPlugin
                 dlgPlayStop.DoModal(GetID);
                 if (dlgPlayStop.IsStopConfirmed)
                 {
-                  Log.DebugFormat("TvOSD: stop confirmed");
+                  Log.Debug("TvOSD: stop confirmed");
                   g_Player.Stop();
                 }
               }
             }
             if (g_Player.IsTVRecording)
             {
-                Log.DebugFormat("TvOSD: stop from recorded TV");
+                Log.Debug("TvOSD: stop from recorded TV");
                 g_Player.Stop();
             }
             GUIWindowManager.IsPauseOsdVisible = false;
@@ -541,7 +541,7 @@ namespace Mediaportal.TV.TvPlugin
                 ToggleSubMenu(0, m_iActiveMenu); // hide the currently active sub-menu
               }
               //g_application.m_guiWindowFullScreen.m_bOSDVisible = false;	// toggle the OSD off so parent window can de-init
-              Log.DebugFormat("TVOSD:stop");
+              Log.Debug("TVOSD:stop");
               if (TVHome.Card.IsRecording)
               {
                 int id = TVHome.Card.RecordingScheduleId;
@@ -1133,18 +1133,18 @@ namespace Mediaportal.TV.TvPlugin
                                               (int)Controls.OSD_SUBTITLE_LIST, msg.Param1, 0, null);
                   g_Player.EnableSubtitle = false;
                   g_Player.CurrentSubtitleStream = -1;
-                  Log.InfoFormat("Subtitle CC selected ");
+                  Log.Info("Subtitle CC selected ");
                 }
                 else
                 {
-                  Log.InfoFormat("Subtitle stream selected " + msg.Label);
+                  Log.Info("Subtitle stream selected " + msg.Label);
                   g_Player.CurrentSubtitleStream = msg.Param1 - 1; // set the current subtitle
                   g_Player.EnableSubtitle = true;
                 }
               }
               else
               {
-                Log.InfoFormat("Subtitle stream selected " + msg.Label);
+                Log.Info("Subtitle stream selected " + msg.Label);
                 g_Player.CurrentSubtitleStream = msg.Param1; // set the current subtitle
               }
               PopulateSubTitles();
@@ -1427,7 +1427,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private void OnPreviousChannel()
     {
-      Log.DebugFormat("GUITV OSD: OnPreviousChannel");
+      Log.Debug("GUITV OSD: OnPreviousChannel");
       if (!TVHome.Card.IsTimeShifting && !g_Player.IsTVRecording)
       {
         return;
@@ -1440,7 +1440,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private void OnNextChannel()
     {
-      Log.DebugFormat("GUITV OSD: OnNextChannel");
+      Log.Debug("GUITV OSD: OnNextChannel");
       if (!TVHome.Card.IsTimeShifting && !g_Player.IsTVRecording)
       {
         return;
@@ -1696,7 +1696,7 @@ namespace Mediaportal.TV.TvPlugin
 
           imgRecIcon.Visible = isRecording;
           _recIconLastCheck = DateTime.Now;
-          Log.InfoFormat("OSD.SetRecorderStatus = {0}", imgRecIcon.Visible);
+          Log.Info("OSD.SetRecorderStatus = {0}", imgRecIcon.Visible);
         }
       }
     }

@@ -126,7 +126,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
         return devices;
       }
     }

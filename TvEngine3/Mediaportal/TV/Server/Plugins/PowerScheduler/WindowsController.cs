@@ -125,7 +125,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
 
     public static ExitWindowsHandler HookExitWindows(ExitWindowsHandler handler)
     {
-      Log.DebugFormat("WindowsController: Setting ExitWindows to {0}.{1}", handler.Target, handler.Method);
+      Log.Debug("WindowsController: Setting ExitWindows to {0}.{1}", handler.Target, handler.Method);
 
       ExitWindowsHandler old = _exitWindows;
       _exitWindows = handler;
@@ -186,7 +186,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       ExitWindowsDefaultEnv env = (ExitWindowsDefaultEnv)_data;
       RestartOptions how = env.how;
       bool force = env.force;
-      Log.DebugFormat("WindowsController: Performing ExitWindows {0}, force: {1}", how, force);
+      Log.Debug("WindowsController: Performing ExitWindows {0}, force: {1}", how, force);
       bool res;
       switch (how)
       {
@@ -200,7 +200,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
           res = ExitWindowsInt((int)how, force);
           break;
       }
-      Log.DebugFormat("WindowsController: ExitWindows performed, result: {0}", res);
+      Log.Debug("WindowsController: ExitWindows performed, result: {0}", res);
       if (env.after != null)
         env.after(how, force, res);
     }
@@ -323,7 +323,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     /// <exception cref="PrivilegeException">There was an error while requesting a required privilege.</exception>
     protected static bool ExitWindowsInt(int how, bool force)
     {
-      Log.InfoFormat("--Exit Windows - ", how.ToString() + ", " + force.ToString());
+      Log.Info("--Exit Windows - ", how.ToString() + ", " + force.ToString());
       EnableToken("SeShutdownPrivilege");
       if (force)
         how = how | EWX_FORCE;

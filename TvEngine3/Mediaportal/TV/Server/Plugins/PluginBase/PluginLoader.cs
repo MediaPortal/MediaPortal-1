@@ -82,13 +82,13 @@ namespace Mediaportal.TV.Server.Plugins.Base
 
         foreach (ITvServerPlugin plugin in _plugins)
         {
-          Log.DebugFormat("PluginManager: Loaded {0} version:{1} author:{2}", plugin.Name, plugin.Version,
+          Log.Debug("PluginManager: Loaded {0} version:{1} author:{2}", plugin.Name, plugin.Version,
                         plugin.Author);
         }      
       }
       catch (Exception ex)
       {
-        Log.DebugFormat("PluginManager: Error while loading dll's.", ex);
+        Log.Debug("PluginManager: Error while loading dll's.", ex);
       }
     }
 
@@ -98,7 +98,7 @@ namespace Mediaportal.TV.Server.Plugins.Base
       if (!isPluginCompatible)
       {
         _incompatiblePlugins.Add(type);
-        Log.DebugFormat("PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!", type.FullName);
+        Log.Debug("PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!", type.FullName);
       }
       return isPluginCompatible;
     }    

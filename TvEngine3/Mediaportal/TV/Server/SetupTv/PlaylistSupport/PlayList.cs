@@ -51,7 +51,7 @@ namespace Mediaportal.TV.Server.SetupTV.PlaylistSupport
     public void Add(PlayListItem item)
     {
       if (item == null) return;
-      //Log.DebugFormat("Playlist: add {0}", item.FileName);
+      //Log.Debug("Playlist: add {0}", item.FileName);
       _listPlayListItems.Add(item);
     }
 

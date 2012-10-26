@@ -753,9 +753,9 @@ namespace Mediaportal.TV.TvPlugin.Teletext
       bool isSubtitlePage = Hamming.IsSubtitleBitSet(0, ref byPage);
       bool isNewsflash = Hamming.IsNewsflash(0, ref byPage);
       isBoxed = isNewsflash | isSubtitlePage;
-      Log.DebugFormat("Newsflash: " + isNewsflash);
-      Log.DebugFormat("Subtitle: " + isSubtitlePage);
-      Log.DebugFormat("Boxed: " + isBoxed);
+      Log.Debug("Newsflash: " + isNewsflash);
+      Log.Debug("Subtitle: " + isSubtitlePage);
+      Log.Debug("Boxed: " + isBoxed);
 
       // Determine if the header or toptext line sould be displayed.
       bool displayHeaderAndTopText = !_fullscreenMode || !isBoxed || (isBoxed && _selectedPageText.IndexOf("-") != -1)
@@ -1142,7 +1142,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
         _fontTeletext = new Font("Lucida Console", fntSize, FontStyle.Bold, GraphicsUnit.Pixel);
         fntHeight = _fontTeletext.GetHeight(renderGraphics);
       }
-      Log.DebugFormat("FONT SIZE OF TELETEXT: " + fntSize);
+      Log.Debug("FONT SIZE OF TELETEXT: " + fntSize);
 
       try
       {

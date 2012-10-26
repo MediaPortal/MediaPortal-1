@@ -49,7 +49,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat("ServiceManager: exception - {0}", ex);
+        Log.Error("ServiceManager: exception - {0}", ex);
       }      
     }  
 
@@ -86,7 +86,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       serviceMetaDataBehaviour.HttpGetUrl = httpUri;
       serviceHost.Open();
       SetMaxItemsInObjectGraph(serviceHost);
-      Log.DebugFormat("Service '{0}' succesfully started.", endpointUrl);
+      Log.Debug("Service '{0}' succesfully started.", endpointUrl);
       return serviceHost;
     }
 
@@ -117,7 +117,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 
       serviceHost.Open();
       SetMaxItemsInObjectGraph(serviceHost);
-      Log.DebugFormat("Service '{0}' succesfully started.", endpointUrl);
+      Log.Debug("Service '{0}' succesfully started.", endpointUrl);
       return serviceHost;
     }
 
@@ -264,7 +264,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     /// <filterpriority>2</filterpriority>
     public void Dispose()
     {
-      Log.DebugFormat("closing WCF service.");
+      Log.Debug("closing WCF service.");
       try
       {
         Services.EventService.CleanUp();
@@ -276,11 +276,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
           }
         }
         _serviceHosts.Clear();
-        Log.DebugFormat("WCF service(s) closed.");
+        Log.Debug("WCF service(s) closed.");
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat("error closing WCF service", ex);
+        Log.Error("error closing WCF service", ex);
         throw;
       }      
     }

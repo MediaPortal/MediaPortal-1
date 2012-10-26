@@ -196,16 +196,16 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Conexant
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
     {
-      Log.DebugFormat("Conexant: initialising device");
+      Log.Debug("Conexant: initialising device");
 
       if (tunerFilter == null)
       {
-        Log.DebugFormat("Conexant: tuner filter is null");
+        Log.Debug("Conexant: tuner filter is null");
         return false;
       }
       if (_isConexant)
       {
-        Log.DebugFormat("Conexant: device is already initialised");
+        Log.Debug("Conexant: device is already initialised");
         return true;
       }
 
@@ -213,7 +213,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Conexant
       _propertySet = pin as IKsPropertySet;
       if (_propertySet == null)
       {
-        Log.DebugFormat("Conexant: pin is not a property set");
+        Log.Debug("Conexant: pin is not a property set");
         return false;
       }
 
@@ -221,11 +221,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Conexant
       int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcMessage, out support);
       if (hr != 0 || (support & KSPropertySupport.Set) == 0)
       {
-        Log.DebugFormat("Conexant: device does not support the Conexant property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        Log.Debug("Conexant: device does not support the Conexant property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
 
-      Log.DebugFormat("Conexant: supported device detected");
+      Log.Debug("Conexant: supported device detected");
       _isConexant = true;
       _instanceBuffer = Marshal.AllocCoTaskMem(InstanceSize);
       _paramBuffer = Marshal.AllocCoTaskMem(DiseqcMessageParamsSize);
@@ -248,17 +248,17 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Conexant
     /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
     public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
     {
-      Log.DebugFormat("Conexant: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
+      Log.Debug("Conexant: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
 
       if (!_isConexant || _propertySet == null)
       {
-        Log.DebugFormat("Conexant: device not initialised or interface not supported");
+        Log.Debug("Conexant: device not initialised or interface not supported");
         return false;
       }
 
       if (toneBurstState == ToneBurst.None)
       {
-        Log.DebugFormat("Conexant: result = success");
+        Log.Debug("Conexant: result = success");
         return true;
       }
 
@@ -288,11 +288,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Conexant
 
       if (hr == 0)
       {
-        Log.DebugFormat("Conexant: result = success");
+        Log.Debug("Conexant: result = success");
         return true;
       }
 
-      Log.DebugFormat("Conexant: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      Log.Debug("Conexant: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -303,23 +303,23 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Conexant
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
     public bool SendCommand(byte[] command)
     {
-      Log.DebugFormat("Conexant: send DiSEqC command");
+      Log.Debug("Conexant: send DiSEqC command");
 
       if (!_isConexant || _propertySet == null)
       {
-        Log.DebugFormat("Conexant: device not initialised or interface not supported");
+        Log.Debug("Conexant: device not initialised or interface not supported");
         return false;
       }
       if (command == null || command.Length == 0)
       {
-        Log.DebugFormat("Conexant: command not supplied");
+        Log.Debug("Conexant: command not supplied");
         return true;
       }
 
       int length = command.Length;
       if (length > MaxDiseqcTxMessageLength)
       {
-        Log.DebugFormat("Conexant: command too long, length = {0}", command.Length);
+        Log.Debug("Conexant: command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -353,11 +353,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Conexant
       );
       if (hr == 0)
       {
-        Log.DebugFormat("Conexant: result = success");
+        Log.Debug("Conexant: result = success");
         return true;
       }
 
-      Log.DebugFormat("Conexant: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      Log.Debug("Conexant: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 

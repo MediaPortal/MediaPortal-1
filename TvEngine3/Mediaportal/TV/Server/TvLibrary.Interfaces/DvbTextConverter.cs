@@ -170,7 +170,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "Error while converting dvb text");        
+        Log.Error(ex, "Error while converting dvb text");        
       }
       byte[] text = new byte[len - pos];
       for (int i = 0; i < len - pos; i++)

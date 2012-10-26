@@ -154,7 +154,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
             {
               ps.Unregister(this as IStandbyHandler);
             }
-            Log.DebugFormat("PowerScheduler: preventing standby when grabbing EPG: {0}", enabled);
+            Log.Debug("PowerScheduler: preventing standby when grabbing EPG: {0}", enabled);
           }
 
           // Check if system should wakeup for EPG grabs
@@ -173,7 +173,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
             {
               ps.Unregister(this as IWakeupHandler);
             }
-            Log.DebugFormat("PowerScheduler: wakeup system for EPG grabbing: {0}", enabled);
+            Log.Debug("PowerScheduler: wakeup system for EPG grabbing: {0}", enabled);
           }
 
           // Check if a wakeup time is set
@@ -183,13 +183,13 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
           if (!config.Equals(setting.Get<EPGWakeupConfig>()))
           {
             setting.Set<EPGWakeupConfig>(config);
-            Log.DebugFormat("PowerScheduler: wakeup system for EPG at time: {0}:{1}", config.Hour, config.Minutes);
+            Log.Debug("PowerScheduler: wakeup system for EPG at time: {0}:{1}", config.Hour, config.Minutes);
             if (config.Days != null)
             {
               foreach (EPGGrabDays day in config.Days)
-                Log.DebugFormat("PowerScheduler: EPG wakeup on day {0}", day);
+                Log.Debug("PowerScheduler: EPG wakeup on day {0}", day);
             }
-            Log.DebugFormat("PowerScheduler: EPG last run: {0}", config.LastRun);
+            Log.Debug("PowerScheduler: EPG last run: {0}", config.LastRun);
           }
 
           // check if schedule is due
@@ -214,7 +214,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
             GrabberSource s = _extGrabbers[o];
             if (s.Timeout < DateTime.Now)
             {
-              Log.DebugFormat("PowerScheduler: EPG source '{0}' timed out, setting allow-standby = true for this source.",
+              Log.Debug("PowerScheduler: EPG source '{0}' timed out, setting allow-standby = true for this source.",
                         s.Name);
               // timeout passed, standby is allowed
               s.SetStandbyAllowed(true, 0);
@@ -256,7 +256,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
         }
 
         p.StartInfo = psi;
-        Log.DebugFormat("EpgGrabbingHandler: Starting external command: {0} {1}", p.StartInfo.FileName, p.StartInfo.Arguments);
+        Log.Debug("EpgGrabbingHandler: Starting external command: {0} {1}", p.StartInfo.FileName, p.StartInfo.Arguments);
         try
         {
           p.Start();
@@ -264,9 +264,9 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
         }
         catch (Exception e)
         {
-          Log.DebugFormat(e, "");
+          Log.Debug(e, "");
         }
-        Log.DebugFormat("EpgGrabbingHandler: External command finished");
+        Log.Debug("EpgGrabbingHandler: External command finished");
       }
     }
 
@@ -281,7 +281,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
       
       EPGWakeupConfig config = new EPGWakeupConfig((SettingsManagement.GetSetting("EPGWakeupConfig", String.Empty).Value));
 
-      Log.InfoFormat("PowerScheduler: EPG schedule {0}:{1} is due: {2}:{3}",
+      Log.Info("PowerScheduler: EPG schedule {0}:{1} is due: {2}:{3}",
                config.Hour, config.Minutes, DateTime.Now.Hour, DateTime.Now.Minute);
 
       // start external command
@@ -384,7 +384,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
         }
         if (DateTime.Now.Day == nextRun.Day)
         {
-          Log.ErrorFormat("PowerScheduler: no valid next wakeup date for EPG grabbing found!");
+          Log.Error("PowerScheduler: no valid next wakeup date for EPG grabbing found!");
           nextRun = DateTime.MaxValue;
         }
       }
@@ -403,7 +403,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
         // check for "should run, but not running"
         if (ShouldRunNow())
         {
-          Log.DebugFormat("EpgGrabbingHandler: standby not allowed since EPG is due");
+          Log.Debug("EpgGrabbingHandler: standby not allowed since EPG is due");
           return true;
         }
 
@@ -413,7 +413,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
           int cardId = _controllerService.CardId(i);
           if (_controllerService.IsGrabbingEpg(cardId))
           {
-            Log.DebugFormat("EpgGrabbingHandler: card {0} does not allow standby", _controllerService.CardName(cardId));
+            Log.Debug("EpgGrabbingHandler: card {0} does not allow standby", _controllerService.CardName(cardId));
             return true;
           }
         }
@@ -422,7 +422,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
         foreach (GrabberSource source in _extGrabbers.Values)
           if (!source.StandbyAllowed)
           {
-            Log.DebugFormat("EpgGrabbingHandler: {0} does not allow standby", source.Name);
+            Log.Debug("EpgGrabbingHandler: {0} does not allow standby", source.Name);
             return true;
           }
 
@@ -457,7 +457,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
         }
       }
       if (isExternal)
-        Log.DebugFormat("PowerScheduler: next EPG wakeup set by external EPG source {0}", externalName);
+        Log.Debug("PowerScheduler: next EPG wakeup set by external EPG source {0}", externalName);
       return nextRun;
     }
 

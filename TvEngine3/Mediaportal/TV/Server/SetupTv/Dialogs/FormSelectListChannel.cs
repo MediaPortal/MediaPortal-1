@@ -50,14 +50,14 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           Channel selectedChannel = listViewChannels.SelectedItems[0].Tag as Channel;
           if (selectedChannel.IdChannel > -1)
           {
-            Log.DebugFormat("SelectListChannel: Channel '{0}' has been selected. ID = {1}", selectedChannel.DisplayName,
+            Log.Debug("SelectListChannel: Channel '{0}' has been selected. ID = {1}", selectedChannel.DisplayName,
                       selectedChannel.IdChannel);
             return selectedChannel.IdChannel;
           }
         }
         else
         {
-          Log.DebugFormat("SelectListChannel: Invalid channel selection.");
+          Log.Debug("SelectListChannel: Invalid channel selection.");
         }
       }
 

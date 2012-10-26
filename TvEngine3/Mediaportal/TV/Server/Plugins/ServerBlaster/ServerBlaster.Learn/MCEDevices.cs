@@ -148,7 +148,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
       }
       catch (Exception e)
       {
-        Log.DebugFormat("Remote.Init: {0}", e.Message);
+        Log.Debug("Remote.Init: {0}", e.Message);
       }
     }
 
@@ -384,7 +384,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
       }
       catch (Exception e)
       {
-        Log.DebugFormat("Blaster.OnReadComplete: {0}", e.Message);
+        Log.Debug("Blaster.OnReadComplete: {0}", e.Message);
       }
     }
 
@@ -407,7 +407,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
         foreach (byte packetByte in packetBytes) packetFinal[packetOffset++] = packetByte;
       }
 
-      Log.DebugFormat("Blaster.FinalizePacket: {0} ({1} bytes)", BitConverter.ToString(packetFinal).Replace("-", ""),
+      Log.Debug("Blaster.FinalizePacket: {0} ({1} bytes)", BitConverter.ToString(packetFinal).Replace("-", ""),
                 packetFinal.Length);
 
       lock (this) _packetArray = new ArrayList();
@@ -440,7 +440,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
         }
       }
 
-      Log.DebugFormat("Blaster.FinalizePacket: {0}", BitConverter.ToString(packetFinal).Replace("-", ""));
+      Log.Debug("Blaster.FinalizePacket: {0}", BitConverter.ToString(packetFinal).Replace("-", ""));
 
       _packetArray = new ArrayList();
 
@@ -477,7 +477,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
         }
       }
 
-      Log.DebugFormat("Blaster.FinalizePacket: {0} ({1} bytes)", BitConverter.ToString(packetFinal).Replace("-", ""),
+      Log.Debug("Blaster.FinalizePacket: {0} ({1} bytes)", BitConverter.ToString(packetFinal).Replace("-", ""),
                 packetFinal.Length);
 
       _packetArray = new ArrayList();
@@ -610,7 +610,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
           throw new Exception(string.Format("Failed in call to SetupDiGetDeviceInterfaceDetail ({0})", GetLastError()));
         }
 
-        if (_dumpDevices) Log.DebugFormat("Device.FindDevice: {0}", deviceInterfaceDetailData.DevicePath);
+        if (_dumpDevices) Log.Debug("Device.FindDevice: {0}", deviceInterfaceDetailData.DevicePath);
 
         if (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_0471&pid_0815") != -1)
         {

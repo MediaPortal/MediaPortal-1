@@ -287,7 +287,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <returns></returns>
     public bool StartTimeShifting(string fileName)
     {
-      Log.DebugFormat("BaseSubChannel: subchannel {0} start timeshifting to {1}", _subChannelId, fileName);
+      Log.Debug("BaseSubChannel: subchannel {0} start timeshifting to {1}", _subChannelId, fileName);
       try
       {
         OnStartTimeShifting(fileName);
@@ -296,7 +296,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "BaseSubChannel: failed to start timeshifting");
+        Log.Error(ex, "BaseSubChannel: failed to start timeshifting");
         StopTimeShifting();
         return false;
       }
@@ -310,7 +310,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <returns></returns>
     public bool StopTimeShifting()
     {
-      Log.DebugFormat("BaseSubChannel: subchannel {0} stop timeshifting", _subChannelId);
+      Log.Debug("BaseSubChannel: subchannel {0} stop timeshifting", _subChannelId);
       OnStopTimeShifting();
       _timeshiftFileName = String.Empty;
       _dateTimeShiftStarted = DateTime.MinValue;
@@ -324,7 +324,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <returns></returns>
     public bool StartRecording(string fileName)
     {
-      Log.DebugFormat("BaseSubChannel: subchannel {0} start recording to {1}", _subChannelId, fileName);
+      Log.Debug("BaseSubChannel: subchannel {0} start recording to {1}", _subChannelId, fileName);
       try
       {
         OnStartRecording(fileName);
@@ -333,7 +333,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "BaseSubChannel: failed to start recording");
+        Log.Error(ex, "BaseSubChannel: failed to start recording");
         StopRecording();
         return false;
       }
@@ -347,7 +347,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <returns></returns>
     public bool StopRecording()
     {
-      Log.DebugFormat("BaseSubChannel: subchannel {0} stop recording", _subChannelId);
+      Log.Debug("BaseSubChannel: subchannel {0} stop recording", _subChannelId);
       OnStopRecording();
       _recordingFileName = String.Empty;
       _dateRecordingStarted = DateTime.MinValue;
@@ -369,7 +369,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public virtual void CancelTune()
     {
-      Log.DebugFormat("BaseSubChannel: subchannel {0} cancel tune", _subChannelId);
+      Log.Debug("BaseSubChannel: subchannel {0} cancel tune", _subChannelId);
       _cancelTune = true;
     }
 
@@ -406,7 +406,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
       }
       return 0;
     }
@@ -436,12 +436,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       try
       {
-        Log.DebugFormat("PID seen - type = {0}", pidType);
+        Log.Debug("PID seen - type = {0}", pidType);
         OnAudioVideoEvent(pidType);
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
       }
       return 0;
     }
@@ -455,7 +455,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public void Decompose()
     {
-      Log.DebugFormat("BaseSubChannel: subchannel {0} decompose", _subChannelId);
+      Log.Debug("BaseSubChannel: subchannel {0} decompose", _subChannelId);
 
       if (IsRecording)
       {

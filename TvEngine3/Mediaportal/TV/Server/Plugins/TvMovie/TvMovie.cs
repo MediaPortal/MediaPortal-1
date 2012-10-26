@@ -89,12 +89,12 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "TVMovie: Registry lookup for {0} failed", valueName);
+        Log.Error(ex, "TVMovie: Registry lookup for {0} failed", valueName);
       }
 
       if (string.IsNullOrEmpty(value))
       {
-        Log.InfoFormat("TVMovie: Registry setting {1} has no value", valueName);
+        Log.Info("TVMovie: Registry setting {1} has no value", valueName);
       }
 
       return value;
@@ -183,7 +183,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       {
         GlobalServiceProvider.Instance.Get<IEpgHandler>().SetStandbyAllowed(this, allowed, 1800);
         if (!allowed)
-          Log.DebugFormat("TVMovie: Telling PowerScheduler standby is allowed: {0}, timeout is 30 minutes", allowed);
+          Log.Debug("TVMovie: Telling PowerScheduler standby is allowed: {0}, timeout is 30 minutes", allowed);
       }
     }
 
@@ -197,11 +197,11 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         if (handler != null)
         {
           handler.EPGScheduleDue += new EPGScheduleHandler(EPGScheduleDue);
-          Log.DebugFormat("TVMovie: registered with PowerScheduler EPG handler");
+          Log.Debug("TVMovie: registered with PowerScheduler EPG handler");
           return;
         }
       }
-      Log.DebugFormat("TVMovie: NOT registered with PowerScheduler EPG handler");
+      Log.Debug("TVMovie: NOT registered with PowerScheduler EPG handler");
     }
 
     private void EPGScheduleDue()
@@ -226,11 +226,11 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         }
         catch (Exception)
         {
-          Log.ErrorFormat("TVMovie: Import enabled but the ClickFinder database was not found.");
+          Log.Error("TVMovie: Import enabled but the ClickFinder database was not found.");
           return;
         }
 
-        //Log.DebugFormat("TVMovie: Checking database");
+        //Log.Debug("TVMovie: Checking database");
         try
         {
           if (_database.NeedsImport)
@@ -244,16 +244,16 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
               if (updateDuration > 20)
                 _database.Import();
               else
-                Log.InfoFormat("TVMovie: Import skipped because there was no new data.");
+                Log.Info("TVMovie: Import skipped because there was no new data.");
             }
             else
-              Log.InfoFormat("TVMovie: Import skipped because the update process timed out / has been aborted.");
+              Log.Info("TVMovie: Import skipped because the update process timed out / has been aborted.");
           }
         }
         catch (Exception ex)
         {
-          Log.InfoFormat("TvMovie plugin error:");
-          Log.ErrorFormat(ex, "");
+          Log.Info("TvMovie plugin error:");
+          Log.Error(ex, "");
         }
       }
       finally
@@ -281,7 +281,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       }
       catch (Exception ex1)
       {
-        Log.ErrorFormat("TVMovie: Error checking enabled status - {0},{1}", ex1.Message, ex1.StackTrace);
+        Log.Error("TVMovie: Error checking enabled status - {0},{1}", ex1.Message, ex1.StackTrace);
       }
 
       if (!_isImporting)
@@ -296,7 +296,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         }
         catch (Exception ex2)
         {
-          Log.ErrorFormat("TVMovie: Error spawing import thread - {0},{1}", ex2.Message, ex2.StackTrace);
+          Log.Error("TVMovie: Error spawing import thread - {0},{1}", ex2.Message, ex2.StackTrace);
         }
       }
     }
@@ -321,7 +321,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       {
         _stateTimer.Enabled = false;
         _stateTimer.Stop();
-        Log.DebugFormat("TVMovie: background import timer stopped");
+        Log.Debug("TVMovie: background import timer stopped");
       }
     }
 

@@ -58,7 +58,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
       IList<Recording> recordings = TVDatabase.TVBusinessLayer.RecordingManagement.ListAllRecordingsByMediaType(MediaTypeEnum.TV);
       foreach (Recording recording in recordings.Where(ShouldBeDeleted))
       {
-        Log.DebugFormat("Recorder: delete old recording:{0} date:{1}",
+        Log.Debug("Recorder: delete old recording:{0} date:{1}",
                   recording.FileName,
                   recording.StartTime.ToShortDateString());
         recordings.Remove(recording);        

@@ -381,7 +381,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
 
       Assembly assm = Assembly.GetExecutingAssembly();
       //for (int x = 0; x < names.Length; x++)
-      //  Log.DebugFormat("res:{0}", names[x]);
+      //  Log.Debug("res:{0}", names[x]);
 
       Stream stream = assm.GetManifestResourceStream("TVCapture.teletext.LogoPage");
       if (stream != null)
@@ -441,7 +441,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
       }
       catch (Exception ex)
       {
-        Log.DebugFormat("Error while saving teletext data: ", ex);
+        Log.Debug("Error while saving teletext data: ", ex);
       }
     }
 

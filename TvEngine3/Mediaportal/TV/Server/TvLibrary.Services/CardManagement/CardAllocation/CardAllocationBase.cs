@@ -127,7 +127,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
       {
         if (LogEnabled)
         {
-          Log.InfoFormat("Controller:    card:{0} type:{1} is available", cardId, tvcard.Type);
+          Log.Info("Controller:    card:{0} type:{1} is available", cardId, tvcard.Type);
         }
       }
       else
@@ -165,7 +165,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
               {
                 if (LogEnabled)
                 {
-                  Log.InfoFormat(
+                  Log.Info(
                     "Controller:    card:{0} type:{1} is available, tuned to same transponder decrypting {2}/{3} channels",
                     cardId, tvcard.Type, NumberOfChannelsDecrypting(tvcard), decryptLimit);
                 }
@@ -174,7 +174,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
               {
                 if (LogEnabled)
                 {
-                  Log.InfoFormat(
+                  Log.Info(
                     "Controller:    card:{0} type:{1} is available, tuned to same transponder",
                     cardId, tvcard.Type);
                 }
@@ -185,7 +185,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
               //it is not, skip this card
               if (LogEnabled)
               {
-                Log.InfoFormat(
+                Log.Info(
                   "Controller:    card:{0} type:{1} is not available, tuned to same transponder decrypting {2}/{3} channels (cam limit reached)",
                   cardId, tvcard.Type, NumberOfChannelsDecrypting(tvcard), decryptLimit);
               }
@@ -197,7 +197,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         {
           if (LogEnabled)
           {
-            Log.InfoFormat("Controller:    card:{0} type:{1} is not available, tuned to different transponder",
+            Log.Info("Controller:    card:{0} type:{1} is not available, tuned to different transponder",
                      cardId, tvcard.Type);
           }
           checkTransponder = false;

@@ -44,7 +44,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
       _timer.Interval = 15 * 60 * 1000;
       _timer.Enabled = true;
       _timer.Elapsed += _timer_Elapsed;
-      Log.DebugFormat("DiskManagement: started");
+      Log.Debug("DiskManagement: started");
     }
 
 
@@ -91,7 +91,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
         return;
       }
 
-      Log.DebugFormat("DiskManagement: checking free disk space");
+      Log.Debug("DiskManagement: checking free disk space");
 
       //first get all drives..
       IEnumerable<string> drives = GetDisks();
@@ -113,8 +113,8 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
       }
       catch (Exception e)
       {
-        Log.ErrorFormat("DiskManagement: Exception at parsing freediskspace ({0}) to drive {1}", quotaText, drive);
-        Log.ErrorFormat(e.ToString());
+        Log.Error("DiskManagement: Exception at parsing freediskspace ({0}) to drive {1}", quotaText, drive);
+        Log.Error(e.ToString());
         //no setting for this drive: quitting
         return false;
       }
@@ -134,8 +134,8 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
       if (freeDiskSpace > minimiumFreeDiskSpace)
         return false;
 
-      Log.InfoFormat("DiskManagement: Drive {0} is out of free space!", drive);
-      Log.InfoFormat("DiskManagement: Has: {0} Minimum Set: {1}", freeDiskSpace.ToString(), minimiumFreeDiskSpace.ToString());
+      Log.Info("DiskManagement: Drive {0} is out of free space!", drive);
+      Log.Info("DiskManagement: Has: {0} Minimum Set: {1}", freeDiskSpace.ToString(), minimiumFreeDiskSpace.ToString());
       return true;
     }
 
@@ -172,7 +172,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
           }
           catch (Exception e)
           {
-            Log.ErrorFormat(e, "DiskManagement: Exception at building FileInfo ({0})", recorded.FileName);
+            Log.Error(e, "DiskManagement: Exception at building FileInfo ({0})", recorded.FileName);
           }
         }
       }
@@ -185,16 +185,16 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
       if (!OutOfDiskSpace(drive))
         return;
 
-      Log.DebugFormat("DiskManagement: not enough free space on drive: {0}", drive);
+      Log.Debug("DiskManagement: not enough free space on drive: {0}", drive);
 
       List<RecordingFileInfo> recordings = GetRecordingsOnDrive(drive);
       if (recordings.Count == 0)
       {
-        Log.DebugFormat("DiskManagement: no recordings to delete");
+        Log.Debug("DiskManagement: no recordings to delete");
         return;
       }
 
-      Log.DebugFormat("DiskManagement: found {0} recordings", recordings.Count);
+      Log.Debug("DiskManagement: found {0} recordings", recordings.Count);
 
       // Not enough free diskspace
       // start deleting recordings (oldest ones first)

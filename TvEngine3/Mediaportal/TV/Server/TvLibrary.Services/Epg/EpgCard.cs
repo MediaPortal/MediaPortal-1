@@ -224,7 +224,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
       }
       return 0;
     }
@@ -350,7 +350,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "EpgCard: Error in EPG timer");
+        Log.Error(ex, "EpgCard: Error in EPG timer");
       }
       finally
       {
@@ -370,27 +370,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     {
       if (channel == null)
       {
-        Log.ErrorFormat("Epg: invalid channel");
+        Log.Error("Epg: invalid channel");
         return false;
       }
       if (tuning == null)
       {
-        Log.ErrorFormat("Epg: invalid tuning");
+        Log.Error("Epg: invalid tuning");
         return false;
       }
       if (card == null)
       {
-        Log.ErrorFormat("Epg: invalid card");
+        Log.Error("Epg: invalid card");
         return false;
       }
       if (ServiceManager.Instance.InternalControllerService == null)
       {
-        Log.ErrorFormat("Epg: invalid tvcontroller");
+        Log.Error("Epg: invalid tvcontroller");
         return false;
       }
       if (_user == null)
       {
-        Log.ErrorFormat("Epg: invalid user");
+        Log.Error("Epg: invalid user");
         return false;
       }
       //remove following check to enable multi-card epg grabbing (still beta)
@@ -539,7 +539,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
         throw;
       }
     }
@@ -586,7 +586,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
       }
       finally
       {
@@ -598,7 +598,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
           }
           catch (Exception ex)
           {
-            Log.ErrorFormat(ex, "");
+            Log.Error(ex, "");
           }          
         }
         if (_state != EpgState.Idle && _user.CardId >= 0)

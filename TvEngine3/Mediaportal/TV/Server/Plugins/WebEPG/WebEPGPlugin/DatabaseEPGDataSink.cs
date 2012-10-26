@@ -173,9 +173,9 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
 
     void IEpgDataSink.Close()
     {
-      Log.InfoFormat("WebEPG: Waiting for database to be updated...");
+      Log.Info("WebEPG: Waiting for database to be updated...");
       ProgramManagement.InitiateInsertPrograms();
-      Log.InfoFormat("WebEPG: Database update finished.");
+      Log.Info("WebEPG: Database update finished.");
     }
 
     void IEpgDataSink.WriteChannel(string id, string name)
@@ -193,7 +193,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
         }
         catch (Exception ex)
         {
-          Log.ErrorFormat(ex, "WebEPG: failed to retrieve channels with display name '{0}':", name);          
+          Log.Error(ex, "WebEPG: failed to retrieve channels with display name '{0}':", name);          
         }
       }
     }
@@ -212,7 +212,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
       else
       {
         _currentChannels = null;
-        Log.InfoFormat("WebEPG: Unknown channel (display name = {0}, channel id = {1}) - skipping...", name, id);
+        Log.Info("WebEPG: Unknown channel (display name = {0}, channel id = {1}) - skipping...", name, id);
         return false;
       }
     }

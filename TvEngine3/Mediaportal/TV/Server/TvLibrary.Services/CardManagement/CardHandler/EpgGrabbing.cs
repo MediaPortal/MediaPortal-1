@@ -66,7 +66,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
         return false;
       }
     }
@@ -88,7 +88,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
       }
     }
 
@@ -128,7 +128,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
         catch (Exception ex)
         {
-          Log.ErrorFormat(ex, "");
+          Log.Error(ex, "");
           return false;
         }
       }

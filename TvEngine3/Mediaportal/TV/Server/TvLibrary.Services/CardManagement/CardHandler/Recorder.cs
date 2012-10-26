@@ -83,7 +83,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
     protected override void AudioVideoEventHandler(PidType pidType)
     {
-      Log.DebugFormat("Recorder audioVideoEventHandler {0}", pidType);
+      Log.Debug("Recorder audioVideoEventHandler {0}", pidType);
 
       // we are only interested in video and audio PIDs
       if (pidType == PidType.Audio)
@@ -145,11 +145,11 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
               }
               _eventVideo.Reset();
               _eventAudio.Reset();
-              Log.DebugFormat("Recorder.start add audioVideoEventHandler");
+              Log.Debug("Recorder.start add audioVideoEventHandler");
               AttachAudioVideoEventHandler(subchannel);
             }
 
-            Log.DebugFormat("card: StartRecording {0} {1}", _cardHandler.DataBaseCard.IdCard, fileName);
+            Log.Debug("card: StartRecording {0} {1}", _cardHandler.DataBaseCard.IdCard, fileName);
             bool recStarted = subchannel.StartRecording(fileName);
             if (recStarted)
             {
@@ -182,7 +182,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
         result = TvResult.UnknownError;
       }
       finally
@@ -199,7 +199,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
     private void HandleFailedRecording(ref IUser user, string fileName)
     {
-      Log.DebugFormat("card: Recording failed! {0} {1}", _cardHandler.DataBaseCard.IdCard, fileName);
+      Log.Debug("card: Recording failed! {0} {1}", _cardHandler.DataBaseCard.IdCard, fileName);
       string cardRecordingFolderName = _cardHandler.DataBaseCard.RecordingFolder;
       Stop(ref user);
       _cardHandler.UserManagement.RemoveUser(user, _cardHandler.UserManagement.GetTimeshiftingChannelId(user.Name));
@@ -228,7 +228,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
         if (_cardHandler.DataBaseCard.Enabled)
         {
-          Log.DebugFormat("card: StopRecording card={0}, user={1}", _cardHandler.DataBaseCard.IdCard, user.Name);
+          Log.Debug("card: StopRecording card={0}, user={1}", _cardHandler.DataBaseCard.IdCard, user.Name);
           if (user.UserType == UserType.Scheduler)
           {
             stop = StopRecording(ref user);
@@ -241,7 +241,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
       }
       return stop;
     }
@@ -264,7 +264,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       else
       {
-        Log.DebugFormat("card: StopRecording subchannel null, skipping");
+        Log.Debug("card: StopRecording subchannel null, skipping");
       }
       return stop;
     }
@@ -281,7 +281,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         {
           if (subchannel.IsRecording)
           {
-            Log.DebugFormat("card: StopRecording setting new context owner on user '{0}'", user.Name);
+            Log.Debug("card: StopRecording setting new context owner on user '{0}'", user.Name);
             context.Owner = user;
             break;
           }
@@ -326,7 +326,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
       }
       return isRecording;
     }
@@ -349,7 +349,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
       }
       return recordingFileName;
     }
@@ -372,7 +372,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
       }
       return recordingStarted;
     }

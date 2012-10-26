@@ -20,7 +20,7 @@ namespace Mediaportal.TV.TvPlugin.EventHandlers
     {
       try
       {
-        Log.DebugFormat("Callback from tvserver {0}", menu.Title);
+        Log.Debug("Callback from tvserver {0}", menu.Title);
 
         // pass menu to calling dialog
         TvPlugin.TVHome.ProcessCiMenu(menu);

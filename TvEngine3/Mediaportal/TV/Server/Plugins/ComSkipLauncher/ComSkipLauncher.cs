@@ -117,7 +117,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
     [CLSCompliant(false)]
     public void Start(IInternalControllerService controllerService)
     {      
-      Log.InfoFormat("plugin: ComSkipLauncher start");
+      Log.Info("plugin: ComSkipLauncher start");
 
       LoadSettings();
 
@@ -126,7 +126,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
 
     public void Stop()
     {
-      Log.InfoFormat("plugin: ComSkipLauncher stop");
+      Log.Info("plugin: ComSkipLauncher stop");
 
       if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
       {
@@ -159,7 +159,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
 
             string parameters = ProcessParameters(_parameters, recording.FileName, channel.DisplayName);
 
-            Log.InfoFormat("ComSkipLauncher: Recording started ({0} on {1}), launching program ({2} {3}) ...",
+            Log.Info("ComSkipLauncher: Recording started ({0} on {1}), launching program ({2} {3}) ...",
                      recording.FileName, channel.DisplayName, _program, parameters);
 
             LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
@@ -172,7 +172,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
             Channel channel = ChannelManagement.GetChannel(recording.IdChannel.GetValueOrDefault());
             string parameters = ProcessParameters(_parameters, recording.FileName, channel.DisplayName);
 
-            Log.InfoFormat("ComSkipLauncher: Recording ended ({0} on {1}), launching program ({2} {3}) ...",
+            Log.Info("ComSkipLauncher: Recording ended ({0} on {1}), launching program ({2} {3}) ...",
                      recording.FileName, channel.DisplayName, _program, parameters);
 
             LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
@@ -181,7 +181,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "ComSkipLauncher - ComSkipLauncher_OnTvServerEvent()");
+        Log.Error(ex, "ComSkipLauncher - ComSkipLauncher_OnTvServerEvent()");
       }
     }
 
@@ -201,7 +201,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
         _program = DefaultProgram;
         _parameters = DefaultParameters;
 
-        Log.ErrorFormat(ex, "ComSkipLauncher - LoadSettings()");
+        Log.Error(ex, "ComSkipLauncher - LoadSettings()");
       }
     }
 
@@ -215,7 +215,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "ComSkipLauncher - SaveSettings()");
+        Log.Error(ex, "ComSkipLauncher - SaveSettings()");
       }
     }
 
@@ -238,7 +238,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "ComSkipLauncher - ProcessParameters()");
+        Log.Error(ex, "ComSkipLauncher - ProcessParameters()");
       }
 
       return output;
@@ -266,7 +266,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "ComSkipLauncher - LaunchProcess()");
+        Log.Error(ex, "ComSkipLauncher - LaunchProcess()");
       }
     }
 

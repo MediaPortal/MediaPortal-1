@@ -64,10 +64,10 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
               using (IProgramRepository programRepositoryForThread = new ProgramRepository())
               {
                 IQueryable<Program> nowProgramsForChannelGroup = programRepositoryForThread.GetNowProgramsForChannelGroup(idGroup);
-                //Log.DebugFormat("GetNowProgramsForChannelGroup SQL = {0}", nowProgramsForChannelGroup.ToTraceString());
+                //Log.Debug("GetNowProgramsForChannelGroup SQL = {0}", nowProgramsForChannelGroup.ToTraceString());
                 nowPrograms = nowProgramsForChannelGroup.ToList();
               }
-              Log.DebugFormat("GetNowProgramsForChannelGroup took {0}", s1.ElapsedMilliseconds);
+              Log.Debug("GetNowProgramsForChannelGroup took {0}", s1.ElapsedMilliseconds);
               AddNowProgramsToList(nowPrograms, progList);
             }
             ,
@@ -75,9 +75,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
             {
               Stopwatch s2 = Stopwatch.StartNew();
               IQueryable<Program> nextProgramsForChannelGroup = programRepository.GetNextProgramsForChannelGroup(idGroup);
-              //Log.DebugFormat("GetNextProgramsForChannelGroup SQL = {0}", nextProgramsForChannelGroup.ToTraceString());
+              //Log.Debug("GetNextProgramsForChannelGroup SQL = {0}", nextProgramsForChannelGroup.ToTraceString());
               nextPrograms = nextProgramsForChannelGroup.ToList();
-              Log.DebugFormat("GetNowProgramsForChannelGroup took {0}", s2.ElapsedMilliseconds);
+              Log.Debug("GetNowProgramsForChannelGroup took {0}", s2.ElapsedMilliseconds);
             }
           );
 
@@ -87,12 +87,12 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat("ProgramManagement.GetNowAndNextProgramsForChannels ex={0}", ex);
+        Log.Error("ProgramManagement.GetNowAndNextProgramsForChannels ex={0}", ex);
         throw;
       }
       finally
       {
-        Log.DebugFormat("GetNowAndNextForChannelGroup took {0}", s.ElapsedMilliseconds);
+        Log.Debug("GetNowAndNextForChannelGroup took {0}", s.ElapsedMilliseconds);
       }
 
     }
@@ -403,7 +403,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat("BusinessLayer: InsertPrograms error - {0}, {1}", ex.Message, ex.StackTrace);
+        Log.Error("BusinessLayer: InsertPrograms error - {0}, {1}", ex.Message, ex.StackTrace);
         return 0;
       }
     }
@@ -434,7 +434,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       try
       {
-        Log.DebugFormat("BusinessLayer: InsertProgramsThread started");
+        Log.Debug("BusinessLayer: InsertProgramsThread started");
         DateTime lastImport = DateTime.Now;
         while (true)
         {
@@ -454,7 +454,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
               //  Has new work been queued in the meantime?
               if (ProgramManagement._programInsertsQueue.Count == 0)
               {
-                Log.DebugFormat("BusinessLayer: InsertProgramsThread exiting");
+                Log.Debug("BusinessLayer: InsertProgramsThread exiting");
                 ProgramManagement._insertProgramsThread = null;
                 break;
               }
@@ -473,27 +473,27 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
               }
               Thread.CurrentThread.Priority = importParams.Priority;
               InsertPrograms(importParams);
-              Log.DebugFormat("BusinessLayer: Inserted {0} programs to the database", importParams.ProgramList.Count);
+              Log.Debug("BusinessLayer: Inserted {0} programs to the database", importParams.ProgramList.Count);
               lastImport = DateTime.Now;
               Thread.CurrentThread.Priority = ThreadPriority.Lowest;
             }
             catch (Exception ex)
             {
-              Log.ErrorFormat("BusinessLayer: InsertMySQL/InsertMSSQL caused an exception:");
-              Log.DebugFormat("", ex);
+              Log.Error("BusinessLayer: InsertMySQL/InsertMSSQL caused an exception:");
+              Log.Debug("", ex);
             }
           }
         }
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat("BusinessLayer: InsertProgramsThread error - {0}, {1}", ex.Message, ex.StackTrace);
+        Log.Error("BusinessLayer: InsertProgramsThread error - {0}, {1}", ex.Message, ex.StackTrace);
       }
     }
 
     public static void SynchProgramStatesForAllSchedules(IEnumerable<Schedule> schedules)
     {
-      Log.InfoFormat("SynchProgramStatesForAllSchedules");
+      Log.Info("SynchProgramStatesForAllSchedules");
 
       if (schedules != null)
       {

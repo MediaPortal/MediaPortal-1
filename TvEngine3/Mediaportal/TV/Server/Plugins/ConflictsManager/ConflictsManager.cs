@@ -98,7 +98,7 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
     /// </summary>
     public void Start(IInternalControllerService controllerService)
     {
-      Log.DebugFormat("plugin: ConflictsManager started");
+      Log.Debug("plugin: ConflictsManager started");
 
       _schedules = ScheduleManagement.ListAllSchedules();
       _cards = CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
@@ -113,7 +113,7 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
     /// </summary>
     public void Stop()
     {
-      Log.DebugFormat("plugin: ConflictsManager stopped");
+      Log.Debug("plugin: ConflictsManager stopped");
       ClearConflictTable();
       ClearConflictPrograms();
 
@@ -155,7 +155,7 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
     /// </summary>
     public void UpdateConflicts()
     {
-      Log.InfoFormat("ConflictManager: Updating conflicts list");
+      Log.Info("ConflictManager: Updating conflicts list");
       DateTime startUpdate = DateTime.Now;
       TimeSpan ts;
       // hmm... 
@@ -183,20 +183,20 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
       /*
       if (cmDebug)
       {
-        foreach (Schedule schedule in scheduleOnceList) Log.DebugFormat("Record Once schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
-        Log.DebugFormat("------------------------------------------------");
-        foreach (Schedule schedule in scheduleDailyList) Log.DebugFormat("Daily schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
-        Log.DebugFormat("------------------------------------------------");
-        foreach (Schedule schedule in scheduleWeeklyList) Log.DebugFormat("Weekly schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
-        Log.DebugFormat("------------------------------------------------");
-        foreach (Schedule schedule in scheduleWeekendsList) Log.DebugFormat("Weekend schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
-        Log.DebugFormat("------------------------------------------------");
-        foreach (Schedule schedule in scheduleWorkingDaysList) Log.DebugFormat("Working days schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
-        Log.DebugFormat("------------------------------------------------");
-        foreach (Schedule schedule in scheduleEveryTimeEveryChannelList) Log.DebugFormat("Evry time on evry chan. schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
-        Log.DebugFormat("------------------------------------------------");
-        foreach (Schedule schedule in scheduleEveryTimeThisChannelList) Log.DebugFormat("Evry time on this chan. schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
-        Log.DebugFormat("------------------------------------------------");
+        foreach (Schedule schedule in scheduleOnceList) Log.Debug("Record Once schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
+        Log.Debug("------------------------------------------------");
+        foreach (Schedule schedule in scheduleDailyList) Log.Debug("Daily schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
+        Log.Debug("------------------------------------------------");
+        foreach (Schedule schedule in scheduleWeeklyList) Log.Debug("Weekly schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
+        Log.Debug("------------------------------------------------");
+        foreach (Schedule schedule in scheduleWeekendsList) Log.Debug("Weekend schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
+        Log.Debug("------------------------------------------------");
+        foreach (Schedule schedule in scheduleWorkingDaysList) Log.Debug("Working days schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
+        Log.Debug("------------------------------------------------");
+        foreach (Schedule schedule in scheduleEveryTimeEveryChannelList) Log.Debug("Evry time on evry chan. schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
+        Log.Debug("------------------------------------------------");
+        foreach (Schedule schedule in scheduleEveryTimeThisChannelList) Log.Debug("Evry time on this chan. schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
+        Log.Debug("------------------------------------------------");
        * 
       }*/
 
@@ -204,12 +204,12 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
 
       scheduleList.Clear();
       ts = DateTime.Now - startUpdate;
-      Log.InfoFormat("Schedules List built {0} ms", ts.TotalMilliseconds);
+      Log.Info("Schedules List built {0} ms", ts.TotalMilliseconds);
       // try to assign all schedules to existing cards
-      if (cmDebug) Log.DebugFormat("Calling assignSchedulestoCards with {0} schedules", scheduleListToParse.Count);
+      if (cmDebug) Log.Debug("Calling assignSchedulestoCards with {0} schedules", scheduleListToParse.Count);
       List<Schedule>[] assignedList = AssignSchedulesToCards(scheduleListToParse);
       ts = DateTime.Now - startUpdate;
-      Log.InfoFormat("ConflictManager: Update done within {0} ms", ts.TotalMilliseconds);
+      Log.Info("ConflictManager: Update done within {0} ms", ts.TotalMilliseconds);
       //List<Conflict> _conflicts = new List<Conflict>();
     }
 

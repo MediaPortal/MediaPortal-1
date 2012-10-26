@@ -500,7 +500,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         // User clicked save...
         ServiceAgents.Instance.CardServiceAgent.SaveCard(dlg.Card);
-        Log.DebugFormat("Saving settings for device {0}...", dlg.Card.Name);
+        Log.Debug("Saving settings for device {0}...", dlg.Card.Name);
         _needRestart = true;
         UpdateList();
       }

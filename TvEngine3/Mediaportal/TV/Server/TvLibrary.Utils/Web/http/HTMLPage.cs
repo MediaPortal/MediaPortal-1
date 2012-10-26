@@ -267,7 +267,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
           }
         }
 
-        Log.DebugFormat("HTMLPage: GetInternal encoding: {0}", _pageEncodingMessage);
+        Log.Debug("HTMLPage: GetInternal encoding: {0}", _pageEncodingMessage);
         // Encoding: depends on selected page
         if (string.IsNullOrEmpty(_strPageSource) || strEncode.ToLower() != _defaultEncode)
         {
@@ -286,7 +286,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
       _error = Page.GetError();
       if (!string.IsNullOrEmpty(_error))
       {
-        Log.ErrorFormat("HTMLPage: GetInternal error: {0}", _error);
+        Log.Error("HTMLPage: GetInternal error: {0}", _error);
       }
       return false;
     }

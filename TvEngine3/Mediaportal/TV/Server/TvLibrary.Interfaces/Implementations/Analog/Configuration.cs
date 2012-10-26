@@ -252,7 +252,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog
         }
         catch
         {
-          Log.DebugFormat("Error while reading analog card configuration file");
+          Log.Debug("Error while reading analog card configuration file");
           _configuration = new Configuration();
           _configuration.Name = name;
           _configuration.DevicePath = devicePath;

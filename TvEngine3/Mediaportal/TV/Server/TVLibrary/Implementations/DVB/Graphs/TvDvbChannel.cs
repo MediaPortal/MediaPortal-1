@@ -119,7 +119,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       _subChannelIndex = -1;
       _tsFilterInterface = (ITsFilter)tsWriter;
       _tsFilterInterface.AddChannel(ref _subChannelIndex);
-      Log.DebugFormat("TvDvbChannel: new subchannel {0} index {1}", _subChannelId, _subChannelIndex);
+      Log.Debug("TvDvbChannel: new subchannel {0} index {1}", _subChannelId, _subChannelIndex);
       _filterTif = tif;
     }
 
@@ -177,7 +177,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     /// </summary>
     public override void OnBeforeTune()
     {
-      Log.DebugFormat("subch:{0} OnBeforeTune", _subChannelId);
+      Log.Debug("subch:{0} OnBeforeTune", _subChannelId);
       _hasTeletext = false;
     }
 
@@ -187,7 +187,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     /// </summary>
     public override void OnAfterTune()
     {
-      Log.DebugFormat("subch:{0} OnAfterTune", _subChannelId);
+      Log.Debug("subch:{0} OnAfterTune", _subChannelId);
 
       // Pass the core PIDs to the tuner's hardware PID filter so that we can do
       // basic tuning and scanning.
@@ -218,7 +218,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     protected bool WaitForPmt(int serviceId, int pmtPid)
     {
       ThrowExceptionIfTuneCancelled();
-      Log.DebugFormat("TvDvbChannel: subchannel {0} wait for PMT, service ID = {1} (0x{1:x}), PMT PID = {2} (0x{2:x})", _subChannelId, serviceId, pmtPid);
+      Log.Debug("TvDvbChannel: subchannel {0} wait for PMT, service ID = {1} (0x{1:x}), PMT PID = {2} (0x{2:x})", _subChannelId, serviceId, pmtPid);
 
       // There 3 classes of service ID settings:
       // -1 = Scanning behaviour, where we don't care about PMT.
@@ -258,9 +258,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       {
         if (pmtPidToSearchFor == 0)
         {
-          Log.DebugFormat("TvDvbChannel: search for updated PMT PID in PAT");
+          Log.Debug("TvDvbChannel: search for updated PMT PID in PAT");
         }
-        Log.DebugFormat("TvDvbChannel: configure PMT grabber, PMT PID = {0} (0x{0:x})", pmtPidToSearchFor);
+        Log.Debug("TvDvbChannel: configure PMT grabber, PMT PID = {0} (0x{0:x})", pmtPidToSearchFor);
         _tsFilterInterface.PmtSetCallBack(_subChannelIndex, this);
         _tsFilterInterface.PmtSetPmtPid(_subChannelIndex, pmtPidToSearchFor, serviceId);
 
@@ -280,11 +280,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         waitLength = DateTime.Now - dtStartWait;
         if (!pmtFound)
         {
-          Log.DebugFormat("TvDvbChannel: timed out waiting for PMT after {0} seconds", waitLength.TotalSeconds);
+          Log.Debug("TvDvbChannel: timed out waiting for PMT after {0} seconds", waitLength.TotalSeconds);
           // One retry allowed...
           if (pmtPidToSearchFor == 0)
           {
-            Log.DebugFormat("TvDvbChannel: giving up waiting for PMT - you might need to increase the PMT timeout");
+            Log.Debug("TvDvbChannel: giving up waiting for PMT - you might need to increase the PMT timeout");
             return false;
           }
           else
@@ -299,7 +299,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         throw new TvExceptionServiceNotRunning();
       }
 
-      Log.DebugFormat("TvDvbChannel: found PMT after {0} seconds", waitLength.TotalSeconds);
+      Log.Debug("TvDvbChannel: found PMT after {0} seconds", waitLength.TotalSeconds);
       bool pmtIsValid = HandlePmt();
       if (pmtIsValid)
       {
@@ -315,7 +315,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       }
       if (_filterTif != null)
       {
-        Log.DebugFormat("TvDvbChannel: stop TIF");
+        Log.Debug("TvDvbChannel: stop TIF");
         _filterTif.Stop();
       }
 
@@ -328,7 +328,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     /// </summary>
     public override void OnGraphRunning()
     {
-      Log.DebugFormat("TvDvbChannel: subchannel {0} OnGraphRunning()", _subChannelId);
+      Log.Debug("TvDvbChannel: subchannel {0} OnGraphRunning()", _subChannelId);
 
       if (_teletextDecoder != null)
       {
@@ -352,7 +352,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     /// </summary>
     public override void OnGraphStop()
     {
-      Log.DebugFormat("subch:{0} OnGraphStop", _subChannelId);
+      Log.Debug("subch:{0} OnGraphStop", _subChannelId);
       if (_tsFilterInterface != null)
       {
         _tsFilterInterface.RecordStopRecord(_subChannelIndex);
@@ -370,7 +370,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     /// </summary>
     public override void OnGraphStopped()
     {
-      Log.DebugFormat("subch:{0} OnGraphStopped", _subChannelId);
+      Log.Debug("subch:{0} OnGraphStopped", _subChannelId);
     }
 
     #endregion
@@ -383,24 +383,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     /// <param name="fileName">filename to which to recording should be saved</param>
     protected override void OnStartRecording(string fileName)
     {
-      Log.DebugFormat("subch:{0} StartRecord({1})", _subChannelId, fileName);
+      Log.Debug("subch:{0} StartRecord({1})", _subChannelId, fileName);
       if (_tsFilterInterface != null)
       {
         int hr = _tsFilterInterface.RecordSetRecordingFileNameW(_subChannelIndex, fileName);
         if (hr != 0)
         {
-          Log.ErrorFormat("subch:{0} SetRecordingFileName failed:{1:X}", _subChannelId, hr);
+          Log.Error("subch:{0} SetRecordingFileName failed:{1:X}", _subChannelId, hr);
         }
-        Log.DebugFormat("subch:{0}-{1} tswriter StartRecording...", _subChannelId, _subChannelIndex);
+        Log.Debug("subch:{0}-{1} tswriter StartRecording...", _subChannelId, _subChannelIndex);
         SetRecorderPids();
 
-        Log.DebugFormat("Set video / audio observer");
+        Log.Debug("Set video / audio observer");
         _tsFilterInterface.RecorderSetVideoAudioObserver(_subChannelIndex, this);
 
         hr = _tsFilterInterface.RecordStartRecord(_subChannelIndex);
         if (hr != 0)
         {
-          Log.ErrorFormat("subch:{0} tswriter StartRecord failed:{1:X}", _subChannelId, hr);
+          Log.Error("subch:{0} tswriter StartRecord failed:{1:X}", _subChannelId, hr);
         }
       }
     }
@@ -411,19 +411,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     /// <returns></returns>
     protected override void OnStopRecording()
     {
-      Log.DebugFormat("tvdvbchannel.OnStopRecording subch={0}, subch index={1}", _subChannelId, _subChannelIndex);
+      Log.Debug("tvdvbchannel.OnStopRecording subch={0}, subch index={1}", _subChannelId, _subChannelIndex);
       if (IsRecording)
       {
         if (_tsFilterInterface != null)
         {
-          Log.DebugFormat("tvdvbchannel.OnStopRecording subch:{0}-{1} tswriter StopRecording...", _subChannelId,
+          Log.Debug("tvdvbchannel.OnStopRecording subch:{0}-{1} tswriter StopRecording...", _subChannelId,
                             _subChannelIndex);
           _tsFilterInterface.RecordStopRecord(_subChannelIndex);
         }
       }
       else
       {
-        Log.DebugFormat("tvdvbchannel.OnStopRecording - not recording");
+        Log.Debug("tvdvbchannel.OnStopRecording - not recording");
       }
     }
 
@@ -433,11 +433,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     /// <param name="fileName">timeshifting filename</param>
     protected override void OnStartTimeShifting(string fileName)
     {
-      Log.DebugFormat("subch:{0} SetTimeShiftFileName:{1}", _subChannelId, fileName);
+      Log.Debug("subch:{0} SetTimeShiftFileName:{1}", _subChannelId, fileName);
       //int hr;
       if (_tsFilterInterface != null)
       {
-        Log.DebugFormat("Set video / audio observer");
+        Log.Debug("Set video / audio observer");
         _tsFilterInterface.SetVideoAudioObserver(_subChannelIndex, this);
         _tsFilterInterface.TimeShiftSetParams(_subChannelIndex, _parameters.MinimumFiles, _parameters.MaximumFiles,
                                               _parameters.MaximumFileSize);
@@ -445,16 +445,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
 
         if (CurrentChannel == null)
         {
-          Log.ErrorFormat("CurrentChannel is null when trying to start timeshifting");
+          Log.Error("CurrentChannel is null when trying to start timeshifting");
           throw new Exception("TvDvbChannel: current channel is null");
         }
 
         //  Set the channel type (0=tv, 1=radio)
         _tsFilterInterface.TimeShiftSetChannelType(_subChannelId, (CurrentChannel.MediaType == MediaTypeEnum.TV ? 0 : 1));
 
-        Log.DebugFormat("subch:{0} SetTimeShiftFileName fill in pids", _subChannelId);
+        Log.Debug("subch:{0} SetTimeShiftFileName fill in pids", _subChannelId);
         SetTimeShiftPids();
-        Log.DebugFormat("subch:{0}-{1} tswriter StartTimeshifting...", _subChannelId, _subChannelIndex);
+        Log.Debug("subch:{0}-{1} tswriter StartTimeshifting...", _subChannelId, _subChannelIndex);
         _tsFilterInterface.TimeShiftStart(_subChannelIndex);
       }
     }
@@ -467,7 +467,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     {
       if (IsTimeShifting)
       {
-        Log.DebugFormat("subch:{0}-{1} tswriter StopTimeshifting...", _subChannelId, _subChannelIndex);
+        Log.Debug("subch:{0}-{1} tswriter StopTimeshifting...", _subChannelId, _subChannelIndex);
         if (_tsFilterInterface != null)
         {
           _tsFilterInterface.TimeShiftStop(_subChannelIndex);
@@ -490,7 +490,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     /// </summary>
     public override void CancelTune()
     {
-      Log.DebugFormat("TvDvbChannel: subchannel {0} cancel tune", _subChannelId);
+      Log.Debug("TvDvbChannel: subchannel {0} cancel tune", _subChannelId);
       _cancelTune = true;
       if (_eventCa != null)
       {
@@ -537,7 +537,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     /// </summary>
     protected override void OnGrabTeletext()
     {
-      Log.DebugFormat("TvDvbChannel: subchannel {0} OnGrabTeletext()", _subChannelId);
+      Log.Debug("TvDvbChannel: subchannel {0} OnGrabTeletext()", _subChannelId);
       int teletextPid = -1;
       if (_grabTeletext)
       {
@@ -552,21 +552,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
 
         if (teletextPid == -1 || _pmt == null || _tsFilterInterface == null)
         {
-          Log.DebugFormat("TvDvbChannel: not able to grab teletext");
+          Log.Debug("TvDvbChannel: not able to grab teletext");
           _grabTeletext = false;
         }
       }
 
       if (_grabTeletext)
       {
-        Log.DebugFormat("TvDvbChannel: start grabbing teletext");
+        Log.Debug("TvDvbChannel: start grabbing teletext");
         _tsFilterInterface.TTxSetCallBack(_subChannelIndex, this);
         _tsFilterInterface.TTxSetTeletextPid(_subChannelIndex, teletextPid);
         _tsFilterInterface.TTxStart(_subChannelIndex);
       }
       else
       {
-        Log.DebugFormat("TvDvbChannel: stop grabbing teletext");
+        Log.Debug("TvDvbChannel: stop grabbing teletext");
         _tsFilterInterface.TTxStop(_subChannelIndex);
       }
     }
@@ -599,10 +599,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       try
       {
         ThrowExceptionIfTuneCancelled();
-        Log.DebugFormat("TvDvbChannel: subchannel {0} build PID list", _subChannelId);
+        Log.Debug("TvDvbChannel: subchannel {0} build PID list", _subChannelId);
         if (_pmt == null)
         {
-          Log.DebugFormat("TvDvbChannel: PMT not available");
+          Log.Debug("TvDvbChannel: PMT not available");
           return;
         }
 
@@ -675,14 +675,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
               hwPids.Add(emmValue.Pid);
             }
           }
-          Log.Log.DebugFormat("Number of HWPIDS that needs to be sent to tuner :{0} ", hwPids.Count);
+          Log.Log.Debug("Number of HWPIDS that needs to be sent to tuner :{0} ", hwPids.Count);
         }*/
 
 
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
       }
     }
 
@@ -700,7 +700,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "TvDvbChannel: failed to set timeshifter PIDs");
+        Log.Error(ex, "TvDvbChannel: failed to set timeshifter PIDs");
       }
     }
 
@@ -718,7 +718,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "TvDvbChannel: failed to set recorder PIDs");
+        Log.Error(ex, "TvDvbChannel: failed to set recorder PIDs");
       }
     }
 
@@ -728,12 +728,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     private bool HandlePmt()
     {
       ThrowExceptionIfTuneCancelled();
-      Log.DebugFormat("TvDvbChannel: subchannel {0} handle PMT", _subChannelId);
+      Log.Debug("TvDvbChannel: subchannel {0} handle PMT", _subChannelId);
       lock (this)
       {
         if (_currentChannel == null)
         {
-          Log.DebugFormat("TvDvbChannel: current channel is not set");
+          Log.Debug("TvDvbChannel: current channel is not set");
           return false;
         }
 
@@ -746,11 +746,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
           Pmt pmt = Pmt.Decode(pmtData, _tuner.CamType);
           if (pmt == null)
           {
-            Log.DebugFormat("TvDvbChannel: invalid PMT detected");
+            Log.Debug("TvDvbChannel: invalid PMT detected");
             return false;
           }
 
-          Log.DebugFormat("TvDvbChannel: SID = {0} (0x{0:x}), PMT PID = {1} (0x{1:x}), version = {2}",
+          Log.Debug("TvDvbChannel: SID = {0} (0x{0:x}), PMT PID = {1} (0x{1:x}), version = {2}",
                           pmt.ProgramNumber, _pmtPid, pmt.Version);
 
           // Have we already seen this PMT? If yes, then stop processing here. Theoretically this is a
@@ -759,7 +759,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
           {
             return false;
           }
-          Log.DebugFormat("TvDvbChannel: new PMT version");
+          Log.Debug("TvDvbChannel: new PMT version");
           _pmt = pmt;
 
           // Attempt to grab the CAT if the service is encrypted. Note that we trust the setting on the
@@ -777,7 +777,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         }
         catch (Exception ex)
         {
-          Log.ErrorFormat(ex, "TvDvbChannel: caught exception while handling PMT");
+          Log.Error(ex, "TvDvbChannel: caught exception while handling PMT");
         }
         finally
         {
@@ -793,7 +793,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     private void GrabCat()
     {
       ThrowExceptionIfTuneCancelled();
-      Log.DebugFormat("TvDvbChannel: subchannel {0} grab CAT", _subChannelId);
+      Log.Debug("TvDvbChannel: subchannel {0} grab CAT", _subChannelId);
       IntPtr catBuffer = Marshal.AllocCoTaskMem(4096);
       try
       {
@@ -806,10 +806,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         TimeSpan ts = DateTime.Now - dtNow;
         if (!found)
         {
-          Log.DebugFormat("TvDvbChannel: CAT not found after {0} seconds", ts.TotalSeconds);
+          Log.Debug("TvDvbChannel: CAT not found after {0} seconds", ts.TotalSeconds);
           return;
         }
-        Log.DebugFormat("TvDvbChannel: CAT found after {0} seconds", ts.TotalSeconds);
+        Log.Debug("TvDvbChannel: CAT found after {0} seconds", ts.TotalSeconds);
         int catLength = _tsFilterInterface.CaGetCaData(_subChannelIndex, catBuffer);
         byte[] catData = new byte[catLength];
         Marshal.Copy(catBuffer, catData, 0, catLength);
@@ -817,7 +817,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "TvDvbChannel: caught exception while grabbing CAT");
+        Log.Error(ex, "TvDvbChannel: caught exception while grabbing CAT");
       }
       finally
       {
@@ -874,7 +874,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     /// <returns></returns>
     public int OnCaReceived()
     {
-      Log.DebugFormat("TvDvbChannel: subchannel {0} OnCaReceived()", _subChannelId);
+      Log.Debug("TvDvbChannel: subchannel {0} OnCaReceived()", _subChannelId);
       if (_eventCa != null)
       {
         _eventCa.Set();
@@ -899,7 +899,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     /// <returns>an HRESULT indicating whether the PMT section was successfully handled</returns>
     public int OnPmtReceived(int pmtPid, int serviceId, bool isServiceRunning)
     {
-      Log.DebugFormat("TvDvbChannel: subchannel {0} OnPmtReceived(), PMT PID = {1} (0x{1:x}), service ID = {2} (0x{2:x}), is service running = {3}, dynamic = {4}",
+      Log.Debug("TvDvbChannel: subchannel {0} OnPmtReceived(), PMT PID = {1} (0x{1:x}), service ID = {2} (0x{2:x}), is service running = {3}, dynamic = {4}",
           _subChannelId, pmtPid, serviceId, isServiceRunning, _pmt != null);
       _pmtPid = pmtPid;
       _isServiceRunning = isServiceRunning;
@@ -950,17 +950,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
             int oldPid = currentDetail.PmtPid;
             currentDetail.PmtPid = pmtPid;
             ChannelManagement.SaveTuningDetail(currentDetail);
-            Log.DebugFormat("TvDvbChannel: updated PMT PID for service {0} (0x{0:x}) from {1} (0x{1:x}) to {2} (0x{2:x})",
+            Log.Debug("TvDvbChannel: updated PMT PID for service {0} (0x{0:x}) from {1} (0x{1:x}) to {2} (0x{2:x})",
                             dvbService.ServiceId, oldPid, pmtPid);
           }
           catch (Exception ex)
           {
-            Log.ErrorFormat(ex, "TvDvbChannel: failed to persist new PMT PID for service {0} (0x{0:x})", dvbService.ServiceId);
+            Log.Error(ex, "TvDvbChannel: failed to persist new PMT PID for service {0} (0x{0:x})", dvbService.ServiceId);
           }
         }
         else
         {
-          Log.DebugFormat("TvDvbChannel: unable to persist new PMT PID for service {0} (0x{0:x})", dvbService.ServiceId);
+          Log.Debug("TvDvbChannel: unable to persist new PMT PID for service {0} (0x{0:x})", dvbService.ServiceId);
         }
       }
     }

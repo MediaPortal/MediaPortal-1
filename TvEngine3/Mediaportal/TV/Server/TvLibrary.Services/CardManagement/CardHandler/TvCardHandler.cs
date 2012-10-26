@@ -260,7 +260,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
         catch (Exception ex)
         {
-          Log.ErrorFormat(ex, "");
+          Log.Error(ex, "");
           return CardType.Analog;
         }
       }
@@ -284,7 +284,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
         catch (Exception ex)
         {
-          Log.ErrorFormat(ex, "");
+          Log.Error(ex, "");
           return "";
         }
       }
@@ -306,7 +306,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
         return "";
       }
     }
@@ -334,7 +334,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
         catch (Exception ex)
         {
-          Log.ErrorFormat(ex, "");
+          Log.Error(ex, "");
           return false;
         }
       }
@@ -362,7 +362,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
         catch (Exception ex)
         {
-          Log.ErrorFormat(ex, "");
+          Log.Error(ex, "");
           return 0;
         }
       }
@@ -390,7 +390,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
         catch (Exception ex)
         {
-          Log.ErrorFormat(ex, "");
+          Log.Error(ex, "");
           return 0;
         }
       }
@@ -414,7 +414,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
       }
     }
 
@@ -441,7 +441,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
         catch (Exception ex)
         {
-          Log.ErrorFormat(ex, "");
+          Log.Error(ex, "");
           return 0;
         }
       }
@@ -469,7 +469,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
         catch (Exception ex)
         {
-          Log.ErrorFormat(ex, "");
+          Log.Error(ex, "");
           return 0;
         }
       }
@@ -570,7 +570,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
         return null;
       }
     }
@@ -597,7 +597,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
         return -1;
       }
     }
@@ -644,7 +644,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
         return "";
       }
     }
@@ -679,7 +679,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
         return false;
       }
     }
@@ -707,7 +707,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
         return false;
       }
     }
@@ -731,11 +731,11 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
         if (_parkedUserManagement.HasAnyParkedUsers())
         {
-          Log.InfoFormat("unable to Stopcard since there are parked channels");
+          Log.Info("unable to Stopcard since there are parked channels");
           return;
         }
       
-        Log.InfoFormat("Stopcard");
+        Log.Info("Stopcard");
 
         //remove all subchannels, except for this user...
         FreeAllSubChannels();        
@@ -751,7 +751,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
       }
     }
 

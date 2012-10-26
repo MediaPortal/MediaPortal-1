@@ -178,7 +178,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
         GlobalServiceProvider.Instance.Remove<IPowerScheduler>();
       }
       GlobalServiceProvider.Instance.Add<IPowerScheduler>(this);
-      Log.DebugFormat("PowerScheduler: Registered PowerScheduler service to GlobalServiceProvider");
+      Log.Debug("PowerScheduler: Registered PowerScheduler service to GlobalServiceProvider");
     }
 
     ~PowerScheduler()
@@ -195,7 +195,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       catch (ObjectDisposedException) {}
       catch (AppDomainUnloadedException appex)
       {
-        Log.ErrorFormat(appex, "PowerScheduler: Error on dispose");
+        Log.Error(appex, "PowerScheduler: Error on dispose");
       }
     }
 
@@ -220,7 +220,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "Powerscheduler: Error naming thread");
+        Log.Error(ex, "Powerscheduler: Error naming thread");
       }
 
       _controllerService = controllerService;
@@ -229,7 +229,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       Register(_clientWakeupHandler);
       RegisterPowerEventHandler();
 
-      Log.DebugFormat("PowerScheduler: Registered default set of standby/resume handlers to PowerScheduler");
+      Log.Debug("PowerScheduler: Registered default set of standby/resume handlers to PowerScheduler");
 
       // Create the PowerManager that helps setting the correct thread executation state
       _powerManager = new PowerManager();
@@ -255,7 +255,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
 
       SendPowerSchedulerEvent(PowerSchedulerEventType.Started);
 
-      Log.DebugFormat("PowerScheduler: Starting poll thread");
+      Log.Debug("PowerScheduler: Starting poll thread");
       _stopThread = new ManualResetEvent(false);
       _pollThread = new Thread(new ThreadStart(PollThread));
       _pollThread.Name = "PowerScheduler poll thread";
@@ -263,7 +263,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       _pollThread.Priority = ThreadPriority.Normal;
       _pollThread.Start();
 
-      Log.InfoFormat("Powerscheduler: started");
+      Log.Info("Powerscheduler: started");
     }
 
     /// <summary>
@@ -283,11 +283,11 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       _factory.RemoveDefaultSet();
       Unregister(_clientStandbyHandler);
       Unregister(_clientWakeupHandler);
-      Log.DebugFormat("PowerScheduler: Removed default set of standby/resume handlers to PowerScheduler");
+      Log.Debug("PowerScheduler: Removed default set of standby/resume handlers to PowerScheduler");
 
       SendPowerSchedulerEvent(PowerSchedulerEventType.Stopped);
 
-      Log.InfoFormat("Powerscheduler: stopped");
+      Log.Info("Powerscheduler: stopped");
     }
 
     private void RegisterPowerEventHandler()
@@ -296,11 +296,11 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       if (GlobalServiceProvider.Instance.IsRegistered<IPowerEventHandler>())
       {
         GlobalServiceProvider.Instance.Get<IPowerEventHandler>().AddPowerEventHandler(new PowerEventHandler(OnPowerEvent));
-        Log.DebugFormat("PowerScheduler: Registered PowerScheduler as PowerEventHandler to tvservice");
+        Log.Debug("PowerScheduler: Registered PowerScheduler as PowerEventHandler to tvservice");
       }
       else
       {
-        Log.ErrorFormat("PowerScheduler: Unable to register power event handler!");
+        Log.Error("PowerScheduler: Unable to register power event handler!");
       }
     }
 
@@ -311,11 +311,11 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       {
         GlobalServiceProvider.Instance.Get<IPowerEventHandler>().RemovePowerEventHandler(
           new PowerEventHandler(OnPowerEvent));
-        Log.DebugFormat("PowerScheduler: UnRegistered PowerScheduler as PowerEventHandler to tvservice");
+        Log.Debug("PowerScheduler: UnRegistered PowerScheduler as PowerEventHandler to tvservice");
       }
       else
       {
-        Log.ErrorFormat("PowerScheduler: Unable to unregister power event handler!");
+        Log.Error("PowerScheduler: Unable to unregister power event handler!");
       }
     }
 
@@ -341,7 +341,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       catch (System.Net.Sockets.SocketException) {}
       ObjRef objref = RemotingServices.Marshal(this, "PowerControl", typeof (IPowerController));
       RemotePowerControl.Clear();
-      Log.DebugFormat("PowerScheduler: Registered PowerScheduler as \"PowerControl\" remoting service");
+      Log.Debug("PowerScheduler: Registered PowerScheduler as \"PowerControl\" remoting service");
       _remotingStarted = true;
     }*/
 
@@ -438,7 +438,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     /// <returns></returns>
     public void SuspendSystem(string source, bool force)
     {
-      Log.InfoFormat("PowerScheduler: Manual system suspend requested by {0}", source);
+      Log.Info("PowerScheduler: Manual system suspend requested by {0}", source);
 
       // determine standby mode
       switch (_settings.ShutdownMode)
@@ -450,10 +450,10 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
           SuspendSystemWithOptions(source, (int)RestartOptions.Hibernate, force);
           break;
         case ShutdownMode.StayOn:
-          Log.DebugFormat("PowerScheduler: Standby requested but system is configured to stay on");
+          Log.Debug("PowerScheduler: Standby requested but system is configured to stay on");
           break;
         default:
-          Log.ErrorFormat("PowerScheduler: unknown shutdown mode: {0}", _settings.ShutdownMode);
+          Log.Error("PowerScheduler: unknown shutdown mode: {0}", _settings.ShutdownMode);
           break;
       }
     }
@@ -489,7 +489,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
         // block concurrent request?
         if (_ignoreSuspendUntil > now)
         {
-          Log.InfoFormat("PowerScheduler: Concurrent shutdown was ignored: {0} ; force: {1}", (RestartOptions)how, force);
+          Log.Info("PowerScheduler: Concurrent shutdown was ignored: {0} ; force: {1}", (RestartOptions)how, force);
           return;
         }
 
@@ -497,7 +497,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
         _ignoreSuspendUntil = DateTime.MaxValue;
       }
 
-      Log.InfoFormat("PowerScheduler: Entering shutdown {0} ; forced: {1} -- kick off shutdown thread", (RestartOptions)how,
+      Log.Info("PowerScheduler: Entering shutdown {0} ; forced: {1} -- kick off shutdown thread", (RestartOptions)how,
                force);
       SuspendSystemThreadEnv data = new SuspendSystemThreadEnv();
       data.that = this;
@@ -518,9 +518,9 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
 
     protected void SuspendSystemThread(string source, RestartOptions how, bool force)
     {
-      Log.DebugFormat("PowerScheduler: Shutdown thread is running: {0}, force: {1}", how, force);
+      Log.Debug("PowerScheduler: Shutdown thread is running: {0}, force: {1}", how, force);
       _isSuspendInProgress = true;
-      Log.DebugFormat("PowerScheduler: Informing handlers about UserShutdownNow");
+      Log.Debug("PowerScheduler: Informing handlers about UserShutdownNow");
       UserShutdownNow();
 
       // user is away, so we set _lastUserTime long time in the past to pretend that he didn't access system a long time
@@ -529,7 +529,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       // test if shutdown is allowed
       bool disallow = DisAllowShutdown(true);
 
-      Log.InfoFormat("PowerScheduler: Source: {0}; shutdown is allowed {1} ; forced: {2}", source, !disallow, force);
+      Log.Info("PowerScheduler: Source: {0}; shutdown is allowed {1} ; forced: {2}", source, !disallow, force);
 
       if (disallow && !force)
       {
@@ -548,7 +548,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
         // Here we should wait for QuerySuspendFailed / QueryStandByFailed since we have rejected
         // the suspend request
         _querySuspendFailed++;
-        Log.InfoFormat("PowerScheduler: _querySuspendFailed {0}", _querySuspendFailed);
+        Log.Info("PowerScheduler: _querySuspendFailed {0}", _querySuspendFailed);
         do
         {
           System.Threading.Thread.Sleep(1000);
@@ -556,7 +556,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       }
       // activate standby
       _denySuspendQuery = false;
-      Log.InfoFormat("PowerScheduler: Entering shutdown {0} ; forced: {1}", (RestartOptions)how, force);
+      Log.Info("PowerScheduler: Entering shutdown {0} ; forced: {1}", (RestartOptions)how, force);
       WindowsController.ExitWindows((RestartOptions)how, force, SuspendSystemThreadAfter);
     }
 
@@ -797,7 +797,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     /// </summary>
     private void OnWakeupTimerExpired()
     {
-      Log.DebugFormat("PowerScheduler: OnResume");
+      Log.Debug("PowerScheduler: OnResume");
     }
 
     /// <summary>
@@ -805,7 +805,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     /// </summary>
     private void OnWakeupTimerException(WaitableTimer sender, TimerException exception)
     {
-      Log.ErrorFormat(exception, "PowerScheduler: WaitableTimer had an exception:");      
+      Log.Error(exception, "PowerScheduler: WaitableTimer had an exception:");      
     }
 
     /// <summary>
@@ -823,7 +823,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "Powerscheduler: Error naming thread");
+        Log.Error(ex, "Powerscheduler: Error naming thread");
       }
 
       int reload = 0;
@@ -846,7 +846,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
           }
           catch (Exception ex)
           {
-            Log.ErrorFormat(ex, "");
+            Log.Error(ex, "");
           }
         }
         if (_stopThread.WaitOne(1000)) // Wait one sec / exit
@@ -875,7 +875,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
           Convert.ToBoolean(SettingsManagement.GetSetting("PowerSchedulerExtensiveLogging", "false").Value))
       {
         _settings.ExtensiveLogging = !_settings.ExtensiveLogging;
-        Log.DebugFormat("PowerScheduler: extensive logging enabled: {0}", _settings.ExtensiveLogging);
+        Log.Debug("PowerScheduler: extensive logging enabled: {0}", _settings.ExtensiveLogging);
         changed = true;
       }
       // Check if PowerScheduler should actively put the system into standby
@@ -1028,7 +1028,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
 
       if (!GetLastInputInfo(ref lastInputInfo))
       {
-        Log.ErrorFormat("PowerScheduler: Unable to GetLastInputInfo!");
+        Log.Error("PowerScheduler: Unable to GetLastInputInfo!");
         return DateTime.MinValue;
       }
 
@@ -1066,7 +1066,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
           _powerManager.AllowStandby();
           if (!_idle)
           {
-            Log.InfoFormat("PowerScheduler: System changed from busy state to idle state");
+            Log.Info("PowerScheduler: System changed from busy state to idle state");
             _idle = true;
             SendPowerSchedulerEvent(PowerSchedulerEventType.SystemIdle);
           }
@@ -1075,7 +1075,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
           // DisAllowShutdown takes some seconds to run => check once again Unattended 
           if (Unattended && _settings.ShutdownEnabled)
           {
-            Log.InfoFormat("PowerScheduler: System is unattended and idle - initiate suspend/hibernate");
+            Log.Info("PowerScheduler: System is unattended and idle - initiate suspend/hibernate");
             SuspendSystem();
           }
         }
@@ -1084,7 +1084,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
           _powerManager.PreventStandby();
           if (_idle)
           {
-            Log.InfoFormat("PowerScheduler: System changed from idle state to busy state");
+            Log.Info("PowerScheduler: System changed from idle state to busy state");
             _idle = false;
             SendPowerSchedulerEvent(PowerSchedulerEventType.SystemBusy);
           }
@@ -1104,13 +1104,13 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       {
         case PowerEventType.QuerySuspend:
         case PowerEventType.QueryStandBy:
-          Log.DebugFormat("PowerScheduler: System wants to enter standby (query)");
+          Log.Debug("PowerScheduler: System wants to enter standby (query)");
           // First request for suspend, this we will reject by returning false.
           // Instead we will start a shutdown thread that will de-init and last will 
           // issue a new suspend query that will accept.
           if (_denySuspendQuery)
           {
-            Log.DebugFormat("PowerScheduler: Suspend queried, starting suspend sequence");
+            Log.Debug("PowerScheduler: Suspend queried, starting suspend sequence");
             // Always try to Hibernate (S4). If system is set to S3, then Hibernate will fail and result will be S3
             SuspendSystemWithOptions("System", (int)RestartOptions.Hibernate, false);
             return false;
@@ -1123,7 +1123,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
         case PowerEventType.QuerySuspendFailed:
         case PowerEventType.QueryStandByFailed:
           _querySuspendFailed--;
-          Log.DebugFormat("PowerScheduler: Entering standby was disallowed (blocked)");
+          Log.Debug("PowerScheduler: Entering standby was disallowed (blocked)");
           return true;
         case PowerEventType.ResumeAutomatic:
         case PowerEventType.ResumeCritical:
@@ -1139,9 +1139,9 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     private void Suspend(PowerEventType powerStatus)
     {
       if (powerStatus == PowerEventType.Suspend)
-        Log.DebugFormat("PowerScheduler: System is going to suspend");
+        Log.Debug("PowerScheduler: System is going to suspend");
       else if (powerStatus == PowerEventType.StandBy)
-        Log.DebugFormat("PowerScheduler: System is going to standby");
+        Log.Debug("PowerScheduler: System is going to standby");
       _denySuspendQuery = true; // reset the flag
       _standby = true;
       _controllerService.EpgGrabberEnabled = false;
@@ -1154,11 +1154,11 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     private void Resume(PowerEventType powerStatus)
     {
       if (powerStatus == PowerEventType.ResumeAutomatic)
-        Log.DebugFormat("PowerScheduler: System has resumed automatically from standby");
+        Log.Debug("PowerScheduler: System has resumed automatically from standby");
       else if (powerStatus == PowerEventType.ResumeCritical)
-        Log.DebugFormat("PowerScheduler: System has resumed from standby after a critical suspend");
+        Log.Debug("PowerScheduler: System has resumed from standby after a critical suspend");
       else if (powerStatus == PowerEventType.ResumeSuspend)
-        Log.DebugFormat("PowerScheduler: System has resumed from standby");
+        Log.Debug("PowerScheduler: System has resumed from standby");
 
       if (!_standby)
         return;
@@ -1169,7 +1169,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
         _lastUserTime = DateTime.Now;
         if (_idle)
         {
-          Log.InfoFormat("PowerScheduler: System changed from idle state to busy state");
+          Log.Info("PowerScheduler: System changed from idle state to busy state");
           _idle = false;
           SendPowerSchedulerEvent(PowerSchedulerEventType.SystemBusy);
         }
@@ -1193,7 +1193,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     /// </summary>
     private void SetWakeupTimer()
     {
-      Log.DebugFormat("PowerScheduler: SetWakeupTimer");
+      Log.Debug("PowerScheduler: SetWakeupTimer");
       if (_settings.WakeupEnabled)
       {
         // determine next wakeup time from IWakeupHandlers
@@ -1202,7 +1202,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
         if (disallow && OSInfo.OSInfo.VistaOrLater())
         {
           // fixing mantis 1487: If suspend it's triggered by remote on vista PSClient tells TV Server Power scheduler to wakeup after 1 min 
-          Log.DebugFormat("PowerScheduler: Vista detected => DisAllowShutdown ignored in SetWakeupTimer");
+          Log.Debug("PowerScheduler: Vista detected => DisAllowShutdown ignored in SetWakeupTimer");
           disallow = false;
         }
         if (nextWakeup < DateTime.MaxValue || disallow)
@@ -1224,16 +1224,16 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
             delta = 60;
           }
           _wakeupTimer.SecondsToWait = delta;
-          Log.DebugFormat("PowerScheduler: Set wakeup timer to wakeup system in {0} minutes", delta / 60);
+          Log.Debug("PowerScheduler: Set wakeup timer to wakeup system in {0} minutes", delta / 60);
         }
         else
         {
-          Log.DebugFormat("PowerScheduler: No pending events found in the future which should wakeup the system");
+          Log.Debug("PowerScheduler: No pending events found in the future which should wakeup the system");
           _wakeupTimer.SecondsToWait = -1;
         }
       }
       else
-        Log.DebugFormat("PowerScheduler: Warning WakeupEnabled is not set.");
+        Log.Debug("PowerScheduler: Warning WakeupEnabled is not set.");
     }
 
     #region Message handling
@@ -1323,7 +1323,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
         }
         catch (Exception e)
         {
-          Log.DebugFormat(e, "");
+          Log.Debug(e, "");
         }
         LogVerbose("External command finished");
       }
@@ -1335,13 +1335,13 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     {
       //don't just do this: LogVerbose(msg, null);!!
       if (_settings.ExtensiveLogging)
-        Log.DebugFormat(msg);
+        Log.Debug(msg);
     }
 
     private void LogVerbose(string format, params object[] args)
     {
       if (_settings.ExtensiveLogging)
-        Log.DebugFormat(format, args);
+        Log.Debug(format, args);
     }
 
     #endregion
@@ -1360,7 +1360,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
 
       if (_controllerService != null)
       {
-        Log.DebugFormat("PowerScheduler: DeInit controller");
+        Log.Debug("PowerScheduler: DeInit controller");
         _controllerService.DeInit();
         _cardsStopped = true;
         _reinitializeController = true;
@@ -1381,7 +1381,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
 
       if (_controllerService != null && _reinitializeController)
       {
-        Log.DebugFormat("PowerScheduler: ReInit Controller");
+        Log.Debug("PowerScheduler: ReInit Controller");
         Thread.Sleep(5000); // Give it a few seconds.
         _controllerService.Init();
         _reinitializeController = false;
@@ -1541,7 +1541,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       DateTime nextWakeupTime = DateTime.MaxValue;
       DateTime earliestWakeupTime = DateTime.Now;
 
-      //too much logging Log.DebugFormat("PowerScheduler: earliest wakeup time: {0}", earliestWakeupTime); 
+      //too much logging Log.Debug("PowerScheduler: earliest wakeup time: {0}", earliestWakeupTime); 
       foreach (IWakeupHandler handler in _wakeupHandlers)
       {
         DateTime nextTime = handler.GetNextWakeupTime(earliestWakeupTime);
@@ -1550,7 +1550,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
                    nextTime);
         if (nextTime < nextWakeupTime && nextTime >= earliestWakeupTime)
         {
-          //too much logging Log.DebugFormat("PowerScheduler: found next wakeup time {0} by {1}", nextTime, handler.HandlerName);
+          //too much logging Log.Debug("PowerScheduler: found next wakeup time {0} by {1}", nextTime, handler.HandlerName);
           handlerName = handler.HandlerName;
           nextWakeupTime = nextTime;
         }
@@ -1563,7 +1563,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       {
         _currentNextWakeupTime = nextWakeupTime;
 
-        Log.DebugFormat("PowerScheduler: new next wakeup time {0} found by {1}", nextWakeupTime, handlerName);
+        Log.Debug("PowerScheduler: new next wakeup time {0} found by {1}", nextWakeupTime, handlerName);
       }
 
       return nextWakeupTime;

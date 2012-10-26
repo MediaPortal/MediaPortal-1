@@ -68,7 +68,7 @@ namespace Mediaportal.TV.Server.SetupTV
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "Failed to startup cause of exception");        
+        Log.Error(ex, "Failed to startup cause of exception");        
       }
     }
 
@@ -91,8 +91,8 @@ namespace Mediaportal.TV.Server.SetupTV
       catch (Exception ex)
       {
         MessageBox.Show("Failed to open WCF connection to server");
-        Log.ErrorFormat("Unable to get list of servers");
-        Log.ErrorFormat(ex, "");
+        Log.Error("Unable to get list of servers");
+        Log.Error(ex, "");
       }
 
       Project project = new Project();
@@ -128,7 +128,7 @@ namespace Mediaportal.TV.Server.SetupTV
                                                   MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
               if (dlg == DialogResult.Yes)
               {
-                Log.InfoFormat("Controller: server {0} changed to {1}", RemoteControl.HostName, localHostname);                      
+                Log.Info("Controller: server {0} changed to {1}", RemoteControl.HostName, localHostname);                      
                 ServiceAgents.Instance.SettingServiceAgent.SaveSetting("hostname", localHostname);
                 if (!ServiceHelper.IsRestrictedMode)
                 {
@@ -144,8 +144,8 @@ namespace Mediaportal.TV.Server.SetupTV
             }
             else
             {
-              Log.ErrorFormat("Cannot connect to server {0}", RemoteControl.HostName);
-              Log.ErrorFormat(ex, "");
+              Log.Error("Cannot connect to server {0}", RemoteControl.HostName);
+              Log.Error(ex, "");
               DialogResult dlg = MessageBox.Show("Unable to connect to <" + RemoteControl.HostName + ">.\n" +
                                                   "Please check the TV Server logs for details.\n\n" +
                                                   "Setup will now close.");
@@ -543,7 +543,7 @@ namespace Mediaportal.TV.Server.SetupTV
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
       }
       finally
       {
@@ -693,7 +693,7 @@ namespace Mediaportal.TV.Server.SetupTV
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
       }
     }
 

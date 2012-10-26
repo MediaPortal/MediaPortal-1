@@ -46,7 +46,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
     public static bool DeleteRecordingOnDisk(string fileNameForRec, out bool wasPendingDeletionAdded)
     {
       wasPendingDeletionAdded = false;
-      Log.DebugFormat("DeleteRecordingOnDisk: '{0}'", fileNameForRec);
+      Log.Debug("DeleteRecordingOnDisk: '{0}'", fileNameForRec);
       bool filesDeleted = false;
       try
       {
@@ -68,7 +68,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "RecordingFileHandler: Error while deleting a recording from disk");
+        Log.Error(ex, "RecordingFileHandler: Error while deleting a recording from disk");
         wasPendingDeletionAdded = true;
         filesDeleted = false;
       }
@@ -105,14 +105,14 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
         bool doesPendingDeletionExist = TVDatabase.TVBusinessLayer.RecordingManagement.HasRecordingPendingDeletion(fileNameForRec);        
         if (!doesPendingDeletionExist)
         {
-          Log.ErrorFormat("RecordingFileHandler: adding filename to list of pending deletions: {0}", fileNameForRec);
+          Log.Error("RecordingFileHandler: adding filename to list of pending deletions: {0}", fileNameForRec);
           var addNewPendingDeletion = new PendingDeletion {FileName = fileNameForRec};
           TVDatabase.TVBusinessLayer.RecordingManagement.SaveRecordingPendingDeletion(addNewPendingDeletion);                  
         }
       }
       catch (Exception ex2)
       {
-        Log.ErrorFormat("DeleteRecordingOnDisk - tried to add to list of pending deletions exception={0}, filename={1}",
+        Log.Error("DeleteRecordingOnDisk - tried to add to list of pending deletions exception={0}, filename={1}",
                   ex2.Message, fileNameForRec);
       }
     }
@@ -125,7 +125,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
 
       foreach (string fileName in relatedFiles)
       {
-        Log.DebugFormat(" - deleting '{0}'", fileName);
+        Log.Debug(" - deleting '{0}'", fileName);
         // File.Delete will _not_ throw on "File does not exist"
         File.Delete(fileName);
       }
@@ -141,11 +141,11 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
     {
       try
       {
-        Log.DebugFormat("RecordingFileHandler: Clean orphan recording dirs for {0}", fileName);
+        Log.Debug("RecordingFileHandler: Clean orphan recording dirs for {0}", fileName);
         string recfolder = Path.GetDirectoryName(fileName);
         List<string> recordingPaths = GetRecordingPaths();
 
-        Log.DebugFormat("RecordingFileHandler: Checking {0} path(s) for cleanup", Convert.ToString(recordingPaths.Count));
+        Log.Debug("RecordingFileHandler: Checking {0} path(s) for cleanup", Convert.ToString(recordingPaths.Count));
         foreach (string checkPath in recordingPaths)
         {
           if (checkPath != string.Empty && checkPath != Path.GetPathRoot(checkPath))
@@ -153,7 +153,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
             // make sure we're only deleting directories which are "recording dirs" from a tv card
             if (fileName.Contains(checkPath))
             {
-              Log.DebugFormat("RecordingFileHandler: Origin for recording {0} found: {1}", Path.GetFileName(fileName),
+              Log.Debug("RecordingFileHandler: Origin for recording {0} found: {1}", Path.GetFileName(fileName),
                         checkPath);
               string deleteDir = recfolder;
               // do not attempt to step higher than the recording base path
@@ -188,7 +188,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
                 }
                 catch (Exception ex1)
                 {
-                  Log.InfoFormat("RecordingFileHandler: Could not delete directory {0} - {1}", deleteDir, ex1.Message);
+                  Log.Info("RecordingFileHandler: Could not delete directory {0} - {1}", deleteDir, ex1.Message);
                   throw; //make sure its added to the pending deletions list later on.                  
                 }
               }
@@ -196,14 +196,14 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
           }
           else
           {
-            Log.DebugFormat("RecordingFileHandler: Path not valid for removal - {1}", checkPath);
+            Log.Debug("RecordingFileHandler: Path not valid for removal - {1}", checkPath);
             return;
           }
         }
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat("RecordingFileHandler: Error cleaning the recording folders - {0},{1}", ex.Message, ex.StackTrace);
+        Log.Error("RecordingFileHandler: Error cleaning the recording folders - {0},{1}", ex.Message, ex.StackTrace);
         throw; //make sure its added to the pending deletions list later on.                  
       }
     }
@@ -215,7 +215,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
 
       if (hasSubDirs)
       {
-        Log.DebugFormat("RecordingFileHandler: Found {0} sub-directory(s) in recording path - not cleaning {1}",
+        Log.Debug("RecordingFileHandler: Found {0} sub-directory(s) in recording path - not cleaning {1}",
                   Convert.ToString(subdirs.Length), deleteDir);
       }
       return hasSubDirs;
@@ -224,7 +224,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
     private static string DeleteDir(string deleteDir)
     {
       Directory.Delete(deleteDir);
-      Log.DebugFormat("RecordingFileHandler: Deleted empty recording dir - {0}", deleteDir);
+      Log.Debug("RecordingFileHandler: Deleted empty recording dir - {0}", deleteDir);
       DirectoryInfo di = Directory.GetParent(deleteDir);
       if (di != null)
       {
@@ -253,7 +253,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
         hasDirAnyFilesOver1MBTotal = (fileSizesTotal >= 1048576);
         if (hasDirAnyFilesOver1MBTotal)
         {
-          Log.DebugFormat(
+          Log.Debug(
             "RecordingFileHandler: Found {0} bytes worth of data (max 1mb) in directory in recording path - not cleaning {1}",
             fileSizesTotal, deleteDir);
           break;
@@ -273,7 +273,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
 
         if (hasDirAnyImportantFiles)
         {
-          Log.DebugFormat(
+          Log.Debug(
             "RecordingFileHandler: Found irrelevant file {0} in recording path {1} - not cleaning",
             fileName, deleteDir);
           break;

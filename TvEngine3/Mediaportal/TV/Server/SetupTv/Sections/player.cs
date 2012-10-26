@@ -46,29 +46,29 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     public bool Play(string fileName, Form form)
     {
       _form = form;
-      Log.DebugFormat("play:{0}", fileName);
+      Log.Debug("play:{0}", fileName);
       _graphBuilder = (IFilterGraph2)new FilterGraph();
       _rotEntry = new DsROTEntry(_graphBuilder);
 
       TsReader reader = new TsReader();
       _tsReader = (IBaseFilter)reader;
-      Log.InfoFormat("TSReaderPlayer:add TsReader to graph");
+      Log.Info("TSReaderPlayer:add TsReader to graph");
       _graphBuilder.AddFilter(_tsReader, "TsReader");
 
       #region load file in TsReader
 
-      Log.DebugFormat("load file in Ts");
+      Log.Debug("load file in Ts");
       IFileSourceFilter interfaceFile = (IFileSourceFilter)_tsReader;
       if (interfaceFile == null)
       {
-        Log.DebugFormat("TSReaderPlayer:Failed to get IFileSourceFilter");
+        Log.Debug("TSReaderPlayer:Failed to get IFileSourceFilter");
         return false;
       }
       int hr = interfaceFile.Load(fileName, null);
 
       if (hr != 0)
       {
-        Log.DebugFormat("TSReaderPlayer:Failed to load file");
+        Log.Debug("TSReaderPlayer:Failed to load file");
         return false;
       }
 
@@ -76,7 +76,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       #region render pin
 
-      Log.InfoFormat("TSReaderPlayer:render TsReader outputs");
+      Log.Info("TSReaderPlayer:render TsReader outputs");
       IEnumPins enumPins;
       _tsReader.EnumPins(out enumPins);
       IPin[] pins = new IPin[2];
@@ -111,10 +111,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                                     form.ClientRectangle.Height);
       }
 
-      Log.DebugFormat("run graph");
+      Log.Debug("run graph");
       _mediaCtrl = (IMediaControl)_graphBuilder;
       hr = _mediaCtrl.Run();
-      Log.DebugFormat("TSReaderPlayer:running:{0:X}", hr);
+      Log.Debug("TSReaderPlayer:running:{0:X}", hr);
 
       return true;
     }

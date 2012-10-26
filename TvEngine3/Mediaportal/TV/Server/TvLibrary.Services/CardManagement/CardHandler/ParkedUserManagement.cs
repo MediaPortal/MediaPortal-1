@@ -118,7 +118,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
                                           }
                                           catch (Exception ex)
                                           {
-                                            Log.ErrorFormat("HandleParkedUserTimeOutThread exception : {0}", ex);
+                                            Log.Error("HandleParkedUserTimeOutThread exception : {0}", ex);
                                           }
                                         });
         
@@ -149,17 +149,17 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
         if (!evt.WaitOne(_parkedStreamTimeout))
         {
-          Log.DebugFormat("HandleParkedUserTimeOutThread: removing idle parked channel '{0}' for user '{1}'", channelId,
+          Log.Debug("HandleParkedUserTimeOutThread: removing idle parked channel '{0}' for user '{1}'", channelId,
                     parkedUser.Name);
           var user = parkedUser as IUser;
           ServiceManager.Instance.InternalControllerService.StopTimeShifting(ref user, channelId);
         }
         else
         {
-          Log.DebugFormat("HandleParkedUserTimeOutThread: stopping timeout event for channel '{0}' for user '{1}'", channelId,
+          Log.Debug("HandleParkedUserTimeOutThread: stopping timeout event for channel '{0}' for user '{1}'", channelId,
                     parkedUser.Name);
         }
-        Log.DebugFormat("HandleParkedUserTimeOutThread: dispose event");        
+        Log.Debug("HandleParkedUserTimeOutThread: dispose event");        
         RemoveChannelOrParkedUser(parkedUser, channelId);
         evt.Dispose();
       }
@@ -203,7 +203,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
                     user = userUpdated;
                     HandleUserOwnerShip(user, subchannel, parkedUser);
 
-                    Log.InfoFormat("UnParkUser: {0} - {1} - {2}", user.Name, duration, idChannel);
+                    Log.Info("UnParkUser: {0} - {1} - {2}", user.Name, duration, idChannel);
                     CancelParkedTimeoutEvent(subchannel.Id, parkedUser);
                     RemoveChannelFromParkedUser(idChannel, parkedUser);
                     break;
@@ -235,7 +235,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       bool hasEvent = parkedUser.Events.TryGetValue(subchannelId, out evt);
       if (hasEvent)
       {
-        Log.DebugFormat("CancelParkedTimeoutEvent on subch={0} - parkeduser={}", subchannelId, parkedUser.Name);
+        Log.Debug("CancelParkedTimeoutEvent on subch={0} - parkeduser={}", subchannelId, parkedUser.Name);
         evt.Set();
       }
       else
@@ -405,7 +405,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       foreach (ManualResetEvent evt in parkedUser.Events.Values)
       {
-        Log.InfoFormat("CancelParkedUserByChannelId: {0}", userName);
+        Log.Info("CancelParkedUserByChannelId: {0}", userName);
         evt.Set();
       }
     }
@@ -522,7 +522,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           int removeSubChId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(parkedUser.Name, idChannel);          
           if (removeSubChId > -1)
           {
-            Log.DebugFormat("RemoveChannelOrParkedUser: removing event from list.");
+            Log.Debug("RemoveChannelOrParkedUser: removing event from list.");
             //parkedUser.SubChannels.Remove(removeSubChId);
             parkedUser.Events.Remove(removeSubChId);
             parkedUser.ParkedAtList.Remove(removeSubChId);
@@ -530,7 +530,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           }
           else
           {
-            Log.ErrorFormat("RemoveChannelOrParkedUser - could not find subchannel id for user: {0} - channel: {1}", parkedUser.Name, idChannel);
+            Log.Error("RemoveChannelOrParkedUser - could not find subchannel id for user: {0} - channel: {1}", parkedUser.Name, idChannel);
           }
           if (parkedUser.Events.Count == 0)
           {

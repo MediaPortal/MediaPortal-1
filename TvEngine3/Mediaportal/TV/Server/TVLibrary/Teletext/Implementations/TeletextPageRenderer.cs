@@ -626,7 +626,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
                       }
                       catch (Exception ex)
                       {
-                        Log.InfoFormat("Error in teletext page renderer: ", ex);
+                        Log.Info("Error in teletext page renderer: ", ex);
                       }
                     }
                   }

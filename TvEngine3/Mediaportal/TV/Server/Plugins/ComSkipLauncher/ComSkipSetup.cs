@@ -84,7 +84,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
 
     public override void OnSectionDeActivated()
     {
-      Log.InfoFormat("ComSkipLauncher: Configuration deactivated");
+      Log.Info("ComSkipLauncher: Configuration deactivated");
 
       ComSkipLauncher.RunAtStart = this.RunAtStart;
       ComSkipLauncher.Program = this.Program;
@@ -97,7 +97,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
 
     public override void OnSectionActivated()
     {
-      Log.InfoFormat("ComSkipLauncher: Configuration activated");
+      Log.Info("ComSkipLauncher: Configuration activated");
 
       ComSkipLauncher.LoadSettings();
 
@@ -135,7 +135,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "ComSkipLauncher - Config Test");
+        Log.Error(ex, "ComSkipLauncher - Config Test");
       }
     }
 

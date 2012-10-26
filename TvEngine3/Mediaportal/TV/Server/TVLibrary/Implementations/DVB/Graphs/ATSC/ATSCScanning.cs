@@ -107,13 +107,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
       int minorChannel = atscChannel.MinorChannel;
       if (atscChannel.MajorChannel > 0)
       {
-        Log.Log.DebugFormat("AtscScanning: service name not set, translated with VCT info to {0}", atscChannel.Name);
+        Log.Log.Debug("AtscScanning: service name not set, translated with VCT info to {0}", atscChannel.Name);
       }
       else
       {
         // If we don't have the major and minor channel numbers or the name then use the physical channel number or
         // frequency for the major channel substitute.
-        Log.Log.DebugFormat("AtscScanning: service name not set, translated with other info to {0}", atscChannel.Name);
+        Log.Log.Debug("AtscScanning: service name not set, translated with other info to {0}", atscChannel.Name);
         if (atscChannel.PhysicalChannel > 0)
         {
           majorChannel = atscChannel.PhysicalChannel;

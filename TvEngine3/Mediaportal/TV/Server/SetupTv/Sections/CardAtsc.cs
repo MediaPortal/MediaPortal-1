@@ -206,19 +206,19 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           tuneChannel.MajorChannel = -1;
           if (checkBoxQAM.Checked)
           {
-            Log.DebugFormat("ATSC tune: QAM checkbox selected... using Modulation 256Qam");
+            Log.Debug("ATSC tune: QAM checkbox selected... using Modulation 256Qam");
             tuneChannel.PhysicalChannel = index + 1;
             tuneChannel.Frequency = _atscChannels[index].frequency;
             tuneChannel.ModulationType = ModulationType.Mod256Qam;
           }
           else
           {
-            Log.DebugFormat("ATSC tune: QAM checkbox not selected... using Modulation 8Vsb");
+            Log.Debug("ATSC tune: QAM checkbox not selected... using Modulation 8Vsb");
             tuneChannel.PhysicalChannel = index;
             tuneChannel.Frequency = -1;
             tuneChannel.ModulationType = ModulationType.Mod8Vsb;
           }
-          Log.DebugFormat("ATSC tune: PhysicalChannel: {0} Frequency: {1} Modulation: {2}", tuneChannel.PhysicalChannel,
+          Log.Debug("ATSC tune: PhysicalChannel: {0} Frequency: {1} Modulation: {2}", tuneChannel.PhysicalChannel,
                         tuneChannel.Frequency, tuneChannel.ModulationType);
           string line = String.Format("physical channel:{0} frequency:{1} modulation:{2}", tuneChannel.PhysicalChannel,
                                       tuneChannel.Frequency, tuneChannel.ModulationType);
@@ -349,7 +349,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
       }
       finally
       {

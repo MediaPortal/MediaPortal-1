@@ -181,7 +181,7 @@ namespace WebEPG.MPCode
           }
           catch (Exception ex)
           {
-            Log.ErrorFormat(ex, "Unable to save {0}");
+            Log.Error(ex, "Unable to save {0}");
           }
           _doc = null;
         }

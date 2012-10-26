@@ -213,7 +213,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "Error saving tuningdetails");
+        Log.Error(ex, "Error saving tuningdetails");
         MessageBox.Show("Transponder list could not be saved, check error.log for details.");
       }
     }
@@ -233,7 +233,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "Error loading tuningdetails");
+        Log.Error(ex, "Error loading tuningdetails");
         MessageBox.Show("Transponder list could not be loaded, check error.log for details.");
       }
     }
@@ -629,7 +629,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
       }
       finally
       {

@@ -53,7 +53,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
       : base(configuration)
     {
       _videoEncoder = videoEncoder;
-      Log.DebugFormat("analog: IVideoEncoder supported by: " +
+      Log.Debug("analog: IVideoEncoder supported by: " +
                         FilterGraphTools.GetFilterName(_videoEncoder as IBaseFilter) + "; Checking capabilities ");
       CheckCapabilities();
     }

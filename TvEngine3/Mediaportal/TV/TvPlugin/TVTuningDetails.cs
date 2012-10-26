@@ -63,7 +63,7 @@ namespace Mediaportal.TV.TvPlugin
         }
         catch (System.Exception ex)
         {
-          Log.ErrorFormat("Error loading TuningDetails /  HasCiMenuSupport:" + ex.StackTrace);
+          Log.Error("Error loading TuningDetails /  HasCiMenuSupport:" + ex.StackTrace);
         }
 
         IList<TuningDetail> details = chan.TuningDetails;

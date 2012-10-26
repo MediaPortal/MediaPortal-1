@@ -101,7 +101,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         }
         catch (Exception ex)
         {
-          Log.InfoFormat("Error while reading subdirectories of {0}: {1}", aDirectory, ex);
+          Log.Info("Error while reading subdirectories of {0}: {1}", aDirectory, ex);
         }
         List<string> searchDirs = new List<string>(importDirs);
         foreach (string subDir in searchDirs)
@@ -124,18 +124,18 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
             }
             catch (Exception ex)
             {
-              Log.InfoFormat("Error while reading matroska informations in file {0}: {1}", xmlFile, ex);
+              Log.Info("Error while reading matroska informations in file {0}: {1}", xmlFile, ex);
             }
           }
         }
         catch (Exception ex)
         {
-          Log.InfoFormat("Error while reading matroska informations in directory {0}: {1}", aDirectory, ex);
+          Log.Info("Error while reading matroska informations in directory {0}: {1}", aDirectory, ex);
         }
       }
       catch (Exception ex)
       {
-        Log.InfoFormat("Error while reading all matroska informations : ", ex);
+        Log.Info("Error while reading all matroska informations : ", ex);
       }
       return foundTagInfo;
     }

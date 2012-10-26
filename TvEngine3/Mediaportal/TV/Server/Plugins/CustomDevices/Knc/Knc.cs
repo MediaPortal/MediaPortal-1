@@ -565,23 +565,23 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <returns><c>true</c> if the association is successfully swapped, otherwise <c>false</c></returns>
     private bool SwapCardCiSlots()
     {
-      Log.DebugFormat("KNC: device {0} swap CI slots", _deviceIndex);
+      Log.Debug("KNC: device {0} swap CI slots", _deviceIndex);
 
       if (!_isKnc)
       {
-        Log.DebugFormat("KNC: device not initialised or interface not supported");
+        Log.Debug("KNC: device not initialised or interface not supported");
         return false;
       }
       if (!_isPcie)
       {
-        Log.DebugFormat("KNC: function not supported");
+        Log.Debug("KNC: function not supported");
         return false;
       }
 
       // Note: num716xDevices includes non-KNC SAA716x main devices. This has been proven with SAA7162 based
       // Pinnacle 7010ix cards.
       int num716xDevices = PCIE_EnumerateMainDevices();
-      Log.DebugFormat("KNC: main device count is {0}", num716xDevices);
+      Log.Debug("KNC: main device count is {0}", num716xDevices);
       if (num716xDevices == 0)
       {
         return false;
@@ -596,13 +596,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
 
       if (!PCIE_OpenMainDevice(0))
       {
-        Log.DebugFormat("KNC: failed to open main device");
+        Log.Debug("KNC: failed to open main device");
         return false;
       }
 
       bool success = PCIE_SwapCAMInput(true);
       PCIE_CloseMainDevice();
-      Log.DebugFormat("KNC: result = {0}", success);
+      Log.Debug("KNC: result = {0}", success);
       return success;
     }
 
@@ -617,7 +617,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     private void OnCiState(byte slotIndex, KncCiState state, String menuTitle, IntPtr context)
     {
-      Log.DebugFormat("KNC: device {0} CI state change callback, slot = {1}", _deviceIndex, slotIndex);
+      Log.Debug("KNC: device {0} CI state change callback, slot = {1}", _deviceIndex, slotIndex);
       lock (this)
       {
         if (state == KncCiState.Ready)
@@ -635,9 +635,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
           _isCamPresent = false;
           _isCamReady = false;
         }
-        Log.DebugFormat("  old state  = {0}", _ciState);
-        Log.DebugFormat("  new state  = {0}", state);
-        Log.DebugFormat("  menu title = {0}", menuTitle);
+        Log.Debug("  old state  = {0}", _ciState);
+        Log.Debug("  new state  = {0}", state);
+        Log.Debug("  menu title = {0}", menuTitle);
         _ciState = state;
       }
     }
@@ -649,7 +649,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     private void OnCiOpenDisplay(byte slotIndex, IntPtr context)
     {
-      Log.DebugFormat("KNC: device {0} open menu callback, slot = {1}", _deviceIndex, slotIndex);
+      Log.Debug("KNC: device {0} open menu callback, slot = {1}", _deviceIndex, slotIndex);
     }
 
     /// <summary>
@@ -663,11 +663,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     private void OnCiMenu(byte slotIndex, String title, String subTitle, String footer, UInt32 numEntries, IntPtr context)
     {
-      Log.DebugFormat("KNC: device {0} menu callback, slot = {1}", _deviceIndex, slotIndex);
-      Log.DebugFormat("  title     = {0}", title);
-      Log.DebugFormat("  sub-title = {0}", subTitle);
-      Log.DebugFormat("  footer    = {0}", footer);
-      Log.DebugFormat("  # entries = {0}", numEntries);
+      Log.Debug("KNC: device {0} menu callback, slot = {1}", _deviceIndex, slotIndex);
+      Log.Debug("  title     = {0}", title);
+      Log.Debug("  sub-title = {0}", subTitle);
+      Log.Debug("  footer    = {0}", footer);
+      Log.Debug("  # entries = {0}", numEntries);
       if (_ciMenuCallbacks != null)
       {
         try
@@ -676,12 +676,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
         }
         catch (Exception ex)
         {
-          Log.ErrorFormat(ex, "KNC: menu callback exception");
+          Log.Error(ex, "KNC: menu callback exception");
         }
       }
       else
       {
-        Log.DebugFormat("KNC: menu callbacks are not set");
+        Log.Debug("KNC: menu callbacks are not set");
       }
     }
 
@@ -694,8 +694,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     private void OnCiMenuEntry(byte slotIndex, UInt32 entryIndex, String text, IntPtr context)
     {
-      Log.DebugFormat("KNC: device {0} menu entry callback, slot = {1}", _deviceIndex, slotIndex);
-      Log.DebugFormat("  entry {0,-2} = {1}", entryIndex, text);
+      Log.Debug("KNC: device {0} menu entry callback, slot = {1}", _deviceIndex, slotIndex);
+      Log.Debug("  entry {0,-2} = {1}", entryIndex, text);
       if (_ciMenuCallbacks != null)
       {
         try
@@ -704,12 +704,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
         }
         catch (Exception ex)
         {
-          Log.ErrorFormat(ex, "KNC: menu callback exception");
+          Log.Error(ex, "KNC: menu callback exception");
         }
       }
       else
       {
-        Log.DebugFormat("KNC: menu callbacks are not set");
+        Log.Debug("KNC: menu callbacks are not set");
       }
     }
 
@@ -723,10 +723,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     private void OnCiRequest(byte slotIndex, bool blind, UInt32 answerLength, String text, IntPtr context)
     {
-      Log.DebugFormat("KNC: device {0} request callback, slot = {1}", _deviceIndex, slotIndex);
-      Log.DebugFormat("  text   = {0}", text);
-      Log.DebugFormat("  length = {0}", answerLength);
-      Log.DebugFormat("  blind  = {0}", blind);
+      Log.Debug("KNC: device {0} request callback, slot = {1}", _deviceIndex, slotIndex);
+      Log.Debug("  text   = {0}", text);
+      Log.Debug("  length = {0}", answerLength);
+      Log.Debug("  blind  = {0}", blind);
       if (_ciMenuCallbacks != null)
       {
         try
@@ -735,12 +735,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
         }
         catch (Exception ex)
         {
-          Log.ErrorFormat(ex, "KNC: request callback exception\r\n{0}");
+          Log.Error(ex, "KNC: request callback exception\r\n{0}");
         }
       }
       else
       {
-        Log.DebugFormat("KNC: menu callbacks are not set");
+        Log.Debug("KNC: menu callbacks are not set");
       }
     }
 
@@ -752,7 +752,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     private void OnCiCloseDisplay(byte slotIndex, UInt32 delay, IntPtr context)
     {
-      Log.DebugFormat("KNC: device {0} close menu callback, slot = {1}, delay = {2}", _deviceIndex, slotIndex, delay);
+      Log.Debug("KNC: device {0} close menu callback, slot = {1}, delay = {2}", _deviceIndex, slotIndex, delay);
       if (_ciMenuCallbacks != null)
       {
         try
@@ -761,12 +761,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
         }
         catch (Exception ex)
         {
-          Log.ErrorFormat(ex, "KNC: close menu callback exception");
+          Log.Error(ex, "KNC: close menu callback exception");
         }
       }
       else
       {
-        Log.DebugFormat("KNC: menu callbacks are not set");
+        Log.Debug("KNC: menu callbacks are not set");
       }
     }
 
@@ -811,21 +811,21 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
     {
-      Log.DebugFormat("KNC: initialising device");
+      Log.Debug("KNC: initialising device");
 
       if (tunerFilter == null)
       {
-        Log.DebugFormat("KNC: tuner filter is null");
+        Log.Debug("KNC: tuner filter is null");
         return false;
       }
       if (String.IsNullOrEmpty(tunerDevicePath))
       {
-        Log.DebugFormat("KNC: tuner device path is not set");
+        Log.Debug("KNC: tuner device path is not set");
         return false;
       }
       if (_isKnc)
       {
-        Log.DebugFormat("KNC: device is already initialised");
+        Log.Debug("KNC: device is already initialised");
         return true;
       }
 
@@ -834,14 +834,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
       int hr = tunerFilter.QueryFilterInfo(out tunerInfo);
       if (hr != 0)
       {
-        Log.DebugFormat("KNC: failed to get the tuner filter name, hr = 0x{0:x} - {1}", HResult.GetDXErrorString(hr));
+        Log.Debug("KNC: failed to get the tuner filter name, hr = 0x{0:x} - {1}", HResult.GetDXErrorString(hr));
         return false;
       }
       foreach (String validTunerName in ValidDeviceNames)
       {
         if (tunerInfo.achName.Equals(validTunerName))
         {
-          Log.DebugFormat("KNC: recognised filter name \"{0}\"", tunerInfo.achName);
+          Log.Debug("KNC: recognised filter name \"{0}\"", tunerInfo.achName);
           _name = validTunerName.Substring(0, validTunerName.IndexOf(' '));
 
           // Stage 2: attempt to get the KNC device index corresponding with this tuner.
@@ -849,13 +849,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
           _deviceIndex = GetDeviceIndex(devicePath);
           if (_deviceIndex < 0)
           {
-            Log.DebugFormat("KNC: failed to calculate the device index");
+            Log.Debug("KNC: failed to calculate the device index");
             break;
           }
 
           // Stage 3: ensure we can get a reference to the filter that implements the proprietary
           // interfaces.
-          Log.DebugFormat("KNC: device index is {0}", _deviceIndex);
+          Log.Debug("KNC: device index is {0}", _deviceIndex);
           if (!devicePath.Contains("dev_7160"))
           {
             // This is a PCI device. The tuner filter implements the proprietary interfaces so no further
@@ -866,7 +866,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
 
           // This is a PCIe device. We need a reference to the capture filter because that is the filter
           // which implements the proprietary interfaces.
-          Log.DebugFormat("KNC: this is a PCIe device");
+          Log.Debug("KNC: this is a PCIe device");
           _isPcie = true;
           _name = "KNC";
 
@@ -877,7 +877,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
           tunerOutputPin = null;
           if (hr != 0 || captureInputPin == null)
           {
-            Log.DebugFormat("KNC: failed to get the capture filter input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            Log.Debug("KNC: failed to get the capture filter input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             break;
           }
 
@@ -887,7 +887,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
           captureInputPin = null;
           if (hr != 0 || captureInfo.filter == null)
           {
-            Log.DebugFormat("KNC: failed to get the capture filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            Log.Debug("KNC: failed to get the capture filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           }
           else
           {
@@ -900,7 +900,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
 
       if (!_isKnc)
       {
-        Log.DebugFormat("KNC: device not supported");
+        Log.Debug("KNC: device not supported");
         if (tunerInfo.pGraph != null)
         {
           DsUtils.ReleaseComObject(tunerInfo.pGraph);
@@ -909,7 +909,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
         return false;
       }
 
-      Log.DebugFormat("KNC: supported device detected");
+      Log.Debug("KNC: supported device detected");
       _diseqcBuffer = Marshal.AllocCoTaskMem(MaxDiseqcCommandLength);
       _tunerFilter = tunerFilter;
       _graphBuilder = (IFilterGraph2)tunerInfo.pGraph;
@@ -917,7 +917,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
       // Prepare the hardware interface for use. This seems to always succeed...
       if (!KNCBDA_HW_Enable(_deviceIndex, _isPcie ? _captureFilter : _tunerFilter))
       {
-        Log.DebugFormat("KNC: failed to enable the hardware");
+        Log.Debug("KNC: failed to enable the hardware");
       }
       return true;
     }
@@ -933,12 +933,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="action">The action to take, if any.</param>
     public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out DeviceAction action)
     {
-      Log.DebugFormat("KNC: on before tune callback");
+      Log.Debug("KNC: on before tune callback");
       action = DeviceAction.Default;
 
       if (!_isKnc)
       {
-        Log.DebugFormat("KNC: device not initialised or interface not supported");
+        Log.Debug("KNC: device not initialised or interface not supported");
         return;
       }
 
@@ -957,7 +957,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
       {
         // Note: this logic does handle bandstacked LNBs properly.
         ch.LnbType.HighBandFrequency = ch.LnbType.LowBandFrequency;
-        Log.DebugFormat("  LNB LOF    = {0}", ch.LnbType.LowBandFrequency);
+        Log.Debug("  LNB LOF    = {0}", ch.LnbType.LowBandFrequency);
       }
 
       if (ch.ModulationType == ModulationType.ModQpsk || ch.ModulationType == ModulationType.Mod8Psk)
@@ -983,7 +983,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
       {
         ch.ModulationType = ModulationType.ModQpsk;
       }
-      Log.DebugFormat("  modulation = {0}", ch.ModulationType);
+      Log.Debug("  modulation = {0}", ch.ModulationType);
     }
 
     #endregion
@@ -999,16 +999,16 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
     public bool OpenInterface()
     {
-      Log.DebugFormat("KNC: device {0} open conditional access interface", _deviceIndex);
+      Log.Debug("KNC: device {0} open conditional access interface", _deviceIndex);
 
       if (!_isKnc)
       {
-        Log.DebugFormat("KNC: device not initialised or interface not supported");
+        Log.Debug("KNC: device not initialised or interface not supported");
         return false;
       }
       if (_callbackBuffer != IntPtr.Zero)
       {
-        Log.DebugFormat("KNC: previous interface instance is still open");
+        Log.Debug("KNC: previous interface instance is still open");
         return false;
       }
 
@@ -1035,18 +1035,18 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
       }
       if (!result)
       {
-        Log.DebugFormat("KNC: CI enable failed");
+        Log.Debug("KNC: CI enable failed");
         return false;
       }
 
       // Prepare the conditional access interface for use. This seems to always succeed...
       if (!KNCBDA_CI_HW_Enable(_deviceIndex, true))
       {
-        Log.DebugFormat("KNC: CI HW enable failed");
+        Log.Debug("KNC: CI HW enable failed");
         return false;
       }
 
-      Log.DebugFormat("KNC: CI interface opened successfully");
+      Log.Debug("KNC: CI interface opened successfully");
 
       // Check if the CAM is currently present and ready for interaction. CI state change callbacks will
       // tell us if the state changes.
@@ -1059,16 +1059,16 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
           StringBuilder nameBuffer = new StringBuilder(100);
           if (KNCBDA_CI_GetName(_deviceIndex, nameBuffer, (uint)nameBuffer.MaxCapacity))
           {
-            Log.DebugFormat("KNC: CAM name/type is {0}", nameBuffer);
+            Log.Debug("KNC: CAM name/type is {0}", nameBuffer);
           }
           else
           {
-            Log.DebugFormat("KNC: failed to get the CAM name/type");
+            Log.Debug("KNC: failed to get the CAM name/type");
           }
         }
       }
 
-      Log.DebugFormat("KNC: result = success");
+      Log.Debug("KNC: result = success");
       return true;
     }
 
@@ -1078,14 +1078,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
     public bool CloseInterface()
     {
-      Log.DebugFormat("KNC: device {0} close conditional access interface", _deviceIndex);
+      Log.Debug("KNC: device {0} close conditional access interface", _deviceIndex);
 
       bool result = true;
       if (_callbackBuffer != IntPtr.Zero)
       {
         if (!KNCBDA_CI_Disable(_deviceIndex))
         {
-          Log.DebugFormat("KNC: CI disable failed");
+          Log.Debug("KNC: CI disable failed");
           result = false;
         }
         Marshal.FreeCoTaskMem(_callbackBuffer);
@@ -1098,11 +1098,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
 
       if (result)
       {
-        Log.DebugFormat("KNC: result = success");
+        Log.Debug("KNC: result = success");
         return true;
       }
 
-      Log.DebugFormat("KNC: result = failure");
+      Log.Debug("KNC: result = failure");
       return false;
     }
 
@@ -1124,16 +1124,16 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <returns><c>true</c> if the interface is ready, otherwise <c>false</c></returns>
     public bool IsInterfaceReady()
     {
-      Log.DebugFormat("KNC: is conditional access interface ready");
+      Log.Debug("KNC: is conditional access interface ready");
 
       if (!KNCBDA_CI_IsAvailable(_deviceIndex))
       {
-        Log.DebugFormat("KNC: CI slot or CAM not present");
+        Log.Debug("KNC: CI slot or CAM not present");
         return false;
       }
 
       bool camReady = KNCBDA_CI_IsReady(_deviceIndex);
-      Log.DebugFormat("KNC: result = {0}", camReady);
+      Log.Debug("KNC: result = {0}", camReady);
       return camReady;
     }
 
@@ -1150,16 +1150,16 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
     public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
-      Log.DebugFormat("KNC: send conditional access command, list action = {0}, command = {1}", listAction, command);
+      Log.Debug("KNC: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
       if (!_isKnc)
       {
-        Log.DebugFormat("KNC: device not initialised or interface not supported");
+        Log.Debug("KNC: device not initialised or interface not supported");
         return false;
       }
       if (pmt == null)
       {
-        Log.DebugFormat("KNC: PMT not supplied");
+        Log.Debug("KNC: PMT not supplied");
         return true;
       }
 
@@ -1173,7 +1173,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
         Marshal.Copy(caPmt, 0, pmtBuffer, caPmt.Length);
         //DVB_MMI.DumpBinary(pmtBuffer, 0, caPmtLength);
         bool result = KNCBDA_CI_SendPMTCommand(_deviceIndex, pmtBuffer, (UInt32)caPmt.Length);
-        Log.DebugFormat("KNC: result = {0}", result);
+        Log.Debug("KNC: result = {0}", result);
         return result;
       }
       finally
@@ -1208,15 +1208,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool EnterCIMenu()
     {
-      Log.DebugFormat("KNC: device {0} slot {1} enter menu", _deviceIndex, _slotIndex);
+      Log.Debug("KNC: device {0} slot {1} enter menu", _deviceIndex, _slotIndex);
       if (!_isKnc)
       {
-        Log.DebugFormat("KNC: device not initialised or interface not supported");
+        Log.Debug("KNC: device not initialised or interface not supported");
         return false;
       }
       if (!_isCamReady)
       {
-        Log.DebugFormat("KNC: the CAM is not ready");
+        Log.Debug("KNC: the CAM is not ready");
         return false;
       }
       return KNCBDA_CI_EnterMenu(_deviceIndex, _slotIndex);
@@ -1228,15 +1228,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool CloseCIMenu()
     {
-      Log.DebugFormat("KNC: device {0} slot {1} close menu", _deviceIndex, _slotIndex);
+      Log.Debug("KNC: device {0} slot {1} close menu", _deviceIndex, _slotIndex);
       if (!_isKnc)
       {
-        Log.DebugFormat("KNC: device not initialised or interface not supported");
+        Log.Debug("KNC: device not initialised or interface not supported");
         return false;
       }
       if (!_isCamReady)
       {
-        Log.DebugFormat("KNC: the CAM is not ready");
+        Log.Debug("KNC: the CAM is not ready");
         return false;
       }
       return KNCBDA_CI_CloseMenu(_deviceIndex, _slotIndex);
@@ -1249,15 +1249,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <returns><c>true</c> if the selection is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool SelectMenu(byte choice)
     {
-      Log.DebugFormat("KNC: device {0} slot {1} select menu entry, choice = {2}", _deviceIndex, _slotIndex, choice);
+      Log.Debug("KNC: device {0} slot {1} select menu entry, choice = {2}", _deviceIndex, _slotIndex, choice);
       if (!_isKnc)
       {
-        Log.DebugFormat("KNC: device not initialised or interface not supported");
+        Log.Debug("KNC: device not initialised or interface not supported");
         return false;
       }
       if (!_isCamReady)
       {
-        Log.DebugFormat("KNC: the CAM is not ready");
+        Log.Debug("KNC: the CAM is not ready");
         return false;
       }
       return KNCBDA_CI_SelectMenu(_deviceIndex, _slotIndex, choice);
@@ -1275,15 +1275,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
       {
         answer = String.Empty;
       }
-      Log.DebugFormat("KNC: device {0} slot {1} send menu answer, answer = {2}, cancel = {3}", _deviceIndex, _slotIndex, answer, cancel);
+      Log.Debug("KNC: device {0} slot {1} send menu answer, answer = {2}, cancel = {3}", _deviceIndex, _slotIndex, answer, cancel);
       if (!_isKnc)
       {
-        Log.DebugFormat("KNC: device not initialised or interface not supported");
+        Log.Debug("KNC: device not initialised or interface not supported");
         return false;
       }
       if (!_isCamReady)
       {
-        Log.DebugFormat("KNC: the CAM is not ready");
+        Log.Debug("KNC: the CAM is not ready");
         return false;
       }
       return KNCBDA_CI_SendMenuAnswer(_deviceIndex, _slotIndex, cancel, answer);
@@ -1317,23 +1317,23 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
     public bool SendCommand(byte[] command)
     {
-      Log.DebugFormat("KNC: device {0} send DiSEqC command", _deviceIndex);
+      Log.Debug("KNC: device {0} send DiSEqC command", _deviceIndex);
 
       if (!_isKnc)
       {
-        Log.DebugFormat("KNC: device not initialised or interface not supported");
+        Log.Debug("KNC: device not initialised or interface not supported");
         return false;
       }
       if (command == null || command.Length == 0)
       {
-        Log.DebugFormat("KNC: command not supplied");
+        Log.Debug("KNC: command not supplied");
         return true;
       }
 
       int length = command.Length;
       if (length > MaxDiseqcCommandLength)
       {
-        Log.DebugFormat("KNC: command too long, length = {0}", command.Length);
+        Log.Debug("KNC: command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -1341,7 +1341,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
       //DVB_MMI.DumpBinary(_diseqcBuffer, 0, length);
 
       bool success = KNCBDA_HW_DiSEqCWrite(_deviceIndex, _diseqcBuffer, (uint)length, 0);
-      Log.DebugFormat("KNC: result = {0}", success);
+      Log.Debug("KNC: result = {0}", success);
       return success;
     }
 

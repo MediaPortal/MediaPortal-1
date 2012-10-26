@@ -272,7 +272,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
     /// <returns>true, if the graph building was successful</returns>
     public bool CreateFilterInstance(Graph graph, IFilterGraph2 graphBuilder)
     {
-      Log.DebugFormat("analog: AddTvTunerFilter {0}", _tunerDevice.Name);
+      Log.Debug("analog: AddTvTunerFilter {0}", _tunerDevice.Name);
       if (DevicesInUse.Instance.IsUsed(_tunerDevice))
         return false;
       IBaseFilter tmp;
@@ -283,12 +283,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       }
       catch (Exception)
       {
-        Log.DebugFormat("analog: cannot add filter to graph");
+        Log.Debug("analog: cannot add filter to graph");
         return false;
       }
       if (hr != 0)
       {
-        Log.ErrorFormat("analog: AddTvTunerFilter failed:0x{0:X}", hr);
+        Log.Error("analog: AddTvTunerFilter failed:0x{0:X}", hr);
         throw new TvException("Unable to add tvtuner to graph");
       }
       _filterTvTuner = tmp;
@@ -297,7 +297,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       if (string.IsNullOrEmpty(graph.Tuner.Name) || !_tunerDevice.Name.Equals(
         graph.Tuner.Name))
       {
-        Log.DebugFormat("analog: Detecting capabilities of the tuner");
+        Log.Debug("analog: Detecting capabilities of the tuner");
         graph.Tuner.Name = _tunerDevice.Name;
         int index;
         _audioPin = FilterGraphTools.FindMediaPin(_filterTvTuner, MediaType.AnalogAudio, MediaSubType.Null,
@@ -305,7 +305,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         graph.Tuner.AudioPin = index;
         return CheckCapabilities(graph);
       }
-      Log.DebugFormat("analog: Using stored capabilities of the tuner");
+      Log.Debug("analog: Using stored capabilities of the tuner");
       _audioPin = DsFindPin.ByDirection(_filterTvTuner, PinDirection.Output, graph.Tuner.AudioPin);
       _supportsFMRadio = (graph.Tuner.RadioMode & RadioMode.FM) != 0;
       _supportsAMRadio = (graph.Tuner.RadioMode & RadioMode.AM) != 0;
@@ -374,7 +374,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
     {
       if (_tuner == null)
       {
-        Log.DebugFormat("");
+        Log.Debug("");
         return false;
       }
       UpdateMinMaxChannel();
@@ -459,7 +459,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       }
       catch (TvExceptionSWEncoderMissing)
       {
-        Log.ErrorFormat("UpdateSignalQuality: unable to perform the check because of a missing audio/video encoder!");
+        Log.Error("UpdateSignalQuality: unable to perform the check because of a missing audio/video encoder!");
       }
 
       if (_tunerLocked)
@@ -494,12 +494,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         {
           if (analogChannel.MediaType == MediaTypeEnum.Radio)
           {
-            Log.DebugFormat("analog:  set to FM radio");
+            Log.Debug("analog:  set to FM radio");
             _tuner.put_Mode(AMTunerModeType.FMRadio);
           }
           else if (analogChannel.MediaType == MediaTypeEnum.TV)
           {
-            Log.DebugFormat("analog:  set to TV");
+            Log.Debug("analog:  set to TV");
             _tuner.put_Mode(AMTunerModeType.TV);
           }
         }
@@ -531,12 +531,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       {
         if (analogChannel.MediaType == MediaTypeEnum.Radio)
         {
-          Log.DebugFormat("analog:  set to FM radio");
+          Log.Debug("analog:  set to FM radio");
           _tuner.put_Mode(AMTunerModeType.FMRadio);
         }
         else
         {
-          Log.DebugFormat("analog:  set to TV");
+          Log.Debug("analog:  set to TV");
           _tuner.put_Mode(AMTunerModeType.TV);
         }
         _tuner.put_TuningSpace(analogChannel.Country.Id);
@@ -557,7 +557,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       _currentChannel = analogChannel;
       UpdateSignalQuality();
       UpdateMinMaxChannel();
-      Log.DebugFormat("Analog: Tuned to country:{0} video:{1} Hz audio:{2} Hz locked:{3}", analogChannel.Country.Id,
+      Log.Debug("Analog: Tuned to country:{0} video:{1} Hz audio:{2} Hz locked:{3}", analogChannel.Country.Id,
                         _videoFrequency, _audioFrequency, _tunerLocked);
     }
 

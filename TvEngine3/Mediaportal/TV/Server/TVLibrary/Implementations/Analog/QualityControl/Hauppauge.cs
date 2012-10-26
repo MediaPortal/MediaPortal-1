@@ -139,11 +139,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
         string card = Encoding.Unicode.GetString(encodedstring);
 
         hr = new HResult(_Init(filter, card));
-        Log.DebugFormat("Hauppauge Quality Control Initializing " + hr.ToDXString());
+        Log.Debug("Hauppauge Quality Control Initializing " + hr.ToDXString());
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "Hauppauge Init failed");
+        Log.Error(ex, "Hauppauge Init failed");
       }
     }
 
@@ -165,7 +165,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "Hauppauge SetDNR failed");
+        Log.Error(ex, "Hauppauge SetDNR failed");
       }
       return false;
     }
@@ -189,7 +189,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "Hauppauge Error GetBitrate");
+        Log.Error(ex, "Hauppauge Error GetBitrate");
       }
 
       return true;
@@ -207,14 +207,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
           if (_IsHauppauge())
           {
             hr.Set(_SetVidBitRate(maxKbps, minKbps, isVBR));
-            Log.DebugFormat("Hauppauge Set Bit Rate " + hr.ToDXString());
+            Log.Debug("Hauppauge Set Bit Rate " + hr.ToDXString());
             return true;
           }
         }
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "Hauppauge Set Vid Rate");
+        Log.Error(ex, "Hauppauge Set Vid Rate");
       }
       return false;
     }
@@ -238,7 +238,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "Hauppauge Get Audio Bitrate");
+        Log.Error(ex, "Hauppauge Get Audio Bitrate");
       }
       return false;
     }
@@ -261,7 +261,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "Hauppauge Set Audio Bit Rate");
+        Log.Error(ex, "Hauppauge Set Audio Bit Rate");
       }
       return false;
     }
@@ -285,7 +285,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "Hauppauge Get Stream");
+        Log.Error(ex, "Hauppauge Get Stream");
       }
       return false;
     }
@@ -308,7 +308,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "Hauppauge Set Stream Type");
+        Log.Error(ex, "Hauppauge Set Stream Type");
       }
       return false;
     }
@@ -348,8 +348,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
         }
         catch (Exception ex)
         {
-          Log.ErrorFormat(ex, "Hauppauge exception");
-          Log.ErrorFormat("Hauppauge Disposed hcw.txt");
+          Log.Error(ex, "Hauppauge exception");
+          Log.Error("Hauppauge Disposed hcw.txt");
         }
       }
       disposed = true;

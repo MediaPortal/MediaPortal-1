@@ -434,7 +434,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           value += code;
           value += ",";
         }
-        //Log.DebugFormat("tvsetup:epggrabber:all: epglang={0}", setting.value);
+        //Log.Debug("tvsetup:epggrabber:all: epglang={0}", setting.value);
         Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("epgLanguages", value);
       }
       finally
@@ -453,7 +453,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           mpListView2.Items[i].Checked = false;
         }
         Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("epgLanguages", ",");
-        Log.DebugFormat("tvsetup:epggrabber:none: epglang={0}", setting.Value);
+        Log.Debug("tvsetup:epggrabber:none: epglang={0}", setting.Value);
       }
       finally
       {

@@ -348,7 +348,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             {
               if (!enableDVBS2 && (tDetail.Pilot > -1 || tDetail.RollOff > -1))
               {
-                Log.DebugFormat(String.Format(
+                Log.Debug(String.Format(
                   "Imported channel {0} detected as DVB-S2. Skipped! \n Enable \"DVB-S2 tuning\" option in your TV-Card properties to be able to map these channels.",
                   tDetail.Name));
               }

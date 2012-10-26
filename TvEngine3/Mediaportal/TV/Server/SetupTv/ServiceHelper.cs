@@ -75,16 +75,16 @@ namespace Mediaportal.TV.Server.SetupTV
     {
       try
       {
-        Log.ErrorFormat("serviceToFind ={0}, hostname={1}", serviceToFind, hostname);
+        Log.Error("serviceToFind ={0}, hostname={1}", serviceToFind, hostname);
 
         ServiceController[] services = ServiceController.GetServices(hostname);
 
-        Log.ErrorFormat("services count = {0}", services.Length);
+        Log.Error("services count = {0}", services.Length);
         
 
         foreach (ServiceController service in services)
         {
-          Log.ErrorFormat("services name= {0}", service.ServiceName);
+          Log.Error("services name= {0}", service.ServiceName);
           if (String.Compare(service.ServiceName, serviceToFind, true) == 0)
           {
             return true;
@@ -96,7 +96,7 @@ namespace Mediaportal.TV.Server.SetupTV
       {
         //_isRestrictedMode = !Network.IsSingleSeat();
         
-        Log.ErrorFormat(
+        Log.Error(
           "ServiceHelper: Check hostname the tvservice is running failed. Try another hostname. {0}", ex);
         return false;
       }
@@ -128,7 +128,7 @@ namespace Mediaportal.TV.Server.SetupTV
         }
         catch (Exception ex)
         {
-          Log.ErrorFormat(ex, 
+          Log.Error(ex, 
             "ServiceHelper: Check whether the tvservice is running failed. Please check your installation.");
           return false;
         }
@@ -175,8 +175,8 @@ namespace Mediaportal.TV.Server.SetupTV
       }
       catch (Exception ex) // either we have no right, or the event does not exist
       {
-        Log.ErrorFormat("Failed to wait for {0}", RemoteControl.InitializedEventName);
-        Log.ErrorFormat(ex, "");
+        Log.Error("Failed to wait for {0}", RemoteControl.InitializedEventName);
+        Log.Error(ex, "");
       }
 
       /*
@@ -196,15 +196,15 @@ namespace Mediaportal.TV.Server.SetupTV
         }
         catch (System.Runtime.Remoting.RemotingException)
         {
-          Log.InfoFormat("ServiceHelper: Waiting for tvserver to initialize. (remoting not initialized)");
+          Log.Info("ServiceHelper: Waiting for tvserver to initialize. (remoting not initialized)");
         }
         catch (System.Net.Sockets.SocketException)
         {
-          Log.InfoFormat("ServiceHelper: Waiting for tvserver to initialize. (socket not initialized)");
+          Log.Info("ServiceHelper: Waiting for tvserver to initialize. (socket not initialized)");
         }
         catch (Exception ex)
         {
-          Log.ErrorFormat(
+          Log.Error(
             "ServiceHelper: Could not check whether the tvservice is running. Please check your network as well. \nError: {0}",
             ex.ToString());
           break;
@@ -230,7 +230,7 @@ namespace Mediaportal.TV.Server.SetupTV
         }
         catch (Exception ex)
         {
-          Log.ErrorFormat(ex,
+          Log.Error(ex,
             "ServiceHelper: Check whether the tvservice is stopped failed. Please check your installation.");
           return false;
         }
@@ -271,7 +271,7 @@ namespace Mediaportal.TV.Server.SetupTV
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, 
+        Log.Error(ex, 
           "ServiceHelper: Stopping tvservice failed. Please check your installation.");
         return false;
       }
@@ -311,7 +311,7 @@ namespace Mediaportal.TV.Server.SetupTV
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "ServiceHelper: Starting {0} failed. Please check your installation.", aServiceName);
+        Log.Error(ex, "ServiceHelper: Starting {0} failed. Please check your installation.", aServiceName);
         return false;
       }
     }
@@ -407,7 +407,7 @@ namespace Mediaportal.TV.Server.SetupTV
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "ServiceHelper: Failed to access registry");
+        Log.Error(ex, "ServiceHelper: Failed to access registry");
         return false;
       }
     }

@@ -39,7 +39,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         if (hr != 0)
         {
           //StackTrace st = new StackTrace(true);
-          //Log.Log.DebugFormat("  Release {0} returns {1}", o, hr);
+          //Log.Log.Debug("  Release {0} returns {1}", o, hr);
         }
       }
       return hr;
@@ -55,7 +55,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       if (o != null)
       {
         DsUtils.ReleaseComObject(o);
-        //Log.Log.DebugFormat("  Release {0} returns {1}", line, hr);
+        //Log.Log.Debug("  Release {0} returns {1}", line, hr);
       }
     }
     /// <summary>
@@ -77,12 +77,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         }
         catch (System.Exception ex)
         {
-          Log.ErrorFormat(ex, "  Error in Dispose of {0}", line);
+          Log.Error(ex, "  Error in Dispose of {0}", line);
         }
 
         int remainingReferences = Release.ComObject(o);
         //if (remainingReferences > 0)
-        Log.DebugFormat("  Release {0} leaves {1} references", line, remainingReferences);
+        Log.Debug("  Release {0} leaves {1} references", line, remainingReferences);
 
         o = default(E);
       }

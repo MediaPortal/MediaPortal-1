@@ -155,11 +155,11 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         if (Decimal.TryParse(strRating, NStyle, NFO, out tmpRating))
           Rating = Convert.ToInt16(tmpRating);
         else
-          Log.InfoFormat("XMLTVImport: star-rating could not be used - {0},({1})", epgRating, strRating);
+          Log.Info("XMLTVImport: star-rating could not be used - {0},({1})", epgRating, strRating);
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "XMLTVImport: Error parsing star-rating - {0}", epgRating);
+        Log.Error(ex, "XMLTVImport: Error parsing star-rating - {0}", epgRating);
       }
       return Rating;
     }
@@ -198,7 +198,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       {
         //layer.RemoveOldPrograms();        
         ProgramManagement.DeleteOldPrograms();        
-        Log.DebugFormat("xmltv import {0}", fileName);        
+        Log.Debug("xmltv import {0}", fileName);        
         //
         // Make sure the file exists before we try to do any processing
         //
@@ -230,7 +230,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                 String id = xmlReader.GetAttribute("id");
                 if (id == null || id.Length == 0)
                 {
-                  Log.ErrorFormat("  channel#{0} doesnt contain an id", iChannel);
+                  Log.Error("  channel#{0} doesnt contain an id", iChannel);
                 }
                 else
                 {
@@ -268,7 +268,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
                   if (displayName == null || displayName.Length == 0)
                   {
-                    Log.ErrorFormat("  channel#{0} xmlid:{1} doesnt contain an displayname", iChannel, id);
+                    Log.Error("  channel#{0} xmlid:{1} doesnt contain an displayname", iChannel, id);
                   }
                   else
                   {
@@ -294,7 +294,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                       newProgChan.externalId = chan.ExternalId;
                       Programs.Add(newProgChan);
 
-                      Log.DebugFormat("  channel#{0} xmlid:{1} name:{2} dbsid:{3}", iChannel, chan.ExternalId,
+                      Log.Debug("  channel#{0} xmlid:{1} name:{2} dbsid:{3}", iChannel, chan.ExternalId,
                                     chan.DisplayName, chan.IdChannel);
                       if (!guideChannels.ContainsKey(chan.IdChannel))
                       {
@@ -378,7 +378,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           _status.Status = "Loading TV programs";
           if (showProgress && ShowProgress != null) ShowProgress(_status);
 
-          Log.DebugFormat("xmltvimport: Reading TV programs");
+          Log.Debug("xmltvimport: Reading TV programs");
           if (xmlReader != null)
           {
             xmlReader.Close();
@@ -757,7 +757,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
               #region sort & remove invalid programs. Save all valid programs
 
-              Log.DebugFormat("xmltvimport: Sorting TV programs");
+              Log.Debug("xmltvimport: Sorting TV programs");
 
               _status.Programs = 0;
               _status.Status = "Sorting TV programs";
@@ -805,7 +805,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                   }
                   catch (Exception)
                   {
-                    Log.InfoFormat("XMLTVImport: Invalid year for OnAirDate - {0}", prog.OriginalAirDate);
+                    Log.Info("XMLTVImport: Invalid year for OnAirDate - {0}", prog.OriginalAirDate);
                   }
 
                   if (prog.StartTime < _status.startTime)
@@ -815,7 +815,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                   _status.Programs++;
                   if (showProgress && ShowProgress != null && (_status.Programs % 100) == 0) ShowProgress(_status);
                 }
-                Log.InfoFormat("XMLTVImport: Inserting {0} programs for {1}", progChan.programs.Count.ToString(),
+                Log.Info("XMLTVImport: Inserting {0} programs for {1}", progChan.programs.Count.ToString(),
                          progChan.Name);
                 _programManagement.InsertPrograms(progChan.programs,
                                      deleteBeforeImport
@@ -842,14 +842,14 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         {
           _errorMessage = "No xmltv file found";
           _status.Status = _errorMessage;
-          Log.ErrorFormat("xmltv data file was not found");
+          Log.Error("xmltv data file was not found");
         }
       }
       catch (Exception ex)
       {
         _errorMessage = String.Format("Invalid XML file:{0}", ex.Message);
         _status.Status = String.Format("invalid XML file:{0}", ex.Message);
-        Log.ErrorFormat(ex, "XML tv import error loading {0}", fileName);
+        Log.Error(ex, "XML tv import error loading {0}", fileName);
 
         //TVDatabase.RollbackTransaction();
       }
@@ -923,7 +923,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         }
         catch (Exception)
         {
-          Log.DebugFormat("XMLTVImport::CorrectEpisodeNum, could not parse '{0}' as plain number", episodenum);
+          Log.Debug("XMLTVImport::CorrectEpisodeNum, could not parse '{0}' as plain number", episodenum);
         }
       }
       else
@@ -937,7 +937,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         }
         catch (Exception)
         {
-          Log.DebugFormat("XMLTVImport::CorrectEpisodeNum, could not parse '{0}' as episode/episodes", episodenum);
+          Log.Debug("XMLTVImport::CorrectEpisodeNum, could not parse '{0}' as episode/episodes", episodenum);
         }
       }
       return "";
@@ -1001,7 +1001,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           day < 0 || day > 31 ||
           month < 0 || month > 12)
       {
-        //Log.DebugFormat(LogType.EPG, true, "epg-import:tvguide.xml contains invalid date/time :{0} converted it to:{1}",
+        //Log.Debug(LogType.EPG, true, "epg-import:tvguide.xml contains invalid date/time :{0} converted it to:{1}",
         //              orgDateTime, newDateTime);
       }
 
@@ -1081,7 +1081,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat("XML tv import error:{1} \n {2} ", ex.Message, ex.StackTrace);
+        Log.Error("XML tv import error:{1} \n {2} ", ex.Message, ex.StackTrace);
       }
     }
 

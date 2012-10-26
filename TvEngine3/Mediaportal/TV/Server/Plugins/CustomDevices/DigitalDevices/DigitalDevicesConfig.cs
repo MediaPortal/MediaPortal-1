@@ -53,7 +53,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
     public DigitalDevicesConfig(string name)
       : base("Digital Devices CI")
     {
-      Log.DebugFormat("Digital Devices config: constructing");
+      Log.Debug("Digital Devices config: constructing");
 
       // Get the details for the slots we've seen in the past.
       Dictionary<String, DigitalDevicesCiSlot> dbSlots = DigitalDevicesCiSlots.GetDatabaseSettings();
@@ -69,22 +69,22 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
         {
           continue;
         }
-        Log.DebugFormat("Digital Devices config: device {0} ({1})...", device.Name, device.DevicePath);
+        Log.Debug("Digital Devices config: device {0} ({1})...", device.Name, device.DevicePath);
         DigitalDevicesCiSlot slot = new DigitalDevicesCiSlot(device.DevicePath);
         if (dbSlots.ContainsKey(device.DevicePath))
         {
-          Log.DebugFormat("  found existing configuration");
+          Log.Debug("  found existing configuration");
           slot = dbSlots[device.DevicePath];
         }
         else
         {
-          Log.DebugFormat("  new configuration");
+          Log.Debug("  new configuration");
         }
         slot.DeviceName = device.Name;
-        Log.DebugFormat("  decrypt limit  = {0}", slot.DecryptLimit);
+        Log.Debug("  decrypt limit  = {0}", slot.DecryptLimit);
         String[] providerList = new String[slot.Providers.Count];
         slot.Providers.CopyTo(providerList);
-        Log.DebugFormat("  provider list  = {0}", String.Join(", ", providerList));
+        Log.Debug("  provider list  = {0}", String.Join(", ", providerList));
 
         // If possible, read the root menu title for the CAM in the slot.
         object obj = null;
@@ -108,7 +108,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
           ciFilter = null;
           obj = null;
         }
-        Log.DebugFormat("  CAM name/title = {0}", slot.CamRootMenuTitle);
+        Log.Debug("  CAM name/title = {0}", slot.CamRootMenuTitle);
 
         _ciSlots.Add(slot);
       }
@@ -124,31 +124,31 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 
       // Now that we have the details, we can build the user interface.
       InitializeComponent();
-      Log.DebugFormat("Digital Devices config: constructed, slot count = {0}", _ciSlots.Count);
+      Log.Debug("Digital Devices config: constructed, slot count = {0}", _ciSlots.Count);
     }
 
     public override void SaveSettings()
     {
-      Log.DebugFormat("Digital Devices config: saving settings, slot count = {0}", _ciSlots.Count);
+      Log.Debug("Digital Devices config: saving settings, slot count = {0}", _ciSlots.Count);
       
       byte i = 0;
       foreach (DigitalDevicesCiSlot slot in _ciSlots)
       {
-        Log.DebugFormat("Digital Devices config: slot {0}...", slot.CamRootMenuTitle);
+        Log.Debug("Digital Devices config: slot {0}...", slot.CamRootMenuTitle);
         _settingServiceAgent.SaveSetting("digitalDevicesCiDeviceName" + i, slot.DeviceName);
         // Persist the slot related settings. The other struct properties are dynamic.
-        Log.DebugFormat("  device name   = {0}", slot.DeviceName);
+        Log.Debug("  device name   = {0}", slot.DeviceName);
 
         _settingServiceAgent.SaveSetting("digitalDevicesCiDevicePath" + i, slot.DevicePath);
-        Log.DebugFormat("  device path   = {0}", slot.DevicePath);
+        Log.Debug("  device path   = {0}", slot.DevicePath);
 
         string decryptLimitValue = _decryptLimits[i].Value.ToString();
         _settingServiceAgent.SaveSetting("digitalDevicesCiDecryptLimit" + i, decryptLimitValue);
-        Log.DebugFormat("  decrypt limit = {0}", decryptLimitValue);
+        Log.Debug("  decrypt limit = {0}", decryptLimitValue);
 
         string digitalDevicesCiProviderList = String.Join("|", Regex.Split(_providerLists[i].Text.Trim(), @"\s*,\s*"));
         _settingServiceAgent.SaveSetting("digitalDevicesCiProviderList" + i, digitalDevicesCiProviderList);
-        Log.DebugFormat("  provider list = {0}", digitalDevicesCiProviderList);
+        Log.Debug("  provider list = {0}", digitalDevicesCiProviderList);
 
         i++;
       }
@@ -161,7 +161,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 
     public override void OnSectionActivated()
     {
-      Log.DebugFormat("Digital Devices config: activated");
+      Log.Debug("Digital Devices config: activated");
 
       // On first load in the constructor we merge details from the database with details for the
       // currently installed and registered CI slots, then construct the UI. The UI remains static
@@ -180,16 +180,16 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       }
 
       int i = 0;
-      Log.DebugFormat("Digital Devices config: slot count = {0}", _ciSlots.Count);
+      Log.Debug("Digital Devices config: slot count = {0}", _ciSlots.Count);
       foreach (DigitalDevicesCiSlot slot in _ciSlots)
       {
-        Log.DebugFormat("Digital Devices config: slot {0}...", slot.CamRootMenuTitle);
+        Log.Debug("Digital Devices config: slot {0}...", slot.CamRootMenuTitle);
         _decryptLimits[i].Value = slot.DecryptLimit;
-        Log.DebugFormat("  decrypt limit = {0}", slot.DecryptLimit);
+        Log.Debug("  decrypt limit = {0}", slot.DecryptLimit);
         String[] providers = new String[slot.Providers.Count];
         slot.Providers.CopyTo(providers);
         _providerLists[i].Text = String.Join(", ", providers);
-        Log.DebugFormat("  provider list = {0}", String.Join("|", providers));
+        Log.Debug("  provider list = {0}", String.Join("|", providers));
         i++;
       }
       base.OnSectionActivated();
@@ -198,7 +198,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 
     public override void OnSectionDeActivated()
     {
-      Log.DebugFormat("Digital Devices config: deactivated");
+      Log.Debug("Digital Devices config: deactivated");
       SaveSettings();
       base.OnSectionDeActivated();
     }

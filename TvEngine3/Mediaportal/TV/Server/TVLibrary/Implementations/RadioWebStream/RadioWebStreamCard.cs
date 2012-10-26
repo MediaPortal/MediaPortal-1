@@ -87,7 +87,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.RadioWebStream
     /// <returns>the subchannel associated with the tuned channel</returns>
     public override ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
-      Log.DebugFormat("RadioWebStream:  Tune:{0}", channel);
+      Log.Debug("RadioWebStream:  Tune:{0}", channel);
       return null;
     }
 
@@ -99,7 +99,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.RadioWebStream
     /// <returns>the subchannel associated with the scanned channel</returns>
     public override ITvSubChannel Scan(int subChannelId, IChannel channel)
     {
-      Log.DebugFormat("RadioWebStream:  Scan:{0}", channel);
+      Log.Debug("RadioWebStream:  Scan:{0}", channel);
       return null;
     }
 
@@ -109,7 +109,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.RadioWebStream
     /// <param name="channel">The channel to tune to.</param>
     protected override void PerformTuning(IChannel channel)
     {
-      Log.DebugFormat("RadioWebStream: perform tuning");
+      Log.Debug("RadioWebStream: perform tuning");
     }
 
     /// <summary>
@@ -154,7 +154,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.RadioWebStream
     /// </summary>
     public override void Dispose()
     {
-      Log.DebugFormat("RadioWebStream:Dispose()");
+      Log.Debug("RadioWebStream:Dispose()");
     }
 
     #endregion

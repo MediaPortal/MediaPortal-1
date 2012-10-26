@@ -80,7 +80,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
             setting.Set<List<string>>(processes);
             _processes = processes;
             foreach (string process in processes)
-              Log.DebugFormat("PowerScheduler: preventing standby for process: {0}", process);
+              Log.Debug("PowerScheduler: preventing standby for process: {0}", process);
           }
           break;
       }

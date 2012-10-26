@@ -161,7 +161,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
       catch (Exception exp)
       {
-        Log.ErrorFormat("LoadGroups error: {0}", exp.Message);
+        Log.Error("LoadGroups error: {0}", exp.Message);
       }
 
       if (listBox1.SelectedIndex <= -1 && listBox1.Items.Count > 0)

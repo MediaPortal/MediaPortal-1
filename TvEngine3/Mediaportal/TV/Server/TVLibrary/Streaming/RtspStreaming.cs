@@ -149,7 +149,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
       }
     }
 
@@ -233,7 +233,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
         return;
       if (_running)
         return;
-      Log.DebugFormat("RTSP: start streamer");
+      Log.Debug("RTSP: start streamer");
       _running = true;
       Thread thread = new Thread(workerThread);
       thread.SetApartmentState(ApartmentState.STA);
@@ -248,7 +248,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
     /// </summary>
     public void Stop()
     {
-      Log.DebugFormat("RTSP: stop streamer");
+      Log.Debug("RTSP: stop streamer");
       if (_initialized == false)
         return;
       StopAllStreams();
@@ -257,7 +257,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
 
     private void StopAllStreams()
     {
-      Log.DebugFormat("RTSP: stop all streams ({0})", _streams.Count);
+      Log.Debug("RTSP: stop all streams ({0})", _streams.Count);
 
       List<string> removals = new List<string>();
       foreach (string key in _streams.Keys)
@@ -284,7 +284,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
       }
       if (System.IO.File.Exists(stream.FileName))
       {
-        Log.DebugFormat("RTSP: add stream {0} file:{1}", stream.Name, stream.FileName);
+        Log.Debug("RTSP: add stream {0} file:{1}", stream.Name, stream.FileName);
         if (stream.Card != null)
         {
           StreamAddTimeShiftFile(stream.Name, stream.FileName, false, (stream.MediaType == MediaTypeEnum.TV ? 0 : 1));
@@ -305,7 +305,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
     {
       if (_initialized == false)
         return;
-      Log.DebugFormat("RTSP: remove stream {0}", streamName);
+      Log.Debug("RTSP: remove stream {0}", streamName);
       if (_streams.ContainsKey(streamName))
       {
         StreamRemove(streamName);
@@ -341,7 +341,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
     /// </summary>
     protected void workerThread()
     {
-      Log.DebugFormat("RTSP: Streamer started");
+      Log.Debug("RTSP: Streamer started");
       try
       {
         while (_running)
@@ -351,9 +351,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
       }
-      Log.DebugFormat("RTSP: Streamer stopped");
+      Log.Debug("RTSP: Streamer stopped");
       _running = false;
     }
 
@@ -406,7 +406,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
       }
       catch (ManagementException e)
       {
-        Log.ErrorFormat("Failed to retrieve ip addresses with default gateway, WMI error: " + e.ToString());
+        Log.Error("Failed to retrieve ip addresses with default gateway, WMI error: " + e.ToString());
       }
       return addresses;
     }

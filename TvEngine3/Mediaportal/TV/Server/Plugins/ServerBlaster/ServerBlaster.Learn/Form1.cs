@@ -659,7 +659,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
 
     private void OnDeviceRemoval()
     {
-      Log.DebugFormat("Device removal");
+      Log.Debug("Device removal");
 
 //			// are we currently learning?
 //			if(buttonStart.Enabled) return;
@@ -820,24 +820,24 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
                 }
                 else
                 {
-                  Log.DebugFormat("Form1.LoadConfig: Unexpected value type '{0}'", objectValue.GetType());
+                  Log.Debug("Form1.LoadConfig: Unexpected value type '{0}'", objectValue.GetType());
                 }
               }
               else
               {
-                Log.DebugFormat("Form1.LoadConfig: Unexpected key type '{0}'", objectKey.GetType());
+                Log.Debug("Form1.LoadConfig: Unexpected key type '{0}'", objectKey.GetType());
               }
             }
           }
           else
           {
-            Log.DebugFormat("Form1.LoadConfig: Unexpected root object");
+            Log.Debug("Form1.LoadConfig: Unexpected root object");
           }
         }
       }
       catch (Exception ex)
       {
-        Log.DebugFormat(ex, "Form1.LoadConfig");
+        Log.Debug(ex, "Form1.LoadConfig");
       }
     }
   }

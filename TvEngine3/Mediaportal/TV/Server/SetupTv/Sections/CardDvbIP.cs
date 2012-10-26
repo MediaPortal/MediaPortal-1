@@ -334,7 +334,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
       }
       finally
       {

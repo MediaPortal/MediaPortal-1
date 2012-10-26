@@ -183,7 +183,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "could not set priority on tvservice - the process might be terminated");
+        Log.Error(ex, "could not set priority on tvservice - the process might be terminated");
         return;
       }
 
@@ -216,7 +216,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       catch (Exception exp)
       {
-        Log.DebugFormat(string.Format("Could not set priority on tvservice. Error on setting process.PriorityClass: {0}",
+        Log.Debug(string.Format("Could not set priority on tvservice. Error on setting process.PriorityClass: {0}",
                                 exp.Message));
         return;
       }

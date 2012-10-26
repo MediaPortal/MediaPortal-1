@@ -143,7 +143,7 @@ namespace WebEPG.config
         return;
       }
 
-      Log.InfoFormat("WebEPG Config: Loading Existing WebEPG.xml");
+      Log.Info("WebEPG Config: Loading Existing WebEPG.xml");
       using (var xmlreader = new Xml(configFile)) 
       {
         _MaxGrab = xmlreader.GetValueAsInt("General", "MaxDays", 1);

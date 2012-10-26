@@ -3558,7 +3558,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       }
       catch (Exception ex)
       {
-        Log.DebugFormat("GuideBase: {0}", ex);
+        Log.Debug("GuideBase: {0}", ex);
       }
       return base.OnMessage(message);
     }

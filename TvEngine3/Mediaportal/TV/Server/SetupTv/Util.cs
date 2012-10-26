@@ -801,13 +801,13 @@ namespace Mediaportal.TV.Server.SetupTV
         {
           if (CheckFileVersion(dllPath, "6.5.2710.2732", out aParamVersion))
             validDllFound = true;
-          Log.InfoFormat("Util: Version of installed Psisdecd.dll: {0} Path: {1}", aParamVersion.ToString(),
+          Log.Info("Util: Version of installed Psisdecd.dll: {0} Path: {1}", aParamVersion.ToString(),
                                  dllPath);
           if (aParamVersion > mostRecentVer)
             mostRecentVer = aParamVersion;
         }
         else
-          Log.InfoFormat("Util: Registered Psisdecd.dll does not exist in path: {0}", dllPath);
+          Log.Info("Util: Registered Psisdecd.dll does not exist in path: {0}", dllPath);
       }
       if (!validDllFound)
       {
@@ -827,7 +827,7 @@ namespace Mediaportal.TV.Server.SetupTV
           if (dllPaths.Count < 1)
             ErrorMsg = "Psisdecd.dll may not be registered properly! \nPlease check our Wiki's requirements page.";
 
-          Log.InfoFormat("Util: Psisdecd.dll error - {0}", ErrorMsg);
+          Log.Info("Util: Psisdecd.dll error - {0}", ErrorMsg);
           if (
             MessageBox.Show(ErrorMsg, "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OKCancel,
                             MessageBoxIcon.Exclamation) == DialogResult.OK)
@@ -1043,7 +1043,7 @@ namespace Mediaportal.TV.Server.SetupTV
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "");
+        Log.Error(ex, "");
       }
     }
 

@@ -84,15 +84,15 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        Log.DebugFormat(@"card: delete timeshift files {0}\{1}", _folder, _fileName);
+        Log.Debug(@"card: delete timeshift files {0}\{1}", _folder, _fileName);
         string[] files = Directory.GetFiles(_folder);
         for (int i = 0; i < files.Length; ++i)
         {
           if (files[i].IndexOf(_fileName) >= 0)
           {
-            Log.DebugFormat("card:   trying to delete {0}", files[i]);
+            Log.Debug("card:   trying to delete {0}", files[i]);
             File.Delete(files[i]);
-            Log.DebugFormat("card:   deleted file {0}", files[i]);
+            Log.Debug("card:   deleted file {0}", files[i]);
           }
         }
       }

@@ -56,9 +56,9 @@ namespace OSPrerequisites
       switch (OSInfo.OSInfo.GetOSSupported())
       {
         case OSInfo.OSInfo.OsSupport.Blocked:
-          Log.ErrorFormat("*******************************************");
-          Log.ErrorFormat("* ERROR, OS can't be used for MediaPortal *");
-          Log.ErrorFormat("*******************************************");
+          Log.Error("*******************************************");
+          Log.Error("* ERROR, OS can't be used for MediaPortal *");
+          Log.Error("*******************************************");
           if (dispMessage)
           {
             MessageBox.Show(MSG_NOT_INSTALLABLE, OSInfo.OSInfo.GetOSDisplayVersion(), MessageBoxButtons.OK,
@@ -68,9 +68,9 @@ namespace OSPrerequisites
           break;
         case OSInfo.OSInfo.OsSupport.NotSupported:
           //Used .Info as .Warning is missing
-          Log.InfoFormat("*******************************************");
-          Log.InfoFormat("* WARNING, OS not officially supported    *");
-          Log.InfoFormat("*******************************************");
+          Log.Info("*******************************************");
+          Log.Info("* WARNING, OS not officially supported    *");
+          Log.Info("*******************************************");
           if (dispMessage)
           {
             res = MessageBox.Show(MSG_NOT_SUPPORTED, OSInfo.OSInfo.GetOSDisplayVersion(), MessageBoxButtons.OKCancel,

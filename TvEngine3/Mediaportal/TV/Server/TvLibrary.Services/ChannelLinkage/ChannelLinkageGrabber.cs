@@ -51,7 +51,7 @@ namespace Mediaportal.TV.Server.TVLibrary.ChannelLinkage
 
     public override int OnLinkageReceived()
     {
-      Log.InfoFormat("OnLinkageReceived()");
+      Log.Info("OnLinkageReceived()");
       Thread workerThread = new Thread(UpdateDatabaseThread);
       workerThread.IsBackground = true;
       workerThread.Name = "Channel linkage update thread";
@@ -69,7 +69,7 @@ namespace Mediaportal.TV.Server.TVLibrary.ChannelLinkage
                                                                pChannel.ServiceId);
       if (dbPortalChannel == null)
       {
-        Log.InfoFormat("Portal channel with networkId={0}, transportId={1}, serviceId={2} not found", pChannel.NetworkId,
+        Log.Info("Portal channel with networkId={0}, transportId={1}, serviceId={2} not found", pChannel.NetworkId,
                  pChannel.TransportId, pChannel.ServiceId);
         return;
       }      
@@ -80,7 +80,7 @@ namespace Mediaportal.TV.Server.TVLibrary.ChannelLinkage
                                                                   lChannel.ServiceId);        
         if (dbLinkedChannnel == null)
         {
-          Log.InfoFormat("Linked channel with name={0}, networkId={1}, transportId={2}, serviceId={3} not found",
+          Log.Info("Linked channel with name={0}, networkId={1}, transportId={2}, serviceId={3} not found",
                    lChannel.Name, lChannel.NetworkId, lChannel.TransportId, lChannel.ServiceId);
           continue;
         }
@@ -102,14 +102,14 @@ namespace Mediaportal.TV.Server.TVLibrary.ChannelLinkage
     {
       Thread.CurrentThread.Priority = ThreadPriority.Lowest;
       List<PortalChannel> linkages = _card.ChannelLinkages;
-      Log.InfoFormat("ChannelLinkage received. {0} portal channels read", linkages.Count);
+      Log.Info("ChannelLinkage received. {0} portal channels read", linkages.Count);
       foreach (PortalChannel pChannel in linkages)
       {
-        Log.InfoFormat("[Linkage Scanner] New portal channel {0} {1} {2}", pChannel.NetworkId, pChannel.ServiceId,
+        Log.Info("[Linkage Scanner] New portal channel {0} {1} {2}", pChannel.NetworkId, pChannel.ServiceId,
                  pChannel.TransportId);
         foreach (LinkedChannel lchan in pChannel.LinkedChannels)
         {
-          Log.InfoFormat("[Linkage Scanner] - {0} nid={1},tid={2} sid={3}", lchan.Name, lchan.NetworkId, lchan.TransportId,
+          Log.Info("[Linkage Scanner] - {0} nid={1},tid={2} sid={3}", lchan.Name, lchan.NetworkId, lchan.TransportId,
                    lchan.ServiceId);
         }
         PersistPortalChannel(pChannel);

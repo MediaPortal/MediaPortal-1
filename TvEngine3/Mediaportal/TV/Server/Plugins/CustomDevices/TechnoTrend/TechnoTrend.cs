@@ -1150,7 +1150,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// </summary>
     private void ReadDeviceInfo()
     {
-      Log.DebugFormat("TechnoTrend: read device information");
+      Log.Debug("TechnoTrend: read device information");
 
       // General product details.
       IntPtr info = Marshal.AllocCoTaskMem(1824);
@@ -1162,19 +1162,19 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       if (result == TtApiResult.Success)
       {
         FilterNames names = (FilterNames)Marshal.PtrToStructure(info, typeof(FilterNames));
-        Log.DebugFormat("  product name        = {0}", names.ProductName);
-        Log.DebugFormat("  tuner type          = {0}", names.FrontEndType);
-        Log.DebugFormat("  tuner filter name   = {0}", names.TunerFilterName);
-        Log.DebugFormat("  capture filter name = {0}", names.CaptureFilterName);
+        Log.Debug("  product name        = {0}", names.ProductName);
+        Log.Debug("  tuner type          = {0}", names.FrontEndType);
+        Log.Debug("  tuner filter name   = {0}", names.TunerFilterName);
+        Log.Debug("  capture filter name = {0}", names.CaptureFilterName);
         // These other filter names are not relevant for digital tuners (they will be blank).
-        /*Log.DebugFormat("TechnoTrend: {0}", names.AnalogTunerFilterName);
-        Log.DebugFormat("TechnoTrend: {0}", names.AnalogCaptureFilterName);
-        Log.DebugFormat("TechnoTrend: {0}", names.StbCaptureFilterName);*/
+        /*Log.Debug("TechnoTrend: {0}", names.AnalogTunerFilterName);
+        Log.Debug("TechnoTrend: {0}", names.AnalogCaptureFilterName);
+        Log.Debug("TechnoTrend: {0}", names.StbCaptureFilterName);*/
         _name = names.ProductName;
       }
       else
       {
-        Log.DebugFormat("TechnoTrend: failed to read the device details, result = {0}", result);
+        Log.Debug("TechnoTrend: failed to read the device details, result = {0}", result);
       }
       Marshal.FreeCoTaskMem(info);
 
@@ -1183,11 +1183,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       result = bdaapiGetProductSellerID(_deviceHandle, ref seller);
       if (result == TtApiResult.Success)
       {
-        Log.DebugFormat("  product (re)seller  = {0}", seller);
+        Log.Debug("  product (re)seller  = {0}", seller);
       }
       else
       {
-        Log.DebugFormat("TechnoTrend: failed to determine the product (re)seller, result = {0}", result);
+        Log.Debug("TechnoTrend: failed to determine the product (re)seller, result = {0}", result);
       }
 
       // Driver version.
@@ -1198,11 +1198,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       result = bdaapiGetDrvVersion(_deviceHandle, ref v1, ref v2, ref v3, ref v4);
       if (result == TtApiResult.Success)
       {
-        Log.DebugFormat("  driver version      = {0}.{1}.{2}.{3}", v1, v2, v3, v4);
+        Log.Debug("  driver version      = {0}.{1}.{2}.{3}", v1, v2, v3, v4);
       }
       else
       {
-        Log.DebugFormat("TechnoTrend: failed to read the driver version, result = {0}", result);
+        Log.Debug("TechnoTrend: failed to read the driver version, result = {0}", result);
       }
 
       // MAC address.
@@ -1213,14 +1213,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       {
         Array lowBytes = BitConverter.GetBytes(lowPart);
         Array highBytes = BitConverter.GetBytes(highPart);
-        Log.DebugFormat("  MAC address         = {0:x2}-{1:x2}-{2:x2}-{3:x2}-{4:x2}-{5:x2}",
+        Log.Debug("  MAC address         = {0:x2}-{1:x2}-{2:x2}-{3:x2}-{4:x2}-{5:x2}",
           highBytes.GetValue(2), highBytes.GetValue(1), highBytes.GetValue(0),
           lowBytes.GetValue(2), lowBytes.GetValue(1), lowBytes.GetValue(0)
         );
       }
       else
       {
-        Log.DebugFormat("TechnoTrend: failed to read the MAC address, result = {0}", result);
+        Log.Debug("TechnoTrend: failed to read the MAC address, result = {0}", result);
       }
 
       // USB speed.
@@ -1230,11 +1230,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
         result = bdaapiGetUSBHighspeedMode(_deviceHandle, ref highSpeed);
         if (result == TtApiResult.Success)
         {
-          Log.DebugFormat("  USB 2 speed support = {0}", highSpeed);
+          Log.Debug("  USB 2 speed support = {0}", highSpeed);
         }
         else
         {
-          Log.DebugFormat("TechnoTrend: failed to determine whether USB high speed is supported, result = {0}", result);
+          Log.Debug("TechnoTrend: failed to determine whether USB high speed is supported, result = {0}", result);
         }
       }
     }
@@ -1248,7 +1248,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       TtApiResult result = bdaapiCIGetSlotStatus(_deviceHandle, _slotIndex);
       if (result != TtApiResult.Success)
       {
-        Log.DebugFormat("TechnoTrend: bdaapiCIGetSlotStatus failed, result = {0}", result);
+        Log.Debug("TechnoTrend: bdaapiCIGetSlotStatus failed, result = {0}", result);
       }
     }
 
@@ -1263,15 +1263,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <param name="slotInfo">A pointer to a CiSlotInfo struct containing extended information about the interface state.</param>
     private void OnSlotStatus(IntPtr context, byte slotIndex, TtCiState state, IntPtr slotInfo)
     {
-      Log.DebugFormat("TechnoTrend: CI slot status callback, slot = {0}", slotIndex);
+      Log.Debug("TechnoTrend: CI slot status callback, slot = {0}", slotIndex);
       if (state == _ciState)
       {
         // Don't be too verbose - we don't need to print the CAS IDs all the time.
-        Log.DebugFormat("TechnoTrend: CI state = {0}", _ciState);
+        Log.Debug("TechnoTrend: CI state = {0}", _ciState);
         return;
       }
 
-      Log.DebugFormat("TechnoTrend: CI state change, old state = {0}, new state = {1}", _ciState, state);
+      Log.Debug("TechnoTrend: CI state change, old state = {0}, new state = {1}", _ciState, state);
       if (state == TtCiState.CamOkay || state == TtCiState.ApplicationOk)
       {
         _isCamPresent = true;
@@ -1293,7 +1293,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       {
         if (state != TtCiState.Empty)
         {
-          Log.DebugFormat("TechnoTrend: detailed slot info is not available [yet]");
+          Log.Debug("TechnoTrend: detailed slot info is not available [yet]");
         }
         return;
       }
@@ -1301,25 +1301,25 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       try
       {
         CiSlotInfo info = (CiSlotInfo)Marshal.PtrToStructure(slotInfo, typeof(CiSlotInfo));
-        Log.DebugFormat("TechnoTrend: slot info");
-        Log.DebugFormat("  status     = {0} ", info.Status);
+        Log.Debug("TechnoTrend: slot info");
+        Log.Debug("  status     = {0} ", info.Status);
         if (info.CamMenuTitle.Equals(String.Empty))
         {
-          Log.DebugFormat("  menu title = (not available)");
+          Log.Debug("  menu title = (not available)");
         }
         else
         {
-          Log.DebugFormat("  menu title = {0} ", info.CamMenuTitle);
+          Log.Debug("  menu title = {0} ", info.CamMenuTitle);
         }
-        Log.DebugFormat("  # CAS IDs  = {0}", info.NumberOfCaSystemIds);
+        Log.Debug("  # CAS IDs  = {0}", info.NumberOfCaSystemIds);
         for (int i = 0; i < info.NumberOfCaSystemIds; i++)
         {
-          Log.DebugFormat("  {0,-2}         = 0x{1:x4}", i + 1, Marshal.ReadInt16(info.CaSystemIds, i * 2));
+          Log.Debug("  {0,-2}         = 0x{1:x4}", i + 1, Marshal.ReadInt16(info.CaSystemIds, i * 2));
         }
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "TechnoTrend: CI slot status callback exception");
+        Log.Error(ex, "TechnoTrend: CI slot status callback exception");
       }
     }
 
@@ -1332,7 +1332,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <param name="error">An error message from the CAM.</param>
     private void OnCaStatus(IntPtr context, byte slotIndex, TtMmiMessage reply, TtCiError error)
     {
-      Log.DebugFormat("TechnoTrend: CA status callback, slot = {0}, reply = {1}, error = {2}", slotIndex, reply, error);
+      Log.Debug("TechnoTrend: CA status callback, slot = {0}, reply = {1}, error = {2}", slotIndex, reply, error);
       try
       {
         // NoCaResource generally seems to indicate a smartcard or CAM error. The TechnoTrend
@@ -1347,7 +1347,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "TechnoTrend: CA status callback exception");
+        Log.Error(ex, "TechnoTrend: CA status callback exception");
       }
     }
 
@@ -1364,11 +1364,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       try
       {
         _camInputRequestContext = Marshal.PtrToStringAnsi(text, textLength);
-        Log.DebugFormat("TechnoTrend: display string callback, slot = {0}, string = {1}", slotIndex, _camInputRequestContext);
+        Log.Debug("TechnoTrend: display string callback, slot = {0}, string = {1}", slotIndex, _camInputRequestContext);
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "TechnoTrend: display string callback exception");
+        Log.Error(ex, "TechnoTrend: display string callback exception");
       }
     }
 
@@ -1384,11 +1384,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     {
       try
       {
-        Log.DebugFormat("TechnoTrend: display menu/list callback, slot = {0}, total menu length = {1}", slotIndex, totalMenuLength);
+        Log.Debug("TechnoTrend: display menu/list callback, slot = {0}, total menu length = {1}", slotIndex, totalMenuLength);
 
         if (_ciMenuCallbacks == null)
         {
-          Log.DebugFormat("TechnoTrend: menu callbacks are not set");
+          Log.Debug("TechnoTrend: menu callbacks are not set");
         }
 
         // Construct menu/list strings for callback.
@@ -1413,10 +1413,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
           // End of an entry. Is the meta-data complete?
           if (idx == 2)
           {
-            Log.DebugFormat("  title     = {0}", strings[0].ToString());
-            Log.DebugFormat("  sub-title = {0}", strings[1].ToString());
-            Log.DebugFormat("  footer    = {0}", strings[2].ToString());
-            Log.DebugFormat("  # entries = {0}", numEntries - 3);
+            Log.Debug("  title     = {0}", strings[0].ToString());
+            Log.Debug("  sub-title = {0}", strings[1].ToString());
+            Log.Debug("  footer    = {0}", strings[2].ToString());
+            Log.Debug("  # entries = {0}", numEntries - 3);
             if (_ciMenuCallbacks != null)
             {
               _ciMenuCallbacks.OnCiMenu(strings[0].ToString(), strings[1].ToString(), strings[2].ToString(), numEntries - 3);
@@ -1424,7 +1424,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
           }
           else if (idx > 2)
           {
-            Log.DebugFormat("  entry {0,-2}  = {1}", idx - 2, strings[idx].ToString());
+            Log.Debug("  entry {0,-2}  = {1}", idx - 2, strings[idx].ToString());
             if (_ciMenuCallbacks != null)
             {
               _ciMenuCallbacks.OnCiMenuChoice(idx - 3, strings[idx].ToString());
@@ -1437,7 +1437,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "TechnoTrend: display menu/list callback exception");
+        Log.Error(ex, "TechnoTrend: display menu/list callback exception");
       }
     }
 
@@ -1448,7 +1448,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     private void OnSwitchOsdOff(IntPtr context, byte slotIndex)
     {
-      Log.DebugFormat("TechnoTrend: switch OSD off callback, slot = {0}", slotIndex);
+      Log.Debug("TechnoTrend: switch OSD off callback, slot = {0}", slotIndex);
       if (_ciMenuCallbacks != null)
       {
         try
@@ -1457,12 +1457,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
         }
         catch (Exception ex)
         {
-          Log.ErrorFormat(ex, "TechnoTrend: switch OSD off callback exception");
+          Log.Error(ex, "TechnoTrend: switch OSD off callback exception");
         }
       }
       else
       {
-        Log.DebugFormat("TechnoTrend: menu callbacks are not set");
+        Log.Debug("TechnoTrend: menu callbacks are not set");
       }
     }
 
@@ -1476,10 +1476,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <param name="keyMask"></param>
     private void OnInputRequest(IntPtr context, byte slotIndex, bool blind, byte answerLength, Int16 keyMask)
     {
-      Log.DebugFormat("TechnoTrend: input request callback, slot = {0}", slotIndex);
-      Log.DebugFormat("  length   = {0}", answerLength);
-      Log.DebugFormat("  blind    = {0}", blind);
-      Log.DebugFormat("  key mask = {0:x4}", keyMask);
+      Log.Debug("TechnoTrend: input request callback, slot = {0}", slotIndex);
+      Log.Debug("  length   = {0}", answerLength);
+      Log.Debug("  blind    = {0}", blind);
+      Log.Debug("  key mask = {0:x4}", keyMask);
       if (_ciMenuCallbacks != null)
       {
         try
@@ -1488,12 +1488,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
         }
         catch (Exception ex)
         {
-          Log.ErrorFormat(ex, "TechnoTrend: input request callback exception");
+          Log.Error(ex, "TechnoTrend: input request callback exception");
         }
       }
       else
       {
-        Log.DebugFormat("TechnoTrend: menu callbacks are not set");
+        Log.Debug("TechnoTrend: menu callbacks are not set");
       }
     }
 
@@ -1507,7 +1507,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <param name="descriptor">???</param>
     private void OnLscSetDescriptor(IntPtr context, byte slotIndex, IntPtr descriptor)
     {
-      Log.DebugFormat("TechnoTrend: OnLscSetDescriptor callback, slot = {0}", slotIndex);
+      Log.Debug("TechnoTrend: OnLscSetDescriptor callback, slot = {0}", slotIndex);
     }
 
     /// <summary>
@@ -1517,7 +1517,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     private void OnLscConnect(IntPtr context, byte slotIndex)
     {
-      Log.DebugFormat("TechnoTrend: OnLscConnect callback, slot = {0}", slotIndex);
+      Log.Debug("TechnoTrend: OnLscConnect callback, slot = {0}", slotIndex);
     }
 
     /// <summary>
@@ -1527,7 +1527,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     private void OnLscDisconnect(IntPtr context, byte slotIndex)
     {
-      Log.DebugFormat("TechnoTrend: OnLscDisconnect callback, slot = {0}", slotIndex);
+      Log.Debug("TechnoTrend: OnLscDisconnect callback, slot = {0}", slotIndex);
     }
 
     /// <summary>
@@ -1539,7 +1539,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <param name="timeout">A timeout in units of ten milliseconds.</param>
     private void OnLscSetParams(IntPtr context, byte slotIndex, byte bufferSize, byte timeout)
     {
-      Log.DebugFormat("TechnoTrend: OnLscSetParams callback, slot = {0}, buffer size = {1}, timeout = {2}", slotIndex, bufferSize, timeout);
+      Log.Debug("TechnoTrend: OnLscSetParams callback, slot = {0}, buffer size = {1}, timeout = {2}", slotIndex, bufferSize, timeout);
     }
 
     /// <summary>
@@ -1549,7 +1549,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     private void OnLscEnquireStatus(IntPtr context, byte slotIndex)
     {
-      Log.DebugFormat("TechnoTrend: OnLscEnquireStatus callback, slot = {0}", slotIndex);
+      Log.Debug("TechnoTrend: OnLscEnquireStatus callback, slot = {0}", slotIndex);
     }
 
     /// <summary>
@@ -1560,7 +1560,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <param name="phaseId"></param>
     private void OnLscGetNextBuffer(IntPtr context, byte slotIndex, byte phaseId)
     {
-      Log.DebugFormat("TechnoTrend: OnLscGetNextBuffer callback, slot = {0}, phase = {1}", slotIndex, phaseId);
+      Log.Debug("TechnoTrend: OnLscGetNextBuffer callback, slot = {0}, phase = {1}", slotIndex, phaseId);
     }
 
     /// <summary>
@@ -1573,7 +1573,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <param name="bufferSize"></param>
     private void OnLscTransmitBuffer(IntPtr context, byte slotIndex, byte phaseId, IntPtr buffer, Int16 bufferSize)
     {
-      Log.DebugFormat("TechnoTrend: OnLscTransmitBuffer callback, slot = {0}, phase = {1}", slotIndex, phaseId);
+      Log.Debug("TechnoTrend: OnLscTransmitBuffer callback, slot = {0}, phase = {1}", slotIndex, phaseId);
       DVB_MMI.DumpBinary(buffer, 0, bufferSize);
     }
 
@@ -1605,41 +1605,41 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
     {
-      Log.DebugFormat("TechnoTrend: initialising device");
+      Log.Debug("TechnoTrend: initialising device");
 
       if (tunerFilter == null)
       {
-        Log.DebugFormat("TechnoTrend: tuner filter is null");
+        Log.Debug("TechnoTrend: tuner filter is null");
         return false;
       }
       if (_isTechnoTrend)
       {
-        Log.DebugFormat("TechnoTrend: device is already initialised");
+        Log.Debug("TechnoTrend: device is already initialised");
         return true;
       }
 
       _deviceCategory = GetDeviceCategory(tunerFilter);
       if (_deviceCategory == TtDeviceCategory.Unknown)
       {
-        Log.DebugFormat("TechnoTrend: device category is unknown");
+        Log.Debug("TechnoTrend: device category is unknown");
         return false;
       }
 
       int deviceId = GetDeviceId(tunerFilter);
       if (deviceId == -1)
       {
-        Log.DebugFormat("TechnoTrend: failed to determine device ID");
+        Log.Debug("TechnoTrend: failed to determine device ID");
         return false;
       }
 
       _deviceHandle = bdaapiOpenHWIdx(_deviceCategory, (uint)deviceId);
       if (_deviceHandle == IntPtr.Zero || _deviceHandle.ToInt64() == -1)
       {
-        Log.DebugFormat("TechnoTrend: hardware interface could not be opened");
+        Log.Debug("TechnoTrend: hardware interface could not be opened");
         return false;
       }
 
-      Log.DebugFormat("TechnoTrend: supported device detected, category = {0}, id = {1}", _deviceCategory, deviceId);
+      Log.Debug("TechnoTrend: supported device detected, category = {0}, id = {1}", _deviceCategory, deviceId);
       _isTechnoTrend = true;
       _tunerType = tunerType;
       _generalBuffer = Marshal.AllocCoTaskMem(TuneRequestSize);
@@ -1649,7 +1649,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
         TtApiResult result = bdaapiSetDVBTAutoOffsetMode(_deviceHandle, false);
         if (result != TtApiResult.Success)
         {
-          Log.DebugFormat("TechnoTrend: failed to turn off auto offset mode, result = {0}", result);
+          Log.Debug("TechnoTrend: failed to turn off auto offset mode, result = {0}", result);
         }
       }
       return true;
@@ -1666,12 +1666,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <param name="action">The action to take, if any.</param>
     public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out DeviceAction action)
     {
-      Log.DebugFormat("TechnoTrend: on before tune callback");
+      Log.Debug("TechnoTrend: on before tune callback");
       action = DeviceAction.Default;
 
       if (!_isTechnoTrend || _deviceHandle == IntPtr.Zero)
       {
-        Log.DebugFormat("TechnoTrend: device not initialised or interface not supported");
+        Log.Debug("TechnoTrend: device not initialised or interface not supported");
         return;
       }
 
@@ -1690,7 +1690,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       {
         ch.ModulationType = ModulationType.ModQpsk;
       }
-      Log.DebugFormat("  modulation = {0}", ch.ModulationType);
+      Log.Debug("  modulation = {0}", ch.ModulationType);
     }
 
     #endregion
@@ -1706,21 +1706,21 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <returns><c>true</c> if the power state is set successfully, otherwise <c>false</c></returns>
     public bool SetPowerState(bool powerOn)
     {
-      Log.DebugFormat("TechnoTrend: set power state, on = {0}", powerOn);
+      Log.Debug("TechnoTrend: set power state, on = {0}", powerOn);
 
       if (!_isTechnoTrend || _deviceHandle == IntPtr.Zero)
       {
-        Log.DebugFormat("TechnoTrend: device not initialised or interface not supported");
+        Log.Debug("TechnoTrend: device not initialised or interface not supported");
         return false;
       }
       if (_tunerType != CardType.DvbT)
       {
-        Log.DebugFormat("TechnoTrend: power control is not supported for this device");
+        Log.Debug("TechnoTrend: power control is not supported for this device");
         return false;
       }
 
       TtApiResult result = bdaapiSetDVBTAntPwr(_deviceHandle, powerOn);
-      Log.DebugFormat("TechnoTrend: result = {0}", result);
+      Log.Debug("TechnoTrend: result = {0}", result);
       return (result == TtApiResult.Success);
     }
 
@@ -1752,11 +1752,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <returns><c>true</c> if the channel is successfully tuned, otherwise <c>false</c></returns>
     public bool Tune(IChannel channel)
     {
-      Log.DebugFormat("TechnoTrend: tune to channel");
+      Log.Debug("TechnoTrend: tune to channel");
 
       if (!_isTechnoTrend || _deviceHandle == IntPtr.Zero)
       {
-        Log.DebugFormat("TechnoTrend: device not initialised or interface not supported");
+        Log.Debug("TechnoTrend: device not initialised or interface not supported");
         return false;
       }
 
@@ -1814,7 +1814,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
           }
           else
           {
-            Log.DebugFormat("TechnoTrend: tuning is not supported for this channel");
+            Log.Debug("TechnoTrend: tuning is not supported for this channel");
             return false;
           }
         }
@@ -1822,7 +1822,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
 
       //DVB_MMI.DumpBinary(_generalBuffer, 0, TuneRequestSize);
       TtApiResult result = bdaapiTune(_deviceHandle, _generalBuffer);
-      Log.DebugFormat("TechnoTrend: result = {0}", result);
+      Log.Debug("TechnoTrend: result = {0}", result);
       return (result == TtApiResult.Success);
     }
 
@@ -1837,16 +1837,16 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
     public bool OpenInterface()
     {
-      Log.DebugFormat("TechnoTrend: open conditional access interface");
+      Log.Debug("TechnoTrend: open conditional access interface");
 
       if (!_isTechnoTrend || _deviceHandle == IntPtr.Zero)
       {
-        Log.DebugFormat("TechnoTrend: device not initialised or interface not supported");
+        Log.Debug("TechnoTrend: device not initialised or interface not supported");
         return false;
       }
       if (_descrambledServices != null || _serviceBuffer != IntPtr.Zero)
       {
-        Log.DebugFormat("TechnoTrend: interface is already open");
+        Log.Debug("TechnoTrend: interface is already open");
         return false;
       }
 
@@ -1885,7 +1885,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       TtApiResult result = bdaapiOpenCI(_deviceHandle, _callbacks);
       if (result == TtApiResult.Success)
       {
-        Log.DebugFormat("TechnoTrend: result = {0}", result);
+        Log.Debug("TechnoTrend: result = {0}", result);
         _isCiSlotPresent = true;
         _serviceBuffer = Marshal.AllocCoTaskMem(200);
         _descrambledServices = new HashSet<UInt16>();
@@ -1893,7 +1893,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       else
       {
         // bdaapiOpenCI() returns "success" when a CI slot is present/connected, otherwise "error".
-        Log.DebugFormat("TechnoTrend: CI slot not present, result = {0}", result);
+        Log.Debug("TechnoTrend: CI slot not present, result = {0}", result);
         _isCiSlotPresent = false;
       }
       return _isCiSlotPresent;
@@ -1905,7 +1905,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
     public bool CloseInterface()
     {
-      Log.DebugFormat("TechnoTrend: close conditional access interface");
+      Log.Debug("TechnoTrend: close conditional access interface");
 
       if (_isCiSlotPresent)
       {
@@ -1921,7 +1921,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       _isCiSlotPresent = false;
       _isCamPresent = false;
       _isCamReady = false;
-      Log.DebugFormat("TechnoTrend: result = success");
+      Log.Debug("TechnoTrend: result = success");
       return true;
     }
 
@@ -1943,12 +1943,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <returns><c>true</c> if the interface is ready, otherwise <c>false</c></returns>
     public bool IsInterfaceReady()
     {
-      Log.DebugFormat("TechnoTrend: is conditional access interface ready");
+      Log.Debug("TechnoTrend: is conditional access interface ready");
 
       // The API accurately invokes the OnSlotStatus() delegate when the CI or CAM state changes so there
       // is no need to do anything other than report the current state.
 
-      Log.DebugFormat("TechnoTrend: result = {0}", _isCamReady);
+      Log.Debug("TechnoTrend: result = {0}", _isCamReady);
       return _isCamReady;
     }
 
@@ -1965,34 +1965,34 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
     public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
-      Log.DebugFormat("TechnoTrend: send conditional access command, list action = {0}, command = {1}", listAction, command);
+      Log.Debug("TechnoTrend: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
       if (!_isTechnoTrend || _deviceHandle == IntPtr.Zero)
       {
-        Log.DebugFormat("TechnoTrend: device not initialised or interface not supported");
+        Log.Debug("TechnoTrend: device not initialised or interface not supported");
         return false;
       }
       if (!_isCiSlotPresent)
       {
-        Log.DebugFormat("TechnoTrend: CI slot not present");
+        Log.Debug("TechnoTrend: CI slot not present");
         // Don't retry - a restart is required for the CI slot to be connected.
         return true;
       }
       if (command == CaPmtCommand.OkMmi || command == CaPmtCommand.Query)
       {
-        Log.DebugFormat("TechnoTrend: command type {0} is not supported", command);
+        Log.Debug("TechnoTrend: command type {0} is not supported", command);
         return false;
       }
       if (pmt == null)
       {
-        Log.DebugFormat("TechnoTrend: PMT not supplied");
+        Log.Debug("TechnoTrend: PMT not supplied");
         return true;
       }
 
-      Log.DebugFormat("TechnoTrend: service ID is {0} (0x{0:x})", pmt.ProgramNumber);
+      Log.Debug("TechnoTrend: service ID is {0} (0x{0:x})", pmt.ProgramNumber);
       if (pmt.ProgramNumber == 0)
       {
-        Log.DebugFormat("TechnoTrend: service 0 cannot be descrambled");
+        Log.Debug("TechnoTrend: service 0 cannot be descrambled");
         return false;
       }
 
@@ -2031,18 +2031,18 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       }
 
       // Send the updated list to the CAM.
-      Log.DebugFormat("TechnoTrend: service list");
+      Log.Debug("TechnoTrend: service list");
       int i = 0;
       HashSet<UInt16>.Enumerator en = _descrambledServices.GetEnumerator();
       while (en.MoveNext())
       {
-        Log.DebugFormat("  {0} = {1} (0x{1:x4})", i + 1, en.Current);
+        Log.Debug("  {0} = {1} (0x{1:x4})", i + 1, en.Current);
         Marshal.WriteInt16(_serviceBuffer, 2 * i, (Int16)en.Current);
         i++;
       }
 
       TtApiResult result = bdaapiCIMultiDecode(_deviceHandle, _serviceBuffer, i);
-      Log.DebugFormat("TechnoTrend: result = {0}", result);
+      Log.Debug("TechnoTrend: result = {0}", result);
       return (result == TtApiResult.Success);
     }
 
@@ -2071,21 +2071,21 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool EnterCIMenu()
     {
-      Log.DebugFormat("TechnoTrend: enter menu");
+      Log.Debug("TechnoTrend: enter menu");
 
       if (!_isTechnoTrend || _deviceHandle == IntPtr.Zero)
       {
-        Log.DebugFormat("TechnoTrend: device not initialised or interface not supported");
+        Log.Debug("TechnoTrend: device not initialised or interface not supported");
         return false;
       }
       if (!_isCamReady)
       {
-        Log.DebugFormat("TechnoTrend: the CAM is not ready");
+        Log.Debug("TechnoTrend: the CAM is not ready");
         return false;
       }
 
       TtApiResult result = bdaapiCIEnterModuleMenu(_deviceHandle, _slotIndex);
-      Log.DebugFormat("TechnoTrend: result = {0}", result);
+      Log.Debug("TechnoTrend: result = {0}", result);
       return (result == TtApiResult.Success);
     }
 
@@ -2095,7 +2095,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool CloseCIMenu()
     {
-      Log.DebugFormat("TechnoTrend: close menu (not implemented)");
+      Log.Debug("TechnoTrend: close menu (not implemented)");
       return true;
     }
 
@@ -2106,21 +2106,21 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <returns><c>true</c> if the selection is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool SelectMenu(byte choice)
     {
-      Log.DebugFormat("TechnoTrend: select menu entry, choice = {0}", choice);
+      Log.Debug("TechnoTrend: select menu entry, choice = {0}", choice);
 
       if (!_isTechnoTrend || _deviceHandle == IntPtr.Zero)
       {
-        Log.DebugFormat("TechnoTrend: device not initialised or interface not supported");
+        Log.Debug("TechnoTrend: device not initialised or interface not supported");
         return false;
       }
       if (!_isCamReady)
       {
-        Log.DebugFormat("TechnoTrend: the CAM is not ready");
+        Log.Debug("TechnoTrend: the CAM is not ready");
         return false;
       }
 
       TtApiResult result = bdaapiCIMenuAnswer(_deviceHandle, _slotIndex, choice);
-      Log.DebugFormat("TechnoTrend: result = {0}", result);
+      Log.Debug("TechnoTrend: result = {0}", result);
       return (result == TtApiResult.Success);
     }
 
@@ -2136,26 +2136,26 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       {
         answer = String.Empty;
       }
-      Log.DebugFormat("TechnoTrend: send menu answer, answer = {0}, cancel = {1}", answer, cancel);
+      Log.Debug("TechnoTrend: send menu answer, answer = {0}, cancel = {1}", answer, cancel);
 
       if (!_isTechnoTrend || _deviceHandle == IntPtr.Zero)
       {
-        Log.DebugFormat("TechnoTrend: device not initialised or interface not supported");
+        Log.Debug("TechnoTrend: device not initialised or interface not supported");
         return false;
       }
       if (!_isCamReady)
       {
-        Log.DebugFormat("TechnoTrend: the CAM is not ready");
+        Log.Debug("TechnoTrend: the CAM is not ready");
         return false;
       }
       if (answer.Length > 255)
       {
-        Log.DebugFormat("TechnoTrend: answer too long, length = {0}", answer.Length);
+        Log.Debug("TechnoTrend: answer too long, length = {0}", answer.Length);
         return false;
       }
 
       TtApiResult result = bdaapiCIAnswer(_deviceHandle, _slotIndex, answer, (byte)answer.Length);
-      Log.DebugFormat("TechnoTrend: result = {0}", result);
+      Log.Debug("TechnoTrend: result = {0}", result);
       return (result == TtApiResult.Success);
     }
 
@@ -2176,11 +2176,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
     {
       // TODO: this function needs to be tested. I'm uncertain whether the driver will accept commands with no DiSEqC messages.
-      Log.DebugFormat("TechnoTrend: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
+      Log.Debug("TechnoTrend: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
 
       if (!_isTechnoTrend || _deviceHandle == IntPtr.Zero)
       {
-        Log.DebugFormat("TechnoTrend: device not initialised or interface not supported");
+        Log.Debug("TechnoTrend: device not initialised or interface not supported");
         return false;
       }
 
@@ -2195,7 +2195,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       }
       TtApiResult result = bdaapiSetDiSEqCMsg(_deviceHandle, IntPtr.Zero, 0, 0, tone, Polarisation.LinearH);
 
-      Log.DebugFormat("TechnoTrend: result = {0}", result);
+      Log.Debug("TechnoTrend: result = {0}", result);
       return (result == TtApiResult.Success);
     }
 
@@ -2206,23 +2206,23 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
     public bool SendCommand(byte[] command)
     {
-      Log.DebugFormat("TechnoTrend: send DiSEqC command");
+      Log.Debug("TechnoTrend: send DiSEqC command");
 
       if (!_isTechnoTrend || _deviceHandle == IntPtr.Zero)
       {
-        Log.DebugFormat("TechnoTrend: device not initialised or interface not supported");
+        Log.Debug("TechnoTrend: device not initialised or interface not supported");
         return false;
       }
       if (command == null || command.Length == 0)
       {
-        Log.DebugFormat("TechnoTrend: command not supplied");
+        Log.Debug("TechnoTrend: command not supplied");
         return true;
       }
 
       int length = command.Length;
       if (length > MaxDiseqcCommandLength)
       {
-        Log.DebugFormat("TechnoTrend: command too long, length = {0}", command.Length);
+        Log.Debug("TechnoTrend: command too long, length = {0}", command.Length);
         return false;
       }
       Marshal.Copy(command, 0, _generalBuffer, length);
@@ -2231,7 +2231,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       // It is okay to use any polarisation. We chose one that will supply 18 Volts to the LNB because it
       // moves dish motors faster.
       TtApiResult result = bdaapiSetDiSEqCMsg(_deviceHandle, _generalBuffer, (byte)length, 0, TtToneBurst.Off, Polarisation.LinearH);
-      Log.DebugFormat("TechnoTrend: result = {0}", result);
+      Log.Debug("TechnoTrend: result = {0}", result);
       return (result == TtApiResult.Success);
     }
 

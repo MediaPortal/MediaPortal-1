@@ -707,7 +707,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat(ex, "ReplaceTag: Regex generated the following error");
+        Log.Error(ex, "ReplaceTag: Regex generated the following error");
         return line;
       }
 

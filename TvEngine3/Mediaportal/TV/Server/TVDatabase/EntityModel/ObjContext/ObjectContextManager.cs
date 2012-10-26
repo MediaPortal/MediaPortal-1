@@ -20,7 +20,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
 
           if (!model.DatabaseExists())
           {
-            Log.InfoFormat("DataBase does not exist. Creating database...");
+            Log.Info("DataBase does not exist. Creating database...");
             model.CreateDatabase();
             SetupStaticValues(model);
           }
@@ -30,7 +30,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
         }
         catch(Exception ex)
         {
-          Log.ErrorFormat(ex, "ObjectContextManager : error opening database. Is the SQL engine running ?");
+          Log.Error(ex, "ObjectContextManager : error opening database. Is the SQL engine running ?");
           throw;
         }        
       }

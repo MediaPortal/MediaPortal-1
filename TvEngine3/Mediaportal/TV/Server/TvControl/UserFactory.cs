@@ -76,15 +76,15 @@ namespace Mediaportal.TV.Server.TVControl
         _priorityEpg = (int)ValueSanityCheck(
         Convert.ToDecimal(settingService.GetSettingWithDefaultValue(EPG_TAGNAME, EPG_PRIORITY.ToString()).Value), PRIORITY_MIN_VALUE, PRIORITY_MAX_VALUE);        
 
-        Log.DebugFormat("UserFactory setting PriorityEPG : {0}", _priorityEpg);
+        Log.Debug("UserFactory setting PriorityEPG : {0}", _priorityEpg);
 
         _priorityUser = (int)ValueSanityCheck(
           Convert.ToDecimal(settingService.GetSettingWithDefaultValue(USER_TAGNAME, USER_PRIORITY.ToString()).Value), PRIORITY_MIN_VALUE, PRIORITY_MAX_VALUE);
-        Log.DebugFormat("UserFactory setting PriorityUser : {0}", _priorityUser);
+        Log.Debug("UserFactory setting PriorityUser : {0}", _priorityUser);
 
         _priorityScheduler = (int)ValueSanityCheck(
           Convert.ToDecimal(settingService.GetSettingWithDefaultValue(SCHEDULER_TAGNAME, SCHEDULER_PRIORITY.ToString()).Value), PRIORITY_MIN_VALUE, PRIORITY_MAX_VALUE);
-        Log.DebugFormat("UserFactory setting PriorityScheduler : {0}", _priorityScheduler);
+        Log.Debug("UserFactory setting PriorityScheduler : {0}", _priorityScheduler);
 
         Setting setting = settingService.GetSettingWithDefaultValue(CUSTOM_TAGNAME, "");
         string[] users = setting.Value.Split(';');
@@ -98,7 +98,7 @@ namespace Mediaportal.TV.Server.TVControl
             int priority;
             if (host.Length > 0 && Int32.TryParse(shareItem[1].Trim(), out priority))
             {
-              Log.DebugFormat("UserFactory setting PriorityCustomUser : {0} - {1}", host, priority);
+              Log.Debug("UserFactory setting PriorityCustomUser : {0} - {1}", host, priority);
               _priorityCustomUsers[host] = priority;
             }
           }
@@ -106,7 +106,7 @@ namespace Mediaportal.TV.Server.TVControl
       }
       catch (Exception ex)
       {
-        Log.ErrorFormat("UserFactory - error reading priority settings from database", ex);        
+        Log.Error("UserFactory - error reading priority settings from database", ex);        
       }
       
     }

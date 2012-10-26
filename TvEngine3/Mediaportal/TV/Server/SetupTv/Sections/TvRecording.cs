@@ -493,7 +493,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void comboBoxWeekend_SelectedIndexChanged(object sender, EventArgs e)
     {
-      Log.DebugFormat("Weekend Updated to : {0}", comboBoxWeekend.SelectedItem);
+      Log.Debug("Weekend Updated to : {0}", comboBoxWeekend.SelectedItem);
       _needRestart = true;
     }
 

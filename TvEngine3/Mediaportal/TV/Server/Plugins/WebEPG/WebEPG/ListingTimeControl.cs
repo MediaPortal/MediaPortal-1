@@ -260,7 +260,7 @@ namespace WebEPG
         guideStartTime = guideStartTime.AddDays(_addDays);
       }
 
-      //Log.DebugFormat("WebEPG: Guide, Program Debug: [{0} {1}]", _GrabDay, _bNextDay);
+      //Log.Debug("WebEPG: Guide, Program Debug: [{0} {1}]", _GrabDay, _bNextDay);
 
       guideData.StartTime = guideStartTime;
       guideData.EndTime = guideEndTime;

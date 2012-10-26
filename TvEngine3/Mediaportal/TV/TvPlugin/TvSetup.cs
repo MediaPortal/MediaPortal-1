@@ -221,7 +221,7 @@ namespace Mediaportal.TV.TvPlugin
       // check if we are in a single seat environment, if so check if TvService is started - if not start it
       if (Network.IsSingleSeat())
       {
-        Log.InfoFormat("TvSetup: Seems we are in a single seat environment - Checking if tvservice is running");
+        Log.Info("TvSetup: Seems we are in a single seat environment - Checking if tvservice is running");
         ServiceController ctrl = null;
         try
         {
@@ -229,13 +229,13 @@ namespace Mediaportal.TV.TvPlugin
         }
         catch (Exception ex)
         {
-          Log.ErrorFormat(ex, "TvSetup: We can't get an instance of the tvservice service with error");
+          Log.Error(ex, "TvSetup: We can't get an instance of the tvservice service with error");
         }
         if (ctrl != null)
         {
           if (ctrl.Status == ServiceControllerStatus.Stopped)
           {
-            Log.InfoFormat("TvSetup: TvService is stopped - trying to start...");
+            Log.Info("TvSetup: TvService is stopped - trying to start...");
             ctrl.Start();
             // Wait until service started but no longer than 30 seconds
             try
@@ -245,20 +245,20 @@ namespace Mediaportal.TV.TvPlugin
             catch (Exception) {}
             if (ctrl.Status == ServiceControllerStatus.Running)
             {
-              Log.InfoFormat("TvSetup: TvService started.");
+              Log.Info("TvSetup: TvService started.");
             }
             else
             {
-              Log.InfoFormat("TvSetup: Failed to start TvService");
+              Log.Info("TvSetup: Failed to start TvService");
             }
           }
           else if (ctrl.Status == ServiceControllerStatus.Running)
           {
-            Log.InfoFormat("TvSetup: TvService already started.");
+            Log.Info("TvSetup: TvService already started.");
           }
           else
           {
-            Log.InfoFormat("TvSetup: TvService seems to be in an unusual state. Please check. Current state={0}",
+            Log.Info("TvSetup: TvService seems to be in an unusual state. Please check. Current state={0}",
                      ctrl.Status.ToString());
           }
         }
