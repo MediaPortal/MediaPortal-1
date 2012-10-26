@@ -49,14 +49,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
   /// </summary>
   public class TVUtil
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(TVUtil)); }
-    }
-
-    #endregion
 
     #region vars
 

@@ -40,14 +40,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 {
   public class AdvancedCardAllocation : CardAllocationBase, ICardAllocation
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(AdvancedCardAllocation)); }
-    }
-
-    #endregion
 
     #region private members
 

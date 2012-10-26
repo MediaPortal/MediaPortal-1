@@ -29,14 +29,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
 {
   public class Compro : BaseCustomDevice, IPowerDevice, IDiseqcDevice
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Compro)); }
-    }
-
-    #endregion
+ 
 
     #region enums
 

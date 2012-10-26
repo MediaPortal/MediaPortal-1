@@ -36,14 +36,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public class Recorder : TimeShifterBase, IRecorder
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Recorder)); }
-    }
-
-    #endregion
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Recording"/> class.

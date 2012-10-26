@@ -10,14 +10,7 @@ namespace Mediaportal.TV.TvPlugin.EventHandlers
   /// </summary>
   public class CiMenuEventEventHandler : CiMenuEventCallbackSink
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(CiMenuEventEventHandler)); }
-    }
-
-    #endregion
+ 
 
     /// <summary>
     /// eventhandler to show CI Menu dialog

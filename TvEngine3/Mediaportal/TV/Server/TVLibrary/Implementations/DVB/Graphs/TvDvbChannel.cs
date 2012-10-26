@@ -41,14 +41,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
   ///</summary>
   public class TvDvbChannel : BaseSubChannel, ITeletextCallBack, IPmtCallBack, ICaCallBack, ITvSubChannel, IVideoAudioObserver
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(TvDvbChannel)); }
-    }
-
-    #endregion
+ 
 
     #region variables
 

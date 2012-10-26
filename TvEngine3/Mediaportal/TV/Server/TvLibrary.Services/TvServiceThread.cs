@@ -21,14 +21,7 @@ namespace Mediaportal.TV.Server.TVLibrary
 {
   public class TvServiceThread : IPowerEventHandler
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(TvServiceThread)); }
-    }
-
-    #endregion
+  
 
     #region variables
 

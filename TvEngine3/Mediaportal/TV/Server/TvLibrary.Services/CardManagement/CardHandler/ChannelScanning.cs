@@ -29,14 +29,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public class ChannelScanning : IChannelScanning
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ChannelScanning)); }
-    }
-
-    #endregion
 
     private readonly ITvCardHandler _cardHandler;
 

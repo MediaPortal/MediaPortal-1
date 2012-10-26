@@ -29,14 +29,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
 {
   public class RecordingFileHandler
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(RecordingFileHandler)); }
-    }
-
-    #endregion
 
     /// <summary>
     /// Deletes a recording from the disk where it has been saved.

@@ -29,14 +29,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
   /// </summary>
   internal class CleanTimeshiftFilesThread
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(CleanTimeshiftFilesThread)); }
-    }
-
-    #endregion
     /// <summary>
     /// The folder
     /// </summary>

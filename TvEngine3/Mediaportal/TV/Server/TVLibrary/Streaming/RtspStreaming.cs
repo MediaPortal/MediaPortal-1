@@ -36,14 +36,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
   /// </summary>
   public class RtspStreaming
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(RtspStreaming)); }
-    }
-
-    #endregion
 
 
     #region imports

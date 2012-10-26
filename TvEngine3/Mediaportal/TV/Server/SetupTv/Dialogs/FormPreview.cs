@@ -36,15 +36,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class FormPreview : MPForm
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(FormPreview)); }
-    }
-
-    #endregion
-
 
     private Channel _channel;
     private IVirtualCard _card;

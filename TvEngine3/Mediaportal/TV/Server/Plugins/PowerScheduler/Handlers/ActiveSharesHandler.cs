@@ -39,14 +39,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
   /// </summary>
   public class ActiveSharesHandler : IStandbyHandler
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(ActiveSharesHandler)); }
-    }
-
-    #endregion
+ 
 
     #region Structs
 

@@ -42,14 +42,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class CardDvbIP : SectionSettings
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(CardDvbIP)); }
-    }
-
-    #endregion
 
 
     private int _cardNumber;

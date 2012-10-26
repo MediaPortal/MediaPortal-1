@@ -80,14 +80,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     #endregion
 
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(BaseSubChannel)); }
-    }
-
-    #endregion
 
     #region variables
 

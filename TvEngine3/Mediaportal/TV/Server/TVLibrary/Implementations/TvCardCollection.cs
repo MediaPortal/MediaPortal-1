@@ -53,14 +53,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
   /// </summary>
   public class TvCardCollection
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(TvCardCollection)); }
-    }
-
-    #endregion
+ 
 
     private readonly List<ITVCard> _cards;
     private readonly IEpgEvents _epgEvents;

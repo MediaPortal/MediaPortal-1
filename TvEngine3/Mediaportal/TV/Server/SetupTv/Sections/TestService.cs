@@ -53,15 +53,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private class ServerMonitor
     {
-        #region logging
-
-        private static ILogManager Log
-        {
-            get { return LogHelper.GetLogger(typeof(ServerMonitor)); }
-        }
-
-        #endregion
-
       #region events & delegates
 
       public delegate void ServerDisconnectedDelegate();

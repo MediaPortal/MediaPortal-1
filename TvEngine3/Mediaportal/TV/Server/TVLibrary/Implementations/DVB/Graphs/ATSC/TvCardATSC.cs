@@ -34,14 +34,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
   /// </summary>
   public class TvCardATSC : TvCardDvbBase, IDisposable, ITVCard
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(TvCardATSC)); }
-    }
-
-    #endregion
 
     #region variables
 

@@ -38,14 +38,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
   /// </summary>
   public class ProcessActiveHandler : IStandbyHandler
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(ProcessActiveHandler)); }
-    }
-
-    #endregion
+ 
 
     #region Variables
 

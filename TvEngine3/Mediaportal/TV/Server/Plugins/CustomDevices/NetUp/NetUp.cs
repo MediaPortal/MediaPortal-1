@@ -37,14 +37,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
   /// </summary>
   public class NetUp : BaseCustomDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(NetUp)); }
-    }
-
-    #endregion
+   
 
     #region enums
 
@@ -159,14 +152,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
     /// </summary>
     private class NetUpCommand
     {
-        #region logging
 
-        private static ILogManager Log
-        {
-            get { return LogHelper.GetLogger(typeof(NetUpCommand)); }
-        }
-
-        #endregion
 
       #region variables
 

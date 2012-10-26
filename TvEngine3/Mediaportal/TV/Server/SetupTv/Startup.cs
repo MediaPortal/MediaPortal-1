@@ -53,14 +53,6 @@ namespace Mediaportal.TV.Server.SetupTV
   /// </summary>
   public class Startup
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Startup)); }
-    }
-
-    #endregion
 
     private const string TypeValidHostnameForTvServerOrExitApplication = "Type valid hostname for tv server (or exit application):";
     private const string TvserviceNotFoundMaybeYouLackUserRightsToAccessControlRemoteWindowsService = "TvService not found (maybe you lack user rights to access/control remote windows service).";

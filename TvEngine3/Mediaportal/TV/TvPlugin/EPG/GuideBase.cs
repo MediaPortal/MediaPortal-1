@@ -44,14 +44,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 {
   public abstract class GuideBase : GUIDialogWindow
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(GuideBase)); }
-    }
-
-    #endregion
 
     #region consts
 

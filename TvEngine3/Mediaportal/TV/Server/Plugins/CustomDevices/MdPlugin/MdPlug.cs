@@ -40,14 +40,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
   /// </summary>
   public class MdPlugin : BaseCustomDevice, IAddOnDevice, IConditionalAccessProvider
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(MdPlugin)); }
-    }
-
-    #endregion
 
     #region COM interface imports
 

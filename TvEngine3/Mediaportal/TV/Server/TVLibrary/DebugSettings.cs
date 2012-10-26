@@ -32,14 +32,7 @@ namespace Mediaportal.TV.Server.TVLibrary
   /// </summary>
   public class DebugSettings
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(DebugSettings)); }
-    }
-
-    #endregion
 
     private static string SettingsPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
                                          @"\Team MediaPortal\MediaPortal TV Server\debug\";

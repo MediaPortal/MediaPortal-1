@@ -10,10 +10,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
 {
     public static class ObjectContextManager
     {
-        private static ILogManager Log
-        {
-            get { return LogHelper.GetLogger(typeof(ObjectContextManager)); }
-        }
+   
 
       static ObjectContextManager ()
       {

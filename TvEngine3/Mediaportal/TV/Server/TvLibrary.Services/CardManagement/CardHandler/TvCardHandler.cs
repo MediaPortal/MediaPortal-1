@@ -34,14 +34,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public class TvCardHandler : ITvCardHandler
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(TvCardHandler)); }
-    }
-
-    #endregion
 
     #region variables
 

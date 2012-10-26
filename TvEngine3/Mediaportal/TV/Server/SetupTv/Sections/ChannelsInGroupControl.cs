@@ -39,14 +39,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {  
   public partial class ChannelsInGroupControl : UserControl
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ChannelsInGroupControl)); }
-    }
-
-    #endregion
 
     private string _allChannelsGroupName = TvConstants.TvGroupNames.AllChannels;
     private MediaTypeEnum _mediaTypeEnum = MediaTypeEnum.TV;

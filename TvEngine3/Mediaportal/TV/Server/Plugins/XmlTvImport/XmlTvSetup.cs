@@ -44,14 +44,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 {
   public partial class XmlTvSetup : SectionSettings
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(XmlTvSetup)); }
-    }
-
-    #endregion
 
     private const string _shortTimePattern24Hrs = "HH:mm";
     private const string _shortTimePattern12Hrs = "hh:mm";

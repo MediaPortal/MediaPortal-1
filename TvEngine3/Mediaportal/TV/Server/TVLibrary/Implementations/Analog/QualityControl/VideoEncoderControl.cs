@@ -31,14 +31,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
   /// </summary>
   public class VideoEncoderControl : BaseControl
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(VideoEncoderControl)); }
-    }
-
-    #endregion
 
     #region variable
 

@@ -46,14 +46,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
   [Interceptor("PluginExceptionInterceptor")]
   public class XmlTvImporter : ITvServerPlugin, ITvServerPluginStartedAll, ITvServerPluginCommunciation
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(XmlTvImporter)); }
-    }
-
-    #endregion
 
     #region constants        
 

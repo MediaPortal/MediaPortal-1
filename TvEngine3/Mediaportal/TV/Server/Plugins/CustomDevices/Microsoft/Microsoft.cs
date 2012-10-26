@@ -37,14 +37,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Microsoft
   /// </summary>
   public class Microsoft : BaseCustomDevice, IPidFilterController, IDiseqcDevice
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Microsoft)); }
-    }
-
-    #endregion
 
     #region constants
 

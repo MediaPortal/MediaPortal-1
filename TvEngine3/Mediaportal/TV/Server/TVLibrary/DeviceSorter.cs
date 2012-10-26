@@ -28,14 +28,7 @@ namespace Mediaportal.TV.Server.TVLibrary
 {
   internal class DeviceSorter
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(DeviceSorter)); }
-    }
-
-    #endregion
 
     private class SortItem : IComparable
     {

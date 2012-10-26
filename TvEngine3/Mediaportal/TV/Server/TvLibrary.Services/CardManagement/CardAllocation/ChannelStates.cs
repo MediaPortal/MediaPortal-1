@@ -37,14 +37,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 {
   public class ChannelStates : CardAllocationBase
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ChannelStates)); }
-    }
-
-    #endregion
 
     public delegate void OnChannelStatesSetDelegate(IUser user);
     public event OnChannelStatesSetDelegate OnChannelStatesSet;

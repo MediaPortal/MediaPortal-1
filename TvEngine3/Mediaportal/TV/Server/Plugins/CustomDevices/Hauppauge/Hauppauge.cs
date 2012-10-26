@@ -34,14 +34,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Hauppauge
   /// </summary>
   public class Hauppauge : Conexant.Conexant
   {
-      #region logging
-
-      private static ILogManager Log
-      {
-          get { return LogHelper.GetLogger(typeof(Hauppauge)); }
-      }
-
-      #endregion
+  
 
     #region enums
 

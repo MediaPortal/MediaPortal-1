@@ -43,14 +43,7 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
   [Interceptor("PluginExceptionInterceptor")]
   public class ConflictsManager : ITvServerPlugin
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ConflictsManager)); }
-    }
-
-    #endregion
 
     #region variables
 

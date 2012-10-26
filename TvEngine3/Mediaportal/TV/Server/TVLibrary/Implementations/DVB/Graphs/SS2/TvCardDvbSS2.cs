@@ -41,14 +41,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
   /// </summary>
   public class TvCardDvbSS2 : TvCardDvbBase, ICustomDevice, IPidFilterController, IDiseqcDevice
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(TvCardDvbSS2)); }
-    }
-
-    #endregion
 
     #region enums
 

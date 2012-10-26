@@ -115,14 +115,6 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
   /// </summary>
   internal sealed class Remote : Device
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Remote)); }
-    }
-
-    #endregion
 
     #region Constructor
 
@@ -246,14 +238,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
   /// </summary>
   internal sealed class Blaster : Device
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Blaster)); }
-    }
-
-    #endregion
 
     #region Constructor
 

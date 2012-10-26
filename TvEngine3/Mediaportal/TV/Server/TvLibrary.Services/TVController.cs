@@ -76,14 +76,7 @@ namespace Mediaportal.TV.Server.TVLibrary
   public class 
       TvController : MarshalByRefObject, IInternalControllerService, IDisposable, ITvServerEvent, ICiMenuCallbacks
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(TvController)); }
-    }
-
-    #endregion
 
     #region constants
 

@@ -36,14 +36,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 {
   internal class XMLTVImport : IComparer
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(XMLTVImport)); }
-    }
-
-    #endregion
 
     private readonly IDictionary<string, ProgramCategory> _categories = new ConcurrentDictionary<string, ProgramCategory>();
 

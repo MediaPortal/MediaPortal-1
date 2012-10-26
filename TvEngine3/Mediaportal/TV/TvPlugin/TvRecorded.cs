@@ -53,27 +53,13 @@ namespace Mediaportal.TV.TvPlugin
 {
   public class TvRecorded : WindowPluginBase, IComparer<GUIListItem>
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(RecordingThumbCacher)); }
-    }
-
-    #endregion
+  
 
     #region ThumbCacher
 
     public class RecordingThumbCacher
     {
-      #region logging
-
-      private static ILogManager Log
-      {
-        get { return LogHelper.GetLogger(typeof(RecordingThumbCacher)); }
-      }
-
-      #endregion
+  
 
       private Work work;
 

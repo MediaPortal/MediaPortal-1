@@ -36,14 +36,7 @@ namespace Mediaportal.TV.TvPlugin
 {
   public class TvNewScheduleSearchType : GUIInternalWindow
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(TvNewScheduleSearchType)); }
-    }
-
-    #endregion
+ 
 
     [SkinControl(2)] protected GUIButtonControl btnQuickRecord = null;
     [SkinControl(3)] protected GUIButtonControl btnAdvancedRecord = null;

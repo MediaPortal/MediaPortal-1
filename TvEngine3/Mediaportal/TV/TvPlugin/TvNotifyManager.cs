@@ -42,14 +42,7 @@ namespace Mediaportal.TV.TvPlugin
 {
   public class TvNotifyManager : ITvServerEventCallbackClient
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(TvNotifyManager)); }
-    }
-
-    #endregion
+ 
     private readonly Timer _timer;
     // flag indicating that notifies have been added/changed/removed
     private readonly IRecordingService _recordingServiceAgent = ServiceAgents.Instance.RecordingServiceAgent;

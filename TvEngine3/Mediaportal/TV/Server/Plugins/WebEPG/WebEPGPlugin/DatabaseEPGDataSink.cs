@@ -35,14 +35,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
   internal class DatabaseEPGDataSink
     : IEpgDataSink
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(DatabaseEPGDataSink)); }
-    }
-
-    #endregion
 
     #region Types
 

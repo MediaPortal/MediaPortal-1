@@ -35,14 +35,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
   /// </summary>
   internal class Capture : IDisposable
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Capture)); }
-    }
-
-    #endregion
 
     #region struct
 

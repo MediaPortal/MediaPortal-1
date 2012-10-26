@@ -38,14 +38,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
   /// </summary>
   public class TechnoTrend : BaseCustomDevice, ICustomTuner, IPowerDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(TechnoTrend)); }
-    }
-
-    #endregion
     #region enums
 
     private enum TtDeviceType   // DVB_TYPE

@@ -10,14 +10,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
 {
   public class ScheduleBLL
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ScheduleBLL)); }
-    }
-
-    #endregion
+ 
 
     private Schedule _entity;    
     public ScheduleBLL(Schedule entity)

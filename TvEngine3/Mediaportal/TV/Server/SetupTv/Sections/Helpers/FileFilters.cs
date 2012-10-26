@@ -111,15 +111,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
   /// </summary>
   internal class FileFilters
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(FileFilters)); }
-    }
-
-    #endregion
-
+ 
     private String[] files;
     private MPComboBox m_cbxCountries;
     private MPComboBox m_cbxRegions;

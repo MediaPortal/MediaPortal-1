@@ -46,14 +46,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
   /// </summary>
   public abstract class TvCardBase : ITVCard
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(TvCardBase)); }
-    }
-
-    #endregion
+ 
 
     #region events
 

@@ -15,14 +15,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public abstract class TimeShifterBase
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(TimeShifterBase)); }
-    }
-
-    #endregion
 
     protected ITvCardHandler _cardHandler;
     protected bool _timeshiftingEpgGrabberEnabled;

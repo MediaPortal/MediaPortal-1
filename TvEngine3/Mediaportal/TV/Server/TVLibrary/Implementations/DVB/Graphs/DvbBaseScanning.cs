@@ -39,14 +39,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
   /// </summary>
   public class DvbBaseScanning : IChannelScanCallBack, ITVScanning
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(DvbBaseScanning)); }
-    }
-
-    #endregion
 
     #region variables
 

@@ -36,12 +36,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
   {
     #region variables
 
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(DVBSChannel)); }
-    }
-
     [DataMember]
     private DiseqcPort _diseqc = DiseqcPort.None;
 

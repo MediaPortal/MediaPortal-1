@@ -34,14 +34,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public class TimeShifter : TimeShifterBase, ITimeShifter
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(TimeShifter)); }
-    }
-
-    #endregion
+ 
 
     private readonly ChannelLinkageGrabber _linkageGrabber;
     private readonly bool _linkageScannerEnabled;

@@ -38,14 +38,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
   internal class ChannelListViewHandler
   {
 
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ChannelListViewHandler)); }
-    }
-
-    #endregion
 
     private const int MS_SLEEP_BEFORE_FILTERING = 150;
 

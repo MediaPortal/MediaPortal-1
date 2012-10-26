@@ -28,15 +28,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public class TeletextManagement : ITeletextManagement
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(TeletextManagement)); }
-    }
-
-    #endregion
-
+ 
     private readonly ITvCardHandler _cardHandler;
 
     /// <summary>

@@ -33,14 +33,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 
   public class AdvancedCardAllocationTicket : AdvancedCardAllocation
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(AdvancedCardAllocationTicket)); }
-    }
-
-    #endregion
 
     private readonly IDictionary<int, ICardTuneReservationTicket> _tickets;
 

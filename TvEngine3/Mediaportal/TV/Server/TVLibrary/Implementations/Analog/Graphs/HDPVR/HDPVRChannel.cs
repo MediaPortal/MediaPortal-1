@@ -30,14 +30,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
   /// </summary>
   public class HDPVRChannel : TvDvbChannel
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(HDPVRChannel)); }
-    }
-
-    #endregion
 
     #region constants
 

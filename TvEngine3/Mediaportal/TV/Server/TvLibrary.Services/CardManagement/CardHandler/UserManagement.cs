@@ -37,14 +37,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public class UserManagement : IUserManagement
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(UserManagement)); }
-    }
-
-    #endregion
 
     private readonly ITvCardHandler _cardHandler;
     private readonly object _usersLock = new object();

@@ -48,14 +48,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
   /// </summary>
   public class TvTeletextBase : GUIInternalWindow
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(TvTeletextBase)); }
-    }
-
-    #endregion
+   
 
     #region gui controls
 

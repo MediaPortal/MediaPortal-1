@@ -37,14 +37,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class StreamingServer : SectionSettings
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(StreamingServer)); }
-    }
-
-    #endregion
 
     private int _rtspPort = Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSetting("rtspport").Value);
     private string _hostname = ServiceAgents.Instance.SettingServiceAgent.GetSetting("hostname").Value;

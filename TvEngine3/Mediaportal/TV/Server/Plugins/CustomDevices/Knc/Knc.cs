@@ -38,14 +38,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
   /// </summary>
   public class Knc : BaseCustomDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Knc)); }
-    }
-
-    #endregion
+  
 
     #region enums
 

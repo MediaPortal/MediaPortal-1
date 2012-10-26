@@ -9,14 +9,7 @@ namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
 {
   public class CiMenuManager : EventDispatcher, ICiMenuCallbacks
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(CiMenuManager)); }
-    }
-
-    #endregion
 
     #region CI Menu Event handling
 

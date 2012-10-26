@@ -67,15 +67,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
   public class EpgDBUpdater : LogProvider
   {
-      // TODO log4net gibman : we want fileappender specifically for EPG / Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EpgDBUpdater
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(EpgDBUpdater)); }
-    }
-
-    #endregion
+   
     #region Variables
 
     private readonly IEpgEvents _epgEvents;

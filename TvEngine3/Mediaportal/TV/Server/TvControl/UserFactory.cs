@@ -31,10 +31,7 @@ namespace Mediaportal.TV.Server.TVControl
 {
   public static class UserFactory
   {
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(UserFactory)); }
-    }
+
 
     public const int EPG_PRIORITY = 1;    
     public const int USER_PRIORITY = 2;

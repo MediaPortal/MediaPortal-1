@@ -9,14 +9,7 @@ namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
 {
   public class TvServerEventDispatcher : EventDispatcher
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(TvServerEventDispatcher)); }
-    }
-
-    #endregion
 
     private void OnTvServerEvent(object sender, EventArgs eventArgs)
     {

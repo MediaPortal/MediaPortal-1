@@ -47,14 +47,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
   /// </summary>
   public class TvGuideBase : GuideBase, IMDB.IProgress
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(TvGuideBase)); }
-    }
-
-    #endregion
+  
 
     #region constants
 

@@ -30,14 +30,7 @@ namespace Mediaportal.TV.Server.TVLibrary.ChannelLinkage
 {
   public class ChannelLinkageGrabber : BaseChannelLinkageScanner
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ChannelLinkageGrabber)); }
-    }
-
-    #endregion
+  
 
     #region variables
 

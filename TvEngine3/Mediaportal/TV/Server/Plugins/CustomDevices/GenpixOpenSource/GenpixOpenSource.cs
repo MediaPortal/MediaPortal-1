@@ -33,14 +33,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource
   /// </summary>
   public class GenpixOpenSource : BaseCustomDevice, IDiseqcDevice
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(GenpixOpenSource)); }
-    }
-
-    #endregion
 
     #region enums
 

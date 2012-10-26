@@ -31,14 +31,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ViXS
   /// </summary>
   public class ViXS : Microsoft.Microsoft
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ViXS)); }
-    }
-
-    #endregion
+  
 
     #region constants
 

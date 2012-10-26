@@ -38,15 +38,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class TvCards : SectionSettings
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(TvCards)); }
-    }
-
-    #endregion
-
+  
     private bool _needRestart;
     private readonly Dictionary<string, CardType> cardTypes = new Dictionary<string, CardType>();
     private TabPage usbWINTV_tabpage;

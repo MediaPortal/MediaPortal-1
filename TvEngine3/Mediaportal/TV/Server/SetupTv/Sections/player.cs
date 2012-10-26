@@ -29,14 +29,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   internal class Player
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Player)); }
-    }
-
-    #endregion
+ 
 
     [ComImport, Guid("b9559486-E1BB-45D3-A2A2-9A7AFE49B23F")]
     protected class TsReader {}

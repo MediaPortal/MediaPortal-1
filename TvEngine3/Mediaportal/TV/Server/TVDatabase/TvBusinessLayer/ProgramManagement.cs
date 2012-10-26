@@ -29,14 +29,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
   public class ProgramManagement
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ProgramManagement)); }
-    }
-
-    #endregion
+ 
 
     #region delegates
 

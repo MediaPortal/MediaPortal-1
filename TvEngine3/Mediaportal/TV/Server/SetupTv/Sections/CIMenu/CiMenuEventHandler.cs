@@ -32,14 +32,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
   /// </summary>
   public class CiMenuEventHandler : ICiMenuEventCallback
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(CiMenuEventHandler)); }
-    }
-
-    #endregion
 
     private CI_Menu_Dialog _refDlg;
 

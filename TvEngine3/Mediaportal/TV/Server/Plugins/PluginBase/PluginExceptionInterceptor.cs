@@ -11,14 +11,7 @@ namespace Mediaportal.TV.Server.Plugins.Base
 {
   public class PluginExceptionInterceptor : IInterceptor
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(PluginExceptionInterceptor)); }
-    }
-
-    #endregion
 
     public void Intercept(IInvocation invocation)
     {

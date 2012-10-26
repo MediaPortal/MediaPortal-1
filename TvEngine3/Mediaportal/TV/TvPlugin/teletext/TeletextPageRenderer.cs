@@ -28,14 +28,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
 {
   public class TeletextPageRenderer
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(TeletextPageRenderer)); }
-    }
-
-    #endregion
 
     #region constructors
 

@@ -34,14 +34,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
   /// </summary>
   internal class TvAudio : IDisposable
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(TvAudio)); }
-    }
-
-    #endregion
 
     #region variables
 

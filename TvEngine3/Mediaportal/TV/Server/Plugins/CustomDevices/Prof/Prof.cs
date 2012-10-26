@@ -37,14 +37,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
   /// </summary>
   public class Prof : BaseCustomDevice, IPowerDevice, IDiseqcDevice
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Prof)); }
-    }
-
-    #endregion
 
     #region enums
 

@@ -34,14 +34,7 @@ namespace Mediaportal.TV.Server.TVService
 
   public partial class Service1 : ServiceBase
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Service1)); }
-    }
-
-    #endregion
+    
 
     //private Thread _tvServiceThread = null;
     private static Thread _unhandledExceptionInThread = null;

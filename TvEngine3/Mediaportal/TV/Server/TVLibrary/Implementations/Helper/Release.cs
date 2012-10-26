@@ -28,14 +28,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
   /// </summary>
   public class Release
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Release)); }
-    }
-
-    #endregion
 
     public static int ComObject(object o)
     {

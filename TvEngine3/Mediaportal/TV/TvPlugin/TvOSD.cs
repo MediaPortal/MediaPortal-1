@@ -46,14 +46,7 @@ namespace Mediaportal.TV.TvPlugin
   /// 
   public class TvOsd : GUIInternalWindow
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(TvOsd)); }
-    }
-
-    #endregion
+  
 
     private enum Controls
     {

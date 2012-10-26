@@ -75,14 +75,7 @@ namespace Mediaportal.TV.TvPlugin
   [PluginIcons("Resources\\TvPlugin.TVPlugin.gif", "Resources\\TvPlugin.TVPluginDisabled.gif")]
   public class TVHome : GUIInternalWindow, ISetupForm, IShowPlugin, IPluginReceiver, ITvServerEventCallbackClient
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(TVHome)); }
-    }
-
-    #endregion
 
     #region constants
 

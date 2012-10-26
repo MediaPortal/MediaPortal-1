@@ -38,14 +38,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
   /// </summary>
   public class Anysee : BaseCustomDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice 
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Anysee)); }
-    }
-
-    #endregion
+ 
     #region enums
 
     private enum BdaExtensionProperty

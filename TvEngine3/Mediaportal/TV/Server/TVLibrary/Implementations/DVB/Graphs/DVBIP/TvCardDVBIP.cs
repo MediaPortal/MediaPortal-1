@@ -34,14 +34,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
   /// </summary>
   public class TvCardDVBIP : TvCardDvbBase, ITVCard
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(TvCardDVBIP)); }
-    }
-
-    #endregion
 
     #region variables
 

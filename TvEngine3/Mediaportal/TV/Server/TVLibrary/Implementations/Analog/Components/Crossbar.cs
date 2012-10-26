@@ -33,14 +33,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
   /// </summary>
   internal class Crossbar : IDisposable
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Crossbar)); }
-    }
-
-    #endregion
 
     #region variables
 

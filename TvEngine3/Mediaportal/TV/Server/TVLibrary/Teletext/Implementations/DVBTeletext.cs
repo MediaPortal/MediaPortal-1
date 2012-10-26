@@ -33,14 +33,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
   /// </summary>
   public class DVBTeletext : ITeletext
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(DVBTeletext)); }
-    }
-
-    #endregion
 
     #region constants
 

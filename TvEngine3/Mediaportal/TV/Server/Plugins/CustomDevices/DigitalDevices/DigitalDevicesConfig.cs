@@ -36,14 +36,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 {
   public partial class DigitalDevicesConfig : SectionSettings
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(DigitalDevicesConfig)); }
-    }
-
-    #endregion
 
     private List<DigitalDevicesCiSlot> _ciSlots = null;
     private NumericUpDown[] _decryptLimits = null;

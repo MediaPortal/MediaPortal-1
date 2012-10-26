@@ -35,14 +35,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
   /// </summary>
   public class Omicom : BaseCustomDevice, IDiseqcDevice
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Omicom)); }
-    }
-
-    #endregion
 
     #region enums
 

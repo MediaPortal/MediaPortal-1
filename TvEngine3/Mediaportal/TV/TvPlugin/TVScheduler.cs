@@ -47,14 +47,7 @@ namespace Mediaportal.TV.TvPlugin
   /// </summary>
   public class TvScheduler : GUIInternalWindow, IComparer<GUIListItem>
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(TvScheduler)); }
-    }
-
-    #endregion
+ 
 
     #region variables, ctor/dtor
 

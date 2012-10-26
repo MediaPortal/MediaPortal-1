@@ -46,14 +46,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class CardAnalog : SectionSettings
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(CardAnalog)); }
-    }
-
-    #endregion
 
     private readonly int _cardNumber;
     private bool _isScanning;

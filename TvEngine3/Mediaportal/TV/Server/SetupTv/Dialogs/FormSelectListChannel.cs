@@ -33,15 +33,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class FormSelectListChannel : Form
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(FormSelectListChannel)); }
-    }
-
-    #endregion
-
 
     public FormSelectListChannel()
     {

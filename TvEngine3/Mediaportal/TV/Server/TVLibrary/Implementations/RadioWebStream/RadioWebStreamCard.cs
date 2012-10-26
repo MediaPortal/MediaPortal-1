@@ -35,14 +35,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.RadioWebStream
   public class RadioWebStreamCard : TvCardBase
   {
 
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(RadioWebStreamCard)); }
-    }
-
-    #endregion
 
     #region variables
 

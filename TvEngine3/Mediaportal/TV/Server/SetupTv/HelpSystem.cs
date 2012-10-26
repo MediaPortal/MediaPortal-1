@@ -26,15 +26,6 @@ namespace Mediaportal.TV.Server.SetupTV
 {
   public static class HelpSystem
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(HelpSystem)); }
-    }
-
-    #endregion
-
 
     private const string baseURL = @"http://wiki.team-mediaportal.com/REDIRECTS/";
 

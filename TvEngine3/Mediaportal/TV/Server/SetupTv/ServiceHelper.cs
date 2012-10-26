@@ -34,14 +34,6 @@ namespace Mediaportal.TV.Server.SetupTV
   /// </summary>
   public static class ServiceHelper
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ServiceHelper)); }
-    }
-
-    #endregion
 
     public const string SERVICENAME_TVSERVICE = @"TvService";
     private static bool _isRestrictedMode;

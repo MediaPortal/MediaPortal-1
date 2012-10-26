@@ -27,14 +27,7 @@ namespace Mediaportal.TV.Server.TVLibrary
 {
   internal class TsCopier
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(TsCopier)); }
-    }
-
-    #endregion
 
     private Int64 _posStart;
     private string _fileStart;

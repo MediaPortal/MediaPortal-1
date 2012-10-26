@@ -35,14 +35,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
   /// </summary>
   internal class Tuner : IDisposable
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Tuner)); }
-    }
-
-    #endregion
 
     #region variables
 

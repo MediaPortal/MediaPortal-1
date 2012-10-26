@@ -16,14 +16,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
   public static class ScheduleManagement
   {
 
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ScheduleManagement)); }
-    }
-
-    #endregion
 
     public static IList<Schedule> ListAllSchedules()
     {

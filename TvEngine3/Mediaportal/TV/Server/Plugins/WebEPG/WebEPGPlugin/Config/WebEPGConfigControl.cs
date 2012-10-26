@@ -43,14 +43,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
 {
   public partial class WebEPGSetup : SectionSettings
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(WebEPGSetup)); }
-    }
-
-    #endregion
 
     private class CBChannelGroup
     {

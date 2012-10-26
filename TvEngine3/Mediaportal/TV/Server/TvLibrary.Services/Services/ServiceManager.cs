@@ -11,14 +11,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 {
   public class ServiceManager : Singleton<ServiceManager>, IDisposable
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ServiceManager)); }
-    }
-
-    #endregion
 
     private readonly object _lock = new object();    
     private readonly IDictionary<Type, ServiceHost> _serviceHosts = new Dictionary<Type, ServiceHost>();

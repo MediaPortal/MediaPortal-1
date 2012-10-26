@@ -32,14 +32,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
 {
   internal class Encoder
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Encoder)); }
-    }
-
-    #endregion
 
     #region constants
 

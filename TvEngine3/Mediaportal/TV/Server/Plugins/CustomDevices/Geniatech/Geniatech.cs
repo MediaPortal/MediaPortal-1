@@ -35,14 +35,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Geniatech
   /// </summary>
   public class Geniatech : Conexant.Conexant, IPowerDevice
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Geniatech)); }
-    }
-
-    #endregion
     #region enums
 
     private new enum BdaExtensionProperty

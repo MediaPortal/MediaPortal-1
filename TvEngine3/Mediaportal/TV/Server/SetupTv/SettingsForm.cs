@@ -44,14 +44,6 @@ namespace Mediaportal.TV.Server.SetupTV
   /// </summary>
   public class SetupTvSettingsForm : SettingsForm
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(SetupTvSettingsForm)); }
-    }
-
-    #endregion
 
     private readonly PluginLoaderSetupTv _pluginLoader = new PluginLoaderSetupTv();
     private Sections.Plugins pluginsRoot;

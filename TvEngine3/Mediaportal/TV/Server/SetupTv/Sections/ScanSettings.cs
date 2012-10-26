@@ -35,15 +35,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class ScanSettings : SectionSettings
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ScanSettings)); }
-    }
-
-    #endregion
-
+ 
     #region private classes
 
     private class DisplaySoftwareEncoder

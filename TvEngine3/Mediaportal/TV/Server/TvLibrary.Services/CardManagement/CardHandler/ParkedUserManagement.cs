@@ -34,14 +34,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public class ParkedUserManagement : IParkedUserManagement, IDisposable
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ParkedUserManagement)); }
-    }
-
-    #endregion
 
     private readonly TvCardHandler _cardHandler;
     private readonly object _parkedUsersLock = new object();

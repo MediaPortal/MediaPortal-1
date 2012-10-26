@@ -6,10 +6,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 {
   public class ServerMonitor
   {
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ServerMonitor)); }
-    }
+    
 
     #region events & delegates
 

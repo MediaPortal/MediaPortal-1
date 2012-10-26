@@ -35,14 +35,7 @@ namespace Mediaportal.TV.Server.TVService
   /// </summary>
   public class Utils
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Utils)); }
-    }
-
-    #endregion
+   
 
     [DllImport("kernel32.dll")]
     private static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, out UInt64 lpFreeBytesAvailable,

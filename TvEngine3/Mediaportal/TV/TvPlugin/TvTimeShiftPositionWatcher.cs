@@ -35,14 +35,7 @@ namespace Mediaportal.TV.TvPlugin
 {
   internal class TvTimeShiftPositionWatcher
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(TvTimeShiftPositionWatcher)); }
-    }
-
-    #endregion
+ 
 
     #region Variables
     private static int idChannelToWatch = -1;

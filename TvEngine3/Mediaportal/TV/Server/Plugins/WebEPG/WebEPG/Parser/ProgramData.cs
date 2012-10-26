@@ -39,14 +39,7 @@ namespace WebEPG.Parser
   /// </summary>
   public class ProgramData : IParserData
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ProgramData)); }
-    }
-
-    #endregion
     #region Variables
 
     private string _channelId = string.Empty;

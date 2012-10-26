@@ -42,14 +42,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
 
   public partial class WebEPGMappingControl : UserControl
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(WebEPGMappingControl)); }
-    }
-
-    #endregion
 
     private class CBChannelGroup
     {

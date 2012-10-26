@@ -32,10 +32,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   public class DvbTextConverter
   {
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof (DvbTextConverter)); }
-    }
     /// <summary>
     /// Convert DVB string to Unicode according to provided language
     /// </summary>

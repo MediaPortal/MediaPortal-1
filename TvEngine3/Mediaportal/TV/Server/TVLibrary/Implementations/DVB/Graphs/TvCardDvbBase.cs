@@ -44,14 +44,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
   /// </summary>
   public abstract class TvCardDvbBase : TvCardBase, IDisposable, ITVCard
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(TvCardDvbBase)); }
-    }
-
-    #endregion
 
     #region constants
 

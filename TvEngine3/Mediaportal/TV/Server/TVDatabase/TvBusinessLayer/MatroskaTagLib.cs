@@ -46,15 +46,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
   /// Contains basic read and write methods to handle Matroska tags for recordings
   /// </summary>
   public class MatroskaTagHandler
-  {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(MatroskaTagHandler)); }
-    }
-
-    #endregion
+  {   
     #region Event delegates
 
     public delegate void TagLookupSuccessful(Dictionary<string, MatroskaTagInfo> FoundTags);

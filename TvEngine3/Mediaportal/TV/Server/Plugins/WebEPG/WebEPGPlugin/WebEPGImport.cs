@@ -45,14 +45,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
   [Interceptor("PluginExceptionInterceptor")]
   public class WebEPGImport : ITvServerPlugin, ITvServerPluginStartedAll, IWakeupHandler 
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(WebEPGImport)); }
-    }
-
-    #endregion
 
     #region constants
 

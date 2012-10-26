@@ -45,14 +45,7 @@ namespace Mediaportal.TV.TvPlugin
   /// </summary>
   public class TvSearch : GUIInternalWindow
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(TvSearch)); }
-    }
-
-    #endregion
 
     [SkinControl(2)] protected GUISortButtonControl btnSortBy = null;
     [SkinControl(4)] protected GUIToggleButtonControl btnSearchByGenre = null;

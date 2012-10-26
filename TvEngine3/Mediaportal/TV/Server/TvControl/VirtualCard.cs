@@ -46,10 +46,6 @@ namespace Mediaportal.TV.Server.TVControl
   public class VirtualCard : IVirtualCard
   {
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(VirtualCard)); }
-    }
     #region variables
 
     [DataMember]

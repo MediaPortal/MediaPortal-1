@@ -30,14 +30,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
   [CLSCompliant(false)]
   public partial class ComSkipSetup : SectionSettings
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ComSkipSetup)); }
-    }
-
-    #endregion
 
     #region Constants
 

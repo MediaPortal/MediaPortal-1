@@ -56,14 +56,7 @@ namespace Mediaportal.TV.TvPlugin
   /// </summary>
   public class TvFullScreen : GUIInternalWindow, IRenderLayer, IMDB.IProgress
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(TvFullScreen)); }
-    }
-
-    #endregion
+  
     #region FullScreenState class
 
     private class FullScreenState

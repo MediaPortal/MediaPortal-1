@@ -27,14 +27,6 @@ namespace Mediaportal.TV.Server.SetupTV.PlaylistSupport
 {
   public class PlayListWPLIO : IPlayListIO
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(PlayListWPLIO)); }
-    }
-
-    #endregion
 
     public bool Load(PlayList playlist, string playlistFileName)
     {

@@ -47,14 +47,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
   /// </summary>
   public class PowerScheduler : MarshalByRefObject, IPowerScheduler, IPowerController
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(PowerScheduler)); }
-    }
-
-    #endregion
 
     #region Variables
 

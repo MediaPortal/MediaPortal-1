@@ -38,14 +38,7 @@ namespace Mediaportal.TV.TvPlugin
   /// 
   public class TvZapOsd : GUIInternalWindow
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(TvZapOsd)); }
-    }
-
-    #endregion
     [SkinControl(35)] protected GUILabelControl lblCurrentChannel = null;
     [SkinControl(36)] protected GUITextControl lblOnTvNow = null;
     [SkinControl(37)] protected GUITextControl lblOnTvNext = null;

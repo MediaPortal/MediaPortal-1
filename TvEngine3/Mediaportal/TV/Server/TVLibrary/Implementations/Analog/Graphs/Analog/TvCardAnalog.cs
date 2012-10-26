@@ -46,14 +46,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
   /// </summary>
   public class TvCardAnalog : TvCardBase, ITVCard
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(TvCardAnalog)); }
-    }
-
-    #endregion
 
     #region imports
 

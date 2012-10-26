@@ -34,14 +34,7 @@ namespace Mediaportal.TV.TvPlugin
 {
   public class TVTuningDetails : GUIInternalWindow
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(TVTuningDetails)); }
-    }
-
-    #endregion
 
     public TVTuningDetails()
     {

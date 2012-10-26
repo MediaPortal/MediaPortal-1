@@ -39,14 +39,7 @@ namespace WebEPG
   public class WebListingGrabber
   {
 
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(WebListingGrabber)); }
-    }
-
-    #endregion
 
     #region Variables
 

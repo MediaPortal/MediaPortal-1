@@ -33,14 +33,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
   /// </summary>
   public class DiskManagement
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(DiskManagement)); }
-    }
-
-    #endregion
+ 
     
     private readonly System.Timers.Timer _timer;
     

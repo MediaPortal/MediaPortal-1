@@ -10,10 +10,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 {
   internal class UnitOfWork : IUnitOfWork
   {
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(UnitOfWork)); }
-    }
+
     private DbTransaction _transaction;
     private readonly ObjectContext _objectContext;
 

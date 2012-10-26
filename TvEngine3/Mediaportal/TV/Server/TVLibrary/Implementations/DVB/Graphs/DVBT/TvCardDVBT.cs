@@ -33,14 +33,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBT
   /// </summary>
   public class TvCardDVBT : TvCardDvbBase
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(TvCardDVBT)); }
-    }
-
-    #endregion
 
     #region variables
 

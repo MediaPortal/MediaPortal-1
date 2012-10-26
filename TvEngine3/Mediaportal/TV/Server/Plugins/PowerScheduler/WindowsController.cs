@@ -115,14 +115,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
   /// </summary>
   public class WindowsController
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(WindowsController)); }
-    }
-
-    #endregion
 
     public delegate void AfterExitWindowsHandler(RestartOptions how, bool force, bool result);
 

@@ -38,15 +38,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
   public partial class EpgGrabber : SectionSettings
   {
 
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(EpgGrabber)); }
-    }
-
-    #endregion
-
     private bool _loaded;
     private readonly MPListViewStringColumnSorter lvwColumnSorter;
 

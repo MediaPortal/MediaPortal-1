@@ -34,11 +34,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog
   public class Configuration
   {
 
-      private static ILogManager Log
-      {
-          get { return LogHelper.GetLogger(typeof (Configuration)); }
-      }
-
     #region variables
 
     private string _name;

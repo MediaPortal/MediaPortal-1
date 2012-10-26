@@ -34,14 +34,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
   /// </summary>
   public class EncodersInUse
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(EncodersInUse)); }
-    }
-
-    #endregion
+ 
 
     private static EncodersInUse _instance;
     private readonly Dictionary<DsDevice, int> _encodersInUse;

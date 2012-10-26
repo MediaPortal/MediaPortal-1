@@ -46,14 +46,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
   /// </summary>
   public class EpgGrabbingHandler : IStandbyHandler, IWakeupHandler, IEpgHandler
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(EpgGrabbingHandler)); }
-    }
-
-    #endregion
 
     #region Structs
 

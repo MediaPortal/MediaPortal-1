@@ -35,14 +35,7 @@ namespace Mediaportal.TV.Server.TVControl
   /// </summary>
   public class RemoteControl
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(RemoteControl)); }
-    }
-
-    #endregion
+  
 
       #region consts
 

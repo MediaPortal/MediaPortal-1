@@ -53,14 +53,7 @@ namespace Mediaportal.TV.TvPlugin
   /// 
   public class TvMiniGuide : GUIDialogWindow
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(TvMiniGuide)); }
-    }
-
-    #endregion
+ 
     // Member variables                                  
     [SkinControl(34)]
     protected GUIButtonControl cmdExit = null;

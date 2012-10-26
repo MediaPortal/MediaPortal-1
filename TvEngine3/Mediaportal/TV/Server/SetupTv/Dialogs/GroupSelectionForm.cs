@@ -32,14 +32,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class GroupSelectionForm : Form
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(GroupSelectionForm)); }
-    }
-
-    #endregion
 
 
     private string _preselectedGroupName = string.Empty;

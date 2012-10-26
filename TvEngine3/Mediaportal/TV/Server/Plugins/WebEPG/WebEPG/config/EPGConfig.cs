@@ -30,14 +30,7 @@ namespace WebEPG.config
   /// </summary>
   public class EPGConfig
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(EPGConfig)); }
-    }
-
-    #endregion
+ 
 
     #region Variables
 

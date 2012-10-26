@@ -26,14 +26,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {
   public static class ChannelManagement
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ChannelManagement)); }
-    }
-
-    #endregion
     public delegate void OnStateChangedTuningDetailDelegate(TuningDetail tuningDetail, ObjectState state);
     public static event OnStateChangedTuningDetailDelegate OnStateChangedTuningDetailEvent;
 

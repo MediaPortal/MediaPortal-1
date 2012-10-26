@@ -38,14 +38,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
   /// </summary>
   public class DigitalEverywhere : BaseCustomDevice, IPowerDevice, IPidFilterController, ICustomTuner, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(DigitalEverywhere)); }
-    }
-
-    #endregion
+ 
 
     #region enums
 

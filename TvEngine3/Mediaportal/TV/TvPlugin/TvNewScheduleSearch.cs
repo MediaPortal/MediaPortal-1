@@ -36,14 +36,7 @@ namespace Mediaportal.TV.TvPlugin
 {
   public class TvNewScheduleSearch : GUIInternalWindow
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(TvNewScheduleSearch)); }
-    }
-
-    #endregion
+ 
 
     #region enums
 

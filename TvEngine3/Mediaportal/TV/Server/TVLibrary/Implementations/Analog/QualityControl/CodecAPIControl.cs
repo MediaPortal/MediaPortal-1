@@ -31,14 +31,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
   /// </summary>
   public class CodecAPIControl : BaseControl
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(CodecAPIControl)); }
-    }
-
-    #endregion
 
     #region variable
 

@@ -40,14 +40,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
   /// </summary>
   public class SmarDtvUsbCi : BaseCustomDevice, IAddOnDevice, IConditionalAccessProvider, ICiMenuActions, ITvServerPlugin
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(SmarDtvUsbCi)); }
-    }
-
-    #endregion
 
     #region enums
 

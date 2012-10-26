@@ -32,14 +32,6 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
 {
   public partial class BlasterSetup : SectionSettings
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(BlasterSetup)); }
-    }
-
-    #endregion
 
     public BlasterSetup()
     {

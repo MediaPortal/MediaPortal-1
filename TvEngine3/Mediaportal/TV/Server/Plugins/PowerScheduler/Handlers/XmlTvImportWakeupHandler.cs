@@ -35,14 +35,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
   /// </summary>
   public class XmlTvImportWakeupHandler : IWakeupHandler
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(XmlTvImportWakeupHandler)); }
-    }
-
-    #endregion
 
     #region Variables    
 

@@ -39,14 +39,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
   /// </summary>
   public class DigitalDevices : BaseCustomDevice, IAddOnDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice, ITvServerPlugin
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(DigitalDevices)); }
-    }
-
-    #endregion
 
     #region enums
 

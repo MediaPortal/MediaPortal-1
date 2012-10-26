@@ -31,14 +31,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
   /// </summary>
   public class HCWIRBlaster
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(HCWIRBlaster)); }
-    }
-
-    #endregion
 
 
     [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]

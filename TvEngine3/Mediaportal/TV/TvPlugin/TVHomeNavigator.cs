@@ -50,14 +50,6 @@ namespace Mediaportal.TV.TvPlugin
   /// </summary>
   public class ChannelNavigator
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(ChannelNavigator)); }
-    }
-
-    #endregion
 
     #region config xml file
 

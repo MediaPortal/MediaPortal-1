@@ -39,14 +39,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public class CardTuner : ICardTuner
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(CardTuner)); }
-    }
-
-    #endregion
 
     private readonly ITvCardHandler _cardHandler;
 

@@ -33,14 +33,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
   /// </summary>
   public class HTMLPage
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(HTMLPage)); }
-    }
-
-    #endregion
+ 
     #region Variables
 
     private string _strPageHead = string.Empty;

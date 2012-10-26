@@ -39,14 +39,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
   /// </summary>
   public class TvCardHDPVR : TvCardBase, ITVCard
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(TvCardHDPVR)); }
-    }
-
-    #endregion
 
     #region constants
 

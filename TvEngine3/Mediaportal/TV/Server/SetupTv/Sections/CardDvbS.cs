@@ -49,15 +49,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class CardDvbS : SectionSettings
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(CardDvbS)); }
-    }
-
-    #endregion
-
+ 
     #region private classes
 
     private class SatelliteContext : IComparable<SatelliteContext>

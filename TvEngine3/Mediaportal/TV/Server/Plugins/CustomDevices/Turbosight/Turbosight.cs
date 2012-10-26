@@ -42,14 +42,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
   /// </summary>
   public class Turbosight : BaseCustomDevice, IPowerDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Turbosight)); }
-    }
-
-    #endregion
 
     #region enums
 

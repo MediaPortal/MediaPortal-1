@@ -11,14 +11,7 @@ namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
 {
   public class HeartbeatManager : EventDispatcher
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(HeartbeatManager)); }
-    }
-
-    #endregion
+  
 
     private const int HEARTBEAT_REQUEST_INTERVAL_SECS = 15;
     private const int HEARTBEAT_MAX_SECS_EXCEED_ALLOWED = 30;

@@ -32,14 +32,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB
   /// </summary>
   public class DiseqcController : IDiseqcController
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(DiseqcController)); }
-    }
-
-    #endregion
 
     #region variables
 

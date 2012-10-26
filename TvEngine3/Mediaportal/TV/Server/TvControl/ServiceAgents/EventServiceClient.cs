@@ -12,15 +12,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 {
   public class EventServiceClient : IEventServiceAgent
   {
-
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(EventServiceClient)); }
-    }
-
-    #endregion
+  
     #region events & delegates
 
     private delegate void HeartbeatRequestReceivedDelegate();

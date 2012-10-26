@@ -12,11 +12,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 
   public class ServiceAgents : Singleton<ServiceAgents>, IDisposable
   {
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ServiceAgents)); }
-    }
-
+ 
     public delegate void ServiceAgentRemovedDelegate(Type service);    
     private static string _hostname = Dns.GetHostName();
 

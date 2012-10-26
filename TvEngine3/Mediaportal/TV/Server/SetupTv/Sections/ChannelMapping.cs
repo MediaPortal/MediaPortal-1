@@ -38,14 +38,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class ChannelMapping : SectionSettings
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ChannelMapping)); }
-    }
-
-    #endregion
 
     private MediaTypeEnum _mediaTypeEnum = MediaTypeEnum.TV;
 

@@ -38,14 +38,7 @@ namespace WebEPG
   /// </summary>
   public class WebEPG
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(WebEPG)); }
-    }
-
-    #endregion
+  
 
     #region Delegates
 

@@ -21,14 +21,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
   [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, ConcurrencyMode = ConcurrencyMode.Multiple)]
   public class EventService : IEventService, IDisposable
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(EventService)); }
-    }
-
-    #endregion
+  
 
     private static readonly IDictionary<string, Subscriber> _subscribers = new ConcurrentDictionary<string, Subscriber>();
     private static readonly object _subscribersLock = new object();

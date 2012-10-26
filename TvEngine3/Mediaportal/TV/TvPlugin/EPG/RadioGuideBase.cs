@@ -45,14 +45,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
   /// </summary>
   public class RadioGuideBase : GuideBase
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(RadioGuideBase)); }
-    }
-
-    #endregion
+ 
     #region constants
 
     private const string SKIN_PROPERTY_PREFIX = "#Radio";

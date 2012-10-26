@@ -44,14 +44,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
 {
   public class RadioRecorded : WindowPluginBase, IComparer<GUIListItem>
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(RadioRecorded)); }
-    }
-
-    #endregion
 
     #region Variables
 

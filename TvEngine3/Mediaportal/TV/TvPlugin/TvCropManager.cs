@@ -32,14 +32,7 @@ namespace Mediaportal.TV.TvPlugin
 {
   internal class TvCropManager
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(TvCropManager)); }
-    }
-
-    #endregion
+  
     #region Ctor/Dtor
 
     public TvCropManager()

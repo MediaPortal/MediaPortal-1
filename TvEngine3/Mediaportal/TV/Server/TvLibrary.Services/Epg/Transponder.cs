@@ -33,14 +33,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
   public class Transponder
   {
 
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Transponder)); }
-    }
-
-    #endregion
 
     #region variables
 

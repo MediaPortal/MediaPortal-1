@@ -38,14 +38,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
   /// </summary>
   internal class NetworkAdapter
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(NetworkAdapter)); }
-    }
-
-    #endregion
+ 
     private PerformanceCounter dlCounter, ulCounter; // Performance counters to monitor download and upload speed.
     //private long dlSpeed, ulSpeed;			  	          // Download Upload speed in bytes per second.
     //private long dlValue, ulValue;				            // Download Upload counter value in bytes.
@@ -111,14 +104,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 
   public class NetworkMonitorHandler : IStandbyHandler
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(NetworkMonitorHandler)); }
-    }
-
-    #endregion
 
     #region Constants
 

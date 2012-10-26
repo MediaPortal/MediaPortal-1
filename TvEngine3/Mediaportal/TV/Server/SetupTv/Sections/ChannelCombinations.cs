@@ -38,14 +38,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class ChannelCombinations : SectionSettings
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ChannelCombinations)); }
-    }
-
-    #endregion
+ 
 
     public class CardInfo
     {

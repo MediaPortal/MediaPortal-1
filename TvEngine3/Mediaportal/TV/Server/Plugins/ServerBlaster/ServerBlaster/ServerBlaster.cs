@@ -44,14 +44,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
   [Interceptor("PluginExceptionInterceptor")]
   public class ServerBlaster : AnalogChannel, ITvServerPlugin
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ServerBlaster)); }
-    }
-
-    #endregion
 
     #region properties
 

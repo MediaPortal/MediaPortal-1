@@ -42,14 +42,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class CardAtsc : SectionSettings
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(CardAtsc)); }
-    }
-
-    #endregion
 
     [Serializable]
     public class ATSCTuning

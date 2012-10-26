@@ -30,15 +30,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 {
   public class EpgGrabbing : IEpgGrabbing
   {
-    // TODO log4net gibman : we want fileappender specifically for EPG / Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EpgDBUpdater
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(EpgGrabbing)); }
-    }
-
-    #endregion
 
     private readonly ITvCardHandler _cardHandler;
 
@@ -57,7 +49,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// <returns></returns>
     public bool Start(BaseEpgGrabber grabber)
     {
-      Log.Info("EpgGrabbing: Start");
+      Log.Epg("EpgGrabbing: Start");
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false)
@@ -84,7 +76,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// </summary>
     public void Abort()
     {
-        Log.Info("EpgGrabbing: Abort");
+      Log.Epg("EpgGrabbing: Abort");
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false)
@@ -148,7 +140,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// <param name="user">User</param>
     public void Stop(IUser user)
     {
-      Log.InfoFormat("EpgGrabbing: Stop - user {0}", user.Name);
+      Log.Epg("EpgGrabbing: Stop - user {0}", user.Name);
       _cardHandler.UserManagement.RemoveUser(user);
       int recentSubChannelId = _cardHandler.UserManagement.GetRecentSubChannelId(user.Name);
       if (recentSubChannelId > -1 && !_cardHandler.UserManagement.ContainsUsersForSubchannel(recentSubChannelId))

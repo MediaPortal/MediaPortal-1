@@ -39,14 +39,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
   [Interceptor("PluginExceptionInterceptor")]
   public class ComSkipLauncher : ITvServerPlugin
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ComSkipLauncher)); }
-    }
-
-    #endregion
 
     #region Constants
 

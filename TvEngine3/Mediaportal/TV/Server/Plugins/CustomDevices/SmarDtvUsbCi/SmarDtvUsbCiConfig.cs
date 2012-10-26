@@ -38,14 +38,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
 {
   public partial class SmarDtvUsbCiConfig : SectionSettings
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(SmarDtvUsbCiConfig)); }
-    }
-
-    #endregion
 
     private ReadOnlyCollection<SmarDtvUsbCiProduct> _products = null;
     private MPComboBox[] _tunerSelections = null;

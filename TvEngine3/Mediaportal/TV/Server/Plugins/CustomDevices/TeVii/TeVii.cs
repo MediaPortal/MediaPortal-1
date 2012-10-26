@@ -35,14 +35,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TeVii
   /// </summary>
   public class TeVii : BaseCustomDevice, ICustomTuner, IDiseqcDevice
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(TeVii)); }
-    }
-
-    #endregion
+ 
 
     #region enums
 

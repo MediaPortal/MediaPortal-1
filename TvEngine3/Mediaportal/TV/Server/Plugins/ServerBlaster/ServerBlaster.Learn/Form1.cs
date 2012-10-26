@@ -34,14 +34,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
   /// </summary>
   public class Form1 : System.Windows.Forms.Form
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Form1)); }
-    }
-
-    #endregion
+   
 
     #region Form members
 

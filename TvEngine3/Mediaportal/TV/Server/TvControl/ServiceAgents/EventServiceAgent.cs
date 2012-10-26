@@ -11,14 +11,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
   public class EventServiceAgent : ServiceAgent<IEventService>, IEventService, IServerEventCallback
   {
 
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(EventServiceAgent)); }
-    }
-
-    #endregion
 
     #region events & delegates
 

@@ -29,14 +29,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
   /// </summary>
   public class DevicesInUse
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(DevicesInUse)); }
-    }
-
-    #endregion
 
     private static DevicesInUse _instance;
     private readonly List<DsDevice> _devicesInUse;

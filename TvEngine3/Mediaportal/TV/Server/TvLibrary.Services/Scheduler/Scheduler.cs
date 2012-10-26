@@ -59,14 +59,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
   /// </summary>
   public class Scheduler
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Scheduler)); }
-    }
-
-    #endregion
 
     #region const
 

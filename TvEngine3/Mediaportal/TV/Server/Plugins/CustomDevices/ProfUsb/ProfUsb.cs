@@ -37,14 +37,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb
   /// </summary>
   public class ProfUsb : Prof.Prof, ICustomTuner
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ProfUsb)); }
-    }
-
-    #endregion
 
     #region enums
 

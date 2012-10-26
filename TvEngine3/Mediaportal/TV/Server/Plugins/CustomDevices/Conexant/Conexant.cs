@@ -33,14 +33,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Conexant
   /// </summary>
   public class Conexant : BaseCustomDevice, IDiseqcDevice
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Conexant)); }
-    }
-
-    #endregion
+ 
 
     #region enums
 

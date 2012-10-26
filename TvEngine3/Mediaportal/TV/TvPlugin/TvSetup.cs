@@ -37,14 +37,7 @@ namespace Mediaportal.TV.TvPlugin
 {
   public class TvSetup : GUIInternalWindow
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(TvSetup)); }
-    }
-
-    #endregion
     #region Variables
 
     private string _hostName;

@@ -33,14 +33,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
   ///</summary>
   public class Hauppauge : IDisposable
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Hauppauge)); }
-    }
-
-    #endregion
 
     private bool disposed;
 

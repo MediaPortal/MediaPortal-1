@@ -29,14 +29,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
   ///</summary>
   public class TeletextPageRenderer
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(TeletextPageRenderer)); }
-    }
-
-    #endregion
 
     #region constructors
 

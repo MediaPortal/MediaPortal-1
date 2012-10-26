@@ -39,14 +39,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
 {
   public static class CardReservationHelper
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(CardReservationHelper)); }
-    }
-
-    #endregion
+   
 
     private static int _idCounter;
 

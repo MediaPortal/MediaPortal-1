@@ -45,14 +45,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class CardDvbC : SectionSettings
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(CardDvbC)); }
-    }
-
-    #endregion
 
     #region Member variables
 

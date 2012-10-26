@@ -48,14 +48,6 @@ namespace Mediaportal.TV.TvPlugin
 
   public class ScheduleInfo
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(ScheduleInfo)); }
-    }
-
-    #endregion
 
     public ScheduleInfo(int aIdChannel, string aTitle, string aDescription, string aGenre, DateTime aStartTime,
                         DateTime aEndTime)
@@ -118,14 +110,7 @@ namespace Mediaportal.TV.TvPlugin
   /// </summary>
   public class TVProgramInfo : GUIInternalWindow
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(TVProgramInfo)); }
-    }
-
-    #endregion
+  
     #region Invoke delegates
 
     protected delegate void UpdateCurrentItem(ScheduleInfo aInfo);

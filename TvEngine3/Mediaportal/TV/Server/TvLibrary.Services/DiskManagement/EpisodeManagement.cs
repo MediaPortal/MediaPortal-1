@@ -29,14 +29,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
 {
   public class EpisodeManagement
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(EpisodeManagement)); }
-    }
-
-    #endregion
 
     public List<Recording> GetEpisodes(string title, IList<Recording> recordings)
     {

@@ -46,14 +46,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class TestChannels : SectionSettings
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(TestChannels)); }
-    }
-
-    #endregion
+ 
 
     private DateTime _lastTune;
     private readonly Dictionary<string, bool> _users = new Dictionary<string, bool>();

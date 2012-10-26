@@ -1528,10 +1528,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   /// </summary>
   public class Cat
   {
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Cat)); }
-    }
+
 
     #region variables
 
@@ -1802,10 +1799,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   /// </summary>
   public class Pmt
   {
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Pmt)); }
-    }
+
 
     #region variables
 
@@ -2527,10 +2521,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   /// </summary>
   public class Descriptor : IDescriptor
   {
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Descriptor)); }
-    }
+ 
 
     #region variables
 
@@ -2684,10 +2675,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   /// </summary>
   public class ConditionalAccessDescriptor : Descriptor
   {
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(ConditionalAccessDescriptor)); }
-    }
+
 
     #region variables
 
@@ -2995,11 +2983,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   /// </summary>
   public class DvbMmiHandler
   {
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(DvbMmiHandler)); }
-    }
+ 
 
     #region MMI/APDU interpretation
 
@@ -3491,10 +3475,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   /// </summary>
   public static class DVB_MMI
   {
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(DVB_MMI)); }
-    }
+
     /// <summary>
     /// returns a safe "printable" character or _
     /// </summary>

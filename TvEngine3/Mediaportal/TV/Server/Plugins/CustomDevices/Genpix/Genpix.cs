@@ -35,14 +35,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
   /// </summary>
   public class Genpix : BaseCustomDevice, ICustomTuner, IDiseqcDevice
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Genpix)); }
-    }
-
-    #endregion
+ 
     #region enums
 
     private enum BdaExtensionProperty : int

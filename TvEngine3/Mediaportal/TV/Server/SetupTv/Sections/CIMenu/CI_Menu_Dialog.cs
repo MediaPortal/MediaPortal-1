@@ -35,15 +35,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
   /// </summary>
   public partial class CI_Menu_Dialog : SectionSettings
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(CI_Menu_Dialog)); }
-    }
-
-    #endregion
-
+ 
     private CiMenuEventHandler _ciMenuEventHandler;
     private CiMenuState ciMenuState = CiMenuState.Closed;
     private int ciMenuChoices = 0;

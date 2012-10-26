@@ -36,14 +36,6 @@ namespace OSPrerequisites
   ///</summary>
   public class OSPrerequisites
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(OSPrerequisites)); }
-    }
-
-    #endregion
 
     private const string MSG_NOT_SUPPORTED =
       "Your platform is not supported by MediaPortal Team because it lacks critical hotfixes! \nPlease check our Wiki's requirements page.";

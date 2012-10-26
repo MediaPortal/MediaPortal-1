@@ -38,14 +38,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
   /// </summary>
   public class Twinhan : BaseCustomDevice, /*IAddOnDevice, ICustomTuner,*/ IPowerDevice, IPidFilterController, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Twinhan)); }
-    }
-
-    #endregion
     #region enums
 
     [Flags]

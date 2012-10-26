@@ -81,7 +81,6 @@
     <Compile Include="ExtensionMethods\ListExtMethods.cs" />
     <Compile Include="ExtensionMethods\ObjectMethods.cs" />
     <Compile Include="GlobalServiceProvider.cs" />
-    <Compile Include="LogHelper.cs" />
     <Compile Include="LogManager.cs" />
     <Compile Include="LogProvider.cs" />
     <Compile Include="NativeMethods.cs" />

@@ -40,14 +40,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
   /// </summary>
   public static class FilterGraphTools
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(FilterGraphTools)); }
-    }
-
-    #endregion
 
     #region structs
 

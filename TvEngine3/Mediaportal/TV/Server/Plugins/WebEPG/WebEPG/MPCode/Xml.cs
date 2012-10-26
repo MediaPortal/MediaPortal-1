@@ -28,14 +28,7 @@ namespace WebEPG.MPCode
 {
   public class Xml : IDisposable
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(Xml)); }
-    }
-
-    #endregion
+ 
     // Fields
     //private static string		_rootName = "profile";
     //private static Encoding _encoding = Encoding.UTF8;

@@ -43,14 +43,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
   [PluginIcons("Resources\\TvPlugin.Radio.gif", "Resources\\TvPlugin.Radio_disabled.gif")]
   public class Radio : WindowPluginBase, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-      get { return LogHelper.GetLogger(typeof(Radio)); }
-    }
-
-    #endregion
     #region constants    
 
     #endregion

@@ -34,14 +34,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky
   /// </summary>
   public class DvbSky : NetUp.NetUp
   {
-    #region logging
-
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(DvbSky)); }
-    }
-
-    #endregion
+    
 
     #region enums
 

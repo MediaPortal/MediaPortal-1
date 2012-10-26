@@ -32,14 +32,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 {
   public abstract class CardAllocationBase
   {
-    #region logging
 
-    private static ILogManager Log
-    {
-        get { return LogHelper.GetLogger(typeof(CardAllocationBase)); }
-    }
-
-    #endregion
 
     private bool _logEnabled = true;
 
