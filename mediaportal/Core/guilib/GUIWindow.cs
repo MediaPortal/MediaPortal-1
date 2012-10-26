@@ -71,9 +71,13 @@ namespace MediaPortal.GUI.Library
       WINDOW_MUSIC = 5,
       WINDOW_VIDEOS = 6,
       WINDOW_SYSTEM_INFORMATION = 7,
+      [Obsolete("This Window name is obsolete; use WINDOW_SETTINGS_GUISCREENSETUP")]
+      WINDOW_SETTINGS_SCREEN = 9,
       WINDOW_SETTINGS_GUISCREENSETUP = 9,
       WINDOW_UI_CALIBRATION = 10,
       WINDOW_MOVIE_CALIBRATION = 11,
+      [Obsolete("This Window name is obsolete; use WINDOW_SETTINGS_PICTURES")]
+      WINDOW_SETTINGS_SLIDESHOW = 12,
       WINDOW_SETTINGS_PICTURES = 12,
       WINDOW_SETTINGS_MUSIC = 14,
       WINDOW_SETTINGS_WEATHER = 17,
@@ -81,6 +85,8 @@ namespace MediaPortal.GUI.Library
       WINDOW_VIDEO_TITLE = 25,
       WINDOW_VIDEO_PLAYLIST = 28,
       WINDOW_RADIO = 30,
+      [Obsolete("This Window name is obsolete; use WINDOW_SETTINGS_GUICONTROL")]
+      WINDOW_SETTINGS_GUI = 31,
       WINDOW_SETTINGS_GUICONTROL = 31,
       WINDOW_MYPLUGINS = 34,
       WINDOW_SECOND_HOME = 35,
@@ -108,8 +114,12 @@ namespace MediaPortal.GUI.Library
       WINDOW_SETTINGS_SORT_CHANNELS = 702,
       WINDOW_SETTINGS_MOVIES = 703,
       WINDOW_SETTINGS_DVD = 704,
+      [Obsolete("This Window name is obsolete; use WINDOW_SETTINGS_GUISKIN")]
+      WINDOW_SETTINGS_SKIN = 705,
       WINDOW_SETTINGS_GUISKIN = 705,
       WINDOW_SETTINGS_TV_EPG = 706,
+      [Obsolete("This Window name is obsolete; use WINDOW_SETTINGS_GUISKIPSTEPS")]
+      WINDOW_SETTINGS_SKIPSTEPS = 708, // by rtv
       WINDOW_SETTINGS_GUISKIPSTEPS = 708, // by rtv
       WINDOW_SETTINGS_TVENGINE = 709,
       WINDOW_TV_SEARCH = 747,
