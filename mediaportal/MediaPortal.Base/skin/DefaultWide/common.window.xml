@@ -206,7 +206,7 @@
       <height>70</height>
       <centered>no</centered>
       <keepaspectratio>no</keepaspectratio>
-      <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(12345)+!control.hasthumb(77)+!window.isvisible(1)+!window.isvisible(614)+!window.isvisible(2003)+!window.isvisible(0)+!window.isvisible(34)</visible>
+      <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(12345)+!control.hasthumb(777)+!window.isvisible(1)+!window.isvisible(614)+!window.isvisible(2003)+!window.isvisible(0)+!window.isvisible(34)</visible>
       <texture mask="cdthumbmask.png">defaultArtistBig.png</texture>
     </control>
     <control>
@@ -225,7 +225,7 @@
     <control>
       <description>music logo</description>
       <type>image</type>
-      <id>77</id>
+      <id>777</id>
       <posX>605</posX>
       <posY>640</posY>
       <width>70</width>
