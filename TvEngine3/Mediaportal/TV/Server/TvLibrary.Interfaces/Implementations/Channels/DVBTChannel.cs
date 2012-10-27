@@ -31,32 +31,54 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
   public struct DVBTTuning
   {
     /// <summary>
-    /// CTOR
+    /// Initialise a new instance of the <see cref="DVBTTuning"/> class.
     /// </summary>
-    /// <param name="p_Frequency">Frequency</param>
-    /// <param name="p_BandWidth">BandWidth</param>
-    /// <param name="p_Offset">Offset</param>
-    public DVBTTuning(long p_Frequency, int p_BandWidth, int p_Offset)
+    /// <param name="frequency">The transmission frequency, in kHz.</param>
+    /// <param name="bandwidth">The transmission bandwidth, in kHz.</param>
+    /// <param name="offset">The transmission frequency offset, in kHz.</param>
+    /// <param name="cellId">The transmitter's cell identifier.</param>
+    /// <param name="cellIdExtension">The transmitter's cell identifier extension.</param>
+    /// <param name="isDvbT2"><c>True</c> if the transmission complies with the DVB-T2 standard, otherwise <c>false</c>.</param>
+    public DVBTTuning(int frequency, int bandwidth, int offset, int cellId, int cellIdExtension, bool isDvbT2)
     {
-      Frequency = p_Frequency;
-      Bandwidth = p_BandWidth;
-      Offset = p_Offset;
+      Frequency = frequency;
+      Bandwidth = bandwidth;
+      Offset = offset;
+      CellId = cellId;
+      CellIdExtension = cellIdExtension;
+      IsDvbT2 = isDvbT2;
     }
 
     /// <summary>
-    /// Frequency
+    /// The transmission frequency, in kHz.
     /// </summary>
-    public long Frequency;
+    public int Frequency;
 
     /// <summary>
-    /// Bandwidth
+    /// The transmission bandwidth, in kHz.
     /// </summary>
     public int Bandwidth;
 
     /// <summary>
-    /// Offset
+    /// The transmission frequency offset, in kHz.
     /// </summary>
     public int Offset;
+
+    /// <summary>
+    /// The transmitter's cell identifier.
+    /// </summary>
+    public int CellId;
+
+    /// <summary>
+    /// The transmitter's cell identifier extension.
+    /// </summary>
+    public int CellIdExtension;
+
+    /// <summary>
+    /// Indicates whether the transmission complies with the second generation DVB terrestrial
+    /// broadcasting standard (DVB-T2 EN 302 755).
+    /// </summary>
+    public bool IsDvbT2;
 
     /// <summary>
     /// ToString
@@ -106,7 +128,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     /// </summary>
     public DVBTTuning TuningInfo
     {
-      get { return new DVBTTuning(Frequency, Bandwidth, Offset); }
+      get { return new DVBTTuning((int)Frequency, Bandwidth, Offset, 0, 0, false); }
       set
       {
         Frequency = value.Frequency;
