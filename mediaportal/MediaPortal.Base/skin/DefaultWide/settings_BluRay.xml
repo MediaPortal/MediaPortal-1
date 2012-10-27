@@ -6,7 +6,7 @@
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
-		<import>common.window.xml</import>
+		
 		<import>common.time.xml</import>
     <control>
       <description>background</description>
@@ -17,24 +17,35 @@
       <height>520</height>
       <width>435</width>
       <texture>backslide.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <colordiffuse>aaffffff</colordiffuse>
+    </control>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>540</posX>
+      <posY>150</posY>
+      <height>345</height>
+      <width>670</width>
+      <texture>backslide2.png</texture>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
 		<control>
-      <description>Blu-ray regions</description>
+      <description>Bluray regions</description>
       <type>image</type>
       <id>1</id>
       <posX>550</posX>
       <posY>160</posY>
       <height>325</height>
       <width>650</width>
-      <texture>Blu-ray_regions.png</texture>
+      <texture mask="picturethumbmask.png">Blu-Ray_regions.png</texture>
 			<visible>yes</visible>
     </control>
     <control>
       <description>buttons</description>
       <type>group</type>
-      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="-300,0">WindowClose</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <posX>105</posX>
       <posY>160</posY>
       <layout>StackLayout(0, Horizontal, True)</layout>

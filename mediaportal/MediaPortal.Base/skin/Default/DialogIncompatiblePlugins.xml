@@ -8,15 +8,15 @@
     <control>
       <id>0</id>
       <type>image</type>
-      <width>720</width>
-      <height>576</height>
+      <width>960</width>
+      <height>720</height>
       <texture>background.png</texture>
     </control>
     <control>
       <type>label</type>
       <id>0</id>
-      <posX>33</posX>
-      <posY>21</posY>
+      <posX>45</posX>
+      <posY>27</posY>
       <font>font16</font>
       <align>left</align>
       <label>1910</label>
@@ -25,8 +25,8 @@
     <control>
       <id>0</id>
       <type>image</type>
-      <posX>288</posX>
-      <posY>185</posY>
+      <posX>384</posX>
+      <posY>232</posY>
       <colordiffuse>d0d0d0d0</colordiffuse>
       <texture>warning-icon.png</texture>
     </control>
@@ -34,10 +34,10 @@
       <id>0</id>
       <description>dialog line 1</description>
       <type>textbox</type>
-      <posX>33</posX>
-      <posY>52</posY>
-      <width>652</width>
-      <height>70</height>
+      <posX>45</posX>
+      <posY>66</posY>
+      <width>870</width>
+      <height>88</height>
       <textcolor>ffffffff</textcolor>
       <font>font13</font>
       <align>LEFT</align>
@@ -49,10 +49,10 @@
       <type>listcontrol</type>
       <onright>3</onright>
       <ondown>3</ondown>
-      <posX>33</posX>
-      <posY>135</posY>
-      <width>441</width>
-      <height>351</height>
+      <posX>45</posX>
+      <posY>169</posY>
+      <width>588</width>
+      <height>439</height>
       <scrollOffset>2</scrollOffset>
       <unfocusedAlpha>160</unfocusedAlpha>
     </control>
@@ -62,10 +62,10 @@
       <type>button</type>
       <onleft>2</onleft>
       <onup>2</onup>
-      <posX>464</posX>
-      <posY>505</posY>
-      <width>225</width>
-      <height>37</height>
+      <posX>619</posX>
+      <posY>632</posY>
+      <width>300</width>
+      <height>47</height>
       <textureFocus>button_focus.png</textureFocus>
       <textureNoFocus>button_nofocus.png</textureNoFocus>
       <label>#(string.formatcount(iif(eq(#countdownseconds,''),0,#countdownseconds), 1912))</label>

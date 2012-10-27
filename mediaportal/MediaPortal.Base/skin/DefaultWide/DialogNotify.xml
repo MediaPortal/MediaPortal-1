@@ -9,8 +9,9 @@
       <id>0</id>
       <width>1280</width>
       <height>720</height>
-      <texture>black.png</texture>
-      <colordiffuse>40ffffff</colordiffuse>
+      <texture>white.png</texture>
+      <colordiffuse>201e90ff</colordiffuse>
+      <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
     </control>
     <control>
       <type>group</type>
@@ -19,17 +20,30 @@
         <type>image</type>
         <id>0</id>
         <posX>368</posX>
-        <posY>300</posY>
+        <posY>0</posY>
         <width>622</width>
-        <height>212</height>
+        <height>160</height>
         <texture>dialog_background.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>368</posX>
+        <posY>0</posY>
+        <width>622</width>
+        <height>160</height>
+        <texture>dialog_background.png</texture>
+        <colordiffuse>99222222</colordiffuse>
+        <visible>window.isvisible(602)|window.isvisible(2005)</visible>
       </control>
       <control>
         <description>Heading text label</description>
         <type>label</type>
         <id>3</id>
         <posX>420</posX>
-        <posY>322</posY>
+        <posY>27</posY>
         <label>181</label>
         <font>font12</font>
         <textcolor>FFFFFFFF</textcolor>
@@ -38,12 +52,12 @@
         <description>OK button</description>
         <type>button</type>
         <id>4</id>
-        <posX>893</posX>
-        <posY>322</posY>
-        <width>50</width>
-        <height>40</height>
-        <textureFocus>dialogue_ok_focus.png</textureFocus>
-        <textureNoFocus>dialogue_ok_nofocus.png</textureNoFocus>
+        <posX>913</posX>
+        <posY>27</posY>
+        <width>30</width>
+        <height>30</height>
+        <textureFocus>top_exit_enabled.png</textureFocus>
+        <textureNoFocus>top_exit_disabled.png</textureNoFocus>
         <label>-</label>
         <onleft>4</onleft>
         <onright>4</onright>
@@ -55,9 +69,9 @@
         <type>image</type>
         <id>5</id>
         <posX>422</posX>
-        <posY>362</posY>
-        <width>124</width>
-        <height>87</height>
+        <posY>67</posY>
+        <width>60</width>
+        <height>60</height>
         <texture>#thumb</texture>
         <colorkey>FFFF00FF</colorkey>
         <colordiffuse>FFFFFFFF</colordiffuse>
@@ -68,7 +82,7 @@
         <type>textbox</type>
         <id>6</id>
         <posX>525</posX>
-        <posY>356</posY>
+        <posY>67</posY>
         <width>391</width>
         <height>112</height>
         <spinPosX>1031</spinPosX>

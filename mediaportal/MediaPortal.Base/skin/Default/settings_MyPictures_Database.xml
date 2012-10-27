@@ -7,68 +7,70 @@
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
-    <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
       <description>Scan pictures folder label</description>
       <type>label</type>
       <id>1</id>
-      <posX>50</posX>
-      <posY>96</posY>
+      <posX>67</posX>
+      <posY>120</posY>
       <label>300181</label>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Folder BG label</description>
       <type>label</type>
       <id>1</id>
-      <posX>286</posX>
-      <posY>112</posY>
+      <posX>382</posX>
+      <posY>140</posY>
       <label>300071</label>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>BG Share Folders</description>
       <type>image</type>
       <id>1</id>
       <texture>context_background.png</texture>
-      <posX>264</posX>
-      <posY>96</posY>
-      <width>371</width>
-      <height>320</height>
+      <posX>352</posX>
+      <posY>120</posY>
+      <width>495</width>
+      <height>400</height>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <control>
       <description>Scan status</description>
       <type>label</type>
       <id>1</id>
-      <posX>382</posX>
-      <posY>120</posY>
+      <posX>510</posX>
+      <posY>150</posY>
       <font>font10</font>
-      <width>337</width>
+      <width>450</width>
       <label>#scanstatus</label>
     </control>
     <control>
       <description>Scan folders listcontrol</description>
       <type>listcontrol</type>
       <id>2</id>
-      <posX>281</posX>
-      <posY>148</posY>
-      <width>337</width>
-      <height>240</height>
+      <posX>375</posX>
+      <posY>185</posY>
+      <width>450</width>
+      <height>300</height>
       <scrollOffset>2</scrollOffset>
       <textXOff>-30</textXOff>
-      <textYOff>1</textYOff>
-      <textXOff2>326</textXOff2>
-      <textYOff2>4</textYOff2>
-      <textXOff3>399</textXOff3>
-      <textYOff3>3</textYOff3>
+      <textYOff>2</textYOff>
+      <textXOff2>435</textXOff2>
+      <textYOff2>5</textYOff2>
+      <textXOff3>532</textXOff3>
+      <textYOff3>4</textYOff3>
       <PinIconWidth>35</PinIconWidth>
       <PinIconHeight>25</PinIconHeight>
-      <PinIconXOff>420</PinIconXOff>
-      <PinIconYOff>4</PinIconYOff>
-      <textureHeight>32</textureHeight>
-      <itemWidth>18</itemWidth>
-      <itemHeight>25</itemHeight>
-      <IconXOff>5</IconXOff>
-      <IconYOff>3</IconYOff>
+      <PinIconXOff>560</PinIconXOff>
+      <PinIconYOff>6</PinIconYOff>
+      <textureHeight>40</textureHeight>
+      <itemWidth>24</itemWidth>
+      <itemHeight>32</itemHeight>
+      <IconXOff>7</IconXOff>
+      <IconYOff>4</IconYOff>
       <keepaspectratio>yes</keepaspectratio>
       <font>font11</font>
       <font2>font10</font2>
@@ -78,10 +80,10 @@
       <textcolor3>ffffffff</textcolor3>
       <selectedColor>80000000</selectedColor>
       <selectedColor2>ffffffff</selectedColor2>
-      <spinWidth>25</spinWidth>
-      <spinHeight>26</spinHeight>
-      <spinPosX>506</spinPosX>
-      <spinPosY>392</spinPosY>
+      <spinWidth>34</spinWidth>
+      <spinHeight>33</spinHeight>
+      <spinPosX>675</spinPosX>
+      <spinPosY>490</spinPosY>
       <onleft>3</onleft>
       <ondown>14</ondown>
       <spaceBetweenItems>0</spaceBetweenItems>
@@ -92,10 +94,10 @@
       <type>button</type>
       <id>3</id>
       <label>300164</label>
-      <posX>50</posX>
-      <posY>124</posY>
-      <width>168</width>
-      <height>36</height>
+      <posX>67</posX>
+      <posY>155</posY>
+      <width>225</width>
+      <height>45</height>
       <font>font11</font>
       <onright>2</onright>
       <onup>17</onup>
@@ -105,10 +107,10 @@
       <type>button</type>
       <id>4</id>
       <label>300182</label>
-      <posX>50</posX>
-      <posY>160</posY>
-      <width>168</width>
-      <height>36</height>
+      <posX>67</posX>
+      <posY>200</posY>
+      <width>225</width>
+      <height>45</height>
       <font>font11</font>
       <onright>2</onright>
       <ondown>3</ondown>

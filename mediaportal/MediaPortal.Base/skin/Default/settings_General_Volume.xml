@@ -7,135 +7,134 @@
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
-    <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
       <description>background</description>
       <type>image</type>
       <id>1</id>
-      <posX>180</posX>
-      <posY>88</posY>
-      <height>440</height>
-      <width>438</width>
+      <posX>240</posX>
+      <posY>110</posY>
+      <height>550</height>
+      <width>585</width>
       <texture>backslide2.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <!--Control-->
     <control>
       <description>Master volume</description>
       <type>checkbutton</type>
       <id>2</id>
-      <posX>196</posX>
-      <posY>120</posY>
+      <posX>262</posX>
+      <posY>150</posY>
       <onleft>10</onleft>
       <onright>10</onright>
       <onup>17</onup>
       <ondown>2</ondown>
       <align>right</align>
       <label>300112</label>
-      <width>281</width>
+      <width>375</width>
     </control>
     <control>
       <description>Wave</description>
       <type>checkbutton</type>
       <id>3</id>
-      <posX>196</posX>
-      <posY>156</posY>
+      <posX>262</posX>
+      <posY>195</posY>
       <onleft>10</onleft>
       <onright>10</onright>
       <onup>2</onup>
       <ondown>4</ondown>
       <align>right</align>
       <label>300113</label>
-      <width>281</width>
+      <width>375</width>
     </control>
     <!--Scale-->
     <control>
       <description>Scale label</description>
       <type>label</type>
       <id>1</id>
-      <posX>196</posX>
-      <posY>204</posY>
-      <width>225</width>
+      <posX>262</posX>
+      <posY>255</posY>
+      <width>300</width>
       <label>300114</label>
     </control>
     <control>
       <description>WinXP</description>
       <type>checkbutton</type>
       <id>4</id>
-      <posX>196</posX>
-      <posY>236</posY>
+      <posX>262</posX>
+      <posY>295</posY>
       <onleft>10</onleft>
       <onright>10</onright>
       <onup>2</onup>
       <ondown>4</ondown>
       <align>right</align>
       <label>300115</label>
-      <width>281</width>
+      <width>375</width>
     </control>
     <control>
       <description>Classic</description>
       <type>checkbutton</type>
       <id>5</id>
-      <posX>196</posX>
-      <posY>280</posY>
+      <posX>262</posX>
+      <posY>350</posY>
       <onleft>10</onleft>
       <onright>10</onright>
       <onup>2</onup>
       <ondown>4</ondown>
       <align>right</align>
       <label>300116</label>
-      <width>281</width>
+      <width>375</width>
     </control>
     <control>
       <description>Logarithmic</description>
       <type>checkbutton</type>
       <id>6</id>
-      <posX>196</posX>
-      <posY>316</posY>
+      <posX>262</posX>
+      <posY>395</posY>
       <onleft>10</onleft>
       <onright>10</onright>
       <onup>2</onup>
       <ondown>4</ondown>
       <align>right</align>
       <label>300117</label>
-      <width>281</width>
+      <width>375</width>
     </control>
     <control>
       <description>Vista/Win7</description>
       <type>checkbutton</type>
       <id>7</id>
-      <posX>196</posX>
-      <posY>360</posY>
+      <posX>262</posX>
+      <posY>450</posY>
       <onleft>10</onleft>
       <onright>10</onright>
       <onup>2</onup>
       <ondown>4</ondown>
       <align>right</align>
       <label>300118</label>
-      <width>281</width>
+      <width>375</width>
     </control>
     <control>
       <description>Custom</description>
       <type>checkbutton</type>
       <id>8</id>
-      <posX>196</posX>
-      <posY>396</posY>
+      <posX>262</posX>
+      <posY>495</posY>
       <onleft>10</onleft>
       <onright>10</onright>
       <onup>2</onup>
       <ondown>4</ondown>
       <align>right</align>
       <label>993</label>
-      <width>281</width>
+      <width>375</width>
     </control>
     <control>
       <description>Custom values label</description>
       <type>fadelabel</type>
       <id>1</id>
-      <posX>337</posX>
-      <posY>408</posY>
-      <width>337</width>
+      <posX>450</posX>
+      <posY>510</posY>
+      <width>450</width>
       <font>font10</font>
       <label>#customScalevalues</label>
       <visible>control.hasfocus(8)</visible>
@@ -145,24 +144,24 @@
       <description>Scale label</description>
       <type>label</type>
       <id>1</id>
-      <posX>196</posX>
-      <posY>444</posY>
-      <width>225</width>
+      <posX>262</posX>
+      <posY>555</posY>
+      <width>300</width>
       <label>478</label>
     </control>
     <control>
       <description>OSD button</description>
       <type>checkbutton</type>
       <id>9</id>
-      <posX>196</posX>
-      <posY>472</posY>
+      <posX>262</posX>
+      <posY>590</posY>
       <onleft>10</onleft>
       <onright>10</onright>
       <onup>2</onup>
       <ondown>4</ondown>
       <align>right</align>
       <label>300119</label>
-      <width>393</width>
+      <width>525</width>
     </control>
   </controls>
 </window>

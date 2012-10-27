@@ -8,23 +8,23 @@
       <description>tele-text rendering image</description>
       <type>image</type>
       <id>500</id>
-      <posX>160</posX>
-      <posY>0</posY>
-      <width>960</width>
-      <height>720</height>
+      <posX>240</posX>
+      <posY>30</posY>
+      <width>800</width>
+      <height>660</height>
       <texture>-</texture>
-      <colordiffuse>ddffffff</colordiffuse>
+      <colordiffuse>bbffffff</colordiffuse>
     </control>
     <control>
       <description>tele-text rendering image 2</description>
       <type>image</type>
       <id>501</id>
-      <posX>160</posX>
-      <posY>0</posY>
-      <width>960</width>
-      <height>720</height>
+      <posX>240</posX>
+      <posY>30</posY>
+      <width>800</width>
+      <height>660</height>
       <texture>-</texture>
-      <colordiffuse>ddffffff</colordiffuse>
+      <colordiffuse>bbffffff</colordiffuse>
     </control>
     <control>
       <description>Current channel</description>

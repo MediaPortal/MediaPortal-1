@@ -4,7 +4,7 @@
     <width>1280</width>
     <height>720</height>
     <version>1.3.0.0</version>
-    <author>The Fantastic Five (MP Design Team: Harley, cul8er, Tgx, ysmp, catavolt)</author>
+    <author>The Fantastic Four (MP Design Team: cul8er, Tgx, ysmp, catavolt)</author>
   </skin>
   <style Name="NoShadow">
     <shadowAngle>0</shadowAngle>
@@ -15,9 +15,14 @@
     <font>font16</font>
     <textalign>center</textalign>
     <textcolor>ffffffff</textcolor>
-    <textcolorNoFocus>00000000</textcolorNoFocus>
+    <textcolorNoFocus>aa6FAFE1</textcolorNoFocus>
     <disabledcolor>ffffffff</disabledcolor>
     <dimColor>ffffffff</dimColor>
+    <width>240</width>
+    <height>50</height>
+    <textYOff>0</textYOff>
+    <textureFocus>button_focus.png</textureFocus>
+    <textureNoFocus></textureNoFocus>
     <onup>21</onup>
     <ondown>99</ondown>
     <animation effect="zoom" start="100,100" end="120,120" time="100">focus</animation>
@@ -26,8 +31,24 @@
     <shadowDistance>0</shadowDistance>
     <shadowColor>00000000</shadowColor>
   </style>
+  <style Name="BasicHomeSubmenu">
+    <font>font12</font>
+    <textalign>center</textalign>
+    <textcolor>ffffffff</textcolor>
+    <textcolorNoFocus>aa6FAFE1</textcolorNoFocus>
+    <disabledcolor>ffffffff</disabledcolor>
+    <dimColor>ffffffff</dimColor>
+    <width>250</width>
+    <height>30</height>
+    <textYOff>2</textYOff>
+    <textureFocus>button_focus.png</textureFocus>
+    <textureNoFocus></textureNoFocus>
+    <shadowAngle>0</shadowAngle>
+    <shadowDistance>0</shadowDistance>
+    <shadowColor>00000000</shadowColor>
+  </style>
   <style Name="BasicHomeFade">
-    <animation effect="fade" time="300">visible</animation>
+    <animation effect="fade" delay="2500" time="500">visible</animation>
     <animation effect="fade" time="70" delay="0">hidden</animation>
   </style>
   <control>
@@ -73,17 +94,15 @@
     <width>260</width>
     <height>40</height>
     <textXOff>10</textXOff>
-    <textYOff>4</textYOff>
+    <textYOff>6</textYOff>
     <textureFocus>button_focus.png</textureFocus>
     <textureNoFocus>button_nofocus.png</textureNoFocus>
     <font>font12</font>
     <textcolor>ffffffff</textcolor>
     <colordiffuse>ffffffff</colordiffuse>
     <disabledcolor>ff808080</disabledcolor>
-    <textcolorNoFocus>ffa9d0f7</textcolorNoFocus>
+    <textcolorNoFocus>ff6FAFE1</textcolorNoFocus>
     <dimColor>ff000000</dimColor>
-    <animation effect="zoom" start="100,100" end="105,105" time="50">focus</animation>
-    <animation effect="zoom" start="105,105" end="100,100" time="0">unfocus</animation>
     <shadowAngle>45</shadowAngle>
     <shadowDistance>1</shadowDistance>
     <shadowColor>ff000000</shadowColor>
@@ -96,7 +115,7 @@
     <width>260</width>
     <height>40</height>
     <textXOff>10</textXOff>
-    <textYOff>4</textYOff>
+    <textYOff>6</textYOff>
     <textureUp>arrow_round_up_nofocus.png</textureUp>
     <textureUpFocus>arrow_round_up_focus.png</textureUpFocus>
     <textureDown>arrow_round_down_nofocus.png</textureDown>
@@ -118,15 +137,13 @@
     <textcolor>ffffffff</textcolor>
     <colordiffuse>ffffffff</colordiffuse>
     <disabledcolor>ff808080</disabledcolor>
-    <textcolorNoFocus>ffa9d0f7</textcolorNoFocus>
+    <textcolorNoFocus>ff6FAFE1</textcolorNoFocus>
     <dimColor>ff000000</dimColor>
     <shadowAngle>45</shadowAngle>
     <shadowDistance>1</shadowDistance>
     <shadowColor>ff000000</shadowColor>
     <textureFocus>button_focus.png</textureFocus>
     <textureNoFocus>button_nofocus.png</textureNoFocus>
-    <animation effect="zoom" start="100,100" end="105,105" time="50">focus</animation>
-    <animation effect="zoom" start="105,105" end="100,100" time="0">unfocus</animation>
   </control>
   <control>
     <description>default updownbutton</description>
@@ -137,17 +154,15 @@
     <width>260</width>
     <height>40</height>
     <textXOff>10</textXOff>
-    <textYOff>4</textYOff>
+    <textYOff>6</textYOff>
     <textureFocus>button_focus.png</textureFocus>
     <textureNoFocus>button_nofocus.png</textureNoFocus>
     <font>font12</font>
     <textcolor>ffffffff</textcolor>
     <colordiffuse>ffffffff</colordiffuse>
     <disabledcolor>ff808080</disabledcolor>
-    <textcolorNoFocus>ffa9d0f7</textcolorNoFocus>
+    <textcolorNoFocus>ff6FAFE1</textcolorNoFocus>
     <dimColor>ffcccccc</dimColor>
-    <animation effect="zoom" start="100,100" end="105,105" time="50">focus</animation>
-    <animation effect="zoom" start="105,105" end="100,100" time="50">unfocus</animation>
     <shadowAngle>45</shadowAngle>
     <shadowDistance>1</shadowDistance>
     <shadowColor>ff000000</shadowColor>
@@ -162,7 +177,7 @@
     <height>40</height>
     <label>457</label>
     <textXOff>26</textXOff>
-    <textYOff>4</textYOff>
+    <textYOff>6</textYOff>
     <textXOff2>17</textXOff2>
     <textYOff2>6</textYOff2>
     <textureFocus>button_focus.png</textureFocus>
@@ -176,11 +191,9 @@
     <textcolor>ffffffff</textcolor>
     <colordiffuse>ffffffff</colordiffuse>
     <disabledcolor>ffffcc00</disabledcolor>
-    <textcolorNoFocus>ffa9d0f7</textcolorNoFocus>
+    <textcolorNoFocus>ff6FAFE1</textcolorNoFocus>
     <dimColor>ffcccccc</dimColor>
     <disabledcolor>60ffffff</disabledcolor>
-    <animation effect="zoom" start="100,100" end="105,105" time="50">focus</animation>
-    <animation effect="zoom" start="105,105" end="100,100" time="50">unfocus</animation>
   </control>
   <control>
     <description>playlist item button</description>
@@ -220,7 +233,7 @@
     <playedColor>ff00ff00</playedColor>
     <playedColor2>ff00ff00</playedColor2>
     <textcolor>ffffffff</textcolor>
-    <textcolorNoFocus>ff000000</textcolorNoFocus>
+    <textcolorNoFocus>ff6FAFE1</textcolorNoFocus>
     <textcolor2>ffffffff</textcolor2>
     <textcolor3>ffffffff</textcolor3>
     <colordiffuse>ffffffff</colordiffuse>
@@ -242,7 +255,7 @@
     <width>260</width>
     <height>40</height>
     <textXOff>10</textXOff>
-    <textYOff>4</textYOff>
+    <textYOff>6</textYOff>
     <textureFocus>togglebutton-on-focus.png</textureFocus>
     <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
     <AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
@@ -252,10 +265,8 @@
     <textcolor>ffffffff</textcolor>
     <colordiffuse>ffffffff</colordiffuse>
     <disabledcolor>ff808080</disabledcolor>
-    <textcolorNoFocus>ffa9d0f7</textcolorNoFocus>
+    <textcolorNoFocus>ff6FAFE1</textcolorNoFocus>
     <dimColor>ffcccccc</dimColor>
-    <animation effect="zoom" start="100,100" end="105,105" time="50">focus</animation>
-    <animation effect="zoom" start="105,105" end="100,100" time="50">unfocus</animation>
     <shadowAngle>45</shadowAngle>
     <shadowDistance>1</shadowDistance>
     <shadowColor>ff000000</shadowColor>
@@ -267,7 +278,7 @@
     <width>260</width>
     <height>40</height>
     <textXOff>10</textXOff>
-    <textYOff>4</textYOff>
+    <textYOff>6</textYOff>
     <textureFocus>button_focus.png</textureFocus>
     <textureNoFocus>button_nofocus.png</textureNoFocus>
     <textureAscending>arrow_round_up_nofocus.png</textureAscending>
@@ -282,11 +293,9 @@
     <textcolor>ffffffff</textcolor>
     <colordiffuse>ffffffff</colordiffuse>
     <disabledcolor>ff808080</disabledcolor>
-    <textcolorNoFocus>ffa9d0f7</textcolorNoFocus>
+    <textcolorNoFocus>ff6FAFE1</textcolorNoFocus>
     <dimColor>ffcccccc</dimColor>
     <label>103</label>
-    <animation effect="zoom" start="100,100" end="105,105" time="50">focus</animation>
-    <animation effect="zoom" start="105,105" end="100,100" time="50">unfocus</animation>
     <shadowAngle>45</shadowAngle>
     <shadowDistance>1</shadowDistance>
     <shadowColor>ff000000</shadowColor>
@@ -295,13 +304,25 @@
     <description>default listcontrol</description>
     <type>listcontrol</type>
     <id>0</id>
-    <posX>462</posX>
-    <posY>121</posY>
-    <width>785</width>
-    <height>573</height>
+    <posX>100</posX>
+    <posY>170</posY>
+    <width>800</width>
+    <height>480</height>
+    <onleft>2</onleft>
+    <onright>2</onright>
+    <scrollOffset>2</scrollOffset>
+    <unfocusedAlpha>160</unfocusedAlpha>
+    <scrollbarHeight>400</scrollbarHeight>
+    <scrollbarbg>bar_vert.png</scrollbarbg>
+    <scrollbartop>mouse_left_horizontal.png</scrollbartop>
+    <scrollbarbottom>mouse_right_horizontal.png</scrollbarbottom>
+    <scrollbarXOff>35</scrollbarXOff>
+    <scrollbarYOff>0</scrollbarYOff>
+    <showScrollbar>yes</showScrollbar>
+    <scrollbarwidth>7</scrollbarwidth>
     <spinWidth>33</spinWidth>
     <spinHeight>33</spinHeight>
-    <spinPosX>1180</spinPosX>
+    <spinPosX>2180</spinPosX>
     <spinPosY>662</spinPosY>
     <spinAlign>Right</spinAlign>
     <spinColor>ffffffff</spinColor>
@@ -311,38 +332,42 @@
     <textureDownFocus>page_down_focus.png</textureDownFocus>
     <textureFocus>list_sub_focus.png</textureFocus>
     <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
-    <textureHeight>40</textureHeight>
-    <image>emtpy.png</image>
+    <textureHeight>35</textureHeight>
     <spaceBetweenItems></spaceBetweenItems>
-    <font>font13</font>
+    <font>font12</font>
     <shadedColor>20ffffff</shadedColor>
-    <selectedColor3>ff009900</selectedColor3>
-    <selectedColor2>ff009900</selectedColor2>
-    <selectedColor>ff009900</selectedColor>
-    <playedColor>ff6FAFE1</playedColor>
-    <playedColor2>ff6FAFE1</playedColor2>
+    <selectedColor3>ff99f9ff</selectedColor3>
+    <selectedColor2>ff99f9ff</selectedColor2>
+    <selectedColor>ff99f9ff</selectedColor>
+    <playedColor>ffffffff</playedColor>
+    <playedColor2>ffffffff</playedColor2>
     <textcolor>ffffffff</textcolor>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
     <textcolor2>ffffffff</textcolor2>
     <textcolor3>ffffffff</textcolor3>
     <colordiffuse>ffffffff</colordiffuse>
-    <remoteColor>ffcc9900</remoteColor>
-    <remoteColor2>ffcc9900</remoteColor2>
+    <remoteColor>ff99f9ff</remoteColor>
+    <remoteColor2>ff99f9ff</remoteColor2>
     <downloadColor>ff666666</downloadColor>
     <downloadColor2>ff80ff80</downloadColor2>
     <dimColor>ffffffff</dimColor>
     <scrollStartDelaySec>1</scrollStartDelaySec>
-    <textXOff>8</textXOff>
+    <textXOff>2</textXOff>
     <textYOff>2</textYOff>
     <textXOff2>0</textXOff2>
     <textYOff2>2</textYOff2>
     <itemWidth>32</itemWidth>
     <itemHeight>32</itemHeight>
-    <IconXOff>12</IconXOff>
-    <IconYOff>4</IconYOff>
-    <suffix>|</suffix>
+    <IconXOff>4</IconXOff>
+    <IconYOff>2</IconYOff>
+    <PinIconXOff>785</PinIconXOff>
+    <PinIconYOff>6</PinIconYOff>
+    <PinIconWidth>35</PinIconWidth>
+    <PinIconHeight>25</PinIconHeight>
+    <folderPrefix></folderPrefix>
+    <folderSuffix></folderSuffix>
     <unfocusedAlpha>160</unfocusedAlpha>
-    <keepaspectratio>false</keepaspectratio>
+    <keepaspectratio>yes</keepaspectratio>
     <shadowAngle>0</shadowAngle>
     <shadowDistance>0</shadowDistance>
     <shadowColor>00000000</shadowColor>
@@ -351,13 +376,13 @@
     <description>default checklistcontrol</description>
     <type>checklistcontrol</type>
     <id>0</id>
-    <posX>462</posX>
-    <posY>121</posY>
-    <width>755</width>
-    <height>573</height>
+    <posX>100</posX>
+    <posY>170</posY>
+    <width>800</width>
+    <height>480</height>
     <spinWidth>33</spinWidth>
     <spinHeight>33</spinHeight>
-    <spinPosX>1160</spinPosX>
+    <spinPosX>2160</spinPosX>
     <spinPosY>662</spinPosY>
     <spinAlign>Right</spinAlign>
     <spinColor>ffffffff</spinColor>
@@ -408,13 +433,13 @@
     <description>default up/downlistcontrol</description>
     <type>updownlistcontrol</type>
     <id>0</id>
-    <posX>462</posX>
-    <posY>121</posY>
-    <width>755</width>
-    <height>573</height>
+    <posX>100</posX>
+    <posY>170</posY>
+    <width>800</width>
+    <height>480</height>
     <spinWidth>33</spinWidth>
     <spinHeight>33</spinHeight>
-    <spinPosX>1160</spinPosX>
+    <spinPosX>2160</spinPosX>
     <spinPosY>662</spinPosY>
     <spinAlign>Right</spinAlign>
     <spinColor>ffffffff</spinColor>
@@ -455,16 +480,16 @@
     <shadowColor>00000000</shadowColor>
   </control>
   <control>
-    <description>default playlist item control</description>
+    <description>default playlist control</description>
     <type>playlistcontrol</type>
     <id>0</id>
-    <posX>462</posX>
-    <posY>121</posY>
-    <width>755</width>
-    <height>573</height>
+    <posX>100</posX>
+    <posY>170</posY>
+    <width>800</width>
+    <height>480</height>
     <spinWidth>33</spinWidth>
     <spinHeight>33</spinHeight>
-    <spinPosX>1160</spinPosX>
+    <spinPosX>2160</spinPosX>
     <spinPosY>662</spinPosY>
     <spinAlign>Right</spinAlign>
     <spinColor>ffffffff</spinColor>
@@ -474,32 +499,31 @@
     <textureDownFocus>page_down_focus.png</textureDownFocus>
     <textureFocus>list_sub_focus.png</textureFocus>
     <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
-    <textureHeight>40</textureHeight>
-    <image>emtpy.png</image>
-    <font>font13</font>
+    <textureHeight>35</textureHeight>
+    <spaceBetweenItems></spaceBetweenItems>
+    <font>font12</font>
     <shadedColor>20ffffff</shadedColor>
-    <selectedColor3>ff009900</selectedColor3>
-    <selectedColor2>ff009900</selectedColor2>
-    <selectedColor>ff009900</selectedColor>
-    <playedColor>ff6FAFE1</playedColor>
-    <playedColor2>ff6FAFE1</playedColor2>
+    <selectedColor3>ff99f9ff</selectedColor3>
+    <selectedColor2>ff99f9ff</selectedColor2>
+    <selectedColor>ff99f9ff</selectedColor>
+    <playedColor>ffffffff</playedColor>
+    <playedColor2>ffffffff</playedColor2>
     <textcolor>ffffffff</textcolor>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
     <textcolor2>ffffffff</textcolor2>
     <textcolor3>ffffffff</textcolor3>
     <colordiffuse>ffffffff</colordiffuse>
-    <remoteColor>ffFF9900</remoteColor>
-    <remoteColor2>ffFF9900</remoteColor2>
+    <remoteColor>ff99f9ff</remoteColor>
+    <remoteColor2>ff99f9ff</remoteColor2>
     <downloadColor>ff666666</downloadColor>
     <downloadColor2>ff80ff80</downloadColor2>
-    <dimColor>ffffffff</dimColor>oadColor2>
-    <dimColor>90ffffff</dimColor>
-    <textXOff>8</textXOff>
-    <textYOff>5</textYOff>
+    <dimColor>ffffffff</dimColor>
+    <textXOff>4</textXOff>
+    <textYOff>2</textYOff>
     <textXOff2>0</textXOff2>
     <textYOff2>5</textYOff2>
-    <IconXOff>14</IconXOff>
-    <IconYOff>10</IconYOff>
+    <IconXOff>4</IconXOff>
+    <IconYOff>2</IconYOff>
     <suffix>|</suffix>
     <upBtnWidth>40</upBtnWidth>
     <downBtnWidth>40</downBtnWidth>
@@ -535,7 +559,7 @@
     <height>592</height>
     <spinWidth>33</spinWidth>
     <spinHeight>33</spinHeight>
-    <spinPosX>1160</spinPosX>
+    <spinPosX>2160</spinPosX>
     <spinPosY>662</spinPosY>
     <spinAlign>Right</spinAlign>
     <spinColor>ffffffff</spinColor>
@@ -592,7 +616,7 @@
     <height>125</height>
     <spinWidth>33</spinWidth>
     <spinHeight>33</spinHeight>
-    <spinPosX>1031</spinPosX>
+    <spinPosX>2031</spinPosX>
     <spinPosY>585</spinPosY>
     <spinAlign>Right</spinAlign>
     <spinColor>ffffffff</spinColor>
@@ -749,7 +773,7 @@
     <height>375</height>
     <spinWidth>28</spinWidth>
     <spinHeight>20</spinHeight>
-    <spinPosX>1084</spinPosX>
+    <spinPosX>2084</spinPosX>
     <spinPosY>662</spinPosY>
     <spinColor>ffffffff</spinColor>
     <textureUp>page_up_nofocus.png</textureUp>
@@ -836,8 +860,6 @@
     <MarkHeight>28</MarkHeight>
     <align>left</align>
     <shadow>no</shadow>
-    <animation effect="zoom" start="100,100" end="110,110" time="50">focus</animation>
-    <animation effect="zoom" start="110,110" end="100,100" time="50">unfocus</animation>
   </control>
   <control>
     <description>default check button</description>
@@ -845,8 +867,21 @@
     <id>0</id>
     <width>260</width>
     <height>40</height>
+    <width>260</width>
+    <height>40</height>
     <textXOff>10</textXOff>
     <textYOff>6</textYOff>
+    <textureFocus>button_focus.png</textureFocus>
+    <textureNoFocus>button_nofocus.png</textureNoFocus>
+    <font>font12</font>
+    <textcolor>ffffffff</textcolor>
+    <colordiffuse>ffffffff</colordiffuse>
+    <disabledcolor>ff808080</disabledcolor>
+    <textcolorNoFocus>ff6FAFE1</textcolorNoFocus>
+    <dimColor>ff000000</dimColor>
+    <shadowAngle>45</shadowAngle>
+    <shadowDistance>1</shadowDistance>
+    <shadowColor>ff000000</shadowColor>
     <textureFocus>button_focus.png</textureFocus>
     <textureNoFocus>button_nofocus.png</textureNoFocus>
     <font>font12</font>
@@ -858,17 +893,7 @@
     <markvalign>middle</markvalign>
     <textureCheckmark>check-box.png</textureCheckmark>
     <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
-    <shadowAngle>45</shadowAngle>
-    <shadowDistance>1</shadowDistance>
-    <shadowColor>ff000000</shadowColor>
-    <font>font12</font>
-    <textcolor>ffffffff</textcolor>
-    <colordiffuse>ffffffff</colordiffuse>
-    <disabledcolor>ff808080</disabledcolor>
-    <textcolorNoFocus>ffa9d0f7</textcolorNoFocus>
-    <dimColor>ff000000</dimColor>
-    <animation effect="zoom" start="100,100" end="105,105" time="50">focus</animation>
-    <animation effect="zoom" start="105,105" end="100,100" time="0">unfocus</animation>
+    
     <textalign>left</textalign>
     <textvalign>middle</textvalign>
   </control>

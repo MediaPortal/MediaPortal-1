@@ -4,53 +4,69 @@
   <defaultcontrol>213</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
-    <import>common.expanded.video.osd.xml</import>
-    <!--#################   THIS IS THE EXPANDING OSD BACKGROUND     ##################-->
     <control>
-      <description>background top</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>0</posX>
-      <posY>512</posY>
-      <width>1290</width>
-      <height>300</height>
-      <texture>blue.png</texture>
-      <colordiffuse>eeffffff</colordiffuse>
-      <visible>!Control.HasFocus(1237)</visible>
-    </control>
-    <!--###################     HERE ARE THE DISPLAYED OSD DATA    ###################################-->
-    <control>
-      <description>vertical divider</description>
+      <description>background</description>
       <type>image</type>
       <id>1</id>
-      <posX>940</posX>
-      <posY>525</posY>
-      <height>175</height>
-      <width>1</width>
-      <texture>slider_vertical.png</texture>
-      <colordiffuse>90ffffff</colordiffuse>
+      <posX>81</posX>
+      <posY>475</posY>
+      <height>229</height>
+      <width>1124</width>
+      <texture>osd_mask.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+    </control>
+    <control>
+      <description>TVSeries ClearArt</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>949</posX>
+      <posY>349</posY>
+      <width>249</width>
+      <height>125</height>
+      <texture>#TVSeries.Play.ClearArt</texture>
       <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>TVSeries ClearArt</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>949</posX>
+      <posY>150</posY>
+      <width>249</width>
+      <height>125</height>
+      <texture>#TVSeries.Play.ClearArt</texture>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Time BG</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1050</posX>
+      <posY>480</posY>
+      <width>145</width>
+      <height>35</height>
+      <texture>button_focus.png</texture>
+      <colordiffuse>90ffffff</colordiffuse>
     </control>
     <control>
       <description>Time Info</description>
       <type>label</type>
       <id>110</id>
-      <posX>1250</posX>
-      <posY>520</posY>
+      <posX>1171</posX>
+      <posY>481</posY>
       <label>#time</label>
       <align>right</align>
-      <font>font12</font>
-      <textcolor>ff6FAFE1</textcolor>
-      <visible>!control.hasfocus(1237)</visible>
+      <font>font16</font>
+      <textcolor>ivory</textcolor>
     </control>
     <control>
       <description>background</description>
       <type>image</type>
       <id>104</id>
-      <posX>190</posX>
-      <posY>575</posY>
-      <width>595</width>
-      <height>22</height>
+      <posX>209</posX>
+      <posY>537</posY>
+      <width>729</width>
+      <height>19</height>
       <texture>osd_progress_background.png</texture>
       <visible>!control.hasfocus(1237)</visible>
     </control>
@@ -58,15 +74,15 @@
       <description>Progress Bar</description>
       <type>progress</type>
       <id>105</id>
-      <posX>193</posX>
-      <posY>579</posY>
-      <width>595</width>
+      <posX>210</posX>
+      <posY>538</posY>
+      <width>728</width>
       <offset>0</offset>
-      <height>16</height>
-      <innerheight>16</innerheight>
-      <lefttexture>-</lefttexture>
+      <height>17</height>
+      <innerheight>17</innerheight>
+      <lefttexture>osd_progress_left.png</lefttexture>
       <midtexture>osd_progress_mid.png</midtexture>
-      <righttexture>-</righttexture>
+      <righttexture>osd_progress_right.png</righttexture>
       <label>#percentage</label>
       <visible>!control.hasfocus(1237)</visible>
     </control>
@@ -74,10 +90,10 @@
       <description>End Time Info</description>
       <type>label</type>
       <id>101</id>
-      <posX>798</posX>
-      <posY>570</posY>
+      <posX>1039</posX>
+      <posY>531</posY>
       <label>#currentremaining</label>
-      <align>left</align>
+      <align>right</align>
       <font>font14</font>
       <textcolor>ffffffff</textcolor>
       <visible>!control.hasfocus(1237)</visible>
@@ -86,8 +102,8 @@
       <description>Start Time Info</description>
       <type>label</type>
       <id>101</id>
-      <posX>70</posX>
-      <posY>570</posY>
+      <posX>119</posX>
+      <posY>531</posY>
       <label>#currentplaytime</label>
       <align>left</align>
       <font>font14</font>
@@ -98,45 +114,85 @@
       <description>Movie Name</description>
       <id>36</id>
       <type>fadelabel</type>
-      <posX>70</posX>
-      <posY>520</posY>
-      <width>770</width>
-      <height>40</height>
-      <label>-</label>
+      <posX>119</posX>
+      <posY>487</posY>
+      <width>919</width>
+      <height>39</height>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-      <font>font18</font>
+      <textcolor>ffffffff</textcolor>
+      <font>font16</font>
       <label>#Play.Current.Title</label>
-      <visible>!control.hasfocus(1237)</visible>
-    </control>
-    <control>
-      <description>horizontal divider</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>70</posX>
-      <posY>620</posY>
-      <height>1</height>
-      <width>840</width>
-      <texture>hbar1white.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
       <description>Plot</description>
       <id>1</id>
       <type>textboxscrollup</type>
-      <posX>220</posX>
-      <posY>600</posY>
-      <width>900</width>
+      <posX>219</posX>
+      <posY>599</posY>
+      <width>899</width>
       <height>0</height>
       <align>left</align>
       <font>font12</font>
       <label>#Play.Current.Plot</label>
-      <seperator>&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;	&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;	&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;</seperator>
       <textcolor>ivory</textcolor>
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <import>common.osd.buttons.xml</import>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>219</posX>
+      <posY>285</posY>
+      <height>350</height>
+      <width>809</width>
+      <texture>osd_mask2.png</texture>
+      <visible>control.hasfocus(1237)</visible>
+      <colordiffuse>ff203661</colordiffuse>
+      <animation effect="slide" start="0,50" time="100" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>Plot</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <posX>239</posX>
+      <posY>300</posY>
+      <height>260</height>
+      <width>780</width>
+      <align>left</align>
+      <label>#Play.Current.Plot</label>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <visible>control.hasfocus(1237)</visible>
+      <shadowAngle>0</shadowAngle>
+      <shadowDistance>0</shadowDistance>
+      <animation effect="slide" start="0,50" time="100" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>Movie thumb</description>
+      <type>image</type>
+      <id>102</id>
+      <posX>1070</posX>
+      <posY>525</posY>
+      <width>105</width>
+      <height>160</height>
+      <texture mask="videothumbmask.png">#Play.Current.Thumb</texture>
+      <keepaspectratio>no</keepaspectratio>
+      <visible>control.hasfocus(1237)</visible>
+      <animation effect="fade" time="100" reversible="true">visible</animation>
+    </control>
+    <control>
+      <id>1</id>
+      <type>image</type>
+      <posX>1070</posX>
+      <posY>525</posY>
+      <width>105</width>
+      <height>160</height>
+      <texture>videothumbframe.png</texture>
+      <visible>control.hasthumb(102)+control.hasfocus(1237)</visible>
+      <animation effect="fade" time="100" reversible="true">visible</animation>
+    </control>
     <import>common.logos.xml</import>
   </controls>
 </window>

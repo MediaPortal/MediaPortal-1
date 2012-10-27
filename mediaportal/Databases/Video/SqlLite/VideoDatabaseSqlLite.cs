@@ -1132,6 +1132,10 @@ namespace MediaPortal.Video.Database
           int movieId = VideoDatabase.GetMovieId(strFilenameAndPath);
           VideoDatabase.GetFilesForMovie(movieId, ref movieFiles);
           SetMovieDuration(movieId, MovieDuration(movieFiles));
+
+          //Update movie subtitle field
+          strSQL = String.Format("UPDATE movie SET hasSubtitles={0} WHERE idMovie={1} ", subtitles, movieId);
+          m_db.Execute(strSQL);
         }
         catch (ThreadAbortException)
         {
@@ -1191,6 +1195,7 @@ namespace MediaPortal.Video.Database
 
         mediaInfo.AudioCodec = DatabaseUtility.Get(results, 0, "audioCodec");
         mediaInfo.AudioChannels = DatabaseUtility.Get(results, 0, "audioChannels");
+        mediaInfo.Duration = GetVideoDuration(fileID);
       }
       catch (ThreadAbortException)
       {
@@ -6472,15 +6477,28 @@ namespace MediaPortal.Video.Database
       }
     }
 
-    public void FlushTransactionsToDisk ()
+    public void FlushTransactionsToDisk()
     {
-      m_db.Execute("PRAGMA synchronous='FULL'");
+      try
+      {
+        m_db.Execute("PRAGMA synchronous='FULL'");
+      }
+      catch (Exception ex)
+      {
+        Log.Error("VideoDatabase FlushTransactionsToDisk() exception: {0}", ex.Message);
+      }
     }
 
     public void RevertFlushTransactionsToDisk()
     {
-      m_db.Execute("PRAGMA synchronous='OFF'");
-      
+      try
+      {
+        m_db.Execute("PRAGMA synchronous='OFF'");
+      }
+      catch (Exception ex)
+      {
+        Log.Error("VideoDatabase RevertFlushTransactionsToDisk() exception: {0}", ex.Message);
+      }
     }
   }
 }

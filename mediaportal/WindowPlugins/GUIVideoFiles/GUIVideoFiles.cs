@@ -1612,13 +1612,13 @@ namespace MediaPortal.GUI.Video
           }
           else
           {
-            MediaInfoWrapper mInfo = new MediaInfoWrapper(file);
+            VideoFilesMediaInfo mInfo = new VideoFilesMediaInfo();
 
             if (fileID > -1)
             {
-              // Set video file duration
-              VideoDatabase.SetVideoDuration(fileID, mInfo.VideoDuration / 1000);
-              TotalMovieDuration += mInfo.VideoDuration / 1000;
+              // Set/update video file duration and media info
+              VideoDatabase.GetVideoFilesMediaInfo(file, ref mInfo, refresh);
+              TotalMovieDuration += (int) mInfo.Duration;
             }
           }
         }

@@ -7,27 +7,26 @@
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
-    <import>common.window.xml</import>
     <import>common.time.xml</import>
     <!--Add/Remove/Default-->
     <control>
       <description>background</description>
       <type>image</type>
       <id>1</id>
-      <posX>255</posX>
-      <posY>96</posY>
-      <height>404</height>
-      <width>239</width>
+      <posX>341</posX>
+      <posY>120</posY>
+      <height>505</height>
+      <width>318</width>
       <texture>backslide.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <control>
       <description>buttons</description>
       <type>group</type>
-      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="-300,0">WindowClose</animation>
-      <posX>39</posX>
-      <posY>128</posY>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <posX>52</posX>
+      <posY>160</posY>
       <layout>StackLayout(0, Horizontal, True)</layout>
       <control>
         <description>Add</description>
@@ -57,13 +56,13 @@
       <description>Extensions listcontrol</description>
       <type>listcontrol</type>
       <id>2</id>
-      <posX>267</posX>
-      <posY>128</posY>
-      <height>416</height>
-      <width>202</width>
-      <textXOff>45</textXOff>
-      <spinPosX>354</spinPosX>
-      <spinPosY>512</spinPosY>
+      <posX>356</posX>
+      <posY>160</posY>
+      <height>520</height>
+      <width>240</width>
+      <textXOff>60</textXOff>
+      <spinPosX>1972</spinPosX>
+      <spinPosY>640</spinPosY>
       <onleft>3</onleft>
       <onright>35</onright>
       <spaceBetweenItems>0</spaceBetweenItems>
