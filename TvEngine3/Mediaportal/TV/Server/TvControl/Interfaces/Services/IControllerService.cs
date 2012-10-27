@@ -50,8 +50,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
   [ServiceKnownType(typeof(ATSCChannel))]
   [ServiceKnownType(typeof(DVBIPChannel))]
   [ServiceKnownType(typeof(AnalogChannel))]
-  [ServiceKnownType(typeof(DVBAudioStream))]
-  [ServiceKnownType(typeof(VideoStream))]
   public interface IControllerService
   {
     #region internal interface

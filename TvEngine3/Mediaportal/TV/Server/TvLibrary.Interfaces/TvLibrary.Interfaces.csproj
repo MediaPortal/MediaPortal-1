@@ -97,7 +97,6 @@
     <Compile Include="Interfaces\Device\IPowerDevice.cs" />
     <Compile Include="Interfaces\ICiMenuEventCallback.cs" />
     <Compile Include="DvbTextConverter.cs" />
-    <Compile Include="HardwareProviders\IHardwareProvider.cs" />
     <Compile Include="Implementations\Analog\Configuration.cs" />
     <Compile Include="Implementations\Analog\GraphComponents\Capture.cs" />
     <Compile Include="Implementations\Analog\GraphComponents\Crossbar.cs" />
@@ -107,14 +106,11 @@
     <Compile Include="Implementations\Analog\GraphComponents\Tuner.cs" />
     <Compile Include="Implementations\Channels\DVBIPChannel.cs" />
     <Compile Include="Implementations\Channels\RadioWebStreamChannel.cs" />
-    <Compile Include="Implementations\VideoStream\VideoStream.cs" />
     <Compile Include="Interfaces\ICiMenuActions.cs" />
     <Compile Include="Interfaces\ICiMenuCallbacks.cs" />
-    <Compile Include="Interfaces\IDiSEqCMotor.cs" />
     <Compile Include="Interfaces\ILnbType.cs" />
     <Compile Include="Interfaces\ITVChannelLinkage.cs" />
     <Compile Include="Interfaces\ITvSubChannel.cs" />
-    <Compile Include="Interfaces\IVideoStream.cs" />
     <Compile Include="Interfaces\TvPluginCallback.cs" />
     <Compile Include="Logging\FileLogger.cs" />
     <Compile Include="Logging\ILogger.cs" />
@@ -125,10 +121,8 @@
     <Compile Include="RtspClient.cs" />
     <Compile Include="ScanParameters.cs" />
     <Compile Include="Epg\Languages.cs" />
-    <Compile Include="Implementations\AudioStream\AnalogAudioStream.cs" />
     <Compile Include="Implementations\Channels\AnalogChannel.cs" />
     <Compile Include="Implementations\Channels\ATSCChannel.cs" />
-    <Compile Include="Implementations\AudioStream\DVBAudioStream.cs" />
     <Compile Include="Implementations\Channels\DVBBaseChannel.cs" />
     <Compile Include="Implementations\Channels\DVBCChannel.cs" />
     <Compile Include="Implementations\Channels\DVBSChannel.cs" />
@@ -138,7 +132,6 @@
     <Compile Include="Epg\EpgChannel.cs" />
     <Compile Include="Epg\EpgLanguageText.cs" />
     <Compile Include="Epg\EpgProgram.cs" />
-    <Compile Include="Interfaces\IAudioStream.cs" />
     <Compile Include="Interfaces\IChannel.cs" />
     <Compile Include="Interfaces\IQuality.cs" />
     <Compile Include="Interfaces\ITeletext.cs" />
