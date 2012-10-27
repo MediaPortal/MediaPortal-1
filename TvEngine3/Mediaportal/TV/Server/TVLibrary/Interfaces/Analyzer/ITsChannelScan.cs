@@ -32,20 +32,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   public interface IChannelScanCallBack
   {
     /// <summary>
-    /// Called by an ITsChannelScan instance when all available service information is ready to
-    /// be retrieved.
+    /// Called by an ITsChannelScan instance when scanning is complete and all available service
+    /// information is ready to be retrieved.
     /// </summary>
     /// <returns>an HRESULT indicating whether the notification was successfully handled</returns>
     [PreserveSig]
-    int OnServiceInfoComplete();
-
-    /// <summary>
-    /// Called by an ITsChannelScan instance when all available network information is ready to
-    /// be retrieved.
-    /// </summary>
-    /// <returns>an HRESULT indicating whether the notification was successfully handled</returns>
-    [PreserveSig]
-    int OnNetworkInfoComplete();
+    int OnScannerDone();
   }
 
   /// <summary>
@@ -72,43 +64,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   }
 
   /// <summary>
-  /// A structure used for service lists returned by ITsChannelScan.GetNetworkTransportStreamDetail()
-  /// and ITsChannelScan.GetBouquetTransportStreamDetail().
-  /// </summary>
-  [StructLayout(LayoutKind.Sequential)]
-  public struct Service
-  {
-    /// <summary>
-    /// The service identifier.
-    /// </summary>
-    public int ServiceId;
-    /// <summary>
-    /// The logical channel number associated with the service.
-    /// </summary>
-    public int LogicalChannelNumber;
-  }
-
-  /// <summary>
-  /// A structure used for the frequency list returned by ITsChannelScan.GetNetworkTransportStreamDetail().
-  /// </summary>
-  [StructLayout(LayoutKind.Sequential)]
-  public struct CellFrequency
-  {
-    /// <summary>
-    /// The frequency (in kHz) used to transmit a transport stream in a cell.
-    /// </summary>
-    public int Frequency;
-    /// <summary>
-    /// The cell identifier. Only applicable for DVB-T transmitters.
-    /// </summary>
-    public int CellId;
-    /// <summary>
-    /// The cell identifier extension. Only applicable for DVB-T transposers/repeaters.
-    /// </summary>
-    public int CellIdExtension;
-  }
-
-  /// <summary>
   /// TsWriter channel scanner interface.
   /// </summary>
   [ComVisible(true), ComImport,
@@ -125,27 +80,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     int SetCallBack(IChannelScanCallBack callBack);
 
     /// <summary>
-    /// Start scanning for service and network information in the stream that is currently being received.
+    /// Start scanning for services in the stream that is currently being received.
     /// </summary>
     /// <param name="broadcastStandard">The broadcast standard that the stream conforms with.</param>
-    /// <param name="recordOtherTransmitterServiceInfo"><c>True</c> to record information about services
-    ///   that are not present in the current stream, otherwise <c>false</c>.</param>
     /// <returns>an HRESULT indicating whether scanning is successfully started</returns>
     [PreserveSig]
-    int StartScanning(BroadcastStandard broadcastStandard, [MarshalAs(UnmanagedType.I1)] bool recordOtherTransmitterServiceInfo);
+    int ScanStream(BroadcastStandard broadcastStandard);
 
     /// <summary>
-    /// Stop scanning.
+    /// Stop stream scanning.
     /// </summary>
-    /// <param name="isOtherTransmitterServiceInfoAvailable"><c>True</c> if information about services
-    ///   that are not present in the current stream is available, otherwise <c>false</c>.</param>
     /// <returns>an HRESULT indicating whether scanning is successfully stopped</returns>
     [PreserveSig]
-    int StopScanning([MarshalAs(UnmanagedType.I1)] out bool isOtherTransmitterServiceInfoAvailable);
+    int StopStreamScan();
 
     /// <summary>
     /// Get the number of services found during the most recently completed scan.
     /// </summary>
+    /// <remarks>
+    /// In the case of a network scan where service information is available for other streams,
+    /// this count will include the services from other streams.
+    /// </remarks>
     /// <param name="serviceCount">The number of services found by the scanner.</param>
     /// <returns>an HRESULT indicating whether the service count was successfully retrieved</returns>
     [PreserveSig]
@@ -158,12 +113,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// Many of the parameters for this method are not applicable for North American television transmission standards.
     /// Specifically: isHighDefinition, previous service identifiers and all of the lists except the language list will
     /// not be populated for ATSC, SCTE cable and clear QAM services.
-    /// In the same way, the logicalChannelNumber parameter is not applicable for DVB services. DVB logical channel
-    /// numbers can be retrieved from the network and bouquet service lists.
     /// </remarks>
     /// <param name="index">The service index. The value of this parameter should be in the range 0..[GetServiceCount() - 1] (inclusive).</param>
-    /// <param name="originalNetworkId">The identifier of the network that the service originates from.</param>
-    /// <param name="transportStreamId">The identifier of the transport stream that contains the service.</param>
+    /// <param name="originalNetworkId">The service's original network ID.</param>
+    /// <param name="transportStreamId">The service's transport stream ID.</param>
     /// <param name="serviceId">The service's identifier.</param>
     /// <param name="serviceName">The name of the service.</param>
     /// <param name="providerName">The name of the service's provider.</param>
@@ -181,6 +134,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     ///     be determined that the service identifier changed recently.</param>
     /// <param name="previousServiceId">The service's previous service ID. Only populated when it can be determined that
     ///     the service identifier changed recently.</param>
+    /// <param name="networkIdCount">The number of networks that the service is included in.</param>
+    /// <param name="networkIds">A buffer containing the Int32 identifiers of each network that the service is included in.</param>
     /// <param name="bouquetIdCount">The number of bouquets that the service is included in.</param>
     /// <param name="bouquetIds">A buffer containing the Int32 identifiers of each bouquet that the service is included in.</param>
     /// <param name="languageCount">The distinct number of audio and subtitle languages that are transmitted as part of the service.</param>
@@ -214,6 +169,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                           out int previousOriginalNetworkId,
                           out int previousTransportStreamId,
                           out int previousServiceId,
+                          out int networkIdCount,
+                          out IntPtr networkIds,
                           out int bouquetIdCount,
                           out IntPtr bouquetIds,
                           out int languageCount,
@@ -230,154 +187,71 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                           out IntPtr unavailableInCountries);
 
     /// <summary>
-    /// Get the number of networks found during the most recently completed scan.
+    /// Start scanning for network information in the stream that is currently being received.
     /// </summary>
-    /// <param name="networkCount">The number of networks found by the scanner.</param>
-    /// <returns>an HRESULT indicating whether the network count was successfully retrieved</returns>
+    /// <remarks>
+    /// Network scanning is currently only supported for DVB streams as other broadcast standards
+    /// don't seem to carry in-band network information.
+    /// </remarks>
+    /// <returns>an HRESULT indicating whether scanning is successfully started</returns>
     [PreserveSig]
-    int GetNetworkCount(out int networkCount);
+    int ScanNetwork();
 
     /// <summary>
-    /// Retrieve the details for a specific network from the scanner.
+    /// Stop network scanning.
     /// </summary>
-    /// <param name="index">The network index. The value of this parameter should be in the range 0..[GetNetworkCount() - 1] (inclusive).</param>
-    /// <param name="networkId">The network's identifier.</param>
-    /// <param name="transportStreamCount">The number of transport streams that belong to the network.</param>
-    /// <param name="targetRegionCount">The number of regions in which the network is intended to be received.</param>
-    /// <param name="targetRegions">A buffer containing the Int64 identifiers of each region in which the network is intended to be received.</param>
-    /// <returns>an HRESULT indicating whether the network detail was successfully retrieved</returns>
+    /// <param name="isOtherMuxServiceInfoAvailable">An indicator for whether service information
+    ///   for the multiplexes identified by the scanner is available. If information is available,
+    ///   it is not necessary to scan each individual multiplex, which is a huge timesaver.</param>
+    /// <returns>an HRESULT indicating whether scanning is successfully stopped</returns>
     [PreserveSig]
-    int GetNetworkDetail(int index,
-                          out int networkId,
-                          out int transportStreamCount,
-                          out int targetRegionCount,
-                          out IntPtr targetRegions);
+    int StopNetworkScan(out bool isOtherMuxServiceInfoAvailable);
 
     /// <summary>
-    /// Retrieve the name of a specific network.
+    /// Get the number of multiplexes found during the most recently completed scan.
     /// </summary>
-    /// <param name="networkId">The network identifier.</param>
-    /// <param name="name">The name of the network.</param>
-    /// <returns>an HRESULT indicating whether the network name was successfully retrieved</returns>
+    /// <param name="multiplexCount">The number of multiplexes found by the scanner.</param>
+    /// <returns>an HRESULT indicating whether the multiplex count was successfully retrieved</returns>
     [PreserveSig]
-    int GetNetworkName(int networkId, out IntPtr name);
+    int GetMultiplexCount(out int multiplexCount);
 
     /// <summary>
-    /// Retrieve the details for a specific network transport stream from the scanner.
+    /// Retrieve the details for a specific multiplex from the scanner.
     /// </summary>
-    /// <param name="networkId">The identifier of the network to retrieve details for. The value of this parameter
-    ///   should match one of the networkId values retrieved using GetNetworkDetail().</param>
-    /// <param name="index">The transport stream index. The value of this parameter should be in the range
-    ///   0..[GetNetworkDetail().transportStreamCount - 1] (inclusive).</param>
-    /// <param name="originalNetworkId">The identifier of the network that the transport stream originates from.</param>
-    /// <param name="transportStreamId">The transport stream's identifier.</param>
-    /// <param name="serviceCount">The number of services multiplexed into the transport stream. If zero, all services
-    ///   with matching original network and transport stream identifiers should be considered as belonging to the network.</param>
-    /// <param name="services">A buffer containing the Service details of each service which belongs to the network.</param>
-    /// <param name="targetRegionCount">The number of regions in which the transport stream is intended to be received.</param>
-    /// <param name="targetRegions">A buffer containing the Int64 identifiers of each region in which the transport stream is intended to be received.</param>
-    /// <param name="type">The type of transmitter (eg. cable, satellite, terrestrial) used to transmit the transport
-    ///   stream, as per the TV database tuning detail type.</param>
-    /// <param name="frequencyCount">The number of frequencies on which the transport stream is transmitted.</param>
-    /// <param name="frequencies">A buffer containing the Frequency details for each frequency on which the transport stream is transmitted.</param>
-    /// <param name="polarisation">The transmitter polarisation. Only applicable for DVB-S/2 transmitters.</param>
-    /// <param name="modulation">The transmitter modulation scheme. Only applicable for DVB-S/2 and DVB-C transmitters.</param>
-    /// <param name="symbolRate">The transmitter symbol rate, in ks/s. Only applicable for DVB-S/2 and DVB-C transmitters.</param>
-    /// <param name="bandwidth">The transmitter bandwith, in MHz. Only applicable for DVB-T transmitters.</param>
-    /// <param name="innerFecRate">The transmitter inner FEC rate. Only applicable for DVB-S/2 transmitters.</param>
-    /// <param name="rollOff">The transmitter roll-off parameter. Only applicable for DVB-S2 transmitters.</param>
-    /// <param name="longitude">The longitude of the geostationary satellite that the transmitter is fixed to, in
+    /// <param name="index">The multiplex index. The value of this parameter should be in the range 0..[GetMultiplexCount() - 1] (inclusive).</param>
+    /// <param name="originalNetworkId">The multiplex's network ID.</param>
+    /// <param name="transportStreamId">The multiplex's transport stream ID.</param>
+    /// <param name="type">The multiplex type (eg. cable, satellite, terrestrial), as per the TV database tuning detail type.</param>
+    /// <param name="frequency">The multiplex frequency, in kHz.</param>
+    /// <param name="polarisation">The multiplex polarisation. Only applicable for DVB-S/2 multiplexes.</param>
+    /// <param name="modulation">The multiplex modulation scheme. Only applicable for DVB-S/2 and DVB-C multiplexes.</param>
+    /// <param name="symbolRate">The multiplex symbol rate, in ks/s. Only applicable for DVB-S/2 and DVB-C multiplexes.</param>
+    /// <param name="bandwidth">The multiplex bandwith, in MHz. Only applicable for DVB-T multiplexes.</param>
+    /// <param name="innerFecRate">The multiplex inner FEC rate. Only applicable for DVB-S/2 multiplexes.</param>
+    /// <param name="rollOff">The multiplex roll-off parameter. Only applicable for DVB-S2 multiplexes.</param>
+    /// <param name="longitude">The longitude of the geostationary satellite that the multiplex is transmitted from, in
     ///     tenths of a degree. Positive longitude values specify East position; negative longitude values specify West
-    ///     position. Only applicable for DVB-S/S2 transmitters.</param>
-    /// <param name="plpId">The physical layer pipe identifier associated with the transport stream. Only applicable for
-    ///   DVB-S2 and DVB-T2 transmitters.</param>
-    /// <returns>an HRESULT indicating whether the transport stream details were successfully retrieved</returns>
+    ///     position. Only applicable for DVB-S/S2 multiplexes.</param>
+    /// <param name="cellId">The cell ID of the multiplex transmitter. Only applicable for DVB-T/T2 multiplexes.</param>
+    /// <param name="cellIdExtension">The cell ID extension of the multiplex transmitter. Only applicable for DVB-T/T2 multiplexes.</param>
+    /// <param name="plpId">The physical layer pipe ID of multiplex. Only applicable for DVB-S2 and DVB-T2 multiplexes.</param>
+    /// <returns>an HRESULT indicating whether the multiplex details were successfully retrieved</returns>
     [PreserveSig]
-    int GetNetworkTransportStreamDetail(int networkId,
-                                        int index,
-                                        out int originalNetworkId,
-                                        out int transportStreamId,
-                                        out int serviceCount,
-                                        out IntPtr services,
-                                        out int targetRegionCount,
-                                        out IntPtr targetRegions,
-                                        out int type,
-                                        out int frequencyCount,
-                                        out IntPtr frequencies,
-                                        out int polarisation,
-                                        out int modulation,
-                                        out int symbolRate,
-                                        out int bandwidth,
-                                        out int innerFecRate,
-                                        out int rollOff,
-                                        out int longitude,
-                                        out int plpId);
-
-    /// <summary>
-    /// Get the number of bouquets found during the most recently completed scan.
-    /// </summary>
-    /// <param name="bouquetCount">The number of bouquets found by the scanner.</param>
-    /// <returns>an HRESULT indicating whether the bouquet count was successfully retrieved</returns>
-    [PreserveSig]
-    int GetBouquetCount(out int bouquetCount);
-
-    /// <summary>
-    /// Retrieve the details for a specific bouquet from the scanner.
-    /// </summary>
-    /// <param name="index">The bouquet index. The value of this parameter should be in the range 0..[GetBouquetCount() - 1] (inclusive).</param>
-    /// <param name="networkId">The bouquet's identifier.</param>
-    /// <param name="transportStreamCount">The number of transport streams that belong to the bouquet.</param>
-    /// <param name="targetRegionCount">The number of regions in which the bouquet is intended to be received.</param>
-    /// <param name="targetRegions">A buffer containing the Int64 identifiers of each region in which the bouquet is intended to be received.</param>
-    /// <param name="availableInCountryCount">The number of countries in which the bouquet is intended to be available.</param>
-    /// <param name="availableInCountries">A buffer containing the ISO 3166 3 byte code for each country in which the bouquet is intended to be available.</param>
-    /// <param name="unavailableInCountryCount">The number of countries in which the bouquet is not intended to be available.</param>
-    /// <param name="unavailableInCountries">A buffer containing the ISO 3166 3 byte code for each country in which the bouquet is not intended to be available.</param>
-    /// <returns>an HRESULT indicating whether the bouquet detail was successfully retrieved</returns>
-    [PreserveSig]
-    int GetBouquetDetail(int index,
-                          out int bouquetId,
-                          out int transportStreamCount,
-                          out int targetRegionCount,
-                          out IntPtr targetRegions,
-                          out int availableInCountryCount,
-                          out IntPtr availableInCountries,
-                          out int unavailableInCountryCount,
-                          out IntPtr unavailableInCountries);
-
-    /// <summary>
-    /// Retrieve the name of a specific bouquet.
-    /// </summary>
-    /// <param name="bouquetId">The bouquet identifier.</param>
-    /// <param name="name">The name of the bouquet.</param>
-    /// <returns>an HRESULT indicating whether the bouquet name was successfully retrieved</returns>
-    [PreserveSig]
-    int GetBouquetName(int networkId, out IntPtr name);
-
-    /// <summary>
-    /// Retrieve the details for a specific bouquet transport stream from the scanner.
-    /// </summary>
-    /// <param name="bouquetId">The identifier of the bouquet to retrieve details for. The value of this parameter
-    ///   should match one of the bouquetId values retrieved using GetBouquetDetail().</param>
-    /// <param name="index">The transport stream index. The value of this parameter should be in the range
-    ///   0..[GetBouquetDetail().transportStreamCount - 1] (inclusive).</param>
-    /// <param name="originalNetworkId">The identifier of the network that the transport stream originates from.</param>
-    /// <param name="transportStreamId">The transport stream's identifier.</param>
-    /// <param name="serviceCount">The number of services multiplexed into the transport stream. If zero, all services
-    ///   with matching original network and transport stream identifiers should be considered as belonging to the bouquet.</param>
-    /// <param name="services">A buffer containing the Service details of each service which belongs to the bouquet.</param>
-    /// <param name="targetRegionCount">The number of regions in which the transport stream is intended to be received.</param>
-    /// <param name="targetRegions">A buffer containing the Int64 identifiers of each region in which the transport stream is intended to be received.</param>
-    /// <returns>an HRESULT indicating whether the transport stream details were successfully retrieved</returns>
-    [PreserveSig]
-    int GetBouquetTransportStreamDetail(int bouquetId,
-                                        int index,
-                                        out int originalNetworkId,
-                                        out int transportStreamId,
-                                        out int serviceCount,
-                                        out IntPtr services,
-                                        out int targetRegionCount,
-                                        out IntPtr targetRegions);
+    int GetMultiplexDetail(int index,
+                            out int originalNetworkId,
+                            out int transportStreamId,
+                            out int type,
+                            out int frequency,
+                            out int polarisation,
+                            out int modulation,
+                            out int symbolRate,
+                            out int bandwidth,
+                            out int innerFecRate,
+                            out int rollOff,
+                            out int longitude,
+                            out int cellId,
+                            out int cellIdExtension,
+                            out int plpId);
 
     /// <summary>
     /// Retrieve the name of a specific target region.
@@ -387,5 +261,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <returns>an HRESULT indicating whether the target region name was successfully retrieved</returns>
     [PreserveSig]
     int GetTargetRegionName(Int64 targetRegionId, out IntPtr name);
+
+    /// <summary>
+    /// Retrieve the name of a specific bouquet.
+    /// </summary>
+    /// <param name="bouquetId">The bouquet identifier.</param>
+    /// <param name="name">The name of the bouquet.</param>
+    /// <returns>an HRESULT indicating whether the bouquet name was successfully retrieved</returns>
+    [PreserveSig]
+    int GetBouquetName(int bouquetId, out IntPtr name);
+
+    /// <summary>
+    /// Retrieve the name of a specific network.
+    /// </summary>
+    /// <param name="networkId">The network identifier.</param>
+    /// <param name="name">The name of the network.</param>
+    /// <returns>an HRESULT indicating whether the network name was successfully retrieved</returns>
+    [PreserveSig]
+    int GetNetworkName(int networkId, out IntPtr name);
   }
 }
