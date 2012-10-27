@@ -424,7 +424,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
             else if (type == 4)
             {
               DVBTChannel dvbtChannel = new DVBTChannel();
-              dvbtChannel.BandWidth = bandwidth;
+              dvbtChannel.Bandwidth = bandwidth;
               ch = dvbtChannel;
             }
             else

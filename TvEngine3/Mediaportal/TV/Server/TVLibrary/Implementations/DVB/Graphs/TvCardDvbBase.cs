@@ -239,7 +239,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         {
           Multiplier = 1000,
           Frequency = (uint)(dvbtChannel.Frequency),
-          Bandwidth = (uint)dvbtChannel.BandWidth,
+          Bandwidth = (uint)dvbtChannel.Bandwidth,
           Polarity = Polarisation.NotSet,
           Range = (uint)undefinedValue
         };

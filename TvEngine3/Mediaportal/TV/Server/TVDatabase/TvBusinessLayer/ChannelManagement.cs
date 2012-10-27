@@ -394,7 +394,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
           return dvbsChannel;
         case 4: //DVBTChannel
           DVBTChannel dvbtChannel = new DVBTChannel();
-          dvbtChannel.BandWidth = detail.Bandwidth;
+          dvbtChannel.Bandwidth = detail.Bandwidth;
           dvbtChannel.FreeToAir = detail.FreeToAir;
           dvbtChannel.Frequency = detail.Frequency;
           dvbtChannel.MediaType = (MediaTypeEnum)detail.MediaType;
@@ -647,7 +647,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       DVBTChannel dvbtChannel = channel as DVBTChannel;
       if (dvbtChannel != null)
       {
-        bandwidth = dvbtChannel.BandWidth;
+        bandwidth = dvbtChannel.Bandwidth;
         channelNumber = dvbtChannel.LogicalChannelNumber;
         channelType = 4;
       }

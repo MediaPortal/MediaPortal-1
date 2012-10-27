@@ -34,8 +34,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBT
   /// </summary>
   public class TvCardDVBT : TvCardDvbBase
   {
-
-
     #region variables
 
     /// <summary>
@@ -169,7 +167,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBT
       _tuningSpace.get_DefaultLocator(out locator);
       IDVBTLocator dvbtLocator = (IDVBTLocator)locator;
       dvbtLocator.put_CarrierFrequency((int)dvbtChannel.Frequency);
-      dvbtLocator.put_Bandwidth(dvbtChannel.BandWidth);
+      dvbtLocator.put_Bandwidth(dvbtChannel.Bandwidth / 1000);
 
       _tuneRequest.put_ONID(dvbtChannel.NetworkId);
       _tuneRequest.put_TSID(dvbtChannel.TransportId);

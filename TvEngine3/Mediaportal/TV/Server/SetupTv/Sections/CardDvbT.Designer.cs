@@ -414,7 +414,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpLabel7.Name = "mpLabel7";
       this.mpLabel7.Size = new System.Drawing.Size(29, 13);
       this.mpLabel7.TabIndex = 14;
-      this.mpLabel7.Text = "MHz";
+      this.mpLabel7.Text = "kHz";
       // 
       // CardDvbT
       // 

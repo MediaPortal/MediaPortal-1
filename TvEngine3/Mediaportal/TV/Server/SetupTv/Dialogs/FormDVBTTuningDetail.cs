@@ -36,24 +36,24 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       {
         textBoxDVBTChannel.Text = TuningDetail.ChannelNumber.ToString();
         textBoxDVBTfreq.Text = TuningDetail.Frequency.ToString();
+        textBoxDVBTBandwidth.Text = TuningDetail.Bandwidth.ToString();
         textBoxNetworkId.Text = TuningDetail.NetworkId.ToString();
         textBoxTransportId.Text = TuningDetail.TransportId.ToString();
         textBoxServiceId.Text = TuningDetail.ServiceId.ToString();
         textBoxDVBTProvider.Text = TuningDetail.Provider;
         checkBoxDVBTfta.Checked = TuningDetail.FreeToAir;
-        comboBoxBandWidth.SelectedIndex = TuningDetail.Bandwidth == 7 ? 0 : 1;
         textBoxPmt.Text = TuningDetail.PmtPid.ToString();
       }
       else
       {
         textBoxDVBTChannel.Text = "";
         textBoxDVBTfreq.Text = "";
+        textBoxDVBTBandwidth.Text = "";
         textBoxNetworkId.Text = "";
         textBoxTransportId.Text = "";
         textBoxServiceId.Text = "";
         textBoxDVBTProvider.Text = "";
         checkBoxDVBTfta.Checked = false;
-        comboBoxBandWidth.SelectedIndex = -1;
         textBoxPmt.Text = "";
       }
     }
@@ -77,18 +77,18 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       TuningDetail.ChannelType = 4;
       TuningDetail.ChannelNumber = Int32.Parse(textBoxDVBTChannel.Text);
       TuningDetail.Frequency = Int32.Parse(textBoxDVBTfreq.Text);
+      TuningDetail.Bandwidth = Int32.Parse(textBoxDVBTBandwidth.Text);
       TuningDetail.NetworkId = Int32.Parse(textBoxNetworkId.Text);
       TuningDetail.TransportId = Int32.Parse(textBoxTransportId.Text);
       TuningDetail.ServiceId = Int32.Parse(textBoxServiceId.Text);
       TuningDetail.Provider = textBoxDVBTProvider.Text;
       TuningDetail.FreeToAir = checkBoxDVBTfta.Checked;
-      TuningDetail.Bandwidth = comboBoxBandWidth.SelectedIndex == 0 ? 7 : 8;
       TuningDetail.PmtPid = Int32.Parse(textBoxPmt.Text);
     }
 
     private bool ValidateInput()
     {
-      int lcn, freq, onid, tsid, sid, pmt;
+      int lcn, freq, bandwidth, onid, tsid, sid, pmt;
       if (textBoxDVBTChannel.Text.Length == 0)
       {
         MessageBox.Show(this, "Please enter a channel number!", "Incorrect input");
@@ -109,9 +109,14 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         MessageBox.Show(this, "Please enter a valid frequency!", "Incorrect input");
         return false;
       }
-      if (comboBoxBandWidth.SelectedIndex < 0)
+      if (textBoxDVBTBandwidth.Text.Length == 0)
       {
-        MessageBox.Show(this, "Please select a valid bandwidth!", "Incorrect input");
+        MessageBox.Show(this, "Please enter a bandwidth!", "Incorrect input");
+        return false;
+      }
+      if (!Int32.TryParse(textBoxDVBTBandwidth.Text, out bandwidth))
+      {
+        MessageBox.Show(this, "Please enter a valid bandwidth!", "Incorrect input");
         return false;
       }
       if (!Int32.TryParse(textBoxNetworkId.Text, out onid))

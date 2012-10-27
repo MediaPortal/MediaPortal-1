@@ -39,33 +39,34 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.textBoxDVBTfreq = new System.Windows.Forms.TextBox();
       this.label50 = new System.Windows.Forms.Label();
       this.channelDVBT = new System.Windows.Forms.Label();
-      this.comboBoxBandWidth = new System.Windows.Forms.ComboBox();
       this.label17 = new System.Windows.Forms.Label();
       this.label18 = new System.Windows.Forms.Label();
       this.label19 = new System.Windows.Forms.Label();
       this.label20 = new System.Windows.Forms.Label();
       this.label21 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
+      this.textBoxDVBTBandwidth = new System.Windows.Forms.TextBox();
+      this.label2 = new System.Windows.Forms.Label();
       this.SuspendLayout();
       // 
       // mpButtonCancel
       // 
       this.mpButtonCancel.Location = new System.Drawing.Point(197, 258);
-      this.mpButtonCancel.TabIndex = 10;
+      this.mpButtonCancel.TabIndex = 21;
       // 
       // mpButtonOk
       // 
       this.mpButtonOk.Location = new System.Drawing.Point(106, 258);
-      this.mpButtonOk.TabIndex = 9;
+      this.mpButtonOk.TabIndex = 20;
       this.mpButtonOk.Click += new System.EventHandler(this.mpButtonOk_Click);
       // 
       // checkBoxDVBTfta
       // 
       this.checkBoxDVBTfta.AutoSize = true;
-      this.checkBoxDVBTfta.Location = new System.Drawing.Point(87, 221);
+      this.checkBoxDVBTfta.Location = new System.Drawing.Point(87, 219);
       this.checkBoxDVBTfta.Name = "checkBoxDVBTfta";
       this.checkBoxDVBTfta.Size = new System.Drawing.Size(78, 17);
-      this.checkBoxDVBTfta.TabIndex = 8;
+      this.checkBoxDVBTfta.TabIndex = 19;
       this.checkBoxDVBTfta.Text = "Free To Air";
       this.checkBoxDVBTfta.TextAlign = System.Drawing.ContentAlignment.TopRight;
       this.checkBoxDVBTfta.UseVisualStyleBackColor = true;
@@ -73,25 +74,25 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // label48
       // 
       this.label48.AutoSize = true;
-      this.label48.Location = new System.Drawing.Point(9, 198);
+      this.label48.Location = new System.Drawing.Point(9, 196);
       this.label48.Name = "label48";
       this.label48.Size = new System.Drawing.Size(49, 13);
-      this.label48.TabIndex = 95;
+      this.label48.TabIndex = 17;
       this.label48.Text = "Provider:";
       // 
       // textBoxDVBTProvider
       // 
-      this.textBoxDVBTProvider.Location = new System.Drawing.Point(87, 195);
+      this.textBoxDVBTProvider.Location = new System.Drawing.Point(87, 193);
       this.textBoxDVBTProvider.Name = "textBoxDVBTProvider";
       this.textBoxDVBTProvider.Size = new System.Drawing.Size(146, 20);
-      this.textBoxDVBTProvider.TabIndex = 7;
+      this.textBoxDVBTProvider.TabIndex = 18;
       // 
       // textBoxPmt
       // 
-      this.textBoxPmt.Location = new System.Drawing.Point(87, 169);
+      this.textBoxPmt.Location = new System.Drawing.Point(87, 167);
       this.textBoxPmt.Name = "textBoxPmt";
       this.textBoxPmt.Size = new System.Drawing.Size(146, 20);
-      this.textBoxPmt.TabIndex = 6;
+      this.textBoxPmt.TabIndex = 16;
       this.textBoxPmt.Text = "-1";
       // 
       // textBoxDVBTChannel
@@ -99,31 +100,31 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.textBoxDVBTChannel.Location = new System.Drawing.Point(87, 12);
       this.textBoxDVBTChannel.Name = "textBoxDVBTChannel";
       this.textBoxDVBTChannel.Size = new System.Drawing.Size(146, 20);
-      this.textBoxDVBTChannel.TabIndex = 0;
+      this.textBoxDVBTChannel.TabIndex = 2;
       this.textBoxDVBTChannel.Text = "0";
       // 
       // textBoxServiceId
       // 
-      this.textBoxServiceId.Location = new System.Drawing.Point(87, 143);
+      this.textBoxServiceId.Location = new System.Drawing.Point(87, 141);
       this.textBoxServiceId.Name = "textBoxServiceId";
       this.textBoxServiceId.Size = new System.Drawing.Size(146, 20);
-      this.textBoxServiceId.TabIndex = 5;
+      this.textBoxServiceId.TabIndex = 14;
       this.textBoxServiceId.Text = "-1";
       // 
       // textBoxTransportId
       // 
-      this.textBoxTransportId.Location = new System.Drawing.Point(87, 117);
+      this.textBoxTransportId.Location = new System.Drawing.Point(87, 115);
       this.textBoxTransportId.Name = "textBoxTransportId";
       this.textBoxTransportId.Size = new System.Drawing.Size(146, 20);
-      this.textBoxTransportId.TabIndex = 4;
+      this.textBoxTransportId.TabIndex = 12;
       this.textBoxTransportId.Text = "-1";
       // 
       // textBoxNetworkId
       // 
-      this.textBoxNetworkId.Location = new System.Drawing.Point(87, 91);
+      this.textBoxNetworkId.Location = new System.Drawing.Point(87, 89);
       this.textBoxNetworkId.Name = "textBoxNetworkId";
       this.textBoxNetworkId.Size = new System.Drawing.Size(146, 20);
-      this.textBoxNetworkId.TabIndex = 3;
+      this.textBoxNetworkId.TabIndex = 10;
       this.textBoxNetworkId.Text = "-1";
       // 
       // textBoxDVBTfreq
@@ -131,16 +132,16 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.textBoxDVBTfreq.Location = new System.Drawing.Point(87, 37);
       this.textBoxDVBTfreq.Name = "textBoxDVBTfreq";
       this.textBoxDVBTfreq.Size = new System.Drawing.Size(146, 20);
-      this.textBoxDVBTfreq.TabIndex = 1;
+      this.textBoxDVBTfreq.TabIndex = 4;
       this.textBoxDVBTfreq.Text = "698000";
       // 
       // label50
       // 
       this.label50.AutoSize = true;
-      this.label50.Location = new System.Drawing.Point(9, 172);
+      this.label50.Location = new System.Drawing.Point(9, 170);
       this.label50.Name = "label50";
       this.label50.Size = new System.Drawing.Size(54, 13);
-      this.label50.TabIndex = 92;
+      this.label50.TabIndex = 15;
       this.label50.Text = "PMT PID:";
       // 
       // channelDVBT
@@ -149,20 +150,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.channelDVBT.Location = new System.Drawing.Point(9, 15);
       this.channelDVBT.Name = "channelDVBT";
       this.channelDVBT.Size = new System.Drawing.Size(49, 13);
-      this.channelDVBT.TabIndex = 91;
+      this.channelDVBT.TabIndex = 1;
       this.channelDVBT.Text = "Channel:";
-      // 
-      // comboBoxBandWidth
-      // 
-      this.comboBoxBandWidth.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxBandWidth.FormattingEnabled = true;
-      this.comboBoxBandWidth.Items.AddRange(new object[] {
-            "7 MHz",
-            "8 MHz"});
-      this.comboBoxBandWidth.Location = new System.Drawing.Point(87, 63);
-      this.comboBoxBandWidth.Name = "comboBoxBandWidth";
-      this.comboBoxBandWidth.Size = new System.Drawing.Size(146, 21);
-      this.comboBoxBandWidth.TabIndex = 2;
       // 
       // label17
       // 
@@ -170,34 +159,34 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.label17.Location = new System.Drawing.Point(9, 66);
       this.label17.Name = "label17";
       this.label17.Size = new System.Drawing.Size(60, 13);
-      this.label17.TabIndex = 89;
+      this.label17.TabIndex = 6;
       this.label17.Text = "Bandwidth:";
       // 
       // label18
       // 
       this.label18.AutoSize = true;
-      this.label18.Location = new System.Drawing.Point(9, 120);
+      this.label18.Location = new System.Drawing.Point(9, 118);
       this.label18.Name = "label18";
       this.label18.Size = new System.Drawing.Size(69, 13);
-      this.label18.TabIndex = 88;
+      this.label18.TabIndex = 11;
       this.label18.Text = "Transport ID:";
       // 
       // label19
       // 
       this.label19.AutoSize = true;
-      this.label19.Location = new System.Drawing.Point(9, 147);
+      this.label19.Location = new System.Drawing.Point(9, 145);
       this.label19.Name = "label19";
       this.label19.Size = new System.Drawing.Size(60, 13);
-      this.label19.TabIndex = 87;
+      this.label19.TabIndex = 13;
       this.label19.Text = "Service ID:";
       // 
       // label20
       // 
       this.label20.AutoSize = true;
-      this.label20.Location = new System.Drawing.Point(9, 94);
+      this.label20.Location = new System.Drawing.Point(9, 92);
       this.label20.Name = "label20";
       this.label20.Size = new System.Drawing.Size(64, 13);
-      this.label20.TabIndex = 86;
+      this.label20.TabIndex = 9;
       this.label20.Text = "Network ID:";
       // 
       // label21
@@ -206,7 +195,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.label21.Location = new System.Drawing.Point(9, 40);
       this.label21.Name = "label21";
       this.label21.Size = new System.Drawing.Size(60, 13);
-      this.label21.TabIndex = 85;
+      this.label21.TabIndex = 3;
       this.label21.Text = "Frequency:";
       // 
       // label1
@@ -215,13 +204,32 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.label1.Location = new System.Drawing.Point(235, 40);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(26, 13);
-      this.label1.TabIndex = 118;
+      this.label1.TabIndex = 5;
       this.label1.Text = "kHz";
+      // 
+      // textBoxDVBTBandwidth
+      // 
+      this.textBoxDVBTBandwidth.Location = new System.Drawing.Point(87, 63);
+      this.textBoxDVBTBandwidth.Name = "textBoxDVBTBandwidth";
+      this.textBoxDVBTBandwidth.Size = new System.Drawing.Size(146, 20);
+      this.textBoxDVBTBandwidth.TabIndex = 7;
+      this.textBoxDVBTBandwidth.Text = "8000";
+      // 
+      // label2
+      // 
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(235, 66);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(26, 13);
+      this.label2.TabIndex = 8;
+      this.label2.Text = "kHz";
       // 
       // FormDVBTTuningDetail
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.ClientSize = new System.Drawing.Size(284, 293);
+      this.Controls.Add(this.label2);
+      this.Controls.Add(this.textBoxDVBTBandwidth);
       this.Controls.Add(this.label1);
       this.Controls.Add(this.checkBoxDVBTfta);
       this.Controls.Add(this.label48);
@@ -234,7 +242,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.Controls.Add(this.textBoxDVBTfreq);
       this.Controls.Add(this.label50);
       this.Controls.Add(this.channelDVBT);
-      this.Controls.Add(this.comboBoxBandWidth);
       this.Controls.Add(this.label17);
       this.Controls.Add(this.label18);
       this.Controls.Add(this.label19);
@@ -250,7 +257,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.Controls.SetChildIndex(this.label19, 0);
       this.Controls.SetChildIndex(this.label18, 0);
       this.Controls.SetChildIndex(this.label17, 0);
-      this.Controls.SetChildIndex(this.comboBoxBandWidth, 0);
       this.Controls.SetChildIndex(this.channelDVBT, 0);
       this.Controls.SetChildIndex(this.label50, 0);
       this.Controls.SetChildIndex(this.textBoxDVBTfreq, 0);
@@ -263,6 +269,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.Controls.SetChildIndex(this.label48, 0);
       this.Controls.SetChildIndex(this.checkBoxDVBTfta, 0);
       this.Controls.SetChildIndex(this.label1, 0);
+      this.Controls.SetChildIndex(this.textBoxDVBTBandwidth, 0);
+      this.Controls.SetChildIndex(this.label2, 0);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -281,12 +289,13 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private System.Windows.Forms.TextBox textBoxDVBTfreq;
     private System.Windows.Forms.Label label50;
     private System.Windows.Forms.Label channelDVBT;
-    private System.Windows.Forms.ComboBox comboBoxBandWidth;
     private System.Windows.Forms.Label label17;
     private System.Windows.Forms.Label label18;
     private System.Windows.Forms.Label label19;
     private System.Windows.Forms.Label label20;
     private System.Windows.Forms.Label label21;
     private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.TextBox textBoxDVBTBandwidth;
+    private System.Windows.Forms.Label label2;
   }
 }

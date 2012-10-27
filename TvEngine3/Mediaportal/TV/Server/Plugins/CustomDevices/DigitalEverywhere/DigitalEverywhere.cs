@@ -39,8 +39,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
   /// </summary>
   public class DigitalEverywhere : BaseCustomDevice, IPowerDevice, IPidFilterController, ICustomTuner, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
   {
- 
-
     #region enums
 
     private enum BdaExtensionProperty
@@ -1360,11 +1358,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
           DvbtMultiplexParams tuneRequest = new DvbtMultiplexParams();
           tuneRequest.Frequency = (UInt32)dvbtChannel.Frequency;
           tuneRequest.Bandwidth = DeOfdmBandwidth.Bandwidth8;
-          if (dvbtChannel.BandWidth == 7)
+          if (dvbtChannel.Bandwidth == 7000)
           {
             tuneRequest.Bandwidth = DeOfdmBandwidth.Bandwidth7;
           }
-          else if (dvbtChannel.BandWidth == 6)
+          else if (dvbtChannel.Bandwidth == 6000)
           {
             tuneRequest.Bandwidth = DeOfdmBandwidth.Bandwidth6;
           }

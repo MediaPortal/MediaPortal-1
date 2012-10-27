@@ -1983,7 +1983,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       {
         DVBTChannel ch = channel as DVBTChannel;
         tuningParams.Frequency = (UInt32)ch.Frequency;
-        tuningParams.Bandwidth = (UInt32)ch.BandWidth;
+        tuningParams.Bandwidth = (UInt32)ch.Bandwidth;
         tuningParams.Modulation = 0;  // ???
       }
       else

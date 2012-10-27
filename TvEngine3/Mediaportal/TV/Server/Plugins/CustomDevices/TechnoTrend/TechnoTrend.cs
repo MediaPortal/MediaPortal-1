@@ -39,7 +39,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
   /// </summary>
   public class TechnoTrend : BaseCustomDevice, ICustomTuner, IPowerDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
   {
-
     #region enums
 
     private enum TtDeviceType   // DVB_TYPE
@@ -1807,7 +1806,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
             // Frequency is already specified in kHz (the base unit) so the
             // multiplier is set to 1.
             tuneRequest.FrequencyMultiplier = 1;
-            tuneRequest.Bandwidth = (uint)(1000 * dvbtChannel.BandWidth);
+            tuneRequest.Bandwidth = (uint)dvbtChannel.Bandwidth;
             tuneRequest.Modulation = ModulationType.ModNotSet;
             tuneRequest.SpectralInversion = SpectralInversion.Automatic;
 

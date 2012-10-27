@@ -2,82 +2,82 @@
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <DVBTTuning>
     <Frequency>474000</Frequency>
-    <Bandwidth>8</Bandwidth>
+    <Bandwidth>8000</Bandwidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>482000</Frequency>
-    <Bandwidth>8</Bandwidth>
+    <Bandwidth>8000</Bandwidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>490000</Frequency>
-    <Bandwidth>8</Bandwidth>
+    <Bandwidth>8000</Bandwidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>498000</Frequency>
-    <Bandwidth>8</Bandwidth>
+    <Bandwidth>8000</Bandwidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>506000</Frequency>
-    <Bandwidth>8</Bandwidth>
+    <Bandwidth>8000</Bandwidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>514000</Frequency>
-    <Bandwidth>8</Bandwidth>
+    <Bandwidth>8000</Bandwidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>522000</Frequency>
-    <Bandwidth>8</Bandwidth>
+    <Bandwidth>8000</Bandwidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>530000</Frequency>
-    <Bandwidth>8</Bandwidth>
+    <Bandwidth>8000</Bandwidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>538000</Frequency>
-    <Bandwidth>8</Bandwidth>
+    <Bandwidth>8000</Bandwidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>546000</Frequency>
-    <Bandwidth>8</Bandwidth>
+    <Bandwidth>8000</Bandwidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>554000</Frequency>
-    <Bandwidth>8</Bandwidth>
+    <Bandwidth>8000</Bandwidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>562000</Frequency>
-    <Bandwidth>8</Bandwidth>
+    <Bandwidth>8000</Bandwidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>570000</Frequency>
-    <Bandwidth>8</Bandwidth>
+    <Bandwidth>8000</Bandwidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>578000</Frequency>
-    <Bandwidth>8</Bandwidth>
+    <Bandwidth>8000</Bandwidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>594000</Frequency>
-    <Bandwidth>8</Bandwidth>
+    <Bandwidth>8000</Bandwidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>602000</Frequency>
-    <Bandwidth>8</Bandwidth>
+    <Bandwidth>8000</Bandwidth>
     <Offset>167</Offset>
   </DVBTTuning>
 </ArrayOfDVBTTuning>

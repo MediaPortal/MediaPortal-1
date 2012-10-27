@@ -39,7 +39,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     public DVBTTuning(long p_Frequency, int p_BandWidth, int p_Offset)
     {
       Frequency = p_Frequency;
-      BandWidth = p_BandWidth;
+      Bandwidth = p_BandWidth;
       Offset = p_Offset;
     }
 
@@ -49,9 +49,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     public long Frequency;
 
     /// <summary>
-    /// BandWidth
+    /// Bandwidth
     /// </summary>
-    public int BandWidth;
+    public int Bandwidth;
 
     /// <summary>
     /// Offset
@@ -64,7 +64,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     /// <returns></returns>
     public override string ToString()
     {
-      return String.Format("freq:{0}/{2} bandwidth:{1}", Frequency, BandWidth, Offset);
+      return String.Format("freq:{0}/{2} bandwidth:{1}", Frequency, Bandwidth, Offset);
     }
   }
   
@@ -89,7 +89,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     /// </summary>
     public DVBTChannel()
     {
-      BandWidth = 8;
+      Bandwidth = 8000;
     }
 
     /// <summary>
@@ -106,11 +106,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     /// </summary>
     public DVBTTuning TuningInfo
     {
-      get { return new DVBTTuning(Frequency, BandWidth, Offset); }
+      get { return new DVBTTuning(Frequency, Bandwidth, Offset); }
       set
       {
         Frequency = value.Frequency;
-        BandWidth = value.BandWidth;
+        Bandwidth = value.Bandwidth;
         Offset = value.Offset;
       }
     }
@@ -127,7 +127,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     /// <summary>
     /// gets/sets the bandwidth for this channel
     /// </summary>
-    public int BandWidth
+    public int Bandwidth
     {
       get { return _bandWidth; }
       set { _bandWidth = value; }
@@ -141,7 +141,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     /// </returns>
     public override string ToString()
     {
-      string line = String.Format("DVBT:{0} BandWidth:{1}", base.ToString(), BandWidth);
+      string line = String.Format("DVBT:{0} BandWidth:{1}", base.ToString(), Bandwidth);
       return line;
     }
 
@@ -163,7 +163,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
         return false;
       }
       DVBTChannel ch = obj as DVBTChannel;
-      if (ch.BandWidth != BandWidth)
+      if (ch.Bandwidth != Bandwidth)
       {
         return false;
       }
@@ -195,7 +195,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
         return true;
       }
       return dvbtChannel.Frequency != Frequency ||
-             dvbtChannel.BandWidth != BandWidth;
+             dvbtChannel.Bandwidth != Bandwidth;
     }
   }
 }

@@ -1674,7 +1674,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
         return false;
       }
 
-      hr = _tunerInterface.SetBandwidth(dvbtChannel.BandWidth);
+      hr = _tunerInterface.SetBandwidth(dvbtChannel.Bandwidth / 1000);
       if (hr != 0)
       {
         Log.Debug("TvCardDvbSs2: failed to set bandwidth, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));

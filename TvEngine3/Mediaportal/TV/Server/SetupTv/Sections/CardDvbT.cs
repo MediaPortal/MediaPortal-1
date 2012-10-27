@@ -45,9 +45,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class CardDvbT : SectionSettings
   {
-
-
-
     #region Member variables
 
     private readonly int _cardNumber;
@@ -287,7 +284,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       DVBTChannel tuneChannel = new DVBTChannel();
       tuneChannel.Frequency = Int32.Parse(textBoxFreq.Text);
-      tuneChannel.BandWidth = Int32.Parse(textBoxBandwidth.Text);
+      tuneChannel.Bandwidth = Int32.Parse(textBoxBandwidth.Text);
       return tuneChannel;
     }
 
@@ -354,7 +351,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
               listViewStatus.Items.Clear();
               string line = String.Format("Scan freq:{0} bandwidth:{1} ...", tuneChannel.Frequency,
-                                          tuneChannel.BandWidth);
+                                          tuneChannel.Bandwidth);
               ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
               item.EnsureVisible();
 
@@ -477,13 +474,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           {
             /// try frequency - offset
             tuneChannel.Frequency = curTuning.Frequency - curTuning.Offset;
-            item.Text = String.Format("{0}tp- {1} {2}MHz ", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
+            item.Text = String.Format("{0}tp- {1} {2}kHz ", 1 + index, tuneChannel.Frequency, tuneChannel.Bandwidth);
             channels = ServiceAgents.Instance.ControllerServiceAgent.Scan(_cardNumber, tuneChannel);
             if (channels == null || channels.Length == 0)
             {
               /// try frequency + offset
               tuneChannel.Frequency = curTuning.Frequency + curTuning.Offset;
-              item.Text = String.Format("{0}tp- {1} {2}MHz ", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
+              item.Text = String.Format("{0}tp- {1} {2}kHz ", 1 + index, tuneChannel.Frequency, tuneChannel.Bandwidth);
               channels = ServiceAgents.Instance.ControllerServiceAgent.Scan(_cardNumber, tuneChannel);
             }
           }
@@ -492,12 +489,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           {
             if (ServiceAgents.Instance.ControllerServiceAgent.TunerLocked(_cardNumber) == false)
             {
-              line = String.Format("{0}tp- {1} {2}:No signal", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
+              line = String.Format("{0}tp- {1} {2}:No signal", 1 + index, tuneChannel.Frequency, tuneChannel.Bandwidth);
               item.Text = line;
               item.ForeColor = Color.Red;
               continue;
             }
-            line = String.Format("{0}tp- {1} {2}:Nothing found", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
+            line = String.Format("{0}tp- {1} {2}:Nothing found", 1 + index, tuneChannel.Frequency, tuneChannel.Bandwidth);
             item.Text = line;
             item.ForeColor = Color.Red;
             continue;
@@ -620,7 +617,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             }
             MappingHelper.AddChannelToCard(dbChannel, card, false);
             line = String.Format("{0}tp- {1} {2}:New TV/Radio:{3}/{4} Updated TV/Radio:{5}/{6}", 1 + index,
-                                 tuneChannel.Frequency, tuneChannel.BandWidth, tv.newChannel, radio.newChannel,
+                                 tuneChannel.Frequency, tuneChannel.Bandwidth, tv.newChannel, radio.newChannel,
                                  tv.updChannel, radio.updChannel);
             item.Text = line;
           }
