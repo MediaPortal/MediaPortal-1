@@ -32,6 +32,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using MediaPortal.Common.Utils;
 using System.Collections;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using BroadcastStandard = Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer.BroadcastStandard;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
 {
