@@ -138,12 +138,18 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static void DeleteSchedule(int idSchedule)
     {
+      Schedule scheduleToDelete;
       using (IScheduleRepository scheduleRepository = new ScheduleRepository(true))
       {        
         SetRelatedRecordingsToNull(idSchedule, scheduleRepository);
-        scheduleRepository.Delete<Schedule>(s => s.IdSchedule == idSchedule);
+        scheduleToDelete = scheduleRepository.First<Schedule>(schedule => schedule.IdSchedule == idSchedule);
+        if (scheduleToDelete == null)
+          return;
+
+        scheduleRepository.Delete(scheduleToDelete);
         scheduleRepository.UnitOfWork.SaveChanges();
       }
+      ProgramManagement.SynchProgramStates(new ScheduleBLL(scheduleToDelete));
     }
 
     private static void SetRelatedRecordingsToNull(int idSchedule, IScheduleRepository scheduleRepository)
