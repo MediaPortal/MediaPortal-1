@@ -44,7 +44,7 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     /// </summary>
     /// <param name="direction">The direction.</param>
     /// <param name="numberOfSteps">The number of steps.</param>
-    void DriveMotor(DiSEqCDirection direction, byte numberOfSteps);
+    void DriveMotor(DiseqcDirection direction, byte numberOfSteps);
 
     /// <summary>
     /// Stores the current diseqc motor position

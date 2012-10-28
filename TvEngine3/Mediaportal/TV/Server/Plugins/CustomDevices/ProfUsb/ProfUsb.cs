@@ -38,8 +38,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb
   /// </summary>
   public class ProfUsb : Prof.Prof, ICustomTuner
   {
-
-
     #region enums
 
     private enum BdaExtensionProperty
@@ -327,7 +325,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb
         return;
       }
 
-      // We only need to tweak the modulation for DVB-S/S2 channels.
+      // We only need to tweak the parameters for DVB-S/S2 channels.
       DVBSChannel ch = channel as DVBSChannel;
       if (ch == null)
       {

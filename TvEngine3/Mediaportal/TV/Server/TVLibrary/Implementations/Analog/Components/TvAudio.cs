@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.GraphComponents;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.AudioStream;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -194,7 +193,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             _filterTvAudioTuner = tuner.Filter;
             _variant = TvAudioVariant.TvTuner;
             _hardwareSupportedModes = graph.TvAudio.AudioModes;
-            CheckCapabilities(graph);
             return true;
           }
           return false;

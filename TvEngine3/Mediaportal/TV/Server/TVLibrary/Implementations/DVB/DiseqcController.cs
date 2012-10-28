@@ -373,7 +373,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB
     /// </summary>
     /// <param name="direction">The direction to move in.</param>
     /// <param name="steps">The number of position steps to move.</param>
-    public void DriveMotor(DiSEqCDirection direction, byte steps)
+    public void DriveMotor(DiseqcDirection direction, byte steps)
     {
       Log.Debug("DiSEqC Controller: drive motor {0} for {1} steps", direction.ToString(), steps);
       if (steps == 0)
@@ -384,25 +384,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB
       Stop();
       byte[] cmd = new byte[4];
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
-      if (direction == DiSEqCDirection.West)
+      if (direction == DiseqcDirection.West)
       {
         cmd[1] = (byte)DiseqcAddress.AzimuthPositioner;
         cmd[2] = (byte)DiseqcCommand.DriveWest;
         _currentStepsAzimuth -= steps;
       }
-      else if (direction == DiSEqCDirection.East)
+      else if (direction == DiseqcDirection.East)
       {
         cmd[1] = (byte)DiseqcAddress.AzimuthPositioner;
         cmd[2] = (byte)DiseqcCommand.DriveEast;
         _currentStepsAzimuth += steps;
       }
-      else if (direction == DiSEqCDirection.Up)
+      else if (direction == DiseqcDirection.Up)
       {
         cmd[1] = (byte)DiseqcAddress.ElevationPositioner;
         cmd[2] = (byte)DiseqcCommand.DriveWest;
         _currentStepsElevation -= steps;
       }
-      else if (direction == DiSEqCDirection.Down)
+      else if (direction == DiseqcDirection.Down)
       {
         cmd[1] = (byte)DiseqcAddress.ElevationPositioner;
         cmd[2] = (byte)DiseqcCommand.DriveEast;

@@ -1273,7 +1273,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (checkBox1.Checked == false)
         return;
       //move motor west
-      ServiceAgents.Instance.ControllerServiceAgent.DiSEqCDriveMotor(_cardNumber, DiSEqCDirection.West,
+      ServiceAgents.Instance.ControllerServiceAgent.DiSEqCDriveMotor(_cardNumber, DiseqcDirection.West,
                                               (byte)(1 + comboBoxStepSize.SelectedIndex));
       comboBox1_SelectedIndexChanged(null, null); //tune..;
     }
@@ -1358,7 +1358,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (checkBox1.Checked == false)
         return;
       //move motor east
-      ServiceAgents.Instance.ControllerServiceAgent.DiSEqCDriveMotor(_cardNumber, DiSEqCDirection.East,
+      ServiceAgents.Instance.ControllerServiceAgent.DiSEqCDriveMotor(_cardNumber, DiseqcDirection.East,
                                               (byte)(1 + comboBoxStepSize.SelectedIndex));
       comboBox1_SelectedIndexChanged(null, null); //tune..
     }
@@ -1498,7 +1498,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (checkBox1.Checked == false)
         return;
       //move motor up
-      ServiceAgents.Instance.ControllerServiceAgent.DiSEqCDriveMotor(_cardNumber, DiSEqCDirection.Up,
+      ServiceAgents.Instance.ControllerServiceAgent.DiSEqCDriveMotor(_cardNumber, DiseqcDirection.Up,
                                               (byte)(1 + comboBoxStepSize.SelectedIndex));
     }
 
@@ -1509,7 +1509,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (checkBox1.Checked == false)
         return;
       //move motor up
-      ServiceAgents.Instance.ControllerServiceAgent.DiSEqCDriveMotor(_cardNumber, DiSEqCDirection.Down,
+      ServiceAgents.Instance.ControllerServiceAgent.DiSEqCDriveMotor(_cardNumber, DiseqcDirection.Down,
                                               (byte)(1 + comboBoxStepSize.SelectedIndex));
     }
 

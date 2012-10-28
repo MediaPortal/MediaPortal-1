@@ -36,8 +36,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
   /// </summary>
   public class Omicom : BaseCustomDevice, IDiseqcDevice
   {
-
-
     #region enums
 
     private enum BdaExtensionProperty

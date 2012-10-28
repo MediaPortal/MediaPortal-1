@@ -39,8 +39,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
   /// </summary>
   public class Knc : BaseCustomDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
   {
-  
-
     #region enums
 
     private enum KncCiState

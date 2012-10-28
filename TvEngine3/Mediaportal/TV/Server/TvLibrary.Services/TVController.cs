@@ -63,6 +63,7 @@ using Mediaportal.TV.Server.TVService.Interfaces.CardReservation;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 using RecordingManagement = Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.RecordingManagement;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 
 #endregion
 
@@ -4398,7 +4399,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }      
     }
 
-    public void DiSEqCDriveMotor(int cardId, DiSEqCDirection direction, byte numberOfSteps)
+    public void DiSEqCDriveMotor(int cardId, DiseqcDirection direction, byte numberOfSteps)
     {
       try
       {

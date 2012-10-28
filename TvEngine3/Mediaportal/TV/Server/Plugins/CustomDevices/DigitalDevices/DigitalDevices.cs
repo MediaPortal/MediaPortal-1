@@ -40,8 +40,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
   /// </summary>
   public class DigitalDevices : BaseCustomDevice, IAddOnDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice, ITvServerPlugin
   {
-
-
     #region enums
 
     private enum CamControlMethod

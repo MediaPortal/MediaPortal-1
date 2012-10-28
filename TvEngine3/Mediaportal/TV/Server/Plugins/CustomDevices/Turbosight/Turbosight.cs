@@ -31,7 +31,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
@@ -427,7 +426,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
         }
         catch (Exception ex)
         {
-          Log.Error("Turbosight: failed to load the On_Start_CI function");
+          Log.Error(ex, "Turbosight: failed to load the On_Start_CI function");
           return false;
         }
 

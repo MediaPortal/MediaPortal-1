@@ -1131,7 +1131,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
 
     #endregion
 
-    #region IPidFilterController
+    #region IPidFilterController member
 
     /// <summary>
     /// Configure the PID filter.

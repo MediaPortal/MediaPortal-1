@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities;
 
 namespace Mediaportal.TV.Server.RuleBasedScheduler
 {

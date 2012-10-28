@@ -25,13 +25,12 @@ using System.ServiceModel;
 using Mediaportal.TV.Server.TVDatabase.Presentation;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.AudioStream;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.VideoStream;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 
 namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
 {
@@ -426,7 +425,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <param name="direction">direction</param>
     /// <param name="numberOfSteps">Number of steps</param>
     [OperationContract]
-    void DiSEqCDriveMotor(int cardId, DiSEqCDirection direction, byte numberOfSteps);
+    void DiSEqCDriveMotor(int cardId, DiseqcDirection direction, byte numberOfSteps);
 
     /// <summary>
     /// Stores the current DiSEqC position for the given card

@@ -37,8 +37,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
   /// </summary>
   public class NetUp : BaseCustomDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
   {
-   
-
     #region enums
 
     private enum NetUpIoControl : uint
@@ -152,8 +150,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
     /// </summary>
     private class NetUpCommand
     {
-
-
       #region variables
 
       private static int _operatingSystemIntSize = 0;
@@ -214,7 +210,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
             if (is64bitOs)
             {
               Log.Debug("NetUP: 32 bit process under 64 bit operating system");
-              is64bitOs = true;
             }
             else
             {

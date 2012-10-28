@@ -18,6 +18,8 @@
 
 #endregion
 
+using System.ComponentModel;
+
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
   /// <summary>
@@ -92,6 +94,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// - highest power use
     /// - fastest possible first (re)tune.
     /// </summary>
+    [Description("Always On")]
     AlwaysOn
   }
 
@@ -203,6 +206,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// <summary>
     /// Astoncrypt 2
     /// </summary>
+    [Description("Astoncrypt 2")]
     Astoncrypt2 = 1
+  }
+
+  /// <summary>
+  /// Possible service free-to-air/encrypted transmission modes.
+  /// </summary>
+  public enum EncryptionMode
+  {
+    /// <summary>
+    /// Always encrypted.
+    /// </summary>
+    Encrypted,
+    /// <summary>
+    /// Sometimes free-to-air; sometimes encrypted.
+    /// </summary>
+    Mixed,
+    /// <summary>
+    /// Always free-to-air.
+    /// </summary>
+    Clear
   }
 }

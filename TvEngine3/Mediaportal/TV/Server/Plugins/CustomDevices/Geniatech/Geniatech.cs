@@ -36,7 +36,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Geniatech
   /// </summary>
   public class Geniatech : Conexant.Conexant, IPowerDevice
   {
-
     #region enums
 
     private new enum BdaExtensionProperty

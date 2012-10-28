@@ -2279,7 +2279,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
 
     #endregion
 
-    #region IPidFilterController
+    #region IPidFilterController member
 
     /// <summary>
     /// Configure the PID filter.

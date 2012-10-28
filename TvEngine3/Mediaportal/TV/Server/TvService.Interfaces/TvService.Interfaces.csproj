@@ -46,7 +46,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CardHandler\IAudioStreams.cs" />
     <Compile Include="CardHandler\ICardTuner.cs" />
     <Compile Include="CardHandler\IChannelScanning.cs" />
     <Compile Include="CardHandler\IDisEqcManagement.cs" />

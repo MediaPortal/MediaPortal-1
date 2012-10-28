@@ -37,8 +37,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Microsoft
   /// </summary>
   public class Microsoft : BaseCustomDevice, IPidFilterController, IDiseqcDevice
   {
-
-
     #region constants
 
     private const int InstanceSize = 32;    // The size of a property instance (KSP_NODE) parameter.
@@ -403,7 +401,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Microsoft
 
     #endregion
 
-    #region IPidFilterController
+    #region IPidFilterController member
 
     /// <summary>
     /// Configure the PID filter.

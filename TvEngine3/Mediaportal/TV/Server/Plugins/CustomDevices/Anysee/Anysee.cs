@@ -28,7 +28,6 @@ using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
@@ -836,7 +835,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
           }
           catch (Exception ex)
           {
-            Log.Error("Anysee: failed to load the CI_Control function");
+            Log.Error(ex, "Anysee: failed to load the CI_Control function");
             return;
           }
 

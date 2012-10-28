@@ -62,7 +62,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// </summary>
     public void Reset()
     {
-
       IDiseqcController controller = _cardHandler.Card.DiseqcController;
       if (controller == null)
         return;
@@ -74,7 +73,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// </summary>
     public void StopMotor()
     {
-
       IDiseqcController controller = _cardHandler.Card.DiseqcController;
       if (controller == null)
         return;
@@ -86,8 +84,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// </summary>
     public void SetEastLimit()
     {
-
-
       IDiseqcController controller = _cardHandler.Card.DiseqcController;
       if (controller == null)
         return;
@@ -99,8 +95,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// </summary>
     public void SetWestLimit()
     {
-
-
       IDiseqcController controller = _cardHandler.Card.DiseqcController;
       if (controller == null)
         return;
@@ -113,8 +107,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// <param name="onOff">if set to <c>true</c> [on off].</param>
     public void EnableEastWestLimits(bool onOff)
     {
-
-
       IDiseqcController controller = _cardHandler.Card.DiseqcController;
       if (controller == null)
         return;
@@ -126,10 +118,8 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// </summary>
     /// <param name="direction">The direction.</param>
     /// <param name="numberOfSteps">The number of steps.</param>
-    public void DriveMotor(DiSEqCDirection direction, byte numberOfSteps)
+    public void DriveMotor(DiseqcDirection direction, byte numberOfSteps)
     {
-
-
       IDiseqcController controller = _cardHandler.Card.DiseqcController;
       if (controller == null)
         return;
@@ -142,8 +132,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// <param name="position">The position.</param>
     public void StoreCurrentPosition(byte position)
     {
-
-
       IDiseqcController controller = _cardHandler.Card.DiseqcController;
       if (controller == null)
         return;
@@ -155,7 +143,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// </summary>
     public void GotoReferencePosition()
     {
-
       IDiseqcController controller = _cardHandler.Card.DiseqcController;
       if (controller == null)
         return;
@@ -168,7 +155,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// <param name="position">The position.</param>
     public void GotoStoredPosition(byte position)
     {
-
       IDiseqcController controller = _cardHandler.Card.DiseqcController;
       if (controller == null)
         return;

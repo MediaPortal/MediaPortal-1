@@ -341,7 +341,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TeVii
           return TeViiFecRate.Rate8_9;
         case BinaryConvolutionCodeRate.Rate9_10:
           return TeViiFecRate.Rate9_10;
-        case BinaryConvolutionCodeRate.RateMax:
         default:
           return TeViiFecRate.Auto;
       }

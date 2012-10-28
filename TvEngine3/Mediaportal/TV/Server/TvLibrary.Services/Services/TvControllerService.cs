@@ -29,6 +29,7 @@ using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 
 namespace Mediaportal.TV.Server.TVLibrary.Services
 {
@@ -504,7 +505,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     /// <param name="cardId">card id</param>
     /// <param name="direction">direction</param>
     /// <param name="numberOfSteps">Number of steps</param>
-    public void DiSEqCDriveMotor(int cardId, DiSEqCDirection direction, byte numberOfSteps)
+    public void DiSEqCDriveMotor(int cardId, DiseqcDirection direction, byte numberOfSteps)
     {
       Service.DiSEqCDriveMotor(cardId, direction, numberOfSteps);
     }
