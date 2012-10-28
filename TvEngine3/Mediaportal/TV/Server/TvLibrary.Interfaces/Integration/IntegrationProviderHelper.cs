@@ -38,7 +38,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Integration
       // If there is already a provider registered, use this instance
       if (GlobalServiceProvider.Get<IIntegrationProvider>() != null)
         return;
-      IWindsorContainer container = GlobalServiceProvider.Instance.Get<IWindsorContainer>();
+      IWindsorContainer container = GlobalServiceProvider.Instance.Get<IWindsorContainer>() ?? new WindsorContainer(new XmlInterpreter());
       var assemblyFilter = new AssemblyFilter(searchPath, "*.Integration.*.dll");
       container.Register(AllTypes.FromAssemblyInDirectory(assemblyFilter).BasedOn<IIntegrationProvider>().WithServiceBase().LifestyleSingleton());
       GlobalServiceProvider.Add(container.Resolve<IIntegrationProvider>());
