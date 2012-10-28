@@ -2349,7 +2349,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   /// <remarks>
   /// Ideally this class should be made read-only like <see cref="Cat"/> and <see cref="Pmt"/>.
   /// </remarks>
-  public class PmtElementaryStream : LogProvider
+  public class PmtElementaryStream 
   {
     #region variables
 
@@ -2464,12 +2464,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     public void Dump()
     {
-      Log.DebugFormat("Elementary Stream: dump...");
-      Log.DebugFormat("  stream type         = {0}", _streamType);
-      Log.DebugFormat("  PID                 = {0} (0x{0:x})", _pid);
-      Log.DebugFormat("  length              = {0}", _esInfoLength);
-      Log.DebugFormat("  logical stream type = {0}", _logicalStreamType);
-      Log.DebugFormat("  {0} descriptor(s)...", _descriptors.Count + _caDescriptors.Count);
+      Log.Debug("Elementary Stream: dump...");
+      Log.Debug("  stream type         = {0}", _streamType);
+      Log.Debug("  PID                 = {0} (0x{0:x})", _pid);
+      Log.Debug("  length              = {0}", _esInfoLength);
+      Log.Debug("  logical stream type = {0}", _logicalStreamType);
+      Log.Debug("  {0} descriptor(s)...", _descriptors.Count + _caDescriptors.Count);
       foreach (IDescriptor d in _descriptors)
       {
         d.Dump();

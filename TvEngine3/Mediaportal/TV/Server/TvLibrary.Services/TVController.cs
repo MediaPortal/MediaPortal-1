@@ -52,6 +52,7 @@ using Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Scheduler;
@@ -158,7 +159,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           initConditionalAccess = card.IsConditionalAccessSupported;
         }
         else
-        {
+        {          
           Log.Debug("InitConditionalAccess: ValidateTvControllerParams failed");         
         }                
       }

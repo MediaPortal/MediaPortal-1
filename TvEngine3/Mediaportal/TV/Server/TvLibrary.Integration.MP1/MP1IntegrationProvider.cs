@@ -25,12 +25,13 @@ namespace TvLibrary.Integration.MP1
   public class MP1IntegrationProvider: IIntegrationProvider
   {
     protected readonly IPathManager _pathManager = new PathManager();
-    protected ILogger _logger;
+    protected ILogger _logger;    
 
-    public MP1IntegrationProvider ()
+    public MP1IntegrationProvider (Castle.Core.Logging.ILogger logger)
     {
-      _logger = new Log4NetLogger(_pathManager.GetPath(@"<LOG>"));
+      _logger = new Log4NetLogger(logger);
     }
+
 
     public IPathManager PathManager
     {

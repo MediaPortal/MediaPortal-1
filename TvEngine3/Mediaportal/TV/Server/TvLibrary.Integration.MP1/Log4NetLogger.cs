@@ -28,38 +28,18 @@ using log4net;
 
 namespace TvLibrary.Integration.MP1
 {
-  public class Log4NetLogger:ILogger
+  public class Log4NetLogger : ILogger
   {
-    /// <summary>
-    /// Creates a new <see cref="Log4NetLogger"/> instance and initializes it with the given parameters.
-    /// </summary>
-    /// <param name="logPath">Path where the logfiles should be written to.</param>
-    public Log4NetLogger(string logPath)
-    {
-      XmlDocument xmlDoc = new XmlDocument();
-      using (Stream stream = new FileStream(Application.ExecutablePath + ".config", FileMode.Open, FileAccess.Read))
-        xmlDoc.Load(stream);
-      XmlNodeList nodeList = xmlDoc.SelectNodes("configuration/log4net/appender/file");
-      foreach (XmlNode node in nodeList)
-        if (node.Attributes != null)
-          foreach (XmlAttribute attribute in node.Attributes)
-            if (attribute.Name.Equals("value"))
-            {
-              attribute.Value = Path.Combine(logPath, Path.GetFileName(attribute.Value));
-              break;
-            }
+    private Castle.Core.Logging.ILogger _logger;
 
-      using (MemoryStream stream = new MemoryStream())
-      {
-        xmlDoc.Save(stream);
-        stream.Seek(0, SeekOrigin.Begin);
-        log4net.Config.XmlConfigurator.Configure(stream);
-      }
+    public Log4NetLogger(Castle.Core.Logging.ILogger logger)
+    {
+      _logger = logger;
     }
 
-    protected ILog GetLogger
+    protected Castle.Core.Logging.ILogger GetLogger
     {
-      get { return LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType); }
+      get { return _logger; }
     }
     /// <summary>
     /// Writes a debug message to the log.

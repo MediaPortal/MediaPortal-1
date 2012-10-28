@@ -25,6 +25,9 @@ using System.Configuration;
 using System.Reflection;
 using System.Threading;
 using System.Diagnostics;
+using Castle.Windsor;
+using Castle.Windsor.Configuration.Interpreters;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
@@ -101,7 +104,9 @@ namespace Mediaportal.TV.Server.SetupTV
     public static void Main(string[] arguments)
     {
       // Initialize hosting environment
-      IntegrationProviderHelper.Register();
+      IWindsorContainer container = new WindsorContainer(new XmlInterpreter());
+      GlobalServiceProvider.Instance.Add<IWindsorContainer>(container);
+      IntegrationProviderHelper.Register();      
 
       if (System.IO.File.Exists("c:\\debug_setuptv.txt"))
       {

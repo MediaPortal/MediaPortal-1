@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using Castle.MicroKernel.Registration;
+using Castle.Windsor;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -68,7 +69,7 @@ namespace Mediaportal.TV.Server.Plugins.Base
       {
         
         var assemblyFilter = new AssemblyFilter("plugins");
-        WindsorService.Register(
+        GlobalServiceProvider.Instance.Get<IWindsorContainer>().Register(
         AllTypes.FromAssemblyInDirectory(assemblyFilter).                        
             BasedOn<ITvServerPlugin>().
             If(t => IsPluginCompatible(t)).            

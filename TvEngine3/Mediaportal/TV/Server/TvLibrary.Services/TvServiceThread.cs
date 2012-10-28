@@ -6,6 +6,8 @@ using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Threading;
+using Castle.Windsor;
+using Castle.Windsor.Configuration.Interpreters;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.Base;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
@@ -44,8 +46,11 @@ namespace Mediaportal.TV.Server.TVLibrary
       applicationPath = System.IO.Path.GetDirectoryName(applicationPath);
       System.IO.Directory.SetCurrentDirectory(applicationPath);
 
+      IWindsorContainer container = new WindsorContainer(new XmlInterpreter());
+      GlobalServiceProvider.Instance.Add<IWindsorContainer>(container);
+
       _powerEventHandlers = new List<PowerEventHandler>();
-      GlobalServiceProvider.Instance.Add<IPowerEventHandler>(this);
+      GlobalServiceProvider.Instance.Add<IPowerEventHandler>(this);      
 
       // Initialize hosting environment
       IntegrationProviderHelper.Register();
