@@ -33,7 +33,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using LNB_Source = DirectShowLib.BDA.LNB_Source;
@@ -1654,14 +1653,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
               }
               if (epgChannel == null)
               {
-                // Use of DVBSChannel is arbitrary - we just need something to hold the three IDs. In my opinion
-                // they should be properties on EpgChannel, but doing that could have broken too many plugins.
-                DVBSChannel ch = new DVBSChannel();
-                ch.NetworkId = (int)networkid;
-                ch.TransportId = (int)transportid;
-                ch.ServiceId = (int)channelid;
-                epgChannel = new EpgChannel();
-                epgChannel.Channel = ch;
+                // We need to use a matching channel type per card, because tuning details will be looked up with cardtype as filter.
+                DVBBaseChannel channel = CreateChannel();
+                channel.NetworkId = (int)networkid;
+                channel.TransportId = (int)transportid;
+                channel.ServiceId = (int)channelid;
+                epgChannel = new EpgChannel { Channel = channel };
                 //Log.Log.Epg("dvb: start filtering channel NID {0} TID {1} SID{2}", dvbChan.NetworkId, dvbChan.TransportId, dvbChan.ServiceId);
                 if (FilterOutEPGChannel((ushort)networkid, (ushort)transportid, (ushort)channelid) == false)
                 {
@@ -1703,14 +1700,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
             for (uint x = 0; x < channelCount; ++x)
             {
               _interfaceEpgGrabber.GetEPGChannel(x, ref networkid, ref transportid, ref serviceid);
-              // Use of DVBSChannel is arbitrary - we just need something to hold the three IDs. In my opinion
-              // they should be properties on EpgChannel, but doing that could have broken too many plugins.
-              DVBSChannel ch = new DVBSChannel();
-              ch.NetworkId = networkid;
-              ch.TransportId = transportid;
-              ch.ServiceId = serviceid;
-              EpgChannel epgChannel = new EpgChannel();
-              epgChannel.Channel = ch;
+              // We need to use a matching channel type per card, because tuning details will be looked up with cardtype as filter.
+              DVBBaseChannel channel = CreateChannel();
+              channel.NetworkId = networkid;
+              channel.TransportId = transportid;
+              channel.ServiceId = serviceid;
+              EpgChannel epgChannel = new EpgChannel { Channel = channel };
               uint eventCount;
               _interfaceEpgGrabber.GetEPGEventCount(x, out eventCount);
               for (uint i = 0; i < eventCount; ++i)
@@ -1848,6 +1843,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         }
       }
     }
+
+    /// <summary>
+    /// Creates a channel that matches to the card type (DVB-C/-S-/-T...).
+    /// </summary>
+    /// <returns></returns>
+    protected abstract DVBBaseChannel CreateChannel();
 
     /// <summary>
     /// Check if the EPG data found in a scan should not be kept.

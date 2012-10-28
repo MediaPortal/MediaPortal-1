@@ -31,7 +31,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
@@ -1499,6 +1498,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       _signalQuality = quality;
       _signalLevel = level;
       _lastSignalUpdate = DateTime.Now;
+    }
+
+    protected override DVBBaseChannel CreateChannel()
+    {
+      if (_tunerType == CardType.DvbC) return new DVBCChannel();
+      if (_tunerType == CardType.DvbS) return new DVBSChannel();
+      if (_tunerType == CardType.DvbT) return new DVBTChannel();
+      return new ATSCChannel();
     }
 
     #region tuning & scanning
