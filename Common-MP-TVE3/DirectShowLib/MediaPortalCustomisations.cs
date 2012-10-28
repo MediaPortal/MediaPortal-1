@@ -19,12 +19,13 @@
 #endregion
 
 using System;
+using System.ComponentModel;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Text;
 using DirectShowLib.BDA;
 using DirectShowLib.Dvd;
-using System.Drawing;
-using System.Text;
 
 /// <summary>
 /// This file holds the MediaPortal and TV Server interface customisations
@@ -37,6 +38,59 @@ using System.Text;
 
 namespace DirectShowLib
 {
+  /// <summary>
+  /// From AnalogVideoStandard
+  /// </summary>
+  [Flags]
+  public enum AnalogVideoStandard
+  {
+    None = 0x00000000,
+    [Description("NTSC M")]
+    NTSC_M = 0x00000001,
+    [Description("NTSC J")]
+    NTSC_M_J = 0x00000002,
+    [Description("NTSC 4.43")]
+    NTSC_433 = 0x00000004,
+    [Description("PAL B")]
+    PAL_B = 0x00000010,
+    [Description("PAL D")]
+    PAL_D = 0x00000020,
+    [Description("PAL G")]
+    PAL_G = 0x00000040,
+    [Description("PAL H")]
+    PAL_H = 0x00000080,
+    [Description("PAL I")]
+    PAL_I = 0x00000100,
+    [Description("PAL M")]
+    PAL_M = 0x00000200,
+    [Description("PAL N")]
+    PAL_N = 0x00000400,
+    [Description("PAL 60")]
+    PAL_60 = 0x00000800,
+    [Description("SECAM B")]
+    SECAM_B = 0x00001000,
+    [Description("SECAM D")]
+    SECAM_D = 0x00002000,
+    [Description("SECAM G")]
+    SECAM_G = 0x00004000,
+    [Description("SECAM H")]
+    SECAM_H = 0x00008000,
+    [Description("SECAM K")]
+    SECAM_K = 0x00010000,
+    [Description("SECAM K1")]
+    SECAM_K1 = 0x00020000,
+    [Description("SECAM L")]
+    SECAM_L = 0x00040000,
+    [Description("SECAM L1")]
+    SECAM_L1 = 0x00080000,
+    [Description("PAL N Combo")]
+    PAL_N_COMBO = 0x00100000,
+
+    NTSCMask = 0x00000007,
+    PALMask = 0x00100FF0,
+    SECAMMask = 0x000FF000
+  }
+
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("70423839-6ACC-4b23-B079-21DBF08156A5"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -201,6 +255,101 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
     int get_FrequencyMultiplier([Out] out int pulMultiplier);
+  }
+}
+
+  #endregion
+
+  #region BDATypes.cs
+
+namespace DirectShowLib.BDA
+{
+  /// <summary>
+  /// From RollOff
+  /// </summary>
+  public enum RollOff
+  {
+    [Description("Not Set")]
+    NotSet = -1,
+    [Description("Not Defined")]
+    NotDefined = 0,
+    [Description("0.20")]
+    Twenty = 1,
+    [Description("0.25")]
+    TwentyFive,
+    [Description("0.35")]
+    ThirtyFive
+  }
+
+  /// <summary>
+  /// From Pilot
+  /// </summary>
+  public enum Pilot
+  {
+    [Description("Not Set")]
+    NotSet = -1,
+    [Description("Not Defined")]
+    NotDefined = 0,
+    Off = 1,
+    On
+  }
+
+  /// <summary>
+  /// From BinaryConvolutionCodeRate
+  /// </summary>
+  public enum BinaryConvolutionCodeRate
+  {
+    [Description("Not Set")]
+    RateNotSet = -1,
+    [Description("Not Defined")]
+    RateNotDefined = 0,
+    [Description("1/2")]
+    Rate1_2 = 1,
+    [Description("2/3")]
+    Rate2_3,
+    [Description("3/4")]
+    Rate3_4,
+    [Description("3/5")]
+    Rate3_5,
+    [Description("4/5")]
+    Rate4_5,
+    [Description("5/6")]
+    Rate5_6,
+    [Description("5/11")]
+    Rate5_11,
+    [Description("7/8")]
+    Rate7_8,
+    [Description("1/4")]
+    Rate1_4,
+    [Description("1/3")]
+    Rate1_3,
+    [Description("2/5")]
+    Rate2_5,
+    [Description("6/7")]
+    Rate6_7,
+    [Description("8/9")]
+    Rate8_9,
+    [Description("9/10")]
+    Rate9_10
+  }
+
+  /// <summary>
+  /// From Polarisation
+  /// </summary>
+  public enum Polarisation
+  {
+    [Description("Not Set")]
+    NotSet = -1,
+    [Description("Not Defined")]
+    NotDefined = 0,
+    [Description("Linear Horizontal")]
+    LinearH = 1,
+    [Description("Linear Vertical")]
+    LinearV,
+    [Description("Circular Left")]
+    CircularL,
+    [Description("Circular Right")]
+    CircularR
   }
 }
 

@@ -644,6 +644,9 @@ namespace DirectShowLib
     Changed = 0x0001
   }
 
+  /*
+   * Redefined in MediaPortalCustomisations.cs.
+   * 
   /// <summary>
   /// From AnalogVideoStandard
   /// </summary>
@@ -675,7 +678,7 @@ namespace DirectShowLib
     NTSCMask = 0x00000007,
     PALMask = 0x00100FF0,
     SECAMMask = 0x000FF000
-  }
+  }*/
 
   /// <summary>
   /// From TunerInputType
