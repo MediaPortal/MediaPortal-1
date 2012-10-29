@@ -167,6 +167,10 @@ namespace OSInfo
       ///</summary>
       Windows7,
       ///<summary>
+      /// Windows 8
+      ///</summary>
+      Windows8,
+      ///<summary>
       /// Windows 2003 Server
       ///</summary>
       Windows2003,
@@ -181,7 +185,11 @@ namespace OSInfo
       ///<summary>
       /// Windows 2008 R2 Server
       ///</summary>
-      Windows2008R2
+      Windows2008R2,
+      ///<summary>
+      /// Windows 8
+      ///</summary>
+      Windows2012
     }
 
     #endregion
@@ -453,6 +461,9 @@ namespace OSInfo
                     case 1:
                       osName = OSProductType == NT_WORKSTATION ? "Windows 7" : "Windows 2008 R2";
                       break;
+                    case 2:
+                      osName = OSProductType == NT_WORKSTATION ? "Windows 8" : "Windows 2012";
+                      break;
                   }
                   break;
                 }
@@ -484,6 +495,8 @@ namespace OSInfo
           return OSProductType == NT_WORKSTATION ? OSList.WindowsVista : OSList.Windows2008;
         case 61:
           return OSProductType == NT_WORKSTATION ? OSList.Windows7 : OSList.Windows2008R2;
+        case 62:
+          return OSProductType == NT_WORKSTATION ? OSList.Windows8 : OSList.Windows2012;
       }
       return OSList.Windows2000andPrevious;
     }
@@ -524,10 +537,12 @@ namespace OSInfo
           minSp = 0;
           minBuild = 7600;
           break;
+        case OSList.Windows8:
         case OSList.Windows2003:
         case OSList.Windows2003R2:
         case OSList.Windows2008:
         case OSList.Windows2008R2:
+        case OSList.Windows2012:
           return OsSupport.NotSupported;
         default:
           // Windows2000andPrevious and WindowsXp64
