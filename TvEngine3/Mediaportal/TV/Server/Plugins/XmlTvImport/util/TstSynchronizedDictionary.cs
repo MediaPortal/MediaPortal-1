@@ -46,7 +46,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.util
     /// </summary>
     private TstDictionary Wrapped
     {
-      get { return Wrapped; }
+      get { return wrapped; }
     }
 
     /// <summary>
