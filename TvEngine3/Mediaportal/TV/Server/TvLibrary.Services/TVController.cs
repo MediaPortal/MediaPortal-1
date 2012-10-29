@@ -76,7 +76,7 @@ namespace Mediaportal.TV.Server.TVLibrary
   /// correct slave servers
   /// </summary>
   public class 
-      TvController : MarshalByRefObject, IInternalControllerService, IDisposable, ITvServerEvent, ICiMenuCallbacks
+      TvController : IInternalControllerService, IDisposable, ITvServerEvent, ICiMenuCallbacks
   {
 
 
@@ -753,14 +753,6 @@ namespace Mediaportal.TV.Server.TVLibrary
 
     #endregion
 
-    #region MarshalByRefObject overrides
-
-    public override object InitializeLifetimeService()
-    {
-      return null;
-    }
-
-    #endregion
 
     #region IDisposable Members
 

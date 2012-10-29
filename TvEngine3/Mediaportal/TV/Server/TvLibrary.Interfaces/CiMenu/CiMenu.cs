@@ -15,7 +15,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu
   /// derived from MarshalByRefObject for passing through remoting
   /// </summary>
   [Serializable]
-  public class CiMenu : MarshalByRefObject
+  public class CiMenu 
   {
     #region private vars
 
@@ -153,13 +153,5 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu
       _menuState = CiMenuState.Request;
     }
 
-    /// <summary>
-    /// override to avoid timeout ?
-    /// </summary>
-    /// <returns></returns>
-    public override object InitializeLifetimeService()
-    {
-      return null;
-    }
   }
 }

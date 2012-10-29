@@ -44,7 +44,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
   /// <summary>
   /// PowerScheduler: tvservice plugin which controls power management
   /// </summary>
-  public class PowerScheduler : MarshalByRefObject, IPowerScheduler, IPowerController
+  public class PowerScheduler : IPowerScheduler, IPowerController
   {
 
 
@@ -770,19 +770,6 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
           Unregister(hdl);
         }
       }
-    }
-
-    #endregion
-
-    #region MarshalByRefObject overrides
-
-    /// <summary>
-    /// Make sure SAO never expires
-    /// </summary>
-    /// <returns></returns>
-    public override object InitializeLifetimeService()
-    {
-      return null;
     }
 
     #endregion
