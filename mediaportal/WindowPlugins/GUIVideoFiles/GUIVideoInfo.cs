@@ -143,7 +143,7 @@ namespace MediaPortal.GUI.Video
       }
 
       // Check for a fake movie (comes from EPG)
-      if (_currentMovie.ID == -1)
+      if (_currentMovie.ID < 1)
       {
         _addToDatabase = false;
         _currentMovie.LastUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
