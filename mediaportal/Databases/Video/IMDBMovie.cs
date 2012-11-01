@@ -955,6 +955,18 @@ namespace MediaPortal.Video.Database
               mList.Clear();
               rndMovieId = movieDetails.ID;
             }
+            else
+            {
+              // User fanart (only for videos which do not have movie info in db -> not scanned)
+              try
+              {
+                GetUserFanart(item, ref info);
+              }
+              catch (Exception ex)
+              {
+                Log.Error("IMDBMovie Set user fanart file property error: {0}", ex.Message);
+              }
+            }
           }
 
           info.ID = rndMovieId;
@@ -1083,6 +1095,14 @@ namespace MediaPortal.Video.Database
         Util.Utils.RemoveStackEndings(ref strFilename);
         faFile = strPath + @"\" + Util.Utils.GetFilename(strFilename, true) + "-fanart.jpg";
         faFiles.Add(faFile);
+        faFile = strPath + @"\" + Util.Utils.GetFilename(strFilename, true) + "-backdrop.jpg";
+        faFiles.Add(faFile);
+        string cleanPath = System.IO.Path.GetFileName(strPath);
+        Util.Utils.RemoveStackEndings(ref cleanPath);
+        faFile = strPath + @"\" + cleanPath + "-fanart.jpg";
+        faFiles.Add(faFile);
+        faFile = strPath + @"\" + cleanPath + "-backdrop.jpg";
+        faFiles.Add(faFile);
 
         foreach (string file in faFiles)
         {
@@ -1096,9 +1116,11 @@ namespace MediaPortal.Video.Database
       else if (item.IsFolder && !VirtualDirectories.Instance.Movies.IsRootShare(item.Path) &&
                Util.Utils.IsFolderDedicatedMovieFolder(strPath)) // folder & dedicated movie folder
       {
-        string cleanPath = item.Path.Substring(item.Path.LastIndexOf(@"\") + 1);
+        string cleanPath = System.IO.Path.GetFileName(item.Path);
         Util.Utils.RemoveStackEndings(ref cleanPath);
         faFile = strPath + @"\" + cleanPath + "-fanart.jpg";
+        faFiles.Add(faFile);
+        faFile = strPath + @"\" + cleanPath + "-backdrop.jpg";
         faFiles.Add(faFile);
 
         foreach (string file in faFiles)
@@ -1226,7 +1248,7 @@ namespace MediaPortal.Video.Database
 
             #region Genre
 
-            XmlNodeList genres = nodeMovie.SelectNodes("genres/genre");
+            XmlNodeList genres = nodeMovie.SelectNodes("genre");
 
             foreach (XmlNode nodeGenre in genres)
             {
@@ -1242,11 +1264,18 @@ namespace MediaPortal.Video.Database
 
             if (string.IsNullOrEmpty(genre))
             {
-              XmlNode nodeGenre = nodeMovie.SelectSingleNode("genre");
+              genres = nodeMovie.SelectNodes("genres/genre");
 
-              if (nodeGenre != null)
+              foreach (XmlNode nodeGenre in genres)
               {
-                genre = nodeGenre.InnerText;
+                if (nodeGenre.InnerText != null)
+                {
+                  if (genre.Length > 0)
+                  {
+                    genre += " / ";
+                  }
+                  genre += nodeGenre.InnerText;
+                }
               }
             }
 

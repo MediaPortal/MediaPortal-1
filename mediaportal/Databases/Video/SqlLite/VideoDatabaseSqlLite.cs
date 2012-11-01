@@ -5158,6 +5158,23 @@ namespace MediaPortal.Video.Database
               }
             }
 
+            if (string.IsNullOrEmpty(genre))
+            {
+              genres = nodeMovie.SelectNodes("genres/genre");
+
+              foreach (XmlNode nodeGenre in genres)
+              {
+                if (nodeGenre.InnerText != null)
+                {
+                  if (genre.Length > 0)
+                  {
+                    genre += " / ";
+                  }
+                  genre += nodeGenre.InnerText;
+                }
+              }
+            }
+
             movie.Genre = genre;
             
             #endregion

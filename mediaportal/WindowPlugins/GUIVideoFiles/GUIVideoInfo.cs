@@ -370,6 +370,7 @@ namespace MediaPortal.GUI.Video
       if (control == spinImages)
       {
         int item = spinImages.Value - 1;
+        
         if (item < 0 || item >= _coverArtUrls.Length)
         {
           item = 0;
@@ -468,6 +469,7 @@ namespace MediaPortal.GUI.Video
 
         string selectedItem = spinDisc.GetLabel();
         int idMovie = _currentMovie.ID;
+        
         if (idMovie > 0)
         {
           if (selectedItem != "HD" && selectedItem != "share")
@@ -525,10 +527,12 @@ namespace MediaPortal.GUI.Video
       }
 
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+      
       if (dlg == null)
       {
         return;
       }
+      
       dlg.Reset();
       dlg.SetHeading(498); // menu
       
@@ -545,16 +549,15 @@ namespace MediaPortal.GUI.Video
       dlg.AddLocalizedString(1262); // Update grabber scripts
       dlg.AddLocalizedString(1307); // Update internal grabber scripts
       dlg.AddLocalizedString(1263); // Set default grabber
-
       // Fanart refresh
       Profile.Settings xmlreader = new MPSettings();
+      
       if (xmlreader.GetValueAsBool("moviedatabase", "usefanart", false))
       {
         dlg.AddLocalizedString(1298); //Refresh fanart
       }
 
       dlg.AddLocalizedString(1304); //Export to nfo file
-
       // Show dialog menu
       dlg.DoModal(GetID);
 
@@ -562,6 +565,7 @@ namespace MediaPortal.GUI.Video
       {
         return;
       }
+      
       switch (dlg.SelectedId)
       {
         case 1297: // Refresh actor info
@@ -990,12 +994,13 @@ namespace MediaPortal.GUI.Video
       }
 
       GetStringFromKeyboard(ref movieTitle);
-      
+
       if (string.IsNullOrEmpty(movieTitle) || movieTitle == _currentMovie.Title)
+      {
         return;
-      
+      }
+
       movieTitle = movieTitle.Trim();
-      
       // Rename cover thumbs
       string oldTitleExt = _currentMovie.Title + "{" + _currentMovie.ID + "}";
       string newTitleExt = movieTitle + "{" + _currentMovie.ID + "}"; 
@@ -1603,6 +1608,7 @@ namespace MediaPortal.GUI.Video
         // Notify user that new fanart download failed
         GUIDialogNotify dlgNotify =
           (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
+        
         if (null != dlgNotify)
         {
           dlgNotify.SetHeading(GUILocalizeStrings.Get(1298));
@@ -1635,6 +1641,11 @@ namespace MediaPortal.GUI.Video
     {
       try
       {
+        if (_currentMovie.ID > 0)
+        {
+          _currentMovie.UserFanart = string.Empty;
+        }
+
         Profile.Settings xmlreader = new MPSettings();
         int faCount = xmlreader.GetValueAsInt("moviedatabase", "fanartnumber", 1);
         FanArt fa = new FanArt();
@@ -1645,6 +1656,7 @@ namespace MediaPortal.GUI.Video
         // Notify user that new fanart are downloaded
         GUIDialogNotify dlgNotify =
           (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
+        
         if (null != dlgNotify)
         {
           dlgNotify.SetHeading(GUILocalizeStrings.Get(1298));
