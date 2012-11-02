@@ -1,5 +1,6 @@
 ﻿using System;
 using MediaPortal.GUI.Library;
+using TvDatabase;
 using WindowPlugins;
 
 namespace TvPlugin
@@ -14,24 +15,39 @@ namespace TvPlugin
     /// <returns>The spoken date label</returns>
     protected static string GetSpokenViewDate(DateTime aStartTime)
     {
-      var thisMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+      DateTime now = DateTime.Now;
+      DateTime today = now.Date;
+
+      var thisMonth = new DateTime(today.Year, today.Month, 1);
       var lastMonth = thisMonth.AddMonths(-1);
 
-      if (DateTime.Today.Equals(aStartTime.Date))
+      DayOfWeek firstDayOfWeek = WeekEndTool.GetFirstWorkingDay();
+      DateTime firstDayOfThisWeek = today;
+      while (firstDayOfThisWeek.DayOfWeek != firstDayOfWeek)
+        firstDayOfThisWeek = firstDayOfThisWeek.AddDays(-1);
+      int daysToStartOfWeek = (aStartTime.Date - firstDayOfThisWeek).Days;
+      int daysToStartOfLastWeek = daysToStartOfWeek + 7;
+
+      if (now < aStartTime)
+        return GUILocalizeStrings.Get(6095); // "Future"
+      else if (today.Equals(aStartTime.Date))
         return GUILocalizeStrings.Get(6030); // "Today"
-      else if (DateTime.Today.Subtract(aStartTime) < new TimeSpan(1, 0, 0, 0))
+      else if (today.Equals(aStartTime.AddDays(1).Date))
         return GUILocalizeStrings.Get(6040); // "Yesterday"
-      else if (DateTime.Today.Subtract(aStartTime) < new TimeSpan(2, 0, 0, 0))
-        return GUILocalizeStrings.Get(6041); // "Two days ago"
+      else if (0 <= daysToStartOfWeek && daysToStartOfWeek < 5) // current week excluding today and yesterday
+        return GUILocalizeStrings.Get(6055); // "Earlier this week";
+      else if (0 <= daysToStartOfLastWeek && daysToStartOfLastWeek < 7)
+        return GUILocalizeStrings.Get(6056); // "Last week"
       else if (thisMonth.Equals(new DateTime(aStartTime.Year, aStartTime.Month, 1)))
-        return GUILocalizeStrings.Get(6060); // "Current month";
+        return GUILocalizeStrings.Get(6062); //"Earlier this month"
       else if (lastMonth.Equals(new DateTime(aStartTime.Year, aStartTime.Month, 1)))
-        return GUILocalizeStrings.Get(6065); // "Last month";
-      else if (DateTime.Now.Year.Equals(aStartTime.Year))
-        return GUILocalizeStrings.Get(6070); // "Current year";
-      else if (DateTime.Now.Year.Equals(aStartTime.AddYears(1).Year))
+        return GUILocalizeStrings.Get(6065); // "Last month"
+      else if (today.Year.Equals(aStartTime.Year))
+        return GUILocalizeStrings.Get(6075); // "Earlier this year"
+      else if (today.Year.Equals(aStartTime.AddYears(1).Year))
         return GUILocalizeStrings.Get(6080); // "Last year";
-      else return GUILocalizeStrings.Get(6090); // "Older";
+      else
+        return GUILocalizeStrings.Get(6090); // "Older"
     }
   }
 }
