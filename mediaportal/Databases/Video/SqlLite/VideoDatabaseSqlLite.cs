@@ -5802,6 +5802,7 @@ namespace MediaPortal.Video.Database
 
             // Cast parse
             XmlNodeList actorsList = nodeMovie.SelectNodes("actor");
+            
             foreach (XmlNode nodeActor in actorsList)
             {
               string name = string.Empty;

@@ -170,6 +170,7 @@ namespace MediaPortal.GUI.Video
 
     private bool _useSortTitle = false;
     private bool _useOnlyNfoScraper = false;
+    private bool _doNotUseDatabase = false;
 
     private static IMDB.InternalMovieInfoScraper _internalGrabber = new IMDB.InternalMovieInfoScraper();
 
@@ -354,6 +355,7 @@ namespace MediaPortal.GUI.Video
 
         _switchRemovableDrives = xmlreader.GetValueAsBool("movies", "SwitchRemovableDrives", true);
         _useOnlyNfoScraper = xmlreader.GetValueAsBool("moviedatabase", "useonlynfoscraper", false);
+        _doNotUseDatabase = xmlreader.GetValueAsBool("moviedatabase", "donotusedatabase", false);
 
       }
 
@@ -955,11 +957,11 @@ namespace MediaPortal.GUI.Video
         return;
       }
       
-      if (!_useOnlyNfoScraper && movieDetails.ID < 1)
+      if (movieDetails.ID < 1 && !_doNotUseDatabase)
       {
 
         // Check for nfo file
-        if (!string.IsNullOrEmpty(movieDetails.MovieNfoFile) && File.Exists(movieDetails.MovieNfoFile))
+        if (_useOnlyNfoScraper && File.Exists(movieDetails.MovieNfoFile))
         {
           // Import nfo into database
           VideoDatabase.ImportNfo(movieDetails.MovieNfoFile, false, false);
