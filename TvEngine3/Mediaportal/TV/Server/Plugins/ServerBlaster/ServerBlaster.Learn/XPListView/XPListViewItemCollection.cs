@@ -86,11 +86,11 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
       return ((XPListViewItem)base.Insert(index, item));
     }
 
-    public XPListViewItem this[int displayIndex]
+    public new XPListViewItem this[int displayIndex]
     {
       get { return ((XPListViewItem)base[displayIndex]); //((XPListViewItem)this[displayIndex])
       }
-      set { this[displayIndex] = value; }
+      set { base[displayIndex] = value; }
     }
 
     public void Remove(XPListViewItem item)
