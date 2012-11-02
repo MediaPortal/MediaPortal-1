@@ -1512,11 +1512,16 @@
     <String id="6041">Two days ago</String>
     <String id="6042">Enter a skip step number of seconds</String>
     <String id="6050">Current week</String>
+	<String id="6055">Earlier this week</String>
+	<String id="6056">Last week</String>
     <String id="6060">Current month</String>
+	<String id="6062">Earlier this month</String>
 	<String id="6065">Last month</String>
     <String id="6070">Current year</String>
+	<String id="6075">Earlier this year</String>
     <String id="6080">Last year</String>
     <String id="6090">Older</String>
+	<String id="6095">Future</String>
     <String id="8000" prefix="My ">Mail</String>
     <String id="8001">Check Mailbox</String>
     <String id="8002">Auto-check off</String>
