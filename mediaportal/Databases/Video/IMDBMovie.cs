@@ -1075,7 +1075,7 @@ namespace MediaPortal.Video.Database
         faFile = strPath + @"\" + "backdrop.jpg";
         faFiles.Add(faFile);
 
-        string dvdBdPath = strPath.Substring(strPath.LastIndexOf(@"\") + 1);
+        string dvdBdPath = System.IO.Path.GetFileName(strPath);
         Util.Utils.RemoveStackEndings(ref dvdBdPath);
 
         faFile = strPath + @"\" + dvdBdPath.Trim() + "-fanart.jpg";
@@ -1113,16 +1113,16 @@ namespace MediaPortal.Video.Database
           }
         }
       }
-      else if (item.IsFolder && !VirtualDirectories.Instance.Movies.IsRootShare(item.Path) &&
+      else if (item.IsFolder && !VirtualDirectories.Instance.Movies.IsRootShare(strPath) &&
                Util.Utils.IsFolderDedicatedMovieFolder(strPath)) // folder & dedicated movie folder
       {
-        string cleanPath = System.IO.Path.GetFileName(item.Path);
+        string cleanPath = System.IO.Path.GetFileName(strPath);
         Util.Utils.RemoveStackEndings(ref cleanPath);
         faFile = strPath + @"\" + cleanPath + "-fanart.jpg";
         faFiles.Add(faFile);
         faFile = strPath + @"\" + cleanPath + "-backdrop.jpg";
         faFiles.Add(faFile);
-
+        
         foreach (string file in faFiles)
         {
           if (System.IO.File.Exists(file))
@@ -1221,6 +1221,7 @@ namespace MediaPortal.Video.Database
           foreach (XmlNode nodeMovie in movieList)
           {
             string genre = string.Empty;
+            string cast = string.Empty;
 
             #region nodes
 
@@ -1293,6 +1294,46 @@ namespace MediaPortal.Video.Database
             }
             #endregion
 
+            #region Cast
+
+            // Cast parse
+            XmlNodeList actorsList = nodeMovie.SelectNodes("actor");
+            
+            foreach (XmlNode nodeActor in actorsList)
+            {
+              string name = string.Empty;
+              string role = string.Empty;
+              string line = string.Empty;
+              XmlNode nodeActorName = nodeActor.SelectSingleNode("name");
+              XmlNode nodeActorRole = nodeActor.SelectSingleNode("role");
+              
+              if (nodeActorName != null && nodeActorName.InnerText != null)
+              {
+                name = nodeActorName.InnerText;
+              }
+              if (nodeActorRole != null && nodeActorRole.InnerText != null)
+              {
+                role = nodeActorRole.InnerText;
+              }
+              
+              if (!string.IsNullOrEmpty(name))
+              {
+                if (!string.IsNullOrEmpty(role))
+                {
+                  line = String.Format("{0} as {1}\n", name, role);
+                }
+                else
+                {
+                  line = String.Format("{0}\n", name);
+                }
+                cast += line;
+              }
+            }
+            // Cast
+            movie.Cast = cast;
+
+            #endregion
+
             #region Moviefiles
 
             // Need to fake movie to see it's properties (id = 0 is not used in vdb for movies)
@@ -1319,6 +1360,8 @@ namespace MediaPortal.Video.Database
               {
                 movie.Watched = 1;
               }
+
+              movie.ID = 0;
 
               #endregion
             }

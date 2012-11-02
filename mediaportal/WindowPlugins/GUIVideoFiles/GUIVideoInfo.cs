@@ -26,6 +26,8 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Xml;
+using MediaPortal.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
@@ -142,7 +144,7 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
-      // Check for a fake movie (comes from EPG)
+      // Check for a fake movie (comes from EPG or only nfo scraper)
       if (_currentMovie.ID < 1)
       {
         _addToDatabase = false;
@@ -301,7 +303,7 @@ namespace MediaPortal.GUI.Video
       //
       // Refresh button
       //
-      if (control == btnRefresh)
+      if (control == btnRefresh && _addToDatabase)
       {
         // Check Internet connection
         if (!Win32API.IsConnectedToInternet())
@@ -350,9 +352,9 @@ namespace MediaPortal.GUI.Video
           }
           return;
         }
-        // Movie info active, refresh movie
         
-        if (_useOnlyNfoScraper && _addToDatabase)
+        // Movie info active, refresh movie
+        if (_useOnlyNfoScraper && CheckForNfoFile(_currentMovie.VideoFileName)) 
         {
           VideoDatabase.ImportNfoUsingVideoFile(_currentMovie.VideoFileName, false, false);
           VideoDatabase.GetMovieInfo(_currentMovie.VideoFileName, ref _currentMovie);
@@ -493,7 +495,7 @@ namespace MediaPortal.GUI.Video
       //
       // Actor listview
       //
-      if (listActors != null)
+      if (listActors != null && _addToDatabase)
       {
         if (control == listActors)
         {
@@ -513,7 +515,7 @@ namespace MediaPortal.GUI.Video
       //
       // Rename movie title
       //
-      if (control == btnRename)
+      if (control == btnRename && _addToDatabase)
       {
         RenameTitle();
       }
@@ -537,7 +539,7 @@ namespace MediaPortal.GUI.Video
       dlg.SetHeading(498); // menu
       
       // Dialog items
-      if (listActors != null)
+      if (listActors != null && _addToDatabase)
       {
         GUIListItem item = listActors.SelectedListItem;
         if (item != null && listActors.IsVisible)
@@ -552,7 +554,7 @@ namespace MediaPortal.GUI.Video
       // Fanart refresh
       Profile.Settings xmlreader = new MPSettings();
       
-      if (xmlreader.GetValueAsBool("moviedatabase", "usefanart", false))
+      if (xmlreader.GetValueAsBool("moviedatabase", "usefanart", false) && _addToDatabase)
       {
         dlg.AddLocalizedString(1298); //Refresh fanart
       }
@@ -1948,6 +1950,70 @@ namespace MediaPortal.GUI.Video
         }
       }
       return strBody;
+    }
+
+    private bool CheckForNfoFile (string videoFile)
+    {
+      try
+      {
+        string nfoFile = string.Empty;
+        string path = string.Empty;
+        bool isbdDvd = false;
+
+        if (videoFile.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase) >= 0)
+        {
+          //DVD folder
+          path = videoFile.Substring(0, videoFile.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase));
+          isbdDvd = true;
+        }
+        else if (videoFile.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV", StringComparison.InvariantCultureIgnoreCase) >= 0)
+        {
+          //BD folder
+          path = videoFile.Substring(0, videoFile.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV", StringComparison.InvariantCultureIgnoreCase));
+          isbdDvd = true;
+        }
+
+        if (isbdDvd)
+        {
+          string cleanFile = string.Empty;
+          cleanFile = Path.GetFileNameWithoutExtension(videoFile);
+          Util.Utils.RemoveStackEndings(ref cleanFile);
+          nfoFile = path + @"\" + cleanFile + ".nfo";
+
+          if (!File.Exists(nfoFile))
+          {
+            cleanFile = Path.GetFileNameWithoutExtension(path);
+            Util.Utils.RemoveStackEndings(ref cleanFile);
+            nfoFile = path + @"\" + cleanFile + ".nfo";
+          }
+        }
+        else
+        {
+          string cleanFile = string.Empty;
+          string strPath, strFilename;
+          DatabaseUtility.Split(videoFile, out strPath, out strFilename);
+          cleanFile = strFilename;
+          Util.Utils.RemoveStackEndings(ref cleanFile);
+          cleanFile = strPath + cleanFile;
+          nfoFile = Path.ChangeExtension(cleanFile, ".nfo");
+        }
+
+        if (!File.Exists(nfoFile))
+        {
+          return false;
+        }
+
+        // Validate nfo xml
+        XmlDocument doc = new XmlDocument();
+        doc.Load(nfoFile);
+        doc = null;
+      }
+      catch (Exception)
+      {
+        return false;
+      }
+
+      return true;
     }
 
     private void LoadState()
