@@ -949,10 +949,10 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
-      bool isDedicatedMovieFolder = Util.Utils.IsFolderDedicatedMovieFolder(pItem.Path);
       IMDBMovie movieDetails = pItem.AlbumInfoTag as IMDBMovie;
       
-      if (movieDetails == null || _useOnlyNfoScraper && string.IsNullOrEmpty(movieDetails.MovieNfoFile))
+      if (movieDetails == null || _doNotUseDatabase && string.IsNullOrEmpty(movieDetails.MovieNfoFile) || 
+          _doNotUseDatabase && movieDetails.ID < 0)
       {
         return;
       }
@@ -978,6 +978,8 @@ namespace MediaPortal.GUI.Video
         }
         else
         {
+          bool isDedicatedMovieFolder = Util.Utils.IsFolderDedicatedMovieFolder(pItem.Path);
+
           if (isDedicatedMovieFolder)
           {
             if (pItem.IsBdDvdFolder)

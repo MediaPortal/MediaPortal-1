@@ -1022,7 +1022,6 @@ namespace MediaPortal.Video.Database
             Log.Error("IMDBMovie Set user fanart file property error: {0}", ex.Message);
           }
 
-
           item.AlbumInfoTag = info;
         }
         catch (Exception ex)
