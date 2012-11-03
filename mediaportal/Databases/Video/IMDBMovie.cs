@@ -833,38 +833,7 @@ namespace MediaPortal.Video.Database
         {
           hasSubtitles = "true";
         }
-
-        //if (file.ToUpperInvariant().Contains(@"VIDEO_TS.IFO"))
-        //{
-        //  videoMediaSource = "DVD";
-        //}
-        //else if (file.ToUpperInvariant().Contains(@"INDEX.BDMV"))
-        //{
-        //  videoMediaSource = "Bluray";
-        //}
-        //else if (file.ToUpperInvariant().EndsWith(@".MKV"))
-        //{
-        //  videoMediaSource = "matroska";
-        //}
-        //else
-        //{
-        //  try
-        //  {
-        //    if (System.IO.Path.HasExtension(file))
-        //    {
-        //      string extension = System.IO.Path.GetExtension(file).Replace(".", string.Empty);
-        //      string extImage = GUIGraphicsContext.Skin +
-        //                          @"\Media\Logos\" + extension + @".png";
-
-        //      if (System.IO.File.Exists(extImage))
-        //      {
-        //        videoMediaSource = extension;
-        //      }
-        //    }
-        //  }
-        //  catch (Exception) { }
-        //}
-
+        
         GUIPropertyManager.SetProperty("#VideoMediaSource", videoMediaSource);
         GUIPropertyManager.SetProperty("#VideoCodec", Util.Utils.MakeFileName(MediaInfo.VideoCodec));
         GUIPropertyManager.SetProperty("#VideoResolution", MediaInfo.VideoResolution);
@@ -1002,7 +971,22 @@ namespace MediaPortal.Video.Database
 
           info.Path = path;
           info.MediaInfo = mInfo;
-          info.Duration = VideoDatabase.GetMovieDuration(info.ID);
+
+          if (info.ID > 0)
+          {
+            info.Duration = VideoDatabase.GetMovieDuration(info.ID);
+          }
+          else
+          {
+            ArrayList files = new ArrayList();
+            VideoDatabase.GetFilesForMovie(VideoDatabase.GetMovieId(info.VideoFileName), ref files);
+
+            foreach (string file in files)
+            {
+              info.Duration += VideoDatabase.GetVideoDuration(VideoDatabase.GetFileId(file));
+            }
+          }
+
           int percent = 0;
           int watchedCount = 0;
           VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(fileName), out percent, out watchedCount);

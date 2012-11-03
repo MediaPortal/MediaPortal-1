@@ -237,6 +237,12 @@ namespace MediaPortal.GUI.Video
           pItem = (GUIListItem)items[x];
           string file = string.Empty;
           bool isFolderPinProtected = (pItem.IsFolder && IsFolderPinProtected(pItem.Path));
+          IMDBMovie movie = pItem.AlbumInfoTag as IMDBMovie;
+
+          if (movie == null)
+          {
+            IMDBMovie.SetMovieData(pItem);
+          }
           
           // Skip DVD & BD backup folder
           if (pItem.IsFolder && !pItem.IsBdDvdFolder)
