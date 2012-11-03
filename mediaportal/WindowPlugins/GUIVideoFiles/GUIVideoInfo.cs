@@ -821,6 +821,16 @@ namespace MediaPortal.GUI.Video
         string imageUrl = _currentMovie.ThumbURL;
         string titleExt = string.Empty;
 
+        if (imageUrl.Length > 7 && 
+          !imageUrl.Substring(0, 7).Equals("file://") &&
+          !imageUrl.Substring(0, 7).Equals("http://"))
+        {
+          if (Util.Utils.IsPicture(imageUrl) && File.Exists(imageUrl))
+          {
+            imageUrl = "file://" + imageUrl;
+          }
+        }
+
         if (imageUrl.Length > 0)
         {
           titleExt = _currentMovie.Title + "{" + _currentMovie.ID + "}";
@@ -1685,6 +1695,7 @@ namespace MediaPortal.GUI.Video
         {
           return;
         }
+
         // Search for more covers
         string[] thumbUrls = new string[1];
         IMDBMovie movie = _currentMovie;
