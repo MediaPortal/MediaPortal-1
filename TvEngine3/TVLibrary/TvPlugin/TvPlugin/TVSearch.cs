@@ -539,7 +539,7 @@ namespace TvPlugin
           {
             IList<string> genres;
             TvBusinessLayer layer = new TvBusinessLayer();
-            genres = layer.GetGenres();
+            genres = layer.GetProgramGenres();
             foreach (string genre in genres)
             {
               GUIListItem item = new GUIListItem();

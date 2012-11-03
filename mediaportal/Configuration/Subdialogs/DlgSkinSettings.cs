@@ -33,7 +33,7 @@ using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.Util;
 using MediaPortal.WinCustomControls;
-
+using TvLibrary.Epg;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -73,8 +73,6 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel mpLabel4;
     private WinCustomControls.ColorComboBox colorComboBoxPgmEnded;
 
-    protected const int LOCALIZED_GENRE_STRING_BASE = 1250;
-    protected const int LOCALIZED_GENRE_STRING_COUNT = 7;
     protected List<string> _defaultGenreColors = new List<string>()
 	    {
        "FF18D22E,FF18D22E",
@@ -96,7 +94,7 @@ namespace MediaPortal.Configuration.Sections
     protected long _guideColorProgramEnded = 0;
     protected long _guideColorProgramSelected = 0;
     protected long _guideColorBorderHighlight = 0;
-    protected List<string> _genreList = new List<string>();
+    protected List<MpGenre> _mpGenres = null;
     protected IDictionary<string, long> _genreColorsOnNow = new Dictionary<string, long>();
     protected IDictionary<string, long> _genreColorsOnLater = new Dictionary<string, long>();
     private Button mpButtonOk;
@@ -135,7 +133,7 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
 
       // If TV is not used then remove the tabs for TV guide settings.
-      if (!UseTvServer)
+      if (!MediaPortal.Util.Utils.UsingTvServer)
       {
         this.tabControlTvGuideSettings.Enabled = false;
         this.gbGenreSettings.Visible = false;
@@ -488,7 +486,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // columnHeader9
       // 
-      this.columnHeader9.Text = "Guide Genre";
+      this.columnHeader9.Text = "MediaPortal Genre";
       this.columnHeader9.Width = 190;
       // 
       // columnHeader1
@@ -836,30 +834,6 @@ namespace MediaPortal.Configuration.Sections
 
     #endregion
 
-    public static bool UseTvServer
-    {
-      get { return File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"); }
-    }
-
-    private bool LoadGenreList(Settings xmlreader)
-    {
-      int genreId;
-      string genre;
-      IDictionary<string, string> allGenres = xmlreader.GetSection<string>("genremap");
-
-      // Each genre map entry is a '{' delimited list of "program" genre names (those that may be compared with the genre from the program listings).
-      // It is an error if a single "program" genre is mapped to more than one genre color category; behavior is undefined for this condition.
-      foreach (var genreMapEntry in allGenres)
-      {
-        // The genremap key is an integer value that is added to a base value in order to locate the correct localized genre name string.
-        genreId = int.Parse(genreMapEntry.Key);
-        genre = GUILocalizeStrings.Get(LOCALIZED_GENRE_STRING_BASE + genreId);
-        _genreList.Add(genre);
-      }
-
-      return _genreList.Count > 0;
-    }
-
     private bool LoadGuideColors(Settings xmlreader)
     {
       List<string> temp;
@@ -894,22 +868,22 @@ namespace MediaPortal.Configuration.Sections
       // Each genre color entry is a csv list.  The first value is the color for program "on now", the second value is for program "on later".
       // If only one value is provided then that value is used for both.
       long color0;
-      for (int i = 0; i < _genreList.Count; i++)
+      for (int i = 0; i < _mpGenres.Count; i++)
       {
-        temp = new List<string>((xmlreader.GetValueAsString("tvguidecolors", i.ToString(), String.Empty)).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+        temp = new List<string>((xmlreader.GetValueAsString("tvguidecolors", "genre" + i.ToString(), String.Empty)).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
 
         if (temp.Count > 0)
         {
           color0 = GetColorFromString(temp[0]);
           if (temp.Count == 2)
           {
-            _genreColorsOnNow.Add(_genreList[i], color0);
-            _genreColorsOnLater.Add(_genreList[i], GetColorFromString(temp[1]));
+            _genreColorsOnNow.Add(_mpGenres[i].Name, color0);
+            _genreColorsOnLater.Add(_mpGenres[i].Name, GetColorFromString(temp[1]));
           }
           else if (temp.Count == 1)
           {
-            _genreColorsOnNow.Add(_genreList[i], color0);
-            _genreColorsOnLater.Add(_genreList[i], color0);
+            _genreColorsOnNow.Add(_mpGenres[i].Name, color0);
+            _genreColorsOnLater.Add(_mpGenres[i].Name, color0);
           }
         }
       }
@@ -934,11 +908,11 @@ namespace MediaPortal.Configuration.Sections
       long onNowColor;
       long onLaterColor;
 
-      for (int i = 0; i < _genreList.Count; i++)
+      for (int i = 0; i < _mpGenres.Count; i++)
       {
-        _genreColorsOnNow.TryGetValue(_genreList[i], out onNowColor);
-        _genreColorsOnLater.TryGetValue(_genreList[i], out onLaterColor);
-        xmlwriter.SetValue("tvguidecolors", i.ToString(), String.Format("{0:X8}", (uint)onNowColor) + "," + String.Format("{0:X8}", (uint)onLaterColor));
+        _genreColorsOnNow.TryGetValue(_mpGenres[i].Name, out onNowColor);
+        _genreColorsOnLater.TryGetValue(_mpGenres[i].Name, out onLaterColor);
+        xmlwriter.SetValue("tvguidecolors", "genre" + i.ToString(), String.Format("{0:X8}", (uint)onNowColor) + "," + String.Format("{0:X8}", (uint)onLaterColor));
       }
     }
 
@@ -964,18 +938,22 @@ namespace MediaPortal.Configuration.Sections
       listViewGuideGenres.BeginUpdate();
       listViewGuideGenres.Items.Clear();
 
-      foreach (string genre in _genreList)
+      foreach (var genre in _mpGenres)
       {
         long lColorOnNow;
-        _genreColorsOnNow.TryGetValue(genre, out lColorOnNow);
+        _genreColorsOnNow.TryGetValue(genre.Name, out lColorOnNow);
         string colorOnNow = String.Format("{0:X8}", (int)lColorOnNow);
 
         long lColorOnLater;
-        _genreColorsOnLater.TryGetValue(genre, out lColorOnLater);
+        _genreColorsOnLater.TryGetValue(genre.Name, out lColorOnLater);
         string colorOnLater = String.Format("{0:X8}", (int)lColorOnLater);
 
-        ListViewItem item = new ListViewItem(new string[] { genre, colorOnNow, colorOnLater });
-        item.Name = genre;
+        ListViewItem item = new ListViewItem(new string[] { genre.Name, colorOnNow, colorOnLater });
+        item.Name = genre.Name;
+        if (!genre.Enabled)
+        {
+          item.ForeColor = SystemColors.GrayText;  // Dim disabled mp genres.
+        }
         item.UseItemStyleForSubItems = false;
         item.SubItems[1].BackColor = Color.FromArgb((int)lColorOnNow);
         item.SubItems[2].BackColor = Color.FromArgb((int)lColorOnLater);
@@ -988,7 +966,7 @@ namespace MediaPortal.Configuration.Sections
     private void CreateDefaultGenreColors(Settings settings)
     {
       // Insert a default collection of TV guide genres.
-      for (int i = 0; i < LOCALIZED_GENRE_STRING_COUNT; i++)
+      for (int i = 0; i < _defaultGenreColors.Count; i++)
       {
         settings.SetValue("tvguidecolors", i.ToString(), _defaultGenreColors[i]);
       }
@@ -996,15 +974,14 @@ namespace MediaPortal.Configuration.Sections
 
     public void LoadSettings(string selectedSkin)
     {
-      // Load the genre map from MP settings.
-      // TODO: this needs to be loaded from tv server settings.
+      // We must specify the hostname of the TV server since MP is not running and their is no active communication with the TV server.
       using (Settings xmlreader = new MPSettings())
       {
-        if (_genreList.Count == 0)
-        {
-          LoadGenreList(xmlreader);
-        }
+        TvServerRemote.HostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
       }
+
+      // Get the MediaPortal genres from the TV server.
+      _mpGenres = TvServerRemote.GetMpGenres();
 
       // Load tv guide colors.
       using (Settings xmlreader = new SKSettings())

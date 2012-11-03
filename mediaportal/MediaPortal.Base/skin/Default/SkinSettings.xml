@@ -24,12 +24,12 @@
     <entry name="guidecolorprogramended">FF202020</entry>
     <entry name="guidecolorborderhighlight">FF6DF0FF</entry>
     <entry name="defaultgenre">FF83A17D,FF404040</entry>
-    <entry name="0">FF18D22E,FF18D22E</entry>
-    <entry name="1">FFFF69B4,FFFF69B4</entry>
-    <entry name="2">FFFA1919,FFFA1919</entry>
-    <entry name="3">FF800000,FF800000</entry>
-    <entry name="4">FF2169EE,FF2169EE</entry>
-    <entry name="5">FFFFD700,FFFFD700</entry>
-    <entry name="6">FF006400,FF006400</entry>
+    <entry name="genre0">FF18D22E,FF18D22E</entry>
+    <entry name="genre1">FFFF69B4,FFFF69B4</entry>
+    <entry name="genre2">FFFA1919,FFFA1919</entry>
+    <entry name="genre3">FF800000,FF800000</entry>
+    <entry name="genre4">FF2169EE,FF2169EE</entry>
+    <entry name="genre5">FFFFD700,FFFFD700</entry>
+    <entry name="genre6">FF006400,FF006400</entry>
   </section>
 </profile>

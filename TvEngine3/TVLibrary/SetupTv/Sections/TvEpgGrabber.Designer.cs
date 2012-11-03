@@ -35,15 +35,15 @@ namespace SetupTv.Sections
       this.linkLabelTVNone = new System.Windows.Forms.LinkLabel();
       this.linkLabelTVGroupedVisible = new System.Windows.Forms.LinkLabel();
       this.linkLabelTVAll = new System.Windows.Forms.LinkLabel();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.linkLabelTVAllGrouped = new System.Windows.Forms.LinkLabel();
       this.mpCheckBoxStoreOnlySelected = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.mpListView2 = new MediaPortal.UserInterface.Controls.MPListView();
-      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
       this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -224,8 +224,8 @@ namespace SetupTv.Sections
       this.mpListView1.TabIndex = 9;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
-      this.mpListView1.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.mpListView1_ItemChecked);
       this.mpListView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListView1_ColumnClick);
+      this.mpListView1.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.mpListView1_ItemChecked);
       // 
       // tabPage1
       // 
@@ -246,7 +246,7 @@ namespace SetupTv.Sections
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
       this.tabPage1.Size = new System.Drawing.Size(477, 405);
       this.tabPage1.TabIndex = 0;
-      this.tabPage1.Text = "TV Epg grabber";
+      this.tabPage1.Text = "TV EPG Grabber";
       this.tabPage1.UseVisualStyleBackColor = true;
       // 
       // mpLabelChannelCount
