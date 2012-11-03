@@ -3732,13 +3732,32 @@ namespace TvService
     }
 
     /// <summary>
+    /// Returns an ordered, distinct list of all program genres.  Maintained for backward compatibility.
+    /// </summary>
+    /// <returns></returns>
+    public List<string> GetGenres()
+    {
+      return GetProgramGenres();
+    }
+
+    /// <summary>
     /// Returns an ordered, distinct list of all program genres.
     /// </summary>
     /// <returns></returns>
-    public IList<string> GetGenres()
+    public List<string> GetProgramGenres()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
-      return layer.GetGenres();
+      return layer.GetProgramGenres();
+    }
+
+    /// <summary>
+    /// Returns a list of MediaPortal genre objects.
+    /// </summary>
+    /// <returns></returns>
+    public List<MpGenre> GetMpGenres()
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      return (List<MpGenre>)layer.GetMpGenres();
     }
 
     #endregion
