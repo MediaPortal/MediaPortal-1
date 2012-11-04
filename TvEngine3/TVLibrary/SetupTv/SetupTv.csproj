@@ -195,6 +195,12 @@
     <Compile Include="Sections\EpgGenreMap.Designer.cs">
       <DependentUpon>EpgGenreMap.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\EpgGrabber.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\EpgGrabber.Designer.cs">
+      <DependentUpon>EpgGrabber.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\UserPriorities.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -320,6 +326,9 @@
       <DependentUpon>EpgGenreMap.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sections\EpgGrabber.resx">
+      <DependentUpon>EpgGrabber.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\UserPriorities.resx">
       <DependentUpon>UserPriorities.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -327,10 +336,6 @@
     <EmbeddedResource Include="Sections\TestService.resx">
       <SubType>Designer</SubType>
       <DependentUpon>TestService.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\TvEpgGrabber.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>TvEpgGrabber.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\RadioChannelMapping.resx">
       <SubType>Designer</SubType>
@@ -442,9 +447,6 @@
     <Compile Include="Sections\RadioEpgGrabber.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\RadioEpgGrabber.Designer.cs">
-      <DependentUpon>RadioEpgGrabber.cs</DependentUpon>
-    </Compile>
     <Compile Include="Sections\ScanSettings.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -477,9 +479,6 @@
     </Compile>
     <Compile Include="Sections\TvEpgGrabber.cs">
       <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\TvEpgGrabber.Designer.cs">
-      <DependentUpon>TvEpgGrabber.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\RadioChannelMapping.cs">
       <SubType>UserControl</SubType>
@@ -574,10 +573,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Sections\RadioEpgGrabber.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>RadioEpgGrabber.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Sections\TvRecording.resx">
       <SubType>Designer</SubType>
       <DependentUpon>TvRecording.cs</DependentUpon>
