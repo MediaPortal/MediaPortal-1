@@ -67,8 +67,6 @@ namespace MpeCore.Classes.SectionPanel
 
     private void SetValues()
     {
-      BaseHorizontalLayout_Shown(null, null);
-      base.button_next.Enabled = false;
       checkBox1.Text = Params[CONST_Check].Value;
       if (File.Exists(Params[CONST_TEXT_FILE].Value))
       {
@@ -102,6 +100,12 @@ namespace MpeCore.Classes.SectionPanel
     public LicenseAgreement()
     {
       InitializeComponent();
+    }
+
+    protected override void BaseHorizontalLayout_Shown(object sender, EventArgs e)
+    {
+      base.BaseHorizontalLayout_Shown(sender, e);
+      base.button_next.Enabled = false;
     }
 
     private void checkBox1_CheckedChanged(object sender, EventArgs e)
