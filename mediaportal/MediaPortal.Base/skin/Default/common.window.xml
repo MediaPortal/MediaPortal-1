@@ -1,36 +1,48 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>background.png</texture>
+      <width>1280</width>
+      <height>720</height>
+      <visible>skin.hassetting(#skin.no.category.fanart)+!control.isvisible(91919293)+!control.isvisible(91919294)</visible>
+    </control>
     <control>
       <description>background top overlay</description>
       <type>image</type>
       <id>1</id>
       <posX>0</posX>
       <posY>0</posY>
-      <width>720</width>
-      <height>216</height>
+      <width>960</width>
+      <height>180</height>
       <texture>overlay_top.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <colordiffuse>ccffffff</colordiffuse>
     </control>
+    <!--     *******************************************************************************************  -->
+    <!--     **************************    Current Module/Number of Files   ****************************  -->
+    <!--     *******************************************************************************************  -->
     <control>
       <type>label</type>
       <id>1</id>
-      <posX>16</posX>
-      <posY>8</posY>
+      <posX>22</posX>
+      <posY>10</posY>
       <label>#(iif(and(neq(L(102012), #currentmodule), neq(L(102002), #currentmodule), neq(L(100100), #currentmodule), neq(L(102015), #currentmodule)), #currentmodule, ' '))</label>
-      <font>font14</font>
+      <font>font11</font>
       <align>left</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Number of Files Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>699</posX>
-      <posY>32</posY>
+      <posX>22</posX>
+      <posY>35</posY>
       <label>#selectedindex/#itemcount #(iif(and(neq(L(102012), #currentmodule), neq(L(102002), #currentmodule), neq(L(100100), #currentmodule), neq(L(102015), #currentmodule)), #currentmodule, ' '))</label>
-      <align>right</align>
+      <align>left</align>
       <textcolor>ivory</textcolor>
       <font>font10</font>
       <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
@@ -39,38 +51,263 @@
       <description>Total duration Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>641</posX>
-      <posY>48</posY>
-      <label>180</label>
+      <posX>933</posX>
+      <posY>35</posY>
+      <label>#(L(180)):   #totalduration</label>
       <align>right</align>
       <textcolor>ivory</textcolor>
       <font>font10</font>
       <visible>string.equals(#totalduration)+[window.isvisible(500)|window.isvisible(501)|window.isvisible(504)]</visible>
     </control>
+    <!--     *******************************************************************************************  -->
+    <!--     *******************************    SELECTED ITEM      *************************************  -->
+    <!--     *******************************************************************************************  -->
     <control>
-      <description>Total duration Label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>699</posX>
-      <posY>48</posY>
-      <label>#totalduration</label>
-      <align>right</align>
-      <textcolor>ivory</textcolor>
-      <font>font10</font>
-      <visible>string.equals(#totalduration)+[window.isvisible(500)|window.isvisible(501)|window.isvisible(504)]</visible>
+      <description>background selecteditem</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>65</posY>
+      <width>1012</width>
+      <height>60</height>
+      <texture>BH background.png</texture>
+      <colordiffuse>aaffffff</colordiffuse>
+      <visible>!window.isvisible(0)+!window.isvisible(34)</visible>
     </control>
     <control>
       <description>Selected item Label</description>
       <type>fadelabel</type>
       <id>1</id>
-      <posX>16</posX>
-      <posY>32</posY>
-      <width>399</width>
+      <posX>0</posX>
+      <posY>95</posY>
+      <width>960</width>
       <label>#selecteditem</label>
-      <font>font13</font>
-      <align>left</align>
+      <font>font16</font>
+      <align>center</align>
       <textcolor>ff6FAFE1</textcolor>
-      <visible>!window.isvisible(6)+!window.isvisible(25)</visible>
+      <visible>!window.isvisible(6)+!window.isvisible(25)+!window.isvisible(0)+!window.isvisible(34)</visible>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     *******************************    NOW PLAYING VIDEO  *************************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <description>video area</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>650</posY>
+      <width>1012</width>
+      <height>60</height>
+      <texture>BH background.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>Player.HasVideo+!window.isvisible(1)+!window.isvisible(614)+!window.isvisible(2003)+!window.isvisible(0)+!window.isvisible(34)</visible>
+      <texture>BH background.png</texture>
+    </control>
+    <control>
+      <description>NowPlaying Background TV/Video</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>435</posX>
+      <posY>645</posY>
+      <width>87</width>
+      <height>70</height>
+      <texture>LCD.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>Player.HasVideo+!window.isvisible(1)+!window.isvisible(614)+!window.isvisible(2003)+!window.isvisible(0)+!window.isvisible(34)</visible>
+    </control>
+    <control>
+      <description>video preview window</description>
+      <type>videowindow</type>
+      <id>0</id>
+      <posX>439</posX>
+      <posY>650</posY>
+      <width>80</width>
+      <height>60</height>
+      <visible>player.HasVideo+!window.isvisible(1)+!window.isvisible(614)+!window.isvisible(2003)+!window.isvisible(0)+!window.isvisible(34)</visible>
+      <action>18</action>
+      <textureFocus>tv_green_border.png</textureFocus>
+    </control>
+    <control>
+      <description>scrolling info label Video</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>423</posX>
+      <posY>655</posY>
+      <width>360</width>
+      <align>right</align>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#Play.Current.Title</label>
+      <wrapString> :.:  </wrapString>
+      <visible>player.HasVideo+!window.isvisible(1)+!window.isvisible(614)+!window.isvisible(2003)+!window.isvisible(0)+!window.isvisible(34)</visible>
+    </control>
+    <control>
+      <description>scrolling info label Video</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>423</posX>
+      <posY>679</posY>
+      <width>360</width>
+      <align>right</align>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#Play.Current.Genre</label>
+      <wrapString> :.:  </wrapString>
+      <visible>player.HasVideo+!window.isvisible(1)+!window.isvisible(614)+!window.isvisible(2003)+!window.isvisible(0)+!window.isvisible(34)</visible>
+    </control>
+    <control>
+      <description>scrolling info label Video</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>536</posX>
+      <posY>655</posY>
+      <width>412</width>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#Play.Current.Year</label>
+      <wrapString> :.:  </wrapString>
+      <visible>player.HasVideo+!window.isvisible(1)+!window.isvisible(614)+!window.isvisible(2003)+!window.isvisible(0)+!window.isvisible(34)</visible>
+    </control>
+    <control>
+      <description>scrolling info label Video</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>536</posX>
+      <posY>679</posY>
+      <width>412</width>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#Play.Current.Director</label>
+      <wrapString> :.:  </wrapString>
+      <visible>player.HasVideo+!window.isvisible(1)+!window.isvisible(614)+!window.isvisible(2003)+!window.isvisible(0)+!window.isvisible(34)</visible>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     *******************************    NOW PLAYING AUDIO   ************************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <description>music area</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>650</posY>
+      <width>1012</width>
+      <height>60</height>
+      <texture>BH background.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>Player.HasAudio+!Player.HasVideo+!window.isvisible(1)+!window.isvisible(614)+!window.isvisible(2003)+!window.isvisible(0)+!window.isvisible(34)</visible>
+    </control>
+    <control>
+      <description>music logo when no thumb</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>453</posX>
+      <posY>654</posY>
+      <width>52</width>
+      <height>52</height>
+      <centered>no</centered>
+      <keepaspectratio>no</keepaspectratio>
+      <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(12345)+!control.hasthumb(777)+!window.isvisible(1)+!window.isvisible(614)+!window.isvisible(2003)+!window.isvisible(0)+!window.isvisible(34)</visible>
+      <texture mask="cdthumbmask.png">defaultArtistBig.png</texture>
+    </control>
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>12345</id>
+      <posX>453</posX>
+      <posY>654</posY>
+      <width>52</width>
+      <height>52</height>
+      <centered>no</centered>
+      <keepaspectratio>no</keepaspectratio>
+      <visible>Player.HasAudio+!Player.HasVideo+!window.isvisible(1)+!window.isvisible(614)+!window.isvisible(2003)+!window.isvisible(0)+!window.isvisible(34)</visible>
+      <texture mask="cdthumbmask.png">#Play.Current.Thumb</texture>
+    </control>
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>777</id>
+      <posX>453</posX>
+      <posY>654</posY>
+      <width>52</width>
+      <height>52</height>
+      <centered>no</centered>
+      <keepaspectratio>no</keepaspectratio>
+      <texture mask="cdthumbmask.png">#Play.Current.ArtistThumb</texture>
+      <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(12345)+!window.isvisible(1)+!window.isvisible(614)+!window.isvisible(2003)+!window.isvisible(0)+!window.isvisible(34)</visible>
+    </control>
+    <control>
+      <description>CD Cover</description>
+      <type>image</type>
+      <id>790</id>
+      <posX>453</posX>
+      <posY>654</posY>
+      <width>52</width>
+      <height>52</height>
+      <centered>no</centered>
+      <visible>Player.HasAudio+!Player.HasVideo+!window.isvisible(1)+!window.isvisible(614)+!window.isvisible(2003)+!window.isvisible(0)+!window.isvisible(34)</visible>
+      <texture>cdthumbframe.png</texture>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>438</posX>
+      <posY>653</posY>
+      <width>420</width>
+      <visible>Player.HasAudio+!Player.HasVideo+!window.isvisible(1)+!window.isvisible(614)+!window.isvisible(2003)+!window.isvisible(0)+!window.isvisible(34)</visible>
+      <label>#(L(171)) #Play.Current.Artist</label>
+      <align>right</align>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>438</posX>
+      <posY>677</posY>
+      <visible>Player.HasAudio+!Player.HasVideo+!window.isvisible(1)+!window.isvisible(614)+!window.isvisible(2003)+!window.isvisible(0)+!window.isvisible(34)</visible>
+      <label>#(L(179)): #Play.Current.Title</label>
+      <width>420</width>
+      <align>right</align>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>521</posX>
+      <posY>653</posY>
+      <width>420</width>
+      <visible>Player.HasAudio+!Player.HasVideo+!window.isvisible(1)+!window.isvisible(614)+!window.isvisible(2003)+!window.isvisible(0)+!window.isvisible(34)</visible>
+      <label>#(L(170)) #Play.Current.Album</label>
+      <align>left</align>
+      <textcolor>ivory</textcolor>
+      <font>font11</font>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>521</posX>
+      <posY>677</posY>
+      <width>420</width>
+      <label>#(L(435)) #Play.Current.Track  |  #(L(436)) #Play.Current.Year  |  #currentplaytime &gt; #currentremaining</label>
+      <align>left</align>
+      <textcolor>ivory</textcolor>
+      <font>font11</font>
+      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#Play.Current.Lastfm.CurrentStream,)+!window.isvisible(1)+!window.isvisible(614)+!window.isvisible(2003)+!window.isvisible(0)+!window.isvisible(34)</visible>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>521</posX>
+      <posY>677</posY>
+      <width>420</width>
+      <label>#Play.Current.Lastfm.CurrentStream  |  #currentplaytime &gt; #currentremaining</label>
+      <align>left</align>
+      <textcolor>ivory</textcolor>
+      <font>font11</font>
+      <visible>Player.HasAudio+!Player.HasVideo+!string.equals(#Play.Current.Lastfm.CurrentStream,)+!window.isvisible(1)+!window.isvisible(614)+!window.isvisible(2003)+!window.isvisible(0)+!window.isvisible(34)</visible>
     </control>
   </controls>
 </window>

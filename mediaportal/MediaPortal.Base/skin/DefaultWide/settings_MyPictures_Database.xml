@@ -6,7 +6,7 @@
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
-		<import>common.window.xml</import>
+		
 		<import>common.time.xml</import>
     <control>
       <description>Scan pictures folder label</description>
@@ -15,6 +15,7 @@
       <posX>90</posX>
       <posY>120</posY>
       <label>300181</label>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Folder BG label</description>
@@ -23,6 +24,7 @@
       <posX>510</posX>
       <posY>140</posY>
       <label>300071</label>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>BG Share Folders</description>
@@ -33,6 +35,7 @@
       <posY>120</posY>
       <width>660</width>
       <height>400</height>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <control>
       <description>Scan status</description>

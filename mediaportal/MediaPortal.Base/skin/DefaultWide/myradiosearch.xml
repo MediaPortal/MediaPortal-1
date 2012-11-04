@@ -3,245 +3,221 @@
   <id>8900</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
-  <define>#header.label:724</define>
+  <define>#header.label:currentmodule</define>
   <define>#header.hover:hover_my radio.png</define>
   <controls>
     <control>
       <description>BG</description>
       <type>image</type>
       <id>1</id>
+      <texture>BH Radio.jpg</texture>
       <width>1280</width>
       <height>720</height>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>30</posY>
+      <width>1280</width>
+      <height>720</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
       <description>Number of Files Label</description>
       <type>label</type>
       <id>12</id>
-      <posX>470</posX>
-      <posY>537</posY>
-      <label>#selectedindex/#itemcount #itemtype</label>
-      <align>left</align>
-      <textcolor>FFFFFFFF</textcolor>
-      <font>font10</font>
-	  <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
-      
-      
-    </control>
-    <control>
-      <description>Selected item Label</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>1173</posX>
-      <posY>87</posY>
-      <width>711</width>
-      <label>#selecteditem</label>
+      <posX>2545</posX>
+      <posY>526</posY>
+      <label>#itemcount</label>
       <align>right</align>
-      <textcolor>ffffffff</textcolor>
-      
-      
+      <font>font10</font>
+      <textcolor>ivory</textcolor>
+      <visible>no</visible>
+    </control>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>0</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>-60</buttonY>
+      <buttonwidth>106</buttonwidth>
+      <buttonheight>720</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>275</width>
+      <height>720</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <width>1280</width>
+        <height>720</height>
+        <texture>white.png</texture>
+        <colordiffuse>201e90ff</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>26</posX>
+        <posY>78</posY>
+        <width>320</width>
+        <height>591</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <posX>50</posX>
+        <posY>121</posY>
+        <control>
+          <description>Sort by Name/Date/Channel</description>
+          <type>sortbutton</type>
+          <id>2</id>
+          <label>620</label>
+          <onleft>10</onleft>
+          <onright>11</onright>
+          <onup>17</onup>
+          <ondown>20</ondown>
+        </control>
+        <control>
+          <description>View by Title/Genre</description>
+          <type>button</type>
+          <id>20</id>
+          <textcolor>ffffffff</textcolor>
+          <colordiffuse>ffffffff</colordiffuse>
+          <label>1522</label>
+          <onleft>10</onleft>
+          <onright>11</onright>
+          <onup>2</onup>
+          <ondown>7</ondown>
+        </control>
+        <control>
+          <description>Starts with</description>
+          <type>selectbutton</type>
+          <id>7</id>
+          <label>872</label>
+          <onleft>7</onleft>
+          <onright>11</onright>
+          <onup>20</onup>
+          <ondown>19</ondown>
+        </control>
+        <control>
+          <description>Search</description>
+          <type>button</type>
+          <id>19</id>
+          <label>2051</label>
+          <onup>7</onup>
+          <ondown>21</ondown>
+          <onleft>10</onleft>
+          <onright>11</onright>
+        </control>
+        <control>
+          <description>Search Description</description>
+          <type>button</type>
+          <id>21</id>
+          <label>1523</label>
+          <onup>19</onup>
+          <ondown>2</ondown>
+          <onleft>10</onleft>
+          <onright>11</onright>
+        </control>
+      </control>
     </control>
     <control>
       <type>group</type>
       <description>group element</description>
-      
-      
-      <control>
-	    <description>Sort by Name/Date/Channel</description>
-        <type>sortbutton</type>
-        <id>2</id>
-        <posX>70</posX>
-        <posY>120</posY>
-        <width>270</width>
-        <height>45</height>
-        <label>620</label>
-        <onleft>10</onleft>
-        <onright>10</onright>
-        <onup>17</onup>
-        <ondown>20</ondown>
-      </control>
-      <control>
-        <description>View by Title/Genre</description>
-        <type>button</type>
-        <id>20</id>
-        <posX>70</posX>
-        <posY>165</posY>
-        <width>270</width>
-        <height>45</height>
-        <textcolor>ffffffff</textcolor>
-        <colordiffuse>ffffffff</colordiffuse>
-        <label>1522</label>
-        <onleft>10</onleft>
-        <onright>10</onright>
-        <onup>2</onup>
-        <ondown>7</ondown>
-      </control>
-      <control>
-        <description>Starts with</description>
-        <type>selectbutton</type>
-        <id>7</id>
-        <posX>70</posX>
-        <posY>210</posY>
-        <width>263</width>
-        <height>45</height>
-        <label>872</label>
-        <onleft>7</onleft>
-        <onright>10</onright>
-        <onup>20</onup>
-        <ondown>19</ondown>
-      </control>
-      <control>
-        <description>Search</description>
-        <type>button</type>
-        <id>19</id>
-        <posX>70</posX>
-        <posY>255</posY>
-        <width>270</width>
-        <height>45</height>
-        <label>2051</label>
-        <onup>7</onup>
-        <ondown>21</ondown>
-        <onleft>10</onleft>
-        <onright>10</onright>
-      </control>
-      <control>
-        <description>Search Description</description>
-        <type>button</type>
-        <id>21</id>
-        <posX>70</posX>
-        <posY>300</posY>
-        <width>270</width>
-        <height>45</height>
-        <label>1523</label>
-        <onup>19</onup>
-        <ondown>2</ondown>
-        <onleft>10</onleft>
-        <onright>10</onright>
-      </control>
-    </control>
-    <control>
-      <type>group</type>
-      <description>group element</description>
-      
-      
       <control>
         <description>listcontrol</description>
         <type>listcontrol</type>
         <id>10</id>
-        <onleft>2</onleft>
-        <onright>11</onright>
-        <onup>2</onup>
-        <ondown>2</ondown>
-        <textcolor>FFFFFFFF</textcolor>
-        <height>380</height>
-        <textureHeight>65</textureHeight>
-        <keepaspectratio>yes</keepaspectratio>
-         <itemWidth>50</itemWidth>
-         <itemHeight>50</itemHeight>
-         <IconXOff>7</IconXOff>
-         <IconYOff>8</IconYOff>
-         <PinIconXOff>90</PinIconXOff>
-         <PinIconYOff>10</PinIconYOff>
-         <textXOff>88</textXOff>
-      <textYOff>2</textYOff>
-      <textXOff2>743</textXOff2>
-      <textYOff2>36</textYOff2>
-      <textXOff3>177</textXOff3>
-      <textYOff3>36</textYOff3>
+        <height>300</height>
       </control>
       <control>
         <description>scheduler recordings listcontrol</description>
         <type>listcontrol</type>
         <id>11</id>
-        <height>380</height>
-        <textureHeight>75</textureHeight>
-        <keepaspectratio>yes</keepaspectratio>
-        <font2>font10</font2>
-        <font3>font10</font3>
-        <onleft>10</onleft>
-        <onright>2</onright>
-        <onup>2</onup>
-        <ondown>2</ondown>
-         <itemWidth>50</itemWidth>
-         <itemHeight>50</itemHeight>
-         <IconXOff>7</IconXOff>
-         <IconYOff>8</IconYOff>
-         <PinIconXOff>90</PinIconXOff>
-         <PinIconYOff>10</PinIconYOff>
-         <textXOff>88</textXOff>
-      <textYOff>2</textYOff>
-      <textXOff2>743</textXOff2>
-      <textYOff2>2</textYOff2>
-      <textXOff3>177</textXOff3>
-      <textYOff3>36</textYOff3>
+        <height>300</height>
       </control>
     </control>
     <control>
-      <description>Current program title</description>
-      <type>fadelabel</type>
-      <id>13</id>
-      <posX>462</posX>
-      <posY>495</posY>
-      <width>424</width>
-      <label>#Radio.Search.Title</label>
-      <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
-      
-      
-   </control>
-    <control>
-      <description>Current channel</description>
-      <type>label</type>
-      <id>16</id>
-      <posX>462</posX>
-      <posY>520</posY>
-      <label>#Radio.Search.Channel</label>
-      <align>left</align>
-      <font>font13</font>
-      <textcolor>ff6FAFE1</textcolor>
-      
-      
+      <description>Seperator</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>80</posX>
+      <posY>425</posY>
+      <width>1140</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
     </control>
     <control>
-      <description>Current program time</description>
-      <type>label</type>
-      <id>14</id>
-      <posX>462</posX>
-      <posY>545</posY>
-      <label>#Radio.Search.Time</label>
-      <align>left</align>
-      <font>font13</font>
+      <type>image</type>
+      <posX>80</posX>
+      <posY>440</posY>
+      <width>60</width>
+      <height>60</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <zoom>no</zoom>
+      <texture>#Radio.Search.thumb</texture>
+    </control>
+    <control>
+      <description>channel</description>
+      <id>0</id>
+      <type>fadelabel</type>
+      <posX>160</posX>
+      <posY>440</posY>
+      <width>1060</width>
       <textcolor>ff6FAFE1</textcolor>
-      
-      
+      <label>#Radio.Search.Channel      #Radio.Search.Time      #Radio.Search.Genre</label>
+      <font>font12</font>
+    </control>
+    <control>
+      <description>Program Title</description>
+      <id>14</id>
+      <type>fadelabel</type>
+      <posX>160</posX>
+      <posY>465</posY>
+      <width>680</width>
+      <label>#Radio.Search.Title</label>
+      <align>left</align>
+      <font>font14</font>
+      <textcolor>ivory</textcolor>
+    </control>
+    <control>
+      <description>Current program Genre</description>
+      <type>fadelabel</type>
+      <id>13</id>
+      <posX>2552</posX>
+      <posY>566</posY>
+      <width>680</width>
+      <label>#Radio.Search.Genre</label>
+      <font>font10</font>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>!string.equals(#Radio.Search.Genre,-)</visible>
     </control>
     <control>
       <description>Description1</description>
       <type>textboxscrollup</type>
       <id>15</id>
-      <posX>462</posX>
-      <posY>575</posY>
-      <width>764</width>
-      <height>85</height>
+      <posX>160</posX>
+      <posY>505</posY>
+      <width>1060</width>
+      <height>105</height>
       <label>#Radio.Search.Description</label>
-      <font>font13</font>
+      <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
-    </control>
-    <control>
-      <description>genre</description>
-      <type>label</type>
-      <id>17</id>
-      <posX>1173</posX>
-      <posY>520</posY>
-      <label>#Radio.Search.Genre</label>
-      <align>right</align>
-      <font>font13</font>
-      <textcolor>ff6FAFE1</textcolor>
-      
-      
     </control>
   </controls>
 </window>

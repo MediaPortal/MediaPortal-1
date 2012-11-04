@@ -195,6 +195,8 @@ namespace MediaPortal.Video.Database
     private int _watchedCount = -1;
     private string _videoFileName = string.Empty;
     private string _videoFilePath = string.Empty;
+    private string _userFanart = string.Empty;
+    private string _movieNfoFile = string.Empty;
     
     public IMDBMovie() {}
 
@@ -491,6 +493,18 @@ namespace MediaPortal.Video.Database
       set { _videoFilePath = value; }
     }
 
+    public string UserFanart
+    {
+      get { return _userFanart; }
+      set { _userFanart = value; }
+    }
+
+    public string MovieNfoFile
+    {
+      get { return _movieNfoFile; }
+      set { _movieNfoFile = value; }
+    }
+
     #endregion
 
     public void Reset()
@@ -542,6 +556,8 @@ namespace MediaPortal.Video.Database
       _watchedCount = -1;
       _videoFileName = string.Empty;
       _videoFilePath = string.Empty;
+      _userFanart = string.Empty;
+      _movieNfoFile = string.Empty;
     }
 
     #region Database views skin properties
@@ -568,6 +584,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#rating", Rating.ToString());
       GUIPropertyManager.SetProperty("#strrating", Rating.ToString(CultureInfo.CurrentCulture) + "/10");
       GUIPropertyManager.SetProperty("#tagline", TagLine);
+      GUIPropertyManager.SetProperty("#myvideosuserfanart", UserFanart);
       
       // Votes
       Int32 votes = 0;
@@ -816,38 +833,7 @@ namespace MediaPortal.Video.Database
         {
           hasSubtitles = "true";
         }
-
-        //if (file.ToUpperInvariant().Contains(@"VIDEO_TS.IFO"))
-        //{
-        //  videoMediaSource = "DVD";
-        //}
-        //else if (file.ToUpperInvariant().Contains(@"INDEX.BDMV"))
-        //{
-        //  videoMediaSource = "Bluray";
-        //}
-        //else if (file.ToUpperInvariant().EndsWith(@".MKV"))
-        //{
-        //  videoMediaSource = "matroska";
-        //}
-        //else
-        //{
-        //  try
-        //  {
-        //    if (System.IO.Path.HasExtension(file))
-        //    {
-        //      string extension = System.IO.Path.GetExtension(file).Replace(".", string.Empty);
-        //      string extImage = GUIGraphicsContext.Skin +
-        //                          @"\Media\Logos\" + extension + @".png";
-
-        //      if (System.IO.File.Exists(extImage))
-        //      {
-        //        videoMediaSource = extension;
-        //      }
-        //    }
-        //  }
-        //  catch (Exception) { }
-        //}
-
+        
         GUIPropertyManager.SetProperty("#VideoMediaSource", videoMediaSource);
         GUIPropertyManager.SetProperty("#VideoCodec", Util.Utils.MakeFileName(MediaInfo.VideoCodec));
         GUIPropertyManager.SetProperty("#VideoResolution", MediaInfo.VideoResolution);
@@ -938,6 +924,18 @@ namespace MediaPortal.Video.Database
               mList.Clear();
               rndMovieId = movieDetails.ID;
             }
+            else
+            {
+              // User fanart (only for videos which do not have movie info in db -> not scanned)
+              try
+              {
+                GetUserFanart(item, ref info);
+              }
+              catch (Exception ex)
+              {
+                Log.Error("IMDBMovie Set user fanart file property error: {0}", ex.Message);
+              }
+            }
           }
 
           info.ID = rndMovieId;
@@ -973,12 +971,41 @@ namespace MediaPortal.Video.Database
 
           info.Path = path;
           info.MediaInfo = mInfo;
-          info.Duration = VideoDatabase.GetMovieDuration(info.ID);
+
+          if (info.ID > 0)
+          {
+            info.Duration = VideoDatabase.GetMovieDuration(info.ID);
+          }
+          else
+          {
+            ArrayList files = new ArrayList();
+            VideoDatabase.GetFilesForMovie(VideoDatabase.GetMovieId(info.VideoFileName), ref files);
+
+            foreach (string file in files)
+            {
+              info.Duration += VideoDatabase.GetVideoDuration(VideoDatabase.GetFileId(file));
+            }
+          }
+
           int percent = 0;
           int watchedCount = 0;
           VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(fileName), out percent, out watchedCount);
           info.WatchedPercent = percent;
           info.WatchedCount = watchedCount;
+
+          // User fanart (only for videos which do not have movie info in db -> not scanned)
+          try
+          {
+            if (info.ID < 1)
+            {
+              GetUserFanart(item, ref info);
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Error("IMDBMovie Set user fanart file property error: {0}", ex.Message);
+          }
+
           item.AlbumInfoTag = info;
         }
         catch (Exception ex)
@@ -991,6 +1018,102 @@ namespace MediaPortal.Video.Database
       {
         Log.Error("IMDBMovie SetMovieData error: {0}", ex.Message);
         item.AlbumInfoTag = info;
+      }
+    }
+
+    private static void GetUserFanart(GUIListItem item, ref IMDBMovie info)
+    {
+      if (info == null)
+      {
+        return;
+      }
+
+      string strPath, strFilename;
+      Util.Utils.Split(info.VideoFileName, out strPath, out strFilename);
+
+      if (string.IsNullOrEmpty(strPath))
+      {
+        if (string.IsNullOrEmpty(item.Path))
+        {
+          return;
+        }
+        strPath = item.Path;
+      }
+
+      List<string> faFiles = new List<string>();
+      string faFile = strPath + @"\fanart.jpg";
+      faFiles.Add(faFile);
+      faFile = strPath + @"\backdrop.jpg";
+      faFiles.Add(faFile);
+
+
+      if (item.IsBdDvdFolder) // dvd/blu-ray
+      {
+        strPath = strPath.Remove(strPath.LastIndexOf(@"\"));
+
+        faFile = strPath + @"\" + Util.Utils.GetFilename(strFilename, true) + "-fanart.jpg";
+        faFiles.Add(faFile);
+        faFile = strPath + @"\" + "fanart.jpg";
+        faFiles.Add(faFile);
+        faFile = strPath + @"\" + "backdrop.jpg";
+        faFiles.Add(faFile);
+
+        string dvdBdPath = System.IO.Path.GetFileName(strPath);
+        Util.Utils.RemoveStackEndings(ref dvdBdPath);
+
+        faFile = strPath + @"\" + dvdBdPath.Trim() + "-fanart.jpg";
+        faFiles.Add(faFile);
+
+        foreach (string file in faFiles)
+        {
+          if (System.IO.File.Exists(file))
+          {
+            info.UserFanart = file;
+            break;
+          }
+        }
+      }
+      else if (!item.IsFolder && !string.IsNullOrEmpty(strFilename)) // video file
+      {
+        Util.Utils.RemoveStackEndings(ref strFilename);
+        faFile = strPath + @"\" + Util.Utils.GetFilename(strFilename, true) + "-fanart.jpg";
+        faFiles.Add(faFile);
+        faFile = strPath + @"\" + Util.Utils.GetFilename(strFilename, true) + "-backdrop.jpg";
+        faFiles.Add(faFile);
+        string cleanPath = System.IO.Path.GetFileName(strPath);
+        Util.Utils.RemoveStackEndings(ref cleanPath);
+        faFile = strPath + @"\" + cleanPath + "-fanart.jpg";
+        faFiles.Add(faFile);
+        faFile = strPath + @"\" + cleanPath + "-backdrop.jpg";
+        faFiles.Add(faFile);
+
+        foreach (string file in faFiles)
+        {
+          if (System.IO.File.Exists(file))
+          {
+            info.UserFanart = file;
+            break;
+          }
+        }
+      }
+      else if (item.IsFolder && !VirtualDirectories.Instance.Movies.IsRootShare(strPath) &&
+               Util.Utils.IsFolderDedicatedMovieFolder(strPath)) // folder & dedicated movie folder
+      {
+        string cleanPath = System.IO.Path.GetFileName(strPath);
+        Util.Utils.RemoveStackEndings(ref cleanPath);
+        faFile = strPath + @"\" + cleanPath + "-fanart.jpg";
+        faFiles.Add(faFile);
+        faFile = strPath + @"\" + cleanPath + "-backdrop.jpg";
+        faFiles.Add(faFile);
+        
+        foreach (string file in faFiles)
+        {
+          if (System.IO.File.Exists(file))
+          {
+            info.UserFanart = file;
+            break;
+          }
+        }
       }
     }
 
@@ -1081,6 +1204,7 @@ namespace MediaPortal.Video.Database
           foreach (XmlNode nodeMovie in movieList)
           {
             string genre = string.Empty;
+            string cast = string.Empty;
 
             #region nodes
 
@@ -1108,7 +1232,7 @@ namespace MediaPortal.Video.Database
 
             #region Genre
 
-            XmlNodeList genres = nodeMovie.SelectNodes("genres/genre");
+            XmlNodeList genres = nodeMovie.SelectNodes("genre");
 
             foreach (XmlNode nodeGenre in genres)
             {
@@ -1124,11 +1248,18 @@ namespace MediaPortal.Video.Database
 
             if (string.IsNullOrEmpty(genre))
             {
-              XmlNode nodeGenre = nodeMovie.SelectSingleNode("genre");
+              genres = nodeMovie.SelectNodes("genres/genre");
 
-              if (nodeGenre != null)
+              foreach (XmlNode nodeGenre in genres)
               {
-                genre = nodeGenre.InnerText;
+                if (nodeGenre.InnerText != null)
+                {
+                  if (genre.Length > 0)
+                  {
+                    genre += " / ";
+                  }
+                  genre += nodeGenre.InnerText;
+                }
               }
             }
 
@@ -1146,11 +1277,52 @@ namespace MediaPortal.Video.Database
             }
             #endregion
 
+            #region Cast
+
+            // Cast parse
+            XmlNodeList actorsList = nodeMovie.SelectNodes("actor");
+            
+            foreach (XmlNode nodeActor in actorsList)
+            {
+              string name = string.Empty;
+              string role = string.Empty;
+              string line = string.Empty;
+              XmlNode nodeActorName = nodeActor.SelectSingleNode("name");
+              XmlNode nodeActorRole = nodeActor.SelectSingleNode("role");
+              
+              if (nodeActorName != null && nodeActorName.InnerText != null)
+              {
+                name = nodeActorName.InnerText;
+              }
+              if (nodeActorRole != null && nodeActorRole.InnerText != null)
+              {
+                role = nodeActorRole.InnerText;
+              }
+              
+              if (!string.IsNullOrEmpty(name))
+              {
+                if (!string.IsNullOrEmpty(role))
+                {
+                  line = String.Format("{0} as {1}\n", name, role);
+                }
+                else
+                {
+                  line = String.Format("{0}\n", name);
+                }
+                cast += line;
+              }
+            }
+            // Cast
+            movie.Cast = cast;
+
+            #endregion
+
             #region Moviefiles
 
             // Need to fake movie to see it's properties (id = 0 is not used in vdb for movies)
             movie.Path = path;
-            movie.File = nfoFile;
+            movie.File = filename;
+            movie.MovieNfoFile = nfoFile;
             int movieId = VideoDatabase.GetMovieId(filename);
 
             if (movieId < 0)
@@ -1171,6 +1343,8 @@ namespace MediaPortal.Video.Database
               {
                 movie.Watched = 1;
               }
+
+              movie.ID = 0;
 
               #endregion
             }
@@ -1595,42 +1769,7 @@ namespace MediaPortal.Video.Database
         {
           hasSubtitles = "true";
         }
-
-        // Maybe in the future
-        //if (!string.IsNullOrEmpty(info.VideoFileName) && System.IO.File.Exists(info.VideoFileName))
-        //{
-        //  if (info.VideoFileName.ToUpperInvariant().Contains(@"VIDEO_TS.IFO"))
-        //  {
-        //    videoMediaSource = "DVD";
-        //  }
-        //  else if (info.VideoFileName.ToUpperInvariant().Contains(@"INDEX.BDMV"))
-        //  {
-        //    videoMediaSource = "Bluray";
-        //  }
-        //  else if (info.VideoFileName.ToUpperInvariant().EndsWith(@".MKV"))
-        //  {
-        //    videoMediaSource = "matroska";
-        //  }
-        //  else
-        //  {
-        //    try
-        //    {
-        //      if (System.IO.Path.HasExtension(info.VideoFileName))
-        //      {
-        //        string extension = System.IO.Path.GetExtension(info.VideoFileName).Replace(".", string.Empty);
-        //        string extImage = GUIGraphicsContext.Skin +
-        //                          @"\Media\Logos\" + extension + @".png";
-
-        //        if (System.IO.File.Exists(extImage))
-        //        {
-        //          videoMediaSource = extension;
-        //        }
-        //      }
-        //    }
-        //    catch (Exception) { }
-        //  }
-        //}
-
+        
         GUIPropertyManager.SetProperty("#VideoMediaSource", videoMediaSource);
         GUIPropertyManager.SetProperty("#VideoCodec", Util.Utils.MakeFileName(info.MediaInfo.VideoCodec));
         GUIPropertyManager.SetProperty("#VideoResolution", info.MediaInfo.VideoResolution);
@@ -1638,94 +1777,9 @@ namespace MediaPortal.Video.Database
         GUIPropertyManager.SetProperty("#AudioChannels", info.MediaInfo.AudioChannels);
         GUIPropertyManager.SetProperty("#HasSubtitles", hasSubtitles);
         GUIPropertyManager.SetProperty("#AspectRatio", info.MediaInfo.AspectRatio);
-        GUIPropertyManager.SetProperty("#myvideosuserfanart", string.Empty);
+        GUIPropertyManager.SetProperty("#myvideosuserfanart", info.UserFanart);
 
-        try
-        {
-          if (info.ID < 1)
-          {
-            string strPath, strFilename;
-            Util.Utils.Split(info.VideoFileName, out  strPath, out strFilename);
-
-            if (string.IsNullOrEmpty(strPath))
-            {
-              if (string.IsNullOrEmpty(item.Path))
-              {
-                return;
-              }
-              strPath = item.Path;
-            }
-          
-            List<string> faFiles = new List<string>();
-            string faFile = strPath + @"\fanart.jpg";
-            faFiles.Add(faFile);
-            faFile = strPath + @"\backdrop.jpg";
-            faFiles.Add(faFile);
-          
-          
-            if (item.IsBdDvdFolder) // dvd/blu-ray
-            {
-              strPath = strPath.Remove(strPath.LastIndexOf(@"\"));
-
-              faFile = strPath + @"\" + Util.Utils.GetFilename(strFilename, true) + "-fanart.jpg";
-              faFiles.Add(faFile);
-              faFile = strPath + @"\" + "fanart.jpg";
-              faFiles.Add(faFile);
-              faFile = strPath + @"\" + "backdrop.jpg";
-              faFiles.Add(faFile);
-
-              string dvdBdPath = strPath.Substring(strPath.LastIndexOf(@"\") + 1);
-              Util.Utils.RemoveStackEndings(ref dvdBdPath);
-            
-              faFile = strPath + @"\" + dvdBdPath.Trim() + "-fanart.jpg";
-              faFiles.Add(faFile);
-
-              foreach (string file in faFiles)
-              {
-                if (System.IO.File.Exists(file))
-                {
-                  GUIPropertyManager.SetProperty("#myvideosuserfanart", file);
-                  break;
-                }
-              }
-            }
-            else if (!item.IsFolder && !string.IsNullOrEmpty(strFilename)) // video file
-            {
-              Util.Utils.RemoveStackEndings(ref strFilename);
-              faFile = strPath + @"\" + Util.Utils.GetFilename(strFilename, true) + "-fanart.jpg";
-              faFiles.Add(faFile);
-
-              foreach (string file in faFiles)
-              {
-                if (System.IO.File.Exists(file))
-                {
-                  GUIPropertyManager.SetProperty("#myvideosuserfanart", file);
-                  break;
-                }
-              }
-            }
-            else if (item.IsFolder && !VirtualDirectories.Instance.Movies.IsRootShare(item.Path) && Util.Utils.IsFolderDedicatedMovieFolder(strPath)) // folder & dedicated movie folder
-            {
-              string cleanPath = item.Path.Substring(item.Path.LastIndexOf(@"\") + 1);
-              Util.Utils.RemoveStackEndings(ref cleanPath);
-              faFile = strPath + @"\" + cleanPath + "-fanart.jpg";
-              faFiles.Add(faFile);
-
-              foreach (string file in faFiles)
-              {
-                if (System.IO.File.Exists(file))
-                {
-                  GUIPropertyManager.SetProperty("#myvideosuserfanart", file);
-                  break;
-                }
-              }
-            }
-          }
-        }
-        catch (Exception ex)
-        {
-          Log.Error("IMDBMovie Set user fanart file property error: {0}", ex.Message);
-        }
+        
       }
       catch (Exception ex)
       {

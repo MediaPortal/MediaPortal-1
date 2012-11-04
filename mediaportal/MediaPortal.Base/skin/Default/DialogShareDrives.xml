@@ -14,17 +14,17 @@
       <id>1</id>
       <texture>context_background.png</texture>
       <posX>0</posX>
-      <posY>80</posY>
-      <width>720</width>
-      <height>248</height>
+      <posY>100</posY>
+      <width>960</width>
+      <height>310</height>
     </control>
     <control>
       <description>Folder info label</description>
       <type>label</type>
       <id>1</id>
-      <posX>281</posX>
-      <posY>90</posY>
-      <width>281</width>
+      <posX>375</posX>
+      <posY>113</posY>
+      <width>375</width>
       <label>1279</label>
       <font>font13</font>
     </control>
@@ -32,9 +32,9 @@
       <description>Share Name label</description>
       <type>label</type>
       <id>1</id>
-      <posX>146</posX>
-      <posY>128</posY>
-      <width>281</width>
+      <posX>195</posX>
+      <posY>160</posY>
+      <width>375</width>
       <label>#folderName</label>
       <font>font11</font>
     </control>
@@ -43,10 +43,10 @@
       <type>button</type>
       <id>3</id>
       <label>Name</label>
-      <posX>28</posX>
-      <posY>120</posY>
-      <width>112</width>
-      <height>32</height>
+      <posX>37</posX>
+      <posY>150</posY>
+      <width>150</width>
+      <height>40</height>
       <onleft>8</onleft>
       <onright>8</onright>
       <onup>7</onup>
@@ -56,9 +56,9 @@
       <description>Share folder label</description>
       <type>label</type>
       <id>1</id>
-      <posX>146</posX>
-      <posY>168</posY>
-      <width>281</width>
+      <posX>195</posX>
+      <posY>210</posY>
+      <width>375</width>
       <label>#folder</label>
       <font>font11</font>
     </control>
@@ -67,10 +67,10 @@
       <type>button</type>
       <id>4</id>
       <label>Folder</label>
-      <posX>28</posX>
-      <posY>160</posY>
-      <width>112</width>
-      <height>32</height>
+      <posX>37</posX>
+      <posY>200</posY>
+      <width>150</width>
+      <height>40</height>
       <onleft>8</onleft>
       <onright>8</onright>
       <onup>3</onup>
@@ -80,9 +80,9 @@
       <description>Default layout label</description>
       <type>label</type>
       <id>1</id>
-      <posX>146</posX>
-      <posY>204</posY>
-      <width>281</width>
+      <posX>195</posX>
+      <posY>255</posY>
+      <width>375</width>
       <label>#layout</label>
       <font>font11</font>
     </control>
@@ -91,10 +91,10 @@
       <type>button</type>
       <id>5</id>
       <label>Layout</label>
-      <posX>28</posX>
-      <posY>200</posY>
-      <width>112</width>
-      <height>32</height>
+      <posX>37</posX>
+      <posY>250</posY>
+      <width>150</width>
+      <height>40</height>
       <onleft>8</onleft>
       <onright>8</onright>
       <onup>4</onup>
@@ -104,9 +104,9 @@
       <description>Pincode label</description>
       <type>label</type>
       <id>1</id>
-      <posX>146</posX>
-      <posY>248</posY>
-      <width>281</width>
+      <posX>195</posX>
+      <posY>310</posY>
+      <width>375</width>
       <label>#pinCode</label>
       <font>font11</font>
     </control>
@@ -115,10 +115,10 @@
       <type>button</type>
       <id>6</id>
       <label>Pin</label>
-      <posX>28</posX>
-      <posY>240</posY>
-      <width>112</width>
-      <height>32</height>
+      <posX>37</posX>
+      <posY>300</posY>
+      <width>150</width>
+      <height>40</height>
       <onleft>8</onleft>
       <onright>8</onright>
       <onup>5</onup>
@@ -130,10 +130,10 @@
       <type>button</type>
       <id>8</id>
       <label>190</label>
-      <posX>28</posX>
-      <posY>280</posY>
-      <width>112</width>
-      <height>32</height>
+      <posX>37</posX>
+      <posY>350</posY>
+      <width>150</width>
+      <height>40</height>
       <textalign>center</textalign>
       <onleft>9</onleft>
       <onright>9</onright>
@@ -145,10 +145,10 @@
       <type>button</type>
       <id>9</id>
       <label>222</label>
-      <posX>157</posX>
-      <posY>280</posY>
-      <width>112</width>
-      <height>32</height>
+      <posX>210</posX>
+      <posY>350</posY>
+      <width>150</width>
+      <height>40</height>
       <textalign>center</textalign>
       <onleft>8</onleft>
       <onright>8</onright>
@@ -160,24 +160,24 @@
       <description>Folder browser</description>
       <type>listcontrol</type>
       <id>7</id>
-      <posX>28</posX>
-      <posY>320</posY>
-      <width>393</width>
-      <height>248</height>
+      <posX>37</posX>
+      <posY>400</posY>
+      <width>525</width>
+      <height>310</height>
       <scrollOffset>2</scrollOffset>
       <textXOff>-30</textXOff>
-      <textYOff>1</textYOff>
-      <textXOff2>337</textXOff2>
-      <textYOff2>1</textYOff2>
+      <textYOff>2</textYOff>
+      <textXOff2>450</textXOff2>
+      <textYOff2>2</textYOff2>
       <PinIconWidth>35</PinIconWidth>
       <PinIconHeight>25</PinIconHeight>
-      <PinIconXOff>747</PinIconXOff>
+      <PinIconXOff>560</PinIconXOff>
       <PinIconYOff>6</PinIconYOff>
-      <textureHeight>32</textureHeight>
-      <itemWidth>18</itemWidth>
-      <itemHeight>25</itemHeight>
-      <IconXOff>5</IconXOff>
-      <IconYOff>3</IconYOff>
+      <textureHeight>40</textureHeight>
+      <itemWidth>24</itemWidth>
+      <itemHeight>32</itemHeight>
+      <IconXOff>7</IconXOff>
+      <IconYOff>4</IconYOff>
       <keepaspectratio>yes</keepaspectratio>
       <font>font11</font>
       <font2>font11</font2>
@@ -186,10 +186,10 @@
       <textcolor3>ffffffff</textcolor3>
       <selectedColor>80000000</selectedColor>
       <selectedColor2>ffffffff</selectedColor2>
-      <spinWidth>25</spinWidth>
-      <spinHeight>26</spinHeight>
-      <spinPosX>365</spinPosX>
-      <spinPosY>520</spinPosY>
+      <spinWidth>34</spinWidth>
+      <spinHeight>33</spinHeight>
+      <spinPosX>487</spinPosX>
+      <spinPosY>650</spinPosY>
       <!--onup>8</onup>
 					<ondown>3</ondown-->
       <onleft>8</onleft>
@@ -203,18 +203,18 @@
       <type>image</type>
       <id>1</id>
       <texture>context_background.png</texture>
-      <posX>419</posX>
-      <posY>320</posY>
-      <width>286</width>
-      <height>224</height>
+      <posX>558</posX>
+      <posY>400</posY>
+      <width>382</width>
+      <height>280</height>
     </control>
     <control>
       <description>Options group label</description>
       <type>label</type>
       <id>1</id>
-      <posX>517</posX>
-      <posY>328</posY>
-      <width>281</width>
+      <posX>690</posX>
+      <posY>410</posY>
+      <width>375</width>
       <label>496</label>
       <font>font13</font>
     </control>
@@ -223,10 +223,10 @@
       <type>togglebutton</type>
       <id>40</id>
       <label>Remember last folder</label>
-      <posX>435</posX>
-      <posY>360</posY>
-      <width>250</width>
-      <height>36</height>
+      <posX>581</posX>
+      <posY>450</posY>
+      <width>333</width>
+      <height>45</height>
       <onleft>43</onleft>
       <onright>43</onright>
       <onup>43</onup>
@@ -237,10 +237,10 @@
       <type>togglebutton</type>
       <id>41</id>
       <label>Add optical drives</label>
-      <posX>435</posX>
-      <posY>400</posY>
-      <width>250</width>
-      <height>36</height>
+      <posX>581</posX>
+      <posY>500</posY>
+      <width>333</width>
+      <height>45</height>
       <onleft>43</onleft>
       <onright>43</onright>
       <onup>40</onup>
@@ -251,10 +251,10 @@
       <type>togglebutton</type>
       <id>42</id>
       <label>Switch to removables</label>
-      <posX>435</posX>
-      <posY>440</posY>
-      <width>250</width>
-      <height>36</height>
+      <posX>581</posX>
+      <posY>550</posY>
+      <width>333</width>
+      <height>45</height>
       <onleft>43</onleft>
       <onright>43</onright>
       <onup>41</onup>
@@ -265,26 +265,26 @@
       <description>Share folders listcontrol</description>
       <type>listcontrol</type>
       <id>43</id>
-      <posX>495</posX>
-      <posY>120</posY>
-      <width>196</width>
-      <height>240</height>
+      <posX>660</posX>
+      <posY>150</posY>
+      <width>262</width>
+      <height>300</height>
       <scrollOffset>2</scrollOffset>
       <textXOff>-30</textXOff>
-      <textYOff>1</textYOff>
-      <textXOff2>393</textXOff2>
-      <textYOff2>1</textYOff2>
-      <textXOff3>399</textXOff3>
-      <textYOff3>3</textYOff3>
+      <textYOff>2</textYOff>
+      <textXOff2>525</textXOff2>
+      <textYOff2>2</textYOff2>
+      <textXOff3>532</textXOff3>
+      <textYOff3>4</textYOff3>
       <PinIconWidth>35</PinIconWidth>
       <PinIconHeight>25</PinIconHeight>
-      <PinIconXOff>747</PinIconXOff>
+      <PinIconXOff>560</PinIconXOff>
       <PinIconYOff>6</PinIconYOff>
-      <textureHeight>32</textureHeight>
-      <itemWidth>18</itemWidth>
-      <itemHeight>25</itemHeight>
-      <IconXOff>5</IconXOff>
-      <IconYOff>3</IconYOff>
+      <textureHeight>40</textureHeight>
+      <itemWidth>24</itemWidth>
+      <itemHeight>32</itemHeight>
+      <IconXOff>7</IconXOff>
+      <IconYOff>4</IconYOff>
       <keepaspectratio>yes</keepaspectratio>
       <font>font13</font>
       <font2>font11</font2>
@@ -294,10 +294,10 @@
       <textcolor3>ffffffff</textcolor3>
       <selectedColor>80000000</selectedColor>
       <selectedColor2>ffffffff</selectedColor2>
-      <spinWidth>25</spinWidth>
-      <spinHeight>26</spinHeight>
-      <spinPosX>630</spinPosX>
-      <spinPosY>360</spinPosY>
+      <spinWidth>34</spinWidth>
+      <spinHeight>33</spinHeight>
+      <spinPosX>840</spinPosX>
+      <spinPosY>450</spinPosY>
       <onleft>42</onleft>
       <onright>42</onright>
       <onup>42</onup>

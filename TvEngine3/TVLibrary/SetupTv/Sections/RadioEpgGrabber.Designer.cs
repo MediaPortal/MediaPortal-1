@@ -31,10 +31,10 @@ namespace SetupTv.Sections
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RadioEpgGrabber));
       this.mpCheckBoxStoreOnlySelected = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.mpLabelChannelCount = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.mpListView2 = new MediaPortal.UserInterface.Controls.MPListView();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -45,8 +45,8 @@ namespace SetupTv.Sections
       this.linkLabelRadioAllGrouped = new System.Windows.Forms.LinkLabel();
       this.linkLabelRadioAll = new System.Windows.Forms.LinkLabel();
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabControl1.SuspendLayout();
@@ -142,7 +142,7 @@ namespace SetupTv.Sections
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
       this.tabPage1.Size = new System.Drawing.Size(477, 405);
       this.tabPage1.TabIndex = 0;
-      this.tabPage1.Text = "Radio EPG grabber";
+      this.tabPage1.Text = "Radio EPG Grabber";
       this.tabPage1.UseVisualStyleBackColor = true;
       // 
       // linkLabelLanguageNone
@@ -237,8 +237,8 @@ namespace SetupTv.Sections
       this.mpListView1.TabIndex = 1;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
-      this.mpListView1.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.mpListView1_ItemChecked);
       this.mpListView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListView1_ColumnClick);
+      this.mpListView1.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.mpListView1_ItemChecked);
       // 
       // columnHeader1
       // 

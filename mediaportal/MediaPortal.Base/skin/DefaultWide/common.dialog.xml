@@ -6,8 +6,9 @@
       <id>0</id>
       <width>1280</width>
       <height>720</height>
-      <texture>black.png</texture>
-      <colordiffuse>40ffffff</colordiffuse>
+      <texture>white.png</texture>
+      <colordiffuse>201e90ff</colordiffuse>
+      <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
     </control>
     <control>
       <type>image</type>
@@ -17,6 +18,19 @@
       <width>718</width>
       <height>290</height>
       <texture>dialog_background.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>280</posX>
+      <posY>233</posY>
+      <width>718</width>
+      <height>290</height>
+      <texture>dialog_background.png</texture>
+      <colordiffuse>bbffffff</colordiffuse>
+      <visible>window.isvisible(602)|window.isvisible(2005)</visible>
     </control>
     <control>
       <description>dialog Heading</description>

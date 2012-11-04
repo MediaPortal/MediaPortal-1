@@ -26,6 +26,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
@@ -169,6 +170,7 @@ namespace MediaPortal.GUI.Video
 
     private bool _useSortTitle = false;
     private bool _useOnlyNfoScraper = false;
+    private bool _doNotUseDatabase = false;
 
     private static IMDB.InternalMovieInfoScraper _internalGrabber = new IMDB.InternalMovieInfoScraper();
 
@@ -353,6 +355,7 @@ namespace MediaPortal.GUI.Video
 
         _switchRemovableDrives = xmlreader.GetValueAsBool("movies", "SwitchRemovableDrives", true);
         _useOnlyNfoScraper = xmlreader.GetValueAsBool("moviedatabase", "useonlynfoscraper", false);
+        _doNotUseDatabase = xmlreader.GetValueAsBool("moviedatabase", "donotusedatabase", false);
 
       }
 
@@ -933,155 +936,67 @@ namespace MediaPortal.GUI.Video
         }
       }
     }
-    
+
     protected override void OnInfo(int iItem)
     {
       GUIListItem pItem = facadeLayout.SelectedListItem;
       CurrentSelectedGUIItem = pItem;
 
-      if (pItem == null)
+      if (pItem == null || pItem.IsRemote ||
+          !_virtualDirectory.RequestPin(pItem.Path) ||
+          pItem.IsFolder && (!pItem.IsBdDvdFolder || pItem.Label == ".."))
       {
         return;
       }
 
-      if (pItem.IsRemote)
+      IMDBMovie movieDetails = pItem.AlbumInfoTag as IMDBMovie;
+      
+      if (movieDetails == null || _doNotUseDatabase && string.IsNullOrEmpty(movieDetails.MovieNfoFile) || 
+          _doNotUseDatabase && movieDetails.ID < 0)
       {
         return;
       }
-
-      if (!_virtualDirectory.RequestPin(pItem.Path))
+      
+      if (movieDetails.ID < 1 && !_doNotUseDatabase)
       {
-        return;
-      }
 
-      string strFile = pItem.Path;
-      string strMovie = pItem.Label;
-      bool bFoundFile = true;
-
-      if ((pItem.IsFolder) && (!Util.Utils.IsDVD(pItem.Path)))
-      {
-        ISelectDVDHandler selectDVDHandler = GetSelectDvdHandler();
-        ISelectBDHandler selectBDHandler = GetSelectBDHandler();
-				
-        if (pItem.Label == ".." || !pItem.IsBdDvdFolder)
+        // Check for nfo file
+        if (_useOnlyNfoScraper && File.Exists(movieDetails.MovieNfoFile))
         {
+          // Import nfo into database
+          VideoDatabase.ImportNfo(movieDetails.MovieNfoFile, false, false);
+          // Refresh movie info
+          VideoDatabase.GetMovieInfo(movieDetails.VideoFileName, ref movieDetails);
+        }
+        else if (!Win32API.IsConnectedToInternet())
+        {
+          GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+          dlgOk.SetHeading(257);
+          dlgOk.SetLine(1, GUILocalizeStrings.Get(703));
+          dlgOk.DoModal(GUIWindowManager.ActiveWindow);
           return;
         }
-
-        strFile = selectDVDHandler.GetFolderVideoFile(pItem.Path);
-
-        if (strFile == string.Empty)
-        {
-          strFile = selectBDHandler.GetFolderVideoFile(pItem.Path);
-        }
-
-        if (strFile == string.Empty)
-        {
-          bFoundFile = false;
-          strFile = pItem.Path;
-        }
-        else if (strFile.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase) >= 0)
-        {
-          //DVD folder
-          string dvdFolder = strFile.Substring(0, strFile.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase));
-          strMovie = Path.GetFileName(dvdFolder);
-        }
-        else if (strFile.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV", StringComparison.InvariantCultureIgnoreCase) >= 0)
-        {
-          //BD folder
-          string bdFolder = strFile.Substring(0, strFile.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV", StringComparison.InvariantCultureIgnoreCase));
-          strMovie = Path.GetFileName(bdFolder);
-        }
         else
         {
-          //Movie 
-          strMovie = Path.GetFileNameWithoutExtension(strFile);
-        }
-      }
-      // Use DVD label as movie name
-      else if (Util.Utils.IsDVD(pItem.Path) && (pItem.DVDLabel != string.Empty))
-      {
-        if (File.Exists(pItem.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
-        {
-          strFile = pItem.Path + @"\VIDEO_TS\VIDEO_TS.IFO";
-        }
-        if (File.Exists(pItem.Path + @"\BDMV\index.bdmv"))
-        {
-          strFile = pItem.Path + @"\BDMV\index.bdmv";
-        }
-        strMovie = pItem.DVDLabel;
-      }
+          bool isDedicatedMovieFolder = Util.Utils.IsFolderDedicatedMovieFolder(pItem.Path);
 
-      IMDBMovie movieDetails = new IMDBMovie();
-
-      if ((VideoDatabase.GetMovieInfo(strFile, ref movieDetails) == -1) ||
-          (movieDetails.IsEmpty))
-      {
-        IMDBMovie.FetchMovieNfo(pItem.Path, strFile, ref movieDetails);
-
-        if (!movieDetails.IsEmpty)
-        {
-          VideoDatabase.ImportNfo(movieDetails.File, false, false);
-          VideoDatabase.GetMovieInfo(strFile, ref movieDetails);
-        }
-        else
-        {
-          if (_useOnlyNfoScraper)
+          if (isDedicatedMovieFolder)
           {
-            // Notify user that new fanart are downloaded
-            GUIDialogNotify dlgNotify =
-              (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
-            if (null != dlgNotify)
+            if (pItem.IsBdDvdFolder)
             {
-              dlgNotify.SetHeading(GUILocalizeStrings.Get(1020)); //Information
-              dlgNotify.SetText(string.Format("Use only nfo import is active and no nfo file found for {0}", pItem.Label));
-              dlgNotify.DoModal(GetID);
-            }
-            return;
-          }
-          // Check Internet connection
-          if (!Win32API.IsConnectedToInternet())
-          {
-            GUIDialogOK dlgOk = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
-            dlgOk.SetHeading(257);
-            dlgOk.SetLine(1, GUILocalizeStrings.Get(703));
-            dlgOk.DoModal(GUIWindowManager.ActiveWindow);
-            return;
-          }
-
-          // Movie is not in the database
-          if (bFoundFile)
-          {
-            AddFileToDatabase(strFile);
-          }
-
-          if (!pItem.IsRemote && Util.Utils.IsFolderDedicatedMovieFolder(pItem.Path))
-          {
-            movieDetails.SearchString = Path.GetFileName(Path.GetDirectoryName(strMovie));
-          }
-          else
-          {
-            if (Util.Utils.IsVideo(strMovie))
-            {
-              movieDetails.SearchString = Path.GetFileNameWithoutExtension(strMovie);
+              movieDetails.SearchString = pItem.Label;
             }
             else
             {
-              movieDetails.SearchString = strMovie;
+              movieDetails.SearchString = Path.GetFileName(movieDetails.VideoFilePath);
             }
-          }
-
-          movieDetails.File = Path.GetFileName(strFile);
-
-          if (movieDetails.File == string.Empty)
-          {
-            movieDetails.Path = strFile;
           }
           else
           {
-            movieDetails.Path = strFile.Substring(0, strFile.IndexOf(movieDetails.File) - 1);
+            movieDetails.SearchString = pItem.Label;
           }
 
+          movieDetails.File = Path.GetFileName(movieDetails.VideoFileName);
           Log.Info("GUIVideoFiles: IMDB search: {0}, file:{1}, path:{2}", movieDetails.SearchString, movieDetails.File,
                    movieDetails.Path);
 
@@ -1094,10 +1009,11 @@ namespace MediaPortal.GUI.Video
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendMessage(msg);
       }
-      // Movie is in the database
+
+      // Open video info screen
       GUIVideoInfo videoInfo = (GUIVideoInfo) GUIWindowManager.GetWindow((int) Window.WINDOW_VIDEO_INFO);
       videoInfo.Movie = movieDetails;
-      
+
       if (pItem.IsFolder)
       {
         videoInfo.FolderForThumbs = pItem.Path;
@@ -1106,45 +1022,10 @@ namespace MediaPortal.GUI.Video
       {
         videoInfo.FolderForThumbs = string.Empty;
       }
-      
+
       GUIWindowManager.ActivateWindow((int) Window.WINDOW_VIDEO_INFO);
-
-      if (movieDetails != null)
-      {
-        // Add file name beacuse in the movie.details it's empty -> FanArt on shares helper
-        movieDetails.File = Path.GetFileName(strFile);
-
-        // Title suffix for problem with covers and movie with the same name
-        //string thumbPath = Util.Utils.GetCoverArt(Thumbs.MovieTitle, movieDetails.Title);
-        string titleExt = movieDetails.Title + "{" + movieDetails.ID + "}";
-        string thumbPath = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
-
-        if (string.IsNullOrEmpty(thumbPath) || !Util.Utils.FileExistsInCache(thumbPath))
-        {
-          thumbPath = string.Format(@"{0}\{1}", Thumbs.MovieTitle,
-                                    Util.Utils.MakeFileName(
-                                      Util.Utils.SplitFilename(Path.ChangeExtension(pItem.Path, ".jpg"))));
-        }
-
-        if (Util.Utils.FileExistsInCache(thumbPath))
-        {
-          pItem.RefreshCoverArt();
-          pItem.IconImage = thumbPath;
-          pItem.IconImageBig = thumbPath;
-          string thumbLargePath = Util.Utils.ConvertToLargeCoverArt(thumbPath);
-          
-          if (Util.Utils.FileExistsInCache(thumbLargePath))
-          {
-            pItem.ThumbnailImage = thumbLargePath;
-          }
-          else
-          {
-            pItem.ThumbnailImage = thumbPath;
-          }
-        }
-      }
     }
-
+  
     protected override void SelectCurrentItem()
     {
       if (_currentSelectedItem >= 0)
@@ -1612,13 +1493,13 @@ namespace MediaPortal.GUI.Video
           }
           else
           {
-            MediaInfoWrapper mInfo = new MediaInfoWrapper(file);
+            VideoFilesMediaInfo mInfo = new VideoFilesMediaInfo();
 
             if (fileID > -1)
             {
-              // Set video file duration
-              VideoDatabase.SetVideoDuration(fileID, mInfo.VideoDuration / 1000);
-              TotalMovieDuration += mInfo.VideoDuration / 1000;
+              // Set/update video file duration and media info
+              VideoDatabase.GetVideoFilesMediaInfo(file, ref mInfo, refresh);
+              TotalMovieDuration += (int) mInfo.Duration;
             }
           }
         }

@@ -8,35 +8,35 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>black.png</texture>
-      <colordiffuse>40ffffff</colordiffuse>
+      <width>960</width>
+      <height>720</height>
+      <texture>white.png</texture>
+      <colordiffuse>201e90ff</colordiffuse>
     </control>
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>176</posX>
-      <posY>224</posY>
-      <width>408</width>
-      <height>201</height>
+      <posX>235</posX>
+      <posY>281</posY>
+      <width>545</width>
+      <height>252</height>
       <texture>dialog_background.png</texture>
     </control>
     <control>
       <type>image</type>
       <id>6</id>
-      <posX>176</posX>
-      <posY>224</posY>
-      <width>408</width>
-      <height>201</height>
+      <posX>235</posX>
+      <posY>281</posY>
+      <width>545</width>
+      <height>252</height>
       <texture>dialog_background.png</texture>
     </control>
     <control>
       <description>Heading text label</description>
       <type>label</type>
       <id>4</id>
-      <posX>209</posX>
-      <posY>249</posY>
+      <posX>279</posX>
+      <posY>312</posY>
       <label>181</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -45,16 +45,16 @@
       <description>options listcontrol</description>
       <type>listcontrol</type>
       <id>3</id>
-      <posX>209</posX>
-      <posY>280</posY>
-      <width>342</width>
-      <height>157</height>
+      <posX>279</posX>
+      <posY>350</posY>
+      <width>456</width>
+      <height>197</height>
       <onleft>5</onleft>
       <onright>5</onright>
       <onup>5</onup>
       <ondown>5</ondown>
-      <spinPosX>450</spinPosX>
-      <spinPosY>369</spinPosY>
+      <spinPosX>600</spinPosX>
+      <spinPosY>462</spinPosY>
     </control>
   </controls>
 </window>

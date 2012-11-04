@@ -36,7 +36,7 @@ namespace SetupTv.Sections
     private readonly MPListViewStringColumnSorter lvwColumnSorter;
 
     public RadioEpgGrabber()
-      : this("Radio Epg grabber") { }
+      : this("Radio EPG Grabber") { }
 
     public RadioEpgGrabber(string name)
       : base(name)

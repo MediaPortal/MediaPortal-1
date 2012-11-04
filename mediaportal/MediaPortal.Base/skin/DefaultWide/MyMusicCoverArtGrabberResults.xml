@@ -10,36 +10,47 @@
       <id>1</id>
       <width>1280</width>
       <height>720</height>
+      <texture>BH Music.jpg</texture>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
+      <description>General Overlay</description>
+      <id>1</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>30</posY>
+      <width>1280</width>
+      <height>720</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
       <type>image</type>
       <description>Album Art image</description>
       <id>10</id>
-      <posX>113</posX>
-      <posY>130</posY>
-      <width>157</width>
-      <height>157</height>
-      <texture flipY="true" diffuse="Thumb_Mask.png" mask="picturethumbmask.png">-</texture>
+      <posX>990</posX>
+      <posY>180</posY>
+      <width>260</width>
+      <height>260</height>
+      <texture mask="cdthumbmask.png">-</texture>
       <keepaspectratio>no</keepaspectratio>
     </control>
     <control>
       <type>image</type>
       <description>Album Art Overlay</description>
       <id>1</id>
-      <posX>113</posX>
-      <posY>130</posY>
-      <width>157</width>
-      <height>157</height>
-      <texture flipY="true" diffuse="Thumb_Mask.png" mask="picturethumbmask.png">picturethumbframe.png</texture>
+      <posX>990</posX>
+      <posY>180</posY>
+      <width>260</width>
+      <height>260</height>
+      <texture mask="cdthumbmask.png">cdthumbframe.png</texture>
       <keepaspectratio>no</keepaspectratio>
     </control>
     <control>
       <type>image</type>
       <description>Amazon Logo image</description>
       <id>30</id>
-      <posX>113</posX>
+      <posX>2113</posX>
       <posY>620</posY>
       <width>167</width>
       <height>56</height>
@@ -51,17 +62,17 @@
       <type>label</type>
       <description>Album Cover Art Label</description>
       <id>11</id>
-      <posX>113</posX>
-      <posY>288</posY>
+      <posX>1040</posX>
+      <posY>450</posY>
       <label>4519</label>
-      <font>font10</font>
+      <font>font12</font>
       <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <type>fadelabel</type>
       <description>Artist value</description>
       <id>12</id>
-      <posX>448</posX>
+      <posX>2448</posX>
       <posY>167</posY>
       <width>800</width>
       <label>-</label>
@@ -72,7 +83,7 @@
       <type>fadelabel</type>
       <description>Album value</description>
       <id>13</id>
-      <posX>448</posX>
+      <posX>2448</posX>
       <posY>130</posY>
       <width>800</width>
       <label>-</label>
@@ -83,7 +94,7 @@
       <type>label</type>
       <description>Release year value</description>
       <id>14</id>
-      <posX>440</posX>
+      <posX>2440</posX>
       <posY>200</posY>
       <label>-</label>
       <font>font16</font>
@@ -93,10 +104,12 @@
       <type>label</type>
       <description>No matches label</description>
       <id>15</id>
-      <posX>640</posX>
-      <posY>400</posY>
+      <posX>0</posX>
+      <posY>200</posY>
+      <width>1280</width>
+      <align>center</align>
       <label>4516</label>
-	  <visible>false</visible>
+      <visible>false</visible>
       <font>font18</font>
       <textcolor>ffffffff</textcolor>
     </control>
@@ -104,38 +117,46 @@
       <type>listcontrol</type>
       <description>album view listcontrol</description>
       <id>25</id>
-      <posX>512</posX>
-      <posY>210</posY>
-      <height>500</height>
-      <onleft>20</onleft>
-      <onright>25</onright>
-      <onup>25</onup>
-      <ondown>25</ondown>
-      <textcolor>FFFFFFFF</textcolor>
-      <subtype>album</subtype>
-      <selectedColor2>FFFF6600</selectedColor2>
-      <font2>font13</font2>
-      <textXOff2>728</textXOff2>
-      <font>font13</font>
+      <posX>100</posX>
+      <posY>170</posY>
+      <height>450</height>
+      <width>800</width>
       <textXOff>10</textXOff>
-      <itemHeight>70</itemHeight>
-      <itemWidth>70</itemWidth>
-      <textureHeight>88</textureHeight>
-      <selectedColor>FFFF6600</selectedColor>
-      <IconXOff>17</IconXOff>
-      <IconYOff>9</IconYOff>
-      <spaceBetweenItems>1</spaceBetweenItems>
-      <suffix>   |   </suffix>
-      <textcolor2>FFFFFFFF</textcolor2>
-      <textYOff2>45</textYOff2>
-      <unfocusedAlpha>170</unfocusedAlpha>
+      <textYOff>2</textYOff>
+      <textXOff2>800</textXOff2>
+      <textYOff2>32</textYOff2>
+      <textXOff3>76</textXOff3>
+      <textYOff3>32</textYOff3>
+      <PinIconXOff>80</PinIconXOff>
+      <PinIconYOff>34</PinIconYOff>
+      <PinIconWidth>35</PinIconWidth>
+      <PinIconHeight>25</PinIconHeight>
+      <textureHeight>60</textureHeight>
+      <itemWidth>55</itemWidth>
+      <itemHeight>55</itemHeight>
+      <IconXOff>10</IconXOff>
+      <IconYOff>2</IconYOff>
+      <keepaspectratio>yes</keepaspectratio>
+      <font>font13</font>
+      <font2>font10</font2>
+      <font3>font10</font3>
+      <textcolor>ffffffff</textcolor>
+      <textcolor2>ffffffff</textcolor2>
+      <textcolor3>ffffffff</textcolor3>
+      <selectedColor>80000000</selectedColor>
+      <selectedColor2>ffffffff</selectedColor2>
+      <spinWidth>40</spinWidth>
+      <spinHeight>40</spinHeight>
+      <spinPosX>2170</spinPosX>
+      <spinPosY>470</spinPosY>
+      <spaceBetweenItems>0</spaceBetweenItems>
     </control>
     <control>
       <type>button</type>
       <description>Skip button</description>
       <id>20</id>
-      <posX>113</posX>
-      <posY>520</posY>
+      <posX>400</posX>
+      <posY>560</posY>
       <onleft>20</onleft>
       <onright>25</onright>
       <onup>20</onup>

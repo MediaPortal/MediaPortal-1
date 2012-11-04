@@ -1929,6 +1929,8 @@ namespace MediaPortal.Configuration.Sections
         chbUseSortTitle.Checked = xmlreader.GetValueAsBool("moviedatabase", "usesorttitle", false);
         // Use only nfo scrapper
         chbUseNfoScraperOnly.Checked = xmlreader.GetValueAsBool("moviedatabase", "useonlynfoscraper", false);
+        chbDoNotUseDatabase.Checked = xmlreader.GetValueAsBool("moviedatabase", "donotusedatabase", false);
+        chbDoNotUseDatabase.Enabled = chbUseNfoScraperOnly.Checked;
 
         // FanArt setting
         string configDir;
@@ -2025,6 +2027,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("moviedatabase", "usesorttitle", chbUseSortTitle.Checked);
         // nfo scraper only
         xmlwriter.SetValueAsBool("moviedatabase", "useonlynfoscraper", chbUseNfoScraperOnly.Checked);
+        xmlwriter.SetValueAsBool("moviedatabase", "donotusedatabase", chbDoNotUseDatabase.Checked);
         
         xmlwriter.SetValueAsBool("movies", "fuzzyMatching", _isFuzzyMatching);
         // FanArt
@@ -5096,6 +5099,7 @@ namespace MediaPortal.Configuration.Sections
         mpDeleteGrabber.Enabled = true;
         mpComboBoxAvailableDatabases.Enabled = true;
         mpButtonAddGrabber.Enabled = true;
+        chbDoNotUseDatabase.Enabled = false;
       }
       else
       {
@@ -5106,6 +5110,7 @@ namespace MediaPortal.Configuration.Sections
         mpDeleteGrabber.Enabled = false;
         mpComboBoxAvailableDatabases.Enabled = false;
         mpButtonAddGrabber.Enabled = false;
+        chbDoNotUseDatabase.Enabled = true;
       }
 
       using (Settings xmlwriter = new MPSettings())
@@ -5177,7 +5182,16 @@ namespace MediaPortal.Configuration.Sections
         pBox.ImageLocation = largeThumb;
       }
     }
+
     #endregion
+
+    private void chbDoNotUseDatabase_CheckedChanged(object sender, EventArgs e)
+    {
+      using (Settings xmlwriter = new MPSettings())
+      {
+        xmlwriter.SetValueAsBool("moviedatabase", "donotusedatabase", chbDoNotUseDatabase.Checked);
+      }
+    }
     
     #endregion
   }

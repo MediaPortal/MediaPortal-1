@@ -10,8 +10,8 @@
       <type>image</type>
       <id>1</id>
       <texture>background.png</texture>
-      <width>720</width>
-      <height>576</height>
+      <width>960</width>
+      <height>720</height>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
@@ -20,8 +20,8 @@
       <type>group</type>
       <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
       <animation effect="slide" time="70" end="0,-300">WindowClose</animation>
-      <posX>39</posX>
-      <posY>96</posY>
+      <posX>37</posX>
+      <posY>121</posY>
       <layout>StackLayout</layout>
       <control>
         <description>New Game</description>
@@ -82,10 +82,10 @@
         <description>Scoreboard background</description>
         <type>image</type>
         <id>20</id>
-        <posX>37</posX>
-        <posY>402</posY>
-        <width>187</width>
-        <height>137</height>
+        <posX>50</posX>
+        <posY>503</posY>
+        <width>250</width>
+        <height>172</height>
         <texture>tetris\scoreboard.png</texture>
         <colordiffuse>60ffffff</colordiffuse>
       </control>
@@ -93,17 +93,17 @@
         <description>Highscore: label</description>
         <type>label</type>
         <id>21</id>
-        <posX>51</posX>
-        <posY>412</posY>
+        <posX>69</posX>
+        <posY>515</posY>
         <label>19008</label>
       </control>
       <control>
         <description>Time</description>
         <type>label</type>
         <id>22</id>
-        <posX>213</posX>
-        <posY>412</posY>
-        <width>162</width>
+        <posX>285</posX>
+        <posY>515</posY>
+        <width>216</width>
         <align>right</align>
         <label>#numberplace.time</label>
       </control>
@@ -111,17 +111,17 @@
         <description>Rank1: label</description>
         <type>label</type>
         <id>24</id>
-        <posX>51</posX>
-        <posY>409</posY>
+        <posX>69</posX>
+        <posY>512</posY>
         <label>#numberplace.name1</label>
       </control>
       <control>
         <description>Rank1 Score: label</description>
         <type>label</type>
         <id>25</id>
-        <posX>213</posX>
-        <posY>409</posY>
-        <width>162</width>
+        <posX>285</posX>
+        <posY>512</posY>
+        <width>216</width>
         <align>right</align>
         <label>#numberplace.score1</label>
       </control>
@@ -129,17 +129,17 @@
         <description>Rank2 Name: label</description>
         <type>label</type>
         <id>26</id>
-        <posX>51</posX>
-        <posY>444</posY>
+        <posX>69</posX>
+        <posY>555</posY>
         <label>#numberplace.name2</label>
       </control>
       <control>
         <description>Rank2 Score: label</description>
         <type>label</type>
         <id>27</id>
-        <posX>213</posX>
-        <posY>444</posY>
-        <width>162</width>
+        <posX>285</posX>
+        <posY>555</posY>
+        <width>216</width>
         <align>right</align>
         <label>#numberplace.score2</label>
       </control>
@@ -147,17 +147,17 @@
         <description>Rank3 Name: label</description>
         <type>label</type>
         <id>28</id>
-        <posX>51</posX>
-        <posY>477</posY>
+        <posX>69</posX>
+        <posY>597</posY>
         <label>#numberplace.name3</label>
       </control>
       <control>
         <description>Rank3 Score: label</description>
         <type>label</type>
         <id>29</id>
-        <posX>213</posX>
-        <posY>477</posY>
-        <width>162</width>
+        <posX>285</posX>
+        <posY>597</posY>
+        <width>216</width>
         <align>right</align>
         <label>#numberplace.score3</label>
       </control>
@@ -168,9 +168,9 @@
       <animation effect="slide" time="70" start="0,-300">WindowOpen</animation>
       <animation effect="slide" time="70" end="800,0">WindowClose</animation>
       <id>1</id>
-      <posX>339</posX>
-      <posY>69</posY>
-      <width>399</width>
+      <posX>453</posX>
+      <posY>87</posY>
+      <width>533</width>
       <label>#numberplace.time</label>
       <font>font14</font>
       <align>right</align>
@@ -182,10 +182,10 @@
       <animation effect="slide" time="70" start="0,-300">WindowOpen</animation>
       <animation effect="slide" time="70" end="800,0">WindowClose</animation>
       <id>700</id>
-      <posX>289</posX>
-      <posY>110</posY>
-      <width>399</width>
-      <height>400</height>
+      <posX>386</posX>
+      <posY>138</posY>
+      <width>533</width>
+      <height>500</height>
       <mpe>
         <layout>Grid</layout>
         <spring>no</spring>
@@ -200,19 +200,19 @@
       <control>
         <type>image</type>
         <id>901</id>
-        <posX>419</posX>
-        <posY>110</posY>
-        <width>3</width>
-        <height>400</height>
+        <posX>559</posX>
+        <posY>138</posY>
+        <width>5</width>
+        <height>500</height>
         <texture>bar_vert.png</texture>
       </control>
       <control>
         <type>image</type>
         <id>902</id>
-        <posX>555</posX>
-        <posY>110</posY>
-        <width>3</width>
-        <height>400</height>
+        <posX>741</posX>
+        <posY>138</posY>
+        <width>5</width>
+        <height>500</height>
         <texture>bar_vert.png</texture>
       </control>
     </control>
@@ -222,26 +222,26 @@
       <animation effect="slide" time="70" start="0,-300">WindowOpen</animation>
       <animation effect="slide" time="70" end="800,0">WindowClose</animation>
       <id>705</id>
-      <posX>289</posX>
-      <posY>108</posY>
-      <width>399</width>
-      <height>400</height>
+      <posX>386</posX>
+      <posY>135</posY>
+      <width>533</width>
+      <height>500</height>
       <control>
         <type>image</type>
         <id>976</id>
-        <posX>289</posX>
-        <posY>238</posY>
-        <width>399</width>
-        <height>4</height>
+        <posX>386</posX>
+        <posY>298</posY>
+        <width>533</width>
+        <height>5</height>
         <texture>bar_hor.png</texture>
       </control>
       <control>
         <type>image</type>
         <id>977</id>
-        <posX>289</posX>
-        <posY>374</posY>
-        <width>399</width>
-        <height>4</height>
+        <posX>386</posX>
+        <posY>468</posY>
+        <width>533</width>
+        <height>5</height>
         <texture>bar_hor.png</texture>
       </control>
     </control>
@@ -251,10 +251,10 @@
       <animation effect="slide" time="70" start="0,-300">WindowOpen</animation>
       <animation effect="slide" time="70" end="800,0">WindowClose</animation>
       <id>10</id>
-      <posX>289</posX>
-      <posY>110</posY>
-      <width>399</width>
-      <height>400</height>
+      <posX>386</posX>
+      <posY>138</posY>
+      <width>533</width>
+      <height>500</height>
       <mpe>
         <layout>Grid</layout>
         <spring>no</spring>
@@ -270,14 +270,14 @@
       <control>
         <type>cell</type>
         <id>1000</id>
-        <posX>290</posX>
-        <posY>109</posY>
+        <posX>387</posX>
+        <posY>137</posY>
         <onright>1001</onright>
         <onup>9000</onup>
         <ondown>2000</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -287,15 +287,15 @@
       <control>
         <type>cell</type>
         <id>1001</id>
-        <posX>333</posX>
-        <posY>109</posY>
+        <posX>444</posX>
+        <posY>137</posY>
         <onleft>1000</onleft>
         <onright>1002</onright>
         <onup>9001</onup>
         <ondown>2001</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>40</height>
+        <width>55</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -304,15 +304,15 @@
       <control>
         <type>cell</type>
         <id>1002</id>
-        <posX>378</posX>
-        <posY>109</posY>
+        <posX>504</posX>
+        <posY>137</posY>
         <onleft>1001</onleft>
         <onright>1003</onright>
         <onup>9002</onup>
         <ondown>2002</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -321,15 +321,15 @@
       <control>
         <type>cell</type>
         <id>1003</id>
-        <posX>425</posX>
-        <posY>109</posY>
+        <posX>567</posX>
+        <posY>137</posY>
         <onleft>1002</onleft>
         <onright>1004</onright>
         <onup>9003</onup>
         <ondown>2003</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -338,15 +338,15 @@
       <control>
         <type>cell</type>
         <id>1004</id>
-        <posX>468</posX>
-        <posY>109</posY>
+        <posX>624</posX>
+        <posY>137</posY>
         <onleft>1003</onleft>
         <onright>1005</onright>
         <onup>9004</onup>
         <ondown>2004</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>40</height>
+        <width>55</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -355,15 +355,15 @@
       <control>
         <type>cell</type>
         <id>1005</id>
-        <posX>513</posX>
-        <posY>109</posY>
+        <posX>684</posX>
+        <posY>137</posY>
         <onleft>1004</onleft>
         <onright>1006</onright>
         <onup>9005</onup>
         <ondown>2005</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -372,15 +372,15 @@
       <control>
         <type>cell</type>
         <id>1006</id>
-        <posX>560</posX>
-        <posY>109</posY>
+        <posX>747</posX>
+        <posY>137</posY>
         <onleft>1005</onleft>
         <onright>1007</onright>
         <onup>9006</onup>
         <ondown>2006</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -389,15 +389,15 @@
       <control>
         <type>cell</type>
         <id>1007</id>
-        <posX>603</posX>
-        <posY>109</posY>
+        <posX>804</posX>
+        <posY>137</posY>
         <onleft>1006</onleft>
         <onright>1008</onright>
         <onup>9007</onup>
         <ondown>2007</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>40</height>
+        <width>55</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -406,15 +406,15 @@
       <control>
         <type>cell</type>
         <id>1008</id>
-        <posX>648</posX>
-        <posY>109</posY>
+        <posX>864</posX>
+        <posY>137</posY>
         <onleft>1007</onleft>
         <onright>1000</onright>
         <onup>9008</onup>
         <ondown>2008</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -424,14 +424,14 @@
       <control>
         <type>cell</type>
         <id>2000</id>
-        <posX>290</posX>
-        <posY>152</posY>
+        <posX>387</posX>
+        <posY>191</posY>
         <onright>2001</onright>
         <onup>1000</onup>
         <ondown>3000</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>41</height>
+        <width>54</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -440,15 +440,15 @@
       <control>
         <type>cell</type>
         <id>2001</id>
-        <posX>333</posX>
-        <posY>152</posY>
+        <posX>444</posX>
+        <posY>191</posY>
         <onleft>2000</onleft>
         <onright>2002</onright>
         <onup>1001</onup>
         <ondown>3001</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>41</height>
+        <width>55</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -457,15 +457,15 @@
       <control>
         <type>cell</type>
         <id>2002</id>
-        <posX>378</posX>
-        <posY>152</posY>
+        <posX>504</posX>
+        <posY>191</posY>
         <onleft>2001</onleft>
         <onright>2003</onright>
         <onup>1002</onup>
         <ondown>3002</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>41</height>
+        <width>54</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -474,15 +474,15 @@
       <control>
         <type>cell</type>
         <id>2003</id>
-        <posX>425</posX>
-        <posY>152</posY>
+        <posX>567</posX>
+        <posY>191</posY>
         <onleft>2002</onleft>
         <onright>2004</onright>
         <onup>1003</onup>
         <ondown>3003</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>41</height>
+        <width>54</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -491,15 +491,15 @@
       <control>
         <type>cell</type>
         <id>2004</id>
-        <posX>468</posX>
-        <posY>152</posY>
+        <posX>624</posX>
+        <posY>191</posY>
         <onleft>2003</onleft>
         <onright>2005</onright>
         <onup>1004</onup>
         <ondown>3004</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>41</height>
+        <width>55</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -508,15 +508,15 @@
       <control>
         <type>cell</type>
         <id>2005</id>
-        <posX>513</posX>
-        <posY>152</posY>
+        <posX>684</posX>
+        <posY>191</posY>
         <onleft>2004</onleft>
         <onright>2006</onright>
         <onup>1005</onup>
         <ondown>3005</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>41</height>
+        <width>54</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -525,15 +525,15 @@
       <control>
         <type>cell</type>
         <id>2006</id>
-        <posX>560</posX>
-        <posY>152</posY>
+        <posX>747</posX>
+        <posY>191</posY>
         <onleft>2005</onleft>
         <onright>2007</onright>
         <onup>1006</onup>
         <ondown>3006</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>41</height>
+        <width>54</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -542,15 +542,15 @@
       <control>
         <type>cell</type>
         <id>2007</id>
-        <posX>603</posX>
-        <posY>152</posY>
+        <posX>804</posX>
+        <posY>191</posY>
         <onleft>2006</onleft>
         <onright>2008</onright>
         <onup>1007</onup>
         <ondown>3007</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>41</height>
+        <width>55</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -559,15 +559,15 @@
       <control>
         <type>cell</type>
         <id>2008</id>
-        <posX>648</posX>
-        <posY>152</posY>
+        <posX>864</posX>
+        <posY>191</posY>
         <onleft>2007</onleft>
         <onright>2000</onright>
         <onup>1008</onup>
         <ondown>3008</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>41</height>
+        <width>54</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -577,14 +577,14 @@
       <control>
         <type>cell</type>
         <id>3000</id>
-        <posX>290</posX>
-        <posY>196</posY>
+        <posX>387</posX>
+        <posY>246</posY>
         <onright>3001</onright>
         <onup>2000</onup>
         <ondown>4000</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -593,15 +593,15 @@
       <control>
         <type>cell</type>
         <id>3001</id>
-        <posX>333</posX>
-        <posY>196</posY>
+        <posX>444</posX>
+        <posY>246</posY>
         <onleft>3000</onleft>
         <onright>3002</onright>
         <onup>2001</onup>
         <ondown>4001</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>40</height>
+        <width>55</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -610,15 +610,15 @@
       <control>
         <type>cell</type>
         <id>3002</id>
-        <posX>378</posX>
-        <posY>196</posY>
+        <posX>504</posX>
+        <posY>246</posY>
         <onleft>3001</onleft>
         <onright>3003</onright>
         <onup>2002</onup>
         <ondown>4002</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -627,15 +627,15 @@
       <control>
         <type>cell</type>
         <id>3003</id>
-        <posX>425</posX>
-        <posY>196</posY>
+        <posX>567</posX>
+        <posY>246</posY>
         <onleft>3002</onleft>
         <onright>3004</onright>
         <onup>2003</onup>
         <ondown>4003</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -644,15 +644,15 @@
       <control>
         <type>cell</type>
         <id>3004</id>
-        <posX>468</posX>
-        <posY>196</posY>
+        <posX>624</posX>
+        <posY>246</posY>
         <onleft>3003</onleft>
         <onright>3005</onright>
         <onup>2004</onup>
         <ondown>4004</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>40</height>
+        <width>55</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -661,15 +661,15 @@
       <control>
         <type>cell</type>
         <id>3005</id>
-        <posX>513</posX>
-        <posY>196</posY>
+        <posX>684</posX>
+        <posY>246</posY>
         <onleft>3004</onleft>
         <onright>3006</onright>
         <onup>2005</onup>
         <ondown>4005</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -678,15 +678,15 @@
       <control>
         <type>cell</type>
         <id>3006</id>
-        <posX>560</posX>
-        <posY>196</posY>
+        <posX>747</posX>
+        <posY>246</posY>
         <onleft>3005</onleft>
         <onright>3007</onright>
         <onup>2006</onup>
         <ondown>4006</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -695,15 +695,15 @@
       <control>
         <type>cell</type>
         <id>3007</id>
-        <posX>603</posX>
-        <posY>196</posY>
+        <posX>804</posX>
+        <posY>246</posY>
         <onleft>3006</onleft>
         <onright>3008</onright>
         <onup>2007</onup>
         <ondown>4007</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>40</height>
+        <width>55</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -712,15 +712,15 @@
       <control>
         <type>cell</type>
         <id>3008</id>
-        <posX>648</posX>
-        <posY>196</posY>
+        <posX>864</posX>
+        <posY>246</posY>
         <onleft>3007</onleft>
         <onright>3000</onright>
         <onup>2008</onup>
         <ondown>4008</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -730,14 +730,14 @@
       <control>
         <type>cell</type>
         <id>4000</id>
-        <posX>290</posX>
-        <posY>245</posY>
+        <posX>387</posX>
+        <posY>307</posY>
         <onright>4001</onright>
         <onup>3000</onup>
         <ondown>5000</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -746,15 +746,15 @@
       <control>
         <type>cell</type>
         <id>4001</id>
-        <posX>333</posX>
-        <posY>245</posY>
+        <posX>444</posX>
+        <posY>307</posY>
         <onleft>4000</onleft>
         <onright>4002</onright>
         <onup>3001</onup>
         <ondown>5001</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>40</height>
+        <width>55</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -763,15 +763,15 @@
       <control>
         <type>cell</type>
         <id>4002</id>
-        <posX>378</posX>
-        <posY>245</posY>
+        <posX>504</posX>
+        <posY>307</posY>
         <onleft>4001</onleft>
         <onright>4003</onright>
         <onup>3002</onup>
         <ondown>5002</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -780,15 +780,15 @@
       <control>
         <type>cell</type>
         <id>4003</id>
-        <posX>425</posX>
-        <posY>245</posY>
+        <posX>567</posX>
+        <posY>307</posY>
         <onleft>4002</onleft>
         <onright>4004</onright>
         <onup>3003</onup>
         <ondown>5003</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -797,15 +797,15 @@
       <control>
         <type>cell</type>
         <id>4004</id>
-        <posX>468</posX>
-        <posY>245</posY>
+        <posX>624</posX>
+        <posY>307</posY>
         <onleft>4003</onleft>
         <onright>4005</onright>
         <onup>3004</onup>
         <ondown>5004</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>40</height>
+        <width>55</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -814,15 +814,15 @@
       <control>
         <type>cell</type>
         <id>4005</id>
-        <posX>513</posX>
-        <posY>245</posY>
+        <posX>684</posX>
+        <posY>307</posY>
         <onleft>4004</onleft>
         <onright>4006</onright>
         <onup>3005</onup>
         <ondown>5005</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -831,15 +831,15 @@
       <control>
         <type>cell</type>
         <id>4006</id>
-        <posX>560</posX>
-        <posY>245</posY>
+        <posX>747</posX>
+        <posY>307</posY>
         <onleft>4005</onleft>
         <onright>4007</onright>
         <onup>3006</onup>
         <ondown>5006</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -848,15 +848,15 @@
       <control>
         <type>cell</type>
         <id>4007</id>
-        <posX>603</posX>
-        <posY>245</posY>
+        <posX>804</posX>
+        <posY>307</posY>
         <onleft>4006</onleft>
         <onright>4008</onright>
         <onup>3007</onup>
         <ondown>5007</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>40</height>
+        <width>55</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -865,15 +865,15 @@
       <control>
         <type>cell</type>
         <id>4008</id>
-        <posX>648</posX>
-        <posY>245</posY>
+        <posX>864</posX>
+        <posY>307</posY>
         <onleft>4007</onleft>
         <onright>4000</onright>
         <onup>3008</onup>
         <ondown>5008</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -883,14 +883,14 @@
       <control>
         <type>cell</type>
         <id>5000</id>
-        <posX>290</posX>
-        <posY>288</posY>
+        <posX>387</posX>
+        <posY>361</posY>
         <onright>5001</onright>
         <onup>4000</onup>
         <ondown>6000</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>41</height>
+        <width>54</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -899,15 +899,15 @@
       <control>
         <type>cell</type>
         <id>5001</id>
-        <posX>333</posX>
-        <posY>288</posY>
+        <posX>444</posX>
+        <posY>361</posY>
         <onleft>5000</onleft>
         <onright>5002</onright>
         <onup>4001</onup>
         <ondown>6001</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>41</height>
+        <width>55</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -916,15 +916,15 @@
       <control>
         <type>cell</type>
         <id>5002</id>
-        <posX>378</posX>
-        <posY>288</posY>
+        <posX>504</posX>
+        <posY>361</posY>
         <onleft>5001</onleft>
         <onright>5003</onright>
         <onup>4002</onup>
         <ondown>6002</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>41</height>
+        <width>54</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -933,15 +933,15 @@
       <control>
         <type>cell</type>
         <id>5003</id>
-        <posX>425</posX>
-        <posY>288</posY>
+        <posX>567</posX>
+        <posY>361</posY>
         <onleft>5002</onleft>
         <onright>5004</onright>
         <onup>4003</onup>
         <ondown>6003</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>41</height>
+        <width>54</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -950,15 +950,15 @@
       <control>
         <type>cell</type>
         <id>5004</id>
-        <posX>468</posX>
-        <posY>288</posY>
+        <posX>624</posX>
+        <posY>361</posY>
         <onleft>5003</onleft>
         <onright>5005</onright>
         <onup>4004</onup>
         <ondown>6004</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>41</height>
+        <width>55</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -967,15 +967,15 @@
       <control>
         <type>cell</type>
         <id>5005</id>
-        <posX>513</posX>
-        <posY>288</posY>
+        <posX>684</posX>
+        <posY>361</posY>
         <onleft>5004</onleft>
         <onright>5006</onright>
         <onup>4005</onup>
         <ondown>6005</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>41</height>
+        <width>54</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -984,15 +984,15 @@
       <control>
         <type>cell</type>
         <id>5006</id>
-        <posX>560</posX>
-        <posY>288</posY>
+        <posX>747</posX>
+        <posY>361</posY>
         <onleft>5005</onleft>
         <onright>5007</onright>
         <onup>4006</onup>
         <ondown>6006</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>41</height>
+        <width>54</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1001,15 +1001,15 @@
       <control>
         <type>cell</type>
         <id>5007</id>
-        <posX>603</posX>
-        <posY>288</posY>
+        <posX>804</posX>
+        <posY>361</posY>
         <onleft>5006</onleft>
         <onright>5008</onright>
         <onup>4007</onup>
         <ondown>6007</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>41</height>
+        <width>55</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1018,15 +1018,15 @@
       <control>
         <type>cell</type>
         <id>5008</id>
-        <posX>648</posX>
-        <posY>288</posY>
+        <posX>864</posX>
+        <posY>361</posY>
         <onleft>5007</onleft>
         <onright>5000</onright>
         <onup>4008</onup>
         <ondown>6008</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>41</height>
+        <width>54</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1036,14 +1036,14 @@
       <control>
         <type>cell</type>
         <id>6000</id>
-        <posX>290</posX>
-        <posY>332</posY>
+        <posX>387</posX>
+        <posY>416</posY>
         <onright>6001</onright>
         <onup>5000</onup>
         <ondown>7000</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1052,15 +1052,15 @@
       <control>
         <type>cell</type>
         <id>6001</id>
-        <posX>333</posX>
-        <posY>332</posY>
+        <posX>444</posX>
+        <posY>416</posY>
         <onleft>6000</onleft>
         <onright>6002</onright>
         <onup>5001</onup>
         <ondown>7001</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>40</height>
+        <width>55</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1069,15 +1069,15 @@
       <control>
         <type>cell</type>
         <id>6002</id>
-        <posX>378</posX>
-        <posY>332</posY>
+        <posX>504</posX>
+        <posY>416</posY>
         <onleft>6001</onleft>
         <onright>6003</onright>
         <onup>5002</onup>
         <ondown>7002</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1086,15 +1086,15 @@
       <control>
         <type>cell</type>
         <id>6003</id>
-        <posX>425</posX>
-        <posY>332</posY>
+        <posX>567</posX>
+        <posY>416</posY>
         <onleft>6002</onleft>
         <onright>6004</onright>
         <onup>5003</onup>
         <ondown>7003</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1103,15 +1103,15 @@
       <control>
         <type>cell</type>
         <id>6004</id>
-        <posX>468</posX>
-        <posY>332</posY>
+        <posX>624</posX>
+        <posY>416</posY>
         <onleft>6003</onleft>
         <onright>6005</onright>
         <onup>5004</onup>
         <ondown>7004</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>40</height>
+        <width>55</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1120,15 +1120,15 @@
       <control>
         <type>cell</type>
         <id>6005</id>
-        <posX>513</posX>
-        <posY>332</posY>
+        <posX>684</posX>
+        <posY>416</posY>
         <onleft>6004</onleft>
         <onright>6006</onright>
         <onup>5005</onup>
         <ondown>7005</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1137,15 +1137,15 @@
       <control>
         <type>cell</type>
         <id>6006</id>
-        <posX>560</posX>
-        <posY>332</posY>
+        <posX>747</posX>
+        <posY>416</posY>
         <onleft>6005</onleft>
         <onright>6007</onright>
         <onup>5006</onup>
         <ondown>7006</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1154,15 +1154,15 @@
       <control>
         <type>cell</type>
         <id>6007</id>
-        <posX>603</posX>
-        <posY>332</posY>
+        <posX>804</posX>
+        <posY>416</posY>
         <onleft>6006</onleft>
         <onright>6008</onright>
         <onup>5007</onup>
         <ondown>7007</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>40</height>
+        <width>55</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1171,15 +1171,15 @@
       <control>
         <type>cell</type>
         <id>6008</id>
-        <posX>648</posX>
-        <posY>332</posY>
+        <posX>864</posX>
+        <posY>416</posY>
         <onleft>6007</onleft>
         <onright>6000</onright>
         <onup>5008</onup>
         <ondown>7008</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1189,14 +1189,14 @@
       <control>
         <type>cell</type>
         <id>7000</id>
-        <posX>290</posX>
-        <posY>380</posY>
+        <posX>387</posX>
+        <posY>476</posY>
         <onright>7001</onright>
         <onup>6000</onup>
         <ondown>8000</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1205,15 +1205,15 @@
       <control>
         <type>cell</type>
         <id>7001</id>
-        <posX>333</posX>
-        <posY>380</posY>
+        <posX>444</posX>
+        <posY>476</posY>
         <onleft>7000</onleft>
         <onright>7002</onright>
         <onup>6001</onup>
         <ondown>8001</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>40</height>
+        <width>55</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1222,15 +1222,15 @@
       <control>
         <type>cell</type>
         <id>7002</id>
-        <posX>378</posX>
-        <posY>380</posY>
+        <posX>504</posX>
+        <posY>476</posY>
         <onleft>7001</onleft>
         <onright>7003</onright>
         <onup>6002</onup>
         <ondown>8002</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1239,15 +1239,15 @@
       <control>
         <type>cell</type>
         <id>7003</id>
-        <posX>425</posX>
-        <posY>380</posY>
+        <posX>567</posX>
+        <posY>476</posY>
         <onleft>7002</onleft>
         <onright>7004</onright>
         <onup>6003</onup>
         <ondown>8003</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1256,15 +1256,15 @@
       <control>
         <type>cell</type>
         <id>7004</id>
-        <posX>468</posX>
-        <posY>380</posY>
+        <posX>624</posX>
+        <posY>476</posY>
         <onleft>7003</onleft>
         <onright>7005</onright>
         <onup>6004</onup>
         <ondown>8004</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>40</height>
+        <width>55</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1273,15 +1273,15 @@
       <control>
         <type>cell</type>
         <id>7005</id>
-        <posX>513</posX>
-        <posY>380</posY>
+        <posX>684</posX>
+        <posY>476</posY>
         <onleft>7004</onleft>
         <onright>7006</onright>
         <onup>6005</onup>
         <ondown>8005</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1290,15 +1290,15 @@
       <control>
         <type>cell</type>
         <id>7006</id>
-        <posX>560</posX>
-        <posY>380</posY>
+        <posX>747</posX>
+        <posY>476</posY>
         <onleft>7005</onleft>
         <onright>7007</onright>
         <onup>6006</onup>
         <ondown>8006</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1307,15 +1307,15 @@
       <control>
         <type>cell</type>
         <id>7007</id>
-        <posX>603</posX>
-        <posY>380</posY>
+        <posX>804</posX>
+        <posY>476</posY>
         <onleft>7006</onleft>
         <onright>7008</onright>
         <onup>6007</onup>
         <ondown>8007</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>40</height>
+        <width>55</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1324,15 +1324,15 @@
       <control>
         <type>cell</type>
         <id>7008</id>
-        <posX>648</posX>
-        <posY>380</posY>
+        <posX>864</posX>
+        <posY>476</posY>
         <onleft>7007</onleft>
         <onright>7000</onright>
         <onup>6008</onup>
         <ondown>8008</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1342,14 +1342,14 @@
       <control>
         <type>cell</type>
         <id>8000</id>
-        <posX>290</posX>
-        <posY>424</posY>
+        <posX>387</posX>
+        <posY>530</posY>
         <onright>8001</onright>
         <onup>7000</onup>
         <ondown>9000</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>41</height>
+        <width>54</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1358,15 +1358,15 @@
       <control>
         <type>cell</type>
         <id>8001</id>
-        <posX>333</posX>
-        <posY>424</posY>
+        <posX>444</posX>
+        <posY>530</posY>
         <onleft>8000</onleft>
         <onright>8002</onright>
         <onup>7001</onup>
         <ondown>9001</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>41</height>
+        <width>55</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1375,15 +1375,15 @@
       <control>
         <type>cell</type>
         <id>8002</id>
-        <posX>378</posX>
-        <posY>424</posY>
+        <posX>504</posX>
+        <posY>530</posY>
         <onleft>8001</onleft>
         <onright>8003</onright>
         <onup>7002</onup>
         <ondown>9002</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>41</height>
+        <width>54</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1392,15 +1392,15 @@
       <control>
         <type>cell</type>
         <id>8003</id>
-        <posX>425</posX>
-        <posY>424</posY>
+        <posX>567</posX>
+        <posY>530</posY>
         <onleft>8002</onleft>
         <onright>8004</onright>
         <onup>7003</onup>
         <ondown>9003</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>41</height>
+        <width>54</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1409,15 +1409,15 @@
       <control>
         <type>cell</type>
         <id>8004</id>
-        <posX>468</posX>
-        <posY>424</posY>
+        <posX>624</posX>
+        <posY>530</posY>
         <onleft>8003</onleft>
         <onright>8005</onright>
         <onup>7004</onup>
         <ondown>9004</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>41</height>
+        <width>55</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1426,15 +1426,15 @@
       <control>
         <type>cell</type>
         <id>8005</id>
-        <posX>513</posX>
-        <posY>424</posY>
+        <posX>684</posX>
+        <posY>530</posY>
         <onleft>8004</onleft>
         <onright>8006</onright>
         <onup>7005</onup>
         <ondown>9005</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>41</height>
+        <width>54</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1443,15 +1443,15 @@
       <control>
         <type>cell</type>
         <id>8006</id>
-        <posX>560</posX>
-        <posY>424</posY>
+        <posX>747</posX>
+        <posY>530</posY>
         <onleft>8005</onleft>
         <onright>8007</onright>
         <onup>7006</onup>
         <ondown>9006</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>41</height>
+        <width>54</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1460,15 +1460,15 @@
       <control>
         <type>cell</type>
         <id>8007</id>
-        <posX>603</posX>
-        <posY>424</posY>
+        <posX>804</posX>
+        <posY>530</posY>
         <onleft>8006</onleft>
         <onright>8008</onright>
         <onup>7007</onup>
         <ondown>9007</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>41</height>
+        <width>55</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1477,15 +1477,15 @@
       <control>
         <type>cell</type>
         <id>8008</id>
-        <posX>648</posX>
-        <posY>424</posY>
+        <posX>864</posX>
+        <posY>530</posY>
         <onleft>8007</onleft>
         <onright>8000</onright>
         <onup>7008</onup>
         <ondown>9008</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>41</height>
+        <width>54</width>
+        <height>52</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1495,14 +1495,14 @@
       <control>
         <type>cell</type>
         <id>9000</id>
-        <posX>290</posX>
-        <posY>468</posY>
+        <posX>387</posX>
+        <posY>585</posY>
         <onright>9001</onright>
         <onup>8000</onup>
         <ondown>1000</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1511,15 +1511,15 @@
       <control>
         <type>cell</type>
         <id>9001</id>
-        <posX>333</posX>
-        <posY>468</posY>
+        <posX>444</posX>
+        <posY>585</posY>
         <onleft>9000</onleft>
         <onright>9002</onright>
         <onup>8001</onup>
         <ondown>1001</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>40</height>
+        <width>55</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1528,15 +1528,15 @@
       <control>
         <type>cell</type>
         <id>9002</id>
-        <posX>378</posX>
-        <posY>468</posY>
+        <posX>504</posX>
+        <posY>585</posY>
         <onleft>9001</onleft>
         <onright>9003</onright>
         <onup>8002</onup>
         <ondown>1002</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1545,15 +1545,15 @@
       <control>
         <type>cell</type>
         <id>9003</id>
-        <posX>425</posX>
-        <posY>468</posY>
+        <posX>567</posX>
+        <posY>585</posY>
         <onleft>9002</onleft>
         <onright>9004</onright>
         <onup>8003</onup>
         <ondown>1003</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1562,15 +1562,15 @@
       <control>
         <type>cell</type>
         <id>9004</id>
-        <posX>468</posX>
-        <posY>468</posY>
+        <posX>624</posX>
+        <posY>585</posY>
         <onleft>9003</onleft>
         <onright>9005</onright>
         <onup>8004</onup>
         <ondown>1004</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>40</height>
+        <width>55</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1579,15 +1579,15 @@
       <control>
         <type>cell</type>
         <id>9005</id>
-        <posX>513</posX>
-        <posY>468</posY>
+        <posX>684</posX>
+        <posY>585</posY>
         <onleft>9004</onleft>
         <onright>9006</onright>
         <onup>8005</onup>
         <ondown>1005</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1596,15 +1596,15 @@
       <control>
         <type>cell</type>
         <id>9006</id>
-        <posX>560</posX>
-        <posY>468</posY>
+        <posX>747</posX>
+        <posY>585</posY>
         <onleft>9005</onleft>
         <onright>9007</onright>
         <onup>8006</onup>
         <ondown>1006</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1613,15 +1613,15 @@
       <control>
         <type>cell</type>
         <id>9007</id>
-        <posX>603</posX>
-        <posY>468</posY>
+        <posX>804</posX>
+        <posY>585</posY>
         <onleft>9006</onleft>
         <onright>9008</onright>
         <onup>8007</onup>
         <ondown>1007</ondown>
         <label>-</label>
-        <width>41</width>
-        <height>40</height>
+        <width>55</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>
@@ -1630,15 +1630,15 @@
       <control>
         <type>cell</type>
         <id>9008</id>
-        <posX>648</posX>
-        <posY>468</posY>
+        <posX>864</posX>
+        <posY>585</posY>
         <onleft>9007</onleft>
         <onright>9000</onright>
         <onup>8008</onup>
         <ondown>1008</ondown>
         <label>-</label>
-        <width>40</width>
-        <height>40</height>
+        <width>54</width>
+        <height>51</height>
         <font>font16</font>
         <textcolor>ivory</textcolor>
         <textureFocus>icon_empty_focus1.png</textureFocus>

@@ -6,7 +6,7 @@
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
-		<import>common.window.xml</import>
+		
 		<import>common.time.xml</import>
     <control>
       <description>rectangle image</description>
@@ -17,7 +17,7 @@
       <width>1180</width>
       <height>580</height>
       <texture>backslide2.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <control>
       <description>Thumb quality spin label</description>

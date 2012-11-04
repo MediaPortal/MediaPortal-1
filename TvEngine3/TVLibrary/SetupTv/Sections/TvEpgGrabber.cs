@@ -36,7 +36,7 @@ namespace SetupTv.Sections
     private readonly MPListViewStringColumnSorter lvwColumnSorter;
 
     public TvEpgGrabber()
-      : this("TV Epg grabber") { }
+      : this("TV EPG Grabber") { }
 
     public TvEpgGrabber(string name)
       : base(name)

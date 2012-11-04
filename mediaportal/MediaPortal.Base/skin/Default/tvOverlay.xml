@@ -9,22 +9,22 @@
       <description>rec logo</description>
       <type>image</type>
       <id>4</id>
-      <posX>348</posX>
-      <posY>8</posY>
-      <width>32</width>
-      <height>32</height>
+      <posX>465</posX>
+      <posY>10</posY>
+      <width>30</width>
+      <height>30</height>
       <texture>rec.png</texture>
       <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
-    <visible>!window.isvisible(0)+!window.isvisible(34)</visible>
+      <visible>!window.isvisible(0)+!window.isvisible(34)</visible>
     </control>
     <control>
       <description>rec logo</description>
       <type>image</type>
       <id>0</id>
-      <posX>220</posX>
-      <posY>8</posY>
-      <width>32</width>
-      <height>32</height>
+      <posX>585</posX>
+      <posY>10</posY>
+      <width>30</width>
+      <height>30</height>
       <texture>rec.png</texture>
       <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
       <visible>window.isvisible(0)|window.isvisible(34)</visible>
