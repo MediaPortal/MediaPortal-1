@@ -63,7 +63,7 @@ namespace SetupTv.Sections
       try
       {
         mpListView2.Items.Clear();
-        TvLibrary.Epg.Languages languages = TvLibrary.Epg.Languages.Instance;
+        TvLibrary.Epg.Languages languages = new TvLibrary.Epg.Languages();
         List<String> codes = languages.GetLanguageCodes();
         List<String> list = languages.GetLanguages();
 

@@ -29,45 +29,6 @@ namespace TvLibrary.Epg
   /// </summary>
   public class Languages
   {
-    #region Singleton
-    private static Languages instance;
-
-    public static Languages Instance
-    {
-      get
-      {
-        if (instance == null)
-        {
-          instance = new Languages();
-        }
-        return instance;
-      }
-    }
-    #endregion
-
-    private readonly List<KeyValuePair<string, string>> languageList = new List<KeyValuePair<string, string>>();
-
-    private Languages()
-    {
-      CultureInfo[] cinfos = CultureInfo.GetCultures(CultureTypes.AllCultures);
-      foreach (CultureInfo ci in cinfos)
-      {
-        languageList.Add(new KeyValuePair<string, string>(ci.ThreeLetterISOLanguageName, ci.EnglishName));
-      }
-
-      // Exceptions with a double ISO639-2 code (B and T). Adding code B
-      for (int i = 0; i < LanguageNameExceptions.Length; ++i)
-      {
-        languageList.Add(new KeyValuePair<string, string>(LanguageCodeExceptions[i], LanguageNameExceptions[i]));
-      }
-      languageList.Sort(NameComparer);
-    }
-
-    private int NameComparer(KeyValuePair<string, string> i1, KeyValuePair<string, string> i2)
-    {
-      return i1.Value.CompareTo(i2.Value);
-    }
-
     //
     // Created needed expections lists for all cultures with two ISO-639-2 ( B and T )
     // (data taken from http://en.wikipedia.org/wiki/List_of_ISO_639-2_codes)
@@ -115,10 +76,14 @@ namespace TvLibrary.Epg
     public List<String> GetLanguages()
     {
       List<String> langs = new List<String>();
-      foreach (KeyValuePair<string, string> kv in languageList)
+
+      CultureInfo[] cinfos = CultureInfo.GetCultures(CultureTypes.AllCultures);
+      foreach (CultureInfo ci in cinfos)
       {
-        langs.Add(kv.Value);
+        langs.Add(ci.EnglishName);
       }
+      // Exceptions with a double ISO639-2 code (B and T). Adding code B
+      langs.AddRange(LanguageNameExceptions);
       return langs;
     }
 
@@ -129,10 +94,14 @@ namespace TvLibrary.Epg
     public List<String> GetLanguageCodes()
     {
       List<String> langs = new List<String>();
-      foreach (KeyValuePair<string, string> kv in languageList)
+
+      CultureInfo[] cinfos = CultureInfo.GetCultures(CultureTypes.AllCultures);
+      foreach (CultureInfo ci in cinfos)
       {
-        langs.Add(kv.Key);
+        langs.Add(ci.ThreeLetterISOLanguageName);
       }
+      // Exceptions with a double ISO639-2 code (B and T). Adding code B
+      langs.AddRange(LanguageCodeExceptions);
       return langs;
     }
 
@@ -141,7 +110,7 @@ namespace TvLibrary.Epg
     /// </summary>
     /// <param name="code">The code.</param>
     /// <returns>language</returns>
-    public string GetLanguageFromCode(string code)
+    public static string GetLanguageFromCode(string code)
     {
       if (String.IsNullOrEmpty(code))
       {
@@ -152,11 +121,11 @@ namespace TvLibrary.Epg
         return code;
       }
       CultureInfo[] cinfos = CultureInfo.GetCultures(CultureTypes.AllCultures);
-      foreach (KeyValuePair<string, string> kv in languageList)
+      foreach (CultureInfo ci in cinfos)
       {
-        if (kv.Key == code)
+        if (ci.ThreeLetterISOLanguageName == code)
         {
-          return kv.Value;
+          return ci.EnglishName;
         }
       }
       return code;
