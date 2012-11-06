@@ -35,6 +35,8 @@
       <posY>160</posY>
       <width>500</width>
       <height>100</height>
+      <onleft>14</onleft>
+      <onright>14</onright>
     </control>
     <control>
       <description>BG Scan Folders</description>
@@ -70,8 +72,9 @@
         <width>420</width>
         <height>35</height>
         <font>font10</font>
-        <onright>10</onright>
+        <onleft>10</onleft>
         <onup>17</onup>
+        <onright>4</onright>
       </control>
       <control>
         <description>Reset database</description>
@@ -83,7 +86,8 @@
         <font>font10</font>
         <onup>14</onup>
         <ondown>2</ondown>
-        <onright>10</onright>
+        <onleft>10</onleft>
+        <onright>4</onright>
       </control>
       <control>
         <description>Default Grabber</description>
@@ -95,7 +99,8 @@
         <font>font10</font>
         <onup>15</onup>
         <ondown>3</ondown>
-        <onright>10</onright>
+        <onleft>10</onleft>
+        <onright>4</onright>
       </control>
       <control>
         <description>Update Grabbers</description>
@@ -107,7 +112,8 @@
         <font>font10</font>
         <onup>2</onup>
         <ondown>4</ondown>
-        <onright>10</onright>
+        <onleft>10</onleft>
+        <onright>4</onright>
       </control>
     </control>
     <control>
@@ -144,10 +150,9 @@
         <width>420</width>
         <height>35</height>
         <font>font10</font>
-        <onleft></onleft>
+        <onleft>14</onleft>
         <onup>3</onup>
         <ondown>5</ondown>
-        <onright>10</onright>
       </control>
       <control>
         <description>Use fanart</description>
@@ -157,10 +162,10 @@
         <width>280</width>
         <height>35</height>
         <font>font10</font>
-        <onleft></onleft>
+        <onleft>14</onleft>
         <onup>4</onup>
         <ondown>7</ondown>
-        <onright>6</onright>
+        <onright>5</onright>
       </control>
       <control>
         <description>Actors Fetch size</description>
@@ -170,10 +175,9 @@
         <width>420</width>
         <height>35</height>
         <font>font10</font>
-        <onleft></onleft>
+        <onleft>14</onleft>
         <onup>5</onup>
         <ondown>8</ondown>
-        <onright>10</onright>
       </control>
       <control>
         <description>Folder name for title</description>
@@ -183,10 +187,9 @@
         <width>420</width>
         <height>35</height>
         <font>font10</font>
-        <onleft></onleft>
         <onup>7</onup>
         <ondown>9</ondown>
-        <onright>10</onright>
+        <onleft>14</onleft>
       </control>
       <control>
         <description>Prefer video filename for search</description>
@@ -196,10 +199,9 @@
         <width>420</width>
         <height>35</height>
         <font>font10</font>
-        <onleft></onleft>
         <onup>8</onup>
         <ondown>11</ondown>
-        <onright>10</onright>
+        <onleft>14</onleft>
       </control>
       <control>
         <description>Skip existing</description>
@@ -209,10 +211,9 @@
         <width>420</width>
         <height>35</height>
         <font>font10</font>
-        <onleft></onleft>
         <onup>9</onup>
         <ondown>12</ondown>
-        <onright>10</onright>
+        <onleft>14</onleft>
       </control>
       <control>
         <description>Refresh existing</description>
@@ -222,10 +223,9 @@
         <width>420</width>
         <height>35</height>
         <font>font10</font>
-        <onleft></onleft>
         <onup>11</onup>
         <ondown>13</ondown>
-        <onright>10</onright>
+        <onleft>14</onleft>
       </control>
       <control>
         <description>Strip prefixes button</description>
@@ -237,7 +237,7 @@
         <font>font10</font>
         <ondown>16</ondown>
         <onup>12</onup>
-        <onright>10</onright>
+        <onleft>14</onleft>
       </control>
       <control>
         <description>Use sort title</description>
@@ -247,23 +247,21 @@
         <width>420</width>
         <height>35</height>
         <font>font10</font>
-        <onleft></onleft>
         <onup>13</onup>
-        <ondown>17</ondown>
-        <onright>10</onright>
+        <ondown>18</ondown>
+        <onleft>14</onleft>
       </control>
       <control>
         <description>Use internal nfo scraper</description>
         <type>checkbutton</type>
-        <id>17</id>
+        <id>18</id>
         <label>300226</label>
         <width>420</width>
         <height>35</height>
         <font>font10</font>
-        <onleft></onleft>
         <onup>16</onup>
         <ondown>14</ondown>
-        <onright>10</onright>
+        <onleft>14</onleft>
       </control>
     </control>
     <control>

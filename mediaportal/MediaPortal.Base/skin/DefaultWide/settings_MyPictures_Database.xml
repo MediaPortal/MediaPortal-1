@@ -41,8 +41,8 @@
       <description>Scan status</description>
       <type>label</type>
       <id>1</id>
-      <posX>680</posX>
-      <posY>150</posY>
+      <posX>30</posX>
+      <posY>40</posY>
       <font>font10</font>
       <width>600</width>
       <label>#scanstatus</label>

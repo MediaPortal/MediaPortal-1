@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>1011</id>
@@ -36,13 +36,15 @@
       <posY>160</posY>
       <width>375</width>
       <height>100</height>
+      <onright>14</onright>
+      <onleft>14</onleft>
     </control>
     <control>
       <description>Scan status</description>
       <type>label</type>
       <id>1</id>
-      <posX>585</posX>
-      <posY>150</posY>
+      <posX>22</posX>
+      <posY>40</posY>
       <font>font10</font>
       <width>450</width>
       <label>#scanstatus</label>
@@ -80,10 +82,12 @@
         <label>300164</label>
         <posX>52</posX>
         <posY>150</posY>
-        <width>345</width>
+        <width>375</width>
         <font>font10</font>
-        <onright>2</onright>
         <onup>17</onup>
+        <ondown>11</ondown>
+        <onleft>2</onleft>
+        <onright>5</onright>
       </control>
       <control>
         <description>Create scan date</description>
@@ -92,10 +96,12 @@
         <label>#dateadded</label>
         <posX>52</posX>
         <posY>185</posY>
-        <width>345</width>
+        <width>375</width>
         <font>font10</font>
         <onup>14</onup>
         <ondown>12</ondown>
+        <onleft>17</onleft>
+        <onright>5</onright>
       </control>
       <control>
         <description>Only update by new date</description>
@@ -104,10 +110,12 @@
         <label>#updatesincelastimprot</label>
         <posX>52</posX>
         <posY>220</posY>
-        <width>345</width>
+        <width>375</width>
         <font>font10</font>
         <onup>11</onup>
         <ondown>13</ondown>
+        <onleft>17</onleft>
+        <onright>5</onright>
       </control>
       <control>
         <description>Auto update</description>
@@ -116,10 +124,12 @@
         <label>300165</label>
         <posX>52</posX>
         <posY>255</posY>
-        <width>345</width>
+        <width>375</width>
         <font>font10</font>
         <onup>12</onup>
         <ondown>3</ondown>
+        <onleft>17</onleft>
+        <onright>5</onright>
       </control>
       <control>
         <description>Strip prefixes button</description>
@@ -134,6 +144,8 @@
         <onright>2</onright>
         <onup>13</onup>
         <ondown>4</ondown>
+        <onleft>17</onleft>
+        <onright>5</onright>
       </control>
       <control>
         <description>Treat tracks</description>
@@ -142,12 +154,14 @@
         <label>300167</label>
         <posX>52</posX>
         <posY>350</posY>
-        <width>345</width>
+        <width>375</width>
         <font>font10</font>
         <onleft>
         </onleft>
         <onup>3</onup>
         <ondown>5</ondown>
+        <onleft>17</onleft>
+        <onright>5</onright>
       </control>
     </control>
     <control>
@@ -156,7 +170,7 @@
       <id>1</id>
       <posX>348</posX>
       <posY>508</posY>
-      <width>345</width>
+      <width>375</width>
       <font>font10</font>
       <label>#prefixes</label>
     </control>
@@ -167,7 +181,7 @@
       <texture>context_background.png</texture>
       <posX>472</posX>
       <posY>90</posY>
-      <width>375</width>
+      <width>450</width>
       <height>460</height>
       <colordiffuse>aaffffff</colordiffuse>
     </control>
@@ -193,10 +207,12 @@
         <label>300169</label>
         <posX>52</posX>
         <posY>435</posY>
-        <width>300</width>
+        <width>375</width>
         <font>font10</font>
         <onup>4</onup>
         <ondown>6</ondown>
+        <onleft>14</onleft>
+        <onright>17</onright>
       </control>
       <control>
         <description>All extensions</description>
@@ -205,12 +221,14 @@
         <label>300170</label>
         <posX>52</posX>
         <posY>470</posY>
-        <width>300</width>
+        <width>375</width>
         <font>font10</font>
         <onleft>
         </onleft>
         <onup>5</onup>
         <ondown>7</ondown>
+        <onleft>14</onleft>
+        <onright>17</onright>
       </control>
       <control>
         <description>Cover art in ID3</description>
@@ -219,10 +237,12 @@
         <label>300171</label>
         <posX>52</posX>
         <posY>505</posY>
-        <width>300</width>
+        <width>375</width>
         <font>font10</font>
         <onup>6</onup>
         <ondown>8</ondown>
+        <onleft>14</onleft>
+        <onright>17</onright>
       </control>
       <control>
         <description>Create genre previes</description>
@@ -231,10 +251,12 @@
         <label>300172</label>
         <posX>52</posX>
         <posY>540</posY>
-        <width>300</width>
+        <width>375</width>
         <font>font10</font>
         <onup>7</onup>
         <ondown>9</ondown>
+        <onleft>14</onleft>
+        <onright>17</onright>
       </control>
       <control>
         <description>Create artist preview</description>
@@ -243,10 +265,12 @@
         <label>300173</label>
         <posX>52</posX>
         <posY>575</posY>
-        <width>300</width>
+        <width>375</width>
         <font>font10</font>
         <onup>8</onup>
         <ondown>10</ondown>
+        <onleft>14</onleft>
+        <onright>17</onright>
       </control>
       <control>
         <description>Create missing folder.jpg</description>
@@ -255,9 +279,11 @@
         <label>300174</label>
         <posX>52</posX>
         <posY>610</posY>
-        <width>300</width>
+        <width>375</width>
         <font>font10</font>
         <ondown>14</ondown>
+        <onleft>14</onleft>
+        <onright>17</onright>
       </control>
     </control>
   </controls>
