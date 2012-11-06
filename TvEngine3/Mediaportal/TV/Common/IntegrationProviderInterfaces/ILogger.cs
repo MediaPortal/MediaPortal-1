@@ -34,7 +34,7 @@ namespace Mediaportal.TV.Common.IntegrationProviderInterfaces
     /// <summary>
     /// Writes a debug message to the log.
     /// </summary>
-    /// <param name="caller">pass the instance type to get enriched logging </param>
+    /// <param name="caller">Pass the instance type to get enriched logging. This parameter can be used to redirect log output to different files.</param>
     /// <param name="format">A composite format string.</param>
     /// <param name="args">An array of objects to write using format.</param>
     void Debug(Type caller, string format, params object[] args);
@@ -49,7 +49,7 @@ namespace Mediaportal.TV.Common.IntegrationProviderInterfaces
     /// <summary>
     /// Writes a debug message to the log.
     /// </summary>
-    /// <param name="caller">pass the instance type to get enriched logging </param>
+    /// <param name="caller">Pass the instance type to get enriched logging. This parameter can be used to redirect log output to different files.</param>
     /// <param name="format">A composite format string.</param>
     /// <param name="ex">The <see cref="Exception"/> that caused the message.</param>
     /// <param name="args">An array of objects to write using format.</param>
@@ -66,7 +66,7 @@ namespace Mediaportal.TV.Common.IntegrationProviderInterfaces
     /// <summary>
     /// Writes an informational message to the log.
     /// </summary>
-    /// <param name="caller">pass the instance type to get enriched logging </param>
+    /// <param name="caller">Pass the instance type to get enriched logging. This parameter can be used to redirect log output to different files.</param>
     /// <param name="format">A composite format string.</param>
     /// <param name="args">An array of objects to write using format.</param>
     void Info(Type caller, string format, params object[] args);
@@ -81,7 +81,7 @@ namespace Mediaportal.TV.Common.IntegrationProviderInterfaces
     /// <summary>
     /// Writes an informational message to the log.
     /// </summary>
-    /// <param name="caller">pass the instance type to get enriched logging </param>
+    /// <param name="caller">Pass the instance type to get enriched logging. This parameter can be used to redirect log output to different files.</param>
     /// <param name="format">A composite format string.</param>
     /// <param name="ex">The <see cref="Exception"/> that caused the message.</param>
     /// <param name="args">An array of objects to write using format.</param>
@@ -98,7 +98,7 @@ namespace Mediaportal.TV.Common.IntegrationProviderInterfaces
     /// <summary>
     /// Writes a warning to the log.
     /// </summary>
-    /// <param name="caller">pass the instance type to get enriched logging </param>
+    /// <param name="caller">Pass the instance type to get enriched logging. This parameter can be used to redirect log output to different files.</param>
     /// <param name="format">A composite format string.</param>
     /// <param name="args">An array of objects to write using format.</param>
     void Warn(Type caller, string format, params object[] args);
@@ -113,7 +113,7 @@ namespace Mediaportal.TV.Common.IntegrationProviderInterfaces
     /// <summary>
     /// Writes a warning to the log, passing the original <see cref="Exception"/>.
     /// </summary>
-    /// <param name="caller">pass the instance type to get enriched logging </param>
+    /// <param name="caller">Pass the instance type to get enriched logging. This parameter can be used to redirect log output to different files.</param>
     /// <param name="format">A composite format string.</param>
     /// <param name="ex">The <see cref="Exception"/> that caused the message.</param>
     /// <param name="args">An array of objects to write using format.</param>
@@ -130,7 +130,7 @@ namespace Mediaportal.TV.Common.IntegrationProviderInterfaces
     /// <summary>
     /// Writes an error message to the log.
     /// </summary>
-    /// <param name="caller">pass the instance type to get enriched logging </param>
+    /// <param name="caller">Pass the instance type to get enriched logging. This parameter can be used to redirect log output to different files.</param>
     /// <param name="format">A composite format string.</param>
     /// <param name="args">An array of objects to write using format.</param>
     void Error(Type caller, string format, params object[] args);
@@ -145,7 +145,7 @@ namespace Mediaportal.TV.Common.IntegrationProviderInterfaces
     /// <summary>
     /// Writes an error message to the log, passing the original <see cref="Exception"/>.
     /// </summary>
-    /// <param name="caller">pass the instance type to get enriched logging </param>
+    /// <param name="caller">Pass the instance type to get enriched logging. This parameter can be used to redirect log output to different files.</param>
     /// <param name="format">A composite format string.</param>
     /// <param name="ex">The <see cref="Exception"/> that caused the message.</param>
     /// <param name="args">An array of objects to write using format.</param>
@@ -162,7 +162,7 @@ namespace Mediaportal.TV.Common.IntegrationProviderInterfaces
     /// <summary>
     /// Writes an Error <see cref="Exception"/> to the log.
     /// </summary>
-    /// <param name="caller">pass the instance type to get enriched logging </param>
+    /// <param name="caller">Pass the instance type to get enriched logging. This parameter can be used to redirect log output to different files.</param>
     /// <param name="ex">The <see cref="Exception"/> to write.</param>
     void Error(Type caller, Exception ex);
 
@@ -175,7 +175,7 @@ namespace Mediaportal.TV.Common.IntegrationProviderInterfaces
     /// <summary>
     /// Writes a critical error system message to the log.
     /// </summary>
-    /// <param name="caller">pass the instance type to get enriched logging </param>
+    /// <param name="caller">Pass the instance type to get enriched logging. This parameter can be used to redirect log output to different files.</param>
     /// <param name="format">A composite format string.</param>
     /// <param name="args">An array of objects to write using format.</param>
     void Critical(Type caller, string format, params object[] args);
@@ -190,7 +190,7 @@ namespace Mediaportal.TV.Common.IntegrationProviderInterfaces
     /// <summary>
     /// Writes a critical error system message to the log, passing the original <see cref="Exception"/>.
     /// </summary>
-    /// <param name="caller">pass the instance type to get enriched logging </param>
+    /// <param name="caller">Pass the instance type to get enriched logging. This parameter can be used to redirect log output to different files.</param>
     /// <param name="format">A composite format string.</param>
     /// <param name="ex">The <see cref="Exception"/> that caused the message.</param>
     /// <param name="args">An array of objects to write using format.</param>
@@ -213,7 +213,7 @@ namespace Mediaportal.TV.Common.IntegrationProviderInterfaces
     /// <summary>
     /// Writes an Critical error <see cref="Exception"/> to the log.
     /// </summary>
-    /// <param name="caller">pass the instance type to get enriched logging </param>
+    /// <param name="caller">Pass the instance type to get enriched logging. This parameter can be used to redirect log output to different files.</param>
     /// <param name="ex">The <see cref="Exception"/> to write.</param>
     void Critical(Type caller, Exception ex);
   }

@@ -28,17 +28,18 @@ namespace Mediaportal.TV.Common.Logging
 {
   public class Logger : IntegrationProviderInterfaces.ILogger
   {
+    private readonly Type _runtimeType;
     private static readonly IDictionary<Type, ILogger> _logCache = new Dictionary<Type, ILogger>();
     private static readonly object _logCacheLock = new object();
 
-    private static ILogger GetLogger()
+    public Logger ()
     {
-      return GetLogger(typeof(Logger));
+      _runtimeType = GetType();
     }
-
+    
     private static ILogger GetLogger(Type type)
     {
-      Castle.Core.Logging.ILogger logger;
+      ILogger logger;
       lock (_logCacheLock)
       {
         bool hasLogger = _logCache.TryGetValue(type, out logger);
@@ -53,10 +54,10 @@ namespace Mediaportal.TV.Common.Logging
       return logger;
     }
    
-    
     /// <summary>
     /// Writes a debug message to the log.
     /// </summary>
+    /// <param name="caller">Pass the instance type to get enriched logging. This parameter can be used to redirect log output to different files.</param>
     /// <param name="format">A composite format string.</param>
     /// <param name="args">An array of objects to write using format.</param>
     public void Debug(Type caller, string format, params object[] args)
@@ -66,12 +67,13 @@ namespace Mediaportal.TV.Common.Logging
 
     public void Debug(string format, params object[] args)
     {
-      GetLogger().DebugFormat(format, args);
+      Debug(_runtimeType, format, args);
     }
 
     /// <summary>
     /// Writes a debug message to the log.
     /// </summary>
+    /// <param name="caller">Pass the instance type to get enriched logging. This parameter can be used to redirect log output to different files.</param>
     /// <param name="format">A composite format string.</param>
     /// <param name="ex">The <see cref="Exception"/> that caused the message.</param>
     /// <param name="args">An array of objects to write using format.</param>
@@ -82,12 +84,13 @@ namespace Mediaportal.TV.Common.Logging
 
     public void Debug(string format, Exception ex, params object[] args)
     {
-      GetLogger().Debug(string.Format(format, args), ex);
+      Debug(_runtimeType, format, ex, args);
     }
 
     /// <summary>
     /// Writes an informational message to the log.
     /// </summary>
+    /// <param name="caller">Pass the instance type to get enriched logging. This parameter can be used to redirect log output to different files.</param>
     /// <param name="format">A composite format string.</param>
     /// <param name="args">An array of objects to write using format.</param>
     public void Info(Type caller, string format, params object[] args)
@@ -97,12 +100,13 @@ namespace Mediaportal.TV.Common.Logging
 
     public void Info(string format, params object[] args)
     {
-      GetLogger().InfoFormat(format, args);
+      Info(_runtimeType, format, args);
     }
 
     /// <summary>
     /// Writes an informational message to the log.
     /// </summary>
+    /// <param name="caller">Pass the instance type to get enriched logging. This parameter can be used to redirect log output to different files.</param>
     /// <param name="format">A composite format string.</param>
     /// <param name="ex">The <see cref="Exception"/> that caused the message.</param>
     /// <param name="args">An array of objects to write using format.</param>
@@ -113,12 +117,13 @@ namespace Mediaportal.TV.Common.Logging
 
     public void Info(string format, Exception ex, params object[] args)
     {
-      GetLogger().Info(string.Format(format, args), ex);
+      Info(_runtimeType, format, ex, args);
     }
 
     /// <summary>
     /// Writes a warning to the log.
     /// </summary>
+    /// <param name="caller">Pass the instance type to get enriched logging. This parameter can be used to redirect log output to different files.</param>
     /// <param name="format">A composite format string.</param>
     /// <param name="args">An array of objects to write using format.</param>
     public void Warn(Type caller, string format, params object[] args)
@@ -128,12 +133,13 @@ namespace Mediaportal.TV.Common.Logging
 
     public void Warn(string format, params object[] args)
     {
-      GetLogger().WarnFormat(format, args);
+      Warn(_runtimeType, format, args);
     }
 
     /// <summary>
     /// Writes a warning to the log, passing the original <see cref="Exception"/>.
     /// </summary>
+    /// <param name="caller">Pass the instance type to get enriched logging. This parameter can be used to redirect log output to different files.</param>
     /// <param name="format">A composite format string.</param>
     /// <param name="ex">The <see cref="Exception"/> that caused the message.</param>
     /// <param name="args">An array of objects to write using format.</param>
@@ -144,12 +150,13 @@ namespace Mediaportal.TV.Common.Logging
 
     public void Warn(string format, Exception ex, params object[] args)
     {
-      GetLogger().Warn(string.Format(format, args), ex);
+      Warn(_runtimeType, format, ex, args);
     }
 
     /// <summary>
     /// Writes an error message to the log.
     /// </summary>
+    /// <param name="caller">Pass the instance type to get enriched logging. This parameter can be used to redirect log output to different files.</param>
     /// <param name="format">A composite format string.</param>
     /// <param name="args">An array of objects to write using format.</param>
     public void Error(Type caller, string format, params object[] args)
@@ -159,12 +166,13 @@ namespace Mediaportal.TV.Common.Logging
 
     public void Error(string format, params object[] args)
     {
-      GetLogger().ErrorFormat(format, args);
+      Error(_runtimeType, format, args);
     }
 
     /// <summary>
     /// Writes an error message to the log, passing the original <see cref="Exception"/>.
     /// </summary>
+    /// <param name="caller">Pass the instance type to get enriched logging. This parameter can be used to redirect log output to different files.</param>
     /// <param name="format">A composite format string.</param>
     /// <param name="ex">The <see cref="Exception"/> that caused the message.</param>
     /// <param name="args">An array of objects to write using format.</param>
@@ -175,26 +183,28 @@ namespace Mediaportal.TV.Common.Logging
 
     public void Error(string format, Exception ex, params object[] args)
     {
-      GetLogger().Error(string.Format(format, args), ex);
+      Error(_runtimeType, format, ex, args);
     }
 
     /// <summary>
     /// Writes an Error <see cref="Exception"/> to the log.
     /// </summary>
+    /// <param name="caller">Pass the instance type to get enriched logging. This parameter can be used to redirect log output to different files.</param>
     /// <param name="ex">The <see cref="Exception"/> to write.</param>
     public void Error(Type caller, Exception ex)
     {
-      GetLogger(caller).Error("", ex);
+      GetLogger(caller).Error(string.Empty, ex);
     }
 
     public void Error(Exception ex)
     {
-      GetLogger().Error("", ex);
+      Error(_runtimeType, ex);
     }
 
     /// <summary>
     /// Writes a critical error system message to the log.
     /// </summary>
+    /// <param name="caller">Pass the instance type to get enriched logging. This parameter can be used to redirect log output to different files.</param>
     /// <param name="format">A composite format string.</param>
     /// <param name="args">An array of objects to write using format.</param>
     public void Critical(Type caller, string format, params object[] args)
@@ -204,12 +214,13 @@ namespace Mediaportal.TV.Common.Logging
 
     public void Critical(string format, params object[] args)
     {
-      GetLogger().FatalFormat(format, args);
+      Critical(_runtimeType, format, args);
     }
 
     /// <summary>
     /// Writes a critical error system message to the log, passing the original <see cref="Exception"/>.
     /// </summary>
+    /// <param name="caller">Pass the instance type to get enriched logging. This parameter can be used to redirect log output to different files.</param>
     /// <param name="format">A composite format string.</param>
     /// <param name="ex">The <see cref="Exception"/> that caused the message.</param>
     /// <param name="args">An array of objects to write using format.</param>
@@ -220,21 +231,22 @@ namespace Mediaportal.TV.Common.Logging
 
     public void Critical(string format, Exception ex, params object[] args)
     {
-      GetLogger().Fatal(string.Format(format, args), ex);
-    }
-
-    public void Critical(Exception ex)
-    {
-      GetLogger().Fatal("", ex);
+      Critical(_runtimeType, format, ex, args);
     }
 
     /// <summary>
     /// Writes an Critical error <see cref="Exception"/> to the log.
     /// </summary>
+    /// <param name="caller">Pass the instance type to get enriched logging. This parameter can be used to redirect log output to different files.</param>
     /// <param name="ex">The <see cref="Exception"/> to write.</param>
     public void Critical(Type caller, Exception ex)
     {
       GetLogger(caller).Fatal("", ex);
+    }
+
+    public void Critical(Exception ex)
+    {
+      Critical(_runtimeType, ex);
     }
   }
 }
