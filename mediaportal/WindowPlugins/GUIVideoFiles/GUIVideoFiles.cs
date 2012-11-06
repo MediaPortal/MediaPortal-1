@@ -951,10 +951,17 @@ namespace MediaPortal.GUI.Video
 
       IMDBMovie movieDetails = pItem.AlbumInfoTag as IMDBMovie;
       
-      if (movieDetails == null || _doNotUseDatabase && string.IsNullOrEmpty(movieDetails.MovieNfoFile) || 
-          _doNotUseDatabase && movieDetails.ID < 0)
+      if (movieDetails == null)
       {
         return;
+      }
+      
+      if (_doNotUseDatabase && movieDetails.ID < 1)
+      {
+        if (string.IsNullOrEmpty(movieDetails.MovieNfoFile))
+        {
+          return;
+        }
       }
       
       if (movieDetails.ID < 1 && !_doNotUseDatabase)
@@ -2745,7 +2752,12 @@ namespace MediaPortal.GUI.Video
           }
         }
 
-        _cachedItems = itemlist;
+        if (_cachedItems != null) 
+        {
+          _cachedItems.Clear();
+          _cachedItems.AddRange(itemlist);
+        }
+
         _cachedDir = _currentFolder;
       } // End non cache items
 
