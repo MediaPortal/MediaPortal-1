@@ -212,7 +212,7 @@ namespace MediaPortal.DeployTool
 
     internal static string GetUserAgentOsString()
     {
-      return "Windows NT " + OSInfo.OSInfo.OSMajorVersion + "." + OSInfo.OSInfo.OSMinorVersion;
+      return "Windows NT 6.1";
     }
 
     #endregion
