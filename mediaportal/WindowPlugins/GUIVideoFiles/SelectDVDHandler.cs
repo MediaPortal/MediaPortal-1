@@ -332,8 +332,6 @@ namespace MediaPortal.GUI.Video
 
           if (!string.IsNullOrEmpty(file))
           {
-            //IMDBMovie movieDetails = new IMDBMovie();
-            //VideoDatabase.GetMovieInfo(file, ref movieDetails);
             int id = movie.ID;
 
             // Set thumb for movies

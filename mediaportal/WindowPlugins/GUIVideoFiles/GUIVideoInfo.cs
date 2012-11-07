@@ -647,7 +647,6 @@ namespace MediaPortal.GUI.Video
       }
 
       int id = _currentMovie.ID;
-
       ArrayList files = new ArrayList();
       VideoDatabase.GetFilesForMovie(id, ref files);
 
@@ -781,7 +780,7 @@ namespace MediaPortal.GUI.Video
           if (imgActorArt != null) imgActorArt.IsVisible = false;
 
         }
-
+        
         btnWatched.Selected = (_currentMovie.Watched != 0);
         
         if (imgCoverArt != null)
