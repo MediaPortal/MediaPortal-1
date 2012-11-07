@@ -14,7 +14,7 @@
       <height>40</height>
       <texture>rec.png</texture>
       <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
-      <visible>!window.isvisible(0)+!window.isvisible(34)</visible>
+      <visible>!window.isvisible(0)+!window.isvisible(34)+!window.isvisible(2007)</visible>
     </control>
     <control>
       <description>rec logo</description>
@@ -26,7 +26,7 @@
       <height>40</height>
       <texture>rec.png</texture>
       <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
-      <visible>window.isvisible(0)|window.isvisible(34)</visible>
+      <visible>window.isvisible(0)|window.isvisible(34)+!window.isvisible(2007)</visible>
     </control>
   </controls>
 </window>
