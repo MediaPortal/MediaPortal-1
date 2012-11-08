@@ -78,7 +78,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     private void _epgTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
       TimeSpan ts = DateTime.Now - _grabStartTime;
-      Log.Epg("TimeshiftingEpgGrabber: timeout after {1} mins", ts.TotalMinutes);
+      Log.Info("TimeshiftingEpgGrabber: timeout after {1} mins", ts.TotalMinutes);
       _epgTimer.Enabled = false;
       _card.AbortGrabbing();
     }
@@ -110,17 +110,17 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       catch (Exception ex)
       {
-        Log.Epg("TimeshiftingEpgGrabber: Error while retrieving the epg data: ", ex);
+        Log.Info("TimeshiftingEpgGrabber: Error while retrieving the epg data: ", ex);
       }
       if (grabbedEpg == null)
       {
-        Log.Epg("TimeshiftingEpgGrabber: No epg received.");
+        Log.Info("TimeshiftingEpgGrabber: No epg received.");
         return 0;
       }
       _epg = new List<EpgChannel>(grabbedEpg);
-      Log.Epg("TimeshiftingEpgGrabber: OnEPGReceived got {0} channels", _epg.Count);
+      Log.Info("TimeshiftingEpgGrabber: OnEPGReceived got {0} channels", _epg.Count);
       if (_epg.Count == 0)
-        Log.Epg("TimeshiftingEpgGrabber: No epg received.");
+        Log.Info("TimeshiftingEpgGrabber: No epg received.");
       else
       {
         Thread workerThread = new Thread(UpdateDatabaseThread);

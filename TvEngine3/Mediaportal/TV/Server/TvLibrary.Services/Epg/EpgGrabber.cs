@@ -104,7 +104,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     {
       if (SettingsManagement.GetSetting("idleEPGGrabberEnabled", "yes").Value != "yes")
       {
-        Log.Epg("EPG: grabber disabled");
+        Log.Info("EPG: grabber disabled");
         return;
       }
       if (_isRunning)
@@ -122,7 +122,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       {
         return;
       }
-      Log.Epg("EPG: grabber initialized for {0} transponders..", TransponderList.Instance.Count);
+      Log.Info("EPG: grabber initialized for {0} transponders..", TransponderList.Instance.Count);
       _isRunning = true;
       IList<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.ChannelMaps);
 
@@ -172,7 +172,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       {
         return;
       }
-      Log.Epg("EPG: grabber stopped..");
+      Log.Info("EPG: grabber stopped..");
       _epgTimer.Enabled = false;
       _isRunning = false;
       foreach (EpgCard epgCard in _epgCards)
@@ -250,7 +250,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
           return;
         foreach (EpgCard card in _epgCards)
         {
-          //Log.Epg("card:{0} grabbing:{1}", card.Card.idCard, card.IsGrabbing);
+          //Log.Info("card:{0} grabbing:{1}", card.Card.idCard, card.IsGrabbing);
           if (!_isRunning)
             return;
           if (card.IsGrabbing)
@@ -309,14 +309,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
           TimeSpan ts = DateTime.Now - TransponderList.Instance.CurrentTransponder.CurrentChannel.LastGrabTime.GetValueOrDefault(DateTime.MinValue);
           if (ts.TotalMinutes < _epgReGrabAfter)
           {
-            //Log.Epg("Skip card:#{0} transponder #{1}/{2} channel: {3} - Less than regrab time",
+            //Log.Info("Skip card:#{0} transponder #{1}/{2} channel: {3} - Less than regrab time",
             //         epgCard.Card.idCard, TransponderList.Instance.CurrentIndex + 1, TransponderList.Instance.Count, ch.displayName);
             continue; // less then 2 hrs ago
           }
 
           if (TVDatabase.TVBusinessLayer.CardManagement.CanTuneTvChannel(epgCard.Card, ch.IdChannel))
           {
-            Log.Epg("Grab for card:#{0} transponder #{1}/{2} channel: {3}",
+            Log.Info("Grab for card:#{0} transponder #{1}/{2} channel: {3}",
                     epgCard.Card.IdCard, TransponderList.Instance.CurrentIndex + 1, TransponderList.Instance.Count,
                     ch.DisplayName);
             //start grabbing

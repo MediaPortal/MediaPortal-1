@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -22,16 +22,17 @@ using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Castle.Windsor.Configuration.Interpreters;
 using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Integration
 {
   /// <summary>
-  /// Helper class for loading the <see cref="IIntegrationProvider"/> from an external assembly using a naming pattern: <c>"*.Integration.*.dll"</c>
+  /// Helper class for loading the <see cref="Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces.IIntegrationProvider"/> from an external assembly using a naming pattern: <c>"*.Integration.*.dll"</c>
   /// </summary>
   public static class IntegrationProviderHelper
   {
     /// <summary>
-    /// Finds an assembly with matching type <see cref="IIntegrationProvider"/> and adds it into <seealso cref="GlobalServiceProvider"/>.
+    /// Finds an assembly with matching type <see cref="IIntegrationProvider"/> and adds it into <seealso cref="MediaPortal.Common.Utils.GlobalServiceProvider"/>.
     /// </summary>
     public static void Register(string searchPath = ".")
     {
@@ -40,8 +41,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Integration
         return;
       IWindsorContainer container = GlobalServiceProvider.Instance.Get<IWindsorContainer>() ?? new WindsorContainer(new XmlInterpreter());
       var assemblyFilter = new AssemblyFilter(searchPath, "*.Integration.*.dll");
+
+      container.Register(Component.For<IPathManager>().ImplementedBy<PathManager>());
+      container.Register(Component.For<ILogger>().ImplementedBy<Logger>());
+
       container.Register(AllTypes.FromAssemblyInDirectory(assemblyFilter).BasedOn<IIntegrationProvider>().WithServiceBase().LifestyleSingleton());
-      GlobalServiceProvider.Add(container.Resolve<IIntegrationProvider>());
+      GlobalServiceProvider.Add(container.Resolve<IIntegrationProvider>());      
     }
   }
 }

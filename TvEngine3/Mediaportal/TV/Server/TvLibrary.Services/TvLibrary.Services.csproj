@@ -149,9 +149,9 @@
       <Project>{58C35C9D-F18D-40F2-8024-24E50D01E9C5}</Project>
       <Name>TvBusinessLayer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TvLibrary.Integration.MP1\TvLibrary.Integration.MP1.csproj">
+    <ProjectReference Include="..\TvLibrary.Integration.MP1\TVLibrary.Integration.MP1.csproj">
       <Project>{D7EB01B3-396B-4E0C-85EA-EBAC4738F089}</Project>
-      <Name>TvLibrary.Integration.MP1</Name>
+      <Name>TVLibrary.Integration.MP1</Name>
     </ProjectReference>
     <ProjectReference Include="..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>

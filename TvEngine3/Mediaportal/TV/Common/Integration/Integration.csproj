@@ -43,9 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IntegrationProviderHelper.cs" />
-    <Compile Include="LogExtensions.cs" />
-    <Compile Include="LogLevel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -53,7 +50,7 @@
       <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
       <Name>Common.Utils</Name>
     </ProjectReference>
-    <ProjectReference Include="..\IntegrationProviderInterfaces\IntegrationProviderInterfaces.csproj">
+    <ProjectReference Include="..\..\Server\TvLibrary.IntegrationProvider.Interfaces\TvLibrary.IntegrationProvider.Interfaces.csproj">
       <Project>{34BCC448-B298-463E-B3B1-C031EBF0B4DB}</Project>
       <Name>IntegrationProviderInterfaces</Name>
     </ProjectReference>

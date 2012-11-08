@@ -278,7 +278,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
           {
             title = ei.Text[0].Title;
           }
-          Log.Epg("                   -> {0}-{1}  {2}", ei.startTime, ei.endTime, title);
+          Log.Info("                   -> {0}-{1}  {2}", ei.startTime, ei.endTime, title);
         }*/
         return null;
       }

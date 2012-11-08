@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.IO;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
+using Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces;
 
-namespace TvLibrary.Integration.MP1
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Integration
 {
   class PathManager: IPathManager
   {

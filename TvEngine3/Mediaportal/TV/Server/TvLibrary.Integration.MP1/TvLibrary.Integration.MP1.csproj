@@ -8,17 +8,17 @@
     <ProjectGuid>{D7EB01B3-396B-4E0C-85EA-EBAC4738F089}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TvLibrary.Integration.MP1</RootNamespace>
-    <AssemblyName>TvLibrary.Integration.MP1</AssemblyName>
+    <RootNamespace>Mediaportal.TV.Server.TVLibrary.Integration.MP1</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.TVLibrary.Integration.MP1</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <CodeAnalysisLogFile>bin\Debug\TvLibrary.Integration.MP1.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
@@ -50,9 +50,7 @@
     <Reference Include="Castle.Core">
       <HintPath>..\..\ExternalBinaries\Castle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\..\ExternalBinaries\log4net.dll</HintPath>
-    </Reference>
+    <Reference Include="Castle.Windsor, Version=3.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
@@ -63,21 +61,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Log4NetLogger.cs" />
     <Compile Include="MP1IntegrationProvider.cs" />
-    <Compile Include="PathManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
-      <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
-      <Name>TvLibrary.Interfaces</Name>
+    <ProjectReference Include="..\..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
+      <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
+      <Name>Common.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TvLibrary.IntegrationProvider.Interfaces\TvLibrary.IntegrationProvider.Interfaces.csproj">
+      <Project>{34BCC448-B298-463E-B3B1-C031EBF0B4DB}</Project>
+      <Name>TvLibrary.IntegrationProvider.Interfaces</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /Y "$(TargetDir)$(ProjectName).dll"  "$(SolutionDir)\TvService\Bin\Debug\"
-xcopy /Y "$(TargetDir)$(ProjectName).dll"  "$(SolutionDir)\SetupTv\Bin\Debug\"
+    <PostBuildEvent>xcopy /Y "$(TargetDir)$(TargetName).dll"  "$(SolutionDir)\TvService\Bin\$(ConfigurationName)\"
+xcopy /Y "$(TargetDir)$(TargetName).dll"  "$(SolutionDir)\SetupTv\Bin\$(ConfigurationName)\"
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

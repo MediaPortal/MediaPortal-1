@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace Mediaportal.TV.Common.IntegrationProviderInterfaces
+namespace Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces
 {
   /// <summary>
   /// <see cref="IIntegrationProvider"/> provides required information about the hosting enviromment and features for the TvCore. 

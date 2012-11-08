@@ -8,8 +8,8 @@
     <ProjectGuid>{34BCC448-B298-463E-B3B1-C031EBF0B4DB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mediaportal.TV.Common.IntegrationProviderInterfaces</RootNamespace>
-    <AssemblyName>Mediaportal.TV.Common.IntegrationProviderInterfaces</AssemblyName>
+    <RootNamespace>Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>

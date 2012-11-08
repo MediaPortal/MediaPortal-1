@@ -24,7 +24,7 @@
 
 using System;
 
-namespace Mediaportal.TV.Common.IntegrationProviderInterfaces
+namespace Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces
 {
   /// <summary>
   /// Interface for all logger implementations.

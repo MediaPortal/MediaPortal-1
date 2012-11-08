@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -19,32 +19,27 @@
 #endregion
 
 using System;
-using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Integration
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Logging
 {
   public static class LogExtensions
   {
-    static string BuildPrefix(object caller, string message)
-    {
-      return string.Format("{0}: {1}", caller.GetType().Name, message);
-    }
-
     public static void LogDebug(this object caller, string message, params object[] args)
     {
-      GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Debug(BuildPrefix(caller, message), args);
+      Log.Debug(caller.GetType(), message, args);      
     }
     public static void LogInfo(this object caller, string message, params object[] args)
     {
-      GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Info(BuildPrefix(caller, message), args);
+      Log.Info(caller.GetType(), message, args);      
     }
     public static void LogError(this object caller, string message, params object[] args)
     {
-      GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Error(BuildPrefix(caller, message), args);
+      Log.Error(caller.GetType(), message, args);
     }
     public static void LogError(this object caller, Exception exception, string message, params object[] args)
     {
-      GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Error(BuildPrefix(caller, message), exception, args);
+      Log.Error(caller.GetType(), message, exception, args);      
     }
   }
 }

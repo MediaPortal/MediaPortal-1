@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -24,9 +24,9 @@ using Castle.Core.Logging;
 using Castle.Windsor;
 using MediaPortal.Common.Utils;
 
-namespace Mediaportal.TV.Common.Logging
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Integration
 {
-  public class Logger : IntegrationProviderInterfaces.ILogger
+  public class Logger : IntegrationProvider.Interfaces.ILogger
   {
     private readonly Type _runtimeType;
     private static readonly IDictionary<Type, ILogger> _logCache = new Dictionary<Type, ILogger>();
@@ -62,7 +62,11 @@ namespace Mediaportal.TV.Common.Logging
     /// <param name="args">An array of objects to write using format.</param>
     public void Debug(Type caller, string format, params object[] args)
     {
-      GetLogger(caller).DebugFormat(format, args);
+      ILogger logger = GetLogger(caller);
+      if (logger.IsDebugEnabled)
+      {
+        logger.DebugFormat(format, args);
+      }
     }
 
     public void Debug(string format, params object[] args)
@@ -79,7 +83,11 @@ namespace Mediaportal.TV.Common.Logging
     /// <param name="args">An array of objects to write using format.</param>
     public void Debug(Type caller, string format, Exception ex, params object[] args)
     {
-      GetLogger(caller).Debug(string.Format(format, args), ex);
+      ILogger logger = GetLogger(caller);
+      if (logger.IsDebugEnabled)
+      {
+        logger.Debug(string.Format(format, args), ex);
+      }
     }
 
     public void Debug(string format, Exception ex, params object[] args)
@@ -95,7 +103,11 @@ namespace Mediaportal.TV.Common.Logging
     /// <param name="args">An array of objects to write using format.</param>
     public void Info(Type caller, string format, params object[] args)
     {
-      GetLogger(caller).InfoFormat(format, args);
+      ILogger logger = GetLogger(caller);
+      if (logger.IsInfoEnabled)
+      {
+        GetLogger(caller).InfoFormat(format, args);
+      }
     }
 
     public void Info(string format, params object[] args)
@@ -112,7 +124,11 @@ namespace Mediaportal.TV.Common.Logging
     /// <param name="args">An array of objects to write using format.</param>
     public void Info(Type caller, string format, Exception ex, params object[] args)
     {
-      GetLogger(caller).Info(string.Format(format, args), ex);
+      ILogger logger = GetLogger(caller);
+      if (logger.IsInfoEnabled)
+      {
+        logger.Info(string.Format(format, args), ex);
+      }      
     }
 
     public void Info(string format, Exception ex, params object[] args)
@@ -128,7 +144,11 @@ namespace Mediaportal.TV.Common.Logging
     /// <param name="args">An array of objects to write using format.</param>
     public void Warn(Type caller, string format, params object[] args)
     {
-      GetLogger(caller).WarnFormat(format, args);
+      ILogger logger = GetLogger(caller);
+      if (logger.IsWarnEnabled)
+      {
+        logger.WarnFormat(format, args);
+      }      
     }
 
     public void Warn(string format, params object[] args)
@@ -145,7 +165,11 @@ namespace Mediaportal.TV.Common.Logging
     /// <param name="args">An array of objects to write using format.</param>
     public void Warn(Type caller, string format, Exception ex, params object[] args)
     {
-      GetLogger(caller).Warn(string.Format(format, args), ex);
+      ILogger logger = GetLogger(caller);
+      if (logger.IsWarnEnabled)
+      {
+        logger.Warn(string.Format(format, args), ex);
+      }      
     }
 
     public void Warn(string format, Exception ex, params object[] args)
@@ -161,7 +185,11 @@ namespace Mediaportal.TV.Common.Logging
     /// <param name="args">An array of objects to write using format.</param>
     public void Error(Type caller, string format, params object[] args)
     {
-      GetLogger(caller).ErrorFormat(format, args);
+      ILogger logger = GetLogger(caller);
+      if (logger.IsErrorEnabled)
+      {
+        GetLogger(caller).ErrorFormat(format, args);
+      }
     }
 
     public void Error(string format, params object[] args)
@@ -178,7 +206,11 @@ namespace Mediaportal.TV.Common.Logging
     /// <param name="args">An array of objects to write using format.</param>
     public void Error(Type caller, string format, Exception ex, params object[] args)
     {
-      GetLogger(caller).Error(string.Format(format, args), ex);
+      ILogger logger = GetLogger(caller);
+      if (logger.IsErrorEnabled)
+      {
+        logger.Error(string.Format(format, args), ex);
+      }      
     }
 
     public void Error(string format, Exception ex, params object[] args)
@@ -193,7 +225,11 @@ namespace Mediaportal.TV.Common.Logging
     /// <param name="ex">The <see cref="Exception"/> to write.</param>
     public void Error(Type caller, Exception ex)
     {
-      GetLogger(caller).Error(string.Empty, ex);
+      ILogger logger = GetLogger(caller);
+      if (logger.IsErrorEnabled)
+      {
+        logger.Error(string.Empty, ex);
+      }
     }
 
     public void Error(Exception ex)
@@ -209,7 +245,11 @@ namespace Mediaportal.TV.Common.Logging
     /// <param name="args">An array of objects to write using format.</param>
     public void Critical(Type caller, string format, params object[] args)
     {
-      GetLogger(caller).FatalFormat(format, args);
+      ILogger logger = GetLogger(caller);
+      if (logger.IsFatalEnabled)
+      {
+        logger.FatalFormat(format, args);
+      }      
     }
 
     public void Critical(string format, params object[] args)
@@ -226,7 +266,11 @@ namespace Mediaportal.TV.Common.Logging
     /// <param name="args">An array of objects to write using format.</param>
     public void Critical(Type caller, string format, Exception ex, params object[] args)
     {
-      GetLogger(caller).Fatal(string.Format(format, args), ex);
+       ILogger logger = GetLogger(caller);
+       if (logger.IsFatalEnabled)
+       {
+         logger.Fatal(string.Format(format, args), ex);
+       }
     }
 
     public void Critical(string format, Exception ex, params object[] args)
@@ -241,7 +285,11 @@ namespace Mediaportal.TV.Common.Logging
     /// <param name="ex">The <see cref="Exception"/> to write.</param>
     public void Critical(Type caller, Exception ex)
     {
-      GetLogger(caller).Fatal("", ex);
+      ILogger logger = GetLogger(caller);
+      if (logger.IsFatalEnabled)
+      {
+        logger.Fatal("", ex);
+      }
     }
 
     public void Critical(Exception ex)

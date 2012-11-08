@@ -18,18 +18,20 @@
 
 #endregion
 
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
+using Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces;
 
-namespace TvLibrary.Integration.MP1
+namespace Mediaportal.TV.Server.TVLibrary.Integration.MP1
 {
   public class MP1IntegrationProvider: IIntegrationProvider
   {
-    protected readonly IPathManager _pathManager = new PathManager();
-    protected ILogger _logger;    
+    protected readonly IPathManager _pathManager;// = new PathManager();
+    protected ILogger _logger;
 
-    public MP1IntegrationProvider (Castle.Core.Logging.ILogger logger)
+    public MP1IntegrationProvider(ILogger logger, IPathManager pathManager)
     {
-      _logger = new Log4NetLogger(logger);
+      //_logger = new Logger();
+      _logger = logger;
+      _pathManager = pathManager;
     }
 
 

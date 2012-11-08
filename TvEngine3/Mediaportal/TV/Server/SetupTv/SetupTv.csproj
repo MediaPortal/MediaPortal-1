@@ -466,9 +466,9 @@
       <Project>{58C35C9D-F18D-40F2-8024-24E50D01E9C5}</Project>
       <Name>TvBusinessLayer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TvLibrary.Integration.MP1\TvLibrary.Integration.MP1.csproj">
+    <ProjectReference Include="..\TvLibrary.Integration.MP1\TVLibrary.Integration.MP1.csproj">
       <Project>{D7EB01B3-396B-4E0C-85EA-EBAC4738F089}</Project>
-      <Name>TvLibrary.Integration.MP1</Name>
+      <Name>TVLibrary.Integration.MP1</Name>
     </ProjectReference>
     <ProjectReference Include="..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
@@ -662,6 +662,10 @@
   <PropertyGroup>
     <PreBuildEvent>xcopy "$(SolutionDir)TVServer.Base\TuningParameters" "%25ProgramData%25\Team MediaPortal\\MediaPortal TV Server\TuningParameters\" /C/Y/S
 xcopy "$(SolutionDir)\..\ExternalBinaries\*castle*.*"  /s /i /y
-xcopy "$(SolutionDir)\..\ExternalBinaries\*log4net*.*"  /s /i /y</PreBuildEvent>
+xcopy "$(SolutionDir)\..\ExternalBinaries\*log4net*.*"  /s /i /y
+xcopy "$(SolutionDir)TvLibrary.IntegrationProvider.Interfaces\$(OutDir)*.dll" "$(TargetDir)" /C/Y/S
+xcopy "$(SolutionDir)TvLibrary.IntegrationProvider.Interfaces\$(OutDir)*.pdb" "$(TargetDir)" /C/Y/S
+xcopy "$(SolutionDir)TvLibrary.Integration.MP1\$(OutDir)*.dll" "$(TargetDir)" /C/Y/S
+xcopy "$(SolutionDir)TvLibrary.Integration.MP1\$(OutDir)*.pdb" "$(TargetDir)" /C/Y/S</PreBuildEvent>
   </PropertyGroup>
 </Project>

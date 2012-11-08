@@ -24,7 +24,7 @@
 
 using System;
 
-namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Integration
+namespace Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces
 {
   /// <summary>
   /// Registration for local file path locations.
