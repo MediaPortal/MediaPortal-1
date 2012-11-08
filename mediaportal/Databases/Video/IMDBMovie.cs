@@ -596,16 +596,13 @@ namespace MediaPortal.Video.Database
       }
 
       GUIPropertyManager.SetProperty("#votes", strVotes);
-      
       GUIPropertyManager.SetProperty("#credits", WritingCredits.Replace(" /", ","));
       GUIPropertyManager.SetProperty("#thumb", strThumb);
       GUIPropertyManager.SetProperty("#title", Title);
       GUIPropertyManager.SetProperty("#year", Year.ToString());
-      
       // MPAA rating
       MPARating = Util.Utils.MakeFileName(MPARating);
       GUIPropertyManager.SetProperty("#mpaarating", MPARating);
-      
       GUIPropertyManager.SetProperty("#studios", Studios.Replace(" /", ","));
       GUIPropertyManager.SetProperty("#country", Country);
       GUIPropertyManager.SetProperty("#language", Language);
@@ -666,7 +663,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#watchedpercent", WatchedPercent.ToString());
       
       // Watched count
-      if (!string.IsNullOrEmpty(file) && System.IO.File.Exists(file))
+      if (!string.IsNullOrEmpty(file) && System.IO.File.Exists(file) || !string.IsNullOrEmpty(VideoFileName) && System.IO.File.Exists(VideoFileName))
       {
         GUIPropertyManager.SetProperty("#watchedcount", WatchedCount.ToString());
       }
@@ -1342,6 +1339,14 @@ namespace MediaPortal.Video.Database
               if (watchedCount > 0)
               {
                 movie.Watched = 1;
+                movie.WatchedCount = watchedCount;
+                movie.WatchedPercent = percent;
+              }
+              else
+              {
+                movie.Watched = 0;
+                movie.WatchedCount = 0;
+                movie.WatchedPercent = 0;
               }
 
               movie.ID = 0;
