@@ -100,13 +100,13 @@ namespace Mediaportal.TV.TvPlugin
       IUser u = TVHome.Card.User;
       if (u == null)
       {
-        Log.Error("TvTimeShiftPositionWatcher: Snapshot buffer failed. TvHome.Card.User==null");
+        this.LogError("TvTimeShiftPositionWatcher: Snapshot buffer failed. TvHome.Card.User==null");
         return;
       }
       long bufferId = 0;
       if (!ServiceAgents.Instance.ControllerServiceAgent.TimeShiftGetCurrentFilePosition(u.Name, ref snapshotBuferPosition, ref bufferId))
       {
-        Log.Error("TvTimeShiftPositionWatcher: TimeShiftGetCurrentFilePosition failed.");
+        this.LogError("TvTimeShiftPositionWatcher: TimeShiftGetCurrentFilePosition failed.");
         return;
       }
       snapshotBufferFile = ServiceAgents.Instance.ControllerServiceAgent.TimeShiftFileName(u.Name, u.CardId) + bufferId.ToString() + ".ts";
@@ -130,7 +130,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Error("TvTimeshiftPositionWatcher.CheckRecordingStatus exception : {0}", ex);
+        this.LogError("TvTimeshiftPositionWatcher.CheckRecordingStatus exception : {0}", ex);
       }
     }
     private static void CheckOrUpdateTimeShiftPosition()
@@ -158,7 +158,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Error("TvTimeshiftPositionWatcher.CheckOrUpdateTimeShiftPosition exception : {0}", ex);
+        this.LogError("TvTimeshiftPositionWatcher.CheckOrUpdateTimeShiftPosition exception : {0}", ex);
       }
     }
     private static void InitiateBufferFilesCopyProcess(string recordingFilename)

@@ -22,7 +22,7 @@ namespace Mediaportal.TV.Server.Plugins.Base
       } 
       catch (Exception ex)
       {
-        Log.Error("PluginExceptionInterceptor.Intercept - caught exception: {0}", ex);
+        this.LogError("PluginExceptionInterceptor.Intercept - caught exception: {0}", ex);
         throw;
       }                                                            
     }

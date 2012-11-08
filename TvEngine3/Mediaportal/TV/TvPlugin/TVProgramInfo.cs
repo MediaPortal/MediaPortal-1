@@ -443,7 +443,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "TVProgramInfo: Error updating program description");
+        this.LogError(ex, "TVProgramInfo: Error updating program description");
       }
     }
 
@@ -479,7 +479,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "TVProgramInfo: Error in Update()");
+        this.LogError(ex, "TVProgramInfo: Error in Update()");
       }
     }
 
@@ -1093,7 +1093,7 @@ namespace Mediaportal.TV.TvPlugin
         GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
         if (dlg == null)
         {
-          Log.Error("TVProgramInfo.CancelProgram: ERROR no GUIDialogMenu found !!!!!!!!!!");
+          this.LogError("TVProgramInfo.CancelProgram: ERROR no GUIDialogMenu found !!!!!!!!!!");
           return;
         }
 

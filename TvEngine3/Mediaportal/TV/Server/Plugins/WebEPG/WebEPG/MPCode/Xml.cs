@@ -182,7 +182,7 @@ namespace WebEPG.MPCode
           }
           catch (Exception ex)
           {
-            Log.Error(ex, "Unable to save {0}");
+            this.LogError(ex, "Unable to save {0}");
           }
           _doc = null;
         }

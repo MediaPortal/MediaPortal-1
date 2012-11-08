@@ -141,7 +141,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Error("Unable to create/modify gentle.config {0},{1}", ex.Message, ex.StackTrace);
+        this.LogError("Unable to create/modify gentle.config {0},{1}", ex.Message, ex.StackTrace);
       }
       this.LogInfo("ChannelNavigator::Reload()");*/
     }   
@@ -168,7 +168,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "TVHome: Error in Reload");        
+        this.LogError(ex, "TVHome: Error in Reload");        
       }      
     }
 

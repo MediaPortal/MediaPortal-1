@@ -1416,7 +1416,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
                   }
                   catch (Exception ex)
                   {
-                    Log.Error(ex, "Twinhan: menu request callback exception");
+                    this.LogError(ex, "Twinhan: menu request callback exception");
                   }
                 }
                 else
@@ -1445,7 +1445,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
                   }
                   catch (Exception ex)
                   {
-                    Log.Error(ex, "Twinhan: menu header callback exception");
+                    this.LogError(ex, "Twinhan: menu header callback exception");
                   }
                 }
                 for (int i = 0; i < mmi.EntryCount; i++)
@@ -1459,7 +1459,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
                     }
                     catch (Exception ex)
                     {
-                      Log.Error(ex, "Twinhan: menu choice callback exception");
+                      this.LogError(ex, "Twinhan: menu choice callback exception");
                     }
                   }
                 }
@@ -1487,7 +1487,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
               }
               catch (Exception ex)
               {
-                Log.Error(ex, "Twinhan: close menu callback exception");
+                this.LogError(ex, "Twinhan: close menu callback exception");
               }
             }
             else
@@ -1506,7 +1506,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "Twinhan: exception in MMI handler thread");
+        this.LogError(ex, "Twinhan: exception in MMI handler thread");
       }
     }
 

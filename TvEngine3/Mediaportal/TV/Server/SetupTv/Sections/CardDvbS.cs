@@ -468,7 +468,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "Error loading tuningdetails");
+        this.LogError(ex, "Error loading tuningdetails");
         MessageBox.Show("Transponder list could not be loaded, check error.log for details.");
       }
     }
@@ -914,7 +914,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       catch (Exception ex)
       {
-        Log.Error(ex);
+        this.LogError(ex);
       }
       finally
       {

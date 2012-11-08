@@ -160,7 +160,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "XMLTVImport: Error parsing star-rating - {0}", epgRating);
+        this.LogError(ex, "XMLTVImport: Error parsing star-rating - {0}", epgRating);
       }
       return Rating;
     }
@@ -231,7 +231,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                 String id = xmlReader.GetAttribute("id");
                 if (id == null || id.Length == 0)
                 {
-                  Log.Error("  channel#{0} doesnt contain an id", iChannel);
+                  this.LogError("  channel#{0} doesnt contain an id", iChannel);
                 }
                 else
                 {
@@ -269,7 +269,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
                   if (displayName == null || displayName.Length == 0)
                   {
-                    Log.Error("  channel#{0} xmlid:{1} doesnt contain an displayname", iChannel, id);
+                    this.LogError("  channel#{0} xmlid:{1} doesnt contain an displayname", iChannel, id);
                   }
                   else
                   {
@@ -843,14 +843,14 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         {
           _errorMessage = "No xmltv file found";
           _status.Status = _errorMessage;
-          Log.Error("xmltv data file was not found");
+          this.LogError("xmltv data file was not found");
         }
       }
       catch (Exception ex)
       {
         _errorMessage = String.Format("Invalid XML file:{0}", ex.Message);
         _status.Status = String.Format("invalid XML file:{0}", ex.Message);
-        Log.Error(ex, "XML tv import error loading {0}", fileName);
+        this.LogError(ex, "XML tv import error loading {0}", fileName);
 
         //TVDatabase.RollbackTransaction();
       }
@@ -1082,7 +1082,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       }
       catch (Exception ex)
       {
-        Log.Error("XML tv import error:{1} \n {2} ", ex.Message, ex.StackTrace);
+        this.LogError("XML tv import error:{1} \n {2} ", ex.Message, ex.StackTrace);
       }
     }
 

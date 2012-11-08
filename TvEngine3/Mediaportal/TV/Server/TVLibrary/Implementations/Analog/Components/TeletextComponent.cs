@@ -114,7 +114,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       int hr = graphBuilder.AddFilter(_teeSink, devices[0].Name);
       if (hr != 0)
       {
-        Log.Error("analog:SinkGraphEx.SetupTeletext(): Unable to add tee/sink filter");
+        this.LogError("analog:SinkGraphEx.SetupTeletext(): Unable to add tee/sink filter");
         return false;
       }
       //connect capture filter -> tee sink filter
@@ -124,7 +124,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       if (hr != 0)
       {
         //failed...
-        Log.Error("analog: unable  to connect capture->tee/sink");
+        this.LogError("analog: unable  to connect capture->tee/sink");
         graphBuilder.RemoveFilter(_teeSink);
         Release.ComObject(_teeSink);
         _teeSink = _filterWstDecoder = null;
@@ -146,7 +146,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             if (hr != 0)
             {
               //failed...
-              Log.Error("analog:SinkGraphEx.SetupTeletext(): Unable to add WST Codec filter");
+              this.LogError("analog:SinkGraphEx.SetupTeletext(): Unable to add WST Codec filter");
               graphBuilder.RemoveFilter(_filterWstDecoder);
               _filterWstDecoder = null;
             }
@@ -172,7 +172,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             if (hr != 0)
             {
               //failed...
-              Log.Error("analog:Unable to add WST Codec filter");
+              this.LogError("analog:Unable to add WST Codec filter");
               graphBuilder.RemoveFilter(_teeSink);
               Release.ComObject(_teeSink);
               _teeSink = _filterWstDecoder = null;
@@ -198,7 +198,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
               if (hr != 0)
               {
                 //failed...
-                Log.Error("analog:Unable to add VBI Codec filter");
+                this.LogError("analog:Unable to add VBI Codec filter");
                 graphBuilder.RemoveFilter(_teeSink);
                 Release.ComObject(_teeSink);
                 _teeSink = _filterWstDecoder = null;
@@ -212,7 +212,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       }
       if (_filterWstDecoder == null)
       {
-        Log.Error("analog: unable to find WST Codec or VBI Codec filter");
+        this.LogError("analog: unable to find WST Codec or VBI Codec filter");
         graphBuilder.RemoveFilter(_teeSink);
         Release.ComObject(_teeSink);
         _teeSink = _filterWstDecoder = null;
@@ -227,7 +227,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       if (hr != 0)
       {
         //failed
-        Log.Error("analog: unable  to tee/sink->wst codec");
+        this.LogError("analog: unable  to tee/sink->wst codec");
         graphBuilder.RemoveFilter(_filterWstDecoder);
         graphBuilder.RemoveFilter(_teeSink);
         Release.ComObject(_filterWstDecoder);

@@ -152,7 +152,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
         }
         catch (Exception e)
         {
-          Log.Error("card: unable to start job for card {0} at:{0}", e.Message, card.Name, RemoteControl.HostName);
+          this.LogError("card: unable to start job for card {0} at:{0}", e.Message, card.Name, RemoteControl.HostName);
         }
 
         var epgCard = new EpgCard(card);
@@ -262,7 +262,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       }
       catch (Exception ex)
       {
-        Log.Error(ex);
+        this.LogError(ex);
       }
       finally
       {

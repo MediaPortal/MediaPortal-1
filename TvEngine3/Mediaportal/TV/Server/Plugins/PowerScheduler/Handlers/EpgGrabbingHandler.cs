@@ -380,7 +380,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
         }
         if (DateTime.Now.Day == nextRun.Day)
         {
-          Log.Error("PowerScheduler: no valid next wakeup date for EPG grabbing found!");
+          this.LogError("PowerScheduler: no valid next wakeup date for EPG grabbing found!");
           nextRun = DateTime.MaxValue;
         }
       }

@@ -297,7 +297,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "BaseSubChannel: failed to start timeshifting");
+        this.LogError(ex, "BaseSubChannel: failed to start timeshifting");
         StopTimeShifting();
         return false;
       }
@@ -334,7 +334,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "BaseSubChannel: failed to start recording");
+        this.LogError(ex, "BaseSubChannel: failed to start recording");
         StopRecording();
         return false;
       }
@@ -407,7 +407,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        this.LogError(ex, "");
       }
       return 0;
     }
@@ -442,7 +442,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       catch (Exception ex)
       {
-        Log.Error(ex);
+        this.LogError(ex);
       }
       return 0;
     }

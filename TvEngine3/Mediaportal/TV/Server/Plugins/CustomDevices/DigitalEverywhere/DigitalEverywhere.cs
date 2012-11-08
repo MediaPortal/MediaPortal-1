@@ -918,7 +918,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "Digital Everywhere: exception in MMI handler thread");
+        this.LogError(ex, "Digital Everywhere: exception in MMI handler thread");
         return;
       }
     }

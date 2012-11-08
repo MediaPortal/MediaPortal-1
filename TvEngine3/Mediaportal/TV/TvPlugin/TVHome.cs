@@ -349,7 +349,7 @@ namespace Mediaportal.TV.TvPlugin
           string strLine = "TvPlugin and TvServer don't have the same version.\r\n";
           strLine += "TvServer Version: " + tvServerVersion + "\r\n";
           strLine += "TvPlugin Version: " + pluginVersion;
-          Log.Error(strLine);
+          this.LogError(strLine);
         }
         else
         {
@@ -358,7 +358,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "TVHome: Error occured in Init()");
+        this.LogError(ex, "TVHome: Error occured in Init()");
       }
       finally
       {
@@ -1086,7 +1086,7 @@ namespace Mediaportal.TV.TvPlugin
       catch (Exception e)
       {
         //we assume that server is disconnected.
-        Log.Error(e, "TVHome.HandleServerNotConnected caused an error");
+        this.LogError(e, "TVHome.HandleServerNotConnected caused an error");
         return true;
       }
       finally
@@ -1275,7 +1275,7 @@ namespace Mediaportal.TV.TvPlugin
           }
           catch (Exception ex)
           {
-            Log.Error(ex, "TVHome: Error resolving hostname");
+            this.LogError(ex, "TVHome: Error resolving hostname");
             return;
           }
         }
@@ -1332,7 +1332,7 @@ namespace Mediaportal.TV.TvPlugin
               }
               catch (Exception ex)
               {
-                Log.Error(ex, "TVHome: WOL - Failed GetHostAddress");
+                this.LogError(ex, "TVHome: WOL - Failed GetHostAddress");
               }
             }
 
@@ -1383,12 +1383,12 @@ namespace Mediaportal.TV.TvPlugin
             }
             else
             {
-              Log.Error("TVHome: WOL - Failed to start the TV server");
+              this.LogError("TVHome: WOL - Failed to start the TV server");
             }
           }
           catch (Exception ex)
           {
-            Log.Error(ex, "TVHome: WOL - Failed to start the TV server");
+            this.LogError(ex, "TVHome: WOL - Failed to start the TV server");
           }
         }
       }
@@ -1678,7 +1678,7 @@ namespace Mediaportal.TV.TvPlugin
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "TvHome.RegisterUserForHeartbeatMonitoring exception");
+          this.LogError(ex, "TvHome.RegisterUserForHeartbeatMonitoring exception");
           
         }        
       }
@@ -1705,7 +1705,7 @@ namespace Mediaportal.TV.TvPlugin
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "TvHome.UnRegisterUserForHeartbeatMonitoring exception");          
+          this.LogError(ex, "TvHome.UnRegisterUserForHeartbeatMonitoring exception");          
         }        
       }
 #endif
@@ -1897,7 +1897,7 @@ namespace Mediaportal.TV.TvPlugin
               }
               catch (Exception e)
               {
-                Log.Error(e, "TVHome: TVNotification: Error on starting channel {0} after notification", notify.Channel.DisplayName);
+                this.LogError(e, "TVHome: TVNotification: Error on starting channel {0} after notification", notify.Channel.DisplayName);
               }
 
             }
@@ -2498,7 +2498,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "TvPlugin:ViewParkedChannelAndCheck Exception");
+        this.LogError(ex, "TvPlugin:ViewParkedChannelAndCheck Exception");
         _doingChannelChange = false;
         Card.User.Name = new User().Name;
         g_Player.Stop();
@@ -3436,7 +3436,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "TvPlugin:ViewChannelandCheckV2 Exception");
+        this.LogError(ex, "TvPlugin:ViewChannelandCheckV2 Exception");
         _doingChannelChange = false;
         Card.User.Name = new User().Name;
         g_Player.Stop();
@@ -3709,7 +3709,7 @@ namespace Mediaportal.TV.TvPlugin
         }
         catch (Exception e)
         {
-          Log.Error(e, "tvhome:SeektoEnd({0}, rtsp={1}", zapping, useRtsp);
+          this.LogError(e, "tvhome:SeektoEnd({0}, rtsp={1}", zapping, useRtsp);
           g_Player.Stop();
         }
       }

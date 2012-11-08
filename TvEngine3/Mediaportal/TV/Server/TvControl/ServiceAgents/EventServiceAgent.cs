@@ -141,7 +141,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
                                           }
                                           catch (Exception ex)
                                           {
-                                            Log.Error("BeginOnCallbackTvServerEvent exception : {0}", ex);
+                                            this.LogError("BeginOnCallbackTvServerEvent exception : {0}", ex);
                                           }                
                                         };
       try
@@ -163,7 +163,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       }
       catch (Exception ex)
       {
-        Log.Error("EndOnCallbackTvServerEvent exception : {0}", ex);
+        this.LogError("EndOnCallbackTvServerEvent exception : {0}", ex);
       }              
     }
 
@@ -180,7 +180,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
         }
         catch (Exception ex)
         {
-          Log.Error("BeginOnCallbackCiMenuEvent exception : {0}", ex);
+          this.LogError("BeginOnCallbackCiMenuEvent exception : {0}", ex);
         }        
       };
       return act.BeginInvoke(menu, callback, asyncState); 
@@ -195,7 +195,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       }
       catch (Exception ex)
       {
-        Log.Error("EndOnCallbackCiMenuEvent exception : {0}", ex);
+        this.LogError("EndOnCallbackCiMenuEvent exception : {0}", ex);
       }        
     }
 
@@ -211,7 +211,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
           }
           catch (Exception ex)
           {
-            Log.Error("BeginOnCallbackHeartBeatEvent exception : {0}", ex);
+            this.LogError("BeginOnCallbackHeartBeatEvent exception : {0}", ex);
           }          
         }
       };
@@ -227,7 +227,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       }
       catch (Exception ex)
       {
-        Log.Error("EndOnCallbackHeartBeatEvent exception : {0}", ex);
+        this.LogError("EndOnCallbackHeartBeatEvent exception : {0}", ex);
       }                
     }
 

@@ -202,7 +202,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           }
           catch (Exception ex)
           {
-            Log.Error(ex, "DVBT card detection error");
+            this.LogError(ex, "DVBT card detection error");
           }
 
           //DVBS

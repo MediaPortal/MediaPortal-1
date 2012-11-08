@@ -268,7 +268,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
         }
         catch (Exception ex)
         {
-          Log.Error(ex, @"plugin:webepg import failed");
+          this.LogError(ex, @"plugin:webepg import failed");
 
         }
 
@@ -424,7 +424,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
         }
         if (DateTime.Now.Day == nextRun.Day)
         {
-          Log.Error("WebEPG: no valid next wakeup date for EPG grabbing found!");
+          this.LogError("WebEPG: no valid next wakeup date for EPG grabbing found!");
           nextRun = DateTime.MaxValue;
         }
       }

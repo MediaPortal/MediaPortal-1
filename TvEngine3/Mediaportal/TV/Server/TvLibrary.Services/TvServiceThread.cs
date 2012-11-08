@@ -75,7 +75,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "");
+        this.LogError(ex, "");
       }
     }
 
@@ -250,7 +250,7 @@ namespace Mediaportal.TV.Server.TVLibrary
 
         if (handle.Equals(IntPtr.Zero))
         {
-          Log.Error("TV service PowerEventThread cannot create window handle, exiting thread");
+          this.LogError("TV service PowerEventThread cannot create window handle, exiting thread");
           return;
         }
 
@@ -274,7 +274,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           }
           catch (Exception ex)
           {
-            Log.Error(ex, "TV service PowerEventThread");
+            this.LogError(ex, "TV service PowerEventThread");
           }
         }
       }
@@ -424,7 +424,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           }
           catch (Exception ex)
           {
-            Log.Error(ex, "TV Service:  Plugin: {0} failed to start", plugin.Name);            
+            this.LogError(ex, "TV Service:  Plugin: {0} failed to start", plugin.Name);            
           }
         }
         else
@@ -447,7 +447,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           }
           catch (Exception ex)
           {
-            Log.Error(ex, "TV Service: Plugin: {0} failed to startedAll", plugin.Name);            
+            this.LogError(ex, "TV Service: Plugin: {0} failed to startedAll", plugin.Name);            
           }
         }
       }
@@ -466,7 +466,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           }
           catch (Exception ex)
           {
-            Log.Error(ex, "TV Service: plugin: {0} failed to stop", plugin.Name);            
+            this.LogError(ex, "TV Service: plugin: {0} failed to stop", plugin.Name);            
           }
         }
         _pluginsStarted = new List<ITvServerPlugin>();
@@ -544,7 +544,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       catch (Exception ex)
       {
-        Log.Error("applyProcessPriority: exception is {0}", ex.StackTrace);
+        this.LogError("applyProcessPriority: exception is {0}", ex.StackTrace);
       }
     }
 
@@ -564,7 +564,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         }
         catch (Exception ex)
         {          
-          Log.Error("OnStart: exception applying process priority: {0}", ex.StackTrace);
+          this.LogError("OnStart: exception applying process priority: {0}", ex.StackTrace);
         }
       }
 
@@ -627,7 +627,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       catch (Exception ex)
       {
         //wait for thread to exit. eg. when stopping tvservice       
-        Log.Error(ex, "TvService OnStart failed");
+        this.LogError(ex, "TvService OnStart failed");
         //_started = true; // otherwise the onstop code will not complete.
         DoStop();
         throw;

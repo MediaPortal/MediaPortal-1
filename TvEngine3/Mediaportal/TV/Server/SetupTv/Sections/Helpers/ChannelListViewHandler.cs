@@ -154,7 +154,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       }
       catch (Exception exp)
       {
-        Log.Error("RefreshAllChannels error: {0}", exp.StackTrace);
+        this.LogError("RefreshAllChannels error: {0}", exp.StackTrace);
       }
       finally
       {

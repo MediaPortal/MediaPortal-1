@@ -137,7 +137,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       }
       catch (Exception e)
       {
-        Log.Error("Failed to load groups {0}", e.Message);
+        this.LogError("Failed to load groups {0}", e.Message);
       }
     }
 
@@ -152,7 +152,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "WebEPG Config: Import failed");
+        this.LogError(ex, "WebEPG Config: Import failed");
         MessageBox.Show("An error occured while trying to import channels. See log for more details.", "Import Error",
                         MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }

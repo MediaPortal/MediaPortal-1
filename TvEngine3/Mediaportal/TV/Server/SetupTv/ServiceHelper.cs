@@ -96,7 +96,7 @@ namespace Mediaportal.TV.Server.SetupTV
       catch (Exception ex)
       {
         //_isRestrictedMode = !Network.IsSingleSeat();
-        
+
         Log.Error(
           "ServiceHelper: Check hostname the tvservice is running failed. Try another hostname. {0}", ex);
         return false;
@@ -176,8 +176,7 @@ namespace Mediaportal.TV.Server.SetupTV
       }
       catch (Exception ex) // either we have no right, or the event does not exist
       {
-        Log.Error("Failed to wait for {0}", RemoteControl.InitializedEventName);
-        Log.Error(ex);
+        Log.Error(ex, "Failed to wait for {0}", RemoteControl.InitializedEventName);        
       }
 
       /*
@@ -205,7 +204,7 @@ namespace Mediaportal.TV.Server.SetupTV
         }
         catch (Exception ex)
         {
-          Log.Error(
+          this.LogError(
             "ServiceHelper: Could not check whether the tvservice is running. Please check your network as well. \nError: {0}",
             ex.ToString());
           break;

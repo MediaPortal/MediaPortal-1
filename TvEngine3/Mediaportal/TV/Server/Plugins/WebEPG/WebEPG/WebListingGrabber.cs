@@ -107,7 +107,7 @@ namespace WebEPG
       }
       catch (InvalidOperationException ex)
       {
-        Log.Error(ex, "WebEPG: Config Error {0}", File);
+        this.LogError(ex, "WebEPG: Config Error {0}", File);
         return false;
       }
 
@@ -140,7 +140,7 @@ namespace WebEPG
         }
         catch (ArgumentException)
         {
-          Log.Error("WebEPG: TimeZone Not valid");
+          this.LogError("WebEPG: TimeZone Not valid");
           _siteTimeZone = null;
         }
       }
@@ -161,7 +161,7 @@ namespace WebEPG
 
           if (_grabber.Listing.DataTemplate.Template == null)
           {
-            Log.Error("WebEPG: {0}: No Template", File);
+            this.LogError("WebEPG: {0}: No Template", File);
             return false;
           }
           _parser = new DataParser(_grabber.Listing.DataTemplate);
@@ -173,7 +173,7 @@ namespace WebEPG
               defaultTemplate.SectionTemplate == null ||
               defaultTemplate.SectionTemplate.Template == null)
           {
-            Log.Error("WebEPG: {0}: No Template", File);
+            this.LogError("WebEPG: {0}: No Template", File);
             return false;
           }
           _parser = new WebParser(_grabber.Listing.HtmlTemplate);
@@ -224,7 +224,7 @@ namespace WebEPG
       _reqData.ChannelId = _grabber.GetChannel(strChannelID);
       if (_reqData.ChannelId == null)
       {
-        Log.Error("WebEPG: ChannelId: {0} not found!", strChannelID);
+        this.LogError("WebEPG: ChannelId: {0} not found!", strChannelID);
         return null;
       }
 
@@ -254,7 +254,7 @@ namespace WebEPG
       {
         if (requestedStartDay > _grabber.Info.GrabDays)
         {
-          Log.Error("WebEPG: Trying to grab past guide days");
+          this.LogError("WebEPG: Trying to grab past guide days");
           return null;
         }
 
@@ -285,7 +285,7 @@ namespace WebEPG
       }
       catch (Exception)
       {
-        Log.Error("WebEPG: Database failed, disabling db lookup");
+        this.LogError("WebEPG: Database failed, disabling db lookup");
         _dblookup = false;
       }
 
@@ -306,7 +306,7 @@ namespace WebEPG
         {
           if (!_grabber.Info.TreatErrorAsWarning)
           {
-            Log.Error("WebEPG: ChannelId: {0} grabber error - stopping", strChannelID);
+            this.LogError("WebEPG: ChannelId: {0} grabber error - stopping", strChannelID);
             break;
           }
           this.LogInfo("WebEPG: ChannelId: {0} grabber error - continuing", strChannelID);

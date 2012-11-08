@@ -391,7 +391,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         int hr = _tsFilterInterface.RecordSetRecordingFileNameW(_subChannelIndex, fileName);
         if (hr != 0)
         {
-          Log.Error("subch:{0} SetRecordingFileName failed:{1:X}", _subChannelId, hr);
+          this.LogError("subch:{0} SetRecordingFileName failed:{1:X}", _subChannelId, hr);
         }
         Log.Debug("subch:{0}-{1} tswriter StartRecording...", _subChannelId, _subChannelIndex);
         SetRecorderPids();
@@ -402,7 +402,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         hr = _tsFilterInterface.RecordStartRecord(_subChannelIndex);
         if (hr != 0)
         {
-          Log.Error("subch:{0} tswriter StartRecord failed:{1:X}", _subChannelId, hr);
+          this.LogError("subch:{0} tswriter StartRecord failed:{1:X}", _subChannelId, hr);
         }
       }
     }
@@ -447,7 +447,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
 
         if (CurrentChannel == null)
         {
-          Log.Error("CurrentChannel is null when trying to start timeshifting");
+          this.LogError("CurrentChannel is null when trying to start timeshifting");
           throw new Exception("TvDvbChannel: current channel is null");
         }
 
@@ -684,7 +684,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       }
       catch (Exception ex)
       {
-        Log.Error(ex);
+        this.LogError(ex);
       }
     }
 
@@ -702,7 +702,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "TvDvbChannel: failed to set timeshifter PIDs");
+        this.LogError(ex, "TvDvbChannel: failed to set timeshifter PIDs");
       }
     }
 
@@ -720,7 +720,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "TvDvbChannel: failed to set recorder PIDs");
+        this.LogError(ex, "TvDvbChannel: failed to set recorder PIDs");
       }
     }
 
@@ -779,7 +779,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "TvDvbChannel: caught exception while handling PMT");
+          this.LogError(ex, "TvDvbChannel: caught exception while handling PMT");
         }
         finally
         {
@@ -819,7 +819,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "TvDvbChannel: caught exception while grabbing CAT");
+        this.LogError(ex, "TvDvbChannel: caught exception while grabbing CAT");
       }
       finally
       {
@@ -957,7 +957,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
           }
           catch (Exception ex)
           {
-            Log.Error(ex, "TvDvbChannel: failed to persist new PMT PID for service {0} (0x{0:x})", dvbService.ServiceId);
+            this.LogError(ex, "TvDvbChannel: failed to persist new PMT PID for service {0} (0x{0:x})", dvbService.ServiceId);
           }
         }
         else

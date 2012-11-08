@@ -191,7 +191,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
         }
         catch (Exception e)
         {
-          Log.Error("RecordingDetail: exception occured {0}", e);
+          this.LogError("RecordingDetail: exception occured {0}", e);
         }
 
         return isRecording;

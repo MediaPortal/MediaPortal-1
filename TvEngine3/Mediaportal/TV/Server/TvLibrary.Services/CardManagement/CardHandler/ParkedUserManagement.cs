@@ -119,7 +119,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
                                           }
                                           catch (Exception ex)
                                           {
-                                            Log.Error("HandleParkedUserTimeOutThread exception : {0}", ex);
+                                            this.LogError("HandleParkedUserTimeOutThread exception : {0}", ex);
                                           }
                                         });
         
@@ -531,7 +531,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           }
           else
           {
-            Log.Error("RemoveChannelOrParkedUser - could not find subchannel id for user: {0} - channel: {1}", parkedUser.Name, idChannel);
+            this.LogError("RemoveChannelOrParkedUser - could not find subchannel id for user: {0} - channel: {1}", parkedUser.Name, idChannel);
           }
           if (parkedUser.Events.Count == 0)
           {

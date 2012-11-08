@@ -412,7 +412,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
           {
             r.Close();
           }
-          Log.Error(ex, "WebEPG: Error loading config {0}", _configFileDir + "\\WebEPG.xml");
+          this.LogError(ex, "WebEPG: Error loading config {0}", _configFileDir + "\\WebEPG.xml");
           LoadOldConfigFile();
         }
       }

@@ -250,7 +250,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "analog: BitRate Mode ERROR");
+        this.LogError(ex, "analog: BitRate Mode ERROR");
       }
     }
 
@@ -389,7 +389,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "analog: BitRate ERROR");
+        this.LogError(ex, "analog: BitRate ERROR");
       }
     }
 
@@ -427,7 +427,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
       }
       catch (Exception e)
       {
-        Log.Error(e, "analog: Encoder CheckCapabilities");
+        this.LogError(e, "analog: Encoder CheckCapabilities");
       }
     }
 

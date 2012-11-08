@@ -168,7 +168,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       }
       catch (Exception e)
       {
-        Log.Error("Failed to load groups {0}", e.Message);
+        this.LogError("Failed to load groups {0}", e.Message);
       }
     }
 
@@ -345,7 +345,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                 }
                 catch (Exception ex)
                 {
-                  Log.Error(ex, "Error while searching for matching guide channel");
+                  this.LogError(ex, "Error while searching for matching guide channel");
                 }
               }
             }
@@ -414,7 +414,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "Failed loading channels/mappings : channel {0}", name);        
+        this.LogError(ex, "Failed loading channels/mappings : channel {0}", name);        
         textBoxAction.Text = "Error";
       }
     }
@@ -486,7 +486,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           else
           {
               MessageBox.Show("Can't open tvguide.xml for reading");
-              Log.Error(@"plugin:xmltv StartImport - Exception when reading [" + fileName + "].");
+              this.LogError(@"plugin:xmltv StartImport - Exception when reading [" + fileName + "].");
           }*/
 
           try
@@ -502,7 +502,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           catch (Exception e)
           {
             MessageBox.Show("Can't open tvguide.xml for reading");
-            Log.Error(@"plugin:xmltv StartImport - Exception when reading [" + fileName + "] : " + e.Message);
+            this.LogError(@"plugin:xmltv StartImport - Exception when reading [" + fileName + "] : " + e.Message);
           }
         }
 
@@ -543,7 +543,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           catch (Exception e)
           {
             MessageBox.Show("Can't read file(s) from the tvguide.lst");
-            Log.Error(@"plugin:xmltv StartImport - Exception when reading [" + fileName + "] : " + e.Message);
+            this.LogError(@"plugin:xmltv StartImport - Exception when reading [" + fileName + "] : " + e.Message);
           }
           finally
           {
@@ -587,7 +587,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
               String id = xmlReader.GetAttribute("id");
               if (id == null || id.Length == 0)
               {
-                Log.Error("  channel#{0} doesnt contain an id", iChannel);
+                this.LogError("  channel#{0} doesnt contain an id", iChannel);
               }
               else
               {
@@ -686,7 +686,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       catch (Exception ex)
       {
         textBoxAction.Text = "Save failed";
-        Log.Error(ex, "Error while saving channelmappings");        
+        this.LogError(ex, "Error while saving channelmappings");        
       }
     }
 
@@ -761,11 +761,11 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       catch (UnauthorizedAccessException ex)
       {
         MessageBox.Show("Can't open the file for writing");
-        Log.Error(ex, "Failed to export guidechannels");
+        this.LogError(ex, "Failed to export guidechannels");
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "Failed to export guidechannels");
+        this.LogError(ex, "Failed to export guidechannels");
       }
     }
 

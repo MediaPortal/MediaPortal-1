@@ -96,7 +96,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
         }
         catch (Exception e)
         {
-          Log.Error("EventService.Subscribe failed for user '{0}' with ex '{1}'", username, e);
+          this.LogError("EventService.Subscribe failed for user '{0}' with ex '{1}'", username, e);
         }
       }      
     }
@@ -266,7 +266,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
                                                       null);                
                 }
                 catch (Exception ex)
-                {                  
+                {
                   Log.Error("EventService.BeginOnCallbackCiMenuEvent failed for user:{0} ex:{1}", username, ex);
                 }
               }

@@ -403,7 +403,7 @@ namespace WebEPG
       }
       catch (InvalidOperationException ex)
       {
-        Log.Error(ex, "WebEPG: Error loading config");
+        this.LogError(ex, "WebEPG: Error loading config");
         return false;
       }
 

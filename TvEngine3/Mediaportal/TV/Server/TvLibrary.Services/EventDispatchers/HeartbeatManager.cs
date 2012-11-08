@@ -160,7 +160,7 @@ namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
         }
         catch (Exception ex)
         {
-          Log.Error("HeartbeatManager: HeartBeatMonitorThread exception - {0}", ex);
+          this.LogError("HeartbeatManager: HeartBeatMonitorThread exception - {0}", ex);
         }
       }
       this.LogInfo("HeartbeatManager: HeartBeatMonitorThread stopped...");
@@ -185,7 +185,7 @@ namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
         }
         catch(Exception ex)
         {
-          Log.Error("HeartbeatManager: RequestHeartBeatThread exception - {0}", ex);
+          this.LogError("HeartbeatManager: RequestHeartBeatThread exception - {0}", ex);
         }
         finally
         {

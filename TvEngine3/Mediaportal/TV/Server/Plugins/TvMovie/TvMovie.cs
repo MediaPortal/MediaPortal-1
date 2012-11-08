@@ -90,7 +90,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "TVMovie: Registry lookup for {0} failed", valueName);
+        this.LogError(ex, "TVMovie: Registry lookup for {0} failed", valueName);
       }
 
       if (string.IsNullOrEmpty(value))
@@ -227,7 +227,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         }
         catch (Exception)
         {
-          Log.Error("TVMovie: Import enabled but the ClickFinder database was not found.");
+          this.LogError("TVMovie: Import enabled but the ClickFinder database was not found.");
           return;
         }
 
@@ -254,7 +254,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         catch (Exception ex)
         {
           this.LogInfo("TvMovie plugin error:");
-          Log.Error(ex);
+          this.LogError(ex);
         }
       }
       finally
@@ -282,7 +282,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       }
       catch (Exception ex1)
       {
-        Log.Error("TVMovie: Error checking enabled status - {0},{1}", ex1.Message, ex1.StackTrace);
+        this.LogError("TVMovie: Error checking enabled status - {0},{1}", ex1.Message, ex1.StackTrace);
       }
 
       if (!_isImporting)
@@ -297,7 +297,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         }
         catch (Exception ex2)
         {
-          Log.Error("TVMovie: Error spawing import thread - {0},{1}", ex2.Message, ex2.StackTrace);
+          this.LogError("TVMovie: Error spawing import thread - {0},{1}", ex2.Message, ex2.StackTrace);
         }
       }
     }

@@ -221,14 +221,14 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
                 }
                 catch (Exception ex)
                 {
-                  Log.Error(ex, "Error during epg entry deletion");
+                  this.LogError(ex, "Error during epg entry deletion");
                 }
               }
             }
           }
           catch (Exception ex)
           {
-            Log.Error(ex, "Error the existing epg entry check");
+            this.LogError(ex, "Error the existing epg entry check");
           }
         }
         AddProgramAndApplyTemplates(dbChannel, epgProgram, prog);

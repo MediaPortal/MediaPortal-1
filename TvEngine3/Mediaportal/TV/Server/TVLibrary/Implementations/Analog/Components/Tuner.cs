@@ -289,7 +289,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       }
       if (hr != 0)
       {
-        Log.Error("analog: AddTvTunerFilter failed:0x{0:X}", hr);
+        this.LogError("analog: AddTvTunerFilter failed:0x{0:X}", hr);
         throw new TvException("Unable to add tvtuner to graph");
       }
       _filterTvTuner = tmp;
@@ -460,7 +460,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       }
       catch (TvExceptionSWEncoderMissing)
       {
-        Log.Error("UpdateSignalQuality: unable to perform the check because of a missing audio/video encoder!");
+        this.LogError("UpdateSignalQuality: unable to perform the check because of a missing audio/video encoder!");
       }
 
       if (_tunerLocked)

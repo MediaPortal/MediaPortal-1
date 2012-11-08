@@ -96,7 +96,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
       }
       catch (Exception ex)
       {
-        Log.Error("TVUtil.SetGentleConfigFile: Error occured while setting the gentle configuration store: {0}", ex);
+        this.LogError("TVUtil.SetGentleConfigFile: Error occured while setting the gentle configuration store: {0}", ex);
         throw;
       }
     }
@@ -731,7 +731,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
         GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_YES_NO);
         if (null == dlgYesNo)
         {
-          Log.Error("TVProgramInfo.DeleteRecordingPrompt: ERROR no GUIDialogYesNo found !!!!!!!!!!");
+          this.LogError("TVProgramInfo.DeleteRecordingPrompt: ERROR no GUIDialogYesNo found !!!!!!!!!!");
         }
         else
         {
@@ -794,7 +794,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (null == dlgYesNo)
       {
-        Log.Error("TVProgramInfo.DeleteRecordingPrompt: ERROR no GUIDialogYesNo found !!!!!!!!!!");
+        this.LogError("TVProgramInfo.DeleteRecordingPrompt: ERROR no GUIDialogYesNo found !!!!!!!!!!");
       }
       else
       {

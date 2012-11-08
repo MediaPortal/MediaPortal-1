@@ -180,7 +180,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         int hr = graphBuilder.Connect(tuner.AudioPin, crossbar.AudioTunerIn);
         if (hr != 0)
         {
-          Log.Error("analog: unable to add TvAudioTuner to graph - even TvTuner as TvAudio fails");
+          this.LogError("analog: unable to add TvAudioTuner to graph - even TvTuner as TvAudio fails");
           return false;
         }
         if (graph.TvAudio.Mode == TvAudioVariant.TvTuner)
@@ -379,7 +379,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         int hr = graphBuilder.Connect(tuner.AudioPin, crossbar.AudioTunerIn);
         if (hr != 0)
         {
-          Log.Error("analog: unable to add TvAudioTuner to graph - even TvTuner as TvAudio fails");
+          this.LogError("analog: unable to add TvAudioTuner to graph - even TvTuner as TvAudio fails");
           _variant = TvAudioVariant.Unavailable;
         }
         else

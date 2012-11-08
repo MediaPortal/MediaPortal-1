@@ -194,7 +194,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       catch (ObjectDisposedException) {}
       catch (AppDomainUnloadedException appex)
       {
-        Log.Error(appex, "PowerScheduler: Error on dispose");
+        this.LogError(appex, "PowerScheduler: Error on dispose");
       }
     }
 
@@ -219,7 +219,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "Powerscheduler: Error naming thread");
+        this.LogError(ex, "Powerscheduler: Error naming thread");
       }
 
       _controllerService = controllerService;
@@ -299,7 +299,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       }
       else
       {
-        Log.Error("PowerScheduler: Unable to register power event handler!");
+        this.LogError("PowerScheduler: Unable to register power event handler!");
       }
     }
 
@@ -314,7 +314,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       }
       else
       {
-        Log.Error("PowerScheduler: Unable to unregister power event handler!");
+        this.LogError("PowerScheduler: Unable to unregister power event handler!");
       }
     }
 
@@ -452,7 +452,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
           Log.Debug("PowerScheduler: Standby requested but system is configured to stay on");
           break;
         default:
-          Log.Error("PowerScheduler: unknown shutdown mode: {0}", _settings.ShutdownMode);
+          this.LogError("PowerScheduler: unknown shutdown mode: {0}", _settings.ShutdownMode);
           break;
       }
     }
@@ -791,7 +791,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     /// </summary>
     private void OnWakeupTimerException(WaitableTimer sender, TimerException exception)
     {
-      Log.Error(exception, "PowerScheduler: WaitableTimer had an exception:");
+      this.LogError(exception, "PowerScheduler: WaitableTimer had an exception:");
     }
 
     /// <summary>
@@ -809,7 +809,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "Powerscheduler: Error naming thread");
+        this.LogError(ex, "Powerscheduler: Error naming thread");
       }
 
       int reload = 0;
@@ -1014,7 +1014,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
 
       if (!GetLastInputInfo(ref lastInputInfo))
       {
-        Log.Error("PowerScheduler: Unable to GetLastInputInfo!");
+        this.LogError("PowerScheduler: Unable to GetLastInputInfo!");
         return DateTime.MinValue;
       }
 

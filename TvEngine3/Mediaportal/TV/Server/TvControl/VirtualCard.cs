@@ -1427,7 +1427,7 @@ namespace Mediaportal.TV.Server.TVControl
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "Exception");
+        this.LogError(ex, "Exception");
         //HandleFailure();
       }
       return false;

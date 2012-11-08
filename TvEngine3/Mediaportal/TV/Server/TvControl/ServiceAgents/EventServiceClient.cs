@@ -167,7 +167,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       catch (Exception ex)
       {
         OnCiMenuCallbackReceived = null;
-        Log.Error("EventServiceAgent: RegisterCiMenuCallbacks exception = {0}", ex);
+        this.LogError("EventServiceAgent: RegisterCiMenuCallbacks exception = {0}", ex);
       }
       finally
       {
@@ -222,7 +222,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       catch (Exception ex)
       {
         OnHeartbeatRequestReceived = null;
-        Log.Error("EventServiceAgent: RegisterHeartbeatCallbacks exception = {0}", ex);
+        this.LogError("EventServiceAgent: RegisterHeartbeatCallbacks exception = {0}", ex);
       }
       finally
       {
@@ -278,7 +278,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       catch (Exception ex)
       {
         OnTvServerEventReceived -= new TvServerEventReceivedDelegate(handler.CallbackTvServerEvent);
-        Log.Error("EventServiceAgent: RegisterTvServerEventCallbacks exception = {0}", ex);
+        this.LogError("EventServiceAgent: RegisterTvServerEventCallbacks exception = {0}", ex);
       }
       finally
       {

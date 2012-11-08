@@ -353,7 +353,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
       }
       catch (Exception ex)
       {
-        Log.Error(ex);
+        this.LogError(ex);
         Dispose();
         _isDeviceInitialised = false;
         throw;
@@ -463,7 +463,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
       }
       if (_filterCapture == null)
       {
-        Log.Error("HDPVR: unable to add TvCaptureFilter to graph");
+        this.LogError("HDPVR: unable to add TvCaptureFilter to graph");
         //throw new TvException("Unable to add TvCaptureFilter to graph");
       }
     }
@@ -570,19 +570,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         int hr = _graphBuilder.AddFilter(_filterTsWriter, "MediaPortal Ts Analyzer");
         if (hr != 0)
         {
-          Log.Error("HDPVR:  Add main Ts Analyzer returns:0x{0:X}", hr);
+          this.LogError("HDPVR:  Add main Ts Analyzer returns:0x{0:X}", hr);
           throw new TvException("Unable to add Ts Analyzer filter");
         }
         IPin pinOut = DsFindPin.ByDirection(_filterEncoder, PinDirection.Output, 0);
         if (pinOut == null)
         {
-          Log.Error("HDPVR:  Unable to find output pin on the encoder filter");
+          this.LogError("HDPVR:  Unable to find output pin on the encoder filter");
           throw new TvException("unable to find output pin on the encoder filter");
         }
         IPin pinIn = DsFindPin.ByDirection(_filterTsWriter, PinDirection.Input, 0);
         if (pinIn == null)
         {
-          Log.Error("HDPVR:  Unable to find the input pin on ts analyzer filter");
+          this.LogError("HDPVR:  Unable to find the input pin on ts analyzer filter");
           throw new TvException("Unable to find the input pin on ts analyzer filter");
         }
         //Log.this.LogInfo("HDPVR: Render [Encoder]->[TsWriter]");
@@ -591,7 +591,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         Release.ComObject("pinEncoderOut", pinOut);
         if (hr != 0)
         {
-          Log.Error("HDPVR:  Unable to connect encoder to ts analyzer filter :0x{0:X}", hr);
+          this.LogError("HDPVR:  Unable to connect encoder to ts analyzer filter :0x{0:X}", hr);
           throw new TvException("unable to connect encoder to ts analyzer filter");
         }
         Log.Debug("HDPVR: AddTsWriterFilterToGraph connected to encoder successfully");

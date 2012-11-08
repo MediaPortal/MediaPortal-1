@@ -78,7 +78,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBC
       ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
       if (container == null)
       {
-        Log.Error("TvCardDvbC: failed to get the tuning space container");
+        this.LogError("TvCardDvbC: failed to get the tuning space container");
         return;
       }
 

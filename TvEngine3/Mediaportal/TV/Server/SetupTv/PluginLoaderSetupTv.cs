@@ -48,7 +48,7 @@ namespace Mediaportal.TV.Server.SetupTV
       }
       catch (Exception ex)
       {
-        Log.Error("PluginLoaderSetupTv.Load - could not load plugins {0}", ex);
+        this.LogError("PluginLoaderSetupTv.Load - could not load plugins {0}", ex);
       }
     }
 

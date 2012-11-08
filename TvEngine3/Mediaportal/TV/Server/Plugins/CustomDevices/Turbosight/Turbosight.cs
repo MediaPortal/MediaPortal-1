@@ -401,7 +401,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "Turbosight: failed to copy tbsCIapi.dll");
+          this.LogError(ex, "Turbosight: failed to copy tbsCIapi.dll");
           return false;
         }
       }
@@ -426,7 +426,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "Turbosight: failed to load the On_Start_CI function");
+          this.LogError(ex, "Turbosight: failed to load the On_Start_CI function");
           return false;
         }
 
@@ -442,7 +442,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "Turbosight: failed to load the Camavailable function");
+          this.LogError(ex, "Turbosight: failed to load the Camavailable function");
           return false;
         }
 
@@ -458,7 +458,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "Turbosight: failed to load the TBS_ci_MMI_Process function");
+          this.LogError(ex, "Turbosight: failed to load the TBS_ci_MMI_Process function");
           return false;
         }
 
@@ -474,7 +474,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "Turbosight: failed to load the TBS_ci_SendPmt function");
+          this.LogError(ex, "Turbosight: failed to load the TBS_ci_SendPmt function");
           return false;
         }
 
@@ -490,7 +490,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "Turbosight: failed to load the On_Exit_CI function");
+          this.LogError(ex, "Turbosight: failed to load the On_Exit_CI function");
           return false;
         }
 
@@ -762,7 +762,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "Turbosight: exception in MMI handler thread");
+        this.LogError(ex, "Turbosight: exception in MMI handler thread");
         return;
       }
     }
@@ -869,7 +869,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "Turbosight: menu header callback exception");
+          this.LogError(ex, "Turbosight: menu header callback exception");
         }
       }
       for (int i = 0; i < entryCount; i++)
@@ -918,7 +918,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "Turbosight: CAM request callback exception");
+          this.LogError(ex, "Turbosight: CAM request callback exception");
         }
       }
       else
@@ -1325,7 +1325,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
         catch (Exception ex)
         {
           // On_Exit_CI() can throw an access violation exception.
-          Log.Error(ex, "Turbosight: On_Exit_CI threw exception, handle address = {0}", handleAddress);
+          this.LogError(ex, "Turbosight: On_Exit_CI threw exception, handle address = {0}", handleAddress);
         }
         _ciHandle = IntPtr.Zero;
       }

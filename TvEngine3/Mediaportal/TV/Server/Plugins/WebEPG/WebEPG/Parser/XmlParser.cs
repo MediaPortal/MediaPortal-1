@@ -92,7 +92,7 @@ namespace WebEPG.Parser
       }
       catch (XmlException) // ex)
       {
-        //Log.Error("WebEPG: XML failed");
+        //this.LogError("WebEPG: XML failed");
         return count;
       }
 

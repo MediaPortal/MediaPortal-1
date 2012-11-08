@@ -367,7 +367,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
         _tuner = new Components.Tuner(_device);
         if (!_tuner.CreateFilterInstance(graph, _graphBuilder))
         {
-          Log.Error("analog: unable to add tv tuner filter");
+          this.LogError("analog: unable to add tv tuner filter");
           throw new TvException("Analog: unable to add tv tuner filter");
         }
         _minChannel = _tuner.MinChannel;
@@ -376,21 +376,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
         _crossbar = new Components.Crossbar();
         if (!_crossbar.CreateFilterInstance(graph, _graphBuilder, _tuner))
         {
-          Log.Error("analog: unable to add tv crossbar filter");
+          this.LogError("analog: unable to add tv crossbar filter");
           throw new TvException("Analog: unable to add tv crossbar filter");
         }
         //add the tv audio tuner device and connect it to the crossbar
         _tvAudio = new TvAudio();
         if (!_tvAudio.CreateFilterInstance(graph, _graphBuilder, _tuner, _crossbar))
         {
-          Log.Error("analog: unable to add tv audio tuner filter");
+          this.LogError("analog: unable to add tv audio tuner filter");
           throw new TvException("Analog: unable to add tv audio tuner filter");
         }
         //add the tv capture device and connect it to the crossbar
         _capture = new Capture();
         if (!_capture.CreateFilterInstance(graph, _capBuilder, _graphBuilder, _tuner, _crossbar, _tvAudio))
         {
-          Log.Error("analog: unable to add capture filter");
+          this.LogError("analog: unable to add capture filter");
           throw new TvException("Analog: unable to add capture filter");
         }
         Configuration.writeConfiguration(_configuration);
@@ -399,7 +399,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
         {
           if (!_teletext.CreateFilterInstance(graph, _graphBuilder, _capture))
           {
-            Log.Error("analog: unable to setup teletext filters");
+            this.LogError("analog: unable to setup teletext filters");
             throw new TvException("Analog: unable to setup teletext filters");
           }
         }
@@ -407,7 +407,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
         _encoder = new Encoder();
         if (!_encoder.CreateFilterInstance(_graphBuilder, _tuner, _tvAudio, _crossbar, _capture))
         {
-          Log.Error("analog: unable to add encoding filter");
+          this.LogError("analog: unable to add encoding filter");
           throw new TvException("Analog: unable to add capture filter");
         }
         Log.Debug("analog: Check quality control");
@@ -449,14 +449,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
       }
       catch (TvExceptionSWEncoderMissing ex)
       {
-        Log.Error(ex);
+        this.LogError(ex);
         Dispose();
         _isDeviceInitialised = false;
         throw;
       }
       catch (Exception ex)
       {
-        Log.Error(ex);
+        this.LogError(ex);
         Dispose();
         _isDeviceInitialised = false;
         throw new TvExceptionGraphBuildingFailed("Graph building failed", ex);

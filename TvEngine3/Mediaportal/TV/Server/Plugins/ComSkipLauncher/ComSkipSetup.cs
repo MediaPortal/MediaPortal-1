@@ -135,7 +135,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "ComSkipLauncher - Config Test");
+        this.LogError(ex, "ComSkipLauncher - Config Test");
       }
     }
 

@@ -69,7 +69,7 @@ namespace Mediaportal.TV.Server.SetupTV.PlaylistSupport
       }
       catch (Exception e)
       {
-        Log.Error(e.StackTrace);
+        this.LogError(e.StackTrace);
       }
       return false;
     }

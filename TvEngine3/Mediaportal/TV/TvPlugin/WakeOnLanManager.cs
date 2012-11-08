@@ -195,7 +195,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "WOLMgr: Ping failed");
+        this.LogError(ex, "WOLMgr: Ping failed");
       }
 
       return false;

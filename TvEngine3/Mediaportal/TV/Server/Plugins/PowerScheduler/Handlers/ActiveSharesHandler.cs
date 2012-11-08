@@ -264,7 +264,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "{0}: Error loading shares to monitor", HandlerName);
+        this.LogError(ex, "{0}: Error loading shares to monitor", HandlerName);
       }
       Log.Debug("{0}: Share monitoring is disabled.", HandlerName);
       return false;

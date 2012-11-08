@@ -225,7 +225,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "NetUP: invoking IsWow64Process caused an exception");
+          this.LogError(ex, "NetUP: invoking IsWow64Process caused an exception");
           return false;
         }
       }
@@ -548,7 +548,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "NetUP: exception in MMI handler thread");
+        this.LogError(ex, "NetUP: exception in MMI handler thread");
         return;
       }
     }
@@ -598,7 +598,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "NetUP: menu header callback exception");
+          this.LogError(ex, "NetUP: menu header callback exception");
           return 1;
         }
       }
@@ -614,7 +614,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
           }
           catch (Exception ex)
           {
-            Log.Error(ex, "NetUP: menu choice callback exception");
+            this.LogError(ex, "NetUP: menu choice callback exception");
             return 1;
           }
         }
@@ -666,7 +666,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "NetUP: CAM request callback exception");
+          this.LogError(ex, "NetUP: CAM request callback exception");
           return 1;
         }
       }

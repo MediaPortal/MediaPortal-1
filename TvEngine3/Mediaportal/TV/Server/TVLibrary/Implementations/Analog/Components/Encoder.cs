@@ -996,7 +996,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         if (pinInput2 != null)
           Release.ComObject("multiplexer pin1", pinInput2);
       }
-      Log.Error("analog: ConnectMultiplexer failed");
+      this.LogError("analog: ConnectMultiplexer failed");
       return false;
     }
 
@@ -1064,7 +1064,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "analog: AddTvMultiPlexer no multiplexer devices found (Exception)");
+        this.LogError(ex, "analog: AddTvMultiPlexer no multiplexer devices found (Exception)");
         return false;
       }
       if (devices.Length == 0)

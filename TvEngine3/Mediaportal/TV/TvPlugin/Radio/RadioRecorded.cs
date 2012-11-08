@@ -483,7 +483,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
       catch (Exception ex)
       {
-        Log.Error("RadioRecorded: Error in ShowViews - {0}", ex.ToString());
+        this.LogError("RadioRecorded: Error in ShowViews - {0}", ex.ToString());
       }
     }*/
 
@@ -529,7 +529,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "RadioRecorded: Error updating button states");
+        this.LogError(ex, "RadioRecorded: Error updating button states");
       }
     }
     
@@ -595,7 +595,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "RadioRecorded: Error in ShowUpcomingEpisodes");
+        this.LogError(ex, "RadioRecorded: Error in ShowUpcomingEpisodes");
       }
     }
 
@@ -732,7 +732,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
             }
             catch (Exception recex)
             {
-              Log.Error(recex, "RadioRecorded: error processing recordings");
+              this.LogError(recex, "RadioRecorded: error processing recordings");
             }
           }
         }
@@ -782,7 +782,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "RadioRecorded: Error fetching recordings from database");
+        this.LogError(ex, "RadioRecorded: Error fetching recordings from database");
       }
 
       try
@@ -806,7 +806,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
       catch (Exception ex2)
       {
-        Log.Error("RadioRecorded: Error adding recordings to list - {0}", ex2.Message);
+        this.LogError("RadioRecorded: Error adding recordings to list - {0}", ex2.Message);
       }
 
       //set object count label
@@ -909,7 +909,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       catch (Exception singleex)
       {
         item = null;
-        Log.Error(singleex, "RadioRecorded: Error building item from recording {0}", aRecording.FileName);
+        this.LogError(singleex, "RadioRecorded: Error building item from recording {0}", aRecording.FileName);
       }
 
       return item;
@@ -1285,7 +1285,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "RadioRecorded: Error updating properties");
+        this.LogError(ex, "RadioRecorded: Error updating properties");
       }
     }
 
@@ -1329,7 +1329,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "RadioRecorded: Error setting item properties");
+        this.LogError(ex, "RadioRecorded: Error setting item properties");
       }
     }
 
@@ -1382,7 +1382,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "RadioRecorded: Error sorting items");
+        this.LogError(ex, "RadioRecorded: Error sorting items");
       }
     }
 
@@ -1603,7 +1603,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "RadioRecorded: Error comparing files");
+        this.LogError(ex, "RadioRecorded: Error comparing files");
         return 0;
       }
     }

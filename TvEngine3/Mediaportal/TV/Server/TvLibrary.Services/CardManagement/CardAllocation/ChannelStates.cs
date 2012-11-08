@@ -219,11 +219,11 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         }
         catch (InvalidOperationException tex)
         {
-            Log.Error("ChannelState.DoSetChannelStatesForAllUsers: Possible race condition occured setting channel states - {0}", tex);
+            this.LogError("ChannelState.DoSetChannelStatesForAllUsers: Possible race condition occured setting channel states - {0}", tex);
         }
         catch (Exception ex)
         {
-            Log.Error("ChannelState.DoSetChannelStatesForAllUsers: An unknown error occured while setting channel states - {0}\n{1}", ex.Message,
+            this.LogError("ChannelState.DoSetChannelStatesForAllUsers: An unknown error occured while setting channel states - {0}\n{1}", ex.Message,
                       ex);
         }
         finally
@@ -249,7 +249,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
                 }
                 catch (Exception e)
                 {
-                  Log.Error("ChannelState.DoSetChannelStatesForAllUsers: could not set channel state for user: {0}, exc: {1}", user.Name, e);
+                  this.LogError("ChannelState.DoSetChannelStatesForAllUsers: could not set channel state for user: {0}, exc: {1}", user.Name, e);
                 }
               } 
             }              

@@ -788,7 +788,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "MD Plugin: failed to load or read configuration, or set preferred CA system index");
+        this.LogError(ex, "MD Plugin: failed to load or read configuration, or set preferred CA system index");
       }
     }
 
@@ -994,7 +994,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "MD Plugin: failed to create, load or read configuration");
+        this.LogError(ex, "MD Plugin: failed to create, load or read configuration");
         return false;
       }
     }
@@ -1109,7 +1109,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "MD Plugin: failed to set plugin directory");
+          this.LogError(ex, "MD Plugin: failed to set plugin directory");
           return false;
         }
         IChangeChannel_Ex temp2 = slot.Filter as IChangeChannel_Ex;
@@ -1429,7 +1429,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "MD Plugin: failed to change channel");
+        this.LogError(ex, "MD Plugin: failed to change channel");
         return false;
       }
 

@@ -102,7 +102,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
       {
         if (_isDeviceInitialised)
         {
-          Log.Error("TvCardDvbIp: the graph is already built");
+          this.LogError("TvCardDvbIp: the graph is already built");
           throw new TvException("The graph is already built.");
         }
 
@@ -129,14 +129,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
         IPin sourceOutputPin = DsFindPin.ByDirection(_filterStreamSource, PinDirection.Output, 0);
         if (sourceOutputPin == null)
         {
-          Log.Error("TvCardDvbIp: failed to find source filter output pin");
+          this.LogError("TvCardDvbIp: failed to find source filter output pin");
           throw new TvExceptionGraphBuildingFailed("TvCardDvbIp: failed to find source filter output pin");
         }
         int hr = sourceOutputPin.ConnectedTo(out _firstFilterInputPin);
         Release.ComObject("DVB-IP Source Filter output pin", sourceOutputPin);
         if (hr != 0 || _firstFilterInputPin == null)
         {
-          Log.Error("TvCardDvbIp: failed to find first filter input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("TvCardDvbIp: failed to find first filter input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           throw new TvExceptionGraphBuildingFailed("TvCardDvbIp: failed to find find first filter input pin");
         }
         Log.Debug("TvCardDvbIp: result = success");
@@ -188,7 +188,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
       catch (Exception ex)
       {
         const string tvcarddvbipGraphBuildingFailed = "TvCardDvbIp: graph building failed";
-        Log.Error(ex, tvcarddvbipGraphBuildingFailed);
+        this.LogError(ex, tvcarddvbipGraphBuildingFailed);
         Dispose();
         _isDeviceInitialised = false;          
         throw new TvExceptionGraphBuildingFailed(tvcarddvbipGraphBuildingFailed, ex);
@@ -220,14 +220,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
       IPin sourceOutputPin = DsFindPin.ByDirection(_filterStreamSource, PinDirection.Output, 0);
       if (sourceOutputPin == null)
       {
-        Log.Error("TvCardDvbIp: failed to find source filter output pin");
+        this.LogError("TvCardDvbIp: failed to find source filter output pin");
         throw new TvException("TvCardDvbIp: failed to find source filter output pin");
       }
       int hr = _graphBuilder.Connect(sourceOutputPin, _firstFilterInputPin);
       Release.ComObject("DVB-IP Source Filter output pin", sourceOutputPin);
       if (hr != 0)
       {
-        Log.Error("TvCardDvbIp: failed to connect source filter into graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("TvCardDvbIp: failed to connect source filter into graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         throw new TvExceptionGraphBuildingFailed("TvCardDvbIp: failed to connect source filter into graph");
       }
       Log.Debug("TvCardDvbIp: result = success");

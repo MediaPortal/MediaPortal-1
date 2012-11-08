@@ -155,7 +155,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
       //  Set the channel type
       if (CurrentChannel == null)
       {
-        Log.Error("Error, CurrentChannel is null when trying to start timeshifting");
+        this.LogError("Error, CurrentChannel is null when trying to start timeshifting");
         throw new Exception("AnalogSubChannel: current channel is null");
       }
 

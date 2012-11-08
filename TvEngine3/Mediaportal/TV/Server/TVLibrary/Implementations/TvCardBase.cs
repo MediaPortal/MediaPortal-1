@@ -1510,7 +1510,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "TvCardBase: action failed");
+        this.LogError(ex, "TvCardBase: action failed");
       }
     }
 
@@ -1546,7 +1546,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       if (hr < 0 || hr > 1)
       {
-        Log.Error("TvCardBase: failed to perform action, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("TvCardBase: failed to perform action, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         throw new TvException("TvCardBase: failed to set graph state");
       }
     }
@@ -1712,7 +1712,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         if (!(ex is TvException))
         {
-          Log.Error(ex);
+          this.LogError(ex);
         }
 
         // One potential reason for getting here is that signal could not be locked, and the reason for

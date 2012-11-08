@@ -1319,7 +1319,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "TechnoTrend: CI slot status callback exception");
+        this.LogError(ex, "TechnoTrend: CI slot status callback exception");
       }
     }
 
@@ -1347,7 +1347,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "TechnoTrend: CA status callback exception");
+        this.LogError(ex, "TechnoTrend: CA status callback exception");
       }
     }
 
@@ -1368,7 +1368,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "TechnoTrend: display string callback exception");
+        this.LogError(ex, "TechnoTrend: display string callback exception");
       }
     }
 
@@ -1437,7 +1437,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "TechnoTrend: display menu/list callback exception");
+        this.LogError(ex, "TechnoTrend: display menu/list callback exception");
       }
     }
 
@@ -1457,7 +1457,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "TechnoTrend: switch OSD off callback exception");
+          this.LogError(ex, "TechnoTrend: switch OSD off callback exception");
         }
       }
       else
@@ -1488,7 +1488,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "TechnoTrend: input request callback exception");
+          this.LogError(ex, "TechnoTrend: input request callback exception");
         }
       }
       else

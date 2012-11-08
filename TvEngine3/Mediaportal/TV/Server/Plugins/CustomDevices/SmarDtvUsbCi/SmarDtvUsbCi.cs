@@ -234,7 +234,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "SmarDTV USB CI: close MMI callback exception\r\n{0}");
+          this.LogError(ex, "SmarDTV USB CI: close MMI callback exception\r\n{0}");
         }
       }
       else

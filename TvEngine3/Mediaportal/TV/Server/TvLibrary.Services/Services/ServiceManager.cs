@@ -50,7 +50,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       }
       catch (Exception ex)
       {
-        Log.Error("ServiceManager: exception - {0}", ex);
+        this.LogError("ServiceManager: exception - {0}", ex);
       }      
     }  
 
@@ -281,7 +281,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       }
       catch (Exception ex)
       {
-        Log.Error("error closing WCF service", ex);
+        this.LogError("error closing WCF service", ex);
         throw;
       }      
     }

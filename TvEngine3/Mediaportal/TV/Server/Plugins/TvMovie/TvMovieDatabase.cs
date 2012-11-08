@@ -271,7 +271,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       }
       catch (Exception connex)
       {
-        Log.Error(connex, "TVMovie: Exception creating OleDbConnection");
+        this.LogError(connex, "TVMovie: Exception creating OleDbConnection");
         return false;
       }
 
@@ -302,13 +302,13 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         }
         catch (System.Data.OleDb.OleDbException ex)
         {
-          Log.Error(ex, "TVMovie: Error accessing TV Movie Clickfinder database while reading stations");          
+          this.LogError(ex, "TVMovie: Error accessing TV Movie Clickfinder database while reading stations");          
           _canceled = true;
           return false;
         }
         catch (Exception ex2)
         {
-          Log.Error(ex2, "TVMovie: Exception");
+          this.LogError(ex2, "TVMovie: Exception");
           _canceled = true;
           return false;
         }
@@ -386,7 +386,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "TVMovie: An error occured checking the last import time");          
+          this.LogError(ex, "TVMovie: An error occured checking the last import time");          
           return true;
         }
       }
@@ -582,7 +582,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         {
           databaseTransaction.Rollback();
           this.LogInfo("TVMovie: Error accessing TV Movie Clickfinder database - import of current station canceled");
-          Log.Error("TVMovie: Exception: {0}", ex);
+          this.LogError("TVMovie: Exception: {0}", ex);
           return 0;
         }
         catch (Exception ex1)
@@ -1159,7 +1159,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         {
           BenchClock.Stop();
           UpdateDuration = (BenchClock.ElapsedMilliseconds / 1000);
-          Log.Error(ex, "TVMovie: LaunchTVMUpdater failed");
+          this.LogError(ex, "TVMovie: LaunchTVMUpdater failed");
         }
       }
       else

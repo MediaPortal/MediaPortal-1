@@ -86,12 +86,12 @@ namespace Mediaportal.TV.Server.Plugins.PersonalTVGuide
         }
         catch (Exception ex)
         {
-          Log.Error("PersonalTVGuide: Error spawing update thread - {0},{1}", ex.Message, ex.StackTrace);
+          this.LogError("PersonalTVGuide: Error spawing update thread - {0},{1}", ex.Message, ex.StackTrace);
         }
       }
       else
       {
-        Log.Error("PersonalTVGuide: Update already started");
+        this.LogError("PersonalTVGuide: Update already started");
       }
     }
 

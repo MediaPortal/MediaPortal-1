@@ -400,7 +400,7 @@ namespace WebEPG.Parser
       }
       catch (Exception)
       {
-        Log.Error("Parsing error {0} : {1}", tag, element);
+        this.LogError("Parsing error {0} : {1}", tag, element);
       }
     }
 
@@ -678,7 +678,7 @@ namespace WebEPG.Parser
       }
       catch (Exception)
       {
-        Log.Error("Parsing error {0} : {1}", tag, element);
+        this.LogError("Parsing error {0} : {1}", tag, element);
       }
     }
 

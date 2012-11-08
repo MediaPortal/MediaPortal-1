@@ -746,7 +746,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
           }
           catch (Exception ex)
           {
-            Log.Error(ex, "Anysee: failed to copy CIAPI.dll");
+            this.LogError(ex, "Anysee: failed to copy CIAPI.dll");
             return;
           }
         }
@@ -771,7 +771,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
           }
           catch (Exception ex)
           {
-            Log.Error(ex, "Anysee: failed to load the CreateDtvCIAPI function");
+            this.LogError(ex, "Anysee: failed to load the CreateDtvCIAPI function");
             return;
           }
 
@@ -787,7 +787,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
           }
           catch (Exception ex)
           {
-            Log.Error(ex, "Anysee: failed to load the DestroyDtvCIAPI function");
+            this.LogError(ex, "Anysee: failed to load the DestroyDtvCIAPI function");
             return;
           }
 
@@ -803,7 +803,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
           }
           catch (Exception ex)
           {
-            Log.Error(ex, "Anysee: failed to load the GetanyseeNumberofDevicesEx function");
+            this.LogError(ex, "Anysee: failed to load the GetanyseeNumberofDevicesEx function");
             return;
           }
 
@@ -819,7 +819,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
           }
           catch (Exception ex)
           {
-            Log.Error(ex, "Anysee: failed to load the OpenCILib function");
+            this.LogError(ex, "Anysee: failed to load the OpenCILib function");
             return;
           }
 
@@ -835,7 +835,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
           }
           catch (Exception ex)
           {
-            Log.Error(ex, "Anysee: failed to load the CI_Control function");
+            this.LogError(ex, "Anysee: failed to load the CI_Control function");
             return;
           }
 
@@ -1464,7 +1464,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
           }
           catch (Exception ex)
           {
-            Log.Error(ex, "Anysee: MMI callback enquiry exception");
+            this.LogError(ex, "Anysee: MMI callback enquiry exception");
             return 1;
           }
         }
@@ -1498,7 +1498,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "Anysee: MMI callback header exception");
+          this.LogError(ex, "Anysee: MMI callback header exception");
           return 1;
         }
       }
@@ -1517,7 +1517,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
           }
           catch (Exception ex)
           {
-            Log.Error(ex, "Anysee: MMI callback entry exception");
+            this.LogError(ex, "Anysee: MMI callback entry exception");
             return 1;
           }
         }

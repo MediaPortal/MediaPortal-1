@@ -105,7 +105,7 @@ namespace Mediaportal.TV.TvPlugin
               }
               catch (Exception ex)
               {
-                Log.Error(ex, "RecordedTV: No thumbnail created for {0}", Utils.SplitFilename(recFileName));
+                this.LogError(ex, "RecordedTV: No thumbnail created for {0}", Utils.SplitFilename(recFileName));
               }
             }
           }
@@ -582,7 +582,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Error("TvRecorded: Error in ShowViews - {0}", ex.ToString());
+        this.LogError("TvRecorded: Error in ShowViews - {0}", ex.ToString());
       }
     }*/
 
@@ -628,7 +628,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "TVRecorded: Error updating button states");
+        this.LogError(ex, "TVRecorded: Error updating button states");
       }
     }
 
@@ -694,7 +694,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "TvRecorded: Error in ShowUpcomingEpisodes");
+        this.LogError(ex, "TvRecorded: Error in ShowUpcomingEpisodes");
       }
     }
 
@@ -830,7 +830,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "TvRecorded: Error fetching recordings from database");
+        this.LogError(ex, "TvRecorded: Error fetching recordings from database");
       }
 
       try
@@ -854,7 +854,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex2)
       {
-        Log.Error("TvRecorded: Error adding recordings to list - {0}", ex2.Message);
+        this.LogError("TvRecorded: Error adding recordings to list - {0}", ex2.Message);
       }
 
       //set object count label
@@ -969,7 +969,7 @@ namespace Mediaportal.TV.TvPlugin
       catch (Exception singleex)
       {
         item = null;
-        Log.Error(singleex, "TVRecorded: Error building item from recording {0}", aRecording.FileName);
+        this.LogError(singleex, "TVRecorded: Error building item from recording {0}", aRecording.FileName);
       }
 
       return item;
@@ -1035,7 +1035,7 @@ namespace Mediaportal.TV.TvPlugin
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "TVRecorded: error in SetLabels");
+          this.LogError(ex, "TVRecorded: error in SetLabels");
         }
       }
     }
@@ -1331,7 +1331,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "TvRecorded: Error updating properties");
+        this.LogError(ex, "TvRecorded: Error updating properties");
       }
     }
 
@@ -1375,7 +1375,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "TvRecorded: Error setting item properties");
+        this.LogError(ex, "TvRecorded: Error setting item properties");
       }
     }
 
@@ -1428,7 +1428,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "TvRecorded: Error sorting items");
+        this.LogError(ex, "TvRecorded: Error sorting items");
       }
     }
 
@@ -1662,7 +1662,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "TvRecorded: Error comparing files");
+        this.LogError(ex, "TvRecorded: Error comparing files");
         return 0;
       }
     }

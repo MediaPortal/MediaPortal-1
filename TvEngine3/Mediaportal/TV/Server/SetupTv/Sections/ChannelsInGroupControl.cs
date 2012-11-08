@@ -129,7 +129,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       catch (Exception exp)
       {
-        Log.Error("OnActivated error: {0}", exp.Message);
+        this.LogError("OnActivated error: {0}", exp.Message);
       }
       finally
       {

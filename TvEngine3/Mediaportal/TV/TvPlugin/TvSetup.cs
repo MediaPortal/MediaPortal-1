@@ -229,7 +229,7 @@ namespace Mediaportal.TV.TvPlugin
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "TvSetup: We can't get an instance of the tvservice service with error");
+          this.LogError(ex, "TvSetup: We can't get an instance of the tvservice service with error");
         }
         if (ctrl != null)
         {

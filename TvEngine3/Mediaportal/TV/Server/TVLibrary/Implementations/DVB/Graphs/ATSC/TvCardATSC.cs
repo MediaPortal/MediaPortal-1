@@ -78,7 +78,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
       ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
       if (container == null)
       {
-        Log.Error("TvCardAtsc: failed to get the tuning space container");
+        this.LogError("TvCardAtsc: failed to get the tuning space container");
         return;
       }
 

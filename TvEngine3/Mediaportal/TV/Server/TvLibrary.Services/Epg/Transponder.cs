@@ -127,7 +127,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       {
         if (Index < 0 || Index >= Channels.Count)
         {
-          Log.Error("transponder index out of range:{0}/{1}", Index, Channels.Count);
+          this.LogError("transponder index out of range:{0}/{1}", Index, Channels.Count);
           return null;
         }                
         return ChannelManagement.GetTuningChannelByType(Channels[Index], TuningDetail.ChannelType);

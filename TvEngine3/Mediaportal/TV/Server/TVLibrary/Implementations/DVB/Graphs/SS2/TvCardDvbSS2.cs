@@ -1597,7 +1597,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       int hr = _tunerInterface.SetFrequency((Int32)dvbsChannel.Frequency / 1000);
       if (hr != 0)
       {
-        Log.Error("TvCardDvbSs2: failed to set frequency, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("TvCardDvbSs2: failed to set frequency, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
 
@@ -1677,7 +1677,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       int hr = _tunerInterface.SetFrequency((Int32)dvbtChannel.Frequency / 1000);
       if (hr != 0)
       {
-        Log.Error("TvCardDvbSs2: failed to set frequency, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("TvCardDvbSs2: failed to set frequency, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
 
@@ -1712,7 +1712,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       int hr = _tunerInterface.SetFrequency((Int32)dvbcChannel.Frequency / 1000);
       if (hr != 0)
       {
-        Log.Error("TvCardDvbSs2: failed to set frequency, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("TvCardDvbSs2: failed to set frequency, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
 
@@ -1794,7 +1794,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       int hr = _tunerInterface.SetFrequency(frequency);
       if (hr != 0)
       {
-        Log.Error("TvCardDvbSs2: failed to set frequency, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("TvCardDvbSs2: failed to set frequency, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
 
@@ -1837,12 +1837,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
         Log.Debug("TvCardDvbSs2: build graph");
         if (_isDeviceInitialised)
         {
-          Log.Error("TvCardDvbSs2: the graph is already built");
+          this.LogError("TvCardDvbSs2: the graph is already built");
           throw new TvException("The graph is already built.");
         }
         if (_tunerType == CardType.Unknown || !_cardPresent)
         {
-          Log.Error("TvCardDvbSs2: device is not present, driver restart required");
+          this.LogError("TvCardDvbSs2: device is not present, driver restart required");
           throw new TvExceptionGraphBuildingFailed("TvCardDvbSs2: device is not present, driver restart required");
         }
 
@@ -1859,14 +1859,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
           _filterB2c2Adapter = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(B2c2AdapterClass, false));
           if (_filterB2c2Adapter == null)
           {
-            Log.Error("TvCardDvbSs2: failed to create B2C2 source filter");
+            this.LogError("TvCardDvbSs2: failed to create B2C2 source filter");
             return;
           }
           Log.Debug("TvCardDvbSs2: add source filter to graph");
           int hr = _graphBuilder.AddFilter(_filterB2c2Adapter, "B2C2-Source");
           if (hr != 0)
           {
-            Log.Error("TvCardDvbSs2: failed to add source filter to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("TvCardDvbSs2: failed to add source filter to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             return;
           }
           Log.Debug("TvCardDvbSs2: get device interface handles");
@@ -1874,14 +1874,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
           _tunerInterface = _filterB2c2Adapter as IB2C2MPEG2TunerCtrl4;
           if (_tunerInterface == null || _dataInterface == null)
           {
-            Log.Error("TvCardDvbSs2: failed to get device interface handles");
+            this.LogError("TvCardDvbSs2: failed to get device interface handles");
             return;
           }
           Log.Debug("TvCardDvbSs2: initialise tuner interface");
           hr = _tunerInterface.Initialize();
           if (hr != 0)
           {
-            Log.Error("TvCardDvbSs2: failed to initialise tuner interface, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("TvCardDvbSs2: failed to initialise tuner interface, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             return;
           }
           // This line is a remnant from old code. I don't know if/why it is necessary, but no harm
@@ -1959,7 +1959,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       catch (Exception ex)
       {
         const string graphBuildingFailed = "Graph building failed";
-        Log.Error(ex, graphBuildingFailed);
+        this.LogError(ex, graphBuildingFailed);
         Dispose();
         _isDeviceInitialised = false;
         throw new TvExceptionGraphBuildingFailed(graphBuildingFailed, ex);
@@ -1977,7 +1977,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       int hr = _graphBuilder.AddFilter(_infTee, "Infinite Tee");
       if (hr != 0)
       {
-        Log.Error("TvCardDvbSs2: failed to add infinite tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("TvCardDvbSs2: failed to add infinite tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         throw new TvExceptionGraphBuildingFailed("TvCardDvbSs2: failed to add infinite tee");
       }
 
@@ -1989,7 +1989,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       Release.ComObject("MPEG 2 demux input pin", sourceOut);
       if (hr != 0)
       {
-        Log.Error("TvCardDvbSs2: failed to connect infinite tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("TvCardDvbSs2: failed to connect infinite tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         throw new TvExceptionGraphBuildingFailed("TvCardDvbSs2: failed to connect infinite tee");
       }
       lastFilter = _infTee;

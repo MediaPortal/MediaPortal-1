@@ -150,7 +150,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
       }
       catch (Exception ex)
       {
-        Log.Error(ex);
+        this.LogError(ex);
       }
     }
 
@@ -352,7 +352,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
       }
       catch (Exception ex)
       {
-        Log.Error(ex);
+        this.LogError(ex);
       }
       Log.Debug("RTSP: Streamer stopped");
       _running = false;
@@ -407,7 +407,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
       }
       catch (ManagementException e)
       {
-        Log.Error("Failed to retrieve ip addresses with default gateway, WMI error: " + e.ToString());
+        this.LogError("Failed to retrieve ip addresses with default gateway, WMI error: " + e.ToString());
       }
       return addresses;
     }

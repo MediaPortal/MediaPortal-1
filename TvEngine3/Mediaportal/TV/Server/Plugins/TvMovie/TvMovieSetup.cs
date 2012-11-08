@@ -337,7 +337,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
           }
           catch (Exception exm)
           {
-            Log.Error("TvMovieSetup: Error on new TvMovieMapping for channel {0} - {1}", channel.Text, exm.Message);
+            this.LogError("TvMovieSetup: Error on new TvMovieMapping for channel {0} - {1}", channel.Text, exm.Message);
           }
           //Log.Debug("TvMovieSetup: SaveMapping - new mapping for {0}/{1}", channel.Text, channelInfo.Name);
           try
@@ -347,7 +347,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
           }
           catch (Exception ex)
           {
-            Log.Error("TvMovieSetup: Error on mapping.Persist() {0},{1}", ex.Message, ex.StackTrace);
+            this.LogError("TvMovieSetup: Error on mapping.Persist() {0},{1}", ex.Message, ex.StackTrace);
           }
         }
       }
@@ -672,7 +672,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       }
       catch (Exception ex2)
       {
-        Log.Error("TVMovie: Error spawing import thread - {0},{1}", ex2.Message, ex2.StackTrace);
+        this.LogError("TVMovie: Error spawing import thread - {0},{1}", ex2.Message, ex2.StackTrace);
         buttonImportNow.Enabled = true;
       }
     }
@@ -691,7 +691,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       catch (Exception ex)
       {
         this.LogInfo("TvMovie plugin error:");
-        Log.Error(ex);
+        this.LogError(ex);
         buttonImportNow.Enabled = true;
       }
     }

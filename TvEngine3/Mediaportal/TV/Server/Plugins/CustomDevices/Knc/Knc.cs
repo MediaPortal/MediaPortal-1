@@ -675,7 +675,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "KNC: menu callback exception");
+          this.LogError(ex, "KNC: menu callback exception");
         }
       }
       else
@@ -703,7 +703,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "KNC: menu callback exception");
+          this.LogError(ex, "KNC: menu callback exception");
         }
       }
       else
@@ -734,7 +734,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "KNC: request callback exception\r\n{0}");
+          this.LogError(ex, "KNC: request callback exception\r\n{0}");
         }
       }
       else
@@ -760,7 +760,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "KNC: close menu callback exception");
+          this.LogError(ex, "KNC: close menu callback exception");
         }
       }
       else

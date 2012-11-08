@@ -163,7 +163,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       }
       else
       {
-        Log.Error("xmltv: Unable to register power event handler!");
+        this.LogError("xmltv: Unable to register power event handler!");
       }
     }
 
@@ -178,7 +178,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       }
       else
       {
-        Log.Error("xmltv: Unable to unregister power event handler!");
+        this.LogError("xmltv: Unable to unregister power event handler!");
       }
     }
 
@@ -397,7 +397,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       if (URL.Length == 0)
       {
         errMsg = "No URL defined.";
-        Log.Error(errMsg);
+        this.LogError(errMsg);
         SettingsManagement.SaveSetting("xmlTvRemoteScheduleTransferStatus", errMsg);
         
         _remoteFileDownloadInProgress = false;
@@ -408,7 +408,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       if (folder.Length == 0)
       {
         errMsg = "No tvguide.xml path defined.";
-        Log.Error(errMsg);
+        this.LogError(errMsg);
         SettingsManagement.SaveSetting("xmlTvRemoteScheduleTransferStatus", errMsg);        
         _remoteFileDownloadInProgress = false;
         SetStandbyAllowed(true);
@@ -469,19 +469,19 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         catch (WebException ex)
         {
           errMsg = "An error occurred while downloading the file: " + URL + " (" + ex.Message + ").";
-          Log.Error(errMsg);
+          this.LogError(errMsg);
           lastTransferAt = errMsg;
         }
         catch (InvalidOperationException ex)
         {
           errMsg = "The " + folder + @"\tvguide.xml file is in use by another thread (" + ex.Message + ").";
-          Log.Error(errMsg);
+          this.LogError(errMsg);
           lastTransferAt = errMsg;
         }
         catch (Exception ex)
         {
           errMsg = "Unknown error @ " + URL + "(" + ex.Message + ").";
-          Log.Error(errMsg);
+          this.LogError(errMsg);
           lastTransferAt = errMsg;
         }
       }
@@ -725,7 +725,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         }
         catch (Exception e)
         {
-          Log.Error(@"plugin:xmltv StartImport - File [" + fileName + "] doesn't have read access : " + e.Message);
+          this.LogError(@"plugin:xmltv StartImport - File [" + fileName + "] doesn't have read access : " + e.Message);
           return;
         }
       }
@@ -740,7 +740,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         }
         catch (Exception e)
         {
-          Log.Error(@"plugin:xmltv StartImport - File [" + fileName + "] doesn't have read access : " + e.Message);
+          this.LogError(@"plugin:xmltv StartImport - File [" + fileName + "] doesn't have read access : " + e.Message);
           return;
         }
         try //Check that all listed files can be read before starting import (and deleting programs list)
@@ -764,7 +764,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
             }
             catch (Exception e)
             {
-              Log.Error(@"plugin:xmltv StartImport - File [" + tvguideFileName + "] doesn't have read access : " +
+              this.LogError(@"plugin:xmltv StartImport - File [" + tvguideFileName + "] doesn't have read access : " +
                         e.Message);
               return;
             }
@@ -890,7 +890,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         }
         catch (Exception ex)
         {
-          Log.Error(ex, @"plugin:xmltv import failed");
+          this.LogError(ex, @"plugin:xmltv import failed");
         }
 
         SettingsManagement.SaveSetting("xmlTvLastUpdate", param._importDate.ToString());

@@ -348,7 +348,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
               }
               catch (Exception ex)
               {
-                Log.Error(ex, "Digital Devices: callback threw exception");
+                this.LogError(ex, "Digital Devices: callback threw exception");
               }
             }
           }
@@ -1194,7 +1194,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "Digital Devices: enter menu exception");
+        this.LogError(ex, "Digital Devices: enter menu exception");
       }
       return false;
     }
@@ -1298,7 +1298,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
           }
           catch (Exception ex)
           {
-            Log.Error(ex, "Digital Devices: select menu exception");
+            this.LogError(ex, "Digital Devices: select menu exception");
           }
         }
         else

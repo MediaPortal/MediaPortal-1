@@ -518,7 +518,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       }
       catch (Exception ex1)
       {
-        Log.Error("Scheduler: Error checking schedule {0} for repeatings {1}", currentEpisodeTitle, ex1.ToString());
+        this.LogError("Scheduler: Error checking schedule {0} for repeatings {1}", currentEpisodeTitle, ex1.ToString());
       }
       return shouldRecordEpisode;
     }
@@ -544,7 +544,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
             }
             else
             {
-              Log.Error(
+              this.LogError(
                 "Scheduler: Schedule {0} ({1}) has already been recorded but the file is invalid! Going to record again...",
                 currentEpisodeTitle, currentEpisodeName);
             }
@@ -1165,7 +1165,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
             catch (Exception ex)
             {
               CardReservationHelper.CancelCardReservationAndRemoveTicket(cardInfo, tickets);
-              Log.Error(ex);
+              this.LogError(ex);
               StopFailedRecord(recDetail);
             }
           }
@@ -1230,7 +1230,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
         }
         catch (Exception ex)
         {
-          Log.Error(ex, "");          
+          this.LogError(ex, "");          
         }
         Log.Debug("scheduler: recording failed, lets try next available card.");
         CardReservationHelper.CancelCardReservationAndRemoveTicket(cardInfo, tickets);
@@ -1266,7 +1266,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
           catch (Exception ex)
           {
             //consume exception, since it isn't catastrophic
-            Log.Error(ex);
+            this.LogError(ex);
           }
 
           Log.Debug("Scheduler: recList: count: {0} add scheduleid: {1} card: {2}",
@@ -1322,7 +1322,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       }
       catch (Exception ex)
       {
-        Log.Error(ex);
+        this.LogError(ex);
       }
     }
 
@@ -1624,7 +1624,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       }
       catch (Exception ex)
       {
-        Log.Error(ex);
+        this.LogError(ex);
       }
     }
 
@@ -1685,7 +1685,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       }
       catch (Exception ex)
       {
-        Log.Error("StopRecord - updating record id={0} failed {1}", recording.Recording.IdRecording, ex.StackTrace);
+        this.LogError("StopRecord - updating record id={0} failed {1}", recording.Recording.IdRecording, ex.StackTrace);
       }
     }
 

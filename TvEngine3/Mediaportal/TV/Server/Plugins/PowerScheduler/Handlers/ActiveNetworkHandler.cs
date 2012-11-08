@@ -209,7 +209,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
       }
       catch (Exception netmonEx)
       {
-        Log.Error(netmonEx, "NetworkMonitorHandler: networkMonitor died");
+        this.LogError(netmonEx, "NetworkMonitorHandler: networkMonitor died");
       }
     }
 

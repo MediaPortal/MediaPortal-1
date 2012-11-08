@@ -347,7 +347,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
       {
         System.Diagnostics.Trace.WriteLine("EXCEPTION");
         //        Log.Debug(Log.LogType.Error,true,"Exception while decoding teletext");
-        //        Log.Error(ex, "");
+        //        this.LogError(ex, "");
       }
       //System.Diagnostics.Trace.WriteLine(_line);
       //Log.Log.Debug(_line);

@@ -195,7 +195,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception e)
       {
-        Log.Error("TvNotify:LoadNotifies exception : {0}", e.Message);
+        this.LogError("TvNotify:LoadNotifies exception : {0}", e.Message);
       }
     }
 
@@ -275,7 +275,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {        
-        Log.Error(ex, "Tv NotifyManager: Exception at timer_tick");
+        this.LogError(ex, "Tv NotifyManager: Exception at timer_tick");
       }
       finally
       {

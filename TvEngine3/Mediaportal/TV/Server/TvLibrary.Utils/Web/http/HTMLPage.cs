@@ -287,7 +287,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
       _error = Page.GetError();
       if (!string.IsNullOrEmpty(_error))
       {
-        Log.Error("HTMLPage: GetInternal error: {0}", _error);
+        this.LogError("HTMLPage: GetInternal error: {0}", _error);
       }
       return false;
     }

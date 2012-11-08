@@ -398,7 +398,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
       catch (Exception ex)
       {
-        Log.Error("BusinessLayer: InsertPrograms error - {0}, {1}", ex.Message, ex.StackTrace);
+        this.LogError("BusinessLayer: InsertPrograms error - {0}, {1}", ex.Message, ex.StackTrace);
         return 0;
       }
     }
@@ -474,15 +474,15 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
             }
             catch (Exception ex)
             {
-              Log.Error("BusinessLayer: InsertMySQL/InsertMSSQL caused an exception:");
-              Log.Error(ex);
+              this.LogError("BusinessLayer: InsertMySQL/InsertMSSQL caused an exception:");
+              this.LogError(ex);
             }
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Error("BusinessLayer: InsertProgramsThread error - {0}, {1}", ex.Message, ex.StackTrace);
+        this.LogError("BusinessLayer: InsertProgramsThread error - {0}, {1}", ex.Message, ex.StackTrace);
       }
     }
 

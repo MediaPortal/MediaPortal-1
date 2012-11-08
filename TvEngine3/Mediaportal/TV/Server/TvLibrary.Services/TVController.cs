@@ -448,7 +448,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           catch (Exception e)
           {
             ex = e;
-            Log.Error("Controller: Error while deinit TvServer in Init");
+            this.LogError("Controller: Error while deinit TvServer in Init");
           }
           Thread.Sleep(3000);
         }
@@ -580,7 +580,7 @@ namespace Mediaportal.TV.Server.TVLibrary
                       }
                       catch (Exception ex)
                       {
-                        Log.Error("failed to preload card '{0}', ex = {1}", card.Name, ex);
+                        this.LogError("failed to preload card '{0}', ex = {1}", card.Name, ex);
                       }
                     }
                     else
@@ -733,7 +733,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       catch (Exception ex)
       {
-        Log.Error("TvControllerException");
+        this.LogError("TvControllerException");
         throw;
       }
 
@@ -825,7 +825,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "TvController: Deinit failed");
+        this.LogError(ex, "TvController: Deinit failed");
       }
     }
 
@@ -876,7 +876,7 @@ namespace Mediaportal.TV.Server.TVLibrary
 
     private void HandleControllerException(Exception ex, string errorMsg)
     {
-      Log.Error(errorMsg);
+      this.LogError(errorMsg);
       HandleControllerException(ex);      
     }
 
@@ -885,7 +885,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       var st = new StackTrace(true);
       StackFrame sf = st.GetFrame(0);
       string methodName = sf.GetMethod().Name;
-      Log.Error("exception occurred in TVController: {0} - {1}", methodName, ex);
+      this.LogError("exception occurred in TVController: {0} - {1}", methodName, ex);
       //throw exception;
     }
 
@@ -2268,7 +2268,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           catch (Exception ex)
           {
             isTimeShifting = false;
-            Log.Error(ex, "Exception in checking");
+            this.LogError(ex, "Exception in checking");
           }
           int subChannelId = tvCardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name);
           result = tvCardHandler.TimeShifter.Start(ref user, ref fileName, subChannelId, idChannel);
@@ -2293,7 +2293,7 @@ namespace Mediaportal.TV.Server.TVLibrary
                   }
                   else
                   {
-                    Log.Error("ParkedSubChannel or CurrentChannel is null when starting streaming");
+                    this.LogError("ParkedSubChannel or CurrentChannel is null when starting streaming");
                   }
 
                   var stream = new RtspStream(String.Format("stream{0}.{1}", cardId, subChannelId), fileName,
@@ -2302,7 +2302,7 @@ namespace Mediaportal.TV.Server.TVLibrary
                 }
                 else
                 {
-                  Log.Error("could not start streaming server.");
+                  this.LogError("could not start streaming server.");
                 }
               }
               else
@@ -2321,7 +2321,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         }
         catch (Exception ex)
         {
-          Log.Error(ex);
+          this.LogError(ex);
         }  
       }
 
@@ -2369,7 +2369,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           }
           else
           {
-            Log.Error("StopTimeShifting - could not find channel to park. {0} - {1} - {2}", user.Name, idChannel, duration);
+            this.LogError("StopTimeShifting - could not find channel to park. {0} - {1} - {2}", user.Name, idChannel, duration);
           }
 
         }
@@ -2447,7 +2447,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         }
         else
         {
-          Log.Error("StopTimeShifting - could not find channel to unpark. {0} - {1} - {2}", userName, idChannel, duration);          
+          this.LogError("StopTimeShifting - could not find channel to unpark. {0} - {1} - {2}", userName, idChannel, duration);          
         }
       }
       catch (Exception e)
@@ -2489,7 +2489,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         }
         catch (Exception ex)
         {
-          Log.Error(ex);
+          this.LogError(ex);
         }
       }
       return result;
@@ -2555,12 +2555,12 @@ namespace Mediaportal.TV.Server.TVLibrary
         }
         else
         {
-          Log.Error("StopTimeShifting - could not find channel to stop. {0} - {1}", user.Name, channelId);
+          this.LogError("StopTimeShifting - could not find channel to stop. {0} - {1}", user.Name, channelId);
         }
       }
       catch (Exception ex)
       {
-        Log.Error(ex);
+        this.LogError(ex);
       }
 
       return false;
@@ -2886,7 +2886,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       else
       {
-        Log.Error("Controller: AbortEPGGrabbing - invalid cardId");
+        this.LogError("Controller: AbortEPGGrabbing - invalid cardId");
       }      
     }
 
@@ -2975,7 +2975,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           }
           catch (Exception e)
           {
-            Log.Error("Controller: Can't delete invalid recording", e);
+            this.LogError("Controller: Can't delete invalid recording", e);
           }
           foundInvalidRecording = true;
         }
@@ -3108,7 +3108,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         }
         catch (Exception)
         {
-          Log.Error("Controller: Can't get recroding url - First catch");
+          this.LogError("Controller: Can't get recroding url - First catch");
         }
       }
       catch (Exception e)
@@ -3148,7 +3148,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         }
         catch (Exception)
         {
-          Log.Error("Controller: Can't get recording chapters - First catch");
+          this.LogError("Controller: Can't get recording chapters - First catch");
         }
       }
       catch (Exception e)
@@ -3204,7 +3204,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         }
         catch (Exception ex)
         {
-          Log.Error(ex);
+          this.LogError(ex);
         }
       }      
     }
@@ -3347,7 +3347,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         }
         catch (Exception ex)
         {
-          Log.Error(ex);
+          this.LogError(ex);
           result = TvResult.UnknownError;
         }
         finally
@@ -4160,7 +4160,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       catch (Exception ex)
       {
-        Log.Error(ex);
+        this.LogError(ex);
         return;
       }
     }
@@ -4179,7 +4179,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       catch (Exception ex)
       {
-        Log.Error(ex);
+        this.LogError(ex);
         return;
       }
     }
@@ -4269,7 +4269,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       catch (Exception ex)
       {
-        Log.Error(ex);
+        this.LogError(ex);
       }
     }
 
@@ -5141,7 +5141,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       catch (Exception ex)
       {
-        Log.Error(ex);
+        this.LogError(ex);
       }
     }
 
@@ -5204,10 +5204,10 @@ namespace Mediaportal.TV.Server.TVLibrary
 #if DEBUG
         StackTrace st = new StackTrace(true);
         StackFrame sf = st.GetFrame(0);
-        Log.Error(
+        this.LogError(
           "TVController:" + sf.GetMethod().Name +
           " - incorrect parameters used! username {0}", userName);
-        Log.Error("{0}", st);
+        this.LogError("{0}", st);
 #endif
         return false;
       }
@@ -5221,11 +5221,11 @@ namespace Mediaportal.TV.Server.TVLibrary
 #if DEBUG
         StackTrace st = new StackTrace(true);
         StackFrame sf = st.GetFrame(0);
-        Log.Error(
+        this.LogError(
           "TVController:" + sf.GetMethod().Name +
           " - incorrect parameters used! cardId {0} _cards.ContainsKey(cardId) == {1} CardPresent {2}", cardId,
           _cards.ContainsKey(cardId), IsCardPresent(cardId));
-        Log.Error("{0}", st);
+        this.LogError("{0}", st);
 #endif
         return false;
       }
@@ -5244,16 +5244,16 @@ namespace Mediaportal.TV.Server.TVLibrary
 
         if (cardId > 0)
         {
-          Log.Error(
+          this.LogError(
             "TVController:" + sf.GetMethod().Name +
             " - incorrect parameters used! user {0} cardId {1} _cards.ContainsKey(cardId) == {2} CardPresent(cardId) {3}",
             userName, cardId, _cards.ContainsKey(cardId), IsCardPresent(cardId));
         }
         else
         {
-          Log.Error("TVController:" + sf.GetMethod().Name + " - incorrect parameters used! user NULL");
+          this.LogError("TVController:" + sf.GetMethod().Name + " - incorrect parameters used! user NULL");
         }
-        Log.Error("{0}", st);
+        this.LogError("{0}", st);
 #endif
       }
       return isValidTvControllerParams;
@@ -5269,16 +5269,16 @@ namespace Mediaportal.TV.Server.TVLibrary
 
         if (user != null)
         {
-          Log.Error(
+          this.LogError(
             "TVController:" + sf.GetMethod().Name +
             " - incorrect parameters used! user {0} cardId {1} _cards.ContainsKey(cardId) == {2} CardPresent(cardId) {3}",
             user, user.CardId, _cards.ContainsKey(user.CardId), IsCardPresent(user.CardId));
         }
         else
         {
-          Log.Error("TVController:" + sf.GetMethod().Name + " - incorrect parameters used! user NULL");
+          this.LogError("TVController:" + sf.GetMethod().Name + " - incorrect parameters used! user NULL");
         }
-        Log.Error("{0}", st);
+        this.LogError("{0}", st);
 #endif
         return false;
       }
@@ -5386,7 +5386,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "ExecutePendingDeletions exception");
+        this.LogError(ex, "ExecutePendingDeletions exception");
       }
     }
 
