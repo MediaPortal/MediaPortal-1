@@ -1133,18 +1133,18 @@ namespace Mediaportal.TV.TvPlugin
                                               (int)Controls.OSD_SUBTITLE_LIST, msg.Param1, 0, null);
                   g_Player.EnableSubtitle = false;
                   g_Player.CurrentSubtitleStream = -1;
-                  Log.Info("Subtitle CC selected ");
+                  this.LogInfo("Subtitle CC selected ");
                 }
                 else
                 {
-                  Log.Info("Subtitle stream selected " + msg.Label);
+                  this.LogInfo("Subtitle stream selected " + msg.Label);
                   g_Player.CurrentSubtitleStream = msg.Param1 - 1; // set the current subtitle
                   g_Player.EnableSubtitle = true;
                 }
               }
               else
               {
-                Log.Info("Subtitle stream selected " + msg.Label);
+                this.LogInfo("Subtitle stream selected " + msg.Label);
                 g_Player.CurrentSubtitleStream = msg.Param1; // set the current subtitle
               }
               PopulateSubTitles();
@@ -1696,7 +1696,7 @@ namespace Mediaportal.TV.TvPlugin
 
           imgRecIcon.Visible = isRecording;
           _recIconLastCheck = DateTime.Now;
-          Log.Info("OSD.SetRecorderStatus = {0}", imgRecIcon.Visible);
+          this.LogInfo("OSD.SetRecorderStatus = {0}", imgRecIcon.Visible);
         }
       }
     }

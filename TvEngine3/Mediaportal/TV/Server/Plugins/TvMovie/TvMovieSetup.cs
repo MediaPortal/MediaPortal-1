@@ -217,7 +217,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
               }
               catch (Exception exstat)
               {
-                Log.Info("TvMovieSetup: Error loading TV Movie station - {0}", exstat.Message);
+                this.LogInfo("TvMovieSetup: Error loading TV Movie station - {0}", exstat.Message);
               }
             }
           }
@@ -241,7 +241,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
           }
           catch (Exception exdb)
           {
-            Log.Info("TvMovieSetup: Error loading MP's channels from database - {0}", exdb.Message);
+            this.LogInfo("TvMovieSetup: Error loading MP's channels from database - {0}", exdb.Message);
           }
           finally
           {
@@ -250,7 +250,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         }
         catch (Exception ex)
         {
-          Log.Info("TvMovieSetup: Unhandled error in  LoadStations - {0}\n{1}", ex.Message, ex.StackTrace);
+          this.LogInfo("TvMovieSetup: Unhandled error in  LoadStations - {0}\n{1}", ex.Message, ex.StackTrace);
         }
       }
     }
@@ -318,7 +318,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
           mapping.Remove();
       }
       else
-        Log.Info("TvMovieSetup: SaveMapping - no mappingList items");
+        this.LogInfo("TvMovieSetup: SaveMapping - no mappingList items");
 
       
 
@@ -626,7 +626,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
                           "Please make sure a supported TV Movie Clickfinder release has been successfully installed.",
                           "Error loading TV Movie stations", MessageBoxButtons.OK, MessageBoxIcon.Error);
           checkBoxEnableImport.Checked = false;
-          Log.Info("TVMovie plugin: Error enabling TV Movie import in LoadStations() - {0},{1}", ex1.Message,
+          this.LogInfo("TVMovie plugin: Error enabling TV Movie import in LoadStations() - {0},{1}", ex1.Message,
                    ex1.StackTrace);
           return;
         }
@@ -640,7 +640,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
           MessageBox.Show(this, "Please make sure your using a valid channel mapping.",
                           "Error loading TVM <-> MP channel mapping", MessageBoxButtons.OK, MessageBoxIcon.Error);
           checkBoxEnableImport.Checked = false;
-          Log.Info("TVMovie plugin: Error enabling TV Movie import in LoadMapping() - {0},{1}", ex2.Message,
+          this.LogInfo("TVMovie plugin: Error enabling TV Movie import in LoadMapping() - {0},{1}", ex2.Message,
                    ex2.StackTrace);
           return;
         }
@@ -690,7 +690,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       }
       catch (Exception ex)
       {
-        Log.Info("TvMovie plugin error:");
+        this.LogInfo("TvMovie plugin error:");
         Log.Error(ex);
         buttonImportNow.Enabled = true;
       }

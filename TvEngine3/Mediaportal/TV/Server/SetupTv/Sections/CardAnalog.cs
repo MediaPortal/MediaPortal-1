@@ -894,7 +894,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
         if (minChannel < 0)
           minChannel = 1;
-        Log.Info("Min channel = {0}. Max channel = {1}", minChannel, maxChannel);
+        this.LogInfo("Min channel = {0}. Max channel = {1}", minChannel, maxChannel);
         for (int channelNr = minChannel; channelNr <= maxChannel; channelNr++)
         {
           if (_stopScanning)

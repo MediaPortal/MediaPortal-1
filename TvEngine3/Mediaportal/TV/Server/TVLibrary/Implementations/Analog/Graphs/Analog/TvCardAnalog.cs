@@ -166,7 +166,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
     protected override int CreateNewSubChannel(IChannel channel)
     {
       int id = _subChannelId++;
-      Log.Info("TvCardAnalog: new subchannel, ID = {0}, subchannel count = {1}", id, _mapSubChannels.Count);
+      this.LogInfo("TvCardAnalog: new subchannel, ID = {0}, subchannel count = {1}", id, _mapSubChannels.Count);
       AnalogSubChannel subChannel = new AnalogSubChannel(id, this, _tvAudio, _capture.SupportsTeletext, _tsFileSink);
       subChannel.Parameters = Parameters;
       subChannel.CurrentChannel = channel;

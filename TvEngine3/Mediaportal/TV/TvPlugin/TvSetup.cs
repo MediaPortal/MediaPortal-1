@@ -221,7 +221,7 @@ namespace Mediaportal.TV.TvPlugin
       // check if we are in a single seat environment, if so check if TvService is started - if not start it
       if (Network.IsSingleSeat())
       {
-        Log.Info("TvSetup: Seems we are in a single seat environment - Checking if tvservice is running");
+        this.LogInfo("TvSetup: Seems we are in a single seat environment - Checking if tvservice is running");
         ServiceController ctrl = null;
         try
         {
@@ -235,7 +235,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           if (ctrl.Status == ServiceControllerStatus.Stopped)
           {
-            Log.Info("TvSetup: TvService is stopped - trying to start...");
+            this.LogInfo("TvSetup: TvService is stopped - trying to start...");
             ctrl.Start();
             // Wait until service started but no longer than 30 seconds
             try
@@ -245,20 +245,20 @@ namespace Mediaportal.TV.TvPlugin
             catch (Exception) {}
             if (ctrl.Status == ServiceControllerStatus.Running)
             {
-              Log.Info("TvSetup: TvService started.");
+              this.LogInfo("TvSetup: TvService started.");
             }
             else
             {
-              Log.Info("TvSetup: Failed to start TvService");
+              this.LogInfo("TvSetup: Failed to start TvService");
             }
           }
           else if (ctrl.Status == ServiceControllerStatus.Running)
           {
-            Log.Info("TvSetup: TvService already started.");
+            this.LogInfo("TvSetup: TvService already started.");
           }
           else
           {
-            Log.Info("TvSetup: TvService seems to be in an unusual state. Please check. Current state={0}",
+            this.LogInfo("TvSetup: TvService seems to be in an unusual state. Please check. Current state={0}",
                      ctrl.Status.ToString());
           }
         }

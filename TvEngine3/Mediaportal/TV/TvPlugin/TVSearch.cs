@@ -1020,7 +1020,7 @@ namespace Mediaportal.TV.TvPlugin
       }
 
       history.Set(item.ItemId.ToString(), currentFolder);
-      //Log.Info("history.Set({0},{1}", item.ItemId.ToString(), currentFolder);
+      //this.LogInfo("history.Set({0},{1}", item.ItemId.ToString(), currentFolder);
     }
 
     private void RestoreHistory()
@@ -1028,7 +1028,7 @@ namespace Mediaportal.TV.TvPlugin
       string currentFolder = String.Format("{0}.{1}.{2}.{3}.{4}.{5}",
                                            (int)currentSearchMode, currentLevel, currentGenre,
                                            filterLetter, filterShow, filterEpisode);
-      //Log.Info("history.Get({0})", currentFolder);
+      //this.LogInfo("history.Get({0})", currentFolder);
       string selectedItemLabel = history.Get(currentFolder);
       if (selectedItemLabel == null)
       {
@@ -1042,7 +1042,7 @@ namespace Mediaportal.TV.TvPlugin
       {
         GUIListItem item = listView[i];
         //if (item.Label == selectedItemLabel)
-        Log.Info(item.ItemId.ToString() + "==" + selectedItemLabel);
+        this.LogInfo(item.ItemId.ToString() + "==" + selectedItemLabel);
         if (item.ItemId.ToString() == selectedItemLabel)
         {
           listView.SelectedListItemIndex = i;

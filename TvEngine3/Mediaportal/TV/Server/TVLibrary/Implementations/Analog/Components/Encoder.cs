@@ -314,7 +314,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       //specific workaround for the Plextor COnvertX devices
       if (_tuner.IsPlextorCard())
       {
-        Log.Info("analog: Plextor ConvertX TV402U detected");
+        this.LogInfo("analog: Plextor ConvertX TV402U detected");
         _isPlextorConvertX = true;
         //fake the capture pin to the Plextor media type & subtype
         FindCapturePin(MediaType.Video, MediaSubtype_Plextor, _capture.VideoFilter);
@@ -1723,7 +1723,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
     /// <returns></returns>
     private bool AddAnalogMuxer(IFilterGraph2 _graphBuilder)
     {
-      Log.Info("analog:AddAnalogMuxer");
+      this.LogInfo("analog:AddAnalogMuxer");
       const string monikerPowerDirectorMuxer =
         @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{7F2BBEAF-E11C-4D39-90E8-938FB5A86045}";
       _filterAnalogMpegMuxer = Marshal.BindToMoniker(monikerPowerDirectorMuxer) as IBaseFilter;
@@ -1738,12 +1738,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       IPin pinIn = DsFindPin.ByDirection(_filterAnalogMpegMuxer, PinDirection.Input, 1);
       if (pinOut == null)
       {
-        Log.Info("analog:no output pin found on audio compressor");
+        this.LogInfo("analog:no output pin found on audio compressor");
         throw new TvException("no output pin found on audio compressor");
       }
       if (pinIn == null)
       {
-        Log.Info("analog:no input pin found on analog muxer");
+        this.LogInfo("analog:no input pin found on analog muxer");
         throw new TvException("no input pin found on muxer");
       }
       hr = _graphBuilder.Connect(pinOut, pinIn);
@@ -1758,12 +1758,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       pinIn = DsFindPin.ByDirection(_filterAnalogMpegMuxer, PinDirection.Input, 0);
       if (pinOut == null)
       {
-        Log.Info("analog:no output pin found on video compressor");
+        this.LogInfo("analog:no output pin found on video compressor");
         throw new TvException("no output pin found on video compressor");
       }
       if (pinIn == null)
       {
-        Log.Info("analog:no input pin found on analog muxer");
+        this.LogInfo("analog:no input pin found on analog muxer");
         throw new TvException("no input pin found on muxer");
       }
       hr = _graphBuilder.Connect(pinOut, pinIn);
@@ -1794,7 +1794,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
     private bool AddInterVideoMuxer(IFilterGraph2 _graphBuilder, Capture _capture)
     {
       IPin pinOut;
-      Log.Info("analog:  using intervideo muxer");
+      this.LogInfo("analog:  using intervideo muxer");
       string muxVideoIn = "video compressor";
       const string monikerInterVideoMuxer =
         @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{317DDB63-870E-11D3-9C32-00104B3801F7}";
@@ -1805,7 +1805,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         Log.Debug("analog:  add intervideo muxer returns:0x{0:X}", hr);
         throw new TvException("Unable to add InterVideo Muxer");
       }
-      Log.Info("analog:  add intervideo muxer successful");
+      this.LogInfo("analog:  add intervideo muxer successful");
       // next connect video compressor->muxer
       if (_isPlextorConvertX)
       {
@@ -1820,12 +1820,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       IPin pinIn = DsFindPin.ByDirection(_filterAnalogMpegMuxer, PinDirection.Input, 0);
       if (pinOut == null)
       {
-        Log.Info("analog:  no output pin found on {0}", muxVideoIn);
+        this.LogInfo("analog:  no output pin found on {0}", muxVideoIn);
         throw new TvException("no output pin found on video out");
       }
       if (pinIn == null)
       {
-        Log.Info("analog:  no input pin found on intervideo muxer");
+        this.LogInfo("analog:  no input pin found on intervideo muxer");
         throw new TvException("no input pin found on intervideo muxer");
       }
       hr = _graphBuilder.Connect(pinOut, pinIn);
@@ -1840,12 +1840,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       pinIn = DsFindPin.ByDirection(_filterAnalogMpegMuxer, PinDirection.Input, 1);
       if (pinOut == null)
       {
-        Log.Info("analog:  no output pin found on audio compressor");
+        this.LogInfo("analog:  no output pin found on audio compressor");
         throw new TvException("no output pin found on audio compressor");
       }
       if (pinIn == null)
       {
-        Log.Info("analog:  no input pin found on intervideo muxer");
+        this.LogInfo("analog:  no input pin found on intervideo muxer");
         throw new TvException("no input pin found on intervideo muxer");
       }
       hr = _graphBuilder.Connect(pinOut, pinIn);

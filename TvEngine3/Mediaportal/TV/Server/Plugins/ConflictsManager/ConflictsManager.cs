@@ -156,7 +156,7 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
     /// </summary>
     public void UpdateConflicts()
     {
-      Log.Info("ConflictManager: Updating conflicts list");
+      this.LogInfo("ConflictManager: Updating conflicts list");
       DateTime startUpdate = DateTime.Now;
       TimeSpan ts;
       // hmm... 
@@ -205,12 +205,12 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
 
       scheduleList.Clear();
       ts = DateTime.Now - startUpdate;
-      Log.Info("Schedules List built {0} ms", ts.TotalMilliseconds);
+      this.LogInfo("Schedules List built {0} ms", ts.TotalMilliseconds);
       // try to assign all schedules to existing cards
       if (cmDebug) Log.Debug("Calling assignSchedulestoCards with {0} schedules", scheduleListToParse.Count);
       List<Schedule>[] assignedList = AssignSchedulesToCards(scheduleListToParse);
       ts = DateTime.Now - startUpdate;
-      Log.Info("ConflictManager: Update done within {0} ms", ts.TotalMilliseconds);
+      this.LogInfo("ConflictManager: Update done within {0} ms", ts.TotalMilliseconds);
       //List<Conflict> _conflicts = new List<Conflict>();
     }
 

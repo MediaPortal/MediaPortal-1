@@ -67,14 +67,14 @@ namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
 
     public override void Start()
     {
-      Log.Info("TvServerEventDispatcher: start");
+      this.LogInfo("TvServerEventDispatcher: start");
       ServiceManager.Instance.InternalControllerService.OnTvServerEvent -= new TvServerEventHandler(OnTvServerEvent);
       ServiceManager.Instance.InternalControllerService.OnTvServerEvent += new TvServerEventHandler(OnTvServerEvent);
     }
 
     public override void Stop()
     {
-      Log.Info("TvServerEventDispatcher: stop");
+      this.LogInfo("TvServerEventDispatcher: stop");
       ServiceManager.Instance.InternalControllerService.OnTvServerEvent -= new TvServerEventHandler(OnTvServerEvent);
     }
 

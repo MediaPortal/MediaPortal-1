@@ -236,12 +236,12 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     {
       try
       {
-        Log.Info("xmlTV plugin resumed");
+        this.LogInfo("xmlTV plugin resumed");
         RetrieveRemoteTvGuideOnStartUp();
       }
       catch (Exception e)
       {
-        Log.Info("xmlTV plugin resume exception [" + e.Message + "]");
+        this.LogInfo("xmlTV plugin resume exception [" + e.Message + "]");
       }
     }
 
@@ -335,7 +335,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
               }
               catch (Exception ex)
               {
-                Log.Info("file is locked, retrying in 30secs. [" + ex.Message + "]");
+                this.LogInfo("file is locked, retrying in 30secs. [" + ex.Message + "]");
                 retries++;
                 Thread.Sleep(30000); //wait 30 sec. before retrying.
               }
@@ -345,13 +345,13 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                 try
                 {
                   string newLoc = SettingsManagement.GetSetting("xmlTv", "").Value + @"\";
-                  Log.Info("extracting zip file {0} to location {1}", path, newLoc);
+                  this.LogInfo("extracting zip file {0} to location {1}", path, newLoc);
                   ZipFile zip = new ZipFile(path);
                   zip.ExtractAll(newLoc, true);
                 }
                 catch (Exception ex2)
                 {
-                  Log.Info("file is locked, retrying in 30secs. [" + ex2.Message + "]");
+                  this.LogInfo("file is locked, retrying in 30secs. [" + ex2.Message + "]");
                   retries++;
                   Thread.Sleep(30000); //wait 30 sec. before retrying.
                 }
@@ -369,7 +369,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         SettingsManagement.SaveSetting("xmlTvRemoteScheduleTransferStatus", info);
         SettingsManagement.SaveSetting("xmlTvRemoteScheduleLastTransfer", DateTime.Now.ToString());        
 
-        Log.Info(info);
+        this.LogInfo(info);
       }
       catch (Exception) {}
       finally
@@ -427,13 +427,13 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           // grab username, password and server from the URL
           // ftp://user:pass@www.somesite.com/TVguide.xml
 
-          Log.Info("FTP URL detected.");
+          this.LogInfo("FTP URL detected.");
 
           int passwordEndIdx = URL.IndexOf("@");
 
           if (passwordEndIdx > -1)
           {
-            Log.Info("FTP username/password detected.");
+            this.LogInfo("FTP username/password detected.");
 
             int userStartIdx = 6; //6 is the length of chars in  --> "ftp://"
             int userEndIdx = URL.IndexOf(":", userStartIdx);
@@ -447,15 +447,15 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           }
           else
           {
-            Log.Info("no FTP username/password detected. Using anonymous access.");
+            this.LogInfo("no FTP username/password detected. Using anonymous access.");
           }
         }
         else
         {
-          Log.Info("HTTP URL detected.");
+          this.LogInfo("HTTP URL detected.");
         }
 
-        Log.Info("initiating download of remote file from " + URL);
+        this.LogInfo("initiating download of remote file from " + URL);
         Uri uri = new Uri(URL);
         webClient.DownloadDataCompleted += new DownloadDataCompletedEventHandler(DownloadFileCallback);
 
@@ -543,11 +543,11 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           SettingsManagement.SaveSetting("xmlTvRemoteScheduleTransferStatus", "File transfer timed out.");
           SettingsManagement.SaveSetting("xmlTvRemoteScheduleLastTransfer", now.ToString());
 
-          Log.Info("File transfer timed out.");
+          this.LogInfo("File transfer timed out.");
         }
         else
         {
-          Log.Info("File transfer is in progress. Waiting...");
+          this.LogInfo("File transfer is in progress. Waiting...");
           return;
         }
       }
@@ -605,7 +605,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       }
       else
       {
-        Log.Info("Not the time to fetch remote file yet");
+        this.LogInfo("Not the time to fetch remote file yet");
       }
     }
 
@@ -623,7 +623,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       }
       catch (Exception e)
       {
-        Log.Info("xmlTvLastUpdate not found, forcing import {0}", e.Message);
+        this.LogInfo("xmlTvLastUpdate not found, forcing import {0}", e.Message);
         lastTime = DateTime.MinValue;
       }
 
@@ -894,7 +894,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         }
 
         SettingsManagement.SaveSetting("xmlTvLastUpdate", param._importDate.ToString());
-        Log.Info("Xmltv: waiting for database to finish inserting imported programs.");        
+        this.LogInfo("Xmltv: waiting for database to finish inserting imported programs.");        
         ProgramManagement.InitiateInsertPrograms();
       }
       finally

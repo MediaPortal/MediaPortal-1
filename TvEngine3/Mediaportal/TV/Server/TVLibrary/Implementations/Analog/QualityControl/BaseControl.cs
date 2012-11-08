@@ -233,14 +233,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
         // Set new bit rate mode
         if (_supported_BitRateMode)
         {
-          Log.Info("analog: Encoder mode setting to {0}", _bitRateMode);
+          this.LogInfo("analog: Encoder mode setting to {0}", _bitRateMode);
           int newMode = (int)_bitRateMode;
           object newBitRateModeO = newMode;
           Marshal.WriteInt32(newBitRateModeO, 0, newMode);
           int hr = SetValue(PropSetID.ENCAPIPARAM_BitRateMode, ref newBitRateModeO);
           if (hr == 0)
           {
-            Log.Info("analog: Encoder mode set to {0}", _bitRateMode);
+            this.LogInfo("analog: Encoder mode set to {0}", _bitRateMode);
           }
           else
           {
@@ -263,7 +263,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
       {
         if (_supported_BitRate)
         {
-          Log.Info("analog: Encoder BitRate setting to {0}", _qualityType);
+          this.LogInfo("analog: Encoder BitRate setting to {0}", _qualityType);
           object valueMin, valueMax, steppingDelta;
           int hr = GetParameterRange(PropSetID.ENCAPIPARAM_BitRate, out valueMin, out valueMax, out steppingDelta);
           if (hr == 0)
@@ -272,7 +272,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
             int valMax = Marshal.ReadInt32(valueMax, 0);
             int valStepDelta = Marshal.ReadInt32(steppingDelta, 0);
 
-            Log.Info("analog: Encoder BitRate Min {0:D} Max {1:D} Delta {2:D}", valMin, valMax, valStepDelta);
+            this.LogInfo("analog: Encoder BitRate Min {0:D} Max {1:D} Delta {2:D}", valMin, valMax, valStepDelta);
 
             Int32 newBitrate;
 
@@ -280,7 +280,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
             {
               case QualityType.Custom:
                 int qualityToSet = _configuration.CustomQualityValue;
-                Log.Info("analog: Encoder custom quality:{0}", qualityToSet);
+                this.LogInfo("analog: Encoder custom quality:{0}", qualityToSet);
                 newBitrate = CalcQualityBitrate(qualityToSet, valMin, valMax, valStepDelta);
                 break;
               case QualityType.Portable:
@@ -312,7 +312,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
             hr = SetValue(PropSetID.ENCAPIPARAM_BitRate, ref newQualityO);
             if (hr == 0)
             {
-              Log.Info("analog: Encoder BitRate set to {0:D}", newQualityO);
+              this.LogInfo("analog: Encoder BitRate set to {0:D}", newQualityO);
             }
             else
             {
@@ -333,7 +333,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
               int valMax = Marshal.ReadInt32(valueMax, 0);
               int valStepDelta = Marshal.ReadInt32(steppingDelta, 0);
 
-              Log.Info("analog: Encoder BitRatePeak Min {0:D} Max {1:D} Delta {2:D}", valMin, valMax, valStepDelta);
+              this.LogInfo("analog: Encoder BitRatePeak Min {0:D} Max {1:D} Delta {2:D}", valMin, valMax, valStepDelta);
 
               Int32 newBitrate;
 
@@ -341,7 +341,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
               {
                 case QualityType.Custom:
                   int qualityToSet = _configuration.CustomPeakQualityValue;
-                  Log.Info("analog: Encoder custom quality:{0}", qualityToSet);
+                  this.LogInfo("analog: Encoder custom quality:{0}", qualityToSet);
                   newBitrate = CalcQualityBitrate(qualityToSet, valMin, valMax, valStepDelta);
                   break;
                 case QualityType.Portable:
@@ -373,7 +373,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
               hr = SetValue(PropSetID.ENCAPIPARAM_PeakBitRate, ref newQualityO);
               if (hr == 0)
               {
-                Log.Info("analog: Encoder BitRatePeak setTo {0:D}", newQualityO);
+                this.LogInfo("analog: Encoder BitRatePeak setTo {0:D}", newQualityO);
               }
               else
               {

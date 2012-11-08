@@ -158,7 +158,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       {
         if (OnCiMenuCallbackReceived == null)
         {
-          Log.Info("EventServiceAgent: RegisterCiMenuCallbacks");
+          this.LogInfo("EventServiceAgent: RegisterCiMenuCallbacks");
           OnCiMenuCallbackReceived += new CiMenuCallbackDelegate(handler.CiMenuCallback);
           RegisterEventServiceIfNeeded();
           ServiceAgents.Instance.ControllerServiceAgent.RegisterUserForCiMenu(_hostname);
@@ -187,7 +187,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       {
         if (OnCiMenuCallbackReceived != null)
         {
-          Log.Info("EventServiceAgent: UnRegisterCiMenuCallbacks");
+          this.LogInfo("EventServiceAgent: UnRegisterCiMenuCallbacks");
           OnCiMenuCallbackReceived -= new CiMenuCallbackDelegate(handler.CiMenuCallback);
           if (!serverDown)
           {
@@ -214,7 +214,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
         if (OnHeartbeatRequestReceived == null)
         {
           OnHeartbeatRequestReceived += new HeartbeatRequestReceivedDelegate(handler.HeartbeatRequestReceived);
-          Log.Info("EventServiceAgent: RegisterHeartbeatCallbacks");
+          this.LogInfo("EventServiceAgent: RegisterHeartbeatCallbacks");
           RegisterEventServiceIfNeeded();
           ServiceAgents.Instance.ControllerServiceAgent.RegisterUserForHeartbeatMonitoring(_hostname);
         }
@@ -242,7 +242,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       {
         if (OnHeartbeatRequestReceived != null)
         {
-          Log.Info("EventServiceAgent: UnRegisterHeartbeatCallbacks");
+          this.LogInfo("EventServiceAgent: UnRegisterHeartbeatCallbacks");
           OnHeartbeatRequestReceived -= new HeartbeatRequestReceivedDelegate(handler.HeartbeatRequestReceived);
           if (!serverDown)
           {
@@ -269,7 +269,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
         if (OnTvServerEventReceived == null)
         {
           //System.Diagnostics.Debugger.Launch();
-          Log.Info("EventServiceAgent: RegisterTvServerEventCallbacks");
+          this.LogInfo("EventServiceAgent: RegisterTvServerEventCallbacks");
           OnTvServerEventReceived += new TvServerEventReceivedDelegate(handler.CallbackTvServerEvent);
           RegisterEventServiceIfNeeded();
           ServiceAgents.Instance.ControllerServiceAgent.RegisterUserForTvServerEvents(_hostname);
@@ -298,7 +298,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       {
         if (OnTvServerEventReceived != null)
         {
-          Log.Info("EventServiceAgent: UnRegisterTvServerEventCallbacks");
+          this.LogInfo("EventServiceAgent: UnRegisterTvServerEventCallbacks");
           OnTvServerEventReceived -= new TvServerEventReceivedDelegate(handler.CallbackTvServerEvent);
           if (!serverDown)
           {

@@ -279,7 +279,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
           currentSubPageNumber++;
         }
         RequestUpdate(false);
-        Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
+        this.LogInfo("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
       }
     }
 
@@ -296,7 +296,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
           currentSubPageNumber--;
         }
         RequestUpdate(false);
-        Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
+        this.LogInfo("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
       }
     }
 
@@ -319,7 +319,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
         _renderer.PageSelectText = Convert.ToString(currentPageNumber, 16);
         currentSubPageNumber = 0;
         RequestUpdate();
-        Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
+        this.LogInfo("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
         inputLine = "";
         return;
       }
@@ -344,7 +344,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
         _renderer.PageSelectText = Convert.ToString(currentPageNumber, 16);
         currentSubPageNumber = 0;
         RequestUpdate();
-        Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
+        this.LogInfo("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
         inputLine = "";
         return;
       }
@@ -356,7 +356,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
     /// <param name="key">Key</param>
     protected void UpdateInputLine(char key)
     {
-      Log.Info("dvb-teletext: key received: " + key);
+      this.LogInfo("dvb-teletext: key received: " + key);
       if (inputLine.Length == 0 && (key == '0' || key == '9'))
       {
         return;
@@ -377,7 +377,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
           currentPageNumber = 0x899;
         }
         RequestUpdate();
-        Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
+        this.LogInfo("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
         inputLine = "";
       }
       else
@@ -422,7 +422,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
         currentSubPageNumber = 0;
         inputLine = "";
         RequestUpdate();
-        Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
+        this.LogInfo("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
         return;
       }
     }
@@ -504,7 +504,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
         }
       }
 
-      Log.Info("dvb-teletext page updated. {0:X}/{1:X} total:{2} rotspeed:{3}", currentPageNumber, currentSubPageNumber,
+      this.LogInfo("dvb-teletext page updated. {0:X}/{1:X} total:{2} rotspeed:{3}", currentPageNumber, currentSubPageNumber,
                NumberOfSubpages, tsRotation.TotalMilliseconds);
       // Request the update
       RequestUpdate(false);
@@ -579,7 +579,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
       int maxSubs = TVHome.Card.SubPageCount(currentPageNumber) - 1;
       maxSubs = maxSubs < -1 ? -1 : maxSubs;
 
-      //Log.Info("dvb-teletext: GetNewPage: page = {0}, subpage = {1}, maxsubpages = {2}", currentPageNumber, currentSubPageNumber, maxSubs);
+      //this.LogInfo("dvb-teletext: GetNewPage: page = {0}, subpage = {1}, maxsubpages = {2}", currentPageNumber, currentSubPageNumber, maxSubs);
 
       // Check if the page is available
       if (maxSubs < 0) // we don't have anything yet...
@@ -590,7 +590,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
         if (receivedPage != null)// && !wasWaiting)
         {
           Redraw();
-          Log.Info("dvb-teletext: nothing, received page {0:X} / subpage {1:X}", receivedPageNumber, receivedSubPageNumber);
+          this.LogInfo("dvb-teletext: nothing, received page {0:X} / subpage {1:X}", receivedPageNumber, receivedSubPageNumber);
         }
         return;
       }
@@ -625,7 +625,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
         _waiting = false;
         _showFirstAvailableSubPage = false;
         Redraw();
-        Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
+        this.LogInfo("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
       }
       else
       {
@@ -634,7 +634,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
         if (receivedPage != null)// && !wasWaiting)
         {
           Redraw();
-          Log.Info("dvb-teletext: received page {0:X} / subpage {1:X}", receivedPageNumber, receivedSubPageNumber);
+          this.LogInfo("dvb-teletext: received page {0:X} / subpage {1:X}", receivedPageNumber, receivedSubPageNumber);
         }
       }
     }

@@ -95,11 +95,11 @@ namespace Mediaportal.TV.TvPlugin
                 Thread.Sleep(250);             
                 if (VideoThumbCreator.CreateVideoThumb(recFileName, thumbNail, true, true))
                 {
-                  Log.Info("RecordedTV: Thumbnail successfully created for - {0}", Utils.SplitFilename(recFileName));
+                  this.LogInfo("RecordedTV: Thumbnail successfully created for - {0}", Utils.SplitFilename(recFileName));
                 }
                 else
                 {
-                  Log.Info("RecordedTV: No thumbnail created for - {0}", Utils.SplitFilename(recFileName));
+                  this.LogInfo("RecordedTV: No thumbnail created for - {0}", Utils.SplitFilename(recFileName));
                 }
                 Thread.Sleep(250);
               }
@@ -365,7 +365,7 @@ namespace Mediaportal.TV.TvPlugin
 
           if (!_createRecordedThumbs)
           {
-            Log.Info("GUIRecordedTV: skipping thumbworker thread - RTSP mode is in use");
+            this.LogInfo("GUIRecordedTV: skipping thumbworker thread - RTSP mode is in use");
           }
           else
           {
@@ -375,7 +375,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       else
       {
-        Log.Info("GUIRecordedTV: thumbworker already running - didn't start another one");
+        this.LogInfo("GUIRecordedTV: thumbworker already running - didn't start another one");
       }
     }
 
@@ -674,7 +674,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           return true;
         }
-        Log.Info("TVRecorded: ShowFullScreenWindow switching to fullscreen video");
+        this.LogInfo("TVRecorded: ShowFullScreenWindow switching to fullscreen video");
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_TVFULLSCREEN);
         GUIGraphicsContext.IsFullScreenVideo = true;
         return true;
@@ -1176,7 +1176,7 @@ namespace Mediaportal.TV.TvPlugin
       {
         if (isRecPlaying)
         {
-          Log.Info("g_Player.Stopped {0}", g_Player.Stopped);
+          this.LogInfo("g_Player.Stopped {0}", g_Player.Stopped);
           g_Player.Stop();
         }
         DeleteRecordingAndUpdateGUI(rec);
@@ -1679,7 +1679,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private void doOnPlayBackStoppedOrChanged(g_Player.MediaType type, int stoptime, string filename, string caller)
     {
-      Log.Info("TvRecorded:{0} {1} {2}", caller, type, filename);
+      this.LogInfo("TvRecorded:{0} {1} {2}", caller, type, filename);
       if (type != g_Player.MediaType.Recording)
       {
         return;
@@ -1699,7 +1699,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       else
       {
-        Log.Info("TvRecorded:{0} no recording found with filename {1}", caller, filename);
+        this.LogInfo("TvRecorded:{0} no recording found with filename {1}", caller, filename);
       }     
     }
 

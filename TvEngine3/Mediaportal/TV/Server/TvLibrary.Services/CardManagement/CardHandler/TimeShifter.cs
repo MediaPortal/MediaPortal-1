@@ -269,7 +269,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
             }
             else
             {
-              Log.Info("start subch:{0} No PMT received. Timeshifting failed", subchannel.SubChannelId);
+              this.LogInfo("start subch:{0} No PMT received. Timeshifting failed", subchannel.SubChannelId);
               result = TvResult.UnableToStartGraph;
             }
           }
@@ -375,7 +375,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       if (_tuneInProgress)
       {
-        Log.Info("audioVideoEventHandler - tune in progress");
+        this.LogInfo("audioVideoEventHandler - tune in progress");
         return;
       }
 
@@ -386,12 +386,12 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         if (ts.TotalMilliseconds > 1000)
         {
           // Avoid repetitive events that are kept for next channel change, so trig only once.
-          Log.Info("audioVideoEventHandler {0}", pidType);
+          this.LogInfo("audioVideoEventHandler {0}", pidType);
           _eventAudio.Set();
         }
         else
         {
-          Log.Info("audio last seen at {0}", _timeAudioEvent);
+          this.LogInfo("audio last seen at {0}", _timeAudioEvent);
         }
         _timeAudioEvent = DateTime.Now;
       }
@@ -402,12 +402,12 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         if (ts.TotalMilliseconds > 1000)
         {
           // Avoid repetitive events that are kept for next channel change, so trig only once.
-          Log.Info("audioVideoEventHandler {0}", pidType);
+          this.LogInfo("audioVideoEventHandler {0}", pidType);
           _eventVideo.Set();
         }
         else
         {
-          Log.Info("video last seen at {0}", _timeVideoEvent);
+          this.LogInfo("video last seen at {0}", _timeVideoEvent);
         }
         _timeVideoEvent = DateTime.Now;
       }

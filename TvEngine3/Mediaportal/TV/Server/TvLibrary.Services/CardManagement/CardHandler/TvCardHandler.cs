@@ -732,11 +732,11 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
         if (_parkedUserManagement.HasAnyParkedUsers())
         {
-          Log.Info("unable to Stopcard since there are parked channels");
+          this.LogInfo("unable to Stopcard since there are parked channels");
           return;
         }
       
-        Log.Info("Stopcard");
+        this.LogInfo("Stopcard");
 
         //remove all subchannels, except for this user...
         FreeAllSubChannels();        

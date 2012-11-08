@@ -139,7 +139,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           if (device.Name != null && device.Name.Equals(graph.Teletext.Name))
           {
             //found it, add it to the graph
-            Log.Info("analog:Using teletext component - {0}", graph.Teletext.Name);
+            this.LogInfo("analog:Using teletext component - {0}", graph.Teletext.Name);
             device.Mon.BindToObject(null, null, ref guidBaseFilter, out obj);
             _filterWstDecoder = (IBaseFilter)obj;
             hr = graphBuilder.AddFilter(_filterWstDecoder, device.Name);
@@ -165,7 +165,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           if (device.Name != null && device.Name.IndexOf("WST") >= 0)
           {
             //found it, add it to the graph
-            Log.Info("analog:Found WST Codec filter");
+            this.LogInfo("analog:Found WST Codec filter");
             device.Mon.BindToObject(null, null, ref guidBaseFilter, out obj);
             _filterWstDecoder = (IBaseFilter)obj;
             hr = graphBuilder.AddFilter(_filterWstDecoder, device.Name);
@@ -191,7 +191,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             if (device.Name != null && device.Name.IndexOf("VBI") >= 0)
             {
               //found it, add it to the graph
-              Log.Info("analog:Found VBI Codec filter");
+              this.LogInfo("analog:Found VBI Codec filter");
               device.Mon.BindToObject(null, null, ref guidBaseFilter, out obj);
               _filterWstDecoder = (IBaseFilter)obj;
               hr = graphBuilder.AddFilter(_filterWstDecoder, device.Name);

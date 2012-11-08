@@ -29,6 +29,7 @@ using MediaPortal.Configuration;
 using MediaPortal.Player;
 
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
 namespace Mediaportal.TV.TvPlugin
@@ -172,13 +173,13 @@ namespace Mediaportal.TV.TvPlugin
         if (ServiceAgents.Instance.ControllerServiceAgent.TimeShiftGetCurrentFilePosition(u.Name, ref currentPosition, ref bufferId))
         {
           string currentFile = ServiceAgents.Instance.ControllerServiceAgent.TimeShiftFileName(u.Name, u.CardId) + bufferId.ToString() + ".ts";
-          Log.Info("**");
-          Log.Info("**");
-          Log.Info("**");
-          Log.Info("TvTimeshiftPositionWatcher: Starting to copy buffer files for recording {0}", recordingFilename);
-          Log.Info("**");
-          Log.Info("**");
-          Log.Info("**");
+          this.LogInfo("**");
+          this.LogInfo("**");
+          this.LogInfo("**");
+          this.LogInfo("TvTimeshiftPositionWatcher: Starting to copy buffer files for recording {0}", recordingFilename);
+          this.LogInfo("**");
+          this.LogInfo("**");
+          this.LogInfo("**");
           ServiceAgents.Instance.ControllerServiceAgent.CopyTimeShiftFile(snapshotBuferPosition, snapshotBufferFile, currentPosition,
                                                    currentFile, recordingFilename);
         }

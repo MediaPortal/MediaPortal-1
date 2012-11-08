@@ -70,7 +70,7 @@ namespace Mediaportal.TV.Server.TVLibrary
                                                 out eventCreated, sec);
         if (!eventCreated)
         {
-          Log.Info("{0} was not created", RemoteControl.InitializedEventName);
+          this.LogInfo("{0} was not created", RemoteControl.InitializedEventName);
         }
       }
       catch (Exception ex)
@@ -395,12 +395,12 @@ namespace Mediaportal.TV.Server.TVLibrary
 
     private void StartPlugins()
     {
-      Log.Info("TV Service: Load plugins");
+      this.LogInfo("TV Service: Load plugins");
 
       _plugins = new PluginLoader();
       _plugins.Load();
 
-      Log.Info("TV Service: Plugins loaded");
+      this.LogInfo("TV Service: Plugins loaded");
       // start plugins
       foreach (ITvServerPlugin plugin in _plugins.Plugins)
       {
@@ -416,7 +416,7 @@ namespace Mediaportal.TV.Server.TVLibrary
             ServiceManager.Instance.AddService(interfaceType, instance);
           }
 
-          Log.Info("TV Service: Plugin: {0} started", plugin.Name);
+          this.LogInfo("TV Service: Plugin: {0} started", plugin.Name);
           try
           {
             plugin.Start(ServiceManager.Instance.InternalControllerService);
@@ -429,18 +429,18 @@ namespace Mediaportal.TV.Server.TVLibrary
         }
         else
         {
-          Log.Info("TV Service: Plugin: {0} disabled", plugin.Name);
+          this.LogInfo("TV Service: Plugin: {0} disabled", plugin.Name);
         }
       }
 
-      Log.Info("TV Service: Plugins started");
+      this.LogInfo("TV Service: Plugins started");
 
       // fire off startedAll on plugins
       foreach (ITvServerPlugin plugin in _pluginsStarted)
       {
         if (plugin is ITvServerPluginStartedAll)
         {
-          Log.Info("TV Service: Plugin: {0} started all", plugin.Name);
+          this.LogInfo("TV Service: Plugin: {0} started all", plugin.Name);
           try
           {
             (plugin as ITvServerPluginStartedAll).StartedAll();
@@ -455,7 +455,7 @@ namespace Mediaportal.TV.Server.TVLibrary
 
     private void StopPlugins()
     {
-      Log.Info("TV Service: Stop plugins");
+      this.LogInfo("TV Service: Stop plugins");
       if (_pluginsStarted != null)
       {
         foreach (ITvServerPlugin plugin in _pluginsStarted)
@@ -471,7 +471,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         }
         _pluginsStarted = new List<ITvServerPlugin>();
       }
-      Log.Info("TV Service: Plugins stopped");
+      this.LogInfo("TV Service: Plugins stopped");
     }
 
    
@@ -597,7 +597,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       {
         if (!Started)
         {
-          Log.Info("TV service: Starting");
+          this.LogInfo("TV service: Starting");
 
           Thread.CurrentThread.Name = "TVService";
 
@@ -619,7 +619,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           {
             _initializedEvent.Set();
           }
-          Log.Info("TV service: Started");
+          this.LogInfo("TV service: Started");
           _tvServiceThreadEvt.WaitOne();
           DoStop();
         }

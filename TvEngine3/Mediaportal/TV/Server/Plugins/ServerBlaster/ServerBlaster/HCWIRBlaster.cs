@@ -83,7 +83,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
     public void blast(string channel_data, bool ExLogging)
     {
       if (ExLogging)
-        Log.Info("HCWBlaster: Changing channels: {0}", channel_data);
+        this.LogInfo("HCWBlaster: Changing channels: {0}", channel_data);
 
       int iChannel = Convert.ToInt32(channel_data);
 
@@ -92,7 +92,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
         HCWRetVal = UIR_Open(0, 0);
         if (HCWRetVal == 0)
         {
-          Log.Info("HCWBlaster: Failed to get Blaster Handle");
+          this.LogInfo("HCWBlaster: Failed to get Blaster Handle");
           return;
         }
 
@@ -108,11 +108,11 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
 
           if (ExLogging)
           {
-            Log.Info("HCWBlaster: " + devset1);
-            Log.Info("HCWBlaster: " + devset2);
-            Log.Info("HCWBlaster: " + devset3);
-            Log.Info("HCWBlaster: " + devset4);
-            Log.Info("HCWBlaster: " + devset5);
+            this.LogInfo("HCWBlaster: " + devset1);
+            this.LogInfo("HCWBlaster: " + devset2);
+            this.LogInfo("HCWBlaster: " + devset3);
+            this.LogInfo("HCWBlaster: " + devset4);
+            this.LogInfo("HCWBlaster: " + devset5);
           }
         }
         else
@@ -124,10 +124,10 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
       int RetChg = UIR_GotoChannel(HCWIRConfig.d, HCWIRConfig.f, iChannel);
       if (RetChg != 0)
       {
-        Log.Info("HCWBlaster: UIR_GotoChannel() failed: " + RetChg);
+        this.LogInfo("HCWBlaster: UIR_GotoChannel() failed: " + RetChg);
       }
       if (ExLogging)
-        Log.Info("HCWBlaster: Finished Changing channels: {0}", channel_data);
+        this.LogInfo("HCWBlaster: Finished Changing channels: {0}", channel_data);
     }
   }
 }

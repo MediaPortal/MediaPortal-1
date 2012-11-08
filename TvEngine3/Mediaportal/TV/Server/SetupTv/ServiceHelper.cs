@@ -197,11 +197,11 @@ namespace Mediaportal.TV.Server.SetupTV
         }
         catch (System.Runtime.Remoting.RemotingException)
         {
-          Log.Info("ServiceHelper: Waiting for tvserver to initialize. (remoting not initialized)");
+          this.LogInfo("ServiceHelper: Waiting for tvserver to initialize. (remoting not initialized)");
         }
         catch (System.Net.Sockets.SocketException)
         {
-          Log.Info("ServiceHelper: Waiting for tvserver to initialize. (socket not initialized)");
+          this.LogInfo("ServiceHelper: Waiting for tvserver to initialize. (socket not initialized)");
         }
         catch (Exception ex)
         {

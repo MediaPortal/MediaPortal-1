@@ -255,7 +255,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       //are there any epg infos for this channel?
       if (epgChannel.Programs.Count == 0)
       {
-        Log.Info("{0}: no epg infos found for channel networkid:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X}",
+        this.LogInfo("{0}: no epg infos found for channel networkid:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X}",
                 _grabberName, dvbChannel.NetworkId, dvbChannel.TransportId, dvbChannel.ServiceId);
         return null;
       }
@@ -269,7 +269,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
       if (dbChannel == null)
       {
-        Log.Info("{0}: no channel found for networkid:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X}", _grabberName,
+        this.LogInfo("{0}: no channel found for networkid:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X}", _grabberName,
                 dvbChannel.NetworkId, dvbChannel.TransportId, dvbChannel.ServiceId);
         /*foreach (EpgProgram ei in epgChannel.Programs)
         {
@@ -278,7 +278,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
           {
             title = ei.Text[0].Title;
           }
-          Log.Info("                   -> {0}-{1}  {2}", ei.startTime, ei.endTime, title);
+          this.LogInfo("                   -> {0}-{1}  {2}", ei.startTime, ei.endTime, title);
         }*/
         return null;
       }
@@ -288,7 +288,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         if (!dbChannel.GrabEpg)
         {
-          Log.Info("{0}: channel {1} is not configured to grab epg.", _grabberName, dbChannel.DisplayName);
+          this.LogInfo("{0}: channel {1} is not configured to grab epg.", _grabberName, dbChannel.DisplayName);
           return null;
         }
       }
@@ -298,7 +298,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         TimeSpan ts = DateTime.Now - dbChannel.LastGrabTime.GetValueOrDefault(DateTime.MinValue);
         if (ts.TotalMinutes < _epgReGrabAfter)
         {
-          Log.Info("{0}: {1} not needed lastUpdate:{2}", _grabberName, dbChannel.DisplayName, dbChannel.LastGrabTime);
+          this.LogInfo("{0}: {1} not needed lastUpdate:{2}", _grabberName, dbChannel.DisplayName, dbChannel.LastGrabTime);
           return null;
         }
       }

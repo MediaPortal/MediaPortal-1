@@ -129,8 +129,8 @@ namespace WebEPG
     //public WebEPG(string configFile, string xmltvDirectory, string baseDirectory)
     public WebEPG(string configFile, IEpgDataSink epgDataSink, string baseDirectory)
     {
-      Log.Info("Assembly versions:");
-      Log.Info(this.GetType().Assembly.GetName().Name + " " + this.GetType().Assembly.GetName().Version.ToString());      
+      this.LogInfo("Assembly versions:");
+      this.LogInfo(this.GetType().Assembly.GetName().Name + " " + this.GetType().Assembly.GetName().Version.ToString());      
       // set config directories and files.
       _configFile = configFile;
       //_xmltvDirectory = xmltvDirectory;
@@ -183,7 +183,7 @@ namespace WebEPG
         GlobalServiceProvider.Instance.Add<IHttpStatistics>(httpStats);
       }
 
-      Log.Info("WebEPG: Loading Channel Config");
+      this.LogInfo("WebEPG: Loading Channel Config");
       _grabList = new Dictionary<string, List<grabInfo>>();
       // for each channel write info xmltv file.
       List<ChannelMap> allChannels = new List<ChannelMap>(_config.Channels);
@@ -192,7 +192,7 @@ namespace WebEPG
       {
         if (channel.id == null && channel.merged == null)
         {
-          Log.Info(" Ignoring Channel Name: {0} - No Channel id", channel.displayName);
+          this.LogInfo(" Ignoring Channel Name: {0} - No Channel id", channel.displayName);
           continue;
         }
 
@@ -225,7 +225,7 @@ namespace WebEPG
           }
           else
           {
-            Log.Info(" Ignoring Channel Name: {0} - No Grabber id", channel.displayName);
+            this.LogInfo(" Ignoring Channel Name: {0} - No Grabber id", channel.displayName);
           }
         }
         else
@@ -261,7 +261,7 @@ namespace WebEPG
             }
             else
             {
-              Log.Info("  Ignoring Merged Sub-channel: {0}/{1} - No Grabber id", channel.displayName,
+              this.LogInfo("  Ignoring Merged Sub-channel: {0}/{1} - No Grabber id", channel.displayName,
                        merged.id);
             }
           }
@@ -280,8 +280,8 @@ namespace WebEPG
         _status.Status = string.Format("Getting Channel ID: {0} [{1} of {2}]", channelid, i, _grabList.Count);
         if (ShowProgress != null) ShowProgress(_status);
 
-        Log.Info("WebEPG: Getting Channel ID: {0}", channelid);
-        Log.Info("        [{0} of {1}]", i++, _grabList.Count);
+        this.LogInfo("WebEPG: Getting Channel ID: {0}", channelid);
+        this.LogInfo("        [{0} of {1}]", i++, _grabList.Count);
 
         if (_grabList[channelid].Count > 0)
         {
@@ -310,8 +310,8 @@ namespace WebEPG
 
               if (grab.merged)
               {
-                Log.Info("WebEPG: Writing Merged Channel Part: {0}", grab.name);
-                Log.Info("        [{0}]", grab.linkTime);
+                this.LogInfo("WebEPG: Writing Merged Channel Part: {0}", grab.name);
+                this.LogInfo("        [{0}]", grab.linkTime);
                 if (_epgDataSink.StartChannelPrograms("[Merged]", grab.name))
                 {
                   _epgDataSink.SetTimeWindow(grab.linkTime);
@@ -329,7 +329,7 @@ namespace WebEPG
               }
               else
               {
-                Log.Info("WebEPG: Writing Channel: {0}", grab.name);
+                this.LogInfo("WebEPG: Writing Channel: {0}", grab.name);
                 if (_epgDataSink.StartChannelPrograms(channelid, grab.name))
                 {
                   for (int p = 0; p < programs.Count; p++)
@@ -350,7 +350,7 @@ namespace WebEPG
           {
             foreach (grabInfo grab in _grabList[channelid])
             {
-              Log.Info("WebEPG: Grabber failed for: {0}", grab.name);
+              this.LogInfo("WebEPG: Grabber failed for: {0}", grab.name);
             }
           }
         }
@@ -365,7 +365,7 @@ namespace WebEPG
       for (int h = 0; h < httpStats.Count; h++)
       {
         SiteStatistics site = httpStats.GetbyIndex(h);
-        Log.Info("HTTP Statistics: {0}", site.ToString());
+        this.LogInfo("HTTP Statistics: {0}", site.ToString());
         httpStats.Clear(site.Site);
       }
 
@@ -388,11 +388,11 @@ namespace WebEPG
     {
       if (!File.Exists(_configFile))
       {
-        Log.Info("File not found: {0}", _configFile);
+        this.LogInfo("File not found: {0}", _configFile);
         return false;
       }
 
-      Log.Info("Loading Config File: {0}", _configFile);
+      this.LogInfo("Loading Config File: {0}", _configFile);
       try
       {
         XmlSerializer s = new XmlSerializer(typeof (WebepgConfigFile));

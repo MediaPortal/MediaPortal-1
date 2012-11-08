@@ -647,11 +647,11 @@ namespace Mediaportal.TV.TvPlugin
               msg.Label = GUILocalizeStrings.Get(519); // Subtitles off
             }
             OnMessage(msg);
-            Log.Info("MyTV toggle subtitle: switched subtitle to {0}", msg.Label);
+            this.LogInfo("MyTV toggle subtitle: switched subtitle to {0}", msg.Label);
           }
           else
           {
-            Log.Info("MyTV toggle subtitle: no subtitle streams available!");
+            this.LogInfo("MyTV toggle subtitle: no subtitle streams available!");
           }
           break;
 
@@ -1821,7 +1821,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       else
       {
-        Log.Info("IMDB Fetcher: Nothing found");
+        this.LogInfo("IMDB Fetcher: Nothing found");
       }
     }
 
@@ -1876,7 +1876,7 @@ namespace Mediaportal.TV.TvPlugin
             _newBitRate = VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak;
             break;
         }
-        Log.Info("Setting quality to: {0}", _newBitRate);
+        this.LogInfo("Setting quality to: {0}", _newBitRate);
         TVHome.Card.BitRateMode = _newBitRate;
       }
       if (TVHome.Card.SupportsBitRate())
@@ -2238,7 +2238,7 @@ namespace Mediaportal.TV.TvPlugin
         }
         if (dlg.SelectedLabel != g_Player.CurrentSubtitleStream + i)
         {
-          Log.Info("Subtitle stream selected : " + (dlg.SelectedLabel - i));
+          this.LogInfo("Subtitle stream selected : " + (dlg.SelectedLabel - i));
           g_Player.CurrentSubtitleStream = dlg.SelectedLabel - i;
         }
         g_Player.EnableSubtitle = true;
@@ -3345,7 +3345,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public bool OnMovieNotFound(IMDBFetcher fetcher)
     {
-      Log.Info("IMDB Fetcher: OnMovieNotFound");
+      this.LogInfo("IMDB Fetcher: OnMovieNotFound");
       // show dialog...
       GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
       pDlgOK.SetHeading(195);
@@ -3427,7 +3427,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public bool OnDetailsNotFound(IMDBFetcher fetcher)
     {
-      Log.Info("IMDB Fetcher: OnDetailsNotFound");
+      this.LogInfo("IMDB Fetcher: OnDetailsNotFound");
       // show dialog...
       GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
       // show dialog...

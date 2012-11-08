@@ -117,7 +117,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
     [CLSCompliant(false)]
     public void Start(IInternalControllerService controllerService)
     {      
-      Log.Info("plugin: ComSkipLauncher start");
+      this.LogInfo("plugin: ComSkipLauncher start");
 
       LoadSettings();
 
@@ -126,7 +126,7 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
 
     public void Stop()
     {
-      Log.Info("plugin: ComSkipLauncher stop");
+      this.LogInfo("plugin: ComSkipLauncher stop");
 
       if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
       {

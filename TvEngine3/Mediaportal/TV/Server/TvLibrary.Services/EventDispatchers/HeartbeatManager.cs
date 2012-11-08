@@ -39,7 +39,7 @@ namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
       }
       //else
      // {
-      //  Log.Info("HeartbeatManager: will not monitor parked user '{0}'", username);
+      //  this.LogInfo("HeartbeatManager: will not monitor parked user '{0}'", username);
      // }
     }
 
@@ -47,14 +47,14 @@ namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
     
     public override void Start()
     {
-      Log.Info("HeartbeatManager: start");
+      this.LogInfo("HeartbeatManager: start");
       SetupHeartbeatThreads();      
       EventService.UserDisconnectedFromService += UserDisconnectedFromService;
     }
 
     public override void Stop()
     {
-      Log.Info("HeartbeatManager: stop");
+      this.LogInfo("HeartbeatManager: stop");
       StopHeartbeatThreads();
       EventService.UserDisconnectedFromService -= UserDisconnectedFromService;
     }
@@ -163,7 +163,7 @@ namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
           Log.Error("HeartbeatManager: HeartBeatMonitorThread exception - {0}", ex);
         }
       }
-      Log.Info("HeartbeatManager: HeartBeatMonitorThread stopped...");
+      this.LogInfo("HeartbeatManager: HeartBeatMonitorThread stopped...");
     }
 
     private void RequestHeartBeatThread()
@@ -195,7 +195,7 @@ namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
           }
         }
       }
-      Log.Info("HeartbeatManager: RequestHeartBeatThread stopped...");
+      this.LogInfo("HeartbeatManager: RequestHeartBeatThread stopped...");
       //#endif
     }
 

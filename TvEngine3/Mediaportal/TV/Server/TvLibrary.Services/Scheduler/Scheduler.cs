@@ -462,7 +462,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
             }
             else
             {
-              Log.Info("StartAnyDueRecordings: RecordingDetail was null");
+              this.LogInfo("StartAnyDueRecordings: RecordingDetail was null");
             }    
           }
         }
@@ -510,7 +510,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
             // Check the type so we aren't logging too verbose on single runs
             if (scheduleType != (int)ScheduleRecordingType.Once)
             {
-              Log.Info("Scheduler: No epsisode title found for schedule {0} - omitting repeating check.",
+              this.LogInfo("Scheduler: No epsisode title found for schedule {0} - omitting repeating check.",
                        currentProgram.Title);
             }
           }
@@ -551,7 +551,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
           }
           else
           {
-            Log.Info(
+            this.LogInfo(
               "Scheduler: Schedule {0} ({1}) had already been started - expect previous failure and try to resume...",
               currentEpisodeTitle, currentEpisodeName);
           }
@@ -620,7 +620,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
         CancelSchedule(newRecording, schedule.IdSchedule);
       }
 
-      Log.Info("Scheduler: Schedule {0}-{1} ({2}) has already been recorded ({3}) - aborting...",
+      this.LogInfo("Scheduler: Schedule {0}-{1} ({2}) has already been recorded ({3}) - aborting...",
                program.StartTime.ToString(CultureInfo.InvariantCulture), episodeTitle, episodeName,
                pastRecording.StartTime.ToString(CultureInfo.InvariantCulture));
     }

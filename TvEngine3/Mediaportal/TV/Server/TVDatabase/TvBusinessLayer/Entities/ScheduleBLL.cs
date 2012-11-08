@@ -200,7 +200,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
       }
       else
       {
-        Log.Info(
+        this.LogInfo(
           "IsPartialRecording: program ({0} {1} - {2} is not (at least partially) included in the schedule {3:hh:mm} - {4:hh:mm}",
           prg.Title, prg.StartTime, prg.EndTime, _entity.StartTime, _entity.EndTime);
         return false;

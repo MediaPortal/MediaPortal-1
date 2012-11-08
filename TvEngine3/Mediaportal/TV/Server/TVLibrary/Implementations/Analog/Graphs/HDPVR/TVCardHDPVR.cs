@@ -155,7 +155,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
     protected override int CreateNewSubChannel(IChannel channel)
     {
       int id = _subChannelId++;
-      Log.Info("TvCardHdPvr: new subchannel, ID = {0}, subchannel count = {1}", id, _mapSubChannels.Count);
+      this.LogInfo("TvCardHdPvr: new subchannel, ID = {0}, subchannel count = {1}", id, _mapSubChannels.Count);
       HDPVRChannel subChannel = new HDPVRChannel(id, this, _filterTsWriter);
       subChannel.Parameters = Parameters;
       subChannel.CurrentChannel = channel;
@@ -585,7 +585,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
           Log.Error("HDPVR:  Unable to find the input pin on ts analyzer filter");
           throw new TvException("Unable to find the input pin on ts analyzer filter");
         }
-        //Log.Log.Info("HDPVR: Render [Encoder]->[TsWriter]");
+        //Log.this.LogInfo("HDPVR: Render [Encoder]->[TsWriter]");
         hr = _graphBuilder.Connect(pinOut, pinIn);
         Release.ComObject("pinTsWriterIn", pinIn);
         Release.ComObject("pinEncoderOut", pinOut);

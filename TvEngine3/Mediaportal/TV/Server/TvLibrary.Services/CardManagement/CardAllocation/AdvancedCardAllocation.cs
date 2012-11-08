@@ -77,7 +77,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 
       if (LogEnabled)
       {
-        Log.Info("Controller:    card:{0} type:{1} users: {2}", card.DataBaseCard.IdCard, card.Type, nrOfOtherUsers);
+        this.LogInfo("Controller:    card:{0} type:{1} users: {2}", card.DataBaseCard.IdCard, card.Type, nrOfOtherUsers);
       }
 
       return nrOfOtherUsers;
@@ -108,11 +108,11 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
       Stopwatch stopwatch = Stopwatch.StartNew();
       try
       {
-        //Log.Info("GetFreeCardsForChannel st {0}", Environment.StackTrace);
+        //this.LogInfo("GetFreeCardsForChannel st {0}", Environment.StackTrace);
         //construct list of all cards we can use to tune to the new channel
         if (LogEnabled)
         {
-          Log.Info("Controller: find free card for channel {0}", dbChannel.DisplayName);
+          this.LogInfo("Controller: find free card for channel {0}", dbChannel.DisplayName);
         }
         var cardsAvailable = new List<CardDetail>();
 
@@ -142,7 +142,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         }
         if (LogEnabled)
         {
-          Log.Info("Controller: found {0} free card(s)", cardsAvailable.Count);
+          this.LogInfo("Controller: found {0} free card(s)", cardsAvailable.Count);
         }
 
         return cardsAvailable;
@@ -156,7 +156,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
       finally
       {
         stopwatch.Stop();
-        Log.Info("AdvancedCardAllocation.GetFreeCardsForChannel took {0} msec", stopwatch.ElapsedMilliseconds);
+        this.LogInfo("AdvancedCardAllocation.GetFreeCardsForChannel took {0} msec", stopwatch.ElapsedMilliseconds);
       }
     }
 
@@ -196,12 +196,12 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
       cardsUnAvailable = new Dictionary<int, TvResult>();
       try
       {
-        //Log.Info("GetFreeCardsForChannel st {0}", Environment.StackTrace);
+        //this.LogInfo("GetFreeCardsForChannel st {0}", Environment.StackTrace);
         //construct list of all cards we can use to tune to the new channel
         var cardsAvailable = new List<CardDetail>();
         if (LogEnabled)
         {
-          Log.Info("Controller: find card for channel {0}", dbChannel.DisplayName);
+          this.LogInfo("Controller: find card for channel {0}", dbChannel.DisplayName);
         }
         //get the tuning details for the channel
         ICollection<IChannel> tuningDetails = CardAllocationCache.GetTuningDetailsByChannelId(dbChannel);
@@ -211,14 +211,14 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
           //no tuning details??
           if (LogEnabled)
           {
-            Log.Info("Controller:  No tuning details for channel:{0}", dbChannel.DisplayName);
+            this.LogInfo("Controller:  No tuning details for channel:{0}", dbChannel.DisplayName);
           }
           return cardsAvailable;
         }
 
         if (LogEnabled)
         {
-          Log.Info("Controller:   got {0} tuning details for {1}", tuningDetails.Count, dbChannel.DisplayName);
+          this.LogInfo("Controller:   got {0} tuning details for {1}", tuningDetails.Count, dbChannel.DisplayName);
         }
         int number = 0;
         ICollection<ITvCardHandler> cardHandlers = cards.Values;
@@ -229,7 +229,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
           number++;
           if (LogEnabled)
           {
-            Log.Info("Controller:   channel #{0} {1} ", number, tuningDetail.ToString());
+            this.LogInfo("Controller:   channel #{0} {1} ", number, tuningDetail.ToString());
           }
           foreach (ITvCardHandler cardHandler in cardHandlers)
           {
@@ -239,7 +239,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
             {
               if (LogEnabled)
               {
-                Log.Info("Controller:    card:{0} has already been queried, skipping.", cardId);
+                this.LogInfo("Controller:    card:{0} has already been queried, skipping.", cardId);
               }
               continue;
             }
@@ -259,7 +259,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
             bool isSameTransponder = IsSameTransponder(cardHandler, tuningDetail);
             if (LogEnabled)
             {
-              Log.Info("Controller:    card:{0} type:{1} can tune to channel", cardId, cardHandler.Type);
+              this.LogInfo("Controller:    card:{0} type:{1} can tune to channel", cardId, cardHandler.Type);
             }
             int nrOfOtherUsers = NumberOfOtherUsersOnCurrentCard(cardHandler, user);
             long? channelTimeshiftingOnOtherMux;
@@ -275,7 +275,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         cardsAvailable.SortStable();
         if (LogEnabled)
         {
-          Log.Info("Controller: found {0} card(s) for channel", cardsAvailable.Count);
+          this.LogInfo("Controller: found {0} card(s) for channel", cardsAvailable.Count);
         }
 
         return cardsAvailable;
@@ -288,7 +288,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
       finally
       {
         stopwatch.Stop();
-        Log.Info("AdvancedCardAllocation.GetAvailableCardsForChannel took {0} msec", stopwatch.ElapsedMilliseconds);
+        this.LogInfo("AdvancedCardAllocation.GetAvailableCardsForChannel took {0} msec", stopwatch.ElapsedMilliseconds);
       }
     }
 
@@ -345,7 +345,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         //not enabled, so skip the card
         if (LogEnabled)
         {
-          Log.Info("Controller:    card:{0} type:{1} is disabled", cardId, cardHandler.Type);
+          this.LogInfo("Controller:    card:{0} type:{1} is disabled", cardId, cardHandler.Type);
         }
         return false;
       }
@@ -361,7 +361,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         //card cannot tune to this channel, so skip it
         if (LogEnabled)
         {
-          Log.Info("Controller:    card:{0} type:{1} cannot tune to channel", cardId, cardHandler.Type);
+          this.LogInfo("Controller:    card:{0} type:{1} cannot tune to channel", cardId, cardHandler.Type);
         }
         return false;
       }
@@ -372,7 +372,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
       {
         if (LogEnabled)
         {
-          Log.Info("Controller:    card:{0} type:{1} channel not mapped", cardId, cardHandler.Type);
+          this.LogInfo("Controller:    card:{0} type:{1} channel not mapped", cardId, cardHandler.Type);
         }
         return false;
       }

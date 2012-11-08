@@ -128,7 +128,7 @@ namespace Mediaportal.TV.Server.SetupTV
                                                   MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
               if (dlg == DialogResult.Yes)
               {
-                Log.Info("Controller: server {0} changed to {1}", RemoteControl.HostName, localHostname);                      
+                this.LogInfo("Controller: server {0} changed to {1}", RemoteControl.HostName, localHostname);                      
                 ServiceAgents.Instance.SettingServiceAgent.SaveSetting("hostname", localHostname);
                 if (!ServiceHelper.IsRestrictedMode)
                 {

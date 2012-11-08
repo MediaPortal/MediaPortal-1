@@ -575,7 +575,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
         {
           return true;
         }
-        Log.Info("RadioRecorded: ShowFullScreenWindow switching to fullscreen video");
+        this.LogInfo("RadioRecorded: ShowFullScreenWindow switching to fullscreen video");
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_TVFULLSCREEN);
         GUIGraphicsContext.IsFullScreenVideo = true;
         return true;
@@ -1123,7 +1123,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       {
         if (isRecPlaying)
         {
-          Log.Info("g_Player.Stopped {0}", g_Player.Stopped);
+          this.LogInfo("g_Player.Stopped {0}", g_Player.Stopped);
           g_Player.Stop();
         }
         DeleteRecordingAndUpdateGUI(rec);
@@ -1620,7 +1620,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
     private void doOnPlayBackStoppedOrChanged(g_Player.MediaType type, int stoptime, string filename, string caller)
     {
-      Log.Info("RadioRecorded:{0} {1} {2}", caller, type, filename);
+      this.LogInfo("RadioRecorded:{0} {1} {2}", caller, type, filename);
       if (type != g_Player.MediaType.Recording)
       {
         return;
@@ -1640,7 +1640,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
       else
       {
-        Log.Info("RadioRecorded:{0} no recording found with filename {1}", caller, filename);
+        this.LogInfo("RadioRecorded:{0} no recording found with filename {1}", caller, filename);
       }
 
       /*

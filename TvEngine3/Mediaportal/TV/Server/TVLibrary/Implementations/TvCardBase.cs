@@ -1607,7 +1607,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             UpdateDecryptList(subChannelId, CaPmtListManagementAction.Last);
           }
         }
-        Log.Info("TvCardBase: subchannel ID = {0}, subchannel count = {1}", subChannelId, _mapSubChannels.Count);
+        this.LogInfo("TvCardBase: subchannel ID = {0}, subchannel count = {1}", subChannelId, _mapSubChannels.Count);
         _mapSubChannels[subChannelId].CurrentChannel = channel;
 
         // Subchannel OnBeforeTune().
@@ -1968,7 +1968,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     protected void FreeAllSubChannels()
     {
-      Log.Info("tvcard:FreeAllSubChannels");
+      this.LogInfo("tvcard:FreeAllSubChannels");
       Dictionary<int, BaseSubChannel>.Enumerator en = _mapSubChannels.GetEnumerator();
       while (en.MoveNext())
       {

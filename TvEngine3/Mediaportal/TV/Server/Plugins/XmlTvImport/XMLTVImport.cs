@@ -156,7 +156,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         if (Decimal.TryParse(strRating, NStyle, NFO, out tmpRating))
           Rating = Convert.ToInt16(tmpRating);
         else
-          Log.Info("XMLTVImport: star-rating could not be used - {0},({1})", epgRating, strRating);
+          this.LogInfo("XMLTVImport: star-rating could not be used - {0},({1})", epgRating, strRating);
       }
       catch (Exception ex)
       {
@@ -806,7 +806,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                   }
                   catch (Exception)
                   {
-                    Log.Info("XMLTVImport: Invalid year for OnAirDate - {0}", prog.OriginalAirDate);
+                    this.LogInfo("XMLTVImport: Invalid year for OnAirDate - {0}", prog.OriginalAirDate);
                   }
 
                   if (prog.StartTime < _status.startTime)
@@ -816,7 +816,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                   _status.Programs++;
                   if (showProgress && ShowProgress != null && (_status.Programs % 100) == 0) ShowProgress(_status);
                 }
-                Log.Info("XMLTVImport: Inserting {0} programs for {1}", progChan.programs.Count.ToString(),
+                this.LogInfo("XMLTVImport: Inserting {0} programs for {1}", progChan.programs.Count.ToString(),
                          progChan.Name);
                 _programManagement.InsertPrograms(progChan.programs,
                                      deleteBeforeImport

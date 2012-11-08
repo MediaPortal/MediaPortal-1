@@ -50,7 +50,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// <returns></returns>
     public bool Start(BaseEpgGrabber grabber)
     {
-      Log.Info("EpgGrabbing: Start");
+      this.LogInfo("EpgGrabbing: Start");
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false)
@@ -77,7 +77,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// </summary>
     public void Abort()
     {
-      Log.Info("EpgGrabbing: Abort");
+      this.LogInfo("EpgGrabbing: Abort");
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false)
@@ -141,7 +141,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// <param name="user">User</param>
     public void Stop(IUser user)
     {
-      Log.Info("EpgGrabbing: Stop - user {0}", user.Name);
+      this.LogInfo("EpgGrabbing: Stop - user {0}", user.Name);
       _cardHandler.UserManagement.RemoveUser(user);
       int recentSubChannelId = _cardHandler.UserManagement.GetRecentSubChannelId(user.Name);
       if (recentSubChannelId > -1 && !_cardHandler.UserManagement.ContainsUsersForSubchannel(recentSubChannelId))

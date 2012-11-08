@@ -143,7 +143,7 @@ namespace Mediaportal.TV.TvPlugin
       {
         Log.Error("Unable to create/modify gentle.config {0},{1}", ex.Message, ex.StackTrace);
       }
-      Log.Info("ChannelNavigator::Reload()");*/
+      this.LogInfo("ChannelNavigator::Reload()");*/
     }   
     
     public void ReLoad()
@@ -176,12 +176,12 @@ namespace Mediaportal.TV.TvPlugin
     {
       if (_channels.Count == 0)
       {
-        Log.Info("get _channels from database");
+        this.LogInfo("get _channels from database");
         IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.TV,
                                                                                                         ChannelIncludeRelationEnum
                                                                                                           .None);
         _channels = channels.Distinct().ToDictionary(c => c.IdChannel);
-        Log.Info("found:{0} tv channels", _channels.Count); 
+        this.LogInfo("found:{0} tv channels", _channels.Count); 
       }
     }
 
@@ -195,7 +195,7 @@ namespace Mediaportal.TV.TvPlugin
           hideAllChannelsGroup = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
         }
 
-        Log.Info("get all groups from database");
+        this.LogInfo("get all groups from database");
         ChannelGroupIncludeRelationEnum include = ChannelGroupIncludeRelationEnum.GroupMaps;
         include |= ChannelGroupIncludeRelationEnum.GroupMapsChannel;
 
@@ -210,7 +210,7 @@ namespace Mediaportal.TV.TvPlugin
           _groups =
             ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.TV, include).OrderBy(g => g.GroupName).ToList();
         }
-        Log.Info("loaded {0} tv groups", _groups.Count);
+        this.LogInfo("loaded {0} tv groups", _groups.Count);
       }
     }    
 
@@ -341,11 +341,11 @@ namespace Mediaportal.TV.TvPlugin
     {
       m_zaptime = DateTime.Now.AddSeconds(-1);
       RaiseOnZapChannelEvent();
-      // Log.Info(Log.LogType.Error, "zapnow group:{0} current group:{0}", m_zapgroup, m_currentgroup);
+      // this.LogInfo(Log.LogType.Error, "zapnow group:{0} current group:{0}", m_zapgroup, m_currentgroup);
       //if (m_zapchannel == null)
-      //   Log.Info(Log.LogType.Error, "zapchannel==null");
+      //   this.LogInfo(Log.LogType.Error, "zapchannel==null");
       //else
-      //   Log.Info(Log.LogType.Error, "zapchannel=={0}",m_zapchannel);
+      //   this.LogInfo(Log.LogType.Error, "zapchannel=={0}",m_zapchannel);
     }
 
     /// <summary>
@@ -391,11 +391,11 @@ namespace Mediaportal.TV.TvPlugin
               if (m_zapchannel.CurrentGroup != null)
               {
                 m_currentgroup = GetGroupIndex(m_zapchannel.CurrentGroup.GroupName);
-                Log.Info("Channel change:{0} on group {1}", zappingTo.DisplayName, m_zapchannel.CurrentGroup.GroupName);
+                this.LogInfo("Channel change:{0} on group {1}", zappingTo.DisplayName, m_zapchannel.CurrentGroup.GroupName);
               }
               else
               {
-                Log.Info("Channel change:{0}", zappingTo.DisplayName);
+                this.LogInfo("Channel change:{0}", zappingTo.DisplayName);
               }
               m_zapchannel = null;
               TVHome.ViewChannel(zappingTo);
@@ -616,7 +616,7 @@ namespace Mediaportal.TV.TvPlugin
       m_zapchannel = chan;
       m_zapchannel.CurrentGroup = null;
       m_zapChannelNr = -1;
-      Log.Info("Navigator:ZapNext {0}->{1}", currentChan.DisplayName, m_zapchannel.Entity.DisplayName);
+      this.LogInfo("Navigator:ZapNext {0}->{1}", currentChan.DisplayName, m_zapchannel.Entity.DisplayName);
       if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
       {
         if (useZapDelay)
@@ -680,7 +680,7 @@ namespace Mediaportal.TV.TvPlugin
       TVHome.UserChannelChanged = true;
       m_zapchannel = new ChannelBLL(chan) {CurrentGroup = null};
       m_zapChannelNr = -1;
-      Log.Info("Navigator:ZapPrevious {0}->{1}",
+      this.LogInfo("Navigator:ZapPrevious {0}->{1}",
                currentChan.DisplayName, m_zapchannel.Entity.DisplayName);
       if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
       {
@@ -846,7 +846,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public void LoadSettings(Settings xmlreader)
     {
-      Log.Info("ChannelNavigator::LoadSettings()");
+      this.LogInfo("ChannelNavigator::LoadSettings()");
       string currentchannelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
       m_zapdelay = 1000 * xmlreader.GetValueAsInt("movieplayer", "zapdelay", 2);
       string groupname = xmlreader.GetValueAsString("mytv", "group", TvConstants.TvGroupNames.AllChannels);

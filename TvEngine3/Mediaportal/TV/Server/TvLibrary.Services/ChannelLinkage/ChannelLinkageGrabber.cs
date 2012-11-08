@@ -52,7 +52,7 @@ namespace Mediaportal.TV.Server.TVLibrary.ChannelLinkage
 
     public override int OnLinkageReceived()
     {
-      Log.Info("OnLinkageReceived()");
+      this.LogInfo("OnLinkageReceived()");
       Thread workerThread = new Thread(UpdateDatabaseThread);
       workerThread.IsBackground = true;
       workerThread.Name = "Channel linkage update thread";
@@ -103,14 +103,14 @@ namespace Mediaportal.TV.Server.TVLibrary.ChannelLinkage
     {
       Thread.CurrentThread.Priority = ThreadPriority.Lowest;
       List<PortalChannel> linkages = _card.ChannelLinkages;
-      Log.Info("ChannelLinkage received. {0} portal channels read", linkages.Count);
+      this.LogInfo("ChannelLinkage received. {0} portal channels read", linkages.Count);
       foreach (PortalChannel pChannel in linkages)
       {
-        Log.Info("[Linkage Scanner] New portal channel {0} {1} {2}", pChannel.NetworkId, pChannel.ServiceId,
+        this.LogInfo("[Linkage Scanner] New portal channel {0} {1} {2}", pChannel.NetworkId, pChannel.ServiceId,
                  pChannel.TransportId);
         foreach (LinkedChannel lchan in pChannel.LinkedChannels)
         {
-          Log.Info("[Linkage Scanner] - {0} nid={1},tid={2} sid={3}", lchan.Name, lchan.NetworkId, lchan.TransportId,
+          this.LogInfo("[Linkage Scanner] - {0} nid={1},tid={2} sid={3}", lchan.Name, lchan.NetworkId, lchan.TransportId,
                    lchan.ServiceId);
         }
         PersistPortalChannel(pChannel);

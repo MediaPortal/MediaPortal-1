@@ -143,7 +143,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public void Start()
       {
-      Log.Info("TvNotify: start");
+      this.LogInfo("TvNotify: start");
 
       if (_enableRecNotification)
       {
@@ -154,7 +154,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public void Stop()
     {
-      Log.Info("TvNotify: stop");
+      this.LogInfo("TvNotify: stop");
 
       if (_enableRecNotification)
       {
@@ -171,7 +171,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public static void OnNotifiesChanged()
     {
-      Log.Info("TvNotify:OnNotifiesChanged");
+      this.LogInfo("TvNotify:OnNotifiesChanged");
       _notifiesListChanged = true;
     }
 
@@ -179,7 +179,7 @@ namespace Mediaportal.TV.TvPlugin
     {
       try
       {
-        Log.Info("TvNotify:LoadNotifies");
+        this.LogInfo("TvNotify:LoadNotifies");
         IEnumerable<Program> prgs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByState(ProgramState.Notify);
         _notifiesList.Clear();
         foreach (var program in prgs)
@@ -189,7 +189,7 @@ namespace Mediaportal.TV.TvPlugin
 
         if (_notifiesList != null)
         {
-          Log.Info("TvNotify: {0} notifies", _notifiesList.Count);
+          this.LogInfo("TvNotify: {0} notifies", _notifiesList.Count);
         }
 
       }
@@ -201,11 +201,11 @@ namespace Mediaportal.TV.TvPlugin
 
     private void Notify(string heading, string mainMsg, Channel channel)
     {
-      Log.Info("send rec notify");
+      this.LogInfo("send rec notify");
       var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY_REC, 0, 0, 0, 0, 0, null)
                   {Label = heading, Label2 = mainMsg, Object = channel};
       GUIGraphicsContext.SendMessage(msg);
-      Log.Info("send rec notify done");
+      this.LogInfo("send rec notify done");
     }
 
     private void ProcessNotifies(DateTime preNotifySecs)
@@ -221,7 +221,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           if (preNotifySecs > program.Entity.StartTime)
           {
-            Log.Info("Notify {0} on {1} start {2}", program.Entity.Title, program.Entity.Channel.DisplayName,
+            this.LogInfo("Notify {0} on {1} start {2}", program.Entity.Title, program.Entity.Channel.DisplayName,
                      program.Entity.StartTime);
             program.Notify = false;
             ServiceAgents.Instance.ProgramServiceAgent.SaveProgram(program.Entity);
@@ -236,12 +236,12 @@ namespace Mediaportal.TV.TvPlugin
                            };
 
             _notifiesList.Remove(program);
-            Log.Info("send notify");
+            this.LogInfo("send notify");
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM, 0, 0, 0, 0, 0, null);
             msg.Object = tvProg;
             GUIGraphicsContext.SendMessage(msg);
             msg = null;
-            Log.Info("send notify done");
+            this.LogInfo("send notify done");
             return;
           }
         }

@@ -407,7 +407,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     protected override int CreateNewSubChannel(IChannel channel)
     {
       int id = _subChannelId++;
-      Log.Info("TvCardDvbBase: new subchannel, ID = {0}, subchannel count = {1}", id, _mapSubChannels.Count);
+      this.LogInfo("TvCardDvbBase: new subchannel, ID = {0}, subchannel count = {1}", id, _mapSubChannels.Count);
       TvDvbChannel subChannel = new TvDvbChannel(id, this, _filterTsWriter, _filterTIF);
       subChannel.Parameters = Parameters;
       subChannel.CurrentChannel = channel;
@@ -614,7 +614,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
           continue;
         if (DevicesInUse.Instance.IsUsed(devices[i]))
         {
-          Log.Info("dvb:  [Tuner]: {0} is being used by TVServer already or another application!", devices[i].Name);
+          this.LogInfo("dvb:  [Tuner]: {0} is being used by TVServer already or another application!", devices[i].Name);
           continue;
         }
         int hr;
@@ -654,7 +654,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       // Assume we found a tuner filter...
       if (_filterTuner == null)
       {
-        Log.Info(
+        this.LogInfo(
           "dvb:  A useable TV Tuner cannot be found! Either the device no longer exists or it's in use by another application!");
         Log.Error("dvb:  No TVTuner installed");
         throw new TvException("No TVTuner installed");
@@ -1102,7 +1102,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       {
         if (_epgGrabberCallback != null && _epgGrabbing)
         {
-          Log.Info("dvb:cancel epg->decompose");
+          this.LogInfo("dvb:cancel epg->decompose");
           _epgGrabberCallback.OnEpgCancelled();
         }
         _epgGrabbing = false;
@@ -1602,8 +1602,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
           _interfaceEpgGrabber.GetEPGChannelCount(out channelCount);
           dvbReady = channelCount > 0;
           List<EpgChannel> epgChannels = new List<EpgChannel>();
-          Log.Info("dvb:mhw ready MHW {0} titles found", titleCount);
-          Log.Info("dvb:dvb ready.EPG {0} channels", channelCount);
+          this.LogInfo("dvb:mhw ready MHW {0} titles found", titleCount);
+          this.LogInfo("dvb:dvb ready.EPG {0} channels", channelCount);
           if (mhwReady)
           {
             _interfaceEpgGrabber.GetMHWTitleCount(out titleCount);
@@ -1659,10 +1659,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
                 channel.TransportId = (int)transportid;
                 channel.ServiceId = (int)channelid;
                 epgChannel = new EpgChannel { Channel = channel };
-                //Log.Log.Info("dvb: start filtering channel NID {0} TID {1} SID{2}", dvbChan.NetworkId, dvbChan.TransportId, dvbChan.ServiceId);
+                //Log.this.LogInfo("dvb: start filtering channel NID {0} TID {1} SID{2}", dvbChan.NetworkId, dvbChan.TransportId, dvbChan.ServiceId);
                 if (FilterOutEPGChannel((ushort)networkid, (ushort)transportid, (ushort)channelid) == false)
                 {
-                  //Log.Log.Info("dvb: Not Filtered channel NID {0} TID {1} SID{2}", dvbChan.NetworkId, dvbChan.TransportId, dvbChan.ServiceId);
+                  //Log.this.LogInfo("dvb: Not Filtered channel NID {0} TID {1} SID{2}", dvbChan.NetworkId, dvbChan.TransportId, dvbChan.ServiceId);
                   epgChannels.Add(epgChannel);
                 }
               }
@@ -1823,10 +1823,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
               if (epgChannel.Programs.Count > 0)
               {
                 epgChannel.Sort();
-                //Log.Log.Info("dvb: start filtering channel NID {0} TID {1} SID{2}", chan.NetworkId, chan.TransportId, chan.ServiceId);
+                //Log.this.LogInfo("dvb: start filtering channel NID {0} TID {1} SID{2}", chan.NetworkId, chan.TransportId, chan.ServiceId);
                 if (this.FilterOutEPGChannel(networkid, transportid, serviceid) == false)
                 {
-                  //Log.Log.Info("dvb: Not Filtered channel NID {0} TID {1} SID{2}", chan.NetworkId, chan.TransportId, chan.ServiceId);
+                  //Log.this.LogInfo("dvb: Not Filtered channel NID {0} TID {1} SID{2}", chan.NetworkId, chan.TransportId, chan.ServiceId);
                   epgChannels.Add(epgChannel);
                 }
               }

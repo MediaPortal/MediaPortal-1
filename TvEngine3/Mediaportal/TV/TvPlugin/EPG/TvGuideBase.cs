@@ -377,7 +377,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
             if (!string.IsNullOrEmpty(fileName)) //are we really recording ?
             {
-              Log.Info("TVGuide: clicked on a currently running recording");
+              this.LogInfo("TVGuide: clicked on a currently running recording");
               var dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
               if (dlg == null)
               {
@@ -422,7 +422,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
               }
               else
               {
-                Log.Info("EPG: _recordingList was not available");
+                this.LogInfo("EPG: _recordingList was not available");
               }
 
 
@@ -771,7 +771,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       }
       else
       {
-        Log.Info("IMDB Fetcher: Nothing found");
+        this.LogInfo("IMDB Fetcher: Nothing found");
       }
     }
 
@@ -887,7 +887,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
     public bool OnMovieNotFound(IMDBFetcher fetcher)
     {
-      Log.Info("IMDB Fetcher: OnMovieNotFound");
+      this.LogInfo("IMDB Fetcher: OnMovieNotFound");
       // show dialog...
       var dlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
       dlgOK.SetHeading(195);
@@ -968,7 +968,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
     public bool OnDetailsNotFound(IMDBFetcher fetcher)
     {
-      Log.Info("IMDB Fetcher: OnDetailsNotFound");
+      this.LogInfo("IMDB Fetcher: OnDetailsNotFound");
       // show dialog...
       var dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
       // show dialog...

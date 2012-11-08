@@ -69,7 +69,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     /// <param name="controllerService">Reference to tvservice's TVController</param>
     public PowerSchedulerFactory(IInternalControllerService controllerService)
     {
-      Log.Info("PowerSchedulerFactory CTOR");
+      this.LogInfo("PowerSchedulerFactory CTOR");
 
       IStandbyHandler standbyHandler;
 

@@ -205,7 +205,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
               Stopwatch stopwatchTimeshiftingAndRecording = Stopwatch.StartNew();
               timeshiftingAndRecordingStates = tvControllerService.GetAllTimeshiftingAndRecordingChannels();
               stopwatchTimeshiftingAndRecording.Stop();
-              Log.Info("ChannelStates.GetAllTimeshiftingAndRecordingChannels took {0} msec",
+              this.LogInfo("ChannelStates.GetAllTimeshiftingAndRecordingChannels took {0} msec",
                          stopwatchTimeshiftingAndRecording.ElapsedMilliseconds);
             }
             UpdateRecOrTSChannelStateForUsers(channel, allUsers, timeshiftingAndRecordingStates);*/
@@ -215,7 +215,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         }
         catch (ThreadAbortException)
         {
-          Log.Info("ChannelState.DoSetChannelStatesForAllUsers: thread obsolete and aborted.");
+          this.LogInfo("ChannelState.DoSetChannelStatesForAllUsers: thread obsolete and aborted.");
         }
         catch (InvalidOperationException tex)
         {
@@ -229,7 +229,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         finally
         {
           stopwatch.Stop();
-          Log.Info("ChannelStates.DoSetChannelStatesForAllUsers took {0} msec", stopwatch.ElapsedMilliseconds);
+          this.LogInfo("ChannelStates.DoSetChannelStatesForAllUsers took {0} msec", stopwatch.ElapsedMilliseconds);
 
           if (OnChannelStatesSet != null)
           {
@@ -278,7 +278,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
       Stopwatch stopwatchTimeshiftingAndRecording = Stopwatch.StartNew();
       IDictionary<int, ChannelState> timeshiftingAndRecordingStates = tvControllerService.GetAllTimeshiftingAndRecordingChannels();
       stopwatchTimeshiftingAndRecording.Stop();
-      Log.Info("ChannelStates.GetAllTimeshiftingAndRecordingChannels took {0} msec",
+      this.LogInfo("ChannelStates.GetAllTimeshiftingAndRecordingChannels took {0} msec",
                   stopwatchTimeshiftingAndRecording.ElapsedMilliseconds);
 
       foreach (KeyValuePair<int, ChannelState> kvp in timeshiftingAndRecordingStates)

@@ -431,7 +431,7 @@ namespace Mediaportal.TV.Server.TVLibrary
 
     public void Init()
     {
-      Log.Info("Controller: Initializing TVServer");      
+      this.LogInfo("Controller: Initializing TVServer");      
       bool result = false;
 
       Exception ex = null;
@@ -452,7 +452,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           }
           Thread.Sleep(3000);
         }
-        Log.Info("Controller: {0} init attempt", (i + 1));
+        this.LogInfo("Controller: {0} init attempt", (i + 1));
         try
         {
           InitController();
@@ -466,11 +466,11 @@ namespace Mediaportal.TV.Server.TVLibrary
 
       if (result)
       {
-        Log.Info("Controller: TVServer initialized okay");
+        this.LogInfo("Controller: TVServer initialized okay");
       }
       else
       {
-        Log.Info("Controller: Failed to initialize TVServer");
+        this.LogInfo("Controller: Failed to initialize TVServer");
         if (ex != null)
         {
           throw ex;
@@ -505,7 +505,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           // Show only IPv4 family addresses
           if (ipaddress.AddressFamily == AddressFamily.InterNetwork)
           {
-            Log.Info("Controller: local ip address:{0}", ipaddress.ToString());
+            this.LogInfo("Controller: local ip address:{0}", ipaddress.ToString());
           }
         }
 
@@ -523,7 +523,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           if (!found)
           {
             // card is not yet in the database, so add it
-            Log.Info("Controller: add card:{0}", itvCard.Name);
+            this.LogInfo("Controller: add card:{0}", itvCard.Name);
 
             var newCard = new Card
             {
@@ -571,7 +571,7 @@ namespace Mediaportal.TV.Server.TVLibrary
                     {
                       try
                       {
-                        Log.Info("Controller: preloading card :{0}", card.Name);
+                        this.LogInfo("Controller: preloading card :{0}", card.Name);
                         card.BuildGraph();
                         if (unknownCard is TvCardAnalog)
                         {
@@ -585,12 +585,12 @@ namespace Mediaportal.TV.Server.TVLibrary
                     }
                     else
                     {
-                      Log.Info("Controller: NOT preloading card :{0}", card.Name);
+                      this.LogInfo("Controller: NOT preloading card :{0}", card.Name);
                     }
                   }
                   else
                   {
-                    Log.Info("Controller: NOT preloading card :{0}", unknownCard.Name);
+                    this.LogInfo("Controller: NOT preloading card :{0}", unknownCard.Name);
                   }
                 }
 
@@ -600,7 +600,7 @@ namespace Mediaportal.TV.Server.TVLibrary
             }
             if (!found)
             {
-              Log.Info("Controller: card not found :{0}", dbsCard.Name);
+              this.LogInfo("Controller: card not found :{0}", dbsCard.Name);
 
               foreach (ITVCard t in _localCardCollection.Cards.Where(t => t.DevicePath == dbsCard.DevicePath))
               {
@@ -635,7 +635,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           }
         }
 
-        Log.Info("Controller: setup hybrid cards");
+        this.LogInfo("Controller: setup hybrid cards");
         IList<CardGroup> cardgroups = TVDatabase.TVBusinessLayer.CardManagement.ListAllCardGroups();
         foreach (CardGroup group in cardgroups)
         {
@@ -673,7 +673,7 @@ namespace Mediaportal.TV.Server.TVLibrary
             }
             if (!Directory.Exists(timeShiftPath))
             {
-              Log.Info("Controller: creating timeshifting folder {0} for card \"{1}\"", timeShiftPath, dbsCard.Name);
+              this.LogInfo("Controller: creating timeshifting folder {0} for card \"{1}\"", timeShiftPath, dbsCard.Name);
               Directory.CreateDirectory(timeShiftPath);
             }
 
@@ -705,11 +705,11 @@ namespace Mediaportal.TV.Server.TVLibrary
           }
           catch (Exception exd)
           {
-            Log.Info("Controller: Error cleaning old ts buffer - {0}", exd.Message);
+            this.LogInfo("Controller: Error cleaning old ts buffer - {0}", exd.Message);
           }
         }
 
-        Log.Info("Controller: setup streaming");
+        this.LogInfo("Controller: setup streaming");
         _hostName = System.Net.Dns.GetHostName();
         SettingsManagement.SaveSetting("hostname", _hostName);
         _streamer = new RtspStreaming(_hostName, _rtspStreamingPort);
@@ -726,7 +726,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         ExecutePendingDeletions();
 
         // Re-evaluate program states
-        Log.Info("Controller: recalculating program states");
+        this.LogInfo("Controller: recalculating program states");
 
         ProgramManagement.ResetAllStates();
         ProgramManagement.SynchProgramStatesForAllSchedules(ScheduleManagement.ListAllSchedules());
@@ -737,7 +737,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         throw;
       }
 
-      Log.Info("Controller: initalized");      
+      this.LogInfo("Controller: initalized");      
     }
 
     private void StartTvServerEventDispatcher()
@@ -787,7 +787,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// </summary>
     public void DeInit()
     {
-      Log.Info("Controller: DeInit.");
+      this.LogInfo("Controller: DeInit.");
       try
       {
         StopHeartbeatManager();
@@ -796,18 +796,18 @@ namespace Mediaportal.TV.Server.TVLibrary
         //stop the RTSP streamer server
         if (_streamer != null)
         {
-          Log.Info("Controller: stop streamer...");
+          this.LogInfo("Controller: stop streamer...");
           _streamer.Stop();
           _streamer = null;
-          Log.Info("Controller: streamer stopped...");
+          this.LogInfo("Controller: streamer stopped...");
         }
         //stop the recording scheduler
         if (_scheduler != null)
         {
-          Log.Info("Controller: stop scheduler...");
+          this.LogInfo("Controller: stop scheduler...");
           _scheduler.Stop();
           _scheduler = null;
-          Log.Info("Controller: scheduler stopped...");
+          this.LogInfo("Controller: scheduler stopped...");
         }
         //stop the epg grabber
         StopEPGgrabber();        
@@ -2276,7 +2276,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           {
             if (!isTimeShifting)
             {
-              Log.Info("user:{0} card:{1} sub:{2} add stream:{3}", user.Name, user.CardId, subChannelId, fileName);
+              this.LogInfo("user:{0} card:{1} sub:{2} add stream:{3}", user.Name, user.CardId, subChannelId, fileName);
               if (File.Exists(fileName))
               {
                 if (_streamer != null)
@@ -2862,7 +2862,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     {
       int cardId = user.CardId;
       bool grabEpg = false;
-      Log.Info("Controller: GrabEpg on card ID == {0}", cardId);
+      this.LogInfo("Controller: GrabEpg on card ID == {0}", cardId);
       if (ValidateTvControllerParams(cardId))
       {
         grabEpg = _cards[cardId].Epg.Start(grabber); 
@@ -2879,7 +2879,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// </summary>
     public void AbortEPGGrabbing(int cardId)
     {
-      Log.Info("Controller: AbortEPGGrabbing on card ID == {0}", cardId);
+      this.LogInfo("Controller: AbortEPGGrabbing on card ID == {0}", cardId);
       if (ValidateTvControllerParams(cardId))
       {
         _cards[cardId].Epg.Abort();        
@@ -3102,7 +3102,7 @@ namespace Mediaportal.TV.Server.TVLibrary
             RtspStream stream = new RtspStream(streamName, recording.FileName, recording.Title);
             _streamer.AddStream(stream);
             string url = String.Format("rtsp://{0}:{1}/{2}", _hostName, _streamer.Port, streamName);
-            Log.Info("Controller: streaming url:{0} file:{1}", url, recording.FileName);
+            this.LogInfo("Controller: streaming url:{0} file:{1}", url, recording.FileName);
             return url;
           }
         }
@@ -3174,7 +3174,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           RtspStream stream = new RtspStream(streamName, fileName, streamName);
           _streamer.AddStream(stream);
           string url = String.Format("rtsp://{0}:{1}/{2}", _hostName, _streamer.Port, streamName);
-          Log.Info("Controller: streaming url:{0} file:{1}", url, fileName);
+          this.LogInfo("Controller: streaming url:{0} file:{1}", url, fileName);
           return url;
         }
       }
@@ -3195,7 +3195,7 @@ namespace Mediaportal.TV.Server.TVLibrary
 
       foreach (ITvCardHandler tvCardHandler in _cards.Values)
       {
-        Log.Info("Controller: dispose card:{0}", tvCardHandler.CardName);
+        this.LogInfo("Controller: dispose card:{0}", tvCardHandler.CardName);
         try
         {
           tvCardHandler.ParkedUserManagement.CancelAllParkedUsers();
@@ -3608,7 +3608,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           //reset failedCardId incase previous card iteration failed.
           failedCardId = -1;
           CardReservationHelper.CancelAllCardReservations(tickets);
-          Log.Info("control2:{0} {1} {2}", userNow.Name, userNow.CardId, tvcard.UserManagement.GetSubChannelIdByChannelId(userNow.Name, channel.IdChannel));
+          this.LogInfo("control2:{0} {1} {2}", userNow.Name, userNow.CardId, tvcard.UserManagement.GetSubChannelIdByChannelId(userNow.Name, channel.IdChannel));
           card = GetVirtualCard(userNow);
           card.NrOfOtherUsersTimeshiftingOnCard = ticket.NumberOfOtherUsersOnSameChannel;
 
@@ -4088,10 +4088,10 @@ namespace Mediaportal.TV.Server.TVLibrary
       {
         if (!_scheduler.IsRecordingSchedule(idSchedule, out card))
         {
-          Log.Info("IsRecordingSchedule: scheduler is not recording schedule");
+          this.LogInfo("IsRecordingSchedule: scheduler is not recording schedule");
           return false;
         }
-        Log.Info("IsRecordingSchedule: scheduler is recording schedule on cardid:{0}", card.Id);
+        this.LogInfo("IsRecordingSchedule: scheduler is recording schedule on cardid:{0}", card.Id);
 
         return true;
       }
@@ -5085,7 +5085,7 @@ namespace Mediaportal.TV.Server.TVLibrary
             result = cardResTS.CardTune(tvCardHandler, ref user, channel, dbChannel, ticket);
             cardResTS.OnStartCardTune -= CardResTsOnStartCardTune;
 
-            Log.Info("Controller: {0} {1} {2}", user.Name, user.CardId,
+            this.LogInfo("Controller: {0} {1} {2}", user.Name, user.CardId,
                      tvCardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, dbChannel.IdChannel));
           }
         }
@@ -5396,7 +5396,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     {
       if (!_onResumeDone)
       {
-        Log.Info("TvController.OnResume()");
+        this.LogInfo("TvController.OnResume()");
         StartHeartbeatManager();
         StartTvServerEventDispatcher();
 
@@ -5411,7 +5411,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     public void OnSuspend()
     {
       _onResumeDone = false;
-      Log.Info("TvController.OnSuspend()");
+      this.LogInfo("TvController.OnSuspend()");
 
       StopHeartbeatManager();
       StopTvserverEventDispatcher();

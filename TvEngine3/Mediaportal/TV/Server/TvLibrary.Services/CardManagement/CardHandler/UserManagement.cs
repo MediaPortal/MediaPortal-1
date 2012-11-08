@@ -741,7 +741,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         throw new InvalidOperationException("subchannelid is invalid");
       }
       user.CardId = _cardHandler.DataBaseCard.IdCard;
-      Log.Info("user:{0} AddSubChannelOrUser", user.Name);
+      this.LogInfo("user:{0} AddSubChannelOrUser", user.Name);
       lock (_usersLock)
       {
         IUser existingUser = GetUser(user.Name);
@@ -776,7 +776,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     public void RemoveChannelFromUser(IUser user, int subChannelId)
     {
       string username = user.Name;
-      Log.Info("user:{0} RemoveChannelFromUser", username);
+      this.LogInfo("user:{0} RemoveChannelFromUser", username);
 
       lock (_usersLock)
       {
@@ -826,7 +826,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     public void RemoveUser(IUser user)
     {
       string username = user.Name;
-      Log.Info("user:{0} remove", username);
+      this.LogInfo("user:{0} remove", username);
 
       lock (_usersLock)
       {

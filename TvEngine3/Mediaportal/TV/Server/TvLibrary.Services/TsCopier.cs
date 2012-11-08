@@ -45,7 +45,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       _posEnd = posEnd;
       _fileEnd = fileEnd;
       _recording = recording;
-      Log.Info("TsCopier: dtor() pos1: {0}, file1: {1}, pos2: {2}, file2: {3}, rec: {4}", posStart, fileStart, posEnd,
+      this.LogInfo("TsCopier: dtor() pos1: {0}, file1: {1}, pos2: {2}, file2: {3}, rec: {4}", posStart, fileStart, posEnd,
                fileEnd, recording);
     }
 
@@ -55,13 +55,13 @@ namespace Mediaportal.TV.Server.TVLibrary
       {
         string baseTs = Path.GetDirectoryName(_fileStart) + "\\" +
                         Path.GetFileNameWithoutExtension(_fileStart).Substring(0, 19);
-        Log.Info("TsCopier: baseTs: {0}", baseTs);
+        this.LogInfo("TsCopier: baseTs: {0}", baseTs);
         int idCurrent = Int32.Parse(Path.GetFileNameWithoutExtension(_fileStart).Remove(0, 19));
         int idStart = idCurrent;
         int idStop = Int32.Parse(Path.GetFileNameWithoutExtension(_fileEnd).Remove(0, 19));
         
         decimal maxFiles = Convert.ToDecimal(SettingsManagement.GetSetting("timeshiftMaxFiles", "20").Value);
-        Log.Info("TsCopier: baseTs={0} idCurrent={1} idStop={2} maxFiles={3}", baseTs, idCurrent, idStop, maxFiles);
+        this.LogInfo("TsCopier: baseTs={0} idCurrent={1} idStop={2} maxFiles={3}", baseTs, idCurrent, idStop, maxFiles);
         Directory.CreateDirectory(Path.GetDirectoryName(_recording) + "\\" +
                                   Path.GetFileNameWithoutExtension(_recording) + "_tsbuffers");
         int cycles = 1;
@@ -74,7 +74,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           string currentSourceBuffer = baseTs + idCurrent.ToString() + ".ts";
           string targetTs = Path.GetDirectoryName(_recording) + "\\" + Path.GetFileNameWithoutExtension(_recording) +
                             "_tsbuffers\\" + Path.GetFileName(currentSourceBuffer);
-          Log.Info("TsCopier: Copying - source: {0}, target: {1}", currentSourceBuffer, targetTs);
+          this.LogInfo("TsCopier: Copying - source: {0}, target: {1}", currentSourceBuffer, targetTs);
           using (var reader = new FileStream(currentSourceBuffer, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
           {
             using (var writer = new FileStream(targetTs, FileMode.CreateNew, FileAccess.Write))
@@ -94,12 +94,12 @@ namespace Mediaportal.TV.Server.TVLibrary
               writer.Flush();
             }
           }          
-          Log.Info("TsCopier: copying done.");
+          this.LogInfo("TsCopier: copying done.");
           idCurrent++;
           if (idCurrent > maxFiles)
             idCurrent = 1;
         }
-        Log.Info("TsCopier: processed all timeshift buffer files for recording.");
+        this.LogInfo("TsCopier: processed all timeshift buffer files for recording.");
       }
       catch (Exception ex)
       {

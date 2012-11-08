@@ -143,10 +143,10 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
 
     public void DoImportChannels()
     {
-      Log.Info("WebEPG Config: Button: Import");
+      this.LogInfo("WebEPG Config: Button: Import");
       try
       {
-        Log.Info("WebEPG Config: Importing from TV Server Database");
+        this.LogInfo("WebEPG Config: Importing from TV Server Database");
         getTvServerChannels();
         RedrawList(null);
       }
@@ -407,7 +407,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
         if (info != null)
         {
           tbChannelName.Text = info.FullName;
-          Log.Info("WebEPG Config: Selection: {0}", info.FullName);
+          this.LogInfo("WebEPG Config: Selection: {0}", info.FullName);
 
           GrabberConfigInfo gInfo = (GrabberConfigInfo)info.GrabberList[grabberId];
           if (gInfo != null)

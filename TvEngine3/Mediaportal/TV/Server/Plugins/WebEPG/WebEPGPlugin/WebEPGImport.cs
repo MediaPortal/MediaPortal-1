@@ -207,7 +207,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
         try
         {
           Log.Debug("plugin:webepg importing");
-          Log.Info("WebEPG: Using directory {0}", webepgDirectory);
+          this.LogInfo("WebEPG: Using directory {0}", webepgDirectory);
 
 
           IEpgDataSink epgSink;
@@ -225,7 +225,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
             //  stmt.Execute();
             //}
             epgSink = new DatabaseEPGDataSink(deleteBeforeImport);
-            Log.Info("Writing to TVServer database");
+            this.LogInfo("Writing to TVServer database");
           }
           else
           {
@@ -239,7 +239,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
               // Do not use XmlTvImporter.DefaultOutputFolder to avoid reference to XmlTvImport
               xmltvDirectory = SettingsManagement.GetSetting("xmlTv", PathManager.GetDataPath + @"\xmltv").Value;
             }
-            Log.Info("Writing to tvguide.xml in {0}", xmltvDirectory);
+            this.LogInfo("Writing to tvguide.xml in {0}", xmltvDirectory);
             // Open XMLTV output file
             if (!Directory.Exists(xmltvDirectory))
             {
@@ -292,7 +292,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
         EPGWakeupConfig config = new EPGWakeupConfig(configSetting.Value);
         if (ShouldRunNow())
         {
-          Log.Info("WebEPGImporter: WebEPG schedule {0}:{1} is due: {2}:{3}",
+          this.LogInfo("WebEPGImporter: WebEPG schedule {0}:{1} is due: {2}:{3}",
                    config.Hour, config.Minutes, DateTime.Now.Hour, DateTime.Now.Minute);
           StartImport(null);
           config.LastRun = DateTime.Now;

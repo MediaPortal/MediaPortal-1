@@ -34,6 +34,7 @@ using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using MediaPortal.Common.Utils;
 using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Microsoft.Win32;
 
 namespace Mediaportal.TV.Server.Plugins.TvMovie
@@ -244,15 +245,15 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
               if (updateDuration > 20)
                 _database.Import();
               else
-                Log.Info("TVMovie: Import skipped because there was no new data.");
+                this.LogInfo("TVMovie: Import skipped because there was no new data.");
             }
             else
-              Log.Info("TVMovie: Import skipped because the update process timed out / has been aborted.");
+              this.LogInfo("TVMovie: Import skipped because the update process timed out / has been aborted.");
           }
         }
         catch (Exception ex)
         {
-          Log.Info("TvMovie plugin error:");
+          this.LogInfo("TvMovie plugin error:");
           Log.Error(ex);
         }
       }

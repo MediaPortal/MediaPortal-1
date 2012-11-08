@@ -45,7 +45,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public TvNewScheduleSearchType()
     {
-      Log.Info("newsearch ctor");
+      this.LogInfo("newsearch ctor");
       GetID = (int)Window.WINDOW_TV_SEARCHTYPE;
     }
 

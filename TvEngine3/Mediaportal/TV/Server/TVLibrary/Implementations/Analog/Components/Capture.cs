@@ -852,7 +852,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         if (hr == 0)
         {
           _currentVideoFormat = newVideoFormat;
-          Log.Info("Set new video format to: {0}", _currentVideoFormat);
+          this.LogInfo("Set new video format to: {0}", _currentVideoFormat);
         }
       }
     }
@@ -869,7 +869,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         {
           VideoQuality quality = map[prop];
           _videoProcAmp.Set(prop, quality.Value, quality.IsManual ? VideoProcAmpFlags.Manual : VideoProcAmpFlags.Auto);
-          Log.Info("Set VideoProcAmp - {0} to value: {1}", prop, quality.Value);
+          this.LogInfo("Set VideoProcAmp - {0} to value: {1}", prop, quality.Value);
         }
       }
     }
@@ -886,7 +886,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       {
         if (SetFrameRate((long)(10000000d / frameRate)))
         {
-          Log.Info("Set Framerate to {0} succeeded", frameRate);
+          this.LogInfo("Set Framerate to {0} succeeded", frameRate);
           _frameRate = frameRate;
         }
         BitmapInfoHeader bmiHeader = GetFrameSize();
@@ -896,7 +896,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           bmiHeader.Height = imageHeight;
           if (SetFrameSize(bmiHeader))
           {
-            Log.Info("Set Framesize to {0}x{1} succeeded", imageWidth, imageHeight);
+            this.LogInfo("Set Framesize to {0}x{1} succeeded", imageWidth, imageHeight);
             _imageWidth = imageWidth;
             _imageHeight = imageHeight;
           }
@@ -921,7 +921,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           int hr = _streamConfig.GetFormat(out mediaType);
           if (hr != 0)
           {
-            Log.Info("SetFrameRate: Failed to get the video format - {0}", hr);
+            this.LogInfo("SetFrameRate: Failed to get the video format - {0}", hr);
             return false;
           }
           // The formatPtr member points to different structures
@@ -957,12 +957,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           }
           else if (mediaType.formatType == FormatType.None)
           {
-            Log.Info("SetFrameRate: FAILED no format returned");
+            this.LogInfo("SetFrameRate: FAILED no format returned");
             return false;
           }
           else
           {
-            Log.Info("SetFrameRate:  FAILED unknown fmt");
+            this.LogInfo("SetFrameRate:  FAILED unknown fmt");
             return false;
           }
           // PtrToStructure copies the data so we need to copy it back
@@ -971,7 +971,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           hr = _streamConfig.SetFormat(mediaType);
           if (hr != 0)
           {
-            Log.Info("SetFrameRate:  FAILED to set:{0}", hr);
+            this.LogInfo("SetFrameRate:  FAILED to set:{0}", hr);
             return false;
           }
         }
@@ -983,7 +983,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       }
       catch (Exception)
       {
-        Log.Info("SetFrameRate:  FAILED ");
+        this.LogInfo("SetFrameRate:  FAILED ");
       }
       return false;
     }
@@ -1005,7 +1005,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           int hr = _streamConfig.GetFormat(out mediaType);
           if (hr != 0)
           {
-            Log.Info("SetFrameSize: Failed to get the video format - {0}", hr);
+            this.LogInfo("SetFrameSize: Failed to get the video format - {0}", hr);
             return false;
           }
           // The formatPtr member points to different structures
@@ -1041,12 +1041,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           }
           else if (mediaType.formatType == FormatType.None)
           {
-            Log.Info("SetFrameSize: FAILED no format returned");
+            this.LogInfo("SetFrameSize: FAILED no format returned");
             return false;
           }
           else
           {
-            Log.Info("SetFrameSize:  FAILED unknown fmt");
+            this.LogInfo("SetFrameSize:  FAILED unknown fmt");
             return false;
           }
           // PtrToStructure copies the data so we need to copy it back
@@ -1055,7 +1055,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           hr = _streamConfig.SetFormat(mediaType);
           if (hr != 0)
           {
-            Log.Info("SetFrameSize:  FAILED to set:{0}", hr);
+            this.LogInfo("SetFrameSize:  FAILED to set:{0}", hr);
             return false;
           }
         }
@@ -1067,7 +1067,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       }
       catch (Exception)
       {
-        Log.Info("SetFrameSize:  FAILED ");
+        this.LogInfo("SetFrameSize:  FAILED ");
       }
       return false;
     }
@@ -1090,7 +1090,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           int hr = _streamConfig.GetFormat(out mediaType);
           if (hr != 0)
           {
-            Log.Info("GetFrameSize: FAILED to get format - {0}", hr);
+            this.LogInfo("GetFrameSize: FAILED to get format - {0}", hr);
             Marshal.ThrowExceptionForHR(hr);
             return bmiHeader;
           }
@@ -1128,7 +1128,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       }
       catch (Exception)
       {
-        Log.Info("  VideoCaptureDevice.getStreamConfigSetting() FAILED ");
+        this.LogInfo("  VideoCaptureDevice.getStreamConfigSetting() FAILED ");
       }
       return bmiHeader;
     }

@@ -202,7 +202,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
     /// <returns>an HRESULT indicating whether the application information was successfully processed</returns>
     private Int32 OnApplicationInfo(IBaseFilter ciFilter, IntPtr info)
     {
-      Log.Info("SmarDTV USB CI: application information callback");
+      this.LogInfo("SmarDTV USB CI: application information callback");
       //DVB_MMI.DumpBinary(info, 0, ApplicationInfoSize);
       ApplicationInfo appInfo = (ApplicationInfo)Marshal.PtrToStructure(info, typeof(ApplicationInfo));
       Log.Debug("  type         = {0}", appInfo.ApplicationType);
@@ -253,7 +253,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
     /// <returns>an HRESULT indicating whether the APDU was successfully processed</returns>
     private Int32 OnApdu(IBaseFilter ciFilter, Int32 apduLength, IntPtr apdu)
     {
-      Log.Info("SmarDTV USB CI: APDU callback");
+      this.LogInfo("SmarDTV USB CI: APDU callback");
 
       //DVB_MMI.DumpBinary(apdu, 0, apduLength);
       byte[] apduBytes = new byte[apduLength];

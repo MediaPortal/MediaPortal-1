@@ -204,7 +204,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
                     user = userUpdated;
                     HandleUserOwnerShip(user, subchannel, parkedUser);
 
-                    Log.Info("UnParkUser: {0} - {1} - {2}", user.Name, duration, idChannel);
+                    this.LogInfo("UnParkUser: {0} - {1} - {2}", user.Name, duration, idChannel);
                     CancelParkedTimeoutEvent(subchannel.Id, parkedUser);
                     RemoveChannelFromParkedUser(idChannel, parkedUser);
                     break;

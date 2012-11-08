@@ -262,7 +262,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       _pollThread.Priority = ThreadPriority.Normal;
       _pollThread.Start();
 
-      Log.Info("Powerscheduler: started");
+      this.LogInfo("Powerscheduler: started");
     }
 
     /// <summary>
@@ -286,7 +286,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
 
       SendPowerSchedulerEvent(PowerSchedulerEventType.Stopped);
 
-      Log.Info("Powerscheduler: stopped");
+      this.LogInfo("Powerscheduler: stopped");
     }
 
     private void RegisterPowerEventHandler()
@@ -437,7 +437,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     /// <returns></returns>
     public void SuspendSystem(string source, bool force)
     {
-      Log.Info("PowerScheduler: Manual system suspend requested by {0}", source);
+      this.LogInfo("PowerScheduler: Manual system suspend requested by {0}", source);
 
       // determine standby mode
       switch (_settings.ShutdownMode)
@@ -488,7 +488,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
         // block concurrent request?
         if (_ignoreSuspendUntil > now)
         {
-          Log.Info("PowerScheduler: Concurrent shutdown was ignored: {0} ; force: {1}", (RestartOptions)how, force);
+          this.LogInfo("PowerScheduler: Concurrent shutdown was ignored: {0} ; force: {1}", (RestartOptions)how, force);
           return;
         }
 
@@ -496,7 +496,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
         _ignoreSuspendUntil = DateTime.MaxValue;
       }
 
-      Log.Info("PowerScheduler: Entering shutdown {0} ; forced: {1} -- kick off shutdown thread", (RestartOptions)how,
+      this.LogInfo("PowerScheduler: Entering shutdown {0} ; forced: {1} -- kick off shutdown thread", (RestartOptions)how,
                force);
       SuspendSystemThreadEnv data = new SuspendSystemThreadEnv();
       data.that = this;
@@ -528,7 +528,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       // test if shutdown is allowed
       bool disallow = DisAllowShutdown(true);
 
-      Log.Info("PowerScheduler: Source: {0}; shutdown is allowed {1} ; forced: {2}", source, !disallow, force);
+      this.LogInfo("PowerScheduler: Source: {0}; shutdown is allowed {1} ; forced: {2}", source, !disallow, force);
 
       if (disallow && !force)
       {
@@ -547,7 +547,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
         // Here we should wait for QuerySuspendFailed / QueryStandByFailed since we have rejected
         // the suspend request
         _querySuspendFailed++;
-        Log.Info("PowerScheduler: _querySuspendFailed {0}", _querySuspendFailed);
+        this.LogInfo("PowerScheduler: _querySuspendFailed {0}", _querySuspendFailed);
         do
         {
           System.Threading.Thread.Sleep(1000);
@@ -555,7 +555,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       }
       // activate standby
       _denySuspendQuery = false;
-      Log.Info("PowerScheduler: Entering shutdown {0} ; forced: {1}", (RestartOptions)how, force);
+      this.LogInfo("PowerScheduler: Entering shutdown {0} ; forced: {1}", (RestartOptions)how, force);
       WindowsController.ExitWindows((RestartOptions)how, force, SuspendSystemThreadAfter);
     }
 
@@ -1052,7 +1052,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
           _powerManager.AllowStandby();
           if (!_idle)
           {
-            Log.Info("PowerScheduler: System changed from busy state to idle state");
+            this.LogInfo("PowerScheduler: System changed from busy state to idle state");
             _idle = true;
             SendPowerSchedulerEvent(PowerSchedulerEventType.SystemIdle);
           }
@@ -1061,7 +1061,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
           // DisAllowShutdown takes some seconds to run => check once again Unattended 
           if (Unattended && _settings.ShutdownEnabled)
           {
-            Log.Info("PowerScheduler: System is unattended and idle - initiate suspend/hibernate");
+            this.LogInfo("PowerScheduler: System is unattended and idle - initiate suspend/hibernate");
             SuspendSystem();
           }
         }
@@ -1070,7 +1070,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
           _powerManager.PreventStandby();
           if (_idle)
           {
-            Log.Info("PowerScheduler: System changed from idle state to busy state");
+            this.LogInfo("PowerScheduler: System changed from idle state to busy state");
             _idle = false;
             SendPowerSchedulerEvent(PowerSchedulerEventType.SystemBusy);
           }
@@ -1155,7 +1155,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
         _lastUserTime = DateTime.Now;
         if (_idle)
         {
-          Log.Info("PowerScheduler: System changed from idle state to busy state");
+          this.LogInfo("PowerScheduler: System changed from idle state to busy state");
           _idle = false;
           SendPowerSchedulerEvent(PowerSchedulerEventType.SystemBusy);
         }

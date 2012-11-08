@@ -221,7 +221,7 @@ namespace Mediaportal.TV.Server.SetupTV
 
        
 
-      /*Log.Info("---- check if database needs to be updated/created ----");
+      /*this.LogInfo("---- check if database needs to be updated/created ----");
       int currentSchemaVersion = dlg.GetCurrentShemaVersion(startupMode);
       if (currentSchemaVersion <= 36) // drop pre-1.0 DBs and handle -1
       {
@@ -234,17 +234,17 @@ namespace Mediaportal.TV.Server.SetupTV
               MessageBoxDefaultButton.Button2) == DialogResult.Cancel)
             return;
 
-        Log.Info("---- create database ----");
+        this.LogInfo("---- create database ----");
         if (!dlg.ExecuteSQLScript("create"))
         {
           MessageBox.Show("Failed to create the database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
           return;
         }
-        Log.Info("- Database created.");
+        this.LogInfo("- Database created.");
         currentSchemaVersion = dlg.GetCurrentShemaVersion(startupMode);
       }
 
-      Log.Info("---- upgrade database schema ----");
+      this.LogInfo("---- upgrade database schema ----");
       if (!dlg.UpgradeDBSchema(currentSchemaVersion))
       {
         MessageBox.Show("Failed to upgrade the database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);

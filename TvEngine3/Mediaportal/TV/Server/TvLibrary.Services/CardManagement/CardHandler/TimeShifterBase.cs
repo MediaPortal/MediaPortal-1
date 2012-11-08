@@ -239,7 +239,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
         else
         {
-          Log.Info("TimeshiftingEPG: channel {0} is not configured for grabbing epg",
+          this.LogInfo("TimeshiftingEPG: channel {0} is not configured for grabbing epg",
                    channel.DisplayName);
         }
       }

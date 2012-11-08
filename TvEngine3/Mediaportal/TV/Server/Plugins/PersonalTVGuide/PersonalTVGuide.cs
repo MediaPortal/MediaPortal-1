@@ -73,7 +73,7 @@ namespace Mediaportal.TV.Server.Plugins.PersonalTVGuide
     /// </summary>
     public void UpdatePersonalTVGuide()
     {
-      if (_debugMode) Log.Info("PersonalTVGuide: Updating list");
+      if (_debugMode) this.LogInfo("PersonalTVGuide: Updating list");
       if (!_isUpdating)
       {
         try
@@ -107,21 +107,21 @@ namespace Mediaportal.TV.Server.Plugins.PersonalTVGuide
     {
       _isUpdating = true;
 
-      if (_debugMode) Log.Info("PersonalTVGuide: UpdateThread - Start: " + DateTime.Now.ToLongTimeString());
+      if (_debugMode) this.LogInfo("PersonalTVGuide: UpdateThread - Start: " + DateTime.Now.ToLongTimeString());
       ClearPersonalTVGuideMap();
       IList<Keyword> list = Keyword.ListAll();
       foreach (Keyword key in list)
       {
         if (_stopService)
         {
-          Log.Info("PersonalTVGuide: Stop Update loop");
+          this.LogInfo("PersonalTVGuide: Stop Update loop");
           break;
         }
         UpdateKeyword(key);      
       }
 
       SettingsManagement.SaveSetting("PTVGLastUpdateTime", DateTime.Now.ToString());      
-      if (_debugMode) Log.Info("PersonalTVGuide: UpdateThread - Stop : " + DateTime.Now.ToLongTimeString());
+      if (_debugMode) this.LogInfo("PersonalTVGuide: UpdateThread - Stop : " + DateTime.Now.ToLongTimeString());
       _isUpdating = false;
     }
 

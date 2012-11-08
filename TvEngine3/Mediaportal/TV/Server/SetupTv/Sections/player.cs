@@ -54,7 +54,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       TsReader reader = new TsReader();
       _tsReader = (IBaseFilter)reader;
-      Log.Info("TSReaderPlayer:add TsReader to graph");
+      this.LogInfo("TSReaderPlayer:add TsReader to graph");
       _graphBuilder.AddFilter(_tsReader, "TsReader");
 
       #region load file in TsReader
@@ -78,7 +78,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       #region render pin
 
-      Log.Info("TSReaderPlayer:render TsReader outputs");
+      this.LogInfo("TSReaderPlayer:render TsReader outputs");
       IEnumPins enumPins;
       _tsReader.EnumPins(out enumPins);
       IPin[] pins = new IPin[2];

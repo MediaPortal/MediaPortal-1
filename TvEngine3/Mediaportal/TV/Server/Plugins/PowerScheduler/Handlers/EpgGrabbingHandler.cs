@@ -277,7 +277,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
       
       EPGWakeupConfig config = new EPGWakeupConfig((SettingsManagement.GetSetting("EPGWakeupConfig", String.Empty).Value));
 
-      Log.Info("PowerScheduler: EPG schedule {0}:{1} is due: {2}:{3}",
+      this.LogInfo("PowerScheduler: EPG schedule {0}:{1} is due: {2}:{3}",
                config.Hour, config.Minutes, DateTime.Now.Hour, DateTime.Now.Minute);
 
       // start external command

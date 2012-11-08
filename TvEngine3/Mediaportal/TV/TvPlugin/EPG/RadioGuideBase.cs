@@ -584,7 +584,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
             if (!string.IsNullOrEmpty(fileName)) //are we really recording ?
             {
-              Log.Info("RadioGuide: clicked on a currently running recording");
+              this.LogInfo("RadioGuide: clicked on a currently running recording");
               var dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
               if (dlg == null)
               {
@@ -641,7 +641,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
               }
               else
               {
-                Log.Info("EPG: _recordingList was not available");
+                this.LogInfo("EPG: _recordingList was not available");
               }
 
 
