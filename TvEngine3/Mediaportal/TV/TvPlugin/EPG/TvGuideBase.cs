@@ -35,6 +35,7 @@ using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.TvPlugin.Helper;
 
@@ -201,7 +202,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       }
       else
       {
-        Log.Debug("TvGuideBase: SpinControl cntlDay is null!");
+        this.LogDebug("TvGuideBase: SpinControl cntlDay is null!");
       }
 
       var cntlTimeInterval = GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL) as GUISpinControl;
@@ -216,7 +217,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       }
       else
       {
-        Log.Debug("TvGuideBase: SpinControl cntlTimeInterval is null!");
+        this.LogDebug("TvGuideBase: SpinControl cntlTimeInterval is null!");
       }
 
       if (!isPreviousWindowTvGuideRelated)
@@ -396,7 +397,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
               }
               if (_recordingList != null)
               {
-                Log.Debug("TVGuide: Found current program {0} in recording list", _currentTitle);
+                this.LogDebug("TVGuide: Found current program {0} in recording list", _currentTitle);
                 switch (dlg.SelectedId)
                 {
                   case 979: // Play recording from beginning
@@ -441,7 +442,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
               if (TVHome.Navigator.Channel != null && TVHome.Navigator.Channel.Entity.IdChannel == _currentChannel.IdChannel &&
                   g_Player.Playing && g_Player.IsTV)
               {
-                Log.Debug("TVGuide: clicked on a currently running show");
+                this.LogDebug("TVGuide: clicked on a currently running show");
                 var dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
                 if (dlg == null)
                 {
@@ -463,10 +464,10 @@ namespace Mediaportal.TV.TvPlugin.EPG
                 {
                   case 1041:
                     ShowProgramInfo();
-                    Log.Debug("TVGuide: show episodes or repeatings for current show");
+                    this.LogDebug("TVGuide: show episodes or repeatings for current show");
                     break;
                   case 938:
-                    Log.Debug("TVGuide: switch currently running show to fullscreen");
+                    this.LogDebug("TVGuide: switch currently running show to fullscreen");
                     GUIWaitCursor.Show();
                     TVHome.ViewChannelAndCheck(_currentProgram.Entity.Channel, 0);
                     GUIWaitCursor.Hide();
@@ -476,7 +477,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
                     }
                     else
                     {
-                      Log.Debug("TVGuide: no show currently running to switch to fullscreen");
+                      this.LogDebug("TVGuide: no show currently running to switch to fullscreen");
                     }
                     break;
                 }
@@ -648,7 +649,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
         {
           case 1041:
             ShowProgramInfo();
-            Log.Debug("TVGuide: show episodes or repeatings for current show");
+            this.LogDebug("TVGuide: show episodes or repeatings for current show");
             break;
           case 368: // IMDB
             OnGetIMDBInfo();
@@ -663,7 +664,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
           case 938: // view channel
 
-            Log.Debug("viewch channel:{0}", _currentChannel);
+            this.LogDebug("viewch channel:{0}", _currentChannel);
             if (_currentProgram != null) 
             {
               TVHome.ViewChannelAndCheck(_currentProgram.Entity.Channel, 0);

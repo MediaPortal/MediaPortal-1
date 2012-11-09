@@ -45,7 +45,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
       _timer.Interval = 15 * 60 * 1000;
       _timer.Enabled = true;
       _timer.Elapsed += _timer_Elapsed;
-      Log.Debug("DiskManagement: started");
+      this.LogDebug("DiskManagement: started");
     }
 
 

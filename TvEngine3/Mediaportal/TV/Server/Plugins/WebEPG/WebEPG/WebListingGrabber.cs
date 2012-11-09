@@ -247,7 +247,7 @@ namespace WebEPG
       _reqBuilder = new RequestBuilder(_grabber.Listing.Request, reqStartTime, _reqData);
       _grabStart = startDateTime;
 
-      Log.Debug("WebEPG: Grab Start {0} {1}", startDateTime.ToShortTimeString(),
+      this.LogDebug("WebEPG: Grab Start {0} {1}", startDateTime.ToShortTimeString(),
                 startDateTime.ToShortDateString());
       int requestedStartDay = startDateTime.Subtract(DateTime.Now).Days;
       if (requestedStartDay > 0)
@@ -392,12 +392,12 @@ namespace WebEPG
         return null;
       }
 
-      //Log.Debug("WebEPG: Guide, Program title: {0}", guideData.Title);
-      //Log.Debug("WebEPG: Guide, Program start: {0}:{1} - {2}/{3}/{4}", guideData.StartTime.Hour, guideData.StartTime.Minute, guideData.StartTime.Day, guideData.StartTime.Month, guideData.StartTime.Year);
+      //this.LogDebug("WebEPG: Guide, Program title: {0}", guideData.Title);
+      //this.LogDebug("WebEPG: Guide, Program start: {0}:{1} - {2}/{3}/{4}", guideData.StartTime.Hour, guideData.StartTime.Minute, guideData.StartTime.Day, guideData.StartTime.Month, guideData.StartTime.Year);
       //if (guideData.EndTime != null)
-      //  Log.Debug("WebEPG: Guide, Program end  : {0}:{1} - {2}/{3}/{4}", guideData.EndTime.Hour, guideData.EndTime.Minute, guideData.EndTime.Day, guideData.EndTime.Month, guideData.EndTime.Year);
-      //Log.Debug("WebEPG: Guide, Program desc.: {0}", guideData.Description);
-      //Log.Debug("WebEPG: Guide, Program genre: {0}", guideData.Genre);
+      //  this.LogDebug("WebEPG: Guide, Program end  : {0}:{1} - {2}/{3}/{4}", guideData.EndTime.Hour, guideData.EndTime.Minute, guideData.EndTime.Day, guideData.EndTime.Month, guideData.EndTime.Year);
+      //this.LogDebug("WebEPG: Guide, Program desc.: {0}", guideData.Description);
+      //this.LogDebug("WebEPG: Guide, Program genre: {0}", guideData.Genre);
 
       // Adjust Time
       if (guideData.StartTime.Day == 0 || guideData.StartTime.Month == 0 || guideData.StartTime.Year == 0)
@@ -465,7 +465,7 @@ namespace WebEPG
           }
           else
           {
-            Log.Debug("WebEPG: Getting sublinked data sucessful");
+            this.LogDebug("WebEPG: Getting sublinked data sucessful");
           }
         }
       }
@@ -533,7 +533,7 @@ namespace WebEPG
           }
         }
 
-        Log.Debug("WebEPG: Program Count ({0}), Listing Count ({1}), Discard Count ({2})", programCount,
+        this.LogDebug("WebEPG: Program Count ({0}), Listing Count ({1}), Discard Count ({2})", programCount,
                   listingCount, _discarded);
         if (programCount < (listingCount - _discarded))
         {

@@ -275,7 +275,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
     {
       if (_graphBuilder == null)
         return;
-      Log.Debug("analog:Dispose()");
+      this.LogDebug("analog:Dispose()");
 
       FreeAllSubChannels();
       IMediaControl mediaCtl = (_graphBuilder as IMediaControl);
@@ -289,7 +289,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
       base.Dispose();
 
       FilterGraphTools.RemoveAllFilters(_graphBuilder);
-      Log.Debug("analog:All filters removed");
+      this.LogDebug("analog:All filters removed");
       if (_tuner != null)
       {
         _tuner.Dispose();
@@ -331,7 +331,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
       Release.ComObject("Graphbuilder", _graphBuilder);
       _graphBuilder = null;
       _isDeviceInitialised = false;
-      Log.Debug("analog: dispose completed");
+      this.LogDebug("analog: dispose completed");
     }
 
     #endregion
@@ -350,12 +350,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
       }
       _lastSignalUpdate = DateTime.MinValue;
       _tunerLocked = false;
-      Log.Debug("analog: build graph");
+      this.LogDebug("analog: build graph");
       try
       {
         if (_isDeviceInitialised)
         {
-          Log.Debug("analog: Graph already build");
+          this.LogDebug("analog: Graph already build");
           throw new TvException("Graph already build");
         }
         //create a new filter graph
@@ -410,13 +410,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
           this.LogError("analog: unable to add encoding filter");
           throw new TvException("Analog: unable to add capture filter");
         }
-        Log.Debug("analog: Check quality control");
+        this.LogDebug("analog: Check quality control");
         _qualityControl = QualityControlFactory.createQualityControl(_configuration, _encoder.VideoEncoderFilter,
                                                                      _capture.VideoFilter, _encoder.MultiplexerFilter,
                                                                      _encoder.VideoCompressorFilter);
         if (_qualityControl == null)
         {
-          Log.Debug("analog: No quality control support found");
+          this.LogDebug("analog: No quality control support found");
           //If a hauppauge analog card, set bitrate to default
           //As the graph is stopped, we don't need to pass in the deviceID
           //However, if we wish to change quality for a live graph, the deviceID must be passed in
@@ -431,7 +431,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
               int min, max;
               bool vbr;
               _hauppauge.GetVideoBitRate(out min, out max, out vbr);
-              Log.Debug("Hauppauge set video parameters - Max kbps: {0}, Min kbps: {1}, VBR {2}", max, min, vbr);
+              this.LogDebug("Hauppauge set video parameters - Max kbps: {0}, Min kbps: {1}, VBR {2}", max, min, vbr);
               _hauppauge.Dispose();
               _hauppauge = null;
             }
@@ -442,7 +442,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
         {
           throw new TvException("Analog: unable to add mpfilewriter");
         }
-        Log.Debug("analog: Graph is built");
+        this.LogDebug("analog: Graph is built");
         FilterGraphTools.SaveGraphFile(_graphBuilder, "analog.grf");
         ReloadCardConfiguration();
         _isDeviceInitialised = true;
@@ -471,28 +471,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
     /// <returns></returns>
     private bool AddTsFileSink()
     {
-      Log.Debug("analog:AddTsFileSink");
+      this.LogDebug("analog:AddTsFileSink");
       _tsFileSink = (IBaseFilter)new MpFileWriter();
       int hr = _graphBuilder.AddFilter(_tsFileSink, "TsFileSink");
       if (hr != 0)
       {
-        Log.Debug("analog:AddTsFileSink returns:0x{0:X}", hr);
+        this.LogDebug("analog:AddTsFileSink returns:0x{0:X}", hr);
         throw new TvException("Unable to add TsFileSink");
       }
-      Log.Debug("analog:connect muxer->tsfilesink");
+      this.LogDebug("analog:connect muxer->tsfilesink");
       IPin pin = DsFindPin.ByDirection(_encoder.MultiplexerFilter, PinDirection.Output, 0);
       if (!FilterGraphTools.ConnectPin(_graphBuilder, pin, _tsFileSink, 0))
       {
-        Log.Debug("analog:unable to connect muxer->tsfilesink");
+        this.LogDebug("analog:unable to connect muxer->tsfilesink");
         throw new TvException("Unable to connect pins");
       }
       Release.ComObject("mpegmux pinin", pin);
       if (_capture.SupportsTeletext)
       {
-        Log.Debug("analog:connect wst/vbi codec->tsfilesink");
+        this.LogDebug("analog:connect wst/vbi codec->tsfilesink");
         if (!FilterGraphTools.ConnectPin(_graphBuilder, _teletext.WST_VBI_Pin, _tsFileSink, 1))
         {
-          Log.Debug("analog:unable to connect wst/vbi->tsfilesink");
+          this.LogDebug("analog:unable to connect wst/vbi->tsfilesink");
           throw new TvException("Unable to connect pins");
         }
       }

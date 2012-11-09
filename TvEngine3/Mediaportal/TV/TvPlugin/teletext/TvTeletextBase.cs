@@ -26,6 +26,7 @@ using System.Threading;
 using MediaPortal.Common.Utils;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace Mediaportal.TV.TvPlugin.Teletext

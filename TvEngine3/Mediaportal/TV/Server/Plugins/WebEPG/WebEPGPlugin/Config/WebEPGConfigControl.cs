@@ -537,7 +537,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
     private void GetGrabbers(ref TreeNode Main, string Location)
     {
       DirectoryInfo dir = new DirectoryInfo(Location);
-      Log.Debug("WebEPG Config: Directory: {0}", Location);
+      this.LogDebug("WebEPG Config: Directory: {0}", Location);
       GrabberConfigInfo gInfo;
       foreach (FileInfo file in dir.GetFiles("*.xml"))
       {
@@ -546,7 +546,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
         GrabberConfigFile grabberXml;
         try
         {
-          Log.Debug("WebEPG Config: File: {0}", file.Name);
+          this.LogDebug("WebEPG Config: File: {0}", file.Name);
 
           XmlSerializer s = new XmlSerializer(typeof (GrabberConfigFile));
           TextReader r = new StreamReader(file.FullName);

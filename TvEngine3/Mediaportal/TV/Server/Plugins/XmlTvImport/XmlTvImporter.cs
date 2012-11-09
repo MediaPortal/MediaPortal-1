@@ -123,7 +123,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     /// </summary>
     public void Start(IInternalControllerService controllerService)
     {      
-      Log.Debug("plugin: xmltv started");
+      this.LogDebug("plugin: xmltv started");
 
       //System.Diagnostics.Debugger.Launch();      
       RegisterPowerEventHandler();
@@ -141,7 +141,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     /// </summary>
     public void Stop()
     {
-      Log.Debug("plugin: xmltv stopped");
+      this.LogDebug("plugin: xmltv stopped");
 
       UnRegisterPowerEventHandler();
 
@@ -159,7 +159,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       if (GlobalServiceProvider.Instance.IsRegistered<IPowerEventHandler>())
       {
         GlobalServiceProvider.Instance.Get<IPowerEventHandler>().AddPowerEventHandler(new PowerEventHandler(OnPowerEvent));
-        Log.Debug("xmltv: Registered xmltv as PowerEventHandler to tvservice");
+        this.LogDebug("xmltv: Registered xmltv as PowerEventHandler to tvservice");
       }
       else
       {
@@ -174,7 +174,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       {
         GlobalServiceProvider.Instance.Get<IPowerEventHandler>().RemovePowerEventHandler(
           new PowerEventHandler(OnPowerEvent));
-        Log.Debug("xmltv: UnRegistered xmltv as PowerEventHandler to tvservice");
+        this.LogDebug("xmltv: UnRegistered xmltv as PowerEventHandler to tvservice");
       }
       else
       {
@@ -226,7 +226,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         {
           string folder = SettingsManagement.GetSetting("xmlTv", DefaultOutputFolder).Value;
           string URL = SettingsManagement.GetSetting("xmlTvRemoteURL", "").Value;
-          Log.Debug("downloadGuideOnWakeUp");
+          this.LogDebug("downloadGuideOnWakeUp");
           RetrieveRemoteFile(folder, URL);
         }
       }
@@ -836,7 +836,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           if (param._importXML)
           {
             string fileName = folder + @"\tvguide.xml";
-            Log.Debug("plugin:xmltv importing " + fileName);
+            this.LogDebug("plugin:xmltv importing " + fileName);
 
             XMLTVImport import = new XMLTVImport(10); // add 10 msec delay to the background thread
             import.Import(fileName, deleteBeforeImport, false);
@@ -851,7 +851,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           if (param._importLST)
           {
             string fileName = folder + @"\tvguide.lst";
-            Log.Debug("plugin:xmltv importing files in " + fileName);
+            this.LogDebug("plugin:xmltv importing files in " + fileName);
 
             Encoding fileEncoding = Encoding.Default;
             streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
@@ -868,7 +868,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                 tvguideFileName = System.IO.Path.Combine(folder, tvguideFileName);
               }
 
-              Log.Debug(@"plugin:xmltv importing " + tvguideFileName);
+              this.LogDebug(@"plugin:xmltv importing " + tvguideFileName);
 
               XMLTVImport import = new XMLTVImport(10); // add 10 msec dely to the background thread
 
@@ -886,7 +886,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           SettingsManagement.SaveSetting("xmlTvResultChannels", numChannels.ToString());
           SettingsManagement.SaveSetting("xmlTvResultPrograms", numPrograms.ToString());
           SettingsManagement.SaveSetting("xmlTvResultStatus", errors);
-          Log.Debug("Xmltv: imported {0} channels, {1} programs status:{2}", numChannels, numPrograms, errors);
+          this.LogDebug("Xmltv: imported {0} channels, {1} programs status:{2}", numChannels, numPrograms, errors);
         }
         catch (Exception ex)
         {
@@ -899,7 +899,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       }
       finally
       {
-        Log.Debug(@"plugin:xmltv import done");
+        this.LogDebug(@"plugin:xmltv import done");
         if (streamIn != null)
         {
           streamIn.Close();
@@ -930,11 +930,11 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         if (handler != null)
         {
           handler.EPGScheduleDue += new EPGScheduleHandler(EPGScheduleDue);
-          Log.Debug("XmlTvImporter: registered with PowerScheduler EPG handler");
+          this.LogDebug("XmlTvImporter: registered with PowerScheduler EPG handler");
           return;
         }
       }
-      Log.Debug("XmlTvImporter: NOT registered with PowerScheduler EPG handler");
+      this.LogDebug("XmlTvImporter: NOT registered with PowerScheduler EPG handler");
     }
 
 
@@ -942,7 +942,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     {
       if (GlobalServiceProvider.Instance.IsRegistered<IEpgHandler>())
       {
-        Log.Debug("plugin:xmltv: Telling PowerScheduler standby is allowed: {0}, timeout is one hour", allowed);
+        this.LogDebug("plugin:xmltv: Telling PowerScheduler standby is allowed: {0}, timeout is one hour", allowed);
         GlobalServiceProvider.Instance.Get<IEpgHandler>().SetStandbyAllowed(this, allowed, 3600);
       }
     }

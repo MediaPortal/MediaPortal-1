@@ -94,10 +94,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
     /// </summary>
     private void ReadDeviceInfo()
     {
-      Log.Debug("Compro: read device information");
+      this.LogDebug("Compro: read device information");
 
       // MAC address.
-      Log.Debug("Compro: reading MAC address");
+      this.LogDebug("Compro: reading MAC address");
       for (int i = 0; i < MacAddressLength; i++)
       {
         Marshal.WriteByte(_generalBuffer, i, 0);
@@ -110,7 +110,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
       );
       if (hr != 0 || returnedByteCount != MacAddressLength)
       {
-        Log.Debug("Compro: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Compro: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
       else
       {
@@ -119,7 +119,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
         {
           address += String.Format("{0:x2}-", Marshal.ReadByte(_generalBuffer, i));
         }
-        Log.Debug("  MAC address = {0}", address.Substring(0, (returnedByteCount * 3) - 1));
+        this.LogDebug("  MAC address = {0}", address.Substring(0, (returnedByteCount * 3) - 1));
       }
     }
 
@@ -147,23 +147,23 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
     {
-      Log.Debug("Compro: initialising device");
+      this.LogDebug("Compro: initialising device");
 
       if (tunerFilter == null)
       {
-        Log.Debug("Compro: tuner filter is null");
+        this.LogDebug("Compro: tuner filter is null");
         return false;
       }
       if (_isCompro)
       {
-        Log.Debug("Compro: device is already initialised");
+        this.LogDebug("Compro: device is already initialised");
         return true;
       }
 
       _propertySet = tunerFilter as IKsPropertySet;
       if (_propertySet == null)
       {
-        Log.Debug("Compro: tuner filter is not a property set");
+        this.LogDebug("Compro: tuner filter is not a property set");
         return false;
       }
 
@@ -171,11 +171,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
       int hr = _propertySet.QuerySupported(BdaExtensionDiseqcPropertySet, (int)BdaExtensionDiseqcProperty.DiseqcRaw, out support);
       if (hr != 0 || (support & KSPropertySupport.Get) == 0)
       {
-        Log.Debug("Compro: device does not support the Compro property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Compro: device does not support the Compro property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
 
-      Log.Debug("Compro: supported device detected");
+      this.LogDebug("Compro: supported device detected");
       _isCompro = true;
       _generalBuffer = Marshal.AllocCoTaskMem(GeneralBufferSize);
       _commandBuffer = Marshal.AllocCoTaskMem(MaxDiseqcMessageLength);
@@ -194,11 +194,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
     /// <returns><c>true</c> if the power state is set successfully, otherwise <c>false</c></returns>
     public bool SetPowerState(bool powerOn)
     {
-      Log.Debug("Compro: set power state, on = {0}", powerOn);
+      this.LogDebug("Compro: set power state, on = {0}", powerOn);
 
       if (!_isCompro || _propertySet == null)
       {
-        Log.Debug("Compro: device not initialised or interface not supported");
+        this.LogDebug("Compro: device not initialised or interface not supported");
         return false;
       }
 
@@ -206,7 +206,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
       int hr = _propertySet.QuerySupported(BdaExtensionDiseqcPropertySet, (int)BdaExtensionDiseqcProperty.TonePower, out support);
       if (hr != 0 || (support & KSPropertySupport.Set) == 0)
       {
-        Log.Debug("Compro: property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Compro: property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
 
@@ -225,11 +225,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
       );
       if (hr == 0)
       {
-        Log.Debug("Compro: result = success");
+        this.LogDebug("Compro: result = success");
         return true;
       }
 
-      Log.Debug("Compro: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogDebug("Compro: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -245,11 +245,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
     /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
     public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
     {
-      Log.Debug("Compro: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
+      this.LogDebug("Compro: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
 
       if (!_isCompro || _propertySet == null)
       {
-        Log.Debug("Compro: device not initialised or interface not supported");
+        this.LogDebug("Compro: device not initialised or interface not supported");
         return false;
       }
 
@@ -263,7 +263,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
                                     out support);
         if (hr != 0 || (support & KSPropertySupport.Set) == 0)
         {
-          Log.Debug("Compro: DiSEqC basic property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogDebug("Compro: DiSEqC basic property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         }
         else
         {
@@ -282,7 +282,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
           );
           if (hr != 0)
           {
-            Log.Debug("Compro: failed to set tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogDebug("Compro: failed to set tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             success = false;
           }
         }
@@ -292,7 +292,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
                                   out support);
       if (hr != 0 || (support & KSPropertySupport.Set) == 0)
       {
-        Log.Debug("Compro: tone/power property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Compro: tone/power property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
       else
       {
@@ -310,14 +310,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
         );
         if (hr != 0)
         {
-          Log.Debug("Compro: failed to set 22 kHz state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogDebug("Compro: failed to set 22 kHz state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           success = false;
         }
       }
 
       if (success)
       {
-        Log.Debug("Compro: result = success");
+        this.LogDebug("Compro: result = success");
       }
       return success;
     }
@@ -329,21 +329,21 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
     public bool SendCommand(byte[] command)
     {
-      Log.Debug("Compro: send DiSEqC command");
+      this.LogDebug("Compro: send DiSEqC command");
 
       if (!_isCompro || _propertySet == null)
       {
-        Log.Debug("Compro: device not initialised or interface not supported");
+        this.LogDebug("Compro: device not initialised or interface not supported");
         return false;
       }
       if (command == null || command.Length == 0)
       {
-        Log.Debug("Compro: command not supplied");
+        this.LogDebug("Compro: command not supplied");
         return true;
       }
       if (command.Length > MaxDiseqcMessageLength)
       {
-        Log.Debug("Compro: command too long, length = {0}", command.Length);
+        this.LogDebug("Compro: command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -361,11 +361,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
       );
       if (hr == 0)
       {
-        Log.Debug("Compro: result = success");
+        this.LogDebug("Compro: result = success");
         return true;
       }
 
-      Log.Debug("Compro: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogDebug("Compro: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 

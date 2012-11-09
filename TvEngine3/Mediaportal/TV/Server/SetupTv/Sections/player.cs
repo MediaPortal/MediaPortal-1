@@ -48,7 +48,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     public bool Play(string fileName, Form form)
     {
       _form = form;
-      Log.Debug("play:{0}", fileName);
+      this.LogDebug("play:{0}", fileName);
       _graphBuilder = (IFilterGraph2)new FilterGraph();
       _rotEntry = new DsROTEntry(_graphBuilder);
 
@@ -59,18 +59,18 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       #region load file in TsReader
 
-      Log.Debug("load file in Ts");
+      this.LogDebug("load file in Ts");
       IFileSourceFilter interfaceFile = (IFileSourceFilter)_tsReader;
       if (interfaceFile == null)
       {
-        Log.Debug("TSReaderPlayer:Failed to get IFileSourceFilter");
+        this.LogDebug("TSReaderPlayer:Failed to get IFileSourceFilter");
         return false;
       }
       int hr = interfaceFile.Load(fileName, null);
 
       if (hr != 0)
       {
-        Log.Debug("TSReaderPlayer:Failed to load file");
+        this.LogDebug("TSReaderPlayer:Failed to load file");
         return false;
       }
 
@@ -113,10 +113,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                                     form.ClientRectangle.Height);
       }
 
-      Log.Debug("run graph");
+      this.LogDebug("run graph");
       _mediaCtrl = (IMediaControl)_graphBuilder;
       hr = _mediaCtrl.Run();
-      Log.Debug("TSReaderPlayer:running:{0:X}", hr);
+      this.LogDebug("TSReaderPlayer:running:{0:X}", hr);
 
       return true;
     }

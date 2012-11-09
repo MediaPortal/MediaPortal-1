@@ -64,7 +64,7 @@ namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
 
           if (ActiveCiMenuCard != -1 && ServiceManager.Instance.InternalControllerService.CardCollection[ActiveCiMenuCard].DataBaseCard.CamType == 1 && !IsCiMenuInteractive)
           {
-            Log.Debug("AstonCrypt2: unrequested CI menu received, no action done. Menu Title: {0}", _curMenu.Title);
+            this.LogDebug("AstonCrypt2: unrequested CI menu received, no action done. Menu Title: {0}", _curMenu.Title);
             return;
           }
 
@@ -78,7 +78,7 @@ namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
             return;
           }
           
-          Log.Debug("CI menu received but no listeners available");
+          this.LogDebug("CI menu received but no listeners available");
         }
       }
     }
@@ -115,7 +115,7 @@ namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
     {
       if (_curMenu == null)
       {
-        Log.Debug("Error in OnCiMenuChoice: menu choice sent before menu started");
+        this.LogDebug("Error in OnCiMenuChoice: menu choice sent before menu started");
         return 0;
       }
       _curMenu.AddEntry(nChoice + 1, lpszText); // choices for display +1 

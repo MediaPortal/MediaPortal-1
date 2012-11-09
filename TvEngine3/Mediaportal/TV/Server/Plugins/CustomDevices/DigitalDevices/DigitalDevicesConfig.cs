@@ -54,7 +54,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
     public DigitalDevicesConfig(string name)
       : base("Digital Devices CI")
     {
-      Log.Debug("Digital Devices config: constructing");
+      this.LogDebug("Digital Devices config: constructing");
 
       // Get the details for the slots we've seen in the past.
       Dictionary<String, DigitalDevicesCiSlot> dbSlots = DigitalDevicesCiSlots.GetDatabaseSettings();
@@ -70,22 +70,22 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
         {
           continue;
         }
-        Log.Debug("Digital Devices config: device {0} ({1})...", device.Name, device.DevicePath);
+        this.LogDebug("Digital Devices config: device {0} ({1})...", device.Name, device.DevicePath);
         DigitalDevicesCiSlot slot = new DigitalDevicesCiSlot(device.DevicePath);
         if (dbSlots.ContainsKey(device.DevicePath))
         {
-          Log.Debug("  found existing configuration");
+          this.LogDebug("  found existing configuration");
           slot = dbSlots[device.DevicePath];
         }
         else
         {
-          Log.Debug("  new configuration");
+          this.LogDebug("  new configuration");
         }
         slot.DeviceName = device.Name;
-        Log.Debug("  decrypt limit  = {0}", slot.DecryptLimit);
+        this.LogDebug("  decrypt limit  = {0}", slot.DecryptLimit);
         String[] providerList = new String[slot.Providers.Count];
         slot.Providers.CopyTo(providerList);
-        Log.Debug("  provider list  = {0}", String.Join(", ", providerList));
+        this.LogDebug("  provider list  = {0}", String.Join(", ", providerList));
 
         // If possible, read the root menu title for the CAM in the slot.
         object obj = null;
@@ -109,7 +109,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
           ciFilter = null;
           obj = null;
         }
-        Log.Debug("  CAM name/title = {0}", slot.CamRootMenuTitle);
+        this.LogDebug("  CAM name/title = {0}", slot.CamRootMenuTitle);
 
         _ciSlots.Add(slot);
       }
@@ -125,31 +125,31 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 
       // Now that we have the details, we can build the user interface.
       InitializeComponent();
-      Log.Debug("Digital Devices config: constructed, slot count = {0}", _ciSlots.Count);
+      this.LogDebug("Digital Devices config: constructed, slot count = {0}", _ciSlots.Count);
     }
 
     public override void SaveSettings()
     {
-      Log.Debug("Digital Devices config: saving settings, slot count = {0}", _ciSlots.Count);
+      this.LogDebug("Digital Devices config: saving settings, slot count = {0}", _ciSlots.Count);
       
       byte i = 0;
       foreach (DigitalDevicesCiSlot slot in _ciSlots)
       {
-        Log.Debug("Digital Devices config: slot {0}...", slot.CamRootMenuTitle);
+        this.LogDebug("Digital Devices config: slot {0}...", slot.CamRootMenuTitle);
         _settingServiceAgent.SaveSetting("digitalDevicesCiDeviceName" + i, slot.DeviceName);
         // Persist the slot related settings. The other struct properties are dynamic.
-        Log.Debug("  device name   = {0}", slot.DeviceName);
+        this.LogDebug("  device name   = {0}", slot.DeviceName);
 
         _settingServiceAgent.SaveSetting("digitalDevicesCiDevicePath" + i, slot.DevicePath);
-        Log.Debug("  device path   = {0}", slot.DevicePath);
+        this.LogDebug("  device path   = {0}", slot.DevicePath);
 
         string decryptLimitValue = _decryptLimits[i].Value.ToString();
         _settingServiceAgent.SaveSetting("digitalDevicesCiDecryptLimit" + i, decryptLimitValue);
-        Log.Debug("  decrypt limit = {0}", decryptLimitValue);
+        this.LogDebug("  decrypt limit = {0}", decryptLimitValue);
 
         string digitalDevicesCiProviderList = String.Join("|", Regex.Split(_providerLists[i].Text.Trim(), @"\s*,\s*"));
         _settingServiceAgent.SaveSetting("digitalDevicesCiProviderList" + i, digitalDevicesCiProviderList);
-        Log.Debug("  provider list = {0}", digitalDevicesCiProviderList);
+        this.LogDebug("  provider list = {0}", digitalDevicesCiProviderList);
 
         i++;
       }
@@ -162,7 +162,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 
     public override void OnSectionActivated()
     {
-      Log.Debug("Digital Devices config: activated");
+      this.LogDebug("Digital Devices config: activated");
 
       // On first load in the constructor we merge details from the database with details for the
       // currently installed and registered CI slots, then construct the UI. The UI remains static
@@ -181,16 +181,16 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       }
 
       int i = 0;
-      Log.Debug("Digital Devices config: slot count = {0}", _ciSlots.Count);
+      this.LogDebug("Digital Devices config: slot count = {0}", _ciSlots.Count);
       foreach (DigitalDevicesCiSlot slot in _ciSlots)
       {
-        Log.Debug("Digital Devices config: slot {0}...", slot.CamRootMenuTitle);
+        this.LogDebug("Digital Devices config: slot {0}...", slot.CamRootMenuTitle);
         _decryptLimits[i].Value = slot.DecryptLimit;
-        Log.Debug("  decrypt limit = {0}", slot.DecryptLimit);
+        this.LogDebug("  decrypt limit = {0}", slot.DecryptLimit);
         String[] providers = new String[slot.Providers.Count];
         slot.Providers.CopyTo(providers);
         _providerLists[i].Text = String.Join(", ", providers);
-        Log.Debug("  provider list = {0}", String.Join("|", providers));
+        this.LogDebug("  provider list = {0}", String.Join("|", providers));
         i++;
       }
       base.OnSectionActivated();
@@ -199,7 +199,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 
     public override void OnSectionDeActivated()
     {
-      Log.Debug("Digital Devices config: deactivated");
+      this.LogDebug("Digital Devices config: deactivated");
       SaveSettings();
       base.OnSectionDeActivated();
     }

@@ -38,6 +38,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
@@ -113,7 +114,7 @@ namespace Mediaportal.TV.TvPlugin
     {
       // Load all groups
       //ServiceProvider services = GlobalServiceProvider.Instance;
-      Log.Debug("ChannelNavigator: ctor()");
+      this.LogDebug("ChannelNavigator: ctor()");
 
       ReLoad();
     }
@@ -501,7 +502,7 @@ namespace Mediaportal.TV.TvPlugin
     /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
     public void ZapToChannel(Channel channel, bool useZapDelay)
     {
-      Log.Debug("ChannelNavigator.ZapToChannel {0} - zapdelay {1}", channel.DisplayName, useZapDelay);
+      this.LogDebug("ChannelNavigator.ZapToChannel {0} - zapdelay {1}", channel.DisplayName, useZapDelay);
       TVHome.UserChannelChanged = true;
       m_zapchannel = new ChannelBLL(channel) {CurrentGroup = null};
 
@@ -526,7 +527,7 @@ namespace Mediaportal.TV.TvPlugin
       IList<GroupMap> channels = CurrentGroup.GroupMaps;
       if (channelNr >= 0)
       {
-        Log.Debug("_channels.Count {0}", channels.Count);
+        this.LogDebug("_channels.Count {0}", channels.Count);
 
         bool found = false;
         int iCounter = 0;
@@ -535,16 +536,16 @@ namespace Mediaportal.TV.TvPlugin
         {
           chan = ((GroupMap)channels[iCounter]).Channel;
 
-          Log.Debug("chan {0}", chan.DisplayName);
+          this.LogDebug("chan {0}", chan.DisplayName);
           if (chan.VisibleInGuide)
           {
             foreach (TuningDetail detail in chan.TuningDetails)
             {
-              Log.Debug("detail nr {0} id{1}", detail.ChannelNumber, detail.IdChannel);
+              this.LogDebug("detail nr {0} id{1}", detail.ChannelNumber, detail.IdChannel);
 
               if (detail.ChannelNumber == channelNr)
               {
-                Log.Debug("find channel: iCounter {0}, detail.channelNumber {1}, detail.name {2}, _channels.Count {3}",
+                this.LogDebug("find channel: iCounter {0}, detail.channelNumber {1}, detail.name {2}, _channels.Count {3}",
                           iCounter, detail.ChannelNumber, detail.Name, channels.Count);
                 found = true;
                 ZapToChannel(iCounter + 1, useZapDelay);

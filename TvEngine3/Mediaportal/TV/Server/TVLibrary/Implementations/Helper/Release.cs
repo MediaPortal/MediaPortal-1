@@ -40,7 +40,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         if (hr != 0)
         {
           //StackTrace st = new StackTrace(true);
-          //Log.Log.Debug("  Release {0} returns {1}", o, hr);
+          //Log.this.LogDebug("  Release {0} returns {1}", o, hr);
         }
       }
       return hr;
@@ -56,7 +56,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       if (o != null)
       {
         DsUtils.ReleaseComObject(o);
-        //Log.Log.Debug("  Release {0} returns {1}", line, hr);
+        //Log.this.LogDebug("  Release {0} returns {1}", line, hr);
       }
     }
     /// <summary>

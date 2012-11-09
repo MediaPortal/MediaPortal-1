@@ -33,6 +33,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Logging
     {
       Log.Info(caller.GetType(), message, args);      
     }
+
+    public static void LogWarn(this object caller, string message, params object[] args)
+    {
+      Log.Warn(caller.GetType(), message, args);
+    }
+
+    public static void LogCritical(this object caller, string message, params object[] args)
+    {
+      Log.Critical(caller.GetType(), message, args);
+    }    
+
     public static void LogError(this object caller, string message, params object[] args)
     {
       Log.Error(caller.GetType(), message, args);

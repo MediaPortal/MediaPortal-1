@@ -200,7 +200,7 @@ namespace WebEPG
         {
           if (channel.grabber != null)
           {
-            Log.Debug(" Loading Channel {0} ID: {1}", channel.displayName, channel.id);
+            this.LogDebug(" Loading Channel {0} ID: {1}", channel.displayName, channel.id);
             //xmltv.WriteChannel(channel.id, channel.displayName);
             _epgDataSink.WriteChannel(channel.id, channel.displayName);
 
@@ -230,7 +230,7 @@ namespace WebEPG
         }
         else
         {
-          Log.Debug(" Loading Merged Channel {0}", channel.displayName);
+          this.LogDebug(" Loading Merged Channel {0}", channel.displayName);
           //xmltv.WriteChannel("[Merged]", channel.displayName);
           _epgDataSink.WriteChannel("[Merged]", channel.displayName);
 
@@ -245,7 +245,7 @@ namespace WebEPG
               grab.merged = true;
               grab.linked = true;
               grab.linkTime = new TimeRange(merged.start, merged.end);
-              Log.Debug("  Loading Merged Sub-channel: {0} Time range: {1}", merged.id,
+              this.LogDebug("  Loading Merged Sub-channel: {0} Time range: {1}", merged.id,
                         grab.linkTime.ToString());
 
               if (!_grabList.ContainsKey(merged.id))

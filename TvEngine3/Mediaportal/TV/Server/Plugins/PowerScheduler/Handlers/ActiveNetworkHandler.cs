@@ -160,13 +160,13 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
             setting.Set<bool>(enabled);
             if (enabled) // Start
             {
-              Log.Debug("NetworkMonitorHandler: networkMonitor started");
+              this.LogDebug("NetworkMonitorHandler: networkMonitor started");
               Thread netmonThr = new Thread(new ThreadStart(StartNetworkMonitor));
               netmonThr.Start();
             }
             else // Stop
             {
-              Log.Debug("NetworkMonitorHandler: networkMonitor stopped");
+              this.LogDebug("NetworkMonitorHandler: networkMonitor stopped");
               StopNetworkMonitor();
             }
           }
@@ -174,7 +174,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
           if (enabled) // Get minimum transferrate considered as network activity
           {
             idleLimit = Int32.Parse(SettingsManagement.GetSetting("NetworkMonitorIdleLimit", "2").Value);
-            Log.Debug("NetworkMonitorHandler: idle limit in KB/s: {0}", idleLimit);
+            this.LogDebug("NetworkMonitorHandler: idle limit in KB/s: {0}", idleLimit);
           }
 
           break;
@@ -240,9 +240,9 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
         foreach (NetworkAdapter adapter in monitoredAdapters)
           if ((adapter.ulSpeedPeak >= idleLimit) || (adapter.dlSpeedPeak >= idleLimit))
           {
-            Log.Debug("NetworkMonitorHandler: standby prevented: {0}", adapter.name);
-            Log.Debug("NetworkMonitorHandler: ulSpeed: {0}", adapter.ulSpeedPeak);
-            Log.Debug("NetworkMonitorHandler: dlSpeed: {0}", adapter.dlSpeedPeak);
+            this.LogDebug("NetworkMonitorHandler: standby prevented: {0}", adapter.name);
+            this.LogDebug("NetworkMonitorHandler: ulSpeed: {0}", adapter.ulSpeedPeak);
+            this.LogDebug("NetworkMonitorHandler: dlSpeed: {0}", adapter.dlSpeedPeak);
 
             adapter.ulSpeedPeak = 0; // Clear peak values
             adapter.dlSpeedPeak = 0;

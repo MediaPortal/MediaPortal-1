@@ -26,6 +26,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Logging
       GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Info(message, args);
     }
 
+    public static void Critical(Type callerType, string message, params object[] args)
+    {
+      GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Critical(callerType, message, args);
+    }
+
+    public static void Critical(string message, params object[] args)
+    {
+      GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Critical(message, args);
+    }
+
+    public static void Warn(Type callerType, string message, params object[] args)
+    {
+      GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Warn(callerType, message, args);
+    }
+
+    public static void Warn(string message, params object[] args)
+    {
+      GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Warn(message, args);
+    }
+
     public static void Error(Type callerType, string message, params object[] args)
     {
       GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Error(callerType, message, args);

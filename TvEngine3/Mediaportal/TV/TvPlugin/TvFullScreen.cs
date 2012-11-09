@@ -41,6 +41,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using MediaPortal.Player.PostProcessing;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 using Mediaportal.TV.TvPlugin.Helper;
@@ -190,7 +191,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public TvFullScreen()
     {
-      Log.Debug("TvFullScreen:ctor");
+      this.LogDebug("TvFullScreen:ctor");
       GetID = (int)Window.WINDOW_TVFULLSCREEN;
     }
 
@@ -232,7 +233,7 @@ namespace Mediaportal.TV.TvPlugin
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(g_Player_PlayBackStopped);
       g_Player.PlayBackChanged += new g_Player.ChangedHandler(g_Player_PlayBackChanged);
 
-      Log.Debug("TvFullScreen:Init");
+      this.LogDebug("TvFullScreen:Init");
       return true;
     }
 
@@ -533,7 +534,7 @@ namespace Mediaportal.TV.TvPlugin
           //case Action.ActionType.ACTION_SHOW_MSN_OSD:
           //  if (_isMsnChatPopup)
           //  {
-          //    Log.Debug("MSN CHAT:ON");
+          //    this.LogDebug("MSN CHAT:ON");
 
           //    _msnWindowVisible = true;
           //    GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
@@ -546,7 +547,7 @@ namespace Mediaportal.TV.TvPlugin
 
         case Action.ActionType.ACTION_AUTOCROP:
           {
-            Log.Debug("ACTION_AUTOCROP");
+            this.LogDebug("ACTION_AUTOCROP");
             _statusVisible = true;
             _statusTimeOutTimer = DateTime.Now;
 
@@ -572,7 +573,7 @@ namespace Mediaportal.TV.TvPlugin
 
         case Action.ActionType.ACTION_TOGGLE_AUTOCROP:
           {
-            Log.Debug("ACTION_TOGGLE_AUTOCROP");
+            this.LogDebug("ACTION_TOGGLE_AUTOCROP");
             _statusVisible = true;
             _statusTimeOutTimer = DateTime.Now;
             IAutoCrop cropper = GUIGraphicsContext.autoCropper;
@@ -702,7 +703,7 @@ namespace Mediaportal.TV.TvPlugin
 
         case Action.ActionType.ACTION_PREVIOUS_MENU:
         case Action.ActionType.ACTION_SHOW_GUI:
-          Log.Debug("fullscreentv:show gui");
+          this.LogDebug("fullscreentv:show gui");
           //if(_vmr9OSD!=null)
           //	_vmr9OSD.HideBitmap();
           GUIWindowManager.ShowPreviousWindow();
@@ -710,7 +711,7 @@ namespace Mediaportal.TV.TvPlugin
 
         case Action.ActionType.ACTION_SHOW_OSD: // Show the OSD
           {
-            Log.Debug("OSD:ON");
+            this.LogDebug("OSD:ON");
             ShowMainOSD();
           }
           break;
@@ -884,7 +885,7 @@ namespace Mediaportal.TV.TvPlugin
                 newIndex = 0;
               }
 
-              Log.Debug("Switching from audio stream {0} to {1}", oldIndex, newIndex);
+              this.LogDebug("Switching from audio stream {0} to {1}", oldIndex, newIndex);
 
               // Show OSD Label
               _statusVisible = true;
@@ -895,7 +896,7 @@ namespace Mediaportal.TV.TvPlugin
               msg.Label = string.Format("{0}:{1} ({2}/{3})", g_Player.AudioType(newIndex),
                                         g_Player.AudioLanguage(newIndex), newIndex + 1, g_Player.AudioStreams);
 
-              Log.Debug(msg.Label);
+              this.LogDebug(msg.Label);
               OnMessage(msg);
             }
           }
@@ -908,7 +909,7 @@ namespace Mediaportal.TV.TvPlugin
           }
           if (g_Player.IsTimeShifting)
           {
-            Log.Debug("TVFullscreen: user request to stop");
+            this.LogDebug("TVFullscreen: user request to stop");
 
 
             //bool canUserParkTimeShifting = ServiceAgents.Instance.ControllerServiceAgent.CanUserParkTimeshifting(TVHome.Card.User);
@@ -926,14 +927,14 @@ namespace Mediaportal.TV.TvPlugin
                 dlgPlayStopPark.DoModal(GetID);
                 if (dlgPlayStopPark.IsParkConfirmed)
                 {
-                  Log.Debug("TVFullscreen: IsParkConfirmed");
+                  this.LogDebug("TVFullscreen: IsParkConfirmed");
                   var userCopy = TVHome.Card.User.Clone() as IUser;
                   ServiceAgents.Instance.ControllerServiceAgent.ParkTimeShifting(userCopy.Name, g_Player.CurrentPosition, TVHome.Card.IdChannel, out userCopy);                 
                   g_Player.Stop();                              
                 }
                 else if (dlgPlayStopPark.IsStopConfirmed)
                 {
-                  Log.Debug("TVFullscreen: stop confirmed");
+                  this.LogDebug("TVFullscreen: stop confirmed");
                   g_Player.Stop();
                 }
               } 
@@ -951,7 +952,7 @@ namespace Mediaportal.TV.TvPlugin
                 dlgPlayStop.DoModal(GetID);
                 if (dlgPlayStop.IsStopConfirmed)
                 {
-                  Log.Debug("TVFullscreen: stop confirmed");
+                  this.LogDebug("TVFullscreen: stop confirmed");
                   g_Player.Stop();
                 }
               } 
@@ -1231,7 +1232,7 @@ namespace Mediaportal.TV.TvPlugin
         _notifyDialogVisible = true;
         dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
         _notifyDialogVisible = false;
-        Log.Debug("Notify Message:" + channel + ", " + message.Label);
+        this.LogDebug("Notify Message:" + channel + ", " + message.Label);
         return true;
       }
 
@@ -1352,7 +1353,7 @@ namespace Mediaportal.TV.TvPlugin
 
           //  if (!_msnWindowVisible && _isMsnChatPopup)
           //  {
-          //    Log.Debug("MSN CHAT:ON");
+          //    this.LogDebug("MSN CHAT:ON");
           //    _msnWindowVisible = true;
           //    GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
           //    ///@
@@ -1369,7 +1370,7 @@ namespace Mediaportal.TV.TvPlugin
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
             lock (this) {
-              Log.Debug("TvFullScreen:deinit->OSD:Off");
+              this.LogDebug("TvFullScreen:deinit->OSD:Off");
               HideMainOSD();
 
               _isOsdVisible = false;
@@ -1427,8 +1428,8 @@ namespace Mediaportal.TV.TvPlugin
             _lastPause = g_Player.Paused;
             _lastSpeed = g_Player.Speed;
 
-            Log.Debug("TvFullScreen:init->OSD:Off");
-            Log.Debug("TvFullScreen: init, playing {0}, player.CurrentFile {1}, TVHome.Card.TimeShiftFileName {2}",
+            this.LogDebug("TvFullScreen:init->OSD:Off");
+            this.LogDebug("TvFullScreen: init, playing {0}, player.CurrentFile {1}, TVHome.Card.TimeShiftFileName {2}",
                       g_Player.Playing, g_Player.CurrentFile, TVHome.Card.TimeShiftFileName);
 
             _isOsdVisible = false;
@@ -1627,7 +1628,7 @@ namespace Mediaportal.TV.TvPlugin
       dlg.DoModal(GetID);
       _isDialogVisible = false;
 
-      Log.Debug("selected id:{0}", dlg.SelectedId);
+      this.LogDebug("selected id:{0}", dlg.SelectedId);
       if (dlg.SelectedId == -1)
       {
         return;
@@ -2073,7 +2074,7 @@ namespace Mediaportal.TV.TvPlugin
       int streamCurrent = g_Player.CurrentAudioStream;
       nrOfstreams = g_Player.AudioStreams;
 
-      Log.Debug("TvFullScreen: ShowAudioLanguageMenu - got {0} audio streams", nrOfstreams);
+      this.LogDebug("TvFullScreen: ShowAudioLanguageMenu - got {0} audio streams", nrOfstreams);
 
       if (nrOfstreams >= streamCurrent)
       {
@@ -2367,7 +2368,7 @@ namespace Mediaportal.TV.TvPlugin
 
       if (!g_Player.Playing && !TVHome.DoingChannelChange())
       {
-          Log.Debug("Tvfullscreen:not viewing anymore");
+          this.LogDebug("Tvfullscreen:not viewing anymore");
           GUIWindowManager.ShowPreviousWindow();
       }
       else
@@ -2655,15 +2656,15 @@ namespace Mediaportal.TV.TvPlugin
       {
         TVHome.Navigator.CheckChannelChange();
       }
-      //Log.Debug("osd visible:{0} timeoutvalue:{1}", _zapOsdVisible ,_zapTimeOutValue);
+      //this.LogDebug("osd visible:{0} timeoutvalue:{1}", _zapOsdVisible ,_zapTimeOutValue);
       if (_zapOsdVisible && _zapTimeOutValue > 0)
       {
         TimeSpan ts = DateTime.Now - _zapTimeOutTimer;
-        //Log.Debug("timeout :{0}", ts.TotalMilliseconds);
+        //this.LogDebug("timeout :{0}", ts.TotalMilliseconds);
         if (ts.TotalMilliseconds > _zapTimeOutValue)
         {
           //yes, then remove osd offscreen
-          Log.Debug("ZAP OSD:Off timeout");
+          this.LogDebug("ZAP OSD:Off timeout");
           HideZapOSD();
         }
       }
@@ -2750,7 +2751,7 @@ namespace Mediaportal.TV.TvPlugin
       //                                 null);
       //_osdWindow.OnMessage(msg2); // Send a de-init msg to the OSD
       //msg2 = null;
-      Log.Debug("timeout->OSD:Off");
+      this.LogDebug("timeout->OSD:Off");
       //_isOsdVisible = false;
       //GUIWindowManager.IsOsdVisible = false;
       HideMainOSD();
@@ -2778,7 +2779,7 @@ namespace Mediaportal.TV.TvPlugin
       {
         return;
       }
-      Log.Debug("UpdateOSD()");
+      this.LogDebug("UpdateOSD()");
       if (!_zapOsdVisible && !g_Player.IsTVRecording)
       {
         GUIWindowManager.IsPauseOsdVisible = false;
@@ -2808,7 +2809,7 @@ namespace Mediaportal.TV.TvPlugin
           _zapWindow.LastError = errorInfo;
         }
         _zapWindow.OnMessage(msg);
-        Log.Debug("ZAP OSD:ON");
+        this.LogDebug("ZAP OSD:ON");
         _zapTimeOutTimer = DateTime.Now;
         _zapOsdVisible = true;
         // now even if main OSD is visible it won't be rendered
@@ -3078,7 +3079,7 @@ namespace Mediaportal.TV.TvPlugin
         return;
       }
 
-      Log.Debug("ChangeChannelNr()");
+      this.LogDebug("ChangeChannelNr()");
       if (_byIndex == true)
       {
         TVHome.Navigator.ZapToChannel(channelNr, useZapDelay);
@@ -3097,7 +3098,7 @@ namespace Mediaportal.TV.TvPlugin
       {
         return;
       }
-      Log.Debug("ZapPreviousChannel()");
+      this.LogDebug("ZapPreviousChannel()");
       TVHome.Navigator.ZapToPreviousChannel(true);
       UpdateOSD();
       ///@
@@ -3114,7 +3115,7 @@ namespace Mediaportal.TV.TvPlugin
         return;
       }
 
-      Log.Debug("ZapNextChannel()");
+      this.LogDebug("ZapNextChannel()");
       TVHome.Navigator.ZapToNextChannel(true);
       UpdateOSD();
       ///@
@@ -3131,7 +3132,7 @@ namespace Mediaportal.TV.TvPlugin
         return;
       }
 
-      Log.Debug("TVFullscreen: Start autozap mode");
+      this.LogDebug("TVFullscreen: Start autozap mode");
       _autoZapMode = true;
       _autoZapTimer.Elapsed += new ElapsedEventHandler(_autoZapTimer_Elapsed);
       using (Settings xmlreader = new MPSettings())
@@ -3156,7 +3157,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public void StopAutoZap()
     {
-      Log.Debug("Stop zap mode");
+      this.LogDebug("Stop zap mode");
       _autoZapTimer.Elapsed -= new ElapsedEventHandler(_autoZapTimer_Elapsed);
       _autoZapMode = false;
     }

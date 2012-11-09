@@ -2,6 +2,7 @@ using MediaPortal.Common.Utils;
 using MediaPortal.GUI.Library;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.TvPlugin.EventHandlers
 {
@@ -20,7 +21,7 @@ namespace Mediaportal.TV.TvPlugin.EventHandlers
     {
       try
       {
-        Log.Debug("Callback from tvserver {0}", menu.Title);
+        this.LogDebug("Callback from tvserver {0}", menu.Title);
 
         // pass menu to calling dialog
         TvPlugin.TVHome.ProcessCiMenu(menu);

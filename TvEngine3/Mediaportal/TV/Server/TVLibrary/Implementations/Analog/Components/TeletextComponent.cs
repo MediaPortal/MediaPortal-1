@@ -104,7 +104,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
     /// <returns>true, if the building was successful; false otherwise</returns>
     public bool CreateFilterInstance(Graph graph, IFilterGraph2 graphBuilder, Capture capture)
     {
-      Log.Debug("analog: SetupTeletext()");
+      this.LogDebug("analog: SetupTeletext()");
       Guid guidBaseFilter = typeof(IBaseFilter).GUID;
       object obj;
       //find and add tee/sink to sink filter
@@ -132,7 +132,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       }
       if (!string.IsNullOrEmpty(graph.Teletext.Name))
       {
-        Log.Debug("analog: Using Teletext-Component configuration from stored graph");
+        this.LogDebug("analog: Using Teletext-Component configuration from stored graph");
         devices = DsDevice.GetDevicesOfCat(graph.Teletext.Category);
         foreach (DsDevice device in devices)
         {
@@ -156,7 +156,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       }
       if (_filterWstDecoder == null)
       {
-        Log.Debug("analog: No stored or invalid graph for Teletext component - Trying to detect");
+        this.LogDebug("analog: No stored or invalid graph for Teletext component - Trying to detect");
 
         //find the WST codec filter
         devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSVBICodec);
@@ -239,11 +239,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         return false;
       }
       //done
-      Log.Debug("analog: teletext setup");
+      this.LogDebug("analog: teletext setup");
 
       if (_filterWstDecoder != null)
       {
-        Log.Debug("analog:connect wst/vbi codec->tsfilesink");
+        this.LogDebug("analog:connect wst/vbi codec->tsfilesink");
         _pinWST_VBI = DsFindPin.ByDirection(_filterWstDecoder, PinDirection.Output, 0);
       }
 

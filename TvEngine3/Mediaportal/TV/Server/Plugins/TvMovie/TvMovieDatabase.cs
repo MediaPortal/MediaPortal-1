@@ -380,7 +380,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
           }
           else
           {
-            Log.Debug("TVMovie: Last update was at {0} - new import scheduled", Convert.ToString(lastUpdated));
+            this.LogDebug("TVMovie: Last update was at {0} - new import scheduled", Convert.ToString(lastUpdated));
             return true;
           }
         }
@@ -408,7 +408,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       }
 
       DateTime ImportStartTime = DateTime.Now;
-      Log.Debug("TVMovie: Importing database");
+      this.LogDebug("TVMovie: Importing database");
       int maximum = 0;
 
       foreach (TVMChannel tvmChan in _tvmEpgChannels)
@@ -419,13 +419,13 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
             break;
           }
 
-      Log.Debug("TVMovie: Calculating stations done");
+      this.LogDebug("TVMovie: Calculating stations done");
 
       // setting update time of epg import to avoid that the background thread triggers another import
       // if the process lasts longer than the timer's update check interval
       SettingsManagement.SaveSetting("TvMovieLastUpdate", DateTime.Now.ToString());
 
-      Log.Debug("TVMovie: Mapped {0} stations for EPG import", Convert.ToString(maximum));
+      this.LogDebug("TVMovie: Mapped {0} stations for EPG import", Convert.ToString(maximum));
       int counter = 0;
 
       _tvmEpgProgs.Clear();
@@ -483,10 +483,10 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         }
       }
 
-      Log.Debug("TVMovie: Waiting for database to be updated...");
+      this.LogDebug("TVMovie: Waiting for database to be updated...");
       //ProgramManagement.WaitForInsertPrograms
       TvBLayer.WaitForInsertPrograms();
-      Log.Debug("TVMovie: Database update finished.");
+      this.LogDebug("TVMovie: Database update finished.");
 
 
       if (OnStationsChanged != null)
@@ -499,7 +499,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
           SettingsManagement.SaveSetting("TvMovieLastUpdate", DateTime.Now.ToString());                    
 
           TimeSpan ImportDuration = (DateTime.Now - ImportStartTime);
-          Log.Debug("TVMovie: Imported {0} database entries for {1} stations in {2} seconds", _programsCounter, counter,
+          this.LogDebug("TVMovie: Imported {0} database entries for {1} stations in {2} seconds", _programsCounter, counter,
                     Convert.ToString(ImportDuration.TotalSeconds));
         }
         catch (Exception)

@@ -93,7 +93,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       }
 
       string traceString = _objectContext.ToTraceString();
-      Log.Debug("EF SaveChanges SQL = {0}", traceString);
+      this.LogDebug("EF SaveChanges SQL = {0}", traceString);
 
       _objectContext.SaveChanges();
     }

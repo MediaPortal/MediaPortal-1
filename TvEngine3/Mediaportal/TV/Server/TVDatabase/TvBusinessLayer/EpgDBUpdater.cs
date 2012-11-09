@@ -128,7 +128,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         return;
       }
-      Log.Debug("{0}: {1} lastUpdate:{2}", _grabberName, dbChannel.DisplayName, dbChannel.LastGrabTime);
+      this.LogDebug("{0}: {1} lastUpdate:{2}", _grabberName, dbChannel.DisplayName, dbChannel.LastGrabTime);
 
       // Store the data in our database
       ImportPrograms(dbChannel, epgChannel.Programs);
@@ -146,7 +146,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       EpgHoleCollection holes = new EpgHoleCollection();
       if ((dbChannel.EpgHasGaps || _alwaysFillHoles) && !_alwaysReplace)
       {
-          Log.Debug("{0}: {1} is marked to have epg gaps. Calculating them...", _grabberName, dbChannel.DisplayName);
+          this.LogDebug("{0}: {1} is marked to have epg gaps. Calculating them...", _grabberName, dbChannel.DisplayName);
 
         IList<Program> infos = ProgramManagement.GetPrograms(dbChannel.IdChannel, DateTime.Now);
         if (infos.Count > 1)
@@ -162,7 +162,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
             }
           }
         }
-        Log.Debug("{0}: {1} Found {2} epg holes.", _grabberName, dbChannel.DisplayName, holes.Count);
+        this.LogDebug("{0}: {1} Found {2} epg holes.", _grabberName, dbChannel.DisplayName, holes.Count);
       }
       DateTime dbLastProgram = ProgramManagement.GetNewestProgramForChannel(dbChannel.IdChannel);
       EpgProgram lastProgram = null;
@@ -192,7 +192,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
           {
             continue;
           }
-          Log.Debug("{0}: Great we stuffed an epg hole {1}-{2} :-)", _grabberName,
+          this.LogDebug("{0}: Great we stuffed an epg hole {1}-{2} :-)", _grabberName,
                   epgProgram.StartTime.ToShortDateString() + " " + epgProgram.StartTime.ToShortTimeString(),
                   epgProgram.EndTime.ToShortDateString() + " " + epgProgram.EndTime.ToShortTimeString());
         }
@@ -208,7 +208,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
               prog = epgs[0];
               if (epgs.Count > 1)
               {
-                Log.Debug("- {0} entries are obsolete for {1} from {2} to {3}", epgs.Count - 1, dbChannel.DisplayName,
+                this.LogDebug("- {0} entries are obsolete for {1} from {2} to {3}", epgs.Count - 1, dbChannel.DisplayName,
                         epgProgram.StartTime, epgProgram.EndTime);
               }
               for (int idx = 1; idx < epgs.Count; idx++)
@@ -216,7 +216,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
                 try
                 {                  
                   ProgramManagement.DeleteProgram(epgs[idx].IdProgram);
-                  Log.Debug("- Deleted the epg entry {0} ({1} - {2})", epgs[idx].Title, epgs[idx].StartTime,
+                  this.LogDebug("- Deleted the epg entry {0} ({1} - {2})", epgs[idx].Title, epgs[idx].StartTime,
                           epgs[idx].EndTime);
                 }
                 catch (Exception ex)
@@ -242,7 +242,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       //_layer.StartResetProgramStatesThread(System.Threading.ThreadPriority.Lowest);
 
 
-      Log.Debug("- Inserted {0} epg entries for channel {1}", iInserted, dbChannel.DisplayName);
+      this.LogDebug("- Inserted {0} epg entries for channel {1}", iInserted, dbChannel.DisplayName);
     }
 
     #endregion

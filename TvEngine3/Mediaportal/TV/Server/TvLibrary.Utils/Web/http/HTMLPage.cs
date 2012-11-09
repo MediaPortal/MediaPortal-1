@@ -268,7 +268,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
           }
         }
 
-        Log.Debug("HTMLPage: GetInternal encoding: {0}", _pageEncodingMessage);
+        this.LogDebug("HTMLPage: GetInternal encoding: {0}", _pageEncodingMessage);
         // Encoding: depends on selected page
         if (string.IsNullOrEmpty(_strPageSource) || strEncode.ToLower() != _defaultEncode)
         {

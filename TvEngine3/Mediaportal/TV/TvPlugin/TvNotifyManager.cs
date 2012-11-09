@@ -34,6 +34,7 @@ using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.TvPlugin.Helper;
 using Channel = Mediaportal.TV.Server.TVDatabase.Entities.Channel;
 using Recording = Mediaportal.TV.Server.TVDatabase.Entities.Recording;
@@ -77,7 +78,7 @@ namespace Mediaportal.TV.TvPlugin
       Schedule failedSchedule = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(idSchedule);
       if (failedSchedule != null)
       {
-          Log.Debug("TVPlugIn: No free card available for {0}. Notifying user.", failedSchedule.ProgramName);
+          this.LogDebug("TVPlugIn: No free card available for {0}. Notifying user.", failedSchedule.ProgramName);
 
           Notify(GUILocalizeStrings.Get(1004),
                  String.Format("{0}. {1}", failedSchedule.ProgramName, GUILocalizeStrings.Get(200055)),

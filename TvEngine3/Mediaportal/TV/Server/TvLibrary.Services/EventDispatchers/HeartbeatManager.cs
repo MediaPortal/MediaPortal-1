@@ -127,7 +127,7 @@ namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
               // more than 30 seconds have elapsed since last heartbeat was received. lets kick the client
               if (ts.TotalSeconds < (-1 * HEARTBEAT_MAX_SECS_EXCEED_ALLOWED))
               {
-                Log.Debug("HeartbeatManager: idle user found: {0}", username);
+                this.LogDebug("HeartbeatManager: idle user found: {0}", username);
                 IDictionary<int, ITvCardHandler> cards = ServiceManager.Instance.InternalControllerService.CardCollection;
                 foreach (ITvCardHandler card in cards.Values)
                 {                  
@@ -139,7 +139,7 @@ namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
                     int timeshiftingChannelId = card.UserManagement.GetTimeshiftingChannelId(tmpUser.Name);
                     if (timeshiftingChannelId > 0)
                     {
-                      Log.Debug("Controller: Heartbeat Monitor - kicking idle user {0}", tmpUser.Name);
+                      this.LogDebug("Controller: Heartbeat Monitor - kicking idle user {0}", tmpUser.Name);
                       ServiceManager.Instance.InternalControllerService.StopTimeShifting(ref tmpUser,
                                                                                        TvStoppedReason.HeartBeatTimeOut, timeshiftingChannelId);
                     }

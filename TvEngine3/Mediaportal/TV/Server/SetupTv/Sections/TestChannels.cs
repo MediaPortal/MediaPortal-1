@@ -617,12 +617,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           txtAvgMsec.Value = Convert.ToInt32(_avg / _total);
         }
         Application.DoEvents();
-        Log.Debug("TestChannels: Succeeded={0}", _succeeded);
-        Log.Debug("TestChannels: Failed={0}", _failed);
-        Log.Debug("TestChannels: Ignored={0}", _ignored);
-        Log.Debug("TestChannels: Total={0}", _total);
-        Log.Debug("TestChannels: Avg mSec={0}", txtAvgMsec.Value);
-        Log.Debug("TestChannels: First Fail={0}", _firstFail);
+        this.LogDebug("TestChannels: Succeeded={0}", _succeeded);
+        this.LogDebug("TestChannels: Failed={0}", _failed);
+        this.LogDebug("TestChannels: Ignored={0}", _ignored);
+        this.LogDebug("TestChannels: Total={0}", _total);
+        this.LogDebug("TestChannels: Avg mSec={0}", txtAvgMsec.Value);
+        this.LogDebug("TestChannels: First Fail={0}", _firstFail);
       }
     }
 

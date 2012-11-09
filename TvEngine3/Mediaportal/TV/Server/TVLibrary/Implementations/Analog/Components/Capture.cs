@@ -306,14 +306,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
     {
       if (!string.IsNullOrEmpty(graph.Capture.Name))
       {
-        Log.Debug("analog: Using Capture configuration from stored graph");
+        this.LogDebug("analog: Using Capture configuration from stored graph");
         if (CreateConfigurationBasedFilterInstance(graph, capBuilder, graphBuilder, tuner, crossbar, tvAudio))
         {
-          Log.Debug("analog: Using Capture configuration from stored graph succeeded");
+          this.LogDebug("analog: Using Capture configuration from stored graph succeeded");
           return true;
         }
       }
-      Log.Debug("analog: No stored or invalid graph for Capture component - Trying to detect");
+      this.LogDebug("analog: No stored or invalid graph for Capture component - Trying to detect");
       return CreateAutomaticFilterInstance(graph, capBuilder, graphBuilder, tuner, crossbar, tvAudio);
     }
 
@@ -345,7 +345,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       {
         if (tuner.TunerName == "Adaptec USB TvTuner")
         {
-          Log.Debug("analog: Adaptec USB device detected!");
+          this.LogDebug("analog: Adaptec USB device detected!");
           devices = DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice);
         }
         else
@@ -356,12 +356,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       }
       catch (Exception)
       {
-        Log.Debug("analog: AddTvCaptureFiler error in allocating devices collection");
+        this.LogDebug("analog: AddTvCaptureFiler error in allocating devices collection");
         return false;
       }
       if (devices.Length == 0)
       {
-        Log.Debug("analog: AddTvCaptureFilter no tvcapture devices found");
+        this.LogDebug("analog: AddTvCaptureFilter no tvcapture devices found");
         return false;
       }
       //try each video capture filter
@@ -371,14 +371,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         IBaseFilter tmp;
         if (_badCaptureDevices.Contains(devices[i].Name))
         {
-          Log.Debug("analog: AddTvCaptureFilter bypassing: {0}", devices[i].Name);
+          this.LogDebug("analog: AddTvCaptureFilter bypassing: {0}", devices[i].Name);
           continue;
         }
-        Log.Debug("analog: AddTvCaptureFilter try:{0} {1}", devices[i].Name, i);
+        this.LogDebug("analog: AddTvCaptureFilter try:{0} {1}", devices[i].Name, i);
         // if video capture filter is in use, then we can skip it
         if (DevicesInUse.Instance.IsUsed(devices[i]))
         {
-          Log.Debug("analog: Device: {0} in use?", devices[i].Name);
+          this.LogDebug("analog: Device: {0} in use?", devices[i].Name);
           continue;
         }
         if (!videoDeviceName.Equals(devices[i].Name) &&
@@ -392,7 +392,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         }
         catch (Exception)
         {
-          Log.Debug("analog: cannot add filter to graph");
+          this.LogDebug("analog: cannot add filter to graph");
           continue;
         }
         if (hr != 0)
@@ -400,7 +400,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           //cannot add video capture filter to graph, try next one
           if (tmp != null)
           {
-            Log.Debug("analog: cannot add filter: {0} to graph", devices[i].Name);
+            this.LogDebug("analog: cannot add filter: {0} to graph", devices[i].Name);
             graphBuilder.RemoveFilter(tmp);
             Release.ComObject("TvCaptureFilter", tmp);
           }
@@ -416,7 +416,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           {
             DevicesInUse.Instance.Add(_videoCaptureDevice);
           }
-          Log.Debug("analog: AddTvCaptureFilter connected video to crossbar successfully");
+          this.LogDebug("analog: AddTvCaptureFilter connected video to crossbar successfully");
           videoConnected = true;
           filterUsed = true;
         }
@@ -431,7 +431,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           {
             DevicesInUse.Instance.Add(_audioCaptureDevice);
           }
-          Log.Debug("analog: AddTvCaptureFilter connected audio to crossbar successfully");
+          this.LogDebug("analog: AddTvCaptureFilter connected audio to crossbar successfully");
           audioConnected = true;
           filterUsed = true;
         }
@@ -445,7 +445,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         {
           // cannot connect crossbar->video capture filter, remove filter from graph
           // cand continue with the next vieo capture filter
-          Log.Debug("analog: AddTvCaptureFilter failed to connect to crossbar");
+          this.LogDebug("analog: AddTvCaptureFilter failed to connect to crossbar");
           graphBuilder.RemoveFilter(tmp);
           Release.ComObject("capture filter", tmp);
         }
@@ -500,7 +500,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       {
         if (tuner.TunerName == "Adaptec USB TvTuner")
         {
-          Log.Debug("analog: Adaptec USB device detected!");
+          this.LogDebug("analog: Adaptec USB device detected!");
           devices = DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice);
         }
         else
@@ -511,12 +511,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       }
       catch (Exception)
       {
-        Log.Debug("analog: AddTvCaptureFiler error in allocating devices collection");
+        this.LogDebug("analog: AddTvCaptureFiler error in allocating devices collection");
         return false;
       }
       if (devices.Length == 0)
       {
-        Log.Debug("analog: AddTvCaptureFilter no tvcapture devices found");
+        this.LogDebug("analog: AddTvCaptureFilter no tvcapture devices found");
         return false;
       }
       //try each video capture filter
@@ -526,10 +526,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         IBaseFilter tmp;
         if (_badCaptureDevices.Contains(devices[i].Name))
         {
-          Log.Debug("analog: AddTvCaptureFilter bypassing: {0}", devices[i].Name);
+          this.LogDebug("analog: AddTvCaptureFilter bypassing: {0}", devices[i].Name);
           continue;
         }
-        Log.Debug("analog: AddTvCaptureFilter try:{0} {1}", devices[i].Name, i);
+        this.LogDebug("analog: AddTvCaptureFilter try:{0} {1}", devices[i].Name, i);
         // if video capture filter is in use, then we can skip it
         if (DevicesInUse.Instance.IsUsed(devices[i]))
           continue;
@@ -541,7 +541,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         }
         catch (Exception)
         {
-          Log.Debug("analog: cannot add filter to graph");
+          this.LogDebug("analog: cannot add filter to graph");
           continue;
         }
         if (hr != 0)
@@ -566,7 +566,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           {
             DevicesInUse.Instance.Add(_videoCaptureDevice);
           }
-          Log.Debug("analog: AddTvCaptureFilter connected video to crossbar successfully");
+          this.LogDebug("analog: AddTvCaptureFilter connected video to crossbar successfully");
           graph.Capture.Name = _videoCaptureDevice.Name;
           graph.Capture.VideoIn = destinationIndex;
           videoConnected = true;
@@ -582,7 +582,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           {
             DevicesInUse.Instance.Add(_audioCaptureDevice);
           }
-          Log.Debug("analog: AddTvCaptureFilter connected audio to crossbar successfully");
+          this.LogDebug("analog: AddTvCaptureFilter connected audio to crossbar successfully");
           graph.Capture.AudioCaptureName = devices[i].Name;
           graph.Capture.AudioIn = destinationIndex;
           audioConnected = true;
@@ -598,7 +598,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         {
           // cannot connect crossbar->video capture filter, remove filter from graph
           // cand continue with the next vieo capture filter
-          Log.Debug("analog: AddTvCaptureFilter failed to connect to crossbar");
+          this.LogDebug("analog: AddTvCaptureFilter failed to connect to crossbar");
           graphBuilder.RemoveFilter(tmp);
           Release.ComObject("capture filter", tmp);
         }
@@ -626,7 +626,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
     /// <param name="graph">The stored graph</param>
     private void FindVBIPin(Graph graph)
     {
-      Log.Debug("analog: FindVBIPin on VideoCapture");
+      this.LogDebug("analog: FindVBIPin on VideoCapture");
       int pinIndex;
       try
       {
@@ -634,7 +634,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
                                                                     PinDirection.Output, out pinIndex);
         if (pinVBI != null)
         {
-          Log.Debug("analog: VideoPortVBI pin found");
+          this.LogDebug("analog: VideoPortVBI pin found");
           Release.ComObject(pinVBI);
           return;
         }
@@ -642,7 +642,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
                                                                PinDirection.Output, out pinIndex);
         if (pinVBI != null)
         {
-          Log.Debug("analog: VBI pin found");
+          this.LogDebug("analog: VBI pin found");
           graph.Capture.TeletextPin = pinIndex;
           _pinVBI = pinVBI;
           return;
@@ -653,25 +653,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         if (ex.ErrorCode.Equals(unchecked((Int32)0x80070490)))
         {
           // pin on a NVTV capture filter is named VBI..
-          Log.Debug("analog: getCategory not supported by collection ? ERROR:0x{0:x} :" + ex.Message,
+          this.LogDebug("analog: getCategory not supported by collection ? ERROR:0x{0:x} :" + ex.Message,
                             ex.ErrorCode);
 
           if (_filterVideoCapture == null)
             return;
-          Log.Debug("analog: find VBI pin by name");
+          this.LogDebug("analog: find VBI pin by name");
 
           IPin pinVBI = FilterGraphTools.GetPinByName(_filterVideoCapture, "VBI", PinDirection.Output, out pinIndex);
           if (pinVBI != null)
           {
-            Log.Debug("analog: pin named VBI found");
+            this.LogDebug("analog: pin named VBI found");
             graph.Capture.TeletextPin = pinIndex;
             _pinVBI = pinVBI;
             return;
           }
         }
-        Log.Debug("analog: Error in searching vbi pin - Skipping error");
+        this.LogDebug("analog: Error in searching vbi pin - Skipping error");
       }
-      Log.Debug("analog: FindVBIPin on VideoCapture no vbi pin found");
+      this.LogDebug("analog: FindVBIPin on VideoCapture no vbi pin found");
     }
 
     /// <summary>

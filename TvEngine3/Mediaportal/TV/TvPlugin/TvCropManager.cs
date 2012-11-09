@@ -25,6 +25,7 @@ using MediaPortal.Common.Utils;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 #endregion
 

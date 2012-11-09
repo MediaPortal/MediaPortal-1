@@ -26,6 +26,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
 {
@@ -659,7 +660,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
 
     private void OnDeviceRemoval()
     {
-      Log.Debug("Device removal");
+      this.LogDebug("Device removal");
 
 //			// are we currently learning?
 //			if(buttonStart.Enabled) return;
@@ -820,18 +821,18 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
                 }
                 else
                 {
-                  Log.Debug("Form1.LoadConfig: Unexpected value type '{0}'", objectValue.GetType());
+                  this.LogDebug("Form1.LoadConfig: Unexpected value type '{0}'", objectValue.GetType());
                 }
               }
               else
               {
-                Log.Debug("Form1.LoadConfig: Unexpected key type '{0}'", objectKey.GetType());
+                this.LogDebug("Form1.LoadConfig: Unexpected key type '{0}'", objectKey.GetType());
               }
             }
           }
           else
           {
-            Log.Debug("Form1.LoadConfig: Unexpected root object");
+            this.LogDebug("Form1.LoadConfig: Unexpected root object");
           }
         }
       }

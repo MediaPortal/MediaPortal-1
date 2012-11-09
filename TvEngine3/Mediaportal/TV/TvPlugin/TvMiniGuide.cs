@@ -38,6 +38,7 @@ using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.TvPlugin.Helper;
 using Action = MediaPortal.GUI.Library.Action;
@@ -294,7 +295,7 @@ namespace Mediaportal.TV.TvPlugin
     /// <param name="new_windowId"></param>
     protected override void OnPageDestroy(int new_windowId)
     {
-      //Log.Debug("TvMiniGuide: OnPageDestroy");
+      //this.LogDebug("TvMiniGuide: OnPageDestroy");
       base.OnPageDestroy(new_windowId);
       //_running = false;
     }
@@ -349,7 +350,7 @@ namespace Mediaportal.TV.TvPlugin
       FillChannelList();
       GUIWaitCursor.Hide();
 
-      Log.Debug("OnGroupChanged {0} took {1} msec", spinGroup.Value, bClock.ElapsedMilliseconds);
+      this.LogDebug("OnGroupChanged {0} took {1} msec", spinGroup.Value, bClock.ElapsedMilliseconds);
 
     }
 
@@ -383,7 +384,7 @@ namespace Mediaportal.TV.TvPlugin
       }
 
       benchClock.Stop();
-      Log.Debug("TvMiniGuide: FillGroupList finished after {0} ms", benchClock.ElapsedMilliseconds.ToString());
+      this.LogDebug("TvMiniGuide: FillGroupList finished after {0} ms", benchClock.ElapsedMilliseconds.ToString());
     }
 
     private List<Server.TVDatabase.Entities.Channel> GetChannelListByGroup()
@@ -398,7 +399,7 @@ namespace Mediaportal.TV.TvPlugin
       List<Server.TVDatabase.Entities.Channel> channels = null;
       if (_tvGroupChannelListCache.TryGetValue(idGroup, out channels))  //already in cache ? then return it.      
       {
-        Log.Debug("TvMiniGuide: GetChannelListByGroup returning cached version of channels.");
+        this.LogDebug("TvMiniGuide: GetChannelListByGroup returning cached version of channels.");
         return channels;
       }
       else //not in cache, fetch it and update cache, then return.
@@ -409,7 +410,7 @@ namespace Mediaportal.TV.TvPlugin
 
         if (tvChannelList != null)
         {
-          Log.Debug("TvMiniGuide: GetChannelListByGroup caching channels from DB.");
+          this.LogDebug("TvMiniGuide: GetChannelListByGroup caching channels from DB.");
           _tvGroupChannelListCache.Add(idGroup, tvChannelList);
           return tvChannelList;
         }
@@ -436,7 +437,7 @@ namespace Mediaportal.TV.TvPlugin
       );            
 
       benchClock.Stop();
-      Log.Debug("TvMiniGuide: FillChannelList retrieved {0} programs for {1} channels in {2} ms", listNowNext.Count,
+      this.LogDebug("TvMiniGuide: FillChannelList retrieved {0} programs for {1} channels in {2} ms", listNowNext.Count,
                 tvChannelList.Count, benchClock.ElapsedMilliseconds.ToString());
 
       GUIListItem item = null;
@@ -460,7 +461,7 @@ namespace Mediaportal.TV.TvPlugin
         benchClock.Stop();
         if (tvChannelStatesList != null)
         {
-          Log.Debug("TvMiniGuide: FillChannelList - {0} channel states for group retrieved in {1} ms",
+          this.LogDebug("TvMiniGuide: FillChannelList - {0} channel states for group retrieved in {1} ms",
                     Convert.ToString(tvChannelStatesList.Count), benchClock.ElapsedMilliseconds.ToString());
         }
       }
@@ -648,7 +649,7 @@ namespace Mediaportal.TV.TvPlugin
         }
       }
       benchClock.Stop();
-      Log.Debug("TvMiniGuide: State check + filling completed after {0} ms", benchClock.ElapsedMilliseconds.ToString());
+      this.LogDebug("TvMiniGuide: State check + filling completed after {0} ms", benchClock.ElapsedMilliseconds.ToString());
       lstChannels.SelectedListItemIndex = SelectedID;
 
       if (lstChannels.GetID == 37)

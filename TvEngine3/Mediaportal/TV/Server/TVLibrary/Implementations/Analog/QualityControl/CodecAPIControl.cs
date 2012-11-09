@@ -53,7 +53,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
       : base(configuration)
     {
       _codecAPI = codecAPI;
-      Log.Debug("analog: ICodecAPI supported by: " + FilterGraphTools.GetFilterName(_codecAPI as IBaseFilter) +
+      this.LogDebug("analog: ICodecAPI supported by: " + FilterGraphTools.GetFilterName(_codecAPI as IBaseFilter) +
                         "; Checking capabilities ");
       CheckCapabilities();
     }

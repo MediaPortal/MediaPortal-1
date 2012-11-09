@@ -355,7 +355,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 
     private void ServiceAgents_Closed(object sender, EventArgs e)
     {
-      Log.Debug("ServiceAgents.ServiceAgents_Closed: {0}", sender.GetType());
+      this.LogDebug("ServiceAgents.ServiceAgents_Closed: {0}", sender.GetType());
       RemoveService(sender);
     }
 
@@ -385,12 +385,12 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
         GlobalServiceProvider.Remove(type);
       }
 
-      Log.Debug("ServiceAgents.RemoveService: removed service:{0}", type);      
+      this.LogDebug("ServiceAgents.RemoveService: removed service:{0}", type);      
     }
 
     private void ServiceAgents_Faulted(object sender, EventArgs e)
     {
-      Log.Debug("ServiceAgents.ServiceAgents_Faulted: {0}", sender.GetType());
+      this.LogDebug("ServiceAgents.ServiceAgents_Faulted: {0}", sender.GetType());
       RemoveService(sender);
     }
 

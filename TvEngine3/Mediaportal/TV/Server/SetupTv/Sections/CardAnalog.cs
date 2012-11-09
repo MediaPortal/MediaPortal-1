@@ -645,7 +645,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
         catch
         {
-          Log.Debug("Could not reload card configuration");
+          this.LogDebug("Could not reload card configuration");
         }
         return;
       }
@@ -1744,7 +1744,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
         else
         {
-          Log.Debug("Card doesn't support quality control");
+          this.LogDebug("Card doesn't support quality control");
           MessageBox.Show("The used encoder doesn't support quality control.",
                           "MediaPortal - TV Server management console", MessageBoxButtons.OK, MessageBoxIcon.Information);
           if (string.IsNullOrEmpty(_configuration.Graph.Capture.Name))

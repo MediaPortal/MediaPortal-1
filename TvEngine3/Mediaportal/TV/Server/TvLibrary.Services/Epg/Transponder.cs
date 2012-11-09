@@ -147,7 +147,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
         return;
       Channels[Index].LastGrabTime = DateTime.Now;
       ChannelManagement.SaveChannel(Channels[Index]);
-      Log.Debug("EPG: database updated for #{0} {1}", Index, Channels[Index].DisplayName);
+      this.LogDebug("EPG: database updated for #{0} {1}", Index, Channels[Index].DisplayName);
     }
 
     /// <summary>
@@ -188,12 +188,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     /// </summary>
     public void Dump()
     {
-      Log.Debug("Transponder:{0} {1} {2} {3} {4} {5}", _currentChannelIndex, TuningDetail.ChannelType,
+      this.LogDebug("Transponder:{0} {1} {2} {3} {4} {5}", _currentChannelIndex, TuningDetail.ChannelType,
                 TuningDetail.Frequency, TuningDetail.Modulation, TuningDetail.Symbolrate, TuningDetail.Bandwidth,
                 TuningDetail.Polarisation);
       foreach (Channel c in _channels)
       {
-        Log.Debug(" {0}", c.DisplayName);
+        this.LogDebug(" {0}", c.DisplayName);
       }
     }
 

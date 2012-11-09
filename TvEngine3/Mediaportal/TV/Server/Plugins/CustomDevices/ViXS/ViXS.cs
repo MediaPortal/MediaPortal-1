@@ -94,27 +94,27 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ViXS
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
     {
-      Log.Debug("ViXS: initialising device");
+      this.LogDebug("ViXS: initialising device");
 
       if (_isVixs)
       {
-        Log.Debug("ViXS: device is already initialised");
+        this.LogDebug("ViXS: device is already initialised");
         return true;
       }
 
       if (tunerType != CardType.Atsc)
       {
-        Log.Debug("ViXS: tuner type {0} is not supported", tunerType);
+        this.LogDebug("ViXS: tuner type {0} is not supported", tunerType);
         return false;
       }
       bool result = base.Initialise(tunerFilter, tunerType, tunerDevicePath);
       if (!result)
       {
-        Log.Debug("ViXS: base Microsoft interface not supported");
+        this.LogDebug("ViXS: base Microsoft interface not supported");
         return false;
       }
 
-      Log.Debug("ViXS: supported device detected");
+      this.LogDebug("ViXS: supported device detected");
       _isVixs = true;
       return true;
     }

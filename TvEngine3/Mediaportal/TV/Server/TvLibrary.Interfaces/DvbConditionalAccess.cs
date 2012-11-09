@@ -1773,17 +1773,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     public void Dump()
     {
-      Log.Debug("CAT: dump...");
+      this.LogDebug("CAT: dump...");
       DVB_MMI.DumpBinary(_rawCat, 0, _rawCat.Length);
-      Log.Debug("  table ID                 = {0}", _tableId);
-      Log.Debug("  section syntax indicator = {0}", _sectionSyntaxIndicator);
-      Log.Debug("  section length           = {0}", _sectionLength);
-      Log.Debug("  version                  = {0}", _version);
-      Log.Debug("  current next indicator   = {0}", _currentNextIndicator);
-      Log.Debug("  section number           = {0}", _sectionNumber);
-      Log.Debug("  last section number      = {0}", _lastSectionNumber);
-      Log.Debug("  CRC                      = 0x{0:x}{1:x}{2:x}{3:x}", _crc[0], _crc[1], _crc[2], _crc[3]);
-      Log.Debug("  {0} descriptor(s)...", _descriptors.Count + _caDescriptors.Count);
+      this.LogDebug("  table ID                 = {0}", _tableId);
+      this.LogDebug("  section syntax indicator = {0}", _sectionSyntaxIndicator);
+      this.LogDebug("  section length           = {0}", _sectionLength);
+      this.LogDebug("  version                  = {0}", _version);
+      this.LogDebug("  current next indicator   = {0}", _currentNextIndicator);
+      this.LogDebug("  section number           = {0}", _sectionNumber);
+      this.LogDebug("  last section number      = {0}", _lastSectionNumber);
+      this.LogDebug("  CRC                      = 0x{0:x}{1:x}{2:x}{3:x}", _crc[0], _crc[1], _crc[2], _crc[3]);
+      this.LogDebug("  {0} descriptor(s)...", _descriptors.Count + _caDescriptors.Count);
       foreach (IDescriptor d in _descriptors)
       {
         d.Dump();
@@ -2232,7 +2232,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// <returns></returns>
     public byte[] GetCaPmt(CaPmtListManagementAction listAction, CaPmtCommand command)
     {
-      Log.Debug("PMT: get CA PMT, list action = {0}, command = {1}", listAction, command);
+      this.LogDebug("PMT: get CA PMT, list action = {0}, command = {1}", listAction, command);
       byte[] tempCaPmt = new byte[4096];  // Max PMT length is 1024, and since CA PMT is a cut-down version of PMT this should be very safe.
       tempCaPmt[0] = (byte)listAction;
       tempCaPmt[1] = _rawPmt[3];
@@ -2313,20 +2313,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     public void Dump()
     {
-      Log.Debug("PMT: dump...");
+      this.LogDebug("PMT: dump...");
       DVB_MMI.DumpBinary(_rawPmt, 0, _rawPmt.Length);
-      Log.Debug("  table ID                 = {0}", _tableId);
-      Log.Debug("  section syntax indicator = {0}", _sectionSyntaxIndicator);
-      Log.Debug("  section length           = {0}", _sectionLength);
-      Log.Debug("  program number           = {0} (0x{0:x})", _programNumber);
-      Log.Debug("  version                  = {0}", _version);
-      Log.Debug("  current next indicator   = {0}", _currentNextIndicator);
-      Log.Debug("  section number           = {0}", _sectionNumber);
-      Log.Debug("  last section number      = {0}", _lastSectionNumber);
-      Log.Debug("  PCR PID                  = {0} (0x{0:x})", _pcrPid);
-      Log.Debug("  program info length      = {0}", _programInfoLength);
-      Log.Debug("  CRC                      = 0x{0:x}{1:x}{2:x}{3:x}", _crc[0], _crc[1], _crc[2], _crc[3]);
-      Log.Debug("  {0} descriptor(s)...", _programDescriptors.Count + _programCaDescriptors.Count);
+      this.LogDebug("  table ID                 = {0}", _tableId);
+      this.LogDebug("  section syntax indicator = {0}", _sectionSyntaxIndicator);
+      this.LogDebug("  section length           = {0}", _sectionLength);
+      this.LogDebug("  program number           = {0} (0x{0:x})", _programNumber);
+      this.LogDebug("  version                  = {0}", _version);
+      this.LogDebug("  current next indicator   = {0}", _currentNextIndicator);
+      this.LogDebug("  section number           = {0}", _sectionNumber);
+      this.LogDebug("  last section number      = {0}", _lastSectionNumber);
+      this.LogDebug("  PCR PID                  = {0} (0x{0:x})", _pcrPid);
+      this.LogDebug("  program info length      = {0}", _programInfoLength);
+      this.LogDebug("  CRC                      = 0x{0:x}{1:x}{2:x}{3:x}", _crc[0], _crc[1], _crc[2], _crc[3]);
+      this.LogDebug("  {0} descriptor(s)...", _programDescriptors.Count + _programCaDescriptors.Count);
       foreach (IDescriptor d in _programDescriptors)
       {
         d.Dump();
@@ -2335,7 +2335,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
       {
         cad.Dump();
       }
-      Log.Debug("  {0} elementary stream(s)...", _elementaryStreams.Count);
+      this.LogDebug("  {0} elementary stream(s)...", _elementaryStreams.Count);
       foreach (PmtElementaryStream es in _elementaryStreams)
       {
         es.Dump();
@@ -2464,12 +2464,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     public void Dump()
     {
-      Log.Debug("Elementary Stream: dump...");
-      Log.Debug("  stream type         = {0}", _streamType);
-      Log.Debug("  PID                 = {0} (0x{0:x})", _pid);
-      Log.Debug("  length              = {0}", _esInfoLength);
-      Log.Debug("  logical stream type = {0}", _logicalStreamType);
-      Log.Debug("  {0} descriptor(s)...", _descriptors.Count + _caDescriptors.Count);
+      this.LogDebug("Elementary Stream: dump...");
+      this.LogDebug("  stream type         = {0}", _streamType);
+      this.LogDebug("  PID                 = {0} (0x{0:x})", _pid);
+      this.LogDebug("  length              = {0}", _esInfoLength);
+      this.LogDebug("  logical stream type = {0}", _logicalStreamType);
+      this.LogDebug("  {0} descriptor(s)...", _descriptors.Count + _caDescriptors.Count);
       foreach (IDescriptor d in _descriptors)
       {
         d.Dump();
@@ -2664,9 +2664,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     public virtual void Dump()
     {
-      Log.Debug("Descriptor: dump...");
-      Log.Debug("  tag    = {0}", _tag);
-      Log.Debug("  length = {0}", _length);
+      this.LogDebug("Descriptor: dump...");
+      this.LogDebug("  tag    = {0}", _tag);
+      this.LogDebug("  length = {0}", _length);
       DVB_MMI.DumpBinary(_data, 0, _data.Length);
     }
   }
@@ -2959,11 +2959,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     public override void Dump()
     {
-      Log.Debug("CA Descriptor: dump...");
-      Log.Debug("  tag          = {0}", _tag);
-      Log.Debug("  length       = {0}", _length);
-      Log.Debug("  CA system ID = {0} (0x{0:x})", _caSystemId);
-      Log.Debug("  CA PID       = {0} (0x{0:x})", _caPid);
+      this.LogDebug("CA Descriptor: dump...");
+      this.LogDebug("  tag          = {0}", _tag);
+      this.LogDebug("  length       = {0}", _length);
+      this.LogDebug("  CA system ID = {0} (0x{0:x})", _caSystemId);
+      this.LogDebug("  CA PID       = {0} (0x{0:x})", _caPid);
       foreach (UInt16 pid in _pids.Keys)
       {
         List<String> providerIds = new List<String>(_pids[pid].Count);
@@ -2971,7 +2971,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
         {
           providerIds.Add(String.Format("{0} (0x{0:x})", providerId));
         }
-        Log.Debug("  PID = {0} (0x{0:x}), provider IDs = {1}", pid, String.Join(", ", providerIds.ToArray()));
+        this.LogDebug("  PID = {0} (0x{0:x}), provider IDs = {1}", pid, String.Join(", ", providerIds.ToArray()));
       }
       DVB_MMI.DumpBinary(_data, 0, _data.Length);
     }

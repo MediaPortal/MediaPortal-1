@@ -57,23 +57,23 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
     public SmarDtvUsbCiConfig(string name)
       : base(name)
     {
-      Log.Debug("SmarDTV USB CI config: constructing");
+      this.LogDebug("SmarDTV USB CI config: constructing");
       _products = SmarDtvUsbCiProducts.GetProductList();
       _tunerSelections = new MPComboBox[_products.Count];
       _installStateLabels = new Label[_products.Count];
       InitializeComponent();
-      Log.Debug("SmarDTV USB CI config: constructed");
+      this.LogDebug("SmarDTV USB CI config: constructed");
     }
 
     public override void SaveSettings()
     {
-      Log.Debug("SmarDTV USB CI config: saving settings");
+      this.LogDebug("SmarDTV USB CI config: saving settings");
       for (int i = 0; i < _products.Count; i++)
       {
         Card selectedTuner = (Card)_tunerSelections[i].SelectedItem;
         if (_tunerSelections[i].Enabled && selectedTuner != null)
         {
-          Log.Debug("  {0} linked to tuner {1} ({2})", _products[i].ProductName, selectedTuner.IdCard, selectedTuner.Name);
+          this.LogDebug("  {0} linked to tuner {1} ({2})", _products[i].ProductName, selectedTuner.IdCard, selectedTuner.Name);
           _settingServiceAgent.SaveSetting("digitalDevicesCiDevicePath" + i, selectedTuner.IdCard.ToString());
 
         }
@@ -83,13 +83,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
 
     public override void OnSectionActivated()
     {
-      Log.Debug("SmarDTV USB CI config: activated");
+      this.LogDebug("SmarDTV USB CI config: activated");
       IList<Card> dbTuners = _cardServiceAgent.ListAllCards();
       DsDevice[] captureDevices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture);
 
       for (int i = 0; i < _products.Count; i++)
       {
-        Log.Debug("SmarDTV USB CI config: product {0}...", _products[i].ProductName);
+        this.LogDebug("SmarDTV USB CI config: product {0}...", _products[i].ProductName);
 
         // Populate the tuner selection fields and set current values.
         Setting setting = _settingServiceAgent.GetSettingWithDefaultValue(_products[i].DbSettingName, "-1");
@@ -106,7 +106,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
           _tunerSelections[i].Items.Add(tuner);
           if (tuner.IdCard.ToString().Equals(setting.Value))
           {
-            Log.Debug("  currently linked to tuner {0} ({1})", tuner.IdCard, tuner.Name);
+            this.LogDebug("  currently linked to tuner {0} ({1})", tuner.IdCard, tuner.Name);
             _tunerSelections[i].SelectedItem = tuner;
           }
         }
@@ -121,7 +121,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
           {
             if (device.Name.Equals(_products[i].WdmDeviceName))
             {
-              Log.Debug("  WDM driver installed");
+              this.LogDebug("  WDM driver installed");
               _installStateLabels[i].Text = "The " + _products[i].ProductName + " is installed with the WDM driver.";
               _installStateLabels[i].ForeColor = Color.Orange;
               found = true;
@@ -129,7 +129,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
             }
             else if (device.Name.Equals(_products[i].BdaDeviceName))
             {
-              Log.Debug("  BDA driver installed");
+              this.LogDebug("  BDA driver installed");
               _installStateLabels[i].Text = "The " + _products[i].ProductName + " is installed correctly.";
               _installStateLabels[i].ForeColor = Color.ForestGreen;
               _tunerSelections[i].Enabled = true;
@@ -140,7 +140,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
         }
         if (!found)
         {
-          Log.Debug("  driver not installed");
+          this.LogDebug("  driver not installed");
           _installStateLabels[i].Text = "The " + _products[i].ProductName + " is not detected.";
           _installStateLabels[i].ForeColor = Color.Red;
         }
@@ -151,7 +151,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
 
     public override void OnSectionDeActivated()
     {
-      Log.Debug("SmarDTV USB CI config: deactivated");
+      this.LogDebug("SmarDTV USB CI config: deactivated");
       SaveSettings();
       base.OnSectionDeActivated();
     }

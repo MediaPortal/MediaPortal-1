@@ -85,7 +85,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         {
           if (dev.Name == device.Name && device.Mon.IsEqual(dev.Mon) == 0 && dev.DevicePath == device.DevicePath)
           {
-            Log.Debug("analog:  compressor {0} is in use, checking reuse limit...", dev.Name);
+            this.LogDebug("analog:  compressor {0} is in use, checking reuse limit...", dev.Name);
             key = dev;
             break;
           }
@@ -94,7 +94,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         // Encoder not yet used -> always okay to use.
         if (key == null)
         {
-          Log.Debug("analog:  compressor {0} is usable", device.Name);
+          this.LogDebug("analog:  compressor {0} is usable", device.Name);
           _encodersInUse.Add(device, 1);
           return true;
         }
@@ -102,7 +102,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         // Encoder not yet in DB -> assume reusable.
         if (dbEncoder == null)
         {
-          Log.Debug("analog:  unrecognised compressor, assuming usable");
+          this.LogDebug("analog:  unrecognised compressor, assuming usable");
           _encodersInUse[key]++;
           return true;
         }
@@ -113,14 +113,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         {
           if (reuseLimit <= 0 || _encodersInUse[key] < reuseLimit)
           {
-            Log.Debug("analog:  reusable compressor, usage under limit (usage: {0}, limit: {1})",
+            this.LogDebug("analog:  reusable compressor, usage under limit (usage: {0}, limit: {1})",
                               _encodersInUse[key], reuseLimit == 0 ? "[unlimited]" : reuseLimit.ToString());
             _encodersInUse[key]++;
             return true;
           }
           else
           {
-            Log.Debug("analog:  reusable compressor, usage already at limit (usage: {0}, limit: {1})",
+            this.LogDebug("analog:  reusable compressor, usage already at limit (usage: {0}, limit: {1})",
                               _encodersInUse[key], reuseLimit);
             return false;
           }
@@ -131,7 +131,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       // and it is in use, which means the limit has already
       // been reached. The encoder wouldn't be in _encodersInUse
       // if it wasn't in use...
-      Log.Debug("analog:  non-reusable compressor, already used");
+      this.LogDebug("analog:  non-reusable compressor, already used");
       return false;
     }
 
@@ -152,11 +152,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         {
           if (dev.Name == device.Name && device.Mon.IsEqual(dev.Mon) == 0 && dev.DevicePath == device.DevicePath)
           {
-            Log.Debug("analog: removing instance of compressor {0} from use", dev.Name);
+            this.LogDebug("analog: removing instance of compressor {0} from use", dev.Name);
             _encodersInUse[dev]--;
             if (_encodersInUse[dev] == 0)
             {
-              Log.Debug("analog: compressor is no longer in use");
+              this.LogDebug("analog: compressor is no longer in use");
               _encodersInUse.Remove(dev);
             }
             break;

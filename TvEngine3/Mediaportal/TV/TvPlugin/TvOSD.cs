@@ -34,6 +34,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.TvPlugin.Helper;
 using Action = MediaPortal.GUI.Library.Action;
@@ -268,7 +269,7 @@ namespace Mediaportal.TV.TvPlugin
           {
             if (g_Player.IsTimeShifting)
             {
-              Log.Debug("TvOSD: user request to stop");
+              this.LogDebug("TvOSD: user request to stop");
               GUIDialogPlayStop dlgPlayStop =
                 (GUIDialogPlayStop)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PLAY_STOP);
               if (dlgPlayStop != null)
@@ -280,14 +281,14 @@ namespace Mediaportal.TV.TvPlugin
                 dlgPlayStop.DoModal(GetID);
                 if (dlgPlayStop.IsStopConfirmed)
                 {
-                  Log.Debug("TvOSD: stop confirmed");
+                  this.LogDebug("TvOSD: stop confirmed");
                   g_Player.Stop();
                 }
               }
             }
             if (g_Player.IsTVRecording)
             {
-                Log.Debug("TvOSD: stop from recorded TV");
+                this.LogDebug("TvOSD: stop from recorded TV");
                 g_Player.Stop();
             }
             GUIWindowManager.IsPauseOsdVisible = false;
@@ -541,7 +542,7 @@ namespace Mediaportal.TV.TvPlugin
                 ToggleSubMenu(0, m_iActiveMenu); // hide the currently active sub-menu
               }
               //g_application.m_guiWindowFullScreen.m_bOSDVisible = false;	// toggle the OSD off so parent window can de-init
-              Log.Debug("TVOSD:stop");
+              this.LogDebug("TVOSD:stop");
               if (TVHome.Card.IsRecording)
               {
                 int id = TVHome.Card.RecordingScheduleId;
@@ -1427,7 +1428,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private void OnPreviousChannel()
     {
-      Log.Debug("GUITV OSD: OnPreviousChannel");
+      this.LogDebug("GUITV OSD: OnPreviousChannel");
       if (!TVHome.Card.IsTimeShifting && !g_Player.IsTVRecording)
       {
         return;
@@ -1440,7 +1441,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private void OnNextChannel()
     {
-      Log.Debug("GUITV OSD: OnNextChannel");
+      this.LogDebug("GUITV OSD: OnNextChannel");
       if (!TVHome.Card.IsTimeShifting && !g_Player.IsTVRecording)
       {
         return;

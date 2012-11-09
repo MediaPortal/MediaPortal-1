@@ -150,7 +150,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
       }
       catch (Exception e)
       {
-        Log.Debug("Remote.Init: {0}", e.Message);
+        this.LogDebug("Remote.Init: {0}", e.Message);
       }
     }
 
@@ -423,7 +423,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
       }
       catch (Exception e)
       {
-        Log.Debug("Blaster.OnReadComplete: {0}", e.Message);
+        this.LogDebug("Blaster.OnReadComplete: {0}", e.Message);
       }
     }
 
@@ -455,7 +455,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
         }
       }
 
-      Log.Debug("Blaster.FinalizePacket: {0} ({1} bytes)", BitConverter.ToString(packetFinal).Replace("-", ""),
+      this.LogDebug("Blaster.FinalizePacket: {0} ({1} bytes)", BitConverter.ToString(packetFinal).Replace("-", ""),
                 packetFinal.Length);
 
       _packetArray = new ArrayList();

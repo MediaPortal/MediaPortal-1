@@ -150,7 +150,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
             {
               ps.Unregister(this as IStandbyHandler);
             }
-            Log.Debug("PowerScheduler: preventing standby when grabbing EPG: {0}", enabled);
+            this.LogDebug("PowerScheduler: preventing standby when grabbing EPG: {0}", enabled);
           }
 
           // Check if system should wakeup for EPG grabs
@@ -169,7 +169,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
             {
               ps.Unregister(this as IWakeupHandler);
             }
-            Log.Debug("PowerScheduler: wakeup system for EPG grabbing: {0}", enabled);
+            this.LogDebug("PowerScheduler: wakeup system for EPG grabbing: {0}", enabled);
           }
 
           // Check if a wakeup time is set
@@ -179,13 +179,13 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
           if (!config.Equals(setting.Get<EPGWakeupConfig>()))
           {
             setting.Set<EPGWakeupConfig>(config);
-            Log.Debug("PowerScheduler: wakeup system for EPG at time: {0}:{1}", config.Hour, config.Minutes);
+            this.LogDebug("PowerScheduler: wakeup system for EPG at time: {0}:{1}", config.Hour, config.Minutes);
             if (config.Days != null)
             {
               foreach (EPGGrabDays day in config.Days)
-                Log.Debug("PowerScheduler: EPG wakeup on day {0}", day);
+                this.LogDebug("PowerScheduler: EPG wakeup on day {0}", day);
             }
-            Log.Debug("PowerScheduler: EPG last run: {0}", config.LastRun);
+            this.LogDebug("PowerScheduler: EPG last run: {0}", config.LastRun);
           }
 
           // check if schedule is due
@@ -210,7 +210,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
             GrabberSource s = _extGrabbers[o];
             if (s.Timeout < DateTime.Now)
             {
-              Log.Debug("PowerScheduler: EPG source '{0}' timed out, setting allow-standby = true for this source.",
+              this.LogDebug("PowerScheduler: EPG source '{0}' timed out, setting allow-standby = true for this source.",
                         s.Name);
               // timeout passed, standby is allowed
               s.SetStandbyAllowed(true, 0);
@@ -252,7 +252,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
         }
 
         p.StartInfo = psi;
-        Log.Debug("EpgGrabbingHandler: Starting external command: {0} {1}", p.StartInfo.FileName, p.StartInfo.Arguments);
+        this.LogDebug("EpgGrabbingHandler: Starting external command: {0} {1}", p.StartInfo.FileName, p.StartInfo.Arguments);
         try
         {
           p.Start();
@@ -262,7 +262,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
         {
           Log.Error(e);
         }
-        Log.Debug("EpgGrabbingHandler: External command finished");
+        this.LogDebug("EpgGrabbingHandler: External command finished");
       }
     }
 
@@ -399,7 +399,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
         // check for "should run, but not running"
         if (ShouldRunNow())
         {
-          Log.Debug("EpgGrabbingHandler: standby not allowed since EPG is due");
+          this.LogDebug("EpgGrabbingHandler: standby not allowed since EPG is due");
           return true;
         }
 
@@ -409,7 +409,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
           int cardId = _controllerService.CardId(i);
           if (_controllerService.IsGrabbingEpg(cardId))
           {
-            Log.Debug("EpgGrabbingHandler: card {0} does not allow standby", _controllerService.CardName(cardId));
+            this.LogDebug("EpgGrabbingHandler: card {0} does not allow standby", _controllerService.CardName(cardId));
             return true;
           }
         }
@@ -418,7 +418,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
         foreach (GrabberSource source in _extGrabbers.Values)
           if (!source.StandbyAllowed)
           {
-            Log.Debug("EpgGrabbingHandler: {0} does not allow standby", source.Name);
+            this.LogDebug("EpgGrabbingHandler: {0} does not allow standby", source.Name);
             return true;
           }
 
@@ -453,7 +453,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
         }
       }
       if (isExternal)
-        Log.Debug("PowerScheduler: next EPG wakeup set by external EPG source {0}", externalName);
+        this.LogDebug("PowerScheduler: next EPG wakeup set by external EPG source {0}", externalName);
       return nextRun;
     }
 

@@ -94,7 +94,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
         remoteScheduleTime.AddDays(1);
       }
 
-      Log.Debug(this._handlerName + ".GetNextWakeupTime {0}", remoteScheduleTime);
+      this.LogDebug(this._handlerName + ".GetNextWakeupTime {0}", remoteScheduleTime);
 
       remoteScheduleTime.AddMinutes(-1); // resume 60sec before      
 

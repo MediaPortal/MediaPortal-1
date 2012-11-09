@@ -109,7 +109,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 
       try
       {
-        Log.Debug("Filter listview for " + filterText);
+        this.LogDebug("Filter listview for " + filterText);
         _listView.Invoke(new MethodInvoker(delegate()
                                              {
                                                _listView.Items.Clear();
@@ -122,7 +122,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
           if (InvokeHasTextChanged(filterText))
           {
 //the search term changed while we were filtering
-            Log.Debug("Cancel filtering for " + filterText);
+            this.LogDebug("Cancel filtering for " + filterText);
             break;
           }
 
@@ -145,7 +145,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
                                                  _listView.Items.AddRange(items.ToArray());
                                                  _listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
                                                }));
-          Log.Debug("Finished filtering " + items.Count + " items for " + filterText);
+          this.LogDebug("Finished filtering " + items.Count + " items for " + filterText);
         }
         else
         {

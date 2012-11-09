@@ -234,7 +234,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
         return;
       if (_running)
         return;
-      Log.Debug("RTSP: start streamer");
+      this.LogDebug("RTSP: start streamer");
       _running = true;
       Thread thread = new Thread(workerThread);
       thread.SetApartmentState(ApartmentState.STA);
@@ -249,7 +249,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
     /// </summary>
     public void Stop()
     {
-      Log.Debug("RTSP: stop streamer");
+      this.LogDebug("RTSP: stop streamer");
       if (_initialized == false)
         return;
       StopAllStreams();
@@ -258,7 +258,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
 
     private void StopAllStreams()
     {
-      Log.Debug("RTSP: stop all streams ({0})", _streams.Count);
+      this.LogDebug("RTSP: stop all streams ({0})", _streams.Count);
 
       List<string> removals = new List<string>();
       foreach (string key in _streams.Keys)
@@ -285,7 +285,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
       }
       if (System.IO.File.Exists(stream.FileName))
       {
-        Log.Debug("RTSP: add stream {0} file:{1}", stream.Name, stream.FileName);
+        this.LogDebug("RTSP: add stream {0} file:{1}", stream.Name, stream.FileName);
         if (stream.Card != null)
         {
           StreamAddTimeShiftFile(stream.Name, stream.FileName, false, (stream.MediaType == MediaTypeEnum.TV ? 0 : 1));
@@ -306,7 +306,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
     {
       if (_initialized == false)
         return;
-      Log.Debug("RTSP: remove stream {0}", streamName);
+      this.LogDebug("RTSP: remove stream {0}", streamName);
       if (_streams.ContainsKey(streamName))
       {
         StreamRemove(streamName);
@@ -342,7 +342,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
     /// </summary>
     protected void workerThread()
     {
-      Log.Debug("RTSP: Streamer started");
+      this.LogDebug("RTSP: Streamer started");
       try
       {
         while (_running)
@@ -354,7 +354,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
       {
         this.LogError(ex);
       }
-      Log.Debug("RTSP: Streamer stopped");
+      this.LogDebug("RTSP: Streamer stopped");
       _running = false;
     }
 

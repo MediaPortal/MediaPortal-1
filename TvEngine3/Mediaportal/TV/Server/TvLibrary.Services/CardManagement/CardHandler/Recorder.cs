@@ -84,7 +84,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
     protected override void AudioVideoEventHandler(PidType pidType)
     {
-      Log.Debug("Recorder audioVideoEventHandler {0}", pidType);
+      this.LogDebug("Recorder audioVideoEventHandler {0}", pidType);
 
       // we are only interested in video and audio PIDs
       if (pidType == PidType.Audio)
@@ -146,11 +146,11 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
               }
               _eventVideo.Reset();
               _eventAudio.Reset();
-              Log.Debug("Recorder.start add audioVideoEventHandler");
+              this.LogDebug("Recorder.start add audioVideoEventHandler");
               AttachAudioVideoEventHandler(subchannel);
             }
 
-            Log.Debug("card: StartRecording {0} {1}", _cardHandler.DataBaseCard.IdCard, fileName);
+            this.LogDebug("card: StartRecording {0} {1}", _cardHandler.DataBaseCard.IdCard, fileName);
             bool recStarted = subchannel.StartRecording(fileName);
             if (recStarted)
             {
@@ -200,7 +200,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
     private void HandleFailedRecording(ref IUser user, string fileName)
     {
-      Log.Debug("card: Recording failed! {0} {1}", _cardHandler.DataBaseCard.IdCard, fileName);
+      this.LogDebug("card: Recording failed! {0} {1}", _cardHandler.DataBaseCard.IdCard, fileName);
       string cardRecordingFolderName = _cardHandler.DataBaseCard.RecordingFolder;
       Stop(ref user);
       _cardHandler.UserManagement.RemoveUser(user, _cardHandler.UserManagement.GetTimeshiftingChannelId(user.Name));
@@ -229,7 +229,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
         if (_cardHandler.DataBaseCard.Enabled)
         {
-          Log.Debug("card: StopRecording card={0}, user={1}", _cardHandler.DataBaseCard.IdCard, user.Name);
+          this.LogDebug("card: StopRecording card={0}, user={1}", _cardHandler.DataBaseCard.IdCard, user.Name);
           if (user.UserType == UserType.Scheduler)
           {
             stop = StopRecording(ref user);
@@ -265,7 +265,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
       else
       {
-        Log.Debug("card: StopRecording subchannel null, skipping");
+        this.LogDebug("card: StopRecording subchannel null, skipping");
       }
       return stop;
     }
@@ -282,7 +282,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         {
           if (subchannel.IsRecording)
           {
-            Log.Debug("card: StopRecording setting new context owner on user '{0}'", user.Name);
+            this.LogDebug("card: StopRecording setting new context owner on user '{0}'", user.Name);
             context.Owner = user;
             break;
           }

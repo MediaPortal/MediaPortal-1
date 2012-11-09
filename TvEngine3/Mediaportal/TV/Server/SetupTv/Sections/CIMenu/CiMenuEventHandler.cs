@@ -50,7 +50,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
     {
       try
       {
-        Log.Debug("Callback from tvserver {0}", menu.Title);
+        this.LogDebug("Callback from tvserver {0}", menu.Title);
 
         // pass menu to calling dialog
         if (_refDlg != null)

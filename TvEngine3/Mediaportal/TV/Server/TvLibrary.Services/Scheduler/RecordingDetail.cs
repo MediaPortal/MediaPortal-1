@@ -225,12 +225,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       Setting setting;
       if (!IsSerie)
       {
-        Log.Debug("Scheduler: MakeFileName() using \"moviesformat\" (_isSerie={0})", _isSerie);
+        this.LogDebug("Scheduler: MakeFileName() using \"moviesformat\" (_isSerie={0})", _isSerie);
         setting = SettingsManagement.GetSetting("moviesformat", "%title%");
       }
       else
       {
-        Log.Debug("Scheduler: MakeFileName() using \"seriesformat\" (_isSerie={0})", _isSerie);
+        this.LogDebug("Scheduler: MakeFileName() using \"seriesformat\" (_isSerie={0})", _isSerie);
         setting = SettingsManagement.GetSetting("seriesformat", "%title%");
       }
 

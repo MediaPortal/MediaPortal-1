@@ -48,7 +48,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       if (_serverMonitorThread == null || !_serverMonitorThread.IsAlive)
       {
         _evtHeartbeatCtrl.Reset();
-        Log.Debug("ServerMonitor: ServerMonitor thread started.");
+        this.LogDebug("ServerMonitor: ServerMonitor thread started.");
         _serverMonitorThread = new Thread(ServerMonitorThread) { IsBackground = true, Name = "ServerMonitor thread" };
         _serverMonitorThread.Start();
       }
@@ -62,7 +62,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
         {
           _evtHeartbeatCtrl.Set();
           _serverMonitorThread.Join();
-          Log.Debug("ServerMonitor: ServerMonitor thread stopped.");
+          this.LogDebug("ServerMonitor: ServerMonitor thread stopped.");
         }
         catch (Exception) { }
       }

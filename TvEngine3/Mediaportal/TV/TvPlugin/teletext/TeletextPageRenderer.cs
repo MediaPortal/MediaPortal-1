@@ -23,6 +23,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Text;
 using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.TvPlugin.Teletext
 {
@@ -753,9 +754,9 @@ namespace Mediaportal.TV.TvPlugin.Teletext
       bool isSubtitlePage = Hamming.IsSubtitleBitSet(0, ref byPage);
       bool isNewsflash = Hamming.IsNewsflash(0, ref byPage);
       isBoxed = isNewsflash | isSubtitlePage;
-      Log.Debug("Newsflash: " + isNewsflash);
-      Log.Debug("Subtitle: " + isSubtitlePage);
-      Log.Debug("Boxed: " + isBoxed);
+      this.LogDebug("Newsflash: " + isNewsflash);
+      this.LogDebug("Subtitle: " + isSubtitlePage);
+      this.LogDebug("Boxed: " + isBoxed);
 
       // Determine if the header or toptext line sould be displayed.
       bool displayHeaderAndTopText = !_fullscreenMode || !isBoxed || (isBoxed && _selectedPageText.IndexOf("-") != -1)
@@ -1142,7 +1143,7 @@ namespace Mediaportal.TV.TvPlugin.Teletext
         _fontTeletext = new Font("Lucida Console", fntSize, FontStyle.Bold, GraphicsUnit.Pixel);
         fntHeight = _fontTeletext.GetHeight(renderGraphics);
       }
-      Log.Debug("FONT SIZE OF TELETEXT: " + fntSize);
+      this.LogDebug("FONT SIZE OF TELETEXT: " + fntSize);
 
       try
       {

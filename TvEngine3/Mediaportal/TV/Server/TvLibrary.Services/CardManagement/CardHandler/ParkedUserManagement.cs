@@ -150,17 +150,17 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
         if (!evt.WaitOne(_parkedStreamTimeout))
         {
-          Log.Debug("HandleParkedUserTimeOutThread: removing idle parked channel '{0}' for user '{1}'", channelId,
+          this.LogDebug("HandleParkedUserTimeOutThread: removing idle parked channel '{0}' for user '{1}'", channelId,
                     parkedUser.Name);
           var user = parkedUser as IUser;
           ServiceManager.Instance.InternalControllerService.StopTimeShifting(ref user, channelId);
         }
         else
         {
-          Log.Debug("HandleParkedUserTimeOutThread: stopping timeout event for channel '{0}' for user '{1}'", channelId,
+          this.LogDebug("HandleParkedUserTimeOutThread: stopping timeout event for channel '{0}' for user '{1}'", channelId,
                     parkedUser.Name);
         }
-        Log.Debug("HandleParkedUserTimeOutThread: dispose event");        
+        this.LogDebug("HandleParkedUserTimeOutThread: dispose event");        
         RemoveChannelOrParkedUser(parkedUser, channelId);
         evt.Dispose();
       }
@@ -523,7 +523,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           int removeSubChId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(parkedUser.Name, idChannel);          
           if (removeSubChId > -1)
           {
-            Log.Debug("RemoveChannelOrParkedUser: removing event from list.");
+            this.LogDebug("RemoveChannelOrParkedUser: removing event from list.");
             //parkedUser.SubChannels.Remove(removeSubChId);
             parkedUser.Events.Remove(removeSubChId);
             parkedUser.ParkedAtList.Remove(removeSubChId);

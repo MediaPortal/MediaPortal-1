@@ -393,7 +393,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     private TvResult AfterTune(IUser user, int idChannel, ITvSubChannel result)
     {
       bool isLocked = _cardHandler.Card.IsTunerLocked;
-      Log.Debug("card: Tuner locked: {0}", isLocked);
+      this.LogDebug("card: Tuner locked: {0}", isLocked);
 
       this.LogInfo("**************************************************");
       this.LogInfo("***** SIGNAL LEVEL: {0}, SIGNAL QUALITY: {1} *****", _cardHandler.Card.SignalLevel,
@@ -402,7 +402,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
       if (result != null)
       {
-        Log.Debug("card: tuned user: {0} subchannel: {1}", user.Name, result.SubChannelId);
+        this.LogDebug("card: tuned user: {0} subchannel: {1}", user.Name, result.SubChannelId);
         _cardHandler.UserManagement.AddSubChannelOrUser(user, idChannel, result.SubChannelId);
       }
       else
@@ -425,7 +425,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       //{
       //  return true;
       //}
-      Log.Debug("card: user: {0}:{1}:{2} tune {3}", user.Name, user.CardId, _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel), channel.ToString());
+      this.LogDebug("card: user: {0}:{1}:{2} tune {3}", user.Name, user.CardId, _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel), channel.ToString());
       _cardHandler.Card.CamType = (CamType)_cardHandler.DataBaseCard.CamType;
       _cardHandler.SetParameters();
 
@@ -436,7 +436,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         {          
           if (_cardHandler.UserManagement.HasUserHighestPriority(user) || _cardHandler.UserManagement.IsOwner(user.Name) && _cardHandler.UserManagement.HasUserEqualOrHigherPriority(user))
           {
-            Log.Debug("card: to different transponder");
+            this.LogDebug("card: to different transponder");
 
             //remove all subchannels, except for this user...
             int i = 0;
@@ -446,11 +446,11 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
             {
               if (recUser.Name != user.Name)
               {
-                Log.Debug("  stop subchannel: {0} user: {1}", i, recUser.Name);
+                this.LogDebug("  stop subchannel: {0} user: {1}", i, recUser.Name);
                 //fix for b2b mantis; http://mantis.team-mediaportal.com/view.php?id=1112
                 
                 // if we are stopping an on-going recording/schedule (=admin), we have to make sure that we remove the schedule also.                
-                Log.Debug("user is scheduler: {0}", recUser.Name);
+                this.LogDebug("user is scheduler: {0}", recUser.Name);
                 int recScheduleId = ServiceManager.Instance.InternalControllerService.GetRecordingSchedule(recUser.CardId, recUser.Name);
 
                 if (recScheduleId > 0)
@@ -527,7 +527,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
 
         TvResult result;
-        Log.Debug("card: CardTune {0} {1} {2}:{3}:{4}", _cardHandler.DataBaseCard.IdCard, channel.Name, user.Name,
+        this.LogDebug("card: CardTune {0} {1} {2}:{3}:{4}", _cardHandler.DataBaseCard.IdCard, channel.Name, user.Name,
                       user.CardId, _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, dbChannel.IdChannel));
         if (_cardHandler.IsScrambled(user.Name))
         {

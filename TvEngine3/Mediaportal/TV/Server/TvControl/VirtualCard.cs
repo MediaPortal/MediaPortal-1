@@ -1415,14 +1415,14 @@ namespace Mediaportal.TV.Server.TVControl
     /// <returns></returns>
     public bool SetCiMenuHandler(ICiMenuCallbacks CallbackHandler)
     {
-      Log.Debug("VC: SetCiMenuHandler");
+      this.LogDebug("VC: SetCiMenuHandler");
       try
       {
         if (User.CardId < 0 || !IsOwner())
         {
           return false;
         }
-        Log.Debug("VC: SetCiMenuHandler card: {0}, {1}", User.CardId, CallbackHandler);
+        this.LogDebug("VC: SetCiMenuHandler card: {0}, {1}", User.CardId, CallbackHandler);
         return GlobalServiceProvider.Get<IControllerService>().SetCiMenuHandler(User.CardId, CallbackHandler);
       }
       catch (Exception ex)

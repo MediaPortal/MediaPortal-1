@@ -199,7 +199,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       {
         //layer.RemoveOldPrograms();        
         ProgramManagement.DeleteOldPrograms();        
-        Log.Debug("xmltv import {0}", fileName);        
+        this.LogDebug("xmltv import {0}", fileName);        
         //
         // Make sure the file exists before we try to do any processing
         //
@@ -295,7 +295,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                       newProgChan.externalId = chan.ExternalId;
                       Programs.Add(newProgChan);
 
-                      Log.Debug("  channel#{0} xmlid:{1} name:{2} dbsid:{3}", iChannel, chan.ExternalId,
+                      this.LogDebug("  channel#{0} xmlid:{1} name:{2} dbsid:{3}", iChannel, chan.ExternalId,
                                     chan.DisplayName, chan.IdChannel);
                       if (!guideChannels.ContainsKey(chan.IdChannel))
                       {
@@ -379,7 +379,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           _status.Status = "Loading TV programs";
           if (showProgress && ShowProgress != null) ShowProgress(_status);
 
-          Log.Debug("xmltvimport: Reading TV programs");
+          this.LogDebug("xmltvimport: Reading TV programs");
           if (xmlReader != null)
           {
             xmlReader.Close();
@@ -758,7 +758,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
               #region sort & remove invalid programs. Save all valid programs
 
-              Log.Debug("xmltvimport: Sorting TV programs");
+              this.LogDebug("xmltvimport: Sorting TV programs");
 
               _status.Programs = 0;
               _status.Status = "Sorting TV programs";
@@ -924,7 +924,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         }
         catch (Exception)
         {
-          Log.Debug("XMLTVImport::CorrectEpisodeNum, could not parse '{0}' as plain number", episodenum);
+          this.LogDebug("XMLTVImport::CorrectEpisodeNum, could not parse '{0}' as plain number", episodenum);
         }
       }
       else
@@ -938,7 +938,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         }
         catch (Exception)
         {
-          Log.Debug("XMLTVImport::CorrectEpisodeNum, could not parse '{0}' as episode/episodes", episodenum);
+          this.LogDebug("XMLTVImport::CorrectEpisodeNum, could not parse '{0}' as episode/episodes", episodenum);
         }
       }
       return "";
@@ -1002,7 +1002,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           day < 0 || day > 31 ||
           month < 0 || month > 12)
       {
-        //Log.Debug(LogType.EPG, true, "epg-import:tvguide.xml contains invalid date/time :{0} converted it to:{1}",
+        //this.LogDebug(LogType.EPG, true, "epg-import:tvguide.xml contains invalid date/time :{0} converted it to:{1}",
         //              orgDateTime, newDateTime);
       }
 

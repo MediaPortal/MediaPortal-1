@@ -239,7 +239,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           }
           else
           {
-            Log.Debug("card: StartTimeShifting {0} {1} ", _cardHandler.DataBaseCard.IdCard, fileName);            
+            this.LogDebug("card: StartTimeShifting {0} {1} ", _cardHandler.DataBaseCard.IdCard, fileName);            
             
             _cardHandler.UserManagement.RefreshUser(ref user);
             ITvSubChannel subchannel = GetSubChannel(subChannelId);
@@ -247,7 +247,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
             if (subchannel != null)
             {
               _subchannel = subchannel;
-              Log.Debug("card: CAM enabled : {0}", _cardHandler.IsConditionalAccessSupported);
+              this.LogDebug("card: CAM enabled : {0}", _cardHandler.IsConditionalAccessSupported);
               AttachAudioVideoEventHandler(subchannel);
               if (subchannel.IsTimeShifting)
               {
@@ -309,7 +309,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         {
           ITvSubChannel subchannel = GetSubChannel(_cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel));
           DetachAudioVideoEventHandler(subchannel);
-          Log.Debug("card {2}: StopTimeShifting user:{0} sub:{1}", user.Name, _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel),
+          this.LogDebug("card {2}: StopTimeShifting user:{0} sub:{1}", user.Name, _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel),
                     _cardHandler.Card.Name);          
           ResetLinkageScanner();          
           _cardHandler.UserManagement.RemoveUser(user, idChannel);
@@ -346,7 +346,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
     public void OnBeforeTune()
     {
-      Log.Debug("TimeShifter.OnBeforeTune: resetting audio/video events");
+      this.LogDebug("TimeShifter.OnBeforeTune: resetting audio/video events");
       _tuneInProgress = true;
       _eventAudio.Reset();
       _eventVideo.Reset();
@@ -354,7 +354,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
     public void OnAfterTune()
     {
-      Log.Debug("TimeShifter.OnAfterTune: resetting audio/video time");
+      this.LogDebug("TimeShifter.OnAfterTune: resetting audio/video time");
       _timeAudioEvent = DateTime.MinValue;
       _timeVideoEvent = DateTime.MinValue;
 

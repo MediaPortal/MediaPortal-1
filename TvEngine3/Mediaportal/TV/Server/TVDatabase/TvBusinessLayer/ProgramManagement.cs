@@ -59,7 +59,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
               using (IProgramRepository programRepositoryForThread = new ProgramRepository())
               {
                 IQueryable<Program> nowProgramsForChannelGroup = programRepositoryForThread.GetNowProgramsForChannelGroup(idGroup);
-                //Log.Debug("GetNowProgramsForChannelGroup SQL = {0}", nowProgramsForChannelGroup.ToTraceString());
+                //this.LogDebug("GetNowProgramsForChannelGroup SQL = {0}", nowProgramsForChannelGroup.ToTraceString());
                 nowPrograms = nowProgramsForChannelGroup.ToList();
               }
               Log.Debug("GetNowProgramsForChannelGroup took {0}", s1.ElapsedMilliseconds);
@@ -70,7 +70,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
             {
               Stopwatch s2 = Stopwatch.StartNew();
               IQueryable<Program> nextProgramsForChannelGroup = programRepository.GetNextProgramsForChannelGroup(idGroup);
-              //Log.Debug("GetNextProgramsForChannelGroup SQL = {0}", nextProgramsForChannelGroup.ToTraceString());
+              //this.LogDebug("GetNextProgramsForChannelGroup SQL = {0}", nextProgramsForChannelGroup.ToTraceString());
               nextPrograms = nextProgramsForChannelGroup.ToList();
               Log.Debug("GetNowProgramsForChannelGroup took {0}", s2.ElapsedMilliseconds);
             }
@@ -429,7 +429,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       try
       {
-        Log.Debug("BusinessLayer: InsertProgramsThread started");
+        this.LogDebug("BusinessLayer: InsertProgramsThread started");
         DateTime lastImport = DateTime.Now;
         while (true)
         {
@@ -449,7 +449,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
               //  Has new work been queued in the meantime?
               if (ProgramManagement._programInsertsQueue.Count == 0)
               {
-                Log.Debug("BusinessLayer: InsertProgramsThread exiting");
+                this.LogDebug("BusinessLayer: InsertProgramsThread exiting");
                 ProgramManagement._insertProgramsThread = null;
                 break;
               }
@@ -468,7 +468,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
               }
               Thread.CurrentThread.Priority = importParams.Priority;
               InsertPrograms(importParams);
-              Log.Debug("BusinessLayer: Inserted {0} programs to the database", importParams.ProgramList.Count);
+              this.LogDebug("BusinessLayer: Inserted {0} programs to the database", importParams.ProgramList.Count);
               lastImport = DateTime.Now;
               Thread.CurrentThread.Priority = ThreadPriority.Lowest;
             }

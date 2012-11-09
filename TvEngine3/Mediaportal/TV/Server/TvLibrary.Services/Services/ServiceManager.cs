@@ -87,7 +87,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       serviceMetaDataBehaviour.HttpGetUrl = httpUri;
       serviceHost.Open();
       SetMaxItemsInObjectGraph(serviceHost);
-      Log.Debug("Service '{0}' succesfully started.", endpointUrl);
+      this.LogDebug("Service '{0}' succesfully started.", endpointUrl);
       return serviceHost;
     }
 
@@ -118,7 +118,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 
       serviceHost.Open();
       SetMaxItemsInObjectGraph(serviceHost);
-      Log.Debug("Service '{0}' succesfully started.", endpointUrl);
+      this.LogDebug("Service '{0}' succesfully started.", endpointUrl);
       return serviceHost;
     }
 
@@ -265,7 +265,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     /// <filterpriority>2</filterpriority>
     public void Dispose()
     {
-      Log.Debug("closing WCF service.");
+      this.LogDebug("closing WCF service.");
       try
       {
         Services.EventService.CleanUp();
@@ -277,7 +277,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
           }
         }
         _serviceHosts.Clear();
-        Log.Debug("WCF service(s) closed.");
+        this.LogDebug("WCF service(s) closed.");
       }
       catch (Exception ex)
       {

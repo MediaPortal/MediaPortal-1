@@ -775,17 +775,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     ///   connect the [first] device filter to.</param>
     protected void LoadPlugins(IBaseFilter mainFilter, ref IBaseFilter lastFilter)
     {
-      Log.Debug("TvCardBase: load custom device plugins");
+      this.LogDebug("TvCardBase: load custom device plugins");
 
       if (mainFilter == null)
       {
-        Log.Debug("TvCardBase: the main filter is null");
+        this.LogDebug("TvCardBase: the main filter is null");
         return;
       }
       string customDevicesFolder = PathManager.BuildAssemblyRelativePath("plugins\\CustomDevices");
       if (!Directory.Exists(customDevicesFolder))
       {
-        Log.Debug("TvCardBase: plugin directory doesn't exist or is not accessible");
+        this.LogDebug("TvCardBase: plugin directory doesn't exist or is not accessible");
         return;
       }
 
@@ -810,7 +810,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
               }
               else
               {
-                Log.Debug("TvCardBase: skipping incompatible plugin \"{0}\" ({1})", type.Name, dllName);
+                this.LogDebug("TvCardBase: skipping incompatible plugin \"{0}\" ({1})", type.Name, dllName);
               }
             }
           }
@@ -850,10 +850,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           interfaceNames[i] = interfaces[i].Name;
         }
         Array.Sort(interfaceNames);
-        Log.Debug("  {0} [{1} - {2}]: {3}", d.Name, d.Priority, d.GetType().Name, String.Join(", ", interfaceNames));
+        this.LogDebug("  {0} [{1} - {2}]: {3}", d.Name, d.Priority, d.GetType().Name, String.Join(", ", interfaceNames));
       }
 
-      Log.Debug("TvCardBase: checking for supported plugins");
+      this.LogDebug("TvCardBase: checking for supported plugins");
       _customDeviceInterfaces = new List<ICustomDevice>();
       foreach (ICustomDevice d in plugins)
       {
@@ -870,10 +870,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           IAddOnDevice addOn = d as IAddOnDevice;
           if (addOn != null)
           {
-            Log.Debug("TvCardBase: add-on plugin found");
+            this.LogDebug("TvCardBase: add-on plugin found");
             if (!addOn.AddToGraph(ref lastFilter))
             {
-              Log.Debug("TvCardBase: failed to add device filters to graph");
+              this.LogDebug("TvCardBase: failed to add device filters to graph");
               addOn.Dispose();
               continue;
             }
@@ -886,7 +886,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           // When we find the main plugin, then we stop searching...
           if (!isAddOn)
           {
-            Log.Debug("TvCardBase: primary plugin found");
+            this.LogDebug("TvCardBase: primary plugin found");
             break;
           }
         }
@@ -897,7 +897,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       if (_customDeviceInterfaces.Count == 0)
       {
-        Log.Debug("TvCardBase: no plugins supported");
+        this.LogDebug("TvCardBase: no plugins supported");
       }
     }
 
@@ -910,7 +910,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </remarks>
     protected void OpenPlugins()
     {
-      Log.Debug("TvCardBase: open custom device plugins");
+      this.LogDebug("TvCardBase: open custom device plugins");
       if (_useConditionalAccessInterace)
       {
         foreach (ICustomDevice plugin in _customDeviceInterfaces)
@@ -929,16 +929,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     protected void ConfigurePidFilter()
     {
-      Log.Debug("TvCardBase: configure PID filter, mode = {0}", _pidFilterMode);
+      this.LogDebug("TvCardBase: configure PID filter, mode = {0}", _pidFilterMode);
 
       if (_tunerType == CardType.Analog || _tunerType == CardType.RadioWebStream || _tunerType == CardType.Unknown)
       {
-        Log.Debug("TvCardBase: unsupported device type {0}", _tunerType);
+        this.LogDebug("TvCardBase: unsupported device type {0}", _tunerType);
         return;
       }
       if (_mapSubChannels == null || _mapSubChannels.Count == 0)
       {
-        Log.Debug("TvCardBase: no subchannels");
+        this.LogDebug("TvCardBase: no subchannels");
         return;
       }
 
@@ -950,7 +950,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         IPidFilterController filter = d as IPidFilterController;
         if (filter != null)
         {
-          Log.Debug("TvCardBase: found PID filter controller interface");
+          this.LogDebug("TvCardBase: found PID filter controller interface");
 
           if (_pidFilterMode == PidFilterMode.Disabled)
           {
@@ -960,7 +960,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
           if (pidSet == null)
           {
-            Log.Debug("TvCardBase: assembling PID list");
+            this.LogDebug("TvCardBase: assembling PID list");
             pidSet = new HashSet<UInt16>();
             int count = 1;
             foreach (ITvSubChannel subchannel in _mapSubChannels.Values)
@@ -1000,7 +1000,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
                 {
                   if (!pidSet.Contains(pid))
                   {
-                    Log.Debug("  {0,-2} = {1} (0x{1:x})", count++, pid);
+                    this.LogDebug("  {0,-2} = {1} (0x{1:x})", count++, pid);
                     pidSet.Add(pid);
                   }
                 }
@@ -1027,26 +1027,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     ///   subchannel has changed, or <c>last</c> if the subchannel is being disposed.</param>
     protected void UpdateDecryptList(int subChannelId, CaPmtListManagementAction updateAction)
     {
-      Log.Debug("TvCardBase: subchannel {0} update decrypt list, mode = {1}, update action = {2}", subChannelId, _multiChannelDecryptMode, updateAction);
+      this.LogDebug("TvCardBase: subchannel {0} update decrypt list, mode = {1}, update action = {2}", subChannelId, _multiChannelDecryptMode, updateAction);
 
       if (_mapSubChannels == null || _mapSubChannels.Count == 0 || !_mapSubChannels.ContainsKey(subChannelId))
       {
-        Log.Debug("TvCardBase: subchannel not found");
+        this.LogDebug("TvCardBase: subchannel not found");
         return;
       }
       if (_mapSubChannels[subChannelId].CurrentChannel.FreeToAir)
       {
-        Log.Debug("TvCardBase: service is not encrypted");
+        this.LogDebug("TvCardBase: service is not encrypted");
         return;
       }
       if (updateAction == CaPmtListManagementAction.Last && _multiChannelDecryptMode != MultiChannelDecryptMode.Changes)
       {
-        Log.Debug("TvCardBase: \"not selected\" command acknowledged, no action required");
+        this.LogDebug("TvCardBase: \"not selected\" command acknowledged, no action required");
         return;
       }
 
       // First build a distinct list of the services that we need to handle.
-      Log.Debug("TvCardBase: assembling service list");
+      this.LogDebug("TvCardBase: assembling service list");
       List<BaseSubChannel> distinctServices = new List<BaseSubChannel>();
       Dictionary<int, BaseSubChannel>.ValueCollection.Enumerator en = _mapSubChannels.Values.GetEnumerator();
       DVBBaseChannel updatedDigitalService = _mapSubChannels[subChannelId].CurrentChannel as DVBBaseChannel;
@@ -1071,7 +1071,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             DVBBaseChannel digitalService = service as DVBBaseChannel;
             if (digitalService != null && digitalService.ServiceId == updatedDigitalService.ServiceId)
             {
-              Log.Debug("TvCardBase: the service for this subchannel is a duplicate, no action required");
+              this.LogDebug("TvCardBase: the service for this subchannel is a duplicate, no action required");
               return;
             }
           }
@@ -1080,7 +1080,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             AnalogChannel analogService = service as AnalogChannel;
             if (analogService != null && analogService.Frequency == updatedAnalogService.Frequency && analogService.ChannelNumber == updatedAnalogService.ChannelNumber)
             {
-              Log.Debug("TvCardBase: the service for this subchannel is a duplicate, no action required");
+              this.LogDebug("TvCardBase: the service for this subchannel is a duplicate, no action required");
               return;
             }
           }
@@ -1141,12 +1141,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       // for "changes" mode.
       if (_decryptLimit > 0 && distinctServices.Count > _decryptLimit)
       {
-        Log.Debug("TvCardBase: decrypt limit exceeded");
+        this.LogDebug("TvCardBase: decrypt limit exceeded");
         return;
       }
       if (distinctServices.Count == 0)
       {
-        Log.Debug("TvCardBase: no services to update");
+        this.LogDebug("TvCardBase: no services to update");
         return;
       }
 
@@ -1157,7 +1157,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         ThrowExceptionIfTuneCancelled();
         if (attempt > 1)
         {
-          Log.Debug("TvCardBase: attempt {0}...", attempt);
+          this.LogDebug("TvCardBase: attempt {0}...", attempt);
         }
 
         foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
@@ -1168,12 +1168,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             continue;
           }
 
-          Log.Debug("TvCardBase: CA provider {0}...", caProvider.Name);
+          this.LogDebug("TvCardBase: CA provider {0}...", caProvider.Name);
           foundCaProvider = true;
 
           if (_waitUntilCaInterfaceReady && !caProvider.IsInterfaceReady())
           {
-            Log.Debug("TvCardBase: provider is not ready, waiting for up to 15 seconds", caProvider.Name);
+            this.LogDebug("TvCardBase: provider is not ready, waiting for up to 15 seconds", caProvider.Name);
             DateTime startWait = DateTime.Now;
             TimeSpan waitTime = new TimeSpan(0);
             while (waitTime.TotalMilliseconds < 15000)
@@ -1183,14 +1183,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
               waitTime = DateTime.Now - startWait;
               if (caProvider.IsInterfaceReady())
               {
-                Log.Debug("TvCardBase: provider ready after {0} ms", waitTime.TotalMilliseconds);
+                this.LogDebug("TvCardBase: provider ready after {0} ms", waitTime.TotalMilliseconds);
                 break;
               }
             }
           }
 
           // Ready or not, we send commands now.
-          Log.Debug("TvCardBase: sending command(s)");
+          this.LogDebug("TvCardBase: sending command(s)");
           bool success = false;
           TvDvbChannel digitalService;
           // The default action is "more" - this will be changed below if necessary.
@@ -1241,7 +1241,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
               action = CaPmtListManagementAction.More;
             }
 
-            Log.Debug("  command = {0}, action = {1}, service = {2}", command, action, distinctServices[i].CurrentChannel.Name);
+            this.LogDebug("  command = {0}, action = {1}, service = {2}", command, action, distinctServices[i].CurrentChannel.Name);
             digitalService = distinctServices[i] as TvDvbChannel;
             if (digitalService == null)
             {
@@ -1267,7 +1267,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
         if (!foundCaProvider)
         {
-          Log.Debug("TvCardBase: no CA providers identified");
+          this.LogDebug("TvCardBase: no CA providers identified");
           return;
         }
       }
@@ -1335,7 +1335,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public void LockInOnSignal()
     {
-      Log.Debug("TvCardBase: lock in on signal");
+      this.LogDebug("TvCardBase: lock in on signal");
       _tunerLocked = false;
       DateTime timeStart = DateTime.Now;
       TimeSpan ts = timeStart - timeStart;
@@ -1346,7 +1346,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         if (!_tunerLocked)
         {
           ts = DateTime.Now - timeStart;
-          Log.Debug("  waiting 20ms");
+          this.LogDebug("  waiting 20ms");
           System.Threading.Thread.Sleep(20);
         }
       }
@@ -1356,7 +1356,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         throw new TvExceptionNoSignal("TvCardBase: failed to lock signal");
       }
 
-      Log.Debug("TvCardBase: locked");
+      this.LogDebug("TvCardBase: locked");
     }
 
     /// <summary>
@@ -1396,7 +1396,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public virtual void Stop()
     {
-      Log.Debug("TvCardBase: stop, idle mode = {0}", _idleMode);
+      this.LogDebug("TvCardBase: stop, idle mode = {0}", _idleMode);
       try
       {
         UpdateEpgGrabber(false);  // Stop grabbing EPG.
@@ -1424,12 +1424,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           deviceInterface.OnStop(this, ref pluginAction);
           if (pluginAction > action)
           {
-            Log.Debug("TvCardBase: plugin \"{0}\" overrides action {1} with {2}", deviceInterface.Name, action, pluginAction);
+            this.LogDebug("TvCardBase: plugin \"{0}\" overrides action {1} with {2}", deviceInterface.Name, action, pluginAction);
             action = pluginAction;
           }
           else if (action != pluginAction)
           {
-            Log.Debug("TvCardBase: plugin \"{0}\" wants to perform action {1}, overriden", deviceInterface.Name, pluginAction);
+            this.LogDebug("TvCardBase: plugin \"{0}\" wants to perform action {1}, overriden", deviceInterface.Name, pluginAction);
           }
         }
 
@@ -1460,7 +1460,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <param name="action">The action to perform with the device.</param>
     protected virtual void PerformDeviceAction(DeviceAction action)
     {
-      Log.Debug("TvCardBase: perform device action, action = {0}", action);
+      this.LogDebug("TvCardBase: perform device action, action = {0}", action);
       try
       {
         if (action == DeviceAction.Reset)
@@ -1478,7 +1478,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         {
           if (_graphBuilder == null)
           {
-            Log.Debug("TvCardBase: graphbuilder is null");
+            this.LogDebug("TvCardBase: graphbuilder is null");
             return;
           }
 
@@ -1501,12 +1501,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           }
           else
           {
-            Log.Debug("TvCardBase: unhandled action");
+            this.LogDebug("TvCardBase: unhandled action");
             return;
           }
         }
 
-        Log.Debug("TvCardBase: action succeeded");
+        this.LogDebug("TvCardBase: action succeeded");
       }
       catch (Exception ex)
       {
@@ -1520,15 +1520,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <param name="state">The state to put the filter graph in.</param>
     protected virtual void SetGraphState(FilterState state)
     {
-      Log.Debug("TvCardBase: set graph state, state = {0}", state);
+      this.LogDebug("TvCardBase: set graph state, state = {0}", state);
 
       // Get current state.
       FilterState currentState;
       ((IMediaControl)_graphBuilder).GetState(10, out currentState);
-      Log.Debug("  current state = {0}", currentState);
+      this.LogDebug("  current state = {0}", currentState);
       if (state == currentState)
       {
-        Log.Debug("TvCardBase: graph already in required state");
+        this.LogDebug("TvCardBase: graph already in required state");
         return;
       }
       int hr = 0;
@@ -1581,7 +1581,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <returns>the subchannel associated with the tuned channel</returns>
     public virtual ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
-      Log.Debug("TvCardBase: tune channel, {0}", channel);
+      this.LogDebug("TvCardBase: tune channel, {0}", channel);
       try
       {
         // The DirectShow/BDA graph needs to be assembled before the channel can be tuned.
@@ -1594,12 +1594,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         // Get a subchannel for the service.
         if (!_mapSubChannels.ContainsKey(subChannelId))
         {
-          Log.Debug("TvCardBase: creating new subchannel");
+          this.LogDebug("TvCardBase: creating new subchannel");
           subChannelId = CreateNewSubChannel(channel);
         }
         else
         {
-          Log.Debug("TvCardBase: using existing subchannel");
+          this.LogDebug("TvCardBase: using existing subchannel");
           // If reusing a subchannel and our multi-channel decrypt mode is "changes", tell the plugin to stop
           // decrypting the previous service before we lose access to the PMT and CAT.
           if (_multiChannelDecryptMode == MultiChannelDecryptMode.Changes)
@@ -1636,12 +1636,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
               // Valid action requested...
               if (pluginAction > action)
               {
-                Log.Debug("TvCardBase: plugin \"{0}\" overrides action {1} with {2}", deviceInterface.Name, action, pluginAction);
+                this.LogDebug("TvCardBase: plugin \"{0}\" overrides action {1} with {2}", deviceInterface.Name, action, pluginAction);
                 action = pluginAction;
               }
               else if (pluginAction != action)
               {
-                Log.Debug("TvCardBase: plugin \"{0}\" wants to perform action {1}, overriden", deviceInterface.Name, pluginAction);
+                this.LogDebug("TvCardBase: plugin \"{0}\" wants to perform action {1}, overriden", deviceInterface.Name, pluginAction);
               }
             }
 
@@ -1739,7 +1739,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <param name="subChannelId">The ID of the subchannel associated with the channel that is being cancelled.</param>
     public void CancelTune(int subChannelId)
     {
-      Log.Debug("TvCardBase: subchannel {0} cancel tune", subChannelId);
+      this.LogDebug("TvCardBase: subchannel {0} cancel tune", subChannelId);
       _cancelTune = true;
       if (_mapSubChannels.ContainsKey(subChannelId))
       {
@@ -1919,17 +1919,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <param name="id">The ID of the subchannel.</param>
     public virtual void FreeSubChannel(int id)
     {
-      Log.Debug("TvCardBase: free subchannel, ID = {0}, subchannel count = {1}", id, _mapSubChannels.Count);
+      this.LogDebug("TvCardBase: free subchannel, ID = {0}, subchannel count = {1}", id, _mapSubChannels.Count);
       if (_mapSubChannels.ContainsKey(id))
       {
         if (_mapSubChannels[id].IsTimeShifting)
         {
-          Log.Debug("TvCardBase: subchannel is still timeshifting!");
+          this.LogDebug("TvCardBase: subchannel is still timeshifting!");
           return;
         }
         if (_mapSubChannels[id].IsRecording)
         {
-          Log.Debug("TvCardBase: subchannel is still recording!");
+          this.LogDebug("TvCardBase: subchannel is still recording!");
           return;
         }
 
@@ -1949,17 +1949,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       else
       {
-        Log.Debug("TvCardBase: subchannel not found!");
+        this.LogDebug("TvCardBase: subchannel not found!");
       }
       if (_mapSubChannels.Count == 0)
       {
         _subChannelId = 0;
-        Log.Debug("TvCardBase: no subchannels present, stopping device");
+        this.LogDebug("TvCardBase: no subchannels present, stopping device");
         Stop();
       }
       else
       {
-        Log.Debug("TvCardBase: subchannels still present, leave device running");
+        this.LogDebug("TvCardBase: subchannels still present, leave device running");
       }
     }
 

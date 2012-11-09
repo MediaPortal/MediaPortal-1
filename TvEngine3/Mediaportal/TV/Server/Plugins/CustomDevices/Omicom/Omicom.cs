@@ -89,23 +89,23 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
     {
-      Log.Debug("Omicom: initialising device");
+      this.LogDebug("Omicom: initialising device");
 
       if (tunerFilter == null)
       {
-        Log.Debug("Omicom: tuner filter is null");
+        this.LogDebug("Omicom: tuner filter is null");
         return false;
       }
       if (_isOmicom)
       {
-        Log.Debug("Omicom: device is already initialised");
+        this.LogDebug("Omicom: device is already initialised");
         return true;
       }
 
       _propertySet = tunerFilter as IKsPropertySet;
       if (_propertySet == null)
       {
-        Log.Debug("Omicom: tuner filter is not a property set");
+        this.LogDebug("Omicom: tuner filter is not a property set");
         return false;
       }
 
@@ -113,11 +113,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
       int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcWrite, out support);
       if (hr != 0 || (support & KSPropertySupport.Set) == 0)
       {
-        Log.Debug("Omicom: device does not support the Omicom property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Omicom: device does not support the Omicom property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
 
-      Log.Debug("Omicom: supported device detected");
+      this.LogDebug("Omicom: supported device detected");
       _isOmicom = true;
       _diseqcBuffer = Marshal.AllocCoTaskMem(DiseqcMessageSize);
       return true;
@@ -134,12 +134,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
     /// <param name="action">The action to take, if any.</param>
     public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out DeviceAction action)
     {
-      Log.Debug("Omicom: on before tune callback");
+      this.LogDebug("Omicom: on before tune callback");
       action = DeviceAction.Default;
 
       if (!_isOmicom)
       {
-        Log.Debug("Omicom: device not initialised or interface not supported");
+        this.LogDebug("Omicom: device not initialised or interface not supported");
         return;
       }
 
@@ -154,7 +154,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
       {
         ch.ModulationType = ModulationType.Mod8Psk;
       }
-      Log.Debug("  modulation = {0}", ch.ModulationType);
+      this.LogDebug("  modulation = {0}", ch.ModulationType);
     }
 
     #endregion
@@ -174,11 +174,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
     /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
     public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
     {
-      Log.Debug("Omicom: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
+      this.LogDebug("Omicom: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
 
       if (!_isOmicom || _propertySet == null)
       {
-        Log.Debug("Omicom: device not initialised or interface not supported");
+        this.LogDebug("Omicom: device not initialised or interface not supported");
         return false;
       }
 
@@ -187,11 +187,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
       int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.Tone22k, _diseqcBuffer, sizeof(Int32), _diseqcBuffer, sizeof(Int32));
       if (hr == 0)
       {
-        Log.Debug("Omicom: result = success");
+        this.LogDebug("Omicom: result = success");
         return true;
       }
 
-      Log.Debug("Omicom: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogDebug("Omicom: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -202,21 +202,21 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
     public bool SendCommand(byte[] command)
     {
-      Log.Debug("Omicom: send DiSEqC command");
+      this.LogDebug("Omicom: send DiSEqC command");
 
       if (!_isOmicom || _propertySet == null)
       {
-        Log.Debug("Omicom: device not initialised or interface not supported");
+        this.LogDebug("Omicom: device not initialised or interface not supported");
         return false;
       }
       if (command == null || command.Length == 0)
       {
-        Log.Debug("Omicom: command not supplied");
+        this.LogDebug("Omicom: command not supplied");
         return true;
       }
       if (command.Length > MaxDiseqcMessageLength)
       {
-        Log.Debug("Omicom: command too long, length = {0}", command.Length);
+        this.LogDebug("Omicom: command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -235,11 +235,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
       );
       if (hr == 0)
       {
-        Log.Debug("Omicom: result = success");
+        this.LogDebug("Omicom: result = success");
         return true;
       }
 
-      Log.Debug("Omicom: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogDebug("Omicom: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -251,12 +251,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
     /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
     public bool ReadResponse(out byte[] response)
     {
-      Log.Debug("Omicom: read DiSEqC response");
+      this.LogDebug("Omicom: read DiSEqC response");
       response = null;
 
       if (!_isOmicom || _propertySet == null)
       {
-        Log.Debug("Omicom: device not initialised or interface not supported");
+        this.LogDebug("Omicom: device not initialised or interface not supported");
         return false;
       }
 
@@ -272,7 +272,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
       );
       if (hr != 0 || returnedByteCount != DiseqcMessageSize)
       {
-        Log.Debug("Omicom: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Omicom: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
 
@@ -280,10 +280,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
       DiseqcMessage message = (DiseqcMessage)Marshal.PtrToStructure(_diseqcBuffer, typeof(DiseqcMessage));
       if (message.MessageLength > MaxDiseqcMessageLength)
       {
-        Log.Debug("Omicom: reply too long, length = {0}", message.MessageLength);
+        this.LogDebug("Omicom: reply too long, length = {0}", message.MessageLength);
         return false;
       }
-      Log.Debug("Omicom: result = success");
+      this.LogDebug("Omicom: result = success");
       response = new byte[message.MessageLength];
       Buffer.BlockCopy(message.Message, 0, response, 0, message.MessageLength);
       return true;

@@ -28,6 +28,7 @@ using System.Runtime.InteropServices;
 using MediaPortal.Common.Utils;
 using MediaPortal.GUI.Library;
 using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 #endregion
 
@@ -177,7 +178,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       else
       {
-        Log.Debug("WOLMgr: Invalid ethernet address!");
+        this.LogDebug("WOLMgr: Invalid ethernet address!");
         return false;
       }
     }
@@ -277,30 +278,30 @@ namespace Mediaportal.TV.TvPlugin
 
       // we have to make sure the remoting system knows that we have resumed the server by means of WOL.
       // this will make sure the connection timeout for the remoting framework is increased.
-      Log.Debug("WOLMgr: Increasing timeout for RemoteControl");
+      this.LogDebug("WOLMgr: Increasing timeout for RemoteControl");
       RemoteControl.UseIncreasedTimeoutForInitialConnection = true;
 
-      Log.Debug("WOLMgr: Ping {0}", wakeupTarget);
+      this.LogDebug("WOLMgr: Ping {0}", wakeupTarget);
       if (Ping(wakeupTarget, timeout))
       {
-        Log.Debug("WOLMgr: {0} already started", wakeupTarget);
+        this.LogDebug("WOLMgr: {0} already started", wakeupTarget);
         return true;
       }
 
       if (!SendWakeOnLanPacket(hwAddress, IPAddress.Broadcast))
       {
-        Log.Debug("WOLMgr: FAILED to send wake-on-lan packet!");
+        this.LogDebug("WOLMgr: FAILED to send wake-on-lan packet!");
         return false;
       }
 
       while (waited < timeout * 1000)
       {
-        Log.Debug("WOLMgr: Ping {0}", wakeupTarget);
+        this.LogDebug("WOLMgr: Ping {0}", wakeupTarget);
         if (Ping(wakeupTarget, 1000))
         {
           return true;
         }
-        Log.Debug("WOLMgr: System {0} still not reachable, waiting...", wakeupTarget);
+        this.LogDebug("WOLMgr: System {0} still not reachable, waiting...", wakeupTarget);
         System.Threading.Thread.Sleep(1000);
         waited += 2000;
       }

@@ -74,7 +74,7 @@ namespace Mediaportal.TV.Server.TVControl
       {
         var settingService = GlobalServiceProvider.Get<ISettingService>();
         _priorityEpg = (int)ValueSanityCheck(
-        Convert.ToDecimal(settingService.GetSettingWithDefaultValue(EPG_TAGNAME, EPG_PRIORITY.ToString()).Value), PRIORITY_MIN_VALUE, PRIORITY_MAX_VALUE);        
+        Convert.ToDecimal(settingService.GetSettingWithDefaultValue(EPG_TAGNAME, EPG_PRIORITY.ToString()).Value), PRIORITY_MIN_VALUE, PRIORITY_MAX_VALUE);
 
         Log.Debug("UserFactory setting PriorityEPG : {0}", _priorityEpg);
 

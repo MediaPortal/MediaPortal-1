@@ -244,7 +244,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
           }
           else
           {
-            Log.Debug("analog: Encoder mode setTo FAILresult: {0}", hr);
+            this.LogDebug("analog: Encoder mode setTo FAILresult: {0}", hr);
           }
         }
       }
@@ -316,12 +316,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
             }
             else
             {
-              Log.Debug("analog: Range SetEncoder(BitRate) FAILresult: 0x{0:x}", hr);
+              this.LogDebug("analog: Range SetEncoder(BitRate) FAILresult: 0x{0:x}", hr);
             }
           }
           else
           {
-            Log.Debug("analog: Range GetParameterRange(BitRate) FAILresult: 0x{0:x}", hr);
+            this.LogDebug("analog: Range GetParameterRange(BitRate) FAILresult: 0x{0:x}", hr);
           }
 
           if (_bitRateMode == VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak && _supported_PeakBitRate)
@@ -377,12 +377,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
               }
               else
               {
-                Log.Debug("analog: Range SetEncoder(BitRatePeak) FAILresult: 0x{0:x}", hr);
+                this.LogDebug("analog: Range SetEncoder(BitRatePeak) FAILresult: 0x{0:x}", hr);
               }
             }
             else
             {
-              Log.Debug("analog: Range GetParameterRange(BitRatePeak) FAILresult: 0x{0:x}", hr);
+              this.LogDebug("analog: Range GetParameterRange(BitRatePeak) FAILresult: 0x{0:x}", hr);
             }
           }
         }
@@ -409,21 +409,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
         int hr = IsSupported(PropSetID.ENCAPIPARAM_BitRateMode);
         _supported_BitRateMode = hr == 0;
         if (_supported_BitRateMode)
-          Log.Debug("analog: Encoder supports ENCAPIPARAM_BitRateMode");
+          this.LogDebug("analog: Encoder supports ENCAPIPARAM_BitRateMode");
 
         // Can we specify the bitrate?
         //ENCAPIPARAM_BITRATE 	Specifies the bit rate, in bits per second. In constant bit rate (CBR) mode, the value gives the constant bitrate. In either variable bit rate mode, it gives the average bit rate. The value is a 32-bit unsigned long.
         hr = IsSupported(PropSetID.ENCAPIPARAM_BitRate);
         _supported_BitRate = hr == 0;
         if (_supported_BitRate)
-          Log.Debug("analog: Encoder supports ENCAPIPARAM_BitRate");
+          this.LogDebug("analog: Encoder supports ENCAPIPARAM_BitRate");
 
         // Can we specify the peak bitrate for variable bit rate peak
         //ENCAPIPARAM_PEAK_BITRATE 	Secifies the peak bit rate. This parameter is relevant only when ENCAPIPARAM_BITRATE_MODE has been set to VariableBitRatePeak.
         hr = IsSupported(PropSetID.ENCAPIPARAM_PeakBitRate);
         _supported_PeakBitRate = hr == 0;
         if (_supported_PeakBitRate)
-          Log.Debug("analog: Encoder supports ENCAPIPARAM_PeakBitRate");
+          this.LogDebug("analog: Encoder supports ENCAPIPARAM_PeakBitRate");
       }
       catch (Exception e)
       {

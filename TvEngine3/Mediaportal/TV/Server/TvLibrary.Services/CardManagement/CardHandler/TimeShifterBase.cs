@@ -57,13 +57,13 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           return;
         }
 
-        Log.Debug("TimeShifterBase: tuning interrupted.");
+        this.LogDebug("TimeShifterBase: tuning interrupted.");
         _cancelled = true;
 
         ITvSubChannel subchannel = GetSubChannel(subchannelId);
         if (subchannel is BaseSubChannel)
         {
-          Log.Debug("card {2}: Cancel Timeshifting sub:{1}", subchannel, _cardHandler.Card.Name);
+          this.LogDebug("card {2}: Cancel Timeshifting sub:{1}", subchannel, _cardHandler.Card.Name);
           ((BaseSubChannel)subchannel).AudioVideoEvent -= AudioVideoEventHandler;
           _eventAudio.Set();
           _eventVideo.Set();
@@ -110,7 +110,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
         if (!_cardHandler.IsConditionalAccessSupported)
         {
-          Log.Debug("card: WaitForTimeShiftFile - return scrambled, since the device does not support conditional access");
+          this.LogDebug("card: WaitForTimeShiftFile - return scrambled, since the device does not support conditional access");
           isScrambled = true;
         }
       }
@@ -150,34 +150,34 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
       if (isRadio)
       {
-        Log.Debug("card: WaitForFile - waiting _eventAudio");
+        this.LogDebug("card: WaitForFile - waiting _eventAudio");
         // wait for audio PID to be seen
         if (_eventAudio.WaitOne(waitForEvent, true))
         {
           if (IsTuneCancelled())
           {
-            Log.Debug("card: WaitForFile - Tune Cancelled");
+            this.LogDebug("card: WaitForFile - Tune Cancelled");
             return false;
           }
           // start of the video & audio is seen
           TimeSpan ts = DateTime.Now - timeStart;
-          Log.Debug("card: WaitForFile - audio is seen after {0} seconds", ts.TotalSeconds);
+          this.LogDebug("card: WaitForFile - audio is seen after {0} seconds", ts.TotalSeconds);
           return true;
         }
         else
         {
           TimeSpan ts = DateTime.Now - timeStart;
-          Log.Debug("card: WaitForRecordingFile - no audio was found after {0} seconds", ts.TotalSeconds);
+          this.LogDebug("card: WaitForRecordingFile - no audio was found after {0} seconds", ts.TotalSeconds);
           if (_cardHandler.IsScrambled(user.Name))
           {
-            Log.Debug("card: WaitForFile - audio stream is scrambled");
+            this.LogDebug("card: WaitForFile - audio stream is scrambled");
             scrambled = true;
           }
         }
       }
       else
       {
-        Log.Debug("card: WaitForFile - waiting _eventAudio & _eventVideo");
+        this.LogDebug("card: WaitForFile - waiting _eventAudio & _eventVideo");
         // block until video & audio PIDs are seen or the timeout is reached
         if (_eventAudio.WaitOne(waitForEvent, true))
         {
@@ -189,22 +189,22 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           {
             if (IsTuneCancelled())
             {
-              Log.Debug("card: WaitForFile - Tune Cancelled");
+              this.LogDebug("card: WaitForFile - Tune Cancelled");
               return false;
             }
             // start of the video & audio is seen
             TimeSpan ts = DateTime.Now - timeStart;
-            Log.Debug("card: WaitForFile - video and audio are seen after {0} seconds", ts.TotalSeconds);
+            this.LogDebug("card: WaitForFile - video and audio are seen after {0} seconds", ts.TotalSeconds);
             return true;
           }
           else
           {
             TimeSpan ts = DateTime.Now - timeStart;
-            Log.Debug("card: WaitForFile - video was found, but audio was not found after {0} seconds",
+            this.LogDebug("card: WaitForFile - video was found, but audio was not found after {0} seconds",
                       ts.TotalSeconds);
             if (_cardHandler.IsScrambled(user.Name))
             {
-              Log.Debug("card: WaitForFile - audio stream is scrambled");
+              this.LogDebug("card: WaitForFile - audio stream is scrambled");
               scrambled = true;
             }
           }
@@ -212,10 +212,10 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         else
         {
           TimeSpan ts = DateTime.Now - timeStart;
-          Log.Debug("card: WaitForFile - no audio was found after {0} seconds", ts.TotalSeconds);
+          this.LogDebug("card: WaitForFile - no audio was found after {0} seconds", ts.TotalSeconds);
           if (_cardHandler.IsScrambled(user.Name))
           {
-            Log.Debug("card: WaitForFile - audio and video stream is scrambled");
+            this.LogDebug("card: WaitForFile - audio and video stream is scrambled");
             scrambled = true;
           }
         }

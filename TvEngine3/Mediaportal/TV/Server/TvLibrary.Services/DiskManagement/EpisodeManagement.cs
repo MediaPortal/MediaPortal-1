@@ -64,7 +64,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
 
     public void OnScheduleEnded(string recordingFilename, Schedule recording, Program program)
     {
-      Log.Debug("diskmanagement: recording {0} ended. type:{1} max episodes:{2}",
+      this.LogDebug("diskmanagement: recording {0} ended. type:{1} max episodes:{2}",
                 program.Title, (ScheduleRecordingType)recording.ScheduleType, recording.MaxAirings);
 
       CheckEpsiodesForRecording(recording, program);
@@ -90,7 +90,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
         Recording oldestEpisode = GetOldestEpisode(episodes);
         if (oldestEpisode == null)
           return;
-        Log.Debug("diskmanagement:   Delete episode {0} {1} {2} {3}",
+        this.LogDebug("diskmanagement:   Delete episode {0} {1} {2} {3}",
                   oldestEpisode.Channel,
                   oldestEpisode.Title,
                   oldestEpisode.StartTime.ToLongDateString(),

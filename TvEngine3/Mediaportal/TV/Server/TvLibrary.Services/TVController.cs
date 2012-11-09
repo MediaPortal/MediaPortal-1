@@ -160,7 +160,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         }
         else
         {          
-          Log.Debug("InitConditionalAccess: ValidateTvControllerParams failed");         
+          this.LogDebug("InitConditionalAccess: ValidateTvControllerParams failed");         
         }                
       }
       catch (Exception e)
@@ -221,15 +221,15 @@ namespace Mediaportal.TV.Server.TVLibrary
       bool checkCardPresent = false;
       try
       {
-        Log.Debug("CiMenuSupported called cardid {0}", cardId);
+        this.LogDebug("CiMenuSupported called cardid {0}", cardId);
         if (ValidateTvControllerParams(cardId, checkCardPresent))
         {
-          Log.Debug("CiMenuSupported card {0} supported: {1}", _cards[cardId].CardName, _cards[cardId].CiMenuSupported);
+          this.LogDebug("CiMenuSupported card {0} supported: {1}", _cards[cardId].CardName, _cards[cardId].CiMenuSupported);
           checkCardPresent = _cards[cardId].CiMenuSupported;          
         }
         else
         {
-          Log.Debug("ValidateTvControllerParams failed");          
+          this.LogDebug("ValidateTvControllerParams failed");          
         }        
       }
       catch (Exception e)
@@ -250,7 +250,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       bool checkCardPresent = false;
       try
       {
-        Log.Debug("EnterCiMenu called");
+        this.LogDebug("EnterCiMenu called");
         if (ValidateTvControllerParams(cardId, checkCardPresent))
         {
           if (_cards[cardId].CiMenuActions != null)
@@ -279,7 +279,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       bool checkCardPresent = false;
       try
       {
-        Log.Debug("SelectCiMenu called");
+        this.LogDebug("SelectCiMenu called");
         if (ValidateTvControllerParams(cardId, false))
         {
           checkCardPresent = _cards[cardId].CiMenuActions != null && _cards[cardId].CiMenuActions.SelectMenu(choice);  
@@ -302,7 +302,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       bool closeMenu = false;
       try
       {
-        Log.Debug("CloseMenu called");
+        this.LogDebug("CloseMenu called");
         if (ValidateTvControllerParams(cardId, false))
         {
           if (_cards[cardId].CiMenuActions != null)
@@ -331,7 +331,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       bool sendMenuAnswer = false;
       try
       {
-        Log.Debug("SendMenuAnswer called");
+        this.LogDebug("SendMenuAnswer called");
         if (ValidateTvControllerParams(cardId, false))
         {
           sendMenuAnswer = _cards[cardId].CiMenuActions != null && _cards[cardId].CiMenuActions.SendMenuAnswer(cancel, answer);
@@ -372,14 +372,14 @@ namespace Mediaportal.TV.Server.TVLibrary
     public bool EnableCiMenuHandler(int cardId)
     {
       bool enableCiMenuHandler = false;
-      Log.Debug("TvController: EnableCiMenuHandler called");
+      this.LogDebug("TvController: EnableCiMenuHandler called");
       if (ValidateTvControllerParams(cardId, false))
       {
         if (_cards[cardId].CiMenuActions != null)
         {
           _ciMenuManager.ActiveCiMenuCard = cardId;
           enableCiMenuHandler = _cards[cardId].CiMenuActions.SetCiMenuHandler(this);
-          Log.Debug("TvController: SetCiMenuHandler: result {0}", enableCiMenuHandler);
+          this.LogDebug("TvController: SetCiMenuHandler: result {0}", enableCiMenuHandler);
         }
       }
       return enableCiMenuHandler;
@@ -498,7 +498,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         _localCardCollection = new TvCardCollection(this);
 
         //log all local ip adresses, usefull for debugging problems
-        Log.Debug("Controller: started at {0}", Dns.GetHostName());
+        this.LogDebug("Controller: started at {0}", Dns.GetHostName());
         IPHostEntry local = Dns.GetHostEntry(Dns.GetHostName());
         foreach (IPAddress ipaddress in local.AddressList)
         {
@@ -646,7 +646,7 @@ namespace Mediaportal.TV.Server.TVLibrary
             if (localcards.ContainsKey(card.IdCard))
             {
               localcards[card.IdCard].IsHybrid = true;
-              Log.Debug("Hybrid card: " + localcards[card.IdCard].Name + " (" + group.Name + ")");
+              this.LogDebug("Hybrid card: " + localcards[card.IdCard].Name + " (" + group.Name + ")");
               HybridCard hybridCard = hybridCardGroup.Add(card.IdCard, localcards[card.IdCard]);
               localcards[card.IdCard] = hybridCard;
             }
@@ -677,7 +677,7 @@ namespace Mediaportal.TV.Server.TVLibrary
               Directory.CreateDirectory(timeShiftPath);
             }
 
-            Log.Debug("Controller: card {0}: current timeshiftpath = {1}", dbsCard.Name, timeShiftPath);
+            this.LogDebug("Controller: card {0}: current timeshiftpath = {1}", dbsCard.Name, timeShiftPath);
             if (timeShiftPath != null)
             {
               string[] files = Directory.GetFiles(timeShiftPath);
@@ -2307,14 +2307,14 @@ namespace Mediaportal.TV.Server.TVLibrary
               }
               else
               {
-                Log.Debug("Controller: streaming: file not found:{0}", fileName);
+                this.LogDebug("Controller: streaming: file not found:{0}", fileName);
               }
             }
           }
 
           if (result == TvResult.Succeeded)
           {
-            Log.Debug("Controller: StartTimeShifting started on card:{0} to {1}", user.CardId, fileName);
+            this.LogDebug("Controller: StartTimeShifting started on card:{0} to {1}", user.CardId, fileName);
           }
 
           return result;
@@ -2360,7 +2360,7 @@ namespace Mediaportal.TV.Server.TVLibrary
               if (cardHandler.TimeShifter.IsTimeShifting(user))
               {
                 FireTimeShiftingParkedEvent(user);                
-                Log.Debug("Controller: ParkTimeShifting {0}", cardHandler.DataBaseCard.IdCard);
+                this.LogDebug("Controller: ParkTimeShifting {0}", cardHandler.DataBaseCard.IdCard);
                 cardHandler.ParkedUserManagement.ParkUser(ref user, duration, idChannel);
                 UpdateChannelStatesForUsers();
                 result = true;
@@ -2430,7 +2430,7 @@ namespace Mediaportal.TV.Server.TVLibrary
               user = CreateTimeshiftingUserWithPriority(userName);
             }
             
-            Log.Debug("Controller: UnParkTimeShifting {0}", cardHandler.DataBaseCard.IdCard);
+            this.LogDebug("Controller: UnParkTimeShifting {0}", cardHandler.DataBaseCard.IdCard);
             cardHandler.ParkedUserManagement.UnParkUser(ref user, duration, idChannel);
             StopTimeShiftingAllChannelsExcept(user, idChannel);
 
@@ -2550,7 +2550,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           if (tvcard.Recorder.IsRecording(user.Name))
             return true;
 
-          Log.Debug("Controller: StopTimeShifting {0}", cardId);
+          this.LogDebug("Controller: StopTimeShifting {0}", cardId);
           return DoStopTimeShifting(ref user, cardId, channelId);
         }
         else
@@ -2705,7 +2705,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           int subChannelByChannelId = tvCardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel);
           if (!tvCardHandler.UserManagement.ContainsUsersForSubchannel(subChannelByChannelId))
           {
-            Log.Debug("Controller:Timeshifting stopped on card:{0}", cardId);
+            this.LogDebug("Controller:Timeshifting stopped on card:{0}", cardId);
             if (_streamer != null)
             {
               _streamer.Remove(String.Format("stream{0}.{1}", cardId, subChannelByChannelId));
@@ -2965,7 +2965,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       bool foundInvalidRecording = false;
       try
       {
-        Log.Debug("Deleting invalid recordings");
+        this.LogDebug("Deleting invalid recordings");
         IList<Recording> itemlist = RecordingManagement.ListAllRecordingsByMediaType(MediaTypeEnum.TV);        
         foreach (Recording rec in itemlist.Where(rec => !IsRecordingValid(rec)))
         {
@@ -3225,7 +3225,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           return -1;
 
         Channel channel = ChannelManagement.GetChannel(idChannel);
-        Log.Debug("Controller: TimeShiftingWouldUseCard {0} {1}", channel.DisplayName, channel.IdChannel);
+        this.LogDebug("Controller: TimeShiftingWouldUseCard {0} {1}", channel.DisplayName, channel.IdChannel);
 
 
         IUser userCopy = GetUserFromContext(userName, idChannel);
@@ -3319,7 +3319,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         
         user.Priority = UserFactory.GetDefaultPriority(user.Name, user.Priority);
         Channel channel = ChannelManagement.GetChannel(idChannel);
-        Log.Debug("Controller: StartTimeShifting {0} {1}", channel.DisplayName, channel.IdChannel);
+        this.LogDebug("Controller: StartTimeShifting {0} {1}", channel.DisplayName, channel.IdChannel);
         StopEPGgrabber();
 
         IDictionary<CardDetail, ICardTuneReservationTicket> tickets = null;
@@ -3341,7 +3341,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           }
           else
           {
-            Log.Debug("Controller: StartTimeShifting failed:{0} - no cards found during initial card allocation", result);
+            this.LogDebug("Controller: StartTimeShifting failed:{0} - no cards found during initial card allocation", result);
             result = AllCardsBusy(result);
           }
         }
@@ -3416,13 +3416,13 @@ namespace Mediaportal.TV.Server.TVLibrary
           else
           {
             result = AllCardsBusy(result);
-            Log.Debug("Controller: StartTimeShifting failed:{0}", result);
+            this.LogDebug("Controller: StartTimeShifting failed:{0}", result);
           }
         }
         else
         {
           result = AllCardsBusy(result);
-          Log.Debug("Controller: StartTimeShifting failed:{0} - no card reservation(s) could be made", result);
+          this.LogDebug("Controller: StartTimeShifting failed:{0} - no card reservation(s) could be made", result);
           moreCardsAvailable = false;
         }
       } //end of while             
@@ -3496,7 +3496,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       kickableCards = null;
       int failedCardId = -1;
       bool moreCardsAvailable = true;
-      Log.Debug("Controller: try max {0} of {1} cards for timeshifting", maxCards, freeCards.Count);
+      this.LogDebug("Controller: try max {0} of {1} cards for timeshifting", maxCards, freeCards.Count);
       //keep tuning each card until we are succesful                
       int cardIteration = 0;
       foreach (CardDetail cardInfo in freeCards)
@@ -3517,7 +3517,7 @@ namespace Mediaportal.TV.Server.TVLibrary
             ticket = CardReservationHelper.RequestCardReservation(userBefore, cardInfo, cardResImpl, channel.IdChannel);
             if (ticket == null)
             {
-             Log.Debug("Controller: StartTimeShifting - could not find cardreservation on card:{0}",
+             this.LogDebug("Controller: StartTimeShifting - could not find cardreservation on card:{0}",
                       userNow.CardId);
              HandleAllCardsBusy(tickets, out result, cardInfo);
               failedCardId = cardInfo.Id;
@@ -3540,7 +3540,7 @@ namespace Mediaportal.TV.Server.TVLibrary
               existingOwnerFoundOnSameChannel = ExistingOwnerFoundOnSameChannel(ticket);
               if (existingOwnerFoundOnSameChannel)
               {
-                Log.Debug("Controller: leech user={0} inherits subch={1}", userBefore.Name, ticket.OwnerSubchannel.Id);                
+                this.LogDebug("Controller: leech user={0} inherits subch={1}", userBefore.Name, ticket.OwnerSubchannel.Id);                
                 userNow.CardId = ticket.CardId;
                 ITvCardHandler tvCardHandler = _cards[ticket.CardId];
 
@@ -3637,7 +3637,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           if (!HasTvSucceeded(result))
           {
             moreCardsAvailable = AreMoreCardsAvailable(cardsIterated, maxCards, cardIteration);
-            Log.Debug(moreCardsAvailable
+            this.LogDebug(moreCardsAvailable
                         ? "Controller: Timeshifting failed, lets try next available card."
                         : "Controller: Timeshifting failed, no more cards available.");            
           }
@@ -3705,7 +3705,7 @@ namespace Mediaportal.TV.Server.TVLibrary
             bool cardsAvailable = ((cardIteration + 1) < maxCards);       
             if (!usersKicked && cardsAvailable)
             {
-              Log.Debug(
+              this.LogDebug(
                 "Controller: skipping card:{0} since other users are present on the same channel and there are still cards available.",
                 tvcard.DataBaseCard.IdCard);
               //TODO: what if the following cards fail, should we then try and kick the leech user, in order to make room for a tune ?            
@@ -3723,7 +3723,7 @@ namespace Mediaportal.TV.Server.TVLibrary
               kickableCards = new Dictionary<int, List<IUser>>();
             }
             kickableCards[tvcard.DataBaseCard.IdCard] = ticket.ActiveUsers.ToList();
-            Log.Debug("Controller: not allowed to kick users on card:{0}, politely asking client...",
+            this.LogDebug("Controller: not allowed to kick users on card:{0}, politely asking client...",
             tvcard.DataBaseCard.IdCard);
           }
           else
@@ -3733,7 +3733,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         }
         else
         {
-          Log.Debug(
+          this.LogDebug(
             "Controller: skipping card:{0} since it is busy (user(s) present with higher priority).",
             tvcard.DataBaseCard.IdCard);
         }
@@ -3813,7 +3813,7 @@ namespace Mediaportal.TV.Server.TVLibrary
                 channelInfo = ch.DisplayName;
               }
 
-              Log.Debug(
+              this.LogDebug(
                 "Controller: kicking leech user '{0}' with prio={1} off card={2} on channel={3} (subchannel #{4}) since owner '{5}' with prio={6} (subchannel #{7}) changed transponder and there are no more cards available",
                 activeUser.Name,
                 activeUser.Priority,
@@ -3879,7 +3879,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         IUser inactiveUser = ticket.InactiveUsers[i];
         foreach (var subchannel in inactiveUser.SubChannels.Values)
         {
-          Log.Debug("controller: RemoveInactiveUsers {0}", inactiveUser.Name);
+          this.LogDebug("controller: RemoveInactiveUsers {0}", inactiveUser.Name);
           StopTimeShifting(ref inactiveUser, subchannel.IdChannel);
           //removing inactive user which shouldnt happen, but atleast its better than having timeshfiting fail. 
         }        
@@ -3911,7 +3911,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     {
       if (_epgGrabber != null)
       {
-        Log.Debug("Controller: epg stop");
+        this.LogDebug("Controller: epg stop");
         _epgGrabber.Stop();
       }
     }
@@ -3920,7 +3920,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     {
       if (_epgGrabber != null && AllCardsIdle)
       {
-        Log.Debug("Controller: epg start");
+        this.LogDebug("Controller: epg start");
         _epgGrabber.Start();
       }
     }
@@ -3952,7 +3952,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         cardInfo.Card.RecordingFolder = Path.Combine(PathManager.GetDataPath, "recordings");
         if (!Directory.Exists(cardInfo.Card.RecordingFolder))
         {
-          Log.Debug("Controller: creating recording folder {0} for card {0}", cardInfo.Card.RecordingFolder,
+          this.LogDebug("Controller: creating recording folder {0} for card {0}", cardInfo.Card.RecordingFolder,
                     cardInfo.Card.Name);
           Directory.CreateDirectory(cardInfo.Card.RecordingFolder);
         }
@@ -3962,7 +3962,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         cardInfo.Card.TimeshiftingFolder = Path.Combine(PathManager.GetDataPath, "timeshiftbuffer");
         if (!Directory.Exists(cardInfo.Card.TimeshiftingFolder))
         {
-          Log.Debug("Controller: creating timeshifting folder {0} for card {0}", cardInfo.Card.TimeshiftingFolder,
+          this.LogDebug("Controller: creating timeshifting folder {0} for card {0}", cardInfo.Card.TimeshiftingFolder,
                     cardInfo.Card.Name);
           Directory.CreateDirectory(cardInfo.Card.TimeshiftingFolder);
         }
@@ -5036,7 +5036,7 @@ namespace Mediaportal.TV.Server.TVLibrary
 
       foreach (int channelId2Remove in channelIdsRemoveList)
       {
-        Log.Debug("StopTimeShiftingAllChannelsExcept : {0} - {1} - {2}", user.Name, user.CardId, idChannel);
+        this.LogDebug("StopTimeShiftingAllChannelsExcept : {0} - {1} - {2}", user.Name, user.CardId, idChannel);
         StopTimeShifting(ref user, channelId2Remove); 
       }     
     }
@@ -5179,7 +5179,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     {
       get
       {
-        //Log.Debug("TVController.CanSuspend: checking cards");
+        //this.LogDebug("TVController.CanSuspend: checking cards");
         if (_cards.Values.Where(card => card != null).Any(card => card.UserManagement.IsAnyUserTimeShiftingOrRecording()))
         {
           return false;
@@ -5359,11 +5359,11 @@ namespace Mediaportal.TV.Server.TVLibrary
         List<int> pendingDelitionRemove = new List<int>();
         IList<PendingDeletion> pendingDeletions = RecordingManagement.ListAllPendingRecordingDeletions();
 
-        Log.Debug("ExecutePendingDeletions: number of pending deletions : " + Convert.ToString(pendingDeletions.Count));
+        this.LogDebug("ExecutePendingDeletions: number of pending deletions : " + Convert.ToString(pendingDeletions.Count));
 
         foreach (PendingDeletion pendingDelition in pendingDeletions)
         {
-          Log.Debug("ExecutePendingDeletions: trying to remove file : " + pendingDelition.FileName);
+          this.LogDebug("ExecutePendingDeletions: trying to remove file : " + pendingDelition.FileName);
 
           bool wasPendingDeletionAdded = false;
           bool wasDeleted = RecordingFileHandler.DeleteRecordingOnDisk(pendingDelition.FileName,

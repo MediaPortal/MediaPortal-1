@@ -239,7 +239,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
     {
       if (_graphBuilder == null)
         return;
-      Log.Debug("HDPVR:  Dispose()");
+      this.LogDebug("HDPVR:  Dispose()");
 
       FreeAllSubChannels();
       // Decompose the graph
@@ -254,7 +254,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
       base.Dispose();
 
       FilterGraphTools.RemoveAllFilters(_graphBuilder);
-      Log.Debug("HDPVR:  All filters removed");
+      this.LogDebug("HDPVR:  All filters removed");
       if (_filterCrossBar != null)
       {
         while (Release.ComObject(_filterCrossBar) > 0) { }
@@ -295,7 +295,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         _encoderDevice = null;
       }
       _isDeviceInitialised = false;
-      Log.Debug("HDPVR:  dispose completed");
+      this.LogDebug("HDPVR:  dispose completed");
     }
 
     #endregion
@@ -315,12 +315,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
 
       _lastSignalUpdate = DateTime.MinValue;
       _tunerLocked = false;
-      Log.Debug("HDPVR: build graph");
+      this.LogDebug("HDPVR: build graph");
       try
       {
         if (_isDeviceInitialised)
         {
-          Log.Debug("HDPVR: graph already built!");
+          this.LogDebug("HDPVR: graph already built!");
           throw new TvException("Graph already built");
         }
         _graphBuilder = (IFilterGraph2)new FilterGraph();
@@ -335,7 +335,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
                                                                      null, null);
         if (_qualityControl == null)
         {
-          Log.Debug("HDPVR: No quality control support found");
+          this.LogDebug("HDPVR: No quality control support found");
         }
 
         _isDeviceInitialised = true;
@@ -362,7 +362,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
 
     private void AddCrossBarFilter()
     {
-      Log.Debug("HDPVR: Add Crossbar Filter");
+      this.LogDebug("HDPVR: Add Crossbar Filter");
       //get list of all crossbar devices installed on this system
       _crossBarDevice = _tunerDevice;
       IBaseFilter tmp;
@@ -374,7 +374,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
       }
       catch (Exception)
       {
-        Log.Debug("HDPVR: cannot add filter to graph");
+        this.LogDebug("HDPVR: cannot add filter to graph");
         throw new TvException("Unable to add crossbar to graph");
       }
       if (hr == 0)
@@ -383,14 +383,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         CheckCapabilities();
         return;
       }
-      Log.Debug("HDPVR: cannot add filter to graph");
+      this.LogDebug("HDPVR: cannot add filter to graph");
       throw new TvException("Unable to add crossbar to graph");
     }
 
     private void AddCaptureFilter()
     {
       DsDevice[] devices;
-      Log.Debug("HDPVR: Add Capture Filter");
+      this.LogDebug("HDPVR: Add Capture Filter");
       //get a list of all video capture devices
       try
       {
@@ -399,12 +399,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
       }
       catch (Exception)
       {
-        Log.Debug("HDPVR: AddTvCaptureFilter no tvcapture devices found");
+        this.LogDebug("HDPVR: AddTvCaptureFilter no tvcapture devices found");
         return;
       }
       if (devices.Length == 0)
       {
-        Log.Debug("HDPVR: AddTvCaptureFilter no tvcapture devices found");
+        this.LogDebug("HDPVR: AddTvCaptureFilter no tvcapture devices found");
         return;
       }
       //try each video capture filter
@@ -414,7 +414,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         {
           continue;
         }
-        Log.Debug("HDPVR: AddTvCaptureFilter try:{0} {1}", devices[i].Name, i);
+        this.LogDebug("HDPVR: AddTvCaptureFilter try:{0} {1}", devices[i].Name, i);
         // if video capture filter is in use, then we can skip it
         if (DevicesInUse.Instance.IsUsed(devices[i]))
         {
@@ -429,7 +429,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         }
         catch (Exception)
         {
-          Log.Debug("HDPVR: cannot add filter to graph");
+          this.LogDebug("HDPVR: cannot add filter to graph");
           continue;
         }
         if (hr != 0)
@@ -452,12 +452,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
           _filterCapture = tmp;
           _captureDevice = devices[i];
           DevicesInUse.Instance.Add(_captureDevice);
-          Log.Debug("HDPVR: AddTvCaptureFilter connected to crossbar successfully");
+          this.LogDebug("HDPVR: AddTvCaptureFilter connected to crossbar successfully");
           break;
         }
         // cannot connect crossbar->video capture filter, remove filter from graph
         // cand continue with the next vieo capture filter
-        Log.Debug("HDPVR: AddTvCaptureFilter failed to connect to crossbar");
+        this.LogDebug("HDPVR: AddTvCaptureFilter failed to connect to crossbar");
         _graphBuilder.RemoveFilter(tmp);
         Release.ComObject("capture filter", tmp);
       }
@@ -471,7 +471,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
     private void AddEncoderFilter()
     {
       DsDevice[] devices;
-      Log.Debug("HDPVR: AddEncoderFilter");
+      this.LogDebug("HDPVR: AddEncoderFilter");
       // first get all encoder filters available on this system
       try
       {
@@ -480,24 +480,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
       }
       catch (Exception)
       {
-        Log.Debug("HDPVR: AddTvEncoderFilter no encoder devices found (Exception)");
+        this.LogDebug("HDPVR: AddTvEncoderFilter no encoder devices found (Exception)");
         return;
       }
 
       if (devices == null)
       {
-        Log.Debug("HDPVR: AddTvEncoderFilter no encoder devices found (devices == null)");
+        this.LogDebug("HDPVR: AddTvEncoderFilter no encoder devices found (devices == null)");
         return;
       }
 
       if (devices.Length == 0)
       {
-        Log.Debug("HDPVR: AddTvEncoderFilter no encoder devices found");
+        this.LogDebug("HDPVR: AddTvEncoderFilter no encoder devices found");
         return;
       }
 
       //for each encoder
-      Log.Debug("HDPVR: AddTvEncoderFilter found:{0} encoders", devices.Length);
+      this.LogDebug("HDPVR: AddTvEncoderFilter found:{0} encoders", devices.Length);
       for (int i = 0; i < devices.Length; i++)
       {
         if (devices[i].Name != _encoderDeviceName)
@@ -508,11 +508,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         //if encoder is in use, we can skip it
         if (DevicesInUse.Instance.IsUsed(devices[i]))
         {
-          Log.Debug("HDPVR:  skip :{0} (inuse)", devices[i].Name);
+          this.LogDebug("HDPVR:  skip :{0} (inuse)", devices[i].Name);
           continue;
         }
 
-        Log.Debug("HDPVR:  try encoder:{0} {1}", devices[i].Name, i);
+        this.LogDebug("HDPVR:  try encoder:{0} {1}", devices[i].Name, i);
         IBaseFilter tmp;
         int hr;
         try
@@ -522,7 +522,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         }
         catch (Exception)
         {
-          Log.Debug("HDPVR: cannot add filter {0} to graph", devices[i].Name);
+          this.LogDebug("HDPVR: cannot add filter {0} to graph", devices[i].Name);
           continue;
         }
         if (hr != 0)
@@ -548,24 +548,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
           _filterEncoder = tmp;
           _encoderDevice = devices[i];
           DevicesInUse.Instance.Add(_encoderDevice);
-          Log.Debug("HDPVR: AddTvEncoderFilter connected to catpure successfully");
+          this.LogDebug("HDPVR: AddTvEncoderFilter connected to catpure successfully");
           //and we're done
           return;
         }
         // cannot connect crossbar->video capture filter, remove filter from graph
         // cand continue with the next vieo capture filter
-        Log.Debug("HDPVR: AddTvEncoderFilter failed to connect to capture");
+        this.LogDebug("HDPVR: AddTvEncoderFilter failed to connect to capture");
         _graphBuilder.RemoveFilter(tmp);
         Release.ComObject("capture filter", tmp);
       }
-      Log.Debug("HDPVR: AddTvEncoderFilter no encoder found");
+      this.LogDebug("HDPVR: AddTvEncoderFilter no encoder found");
     }
 
     private void AddTsWriterFilterToGraph()
     {
       if (_filterTsWriter == null)
       {
-        Log.Debug("HDPVR: Add Mediaportal TsWriter filter");
+        this.LogDebug("HDPVR: Add Mediaportal TsWriter filter");
         _filterTsWriter = (IBaseFilter)new MpTsAnalyzer();
         int hr = _graphBuilder.AddFilter(_filterTsWriter, "MediaPortal Ts Analyzer");
         if (hr != 0)
@@ -594,7 +594,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
           this.LogError("HDPVR:  Unable to connect encoder to ts analyzer filter :0x{0:X}", hr);
           throw new TvException("unable to connect encoder to ts analyzer filter");
         }
-        Log.Debug("HDPVR: AddTsWriterFilterToGraph connected to encoder successfully");
+        this.LogDebug("HDPVR: AddTsWriterFilterToGraph connected to encoder successfully");
       }
     }
 
@@ -608,7 +608,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
     /// <param name="channel">The channel to tune to.</param>
     protected override void PerformTuning(IChannel channel)
     {
-      Log.Debug("HDPVR: Tune");
+      this.LogDebug("HDPVR: Tune");
       AnalogChannel analogChannel = channel as AnalogChannel;
       if (analogChannel == null)
       {
@@ -628,7 +628,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         // Video
         if (_videoPinMap.ContainsKey(analogChannel.VideoSource))
         {
-          Log.Debug("HDPVR:   video input -> {0}", analogChannel.VideoSource);
+          this.LogDebug("HDPVR:   video input -> {0}", analogChannel.VideoSource);
           crossBarFilter.Route(_videoOutPinIndex, _videoPinMap[analogChannel.VideoSource]);
         }
 
@@ -637,7 +637,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         {
           if (_videoPinRelatedAudioMap.ContainsKey(analogChannel.VideoSource))
           {
-            Log.Debug("HDPVR:   audio input -> (auto)");
+            this.LogDebug("HDPVR:   audio input -> (auto)");
             crossBarFilter.Route(_audioOutPinIndex, _videoPinRelatedAudioMap[analogChannel.VideoSource]);
           }
         }
@@ -648,12 +648,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         analogChannel.AudioSource != AnalogChannel.AudioInputType.Automatic &&
         _audioPinMap.ContainsKey(analogChannel.AudioSource))
       {
-        Log.Debug("HDPVR:   audio input -> {0}", analogChannel.AudioSource);
+        this.LogDebug("HDPVR:   audio input -> {0}", analogChannel.AudioSource);
         crossBarFilter.Route(_audioOutPinIndex, _audioPinMap[analogChannel.AudioSource]);
       }
 
       _previousChannel = analogChannel;
-      Log.Debug("HDPVR: Tuned to channel {0}", channel.Name);
+      this.LogDebug("HDPVR: Tuned to channel {0}", channel.Name);
     }
 
     /// <summary>
@@ -697,7 +697,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         for (int i = 0; i < inputs; ++i)
         {
           crossBarFilter.get_CrossbarPinInfo(true, i, out relatedPinIndex, out connectorType);
-          Log.Debug(" crossbar pin:{0} type:{1}", i, connectorType);
+          this.LogDebug(" crossbar pin:{0} type:{1}", i, connectorType);
           switch (connectorType)
           {
             case PhysicalConnectorType.Audio_Tuner:

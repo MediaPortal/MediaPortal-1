@@ -114,7 +114,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
     /// </summary>
     public void Start(IInternalControllerService controllerService)
     {
-      Log.Debug("plugin: webepg started");
+      this.LogDebug("plugin: webepg started");
 
       //CheckNewTVGuide();
       _scheduleTimer = new System.Timers.Timer {Interval = 60000, Enabled = true};
@@ -126,7 +126,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
     /// </summary>
     public void Stop()
     {
-      Log.Debug("plugin: webepg stopped");
+      this.LogDebug("plugin: webepg stopped");
       UnregisterWakeupHandler();
       if (_scheduleTimer != null)
       {
@@ -206,7 +206,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
 
         try
         {
-          Log.Debug("plugin:webepg importing");
+          this.LogDebug("plugin:webepg importing");
           this.LogInfo("WebEPG: Using directory {0}", webepgDirectory);
 
 
@@ -264,7 +264,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
           SettingsManagement.SaveSetting("webepgResultPrograms", epg.ImportStats.Programs.ToString());
           SettingsManagement.SaveSetting("webepgResultStatus", epg.ImportStats.Status);
           
-          //Log.Debug("Xmltv: imported {0} channels, {1} programs status:{2}", numChannels, numPrograms, errors);
+          //this.LogDebug("Xmltv: imported {0} channels, {1} programs status:{2}", numChannels, numPrograms, errors);
         }
         catch (Exception ex)
         {
@@ -276,7 +276,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
       }
       finally
       {
-        Log.Debug(@"plugin:webepg import done");
+        this.LogDebug(@"plugin:webepg import done");
         _workerThreadRunning = false;
         SetStandbyAllowed(true);
       }
@@ -316,11 +316,11 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
         if (handler != null)
         {
           handler.EPGScheduleDue += new EPGScheduleHandler(EPGScheduleDue);
-          Log.Debug("WebEPGImporter: registered with PowerScheduler EPG handler");
+          this.LogDebug("WebEPGImporter: registered with PowerScheduler EPG handler");
           return;
         }
       }
-      Log.Debug("WebEPGImporter: NOT registered with PowerScheduler EPG handler");
+      this.LogDebug("WebEPGImporter: NOT registered with PowerScheduler EPG handler");
     }
 
     private void RegisterWakeupHandler()
@@ -328,10 +328,10 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
       if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
       {
         GlobalServiceProvider.Instance.Get<IPowerScheduler>().Register(this as IWakeupHandler);
-        Log.Debug("WebEPGImporter: registered WakeupHandler with PowerScheduler ");
+        this.LogDebug("WebEPGImporter: registered WakeupHandler with PowerScheduler ");
         return;
       }
-      Log.Debug("WebEPGImporter: NOT registered WakeupHandler with PowerScheduler ");
+      this.LogDebug("WebEPGImporter: NOT registered WakeupHandler with PowerScheduler ");
     }
 
     private void UnregisterWakeupHandler()
@@ -339,7 +339,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
       if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
       {
         GlobalServiceProvider.Instance.Get<IPowerScheduler>().Unregister(this as IWakeupHandler);
-        Log.Debug("WebEPGImporter: unregistered WakeupHandler with PowerScheduler ");
+        this.LogDebug("WebEPGImporter: unregistered WakeupHandler with PowerScheduler ");
       }
     }
 
@@ -347,7 +347,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
     {
       if (GlobalServiceProvider.Instance.IsRegistered<IEpgHandler>())
       {
-        Log.Debug("plugin:webepg: Telling PowerScheduler standby is allowed: {0}, timeout is one hour", allowed);
+        this.LogDebug("plugin:webepg: Telling PowerScheduler standby is allowed: {0}, timeout is one hour", allowed);
         GlobalServiceProvider.Instance.Get<IEpgHandler>().SetStandbyAllowed(this, allowed, 3600);
       }
     }

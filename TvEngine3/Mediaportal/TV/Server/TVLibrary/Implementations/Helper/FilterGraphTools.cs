@@ -872,7 +872,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       catch (Exception)
       {
         Log.Debug("Remove filter error!");
-        return;
       }
       finally
       {
@@ -1263,7 +1262,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// <returns></returns>
     public static bool ConnectFilter(IGraphBuilder graphBuilder, IPin pinSource, IBaseFilter destinationFilter)
     {
-      //Log.Debug("analog: ConnectFilter()");
+      //this.LogDebug("analog: ConnectFilter()");
       Log.Debug("analog:  PinSource:{0}", LogPinInfo(pinSource));
       for (int i = 0; i <= 10; ++i)
       {
@@ -1305,7 +1304,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     public static bool ConnectFilter(IGraphBuilder graphBuilder, IPin pinSource, IBaseFilter destinationFilter,
                                      out int destinationPinIndex)
     {
-      //Log.Debug("analog: ConnectFilter()");
+      //this.LogDebug("analog: ConnectFilter()");
       Log.Debug("analog:  PinSource:{0}", LogPinInfo(pinSource));
       destinationPinIndex = -1;
       for (int i = 0; i <= 10; ++i)
@@ -1347,7 +1346,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// <returns></returns>
     public static bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IPin pinDestination)
     {
-      //Log.Debug("analog: ConnectFilter()");
+      //this.LogDebug("analog: ConnectFilter()");
       Log.Debug("analog:  PinDest:{0}", LogPinInfo(pinDestination));
       for (int i = 0; i <= 10; ++i)
       {
@@ -1378,7 +1377,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     public static bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IPin pinDestination,
                                      out int sourcePinIndex)
     {
-      //Log.Debug("analog: ConnectFilter()");
+      //this.LogDebug("analog: ConnectFilter()");
       Log.Debug("analog:  PinDest:{0}", LogPinInfo(pinDestination));
       sourcePinIndex = -1;
       for (int i = 0; i <= 10; ++i)
@@ -1409,7 +1408,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// <returns></returns>
     public static bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IBaseFilter destinationFilter)
     {
-      //Log.Debug("analog: ConnectFilter()");
+      //this.LogDebug("analog: ConnectFilter()");
       IPin pinIn = DsFindPin.ByDirection(destinationFilter, PinDirection.Input, 0);
       Log.Debug("analog:  PinDest:{0}", LogPinInfo(pinIn));
       for (int i = 0; i <= 10; ++i)
@@ -1441,7 +1440,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     public static bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IBaseFilter destinationFilter,
                                      string deviceName)
     {
-      //Log.Debug("analog: ConnectFilter()");
+      //this.LogDebug("analog: ConnectFilter()");
       IPin pinIn = DsFindPin.ByDirection(destinationFilter, PinDirection.Input, 0);
       Log.Debug("analog:  PinDest:{0}", LogPinInfo(pinIn));
       for (int i = 0; i <= 10; ++i)

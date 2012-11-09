@@ -61,14 +61,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     /// <filterpriority>2</filterpriority>
     public void Dispose()
     {
-      Log.Debug("EventService.Dispose");
+      this.LogDebug("EventService.Dispose");
     }
 
     #endregion
 
     public void Subscribe(string username)
     {
-      Log.Debug("EventService.Subscribe user:{0}", username);
+      this.LogDebug("EventService.Subscribe user:{0}", username);
       bool alreadySubscribed;
       lock (_subscribersLock)
       {
@@ -103,7 +103,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 
     public void Unsubscribe(string username)
     {
-      Log.Debug("EventService.Unsubscribe user:{0}", username);
+      this.LogDebug("EventService.Unsubscribe user:{0}", username);
       Subscriber subscriber;
       bool found;
       lock (_subscribersLock)

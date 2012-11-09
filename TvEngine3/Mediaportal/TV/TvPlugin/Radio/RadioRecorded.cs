@@ -37,6 +37,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.TvPlugin.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using WindowPlugins;
 using Action = MediaPortal.GUI.Library.Action;
 
@@ -744,7 +745,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
           Utils.SetDefaultIcons(item);
           itemlist.Add(item);
 
-          // Log.Debug("RadioRecorded: Currently showing the virtual folder contents of {0}", _currentLabel);
+          // this.LogDebug("RadioRecorded: Currently showing the virtual folder contents of {0}", _currentLabel);
           foreach (Recording rec in recordings)
           {
             bool addToList = true;
@@ -860,7 +861,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
           strChannelName = refCh.DisplayName;
         }        
 
-        // Log.Debug("RadioRecorded: BuildItemFromRecording [{0}]: {1} ({2}) on channel {3}", _currentDbView.ToString(), aRecording.title, aRecording.ProgramCategory.category, strChannelName);
+        // this.LogDebug("RadioRecorded: BuildItemFromRecording [{0}]: {1} ({2}) on channel {3}", _currentDbView.ToString(), aRecording.title, aRecording.ProgramCategory.category, strChannelName);
         item = new GUIListItem();
         switch (_currentDbView)
         {
@@ -971,7 +972,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
               item1.IsPlayed = true;
             }
           }
-          //Log.Debug("RadioRecorded: SetLabels - 1: {0}, 2: {1}, 3: {2}", item1.Label, item1.Label2, item1.Label3);
+          //this.LogDebug("RadioRecorded: SetLabels - 1: {0}, 2: {1}, 3: {2}", item1.Label, item1.Label2, item1.Label3);
         }
         catch (Exception ex)
         {
@@ -1700,7 +1701,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
       int prefLangIdx = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Log.Debug("RadioRecorded.OnPlayRecordingBackStarted(): setting audioIndex on tsreader {0}", prefLangIdx);
+      this.LogDebug("RadioRecorded.OnPlayRecordingBackStarted(): setting audioIndex on tsreader {0}", prefLangIdx);
       g_Player.CurrentAudioStream = prefLangIdx;
 
       if (dualMonoMode != eAudioDualMonoMode.UNSUPPORTED)

@@ -71,7 +71,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBC
     /// </summary>
     protected override void CreateTuningSpace()
     {
-      Log.Debug("TvCardDvbC: create tuning space");
+      this.LogDebug("TvCardDvbC: create tuning space");
 
       // Check if the system already has an appropriate tuning space.
       SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();
@@ -102,7 +102,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBC
           spaces[0].get_UniqueName(out name);
           if (name.Equals("MediaPortal DVBC TuningSpace"))
           {
-            Log.Debug("TvCardDvbC: found correct tuningspace");
+            this.LogDebug("TvCardDvbC: found correct tuningspace");
             _tuningSpace = (IDVBTuningSpace)spaces[0];
             tuner.put_TuningSpace(_tuningSpace);
             _tuningSpace.CreateTuneRequest(out request);
@@ -119,7 +119,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBC
       }
 
       // We didn't find our tuning space registered in the system, so create a new one.
-      Log.Debug("TvCardDvbC: create new tuningspace");
+      this.LogDebug("TvCardDvbC: create new tuningspace");
       _tuningSpace = (IDVBTuningSpace)new DVBTuningSpace();
       _tuningSpace.put_UniqueName("MediaPortal DVBC TuningSpace");
       _tuningSpace.put_FriendlyName("MediaPortal DVBC TuningSpace");
@@ -165,7 +165,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBC
       DVBCChannel dvbcChannel = channel as DVBCChannel;
       if (dvbcChannel == null)
       {
-        Log.Debug("TvCardDvbC: channel is not a DVB-C channel!!! {0}", channel.GetType().ToString());
+        this.LogDebug("TvCardDvbC: channel is not a DVB-C channel!!! {0}", channel.GetType().ToString());
         return null;
       }
 

@@ -137,7 +137,7 @@ namespace Mediaportal.TV.Server.Plugins.PersonalTVGuide
 
     private void UpdateKeyword(Keyword key)
     {      
-      if (_debugMode) Log.Debug("PersonalTVGuide: Updating Keyword: " + key.KeywordName);
+      if (_debugMode) this.LogDebug("PersonalTVGuide: Updating Keyword: " + key.KeywordName);
       if (key.SearchInTitle)
       {
         SaveList(key.IdKeyword, ContainsInTitle(key.KeywordName));
@@ -191,7 +191,7 @@ namespace Mediaportal.TV.Server.Plugins.PersonalTVGuide
     private void LoadSettings()
     {
       //_debugMode = (cmLayer.GetSetting("PTVGDebugMode", "true").Value == "true");
-      if (_debugMode) Log.Debug("PersonalTVGuide: Extensive Logging switched on");
+      if (_debugMode) this.LogDebug("PersonalTVGuide: Extensive Logging switched on");
     }
 
     #endregion
@@ -245,7 +245,7 @@ namespace Mediaportal.TV.Server.Plugins.PersonalTVGuide
     public void Start(IInternalControllerService controllerService)
     {
       LoadSettings();
-      Log.Debug("plugin: PersonalTVGuide started");
+      this.LogDebug("plugin: PersonalTVGuide started");
       _stopService = false;
       ITvServerEvent events = GlobalServiceProvider.Instance.Get<ITvServerEvent>();
       events.OnTvServerEvent += new TvServerEventHandler(events_OnTvServerEvent);
@@ -258,7 +258,7 @@ namespace Mediaportal.TV.Server.Plugins.PersonalTVGuide
     public void Stop()
     {
       _stopService = true;
-      Log.Debug("plugin: PersonalTVGuide stopped");
+      this.LogDebug("plugin: PersonalTVGuide stopped");
 
       if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
       {

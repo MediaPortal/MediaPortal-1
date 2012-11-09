@@ -80,13 +80,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Hauppauge
     /// <returns><c>true</c> if the setting is successfully applied, otherwise <c>false</c></returns>
     private bool SetPilot(Pilot pilot)
     {
-      Log.Debug("Hauppauge: set pilot = {0}", pilot);
+      this.LogDebug("Hauppauge: set pilot = {0}", pilot);
 
       KSPropertySupport support;
       int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.Pilot, out support);
       if (hr != 0 || (support & KSPropertySupport.Set) == 0)
       {
-        Log.Debug("Hauppauge: device does not support pilot property, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Hauppauge: device does not support pilot property, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return true;  // This is not an error.
       }
 
@@ -97,11 +97,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Hauppauge
       );
       if (hr == 0)
       {
-        Log.Debug("Hauppauge: result = success");
+        this.LogDebug("Hauppauge: result = success");
         return true;
       }
 
-      Log.Debug("Hauppauge: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogDebug("Hauppauge: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -112,13 +112,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Hauppauge
     /// <returns><c>true</c> if the setting is successfully applied, otherwise <c>false</c></returns>
     private bool SetRollOff(RollOff rollOff)
     {
-      Log.Debug("Hauppauge: set roll-off = {0}", rollOff);
+      this.LogDebug("Hauppauge: set roll-off = {0}", rollOff);
 
       KSPropertySupport support;
       int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.Pilot, out support);
       if (hr != 0 || (support & KSPropertySupport.Set) == 0)
       {
-        Log.Debug("Hauppauge: device does not support roll-off property, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Hauppauge: device does not support roll-off property, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return true;  // This is not an error.
       }
 
@@ -129,11 +129,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Hauppauge
       );
       if (hr == 0)
       {
-        Log.Debug("Hauppauge: result = success");
+        this.LogDebug("Hauppauge: result = success");
         return true;
       }
 
-      Log.Debug("Hauppauge: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogDebug("Hauppauge: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -165,22 +165,22 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Hauppauge
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
     {
-      Log.Debug("Hauppauge: initialising device");
+      this.LogDebug("Hauppauge: initialising device");
 
       if (_isHauppauge)
       {
-        Log.Debug("Hauppauge: device is already initialised");
+        this.LogDebug("Hauppauge: device is already initialised");
         return true;
       }
 
       bool result = base.Initialise(tunerFilter, tunerType, tunerDevicePath);
       if (!result)
       {
-        Log.Debug("Hauppauge: base Conexant interface not supported");
+        this.LogDebug("Hauppauge: base Conexant interface not supported");
         return false;
       }
 
-      Log.Debug("Hauppauge: supported device detected");
+      this.LogDebug("Hauppauge: supported device detected");
       _isHauppauge = true;
       return true;
     }
@@ -196,12 +196,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Hauppauge
     /// <param name="action">The action to take, if any.</param>
     public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out DeviceAction action)
     {
-      Log.Debug("Hauppauge: on before tune callback");
+      this.LogDebug("Hauppauge: on before tune callback");
       action = DeviceAction.Default;
 
       if (!_isHauppauge || _propertySet == null)
       {
-        Log.Debug("Hauppauge: device not initialised or interface not supported");
+        this.LogDebug("Hauppauge: device not initialised or interface not supported");
         return;
       }
 
@@ -232,7 +232,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Hauppauge
       {
         ch.ModulationType = ModulationType.ModNbc8Psk;
       }
-      Log.Debug("  modulation = {0}", ch.ModulationType);
+      this.LogDebug("  modulation = {0}", ch.ModulationType);
 
       SetPilot(ch.Pilot);
       SetRollOff(ch.RollOff);

@@ -196,7 +196,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         textBoxAction.Text = "Loading";
         this.Refresh();
 
-        Log.Debug("Loading all channels from the tvguide[s]");
+        this.LogDebug("Loading all channels from the tvguide[s]");
         // used for partial matches
         TstDictionary guideChannels = new TstDictionary();
 
@@ -225,7 +225,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           }
         }
 
-        Log.Debug("Loading all channels from the database");
+        this.LogDebug("Loading all channels from the database");
 
         CBChannelGroup chGroup = (CBChannelGroup)comboBoxGroup.SelectedItem;
 
@@ -480,7 +480,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           if (canRead)
           {
               // all ok, get channels
-              Log.Debug(@"plugin:xmltv loading " + fileName);
+              this.LogDebug(@"plugin:xmltv loading " + fileName);
               listChannels.AddRange(readTVGuideChannelsFromFile(fileName));
           }
           else
@@ -495,7 +495,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
             IOUtil.CheckFileAccessRights(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
 
             // all ok, get channels
-            Log.Debug(@"plugin:xmltv loading " + fileName);
+            this.LogDebug(@"plugin:xmltv loading " + fileName);
 
             listChannels.AddRange(readTVGuideChannelsFromFile(fileName));
           }
@@ -532,7 +532,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                 tvguideFileName = System.IO.Path.Combine(folder, tvguideFileName);
               }
 
-              Log.Debug(@"plugin:xmltv loading " + tvguideFileName);
+              this.LogDebug(@"plugin:xmltv loading " + tvguideFileName);
 
               // get channels
               listChannels.AddRange(readTVGuideChannelsFromFile(tvguideFileName));

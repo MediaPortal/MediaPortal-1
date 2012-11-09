@@ -55,7 +55,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
       : base(configuration)
     {
       _encoderAPI = encoderAPI;
-      Log.Debug("analog: IEncoderAPI supported by: " +
+      this.LogDebug("analog: IEncoderAPI supported by: " +
                         FilterGraphTools.GetFilterName(_encoderAPI as IBaseFilter) + "; Checking capabilities ");
       CheckCapabilities();
     }

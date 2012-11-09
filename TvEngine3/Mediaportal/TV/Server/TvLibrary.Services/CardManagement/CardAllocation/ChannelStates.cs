@@ -134,7 +134,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         try
         {
           //construct list of all cards we can use to tune to the new channel
-          Log.Debug("Controller: DoSetChannelStatesForAllUsers for {0} channels", channels.Count);
+          this.LogDebug("Controller: DoSetChannelStatesForAllUsers for {0} channels", channels.Count);
 
           if (allUsers == null || allUsers.Count == 0)
           {
@@ -237,7 +237,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
             {
               foreach (var user in allUsers)
               {
-                Log.Debug("DoSetChannelStatesForAllUsers OnChannelStatesSet user={0}", user.Name);
+                this.LogDebug("DoSetChannelStatesForAllUsers OnChannelStatesSet user={0}", user.Name);
                 OnChannelStatesSet(user);
                 try
                 {
@@ -368,7 +368,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         DoSetChannelStatesForAllUsers(channels, allUsers);
         if (OnChannelStatesSet != null)
         {
-          Log.Debug("SetChannelStatesForUser OnChannelStatesSet user={0}", user.Name);
+          this.LogDebug("SetChannelStatesForUser OnChannelStatesSet user={0}", user.Name);
           OnChannelStatesSet(user);
         }
       }           

@@ -140,7 +140,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
         string card = Encoding.Unicode.GetString(encodedstring);
 
         hr = new HResult(_Init(filter, card));
-        Log.Debug("Hauppauge Quality Control Initializing " + hr.ToDXString());
+        this.LogDebug("Hauppauge Quality Control Initializing " + hr.ToDXString());
       }
       catch (Exception ex)
       {
@@ -208,7 +208,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
           if (_IsHauppauge())
           {
             hr.Set(_SetVidBitRate(maxKbps, minKbps, isVBR));
-            Log.Debug("Hauppauge Set Bit Rate " + hr.ToDXString());
+            this.LogDebug("Hauppauge Set Bit Rate " + hr.ToDXString());
             return true;
           }
         }

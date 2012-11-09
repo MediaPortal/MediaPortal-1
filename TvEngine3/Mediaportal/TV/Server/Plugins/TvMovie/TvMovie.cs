@@ -184,7 +184,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       {
         GlobalServiceProvider.Instance.Get<IEpgHandler>().SetStandbyAllowed(this, allowed, 1800);
         if (!allowed)
-          Log.Debug("TVMovie: Telling PowerScheduler standby is allowed: {0}, timeout is 30 minutes", allowed);
+          this.LogDebug("TVMovie: Telling PowerScheduler standby is allowed: {0}, timeout is 30 minutes", allowed);
       }
     }
 
@@ -198,11 +198,11 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
         if (handler != null)
         {
           handler.EPGScheduleDue += new EPGScheduleHandler(EPGScheduleDue);
-          Log.Debug("TVMovie: registered with PowerScheduler EPG handler");
+          this.LogDebug("TVMovie: registered with PowerScheduler EPG handler");
           return;
         }
       }
-      Log.Debug("TVMovie: NOT registered with PowerScheduler EPG handler");
+      this.LogDebug("TVMovie: NOT registered with PowerScheduler EPG handler");
     }
 
     private void EPGScheduleDue()
@@ -231,7 +231,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
           return;
         }
 
-        //Log.Debug("TVMovie: Checking database");
+        //this.LogDebug("TVMovie: Checking database");
         try
         {
           if (_database.NeedsImport)
@@ -322,7 +322,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
       {
         _stateTimer.Enabled = false;
         _stateTimer.Stop();
-        Log.Debug("TVMovie: background import timer stopped");
+        this.LogDebug("TVMovie: background import timer stopped");
       }
     }
 

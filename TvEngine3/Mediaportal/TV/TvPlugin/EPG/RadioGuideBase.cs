@@ -33,6 +33,7 @@ using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.TvPlugin.Helper;
 
@@ -237,7 +238,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       }
       else
       {
-        Log.Debug("RadioGuideBase: SpinControl cntlDay is null!");
+        this.LogDebug("RadioGuideBase: SpinControl cntlDay is null!");
       }
 
       var cntlTimeInterval = GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL) as GUISpinControl;
@@ -252,7 +253,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       }
       else
       {
-        Log.Debug("RadioGuideBase: SpinControl cntlTimeInterval is null!");
+        this.LogDebug("RadioGuideBase: SpinControl cntlTimeInterval is null!");
       }
 
       if (message.Param1 != (int)Window.WINDOW_TV_PROGRAM_INFO)
@@ -499,7 +500,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
         {
           case 1041:
             ShowProgramInfo();
-            Log.Debug("RadioGuide: show episodes or repeatings for current show");
+            this.LogDebug("RadioGuide: show episodes or repeatings for current show");
             break;
           case 971: //group
             OnSelectChannelGroup();
@@ -511,7 +512,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
           case 1213: // listen to station
 
-            Log.Debug("viewch channel:{0}", _currentChannel);
+            this.LogDebug("viewch channel:{0}", _currentChannel);
             Radio.Radio.Play();
             if (_currentProgram != null && (TVHome.Card.IsTimeShifting && TVHome.Card.IdChannel == _currentProgram.Entity.IdChannel))
             {
@@ -603,7 +604,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
               }
               if (_recordingList != null)
               {
-                Log.Debug("RadioGuide: Found current program {0} in recording list", _currentTitle);
+                this.LogDebug("RadioGuide: Found current program {0} in recording list", _currentTitle);
                 switch (dlg.SelectedId)
                 {
                   case 979: // Play recording from beginning
@@ -660,7 +661,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
               if (Radio.Radio.CurrentChannel != null && Radio.Radio.CurrentChannel.IdChannel == _currentChannel.IdChannel &&
                   g_Player.Playing)
               {
-                Log.Debug("RadioGuide: clicked on a currently running show");
+                this.LogDebug("RadioGuide: clicked on a currently running show");
                 var dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
                 if (dlg == null)
                 {
@@ -682,10 +683,10 @@ namespace Mediaportal.TV.TvPlugin.EPG
                 {
                   case 1041:
                     ShowProgramInfo();
-                    Log.Debug("RadioGuide: show episodes or repeatings for current show");
+                    this.LogDebug("RadioGuide: show episodes or repeatings for current show");
                     break;
                   case 1213:
-                    Log.Debug("RadioGuide: switch currently running show to fullscreen");
+                    this.LogDebug("RadioGuide: switch currently running show to fullscreen");
                     GUIWaitCursor.Show();
                     Radio.Radio.Play();
                     GUIWaitCursor.Hide();
@@ -695,7 +696,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
                     }
                     else
                     {
-                      Log.Debug("RadioGuide: no show currently running to switch to fullscreen");
+                      this.LogDebug("RadioGuide: no show currently running to switch to fullscreen");
                     }
                     break;
                 }

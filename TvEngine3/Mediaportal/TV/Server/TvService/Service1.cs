@@ -71,7 +71,7 @@ namespace Mediaportal.TV.Server.TVService
     {
       try
       {
-        Log.Debug("Tvservice stopped due to an unhandled app domain exception {0}", e.ExceptionObject);
+        this.LogDebug("Tvservice stopped due to an unhandled app domain exception {0}", e.ExceptionObject);
         _unhandledExceptionInThread = Thread.CurrentThread;
         ExitCode = -1; //tell windows that the service failed.      
         OnStop(); //cleanup
@@ -294,7 +294,7 @@ namespace Mediaportal.TV.Server.TVService
     protected override void OnStop()
     { 
       RequestAdditionalTime(300000); // we want to make sure all services etc. are closed before tearing down the process.
-      Log.Debug("service.OnStop");
+      this.LogDebug("service.OnStop");
       if (_tvServiceThread != null)
       {
         _tvServiceThread.Stop(60000);        

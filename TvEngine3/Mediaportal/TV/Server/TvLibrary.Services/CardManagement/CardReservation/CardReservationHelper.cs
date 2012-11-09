@@ -191,7 +191,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
         }
         else
         {
-          //Log.Debug("CardReservation.CancelCardReservation FAILED id={0}", ticket.Id);
+          //this.LogDebug("CardReservation.CancelCardReservation FAILED id={0}", ticket.Id);
         }
 
       }
@@ -392,7 +392,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
         }
 
         if (freeCardsDict.Count > 2)
-        {          
+        {
           Log.Debug(
             "CancelCardReservationsExceedingMaxConcurrentTickets: removing exceeding nr of tickets, only 2 allowed at a time but found {0}",
             tickets.Count);

@@ -113,7 +113,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         {
           if (subchannel.IdChannel == idChannel)
           {
-            Log.Debug("usermanagement.RemoveUser: {0}, subch: {1} of {2}, card: {3}", user.Name, subchannel.Id,
+            this.LogDebug("usermanagement.RemoveUser: {0}, subch: {1} of {2}, card: {3}", user.Name, subchannel.Id,
                       _cardHandler.Card.SubChannels.Length, _cardHandler.DataBaseCard.IdCard);
             if (!ContainsUsersForSubchannel(subchannel.Id))
             {

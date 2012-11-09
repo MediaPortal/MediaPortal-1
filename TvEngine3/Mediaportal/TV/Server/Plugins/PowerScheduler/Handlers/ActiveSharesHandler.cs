@@ -112,7 +112,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
         {
           MonitoringType = ShareType.UserFromHostUsingShare;
         }
-        Log.Debug("ShareMonitor: Monitor user '{0}' from host '{1}' on share '{2}' Type '{3}'", _user, _host, _share,
+        this.LogDebug("ShareMonitor: Monitor user '{0}' from host '{1}' on share '{2}' Type '{3}'", _user, _host, _share,
                   MonitoringType);
       }
 
@@ -170,7 +170,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
             }
             break;
           default:
-            Log.Debug("Invalid share monitoring configuration.");
+            this.LogDebug("Invalid share monitoring configuration.");
             break;
         }
         return serverConnectionMatches;
@@ -258,7 +258,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
               _sharesToMonitor.Add(new ShareMonitor(shareItem[0], shareItem[1], shareItem[2]));
             }
           }
-          Log.Debug("{0}: Share monitoring is enabled.", HandlerName);
+          this.LogDebug("{0}: Share monitoring is enabled.", HandlerName);
           return true;
         }
       }
@@ -266,7 +266,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
       {
         this.LogError(ex, "{0}: Error loading shares to monitor", HandlerName);
       }
-      Log.Debug("{0}: Share monitoring is disabled.", HandlerName);
+      this.LogDebug("{0}: Share monitoring is disabled.", HandlerName);
       return false;
     }
 
@@ -306,13 +306,13 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
             {
               if (shareBeingMonitored.Equals(connection))
               {
-                Log.Debug("{0}: Standby cancelled due to connection '{1}:{2}' on share '{3}'", HandlerName,
+                this.LogDebug("{0}: Standby cancelled due to connection '{1}:{2}' on share '{3}'", HandlerName,
                           connection.UserName, connection.ComputerName, connection.ShareName);
                 return true;
               }
             }
           }
-          Log.Debug("{0}: have not found any matching connections - will allow standby", HandlerName);
+          this.LogDebug("{0}: have not found any matching connections - will allow standby", HandlerName);
           return false;
         }
         return false;

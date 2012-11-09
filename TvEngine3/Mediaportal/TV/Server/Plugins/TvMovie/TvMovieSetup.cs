@@ -324,11 +324,11 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
 
       foreach (TreeNode channel in treeViewMpChannels.Nodes)
       {
-        //Log.Debug("TvMovieSetup: Processing channel {0}", channel.Text);
+        //this.LogDebug("TvMovieSetup: Processing channel {0}", channel.Text);
         foreach (TreeNode station in channel.Nodes)
         {
           ChannelInfo channelInfo = (ChannelInfo)station.Tag;
-          //Log.Debug("TvMovieSetup: Processing channelInfo {0}", channelInfo.Name);
+          //this.LogDebug("TvMovieSetup: Processing channelInfo {0}", channelInfo.Name);
           TvMovieMapping mapping = null;
           try
           {
@@ -339,10 +339,10 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
           {
             this.LogError("TvMovieSetup: Error on new TvMovieMapping for channel {0} - {1}", channel.Text, exm.Message);
           }
-          //Log.Debug("TvMovieSetup: SaveMapping - new mapping for {0}/{1}", channel.Text, channelInfo.Name);
+          //this.LogDebug("TvMovieSetup: SaveMapping - new mapping for {0}/{1}", channel.Text, channelInfo.Name);
           try
           {
-            Log.Debug("TvMovieSetup: Persisting TvMovieMapping for channel {0}", channel.Text);
+            this.LogDebug("TvMovieSetup: Persisting TvMovieMapping for channel {0}", channel.Text);
             mapping.Persist();
           }
           catch (Exception ex)
@@ -405,22 +405,22 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
                     }
                   }
                   else
-                    Log.Debug("TVMovie plugin: Channel {0} no longer present in Database - ignoring", stationName);
+                    this.LogDebug("TVMovie plugin: Channel {0} no longer present in Database - ignoring", stationName);
                 }
               }
               catch (Exception exInner)
               {
-                Log.Debug("TVMovie plugin: Mapping of station {0} failed; maybe it has been deleted / changed ({1})",
+                this.LogDebug("TVMovie plugin: Mapping of station {0} failed; maybe it has been deleted / changed ({1})",
                           MpChannelName, exInner.Message);
               }
             }
           }
           else
-            Log.Debug("TVMovie plugin: LoadMapping did not find any mapped channels");
+            this.LogDebug("TVMovie plugin: LoadMapping did not find any mapped channels");
         }
         catch (Exception ex)
         {
-          Log.Debug("TVMovie plugin: LoadMapping failed - {0},{1}", ex.Message, ex.StackTrace);
+          this.LogDebug("TVMovie plugin: LoadMapping failed - {0},{1}", ex.Message, ex.StackTrace);
         }
         ColorTree();
       }
@@ -442,7 +442,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovie
               return MpNode;
           }
           else
-            Log.Debug("TVMovie plugin: FindChannel failed - no Channel in Node tag of {0}", MpNode.Text);
+            this.LogDebug("TVMovie plugin: FindChannel failed - no Channel in Node tag of {0}", MpNode.Text);
         }
       return null;
     }

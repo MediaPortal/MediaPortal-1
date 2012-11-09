@@ -53,12 +53,12 @@ namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
           }
           else
           {
-            Log.Debug("TvServerEventDispatcher.DoOnTvServerEventAsynch : tvserver event received but no users found...");
+            this.LogDebug("TvServerEventDispatcher.DoOnTvServerEventAsynch : tvserver event received but no users found...");
           }
         }
         catch (Exception ex)
         {
-          Log.Debug("DoOnTvServerEventAsynch failed : {0}", ex);        
+          this.LogDebug("DoOnTvServerEventAsynch failed : {0}", ex);        
         }            
       }
     }
