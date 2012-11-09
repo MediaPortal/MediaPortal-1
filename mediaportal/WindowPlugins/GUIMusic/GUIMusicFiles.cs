@@ -138,9 +138,8 @@ namespace MediaPortal.GUI.Music
     private string _discId = string.Empty;
     private static string currentFolder = string.Empty;
     private string _startDirectory = string.Empty;
-    private string _destination = string.Empty;
-    private string _fileMenuPinCode = string.Empty;
-    private bool _useFileMenu = false;
+    //private string _destination = string.Empty;
+    //private string _fileMenuPinCode = string.Empty;
     private bool _stripArtistPrefixes = false;
 
     private DateTime Previous_ACTION_PLAY_Time = DateTime.Now;
@@ -149,6 +148,16 @@ namespace MediaPortal.GUI.Music
 
     private Thread _importFolderThread = null;
     private Queue<string> _scanQueue = new Queue<string>();
+
+    // File menu
+    private string _fileMenuDestinationDir = string.Empty;
+    private bool _fileMenuEnabled;
+    private bool _fileMenuFastDeleteEnabled;
+    private string _fileMenuPinCode = string.Empty;
+
+    private bool _resetSMSsearch;
+    private bool _oldStateSMSsearch;
+    private DateTime _resetSMSsearchDelay;
 
     #endregion
 
@@ -234,7 +243,9 @@ namespace MediaPortal.GUI.Music
         _stripArtistPrefixes = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
         MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);
-        _useFileMenu = xmlreader.GetValueAsBool("filemenu", "enabled", true);
+        // File menu
+        _fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", false);
+        _fileMenuFastDeleteEnabled = xmlreader.GetValueAsBool("filemenu", "fastdelete", false);
         _fileMenuPinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
 
         string strDefault = xmlreader.GetValueAsString("music", "default", string.Empty);
@@ -369,6 +380,11 @@ namespace MediaPortal.GUI.Music
           LoadDirectory(item.Path);
           return;
         }
+      }
+
+      if (action.wID == Action.ActionType.ACTION_DELETE_ITEM && _fileMenuEnabled && _fileMenuFastDeleteEnabled)
+      {
+        ShowFileMenu(true);
       }
 
       base.OnAction(action);
@@ -692,8 +708,7 @@ namespace MediaPortal.GUI.Music
           dlg.AddLocalizedString(654); //Eject
         }
 
-        int iPincodeCorrect;
-        if (!_virtualDirectory.IsProtectedShare(item.Path, out iPincodeCorrect) && !item.IsRemote && _useFileMenu)
+        if (!item.IsRemote && _fileMenuEnabled)
         {
           dlg.AddLocalizedString(500); // FileMenu
         }
@@ -780,19 +795,7 @@ namespace MediaPortal.GUI.Music
 
         case 500: // File menu
           {
-            // get pincode
-            if (_fileMenuPinCode != string.Empty)
-            {
-              string strUserCode = string.Empty;
-              if (GetUserPasswordString(ref strUserCode) && strUserCode == _fileMenuPinCode)
-              {
-                OnShowFileMenu();
-              }
-            }
-            else
-            {
-              OnShowFileMenu();
-            }
+            ShowFileMenu(false);
           }
           break;
 
@@ -938,6 +941,18 @@ namespace MediaPortal.GUI.Music
       }
     }
 
+    public override void Process()
+    {
+      if ((_resetSMSsearch == true) && (_resetSMSsearchDelay.Subtract(DateTime.Now).Seconds < -2))
+      {
+        _resetSMSsearchDelay = DateTime.Now;
+        _resetSMSsearch = true;
+        facadeLayout.EnableSMSsearch = _oldStateSMSsearch;
+      }
+
+      base.Process();
+    }
+
     private bool GetUserInputString(ref string sString)
     {
       VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
@@ -975,20 +990,28 @@ namespace MediaPortal.GUI.Music
       return keyboard.IsConfirmed;
     }
 
-    private void OnShowFileMenu()
+    private void OnShowFileMenu(bool preselectDelete)
     {
-      GUIListItem item = _selectedListItem;
+      GUIListItem item = facadeLayout.SelectedListItem;
+
       if (item == null)
       {
         return;
       }
-      if (item.IsFolder && item.Label == "..")
+
+      if (item.IsFolder && (item.Label == ".." || _virtualDirectory.IsRootShare(item.Path)))
+      {
+        return;
+      }
+
+      if (!_virtualDirectory.RequestPin(item.Path))
       {
         return;
       }
 
       // init
       GUIDialogFile dlgFile = (GUIDialogFile)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_FILE);
+
       if (dlgFile == null)
       {
         return;
@@ -997,27 +1020,45 @@ namespace MediaPortal.GUI.Music
       // File operation settings
       dlgFile.SetSourceItem(item);
       dlgFile.SetSourceDir(currentFolder);
-      dlgFile.SetDestinationDir(_destination);
+      dlgFile.SetDestinationDir(_fileMenuDestinationDir);
       dlgFile.SetDirectoryStructure(_virtualDirectory);
-      dlgFile.DoModal(GetID);
-      _destination = dlgFile.GetDestinationDir();
 
+      if (preselectDelete)
+      {
+        dlgFile.PreselectDelete();
+      }
+
+      dlgFile.DoModal(GetID);
+      _fileMenuDestinationDir = dlgFile.GetDestinationDir();
       //final
+      _oldStateSMSsearch = facadeLayout.EnableSMSsearch;
+      facadeLayout.EnableSMSsearch = false;
+
       if (dlgFile.Reload())
       {
-        LoadDirectory(currentFolder);
-        if (_selectedItem >= 0)
+        int selectedItem = facadeLayout.SelectedListItemIndex;
+
+        if (currentFolder != dlgFile.GetSourceDir())
         {
-          if (_selectedItem >= facadeLayout.Count)
-            _selectedItem = facadeLayout.Count - 1;
-          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _selectedItem);
+          selectedItem = -1;
+        }
+
+        LoadDirectory(currentFolder);
+
+        if (selectedItem >= 0)
+        {
+          if (selectedItem >= facadeLayout.Count)
+            selectedItem = facadeLayout.Count - 1;
+          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItem);
         }
       }
 
       dlgFile.DeInit();
       dlgFile = null;
+      _resetSMSsearchDelay = DateTime.Now;
+      _resetSMSsearch = true;
     }
-
+    
     protected override void OnRetrieveCoverArt(GUIListItem item)
     {
       Util.Utils.SetDefaultIcons(item);
@@ -1920,6 +1961,23 @@ namespace MediaPortal.GUI.Music
     public static void ResetExtensions(ArrayList extensions)
     {
       _virtualDirectory.SetExtensions(extensions);
+    }
+
+    private void ShowFileMenu(bool preselectDelete)
+    {
+      // get pincode
+      if (_fileMenuPinCode != string.Empty)
+      {
+        string userCode = string.Empty;
+        if (GetUserPasswordString(ref userCode) && userCode == _fileMenuPinCode)
+        {
+          OnShowFileMenu(preselectDelete);
+        }
+      }
+      else
+      {
+        OnShowFileMenu(preselectDelete);
+      }
     }
 
     #region ISetupForm Members

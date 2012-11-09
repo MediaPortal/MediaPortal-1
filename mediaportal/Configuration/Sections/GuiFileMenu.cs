@@ -35,6 +35,7 @@ namespace MediaPortal.Configuration.Sections
     private MPTextBox textPinCodeBox;
     private MPLabel label3;
     private MPTextBox textTrashcanFolder;
+    private MPCheckBox chbFastDelete;
     private IContainer components = null;
 
     public GuiFileMenu()
@@ -70,8 +71,9 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlreader = new MPSettings())
       {
-        chbEnabled.Checked = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-        textPinCodeBox.Text = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", ""));
+        chbEnabled.Checked = xmlreader.GetValueAsBool("filemenu", "enabled", false);
+        chbFastDelete.Checked = xmlreader.GetValueAsBool("filemenu", "fastdelete", false);
+        textPinCodeBox.Text = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", "0000"));
         textTrashcanFolder.Text = xmlreader.GetValueAsString("filemenu", "trashcan", "");
       }
     }
@@ -81,6 +83,7 @@ namespace MediaPortal.Configuration.Sections
       using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("filemenu", "enabled", chbEnabled.Checked);
+        xmlwriter.SetValueAsBool("filemenu", "fastdelete", chbFastDelete.Checked);
         xmlwriter.SetValue("filemenu", "pincode", Util.Utils.EncryptPin(textPinCodeBox.Text));
         xmlwriter.SetValue("filemenu", "trashcan", textTrashcanFolder.Text);
       }
@@ -100,22 +103,22 @@ namespace MediaPortal.Configuration.Sections
       this.chbEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textTrashcanFolder = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.chbFastDelete = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.chbFastDelete);
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.textPinCodeBox);
       this.groupBox1.Controls.Add(this.chbEnabled);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(6, 0);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(462, 80);
+      this.groupBox1.Size = new System.Drawing.Size(462, 110);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
@@ -123,7 +126,7 @@ namespace MediaPortal.Configuration.Sections
       // label1
       // 
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(16, 48);
+      this.label1.Location = new System.Drawing.Point(15, 78);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(49, 13);
       this.label1.TabIndex = 1;
@@ -131,12 +134,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textPinCodeBox
       // 
-      this.textPinCodeBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.textPinCodeBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textPinCodeBox.BorderColor = System.Drawing.Color.Empty;
-      this.textPinCodeBox.Location = new System.Drawing.Point(71, 44);
+      this.textPinCodeBox.Location = new System.Drawing.Point(70, 75);
       this.textPinCodeBox.Name = "textPinCodeBox";
       this.textPinCodeBox.Size = new System.Drawing.Size(278, 20);
       this.textPinCodeBox.TabIndex = 2;
@@ -156,7 +157,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label3
       // 
-      this.label3.Location = new System.Drawing.Point(16, 104);
+      this.label3.Location = new System.Drawing.Point(21, 130);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(88, 16);
       this.label3.TabIndex = 1;
@@ -165,16 +166,26 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textTrashcanFolder
       // 
-      this.textTrashcanFolder.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.textTrashcanFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textTrashcanFolder.BorderColor = System.Drawing.Color.Empty;
-      this.textTrashcanFolder.Location = new System.Drawing.Point(108, 100);
+      this.textTrashcanFolder.Location = new System.Drawing.Point(115, 126);
       this.textTrashcanFolder.Name = "textTrashcanFolder";
       this.textTrashcanFolder.Size = new System.Drawing.Size(288, 20);
       this.textTrashcanFolder.TabIndex = 2;
       this.textTrashcanFolder.Visible = false;
+      // 
+      // chbFastDelete
+      // 
+      this.chbFastDelete.AutoSize = true;
+      this.chbFastDelete.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.chbFastDelete.Location = new System.Drawing.Point(18, 43);
+      this.chbFastDelete.Name = "chbFastDelete";
+      this.chbFastDelete.RightToLeft = System.Windows.Forms.RightToLeft.No;
+      this.chbFastDelete.Size = new System.Drawing.Size(189, 17);
+      this.chbFastDelete.TabIndex = 3;
+      this.chbFastDelete.Text = "Enable fast delete (default \"0\" key)";
+      this.chbFastDelete.UseVisualStyleBackColor = true;
       // 
       // GuiFileMenu
       // 
@@ -188,6 +199,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
+
     }
 
     #endregion
@@ -195,6 +207,7 @@ namespace MediaPortal.Configuration.Sections
     private void chbEnabled_CheckedChanged(object sender, EventArgs e)
     {
       textPinCodeBox.Enabled = chbEnabled.Checked;
+      chbFastDelete.Enabled = chbEnabled.Checked;
       textTrashcanFolder.Enabled = chbEnabled.Checked;
     }
   }

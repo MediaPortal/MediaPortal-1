@@ -119,6 +119,7 @@ namespace MediaPortal.GUI.Video
     // File menu
     private string _fileMenuDestinationDir = string.Empty;
     private bool _fileMenuEnabled;
+    private bool _fileMenuFastDeleteEnabled;
     private string _fileMenuPinCode = string.Empty;
 
     private bool _scanning;
@@ -307,9 +308,11 @@ namespace MediaPortal.GUI.Video
         _scanSkipExisting = xmlreader.GetValueAsBool("moviedatabase", "scanskipexisting", false);
         _getActors = xmlreader.GetValueAsBool("moviedatabase", "getactors", true);
         _markWatchedFiles = xmlreader.GetValueAsBool("movies", "markwatched", true);
-        //_eachFolderIsMovie = xmlreader.GetValueAsBool("movies", "eachFolderIsMovie", false);
-        _fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
+        // File menu
+        _fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", false);
+        _fileMenuFastDeleteEnabled = xmlreader.GetValueAsBool("filemenu", "fastdelete", false);
         _fileMenuPinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
+        //
         _howToPlayAll = xmlreader.GetValueAsInt("movies", "playallinfolder", 3);
         _watchedPercentage = xmlreader.GetValueAsInt("movies", "playedpercentagewatched", 95);
         _videoInfoInShare = xmlreader.GetValueAsBool("moviedatabase", "movieinfoshareview", false);
@@ -408,7 +411,7 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
-      if (action.wID == Action.ActionType.ACTION_DELETE_ITEM && _fileMenuEnabled)
+      if (action.wID == Action.ActionType.ACTION_DELETE_ITEM && _fileMenuEnabled && _fileMenuFastDeleteEnabled)
       {
         ShowFileMenu(true);
       }
@@ -3721,7 +3724,7 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
-      if (item.IsFolder && item.Label == "..")
+      if (item.IsFolder && (item.Label == ".." || _virtualDirectory.IsRootShare(item.Path)))
       {
         return;
       }

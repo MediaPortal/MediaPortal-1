@@ -305,8 +305,6 @@ namespace MediaPortal.GUI.Pictures
     private string destinationFolder = string.Empty;
     private static VirtualDirectory virtualDirectory = new VirtualDirectory();
     private MapSettings mapSettings = new MapSettings();
-    private bool isFileMenuEnabled = false;
-    private string fileMenuPinCode = string.Empty;
     private bool _autocreateLargeThumbs = true;
     private bool _useDayGrouping = false;
     private bool _enableVideoPlayback = false;
@@ -315,6 +313,16 @@ namespace MediaPortal.GUI.Pictures
     private Display disp = Display.Files;
     private bool _switchRemovableDrives;
     private int CountOfNonImageItems = 0; // stores the count of items in a folder that are no images (folders etc...)
+    // File menu
+    private string _fileMenuDestinationDir = string.Empty;
+    private bool _fileMenuEnabled;
+    private bool _fileMenuFastDeleteEnabled;
+    private string _fileMenuPinCode = string.Empty;
+
+    private bool _resetSMSsearch;
+    private bool _oldStateSMSsearch;
+    private DateTime _resetSMSsearchDelay;
+
 
     #endregion
 
@@ -337,8 +345,11 @@ namespace MediaPortal.GUI.Pictures
         _useDayGrouping = xmlreader.GetValueAsBool("pictures", "useDayGrouping", false);
         _enableVideoPlayback = xmlreader.GetValueAsBool("pictures", "enableVideoPlayback", false);
         _playVideosInSlideshows = xmlreader.GetValueAsBool("pictures", "playVideosInSlideshows", false);
-        isFileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-        fileMenuPinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
+        // File menu
+        _fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", false);
+        _fileMenuFastDeleteEnabled = xmlreader.GetValueAsBool("filemenu", "fastdelete", false);
+        _fileMenuPinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
+        //
         string strDefault = xmlreader.GetValueAsString("pictures", "default", string.Empty);
         virtualDirectory.Clear();
         for (int i = 0; i < VirtualDirectory.MaxSharesCount; i++)
@@ -508,17 +519,9 @@ namespace MediaPortal.GUI.Pictures
         }
         return;
       }
-      if (action.wID == Action.ActionType.ACTION_DELETE_ITEM)
+      if (action.wID == Action.ActionType.ACTION_DELETE_ITEM && _fileMenuEnabled && _fileMenuFastDeleteEnabled)
       {
-        // delete current picture
-        GUIListItem item = GetSelectedItem();
-        if (item != null)
-        {
-          if (item.IsFolder == false)
-          {
-            OnDeleteItem(item);
-          }
-        }
+        ShowFileMenu(true);
       }
 
       base.OnAction(action);
@@ -770,11 +773,12 @@ namespace MediaPortal.GUI.Pictures
         dlg.AddLocalizedString(200048); //Regenerate Thumbnails
       }
       dlg.AddLocalizedString(457); //Switch View
-      int iPincodeCorrect;
-      if (!virtualDirectory.IsProtectedShare(item.Path, out iPincodeCorrect) && !item.IsRemote && isFileMenuEnabled)
+      
+      if (!IsFolderPinProtected(item.Path) && !item.IsRemote && _fileMenuEnabled)
       {
         dlg.AddLocalizedString(500); // FileMenu      
       }
+      
       if (Util.Utils.IsRemovable(item.Path))
       {
         dlg.AddLocalizedString(831);
@@ -813,18 +817,8 @@ namespace MediaPortal.GUI.Pictures
           break;
 
         case 500: // File menu
-          // get pincode
-          if (fileMenuPinCode != string.Empty)
           {
-            string strUserCode = string.Empty;
-            if (GetUserPasswordString(ref strUserCode) && strUserCode == fileMenuPinCode)
-            {
-              OnShowFileMenu();
-            }
-          }
-          else
-          {
-            OnShowFileMenu();
+            ShowFileMenu(false);
           }
           break;
         case 200046: // Generate Thumbnails
@@ -865,6 +859,18 @@ namespace MediaPortal.GUI.Pictures
           }
           break;
       }
+    }
+
+    public override void Process()
+    {
+      if ((_resetSMSsearch == true) && (_resetSMSsearchDelay.Subtract(DateTime.Now).Seconds < -2))
+      {
+        _resetSMSsearchDelay = DateTime.Now;
+        _resetSMSsearch = true;
+        facadeLayout.EnableSMSsearch = _oldStateSMSsearch;
+      }
+
+      base.Process();
     }
 
     #endregion
@@ -944,7 +950,8 @@ namespace MediaPortal.GUI.Pictures
           textLine = GUILocalizeStrings.Get(105);
           break;
       }
-      GUIControl.SetControlLabel(GetID, btnSortBy.GetID, GUILocalizeStrings.Get(96) + textLine);
+      //GUIControl.SetControlLabel(GetID, btnSortBy.GetID, GUILocalizeStrings.Get(96) + textLine);
+      btnSortBy.Label = GUILocalizeStrings.Get(96) + textLine;
 
       if (null != facadeLayout)
         facadeLayout.EnableScrollLabel = method == SortMethod.Name;
@@ -1229,71 +1236,6 @@ namespace MediaPortal.GUI.Pictures
             Util.Utils.SetThumbnails(ref item);
           }
         }
-      }
-    }
-
-    private void OnDeleteItem(GUIListItem item)
-    {
-      if (item.IsRemote)
-      {
-        return;
-      }
-
-      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
-      if (null == dlgYesNo)
-      {
-        return;
-      }
-      string strFileName = Path.GetFileName(item.Path);
-      if (!item.IsFolder)
-      {
-        dlgYesNo.SetHeading(664);
-      }
-      else
-      {
-        dlgYesNo.SetHeading(503);
-      }
-      dlgYesNo.SetLine(1, strFileName);
-      dlgYesNo.SetLine(2, string.Empty);
-      dlgYesNo.SetLine(3, string.Empty);
-      dlgYesNo.DoModal(GetID);
-
-      if (!dlgYesNo.IsConfirmed)
-      {
-        return;
-      }
-      DoDeleteItem(item);
-
-      selectedItemIndex = GetSelectedItemNo();
-      if (selectedItemIndex > 0)
-      {
-        selectedItemIndex--;
-      }
-      LoadDirectory(currentFolder);
-      if (selectedItemIndex >= 0)
-      {
-        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
-      }
-    }
-
-    private void DoDeleteItem(GUIListItem item)
-    {
-      if (item.IsFolder)
-      {
-        if (item.Label != "..")
-        {
-          List<GUIListItem> items = new List<GUIListItem>();
-          items = virtualDirectory.GetDirectoryUnProtectedExt(item.Path, false);
-          foreach (GUIListItem subItem in items)
-          {
-            DoDeleteItem(subItem);
-          }
-          Util.Utils.DirectoryDelete(item.Path);
-        }
-      }
-      else if (!item.IsRemote)
-      {
-        Util.Utils.FileDelete(item.Path);
       }
     }
 
@@ -1641,20 +1583,45 @@ namespace MediaPortal.GUI.Pictures
       GUIControl.FocusControl(GetID, btnSortBy.GetID);
     }
 
-    private void OnShowFileMenu()
+    private void ShowFileMenu(bool preselectDelete)
     {
-      GUIListItem item = selectedListItem;
+      // get pincode
+      if (_fileMenuPinCode != string.Empty)
+      {
+        string userCode = string.Empty;
+        if (GetUserPasswordString(ref userCode) && userCode == _fileMenuPinCode)
+        {
+          OnShowFileMenu(preselectDelete);
+        }
+      }
+      else
+      {
+        OnShowFileMenu(preselectDelete);
+      }
+    }
+
+    private void OnShowFileMenu(bool preselectDelete)
+    {
+      GUIListItem item = facadeLayout.SelectedListItem;
+
       if (item == null)
       {
         return;
       }
-      if (item.IsFolder && item.Label == "..")
+
+      if (item.IsFolder && (item.Label == ".." || virtualDirectory.IsRootShare(item.Path)))
+      {
+        return;
+      }
+
+      if (!virtualDirectory.RequestPin(item.Path))
       {
         return;
       }
 
       // init
       GUIDialogFile dlgFile = (GUIDialogFile)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_FILE);
+
       if (dlgFile == null)
       {
         return;
@@ -1663,25 +1630,49 @@ namespace MediaPortal.GUI.Pictures
       // File operation settings
       dlgFile.SetSourceItem(item);
       dlgFile.SetSourceDir(currentFolder);
-      dlgFile.SetDestinationDir(destinationFolder);
+      dlgFile.SetDestinationDir(_fileMenuDestinationDir);
       dlgFile.SetDirectoryStructure(virtualDirectory);
-      dlgFile.DoModal(GetID);
-      destinationFolder = dlgFile.GetDestinationDir();
 
-      //final		
+      if (preselectDelete)
+      {
+        dlgFile.PreselectDelete();
+      }
+
+      dlgFile.DoModal(GetID);
+      _fileMenuDestinationDir = dlgFile.GetDestinationDir();
+      //final
+      _oldStateSMSsearch = facadeLayout.EnableSMSsearch;
+      facadeLayout.EnableSMSsearch = false;
+
       if (dlgFile.Reload())
       {
-        LoadDirectory(currentFolder);
-        if (selectedItemIndex >= 0)
+        int selectedItem = facadeLayout.SelectedListItemIndex;
+
+        if (currentFolder != dlgFile.GetSourceDir())
         {
-          if (selectedItemIndex >= facadeLayout.Count)
-            selectedItemIndex = facadeLayout.Count - 1;
-          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
+          selectedItem = -1;
+        }
+
+        LoadDirectory(currentFolder);
+
+        if (selectedItem >= 0)
+        {
+          if (selectedItem >= facadeLayout.Count)
+            selectedItem = facadeLayout.Count - 1;
+          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItem);
         }
       }
 
       dlgFile.DeInit();
       dlgFile = null;
+      _resetSMSsearchDelay = DateTime.Now;
+      _resetSMSsearch = true;
+    }
+
+    private static bool IsFolderPinProtected(string folder)
+    {
+      int pinCode = 0;
+      return virtualDirectory.IsProtectedShare(folder, out pinCode);
     }
 
     #endregion

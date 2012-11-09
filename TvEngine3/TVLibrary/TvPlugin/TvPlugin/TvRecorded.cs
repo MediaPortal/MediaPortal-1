@@ -183,6 +183,10 @@ namespace TvPlugin
     private bool _resetSMSsearch = false;
     private bool _oldStateSMSsearch;
     private DateTime _resetSMSsearchDelay;
+    // File menu
+    private bool _fileMenuEnabled;
+    private bool _fileMenuFastDeleteEnabled;
+    private string _fileMenuPinCode = string.Empty;
 
     private RecordingThumbCacher thumbworker = null;
     
@@ -242,6 +246,11 @@ namespace TvPlugin
 
         _deleteWatchedShows = xmlreader.GetValueAsBool("capture", "deletewatchedshows", false);
         _createRecordedThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
+
+        // File menu
+        _fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", false);
+        _fileMenuFastDeleteEnabled = xmlreader.GetValueAsBool("filemenu", "fastdelete", false);
+        _fileMenuPinCode = Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
       }
 
       thumbworker = null;
@@ -313,12 +322,10 @@ namespace TvPlugin
       {
         case Action.ActionType.ACTION_DELETE_ITEM:
           {
-            int item = GetSelectedItemNo();
-            if (item >= 0)
+            if (_fileMenuEnabled && _fileMenuFastDeleteEnabled)
             {
-              OnDeleteRecording(item);
+              DeleteRecording();
             }
-            UpdateProperties();
           }
           break;
 
@@ -517,7 +524,7 @@ namespace TvPlugin
       dlg.SetHeading(TVUtil.GetDisplayTitle(rec));
 
       dlg.AddLocalizedString(655); //Play recorded tv
-      dlg.AddLocalizedString(656); //Delete recorded tv
+      if(_fileMenuEnabled) dlg.AddLocalizedString(656); //Delete recorded tv
       if (rec.TimesWatched > 0)
       {
         dlg.AddLocalizedString(830); //Reset watched status
@@ -536,7 +543,7 @@ namespace TvPlugin
       switch (dlg.SelectedId)
       {
         case 656: // delete
-          OnDeleteRecording(iItem);
+          DeleteRecording();
           break;
 
         case 655: // play
@@ -1176,6 +1183,51 @@ namespace TvPlugin
       return TVUtil.PlayRecording(rec, stoptime);
     }
 
+    private void DeleteRecording()
+    {
+      // get pincode
+      int item = GetSelectedItemNo();
+      if (item >= 0)
+      {
+        if (_fileMenuPinCode != string.Empty)
+        {
+          string userCode = string.Empty;
+          if (GetUserPasswordString(ref userCode) && userCode == _fileMenuPinCode)
+          {
+            OnDeleteRecording(item);
+          }
+        }
+        else
+        {
+          OnDeleteRecording(item);
+        }
+        UpdateProperties();
+      }
+    }
+
+    private bool GetUserPasswordString(ref string sString)
+    {
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
+
+      if (null == keyboard)
+      {
+        return false;
+      }
+
+      keyboard.IsSearchKeyboard = true;
+      keyboard.Reset();
+      keyboard.Password = true;
+      keyboard.Text = sString;
+      keyboard.DoModal(GetID); // show it...
+
+      if (keyboard.IsConfirmed)
+      {
+        sString = keyboard.Text;
+      }
+
+      return keyboard.IsConfirmed;
+    }
+
     private void OnDeleteRecording(int iItem)
     {
       _iSelectedItem = GetSelectedItemNo();
@@ -1274,7 +1326,6 @@ namespace TvPlugin
       _resetSMSsearchDelay = DateTime.Now;
       _resetSMSsearch = true;
     }
-
 
     private void TryDeleteRecordingAndNotifyUser(Recording rec)
     {

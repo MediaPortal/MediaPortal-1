@@ -28,6 +28,7 @@ using System.Threading;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
+using MediaPortal.Picture.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using Microsoft.DirectX.Direct3D;
@@ -245,6 +246,9 @@ namespace MediaPortal.GUI.Pictures
     private PlayListPlayer pausedMusicPlaylist;
     private PlayListType pausedPlayListType;
     private bool isPausedMusicCDA;
+    private bool _fileMenuEnabled;
+    private bool _fileMenuFastDeleteEnabled;
+    private string _fileMenuPinCode = string.Empty;
 
 
     private bool _isPictureZoomed
@@ -417,7 +421,10 @@ namespace MediaPortal.GUI.Pictures
           break;
 
         case Action.ActionType.ACTION_DELETE_ITEM:
-          OnDelete();
+          if (_fileMenuEnabled && _fileMenuFastDeleteEnabled)
+          {
+            ShowFileMenu();
+          }
           break;
 
         case Action.ActionType.ACTION_PREV_ITEM:
@@ -1079,7 +1086,6 @@ namespace MediaPortal.GUI.Pictures
       _slideDirection = 1;
       _isSlideShow = true;
     }
-
 
     public void Reset()
     {
@@ -2227,6 +2233,8 @@ namespace MediaPortal.GUI.Pictures
       }
       if (Util.Utils.FileDelete(_backgroundSlide.FilePath) == true)
       {
+        //Remove from picture database
+        PictureDatabase.DeletePicture(_backgroundSlide.FilePath);
         try
         {
           _slideList.Remove(_backgroundSlide.FilePath);
@@ -2248,7 +2256,6 @@ namespace MediaPortal.GUI.Pictures
       exifDialog.FileName = _backgroundSlide.FilePath;
       exifDialog.DoModal(GetID);
     }
-
 
     private bool RenderPause()
     {
@@ -2593,6 +2600,10 @@ namespace MediaPortal.GUI.Pictures
         _useRandomTransitions = xmlreader.GetValueAsBool("pictures", "random", true);
         _autoShuffle = xmlreader.GetValueAsBool("pictures", "autoShuffle", false);
         _autoRepeat = xmlreader.GetValueAsBool("pictures", "autoRepeat", false);
+        // File menu
+        _fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", false);
+        _fileMenuFastDeleteEnabled = xmlreader.GetValueAsBool("filemenu", "fastdelete", false);
+        _fileMenuPinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
       }
     }
 
@@ -2722,6 +2733,42 @@ namespace MediaPortal.GUI.Pictures
       dlg.DoModal(GUIWindowManager.ActiveWindow);
     }
 
+    private void ShowFileMenu()
+    {
+      // get pincode
+      if (_fileMenuPinCode != string.Empty)
+      {
+        string userCode = string.Empty;
+        if (GetUserPasswordString(ref userCode) && userCode == _fileMenuPinCode)
+        {
+          OnDelete();
+        }
+      }
+      else
+      {
+        OnDelete();
+      }
+    }
+
+    private bool GetUserPasswordString(ref string sString)
+    {
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
+      if (null == keyboard)
+      {
+        return false;
+      }
+      keyboard.IsSearchKeyboard = true;
+      keyboard.Reset();
+      keyboard.Password = true;
+      keyboard.Text = sString;
+      keyboard.DoModal(GetID); // show it...
+      if (keyboard.IsConfirmed)
+      {
+        sString = keyboard.Text;
+      }
+      return keyboard.IsConfirmed;
+    }
+    
     #endregion
   }
 }

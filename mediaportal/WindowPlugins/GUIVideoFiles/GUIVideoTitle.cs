@@ -74,6 +74,13 @@ namespace MediaPortal.GUI.Video
     private static string _currentBaseView = string.Empty; // lvl 0 view name (origin view which can be drilled down liek genres, index, years..))
     // Last View lvl postion on back from VideoInfo screen
     private int _currentLevel = 0;
+    // File menu
+    private bool _fileMenuEnabled;
+    private bool _fileMenuFastDeleteEnabled;
+    private string _fileMenuPinCode = string.Empty;
+    private bool _resetSMSsearch;
+    private bool _oldStateSMSsearch;
+    private DateTime _resetSMSsearchDelay;
     
     #endregion
 
@@ -97,6 +104,18 @@ namespace MediaPortal.GUI.Video
       currentFolder = string.Empty;
       handler.CurrentView = "369";
       return Load(GUIGraphicsContext.GetThemedSkinFile(@"\myvideoTitle.xml"));
+    }
+
+    protected override void LoadSettings()
+    {
+      base.LoadSettings();
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
+      {
+        // File menu
+        _fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", false);
+        _fileMenuFastDeleteEnabled = xmlreader.GetValueAsBool("filemenu", "fastdelete", false);
+        _fileMenuPinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
+      }
     }
 
     protected override string SerializeName
@@ -250,6 +269,15 @@ namespace MediaPortal.GUI.Video
         _playClicked = true;
         OnClick(facadeLayout.SelectedListItemIndex);
         return;
+      }
+      if (action.wID == Action.ActionType.ACTION_DELETE_ITEM && _fileMenuEnabled && _fileMenuFastDeleteEnabled)
+      {
+        GUIListItem item = facadeLayout.SelectedListItem;
+        if (item == null)
+        {
+          return;
+        }
+        OnDeleteItem(item);
       }
       base.OnAction(action);
     }
@@ -531,7 +559,7 @@ namespace MediaPortal.GUI.Video
 
         dlg.AddLocalizedString(118); //rename title
         dlg.AddLocalizedString(1308); //Rename sort title
-        dlg.AddLocalizedString(925); //delete
+        if (_fileMenuEnabled) dlg.AddLocalizedString(925); //delete
       }
 
       if ((handler.CurrentLevelWhere == "title" ||
@@ -1580,6 +1608,16 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
+      // get pincode
+      if (_fileMenuPinCode != string.Empty)
+      {
+        string userCode = string.Empty;
+        if (!GetUserPasswordString(ref userCode) || userCode != _fileMenuPinCode)
+        {
+          return;
+        }
+      }
+      
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
       if (null == dlgYesNo)
       {
@@ -2739,6 +2777,29 @@ namespace MediaPortal.GUI.Video
       {
         nfoFiles.Add(file);
       }
+    }
+
+    private bool GetUserPasswordString(ref string sString)
+    {
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
+
+      if (null == keyboard)
+      {
+        return false;
+      }
+
+      keyboard.IsSearchKeyboard = true;
+      keyboard.Reset();
+      keyboard.Password = true;
+      keyboard.Text = sString;
+      keyboard.DoModal(GetID); // show it...
+
+      if (keyboard.IsConfirmed)
+      {
+        sString = keyboard.Text;
+      }
+
+      return keyboard.IsConfirmed;
     }
     
     #region Get/Set
