@@ -40,6 +40,7 @@ using Mediaportal.TV.TvPlugin.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using WindowPlugins;
 using Action = MediaPortal.GUI.Library.Action;
+using Log = Mediaportal.TV.Server.TVLibrary.Interfaces.Logging.Log;
 
 namespace Mediaportal.TV.TvPlugin.Radio
 {
@@ -576,7 +577,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
         {
           return true;
         }
-        this.LogInfo("RadioRecorded: ShowFullScreenWindow switching to fullscreen video");
+        Log.Info("RadioRecorded: ShowFullScreenWindow switching to fullscreen video");
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_TVFULLSCREEN);
         GUIGraphicsContext.IsFullScreenVideo = true;
         return true;
@@ -596,7 +597,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "RadioRecorded: Error in ShowUpcomingEpisodes");
+        Log.Error(ex, "RadioRecorded: Error in ShowUpcomingEpisodes");
       }
     }
 
@@ -976,7 +977,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
         }
         catch (Exception ex)
         {
-          Log.Warn(ex, "RadioRecorded: error in SetLabels");
+          this.LogWarn(ex, "RadioRecorded: error in SetLabels");
         }
       }
     }

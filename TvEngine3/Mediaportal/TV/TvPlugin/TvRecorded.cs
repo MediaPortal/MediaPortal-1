@@ -42,6 +42,7 @@ using Mediaportal.TV.TvPlugin.Helper;
 using WindowPlugins;
 using Action = MediaPortal.GUI.Library.Action;
 using GlobalServiceProvider = MediaPortal.Services.GlobalServiceProvider;
+using Log = Mediaportal.TV.Server.TVLibrary.Interfaces.Logging.Log;
 
 //using System.Windows;
 //using System.Windows.Media;
@@ -675,7 +676,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           return true;
         }
-        this.LogInfo("TVRecorded: ShowFullScreenWindow switching to fullscreen video");
+        Log.Info("TVRecorded: ShowFullScreenWindow switching to fullscreen video");
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_TVFULLSCREEN);
         GUIGraphicsContext.IsFullScreenVideo = true;
         return true;
@@ -695,7 +696,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "TvRecorded: Error in ShowUpcomingEpisodes");
+        Log.Error(ex, "TvRecorded: Error in ShowUpcomingEpisodes");
       }
     }
 

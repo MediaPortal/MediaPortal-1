@@ -41,6 +41,7 @@ using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces;
+using Log = Mediaportal.TV.Server.TVLibrary.Interfaces.Logging.Log;
 
 namespace Mediaportal.TV.TvPlugin.Helper
 {
@@ -97,7 +98,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
       }
       catch (Exception ex)
       {
-        this.LogError("TVUtil.SetGentleConfigFile: Error occured while setting the gentle configuration store: {0}", ex);
+        Log.Error("TVUtil.SetGentleConfigFile: Error occured while setting the gentle configuration store: {0}", ex);
         throw;
       }
     }
@@ -369,7 +370,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
       bool useRTSP = TVHome.UseRTSP();
       string chapters = useRTSP ? ServiceAgents.Instance.ControllerServiceAgent.GetRecordingChapters(rec.IdRecording) : null;
 
-      this.LogInfo("PlayRecording:{0} - using rtsp mode:{1}", fileName, useRTSP);
+      Log.Info("PlayRecording:{0} - using rtsp mode:{1}", fileName, useRTSP);
       if (g_Player.Play(fileName, mediaType, chapters))
       {
         if (Utils.IsVideo(fileName) && !g_Player.IsRadio)
@@ -732,7 +733,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
         GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_YES_NO);
         if (null == dlgYesNo)
         {
-          this.LogError("TVProgramInfo.DeleteRecordingPrompt: ERROR no GUIDialogYesNo found !!!!!!!!!!");
+          Log.Error("TVProgramInfo.DeleteRecordingPrompt: ERROR no GUIDialogYesNo found !!!!!!!!!!");
         }
         else
         {
@@ -795,7 +796,7 @@ namespace Mediaportal.TV.TvPlugin.Helper
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (null == dlgYesNo)
       {
-        this.LogError("TVProgramInfo.DeleteRecordingPrompt: ERROR no GUIDialogYesNo found !!!!!!!!!!");
+        Log.Error("TVProgramInfo.DeleteRecordingPrompt: ERROR no GUIDialogYesNo found !!!!!!!!!!");
       }
       else
       {

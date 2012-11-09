@@ -29,19 +29,40 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Logging
     {
       Log.Debug(caller.GetType(), message, args);      
     }
+
+    public static void LogDebug(this object caller, Exception exception, string message, params object[] args)
+    {
+      Log.Debug(caller.GetType(), exception, message, args);
+    }    
+
     public static void LogInfo(this object caller, string message, params object[] args)
     {
       Log.Info(caller.GetType(), message, args);      
     }
+
+    public static void LogInfo(this object caller, Exception exception, string message, params object[] args)
+    {
+      Log.Info(caller.GetType(), exception, message, args);
+    }    
 
     public static void LogWarn(this object caller, string message, params object[] args)
     {
       Log.Warn(caller.GetType(), message, args);
     }
 
+    public static void LogWarn(this object caller, Exception exception, string message, params object[] args)
+    {
+      Log.Warn(caller.GetType(), exception, message, args);
+    }    
+
     public static void LogCritical(this object caller, string message, params object[] args)
     {
       Log.Critical(caller.GetType(), message, args);
+    }
+
+    public static void LogCritical(this object caller, Exception exception, string message, params object[] args)
+    {
+      Log.Critical(caller.GetType(), exception, message, args);
     }    
 
     public static void LogError(this object caller, string message, params object[] args)

@@ -56,7 +56,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Util
               if (c == i)
               {
                 unclean = true;
-                //Log.Warn("Utils: *** File name {1} still contains invalid chars - {0}", Convert.ToString(c), strFName);
+                //this.LogWarn("Utils: *** File name {1} still contains invalid chars - {0}", Convert.ToString(c), strFName);
                 strFName = strFName.Replace(c, '_');
                 break;
               }

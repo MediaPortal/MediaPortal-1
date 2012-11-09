@@ -37,6 +37,7 @@ using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.TvPlugin.Helper;
 using Channel = Mediaportal.TV.Server.TVDatabase.Entities.Channel;
+using Log = Mediaportal.TV.Server.TVLibrary.Interfaces.Logging.Log;
 using Recording = Mediaportal.TV.Server.TVDatabase.Entities.Recording;
 
 namespace Mediaportal.TV.TvPlugin
@@ -172,7 +173,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public static void OnNotifiesChanged()
     {
-      this.LogInfo("TvNotify:OnNotifiesChanged");
+      Log.Info("TvNotify:OnNotifiesChanged");
       _notifiesListChanged = true;
     }
 

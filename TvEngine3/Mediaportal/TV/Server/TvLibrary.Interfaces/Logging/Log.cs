@@ -11,6 +11,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Logging
       GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Debug(callerType, message, args);
     }
 
+    public static void Debug(Type callerType, Exception exception, string message, params object[] args)
+    {
+      GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Debug(callerType, message, exception, args);
+    }
+
+    public static void Debug(Exception exception, string message, params object[] args)
+    {
+      GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Debug(message, exception, args);
+    }
+
     public static void Debug(string message, params object[] args)
     {
       GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Debug(message, args);
@@ -20,6 +30,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Logging
     {
       GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Info(callerType, message, args);
     }
+
+    public static void Info(Type callerType, Exception exception, string message, params object[] args)
+    {
+      GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Info(callerType, message, exception, args);
+    }
+
+    public static void Info(Exception exception, string message, params object[] args)
+    {
+      GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Info(message, exception, args);
+    }
+
 
     public static void Info(string message, params object[] args)
     {
@@ -36,6 +57,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Logging
       GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Critical(message, args);
     }
 
+    public static void Critical(Type callerType, Exception exception, string message, params object[] args)
+    {
+      GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Critical(callerType, message, exception, args);
+    }
+
+    public static void Critical(Exception exception, string message, params object[] args)
+    {
+      GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Critical(message, exception, args);
+    }
+
     public static void Warn(Type callerType, string message, params object[] args)
     {
       GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Warn(callerType, message, args);
@@ -44,6 +75,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Logging
     public static void Warn(string message, params object[] args)
     {
       GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Warn(message, args);
+    }
+
+    public static void Warn(Type callerType, Exception exception, string message, params object[] args)
+    {
+      GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Warn(callerType, message, exception, args);
+    }
+
+    public static void Warn(Exception exception, string message, params object[] args)
+    {
+      GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Warn(message, exception, args);
     }
 
     public static void Error(Type callerType, string message, params object[] args)

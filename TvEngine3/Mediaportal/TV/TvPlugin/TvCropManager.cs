@@ -26,6 +26,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Log = Mediaportal.TV.Server.TVLibrary.Interfaces.Logging.Log;
 
 #endregion
 
@@ -75,7 +76,7 @@ namespace Mediaportal.TV.TvPlugin
           xmlwriter.SetValue("tv", "cropleft", cropSettings.Left);
           xmlwriter.SetValue("tv", "cropright", cropSettings.Right);
         }
-        this.LogInfo("TvCropManager.SendCropMessage(): {0}, {1}, {2}, {3}", cropSettings.Top, cropSettings.Bottom,
+        Log.Info("TvCropManager.SendCropMessage(): {0}, {1}, {2}, {3}", cropSettings.Top, cropSettings.Bottom,
                  cropSettings.Left, cropSettings.Right);
         GUIWindowManager.SendThreadMessage(new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLANESCENE_CROP, 0, 0, 0, 0, 0,
                                                           cropSettings));
