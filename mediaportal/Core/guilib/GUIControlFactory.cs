@@ -398,6 +398,11 @@ namespace MediaPortal.GUI.Library
         //				if(control is ISupportInitialize)
         ((ISupportInitialize)control).BeginInit();
 
+        if (typeOfControlToCreate == typeof(GUIToggleButtonControl))
+        {
+          typeOfControlToCreate = typeof (GUICheckButton);
+        }
+
         XmlNode referenceNode =
           (XmlNode)m_referenceNodesByControlType[typeOfControlToCreate];
 
