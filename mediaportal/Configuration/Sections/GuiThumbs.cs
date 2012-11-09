@@ -23,8 +23,10 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using MediaPortal.Profile;
+using MediaPortal.Services;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.Util;
+using MediaPortal.Video.Database;
 
 #pragma warning disable 108
 
@@ -61,6 +63,7 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel labelHigh;
     private MPLabel labelLow;
     private MPLabel labelQualityHint;
+    private MPButton bttnClearBlacklistedThumbs;
     private TrackBar trackBarQuality;
 
     public GuiThumbs()
@@ -186,6 +189,7 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBoxTVThumbs = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.bttnClearBlacklistedThumbs = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelRows = new MediaPortal.UserInterface.Controls.MPLabel();
       this.numericUpDownThumbRows = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
@@ -229,6 +233,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxTVThumbs.Anchor =
         ((System.Windows.Forms.AnchorStyles)
          ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.groupBoxTVThumbs.Controls.Add(this.bttnClearBlacklistedThumbs);
       this.groupBoxTVThumbs.Controls.Add(this.mpLabel1);
       this.groupBoxTVThumbs.Controls.Add(this.labelRows);
       this.groupBoxTVThumbs.Controls.Add(this.numericUpDownThumbRows);
@@ -240,10 +245,20 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxTVThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxTVThumbs.Location = new System.Drawing.Point(6, 264);
       this.groupBoxTVThumbs.Name = "groupBoxTVThumbs";
-      this.groupBoxTVThumbs.Size = new System.Drawing.Size(462, 94);
+      this.groupBoxTVThumbs.Size = new System.Drawing.Size(462, 127);
       this.groupBoxTVThumbs.TabIndex = 7;
       this.groupBoxTVThumbs.TabStop = false;
       this.groupBoxTVThumbs.Text = "TV/Videos thumbs";
+      // 
+      // bttnClearBlacklistedThumbs
+      // 
+      this.bttnClearBlacklistedThumbs.Location = new System.Drawing.Point(12, 92);
+      this.bttnClearBlacklistedThumbs.Name = "bttnClearBlacklistedThumbs";
+      this.bttnClearBlacklistedThumbs.Size = new System.Drawing.Size(178, 23);
+      this.bttnClearBlacklistedThumbs.TabIndex = 14;
+      this.bttnClearBlacklistedThumbs.Text = "Clear Blacklisted thumbs";
+      this.bttnClearBlacklistedThumbs.UseVisualStyleBackColor = true;
+      this.bttnClearBlacklistedThumbs.Click += new System.EventHandler(this.bttnClearBlaclistedThumbs_Click);
       // 
       // mpLabel1
       // 
@@ -668,6 +683,25 @@ namespace MediaPortal.Configuration.Sections
     {
       Util.Utils.DeleteFiles(Thumbs.TVRecorded, String.Format(@"*{0}", Util.Utils.GetThumbExtension()));
       Util.Utils.DeleteFiles(Thumbs.Videos, String.Format(@"*{0}", Util.Utils.GetThumbExtension()));
+    }
+
+    private void bttnClearBlaclistedThumbs_Click(object sender, EventArgs e)
+    {
+      IVideoThumbBlacklist blacklist;
+      if (GlobalServiceProvider.IsRegistered<IVideoThumbBlacklist>())
+      {
+        blacklist = GlobalServiceProvider.Get<IVideoThumbBlacklist>();
+      }
+      else
+      {
+        blacklist = new VideoThumbBlacklistDBImpl();
+        GlobalServiceProvider.Add<IVideoThumbBlacklist>(blacklist);
+      }
+      
+      if (blacklist != null)
+      {
+        blacklist.Clear();
+      }
     }
   }
 }
