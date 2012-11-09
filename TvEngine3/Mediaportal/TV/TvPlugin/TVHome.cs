@@ -36,6 +36,8 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using Castle.Windsor;
+using Castle.Windsor.Configuration.Interpreters;
 using Dialogs.Dialogs;
 using MediaPortal;
 using MediaPortal.Common.Utils;
@@ -56,6 +58,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.Presentation;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
@@ -299,12 +302,16 @@ namespace Mediaportal.TV.TvPlugin
 
     public override void OnAdded()
     {
+      
 #if DEBUG
       if (File.Exists(@"c:\debug_tvplugin.txt"))
       {
         System.Diagnostics.Debugger.Launch();
       }
 #endif
+      IWindsorContainer container = new WindsorContainer(new XmlInterpreter());
+      GlobalServiceProvider.Instance.Add<IWindsorContainer>(container);
+      IntegrationProviderHelper.Register();
       this.LogInfo("TVHome:OnAdded");
 
       GUIGraphicsContext.OnBlackImageRendered += new BlackImageRenderedHandler(OnBlackImageRendered);
