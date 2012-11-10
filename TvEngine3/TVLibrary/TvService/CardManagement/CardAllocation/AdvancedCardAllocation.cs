@@ -26,6 +26,8 @@ using System.Diagnostics;
 using System.Linq;
 using TvControl;
 using TvDatabase;
+using TvLibrary.Channels;
+using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
 
@@ -37,7 +39,7 @@ namespace TvService
   {
     #region private members   
 
-    public AdvancedCardAllocation(TvBusinessLayer businessLayer, IController controller) : base(businessLayer, controller)
+    public AdvancedCardAllocation(TvBusinessLayer businessLayer, TVController controller) : base(businessLayer, controller)
     {
     }
 
@@ -128,7 +130,7 @@ namespace TvService
         }
 
         //sort cards
-        cardsAvailable.Sort();
+        cardsAvailable.SortStable();
 
         if (cardsAvailable.Count > 0)
         {
@@ -260,7 +262,8 @@ namespace TvService
             {
               Log.Info("Controller:    card:{0} type:{1} can tune to channel", cardId, cardHandler.Type);
             }            
-            int nrOfOtherUsers = NumberOfOtherUsersOnCurrentCard(cardHandler, user);            
+            int nrOfOtherUsers = NumberOfOtherUsersOnCurrentCard(cardHandler, user);
+            long? channelTimeshiftingOnOtherMux;
             var cardInfo = new CardDetail(cardId, cardHandler.DataBaseCard, tuningDetail, isSameTransponder,
                                                  nrOfOtherUsers);
             cardsAvailable.Add(cardInfo);
@@ -269,7 +272,7 @@ namespace TvService
 
 
         //sort cards
-        cardsAvailable.Sort();
+        cardsAvailable.SortStable();
         if (LogEnabled)
         {
           Log.Info("Controller: found {0} card(s) for channel", cardsAvailable.Count);
@@ -287,7 +290,7 @@ namespace TvService
         stopwatch.Stop();
         Log.Info("AdvancedCardAllocation.GetAvailableCardsForChannel took {0} msec", stopwatch.ElapsedMilliseconds);
       }
-    }    
+    }
 
     private static bool CanCardDecodeChannel(ITvCardHandler cardHandler, IChannel tuningDetail)
     {

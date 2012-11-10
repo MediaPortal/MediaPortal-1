@@ -448,6 +448,15 @@ namespace TvLibrary.Implementations.Hybrid
     }
 
     /// <summary>
+    /// Gets the first sub channel.
+    /// </summary>    
+    /// <returns></returns>
+    public ITvSubChannel GetFirstSubChannel()
+    {
+      return _group.GetFirstSubChannel();
+    }
+
+    /// <summary>
     /// Gets the sub channels.
     /// </summary>
     /// <value>The sub channels.</value>
