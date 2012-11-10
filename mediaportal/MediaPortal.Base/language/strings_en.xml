@@ -2317,5 +2317,6 @@
     <String id="300224">Video thumbs disabled globally</String>
     <String id="300225">Use "Sort title"</String>
     <String id="300226">Use only internal nfo scraper</String>
+		<String id="300227">Clear Blacklisted thumbs</String>
 	</Section>
 </Language>
