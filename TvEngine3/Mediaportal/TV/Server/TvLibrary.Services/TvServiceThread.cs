@@ -40,20 +40,17 @@ namespace Mediaportal.TV.Server.TVLibrary
 
     public TvServiceThread(string applicationPath)
     {
+      // Initialize hosting environment
+      IntegrationProviderHelper.Register();
+
       // set working dir from application.exe
       _applicationPath = applicationPath;
       applicationPath = System.IO.Path.GetFullPath(applicationPath);
       applicationPath = System.IO.Path.GetDirectoryName(applicationPath);
       System.IO.Directory.SetCurrentDirectory(applicationPath);
-
-      IWindsorContainer container = new WindsorContainer(new XmlInterpreter());
-      GlobalServiceProvider.Instance.Add<IWindsorContainer>(container);
-
+      
       _powerEventHandlers = new List<PowerEventHandler>();
       GlobalServiceProvider.Instance.Add<IPowerEventHandler>(this);      
-
-      // Initialize hosting environment
-      IntegrationProviderHelper.Register();
 
       AddPowerEventHandler(OnPowerEventHandler);
       try

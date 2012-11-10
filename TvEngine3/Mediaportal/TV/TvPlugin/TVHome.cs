@@ -36,8 +36,6 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using Castle.Windsor;
-using Castle.Windsor.Configuration.Interpreters;
 using Dialogs.Dialogs;
 using MediaPortal;
 using MediaPortal.Common.Utils;
@@ -308,9 +306,7 @@ namespace Mediaportal.TV.TvPlugin
       {
         System.Diagnostics.Debugger.Launch();
       }
-#endif
-      IWindsorContainer container = new WindsorContainer(new XmlInterpreter());
-      GlobalServiceProvider.Instance.Add<IWindsorContainer>(container);
+#endif      
       IntegrationProviderHelper.Register();
       this.LogInfo("TVHome:OnAdded");
 

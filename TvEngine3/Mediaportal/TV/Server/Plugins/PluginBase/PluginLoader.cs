@@ -77,7 +77,7 @@ namespace Mediaportal.TV.Server.Plugins.Base
             LifestyleSingleton()
             );
 
-        _plugins = new List<ITvServerPlugin>(WindsorService.ResolveAll<ITvServerPlugin>());
+        _plugins = new List<ITvServerPlugin>(GlobalServiceProvider.Instance.Get<IWindsorContainer>().ResolveAll<ITvServerPlugin>());
 
         foreach (ITvServerPlugin plugin in _plugins)
         {

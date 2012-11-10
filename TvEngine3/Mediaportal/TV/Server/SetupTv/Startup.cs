@@ -103,9 +103,7 @@ namespace Mediaportal.TV.Server.SetupTV
     [STAThread]
     public static void Main(string[] arguments)
     {
-      // Initialize hosting environment
-      IWindsorContainer container = new WindsorContainer(new XmlInterpreter());
-      GlobalServiceProvider.Instance.Add<IWindsorContainer>(container);
+      // Initialize hosting environment      
       IntegrationProviderHelper.Register();      
 
       if (System.IO.File.Exists("c:\\debug_setuptv.txt"))
