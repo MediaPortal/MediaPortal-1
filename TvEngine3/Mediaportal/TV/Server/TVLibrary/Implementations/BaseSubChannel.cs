@@ -58,11 +58,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     }
 
     /// <summary>
-    /// Delegate for the after tune event.
-    /// </summary>
-    public delegate void OnAfterTuneDelegate();
-
-    /// <summary>
     /// After tune observer event.
     /// </summary>
     public event OnAfterTuneDelegate AfterTuneEvent;

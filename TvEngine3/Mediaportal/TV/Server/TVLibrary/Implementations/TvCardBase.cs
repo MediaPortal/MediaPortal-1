@@ -124,7 +124,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Dictionary of the corresponding sub channels
     /// </summary>
-    protected Dictionary<int, BaseSubChannel> _mapSubChannels;
+    protected Dictionary<int, ITvSubChannel> _mapSubChannels;
 
     /// <summary>
     /// Indicates, if the card is a hybrid one
@@ -333,7 +333,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     protected TvCardBase(DsDevice device)
     {
       _isDeviceInitialised = false;
-      _mapSubChannels = new Dictionary<int, BaseSubChannel>();
+      _mapSubChannels = new Dictionary<int, ITvSubChannel>();
       _lastSignalUpdate = DateTime.MinValue;
       _parameters = new ScanParameters();
       _epgGrabbing = false;   // EPG grabbing not supported by default.
@@ -409,7 +409,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       set
       {
         _parameters = value;
-        Dictionary<int, BaseSubChannel>.Enumerator en = _mapSubChannels.GetEnumerator();
+        Dictionary<int, ITvSubChannel>.Enumerator en = _mapSubChannels.GetEnumerator();
         while (en.MoveNext())
         {
           en.Current.Value.Parameters = value;
@@ -595,7 +595,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         }
 
         HashSet<long> decryptedServices = new HashSet<long>();
-        Dictionary<int, BaseSubChannel>.Enumerator en = _mapSubChannels.GetEnumerator();
+        Dictionary<int, ITvSubChannel>.Enumerator en = _mapSubChannels.GetEnumerator();
         while (en.MoveNext())
         {
           IChannel service = en.Current.Value.CurrentChannel;
@@ -1045,8 +1045,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       // First build a distinct list of the services that we need to handle.
       this.LogDebug("TvCardBase: assembling service list");
-      List<BaseSubChannel> distinctServices = new List<BaseSubChannel>();
-      Dictionary<int, BaseSubChannel>.ValueCollection.Enumerator en = _mapSubChannels.Values.GetEnumerator();
+      List<ITvSubChannel> distinctServices = new List<ITvSubChannel>();
+      Dictionary<int, ITvSubChannel>.ValueCollection.Enumerator en = _mapSubChannels.Values.GetEnumerator();
       DVBBaseChannel updatedDigitalService = _mapSubChannels[subChannelId].CurrentChannel as DVBBaseChannel;
       AnalogChannel updatedAnalogService = _mapSubChannels[subChannelId].CurrentChannel as AnalogChannel;
       while (en.MoveNext())
@@ -1093,7 +1093,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           // Check for "list" mode: have we already go this service in our distinct list? If so, don't add it
           // again...
           bool exists = false;
-          foreach (BaseSubChannel serviceToDecrypt in distinctServices)
+          foreach (ITvSubChannel serviceToDecrypt in distinctServices)
           {
             DVBBaseChannel digitalService = service as DVBBaseChannel;
             if (digitalService != null)
@@ -1693,8 +1693,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         LockInOnSignal();
 
         // Subchannel OnGraphRunning().
-        _mapSubChannels[subChannelId].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(FireAfterTuneEvent);
-        _mapSubChannels[subChannelId].AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(FireAfterTuneEvent);
+        _mapSubChannels[subChannelId].AfterTuneEvent -= FireAfterTuneEvent;
+        _mapSubChannels[subChannelId].AfterTuneEvent += FireAfterTuneEvent;
         _mapSubChannels[subChannelId].OnGraphRunning();
 
         // At this point we should know which data/streams form the service(s) that are being accessed. We need to
@@ -1967,7 +1967,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     protected void FreeAllSubChannels()
     {
       this.LogInfo("tvcard:FreeAllSubChannels");
-      Dictionary<int, BaseSubChannel>.Enumerator en = _mapSubChannels.GetEnumerator();
+      Dictionary<int, ITvSubChannel>.Enumerator en = _mapSubChannels.GetEnumerator();
       while (en.MoveNext())
       {
         en.Current.Value.Decompose();
@@ -2014,7 +2014,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         int count = 0;
         ITvSubChannel[] channels = new ITvSubChannel[_mapSubChannels.Count];
-        Dictionary<int, BaseSubChannel>.Enumerator en = _mapSubChannels.GetEnumerator();
+        Dictionary<int, ITvSubChannel>.Enumerator en = _mapSubChannels.GetEnumerator();
         while (en.MoveNext())
         {
           channels[count++] = en.Current.Value;

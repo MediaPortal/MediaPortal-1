@@ -40,7 +40,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
   ///<summary>
   /// A base class for digital services ("subchannels").
   ///</summary>
-  public class TvDvbChannel : BaseSubChannel, ITeletextCallBack, IPmtCallBack, ICaCallBack, ITvSubChannel, IVideoAudioObserver
+  public class TvDvbChannel : BaseSubChannel, ITeletextCallBack, IPmtCallBack, ICaCallBack, IVideoAudioObserver
   {
  
 

@@ -76,7 +76,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     /// <summary>
     /// returns the IChannel to which the card is currently tuned
     /// </summary>
-    IChannel CurrentChannel { get; }
+    IChannel CurrentChannel { get; set; }
 
     #endregion
 
@@ -96,6 +96,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     /// Property which returns true when the current channel contains teletext
     /// </summary>
     bool HasTeletext { get; }
+
+    ScanParameters Parameters { get; set; }
 
     #endregion
 
@@ -140,5 +142,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     void CancelTune();
 
     #endregion
+
+    /// <summary>
+    /// 
+    /// </summary>
+    void OnBeforeTune();
+
+    event OnAfterTuneDelegate AfterTuneEvent;
+    void OnGraphRunning();
+    void Decompose();
+    void OnAfterTune();
   }
 }
