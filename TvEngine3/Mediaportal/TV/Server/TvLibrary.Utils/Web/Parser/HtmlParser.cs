@@ -74,7 +74,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.Parser
       string pageSource = webPage.GetPage();
 
       int startIndex = 0;
-      if (_template.Start != null && _template.Start != string.Empty)
+      if (!string.IsNullOrEmpty(_template.Start))
       {
         startIndex = pageSource.IndexOf(_template.Start, 0, StringComparison.OrdinalIgnoreCase);
         if (startIndex == -1)
@@ -87,7 +87,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.Parser
 
       int endIndex = pageSource.Length;
 
-      if (_template.End != null && _template.End != string.Empty)
+      if (!string.IsNullOrEmpty(_template.End))
       {
         endIndex = pageSource.IndexOf(_template.End, startIndex, StringComparison.OrdinalIgnoreCase);
         if (endIndex == -1)

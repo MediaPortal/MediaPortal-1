@@ -139,7 +139,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.Parser
     private Profile BuildProfile(string source)
     {
       Profile build = new Profile();
-      if (source == null || source.Length == 0)
+      if (string.IsNullOrEmpty(source))
       {
         return build;
       }

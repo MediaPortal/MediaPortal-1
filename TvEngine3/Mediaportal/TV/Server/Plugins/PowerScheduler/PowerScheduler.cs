@@ -697,7 +697,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
 
       // Register handlers
       LogVerbose("PowerScheduler: RegisterRemote tag: {0}, uris: {1}, {2}", newTag, standbyHandlerURI, wakeupHandlerURI);
-      if (standbyHandlerURI != null && standbyHandlerURI.Length > 0)
+      if (!string.IsNullOrEmpty(standbyHandlerURI))
       {
         RemoteStandbyHandler hdl;
         if (newTag <= _remoteTags)
@@ -714,7 +714,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
         _remoteStandbyHandlers[newTag] = hdl;
         _remoteStandbyHandlerURIs[standbyHandlerURI] = newTag;
       }
-      if (wakeupHandlerURI != null && wakeupHandlerURI.Length > 0)
+      if (!string.IsNullOrEmpty(wakeupHandlerURI))
       {
         RemoteWakeupHandler hdl;
         if (newTag <= _remoteTags)

@@ -229,7 +229,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
               do
               {
                 String id = xmlReader.GetAttribute("id");
-                if (id == null || id.Length == 0)
+                if (string.IsNullOrEmpty(id))
                 {
                   this.LogError("  channel#{0} doesnt contain an id", iChannel);
                 }
@@ -267,7 +267,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
                     xmlChannel = null;
                   }
 
-                  if (displayName == null || displayName.Length == 0)
+                  if (string.IsNullOrEmpty(displayName))
                   {
                     this.LogError("  channel#{0} xmlid:{1} doesnt contain an displayname", iChannel, id);
                   }

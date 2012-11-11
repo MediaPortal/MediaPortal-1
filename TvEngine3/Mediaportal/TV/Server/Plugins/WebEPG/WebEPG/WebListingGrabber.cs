@@ -111,7 +111,7 @@ namespace WebEPG
         return false;
       }
 
-      if (_grabber.Info.Version == null || _grabber.Info.Version == string.Empty)
+      if (string.IsNullOrEmpty(_grabber.Info.Version))
       {
         this.LogInfo("WebEPG: Unknown Version");
       }
@@ -131,7 +131,7 @@ namespace WebEPG
       this.LogInfo("WebEPG: TimeZone, Local: {0}", TimeZone.CurrentTimeZone.StandardName);
 
       _siteTimeZone = null;
-      if (_grabber.Info.TimeZone != null && _grabber.Info.TimeZone != string.Empty)
+      if (!string.IsNullOrEmpty(_grabber.Info.TimeZone))
       {
         try
         {

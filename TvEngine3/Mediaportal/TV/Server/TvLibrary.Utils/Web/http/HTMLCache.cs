@@ -194,7 +194,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
     {
       uint gethash = (uint)Page.Uri.GetHashCode();
 
-      if (Page.PostQuery == null || Page.PostQuery == string.Empty)
+      if (string.IsNullOrEmpty(Page.PostQuery))
       {
         return CACHE_DIR + "/" + Page.Host + "_" + gethash.ToString() + ".html";
       }

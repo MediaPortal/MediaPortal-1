@@ -585,7 +585,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
             do
             {
               String id = xmlReader.GetAttribute("id");
-              if (id == null || id.Length == 0)
+              if (string.IsNullOrEmpty(id))
               {
                 this.LogError("  channel#{0} doesnt contain an id", iChannel);
               }
