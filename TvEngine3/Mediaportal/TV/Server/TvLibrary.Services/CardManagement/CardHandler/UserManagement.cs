@@ -549,16 +549,8 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
     public bool IsAnyUserTimeShiftingOrRecording()
     {
-      bool isAnyUserTimeShiftingOrRecording = false;
       IEnumerable<IUser> safeUsers = GetUsersCopy();
-      foreach (IUser user in safeUsers)
-      {
-        if (_cardHandler.TimeShifter.IsTimeShifting(user) || _cardHandler.Recorder.IsRecording(user.Name))
-        {          
-          return false;
-        }
-      }
-      return isAnyUserTimeShiftingOrRecording;
+      return safeUsers.Any(user => _cardHandler.TimeShifter.IsTimeShifting(user) || _cardHandler.Recorder.IsRecording(user.Name));
     }
 
     public bool IsAnyUserOnTuningDetail(IChannel tuningDetail)
