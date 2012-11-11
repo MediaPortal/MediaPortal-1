@@ -20,7 +20,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.DBaseContext
         public System.Data.Entity.DbContext GetDbContextForKey(string key)
         {
             System.Data.Entity.DbContext context;
-            if (!this._storage.TryGetValue(key, out context))
+            if (!_storage.TryGetValue(key, out context))
                 return null;
             return context;
         }
@@ -35,7 +35,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.DBaseContext
         /// <param name="objectContext">The object context.</param>
         public void SetDbContextForKey(string key, System.Data.Entity.DbContext context)
         {
-            this._storage.Add(key, context);           
+            _storage.Add(key, context);           
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.DBaseContext
         /// <returns></returns>
         public IEnumerable<System.Data.Entity.DbContext> GetAllDbContexts()
         {
-            return this._storage.Values;
+            return _storage.Values;
         }
     }
 }

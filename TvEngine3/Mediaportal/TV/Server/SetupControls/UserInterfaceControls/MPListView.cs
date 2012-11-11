@@ -162,7 +162,7 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 
     protected override void OnDragLeave(EventArgs e)
     {
-      this.Invalidate();
+      Invalidate();
 
       base.OnDragLeave(e);
     }
@@ -201,7 +201,7 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 
       ListViewItem hoverItem = null;
 
-      if (this.Items.Count > 0)
+      if (Items.Count > 0)
       {
         Point cp = PointToClient(new Point(e.X, e.Y));
 
@@ -211,7 +211,7 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
           if (!isGroupMapping)
           {
             e.Effect = DragDropEffects.None;
-            this.Invalidate();
+            Invalidate();
             return;
           }
         }
@@ -224,29 +224,29 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
             {
               e.Effect = DragDropEffects.None;
               hoverItem.EnsureVisible();
-              this.Invalidate();
+              Invalidate();
               return;
             }
           }
 
           if (hoverItem != lastItem)
           {
-            this.Invalidate();
+            Invalidate();
           }
 
           lastItem = hoverItem;
 
           Color lineColor = SystemColors.Highlight;
 
-          if (this.View == View.Details || this.View == View.List)
+          if (View == View.Details || View == View.List)
           {
-            using (Graphics g = this.CreateGraphics())
+            using (Graphics g = CreateGraphics())
             {
               int totalColWidth = 0;
 
-              for (int i = 0; i < this.Columns.Count; i++)
+              for (int i = 0; i < Columns.Count; i++)
               {
-                totalColWidth += this.Columns[i].Width;
+                totalColWidth += Columns[i].Width;
               }
 
               g.DrawLine(new Pen(lineColor, 2),
@@ -281,12 +281,12 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
         } //if (hoverItem != null)
         else
         {
-          this.Invalidate();
+          Invalidate();
         }
       }
       else
       {
-        this.Invalidate();
+        Invalidate();
       }
 
       base.OnDragOver(e);
@@ -337,7 +337,7 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
         return;
       }
 
-      int dropIndex = this.Items.Count;
+      int dropIndex = Items.Count;
 
       Point cp = PointToClient(new Point(e.X, e.Y));
       ListViewItem dragToItem = GetItemAt(cp.X, cp.Y);

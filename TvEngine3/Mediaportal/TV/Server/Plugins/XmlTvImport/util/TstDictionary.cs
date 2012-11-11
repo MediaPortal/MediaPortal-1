@@ -75,7 +75,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.util
       if (root == null)
         throw new ArgumentNullException("root is null");
       this.root = root;
-      this.version = 0;
+      version = 0;
     }
 
     ///<summary>
@@ -111,7 +111,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.util
     {
       get
       {
-        IEnumerator en = this.GetEnumerator();
+        IEnumerator en = GetEnumerator();
         int n = 0;
         while (en.MoveNext())
           ++n;
@@ -528,7 +528,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.util
     /// <returns>An <see cref="IDictionaryEnumerator"/> for the <see cref="TstDictionary"/>.</returns>		
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return this.GetEnumerator();
+      return GetEnumerator();
     }
 
     /// <summary>

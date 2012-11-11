@@ -287,10 +287,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     /// <returns>a shallow clone of the channel instance</returns>
     public override object Clone()
     {
-      DVBSChannel ch = (DVBSChannel)this.MemberwiseClone();
-      if (this.LnbType != null)
+      DVBSChannel ch = (DVBSChannel)MemberwiseClone();
+      if (LnbType != null)
       {
-        ch.LnbType = this.LnbType.Clone();
+        ch.LnbType = LnbType.Clone();
       }
       return ch;
     }
@@ -327,7 +327,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     /// <returns>a channel instance with parameters adjusted as necessary</returns>
     public override IChannel GetTuningChannel()
     {
-      IChannel clone = (IChannel)this.Clone();
+      IChannel clone = (IChannel)Clone();
       DVBSChannel dvbsChannel = clone as DVBSChannel;
       if (dvbsChannel == null)
       {

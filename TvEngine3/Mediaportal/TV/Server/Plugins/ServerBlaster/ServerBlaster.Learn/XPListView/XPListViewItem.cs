@@ -53,19 +53,19 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
 
     public XPListViewItem(string[] items, int imageIndex, int groupIndex) : base(items, imageIndex)
     {
-      this.GroupIndex = groupIndex;
+      GroupIndex = groupIndex;
     }
 
     public XPListViewItem(XPListViewItem.ListViewSubItem[] subItems, int imageIndex, int groupIndex)
       : base(subItems, imageIndex)
     {
-      this.GroupIndex = groupIndex;
+      GroupIndex = groupIndex;
     }
 
     public XPListViewItem(string[] items, int imageIndex, Color foreColor, Color backColor, Font font, int groupIndex)
       : base(items, imageIndex, foreColor, backColor, font)
     {
-      this.GroupIndex = groupIndex;
+      GroupIndex = groupIndex;
     }
 
     [Browsable(true), Category("Info")]
@@ -84,16 +84,16 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
     {
       get
       {
-        if (this.SubItems.Count == 0)
+        if (SubItems.Count == 0)
         {
           return null;
         }
 
-        string[] a = new string[this.SubItems.Count - 1];
+        string[] a = new string[SubItems.Count - 1];
 
-        for (int i = 0; i <= this.SubItems.Count - 1; i++)
+        for (int i = 0; i <= SubItems.Count - 1; i++)
         {
-          a[i] = this.SubItems[i].Text;
+          a[i] = SubItems[i].Text;
         }
         return a;
       }

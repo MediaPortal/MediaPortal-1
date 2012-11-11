@@ -37,7 +37,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.util
     /// <param name="dic">Dictionary to synchronize</param>
     public TstSynchronizedDictionary(TstDictionary dic)
     {
-      this.wrapped = dic;
+      wrapped = dic;
     }
 
     /// <summary>

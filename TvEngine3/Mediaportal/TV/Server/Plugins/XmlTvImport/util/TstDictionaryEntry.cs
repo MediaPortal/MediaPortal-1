@@ -46,14 +46,14 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.util
       char splitChar
       )
     {
-      this.isKey = false;
-      this.key = null;
-      this.value = null;
+      isKey = false;
+      key = null;
+      value = null;
       this.parent = parent;
       this.splitChar = splitChar;
-      this.lowChild = null;
-      this.eqChild = null;
-      this.highChild = null;
+      lowChild = null;
+      eqChild = null;
+      highChild = null;
     }
 
     /// <summary>
@@ -227,19 +227,19 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.util
     public override string ToString()
     {
       char c;
-      if (this.IsEqChild)
+      if (IsEqChild)
         c = 'E';
-      else if (this.IsLowChild)
+      else if (IsLowChild)
         c = 'L';
-      else if (this.IsHighChild)
+      else if (IsHighChild)
         c = 'H';
       else
         c = 'R';
 
-      if (this.IsKey)
-        return String.Format("{0} {1} {2}", c, this.SplitChar, this.Key);
+      if (IsKey)
+        return String.Format("{0} {1} {2}", c, SplitChar, Key);
       else
-        return String.Format("{0} {1}", c, this.SplitChar);
+        return String.Format("{0} {1}", c, SplitChar);
     }
 
     #endregion

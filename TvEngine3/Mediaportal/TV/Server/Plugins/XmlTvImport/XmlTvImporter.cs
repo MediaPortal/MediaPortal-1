@@ -516,7 +516,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       if (importXML || importLST)
       {
         var tp = new ThreadParams {_importDate = DateTime.MinValue, _importLST = importLST, _importXML = importXML};
-        this.ThreadFunctionImportTVGuide(tp);        
+        ThreadFunctionImportTVGuide(tp);        
       }
     }
 

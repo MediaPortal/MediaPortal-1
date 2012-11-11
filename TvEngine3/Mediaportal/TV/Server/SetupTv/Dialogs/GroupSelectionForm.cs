@@ -79,14 +79,14 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     public DialogResult ShowDialog(Type groupType)
     {
-      this.LoadGroups(groupType);
+      LoadGroups(groupType);
 
       return base.ShowDialog();
     }
 
     public DialogResult ShowDialog(Type groupType, IWin32Window owner)
     {
-      this.LoadGroups(groupType);
+      LoadGroups(groupType);
 
       return base.ShowDialog(owner);
     }

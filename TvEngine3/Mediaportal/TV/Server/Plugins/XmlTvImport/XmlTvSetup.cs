@@ -194,7 +194,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       try
       {
         textBoxAction.Text = "Loading";
-        this.Refresh();
+        Refresh();
 
         this.LogDebug("Loading all channels from the tvguide[s]");
         // used for partial matches
@@ -792,10 +792,10 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
     {
       //persist stuff when changing tabs in the plugin.
-      this.OnSectionDeActivated();
+      OnSectionDeActivated();
 
       //load settings      
-      this.OnSectionActivated();
+      OnSectionActivated();
     }
 
     private void chkScheduler_CheckedChanged(object sender, EventArgs e)

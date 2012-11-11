@@ -207,9 +207,9 @@ namespace WebEPG.Parser
       if (data != null)
       {
         // Preference not yet set?
-        if (this._preference == null)
+        if (_preference == null)
         {
-          this._preference = new DataPreference();
+          _preference = new DataPreference();
         }
 
         if (data._preference == null)
@@ -219,57 +219,57 @@ namespace WebEPG.Parser
 
         // Merge values with Preference
         if (data._title != string.Empty &&
-            (this._title == string.Empty || data._preference.Title > this._preference.Title))
+            (_title == string.Empty || data._preference.Title > _preference.Title))
         {
-          this._title = data._title;
-          this._preference.Title = data._preference.Title;
+          _title = data._title;
+          _preference.Title = data._preference.Title;
         }
 
         if (data._subTitle != string.Empty &&
-            (this._subTitle == string.Empty || data._preference.Subtitle > this._preference.Subtitle))
+            (_subTitle == string.Empty || data._preference.Subtitle > _preference.Subtitle))
         {
-          this._subTitle = data._subTitle;
-          this._preference.Subtitle = data._preference.Subtitle;
+          _subTitle = data._subTitle;
+          _preference.Subtitle = data._preference.Subtitle;
         }
 
         if (data._description != string.Empty &&
-            (this._description == string.Empty || data._preference.Description > this._preference.Description))
+            (_description == string.Empty || data._preference.Description > _preference.Description))
         {
-          this._description = data._description;
-          this._preference.Description = data._preference.Description;
+          _description = data._description;
+          _preference.Description = data._preference.Description;
         }
 
         if (data._genre != string.Empty &&
-            (this._genre == string.Empty || data._preference.Genre > this._preference.Genre))
+            (_genre == string.Empty || data._preference.Genre > _preference.Genre))
         {
-          this._genre = data._genre;
-          this._preference.Genre = data._preference.Genre;
+          _genre = data._genre;
+          _preference.Genre = data._preference.Genre;
         }
 
         if (data._repeat)
         {
-          this._repeat = data._repeat;
+          _repeat = data._repeat;
         }
 
         if (data._subtitles)
         {
-          this._subtitles = data._subtitles;
+          _subtitles = data._subtitles;
         }
 
         if (data._episode > 0)
         {
-          this._episode = data._episode;
+          _episode = data._episode;
         }
 
         if (data._season > 0)
         {
-          this._season = data._season;
+          _season = data._season;
         }
 
         // Merge values without pPreference
-        if (data._channelId != string.Empty && this._channelId == string.Empty)
+        if (data._channelId != string.Empty && _channelId == string.Empty)
         {
-          this._channelId = data._channelId;
+          _channelId = data._channelId;
         }
 
         // Do not merge Date/Time ... causes

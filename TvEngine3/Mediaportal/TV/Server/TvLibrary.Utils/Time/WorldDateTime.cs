@@ -142,7 +142,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Time
 
       if (useOffset)
       {
-        DateTime dt = this.DateTime;
+        DateTime dt = DateTime;
         TimeSpan ts = GetTimeOffset(dateTimeGmt.Substring(timeEndPos, dateTimeGmt.Length - timeEndPos));
         SetFromDateTime(dt.Add(ts));
       }
@@ -269,7 +269,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Time
     /// <returns></returns>
     public WorldDateTime AddDays(double days)
     {
-      DateTime dt = this.DateTime;
+      DateTime dt = DateTime;
       return new WorldDateTime(dt.AddDays(days), _timeZone);
     }
 
@@ -328,21 +328,21 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Time
 
     public long DaysSince(DateTime value)
     {
-      TimeSpan ts = this.DateTime.Subtract(value);
+      TimeSpan ts = DateTime.Subtract(value);
 
       return (long)ts.TotalDays;
     }
 
     public long SecondsSince(DateTime value)
     {
-      TimeSpan ts = this.DateTime.Subtract(value);
+      TimeSpan ts = DateTime.Subtract(value);
 
       return (long)ts.TotalSeconds;
     }
 
     public long ToEpochTime()
     {
-      DateTime dt = this.DateTime;
+      DateTime dt = DateTime;
       if (_timeZone != null)
         dt = _timeZone.ToUniversalTime(dt);
       DateTime dtEpochStartTime = Convert.ToDateTime("1/1/1970 12:00:00 AM");
@@ -355,7 +355,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Time
 
     public long ToEpochDate()
     {
-      DateTime dt = this.DateTime;
+      DateTime dt = DateTime;
       if (_timeZone != null)
         dt = _timeZone.ToUniversalTime(dt);
       DateTime dtEpochStartTime = Convert.ToDateTime("1/1/1970 12:00:00 AM");
@@ -366,7 +366,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Time
 
     public DateTime ToLocalTime()
     {
-      DateTime dt = this.DateTime;
+      DateTime dt = DateTime;
       if (_timeZone != null)
       {
         return _timeZone.ToLocalTime(dt);
@@ -377,7 +377,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Time
 
     public DateTime ToUniveralTime()
     {
-      DateTime dt = this.DateTime;
+      DateTime dt = DateTime;
       if (_timeZone != null)
       {
         return _timeZone.ToUniversalTime(dt);

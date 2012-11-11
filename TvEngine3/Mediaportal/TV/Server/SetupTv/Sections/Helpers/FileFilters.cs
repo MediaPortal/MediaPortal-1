@@ -48,7 +48,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 
     public String DisplayName
     {
-      get { return this.ToString(); }
+      get { return ToString(); }
     }
 
     public CustomFileName(String fileName, String filter)
@@ -157,7 +157,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       {
         cbxCountries.Items.Add(countries[i]);
       }
-      cbxCountries.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChanged);
+      cbxCountries.SelectedIndexChanged += new System.EventHandler(SelectedIndexChanged);
       cbxCountries.SelectedIndex = 0;
       cbxRegions.DisplayMember = "DisplayName";
     }

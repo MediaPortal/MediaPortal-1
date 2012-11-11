@@ -23,7 +23,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
 
         public ObjectContextBuilder(string connectionStringName, string[] mappingAssemblies, bool recreateDatabaseIfExists, bool lazyLoadingEnabled)
         {
-            this.Conventions.Remove<IncludeMetadataConvention>();
+            Conventions.Remove<IncludeMetadataConvention>();
 
             _cnStringSettings = ConfigurationManager.ConnectionStrings[connectionStringName];
             _factory = DbProviderFactories.GetFactory(_cnStringSettings.ProviderName);
@@ -44,10 +44,10 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
             var cn = _factory.CreateConnection();
             cn.ConnectionString = _cnStringSettings.ConnectionString;
 
-            var dbModel = this.Build(cn);
+            var dbModel = Build(cn);
 
             System.Data.Objects.ObjectContext ctx = dbModel.Compile().CreateObjectContext<System.Data.Objects.ObjectContext>(cn);
-            ctx.ContextOptions.LazyLoadingEnabled = this._lazyLoadingEnabled;
+            ctx.ContextOptions.LazyLoadingEnabled = _lazyLoadingEnabled;
 
             if (!ctx.DatabaseExists())
             {
@@ -88,7 +88,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
 
                             // http://areaofinterest.wordpress.com/2010/12/08/dynamically-load-entity-configurations-in-ef-codefirst-ctp5/
                             dynamic configurationInstance = Activator.CreateInstance(type);
-                            this.Configurations.Add(configurationInstance);
+                            Configurations.Add(configurationInstance);
                         }
                     }
                 }

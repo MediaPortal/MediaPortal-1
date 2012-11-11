@@ -44,14 +44,14 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     public GenericRepository()
       : this(string.Empty)
     {
-      this._objectContext = ObjectContextManager.CreateDbContext as TEntity;
+      _objectContext = ObjectContextManager.CreateDbContext as TEntity;
     }
 
     public GenericRepository(bool trackingEnabled)
       : this(string.Empty)
     {
       _trackingEnabled = trackingEnabled;
-      this._objectContext = ObjectContextManager.CreateDbContext as TEntity;
+      _objectContext = ObjectContextManager.CreateDbContext as TEntity;
     }
 
     /// <summary>
@@ -60,7 +60,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     /// <param name="connectionStringName">Name of the connection string.</param>
     public GenericRepository(string connectionStringName)
     {
-      this._connectionStringName = connectionStringName;
+      _connectionStringName = connectionStringName;
     }
 
     /// <summary>
@@ -71,7 +71,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {
       if (objectContext == null)
         throw new ArgumentNullException("objectContext");
-      this._objectContext = objectContext;
+      _objectContext = objectContext;
     }
 
     public TEntity GetByKey<TEntity>(object keyValue) where TEntity : class
@@ -357,7 +357,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       {
         if (_unitOfWork == null)
         {
-          _unitOfWork = new UnitOfWork(this.ObjectContext);
+          _unitOfWork = new UnitOfWork(ObjectContext);
         }
         return _unitOfWork;
       }
@@ -367,11 +367,11 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {
       get
       {
-        if (this._objectContext == null)
+        if (_objectContext == null)
         {
-          this._objectContext = ObjectContextManager.CreateDbContext as TEntity;
+          _objectContext = ObjectContextManager.CreateDbContext as TEntity;
         }
-        return this._objectContext;
+        return _objectContext;
       }
     }
 
@@ -447,7 +447,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
     public void Dispose()
     {
-      if (!_disposed && this._objectContext != null)
+      if (!_disposed && _objectContext != null)
       {
         try
         {

@@ -530,7 +530,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       }
 
       // Perform the sort with these new sort options.
-      this.lvMapping.Sort();
+      lvMapping.Sort();
     }
 
     //private void bMergedAdd_Click(object sender, EventArgs e)

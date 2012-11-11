@@ -28,7 +28,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.html
 
     public virtual MatchTag this[int Index]
     {
-      get { return (MatchTag)this.List[Index]; }
+      get { return (MatchTag)List[Index]; }
     }
 
     #endregion
@@ -37,7 +37,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.html
 
     public virtual void Add(MatchTag value)
     {
-      this.List.Add(value);
+      List.Add(value);
     }
 
     #endregion

@@ -43,8 +43,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     public int ShowFormModal()
     {
-      this.ShowDialog();
-      if (this.DialogResult == DialogResult.OK)
+      ShowDialog();
+      if (DialogResult == DialogResult.OK)
       {
         if (listViewChannels.SelectedItems.Count == 1)
         {
@@ -103,14 +103,14 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private void mpButtonCancel_Click(object sender, EventArgs e)
     {
-      this.DialogResult = DialogResult.Cancel;
-      this.Close();
+      DialogResult = DialogResult.Cancel;
+      Close();
     }
 
     private void mpButtonOk_Click(object sender, EventArgs e)
     {
-      this.DialogResult = DialogResult.OK;
-      this.Close();
+      DialogResult = DialogResult.OK;
+      Close();
     }
 
     private void checkBoxGuideChannels_CheckedChanged(object sender, EventArgs e)

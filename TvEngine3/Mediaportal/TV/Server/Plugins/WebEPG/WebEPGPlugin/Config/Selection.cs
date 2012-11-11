@@ -231,7 +231,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
     {
       if (source == bClose)
       {
-        this.Close();
+        Close();
         return;
       }
     }
@@ -239,8 +239,8 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
     private void UpdateList()
     {
       //			TreeNode sNode = treeView1.SelectedNode;
-      this.treeView1.Nodes.Clear();
-      this.treeView1.Nodes.Add((TreeNode)tGrabbers.Clone());
+      treeView1.Nodes.Clear();
+      treeView1.Nodes.Add((TreeNode)tGrabbers.Clone());
     }
 
     private TreeNode FindNode(TreeNode tNode, GrabberSelectionInfo tag)

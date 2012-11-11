@@ -116,11 +116,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (dbCard.UseConditionalAccess == true)
       {
         ciMenuDialog = new CI_Menu_Dialog(_cardNumber);
-        this.tabPageCIMenu.Controls.Add(ciMenuDialog);
+        tabPageCIMenu.Controls.Add(ciMenuDialog);
       }
       else
       {
-        this.tabPageCIMenu.Dispose();
+        tabPageCIMenu.Dispose();
       }
       base.Text = name;
       Init();

@@ -1824,7 +1824,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
               {
                 epgChannel.Sort();
                 //Log.this.LogInfo("dvb: start filtering channel NID {0} TID {1} SID{2}", chan.NetworkId, chan.TransportId, chan.ServiceId);
-                if (this.FilterOutEPGChannel(networkid, transportid, serviceid) == false)
+                if (FilterOutEPGChannel(networkid, transportid, serviceid) == false)
                 {
                   //Log.this.LogInfo("dvb: Not Filtered channel NID {0} TID {1} SID{2}", chan.NetworkId, chan.TransportId, chan.ServiceId);
                   epgChannels.Add(epgChannel);

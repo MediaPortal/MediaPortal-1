@@ -160,7 +160,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     /// <returns>a shallow clone of the channel instance</returns>
     public object Clone()
     {
-      return this.MemberwiseClone();
+      return MemberwiseClone();
     }
 
     #endregion
@@ -182,7 +182,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     public IChannel GetTuningChannel()
     {
       // No adjustments required.
-      return (IChannel)this.Clone();
+      return (IChannel)Clone();
     }
 
     public MediaTypeEnum MediaType

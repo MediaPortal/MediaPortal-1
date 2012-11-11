@@ -106,17 +106,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       base.OnSectionActivated();
 
-      this.RefreshAll();
+      RefreshAll();
     }
 
     private void RefreshAll()
     {
-      this.RefreshTabs();
-      this.RefreshContextMenu();
+      RefreshTabs();
+      RefreshContextMenu();
 
       Application.DoEvents();
 
-      this.RefreshAllChannels();
+      RefreshAllChannels();
     }
 
     private void RefreshTabs()
@@ -226,7 +226,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
         group.AcceptChanges();
 
-        this.RefreshContextMenu();
+        RefreshContextMenu();
       }
       else
       {
@@ -258,7 +258,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
       
-      this.RefreshTabs();
+      RefreshTabs();
     }
 
     
@@ -793,8 +793,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
       group.AcceptChanges();
 
-      this.RefreshContextMenu();
-      this.RefreshTabs();
+      RefreshContextMenu();
+      RefreshTabs();
     }
 
     private void mpButtonRenameGroup_Click(object sender, EventArgs e)
@@ -826,12 +826,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       if (group.GroupMaps.Count > 0)
       {
-        this.RefreshAll();
+        RefreshAll();
       }
       else
       {
-        this.RefreshContextMenu();
-        this.RefreshTabs();
+        RefreshContextMenu();
+        RefreshTabs();
       }
     }
 
@@ -865,12 +865,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       if (!isGroupEmpty)
       {
-        this.RefreshAll();
+        RefreshAll();
       }
       else
       {
-        this.RefreshContextMenu();
-        this.RefreshTabs();
+        RefreshContextMenu();
+        RefreshTabs();
       }
     }
 
@@ -915,7 +915,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             continue;
           }
 
-          if (tabControl1.GetTabRect(i).Contains(this.PointToClient(new System.Drawing.Point(e.X, e.Y))))
+          if (tabControl1.GetTabRect(i).Contains(PointToClient(new System.Drawing.Point(e.X, e.Y))))
           {
             tabControl1.SelectedIndex = i;
             break;
@@ -973,7 +973,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       _suppressRefresh = false;
 
-      this.ReOrderGroups();
+      ReOrderGroups();
     }
 
     private void tabControl1_MouseClick(object sender, MouseEventArgs e)
@@ -1068,12 +1068,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       if (group.GroupMaps.Count > 0 && tabControl1.SelectedIndex == 0)
       {
-        this.RefreshContextMenu();
-        this.RefreshAllChannels();
+        RefreshContextMenu();
+        RefreshAllChannels();
       }
       else
       {
-        this.RefreshContextMenu();
+        RefreshContextMenu();
       }
     }
 
@@ -1112,12 +1112,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       if (!groupIsEmpty && tabControl1.SelectedIndex == 0)
       {
-        this.RefreshContextMenu();
-        this.RefreshAllChannels();
+        RefreshContextMenu();
+        RefreshAllChannels();
       }
       else
       {
-        this.RefreshContextMenu();
+        RefreshContextMenu();
       }
     }
   }

@@ -91,7 +91,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
 
           int param = 0;
           int wParam = System.Convert.ToInt32(value);
-          ListViewAPI.SendMessage(this.Handle, ListViewAPI.LVM_ENABLEGROUPVIEW, wParam, ref param);
+          ListViewAPI.SendMessage(Handle, ListViewAPI.LVM_ENABLEGROUPVIEW, wParam, ref param);
         }
       }
     }
@@ -165,7 +165,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
       Marshal.Copy(columns, 0, lpcol, columns.Length);
 
       int param = 0;
-      _apiRetVal = ListViewAPI.SendMessage(this.Handle, ListViewAPI.LVM_SETVIEW, ListViewAPI.LV_VIEW_TILE, ref param);
+      _apiRetVal = ListViewAPI.SendMessage(Handle, ListViewAPI.LVM_SETVIEW, ListViewAPI.LV_VIEW_TILE, ref param);
 
       ListViewAPI.LVTILEVIEWINFO apiTileView = new ListViewAPI.LVTILEVIEWINFO();
       apiTileView.cbSize = Marshal.SizeOf(typeof (ListViewAPI.LVTILEVIEWINFO));
@@ -174,9 +174,9 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
       apiTileView.cLines = columns.Length;
 
 
-      _apiRetVal = ListViewAPI.SendMessage(this.Handle, ListViewAPI.LVM_SETTILEVIEWINFO, 0, ref apiTileView);
+      _apiRetVal = ListViewAPI.SendMessage(Handle, ListViewAPI.LVM_SETTILEVIEWINFO, 0, ref apiTileView);
 
-      foreach (XPListViewItem itm in this.Items)
+      foreach (XPListViewItem itm in Items)
       {
         apiTile = new ListViewAPI.LVTILEINFO();
         apiTile.cbSize = Marshal.SizeOf(typeof (ListViewAPI.LVTILEINFO));
@@ -184,7 +184,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
         apiTile.cColumns = columns.Length;
         apiTile.puColumns = (int)lpcol;
 
-        _apiRetVal = ListViewAPI.SendMessage(this.Handle, ListViewAPI.LVM_SETTILEINFO, 0, ref apiTile);
+        _apiRetVal = ListViewAPI.SendMessage(Handle, ListViewAPI.LVM_SETTILEINFO, 0, ref apiTile);
       }
 
       //columns = null;
@@ -194,10 +194,10 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
 
     public void SetTileSize(Size size)
     {
-      this.SuspendLayout();
+      SuspendLayout();
 
       int param = 0;
-      _apiRetVal = ListViewAPI.SendMessage((System.IntPtr)this.Handle, ListViewAPI.LVM_GETVIEW, ListViewAPI.LV_VIEW_TILE,
+      _apiRetVal = ListViewAPI.SendMessage((System.IntPtr)Handle, ListViewAPI.LVM_GETVIEW, ListViewAPI.LV_VIEW_TILE,
                                            ref param);
       if ((int)_apiRetVal != ListViewAPI.LV_VIEW_TILE)
       {
@@ -211,21 +211,21 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
       ListViewAPI.LVTILEVIEWINFO apiTileView = new ListViewAPI.LVTILEVIEWINFO();
       apiTileView.cbSize = Marshal.SizeOf(typeof (ListViewAPI.LVTILEVIEWINFO));
       apiTileView.dwMask = ListViewAPI.LVTVIM_TILESIZE | ListViewAPI.LVTVIM_LABELMARGIN;
-      _apiRetVal = ListViewAPI.SendMessage(this.Handle, ListViewAPI.LVM_GETTILEVIEWINFO, 0, ref apiTileView);
+      _apiRetVal = ListViewAPI.SendMessage(Handle, ListViewAPI.LVM_GETTILEVIEWINFO, 0, ref apiTileView);
       apiTileView.dwFlags = ListViewAPI.LVTVIF_FIXEDSIZE;
       apiTileView.sizeTile = apiSize;
-      _apiRetVal = ListViewAPI.SendMessage(this.Handle, ListViewAPI.LVM_SETTILEVIEWINFO, 0, ref apiTileView);
+      _apiRetVal = ListViewAPI.SendMessage(Handle, ListViewAPI.LVM_SETTILEVIEWINFO, 0, ref apiTileView);
 
-      this.ResumeLayout();
+      ResumeLayout();
     }
 
 
     public void SetTileWidth(int width)
     {
-      this.SuspendLayout();
+      SuspendLayout();
 
       int param = 0;
-      _apiRetVal = ListViewAPI.SendMessage(this.Handle, ListViewAPI.LVM_GETVIEW, ListViewAPI.LV_VIEW_TILE, ref param);
+      _apiRetVal = ListViewAPI.SendMessage(Handle, ListViewAPI.LVM_GETVIEW, ListViewAPI.LV_VIEW_TILE, ref param);
       if ((int)_apiRetVal != ListViewAPI.LV_VIEW_TILE)
       {
         return;
@@ -234,21 +234,21 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
       ListViewAPI.LVTILEVIEWINFO apiTileView = new ListViewAPI.LVTILEVIEWINFO();
       apiTileView.cbSize = Marshal.SizeOf(typeof (ListViewAPI.LVTILEVIEWINFO));
       apiTileView.dwMask = ListViewAPI.LVTVIM_TILESIZE | ListViewAPI.LVTVIM_LABELMARGIN;
-      _apiRetVal = ListViewAPI.SendMessage(this.Handle, ListViewAPI.LVM_GETTILEVIEWINFO, 0, ref apiTileView);
+      _apiRetVal = ListViewAPI.SendMessage(Handle, ListViewAPI.LVM_GETTILEVIEWINFO, 0, ref apiTileView);
       apiTileView.dwFlags = ListViewAPI.LVTVIF_FIXEDWIDTH;
       apiTileView.sizeTile.cx = width;
-      _apiRetVal = ListViewAPI.SendMessage(this.Handle, ListViewAPI.LVM_SETTILEVIEWINFO, 0, ref apiTileView);
+      _apiRetVal = ListViewAPI.SendMessage(Handle, ListViewAPI.LVM_SETTILEVIEWINFO, 0, ref apiTileView);
 
-      this.ResumeLayout();
+      ResumeLayout();
     }
 
 
     public void SetTileHeight(int height)
     {
-      this.SuspendLayout();
+      SuspendLayout();
 
       int param = 0;
-      _apiRetVal = ListViewAPI.SendMessage(this.Handle, ListViewAPI.LVM_GETVIEW, ListViewAPI.LV_VIEW_TILE, ref param);
+      _apiRetVal = ListViewAPI.SendMessage(Handle, ListViewAPI.LVM_GETVIEW, ListViewAPI.LV_VIEW_TILE, ref param);
       if ((int)_apiRetVal != ListViewAPI.LV_VIEW_TILE)
       {
         return;
@@ -259,19 +259,19 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
 
       apiTileView.cbSize = Marshal.SizeOf(typeof (ListViewAPI.LVTILEVIEWINFO));
       apiTileView.dwMask = ListViewAPI.LVTVIM_TILESIZE | ListViewAPI.LVTVIM_LABELMARGIN;
-      _apiRetVal = ListViewAPI.SendMessage(this.Handle, ListViewAPI.LVM_GETTILEVIEWINFO, 0, ref apiTileView);
+      _apiRetVal = ListViewAPI.SendMessage(Handle, ListViewAPI.LVM_GETTILEVIEWINFO, 0, ref apiTileView);
       apiTileView.dwFlags = ListViewAPI.LVTVIF_FIXEDHEIGHT;
       apiTileView.sizeTile.cy = height;
-      _apiRetVal = ListViewAPI.SendMessage(this.Handle, ListViewAPI.LVM_SETTILEVIEWINFO, 0, ref apiTileView);
+      _apiRetVal = ListViewAPI.SendMessage(Handle, ListViewAPI.LVM_SETTILEVIEWINFO, 0, ref apiTileView);
 
 
-      this.ResumeLayout();
+      ResumeLayout();
     }
 
 
     public bool AutoGroupByColumn(int columnID)
     {
-      if (columnID >= this.Columns.Count || columnID < 0)
+      if (columnID >= Columns.Count || columnID < 0)
       {
         return false;
       }
@@ -279,7 +279,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
       try
       {
         _autoGroupList.Clear();
-        foreach (XPListViewItem itm in this.Items)
+        foreach (XPListViewItem itm in Items)
         {
           if (
             !_autoGroupList.Contains(itm.SubItems[columnID].Text == ""
@@ -298,7 +298,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
           ListViewAPI.AddListViewGroup(this, text, _autoGroupList.IndexOf(text));
         }
 
-        foreach (XPListViewItem itm in this.Items)
+        foreach (XPListViewItem itm in Items)
         {
           ListViewAPI.AddItemToGroup(this, itm.Index,
                                      _autoGroupList.IndexOf(itm.SubItems[columnID].Text == ""
@@ -307,12 +307,12 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
         }
 
         int param = 0;
-        ListViewAPI.SendMessage(this.Handle, ListViewAPI.LVM_ENABLEGROUPVIEW, 1, ref param);
+        ListViewAPI.SendMessage(Handle, ListViewAPI.LVM_ENABLEGROUPVIEW, 1, ref param);
         _showInGroups = true;
         _autoGroup = true;
-        _autoGroupCol = this.Columns[columnID];
+        _autoGroupCol = Columns[columnID];
 
-        this.Refresh();
+        Refresh();
 
         return true;
       }
@@ -328,18 +328,18 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
       try
       {
         ListViewAPI.ClearListViewGroup(this);
-        foreach (XPListViewGroup grp in this.Groups)
+        foreach (XPListViewGroup grp in Groups)
         {
           ListViewAPI.AddListViewGroup(this, grp.GroupText, grp.GroupIndex);
         }
 
-        foreach (XPListViewItem itm in this.Items)
+        foreach (XPListViewItem itm in Items)
         {
           ListViewAPI.AddItemToGroup(this, itm.Index, itm.GroupIndex);
         }
 
         int param = 0;
-        ListViewAPI.SendMessage(this.Handle, ListViewAPI.LVM_ENABLEGROUPVIEW, 1, ref param);
+        ListViewAPI.SendMessage(Handle, ListViewAPI.LVM_ENABLEGROUPVIEW, 1, ref param);
         _showInGroups = true;
         _autoGroup = false;
         _autoGroupCol = null;
@@ -357,7 +357,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
     public void RedrawItems()
     {
       ListViewAPI.RedrawItems(this, true);
-      this.ArrangeIcons();
+      ArrangeIcons();
     }
 
 
@@ -369,9 +369,9 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
 
     public void SetColumnStyle(int column, Font font, Color foreColor, Color backColor)
     {
-      this.SuspendLayout();
+      SuspendLayout();
 
-      foreach (XPListViewItem itm in this.Items)
+      foreach (XPListViewItem itm in Items)
       {
         if (itm.SubItems.Count > column)
         {
@@ -381,27 +381,27 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
         }
       }
 
-      this.ResumeLayout();
+      ResumeLayout();
     }
 
 
     public void SetColumnStyle(int column, Font font, Color foreColor)
     {
-      SetColumnStyle(column, font, foreColor, this.BackColor);
+      SetColumnStyle(column, font, foreColor, BackColor);
     }
 
 
     public void SetColumnStyle(int column, Font font)
     {
-      SetColumnStyle(column, font, this.ForeColor, this.BackColor);
+      SetColumnStyle(column, font, ForeColor, BackColor);
     }
 
 
     public void ResetColumnStyle(int column)
     {
-      this.SuspendLayout();
+      SuspendLayout();
 
-      foreach (XPListViewItem itm in this.Items)
+      foreach (XPListViewItem itm in Items)
       {
         if (itm.SubItems.Count > column)
         {
@@ -409,7 +409,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
         }
       }
 
-      this.ResumeLayout();
+      ResumeLayout();
     }
 
 
@@ -438,26 +438,26 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
     protected override void OnColumnClick(System.Windows.Forms.ColumnClickEventArgs e)
     {
       base.OnColumnClick(e);
-      this.SuspendLayout();
+      SuspendLayout();
       if (_showInGroups)
       {
         int param = 0;
-        ListViewAPI.SendMessage(this.Handle, ListViewAPI.LVM_ENABLEGROUPVIEW, 0, ref param);
+        ListViewAPI.SendMessage(Handle, ListViewAPI.LVM_ENABLEGROUPVIEW, 0, ref param);
       }
-      this.ListViewItemSorter = new XPListViewItemComparer(e.Column);
-      if (this.Sorting == SortOrder.Descending)
+      ListViewItemSorter = new XPListViewItemComparer(e.Column);
+      if (Sorting == SortOrder.Descending)
       {
-        this.Sorting = SortOrder.Ascending;
+        Sorting = SortOrder.Ascending;
       }
       else
       {
-        this.Sorting = SortOrder.Descending;
+        Sorting = SortOrder.Descending;
       }
-      this.Sort();
+      Sort();
       if (_showInGroups)
       {
         int param = 0;
-        ListViewAPI.SendMessage(this.Handle, ListViewAPI.LVM_ENABLEGROUPVIEW, 1, ref param);
+        ListViewAPI.SendMessage(Handle, ListViewAPI.LVM_ENABLEGROUPVIEW, 1, ref param);
         if (_autoGroup == true)
         {
           AutoGroupByColumn(_autoGroupCol.Index);
@@ -467,7 +467,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
           Regroup();
         }
       }
-      this.ResumeLayout();
+      ResumeLayout();
     }
 
     protected override void WndProc(ref Message m)

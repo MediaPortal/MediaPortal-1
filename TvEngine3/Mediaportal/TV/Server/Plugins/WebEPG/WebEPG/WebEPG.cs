@@ -130,7 +130,7 @@ namespace WebEPG
     public WebEPG(string configFile, IEpgDataSink epgDataSink, string baseDirectory)
     {
       this.LogInfo("Assembly versions:");
-      this.LogInfo(this.GetType().Assembly.GetName().Name + " " + this.GetType().Assembly.GetName().Version.ToString());      
+      this.LogInfo(GetType().Assembly.GetName().Name + " " + GetType().Assembly.GetName().Version.ToString());      
       // set config directories and files.
       _configFile = configFile;
       //_xmltvDirectory = xmltvDirectory;

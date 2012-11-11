@@ -5420,7 +5420,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
 
       IUser tmpUser = new User();
-      foreach (ITvCardHandler cardhandler in this.CardCollection.Values)
+      foreach (ITvCardHandler cardhandler in CardCollection.Values)
       {
         cardhandler.ParkedUserManagement.CancelAllParkedUsers();
         cardhandler.StopCard();

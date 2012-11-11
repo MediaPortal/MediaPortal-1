@@ -145,7 +145,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Time
     /// </returns>
     public bool IsLocalTimeZone()
     {
-      if (CurrentTimeZone.StandardName == this.StandardName)
+      if (CurrentTimeZone.StandardName == StandardName)
       {
         return true;
       }

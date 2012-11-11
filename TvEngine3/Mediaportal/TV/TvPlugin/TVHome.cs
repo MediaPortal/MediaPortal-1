@@ -2200,7 +2200,7 @@ namespace Mediaportal.TV.TvPlugin
 
         dlg.SelectedLabel = activeRecordings.Count;
 
-        dlg.DoModal(this.GetID);
+        dlg.DoModal(GetID);
         if (dlg.SelectedLabel < 0)
         {
           return;
@@ -2232,7 +2232,7 @@ namespace Mediaportal.TV.TvPlugin
           pDlgOK.SetHeading(200052); //my tv
           pDlgOK.SetLine(1, GUILocalizeStrings.Get(200053)); // No Active recordings
           pDlgOK.SetLine(2, "");
-          pDlgOK.DoModal(this.GetID);
+          pDlgOK.DoModal(GetID);
         }
       }
     }
@@ -2296,13 +2296,13 @@ namespace Mediaportal.TV.TvPlugin
             pDlgOK.SetHeading(692); //my tv
             pDlgOK.SetLine(1, GUILocalizeStrings.Get(1511)); // No Active streams
             pDlgOK.SetLine(2, "");
-            pDlgOK.DoModal(this.GetID);
+            pDlgOK.DoModal(GetID);
           }
         }
         else
         {
           dlg.SelectedLabel = selected;
-          dlg.DoModal(this.GetID);
+          dlg.DoModal(GetID);
           if (dlg.SelectedLabel >= 0)
           {
             StreamPresentation streamingChannel = streamingChannels[dlg.SelectedLabel];

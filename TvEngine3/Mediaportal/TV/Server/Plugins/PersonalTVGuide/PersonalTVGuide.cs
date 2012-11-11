@@ -279,7 +279,7 @@ namespace Mediaportal.TV.Server.Plugins.PersonalTVGuide
 
     public string HandlerName
     {
-      get { return this.Name; }
+      get { return Name; }
     }
 
     #endregion

@@ -165,13 +165,13 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
         relativeUri = Uri.LocalPath + relativeUri;
       Uri newUri = new Uri(Uri, relativeUri);
       HTTPRequest newHTTPRequest = new HTTPRequest(newUri);
-      newHTTPRequest._encoding = this._encoding;
+      newHTTPRequest._encoding = _encoding;
       // Copy this also otherwise data is lost
       // Caused sublink delay in WebEPG always to be 0
-      newHTTPRequest._externalBrowser = this._externalBrowser;
-      newHTTPRequest._cookies = this._cookies;
-      newHTTPRequest._delay = this._delay;
-      newHTTPRequest._agent = this._agent;
+      newHTTPRequest._externalBrowser = _externalBrowser;
+      newHTTPRequest._cookies = _cookies;
+      newHTTPRequest._delay = _delay;
+      newHTTPRequest._agent = _agent;
       return newHTTPRequest;
     }
 

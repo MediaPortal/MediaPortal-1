@@ -538,12 +538,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void mpButtonOrderByName_Click(object sender, EventArgs e)
     {
-      this.listView1_ColumnClick(null, new ColumnClickEventArgs(0));
+      listView1_ColumnClick(null, new ColumnClickEventArgs(0));
     }
 
     private void mpButtonOrderByNumber_Click(object sender, EventArgs e)
     {
-      this.listView1_ColumnClick(null, new ColumnClickEventArgs(1));
+      listView1_ColumnClick(null, new ColumnClickEventArgs(1));
     }
   }
 }

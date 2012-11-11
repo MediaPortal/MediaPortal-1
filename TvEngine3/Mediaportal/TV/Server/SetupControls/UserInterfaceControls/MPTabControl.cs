@@ -98,19 +98,19 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
         {
           lastHoverTabIndex = -1;
           e.Effect = DragDropEffects.None;
-          this.Refresh();
+          Refresh();
         }
         return;
       }
 
-      int hoverTabIndex = this.TabPages.IndexOf(hoverTab);
-      if (hoverTabIndex == this.SelectedIndex || hoverTabIndex == 0)
+      int hoverTabIndex = TabPages.IndexOf(hoverTab);
+      if (hoverTabIndex == SelectedIndex || hoverTabIndex == 0)
       {
         if (hoverTabIndex != lastHoverTabIndex)
         {
           lastHoverTabIndex = hoverTabIndex;
           e.Effect = DragDropEffects.None;
-          this.Refresh();
+          Refresh();
         }
 
         return;
@@ -126,22 +126,22 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 
           if (hoverTabIndex != lastHoverTabIndex)
           {
-            this.Refresh();
+            Refresh();
 
             lastHoverTabIndex = hoverTabIndex;
 
             int targetIndex = hoverTabIndex;
-            if (targetIndex < this.SelectedIndex)
+            if (targetIndex < SelectedIndex)
               targetIndex--;
 
             Color lineColor = SystemColors.Highlight;
 
-            using (Graphics g = this.CreateGraphics())
+            using (Graphics g = CreateGraphics())
             {
               Rectangle tabRect = GetTabRect(targetIndex);
 
               int x = tabRect.X + tabRect.Width - 1;
-              if (hoverTabIndex == this.TabCount - 1)
+              if (hoverTabIndex == TabCount - 1)
               {
                 //for whatever reason the x + width is not accurate on last tab
                 x = x - 1;
@@ -171,7 +171,7 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
     {
       base.OnMouseMove(e);
 
-      if (!this.AllowReorderTabs)
+      if (!AllowReorderTabs)
       {
         return;
       }
@@ -185,7 +185,7 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
       Point pt = new Point(e.X, e.Y);
       TabPage tp = GetTabPageByTab(pt);
 
-      if (tp == null || tp != this.SelectedTab || this.TabPages[0] == tp)
+      if (tp == null || tp != SelectedTab || TabPages[0] == tp)
       {
         dragMoveCounter = 0;
         return;
@@ -206,7 +206,7 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 
       lastHoverTabIndex = -1;
 
-      this.Refresh();
+      Refresh();
     }
 
     protected override void OnMouseUp(MouseEventArgs e)

@@ -40,10 +40,10 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.util
     {
       if (tst == null)
         throw new ArgumentNullException("tst");
-      this.version = tst.Version;
-      this.dictionary = tst;
-      this.currentNode = null;
-      this.stack = null;
+      version = tst.Version;
+      dictionary = tst;
+      currentNode = null;
+      stack = null;
     }
 
     /// <summary>
@@ -51,8 +51,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.util
     /// </summary>
     public void Reset()
     {
-      this.ThrowIfChanged();
-      this.stack.Clear();
+      ThrowIfChanged();
+      stack.Clear();
       stack = null;
     }
 
@@ -65,8 +65,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.util
     {
       get
       {
-        this.ThrowIfChanged();
-        return this.Entry;
+        ThrowIfChanged();
+        return Entry;
       }
     }
 
@@ -76,7 +76,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.util
     /// <value>The current element in the collection.</value>	
     Object IEnumerator.Current
     {
-      get { return this.Current; }
+      get { return Current; }
     }
 
     /// <summary>
@@ -93,7 +93,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.util
     {
       get
       {
-        this.ThrowIfChanged();
+        ThrowIfChanged();
         if (currentNode == null)
           throw new InvalidOperationException();
         return new DictionaryEntry(currentNode.Key, currentNode.Value);
@@ -113,7 +113,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.util
     {
       get
       {
-        this.ThrowIfChanged();
+        ThrowIfChanged();
         if (currentNode == null)
           throw new InvalidOperationException();
         return currentNode.Key;
@@ -131,7 +131,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.util
     /// </exception>		
     Object IDictionaryEnumerator.Key
     {
-      get { return this.Key; }
+      get { return Key; }
     }
 
     /// <summary>
@@ -147,7 +147,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.util
     {
       get
       {
-        this.ThrowIfChanged();
+        ThrowIfChanged();
         if (currentNode == null)
           throw new InvalidOperationException();
         return currentNode.Value;
@@ -163,7 +163,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.util
     /// </returns>
     public bool MoveNext()
     {
-      this.ThrowIfChanged();
+      ThrowIfChanged();
 
       // we are at the beginning
       if (stack == null)

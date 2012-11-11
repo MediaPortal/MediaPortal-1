@@ -363,7 +363,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
         protected override void InsertItem(int index, T item)
         {
-            if (!this.Contains(item))
+            if (!Contains(item))
             {
                 base.InsertItem(index, item);
             }

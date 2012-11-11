@@ -86,9 +86,9 @@ namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
     {
       this.LogInfo("ComSkipLauncher: Configuration deactivated");
 
-      ComSkipLauncher.RunAtStart = this.RunAtStart;
-      ComSkipLauncher.Program = this.Program;
-      ComSkipLauncher.Parameters = this.Parameters;
+      ComSkipLauncher.RunAtStart = RunAtStart;
+      ComSkipLauncher.Program = Program;
+      ComSkipLauncher.Parameters = Parameters;
 
       ComSkipLauncher.SaveSettings();
 

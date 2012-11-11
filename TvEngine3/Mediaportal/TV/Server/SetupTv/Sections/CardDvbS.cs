@@ -109,14 +109,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         get
         {
           DVBSChannel tuneChannel = new DVBSChannel();
-          tuneChannel.Frequency = this.CarrierFrequency;
-          tuneChannel.Polarisation = this.Polarisation;
-          tuneChannel.SymbolRate = this.SymbolRate;
-          tuneChannel.ModulationType = this.Modulation;
-          tuneChannel.InnerFecRate = this.InnerFecRate;
+          tuneChannel.Frequency = CarrierFrequency;
+          tuneChannel.Polarisation = Polarisation;
+          tuneChannel.SymbolRate = SymbolRate;
+          tuneChannel.ModulationType = Modulation;
+          tuneChannel.InnerFecRate = InnerFecRate;
           //Grab the Pilot & Roll-off settings
-          tuneChannel.Pilot = this.Pilot;
-          tuneChannel.RollOff = this.Rolloff;
+          tuneChannel.Pilot = Pilot;
+          tuneChannel.RollOff = Rolloff;
           return tuneChannel;
         }
       }
@@ -211,11 +211,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (dbCard.UseConditionalAccess == true)
       {
         ciMenuDialog = new CI_Menu_Dialog(_cardNumber);
-        this.tabPageCIMenu.Controls.Add(ciMenuDialog);
+        tabPageCIMenu.Controls.Add(ciMenuDialog);
       }
       else
       {
-        this.tabPageCIMenu.Dispose();
+        tabPageCIMenu.Dispose();
       }
       base.Text = name;
       Init();

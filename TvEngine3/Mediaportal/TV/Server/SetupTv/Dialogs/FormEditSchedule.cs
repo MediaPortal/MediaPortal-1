@@ -89,9 +89,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private void SetupEventHandlersForDates()
     {
-      this.dateTimePickerStartingBetweenTo.ValueChanged += new System.EventHandler(this.dateTimePickerStartingBetweenTo_ValueChanged);
-      this.dateTimePickerStartingAround.ValueChanged += new System.EventHandler(this.dateTimePickerStartingAround_ValueChanged);
-      this.dateTimePickerStartingBetweenFrom.ValueChanged += new System.EventHandler(this.dateTimePickerStartingBetweenFrom_ValueChanged);
+      dateTimePickerStartingBetweenTo.ValueChanged += new System.EventHandler(dateTimePickerStartingBetweenTo_ValueChanged);
+      dateTimePickerStartingAround.ValueChanged += new System.EventHandler(dateTimePickerStartingAround_ValueChanged);
+      dateTimePickerStartingBetweenFrom.ValueChanged += new System.EventHandler(dateTimePickerStartingBetweenFrom_ValueChanged);
     }
 
     private void PreFillInProgramDataForDates()

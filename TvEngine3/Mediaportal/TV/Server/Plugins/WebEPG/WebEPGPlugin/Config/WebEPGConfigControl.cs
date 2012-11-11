@@ -744,9 +744,9 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       if (selection == null)
       {
         selection = new fSelection(tGrabbers); //, true, this.DoSelect);
-        selection.GrabberSelected += this.DoSelect;
+        selection.GrabberSelected += DoSelect;
         selection.MinimizeBox = false;
-        selection.Closed += new EventHandler(this.CloseSelect);
+        selection.Closed += new EventHandler(CloseSelect);
         selection.Show();
       }
       else
@@ -765,7 +765,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
 
     private void ShowImportProgress(WebEPG.WebEPG.Stats status)
     {
-      this.Invoke(new ShowStatusHandler(ShowStatus), new object[] {status});
+      Invoke(new ShowStatusHandler(ShowStatus), new object[] {status});
     }
 
     private void StatusTimer_Tick(object sender, EventArgs e)

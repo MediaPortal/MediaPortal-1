@@ -113,7 +113,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
 
     private void bCancel_Click(object sender, EventArgs e)
     {
-      this.Close();
+      Close();
     }
 
     private void bChannelID_Click(object sender, EventArgs e)
@@ -132,7 +132,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
 
     public void DoSelect(Object source, GrabberSelectedEventArgs e)
     {
-      this.Activate();
+      Activate();
       GrabberSelectionInfo id = e.Selection;
 
       if (id != null)
@@ -141,7 +141,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
         tbGrabSite.Text = id.GrabberId;
       }
 
-      this.BringToFront();
+      BringToFront();
       //_selection.Close();
     }
 

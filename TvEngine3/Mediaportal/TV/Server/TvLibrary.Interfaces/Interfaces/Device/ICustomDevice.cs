@@ -141,7 +141,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
     {
       get
       {
-        return this.GetType().Name;
+        return GetType().Name;
       }
     }
 

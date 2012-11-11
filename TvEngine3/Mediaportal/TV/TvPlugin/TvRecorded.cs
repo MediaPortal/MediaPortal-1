@@ -67,7 +67,7 @@ namespace Mediaportal.TV.TvPlugin
 
       public RecordingThumbCacher()
       {
-        work = new Work(new DoWorkHandler(this.PerformRequest));
+        work = new Work(new DoWorkHandler(PerformRequest));
         work.ThreadPriority = ThreadPriority.BelowNormal;
         GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
       }
