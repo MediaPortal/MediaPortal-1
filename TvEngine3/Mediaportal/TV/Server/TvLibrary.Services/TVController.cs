@@ -2835,7 +2835,6 @@ namespace Mediaportal.TV.Server.TVLibrary
           StopEPGgrabber();
           ScanParameters settings = new ScanParameters();
           settings.TimeOutTune = Int32.Parse(SettingsManagement.GetSetting("timeoutTune", "2").Value);
-          _cards[cardId].SetParameters();
           scanNit = _cards[cardId].Scanner.ScanNIT(channel, settings);
         }
       }

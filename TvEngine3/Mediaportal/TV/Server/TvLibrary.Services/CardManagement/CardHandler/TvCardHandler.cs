@@ -51,6 +51,9 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     private readonly CardTuner _tuner;
     private ICiMenuActions _ciMenu;    
 
+    private static ScanParameters _settings;
+    private static object _settingsLock = new object();
+
     #endregion
 
     #region ctor
@@ -59,7 +62,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// Initializes a new instance of the <see cref="ITVCard"/> class.
     /// </summary>
     public TvCardHandler(Card dbsCard, ITVCard card)
-    {
+    {      
       _dbsCard = dbsCard;
       Card = card;
       _userManagement = new UserManagement(this);
@@ -173,6 +176,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         {
           _card.Context = new TvCardContext();
         }
+        SetParameters();
       }
     }
 
@@ -474,6 +478,41 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
     }
 
+    private static ScanParameters Settings
+    {
+      get
+      {
+        lock (_settingsLock)
+        {
+          if (_settings == null)
+          {
+            _settings = new ScanParameters
+            {
+              TimeOutTune = Int32.Parse(SettingsManagement.GetSetting("timeoutTune", "2").Value),
+              TimeOutPAT = Int32.Parse(SettingsManagement.GetSetting("timeoutPAT", "5").Value),
+              TimeOutCAT = Int32.Parse(SettingsManagement.GetSetting("timeoutCAT", "5").Value),
+              TimeOutPMT = Int32.Parse(SettingsManagement.GetSetting("timeoutPMT", "10").Value),
+              TimeOutSDT = Int32.Parse(SettingsManagement.GetSetting("timeoutSDT", "20").Value),
+              TimeOutAnalog = Int32.Parse(SettingsManagement.GetSetting("timeoutAnalog", "20").Value),
+              UseDefaultLnbFrequencies =
+                (SettingsManagement.GetSetting("lnbDefault", "true").Value == "true"),
+              LnbLowFrequency = Int32.Parse(SettingsManagement.GetSetting("LnbLowFrequency", "0").Value),
+              LnbHighFrequency = Int32.Parse(SettingsManagement.GetSetting("LnbHighFrequency", "0").Value),
+              LnbSwitchFrequency =
+                Int32.Parse(SettingsManagement.GetSetting("LnbSwitchFrequency", "0").Value),
+              MinimumFiles = Int32.Parse(SettingsManagement.GetSetting("timeshiftMinFiles", "6").Value),
+              MaximumFiles = Int32.Parse(SettingsManagement.GetSetting("timeshiftMaxFiles", "20").Value),
+              MaximumFileSize =
+                UInt32.Parse(SettingsManagement.GetSetting("timeshiftMaxFileSize", "256").Value)
+            };
+            _settings.MaximumFileSize *= 1000;
+            _settings.MaximumFileSize *= 1000;
+          } 
+        }        
+        return _settings;
+      }
+    }
+
 
     /// <summary>
     /// Disposes this instance.
@@ -481,35 +520,18 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     public void Dispose()
     {
       _card.Dispose();
-    }    
-
+    }
     
-
-    public void SetParameters()
+    private void SetParameters()
     {
       if (_card == null)
       {
         return;
-      }
-      ScanParameters settings = new ScanParameters();
-      
-      settings.TimeOutTune = Int32.Parse(SettingsManagement.GetSetting("timeoutTune", "2").Value);
-      settings.TimeOutPAT = Int32.Parse(SettingsManagement.GetSetting("timeoutPAT", "5").Value);
-      settings.TimeOutCAT = Int32.Parse(SettingsManagement.GetSetting("timeoutCAT", "5").Value);
-      settings.TimeOutPMT = Int32.Parse(SettingsManagement.GetSetting("timeoutPMT", "10").Value);
-      settings.TimeOutSDT = Int32.Parse(SettingsManagement.GetSetting("timeoutSDT", "20").Value);
-      settings.TimeOutAnalog = Int32.Parse(SettingsManagement.GetSetting("timeoutAnalog", "20").Value);
-      settings.UseDefaultLnbFrequencies = (SettingsManagement.GetSetting("lnbDefault", "true").Value == "true");
-      settings.LnbLowFrequency = Int32.Parse(SettingsManagement.GetSetting("LnbLowFrequency", "0").Value);
-      settings.LnbHighFrequency = Int32.Parse(SettingsManagement.GetSetting("LnbHighFrequency", "0").Value);
-      settings.LnbSwitchFrequency = Int32.Parse(SettingsManagement.GetSetting("LnbSwitchFrequency", "0").Value);
-      settings.MinimumFiles = Int32.Parse(SettingsManagement.GetSetting("timeshiftMinFiles", "6").Value);
-      settings.MaximumFiles = Int32.Parse(SettingsManagement.GetSetting("timeshiftMaxFiles", "20").Value);
-      settings.MaximumFileSize = UInt32.Parse(SettingsManagement.GetSetting("timeshiftMaxFileSize", "256").Value);
-      settings.MaximumFileSize *= 1000;
-      settings.MaximumFileSize *= 1000;
-      _card.Parameters = settings;
+      }      
+      _card.Parameters = Settings;
     }
+
+
 
     public long CurrentMux()
     {

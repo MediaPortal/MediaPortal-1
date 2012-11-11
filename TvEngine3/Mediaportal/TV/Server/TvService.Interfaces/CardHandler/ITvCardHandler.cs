@@ -64,8 +64,7 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     bool IsScrambled(string userName);
     bool IsScrambled(int subchannel);
 
-    void StopCard();    
-    void SetParameters();
+    void StopCard();
     void Dispose();
     long CurrentMux();
   }
