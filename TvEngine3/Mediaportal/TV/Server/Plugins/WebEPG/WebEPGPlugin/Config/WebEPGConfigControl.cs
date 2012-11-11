@@ -126,7 +126,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       Initialize();
 
 
-      switch (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgDestination", "db").Value)
+      switch (ServiceAgents.Instance.SettingServiceAgent.GetValue("webepgDestination", "db"))
       {
         case "db":
           DestinationComboBox.SelectedIndex = 0;
@@ -142,15 +142,15 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
           break;
       }
 
-      textBoxFolder.Text = ServiceAgents.Instance.SettingServiceAgent.GetSetting("webepgDestinationFolder").Value;
-      checkBoxDeleteBeforeImport.Checked = Convert.ToBoolean(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgDeleteBeforeImport", "true").Value);
+      textBoxFolder.Text = ServiceAgents.Instance.SettingServiceAgent.GetValue("webepgDestinationFolder", "");
+      checkBoxDeleteBeforeImport.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("webepgDeleteBeforeImport", true);
 
       LoadWebepgConfigFile();
       //RedrawList(null);
 
       // Schedule
-      ScheduleGrabCheckBox.Checked = Convert.ToBoolean(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgScheduleEnabled", "true").Value);
-      EPGWakeupConfig config = new EPGWakeupConfig(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgSchedule", String.Empty).Value);
+      ScheduleGrabCheckBox.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("webepgScheduleEnabled", true);
+      var config = new EPGWakeupConfig(ServiceAgents.Instance.SettingServiceAgent.GetValue("webepgSchedule", String.Empty));
       foreach (EPGGrabDays day in config.Days)
       {
         switch (day)
@@ -228,15 +228,15 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
           break;
       }
 
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("webepgDestination", value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("webepgDestinationFolder", textBoxFolder.Text);
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("webepgDeleteBeforeImport", checkBoxDeleteBeforeImport.Checked ? "true" : "false");
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("webepgScheduleEnabled", ScheduleGrabCheckBox.Checked ? "true" : "false");
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("webepgDestination", value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("webepgDestinationFolder", textBoxFolder.Text);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("webepgDeleteBeforeImport", checkBoxDeleteBeforeImport.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("webepgScheduleEnabled", ScheduleGrabCheckBox.Checked);
 
 
-      Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgSchedule", String.Empty);
-      EPGWakeupConfig cfg = new EPGWakeupConfig(setting.Value);
-      EPGWakeupConfig newcfg = new EPGWakeupConfig();
+      string setting = ServiceAgents.Instance.SettingServiceAgent.GetValue("webepgSchedule", String.Empty);
+      var cfg = new EPGWakeupConfig(setting);
+      var newcfg = new EPGWakeupConfig();
       newcfg.Hour = cfg.Hour;
       newcfg.Minutes = cfg.Minutes;
       // newcfg.Days = cfg.Days;
@@ -254,7 +254,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
 
       if (!cfg.Equals(newcfg))
       {
-        ServiceAgents.Instance.SettingServiceAgent.SaveSetting("webepgSchedule", newcfg.SerializeAsString());                
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("webepgSchedule", newcfg.SerializeAsString());                
       }
     }
 
@@ -283,20 +283,20 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       labelPrograms.Text = status.Programs.ToString();
       labelStatus.Text = status.Status;
 
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("webepgResultChannels", status.Channels.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("webepgResultPrograms", status.Programs.ToString());      
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("webepgResultStatus", status.Status);
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("webepgResultLastImport", status.StartTime.ToString());      
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("webepgResultChannels", status.Channels);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("webepgResultPrograms", status.Programs);      
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("webepgResultStatus", status.Status);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("webepgResultLastImport", status.StartTime);      
       
     }
 
     private void ShowStatus()
     {
 
-      labelLastImport.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgResultLastImport", "").Value;
-      labelChannels.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgResultChannels", "").Value;
-      labelPrograms.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgResultPrograms", "").Value;
-      labelStatus.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgResultStatus", "").Value;
+      labelLastImport.Text = ServiceAgents.Instance.SettingServiceAgent.GetValue("webepgResultLastImport", "");
+      labelChannels.Text = ServiceAgents.Instance.SettingServiceAgent.GetValue("webepgResultChannels", "");
+      labelPrograms.Text = ServiceAgents.Instance.SettingServiceAgent.GetValue("webepgResultPrograms", "");
+      labelStatus.Text = ServiceAgents.Instance.SettingServiceAgent.GetValue("webepgResultStatus", "");
     }
 
     private void LoadCountries()

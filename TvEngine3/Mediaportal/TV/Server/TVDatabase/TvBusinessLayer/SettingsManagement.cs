@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories;
@@ -37,6 +38,31 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
+    public static void SaveValue(string tagName, int defaultValue)
+    {
+      SaveSetting(tagName, defaultValue.ToString());
+    }
+    
+    public static void SaveValue(string tagName, double defaultValue)
+    {
+      SaveSetting(tagName, defaultValue.ToString());
+    }
+    
+    public static void SaveValue(string tagName, bool defaultValue)
+    {
+      SaveSetting(tagName, defaultValue.ToString());
+    }
+    
+    public static void SaveValue(string tagName, string defaultValue)
+    {
+      SaveSetting(tagName, defaultValue);
+    }
+    
+    public static void SaveValue(string tagName, DateTime defaultValue)
+    {
+      SaveSetting(tagName, defaultValue.ToString(CultureInfo.InvariantCulture));
+    }
+    
     public static Setting GetSetting(string tagName, string defaultValue)
     {
       using (ISettingsRepository settingsRepository = new SettingsRepository(true))
@@ -72,9 +98,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     public static DateTime GetValue(string tagName, DateTime defaultValue)
     {
       Setting setting = GetSetting(tagName, defaultValue.ToString());
-      return string.IsNullOrEmpty(setting.Value) ? DateTime.MinValue : DateTime.Parse(setting.Value);
+      return string.IsNullOrEmpty(setting.Value) ? DateTime.MinValue : DateTime.Parse(setting.Value, CultureInfo.InvariantCulture);
     }
-
-    // maximum hours to keep old program info
   }
 }

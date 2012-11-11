@@ -230,8 +230,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private void SetRecordingInterval()
     {
-      mpNumericTextBoxPreRec.Value = int.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "7").Value);
-      mpNumericTextBoxPostRec.Value = int.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "10").Value);
+      mpNumericTextBoxPreRec.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("preRecordInterval", 7);
+      mpNumericTextBoxPostRec.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("postRecordInterval", 10);
     }
 
     private void PopulateProgramFieldsComboBox()

@@ -70,7 +70,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
         if (_tunerSelections[i].Enabled && selectedTuner != null)
         {
           this.LogDebug("  {0} linked to tuner {1} ({2})", _products[i].ProductName, selectedTuner.IdCard, selectedTuner.Name);
-          _settingServiceAgent.SaveSetting("digitalDevicesCiDevicePath" + i, selectedTuner.IdCard.ToString());
+          _settingServiceAgent.SaveValue("digitalDevicesCiDevicePath" + i, selectedTuner.IdCard);
 
         }
       }
@@ -88,7 +88,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
         this.LogDebug("SmarDTV USB CI config: product {0}...", _products[i].ProductName);
 
         // Populate the tuner selection fields and set current values.
-        Setting setting = _settingServiceAgent.GetSettingWithDefaultValue(_products[i].DbSettingName, "-1");
+        int setting = _settingServiceAgent.GetValue(_products[i].DbSettingName, -1);
         _tunerSelections[i].Items.Clear();
         _tunerSelections[i].SelectedIndex = -1;
 
@@ -100,7 +100,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
             continue;
           }
           _tunerSelections[i].Items.Add(tuner);
-          if (tuner.IdCard.ToString().Equals(setting.Value))
+          if (tuner.IdCard.Equals(setting))
           {
             this.LogDebug("  currently linked to tuner {0} ({1})", tuner.IdCard, tuner.Name);
             _tunerSelections[i].SelectedItem = tuner;

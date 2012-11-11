@@ -239,25 +239,24 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     /// </summary>
     private void SetDefaults()
     {
-      int index = Math.Max(Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbt" + _cardNumber + "Country", "0").Value), 0);
+      int index = Math.Max(ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _cardNumber + "Country", 0), 0);
       // limit to >= 0
       if (index < mpComboBoxCountry.Items.Count)
       {
         mpComboBoxCountry.SelectedIndex = index;
       }
 
-      index = Math.Max(Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbt" + _cardNumber + "Region", "0").Value), 0); // limit to >= 0
+      index = Math.Max(ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _cardNumber + "Region", 0), 0); // limit to >= 0
       if (index < mpComboBoxRegion.Items.Count)
       {
         mpComboBoxRegion.SelectedIndex = index;
       }
 
-      textBoxFreq.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbt" + _cardNumber + "Freq", "306000").Value;
-      textBoxBandwidth.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbt" + _cardNumber + "Bandwidth", "8").Value ;
+      textBoxFreq.Text = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _cardNumber + "Freq", "306000");
+      textBoxBandwidth.Text = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _cardNumber + "Bandwidth", "8");
 
-      checkBoxCreateGroups.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbt" + _cardNumber + "creategroups", "false").Value == "true");
-      checkBoxCreateSignalGroup.Checked =
-        (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbt" + _cardNumber + "createsignalgroup", "false").Value == "true");
+      checkBoxCreateGroups.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _cardNumber + "creategroups", false));
+      checkBoxCreateSignalGroup.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbt" + _cardNumber + "createsignalgroup", false));
     }
 
     /// <summary>
@@ -266,12 +265,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void PersistState()
     {
       
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbt" + _cardNumber + "Country", mpComboBoxCountry.SelectedIndex.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbt" + _cardNumber + "Region", mpComboBoxRegion.SelectedIndex.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbt" + _cardNumber + "Freq", textBoxFreq.Text);
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbt" + _cardNumber + "Bandwidth", textBoxBandwidth.Text);
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbt" + _cardNumber + "creategroups", checkBoxCreateGroups.Checked ? "true" : "false");
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbt" + _cardNumber + "createsignalgroup", checkBoxCreateSignalGroup.Checked ? "true" : "false");      
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbt" + _cardNumber + "Country", mpComboBoxCountry.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbt" + _cardNumber + "Region", mpComboBoxRegion.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbt" + _cardNumber + "Freq", textBoxFreq.Text);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbt" + _cardNumber + "Bandwidth", textBoxBandwidth.Text);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbt" + _cardNumber + "creategroups", checkBoxCreateGroups.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbt" + _cardNumber + "createsignalgroup", checkBoxCreateSignalGroup.Checked);      
     }
 
     /// <summary>

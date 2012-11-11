@@ -670,8 +670,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
         if (curBox.Items.Count > 0)
         {
-          int selIdx =
-            Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("dvbs{0}SatteliteContext{1}", _cardNumber, idx), "0").Value);
+          int selIdx = ServiceAgents.Instance.SettingServiceAgent.GetValue(String.Format("dvbs{0}SatteliteContext{1}", _cardNumber, idx), 0);
           if (selIdx < curBox.Items.Count)
           {
             curBox.SelectedIndex = selIdx;
@@ -707,20 +706,18 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             "Port 14",
             "Port 15",
             "Port 16"});
-        curBox.SelectedIndex =
-          Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("dvbs{0}DiSEqC{1}", _cardNumber, idx), "0").Value);
+        curBox.SelectedIndex = ServiceAgents.Instance.SettingServiceAgent.GetValue(String.Format("dvbs{0}DiSEqC{1}", _cardNumber, idx), 0);
 
         curBox = mpComboLnbType[ctlIndex];
         curBox.Items.Clear();
         curBox.Items.AddRange((object[])lnbTypes);
         if (curBox.Items.Count > 0)
         {
-          curBox.SelectedIndex =
-            Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("dvbs{0}band{1}", _cardNumber, idx), "0").Value);
+          curBox.SelectedIndex = ServiceAgents.Instance.SettingServiceAgent.GetValue(String.Format("dvbs{0}band{1}", _cardNumber, idx), 0);
         }
 
         curCheck = mpLNBs[ctlIndex];        
-        curCheck.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("dvbs{0}LNB{1}", _cardNumber, idx), "0").Value == "true");
+        curCheck.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue(String.Format("dvbs{0}LNB{1}", _cardNumber, idx), false);
       }
 
       mpLNB1_CheckedChanged(null, null);
@@ -728,13 +725,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       mpLNB3_CheckedChanged(null, null);
       mpLNB4_CheckedChanged(null, null);
 
-      checkBoxCreateGroups.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "creategroups", "false").Value == "true");
-      checkBoxCreateGroupsSat.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "creategroupssat", "false").Value ==
-                                         "true");
-      checkBoxCreateSignalGroup.Checked =
-        (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "createsignalgroup", "false").Value == "true");
-
-      checkBoxEnableDVBS2.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "enabledvbs2", "false").Value == "true");
+      checkBoxCreateGroups.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbs" + _cardNumber + "creategroups", false));
+      checkBoxCreateGroupsSat.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbs" + _cardNumber + "creategroupssat", false));
+      checkBoxCreateSignalGroup.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbs" + _cardNumber + "createsignalgroup", false));
+      checkBoxEnableDVBS2.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbs" + _cardNumber + "enabledvbs2", false));
 
 
       _enableEvents = true;
@@ -762,28 +756,26 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     public override void SaveSettings()
     {
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "creategroups", checkBoxCreateGroups.Checked ? "true" : "false");
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "creategroupssat", checkBoxCreateGroupsSat.Checked ? "true" : "false");
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "createsignalgroup", checkBoxCreateSignalGroup.Checked ? "true" : "false");
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "SatteliteContext1", mpTransponder1.SelectedIndex.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "SatteliteContext2", mpTransponder2.SelectedIndex.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "SatteliteContext3", mpTransponder3.SelectedIndex.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "SatteliteContext4", mpTransponder4.SelectedIndex.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "DisEqc1", mpComboDiseqc1.SelectedIndex.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "DisEqc2", mpComboDiseqc2.SelectedIndex.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "DisEqc3", mpComboDiseqc3.SelectedIndex.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "DisEqc4", mpComboDiseqc4.SelectedIndex.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "band1", mpComboLnbType1.SelectedIndex.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "band2", mpComboLnbType2.SelectedIndex.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "band3", mpComboLnbType3.SelectedIndex.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "band4", mpComboLnbType4.SelectedIndex.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "LNB1", mpLNB1.Checked ? "true" : "false");
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "LNB2", mpLNB2.Checked ? "true" : "false");
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "LNB3", mpLNB3.Checked ? "true" : "false");
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "LNB4", mpLNB4.Checked ? "true" : "false");
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "enabledvbs2", checkBoxEnableDVBS2.Checked ? "true" : "false");
-
-    
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "creategroups", checkBoxCreateGroups.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "creategroupssat", checkBoxCreateGroupsSat.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "createsignalgroup", checkBoxCreateSignalGroup.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "SatteliteContext1", mpTransponder1.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "SatteliteContext2", mpTransponder2.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "SatteliteContext3", mpTransponder3.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "SatteliteContext4", mpTransponder4.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "DisEqc1", mpComboDiseqc1.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "DisEqc2", mpComboDiseqc2.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "DisEqc3", mpComboDiseqc3.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "DisEqc4", mpComboDiseqc4.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "band1", mpComboLnbType1.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "band2", mpComboLnbType2.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "band3", mpComboLnbType3.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "band4", mpComboLnbType4.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "LNB1", mpLNB1.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "LNB2", mpLNB2.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "LNB3", mpLNB3.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "LNB4", mpLNB4.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "enabledvbs2", checkBoxEnableDVBS2.Checked);
     }
 
     private void UpdateStatus()
@@ -936,8 +928,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
 
       int position = -1;
-      Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "motorEnabled", "no");
-      if (setting.Value == "yes")
+      bool setting = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbs" + _cardNumber + "motorEnabled", false);
+      if (setting)
       {
         foreach (DisEqcMotor motor in card.DisEqcMotors)
         {
@@ -1211,12 +1203,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       _enableEvents = false;
 
-      Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "motorEnabled", "no");
-      bool enabled = false;
-      if (setting.Value == "yes")
-      {
-        enabled = true;
-      }
+      bool enabled = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbs" + _cardNumber + "motorEnabled", false);
       checkBox1.Checked = enabled;
       checkBox1_CheckedChanged(null, null);
 
@@ -1224,18 +1211,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       for (int i = 1; i < 127; ++i)
         comboBoxStepSize.Items.Add(i.ToString());
 
-      setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "motorStepSize", "10");
-      int stepsize;
-      if (Int32.TryParse(setting.Value, out stepsize))
-        comboBoxStepSize.SelectedIndex = stepsize - 1;
-      else
-        comboBoxStepSize.SelectedIndex = 9;
+      int stepsize = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbs" + _cardNumber + "motorStepSize", 10);
+      comboBoxStepSize.SelectedIndex = stepsize - 1;
 
       comboBoxSat.Items.Clear();
 
-      setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "selectedMotorSat", "0");
-      int index;
-      Int32.TryParse(setting.Value, out index);
+      int index = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbs" + _cardNumber + "selectedMotorSat", 0);
 
       List<SatelliteContext> satellites = LoadSatellites();
 
@@ -1378,7 +1359,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (checkBox1.Checked == false)
         return;
 
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "selectedMotorSat", comboBoxSat.SelectedIndex.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "selectedMotorSat", comboBoxSat.SelectedIndex);
       LoadMotorTransponder();
       comboBox1_SelectedIndexChanged(null, null);
     }
@@ -1393,7 +1374,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (checkBoxEnabled.Checked)
       {
         ServiceAgents.Instance.ControllerServiceAgent.DiSEqCForceLimit(_cardNumber, true);
-        ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "limitsEnabled", "yes");
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "limitsEnabled", true);
       }
       else
       {
@@ -1402,26 +1383,22 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                           MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
         {
           ServiceAgents.Instance.ControllerServiceAgent.DiSEqCForceLimit(_cardNumber, false);
-          ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "limitsEnabled", "no");
-
+          ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "limitsEnabled", false);
         }
         else
         {
           _enableEvents = false;
           checkBoxEnabled.Checked = true;
           ServiceAgents.Instance.ControllerServiceAgent.DiSEqCForceLimit(_cardNumber, true);
-          ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "limitsEnabled", "yes");
+          ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "limitsEnabled", true);
           _enableEvents = true;
         }
       }
     }
     private void LoadMotorTransponder()
     {
-      Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + _cardNumber + "limitsEnabled", "yes");
-      if (setting.Value == "yes")
-        checkBoxEnabled.Checked = true;
-      if (setting.Value == "no")
-        checkBoxEnabled.Checked = false;
+      checkBoxEnabled.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbs" + _cardNumber + "limitsEnabled", true);
+
       comboBox1.Items.Clear();
       SatelliteContext sat = (SatelliteContext)comboBoxSat.SelectedItem;
       LoadTransponders(sat);
@@ -1517,7 +1494,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         return;
       if (checkBox1.Checked == false)
         return;
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "motorStepSize", String.Format("{0}", (1 + comboBoxStepSize.SelectedIndex)));            
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "motorStepSize", (1 + comboBoxStepSize.SelectedIndex));
     }
 
     private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -1538,7 +1515,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       buttonSetEastLimit.Enabled = checkBox1.Checked;
       buttonReset.Enabled = checkBox1.Checked;
 
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbs" + _cardNumber + "motorEnabled", checkBox1.Checked ? "yes" : "no");      
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbs" + _cardNumber + "motorEnabled", checkBox1.Checked);
     }
 
     private bool reentrant;

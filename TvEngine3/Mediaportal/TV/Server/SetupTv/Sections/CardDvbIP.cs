@@ -90,18 +90,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       base.OnSectionActivated();
       UpdateStatus();
       
-      int index = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbip" + _cardNumber.ToString() + "Service", "0").Value);
+      int index = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbip" + _cardNumber.ToString() + "Service", 0);
       if (index < mpComboBoxService.Items.Count) mpComboBoxService.SelectedIndex = index;
       
-      checkBoxCreateGroups.Checked =
-        (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbip" + _cardNumber.ToString() + "creategroups", "false").Value == "true");
+      checkBoxCreateGroups.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbip" + _cardNumber.ToString() + "creategroups", false);
     }
 
     public override void OnSectionDeActivated()
     {
       base.OnSectionDeActivated();
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbip" + _cardNumber.ToString() + "Service", mpComboBoxService.SelectedIndex.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("dvbip" + _cardNumber.ToString() + "creategroups", checkBoxCreateGroups.Checked ? "true" : "false");
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbip" + _cardNumber.ToString() + "Service", mpComboBoxService.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbip" + _cardNumber.ToString() + "creategroups", checkBoxCreateGroups.Checked);
     }
 
     private void CardDvbIP_Load(object sender, EventArgs e) {}

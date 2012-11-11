@@ -62,7 +62,7 @@ namespace Mediaportal.TV.Server.SetupTV
     /// <returns>number of seconds</returns>
     public static int DefaultInitTimeOut()
     {
-      return Convert.ToInt16(Singleton<ServiceAgents>.Instance.SettingServiceAgent.GetSettingWithDefaultValue("delayCardDetect", "0").Value) + 10;
+      return Singleton<ServiceAgents>.Instance.SettingServiceAgent.GetValue("delayCardDetect", 0) + 10;
     }
 
     /// <summary>

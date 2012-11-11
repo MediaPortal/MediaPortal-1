@@ -301,7 +301,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 
       // Update last schedule run status
       config.LastRun = DateTime.Now;
-      SettingsManagement.SaveSetting("EPGWakeupConfig", config.SerializeAsString());      
+      SettingsManagement.SaveValue("EPGWakeupConfig", config.SerializeAsString());      
       _epgThreadRunning = false;
     }
 

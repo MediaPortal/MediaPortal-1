@@ -132,26 +132,26 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       foreach (DigitalDevicesCiSlot slot in _ciSlots)
       {
         this.LogDebug("Digital Devices config: slot {0}...", slot.CamRootMenuTitle);
-        _settingServiceAgent.SaveSetting("digitalDevicesCiDeviceName" + i, slot.DeviceName);
+        _settingServiceAgent.SaveValue("digitalDevicesCiDeviceName" + i, slot.DeviceName);
         // Persist the slot related settings. The other struct properties are dynamic.
         this.LogDebug("  device name   = {0}", slot.DeviceName);
 
-        _settingServiceAgent.SaveSetting("digitalDevicesCiDevicePath" + i, slot.DevicePath);
+        _settingServiceAgent.SaveValue("digitalDevicesCiDevicePath" + i, slot.DevicePath);
         this.LogDebug("  device path   = {0}", slot.DevicePath);
 
-        string decryptLimitValue = _decryptLimits[i].Value.ToString();
-        _settingServiceAgent.SaveSetting("digitalDevicesCiDecryptLimit" + i, decryptLimitValue);
+        int decryptLimitValue = (int) _decryptLimits[i].Value;
+        _settingServiceAgent.SaveValue("digitalDevicesCiDecryptLimit" + i, decryptLimitValue);
         this.LogDebug("  decrypt limit = {0}", decryptLimitValue);
 
         string digitalDevicesCiProviderList = String.Join("|", Regex.Split(_providerLists[i].Text.Trim(), @"\s*,\s*"));
-        _settingServiceAgent.SaveSetting("digitalDevicesCiProviderList" + i, digitalDevicesCiProviderList);
+        _settingServiceAgent.SaveValue("digitalDevicesCiProviderList" + i, digitalDevicesCiProviderList);
         this.LogDebug("  provider list = {0}", digitalDevicesCiProviderList);
 
         i++;
       }
 
       // Invalidate any other settings in the DB.
-      _settingServiceAgent.SaveSetting("digitalDevicesCiDevicePath" + i, String.Empty);
+      _settingServiceAgent.SaveValue("digitalDevicesCiDevicePath" + i, String.Empty);
 
       base.SaveSettings();
     }

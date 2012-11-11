@@ -141,7 +141,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             continue;
           if (channel.MediaType != (decimal) _mediaTypeEnum)
             continue;          
-          bool enableDVBS2 = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + card.IdCard + "enabledvbs2", "false").Value == "true");
+          bool enableDVBS2 = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbs" + card.IdCard + "enabledvbs2", false);
           List<TuningDetail> tuningDetails = GetTuningDetailsByCardType(channel, cardType, enableDVBS2);
           int imageIndex = GetImageIndex(tuningDetails);
           ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);

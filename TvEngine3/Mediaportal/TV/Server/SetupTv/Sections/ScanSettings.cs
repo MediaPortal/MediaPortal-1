@@ -114,16 +114,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       base.OnSectionActivated();
       
 
-      numericUpDownTune.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutTune", "2").Value);
-      numericUpDownPAT.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutPAT", "5").Value);
-      numericUpDownCAT.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutCAT", "5").Value);
-      numericUpDownPMT.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutPMT", "10").Value);
-      numericUpDownSDT.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutSDT", "20").Value);
-      numericUpDownAnalog.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeoutAnalog", "20").Value);
+      numericUpDownTune.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeoutTune", 2);
+      numericUpDownPAT.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeoutPAT", 5);
+      numericUpDownCAT.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeoutCAT", 5);
+      numericUpDownPMT.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeoutPMT", 10);
+      numericUpDownSDT.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeoutSDT", 20);
+      numericUpDownAnalog.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeoutAnalog", 20);
 
-      delayDetectUpDown.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("delayCardDetect", "0").Value);
+      delayDetectUpDown.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("delayCardDetect", 0);
 
-      checkBoxEnableLinkageScanner.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("linkageScannerEnabled", "no").Value == "yes");
+      checkBoxEnableLinkageScanner.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("linkageScannerEnabled", false);
 
       mpComboBoxPrio.Items.Clear();
       mpComboBoxPrio.Items.Add("Realtime");
@@ -135,7 +135,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       try
       {
-        mpComboBoxPrio.SelectedIndex = Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("processPriority", "3").Value);
+        mpComboBoxPrio.SelectedIndex = ServiceAgents.Instance.SettingServiceAgent.GetValue("processPriority", 3);
         //default is normal=3       
       }
       catch (Exception)
@@ -144,22 +144,22 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       BuildLists();
-      numericUpDownReuseLimit.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("softwareEncoderReuseLimit", "0").Value);
+      numericUpDownReuseLimit.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("softwareEncoderReuseLimit", 0);
     }
 
     public override void OnSectionDeActivated()
     {
       base.OnSectionDeActivated();
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeoutTune", numericUpDownTune.Value.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeoutPAT", numericUpDownPAT.Value.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeoutCAT", numericUpDownCAT.Value.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeoutPMT", numericUpDownPMT.Value.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeoutSDT", numericUpDownSDT.Value.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeoutAnalog", numericUpDownAnalog.Value.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("linkageScannerEnabled", checkBoxEnableLinkageScanner.Checked ? "yes" : "no");
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("processPriority", mpComboBoxPrio.SelectedIndex.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("delayCardDetect", delayDetectUpDown.Value.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("softwareEncoderReuseLimit", numericUpDownReuseLimit.Value.ToString());      
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeoutTune", (int)numericUpDownTune.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeoutPAT", (int) numericUpDownPAT.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeoutCAT", (int) numericUpDownCAT.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeoutPMT", (int) numericUpDownPMT.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeoutSDT", (int) numericUpDownSDT.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeoutAnalog", (int) numericUpDownAnalog.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("linkageScannerEnabled", checkBoxEnableLinkageScanner.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("processPriority", mpComboBoxPrio.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("delayCardDetect", (int) delayDetectUpDown.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("softwareEncoderReuseLimit", (int) numericUpDownReuseLimit.Value);      
 
       foreach (DisplaySoftwareEncoder encoder in _bindingVideoEncoders)
       {

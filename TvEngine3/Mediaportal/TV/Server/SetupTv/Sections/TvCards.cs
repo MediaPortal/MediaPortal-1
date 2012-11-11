@@ -131,14 +131,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       ReOrder();
 
       // DVB-IP cards
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("iptvCardCount", iptvUpDown.Value.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("iptvCardCount", (int)iptvUpDown.Value);
       
 
       // WinTV CI
       CardInfo info = (CardInfo)mpComboBoxCard.SelectedItem;
       if (info != null)
       {
-        ServiceAgents.Instance.SettingServiceAgent.SaveSetting("winTvCiTuner", info.card.IdCard.ToString());        
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("winTvCiTuner", info.card.IdCard);        
       }
 
       if (_needRestart)
@@ -155,10 +155,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       UpdateList();
 
       //IPTV
-      iptvUpDown.Value = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("iptvCardCount", "1").Value);
+      iptvUpDown.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("iptvCardCount", 1);
 
       //WinTV CI
-      int winTvTunerCardId = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("winTvCiTuner", "-1").Value);
+      int winTvTunerCardId = ServiceAgents.Instance.SettingServiceAgent.GetValue("winTvCiTuner", -1);
       mpComboBoxCard.SelectedIndex = -1;
       foreach (CardInfo cardInfo in mpComboBoxCard.Items)
       {

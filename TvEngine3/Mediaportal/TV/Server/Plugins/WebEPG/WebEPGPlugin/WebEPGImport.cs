@@ -252,10 +252,10 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
             epg.ShowProgress -= param.showProgress;
           }
 
-          SettingsManagement.SaveSetting("webepgResultLastImport", DateTime.Now.ToString());
-          SettingsManagement.SaveSetting("webepgResultChannels", epg.ImportStats.Channels.ToString());
-          SettingsManagement.SaveSetting("webepgResultPrograms", epg.ImportStats.Programs.ToString());
-          SettingsManagement.SaveSetting("webepgResultStatus", epg.ImportStats.Status);
+          SettingsManagement.SaveValue("webepgResultLastImport", DateTime.Now);
+          SettingsManagement.SaveValue("webepgResultChannels", epg.ImportStats.Channels);
+          SettingsManagement.SaveValue("webepgResultPrograms", epg.ImportStats.Programs);
+          SettingsManagement.SaveValue("webepgResultStatus", epg.ImportStats.Status);
           
           //this.LogDebug("Xmltv: imported {0} channels, {1} programs status:{2}", numChannels, numPrograms, errors);
         }
@@ -265,7 +265,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
 
         }
 
-        SettingsManagement.SaveSetting("webepgResultLastImport", DateTime.Now.ToString());
+        SettingsManagement.SaveValue("webepgResultLastImport", DateTime.Now);
       }
       finally
       {
@@ -289,7 +289,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
                    config.Hour, config.Minutes, DateTime.Now.Hour, DateTime.Now.Minute);
           StartImport(null);
           config.LastRun = DateTime.Now;
-          SettingsManagement.SaveSetting("webepgSchedule", config.SerializeAsString());
+          SettingsManagement.SaveValue("webepgSchedule", config.SerializeAsString());
         }
       }
     }

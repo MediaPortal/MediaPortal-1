@@ -44,13 +44,13 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
     public override void OnSectionActivated()
     {
       
-      analyzeMode.SelectedIndex = Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("CMAnalyzeMode", "0").Value);
-      debug.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("CMDebugMode", "false").Value == "true";
+      analyzeMode.SelectedIndex = ServiceAgents.Instance.SettingServiceAgent.GetValue("CMAnalyzeMode", 0);
+      debug.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("CMDebugMode", false);
     }
 
     public override void OnSectionDeActivated()
     {            
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("CMDebugMode", debug.Checked ? "true" : "false");
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("CMDebugMode", debug.Checked);
       base.OnSectionDeActivated();
     }
 

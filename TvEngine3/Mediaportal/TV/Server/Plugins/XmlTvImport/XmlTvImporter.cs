@@ -358,8 +358,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
             }
           }
         }
-        SettingsManagement.SaveSetting("xmlTvRemoteScheduleTransferStatus", info);
-        SettingsManagement.SaveSetting("xmlTvRemoteScheduleLastTransfer", DateTime.Now.ToString());        
+        SettingsManagement.SaveValue("xmlTvRemoteScheduleTransferStatus", info);
+        SettingsManagement.SaveValue("xmlTvRemoteScheduleLastTransfer", DateTime.Now);        
 
         this.LogInfo(info);
       }
@@ -390,7 +390,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       {
         errMsg = "No URL defined.";
         this.LogError(errMsg);
-        SettingsManagement.SaveSetting("xmlTvRemoteScheduleTransferStatus", errMsg);
+        SettingsManagement.SaveValue("xmlTvRemoteScheduleTransferStatus", errMsg);
         
         _remoteFileDownloadInProgress = false;
         SetStandbyAllowed(true);
@@ -401,7 +401,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       {
         errMsg = "No tvguide.xml path defined.";
         this.LogError(errMsg);
-        SettingsManagement.SaveSetting("xmlTvRemoteScheduleTransferStatus", errMsg);        
+        SettingsManagement.SaveValue("xmlTvRemoteScheduleTransferStatus", errMsg);        
         _remoteFileDownloadInProgress = false;
         SetStandbyAllowed(true);
         return;
@@ -477,8 +477,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           lastTransferAt = errMsg;
         }
       }
-      SettingsManagement.SaveSetting("xmlTvRemoteScheduleTransferStatus", transferStatus);
-      SettingsManagement.SaveSetting("xmlTvRemoteScheduleLastTransfer", lastTransferAt);
+      SettingsManagement.SaveValue("xmlTvRemoteScheduleTransferStatus", transferStatus);
+      SettingsManagement.SaveValue("xmlTvRemoteScheduleLastTransfer", lastTransferAt);
     }
 
     /// <summary>
@@ -532,8 +532,8 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           //timed out;
           _remoteFileDownloadInProgress = false;          
           Setting setting;
-          SettingsManagement.SaveSetting("xmlTvRemoteScheduleTransferStatus", "File transfer timed out.");
-          SettingsManagement.SaveSetting("xmlTvRemoteScheduleLastTransfer", now.ToString());
+          SettingsManagement.SaveValue("xmlTvRemoteScheduleTransferStatus", "File transfer timed out.");
+          SettingsManagement.SaveValue("xmlTvRemoteScheduleLastTransfer", now);
 
           this.LogInfo("File transfer timed out.");
         }
@@ -852,10 +852,10 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
             }
           }
 
-          SettingsManagement.SaveSetting("xmlTvResultLastImport", DateTime.Now.ToString());
-          SettingsManagement.SaveSetting("xmlTvResultChannels", numChannels.ToString());
-          SettingsManagement.SaveSetting("xmlTvResultPrograms", numPrograms.ToString());
-          SettingsManagement.SaveSetting("xmlTvResultStatus", errors);
+          SettingsManagement.SaveValue("xmlTvResultLastImport", DateTime.Now);
+          SettingsManagement.SaveValue("xmlTvResultChannels", numChannels);
+          SettingsManagement.SaveValue("xmlTvResultPrograms", numPrograms);
+          SettingsManagement.SaveValue("xmlTvResultStatus", errors);
           this.LogDebug("Xmltv: imported {0} channels, {1} programs status:{2}", numChannels, numPrograms, errors);
         }
         catch (Exception ex)
@@ -863,7 +863,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
           this.LogError(ex, @"plugin:xmltv import failed");
         }
 
-        SettingsManagement.SaveSetting("xmlTvLastUpdate", param._importDate.ToString());
+        SettingsManagement.SaveValue("xmlTvLastUpdate", param._importDate);
         this.LogInfo("Xmltv: waiting for database to finish inserting imported programs.");        
         ProgramManagement.InitiateInsertPrograms();
       }

@@ -77,18 +77,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     public override void LoadSettings()
     {
             
-      numEpgGrabber.Value = ValueSanityCheck(
-        Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(UserFactory.EPG_TAGNAME, UserFactory.EPG_PRIORITY.ToString()).Value), 1, 100);
+      numEpgGrabber.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue(UserFactory.EPG_TAGNAME, UserFactory.EPG_PRIORITY), 1, 100);
 
-      numDefaultUser.Value = ValueSanityCheck(
-        Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(UserFactory.USER_TAGNAME, UserFactory.USER_PRIORITY.ToString()).Value), 1, 100);
+      numDefaultUser.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue(UserFactory.USER_TAGNAME, UserFactory.USER_PRIORITY), 1, 100);
 
-      numScheduler.Value = ValueSanityCheck(
-        Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(UserFactory.SCHEDULER_TAGNAME, UserFactory.SCHEDULER_PRIORITY.ToString()).Value), 1, 100);
+      numScheduler.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue(UserFactory.SCHEDULER_TAGNAME, UserFactory.SCHEDULER_PRIORITY), 1, 100);
 
-      Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(UserFactory.CUSTOM_TAGNAME, "");
+      string setting = ServiceAgents.Instance.SettingServiceAgent.GetValue(UserFactory.CUSTOM_TAGNAME, "");
       gridUserPriorities.Rows.Clear();
-      string[] users = setting.Value.Split(';');
+      string[] users = setting.Split(';');
       foreach (string user in users)
       {
         string[] shareItem = user.Split(',');
@@ -103,9 +100,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     public override void SaveSettings()
     {
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("PriorityEPG", numEpgGrabber.Value.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("PriorityUser", numDefaultUser.Value.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("PriorityScheduler", numScheduler.Value.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("PriorityEPG", (int)numEpgGrabber.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("PriorityUser", (int)numDefaultUser.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("PriorityScheduler", (int)numScheduler.Value);
       
 
       
@@ -115,7 +112,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         shares.AppendFormat("{0},{1};", row.Cells[0].Value, row.Cells[1].Value);
       }
 
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("PrioritiesCustom", shares.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("PrioritiesCustom", shares.ToString());
     }
 
     #endregion

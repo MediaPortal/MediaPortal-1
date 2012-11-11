@@ -79,30 +79,24 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       
 
-      numericUpDownMinFiles.Value = ValueSanityCheck(
-        Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeshiftMinFiles", "6").Value), 3, 100);
-      numericUpDownMaxFiles.Value =
-        ValueSanityCheck(Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeshiftMaxFiles", "20").Value), 3, 100);
-      numericUpDownMaxFileSize.Value =
-        ValueSanityCheck(Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeshiftMaxFileSize", "256").Value), 20, 1024);
-      numericUpDownWaitUnscrambled.Value =
-        ValueSanityCheck(Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeshiftWaitForUnscrambled", "5").Value), 1, 30);
-      numericUpDownWaitTimeshifting.Value =
-        ValueSanityCheck(Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeshiftWaitForTimeshifting", "15").Value), 1, 30);
-      numericUpDownMaxFreeCardsToTry.Value = ValueSanityCheck(
-        Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeshiftMaxFreeCardsToTry", "0").Value), 0, 100);
-      numericParkedStreamTimeout.Value = ValueSanityCheck(Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("parkedStreamTimeout", "5").Value), 1, 300);
+      numericUpDownMinFiles.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("timeshiftMinFiles", 6), 3, 100);
+      numericUpDownMaxFiles.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("timeshiftMaxFiles", 20), 3, 100);
+      numericUpDownMaxFileSize.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("timeshiftMaxFileSize", 256), 20, 1024);
+      numericUpDownWaitUnscrambled.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("timeshiftWaitForUnscrambled", 5), 1, 30);
+      numericUpDownWaitTimeshifting.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("timeshiftWaitForTimeshifting", 15), 1, 30);
+      numericUpDownMaxFreeCardsToTry.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("timeshiftMaxFreeCardsToTry", 0), 0, 100);
+      numericParkedStreamTimeout.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("parkedStreamTimeout", 5), 1, 300);
     }
 
     public override void SaveSettings()
     {
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeshiftMinFiles", numericUpDownMinFiles.Value.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeshiftMaxFiles", numericUpDownMaxFiles.Value.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeshiftMaxFileSize", numericUpDownMaxFileSize.Value.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeshiftWaitForUnscrambled", numericUpDownWaitUnscrambled.Value.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeshiftWaitForTimeshifting", numericUpDownWaitTimeshifting.Value.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeshiftMaxFreeCardsToTry", numericUpDownMaxFreeCardsToTry.Value.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("parkedStreamTimeout", numericParkedStreamTimeout.Value.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeshiftMinFiles", (int)numericUpDownMinFiles.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeshiftMaxFiles", (int)numericUpDownMaxFiles.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeshiftMaxFileSize", (int)numericUpDownMaxFileSize.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeshiftWaitForUnscrambled", (int)numericUpDownWaitUnscrambled.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeshiftWaitForTimeshifting", (int) numericUpDownWaitTimeshifting.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeshiftMaxFreeCardsToTry", (int) numericUpDownMaxFreeCardsToTry.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("parkedStreamTimeout", (int) numericParkedStreamTimeout.Value);
     }
 
     #endregion

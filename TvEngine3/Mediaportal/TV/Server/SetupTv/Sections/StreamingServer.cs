@@ -131,8 +131,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (needRestart)
       {
 
-        ServiceAgents.Instance.SettingServiceAgent.SaveSetting("rtspport", _rtspPort.ToString());
-        ServiceAgents.Instance.SettingServiceAgent.SaveSetting("hostname", _hostname);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("rtspport", _rtspPort);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("hostname", _hostname);
 
         ServiceNeedsToRestart();
       }

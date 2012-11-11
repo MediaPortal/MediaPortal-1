@@ -196,20 +196,19 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       numericUpDownPostRec.Value = 5;
       
 
-      numericUpDownMaxFreeCardsToTry.Value = ValueSanityCheck(
-        Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("recordMaxFreeCardsToTry", "0").Value), 0, 100);
+      numericUpDownMaxFreeCardsToTry.Value = ValueSanityCheck(ServiceAgents.Instance.SettingServiceAgent.GetValue("recordMaxFreeCardsToTry", 0), 0, 100);
 
-      comboBoxWeekend.SelectedIndex = Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("FirstDayOfWeekend", "0").Value);
+      comboBoxWeekend.SelectedIndex = ServiceAgents.Instance.SettingServiceAgent.GetValue("FirstDayOfWeekend", 0);
       //default is Saturday=0
 
-      checkBoxAutoDelete.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("autodeletewatchedrecordings", "no").Value == "yes");
-      checkBoxPreventDupes.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PreventDuplicates", "no").Value == "yes");
-      comboBoxEpisodeKey.SelectedIndex = Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("EpisodeKey", "0").Value);
+      checkBoxAutoDelete.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetValue("autodeletewatchedrecordings", false));
+      checkBoxPreventDupes.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetValue("PreventDuplicates", false));
+      comboBoxEpisodeKey.SelectedIndex = ServiceAgents.Instance.SettingServiceAgent.GetValue("EpisodeKey", 0);
       // default EpisodeName
-      //checkBoxCreateTagInfoXML.Checked = true; // (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("createtaginfoxml", "yes").value == "yes");
+      //checkBoxCreateTagInfoXML.Checked = true; // (ServiceAgents.Instance.SettingServiceAgent.GetValue("createtaginfoxml", "yes").value == "yes");
 
-      numericUpDownPreRec.Value = int.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "7").Value);
-      numericUpDownPostRec.Value = int.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "10").Value);
+      numericUpDownPreRec.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("preRecordInterval", 7);
+      numericUpDownPostRec.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("postRecordInterval", 10);
 
       // Movies formats
       _formatString[0] = new string[4];
@@ -226,16 +225,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       _formatString[1][3] = @"%title% - %channel%\%title% - %date% - %start%";
       _formatString[1][4] = @"[User custom value]"; // Must be the last one in the array list
 
-      Int32.TryParse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("moviesformatindex", "0").Value, out _formatIndex[0]);
-      Int32.TryParse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("seriesformatindex", "0").Value, out _formatIndex[1]);
+      _formatIndex[0]= ServiceAgents.Instance.SettingServiceAgent.GetValue("moviesformatindex", 0);
+      _formatIndex[1] = ServiceAgents.Instance.SettingServiceAgent.GetValue("seriesformatindex", 0);
 
-      _customFormat[0] = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("moviesformat", "").Value;
-      _customFormat[1] = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("seriesformat", "").Value;
+      _customFormat[0] = ServiceAgents.Instance.SettingServiceAgent.GetValue("moviesformat", "");
+      _customFormat[1] = ServiceAgents.Instance.SettingServiceAgent.GetValue("seriesformat", "");
 
       comboBoxMovies.SelectedIndex = 0;
       UpdateFieldDisplay();
 
-      enableDiskQuota.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("diskQuotaEnabled", "False").Value == "True");
+      enableDiskQuota.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetValue("diskQuotaEnabled", false));
       enableDiskQuotaControls();
 
       LoadComboBoxDrive();
@@ -259,26 +258,26 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     public override void SaveSettings()
     {
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("preRecordInterval", numericUpDownPreRec.Value.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("postRecordInterval", numericUpDownPostRec.Value.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("preRecordInterval", (int) numericUpDownPreRec.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("postRecordInterval", (int) numericUpDownPostRec.Value);
 
 
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("moviesformat", _formatIndex[0] == (_formatString[0].Length - 1)
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("moviesformat", _formatIndex[0] == (_formatString[0].Length - 1)
                         ? _customFormat[0]
                         : _formatString[0][_formatIndex[0]]);
       
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("moviesformatindex",_formatIndex[0].ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("moviesformatindex",_formatIndex[0]);
       
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("seriesformat", _formatIndex[1] == (_formatString[1].Length - 1)
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("seriesformat", _formatIndex[1] == (_formatString[1].Length - 1)
                         ? _customFormat[1]
                         : _formatString[1][_formatIndex[1]]);
 
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("seriesformatindex", _formatIndex[1].ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("FirstDayOfWeekend", comboBoxWeekend.SelectedIndex.ToString()); //default is Saturday=0      
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("autodeletewatchedrecordings", checkBoxAutoDelete.Checked ? "yes" : "no");
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("PreventDuplicates", checkBoxPreventDupes.Checked ? "yes" : "no");
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("EpisodeKey", comboBoxEpisodeKey.SelectedIndex.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("recordMaxFreeCardsToTry", numericUpDownMaxFreeCardsToTry.Value.ToString());      
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("seriesformatindex", _formatIndex[1]);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("FirstDayOfWeekend", comboBoxWeekend.SelectedIndex); //default is Saturday=0      
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("autodeletewatchedrecordings", checkBoxAutoDelete.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("PreventDuplicates", checkBoxPreventDupes.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("EpisodeKey", comboBoxEpisodeKey.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("recordMaxFreeCardsToTry", (int) numericUpDownMaxFreeCardsToTry.Value);      
 
       UpdateDriveInfo(true);
     }
@@ -478,7 +477,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       enableDiskQuotaControls();
 
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("diskQuotaEnabled", ((CheckBox)sender).Checked.ToString());      
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("diskQuotaEnabled", ((CheckBox)sender).Checked.ToString());      
     }
 
     private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -518,7 +517,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         if (mpNumericTextBoxDiskQuota.Value < 500)
           mpNumericTextBoxDiskQuota.Value = 500;
         long quota = mpNumericTextBoxDiskQuota.Value * 1024;        
-        ServiceAgents.Instance.SettingServiceAgent.SaveSetting("freediskspace", quota.ToString());
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("freediskspace", quota.ToString());
       }
       else
       {

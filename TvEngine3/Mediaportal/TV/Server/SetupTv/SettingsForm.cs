@@ -126,7 +126,7 @@ namespace Mediaportal.TV.Server.SetupTV
               if (dlg == DialogResult.Yes)
               {
                 this.LogInfo("Controller: server {0} changed to {1}", RemoteControl.HostName, localHostname);                      
-                ServiceAgents.Instance.SettingServiceAgent.SaveSetting("hostname", localHostname);
+                ServiceAgents.Instance.SettingServiceAgent.SaveValue("hostname", localHostname);
                 if (!ServiceHelper.IsRestrictedMode)
                 {
                   ServiceHelper.Restart();
@@ -189,9 +189,9 @@ namespace Mediaportal.TV.Server.SetupTV
           SectionSettings settings = plugin.Setup;
           if (settings != null)
           {
-            Setting isActive = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("plugin{0}", plugin.Name), "false");
+            bool isActive = ServiceAgents.Instance.SettingServiceAgent.GetValue(String.Format("plugin{0}", plugin.Name), false);
             settings.Text = plugin.Name;
-            if (isActive.Value == "true")
+            if (isActive)
             {
               AddChildSection(pluginsRoot, settings);
             }
@@ -444,10 +444,10 @@ namespace Mediaportal.TV.Server.SetupTV
         SectionSettings settings = plugin.Setup;
         if (settings != null && plugin.Name == name)
         {
-          Setting isActive = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(((Setting)sender).Tag, "false");
+          bool isActive = ServiceAgents.Instance.SettingServiceAgent.GetValue(((Setting)sender).Tag, false);
           settings.Text = name;
 
-          if (isActive.Value == "true")
+          if (isActive)
           {
             AddChildSection(pluginsRoot, settings);
             LoadChildSettingsFromNode(pluginsRoot, settings);

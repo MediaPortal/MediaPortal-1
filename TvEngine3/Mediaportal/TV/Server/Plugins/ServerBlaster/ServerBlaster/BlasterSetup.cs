@@ -38,12 +38,12 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
 
     public override void OnSectionDeActivated()
     {
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("SrvBlasterType", comboBoxType.SelectedIndex.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("SrvBlasterSpeed", comboBoxSpeed.SelectedIndex.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("SrvBlaster1Card", comboBoxBlaster1.SelectedIndex.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("SrvBlaster2Card", comboBoxBlaster2.SelectedIndex.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("SrvBlasterLog", Convert.ToString(checkBoxExtLog.Checked));
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("SrvBlasterSendSelect", Convert.ToString(checkSendSelect.Checked));            
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("SrvBlasterType", comboBoxType.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("SrvBlasterSpeed", comboBoxSpeed.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("SrvBlaster1Card", comboBoxBlaster1.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("SrvBlaster2Card", comboBoxBlaster2.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("SrvBlasterLog", checkBoxExtLog.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("SrvBlasterSendSelect", checkSendSelect.Checked);            
 
       base.OnSectionDeActivated();
     }
@@ -51,8 +51,8 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
     public override void OnSectionActivated()
     {
       
-      comboBoxType.SelectedIndex = Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlasterType", "0").Value);
-      comboBoxSpeed.SelectedIndex = Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlasterSpeed", "0").Value);
+      comboBoxType.SelectedIndex = ServiceAgents.Instance.SettingServiceAgent.GetValue("SrvBlasterType", 0);
+      comboBoxSpeed.SelectedIndex = ServiceAgents.Instance.SettingServiceAgent.GetValue("SrvBlasterSpeed", 0);
       comboBoxBlaster1.Items.Clear();
       comboBoxBlaster2.Items.Clear();
       comboBoxBlaster1.Items.Add("None");
@@ -66,12 +66,12 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
         comboBoxBlaster2.Items.Add(card.Name);
       }
       this.LogDebug("CB1Size {0}, CB2Size {1}, BT1 {2}, BT2 {3}", comboBoxBlaster1.Items.Count,
-                    comboBoxBlaster1.Items.Count, Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlaster1Card", "0").Value),
-                    Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlaster2Card", "0").Value));
-      comboBoxBlaster1.SelectedIndex = Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlaster1Card", "0").Value);
-      comboBoxBlaster2.SelectedIndex = Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("SrvBlaster2Card", "0").Value);
-      checkBoxExtLog.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSetting("SrvBlasterLog").Value == "True");
-      checkSendSelect.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSetting("SrvBlasterSendSelect").Value == "True");
+                    comboBoxBlaster1.Items.Count, ServiceAgents.Instance.SettingServiceAgent.GetValue("SrvBlaster1Card", 0),
+                    ServiceAgents.Instance.SettingServiceAgent.GetValue("SrvBlaster2Card", 0));
+      comboBoxBlaster1.SelectedIndex = ServiceAgents.Instance.SettingServiceAgent.GetValue("SrvBlaster1Card", 0);
+      comboBoxBlaster2.SelectedIndex = ServiceAgents.Instance.SettingServiceAgent.GetValue("SrvBlaster2Card", 0);
+      checkBoxExtLog.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("SrvBlasterLog", false);
+      checkSendSelect.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("SrvBlasterSendSelect", false);
     }
 
     private void ComboBox1SelectedIndexChanged(object sender, EventArgs e)

@@ -60,8 +60,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         item.SubItems.Add(plugin.Name);
         item.SubItems.Add(plugin.Author);
         item.SubItems.Add(plugin.Version);
-        Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("plugin{0}", plugin.Name), "false");
-        item.Checked = setting.Value == "true";
+        bool setting = ServiceAgents.Instance.SettingServiceAgent.GetValue(String.Format("plugin{0}", plugin.Name), false);
+        item.Checked = setting;
         item.Tag = setting;
       }
       listGroup = listView1.Groups["listViewGroupIncompatible"];
@@ -98,7 +98,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         return;
       }
       
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting(setting.Tag, e.Item.Checked ? "true" : "false");
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue(setting.Tag, e.Item.Checked);
       _needRestart = true;
 
       OnChanged(setting, EventArgs.Empty);

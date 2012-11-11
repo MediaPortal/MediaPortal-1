@@ -96,10 +96,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       
       
         
-      mpComboBoxCountry.SelectedIndex = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("analog" + _cardNumber + "Country", "0").Value);
-      mpComboBoxSource.SelectedIndex = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("analog" + _cardNumber + "Source", "0").Value);
-      checkBoxCreateSignalGroup.Checked =
-        (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("analog" + _cardNumber + "createsignalgroup", "false").Value == "true");
+      mpComboBoxCountry.SelectedIndex = ServiceAgents.Instance.SettingServiceAgent.GetValue("analog" + _cardNumber + "Country", 0);
+      mpComboBoxSource.SelectedIndex = ServiceAgents.Instance.SettingServiceAgent.GetValue("analog" + _cardNumber + "Source", 0);
+      checkBoxCreateSignalGroup.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("analog" + _cardNumber + "createsignalgroup", false);
       checkBoxCreateSignalGroup.Text = "Create \"" + TvConstants.TvGroupNames.Analog + "\" group";
 
       _cardName = ServiceAgents.Instance.ControllerServiceAgent.CardName(_cardNumber);
@@ -626,9 +625,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       base.OnSectionDeActivated();
       
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("analog" + _cardNumber + "Country", mpComboBoxCountry.SelectedIndex.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("analog" + _cardNumber + "Source", mpComboBoxSource.SelectedIndex.ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("analog" + _cardNumber + "createsignalgroup", checkBoxCreateSignalGroup.Checked ? "true" : "false");
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("analog" + _cardNumber + "Country", mpComboBoxCountry.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("analog" + _cardNumber + "Source", mpComboBoxSource.SelectedIndex);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("analog" + _cardNumber + "createsignalgroup", checkBoxCreateSignalGroup.Checked);
       
       
 
