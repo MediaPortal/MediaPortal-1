@@ -22,11 +22,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using MediaPortal.Common.Utils;
-using DirectShowLib;
 using System.Runtime.InteropServices.ComTypes;
+using System.Security.Permissions;
+using DirectShowLib;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TvLibrary.Utils.Util;
 

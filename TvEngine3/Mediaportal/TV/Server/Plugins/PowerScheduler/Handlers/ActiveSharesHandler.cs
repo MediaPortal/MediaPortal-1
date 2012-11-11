@@ -21,13 +21,12 @@
 #region Usings
 
 using System;
-using System.Management;
 using System.Collections.Generic;
+using System.Management;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using MediaPortal.Common.Utils;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using TvEngine.PowerScheduler.Interfaces;
 

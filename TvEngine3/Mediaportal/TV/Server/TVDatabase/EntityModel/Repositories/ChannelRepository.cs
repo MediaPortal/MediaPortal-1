@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Objects;
+﻿using System.Data.Entity;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;

@@ -5,8 +5,6 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using MediaPortal.Common.Utils;
-using Channel = Mediaportal.TV.Server.TVDatabase.Entities.Channel;
 
 namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {

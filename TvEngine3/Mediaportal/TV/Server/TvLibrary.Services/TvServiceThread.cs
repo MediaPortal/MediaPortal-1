@@ -6,16 +6,14 @@ using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Threading;
-using Castle.Windsor;
-using Castle.Windsor.Configuration.Interpreters;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.Base;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Services;
 
 namespace Mediaportal.TV.Server.TVLibrary

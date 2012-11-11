@@ -20,14 +20,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Threading;
+using System.Management;
 using System.Net;
 using System.Net.Sockets;
-using System.Management;
+using System.Runtime.InteropServices;
+using System.Threading;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Streaming

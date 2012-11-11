@@ -34,7 +34,6 @@ using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Presentation;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Microsoft.Win32;
-using Version = System.Version;
 
 namespace Mediaportal.TV.Server.SetupTV
 {

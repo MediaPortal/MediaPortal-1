@@ -21,7 +21,6 @@
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR

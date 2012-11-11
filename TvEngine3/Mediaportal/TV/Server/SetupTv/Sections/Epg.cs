@@ -21,10 +21,7 @@
 using System;
 using System.Collections.Specialized;
 using Mediaportal.TV.Server.SetupControls;
-using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections

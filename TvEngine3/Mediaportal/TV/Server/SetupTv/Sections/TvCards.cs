@@ -23,16 +23,13 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using DirectShowLib;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupTV.Dialogs;
-using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using DirectShowLib;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections

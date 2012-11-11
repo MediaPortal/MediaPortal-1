@@ -21,9 +21,8 @@
 using System;
 using System.Collections.Generic;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.DiskManagement

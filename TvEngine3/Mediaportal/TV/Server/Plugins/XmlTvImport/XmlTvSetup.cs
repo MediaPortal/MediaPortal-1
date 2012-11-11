@@ -31,14 +31,10 @@ using System.Windows.Forms;
 using System.Xml;
 using Mediaportal.TV.Server.Plugins.XmlTvImport.util;
 using Mediaportal.TV.Server.SetupControls;
-using Mediaportal.TV.Server.TVControl;
-using Mediaportal.TV.Server.TVControl.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.Plugins.XmlTvImport

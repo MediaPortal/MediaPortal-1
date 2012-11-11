@@ -20,17 +20,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.ServiceModel;
 using Mediaportal.TV.Server.TVDatabase.Presentation;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 
 namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
 {

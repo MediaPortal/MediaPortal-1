@@ -22,7 +22,6 @@ using System;
 using System.Drawing;
 using System.Globalization;
 using System.Text;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.TvPlugin.Teletext

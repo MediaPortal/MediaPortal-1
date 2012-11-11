@@ -1,11 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Data.Entity;
 using System.Data.Objects;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
 {

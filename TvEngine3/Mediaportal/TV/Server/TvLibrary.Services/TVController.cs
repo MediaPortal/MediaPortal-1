@@ -52,8 +52,8 @@ using Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Scheduler;
 using Mediaportal.TV.Server.TVLibrary.Services;
@@ -64,7 +64,6 @@ using Mediaportal.TV.Server.TVService.Interfaces.CardReservation;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 using RecordingManagement = Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.RecordingManagement;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 
 #endregion
 

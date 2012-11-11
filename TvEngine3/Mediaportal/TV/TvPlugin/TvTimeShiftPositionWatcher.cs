@@ -19,19 +19,14 @@
 #endregion
 
 using System;
-using MediaPortal.Common.Utils;
-using Mediaportal.TV.Server.TVControl;
-using Mediaportal.TV.Server.TVControl.ServiceAgents;
-using Mediaportal.TV.Server.TVDatabase.Entities;
 using System.Windows.Forms;
-using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
 using MediaPortal.Player;
-
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
-using Log = Mediaportal.TV.Server.TVLibrary.Interfaces.Logging.Log;
 
 namespace Mediaportal.TV.TvPlugin
 {

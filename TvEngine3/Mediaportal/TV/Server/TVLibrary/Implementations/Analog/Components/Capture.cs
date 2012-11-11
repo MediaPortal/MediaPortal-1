@@ -26,7 +26,6 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.GraphComponents;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components

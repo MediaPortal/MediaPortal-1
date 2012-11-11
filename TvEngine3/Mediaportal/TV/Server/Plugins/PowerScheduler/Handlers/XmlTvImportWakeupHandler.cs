@@ -24,7 +24,6 @@ using System;
 using System.Runtime.CompilerServices;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 #endregion

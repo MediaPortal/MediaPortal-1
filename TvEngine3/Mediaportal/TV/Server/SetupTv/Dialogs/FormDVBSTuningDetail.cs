@@ -23,7 +23,6 @@ using System.Collections;
 using System.Windows.Forms;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.SetupControls;
-using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 
 namespace Mediaportal.TV.Server.SetupTV.Dialogs

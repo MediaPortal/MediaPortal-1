@@ -22,19 +22,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
+using System.Globalization;
 using System.Windows.Forms;
-using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using MediaPortal.Common.Utils;
-
-using System.Globalization;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using WebEPG.config.WebEPG;
 using ChannelMap = WebEPG.config.WebEPG.ChannelMap;
+
 //using System.Data;
 
 namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config

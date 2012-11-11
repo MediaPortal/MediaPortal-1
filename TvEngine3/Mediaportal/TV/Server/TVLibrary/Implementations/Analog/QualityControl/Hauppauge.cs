@@ -22,8 +22,6 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using DirectShowLib;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 

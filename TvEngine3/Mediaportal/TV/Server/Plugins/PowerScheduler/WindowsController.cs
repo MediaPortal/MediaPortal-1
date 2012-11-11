@@ -19,11 +19,11 @@
 #endregion
 
 using System;
-using System.Text;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
+using System.Windows.Forms;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.Plugins.PowerScheduler

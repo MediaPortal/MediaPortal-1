@@ -18,7 +18,6 @@
 
 #endregion
 
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 

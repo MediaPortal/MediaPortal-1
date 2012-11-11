@@ -18,14 +18,11 @@
 
 #endregion
 
+using System;
 using System.IO;
 using System.Text;
 using System.Xml;
-using System;
-
-using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TvLibrary.Utils.Time;
-
 using WebEPG.Parser;
 
 namespace WebEPG.Utils

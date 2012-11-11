@@ -21,13 +21,10 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using MediaPortal.Common.Utils;
 using MediaPortal.GUI.Library;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVControl;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 

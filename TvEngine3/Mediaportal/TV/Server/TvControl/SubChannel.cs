@@ -1,4 +1,3 @@
-using System;
 using System.Runtime.Serialization;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;

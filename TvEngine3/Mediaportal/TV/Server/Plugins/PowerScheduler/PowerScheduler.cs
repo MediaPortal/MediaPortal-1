@@ -25,6 +25,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Threading;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers;
@@ -33,8 +35,6 @@ using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using System.Runtime.InteropServices;
-using System.Threading;
 using TvEngine.PowerScheduler.Interfaces;
 
 #endregion

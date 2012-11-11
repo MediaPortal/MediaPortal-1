@@ -26,10 +26,8 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.SetupControls;
-using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.Plugins.TvMovie
 {

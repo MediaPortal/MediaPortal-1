@@ -24,7 +24,6 @@ using System.Diagnostics;
 using System.IO;
 using System.ServiceProcess;
 using Mediaportal.TV.Server.SetupControls;
-using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Microsoft.Win32;
 

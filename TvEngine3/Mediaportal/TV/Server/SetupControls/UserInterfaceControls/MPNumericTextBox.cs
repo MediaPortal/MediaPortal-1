@@ -19,8 +19,8 @@
 #endregion
 
 using System;
-using System.Windows.Forms;
 using System.Globalization;
+using System.Windows.Forms;
 
 namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 {

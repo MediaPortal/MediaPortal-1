@@ -20,10 +20,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
+using DirectShowLib;
+using DirectShowLib.BDA;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR;
@@ -38,13 +41,9 @@ using Mediaportal.TV.Server.TVLibrary.Implementations.RadioWebStream;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using MediaPortal.Common.Utils;
-using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using TvLibrary.Implementations.DVB;
-using DirectShowLib;
-using DirectShowLib.BDA;
 using Microsoft.Win32;
+using TvLibrary.Implementations.DVB;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {

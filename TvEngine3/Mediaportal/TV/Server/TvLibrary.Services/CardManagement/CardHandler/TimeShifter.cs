@@ -25,7 +25,6 @@ using Mediaportal.TV.Server.TVLibrary.ChannelLinkage;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;

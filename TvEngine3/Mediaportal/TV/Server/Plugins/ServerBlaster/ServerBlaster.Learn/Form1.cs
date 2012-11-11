@@ -20,11 +20,10 @@
 
 using System;
 using System.Collections;
-using System.Windows.Forms;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
-using MediaPortal.Common.Utils;
+using System.Windows.Forms;
 using Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 

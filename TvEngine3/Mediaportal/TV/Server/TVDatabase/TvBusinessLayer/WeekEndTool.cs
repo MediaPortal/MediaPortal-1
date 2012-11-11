@@ -20,10 +20,8 @@
 
 using System;
 using MediaPortal.Common.Utils;
-using Mediaportal.TV.Server.TVControl.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
 namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {

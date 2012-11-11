@@ -18,8 +18,6 @@
 
 #endregion
 
-using System;
-using System.Reflection;
 using MediaPortal.Common.Utils;
 
 [assembly: SubsystemVersion("*", "1.1.6.27644")]

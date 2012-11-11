@@ -20,9 +20,7 @@
 
 using System;
 using MediaPortal.GUI.Library;
-using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
-using Mediaportal.TV.Server.TVDatabase.Entities;
 using Action = MediaPortal.GUI.Library.Action;
 
 //using MediaPortal.Utils.Services;

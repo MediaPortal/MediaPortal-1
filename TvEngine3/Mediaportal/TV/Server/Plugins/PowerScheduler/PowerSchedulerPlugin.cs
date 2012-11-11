@@ -22,14 +22,10 @@
 
 using System;
 using Castle.Core;
-using Mediaportal.TV.Server.Plugins.Base;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using Mediaportal.TV.Server.SetupControls;
-using Mediaportal.TV.Server.TVControl;
-using Mediaportal.TV.Server.TVControl.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
-using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
 #endregion
 

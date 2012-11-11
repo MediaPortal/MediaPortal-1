@@ -23,31 +23,31 @@ public class BookingMetadata
 
   public class ProgramMetadata
   {
-    [ProgramAttribute("Title", 1)]
+    [Program("Title", 1)]
     public string title { get; set; }
 
-    [ProgramAttribute("Description", 2)]
+    [Program("Description", 2)]
     public string description { get; set; }
 
-    [ProgramAttribute("SeriesNum", 3)]
+    [Program("SeriesNum", 3)]
     public int seriesNum { get; set; }
 
-    [ProgramAttribute("EpisodeNum", 4)]
+    [Program("EpisodeNum", 4)]
     public int episodeNum { get; set; }
 
-    [ProgramAttribute("Classification", 5)]
+    [Program("Classification", 5)]
     public int classification { get; set; }
 
-    [ProgramAttribute("StarRating", 6)]
+    [Program("StarRating", 6)]
     public int starRating { get; set; }
 
-    [ProgramAttribute("ParentalRating", 7)]
+    [Program("ParentalRating", 7)]
     public int parentalRating { get; set; }
 
-    [ProgramAttribute("EpisodeName", 8)]
+    [Program("EpisodeName", 8)]
     public string episodeName { get; set; }
 
-    [ProgramAttribute("EpisodePart", 9)]
+    [Program("EpisodePart", 9)]
     public int episodePart { get; set; }    
   }
 

@@ -19,18 +19,15 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
+using DirectShowLib.BDA;
 using Mediaportal.TV.Server.SetupControls;
-using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using DirectShowLib.BDA;
 
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {

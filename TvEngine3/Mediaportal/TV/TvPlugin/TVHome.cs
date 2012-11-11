@@ -21,10 +21,7 @@
 #region Usings
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Configuration;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -32,13 +29,11 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.ServiceModel;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using Dialogs.Dialogs;
 using MediaPortal;
-using MediaPortal.Common.Utils;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -58,13 +53,13 @@ using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 using Mediaportal.TV.TvPlugin.EventHandlers;
 using Mediaportal.TV.TvPlugin.Helper;
 using Action = MediaPortal.GUI.Library.Action;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Log = Mediaportal.TV.Server.TVLibrary.Interfaces.Logging.Log;
 
 #endregion

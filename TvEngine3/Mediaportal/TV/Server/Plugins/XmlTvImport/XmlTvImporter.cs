@@ -19,27 +19,22 @@
 #endregion
 
 using System;
-using System.Configuration;
+using System.IO;
 using System.Net;
-using System.ServiceModel;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
-using System.IO;
 using Castle.Core;
+using Ionic.Zip;
 using MediaPortal.Common.Utils;
-using Mediaportal.TV.Server.Plugins.Base;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using Mediaportal.TV.Server.Plugins.XmlTvImport.util;
 using Mediaportal.TV.Server.SetupControls;
-using Mediaportal.TV.Server.TVControl.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using MediaPortal.Common.Utils;
-using System.Runtime.CompilerServices;
-using Ionic.Zip;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.Plugins.XmlTvImport

@@ -2,7 +2,6 @@
 using System.Reflection;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {

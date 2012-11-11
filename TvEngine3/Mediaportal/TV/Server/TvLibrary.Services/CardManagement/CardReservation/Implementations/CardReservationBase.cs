@@ -30,7 +30,6 @@ using Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation;
 using Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Ticket;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Services;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;

@@ -19,15 +19,15 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using System.Timers;
-using System.Collections;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using System.Threading;
 using TvEngine.PowerScheduler.Interfaces;
 
 namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers

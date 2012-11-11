@@ -20,24 +20,20 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.IO;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using Castle.Core;
-using Mediaportal.TV.Server.Plugins.Base;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using Mediaportal.TV.Server.Plugins.WebEPGImport.Config;
 using Mediaportal.TV.Server.SetupControls;
-using Mediaportal.TV.Server.TVControl;
-using Mediaportal.TV.Server.TVControl.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using MediaPortal.Common.Utils;
-using MediaPortal.Common.Utils;
-using System.Runtime.CompilerServices;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using WebEPG.Utils;
 

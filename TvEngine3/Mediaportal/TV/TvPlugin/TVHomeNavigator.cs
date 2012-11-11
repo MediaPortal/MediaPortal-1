@@ -21,14 +21,9 @@
 #region Usings
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.ServiceModel.Channels;
 using System.Threading.Tasks;
-using System.Xml;
-using MediaPortal.Common.Utils;
-using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using Mediaportal.Common.Utils;

@@ -22,11 +22,9 @@
 
 using System;
 using System.Net;
-using System.Net.Sockets;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
-using MediaPortal.Common.Utils;
-using MediaPortal.GUI.Library;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 

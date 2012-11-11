@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.ServiceProcess;
-using MediaPortal.Common.Utils;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;

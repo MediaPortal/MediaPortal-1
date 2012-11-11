@@ -19,11 +19,12 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Threading;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 using Castle.Core;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.Events;
@@ -32,8 +33,6 @@ using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using MediaPortal.Common.Utils;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 // Modified to include Hauppauge Blasting

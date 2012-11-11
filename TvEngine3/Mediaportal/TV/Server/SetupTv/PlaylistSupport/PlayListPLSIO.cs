@@ -18,8 +18,8 @@
 
 #endregion
 
-using System.Text;
 using System.IO;
+using System.Text;
 
 namespace Mediaportal.TV.Server.SetupTV.PlaylistSupport
 {

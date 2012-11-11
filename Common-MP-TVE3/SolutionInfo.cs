@@ -18,8 +18,8 @@
 
 #endregion
 
-using System;
 using System.Reflection;
+
 //using MediaPortal.Common.Utils;
 
 //

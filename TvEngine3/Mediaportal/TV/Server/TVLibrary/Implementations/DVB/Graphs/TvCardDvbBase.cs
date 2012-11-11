@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
@@ -33,9 +34,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
-using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using LNB_Source = DirectShowLib.BDA.LNB_Source;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
 {

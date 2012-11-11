@@ -19,12 +19,11 @@
 #endregion
 
 using System;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using System.IO;
 using System.Drawing;
+using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations

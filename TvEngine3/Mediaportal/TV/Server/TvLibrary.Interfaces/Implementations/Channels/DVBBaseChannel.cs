@@ -20,7 +20,6 @@
 
 using System;
 using System.Runtime.Serialization;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 

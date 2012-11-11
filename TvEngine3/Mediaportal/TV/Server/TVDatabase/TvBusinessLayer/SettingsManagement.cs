@@ -1,15 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Objects;
-using System.Data.SqlTypes;
-using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
-using Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories;
-using MediaPortal.Common.Utils;
-using Channel = Mediaportal.TV.Server.TVDatabase.Entities.Channel;
 
 namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {

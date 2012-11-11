@@ -5,7 +5,6 @@ using System.ServiceModel.Description;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVControl.Interfaces.ServiceAgents;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVControl.ServiceAgents

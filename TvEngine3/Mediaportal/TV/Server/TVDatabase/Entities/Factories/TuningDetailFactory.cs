@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+﻿using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 
 namespace Mediaportal.TV.Server.TVDatabase.Entities.Factories
 {

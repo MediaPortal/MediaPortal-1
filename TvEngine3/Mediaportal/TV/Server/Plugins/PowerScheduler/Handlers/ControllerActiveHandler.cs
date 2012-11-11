@@ -21,7 +21,6 @@
 #region Usings
 
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVControl.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 
 #endregion

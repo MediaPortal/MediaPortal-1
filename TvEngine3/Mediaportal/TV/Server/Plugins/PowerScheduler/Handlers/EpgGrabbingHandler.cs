@@ -22,15 +22,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using System.Threading;
-using System.Diagnostics;
 using TvEngine.PowerScheduler.Interfaces;
 
 #endregion

@@ -20,9 +20,6 @@
 
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.ServiceModel;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 
 namespace Mediaportal.TV.Server.TVService.Interfaces.Services

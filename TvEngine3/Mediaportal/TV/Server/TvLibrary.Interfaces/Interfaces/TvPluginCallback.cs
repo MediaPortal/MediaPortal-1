@@ -19,9 +19,7 @@
 #endregion
 
 using System;
-using System.Text;
 using System.Collections.Generic;
-using System.Runtime.Remoting;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
 namespace TvLibrary.Interfaces

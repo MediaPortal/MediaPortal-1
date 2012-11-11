@@ -26,18 +26,16 @@ using System.Reflection;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
-using MediaPortal.Common.Utils;
-using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations

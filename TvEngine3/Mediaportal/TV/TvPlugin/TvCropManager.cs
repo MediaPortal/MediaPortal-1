@@ -21,7 +21,6 @@
 #region usings
 
 using System;
-using MediaPortal.Common.Utils;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;

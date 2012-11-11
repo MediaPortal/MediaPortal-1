@@ -19,11 +19,10 @@
 #endregion
 
 using System;
-using System.Runtime.InteropServices;
-using System.IO;
-using System.Windows.Forms;
 using System.Collections;
-using MediaPortal.Common.Utils;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 //Logging

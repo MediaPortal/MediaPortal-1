@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Data.Objects;
 using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;

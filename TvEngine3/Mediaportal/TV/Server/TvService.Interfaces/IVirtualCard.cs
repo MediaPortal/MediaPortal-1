@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;

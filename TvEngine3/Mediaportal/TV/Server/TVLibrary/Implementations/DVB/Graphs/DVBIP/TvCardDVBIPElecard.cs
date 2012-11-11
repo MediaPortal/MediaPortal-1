@@ -19,7 +19,6 @@
 #endregion
 
 using System;
-using System.Runtime.InteropServices;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;

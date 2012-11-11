@@ -19,12 +19,12 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Management;
-using System.Text.RegularExpressions;
-using System.Diagnostics;
-using System.Text;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Text.RegularExpressions;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary

@@ -19,16 +19,17 @@
 #endregion
 
 using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
-using System.Threading;
-using System.Xml;
+using System.IO;
 using System.Net;
-using DirectShowLib.BDA;
+using System.Threading;
+using System.Windows.Forms;
+using System.Xml;
 using System.Xml.Serialization;
+using DirectShowLib.BDA;
 using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 using Mediaportal.TV.Server.SetupTV.Sections.CIMenu;
 using Mediaportal.TV.Server.SetupTV.Sections.Helpers;
 using Mediaportal.TV.Server.TVControl;
@@ -36,15 +37,12 @@ using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
-using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {

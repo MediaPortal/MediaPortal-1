@@ -19,7 +19,6 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -27,7 +26,6 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Util;
-using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;

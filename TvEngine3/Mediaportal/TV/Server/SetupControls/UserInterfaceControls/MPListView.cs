@@ -19,10 +19,10 @@
 #endregion
 
 using System;
-using System.Windows.Forms;
-using System.Drawing;
 using System.Collections;
+using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 {

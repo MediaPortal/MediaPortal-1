@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
@@ -26,7 +27,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
-using System.Collections.Generic;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.Plugins.CustomDevices.Microsoft

@@ -1,5 +1,3 @@
-using MediaPortal.Common.Utils;
-using MediaPortal.GUI.Library;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;

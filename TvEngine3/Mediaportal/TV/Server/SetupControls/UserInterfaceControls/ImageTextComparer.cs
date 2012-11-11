@@ -18,9 +18,9 @@
 
 #endregion
 
-using System.Windows.Forms;
-using System.Text.RegularExpressions;
 using System.Collections;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 {

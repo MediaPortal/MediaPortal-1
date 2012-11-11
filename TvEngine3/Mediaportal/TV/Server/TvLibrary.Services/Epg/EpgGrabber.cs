@@ -20,14 +20,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using MediaPortal.Common.Utils.ExtensionMethods;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using MediaPortal.Common.Utils;
-using System.Threading;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Services;
 

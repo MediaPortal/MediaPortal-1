@@ -21,22 +21,19 @@
 #region Usings
 
 using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Drawing;
+using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupTV.Dialogs;
-using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 #endregion

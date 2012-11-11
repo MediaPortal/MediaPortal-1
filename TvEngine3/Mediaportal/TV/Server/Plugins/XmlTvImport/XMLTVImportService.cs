@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.ServiceModel;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 
 namespace Mediaportal.TV.Server.Plugins.XmlTvImport

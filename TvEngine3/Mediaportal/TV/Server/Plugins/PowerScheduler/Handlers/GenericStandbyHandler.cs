@@ -21,8 +21,8 @@
 #region Usings
 
 using System;
-using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using TvEngine.PowerScheduler.Interfaces;
 
 #endregion

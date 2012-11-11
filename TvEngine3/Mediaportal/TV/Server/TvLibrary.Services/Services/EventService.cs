@@ -8,7 +8,6 @@ using Mediaportal.TV.Server.TVControl.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Services

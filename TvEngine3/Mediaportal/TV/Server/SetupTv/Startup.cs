@@ -20,14 +20,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.Configuration;
+using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
-using System.Diagnostics;
-using Castle.Windsor;
-using Castle.Windsor.Configuration.Interpreters;
-using MediaPortal.Common.Utils;
+using System.Windows.Forms;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;

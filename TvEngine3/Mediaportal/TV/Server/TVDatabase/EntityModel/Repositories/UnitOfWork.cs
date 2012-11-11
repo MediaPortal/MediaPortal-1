@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Data.Objects;
 using System.Data;
 using System.Data.Common;
-using System.Data.Entity.Infrastructure;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-using MediaPortal.Common.Utils;
+using System.Data.Objects;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories

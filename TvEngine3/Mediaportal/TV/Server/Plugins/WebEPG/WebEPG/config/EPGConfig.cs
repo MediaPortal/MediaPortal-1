@@ -20,7 +20,6 @@
 
 using System.Collections;
 using System.IO;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using WebEPG.MPCode;
 

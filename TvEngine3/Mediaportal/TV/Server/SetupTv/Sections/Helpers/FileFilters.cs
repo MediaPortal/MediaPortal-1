@@ -20,12 +20,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Xml.Serialization;
-using System.Xml;
 using System.Windows.Forms;
+using System.Xml;
+using System.Xml.Serialization;
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers

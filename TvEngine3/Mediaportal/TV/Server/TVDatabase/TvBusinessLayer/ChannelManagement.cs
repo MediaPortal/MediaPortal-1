@@ -1,27 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Objects;
 using System.Linq;
-using System.Linq.Expressions;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories;
-using Mediaportal.TV.Server.TVDatabase.Presentation;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.LinqKit;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Countries;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Channel = Mediaportal.TV.Server.TVDatabase.Entities.Channel;
-using Mediaportal.TV.Server.TVDatabase.EntityModel;
 
 namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {

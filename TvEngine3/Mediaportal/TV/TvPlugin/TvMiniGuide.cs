@@ -26,15 +26,12 @@ using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using MediaPortal.Common.Utils;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 using Mediaportal.Common.Utils;
-using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
@@ -42,7 +39,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.TvPlugin.Helper;
 using Action = MediaPortal.GUI.Library.Action;
-using TuningDetail = Mediaportal.TV.Server.TVDatabase.Entities.TuningDetail;
 
 #endregion
 

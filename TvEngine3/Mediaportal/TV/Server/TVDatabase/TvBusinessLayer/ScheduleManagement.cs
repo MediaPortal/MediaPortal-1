@@ -7,10 +7,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
-using Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Channel = Mediaportal.TV.Server.TVDatabase.Entities.Channel;
 
 namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {

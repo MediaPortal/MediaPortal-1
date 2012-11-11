@@ -19,13 +19,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using MediaPortal.Common.Utils;
-using Mediaportal.TV.Server.TVControl.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;

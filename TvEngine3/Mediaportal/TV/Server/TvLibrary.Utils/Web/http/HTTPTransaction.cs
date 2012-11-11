@@ -26,7 +26,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using MediaPortal.Common.Utils;
 
-
 // for Service Framework
 
 namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http

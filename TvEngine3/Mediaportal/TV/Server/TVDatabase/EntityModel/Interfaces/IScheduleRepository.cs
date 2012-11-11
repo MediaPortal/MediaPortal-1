@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces

@@ -25,7 +25,6 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces

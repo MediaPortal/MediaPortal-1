@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -29,8 +30,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using MediaPortal.Common.Utils;
-using System.Collections;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using BroadcastStandard = Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer.BroadcastStandard;
 

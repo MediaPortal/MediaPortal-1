@@ -22,10 +22,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using MediaPortal.Common.Utils;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using mshtml;
 using SHDocVw;
+using mshtml;
 
 namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
 {

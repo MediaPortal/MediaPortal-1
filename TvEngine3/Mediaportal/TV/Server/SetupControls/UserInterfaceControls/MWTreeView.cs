@@ -22,8 +22,8 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
-using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 /// <summary>
 ///	Mikael Wiberg 2003

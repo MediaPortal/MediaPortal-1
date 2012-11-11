@@ -25,7 +25,6 @@ using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.GraphComponents;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Microsoft.Win32;
 

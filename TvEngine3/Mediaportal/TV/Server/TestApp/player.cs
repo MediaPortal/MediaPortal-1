@@ -23,7 +23,6 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
-using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TestApp
 {

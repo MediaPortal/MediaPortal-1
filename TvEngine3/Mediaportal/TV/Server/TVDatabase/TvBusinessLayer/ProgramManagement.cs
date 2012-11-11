@@ -8,14 +8,11 @@ using Mediaportal.Common.Utils;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
+using Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
-using Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Channel = Mediaportal.TV.Server.TVDatabase.Entities.Channel;
-using Program = Mediaportal.TV.Server.TVDatabase.Entities.Program;
 using ThreadState = System.Threading.ThreadState;
-
 
 namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {

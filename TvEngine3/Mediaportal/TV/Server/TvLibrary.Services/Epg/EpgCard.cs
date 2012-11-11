@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
@@ -31,8 +32,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using MediaPortal.Common.Utils;
-using System.Threading;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Services;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;

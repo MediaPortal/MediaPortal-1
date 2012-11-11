@@ -19,24 +19,20 @@
 #endregion
 
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-
 using Mediaportal.TV.Server.RuleBasedScheduler;
 using Mediaportal.TV.Server.RuleBasedScheduler.ScheduleConditions;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
-using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {

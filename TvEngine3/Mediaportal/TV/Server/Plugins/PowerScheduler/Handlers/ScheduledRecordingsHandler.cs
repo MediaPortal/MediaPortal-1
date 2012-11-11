@@ -22,12 +22,12 @@
 
 using System;
 using System.Collections.Generic;
+using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
-using MediaPortal.Common.Utils;
 using TvEngine.PowerScheduler.Interfaces;
 
 #endregion

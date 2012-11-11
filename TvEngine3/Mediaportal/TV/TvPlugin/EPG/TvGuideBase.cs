@@ -23,14 +23,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MediaPortal.Common.Utils;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Video;
 using MediaPortal.Player;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
-using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;

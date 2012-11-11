@@ -22,7 +22,6 @@ using System;
 using System.IO;
 using System.Text;
 using System.Xml;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace WebEPG.MPCode

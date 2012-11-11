@@ -23,14 +23,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 using MediaPortal.Common.Utils;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TvLibrary.Utils.Time;
 using Mediaportal.TV.Server.TvLibrary.Utils.Web.http;
 using WebEPG.Parser;
 using WebEPG.Utils;
 using WebEPG.config.WebEPG;
-using ChannelMap = WebEPG.config.WebEPG.ChannelMap;
 
 namespace WebEPG
 {

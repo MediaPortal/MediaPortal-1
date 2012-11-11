@@ -45,7 +45,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
     Success,
   }
 
-  [Serializable(), DefaultPropertyAttribute("Name")]
+  [Serializable(), DefaultProperty("Name")]
   public class BlasterCommand //: ISerializable
   {
     #region Construction

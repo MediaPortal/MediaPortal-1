@@ -64,105 +64,105 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
       _episodePartNext = episodePartNext;
     }
 
-    [DataMemberAttribute]
+    [DataMember]
     public int IdChannel
     {
       get { return _idChannel; }
       set { _idChannel = value; }
     }
 
-    [DataMemberAttribute]
+    [DataMember]
     public DateTime NowStartTime
     {
       get { return _nowStart; }
       set { _nowStart = value; }
     }
 
-    [DataMemberAttribute]
+    [DataMember]
     public DateTime NowEndTime
     {
       get { return _nowEnd; }
       set { _nowEnd = value; }
     }
 
-    [DataMemberAttribute]
+    [DataMember]
     public string TitleNow
     {
       get { return _titleNow; }
       set { _titleNow = value; }
     }
 
-    [DataMemberAttribute]
+    [DataMember]
     public string TitleNext
     {
       get { return _titleNext; }
       set { _titleNext = value; }
     }
 
-    [DataMemberAttribute]
+    [DataMember]
     public int IdProgramNow
     {
       get { return _idProgramNow; }
       set { _idProgramNow = value; }
     }
 
-    [DataMemberAttribute]
+    [DataMember]
     public int IdProgramNext
     {
       get { return _idProgramNext; }
       set { _idProgramNext = value; }
     }
 
-    [DataMemberAttribute]
+    [DataMember]
     public string EpisodeName
     {
       get { return _episodeName; }
       set { _episodeName = value; }
     }
 
-    [DataMemberAttribute]
+    [DataMember]
     public string EpisodeNameNext
     {
       get { return _episodeNameNext; }
       set { _episodeNameNext = value; }
     }
 
-    [DataMemberAttribute]
+    [DataMember]
     public string SeriesNum
     {
       get { return _seriesNum; }
       set { _seriesNum = value; }
     }
 
-    [DataMemberAttribute]
+    [DataMember]
     public string SeriesNumNext
     {
       get { return _seriesNumNext; }
       set { _seriesNumNext = value; }
     }
 
-    [DataMemberAttribute]
+    [DataMember]
     public string EpisodeNum
     {
       get { return _episodeNum; }
       set { _episodeNum = value; }
     }
 
-    [DataMemberAttribute]
+    [DataMember]
     public string EpisodeNumNext
     {
       get { return _episodeNumNext; }
       set { _episodeNumNext = value; }
     }
 
-    [DataMemberAttribute]
+    [DataMember]
     public string EpisodePart
     {
       get { return _episodePart; }
       set { _episodePart = value; }
     }
 
-    [DataMemberAttribute]
+    [DataMember]
     public string EpisodePartNext
     {
       get { return _episodePartNext; }

@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
-using MediaPortal.Common.Utils;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using Mediaportal.TV.Server.TVControl;
@@ -36,9 +35,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.TvPlugin.Helper;
-using Channel = Mediaportal.TV.Server.TVDatabase.Entities.Channel;
 using Log = Mediaportal.TV.Server.TVLibrary.Interfaces.Logging.Log;
-using Recording = Mediaportal.TV.Server.TVDatabase.Entities.Recording;
 
 namespace Mediaportal.TV.TvPlugin
 {

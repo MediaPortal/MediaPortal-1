@@ -23,7 +23,6 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Threading;
-using MediaPortal.Common.Utils;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;

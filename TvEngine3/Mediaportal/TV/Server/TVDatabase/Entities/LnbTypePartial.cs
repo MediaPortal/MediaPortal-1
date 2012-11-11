@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Mediaportal.TV.Server.TVDatabase.Entities
+﻿namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
   public partial class LnbType 
   {

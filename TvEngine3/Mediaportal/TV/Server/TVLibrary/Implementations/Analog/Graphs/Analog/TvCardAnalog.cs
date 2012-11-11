@@ -31,14 +31,11 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.GraphComponents;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Capture = Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components.Capture;
 using Crossbar = Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components.Crossbar;
 using Tuner = Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components.Tuner;
 using TvAudio = Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components.TvAudio;
-
-               
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
 {

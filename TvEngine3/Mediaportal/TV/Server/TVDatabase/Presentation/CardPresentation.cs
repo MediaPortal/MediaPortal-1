@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVService.Interfaces.Services;
+﻿using System.Runtime.Serialization;
 
 namespace Mediaportal.TV.Server.TVDatabase.Presentation
 { 
