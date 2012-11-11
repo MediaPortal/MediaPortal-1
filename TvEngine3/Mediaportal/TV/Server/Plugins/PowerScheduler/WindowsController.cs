@@ -411,7 +411,8 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     /// <summary>
     /// Initializes a new instance of the PrivilegeException class.
     /// </summary>
-    public PrivilegeException() : base() {}
+    public PrivilegeException()
+    {}
 
     /// <summary>
     /// Initializes a new instance of the PrivilegeException class with a specified error message.

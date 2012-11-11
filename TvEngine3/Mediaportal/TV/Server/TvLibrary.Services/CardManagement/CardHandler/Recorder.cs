@@ -43,7 +43,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// Initializes a new instance of the <see cref="Recording"/> class.
     /// </summary>
     /// <param name="cardHandler">The card handler.</param>
-    public Recorder(ITvCardHandler cardHandler) : base()
+    public Recorder(ITvCardHandler cardHandler)
     {
       string recordingFolder = cardHandler.DataBaseCard.RecordingFolder;
 

@@ -30,7 +30,8 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
   {
     private int _groupIndex;
 
-    public XPListViewItem() : base() {}
+    public XPListViewItem()
+    {}
 
     public XPListViewItem(string text) : base(text) {}
 

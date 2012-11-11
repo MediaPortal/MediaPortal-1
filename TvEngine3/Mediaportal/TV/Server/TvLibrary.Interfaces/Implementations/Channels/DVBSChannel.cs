@@ -72,7 +72,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     /// Initialise a new instance of the <see cref="DVBSChannel"/> class.
     /// </summary>
     public DVBSChannel()
-      : base()
     {
       _diseqc = DiseqcPort.None;
       _lnbType = null;
