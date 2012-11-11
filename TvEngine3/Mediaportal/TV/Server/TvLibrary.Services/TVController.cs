@@ -5816,7 +5816,7 @@ namespace Mediaportal.TV.Server.TVLibrary
                       Idle = false,
                       UserName = user.Name,
                       ChannelName =
-                        ChannelManagement.GetChannel(subchannel.IdChannel).DisplayName,
+                        ChannelManagement.GetChannel(subchannel.IdChannel, ChannelIncludeRelationEnum.None).DisplayName,
                       IsScrambled = isScrambled ? "yes" : "no",
                       IsOwner = isOwner ? "yes" : "no",
                     };
