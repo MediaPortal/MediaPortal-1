@@ -1858,9 +1858,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     /// <value><c>false</c> if the data should be kept, otherwise <c>true</c></value>
     protected virtual bool FilterOutEPGChannel(ushort networkId, ushort transportStreamId, ushort serviceId)
     {
-      Setting setting = SettingsManagement.GetSetting("generalGrapOnlyForSameTransponder", "no");
+      bool setting = SettingsManagement.GetValue("generalGrapOnlyForSameTransponder", true);
 
-      if (setting != null && !setting.Value.Equals("yes"))
+      if (!setting)
       {
         return false;
       }

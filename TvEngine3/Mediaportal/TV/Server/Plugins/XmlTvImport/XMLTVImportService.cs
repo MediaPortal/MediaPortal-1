@@ -11,12 +11,9 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         delegate
           {
             string folder =
-              SettingsManagement.GetSetting("xmlTv", XmlTvImporter.DefaultOutputFolder).
-                Value;
-            bool importXML =
-              SettingsManagement.GetSetting("xmlTvImportXML", "true").Value == "true";
-            bool importLST =
-              SettingsManagement.GetSetting("xmlTvImportLST", "false").Value == "true";
+              SettingsManagement.GetValue("xmlTv", XmlTvImporter.DefaultOutputFolder);
+            bool importXML = SettingsManagement.GetValue("xmlTvImportXML", true);
+            bool importLST = SettingsManagement.GetValue("xmlTvImportLST", false);
 
             var importer = new XmlTvImporter();
             importer.ForceImport(folder, importXML, importLST);

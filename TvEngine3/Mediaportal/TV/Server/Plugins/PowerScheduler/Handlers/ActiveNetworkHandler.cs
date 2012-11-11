@@ -149,7 +149,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 
           // Check if standby should be prevented
           PowerSetting setting = ps.Settings.GetSetting("NetworkMonitorEnabled");          
-          bool enabled = Convert.ToBoolean(SettingsManagement.GetSetting("NetworkMonitorEnabled", "false").Value);
+          bool enabled = SettingsManagement.GetValue("NetworkMonitorEnabled", false);
 
           if (setting.Get<bool>() != enabled) // Setting changed
           {
@@ -169,7 +169,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 
           if (enabled) // Get minimum transferrate considered as network activity
           {
-            idleLimit = Int32.Parse(SettingsManagement.GetSetting("NetworkMonitorIdleLimit", "2").Value);
+            idleLimit = SettingsManagement.GetValue("NetworkMonitorIdleLimit", 2);
             this.LogDebug("NetworkMonitorHandler: idle limit in KB/s: {0}", idleLimit);
           }
 

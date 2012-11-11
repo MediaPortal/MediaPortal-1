@@ -856,38 +856,35 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       
 
       // Check if PowerScheduler should log verbose debug messages
-      if (_settings.ExtensiveLogging !=
-          Convert.ToBoolean(SettingsManagement.GetSetting("PowerSchedulerExtensiveLogging", "false").Value))
+      if (_settings.ExtensiveLogging != SettingsManagement.GetValue("PowerSchedulerExtensiveLogging", false))
       {
         _settings.ExtensiveLogging = !_settings.ExtensiveLogging;
         this.LogDebug("PowerScheduler: extensive logging enabled: {0}", _settings.ExtensiveLogging);
         changed = true;
       }
       // Check if PowerScheduler should actively put the system into standby
-      if (_settings.ShutdownEnabled !=
-          Convert.ToBoolean(SettingsManagement.GetSetting("PowerSchedulerShutdownActive", "false").Value))
+      if (_settings.ShutdownEnabled != SettingsManagement.GetValue("PowerSchedulerShutdownActive", false))
       {
         _settings.ShutdownEnabled = !_settings.ShutdownEnabled;
         LogVerbose("PowerScheduler: entering standby is enabled: {0}", _settings.ShutdownEnabled);
         changed = true;
       }
       // Check if PowerScheduler should wakeup the system automatically
-      if (_settings.WakeupEnabled != Convert.ToBoolean(SettingsManagement.GetSetting("PowerSchedulerWakeupActive", "false").Value))
+      if (_settings.WakeupEnabled != SettingsManagement.GetValue("PowerSchedulerWakeupActive", false))
       {
         _settings.WakeupEnabled = !_settings.WakeupEnabled;
         LogVerbose("PowerScheduler: automatic wakeup is enabled: {0}", _settings.WakeupEnabled);
         changed = true;
       }
       // Check if PowerScheduler should force the system into suspend/hibernate
-      if (_settings.ForceShutdown != Convert.ToBoolean(SettingsManagement.GetSetting("PowerSchedulerForceShutdown", "false").Value))
+      if (_settings.ForceShutdown != SettingsManagement.GetValue("PowerSchedulerForceShutdown", false))
       {
         _settings.ForceShutdown = !_settings.ForceShutdown;
         LogVerbose("PowerScheduler: force shutdown enabled: {0}", _settings.ForceShutdown);
         changed = true;
       }
       // Check if PowerScheduler should reinitialize the TVController after wakeup
-      if (_settings.ReinitializeController !=
-          Convert.ToBoolean(SettingsManagement.GetSetting("PowerSchedulerReinitializeController", "false").Value))
+      if (_settings.ReinitializeController != SettingsManagement.GetValue("PowerSchedulerReinitializeController", false))
       {
         _settings.ReinitializeController = !_settings.ReinitializeController;
         LogVerbose("PowerScheduler: Reinitialize controller on wakeup: {0}", _settings.ReinitializeController);
@@ -895,7 +892,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       }
 
       PowerSetting pSetting = _settings.GetSetting("ExternalCommand");
-      string sSetting = SettingsManagement.GetSetting("PowerSchedulerCommand", String.Empty).Value;
+      string sSetting = SettingsManagement.GetValue("PowerSchedulerCommand", String.Empty);
       if (!sSetting.Equals(pSetting.Get<string>()))
       {
         pSetting.Set<string>(sSetting);
@@ -904,7 +901,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       }
 
       // Check configured PowerScheduler idle timeout
-      int setting = Int32.Parse(SettingsManagement.GetSetting("PowerSchedulerIdleTimeout", "5").Value);
+      int setting = SettingsManagement.GetValue("PowerSchedulerIdleTimeout", 5);
       if (_settings.IdleTimeout != setting)
       {
         _settings.IdleTimeout = setting;
@@ -912,7 +909,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
         changed = true;
       }
       // Check configured pre-wakeup time
-      setting = Int32.Parse(SettingsManagement.GetSetting("PowerSchedulerPreWakeupTime", "60").Value);
+      setting = SettingsManagement.GetValue("PowerSchedulerPreWakeupTime", 60);
       if (_settings.PreWakeupTime != setting)
       {
         _settings.PreWakeupTime = setting;
@@ -921,7 +918,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       }
 
       // Check configured pre-no-shutdown time
-      setting = Int32.Parse(SettingsManagement.GetSetting("PowerSchedulerPreNoShutdownTime", "120").Value);
+      setting = SettingsManagement.GetValue("PowerSchedulerPreNoShutdownTime", 120);
       if (_settings.PreNoShutdownTime != setting)
       {
         _settings.PreNoShutdownTime = setting;
@@ -930,7 +927,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       }
 
       // Check if check interval needs to be updated
-      setting = Int32.Parse(SettingsManagement.GetSetting("PowerSchedulerCheckInterval", "60").Value);
+      setting = SettingsManagement.GetValue("PowerSchedulerCheckInterval", 60);
       if (_settings.CheckInterval != setting)
       {
         _settings.CheckInterval = setting;
@@ -939,7 +936,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
         changed = true;
       }
       // Check configured shutdown mode
-      setting = Int32.Parse(SettingsManagement.GetSetting("PowerSchedulerShutdownMode", "2").Value);
+      setting = SettingsManagement.GetValue("PowerSchedulerShutdownMode", 2);
       if ((int)_settings.ShutdownMode != setting)
       {
         _settings.ShutdownMode = (ShutdownMode)setting;
@@ -948,7 +945,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       }
 
       // Check allowed stop time
-      setting = Int32.Parse(SettingsManagement.GetSetting("PowerSchedulerStandbyAllowedEnd", "24").Value);
+      setting = SettingsManagement.GetValue("PowerSchedulerStandbyAllowedEnd", 24);
       if (_settings.AllowedSleepStopTime != setting)
       {
         _settings.AllowedSleepStopTime = setting;
@@ -957,7 +954,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       }
 
       // Check configured allowed start time
-      setting = Int32.Parse(SettingsManagement.GetSetting("PowerSchedulerStandbyAllowedStart", "0").Value);
+      setting = SettingsManagement.GetValue("PowerSchedulerStandbyAllowedStart", 0);
       if (_settings.AllowedSleepStartTime != setting)
       {
         _settings.AllowedSleepStartTime = setting;

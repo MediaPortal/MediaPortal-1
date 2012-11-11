@@ -85,7 +85,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
     {
       //check diskspace every 15 minutes...
       
-      if (SettingsManagement.GetSetting("diskQuotaEnabled", "False").Value != "True")
+      if (SettingsManagement.GetValue("diskQuotaEnabled", false))
       {
         //Disk Quota Management disabled: quitting
         return;
@@ -105,19 +105,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
 
     private static bool OutOfDiskSpace(string drive)
     {
-      ulong minimiumFreeDiskSpace;
-      string quotaText = SettingsManagement.GetSetting("freediskspace" + drive[0], "51200").Value;
-      try
-      {
-        minimiumFreeDiskSpace = (ulong)Int32.Parse(quotaText);
-      }
-      catch (Exception e)
-      {
-        Log.Error("DiskManagement: Exception at parsing freediskspace ({0}) to drive {1}", quotaText, drive);
-        Log.Error(e.ToString());
-        //no setting for this drive: quitting
-        return false;
-      }
+      ulong minimiumFreeDiskSpace = (ulong) SettingsManagement.GetValue("freediskspace" + drive[0], 51200);
 
       if (minimiumFreeDiskSpace <= 51200) // 50MB
       {

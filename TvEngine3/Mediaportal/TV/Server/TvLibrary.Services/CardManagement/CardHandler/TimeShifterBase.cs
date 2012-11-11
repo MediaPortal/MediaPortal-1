@@ -32,7 +32,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       _eventVideo.Reset();
 
       
-      _waitForTimeshifting = Int32.Parse(SettingsManagement.GetSetting("timeshiftWaitForTimeshifting", "15").Value);
+      _waitForTimeshifting = SettingsManagement.GetValue("timeshiftWaitForTimeshifting", 15);
 
       if (_cardHandler != null && _cardHandler.Tuner != null)
       {

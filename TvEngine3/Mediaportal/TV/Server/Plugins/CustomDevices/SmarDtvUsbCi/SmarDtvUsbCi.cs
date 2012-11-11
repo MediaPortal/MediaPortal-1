@@ -304,7 +304,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
       ReadOnlyCollection<SmarDtvUsbCiProduct> productList = SmarDtvUsbCiProducts.GetProductList();
       foreach (SmarDtvUsbCiProduct p in productList)
       {
-        if (SettingsManagement.GetSetting(p.DbSettingName, "-1").Value.Equals(tunerIdAsString))
+        if (SettingsManagement.GetValue(p.DbSettingName, "-1").Equals(tunerIdAsString))
         {
           continue;
         }

@@ -43,7 +43,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     public ParkedUserManagement(TvCardHandler tvCardHandler)
     {
       _cardHandler = tvCardHandler;
-      _parkedStreamTimeout = Int32.Parse(SettingsManagement.GetSetting("parkedStreamTimeout", "5").Value)*60*1000;
+      _parkedStreamTimeout = SettingsManagement.GetValue("parkedStreamTimeout", 5)*60*1000;
     }
 
     private ITvCardContext Context

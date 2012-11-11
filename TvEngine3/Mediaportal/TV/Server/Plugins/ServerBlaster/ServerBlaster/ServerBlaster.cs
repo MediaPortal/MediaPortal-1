@@ -192,14 +192,14 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
       try
       {
         
-        _sendSelect = (SettingsManagement.GetSetting("SrvBlasterSendSelect", "False").Value == "True");
+        _sendSelect = SettingsManagement.GetValue("SrvBlasterSendSelect", false);
         _sleepTime = 100; //xmlreader.GetValueAsInt("ServerBlaster", "delay", 100);
         _sendPort = 1; //xmlreader.GetValueAsInt("ServerBlaster", "forceport", 1);
-        _blaster1Card = Convert.ToInt16(SettingsManagement.GetSetting("SrvBlaster1Card", "0").Value);
-        _blaster2Card = Convert.ToInt16(SettingsManagement.GetSetting("SrvBlaster2Card", "0").Value);
-        _deviceType = Convert.ToInt16(SettingsManagement.GetSetting("SrvBlasterType", "0").Value);
-        _deviceSpeed = Convert.ToInt16(SettingsManagement.GetSetting("SrvBlasterSpeed", "0").Value);
-        _advandeLogging = (SettingsManagement.GetSetting("SrvBlasterLog", "False").Value == "True");
+        _blaster1Card = SettingsManagement.GetValue("SrvBlaster1Card", 0);
+        _blaster2Card = SettingsManagement.GetValue("SrvBlaster2Card", 0);
+        _deviceType = SettingsManagement.GetValue("SrvBlasterType", 0);
+        _deviceSpeed = SettingsManagement.GetValue("SrvBlasterSpeed", 0);
+        _advandeLogging = SettingsManagement.GetValue("SrvBlasterLog", false);
         _sendPort = Math.Max(1, Math.Min(2, _sendPort));
 
         this.LogDebug("ServerBlaster.LoadRemoteCodes: Default port {0}", _sendPort);

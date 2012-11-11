@@ -120,31 +120,22 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       byte i = 0;
       while (true)  // Loop until we don't find any more settings.
       {
-        Setting devicePath = SettingsManagement.GetSetting("digitalDevicesCiDevicePath" + i, String.Empty);        
-        if (devicePath.Value.Equals(String.Empty))
+        string devicePath = SettingsManagement.GetValue("digitalDevicesCiDevicePath" + i, String.Empty);        
+        if (string.IsNullOrEmpty(devicePath))
         {
           break;
         }
 
-        DigitalDevicesCiSlot slot = new DigitalDevicesCiSlot(devicePath.Value);
-        Setting deviceName = SettingsManagement.GetSetting("digitalDevicesCiDeviceName" + i, String.Empty);
-        slot.DeviceName = deviceName.Value;
-        Setting decryptLimit = SettingsManagement.GetSetting("digitalDevicesCiDecryptLimit" + i, "0");
-        try
-        {
-          slot.DecryptLimit = Int32.Parse(decryptLimit.Value);
-        }
-        catch (Exception)
-        {
-          slot.DecryptLimit = 0;
-        }
-        Setting providerList = SettingsManagement.GetSetting("digitalDevicesCiProviderList" + i, String.Empty);
-        slot.Providers = new HashSet<String>(providerList.Value.Split('|'));
+        DigitalDevicesCiSlot slot = new DigitalDevicesCiSlot(devicePath);
+        slot.DeviceName = SettingsManagement.GetValue("digitalDevicesCiDeviceName" + i, String.Empty);
+        slot.DecryptLimit = SettingsManagement.GetValue("digitalDevicesCiDecryptLimit" + i, 0);
+        string providers = SettingsManagement.GetValue("digitalDevicesCiProviderList" + i, String.Empty);
+        slot.Providers = new HashSet<String>(providers.Split('|'));
 
         // Use the first settings found. Settings found later could be invalid left-overs.
-        if (!slotSettings.ContainsKey(devicePath.Value))
+        if (!slotSettings.ContainsKey(devicePath))
         {
-          slotSettings.Add(devicePath.Value, slot);
+          slotSettings.Add(devicePath, slot);
         }
         i++;
       }
@@ -215,12 +206,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
     /// <returns><c>true</c> if the plugin is enabled, otherwise <c>false</c></returns>
     public static bool IsPluginEnabled()
     {
-      Setting s = SettingsManagement.GetSetting("pluginDigital Devices", "false");
-      if (s.Value.Equals("true"))
-      {
-        return true;
-      }
-      return false;
+      return SettingsManagement.GetValue("pluginDigital Devices", false);
     }
   }
 }

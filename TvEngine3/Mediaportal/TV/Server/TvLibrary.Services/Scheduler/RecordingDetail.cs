@@ -221,25 +221,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
     public void MakeFileName(string recordingPath)
     {
 
-      Setting setting;
+      string setting;
       if (!IsSerie)
       {
         this.LogDebug("Scheduler: MakeFileName() using \"moviesformat\" (_isSerie={0})", _isSerie);
-        setting = SettingsManagement.GetSetting("moviesformat", "%title%");
+        setting = SettingsManagement.GetValue("moviesformat", "%title%");
       }
       else
       {
         this.LogDebug("Scheduler: MakeFileName() using \"seriesformat\" (_isSerie={0})", _isSerie);
-        setting = SettingsManagement.GetSetting("seriesformat", "%title%");
+        setting = SettingsManagement.GetValue("seriesformat", "%title%");
       }
 
       string strInput = "title%";
-      if (setting != null)
+      if (!string.IsNullOrEmpty(setting))
       {
-        if (setting.Value != null)
-        {
-          strInput = setting.Value;
-        }
+        strInput = setting;
       }
       string subDirectory = string.Empty;
       string fullPath = recordingPath;

@@ -488,22 +488,19 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
           {
             _settings = new ScanParameters
             {
-              TimeOutTune = Int32.Parse(SettingsManagement.GetSetting("timeoutTune", "2").Value),
-              TimeOutPAT = Int32.Parse(SettingsManagement.GetSetting("timeoutPAT", "5").Value),
-              TimeOutCAT = Int32.Parse(SettingsManagement.GetSetting("timeoutCAT", "5").Value),
-              TimeOutPMT = Int32.Parse(SettingsManagement.GetSetting("timeoutPMT", "10").Value),
-              TimeOutSDT = Int32.Parse(SettingsManagement.GetSetting("timeoutSDT", "20").Value),
-              TimeOutAnalog = Int32.Parse(SettingsManagement.GetSetting("timeoutAnalog", "20").Value),
-              UseDefaultLnbFrequencies =
-                (SettingsManagement.GetSetting("lnbDefault", "true").Value == "true"),
-              LnbLowFrequency = Int32.Parse(SettingsManagement.GetSetting("LnbLowFrequency", "0").Value),
-              LnbHighFrequency = Int32.Parse(SettingsManagement.GetSetting("LnbHighFrequency", "0").Value),
-              LnbSwitchFrequency =
-                Int32.Parse(SettingsManagement.GetSetting("LnbSwitchFrequency", "0").Value),
-              MinimumFiles = Int32.Parse(SettingsManagement.GetSetting("timeshiftMinFiles", "6").Value),
-              MaximumFiles = Int32.Parse(SettingsManagement.GetSetting("timeshiftMaxFiles", "20").Value),
-              MaximumFileSize =
-                UInt32.Parse(SettingsManagement.GetSetting("timeshiftMaxFileSize", "256").Value)
+              TimeOutTune = SettingsManagement.GetValue("timeoutTune", 2),
+              TimeOutPAT = SettingsManagement.GetValue("timeoutPAT", 5),
+              TimeOutCAT = SettingsManagement.GetValue("timeoutCAT", 5),
+              TimeOutPMT = SettingsManagement.GetValue("timeoutPMT", 10),
+              TimeOutSDT = SettingsManagement.GetValue("timeoutSDT", 20),
+              TimeOutAnalog = SettingsManagement.GetValue("timeoutAnalog", 20),
+              UseDefaultLnbFrequencies = SettingsManagement.GetValue("lnbDefault", true),
+              LnbLowFrequency = SettingsManagement.GetValue("LnbLowFrequency", 0),
+              LnbHighFrequency = SettingsManagement.GetValue("LnbHighFrequency", 0),
+              LnbSwitchFrequency = SettingsManagement.GetValue("LnbSwitchFrequency", 0),
+              MinimumFiles = SettingsManagement.GetValue("timeshiftMinFiles", 6),
+              MaximumFiles = SettingsManagement.GetValue("timeshiftMaxFiles", 20),
+              MaximumFileSize = (uint) SettingsManagement.GetValue("timeshiftMaxFileSize", 256)
             };
             _settings.MaximumFileSize *= 1000;
             _settings.MaximumFileSize *= 1000;

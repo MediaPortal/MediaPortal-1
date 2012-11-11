@@ -187,9 +187,9 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       _status.endTime = new DateTime(1971, 11, 6);
       if (showProgress && ShowProgress != null) ShowProgress(_status);
 
-      bool useTimeZone = SettingsManagement.GetSetting("xmlTvUseTimeZone", "false").Value == "true";
-      int hours = Int32.Parse(SettingsManagement.GetSetting("xmlTvTimeZoneHours", "0").Value);
-      int mins = Int32.Parse(SettingsManagement.GetSetting("xmlTvTimeZoneMins", "0").Value);
+      bool useTimeZone = SettingsManagement.GetValue("xmlTvUseTimeZone", false);
+      int hours = SettingsManagement.GetValue("xmlTvTimeZoneHours", 0);
+      int mins = SettingsManagement.GetValue("xmlTvTimeZoneMins", 0);
       int timeZoneCorrection = hours * 60 + mins;
 
       var Programs = new ArrayList();

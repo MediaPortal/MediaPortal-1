@@ -240,11 +240,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     public void GrabEpg()
     {
       ServiceManager.Instance.InternalControllerService.OnTvServerEvent += _eventHandler;
-      Setting s = SettingsManagement.GetSetting("timeoutEPG", "10");
-      if (Int32.TryParse(s.Value, out _epgTimeOut) == false)
-      {
-        _epgTimeOut = 10;
-      }
+      _epgTimeOut = SettingsManagement.GetValue("timeoutEPG", 10);
       _currentTransponder = TransponderList.Instance.CurrentTransponder;
       Channel channel = _currentTransponder.CurrentChannel;
 

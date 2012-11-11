@@ -6,7 +6,21 @@ using Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories;
 namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {
   public static class SettingsManagement
-  {    
+  {
+    private static int _epgKeepDuration;
+    public static int EpgKeepDuration
+    {
+      get
+      {
+        if (_epgKeepDuration == 0)
+        {
+          // first time query settings, caching
+          _epgKeepDuration = GetValue("epgKeepDuration", 24);
+        }
+        return _epgKeepDuration;
+      }
+    }
+
     public static Setting GetSetting(string tagName)
     {
       using (ISettingsRepository settingsRepository = new SettingsRepository())
@@ -31,21 +45,36 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
-    // maximum hours to keep old program info
-    private static int _epgKeepDuration;
-    public static int EpgKeepDuration
+    public static int GetValue(string tagName, int defaultValue)
     {
-      get
-      {
-        if (_epgKeepDuration == 0)
-        {
-          // first time query settings, caching
-          Setting duration = GetSetting("epgKeepDuration", "24");          
-          _epgKeepDuration = Convert.ToInt32(duration.Value);
-        }
-        return _epgKeepDuration;
-      }
+      Setting setting = GetSetting(tagName, defaultValue.ToString());
+      return int.Parse(setting.Value);
     }
 
+    public static double GetValue(string tagName, double defaultValue)
+    {
+      Setting setting = GetSetting(tagName, defaultValue.ToString());
+      return double.Parse(setting.Value);
+    }
+
+    public static bool GetValue(string tagName, bool defaultValue)
+    {
+      Setting setting = GetSetting(tagName, defaultValue.ToString());
+      return setting.Value == "true";
+    }
+
+    public static string GetValue(string tagName, string defaultValue)
+    {
+      Setting setting = GetSetting(tagName, defaultValue);
+      return setting.Value;
+    }
+
+    public static DateTime GetValue(string tagName, DateTime defaultValue)
+    {
+      Setting setting = GetSetting(tagName, defaultValue.ToString());
+      return string.IsNullOrEmpty(setting.Value) ? DateTime.MinValue : DateTime.Parse(setting.Value);
+    }
+
+    // maximum hours to keep old program info
   }
 }
