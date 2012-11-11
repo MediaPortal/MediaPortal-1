@@ -159,7 +159,6 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
 
     public void ShowTiles(int[] columns)
     {
-      ListViewAPI.LVTILEVIEWINFO apiTileView;
       ListViewAPI.LVTILEINFO apiTile;
 
       IntPtr lpcol = Marshal.AllocHGlobal(columns.Length * 4);
@@ -168,7 +167,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
       int param = 0;
       _apiRetVal = ListViewAPI.SendMessage(this.Handle, ListViewAPI.LVM_SETVIEW, ListViewAPI.LV_VIEW_TILE, ref param);
 
-      apiTileView = new ListViewAPI.LVTILEVIEWINFO();
+      ListViewAPI.LVTILEVIEWINFO apiTileView = new ListViewAPI.LVTILEVIEWINFO();
       apiTileView.cbSize = Marshal.SizeOf(typeof (ListViewAPI.LVTILEVIEWINFO));
       apiTileView.dwMask = ListViewAPI.LVTVIM_COLUMNS | ListViewAPI.LVTVIM_TILESIZE;
       apiTileView.dwFlags = ListViewAPI.LVTVIF_AUTOSIZE;
@@ -195,9 +194,6 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
 
     public void SetTileSize(Size size)
     {
-      ListViewAPI.LVTILEVIEWINFO apiTileView;
-      ListViewAPI.INTEROP_SIZE apiSize;
-
       this.SuspendLayout();
 
       int param = 0;
@@ -208,11 +204,11 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
         return;
       }
 
-      apiSize = new ListViewAPI.INTEROP_SIZE();
+      ListViewAPI.INTEROP_SIZE apiSize = new ListViewAPI.INTEROP_SIZE();
       apiSize.cx = size.Width;
       apiSize.cy = size.Height;
 
-      apiTileView = new ListViewAPI.LVTILEVIEWINFO();
+      ListViewAPI.LVTILEVIEWINFO apiTileView = new ListViewAPI.LVTILEVIEWINFO();
       apiTileView.cbSize = Marshal.SizeOf(typeof (ListViewAPI.LVTILEVIEWINFO));
       apiTileView.dwMask = ListViewAPI.LVTVIM_TILESIZE | ListViewAPI.LVTVIM_LABELMARGIN;
       _apiRetVal = ListViewAPI.SendMessage(this.Handle, ListViewAPI.LVM_GETTILEVIEWINFO, 0, ref apiTileView);
@@ -226,8 +222,6 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
 
     public void SetTileWidth(int width)
     {
-      ListViewAPI.LVTILEVIEWINFO apiTileView;
-
       this.SuspendLayout();
 
       int param = 0;
@@ -237,7 +231,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
         return;
       }
 
-      apiTileView = new ListViewAPI.LVTILEVIEWINFO();
+      ListViewAPI.LVTILEVIEWINFO apiTileView = new ListViewAPI.LVTILEVIEWINFO();
       apiTileView.cbSize = Marshal.SizeOf(typeof (ListViewAPI.LVTILEVIEWINFO));
       apiTileView.dwMask = ListViewAPI.LVTVIM_TILESIZE | ListViewAPI.LVTVIM_LABELMARGIN;
       _apiRetVal = ListViewAPI.SendMessage(this.Handle, ListViewAPI.LVM_GETTILEVIEWINFO, 0, ref apiTileView);
@@ -251,8 +245,6 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
 
     public void SetTileHeight(int height)
     {
-      ListViewAPI.LVTILEVIEWINFO apiTileView;
-
       this.SuspendLayout();
 
       int param = 0;
@@ -263,7 +255,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
       }
 
 
-      apiTileView = new ListViewAPI.LVTILEVIEWINFO();
+      ListViewAPI.LVTILEVIEWINFO apiTileView = new ListViewAPI.LVTILEVIEWINFO();
 
       apiTileView.cbSize = Marshal.SizeOf(typeof (ListViewAPI.LVTILEVIEWINFO));
       apiTileView.dwMask = ListViewAPI.LVTVIM_TILESIZE | ListViewAPI.LVTVIM_LABELMARGIN;

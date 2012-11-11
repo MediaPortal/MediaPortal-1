@@ -94,10 +94,9 @@ namespace Mediaportal.TV.Server.TVLibrary
       uint maxcomplen; //receives maximum component length
       uint sysflags; //receives file system flags
       StringBuilder sysname = new StringBuilder(256); //receives the file system name
-      bool retval; //return value
 
-      retval = GetVolumeInformation(drive.Substring(0, 2), volname, 256, out sn, out maxcomplen, out sysflags, sysname,
-                                    256);
+      bool retval = GetVolumeInformation(drive.Substring(0, 2), volname, 256, out sn, out maxcomplen, out sysflags, sysname,
+                                         256);
 
       if (retval)
       {
@@ -116,9 +115,8 @@ namespace Mediaportal.TV.Server.TVLibrary
       uint maxcomplen; //receives maximum component length
       uint sysflags; //receives file system flags
       StringBuilder sysname = new StringBuilder(256); //receives the file system name
-      bool retval; //return value
 
-      retval = GetVolumeInformation(drive, volname, 256, out sn, out maxcomplen, out sysflags, sysname, 256);
+      bool retval = GetVolumeInformation(drive, volname, 256, out sn, out maxcomplen, out sysflags, sysname, 256);
 
       if (retval)
       {
@@ -423,18 +421,17 @@ namespace Mediaportal.TV.Server.TVLibrary
       try
       {
         if (ldate < 0) return DateTime.MinValue;
-        int year, month, day, hour, minute, sec;
-        sec = (int)(ldate % 100L);
+        int sec = (int)(ldate % 100L);
         ldate /= 100L;
-        minute = (int)(ldate % 100L);
+        int minute = (int)(ldate % 100L);
         ldate /= 100L;
-        hour = (int)(ldate % 100L);
+        int hour = (int)(ldate % 100L);
         ldate /= 100L;
-        day = (int)(ldate % 100L);
+        int day = (int)(ldate % 100L);
         ldate /= 100L;
-        month = (int)(ldate % 100L);
+        int month = (int)(ldate % 100L);
         ldate /= 100L;
-        year = (int)ldate;
+        int year = (int)ldate;
         DateTime dt = new DateTime(year, month, day, hour, minute, 0, 0);
         return dt;
       }
@@ -676,14 +673,13 @@ namespace Mediaportal.TV.Server.TVLibrary
         dateTime = dateTime.Replace(":", "-");
         string[] parts = dateTime.Split('-');
         if (parts.Length < 6) return DateTime.Now;
-        int hour, min, sec, year, day, month;
-        day = Int32.Parse(parts[0]);
-        month = Int32.Parse(parts[1]);
-        year = Int32.Parse(parts[2]);
+        int day = Int32.Parse(parts[0]);
+        int month = Int32.Parse(parts[1]);
+        int year = Int32.Parse(parts[2]);
 
-        hour = Int32.Parse(parts[3]);
-        min = Int32.Parse(parts[4]);
-        sec = Int32.Parse(parts[5]);
+        int hour = Int32.Parse(parts[3]);
+        int min = Int32.Parse(parts[4]);
+        int sec = Int32.Parse(parts[5]);
         return new DateTime(year, month, day, hour, min, sec, 0);
       }
       catch (Exception) {}

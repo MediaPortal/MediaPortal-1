@@ -821,7 +821,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void btnCustom_Click(object sender, EventArgs e)
     {
-      bool result;      
       IVirtualCard card;      
 
       Channel dr1 = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(1);
@@ -836,7 +835,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       low.CardId = card.Id;
       Thread.Sleep(2000);
 
-      result = ServiceAgents.Instance.ControllerServiceAgent.ParkTimeShifting(low.Name, 0, dr1.IdChannel, out low);      
+      bool result = ServiceAgents.Instance.ControllerServiceAgent.ParkTimeShifting(low.Name, 0, dr1.IdChannel, out low);      
 
       Thread.Sleep(1000);
       tvresult = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(low.Name, dr2.IdChannel, out card, out low);

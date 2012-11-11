@@ -114,9 +114,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         }
         else if (String.Compare(devices[i].Name, "Elecard NWSource-Plus", true) == 0)
         {
-
-          Setting setting;
-          setting = SettingsManagement.GetSetting("iptvCardCount", "1");
+          Setting setting = SettingsManagement.GetSetting("iptvCardCount", "1");
           int iptvCardCount = Convert.ToInt32(setting.Value);
           for (int cardNum = 0; cardNum < iptvCardCount; cardNum++)
           {
@@ -127,8 +125,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         }
         else if (String.Compare(devices[i].Name, "MediaPortal IPTV Source Filter", true) == 0)
         {
-          Setting setting;
-          setting = SettingsManagement.GetSetting("iptvCardCount", "1");
+          Setting setting = SettingsManagement.GetSetting("iptvCardCount", "1");
 
           int iptvCardCount = Convert.ToInt32(setting.Value);
           for (int cardNum = 0; cardNum < iptvCardCount; cardNum++)

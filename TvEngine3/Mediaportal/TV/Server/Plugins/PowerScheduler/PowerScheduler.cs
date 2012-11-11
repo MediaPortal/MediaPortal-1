@@ -848,7 +848,6 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     /// </summary>
     private void LoadSettings()
     {
-      int setting;
       bool changed = false;
 
       if (_settings == null)
@@ -905,7 +904,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
       }
 
       // Check configured PowerScheduler idle timeout
-      setting = Int32.Parse(SettingsManagement.GetSetting("PowerSchedulerIdleTimeout", "5").Value);
+      int setting = Int32.Parse(SettingsManagement.GetSetting("PowerSchedulerIdleTimeout", "5").Value);
       if (_settings.IdleTimeout != setting)
       {
         _settings.IdleTimeout = setting;

@@ -36,8 +36,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
 
     public XPListViewItem Add(XPListViewItem item)
     {
-      XPListViewItem itm;
-      itm = ((XPListViewItem)base.Add(item));
+      XPListViewItem itm = ((XPListViewItem)base.Add(item));
       ListViewAPI.AddItemToGroup(((XPListView)itm.ListView), itm.Index, itm.GroupIndex);
       if (ItemAdded != null)
       {

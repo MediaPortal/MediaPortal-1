@@ -288,9 +288,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Time
     /// <returns>long in xmltv format (yyyymmddhhmmss)</returns>
     public long ToLongDateTime()
     {
-      long lDatetime;
-
-      lDatetime = _year;
+      long lDatetime = _year;
       lDatetime *= 100;
       lDatetime += _month;
       lDatetime *= 100;
@@ -313,9 +311,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Time
     {
       DateTime dt = ToLocalTime();
 
-      long lDatetime;
-
-      lDatetime = dt.Year;
+      long lDatetime = dt.Year;
       lDatetime *= 100;
       lDatetime += dt.Month;
       lDatetime *= 100;

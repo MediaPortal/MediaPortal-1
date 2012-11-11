@@ -71,13 +71,11 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
     {
       this.LogInfo("PowerSchedulerFactory CTOR");
 
-      IStandbyHandler standbyHandler;
-
       _standbyHandlers = new List<IStandbyHandler>();
       _wakeupHandlers = new List<IWakeupHandler>();
 
       // Add handlers for preventing the system from entering standby
-      standbyHandler = new ActiveStreamsHandler(controllerService);
+      IStandbyHandler standbyHandler = new ActiveStreamsHandler(controllerService);
       _standbyHandlers.Add(standbyHandler);
       standbyHandler = new ControllerActiveHandler(controllerService);
       _standbyHandlers.Add(standbyHandler);

@@ -1140,18 +1140,16 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       try
       {
         if (ldate < 0) return DateTime.MinValue;
-        int year, month, day, hour, minute, sec;
-        sec = (int)(ldate % 100L);
         ldate /= 100L;
-        minute = (int)(ldate % 100L);
+        int minute = (int)(ldate % 100L);
         ldate /= 100L;
-        hour = (int)(ldate % 100L);
+        int hour = (int)(ldate % 100L);
         ldate /= 100L;
-        day = (int)(ldate % 100L);
+        int day = (int)(ldate % 100L);
         ldate /= 100L;
-        month = (int)(ldate % 100L);
+        int month = (int)(ldate % 100L);
         ldate /= 100L;
-        year = (int)ldate;
+        int year = (int)ldate;
         DateTime dt = new DateTime(year, month, day, hour, minute, 0, 0);
         return dt;
       }

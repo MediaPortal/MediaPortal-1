@@ -1265,7 +1265,6 @@ namespace Mediaportal.TV.TvPlugin.Radio
     {
       try
       {
-        Recording rec;
         GUIListItem pItem = GetItem(GetSelectedItemNo());
         if (pItem == null)
         {
@@ -1273,7 +1272,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
           SetProperties(null);
           return;
         }
-        rec = pItem.TVTag as Recording;
+        Recording rec = pItem.TVTag as Recording;
         if (rec == null)
         {
           SetProperties(null);

@@ -131,9 +131,8 @@ namespace Mediaportal.TV.TvPlugin.Radio
       {
         currentLayout = (GUIFacadeControl.Layout)xmlreader.GetValueAsInt(SerializeName, "layout", (int)GUIFacadeControl.Layout.List);
         m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
-        
-        string tmpLine;
-        tmpLine = xmlreader.GetValue("myradio", "sort");
+
+        string tmpLine = xmlreader.GetValue("myradio", "sort");
         if (tmpLine != null)
         {
           if (tmpLine == "name")

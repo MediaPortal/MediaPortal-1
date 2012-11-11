@@ -78,9 +78,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.html
     /// <returns>processed string</returns>
     public static string ToAscii(string source)
     {
-      string stripped;
-
-      stripped = NewLines(source);
+      string stripped = NewLines(source);
       stripped = Decode(stripped);
 
       return stripped;

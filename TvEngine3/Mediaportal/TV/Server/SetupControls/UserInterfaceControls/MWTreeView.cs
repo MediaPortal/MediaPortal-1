@@ -5289,9 +5289,7 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
     /// <returns>True if the proposed Label Text satisfies the regular expression or false otherwise.</returns>
     private bool IsDisallowLabelEditRegExSatisfied(string strLabelText)
     {
-      bool bRetVal;
-
-      bRetVal = !(DisallowLabelEditRegEx == string.Empty) && Regex.IsMatch(strLabelText, DisallowLabelEditRegEx);
+      bool bRetVal = !(DisallowLabelEditRegEx == string.Empty) && Regex.IsMatch(strLabelText, DisallowLabelEditRegEx);
 
       return bRetVal;
     }

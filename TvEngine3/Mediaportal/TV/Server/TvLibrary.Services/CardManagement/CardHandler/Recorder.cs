@@ -74,8 +74,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
     private static string SetDefaultRecordingFolder(ITvCardHandler cardHandler)
     {
-      string recordingFolder;
-      recordingFolder = TVDatabase.TVBusinessLayer.Common.GetDefaultRecordingFolder();
+      string recordingFolder = TVDatabase.TVBusinessLayer.Common.GetDefaultRecordingFolder();
       cardHandler.DataBaseCard.RecordingFolder = recordingFolder;
       TVDatabase.TVBusinessLayer.CardManagement.SaveCard(cardHandler.DataBaseCard);
       return recordingFolder;

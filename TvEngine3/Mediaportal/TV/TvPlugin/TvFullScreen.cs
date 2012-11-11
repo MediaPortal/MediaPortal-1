@@ -2800,9 +2800,8 @@ namespace Mediaportal.TV.TvPlugin
     {
       if (!_zapOsdVisible)
       {
-        GUIMessage msg;
         // Show zap OSD
-        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _zapWindow.GetID, 0, 0,
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _zapWindow.GetID, 0, 0,
                                         GetID, 0, null);
         if (errorInfo != null)
         {

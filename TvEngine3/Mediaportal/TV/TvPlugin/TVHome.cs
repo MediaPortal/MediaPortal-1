@@ -1321,9 +1321,7 @@ namespace Mediaportal.TV.TvPlugin
               // Get IP address of the TV server
               try
               {
-                IPAddress[] ips;
-
-                ips = Dns.GetHostAddresses(ServiceAgents.Instance.Hostname);
+                IPAddress[] ips = Dns.GetHostAddresses(ServiceAgents.Instance.Hostname);
 
                 Log.Debug("TVHome: WOL - GetHostAddresses({0}) returns:", ServiceAgents.Instance.Hostname);
 

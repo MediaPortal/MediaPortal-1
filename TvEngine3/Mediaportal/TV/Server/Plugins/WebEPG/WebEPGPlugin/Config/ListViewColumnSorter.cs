@@ -66,15 +66,12 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
     /// <returns>The result of the comparison. "0" if equal, negative if 'x' is less than 'y' and positive if 'x' is greater than 'y'</returns>
     public int Compare(object x, object y)
     {
-      int compareResult;
-      ListViewItem listviewX, listviewY;
-
       // Cast the objects to be compared to ListViewItem objects
-      listviewX = (ListViewItem)x;
-      listviewY = (ListViewItem)y;
+      ListViewItem listviewX = (ListViewItem)x;
+      ListViewItem listviewY = (ListViewItem)y;
 
       // Compare the two items
-      compareResult = ObjectCompare.Compare(listviewX.SubItems[ColumnToSort].Text, listviewY.SubItems[ColumnToSort].Text);
+      int compareResult = ObjectCompare.Compare(listviewX.SubItems[ColumnToSort].Text, listviewY.SubItems[ColumnToSort].Text);
 
       // Calculate correct return value based on object comparison
       if (OrderOfSort == SortOrder.Ascending)

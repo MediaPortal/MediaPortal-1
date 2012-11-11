@@ -147,16 +147,15 @@ namespace Mediaportal.TV.TvPlugin
       rec.ScheduleType = (int)ScheduleRecordingType.Once;
 
       DateTime dtNow = DateTime.Now;
-      int day;
-      day = 0;
+      int day = 0;
 
       dlg.Reset();
       dlg.SetHeading(142); //select time
       dlg.ShowQuickNumbers = false;
       //time
       //int no = 0;
-      int hour, minute, steps;
-      steps = 15;
+      int hour, minute;
+      int steps = 15;
       dlg.Add("00:00");
       for (hour = 0; hour <= 23; hour++)
       {
@@ -336,8 +335,8 @@ namespace Mediaportal.TV.TvPlugin
       dlg.ShowQuickNumbers = false;
       //time
       //int no = 0;
-      int hour, minute, steps;
-      steps = 5;
+      int hour, minute;
+      int steps = 5;
       dlg.Add("00:00");
       for (hour = 0; hour <= 23; hour++)
       {

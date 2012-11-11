@@ -1265,7 +1265,6 @@ namespace Mediaportal.TV.TvPlugin
       }
       for (int i = 0; i < subStreamsCount; ++i)
       {
-        string strItem;
         string strLang = g_Player.SubtitleLanguage(i);
         // formats right label2 to '[active]'
         string strActive = (currentSubtitleStream == i) ? strActiveLabel : null;
@@ -1275,7 +1274,7 @@ namespace Mediaportal.TV.TvPlugin
           strLang = strLang.Substring(0, ipos);
         }
         // formats to 'Language'
-        strItem = String.Format(strLang);
+        string strItem = String.Format(strLang);
 
         // create a list item object to add to the list
         GUIListItem pItem = new GUIListItem(strItem);
@@ -1706,7 +1705,6 @@ namespace Mediaportal.TV.TvPlugin
     {
       if (!g_Player.IsTVRecording)
       {
-        double fPercent;
         Program prog = GetChannel().CurrentProgram;
 
         if (prog == null)
@@ -1722,7 +1720,7 @@ namespace Mediaportal.TV.TvPlugin
         double iTotalSecs = ts.TotalSeconds;
         ts = DateTime.Now - prog.StartTime;
         double iCurSecs = ts.TotalSeconds;
-        fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
+        double fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
         fPercent *= 100.0d;
         GUIPropertyManager.SetProperty("#TV.View.Percentage", fPercent.ToString());
         Get_TimeInfo();

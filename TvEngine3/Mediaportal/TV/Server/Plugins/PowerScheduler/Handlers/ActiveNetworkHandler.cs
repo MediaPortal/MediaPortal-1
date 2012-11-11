@@ -146,14 +146,10 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
           if (ps == null)
             return;
 
-          
-          PowerSetting setting;
-
-          bool enabled;
 
           // Check if standby should be prevented
-          setting = ps.Settings.GetSetting("NetworkMonitorEnabled");          
-          enabled = Convert.ToBoolean(SettingsManagement.GetSetting("NetworkMonitorEnabled", "false").Value);
+          PowerSetting setting = ps.Settings.GetSetting("NetworkMonitorEnabled");          
+          bool enabled = Convert.ToBoolean(SettingsManagement.GetSetting("NetworkMonitorEnabled", "false").Value);
 
           if (setting.Get<bool>() != enabled) // Setting changed
           {

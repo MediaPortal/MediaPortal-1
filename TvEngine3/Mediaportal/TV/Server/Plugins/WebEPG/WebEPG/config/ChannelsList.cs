@@ -156,11 +156,10 @@ namespace WebEPG.config
       ChannelGrabberInfo ch;
 
       Levenstein comparer = new Levenstein();
-      float bestSimilarity;
       float similarity;
       int mostSimilarChan = -1;
 
-      bestSimilarity = MIN_SIMILARITY;
+      float bestSimilarity = MIN_SIMILARITY;
       for (int i = 0; i < channels.Count; i++)
       {
         ch = (ChannelGrabberInfo)channels[i];

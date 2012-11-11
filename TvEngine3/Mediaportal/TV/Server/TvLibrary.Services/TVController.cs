@@ -2604,7 +2604,6 @@ namespace Mediaportal.TV.Server.TVLibrary
       channelId = -1;
       foreach (ITvCardHandler cardHandler in _cards.Values)
       {
-        IUser user;
         if (tvUsage.HasValue)
         {
           channelId = cardHandler.UserManagement.GetChannelId(userName, tvUsage.GetValueOrDefault());
@@ -2614,7 +2613,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           }          
         }
 
-        user = cardHandler.UserManagement.GetUserCopy(userName);  
+        IUser user = cardHandler.UserManagement.GetUserCopy(userName);  
         if (user != null)
         {
           return user;

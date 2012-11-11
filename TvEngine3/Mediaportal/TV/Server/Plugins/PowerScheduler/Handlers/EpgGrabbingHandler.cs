@@ -130,13 +130,10 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
         case PowerSchedulerEventType.Elapsed:
 
           IPowerScheduler ps = GlobalServiceProvider.Instance.Get<IPowerScheduler>();
-          
-          PowerSetting setting;
-          bool enabled;
 
           // Check if standby should be prevented when grabbing EPG
-          setting = ps.Settings.GetSetting("PreventStandbyWhenGrabbingEPG");
-          enabled = Convert.ToBoolean(SettingsManagement.GetSetting("PreventStandbyWhenGrabbingEPG", "false").Value);
+          PowerSetting setting = ps.Settings.GetSetting("PreventStandbyWhenGrabbingEPG");
+          bool enabled = Convert.ToBoolean(SettingsManagement.GetSetting("PreventStandbyWhenGrabbingEPG", "false").Value);
           if (setting.Get<bool>() != enabled)
           {
             setting.Set<bool>(enabled);
