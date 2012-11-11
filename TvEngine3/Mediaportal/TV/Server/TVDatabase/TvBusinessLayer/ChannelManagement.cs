@@ -209,6 +209,16 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
+    public static Channel GetChannel(int idChannel, ChannelIncludeRelationEnum includeRelations)
+    {
+      using (IChannelRepository channelRepository = new ChannelRepository())
+      {
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.IdChannel == idChannel);        
+        Channel channel = channelRepository.IncludeAllRelations(query, includeRelations).FirstOrDefault();
+        return channel;
+      }
+    }
+
     public static Channel GetChannel(int idChannel)
     {
       using (IChannelRepository channelRepository = new ChannelRepository())

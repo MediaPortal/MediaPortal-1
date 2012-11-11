@@ -24,6 +24,7 @@ using System.Linq;
 using System.Threading;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
@@ -1183,35 +1184,48 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         IUser existingUser = GetUser(user.Name);
         if (existingUser != null)
         {
-          Channel channel = ChannelManagement.GetChannel(idChannel);
-          if (channel != null)
+          ThreadPool.QueueUserWorkItem(delegate { PersistUserHistoryAsync(idChannel, existingUser); });
+        }
+      }
+    }
+
+    private void PersistUserHistoryAsync(int idChannel, IUser existingUser)
+    {
+      try
+      {
+        Channel channel = ChannelManagement.GetChannel(idChannel, ChannelIncludeRelationEnum.None);
+        if (channel != null)
+        {
+          History history = existingUser.History as History;
+          if (history != null)
           {
-            History history = existingUser.History as History;
-            if (history != null)
+            ChannelManagement.SaveChannelHistory(history);
+          }
+          existingUser.History = null;
+          var channelBll = new ChannelBLL(channel);
+          Program p = channelBll.CurrentProgram;
+          if (p != null)
+          {
+            var history1 = new History
             {
-              ChannelManagement.SaveChannelHistory(history);
-            }
-            existingUser.History = null;
-            var channelBll = new ChannelBLL(channel);
-            Program p = channelBll.CurrentProgram;
-            if (p != null)
-            {
-              var history1 = new History
-                               {
-                                 IdChannel = channel.IdChannel,
-                                 StartTime = p.StartTime,
-                                 EndTime = p.EndTime,
-                                 Title = p.Title,
-                                 Description = p.Description,
-                                 ProgramCategory = p.ProgramCategory,
-                                 Recorded = false,
-                                 Watched = 0
-                               };
-              existingUser.History = history1;
-            }
+              IdChannel = channel.IdChannel,
+              StartTime = p.StartTime,
+              EndTime = p.EndTime,
+              Title = p.Title,
+              Description = p.Description,
+              ProgramCategory = p.ProgramCategory,
+              Recorded = false,
+              Watched = 0
+            };
+            existingUser.History = history1;
           }
         }
       }
+      catch (Exception ex)
+      {        
+       this.LogError(ex, "could not persist user's channel change history."); 
+      }
+      
     }
 
     #endregion
