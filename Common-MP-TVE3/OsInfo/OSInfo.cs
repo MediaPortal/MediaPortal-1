@@ -28,7 +28,6 @@ namespace OSInfo
   /// </summary>
   public class OSInfo
   {
-
     #region win32 API definitions
 
     [StructLayout(LayoutKind.Sequential)]
@@ -51,13 +50,6 @@ namespace OSInfo
     private static extern bool GetVersionEx(ref OSVERSIONINFOEX osVersionInfo);
 
     [DllImport("kernel32.dll")]
-    private static extern bool VerifyVersionInfo(ref OSVERSIONINFOEX osVersionInfo, [In] uint dwTypeMask, [In] UInt64 dwlConditionMask);
-
-    [DllImport("kernel32.dll")]
-    private static extern ulong VerSetConditionMask([In] ulong dwlConditionMask, [In] uint dwTypeBitMask,
-                                                    [In] byte dwConditionMask);
-
-    [DllImport("kernel32.dll")]
     private static extern bool GetProductInfo(
       [In] int dwOSMajorVersion,
       [In] int dwOSMinorVersion,
@@ -67,6 +59,13 @@ namespace OSInfo
 
     [DllImport("user32.dll")]
     private static extern bool GetSystemMetrics([In] int nIndex);
+
+    [DllImport("kernel32.dll")]
+    private static extern bool VerifyVersionInfo(ref OSVERSIONINFOEX osVersionInfo, [In] uint dwTypeMask, [In] UInt64 dwlConditionMask);
+
+    [DllImport("kernel32.dll")]
+    private static extern ulong VerSetConditionMask([In] ulong dwlConditionMask, [In] uint dwTypeBitMask,
+                                                    [In] byte dwConditionMask);
 
     #endregion
 
@@ -218,7 +217,7 @@ namespace OSInfo
       ///</summary>
       Windows2008R2,
       ///<summary>
-      /// Windows 8
+      /// Windows 2012 Server
       ///</summary>
       Windows2012
     }
@@ -247,6 +246,316 @@ namespace OSInfo
     #region Public Methods
 
     /// <summary>
+    /// Returns the product type of the operating system running on this computer.
+    /// </summary>
+    /// <returns>A string containing the the operating system product type.</returns>
+    public static string GetOSProductType()
+    {
+      OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
+      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
+      if (!GetVersionEx(ref osVersionInfo)) return string.Empty;
+
+      switch (OSMajorVersion)
+      {
+        case 4:
+          if (OSProductType == NT_WORKSTATION)
+          {
+            // Windows NT 4.0 Workstation
+            return " Workstation";
+          }
+          if (OSProductType == NT_SERVER)
+          {
+            // Windows NT 4.0 Server
+            return " Server";
+          }
+          return string.Empty;
+        case 5:
+          if (GetSystemMetrics(SM_MEDIACENTER))
+          {
+            return " Media Center";
+          }
+          if (GetSystemMetrics(SM_TABLETPC))
+          {
+            return " Tablet PC";
+          }
+          if (OSProductType == NT_WORKSTATION)
+          {
+            if ((osVersionInfo.wSuiteMask & VER_SUITE_EMBEDDEDNT) == VER_SUITE_EMBEDDEDNT)
+            {
+              //Windows XP Embedded
+              return " Embedded";
+            }
+            return (osVersionInfo.wSuiteMask & VER_SUITE_PERSONAL) == VER_SUITE_PERSONAL ? " Home" : " Professional";
+            // Windows XP / Windows 2000 Professional
+          }
+          if (OSProductType == NT_SERVER || OSProductType == NT_DOMAIN_CONTROLLER)
+          {
+            if (OSMinorVersion == 0)
+            {
+              if ((osVersionInfo.wSuiteMask & VER_SUITE_DATACENTER) == VER_SUITE_DATACENTER)
+              {
+                // Windows 2000 Datacenter Server
+                return " Datacenter Server";
+              }
+              if ((osVersionInfo.wSuiteMask & VER_SUITE_ENTERPRISE) == VER_SUITE_ENTERPRISE)
+              {
+                // Windows 2000 Advanced Server
+                return " Advanced Server";
+              }
+              // Windows 2000 Server
+              return " Server";
+            }
+            if (OSMinorVersion == 2)
+            {
+              if ((osVersionInfo.wSuiteMask & VER_SUITE_DATACENTER) == VER_SUITE_DATACENTER)
+              {
+                // Windows Server 2003 Datacenter Edition
+                return " Datacenter Edition";
+              }
+              if ((osVersionInfo.wSuiteMask & VER_SUITE_ENTERPRISE) == VER_SUITE_ENTERPRISE)
+              {
+                // Windows Server 2003 Enterprise Edition
+                return " Enterprise Edition";
+              }
+              if ((osVersionInfo.wSuiteMask & VER_SUITE_STORAGE_SERVER) == VER_SUITE_STORAGE_SERVER)
+              {
+                // Windows Server 2003 Storage Edition
+                return " Storage Edition";
+              }
+              if ((osVersionInfo.wSuiteMask & VER_SUITE_COMPUTE_SERV) == VER_SUITE_COMPUTE_SERV)
+              {
+                // Windows Server 2003 Compute Cluster Edition
+                return " Compute Cluster Edition";
+              }
+              if ((osVersionInfo.wSuiteMask & VER_SUITE_BLADE) == VER_SUITE_BLADE)
+              {
+                // Windows Server 2003 Web Edition
+                return " Web Edition";
+              }
+              // Windows Server 2003 Standard Edition
+              return " Standard Edition";
+            }
+          }
+          break;
+        case 6:
+          int strProductType;
+          GetProductInfo(osVersionInfo.dwMajorVersion, osVersionInfo.dwMinorVersion, 0, 0, out strProductType);
+          switch (strProductType)
+          {
+            case PRODUCT_ULTIMATE:
+            case PRODUCT_ULTIMATE_E:
+            case PRODUCT_ULTIMATE_N:
+              return "Ultimate Edition";
+            case PRODUCT_PROFESSIONAL:
+            case PRODUCT_PROFESSIONAL_E:
+            case PRODUCT_PROFESSIONAL_N:
+              return "Professional";
+            case PRODUCT_HOME_PREMIUM:
+            case PRODUCT_HOME_PREMIUM_E:
+            case PRODUCT_HOME_PREMIUM_N:
+              return "Home Premium Edition";
+            case PRODUCT_HOME_BASIC:
+            case PRODUCT_HOME_BASIC_E:
+            case PRODUCT_HOME_BASIC_N:
+              return "Home Basic Edition";
+            case PRODUCT_ENTERPRISE:
+            case PRODUCT_ENTERPRISE_E:
+            case PRODUCT_ENTERPRISE_N:
+            case PRODUCT_ENTERPRISE_SERVER_V:
+              return "Enterprise Edition";
+            case PRODUCT_BUSINESS:
+            case PRODUCT_BUSINESS_N:
+              return "Business Edition";
+            case PRODUCT_STARTER:
+            case PRODUCT_STARTER_E:
+            case PRODUCT_STARTER_N:
+              return "Starter Edition";
+            case PRODUCT_CLUSTER_SERVER:
+              return "Cluster Server Edition";
+            case PRODUCT_DATACENTER_SERVER:
+            case PRODUCT_DATACENTER_SERVER_V:
+              return "Datacenter Edition";
+            case PRODUCT_DATACENTER_SERVER_CORE:
+            case PRODUCT_DATACENTER_SERVER_CORE_V:
+              return "Datacenter Edition (core installation)";
+            case PRODUCT_ENTERPRISE_SERVER:
+              return "Enterprise Edition";
+            case PRODUCT_ENTERPRISE_SERVER_CORE:
+            case PRODUCT_ENTERPRISE_SERVER_CORE_V:
+              return "Enterprise Edition (core installation)";
+            case PRODUCT_ENTERPRISE_SERVER_IA64:
+              return "Enterprise Edition for Itanium-based Systems";
+            case PRODUCT_SMALLBUSINESS_SERVER:
+              return "Small Business Server";
+              //case PRODUCT_SMALLBUSINESS_SERVER_PREMIUM:
+              //  return "Small Business Server Premium Edition";
+            case PRODUCT_SERVER_FOR_SMALLBUSINESS:
+            case PRODUCT_SERVER_FOR_SMALLBUSINESS_V:
+              return "Windows Essential Server Solutions";
+            case PRODUCT_STANDARD_SERVER:
+            case PRODUCT_STANDARD_SERVER_V:
+              return "Standard Edition";
+            case PRODUCT_STANDARD_SERVER_CORE:
+            case PRODUCT_STANDARD_SERVER_CORE_V:
+              return "Standard Edition (core installation)";
+            case PRODUCT_WEB_SERVER:
+            case PRODUCT_WEB_SERVER_CORE:
+              return "Web Server Edition";
+            case PRODUCT_MEDIUMBUSINESS_SERVER_MANAGEMENT:
+            case PRODUCT_MEDIUMBUSINESS_SERVER_MESSAGING:
+            case PRODUCT_MEDIUMBUSINESS_SERVER_SECURITY:
+              return "Windows Essential Business Server ";
+            case PRODUCT_STORAGE_ENTERPRISE_SERVER:
+            case PRODUCT_STORAGE_EXPRESS_SERVER:
+            case PRODUCT_STORAGE_STANDARD_SERVER:
+            case PRODUCT_STORAGE_WORKGROUP_SERVER:
+              return "Storage Server";
+          }
+          break;
+      }
+      return string.Empty;
+    }
+
+    /// <summary>
+    /// Returns the service pack information of the operating system running on this computer.
+    /// </summary>
+    /// <returns>A string containing the the operating system service pack information.</returns>
+    public static string GetOSServicePack()
+    {
+      OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
+      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
+      return !GetVersionEx(ref osVersionInfo) ? string.Empty : osVersionInfo.szCSDVersion;
+    }
+
+    /// <summary>
+    /// Returns the name of the operating system running on this computer.
+    /// </summary>
+    /// <returns>A string containing the the operating system name.</returns>
+    public static string GetOSNameString()
+    {
+      OperatingSystem osInfo = Environment.OSVersion;
+      string osName = "UNKNOWN";
+
+      switch (osInfo.Platform)
+      {
+        case PlatformID.Win32Windows:
+          {
+            switch (OSMinorVersion)
+            {
+              case 0:
+                {
+                  osName = "Windows 95";
+                  break;
+                }
+              case 10:
+                {
+                  osName = osInfo.Version.Revision.ToString() == "2222A" ? "Windows 98 Second Edition" : "Windows 98";
+                  break;
+                }
+              case 90:
+                {
+                  osName = "Windows Me";
+                  break;
+                }
+            }
+            break;
+          }
+
+        case PlatformID.Win32NT:
+          {
+            switch (OSMajorVersion)
+            {
+              case 3:
+                {
+                  osName = "Windows NT 3.51";
+                  break;
+                }
+              case 4:
+                {
+                  osName = "Windows NT 4.0";
+                  break;
+                }
+              case 5:
+                {
+                  switch (OSMinorVersion)
+                  {
+                    case 0:
+                      osName = "Windows 2000";
+                      break;
+                    case 1:
+                      osName = "Windows XP";
+                      break;
+                    case 2:
+                      if (OSProductType == NT_WORKSTATION)
+                      {
+                        osName = "WindowsXP x64";
+                      }
+                      else
+                      {
+                        osName = GetSystemMetrics(SM_SERVERR2) ? "Windows Server 2003 R2" : "Windows Server 2003";
+                      }
+
+
+                      break;
+                  }
+                  break;
+                }
+              case 6:
+                {
+                  switch (OSMinorVersion)
+                  {
+                    case 0:
+                      osName = OSProductType == NT_WORKSTATION ? "Windows Vista" : "Windows 2008";
+                      break;
+                    case 1:
+                      osName = OSProductType == NT_WORKSTATION ? "Windows 7" : "Windows 2008 R2";
+                      break;
+                    case 2:
+                      osName = OSProductType == NT_WORKSTATION ? "Windows 8" : "Windows 2012";
+                      break;
+                  }
+                  break;
+                }
+            }
+            break;
+          }
+      }
+
+      if (!IsReportedOSVersion(OSMajorVersion, OSMinorVersion, (short)OSServicePackMajor, OSBuildVersion))
+      {
+        osName = "Compatibilty Mode: " + osName;
+      }
+
+      return osName;
+    }
+
+    /// <summary>
+    /// Returns the name of the operating system running on this computer.
+    /// </summary>
+    /// <returns>A string containing the the operating system name.</returns>
+    public static OSList GetOSName()
+    {
+      switch (OsVersionInt())
+      {
+        case 51:
+          return OSList.WindowsXp;
+        case 52:
+          if (OSProductType == NT_WORKSTATION)
+          {
+            return OSList.WindowsXp64;
+          }
+          return GetSystemMetrics(SM_SERVERR2) ? OSList.Windows2003R2 : OSList.Windows2003;
+        case 60:
+          return OSProductType == NT_WORKSTATION ? OSList.WindowsVista : OSList.Windows2008;
+        case 61:
+          return OSProductType == NT_WORKSTATION ? OSList.Windows7 : OSList.Windows2008R2;
+        case 62:
+          return OSProductType == NT_WORKSTATION ? OSList.Windows8 : OSList.Windows2012;
+      }
+      return OSList.Windows2000andPrevious;
+    }
+
+    /// <summary>
     /// Return a full version string, es.: "Windows XP ( Servicepack 2 ) [5.1.0000]"
     /// </summary>
     /// <returns>A string rappresenting a fully displayable version</returns>
@@ -257,7 +566,7 @@ namespace OSInfo
       {
         servicePack = " ( " + servicePack + " )";
       }
-      return GetOSNameString() + servicePack + " [" + Environment.OSVersion.Version + "]";
+      return GetOSNameString() + servicePack + " [" + OSVersion + "]";
     }
 
     /// <summary>
@@ -297,7 +606,7 @@ namespace OSInfo
     /// <returns>false means 2000 or previous</returns>
     public static bool XpOrLater()
     {
-      return VerifyVersionGreaterEqual(5,1);
+      return VerifyVersionGreaterEqual(5, 1);
     }
 
     /// <summary>
@@ -317,7 +626,7 @@ namespace OSInfo
     /// <returns>false means Xp or previous</returns>
     public static bool VistaOrLater()
     {
-      return VerifyVersionGreaterEqual(6,0);
+      return VerifyVersionGreaterEqual(6, 0);
     }
 
     /// <summary>
@@ -327,7 +636,7 @@ namespace OSInfo
     /// <returns>false means Vista or previous</returns>
     public static bool Win7OrLater()
     {
-      return VerifyVersionGreaterEqual(6,1);
+      return VerifyVersionGreaterEqual(6, 1);
     }
 
     /// <summary>
@@ -337,12 +646,75 @@ namespace OSInfo
     /// <returns>false means Win7 or previous</returns>
     public static bool Win8OrLater()
     {
-      return VerifyVersionGreaterEqual(6,2);
+      return VerifyVersionGreaterEqual(6, 2);
+    }
+
+    /// <summary>
+    /// Return a numeric value rappresenting OS version
+    /// </summary>
+    /// <returns>(OSMajorVersion * 10 + OSMinorVersion)</returns>
+    public static int OsVersionInt()
+    {
+      return (OSMajorVersion * 10 + OSMinorVersion);
     }
 
     #endregion
-    
-    #region Properties
+
+    #region Public Properties
+
+    /// <summary>
+    /// Gets the full version of the operating system running on this computer.
+    /// </summary>
+    public static string OSVersion
+    {
+      get { return Environment.OSVersion.Version.ToString(); }
+    }
+
+    /// <summary>
+    /// Gets the major version of the operating system running on this computer.
+    /// </summary>
+    public static int OSMajorVersion
+    {
+      get { return Environment.OSVersion.Version.Major; }
+    }
+
+    /// <summary>
+    /// Gets the minor version of the operating system running on this computer.
+    /// </summary>
+    public static int OSMinorVersion
+    {
+      get { return Environment.OSVersion.Version.Minor; }
+    }
+
+    /// <summary>
+    /// Gets the build version of the operating system running on this computer.
+    /// </summary>
+    public static int OSBuildVersion
+    {
+      get { return Environment.OSVersion.Version.Build; }
+    }
+
+    /// <summary>
+    /// Gets the revision version of the operating system running on this computer.
+    /// </summary>
+    public static int OSRevisionVersion
+    {
+      get { return Environment.OSVersion.Version.Revision; }
+    }
+
+    /// <summary>
+    /// Gets the main version of the service pack running on this computer.
+    /// </summary>
+    public static int OSServicePackMajor
+    {
+      get
+      {
+        OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
+        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
+        if (!GetVersionEx(ref osVersionInfo)) return -1;
+        return osVersionInfo.wServicePackMajor;
+      }
+    }
 
     /// <summary>
     /// Gets the main version of the service pack running on this computer.
@@ -358,9 +730,22 @@ namespace OSInfo
     }
 
     /// <summary>
+    /// Gets the string description of the service pack running on this computer.
+    /// </summary>
+    public static string OSServicePackDesc
+    {
+      get
+      {
+        OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
+        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
+        return !GetVersionEx(ref osVersionInfo) ? String.Empty : osVersionInfo.szCSDVersion;
+      }
+    }
+
+    /// <summary>
     /// Gets the product type of the operating system running on this computer.
     /// </summary>
-    private static byte OSProductType
+    public static byte OSProductType
     {
       get
       {
@@ -369,118 +754,6 @@ namespace OSInfo
         if (!GetVersionEx(ref osVersionInfo)) return 0x0;
         return osVersionInfo.wProductType;
       }
-    }
-
-    #endregion
-
-    #region Private Methods
-
-    /// <summary>
-    /// Returns the service pack information of the operating system running on this computer.
-    /// </summary>
-    /// <returns>A string containing the the operating system service pack information.</returns>
-    private static string GetOSServicePack()
-    {
-      OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
-      return !GetVersionEx(ref osVersionInfo) ? string.Empty : osVersionInfo.szCSDVersion;
-    }
-
-    /// <summary>
-    /// Returns the name of the operating system running on this computer.
-    /// </summary>
-    /// <returns>A string containing the the operating system name.</returns>
-    private static string GetOSNameString()
-    {
-      OperatingSystem osInfo = Environment.OSVersion;
-      string osName = "UNKNOWN";
-
-      switch (osInfo.Platform)
-      {
-        case PlatformID.Win32Windows:
-          {
-            switch (Environment.OSVersion.Version.Minor)
-            {
-              case 0:
-                {
-                  osName = "Windows 95";
-                  break;
-                }
-              case 10:
-                {
-                  osName = osInfo.Version.Revision.ToString() == "2222A" ? "Windows 98 Second Edition" : "Windows 98";
-                  break;
-                }
-              case 90:
-                {
-                  osName = "Windows Me";
-                  break;
-                }
-            }
-            break;
-          }
-
-        case PlatformID.Win32NT:
-          {
-            switch (Environment.OSVersion.Version.Major)
-            {
-              case 3:
-                {
-                  osName = "Windows NT 3.51";
-                  break;
-                }
-              case 4:
-                {
-                  osName = "Windows NT 4.0";
-                  break;
-                }
-              case 5:
-                {
-                  switch (Environment.OSVersion.Version.Minor)
-                  {
-                    case 0:
-                      osName = "Windows 2000";
-                      break;
-                    case 1:
-                      osName = "Windows XP";
-                      break;
-                    case 2:
-                      if (OSProductType == NT_WORKSTATION)
-                      {
-                        osName = "WindowsXP x64";
-                      }
-                      else
-                      {
-                        osName = GetSystemMetrics(SM_SERVERR2) ? "Windows Server 2003 R2" : "Windows Server 2003";
-                      }
-
-
-                      break;
-                  }
-                  break;
-                }
-              case 6:
-                {
-                  switch (Environment.OSVersion.Version.Minor)
-                  {
-                    case 0:
-                      osName = OSProductType == NT_WORKSTATION ? "Windows Vista" : "Windows 2008";
-                      break;
-                    case 1:
-                      osName = OSProductType == NT_WORKSTATION ? "Windows 7" : "Windows 2008 R2";
-                      break;
-                    case 2:
-                      osName = OSProductType == NT_WORKSTATION ? "Windows 8" : "Windows 2012";
-                      break;
-                  }
-                  break;
-                }
-            }
-            break;
-          }
-      }
-
-      return osName;
     }
 
     /// <summary>
@@ -493,12 +766,12 @@ namespace OSInfo
     {
       ulong condition = 0;
       var osVersionInfo = new OSVERSIONINFOEX
-                            {
-                              dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX)),
-                              dwMajorVersion = majorVersion,
-                              dwMinorVersion =  minorVersion
-                            };
-      condition = VerSetConditionMask(condition, VER_MAJORVERSION,VER_GREATER_EQUAL);
+      {
+        dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX)),
+        dwMajorVersion = majorVersion,
+        dwMinorVersion = minorVersion
+      };
+      condition = VerSetConditionMask(condition, VER_MAJORVERSION, VER_GREATER_EQUAL);
       return VerifyVersionInfo(ref osVersionInfo, VER_MAJORVERSION, condition);
     }
 
@@ -527,7 +800,28 @@ namespace OSInfo
       condition = VerSetConditionMask(condition, VER_PRODUCT_TYPE, VER_EQUAL);
       condition = VerSetConditionMask(condition, VER_SERVICEPACKMAJOR, VER_GREATER_EQUAL);
       condition = VerSetConditionMask(condition, VER_BUILDVERSION, VER_GREATER_EQUAL);
-      return VerifyVersionInfo(ref osVersionInfo, VER_MAJORVERSION | VER_MINORVERSION | VER_PRODUCT_TYPE | 
+      return VerifyVersionInfo(ref osVersionInfo, VER_MAJORVERSION | VER_MINORVERSION | VER_PRODUCT_TYPE |
+                                                  VER_SERVICEPACKMAJOR | VER_BUILDVERSION, condition);
+    }
+
+    private static bool IsReportedOSVersion(int majorVersion, int minorVersion, short servicePack, int buildVersion)
+    {
+      ulong condition = 0;
+      var osVersionInfo = new OSVERSIONINFOEX
+      {
+        dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX)),
+        dwMajorVersion = majorVersion,
+        dwMinorVersion = minorVersion,
+        dwBuildNumber = buildVersion,
+        wProductType = NT_WORKSTATION,
+        wServicePackMajor = servicePack
+      };
+      condition = VerSetConditionMask(condition, VER_MAJORVERSION, VER_EQUAL);
+      condition = VerSetConditionMask(condition, VER_MINORVERSION, VER_EQUAL);
+      condition = VerSetConditionMask(condition, VER_PRODUCT_TYPE, VER_EQUAL);
+      condition = VerSetConditionMask(condition, VER_SERVICEPACKMAJOR, VER_EQUAL);
+      condition = VerSetConditionMask(condition, VER_BUILDVERSION, VER_EQUAL);
+      return VerifyVersionInfo(ref osVersionInfo, VER_MAJORVERSION | VER_MINORVERSION | VER_PRODUCT_TYPE |
                                                   VER_SERVICEPACKMAJOR | VER_BUILDVERSION, condition);
     }
 
@@ -548,6 +842,5 @@ namespace OSInfo
     }
 
     #endregion
-
   }
 }
