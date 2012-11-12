@@ -521,7 +521,7 @@ namespace OSInfo
           }
       }
 
-      if (!IsReportedOSVersion(OSMajorVersion, OSMinorVersion, (short)OSServicePackMajor, OSBuildVersion))
+      if (!IsOSAsReported(OSMajorVersion, OSMinorVersion, OSBuildVersion, OSProductType, (short)OSServicePackMajor))
       {
         osName = "Compatibilty Mode: " + osName;
       }
@@ -575,19 +575,19 @@ namespace OSInfo
     public static OsSupport GetOSSupported()
     {
 
-      if (VerifyDesktopOSMinRequirement(5, 1, 3, 2600))
+      if (VerifyDesktopOSMinRequirement(5, 1, 2600, 3, NT_WORKSTATION))
       { // XP SP3
         return OsSupport.FullySupported;
       }
-      if (VerifyDesktopOSMinRequirement(6, 0, 2, 6000))
+      if (VerifyDesktopOSMinRequirement(6, 0, 6000, 2, NT_WORKSTATION))
       { // Vista SP2
         return OsSupport.FullySupported;
       }
-      if (VerifyDesktopOSMinRequirement(6, 1, 0, 7600))
+      if (VerifyDesktopOSMinRequirement(6, 1, 7600, 0, NT_WORKSTATION))
       { // Win7 RTM
         return OsSupport.FullySupported;
       }
-      if (VerifyDesktopOSMinRequirement(6, 2, 0, 9200))
+      if (VerifyDesktopOSMinRequirement(6, 2, 9200, 0, NT_WORKSTATION))
       { // Windows 8 RTM
         return OsSupport.NotSupported;
       }
@@ -755,6 +755,10 @@ namespace OSInfo
         return osVersionInfo.wProductType;
       }
     }
+    
+    #endregion
+
+    #region private methods
 
     /// <summary>
     /// Checks if OS is later then major / minor version
@@ -776,14 +780,15 @@ namespace OSInfo
     }
 
     /// <summary>
-    /// Checks Desktop OS for required service pack and build version
+    /// Checks OS for required service pack and build version
     /// </summary>
     /// <param name="majorVersion">Major OS version</param>
     /// <param name="minorVersion">Minor OS version</param>
-    /// <param name="servicePack">Minimum Service Pack</param>
-    /// <param name="buildVersion">Minimum </param>
+    /// <param name="buildVersion">OS Build Version</param>
+    /// <param name="productType">OS Product Type</param>
+    /// <param name="servicePack">Minimum Major Service PackVersion</param>
     /// <returns>True if Major / Minor OS versions match and service pack / build version are >= parameters</returns>
-    private static bool VerifyDesktopOSMinRequirement(int majorVersion, int minorVersion, short servicePack, int buildVersion)
+    private static bool VerifyDesktopOSMinRequirement(int majorVersion, int minorVersion, int buildVersion, byte productType, short servicePack)
     {
       ulong condition = 0;
       var osVersionInfo = new OSVERSIONINFOEX
@@ -792,7 +797,7 @@ namespace OSInfo
         dwMajorVersion = majorVersion,
         dwMinorVersion = minorVersion,
         dwBuildNumber = buildVersion,
-        wProductType = NT_WORKSTATION,
+        wProductType = productType,
         wServicePackMajor = servicePack
       };
       condition = VerSetConditionMask(condition, VER_MAJORVERSION, VER_EQUAL);
@@ -804,7 +809,18 @@ namespace OSInfo
                                                   VER_SERVICEPACKMAJOR | VER_BUILDVERSION, condition);
     }
 
-    private static bool IsReportedOSVersion(int majorVersion, int minorVersion, short servicePack, int buildVersion)
+    /// <summary>
+    /// Checks whether the OS version reported via GetVersionEx matches that of VerifyVersionInfo
+    /// When running in compatibility mode GetVersionEx can return the value of the 
+    /// compatibility setting rather than the actual OS
+    /// </summary>
+    /// <param name="majorVersion">Reported OS Major Version</param>
+    /// <param name="minorVersion">Reported OS Minor Version</param>
+    /// <param name="buildVersion">Reported OS Build Version</param>
+    /// <param name="productType">Reported OS Product Type</param>
+    /// <param name="servicePack">Reported OS Major Service Pack Version</param>
+    /// <returns>True if actual OS matches reported one</returns>
+    private static bool IsOSAsReported(int majorVersion, int minorVersion, int buildVersion, byte productType, short servicePack)
     {
       ulong condition = 0;
       var osVersionInfo = new OSVERSIONINFOEX
@@ -813,7 +829,7 @@ namespace OSInfo
         dwMajorVersion = majorVersion,
         dwMinorVersion = minorVersion,
         dwBuildNumber = buildVersion,
-        wProductType = NT_WORKSTATION,
+        wProductType = productType,
         wServicePackMajor = servicePack
       };
       condition = VerSetConditionMask(condition, VER_MAJORVERSION, VER_EQUAL);
@@ -842,5 +858,6 @@ namespace OSInfo
     }
 
     #endregion
+
   }
 }
