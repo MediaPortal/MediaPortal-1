@@ -575,19 +575,19 @@ namespace OSInfo
     public static OsSupport GetOSSupported()
     {
 
-      if (VerifyDesktopOSMinRequirement(5, 1, 2600, 3, NT_WORKSTATION))
+      if (VerifyDesktopOSMinRequirement(5, 1, 2600, NT_WORKSTATION, 3))
       { // XP SP3
         return OsSupport.FullySupported;
       }
-      if (VerifyDesktopOSMinRequirement(6, 0, 6000, 2, NT_WORKSTATION))
+      if (VerifyDesktopOSMinRequirement(6, 0, 6000, NT_WORKSTATION, 2))
       { // Vista SP2
         return OsSupport.FullySupported;
       }
-      if (VerifyDesktopOSMinRequirement(6, 1, 7600, 0, NT_WORKSTATION))
+      if (VerifyDesktopOSMinRequirement(6, 1, 7600, NT_WORKSTATION, 0))
       { // Win7 RTM
         return OsSupport.FullySupported;
       }
-      if (VerifyDesktopOSMinRequirement(6, 2, 9200, 0, NT_WORKSTATION))
+      if (VerifyDesktopOSMinRequirement(6, 2, 9200, NT_WORKSTATION, 0))
       { // Windows 8 RTM
         return OsSupport.NotSupported;
       }
