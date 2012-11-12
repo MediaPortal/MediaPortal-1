@@ -260,6 +260,7 @@ namespace MediaPortal
     protected bool useExclusiveDirectXMode;
     protected bool useEnhancedVideoRenderer;
     private bool _disableMouseEvents = false;
+    private bool _doNotWaitForVSync = false;
 
     [DllImport("winmm.dll")]
     internal static extern uint timeBeginPeriod(uint period);
@@ -322,6 +323,7 @@ namespace MediaPortal
         alwaysOnTopConfig = alwaysOnTop = xmlreader.GetValueAsBool("general", "alwaysontop", false);
         debugChangeDeviceHack = xmlreader.GetValueAsBool("debug", "changedevicehack", false);
         _disableMouseEvents = xmlreader.GetValueAsBool("remote", "CentareaJoystickMap", false);
+        _doNotWaitForVSync =  xmlreader.GetValueAsBool("debug", "donotwaitforvsync", false);
       }
 
       // When clipCursorWhenFullscreen is TRUE, the cursor is limited to
@@ -584,7 +586,7 @@ namespace MediaPortal
       graphicsSettings.WindowedMultisampleQuality = 0; //(int)bestDeviceCombo.MultiSampleQualityList[iQuality];
 
       graphicsSettings.WindowedVertexProcessingType = (VertexProcessingType)bestDeviceCombo.VertexProcessingTypeList[0];
-      graphicsSettings.WindowedPresentInterval = (PresentInterval)bestDeviceCombo.PresentIntervalList[0];
+      graphicsSettings.WindowedPresentInterval = _doNotWaitForVSync ? PresentInterval.Immediate : (PresentInterval)bestDeviceCombo.PresentIntervalList[0];
 
       return true;
     }
@@ -733,7 +735,7 @@ namespace MediaPortal
       graphicsSettings.FullscreenMultisampleQuality = 0;
       graphicsSettings.FullscreenVertexProcessingType =
         (VertexProcessingType)bestDeviceCombo.VertexProcessingTypeList[0];
-      graphicsSettings.FullscreenPresentInterval = PresentInterval.Default;
+      graphicsSettings.FullscreenPresentInterval = _doNotWaitForVSync ? PresentInterval.Immediate : PresentInterval.Default;
 
       return true;
     }
@@ -777,7 +779,7 @@ namespace MediaPortal
         presentParams.BackBufferWidth = ourRenderTarget.ClientRectangle.Right - ourRenderTarget.ClientRectangle.Left;
         presentParams.BackBufferHeight = ourRenderTarget.ClientRectangle.Bottom - ourRenderTarget.ClientRectangle.Top;
         presentParams.BackBufferFormat = graphicsSettings.BackBufferFormat;
-        presentParams.PresentationInterval = PresentInterval.Default;
+        presentParams.PresentationInterval = _doNotWaitForVSync ? PresentInterval.Immediate : PresentInterval.Default;
         presentParams.FullScreenRefreshRateInHz = 0;
         presentParams.SwapEffect = SwapEffect.Discard;
         presentParams.PresentFlag = PresentFlag.Video; //PresentFlag.LockableBackBuffer;
@@ -795,7 +797,7 @@ namespace MediaPortal
         presentParams.BackBufferWidth = graphicsSettings.DisplayMode.Width;
         presentParams.BackBufferHeight = graphicsSettings.DisplayMode.Height;
         presentParams.BackBufferFormat = graphicsSettings.DeviceCombo.BackBufferFormat;
-        presentParams.PresentationInterval = PresentInterval.Default;
+        presentParams.PresentationInterval = _doNotWaitForVSync ? PresentInterval.Immediate : PresentInterval.Default;
         presentParams.FullScreenRefreshRateInHz = graphicsSettings.DisplayMode.RefreshRate;
         presentParams.SwapEffect = SwapEffect.Discard;
         presentParams.PresentFlag = PresentFlag.Video; //|PresentFlag.LockableBackBuffer;
@@ -2722,12 +2724,18 @@ namespace MediaPortal
 
     private void StartFrameClock()
     {
+      if (_doNotWaitForVSync)
+        return; 
+
       clockWatch.Reset();
       clockWatch.Start();
     }
 
     private void WaitForFrameClock()
     {
+      if (_doNotWaitForVSync)
+        return; 
+
       long milliSecondsLeft;
       long timeElapsed = 0;
 
