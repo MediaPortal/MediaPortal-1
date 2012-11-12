@@ -65,7 +65,7 @@ namespace MediaPortal.GUI.Library
       public Font fnt;
       public float xpos;
       public float ypos;
-      public int color;
+      public uint color;
       public string text;
       public float[,] matrix;
       public Viewport viewport;
@@ -364,7 +364,7 @@ namespace MediaPortal.GUI.Library
       draw.fnt = fnt;
       draw.xpos = xpos;
       draw.ypos = ypos;
-      draw.color = color.ToArgb();
+      draw.color = (uint)color.ToArgb();
       draw.text = text;
       draw.matrix = (float[,])GUIGraphicsContext.GetFinalMatrix().Clone();
       draw.viewport = GUIGraphicsContext.DX9Device.Viewport;
@@ -487,7 +487,7 @@ namespace MediaPortal.GUI.Library
 
       _d3dxSprite.Draw(drawingTexture.texture, new Rectangle(0, 0, size.Width, size.Height),
                        Vector3.Empty,
-                       new Vector3((int)draw.xpos, (int)draw.ypos, 0), draw.color);
+                       new Vector3((int)draw.xpos, (int)draw.ypos, 0), (int)draw.color);
     }
 
     public static void Present()
@@ -554,7 +554,7 @@ namespace MediaPortal.GUI.Library
             {
               draw.fnt.DrawText(_d3dxSprite, draw.text, new Rectangle((int)draw.xpos,
                                                                       (int)draw.ypos, 0, 0), DrawTextFormat.NoClip,
-                                draw.color);
+                                                                      (int)draw.color);
             }
 
             _d3dxSprite.Flush();

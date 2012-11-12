@@ -49,13 +49,13 @@ namespace MediaPortal.GUI.Library
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh,
-                                                            float uoff, float voff, float umax, float vmax, int color,
+                                                            float uoff, float voff, float umax, float vmax, uint color,
                                                             float[,] matrix);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEngineDrawMaskedTexture(int textureNo1, float x, float y, float nw, float nh,
                                                                   float uoff, float voff, float umax, float vmax,
-                                                                  int color,
+                                                                  uint color,
                                                                   float[,] matrix, int textureNo2, float uoff2,
                                                                   float voff2,
                                                                   float umax2, float vmax2);
@@ -63,7 +63,7 @@ namespace MediaPortal.GUI.Library
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEngineDrawTexture2(int textureNo1, float x, float y, float nw, float nh,
                                                              float uoff, float voff, float umax, float vmax,
-                                                             int color,
+                                                             uint color,
                                                              float[,] matrix, int textureNo2, float uoff2,
                                                              float voff2,
                                                              float umax2, float vmax2,
@@ -291,7 +291,7 @@ namespace MediaPortal.GUI.Library
       /// <param name="umax"></param>
       /// <param name="vmax"></param>
       /// <param name="color"></param>
-      public void Draw(float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color)
+      public void Draw(float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, uint color)
       {
         //string logline=String.Format("draw:#{0} {1} {2} {3} {4}",_textureNumber,x,y,nw,nh);
         //Trace.WriteLine(logline);
@@ -323,7 +323,7 @@ namespace MediaPortal.GUI.Library
       /// <param name="vmax"></param>
       /// <param name="color"></param>
       public void Draw(float x, float y, float nw, float nh, float zrot, float uoff, float voff, float umax, float vmax,
-                       int color)
+                       uint color)
       {
         if (_textureNumber >= 0)
         {
@@ -363,7 +363,7 @@ namespace MediaPortal.GUI.Library
       /// <param name="umaxd"></param>
       /// <param name="vmaxd"></param>
       public void Draw(float x, float y, float nw, float nh, float zrot, float uoff, float voff, float umax, float vmax,
-                       int color, int blendableTextureNo, float uoffd, float voffd, float umaxd, float vmaxd,
+                       uint color, int blendableTextureNo, float uoffd, float voffd, float umaxd, float vmaxd,
                        GUIImage.FontEngineBlendMode blendMode)
       {
         if (_textureNumber >= 0)
@@ -406,7 +406,7 @@ namespace MediaPortal.GUI.Library
       /// <param name="umaxm"></param>
       /// <param name="vmaxm"></param>
       public void DrawMasked(float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax,
-                             int color, int maskTextureNo, float uoffm, float voffm, float umaxm, float vmaxm)
+                             uint color, int maskTextureNo, float uoffm, float voffm, float umaxm, float vmaxm)
       {
         if (_textureNumber >= 0)
         {

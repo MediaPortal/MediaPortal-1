@@ -502,7 +502,7 @@ int FontEngineAddSurface(int hashCode, bool useAlphaBlend,void* surface)
 }
 
 //*******************************************************************************************************************
-void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color, float m[3][4])
+void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, unsigned int color, float m[3][4])
 {
   if (textureNo < 0 || textureNo>=MAX_TEXTURES) 
 	  return;
@@ -751,7 +751,7 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 // blendMode 1 = diffuse blending (choose D3DTOP_MODULATE)
 // blendMode 2 = linear blending (choose D3DTOP_BLENDTEXTUREALPHA)
 void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax,
-                            int color, float m[3][4],
+                            unsigned int color, float m[3][4],
                             int textureNo2, float uoff2, float voff2, float umax2, float vmax2,
                             int blendMode)
 {
@@ -1029,7 +1029,7 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
 
 //*******************************************************************************************************************
 void FontEngineDrawMaskedTexture(int textureNo1, float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax,
-                                 int color, float m[3][4],
+                                 unsigned int color, float m[3][4],
                                  int textureNo2, float uoff2, float voff2, float umax2, float vmax2)
 {
   // textureNo1 - main image
@@ -1291,7 +1291,7 @@ void FontEngineDrawMaskedTexture(int textureNo1, float x, float y, float nw, flo
 // blendMode 1 = diffuse blending (choose D3DTOP_MODULATE)
 // blendMode 2 = linear blending (choose D3DTOP_BLENDTEXTUREALPHA)
 void FontEngineDrawMaskedTexture2(int textureNo1,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax,
-                                  int color, float m[3][4],
+                                  unsigned int color, float m[3][4],
                                   int textureNo2, float uoff2, float voff2, float umax2, float vmax2,
                                   int textureNo3, float uoff3, float voff3, float umax3, float vmax3,
                                   int blendMode)
