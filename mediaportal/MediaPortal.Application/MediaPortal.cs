@@ -370,7 +370,7 @@ public class MediaPortalApp : D3DApp, IRender
       UIntPtr res = UIntPtr.Zero;
 
       int options = Convert.ToInt32(Reg.RegistryRights.ReadKey);
-      if (OSInfo.OSInfo.OsVersionInt() >= 52)
+      if (OSInfo.OSInfo.Xp64OrLater())
       {
         options = options | Convert.ToInt32(Reg.RegWow64Options.KEY_WOW64_64KEY);
       }
