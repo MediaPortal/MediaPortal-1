@@ -101,6 +101,11 @@ namespace MediaPortal.Dialogs
           {
             m_bButtonPressed = false;
             base.OnMessage(message);
+
+            Reset();
+            AllocResources();
+            InitControls();
+
             _selectedLabel = -1;
             ClearControl(GetID, (int)Controls.CONTROL_LIST);
 
@@ -246,11 +251,12 @@ namespace MediaPortal.Dialogs
 
     public void SetHeading(string strLine)
     {
+      /*    
       Reset();
       //LoadSkin();
       AllocResources();
       InitControls();
-
+      */
       SetControlLabel(GetID, (int)Controls.CONTROL_HEADING, strLine);
     }
 

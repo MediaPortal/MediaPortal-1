@@ -65,6 +65,11 @@ namespace MediaPortal.Dialogs
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
             base.OnMessage(message);
+
+            Reset();
+            AllocResources();
+            InitControls();
+
             ClearControl(GetID, (int)Controls.CONTROL_LIST);
 
             for (int i = 0; i < m_vecList.Count; i++)
@@ -123,11 +128,12 @@ namespace MediaPortal.Dialogs
 
     public void SetHeading(string strLine)
     {
+      /*
       Reset();
       //LoadSkin();
       AllocResources();
       InitControls();
-
+      */
       SetControlLabel(GetID, (int)Controls.CONTROL_HEADING, strLine);
     }
 
