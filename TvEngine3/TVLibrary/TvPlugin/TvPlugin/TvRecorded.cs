@@ -962,9 +962,39 @@ namespace TvPlugin
 
         // Set a default logo indicating the watched status
         string SmallThumb = aRecording.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
-        string previewThumb = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded,
+        string PreviewThumb = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded,
                                             Path.ChangeExtension(Utils.SplitFilename(aRecording.FileName), null),
                                             Utils.GetThumbExtension());
+
+        if (!File.Exists(PreviewThumb))
+        {
+          string thumbnailFilename = string.Format("{0}{1}",
+                                            Path.ChangeExtension(Utils.SplitFilename(aRecording.FileName), null),
+                                            Utils.GetThumbExtension());
+
+          try
+          {
+            byte[] thumbData = RemoteControl.Instance.GetRecordingThumbnail(thumbnailFilename);
+
+            if (thumbData.Length > 0)
+            {
+              using (FileStream fs = new FileStream(PreviewThumb, FileMode.Create))
+              {
+                fs.Write(thumbData, 0, thumbData.Length);
+                fs.Close();
+                fs.Dispose();
+              }
+            }
+            else
+            {
+              Log.Warn("No thumbdata found for thumbnail: {0}", thumbnailFilename);
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Error("Error fetching thumbnail from TVServer: {0}", ex.Message);
+          }
+        }
 
         // Get the channel logo for the small icons
         string StationLogo = Utils.GetCoverArt(Thumbs.TVChannel, strChannelName);
@@ -974,15 +1004,15 @@ namespace TvPlugin
         }
 
         // Display previews only if the option to create them is active                
-        if (Utils.FileExistsInCache(previewThumb))
+        if (Utils.FileExistsInCache(PreviewThumb))
         {
           // Search a larger one
-          string PreviewThumbLarge = Utils.ConvertToLargeCoverArt(previewThumb);          
+          string PreviewThumbLarge = Utils.ConvertToLargeCoverArt(PreviewThumb);          
           if (Utils.FileExistsInCache(PreviewThumbLarge))
           {
-            previewThumb = PreviewThumbLarge;
+            PreviewThumb = PreviewThumbLarge;
           }
-          item.ThumbnailImage = item.IconImageBig = previewThumb;
+          item.ThumbnailImage = item.IconImageBig = PreviewThumb;
         }
         else
         {

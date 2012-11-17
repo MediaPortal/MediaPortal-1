@@ -40,6 +40,7 @@ using TvLibrary.Implementations.Hybrid;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using TvLibrary.Streaming;
+using TvThumbnails;
 
 namespace TvService
 {
@@ -62,6 +63,7 @@ namespace TvService
     private readonly TvBusinessLayer _layer = new TvBusinessLayer();
     private readonly ICardAllocation _cardAllocation;
     private readonly ChannelStates _channelStates;
+    private readonly RecordingThumbsService _recordingThumbsService;
 
     /// <summary>
     /// EPG grabber for DVB
@@ -186,6 +188,7 @@ namespace TvService
     {
       _channelStates = new ChannelStates(_layer, this);
       _cardAllocation = new AdvancedCardAllocation(_layer, this);
+      _recordingThumbsService = new RecordingThumbsService();
     }
 
     public Dictionary<int, ITvCardHandler> CardCollection
@@ -472,6 +475,8 @@ namespace TvService
         Log.Info("Controller: TVServer initialized okay");
       else
         Log.Info("Controller: Failed to initialize TVServer");
+
+      _recordingThumbsService.Init();
 
       return;
     }
@@ -873,6 +878,8 @@ namespace TvService
 
         //clean up the tv cards
         FreeCards();
+
+        _recordingThumbsService.Dispose();
 
         Gentle.Common.CacheManager.Clear();
         if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
@@ -2369,6 +2376,22 @@ namespace TvService
         Log.Error("Controller: Can't get streaming url");
       }
       return "";
+    }
+
+    /// <summary>
+    /// Gets the thumbnail image data of given file
+    /// </summary>
+    /// <param name="thumbnailFilename">Filename of the thumbnail</param>
+    /// <returns></returns>
+    public byte[] GetRecordingThumbnail(string thumbnailFilename)
+    {
+      string fileAndPath = _recordingThumbsService.GetThumbnailFolder() + "/" + thumbnailFilename;
+
+      if (!File.Exists(fileAndPath))
+      {
+        return new byte[0];
+      }
+      return File.ReadAllBytes(fileAndPath);
     }
 
     public string GetRecordingUrl(int idRecording)

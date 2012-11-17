@@ -430,6 +430,11 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\ttdvbacc.dll"
   File "${TVSERVER.BASE}\tevii.dll"
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
+  
+  ; thumbnail software
+  File "${TVSERVER.BASE}\ffmpeg.exe"
+  File "${git_TVServer}\TvThumbnails\bin\${BUILD_TYPE}\TvThumbnails.dll"
+  
 
   File "${git_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
   
@@ -589,6 +594,8 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\tevii.dll"
   Delete "$INSTDIR\Ionic.Zip.dll"
   Delete "$INSTDIR\Interop.SHDocVw.dll"
+  Delete "$INSTDIR\ffmpeg.exe"
+  Delete "$INSTDIR\TvThumbnails.dll"
 
   ; remove Start Menu shortcuts
   Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"

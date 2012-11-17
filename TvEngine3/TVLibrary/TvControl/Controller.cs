@@ -197,6 +197,13 @@ namespace TvControl
     void ClearCache();
 
     /// <summary>
+    /// Gets the thumbnail image data of given file
+    /// </summary>
+    /// <param name="thumbnailFilename">Filename of the thumbnail</param>
+    /// <returns></returns>
+    byte[] GetRecordingThumbnail(string thumbnailFilename);
+
+    /// <summary>
     /// Returns the URL for the RTSP stream on which the client can find the
     /// stream for recording 
     /// </summary>
