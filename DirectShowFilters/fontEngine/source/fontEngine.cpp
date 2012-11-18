@@ -94,26 +94,22 @@ struct FONT_DATA_T
   float                   fTextureHeight;
   float                   fSpacingPerChar;
   LPDIRECT3DTEXTURE9      pTexture;
-  LPDIRECT3DVERTEXBUFFER9 pVertexBuffer;
   LPDIRECT3DINDEXBUFFER9  pIndexBuffer;
   float                   textureCoord[MAX_TEXTURE_COORDS][4];
   CUSTOMVERTEX*           vertices;
   int                     iv;
   int                     dwNumTriangles;
-  bool                    updateVertexBuffer;
-} ;
+};
 
 struct TEXTURE_DATA_T
 {	
   int                     hashCode;
   LPDIRECT3DTEXTURE9      pTexture;
-  LPDIRECT3DVERTEXBUFFER9 pVertexBuffer;
   LPDIRECT3DINDEXBUFFER9  pIndexBuffer;
   CUSTOMVERTEX*           vertices;
   int                     iv;
   int                     dwNumTriangles;
   D3DSURFACE_DESC         desc;
-  bool                    updateVertexBuffer;
   bool                    useAlphaBlend;
   bool                    delayedRemove;
 };
@@ -140,13 +136,9 @@ TCHAR logFile[MAX_PATH];
 static bool pathInitialized=false;
 
 int m_iTexturesInUse=0;
-int m_iVertexBuffersUpdated=0;
-int m_iFontVertexBuffersUpdated=0;
 int m_iScreenWidth=0;
 int m_iScreenHeight=0;
 D3DPOOL   m_ipoolFormat=D3DPOOL_MANAGED;
-DWORD     m_usage = 0;
-DWORD     m_lock = 0;
 DWORD     m_alphaBlend=-1;
 
 void Log(char* txt)
@@ -207,22 +199,18 @@ void FontEngineInitialize(int screenWidth, int screenHeight, int poolFormat)
   {
     for (int i=0; i < MAX_FONTS;++i)
     {
-      fontData[i].pVertexBuffer=NULL;
       fontData[i].pIndexBuffer=NULL;
       fontData[i].pTexture = NULL;
       fontData[i].vertices = NULL;
-      fontData[i].updateVertexBuffer=false;
     }
     for (int i=0; i < MAX_TEXTURES;++i)
     {
       textureData[i].hashCode=-1;
       textureData[i].dwNumTriangles=0;
       textureData[i].iv=0;
-      textureData[i].pVertexBuffer=NULL;
       textureData[i].pIndexBuffer=NULL;
       textureData[i].pTexture=NULL;
       textureData[i].vertices = NULL;
-      textureData[i].updateVertexBuffer=false;
       textureData[i].useAlphaBlend=true;
       textureData[i].delayedRemove=false;
       textureZ[i]=-1;
@@ -232,19 +220,13 @@ void FontEngineInitialize(int screenWidth, int screenHeight, int poolFormat)
     initialized=true;
     textureCount=0;
 	}
-  if(poolFormat==0)
+  if (poolFormat==0)
   {
-    m_ipoolFormat = D3DPOOL_DEFAULT;
-    //m_usage = D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY;
-    //m_lock = D3DLOCK_DISCARD;
-    m_usage = D3DUSAGE_WRITEONLY;
-    m_lock = 0;
+    m_ipoolFormat = D3DPOOL_SYSTEMMEM;
   }
   else
   {
     m_ipoolFormat = D3DPOOL_MANAGED;
-    m_usage = D3DUSAGE_WRITEONLY;
-    m_lock = 0;
   }
 }
 //*******************************************************************************************************************
@@ -328,11 +310,7 @@ void FontEngineRemoveTexture(int textureNo)
   textureData[textureNo].hashCode=-1;
   textureData[textureNo].dwNumTriangles=0;
   textureData[textureNo].iv=0;
-  if (textureData[textureNo].pVertexBuffer!=NULL)
-  {
-    textureData[textureNo].pVertexBuffer->Release();
-  }
-  textureData[textureNo].pVertexBuffer=NULL;
+
   if (textureData[textureNo].pIndexBuffer!=NULL)
   {
     textureData[textureNo].pIndexBuffer->Release();
@@ -349,7 +327,6 @@ void FontEngineRemoveTexture(int textureNo)
     textureData[textureNo].pTexture->Release();
   }
   textureData[textureNo].pTexture=NULL;
-  textureData[textureNo].updateVertexBuffer=true;
   textureData[textureNo].useAlphaBlend=true;
   textureData[textureNo].delayedRemove=false;
 }
@@ -379,17 +356,7 @@ int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
   textureData[selected].hashCode=hashCode;
   textureData[selected].pTexture=(LPDIRECT3DTEXTURE9)texture;
   textureData[selected].pTexture->AddRef();
-  textureData[selected].updateVertexBuffer=true;
 
-  if (textureData[selected].pVertexBuffer==NULL)
-  {
-    m_pDevice->CreateVertexBuffer(MaxNumTextureVertices*sizeof(CUSTOMVERTEX),
-                                  m_usage, 
-                                  D3DFVF_CUSTOMVERTEX,
-                                  m_ipoolFormat, 
-                                  &textureData[selected].pVertexBuffer, 
-                                  NULL);  
-  }
   if (textureData[selected].vertices==NULL)
   {
     textureData[selected].vertices = new CUSTOMVERTEX[MaxNumTextureVertices];
@@ -402,11 +369,11 @@ int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
   textureData[selected].pTexture->GetLevelDesc(0,&textureData[selected].desc);
 
   m_pDevice->CreateIndexBuffer(	MaxNumTextureVertices *sizeof(WORD),
-                                D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, m_ipoolFormat, 
+                                D3DUSAGE_DYNAMIC, D3DFMT_INDEX16, m_ipoolFormat, 
                                 &textureData[selected].pIndexBuffer, NULL ) ;
   WORD* pIndices;
   int triangle=0;
-  textureData[selected].pIndexBuffer->Lock(0,0,(VOID**)&pIndices,0);
+  textureData[selected].pIndexBuffer->Lock(0,0,(VOID**)&pIndices, 0);
   for (int i=0; i < MaxNumTextureVertices;i+=6)
   {
     if (i+5 < MaxNumTextureVertices)
@@ -457,32 +424,22 @@ int FontEngineAddSurface(int hashCode, bool useAlphaBlend,void* surface)
   textureData[selected].hashCode=hashCode;
   textureData[selected].pTexture=(LPDIRECT3DTEXTURE9)pContainer;
 
-  if (textureData[selected].pVertexBuffer==NULL)
-  {
-    m_pDevice->CreateVertexBuffer(MaxNumTextureVertices*sizeof(CUSTOMVERTEX),
-                                  m_usage, 
-                                  D3DFVF_CUSTOMVERTEX,
-                                  m_ipoolFormat, 
-                                  &textureData[selected].pVertexBuffer, 
-                                  NULL) ;  
-  }
   if (textureData[selected].vertices==NULL)
   {
     textureData[selected].vertices = new CUSTOMVERTEX[MaxNumTextureVertices];
     for (int i=0; i < MaxNumTextureVertices;++i)
     {
       textureData[selected].vertices[i].z=0;
-      //textureData[selected].vertices[i].rhw=1;
     }
   }
   textureData[selected].pTexture->GetLevelDesc(0,&textureData[selected].desc);
 
   m_pDevice->CreateIndexBuffer( MaxNumTextureVertices *sizeof(WORD),
-                                D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, m_ipoolFormat, 
+                                D3DUSAGE_DYNAMIC, D3DFMT_INDEX16, m_ipoolFormat, 
                                 &textureData[selected].pIndexBuffer, NULL ) ;
   WORD* pIndices;
   int triangle=0;
-  textureData[selected].pIndexBuffer->Lock(0,0,(VOID**)&pIndices,0);
+  textureData[selected].pIndexBuffer->Lock(0,0,(VOID**)&pIndices, 0);
   for (int i=0; i < MaxNumTextureVertices;i+=6)
   {
     if (i+5 < MaxNumTextureVertices)
@@ -687,11 +644,6 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
   float z4=matrix.ScaleFinalZCoord(xpos2,ypos);
 
   //upper left
-  if (texture->vertices[iv].tu != tx1 || texture->vertices[iv].tv !=ty1 || texture->vertices[iv].color!=color ||
-      texture->vertices[iv].x != x1 || texture->vertices[iv].y !=y1 || texture->vertices[iv].z!=z1)
-  {
-    texture->updateVertexBuffer=true;
-  }
   texture->vertices[iv].x=x1 ;  
   texture->vertices[iv].y=y1 ; 
   texture->vertices[iv].z=z1;
@@ -701,11 +653,6 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
   iv++;
 
   //bottom left
-  if (texture->vertices[iv].tu != tx1 || texture->vertices[iv].tv !=ty2 || texture->vertices[iv].color!=color ||
-      texture->vertices[iv].x != x2 || texture->vertices[iv].y !=y2 || texture->vertices[iv].z!=z2)
-  {
-    texture->updateVertexBuffer=true;
-  }
   texture->vertices[iv].x=x2;  
   texture->vertices[iv].y=y2;
   texture->vertices[iv].z=z2; 
@@ -715,11 +662,6 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
   iv++;
 
   //bottom right
-  if (texture->vertices[iv].tu != tx2 || texture->vertices[iv].tv !=ty2 || texture->vertices[iv].color!=color ||
-      texture->vertices[iv].x != x3 || texture->vertices[iv].y !=y3 || texture->vertices[iv].z!=z3)
-  {
-    texture->updateVertexBuffer=true;
-  }
   texture->vertices[iv].x=x3;  
   texture->vertices[iv].y=y3; 
   texture->vertices[iv].z=z3;
@@ -728,11 +670,6 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
   texture->vertices[iv].tv=ty2;iv++;
 
   //upper right
-  if (texture->vertices[iv].tu != tx2 || texture->vertices[iv].tv !=ty1 || texture->vertices[iv].color!=color ||
-      texture->vertices[iv].x != x4 || texture->vertices[iv].y !=y4 || texture->vertices[iv].z!=z4)
-  {
-    texture->updateVertexBuffer=true;
-  }
   texture->vertices[iv].x=x4;  
   texture->vertices[iv].y=y4;
   texture->vertices[iv].z=z4; 
@@ -1624,80 +1561,79 @@ void FontEnginePresentTextures()
   inPresentTextures=true;
   try
   {
-    m_pDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
+    if (textureCount > 0)
+    {  
+      m_pDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
 
-    // Set the texture blending operations for default rendering.
-    m_pDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-    m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-    m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
-    m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-    m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-    m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+      // Set the texture blending operations for default rendering.
+      m_pDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+      m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+      m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+      m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+      m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+      m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 
-    m_pDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
-    m_pDevice->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-    m_pDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
-    m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-    m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-    m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
+      m_pDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
+      m_pDevice->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+      m_pDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
+      m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+      m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+      m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
 
-    m_pDevice->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_DISABLE);
-    m_pDevice->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
+      m_pDevice->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_DISABLE);
+      m_pDevice->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
 
-    for (int i=0; i < textureCount; ++i)
-    {
-      int index=textureZ[i];
-      if (index < 0 || index >= MAX_TEXTURES) continue;
-
-      TEXTURE_DATA_T* texture = &(textureData[index]);
-      if( !texture->delayedRemove )
+      for (int i=0; i < textureCount; ++i)
       {
-        try
+        int index=textureZ[i];
+        if (index < 0 || index >= MAX_TEXTURES) continue;
+
+        TEXTURE_DATA_T* texture = &(textureData[index]);
+        if( !texture->delayedRemove )
         {
-          if (texture->dwNumTriangles!=0)
+          try
           {
-            m_iTexturesInUse++;
-            if (texture->updateVertexBuffer)
+            if (texture->dwNumTriangles!=0)
             {
-              m_iVertexBuffersUpdated++;
-              CUSTOMVERTEX* pVertices;
-              texture->pVertexBuffer->Lock( 0, 0, (void**)&pVertices, m_lock) ;
-              memcpy(pVertices,texture->vertices, (texture->iv)*sizeof(CUSTOMVERTEX));
-              texture->pVertexBuffer->Unlock();
-            }
+              m_iTexturesInUse++;
 
-            if(texture->useAlphaBlend)
-            {
-              FontEngineSetAlphaBlend(TRUE);
-            }
-            else
-            {
-              FontEngineSetAlphaBlend(FALSE);
-            }
+              if (texture->useAlphaBlend)
+              {
+                FontEngineSetAlphaBlend(TRUE);
+              }
+              else
+              {
+                FontEngineSetAlphaBlend(FALSE);
+              }
 
-            m_pDevice->SetTexture(0, texture->pTexture);
-            m_pDevice->SetStreamSource(0, texture->pVertexBuffer, 0, sizeof(CUSTOMVERTEX) );
-            m_pDevice->SetIndices( texture->pIndexBuffer );
-            m_pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 
-                                            0,                      //baseVertexIndex,
-                                            0,                      //minVertexIndex,
-                                            texture->iv,            //NumVertices
-                                            0,                      //StartIndex,
-                                            texture->dwNumTriangles //MaxPrimitives
-                                            );
+              m_pDevice->SetTexture(0, texture->pTexture);
+              m_pDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
+              WORD* pIndices = NULL;
+              texture->pIndexBuffer->Lock(0, 0, (VOID**)&pIndices, D3DLOCK_READONLY);
+
+              m_pDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST,               // PrimitiveType
+                                                0,                                // MinVertexIndex
+                                                texture->iv,                      // NumVertices
+                                                texture->dwNumTriangles,          // PrimitiveCount
+                                                (const void*)pIndices,            // pIndexData
+                                                D3DFMT_INDEX16,                   // IndexDataFormat
+                                                (const void*)texture->vertices,   // pVertexStreamZeroData
+                                                sizeof(CUSTOMVERTEX));            // VertexStreamZeroStride
+              
+              texture->pIndexBuffer->Unlock();
+            }
           }
+          catch(...)
+          {
+            char log[128];
+            sprintf(log,"ERROR Fontengine:FontEnginePresentTextures() exception drawing texture:%d\n", index);
+            Log(log);
+          }
+          texture->dwNumTriangles = 0;
+          texture->iv = 0;
+          textureZ[i]=0;
+          texturePlace[index]->numRect = 0;
         }
-        catch(...)
-        {
-          char log[128];
-          sprintf(log,"ERROR Fontengine:FontEnginePresentTextures() exception drawing texture:%d\n", index);
-          Log(log);
-        }
-        texture->dwNumTriangles = 0;
-        texture->iv = 0;
-        texture->updateVertexBuffer=false;
-        textureZ[i]=0;
-        texturePlace[index]->numRect = 0;
       }
     }
     textureCount=0;
@@ -1709,8 +1645,6 @@ void FontEnginePresentTextures()
     //	}
     //#endif
     m_iTexturesInUse=0;
-    m_iVertexBuffersUpdated=0;
-    m_iFontVertexBuffersUpdated=0;
   }
   catch(...)
   {
@@ -1759,15 +1693,8 @@ void FontEngineAddFont( int fontNumber,void* fontTexture, int firstChar, int end
   fontData[fontNumber].iv=0;
   fontData[fontNumber].dwNumTriangles=0;
 
-  LPDIRECT3DVERTEXBUFFER9 g_pVB = NULL;
-  int hr=m_pDevice->CreateVertexBuffer(	MaxNumfontVertices*sizeof(CUSTOMVERTEX),
-                                        D3DUSAGE_WRITEONLY, D3DFVF_CUSTOMVERTEX,
-                                        m_ipoolFormat, 
-                                        &g_pVB, 
-                                        NULL) ;
-  fontData[fontNumber].pVertexBuffer=g_pVB;
   m_pDevice->CreateIndexBuffer(	MaxNumfontVertices *sizeof(WORD),
-                                D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, m_ipoolFormat, 
+                                D3DUSAGE_DYNAMIC, D3DFMT_INDEX16, m_ipoolFormat, 
                                 &fontData[fontNumber].pIndexBuffer, NULL ) ;
   WORD* pIndices;
   int triangle=0;
@@ -1806,7 +1733,8 @@ void UpdateVertex(TransformMatrix& matrix, FONT_DATA_T* pFont, CUSTOMVERTEX* pVe
   float x1 = matrix.ScaleFinalXCoord(x,y);
   float y1 = matrix.ScaleFinalYCoord(x,y);
   float z = matrix.ScaleFinalZCoord(x,y);
-  if(pVertex->x != x1 || pVertex->y != y1 || pVertex->z != z || pVertex->tu != tu || pVertex->tv != tv || pVertex->color != color)
+  
+  if (pVertex->x != x1 || pVertex->y != y1 || pVertex->z != z || pVertex->tu != tu || pVertex->tv != tv || pVertex->color != color)
   {
 	  pVertex->x = x1;
 	  pVertex->y = y1;
@@ -1814,16 +1742,14 @@ void UpdateVertex(TransformMatrix& matrix, FONT_DATA_T* pFont, CUSTOMVERTEX* pVe
 	  pVertex->tu = tu;
 	  pVertex->tv = tv;
 	  pVertex->color = color;
-	  pFont->updateVertexBuffer = true;		// We need to update gfx card vertex buffer
   }
-  }
+}
 
   //*******************************************************************************************************************
   void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int yposStart, DWORD intColor, int maxWidth, float m[3][4])
   {
   if (fontNumber< 0 || fontNumber>=MAX_FONTS) return;
   if (m_pDevice==NULL) return;
-  if (fontData[fontNumber].pVertexBuffer==NULL) return;
   if (textVoid==NULL) return;
 
   TransformMatrix matrix(m);
@@ -1854,7 +1780,8 @@ void UpdateVertex(TransformMatrix& matrix, FONT_DATA_T* pFont, CUSTOMVERTEX* pVe
   float totalWidth = 0;
   float lineWidths[MAX_TEXT_LINES];
   int lineNr=0;
-  for (int i=0; i < (int)wcslen(text);++i)
+  int len = (int)wcslen(text);
+  for (int i=0; i < len;++i)
   {
     WCHAR c=text[i];
     if (c == '\n')
@@ -1890,7 +1817,7 @@ void UpdateVertex(TransformMatrix& matrix, FONT_DATA_T* pFont, CUSTOMVERTEX* pVe
   ypos = fStartY;
   lineNr=0;
 
-  for (int i=0; i < (int)wcslen(text);++i)
+  for (int i=0; i < len;++i)
   {
     WCHAR c=text[i];
     if (c == '\n')
@@ -2032,15 +1959,6 @@ void FontEnginePresent3D(int fontNumber)
   {
     if (font->dwNumTriangles !=0)
 	  {
-      if (font->updateVertexBuffer)
-      {
-        m_iFontVertexBuffersUpdated++;
-        CUSTOMVERTEX* pVertices;
-        font->pVertexBuffer->Lock( 0, 0, (void**)&pVertices, m_lock) ;
-        memcpy(pVertices,font->vertices, (font->iv)*sizeof(CUSTOMVERTEX));
-        font->pVertexBuffer->Unlock();
-      }
-
       // Set the texture blending operations for default rendering.
       m_pDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
       m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
@@ -2061,21 +1979,23 @@ void FontEnginePresent3D(int fontNumber)
 
       FontEngineSetAlphaBlend(1);
       m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
-
-      m_pDevice->SetTexture(0, font->pTexture);
-      m_pDevice->SetStreamSource(0, font->pVertexBuffer, 0, sizeof(CUSTOMVERTEX) );
-      m_pDevice->SetIndices( font->pIndexBuffer );
       m_pDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
-      m_pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 
-                                      0,                    //baseVertexIndex,
-                                      0,                    //minVertexIndex,
-                                      font->iv,             //NumVertices
-                                      0,                    //StartIndex,
-                                      font->dwNumTriangles //MaxPrimitives
-                                      );
+      m_pDevice->SetTexture(0, font->pTexture);
+      WORD* pIndices = NULL;
+      font->pIndexBuffer->Lock(0, 0, (VOID**)&pIndices, D3DLOCK_READONLY);
+
+      m_pDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST,               // PrimitiveType
+                                        0,                                // MinVertexIndex
+                                        font->iv,                         // NumVertices
+                                        font->dwNumTriangles,             // PrimitiveCount
+                                        (const void*)pIndices,            // pIndexData
+                                        D3DFMT_INDEX16,                   // IndexDataFormat
+                                        (const void*)font->vertices,      // pVertexStreamZeroData
+                                        sizeof(CUSTOMVERTEX));            // VertexStreamZeroStride
+
+      font->pIndexBuffer->Unlock();
       font->dwNumTriangles = 0;
       font->iv = 0;
-      font->updateVertexBuffer=false;
     }
   }
   catch(...)
@@ -2085,7 +2005,6 @@ void FontEnginePresent3D(int fontNumber)
     Log(log);
     font->dwNumTriangles = 0;
     font->iv = 0;
-    font->updateVertexBuffer=false;
   }
 }
  
@@ -2095,11 +2014,6 @@ void FontEngineRemoveFont(int fontNumber)
   // Important to set it to NULL  otherwise the textures, etc. will not be freed on release
   m_pDevice->SetStreamSource(0, NULL, 0, 0 );
   if (fontNumber< 0 || fontNumber>=MAX_FONTS) return;
-  if (fontData[fontNumber].pVertexBuffer!=NULL) 
-  {
-    fontData[fontNumber].pVertexBuffer->Release();
-  }
-  fontData[fontNumber].pVertexBuffer=NULL;
   if (fontData[fontNumber].pIndexBuffer!=NULL) 
   {
     fontData[fontNumber].pIndexBuffer->Release();
@@ -2117,7 +2031,7 @@ void FontEngineRemoveFont(int fontNumber)
 void PrintStatistics()
 {
   TCHAR log[256];
-  _stprintf(log, _T("fontengine: Textures InUse:%d VertexBuffer Updates:%d %d\n"), m_iTexturesInUse, m_iVertexBuffersUpdated, m_iFontVertexBuffersUpdated);
+  _stprintf(log, _T("fontengine: Textures in use:%d\n"), m_iTexturesInUse);
   OutputDebugString(log);
 }
 
