@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Data;
 using System.Data.Common;
 using System.Data.Objects;
@@ -9,11 +10,23 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
   internal class UnitOfWork : IUnitOfWork
   {
 
-    private DbTransaction _transaction;
+    private static bool? _entityFrameworkEnableVerbosePersistenceLogging;
+
     private readonly ObjectContext _objectContext;
+    private DbTransaction _transaction;
 
     public UnitOfWork(ObjectContext context)
     {
+      if (!_entityFrameworkEnableVerbosePersistenceLogging.HasValue)
+      {
+        bool entityFrameworkEnableVerbosePersistenceLogging;
+        bool parsed = Boolean.TryParse(ConfigurationManager.AppSettings["EntityFrameworkEnableVerbosePersistenceLogging"], out entityFrameworkEnableVerbosePersistenceLogging);
+        if (parsed)
+        {
+          _entityFrameworkEnableVerbosePersistenceLogging = entityFrameworkEnableVerbosePersistenceLogging;
+          this.LogDebug("EntityFrameworkEnableVerbosePersistenceLogging={0}", _entityFrameworkEnableVerbosePersistenceLogging);
+        }
+      }
       _objectContext = context;
     }
 
@@ -89,8 +102,11 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
         throw new ApplicationException("A transaction is running. Call BeginTransaction instead.");
       }
 
-      string traceString = _objectContext.ToTraceString();
-      this.LogDebug("EF SaveChanges SQL = {0}", traceString);
+      if (_entityFrameworkEnableVerbosePersistenceLogging.HasValue && _entityFrameworkEnableVerbosePersistenceLogging.Value)
+      {
+        string traceString = _objectContext.ToTraceString();
+        this.LogDebug("EF SaveChanges SQL = {0}", traceString); 
+      }      
 
       _objectContext.SaveChanges();
     }
