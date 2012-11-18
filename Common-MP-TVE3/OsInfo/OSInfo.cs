@@ -776,7 +776,8 @@ namespace OSInfo
         dwMinorVersion = minorVersion
       };
       condition = VerSetConditionMask(condition, VER_MAJORVERSION, VER_GREATER_EQUAL);
-      return VerifyVersionInfo(ref osVersionInfo, VER_MAJORVERSION, condition);
+      condition = VerSetConditionMask(condition, VER_MINORVERSION, VER_GREATER_EQUAL);
+      return VerifyVersionInfo(ref osVersionInfo, VER_MAJORVERSION | VER_MINORVERSION, condition);
     }
 
     /// <summary>
