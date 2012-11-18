@@ -40,17 +40,17 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static void SaveValue(string tagName, int defaultValue)
     {
-      SaveSetting(tagName, defaultValue.ToString());
+      SaveSetting(tagName, defaultValue.ToString(CultureInfo.InvariantCulture));
     }
     
     public static void SaveValue(string tagName, double defaultValue)
     {
-      SaveSetting(tagName, defaultValue.ToString());
+      SaveSetting(tagName, defaultValue.ToString(CultureInfo.InvariantCulture));
     }
     
     public static void SaveValue(string tagName, bool defaultValue)
     {
-      SaveSetting(tagName, defaultValue.ToString());
+      SaveSetting(tagName, defaultValue.ToString(CultureInfo.InvariantCulture).ToLowerInvariant());
     }
     
     public static void SaveValue(string tagName, string defaultValue)
@@ -73,19 +73,19 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static int GetValue(string tagName, int defaultValue)
     {
-      Setting setting = GetSetting(tagName, defaultValue.ToString());
+      Setting setting = GetSetting(tagName, defaultValue.ToString(CultureInfo.InvariantCulture));
       return int.Parse(setting.Value);
     }
 
     public static double GetValue(string tagName, double defaultValue)
     {
-      Setting setting = GetSetting(tagName, defaultValue.ToString());
+      Setting setting = GetSetting(tagName, defaultValue.ToString(CultureInfo.InvariantCulture));
       return double.Parse(setting.Value);
     }
 
     public static bool GetValue(string tagName, bool defaultValue)
     {
-      Setting setting = GetSetting(tagName, defaultValue.ToString());
+      Setting setting = GetSetting(tagName, defaultValue.ToString(CultureInfo.InvariantCulture).ToLowerInvariant());
       return setting.Value == "true";
     }
 
@@ -97,7 +97,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static DateTime GetValue(string tagName, DateTime defaultValue)
     {
-      Setting setting = GetSetting(tagName, defaultValue.ToString());
+      Setting setting = GetSetting(tagName, defaultValue.ToString(CultureInfo.InvariantCulture));
       return string.IsNullOrEmpty(setting.Value) ? DateTime.MinValue : DateTime.Parse(setting.Value, CultureInfo.InvariantCulture);
     }
   }
