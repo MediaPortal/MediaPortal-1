@@ -1,0 +1,8 @@
+[main]
+host=https://www.transifex.com
+[MP1_DeployTool.deploytool]
+file_filter=..\MediaPortal.DeployTool\MediaPortal.DeployTool.<lang>.resx
+source_file=..\MediaPortal.DeployTool\MediaPortal.DeployTool.resx
+source_lang=en
+lang_map = cs: cs-CZ, da: da-DK, de: de-DE, el: el-GR, es: es-ES, fr: fr-FR, hr: hr-HR, it: it-IT, ja: ja-JP, mk: mk-MK, nb: nb-NO, nl: nl-NL, no: no-NO, pl: pl-PL, pt: pt-PT, ro: ro-RO, ru: ru-RU, sk: sk-SK, sl: sl-SI, sr: sr-Cyrl-CS, sr@latin: sr-Latn-CS, sv: sv-SE, tr: tr-TR, zh: zh-CN
+type=RESX
