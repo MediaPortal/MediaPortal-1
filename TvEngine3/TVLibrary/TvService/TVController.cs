@@ -63,7 +63,7 @@ namespace TvService
     private readonly TvBusinessLayer _layer = new TvBusinessLayer();
     private readonly ICardAllocation _cardAllocation;
     private readonly ChannelStates _channelStates;
-    private readonly RecordingThumbsService _recordingThumbsService;
+    private readonly ThumbProcessor _thumbProcessor;
 
     /// <summary>
     /// EPG grabber for DVB
@@ -188,7 +188,7 @@ namespace TvService
     {
       _channelStates = new ChannelStates(_layer, this);
       _cardAllocation = new AdvancedCardAllocation(_layer, this);
-      _recordingThumbsService = new RecordingThumbsService();
+      _thumbProcessor = new ThumbProcessor();
     }
 
     public Dictionary<int, ITvCardHandler> CardCollection
@@ -476,7 +476,7 @@ namespace TvService
       else
         Log.Info("Controller: Failed to initialize TVServer");
 
-      _recordingThumbsService.Init();
+      _thumbProcessor.Init();
 
       return;
     }
@@ -879,7 +879,7 @@ namespace TvService
         //clean up the tv cards
         FreeCards();
 
-        _recordingThumbsService.Dispose();
+        _thumbProcessor.Dispose();
 
         Gentle.Common.CacheManager.Clear();
         if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
@@ -2385,7 +2385,7 @@ namespace TvService
     /// <returns></returns>
     public byte[] GetRecordingThumbnail(string thumbnailFilename)
     {
-      string fileAndPath = _recordingThumbsService.GetThumbnailFolder() + "/" + thumbnailFilename;
+      string fileAndPath = _thumbProcessor.GetThumbnailFolder() + "/" + thumbnailFilename;
 
       if (!File.Exists(fileAndPath))
       {

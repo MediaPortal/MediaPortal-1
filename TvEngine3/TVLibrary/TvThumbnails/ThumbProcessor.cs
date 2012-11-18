@@ -30,13 +30,13 @@ using TvLibrary.Log;
 
 namespace TvThumbnails
 {
-  public class RecordingThumbsService : IDisposable
+  public class ThumbProcessor : IDisposable
   {
     private readonly string _recTvThumbsFolder;
 
     private ProcessingQueue _queue;
 
-    public RecordingThumbsService()
+    public ThumbProcessor()
     {
       FileInfo fileInfo = new FileInfo(Assembly.GetCallingAssembly().Location);
 
