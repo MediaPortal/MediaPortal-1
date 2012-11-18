@@ -75,7 +75,7 @@ namespace TvThumbnails
 
     private void DoWork(string recFileName)
     {
-      Log.Info("plugin: MultiseatTVThumbs creating thumb for {0}", recFileName);
+      Log.Info("ThumbProcessor - creating thumb for {0}", recFileName);
 
       try
       {
@@ -88,22 +88,22 @@ namespace TvThumbnails
           {
             if (VideoThumbCreator.CreateVideoThumb(recFileName, thumbNail, true))
             {
-              Log.Info("RecordedTV: Thumbnail successfully created for - {0}", recFileName);
+              Log.Info("ThumbProcessor - Thumbnail successfully created for - {0}", recFileName);
             }
             else
             {
-              Log.Info("RecordedTV: No thumbnail created for - {0}", recFileName);
+              Log.Info("ThumbProcessor - No thumbnail created for - {0}", recFileName);
             }            
           }
           catch (Exception ex)
           {
-            Log.Error("RecordedTV: No thumbnail created for {0} - {1}", recFileName, ex.Message);
+            Log.Error("ThumbProcessor - No thumbnail created for {0} - {1}", recFileName, ex.Message);
           }
         }      
       }
       catch(Exception ex)
       {
-        Log.Error("RecordedTV: No thumbnail created for {0} - {1}", recFileName, ex.Message);
+        Log.Error("ThumbProcessor - No thumbnail created for {0} - {1}", recFileName, ex.Message);
       }
     }
 
