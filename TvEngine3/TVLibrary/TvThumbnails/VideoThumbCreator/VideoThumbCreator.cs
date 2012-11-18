@@ -28,7 +28,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using TvLibrary.Log;
 
-namespace TvThumbnails
+namespace TvThumbnails.VideoThumbCreator
 {
   public static class VideoThumbCreator
   {

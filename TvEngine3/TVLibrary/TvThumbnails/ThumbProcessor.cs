@@ -86,7 +86,7 @@ namespace TvThumbnails
         {                    
           try
           {
-            if (VideoThumbCreator.CreateVideoThumb(recFileName, thumbNail, true))
+            if (VideoThumbCreator.VideoThumbCreator.CreateVideoThumb(recFileName, thumbNail, true))
             {
               Log.Info("ThumbProcessor - Thumbnail successfully created for - {0}", recFileName);
             }

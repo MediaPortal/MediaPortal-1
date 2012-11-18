@@ -26,7 +26,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using TvLibrary.Log;
 
-namespace TvThumbnails
+namespace TvThumbnails.VideoThumbCreator
 {
   /// <summary>
   /// Provides a System.Drawing.Image class with disabled image verification
