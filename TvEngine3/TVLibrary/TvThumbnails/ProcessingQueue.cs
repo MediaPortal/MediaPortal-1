@@ -33,9 +33,9 @@ namespace TvThumbnails
 
     private readonly Thread _worker;
 
-    private readonly object _locker = new object();
-
     private readonly Queue<string> _tasks = new Queue<string>();
+
+    private readonly object _lock = new object();
 
     public ProcessingQueue(DoWork callback)
     {
@@ -48,7 +48,7 @@ namespace TvThumbnails
 
     public void EnqueueTask(List<string> tasks)
     {
-      lock (_locker)
+      lock (_lock)
       {
         foreach (string task in tasks)
         {
@@ -65,7 +65,7 @@ namespace TvThumbnails
       {
         string task = null;
 
-        lock (_locker)
+        lock (_lock)
         {
           if (_tasks.Count > 0)
           {

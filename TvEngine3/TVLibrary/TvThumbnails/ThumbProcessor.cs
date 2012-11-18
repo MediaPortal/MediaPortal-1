@@ -30,11 +30,11 @@ using TvLibrary.Log;
 
 namespace TvThumbnails
 {
-  public class ThumbProcessor : IDisposable
+  public class ThumbProcessor
   {
     private readonly string _recTvThumbsFolder;
 
-    private ProcessingQueue _queue;
+    private readonly ProcessingQueue _queue;
 
     public ThumbProcessor()
     {
@@ -46,23 +46,32 @@ namespace TvThumbnails
       {
         Directory.CreateDirectory(_recTvThumbsFolder);
       }
+
+      _queue = new ProcessingQueue(DoWork);
     }
 
-    // TODO Clean up old thumbs ???
-
-    public void Init()
+    public void Start()
     {
-      _queue = new ProcessingQueue(DoWork);
-
       _queue.EnqueueTask(Recording.ListAll().Select(recording => recording.FileName).ToList());
 
       GlobalServiceProvider.Instance.Get<ITvServerEvent>().OnTvServerEvent += OnTvServerEvent;
+    }
+
+    public void Stop()
+    {
+      if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
+      {
+        GlobalServiceProvider.Instance.Get<ITvServerEvent>().OnTvServerEvent -= OnTvServerEvent;
+      }
+      _queue.Dispose();
     }
 
     public string GetThumbnailFolder()
     {
       return _recTvThumbsFolder;
     }
+
+    // TODO Clean up old thumbs ???
 
     private void DoWork(string recFileName)
     {
@@ -106,16 +115,6 @@ namespace TvThumbnails
       {
         _queue.EnqueueTask(new List<string> { tvEvent.Recording.FileName });
       }   
-    }
-
-    public void Dispose()
-    {
-      if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
-      {
-        GlobalServiceProvider.Instance.Get<ITvServerEvent>().OnTvServerEvent -= OnTvServerEvent;
-      }
-
-      _queue.Dispose();
     }
   }
 }

@@ -63,7 +63,6 @@ namespace TvService
     private readonly TvBusinessLayer _layer = new TvBusinessLayer();
     private readonly ICardAllocation _cardAllocation;
     private readonly ChannelStates _channelStates;
-    private readonly ThumbProcessor _thumbProcessor;
 
     /// <summary>
     /// EPG grabber for DVB
@@ -74,6 +73,11 @@ namespace TvService
     /// Recording scheduler
     /// </summary>
     private Scheduler _scheduler;
+    
+    /// <summary>
+    /// Thumbnail processor for recordings
+    /// </summary>
+    private ThumbProcessor _thumbProcessor;
 
     /// <summary>
     /// RTSP Streaming Server
@@ -188,7 +192,6 @@ namespace TvService
     {
       _channelStates = new ChannelStates(_layer, this);
       _cardAllocation = new AdvancedCardAllocation(_layer, this);
-      _thumbProcessor = new ThumbProcessor();
     }
 
     public Dictionary<int, ITvCardHandler> CardCollection
@@ -475,8 +478,6 @@ namespace TvService
         Log.Info("Controller: TVServer initialized okay");
       else
         Log.Info("Controller: Failed to initialize TVServer");
-
-      _thumbProcessor.Init();
 
       return;
     }
@@ -773,6 +774,9 @@ namespace TvService
           _scheduler.Start();
         }
 
+        _thumbProcessor = new ThumbProcessor();
+        _thumbProcessor.Start();
+
         SetupHeartbeatThread();
         ExecutePendingDeletions();
 
@@ -872,14 +876,18 @@ namespace TvService
           _scheduler = null;
           Log.Info("Controller: scheduler stopped...");
         }
+        //stop the thumbnail processor
+        if (_thumbProcessor != null)
+        {
+          _thumbProcessor.Stop();
+          _thumbProcessor = null;
+        }
         //stop the epg grabber
         StopEPGgrabber();
         _epgGrabber = null;        
 
         //clean up the tv cards
         FreeCards();
-
-        _thumbProcessor.Dispose();
 
         Gentle.Common.CacheManager.Clear();
         if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
@@ -2381,17 +2389,25 @@ namespace TvService
     /// <summary>
     /// Gets the thumbnail image data of given file
     /// </summary>
-    /// <param name="thumbnailFilename">Filename of the thumbnail</param>
+    /// <param name="thumbnailFilename">Filename of the thumbnail, e.g. "Top Gear - MTV3 - 2012-11-10.jpg"</param>
     /// <returns></returns>
     public byte[] GetRecordingThumbnail(string thumbnailFilename)
     {
-      string fileAndPath = _thumbProcessor.GetThumbnailFolder() + "/" + thumbnailFilename;
-
-      if (!File.Exists(fileAndPath))
+      try
       {
-        return new byte[0];
+        string fileAndPath = _thumbProcessor.GetThumbnailFolder() + "/" + thumbnailFilename;
+
+        if (!File.Exists(fileAndPath))
+        {
+          return new byte[0];
+        }
+        return File.ReadAllBytes(fileAndPath); 
       }
-      return File.ReadAllBytes(fileAndPath);
+      catch (Exception ex)
+      {
+        Log.Error("Controller: Can't get recording thumbnail data: {0}", ex.Message);
+      }
+      return new byte[0];
     }
 
     public string GetRecordingUrl(int idRecording)
