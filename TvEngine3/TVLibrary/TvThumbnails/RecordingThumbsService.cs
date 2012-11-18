@@ -34,8 +34,6 @@ namespace TvThumbnails
   {
     private readonly string _recTvThumbsFolder;
 
-    private Thumbnailer _thumbnailer;
-
     private ProcessingQueue _queue;
 
     public RecordingThumbsService()
@@ -52,8 +50,6 @@ namespace TvThumbnails
 
     public void Init()
     {
-      _thumbnailer = new Thumbnailer();
-
       _queue = new ProcessingQueue(DoWork);
 
       _queue.EnqueueTask(Recording.ListAll().Select(recording => recording.FileName).ToList());
@@ -79,7 +75,7 @@ namespace TvThumbnails
         {                    
           try
           {
-            if (_thumbnailer.CreateVideoThumb(recFileName, thumbNail, true))
+            if (VideoThumbCreator.CreateVideoThumb(recFileName, thumbNail, true))
             {
               Log.Info("RecordedTV: Thumbnail successfully created for - {0}", recFileName);
             }
