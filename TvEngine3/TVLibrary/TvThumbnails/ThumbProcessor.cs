@@ -48,6 +48,8 @@ namespace TvThumbnails
       }
     }
 
+    // TODO Clean up old thumbs ???
+
     public void Init()
     {
       _queue = new ProcessingQueue(DoWork);
