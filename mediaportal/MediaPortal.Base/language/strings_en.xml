@@ -1933,7 +1933,7 @@
     <String id="101004">Virtual SMS Keyboard</String>
     <String id="101005">GUI - Thumbnails</String>
     <String id="101006">GUI - On-screen display</String>
-    <String id="101007">General - Volume</String>
+    <String id="101007">Volume</String>
     <String id="101008">General - Dynamic refresh rate</String>
     <String id="101010">Videos - Database</String>
     <String id="101011">Music- Database</String>
@@ -2187,7 +2187,7 @@
     <String id="300094">Restart delay in seconds</String>
     <String id="300095">Turn off monitor (when blanking screen)</String>
     <String id="300096">Turn monitor/tv on (resume from standby)</String>
-    <String id="300097">Allow S3 standby (even wakeup devices are present)</String>
+    <String id="300097">Allow S3 standby (even if wake up devices are present)</String>
     <String id="300098">Workaround to fix MediaPortal freeze on resume</String>
     <String id="300099">Restart MediaPortal on resume</String>
     <String id="300100">Show last active module on wake up</String>
@@ -2199,7 +2199,7 @@
     <String id="300106">Alternative splash screen</String>
     <String id="300107">Keep MediaPortal always on top</String>
     <String id="300108">Hide taskbar in fullscreen</String>
-    <String id="300109">Autostart MediaPortal on Win startup</String>
+    <String id="300109">Autostart MediaPortal on Windows startup</String>
     <String id="300110">Minimize to tray on startup</String>
     <String id="300111">Minimize to tray on GUI exit</String>
     <String id="300112">Master volume</String>
