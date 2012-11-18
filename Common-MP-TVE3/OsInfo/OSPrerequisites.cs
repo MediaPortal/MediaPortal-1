@@ -20,13 +20,13 @@
 
 using System;
 using System.Windows.Forms;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+
 #if MediaPortal
 using MediaPortal.Common.Utils;
 using MediaPortal.ServiceImplementations;
 
 #else
-
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 #endif
 
 namespace OSPrerequisites
@@ -36,7 +36,6 @@ namespace OSPrerequisites
   ///</summary>
   public class OSPrerequisites
   {
-
     private const string MSG_NOT_SUPPORTED =
       "Your platform is not supported by MediaPortal Team because it lacks critical hotfixes! \nPlease check our Wiki's requirements page.";
 
