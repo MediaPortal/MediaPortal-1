@@ -559,7 +559,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
         _currentTransponder.InUse = false;
         return;
       }
-      this.LogInfo("Epg: card:{0} Updating database with new programs", _user.CardId);
+      int cardId = _user.CardId;
+      this.LogInfo("Epg: card:{0} Updating database with new programs", cardId);
       bool timeOut = false;
       _dbUpdater.ReloadConfig();
       try
@@ -569,20 +570,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
           _dbUpdater.UpdateEpgForChannel(epgChannel);
           if (_state != EpgState.Updating)
           {
-            this.LogInfo("Epg: card:{0} stopped updating state changed", _user.CardId);
+            this.LogInfo("Epg: card:{0} stopped updating state changed", cardId);
             timeOut = true;
             return;
           }
           if (IsCardIdle(_user) == false)
           {
-            this.LogInfo("Epg: card:{0} stopped updating card not idle", _user.CardId);
+            this.LogInfo("Epg: card:{0} stopped updating card not idle", cardId);
             timeOut = true;
             return;
           }
         }
         _epg.Clear();
         ProgramManagement.SynchProgramStatesForAllSchedules(ScheduleManagement.ListAllSchedules());
-        this.LogInfo("Epg: card:{0} Finished updating the database.", _user.CardId);
+        this.LogInfo("Epg: card:{0} Finished updating the database.", cardId);
       }
       catch (Exception ex)
       {
@@ -601,10 +602,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
             this.LogError(ex);
           }          
         }
-        if (_state != EpgState.Idle && _user.CardId >= 0)
+        if (_state != EpgState.Idle && cardId >= 0)
         {
           ServiceManager.Instance.InternalControllerService.StopGrabbingEpg(_user);
-          ServiceManager.Instance.InternalControllerService.StopCard(_user.CardId);
+          ServiceManager.Instance.InternalControllerService.StopCard(cardId);
         }
         _currentTransponder.InUse = false;
         _state = EpgState.Idle;
