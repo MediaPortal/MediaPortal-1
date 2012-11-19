@@ -104,6 +104,8 @@
       <SubType>
       </SubType>
     </Compile>
+    <Compile Include="Cache\EntityCache.cs" />
+    <Compile Include="Cache\EntityCacheHelper.cs" />
     <Compile Include="LnbTypePartial.cs" />
     <Compile Include="DisEqcMotor.cs">
       <DependentUpon>Model.tt</DependentUpon>
@@ -295,6 +297,12 @@
       <SubType>
       </SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
+      <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
+      <Name>Common.Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

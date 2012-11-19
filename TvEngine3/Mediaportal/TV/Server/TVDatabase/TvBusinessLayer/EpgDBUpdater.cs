@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data.SqlTypes;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Cache;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
@@ -166,6 +167,8 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
       DateTime dbLastProgram = ProgramManagement.GetNewestProgramForChannel(dbChannel.IdChannel);
       EpgProgram lastProgram = null;
+      IList<Program> programs = new List<Program>();      
+      
       for (int i = 0; i < epgPrograms.Count; i++)
       {
         EpgProgram epgProgram = epgPrograms[i];
@@ -231,10 +234,13 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
             this.LogError(ex, "Error the existing epg entry check");
           }
         }
-        AddProgramAndApplyTemplates(dbChannel, epgProgram, prog);
+        AddProgramAndApplyTemplates(dbChannel, epgProgram, prog, programs);
         iInserted++;
         lastProgram = epgProgram;
       }
+
+      PersistPrograms(programs);      
+
       dbChannel.LastGrabTime = DateTime.Now;
       dbChannel.EpgHasGaps = hasGaps;
       ChannelManagement.SaveChannel(dbChannel);      
@@ -244,6 +250,8 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
       this.LogDebug("- Inserted {0} epg entries for channel {1}", iInserted, dbChannel.DisplayName);
     }
+
+    
 
     #endregion
 
@@ -415,9 +423,15 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         classification = "";
       }
     }
+    
 
-    private void AddProgramAndApplyTemplates(Channel dbChannel, EpgProgram ep, Program dbProg)
+    private void PersistPrograms(IEnumerable<Program> programs)
     {
+      ProgramManagement.SavePrograms(programs);      
+    }
+
+    private void AddProgramAndApplyTemplates(Channel dbChannel, EpgProgram ep, Program dbProg, IList<Program> programs)
+    {      
       string title;
       string description;
       string genre;
@@ -426,25 +440,32 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       int parentRating;
       GetEPGLanguage(ep.Text, out title, out description, out genre, out starRating, out classification,
                      out parentRating);
-      NameValueCollection values = new NameValueCollection();
-      values.Add("%TITLE%", title);
-      values.Add("%DESCRIPTION%", description);
-      values.Add("%GENRE%", genre);
-      values.Add("%STARRATING%", starRating.ToString());
-      values.Add("%STARRATING_STR%", GetStarRatingStr(starRating));
-      values.Add("%CLASSIFICATION%", classification);
-      values.Add("%PARENTALRATING%", parentRating.ToString());
-      values.Add("%NEWLINE%", Environment.NewLine);
+      var values = new NameValueCollection
+                     {
+                       {"%TITLE%", title},
+                       {"%DESCRIPTION%", description},
+                       {"%GENRE%", genre},
+                       {"%STARRATING%", starRating.ToString()},
+                       {"%STARRATING_STR%", GetStarRatingStr(starRating)},
+                       {"%CLASSIFICATION%", classification},
+                       {"%PARENTALRATING%", parentRating.ToString()},
+                       {"%NEWLINE%", Environment.NewLine}
+                     };
       title = EvalTemplate(_titleTemplate, values);
       description = EvalTemplate(_descriptionTemplate, values);
+
+      ProgramCategory programCategory = GetProgramCategoryByName(genre);
+
       if (dbProg == null)
       {
-        dbProg = ProgramFactory.CreateProgram(dbChannel.IdChannel, ep.StartTime, ep.EndTime, title, description, ProgramManagement.GetProgramCategoryByName(genre),
-                                     ProgramState.None,
-                                     SqlDateTime.MinValue.Value, string.Empty, string.Empty, string.Empty, string.Empty,
-                                     starRating, classification,
-                                     parentRating);
-        ProgramManagement.SaveProgram(dbProg);
+        dbProg = ProgramFactory.CreateProgram(dbChannel.IdChannel, ep.StartTime, ep.EndTime, title, description,
+                                              programCategory,
+                                              ProgramState.None,
+                                              SqlDateTime.MinValue.Value, string.Empty, string.Empty, string.Empty,
+                                              string.Empty,
+                                              starRating, classification,
+                                              parentRating);        
+        programs.Add(dbProg);
       }
       else
       {
@@ -464,14 +485,26 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         prgBLL.Entity.Title = title;
         prgBLL.Entity.StartTime = ep.StartTime;
         prgBLL.Entity.EndTime = ep.EndTime;
-        prgBLL.Entity.ProgramCategory = ProgramManagement.GetProgramCategoryByName(genre);
+        prgBLL.Entity.ProgramCategory = programCategory;
         prgBLL.Entity.StarRating = starRating;
         prgBLL.Entity.Classification = classification;
         prgBLL.Entity.ParentalRating = parentRating;
         prgBLL.Entity.OriginalAirDate = SqlDateTime.MinValue.Value; // TODO: /!\ add implementation
         prgBLL.ClearRecordPendingState();
-        ProgramManagement.SaveProgram(prgBLL.Entity);
+        programs.Add(prgBLL.Entity);
       }      
+    }
+
+    private static ProgramCategory GetProgramCategoryByName(string genre)
+    {
+      bool dataFetchedAtleastOnce;
+      int count = EntityCacheHelper.Instance.ProgramCategoryCache.CacheCount(out dataFetchedAtleastOnce);
+
+      if (dataFetchedAtleastOnce && count == 0)
+      {
+        return null;
+      }
+      return ProgramManagement.GetProgramCategoryByName(genre);
     }
 
     #endregion
