@@ -1079,6 +1079,16 @@
     <String id="1307">Update internal Grabber scripts</String>
     <String id="1308">Rename SortTitle</String>
     <String id="1309">Name-Full</String>
+    <String id="1310">Select actor</String>
+    <String id="1311">Refreshing is already active.</String>
+    <String id="1312">Exporting movies...</String>
+    <String id="1313">Creating nfo file</String>
+    <String id="1314">Working...</String>
+    <String id="1315">Creating nfo for: </String>
+    <String id="1316">Updating internal scripts...</String>
+    <String id="1317">Downloading internal scripts...</String>
+    <String id="1318">Save subtitle</String>
+    <String id="1319">Save modified subtitle file?</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
     <String id="1442">Scroll speed (horizontal)</String>
@@ -1512,16 +1522,16 @@
     <String id="6041">Two days ago</String>
     <String id="6042">Enter a skip step number of seconds</String>
     <String id="6050">Current week</String>
-	<String id="6055">Earlier this week</String>
-	<String id="6056">Last week</String>
+    <String id="6055">Earlier this week</String>
+    <String id="6056">Last week</String>
     <String id="6060">Current month</String>
-	<String id="6062">Earlier this month</String>
-	<String id="6065">Last month</String>
+    <String id="6062">Earlier this month</String>
+    <String id="6065">Last month</String>
     <String id="6070">Current year</String>
-	<String id="6075">Earlier this year</String>
+    <String id="6075">Earlier this year</String>
     <String id="6080">Last year</String>
     <String id="6090">Older</String>
-	<String id="6095">Future</String>
+    <String id="6095">Future</String>
     <String id="8000" prefix="My ">Mail</String>
     <String id="8001">Check Mailbox</String>
     <String id="8002">Auto-check off</String>
@@ -2317,6 +2327,6 @@
     <String id="300224">Video thumbs disabled globally</String>
     <String id="300225">Use "Sort title"</String>
     <String id="300226">Use only internal nfo scraper</String>
-		<String id="300227">Clear Blacklisted thumbs</String>
-	</Section>
+    <String id="300227">Clear Blacklisted thumbs</String>
+   </Section>
 </Language>
