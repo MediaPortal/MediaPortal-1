@@ -178,16 +178,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
         }*/
         //is epg grabber already updating the database?
 
+        int cardId = _user.CardId;
         if (_state == EpgState.Updating)
         {
-          this.LogInfo("Epg: card:{0} OnEpgReceived while updating", _user.CardId);
+          this.LogInfo("Epg: card:{0} OnEpgReceived while updating", cardId);
           return 0;
         }
 
         //is the card still idle?
         if (IsCardIdle(_user) == false)
         {
-          this.LogInfo("Epg: card:{0} OnEpgReceived but card is not idle", _user.CardId);
+          this.LogInfo("Epg: card:{0} OnEpgReceived but card is not idle", cardId);
           _state = EpgState.Idle;
           ServiceManager.Instance.InternalControllerService.StopGrabbingEpg(_user);
           _user.CardId = -1;
@@ -195,26 +196,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
           return 0;
         }
 
-        List<EpgChannel> epg = ServiceManager.Instance.InternalControllerService.Epg(_user.CardId) ??
+        List<EpgChannel> epg = ServiceManager.Instance.InternalControllerService.Epg(cardId) ??
                                new List<EpgChannel>();
         //did we receive epg info?
         if (epg.Count == 0)
         {
           //no epg found for this transponder
-          this.LogInfo("Epg: card:{0} no epg found", _user.CardId);
+          this.LogInfo("Epg: card:{0} no epg found", cardId);
           _currentTransponder.InUse = false;
           _currentTransponder.OnTimeOut();
 
           _state = EpgState.Idle;
           ServiceManager.Instance.InternalControllerService.StopGrabbingEpg(_user);
-          ServiceManager.Instance.InternalControllerService.StopCard(_user.CardId);
+          ServiceManager.Instance.InternalControllerService.StopCard(cardId);
           _user.CardId = -1;
           _currentTransponder.InUse = false;
           return 0;
         }
 
         //create worker thread to update the database
-        this.LogInfo("Epg: card:{0} received epg for {1} channels", _user.CardId, epg.Count);
+        this.LogInfo("Epg: card:{0} received epg for {1} channels", cardId, epg.Count);
         _state = EpgState.Updating;
         _epg = epg;
         Thread workerThread = new Thread(UpdateDatabaseThread);
