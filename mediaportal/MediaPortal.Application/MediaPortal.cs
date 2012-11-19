@@ -2052,13 +2052,12 @@ public class MediaPortalApp : D3DApp, IRender
       // ask the layer manager to render all layers
       GUILayerManager.Render(timePassed);
       RenderStats();
-      GUIFontManager.Present();
       GUIGraphicsContext.DX9Device.EndScene();
       d3ErrInvalidCallCounter = 0;
       try
       {
         // Show the frame on the primary surface.
-        GUIGraphicsContext.DX9Device.Present(); //SLOW
+        GUIGraphicsContext.DX9Device.Present();
       }
       catch (DeviceLostException ex)
       {
