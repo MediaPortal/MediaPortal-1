@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2009</id>
@@ -15,29 +15,21 @@
     </control>
     <control>
       <type>image</type>
-      <id>0</id>
-      <posX>235</posX>
-      <posY>281</posY>
-      <width>545</width>
-      <height>252</height>
-      <texture>dialog_background.png</texture>
-    </control>
-    <control>
-      <type>image</type>
       <id>6</id>
-      <posX>235</posX>
-      <posY>281</posY>
-      <width>545</width>
-      <height>252</height>
-      <texture>dialog_background.png</texture>
+      <posX>192</posX>
+      <posY>80</posY>
+      <width>615</width>
+      <height>500</height>
+      <texture>context_background.png</texture>
     </control>
     <control>
       <description>Heading text label</description>
       <type>label</type>
       <id>4</id>
-      <posX>279</posX>
-      <posY>312</posY>
-      <label>181</label>
+      <posX>231</posX>
+      <posY>104</posY>
+      <label>-</label>
+      <width>555</width>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
@@ -45,15 +37,15 @@
       <description>options listcontrol</description>
       <type>listcontrol</type>
       <id>3</id>
-      <posX>279</posX>
-      <posY>350</posY>
-      <width>456</width>
-      <height>197</height>
+      <posX>240</posX>
+      <posY>150</posY>
+      <width>510</width>
+      <height>420</height>
       <onleft>5</onleft>
       <onright>5</onright>
       <onup>5</onup>
       <ondown>5</ondown>
-      <spinPosX>600</spinPosX>
+      <spinPosX>2600</spinPosX>
       <spinPosY>462</spinPosY>
     </control>
   </controls>
