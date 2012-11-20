@@ -26,23 +26,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Logging
   {
     public static void LogDebug(this object caller, string message, params object[] args)
     {
-      Log.Debug(caller.GetType(), message, args);      
+      Log.Debug(caller.GetType(), message, args);
     }
 
     public static void LogDebug(this object caller, Exception exception, string message, params object[] args)
     {
       Log.Debug(caller.GetType(), exception, message, args);
-    }    
+    }
 
     public static void LogInfo(this object caller, string message, params object[] args)
     {
-      Log.Info(caller.GetType(), message, args);      
+      Log.Info(caller.GetType(), message, args);
     }
 
     public static void LogInfo(this object caller, Exception exception, string message, params object[] args)
     {
       Log.Info(caller.GetType(), exception, message, args);
-    }    
+    }
 
     public static void LogWarn(this object caller, string message, params object[] args)
     {
@@ -52,7 +52,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Logging
     public static void LogWarn(this object caller, Exception exception, string message, params object[] args)
     {
       Log.Warn(caller.GetType(), exception, message, args);
-    }    
+    }
 
     public static void LogCritical(this object caller, string message, params object[] args)
     {
@@ -62,20 +62,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Logging
     public static void LogCritical(this object caller, Exception exception, string message, params object[] args)
     {
       Log.Critical(caller.GetType(), exception, message, args);
-    }    
+    }
 
     public static void LogError(this object caller, string message, params object[] args)
     {
       Log.Error(caller.GetType(), message, args);
     }
+
     public static void LogError(this object caller, Exception exception, string message, params object[] args)
     {
-      Log.Error(caller.GetType(), message, exception, args);      
+      Log.Error(caller.GetType(), exception, message, args);
     }
 
     public static void LogError(this object caller, Exception exception)
-    {
-      Log.Error(caller.GetType(), "", exception);
+    {      
+      Log.Error(caller.GetType(), exception, "");
     }
   }
 }
