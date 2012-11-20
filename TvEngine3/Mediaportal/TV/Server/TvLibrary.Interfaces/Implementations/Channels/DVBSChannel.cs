@@ -334,14 +334,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
       }
 
       // 1: Log the default frequency settings for the LNB.
+      if (dvbsChannel.LnbType == null)
+      {
+        throw new InvalidOperationException("LnbType was null");
+      }
+
+      int lowBandFrequency = dvbsChannel.LnbType.LowBandFrequency;
+      int highBandFrequency = dvbsChannel.LnbType.HighBandFrequency;
+      int switchFrequency = dvbsChannel.LnbType.SwitchFrequency;
+      bool isToroidal = dvbsChannel.LnbType.IsToroidal;
+      bool isBandStacked = dvbsChannel.LnbType.IsBandStacked;
+
       this.LogDebug("DvbsChannel: LNB settings, low = {0} kHz, high = {1} kHz, switch = {2} kHz, bandstacked = {3}, toroidal = {4}, polarisation = {5}",
-          dvbsChannel.LnbType.LowBandFrequency, dvbsChannel.LnbType.HighBandFrequency, dvbsChannel.LnbType.SwitchFrequency,
-          dvbsChannel.LnbType.IsBandStacked, dvbsChannel.LnbType.IsToroidal, dvbsChannel.Polarisation);
+        lowBandFrequency, highBandFrequency, switchFrequency,
+        isBandStacked, isToroidal, dvbsChannel.Polarisation);
 
       // 2: Toroidal LNB handling.
       // LNBs mounted on a toroidal dish require circular polarities to be inverted. Note that it is important to do
       // this before the bandstacked LNB logic.
-      if (dvbsChannel.LnbType.IsToroidal)
+      if (isToroidal)
       {
         if (dvbsChannel.Polarisation == Polarisation.CircularL)
         {
@@ -357,13 +368,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
       // For bandstacked LNBs, if the transponder polarisation is horizontal or circular left then we
       // should use the nominal high oscillator frequency. In addition, we should always supply bandstacked
       // LNBs with 18 V for reliable operation.
-      if (dvbsChannel.LnbType.IsBandStacked)
+      if (isBandStacked)
       {
         if (dvbsChannel.Polarisation == Polarisation.LinearH || dvbsChannel.Polarisation == Polarisation.CircularL)
         {
-          dvbsChannel.LnbType.LowBandFrequency = dvbsChannel.LnbType.HighBandFrequency;
+          dvbsChannel.LnbType.LowBandFrequency = highBandFrequency;
         }
-        dvbsChannel.LnbType.HighBandFrequency = dvbsChannel.LnbType.LowBandFrequency + 500000;
+        dvbsChannel.LnbType.HighBandFrequency = lowBandFrequency + 500000;
         dvbsChannel.Polarisation = Polarisation.LinearH;
       }
 
@@ -390,7 +401,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
       // always use high voltage (useful for bandstacked LNBs).
 
       this.LogDebug("DvbsChannel: translated LNB settings, low = {0} kHz, high = {1} kHz, switch = {2} kHz, polarisation = {3}",
-          dvbsChannel.LnbType.LowBandFrequency, dvbsChannel.LnbType.HighBandFrequency, dvbsChannel.LnbType.SwitchFrequency,
+          lowBandFrequency, highBandFrequency, switchFrequency,
           dvbsChannel.Polarisation);
       return dvbsChannel;
     }

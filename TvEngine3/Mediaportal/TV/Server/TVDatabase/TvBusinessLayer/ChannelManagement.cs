@@ -392,6 +392,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
           dvbsChannel.Pilot = (Pilot)detail.Pilot;
           dvbsChannel.RollOff = (RollOff)detail.RollOff;
           dvbsChannel.LogicalChannelNumber = detail.ChannelNumber;
+          dvbsChannel.LnbType = detail.LnbType;
           return dvbsChannel;
         case 4: //DVBTChannel
           DVBTChannel dvbtChannel = new DVBTChannel();
