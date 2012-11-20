@@ -595,6 +595,8 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       int pilot = (int)Pilot.NotSet;
       int rollOff = (int)RollOff.NotSet;
       string url = "";
+      LnbType lnbType = null;
+
       MediaTypeEnum mediaType = MediaTypeEnum.TV;
 
       AnalogChannel analogChannel = channel as AnalogChannel;
@@ -634,6 +636,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       DVBSChannel dvbsChannel = channel as DVBSChannel;
       if (dvbsChannel != null)
       {
+        lnbType = dvbsChannel.LnbType;
         symbolRate = dvbsChannel.SymbolRate;
         polarisation = (int)dvbsChannel.Polarisation;
         diseqc = (int)dvbsChannel.Diseqc;
@@ -706,6 +709,10 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       tuningDetail.RollOff = rollOff;
       tuningDetail.Url = url;
       tuningDetail.Bitrate = 0;
+      if (lnbType != null)
+      {
+        tuningDetail.IdLnbType = lnbType.IdLnbType;
+      }
 
       /*TuningDetail detail = TuningDetailFactory.CreateTuningDetail(idChannel, channelName, provider,
                                              channelType, channelNumber, (int)channelFrequency, country, mediaType,
