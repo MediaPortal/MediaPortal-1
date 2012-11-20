@@ -30,8 +30,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
     public TitanExtensionInstall()
     {
       MpeId = "d2c4076c-f3d0-4d84-9a74-83fbbd15c940";
-      MpeURL = "https://dl.dropbox.com/u/17312941/Titan%20Extended.mpe1";
-      MpeUpdateURL = "https://dl.dropbox.com/u/17312941/TitanExtendedUpdate.xml";
+      MpeURL = "http://install.team-mediaportal.com/MP1/skinUpdates/titan/TitanExtended.mpe1";
+      MpeUpdateURL = "http://install.team-mediaportal.com/MP1/skinUpdates/titan/TitanExtendedUpdate.xml";
       MpeUpdateFile = Application.StartupPath + "\\deploy\\" + "TitanExtensions.xml";
       FileName = Application.StartupPath + "\\deploy\\" + "TitanExtensions.mpe1";
     }
