@@ -164,10 +164,6 @@ namespace MediaPortal.Configuration.Sections
     private HScrollBar hScrollBarCrossFade;
     private HScrollBar hScrollBarBuffering;
     private TabPage tabPageNowPlaying;
-    private GroupBox groupBoxDynamicContent;
-    private MPCheckBox checkBoxDisableTagLookups;
-    private MPCheckBox checkBoxDisableAlbumLookups;
-    private MPCheckBox checkBoxDisableCoverLookups;
     private MPGroupBox groupBoxVizOptions;
     private MPCheckBox ShowVizInNowPlayingChkBox;
     private ComboBox ShowLyricsCmbBox;
@@ -189,7 +185,6 @@ namespace MediaPortal.Configuration.Sections
     private Label label8;
     private CheckBox checkBox2;
     private MPCheckBox PlaylistCurrentCheckBox;
-    private MPCheckBox checkBoxSwitchArtistOnLastFMSubmit;
 
     #endregion
 
@@ -426,11 +421,6 @@ namespace MediaPortal.Configuration.Sections
         }
 
         ShowVizInNowPlayingChkBox.Checked = xmlreader.GetValueAsBool("musicmisc", "showVisInNowPlaying", false);
-        checkBoxDisableCoverLookups.Checked = !(xmlreader.GetValueAsBool("musicmisc", "fetchlastfmcovers", true));
-        checkBoxDisableAlbumLookups.Checked = !(xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtopalbums", true));
-        checkBoxDisableTagLookups.Checked = !(xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtracktags", true));
-        checkBoxSwitchArtistOnLastFMSubmit.Checked = xmlreader.GetValueAsBool("musicmisc", "switchArtistOnLastFMSubmit",
-                                                                              false);
 
         string vuMeter = xmlreader.GetValueAsString("musicmisc", "vumeter", "none");
 
@@ -586,10 +576,6 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValue("musicmisc", "lyrics", showLyrics);
         xmlwriter.SetValueAsBool("musicmisc", "showVisInNowPlaying", ShowVizInNowPlayingChkBox.Checked);
-        xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmcovers", !checkBoxDisableCoverLookups.Checked);
-        xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmtopalbums", !checkBoxDisableAlbumLookups.Checked);
-        xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmtracktags", !checkBoxDisableTagLookups.Checked);
-        xmlwriter.SetValueAsBool("musicmisc", "switchArtistOnLastFMSubmit", checkBoxSwitchArtistOnLastFMSubmit.Checked);
 
         string vuMeter = VUMeterValue0;
 
@@ -697,11 +683,6 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonVULed = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.radioButtonVUAnalog = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.radioButtonVUNone = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.groupBoxDynamicContent = new System.Windows.Forms.GroupBox();
-      this.checkBoxSwitchArtistOnLastFMSubmit = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxDisableTagLookups = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxDisableAlbumLookups = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxDisableCoverLookups = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxVizOptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.ShowVizInNowPlayingChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.ShowLyricsCmbBox = new System.Windows.Forms.ComboBox();
@@ -741,7 +722,6 @@ namespace MediaPortal.Configuration.Sections
       this.grpSelectOptions.SuspendLayout();
       this.tabPageNowPlaying.SuspendLayout();
       this.groupBoxVUMeter.SuspendLayout();
-      this.groupBoxDynamicContent.SuspendLayout();
       this.groupBoxVizOptions.SuspendLayout();
       this.PlaylistTabPg.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -812,8 +792,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // hScrollBarBuffering
       // 
-      this.hScrollBarBuffering.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.hScrollBarBuffering.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.hScrollBarBuffering.LargeChange = 500;
       this.hScrollBarBuffering.Location = new System.Drawing.Point(91, 161);
       this.hScrollBarBuffering.Maximum = 8499;
@@ -827,8 +807,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // hScrollBarCrossFade
       // 
-      this.hScrollBarCrossFade.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.hScrollBarCrossFade.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.hScrollBarCrossFade.LargeChange = 500;
       this.hScrollBarCrossFade.Location = new System.Drawing.Point(91, 137);
       this.hScrollBarCrossFade.Maximum = 16499;
@@ -921,8 +901,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.mpLabel2);
       this.mpGroupBox1.Controls.Add(this.soundDeviceComboBox);
       this.mpGroupBox1.Controls.Add(this.label2);
@@ -946,8 +926,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // soundDeviceComboBox
       // 
-      this.soundDeviceComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.soundDeviceComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.soundDeviceComboBox.BorderColor = System.Drawing.Color.Empty;
       this.soundDeviceComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.soundDeviceComboBox.Location = new System.Drawing.Point(91, 51);
@@ -966,8 +946,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // audioPlayerComboBox
       // 
-      this.audioPlayerComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioPlayerComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.audioPlayerComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioPlayerComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.audioPlayerComboBox.Items.AddRange(new object[] {
@@ -1055,7 +1035,6 @@ namespace MediaPortal.Configuration.Sections
       // tabPageNowPlaying
       // 
       this.tabPageNowPlaying.Controls.Add(this.groupBoxVUMeter);
-      this.tabPageNowPlaying.Controls.Add(this.groupBoxDynamicContent);
       this.tabPageNowPlaying.Controls.Add(this.groupBoxVizOptions);
       this.tabPageNowPlaying.Location = new System.Drawing.Point(4, 22);
       this.tabPageNowPlaying.Name = "tabPageNowPlaying";
@@ -1071,7 +1050,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxVUMeter.Controls.Add(this.radioButtonVUAnalog);
       this.groupBoxVUMeter.Controls.Add(this.radioButtonVUNone);
       this.groupBoxVUMeter.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxVUMeter.Location = new System.Drawing.Point(16, 285);
+      this.groupBoxVUMeter.Location = new System.Drawing.Point(6, 81);
       this.groupBoxVUMeter.Name = "groupBoxVUMeter";
       this.groupBoxVUMeter.Size = new System.Drawing.Size(432, 64);
       this.groupBoxVUMeter.TabIndex = 5;
@@ -1113,70 +1092,13 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonVUNone.Text = "None";
       this.radioButtonVUNone.UseVisualStyleBackColor = true;
       // 
-      // groupBoxDynamicContent
-      // 
-      this.groupBoxDynamicContent.Controls.Add(this.checkBoxSwitchArtistOnLastFMSubmit);
-      this.groupBoxDynamicContent.Controls.Add(this.checkBoxDisableTagLookups);
-      this.groupBoxDynamicContent.Controls.Add(this.checkBoxDisableAlbumLookups);
-      this.groupBoxDynamicContent.Controls.Add(this.checkBoxDisableCoverLookups);
-      this.groupBoxDynamicContent.Location = new System.Drawing.Point(16, 16);
-      this.groupBoxDynamicContent.Name = "groupBoxDynamicContent";
-      this.groupBoxDynamicContent.Size = new System.Drawing.Size(432, 194);
-      this.groupBoxDynamicContent.TabIndex = 4;
-      this.groupBoxDynamicContent.TabStop = false;
-      this.groupBoxDynamicContent.Text = "Dynamic content";
-      // 
-      // checkBoxSwitchArtistOnLastFMSubmit
-      // 
-      this.checkBoxSwitchArtistOnLastFMSubmit.AutoSize = true;
-      this.checkBoxSwitchArtistOnLastFMSubmit.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxSwitchArtistOnLastFMSubmit.Location = new System.Drawing.Point(11, 88);
-      this.checkBoxSwitchArtistOnLastFMSubmit.Name = "checkBoxSwitchArtistOnLastFMSubmit";
-      this.checkBoxSwitchArtistOnLastFMSubmit.Size = new System.Drawing.Size(404, 17);
-      this.checkBoxSwitchArtistOnLastFMSubmit.TabIndex = 13;
-      this.checkBoxSwitchArtistOnLastFMSubmit.Text = "Switch artist on internet lookup. i.e. LastName, Firstname -> FirstName LastName";
-      this.checkBoxSwitchArtistOnLastFMSubmit.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxDisableTagLookups
-      // 
-      this.checkBoxDisableTagLookups.AutoSize = true;
-      this.checkBoxDisableTagLookups.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxDisableTagLookups.Location = new System.Drawing.Point(11, 65);
-      this.checkBoxDisableTagLookups.Name = "checkBoxDisableTagLookups";
-      this.checkBoxDisableTagLookups.Size = new System.Drawing.Size(238, 17);
-      this.checkBoxDisableTagLookups.TabIndex = 10;
-      this.checkBoxDisableTagLookups.Text = "Disable internet lookups for track suggestions";
-      this.checkBoxDisableTagLookups.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxDisableAlbumLookups
-      // 
-      this.checkBoxDisableAlbumLookups.AutoSize = true;
-      this.checkBoxDisableAlbumLookups.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxDisableAlbumLookups.Location = new System.Drawing.Point(11, 42);
-      this.checkBoxDisableAlbumLookups.Name = "checkBoxDisableAlbumLookups";
-      this.checkBoxDisableAlbumLookups.Size = new System.Drawing.Size(238, 17);
-      this.checkBoxDisableAlbumLookups.TabIndex = 9;
-      this.checkBoxDisableAlbumLookups.Text = "Disable internet lookups for best album tracks";
-      this.checkBoxDisableAlbumLookups.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxDisableCoverLookups
-      // 
-      this.checkBoxDisableCoverLookups.AutoSize = true;
-      this.checkBoxDisableCoverLookups.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxDisableCoverLookups.Location = new System.Drawing.Point(11, 19);
-      this.checkBoxDisableCoverLookups.Name = "checkBoxDisableCoverLookups";
-      this.checkBoxDisableCoverLookups.Size = new System.Drawing.Size(197, 17);
-      this.checkBoxDisableCoverLookups.TabIndex = 8;
-      this.checkBoxDisableCoverLookups.Text = "Disable internet lookups for cover art";
-      this.checkBoxDisableCoverLookups.UseVisualStyleBackColor = true;
-      // 
       // groupBoxVizOptions
       // 
       this.groupBoxVizOptions.Controls.Add(this.ShowVizInNowPlayingChkBox);
       this.groupBoxVizOptions.Controls.Add(this.ShowLyricsCmbBox);
       this.groupBoxVizOptions.Controls.Add(this.label9);
       this.groupBoxVizOptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxVizOptions.Location = new System.Drawing.Point(16, 216);
+      this.groupBoxVizOptions.Location = new System.Drawing.Point(6, 12);
       this.groupBoxVizOptions.Name = "groupBoxVizOptions";
       this.groupBoxVizOptions.Size = new System.Drawing.Size(432, 54);
       this.groupBoxVizOptions.TabIndex = 3;
@@ -1229,8 +1151,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.PlaylistCurrentCheckBox);
       this.groupBox1.Controls.Add(this.autoShuffleCheckBox);
       this.groupBox1.Controls.Add(this.ResumePlaylistChkBox);
@@ -1315,8 +1237,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // playlistFolderTextBox
       // 
-      this.playlistFolderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.playlistFolderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.playlistFolderTextBox.BorderColor = System.Drawing.Color.Empty;
       this.playlistFolderTextBox.Location = new System.Drawing.Point(91, 24);
       this.playlistFolderTextBox.Name = "playlistFolderTextBox";
@@ -1522,8 +1444,6 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageNowPlaying.ResumeLayout(false);
       this.groupBoxVUMeter.ResumeLayout(false);
       this.groupBoxVUMeter.PerformLayout();
-      this.groupBoxDynamicContent.ResumeLayout(false);
-      this.groupBoxDynamicContent.PerformLayout();
       this.groupBoxVizOptions.ResumeLayout(false);
       this.groupBoxVizOptions.PerformLayout();
       this.PlaylistTabPg.ResumeLayout(false);

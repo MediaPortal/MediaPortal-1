@@ -217,13 +217,6 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AudioScrobbler\AudioscrobblerPlugin.cs" />
-    <Compile Include="AudioScrobbler\AudioscrobblerSettings.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AudioScrobbler\AudioscrobblerSettings.Designer.cs">
-      <DependentUpon>AudioscrobblerSettings.cs</DependentUpon>
-    </Compile>
     <Compile Include="MiniDisplay\MiniDisplay.cs" />
     <Compile Include="MiniDisplay\SetupForm.cs">
       <SubType>Form</SubType>
@@ -258,21 +251,11 @@
     </Compile>
     <Compile Include="ViewModeSwitcher\ViewModeSwitcherRules.cs" />
     <Compile Include="ViewModeSwitcher\ViewModeSwitcherSettings.cs" />
-    <EmbeddedResource Include="AudioScrobbler\AudioscrobblerSettings.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>AudioscrobblerSettings.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Audioscrobbler\Audioscrobbler.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Audioscrobbler\AudioscrobblerDisabled.gif" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MusicShareWatcher\MusicShareWatcher.gif" />
