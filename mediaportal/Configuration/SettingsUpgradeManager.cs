@@ -55,12 +55,16 @@ namespace MediaPortal.Configuration
       RemoveEntry(settings, "plugins", "ISDN Caller-ID");
       RemoveEntry(settings, "plugins", "YAC Caller-ID");
       RemoveEntry(settings, "plugins", "MAME Devices");
+      RemoveEntry(settings, "plugins", "Last.fm Radio");
       RemoveEntry(settings, "home", "Burner");
       RemoveEntry(settings, "home", "VideoEditor");
+      RemoveEntry(settings, "home", "Last.fm Radio");
       RemoveEntry(settings, "myplugins", "Burner");
       RemoveEntry(settings, "myplugins", "VideoEditor");
+      RemoveEntry(settings, "myplugins", "Last.fm Radio");
       RemoveEntry(settings, "pluginswindows", "MediaPortal.GUI.GUIBurner.GUIBurner");
       RemoveEntry(settings, "pluginswindows", "WindowPlugins.VideoEditor.GUIVideoEditor");
+      RemoveEntry(settings, "pluginswindows", "MediaPortal.GUI.RADIOLASTFM.GUIRadioLastFM");
       RemoveEntry(settings, "musicmisc", "playnowjumpto");
 
       // Moved entries
