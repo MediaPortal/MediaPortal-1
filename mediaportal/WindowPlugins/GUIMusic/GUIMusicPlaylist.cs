@@ -22,7 +22,6 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using MediaPortal.GUI.Library;
-using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
@@ -36,16 +35,6 @@ namespace MediaPortal.GUI.Music
   /// </summary>
   public class GUIMusicPlayList : GUIMusicBaseWindow
   {
-    public enum ScrobbleMode
-    {
-      Similar = 0,
-      Neighbours = 1,
-      Friends = 2,
-      Tags = 3,
-      Recent = 4,
-      Random = 5,
-    }
-
 
     #region Variables
 
@@ -55,7 +44,6 @@ namespace MediaPortal.GUI.Music
     private string m_strCurrentFile = string.Empty;
     private bool _savePlaylistOnExit = false;
     private bool _resumePlaylistOnEnter = false;
-    private bool _autoShuffleOnLoad = false;
     private string _defaultPlaylist = "default.m3u";
     private WaitCursor waitCursor;
     private static bool _movingItem = false;
@@ -85,14 +73,12 @@ namespace MediaPortal.GUI.Music
       {
         _savePlaylistOnExit = xmlreader.GetValueAsBool("musicfiles", "savePlaylistOnExit", false);
         _resumePlaylistOnEnter = xmlreader.GetValueAsBool("musicfiles", "resumePlaylistOnMusicEnter", false);
-        _autoShuffleOnLoad = xmlreader.GetValueAsBool("musicfiles", "autoshuffle", false);
         playlistPlayer.RepeatPlaylist = xmlreader.GetValueAsBool("musicfiles", "repeat", true);
       }
 
       if (_resumePlaylistOnEnter)
       {
         Log.Info("GUIMusicPlaylist: Loading default playlist {0}", _defaultPlaylist);
-        //LoadPlayList(Path.Combine(_playlistFolder, _defaultPlaylist), false);
         bw = new BackgroundWorker();
         bw.WorkerSupportsCancellation = true;
         bw.WorkerReportsProgress = false;
@@ -601,6 +587,51 @@ namespace MediaPortal.GUI.Music
       }
     }
 
+    protected override bool AllowLayout(Layout layout)
+    {
+      if (layout == Layout.List)
+      {
+        return false;
+      }
+      if (layout == Layout.AlbumView)
+      {
+        return false;
+      }
+      if (layout == Layout.Filmstrip)
+      {
+        return false;
+      }
+      if (layout == Layout.CoverFlow)
+      {
+        return false;
+      }
+      return true;
+    }
+
+    private void DoRefreshList()
+    {
+      if (facadeLayout != null)
+      {
+        // only focus the file while playlist is visible
+        if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_MUSIC_PLAYLIST)
+        {
+          LoadFacade();
+          SelectCurrentPlayingSong();
+        }
+      }
+    }
+
+    private void playlistPlayer_Changed(PlayListType nPlayList, PlayList playlist)
+    {
+      // update of playlist control is done by skin engine when moving item up / down
+      // but moving the item in the playlist triggers an event
+      // we do not want to reload if an item has been moved
+      if (!_movingItem)
+      {
+        DoRefreshList();
+      }
+    }
+
     #region modify playlist
 
     private void ClearPlayList()
@@ -832,55 +863,6 @@ namespace MediaPortal.GUI.Music
       }
 
       UpdateButtonStates();
-    }
-
-    #endregion
-
-    #region scrobbling methods
-
-    protected override bool AllowLayout(Layout layout)
-    {
-      if (layout == Layout.List)
-      {
-        return false;
-      }
-      if (layout == Layout.AlbumView)
-      {
-        return false;
-      }
-      if (layout == Layout.Filmstrip)
-      {
-        return false;
-      }
-      if (layout == Layout.CoverFlow)
-      {
-        return false;
-      }
-      return true;
-    }
-
-    private void DoRefreshList()
-    {
-      if (facadeLayout != null)
-      {
-        // only focus the file while playlist is visible
-        if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_MUSIC_PLAYLIST)
-        {
-          LoadFacade();
-          SelectCurrentPlayingSong();
-        }
-      }
-    }
-
-    private void playlistPlayer_Changed(PlayListType nPlayList, PlayList playlist)
-    {
-      // update of playlist control is done by skin engine when moving item up / down
-      // but moving the item in the playlist triggers an event
-      // we do not want to reload if an item has been moved
-      if (!_movingItem)
-      {
-        DoRefreshList();
-      }
     }
 
     #endregion

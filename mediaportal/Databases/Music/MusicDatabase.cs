@@ -352,16 +352,6 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.AddIndex(MusicDbClient, "idxartistinfo_strArtist",
                                  "CREATE INDEX idxartistinfo_strArtist ON artistinfo(strArtist ASC)");
 
-        // Scrobble table
-        DatabaseUtility.AddTable(MusicDbClient, "scrobbleusers",
-                                 "CREATE TABLE scrobbleusers ( idScrobbleUser integer primary key, strUsername text, strPassword text)");
-        DatabaseUtility.AddTable(MusicDbClient, "scrobblesettings",
-                                 "CREATE TABLE scrobblesettings ( idScrobbleSettings integer primary key, idScrobbleUser integer, iAddArtists integer, iAddTracks integer, iNeighbourMode integer, iRandomness integer, iScrobbleDefault integer, iSubmitOn integer, iDebugLog integer, iOfflineMode integer, iPlaylistLimit integer, iPreferCount integer, iRememberStartArtist integer, iAnnounce integer)");
-        DatabaseUtility.AddTable(MusicDbClient, "scrobblemode",
-                                 "CREATE TABLE scrobblemode ( idScrobbleMode integer primary key, idScrobbleUser integer, iSortID integer, strModeName text)");
-        DatabaseUtility.AddTable(MusicDbClient, "scrobbletags",
-                                 "CREATE TABLE scrobbletags ( idScrobbleTag integer primary key, idScrobbleMode integer, iSortID integer, strTagName text)");
-
         Log.Info("MusicDatabase: New Database created successfully");
         return true;
       }

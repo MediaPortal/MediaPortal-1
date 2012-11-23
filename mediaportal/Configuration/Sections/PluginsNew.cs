@@ -196,7 +196,7 @@ namespace MediaPortal.Configuration.Sections
           {
             continue;
           }
-          if (tag.IsProcess && !tag.IsEnabled && tag.SetupForm.PluginName() != "Audioscrobbler")
+          if (tag.IsProcess && !tag.IsEnabled)
           {
             continue;
           }

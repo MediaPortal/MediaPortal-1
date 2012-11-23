@@ -240,7 +240,6 @@ namespace MediaPortal.Player
         using (Settings xmlreader = new MPSettings())
         {
           string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
-          int streamPlayer = xmlreader.GetValueAsInt("audioscrobbler", "streamplayertype", 0);
           bool Vmr9Enabled = xmlreader.GetValueAsBool("musicvideo", "useVMR9", true);
 
           // Free BASS to avoid problems with Digital Audio, when watching movies

@@ -20,75 +20,11 @@
 
 using System;
 using System.Text;
-using System.Web;
 using MediaPortal.TagReader;
 using MediaPortal.Playlists;
 
 namespace MediaPortal.Music.Database
 {
-  /// <summary>
-  /// The audioscrobbler submit queue status
-  /// </summary>
-  public enum SongStatus
-  {
-    Init,
-    Loaded,
-    Cached,
-    Queued,
-    Submitted,
-    Short
-  }
-
-  /// <summary>
-  /// The source which "suggested" the track
-  /// </summary>
-  public enum SongSource
-  {
-    /// <summary>
-    /// Chosen by the user
-    /// </summary>
-    P,
-    /// <summary>
-    /// Non-personalised broadcast (e.g. Shoutcast, BBC Radio 1).
-    /// </summary>
-    R,
-    /// <summary>
-    /// Personalised recommendation except Last.fm (e.g. Pandora, Launchcast).
-    /// </summary>
-    E,
-    /// <summary>
-    /// Last.fm (any mode). prove validity of submission by sourceID (for example, "o[0]=L1b48a").
-    /// </summary>
-    L,
-    /// <summary>
-    /// Source unknown
-    /// </summary>
-    U,
-  }
-
-  /// <summary>
-  /// A single character denoting the rating of the track. Empty if not applicable
-  /// </summary>
-  public enum SongAction
-  {
-    /// <summary>
-    /// None
-    /// </summary>
-    N,
-    /// <summary>
-    /// Love (on any mode if the user has manually loved the track). This implies a listen.
-    /// </summary>
-    L,
-    /// <summary>
-    /// Ban (only if source=L). This implies a skip, and the client should skip to the next track when a ban happens.
-    /// </summary>
-    B,
-    /// <summary>
-    /// Skip (only if source=L)
-    /// </summary>
-    S,
-  }
-
   [Serializable()]
   public class Song
   {
@@ -103,12 +39,8 @@ namespace MediaPortal.Music.Database
 
     public Song()
     {
-      AudioscrobblerAction = SongAction.N;
       AuthToken = String.Empty;
-      Source = SongSource.P;
       Lyrics = String.Empty;
-      LastFMMatch = String.Empty;
-      WebImage = String.Empty;
       URL = String.Empty;
       DateTimeModified = DateTime.MinValue;
       Favorite = false;
@@ -135,43 +67,40 @@ namespace MediaPortal.Music.Database
 
     public Song Clone()
     {
-      Song newsong = new Song();
-      newsong.Id = Id;
-      newsong.Album = Album;
-      newsong.Artist = Artist;
-      newsong.AlbumArtist = AlbumArtist;
-      newsong.Duration = Duration;
-      newsong.FileName = FileName;
-      newsong.Genre = Genre;
-      newsong.Composer = Composer;
-      newsong.Conductor = Conductor;
-      newsong.TimesPlayed = TimesPlayed;
-      newsong.Title = Title;
-      newsong.Track = Track;
-      newsong.TrackTotal = TrackTotal;
-      newsong.Year = Year;
-      newsong.Rating = Rating;
-      newsong.Favorite = Favorite;
-      newsong.DateTimeModified = DateTimeModified;
-      newsong.DateTimePlayed = DateTimePlayed;
-      newsong.AudioScrobblerStatus = AudioScrobblerStatus;
-      newsong.URL = URL;
-      newsong.WebImage = WebImage;
-      newsong.LastFMMatch = LastFMMatch;
-      newsong.ResumeAt = ResumeAt;
-      newsong.DiscId = DiscId;
-      newsong.DiscTotal = DiscTotal;
-      newsong.Lyrics = Lyrics;
-      newsong.Source = Source;
-      newsong.AuthToken = AuthToken;
-      newsong.AudioscrobblerAction = AudioscrobblerAction;
-      newsong.Comment = Comment;
-      newsong.FileType = FileType;
-      newsong.Codec = Codec;
-      newsong.BitRateMode = BitRateMode;
-      newsong.BPM = BPM;
-      newsong.Channels = Channels;
-      newsong.SampleRate = SampleRate;
+      var newsong = new Song
+                      {
+                        Id = Id,
+                        Album = Album,
+                        Artist = Artist,
+                        AlbumArtist = AlbumArtist,
+                        Duration = Duration,
+                        FileName = FileName,
+                        Genre = Genre,
+                        Composer = Composer,
+                        Conductor = Conductor,
+                        TimesPlayed = TimesPlayed,
+                        Title = Title,
+                        Track = Track,
+                        TrackTotal = TrackTotal,
+                        Year = Year,
+                        Rating = Rating,
+                        Favorite = Favorite,
+                        DateTimeModified = DateTimeModified,
+                        DateTimePlayed = DateTimePlayed,
+                        URL = URL,
+                        ResumeAt = ResumeAt,
+                        DiscId = DiscId,
+                        DiscTotal = DiscTotal,
+                        Lyrics = Lyrics,
+                        AuthToken = AuthToken,
+                        Comment = Comment,
+                        FileType = FileType,
+                        Codec = Codec,
+                        BitRateMode = BitRateMode,
+                        BPM = BPM,
+                        Channels = Channels,
+                        SampleRate = SampleRate
+                      };
 
       return newsong;
     }
@@ -196,17 +125,12 @@ namespace MediaPortal.Music.Database
       Rating = 0;
       DateTimeModified = DateTime.MinValue;
       DateTimePlayed = DateTime.MinValue;
-      AudioScrobblerStatus = SongStatus.Init;
       URL = String.Empty;
-      WebImage = String.Empty;
-      LastFMMatch = String.Empty;
       _iResumeAt = 0;
       _iDisc = 0;
       _iNumDisc = 0;
       Lyrics = String.Empty;
-      Source = SongSource.P;
       AuthToken = String.Empty;
-      AudioscrobblerAction = SongAction.N;
       Comment = String.Empty;
       FileType = String.Empty;
       Codec = String.Empty;
@@ -340,16 +264,7 @@ namespace MediaPortal.Music.Database
     /// </summary>
     public DateTime DateTimePlayed { get; set; }
 
-    /// <summary>
-    /// Determines whether the song has been submitted, is waiting for submit, etc
-    /// </summary>
-    public SongStatus AudioScrobblerStatus { get; set; }
-
     public string URL { get; set; }
-
-    public string WebImage { get; set; }
-
-    public string LastFMMatch { get; set; }
 
     public int ResumeAt
     {
@@ -408,17 +323,7 @@ namespace MediaPortal.Music.Database
 
     public int SampleRate { get; set; }
 
-    /// <summary>
-    /// Indicates whether the track has been choosen by the user / a radio station / a suggestion method
-    /// </summary>
-    public SongSource Source { get; set; }
-
     public string AuthToken { get; set; }
-
-    /// <summary>
-    /// A submit action like BAN / LOVE / SKIP
-    /// </summary>
-    public SongAction AudioscrobblerAction { get; set; }
 
     #endregion
 
@@ -426,47 +331,50 @@ namespace MediaPortal.Music.Database
 
     public MusicTag ToMusicTag()
     {
-      MusicTag tmpTag = new MusicTag();
-
-      tmpTag.Title = this.Title;
-      tmpTag.Album = this.Album;
-      tmpTag.DiscID = this.DiscId;
-      tmpTag.DiscTotal = this.DiscTotal;
-      tmpTag.AlbumArtist = this.AlbumArtist;
-      tmpTag.Artist = this.Artist;
-      tmpTag.Duration = this.Duration;
-      tmpTag.Genre = this.Genre;
-      tmpTag.Composer = this.Composer;
-      tmpTag.Conductor = this.Conductor;
-      tmpTag.Track = this.Track;
-      tmpTag.TrackTotal = this.TrackTotal;
-      tmpTag.Year = this.Year;
-      tmpTag.Rating = this.Rating;
-      tmpTag.TimesPlayed = this.TimesPlayed;
-      tmpTag.Lyrics = this.Lyrics;
-      tmpTag.DateTimeModified = this.DateTimeModified;
-      tmpTag.DateTimePlayed = this.DateTimePlayed;
-      tmpTag.Comment = this.Comment;
-      tmpTag.FileType = this.FileType;
-      tmpTag.Codec = this.Codec;
-      tmpTag.BitRateMode = this.BitRateMode;
-      tmpTag.BPM = this.BPM;
-      tmpTag.BitRate = this.BitRate;
-      tmpTag.Channels = this.Channels;
-      tmpTag.SampleRate = this.SampleRate;
-      tmpTag.HasAlbumArtist = string.IsNullOrEmpty(this.AlbumArtist);
+      var tmpTag = new MusicTag
+                     {
+                       Title = this.Title,
+                       Album = this.Album,
+                       DiscID = this.DiscId,
+                       DiscTotal = this.DiscTotal,
+                       AlbumArtist = this.AlbumArtist,
+                       Artist = this.Artist,
+                       Duration = this.Duration,
+                       Genre = this.Genre,
+                       Composer = this.Composer,
+                       Conductor = this.Conductor,
+                       Track = this.Track,
+                       TrackTotal = this.TrackTotal,
+                       Year = this.Year,
+                       Rating = this.Rating,
+                       TimesPlayed = this.TimesPlayed,
+                       Lyrics = this.Lyrics,
+                       DateTimeModified = this.DateTimeModified,
+                       DateTimePlayed = this.DateTimePlayed,
+                       Comment = this.Comment,
+                       FileType = this.FileType,
+                       Codec = this.Codec,
+                       BitRateMode = this.BitRateMode,
+                       BPM = this.BPM,
+                       BitRate = this.BitRate,
+                       Channels = this.Channels,
+                       SampleRate = this.SampleRate,
+                       HasAlbumArtist = string.IsNullOrEmpty(this.AlbumArtist)
+                     };
 
       return tmpTag;
     }
 
     public PlayListItem ToPlayListItem()
     {
-      PlayListItem pli = new PlayListItem();
+      var pli = new PlayListItem
+                  {
+                    Type = PlayListItem.PlayListItemType.Audio,
+                    FileName = this.FileName,
+                    Description = this.Title,
+                    Duration = this.Duration
+                  };
 
-      pli.Type = PlayListItem.PlayListItemType.Audio;
-      pli.FileName = this.FileName;
-      pli.Description = this.Title;
-      pli.Duration = this.Duration;
       MusicTag tag = this.ToMusicTag();
       pli.MusicTag = tag;
 
@@ -497,86 +405,6 @@ namespace MediaPortal.Music.Database
       return s.ToString();
     }
 
-    public string ToLastFMString()
-    {
-      StringBuilder s = new StringBuilder();
-
-      if (_strArtist != String.Empty)
-      {
-        s.Append(_strArtist);
-        s.Append(" - ");
-      }
-      if (Title != String.Empty)
-      {
-        s.Append(Title);
-      }
-      if (_iDuration > 0)
-      {
-        s.Append(" [");
-        s.Append(Util.Utils.SecondsToHMSString(_iDuration));
-        s.Append("]");
-      }
-      if (TimesPlayed > 0)
-      {
-        s.Append(" (played: " + Convert.ToString(TimesPlayed) + " times)");
-      }
-
-      return s.ToString();
-    }
-
-    public string ToLastFMMatchString(bool showURL_)
-    {
-      StringBuilder s = new StringBuilder();
-      if (_strArtist != String.Empty)
-      {
-        s.Append(_strArtist);
-        if (Album != String.Empty)
-        {
-          s.Append(" - " + Album);
-        }
-        else
-        {
-          if (Title != String.Empty)
-          {
-            s.Append(" - " + Title);
-          }
-          if (Genre != String.Empty)
-          {
-            s.Append(" (tagged: " + Genre + ")");
-          }
-        }
-      }
-      else if (Album != String.Empty)
-      {
-        s.Append(Album);
-      }
-      if (LastFMMatch != String.Empty)
-      {
-        if (LastFMMatch.IndexOf(".") == -1)
-        {
-          s.Append(" (match: " + LastFMMatch + "%)");
-        }
-        else
-        {
-          s.Append(" (match: " + LastFMMatch.Remove(LastFMMatch.IndexOf(".") + 2) + "%)");
-        }
-      }
-      if (showURL_)
-      {
-        if (URL != String.Empty)
-        {
-          s.Append(" (link: " + URL + ")");
-        }
-      }
-
-      return s.ToString();
-    }
-
-    public string ToURLArtistString()
-    {
-      return HttpUtility.UrlEncode(_strArtist);
-    }
-
     public override string ToString()
     {
       return _strArtist + "\t" +
@@ -584,63 +412,6 @@ namespace MediaPortal.Music.Database
              Album + "\t" +
              _iDuration + "\t" +
              DateTimePlayed.ToString("s");
-    }
-
-    public string getQueueTime(bool asUnixTime)
-    {
-      string queueTime = string.Empty;
-
-      if (asUnixTime)
-      {
-        queueTime = Convert.ToString(Util.Utils.GetUnixTime(DateTimePlayed.ToUniversalTime()));
-      }
-      else
-      {
-        queueTime = String.Format("{0:0000}-{1:00}-{2:00} {3:00}:{4:00}:{5:00}",
-                                  DateTimePlayed.Year,
-                                  DateTimePlayed.Month,
-                                  DateTimePlayed.Day,
-                                  DateTimePlayed.Hour,
-                                  DateTimePlayed.Minute,
-                                  DateTimePlayed.Second);
-      }
-      return queueTime;
-    }
-
-    public string getRateActionParam()
-    {
-      switch (AudioscrobblerAction)
-      {
-        case SongAction.N:
-          return String.Empty;
-        case SongAction.L:
-          return "L";
-        case SongAction.B:
-          return "B";
-        case SongAction.S:
-          return "S";
-        default:
-          return String.Empty;
-      }
-    }
-
-    public string getSourceParam()
-    {
-      switch (Source)
-      {
-        case SongSource.P:
-          return "P";
-        case SongSource.R:
-          return "R";
-        case SongSource.E:
-          return "E";
-        case SongSource.L:
-          return "L" + AuthToken;
-        case SongSource.U:
-          return "U";
-        default:
-          return "P";
-      }
     }
 
     #endregion

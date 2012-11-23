@@ -52,33 +52,14 @@ namespace MediaPortal.GUI.Music
   {
     #region Enums
 
-    private enum PopularityRating : int
-    {
-      unknown = 0,
-      existent = 1,
-      known = 2,
-      famous = 3,
-    }
-
     private enum ControlIDs
     {
       LBL_CAPTION = 1,
       IMG_COVERART = 112,
-      IMG_TRACK_PROGRESS_BG = 117,
       PROG_TRACK = 118,
-      IMGLIST_RATING = 141,
-      IMGLIST_NEXTRATING = 142,
       LBL_UP_NEXT = 20,
-      BTN_LASTFM_LOVE = 30,
-      BTN_LASTFM_BAN = 31,
       VUMETER_LEFT = 999,
       VUMETER_RIGHT = 998,
-    }
-
-    public enum TrackProgressType
-    {
-      Elapsed,
-      CountDown
     }
 
     #endregion
@@ -97,12 +78,9 @@ namespace MediaPortal.GUI.Music
     [SkinControl((int)ControlIDs.LBL_CAPTION)] protected GUILabelControl LblCaption = null;
     [SkinControl((int)ControlIDs.IMG_COVERART)] protected GUIImage ImgCoverArt = null;
     [SkinControl((int)ControlIDs.PROG_TRACK)] protected GUIProgressControl ProgTrack = null;
-    [SkinControl((int)ControlIDs.IMG_TRACK_PROGRESS_BG)] protected GUIImage ImgTrackProgressBkGrnd = null;
     [SkinControl((int)ControlIDs.LBL_UP_NEXT)] protected GUILabelControl LblUpNext = null;
     [SkinControl((int)ControlIDs.VUMETER_LEFT)] protected GUIImage VUMeterLeft = null;
     [SkinControl((int)ControlIDs.VUMETER_RIGHT)] protected GUIImage VUMeterRight = null;
-    [SkinControl((int)ControlIDs.BTN_LASTFM_LOVE)] protected GUIButtonControl btnLastFMLove = null;
-    [SkinControl((int)ControlIDs.BTN_LASTFM_BAN)] protected GUIButtonControl btnLastFMBan = null;
 
     #endregion
 
@@ -112,18 +90,14 @@ namespace MediaPortal.GUI.Music
 
     protected delegate void TimerElapsedDelegate();
 
-
     #endregion
 
     #region Variables
-
-    private const int DISPLAY_LISTITEM_COUNT = 3;
 
     private bool ControlsInitialized = false;
     private PlayListPlayer PlaylistPlayer = null;
     private string CurrentThumbFileName = string.Empty;
     private string CurrentTrackFileName = string.Empty;
-    private string NextTrackFileName = string.Empty;
     private MusicTag PreviousTrackTag = null;
     private MusicTag CurrentTrackTag = null;
     private MusicTag NextTrackTag = null;
@@ -168,15 +142,6 @@ namespace MediaPortal.GUI.Music
         VizName = xmlreader.GetValueAsString("musicvisualization", "name", "None");
         ShowViz = xmlreader.GetValueAsBool("musicmisc", "showVisInNowPlaying", false);
         _vuMeter = xmlreader.GetValueAsString("musicmisc", "vumeter", "none");
-
-        if (btnLastFMLove != null)
-        {
-          btnLastFMLove.Label = GUILocalizeStrings.Get(34010); // love
-        }
-        if (btnLastFMBan != null)
-        {
-          btnLastFMBan.Label = GUILocalizeStrings.Get(34011); // ban
-        }
 
         if (ShowViz && VizName != "None")
         {
@@ -272,12 +237,11 @@ namespace MediaPortal.GUI.Music
       ClearVisualizationImages();
 
       CurrentTrackFileName = filename;
-      NextTrackFileName = PlaylistPlayer.GetNext();
       GetTrackTags();
 
       CurrentThumbFileName = GUIMusicBaseWindow.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
 
-      if (CurrentThumbFileName.Length < 1)
+      if (string.IsNullOrEmpty(CurrentThumbFileName))
         // no LOCAL Thumb found because user has bad settings -> check if there is a folder.jpg in the share
       {
         CurrentThumbFileName = Util.Utils.GetFolderThumb(CurrentTrackFileName);
@@ -287,7 +251,7 @@ namespace MediaPortal.GUI.Music
         }
       }
 
-      if (CurrentThumbFileName.Length > 0)
+      if (!string.IsNullOrEmpty(CurrentThumbFileName))
       {
         // let us test if there is a larger cover art image
         string strLarge = Util.Utils.ConvertToLargeCoverArt(CurrentThumbFileName);
@@ -368,7 +332,6 @@ namespace MediaPortal.GUI.Music
         case Action.ActionType.ACTION_NEXT_ITEM:
         case Action.ActionType.ACTION_PAUSE:
         case Action.ActionType.ACTION_PREV_ITEM:
-          //if (PlaylistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC)
           if ((PlaylistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC) &&
               (PlaylistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC_TEMP))
           {
@@ -510,18 +473,6 @@ namespace MediaPortal.GUI.Music
       base.OnPageDestroy(new_windowId);
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
-    {
-      if (control == btnLastFMLove)
-      {
-        DoLastFMLove();
-      }
-      if (control == btnLastFMBan)
-      {
-        DoLastFMBan();
-      }
-    }
-
     protected override void OnShowContextMenu()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
@@ -657,10 +608,6 @@ namespace MediaPortal.GUI.Music
           break;
       }
     }
-
-    #endregion
-
-    #region Public methods
 
     #endregion
 
@@ -826,7 +773,6 @@ namespace MediaPortal.GUI.Music
 
       if (g_Player.Duration > 0 && ImagePathContainer.Count > 1)
       {
-        //  ImageChangeTimer.Interval = (g_Player.Duration * 1000) / (ImagePathContainer.Count * 8); // change each cover 8x
         ImageChangeTimer.Interval = 15 * 1000; // change covers every 15 seconds
       }
       else
@@ -843,7 +789,7 @@ namespace MediaPortal.GUI.Music
       lock (_imageMutex)
       {
         string ImagePath = Convert.ToString(newImage);
-        if (ImagePath.IndexOf(@"missing_coverart") > 0) // && (ImagePathContainer.Count > 0))
+        if (ImagePath.IndexOf(@"missing_coverart") > 0)
         {
           Log.Debug("GUIMusicPlayingNow: Found placeholder - not inserting image {0}", ImagePath);
           return false;
@@ -955,34 +901,6 @@ namespace MediaPortal.GUI.Music
       GUIGraphicsContext.form.Invoke(new TimerElapsedDelegate(FlipPictures));
     }
 
-    private void AddInfoTrackToPlaylist(GUIListItem chosenTrack_)
-    {
-      try
-      {
-        MusicDatabase mdb = MusicDatabase.Instance;
-        Song addSong = new Song();
-        MusicTag tempTag = new MusicTag();
-        tempTag = (MusicTag)chosenTrack_.MusicTag;
-
-        if (mdb.GetSongByMusicTagInfo(tempTag.Artist, tempTag.Album, tempTag.Title, true, ref addSong))
-        {
-          if (AddSongToPlaylist(ref addSong))
-          {
-            Log.Info("GUIMusicPlayingNow: Song inserted: {0} - {1}", addSong.Artist, addSong.Title);
-          }
-        }
-        else
-        {
-          Log.Info("GUIMusicPlayingNow: DB lookup for Artist: {0} Title: {1} unsuccessful", tempTag.Artist,
-                   tempTag.Title);
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("GUIMusicPlayingNow: DB lookup for Song failed - {0}", ex.Message);
-      }
-    }
-
     private void UpdateCurrentTrackRating(int RatingValue)
     {
       if (RatingValue < 0 || RatingValue > 5)
@@ -1002,31 +920,11 @@ namespace MediaPortal.GUI.Music
                Convert.ToString(RatingValue));
     }
 
-    private static string CleanTagString(string tagField)
-    {
-      int dotIndex = 0;
-      string outString = string.Empty;
-
-      outString = Convert.ToString(tagField);
-      outString = Util.Utils.MakeFileName(outString);
-
-      dotIndex = outString.IndexOf(@"\");
-      if (dotIndex > 0)
-      {
-        outString = outString.Remove(dotIndex);
-      }
-
-      return outString;
-    }
-
     /// <summary>
     /// Updates the artist info for the current track playing.
-    /// The artist info is fetched asynchronously by adding a request onto the request queue of the AudioScrobblerUtils
-    /// class. The response will be received via callback by a delegate (OnUpdateArtistInfoCompleted).
     /// </summary>
     private void UpdateArtistInfo()
     {
-      string CurrentArtist = CleanTagString(CurrentTrackTag.Artist);
       // artist tag can contain multiple artists and 
       // will be separated by " | " so split by | then trim
       // so we will add one thumb for artist
@@ -1133,7 +1031,6 @@ namespace MediaPortal.GUI.Music
     private void OnSongInserted()
     {
       _trackChanged = true;
-      NextTrackFileName = PlaylistPlayer.GetNext();
       GetTrackTags();
       UpdateTrackInfo();
     }
@@ -1142,7 +1039,6 @@ namespace MediaPortal.GUI.Music
     /// Add or enque a song to the current playlist - call OnSongInserted() after this!!!
     /// </summary>
     /// <param name="song">the song to add</param>
-    /// <param name="enqueueNext_">if true the songs is inserted after the current track, otherwise added to the end of the list</param>
     /// <returns>if the action was successful</returns>
     private bool AddSongToPlaylist(ref Song song)
     {
@@ -1206,14 +1102,6 @@ namespace MediaPortal.GUI.Music
         return;
       }
 
-      // the solution below doesn't rotate e.g. artist pics.
-
-      //if (ImgCoverArt != null)
-      //{
-      //  GUIGraphicsContext.VideoWindow = new Rectangle(ImgCoverArt.XPosition, ImgCoverArt.YPosition, ImgCoverArt.Width, ImgCoverArt.Height);
-      //  return;
-      //}
-
       VisualizationWindow vizWindow = BassMusicPlayer.Player.VisualizationWindow;
 
       if (vizWindow != null)
@@ -1222,9 +1110,6 @@ namespace MediaPortal.GUI.Music
 
         int width = ImgCoverArt.RenderWidth;
         int height = ImgCoverArt.RenderHeight;
-
-        //int width = ImgCoverArt.Width;
-        //int height = ImgCoverArt.Height;
 
         Size vizSize = new Size(width, height);
         float vizX = (float)ImgCoverArt.Location.X;

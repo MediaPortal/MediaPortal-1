@@ -1022,32 +1022,7 @@ namespace MediaPortal.Configuration
                           MessageBoxIcon.Exclamation);
           return false;
         }
-        // is last.fm enabled but audioscrobbler is not? 
-        bool audioScrobblerOn = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
-        bool lastFmOn = xmlreader.GetValueAsBool("plugins", "Last.fm Radio", false);
-        if (lastFmOn && !audioScrobblerOn)
-        {
-          MessageBox.Show("Please configure the Audioscrobbler plugin to use Last.fm radio", "MediaPortal Settings",
-                          MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-          return false;
-        }
 
-        if (audioScrobblerOn)
-        {
-          // Does Audioscrobbler have a user but no password (due to DB upgrades, restores, etc)
-          string asuser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
-          if (!string.IsNullOrEmpty(asuser))
-          {
-            Music.Database.MusicDatabase mdb = Music.Database.MusicDatabase.Instance;
-            string AsPass = mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(asuser)), "");
-            if (string.IsNullOrEmpty(AsPass))
-            {
-              MessageBox.Show("No password specified for current Audioscrobbler user", "MediaPortal Settings",
-                              MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-              return false;
-            }
-          }
-        }
       }
       return true;
     }
