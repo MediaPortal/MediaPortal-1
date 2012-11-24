@@ -83,8 +83,6 @@
     <Compile Include="DvbConditionalAccess.cs" />
     <Compile Include="HResult.cs" />
     <Compile Include="Integration\IntegrationProviderHelper.cs" />
-    <Compile Include="Integration\Logger.cs" />
-    <Compile Include="Integration\PathManager.cs" />
     <Compile Include="Interfaces\Device\IAddOnDevice.cs" />
     <Compile Include="Interfaces\Device\IConditionalAccessProvider.cs" />
     <Compile Include="Interfaces\Device\ICustomDevice.cs" />

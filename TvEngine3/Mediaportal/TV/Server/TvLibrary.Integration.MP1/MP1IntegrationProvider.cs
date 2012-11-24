@@ -24,14 +24,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Integration.MP1
 {
   public class MP1IntegrationProvider: IIntegrationProvider
   {
-    protected readonly IPathManager _pathManager;// = new PathManager();
+    protected readonly IPathManager _pathManager = new PathManager();
     protected ILogger _logger;
 
-    public MP1IntegrationProvider(ILogger logger, IPathManager pathManager)
+    public MP1IntegrationProvider()
     {
-      //_logger = new Logger();
-      _logger = logger;
-      _pathManager = pathManager;
+      _logger = new Logger();
     }
 
 

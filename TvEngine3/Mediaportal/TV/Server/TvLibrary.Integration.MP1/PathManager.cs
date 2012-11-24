@@ -2,9 +2,9 @@ using System;
 using System.IO;
 using Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces;
 
-namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Integration
+namespace Mediaportal.TV.Server.TVLibrary.Integration.MP1
 {
-  class PathManager: IPathManager
+  public class PathManager: IPathManager
   {
     /// <summary>
     /// Checks if a path with the specified label is registered.

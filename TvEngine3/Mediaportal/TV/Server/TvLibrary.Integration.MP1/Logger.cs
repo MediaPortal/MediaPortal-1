@@ -22,9 +22,8 @@ using System;
 using System.Collections.Generic;
 using Castle.Core.Logging;
 using Castle.Windsor;
-using MediaPortal.Common.Utils;
 
-namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Integration
+namespace Mediaportal.TV.Server.TVLibrary.Integration.MP1
 {
   public class Logger : IntegrationProvider.Interfaces.ILogger
   {
@@ -45,7 +44,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Integration
         bool hasLogger = _logCache.TryGetValue(type, out logger);
         if (!hasLogger)
         {
-          var container = GlobalServiceProvider.Instance.Get<IWindsorContainer>();
+          IWindsorContainer container = Instantiator.Instance.Container();
           var loggerFactory = container.Resolve<ILoggerFactory>();
           logger = loggerFactory.Create(type);      
           _logCache[type] = logger;
