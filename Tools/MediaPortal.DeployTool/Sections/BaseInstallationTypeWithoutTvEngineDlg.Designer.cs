@@ -81,7 +81,7 @@ namespace MediaPortal.DeployTool.Sections
       this.labelAdvancedDesc.Size = new System.Drawing.Size(389, 46);
       this.labelAdvancedDesc.TabIndex = 18;
       this.labelAdvancedDesc.Text = "The advanced installation allows you to specify installation locations and other " +
-          "settings";
+    "settings";
       // 
       // labelAdvancedCaption
       // 
@@ -105,7 +105,7 @@ namespace MediaPortal.DeployTool.Sections
       this.labelOneClickDesc.Size = new System.Drawing.Size(389, 46);
       this.labelOneClickDesc.TabIndex = 16;
       this.labelOneClickDesc.Text = "All required applications will be installed into their default locations and with" +
-          " the default settings.";
+    " the default settings.";
       // 
       // labelOneClickCaption
       // 
@@ -151,8 +151,8 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // BaseInstallationTypeWithoutTvEngineDlg
       // 
-	  this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_one_click_install_choose;
       this.Controls.Add(this.bAdvanced);
       this.Controls.Add(this.bOneClick);

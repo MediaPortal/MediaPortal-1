@@ -151,8 +151,8 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // DBMSTypeDlg
       // 
-	  this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_empty;
       this.Controls.Add(this.lbMSSQL);
       this.Controls.Add(this.bExists);

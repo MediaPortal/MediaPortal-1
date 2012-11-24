@@ -67,7 +67,7 @@ namespace MediaPortal.DeployTool.Sections
       this.labelOneClickDesc.Size = new System.Drawing.Size(399, 58);
       this.labelOneClickDesc.TabIndex = 2;
       this.labelOneClickDesc.Text = "All required applications will be installed into their default locations and with" +
-          " the default settings. The database password is \"MediaPortal\".";
+    " the default settings. The database password is \"MediaPortal\".";
       // 
       // labelAdvancedDesc
       // 
@@ -79,7 +79,7 @@ namespace MediaPortal.DeployTool.Sections
       this.labelAdvancedDesc.Size = new System.Drawing.Size(399, 46);
       this.labelAdvancedDesc.TabIndex = 6;
       this.labelAdvancedDesc.Text = "The advanced installation allows you to install Server/Client setups and to speci" +
-          "fy installation locations and other settings";
+    "fy installation locations and other settings";
       // 
       // labelAdvancedCaption
       // 
@@ -151,8 +151,8 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // BaseInstallationTypeDlg
       // 
-	  this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_one_click_install_choose;
       this.Controls.Add(this.bAdvanced);
       this.Controls.Add(this.rbAdvanced);

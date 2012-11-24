@@ -107,15 +107,15 @@ namespace MediaPortal.DeployTool.Sections
       this.labelNote.ForeColor = System.Drawing.Color.White;
       this.labelNote.Location = new System.Drawing.Point(244, 195);
       this.labelNote.Name = "labelNote";
-      this.labelNote.Size = new System.Drawing.Size(269, 26);
+      this.labelNote.Size = new System.Drawing.Size(265, 26);
       this.labelNote.TabIndex = 21;
       this.labelNote.Text = "NOTE: You cannot upgrade from an existing GIT build,\r\n             those are mean" +
-          "t for testing purposes only.";
+    "t for testing purposes only.";
       // 
       // UpgradeDlg
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_TV_install;
       this.Controls.Add(this.labelNote);
       this.Controls.Add(this.bFresh);

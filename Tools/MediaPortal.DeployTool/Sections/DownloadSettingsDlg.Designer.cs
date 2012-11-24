@@ -31,9 +31,9 @@ namespace MediaPortal.DeployTool.Sections
       this.rb32bit = new System.Windows.Forms.Label();
       this.rb64bit = new System.Windows.Forms.Label();
       this.listViewLang = new MediaPortal.DeployTool.MPListView();
-      this.columnCountry = new System.Windows.Forms.ColumnHeader();
-      this.columnID = new System.Windows.Forms.ColumnHeader();
-      this.columnLang3 = new System.Windows.Forms.ColumnHeader();
+      this.columnCountry = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnID = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnLang3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.b32bit = new System.Windows.Forms.Button();
       this.b64bit = new System.Windows.Forms.Button();
       this.SuspendLayout();
@@ -137,8 +137,8 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // DownloadSettingsDlg
       // 
-	  this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_internet_connection;
       this.Controls.Add(this.b64bit);
       this.Controls.Add(this.b32bit);

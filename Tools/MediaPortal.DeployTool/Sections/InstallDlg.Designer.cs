@@ -32,9 +32,9 @@ namespace MediaPortal.DeployTool.Sections
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InstallDlg));
       this.labelHeading = new System.Windows.Forms.Label();
       this.listView = new System.Windows.Forms.ListView();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.iconsList = new System.Windows.Forms.ImageList(this.components);
       this.SuspendLayout();
       // 
@@ -48,12 +48,12 @@ namespace MediaPortal.DeployTool.Sections
       this.labelHeading.Size = new System.Drawing.Size(452, 13);
       this.labelHeading.TabIndex = 11;
       this.labelHeading.Text = "Press the \"install\" button to perform all necessary actions to install your setup" +
-          "";
+    "";
       // 
       // listView
       // 
-      this.listView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.listView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
@@ -87,8 +87,8 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // InstallDlg
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_empty;
       this.Controls.Add(this.listView);
       this.Controls.Add(this.labelHeading);

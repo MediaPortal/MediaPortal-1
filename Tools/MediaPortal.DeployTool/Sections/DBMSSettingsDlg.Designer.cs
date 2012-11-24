@@ -37,6 +37,10 @@ namespace MediaPortal.DeployTool.Sections
       this.checkBoxFirewall = new System.Windows.Forms.CheckBox();
       this.SuspendLayout();
       // 
+      // labelSectionHeader
+      // 
+      this.labelSectionHeader.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+      // 
       // labelHeading
       // 
       this.labelHeading.AutoSize = true;
@@ -61,8 +65,8 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // textBoxDir
       // 
-      this.textBoxDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxDir.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.textBoxDir.Location = new System.Drawing.Point(48, 94);
       this.textBoxDir.Name = "textBoxDir";
@@ -124,8 +128,8 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // DBMSSettingsDlg
       // 
-	  this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_empty;
       this.Controls.Add(this.checkBoxFirewall);
       this.Controls.Add(this.labelPassword);
@@ -134,8 +138,9 @@ namespace MediaPortal.DeployTool.Sections
       this.Controls.Add(this.buttonBrowse);
       this.Controls.Add(this.textBoxDir);
       this.Controls.Add(this.labelInstDir);
+      this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
       this.Name = "DBMSSettingsDlg";
-      this.Size = new System.Drawing.Size(666, 250);
+      this.Size = new System.Drawing.Size(1038, 250);
       this.Controls.SetChildIndex(this.labelInstDir, 0);
       this.Controls.SetChildIndex(this.textBoxDir, 0);
       this.Controls.SetChildIndex(this.buttonBrowse, 0);

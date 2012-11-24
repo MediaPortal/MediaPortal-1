@@ -44,8 +44,8 @@ namespace MediaPortal.DeployTool
       // 
       // DeployDialog
       // 
-	  this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
       this.AutoSize = true;
       this.BackColor = System.Drawing.Color.Transparent;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_empty;

@@ -34,6 +34,10 @@ namespace MediaPortal.DeployTool.Sections
       this.cbLanguage = new System.Windows.Forms.ComboBox();
       this.SuspendLayout();
       // 
+      // labelSectionHeader
+      // 
+      this.labelSectionHeader.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+      // 
       // labelHeading1
       // 
       this.labelHeading1.AutoSize = true;
@@ -45,7 +49,7 @@ namespace MediaPortal.DeployTool.Sections
       this.labelHeading1.Size = new System.Drawing.Size(402, 32);
       this.labelHeading1.TabIndex = 1;
       this.labelHeading1.Text = "This application will guide you through the installation of MediaPortal and all t" +
-          "he required components.";
+    "he required components.";
       // 
       // labelHeading2
       // 
@@ -77,6 +81,7 @@ namespace MediaPortal.DeployTool.Sections
       this.cbLanguage.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.cbLanguage.FormattingEnabled = true;
       this.cbLanguage.Location = new System.Drawing.Point(207, 194);
+      this.cbLanguage.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
       this.cbLanguage.Name = "cbLanguage";
       this.cbLanguage.Size = new System.Drawing.Size(248, 22);
       this.cbLanguage.TabIndex = 4;
@@ -84,13 +89,14 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // WelcomeDlg
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_with_MP_Box;
       this.Controls.Add(this.cbLanguage);
       this.Controls.Add(this.labelHeading3);
       this.Controls.Add(this.labelHeading2);
       this.Controls.Add(this.labelHeading1);
+      this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
       this.Name = "WelcomeDlg";
       this.Size = new System.Drawing.Size(666, 250);
       this.Controls.SetChildIndex(this.labelHeading1, 0);

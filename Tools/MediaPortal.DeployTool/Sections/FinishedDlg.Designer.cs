@@ -71,7 +71,7 @@ namespace MediaPortal.DeployTool.Sections
       this.labelHeading3.Size = new System.Drawing.Size(349, 26);
       this.labelHeading3.TabIndex = 13;
       this.labelHeading3.Text = "Below you may find some useful links that help you getting started with MediaPort" +
-          "al";
+    "al";
       // 
       // linkHomepage
       // 
@@ -127,8 +127,8 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // FinishedDlg
       // 
-	  this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_with_MP_Box;
       this.Controls.Add(this.labelEbay);
       this.Controls.Add(this.linkWiki);

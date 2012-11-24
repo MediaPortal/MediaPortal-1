@@ -28,7 +28,6 @@ namespace MediaPortal.DeployTool
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ManualDownload));
       this.labelHeading = new System.Windows.Forms.Label();
       this.labelFile = new System.Windows.Forms.Label();
       this.labelTargetFile = new System.Windows.Forms.Label();
@@ -138,8 +137,8 @@ namespace MediaPortal.DeployTool
       // 
       // ManualDownload
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
       this.AutoSize = true;
       this.ClientSize = new System.Drawing.Size(672, 200);
       this.Controls.Add(this.buttonContinue);

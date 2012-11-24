@@ -152,77 +152,128 @@
       <SubType>Designer</SubType>
       <DependentUpon>ManualDownloadFileMissing.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MediaPortal.DeployTool.cs-CZ.resx" />
+    <EmbeddedResource Include="MediaPortal.DeployTool.cs-CZ.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.cs-CZ.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.da-DK.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.da-DK.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.de-AT.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.de-AT.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.de-DE.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.de-DE.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.el-GR.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.el-GR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.es-ES.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.es-ES.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.fr-FR.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.fr-FR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.hr-HR.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.hr-HR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.it-IT.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.it-IT.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.ja-JP.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.ja-JP.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.mk-MK.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.mk-MK.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.nb-NO.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.nb-NO.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.nl-NL.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.nl-NL.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.pl-PL.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.pl-PL.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.pt-BR.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.pt-BR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.pt-PT.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.pt-PT.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.ro-RO.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.ro-RO.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.ru-RU.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.ru-RU.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.sl-SI.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.sl-SI.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.sr-Cyrl-CS.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.sr-Cyrl-CS.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.sr-Latn-CS.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.sr-Latn-CS.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.sv-SE.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.sv-SE.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.tr-TR.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.tr-TR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.zh-CN.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.zh-CN.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\BaseInstallationTypeDlg.resx">
       <SubType>Designer</SubType>

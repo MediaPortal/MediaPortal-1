@@ -28,7 +28,6 @@ namespace MediaPortal.DeployTool
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DeployTool));
       this.splitContainer1 = new System.Windows.Forms.SplitContainer();
       this.bHelp = new System.Windows.Forms.Button();
       this.bExit = new System.Windows.Forms.Button();
@@ -119,6 +118,7 @@ namespace MediaPortal.DeployTool
       this.pictureBox1.Location = new System.Drawing.Point(0, 0);
       this.pictureBox1.Name = "pictureBox1";
       this.pictureBox1.Size = new System.Drawing.Size(666, 122);
+      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
       this.pictureBox1.TabIndex = 20;
       this.pictureBox1.TabStop = false;
       // 
@@ -126,7 +126,6 @@ namespace MediaPortal.DeployTool
       // 
       this.splitContainer2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(4)))), ((int)(((byte)(31)))), ((int)(((byte)(73)))));
       this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.splitContainer2.IsSplitterFixed = true;
       this.splitContainer2.Location = new System.Drawing.Point(0, 0);
       this.splitContainer2.Margin = new System.Windows.Forms.Padding(0);
       this.splitContainer2.Name = "splitContainer2";
@@ -134,7 +133,8 @@ namespace MediaPortal.DeployTool
       // 
       // splitContainer2.Panel1
       // 
-      this.splitContainer2.Panel1.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_empty;
+      this.splitContainer2.Panel1.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_bottom;
+      this.splitContainer2.Panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
       // 
       // splitContainer2.Panel2
       // 
@@ -177,8 +177,9 @@ namespace MediaPortal.DeployTool
       // 
       // DeployTool
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+      this.AutoSize = true;
       this.BackColor = System.Drawing.Color.White;
       this.ClientSize = new System.Drawing.Size(666, 416);
       this.Controls.Add(this.splitContainer1);
