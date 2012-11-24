@@ -402,6 +402,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ;File "${git_TVServer}\Server\ServiceAgents\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVService.ServiceAgents.dll"
   File "${git_TVServer}\Server\RuleBasedScheduler\bin\${BUILD_TYPE}\Mediaportal.TV.Server.RuleBasedScheduler.dll"
   File "${EXTBIN}\log4net.dll"
+  File "${git_TVServer}\Server\TvService\bin\${BUILD_TYPE}\log4net.config"
   File "${EXTBIN}\MySql.Data.dll"
   File "${EXTBIN}\MySql.Data.Entity.dll"
   File "${EXTBIN}\EntityFramework.dll"
@@ -425,6 +426,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Utils.dll"
   File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
   File "${git_TVServer}\Server\TVDatabase\Presentation\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
+  File "${git_TVServer}\Server\TvLibrary.Integration.MP1\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
+  File "${git_TVServer}\Server\TvLibrary.IntegrationProvider.Interfaces\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces.dll"
 
   ; 3rd party assemblies
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
@@ -512,6 +515,10 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Utils.dll"
   File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
   File "${git_TVServer}\Server\TVDatabase\Presentation\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
+  File "${git_TVServer}\Server\TvLibrary.Integration.MP1\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
+  File "${git_TVServer}\Server\TvLibrary.IntegrationProvider.Interfaces\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces.dll"
+  File "${EXTBIN}\log4net.dll"
+  File "${git_TVServer}\Server\SetupTv\bin\${BUILD_TYPE}\log4net.config"
   
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION   for TVServer
@@ -693,6 +700,10 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\Castle.Services.Logging.Log4netIntegration.dll"
   Delete "$INSTDIR\Castle.Services.Logging.NLogIntegration.dll"
   Delete "$INSTDIR\Castle.Windsor.dll"
+  Delete "$INSTDIR\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
+  Delete "$INSTDIR\Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces.dll"
+  Delete "$INSTDIR\log4net.dll"
+  Delete "$INSTDIR\log4net.config"
 
   ; 3rd party assembliess
   Delete "$INSTDIR\dxerr9.dll"
@@ -774,6 +785,10 @@ ${MementoSectionEnd}
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.SetupControls.dll"
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
   Delete "${SETUP_TV_FOLDER}\Interop.SHDocVw.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces.dll"
+  Delete "${SETUP_TV_FOLDER}\log4net.dll"
+  Delete "${SETUP_TV_FOLDER}\log4net.config"
 
   ; remove Start Menu shortcuts
   Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"
@@ -846,7 +861,6 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File "${git_TVServer}\Server\Plugins\PluginBase\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.Base.dll"
   File "${git_TVServer}\Server\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.TvBusinessLayer.dll"
   File "${git_TVServer}\Server\TVDatabase\Presentation\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
-  File "${EXTBIN}\log4net.dll"
   File "${EXTBIN}\MySql.Data.dll"
   File "${EXTBIN}\MySql.Data.Entity.dll"
   File "${EXTBIN}\EntityFramework.dll"
@@ -861,6 +875,8 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   ;File "${EXTBIN}\Castle.Services.Logging.Log4netIntegration.dll"
   ;File "${EXTBIN}\Castle.Services.Logging.NLogIntegration.dll"
   ;File "${EXTBIN}\Castle.Windsor.dll"
+  File "${git_TVServer}\Server\TvLibrary.Integration.MP1\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
+  File "${git_TVServer}\Server\TvLibrary.IntegrationProvider.Interfaces\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces.dll"
 
   ; The Plugins
   SetOutPath "$MPdir.Plugins\Windows"
@@ -898,6 +914,10 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File "${EXTBIN}\Castle.Services.Logging.Log4netIntegration.dll"
   File "${EXTBIN}\Castle.Services.Logging.NLogIntegration.dll"
   File "${EXTBIN}\Castle.Windsor.dll"
+  File "${EXTBIN}\EntityFramework.dll"
+  File "${EXTBIN}\EntityFramework.xml"
+  File "${EXTBIN}\log4net.dll"
+  File "${git_TVServer}\Server\SetupTv\bin\${BUILD_TYPE}\log4net.config"
   
   ; The Plugin Directory
   SetOutPath "${SETUP_TV_FOLDER}\Plugins"
@@ -1012,6 +1032,8 @@ ${MementoSectionEnd}
   Delete "${SETUP_TV_FOLDER}\Castle.Services.Logging.Log4netIntegration.dll"
   Delete "${SETUP_TV_FOLDER}\Castle.Services.Logging.NLogIntegration.dll"
   Delete "${SETUP_TV_FOLDER}\Castle.Windsor.dll"
+  Delete "${SETUP_TV_FOLDER}\log4net.dll"
+  Delete "${SETUP_TV_FOLDER}\log4net.config"
   
   ${LOG_TEXT} "INFO" "remove files..."
   ; Remove TuningParameters
@@ -1057,6 +1079,8 @@ ${MementoSectionEnd}
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.SetupControls.dll"
   Delete "${SETUP_TV_FOLDER}\Interop.SHDocVw.dll"
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces.dll"
 
   ; remove Start Menu shortcuts
   Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"
