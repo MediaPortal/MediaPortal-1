@@ -153,6 +153,10 @@
       <Project>{D7EB01B3-396B-4E0C-85EA-EBAC4738F089}</Project>
       <Name>TVLibrary.Integration.MP1</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TvLibrary.IntegrationProvider.Interfaces\TvLibrary.IntegrationProvider.Interfaces.csproj">
+      <Project>{34BCC448-B298-463E-B3B1-C031EBF0B4DB}</Project>
+      <Name>TvLibrary.IntegrationProvider.Interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>

@@ -50,6 +50,7 @@
     <Reference Include="Castle.Core">
       <HintPath>..\..\ExternalBinaries\Castle.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Castle.Windsor, Version=3.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
@@ -60,7 +61,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Instantiator.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="MP1IntegrationProvider.cs" />
+    <Compile Include="PathManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
