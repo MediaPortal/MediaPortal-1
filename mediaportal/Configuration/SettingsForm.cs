@@ -1023,6 +1023,7 @@ namespace MediaPortal.Configuration
           return false;
         }
 
+        bool audioScrobblerOn = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
         if (audioScrobblerOn)
         {
           // Does Audioscrobbler have a user but no password (due to DB upgrades, restores, etc)
