@@ -390,7 +390,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
       _apiCount++;
       _apiIndex = _apiCount;
       this.LogDebug("Turbosight: loading API, API index = {0}", _apiIndex);
-      string resourcesFolder = PathManager.BuildAssemblyRelativePath("plugins\\CustomDevices\\Resources");
+      string resourcesFolder = PathManager.BuildAssemblyRelativePath("Resources"); // It's called already inside plugins\CustomDevices !
       string sourceFilename = Path.Combine(resourcesFolder, "tbsCIapi.dll");
       string targetFilename = Path.Combine(resourcesFolder, "tbsCIapi" + _apiIndex + ".dll");
       if (!File.Exists(sourceFilename))
