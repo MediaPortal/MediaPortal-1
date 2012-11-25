@@ -438,12 +438,9 @@ namespace MediaPortal.Util
     {
       try
       {
-        if (aPath.StartsWith(@"http://"))
+        if (aPath.StartsWith(@"http://play.last.fm"))
         {
-          if (aPath.Contains(@"/last.mp3?") || aPath.Contains(@"last.fm/"))
-          {
-            return true;
-          }
+          return true;
         }
       }
       catch (Exception ex)

@@ -35,7 +35,8 @@ using MediaPortal.TagReader;
 namespace MediaPortal.ProcessPlugins.LastFMScrobbler
 {
 
-  [PluginIcons("LastFMScrobbler.LastFMScrobbler.gif", "LastFMScrobbler.LastFMSscrobblerDisabled.gif")]
+  [PluginIcons("ProcessPlugins.LastFMScrobbler.LastFMScrobbler.gif",
+               "ProcessPlugins.LastFMScrobbler.LastFMSscrobblerDisabled.gif")]
   public class LastFMScrobbler : IPlugin, ISetupForm
   {
     private class PlaybackStop

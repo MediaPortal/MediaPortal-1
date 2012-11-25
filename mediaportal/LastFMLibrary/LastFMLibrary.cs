@@ -695,14 +695,21 @@ namespace MediaPortal.LastFM
         }
         catch (WebException ex)
         {
-          //last.fm API returns a HTTP error is not successful but still returns a response
-          var res = (HttpWebResponse) ex.Response;
-          var st = res.GetResponseStream();
-          if (st != null)
+          try
           {
-            var reader = new StreamReader(st);
-            var ttt = reader.ReadToEnd();
-            lastFMResponse = ttt;
+            //last.fm API returns a HTTP error is not successful but still returns a response
+            var res = (HttpWebResponse) ex.Response;
+            var st = res.GetResponseStream();
+            if (st != null)
+            {
+              var reader = new StreamReader(st);
+              var ttt = reader.ReadToEnd();
+              lastFMResponse = ttt;
+            }
+          }
+          catch (Exception)
+          {
+            Log.Error(ex);
           }
         }
         catch (Exception ex)

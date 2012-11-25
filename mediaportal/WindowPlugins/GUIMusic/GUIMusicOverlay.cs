@@ -723,7 +723,7 @@ namespace MediaPortal.GUI.Music
       {
         return;
       }
-      // last.fm radio sets properties manually therefore do not overwrite them.
+
       if (Util.Utils.IsLastFMStream(filename))
       {
         return;
@@ -736,7 +736,7 @@ namespace MediaPortal.GUI.Music
       }
 
       // When Playing an Internet Stream, via BASS, skin properties are set during the Play method in BassAudio.cs
-      if (BassMusicPlayer.IsDefaultMusicPlayer && isInternetStream)
+      if (BassMusicPlayer.IsDefaultMusicPlayer && isInternetStream &! Util.Utils.IsLastFMStream(filename))
       {
         return;
       }
