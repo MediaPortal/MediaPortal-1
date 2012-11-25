@@ -479,6 +479,7 @@ Section "MediaPortal core files (required)" SecCore
   ; libbluray
   SetOutPath "$MPdir.Base"
   File "${git_DirectShowFilters}\BDReader\libbluray\bluray.dll"
+  File "${git_MP}\LastFMLibrary\bin\${BUILD_TYPE}\LastFMLibrary.dll"
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION
