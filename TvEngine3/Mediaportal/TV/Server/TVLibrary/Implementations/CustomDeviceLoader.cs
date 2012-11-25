@@ -12,7 +12,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
-  internal class CustomDeviceLoader : Singleton<CustomDeviceLoader>
+  internal class CustomDeviceLoader
   {
     private List<ICustomDevice> _plugins = new List<ICustomDevice>();
     private readonly List<Type> _incompatiblePlugins = new List<Type>();
@@ -75,7 +75,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           BasedOn<ICustomDevice>().
           If(t => IsPluginCompatible(t)).
           WithServiceBase().
-          LifestyleSingleton()
+          LifestyleTransient()
           );
 
         _plugins = new List<ICustomDevice>(GlobalServiceProvider.Instance.Get<IWindsorContainer>().ResolveAll<ICustomDevice>());            

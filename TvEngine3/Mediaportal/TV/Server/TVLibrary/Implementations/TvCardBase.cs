@@ -783,8 +783,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         return;
       }
 
-      CustomDeviceLoader.Instance.Load();
-      IEnumerable<ICustomDevice> plugins = CustomDeviceLoader.Instance.Plugins;
+      CustomDeviceLoader customDeviceLoader = new CustomDeviceLoader();
+
+      customDeviceLoader.Load();
+      IEnumerable<ICustomDevice> plugins = customDeviceLoader.Plugins;
 
       this.LogDebug("TvCardBase: checking for supported plugins");
       _customDeviceInterfaces = new List<ICustomDevice>();      
