@@ -23,6 +23,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Castle.MicroKernel.Registration;
+using Castle.Windsor;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using MediaPortal.Common.Utils;
@@ -758,7 +760,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         graphRunning = (state == FilterState.Running);
       }
       return graphRunning;
-    }
+    }    
 
     /// <summary>
     /// Load the <see cref="T:TvLibrary.Interfaces.ICustomDevice"/> plugins for this device.
@@ -780,79 +782,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         this.LogDebug("TvCardBase: the main filter is null");
         return;
       }
-      string customDevicesFolder = PathManager.BuildAssemblyRelativePath("plugins\\CustomDevices");
-      if (!Directory.Exists(customDevicesFolder))
-      {
-        this.LogDebug("TvCardBase: plugin directory doesn't exist or is not accessible");
-        return;
-      }
 
-      // Load all available and compatible plugins.
-      List<ICustomDevice> plugins = new List<ICustomDevice>();
-      String[] dllNames = Directory.GetFiles(customDevicesFolder, "*.dll");
-      foreach (String dllName in dllNames)
-      {
-        Assembly dll = Assembly.LoadFrom(dllName);
-        Type[] pluginTypes = dll.GetExportedTypes();
-        foreach (Type type in pluginTypes)
-        {
-          if (type.IsClass && !type.IsAbstract)
-          {
-            Type cdInterface = type.GetInterface("ICustomDevice");
-            if (cdInterface != null)
-            {
-              if (CompatibilityManager.IsPluginCompatible(type))
-              {
-                ICustomDevice plugin = (ICustomDevice)Activator.CreateInstance(type);
-                plugins.Add(plugin);
-              }
-              else
-              {
-                this.LogDebug("TvCardBase: skipping incompatible plugin \"{0}\" ({1})", type.Name, dllName);
-              }
-            }
-          }
-        }
-      }
-
-      // There is a well defined loading/checking order for plugins: add-ons, priority, name.
-      plugins.Sort(
-        delegate(ICustomDevice cd1, ICustomDevice cd2)
-        {
-          bool cd1IsAddOn = cd1 is IAddOnDevice;
-          bool cd2IsAddOn = cd2 is IAddOnDevice;
-          if (cd1IsAddOn && !cd2IsAddOn)
-          {
-            return -1;
-          }
-          if (cd2IsAddOn && !cd1IsAddOn)
-          {
-            return 1;
-          }
-          int priorityCompare = cd2.Priority.CompareTo(cd1.Priority);
-          if (priorityCompare != 0)
-          {
-            return priorityCompare;
-          }
-          return cd1.Name.CompareTo(cd2.Name);
-        }
-      );
-
-      // Log the name, priority and capabilities for each plugin, in priority order.
-      foreach (ICustomDevice d in plugins)
-      {
-        Type[] interfaces = d.GetType().GetInterfaces();
-        String[] interfaceNames = new String[interfaces.Length];
-        for (int i = 0; i < interfaces.Length; i++)
-        {
-          interfaceNames[i] = interfaces[i].Name;
-        }
-        Array.Sort(interfaceNames);
-        this.LogDebug("  {0} [{1} - {2}]: {3}", d.Name, d.Priority, d.GetType().Name, String.Join(", ", interfaceNames));
-      }
+      CustomDeviceLoader.Instance.Load();
+      IEnumerable<ICustomDevice> plugins = CustomDeviceLoader.Instance.Plugins;
 
       this.LogDebug("TvCardBase: checking for supported plugins");
-      _customDeviceInterfaces = new List<ICustomDevice>();
+      _customDeviceInterfaces = new List<ICustomDevice>();      
       foreach (ICustomDevice d in plugins)
       {
         if (!d.Initialise(mainFilter, _tunerType, _devicePath))

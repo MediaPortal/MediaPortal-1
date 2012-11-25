@@ -106,6 +106,7 @@
     </Compile>
     <Compile Include="Cache\EntityCache.cs" />
     <Compile Include="Cache\EntityCacheHelper.cs" />
+    <Compile Include="Enums\ScheduleIncludeRelationEnum.cs" />
     <Compile Include="LnbTypePartial.cs" />
     <Compile Include="DisEqcMotor.cs">
       <DependentUpon>Model.tt</DependentUpon>

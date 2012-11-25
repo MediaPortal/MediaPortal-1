@@ -28,7 +28,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.Plugins.Base
 {
-  public class PluginLoader //: LogProvider
+  public class PluginLoader
   {
     private List<ITvServerPlugin> _plugins = new List<ITvServerPlugin>();
     private readonly List<Type> _incompatiblePlugins = new List<Type>();

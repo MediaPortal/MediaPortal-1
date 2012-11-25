@@ -1,6 +1,7 @@
 ﻿using System.Data.Entity;
 using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
@@ -34,6 +35,53 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
        
       return includeRelations;
     }
-  
+
+    public IQueryable<Schedule> IncludeAllRelations(IQueryable<Schedule> query, ScheduleIncludeRelationEnum includeRelations)
+    {
+      bool channel = includeRelations.HasFlag(ScheduleIncludeRelationEnum.Channel);
+      bool channelTuningDetails = includeRelations.HasFlag(ScheduleIncludeRelationEnum.ChannelTuningDetails);
+      bool conflictingSchedules = includeRelations.HasFlag(ScheduleIncludeRelationEnum.ConflictingSchedules);
+      bool conflicts = includeRelations.HasFlag(ScheduleIncludeRelationEnum.Conflicts);
+      bool parentSchedule = includeRelations.HasFlag(ScheduleIncludeRelationEnum.ParentSchedule);
+      bool recordings = includeRelations.HasFlag(ScheduleIncludeRelationEnum.Recordings);
+      bool schedules = includeRelations.HasFlag(ScheduleIncludeRelationEnum.Schedules);
+
+      if (channel)
+      {
+        query = query.Include(s => s.Channel);
+      }
+
+      if (channelTuningDetails)
+      {
+        query = query.Include(s => s.Channel.TuningDetails);
+      }
+
+      if (conflictingSchedules)
+      {
+        query = query.Include(s => s.ConflictingSchedules);
+      }
+
+      if (conflicts)
+      {
+        query = query.Include(s => s.Conflicts);
+      }
+
+      if (parentSchedule)
+      {
+        query = query.Include(s => s.ParentSchedule);
+      }
+
+      if (recordings)
+      {
+        query = query.Include(s => s.Recordings);
+      }
+
+      if (schedules)
+      {
+        query = query.Include(s => s.Schedules);
+      }
+
+      return query;
+    }
   }  
 }

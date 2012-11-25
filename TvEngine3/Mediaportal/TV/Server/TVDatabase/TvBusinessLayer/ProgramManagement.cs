@@ -4,6 +4,7 @@ using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Mediaportal.Common.Utils;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Cache;
@@ -490,10 +491,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
       if (schedules != null)
       {
-        foreach (TVDatabase.Entities.Schedule schedule in schedules)
-        {
-          SynchProgramStates(new ScheduleBLL(schedule));
-        }
+        Parallel.ForEach(schedules, schedule => SynchProgramStates(new ScheduleBLL(schedule)));        
       }
     }
 

@@ -1096,7 +1096,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       if (_graphBuilder == null)
         return;
 
+      
       this.LogDebug("dvb:Decompose");
+      _timeshiftingEPGGrabber.Dispose();
+
       if (_epgGrabbing)
       {
         if (_epgGrabberCallback != null && _epgGrabbing)

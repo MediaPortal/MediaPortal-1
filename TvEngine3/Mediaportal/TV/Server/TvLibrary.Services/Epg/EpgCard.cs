@@ -26,6 +26,7 @@ using Mediaportal.TV.Server.TVControl.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG;
 using Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation;
 using Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
@@ -691,6 +692,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
         // get rid of managed resources
         if (!_disposed)
         {
+          _dbUpdater.Dispose();
           _epgTimer.Dispose();
           _disposed = true;
         }

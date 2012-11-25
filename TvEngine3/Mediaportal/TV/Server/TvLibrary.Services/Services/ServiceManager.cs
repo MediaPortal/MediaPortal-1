@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Description;
+using System.Threading.Tasks;
 using MediaPortal.Common.Utils;
+using Mediaportal.Common.Utils;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -30,22 +32,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     {
       try
       {
-        AddService<IProgramCategoryService, ProgramCategoryService>();
-        AddService<IConflictService, ConflictService>();
-        AddService<ICardService, CardService>();
-        AddService<ICanceledScheduleService, CanceledScheduleService>();
-        AddService<IChannelService, ChannelService>();
-        AddService<IProgramService, ProgramService>();
-        AddService<ISettingService, SettingService>();
-        AddService<IRecordingService, RecordingService>();
-        AddService<IScheduleService, ScheduleService>();
-        AddService<IChannelGroupService, ChannelGroupService>();
-        AddService<IControllerService, TvControllerService>();
-
-        GlobalServiceProvider.Add<IInternalControllerService>(new TvController());
-
-        AddEventService<IEventService, EventService>();
-        AddService<IDiscoverService, DiscoverService>();
+        ThreadHelper.ParallelInvoke(
+            AddService<IProgramCategoryService, ProgramCategoryService>,
+            AddService<IConflictService, ConflictService>,
+            AddService<ICardService, CardService>,
+            AddService<ICanceledScheduleService, CanceledScheduleService>,
+            AddService<IChannelService, ChannelService>,
+            AddService<IProgramService, ProgramService>,
+            AddService<ISettingService, SettingService>,
+            AddService<IRecordingService, RecordingService>,
+            AddService<IScheduleService, ScheduleService>,
+            AddService<IChannelGroupService, ChannelGroupService>,
+            AddService<IControllerService, TvControllerService>,
+            () => GlobalServiceProvider.Add<IInternalControllerService>(new TvController()),
+            AddEventService<IEventService, EventService>,
+            AddService<IDiscoverService, DiscoverService>        
+          );       
       }
       catch (Exception ex)
       {

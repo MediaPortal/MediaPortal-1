@@ -21,11 +21,13 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
@@ -293,14 +295,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
       // products (we don't prevent explicitly prevent this). The TV Server plugin allows each OEM CI product
       // to be linked to a single tuner. Here we need to know whether this tuner (ie. the one associated with
       // the tuner filter and tuner device path) is currently linked to any of the products.
-      Card tuner = CardManagement.GetCardByDevicePath(tunerDevicePath);
+      Card tuner = CardManagement.GetCardByDevicePath(tunerDevicePath, CardIncludeRelationEnum.None);
       if (tuner == null)
       {
         this.LogDebug("SmarDTV USB CI: tuner device ID not found in database");
         return false;
       }
 
-      String tunerIdAsString = tuner.IdCard.ToString();
+      String tunerIdAsString = tuner.IdCard.ToString(CultureInfo.InvariantCulture);
       ReadOnlyCollection<SmarDtvUsbCiProduct> productList = SmarDtvUsbCiProducts.GetProductList();
       foreach (SmarDtvUsbCiProduct p in productList)
       {

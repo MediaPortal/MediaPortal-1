@@ -14,6 +14,15 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
   public static class ScheduleManagement
   {
 
+    public static IList<Schedule> ListAllSchedules(ScheduleIncludeRelationEnum includeRelations)
+    {
+      using (IScheduleRepository scheduleRepository = new ScheduleRepository())
+      {
+        IQueryable<Schedule> listAllSchedules = scheduleRepository.GetAll<Schedule>();
+        listAllSchedules = scheduleRepository.IncludeAllRelations(listAllSchedules, includeRelations);
+        return listAllSchedules.ToList();
+      }
+    }
 
     public static IList<Schedule> ListAllSchedules()
     {

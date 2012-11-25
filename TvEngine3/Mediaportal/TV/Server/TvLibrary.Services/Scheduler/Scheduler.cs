@@ -138,7 +138,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       ResetRecordingStates();
 
       _recordingsInProgressList = new List<RecordingDetail>();
-      IList<Schedule> schedules = ScheduleManagement.ListAllSchedules();
+      IList<Schedule> schedules = ScheduleManagement.ListAllSchedules(ScheduleIncludeRelationEnum.None);
       this.LogDebug("Scheduler: loaded {0} schedules", schedules.Count);
       StartSchedulerThread();
       new DiskManagement.DiskManagement();

@@ -29,6 +29,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 using MediaPortal.Common.Utils;
 using MediaPortal.Common.Utils.ExtensionMethods;
@@ -724,11 +725,7 @@ namespace Mediaportal.TV.Server.TVLibrary
 
         ExecutePendingDeletions();
 
-        // Re-evaluate program states
-        this.LogInfo("Controller: recalculating program states");
-
-        ProgramManagement.ResetAllStates();
-        ProgramManagement.SynchProgramStatesForAllSchedules(ScheduleManagement.ListAllSchedules());
+        SynchProgramStatesForAllSchedules();
       }
       catch (Exception ex)
       {
@@ -737,6 +734,27 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
 
       this.LogInfo("Controller: initalized");      
+    }
+
+    private void SynchProgramStatesForAllSchedules()
+    {
+      // Re-evaluate program states
+      this.LogInfo("Controller: recalculating program states");
+
+      ThreadPool.QueueUserWorkItem(
+        delegate
+          {
+            try
+            {
+              ProgramManagement.ResetAllStates();
+              ProgramManagement.SynchProgramStatesForAllSchedules(ScheduleManagement.ListAllSchedules());
+            }
+            catch (Exception e)
+            {
+              this.LogError(e, "could not sync rogram states for all schedules");
+            }
+          })
+        ;
     }
 
     private void StartTvServerEventDispatcher()
@@ -5350,41 +5368,44 @@ namespace Mediaportal.TV.Server.TVLibrary
 
     public void ExecutePendingDeletions()
     {
-      try
-      {
-        // System.Diagnostics.Debugger.Launch();
-        List<int> pendingDelitionRemove = new List<int>();
-        IList<PendingDeletion> pendingDeletions = RecordingManagement.ListAllPendingRecordingDeletions();
+      ThreadPool.QueueUserWorkItem(delegate
+                                     {
+                                       try
+                                       {
+                                         // System.Diagnostics.Debugger.Launch();
+                                         List<int> pendingDelitionRemove = new List<int>();
+                                         IList<PendingDeletion> pendingDeletions = RecordingManagement.ListAllPendingRecordingDeletions();
 
-        this.LogDebug("ExecutePendingDeletions: number of pending deletions : " + Convert.ToString(pendingDeletions.Count));
+                                         this.LogDebug("ExecutePendingDeletions: number of pending deletions : " +
+                                                       Convert.ToString(pendingDeletions.Count));
 
-        foreach (PendingDeletion pendingDelition in pendingDeletions)
-        {
-          this.LogDebug("ExecutePendingDeletions: trying to remove file : " + pendingDelition.FileName);
+                                         Parallel.ForEach(pendingDeletions, pendingDelition =>
+                                                                              {
+                                                                                this.LogDebug("ExecutePendingDeletions: trying to remove file : {0}", pendingDelition.FileName);
+                                                                                bool wasPendingDeletionAdded;
+                                                                                bool wasDeleted =
+                                                                                  RecordingFileHandler.DeleteRecordingOnDisk(pendingDelition.FileName,
+                                                                                                                             out wasPendingDeletionAdded);
+                                                                                if (wasDeleted && !wasPendingDeletionAdded)
+                                                                                {
+                                                                                  pendingDelitionRemove.Add(pendingDelition.IdPendingDeletion);
+                                                                                }
+                                                                              });
 
-          bool wasPendingDeletionAdded = false;
-          bool wasDeleted = RecordingFileHandler.DeleteRecordingOnDisk(pendingDelition.FileName,
-                                                                       out wasPendingDeletionAdded);
-          if (wasDeleted && !wasPendingDeletionAdded)
-          {
-            pendingDelitionRemove.Add(pendingDelition.IdPendingDeletion);
-          }
-        }
-
-        foreach (int id in pendingDelitionRemove)
-        {
-          PendingDeletion pendingDelition = RecordingManagement.GetPendingRecordingDeletion(id);
-
-          if (pendingDelition != null)
-          {
-            RecordingManagement.DeletePendingRecordingDeletion(pendingDelition.IdPendingDeletion);
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "ExecutePendingDeletions exception");
-      }
+                                         Parallel.ForEach(pendingDelitionRemove, id =>
+                                                                                   {
+                                                                                     PendingDeletion pendingDelition = RecordingManagement.GetPendingRecordingDeletion(id);
+                                                                                     if (pendingDelition != null)
+                                                                                     {
+                                                                                       RecordingManagement.DeletePendingRecordingDeletion(pendingDelition.IdPendingDeletion);
+                                                                                     }
+                                                                                   });                                         
+                                       }
+                                       catch (Exception ex)
+                                       {
+                                         this.LogError(ex, "ExecutePendingDeletions exception");
+                                       }
+                                     });
     }
 
 

@@ -22,13 +22,14 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary
 {
-  internal class TimeShiftingEPGGrabber : BaseEpgGrabber
+  internal class TimeShiftingEPGGrabber : BaseEpgGrabber, IDisposable
   {
 
     #region Variables
@@ -39,6 +40,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     private List<EpgChannel> _epg;
     private bool _updateThreadRunning;
     private readonly EpgDBUpdater _dbUpdater;
+    private bool _disposed;
 
     #endregion
 
@@ -158,6 +160,41 @@ namespace Mediaportal.TV.Server.TVLibrary
         _card.IsEpgGrabbing = false;
         _updateThreadRunning = false;         
       }            
+    }
+
+    #endregion
+
+    #region IDisposable Members    
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        // get rid of managed resources
+        if (!_disposed)
+        {
+          _dbUpdater.Dispose();
+          _epgTimer.Dispose();
+          _disposed = true;
+        }
+      }
+
+      // get rid of unmanaged resources
+    }
+
+
+    /// <summary>
+    /// Disposes the EPG card
+    /// </summary>    
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    ~TimeShiftingEPGGrabber()
+    {
+      Dispose(false);
     }
 
     #endregion
