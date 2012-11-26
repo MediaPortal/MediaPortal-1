@@ -22,7 +22,6 @@ using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Castle.Windsor.Configuration.Interpreters;
 using MediaPortal.Common.Utils;
-using Mediaportal.TV.Server.TVLibrary.Integration.MP1;
 using Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Integration
