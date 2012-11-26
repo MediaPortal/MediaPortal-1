@@ -525,7 +525,7 @@ namespace MediaPortal.Player
       {
         foreach (double fpsSetting in setting.Fps)
         {
-          if (fps == fpsSetting)
+          if (Math.Abs(fps - fpsSetting) < 0.1)
           {
             newRR = setting.Hz;
             newExtCmd = setting.ExtCmd;
@@ -638,7 +638,7 @@ namespace MediaPortal.Player
       _refreshrateChangeCurrentRR = 0;
     }
 
-    public static void SetRefreshRateBasedOnFPS(double fps, string strFile, MediaType type)
+    public static bool SetRefreshRateBasedOnFPS(double fps, string strFile, MediaType type)
     {
       int currentScreenNr = GUIGraphicsContext.currentScreenNumber;
       double currentRR = 0;
@@ -665,7 +665,7 @@ namespace MediaPortal.Player
         if (!enabled)
         {
           Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: 'auto refreshrate changer' disabled");
-          return;
+          return false;
         }
         force_refresh_rate = xmlreader.GetValueAsBool("general", "force_refresh_rate", false);
         deviceReset = xmlreader.GetValueAsBool("general", "devicereset", false);
@@ -709,16 +709,96 @@ namespace MediaPortal.Player
           Log.Info(
             "RefreshRateChanger.SetRefreshRateBasedOnFPS: could not find a matching refreshrate based on {0} fps (check config)",
             fps);
+          return false;
         }
         else
         {
           Log.Info(
             "RefreshRateChanger.SetRefreshRateBasedOnFPS: no refreshrate change required. current is {0}hz, desired is {1}",
             currentRR, newRR);
+          return false;
+        }
+      }
+      return true;
+    }
+
+    public static void DelayedRefreshrateChanger(string strFile, MediaPortal.Player.g_Player.MediaType type)
+    {
+
+      Log.Info("RefreshRateChanger.DelayedRefreshrateChanger: using delayed framerate detection");
+      double fps = -1;
+      int maxretries = 100;
+
+      // wait until graph is build
+      while (VMR9Util.g_vmr9 == null)
+      {
+        Thread.Sleep(200);
+      }
+
+      // wait that the video file is played a while
+      Thread.Sleep(2000);
+
+      do
+      {
+        if (VMR9Util.g_vmr9 != null)
+        {
+          fps = VMR9Util.g_vmr9.GetEVRVideoFPS(0);
+          if (fps > 1)
+          {
+            break;
+          }
+        }
+        Thread.Sleep(200);
+      } while (--maxretries > 0);
+
+      int verify = 2;
+      while (fps > 1 || --verify > 0)
+      {
+        Log.Info("RefreshRateChanger.DelayedRefreshrateChanger: detected new render framerate of:{0} fps", fps);
+
+        // refreshrate change done here.
+        bool rchanged = RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type, fps);
+
+        if (RefreshRateChanger.RefreshRateChangePending)
+        {
+          TimeSpan ts = DateTime.Now - RefreshRateChanger.RefreshRateChangeExecutionTime;
+          if (ts.TotalSeconds > RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX)
+          {
+            Log.Info(
+              "RefreshRateChanger.DelayedRefreshrateChanger: waited {0}s for refreshrate change, but it never took place (check your config). Proceeding with playback.",
+              RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX);
+            RefreshRateChanger.ResetRefreshRateState();
+          }
+          else
+          {
+            Log.Info("RefreshRateChanger.DelayedRefreshrateChanger: waited {0}s for refreshrate change. Proceeding with playback.", ts.TotalSeconds);
+          }
+        }
+
+        if (rchanged && VMR9Util.g_vmr9 != null)
+        {
+          Thread.Sleep(500);
+          Log.Info("RefreshRateChanger.DelayedRefreshrateChanger: UpdateEVRDisplayFPS");
+          VMR9Util.g_vmr9.UpdateEVRDisplayFPS();
+        }
+
+        // recheck the fps rate
+        Thread.Sleep(10000);
+
+        double newfps = VMR9Util.g_vmr9.GetEVRVideoFPS(0);
+        Log.Info("RefreshRateChanger.DelayedRefreshrateChanger: verify refresh rate new render framerate: {0} fps old {1} fps", newfps, fps);
+        if (Math.Abs(fps - newfps) > 1 && VMR9Util.g_vmr9 != null)
+        {
+          // seems that the refreshrate we detected first has now changed again
+          fps = newfps;
+        }
+        else
+        {
+          // end while no new changed needed
+          fps = 0;
         }
       }
     }
-
 
     // defaults the refreshrate
     public static void AdaptRefreshRate()
@@ -783,22 +863,17 @@ namespace MediaPortal.Player
     }
 
     // change screen refresh rate based on media framerate
-    public static void AdaptRefreshRate(string strFile, MediaType type)
+    public static bool AdaptRefreshRate(string strFile, MediaType type, double fps)
     {
       if (_refreshrateChangePending)
       {
-        return;
+        return true;
       }
 
       bool isTV = Util.Utils.IsLiveTv(strFile);
-      bool isDVD = Util.Utils.IsDVD(strFile);
-      bool isVideo = Util.Utils.IsVideo(strFile);
+      //bool isDVD = Util.Utils.IsDVD(strFile);
+      //bool isVideo = Util.Utils.IsVideo(strFile);
       bool isRTSP = Util.Utils.IsRTSP(strFile); //rtsp users for live TV and recordings.
-
-      if (!isTV && !isDVD && !isVideo && !isRTSP)
-      {
-        return;
-      }
 
       bool enabled = false;
       NumberFormatInfo provider = new NumberFormatInfo();
@@ -812,7 +887,7 @@ namespace MediaPortal.Player
         if (!enabled)
         {
           Log.Info("RefreshRateChanger.AdaptRefreshRate: 'auto refreshrate changer' disabled");
-          return;
+          return false;
         }
 
         deviceReset = xmlreader.GetValueAsBool("general", "devicereset", false);
@@ -825,46 +900,26 @@ namespace MediaPortal.Player
       {
         Log.Error(
           "RefreshRateChanger.AdaptRefreshRate: TV section not found in mediaportal.xml, please delete file and reconfigure.");
-        return;
+        return false;
       }
 
-      List<double> tvFPS = setting.Fps;
-      double fps = -1;
-
-      if ((isVideo || isDVD) && (!isRTSP && !isTV))
+      if ((isTV || isRTSP) && fps <= 0)
       {
-        if (g_Player.MediaInfo != null)
-        {
-          fps = g_Player.MediaInfo.Framerate;
-        }
-        else
-        {
-          StackTrace st = new StackTrace(true);
-          StackFrame sf = st.GetFrame(0);
-
-          Log.Error("RefreshRateChanger.AdaptRefreshRate: g_Player.MediaInfo was null. file: {0} st: {1}", strFile,
-                    sf.GetMethod().Name);
-          return;
-        }
-      }
-      else if (isTV || isRTSP)
-      {
+        List<double> tvFPS = setting.Fps;
         if (tvFPS.Count > 0)
         {
           fps = tvFPS[0];
         }
       }
 
-      if (fps < 1)
+      if (fps <= 0)
       {
         Log.Info("RefreshRateChanger.AdaptRefreshRate: unable to guess framerate on file {0}", strFile);
-      }
-      else
-      {
-        Log.Info("RefreshRateChanger.AdaptRefreshRate: framerate on file {0} is {1}", strFile, fps);
+        return false;
       }
 
-      SetRefreshRateBasedOnFPS(fps, strFile, type);
+      Log.Info("RefreshRateChanger.AdaptRefreshRate: framerate on file {0} is {1}", strFile, fps);
+      return SetRefreshRateBasedOnFPS(fps, strFile, type);
     }
 
     #endregion

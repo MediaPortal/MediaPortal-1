@@ -38,6 +38,7 @@ using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Cd;
 using Action = MediaPortal.GUI.Library.Action;
 using MediaPortal.Player.Subtitles;
+using System.Threading;
 
 namespace MediaPortal.Player
 {
@@ -67,6 +68,7 @@ namespace MediaPortal.Player
     #region variables
 
     private static MediaInfoWrapper _mediaInfo = null;
+    private static Thread _delayedrefreshratechanger = null;
     private static int _currentStep = 0;
     private static int _currentStepIndex = -1;
     private static DateTime _seekTimer = DateTime.MinValue;
@@ -596,6 +598,11 @@ namespace MediaPortal.Player
       }
       if (_player != null)
       {
+        if (_delayedrefreshratechanger != null)
+        {
+          _delayedrefreshratechanger.Abort();
+          _delayedrefreshratechanger = null;
+        }
         Log.Debug("g_Player.doStop() keepTimeShifting = {0} keepExclusiveModeOn = {1}", keepTimeShifting,
                   keepExclusiveModeOn);
         // Get playing file for unmount handling
@@ -1280,6 +1287,12 @@ namespace MediaPortal.Player
           ChangeDriveSpeed(strFile, DriveType.CD);
         }
 
+        if (_delayedrefreshratechanger != null)
+        {
+          _delayedrefreshratechanger.Abort();
+          _delayedrefreshratechanger = null;
+        }
+
         if (!playingRemoteUrl) // MediaInfo can only be used on files (local or SMB)
         {
           _mediaInfo = new MediaInfoWrapper(strFile);
@@ -1293,25 +1306,35 @@ namespace MediaPortal.Player
             type = MediaType.Video;
           }
 
-          // Refreshrate change done here. Blu-ray player will handle the refresh rate changes by itself
-          if (strFile.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV") == -1)
+          if (_mediaInfo == null || _mediaInfo.Framerate <= 0)
           {
-            RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+            // using DelayedRefreshrateChanger
+            _delayedrefreshratechanger = new Thread(delegate() { RefreshRateChanger.DelayedRefreshrateChanger(strFile, type); });
+            _delayedrefreshratechanger.Start();
           }
-
-          if (RefreshRateChanger.RefreshRateChangePending)
+          else
           {
-            TimeSpan ts = DateTime.Now - RefreshRateChanger.RefreshRateChangeExecutionTime;
-            if (ts.TotalSeconds > RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX)
+            // Refreshrate change done here. Blu-ray player will handle the refresh rate changes by itself
+            if (strFile.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV") == -1)
             {
-              Log.Info(
-                "g_Player.Play - waited {0}s for refreshrate change, but it never took place (check your config). Proceeding with playback.",
-                RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX);
-              RefreshRateChanger.ResetRefreshRateState();
+              RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType) (int) type,
+                                                  _mediaInfo.Framerate);
             }
-            else
+
+            if (RefreshRateChanger.RefreshRateChangePending)
             {
-              return true;
+              TimeSpan ts = DateTime.Now - RefreshRateChanger.RefreshRateChangeExecutionTime;
+              if (ts.TotalSeconds > RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX)
+              {
+                Log.Info(
+                  "g_Player.Play - waited {0}s for refreshrate change, but it never took place (check your config). Proceeding with playback.",
+                  RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX);
+                RefreshRateChanger.ResetRefreshRateState();
+              }
+              else
+              {
+                return true;
+              }
             }
           }
         }
