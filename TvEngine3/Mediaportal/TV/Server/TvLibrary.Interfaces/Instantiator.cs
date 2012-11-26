@@ -2,7 +2,7 @@ using Castle.Windsor;
 using Castle.Windsor.Configuration.Interpreters;
 using MediaPortal.Common.Utils;
 
-namespace Mediaportal.TV.Server.TVLibrary.Integration.MP1
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
   public class Instantiator : Singleton<Instantiator>
   {

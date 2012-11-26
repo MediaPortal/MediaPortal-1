@@ -82,6 +82,7 @@
     <Compile Include="CiMenu\CiMenuEntry.cs" />
     <Compile Include="DvbConditionalAccess.cs" />
     <Compile Include="HResult.cs" />
+    <Compile Include="Instantiator.cs" />
     <Compile Include="Integration\IntegrationProviderHelper.cs" />
     <Compile Include="Interfaces\Device\IAddOnDevice.cs" />
     <Compile Include="Interfaces\Device\IConditionalAccessProvider.cs" />
