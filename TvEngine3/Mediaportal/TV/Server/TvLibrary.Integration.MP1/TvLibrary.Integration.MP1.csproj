@@ -61,7 +61,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Instantiator.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="MP1IntegrationProvider.cs" />
     <Compile Include="PathManager.cs" />
