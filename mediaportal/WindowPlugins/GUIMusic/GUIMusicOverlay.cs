@@ -724,11 +724,6 @@ namespace MediaPortal.GUI.Music
         return;
       }
 
-      if (Util.Utils.IsLastFMStream(filename))
-      {
-        return;
-      }
-
       // Radio Properties are set already in Play routine
       if (g_Player.IsRadio)
       {
@@ -736,7 +731,7 @@ namespace MediaPortal.GUI.Music
       }
 
       // When Playing an Internet Stream, via BASS, skin properties are set during the Play method in BassAudio.cs
-      if (BassMusicPlayer.IsDefaultMusicPlayer && isInternetStream &! Util.Utils.IsLastFMStream(filename))
+      if (BassMusicPlayer.IsDefaultMusicPlayer && isInternetStream && !Util.Utils.IsLastFMStream(filename))
       {
         return;
       }

@@ -38,12 +38,14 @@ namespace MediaPortal.LastFM
   public class LastFMStreamingTrack : LastFMTrack
   {
     public string TrackURL { get; set; }
+    public int Duration { get; set; }
 
-    public LastFMStreamingTrack(string strArtist, string strTrack, string strURL)
+    public LastFMStreamingTrack(string strArtist, string strTrack, string strURL, int iDuration)
     {
       ArtistName = strArtist;
       TrackTitle = strTrack;
       TrackURL = strURL;
+      Duration = iDuration;
     }
 
     public LastFMStreamingTrack()   { }

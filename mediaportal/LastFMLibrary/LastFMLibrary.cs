@@ -328,7 +328,8 @@ namespace MediaPortal.LastFM
                         {
                           ArtistName = a.Element(ns + "creator").Value,
                           TrackTitle = a.Element(ns + "title").Value,
-                          TrackURL = a.Element(ns + "location").Value
+                          TrackURL = a.Element(ns + "location").Value,
+                          Duration = int.Parse(a.Element(ns + "duration").Value) / 1000
                         }).ToList();
       return z;
 
@@ -637,13 +638,13 @@ namespace MediaPortal.LastFM
       // TODO this should be replaced with a simple call to XDocument.Load (only for GET calls)
       //TODO: need to add check for no internet connection?
       var lastFMResponse = String.Empty;
-      var myWebClient = new WebClient();
+      var myWebClient = new WebClient {Encoding = Encoding.UTF8};
       try
       {
         var st = myWebClient.OpenRead(BaseURL + "?" + querystring);
         if (st != null)
         {
-          var sr = new StreamReader(st);
+          var sr = new StreamReader(st, Encoding.UTF8);
           lastFMResponse = sr.ReadToEnd();
         }
       }
@@ -684,14 +685,14 @@ namespace MediaPortal.LastFM
     {
       //TODO: need to add check for no internet connection?
       var lastFMResponse = String.Empty;
-      var postArray = Encoding.ASCII.GetBytes(postData);
-      using(var myWebClient = new WebClient())
+      var postArray = Encoding.UTF8.GetBytes(postData);
+      using(var myWebClient = new WebClient {Encoding = Encoding.UTF8})
       {
         try
         {
           myWebClient.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
           var responseArray = myWebClient.UploadData(BaseURL, postArray);
-          lastFMResponse = Encoding.ASCII.GetString(responseArray);
+          lastFMResponse = Encoding.UTF8.GetString(responseArray);
         }
         catch (WebException ex)
         {
@@ -702,7 +703,7 @@ namespace MediaPortal.LastFM
             var st = res.GetResponseStream();
             if (st != null)
             {
-              var reader = new StreamReader(st);
+              var reader = new StreamReader(st, Encoding.UTF8);
               var ttt = reader.ReadToEnd();
               lastFMResponse = ttt;
             }
