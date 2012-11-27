@@ -37,6 +37,7 @@ namespace MediaPortal.LastFM
   {
 
     private static string _theSK = String.Empty;
+    private static string _currentUser = string.Empty;
     internal static string BaseURL = "http://ws.audioscrobbler.com/2.0/";
 
     #region ctor
@@ -50,6 +51,31 @@ namespace MediaPortal.LastFM
       servicePoint.Expect100Continue = false;
 
       LoadSettings();
+    }
+
+    #endregion
+
+    #region properties
+
+    public static string CurrrentUser
+    {
+      get
+      {
+        if (!string.IsNullOrEmpty(_currentUser))
+        {
+          return _currentUser;
+        }
+
+        var userXML = GetUserInfo();
+        var userElement = userXML.Descendants("name").FirstOrDefault();
+        if (userElement != null)
+        {
+          _currentUser = userElement.Value;
+          return _currentUser;
+        }
+        
+        return string.Empty;
+      }
     }
 
     #endregion
@@ -593,17 +619,18 @@ namespace MediaPortal.LastFM
     /// <summary>
     /// Get details of authenticated user
     /// </summary>
-    public static void GetUserInfo()
+    public static XDocument GetUserInfo()
     {
       //TODO: consider return value
-      GetUserInfo(String.Empty);
+      return GetUserInfo(String.Empty);
     }
 
     /// <summary>
     /// Get details of named user
     /// </summary>
     /// <param name="strUser">Name of user</param>
-    public static void GetUserInfo(string strUser)
+    /// <returns>XDocument returned from last.fm</returns>
+    public static XDocument GetUserInfo(string strUser)
     {
       var parms = new Dictionary<string, string>();
       const string methodName = "user.getInfo";
@@ -622,6 +649,7 @@ namespace MediaPortal.LastFM
       }
 
       var xDoc = XDocument.Parse(lastFMResponseXML);
+      return xDoc;
     }
 
     #endregion
@@ -738,7 +766,7 @@ namespace MediaPortal.LastFM
 
     #endregion
 
-    #region
+    #region Database
 
     /// <summary>
     /// Takes a list of tracks supplied by last.fm and matches these to tracks in the database
