@@ -2459,12 +2459,14 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.Record.percent1", percentLivePoint.ToString());
       GUIPropertyManager.SetProperty("#TV.Record.percent2", "0");
       GUIPropertyManager.SetProperty("#TV.Record.percent3", "0");
+      GUIPropertyManager.SetProperty("#TV.View.idProgram", 0);
 
       Recording rec = TvRecorded.ActiveRecording();
 
       if (rec != null)
       {
         GUIPropertyManager.SetProperty("#TV.View.title", rec.Title);
+        GUIPropertyManager.SetProperty("#TV.View.idProgram", 0);
         GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(rec));
         GUIPropertyManager.SetProperty("#TV.View.subtitle", rec.EpisodeName);
         GUIPropertyManager.SetProperty("#TV.View.episode", rec.EpisodeNumber);
@@ -2560,6 +2562,7 @@ namespace TvPlugin
       {
         GUIPropertyManager.SetProperty("#TV.View.channel", ch.DisplayName);
         GUIPropertyManager.SetProperty("#TV.View.title", current.Title);
+        GUIPropertyManager.SetProperty("#TV.View.idProgram", current.idProgram);
         GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(current));
         GUIPropertyManager.SetProperty("#TV.View.start",
                                        current.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
@@ -2627,6 +2630,7 @@ namespace TvPlugin
     {
       GUIPropertyManager.SetProperty("#TV.View.title", GUILocalizeStrings.Get(736)); // no epg for this channel
       GUIPropertyManager.SetProperty("#TV.View.compositetitle", GUILocalizeStrings.Get(736)); // no epg for this channel
+      GUIPropertyManager.SetProperty("#TV.View.idProgram", 0);
       GUIPropertyManager.SetProperty("#TV.View.start", String.Empty);
       GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
       GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
@@ -2661,6 +2665,7 @@ namespace TvPlugin
       if (next != null)
       {
         GUIPropertyManager.SetProperty("#TV.Next.title", next.Title);
+        GUIPropertyManager.SetProperty("#TV.Next.idProgram", next.idProgram);
         GUIPropertyManager.SetProperty("#TV.Next.compositetitle", TVUtil.GetDisplayTitle(next));
         GUIPropertyManager.SetProperty("#TV.Next.start",
                                                next.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
@@ -2676,6 +2681,7 @@ namespace TvPlugin
       {
         GUIPropertyManager.SetProperty("#TV.Next.title", GUILocalizeStrings.Get(736));          // no epg for this channel
         GUIPropertyManager.SetProperty("#TV.Next.compositetitle", GUILocalizeStrings.Get(736)); // no epg for this channel
+        GUIPropertyManager.SetProperty("#TV.Next.idProgram", 0);
         GUIPropertyManager.SetProperty("#TV.Next.start", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Next.stop", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Next.description", String.Empty);

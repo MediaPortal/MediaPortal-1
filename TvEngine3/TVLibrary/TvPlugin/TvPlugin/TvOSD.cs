@@ -1912,6 +1912,7 @@ namespace TvPlugin
         if (updateProperties)
         {
           GUIPropertyManager.SetProperty("#TV.View.channel", prog.ReferencedChannel().DisplayName);
+          GUIPropertyManager.SetProperty("#TV.View.idProgram", prog.idProgram);
           GUIPropertyManager.SetProperty("#TV.View.start",
                                          prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
           GUIPropertyManager.SetProperty("#TV.View.stop",
@@ -1959,6 +1960,7 @@ namespace TvPlugin
           Get_TimeInfo();
 
           GUIPropertyManager.SetProperty("#TV.View.channel", channelDisplayName);
+          GUIPropertyManager.SetProperty("#TV.View.idProgram", 0);
           GUIPropertyManager.SetProperty("#TV.View.start", startTime);
           GUIPropertyManager.SetProperty("#TV.View.stop", endTime);
           GUIPropertyManager.SetProperty("#TV.View.genre", rec.Genre);
