@@ -50,6 +50,22 @@ namespace MediaPortal.DeployTool.InstallationChecks
         return false;
       }
 
+      //if user has chosen a skin then update deploy.xml so this is picked up by MP
+      //if no skin has been chosed (user has selected one click install) then set one
+      var chosenSkin = InstallationProperties.Instance.Get("ChosenSkin");
+      if (string.IsNullOrEmpty(chosenSkin))
+      {
+        chosenSkin = "Titan";
+      }
+
+      if (InstallationProperties.Instance["UpdateMode"] == "yes")
+      {
+        if (chosenSkin != "[Existing]")
+        {
+          Utils.SetDeployXml("skin", "name", chosenSkin);
+        }
+      }
+
       string targetDir = InstallationProperties.Instance["MPDir"];
 
       //NSIS installer need to to if it's a fresh install or an update (chefkoch)
@@ -68,16 +84,14 @@ namespace MediaPortal.DeployTool.InstallationChecks
             Utils.NotifyReboot(GetDisplayName());
           }
 
-          //if user has chosen a skin then update deploy.xml so this is picked up by MP
-          //if no skin has been chosed (user has selected one click install) then set one
-          var chosenSkin = InstallationProperties.Instance.Get("ChosenSkin");
-          if (string.IsNullOrEmpty(chosenSkin))
+          // installer backups existing folder so need to write deploy.xml after installation 
+          // else it will get backed up
+          if (InstallationProperties.Instance["UpdateMode"] != "yes")
           {
-            chosenSkin = "Titan";
-          }
-          if (chosenSkin != "[Existing]")
-          {
-            Utils.SetDeployXml("skin", "name", chosenSkin);
+            if (chosenSkin != "[Existing]")
+            {
+              Utils.SetDeployXml("skin", "name", chosenSkin);
+            }
           }
 
           return true;
