@@ -1453,7 +1453,7 @@ namespace MediaPortal
 
 
     /// <summary>
-    /// Automatically hides or show mouse cursor
+    /// Automatically hides or show mouse cursor when over form
     /// </summary>
     private void HandleCursor()
     {
@@ -1472,12 +1472,20 @@ namespace MediaPortal
           _lastShowCursor = ShowCursor;
         }
 
-        var ts = DateTime.Now - MouseTimeOutTimer;
-        if (ShowCursor && ts.TotalSeconds >= 3)
+        bool isMouseOverForm = ClientRectangle.Contains(MousePosition.X - Location.X, MousePosition.Y - Location.Y);
+        if (!isMouseOverForm)
         {
-          Cursor.Hide();
-          ShowCursor = false;
-          Invalidate(true);
+          MouseTimeOutTimer = DateTime.Now;
+        }
+        else
+        {
+          var ts = DateTime.Now - MouseTimeOutTimer;
+          if (ShowCursor && ts.TotalSeconds >= 3)
+          {
+            Cursor.Hide();
+            ShowCursor = false;
+            Invalidate(true);
+          }
         }
       }
     }
@@ -1953,7 +1961,7 @@ namespace MediaPortal
     {
       MouseMoveEvent(e);
     }
-    
+
 
     /// <summary>
     /// 
