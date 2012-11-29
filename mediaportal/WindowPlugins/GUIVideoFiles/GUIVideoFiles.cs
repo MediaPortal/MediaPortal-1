@@ -497,6 +497,7 @@ namespace MediaPortal.GUI.Video
       }
 
       SaveFolderSettings(_currentFolder);
+      ReleaseResources();
       base.OnPageDestroy(newWindowId);
     }
 
@@ -3936,6 +3937,14 @@ namespace MediaPortal.GUI.Video
       foreach (string file in sortedFiles)
       {
         nfoFiles.Add(file);
+      }
+    }
+
+    private void ReleaseResources()
+    {
+      if (facadeLayout != null)
+      {
+        facadeLayout.Clear();
       }
     }
     

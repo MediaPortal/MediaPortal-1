@@ -923,20 +923,23 @@ namespace MediaPortal.Configuration.Sections
         listViewMovieActors.Sort();
 
         string szGenres = movie.Genre;
-        if (szGenres.IndexOf("/") >= 0)
+        if (szGenres.IndexOf("/") >= 0 || szGenres.IndexOf("|") >= 0)
         {
-          Tokens f = new Tokens(szGenres, new[] {'/'});
+          Tokens f = new Tokens(szGenres, new[] {'/', '|'});
           foreach (string strGenre in f)
           {
-            String strCurrentGenre = strGenre.Trim();
-            listViewGenres.Items.Add(strCurrentGenre);
-
-            for (int i = listViewAllGenres.Items.Count - 1; i >= 0; --i)
+            if (!string.IsNullOrEmpty(strGenre))
             {
-              if (listViewAllGenres.Items[i].Text == strCurrentGenre)
+              String strCurrentGenre = strGenre.Trim();
+              listViewGenres.Items.Add(strCurrentGenre);
+
+              for (int i = listViewAllGenres.Items.Count - 1; i >= 0; --i)
               {
-                listViewAllGenres.Items.RemoveAt(i);
-                break;
+                if (listViewAllGenres.Items[i].Text == strCurrentGenre)
+                {
+                  listViewAllGenres.Items.RemoveAt(i);
+                  break;
+                }
               }
             }
           }
