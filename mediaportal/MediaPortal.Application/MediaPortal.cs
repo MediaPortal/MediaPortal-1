@@ -105,11 +105,8 @@ public class MediaPortalApp : D3DApp, IRender
   private bool _startWithBasicHome;
   private bool _useOnlyOneHome;
   private bool _suspended;
-  private bool _runAutomaticResume;
   private bool _ignoreContextMenuAction;
   private DateTime _lastContextMenuAction = DateTime.MaxValue;
-  private bool _onResumeRunning;
-  private bool _onResumeAutomaticRunning;
   protected string DateFormat = string.Empty;
   protected bool UseLongDateFormat = false;
   private readonly bool _showLastActiveModule;
@@ -133,47 +130,42 @@ public class MediaPortalApp : D3DApp, IRender
   private MouseEventArgs _lastMouseClickEvent;
   private Timer _mouseClickTimer;
   private bool _mouseClickFired;
-  // ReSharper disable InconsistentNaming
-  private const int WM_SYSCOMMAND             = 0x0112; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
-  private const int SC_SCREENSAVE             = 0xF140; // Executes the screen saver application specified in the [boot] section of the System.ini file.
-  private const int SC_MONITORPOWER           = 0xF170; // Sets the state of the display.
-  private const int WM_POWERBROADCAST         = 0x0218; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa373247(v=vs.85).aspx
-  private const int WM_ENDSESSION             = 0x0016; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa376889(v=vs.85).aspx
-  private const int WM_DEVICECHANGE           = 0x0219; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363480(v=vs.85).aspx
-  private const int WM_QUERYENDSESSION        = 0x0011; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa376890(v=vs.85).aspx
-  private const int WM_NULL                   = 0x0000; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632637(v=vs.85).aspx
-  private const int WM_ACTIVATE               = 0x0006; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646274(v=vs.85).aspx
-  private const int WM_ACTIVATEAPP            = 0x001C; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632614(v=vs.85).aspx
-  private const int WM_SIZING                 = 0x0214; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
-  private const int WMSZ_LEFT                 = 1;
-  private const int WMSZ_RIGHT                = 2;
-  private const int WMSZ_TOP                  = 3;
-  private const int WMSZ_TOPLEFT              = 4;
-  private const int WMSZ_TOPRIGHT             = 5;
-  private const int WMSZ_BOTTOM               = 6;
-  private const int WMSZ_BOTTOMLEFT           = 7;
-  private const int WMSZ_BOTTOMRIGHT          = 8;
-  private const int WM_GETMINMAXINFO          = 0x0024; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632626(v=vs.85).aspx
-  private const int WM_MOVING                 = 0x0216; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632632(v=vs.85).aspx
-  private const int WM_CREATE                 = 0x0001; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632619(v=vs.85).aspx
-  private const int PBT_APMQUERYSUSPEND       = 0x0000; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372716(v=vs.85).aspx
-  private const int PBT_APMQUERYSTANDBY       = 0x0001;
-  private const int PBT_APMQUERYSUSPENDFAILED = 0x0002; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372717(v=vs.85).aspx
-  private const int PBT_APMQUERYSTANDBYFAILED = 0x0003;
-  private const int PBT_APMSUSPEND            = 0x0004; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372721(v=vs.85).aspx
-  private const int PBT_APMSTANDBY            = 0x0005; 
-  private const int PBT_APMRESUMECRITICAL     = 0x0006; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372719(v=vs.85).aspx
-  private const int PBT_APMRESUMESUSPEND      = 0x0007; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372720(v=vs.85).aspx
-  private const int PBT_APMRESUMESTANDBY      = 0x0008; 
-  private const int PBT_APMRESUMEAUTOMATIC    = 0x0012; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372718(v=vs.85).aspx
-  private const int SPI_SETSCREENSAVEACTIVE   = 17;
-  private const int SPI_GETSCREENSAVEACTIVE   = 16;
-  private const int SPIF_SENDWININICHANGE     = 0x0002;
-  private const int GPU_HUNG                  = -2005530508;
-  private const int D3DERR_INVALIDCALL        = -2005530516;
-  private const int GPU_REMOVED               = -2005530512;
 
+  // ReSharper disable InconsistentNaming
+  private const int WM_SYSCOMMAND           = 0x0112; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
+  private const int SC_SCREENSAVE           = 0xF140; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
+  private const int SC_MONITORPOWER         = 0xF170; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
+  private const int WM_ENDSESSION           = 0x0016; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa376889(v=vs.85).aspx
+  private const int WM_DEVICECHANGE         = 0x0219; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363480(v=vs.85).aspx
+  private const int WM_QUERYENDSESSION      = 0x0011; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa376890(v=vs.85).aspx
+  private const int WM_NULL                 = 0x0000; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632637(v=vs.85).aspx
+  private const int WM_ACTIVATE             = 0x0006; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646274(v=vs.85).aspx
+  private const int WM_ACTIVATEAPP          = 0x001C; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632614(v=vs.85).aspx
+  private const int WM_SIZING               = 0x0214; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
+  private const int WMSZ_LEFT               = 1;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
+  private const int WMSZ_RIGHT              = 2;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
+  private const int WMSZ_TOP                = 3;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
+  private const int WMSZ_TOPLEFT            = 4;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
+  private const int WMSZ_TOPRIGHT           = 5;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
+  private const int WMSZ_BOTTOM             = 6;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
+  private const int WMSZ_BOTTOMLEFT         = 7;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
+  private const int WMSZ_BOTTOMRIGHT        = 8;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
+  private const int WM_GETMINMAXINFO        = 0x0024; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632626(v=vs.85).aspx
+  private const int WM_MOVING               = 0x0216; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632632(v=vs.85).aspx
+  private const int WM_CREATE               = 0x0001; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632619(v=vs.85).aspx
+  private const int WM_POWERBROADCAST       = 0x0218; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa373247(v=vs.85).aspx
+  private const int PBT_APMSUSPEND          = 0x0004; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372721(v=vs.85).aspx
+  private const int PBT_APMRESUMECRITICAL   = 0x0006; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372719(v=vs.85).aspx
+  private const int PBT_APMRESUMESUSPEND    = 0x0007; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372720(v=vs.85).aspx
+  private const int PBT_APMRESUMEAUTOMATIC  = 0x0012; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372718(v=vs.85).aspx
+  private const int SPI_SETSCREENSAVEACTIVE = 0x0011; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms724947(v=vs.85).aspx
+  private const int SPI_GETSCREENSAVEACTIVE = 0x0010; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms724947(v=vs.85).aspx
+  private const int SPIF_SENDCHANGE         = 0x0002; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms724947(v=vs.85).aspx
+  private const int D3DERR_DEVICEHUNG       = -2005530508; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
+  private const int D3DERR_DEVICEREMOVED    = -2005530512; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
+  private const int D3DERR_INVALIDCALL      = -2005530516; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
   // ReSharper restore InconsistentNaming
+
   private const string MPMutex = "{E0151CBA-7F81-41df-9849-F5298A779EB3}";
 #pragma warning disable 169
   private const string ConfigMutex = "{0BFD648F-A59F-482A-961B-337D70968611}";
@@ -182,9 +174,6 @@ public class MediaPortalApp : D3DApp, IRender
   private bool _supportsAlphaBlend;
   private int _anisotropy;
   private DateTime _updateTimer = DateTime.MinValue;
-  // ReSharper disable NotAccessedField.Local
-
-  // ReSharper restore NotAccessedField.Local
   private static SplashScreen _splashScreen;
 #if !DEBUG
   private static bool _avoidVersionChecking;
@@ -239,14 +228,21 @@ public class MediaPortalApp : D3DApp, IRender
 
   #endregion
 
+  // http://msdn.microsoft.com/en-us/library/windows/desktop/ms724947(v=vs.85).aspx
   [DllImport("user32")]
   private static extern bool SystemParametersInfo(int uAction, int uParam, ref bool lpvParam, int fuWinIni);
 
+  // http://msdn.microsoft.com/en-us/library/windows/desktop/ms724947(v=vs.85).aspx
   [DllImport("user32")]
   private static extern bool SystemParametersInfo(int uAction, int uParam, int lpvParam, int fuWinIni);
 
-  [DllImport("Kernel32.DLL")]
+  // http://msdn.microsoft.com/en-us/library/windows/desktop/aa373208(v=vs.85).aspx
+  [DllImport("Kernel32.dll")]
   private static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE state);
+
+  // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372708(v=vs.85).aspx
+  [DllImport("Kernel32.dll")]
+  private static extern bool IsSystemResumeAutomatic();
 
   private static RestartOptions _restartOptions = RestartOptions.Reboot;
   private static bool _useRestartOptions;
@@ -1024,7 +1020,7 @@ public class MediaPortalApp : D3DApp, IRender
   
 
   /// <summary>
-  /// 
+  /// Message Pump
   /// </summary>
   /// <param name="msg"></param>
   protected override void WndProc(ref Message msg)
@@ -1038,88 +1034,21 @@ public class MediaPortalApp : D3DApp, IRender
 
       switch (msg.Msg)
       {
+        // power management broadcasts
         case WM_POWERBROADCAST:
           Log.Info("Main: WM_POWERBROADCAST: {0}", msg.WParam.ToInt32());
           switch (msg.WParam.ToInt32())
           {
-            // The PBT_APMQUERYSUSPEND message is sent to request permission to suspend the computer.
-            // An application that grants permission should carry out preparations for the suspension before returning.
-            // Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
-            case PBT_APMQUERYSUSPEND:
-              Log.Info("Main: Windows is requesting hibernate mode - UI bit: {0}", msg.LParam.ToInt32());
-              break;
-
-            // The PBT_APMQUERYSTANDBY message is sent to request permission to suspend the computer.
-            // An application that grants permission should carry out preparations for the suspension before returning.
-            // Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
-            case PBT_APMQUERYSTANDBY:
-              // Stop all media before suspending or hibernating
-              Log.Info("Main: Windows is requesting standby mode - UI bit: {0}", msg.LParam.ToInt32());
-              break;
-
-            // The PBT_APMQUERYSUSPENDFAILED message is sent to notify the application that suspension was denied
-            // by some other application. However, this message is only sent when we receive PBT_APMQUERY* before.
-            case PBT_APMQUERYSUSPENDFAILED:
-              Log.Info("Main: Windows is denied to go to suspended mode");
-              // dero: IT IS NOT SAFE to rely on this message being sent! Sometimes it is not sent even if we
-              // processed PBT_AMQUERYSUSPEND/PBT_APMQUERYSTANDBY
-              // I observed this using TVService.PowerScheduler
-              break;
-
-            // The PBT_APMQUERYSTANDBYFAILED message is sent to notify the application that suspension was denied
-            // by some other application. However, this message is only sent when we receive PBT_APMQUERY* before.
-            case PBT_APMQUERYSTANDBYFAILED:
-              Log.Info("Main: Windows is denied to go to standby mode");
-              // dero: IT IS NOT SAFE to rely on this message being sent! Sometimes it is not sent even if we
-              // processed PBT_AMQUERYSUSPEND/PBT_APMQUERYSTANDBY
-              // I observed this using TVService.PowerScheduler
-              break;
-
-            case PBT_APMSTANDBY:
-              Log.Info("Main: Windows is going to standby");
-              OnSuspend();
-              break;
-
             case PBT_APMSUSPEND:
-              Log.Info("Main: Windows is suspending");
+              Log.Info("Main: Suspending operation.");
               OnSuspend();
               break;
 
-            // The PBT_APMRESUMECRITICAL event is broadcast as a notification that the system has resumed operation. 
-            // this event can indicate that some or all applications did not receive a PBT_APMSUSPEND event. 
-            // For example, this event can be broadcast after a critical suspension caused by a failing battery.
             case PBT_APMRESUMECRITICAL:
-              Log.Info("Main: Windows has resumed from critical hibernate mode");
-              OnResume();
-              break;
-
-            // The PBT_APMRESUMESUSPEND event is broadcast as a notification that the system has resumed operation after being suspended.
-            case PBT_APMRESUMESUSPEND:
-              Log.Info("Main: Windows has resumed from hibernate mode");
-              OnResume();
-              break;
-
-            // The PBT_APMRESUMESTANDBY event is broadcast as a notification that the system has resumed operation after being standby.
-            case PBT_APMRESUMESTANDBY:
-              Log.Info("Main: Windows has resumed from standby mode");
-              OnResume();
-              break;
-
-            // The PBT_APMRESUMEAUTOMATIC event is broadcast when the computer wakes up automatically to
-            // handle an event. An application will not generally respond unless it is handling the event, because the user is not present.
             case PBT_APMRESUMEAUTOMATIC:
-              Log.Info("Main: Windows has resumed from standby or hibernate mode to handle a requested event");
-              OnResumeAutomatic();
-
-              using (Settings xmlreader = new MPSettings())
-              {
-                var useS3Hack = xmlreader.GetValueAsBool("debug", "useS3Hack", false);
-                if (useS3Hack)
-                {
-                  Log.Info("Main: useS3Hack enabled, calling OnResume() on automatic resume");
-                  OnResume();
-                }
-              }
+            case PBT_APMRESUMESUSPEND:
+              Log.Info("Main: Resuming operation.");
+              OnResume();
               break;
           }
           _lastMsg = msg.Msg;
@@ -1312,7 +1241,6 @@ public class MediaPortalApp : D3DApp, IRender
 
       if (PluginManager.WndProc(ref msg))
       {
-        // msg.Result = new IntPtr(0); <-- do plugins really set it on their own?
         return;
       }
 
@@ -1364,8 +1292,7 @@ public class MediaPortalApp : D3DApp, IRender
     }
   }
 
-  private static readonly object SyncObj = new object();
-
+  
   /// <summary>
   /// 
   /// </summary>
@@ -1469,52 +1396,44 @@ public class MediaPortalApp : D3DApp, IRender
   /// </summary>
   private void OnSuspend()
   {
-    lock (SyncObj)
+    if (!_suspended)
     {
-      if (!_suspended)
+      _ignoreContextMenuAction = true;
+      _suspended = true;
+      GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING; // this will close all open dialogs      
+
+      Log.Info("Main: Stopping playback");
+      if (GUIGraphicsContext.IsPlaying)
       {
-        _ignoreContextMenuAction = true;
-        _suspended = true;
-        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING; // this will close all open dialogs      
-
-        Log.Info("Main: Stopping playback");
-        if (GUIGraphicsContext.IsPlaying)
+        Currentmodulefullscreen();
+        g_Player.Stop();
+        // wait for player to stop before proceeding                
+        while (GUIGraphicsContext.IsPlaying)
         {
-          Currentmodulefullscreen();
-          g_Player.Stop();
-          // wait for player to stop before proceeding                
-          while (GUIGraphicsContext.IsPlaying)
-          {
-            Thread.Sleep(100);
-          }
+          Thread.Sleep(100);
         }
-
-        SaveLastActiveModule();
-
-        // switch to windowed mode
-        if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false && !Windowed)
-        {
-          Log.Info("Main: Switching to windowed mode");
-          UpdatePresentParams(true, false);
-        }
-        // stop playback
-        _suspended = true;
-        _runAutomaticResume = true;
-        InputDevices.Stop();
-        Log.Info("Main: Stopping AutoPlay");
-        AutoPlay.StopListening();
-        // we only dispose the DB connection if the DB path is remote.      
-        // since local db's have no problems.
-        DisposeDBs();
-        VolumeHandler.Dispose();
-        Log.Info("Main: OnSuspend - Done");
       }
+
+      SaveLastActiveModule();
+
+      // switch to windowed mode
+      if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false && !Windowed)
+      {
+        Log.Info("Main: Switching to windowed mode");
+        UpdatePresentParams(true, false);
+      }
+      // stop playback
+      _suspended = true;
+      InputDevices.Stop();
+      Log.Info("Main: Stopping AutoPlay");
+      AutoPlay.StopListening();
+      // we only dispose the DB connection if the DB path is remote.      
+      // since local db's have no problems.
+      DisposeDBs();
+      VolumeHandler.Dispose();
+      Log.Info("Main: OnSuspend - Done");
     }
   }
-
-  // called when windows wakes up again
-  private static readonly object SyncResume = new object();
-  private static readonly object SyncResumeAutomatic = new object();
 
   //private bool IsNetworkConnected()
   //{
@@ -1548,37 +1467,14 @@ public class MediaPortalApp : D3DApp, IRender
   /// <summary>
   /// 
   /// </summary>
-  private void OnResumeAutomatic()
-  {
-    if (!_onResumeAutomaticRunning)
-    {
-      Log.Debug("Main: OnResumeAutomatic - set lock for synchronous inits");
-      lock (SyncResumeAutomatic)
-      {
-        if (_runAutomaticResume)
-        {
-          _onResumeAutomaticRunning = false;
-          _runAutomaticResume = false;
-          Log.Info("Main: OnResumeAutomatic - Done");
-        }
-        else
-        {
-          Log.Info("Main: OnResumeAutomatic - OnResume called but !_suspended");
-        }
-      }
-    }
-    else
-    {
-      Log.Info("Main: OnResumeAutomatic - already running -> return without further action");
-    }
-  }
-
-
-  /// <summary>
-  /// 
-  /// </summary>
   private void OnResume()
   {
+    // do nothing if system was not woken up by a user
+    if (IsSystemResumeAutomatic())
+    {
+      return;
+    }
+
     using (Settings xmlreader = new MPSettings())
     {
       int waitOnResume = xmlreader.GetValueAsBool("general", "delay resume", false)
@@ -1591,46 +1487,27 @@ public class MediaPortalApp : D3DApp, IRender
       }
     }
 
-    GUIGraphicsContext.ResetLastActivity(); // avoid Screen saver after standby
+    GUIGraphicsContext.ResetLastActivity(); // avoid screen saver after standby
     _ignoreContextMenuAction = true;
-    if (_onResumeRunning)
+
+    if (!_suspended)
     {
-      Log.Info("Main: OnResume - already running -> return without further action");
-      return;
+      Log.Error("Main: OnResume - OnResume called but MP is not in suspended state.");
     }
-    Log.Debug("Main: OnResume - set lock for synchronous inits");
-    lock (SyncResume)
+    else
     {
-      if (_suspended)
+      ReOpenDBs();
+
+      // Systems without DirectX9 Ex have lost graphics device in suspend/hibernate cycle
+      if (!GUIGraphicsContext.IsDirectX9ExUsed())
       {
-        _onResumeRunning = true;
+        Log.Info("Main: OnResume - set GUIGraphicsContext.State.LOST");
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
+      }
 
-        ReOpenDBs();
-
-        // Systems without DirectX9 Ex have lost graphics device in suspend/hibernate cycle
-        if (!GUIGraphicsContext.IsDirectX9ExUsed())
-        {
-          Log.Info("Main: OnResume - set GUIGraphicsContext.State.LOST");
-          GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
-        }
-
-        var oldState = EXECUTION_STATE.ES_CONTINUOUS;
-        bool turnMonitorOn;
-        using (Settings xmlreader = new MPSettings())
-        {
-          turnMonitorOn = xmlreader.GetValueAsBool("general", "turnmonitoronafterresume", false);
-          if (turnMonitorOn)
-          {
-            Log.Info("Main: OnResume - Trying to wake up the monitor / tv");
-            const EXECUTION_STATE state = EXECUTION_STATE.ES_CONTINUOUS | EXECUTION_STATE.ES_DISPLAY_REQUIRED;
-            oldState = SetThreadExecutionState(state);
-          }
-          if (xmlreader.GetValueAsBool("general", "restartonresume", false))
-          {
-            Log.Info("Main: OnResume - prepare for restart!");
-            Utils.RestartMePo();
-          }
-        }
+      Log.Info("Main: OnResume - show last active module?");
+      if (!ShowLastActiveModule())
+      {
         if (_startWithBasicHome && File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml")))
         {
           Log.Info("Main: OnResume - Switch to basic home screen");
@@ -1641,41 +1518,37 @@ public class MediaPortalApp : D3DApp, IRender
           Log.Info("Main: OnResume - Switch to home screen");
           GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_HOME);
         }
-        Log.Info("Main: OnResume - calling recover device");
-        RecoverDevice();
-        if (turnMonitorOn)
-        {
-          SetThreadExecutionState(oldState);
-        }
-        Log.Info("Main: OnResume - init InputDevices");
-        InputDevices.Init();
-        _suspended = false;
-        Log.Debug("Main: OnResume - show last active module?");
-        ShowLastActiveModule();
+      }
 
-        if (GUIGraphicsContext.IsDirectX9ExUsed())
-        {
-          Log.Info("Main: OnResume - set GUIGraphicsContext.State.RUNNING");
-          GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
-        }
+      Log.Info("Main: OnResume - calling recover device");
+      RecoverDevice();
 
-        Log.Debug("Main: OnResume - autoplay start listening");
-        AutoPlay.StartListening();
+      Log.Info("Main: OnResume - Resettig executing state");
+      SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS); 
+      // TODO: add EXECUTION_STATE.ES_DISPLAY_REQUIRED to keep display on where appropriate
 
-        Log.Info("Main: OnResume - initializing volume handler");
+      Log.Info("Main: OnResume - Init InputDevices");
+      InputDevices.Init();
+      
+      _suspended = false;
+
+      if (GUIGraphicsContext.IsDirectX9ExUsed())
+      {
+        Log.Info("Main: OnResume - set GUIGraphicsContext.State.RUNNING");
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+      }
+
+      Log.Debug("Main: OnResume - autoplay start listening");
+      AutoPlay.StartListening();
+
+      Log.Debug("Main: OnResume - initializing volume handler");
 #pragma warning disable 168
-        VolumeHandler vh = VolumeHandler.Instance;
+      VolumeHandler vh = VolumeHandler.Instance;
 #pragma warning restore 168
 
-        _onResumeRunning = false;
-        _ignoreContextMenuAction = false;
-        _lastOnresume = DateTime.Now;
-        Log.Info("Main: OnResume - Done");
-      }
-      else
-      {
-        Log.Info("Main: OnResume - OnResume called but !_suspended");
-      }
+      _ignoreContextMenuAction = false;
+      _lastOnresume = DateTime.Now;
+      Log.Info("Main: OnResume - Done");
     }
   }
 
@@ -1806,7 +1679,7 @@ public class MediaPortalApp : D3DApp, IRender
         SystemParametersInfo(SPI_GETSCREENSAVEACTIVE, 0, ref _isWinScreenSaverInUse, 0);
         if (_isWinScreenSaverInUse)
         {
-          SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, 0, 0, SPIF_SENDWININICHANGE);
+          SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, 0, 0, SPIF_SENDCHANGE);
         }
       }
 
@@ -2013,7 +1886,7 @@ public class MediaPortalApp : D3DApp, IRender
     VolumeHandler.Dispose();
     if (_isWinScreenSaverInUse)
     {
-      SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, 1, 0, SPIF_SENDWININICHANGE);
+      SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, 1, 0, SPIF_SENDCHANGE);
     }
   }
 
@@ -2316,8 +2189,8 @@ public class MediaPortalApp : D3DApp, IRender
             }
             break;
   
-          case GPU_REMOVED:
-          case GPU_HUNG:
+          case D3DERR_DEVICEHUNG:
+          case D3DERR_DEVICEREMOVED:
             Log.Info("Main: GPU_HUNG - {0}", dex.ToString());
             GUIGraphicsContext.DX9ExRealDeviceLost = true;
             if (!RefreshRateChanger.RefreshRateChangePending)
@@ -3240,8 +3113,8 @@ public class MediaPortalApp : D3DApp, IRender
         _lastMousePositionY = iCursorY;
         float fX = ((float) GUIGraphicsContext.Width) / ClientSize.Width;
         float fY = ((float) GUIGraphicsContext.Height) / ClientSize.Height;
-        float x = (fX*iCursorX) - GUIGraphicsContext.OffsetX;
-        float y = (fY*iCursorY) - GUIGraphicsContext.OffsetY;
+        float x = (fX * iCursorX) - GUIGraphicsContext.OffsetX;
+        float y = (fY * iCursorY) - GUIGraphicsContext.OffsetY;
         GUIWindow window = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
         if (window != null)
         {
@@ -4195,7 +4068,7 @@ public class MediaPortalApp : D3DApp, IRender
   private void DoStartupJobs()
   {
     FilterChecker.CheckInstalledVersions();
-
+    
     Version aParamVersion;
     //
     // 6.5.2600.3243 = KB941568,   6.5.2600.3024 = KB927544
@@ -4211,7 +4084,6 @@ public class MediaPortalApp : D3DApp, IRender
       }
     }
 
-    EnableS3Trick();
     GUIWindowManager.OnNewAction += OnAction;
     GUIWindowManager.Receivers += OnMessage;
     GUIWindowManager.Callbacks += MPProcess;
@@ -4332,56 +4204,5 @@ public class MediaPortalApp : D3DApp, IRender
       _dateLayout = xmlreader.GetValueAsInt("home", "datelayout", 0);
     }
     GUIGraphicsContext.ResetLastActivity();
-  }
-
-  /// <summary>
-  /// Enables the S3 system power state for standby when USB devices are armed for wake,  if this option is enabled in the configuration.
-  /// The trick is to create the following registry value: HKLM\SYSTEM\CurrentControlSet\Services\usb\USBBIOSx and set it to 0.
-  /// </summary>
-  private static void EnableS3Trick()
-  {
-    try
-    {
-      using (RegistryKey services = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services", true))
-      {
-        if (services != null)
-        {
-          RegistryKey usb = services.OpenSubKey("usb", true) ?? services.CreateSubKey("usb");
-          // Delete the USBBIOSHACKS value if it is still there.
-          if (usb != null && usb.GetValue("USBBIOSHacks") != null)
-          {
-            usb.DeleteValue("USBBIOSHacks");
-          }
-          // Check the general.enables3trick configuration option and create/delete the USBBIOSx
-          // value accordingly
-          using (Settings xmlreader = new MPSettings())
-          {
-            bool enableS3Trick = xmlreader.GetValueAsBool("general", "enables3trick", true);
-            if (enableS3Trick)
-            {
-              if (usb != null)
-              {
-	              usb.SetValue("USBBIOSx", 0);
-              }
-            }
-            else
-            {
-              if (usb != null && usb.GetValue("USBBIOSx") != null)
-              {
-                usb.DeleteValue("USBBIOSx");
-              }
-            }
-          }
-        }
-      }
-    }
-    catch (SecurityException)
-    {
-      Log.Info("Not enough permissions to enable/disable the S3 standby trick");
-    }
-    catch (UnauthorizedAccessException)
-    {
-      Log.Info("No write permissions to enable/disable the S3 standby trick");
-    }
   }
 }

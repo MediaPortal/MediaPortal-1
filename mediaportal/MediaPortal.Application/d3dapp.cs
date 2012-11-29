@@ -1582,7 +1582,7 @@ namespace MediaPortal
     /// 
     /// </summary>
     /// <returns></returns>
-    protected void ShowLastActiveModule()
+    protected bool ShowLastActiveModule()
     {
       bool showLastActiveModule;
       int lastActiveModule;
@@ -1643,9 +1643,11 @@ namespace MediaPortal
           catch (Exception e)
           {
             Log.Error("Error recalling last active module '{0}' - {1}", lastActiveModule, e.Message);
+            showLastActiveModule = false;
           }
         }
       }
+      return showLastActiveModule;
     }
 
 
