@@ -2282,7 +2282,7 @@ namespace MediaPortal.Configuration.Sections
       _progressDialog.Total = 1;
       _progressDialog.Count = 1;
       _progressDialog.Show();
-      if (DownloadFile(_grabberIndexFile, GrabberIndexUrl) == false)
+      if (DownloadFile(_grabberIndexFile, GrabberIndexUrl, Encoding.Default) == false)
       {
         _progressDialog.CloseProgress();
         return;
@@ -2317,7 +2317,7 @@ namespace MediaPortal.Configuration.Sections
         _progressDialog.Count = i + 1;
         percent += 100 / (sectionNodes.Count - 1);
 
-        if (DownloadFile(IMDB.ScriptDirectory + @"\" + id, url) == false)
+        if (DownloadFile(IMDB.ScriptDirectory + @"\" + id, url, Encoding.Default) == false)
         {
           _progressDialog.CloseProgress();
           return;
@@ -2381,7 +2381,7 @@ namespace MediaPortal.Configuration.Sections
       _progressDialog.Total = 1;
       _progressDialog.Count = 1;
       _progressDialog.Show();
-      if (DownloadFile(parserIndexFile, parserIndexUrl) == false)
+      if (DownloadFile(parserIndexFile, parserIndexUrl, Encoding.UTF8) == false)
       {
         _progressDialog.CloseProgress();
         return;
@@ -2392,7 +2392,7 @@ namespace MediaPortal.Configuration.Sections
       _progressDialog.Total = 1;
       _progressDialog.Count = 1;
       _progressDialog.Show();
-      if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl) == false)
+      if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl, Encoding.Default) == false)
       {
         _progressDialog.CloseProgress();
         return;
@@ -2542,7 +2542,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private bool DownloadFile(string filepath, string url)
+    private bool DownloadFile(string filepath, string url, Encoding enc)
     {
       string grabberTempFile = Path.GetTempFileName();
 
@@ -2570,7 +2570,7 @@ namespace MediaPortal.Configuration.Sections
           Application.DoEvents();
           using (Stream resStream = response.GetResponseStream())
           {
-            using (TextReader tin = new StreamReader(resStream, Encoding.Default))
+            using (TextReader tin = new StreamReader(resStream, enc))
             {
               using (TextWriter tout = File.CreateText(grabberTempFile))
               {

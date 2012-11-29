@@ -429,7 +429,7 @@ namespace MediaPortal.GUI.Settings
       progressDialog.SetPercentage(100);
       progressDialog.StartModal(GetID);
 
-      if (DownloadFile(_grabberIndexFile, _grabberIndexUrl) == false)
+      if (DownloadFile(_grabberIndexFile, _grabberIndexUrl, Encoding.Default) == false)
       {
         progressDialog.Close();
         return;
@@ -448,7 +448,7 @@ namespace MediaPortal.GUI.Settings
       progressDialog.SetPercentage(75);
       progressDialog.StartModal(GUIWindowManager.ActiveWindow);
 
-      if (DownloadFile(parserIndexFile, parserIndexUrl) == false)
+      if (DownloadFile(parserIndexFile, parserIndexUrl, Encoding.UTF8) == false)
       {
         progressDialog.Close();
         return;
@@ -462,7 +462,7 @@ namespace MediaPortal.GUI.Settings
       progressDialog.SetPercentage(100);
       progressDialog.StartModal(GUIWindowManager.ActiveWindow);
 
-      if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl) == false)
+      if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl, Encoding.Default) == false)
       {
         progressDialog.Close();
         return;
@@ -506,7 +506,7 @@ namespace MediaPortal.GUI.Settings
           percent += 100 / (sectionNodes.Count - 1);
           progressDialog.Progress();
 
-          if (DownloadFile(IMDB.ScriptDirectory + @"\" + id, url) == false)
+          if (DownloadFile(IMDB.ScriptDirectory + @"\" + id, url, Encoding.Default) == false)
           {
             progressDialog.Close();
             return;
@@ -516,7 +516,7 @@ namespace MediaPortal.GUI.Settings
       progressDialog.Close();
     }
 
-    private bool DownloadFile(string filepath, string url)
+    private bool DownloadFile(string filepath, string url, Encoding enc)
     {
       string grabberTempFile = Path.GetTempFileName();
 
@@ -540,7 +540,7 @@ namespace MediaPortal.GUI.Settings
         {
           using (Stream resStream = response.GetResponseStream())
           {
-            using (TextReader tin = new StreamReader(resStream, Encoding.Default))
+            using (TextReader tin = new StreamReader(resStream, enc))
             {
               using (TextWriter tout = File.CreateText(grabberTempFile))
               {
