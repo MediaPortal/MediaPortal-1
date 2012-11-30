@@ -923,20 +923,23 @@ namespace MediaPortal.Configuration.Sections
         listViewMovieActors.Sort();
 
         string szGenres = movie.Genre;
-        if (szGenres.IndexOf("/") >= 0)
+        if (szGenres.IndexOf("/") >= 0 || szGenres.IndexOf("|") >= 0)
         {
-          Tokens f = new Tokens(szGenres, new[] {'/'});
+          Tokens f = new Tokens(szGenres, new[] {'/', '|'});
           foreach (string strGenre in f)
           {
-            String strCurrentGenre = strGenre.Trim();
-            listViewGenres.Items.Add(strCurrentGenre);
-
-            for (int i = listViewAllGenres.Items.Count - 1; i >= 0; --i)
+            if (!string.IsNullOrEmpty(strGenre))
             {
-              if (listViewAllGenres.Items[i].Text == strCurrentGenre)
+              String strCurrentGenre = strGenre.Trim();
+              listViewGenres.Items.Add(strCurrentGenre);
+
+              for (int i = listViewAllGenres.Items.Count - 1; i >= 0; --i)
               {
-                listViewAllGenres.Items.RemoveAt(i);
-                break;
+                if (listViewAllGenres.Items[i].Text == strCurrentGenre)
+                {
+                  listViewAllGenres.Items.RemoveAt(i);
+                  break;
+                }
               }
             }
           }
@@ -2282,7 +2285,7 @@ namespace MediaPortal.Configuration.Sections
       _progressDialog.Total = 1;
       _progressDialog.Count = 1;
       _progressDialog.Show();
-      if (DownloadFile(_grabberIndexFile, GrabberIndexUrl) == false)
+      if (DownloadFile(_grabberIndexFile, GrabberIndexUrl, Encoding.Default) == false)
       {
         _progressDialog.CloseProgress();
         return;
@@ -2317,7 +2320,7 @@ namespace MediaPortal.Configuration.Sections
         _progressDialog.Count = i + 1;
         percent += 100 / (sectionNodes.Count - 1);
 
-        if (DownloadFile(IMDB.ScriptDirectory + @"\" + id, url) == false)
+        if (DownloadFile(IMDB.ScriptDirectory + @"\" + id, url, Encoding.Default) == false)
         {
           _progressDialog.CloseProgress();
           return;
@@ -2381,7 +2384,7 @@ namespace MediaPortal.Configuration.Sections
       _progressDialog.Total = 1;
       _progressDialog.Count = 1;
       _progressDialog.Show();
-      if (DownloadFile(parserIndexFile, parserIndexUrl) == false)
+      if (DownloadFile(parserIndexFile, parserIndexUrl, Encoding.UTF8) == false)
       {
         _progressDialog.CloseProgress();
         return;
@@ -2392,7 +2395,7 @@ namespace MediaPortal.Configuration.Sections
       _progressDialog.Total = 1;
       _progressDialog.Count = 1;
       _progressDialog.Show();
-      if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl) == false)
+      if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl, Encoding.Default) == false)
       {
         _progressDialog.CloseProgress();
         return;
@@ -2542,7 +2545,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private bool DownloadFile(string filepath, string url)
+    private bool DownloadFile(string filepath, string url, Encoding enc)
     {
       string grabberTempFile = Path.GetTempFileName();
 
@@ -2570,7 +2573,7 @@ namespace MediaPortal.Configuration.Sections
           Application.DoEvents();
           using (Stream resStream = response.GetResponseStream())
           {
-            using (TextReader tin = new StreamReader(resStream, Encoding.Default))
+            using (TextReader tin = new StreamReader(resStream, enc))
             {
               using (TextWriter tout = File.CreateText(grabberTempFile))
               {

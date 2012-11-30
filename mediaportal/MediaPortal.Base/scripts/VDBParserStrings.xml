@@ -134,31 +134,31 @@
 			<![CDATA[</title>]]>
 		</string>
 		<string><!--2 value !equal-->
-			<![CDATA[imdb name search]]>
+			<![CDATA[find - imdb]]>
 		</string>
 		<string><!--3 skip to start of no case-->
-			<![CDATA[Popular names]]>
+			<![CDATA[</a>Names]]>
 		</string>
 		<string><!--4 skip to end of-->
-			<![CDATA[<table>]]>
+			<![CDATA[<table class="findList">]]>
 		</string>
 		<string><!--5 extract to (ref popular block)-->
 			<![CDATA[</table>]]>
 		</string>
 		<string><!--6 skip to start of-->
-			<![CDATA[href="/name/]]>
+			<![CDATA[result_text]]>
 		</string>
 		<string><!--7 skip to end of-->
 			<![CDATA[href="]]>
 		</string>
 		<string><!--8 extract to (ref url)-->
-			<![CDATA["]]>
+			<![CDATA[/?]]>
 		</string>
 		<string><!--9 skip to end of-->
-			<![CDATA[Image()).src='/rg/find-name-]]>
+			<![CDATA["]]>
 		</string>
 		<string><!--10 skip to end of-->
-			<![CDATA[';">]]>
+			<![CDATA[>]]>
 		</string>
 		<string><!--11 extract to (ref name)-->
 			<![CDATA[</a>]]>
