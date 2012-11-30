@@ -28,13 +28,11 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-//using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.ServiceProcess;
 using System.Threading;
-using System.Timers;
 using System.Windows.Forms;
 using System.Xml;
 using MediaPortal;
@@ -56,7 +54,6 @@ using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.Win32;
 using Action = MediaPortal.GUI.Library.Action;
-using Timer = System.Timers.Timer;
 
 #endregion
 
@@ -85,8 +82,7 @@ public class MediaPortalApp : D3DApp, IRender
   private Thread _updaterThread = null;
   private const int UPDATERTHREAD_JOIN_TIMEOUT = 3 * 1000;
 #endif
-  private int _lastMousePositionX;
-  private int _lastMousePositionY;
+  private Point _lastCursorPosition;
   private bool _playingState;
   private bool _showStats;
   private bool _showStatsPrevious;
@@ -128,7 +124,6 @@ public class MediaPortalApp : D3DApp, IRender
   bool m_bCancelVersion = false;
 #endif
   private MouseEventArgs _lastMouseClickEvent;
-  private Timer _mouseClickTimer;
   private bool _mouseClickFired;
 
   // ReSharper disable InconsistentNaming
@@ -1143,6 +1138,7 @@ public class MediaPortalApp : D3DApp, IRender
             rc = _lastRect;
           }
 
+          // TODO: WINDOWED VS FULLSCREEN MODE
           // minimum size check, form cannot be smaller than initial skin width
           if (rc.right - rc.left < GUIGraphicsContext.SkinSize.Width)
           {
@@ -1176,8 +1172,6 @@ public class MediaPortalApp : D3DApp, IRender
           base.WndProc(ref msg);
           Log.Info("Main: shutdown mode executed");
           msg.Result = IntPtr.Zero; // tell Windows it's ok to shutdown        
-          _mouseClickTimer.Stop();
-          _mouseClickTimer.Dispose();
           Application.ExitThread();
           Application.Exit();
           _lastMsg = msg.Msg;
@@ -1263,8 +1257,8 @@ public class MediaPortalApp : D3DApp, IRender
               Utils.PlaySound(action.SoundFileName, false, true);
             }
           }
-          GUIGraphicsContext.OnAction(action);
           GUIGraphicsContext.ResetLastActivity();
+          GUIGraphicsContext.OnAction(action);
         }
         if (keyCode != Keys.A)
         {
@@ -1435,34 +1429,6 @@ public class MediaPortalApp : D3DApp, IRender
     }
   }
 
-  //private bool IsNetworkConnected()
-  //{
-  //  DateTime now = DateTime.Now;
-  //  TimeSpan ts = now - DateTime.Now;
-  //  bool connected = false;
-  //  if (SystemInformation.Network)
-  //  {
-  //    NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces();
-  //    while (ts.TotalSeconds > -10)
-  //    {
-  //      foreach (NetworkInterface n in adapters)
-  //      {
-  //        if (n.OperationalStatus == OperationalStatus.Up)
-  //        {
-  //          connected = true;
-  //          break;
-  //        }
-  //      }
-  //      if (connected)
-  //      {
-  //        break;
-  //      }
-  //      ts = now - DateTime.Now;
-  //    }
-  //  }
-  //  return connected;
-  //}
-
 
   /// <summary>
   /// 
@@ -1525,7 +1491,7 @@ public class MediaPortalApp : D3DApp, IRender
 
       Log.Info("Main: OnResume - Resettig executing state");
       SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS); 
-      // TODO: add EXECUTION_STATE.ES_DISPLAY_REQUIRED to keep display on where appropriate
+      // TODO: add EXECUTION_STATE.ES_DISPLAY_REQUIRED to keep display on where appropriate. Done in S3 related Mantis
 
       Log.Info("Main: OnResume - Init InputDevices");
       InputDevices.Init();
@@ -1638,9 +1604,6 @@ public class MediaPortalApp : D3DApp, IRender
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(64)); // Starting plugins...
     PluginManager.Load();
     PluginManager.Start();
-    _mouseClickTimer = new Timer(SystemInformation.DoubleClickTime)
-                         {AutoReset = false, Enabled = false, SynchronizingObject = this};
-    _mouseClickTimer.Elapsed += MouseClickTimerElapsed;
     using (Settings xmlreader = new MPSettings())
     {
       DateFormat = xmlreader.GetValueAsString("home", "dateformat", "<Day> <Month> <DD>");
@@ -1673,6 +1636,7 @@ public class MediaPortalApp : D3DApp, IRender
         }
         _splashScreen = null;
       }
+
       // disable screen saver when MP running and internal selected
       if (_useScreenSaver)
       {
@@ -1730,6 +1694,7 @@ public class MediaPortalApp : D3DApp, IRender
     return 0;
   }
 
+
   /// <summary>
   /// Load string_xx.xml based on config
   /// </summary>
@@ -1761,6 +1726,7 @@ public class MediaPortalApp : D3DApp, IRender
       Application.Exit();
     }
   }
+
 
   /// <summary>
   /// saves last active module.
@@ -1838,6 +1804,7 @@ public class MediaPortalApp : D3DApp, IRender
     }
   }
 
+
   /// <summary>
   /// OnExit() Gets called just b4 application stops
   /// </summary>
@@ -1870,12 +1837,6 @@ public class MediaPortalApp : D3DApp, IRender
     InputDevices.Stop();
     AutoPlay.StopListening();
     PluginManager.Stop();
-    if (_mouseClickTimer != null)
-    {
-      _mouseClickTimer.Stop();
-      _mouseClickTimer.Dispose();
-      _mouseClickTimer = null;
-    }
     GUIWaitCursor.Dispose();
     GUIFontManager.ReleaseUnmanagedResources();
     GUIFontManager.Dispose();
@@ -1889,6 +1850,7 @@ public class MediaPortalApp : D3DApp, IRender
       SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, 1, 0, SPIF_SENDCHANGE);
     }
   }
+
 
   /// <summary>
   /// The device has been created.  Resources that are not lost on
@@ -2028,6 +1990,7 @@ public class MediaPortalApp : D3DApp, IRender
     WorkingSet.Minimize();
   }
 
+
   /// <summary>
   /// Updates the splash screen to display the given string. 
   /// This method checks whether the splash screen exists.
@@ -2048,12 +2011,19 @@ public class MediaPortalApp : D3DApp, IRender
     }
   }
 
+
+  /// <summary>
+  /// 
+  /// </summary>
+  /// <param name="sender"></param>
+  /// <param name="e"></param>
   protected override void OnDeviceLost(object sender, EventArgs e)
   {
     Log.Warn("Main: ***** OnDeviceLost *****");
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
     base.OnDeviceLost(sender, e);
   }
+
 
   /// <summary>
   /// The device exists, but may have just been Reset().  Resources in
@@ -2392,7 +2362,6 @@ public class MediaPortalApp : D3DApp, IRender
 
   #region Handle messages, keypresses, mouse moves etc
 
-
   /// <summary>
   /// 
   /// </summary>
@@ -2659,7 +2628,7 @@ public class MediaPortalApp : D3DApp, IRender
               switch (dlg.SelectedId)
               {
                 case 1057:
-                  ExitMePo();
+                  ExitMP();
                   return;
 
                 case 1058:
@@ -2706,7 +2675,7 @@ public class MediaPortalApp : D3DApp, IRender
 
         // exit Mediaportal
         case Action.ActionType.ACTION_EXIT:
-          ExitMePo();
+          ExitMP();
           return;
 
         //stop radio
@@ -2888,7 +2857,7 @@ public class MediaPortalApp : D3DApp, IRender
   /// <summary>
   /// 
   /// </summary>
-  private void ExitMePo()
+  private void ExitMP()
   {
     Log.Info("Main: Exit requested");
     // is the minimize on gui option set?  If so, minimize to tray...
@@ -2922,6 +2891,12 @@ public class MediaPortalApp : D3DApp, IRender
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
   }
 
+
+  /// <summary>
+  /// 
+  /// </summary>
+  /// <param name="action"></param>
+  /// <returns></returns>
   private static bool PromptUserBeforeChangingPowermode(Action action)
   {
     var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO, 0, 0, 0, 0, 0, 0);
@@ -2962,8 +2937,7 @@ public class MediaPortalApp : D3DApp, IRender
   }
 
   #region keypress handlers
-
-
+  
   /// <summary>
   /// 
   /// </summary>
@@ -3050,34 +3024,24 @@ public class MediaPortalApp : D3DApp, IRender
   #endregion
 
   #region mouse event handlers
-
-
+  
   /// <summary>
   /// 
   /// </summary>
   /// <param name="e"></param>
   protected override void OnMouseWheel(MouseEventArgs e)
   {
-    // Calculate Mouse position
-    var ptScreenUL = new Point {X = Cursor.Position.X, Y = Cursor.Position.Y};
-    Point ptClientUL = PointToClient(ptScreenUL);
-    int iCursorX = ptClientUL.X;
-    int iCursorY = ptClientUL.Y;
-    float fX = ((float)GUIGraphicsContext.Width) / ClientSize.Width;
-    float fY = ((float)GUIGraphicsContext.Height) / ClientSize.Height;
-    float x = (fX * iCursorX) - GUIGraphicsContext.OffsetX;
-    float y = (fY * iCursorY) - GUIGraphicsContext.OffsetY;
     if (e.Delta > 0)
     {
-      var action = new Action(Action.ActionType.ACTION_MOVE_UP, x, y) {MouseButton = e.Button};
+      var action = new Action(Action.ActionType.ACTION_MOVE_UP, e.X, e.Y) {MouseButton = e.Button};
+      GUIGraphicsContext.ResetLastActivity(); 
       GUIGraphicsContext.OnAction(action);
-      GUIGraphicsContext.ResetLastActivity();
     }
     else if (e.Delta < 0)
     {
-      var action = new Action(Action.ActionType.ACTION_MOVE_DOWN, x, y) {MouseButton = e.Button};
-      GUIGraphicsContext.OnAction(action);
+      var action = new Action(Action.ActionType.ACTION_MOVE_DOWN, e.X, e.Y) {MouseButton = e.Button};
       GUIGraphicsContext.ResetLastActivity();
+      GUIGraphicsContext.OnAction(action);
     }
     base.OnMouseWheel(e);
   }
@@ -3091,34 +3055,25 @@ public class MediaPortalApp : D3DApp, IRender
   {
     // Disable first mouse action when mouse was hidden
     base.MouseMoveEvent(e);
+
     if (ShowCursor)
     {
-      var ptScreenUL = new Point {X = Cursor.Position.X, Y = Cursor.Position.Y};
-      Point ptClientUL = PointToClient(ptScreenUL);
-      int iCursorX = ptClientUL.X;
-      int iCursorY = ptClientUL.Y;
-      if (_lastMousePositionX != iCursorX || _lastMousePositionY != iCursorY)
+      if (_lastCursorPosition != Cursor.Position)
       {
-        if ((Math.Abs(_lastMousePositionX - iCursorX) > 10) || (Math.Abs(_lastMousePositionY - iCursorY) > 10))
+        bool cursorMovedFarEnough = (Math.Abs(_lastCursorPosition.X - Cursor.Position.X) > 10) || (Math.Abs(_lastCursorPosition.Y - Cursor.Position.Y) > 10);
+        if (cursorMovedFarEnough)
         {
           GUIGraphicsContext.ResetLastActivity();
+          if (GUIGraphicsContext.DBLClickAsRightClick && _mouseClickFired)
+          {
+            CheckSingleClick(e);
+          }
         }
-        //check any still waiting single click events
-        if (GUIGraphicsContext.DBLClickAsRightClick && _mouseClickFired &&
-            ((Math.Abs(_lastMousePositionX - iCursorX) > 10) || (Math.Abs(_lastMousePositionY - iCursorY) > 10)))
+        _lastCursorPosition = Cursor.Position;
+
+        if (GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow) != null)
         {
-          CheckSingleClick();
-        }
-        _lastMousePositionX = iCursorX;
-        _lastMousePositionY = iCursorY;
-        float fX = ((float) GUIGraphicsContext.Width) / ClientSize.Width;
-        float fY = ((float) GUIGraphicsContext.Height) / ClientSize.Height;
-        float x = (fX * iCursorX) - GUIGraphicsContext.OffsetX;
-        float y = (fY * iCursorY) - GUIGraphicsContext.OffsetY;
-        GUIWindow window = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-        if (window != null)
-        {
-          var action = new Action(Action.ActionType.ACTION_MOUSE_MOVE, x, y) {MouseButton = e.Button};
+          var action = new Action(Action.ActionType.ACTION_MOUSE_MOVE, e.X, e.Y) {MouseButton = e.Button};
           GUIGraphicsContext.OnAction(action);
         }
       }
@@ -3132,29 +3087,24 @@ public class MediaPortalApp : D3DApp, IRender
   /// <param name="e"></param>
   protected override void MouseDoubleClickEvent(MouseEventArgs e)
   {
-    if ((GUIGraphicsContext.DBLClickAsRightClick))
+    if (GUIGraphicsContext.DBLClickAsRightClick)
     {
       return;
     }
+
     GUIGraphicsContext.ResetLastActivity();
+
     if (!ShowCursor)
     {
       base.MouseClickEvent(e);
       return;
     }
-    var ptScreenUL = new Point {X = Cursor.Position.X, Y = Cursor.Position.Y};
-    Point ptClientUL = PointToClient(ptScreenUL);
-    int iCursorX = ptClientUL.X;
-    int iCursorY = ptClientUL.Y;
-    float fX = ((float)GUIGraphicsContext.Width) / ClientSize.Width;
-    float fY = ((float)GUIGraphicsContext.Height) / ClientSize.Height;
-    float x = (fX * iCursorX) - GUIGraphicsContext.OffsetX;
-    float y = (fY * iCursorY) - GUIGraphicsContext.OffsetY;
-    _lastMousePositionX = iCursorX;
-    _lastMousePositionY = iCursorY;
-    var actionMove = new Action(Action.ActionType.ACTION_MOUSE_MOVE, x, y);
+    _lastCursorPosition = Cursor.Position;
+
+    var actionMove = new Action(Action.ActionType.ACTION_MOUSE_MOVE, e.X, e.Y);
     GUIGraphicsContext.OnAction(actionMove);
-    var action = new Action(Action.ActionType.ACTION_MOUSE_DOUBLECLICK, x, y) {MouseButton = e.Button, SoundFileName = "click.wav"};
+
+    var action = new Action(Action.ActionType.ACTION_MOUSE_DOUBLECLICK, e.X, e.Y) {MouseButton = e.Button, SoundFileName = "click.wav"};
     if (action.SoundFileName.Length > 0 && !g_Player.Playing)
     {
       Utils.PlaySound(action.SoundFileName, false, true);
@@ -3168,48 +3118,43 @@ public class MediaPortalApp : D3DApp, IRender
   /// </summary>
   /// <param name="e"></param>
   protected override void MouseClickEvent(MouseEventArgs e)
+  // TODO: move double click as right click change to OnMouseDouleClick Handler where it belongs
   {
-    GUIGraphicsContext.ResetLastActivity();
     // Disable first mouse action when mouse was hidden
-    if (ShowCursor)
+    GUIGraphicsContext.ResetLastActivity();
+
+    if (!ShowCursor)
+    {
+      base.MouseClickEvent(e);
+    }
+    else
     {
       Action action;
       bool mouseButtonRightClick = false;
-      var ptScreenUL = new Point {X = Cursor.Position.X, Y = Cursor.Position.Y};
-      Point ptClientUL = PointToClient(ptScreenUL);
-      int iCursorX = ptClientUL.X;
-      int iCursorY = ptClientUL.Y;
-      float fX = ((float) GUIGraphicsContext.Width) / ClientSize.Width;
-      float fY = ((float) GUIGraphicsContext.Height) / ClientSize.Height;
-      float x = (fX*iCursorX) - GUIGraphicsContext.OffsetX;
-      float y = (fY*iCursorY) - GUIGraphicsContext.OffsetY;
-      _lastMousePositionX = iCursorX;
-      _lastMousePositionY = iCursorY;
-      var actionMove = new Action(Action.ActionType.ACTION_MOUSE_MOVE, x, y);
+      _lastCursorPosition = Cursor.Position;
+
+      var actionMove = new Action(Action.ActionType.ACTION_MOUSE_MOVE, e.X, e.Y);
       GUIGraphicsContext.OnAction(actionMove);
+
       if (e.Button == MouseButtons.Left)
       {
         if (GUIGraphicsContext.DBLClickAsRightClick)
         {
-          if (_mouseClickTimer != null)
+          _mouseClickFired = false;
+          if (e.Clicks < 2)
           {
-            _mouseClickFired = false;
-            if (e.Clicks < 2)
-            {
-              _lastMouseClickEvent = e;
-              _mouseClickFired = true;
-              _mouseClickTimer.Start();
-              return;
-            }
-            // Double click used as right click
-            _lastMouseClickEvent = null;
-            _mouseClickTimer.Stop();
-            mouseButtonRightClick = true;
+            _lastMouseClickEvent = e;
+            _mouseClickFired = true;
+            return;
           }
+          // Double click used as right click
+          _lastMouseClickEvent = null;
+
+          mouseButtonRightClick = true;
         }
         else
         {
-          action = new Action(Action.ActionType.ACTION_MOUSE_CLICK, x, y) {MouseButton = e.Button, SoundFileName = "click.wav"};
+          action = new Action(Action.ActionType.ACTION_MOUSE_CLICK, e.X, e.Y) {MouseButton = e.Button, SoundFileName = "click.wav"};
           if (action.SoundFileName.Length > 0 && !g_Player.Playing)
           {
             Utils.PlaySound(action.SoundFileName, false, true);
@@ -3218,15 +3163,16 @@ public class MediaPortalApp : D3DApp, IRender
           return;
         }
       }
+
       // right mouse button=back
-      if ((e.Button == MouseButtons.Right) || (mouseButtonRightClick))
+      if ((e.Button == MouseButtons.Right) || mouseButtonRightClick)
       {
         GUIWindow window = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
         if ((window.GetFocusControlId() != -1) || GUIGraphicsContext.IsFullScreenVideo ||
             (GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_SLIDESHOW))
         {
           // Get context menu
-          action = new Action(Action.ActionType.ACTION_CONTEXT_MENU, x, y) {MouseButton = e.Button, SoundFileName = "click.wav"};
+          action = new Action(Action.ActionType.ACTION_CONTEXT_MENU, e.X, e.Y) {MouseButton = e.Button, SoundFileName = "click.wav"};
           if (action.SoundFileName.Length > 0 && !g_Player.Playing)
           {
             Utils.PlaySound(action.SoundFileName, false, true);
@@ -3248,6 +3194,7 @@ public class MediaPortalApp : D3DApp, IRender
           }
         }
       }
+
       // middle mouse button=Y
       if (e.Button == MouseButtons.Middle)
       {
@@ -3263,57 +3210,35 @@ public class MediaPortalApp : D3DApp, IRender
         }
       }
     }
-    else
-    {
-      base.MouseClickEvent(e);
-    }
   }
 
 
   /// <summary>
   /// 
   /// </summary>
-  /// <param name="sender"></param>
-  /// <param name="e"></param>
-  private void MouseClickTimerElapsed(object sender, ElapsedEventArgs e)
-  {
-    CheckSingleClick();
-  }
-
-
-  /// <summary>
-  /// 
-  /// </summary>
-  private void CheckSingleClick()
+  private void CheckSingleClick(MouseEventArgs e)
   {
     // Check for touchscreen users and TVGuide items
     if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVGUIDE)
     {
-      GUIWindow pWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-      if ((pWindow.GetFocusControlId() == 1) && (GUIWindowManager.RoutedWindow == -1))
+      GUIWindow window = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+      if ((window.GetFocusControlId() == 1) && (GUIWindowManager.RoutedWindow == -1))
       {
         // Don't send single click (only the mouse move event is send)
         _mouseClickFired = false;
         return;
       }
     }
-    if (_mouseClickTimer != null)
+
+    if (_mouseClickFired)
     {
-      _mouseClickTimer.Stop();
-      if (_mouseClickFired)
+      _mouseClickFired = false;
+      var action = new Action(Action.ActionType.ACTION_MOUSE_CLICK, e.X, e.Y) {MouseButton = _lastMouseClickEvent.Button, SoundFileName = "click.wav"};
+      if (action.SoundFileName.Length > 0 && !g_Player.Playing)
       {
-        float fX = ((float)GUIGraphicsContext.Width) / ClientSize.Width;
-        float fY = ((float)GUIGraphicsContext.Height) / ClientSize.Height;
-        float x = (fX * _lastMousePositionX) - GUIGraphicsContext.OffsetX;
-        float y = (fY * _lastMousePositionY) - GUIGraphicsContext.OffsetY;
-        _mouseClickFired = false;
-        var action = new Action(Action.ActionType.ACTION_MOUSE_CLICK, x, y) {MouseButton = _lastMouseClickEvent.Button, SoundFileName = "click.wav"};
-        if (action.SoundFileName.Length > 0 && !g_Player.Playing)
-        {
-          Utils.PlaySound(action.SoundFileName, false, true);
-        }
-        GUIGraphicsContext.OnAction(action);
+        Utils.PlaySound(action.SoundFileName, false, true);
       }
+      GUIGraphicsContext.OnAction(action);
     }
   }
 
