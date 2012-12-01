@@ -38,21 +38,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Integration
     {
       // If there is already a provider registered, use this instance
       if (GlobalServiceProvider.Get<IIntegrationProvider>() != null)
-        return;
-      var container = GlobalServiceProvider.Instance.Get<IWindsorContainer>();
-      if (container == null)
       {
-        container = new WindsorContainer(new XmlInterpreter());
-        GlobalServiceProvider.Instance.Add<IWindsorContainer>(container);
+        return;
       }
-            
+      IWindsorContainer container = Instantiator.Instance.Container();      
       var assemblyFilter = new AssemblyFilter(searchPath, "*.Integration.*.dll");
-
-      container.Register(Component.For<IPathManager>().ImplementedBy<PathManager>());
-      container.Register(Component.For<ILogger>().ImplementedBy<Logger>());
-
+      
       container.Register(AllTypes.FromAssemblyInDirectory(assemblyFilter).BasedOn<IIntegrationProvider>().WithServiceBase().LifestyleSingleton());
-      GlobalServiceProvider.Add(container.Resolve<IIntegrationProvider>());      
+      GlobalServiceProvider.Add(container.Resolve<IIntegrationProvider>());
     }
   }
 }

@@ -24,6 +24,7 @@ using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.Plugins.Base
@@ -66,10 +67,10 @@ namespace Mediaportal.TV.Server.Plugins.Base
       _incompatiblePlugins.Clear();
 
       try
-      {
-        
+      {        
         var assemblyFilter = new AssemblyFilter("plugins");
-        GlobalServiceProvider.Instance.Get<IWindsorContainer>().Register(
+        IWindsorContainer container = Instantiator.Instance.Container();
+        container.Register(
         AllTypes.FromAssemblyInDirectory(assemblyFilter).                        
             BasedOn<ITvServerPlugin>().
             If(t => IsPluginCompatible(t)).            
@@ -77,7 +78,7 @@ namespace Mediaportal.TV.Server.Plugins.Base
             LifestyleSingleton()
             );
 
-        _plugins = new List<ITvServerPlugin>(GlobalServiceProvider.Instance.Get<IWindsorContainer>().ResolveAll<ITvServerPlugin>());
+        _plugins = new List<ITvServerPlugin>(container.ResolveAll<ITvServerPlugin>());
 
         foreach (ITvServerPlugin plugin in _plugins)
         {
