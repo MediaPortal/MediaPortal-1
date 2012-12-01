@@ -895,7 +895,6 @@ public class MediaPortalApp : D3DApp, IRender
     Deactivate += MediaPortalAppDeactivate;
     Log.Info("Main: Checking skin version");
     CheckSkinVersion();
-    // TODO:
     using (Settings xmlreader = new MPSettings())
     {
       var startFullscreen = !WindowedOverride && (FullscreenOverride || xmlreader.GetValueAsBool("general", "startfullscreen", false));
@@ -1139,8 +1138,8 @@ public class MediaPortalApp : D3DApp, IRender
           }
 
           // TODO: WINDOWED VS FULLSCREEN MODE
-          // minimum size check, form cannot be smaller than initial skin width
-          if (rc.right - rc.left < GUIGraphicsContext.SkinSize.Width)
+          // minimum size check, form cannot be smaller than initial skin width plus the window border width
+          if (rc.right - rc.left < GUIGraphicsContext.SkinSize.Width + borderWidth)
           {
             rc = _lastRect;
           }
@@ -1148,8 +1147,10 @@ public class MediaPortalApp : D3DApp, IRender
           // only redraw if rectangle size changed
           if (((rc.right - rc.left) != (_lastRect.right - _lastRect.left)) || ((rc.bottom - rc.top) != (_lastRect.bottom - _lastRect.top)))
           {
-            Log.Debug("Main: Aspect ratio safe resizing from {0}x{1} to {2}x{3}", 
-                      _lastRect.right - _lastRect.left, _lastRect.bottom - _lastRect.top, rc.right - rc.left, rc.bottom - rc.top);
+            Log.Debug("Main: Aspect ratio safe resizing from {0}x{1} to {2}x{3} (Skin resized to {4}x{5})", 
+                      _lastRect.right - _lastRect.left, _lastRect.bottom - _lastRect.top, 
+                      rc.right - rc.left, rc.bottom - rc.top,
+                      rc.right - rc.left - borderWidth, rc.bottom - rc.top - borderHeight);
             OnPaintEvent();
           }
           msg.Result = (IntPtr)1;
@@ -1867,13 +1868,13 @@ public class MediaPortalApp : D3DApp, IRender
     GUITextureManager.Dispose();
 
     // Loading keymap.xml
-    Log.Info("Main: Load keymap.xml");
+    Log.Info("Startup: Load keymap.xml");
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(65));
     ActionTranslator.Load();
     GUIGraphicsContext.ActiveForm = Handle;
 
     // Caching Graphics
-    Log.Info("Main: Caching Graphics");
+    Log.Info("Startup: Caching Graphics");
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(67));
     try
     {
@@ -1889,18 +1890,12 @@ public class MediaPortalApp : D3DApp, IRender
     Utils.FileExistsInCache(Thumbs.Videos + "\\dummy.png");
     Utils.FileExistsInCache(Thumbs.MusicFolder + "\\dummy.png");
 
-    // Loading Fonts
-    Log.Info("Main: Loading Fonts");
-    UpdateSplashScreenMessage(GUILocalizeStrings.Get(68));
-    GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
-    GUIFontManager.InitializeDeviceObjects();
-
     // Loading Skin
     UpdateSplashScreenMessage(String.Format(GUILocalizeStrings.Get(69), GUIGraphicsContext.SkinName + " - " + GUIThemeManager.CurrentTheme));
     GUIControlFactory.LoadReferences(GUIGraphicsContext.GetThemedSkinFile(@"\references.xml"));
     if (Windowed)
     {
-      Log.Debug("Main: Resizing form to Skin Dimensions");
+      Log.Debug("Startup: Resizing form to Skin Dimensions");
       var borderWidth = Width - ClientSize.Width;
       var borderHeight = Height - ClientSize.Height;
       Size = new Size(GUIGraphicsContext.SkinSize.Width + borderWidth, GUIGraphicsContext.SkinSize.Height + borderHeight + SystemInformation.MenuHeight);
@@ -1908,15 +1903,20 @@ public class MediaPortalApp : D3DApp, IRender
     }
     else
     {
-      Log.Debug("Main: Resizing form to Screen Dimensions");
+      Log.Debug("Startup: Resizing form to Screen Dimensions");
       Size = new Size(GUIGraphicsContext.currentScreen.Bounds.Right, GUIGraphicsContext.currentScreen.Bounds.Bottom);
       ClientSize = Size;
     }
-    
     UpdatePresentParams(Windowed, true);
 
+    // Loading Fonts
+    Log.Info("Startup: Loading Fonts");
+    UpdateSplashScreenMessage(GUILocalizeStrings.Get(68));
+    GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
+    GUIFontManager.InitializeDeviceObjects();
+
     // Loading window plugins
-    Log.Info("Main: Loading Plugins");
+    Log.Info("Startup: Loading Plugins");
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(70));
     if (!string.IsNullOrEmpty(_safePluginsList))
     {
@@ -1927,7 +1927,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     // Initialize window manager
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(71));
-    Log.Info("Main: Initialize Window Manager...");
+    Log.Info("Startup: Initialize Window Manager...");
     GUIGraphicsContext.Load();
     GUIWindowManager.Initialize();
 
@@ -1936,26 +1936,13 @@ public class MediaPortalApp : D3DApp, IRender
       UseLongDateFormat = xmlreader.GetValueAsBool("home", "LongTimeFormat", false);
       _startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
       _useOnlyOneHome = xmlreader.GetValueAsBool("gui", "useonlyonehome", false);
-      bool autosize = xmlreader.GetValueAsBool("gui", "autosize", true);
-      if (autosize && Windowed)
-      {
-        if (GUIGraphicsContext.IsDirectX9ExUsed())
-        {
-          UpdatePresentParams(Windowed, true);
-          OnDeviceReset(null, null);
-        }
-      }
-      else
-      {
-        GUIGraphicsContext.Load();
-      }
     }
 
-    Log.Info("Main: Starting Window Manager");
+    Log.Info("Startup: Starting Window Manager");
     GUIWindowManager.PreInit();
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
 
-    Log.Info("Main: Activating Window Manager");
+    Log.Info("Startup: Activating Window Manager");
     if ((_startWithBasicHome) && (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml"))))
     {
       GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
@@ -2846,7 +2833,7 @@ public class MediaPortalApp : D3DApp, IRender
     catch (Exception ex)
     {
       Log.Error(ex);
-      Log.Error("  exception: {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+      Log.Error("Exception: {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
 #if !DEBUG
       throw new Exception("exception occurred", ex);
 #endif

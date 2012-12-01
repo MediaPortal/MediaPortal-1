@@ -66,6 +66,7 @@ namespace MediaPortal.Configuration
       RemoveEntry(settings, "pluginswindows", "WindowPlugins.VideoEditor.GUIVideoEditor");
       RemoveEntry(settings, "pluginswindows", "MediaPortal.GUI.RADIOLASTFM.GUIRadioLastFM");
       RemoveEntry(settings, "musicmisc", "playnowjumpto");
+      RemoveEntry(settings, "gui", "autosize");
 
       // Moved entries
       MoveEntry(settings, "general", "gui", "mousesupport");
@@ -73,7 +74,6 @@ namespace MediaPortal.Configuration
       MoveEntry(settings, "general", "gui", "allowRememberLastFocusedItem");
       MoveEntry(settings, "general", "gui", "myprefix");
       MoveEntry(settings, "general", "gui", "startbasichome");
-      MoveEntry(settings, "general", "gui", "autosize");
       MoveEntry(settings, "general", "gui", "enableguisounds");
       MoveEntry(settings, "general", "gui", "ScrollSpeedRight");
       MoveEntry(settings, "general", "gui", "ScrollSpeedDown");

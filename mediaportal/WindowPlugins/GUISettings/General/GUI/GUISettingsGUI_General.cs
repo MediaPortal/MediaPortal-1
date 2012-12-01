@@ -34,7 +34,6 @@ namespace WindowPlugins.GUISettings
   public class GUISettingsGUIGeneral : GUIInternalWindow
   {
     [SkinControl(30)] protected GUICheckButton cmAllowRememberLastFocusedItem = null;
-    [SkinControl(31)] protected GUICheckButton cmAutosize = null;
     [SkinControl(32)] protected GUICheckButton cmHideextensions = null;
     [SkinControl(33)] protected GUICheckButton cmFileexistscache = null;
     [SkinControl(34)] protected GUICheckButton cmEnableguisounds = null;
@@ -88,7 +87,6 @@ namespace WindowPlugins.GUISettings
       {
         // GUI settings
         cmAllowRememberLastFocusedItem.Selected = xmlreader.GetValueAsBool("gui", "allowRememberLastFocusedItem", true);
-        cmAutosize.Selected = xmlreader.GetValueAsBool("gui", "autosize", true);
         cmHideextensions.Selected = xmlreader.GetValueAsBool("gui", "hideextensions", true);
         cmFileexistscache.Selected = xmlreader.GetValueAsBool("gui", "fileexistscache", false);
         cmEnableguisounds.Selected = xmlreader.GetValueAsBool("gui", "enableguisounds", true);
@@ -109,7 +107,6 @@ namespace WindowPlugins.GUISettings
       using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("gui", "allowRememberLastFocusedItem", cmAllowRememberLastFocusedItem.Selected);
-        xmlwriter.SetValueAsBool("gui", "autosize", cmAutosize.Selected);
         xmlwriter.SetValueAsBool("gui", "hideextensions", cmHideextensions.Selected);
         xmlwriter.SetValueAsBool("gui", "fileexistscache", cmFileexistscache.Selected);
         xmlwriter.SetValueAsBool("gui", "enableguisounds", cmEnableguisounds.Selected);
@@ -124,10 +121,6 @@ namespace WindowPlugins.GUISettings
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       if (control == cmAllowRememberLastFocusedItem)
-      {
-        SettingsChanged(true);
-      }
-      if (control == cmAutosize)
       {
         SettingsChanged(true);
       }

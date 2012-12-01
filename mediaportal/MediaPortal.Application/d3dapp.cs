@@ -457,14 +457,10 @@ namespace MediaPortal
         MinimizeBox = true;
         Menu = _menuStripMain;
         var newBounds = new Rectangle(_oldBounds.X, _oldBounds.Y, _oldBounds.Width, _oldBounds.Height);
-        using (Settings xmlreader = new MPSettings())
+        if (Windowed)
         {
-          var autosize = xmlreader.GetValueAsBool("gui", "autosize", true);
-          if (autosize && Windowed)
-          {
-            newBounds.Height = GUIGraphicsContext.SkinSize.Height;
-            newBounds.Width = GUIGraphicsContext.SkinSize.Width;
-          }
+          newBounds.Height = GUIGraphicsContext.SkinSize.Height;
+          newBounds.Width = GUIGraphicsContext.SkinSize.Width;
         }
         Bounds = newBounds;
         Update();
@@ -1563,6 +1559,7 @@ namespace MediaPortal
         Size size;
         if (_miniTvMode)
         {
+          // TODO: match resized window
           size = new Size(720/2, 576/2);
           _alwaysOnTop = true;
           FormBorderStyle = FormBorderStyle.SizableToolWindow;

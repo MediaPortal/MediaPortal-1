@@ -112,8 +112,6 @@ namespace MediaPortal.Configuration.Sections
                                           {
                                             new string[] {"gui", "allowRememberLastFocusedItem", "true"},
                                             // 0 Allow remember last focused item on supported window/skin
-                                            new string[] {"gui", "autosize", "true"},
-                                            // 1 Autosize window mode to skin dimensions
                                             new string[] {"gui", "hideextensions", "true"},
                                             // 2 Hide file extensions like .mp3, .avi, .mpg,...
                                             new string[] {"gui", "fileexistscache", "false"},
