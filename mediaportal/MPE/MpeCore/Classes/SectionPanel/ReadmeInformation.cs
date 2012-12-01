@@ -86,7 +86,6 @@ namespace MpeCore.Classes.SectionPanel
 
     private void SetValues()
     {
-      BaseHorizontalLayout_Shown(null, null);
       if (File.Exists(Params[CONST_TEXT_FILE].Value))
       {
         if (Path.GetExtension(Params[CONST_TEXT_FILE].Value).CompareTo(".rtf") == 0)

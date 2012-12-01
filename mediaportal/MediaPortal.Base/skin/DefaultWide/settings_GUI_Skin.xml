@@ -2,10 +2,9 @@
 <window>
   <id>705</id>
   <defaultcontrol>10</defaultcontrol>
-  <allowoverlay>yes</allowoverlay>
+  <allowoverlay>no</allowoverlay>
   <controls>
     <import>common.settings.xml</import>
-    <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
       <description>buttons</description>
@@ -19,7 +18,7 @@
         <description>Skin</description>
         <type>button</type>
         <id>10</id>
-        <width>450</width>
+        <width>350</width>
         <label>166</label>
         <onup>17</onup>
       </control>
@@ -27,9 +26,7 @@
         <description>theme</description>
         <type>menubutton</type>
         <id>15</id>
-        <!--posX>99</posX>
-        <posY>233</posY-->
-				<width>450</width>
+        <width>350</width>
         <mode>dialoglist</mode>
         <dialogTitle>90</dialogTitle>
         <valueTextInButton>yes</valueTextInButton>
@@ -45,15 +42,48 @@
         <description>Language</description>
         <type>button</type>
         <id>11</id>
-        <width>450</width>
+        <width>350</width>
         <label>248</label>
       </control>
       <control>
         <description>Prefix My</description>
         <type>checkbutton</type>
         <id>14</id>
-        <width>450</width>
+        <width>350</width>
         <label>300137</label>
+        <ondown>30</ondown>
+      </control>
+      <control>
+        <description>Fanart BasicHome</description>
+        <type>checkbutton</type>
+        <id>30</id>
+        <width>350</width>
+        <label>Video Fanart on BasicHome</label>
+        <selected>#(skin.hassetting('#skin.fanart.basichome'))</selected>
+        <onclick>#(skin.togglesetting('#skin.fanart.basichome'))</onclick>
+        <onup>14</onup>
+        <ondown>31</ondown>
+      </control>
+      <control>
+        <description>No LatestMedia</description>
+        <type>checkbutton</type>
+        <id>31</id>
+        <width>350</width>
+        <label>No Latest Media Info</label>
+        <selected>#(skin.hassetting('#skin.no.latestmedia'))</selected>
+        <onclick>#(skin.togglesetting('#skin.no.latestmedia'))</onclick>
+        <onup>30</onup>
+        <ondown>32</ondown>
+      </control>
+      <control>
+        <description>Standard Background</description>
+        <type>checkbutton</type>
+        <id>32</id>
+        <width>350</width>
+        <label>Standard Background</label>
+        <selected>#(skin.hassetting('#skin.no.category.fanart'))</selected>
+        <onclick>#(skin.togglesetting('#skin.no.category.fanart'))</onclick>
+        <onup>31</onup>
         <ondown>10</ondown>
       </control>
     </control>

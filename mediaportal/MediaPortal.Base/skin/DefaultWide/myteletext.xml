@@ -2,7 +2,7 @@
 <window>
   <id>7700</id>
   <defaultcontrol>502</defaultcontrol>
-  <allowoverlay>no</allowoverlay>
+  <allowoverlay>yes</allowoverlay>
   <define>#header.label:Teletext</define>
   <define>#header.hover:hover_my tv.png</define>
   <controls>
@@ -16,13 +16,23 @@
     <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>30</posY>
+      <width>1280</width>
+      <height>720</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
       <description>tele-text rendering image</description>
       <type>image</type>
       <id>500</id>
       <posX>435</posX>
-      <posY>121</posY>
-      <width>760</width>
-      <height>570</height>
+      <posY>170</posY>
+      <width>660</width>
+      <height>440</height>
       <texture>black.png</texture>
     </control>
     <control>
@@ -30,9 +40,9 @@
       <type>image</type>
       <id>501</id>
       <posX>435</posX>
-      <posY>121</posY>
-      <width>760</width>
-      <height>570</height>
+      <posY>170</posY>
+      <width>660</width>
+      <height>440</height>
       <texture>black.png</texture>
     </control>
     <control>
@@ -57,8 +67,8 @@
     </control>
     <control>
       <type>group</type>
-      <posX>71</posX>
-      <posY>121</posY>
+      <posX>50</posX>
+      <posY>170</posY>
       <layout>StackLayout</layout>
       <description>group element</description>
       <control>
@@ -169,28 +179,6 @@
         <onright>507</onright>
       </control>
     </control>
-    <control>
-      <description>video rectangle</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>78</posX>
-      <posY>553</posY>
-      <width>219</width>
-      <height>124</height>
-      <texture>Picture_cover.png</texture>
-    </control>
-    <control>
-      <description>video preview window</description>
-      <type>videowindow</type>
-      <id>508</id>
-      <posX>86</posX>
-      <posY>558</posY>
-      <width>203</width>
-      <height>115</height>
-      <keepaspectratio>yes</keepaspectratio>
-      <centered>yes</centered>
-      <action>18</action>
-      <textureFocus>tv_green_border.png</textureFocus>
-    </control>
+    
   </controls>
 </window>

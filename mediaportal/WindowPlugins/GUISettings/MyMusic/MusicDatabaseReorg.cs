@@ -214,6 +214,9 @@ namespace MediaPortal.GUI.Settings
       {
         pDlgSelect.SetHeading(szText);
         pDlgSelect.Reset();
+        pDlgSelect.EnableButton(true);
+        pDlgSelect.SetButtonLabel(510); //Cancel
+
         foreach (AlbumInfoCache album in vecAlbums)
         {
           pDlgSelect.Add(album.Album + " - " + album.Artist);
@@ -281,6 +284,9 @@ namespace MediaPortal.GUI.Settings
       {
         pDlgSelect.SetHeading(szText);
         pDlgSelect.Reset();
+        pDlgSelect.EnableButton(true);
+        pDlgSelect.SetButtonLabel(510); //Cancel
+
         foreach (AlbumInfoCache album in vecAlbums)
         {
           pDlgSelect.Add(album.Album + " - " + album.Artist);
@@ -297,13 +303,15 @@ namespace MediaPortal.GUI.Settings
 
         AlbumInfoCache albumDel = (AlbumInfoCache)vecAlbums[iSelectedAlbum];
         //	Delete album
-        strSQL = String.Format("delete from tracks where strAlbum='{0}' and strAlbumArtist like '%{1}'", albumDel.Album,
-                               albumDel.Artist);
+        var strAlbum = DatabaseUtility.RemoveInvalidChars(albumDel.Album);
+        var strAlbumArtist = DatabaseUtility.RemoveInvalidChars(albumDel.Artist);
+
+        strSQL = String.Format("delete from tracks where strAlbum='{0}' and strAlbumArtist = '{1} '", strAlbum,strAlbumArtist);
+        Log.Info("Removing album from database: {0} - {1}", strAlbumArtist, strAlbum);
         MusicDatabase.DirectExecute(strSQL);
 
         //	Delete album info
-        strSQL = String.Format("delete from albuminfo where strAlbum='{0}' and strAlbumArtist like '%{1}'",
-                               albumDel.Album, albumDel.Artist);
+        strSQL = String.Format("delete from albuminfo where strAlbum='{0}' and strAlbumArtist = '{1} '", strAlbum, strAlbumArtist);
         MusicDatabase.DirectExecute(strSQL);
       }
     }

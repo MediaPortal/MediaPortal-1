@@ -101,6 +101,7 @@
     <Compile Include="Radio\RadioSetupForm.Designer.cs">
       <DependentUpon>RadioSetupForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="RecordedBase.cs" />
     <Compile Include="Teletext\Hamming.cs" />
     <Compile Include="Teletext\TeletextPageRenderer.cs" />
     <Compile Include="Teletext\TvFullscreenTeletext.cs" />

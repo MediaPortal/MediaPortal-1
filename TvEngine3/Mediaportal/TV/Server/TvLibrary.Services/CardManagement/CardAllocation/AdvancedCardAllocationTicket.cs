@@ -84,11 +84,9 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
                                                    cards[cardDetail.Card.IdCard],
                                                    tuningDetail);
           if (checkTransponder)
-          {
             cardetails.Add(cardDetail);
           }          
         }
-      }
 
       cardetails.SortStable();
 
@@ -111,7 +109,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
       return ticket;
     }
 
-    #region overrides   
+    #region overrides
 
     protected override bool CanCardTuneChannel(ITvCardHandler cardHandler, Channel dbChannel, IChannel tuningDetail)
     {
@@ -176,7 +174,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 
       if (ticket != null)
       {
-        bool hasHighestPriority = ticket.HasHighestPriority;        
+        bool hasHighestPriority = ticket.HasHighestPriority;
         if (hasHighestPriority)
         {
           isOwnerOfCard = true;

@@ -8,8 +8,8 @@
 			<id>0</id>
 			<width>1280</width>
 			<height>720</height>
-			<texture>black.png</texture>
-			<colordiffuse>60ffffff</colordiffuse>
+			<texture>white.png</texture>
+      <colordiffuse>201e90ff</colordiffuse>
 		</control>
 		<control>
 			<type>image</type>
@@ -56,8 +56,8 @@
 			<posY>105</posY>
 			<width>69</width>
 			<height>59</height>
-			<textureFocus>dialogue_shutdown_focus.png</textureFocus>
-			<textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
+			<textureFocus>top_exit_enabled.png</textureFocus>
+			<textureNoFocus>top_exit_disabled.png</textureNoFocus>
 			<label>-</label>
 			<onleft>3</onleft>
 			<onright>3</onright>

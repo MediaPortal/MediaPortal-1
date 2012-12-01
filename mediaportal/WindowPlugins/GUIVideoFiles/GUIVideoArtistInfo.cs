@@ -565,8 +565,7 @@ namespace MediaPortal.GUI.Video
           return;
         }
         dlg.SetHeading(GUILocalizeStrings.Get(1020));
-        dlg.SetLine(1, "Refreshing is already active.");
-        dlg.SetLine(2, "Please wait to finish it first.");
+        dlg.SetLine(1, GUILocalizeStrings.Get(1311)); // Refresh is already active.
         dlg.DoModal(GetID);
         return;
       }

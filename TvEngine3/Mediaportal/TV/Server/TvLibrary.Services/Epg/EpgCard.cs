@@ -405,7 +405,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       {
         if (ServiceManager.Instance.InternalControllerService.Type(card.IdCard) == CardType.Atsc)
         {
-          if (IsCardIdle(card.IdCard) == false)
+          if (IsCardIdle(Card.IdCard) == false)
           {
             this.LogInfo("Epg: card:{0} atsc card is not idle", card.IdCard);
             return false; //card is busy
@@ -422,7 +422,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       {
         if (ServiceManager.Instance.InternalControllerService.Type(card.IdCard) == CardType.DvbC)
         {
-          if (IsCardIdle(card.IdCard) == false)
+          if (IsCardIdle(Card.IdCard) == false)
           {
             this.LogInfo("Epg: card:{0} dvbc card is not idle", card.IdCard);
             return false; //card is busy
@@ -439,7 +439,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       {
         if (ServiceManager.Instance.InternalControllerService.Type(card.IdCard) == CardType.DvbS)
         {
-          if (IsCardIdle(card.IdCard) == false)
+          if (IsCardIdle(Card.IdCard) == false)
           {
             this.LogInfo("Epg: card:{0} dvbs card is not idle", card.IdCard);
             return false; //card is busy
@@ -456,7 +456,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       {
         if (ServiceManager.Instance.InternalControllerService.Type(card.IdCard) == CardType.DvbT)
         {
-          if (IsCardIdle(card.IdCard) == false)
+          if (IsCardIdle(Card.IdCard) == false)
           {
             this.LogInfo("Epg: card:{0} dvbt card is not idle", card.IdCard);
             return false; //card is busy
@@ -474,7 +474,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       {
         if (ServiceManager.Instance.InternalControllerService.Type(card.IdCard) == CardType.DvbIP)
         {
-          if (IsCardIdle(card.IdCard) == false)
+          if (IsCardIdle(Card.IdCard) == false)
           {
             this.LogInfo("Epg: card:{0} dvbip card is not idle", card.IdCard);
             return false; //card is busy
@@ -495,7 +495,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
     {
       try
       {
-        _user.CardId = card.IdCard;
+        _user.CardId = Card.IdCard;
         ITvCardHandler cardHandler;
         if (ServiceManager.Instance.InternalControllerService.CardCollection.TryGetValue(card.IdCard, out cardHandler))
         {
@@ -520,7 +520,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
                   this.LogInfo("Epg: card:{0} could not start dvbt grabbing", card.IdCard);
                   return false;
                 }
-                _user.CardId = card.IdCard;
+                _user.CardId = Card.IdCard;
                 return true;
               }
             }

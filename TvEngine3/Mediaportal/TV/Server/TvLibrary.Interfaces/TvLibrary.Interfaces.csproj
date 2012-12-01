@@ -95,6 +95,7 @@
     <Compile Include="Interfaces\Device\IPowerDevice.cs" />
     <Compile Include="Interfaces\ICiMenuEventCallback.cs" />
     <Compile Include="DvbTextConverter.cs" />
+    <Compile Include="Epg\MpGenre.cs" />
     <Compile Include="Implementations\Analog\Configuration.cs" />
     <Compile Include="Implementations\Analog\GraphComponents\Capture.cs" />
     <Compile Include="Implementations\Analog\GraphComponents\Crossbar.cs" />

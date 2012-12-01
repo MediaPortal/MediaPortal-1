@@ -7,33 +7,32 @@
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
-    <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
       <description>background</description>
       <type>image</type>
       <id>1</id>
-      <posX>180</posX>
-      <posY>96</posY>
-      <height>376</height>
-      <width>438</width>
+      <posX>240</posX>
+      <posY>120</posY>
+      <height>470</height>
+      <width>585</width>
       <texture>backslide2.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <control>
       <description>buttons</description>
       <type>group</type>
       <animation effect="slide" time="70" start="800,0">WindowOpen</animation>
       <animation effect="slide" time="70" end="800,0">WindowClose</animation>
-      <posX>196</posX>
-      <posY>128</posY>
+      <posX>262</posX>
+      <posY>160</posY>
       <layout>StackLayout(0, Horizontal, True)</layout>
       <control>
         <description>Mark watched files</description>
         <type>checkbutton</type>
         <id>2</id>
         <label>300204</label>
-        <width>393</width>
+        <width>525</width>
         <onup>6</onup>
         <onright>2</onright>
         <ondown>3</ondown>
@@ -43,7 +42,7 @@
         <type>checkbutton</type>
         <id>3</id>
         <label>300205</label>
-        <width>393</width>
+        <width>525</width>
         <onup>2</onup>
         <ondown>4</ondown>
         <onright>3</onright>
@@ -53,7 +52,7 @@
         <type>checkbutton</type>
         <id>4</id>
         <label>300206</label>
-        <width>393</width>
+        <width>525</width>
         <onup>3</onup>
         <ondown>5</ondown>
         <onright>4</onright>
@@ -63,16 +62,16 @@
       <description>Watched percentage Label</description>
       <type>label</type>
       <id>101</id>
-      <posX>196</posX>
-      <posY>240</posY>
+      <posX>262</posX>
+      <posY>300</posY>
       <label>300207</label>
     </control>
     <control>
       <description>Watched percentage</description>
       <type>spincontrol</type>
       <id>5</id>
-      <posX>545</posX>
-      <posY>244</posY>
+      <posX>727</posX>
+      <posY>305</posY>
       <onup>4</onup>
       <ondown>6</ondown>
       <align>right</align>
@@ -82,16 +81,16 @@
       <description>Audio video delay</description>
       <type>label</type>
       <id>102</id>
-      <posX>196</posX>
-      <posY>272</posY>
+      <posX>262</posX>
+      <posY>340</posY>
       <label>300208</label>
     </control>
     <control>
       <description>Audio video delay</description>
       <type>spincontrol</type>
       <id>6</id>
-      <posX>545</posX>
-      <posY>276</posY>
+      <posX>727</posX>
+      <posY>345</posY>
       <onleft>5</onleft>
       <onright>10</onright>
       <onup>5</onup>

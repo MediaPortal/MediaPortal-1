@@ -9,8 +9,9 @@
       <id>0</id>
       <width>1280</width>
       <height>720</height>
-      <texture>black.png</texture>
-      <colordiffuse>80ffffff</colordiffuse>
+      <texture>white.png</texture>
+      <colordiffuse>201e90ff</colordiffuse>
+      <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
     </control>
     <control>
       <type>image</type>
@@ -18,8 +19,21 @@
       <posX>256</posX>
       <posY>80</posY>
       <width>820</width>
-      <height>457</height>
+      <height>500</height>
       <texture>context_background.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>256</posX>
+      <posY>80</posY>
+      <width>820</width>
+      <height>500</height>
+      <texture>context_background.png</texture>
+      <colordiffuse>bbffffff</colordiffuse>
+      <visible>window.isvisible(602)|window.isvisible(2005)</visible>
     </control>
     <control>
       <description>Heading text label</description>
@@ -49,12 +63,12 @@
       <description>Exit button</description>
       <type>button</type>
       <id>2</id>
-      <posX>985</posX>
-      <posY>100</posY>
-      <width>50</width>
-      <height>50</height>
-      <textureFocus>dialogue_shutdown_focus.png</textureFocus>
-      <textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
+      <posX>1015</posX>
+      <posY>105</posY>
+      <width>30</width>
+      <height>30</height>
+      <textureFocus>top_exit_enabled.png</textureFocus>
+      <textureNoFocus>top_exit_disabled.png</textureNoFocus>
       <label>-</label>
       <onleft>3</onleft>
       <onright>3</onright>
@@ -65,24 +79,16 @@
       <description>options listcontrol</description>
       <type>listcontrol</type>
       <id>3</id>
-      <posX>284</posX>
-      <posY>167</posY>
-      <width>750</width>
-      <height>325</height>
+      <posX>320</posX>
+      <posY>150</posY>
+      <width>680</width>
+      <height>420</height>
       <onleft>2</onleft>
       <onright>2</onright>
-      <spinPosX>927</spinPosX>
-      <spinPosY>462</spinPosY>
-      <textXOff>88</textXOff>
-      <PinIconXOff>60</PinIconXOff>
-      <PinIconYOff>10</PinIconYOff>
-      <PinIconWidth>40</PinIconWidth>
-      <PinIconHeight>25</PinIconHeight>
-      <keepaspectratio>yes</keepaspectratio>
-      <itemHeight>34</itemHeight>
-      <itemWidth>53</itemWidth>
-      <IconXOff>17</IconXOff>
-      <IconYOff>3</IconYOff>
+      <spinPosX>2927</spinPosX>
+      <spinPosY>510</spinPosY>
+      
+      
     </control>
   </controls>
 </window>

@@ -157,6 +157,13 @@
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="HelpSystem.cs" />
     <Compile Include="InputBox.cs" />
+    <Compile Include="Sections\EpgGenreMap.cs" />
+    <Compile Include="Sections\EpgGenreMap.Designer.cs">
+      <DependentUpon>EpgGenreMap.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\EpgGrabber.Designer.cs">
+      <DependentUpon>EpgGrabber.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\UserPriorities.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -276,6 +283,13 @@
       <SubType>Designer</SubType>
       <DependentUpon>CardDvbT.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sections\EpgGenreMap.resx">
+      <DependentUpon>EpgGenreMap.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\EpgGrabber.resx">
+      <DependentUpon>EpgGrabber.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\UserPriorities.resx">
       <DependentUpon>UserPriorities.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -283,10 +297,6 @@
     <EmbeddedResource Include="Sections\TestService.resx">
       <SubType>Designer</SubType>
       <DependentUpon>TestService.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\EpgGrabber.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>EpgGrabber.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\TvCards.resx">
       <SubType>Designer</SubType>
@@ -363,6 +373,7 @@
     <Compile Include="Sections\Plugins.Designer.cs">
       <DependentUpon>Plugins.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\RadioEpgGrabber.cs" />
     <Compile Include="Sections\ScanSettings.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -395,9 +406,6 @@
     </Compile>
     <Compile Include="Sections\EpgGrabber.cs">
       <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\EpgGrabber.Designer.cs">
-      <DependentUpon>EpgGrabber.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\TvCards.cs">
       <SubType>UserControl</SubType>
@@ -475,6 +483,10 @@
     <ProjectReference Include="..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TvLibrary.Utils\TvLibrary.Utils.csproj">
+      <Project>{954F9929-7FDA-4F59-88E3-FD2B9A7B6E6E}</Project>
+      <Name>TvLibrary.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\TVLibrary\TVLibrary.csproj">
       <Project>{59C2EBC8-0FEA-4B2E-B5D1-476347332331}</Project>

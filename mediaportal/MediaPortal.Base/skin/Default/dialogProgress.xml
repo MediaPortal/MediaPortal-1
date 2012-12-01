@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>101</id>
@@ -7,40 +7,42 @@
   <controls>
     <import>common.dialog.xml</import>
     <control>
+      <description>background</description>
       <type>image</type>
       <id>100</id>
-      <posX>202</posX>
-      <posY>340</posY>
-      <width>304</width>
-      <height>21</height>
+      <posX>270</posX>
+      <posY>433</posY>
+      <width>412</width>
+      <height>19</height>
       <texture>osd_progress_background.png</texture>
     </control>
     <control>
-      <description>progress bar</description>
+      <description>Progress Bar</description>
       <type>progress</type>
       <id>20</id>
-      <posX>202</posX>
-      <posY>343</posY>
-      <width>304</width>
-      <offset>0</offset>
-      <height>16</height>
-      <innerheight>20</innerheight>
-      <texturebg>-</texturebg>
-      <lefttexture>-</lefttexture>
-      <midtexture>osd_progress_mid.png</midtexture>
-      <righttexture>-</righttexture>
+      <posX>257</posX>
+      <posY>435</posY>
+      <width>420</width>
+      <height>17</height>
       <label>#percentage</label>
+      <texturebg>-</texturebg>
+      <onlymidtexture>no</onlymidtexture>
+      <midwidth>591</midwidth>
+      <midheight>17</midheight>
+      <midoffsetX>0</midoffsetX>
+      <midoffsetY>0</midoffsetY>
+      <midtexture>osd_progress_mid.png</midtexture>
     </control>
     <control>
       <description>Cancel button</description>
       <type>button</type>
       <id>10</id>
-      <posX>499</posX>
-      <posY>211</posY>
-      <width>28</width>
-      <height>40</height>
-      <textureFocus>dialogue_shutdown_focus.png</textureFocus>
-      <textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
+      <posX>686</posX>
+      <posY>274</posY>
+      <width>22</width>
+      <height>22</height>
+      <textureFocus>top_exit_enabled.png</textureFocus>
+      <textureNoFocus>top_exit_disabled.png</textureNoFocus>
       <label>-</label>
       <onleft>10</onleft>
       <onright>10</onright>

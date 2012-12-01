@@ -10,30 +10,25 @@
       <type>image</type>
       <id>1</id>
       <texture>background.png</texture>
-      <width>720</width>
-      <height>576</height>
+      <width>960</width>
+      <height>720</height>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
-    <!--control>
-      <description>status</description>
-      <type>label</type>
-      <id>2</id>
-      <posX>444</posX>
-      <posY>80</posY>
-      <label>6035</label>
-      <font>font16</font>
-      <align>right</align>
-      <textcolor>ffffffff</textcolor>
-    </control-->
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>30</posY>
+      <width>960</width>
+      <height>720</height>
+      <texture>general_overlay.png</texture>
+    </control>
     <control>
       <description>listcontrol</description>
       <type>listcontrol</type>
       <id>50</id>
-      <posX>254</posX>
-      <posY>96</posY>
-      <width>441</width>
-      <height>388</height>
       <onleft>7</onleft>
       <onright>7</onright>
       <onup>7</onup>
@@ -45,8 +40,8 @@
       <description>group element</description>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
-      <posX>39</posX>
-      <posY>120</posY>
+      <posX>37</posX>
+      <posY>170</posY>
       <control>
         <description>Search Title</description>
         <type>button</type>

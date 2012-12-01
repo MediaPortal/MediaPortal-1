@@ -1048,7 +1048,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
           var cardAllocationTicket = new AdvancedCardAllocationTicket(ticketsList);
           ICollection<CardDetail> cards = cardAllocationTicket.UpdateFreeCardsForChannelBasedOnTicket(
                                                                               cardsForReservation,
-                                                                              user, out tvResult);
+                                                                              user, out tvResult);          
+          CardReservationHelper.CancelCardReservationsExceedingMaxConcurrentTickets(tickets, cards);
+          CardReservationHelper.CancelCardReservationsNotFoundInFreeCards(cardsForReservation, tickets, cards);
 
           CardReservationHelper.CancelCardReservationsExceedingMaxConcurrentTickets(tickets, cards);
           CardReservationHelper.CancelCardReservationsNotFoundInFreeCards(cardsForReservation, tickets, cards);
@@ -1057,7 +1059,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
           UpdateCardsIterated(cardsIterated, cards); //keep track of what cards have been iterated here.           
 
           if (cards != null && cards.Count > 0)
-          {            
+          {
             cardIterations += cards.Count;
             recSucceded = IterateTicketsUntilRecording(recDetail, user, cards, cardRes, maxCards, tickets, cardsIterated);
             moreCardsAvailable = _maxRecordFreeCardsToTry == 0 || _maxRecordFreeCardsToTry > cardIterations;
@@ -1193,7 +1195,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
     private bool FindFreeCardAndStartRecord(RecordingDetail recDetail, IUser user, ICollection<CardDetail> cards, int maxCards, IDictionary<CardDetail, ICardTuneReservationTicket> tickets, CardReservationRec cardResImpl)
     {
       bool result = false;
-      //keep tuning each card until we are succesful                
+      //keep tuning each card until we are succesful
       for (int i = 0; i < maxCards; i++)
       {
         CardDetail cardInfo = null;

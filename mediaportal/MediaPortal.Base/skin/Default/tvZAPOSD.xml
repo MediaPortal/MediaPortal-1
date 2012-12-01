@@ -6,34 +6,53 @@
   <allowoverlay>no</allowoverlay>
   <controls>
     <control>
-      <description>background botton</description>
-      <id>1</id>
+      <description>background</description>
       <type>image</type>
-      <posX>0</posX>
-      <posY>465</posY>
-      <height>136</height>
-      <width>731</width>
-      <texture>blue.png</texture>
-      <colordiffuse>eeffffff</colordiffuse>
+      <id>1</id>
+      <posX>60</posX>
+      <posY>516</posY>
+      <height>189</height>
+      <width>843</width>
+      <texture>osd_mask.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+    </control>
+    <control>
+      <description>Time BG</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>787</posX>
+      <posY>521</posY>
+      <width>108</width>
+      <height>35</height>
+      <texture>button_focus.png</texture>
+      <colordiffuse>90ffffff</colordiffuse>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Time Info</description>
+      <type>label</type>
+      <id>100</id>
+      <posX>1589</posX>
+      <posY>593</posY>
     </control>
     <control>
       <description>Time Info</description>
       <type>label</type>
       <id>110</id>
-      <posX>703</posX>
-      <posY>479</posY>
+      <posX>884</posX>
+      <posY>522</posY>
       <label>#time</label>
       <align>right</align>
-      <font>font14</font>
+      <font>font16</font>
       <textcolor>ivory</textcolor>
     </control>
     <control>
       <type>image</type>
       <id>10</id>
-      <posX>22</posX>
-      <posY>480</posY>
-      <width>56</width>
-      <height>80</height>
+      <posX>78</posX>
+      <posY>531</posY>
+      <width>69</width>
+      <height>92</height>
       <texture>#TV.View.thumb</texture>
       <centered>yes</centered>
       <keepaspectratio>yes</keepaspectratio>
@@ -42,37 +61,37 @@
       <description>Current channel</description>
       <type>label</type>
       <id>35</id>
-      <posX>527</posX>
-      <posY>508</posY>
-      <width>185</width>
+      <posX>164</posX>
+      <posY>528</posY>
+      <width>554</width>
       <label>-</label>
       <align>left</align>
-      <font>font14</font>
+      <font>font16</font>
       <textcolor>ivory</textcolor>
     </control>
     <control>
       <type>image</type>
       <description>progressbar bg</description>
       <id>1</id>
-      <posX>101</posX>
-      <posY>512</posY>
-      <width>405</width>
-      <height>21</height>
+      <posX>164</posX>
+      <posY>604</posY>
+      <width>591</width>
+      <height>19</height>
       <texture>osd_progress_background.png</texture>
     </control>
     <control>
       <description>progress bar</description>
       <type>progress</type>
       <id>20</id>
-      <posX>101</posX>
-      <posY>515</posY>
-      <width>405</width>
+      <posX>165</posX>
+      <posY>605</posY>
+      <width>591</width>
       <offset>0</offset>
-      <height>16</height>
-      <innerheight>20</innerheight>
-      <lefttexture>-</lefttexture>
-      <midtexture>osd_progress_mid_green.png</midtexture>
-      <righttexture>-</righttexture>
+      <height>17</height>
+      <innerheight>17</innerheight>
+      <lefttexture>osd_progress_left.png</lefttexture>
+      <midtexture>osd_progress_mid.png</midtexture>
+      <righttexture>osd_progress_right.png</righttexture>
       <label>#TV.View.Percentage</label>
       <visible>yes</visible>
     </control>
@@ -80,35 +99,35 @@
       <description>Start Time Info</description>
       <type>label</type>
       <id>101</id>
-      <posX>101</posX>
-      <posY>480</posY>
+      <posX>164</posX>
+      <posY>565</posY>
       <label>#TV.View.start</label>
       <align>left</align>
-      <font>font14</font>
+      <font>font16</font>
       <textcolor>ivory</textcolor>
     </control>
     <control>
       <description>On tv NOW</description>
       <id>36</id>
       <type>textbox</type>
-      <posX>180</posX>
-      <posY>479</posY>
-      <width>281</width>
-      <height>24</height>
+      <posX>246</posX>
+      <posY>563</posY>
+      <width>539</width>
+      <height>29</height>
       <label>#TV.View.title</label>
-      <font>font14</font>
+      <font>font16</font>
       <textcolor>ivory</textcolor>
     </control>
     <control>
       <description>End Time Info</description>
       <type>label</type>
       <id>102</id>
-      <posX>101</posX>
-      <posY>536</posY>
+      <posX>164</posX>
+      <posY>642</posY>
       <label>#TV.View.Stop</label>
       <align>left</align>
       <textcolor>ivory</textcolor>
-      <font>font14</font>
+      <font>font16</font>
       <shadowAngle>0</shadowAngle>
       <shadowDistance>0</shadowDistance>
       <shadowColor />
@@ -117,12 +136,12 @@
       <description>On tv NEXT</description>
       <id>37</id>
       <type>textbox</type>
-      <posX>180</posX>
-      <posY>534</posY>
-      <height>24</height>
-      <width>281</width>
+      <posX>246</posX>
+      <posY>640</posY>
+      <height>29</height>
+      <width>741</width>
       <align>left</align>
-      <font>font14</font>
+      <font>font16</font>
       <textcolor>ivory</textcolor>
       <shadowAngle>0</shadowAngle>
       <shadowDistance>0</shadowDistance>
@@ -132,33 +151,24 @@
       <description>rec logo</description>
       <type>image</type>
       <id>39</id>
-      <posX>506</posX>
-      <posY>510</posY>
-      <width>28</width>
-      <height>40</height>
-      <texture>tv_is_recording.png</texture>
-      <animation effect="zoom" start="100,100" end="110,110" time="70" condition="true" pulse="true">conditional</animation>
-    </control>
-    <control>
-      <description>divider</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>517</posX>
-      <posY>480</posY>
-      <height>88</height>
-      <texture>slider_vertical.png</texture>
-      <colordiffuse>90ffffff</colordiffuse>
+      <posX>839</posX>
+      <posY>568</posY>
+      <width>36</width>
+      <height>49</height>
+      <texture>recording.png</texture>
+      <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
     </control>
     <control>
       <description>Zap to channel no</description>
       <type>label</type>
       <id>38</id>
-      <posX>28</posX>
-      <posY>24</posY>
+      <posX>36</posX>
+      <posY>29</posY>
       <label>-</label>
       <align>left</align>
-      <font>font14</font>
+      <font>font16</font>
       <textcolor>lime</textcolor>
+      <visible>no</visible>
       <animation effect="zoom" start="100,100" end="160,160" time="10">visiblechange</animation>
     </control>
   </controls>

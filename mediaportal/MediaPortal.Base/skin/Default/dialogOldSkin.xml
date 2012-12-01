@@ -8,15 +8,15 @@
     <control>
       <id>0</id>
       <type>image</type>
-      <width>720</width>
-      <height>576</height>
+      <width>960</width>
+      <height>720</height>
       <texture>background.png</texture>
     </control>
     <control>
       <type>label</type>
       <id>0</id>
-      <posX>33</posX>
-      <posY>21</posY>
+      <posX>45</posX>
+      <posY>27</posY>
       <label>1900</label>
       <font>font16</font>
       <align>left</align>
@@ -25,8 +25,8 @@
     <control>
       <id>0</id>
       <type>image</type>
-      <posX>288</posX>
-      <posY>185</posY>
+      <posX>384</posX>
+      <posY>232</posY>
       <colordiffuse>d0d0d0d0</colordiffuse>
       <texture>warning-icon.png</texture>
     </control>
@@ -34,10 +34,10 @@
       <id>0</id>
       <description>dialog line 1</description>
       <type>textbox</type>
-      <posX>95</posX>
-      <posY>96</posY>
-      <width>528</width>
-      <height>256</height>
+      <posX>127</posX>
+      <posY>120</posY>
+      <width>705</width>
+      <height>320</height>
       <textcolor>ffffffff</textcolor>
       <font>font13</font>
       <align>center</align>
@@ -51,10 +51,10 @@
       <onright>11</onright>
       <onup>10</onup>
       <ondown>10</ondown>
-      <posX>56</posX>
-      <posY>480</posY>
-      <width>194</width>
-      <height>22</height>
+      <posX>75</posX>
+      <posY>600</posY>
+      <width>259</width>
+      <height>28</height>
       <label>1902</label>
     </control>
     <control>
@@ -65,16 +65,16 @@
       <onright>10</onright>
       <onup>11</onup>
       <ondown>11</ondown>
-      <posX>438</posX>
-      <posY>468</posY>
-      <width>225</width>
-      <height>37</height>
+      <posX>585</posX>
+      <posY>586</posY>
+      <width>300</width>
+      <height>47</height>
       <textureFocus>button_focus.png</textureFocus>
       <textureNoFocus>button_nofocus.png</textureNoFocus>
       <label>#(string.format(1903,#countdownseconds))</label>
       <textalign>CENTER</textalign>
-      <textXOff>31</textXOff>
-      <textYOff>6</textYOff>
+      <textXOff>42</textXOff>
+      <textYOff>8</textYOff>
     </control>
   </controls>
 </window>

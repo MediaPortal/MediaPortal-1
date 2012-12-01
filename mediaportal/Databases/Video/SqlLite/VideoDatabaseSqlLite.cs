@@ -1132,6 +1132,10 @@ namespace MediaPortal.Video.Database
           int movieId = VideoDatabase.GetMovieId(strFilenameAndPath);
           VideoDatabase.GetFilesForMovie(movieId, ref movieFiles);
           SetMovieDuration(movieId, MovieDuration(movieFiles));
+
+          //Update movie subtitle field
+          strSQL = String.Format("UPDATE movie SET hasSubtitles={0} WHERE idMovie={1} ", subtitles, movieId);
+          m_db.Execute(strSQL);
         }
         catch (ThreadAbortException)
         {
@@ -1191,6 +1195,7 @@ namespace MediaPortal.Video.Database
 
         mediaInfo.AudioCodec = DatabaseUtility.Get(results, 0, "audioCodec");
         mediaInfo.AudioChannels = DatabaseUtility.Get(results, 0, "audioChannels");
+        mediaInfo.Duration = GetVideoDuration(fileID);
       }
       catch (ThreadAbortException)
       {
@@ -2489,14 +2494,17 @@ namespace MediaPortal.Video.Database
         
         if (szGenres != Strings.Unknown)
         {
-          if (szGenres.IndexOf("/") >= 0)
+          if (szGenres.IndexOf("/") >= 0 || szGenres.IndexOf("|") >= 0)
           {
-            Tokens f = new Tokens(szGenres, new[] {'/'});
+            Tokens f = new Tokens(szGenres, new[] {'/', '|'});
             foreach (string strGenre in f)
             {
               strGenre.Trim();
-              int lGenreId = AddGenre(strGenre);
-              vecGenres.Add(lGenreId);
+              if (!string.IsNullOrEmpty(strGenre))
+              {
+                int lGenreId = AddGenre(strGenre);
+                vecGenres.Add(lGenreId);
+              }
             }
           }
           else
@@ -4984,6 +4992,7 @@ namespace MediaPortal.Video.Database
             XmlNode nodeDirector = nodeMovie.SelectSingleNode("director");
             XmlNode nodeDirectorImdb = nodeMovie.SelectSingleNode("directorimdb");
             XmlNode nodeImdbNumber = nodeMovie.SelectSingleNode("imdb");
+            XmlNode nodeIdImdbNumber = nodeMovie.SelectSingleNode("id");
             XmlNode nodeMpaa = nodeMovie.SelectSingleNode("mpaa");
             XmlNode nodeTop250 = nodeMovie.SelectSingleNode("top250");
             XmlNode nodeVotes = nodeMovie.SelectSingleNode("votes");
@@ -5153,6 +5162,23 @@ namespace MediaPortal.Video.Database
               }
             }
 
+            if (string.IsNullOrEmpty(genre))
+            {
+              genres = nodeMovie.SelectNodes("genres/genre");
+
+              foreach (XmlNode nodeGenre in genres)
+              {
+                if (nodeGenre.InnerText != null)
+                {
+                  if (genre.Length > 0)
+                  {
+                    genre += " / ";
+                  }
+                  genre += nodeGenre.InnerText;
+                }
+              }
+            }
+
             movie.Genre = genre;
             
             #endregion
@@ -5227,6 +5253,14 @@ namespace MediaPortal.Video.Database
               if (CheckMovieImdbId(nodeImdbNumber.InnerText))
               {
                 movie.IMDBNumber = nodeImdbNumber.InnerText;
+              }
+            }
+
+            if (string.IsNullOrEmpty(movie.IMDBNumber) && nodeIdImdbNumber != null)
+            {
+              if (CheckMovieImdbId(nodeIdImdbNumber.InnerText))
+              {
+                movie.IMDBNumber = nodeIdImdbNumber.InnerText;
               }
             }
 
@@ -5780,6 +5814,7 @@ namespace MediaPortal.Video.Database
 
             // Cast parse
             XmlNodeList actorsList = nodeMovie.SelectNodes("actor");
+            
             foreach (XmlNode nodeActor in actorsList)
             {
               string name = string.Empty;
@@ -6095,13 +6130,16 @@ namespace MediaPortal.Video.Database
           // Genre
           string szGenres = movieDetails.Genre;
 
-          if (szGenres.IndexOf("/") >= 0)
+          if (szGenres.IndexOf("/") >= 0 || szGenres.IndexOf("|") >= 0)
           {
-            Tokens f = new Tokens(szGenres, new[] {'/'});
+            Tokens f = new Tokens(szGenres, new[] {'/', '|'});
 
             foreach (string strGenre in f)
             {
-              CreateXmlNode(mainNode, doc, "genre", strGenre.Trim());
+              if (!string.IsNullOrEmpty(strGenre))
+              {
+                CreateXmlNode(mainNode, doc, "genre", strGenre.Trim());
+              }
             }
           }
           else
@@ -6472,15 +6510,28 @@ namespace MediaPortal.Video.Database
       }
     }
 
-    public void FlushTransactionsToDisk ()
+    public void FlushTransactionsToDisk()
     {
-      m_db.Execute("PRAGMA synchronous='FULL'");
+      try
+      {
+        m_db.Execute("PRAGMA synchronous='FULL'");
+      }
+      catch (Exception ex)
+      {
+        Log.Error("VideoDatabase FlushTransactionsToDisk() exception: {0}", ex.Message);
+      }
     }
 
     public void RevertFlushTransactionsToDisk()
     {
-      m_db.Execute("PRAGMA synchronous='OFF'");
-      
+      try
+      {
+        m_db.Execute("PRAGMA synchronous='OFF'");
+      }
+      catch (Exception ex)
+      {
+        Log.Error("VideoDatabase RevertFlushTransactionsToDisk() exception: {0}", ex.Message);
+      }
     }
   }
 }

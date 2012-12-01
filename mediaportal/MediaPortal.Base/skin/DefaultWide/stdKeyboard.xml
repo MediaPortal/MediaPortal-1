@@ -7,6 +7,14 @@
     <control>
       <type>image</type>
       <id>0</id>
+      <width>1280</width>
+      <height>720</height>
+      <texture>white.png</texture>
+      <colordiffuse>201e90ff</colordiffuse>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
       <posX>391</posX>
       <posY>198</posY>
       <width>595</width>

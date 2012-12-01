@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2016</id>
@@ -8,10 +8,11 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>black.png</texture>
-      <colordiffuse>40ffffff</colordiffuse>
+      <width>960</width>
+      <height>720</height>
+      <texture>white.png</texture>
+      <colordiffuse>201e90ff</colordiffuse>
+      <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
     </control>
     <control>
       <type>group</type>
@@ -19,32 +20,45 @@
       <control>
         <type>image</type>
         <id>0</id>
-        <posX>319</posX>
-        <posY>400</posY>
-        <width>349</width>
-        <height>169</height>
+        <posX>276</posX>
+        <posY>0</posY>
+        <width>466</width>
+        <height>160</height>
         <texture>dialog_background.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>276</posX>
+        <posY>0</posY>
+        <width>466</width>
+        <height>160</height>
+        <texture>dialog_background.png</texture>
+        <colordiffuse>99222224</colordiffuse>
+        <visible>window.isvisible(602)|window.isvisible(2005)</visible>
       </control>
       <control>
         <description>Heading text label</description>
         <type>label</type>
         <id>3</id>
-        <posX>360</posX>
-        <posY>424</posY>
+        <posX>315</posX>
+        <posY>27</posY>
         <label>181</label>
-        <font>font10</font>
+        <font>font12</font>
         <textcolor>FFFFFFFF</textcolor>
       </control>
       <control>
         <description>OK button</description>
         <type>button</type>
         <id>4</id>
-        <posX>614</posX>
-        <posY>417</posY>
-        <width>28</width>
-        <height>32</height>
-        <textureFocus>dialogue_ok_focus.png</textureFocus>
-        <textureNoFocus>dialogue_ok_nofocus.png</textureNoFocus>
+        <posX>684</posX>
+        <posY>27</posY>
+        <width>22</width>
+        <height>22</height>
+        <textureFocus>top_exit_enabled.png</textureFocus>
+        <textureNoFocus>top_exit_disabled.png</textureNoFocus>
         <label>-</label>
         <onleft>4</onleft>
         <onright>4</onright>
@@ -55,10 +69,10 @@
         <description>logo</description>
         <type>image</type>
         <id>5</id>
-        <posX>349</posX>
-        <posY>449</posY>
-        <width>69</width>
-        <height>69</height>
+        <posX>316</posX>
+        <posY>67</posY>
+        <width>45</width>
+        <height>60</height>
         <texture>#thumb</texture>
         <colorkey>FFFF00FF</colorkey>
         <colordiffuse>FFFFFFFF</colordiffuse>
@@ -68,12 +82,12 @@
         <description>textarea</description>
         <type>textbox</type>
         <id>6</id>
-        <posX>424</posX>
-        <posY>444</posY>
-        <width>219</width>
-        <height>89</height>
-        <spinPosX>579</spinPosX>
-        <spinPosY>512</spinPosY>
+        <posX>393</posX>
+        <posY>67</posY>
+        <width>293</width>
+        <height>112</height>
+        <spinPosX>773</spinPosX>
+        <spinPosY>641</spinPosY>
         <onleft>4</onleft>
         <onright>4</onright>
         <onup>4</onup>

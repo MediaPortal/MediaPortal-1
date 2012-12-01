@@ -2275,10 +2275,10 @@ namespace MediaPortal.GUI.Video
         GUIDialogProgress progressDialog =
           (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
         progressDialog.Reset();
-        progressDialog.SetHeading("Exporting movies....");
+        progressDialog.SetHeading(GUILocalizeStrings.Get(1312)); // Exporting movies...
         progressDialog.ShowProgressBar(true);
-        progressDialog.SetLine(1, "Creating nfo file");
-        progressDialog.SetLine(2, "Working...");
+        progressDialog.SetLine(1, GUILocalizeStrings.Get(1313)); // Creating nfo file
+        progressDialog.SetLine(2, GUILocalizeStrings.Get(1314)); // Working...
         progressDialog.StartModal(GUIWindowManager.ActiveWindow);
         int percent = 0;
         int moviesCount = facadeLayout.ListLayout.ListItems.Count;
@@ -2294,8 +2294,8 @@ namespace MediaPortal.GUI.Video
           
           if (movie != null)
           {
-            progressDialog.SetLine(1, "Creating nfo for: " + movie.Title);
-            progressDialog.SetLine(2, "Working...");
+            progressDialog.SetLine(1, GUILocalizeStrings.Get(1315) + movie.Title); // Creating nfo for:
+            progressDialog.SetLine(2, GUILocalizeStrings.Get(1314)); // Working
             progressDialog.SetPercentage(percent);
             percent += 100 / (moviesCount - 1);
             progressDialog.Progress();
@@ -3070,7 +3070,7 @@ namespace MediaPortal.GUI.Video
       GUIDialogSelect pDlgSelect = (GUIDialogSelect)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_SELECT);
       // more then 1 actor found
       // ask user to select 1
-      pDlgSelect.SetHeading("Select actor:"); //select actor
+      pDlgSelect.SetHeading(GUILocalizeStrings.Get(1310)); //select actor
       pDlgSelect.Reset();
       for (int i = 0; i < fetcher.Count; ++i)
       {

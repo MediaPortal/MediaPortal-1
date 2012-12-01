@@ -558,8 +558,15 @@ namespace Mediaportal.TV.TvPlugin.Radio
         case SearchMode.Genre:
           if (currentLevel == 0)
           {
+<<<<<<< HEAD:TvEngine3/Mediaportal/TV/TvPlugin/Radio/RadioSearch.cs
             IEnumerable<ProgramCategory> genres = ServiceAgents.Instance.ProgramCategoryServiceAgent.ListAllProgramCategories();
             foreach (ProgramCategory genre in genres)
+=======
+            IList<string> genres;
+            TvBusinessLayer layer = new TvBusinessLayer();
+            genres = layer.GetProgramGenres();
+            foreach (string genre in genres)
+>>>>>>> origin/master:TvEngine3/TVLibrary/TvPlugin/TvPlugin/RadioSearch.cs
             {
               GUIListItem item = new GUIListItem
                                    {

@@ -92,6 +92,9 @@ namespace MediaPortal.DeployTool.Sections
       {
         rbUpdate.Enabled = true;
         bUpdate.Enabled = true;
+
+        // Set the default option to upgrade, if possible
+        SelectUpdate();
       }
 
       var strMPDisplayVer = MpDisplayVer;
@@ -170,6 +173,16 @@ namespace MediaPortal.DeployTool.Sections
 
     private void bUpdate_Click(object sender, EventArgs e)
     {
+      SelectUpdate();
+    }
+
+    private void bFresh_Click(object sender, EventArgs e)
+    {
+      SelectFresh();
+    }
+
+    private void SelectUpdate()
+    {
       bUpdate.Image = Images.Choose_button_on;
       bFresh.Image = Images.Choose_button_off;
       rbFreshChecked = false;
@@ -187,7 +200,7 @@ namespace MediaPortal.DeployTool.Sections
       if (TvServer && TvClient) InstallationProperties.Instance.Set("InstallType", "singleseat");
     }
 
-    private void bFresh_Click(object sender, EventArgs e)
+    private void SelectFresh()
     {
       bUpdate.Image = Images.Choose_button_off;
       bFresh.Image = Images.Choose_button_on;

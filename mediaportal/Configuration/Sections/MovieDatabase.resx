@@ -130,4 +130,15 @@ nfo file is changed.
 Note: Saving movie info in editor will create new nfo file. If nfo file
 exist, it will be overwritten.</value>
   </data>
+  <data name="chbDoNotUseDatabase.ToolTip" xml:space="preserve">
+    <value>Prevent videodatabase use for nfo files.
+
+Use this if you want to see movie details only from
+nfo file in GUI on video files select or in movie info screen.
+
+Movie refresh or actor fetch will not work in GUI.
+
+Also, do not use configuration database importer/editor for those 
+video files beacuse database entries will override this behaviour in GUI.</value>
+  </data>
 </root>
