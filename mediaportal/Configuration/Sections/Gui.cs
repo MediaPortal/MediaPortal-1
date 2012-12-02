@@ -212,7 +212,7 @@ namespace MediaPortal.Configuration.Sections
         //  Log.Debug("GeneralSkin: Current skin {0} not selected.", currentSkin);
         //}
 
-        bool startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
+        bool startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", true);
         bool useOnlyOneHome = xmlreader.GetValueAsBool("gui", "useonlyonehome", false);
         //homeComboBox.SelectedIndex = useOnlyOneHome ? (startWithBasicHome ? 3 : 2) : (startWithBasicHome ? 1 : 0);
         homeComboBox.SelectedIndex = (int)((useOnlyOneHome ? HomeUsageEnum.UseOnlyOne : HomeUsageEnum.UseBoth) |
