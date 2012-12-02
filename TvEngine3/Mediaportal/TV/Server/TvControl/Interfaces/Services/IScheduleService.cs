@@ -62,7 +62,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     void UnCancelSerie(Schedule schedule, DateTime startTime, int idChannel);
 
     [OperationContract]
-    IList<Schedule> GetConflictingSchedules(Schedule schedule);
+    IList<Schedule> GetConflictingSchedules(Schedule schedule, out List<Schedule> notViewabledSchedules);
 
     [OperationContract]
     IList<Schedule> GetRecordingTimes(Schedule schedule, int days);

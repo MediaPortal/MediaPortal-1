@@ -1185,11 +1185,12 @@ namespace Mediaportal.TV.TvPlugin
         schedule.Entity.ScheduleType = scheduleType;
       }
 
+      // check if this program is conflicting with any other already scheduled recording or not viewable cause isn't assigned to a card
+      List<Schedule> notViewables;
       // check if this program is conflicting with any other already scheduled recording
-      IList<Schedule> conflicts = ServiceAgents.Instance.ScheduleServiceAgent.GetConflictingSchedules(schedule.Entity).ToList();
-
-      Log.Debug("TVProgramInfo.CreateProgram - conflicts.Count = {0}", conflicts.Count);
+      IList<Schedule> conflicts = ServiceAgents.Instance.ScheduleServiceAgent.GetConflictingSchedules(schedule.Entity, out notViewables).ToList();            
       
+      Log.Debug("TVProgramInfo.CreateProgram - conflicts.Count = {0} - notViewable.Count = {1}", conflicts.Count, notViewables.Count);            
 
       //conflicts management
       bool skipConflictingEpisodes = false;
@@ -1279,7 +1280,7 @@ namespace Mediaportal.TV.TvPlugin
 
             GUIListItem item = new GUIListItem(notViewable.ProgramName);
             item.Label2 = GetRecordingDateTime(notViewable);
-            Channel channel = Channel.Retrieve(notViewable.IdChannel);
+            Channel channel = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(notViewable.IdChannel);
             if (channel != null && !string.IsNullOrEmpty(channel.DisplayName))
             {
               item.Label3 = channel.DisplayName;
@@ -1367,23 +1368,25 @@ namespace Mediaportal.TV.TvPlugin
       }
       if (skipNotViewableEpisodes)
       {
-        List<Schedule> episodes = layer.GetRecordingTimes(schedule);
+        IList<Schedule> episodes = ServiceAgents.Instance.ScheduleServiceAgent.GetRecordingTimes(schedule.Entity, 10);        
         foreach (Schedule notViewable in notViewables)
         {
           if (DateTime.Now > notViewable.EndTime)
           {
-            continue;
+            continue;          
           }
-          if (notViewable.IsSerieIsCanceled(notViewable.StartTime, notViewable.IdChannel))
+
+          var notViewableBLL = new ScheduleBLL(notViewable);
+          if (notViewableBLL.IsSerieIsCanceled(notViewable.StartTime, notViewable.IdChannel))
           {
             continue;
           }
-          Log.Debug("TVProgramInfo.CreateProgram - skip episode not viewable = {0}", notViewable.ToString());
-          CanceledSchedule canceledSchedule = new CanceledSchedule(schedule.IdSchedule, notViewable.IdChannel, notViewable.StartTime);
-          canceledSchedule.Persist();
+          Log.Debug("TVProgramInfo.CreateProgram - skip episode not viewable = {0}", notViewable.ToString());          
+          CanceledSchedule canceledSchedule = CanceledScheduleFactory.CreateCanceledSchedule(schedule.Entity.IdSchedule, notViewable.IdChannel, notViewable.StartTime);
+          ServiceAgents.Instance.CanceledScheduleServiceAgent.SaveCanceledSchedule(canceledSchedule);          
         }
       }
-      server.OnNewSchedule();
+      ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
     }
 
     private void OnAdvancedRecord()

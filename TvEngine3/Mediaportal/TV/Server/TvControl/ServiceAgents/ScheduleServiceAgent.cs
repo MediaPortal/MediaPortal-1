@@ -72,9 +72,9 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       _channel.UnCancelSerie(schedule, startTime, idChannel);
     }
 
-    public IList<Schedule> GetConflictingSchedules(Schedule schedule)
+    public IList<Schedule> GetConflictingSchedules(Schedule schedule, out List<Schedule> notViewabledSchedules)
     {
-      return _channel.GetConflictingSchedules(schedule);
+      return _channel.GetConflictingSchedules(schedule, out notViewabledSchedules);
     }
 
     public IList<Schedule> GetRecordingTimes(Schedule schedule, int days)

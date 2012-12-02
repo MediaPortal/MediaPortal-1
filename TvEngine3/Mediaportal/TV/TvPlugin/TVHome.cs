@@ -1170,22 +1170,14 @@ namespace Mediaportal.TV.TvPlugin
         if (_card == null)
         {
           IUser user = new User();
-<<<<<<< HEAD:TvEngine3/Mediaportal/TV/TvPlugin/TVHome.cs
           _card = new VirtualCard(user);
-=======
-          _card = TvServer.CardByIndex(user, 0);
->>>>>>> origin/master:TvEngine3/TVLibrary/TvPlugin/TvPlugin/TVHome.cs
         }
         return _card;
       }
       set
       {
         if (_card != null)
-<<<<<<< HEAD:TvEngine3/Mediaportal/TV/TvPlugin/TVHome.cs
-        {          
-=======
         {
->>>>>>> origin/master:TvEngine3/TVLibrary/TvPlugin/TvPlugin/TVHome.cs
           _card = value;
         }
       }

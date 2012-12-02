@@ -20,16 +20,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Windows.Forms;
-using TvControl;
-using Gentle.Framework;
-using TvDatabase;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.SetupControls;
 using TvLibrary.Epg;
-using MediaPortal.UserInterface.Controls;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class EpgGenreMap : SectionSettings
   {
@@ -52,14 +47,20 @@ namespace SetupTv.Sections
 
     public override void LoadSettings()
     {
-      base.LoadSettings();
-      TvBusinessLayer layer = new TvBusinessLayer();
+      base.LoadSettings();      
 
       // Load the list of all EPG provided program genres.
-      _allProgramGenres = (List<string>)layer.GetProgramGenres();
+      //_allProgramGenres = (List<string>)layer.GetProgramGenres();
+
+      _allProgramGenres = new List<string>();
+      _allProgramGenres.Add("genre_static0");
+      _allProgramGenres.Add("genre_static1");
 
       // Load the list of MP genres.
-      _mpGenres = layer.GetMpGenres();
+      //_mpGenres = layer.GetMpGenres();
+      _mpGenres = new List<MpGenre>();
+      _mpGenres.Add(new MpGenre("mpgenre_static0", 0));
+      _mpGenres.Add(new MpGenre("mpgenre_static1", 1));
 
       // Populate the guide genre and program genre lists.
       PopulateGuideGenreList();
@@ -67,9 +68,8 @@ namespace SetupTv.Sections
     }
 
     public override void SaveSettings()
-    {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      layer.SaveMpGenres(_mpGenres);
+    {      
+      //layer.SaveMpGenres(_mpGenres);
       base.SaveSettings();
     }
 

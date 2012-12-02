@@ -165,8 +165,8 @@ namespace Mediaportal.TV.Server.SetupTV
 
         Epg EpgSection = new Epg();
         AddSection(EpgSection);
-        AddChildSection(EpgSection, new EpgGrabber("TV Epg grabber", MediaTypeEnum.TV));
-        AddChildSection(EpgSection, new EpgGrabber("Radio Epg grabber", MediaTypeEnum.Radio)); ;
+        AddChildSection(EpgSection, new EpgGrabber("TV Epg grabber", "epgLanguages", "epgStoreOnlySelected", MediaTypeEnum.TV));
+        AddChildSection(EpgSection, new EpgGrabber("Radio Epg grabber", "radioLanguages", "epgRadioStoreOnlySelected", MediaTypeEnum.Radio));
         AddChildSection(EpgSection, new EpgGenreMap());
 
         AddSection(new ScanSettings());

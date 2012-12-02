@@ -37,8 +37,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private bool _loaded;
     private readonly MPListViewStringColumnSorter lvwColumnSorter;
+    private readonly string languagesSettingsKey;
+    private readonly string storeOnlySelectedSettingsKey;
 
-    public EpgGrabber(string name, MediaTypeEnum mediaType)
+    public EpgGrabber(string name, string languagesSettingsKey, string storeOnlySelectedSettingsKey, MediaTypeEnum mediaType)
       : base(name)
     {
       MediaTypeEnum = mediaType;
@@ -46,6 +48,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       lvwColumnSorter = new MPListViewStringColumnSorter();
       lvwColumnSorter.Order = SortOrder.None;
       mpListView1.ListViewItemSorter = lvwColumnSorter;
+      this.languagesSettingsKey = languagesSettingsKey;
+      this.storeOnlySelectedSettingsKey = storeOnlySelectedSettingsKey;
     }
 
     public MediaTypeEnum MediaTypeEnum
@@ -65,7 +69,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         List<String> codes = languages.GetLanguageCodes();
         List<String> list = languages.GetLanguages();
 
-        Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSetting("epgLanguages");
+        Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSetting(languagesSettingsKey);        
 
         string values = "";
         for (int j = 0; j < list.Count; j++)
@@ -103,7 +107,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     public override void OnSectionDeActivated()
     {
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("epgStoreOnlySelected", mpCheckBoxStoreOnlySelected.Checked);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue(storeOnlySelectedSettingsKey, mpCheckBoxStoreOnlySelected.Checked);
       base.OnSectionDeActivated();
       SaveSettings();
     }
@@ -118,7 +122,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         _ignoreItemCheckedEvent = true;
         LoadLanguages();
-        Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSetting("epgStoreOnlySelected");
+        Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSetting(storeOnlySelectedSettingsKey);
         mpCheckBoxStoreOnlySelected.Checked = (setting.Value == "yes");
         Dictionary<string, CardType> cards = new Dictionary<string, CardType>();
         IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
@@ -270,8 +274,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           value += ",";
         }
       }
-      
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("epgLanguages", value);
+
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue(languagesSettingsKey, value);
       base.SaveSettings();
     }
 

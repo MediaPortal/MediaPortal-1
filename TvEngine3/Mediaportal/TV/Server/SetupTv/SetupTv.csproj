@@ -157,7 +157,9 @@
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="HelpSystem.cs" />
     <Compile Include="InputBox.cs" />
-    <Compile Include="Sections\EpgGenreMap.cs" />
+    <Compile Include="Sections\EpgGenreMap.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Sections\EpgGenreMap.Designer.cs">
       <DependentUpon>EpgGenreMap.cs</DependentUpon>
     </Compile>
@@ -373,7 +375,9 @@
     <Compile Include="Sections\Plugins.Designer.cs">
       <DependentUpon>Plugins.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\RadioEpgGrabber.cs" />
+    <Compile Include="Sections\RadioEpgGrabber.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Sections\ScanSettings.cs">
       <SubType>UserControl</SubType>
     </Compile>

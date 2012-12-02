@@ -1,4 +1,4 @@
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   partial class EpgGenreMap
   {
@@ -31,21 +31,21 @@ namespace SetupTv.Sections
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EpgGenreMap));
       this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.mpButtonGenreIsMovie = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonEnableGenre = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonGenreIsMovie = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.mpButtonEnableGenre = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.label26 = new System.Windows.Forms.Label();
-      this.listViewGuideGenres = new MediaPortal.UserInterface.Controls.MPListView();
+      this.listViewGuideGenres = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
       this.colGuideGenreName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.colIsMovie = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.colEnabled = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.buttonMapGenres = new MediaPortal.UserInterface.Controls.MPButton();
-      this.buttonUnmapGenres = new MediaPortal.UserInterface.Controls.MPButton();
-      this.listViewProgramGenres = new MediaPortal.UserInterface.Controls.MPListView();
+      this.buttonMapGenres = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.buttonUnmapGenres = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.listViewProgramGenres = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
       this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.listViewMappedGenres = new MediaPortal.UserInterface.Controls.MPListView();
+      this.listViewMappedGenres = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
       this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-      this.mpLabelChannelCount = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabelChannelCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1.SuspendLayout();
       this.tabControl1.SuspendLayout();
@@ -263,21 +263,21 @@ namespace SetupTv.Sections
     #endregion
 
     private System.Windows.Forms.TabPage tabPage1;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelChannelCount;
+    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel mpLabelChannelCount;
     private System.Windows.Forms.TabControl tabControl1;
-    private MediaPortal.UserInterface.Controls.MPListView listViewGuideGenres;
+    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView listViewGuideGenres;
     private System.Windows.Forms.ColumnHeader colGuideGenreName;
-    private MediaPortal.UserInterface.Controls.MPButton buttonMapGenres;
-    private MediaPortal.UserInterface.Controls.MPButton buttonUnmapGenres;
-    private MediaPortal.UserInterface.Controls.MPListView listViewProgramGenres;
+    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton buttonMapGenres;
+    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton buttonUnmapGenres;
+    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView listViewProgramGenres;
     private System.Windows.Forms.ColumnHeader columnHeader12;
-    private MediaPortal.UserInterface.Controls.MPListView listViewMappedGenres;
+    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView listViewMappedGenres;
     private System.Windows.Forms.ColumnHeader columnHeader13;
     private System.Windows.Forms.Label label26;
     private System.Windows.Forms.ImageList imageList1;
     private System.Windows.Forms.ColumnHeader colEnabled;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonGenreIsMovie;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonEnableGenre;
+    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton mpButtonGenreIsMovie;
+    private Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton mpButtonEnableGenre;
     private System.Windows.Forms.ColumnHeader colIsMovie;
   }
 }

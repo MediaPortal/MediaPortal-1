@@ -30,22 +30,15 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.Util;
-<<<<<<< HEAD:TvEngine3/Mediaportal/TV/TvPlugin/Radio/RadioRecorded.cs
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.TvPlugin.Helper;
-using WindowPlugins;
 using Action = MediaPortal.GUI.Library.Action;
 using Log = Mediaportal.TV.Server.TVLibrary.Interfaces.Logging.Log;
-=======
-using TvControl;
-using TvDatabase;
-using Action = MediaPortal.GUI.Library.Action;
-using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
->>>>>>> origin/master:TvEngine3/TVLibrary/TvPlugin/TvPlugin/RadioRecorded.cs
+
 
 namespace Mediaportal.TV.TvPlugin.Radio
 {

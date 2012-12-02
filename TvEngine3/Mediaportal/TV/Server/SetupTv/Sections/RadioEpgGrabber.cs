@@ -18,12 +18,13 @@
 
 #endregion
 
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class RadioEpgGrabber : EpgGrabber
   {
     public RadioEpgGrabber()
-      : base("Radio Epg grabber", "radioLanguages", "epgRadioStoreOnlySelected", false) { }
+      : base("Radio Epg grabber", "radioLanguages", "epgRadioStoreOnlySelected", MediaTypeEnum.Radio) { }
   }
 }
