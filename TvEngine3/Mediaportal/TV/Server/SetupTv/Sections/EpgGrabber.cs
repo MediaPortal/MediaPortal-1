@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
@@ -28,28 +29,32 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class EpgGrabber : SectionSettings
   {
-
     private bool _loaded;
     private readonly MPListViewStringColumnSorter lvwColumnSorter;
+    private bool ignoreCheckChanges;
     private readonly string languagesSettingsKey;
-    private readonly string storeOnlySelectedSettingsKey;
+    private readonly string storeOnlySelectedSettingsKey;    
 
-    public EpgGrabber(string name, string languagesSettingsKey, string storeOnlySelectedSettingsKey, MediaTypeEnum mediaType)
+    private EpgGrabber() { }
+
+    public EpgGrabber(string name, string languagesSettingsKey, string storeOnlySelectedSettingsKey, MediaTypeEnum mediaTypeEnum)
       : base(name)
     {
-      MediaTypeEnum = mediaType;
       InitializeComponent();
       lvwColumnSorter = new MPListViewStringColumnSorter();
       lvwColumnSorter.Order = SortOrder.None;
       mpListView1.ListViewItemSorter = lvwColumnSorter;
+      mpListView2.ListViewItemSorter = lvwColumnSorter;
+      ignoreCheckChanges = true;
       this.languagesSettingsKey = languagesSettingsKey;
       this.storeOnlySelectedSettingsKey = storeOnlySelectedSettingsKey;
+      _mediaTypeEnum = mediaTypeEnum;
+      this.tabPage1.Text = name;
     }
 
     public MediaTypeEnum MediaTypeEnum
@@ -71,33 +76,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
         Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSetting(languagesSettingsKey);        
 
-        string values = "";
         for (int j = 0; j < list.Count; j++)
         {
           ListViewItem item = new ListViewItem(new string[] { list[j], codes[j] });
           mpListView2.Items.Add(item);
           item.Tag = codes[j];
-          if (setting.Value == "")
-          {
-            values += item.Tag;
-            values += ",";
-          }
-          else
-          {
-            if (setting.Value.IndexOf((string)item.Tag) >= 0)
-            {
-              item.Checked = true;
-            }
-          }
+          item.Checked = setting.Value.IndexOf((string)item.Tag) >= 0;
         }
         mpListView2.Sort();
 
-        if (setting.Value == "")
-        {
-          setting.Value = values;
-          ServiceAgents.Instance.SettingServiceAgent.SaveValue(setting.Tag, setting.Value);
-          //DatabaseManager.Instance.SaveChanges();
-        }
       }
       finally
       {
@@ -106,14 +93,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     }
 
     public override void OnSectionDeActivated()
-    {
+    {      
       ServiceAgents.Instance.SettingServiceAgent.SaveValue(storeOnlySelectedSettingsKey, mpCheckBoxStoreOnlySelected.Checked);
       base.OnSectionDeActivated();
       SaveSettings();
     }
 
-    private bool _ignoreItemCheckedEvent = true;
     private MediaTypeEnum _mediaTypeEnum;
+    private bool _ignoreItemCheckedEvent = true;
 
     public override void OnSectionActivated()
     {
@@ -123,11 +110,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         _ignoreItemCheckedEvent = true;
         LoadLanguages();
         Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSetting(storeOnlySelectedSettingsKey);
+
         mpCheckBoxStoreOnlySelected.Checked = (setting.Value == "yes");
+
         Dictionary<string, CardType> cards = new Dictionary<string, CardType>();
         IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
         foreach (Card card in dbsCards)
-        {
+        {          
           cards[card.DevicePath] = ServiceAgents.Instance.ControllerServiceAgent.Type(card.IdCard);
         }
         base.OnSectionActivated();
@@ -135,9 +124,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
         ChannelIncludeRelationEnum includeRelations = ChannelIncludeRelationEnum.TuningDetails;
         includeRelations |= ChannelIncludeRelationEnum.ChannelMaps;
-        includeRelations |= ChannelIncludeRelationEnum.ChannelMapsCard;        
+        includeRelations |= ChannelIncludeRelationEnum.ChannelMapsCard;
         IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(_mediaTypeEnum, includeRelations);
-
 
         foreach (Channel ch in channels)
         {
@@ -152,9 +140,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           if (ch.MediaType != (decimal)_mediaTypeEnum)
             continue;
           if (ch.IsWebstream())
-          {
             continue;
-          }
 
           IList<TuningDetail> tuningDetails = ch.TuningDetails;
           foreach (TuningDetail detail in tuningDetails)
@@ -169,21 +155,30 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             }
           }
 
-          int imageIndex;
+          string imageName = null;
+          if (_mediaTypeEnum == MediaTypeEnum.TV)
+          {
+            imageName = "tv_";
+          }
+          else if (_mediaTypeEnum == MediaTypeEnum.Radio)
+          {
+            imageName = "radio_";
+          }
+          
           if (hasFta && hasScrambled)
           {
-            imageIndex = 5;
+            imageName += "scrambled_and_fta.png";
           }
           else if (hasScrambled)
           {
-            imageIndex = 4;
+            imageName += "scrambled.png";
           }
           else
           {
-            imageIndex = 3;
+            imageName += "fta_.png";
           }
 
-          ListViewItem item = mpListView1.Items.Add(ch.DisplayName, imageIndex);
+          ListViewItem item = mpListView1.Items.Add(ch.DisplayName, imageName);
           foreach (ChannelMap map in ch.ChannelMaps)
           {
             if (cards.ContainsKey(map.Card.DevicePath))
@@ -262,8 +257,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     public override void SaveSettings()
     {
       if (false == _loaded)
-        return;      
-      
+        return;
+
       string value = ",";
       for (int i = 0; i < mpListView2.Items.Count; ++i)
       {
@@ -279,7 +274,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       base.SaveSettings();
     }
 
-    private void mpListView1_ColumnClick(object sender, ColumnClickEventArgs e)
+    private void mpListView_ColumnClick(object sender, ColumnClickEventArgs e)
     {
       if (e.Column == lvwColumnSorter.SortColumn)
       {
@@ -295,7 +290,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         lvwColumnSorter.Order = SortOrder.Ascending;
       }
       // Perform the sort with these new sort options.
-      mpListView1.Sort();
+      ((MPListView)sender).Sort();
     }
 
     private void mpListView1_ItemChecked(object sender, ItemCheckedEventArgs e)
@@ -310,38 +305,23 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }      
     }
 
-    private void linkLabelTVAll_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    private void linkLabelAll_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       mpListView1.BeginUpdate();
       try
       {
-        _ignoreItemCheckedEvent = true;
-
-        ICollection<Channel> channels = new List<Channel>();
-
         for (int i = 0; i < mpListView1.Items.Count; ++i)
-        {          
-          mpListView1.Items[i].Checked = true;
-          var channel = mpListView1.Items[i].Tag as Channel;
-          if (channel != null)
-          {
-            channel.GrabEpg = true;
-            channels.Add(channel);
-          }
-        }
-        if (channels.Count > 0)
         {
-          ServiceAgents.Instance.ChannelServiceAgent.SaveChannels(channels);
+          mpListView1.Items[i].Checked = true;
         }
       }
       finally
       {
         mpListView1.EndUpdate();
-        _ignoreItemCheckedEvent = false;
       }
     }
 
-    private void linkLabelTVAllGrouped_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    private void linkLabelAllGrouped_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       mpListView1.BeginUpdate();
       try
@@ -367,7 +347,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
     }
 
-    private void linkLabelTVGroupedVisible_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    private void linkLabelGroupedVisible_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       mpListView1.BeginUpdate();
       try
@@ -393,7 +373,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
     }
 
-    private void linkLabelTVNone_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    private void linkLabelNone_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       mpListView1.BeginUpdate();
       try
@@ -417,48 +397,65 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
     }
 
-    private void linkLabelLanguageAll_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    private void CheckAll(bool aChecked)
     {
       mpListView2.BeginUpdate();
+      ignoreCheckChanges = true;
       try
       {
-        for (int i = 0; i < mpListView2.Items.Count; ++i)
+        foreach (ListViewItem lv in mpListView2.Items)
         {
-          mpListView2.Items[i].Checked = true;
+          lv.Checked = aChecked;
         }
-        Languages languages = new Languages();
-        List<String> codes = languages.GetLanguageCodes();
-        
-        string value = "";
-        foreach (string code in codes)
-        {
-          value += code;
-          value += ",";
-        }
-        //this.LogDebug("tvsetup:epggrabber:all: epglang={0}", setting.value);
       }
       finally
       {
         mpListView2.EndUpdate();
+        ignoreCheckChanges = false;
       }
+    }
+
+    private void linkLabelLanguageAll_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      CheckAll(true);
     }
 
     private void linkLabelLanguageNone_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      mpListView2.BeginUpdate();
-      try
+      CheckAll(false);
+    }
+
+    private void mpListView2_ItemChecked(object sender, ItemCheckedEventArgs e)
+    {
+      if (!ignoreCheckChanges)
       {
-        for (int i = 0; i < mpListView2.Items.Count; ++i)
+        ignoreCheckChanges = true;
+        try
         {
-          mpListView2.Items[i].Checked = false;
+          foreach (ListViewItem item in mpListView2.Items)
+          {
+            if (item != e.Item)
+            {
+              if (item.SubItems[1].Text == e.Item.SubItems[1].Text)
+                item.Checked = e.Item.Checked;
+            }
+          }
         }
-        string setting = ServiceAgents.Instance.SettingServiceAgent.GetValue("epgLanguages", ",");
-        this.LogDebug("tvsetup:epggrabber:none: epglang={0}", setting);
+        finally 
+        {
+          ignoreCheckChanges = false;
+        }                
       }
-      finally
-      {
-        mpListView2.EndUpdate();
-      }
+    }
+
+    private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void EpgGrabber_Load(object sender, EventArgs e)
+    {
+      ignoreCheckChanges = false;
     }
   }
 }
