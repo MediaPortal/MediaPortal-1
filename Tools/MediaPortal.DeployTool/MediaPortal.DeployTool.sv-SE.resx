@@ -507,4 +507,10 @@ Genom att använda AERO minskas även CPU belastningen vilket kan leda till att 
     <value>En omstart av datorn krävs av en Microsoft-komponent.
 Innan du fortsätter med installationen av MediaPortal måste du starta om datorn.</value>
   </data>
+  <data name="SkinChoice_labelExistingSkin" xml:space="preserve">
+    <value>Använd ditt aktuella Skin (detta kommer att kompatibilitetstestas)</value>
+  </data>
+  <data name="SkinChoice_labelSectionHeader" xml:space="preserve">
+    <value>Välj Skin</value>
+  </data>
 </root>

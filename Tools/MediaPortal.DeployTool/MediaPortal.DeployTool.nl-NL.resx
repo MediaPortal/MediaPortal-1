@@ -512,4 +512,10 @@ Inschakelen van AERO zal ook het processor gebruik verminderen, dus het maakt u 
     <value>Een onderdeel van Microsoft vereist een herstart.
 Ga a.u.b. pas verder met de met de installatie van MediaPortal na de herstart.</value>
   </data>
+  <data name="SkinChoice_labelExistingSkin" xml:space="preserve">
+    <value>Gebruik huidige Skin (Compatibiliteit word gecontroleerd)</value>
+  </data>
+  <data name="SkinChoice_labelSectionHeader" xml:space="preserve">
+    <value>Kies Skin</value>
+  </data>
 </root>
