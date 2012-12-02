@@ -4,7 +4,7 @@
     <String id="0" prefix="Mina ">Program</String>
     <String id="1" prefix="Mina ">Bilder</String>
     <String id="2" prefix="Min ">Musik</String>
-    <String id="3" prefix="Mina ">Barnprogram</String>
+    <String id="3" prefix="Mina ">Filmer</String>
     <String id="4">TV-tablå</String>
     <String id="5">Inställningar</String>
     <String id="6">Etikett saknas!</String>
@@ -856,7 +856,7 @@
     <String id="967">Variabel bithastighet (max)</String>
     <String id="968">Odefinierad</String>
     <String id="970">Föregående fönster</String>
-    <String id="971">Välj kanalgrupp</String>
+    <String id="971">Kanalgrupp</String>
     <String id="972">Alla Kanaler</String>
     <String id="973">Maximal FPS</String>
     <String id="974">Rotmeny</String>
@@ -942,8 +942,8 @@
     <String id="1054">(inspelning)</String>
     <String id="1055">(timeshifting)</String>
     <String id="1056">(ej tillgänglig)</String>
-    <String id="1057">Exit MediaPortal</String>
-    <String id="1058">Restart MediaPortal</String>
+    <String id="1057">Avsluta MediaPortal</String>
+    <String id="1058">Starta om MediaPortal</String>
     <String id="1061">Flyttbar</String>
     <String id="1062">Objekt</String>
     <String id="1064">Bokmärken</String>
