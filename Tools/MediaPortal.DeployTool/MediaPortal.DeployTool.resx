@@ -516,4 +516,10 @@ Please proceed with it before continuing with MediaPortal installation.</value>
   <data name="MPSettings_checkBoxLAV" xml:space="preserve">
     <value>Install LAV Filters to enable playback of many common audio and video formats</value>
   </data>
+  <data name="SkinChoice_labelSectionHeader" xml:space="preserve">
+    <value>Choose a Skin</value>
+  </data>
+  <data name="SkinChoice_labelExistingSkin" xml:space="preserve">
+    <value>Use Existing Skin (This will be checked for compatability)</value>
+  </data>
 </root>

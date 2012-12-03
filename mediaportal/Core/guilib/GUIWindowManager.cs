@@ -526,7 +526,7 @@ namespace MediaPortal.GUI.Library
     {
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
-        _startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
+        _startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", true);
       }
       //no active window yet
       _activeWindowId = -1;

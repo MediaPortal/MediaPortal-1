@@ -4,7 +4,7 @@
     <String id="0" prefix="Mina ">Program</String>
     <String id="1" prefix="Mina ">Bilder</String>
     <String id="2" prefix="Min ">Musik</String>
-    <String id="3" prefix="Mina ">Barnprogram</String>
+    <String id="3" prefix="Mina ">Filmer</String>
     <String id="4">TV-tablå</String>
     <String id="5">Inställningar</String>
     <String id="6">Etikett saknas!</String>
@@ -856,7 +856,7 @@
     <String id="967">Variabel bithastighet (max)</String>
     <String id="968">Odefinierad</String>
     <String id="970">Föregående fönster</String>
-    <String id="971">Välj kanalgrupp</String>
+    <String id="971">Kanalgrupp</String>
     <String id="972">Alla Kanaler</String>
     <String id="973">Maximal FPS</String>
     <String id="974">Rotmeny</String>
@@ -942,8 +942,8 @@
     <String id="1054">(inspelning)</String>
     <String id="1055">(timeshifting)</String>
     <String id="1056">(ej tillgänglig)</String>
-    <String id="1057">Exit MediaPortal</String>
-    <String id="1058">Restart MediaPortal</String>
+    <String id="1057">Avsluta MediaPortal</String>
+    <String id="1058">Starta om MediaPortal</String>
     <String id="1061">Flyttbar</String>
     <String id="1062">Objekt</String>
     <String id="1064">Bokmärken</String>
@@ -1086,7 +1086,17 @@
     <String id="1306">Skapa nfo-filer för samtliga filmer</String>
     <String id="1307">Uppdatera inbyggda Grabber-skript</String>
     <String id="1308">Döp om SortTitle</String>
-    <String id="1309">Namn (mappar och filer)</String>
+    <String id="1309">Välj skådespelare</String>
+    <String id="1310">Uppdatering pågår redan</String>
+    <String id="1311">Exporterar filmer...</String>
+    <String id="1312">Skapar NFO-fil</String>
+    <String id="1313">Arbetar...</String>
+    <String id="1314">Skapar NFO för:</String>
+    <String id="1315">Uppdaterar interna skript...</String>
+    <String id="1316">Hämtar interna skript...</String>
+    <String id="1317">Spara undertext</String>
+    <String id="1318">Spara ändrad undertext?</String>
+    <String id="1319">Namn (mappar och filer)</String>
     <String id="1440" prefix="Min ">Text-TV</String>
     <String id="1441">Text-TV</String>
     <String id="1442">Scroll-hastighet (Horisontel)</String>
@@ -1519,11 +1529,16 @@
     <String id="6041">För två dagar sedan</String>
     <String id="6042">Mata in antal sek för hoppsteg</String>
     <String id="6050">Aktuell vecka</String>
+    <String id="6055">Tidigare denna vecka</String>
+    <String id="6056">Förra veckan</String>
     <String id="6060">Aktuell månad</String>
+    <String id="6062">Tidigare denna månad</String>
     <String id="6065">Senaste månaden</String>
     <String id="6070">Aktuellt år</String>
+    <String id="6075">Tidigare i år</String>
     <String id="6080">Förra året</String>
     <String id="6090">Äldre</String>
+    <String id="6095">Framtida</String>
     <String id="8000" prefix="Min">E-post</String>
     <String id="8001">Kontrollera brevlådan</String>
     <String id="8002">Autokoll Av</String>
@@ -2319,5 +2334,6 @@
     <String id="300224">Tumnagelbilder för video globalt avstängt</String>
     <String id="300225">Använd "Sorterings-titel"</String>
     <String id="300226">Använd endast intern nfo-hämtning</String>
+    <String id="300226">Radera svartlistade tumnagelbilder</String>
   </Section>
 </Language>

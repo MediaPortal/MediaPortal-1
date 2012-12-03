@@ -186,6 +186,7 @@ namespace MediaPortal.DeployTool.Sections
           AddPackageToListView(new TvServerChecker());
           AddPackageToListView(new TvPluginChecker());
           AddPackageToListView(new LAVFilterMPEInstall());
+          AddPackageToListView(new TitanExtensionInstall());
           break;
 
         case "tvserver_master":
@@ -200,11 +201,13 @@ namespace MediaPortal.DeployTool.Sections
           AddPackageToListView(new MediaPortalChecker());
           AddPackageToListView(new TvPluginChecker());
           AddPackageToListView(new LAVFilterMPEInstall());
+          AddPackageToListView(new TitanExtensionInstall());
           break;
 
         case "mp_only":
           AddPackageToListView(new MediaPortalChecker());
           AddPackageToListView(new LAVFilterMPEInstall());
+          AddPackageToListView(new TitanExtensionInstall());
           break;
 
         case "download_only":
@@ -214,6 +217,7 @@ namespace MediaPortal.DeployTool.Sections
           AddPackageToListView(new TvServerChecker());
           AddPackageToListView(new TvPluginChecker());
           AddPackageToListView(new LAVFilterMPEInstall());
+          AddPackageToListView(new TitanExtensionInstall());
           break;
       }
       if ((InstallationProperties.Instance["ConfigureMediaPortalFirewall"] == "1" ||
