@@ -1071,6 +1071,23 @@
     <String id="1300" prefix="Meine ">TV-Serien</String>
     <String id="1301">Lade Schauspieler und Rollen</String>
     <String id="1302">Lade Schauspieler-Informationen</String>
+    <String id="1303">Künstler wählen</String>
+    <String id="1304">.nfo-Datei erstellen</String>
+    <String id="1305">.nfo-Datei erstellt</String>
+    <String id="1306">.nfo-Dateien für alle Filme erstellen</String>
+    <String id="1307">Interne Grabber-Skripts aktualisieren</String>
+    <String id="1308">Sortiertitel umbenennen</String>
+    <String id="1309">Name - Komplett</String>
+    <String id="1310">Schauspieler auswählen</String>
+    <String id="1311">Aktualisierung läuft bereits</String>
+    <String id="1312">Exportiere Filme...</String>
+    <String id="1313">Erstelle .nfo-Datei</String>
+    <String id="1314">Arbeite...</String>
+    <String id="1315">Erstelle .nfo-Datei für: </String>
+    <String id="1316">Aktualisiere interne Scripts...</String>
+    <String id="1317">Lade interne Skripts...</String>
+    <String id="1318">Untertitel speichern</String>
+    <String id="1319">Geänderte Untertiteldatei speichern?</String>
     <String id="1440" prefix="Mein ">Videotext</String>
     <String id="1441">Videotext</String>
     <String id="1442">Textlauf horizontal</String>
