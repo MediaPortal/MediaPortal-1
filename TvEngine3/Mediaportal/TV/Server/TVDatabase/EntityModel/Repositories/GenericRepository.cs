@@ -41,14 +41,14 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     public GenericRepository()
       : this(string.Empty)
     {
-      _objectContext = ObjectContextManager.CreateDbContext as TEntity;
+      _objectContext = ObjectContextManager.CreateDbContext() as TEntity;
     }
 
     public GenericRepository(bool trackingEnabled)
       : this(string.Empty)
     {
       _trackingEnabled = trackingEnabled;
-      _objectContext = ObjectContextManager.CreateDbContext as TEntity;
+      _objectContext = ObjectContextManager.CreateDbContext() as TEntity;
     }
 
     /// <summary>
@@ -366,7 +366,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       {
         if (_objectContext == null)
         {
-          _objectContext = ObjectContextManager.CreateDbContext as TEntity;
+          _objectContext = ObjectContextManager.CreateDbContext() as TEntity;
         }
         return _objectContext;
       }
