@@ -1947,8 +1947,17 @@ namespace MediaPortal.Configuration.Sections
           _useFanArt = false;
         }
         useFanartCheckBox.Checked = _useFanArt;
-        fanartQ.Value = xmlreader.GetValueAsInt("moviedatabase", "fanartnumber", 1);
+        int faValue = xmlreader.GetValueAsInt("moviedatabase", "fanartnumber", 1);
         
+        if (faValue < 1)
+        {
+          fanartQ.Value = 1;
+        }
+        else
+        {
+          fanartQ.Value = faValue;
+        }
+
         if (_useFanArt)
         {
           fanartQ.Enabled = true;
