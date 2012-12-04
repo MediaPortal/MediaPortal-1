@@ -20,7 +20,6 @@
 
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
-using Castle.Windsor.Configuration.Interpreters;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces;
 
@@ -34,14 +33,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Integration
     /// <summary>
     /// Finds an assembly with matching type <see cref="IIntegrationProvider"/> and adds it into <seealso cref="MediaPortal.Common.Utils.GlobalServiceProvider"/>.
     /// </summary>
-    public static void Register(string searchPath = ".")
+    public static void Register(string searchPath = ".", string configFile = null)
     {
       // If there is already a provider registered, use this instance
       if (GlobalServiceProvider.Get<IIntegrationProvider>() != null)
       {
         return;
       }
-      IWindsorContainer container = Instantiator.Instance.Container();      
+      IWindsorContainer container = Instantiator.Instance.Container(configFile);      
       var assemblyFilter = new AssemblyFilter(searchPath, "*.Integration.*.dll");
       
       container.Register(AllTypes.FromAssemblyInDirectory(assemblyFilter).BasedOn<IIntegrationProvider>().WithServiceBase().LifestyleSingleton());

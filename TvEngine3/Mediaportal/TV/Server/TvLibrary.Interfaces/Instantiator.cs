@@ -10,12 +10,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// Get or Create an IoC container
     /// </summary>
     /// <returns></returns>
-    public IWindsorContainer Container()
+    public IWindsorContainer Container(string configFile = null)
     {
       var container = GlobalServiceProvider.Instance.Get<IWindsorContainer>();      
       if (container == null)
       {
-        container = new WindsorContainer(new XmlInterpreter());
+        container = string.IsNullOrEmpty(configFile) ? new WindsorContainer(new XmlInterpreter()) : new WindsorContainer(configFile);
         GlobalServiceProvider.Instance.Add<IWindsorContainer>(container); 
       }
       return container;
