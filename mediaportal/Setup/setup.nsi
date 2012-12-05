@@ -479,6 +479,9 @@ Section "MediaPortal core files (required)" SecCore
   ; libbluray
   SetOutPath "$MPdir.Base"
   File "${git_DirectShowFilters}\BDReader\libbluray\bluray.dll"
+  ; TvLibrary for Genre
+  File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
+  ; MediaPortal.exe
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION
@@ -622,6 +625,8 @@ SectionEnd
   Delete "$MPdir.Base\MediaFoundation.dll"
   ; MP Tray
   Delete "$MPdir.Base\MPTray.exe"
+  ; TvLibrary for Genre
+  Delete "$MPdir.Base\TvLibrary.Interfaces.dll"
   ; Plugins
   Delete "$MPdir.Base\RemotePlugins.dll"
   Delete "$MPdir.Base\HcwHelper.exe"
