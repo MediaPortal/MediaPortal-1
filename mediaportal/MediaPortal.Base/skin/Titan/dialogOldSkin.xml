@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>2020</id>
+  <defaultcontrol>3</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <id>0</id>
+      <type>image</type>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+    <control>
+      <type>label</type>
+      <id>0</id>
+      <posX>60</posX>
+      <posY>27</posY>
+      <label>1900</label>
+      <textcolor>6aa5cb</textcolor>
+      <font>font22</font>
+    </control>
+    <control>
+      <id>0</id>
+      <type>textbox</type>
+      <posX>170</posX>
+      <posY>120</posY>
+      <width>940</width>
+      <height>320</height>
+      <textcolor>ffffffff</textcolor>
+      <font>TitanLight11</font>
+      <align>center</align>
+      <label>#(string.format(1901,#userskin))</label>
+    </control>
+    <control>
+      <id>2</id>
+      <description>Ignore check box</description>
+      <type>checkmark</type>
+      <onleft>11</onleft>
+      <onright>11</onright>
+      <onup>10</onup>
+      <ondown>10</ondown>
+      <posX>100</posX>
+      <posY>600</posY>
+      <width>346</width>
+      <height>28</height>
+      <label>1902</label>
+    </control>
+    <control>
+      <id>3</id>
+      <description>Continue button</description>
+      <type>button</type>
+      <onleft>3</onleft>
+      <onright>3</onright>
+      <onup>3</onup>
+      <ondown>3</ondown>
+      <posX>780</posX>
+      <posY>586</posY>
+      <label>#(string.format(1903,#countdownseconds))</label>
+    </control>
+  </controls>
+</window>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>1020</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+	<define>#header.label:897</define>
+  <rememberLastFocusedControl>no</rememberLastFocusedControl>
+  <controls>
+	<import>settings.menu.xml</import>	
+	<import>common.settings.xml</import>	
+	<import>common.time.settings.xml</import>  
+	
+	<control>
+		<type>label</type>
+		<id>1</id>
+		<posX>685</posX>
+		<posY>225</posY>
+		<width>800</width>
+		<label>#(L(101021))/#(L(102900))</label>
+		<textcolor>00b7ff</textcolor>
+		<font>TitanLight20</font>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+	</control>
+		<control Style="SettingsCheckButtonLarge">
+      <description>Enable screen saver</description>
+      <type>checkbutton</type>
+      <id>2</id>
+      <label>300133</label>
+  		<posX>655</posX>
+  		<posY>321</posY>
+      <ondown>3</ondown>
+      <onup>5</onup>
+   		<animation effect="fade" time="150">WindowOpen</animation>
+  		<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+    <control>
+      <description>Delay label</description>
+      <type>label</type>
+      <id>1</id>
+  		<posX>683</posX>
+  		<posY>396</posY>
+      <label>355</label>
+			<font>TitanLight12</font>
+     	<textcolor>ff00b7ff</textcolor>
+    	<animation effect="fade" time="150">WindowOpen</animation>
+  		<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+    <control>
+      <description>Delay</description>
+      <type>spincontrol</type>
+      <id>3</id>
+  		<posX>1588</posX>
+  		<posY>396</posY>
+      <align>right</align>
+      <onup>2</onup>
+      <ondown>4</ondown>
+      <textcolor>ffffffff</textcolor>
+    	<animation effect="fade" time="150">WindowOpen</animation>
+  		<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+		<control Style="SettingsCheckButtonLarge">
+      <description>BurnIn</description>
+      <type>checkbutton</type>
+      <id>4</id>
+      <label>300134</label>
+  		<posX>655</posX>
+  		<posY>451</posY>
+      <onright>5</onright>
+      <onup>3</onup>
+   		<animation effect="fade" time="150">WindowOpen</animation>
+  		<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+		<control Style="SettingsCheckButtonLarge">
+      <description>Reduce framerate</description>
+      <type>checkbutton</type>
+      <id>5</id>
+      <label>300135</label>
+  		<posX>655</posX>
+  		<posY>516</posY>
+      <ondown>2</ondown>
+   		<animation effect="fade" time="150">WindowOpen</animation>
+  		<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+  </controls>
+</window>

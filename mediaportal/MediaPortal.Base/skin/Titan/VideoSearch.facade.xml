@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="250" end="800,0">WindowClose</animation>
+      <control>
+        <description>composite control consisting of a list control and a thumbnail panel</description>
+        <type>facadeview</type>
+        <id>50</id>
+        <control>
+          <description>listcontrol</description>
+          <type>listcontrol</type>
+          <id>50</id>
+          <scrollOffset>2</scrollOffset>
+          <onleft>102</onleft>
+          <onup>66</onup>
+        </control>
+		
+			<control>
+				<description>Thumbnail Panel</description>
+				<type>thumbnailpanel</type>
+				<dimColor>90ffffff</dimColor>
+				<id>50</id>
+				<posX>163</posX>
+				<posY>242</posY>
+				<width>1040</width>
+				<height>500</height>
+				<scrollOffset>1</scrollOffset>
+				<onleft>102</onleft>
+				<onright>102</onright>
+				<itemWidth>187</itemWidth>
+				<itemHeight>175</itemHeight>
+				<textureWidth>157</textureWidth>
+				<textureHeight>120</textureHeight>
+				<thumbWidth>145</thumbWidth>
+				<thumbHeight>107</thumbHeight>
+				<thumbPosX>5</thumbPosX>
+				<thumbPosY>5</thumbPosY>
+				<itemWidthBig>224</itemWidthBig>
+				<itemHeightBig>227</itemHeightBig>
+				<thumbWidthBig>207</thumbWidthBig>
+				<thumbHeightBig>157</thumbHeightBig>
+				<textureWidthBig>219</textureWidthBig>
+				<textureHeightBig>167</textureHeightBig>
+				<thumbPosXBig>5</thumbPosXBig>
+				<thumbPosYBig>5</thumbPosYBig>
+				<zoomXPixels>30</zoomXPixels>
+				<zoomYPixels>30</zoomYPixels>
+				<hideUnfocusTexture>no</hideUnfocusTexture>
+				<renderFocusText>no</renderFocusText>
+				<renderUnfocusText>no</renderUnfocusText>
+				<spinCanFocus>no</spinCanFocus>
+			</control>
+		
+      </control>
+    </control>
+  </controls>
+</window>
