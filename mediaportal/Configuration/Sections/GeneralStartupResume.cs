@@ -94,7 +94,7 @@ namespace MediaPortal.Configuration.Sections
                                             // 7 Turn off monitor when blanking screen	    
                                             new string[] {"general", "turnmonitoronafterresume", "true"},
                                             // 8 Turn monitor/tv on when resuming from standby
-                                            new string[] {"general", "enables3trick", "true"},
+                                            new string[] {"general", "enables3trick", "false"},
                                             // 9 Allow S3 standby although wake up devices are present
                                             new string[] {"debug", "useS3Hack", "false"},
                                             // 10 Apply workaround to fix MP freezing on resume on some systems

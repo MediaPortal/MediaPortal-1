@@ -89,7 +89,7 @@ namespace MediaPortal.GUI.Settings
         // Resume settings
         cmTurnoffmonitor.Selected = xmlreader.GetValueAsBool("general", "turnoffmonitor", false);
         cmTurnmonitoronafterresume.Selected = xmlreader.GetValueAsBool("general", "turnmonitoronafterresume", false);
-        cmEnables3trick.Selected = xmlreader.GetValueAsBool("general", "enables3trick", true);
+        cmEnables3trick.Selected = xmlreader.GetValueAsBool("general", "enables3trick", false);
         cmUseS3Hack.Selected = xmlreader.GetValueAsBool("general", "useS3Hack", false);
         cmRestartonresume.Selected = xmlreader.GetValueAsBool("general", "restartonresume", false);
         cmShowlastactivemodule.Selected = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
