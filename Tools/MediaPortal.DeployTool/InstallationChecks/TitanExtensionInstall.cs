@@ -19,45 +19,40 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using Microsoft.Win32;
 
 namespace MediaPortal.DeployTool.InstallationChecks
 {
-  internal class LAVFilterMPEInstall : MPEInstall
+  internal class TitanExtensionInstall : MPEInstall
   {
 
-    public LAVFilterMPEInstall()
+    public TitanExtensionInstall()
     {
-      MpeId = "b7738156-b6ec-4f0f-b1a8-b5010349d8b1";
-      MpeURL ="http://www.team-mediaportal.com/index.php?option=com_mtree&task=att_download&link_id=162&cf_id=24";
-      MpeUpdateURL= "http://www.team-mediaportal.com/index.php?option=com_mtree&task=att_download&link_id=162&cf_id=52";
-      MpeUpdateFile = Application.StartupPath + "\\deploy\\" + "LAVFilters.xml";
-      FileName = Application.StartupPath + "\\deploy\\" + "LAVFilters.mpe1";
+      MpeId = "d2c4076c-f3d0-4d84-9a74-83fbbd15c940";
+      MpeURL = "http://install.team-mediaportal.com/MP1/skinUpdates/titan/TitanExtended.mpe1";
+      MpeUpdateURL = "http://install.team-mediaportal.com/MP1/skinUpdates/titan/TitanExtendedUpdate.xml";
+      MpeUpdateFile = Application.StartupPath + "\\deploy\\" + "TitanExtensions.xml";
+      FileName = Application.StartupPath + "\\deploy\\" + "TitanExtensions.mpe1";
     }
 
     public override string GetDisplayName()
     {
-      return "LAV Filters" + (OnlineVersion != null ? " " + OnlineVersion.ToString() : "");
+      return "Titan Extension Plugin";
     }
 
     public override CheckResult CheckStatus()
     {
       CheckResult result = default(CheckResult);
 
-      // check if the user does not want LAV installed
-      if (InstallationProperties.Instance["ConfigureMediaPortalLAV"] == "0")
+      if (InstallationProperties.Instance["ConfigureMediaPortalTitanExt"] == "No")
       {
         result.state = CheckState.SKIPPED;
         return result;
       }
 
-      // check if mpe package is installed and also check if LAV is actually installed
       Version vMpeInstalled = GetInstalledMpeVersion();
-      Version vLavInstalled = GetInstalledLAVVersion();
-      if (vLavInstalled != null && vMpeInstalled != null)
+      if (vMpeInstalled != null)
       {
         OnlineVersion = GetLatestAvailableMpeVersion();
         if (OnlineVersion != null)
@@ -81,21 +76,6 @@ namespace MediaPortal.DeployTool.InstallationChecks
       }
 
       return result;
-    }
-
-    static Version GetInstalledLAVVersion()
-    {
-      RegistryKey key = Registry.ClassesRoot.OpenSubKey(@"CLSID\{B98D13E7-55DB-4385-A33D-09FD1BA26338}\InprocServer32");
-      if (key != null)
-      {
-        string ax = key.GetValue(null).ToString();
-        if (File.Exists(ax))
-        {
-          FileVersionInfo info = FileVersionInfo.GetVersionInfo(ax);
-          return new Version(info.ProductMajorPart, info.ProductMinorPart, info.ProductBuildPart, info.ProductPrivatePart);
-        }
-      }
-      return null;
     }
 
   }

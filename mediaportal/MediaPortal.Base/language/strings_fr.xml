@@ -1107,7 +1107,7 @@
     <String id="1501">Carte désactivée</String>
     <String id="1502">Pas de carte disponible</String>
     <String id="1503">La chaîne est cryptée</String>
-    <String id="1504">Pas de signal detecté</String>
+    <String id="1504">Pas video/audio detecté</String>
     <String id="1505">Pas de graphe</String>
     <String id="1506">Erreur inconnue</String>
     <String id="1507">Chaîne inconnue</String>

@@ -509,4 +509,10 @@ Bitte fahren Sie nach dem Neustart mit der Installation fort.</value>
   <data name="MPSettings_checkBoxLAV" xml:space="preserve">
     <value>LAV Filter installieren um gängige Mediendateien abspielen zu können</value>
   </data>
+  <data name="SkinChoice_labelExistingSkin" xml:space="preserve">
+    <value>Existierenden Skin verwenden (Wird auf Kompatibilität geprüft)</value>
+  </data>
+  <data name="SkinChoice_labelSectionHeader" xml:space="preserve">
+    <value>Skin auswählen</value>
+  </data>
 </root>

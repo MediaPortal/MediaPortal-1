@@ -483,18 +483,33 @@ namespace MediaPortal.GUI.Video
     {
       if (item != null)
       {
-        GUIPropertyManager.SetProperty("#Actor.MoviePlot", ListItemMovieInfo(item).MoviePlot);
-        GUIPropertyManager.SetProperty("#Actor.MovieImage", item.ThumbnailImage);
-        GUIPropertyManager.SetProperty("#imdbnumber", ListItemMovieInfo(item).MovieImdbID);
-        GUIPropertyManager.SetProperty("#Actor.MovieExtraDetails", GUILocalizeStrings.Get(199) + " " +
-                                                                   ListItemMovieInfo(item).MovieCredits.Replace(" /", ",") + "  |  " +
-                                                                   GUILocalizeStrings.Get(174) + " " +
-                                                                   ListItemMovieInfo(item).MovieGenre.Replace(" /", ",") + "  |  " +
-                                                                   GUILocalizeStrings.Get(204) + " " +
-                                                                   ListItemMovieInfo(item).MovieMpaaRating + "  |  " +
-                                                                   GUILocalizeStrings.Get(344) + ": " +
-                                                                   ListItemMovieInfo(item).MovieCast.Replace(" /", ","));
-        GUIPropertyManager.SetProperty("#Actor.MovieTitle", ListItemMovieInfo(item).MovieTitle);
+        if (ListItemMovieInfo(item) != null)
+        {
+          GUIPropertyManager.SetProperty("#Actor.MoviePlot", ListItemMovieInfo(item).MoviePlot);
+          GUIPropertyManager.SetProperty("#Actor.MovieImage", item.ThumbnailImage);
+          GUIPropertyManager.SetProperty("#imdbnumber", ListItemMovieInfo(item).MovieImdbID);
+          GUIPropertyManager.SetProperty("#Actor.MovieExtraDetails", GUILocalizeStrings.Get(199) + " " +
+                                                                     ListItemMovieInfo(item).MovieCredits.Replace(" /",
+                                                                                                                  ",") +
+                                                                     "  |  " +
+                                                                     GUILocalizeStrings.Get(174) + " " +
+                                                                     ListItemMovieInfo(item).MovieGenre.Replace(" /",
+                                                                                                                ",") +
+                                                                     "  |  " +
+                                                                     GUILocalizeStrings.Get(204) + " " +
+                                                                     ListItemMovieInfo(item).MovieMpaaRating + "  |  " +
+                                                                     GUILocalizeStrings.Get(344) + ": " +
+                                                                     ListItemMovieInfo(item).MovieCast.Replace(" /", ","));
+          GUIPropertyManager.SetProperty("#Actor.MovieTitle", ListItemMovieInfo(item).MovieTitle);
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#Actor.MoviePlot", string.Empty);
+          GUIPropertyManager.SetProperty("#Actor.MovieImage", string.Empty);
+          GUIPropertyManager.SetProperty("#imdbnumber", string.Empty);
+          GUIPropertyManager.SetProperty("#Actor.MovieExtraDetails", string.Empty);
+          GUIPropertyManager.SetProperty("#Actor.MovieTitle", string.Empty);
+        }
         // For fanart handler
         if (item.IsPlayed)
         {
@@ -770,6 +785,11 @@ namespace MediaPortal.GUI.Video
 
     private void GetDetails(GUIListItem item)
     {
+      if (ListItemMovieInfo(item) == null)
+      {
+        return;
+      }
+
       string plot = ListItemMovieInfo(item).MoviePlot;
       string cover = item.ThumbnailImage;
       string tempItemLabel = item.Label; // To show Downloading on list item then switch to original label

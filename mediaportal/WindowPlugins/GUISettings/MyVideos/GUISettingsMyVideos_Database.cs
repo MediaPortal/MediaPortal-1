@@ -136,7 +136,17 @@ namespace MediaPortal.GUI.Settings
           GUIControl.DisableControl(GetID, (int)Controls.CONTROL_FANARTCOUNT);
         }
         
-        m_iCount = xmlreader.GetValueAsInt("moviedatabase", "fanartnumber", 0);
+        int faCount = xmlreader.GetValueAsInt("moviedatabase", "fanartnumber", 1);
+        
+        if (faCount < 1)
+        {
+          m_iCount = 1;
+        }
+        else
+        {
+          m_iCount = faCount;
+        }
+
         _actorsFetchSize = xmlreader.GetValueAsString("moviedatabase", "actorslistsize", "Short");
         
         // Folder names as title

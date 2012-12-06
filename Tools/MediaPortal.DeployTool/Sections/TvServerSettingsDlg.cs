@@ -48,6 +48,10 @@ namespace MediaPortal.DeployTool.Sections
 
     public override DeployDialog GetNextDialog()
     {
+      if (InstallationProperties.Instance.Get("InstallType") != "tvserver_master")
+      {
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.SkinChoice);  
+      }
       return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
     }
 
