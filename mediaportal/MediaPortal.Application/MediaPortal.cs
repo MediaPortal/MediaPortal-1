@@ -21,9 +21,7 @@
 #region usings
 
 using System;
-#if !DEBUG
 using System.Configuration;
-#endif
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -101,6 +99,8 @@ public class MediaPortalApp : D3DApp, IRender
   private bool _startWithBasicHome;
   private bool _useOnlyOneHome;
   private bool _suspended;
+  private bool _suspending;
+  private bool _resuming;
   private bool _ignoreContextMenuAction;
   private DateTime _lastContextMenuAction = DateTime.MaxValue;
   protected string DateFormat = string.Empty;
@@ -128,14 +128,16 @@ public class MediaPortalApp : D3DApp, IRender
 
   // ReSharper disable InconsistentNaming
   private const int WM_SYSCOMMAND           = 0x0112; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
+  private const int SC_MINIMIZE             = 0xF020; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
   private const int SC_SCREENSAVE           = 0xF140; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
   private const int SC_MONITORPOWER         = 0xF170; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
   private const int WM_ENDSESSION           = 0x0016; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa376889(v=vs.85).aspx
   private const int WM_DEVICECHANGE         = 0x0219; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363480(v=vs.85).aspx
   private const int WM_QUERYENDSESSION      = 0x0011; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa376890(v=vs.85).aspx
-  private const int WM_NULL                 = 0x0000; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632637(v=vs.85).aspx
   private const int WM_ACTIVATE             = 0x0006; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646274(v=vs.85).aspx
-  private const int WM_ACTIVATEAPP          = 0x001C; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632614(v=vs.85).aspx
+  private const int WA_INACTIVE             = 0;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646274(v=vs.85).aspx
+  private const int WA_ACTIVE               = 1;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646274(v=vs.85).aspx
+  private const int WA_CLICKACTIVE          = 2;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646274(v=vs.85).aspx
   private const int WM_SIZING               = 0x0214; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
   private const int WMSZ_LEFT               = 1;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
   private const int WMSZ_RIGHT              = 2;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
@@ -174,7 +176,6 @@ public class MediaPortalApp : D3DApp, IRender
   private static bool _avoidVersionChecking;
 #endif
   private string _outdatedSkinName;
-  private int _lastMsg = WM_NULL;
   private static bool _isRendering;
   private int _errorCounter;
   private RECT _lastRect; 
@@ -534,11 +535,11 @@ public class MediaPortalApp : D3DApp, IRender
 
         Log.Info("Main: Skin is {0} using theme {1}", skin, GUIThemeManager.CurrentTheme);
 
-#if !DEBUG
+//#if !DEBUG
         string version = ConfigurationManager.AppSettings["version"];
         _splashScreen = new SplashScreen {Version = version};
         _splashScreen.Run();
-#endif
+//#endif
         Application.DoEvents();
         if (_waitForTvServer)
         {
@@ -607,7 +608,6 @@ public class MediaPortalApp : D3DApp, IRender
               _splashScreen.SetInformation(String.Format(GUILocalizeStrings.Get(61), i.ToString(CultureInfo.InvariantCulture)));
             }
             Application.DoEvents();
-            Thread.Sleep(1000);
           }
         }
         Log.Debug("Main: Checking prerequisites");
@@ -682,9 +682,6 @@ public class MediaPortalApp : D3DApp, IRender
 #endif
         }
         catch (Exception) {}
-        //following crashes on some PCs, dunno why
-        //Log.Info("  Stop any known recording processes");
-        //Utils.KillExternalTVProcesses();
 #if !DEBUG
         try
         {
@@ -1021,14 +1018,12 @@ public class MediaPortalApp : D3DApp, IRender
   {
     try
     {
-      double ratioX;
-      double ratioY;
       RECT rc;
       Rectangle bounds;
 
       switch (msg.Msg)
       {
-        // power management broadcasts
+        // power management
         case WM_POWERBROADCAST:
           Log.Info("Main: WM_POWERBROADCAST: {0}", msg.WParam.ToInt32());
           switch (msg.WParam.ToInt32())
@@ -1038,48 +1033,68 @@ public class MediaPortalApp : D3DApp, IRender
               OnSuspend();
               break;
 
-            case PBT_APMRESUMECRITICAL:
+            // When resuming from hibernation, the OS always assume that a user is present. This is by design of Windows.
             case PBT_APMRESUMEAUTOMATIC:
+              bool useS3Hack;
+              using (Settings xmlreader = new MPSettings())
+              {
+                useS3Hack = xmlreader.GetValueAsBool("debug", "useS3Hack", false);
+              }
+            
+              if (useS3Hack)
+              {
+                Log.Info("Main: Resuming operation (useS3Hack enabled)");
+                OnResume();
+              }
+              else
+              {
+                Log.Info("Main: Automatic Resume - doing nothing");
+              }
+              break;
+
+            case PBT_APMRESUMECRITICAL:
             case PBT_APMRESUMESUSPEND:
               Log.Info("Main: Resuming operation.");
               OnResume();
               break;
           }
-          _lastMsg = msg.Msg;
+          msg.Result = (IntPtr)1;
           break;
 
         // window was created but not yet shown
         case WM_CREATE:
+          Log.Debug("Main: WM_CREATE");
           _lastRect.top    = 0;
           _lastRect.left   = 0;
           _lastRect.bottom = Height;
           _lastRect.right  = Width;
-          _lastMsg = msg.Msg;
-          // TODO: workaround for using DX9Device.Viewport might be necessary
+          msg.Result = (IntPtr)0;
           break;
 
-        // set maximum and minimum window size
+        // set maximum and minimum form size in windowed mode
         case WM_GETMINMAXINFO:
-          var mmi   = (MINMAXINFO) Marshal.PtrToStructure(msg.LParam, typeof(MINMAXINFO));
-          ratioX    = (double) GUIGraphicsContext.currentScreen.WorkingArea.Width / Width;
-          ratioY    = (double) GUIGraphicsContext.currentScreen.WorkingArea.Height / Height;
-          var ratio = Math.Min(ratioX, ratioY);
-
-          mmi.ptMaxSize.x      = (int)(Width * ratio);
-          mmi.ptMaxSize.y      = (int)(Height * ratio);
-          mmi.ptMaxPosition.x  = GUIGraphicsContext.currentScreen.WorkingArea.Left;
-          mmi.ptMaxPosition.y  = GUIGraphicsContext.currentScreen.WorkingArea.Top;
-          mmi.ptMinTrackSize.x = GUIGraphicsContext.SkinSize.Width  / 4;
-          mmi.ptMinTrackSize.y = GUIGraphicsContext.SkinSize.Height / 4;
-          mmi.ptMaxTrackSize.x = GUIGraphicsContext.currentScreen.WorkingArea.Right  - GUIGraphicsContext.currentScreen.WorkingArea.Left;
-          mmi.ptMaxTrackSize.y = GUIGraphicsContext.currentScreen.WorkingArea.Bottom - GUIGraphicsContext.currentScreen.WorkingArea.Top;
-          Marshal.StructureToPtr(mmi, msg.LParam, true);
-          _lastMsg = msg.Msg;
-          // TODO: workaround for using DX9Device.Viewport might be necessary
+          Log.Debug("Main: WM_GETMINMAXINFO");
+          if (FormBorderStyle == FormBorderStyle.Sizable)
+          {
+            var mmi = (MINMAXINFO)Marshal.PtrToStructure(msg.LParam, typeof(MINMAXINFO));
+            var ratio = Math.Min((double)GUIGraphicsContext.currentScreen.WorkingArea.Width / Width, 
+                                 (double)GUIGraphicsContext.currentScreen.WorkingArea.Height / Height);
+            mmi.ptMaxSize.x = (int)(Width * ratio);
+            mmi.ptMaxSize.y = (int)(Height * ratio);
+            mmi.ptMaxPosition.x = GUIGraphicsContext.currentScreen.WorkingArea.Left;
+            mmi.ptMaxPosition.y = GUIGraphicsContext.currentScreen.WorkingArea.Top;
+            mmi.ptMinTrackSize.x = GUIGraphicsContext.SkinSize.Width / 4;
+            mmi.ptMinTrackSize.y = GUIGraphicsContext.SkinSize.Height / 4;
+            mmi.ptMaxTrackSize.x = GUIGraphicsContext.currentScreen.WorkingArea.Right - GUIGraphicsContext.currentScreen.WorkingArea.Left;
+            mmi.ptMaxTrackSize.y = GUIGraphicsContext.currentScreen.WorkingArea.Bottom - GUIGraphicsContext.currentScreen.WorkingArea.Top;
+            Marshal.StructureToPtr(mmi, msg.LParam, true);
+            msg.Result = (IntPtr)0;
+          }
           break;
 
         // move window
         case WM_MOVING:
+          Log.Debug("Main: WM_MOVING");
           if ((!_allowMinOOB && WindowState == FormWindowState.Minimized) || (!_allowMaxOOB && WindowState == FormWindowState.Maximized))
           {
             rc = (RECT)Marshal.PtrToStructure(msg.LParam, typeof(RECT));
@@ -1092,19 +1107,21 @@ public class MediaPortalApp : D3DApp, IRender
             Marshal.StructureToPtr(rc, msg.LParam, false);
             _lastRect = rc;
           }
-          _lastMsg = msg.Msg;
+          msg.Result = (IntPtr)1;
           break;
         
-        // resize window
+        // aspect ratio save window resizing (except when being in MiniTV Mode)
         case WM_SIZING:
+          Log.Debug("Main WM_SIZING");
+
           rc = (RECT) Marshal.PtrToStructure(msg.LParam, typeof(RECT));
           var borderWidth  = Width  - ClientSize.Width;
           var borderHeight = Height - ClientSize.Height;
           var width        = rc.right  - rc.left - borderWidth;
           var height       = rc.bottom - rc.top  - borderHeight;
           var gcd          = GCD(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
-          ratioX           = (double) GUIGraphicsContext.SkinSize.Width  / gcd;
-          ratioY           = (double) GUIGraphicsContext.SkinSize.Height / gcd;
+          var ratioX       = (double) GUIGraphicsContext.SkinSize.Width  / gcd;
+          var ratioY       = (double) GUIGraphicsContext.SkinSize.Height / gcd;
           bounds           = GUIGraphicsContext.currentScreen.WorkingArea;
 
           switch (msg.WParam.ToInt32())
@@ -1137,9 +1154,8 @@ public class MediaPortalApp : D3DApp, IRender
             rc = _lastRect;
           }
 
-          // TODO: WINDOWED VS FULLSCREEN MODE
-          // minimum size check, form cannot be smaller than initial skin width plus the window border width
-          if (rc.right - rc.left < GUIGraphicsContext.SkinSize.Width + borderWidth)
+          // minimum size check, form cannot be smaller than a quarter of the initial skin size plus window borders
+          if (rc.right - rc.left < GUIGraphicsContext.SkinSize.Width / 4 + borderWidth)
           {
             rc = _lastRect;
           }
@@ -1147,17 +1163,15 @@ public class MediaPortalApp : D3DApp, IRender
           // only redraw if rectangle size changed
           if (((rc.right - rc.left) != (_lastRect.right - _lastRect.left)) || ((rc.bottom - rc.top) != (_lastRect.bottom - _lastRect.top)))
           {
-            Log.Debug("Main: Aspect ratio safe resizing from {0}x{1} to {2}x{3} (Skin resized to {4}x{5})", 
+            Log.Info("Main: Aspect ratio safe resizing from {0}x{1} to {2}x{3} (Skin resized to {4}x{5})", 
                       _lastRect.right - _lastRect.left, _lastRect.bottom - _lastRect.top, 
                       rc.right - rc.left, rc.bottom - rc.top,
                       rc.right - rc.left - borderWidth, rc.bottom - rc.top - borderHeight);
             OnPaintEvent();
           }
-          msg.Result = (IntPtr)1;
           Marshal.StructureToPtr(rc, msg.LParam, false);
           _lastRect = rc;
-          _lastMsg = msg.Msg;
-          // TODO: workaround for using DX9Device.Viewport might be necessary
+          msg.Result = (IntPtr)1;
           break;
 
         case WM_QUERYENDSESSION:
@@ -1166,47 +1180,50 @@ public class MediaPortalApp : D3DApp, IRender
           Log.Info("Main: shutdown mode granted");
           ShuttingDown = true;
           msg.Result = (IntPtr)1; // tell Windows we are ready to shutdown   
-          _lastMsg = msg.Msg;
           break;
 
         case WM_ENDSESSION:
           base.WndProc(ref msg);
-          Log.Info("Main: shutdown mode executed");
+          Log.Info("Main: Shutdown mode executed");
           msg.Result = IntPtr.Zero; // tell Windows it's ok to shutdown        
           Application.ExitThread();
           Application.Exit();
-          _lastMsg = msg.Msg;
+          msg.Result = (IntPtr)0;
           break;
 
         case WM_DEVICECHANGE:
-          _lastMsg = msg.Msg;
           if (RemovableDriveHelper.HandleDeviceChangedMessage(msg))
           {
             return;
           }
+          msg.Result = (IntPtr)1;
           break;
 
-        // activate or deactivate app
-        case WM_ACTIVATEAPP:
-          if (AppActive && _lastMsg == WM_ACTIVATE)
+        case WM_ACTIVATE:
+          switch (msg.WParam.ToInt32())
           {
-            var activate = (((int)msg.WParam != 0));
-            if (activate)
-            {
-              RestoreFromTray();
-            }
-            else
-            {
+            case WA_INACTIVE:
+              Log.Info("Main: Deactivation Request Received");
               MinimizeToTray(false);
-            }
+              break;
+            case WA_ACTIVE:
+            case WA_CLICKACTIVE:
+              Log.Info("Main: Activation Request Received");
+              RestoreFromTray();
+              break;
           }
-          _lastMsg = msg.Msg;
+          msg.Result = (IntPtr)0;
           break;
 
         // handle system commands
         case WM_SYSCOMMAND:
           switch (msg.WParam.ToInt32())
           {
+            // user clocked on minimize button
+            case SC_MINIMIZE:
+              Log.Debug("Main: SC_MINIMIZE");
+              MinimizeToTray(true);
+              break;
             // windows wants to start the screen saver
             case SC_MONITORPOWER:
             case SC_SCREENSAVE:
@@ -1219,20 +1236,15 @@ public class MediaPortalApp : D3DApp, IRender
               break;
             }
           break;
-        
-        default:
-          _lastMsg = msg.Msg;
-          break;
       }
 
       // don't continue if activating or deactivating app
-      if (_lastMsg == WM_ACTIVATEAPP)
-      {
-        g_Player.WndProc(ref msg);
-        base.WndProc(ref msg);
-        return;
-
-      }
+      //if (msg.Msg == WM_ACTIVATE)
+      //{
+      //  g_Player.WndProc(ref msg);
+      //  base.WndProc(ref msg);
+      //  return;
+      //}
 
       if (PluginManager.WndProc(ref msg))
       {
@@ -1391,6 +1403,13 @@ public class MediaPortalApp : D3DApp, IRender
   /// </summary>
   private void OnSuspend()
   {
+    if (_suspending)
+    {
+      Log.Debug("Suspending is already in progress");
+      return;
+    }
+    _suspending = true;
+
     if (!_suspended)
     {
       _ignoreContextMenuAction = true;
@@ -1408,26 +1427,23 @@ public class MediaPortalApp : D3DApp, IRender
           Thread.Sleep(100);
         }
       }
-
       SaveLastActiveModule();
 
-      // switch to windowed mode
-      if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false && !Windowed)
-      {
-        Log.Info("Main: Switching to windowed mode");
-        UpdatePresentParams(true, false);
-      }
       // stop playback
       _suspended = true;
+
+      Log.Info("Main: Stopping Input Devices");
       InputDevices.Stop();
+      
       Log.Info("Main: Stopping AutoPlay");
       AutoPlay.StopListening();
+      
       // we only dispose the DB connection if the DB path is remote.      
-      // since local db's have no problems.
       DisposeDBs();
       VolumeHandler.Dispose();
       Log.Info("Main: OnSuspend - Done");
     }
+    _suspending = false;
   }
 
 
@@ -1436,6 +1452,13 @@ public class MediaPortalApp : D3DApp, IRender
   /// </summary>
   private void OnResume()
   {
+    if (_resuming)
+    {
+      Log.Info("Main: Resuming is already in progress");
+      return;
+    }
+    _resuming = true;
+    
     // do nothing if system was not woken up by a user
     if (IsSystemResumeAutomatic())
     {
@@ -1465,7 +1488,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       ReOpenDBs();
 
-      // Systems without DirectX9 Ex have lost graphics device in suspend/hibernate cycle
+      // Systems without DirectX9Ex have lost graphics device in suspend/hibernate cycle
       if (!GUIGraphicsContext.IsDirectX9ExUsed())
       {
         Log.Info("Main: OnResume - set GUIGraphicsContext.State.LOST");
@@ -1487,14 +1510,13 @@ public class MediaPortalApp : D3DApp, IRender
         }
       }
 
-      Log.Info("Main: OnResume - calling recover device");
+      Log.Info("Main: OnResume - Recovering device");
       RecoverDevice();
 
-      Log.Info("Main: OnResume - Resettig executing state");
+      Log.Info("Main: OnResume - Resetting executing state");
       SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS); 
-      // TODO: add EXECUTION_STATE.ES_DISPLAY_REQUIRED to keep display on where appropriate. Done in S3 related Mantis
-
-      Log.Info("Main: OnResume - Init InputDevices");
+ 
+      Log.Info("Main: OnResume - Init Input Devices");
       InputDevices.Init();
       
       _suspended = false;
@@ -1517,6 +1539,7 @@ public class MediaPortalApp : D3DApp, IRender
       _lastOnresume = DateTime.Now;
       Log.Info("Main: OnResume - Done");
     }
+    _resuming = false;
   }
 
   #endregion
@@ -1529,7 +1552,7 @@ public class MediaPortalApp : D3DApp, IRender
   {
     if (MinimizeOnStartup && FirstTimeWindowDisplayed)
     {
-      Log.Info("d3dapp: Minimizing to tray on startup");
+      Log.Info("D3D: Minimizing to tray on startup");
       MinimizeToTray(true);
     }
     base.OnShown(e);
@@ -3105,7 +3128,6 @@ public class MediaPortalApp : D3DApp, IRender
   /// </summary>
   /// <param name="e"></param>
   protected override void MouseClickEvent(MouseEventArgs e)
-  // TODO: move double click as right click change to OnMouseDouleClick Handler where it belongs
   {
     // Disable first mouse action when mouse was hidden
     GUIGraphicsContext.ResetLastActivity();

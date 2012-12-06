@@ -90,15 +90,16 @@ namespace MediaPortal
     private readonly Control           _renderTarget;             //
     private readonly PresentParameters _presentParams;            // D3D presentation parameters
     private readonly D3DSettings       _graphicsSettings;         //
-    private readonly D3DEnumeration    _enumerationSettings;      // We need to keep track of our enumeration settings
+    private readonly D3DEnumeration    _enumerationSettings;      //
     private readonly bool              _useExclusiveDirectXMode;  // 
     private readonly bool              _alwaysOnTopConfig;        //
     private readonly bool              _disableMouseEvents;       //
-    private readonly bool              _showCursorWhenFullscreen; // Whether to show cursor when fullscreen
-    private bool                       _miniTvMode;               // minitv means minimum size < 720, always on top, focus may leave
-    private bool                       _isClosing;                // closing app?
+    private readonly bool              _showCursorWhenFullscreen; //
+    private bool                       _miniTvMode;               //
+    private bool                       _isClosing;                //
     private bool                       _lastShowCursor;           //
-    private bool                       _fromTray;                 // restoring from tray?
+    private bool                       _isVisible;                // set to true if form is not minimized to tray
+    private bool                       _lostFocus;                // set to true if form lost focus
     private bool                       _needReset;                //
     private bool                       _wasPlayingVideo;          //
     private bool                       _alwaysOnTop;              //
@@ -141,13 +142,13 @@ namespace MediaPortal
       SkinOverride              = string.Empty;
       WindowedOverride          = false;
       FullscreenOverride        = false;
-      ScreenNumberOverride       = -1;
+      ScreenNumberOverride      = -1;
       FirstTimeWindowDisplayed  = true;
       MinimizeOnStartup         = false;
       MinimizeOnGuiExit         = false;
       ShuttingDown              = false;
       AutoHideMouse             = false;
-      ShowCursor                = false;
+      ShowCursor                = true;
       Windowed                  = true;
       Volume                    = -1;
       AppActive                 = false;
@@ -159,7 +160,8 @@ namespace MediaPortal
       PlaylistPlayer            = PlayListPlayer.SingletonPlayer;
       MouseTimeOutTimer         = DateTime.Now;
       _lastActiveWindow         = -1;
-      _lastShowCursor           = true;
+      _isVisible                = true;
+      _lastShowCursor           = ShowCursor;
       _showCursorWhenFullscreen = false;
       _currentPlayListType      = PlayListType.PLAYLIST_NONE;
       _enumerationSettings      = new D3DEnumeration();
@@ -298,17 +300,17 @@ namespace MediaPortal
           location.Y = location.Y - formOnScreen.Bounds.Top + GUIGraphicsContext.currentScreen.Bounds.Top;
           Location = location;
         }
-        _oldBounds = Bounds;
+
         using (Settings xmlreader = new MPSettings())
         {
           var startFullscreen = !WindowedOverride && (FullscreenOverride || xmlreader.GetValueAsBool("general", "startfullscreen", false));
           if (startFullscreen)
           {
+            Log.Info("D3D: Starting in fullscreen");
             if (AutoHideTaskbar && !MinimizeOnStartup)
             {
               HideTaskBar(true);
             }
-            Log.Info("D3D: Starting fullscreen");
             FormBorderStyle = FormBorderStyle.None;
             MaximizeBox = false;
             MinimizeBox = false;
@@ -320,12 +322,14 @@ namespace MediaPortal
                      ClientSize.Width, ClientSize.Height,
                      GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
             Windowed = false;
+            ShowCursor = false;
+            _lastShowCursor = true;
           }
         }
         
         // Initialize the 3D environment for the app
-        // TODO:
         InitializeDevice();
+
         // Initialize the app's custom scene stuff
         OneTimeSceneInitialization();
       }
@@ -386,12 +390,12 @@ namespace MediaPortal
           }
 
           Log.Debug(windowed
-                      ? "D3D: Switched to windowed mode successfully"
-                      : "D3D: Switched to fullscreen mode successfully");
+                   ? "D3D: Updating presentation parameters for windowed mode successful"
+                   : "D3D: Updating presentation parameters for fullscreen mode successful");
         }
         catch (Exception ex)
         {
-          Log.Warn(windowed
+          Log.Error(windowed
                      ? "D3D: Switch to windowed mode failed - {0}"
                      : "D3D: Switch to fullscreen mode failed - {0}", ex.ToString());
         }
@@ -414,18 +418,21 @@ namespace MediaPortal
     protected void ToggleFullscreen()
     {
       Log.Info("D3D: Fullscreen / windowed mode toggled");
+
       // Force player to stop so as not to crash during toggle
       if (GUIGraphicsContext.Vmr9Active)
       {
         Log.Info("D3D: Vmr9Active - Stopping media");
         g_Player.Stop();
       }
+
       GUITextureManager.CleanupThumbs();
       GUITextureManager.Dispose();
       GUIFontManager.Dispose();
+
       if (Windowed)
       {
-        Log.Info("D3D: Switching from windowed mode to fullscreen");
+        Log.Debug("D3D: Switching from windowed mode to fullscreen");
         if (AutoHideTaskbar)
         {
           HideTaskBar(true);
@@ -437,12 +444,12 @@ namespace MediaPortal
         Menu = null;
         _oldBounds = Bounds;
         var newBounds = GUIGraphicsContext.currentScreen.Bounds;
-        Bounds = newBounds;
+        SetBounds(newBounds.X, newBounds.Y, newBounds.Width, newBounds.Height, BoundsSpecified.All);
         Update();
-        Log.Info("D3D: Switching windowed mode to fullscreen done - Windowed: {0}", Windowed);
         Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}", ClientSize.Width, ClientSize.Height,
                  GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
         UpdatePresentParams(false, false);
+        Log.Info("D3D: Switching windowed mode to fullscreen done");
       }
       else
       {
@@ -456,18 +463,19 @@ namespace MediaPortal
         MaximizeBox = true;
         MinimizeBox = true;
         Menu = _menuStripMain;
-        var newBounds = new Rectangle(_oldBounds.X, _oldBounds.Y, _oldBounds.Width, _oldBounds.Height);
-        if (Windowed)
+        if (_oldBounds.IsEmpty)
         {
-          newBounds.Height = GUIGraphicsContext.SkinSize.Height;
-          newBounds.Width = GUIGraphicsContext.SkinSize.Width;
+          ClientSize = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
         }
-        Bounds = newBounds;
+        else
+        {
+          SetBounds(_oldBounds.X, _oldBounds.Y, _oldBounds.Width, _oldBounds.Height, BoundsSpecified.All);
+        }
         Update();
-        Log.Info("D3D: Switching fullscreen to windowed mode done - Windowed: {0}", Windowed);
         Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}", ClientSize.Width, ClientSize.Height,
                  GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
         UpdatePresentParams(true, false);
+        Log.Info("D3D: Switching fullscreen to windowed mode done");
       }
       OnDeviceReset(null, null);
     }
@@ -478,8 +486,8 @@ namespace MediaPortal
     /// </summary>
     protected void FullRender()
     {
-      // don't render if minimized and restoring is not in progress
-      if (WindowState == FormWindowState.Minimized && !_fromTray)
+      // don't render if form is minimized and not visible to the user
+      if (WindowState == FormWindowState.Minimized && !_isVisible)
       {
         Thread.Sleep(100);
         return;
@@ -506,7 +514,7 @@ namespace MediaPortal
         try
         {
 #endif
-        if (((GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST) || (ActiveForm != this) || (GUIGraphicsContext.SaveRenderCycles)) && !_fromTray)
+        if (((GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST) || (ActiveForm != this) || (GUIGraphicsContext.SaveRenderCycles)) && !_isVisible)
         {
           Thread.Sleep(100);
         }
@@ -539,8 +547,8 @@ namespace MediaPortal
       }
       else
       {
-        // if we don't got the focus, then don't use all the CPU unless we are restoring from tray
-        if (ActiveForm != this || (GUIGraphicsContext.SaveRenderCycles) && !_fromTray)
+        // if form isn't active then don't use all the CPU unless we are visible
+        if (ActiveForm != this || (GUIGraphicsContext.SaveRenderCycles) && !_isVisible)
         {
           Thread.Sleep(100);
         }
@@ -564,7 +572,7 @@ namespace MediaPortal
         {
           try
           {
-            Log.Debug("d3dapp: RecoverDevice called");
+            Log.Debug("D3D: RecoverDevice called");
             // Test the cooperative level to see if it's OK to render
             GUIGraphicsContext.DX9Device.TestCooperativeLevel();
           }
@@ -572,12 +580,12 @@ namespace MediaPortal
           {
             // If the device was lost, do not render until we get it back
             AppActive = false;
-            Log.Debug("d3dapp: DeviceLostException");
+            Log.Debug("D3D: DeviceLostException");
             return;
           }
           catch (DeviceNotResetException)
           {
-            Log.Debug("d3dapp: DeviceNotResetException");
+            Log.Debug("D3D: DeviceNotResetException");
             _needReset = true;
           }
         }
@@ -594,7 +602,7 @@ namespace MediaPortal
           }
 
           // Reset the device and resize it
-          Log.Warn("d3dapp: Resetting DX9 device");
+          Log.Warn("D3D: Resetting DX9 device");
           try
           {
             GUITextureManager.Dispose();
@@ -607,21 +615,21 @@ namespace MediaPortal
             }
             else
             {
-              Log.Warn("d3dapp: DirectX9Ex is lost or GPU hung --> Reinit of DX9Ex is needed.");
+              Log.Warn("D3D: DirectX9Ex is lost or GPU hung --> Reinit of DX9Ex is needed.");
               GUIGraphicsContext.DX9ExRealDeviceLost = true;
               InitializeDevice();
             }
           }
           catch (Exception ex)
           {
-            Log.Error("d3dapp: Reset failed - {0}", ex.ToString());
+            Log.Error("D3D: Reset failed - {0}", ex.ToString());
             GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
             GUIGraphicsContext.DX9Device.DeviceReset -= OnDeviceReset;
             InitializeDevice();
             return;
           }
 
-          Log.Debug("d3dapp: EnvironmentResized()");
+          Log.Debug("D3D: EnvironmentResized()");
           EnvironmentResized(new CancelEventArgs());
         }
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
@@ -701,21 +709,29 @@ namespace MediaPortal
     /// <summary>
     /// Restores MP from System Tray
     /// </summary>
-    // TODO: restore window dimensions
-    // TODO: resume player when in fullscreen mode
     protected void RestoreFromTray()
     {
-      Log.Info("D3D: Restoring from tray");
-      _fromTray = true;
-      AppActive = true;
-      _notifyIcon.Visible = false;
-      Show();
-      WindowState = FormWindowState.Normal;
-      Activate();
-      ResumePlayer();
-      if (!Windowed && AutoHideTaskbar)
+  // do nothing if we are closing
+      if (_isClosing)
       {
-        HideTaskBar(true);
+        return;
+      }
+
+      // only restore if not visible
+      if (!_isVisible )
+      {
+        Log.Info("D3D: Restoring from tray");
+        _isVisible = true;
+        AppActive = true;
+        _notifyIcon.Visible = false;
+        Show();
+        WindowState = FormWindowState.Normal;
+        Activate();
+        ResumePlayer();
+        if (!Windowed && AutoHideTaskbar)
+        {
+          HideTaskBar(true);
+        }
       }
     }
 
@@ -723,20 +739,33 @@ namespace MediaPortal
     /// <summary>
     /// Minimized MP To System Tray
     /// </summary>
-    /// <param name="force">set to true for force hiding in window mode</param>
-    // TODO: save window dimensions
-    // TODO: pause player when in fullscreenmode
     protected void MinimizeToTray(bool force)
     {
-      if (!Windowed || force)
+      // do nothing if we are closing
+      if (_isClosing)
+      {
+        return;
+      }
+
+      // only minimize if visible and lost focus in windowed mode or if in fullscreen mode
+      if (_isVisible && ((_lostFocus && Windowed) || !Windowed || force))
       {
         Log.Info("D3D: Minimizing to tray");
-        _fromTray = false;
+        _isVisible = false;
         AppActive = false;
         _notifyIcon.Visible = true;
         Hide();
         WindowState = FormWindowState.Minimized;
         SavePlayerState();
+        // pause player and mute audio
+
+        if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD)
+        {
+          Volume = g_Player.Volume;
+          g_Player.Volume = 0;
+          g_Player.Pause();
+        }
+
         if (AutoHideTaskbar)
         {
           HideTaskBar(false);
@@ -1075,8 +1104,8 @@ namespace MediaPortal
       _presentParams.BackBufferWidth            = windowed ? ClientSize.Width  : _graphicsSettings.DisplayMode.Width;
       _presentParams.BackBufferHeight           = windowed ? ClientSize.Height : _graphicsSettings.DisplayMode.Height;
       Log.Debug(windowed
-                  ? "Main: Windowed Presentation Parameter Size updated to: {0}x{1}"
-                  : "Main: Fullscreen Presentation Parameter Size updated to: {0}x{1}",
+                  ? "D3D: Windowed Presentation Parameter Size updated to: {0}x{1}"
+                  : "D3D: Fullscreen Presentation Parameter Size updated to: {0}x{1}",
                  _presentParams.BackBufferWidth, _presentParams.BackBufferHeight);
       _presentParams.BackBufferFormat          = windowed ? _graphicsSettings.DisplayMode.Format : Format.X8R8G8B8;
       _presentParams.BackBufferCount           = 2;
@@ -1105,15 +1134,15 @@ namespace MediaPortal
 
       try
       {
-        Log.Info("d3dapp: Graphic adapter '{0}' is using driver version '{1}'",
+        Log.Info("D3D: Graphic adapter '{0}' is using driver version '{1}'",
                  adapterInfo.AdapterDetails.Description.Trim(), adapterInfo.AdapterDetails.DriverVersion.ToString());
-        Log.Info("d3dapp: Pixel shaders supported: {0} (Version: {1}), Vertex shaders supported: {2} (Version: {3})",
+        Log.Info("D3D: Pixel shaders supported: {0} (Version: {1}), Vertex shaders supported: {2} (Version: {3})",
                  deviceInfo.Caps.PixelShaderCaps.NumberInstructionSlots, deviceInfo.Caps.PixelShaderVersion.ToString(),
                  deviceInfo.Caps.VertexShaderCaps.NumberTemps, deviceInfo.Caps.VertexShaderVersion.ToString());
       }
       catch (Exception lex)
       {
-        Log.Warn("d3dapp: Error logging graphic device details - {0}", lex.Message);
+        Log.Warn("D3d: Error logging graphic device details - {0}", lex.Message);
       }
 
       // Set up the presentation parameters
@@ -1150,12 +1179,12 @@ namespace MediaPortal
         if (GUIGraphicsContext.IsDirectX9ExUsed())
         {
           // Vista or later, use DirectX9Ex device
-          Log.Info("Creating DirectX9Ex device");
+          Log.Info("D3D: Creating DirectX9Ex device");
           CreateDirectX9ExDevice(createFlags);
         }
         else
         {
-          Log.Info("Creating DirectX9 device");
+          Log.Info("D3D: Creating DirectX9 device");
           GUIGraphicsContext.DX9Device = new Device(_graphicsSettings.AdapterOrdinal,
                                                     _graphicsSettings.DevType,
                                                     Windowed ? _renderTarget : this,
@@ -1164,7 +1193,6 @@ namespace MediaPortal
         }
         if (Windowed)
         {
-          // TODO: Fix as ClienzSize does not equal Size
           // Make sure main window isn't topmost, so error message is visible
           var currentClientSize = ClientSize;
           Size = ClientSize;
@@ -1203,8 +1231,6 @@ namespace MediaPortal
         if (FindBestWindowedMode())
         {
           Windowed = true;
-
-          // TODO: Fix as ClienzSize does not equal Size
           // Make sure main window isn't topmost, so error message is visible
           var currentClientSize = ClientSize;
           Size = ClientSize;
@@ -1277,7 +1303,7 @@ namespace MediaPortal
       }
       else
       {
-        Log.Error("d3dapp: Could not create device");
+        Log.Error("D3D: Could not create device");
       }
     }
 
@@ -1393,7 +1419,7 @@ namespace MediaPortal
 
 
     /// <summary>
-    /// Restore player from saved state (after resizing form)
+    /// Restore player from saved state
     /// </summary>
     private void ResumePlayer()
     {
@@ -1455,6 +1481,15 @@ namespace MediaPortal
     {
       if (AutoHideMouse)
       {
+        // don't hide mouse when not over client ares of form
+        bool isMouseOverForm = ClientRectangle.Contains(PointToClient(MousePosition));
+        if (!isMouseOverForm)
+        {
+          MouseTimeOutTimer = DateTime.Now;
+          return;
+        }
+
+        // update mouse cursor state
         if (ShowCursor != _lastShowCursor)
         {
           if (ShowCursor)
@@ -1468,20 +1503,13 @@ namespace MediaPortal
           _lastShowCursor = ShowCursor;
         }
 
-        bool isMouseOverForm = ClientRectangle.Contains(MousePosition.X - Location.X, MousePosition.Y - Location.Y);
-        if (!isMouseOverForm)
+        // hide mouse cursor state if not active in the last three seconds
+        var ts = DateTime.Now - MouseTimeOutTimer;
+        if (ShowCursor && ts.TotalSeconds >= 3)
         {
-          MouseTimeOutTimer = DateTime.Now;
-        }
-        else
-        {
-          var ts = DateTime.Now - MouseTimeOutTimer;
-          if (ShowCursor && ts.TotalSeconds >= 3)
-          {
-            Cursor.Hide();
-            ShowCursor = false;
-            Invalidate(true);
-          }
+          Cursor.Hide();
+          ShowCursor = false;
+          Invalidate(true);
         }
       }
     }
@@ -1492,6 +1520,7 @@ namespace MediaPortal
     /// </summary>
     private void CleanupEnvironment()
     {
+      Log.Debug("D3D CleanupEnvironment()");
       AppActive = false;
       if (GUIGraphicsContext.DX9Device != null)
       {
@@ -1559,8 +1588,7 @@ namespace MediaPortal
         Size size;
         if (_miniTvMode)
         {
-          // TODO: match resized window
-          size = new Size(720/2, 576/2);
+          size = new Size(GUIGraphicsContext.SkinSize.Width/2,  GUIGraphicsContext.SkinSize.Height/2);
           _alwaysOnTop = true;
           FormBorderStyle = FormBorderStyle.SizableToolWindow;
           Menu = null;
@@ -1850,6 +1878,7 @@ namespace MediaPortal
     /// <param name="e"></param>
     private void OnLoad(object sender, EventArgs e)
     {
+      Log.Debug("D3D: OnLoad()");
       Application.Idle += OnIdle;
 
       Initialize();
@@ -1903,6 +1932,7 @@ namespace MediaPortal
     /// <param name="e"></param>
     private static void OnClosing(object sender, CancelEventArgs e)
     {
+      Log.Debug("D3D: OnClosing()");
       GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
       g_Player.Stop();
     }
@@ -2101,60 +2131,22 @@ namespace MediaPortal
     /// <param name="e">An EventArgs that contains the event data.</param>
     protected override void OnGotFocus(EventArgs e)
     {
-      AppActive = true;
+      Log.Debug("D3D: OnGotFocus()");
+      _lostFocus = false;
       base.OnGotFocus(e);
     }
 
 
     /// <summary>
-    /// Raises the Resize event.
-    /// http://msdn.microsoft.com/en-us/library/system.windows.forms.control.onresize.aspx
+    /// Raises the Lost Focus event.
+    /// http://msdn.microsoft.com/en-us/library/system.windows.forms.control.onlostfocus.aspx
     /// </summary>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    protected override void OnResize(EventArgs e)
+    protected override void OnLostFocus(EventArgs e)
     {
-      try
-      {
-        if (_fromTray)
-        {
-          _fromTray = false;
-        }
-        else
-        {
-          SavePlayerState();
-        }
-        if (_notifyIcon != null)
-        {
-          if (_notifyIcon.Visible == false && WindowState == FormWindowState.Minimized)
-          {
-            _notifyIcon.Visible = true;
-            Hide();
-            if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD)
-            {
-              if (g_Player.Volume > 0)
-              {
-                Volume = g_Player.Volume;
-                g_Player.Volume = 0;
-              }
-              if (g_Player.Paused == false)
-              {
-                g_Player.Pause();
-              }
-            }
-            return;
-          }
-          if (_notifyIcon.Visible && WindowState != FormWindowState.Minimized)
-          {
-            _notifyIcon.Visible = false;
-          }
-        }
-        AppActive = WindowState != FormWindowState.Minimized;
-        base.OnResize(e);
-      }
-      catch (Exception ex)
-      {
-        Log.Error("d3dapp: An error occured in OnResize - {0}", ex.ToString());
-      }
+      Log.Debug("D3D: OnLostFocus()");
+      _lostFocus = true;
+      base.OnLostFocus(e);
     }
 
 
@@ -2175,7 +2167,7 @@ namespace MediaPortal
       }
       catch (Exception ex)
       {
-        Log.Error("d3dapp: Exception: {0}", ex);
+        Log.Error("D3D: Exception: {0}", ex);
       }
     }
 
@@ -2187,6 +2179,7 @@ namespace MediaPortal
     /// <param name="e">A CancelEventArgs that contains the event data.</param>
     protected override void OnClosing(CancelEventArgs e)
     {
+      Log.Debug("D3D: OnClosing()");
       if (MinimizeOnGuiExit && !ShuttingDown)
       {
         if (WindowState != FormWindowState.Minimized)
@@ -2235,7 +2228,7 @@ namespace MediaPortal
       var newBounds = new Rectangle(x, y, width, height);
       if (GUIGraphicsContext._useScreenSelector && !Windowed && !newBounds.Equals(GUIGraphicsContext.currentScreen.Bounds))
       {
-        Log.Info("d3dapp: Screenselector: skipped SetBoundsCore {0} does not match {1}", newBounds.ToString(), GUIGraphicsContext.currentScreen.Bounds.ToString());
+        Log.Info("D3D: Screenselector: skipped SetBoundsCore {0} does not match {1}", newBounds.ToString(), GUIGraphicsContext.currentScreen.Bounds.ToString());
       }
       else
       {
