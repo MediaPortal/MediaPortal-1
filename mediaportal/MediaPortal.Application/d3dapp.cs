@@ -271,6 +271,7 @@ namespace MediaPortal
     /// 
     protected bool CreateGraphicsSample()
     {
+      Log.Debug("D3D: CreateGraphicsSample()");
       _enumerationSettings.ConfirmDeviceCallback = ConfirmDevice;
       _enumerationSettings.Enumerate();
 
@@ -322,8 +323,10 @@ namespace MediaPortal
                      ClientSize.Width, ClientSize.Height,
                      GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
             Windowed = false;
-            ShowCursor = false;
-            _lastShowCursor = true;
+
+            // make sure cursor is initially hidden in fullscreen
+            ShowCursor = _lastShowCursor = false;
+            Cursor.Hide();
           }
         }
         
@@ -723,7 +726,10 @@ namespace MediaPortal
         Log.Info("D3D: Restoring from tray");
         _isVisible = true;
         AppActive = true;
-        _notifyIcon.Visible = false;
+        if (_notifyIcon != null)
+        {
+          _notifyIcon.Visible = false;
+        }
         Show();
         WindowState = FormWindowState.Normal;
         Activate();
@@ -753,7 +759,10 @@ namespace MediaPortal
         Log.Info("D3D: Minimizing to tray");
         _isVisible = false;
         AppActive = false;
-        _notifyIcon.Visible = true;
+        if (_notifyIcon != null)
+        {
+          _notifyIcon.Visible = true;
+        }
         Hide();
         WindowState = FormWindowState.Minimized;
         SavePlayerState();
@@ -1129,6 +1138,7 @@ namespace MediaPortal
     /// </summary>
     protected void InitializeDevice()
     {
+      Log.Debug("D3D: InitializeDevice()");
       var adapterInfo = _graphicsSettings.AdapterInfo;
       var deviceInfo = _graphicsSettings.DeviceInfo;
 
@@ -1482,11 +1492,13 @@ namespace MediaPortal
       if (AutoHideMouse)
       {
         // don't hide mouse when not over client ares of form
-        bool isMouseOverForm = ClientRectangle.Contains(PointToClient(MousePosition));
-        if (!isMouseOverForm)
+        if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
         {
-          MouseTimeOutTimer = DateTime.Now;
-          return;
+          if (!ClientRectangle.Contains(PointToClient(MousePosition)))
+          {
+            MouseTimeOutTimer = DateTime.Now;
+            return;
+          }
         }
 
         // update mouse cursor state
@@ -1652,12 +1664,12 @@ namespace MediaPortal
       {
         showLastActiveModule = false;
       }
-      Log.Debug("d3dapp: ShowLastActiveModule active : {0}", showLastActiveModule);
+      Log.Debug("D3D: ShowLastActiveModule active : {0}", showLastActiveModule);
 
       if (showLastActiveModule)
       {
-        Log.Debug("d3dapp: ShowLastActiveModule module : {0}", lastActiveModule);
-        Log.Debug("d3dapp: ShowLastActiveModule fullscreen : {0}", lastActiveModuleFullscreen);
+        Log.Debug("D3D: ShowLastActiveModule module : {0}", lastActiveModule);
+        Log.Debug("D3D: ShowLastActiveModule fullscreen : {0}", lastActiveModuleFullscreen);
         if (lastActiveModule < 0)
         {
           Log.Error("Error recalling last active module - invalid module name '{0}'", lastActiveModule);
@@ -2047,6 +2059,14 @@ namespace MediaPortal
     /// <param name="e"></param>
     protected virtual void MouseMoveEvent(MouseEventArgs e)
     {
+      // ignore first mouse move event in fullscreen mode or mouse cursor will be shown
+      if (!Windowed && FirstTimeWindowDisplayed)
+      {
+        Log.Debug("D3D: skipping mouse move event in fullscreen mode");
+        FirstTimeWindowDisplayed = false;
+        return;
+      }
+
       if (!_disableMouseEvents && !ShowCursor)
       {
         Cursor.Show();

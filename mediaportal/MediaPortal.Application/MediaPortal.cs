@@ -236,10 +236,6 @@ public class MediaPortalApp : D3DApp, IRender
   [DllImport("Kernel32.dll")]
   private static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE state);
 
-  // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372708(v=vs.85).aspx
-  [DllImport("Kernel32.dll")]
-  private static extern bool IsSystemResumeAutomatic();
-
   private static RestartOptions _restartOptions = RestartOptions.Reboot;
   private static bool _useRestartOptions;
 
@@ -1459,12 +1455,6 @@ public class MediaPortalApp : D3DApp, IRender
     }
     _resuming = true;
     
-    // do nothing if system was not woken up by a user
-    if (IsSystemResumeAutomatic())
-    {
-      return;
-    }
-
     using (Settings xmlreader = new MPSettings())
     {
       int waitOnResume = xmlreader.GetValueAsBool("general", "delay resume", false)
@@ -1513,9 +1503,28 @@ public class MediaPortalApp : D3DApp, IRender
       Log.Info("Main: OnResume - Recovering device");
       RecoverDevice();
 
-      Log.Info("Main: OnResume - Resetting executing state");
-      SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS); 
- 
+      using (Settings xmlreader = new MPSettings())
+      {
+        Log.Info("Main: OnResume - Resetting executing state");
+        bool turnMonitorOn = xmlreader.GetValueAsBool("general", "turnmonitoronafterresume", false);
+
+        if (turnMonitorOn)
+        {
+          Log.Info("Main: OnResume - Trying to wake up the display");
+          SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
+          if (OSInfo.OSInfo.Win8OrLater())
+          {
+            Log.Warn("Main: OnResume - Display can only be turned on by the OS staring with Win8");
+          }
+        }
+  
+        if (xmlreader.GetValueAsBool("general", "restartonresume", false))
+        {
+          Log.Info("Main: OnResume - prepare for restart!");
+          Utils.RestartMePo();
+        }
+      }
+      
       Log.Info("Main: OnResume - Init Input Devices");
       InputDevices.Init();
       
@@ -3064,9 +3073,11 @@ public class MediaPortalApp : D3DApp, IRender
   protected override void MouseMoveEvent(MouseEventArgs e)
   {
     // Disable first mouse action when mouse was hidden
-    base.MouseMoveEvent(e);
-
-    if (ShowCursor)
+    if (!ShowCursor)
+    {
+      base.MouseMoveEvent(e);
+    }
+    else
     {
       if (_lastCursorPosition != Cursor.Position)
       {
@@ -3129,9 +3140,9 @@ public class MediaPortalApp : D3DApp, IRender
   /// <param name="e"></param>
   protected override void MouseClickEvent(MouseEventArgs e)
   {
-    // Disable first mouse action when mouse was hidden
     GUIGraphicsContext.ResetLastActivity();
 
+    // Disable first mouse action when mouse was hidden
     if (!ShowCursor)
     {
       base.MouseClickEvent(e);
