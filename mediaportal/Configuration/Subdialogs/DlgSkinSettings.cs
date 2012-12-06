@@ -994,33 +994,41 @@ namespace MediaPortal.Configuration.Sections
           CreateDefaultGenreColors(xmlreader);
         }
 
-        if (!_guideColorsLoaded)
-        {
-          _guideColorsLoaded = LoadGuideColors(xmlreader);
-        }
-
         PopulateThemesList(selectedTheme);
-        PopulateGuideGenreList();
 
-        // Need to read skin settings as string and parse to boolean to allow skin settings to have true/false values rather than yes/no values.
-        cbColoredGuide.Checked = bool.Parse(xmlreader.GetValueAsString("booleansettings", "#skin.tvguide.usecolorsforbuttons", "False"));
-        cbGenreColoring.Checked = bool.Parse(xmlreader.GetValueAsString("booleansettings", "#skin.tvguide.usecolorsforgenre", "False"));
-        cbGenreColorKey.Checked = bool.Parse(xmlreader.GetValueAsString("booleansettings", "#skin.tvguide.showgenrekey", "False"));
-        cbBorderHighlight.Checked = bool.Parse(xmlreader.GetValueAsString("booleansettings", "#skin.tvguide.useborderhighlight", "False"));
-
-        cbGenreColoring.Enabled = cbColoredGuide.Checked;
-        cbGenreColorKey.Enabled = cbGenreColoring.Checked;
-
-        if (cbColoredGuide.Checked)
+        if (SettingsForm.UseTvServer)
         {
-          if (!tabControlTvGuideSettings.Controls.Contains(tabPageTvGuideColors))
+          if (!_guideColorsLoaded)
           {
-            tabControlTvGuideSettings.Controls.Add(tabPageTvGuideColors);
+            _guideColorsLoaded = LoadGuideColors(xmlreader);
           }
-        }
-        else
-        {
-          tabControlTvGuideSettings.Controls.Remove(tabPageTvGuideColors);
+
+          PopulateGuideGenreList();
+
+          // Need to read skin settings as string and parse to boolean to allow skin settings to have true/false values rather than yes/no values.
+          cbColoredGuide.Checked =
+            bool.Parse(xmlreader.GetValueAsString("booleansettings", "#skin.tvguide.usecolorsforbuttons", "False"));
+          cbGenreColoring.Checked =
+            bool.Parse(xmlreader.GetValueAsString("booleansettings", "#skin.tvguide.usecolorsforgenre", "False"));
+          cbGenreColorKey.Checked =
+            bool.Parse(xmlreader.GetValueAsString("booleansettings", "#skin.tvguide.showgenrekey", "False"));
+          cbBorderHighlight.Checked =
+            bool.Parse(xmlreader.GetValueAsString("booleansettings", "#skin.tvguide.useborderhighlight", "False"));
+
+          cbGenreColoring.Enabled = cbColoredGuide.Checked;
+          cbGenreColorKey.Enabled = cbGenreColoring.Checked;
+
+          if (cbColoredGuide.Checked)
+          {
+            if (!tabControlTvGuideSettings.Controls.Contains(tabPageTvGuideColors))
+            {
+              tabControlTvGuideSettings.Controls.Add(tabPageTvGuideColors);
+            }
+          }
+          else
+          {
+            tabControlTvGuideSettings.Controls.Remove(tabPageTvGuideColors);
+          }
         }
       }
     }
@@ -1076,16 +1084,19 @@ namespace MediaPortal.Configuration.Sections
 
     public void SaveSettings()
     {
-      using (Settings xmlwriter = new SKSettings())
+      if (SettingsForm.UseTvServer)
       {
-        xmlwriter.SetValue("theme", "name", listViewAvailableThemes.SelectedItems[0].Text);
+        using (Settings xmlwriter = new SKSettings())
+        {
+          xmlwriter.SetValue("theme", "name", listViewAvailableThemes.SelectedItems[0].Text);
 
-        xmlwriter.SetValue("booleansettings", "#skin.tvguide.usecolorsforbuttons", cbColoredGuide.Checked);
-        xmlwriter.SetValue("booleansettings", "#skin.tvguide.usecolorsforgenre", cbGenreColoring.Checked);
-        xmlwriter.SetValue("booleansettings", "#skin.tvguide.useborderhighlight", cbBorderHighlight.Checked);
-        xmlwriter.SetValue("booleansettings", "#skin.tvguide.showgenrekey", cbGenreColorKey.Checked);
+          xmlwriter.SetValue("booleansettings", "#skin.tvguide.usecolorsforbuttons", cbColoredGuide.Checked);
+          xmlwriter.SetValue("booleansettings", "#skin.tvguide.usecolorsforgenre", cbGenreColoring.Checked);
+          xmlwriter.SetValue("booleansettings", "#skin.tvguide.useborderhighlight", cbBorderHighlight.Checked);
+          xmlwriter.SetValue("booleansettings", "#skin.tvguide.showgenrekey", cbGenreColorKey.Checked);
 
-        SaveGuideColors(xmlwriter);
+          SaveGuideColors(xmlwriter);
+        }
       }
     }
 
