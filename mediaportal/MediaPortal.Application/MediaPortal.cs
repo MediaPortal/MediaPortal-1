@@ -149,7 +149,6 @@ public class MediaPortalApp : D3DApp, IRender
   private const int WMSZ_BOTTOMRIGHT        = 8;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
   private const int WM_GETMINMAXINFO        = 0x0024; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632626(v=vs.85).aspx
   private const int WM_MOVING               = 0x0216; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632632(v=vs.85).aspx
-  private const int WM_CREATE               = 0x0001; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632619(v=vs.85).aspx
   private const int WM_POWERBROADCAST       = 0x0218; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa373247(v=vs.85).aspx
   private const int PBT_APMSUSPEND          = 0x0004; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372721(v=vs.85).aspx
   private const int PBT_APMRESUMECRITICAL   = 0x0006; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372719(v=vs.85).aspx
@@ -178,9 +177,6 @@ public class MediaPortalApp : D3DApp, IRender
   private string _outdatedSkinName;
   private static bool _isRendering;
   private int _errorCounter;
-  private RECT _lastRect; 
-  private readonly int _clientSizeConfigX;
-  private readonly int _clientSizeConfigY;
   // ReSharper disable ConvertToConstant.Local
   private readonly bool _allowMinOOB = true;
   private readonly bool _allowMaxOOB = true;
@@ -189,17 +185,6 @@ public class MediaPortalApp : D3DApp, IRender
   #endregion
 
   #region structs
-
-  [StructLayout(LayoutKind.Sequential)]
-  // ReSharper disable InconsistentNaming
-  private struct RECT
-  {
-    public int left;
-    public int top;
-    public int right;
-    public int bottom;
-  }
-  // ReSharper restore InconsistentNaming
 
   // ReSharper disable InconsistentNaming
   // ReSharper disable NotAccessedField.Local
@@ -835,8 +820,6 @@ public class MediaPortalApp : D3DApp, IRender
       _useScreenSaver = xmlreader.GetValueAsBool("general", "IdleTimer", true);
       _timeScreenSaver = xmlreader.GetValueAsInt("general", "IdleTimeValue", 300);
       _useIdleblankScreen = xmlreader.GetValueAsBool("general", "IdleBlanking", false);
-      _clientSizeConfigX = xmlreader.GetValueAsInt("general", "sizex", 720);
-      _clientSizeConfigY = xmlreader.GetValueAsInt("general", "sizey", 576);
       _showLastActiveModule = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
       _lastActiveModule = xmlreader.GetValueAsInt("general", "lastactivemodule", -1);
       _lastActiveModuleFullscreen = xmlreader.GetValueAsBool("general", "lastactivemodulefullscreen", false);
@@ -859,7 +842,10 @@ public class MediaPortalApp : D3DApp, IRender
     Log.Info("Main: Checking for running MediaPortal instance");
     Log.Info(@"Main: Deleting old log\capture.log");
     Utils.FileDelete(Config.GetFile(Config.Dir.Log, "capture.log"));
-    ClientSize = new Size(_clientSizeConfigX, _clientSizeConfigY);
+
+    // temporarily set new client size for initialization purposes
+    ClientSize = new Size(0, 0);
+    
     Text = "MediaPortal";
     GUIGraphicsContext.form = this;
     GUIGraphicsContext.graphics = null;
@@ -998,7 +984,7 @@ public class MediaPortalApp : D3DApp, IRender
   {
     while (b != 0)
     {
-      var tmp = b;
+      long tmp = b;
       b = a % b;
       a = tmp;
     }
@@ -1057,28 +1043,18 @@ public class MediaPortalApp : D3DApp, IRender
           msg.Result = (IntPtr)1;
           break;
 
-        // window was created but not yet shown
-        case WM_CREATE:
-          Log.Debug("Main: WM_CREATE");
-          _lastRect.top    = 0;
-          _lastRect.left   = 0;
-          _lastRect.bottom = Height;
-          _lastRect.right  = Width;
-          msg.Result = (IntPtr)0;
-          break;
-
         // set maximum and minimum form size in windowed mode
         case WM_GETMINMAXINFO:
           Log.Debug("Main: WM_GETMINMAXINFO");
           if (FormBorderStyle == FormBorderStyle.Sizable)
           {
+            double ratio = Math.Min((double)GUIGraphicsContext.currentScreen.WorkingArea.Width / Width, 
+                                    (double)GUIGraphicsContext.currentScreen.WorkingArea.Height / Height);
             var mmi = (MINMAXINFO)Marshal.PtrToStructure(msg.LParam, typeof(MINMAXINFO));
-            var ratio = Math.Min((double)GUIGraphicsContext.currentScreen.WorkingArea.Width / Width, 
-                                 (double)GUIGraphicsContext.currentScreen.WorkingArea.Height / Height);
-            mmi.ptMaxSize.x = (int)(Width * ratio);
-            mmi.ptMaxSize.y = (int)(Height * ratio);
-            mmi.ptMaxPosition.x = GUIGraphicsContext.currentScreen.WorkingArea.Left;
-            mmi.ptMaxPosition.y = GUIGraphicsContext.currentScreen.WorkingArea.Top;
+            mmi.ptMaxSize.x      = (int)(Width * ratio);
+            mmi.ptMaxSize.y      = (int)(Height * ratio);
+            mmi.ptMaxPosition.x  = GUIGraphicsContext.currentScreen.WorkingArea.Left;
+            mmi.ptMaxPosition.y  = GUIGraphicsContext.currentScreen.WorkingArea.Top;
             mmi.ptMinTrackSize.x = GUIGraphicsContext.SkinSize.Width / 4;
             mmi.ptMinTrackSize.y = GUIGraphicsContext.SkinSize.Height / 4;
             mmi.ptMaxTrackSize.x = GUIGraphicsContext.currentScreen.WorkingArea.Right - GUIGraphicsContext.currentScreen.WorkingArea.Left;
@@ -1098,10 +1074,10 @@ public class MediaPortalApp : D3DApp, IRender
             // out of bounds check
             if (rc.top < bounds.Top || rc.bottom > bounds.Bottom || rc.right > bounds.Right || rc.left < bounds.Left)
             {
-              rc = _lastRect;
+              rc = LastRect;
             }
             Marshal.StructureToPtr(rc, msg.LParam, false);
-            _lastRect = rc;
+            LastRect = rc;
           }
           msg.Result = (IntPtr)1;
           break;
@@ -1109,15 +1085,13 @@ public class MediaPortalApp : D3DApp, IRender
         // aspect ratio save window resizing (except when being in MiniTV Mode)
         case WM_SIZING:
           Log.Debug("Main WM_SIZING");
-
           rc = (RECT) Marshal.PtrToStructure(msg.LParam, typeof(RECT));
-          var borderWidth  = Width  - ClientSize.Width;
-          var borderHeight = Height - ClientSize.Height;
-          var width        = rc.right  - rc.left - borderWidth;
-          var height       = rc.bottom - rc.top  - borderHeight;
-          var gcd          = GCD(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
-          var ratioX       = (double) GUIGraphicsContext.SkinSize.Width  / gcd;
-          var ratioY       = (double) GUIGraphicsContext.SkinSize.Height / gcd;
+          var border       = new Size(Width  - ClientSize.Width, Height - ClientSize.Height);
+          int width        = rc.right  - rc.left - border.Width;
+          int height       = rc.bottom - rc.top  - border.Height;
+          long gcd         = GCD(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
+          double ratioX    = (double) GUIGraphicsContext.SkinSize.Width  / gcd;
+          double ratioY    = (double) GUIGraphicsContext.SkinSize.Height / gcd;
           bounds           = GUIGraphicsContext.currentScreen.WorkingArea;
 
           switch (msg.WParam.ToInt32())
@@ -1126,47 +1100,47 @@ public class MediaPortalApp : D3DApp, IRender
             case WMSZ_LEFT:
             case WMSZ_RIGHT:
             case WMSZ_BOTTOMRIGHT:
-              rc.bottom = rc.top + borderHeight + (int)(ratioY * width / ratioX);
+              rc.bottom = rc.top + border.Height + (int)(ratioY * width / ratioX);
               break;
             // adjust width by overriding right
             case WMSZ_TOP:
             case WMSZ_BOTTOM:
-              rc.right = rc.left + borderWidth + (int)(ratioX * height / ratioY);
+              rc.right = rc.left + border.Width + (int)(ratioX * height / ratioY);
               break;
             // adjust width by overriding left
             case WMSZ_TOPLEFT:
             case WMSZ_BOTTOMLEFT:
-              rc.left = rc.right - borderWidth - (int)(ratioX * height / ratioY);
+              rc.left = rc.right - border.Width - (int)(ratioX * height / ratioY);
               break;
             // adjust height by overriding top
             case WMSZ_TOPRIGHT:
-              rc.top = rc.bottom - borderHeight - (int)(ratioY * width / ratioX);
+              rc.top = rc.bottom - border.Height - (int)(ratioY * width / ratioX);
               break;
           }
 
           // out of bounds check
           if (rc.top < bounds.Top || rc.bottom > bounds.Bottom || rc.right > bounds.Right || rc.left < bounds.Left)
           {
-            rc = _lastRect;
+            rc = LastRect;
           }
 
           // minimum size check, form cannot be smaller than a quarter of the initial skin size plus window borders
-          if (rc.right - rc.left < GUIGraphicsContext.SkinSize.Width / 4 + borderWidth)
+          if (rc.right - rc.left < GUIGraphicsContext.SkinSize.Width / 4 + border.Width)
           {
-            rc = _lastRect;
+            rc = LastRect;
           }
 
           // only redraw if rectangle size changed
-          if (((rc.right - rc.left) != (_lastRect.right - _lastRect.left)) || ((rc.bottom - rc.top) != (_lastRect.bottom - _lastRect.top)))
+          if (((rc.right - rc.left) != (LastRect.right - LastRect.left)) || ((rc.bottom - rc.top) != (LastRect.bottom - LastRect.top)))
           {
             Log.Info("Main: Aspect ratio safe resizing from {0}x{1} to {2}x{3} (Skin resized to {4}x{5})", 
-                      _lastRect.right - _lastRect.left, _lastRect.bottom - _lastRect.top, 
+                      LastRect.right - LastRect.left, LastRect.bottom - LastRect.top, 
                       rc.right - rc.left, rc.bottom - rc.top,
-                      rc.right - rc.left - borderWidth, rc.bottom - rc.top - borderHeight);
+                      rc.right - rc.left - border.Width, rc.bottom - rc.top - border.Height);
             OnPaintEvent();
           }
           Marshal.StructureToPtr(rc, msg.LParam, false);
-          _lastRect = rc;
+          LastRect = rc;
           msg.Result = (IntPtr)1;
           break;
 
@@ -1925,19 +1899,33 @@ public class MediaPortalApp : D3DApp, IRender
     // Loading Skin
     UpdateSplashScreenMessage(String.Format(GUILocalizeStrings.Get(69), GUIGraphicsContext.SkinName + " - " + GUIThemeManager.CurrentTheme));
     GUIControlFactory.LoadReferences(GUIGraphicsContext.GetThemedSkinFile(@"\references.xml"));
+
     if (Windowed)
     {
-      Log.Debug("Startup: Resizing form to Skin Dimensions");
-      var borderWidth = Width - ClientSize.Width;
-      var borderHeight = Height - ClientSize.Height;
-      Size = new Size(GUIGraphicsContext.SkinSize.Width + borderWidth, GUIGraphicsContext.SkinSize.Height + borderHeight + SystemInformation.MenuHeight);
-      ClientSize = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
+      var border = new Size(Width - ClientSize.Width, Height - ClientSize.Height);
+      if (GUIGraphicsContext.SkinSize.Width  + border.Width  <= GUIGraphicsContext.currentScreen.WorkingArea.Width &&
+          GUIGraphicsContext.SkinSize.Height + border.Height <= GUIGraphicsContext.currentScreen.WorkingArea.Height)
+      {
+        Log.Debug("Startup: Resizing form to Skin Dimensions");
+        ClientSize = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
+      }
+      else
+      {
+        Log.Debug("Startup: Resizing form to Working Area Dimensions (SkinDimensions > Working Area)");
+        double ratio = Math.Min((double)(GUIGraphicsContext.currentScreen.WorkingArea.Width  - border.Width)  / GUIGraphicsContext.SkinSize.Width,
+                                (double)(GUIGraphicsContext.currentScreen.WorkingArea.Height - border.Height) / GUIGraphicsContext.SkinSize.Height);
+        ClientSize = new Size((int)(GUIGraphicsContext.SkinSize.Width * ratio), (int)(GUIGraphicsContext.SkinSize.Height * ratio));
+        Location = new Point(0, 0);
+      }
+      LastRect.top    = Location.Y;
+      LastRect.left   = Location.X;
+      LastRect.bottom = Size.Height;
+      LastRect.right  = Size.Width;
     }
     else
     {
       Log.Debug("Startup: Resizing form to Screen Dimensions");
-      Size = new Size(GUIGraphicsContext.currentScreen.Bounds.Right, GUIGraphicsContext.currentScreen.Bounds.Bottom);
-      ClientSize = Size;
+      ClientSize = new Size(GUIGraphicsContext.currentScreen.Bounds.Right, GUIGraphicsContext.currentScreen.Bounds.Bottom);
     }
     UpdatePresentParams(Windowed, true);
 
@@ -1999,7 +1987,6 @@ public class MediaPortalApp : D3DApp, IRender
                                                       Usage.RenderTarget | Usage.QueryPostPixelShaderBlending,
                                                       ResourceType.Surface,
                                                       Format.A8R8G8B8);
-      Log.Info("Main: DX9 size: {0}x{1}", GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
       Log.Info("Main: Video memory left: {0} MB", (uint)GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1048576);
     }
 

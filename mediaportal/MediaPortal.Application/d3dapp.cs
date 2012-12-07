@@ -61,6 +61,21 @@ namespace MediaPortal
     
     #endregion
 
+    #region protected structs
+
+    [StructLayout(LayoutKind.Sequential)]
+    // ReSharper disable InconsistentNaming
+    protected struct RECT
+    {
+      public int left;
+      public int top;
+      public int right;
+      public int bottom;
+    }
+    // ReSharper restore InconsistentNaming
+
+    #endregion
+
     #region protected attributes
 
     protected static bool    FullscreenOverride;       //
@@ -82,6 +97,7 @@ namespace MediaPortal
     protected int            Volume;                   //
     protected PlayListPlayer PlaylistPlayer;           //
     protected DateTime       MouseTimeOutTimer;        //
+    protected RECT           LastRect;                 // tracks last rectangle size for window resizing
 
     #endregion
 
@@ -441,13 +457,21 @@ namespace MediaPortal
           HideTaskBar(true);
         }
 
+        // exist miniTVMode
+        if (_menuItemMiniTv.Checked)
+        {
+          ToggleMiniTV();
+        }
+
+        _oldBounds      = Bounds;
         FormBorderStyle = FormBorderStyle.None;
-        MaximizeBox = false;
-        MinimizeBox = false;
-        Menu = null;
-        _oldBounds = Bounds;
+        MaximizeBox     = false;
+        MinimizeBox     = false;
+        Menu            = null;
+
         var newBounds = GUIGraphicsContext.currentScreen.Bounds;
         SetBounds(newBounds.X, newBounds.Y, newBounds.Width, newBounds.Height, BoundsSpecified.All);
+
         Update();
         Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}", ClientSize.Width, ClientSize.Height,
                  GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
@@ -461,19 +485,41 @@ namespace MediaPortal
         {
           HideTaskBar(false);
         }
-        WindowState = FormWindowState.Normal;
+
+        WindowState     = FormWindowState.Normal;
         FormBorderStyle = FormBorderStyle.Sizable;
-        MaximizeBox = true;
-        MinimizeBox = true;
-        Menu = _menuStripMain;
+        MaximizeBox     = true;
+        MinimizeBox     = true;
+        Menu            = _menuStripMain;
+
         if (_oldBounds.IsEmpty)
         {
-          ClientSize = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
+          var border = new Size(Width - ClientSize.Width, Height - ClientSize.Height);
+          if (GUIGraphicsContext.SkinSize.Width  + border.Width  <= GUIGraphicsContext.currentScreen.WorkingArea.Width &&
+              GUIGraphicsContext.SkinSize.Height + border.Height <= GUIGraphicsContext.currentScreen.WorkingArea.Height)
+          {
+            Log.Debug("D3D: Resizing form to Skin Dimensions");
+            ClientSize = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
+          }
+          else
+          {
+            Log.Debug("D3D: Resizing form to Working Area Dimensions (SkinDimensions > Working Area)");
+            double ratio = Math.Min((double)(GUIGraphicsContext.currentScreen.WorkingArea.Width  - border.Width)  / GUIGraphicsContext.SkinSize.Width,
+                                    (double)(GUIGraphicsContext.currentScreen.WorkingArea.Height - border.Height) / GUIGraphicsContext.SkinSize.Height);
+            ClientSize = new Size((int)(GUIGraphicsContext.SkinSize.Width * ratio), (int)(GUIGraphicsContext.SkinSize.Height * ratio));
+            Location = new Point(0, 0);
+          }
         }
         else
         {
           SetBounds(_oldBounds.X, _oldBounds.Y, _oldBounds.Width, _oldBounds.Height, BoundsSpecified.All);
         }
+
+        LastRect.top    = Location.Y;
+        LastRect.left   = Location.X;
+        LastRect.bottom = Size.Height;
+        LastRect.right  = Size.Width;
+
         Update();
         Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}", ClientSize.Width, ClientSize.Height,
                  GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
@@ -714,7 +760,7 @@ namespace MediaPortal
     /// </summary>
     protected void RestoreFromTray()
     {
-  // do nothing if we are closing
+      // do nothing if we are closing
       if (_isClosing)
       {
         return;
@@ -810,6 +856,29 @@ namespace MediaPortal
       {
         Log.Debug("D3D: Exception: {0}", ex.ToString());
       }
+    }
+
+
+    /// <summary>
+    /// Calculates the maximum client area if skin is larger than working area
+    /// </summary>
+    /// <returns></returns>
+    protected Size CalcMaxClientArea()
+    {
+      Size clientArea;
+      var border = new Size(Width - ClientSize.Width, Height - ClientSize.Height);
+      if (GUIGraphicsContext.SkinSize.Width + border.Width <= GUIGraphicsContext.currentScreen.WorkingArea.Width &&
+          GUIGraphicsContext.SkinSize.Height + border.Height <= GUIGraphicsContext.currentScreen.WorkingArea.Height)
+      {
+        clientArea = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
+      }
+      else
+      {
+        double ratio = Math.Min((double)(GUIGraphicsContext.currentScreen.WorkingArea.Width - border.Width) / GUIGraphicsContext.SkinSize.Width,
+                                (double)(GUIGraphicsContext.currentScreen.WorkingArea.Height - border.Height) / GUIGraphicsContext.SkinSize.Height);
+        clientArea = new Size((int)(GUIGraphicsContext.SkinSize.Width * ratio), (int)(GUIGraphicsContext.SkinSize.Height * ratio));
+      }
+      return clientArea;
     }
 
     #endregion
@@ -1108,13 +1177,15 @@ namespace MediaPortal
     /// <param name="windowed">true for window, false for fullscreen</param>
     protected void BuildPresentParams(bool windowed)
     {
+      Size windowBackBufferSize = CalcMaxClientArea();
+
       _graphicsSettings.DisplayMode = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode;
       // workaround for usage of DX9Device.Viewport elsewhere, in windowed mode width and height should be 0. Backbuffer Size != Client Size
-      _presentParams.BackBufferWidth            = windowed ? ClientSize.Width  : _graphicsSettings.DisplayMode.Width;
-      _presentParams.BackBufferHeight           = windowed ? ClientSize.Height : _graphicsSettings.DisplayMode.Height;
+      _presentParams.BackBufferWidth            = windowed ? windowBackBufferSize.Width  : _graphicsSettings.DisplayMode.Width;
+      _presentParams.BackBufferHeight           = windowed ? windowBackBufferSize.Height : _graphicsSettings.DisplayMode.Height;
       Log.Debug(windowed
-                  ? "D3D: Windowed Presentation Parameter Size updated to: {0}x{1}"
-                  : "D3D: Fullscreen Presentation Parameter Size updated to: {0}x{1}",
+                  ? "D3D: Windowed Presentation Parameter Back Buffer Size set to: {0}x{1}"
+                  : "D3D: Fullscreen Presentation Parameter Back Buffer Size set to: {0}x{1}",
                  _presentParams.BackBufferWidth, _presentParams.BackBufferHeight);
       _presentParams.BackBufferFormat          = windowed ? _graphicsSettings.DisplayMode.Format : Format.X8R8G8B8;
       _presentParams.BackBufferCount           = 2;
@@ -1125,7 +1196,7 @@ namespace MediaPortal
       _presentParams.Windowed                  = windowed;
       _presentParams.EnableAutoDepthStencil    = false;
       _presentParams.AutoDepthStencilFormat    = windowed ? _graphicsSettings.WindowedDepthStencilBufferFormat : _graphicsSettings.FullscreenDepthStencilBufferFormat;
-      _presentParams.PresentFlag               = PresentFlag.Video;  // | PresentFlag.LockableBackBuffer
+      _presentParams.PresentFlag               = PresentFlag.Video;
       _presentParams.FullScreenRefreshRateInHz = windowed ? 0 : _graphicsSettings.DisplayMode.RefreshRate;
       _presentParams.PresentationInterval      = PresentInterval.Default;
       _presentParams.ForceNoMultiThreadedFlag  = false;
@@ -1152,7 +1223,7 @@ namespace MediaPortal
       }
       catch (Exception lex)
       {
-        Log.Warn("D3d: Error logging graphic device details - {0}", lex.Message);
+        Log.Warn("D3D: Error logging graphic device details - {0}", lex.Message);
       }
 
       // Set up the presentation parameters
@@ -1597,28 +1668,28 @@ namespace MediaPortal
       if (Windowed)
       {
         _miniTvMode = !_miniTvMode;
+        _menuItemMiniTv.Checked = _miniTvMode;
+
         Size size;
         if (_miniTvMode)
         {
-          size = new Size(GUIGraphicsContext.SkinSize.Width/2,  GUIGraphicsContext.SkinSize.Height/2);
-          _alwaysOnTop = true;
           FormBorderStyle = FormBorderStyle.SizableToolWindow;
-          Menu = null;
+          Menu            = null;
+          _alwaysOnTop    = true;
+           size = CalcMaxClientArea();
+          size.Width  /= 3;
+          size.Height /= 3;
         }
         else
         {
-          size = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
-          _alwaysOnTop = _alwaysOnTopConfig;
           FormBorderStyle = FormBorderStyle.Sizable;
-          Menu = _menuStripMain;
-
-          UpdatePresentParams(true, false);
+          Menu            = _menuStripMain;
+          _alwaysOnTop    = _alwaysOnTopConfig;
+          size            = CalcMaxClientArea();
+          UpdatePresentParams(Windowed, false);
         }
-
-        Size = size;
-        TopMost = _alwaysOnTop;
-
-        _menuItemMiniTv.Checked = _miniTvMode;
+        ClientSize = size;
+        TopMost    = _alwaysOnTop;
       }
     }
 
@@ -2276,9 +2347,9 @@ namespace MediaPortal
         HideTaskBar(false);
       }
     }
-
+ 
     #endregion
-  
+    
   }
 
   #endregion
