@@ -465,7 +465,10 @@ namespace MediaPortal.GUI.Library
       
       // if windows supports delayed loading then do nothing else load the xml file now
       _windowXmlFileName = skinFileName;
-      return SupportsDelayedLoad || LoadSkin();
+
+      bool result = LoadSkin();
+      AllocResources();
+      return SupportsDelayedLoad || result;
     }
 
     /// <summary>
