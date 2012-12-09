@@ -32,8 +32,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
       MpeId = "d2c4076c-f3d0-4d84-9a74-83fbbd15c940";
       MpeURL = "http://install.team-mediaportal.com/MP1/skinUpdates/titan/TitanExtended.mpe1";
       MpeUpdateURL = "http://install.team-mediaportal.com/MP1/skinUpdates/titan/TitanExtendedUpdate.xml";
-      MpeUpdateFile = Application.StartupPath + "\\deploy\\" + "TitanExtensions.xml";
-      FileName = Application.StartupPath + "\\deploy\\" + "TitanExtensions.mpe1";
+      MpeUpdateFile = Application.StartupPath + "\\deploy\\" + "TitanExtendedUpdate.xml";
+      FileName = Application.StartupPath + "\\deploy\\" + "TitanExtended.mpe1";
     }
 
     public override string GetDisplayName()
