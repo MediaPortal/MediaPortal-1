@@ -36,26 +36,26 @@
 			<label>-</label>
 			<action>10</action>
 			<onleft>31</onleft>
-			<onright>26</onright>
+			<onright>172</onright>
 			<onup>21</onup>
 			<ondown>2</ondown>
 		</control>
 
 		<control>
-			<description>basichome button</description>
+			<description>Minimize button</description>
 			<type>button</type>
-			<id>26</id>
-			<posX>172</posX>
+			<id>172</id>
+			<posX>1050</posX>
 			<posY>0</posY>
 			<width>107</width>
 			<height>80</height>
-			<textureFocus>topbar_refresh_focus.png</textureFocus>
-			<textureNoFocus>topbar_refresh.png</textureNoFocus>
+			<textureFocus>topbar_fullscreen_focus.png</textureFocus>
+			<textureNoFocus>topbar_fullscreen.png</textureNoFocus>
 			<label>-</label>
-			<action>115</action>
+			<action>18</action>
 			<onleft>21</onleft>
 			<onright>22</onright>
-			<onup>26</onup>
+			<onup>30</onup>
 			<ondown>2</ondown>
 		</control>
 
@@ -71,7 +71,7 @@
 			<textureNoFocus>topbar_skipback.png</textureNoFocus>
 			<action>15</action>
 			<label>-</label>
-			<onleft>26</onleft>
+			<onleft>172</onleft>
 			<onright>23</onright>
 			<onup>22</onup>
 			<ondown>2</ondown>
@@ -180,15 +180,15 @@
 			<action>14</action>
 			<label>-</label>
 			<onleft>28</onleft>
-			<onright>30</onright>
+			<onright>26</onright>
 			<onup>29</onup>
 			<ondown>2</ondown>
 		</control>
 
 		<control>
-			<description>Minimize button</description>
+			<description>basichome button</description>
 			<type>button</type>
-			<id>30</id>
+			<id>26</id>
 			<posX>1050</posX>
 			<posY>0</posY>
 			<width>107</width>
@@ -196,10 +196,10 @@
 			<textureFocus>topbar_home_focus.png</textureFocus>
 			<textureNoFocus>topbar_home.png</textureNoFocus>
 			<label>-</label>
-			<action>18</action>
+			<action>115</action>
 			<onleft>29</onleft>
 			<onright>31</onright>
-			<onup>30</onup>
+			<onup>26</onup>
 			<ondown>2</ondown>
 		</control>
 
@@ -216,7 +216,7 @@
 			<action>97</action>
 			<label>-</label>
 			<action>97</action>
-			<onleft>30</onleft>
+			<onleft>26</onleft>
 			<onright>21</onright>
 			<onup>31</onup>
 			<ondown>2</ondown>
