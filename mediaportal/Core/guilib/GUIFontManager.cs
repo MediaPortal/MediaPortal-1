@@ -239,7 +239,8 @@ namespace MediaPortal.GUI.Library
         {
           return _listFonts[iFont];
         }
-        return GetFont("debug");
+        //return GetFont("debug"); // TODO: crashes config on save, is this really needed?
+        return null;
       }
     }
 
@@ -270,8 +271,8 @@ namespace MediaPortal.GUI.Library
           }
         }
 
-        // just return a font
-        return GetFont("debug");
+        //return GetFont("debug"); // TODO: crashes config on save, is this really needed?
+        return null;
       }
     }
 

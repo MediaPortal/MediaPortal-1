@@ -462,12 +462,24 @@ namespace MediaPortal.GUI.Library
       {
         return false;
       }
-      
-      // if windows supports delayed loading then do nothing else load the xml file now
       _windowXmlFileName = skinFileName;
 
-      // TODO: fix delayed texture loading for GUI_MSG_WINDOW_INIT messages
-      return SupportsDelayedLoad || LoadSkin();}
+      // if windows supports delayed loading then do nothing else load the xml file now
+      if (SupportsDelayedLoad)
+      {
+        Log.Debug("Delayed Loading of {0}", _windowXmlFileName);
+        return true;
+      }
+
+      // else load xml file now
+      Log.Debug("Loading of {0}", _windowXmlFileName);
+      LoadSkin();
+      if (!_windowAllocated)
+      AllocResources();
+
+      return true;
+
+    }
 
     /// <summary>
     /// Loads the xml file for the window.
@@ -1630,16 +1642,16 @@ namespace MediaPortal.GUI.Library
               GUIPropertyManager.SetProperty("#selectedthumb", string.Empty);
               GUIPropertyManager.SetProperty("#selectedindex", string.Empty);
               GUIPropertyManager.SetProperty("#facadeview.layout", string.Empty);
-              if (!_shouldRestore)
+              if (_shouldRestore)
+              {
+                DoRestoreSkin();
+              }
+              else
               {
                 LoadSkin();
-                Restore();
+                if (!_windowAllocated)
+                AllocResources(); // Mantis 0002389 - Double AllocResources
               }
-              DoRestoreSkin();
-#if !DEBUG
-              long lTotalMemory = GC.GetTotalMemory(true);
-              Log.Info("Total Memory allocated:{0}", MediaPortal.Util.Utils.GetSize(lTotalMemory));
-#endif
 
               InitControls();
               UpdateOverlayAllowed();
