@@ -32,9 +32,9 @@
 		<defaultcontrol>3</defaultcontrol>
 		<onexit>50</onexit>
 		<dimColor>00ffffff</dimColor>
-		<buttonX>0</buttonX>
-		<buttonY>0</buttonY>
-		<buttonwidth>521</buttonwidth>
+		<buttonX>-460</buttonX>
+		<buttonY>155</buttonY>
+		<buttonwidth>499</buttonwidth>
 		<buttonheight>1080</buttonheight>
 		
 			<control>
