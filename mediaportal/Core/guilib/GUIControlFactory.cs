@@ -127,7 +127,6 @@ namespace MediaPortal.GUI.Library
 
     private static void ReadSkinSizeFromReferenceFile(XmlDocument doc)
     {
-      GUIGraphicsContext.SkinSize = new Size(720, 576);
       XmlNode nodeSkinWidth = doc.DocumentElement.SelectSingleNodeFast("/controls/skin/width/text()");
       XmlNode nodeSkinHeight = doc.DocumentElement.SelectSingleNodeFast("/controls/skin/height/text()");
       if (nodeSkinWidth != null && nodeSkinHeight != null)
