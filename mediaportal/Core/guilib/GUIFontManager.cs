@@ -169,7 +169,6 @@ namespace MediaPortal.GUI.Library
                 int iHeight = Int32.Parse(nodeHeight.InnerText);
 
                 // height is based on 720x576
-                // TODO: make height depended on skin dimensions
                 float fPercent = (GUIGraphicsContext.Height * GUIGraphicsContext.ZoomVertical) / 576.0f;
                 fPercent *= iHeight;
                 iHeight = (int)fPercent;

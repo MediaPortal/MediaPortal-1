@@ -466,10 +466,8 @@ namespace MediaPortal.GUI.Library
       // if windows supports delayed loading then do nothing else load the xml file now
       _windowXmlFileName = skinFileName;
 
-      bool result = LoadSkin();
-      AllocResources();
-      return SupportsDelayedLoad || result;
-    }
+      // TODO: fix delayed texture loading for GUI_MSG_WINDOW_INIT messages
+      return SupportsDelayedLoad || LoadSkin();}
 
     /// <summary>
     /// Loads the xml file for the window.
