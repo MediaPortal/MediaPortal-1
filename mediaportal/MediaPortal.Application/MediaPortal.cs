@@ -1812,7 +1812,7 @@ public class MediaPortalApp : D3DApp, IRender
     using (Settings xmlreader = new MPSettings())
     {
       _useLongDateFormat = xmlreader.GetValueAsBool("home", "LongTimeFormat", false);
-      _startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
+      _startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", true);
       _useOnlyOneHome = xmlreader.GetValueAsBool("gui", "useonlyonehome", false);
       bool autosize = xmlreader.GetValueAsBool("gui", "autosize", true);
       if (autosize && !GUIGraphicsContext.Fullscreen)

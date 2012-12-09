@@ -161,7 +161,13 @@ namespace MediaPortal.DeployTool.Sections
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.WatchTV);
       }
       // Direct to upgrade
+      if (InstallationProperties.Instance.Get("InstallType") != "tvserver_master")
+      {  // install includes MP so check skin choice
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.SkinChoice);
+      }
+      // tv server only install so no need for skin choice
       return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
+
     }
 
     public override bool SettingsValid()

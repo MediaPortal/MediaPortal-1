@@ -1079,6 +1079,16 @@
     <String id="1307">Oppdater de interne skriptene for Grabber</String>
     <String id="1308">Gi nytt navn til sorter etter tittel</String>
     <String id="1309">Navn-Fullt</String>
+    <String id="1310">Velg skuespiller</String>
+    <String id="1311">Oppdatering allerede påbegynt.</String>
+    <String id="1312">Eksporterer filmer...</String>
+    <String id="1313">Lager nfo fil</String>
+    <String id="1314">Arbeider...</String>
+    <String id="1315">Lager nfo fil for:</String>
+    <String id="1316">Oppdatering av interne skript...</String>
+    <String id="1317">Laster ned interne skript...</String>
+    <String id="1318">Lagre undertekst</String>
+    <String id="1319">Lagre fil med endret undertekst?</String>
     <String id="1440" prefix="Min ">Tekst-TV</String>
     <String id="1441">Tekst-TV</String>
     <String id="1442">Rullehastighet (horisontal)</String>
@@ -2317,5 +2327,6 @@
     <String id="300224">Miniatyrbilde for video avslått globalt</String>
     <String id="300225">Bruk "Sorter etter tittel"</String>
     <String id="300226">Bruk kun intern nfo samler</String>
+    <String id="300227">Slett svartelistede miniatyrbilder</String>
   </Section>
 </Language>

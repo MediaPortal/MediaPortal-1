@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+<!--Dummy label-->
+	<control>
+		<description>Selected item Label</description>
+		<type>label</type>
+		<id>7773</id>
+		<posX>-2000</posX>
+		<posY>100</posY>
+		<label>#title</label>
+		<visible>control.hastext(7773)</visible>
+	</control>
+
+	<control>
+		<description>default background</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>0</posX>
+        <posY>0</posY>
+		<width>1920</width>
+		<height>1080</height>
+		<texture>background.png</texture>
+	</control>
+	
+		<!--            :: Fanart ::            -->	
+		
+	<control>
+		<description>DUMMY CONTROLL FOR FANART VISIBILITY CONDITION</description>
+		<type>label</type>
+		<id>91919291</id>
+		<posX>0</posX>
+		<posY>0</posY>
+		<width>1</width>
+	</control>
+
+	<control>
+		<description>DUMMY CONTROLL FOR FANART VISIBILITY CONDITION</description>
+		<type>label</type>
+		<id>91919292</id>
+		<posX>0</posX>
+		<posY>0</posY>
+		<width>1</width>
+	</control>
+
+	<control>
+		<description>DUMMY CONTROLL FOR FANART AVAILABILITY CONDITION</description>
+		<type>label</type>
+		<id>91919293</id>
+		<posX>0</posX>
+		<posY>0</posY>
+		<width>1</width>
+		<visible>no</visible>
+	</control>	
+		
+	<control>
+		<description>FANART BACKGROUND</description>
+		<id>897689</id>
+	   	<type>image</type>
+        <posX>0</posX>
+        <posY>120</posY>
+        <width>1312</width>
+        <height>738</height>
+		<texture>#fanarthandler.movie.backdrop1.selected</texture>
+		<visible>[facadeview.list|facadeview.playlist | facadeview.smallicons | facadeview.largeicons] + [control.isvisible(91919291)+control.isvisible(91919293)]</visible>
+        <animation effect="fade" time="300">visible</animation>
+        <animation effect="fade" time="300" delay="300">hidden</animation>
+        <animation effect="fade" time="0">WindowClose</animation>
+        <animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+	</control>
+
+	<control>
+		<description>FANART BACKGROUND</description>
+		<id>897688</id>
+		<type>image</type>
+        <posX>0</posX>
+        <posY>120</posY>
+        <width>1312</width>
+        <height>738</height>
+		<texture>#fanarthandler.movie.backdrop2.selected</texture>
+		<visible>[facadeview.list|facadeview.playlist | facadeview.smallicons | facadeview.largeicons] + [control.isvisible(91919292)+control.isvisible(91919293)]</visible>
+        <animation effect="fade" time="300">visible</animation>
+        <animation effect="fade" time="300" delay="300">hidden</animation>
+        <animation effect="fade" time="0">WindowClose</animation>
+        <animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+	</control>
+	
+ 	<control>
+		<description>FANART BACKGROUND 1 (filmstrip)</description>
+		<id>897686</id>
+		<type>image</type>
+		<posX>0</posX>
+		<posY>0</posY>
+		<width>1920</width>
+		<height>1080</height>
+		<keepaspectratio>no</keepaspectratio>
+		<centered>yes</centered>
+		<zoom>yes</zoom>
+		<texture>#fanarthandler.movie.backdrop1.selected</texture>  
+		<visible>[facadeview.filmstrip|facadeview.coverflow] + [control.isvisible(91919291)+control.isvisible(91919293)]</visible>	
+		  <animation effect="fade" time="300">visible</animation>
+		  <animation effect="fade" time="300" delay="300">hidden</animation>
+		  <animation effect="fade" time="0">WindowClose</animation>
+		  <animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+	</control>
+
+	<control>
+		<description>FANART BACKGROUND 2 (filmstrip)</description>
+		<id>897687</id>
+		<type>image</type>
+		<posX>0</posX>
+		<posY>0</posY>
+		<width>1920</width>
+		<height>1080</height>
+		<keepaspectratio>no</keepaspectratio>
+		<centered>yes</centered>
+		<zoom>yes</zoom>
+		<texture>#fanarthandler.movie.backdrop2.selected</texture>  
+		<visible>[facadeview.filmstrip|facadeview.coverflow] + [control.isvisible(91919292)+control.isvisible(91919293)]</visible>
+    	  <animation effect="fade" time="300">visible</animation>
+		  <animation effect="fade" time="300" delay="300">hidden</animation>
+		  <animation effect="fade" time="0">WindowClose</animation>
+		  <animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+	</control>	
+    
+	<control>
+		<description>NO FANART BACKGROUND</description>
+		<id>0</id>
+		<type>image</type>
+        <posX>0</posX>
+        <posY>120</posY>
+        <width>1312</width>
+        <height>738</height>
+		<texture>hover_my videos.png</texture>
+		<visible>[facadeview.list|facadeview.playlist | facadeview.smallicons | facadeview.largeicons] + !control.isvisible(919192923)</visible>
+        <animation effect="fade" time="300">visible</animation>
+        <animation effect="fade" time="300" delay="300">hidden</animation>
+        <animation effect="fade" time="0">WindowClose</animation>
+        <animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+	</control>
+    
+	<control>
+		<description>NO FANART BACKGROUND</description>
+		<id>0</id>
+		<type>image</type>
+		<posX>0</posX>
+		<posY>0</posY>
+		<width>1920</width>
+		<height>1080</height>
+		<keepaspectratio>no</keepaspectratio>
+		<centered>yes</centered>
+		<zoom>yes</zoom>
+		<texture>hover_my videos.png</texture>
+		<visible>[facadeview.filmstrip|facadeview.coverflow] + !control.isvisible(919192923)</visible>
+        <animation effect="fade" time="300">visible</animation>
+        <animation effect="fade" time="300" delay="300">hidden</animation>
+        <animation effect="fade" time="0">WindowClose</animation>
+        <animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+	</control>
+	
+		<!--            :: Overlays ::            -->	
+		
+	<control>
+		<description>background listview</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>0</posX>
+        <posY>0</posY>
+		<width>1920</width>
+		<height>1080</height>
+		<texture>overlay_long.png</texture>
+		<visible>[facadeview.list|facadeview.playlist | facadeview.album | facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50)</visible>
+	</control>
+	
+	<control>
+		<description>viewport list</description>
+		<type>image</type>
+		<id>2020</id>
+		<posX>1</posX>
+		<posY>92</posY>
+		<width>1893</width>
+		<height>795</height>
+		<texture>viewport_long.png</texture>
+		<visible>[facadeview.list|facadeview.playlist | facadeview.album] + Control.IsVisible(50)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+		<animation effect="slide" time="250" start="-1890,0">WindowOpen</animation>
+		<animation effect="slide" time="250" end="-1890,0">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>viewport thumbs</description>
+		<type>image</type>
+		<id>2021</id>
+		<posX>1</posX>
+		<posY>92</posY>
+		<width>1893</width>
+		<height>795</height>
+		<texture>viewport_thumbs.png</texture>
+		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+		<animation effect="slide" time="250" start="-1890,0">WindowOpen</animation>
+		<animation effect="slide" time="250" end="-1890,0">WindowClose</animation>
+	</control>	
+	
+	<control>
+		<description>filmstrip overlay</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>0</posX>
+        <posY>0</posY>
+		<width>1920</width>
+		<height>1080</height>
+		<texture>filmstrip_fanart_overlay.png</texture>
+		<visible>facadeview.filmstrip|facadeview.coverflow + Control.IsVisible(50)</visible>
+	</control>
+
+	
+	<control>
+		<description>Selected item Label</description>
+		<type>fadelabel</type>
+		<id>1</id>
+		<posX>1832</posX>
+		<posY>956</posY>
+		<width>1170</width>
+		<label>#selecteditem</label>
+		<font>fontB16</font>
+		<align>right</align>
+		<visible>[facadeview.list|facadeview.playlist|facadeview.smallicons|facadeview.largeicons]+!control.isvisible(53)</visible>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>Selected item Label</description>
+		<type>fadelabel</type>
+		<id>1</id>
+		<posX>0</posX>
+		<posY>942</posY>
+		<width>1920</width>
+		<align>center</align>
+		<label>#selecteditem</label>
+		<font>fontB16</font>
+		<visible>[facadeview.filmstrip|facadeview.coverflow]+!control.isvisible(53)</visible>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+	</control>
+
+</controls>
+</window>

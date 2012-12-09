@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+	<controls>
+
+    <control>
+      <description>Video resolution</description>
+      <type>image</type>
+      <id>0</id>
+			<posX>776</posX>
+			<posY>958</posY>
+    	<width>99</width>
+    	<height>65</height>
+      <texture>Logos\resolution\#Play.Current.VideoResolution.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <colordiffuse>FF000000</colordiffuse>
+    </control>
+		<control>
+    	<description>Video codec</description>
+      <type>image</type>
+      <id>0</id>
+			<posX>866</posX>
+			<posY>958</posY>
+    	<width>99</width>
+    	<height>65</height>
+      <texture>Logos\video\#Play.Current.VideoCodec.Texture.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <colordiffuse>FF000000</colordiffuse>
+    </control>
+    <control>
+      <description>Audio codec</description>
+      <type>image</type>
+      <id>0</id>
+			<posX>956</posX>
+			<posY>958</posY>
+    	<width>99</width>
+    	<height>65</height>
+      <texture>Logos\audio\#Play.Current.AudioCodec.Texture.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <colordiffuse>FF000000</colordiffuse>
+    </control>
+    <control>
+      <description>Audio channels</description>
+      <type>image</type>
+      <id>0</id>
+			<posX>1046</posX>
+			<posY>958</posY>
+    	<width>99</width>
+    	<height>65</height>
+      <texture>Logos\audio\#Play.Current.AudioChannels.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <colordiffuse>FF000000</colordiffuse>
+    </control>
+	</controls>
+</window>

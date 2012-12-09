@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>      
+    <control>
+      <description>BasicHome Videos</description>
+      <type>button</type>
+      <id>6</id>
+			<posX>1274</posX>
+	    <posY>353</posY>
+      <width>594</width>
+      <height>241</height>
+      <textureFocus>basichome_menu_item_label_overlay.png</textureFocus>
+      <textureNoFocus>basichome_menu_item_label_overlay.png</textureNoFocus>
+      <hyperlink>7986</hyperlink>        
+      <label>342</label>
+      <font>TitanLight20</font>
+      <textcolor>FFFFFF</textcolor>
+			<textalign>center</textalign>   
+      <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
+      <textYOff>88</textYOff>
+			<onright>400</onright>
+			<onleft>4</onleft>
+			<onup>6</onup>
+			<ondown>7</ondown>
+ 			<animation effect="fade" time="250" reversible="false">visiblechange</animation>
+      <animation effect="zoom" start="100,100" end="102,102" time="200">focus</animation>
+      <animation effect="zoom" start="102,102" end="100,100" time="150">unfocus</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+			<visible allowhiddenfocus="true">![control.hasfocus(12)|control.hasfocus(13)|control.hasfocus(14)] + [control.HasFocus(2) | control.HasFocus(3) | control.HasFocus(4) | control.HasFocus(5) | control.HasFocus(6) | control.HasFocus(7)]</visible>  
+    </control>
+</controls>
+</window>
