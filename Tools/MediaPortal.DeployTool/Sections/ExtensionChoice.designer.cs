@@ -84,9 +84,9 @@
       this.lblTitan.ForeColor = System.Drawing.Color.White;
       this.lblTitan.Location = new System.Drawing.Point(36, 39);
       this.lblTitan.Name = "lblTitan";
-      this.lblTitan.Size = new System.Drawing.Size(255, 13);
+      this.lblTitan.Size = new System.Drawing.Size(300, 13);
       this.lblTitan.TabIndex = 10;
-      this.lblTitan.Text = "Extension adds support for popular third party plugins";
+      this.lblTitan.Text = "Install extension that adds support for popular third party plugins";
       // 
       // grpLAV
       // 
