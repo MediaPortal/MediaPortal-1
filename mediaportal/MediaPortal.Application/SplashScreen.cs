@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2012 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2012 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -20,9 +20,9 @@
 
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
@@ -41,24 +41,18 @@ namespace MediaPortal
   public class SplashScreen
   {
     public string Version;
-    private bool stopRequested = false;
-    private bool AllowWindowOverlayRequested = false;
-    private SplashForm frm;
-    private FullScreenSplashScreen frmFull;
-    private Form _overlaidForm = null;
-    private string info;
-    private object _overlaidFormClosingLock = new object();
-
-    public SplashScreen() {}
-
+    private bool _stopRequested;
+    private bool _bringToFront;
+    private SplashForm _frm;
+    private FullScreenSplashScreen _frmFull;
+    private string _info;
 
     /// <summary>
     /// Starts the splash screen.
     /// </summary>
     public void Run()
     {
-      Thread thread = new Thread(new ThreadStart(DoRun));
-      thread.Name = "SplashScreen";
+      var thread = new Thread(DoRun) {Name = "SplashScreen"};
       thread.Start();
     }
 
@@ -67,29 +61,30 @@ namespace MediaPortal
     /// </summary>
     public void Stop()
     {
-      stopRequested = true;
+      _stopRequested = true;
     }
 
     /// <summary>
-    /// Allows other windows to overlay the splashscreen
+    /// Allows other windows to overlay the splash screen
     /// </summary>
-    public void AllowWindowOverlay(Form OverlayedForm)
+    public void AllowWindowOverlay(Form overlayedForm)
     {
-      _overlaidForm = OverlayedForm;
-      if (_overlaidForm != null)
-      {
-        AllowWindowOverlayRequested = true;
-        _overlaidForm.FormClosing += OverlayedForm_FormClosing;
-      }
     }
 
     /// <summary>
-    /// Determine if the Splash has been closed
+    /// Determine if the splash screen has been closed
     /// </summary>
-    public bool isStopped()
+    public bool IsStopped()
     {
-      // do only return the state of the normal splashscreen to allow mp to work during the delay stop phase of the fullscreen splash
-      return (frm == null);
+      return _frm == null && _frmFull == null;
+    }
+
+    /// <summary>
+    /// Brings the splash screen to front of the z-order
+    /// </summary>
+    public void BringToFront()
+    {
+      _bringToFront = true;
     }
 
     /// <summary>
@@ -98,7 +93,7 @@ namespace MediaPortal
     /// <param name="information">the information to set</param>
     public void SetInformation(string information)
     {
-      info = information;
+      _info = information;
     }
 
     /// <summary>
@@ -110,10 +105,10 @@ namespace MediaPortal
     {
       try
       {
-        bool useFullScreenSplash = true;
-        bool startFullScreen = true;
-        int screennumber = 0;
-        bool ShouldUseNormalSplashScreen = false;
+        bool useFullScreenSplash;
+        bool startFullScreen;
+        int screennumber;
+        bool shouldUseNormalSplashScreen = false;
 
         using (Settings xmlreader = new MPSettings())
         {
@@ -124,19 +119,14 @@ namespace MediaPortal
 
         if (useFullScreenSplash && screennumber > 0)
         {
-          int AvailableScreensNumber = 0;
-          foreach (Screen screen in Screen.AllScreens)
+          int availableScreensNumber = Screen.AllScreens.Count();
+          if (availableScreensNumber < screennumber + 1)
           {
-            AvailableScreensNumber++;
-          }
-
-          if (AvailableScreensNumber < screennumber + 1)
-          {
-            ShouldUseNormalSplashScreen = true;
+            shouldUseNormalSplashScreen = true;
           }
         }
 
-        if (useFullScreenSplash && startFullScreen && !ShouldUseNormalSplashScreen)
+        if (useFullScreenSplash && startFullScreen && !shouldUseNormalSplashScreen)
         {
           ShowFullScreenSplashScreen();
         }
@@ -151,64 +141,40 @@ namespace MediaPortal
       }
     }
 
-    private void OverlayedForm_FormClosing(object sender, FormClosingEventArgs e)
-    {
-      lock(_overlaidFormClosingLock)
-      {
-        _overlaidForm.FormClosing -= OverlayedForm_FormClosing;
-        _overlaidForm = null;
-      }
-    }
-
-
     /// <summary>
     /// handles the normal splash screen
     /// </summary>
     private void ShowNormalSplash()
     {
-      frm = new SplashForm();
-      frm.SetVersion(Version);
-      frm.Show();
-      frm.Update();
-      frm.FadeIn();
+      _frm = new SplashForm();
+      _frm.SetVersion(Version);
+      _frm.Show();
+      _frm.Update();
+      _frm.FadeIn();
       string oldInfo = null;
-      while (!stopRequested && (frm.Focused || _overlaidForm != null)) //run until stop of splashscreen is requested
+
+      // run until stop of splash screen is requested
+      while (!_stopRequested && _frm.Focused) 
       {
-        if (AllowWindowOverlayRequested)
+        // bring splash screen to front when request is pending
+        if (_bringToFront)
         {
-          // Allow other Windows to Overlay the splashscreen
-          lock(_overlaidFormClosingLock)
-          {
-            if (_overlaidForm != null && _overlaidForm.Visible) // prepare everything to let the Outdated skin message appear
-            {
-              if (frm.Focused)
-              {
-                frm.TopMost = false;
-                _overlaidForm.TopMost = true;
-                _overlaidForm.BringToFront();
-                Cursor.Show();
-              }
-            }
-            else
-            {
-              AllowWindowOverlayRequested = false;
-              frm.TopMost = true;
-              frm.BringToFront();
-              Cursor.Hide();
-            }
-          }
+          _frmFull.TopMost = true;
+          _frmFull.BringToFront();
+          _bringToFront = false;
         }
-        if (oldInfo != info)
+
+        if (oldInfo != _info)
         {
-          frm.SetInformation(info);
-          oldInfo = info;
+          _frm.SetInformation(_info);
+          oldInfo = _info;
         }
         Thread.Sleep(25);
-        //Application.DoEvents();
       }
-      frm.FadeOut();
-      frm.Close(); //closes, and disposes the form
-      frm = null;
+
+      _frm.FadeOut();
+      _frm.Close(); //closes, and disposes the form
+      _frm = null;
     }
 
     /// <summary>
@@ -216,78 +182,44 @@ namespace MediaPortal
     /// </summary>
     private void ShowFullScreenSplashScreen()
     {
-      frmFull = new FullScreenSplashScreen();
       Cursor.Hide();
-
-      //frmFull.pbBackground.Image = new System.Drawing.Bitmap(GetBackgroundImagePath());
-      frmFull.RetrieveSplashScreenInfo();
-
-      frmFull.Left = (Screen.PrimaryScreen.Bounds.Width / 2 - frmFull.Width / 2) + 1;
-      frmFull.Top = (Screen.PrimaryScreen.Bounds.Height / 2 - frmFull.Height / 2) + 1;
-
-      frmFull.lblMain.Parent = frmFull.pbBackground;
-      frmFull.lblVersion.Parent = frmFull.lblMain;
-      frmFull.lblCVS.Parent = frmFull.lblMain;
-
-      frmFull.SetVersion(Version);
-      frmFull.Show();
-
-      frmFull.Update();
-      //frmFull.FadeIn(); // remarked because without it the start looks faster (more powerful and responding)
-      frmFull.Opacity = 100;
+      _frmFull = new FullScreenSplashScreen();
+      _frmFull.RetrieveSplashScreenInfo();
+      _frmFull.Left = (Screen.PrimaryScreen.Bounds.Width / 2 - _frmFull.Width / 2) + 1;
+      _frmFull.Top = (Screen.PrimaryScreen.Bounds.Height / 2 - _frmFull.Height / 2) + 1;
+      _frmFull.lblMain.Parent = _frmFull.pbBackground;
+      _frmFull.lblVersion.Parent = _frmFull.lblMain;
+      _frmFull.lblCVS.Parent = _frmFull.lblMain;
+      _frmFull.SetVersion(Version);
+      _frmFull.Show();
+      _frmFull.Update();
+      _frmFull.Opacity = 100;
 
       string oldInfo = null;
-      bool delayedStopAllowed = false;
-      int stopRequestTime = 0;
-      while (!delayedStopAllowed && (frmFull.Focused || _overlaidForm != null))
-        //run until stop of splashscreen is requested
-      {
-        if (stopRequested && stopRequestTime == 0) // store the current time when stop of the splashscreen is requested
-        {
-          stopRequestTime = Environment.TickCount;
-          frmFull.TopMost = false; // allow the splashscreen to be overlayed by other windows (like the mp main screen)
-        }
-        if (AllowWindowOverlayRequested)
-        // Allow other Windows to Overlay the splashscreen
-        {
-          lock (_overlaidFormClosingLock)
-          {
-            if (_overlaidForm != null && _overlaidForm.Visible)
-              // prepare everything to let the Outdated skin message appear
-            {
-              if (frmFull.Focused)
-              {
-                frmFull.TopMost = false;
-                _overlaidForm.TopMost = true;
-                _overlaidForm.BringToFront();
-                Cursor.Show();
-              }
-            }
-            else
-            {
-              AllowWindowOverlayRequested = false;
-              frmFull.TopMost = true;
-              frmFull.BringToFront();
-              Cursor.Hide();
-            }
-          }
-        }
-        if ((stopRequestTime != 0) && ((Environment.TickCount - 5000) > stopRequestTime))
-        {
-          delayedStopAllowed = true; // if stop is requested for more than 5sec ... leave the loop
-        }
 
-        if (oldInfo != info)
+      // run until stop of splash screen is requested
+      while (!_stopRequested && _frmFull.Focused)
+      {
+        // bring splash screen to front when request is pending
+        if (_bringToFront)
         {
-          frmFull.SetInformation(info);
-          oldInfo = info;
+          _frmFull.TopMost = true;
+          _frmFull.BringToFront();
+          _bringToFront = false;
+          Cursor.Hide();
+         }
+
+        if (oldInfo != _info)
+        {
+          _frmFull.SetInformation(_info);
+          oldInfo = _info;
         }
         Thread.Sleep(25);
       }
 
       Cursor.Show();
-      frmFull.Close();
-      frmFull = null;
+      _frmFull.Close();
+      _frmFull = null;
     }
 
     /// <summary>
@@ -295,38 +227,43 @@ namespace MediaPortal
     /// </summary>
     private class SplashForm : MPForm
     {
-      private Panel panel1;
-      private Label versionLabel;
-      private Label cvsLabel;
-      private Label informationLabel;
+      private Panel _panel1;
+      private Label _versionLabel;
+      private Label _cvsLabel;
+      private Label _informationLabel;
 
       /// <summary>
       /// Required designer variable.
       /// </summary>
-      private Container components = null;
+      private readonly Container _components = null;
 
+      /// <summary>
+      /// 
+      /// </summary>
       public SplashForm()
       {
-        //
         // Required for Windows Form Designer support
-        //
         InitializeComponent();
-
-        //
-        // TODO: Add any constructor code after InitializeComponent call
-        //
       }
 
+      /// <summary>
+      /// 
+      /// </summary>
+      /// <param name="information"></param>
       public void SetInformation(string information)
       {
-        informationLabel.Text = information;
+        _informationLabel.Text = information;
         Update();
       }
 
+      /// <summary>
+      /// 
+      /// </summary>
+      /// <param name="version"></param>
       public void SetVersion(string version)
       {
         string[] strVersion = version.Split('-');
-        versionLabel.Text = strVersion[0];
+        _versionLabel.Text = strVersion[0];
         Log.Info("Version: Application {0}", strVersion[0]);
         if (strVersion.Length > 1)
         {
@@ -335,8 +272,8 @@ namespace MediaPortal
           string year = strVersion[2].Substring(6, 4);
           string time = strVersion[3].Substring(0, 5);
           string build = strVersion[4].Substring(0, 13).Trim();
-          cvsLabel.Text = string.Format("{0} {1} ({2}-{3}-{4} / {5} CET)", strVersion[1], build, year, month, day, time);
-          Log.Info("Version: {0}", cvsLabel.Text);
+          _cvsLabel.Text = string.Format("{0} {1} ({2}-{3}-{4} / {5} CET)", strVersion[1], build, year, month, day, time);
+          Log.Info("Version: {0}", _cvsLabel.Text);
         }
         Update();
       }
@@ -348,14 +285,17 @@ namespace MediaPortal
       {
         if (disposing)
         {
-          if (components != null)
+          if (_components != null)
           {
-            components.Dispose();
+            _components.Dispose();
           }
         }
         base.Dispose(disposing);
       }
 
+      /// <summary>
+      /// 
+      /// </summary>
       public void FadeIn()
       {
         while (Opacity <= 0.9)
@@ -365,6 +305,9 @@ namespace MediaPortal
         }
       }
 
+      /// <summary>
+      /// 
+      /// </summary>
       public void FadeOut()
       {
         while (Opacity >= 0.02)
@@ -384,72 +327,72 @@ namespace MediaPortal
       /// </summary>
       private void InitializeComponent()
       {
-        this.panel1 = new System.Windows.Forms.Panel();
-        this.informationLabel = new System.Windows.Forms.Label();
-        this.versionLabel = new System.Windows.Forms.Label();
-        this.cvsLabel = new System.Windows.Forms.Label();
-        this.panel1.SuspendLayout();
+        this._panel1 = new System.Windows.Forms.Panel();
+        this._informationLabel = new System.Windows.Forms.Label();
+        this._versionLabel = new System.Windows.Forms.Label();
+        this._cvsLabel = new System.Windows.Forms.Label();
+        this._panel1.SuspendLayout();
         this.SuspendLayout();
         // 
         // panel1
         // 
-        this.panel1.BackColor = System.Drawing.Color.Transparent;
-        this.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-        this.panel1.Controls.Add(this.informationLabel);
-        this.panel1.Controls.Add(this.versionLabel);
-        this.panel1.Controls.Add(this.cvsLabel);
-        this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-        this.panel1.Location = new System.Drawing.Point(0, 0);
-        this.panel1.Name = "panel1";
-        this.panel1.Size = new System.Drawing.Size(399, 175);
-        this.panel1.TabIndex = 0;
+        this._panel1.BackColor = System.Drawing.Color.Transparent;
+        this._panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+        this._panel1.Controls.Add(this._informationLabel);
+        this._panel1.Controls.Add(this._versionLabel);
+        this._panel1.Controls.Add(this._cvsLabel);
+        this._panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+        this._panel1.Location = new System.Drawing.Point(0, 0);
+        this._panel1.Name = "_panel1";
+        this._panel1.Size = new System.Drawing.Size(399, 175);
+        this._panel1.TabIndex = 0;
         // 
         // informationLabel
         // 
-        this.informationLabel.Anchor =
+        this._informationLabel.Anchor =
           ((System.Windows.Forms.AnchorStyles)
            (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
              | System.Windows.Forms.AnchorStyles.Right)));
-        this.informationLabel.BackColor = System.Drawing.Color.Transparent;
-        this.informationLabel.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Bold,
+        this._informationLabel.BackColor = System.Drawing.Color.Transparent;
+        this._informationLabel.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Bold,
                                                              System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        this.informationLabel.ForeColor = System.Drawing.Color.White;
-        this.informationLabel.Location = new System.Drawing.Point(11, 138);
-        this.informationLabel.Name = "informationLabel";
-        this.informationLabel.Size = new System.Drawing.Size(377, 16);
-        this.informationLabel.TabIndex = 4;
-        this.informationLabel.Text = "Information";
-        this.informationLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+        this._informationLabel.ForeColor = System.Drawing.Color.White;
+        this._informationLabel.Location = new System.Drawing.Point(11, 138);
+        this._informationLabel.Name = "_informationLabel";
+        this._informationLabel.Size = new System.Drawing.Size(377, 16);
+        this._informationLabel.TabIndex = 4;
+        this._informationLabel.Text = "Information";
+        this._informationLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
         // 
         // versionLabel
         // 
-        this.versionLabel.Anchor =
+        this._versionLabel.Anchor =
           ((System.Windows.Forms.AnchorStyles)
            (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
              | System.Windows.Forms.AnchorStyles.Right)));
-        this.versionLabel.BackColor = System.Drawing.Color.Transparent;
-        this.versionLabel.Font = new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular,
+        this._versionLabel.BackColor = System.Drawing.Color.Transparent;
+        this._versionLabel.Font = new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular,
                                                          System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        this.versionLabel.ForeColor = System.Drawing.Color.White;
-        this.versionLabel.Location = new System.Drawing.Point(277, 113);
-        this.versionLabel.Name = "versionLabel";
-        this.versionLabel.Size = new System.Drawing.Size(111, 16);
-        this.versionLabel.TabIndex = 5;
-        this.versionLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
+        this._versionLabel.ForeColor = System.Drawing.Color.White;
+        this._versionLabel.Location = new System.Drawing.Point(277, 113);
+        this._versionLabel.Name = "_versionLabel";
+        this._versionLabel.Size = new System.Drawing.Size(111, 16);
+        this._versionLabel.TabIndex = 5;
+        this._versionLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
         // 
         // cvsLabel
         // 
-        this.cvsLabel.Anchor =
+        this._cvsLabel.Anchor =
           ((System.Windows.Forms.AnchorStyles)
            (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
              | System.Windows.Forms.AnchorStyles.Right)));
-        this.cvsLabel.BackColor = System.Drawing.Color.Transparent;
-        this.cvsLabel.Font = new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular,
+        this._cvsLabel.BackColor = System.Drawing.Color.Transparent;
+        this._cvsLabel.Font = new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular,
                                                      System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        this.cvsLabel.Location = new System.Drawing.Point(24, 113);
-        this.cvsLabel.Name = "cvsLabel";
-        this.cvsLabel.Size = new System.Drawing.Size(211, 16);
-        this.cvsLabel.TabIndex = 5;
+        this._cvsLabel.Location = new System.Drawing.Point(24, 113);
+        this._cvsLabel.Name = "_cvsLabel";
+        this._cvsLabel.Size = new System.Drawing.Size(211, 16);
+        this._cvsLabel.TabIndex = 5;
         // 
         // SplashForm
         // 
@@ -457,7 +400,7 @@ namespace MediaPortal
         this.BackgroundImage = global::MediaPortal.Properties.Resources.mplogo;
         this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
         this.ClientSize = new System.Drawing.Size(400, 172);
-        this.Controls.Add(this.panel1);
+        this.Controls.Add(this._panel1);
         this.DoubleBuffered = true;
         this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
         this.MaximizeBox = false;
@@ -468,7 +411,7 @@ namespace MediaPortal
         this.Text = "SplashScreen";
         this.TopMost = true;
         this.TransparencyKey = System.Drawing.Color.FromArgb(0, 0, 0, 0);
-        this.panel1.ResumeLayout(false);
+        this._panel1.ResumeLayout(false);
         this.ResumeLayout(false);
       }
 
