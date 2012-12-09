@@ -47,8 +47,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
   /// </summary>
   public abstract class TvCardBase : ITVCard
   {
- 
-
     #region events
 
     /// <summary>
@@ -1126,7 +1124,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
           // Ready or not, we send commands now.
           this.LogDebug("TvCardBase: sending command(s)");
-          bool success = false;
+          bool success = true;
           TvDvbChannel digitalService;
           // The default action is "more" - this will be changed below if necessary.
           CaPmtListManagementAction action = CaPmtListManagementAction.More;
@@ -1180,16 +1178,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             digitalService = distinctServices[i] as TvDvbChannel;
             if (digitalService == null)
             {
-              success = caProvider.SendCommand(distinctServices[i].CurrentChannel, action, command, null, null);
+              success &= caProvider.SendCommand(distinctServices[i].CurrentChannel, action, command, null, null);
             }
             else
             {
-              success = caProvider.SendCommand(distinctServices[i].CurrentChannel, action, command, digitalService.Pmt, digitalService.Cat);
-            }
-            // Are we done?
-            if (success)
-            {
-              return;
+              success &= caProvider.SendCommand(distinctServices[i].CurrentChannel, action, command, digitalService.Pmt, digitalService.Cat);
             }
           }
 
