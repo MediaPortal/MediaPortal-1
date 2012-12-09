@@ -465,7 +465,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   
     ; CustomDevice Plugin Directory
   SetOutPath "$INSTDIR\Plugins\CustomDevices"
-  File "${git_TVServer}\Server\Plugins\CustomDevices\Anysee\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Anysee.dll" 
+  File "${git_TVServer}\Server\Plugins\CustomDevices\Anysee\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Anysee.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\AVerMedia\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia.dll"
   File "${git_TVServer}\Server\Plugins\CustomDevices\Conexant\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Conexant.dll"
   File "${git_TVServer}\Server\Plugins\CustomDevices\DigitalDevices\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices.dll"
   File "${git_TVServer}\Server\Plugins\CustomDevices\DigitalEverywhere\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere.dll"
@@ -627,7 +628,8 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\Plugins\WebEPG.dll"
   Delete "$INSTDIR\Plugins\WebEPGImport.dll"
   Delete "$INSTDIR\Plugins\XmlTvImport.dll"
-  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Anysee.dll" 
+  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Anysee.dll"
+  Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia.dll"
   Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Conexant.dll"
   Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices.dll"
   Delete "$INSTDIR\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere.dll"
@@ -720,7 +722,8 @@ ${MementoSectionEnd}
   Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.XmlTvImport.dll"
 
   ; Remove Plugins
-  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Anysee.dll" 
+  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Anysee.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia.dll"
   Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.Conexant.dll"
   Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.igitalDevices.dll"
   Delete "${SETUP_TV_FOLDER}\Plugins\CustomDevices\Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere.dll"
@@ -907,7 +910,8 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
 
   ; CustomDevice Plugin Directory
   SetOutPath "${SETUP_TV_FOLDER}\Plugins\CustomDevices"
-  File "${git_TVServer}\Server\Plugins\CustomDevices\Anysee\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Anysee.dll" 
+  File "${git_TVServer}\Server\Plugins\CustomDevices\Anysee\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Anysee.dll"
+  File "${git_TVServer}\Server\Plugins\CustomDevices\AVerMedia\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia.dll"
   File "${git_TVServer}\Server\Plugins\CustomDevices\Conexant\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.Conexant.dll"
   File "${git_TVServer}\Server\Plugins\CustomDevices\DigitalDevices\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices.dll"
   File "${git_TVServer}\Server\Plugins\CustomDevices\DigitalEverywhere\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere.dll"

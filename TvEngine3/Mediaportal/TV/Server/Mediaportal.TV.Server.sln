@@ -164,6 +164,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TVLibrary.Integration.MP1",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvLibrary.IntegrationProvider.Interfaces", "TvLibrary.IntegrationProvider.Interfaces\TvLibrary.IntegrationProvider.Interfaces.csproj", "{34BCC448-B298-463E-B3B1-C031EBF0B4DB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AVerMedia", "Plugins\CustomDevices\AVerMedia\AVerMedia.csproj", "{3CA0D0E7-B40D-489C-9BE2-AC27CB5D9F2A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -764,6 +766,16 @@ Global
 		{34BCC448-B298-463E-B3B1-C031EBF0B4DB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{34BCC448-B298-463E-B3B1-C031EBF0B4DB}.Release|x86.ActiveCfg = Release|Any CPU
 		{34BCC448-B298-463E-B3B1-C031EBF0B4DB}.Release|x86.Build.0 = Release|Any CPU
+		{3CA0D0E7-B40D-489C-9BE2-AC27CB5D9F2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CA0D0E7-B40D-489C-9BE2-AC27CB5D9F2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CA0D0E7-B40D-489C-9BE2-AC27CB5D9F2A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{3CA0D0E7-B40D-489C-9BE2-AC27CB5D9F2A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{3CA0D0E7-B40D-489C-9BE2-AC27CB5D9F2A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3CA0D0E7-B40D-489C-9BE2-AC27CB5D9F2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CA0D0E7-B40D-489C-9BE2-AC27CB5D9F2A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CA0D0E7-B40D-489C-9BE2-AC27CB5D9F2A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{3CA0D0E7-B40D-489C-9BE2-AC27CB5D9F2A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{3CA0D0E7-B40D-489C-9BE2-AC27CB5D9F2A}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -833,5 +845,6 @@ Global
 		{4709D794-07BD-49CF-AEA7-9F3B83547A51} = {5538D6F9-21DD-4B49-8E06-8E06AF7ACD73}
 		{D27D51F7-F01E-45FD-864A-8A0E334179CF} = {5538D6F9-21DD-4B49-8E06-8E06AF7ACD73}
 		{31C51CBF-F4FA-466D-8D91-E629EDCD533A} = {5538D6F9-21DD-4B49-8E06-8E06AF7ACD73}
+		{3CA0D0E7-B40D-489C-9BE2-AC27CB5D9F2A} = {5538D6F9-21DD-4B49-8E06-8E06AF7ACD73}
 	EndGlobalSection
 EndGlobal
