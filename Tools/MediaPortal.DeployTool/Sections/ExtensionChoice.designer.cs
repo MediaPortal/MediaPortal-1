@@ -37,6 +37,7 @@
       this.lblLAV = new System.Windows.Forms.Label();
       this.chkLAV = new System.Windows.Forms.CheckBox();
       this.linkExtensions = new System.Windows.Forms.LinkLabel();
+      this.lblRecommended = new System.Windows.Forms.Label();
       this.gtpTitan.SuspendLayout();
       this.grpLAV.SuspendLayout();
       this.SuspendLayout();
@@ -49,9 +50,9 @@
       this.chkTitan.ForeColor = System.Drawing.Color.White;
       this.chkTitan.Location = new System.Drawing.Point(15, 19);
       this.chkTitan.Name = "chkTitan";
-      this.chkTitan.Size = new System.Drawing.Size(187, 17);
+      this.chkTitan.Size = new System.Drawing.Size(98, 17);
       this.chkTitan.TabIndex = 9;
-      this.chkTitan.Text = "Download Titan Extensions Plugin";
+      this.chkTitan.Text = "Titan Extended";
       this.chkTitan.UseVisualStyleBackColor = true;
       // 
       // gtpTitan
@@ -59,9 +60,9 @@
       this.gtpTitan.Controls.Add(this.linkTitan);
       this.gtpTitan.Controls.Add(this.lblTitan);
       this.gtpTitan.Controls.Add(this.chkTitan);
-      this.gtpTitan.Location = new System.Drawing.Point(53, 34);
+      this.gtpTitan.Location = new System.Drawing.Point(53, 59);
       this.gtpTitan.Name = "gtpTitan";
-      this.gtpTitan.Size = new System.Drawing.Size(513, 81);
+      this.gtpTitan.Size = new System.Drawing.Size(513, 70);
       this.gtpTitan.TabIndex = 11;
       this.gtpTitan.TabStop = false;
       // 
@@ -69,7 +70,7 @@
       // 
       this.linkTitan.AutoSize = true;
       this.linkTitan.LinkColor = System.Drawing.Color.White;
-      this.linkTitan.Location = new System.Drawing.Point(437, 53);
+      this.linkTitan.Location = new System.Drawing.Point(437, 50);
       this.linkTitan.Name = "linkTitan";
       this.linkTitan.Size = new System.Drawing.Size(52, 13);
       this.linkTitan.TabIndex = 11;
@@ -92,9 +93,9 @@
       this.grpLAV.Controls.Add(this.linkLAV);
       this.grpLAV.Controls.Add(this.lblLAV);
       this.grpLAV.Controls.Add(this.chkLAV);
-      this.grpLAV.Location = new System.Drawing.Point(53, 121);
+      this.grpLAV.Location = new System.Drawing.Point(53, 135);
       this.grpLAV.Name = "grpLAV";
-      this.grpLAV.Size = new System.Drawing.Size(513, 89);
+      this.grpLAV.Size = new System.Drawing.Size(513, 70);
       this.grpLAV.TabIndex = 12;
       this.grpLAV.TabStop = false;
       // 
@@ -102,7 +103,7 @@
       // 
       this.linkLAV.AutoSize = true;
       this.linkLAV.LinkColor = System.Drawing.Color.White;
-      this.linkLAV.Location = new System.Drawing.Point(437, 59);
+      this.linkLAV.Location = new System.Drawing.Point(437, 50);
       this.linkLAV.Name = "linkLAV";
       this.linkLAV.Size = new System.Drawing.Size(52, 13);
       this.linkLAV.TabIndex = 11;
@@ -116,9 +117,9 @@
       this.lblLAV.ForeColor = System.Drawing.Color.White;
       this.lblLAV.Location = new System.Drawing.Point(36, 39);
       this.lblLAV.Name = "lblLAV";
-      this.lblLAV.Size = new System.Drawing.Size(317, 13);
+      this.lblLAV.Size = new System.Drawing.Size(379, 13);
       this.lblLAV.TabIndex = 10;
-      this.lblLAV.Text = "Codecs that allow playback of the majority of audio and video files";
+      this.lblLAV.Text = "Install LAV Filters to enable playback of many common audio and video formats";
       // 
       // chkLAV
       // 
@@ -128,9 +129,9 @@
       this.chkLAV.ForeColor = System.Drawing.Color.White;
       this.chkLAV.Location = new System.Drawing.Point(15, 19);
       this.chkLAV.Name = "chkLAV";
-      this.chkLAV.Size = new System.Drawing.Size(135, 17);
+      this.chkLAV.Size = new System.Drawing.Size(76, 17);
       this.chkLAV.TabIndex = 9;
-      this.chkLAV.Text = "Download LAV codecs";
+      this.chkLAV.Text = "LAV Filters";
       this.chkLAV.UseVisualStyleBackColor = true;
       // 
       // linkExtensions
@@ -145,9 +146,21 @@
       this.linkExtensions.Text = "Browse other extensions";
       this.linkExtensions.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkExtensions_LinkClicked_1);
       // 
+      // lblRecommended
+      // 
+      this.lblRecommended.AutoSize = true;
+      this.lblRecommended.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold);
+      this.lblRecommended.ForeColor = System.Drawing.Color.White;
+      this.lblRecommended.Location = new System.Drawing.Point(50, 31);
+      this.lblRecommended.Name = "lblRecommended";
+      this.lblRecommended.Size = new System.Drawing.Size(200, 16);
+      this.lblRecommended.TabIndex = 14;
+      this.lblRecommended.Text = "Recommended Extensions";
+      // 
       // ExtensionChoice
       // 
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+      this.Controls.Add(this.lblRecommended);
       this.Controls.Add(this.linkExtensions);
       this.Controls.Add(this.grpLAV);
       this.Controls.Add(this.gtpTitan);
@@ -156,6 +169,7 @@
       this.Controls.SetChildIndex(this.gtpTitan, 0);
       this.Controls.SetChildIndex(this.grpLAV, 0);
       this.Controls.SetChildIndex(this.linkExtensions, 0);
+      this.Controls.SetChildIndex(this.lblRecommended, 0);
       this.gtpTitan.ResumeLayout(false);
       this.gtpTitan.PerformLayout();
       this.grpLAV.ResumeLayout(false);
@@ -176,6 +190,7 @@
     private System.Windows.Forms.LinkLabel linkTitan;
     private System.Windows.Forms.LinkLabel linkLAV;
     private System.Windows.Forms.LinkLabel linkExtensions;
+    private System.Windows.Forms.Label lblRecommended;
 
   }
 }

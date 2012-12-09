@@ -39,7 +39,12 @@ namespace MediaPortal.DeployTool.Sections
 
     public override void UpdateUI()
     {
-      //chkLAV.Text = Localizer.GetBestTranslation("MPSettings_checkBoxLAV");
+      lblLAV.Text = Localizer.GetBestTranslation("ExtensionChoice_LAV");
+      lblTitan.Text = Localizer.GetBestTranslation("ExtensionChoice_Titan");
+      linkExtensions.Text = Localizer.GetBestTranslation("ExtensionChoice_OtherExtensions");
+      linkLAV.Text = Localizer.GetBestTranslation("ExtensionChoice_MoreInfo");
+      linkTitan.Text = Localizer.GetBestTranslation("ExtensionChoice_MoreInfo");
+      lblRecommended.Text = Localizer.GetBestTranslation("ExtensionChoice_Title");
     }
 
     public override DeployDialog GetNextDialog()
