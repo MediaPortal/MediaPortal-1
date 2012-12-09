@@ -119,6 +119,7 @@ namespace MediaPortal.Playlists
     private PlayList _emptyPlayList = new PlayList();
     private PlayList _musicVideoPlayList = new PlayList();
     private PlayList _radioStreamPlayList = new PlayList();
+    private PlayList _lastFMPlaylist = new PlayList();
     private bool _repeatPlayList = true;
     private string _currentPlaylistName = string.Empty;
 
@@ -169,6 +170,8 @@ namespace MediaPortal.Playlists
           nPlaylist = PlayListType.PLAYLIST_MUSIC_VIDEO;
         else if (_radioStreamPlayList == playlist)
           nPlaylist = PlayListType.PLAYLIST_RADIO_STREAMS;
+        else if (_lastFMPlaylist == playlist)
+          nPlaylist = PlayListType.PLAYLIST_LAST_FM;
         else
           nPlaylist = PlayListType.PLAYLIST_NONE;
 
@@ -655,6 +658,9 @@ namespace MediaPortal.Playlists
         case PlayListType.PLAYLIST_RADIO_STREAMS:
           _radioStreamPlayList = playlist;
           break;
+        case PlayListType.PLAYLIST_LAST_FM:
+          _lastFMPlaylist = playlist;
+          break;
         default:
           _emptyPlayList = playlist;
           break;
@@ -679,6 +685,8 @@ namespace MediaPortal.Playlists
           return _musicVideoPlayList;
         case PlayListType.PLAYLIST_RADIO_STREAMS:
           return _radioStreamPlayList;
+        case PlayListType.PLAYLIST_LAST_FM:
+          return _lastFMPlaylist;
         default:
           _emptyPlayList.Clear();
           return _emptyPlayList;
