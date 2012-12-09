@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using MediaPortal.Common.Utils;
@@ -73,7 +71,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       GlobalServiceProvider.Instance.Get<IWindsorContainer>().Register(
       AllTypes.FromAssemblyInDirectory(assemblyFilter).
           BasedOn<ICustomDevice>().
-          If(t => IsPluginCompatible(t)).
+          If(IsPluginCompatible).
           WithServiceBase().
           LifestyleTransient()
           );
@@ -118,7 +116,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       catch (Exception ex)
       {
-        this.LogDebug("CustomDeviceLoader: Error while loading dll's.", ex);
+        this.LogError(ex, "CustomDeviceLoader: Error while loading dll's.");
       }
     }
 
