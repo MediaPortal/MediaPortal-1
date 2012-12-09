@@ -710,8 +710,8 @@ namespace Mediaportal.TV.Server.TVLibrary
         }
 
         this.LogInfo("Controller: setup streaming");
-        _hostName = System.Net.Dns.GetHostName();
-        SettingsManagement.SaveSetting("hostname", _hostName);
+        _hostName = Dns.GetHostName();
+        _hostName = SettingsManagement.GetValue("hostname", _hostName);
         _streamer = new RtspStreaming(_hostName, _rtspStreamingPort);
 
 
