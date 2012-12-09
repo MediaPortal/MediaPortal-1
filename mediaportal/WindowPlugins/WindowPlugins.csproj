@@ -638,8 +638,8 @@
     <EmbeddedResource Include="GUIDisc\DVDDisabled.gif" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="GUILastFMRadio\BallonRadio.gif" />
-    <Content Include="GUILastFMRadio\BallonRadioDisabled.gif" />
+    <EmbeddedResource Include="GUILastFMRadio\BallonRadio.gif" />
+    <EmbeddedResource Include="GUILastFMRadio\BallonRadioDisabled.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

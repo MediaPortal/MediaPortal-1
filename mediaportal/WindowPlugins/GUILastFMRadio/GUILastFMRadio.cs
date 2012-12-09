@@ -123,7 +123,7 @@ namespace MediaPortal.GUI.LastFMRadio
 
     #endregion
 
-    GUILastFMRadio()
+    public GUILastFMRadio()
     {
       g_Player.PlayBackEnded += OnPlayBackEnded;
       g_Player.PlayBackChanged += OnPlayBackChanged;

@@ -61,20 +61,7 @@ namespace MediaPortal.LastFM
     {
       get
       {
-        if (!string.IsNullOrEmpty(_currentUser))
-        {
-          return _currentUser;
-        }
-
-        var userXML = GetUserInfo();
-        var userElement = userXML.Descendants("name").FirstOrDefault();
-        if (userElement != null)
-        {
-          _currentUser = userElement.Value;
-          return _currentUser;
-        }
-        
-        return string.Empty;
+        return !string.IsNullOrEmpty(_currentUser) ? _currentUser : string.Empty;
       }
     }
 
@@ -87,6 +74,7 @@ namespace MediaPortal.LastFM
       using (var xmlreader = new MPSettings())
       {
         _theSK = xmlreader.GetValueAsString("lastfm:test", "SK", String.Empty);
+        _currentUser = xmlreader.GetValueAsString("lastfm:test", "User", string.Empty);
       }
     }
 
@@ -95,6 +83,7 @@ namespace MediaPortal.LastFM
       using (var xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("lastfm:test", "SK", _theSK);
+        xmlwriter.SetValue("lastfm:test", "User", _currentUser);
       }
     }
 
@@ -193,6 +182,7 @@ namespace MediaPortal.LastFM
           Log.Info("Saved last.fm session key for: {0}", userName);
 
           if (sk != null) _theSK = sk.Value;
+          if (userName != null) _currentUser = userName.Value;
           SaveSettings();
 
           return _theSK;
@@ -633,12 +623,12 @@ namespace MediaPortal.LastFM
     public static XDocument GetUserInfo(string strUser)
     {
       var parms = new Dictionary<string, string>();
-      const string methodName = "user.getInfo";
+      const string methodName = "user.getinfo";
       if(!String.IsNullOrEmpty(strUser))
       {
         parms.Add("user", strUser);
       }
-      var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
+      var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, false);
 
       var lastFMResponseXML = HttpGet(buildLastFMString);
 
