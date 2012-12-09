@@ -57,7 +57,7 @@ namespace MediaPortal.LastFM
 
     #region properties
 
-    public static string CurrrentUser
+    public static string CurrentUser
     {
       get
       {

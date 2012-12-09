@@ -215,6 +215,7 @@ namespace MediaPortal.GUI.LastFMRadio
         };
         Log.Info("Artist: {0} :Title: {1} :URL: {2}", lastFMTrack.ArtistName, lastFMTrack.TrackTitle, lastFMTrack.TrackURL);
 
+        var pl = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_LAST_FM);
         pl.Add(a);
       }
       
