@@ -520,7 +520,7 @@ Please proceed with it before continuing with MediaPortal installation.</value>
     <value>Choose a Skin</value>
   </data>
   <data name="SkinChoice_labelExistingSkin" xml:space="preserve">
-    <value>Use Existing Skin (This will be checked for compatability)</value>
+    <value>Use Existing Skin (This will be checked for compatibility)</value>
   </data>
   <data name="ExtensionChoice_MoreInfo" xml:space="preserve">
     <value>More Info</value>
