@@ -170,7 +170,6 @@ public class MediaPortalApp : D3DApp, IRender
   private bool _supportsAlphaBlend;
   private int _anisotropy;
   private DateTime _updateTimer = DateTime.MinValue;
-  private static SplashScreen _splashScreen;
 #if !DEBUG
   private static bool _avoidVersionChecking;
 #endif
@@ -340,12 +339,6 @@ public class MediaPortalApp : D3DApp, IRender
         return;
       }
 
-      bool autoHideTaskbar;
-#if !DEBUG
-      bool watchdogEnabled;
-      bool restartOnError;
-      int restartDelay;
-#endif
       using (Settings xmlreader = new MPSettings())
       {
         string threadPriority = xmlreader.GetValueAsString("general", "ThreadPriority", "Normal");
@@ -364,19 +357,24 @@ public class MediaPortalApp : D3DApp, IRender
             Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.BelowNormal;
             break;
         }
-        autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", false);
         _startupDelay = xmlreader.GetValueAsBool("general", "delay startup", false) 
                           ? xmlreader.GetValueAsInt("general", "delay", 0)
                           : 0;
         _waitForTvServer = xmlreader.GetValueAsBool("general", "wait for tvserver", false);
+        GUIGraphicsContext._useScreenSelector |= xmlreader.GetValueAsBool("screenselector", "usescreenselector", false);
+      }
+
 #if !DEBUG
+      bool watchdogEnabled;
+      bool restartOnError;
+      int restartDelay;
+      using (Settings xmlreader = new MPSettings())
+      {
         watchdogEnabled = xmlreader.GetValueAsBool("general", "watchdogEnabled", true);
         restartOnError = xmlreader.GetValueAsBool("general", "restartOnError", false);
         restartDelay = xmlreader.GetValueAsInt("general", "restart delay", 10);        
-#endif
-        GUIGraphicsContext._useScreenSelector |= xmlreader.GetValueAsBool("screenselector", "usescreenselector", false);
       }
-#if !DEBUG
+
       AddExceptionHandler();
       if (watchdogEnabled)
       {
@@ -405,6 +403,7 @@ public class MediaPortalApp : D3DApp, IRender
         mpWatchDog.Start();
       }
 #endif
+
       // Log MediaPortal version build and operating system level
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
 
@@ -516,11 +515,11 @@ public class MediaPortalApp : D3DApp, IRender
 
         Log.Info("Main: Skin is {0} using theme {1}", skin, GUIThemeManager.CurrentTheme);
 
-//#if !DEBUG
+        // Start Splash Screen
         string version = ConfigurationManager.AppSettings["version"];
-        _splashScreen = new SplashScreen {Version = version};
-        _splashScreen.Run();
-//#endif
+        SplashScreen = new SplashScreen {Version = version};
+        SplashScreen.Run();
+
         Application.DoEvents();
         if (_waitForTvServer)
         {
@@ -538,10 +537,7 @@ public class MediaPortalApp : D3DApp, IRender
           if (ctrl != null)
           {
             Log.Debug("Main: TV service found. Checking status...");
-            if (_splashScreen != null)
-            {
-              _splashScreen.SetInformation(GUILocalizeStrings.Get(60)); // Waiting for startup of TV service...
-            }
+            UpdateSplashScreenMessage(GUILocalizeStrings.Get(60)); // Waiting for startup of TV service...
             if (ctrl.Status == ServiceControllerStatus.StartPending || ctrl.Status == ServiceControllerStatus.Stopped)
             {
               if (ctrl.Status == ServiceControllerStatus.StartPending)
@@ -579,18 +575,17 @@ public class MediaPortalApp : D3DApp, IRender
           }
         }
         Application.DoEvents();
+
         if (_startupDelay > 0)
         {
           Log.Info("Main: Waiting {0} second(s) before startup", _startupDelay);
           for (int i = _startupDelay; i > 0; i--)
           {
-            if (_splashScreen != null)
-            {
-              _splashScreen.SetInformation(String.Format(GUILocalizeStrings.Get(61), i.ToString(CultureInfo.InvariantCulture)));
-            }
+            UpdateSplashScreenMessage(String.Format(GUILocalizeStrings.Get(61), i.ToString(CultureInfo.InvariantCulture)));
             Application.DoEvents();
           }
         }
+
         Log.Debug("Main: Checking prerequisites");
         try
         {
@@ -598,16 +593,10 @@ public class MediaPortalApp : D3DApp, IRender
           Log.Debug("Main: Verifying DirectX 9");
           if (!DirectXCheck.IsInstalled())
           {
+            DisableSplashScreen();
             string strLine = "Please install a newer DirectX 9.0c redist!\r\n";
             strLine = strLine + "MediaPortal cannot run without DirectX 9.0c redist (August 2008)\r\n";
             strLine = strLine + "http://install.team-mediaportal.com/DirectX";
-#if !DEBUG
-            if (_splashScreen != null)
-            {
-              _splashScreen.Stop();
-              _splashScreen = null;
-            }
-#endif
             MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
           }
@@ -616,7 +605,6 @@ public class MediaPortalApp : D3DApp, IRender
           // CHECK if Windows MediaPlayer 11 is installed
           const string wmpMainVer = "11";
           Log.Debug("Main: Verifying Windows Media Player");
-
           Version aParamVersion;
           if (FilterChecker.CheckFileVersion(Environment.SystemDirectory + "\\wmp.dll", wmpMainVer + ".0.0000.0000", out aParamVersion))
           {
@@ -624,13 +612,7 @@ public class MediaPortalApp : D3DApp, IRender
           }
           else
           {
-#if !DEBUG
-            if (_splashScreen != null)
-            {
-              _splashScreen.Stop();
-              _splashScreen = null;
-            }
-#endif
+            DisableSplashScreen();
             string strLine = "Please install Windows Media Player " + wmpMainVer + "\r\n";
             strLine = strLine + "MediaPortal cannot run without Windows Media Player " + wmpMainVer;
             MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -650,11 +632,7 @@ public class MediaPortalApp : D3DApp, IRender
               strLine += "Please update the older component to the same version as the newer one.\r\n";
               strLine += "MediaPortal Version: " + mpVersion + "\r\n";
               strLine += "TvPlugin    Version: " + tvPluginVersion;
-              if (_splashScreen != null)
-              {
-                _splashScreen.Stop();
-                _splashScreen = null;
-              }
+              DisableSplashScreen();
               MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
               Log.Info(strLine);
               return;
@@ -663,42 +641,37 @@ public class MediaPortalApp : D3DApp, IRender
 #endif
         }
         catch (Exception) {}
-#if !DEBUG
+
         try
         {
-#endif
-        Application.DoEvents();
-        if (_splashScreen != null)
-        {
-          _splashScreen.SetInformation(GUILocalizeStrings.Get(62)); // Initializing DirectX...
-        }
-        var app = new MediaPortalApp();
-        Log.Debug("Main: Initializing DirectX");
-        if (app.CreateGraphicsSample())
-        {
-          // Initialize Input Devices
-          if (_splashScreen != null)
-          {
-            _splashScreen.SetInformation(GUILocalizeStrings.Get(63)); // Initializing input devices...
-          }
+          Application.DoEvents();
+          UpdateSplashScreenMessage(GUILocalizeStrings.Get(63)); // Initializing input devices...
+          Log.Info("Main: Initializing Input Devices");
           InputDevices.Init();
-          try
+
+          Application.DoEvents();
+          UpdateSplashScreenMessage(GUILocalizeStrings.Get(62)); // Initializing DirectX...
+          Log.Debug("Main: Initializing DirectX");
+
+          var app = new MediaPortalApp();
+          if (app.CreateGraphicsSample())
           {
-            Log.Info("Main: Running");
-            GUIGraphicsContext.BlankScreen = false;
-            Application.Run(app);
-            app.Focus();
-            Debug.WriteLine("after Application.Run");
+            try
+            {
+              Log.Info("Main: Running");
+              GUIGraphicsContext.BlankScreen = false;
+              Application.Run(app);
+              app.Focus();
+            }
+            catch (Exception ex)
+            {
+              Log.Error(ex);
+              Log.Error("MediaPortal stopped due to an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+              _mpCrashed = true;
+            }
+            app.OnExit();
           }
-          catch (Exception ex)
-          {
-            Log.Error(ex);
-            Log.Error("MediaPortal stopped due to an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
-            _mpCrashed = true;
-          }
-          app.OnExit();
-        }
-#if !DEBUG
+
         }
         catch (Exception ex)
         {
@@ -706,21 +679,21 @@ public class MediaPortalApp : D3DApp, IRender
           Log.Error("MediaPortal stopped due to an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
           _mpCrashed = true;
         }
-#endif
-#if !DEBUG
-        if (_splashScreen != null)
-        {
-          _splashScreen.Stop();
-          _splashScreen = null;
-        }
-#endif
+
+        DisableSplashScreen();
+        
         Settings.SaveCache();
 
-        if (autoHideTaskbar)
+        // only re-show the task bar if MP is the one that has hidden it.
+        using (Settings xmlreader = new MPSettings())
         {
-          // only re-show the task bar if MP is the one that has hidden it.
-          HideTaskBar(false);
+          bool autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", false);
+          if (autoHideTaskbar)
+          {
+            HideTaskBar(false);
+          }
         }
+        
         if (_useRestartOptions)
         {
           Log.Info("Main: Exiting Windows - {0}", _restartOptions);
@@ -741,6 +714,7 @@ public class MediaPortalApp : D3DApp, IRender
     }
     else
     {
+      DisableSplashScreen();
       string msg = "The file MediaPortalDirs.xml has been changed by a recent update in the MediaPortal application directory.\n\n";
       msg += "You have to open the file ";
       msg += Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Team MediaPortal\MediaPortalDirs.xml";
@@ -750,13 +724,7 @@ public class MediaPortalApp : D3DApp, IRender
       string msg2 = "\n\n\n";
       msg2 += "Do you want to open your local file now?";
       Log.Error(msg);
-#if !DEBUG
-      if (_splashScreen != null)
-      {
-        _splashScreen.Stop();
-        _splashScreen = null;
-      }
-#endif
+
       DialogResult result = MessageBox.Show(msg + msg2, "MediaPortal - Update Conflict", MessageBoxButtons.YesNo, MessageBoxIcon.Stop);
       try
       {
@@ -777,6 +745,20 @@ public class MediaPortalApp : D3DApp, IRender
     }
     Environment.Exit(0);
   }
+
+
+  /// <summary>
+  /// Disables the Splash Screen
+  /// </summary>
+  private static void DisableSplashScreen()
+  {
+    if (SplashScreen != null)
+    {
+      SplashScreen.Stop();
+      SplashScreen = null;
+    }
+  }
+
 
 #if !DEBUG
   private static UnhandledExceptionLogger _logger;
@@ -1179,7 +1161,7 @@ public class MediaPortalApp : D3DApp, IRender
             case WA_ACTIVE:
             case WA_CLICKACTIVE:
               Log.Info("Main: Activation Request Received");
-              RestoreFromTray();
+              RestoreFromTray(false);
               break;
           }
           msg.Result = (IntPtr)0;
@@ -1524,7 +1506,7 @@ public class MediaPortalApp : D3DApp, IRender
     }
     _resuming = false;
   }
-
+  
   #endregion
 
   /// <summary>
@@ -1537,6 +1519,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       Log.Info("D3D: Minimizing to tray on startup");
       MinimizeToTray(true);
+      FirstTimeWindowDisplayed = false;
     }
     base.OnShown(e);
   }
@@ -1604,13 +1587,19 @@ public class MediaPortalApp : D3DApp, IRender
   /// </summary>
   protected override void OnStartup()
   {
-    // set window form styles
-    // these styles enable double buffering, which results in no flickering
     Log.Info("Main: Starting up");
+    
     MouseTimeOutTimer = DateTime.Now;
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(64)); // Starting plugins...
     PluginManager.Load();
     PluginManager.Start();
+
+    // Restore minimized MP main window
+    if (!Windowed)
+    {
+      RestoreFromTray(true);
+    }
+
     using (Settings xmlreader = new MPSettings())
     {
       DateFormat = xmlreader.GetValueAsString("home", "dateformat", "<Day> <Month> <DD>");
@@ -1633,15 +1622,16 @@ public class MediaPortalApp : D3DApp, IRender
       GUIPropertyManager.SetProperty("#SY", GetShortYear()); // 80
       GUIPropertyManager.SetProperty("#Year", GetYear()); // 1980
 
-      if (_splashScreen != null)
+      // stop splash screen thread
+      if (SplashScreen != null)
       {
-        _splashScreen.Stop();
+        SplashScreen.Stop();
         Activate();
-        while (!_splashScreen.isStopped())
+        while (!SplashScreen.IsStopped())
         {
           Thread.Sleep(100);
         }
-        _splashScreen = null;
+        SplashScreen = null;
       }
 
       // disable screen saver when MP running and internal selected
@@ -1661,12 +1651,14 @@ public class MediaPortalApp : D3DApp, IRender
     {
       Log.Error("MediaPortalApp: Error setting date and time properties - {0}", ex.Message);
     }
+
     if (_outdatedSkinName != null || PluginManager.IncompatiblePluginAssemblies.Count > 0 || PluginManager.IncompatiblePlugins.Count > 0)
     {
       GUIWindowManager.SendThreadCallback(ShowStartupWarningDialogs, 0, 0, null);
     }
     Log.Debug("Main: Auto play start listening");
     AutoPlay.StartListening();
+
     Log.Info("Main: Initializing volume handler");
 #pragma warning disable 168
     VolumeHandler vh = VolumeHandler.Instance;
@@ -1872,7 +1864,7 @@ public class MediaPortalApp : D3DApp, IRender
     GUIWindowManager.Clear();
     GUIWaitCursor.Dispose();
     GUITextureManager.Dispose();
-
+ 
     // Loading keymap.xml
     Log.Info("Startup: Load keymap.xml");
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(65));
@@ -1896,10 +1888,11 @@ public class MediaPortalApp : D3DApp, IRender
     Utils.FileExistsInCache(Thumbs.Videos + "\\dummy.png");
     Utils.FileExistsInCache(Thumbs.MusicFolder + "\\dummy.png");
 
-    // Loading Skin
+    // Loading Theme
     UpdateSplashScreenMessage(String.Format(GUILocalizeStrings.Get(69), GUIGraphicsContext.SkinName + " - " + GUIThemeManager.CurrentTheme));
     GUIControlFactory.LoadReferences(GUIGraphicsContext.GetThemedSkinFile(@"\references.xml"));
 
+    // Resize Form
     if (Windowed)
     {
       var border = new Size(Width - ClientSize.Width, Height - ClientSize.Height);
@@ -1921,13 +1914,13 @@ public class MediaPortalApp : D3DApp, IRender
       LastRect.left   = Location.X;
       LastRect.bottom = Size.Height;
       LastRect.right  = Size.Width;
+      UpdatePresentParams(Windowed, true);
     }
     else
     {
       Log.Debug("Startup: Resizing form to Screen Dimensions");
       ClientSize = new Size(GUIGraphicsContext.currentScreen.Bounds.Right, GUIGraphicsContext.currentScreen.Bounds.Bottom);
     }
-    UpdatePresentParams(Windowed, true);
 
     // Loading Fonts
     Log.Info("Startup: Loading Fonts");
@@ -1993,6 +1986,7 @@ public class MediaPortalApp : D3DApp, IRender
     // ReSharper disable ObjectCreationAsStatement
     new GUILayerRenderer();
     // ReSharper restore ObjectCreationAsStatement
+
     WorkingSet.Minimize();
   }
 
@@ -2006,9 +2000,9 @@ public class MediaPortalApp : D3DApp, IRender
   {
     try
     {
-      if (_splashScreen != null)
+      if (SplashScreen != null)
       {
-        _splashScreen.SetInformation(aSplashLine);
+        SplashScreen.SetInformation(aSplashLine);
       }
     }
     catch (Exception ex)
@@ -2538,7 +2532,7 @@ public class MediaPortalApp : D3DApp, IRender
 
         case Action.ActionType.ACTION_MPRESTORE:
           Log.Info("Main: Restore MP by action");
-          RestoreFromTray();
+          RestoreFromTray(false);
           if ((g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD) && Volume > 0)
           {
             g_Player.Volume = Volume;
@@ -2869,29 +2863,8 @@ public class MediaPortalApp : D3DApp, IRender
     // is the minimize on gui option set?  If so, minimize to tray...
     if (MinimizeOnGuiExit && !ShuttingDown)
     {
-      if (WindowState != FormWindowState.Minimized)
-      {
-        Log.Info("Main: Minimizing to tray on GUI exit and restoring taskbar");
-      }
-      WindowState = FormWindowState.Minimized;
-      Hide();
-      if (AutoHideTaskbar)
-      {
-        // only re-show the task bar if MP is the one that has hidden it.
-        HideTaskBar(false);
-      }
-      if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD)
-      {
-        if (g_Player.Volume > 0)
-        {
-          Volume = g_Player.Volume;
-          g_Player.Volume = 0;
-        }
-        if (g_Player.Paused == false && !GUIGraphicsContext.IsVMR9Exclusive)
-        {
-          g_Player.Pause();
-        }
-      }
+      Log.Info("Main: Minimizing to tray on GUI exit");
+      MinimizeToTray(true);
       return;
     }
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
@@ -3219,7 +3192,7 @@ public class MediaPortalApp : D3DApp, IRender
     }
   }
 
-
+  
   /// <summary>
   /// 
   /// </summary>
@@ -3265,7 +3238,7 @@ public class MediaPortalApp : D3DApp, IRender
         g_Player.Pause();
       }
     }
-    RestoreFromTray();
+    RestoreFromTray(false);
   }
 
   #endregion
@@ -3502,9 +3475,8 @@ public class MediaPortalApp : D3DApp, IRender
                 g_Player.Pause();
               }
             }
-            RestoreFromTray();
+            RestoreFromTray(false);
           }
-          //Force.SetForegroundWindow(this.Handle, true);
           break;
 
         case GUIMessage.MessageType.GUI_MSG_CODEC_MISSING:

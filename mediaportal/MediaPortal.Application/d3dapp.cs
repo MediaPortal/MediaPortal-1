@@ -55,8 +55,29 @@ namespace MediaPortal
   /// </summary>
   public class D3DApp : MPForm
   {
+    #region Win32 Imports
+
+    // http://msdn.microsoft.com/en-us/library/windows/desktop/ms633505(v=vs.85).aspx
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetForegroundWindow();
+
+    // http://msdn.microsoft.com/en-us/library/windows/desktop/ms633548(v=vs.85).aspx
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+    #endregion
+
+    #region constants
+
+    // ReSharper disable InconsistentNaming
+    private const int SW_MINIMIZE = 6;
+    // ReSharper restore InconsistentNaming
+
+    #endregion
+
     #region internal attributes
-  
+
     internal static int ScreenNumberOverride; // 0 or higher means it is set
     
     #endregion
@@ -95,10 +116,11 @@ namespace MediaPortal
     protected bool           UseEnhancedVideoRenderer; //
     protected int            Frames;                   // Number of frames since our last update
     protected int            Volume;                   //
-    protected PlayListPlayer PlaylistPlayer;           //
-    protected DateTime       MouseTimeOutTimer;        //
-    protected RECT           LastRect;                 // tracks last rectangle size for window resizing
-
+   
+    protected PlayListPlayer      PlaylistPlayer;    //
+    protected DateTime            MouseTimeOutTimer; //
+    protected RECT                LastRect;          // tracks last rectangle size for window resizing
+    protected static SplashScreen SplashScreen;      //
     #endregion
 
     #region private attributes
@@ -318,34 +340,29 @@ namespace MediaPortal
           Location = location;
         }
 
-        using (Settings xmlreader = new MPSettings())
+        if (!Windowed)
         {
-          var startFullscreen = !WindowedOverride && (FullscreenOverride || xmlreader.GetValueAsBool("general", "startfullscreen", false));
-          if (startFullscreen)
+          Log.Info("D3D: Starting in fullscreen");
+          if (AutoHideTaskbar && !MinimizeOnStartup)
           {
-            Log.Info("D3D: Starting in fullscreen");
-            if (AutoHideTaskbar && !MinimizeOnStartup)
-            {
-              HideTaskBar(true);
-            }
-            FormBorderStyle = FormBorderStyle.None;
-            MaximizeBox = false;
-            MinimizeBox = false;
-            Menu = null;
-            var newBounds = GUIGraphicsContext.currentScreen.Bounds;
-            Bounds = newBounds;
-            ClientSize = newBounds.Size;
-            Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}",
-                     ClientSize.Width, ClientSize.Height,
-                     GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
-            Windowed = false;
-
-            // make sure cursor is initially hidden in fullscreen
-            ShowCursor = _lastShowCursor = false;
-            Cursor.Hide();
+            HideTaskBar(true);
           }
+          FormBorderStyle = FormBorderStyle.None;
+          MaximizeBox = false;
+          MinimizeBox = false;
+          Menu = null;
+          var newBounds = GUIGraphicsContext.currentScreen.Bounds;
+          Bounds = newBounds;
+          ClientSize = newBounds.Size;
+          Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}",
+                   ClientSize.Width, ClientSize.Height,
+                   GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+ 
+          // make sure cursor is initially hidden in fullscreen
+          ShowCursor = _lastShowCursor = false;
+          Cursor.Hide();
         }
-        
+
         // Initialize the 3D environment for the app
         InitializeDevice();
 
@@ -758,7 +775,7 @@ namespace MediaPortal
     /// <summary>
     /// Restores MP from System Tray
     /// </summary>
-    protected void RestoreFromTray()
+    protected void RestoreFromTray(bool force)
     {
       // do nothing if we are closing
       if (_isClosing)
@@ -767,7 +784,7 @@ namespace MediaPortal
       }
 
       // only restore if not visible
-      if (!_isVisible )
+      if (!_isVisible || force)
       {
         Log.Info("D3D: Restoring from tray");
         _isVisible = true;
@@ -1178,8 +1195,8 @@ namespace MediaPortal
     protected void BuildPresentParams(bool windowed)
     {
       Size windowBackBufferSize = CalcMaxClientArea();
-
       _graphicsSettings.DisplayMode = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode;
+
       // workaround for usage of DX9Device.Viewport elsewhere, in windowed mode width and height should be 0. Backbuffer Size != Client Size
       _presentParams.BackBufferWidth            = windowed ? windowBackBufferSize.Width  : _graphicsSettings.DisplayMode.Width;
       _presentParams.BackBufferHeight           = windowed ? windowBackBufferSize.Height : _graphicsSettings.DisplayMode.Height;
@@ -1200,6 +1217,7 @@ namespace MediaPortal
       _presentParams.FullScreenRefreshRateInHz = windowed ? 0 : _graphicsSettings.DisplayMode.RefreshRate;
       _presentParams.PresentationInterval      = PresentInterval.Default;
       _presentParams.ForceNoMultiThreadedFlag  = false;
+
       GUIGraphicsContext.DirectXPresentParameters = _presentParams;
       Windowed = windowed;
     }
@@ -1253,7 +1271,7 @@ namespace MediaPortal
         default:
           throw new ApplicationException();
       }
-
+      
       try
       {
         // Create the device
@@ -1272,14 +1290,20 @@ namespace MediaPortal
                                                     createFlags | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve,
                                                     _presentParams);
         }
-        if (Windowed)
+
+        if (!Windowed)
+        {
+          // minimize currently empty main form
+          IntPtr hWnd = GetForegroundWindow();
+          ShowWindow(hWnd, SW_MINIMIZE);
+          // bring splash screen to front of z-order
+          SplashScreen.BringToFront();
+        }
+        else
         {
           // Make sure main window isn't topmost, so error message is visible
-          var currentClientSize = ClientSize;
-          Size = ClientSize;
           SendToBack();
           BringToFront();
-          ClientSize = currentClientSize;
           TopMost = _alwaysOnTop;
         }
 
@@ -1290,6 +1314,7 @@ namespace MediaPortal
           GUIGraphicsContext.DX9Device.SetCursor(ourCursor, true);
           GUIGraphicsContext.DX9Device.ShowCursor(true);
         }
+
         // Setup the event handlers for our device
         GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
         GUIGraphicsContext.DX9Device.DeviceReset += OnDeviceReset;
@@ -1358,7 +1383,6 @@ namespace MediaPortal
       Direct3D.Direct3DCreate9Ex(32, out direct3D9Ex);
       var o = Marshal.GetIUnknownForObject(direct3D9Ex);
       Marshal.Release(o);
-
       var displaymodeEx = new D3DDISPLAYMODEEX();
       displaymodeEx.Size = (uint)Marshal.SizeOf(displaymodeEx);
       displaymodeEx.Width  = param.BackBufferWidth;
@@ -1935,7 +1959,7 @@ namespace MediaPortal
     /// <param name="e"></param>
     protected virtual void NotifyIconRestore(Object sender, EventArgs e)
     {
-      RestoreFromTray();
+      RestoreFromTray(false);
     }
 
 
@@ -2273,32 +2297,10 @@ namespace MediaPortal
       Log.Debug("D3D: OnClosing()");
       if (MinimizeOnGuiExit && !ShuttingDown)
       {
-        if (WindowState != FormWindowState.Minimized)
-        {
-          Log.Info("D3D: Minimizing to tray on GUI exit");
-        }
+        Log.Info("D3D: Minimizing to tray on GUI exit");
         _isClosing = false;
-        WindowState = FormWindowState.Minimized;
-        Hide();
         e.Cancel = true;
-
-        if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD)
-        {
-          if (g_Player.Volume > 0)
-          {
-            Volume = g_Player.Volume;
-            g_Player.Volume = 0;
-          }
-          if (g_Player.Paused == false)
-          {
-            g_Player.Pause();
-          }
-        }
-        return;
-      }
-      if (AutoHideTaskbar)
-      {
-        HideTaskBar(false);
+        MinimizeToTray(true);
       }
       _isClosing = true;
       base.OnClosing(e);
