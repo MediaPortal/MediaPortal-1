@@ -36,7 +36,6 @@
       this.lblDefaultWide = new System.Windows.Forms.Label();
       this.lblDefault = new System.Windows.Forms.Label();
       this.pbSkin = new System.Windows.Forms.PictureBox();
-      this.chkTitanExtension = new System.Windows.Forms.CheckBox();
       this.lblExisting = new System.Windows.Forms.Label();
       this.btnExisting = new System.Windows.Forms.Button();
       ((System.ComponentModel.ISupportInitialize)(this.pbSkin)).BeginInit();
@@ -138,26 +137,15 @@
       this.pbSkin.TabIndex = 8;
       this.pbSkin.TabStop = false;
       // 
-      // chkTitanExtension
-      // 
-      this.chkTitanExtension.AutoSize = true;
-      this.chkTitanExtension.ForeColor = System.Drawing.Color.White;
-      this.chkTitanExtension.Location = new System.Drawing.Point(294, 218);
-      this.chkTitanExtension.Name = "chkTitanExtension";
-      this.chkTitanExtension.Size = new System.Drawing.Size(187, 17);
-      this.chkTitanExtension.TabIndex = 9;
-      this.chkTitanExtension.Text = "Download Titan Extensions Plugin";
-      this.chkTitanExtension.UseVisualStyleBackColor = true;
-      // 
       // lblExisting
       // 
       this.lblExisting.AutoSize = true;
       this.lblExisting.ForeColor = System.Drawing.Color.White;
       this.lblExisting.Location = new System.Drawing.Point(329, 70);
       this.lblExisting.Name = "lblExisting";
-      this.lblExisting.Size = new System.Drawing.Size(251, 13);
+      this.lblExisting.Size = new System.Drawing.Size(270, 13);
       this.lblExisting.TabIndex = 11;
-      this.lblExisting.Text = "Use Existing Skin (will be checked for compatability)";
+      this.lblExisting.Text = "Use Existing Skin (This will be checked for compatibility)";
       this.lblExisting.Visible = false;
       // 
       // btnExisting
@@ -185,7 +173,6 @@
       this.Controls.Add(this.lblChooseSkin);
       this.Controls.Add(this.lblDefault);
       this.Controls.Add(this.lblTitan);
-      this.Controls.Add(this.chkTitanExtension);
       this.Controls.Add(this.lblDefaultWide);
       this.Controls.Add(this.btnTitan);
       this.Controls.Add(this.btnDefaultWide);
@@ -195,7 +182,6 @@
       this.Controls.SetChildIndex(this.btnDefaultWide, 0);
       this.Controls.SetChildIndex(this.btnTitan, 0);
       this.Controls.SetChildIndex(this.lblDefaultWide, 0);
-      this.Controls.SetChildIndex(this.chkTitanExtension, 0);
       this.Controls.SetChildIndex(this.lblTitan, 0);
       this.Controls.SetChildIndex(this.lblDefault, 0);
       this.Controls.SetChildIndex(this.lblChooseSkin, 0);
@@ -219,7 +205,6 @@
     private System.Windows.Forms.Label lblDefaultWide;
     private System.Windows.Forms.Label lblDefault;
     private System.Windows.Forms.PictureBox pbSkin;
-    private System.Windows.Forms.CheckBox chkTitanExtension;
     private System.Windows.Forms.Label lblExisting;
     private System.Windows.Forms.Button btnExisting;
   }
