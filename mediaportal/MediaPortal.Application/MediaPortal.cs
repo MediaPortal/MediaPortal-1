@@ -101,6 +101,7 @@ public class MediaPortalApp : D3DApp, IRender
   private bool _suspended;
   private bool _suspending;
   private bool _resuming;
+  private bool _wasActiveBeforeSuspending;
   private bool _ignoreContextMenuAction;
   private DateTime _lastContextMenuAction = DateTime.MaxValue;
   protected string DateFormat = string.Empty;
@@ -1393,6 +1394,14 @@ public class MediaPortalApp : D3DApp, IRender
       // we only dispose the DB connection if the DB path is remote.      
       DisposeDBs();
       VolumeHandler.Dispose();
+
+      // minimize to tray if App is active and in fullscreen
+      if (AppActive && !Windowed)
+      {
+        MinimizeToTray(false);
+        _wasActiveBeforeSuspending = true;
+      }
+      
       Log.Info("Main: OnSuspend - Done");
     }
     _suspending = false;
@@ -1502,6 +1511,14 @@ public class MediaPortalApp : D3DApp, IRender
 
       _ignoreContextMenuAction = false;
       _lastOnresume = DateTime.Now;
+
+      // restore from tray if it was active before suspending
+      if (_wasActiveBeforeSuspending)
+      {
+        RestoreFromTray(false);
+        _wasActiveBeforeSuspending = false;
+      }
+
       Log.Info("Main: OnResume - Done");
     }
     _resuming = false;
@@ -3033,7 +3050,7 @@ public class MediaPortalApp : D3DApp, IRender
   protected override void MouseMoveEvent(MouseEventArgs e)
   {
     // Disable first mouse action when mouse was hidden
-    if (!ShowCursor)
+    if (!ShowMouseCursor)
     {
       base.MouseMoveEvent(e);
     }
@@ -3075,7 +3092,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     GUIGraphicsContext.ResetLastActivity();
 
-    if (!ShowCursor)
+    if (!ShowMouseCursor)
     {
       base.MouseClickEvent(e);
       return;
@@ -3103,7 +3120,7 @@ public class MediaPortalApp : D3DApp, IRender
     GUIGraphicsContext.ResetLastActivity();
 
     // Disable first mouse action when mouse was hidden
-    if (!ShowCursor)
+    if (!ShowMouseCursor)
     {
       base.MouseClickEvent(e);
     }

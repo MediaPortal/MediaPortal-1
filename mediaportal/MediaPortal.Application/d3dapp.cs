@@ -66,6 +66,10 @@ namespace MediaPortal
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
+    // http://msdn.microsoft.com/en-us/library/windows/desktop/ms648396(v=vs.85).aspx
+    [DllImport("user32.dll")]
+    private static extern int ShowCursor(bool bShow);
+
     #endregion
 
     #region constants
@@ -110,7 +114,7 @@ namespace MediaPortal
     protected bool           FirstTimeWindowDisplayed; //
     protected bool           AutoHideMouse;            //
     protected bool           AppActive;                // Is app active?          
-    protected bool           ShowCursor;               //
+    protected bool           ShowMouseCursor;          //
     protected bool           Windowed;                 // Are we in windowed mode?
     protected bool           AutoHideTaskbar;          // 
     protected bool           UseEnhancedVideoRenderer; //
@@ -142,6 +146,7 @@ namespace MediaPortal
     private bool                       _wasPlayingVideo;          //
     private bool                       _alwaysOnTop;              //
     private int                        _lastActiveWindow;         //
+    private int                        _displayCount;             //
     private long                       _lastTime;                 //
     private double                     _currentPlayerPos;         //
     private string                     _currentFile;              //
@@ -186,7 +191,7 @@ namespace MediaPortal
       MinimizeOnGuiExit         = false;
       ShuttingDown              = false;
       AutoHideMouse             = false;
-      ShowCursor                = true;
+      ShowMouseCursor           = true;
       Windowed                  = true;
       Volume                    = -1;
       AppActive                 = false;
@@ -199,7 +204,8 @@ namespace MediaPortal
       MouseTimeOutTimer         = DateTime.Now;
       _lastActiveWindow         = -1;
       _isVisible                = true;
-      _lastShowCursor           = ShowCursor;
+      _lastShowCursor           = ShowMouseCursor;
+      _displayCount             = 0;
       _showCursorWhenFullscreen = false;
       _currentPlayListType      = PlayListType.PLAYLIST_NONE;
       _enumerationSettings      = new D3DEnumeration();
@@ -359,7 +365,7 @@ namespace MediaPortal
                    GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
  
           // make sure cursor is initially hidden in fullscreen
-          ShowCursor = _lastShowCursor = false;
+          ShowMouseCursor = _lastShowCursor = false;
           Cursor.Hide();
         }
 
@@ -797,9 +803,21 @@ namespace MediaPortal
         WindowState = FormWindowState.Normal;
         Activate();
         ResumePlayer();
+
         if (!Windowed && AutoHideTaskbar)
         {
           HideTaskBar(true);
+        }
+
+        // set cursor hide/show balance to old value
+        int displayCount = ShowCursor(false);
+        while (displayCount > _displayCount)
+        {
+          displayCount = ShowCursor(false);
+        }
+        while (displayCount < _displayCount)
+        {
+          displayCount = ShowCursor(true);
         }
       }
     }
@@ -829,8 +847,8 @@ namespace MediaPortal
         Hide();
         WindowState = FormWindowState.Minimized;
         SavePlayerState();
-        // pause player and mute audio
 
+        // pause player and mute audio
         if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD)
         {
           Volume = g_Player.Volume;
@@ -841,6 +859,18 @@ namespace MediaPortal
         if (AutoHideTaskbar)
         {
           HideTaskBar(false);
+        }
+
+        // set cursor hide/show balance to zero, as it can get imbalanced during initialization
+        int displayCount = ShowCursor(true);
+        _displayCount--;
+        while (displayCount < 0)
+        {
+          displayCount = ShowCursor(true);
+        }
+        while (displayCount > 0)
+        {
+          displayCount = ShowCursor(false);
         }
       }
     }
@@ -1586,20 +1616,28 @@ namespace MediaPortal
     {
       if (AutoHideMouse)
       {
-        // don't hide mouse when not over client ares of form
-        if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
+        // TODO: check state instead of try/catch statement in case form is already disposed
+        bool isOverForm;
+        try
         {
-          if (!ClientRectangle.Contains(PointToClient(MousePosition)))
-          {
-            MouseTimeOutTimer = DateTime.Now;
-            return;
-          }
+          isOverForm = ClientRectangle.Contains(PointToClient(MousePosition));
+        }
+        catch
+        {
+          isOverForm = false;
+        }
+
+        // don't update cursor status when not over client area
+        if (!isOverForm)
+        {
+          MouseTimeOutTimer = DateTime.Now;
+          return;
         }
 
         // update mouse cursor state
-        if (ShowCursor != _lastShowCursor)
+        if (ShowMouseCursor != _lastShowCursor)
         {
-          if (ShowCursor)
+          if (ShowMouseCursor)
           {
             Cursor.Show();
           }
@@ -1607,15 +1645,16 @@ namespace MediaPortal
           {
             Cursor.Hide();
           }
-          _lastShowCursor = ShowCursor;
+          _lastShowCursor = ShowMouseCursor;
         }
 
         // hide mouse cursor state if not active in the last three seconds
         var ts = DateTime.Now - MouseTimeOutTimer;
-        if (ShowCursor && ts.TotalSeconds >= 3)
+        if (ShowMouseCursor && ts.TotalSeconds >= 3)
         {
+          Log.Debug("D3D: Hiding Mouse Cursor");
           Cursor.Hide();
-          ShowCursor = false;
+          ShowMouseCursor = false;
           Invalidate(true);
         }
       }
@@ -2157,15 +2196,15 @@ namespace MediaPortal
       // ignore first mouse move event in fullscreen mode or mouse cursor will be shown
       if (!Windowed && FirstTimeWindowDisplayed)
       {
-        Log.Debug("D3D: skipping mouse move event in fullscreen mode");
+        Log.Debug("D3D: skipping first mouse move event in fullscreen mode");
         FirstTimeWindowDisplayed = false;
         return;
       }
 
-      if (!_disableMouseEvents && !ShowCursor)
+      if (!_disableMouseEvents && !ShowMouseCursor)
       {
         Cursor.Show();
-        ShowCursor = true;
+        ShowMouseCursor = true;
         Invalidate(true);
       }
       MouseTimeOutTimer = DateTime.Now;
@@ -2178,10 +2217,10 @@ namespace MediaPortal
     /// <param name="e"></param>
     protected virtual void MouseClickEvent(MouseEventArgs e)
     {
-      if (!ShowCursor)
+      if (!ShowMouseCursor)
       {
         Cursor.Show();
-        ShowCursor = true;
+        ShowMouseCursor = true;
         Invalidate(true);
       }
       MouseTimeOutTimer = DateTime.Now;
@@ -2194,10 +2233,10 @@ namespace MediaPortal
     /// <param name="e"></param>
     protected virtual void MouseDoubleClickEvent(MouseEventArgs e)
     {
-      if (!ShowCursor)
+      if (!ShowMouseCursor)
       {
         Cursor.Show();
-        ShowCursor = true;
+        ShowMouseCursor = true;
         Invalidate(true);
       }
       MouseTimeOutTimer = DateTime.Now;
