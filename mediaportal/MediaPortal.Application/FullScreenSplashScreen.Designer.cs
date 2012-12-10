@@ -109,8 +109,8 @@
       this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
       this.Text = "FullScreenSplashScreen";
       this.TopMost = true;
-      this.Load += new System.EventHandler(this.FullScreenSplashScreen_Load);
-      this.Activated += new System.EventHandler(this.FullScreenSplashScreen_Activated);
+      this.Load += new System.EventHandler(this.FullScreenSplashScreenLoad);
+      this.Activated += new System.EventHandler(this.FullScreenSplashScreenActivated);
       ((System.ComponentModel.ISupportInitialize)(this.pbBackground)).EndInit();
       this.ResumeLayout(false);
 
