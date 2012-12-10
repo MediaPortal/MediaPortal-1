@@ -31,7 +31,6 @@ namespace MediaPortal.DeployTool.Sections
       InitializeComponent();
       type = DialogType.SkinChoice;
       labelSectionHeader.Text = "";
-      chkTitanExtension.Checked = true;
 
       if (InstallationProperties.Instance.Get("UpdateMode") == "yes")
       {
@@ -71,24 +70,12 @@ namespace MediaPortal.DeployTool.Sections
 
     public override DeployDialog GetNextDialog()
     {
-      return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
+      return DialogFlowHandler.Instance.GetDialogInstance(DialogType.ExtensionChoice);
     }
 
     public override bool SettingsValid()
     {
       return true;
-    }
-
-    public override void SetProperties()
-    {
-      if (!chkTitanExtension.Checked)
-      {
-        InstallationProperties.Instance.Set("ConfigureMediaPortalTitanExt", "No");
-      }
-      else
-      {
-        InstallationProperties.Instance.Set("ConfigureMediaPortalTitanExt", "Yes");
-      }
     }
 
     #endregion

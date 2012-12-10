@@ -34,7 +34,6 @@ namespace MediaPortal.DeployTool.Sections
         installationPath =
         Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal";
       checkBoxFirewall.Text = Localizer.GetBestTranslation("MPSettings_checkBoxFirewall");
-	  checkBoxLAV.Text = Localizer.GetBestTranslation("MPSettings_checkBoxLAV");
       UpdateUI();
     }
 
@@ -74,10 +73,6 @@ namespace MediaPortal.DeployTool.Sections
         InstallationProperties.Instance.Set("ConfigureMediaPortalFirewall", "1");
       else
         InstallationProperties.Instance.Set("ConfigureMediaPortalFirewall", "0");
-	  if (checkBoxLAV.Checked)
-		  InstallationProperties.Instance.Set("ConfigureMediaPortalLAV", "1");
-	  else
-		  InstallationProperties.Instance.Set("ConfigureMediaPortalLAV", "0");
     }
 
     #endregion
@@ -97,5 +92,6 @@ namespace MediaPortal.DeployTool.Sections
     {
       installationPath = textBoxDir.Text;
     }
+
   }
 }
