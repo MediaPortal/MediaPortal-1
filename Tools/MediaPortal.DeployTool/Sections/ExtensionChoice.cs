@@ -88,7 +88,7 @@ namespace MediaPortal.DeployTool.Sections
 
     private void linkTitan_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      OpenURL("http://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/17_Extensions/3_Plugins/Titan_Extended");
+      OpenURL("http://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/17_Extensions/4_Skins/Titan_Extended");
     }
 
     #endregion

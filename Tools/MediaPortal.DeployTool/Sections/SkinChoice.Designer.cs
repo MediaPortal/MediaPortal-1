@@ -143,9 +143,9 @@
       this.lblExisting.ForeColor = System.Drawing.Color.White;
       this.lblExisting.Location = new System.Drawing.Point(329, 70);
       this.lblExisting.Name = "lblExisting";
-      this.lblExisting.Size = new System.Drawing.Size(251, 13);
+      this.lblExisting.Size = new System.Drawing.Size(270, 13);
       this.lblExisting.TabIndex = 11;
-      this.lblExisting.Text = "Use Existing Skin (will be checked for compatability)";
+      this.lblExisting.Text = "Use Existing Skin (This will be checked for compatibility)";
       this.lblExisting.Visible = false;
       // 
       // btnExisting
