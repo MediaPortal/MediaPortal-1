@@ -479,6 +479,9 @@ Section "MediaPortal core files (required)" SecCore
   ; libbluray
   SetOutPath "$MPdir.Base"
   File "${git_DirectShowFilters}\BDReader\libbluray\bluray.dll"
+  ; TvLibrary for Genre
+  File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
+  ; MediaPortal.exe
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION
@@ -513,7 +516,7 @@ Section "MediaPortal core files (required)" SecCore
   
   ; used for Titan Skin
   StrCpy $FONT_DIR $FONTS
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\mayatypeui.ttf"
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanSmall.ttf"
   SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=5000  
   
   StrCpy $FONT_DIR $FONTS
@@ -622,6 +625,8 @@ SectionEnd
   Delete "$MPdir.Base\MediaFoundation.dll"
   ; MP Tray
   Delete "$MPdir.Base\MPTray.exe"
+  ; TvLibrary for Genre
+  Delete "$MPdir.Base\TvLibrary.Interfaces.dll"
   ; Plugins
   Delete "$MPdir.Base\RemotePlugins.dll"
   Delete "$MPdir.Base\HcwHelper.exe"

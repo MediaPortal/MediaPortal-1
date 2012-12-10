@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>101</id>
+<defaultcontrol>10</defaultcontrol>
+<allowoverlay>no</allowoverlay>
+<controls>
+
+	<import>common.dialog.xml</import>
+	
+	<control>
+		<type>image</type>
+		<id>100</id>
+		<posX>675</posX>
+		<posY>817</posY>
+		<width>570</width>
+		<height>19</height>
+		<texture>common_osd_progress_bg.png</texture>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="0">WindowClose</animation>
+		<animation effect="slide" start="0,200" end="0,0" tween="quadratic" easing="in" time="150" delay="0">WindowOpen</animation>
+	</control>
+
+	<control>
+		<description>progress control</description>
+		<type>progress</type>
+		<id>20</id>
+		<posX>665</posX>
+		<posY>818</posY>
+		<width>589</width>
+		<height>18</height>
+		<texturebg>-</texturebg>
+		<lefttexture>osd_progress_left.png</lefttexture>
+		<midtexture>osd_progress_mid.png</midtexture>
+		<righttexture>osd_progress_right.png</righttexture>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="0">WindowClose</animation>
+		<animation effect="slide" start="0,200" end="0,0" tween="quadratic" easing="in" time="150" delay="0">WindowOpen</animation>
+	</control>
+	
+    <control>
+		<description>Cancel button</description>
+		<type>button</type>
+		<id>10</id>
+		<posX>888</posX>
+		<posY>177</posY>
+		<width>57</width>
+		<height>57</height>
+		<textureFocus>dialogue_shutdown_focus.png</textureFocus>
+		<textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
+		<label>-</label>
+		<onleft>10</onleft>
+		<onright>10</onright>
+		<onup>10</onup>
+		<ondown>10</ondown>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="0">WindowClose</animation>
+		<animation effect="slide" start="0,200" end="0,0" tween="quadratic" easing="in" time="150" delay="0">WindowOpen</animation>
+    </control>
+
+</controls>
+</window>

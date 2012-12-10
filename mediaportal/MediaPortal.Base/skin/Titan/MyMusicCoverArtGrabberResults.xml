@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>508</id>
+<defaultcontrol>20</defaultcontrol>
+<allowoverlay>no</allowoverlay>
+<controls>
+
+  <import>common.window.music.xml</import>
+
+	<control>
+		<description>Poster shadow</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>103</posX>
+		<posY>349</posY>
+		<width>606</width>
+		<height>605</height>
+		<texture>list_poster_shadow_music.png</texture>
+		<visible>Control.hasthumb(10)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>	
+
+	<control>
+		<id>10</id>
+		<type>Album Art image</type>
+		<posX>121</posX>
+		<posY>362</posY>
+		<width>556</width>
+		<height>556</height>
+		<texture>-</texture>
+ 		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+
+	<control>
+		<type>image</type>
+		<description>Amazon Logo image</description>
+		<id>30</id>
+		<posX>-2000</posX>
+		<posY>620</posY>
+		<width>167</width>
+		<height>56</height>
+		<texture>amazonlogo.png</texture>
+		<centered>yes</centered>
+		<keepaspectratio>yes</keepaspectratio>
+	</control>
+
+	<control>
+		<type>label</type>
+		<description>Album Cover Art Label</description>
+		<id>11</id>
+		<posX>113</posX>
+		<posY>288</posY>
+		<label>4519</label>
+		<font>font10</font>
+		<textcolor>ffb2d4f5</textcolor>
+	</control>
+
+	<control>
+		<type>fadelabel</type>
+		<description>Artist value</description>
+		<id>12</id>
+		<posX>448</posX>
+		<posY>167</posY>
+		<width>800</width>
+		<label>-</label>
+		<font>font16</font>
+		<textcolor>ffffffff</textcolor>
+	</control>
+
+	<control>
+		<type>fadelabel</type>
+		<description>Album value</description>
+		<id>13</id>
+		<posX>448</posX>
+		<posY>130</posY>
+		<width>800</width>
+		<label>-</label>
+		<font>font16</font>
+		<textcolor>ffffffff</textcolor>
+	</control>
+
+	<control>
+		<type>label</type>
+		<description>Release year value</description>
+		<id>14</id>
+		<posX>440</posX>
+		<posY>200</posY>
+		<label>-</label>
+		<font>font16</font>
+		<textcolor>ffffffff</textcolor>
+	</control>
+
+	<control>
+		<type>label</type>
+		<description>No matches label</description>
+		<id>15</id>
+		<posX>640</posX>
+		<posY>400</posY>
+		<label>4516</label>
+		<font>font18</font>
+		<textcolor>ffffffff</textcolor>
+	</control>
+
+  <control>
+    <description>album view listcontrol</description>
+    <type>listcontrol</type>
+    <subtype>album</subtype>
+    <id>25</id>
+		<posX>745</posX>
+		<posY>312</posY>
+		<width>1113</width>
+		<height>750</height>
+		<textXOff>72</textXOff>
+		<textYOff>38</textYOff>
+		<textXOff2>1070</textXOff2>
+		<textYOff2>95</textYOff2>
+		<font>TitanLight16</font>
+		<font2>TitanLight16</font2>
+		<textcolor>ff85cffe</textcolor>
+		<textcolor2>ff85cffe</textcolor2>
+    <itemHeight>130</itemHeight>
+    <itemWidth>128</itemWidth>
+    <IconXOff>56</IconXOff>
+    <IconYOff>16</IconYOff>
+    <PinIconWidth>20</PinIconWidth>
+    <PinIconHeight>20</PinIconHeight>
+    <PinIconXOff>72</PinIconXOff>
+    <PinIconYOff>22</PinIconYOff>
+    <spaceBetweenItems>2</spaceBetweenItems>
+    <textureHeight>163</textureHeight>
+    <scrollOffset>1</scrollOffset>
+		<textureFocus>listcontrol_item_selected_big.png</textureFocus>
+		<textureNoFocus>-</textureNoFocus>
+    <onleft>2</onleft>
+    <onright>50</onright>
+    <keepaspectratio>no</keepaspectratio>
+    <spinPosX>-2000</spinPosX>
+    <spinPosY>1000</spinPosY>
+    <dimColor>ffffffff</dimColor>
+	</control>
+	<control>
+		<type>button</type>
+		<description>Skip button</description>
+		<id>20</id>
+		<posX>113</posX>
+		<posY>520</posY>
+		<onleft>20</onleft>
+		<onright>25</onright>
+		<onup>20</onup>
+		<ondown>21</ondown>
+		<label>4520</label>
+		<width>224</width>
+	</control>
+
+	<control>
+		<type>button</type>
+		<description>Cancel button</description>
+		<id>21</id>
+		<posX>113</posX>
+		<posY>560</posY>
+		<onleft>21</onleft>
+		<onright>25</onright>
+		<onup>20</onup>
+		<ondown>21</ondown>
+		<label>222</label>
+		<width>224</width>
+	</control>
+
+</controls>
+</window>
