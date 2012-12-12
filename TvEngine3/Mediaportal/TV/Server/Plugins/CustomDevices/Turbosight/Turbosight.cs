@@ -42,8 +42,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
   /// </summary>
   public class Turbosight : BaseCustomDevice, IPowerDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
   {
-
-
     #region enums
 
     // PCIe/PCI only.
@@ -1278,7 +1276,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
 
       // Attempt to initialise the interface.
       _ciHandle = _onStartCi(_tunerFilter, _tunerFilterName);
-      if (_ciHandle == IntPtr.Zero || _ciHandle.ToInt64() == 0)
+      if (_ciHandle == IntPtr.Zero || _ciHandle.ToInt64() == -1)
       {
         this.LogDebug("Turbosight: interface handle is null");
         _isCiSlotPresent = false;
@@ -1317,16 +1315,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
 
       if (_ciHandle != IntPtr.Zero)
       {
-        String handleAddress = String.Format("0x{0:x}", _ciHandle.ToInt64());
-        try
-        {
-          _onExitCi(_ciHandle);
-        }
-        catch (Exception ex)
-        {
-          // On_Exit_CI() can throw an access violation exception.
-          this.LogError(ex, "Turbosight: On_Exit_CI threw exception, handle address = {0}", handleAddress);
-        }
+        _onExitCi(_ciHandle);
         _ciHandle = IntPtr.Zero;
       }
 

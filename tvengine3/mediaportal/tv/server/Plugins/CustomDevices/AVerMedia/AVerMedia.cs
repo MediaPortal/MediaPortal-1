@@ -325,7 +325,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
         // The other data is state dependent.
         if (_ciState == AVerMediaCiState.CamInitialising)
         {
-          this.LogDebug("  menu title = {0}", Marshal.PtrToStringAnsi(new IntPtr(stateData.ToInt64() + 2)));
+          this.LogDebug("  menu title = {0}", Marshal.PtrToStringAnsi(IntPtr.Add(stateData, 2)));
         }
         else if (_ciState == AVerMediaCiState.CamReady)
         {

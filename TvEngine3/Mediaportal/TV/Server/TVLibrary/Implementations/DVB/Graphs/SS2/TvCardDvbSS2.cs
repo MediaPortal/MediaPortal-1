@@ -2083,12 +2083,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       // Get device details...
       int size = DeviceInfoSize * MaxDeviceCount;
       int deviceCount = MaxDeviceCount;
-      IntPtr tempBuffer = Marshal.AllocCoTaskMem(size);
+      IntPtr structurePtr = Marshal.AllocCoTaskMem(size);
       for (int i = 0; i < size; i++)
       {
-        Marshal.WriteByte(tempBuffer, i, 0);
+        Marshal.WriteByte(structurePtr, i, 0);
       }
-      int hr = dataInterface.GetDeviceList(tempBuffer, ref size, ref deviceCount);
+      int hr = dataInterface.GetDeviceList(structurePtr, ref size, ref deviceCount);
       if (hr != 0)
       {
         Log.Debug("TvCardDvbSs2: failed to get device list, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -2097,12 +2097,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       {
         //DVB_MMI.DumpBinary(tempBuffer, 0, size);
         Log.Debug("TvCardDvbSs2: device count = {0}", deviceCount);
-        Int64 structurePtr = tempBuffer.ToInt64();
         contexts = new object[deviceCount];
         for (int i = 0; i < deviceCount; i++)
         {
           Log.Debug("TvCardDvbSs2: device {0}", i + 1);
-          DeviceInfo d = (DeviceInfo)Marshal.PtrToStructure(new IntPtr(structurePtr), typeof(DeviceInfo));
+          DeviceInfo d = (DeviceInfo)Marshal.PtrToStructure(structurePtr, typeof(DeviceInfo));
           Log.Debug("  device ID           = {0}", d.DeviceId);
           Log.Debug("  MAC address         = {0}", BitConverter.ToString(d.MacAddress.Address).ToLowerInvariant());
           Log.Debug("  tuner type          = {0}", d.TunerType);
@@ -2113,14 +2112,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
           Log.Debug("  product description = {0}", d.ProductDescription);
           Log.Debug("  product revision    = {0}", d.ProductRevision);
           Log.Debug("  product front end   = {0}", d.ProductFrontEnd);
-          structurePtr += DeviceInfoSize;
+          structurePtr = IntPtr.Add(structurePtr, DeviceInfoSize);
           contexts[i] = d;
         }
         Log.Debug("TvCardDvbSs2: result = success");
       }
 
       // Clean up...
-      Marshal.FreeCoTaskMem(tempBuffer);
+      Marshal.FreeCoTaskMem(structurePtr);
       Release.ComObject("B2C2 Source Filter", b2c2Source);
 
       return contexts;

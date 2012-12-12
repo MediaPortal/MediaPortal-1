@@ -409,10 +409,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       menu.EntryCount = Marshal.ReadInt32(_mmiBuffer, 8);
       menu.Length = Marshal.ReadInt32(_mmiBuffer, 12);
       menu.Entries = new List<String>();
-      int offset = 16;
+      IntPtr stringPtr = IntPtr.Add(_mmiBuffer, 16);
       for (int i = 0; i < menu.EntryCount + 3; i++)
       {
-        IntPtr stringPtr = new IntPtr(_mmiBuffer.ToInt64() + offset);
         String entry = Marshal.PtrToStringAnsi(stringPtr);
         switch (i)
         {
@@ -429,7 +428,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
             menu.Entries.Add(entry);
             break;
         }
-        offset += entry.Length + 1;
+        stringPtr = IntPtr.Add(stringPtr, entry.Length + 1);
       }
       return true;
     }

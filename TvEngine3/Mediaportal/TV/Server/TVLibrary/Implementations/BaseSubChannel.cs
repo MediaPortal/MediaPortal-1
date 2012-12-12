@@ -393,10 +393,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       try
       {
+        IntPtr packetPtr = data;
         for (int i = 0; i < packetCount; ++i)
         {
-          IntPtr packetPtr = new IntPtr(data.ToInt64() + i * 188);
           ProcessPacket(packetPtr);
+          packetPtr = IntPtr.Add(packetPtr, 188);
         }
       }
       catch (Exception ex)
