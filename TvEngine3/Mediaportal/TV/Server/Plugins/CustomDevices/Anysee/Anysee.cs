@@ -38,7 +38,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
   /// </summary>
   public class Anysee : BaseCustomDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice 
   {
- 
     #region enums
 
     private enum BdaExtensionProperty
@@ -87,40 +86,40 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
     // chip combinations
     private enum AnyseeNim
     {
-    	Unknown = 0,
-    	DNOS404Zx101x,
-    	DNOS404Zx102x,              // Samsung NIM - Zarlink MT352 (COFDM demod)
-    	DNOS404Zx103x,              // Samsung NIM - Zarlink ZL10353 (COFDM demod)
-    	TDVSH062P,                  // LG/Innotek NIM - LG DT3303 (8 VSB + 256/64 QAM demod), Philips TDA9887 (analog demod), Infineon TUA6034 (hybrid digital/analog terrestrial tuner)
-    	MT352_FMD1216ME,            // Zarlink (COFDM demod)/Philips (hybrid DVB-T/analog TV/FM tuner)
-    	ZL10353_FMD1216ME,          // Zarlink (COFDM demod)/Philips (hybrid DVB-T/analog TV/FM tuner)
-    	PN3030_ITD3010,             // ??? (DAB/DAB+/DMB/FM demod)/Integrant Technologies (DMB/FM tuner)
-    	DNOS881Zx121A,              // Samsung NIM
-    	STV0297J_DNOS881Zx121A,			// ST (QAM demod)/???
-    	DNQS441PH261A,					    // Samsung
-    	TDA10023HT_DTOS203IH102A,		// Philips/NXP/Trident (QAM demod)/??? (DVB-C tuner)
-    	DNBU10321IRT,
-    	FakeHW,                     // (simulation hardware)
-    	BS2N10WCC01,					      // "DVB-S2, Cosy NIM" - Conexant CX24116/CX24118 (QPSK, DVB-S2 QPSK/8PSK demod)
-    	ZL10353_XC5000,					    // Zarlink (COFDM demod)/Xceive (hybrid digital/analog tuner)
-    	TDA10023HT_XC5000,				  // Philips/NXP/Trident (QAM demod)/Xceive (hybrid digital/analog tuner)
-    	ZL10353_DTOS203IH102A,      // Zarlink (COFDM demod)/???
-    	ZL10353_DTOS403Ix102x,			// Zarlink (COFDM demod)/???
-    	TDA10023HT_DTOS403Ix102x,		// Philips/NXP/Trident (QAM demod)
-    	DNBU10512IST,					      // ST NIM - STV0903 (QPSK, DC II, DVB-S2 QPSK/8PSK demod), STV6110
-    	M88DS3002_M88TS2020,			  // LG Montage NIM - M88DS3002 (QPSK, DVB-S2 QPSK/8PSK/16APSK/32APSK demod), M88TS2020 (digital tuner)
-    	ZL10353_EN4020,					    // Zarlink (COFDM demod)/Entropic (hybrid digital/analog terrestrial/cable tuner)
-    	TDA10023HT_EN4020,				  // Philips/NXP/Trident (QAM demod)/Entropic (hybrid digital/analog terrestrial/cable tuner)
-    	ZL10353_TDA18212,				    // Zarlink (COFDM demod)/NXP DNOD44CDV086A (hybrid digital/analog terrestrial/cable tuner)
-    	TDA10023HT_TDA18212,			  // Philips/NXP/Trident (QAM demod)/NXP DNOD44CDV086A (hybrid digital/analog terrestrial/cable tuner)
-    	CXD2820_TDA18272,				    // ??? (DVB-T2 demod)/NXP DNOD44CDV086A (hybrid digital/analog terrestrial/cable tuner)
-    	DNOQ44QCV106A,					    // Samsung NIM - DVB-T2/C
+      Unknown = 0,
+      DNOS404Zx101x,
+      DNOS404Zx102x,              // Samsung NIM - Zarlink MT352 (COFDM demod)
+      DNOS404Zx103x,              // Samsung NIM - Zarlink ZL10353 (COFDM demod)
+      TDVSH062P,                  // LG/Innotek NIM - LG DT3303 (8 VSB + 256/64 QAM demod), Philips TDA9887 (analog demod), Infineon TUA6034 (hybrid digital/analog terrestrial tuner)
+      MT352_FMD1216ME,            // Zarlink (COFDM demod)/Philips (hybrid DVB-T/analog TV/FM tuner)
+      ZL10353_FMD1216ME,          // Zarlink (COFDM demod)/Philips (hybrid DVB-T/analog TV/FM tuner)
+      PN3030_ITD3010,             // ??? (DAB/DAB+/DMB/FM demod)/Integrant Technologies (DMB/FM tuner)
+      DNOS881Zx121A,              // Samsung NIM
+      STV0297J_DNOS881Zx121A,     // ST (QAM demod)/???
+      DNQS441PH261A,              // Samsung
+      TDA10023HT_DTOS203IH102A,   // Philips/NXP/Trident (QAM demod)/??? (DVB-C tuner)
+      DNBU10321IRT,
+      FakeHW,                     // (simulation hardware)
+      BS2N10WCC01,                // "DVB-S2, Cosy NIM" - Conexant CX24116/CX24118 (QPSK, DVB-S2 QPSK/8PSK demod)
+      ZL10353_XC5000,             // Zarlink (COFDM demod)/Xceive (hybrid digital/analog tuner)
+      TDA10023HT_XC5000,          // Philips/NXP/Trident (QAM demod)/Xceive (hybrid digital/analog tuner)
+      ZL10353_DTOS203IH102A,      // Zarlink (COFDM demod)/???
+      ZL10353_DTOS403Ix102x,      // Zarlink (COFDM demod)/???
+      TDA10023HT_DTOS403Ix102x,   // Philips/NXP/Trident (QAM demod)
+      DNBU10512IST,               // ST NIM - STV0903 (QPSK, DC II, DVB-S2 QPSK/8PSK demod), STV6110
+      M88DS3002_M88TS2020,        // LG Montage NIM - M88DS3002 (QPSK, DVB-S2 QPSK/8PSK/16APSK/32APSK demod), M88TS2020 (digital tuner)
+      ZL10353_EN4020,             // Zarlink (COFDM demod)/Entropic (hybrid digital/analog terrestrial/cable tuner)
+      TDA10023HT_EN4020,          // Philips/NXP/Trident (QAM demod)/Entropic (hybrid digital/analog terrestrial/cable tuner)
+      ZL10353_TDA18212,           // Zarlink (COFDM demod)/NXP DNOD44CDV086A (hybrid digital/analog terrestrial/cable tuner)
+      TDA10023HT_TDA18212,        // Philips/NXP/Trident (QAM demod)/NXP DNOD44CDV086A (hybrid digital/analog terrestrial/cable tuner)
+      CXD2820_TDA18272,           // ??? (DVB-T2 demod)/NXP DNOD44CDV086A (hybrid digital/analog terrestrial/cable tuner)
+      DNOQ44QCV106A,              // Samsung NIM - DVB-T2/C
     }
 
     private enum AnyseeNimMode
     {
-		  None = 0,
-		  DvbS_Qpsk,
+      None = 0,
+      DvbS_Qpsk,
       Qam16,
       Qam32,
       Qam64,
@@ -194,10 +193,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
 
     private enum AnyseeInversionMode
     {
-    	None = 0,         // Normal
-    	Inverted,
-    	Auto,
-    	AutoNormalFirst   // Auto-detect, try normal inversion first
+      None = 0,         // Normal
+      Inverted,
+      Auto,
+      AutoNormalFirst   // Auto-detect, try normal inversion first
     }
 
     private enum AnyseeScanDirection
@@ -443,7 +442,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KsPropertySize)]
       public byte[] KsProperty;
 
-	    public Int32 SymbolRate;      // unit = s/s (Baud)
+      public Int32 SymbolRate;      // unit = s/s (Baud)
       public Int32 SweepRate;       // unit = Hz/s
 
       public Int32 Frequency;       // unit = kHz
@@ -459,7 +458,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
 
       public AnyseeInversionMode SignalInversion;
       public AnyseeScanDirection ScanDirection;
-	  }
+    }
 
     [StructLayout(LayoutKind.Sequential)]
     private struct LnbInfo
@@ -606,7 +605,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       public byte StreamType;
 
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDescriptorDataLength)]
-      public byte[] DescriptorData;           // The first two bytes should specify the length of the descriptor data.
+      public byte[] DescriptorData;             // The first two bytes should specify the length of the descriptor data.
     }
 
     #endregion
@@ -624,7 +623,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       private struct CiDeviceInfo   // ANYSEECIDEVICESINFO
       {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDeviceCount)]
-        public ApiString[] DevicePaths;      // A list of the capture device paths for all Anysee devices connected to the system.
+        public ApiString[] DevicePaths;       // A list of the capture device paths for all Anysee devices connected to the system.
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDeviceCount)]
         public Int32[] DevicePathLengths;     // The length of the corresponding device path in DevicePaths.
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDeviceCount)]

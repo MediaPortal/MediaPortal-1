@@ -1136,7 +1136,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
     /// <returns><c>true</c> if the selection is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool SelectMenu(byte choice)
     {
-      this.LogDebug("NetUP: select menu entry, choice = {0}", (int)choice);
+      this.LogDebug("NetUP: select menu entry, choice = {0}", choice);
 
       if (!_isNetUp || _propertySet == null)
       {

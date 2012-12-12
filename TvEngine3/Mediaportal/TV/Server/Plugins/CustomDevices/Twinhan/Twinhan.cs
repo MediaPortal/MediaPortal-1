@@ -2474,7 +2474,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     /// <returns><c>true</c> if the selection is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool SelectMenu(byte choice)
     {
-      this.LogDebug("Twinhan: select menu entry, choice = {0}", (int)choice);
+      this.LogDebug("Twinhan: select menu entry, choice = {0}", choice);
       MmiData mmi = new MmiData();
       mmi.ChoiceIndex = (int)choice;
       mmi.Type = 1;
