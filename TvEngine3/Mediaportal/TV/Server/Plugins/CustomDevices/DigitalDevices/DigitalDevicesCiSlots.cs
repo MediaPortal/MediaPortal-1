@@ -163,7 +163,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       try
       {
         int returnedByteCount;
-        int hr = ((IKsPropertySet)ciFilter).Get(CommonInterfacePropertySet, (int)CommonInterfaceProperty.CamMenuTitle,
+        int hr = (ciFilter as IKsPropertySet).Get(CommonInterfacePropertySet, (int)CommonInterfaceProperty.CamMenuTitle,
           buffer, bufferSize,
           buffer, bufferSize,
           out returnedByteCount

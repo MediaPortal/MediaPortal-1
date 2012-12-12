@@ -43,8 +43,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
   /// </summary>
   public abstract class TvCardDvbBase : TvCardBase, IDisposable, ITVCard
   {
-
-
     #region constants
 
     [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]

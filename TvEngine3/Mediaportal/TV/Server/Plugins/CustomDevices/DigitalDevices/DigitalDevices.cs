@@ -380,7 +380,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 
       KsMethod method = new KsMethod(CamControlMethodSet, (int)CamControlMethod.GetMenu, (int)KsMethodFlag.Send);
       int returnedByteCount = 0;
-      int hr = ((IKsControl)_ciContexts[slot].Filter).KsMethod(ref method, KsMethodSize, _mmiBuffer, MenuDataSize, ref returnedByteCount);
+      int hr = (_ciContexts[slot].Filter as IKsControl).KsMethod(ref method, KsMethodSize, _mmiBuffer, MenuDataSize, ref returnedByteCount);
       if (hr != 0)
       {
         // Attempting to check for an MMI message when the menu has not previously been
@@ -945,7 +945,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       {
         this.LogDebug("Digital Devices: reset slot {0} \"{1}\"", i + 1, _ciContexts[i].FilterName);
         KsMethod method = new KsMethod(CamControlMethodSet, (int)CamControlMethod.Reset, (int)KsMethodFlag.Send);
-        int hr = ((IKsControl)_ciContexts[i].Filter).KsMethod(ref method, KsMethodSize, IntPtr.Zero, 0, ref returnedByteCount);
+        int hr = (_ciContexts[i].Filter as IKsControl).KsMethod(ref method, KsMethodSize, IntPtr.Zero, 0, ref returnedByteCount);
         if (hr == 0)
         {
           this.LogDebug("Digital Devices: result = success");
@@ -1105,7 +1105,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       IntPtr buffer = Marshal.AllocCoTaskMem(paramSize);
       Marshal.WriteInt32(buffer, (int)serviceId);
       DVB_MMI.DumpBinary(buffer, 0, paramSize);
-      int hr = ((IKsPropertySet)_ciContexts[context].Filter).Set(DigitalDevicesCiSlots.CommonInterfacePropertySet, (int)CommonInterfaceProperty.DecryptProgram,
+      int hr = (_ciContexts[context].Filter as IKsPropertySet).Set(DigitalDevicesCiSlots.CommonInterfacePropertySet, (int)CommonInterfaceProperty.DecryptProgram,
         buffer, paramSize,
         buffer, paramSize
       );
@@ -1220,7 +1220,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 
       KsMethod method = new KsMethod(CamControlMethodSet, (int)CamControlMethod.EnterMenu, (int)KsMethodFlag.Send);
       int returnedByteCount = 0;
-      int hr = ((IKsControl)_ciContexts[slot].Filter).KsMethod(ref method, KsMethodSize, IntPtr.Zero, 0, ref returnedByteCount);
+      int hr = (_ciContexts[slot].Filter as IKsControl).KsMethod(ref method, KsMethodSize, IntPtr.Zero, 0, ref returnedByteCount);
       if (hr == 0)
       {
         this.LogDebug("Digital Devices: result = success");
@@ -1257,7 +1257,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 
       KsMethod method = new KsMethod(CamControlMethodSet, (int)CamControlMethod.CloseMenu, (int)KsMethodFlag.Send);
       int returnedByteCount = 0;
-      int hr = ((IKsControl)_ciContexts[_menuContext].Filter).KsMethod(ref method, KsMethodSize, IntPtr.Zero, 0, ref returnedByteCount);
+      int hr = (_ciContexts[_menuContext].Filter as IKsControl).KsMethod(ref method, KsMethodSize, IntPtr.Zero, 0, ref returnedByteCount);
       if (hr == 0)
       {
         this.LogDebug("Digital Devices: result = success");
@@ -1326,7 +1326,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 
       KsMethod method = new KsMethod(CamControlMethodSet, (int)CamControlMethod.MenuReply, (int)KsMethodFlag.Send);
       int returnedByteCount = 0;
-      int hr = ((IKsControl)_ciContexts[_menuContext].Filter).KsMethod(ref method, KsMethodSize, _mmiBuffer, MenuChoiceSize, ref returnedByteCount);
+      int hr = (_ciContexts[_menuContext].Filter as IKsControl).KsMethod(ref method, KsMethodSize, _mmiBuffer, MenuChoiceSize, ref returnedByteCount);
       if (hr == 0)
       {
         this.LogDebug("Digital Devices: result = success");
@@ -1378,7 +1378,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 
       KsMethod method = new KsMethod(CamControlMethodSet, (int)CamControlMethod.CamAnswer, (int)KsMethodFlag.Send);
       int returnedByteCount = 0;
-      int hr = ((IKsControl)_ciContexts[_menuContext].Filter).KsMethod(ref method, KsMethodSize, _mmiBuffer, bufferSize, ref returnedByteCount);
+      int hr = (_ciContexts[_menuContext].Filter as IKsControl).KsMethod(ref method, KsMethodSize, _mmiBuffer, bufferSize, ref returnedByteCount);
       if (hr == 0)
       {
         this.LogDebug("Digital Devices: result = success");

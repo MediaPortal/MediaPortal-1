@@ -754,11 +754,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       if (_graphBuilder != null)
       {
         FilterState state;
-        ((IMediaControl)_graphBuilder).GetState(10, out state);
+        (_graphBuilder as IMediaControl).GetState(10, out state);
         graphRunning = (state == FilterState.Running);
       }
       return graphRunning;
-    }    
+    }
 
     /// <summary>
     /// Load the <see cref="T:TvLibrary.Interfaces.ICustomDevice"/> plugins for this device.
@@ -1452,7 +1452,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       // Get current state.
       FilterState currentState;
-      ((IMediaControl)_graphBuilder).GetState(10, out currentState);
+      (_graphBuilder as IMediaControl).GetState(10, out currentState);
       this.LogDebug("  current state = {0}", currentState);
       if (state == currentState)
       {
@@ -1462,15 +1462,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       int hr = 0;
       if (state == FilterState.Stopped)
       {
-        hr = ((IMediaControl)_graphBuilder).Stop();
+        hr = (_graphBuilder as IMediaControl).Stop();
       }
       else if (state == FilterState.Paused)
       {
-        hr = ((IMediaControl)_graphBuilder).Pause();
+        hr = (_graphBuilder as IMediaControl).Pause();
       }
       else
       {
-        hr = ((IMediaControl)_graphBuilder).Run();
+        hr = (_graphBuilder as IMediaControl).Run();
       }
       if (hr < 0 || hr > 1)
       {
