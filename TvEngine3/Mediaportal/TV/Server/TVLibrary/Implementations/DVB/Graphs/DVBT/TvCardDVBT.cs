@@ -168,15 +168,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBT
       }
 
       ILocator locator;
-      _tuningSpace.get_DefaultLocator(out locator);
+      int hr = _tuningSpace.get_DefaultLocator(out locator);
       IDVBTLocator dvbtLocator = (IDVBTLocator)locator;
-      dvbtLocator.put_CarrierFrequency((int)dvbtChannel.Frequency);
-      dvbtLocator.put_Bandwidth(dvbtChannel.Bandwidth / 1000);
+      hr |= dvbtLocator.put_CarrierFrequency((int)dvbtChannel.Frequency);
+      hr |= dvbtLocator.put_Bandwidth(dvbtChannel.Bandwidth / 1000);
 
-      _tuneRequest.put_ONID(dvbtChannel.NetworkId);
-      _tuneRequest.put_TSID(dvbtChannel.TransportId);
-      _tuneRequest.put_SID(dvbtChannel.ServiceId);
-      _tuneRequest.put_Locator(locator);
+      hr |= _tuneRequest.put_ONID(dvbtChannel.NetworkId);
+      hr |= _tuneRequest.put_TSID(dvbtChannel.TransportId);
+      hr |= _tuneRequest.put_SID(dvbtChannel.ServiceId);
+      hr |= _tuneRequest.put_Locator(locator);
+
+      if (hr != 0)
+      {
+        Log.Error("TvCardDvbT: warning, potential error in assemble tune request, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      }
 
       return _tuneRequest;
     }

@@ -34,8 +34,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
   /// </summary>
   public class TvCardDVBIP : TvCardDvbBase, ITVCard
   {
-
-
     #region variables
 
     /// <summary>

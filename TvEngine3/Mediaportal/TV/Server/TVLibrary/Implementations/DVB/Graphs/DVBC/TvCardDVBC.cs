@@ -33,8 +33,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBC
   /// </summary>
   public class TvCardDVBC : TvCardDvbBase
   {
-
-
     #region variables
 
     /// <summary>
@@ -170,16 +168,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBC
       }
 
       ILocator locator;
-      _tuningSpace.get_DefaultLocator(out locator);
+      int hr = _tuningSpace.get_DefaultLocator(out locator);
       IDVBCLocator dvbcLocator = (IDVBCLocator)locator;
-      dvbcLocator.put_CarrierFrequency((int)dvbcChannel.Frequency);
-      dvbcLocator.put_SymbolRate(dvbcChannel.SymbolRate);
-      dvbcLocator.put_Modulation(dvbcChannel.ModulationType);
+      hr |= dvbcLocator.put_CarrierFrequency((int)dvbcChannel.Frequency);
+      hr |= dvbcLocator.put_SymbolRate(dvbcChannel.SymbolRate);
+      hr |= dvbcLocator.put_Modulation(dvbcChannel.ModulationType);
 
-      _tuneRequest.put_ONID(dvbcChannel.NetworkId);
-      _tuneRequest.put_TSID(dvbcChannel.TransportId);
-      _tuneRequest.put_SID(dvbcChannel.ServiceId);
-      _tuneRequest.put_Locator(locator);
+      hr |= _tuneRequest.put_ONID(dvbcChannel.NetworkId);
+      hr |= _tuneRequest.put_TSID(dvbcChannel.TransportId);
+      hr |= _tuneRequest.put_SID(dvbcChannel.ServiceId);
+      hr |= _tuneRequest.put_Locator(locator);
+
+      if (hr != 0)
+      {
+        Log.Error("TvCardDvbC: warning, potential error in assemble tune request, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      }
 
       return _tuneRequest;
     }

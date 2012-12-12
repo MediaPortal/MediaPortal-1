@@ -34,7 +34,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
   /// </summary>
   public class TvCardATSC : TvCardDvbBase, IDisposable, ITVCard
   {
-
     #region variables
 
     /// <summary>
@@ -179,15 +178,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
       }
 
       ILocator locator;
-      _tuningSpace.get_DefaultLocator(out locator);
+      int hr = _tuningSpace.get_DefaultLocator(out locator);
       IATSCLocator atscLocator = (IATSCLocator)locator;
-      atscLocator.put_CarrierFrequency((int)atscChannel.Frequency);
-      atscLocator.put_PhysicalChannel(atscChannel.PhysicalChannel);
-      atscLocator.put_Modulation(atscChannel.ModulationType);
+      hr |= atscLocator.put_CarrierFrequency((int)atscChannel.Frequency);
+      hr |= atscLocator.put_PhysicalChannel(atscChannel.PhysicalChannel);
+      hr |= atscLocator.put_Modulation(atscChannel.ModulationType);
 
-      _tuneRequest.put_Channel(atscChannel.MajorChannel);
-      _tuneRequest.put_MinorChannel(atscChannel.MinorChannel);
-      _tuneRequest.put_Locator(locator);
+      hr |= _tuneRequest.put_Channel(atscChannel.MajorChannel);
+      hr |= _tuneRequest.put_MinorChannel(atscChannel.MinorChannel);
+      hr |= _tuneRequest.put_Locator(locator);
+
+      if (hr != 0)
+      {
+        Log.Error("TvCardAtsc: warning, potential error in assemble tune request, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      }
 
       return _tuneRequest;
     }

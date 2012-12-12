@@ -37,8 +37,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
   /// </summary>
   public class TvCardDVBS : TvCardDvbBase
   {
-
-
     #region variables
 
     /// <summary>
@@ -249,26 +247,31 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
         return null;
       }
 
-      _tuningSpace.put_LowOscillator(dvbsChannel.LnbType.LowBandFrequency);
-      _tuningSpace.put_HighOscillator(dvbsChannel.LnbType.HighBandFrequency);
-      _tuningSpace.put_LNBSwitch(dvbsChannel.LnbType.SwitchFrequency);
+      int hr = _tuningSpace.put_LowOscillator(dvbsChannel.LnbType.LowBandFrequency);
+      hr |= _tuningSpace.put_HighOscillator(dvbsChannel.LnbType.HighBandFrequency);
+      hr |= _tuningSpace.put_LNBSwitch(dvbsChannel.LnbType.SwitchFrequency);
 
       ILocator locator;
-      _tuningSpace.get_DefaultLocator(out locator);
+      hr |= _tuningSpace.get_DefaultLocator(out locator);
       IDVBSLocator dvbsLocator = (IDVBSLocator)locator;
-      dvbsLocator.put_CarrierFrequency((int)dvbsChannel.Frequency);
-      dvbsLocator.put_SymbolRate(dvbsChannel.SymbolRate);
-      dvbsLocator.put_SignalPolarisation(dvbsChannel.Polarisation);
-      dvbsLocator.put_Modulation(dvbsChannel.ModulationType);
-      dvbsLocator.put_InnerFECRate(dvbsChannel.InnerFecRate);
+      hr |= dvbsLocator.put_CarrierFrequency((int)dvbsChannel.Frequency);
+      hr |= dvbsLocator.put_SymbolRate(dvbsChannel.SymbolRate);
+      hr |= dvbsLocator.put_SignalPolarisation(dvbsChannel.Polarisation);
+      hr |= dvbsLocator.put_Modulation(dvbsChannel.ModulationType);
+      hr |= dvbsLocator.put_InnerFECRate(dvbsChannel.InnerFecRate);
 
       ITuneRequest request;
-      _tuningSpace.CreateTuneRequest(out request);
+      hr |= _tuningSpace.CreateTuneRequest(out request);
       IDVBTuneRequest tuneRequest = (IDVBTuneRequest)request;
-      tuneRequest.put_ONID(dvbsChannel.NetworkId);
-      tuneRequest.put_TSID(dvbsChannel.TransportId);
-      tuneRequest.put_SID(dvbsChannel.ServiceId);
-      tuneRequest.put_Locator(locator);
+      hr |= tuneRequest.put_ONID(dvbsChannel.NetworkId);
+      hr |= tuneRequest.put_TSID(dvbsChannel.TransportId);
+      hr |= tuneRequest.put_SID(dvbsChannel.ServiceId);
+      hr |= tuneRequest.put_Locator(locator);
+
+      if (hr != 0)
+      {
+        Log.Error("TvCardDvbS: warning, potential error in assemble tune request, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      }
 
       return tuneRequest;
     }
