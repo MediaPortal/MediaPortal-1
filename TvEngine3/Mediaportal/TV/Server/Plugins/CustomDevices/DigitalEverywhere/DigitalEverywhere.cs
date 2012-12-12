@@ -537,7 +537,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
     private CardType _tunerType = CardType.Unknown;
 
     private Thread _mmiHandlerThread = null;
-    private bool _stopMmiHandlerThread = false;
+    private volatile bool _stopMmiHandlerThread = false;
     private ICiMenuCallbacks _ciMenuCallbacks = null;
 
     #endregion
@@ -1446,7 +1446,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         _stopMmiHandlerThread = true;
         // In the worst case scenario it should take approximately
         // twice the thread sleep time to cleanly stop the thread.
-        Thread.Sleep(MmiHandlerThreadSleepTime * 2);
+        _mmiHandlerThread.Join(MmiHandlerThreadSleepTime * 2);
+        if (_mmiHandlerThread.IsAlive)
+        {
+          this.LogDebug("Digital Everywhere: warning, failed to join MMI handler thread => aborting thread");
+          _mmiHandlerThread.Abort();
+        }
         _mmiHandlerThread = null;
       }
 

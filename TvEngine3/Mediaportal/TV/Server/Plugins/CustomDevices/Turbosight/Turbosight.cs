@@ -367,7 +367,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
     private bool _isCiSlotPresent = false;
     private bool _isCamPresent = false;
 
-    private bool _stopMmiHandlerThread = false;
+    private volatile bool _stopMmiHandlerThread = false;
     private Thread _mmiHandlerThread = null;
     private ICiMenuCallbacks _ciMenuCallbacks = null;
 
@@ -1309,7 +1309,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
         _stopMmiHandlerThread = true;
         // In the worst case scenario it should take approximately
         // twice the thread sleep time to cleanly stop the thread.
-        Thread.Sleep(MmiHandlerThreadSleepTime * 2);
+        _mmiHandlerThread.Join(MmiHandlerThreadSleepTime * 2);
+        if (_mmiHandlerThread.IsAlive)
+        {
+          this.LogDebug("Turbosight: warning, failed to join MMI handler thread => aborting thread");
+          _mmiHandlerThread.Abort();
+        }
         _mmiHandlerThread = null;
       }
 

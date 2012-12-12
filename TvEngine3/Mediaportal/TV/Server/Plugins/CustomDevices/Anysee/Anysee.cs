@@ -722,7 +722,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       private IntPtr _libHandle = IntPtr.Zero;
 
       private Thread _apiAccessThread = null;
-      private bool _stopApiAccessThread = false;
+      private volatile bool _stopApiAccessThread = false;
 
       #endregion
 
@@ -1008,15 +1008,22 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
         if (_apiAccessThread == null)
         {
           this.LogDebug("Anysee: API access thread is null");
+          _stopApiAccessThread = true;
         }
         else
         {
           this.LogDebug("Anysee: API access thread state = {0}", _apiAccessThread.ThreadState);
+          _stopApiAccessThread = true;
+          // In the worst case scenario it should take approximately
+          // twice the thread sleep time to cleanly stop the thread.
+          _apiAccessThread.Join(ApiAccessThreadSleepTime * 2);
+          if (_apiAccessThread.IsAlive)
+          {
+            this.LogDebug("Anysee: warning, failed to join API access thread => aborting thread");
+            _apiAccessThread.Abort();
+          }
+          _apiAccessThread = null;
         }
-        _stopApiAccessThread = true;
-        // In the worst case scenario it should take approximately
-        // twice the thread sleep time to cleanly stop the thread.
-        Thread.Sleep(ApiAccessThreadSleepTime * 2);
 
         // Free memory and close the library.
         if (_ciApiInstance != IntPtr.Zero)

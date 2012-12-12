@@ -38,7 +38,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
   /// </summary>
   public class Twinhan : BaseCustomDevice, /*IAddOnDevice, ICustomTuner,*/ IPowerDevice, IPidFilterController, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
   {
-
     #region enums
 
     [Flags]
@@ -1130,7 +1129,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     private int _mmiDataSize = DefaultMmiDataSize;
 
     private Thread _mmiHandlerThread = null;
-    private bool _stopMmiHandlerThread = false;
+    private volatile bool _stopMmiHandlerThread = false;
     private ICiMenuCallbacks _ciMenuCallbacks = null;
 
     #endregion
@@ -2210,7 +2209,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
         _stopMmiHandlerThread = true;
         // In the worst case scenario it should take approximately
         // twice the thread sleep time to cleanly stop the thread.
-        Thread.Sleep(MmiHandlerThreadSleepTime * 2);
+        _mmiHandlerThread.Join(MmiHandlerThreadSleepTime * 2);
+        if (_mmiHandlerThread.IsAlive)
+        {
+          this.LogDebug("Twinhan: warning, failed to join MMI handler thread => aborting thread");
+          _mmiHandlerThread.Abort();
+        }
         _mmiHandlerThread = null;
       }
 

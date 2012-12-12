@@ -192,7 +192,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
     private IntPtr _mmiBuffer = IntPtr.Zero;
 
     private ICiMenuCallbacks _ciMenuCallbacks = null;
-    private bool _stopMmiHandlerThread = false;
+    private volatile bool _stopMmiHandlerThread = false;
     private Thread _mmiHandlerThread = null;
 
     // For DiSEqC support only.
@@ -895,7 +895,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
         _stopMmiHandlerThread = true;
         // In the worst case scenario it should take approximately
         // twice the thread sleep time to cleanly stop the thread.
-        Thread.Sleep(MmiHandlerThreadSleepTime * 2);
+        _mmiHandlerThread.Join(MmiHandlerThreadSleepTime * 2);
+        if (_mmiHandlerThread.IsAlive)
+        {
+          this.LogDebug("Digital Devices: warning, failed to join MMI handler thread => aborting thread");
+          _mmiHandlerThread.Abort();
+        }
         _mmiHandlerThread = null;
       }
 
