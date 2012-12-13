@@ -519,9 +519,11 @@ public class MediaPortalApp : D3DApp, IRender
         // Start Splash Screen
         string version = ConfigurationManager.AppSettings["version"];
         SplashScreen = new SplashScreen {Version = version};
+#if !DEBUG
         SplashScreen.Run();
-
+#endif
         Application.DoEvents();
+        
         if (_waitForTvServer)
         {
           Log.Debug("Main: Wait for TV service requested. Checking if installed...");
@@ -1605,17 +1607,17 @@ public class MediaPortalApp : D3DApp, IRender
   protected override void OnStartup()
   {
     Log.Info("Main: Starting up");
-    
-    MouseTimeOutTimer = DateTime.Now;
-    UpdateSplashScreenMessage(GUILocalizeStrings.Get(64)); // Starting plugins...
-    PluginManager.Load();
-    PluginManager.Start();
 
-    // Restore minimized MP main window
+    // Restore minimized MP main window as soon as possible
     if (!Windowed)
     {
       RestoreFromTray(true);
     }
+
+    MouseTimeOutTimer = DateTime.Now;
+    UpdateSplashScreenMessage(GUILocalizeStrings.Get(64)); // Starting plugins...
+    PluginManager.Load();
+    PluginManager.Start();
 
     using (Settings xmlreader = new MPSettings())
     {
@@ -2076,16 +2078,17 @@ public class MediaPortalApp : D3DApp, IRender
         GUIWindowManager.ShowPreviousWindow();
       }
 
-      GUIWindowManager.UnRoute();
       // avoid that there is an active Window when GUIWindowManager.ActivateWindow(activeWin); is called
+      GUIWindowManager.UnRoute();
       Log.Info("Main: UnRoute - done");
 
-      GUITextureManager.Dispose();
+      GUIWindowManager.Dispose();
       GUIFontManager.Dispose();
-
+      GUITextureManager.Dispose();
       GUIGraphicsContext.DX9Device.EvictManagedResources();
-      GUIWaitCursor.Dispose();
+
       GUIGraphicsContext.Load();
+      GUITextureManager.Init();
       GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
       GUIFontManager.InitializeDeviceObjects();
 

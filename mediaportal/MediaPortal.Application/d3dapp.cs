@@ -76,6 +76,8 @@ namespace MediaPortal
 
     // ReSharper disable InconsistentNaming
     private const int SW_MINIMIZE = 6;
+    private const int D3DSWAPEFFECT_FLIPEX = 5;
+
     // ReSharper restore InconsistentNaming
 
     #endregion
@@ -468,9 +470,9 @@ namespace MediaPortal
         g_Player.Stop();
       }
 
-      GUITextureManager.CleanupThumbs();
-      GUITextureManager.Dispose();
-      GUIFontManager.Dispose();
+     // GUITextureManager.CleanupThumbs();
+      //GUITextureManager.Dispose();
+      //GUIFontManager.Dispose();
 
       if (Windowed)
       {
@@ -586,7 +588,7 @@ namespace MediaPortal
         try
         {
 #endif
-        if (((GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST) || (ActiveForm != this) || (GUIGraphicsContext.SaveRenderCycles)) && !_isVisible)
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST || ActiveForm != this || GUIGraphicsContext.SaveRenderCycles || !_isVisible)
         {
           Thread.Sleep(100);
         }
@@ -603,7 +605,7 @@ namespace MediaPortal
         }
         catch (Exception ex)
         {
-          Log.Error("d3dapp: Exception: {0}", ex);
+          Log.Error("D3D: Exception: {0}", ex);
         }
 #if !DEBUG
         } 
@@ -620,7 +622,7 @@ namespace MediaPortal
       else
       {
         // if form isn't active then don't use all the CPU unless we are visible
-        if (ActiveForm != this || (GUIGraphicsContext.SaveRenderCycles) && !_isVisible)
+        if (ActiveForm != this || GUIGraphicsContext.SaveRenderCycles || !_isVisible)
         {
           Thread.Sleep(100);
         }
@@ -733,10 +735,10 @@ namespace MediaPortal
     /// </summary>
     protected void GetStats()
     {
-      var fmtAdapter = _graphicsSettings.DisplayMode.Format;
-      var strFmt = String.Format("backbuf {0}, adapter {1}", GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferFormat, fmtAdapter);
-      var strDepthFmt = _enumerationSettings.AppUsesDepthBuffer ? String.Format(" ({0})", _graphicsSettings.DepthStencilBufferFormat.ToString()) : "";
-      var strMultiSample = string.Empty;
+      Format fmtAdapter = _graphicsSettings.DisplayMode.Format;
+      string strFmt = String.Format("backbuf {0}, adapter {1}", GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferFormat, fmtAdapter);
+      string strDepthFmt = _enumerationSettings.AppUsesDepthBuffer ? String.Format(" ({0})", _graphicsSettings.DepthStencilBufferFormat.ToString()) : "";
+      string strMultiSample = string.Empty;
       
       FrameStatsLine1 = String.Format("last {0} fps ({1}x{2}), {3}{4}{5}",
                                       GUIGraphicsContext.CurrentFPS.ToString("f2"),
@@ -751,12 +753,12 @@ namespace MediaPortal
         FrameStatsLine2 = String.Format(GUIGraphicsContext.IsEvr ? "EVR {0} " : "VMR9 {0} ", GUIGraphicsContext.Vmr9FPS.ToString("f2"));
       }
 
-      var quality = String.Format("avg fps:{0} sync:{1} drawn:{2} dropped:{3} jitter:{4}",
-                                     VideoRendererStatistics.AverageFrameRate.ToString("f2"),
-                                     VideoRendererStatistics.AverageSyncOffset,
-                                     VideoRendererStatistics.FramesDrawn,
-                                     VideoRendererStatistics.FramesDropped,
-                                     VideoRendererStatistics.Jitter);
+      string quality = String.Format("avg fps:{0} sync:{1} drawn:{2} dropped:{3} jitter:{4}",
+                                      VideoRendererStatistics.AverageFrameRate.ToString("f2"),
+                                      VideoRendererStatistics.AverageSyncOffset,
+                                      VideoRendererStatistics.FramesDrawn,
+                                      VideoRendererStatistics.FramesDropped,
+                                      VideoRendererStatistics.Jitter);
       FrameStatsLine2 += quality;
     }
 
@@ -766,8 +768,8 @@ namespace MediaPortal
     /// </summary>
     protected void UpdateStats()
     {
-      var time = Stopwatch.GetTimestamp();
-      var diffTime = (float)(time - _lastTime) / Stopwatch.Frequency;
+      long time = Stopwatch.GetTimestamp();
+      float diffTime = (float)(time - _lastTime) / Stopwatch.Frequency;
       // Update the scene stats once per second
       if (diffTime >= 1.0f)
       {
@@ -809,15 +811,18 @@ namespace MediaPortal
           HideTaskBar(true);
         }
 
-        // set cursor hide/show balance to old value
-        int displayCount = ShowCursor(false);
-        while (displayCount > _displayCount)
+        if (!Windowed)
         {
-          displayCount = ShowCursor(false);
-        }
-        while (displayCount < _displayCount)
-        {
-          displayCount = ShowCursor(true);
+          // set cursor hide/show balance to old value
+          int displayCount = ShowCursor(false);
+          while (displayCount > _displayCount)
+          {
+            displayCount = ShowCursor(false);
+          }
+          while (displayCount < _displayCount)
+          {
+            displayCount = ShowCursor(true);
+          }
         }
       }
     }
@@ -861,16 +866,19 @@ namespace MediaPortal
           HideTaskBar(false);
         }
 
-        // set cursor hide/show balance to zero, as it can get imbalanced during initialization
-        int displayCount = ShowCursor(true);
-        _displayCount--;
-        while (displayCount < 0)
+        if (!Windowed)
         {
-          displayCount = ShowCursor(true);
-        }
-        while (displayCount > 0)
-        {
-          displayCount = ShowCursor(false);
+          // set cursor hide/show balance to zero, as it can get imbalanced during initialization
+          int displayCount = ShowCursor(true);
+          _displayCount--;
+          while (displayCount < 0)
+          {
+            displayCount = ShowCursor(true);
+          }
+          while (displayCount > 0)
+          {
+            displayCount = ShowCursor(false);
+          }
         }
       }
     }
@@ -1198,7 +1206,7 @@ namespace MediaPortal
       _graphicsSettings.FullscreenMultisampleType      = (MultiSampleType)bestDeviceCombo.MultiSampleTypeList[0];
       _graphicsSettings.FullscreenMultisampleQuality   = 0;
       _graphicsSettings.FullscreenVertexProcessingType = (VertexProcessingType)bestDeviceCombo.VertexProcessingTypeList[0];
-      _graphicsSettings.FullscreenPresentInterval      = PresentInterval.Default;
+      _graphicsSettings.FullscreenPresentInterval      = PresentInterval.One;
 
       return true;
     }
@@ -1238,16 +1246,23 @@ namespace MediaPortal
       _presentParams.BackBufferCount           = 2;
       _presentParams.MultiSample               = MultiSampleType.None;
       _presentParams.MultiSampleQuality        = 0;
-      _presentParams.SwapEffect                = SwapEffect.Discard;
+      if (OSInfo.OSInfo.Win7OrLater())
+      {
+        _presentParams.SwapEffect              = (SwapEffect)D3DSWAPEFFECT_FLIPEX;
+      }
+      else
+      {
+        _presentParams.SwapEffect              = SwapEffect.Discard;
+      }
       _presentParams.DeviceWindow              = windowed ? _renderTarget : this;
       _presentParams.Windowed                  = windowed;
       _presentParams.EnableAutoDepthStencil    = false;
       _presentParams.AutoDepthStencilFormat    = windowed ? _graphicsSettings.WindowedDepthStencilBufferFormat : _graphicsSettings.FullscreenDepthStencilBufferFormat;
       _presentParams.PresentFlag               = PresentFlag.Video;
       _presentParams.FullScreenRefreshRateInHz = windowed ? 0 : _graphicsSettings.DisplayMode.RefreshRate;
-      _presentParams.PresentationInterval      = PresentInterval.Default;
+      _presentParams.PresentationInterval      = PresentInterval.One;
       _presentParams.ForceNoMultiThreadedFlag  = false;
-
+      GUIGraphicsContext.MaxFPS = _graphicsSettings.DisplayMode.RefreshRate;
       GUIGraphicsContext.DirectXPresentParameters = _presentParams;
       Windowed = windowed;
     }
