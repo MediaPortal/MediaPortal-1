@@ -467,15 +467,15 @@ namespace MediaPortal.GUI.Library
       // if windows supports delayed loading then do nothing else load the xml file now
       if (SupportsDelayedLoad)
       {
-        Log.Debug("Delayed Loading of {0}", _windowXmlFileName);
         return true;
       }
 
       // else load xml file now
-      Log.Debug("Loading of {0}", _windowXmlFileName);
       LoadSkin();
       if (!_windowAllocated)
-      AllocResources();
+      {
+        AllocResources();
+      }
 
       return true;
 
@@ -1650,7 +1650,9 @@ namespace MediaPortal.GUI.Library
               {
                 LoadSkin();
                 if (!_windowAllocated)
-                AllocResources(); // Mantis 0002389 - Double AllocResources
+                {
+                  AllocResources();
+                }
               }
 
               InitControls();
