@@ -67,7 +67,7 @@ namespace MediaPortal.GUI.Library
     {
       mapWindows.Clear();
       string strFilename = Config.GetFile(Config.Dir.Config, "keymap.xml");
-      Log.Info("  Load key mapping from {0}", strFilename);
+      Log.Info("Load key mapping from: {0}", strFilename);
       try
       {
         // Load the XML file
@@ -138,7 +138,7 @@ namespace MediaPortal.GUI.Library
     {
       //mapWindows.Clear();
       //string strFilename = Config.GetFile(Config.Dir.Config, "keymap.xml");
-      Log.Info("  Load supplementary key mapping from {0}", strFilename);
+      Log.Info("Load supplementary key mapping from: {0}", strFilename);
       try
       {
         // Load the XML file

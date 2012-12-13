@@ -115,7 +115,7 @@ namespace MediaPortal.GUI.Library
       lock (Renderlock)
       {
         int counter = 0;
-        Log.Info("  Load fonts from {0}", strFilename);
+        Log.Info("Load fonts from: {0}", strFilename);
         _listFonts.DisposeAndClear();
 
         // Load the debug font
@@ -218,7 +218,7 @@ namespace MediaPortal.GUI.Library
         }
         catch (Exception ex)
         {
-          Log.Info("GUIFontManager: Exception loading fonts {0} err:{1} stack:{2}", strFilename, ex.Message,
+          Log.Warn("GUIFontManager: Exception loading fonts {0} err:{1} stack:{2}", strFilename, ex.Message,
                    ex.StackTrace);
         }
 
@@ -582,7 +582,7 @@ namespace MediaPortal.GUI.Library
     {
       lock (Renderlock)
       {
-        Log.Info("  fonts.SafeDispose()");
+        Log.Debug("GUIFontManager: SafeDispose()");
         //_listFonts.DisposeAndClear();
         foreach (GUIFont font in _listFonts)
         {
@@ -615,7 +615,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void SetDevice()
     {
-      Log.Info("  fonts.SetDevice()");
+      Log.Debug("GUIFontManager SetDevice()");
       IntPtr upDevice = DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
       unsafe
@@ -631,7 +631,7 @@ namespace MediaPortal.GUI.Library
     {
       lock (Renderlock)
       {
-        Log.Debug("  fonts.InitializeDeviceObjects()");
+        Log.Debug("GUIFontManager InitializeDeviceObjects()");
         IntPtr upDevice = DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
         unsafe

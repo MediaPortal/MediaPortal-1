@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2012 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2012 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -58,7 +58,7 @@ namespace MediaPortal.GUI.Library
         {
           return;
         }
-        Log.Info("  Loading references from {0}", referenceFile);
+        Log.Info("Loading references from: {0}", referenceFile);
         m_referenceNodesByControlType = new Hashtable();
         _cachedStyleNodes = new Dictionary<string, XmlNode>();
         _cachedDefines = new Dictionary<string, string>();
@@ -135,7 +135,7 @@ namespace MediaPortal.GUI.Library
         {
           int iWidth = Convert.ToInt16(nodeSkinWidth.Value);
           int iHeight = Convert.ToInt16(nodeSkinHeight.Value);
-          Log.Info("  original skin size:{0}x{1}", iWidth, iHeight);
+          Log.Info("Original skin size: {0}x{1}", iWidth, iHeight);
           GUIGraphicsContext.SkinSize = new Size(iWidth, iHeight);
         }
         catch (FormatException) // Size values were invalid.
