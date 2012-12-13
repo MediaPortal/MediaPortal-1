@@ -475,6 +475,7 @@ public class MediaPortalApp : D3DApp, IRender
         }
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
+
         // Set current directory
         string applicationPath = Application.ExecutablePath;
         applicationPath = Path.GetFullPath(applicationPath);

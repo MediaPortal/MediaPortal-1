@@ -470,10 +470,6 @@ namespace MediaPortal
         g_Player.Stop();
       }
 
-     // GUITextureManager.CleanupThumbs();
-      //GUITextureManager.Dispose();
-      //GUIFontManager.Dispose();
-
       if (Windowed)
       {
         Log.Debug("D3D: Switching from windowed mode to fullscreen");
