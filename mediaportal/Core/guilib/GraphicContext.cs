@@ -226,7 +226,7 @@ namespace MediaPortal.GUI.Library
     }
 
     [DllImport("user32.dll")]
-    private static extern bool SendMessage(IntPtr hWnd, uint Msg, uint wParam, IntPtr lParam);
+    private static extern bool SendMessage(IntPtr hWnd, uint msg, uint wParam, IntPtr lParam);
 
     // singleton. Dont allow any instance of this class
     private GUIGraphicsContext() {}
@@ -364,9 +364,6 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Property to get windowed/fullscreen state of application
     /// </summary>
-    //SV
-    //static bool Fullscreen
-    // TODO: Does not work!
     public static bool Fullscreen
     {
       get { return ((Width == currentScreen.Bounds.Width) && (Height == currentScreen.Bounds.Height)); }
@@ -489,9 +486,6 @@ namespace MediaPortal.GUI.Library
         m_iScrollSpeedHorizontal = xmlReader.GetValueAsInt("gui", "ScrollSpeedRight", 3);
         m_bAnimations = xmlReader.GetValueAsBool("general", "animations", true);
         turnOffMonitor = xmlReader.GetValueAsBool("general", "turnoffmonitor", false);
-
-        Log.Info("GraphicContext: MP will render at {0} FPS, use animations = {1}", m_iMaxFPS,
-                 Convert.ToString(m_bAnimations));
       }
     }
 
@@ -510,7 +504,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Send a action to anyone interested
     /// </summary>
-    /// <param name="msg">The message.</param>
+    /// <param name="action">The message.</param>
     public static void OnAction(Action action)
     {
       if (OnNewAction != null)
@@ -705,7 +699,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Scale X position for current resolution
     /// </summary>
-    /// <param name="y">X coordinate to scale.</param>
+    /// <param name="x">X coordinate to scale.</param>
     public static void ScaleHorizontal(ref int x)
     {
       // Adjust for global zoom.
@@ -734,7 +728,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Scale X position for current resolution
     /// </summary>
-    /// <param name="y">X coordinate to scale.</param>
+    /// <param name="x">X coordinate to scale.</param>
     public static int ScaleHorizontal(int x)
     {
       int sx = x;
@@ -861,7 +855,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Return a themed version of the requested skin filename, otherwise return the default skin filename.  Use a path to media to get images.
     /// </summary>
-    /// <param name="xmlfilename"></param>
+    /// <param name="filename"></param>
     /// <returns></returns>
     public static string GetThemedSkinFile(string filename)
     {
@@ -871,7 +865,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Return a themed version of the requested directory, otherwise return the default skin directory.
     /// </summary>
-    /// <param name="xmlfilename"></param>
+    /// <param name="dir"></param>
     /// <returns></returns>
     public static string GetThemedSkinDirectory(string dir)
     {
@@ -1383,6 +1377,8 @@ namespace MediaPortal.GUI.Library
         }
         m_iMaxFPS = value;
         SyncFrameTime();
+        Log.Info("GraphicContext: MP will render at {0} FPS, use animations = {1}", m_iMaxFPS,
+         Convert.ToString(m_bAnimations));
       }
     }
 
@@ -1648,7 +1644,7 @@ namespace MediaPortal.GUI.Library
       }
       else
       {
-        _guiTransform = TransformMatrix.CreateTranslation((float)posX, (float)posY, 0);
+        _guiTransform = TransformMatrix.CreateTranslation(posX, posY, 0);
         //_windowScaleX = 1.0f;
         //_windowScaleY = 1.0f;
       }
