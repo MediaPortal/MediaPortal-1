@@ -176,6 +176,24 @@
       	<animation effect="fade" time="150">WindowClose</animation>
 				<visible>control.isvisible(999) + control.hasfocus(300)</visible>                
 	    </control>
+      
+      <control>
+    	  <description>BasicHome DUMMY 2 Focus</description>
+    	  <type>image</type>
+    	  <id>0</id>
+    	  <posX>17</posX>
+    	  <posY>578</posY>
+    	  <width>663</width>
+    	  <height>311</height>
+    	  <texture>basichome_button_focus.png</texture>
+        <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(600)">conditional</animation>
+        <animation effect="fade" time="250">visible</animation>
+        <animation effect="fade" time="0">hidden</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="150">WindowClose</animation>
+    	  <visible>control.isvisible(999) + control.hasfocus(600)</visible>             
+      </control>
+      
    </control>
     
 </controls>
