@@ -639,6 +639,8 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GUILastFMRadio\BallonRadio.gif" />
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="GUILastFMRadio\BallonRadioDisabled.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

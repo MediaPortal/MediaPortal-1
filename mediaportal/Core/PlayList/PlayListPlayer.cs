@@ -33,6 +33,7 @@ namespace MediaPortal.Playlists
       bool Play(string strFile);
       bool PlayVideoStream(string strURL, string streamName);
       bool PlayAudioStream(string strURL);
+      bool PlayMusic(string strFile);
       void Stop();
       void SeekAsolutePercentage(int iPercentage);
       double Duration { get; }
@@ -57,6 +58,11 @@ namespace MediaPortal.Playlists
       bool IPlayer.Play(string strFile)
       {
         return Player.g_Player.Play(strFile);
+      }
+
+      bool IPlayer.PlayMusic(string strFile)
+      {
+        return Player.g_Player.Play(strFile, Player.g_Player.MediaType.Music);
       }
 
       bool IPlayer.PlayVideoStream(string strURL, string streamName)
@@ -545,6 +551,10 @@ namespace MediaPortal.Playlists
         else if (item.Type == PlayListItem.PlayListItemType.AudioStream) // Internet Radio
         {
           playResult = g_Player.PlayAudioStream(item.FileName);
+        }
+        else if (item.Type == PlayListItem.PlayListItemType.Audio)
+        {
+          playResult = g_Player.PlayMusic(item.FileName);
         }
         else
         {

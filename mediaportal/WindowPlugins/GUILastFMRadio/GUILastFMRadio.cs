@@ -1,13 +1,17 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
+using MediaPortal.GUI.Music;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
 using MediaPortal.LastFM;
 
 using Action = MediaPortal.GUI.Library.Action;
+using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
 namespace MediaPortal.GUI.LastFMRadio
 {
@@ -18,11 +22,12 @@ namespace MediaPortal.GUI.LastFMRadio
 
     private enum SkinControls
     {
-      USER_RECOMMENDED_BUTTON = 10,
+      USER_RECOMMENDED_BUTTON = 2,
       USER_MIX_BUTTON = 11,
       USER_LIBRARY_BUTTON = 12,
       ARTIST_BUTTON = 13,
-      TAG_BUTTON = 14
+      TAG_BUTTON = 14,
+      PLAYLIST_CONTROL = 50
     }
 
     [SkinControlAttribute((int)SkinControls.USER_RECOMMENDED_BUTTON)] protected GUIButtonControl BtnUserRecomended = null;
@@ -30,6 +35,7 @@ namespace MediaPortal.GUI.LastFMRadio
     [SkinControlAttribute((int)SkinControls.USER_LIBRARY_BUTTON)] protected GUIButtonControl BtnUserLibrary = null;
     [SkinControlAttribute((int)SkinControls.ARTIST_BUTTON)] protected GUIButtonControl BtnArtist = null;
     [SkinControlAttribute((int)SkinControls.TAG_BUTTON)] protected GUIButtonControl BtnTag = null;
+    [SkinControlAttribute((int)SkinControls.PLAYLIST_CONTROL)] protected GUIFacadeControl PlaylistControl = null;
 
     private static PlayListPlayer _playlistPlayer;
 
@@ -70,7 +76,7 @@ namespace MediaPortal.GUI.LastFMRadio
     {
       // WindowID of windowplugin belonging to this setup
       // enter your own unique code
-      return 5678;
+      return 56789;
     }
 
     // Indicates if plugin is enabled by default;
@@ -113,11 +119,7 @@ namespace MediaPortal.GUI.LastFMRadio
     {
       get
       {
-        return 5678;
-      }
-
-      set
-      {
+        return 56789;
       }
     }
 
@@ -127,6 +129,7 @@ namespace MediaPortal.GUI.LastFMRadio
     {
       g_Player.PlayBackEnded += OnPlayBackEnded;
       g_Player.PlayBackChanged += OnPlayBackChanged;
+      g_Player.PlayBackStopped += OnPlayBackStopped;
     }
 
     #region overrides
@@ -136,6 +139,14 @@ namespace MediaPortal.GUI.LastFMRadio
       _playlistPlayer = PlayListPlayer.SingletonPlayer;
       var a = new LastFMLibrary(); //TODO this is just making _SK get loaded.   No need to actual instansiate
       return Load(GUIGraphicsContext.Skin + @"\lastFmRadio.xml");
+    }
+
+    protected override void OnPageLoad()
+    {
+      base.OnPageLoad();
+      PlaylistControl.CurrentLayout = Layout.Playlist;
+      PlaylistControl.Clear();
+      LoadPlaylist();
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -172,26 +183,46 @@ namespace MediaPortal.GUI.LastFMRadio
       base.OnClicked(controlId, control, actionType);
     }
 
+    public override void OnAction(Action action)
+    {
+      switch (action.wID)
+      {
+        case Action.ActionType.ACTION_MOVE_SELECTED_ITEM_UP:
+          MovePlayListItemUp();
+          break;
+        case Action.ActionType.ACTION_MOVE_SELECTED_ITEM_DOWN:
+          MovePlayListItemDown();
+          break;
+        case Action.ActionType.ACTION_DELETE_SELECTED_ITEM:
+          DeletePlayListItem();
+          LoadPlaylist();
+          break;
+      }
+
+      base.OnAction(action);
+    }
+
     #endregion
 
     #region last.fm code
 
-    private static void TuneToStation(string strStation)
+    private void TuneToStation(string strStation)
     {
 
       Log.Debug("Attempting to Tune to last.fm station: {0}", strStation);
 
       // Clear playlist and start playback
       var pl = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_LAST_FM);
-      _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_LAST_FM;
       pl.Clear();
+      _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_LAST_FM;
       _playlistPlayer.Reset();
 
       LastFMLibrary.TuneRadio(strStation);
       AddMoreTracks();
+      _playlistPlayer.Play(0);
     }
 
-    private static void AddMoreTracks()
+    private void AddMoreTracks()
     {
       var z = LastFMLibrary.GetRadioPlaylist();
       foreach (var lastFMTrack in z)
@@ -202,10 +233,12 @@ namespace MediaPortal.GUI.LastFMRadio
           Artist = lastFMTrack.ArtistName,
           Title = lastFMTrack.TrackTitle,
           FileName = lastFMTrack.TrackURL,
-          Duration = lastFMTrack.Duration
+          Duration = lastFMTrack.Duration,
+          Lyrics =   lastFMTrack.ImageURL
+          //TODO: this should not be lyrics
         };
 
-        var a = new PlayListItem
+        var pli = new PlayListItem
         {
           Type = PlayListItem.PlayListItemType.Audio,
           FileName = lastFMTrack.TrackURL,
@@ -213,16 +246,58 @@ namespace MediaPortal.GUI.LastFMRadio
           Duration = lastFMTrack.Duration,
           MusicTag = tag
         };
+
         Log.Info("Artist: {0} :Title: {1} :URL: {2}", lastFMTrack.ArtistName, lastFMTrack.TrackTitle, lastFMTrack.TrackURL);
 
         var pl = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_LAST_FM);
-        pl.Add(a);
+        pl.Add(pli);
+
       }
-      
-      _playlistPlayer.Play(0);      
+      LoadPlaylist();
     }
 
     #endregion
+
+    protected virtual void OnRetrieveCoverArt(GUIListItem item)
+    {
+      Util.Utils.SetDefaultIcons(item);
+      if (item.Label == "..")
+      {
+        return;
+      }
+      MusicTag tag = (MusicTag)item.MusicTag;
+      string strThumb = GUIMusicBaseWindow.GetCoverArt(item.IsFolder, item.Path, tag);
+      if (strThumb != string.Empty)
+      {
+        item.ThumbnailImage = strThumb;
+        item.IconImageBig = strThumb;
+        item.IconImage = strThumb;
+
+        // let us test if there is a larger cover art image
+        string strLarge = Util.Utils.ConvertToLargeCoverArt(strThumb);
+        if (Util.Utils.FileExistsInCache(strLarge))
+        {
+          item.ThumbnailImage = strLarge;
+        }
+      }
+      else
+      {
+        //TODO: Only for testing
+        // need to remove this as downloading thumb in main thread
+        // also I think temp resources are not cleaned up
+        // There is also a check in music overlay so that this will
+        // not override thumb set here (#Play.Current.Thumb)
+        string temporaryFilename = Path.GetTempFileName() + ".jpg";
+        Util.Utils.DownLoadAndCacheImage(tag.Lyrics, temporaryFilename);
+        if (item.Path == g_Player.currentFileName)
+        {
+          GUIPropertyManager.SetProperty("#Play.Current.Thumb", temporaryFilename);
+        }
+        item.ThumbnailImage = temporaryFilename;
+        item.IconImageBig = temporaryFilename;
+        item.IconImage = temporaryFilename;
+      }
+    }
 
     /// <summary>
     /// Displays a virtual keyboard
@@ -246,13 +321,13 @@ namespace MediaPortal.GUI.LastFMRadio
 
     #region g_player events
 
-    private static void OnPlayBackEnded(g_Player.MediaType type, string filename)
+    private void OnPlayBackEnded(g_Player.MediaType type, string filename)
     {
       if (type != g_Player.MediaType.Music)
       {
         return;
       }
-      DoOnChanged();
+      DoOnEnded();
     }
 
     /// <summary>
@@ -264,7 +339,7 @@ namespace MediaPortal.GUI.LastFMRadio
     /// <param name="type">MediaType of item that was playing</param>
     /// <param name="stoptime">Number of seconds item has played for when it stopped</param>
     /// <param name="filename">filename of item that was playing</param>
-    private static void OnPlayBackChanged(g_Player.MediaType type, int stoptime, string filename)
+    private void OnPlayBackChanged(g_Player.MediaType type, int stoptime, string filename)
     {
       if (type != g_Player.MediaType.Music)
       {
@@ -273,7 +348,24 @@ namespace MediaPortal.GUI.LastFMRadio
       DoOnChanged();
     }
 
-    private static void DoOnChanged()
+    /// <summary>
+    /// Handle event fired by MP player.
+    /// Playback has stopped; user has pressed stop mid way through a track
+    /// </summary>
+    /// <param name="type">MediaType of track that was stopped</param>
+    /// <param name="stoptime">Number of seconds item has played for before it was stopped</param>
+    /// <param name="filename">filename of item that was stopped</param>
+    private void OnPlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
+    {
+      if (type != g_Player.MediaType.Music)
+      {
+        return;
+      }
+
+      DoOnEnded();
+    }
+
+    private void DoOnChanged()
     {
       if (_playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_LAST_FM)
       {
@@ -281,14 +373,208 @@ namespace MediaPortal.GUI.LastFMRadio
       }
       var pl = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_LAST_FM);
       var currentTrackIndex = _playlistPlayer.CurrentSong;
-      var plRemainingTracks = pl.Count - currentTrackIndex - 1;
 
-      if (plRemainingTracks < 5)
+      for (int i = currentTrackIndex - 1; i >= 0; i--)
+      {
+        RemovePlayListItem(i);
+      }
+
+      if (pl.Count< 5)
       {
         AddMoreTracks();
       }
+    }
 
+    private void DoOnEnded()
+    {
+      if (_playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_LAST_FM)
+      {
+        return;
+      }
+      var pl = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_LAST_FM);
+      pl.Clear();
+      _playlistPlayer.Reset();
+      LoadPlaylist();
+      
+    }
 
+    private void LoadPlaylist()
+    {
+      PlaylistControl.Clear();
+      var playlist = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_LAST_FM);
+      for (int i = 0; i < playlist.Count; i++)
+      {
+        PlayListItem pli = playlist[i];
+
+        GUIListItem pItem = new GUIListItem(pli.Description);
+
+        MusicTag tag = (MusicTag) pli.MusicTag;
+        bool dirtyTag = false;
+        if (tag != null)
+        {
+          pItem.MusicTag = tag;
+          if (tag.Title == ("unknown") || tag.Title.IndexOf("unknown") > 0 || tag.Title == string.Empty)
+          {
+            dirtyTag = true;
+          }
+        }
+        else
+        {
+          dirtyTag = true;
+        }
+
+        if (tag != null && !dirtyTag)
+        {
+          string duration = Util.Utils.SecondsToHMSString(tag.Duration);
+          pItem.Label = string.Format("{0} - {1}", tag.Artist, tag.Title);
+          pItem.Label2 = duration;
+          pItem.MusicTag = pli.MusicTag;
+        }
+
+        pItem.Path = pli.FileName;
+        pItem.IsFolder = false;
+
+        if (pli.Played)
+        {
+          pItem.Shaded = true;
+        }
+
+        Util.Utils.SetDefaultIcons(pItem);
+
+        pItem.OnRetrieveArt += OnRetrieveCoverArt;
+        //pItem.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+
+        PlaylistControl.Add(pItem);
+      }
+    }
+
+    #endregion
+
+    #region playlist changes
+
+    private void MovePlayListItemUp()
+    {
+      if (_playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_NONE)
+      {
+        _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_LAST_FM;
+      }
+
+      if (_playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_LAST_FM
+          || PlaylistControl.CurrentLayout != GUIFacadeControl.Layout.Playlist
+          || PlaylistControl.PlayListLayout == null)
+      {
+        return;
+      }
+
+      int iItem = PlaylistControl.SelectedListItemIndex;
+
+      PlayList playList = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_LAST_FM);
+      playList.MovePlayListItemUp(iItem);
+      int selectedIndex = PlaylistControl.MoveItemUp(iItem, true);
+
+      if (iItem == _playlistPlayer.CurrentSong)
+      {
+        _playlistPlayer.CurrentSong = selectedIndex;
+      }
+
+      PlaylistControl.SelectedListItemIndex = selectedIndex;
+    }
+
+    private void MovePlayListItemDown()
+    {
+      if (_playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_NONE)
+      {
+        _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_LAST_FM;
+      }
+
+      if (_playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_LAST_FM
+          || PlaylistControl.CurrentLayout != Layout.Playlist
+          || PlaylistControl.PlayListLayout == null)
+      {
+        return;
+      }
+
+      int iItem = PlaylistControl.SelectedListItemIndex;
+      PlayList playList = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+
+      playList.MovePlayListItemDown(iItem);
+      int selectedIndex = PlaylistControl.MoveItemDown(iItem, true);
+
+      if (iItem == _playlistPlayer.CurrentSong)
+      {
+        _playlistPlayer.CurrentSong = selectedIndex;
+      }
+    }
+
+    private void DeletePlayListItem()
+    {
+      if (_playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_NONE)
+      {
+        _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_LAST_FM;
+      }
+
+      if (_playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_LAST_FM
+          || PlaylistControl.CurrentLayout != Layout.Playlist
+          || PlaylistControl.PlayListLayout == null)
+      {
+        return;
+      }
+
+      int iItem = PlaylistControl.SelectedListItemIndex;
+
+      string currentFile = g_Player.CurrentFile;
+      GUIListItem item = PlaylistControl[iItem];
+      RemovePlayListItem(iItem);
+
+      if (currentFile.Length > 0 && currentFile == item.Path)
+      {
+        string nextTrackPath = _playlistPlayer.GetNext();
+
+        if (nextTrackPath.Length == 0)
+        {
+          g_Player.Stop();
+        }
+
+        else
+        {
+          if (iItem == PlaylistControl.Count)
+          {
+            _playlistPlayer.Play(iItem - 1);
+          }
+
+          else
+          {
+            _playlistPlayer.PlayNext();
+          }
+        }
+      }
+
+      if (PlaylistControl.Count == 0)
+      {
+        g_Player.Stop();
+      }
+
+      else
+      {
+        PlaylistControl.PlayListLayout.SelectedListItemIndex = iItem;
+      }
+
+    }
+
+    private void RemovePlayListItem(int iItem)
+    {
+      GUIListItem pItem = PlaylistControl[iItem];
+      if (pItem == null)
+      {
+        return;
+      }
+      string strFileName = pItem.Path;
+
+      _playlistPlayer.Remove(PlayListType.PLAYLIST_LAST_FM, strFileName);
+
+      LoadPlaylist();
+
+      GUIControl.SelectItemControl(GetID, PlaylistControl.GetID, iItem);
     }
 
     #endregion

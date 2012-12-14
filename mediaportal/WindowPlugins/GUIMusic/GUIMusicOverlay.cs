@@ -450,7 +450,10 @@ namespace MediaPortal.GUI.Music
           thumb = strLarge;
         }
 
-        GUIPropertyManager.SetProperty("#Play.Current.Thumb", thumb);
+        if (!Util.Utils.IsLastFMStream(fileName))
+        {
+          GUIPropertyManager.SetProperty("#Play.Current.Thumb", thumb);
+        }
 
         // non-text values default to 0 and datetime.minvalue so
         // set the appropriate properties to string.empty

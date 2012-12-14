@@ -345,7 +345,8 @@ namespace MediaPortal.LastFM
                           ArtistName = a.Element(ns + "creator").Value,
                           TrackTitle = a.Element(ns + "title").Value,
                           TrackURL = a.Element(ns + "location").Value,
-                          Duration = int.Parse(a.Element(ns + "duration").Value) / 1000
+                          Duration = int.Parse(a.Element(ns + "duration").Value) / 1000,
+                          ImageURL = a.Element(ns + "image").Value
                         }).ToList();
       return z;
 

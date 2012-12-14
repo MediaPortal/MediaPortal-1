@@ -65,6 +65,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     public void Start()
     {
       Log.Info("LastFMScrobbler: Starting");
+      LoadSettings();
       g_Player.PlayBackStarted += OnPlayBackStarted;
       g_Player.PlayBackEnded += OnPlayBackEnded;
       g_Player.PlayBackChanged += OnPlayBackChanged;
@@ -274,7 +275,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       
       LastFMLibrary.UpdateNowPlaying(currentSong.Artist, currentSong.Title, currentSong.Album,
                          currentSong.Duration.ToString(CultureInfo.InvariantCulture));
-      if (_autoDJEnabled)
+      if (_autoDJEnabled && PlayListPlayer.SingletonPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_LAST_FM)
       {
         AutoDJ(currentSong.Title, currentSong.Artist);
       }
