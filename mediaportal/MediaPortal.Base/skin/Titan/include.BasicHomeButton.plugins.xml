@@ -14,7 +14,7 @@
  	 <animation effect="fade" time="250" reversible="false">visiblechange</animation>
 	 <animation effect="fade" time="250">WindowOpen</animation>
 	 <animation effect="fade" time="250">WindowClose</animation> 
-	 <visible>[control.HasFocus(2) | control.HasFocus(3) | control.HasFocus(4) | control.HasFocus(5) | control.HasFocus(6) | control.HasFocus(7) | control.hasfocus(12)|control.hasfocus(13)|control.hasfocus(14) | control.HasFocus(1000) | control.HasFocus(1001) | control.HasFocus(1002) | control.HasFocus(1003) | control.HasFocus(1004) | control.HasFocus(1100) | control.HasFocus(1101) | control.HasFocus(1102) | control.HasFocus(1103) | control.HasFocus(1104)]</visible>      
+	 <visible>![control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible>      
 	</control>
   
   <control>
@@ -44,7 +44,7 @@
     <animation effect="zoom" start="102,102" end="100,100" time="150">unfocus</animation>
     <animation effect="fade" time="250">WindowOpen</animation>
     <animation effect="fade" time="250">WindowClose</animation>
-		<visible allowhiddenfocus="true">![control.hasfocus(12)|control.hasfocus(13)|control.hasfocus(14)] + [control.HasFocus(2) | control.HasFocus(3) | control.HasFocus(4) | control.HasFocus(5) | control.HasFocus(6) | control.HasFocus(7) | control.HasFocus(1000) | control.HasFocus(1001) | control.HasFocus(1002) | control.HasFocus(1003) | control.HasFocus(1004) | control.HasFocus(1100) | control.HasFocus(1101) | control.HasFocus(1102) | control.HasFocus(1103) | control.HasFocus(1104)]</visible>  
+		<visible allowhiddenfocus="true">![control.hasfocus(12)|control.hasfocus(13)|control.hasfocus(14)|control.hasfocus(99999)|control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible>  
   </control>
   
 	<!--            :: DUMMY BUTTON ON SECOND GROUP ::            -->

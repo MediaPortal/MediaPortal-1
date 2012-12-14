@@ -308,7 +308,7 @@
     <offsetSortButtonX>260</offsetSortButtonX>
     <offsetSortButtonY>23</offsetSortButtonY>
     <font>font12</font>
-    <disabledcolor>60ffffff</disabledcolor>
+    <disabledcolor>FF606060</disabledcolor>
     <textcolor>ffffffff</textcolor>
     <colordiffuse>ffffffff</colordiffuse>
     <textcolorNoFocus>ff393939</textcolorNoFocus>

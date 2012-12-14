@@ -6,6 +6,7 @@
  	
 	<control>
 		<description>Background</description>
+    <id>0</id>
 		<type>image</type>
 		<posX>1203</posX>
 	  <posY>309</posY>
@@ -150,6 +151,7 @@
  	
 	<control>
 		<description>Background</description>
+    <id>0</id>
 		<type>image</type>
 		<posX>919</posX>
 	  <posY>309</posY>

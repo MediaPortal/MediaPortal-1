@@ -52,7 +52,7 @@ namespace MediaPortal.DeployTool.Sections
     {
       if (rbOneClickChecked)
       {
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.ExtensionChoice);
       }
       return DialogFlowHandler.Instance.GetDialogInstance(DialogType.CUSTOM_INSTALLATION_TYPE);
     }

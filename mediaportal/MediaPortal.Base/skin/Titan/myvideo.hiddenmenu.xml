@@ -31,9 +31,9 @@
 		<defaultcontrol>2</defaultcontrol>
 		<onexit>50</onexit>
 		<dimColor>00ffffff</dimColor>
-		<buttonX>0</buttonX>
-		<buttonY>0</buttonY>
-		<buttonwidth>521</buttonwidth>
+		<buttonX>-460</buttonX>
+		<buttonY>155</buttonY>
+		<buttonwidth>499</buttonwidth>
 		<buttonheight>1080</buttonheight>
 		
 			<control>
@@ -42,7 +42,7 @@
 				<width>1920</width>
 				<height>1080</height>
 				<texture>semi_trans_back_hidden_menu.png</texture>
-				<visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
+				<visible>!Control.HasFocus(50)</visible>
 				<animation effect="fade" time="450">visible</animation>
 				<animation effect="fade" time="400">hidden</animation>
 			</control>
@@ -55,13 +55,13 @@
 				<width>612</width>
 				<height>1074</height>
 				<texture>menu_bg.png</texture>
-				<visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
+				<visible>!Control.HasFocus(50)</visible>
 	    	<animation effect="fade" time="0">WindowClose</animation>
 	    	<animation effect="slide" start="-150,0" time="100">visible</animation>
 	    	<animation effect="fade" time="50">visible</animation>
 	    	<animation effect="fade" time="0">hidden</animation>
 			</control>
-		
+		    
 			<control>
 				<type>image</type>
 				<id>0</id>
@@ -106,7 +106,7 @@
 	    	<animation effect="fade" time="50">visible</animation>
 	    	<animation effect="fade" time="0">hidden</animation>
 			</control>
-			
+      
 			<control>
 				<description>Menu label</description>
 				<type>label</type>
