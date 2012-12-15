@@ -1,24 +1,6 @@
-<<<<<<< HEAD
 USE %TvLibrary%;
 
 ALTER TABLE "Channel" ADD COLUMN "channelNumber" int(11) NOT NULL DEFAULT 10000;
 UPDATE Channel c set c.channelNumber = (SELECT t.channelNumber FROM TuningDetail t WHERE t.idChannel = c.idChannel ORDER BY t.idTuning limit 1);
 
 UPDATE Version SET versionNumber=61;
-=======
-USE %TvLibrary%;
-
-ALTER TABLE "program"
-
-ADD COLUMN "seriesId" VARCHAR(200);
-
-ALTER TABLE "program"
-
-ADD COLUMN "seriesTermination" TINYINT;
-
-ALTER TABLE "schedule"
-
-ADD COLUMN "seriesId" VARCHAR(200);
-
-UPDATE Version SET versionNumber=61;
->>>>>>> 7716a4f... Updated .sql files due to no CRLF being entered in notepad.

@@ -343,9 +343,9 @@ namespace TvControl
              TvResult result = RemoteControl.Instance.StartTimeShiftingWithCustom(ref user, idChannel, out card, CustomFileName, Pids);
              return result;
          }
-         catch (Exception)
+         catch (Exception e)
          {
-            HandleFailure();
+            HandleFailure("TVServer",e);
          }
          return TvResult.UnknownError;
      }
@@ -369,9 +369,9 @@ namespace TvControl
              TvResult result = RemoteControl.Instance.StartTimeShiftingWithCustom(ref user, idChannel, out card, out cardChanged, CustomFileName, Pids);
              return result;
          }
-         catch (Exception)
+         catch (Exception e)
          {
-             HandleFailure();
+             HandleFailure("TVServer", e);
          }
          return TvResult.UnknownError;
      }
@@ -394,9 +394,9 @@ namespace TvControl
              TvResult result = RemoteControl.Instance.StartTimeShiftingWithCustom(ref user, idChannel, out card, forceCardId, CustomFileName, Pids);
              return result;
          }
-         catch (Exception)
+         catch (Exception e)
          {
-             HandleFailure();
+             HandleFailure("TVServer", e);
          }
          return TvResult.UnknownError;
      }
