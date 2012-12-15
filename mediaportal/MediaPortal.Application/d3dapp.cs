@@ -57,10 +57,6 @@ namespace MediaPortal
   {
     #region Win32 Imports
 
-    // http://msdn.microsoft.com/en-us/library/windows/desktop/ms633505(v=vs.85).aspx
-    [DllImport("user32.dll")]
-    private static extern IntPtr GetForegroundWindow();
-
     // http://msdn.microsoft.com/en-us/library/windows/desktop/ms633548(v=vs.85).aspx
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
@@ -1332,11 +1328,14 @@ namespace MediaPortal
                                                     _presentParams);
         }
 
+#if !DEBUG
+        SplashScreen.Run();
+#endif
         if (!Windowed)
         {
           // minimize currently empty main form
-          IntPtr hWnd = GetForegroundWindow();
-          ShowWindow(hWnd, SW_MINIMIZE);
+          ShowWindow(Handle, SW_MINIMIZE);
+
           // bring splash screen to front of z-order
           SplashScreen.BringToFront();
         }

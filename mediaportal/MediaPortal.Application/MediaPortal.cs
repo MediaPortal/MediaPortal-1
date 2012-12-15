@@ -30,6 +30,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.ServiceProcess;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
@@ -220,6 +221,22 @@ public class MediaPortalApp : D3DApp, IRender
   // http://msdn.microsoft.com/en-us/library/windows/desktop/aa373208(v=vs.85).aspx
   [DllImport("Kernel32.dll")]
   private static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE state);
+
+  [DllImport("user32.dll", SetLastError = true)]
+  private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+  [DllImport("kernel32.dll", SetLastError = true)]
+  [PreserveSig]
+  private static extern uint GetModuleFileName(
+    [In]
+    IntPtr hModule,
+    [Out] 
+    StringBuilder lpFilename,
+    [In]
+    [MarshalAs(UnmanagedType.U4)] 
+    int nSize
+);
+
 
   private static RestartOptions _restartOptions = RestartOptions.Reboot;
   private static bool _useRestartOptions;
@@ -436,7 +453,7 @@ public class MediaPortalApp : D3DApp, IRender
       {
         uint tKey;
         uint lKey = 100;
-        var sKey = new System.Text.StringBuilder((int)lKey);
+        var sKey = new StringBuilder((int)lKey);
         retval = Reg.RegQueryValueEx(res, "LastSuccessTime", 0, out tKey, sKey, ref lKey);
         if (retval == 0)
         {
@@ -520,9 +537,7 @@ public class MediaPortalApp : D3DApp, IRender
         // Start Splash Screen
         string version = ConfigurationManager.AppSettings["version"];
         SplashScreen = new SplashScreen {Version = version};
-#if !DEBUG
-        SplashScreen.Run();
-#endif
+
         Application.DoEvents();
         
         if (_waitForTvServer)
@@ -648,11 +663,6 @@ public class MediaPortalApp : D3DApp, IRender
 
         try
         {
-          Application.DoEvents();
-          UpdateSplashScreenMessage(GUILocalizeStrings.Get(63)); // Initializing input devices...
-          Log.Info("Main: Initializing Input Devices");
-          InputDevices.Init();
-
           Application.DoEvents();
           UpdateSplashScreenMessage(GUILocalizeStrings.Get(62)); // Initializing DirectX...
           Log.Debug("Main: Initializing DirectX");
@@ -1156,15 +1166,22 @@ public class MediaPortalApp : D3DApp, IRender
           break;
 
         case WM_ACTIVATE:
-          switch (msg.WParam.ToInt32())
+          uint processID;
+          var exePath = new StringBuilder(1024);
+          IntPtr hWnd = msg.LParam;
+          GetWindowThreadProcessId(hWnd, out processID);
+          GetModuleFileName((IntPtr)processID, exePath, exePath.Capacity);
+        switch (msg.WParam.ToInt32())
           {
             case WA_INACTIVE:
               Log.Info("Main: Deactivation Request Received");
+              Log.Debug("Main: New module in Focus {0}", exePath);
               MinimizeToTray(false);
               break;
             case WA_ACTIVE:
             case WA_CLICKACTIVE:
               Log.Info("Main: Activation Request Received");
+              Log.Debug("Main: Previous module in focus {0}", exePath);
               RestoreFromTray(false);
               break;
           }
@@ -1616,6 +1633,11 @@ public class MediaPortalApp : D3DApp, IRender
     }
 
     MouseTimeOutTimer = DateTime.Now;
+    UpdateSplashScreenMessage(GUILocalizeStrings.Get(63)); // Initializing input devices...
+    Log.Info("Main: Initializing Input Devices");
+    InputDevices.Init();
+
+    MouseTimeOutTimer = DateTime.Now;
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(64)); // Starting plugins...
     PluginManager.Load();
     PluginManager.Start();
@@ -1881,6 +1903,7 @@ public class MediaPortalApp : D3DApp, IRender
   /// </summary>
   protected override void InitializeDeviceObjects()
   {
+    Log.Debug("Main: InitializeDeviceObjects()");
     GUIWindowManager.Clear();
     GUIWaitCursor.Dispose();
     GUITextureManager.Dispose();

@@ -159,8 +159,7 @@ namespace MediaPortal
         // bring splash screen to front when request is pending
         if (_bringToFront)
         {
-          _frmFull.TopMost = true;
-          _frmFull.BringToFront();
+          _frm.TopMost = true;
           _bringToFront = false;
         }
 
@@ -204,9 +203,8 @@ namespace MediaPortal
         if (_bringToFront)
         {
           _frmFull.TopMost = true;
-          _frmFull.BringToFront();
           _bringToFront = false;
-          Cursor.Hide();
+          //Cursor.Hide();
          }
 
         if (oldInfo != _info)
