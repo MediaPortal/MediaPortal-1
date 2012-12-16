@@ -59,10 +59,7 @@ namespace MediaPortal.GUI.Pictures
 
       GUIPictures tmpGUIpictures = (GUIPictures)GUIWindowManager.GetWindow((int)Window.WINDOW_PICTURES);
       Log.Debug("GUISlideShow: LoadSlide - currentSlideIndex {0}", _currentSlideIndex);
-      if (_isSlideShow)
-        tmpGUIpictures.IncSelectedItemIndex();
-      else
-        tmpGUIpictures.SetSelectedItemIndex(_currentSlideIndex);
+      tmpGUIpictures.SetSelectedItemIndex(_currentSlideIndex);
       if (Util.Utils.IsVideo(slideFilePath))
       {
         if (g_Player.IsMusic || g_Player.IsCDA || (g_Player.IsRadio && !g_Player.IsTimeShifting))
@@ -82,6 +79,9 @@ namespace MediaPortal.GUI.Pictures
 
         g_Player.Play(slideFilePath, g_Player.MediaType.Video);
         g_Player.ShowFullScreenWindow();
+
+        if (_isSlideShow)
+        _slideDirection = 1;
 
         _loadVideoPlayback = false;
         _returnedFromVideoPlayback = true;
@@ -238,7 +238,7 @@ namespace MediaPortal.GUI.Pictures
     private float _defaultZoomFactor = 1.0f;
     internal bool _returnedFromVideoPlayback = false;
     internal bool _loadVideoPlayback = false;
-    private static int _slideDirection = 0; //-1=backwards, 0=nothing, 1=forward
+    public static int _slideDirection = 0; //-1=backwards, 0=nothing, 1=forward
     private String pausedMusicFileName;
     private double pausedMusicLastPosition;
     private bool pausedMusic;
@@ -328,6 +328,7 @@ namespace MediaPortal.GUI.Pictures
 
           if (_returnedFromVideoPlayback)
           {
+            g_Player.Stop();
             GUIWindowManager.ShowPreviousWindow();
           }
           else
@@ -413,6 +414,10 @@ namespace MediaPortal.GUI.Pictures
 
         case Action.ActionType.ACTION_STOP:
         case Action.ActionType.ACTION_PREVIOUS_MENU:
+          if (_returnedFromVideoPlayback)
+          {
+            _returnedFromVideoPlayback = false;
+          }
           ShowPreviousWindow();
           break;
 
@@ -421,6 +426,7 @@ namespace MediaPortal.GUI.Pictures
           break;
 
         case Action.ActionType.ACTION_PREV_ITEM:
+        case Action.ActionType.ACTION_PREV_PICTURE:
           if (_lastSegmentIndex != -1)
           {
             ShowPrevious(true);
@@ -429,9 +435,6 @@ namespace MediaPortal.GUI.Pictures
           else
             _slideDirection = 0;
 
-          break;
-        case Action.ActionType.ACTION_PREV_PICTURE:
-          _slideDirection = -1;
           if (!_isPictureZoomed)
           {
             ShowPrevious();
@@ -447,7 +450,9 @@ namespace MediaPortal.GUI.Pictures
             _slideTime = (int)(DateTime.Now.Ticks / 10000);
           }
           break;
+
         case Action.ActionType.ACTION_NEXT_ITEM:
+        case Action.ActionType.ACTION_NEXT_PICTURE:
           if (_lastSegmentIndex != -1)
           {
             ShowNext(true);
@@ -456,9 +461,6 @@ namespace MediaPortal.GUI.Pictures
           else
             _slideDirection = 0;
 
-          break;
-        case Action.ActionType.ACTION_NEXT_PICTURE:
-          _slideDirection = 1;
           if (!_isPictureZoomed)
           {
             ShowNext();
@@ -1126,7 +1128,7 @@ namespace MediaPortal.GUI.Pictures
 
     #region private members
 
-    private void ShowNext()
+    public void ShowNext()
     {
       ShowNext(false);
     }
@@ -1200,7 +1202,7 @@ namespace MediaPortal.GUI.Pictures
       return slideIndex;
     }
 
-    private void ShowPrevious()
+    public void ShowPrevious()
     {
       ShowPrevious(false);
     }

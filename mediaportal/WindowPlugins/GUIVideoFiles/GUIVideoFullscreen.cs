@@ -25,6 +25,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
+using MediaPortal.GUI.Pictures;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Video.Database;
@@ -418,17 +419,39 @@ namespace MediaPortal.GUI.Video
 
       switch (action.wID)
       {
-          // previous : play previous song from playlist
+          // previous : play previous song from playlist or previous item from MyPictures
+        case Action.ActionType.ACTION_PREV_CHAPTER:
         case Action.ActionType.ACTION_PREV_ITEM:
           {
-            //g_playlistPlayer.PlayPrevious();
+            if (GUIWindowManager.GetPreviousActiveWindow() == (int)GUIWindow.Window.WINDOW_SLIDESHOW)
+            {
+              {
+                GUISlideShow._slideDirection = -1;
+                g_Player.Stop();
+              }
+            }
+            else
+            {
+              //g_playlistPlayer.PlayNext();
+            }
           }
           break;
 
-          // next : play next song from playlist
+          // next : play next song from playlist or next item from MyPictures
+        case Action.ActionType.ACTION_NEXT_CHAPTER:
         case Action.ActionType.ACTION_NEXT_ITEM:
           {
-            //g_playlistPlayer.PlayNext();
+            if (GUIWindowManager.GetPreviousActiveWindow() == (int)GUIWindow.Window.WINDOW_SLIDESHOW)
+            {
+              {
+                GUISlideShow._slideDirection = 1;
+                g_Player.Stop();
+              }
+            }
+            else
+            {
+              //g_playlistPlayer.PlayNext();
+            }
           }
           break;
 
@@ -841,6 +864,10 @@ namespace MediaPortal.GUI.Video
 
         case Action.ActionType.ACTION_STOP:
           {
+            if (GUIWindowManager.GetPreviousActiveWindow() == (int)GUIWindow.Window.WINDOW_SLIDESHOW)
+            {
+              GUISlideShow._slideDirection = 0;
+            }
             Log.Info("GUIVideoFullscreen:stop");
             g_Player.Stop();
             GUIWindowManager.ShowPreviousWindow();
@@ -938,6 +965,14 @@ namespace MediaPortal.GUI.Video
                 {
                   ChangetheTimeCode(chKey);
                 }
+              }
+            }
+            if (chKey == 'b')
+            {
+              if (GUIWindowManager.GetPreviousActiveWindow() == (int)GUIWindow.Window.WINDOW_SLIDESHOW)
+              {
+                GUISlideShow._slideDirection = 0;
+                g_Player.Stop();
               }
             }
           }

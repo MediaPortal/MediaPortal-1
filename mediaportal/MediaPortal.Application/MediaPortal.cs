@@ -41,6 +41,7 @@ using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
+using MediaPortal.GUI.Pictures;
 using MediaPortal.InputDevices;
 using MediaPortal.IR;
 using MediaPortal.Player;
@@ -2740,6 +2741,10 @@ public class MediaPortalApp : D3DApp, IRender
             if (!g_Player.IsTV || !GUIGraphicsContext.IsFullScreenVideo)
             {
               Log.Info("Main: Stopping media");
+              if (GUIWindowManager.GetPreviousActiveWindow() == (int)GUIWindow.Window.WINDOW_SLIDESHOW)
+              {
+                GUISlideShow._slideDirection = 0;
+              }
               g_Player.Stop();
               return;
             }
