@@ -109,6 +109,8 @@ public class MediaPortalApp : D3D, IRender
   // ReSharper restore NotAccessedField.Local
   private bool                  _mouseClickFired;
   private bool                  _useLongDateFormat;
+  private bool                  _deactivationRequestPending;
+  private bool                  _activationRequestPending;
   private static int            _startupDelay;
   private readonly int          _timeScreenSaver;
   private readonly int          _suspendGracePeriodSec;
@@ -231,18 +233,9 @@ public class MediaPortalApp : D3D, IRender
   [DllImport("kernel32")]
   private static extern bool SetProcessWorkingSetSize(IntPtr handle, int minSize, int maxSize);
 
-  // http://msdn.microsoft.com/en-us/library/windows/desktop/ms633522(v=vs.85).aspx
-  [DllImport("user32.dll", SetLastError = true)]
-  private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-
   // http://msdn.microsoft.com/en-us/library/ms648415(v=vs.85).aspx
   [DllImport("User32.dll", CharSet = CharSet.Auto)]
   private static extern void DisableProcessWindowsGhosting();
-
-  // http://msdn.microsoft.com/en-us/library/windows/desktop/ms683197(v=vs.85).aspx
-  [DllImport("kernel32.dll", SetLastError = true)]
-  [PreserveSig]
-  private static extern uint GetModuleFileName([In] IntPtr hModule, [Out] StringBuilder lpFilename, [In] [MarshalAs(UnmanagedType.U4)] int nSize);
 
   // http://msdn.microsoft.com/en-us/library/windows/desktop/bb773640(v=vs.85).aspx
   [DllImport("shlwapi.dll")]
@@ -1046,6 +1039,21 @@ public class MediaPortalApp : D3D, IRender
         // set maximum and minimum form size in windowed mode
         case WM_GETMINMAXINFO:
           Log.Debug("Main: WM_GETMINMAXINFO");
+
+          // complete WM_DISPLAYCHANGE deactivation request after hot plugin event is completed
+          if (_deactivationRequestPending)
+          {
+            MinimizeToTray(false);
+            _deactivationRequestPending = false;
+          }
+
+          // complete WM_DISPLAYCHANGE activation request after hot plugin event is completed
+          if (_activationRequestPending)
+          {
+            RestoreFromTray(false);
+            _activationRequestPending = false;
+          }
+
           if (FormBorderStyle == FormBorderStyle.Sizable)
           {
             double ratio = Math.Min((double)GUIGraphicsContext.currentScreen.WorkingArea.Width / Width, 
@@ -1149,8 +1157,20 @@ public class MediaPortalApp : D3D, IRender
           int newDepth  = msg.WParam.ToInt32();
           int newWidth  = unchecked((short)msg.LParam.ToInt32());
           int newHeight = unchecked((short)((uint)msg.LParam.ToInt32() >> 16));
-          Log.Info("Main: Resolution changed to {0}x{1}x{2}", newWidth, newHeight, newDepth);
-          UpdateResolution();
+          Log.Info("Main: Resolution changed to {0}x{1}x{2}", newWidth, newHeight, newDepth); 
+
+          if (newWidth  != GUIGraphicsContext.DirectXPresentParameters.BackBufferWidth || 
+              newHeight != GUIGraphicsContext.DirectXPresentParameters.BackBufferHeight ||
+              newDepth  != 32)
+          {
+            Log.Info("Main: Resolution does not match current presentation parameters");
+            _deactivationRequestPending = true;
+          }
+          else
+          {
+            Log.Info("Main: Resolution restored to current presentation parameters");
+            _activationRequestPending = true;
+          }
           break;
 
         case WM_DEVICECHANGE:
@@ -1185,22 +1205,16 @@ public class MediaPortalApp : D3D, IRender
           break;
 
         case WM_ACTIVATE:
-          uint processID;
-          var exePath = new StringBuilder(1024);
-          IntPtr hWnd = msg.LParam;
-          GetWindowThreadProcessId(hWnd, out processID);
-          GetModuleFileName((IntPtr)processID, exePath, exePath.Capacity);
-        switch (msg.WParam.ToInt32())
+          Log.Debug("Main: WM_ACTIVATE");
+          switch (msg.WParam.ToInt32())
           {
             case WA_INACTIVE:
               Log.Info("Main: Deactivation Request Received");
-              Log.Debug("Main: New module in Focus {0}", exePath);
               MinimizeToTray(false);
               break;
             case WA_ACTIVE:
             case WA_CLICKACTIVE:
               Log.Info("Main: Activation Request Received");
-              Log.Debug("Main: Previous module in focus {0}", exePath);
               RestoreFromTray(false);
               break;
           }

@@ -545,31 +545,6 @@ namespace MediaPortal
 
 
     /// <summary>
-    /// 
-    /// </summary>
-    protected void UpdateResolution()
-    {
-      Log.Debug("D3D: UpdateResolution()");
-      if (!Windowed)
-      {
-        if (GUIGraphicsContext.Vmr9Active)
-        {
-          Log.Info("D3D: Stopping Player");
-          g_Player.Stop();
-        }
-
-        var newBounds = GUIGraphicsContext.currentScreen.Bounds;
-        SetBounds(newBounds.X, newBounds.Y, newBounds.Width, newBounds.Height, BoundsSpecified.All);
-        Update();
-        Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}", ClientSize.Width, ClientSize.Height,
-                 GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
-        UpdatePresentParams(Windowed, true);
-        OnDeviceReset(null, null);
-      }
-    }
-
-
-    /// <summary>
     /// Called when nothing else needs to be done and it's time to render
     /// </summary>
     protected void FullRender()
