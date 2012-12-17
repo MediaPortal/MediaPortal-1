@@ -32,7 +32,8 @@ namespace TvLibrary.Epg
     #region Singleton
     private static Languages instance = null;
     private List<KeyValuePair<String, String>> langs = new List<KeyValuePair<String, String>>();
-    private Languages()
+
+    public Languages()
     {
       CultureInfo[] cinfos = CultureInfo.GetCultures(CultureTypes.AllCultures);
       foreach (CultureInfo ci in cinfos)
