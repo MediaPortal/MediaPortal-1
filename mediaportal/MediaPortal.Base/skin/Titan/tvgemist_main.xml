@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>6799</id>
+<defaultcontrol>2</defaultcontrol>
+<allowoverlay>yes</allowoverlay>
+<controls>
+<import>common.window.xml</import>
+
+	<control>
+		<animation effect="fade" time="100">WindowOpen</animation>
+		<animation effect="fade" time="100">WindowClose</animation>
+		<type>label</type>
+		<id>1</id>
+		<posX>552</posX>
+		<posY>30</posY>
+		<width>500</width>
+		<height>100</height>
+		<label>tvgemist</label>
+		<textcolor>6aa5cb</textcolor>
+		<font>Segoe Light40</font>
+		<visible>facadeview.list</visible>
+		<valign>middle</valign>
+	</control>
+	
+<import>common.time.xml</import>
+	
+	<control>
+		<description>listcontrol background</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>524</posX>
+        <posY>153</posY>
+		<width>725</width>
+		<height>482</height>
+		<texture>listcontrol_bg.png</texture>
+		<animation effect="fade" time="100">WindowOpen</animation>
+		<animation effect="fade" time="100">WindowClose</animation>
+		<visible>facadeview.list</visible>
+	</control>
+	
+	<control>
+		<description>listcontrol background info</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>524</posX>
+        <posY>678</posY>
+		<width>725</width>
+		<height>51</height>
+		<texture>listcontrol_bg_info.png</texture>
+		<animation effect="fade" time="100">WindowOpen</animation>
+		<animation effect="fade" time="100">WindowClose</animation>
+		<visible>facadeview.list</visible>
+	</control>
+	
+	<control>
+		<id>1</id>
+		<type>image</type>
+		<posX>296</posX>
+		<posY>64</posY>
+		<width>150</width>
+		<height>46</height>
+		<texture>tvgemist_nlgemist_logo_big.png</texture>
+		<visible>string.contains(#zender,NED)</visible>
+		<animation effect="fade" time="100">WindowOpen</animation>
+		<animation effect="fade" time="100">WindowClose</animation>
+	</control>
+	
+	<control>
+		<id>1</id>
+		<type>image</type>
+		<posX>296</posX>
+		<posY>64</posY>
+		<width>150</width>
+		<height>46</height>
+		<texture>tvgemist_rtlgemist_logo_big.png</texture>
+		<visible>string.contains(#zender,RTL)</visible>
+		<animation effect="fade" time="100">WindowOpen</animation>
+		<animation effect="fade" time="100">WindowClose</animation>
+	</control>
+	
+	<control>
+		<id>1</id>
+		<type>image</type>
+		<posX>296</posX>
+		<posY>64</posY>
+		<width>150</width>
+		<height>46</height>
+		<texture>tvgemist_sbsgemist_logo_big.png</texture>
+		<visible>string.contains(#zender,NET5) | string.contains(#zender,SBS6) | string.contains(#zender,VERONICA)</visible>
+		<animation effect="fade" time="100">WindowOpen</animation>
+		<animation effect="fade" time="100">WindowClose</animation>
+	</control>
+	
+	<control>
+		<id>1</id>
+		<type>label</type>
+		<posX>555</posX>
+		<posY>180</posY>
+		<label>Nederland 1</label>
+		<width>365</width>
+		<font>Segoe Light18</font>
+		<textcolor>85cffe</textcolor>
+		<visible>string.contains(#zender,NED1)</visible>
+		<animation effect="fade" time="100">WindowOpen</animation>
+		<animation effect="fade" time="100">WindowClose</animation>
+	</control>
+	
+	<control>
+		<id>1</id>
+		<type>label</type>
+		<posX>555</posX>
+		<posY>180</posY>
+		<label>Nederland 2</label>
+		<width>365</width>
+		<font>Segoe Light18</font>
+		<textcolor>85cffe</textcolor>
+		<visible>string.contains(#zender,NED2)</visible>
+		<animation effect="fade" time="100">WindowOpen</animation>
+		<animation effect="fade" time="100">WindowClose</animation>
+	</control>
+	
+	<control>
+		<id>1</id>
+		<type>label</type>
+		<posX>555</posX>
+		<posY>180</posY>
+		<label>Nederland 3</label>
+		<width>365</width>
+		<font>Segoe Light18</font>
+		<textcolor>85cffe</textcolor>
+		<visible>string.contains(#zender,NED3)</visible>
+		<animation effect="fade" time="100">WindowOpen</animation>
+		<animation effect="fade" time="100">WindowClose</animation>
+	</control>
+	
+	<control>
+		<id>1</id>
+		<type>label</type>
+		<posX>555</posX>
+		<posY>180</posY>
+		<label>NET 5</label>
+		<width>365</width>
+		<font>Segoe Light18</font>
+		<textcolor>85cffe</textcolor>
+		<visible>string.contains(#zender,NET5)</visible>
+		<animation effect="fade" time="100">WindowOpen</animation>
+		<animation effect="fade" time="100">WindowClose</animation>
+	</control>
+	
+	<control>
+		<id>1</id>
+		<type>label</type>
+		<posX>555</posX>
+		<posY>180</posY>
+		<label>SBS 6</label>
+		<width>365</width>
+		<font>Segoe Light18</font>
+		<textcolor>85cffe</textcolor>
+		<visible>string.contains(#zender,SBS6)</visible>
+		<animation effect="fade" time="100">WindowOpen</animation>
+		<animation effect="fade" time="100">WindowClose</animation>
+	</control>
+	
+	<control>
+		<id>1</id>
+		<type>label</type>
+		<posX>555</posX>
+		<posY>180</posY>
+		<label>Veronica</label>
+		<width>365</width>
+		<font>Segoe Light18</font>
+		<textcolor>85cffe</textcolor>
+		<visible>string.contains(#zender,VERONICA)</visible>
+		<animation effect="fade" time="100">WindowOpen</animation>
+		<animation effect="fade" time="100">WindowClose</animation>
+	</control>
+	
+	<control>
+		<id>1</id>
+		<type>label</type>
+		<posX>555</posX>
+		<posY>180</posY>
+		<label>#zender</label>
+		<width>365</width>
+		<font>Segoe Light18</font>
+		<textcolor>85cffe</textcolor>
+		<visible>string.contains(#zender,RTL)</visible>
+		<animation effect="fade" time="100">WindowOpen</animation>
+		<animation effect="fade" time="100">WindowClose</animation>
+	</control>
+	
+	<control>
+		<type>actiongroup</type>
+		<description>action menu</description>
+		<defaultcontrol>2</defaultcontrol>
+		<onexit>50</onexit>
+		<buttonX>0</buttonX>
+		<buttonY>0</buttonY>
+		<buttonwidth>0</buttonwidth>
+		<buttonheight>0</buttonheight>
+		<width>1366</width>
+		<height>768</height>
+		<dimColor>00ffffff</dimColor>
+		<control>
+			<type>image</type>
+			<id>0</id>
+			<width>1366</width>
+			<height>768</height>
+			<texture>semi_trans_back_general_menu.png</texture>
+			<colordiffuse>90ffffff</colordiffuse>
+			<animation effect="fade" time="200">windowopen</animation>
+			<animation effect="fade" time="400">windowclose</animation>
+		</control>
+		
+		<control>
+		<type>group</type>
+		<animation effect="fade" time="250">Visible</animation>
+		<animation effect="zoom" delay="100" tween="elastic" easing="out" start="95,95" end="100,100" center="683,384" time="550">Visible</animation>
+		<animation effect="fade" time="200">Hidden</animation>
+		<animation effect="zoom" start="100,100" end="200,200" center="683,384" time="200">Hidden</animation>
+		
+		<control>
+			<id>1</id>
+			<type>image</type>
+			<posX>512</posX>
+			<posY>64</posY>
+			<width>342</width>
+			<height>640</height>
+			<texture>menu_bg.png</texture>
+			<visible>!Control.HasFocus(50)</visible>
+		</control>
+		
+		<control>
+			<description>Heading text label</description>
+			<type>label</type>
+			<id>1</id>
+			<posX>567</posX>
+			<posY>110</posY>
+			<label>924</label>
+			<font>Segoe Light18</font>
+			<textcolor>85cffe</textcolor>
+		</control>
+		
+		<control>
+			<description>button group</description>
+			<type>group</type>
+			<posX>543</posX>
+			<posY>175</posY>
+			<layout>StackLayout(1)</layout>
+			
+			<control>
+				<description>NLgemist</description>
+				<type>button</type>
+				<id>2</id>
+				<label>Uitzending Gemist</label>
+				<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+				<textureNoFocus>hiddenmenu_item.png</textureNoFocus>
+				<width>279</width>
+				<height>49</height>
+				<textXOff>25</textXOff>
+				<textYOff>12</textYOff>
+				<onleft>50</onleft>
+				<onright>50</onright>
+				<onup>6</onup>
+				<ondown>3</ondown>
+			</control>
+			
+			<control>
+				<description>RTLgemist</description>
+				<type>button</type>
+				<id>3</id>
+				<label>RTL Gemist</label>
+				<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+				<textureNoFocus>hiddenmenu_item.png</textureNoFocus>
+				<width>279</width>
+				<height>49</height>
+				<textXOff>25</textXOff>
+				<textYOff>12</textYOff>
+				<onleft>50</onleft>
+				<onright>50</onright>
+				<onup>2</onup>
+				<ondown>4</ondown>
+			</control>
+			
+			<control>
+				<description>SBSgemist</description>
+				<type>button</type>
+				<id>4</id>
+				<label>SBS Gemist</label>
+				<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+				<textureNoFocus>hiddenmenu_item.png</textureNoFocus>
+				<width>279</width>
+				<height>49</height>
+				<textXOff>25</textXOff>
+				<textYOff>12</textYOff>
+				<onleft>50</onleft>
+				<onright>50</onright>
+				<onup>3</onup>
+				<ondown>5</ondown>
+			</control>
+			
+			<control>
+				<description>LIVETV</description>
+				<type>button</type>
+				<id>5</id>
+				<label>Live Streams</label>
+				<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+				<textureNoFocus>hiddenmenu_item.png</textureNoFocus>
+				<width>279</width>
+				<height>49</height>
+				<textXOff>25</textXOff>
+				<textYOff>12</textYOff>
+				<onleft>50</onleft>
+				<onright>50</onright>
+				<onup>4</onup>
+				<ondown>6</ondown>
+			</control>
+			
+			<control>
+				<description>Favorieten</description>
+				<type>button</type>
+				<id>6</id>
+				<label>Favorieten</label>
+				<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+				<textureNoFocus>hiddenmenu_item.png</textureNoFocus>
+				<width>279</width>
+				<height>49</height>
+				<textXOff>25</textXOff>
+				<textYOff>12</textYOff>
+				<onleft>50</onleft>
+				<onright>50</onright>
+				<onup>5</onup>
+				<ondown>2</ondown>
+			</control>
+			
+		</control>
+		
+		<control>
+			<id>1</id>
+			<type>image</type>
+			<posX>735</posX>
+			<posY>188</posY>
+			<width>77</width>
+			<height>21</height>
+			<texture>tvgemist_nlgemist_logo.png</texture>
+			<animation effect="fade" time="100">WindowOpen</animation>
+			<animation effect="fade" time="100">WindowClose</animation>
+		</control>
+		
+		<control>
+			<id>1</id>
+			<type>image</type>
+			<posX>735</posX>
+			<posY>238</posY>
+			<width>77</width>
+			<height>21</height>
+			<texture>tvgemist_rtlgemist_logo.png</texture>
+			<animation effect="fade" time="100">WindowOpen</animation>
+			<animation effect="fade" time="100">WindowClose</animation>
+		</control>
+		
+		<control>
+			<id>1</id>
+			<type>image</type>
+			<posX>735</posX>
+			<posY>288</posY>
+			<width>77</width>
+			<height>21</height>
+			<texture>tvgemist_sbsgemist_logo.png</texture>
+			<animation effect="fade" time="100">WindowOpen</animation>
+			<animation effect="fade" time="100">WindowClose</animation>
+		</control>
+		
+	</control>
+	
+</control>
+	
+	<control>
+		<id>1</id>
+		<type>image</type>
+		<posX>91</posX>
+        <posY>207</posY>
+        <width>365</width>
+	    <height>203</height>
+		<texture>#thumb</texture>
+		<animation effect="fade" time="100">WindowOpen</animation>
+		<animation effect="fade" time="100">WindowClose</animation>
+	</control>
+	
+	<control>
+		<type>image</type>
+		<id>1</id>
+		<posX>44</posX>
+	    <posY>161</posY>
+	    <width>457</width>
+	    <height>295</height>
+		<texture>blackborders_recordings.png</texture>
+		<animation effect="fade" time="100">WindowOpen</animation>
+		<animation effect="fade" time="100">WindowClose</animation>
+	</control>
+	
+	<control>
+		<id>1</id>
+		<type>image</type>
+		<posX>0</posX>
+		<posY>325</posY>
+		<texture>hiddenmenu_tab.png</texture>
+		<visible>[facadeview.list|facadeview.album]+Control.HasFocus(50)</visible>
+	</control>
+	
+	<control>
+		<type>textboxscrollup</type>
+		<description>Description1</description>
+		<id>15</id>
+		<posX>555</posX>
+		<posY>281</posY>
+		<width>741</width>
+		<height>83</height>
+		<font>font12</font>
+		<label>#description</label>
+	</control>
+	
+<import>tvgemist_facade.xml</import>
+<import>common.overlay.xml</import>
+</controls>
+</window>

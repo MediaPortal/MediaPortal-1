@@ -192,6 +192,9 @@ namespace MediaPortal.Configuration.Sections
         UpdateDecoderSettings();
         audioRendererComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "audiorenderer",
                                                                         "Default DirectSound Device");
+        // Set Source Splitter check for first init to true.
+        string CheckSourceSplitter = xmlreader.GetValueAsString("movieplayer", "forcesourcesplitter", "");
+
         // Set codecs
         string videoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
         string h264videoCodec = xmlreader.GetValueAsString("movieplayer", "h264videocodec", "");
@@ -247,6 +250,11 @@ namespace MediaPortal.Configuration.Sections
         {
           ArrayList availableFileSyncFilters = FilterHelper.GetFilters(MediaType.Stream, MediaSubType.Null);
           splitterFileFilter = SetCodecBox(availableFileSyncFilters, "LAV Splitter", "", "");
+        }
+
+        if (CheckSourceSplitter == string.Empty && (splitterFilter == "LAV Splitter Source" || splitterFileFilter == "LAV Splitter"))
+        {
+          ForceSourceSplitter.Checked = true;
         }
 
         audioCodecComboBox.Text = audioCodec;

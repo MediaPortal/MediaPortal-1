@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+	
+	<control>
+		<description>panel</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>546</posX>
+		<posY>140</posY>
+		<width>1372</width>
+		<height>940</height>
+		<texture>panel_settings_main.png</texture>
+  	<animation effect="fade" time="150">WindowOpen</animation>
+  	<animation effect="fade" time="150">WindowClose</animation>
+	</control>
+
+  <control>
+    <id>0</id>
+    <type>image</type>
+    <posX>68</posX>
+    <posY>36</posY>
+    <width>58</width>
+    <height>58</height>
+    <texture>icon_settings.png</texture>
+  </control>
+</controls>
+</window>

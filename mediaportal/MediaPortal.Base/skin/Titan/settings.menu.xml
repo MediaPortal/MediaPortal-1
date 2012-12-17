@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+
+	<control>
+		<description>BG</description>
+		<type>image</type>
+		<id>1</id>
+		<width>1920</width>
+		<height>1080</height>
+		<texture>background_settings.png</texture>
+	</control>
+
+	<control>
+		<description>panel</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>5</posX>
+		<posY>140</posY>
+		<width>618</width>
+		<height>940</height>
+		<texture>panel_settings_left.png</texture>
+	</control>
+
+	<control>
+		<type>label</type>
+		<id>1</id>
+		<posX>152</posX>
+		<posY>225</posY>
+		<width>500</width>
+		<label>924</label>
+		<textcolor>00b7ff</textcolor>
+		<font>TitanLight20</font>
+	</control>
+	
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+		<posX>122</posX>
+		<posY>321</posY>
+		<dimColor>ffffffff</dimColor>
+		<layout>StackLayout(7, Vertical, true)</layout>
+		
+			<control Style="SettingsButton">
+        <description>General Main setttings</description>
+        <type>button</type>
+        <id>9991</id>
+        <label>128</label>
+				<onup>99910</onup>
+        <hyperlink>1016</hyperlink>
+      </control>
+			
+			<control Style="SettingsButton">
+				<description>General Skin settings</description>
+				<type>button</type>
+				<id>9992</id>
+				<label>101021</label>
+				<hyperlink>1021</hyperlink>
+			</control>
+			
+			<control Style="SettingsButton">
+				<description>Screen</description>
+				<type>button</type>
+				<id>9993</id>
+				<label>6023</label>
+				<hyperlink>9</hyperlink>
+			</control>
+	
+			<control Style="SettingsButton">
+				<description>TV</description>
+				<type>button</type>
+				<id>9994</id>
+				<label>605</label>
+				<hyperlink>700</hyperlink>
+			</control>
+	
+			<control Style="SettingsButton">
+				<description>My Pictures</description>
+				<type>button</type>
+				<id>9995</id>
+				<label>1</label>
+				<hyperlink>12</hyperlink>
+			</control>
+	
+			<control Style="SettingsButton">
+				<description>Movies</description>
+				<type>button</type>
+				<id>9996</id>
+				<label>3</label>
+				<hyperlink>703</hyperlink>
+			</control>
+	
+			<control Style="SettingsButton">
+				<description>My DVD</description>
+				<type>button</type>
+				<id>9997</id>
+				<label>1027</label>
+				<hyperlink>704</hyperlink>
+			</control>
+	
+			<control Style="SettingsButton">
+        <description>BluRay</description>
+        <type>button</type>
+        <id>9998</id>
+        <label>300217</label>
+        <hyperlink>1024</hyperlink>
+      </control>
+	
+			<control Style="SettingsButton">
+				<description>My Music</description>
+				<type>button</type>
+				<id>9999</id>
+				<label>2</label>
+				<hyperlink>14</hyperlink>
+	      <ondown>99910</ondown>
+			</control>
+				
+			<control Style="SettingsButton">
+        <description>MiniDisplay</description>
+        <type>button</type>
+        <id>99910</id>
+        <label>9100</label>
+        <hyperlink>9000</hyperlink>
+				<ondown>9991</ondown>
+	      <visible>plugin.isenabled(MiniDisplay)</visible>
+      </control>
+		
+		</control>
+</controls>
+</window>

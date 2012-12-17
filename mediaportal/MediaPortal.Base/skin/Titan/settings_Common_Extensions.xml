@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>1001</id>
+  <defaultcontrol>3</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+	<define>#header.label:897</define>		
+	<rememberLastFocusedControl>no</rememberLastFocusedControl>
+  <controls>
+  
+	<import>common.time.settings.xml</import>
+	<import>settings.menu.xml</import>
+  <import>common.settings.xml</import>
+	
+	<control>
+		<type>label</type>
+		<id>1</id>
+		<posX>685</posX>
+		<posY>225</posY>
+		<width>800</width>
+		<label>300162</label>
+		<textcolor>00b7ff</textcolor>
+		<font>TitanLight20</font>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+	</control>
+  
+	<control>
+		<type>image</type>
+		<id>0</id>
+		<posX>1240</posX>
+		<posY>321</posY>
+		<width>554</width>
+		<height>513</height>
+		<texture>settings_dark_background2.png</texture>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+	</control>
+  
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+		<posX>655</posX>
+		<posY>321</posY>
+		<dimColor>ffffffff</dimColor>
+    <layout>StackLayout(7, Vertical, true)</layout>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+  	 <control Style="SettingsButton">
+        <description>Add</description>
+        <type>button</type>
+        <id>3</id>
+        <onright>2</onright>
+        <onup>5</onup>
+        <label>300063</label>
+      </control>
+  	 <control Style="SettingsButton">
+        <description>Remove</description>
+        <type>button</type>
+        <id>4</id>
+        <onright>2</onright>
+        <label>300064</label>
+      </control>
+  	 <control Style="SettingsButton">
+        <description>Default</description>
+        <type>button</type>
+        <id>5</id>
+        <onright>2</onright>
+        <ondown>3</ondown>
+        <label>886</label>
+      </control>
+    </control>
+    <control>
+      <description>Extensions listcontrol</description>
+      <type>listcontrol</type>
+      <id>2</id>
+      <posX>1327</posX>
+      <posY>351</posY>
+      <width>230</width>
+      <height>520</height>
+      <textXOff>15</textXOff>
+      <textYOff>-6</textYOff>
+      <textcolor>FFFFFFFF</textcolor>
+      <selectedColor>FF00b7ff</selectedColor>
+      <selectedColor2>FF00b7ff</selectedColor2>
+      <selectedColor3>FF00b7ff</selectedColor3>	
+      <spinPosX>1750</spinPosX>
+      <spinPosY>760</spinPosY>
+      <spinColor>ffffffff</spinColor>
+      <onleft>3</onleft>
+      <onright>35</onright>
+      <textureHeight>25</textureHeight>
+      <textureFocus>settings_listcontrol_focus.png</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <spaceBetweenItems>16</spaceBetweenItems>
+      <unfocusedAlpha>255</unfocusedAlpha>
+      <dimColor>ffffffff</dimColor>
+   	  <animation effect="fade" time="150">WindowOpen</animation>
+  	  <animation effect="fade" time="150">WindowClose</animation>
+    </control>
+  </controls>
+</window>

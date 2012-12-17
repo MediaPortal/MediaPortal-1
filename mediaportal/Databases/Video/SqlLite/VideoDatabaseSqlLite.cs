@@ -2494,14 +2494,17 @@ namespace MediaPortal.Video.Database
         
         if (szGenres != Strings.Unknown)
         {
-          if (szGenres.IndexOf("/") >= 0)
+          if (szGenres.IndexOf("/") >= 0 || szGenres.IndexOf("|") >= 0)
           {
-            Tokens f = new Tokens(szGenres, new[] {'/'});
+            Tokens f = new Tokens(szGenres, new[] {'/', '|'});
             foreach (string strGenre in f)
             {
               strGenre.Trim();
-              int lGenreId = AddGenre(strGenre);
-              vecGenres.Add(lGenreId);
+              if (!string.IsNullOrEmpty(strGenre))
+              {
+                int lGenreId = AddGenre(strGenre);
+                vecGenres.Add(lGenreId);
+              }
             }
           }
           else
@@ -4989,6 +4992,7 @@ namespace MediaPortal.Video.Database
             XmlNode nodeDirector = nodeMovie.SelectSingleNode("director");
             XmlNode nodeDirectorImdb = nodeMovie.SelectSingleNode("directorimdb");
             XmlNode nodeImdbNumber = nodeMovie.SelectSingleNode("imdb");
+            XmlNode nodeIdImdbNumber = nodeMovie.SelectSingleNode("id");
             XmlNode nodeMpaa = nodeMovie.SelectSingleNode("mpaa");
             XmlNode nodeTop250 = nodeMovie.SelectSingleNode("top250");
             XmlNode nodeVotes = nodeMovie.SelectSingleNode("votes");
@@ -5249,6 +5253,14 @@ namespace MediaPortal.Video.Database
               if (CheckMovieImdbId(nodeImdbNumber.InnerText))
               {
                 movie.IMDBNumber = nodeImdbNumber.InnerText;
+              }
+            }
+
+            if (string.IsNullOrEmpty(movie.IMDBNumber) && nodeIdImdbNumber != null)
+            {
+              if (CheckMovieImdbId(nodeIdImdbNumber.InnerText))
+              {
+                movie.IMDBNumber = nodeIdImdbNumber.InnerText;
               }
             }
 
@@ -6118,13 +6130,16 @@ namespace MediaPortal.Video.Database
           // Genre
           string szGenres = movieDetails.Genre;
 
-          if (szGenres.IndexOf("/") >= 0)
+          if (szGenres.IndexOf("/") >= 0 || szGenres.IndexOf("|") >= 0)
           {
-            Tokens f = new Tokens(szGenres, new[] {'/'});
+            Tokens f = new Tokens(szGenres, new[] {'/', '|'});
 
             foreach (string strGenre in f)
             {
-              CreateXmlNode(mainNode, doc, "genre", strGenre.Trim());
+              if (!string.IsNullOrEmpty(strGenre))
+              {
+                CreateXmlNode(mainNode, doc, "genre", strGenre.Trim());
+              }
             }
           }
           else
