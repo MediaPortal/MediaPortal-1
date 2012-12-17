@@ -13,5 +13,5 @@ ALTER TABLE schedule
   ADD seriesId varchar(200)
 GO
 
-UPDATE Version SET versionNumber=62
+UPDATE Version SET versionNumber=61
 GO
