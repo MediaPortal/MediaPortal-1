@@ -72,61 +72,78 @@ namespace MediaPortal
 /// <summary>
 /// 
 /// </summary>
-public class MediaPortalApp : D3DApp, IRender
+public class MediaPortalApp : D3D, IRender
 {
   #region vars
+  
+  private static bool           _useRestartOptions;
+  private static bool           _isWinScreenSaverInUse;
+  private static bool           _mpCrashed;
+  private static bool           _waitForTvServer;
+  private static bool           _isRendering;
+#if !DEBUG
+  private static bool           _avoidVersionChecking;
+#endif
+  private readonly bool         _useScreenSaver = true;
+  private readonly bool         _useIdleblankScreen;
+  private readonly bool         _showLastActiveModule;
+  // ReSharper disable ConvertToConstant.Local
+  private readonly bool         _allowMinOOB                  = true;
+  private readonly bool         _allowMaxOOB                  = true;
+  // ReSharper restore ConvertToConstant.Local
+  private bool                   _playingState;
+  private bool                  _showStats;
+  private bool                  _showStatsPrevious;
+  private bool                  _restoreTopMost;
+  private bool                  _startWithBasicHome;
+  private bool                  _useOnlyOneHome;
+  private bool                  _suspended;
+  private bool                  _suspending;
+  private bool                  _resuming;
+  private bool                  _wasActiveBeforeSuspending;
+  private bool                  _ignoreContextMenuAction;
+  private bool                  _supportsFiltering;
+  private bool                  _supportsAlphaBlend;
+ // ReSharper disable NotAccessedField.Local
+  private bool                  _lastActiveModuleFullscreen;
+  // ReSharper restore NotAccessedField.Local
+  private bool                  _mouseClickFired;
+  private bool                  _useLongDateFormat;
+  private static int            _startupDelay;
+  private readonly int          _timeScreenSaver;
+  private readonly int          _suspendGracePeriodSec;
+  private int                   _xpos                         = 50;
+  // ReSharper disable NotAccessedField.Local
+  private int                   _dateLayout;
+  private int                   _lastActiveModule;
+  // ReSharper restore NotAccessedField.Local
+  private int                   _frameCount;
+  private int                   _errorCounter;
+  private int                   _anisotropy;
+  private static string         _alternateConfig;
+  private static string         _safePluginsList;
+  private string                _dateFormat;
+  private string                _outdatedSkinName;
+  private static DateTime       _lastOnresume                 = DateTime.Now;
+  private DateTime              _updateTimer                  = DateTime.MinValue;
+  private DateTime              _lastContextMenuAction        = DateTime.MaxValue;
+  private Point                 _lastCursorPosition;
+  private SerialUIR             _serialuirdevice;
+  private USBUIRT               _usbuirtdevice;
+  private WinLirc               _winlircdevice;
+  private RedEye                _redeyedevice;
+  private MouseEventArgs        _lastMouseClickEvent;
+  private readonly Rectangle[]  _region                       = new Rectangle[1];
+  private static RestartOptions _restartOptions              = RestartOptions.Reboot;
 
 #if AUTOUPDATE
   private ApplicationUpdateManager _updater = null;
   private Thread _updaterThread = null;
   private const int UPDATERTHREAD_JOIN_TIMEOUT = 3 * 1000;
-#endif
-  private Point _lastCursorPosition;
-  private bool _playingState;
-  private bool _showStats;
-  private bool _showStatsPrevious;
-  private readonly Rectangle[] _region = new Rectangle[1];
-  private int _xpos = 50;
-  private int _frameCount;
-  private SerialUIR _serialuirdevice;
-  private USBUIRT _usbuirtdevice;
-  private WinLirc _winlircdevice; //sd00//
-  private RedEye _redeyedevice; //PB00//
-  private readonly bool _useScreenSaver = true;
-  private readonly bool _useIdleblankScreen;
-  private static bool _isWinScreenSaverInUse;
-  private readonly int _timeScreenSaver = 300;
-  private bool _restoreTopMost;
-  private bool _startWithBasicHome;
-  private bool _useOnlyOneHome;
-  private bool _suspended;
-  private bool _suspending;
-  private bool _resuming;
-  private bool _wasActiveBeforeSuspending;
-  private bool _ignoreContextMenuAction;
-  private DateTime _lastContextMenuAction = DateTime.MaxValue;
-  protected string DateFormat = string.Empty;
-  protected bool UseLongDateFormat = false;
-  private readonly bool _showLastActiveModule;
-  private readonly int _suspendGracePeriodSec = 5;
-  // ReSharper disable NotAccessedField.Local
-  private int _dateLayout;
-  private int _lastActiveModule = -1;
-  private bool _lastActiveModuleFullscreen;
-  // ReSharper restore NotAccessedField.Local
-  private static bool _mpCrashed;
-  private static int _startupDelay;
-  private static bool _waitForTvServer;
-  private static DateTime _lastOnresume = DateTime.Now;
-  private static string _alternateConfig = string.Empty;
-  private static string _safePluginsList;
-#if AUTOUPDATE
   string m_strNewVersion = "";
   bool m_bNewVersionAvailable = false;
   bool m_bCancelVersion = false;
 #endif
-  private MouseEventArgs _lastMouseClickEvent;
-  private bool _mouseClickFired;
 
   // ReSharper disable InconsistentNaming
   private const int WM_SYSCOMMAND           = 0x0112; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
@@ -135,6 +152,7 @@ public class MediaPortalApp : D3DApp, IRender
   private const int SC_MONITORPOWER         = 0xF170; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
   private const int WM_ENDSESSION           = 0x0016; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa376889(v=vs.85).aspx
   private const int WM_DEVICECHANGE         = 0x0219; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363480(v=vs.85).aspx
+  private const int DBT_DEVNODES_CHANGED    = 0x0007; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363211(v=vs.85).aspx
   private const int WM_QUERYENDSESSION      = 0x0011; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa376890(v=vs.85).aspx
   private const int WM_ACTIVATE             = 0x0006; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646274(v=vs.85).aspx
   private const int WA_INACTIVE             = 0;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646274(v=vs.85).aspx
@@ -152,6 +170,7 @@ public class MediaPortalApp : D3DApp, IRender
   private const int WM_GETMINMAXINFO        = 0x0024; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632626(v=vs.85).aspx
   private const int WM_MOVING               = 0x0216; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632632(v=vs.85).aspx
   private const int WM_POWERBROADCAST       = 0x0218; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa373247(v=vs.85).aspx
+  private const int WM_DISPLAYCHANGE        = 0x007E; // http://msdn.microsoft.com/en-us/library/windows/desktop/dd145210(v=vs.85).aspx
   private const int PBT_APMSUSPEND          = 0x0004; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372721(v=vs.85).aspx
   private const int PBT_APMRESUMECRITICAL   = 0x0006; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372719(v=vs.85).aspx
   private const int PBT_APMRESUMESUSPEND    = 0x0007; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372720(v=vs.85).aspx
@@ -164,24 +183,10 @@ public class MediaPortalApp : D3DApp, IRender
   private const int D3DERR_INVALIDCALL      = -2005530516; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
   // ReSharper restore InconsistentNaming
 
-  private const string MPMutex = "{E0151CBA-7F81-41df-9849-F5298A779EB3}";
+  private const string MPMutex     = "{E0151CBA-7F81-41df-9849-F5298A779EB3}";
 #pragma warning disable 169
   private const string ConfigMutex = "{0BFD648F-A59F-482A-961B-337D70968611}";
 #pragma warning restore 169
-  private bool _supportsFiltering;
-  private bool _supportsAlphaBlend;
-  private int _anisotropy;
-  private DateTime _updateTimer = DateTime.MinValue;
-#if !DEBUG
-  private static bool _avoidVersionChecking;
-#endif
-  private string _outdatedSkinName;
-  private static bool _isRendering;
-  private int _errorCounter;
-  // ReSharper disable ConvertToConstant.Local
-  private readonly bool _allowMinOOB = true;
-  private readonly bool _allowMaxOOB = true;
-  // ReSharper restore ConvertToConstant.Local
 
   #endregion
 
@@ -222,25 +227,24 @@ public class MediaPortalApp : D3DApp, IRender
   [DllImport("Kernel32.dll")]
   private static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE state);
 
+  //http://msdn.microsoft.com/en-us/library/windows/desktop/ms686234(v=vs.85).aspx
+  [DllImport("kernel32")]
+  private static extern bool SetProcessWorkingSetSize(IntPtr handle, int minSize, int maxSize);
+
+  // http://msdn.microsoft.com/en-us/library/windows/desktop/ms633522(v=vs.85).aspx
   [DllImport("user32.dll", SetLastError = true)]
   private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
+  // http://msdn.microsoft.com/en-us/library/ms648415(v=vs.85).aspx
+  [DllImport("User32.dll", CharSet = CharSet.Auto)]
+  private static extern void DisableProcessWindowsGhosting();
+
+  // http://msdn.microsoft.com/en-us/library/windows/desktop/ms683197(v=vs.85).aspx
   [DllImport("kernel32.dll", SetLastError = true)]
   [PreserveSig]
-  private static extern uint GetModuleFileName(
-    [In]
-    IntPtr hModule,
-    [Out] 
-    StringBuilder lpFilename,
-    [In]
-    [MarshalAs(UnmanagedType.U4)] 
-    int nSize
-);
+  private static extern uint GetModuleFileName([In] IntPtr hModule, [Out] StringBuilder lpFilename, [In] [MarshalAs(UnmanagedType.U4)] int nSize);
 
-
-  private static RestartOptions _restartOptions = RestartOptions.Reboot;
-  private static bool _useRestartOptions;
-
+  // http://msdn.microsoft.com/en-us/library/windows/desktop/bb773640(v=vs.85).aspx
   [DllImport("shlwapi.dll")]
   private static extern bool PathIsNetworkPath(string path);
 
@@ -251,7 +255,7 @@ public class MediaPortalApp : D3DApp, IRender
   [STAThread]
   public static void Main(string[] args)
   {
-    Thread.CurrentThread.Name = "MPMain";
+    Thread.CurrentThread.Name = "MediaPortal";
     if (args.Length > 0)
     {
       foreach (string arg in args)
@@ -473,7 +477,7 @@ public class MediaPortalApp : D3DApp, IRender
       Log.Info("Main: Last install from WindowsUpdate is dated {0}", lastSuccessTime);
 
       Log.Debug("Disabling process window ghosting");
-      NativeMethods.DisableProcessWindowsGhosting();
+      DisableProcessWindowsGhosting();
 
       // Start MediaPortal
       Log.Info("Main: Using Directories:");
@@ -668,7 +672,7 @@ public class MediaPortalApp : D3DApp, IRender
           Log.Debug("Main: Initializing DirectX");
 
           var app = new MediaPortalApp();
-          if (app.CreateGraphicsSample())
+          if (app.Init())
           {
             try
             {
@@ -1140,6 +1144,29 @@ public class MediaPortalApp : D3DApp, IRender
           msg.Result = (IntPtr)1;
           break;
 
+        case WM_DISPLAYCHANGE:
+          Log.Debug("Main: WM_DISPLAYCHANGE");
+          int newDepth  = msg.WParam.ToInt32();
+          int newWidth  = unchecked((short)msg.LParam.ToInt32());
+          int newHeight = unchecked((short)((uint)msg.LParam.ToInt32() >> 16));
+          Log.Info("Main: Resolution changed to {0}x{1}x{2}", newWidth, newHeight, newDepth);
+          UpdateResolution();
+          break;
+
+        case WM_DEVICECHANGE:
+          Log.Debug("Main: WM_DEVICECHANGE (Event: {0})", msg.WParam.ToInt32());
+          switch (msg.WParam.ToInt32())
+          {
+            case DBT_DEVNODES_CHANGED:
+              Log.Debug("Main: A device has been added or removed from the system.");
+              break;
+          }
+
+          RemovableDriveHelper.HandleDeviceChangedMessage(msg);
+
+          msg.Result = (IntPtr)1;
+          break;
+
         case WM_QUERYENDSESSION:
           Log.Info("Main: Windows is requesting shutdown mode");
           base.WndProc(ref msg);
@@ -1155,14 +1182,6 @@ public class MediaPortalApp : D3DApp, IRender
           Application.ExitThread();
           Application.Exit();
           msg.Result = (IntPtr)0;
-          break;
-
-        case WM_DEVICECHANGE:
-          if (RemovableDriveHelper.HandleDeviceChangedMessage(msg))
-          {
-            return;
-          }
-          msg.Result = (IntPtr)1;
           break;
 
         case WM_ACTIVATE:
@@ -1644,7 +1663,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     using (Settings xmlreader = new MPSettings())
     {
-      DateFormat = xmlreader.GetValueAsString("home", "dateformat", "<Day> <Month> <DD>");
+      _dateFormat = xmlreader.GetValueAsString("home", "dateformat", "<Day> <Month> <DD>");
     }
     // Asynchronously pre-initialize the music engine if we're using the BassMusicPlayer
     if (BassMusicPlayer.IsDefaultMusicPlayer)
@@ -1989,7 +2008,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     using (Settings xmlreader = new MPSettings())
     {
-      UseLongDateFormat = xmlreader.GetValueAsBool("home", "LongTimeFormat", false);
+      _useLongDateFormat = xmlreader.GetValueAsBool("home", "LongTimeFormat", false);
       _startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
       _useOnlyOneHome = xmlreader.GetValueAsBool("gui", "useonlyonehome", false);
     }
@@ -2030,7 +2049,7 @@ public class MediaPortalApp : D3DApp, IRender
     new GUILayerRenderer();
     // ReSharper restore ObjectCreationAsStatement
 
-    WorkingSet.Minimize();
+    SetProcessWorkingSetSize(Process.GetCurrentProcess().Handle, -1, -1);
   }
 
 
@@ -3640,7 +3659,7 @@ public class MediaPortalApp : D3DApp, IRender
   /// <returns>A string containing the localized version of the date.</returns>
   protected string GetDate()
   {
-    string dateString = DateFormat;
+    string dateString = _dateFormat;
     if (!string.IsNullOrEmpty(dateString))
     {
       DateTime cur = DateTime.Now;
@@ -3727,7 +3746,7 @@ public class MediaPortalApp : D3DApp, IRender
   /// <returns>A string containing the current time.</returns>
   protected string GetTime()
   {
-    return DateTime.Now.ToString(UseLongDateFormat 
+    return DateTime.Now.ToString(_useLongDateFormat 
       ? Thread.CurrentThread.CurrentCulture.DateTimeFormat.LongTimePattern 
       : Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortTimePattern);
   }
@@ -4114,8 +4133,7 @@ public class MediaPortalApp : D3DApp, IRender
     Thumbs.CreateFolders();
     try
     {
-#if DEBUG
-#else
+
 #if AUTOUPDATE
       UpdaterConfiguration config = UpdaterConfiguration.Instance;
       config.Logging.LogPath = Config.Get(Config.Dir.Log) + "updatelog.log";
@@ -4146,7 +4164,7 @@ public class MediaPortalApp : D3DApp, IRender
 			_updaterThread = new Thread(new ThreadStart(_updater.StartUpdater));
 			_updaterThread.Start();
 #endif
-#endif
+
     }
     catch (Exception) {}
     using (Settings xmlreader = new MPSettings())

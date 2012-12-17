@@ -231,10 +231,10 @@ namespace MediaPortal
       using (Settings xmlreader = new MPSettings())
       {
         // lets see if the command line option "/screen=" was set or the screen selector is enabled in the config
-        if ((D3DApp.ScreenNumberOverride != -1) || xmlreader.GetValueAsBool("screenselector", "usescreenselector", false))
+        if ((D3D.ScreenNumberOverride != -1) || xmlreader.GetValueAsBool("screenselector", "usescreenselector", false))
         {
-          int screenNumber = D3DApp.ScreenNumberOverride != -1 
-                               ? D3DApp.ScreenNumberOverride 
+          int screenNumber = D3D.ScreenNumberOverride != -1 
+                               ? D3D.ScreenNumberOverride 
                                : xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
 
           screenNumber++; // increase the number by 1 to respect the DisplayDevice naming convention
