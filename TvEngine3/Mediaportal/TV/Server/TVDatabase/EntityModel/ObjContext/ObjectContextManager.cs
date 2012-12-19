@@ -89,9 +89,9 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
       string conType = dbConnection.GetType().ToString();
       if (conType.Contains("MySqlClient"))
         metadata.Add("res://Mediaportal.TV.Server.TVDatabase.EntityModel/Mediaportal.TV.Server.TVDatabase.EntityModel.Model.MySQL.ssdl");
-      if (conType.Contains("SqlServerCe"))
+      else if (conType.Contains("SqlServerCe"))
         metadata.Add("res://Mediaportal.TV.Server.TVDatabase.EntityModel/Mediaportal.TV.Server.TVDatabase.EntityModel.Model.MSSQLCE.ssdl");
-      if (conType.Contains("SqlClient"))
+      else if (conType.Contains("SqlClient"))
         metadata.Add("res://Mediaportal.TV.Server.TVDatabase.EntityModel/Mediaportal.TV.Server.TVDatabase.EntityModel.Model.MSSQL.ssdl");
 
       MetadataWorkspace workspace = new MetadataWorkspace(metadata, new[] { Assembly.GetExecutingAssembly() });
