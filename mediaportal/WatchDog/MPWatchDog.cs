@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2012 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2012 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -98,15 +98,34 @@ namespace WatchDog
                              GetScreenAspect() <= 1.5 ? Default4to3Skin : Default16to9Skin,
                              Application.StartupPath, _tempConfig);
       }
-      else
-      {
-        return String.Format("/config=\"{0}\"", _tempConfig);
-      }
+      return String.Format("/config=\"{0}\"", _tempConfig);
     }
 
     private string CreateTemporaryConfiguration()
     {
       string tempSettingsFilename = Path.Combine(_tempDir, "MediaPortalTemp.xml");
+
+      // check if Mediaportal has been configured, if not start configuration.exe in wizard mode
+      var fi = new FileInfo(MPSettings.ConfigPathName);
+      if (!File.Exists(MPSettings.ConfigPathName) || (fi.Length < 10000))
+      {
+        MessageBox.Show("MediaPortal has never been configured.", "Configuration not found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        try
+        {
+          var process = new Process
+                          {
+                            StartInfo = new ProcessStartInfo
+                                          {
+                                            FileName = Config.GetFile(Config.Dir.Base, "configuration.exe"),
+                                            Arguments = @"/wizard"
+                                          }
+                          };
+          process.Start();
+          process.WaitForExit();
+          Application.Restart();
+        }
+        catch {}
+      }
 
       try
       {
@@ -139,7 +158,7 @@ namespace WatchDog
         screenNumber = 0;
       }
       Screen mpScreen = Screen.AllScreens[screenNumber];
-      return (float)mpScreen.Bounds.Width / (float)mpScreen.Bounds.Height;
+      return (float)mpScreen.Bounds.Width / mpScreen.Bounds.Height;
     }
 
     private string GetZipFilename()
@@ -242,11 +261,12 @@ namespace WatchDog
     {
       Directory.CreateDirectory(_tempDir);
       string zipFile = GetZipFilename();
-      if (!Directory.Exists(Path.GetDirectoryName(zipFile)))
+      string directory = Path.GetDirectoryName(zipFile);
+      if (directory != null && !Directory.Exists(directory))
       {
         try
         {
-          Directory.CreateDirectory(Path.GetDirectoryName(zipFile));
+          Directory.CreateDirectory(directory);
         }
         catch (Exception)
         {
@@ -331,18 +351,10 @@ namespace WatchDog
       // give windows 1 sec to render the form
       Utils.SleepNonBlocking(1000);
 
-      if (pta.PerformActions())
-      {
-        setStatus("Done performing pre-test actions.");
-      }
-      else
-      {
-        setStatus("Pre-test actions were aborted.");
-      }
+      setStatus(pta.PerformActions() ? "Done performing pre-test actions." : "Pre-test actions were aborted.");
       if (autoClose)
       {
         pta.Close();
-        pta = null;
       }
     }
 
@@ -378,18 +390,10 @@ namespace WatchDog
       // give windows 1 sec to render the form
       Utils.SleepNonBlocking(1000);
 
-      if (pta.PerformActions())
-      {
-        setStatus("Done performing post-test actions.");
-      }
-      else
-      {
-        setStatus("Post-test actions were aborted.");
-      }
+      setStatus(pta.PerformActions() ? "Done performing post-test actions." : "Post-test actions were aborted.");
       if (autoClose)
       {
         pta.Close();
-        pta = null;
       }
     }
 
@@ -446,10 +450,6 @@ namespace WatchDog
       {
         return;
       }
-      if (panel == null)
-      {
-        return;
-      }
       panel.Width = 3000;
       panel.ShowPinNames = true;
       panel.ShowTimeSlider = false;
@@ -458,7 +458,7 @@ namespace WatchDog
       using (Bitmap b = new Bitmap(panel.Width, panel.Height))
       {
         panel.DrawToBitmap(b, panel.Bounds);
-        string imgFile = _tempDir + "\\graph_" + rotEntry.ToString() + ".jpg";
+        string imgFile = _tempDir + "\\graph_" + rotEntry + ".jpg";
         try
         {
           b.Save(imgFile, ImageFormat.Jpeg);
