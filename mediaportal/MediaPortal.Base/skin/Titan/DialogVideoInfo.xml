@@ -152,8 +152,12 @@
 				<onright>24</onright>
 				<onup>2</onup>
 				<ondown>4</ondown>
-		    <textcolor>FF000000</textcolor>
+		   	<textcolor>FF000000</textcolor>
 				<textcolorNoFocus>ffffffff</textcolorNoFocus>
+        <textureFocus>button_tv_on_focus.png</textureFocus>
+        <textureNoFocus>button_tv_on_nofocus.png</textureNoFocus>
+        <AltTextureFocus>button_tv_off_focus.png</AltTextureFocus>
+        <AltTextureNoFocus>button_tv_off_nofocus.png</AltTextureNoFocus>
 			</control>
 	
 			<control>
@@ -170,6 +174,10 @@
 				<ondown>7</ondown>
 		   	<textcolor>FF000000</textcolor>
 				<textcolorNoFocus>ffffffff</textcolorNoFocus>
+        <textureFocus>button_tv_on_focus.png</textureFocus>
+        <textureNoFocus>button_tv_on_nofocus.png</textureNoFocus>
+        <AltTextureFocus>button_tv_off_focus.png</AltTextureFocus>
+        <AltTextureNoFocus>button_tv_off_nofocus.png</AltTextureNoFocus>
 			</control>
 	
       <control>
@@ -186,6 +194,10 @@
         <ondown>5</ondown>
 		   	<textcolor>FF000000</textcolor>
 				<textcolorNoFocus>ffffffff</textcolorNoFocus>
+        <textureFocus>button_tv_on_focus.png</textureFocus>
+        <textureNoFocus>button_tv_on_nofocus.png</textureNoFocus>
+        <AltTextureFocus>button_tv_off_focus.png</AltTextureFocus>
+        <AltTextureNoFocus>button_tv_off_nofocus.png</AltTextureNoFocus>
       </control>
 	
 			<control>
@@ -226,8 +238,12 @@
 				<onright>24</onright>
 				<onup>26</onup>
 				<ondown>10</ondown>
-		    <textcolor>FF000000</textcolor>
+		   	<textcolor>FF000000</textcolor>
 				<textcolorNoFocus>ffffffff</textcolorNoFocus>
+        <textureFocus>button_tv_on_focus.png</textureFocus>
+        <textureNoFocus>button_tv_on_nofocus.png</textureNoFocus>
+        <AltTextureFocus>button_tv_off_focus.png</AltTextureFocus>
+        <AltTextureNoFocus>button_tv_off_nofocus.png</AltTextureNoFocus>
 			</control>
 			
 	</control>
@@ -547,7 +563,7 @@
 		<onup>2</onup>
 		<ondown>2</ondown>
 		<label>#plot</label>
-		<visible>!Control.IsVisible(24)</visible>
+		<visible>!Control.IsVisible(24)+!Control.IsVisible(23)</visible>
     <animation effect="fade" time="250">WindowOpen</animation>
     <animation effect="fade" time="250">WindowClose</animation>
 	</control>
