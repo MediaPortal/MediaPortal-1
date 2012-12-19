@@ -5,7 +5,7 @@
 <allowoverlay>yes</allowoverlay>
 <disabletopbar>no</disabletopbar>
 <define>#header.label:Home</define>
-<rememberLastFocusedControl>no</rememberLastFocusedControl>
+<rememberLastFocusedControl>yes</rememberLastFocusedControl>
 
 
 <controls>	
