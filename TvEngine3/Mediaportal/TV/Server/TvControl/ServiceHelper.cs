@@ -37,14 +37,14 @@ namespace Mediaportal.TV.Server.TVControl
     /// </summary>
     /// <returns></returns>
     public static NetTcpBinding GetTcpBinding()
-    {      
+    {
       var netTcpBinding = new NetTcpBinding
       {
         Name = NetTcpBindingName,
         MaxBufferSize = MaxBufferSize,
         MaxReceivedMessageSize = MaxReceivedMessageSize,
         ReceiveTimeout = TcpReceiveTimeout,
-        SendTimeout = TcpSendTimeout,   
+        SendTimeout = TcpSendTimeout,
         //TransactionFlow = false,
         CloseTimeout = TcpCloseTimeout,
         OpenTimeout = TcpOpenTimeout
@@ -66,7 +66,7 @@ namespace Mediaportal.TV.Server.TVControl
         MaxBufferSize = MaxBufferSize,
         MaxReceivedMessageSize = MaxReceivedMessageSize,
         ReceiveTimeout = HttpReceiveTimeout,
-        SendTimeout = HttpSendTimeout,   
+        SendTimeout = HttpSendTimeout,
         Security =
           {
             Mode = HttpSecurityMode,
@@ -77,8 +77,8 @@ namespace Mediaportal.TV.Server.TVControl
       return basicHttpBinding;
     }
 
-    private static void SetReaderQuotas (XmlDictionaryReaderQuotas readerQuotas)
-    {      
+    private static void SetReaderQuotas(XmlDictionaryReaderQuotas readerQuotas)
+    {
       readerQuotas.MaxDepth = ReaderQuotasMaxDepth;
       readerQuotas.MaxStringContentLength = ReaderQuotasMaxStringContentLength;
       readerQuotas.MaxArrayLength = ReaderQuotasMaxArrayLength;
@@ -86,6 +86,10 @@ namespace Mediaportal.TV.Server.TVControl
       readerQuotas.MaxNameTableCharCount = ReaderQuotasMaxNameTableCharCount;
     }
 
+    public static string GetEndpointRootURL()
+    {
+      return @"http://+:" + PortHttpService + Tvservice;
+    }
 
     public static string GetEndpointURL(Type type, string hostName)
     {

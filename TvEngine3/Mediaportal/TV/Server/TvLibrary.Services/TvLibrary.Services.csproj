@@ -111,6 +111,7 @@
     <Compile Include="Services\ConflictService.cs" />
     <Compile Include="Services\DiscoverService.cs" />
     <Compile Include="Services\EventService.cs" />
+    <Compile Include="Services\NetAclHelper.cs" />
     <Compile Include="Services\ProgramCategoryService.cs" />
     <Compile Include="Services\ProgramService.cs" />
     <Compile Include="Services\RecordingService.cs" />

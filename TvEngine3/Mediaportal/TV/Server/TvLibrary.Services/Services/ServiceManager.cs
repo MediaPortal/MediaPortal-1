@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Description;
-using System.Threading.Tasks;
 using MediaPortal.Common.Utils;
-using Mediaportal.Common.Utils;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -13,47 +11,44 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 {
   public class ServiceManager : Singleton<ServiceManager>, IDisposable
   {
-
-
-    private readonly object _lock = new object();    
+    private bool _netAclRun = false;
+    private readonly object _lock = new object();
     private readonly IDictionary<Type, ServiceHost> _serviceHosts = new Dictionary<Type, ServiceHost>();
 
     ~ServiceManager()
     {
-      Dispose();      
+      Dispose();
     }
 
-    private ServiceManager ()
+    private ServiceManager()
     {
       Init();
-    }   
+    }
 
     private void Init()
     {
       try
       {
-        ThreadHelper.ParallelInvoke(
-            AddService<IProgramCategoryService, ProgramCategoryService>,
-            AddService<IConflictService, ConflictService>,
-            AddService<ICardService, CardService>,
-            AddService<ICanceledScheduleService, CanceledScheduleService>,
-            AddService<IChannelService, ChannelService>,
-            AddService<IProgramService, ProgramService>,
-            AddService<ISettingService, SettingService>,
-            AddService<IRecordingService, RecordingService>,
-            AddService<IScheduleService, ScheduleService>,
-            AddService<IChannelGroupService, ChannelGroupService>,
-            AddService<IControllerService, TvControllerService>,
-            () => GlobalServiceProvider.Add<IInternalControllerService>(new TvController()),
-            AddEventService<IEventService, EventService>,
-            AddService<IDiscoverService, DiscoverService>        
-          );       
+        AddService<IProgramCategoryService, ProgramCategoryService>();
+        AddService<IConflictService, ConflictService>();
+        AddService<ICardService, CardService>();
+        AddService<ICanceledScheduleService, CanceledScheduleService>();
+        AddService<IChannelService, ChannelService>();
+        AddService<IProgramService, ProgramService>();
+        AddService<ISettingService, SettingService>();
+        AddService<IRecordingService, RecordingService>();
+        AddService<IScheduleService, ScheduleService>();
+        AddService<IChannelGroupService, ChannelGroupService>();
+        AddService<IControllerService, TvControllerService>();
+        GlobalServiceProvider.Add<IInternalControllerService>(new TvController());
+        AddEventService<IEventService, EventService>();
+        AddService<IDiscoverService, DiscoverService>();
       }
       catch (Exception ex)
       {
         this.LogError("ServiceManager: exception - {0}", ex);
-      }      
-    }  
+      }
+    }
 
     private void AddEventService<I, T>() where T : class, I, new()
     {
@@ -69,7 +64,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       }
     }
 
-    private ServiceHost GetServiceHost(Type interfaceType, Type implType)
+    private ServiceHost GetServiceHost(Type interfaceType, Type implType, bool isRetry = false)
     {
       var serviceHost = new ServiceHost(implType);
       BasicHttpBinding defaultBinding = ServiceHelper.GetHttpBinding();
@@ -86,7 +81,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 
       ServiceMetadataBehavior serviceMetaDataBehaviour = SetHttpsGetEnabled(serviceHost);
       serviceMetaDataBehaviour.HttpGetUrl = httpUri;
-      serviceHost.Open();
+      try
+      {
+        serviceHost.Open();
+      }
+      catch (AddressAccessDeniedException)
+      {
+        if (_netAclRun || isRetry)
+          return null;
+
+        try
+        {
+          // Try to run external command only once
+          _netAclRun = true;
+          NetAclHelper.AddAddress(ServiceHelper.GetEndpointRootURL());
+          return GetServiceHost(interfaceType, implType, true);
+        }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "Could not open service Url '{0}', no remote connections possible!", endpointUrl);
+          return null;
+        }
+      }
       SetMaxItemsInObjectGraph(serviceHost);
       this.LogDebug("Service '{0}' succesfully started.", endpointUrl);
       return serviceHost;
@@ -128,7 +144,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       var serviceMetaDataBehaviour = serviceHost.Description.Behaviors.Find<ServiceMetadataBehavior>();
       if (serviceMetaDataBehaviour == null)
       {
-        serviceMetaDataBehaviour = new ServiceMetadataBehavior {HttpGetEnabled = true};
+        serviceMetaDataBehaviour = new ServiceMetadataBehavior { HttpGetEnabled = true };
         serviceHost.Description.Behaviors.Add(serviceMetaDataBehaviour);
       }
       else
@@ -137,8 +153,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       }
       return serviceMetaDataBehaviour;
     }
-
-  
 
     private static void SetMaxItemsInObjectGraph(ServiceHost serviceHost)
     {
@@ -205,7 +219,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     public IProgramCategoryService ProgramCategoryService
     {
       get { return GlobalServiceProvider.Get<IProgramCategoryService>(); }
-    }    
+    }
 
     public IInternalControllerService InternalControllerService
     {
@@ -219,31 +233,31 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 
     public void AddService(Type interfaceType, object instance)
     {
-      Type implType = instance.GetType();      
+      Type implType = instance.GetType();
       ThrowExceptionIfServiceAlreadyAdded(implType);
       ServiceHost serviceHost = GetServiceHost(interfaceType, implType);
       lock (_lock)
-      {        
+      {
         GlobalServiceProvider.Add(interfaceType, instance);
-        _serviceHosts.Add(implType, serviceHost);
+        if (serviceHost != null)
+          _serviceHosts.Add(implType, serviceHost);
       }
     }
 
     public void AddService<I, T>() where T : class, I, new()
     {
-      Type implType = typeof (T);
-      Type interfaceType = typeof (I);
+      Type implType = typeof(T);
+      Type interfaceType = typeof(I);
       ThrowExceptionIfServiceAlreadyAdded(implType);
       ServiceHost serviceHost = GetServiceHost(interfaceType, implType);
       lock (_lock)
       {
         var service = new T();
         GlobalServiceProvider.Add<I>(service);
-        _serviceHosts.Add(implType, serviceHost);
+        if (serviceHost != null)
+          _serviceHosts.Add(implType, serviceHost);
       }
     }
-
-    
 
     private void ThrowExceptionIfServiceAlreadyAdded(Type contractType)
     {
@@ -255,9 +269,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
         }
       }
     }
-   
 
-   
     #region Implementation of IDisposable
 
     /// <summary>
@@ -271,10 +283,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       {
         Services.EventService.CleanUp();
         foreach (ServiceHost host in _serviceHosts.Values)
-        {          
+        {
           if (host != null)
           {
-            host.Close();            
+            host.Close();
           }
         }
         _serviceHosts.Clear();
@@ -282,9 +294,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       }
       catch (Exception ex)
       {
-        this.LogError("error closing WCF service", ex);
+        this.LogError(ex, "error closing WCF service");
         throw;
-      }      
+      }
     }
 
     #endregion
