@@ -136,7 +136,7 @@ public class MediaPortalApp : D3D, IRender
   private RedEye                _redeyedevice;
   private MouseEventArgs        _lastMouseClickEvent;
   private readonly Rectangle[]  _region                       = new Rectangle[1];
-  private static RestartOptions _restartOptions              = RestartOptions.Reboot;
+  private static RestartOptions _restartOptions               = RestartOptions.Reboot;
 
 #if AUTOUPDATE
   private ApplicationUpdateManager _updater = null;
@@ -154,7 +154,6 @@ public class MediaPortalApp : D3D, IRender
   private const int SC_MONITORPOWER         = 0xF170; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
   private const int WM_ENDSESSION           = 0x0016; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa376889(v=vs.85).aspx
   private const int WM_DEVICECHANGE         = 0x0219; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363480(v=vs.85).aspx
-  private const int DBT_DEVNODES_CHANGED    = 0x0007; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363211(v=vs.85).aspx
   private const int WM_QUERYENDSESSION      = 0x0011; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa376890(v=vs.85).aspx
   private const int WM_ACTIVATE             = 0x0006; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646274(v=vs.85).aspx
   private const int WA_INACTIVE             = 0;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646274(v=vs.85).aspx
@@ -661,8 +660,8 @@ public class MediaPortalApp : D3D, IRender
         try
         {
           Application.DoEvents();
-          UpdateSplashScreenMessage(GUILocalizeStrings.Get(62)); // Initializing DirectX...
-          Log.Debug("Main: Initializing DirectX");
+          //UpdateSplashScreenMessage(GUILocalizeStrings.Get(62)); // Initializing DirectX...
+          //Log.Debug("Main: Initializing DirectX");
 
           var app = new MediaPortalApp();
           if (app.Init())
@@ -1050,6 +1049,12 @@ public class MediaPortalApp : D3D, IRender
           // complete WM_DISPLAYCHANGE activation request after hot plugin event is completed
           if (_activationRequestPending)
           {
+            // cycle again in case of multiple WM_DISPLAYCHANGE messages
+            if (IsVisible)
+            {
+              MinimizeToTray(false);
+              Thread.Sleep(3000);
+            }
             RestoreFromTray(false);
             _activationRequestPending = false;
           }
@@ -1157,8 +1162,7 @@ public class MediaPortalApp : D3D, IRender
           int newDepth  = msg.WParam.ToInt32();
           int newWidth  = unchecked((short)msg.LParam.ToInt32());
           int newHeight = unchecked((short)((uint)msg.LParam.ToInt32() >> 16));
-          Log.Info("Main: Resolution changed to {0}x{1}x{2}", newWidth, newHeight, newDepth); 
-
+          Log.Info("Main: Resolution changed to {0}x{1}x{2} or displays added/removed", newWidth, newHeight, newDepth); 
           if (newWidth  != GUIGraphicsContext.DirectXPresentParameters.BackBufferWidth || 
               newHeight != GUIGraphicsContext.DirectXPresentParameters.BackBufferHeight ||
               newDepth  != 32)
@@ -1168,22 +1172,15 @@ public class MediaPortalApp : D3D, IRender
           }
           else
           {
-            Log.Info("Main: Resolution restored to current presentation parameters");
+            Log.Info("Main: Resolution matches current presentation parameters");
             _activationRequestPending = true;
           }
+          msg.Result = (IntPtr)1;
           break;
 
         case WM_DEVICECHANGE:
           Log.Debug("Main: WM_DEVICECHANGE (Event: {0})", msg.WParam.ToInt32());
-          switch (msg.WParam.ToInt32())
-          {
-            case DBT_DEVNODES_CHANGED:
-              Log.Debug("Main: A device has been added or removed from the system.");
-              break;
-          }
-
           RemovableDriveHelper.HandleDeviceChangedMessage(msg);
-
           msg.Result = (IntPtr)1;
           break;
 
@@ -1665,12 +1662,10 @@ public class MediaPortalApp : D3D, IRender
       RestoreFromTray(true);
     }
 
-    MouseTimeOutTimer = DateTime.Now;
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(63)); // Initializing input devices...
     Log.Info("Main: Initializing Input Devices");
     InputDevices.Init();
 
-    MouseTimeOutTimer = DateTime.Now;
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(64)); // Starting plugins...
     PluginManager.Load();
     PluginManager.Start();

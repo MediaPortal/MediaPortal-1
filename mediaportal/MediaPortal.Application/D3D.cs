@@ -61,10 +61,6 @@ namespace MediaPortal
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
-    // http://msdn.microsoft.com/en-us/library/windows/desktop/ms648396(v=vs.85).aspx
-    [DllImport("user32.dll")]
-    private static extern int ShowCursor(bool bShow);
-
     // http://msdn.microsoft.com/en-us/library/windows/desktop/dd145065(v=vs.85).aspx
     [StructLayout(LayoutKind.Sequential)]
     public struct MonitorInformation
@@ -150,13 +146,12 @@ namespace MediaPortal
     private readonly bool              _showCursorWhenFullscreen; //
     private bool                       _miniTvMode;               //
     private bool                       _isClosing;                //
-    private bool                       _lastShowCursor;           //
+    private bool                       _lastShowMouseCursor;      //
     private bool                       _lostFocus;                // set to true if form lost focus
     private bool                       _needReset;                //
     private bool                       _wasPlayingVideo;          //
     private bool                       _alwaysOnTop;              //
     private int                        _lastActiveWindow;         //
-    private int                        _displayCount;             //
     private long                       _lastTime;                 //
     private double                     _currentPlayerPos;         //
     private string                     _currentFile;              //
@@ -215,8 +210,7 @@ namespace MediaPortal
       MouseTimeOutTimer         = DateTime.Now;
       _lastActiveWindow         = -1;
       IsVisible                 = true;
-      _lastShowCursor           = ShowMouseCursor;
-      _displayCount             = 0;
+      _lastShowMouseCursor      = ShowMouseCursor;
       _showCursorWhenFullscreen = false;
       _currentPlayListType      = PlayListType.PLAYLIST_NONE;
       _enumerationSettings      = new D3DEnumeration();
@@ -380,8 +374,8 @@ namespace MediaPortal
                  GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
  
         // make sure cursor is initially hidden in fullscreen
-        ShowMouseCursor = _lastShowCursor = false;
-        Cursor.Hide();
+        ShowMouseCursor = _lastShowMouseCursor = false;
+        UpdateMouseCursor();
       }
 
       // Initialize D3D Device
@@ -537,7 +531,7 @@ namespace MediaPortal
         Update();
         Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}", ClientSize.Width, ClientSize.Height,
                  GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
-        UpdatePresentParams(Windowed, false);
+        UpdatePresentParams(true, false);
         Log.Info("D3D: Switching fullscreen to windowed mode done");
       }
       OnDeviceReset(null, null);
@@ -557,7 +551,7 @@ namespace MediaPortal
       }
 
       ResumePlayer();
-      HandleCursor();
+      UpdateMouseCursor();
 
       // In minitv mode allow to loose focus
       if ((ActiveForm != this) && (_alwaysOnTop) && !_miniTvMode && (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING))
@@ -796,19 +790,9 @@ namespace MediaPortal
           HideTaskBar(true);
         }
 
-        if (!Windowed)
-        {
-          // set cursor hide/show balance to old value
-          int displayCount = ShowCursor(false);
-          while (displayCount > _displayCount)
-          {
-            displayCount = ShowCursor(false);
-          }
-          while (displayCount < _displayCount)
-          {
-            displayCount = ShowCursor(true);
-          }
-        }
+        ShowMouseCursor = false;
+        MouseTimeOutTimer = DateTime.Now;
+        UpdateMouseCursor();
       }
     }
 
@@ -851,20 +835,9 @@ namespace MediaPortal
           HideTaskBar(false);
         }
 
-        if (!Windowed)
-        {
-          // set cursor hide/show balance to zero, as it can get imbalanced during initialization
-          int displayCount = ShowCursor(true);
-          _displayCount--;
-          while (displayCount < 0)
-          {
-            displayCount = ShowCursor(true);
-          }
-          while (displayCount > 0)
-          {
-            displayCount = ShowCursor(false);
-          }
-        }
+        ShowMouseCursor = true;
+        MouseTimeOutTimer = DateTime.Now;
+        UpdateMouseCursor();
       }
     }
 
@@ -1071,8 +1044,8 @@ namespace MediaPortal
       _presentParams.ForceNoMultiThreadedFlag  = false;
 
       GUIGraphicsContext.DirectXPresentParameters = _presentParams;
-      
-      GUIGraphicsContext.MaxFPS = GUIGraphicsContext.DirectXPresentParameters.FullScreenRefreshRateInHz;
+
+      GUIGraphicsContext.MaxFPS = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.RefreshRate;
       Windowed = windowed;
     }
 
@@ -1347,50 +1320,53 @@ namespace MediaPortal
     /// <summary>
     /// Automatically hides or show mouse cursor when over form
     /// </summary>
-    private void HandleCursor()
+    private void UpdateMouseCursor()
     {
-      if (AutoHideMouse)
+      if (!AutoHideMouse)
       {
-        bool isOverForm;
-        try
-        {
-          isOverForm = ClientRectangle.Contains(PointToClient(MousePosition));
-        }
-        catch
-        {
-          isOverForm = false;
-        }
+        return;
+      }
 
-        // don't update cursor status when not over client area
-        if (!isOverForm)
-        {
-          MouseTimeOutTimer = DateTime.Now;
-          return;
-        }
+      bool isOverForm;
+      try
+      {
+        isOverForm = ClientRectangle.Contains(PointToClient(MousePosition));
+      }
+      catch
+      {
+        isOverForm = false;
+      }
 
-        // update mouse cursor state
-        if (ShowMouseCursor != _lastShowCursor)
+      // don't update cursor status when not over client area
+      if (!isOverForm)
+      {
+        MouseTimeOutTimer = DateTime.Now;
+        return;
+      }
+
+      // Hide mouse cursor after three seconds of inactivity
+      var timeSpam = DateTime.Now - MouseTimeOutTimer;
+      if (timeSpam.TotalSeconds >= 3)
+      {
+        ShowMouseCursor = false;
+      }
+
+      // update mouse cursor state if necessary
+      if (ShowMouseCursor != _lastShowMouseCursor)
+      {
+        switch (ShowMouseCursor)
         {
-          if (ShowMouseCursor)
-          {
+          case true:
+            Log.Debug("D3D: Showing mouse cursor");
             Cursor.Show();
-          }
-          else
-          {
+            break;
+          case false:
+            Log.Debug("D3D: Hiding mouse cursor");
             Cursor.Hide();
-          }
-          _lastShowCursor = ShowMouseCursor;
+            break;
         }
-
-        // hide mouse cursor state if not active in the last three seconds
-        var ts = DateTime.Now - MouseTimeOutTimer;
-        if (ShowMouseCursor && ts.TotalSeconds >= 3)
-        {
-          Log.Debug("D3D: Hiding Mouse Cursor");
-          Cursor.Hide();
-          ShowMouseCursor = false;
-          Invalidate(true);
-        }
+        _lastShowMouseCursor = ShowMouseCursor;
+        Invalidate();
       }
     }
 
@@ -1935,13 +1911,12 @@ namespace MediaPortal
         return;
       }
 
-      if (!_disableMouseEvents && !ShowMouseCursor)
+      if (!_disableMouseEvents)
       {
-        Cursor.Show();
         ShowMouseCursor = true;
-        Invalidate(true);
       }
       MouseTimeOutTimer = DateTime.Now;
+      UpdateMouseCursor();
     }
 
 
@@ -1951,13 +1926,12 @@ namespace MediaPortal
     /// <param name="e"></param>
     protected virtual void MouseClickEvent(MouseEventArgs e)
     {
-      if (!ShowMouseCursor)
+      if (!_disableMouseEvents)
       {
-        Cursor.Show();
         ShowMouseCursor = true;
-        Invalidate(true);
       }
       MouseTimeOutTimer = DateTime.Now;
+      UpdateMouseCursor();
     }
 
 
@@ -1967,13 +1941,12 @@ namespace MediaPortal
     /// <param name="e"></param>
     protected virtual void MouseDoubleClickEvent(MouseEventArgs e)
     {
-      if (!ShowMouseCursor)
+      if (!_disableMouseEvents)
       {
-        Cursor.Show();
         ShowMouseCursor = true;
-        Invalidate(true);
       }
       MouseTimeOutTimer = DateTime.Now;
+      UpdateMouseCursor();
     }
 
     #endregion
