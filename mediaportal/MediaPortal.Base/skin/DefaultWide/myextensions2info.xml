@@ -3,6 +3,7 @@
   <id>804</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#selecteditem:#MPE.Selected.Name</define>
   <controls>
     <control>
       <description>BG</description>
@@ -11,26 +12,24 @@
       <texture>background.png</texture>
       <width>1280</width>
       <height>720</height>
-    </control>    
+    </control>
+    <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
-      <type>label</type>
-      <id>1</id>
-      <posX>60</posX>
-      <posY>27</posY>
-      <label>#MPE.Selected.Name</label>
-      <font>font16</font>
-      <align>left</align>
-      <textcolor>ivory</textcolor>
-			<width>680</width>
-      <animation effect="Fade" time="250">WindowOpen</animation>
-      <animation effect="Fade" time="100">WindowClose</animation>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>30</posY>
+      <width>1280</width>
+      <height>720</height>
+      <texture>general_overlay.png</texture>
     </control>
     <control>
       <description>Action Buttons</description>
       <type>group</type>
-      <posX>40</posX>
-      <posY>165</posY>
+      <posX>50</posX>
+        <posY>121</posY>
       <layout>StackLayout(0, Vertical, true)</layout>
       <animation effect="Fade" time="250">WindowOpen</animation>
       <animation effect="Fade" time="100">WindowClose</animation>
@@ -117,10 +116,10 @@
     </control>
     <control>
       <type>image</type>
-      <posX>1016</posX>
-      <posY>98</posY>
-      <width>228</width>
-      <height>192</height>
+      <posX>970</posX>
+      <posY>200</posY>
+      <width>261</width>
+      <height>221</height>
       <keepaspectratio>yes</keepaspectratio>
       <texture>#MPE.Selected.Icon</texture>
       <font>font11</font>
@@ -316,11 +315,10 @@
       <animation effect="Fade" time="100">WindowClose</animation>
       <visible>string.equals(#MPE.View.Name,#MPEI.Translation.MPOnlineExtensions.Label)</visible>
     </control>
-    
     <control>
       <type>textboxscrollup</type>
       <posX>336</posX>
-      <posY>307</posY>
+      <posY>327</posY>
       <width>911</width>
       <height>180</height>
       <font>font11</font>
@@ -332,7 +330,7 @@
     <control>
       <type>textboxscrollup</type>
       <posX>336</posX>
-      <posY>390</posY>
+      <posY>420</posY>
       <width>911</width>
       <height>180</height>
       <font>font11</font>
@@ -344,8 +342,8 @@
     <control>
       <description>Image Tags</description>
       <type>group</type>
-      <posX>60</posX>
-      <posY>75</posY>
+      <posX>970</posX>
+      <posY>180</posY>
       <dimColor>FFffffff</dimColor>
       <layout>StackLayout(4, Horizontal, true)</layout>
       <animation effect="Fade" time="250">WindowOpen</animation>
@@ -365,6 +363,6 @@
         <visible>string.contains(#MPE.Selected.DeveloperPick,true)</visible>
         <texture>status_editorpick.png</texture>
       </control>
-     </control>
+    </control>
   </controls>
 </window>

@@ -40,6 +40,7 @@ using TvDatabase;
 using TvLibrary;
 using TvLibrary.Channels;
 using TvLibrary.Implementations;
+using TvLibrary.Epg;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using StatementType = Gentle.Framework.StatementType;
@@ -203,6 +204,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
       IList<ChannelGroup> groups = ObjectFactory.GetCollection<ChannelGroup>(stmt.Execute());
       ChannelGroup group;
+      int GroupSelected = 0;
       if (groups.Count == 0)
       {
         group = new ChannelGroup(groupName, 9999);
@@ -210,7 +212,14 @@ namespace TvDatabase
       }
       else
       {
-        group = groups[0];
+        for (int i = 0; i < groups.Count; ++i)
+        {
+          if (groups[i].GroupName == groupName)
+          {
+            GroupSelected = i;
+          }
+        }
+        group = groups[GroupSelected];
       }
       return group;
     }
@@ -1551,7 +1560,13 @@ namespace TvDatabase
                : GetProgramsByTitle(startTime, endTime, programName);
     }
 
-    public IList<string> GetGenres()
+    // Maintained for backward compatibility.
+    public List<string> GetGenres()
+    {
+      return GetProgramGenres();
+    }
+
+    public List<string> GetProgramGenres()
     {
       List<string> genres = new List<string>();
       string connectString = ProviderFactory.GetDefaultProvider().ConnectionString;
@@ -1600,6 +1615,107 @@ namespace TvDatabase
         }
       }
       return genres;
+    }
+
+    private IList<string> GetDefaultMpGenreNames()
+    {
+      // Return a list of default names of MP genres.
+      List<string> defaultGenreList = new List<string>();
+      defaultGenreList.Add("Documentary");
+      defaultGenreList.Add("Kids");
+      defaultGenreList.Add("Movie");
+      defaultGenreList.Add("Music");
+      defaultGenreList.Add("News");
+      defaultGenreList.Add("Special");
+      defaultGenreList.Add("Sports");
+      return defaultGenreList;
+    }
+
+    /// <summary>
+    /// Returns a list of MediaPortal genres.
+    /// </summary>
+    /// <returns>A list of MediaPortal genres</returns>
+    public List<MpGenre> GetMpGenres()
+    {
+      string genre;
+      bool enabled;
+      List<MpGenre> mpGenres = new List<MpGenre>();
+      List<string> mappedProgramGenres;
+      List<string> defaultGenreNames = (List<string>)GetDefaultMpGenreNames();
+
+      // Get the id of the mp genre identified as the movie genre.
+      int genreMapMovieGenreId;
+      if (!int.TryParse(GetSetting("genreMapMovieGenreId", "-1").Value, out genreMapMovieGenreId))
+      {
+        genreMapMovieGenreId = -1;
+      }
+
+      // Each genre map value is a '{' delimited list of "program" genre names (those that may be compared with the genre from the program listings).
+      // It is an error if a single "program" genre is mapped to more than one guide genre; behavior is undefined for this condition.
+      for (int i = 0; i < defaultGenreNames.Count; i++)
+      {
+        // The genremap key is an integer value that is added to a base value in order to locate the correct localized genre name string.
+        genre = GetSetting("genreMapName" + i, defaultGenreNames[i]).Value;
+
+        // Get the status of the mp genre.
+        if (!bool.TryParse(GetSetting("genreMapNameEnabled" + i, "True").Value, out enabled))
+        {
+          enabled = true;
+        }
+
+        // Create a mp genre object.
+        MpGenre mpg = new MpGenre(genre, i);
+        mpg.IsMovie = (i == genreMapMovieGenreId);
+        mpg.Enabled = enabled;
+
+        string genreMapEntry = GetSetting("genreMapEntry" + i, "").Value;
+        mappedProgramGenres = new List<string>(genreMapEntry.Split(new char[] { '{' }, StringSplitOptions.RemoveEmptyEntries));
+
+        foreach (string programGenre in mappedProgramGenres)
+        {
+          mpg.MapToProgramGenre(programGenre);
+        }
+
+        mpGenres.Add((MpGenre)mpg);
+      }
+
+      return mpGenres;
+    }
+
+    /// <summary>
+    /// Save the specified list of MediaPortal genres to the database.
+    /// </summary>
+    /// <param name="mpGenres">A list of MediaPortal genre objects</param>
+    public void SaveMpGenres(List<MpGenre> mpGenres)
+    {
+      Setting setting;
+      foreach (var genre in mpGenres)
+      {
+        setting = GetSetting("genreMapName" + genre.Id, "");
+        setting.Value = genre.Name;
+        setting.Persist();
+
+        string mappedProgramGenres = "";
+        foreach (var programGenre in genre.MappedProgramGenres)
+        {
+          mappedProgramGenres += programGenre + '{';
+        }
+
+        setting = GetSetting("genreMapEntry" + genre.Id, "");
+        setting.Value = mappedProgramGenres.TrimEnd('{');
+        setting.Persist();
+
+        setting = GetSetting("genreMapNameEnabled" + genre.Id, "true");
+        setting.Value = genre.Enabled.ToString();
+        setting.Persist();
+
+        if (genre.IsMovie)
+        {
+          setting = GetSetting("genreMapMovieGenreId", "-1");
+          setting.Value = genre.Id.ToString();
+          setting.Persist();
+        }
+      }
     }
 
     //GEMX: for downwards compatibility
@@ -2505,7 +2621,6 @@ namespace TvDatabase
       {
         Log.Info("BusinessLayer: ExecuteInsertProgramsMySqlCommand - Prepare caused an Exception - {0}", ex.Message);
       }
-
       foreach (Program prog in currentInserts)
       {
         sqlCmd.Parameters["?idChannel"].Value = prog.IdChannel;
@@ -2759,16 +2874,17 @@ namespace TvDatabase
 
     #region schedules
 
-    public List<Schedule> GetConflictingSchedules(Schedule rec)
+    public void GetConflictingSchedules(Schedule rec, out List<Schedule> conflictingSchedules, out List<Schedule> notViewableSchedules)
     {
       Log.Info("GetConflictingSchedules: Schedule = " + rec);
-      List<Schedule> conflicts = new List<Schedule>();
+      conflictingSchedules = new List<Schedule>();
+      notViewableSchedules = new List<Schedule>();
       IList<Schedule> schedulesList = Schedule.ListAll();
 
-      IList<Card> cards = Card.ListAll();
+      IList<Card> cards = Card.ListAllEnabled();
       if (cards.Count == 0)
       {
-        return conflicts;
+        return;
       }
       Log.Info("GetConflictingSchedules: Cards.Count = {0}", cards.Count);
 
@@ -2780,6 +2896,9 @@ namespace TvDatabase
 
       // GEMX: Assign all already scheduled timers to cards. Assume that even possibly overlapping schedulues are ok to the user,
       // as he decided to keep them before. That's why they are in the db
+
+      List<Schedule> newEpisodes = GetRecordingTimes(rec);
+
       foreach (Schedule schedule in schedulesList)
       {
         List<Schedule> episodes = GetRecordingTimes(schedule);
@@ -2793,12 +2912,28 @@ namespace TvDatabase
           {
             continue;
           }
-          List<Schedule> overlapping;
-          AssignSchedulesToCard(episode, cardSchedules, out overlapping);
+          // skip not overlapping episodes
+          foreach (Schedule newEpisode in newEpisodes)
+          {
+            if (DateTime.Now > newEpisode.EndTime)
+            {
+              continue;
+            }
+            if (newEpisode.IsSerieIsCanceled(newEpisode.StartTime))
+            {
+              continue;
+            }
+            if (newEpisode.IsOverlapping(episode))
+            {
+              List<Schedule> overlapping;
+              List<Schedule> notViewable;
+              AssignSchedulesToCard(episode, cardSchedules, out overlapping, out notViewable);
+              break;
+            }
+          }
         }
       }
 
-      List<Schedule> newEpisodes = GetRecordingTimes(rec);
       foreach (Schedule newEpisode in newEpisodes)
       {
         if (DateTime.Now > newEpisode.EndTime)
@@ -2810,27 +2945,32 @@ namespace TvDatabase
           continue;
         }
         List<Schedule> overlapping;
-        if (!AssignSchedulesToCard(newEpisode, cardSchedules, out overlapping))
+        List<Schedule> notViewable;
+        if (!AssignSchedulesToCard(newEpisode, cardSchedules, out overlapping, out notViewable))
         {
           Log.Info("GetConflictingSchedules: newEpisode can not be assigned to a card = " + newEpisode);
-          conflicts.AddRange(overlapping);
+          conflictingSchedules.AddRange(overlapping);
+          notViewableSchedules.AddRange(notViewable);
         }
       }
-      return conflicts;
+      return;
     }
 
     private static bool AssignSchedulesToCard(Schedule schedule, List<Schedule>[] cardSchedules,
-                                              out List<Schedule> overlappingSchedules)
+                                              out List<Schedule> overlappingSchedules, out List<Schedule> notViewabledSchedules)
     {
       overlappingSchedules = new List<Schedule>();
+      notViewabledSchedules = new List<Schedule>();
       Log.Info("AssignSchedulesToCard: schedule = " + schedule);
-      IList<Card> cards = Card.ListAll();
+      IList<Card> cards = Card.ListAllEnabled();
       bool assigned = false;
+      bool canView = false;
       int count = 0;
       foreach (Card card in cards)
       {
-        if (card.Enabled && card.canViewTvChannel(schedule.IdChannel))
+        if (card.canViewTvChannel(schedule.IdChannel))
         {
+          canView = true;
           // checks if any schedule assigned to this cards overlaps current parsed schedule
           bool free = true;
           foreach (Schedule assignedSchedule in cardSchedules[count])
@@ -2860,12 +3000,11 @@ namespace TvDatabase
         }
         count++;
       }
-      if (!assigned)
+      if (!canView)
       {
-        return false;
+        notViewabledSchedules.Add(schedule);
       }
-
-      return true;
+      return (canView && assigned);
     }
 
     public List<Schedule> GetRecordingTimes(Schedule rec)

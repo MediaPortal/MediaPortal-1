@@ -3,22 +3,140 @@
   <id>2004</id>
   <defaultcontrol>2</defaultcontrol>
   <controls>
+    <!--     *******************************************************************************************  -->
+    <!--     *******************************    NOW PLAYING AUDIO   ************************************  -->
+    <!--     *******************************************************************************************  -->
     <control>
-      <description>rectangle image</description>
+      <description>music area</description>
       <type>image</type>
-      <id>0</id>
-      <posX>30</posX>
-      <posY>547</posY>
-      <width>360</width>
-      <height>180</height>
-      <texture mask="picturethumbmask.png">blue.png</texture>
-      <colordiffuse>90ffffff</colordiffuse>
+      <id>1</id>
+      <posX>-20</posX>
+      <posY>650</posY>
+      <width>1350</width>
+      <height>60</height>
+      <texture>general_overlay_selecteditem.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>Player.HasAudio+!Player.HasVideo</visible>
     </control>
+    <control>
+      <description>music logo when no thumb</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>605</posX>
+      <posY>640</posY>
+      <width>70</width>
+      <height>70</height>
+      <centered>no</centered>
+      <keepaspectratio>no</keepaspectratio>
+      <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(12345)+!control.hasthumb(77)</visible>
+      <texture mask="cdthumbmask.png">defaultArtistBig.png</texture>
+    </control>
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>12345</id>
+      <posX>605</posX>
+      <posY>640</posY>
+      <width>70</width>
+      <height>70</height>
+      <centered>no</centered>
+      <keepaspectratio>no</keepaspectratio>
+      <visible>Player.HasAudio+!Player.HasVideo</visible>
+      <texture mask="cdthumbmask.png">#Play.Current.Thumb</texture>
+    </control>
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>77</id>
+      <posX>605</posX>
+      <posY>640</posY>
+      <width>70</width>
+      <height>70</height>
+      <centered>no</centered>
+      <keepaspectratio>no</keepaspectratio>
+      <texture mask="cdthumbmask.png">#Play.Current.ArtistThumb</texture>
+      <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(12345)</visible>
+    </control>
+    <control>
+      <description>CD Cover</description>
+      <type>image</type>
+      <id>790</id>
+      <posX>605</posX>
+      <posY>640</posY>
+      <width>70</width>
+      <height>70</height>
+      <centered>no</centered>
+      <visible>Player.HasAudio+!Player.HasVideo</visible>
+      <texture>cdthumbframe.png</texture>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>585</posX>
+      <posY>653</posY>
+      <width>560</width>
+      <visible>Player.HasAudio+!Player.HasVideo</visible>
+      <label>#(L(171)) #Play.Current.Artist</label>
+      <align>right</align>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>585</posX>
+      <posY>677</posY>
+      <visible>Player.HasAudio+!Player.HasVideo</visible>
+      <label>#(L(179)): #Play.Current.Title</label>
+      <width>560</width>
+      <align>right</align>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>695</posX>
+      <posY>653</posY>
+      <width>560</width>
+      <visible>Player.HasAudio+!Player.HasVideo</visible>
+      <label>#(L(170)) #Play.Current.Album</label>
+      <align>left</align>
+      <textcolor>ivory</textcolor>
+      <font>font11</font>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>695</posX>
+      <posY>677</posY>
+      <width>560</width>
+      <label>#(L(435)) #Play.Current.Track  |  #(L(436)) #Play.Current.Year  |  #currentplaytime &gt; #currentremaining</label>
+      <align>left</align>
+      <textcolor>ivory</textcolor>
+      <font>font11</font>
+      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#Play.Current.Lastfm.CurrentStream,)</visible>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>695</posX>
+      <posY>677</posY>
+      <width>560</width>
+      <label>#Play.Current.Lastfm.CurrentStream  |  #currentplaytime &gt; #currentremaining</label>
+      <align>left</align>
+      <textcolor>ivory</textcolor>
+      <font>font11</font>
+      <visible>Player.HasAudio+!Player.HasVideo+!string.equals(#Play.Current.Lastfm.CurrentStream,)</visible>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     ******************    !!!  THESE CONTROLS ARE FOR COMPATIBILITY ONLY  !!!  ****************  -->
+    <!--     *******************************************************************************************  -->
     <control>
       <description>play time label</description>
       <type>label</type>
       <id>2</id>
-      <posX>286</posX>
+      <posX>2286</posX>
       <posY>585</posY>
       <label>#currentplaytime</label>
       <align>left</align>
@@ -29,7 +147,7 @@
       <description>music logo</description>
       <type>image</type>
       <id>1</id>
-      <posX>85</posX>
+      <posX>2285</posX>
       <posY>558</posY>
       <width>115</width>
       <height>115</height>
@@ -42,7 +160,7 @@
       <description>music logo</description>
       <type>image</type>
       <id>87</id>
-      <posX>85</posX>
+      <posX>2285</posX>
       <posY>558</posY>
       <width>115</width>
       <height>115</height>
@@ -54,7 +172,7 @@
       <description>music logo</description>
       <type>image</type>
       <id>86</id>
-      <posX>85</posX>
+      <posX>2285</posX>
       <posY>558</posY>
       <width>115</width>
       <height>115</height>
@@ -64,21 +182,10 @@
       <visible>!control.hasthumb(87)</visible>
     </control>
     <control>
-      <description>music rectangle</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>85</posX>
-      <posY>558</posY>
-      <width>115</width>
-      <height>115</height>
-      <texture>picturethumbframe.png</texture>
-      <centered>yes</centered>
-    </control>
-    <control>
       <description>play logo</description>
       <type>image</type>
       <id>3</id>
-      <posX>216</posX>
+      <posX>2216</posX>
       <posY>580</posY>
       <width>52</width>
       <height>52</height>
@@ -88,7 +195,7 @@
       <description>Pause logo</description>
       <type>image</type>
       <id>4</id>
-      <posX>216</posX>
+      <posX>2216</posX>
       <posY>580</posY>
       <width>52</width>
       <height>52</height>
@@ -98,7 +205,7 @@
       <description>FF logo</description>
       <type>image</type>
       <id>7</id>
-      <posX>216</posX>
+      <posX>2216</posX>
       <posY>580</posY>
       <width>52</width>
       <height>52</height>
@@ -108,7 +215,7 @@
       <description>RW logo</description>
       <type>image</type>
       <id>8</id>
-      <posX>216</posX>
+      <posX>2216</posX>
       <posY>580</posY>
       <width>52</width>
       <height>52</height>
@@ -118,7 +225,7 @@
       <description>Gap / Normal Icon</description>
       <type>image</type>
       <id>10</id>
-      <posX>230</posX>
+      <posX>2230</posX>
       <posY>638</posY>
       <width>43</width>
       <height>27</height>
@@ -129,7 +236,7 @@
       <description>Gapless Icon</description>
       <type>image</type>
       <id>11</id>
-      <posX>230</posX>
+      <posX>2230</posX>
       <posY>638</posY>
       <width>43</width>
       <height>27</height>
@@ -140,7 +247,7 @@
       <description>Crossfade Icon</description>
       <type>image</type>
       <id>12</id>
-      <posX>230</posX>
+      <posX>2230</posX>
       <posY>638</posY>
       <width>43</width>
       <height>27</height>
@@ -152,7 +259,7 @@
       <type>fadelabel</type>
       <id>5</id>
       <height>37</height>
-      <posX>43</posX>
+      <posX>2243</posX>
       <posY>675</posY>
       <width>335</width>
       <font>font12</font>

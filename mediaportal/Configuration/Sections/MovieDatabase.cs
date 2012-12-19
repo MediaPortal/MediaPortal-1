@@ -923,20 +923,23 @@ namespace MediaPortal.Configuration.Sections
         listViewMovieActors.Sort();
 
         string szGenres = movie.Genre;
-        if (szGenres.IndexOf("/") >= 0)
+        if (szGenres.IndexOf("/") >= 0 || szGenres.IndexOf("|") >= 0)
         {
-          Tokens f = new Tokens(szGenres, new[] {'/'});
+          Tokens f = new Tokens(szGenres, new[] {'/', '|'});
           foreach (string strGenre in f)
           {
-            String strCurrentGenre = strGenre.Trim();
-            listViewGenres.Items.Add(strCurrentGenre);
-
-            for (int i = listViewAllGenres.Items.Count - 1; i >= 0; --i)
+            if (!string.IsNullOrEmpty(strGenre))
             {
-              if (listViewAllGenres.Items[i].Text == strCurrentGenre)
+              String strCurrentGenre = strGenre.Trim();
+              listViewGenres.Items.Add(strCurrentGenre);
+
+              for (int i = listViewAllGenres.Items.Count - 1; i >= 0; --i)
               {
-                listViewAllGenres.Items.RemoveAt(i);
-                break;
+                if (listViewAllGenres.Items[i].Text == strCurrentGenre)
+                {
+                  listViewAllGenres.Items.RemoveAt(i);
+                  break;
+                }
               }
             }
           }
@@ -1929,6 +1932,8 @@ namespace MediaPortal.Configuration.Sections
         chbUseSortTitle.Checked = xmlreader.GetValueAsBool("moviedatabase", "usesorttitle", false);
         // Use only nfo scrapper
         chbUseNfoScraperOnly.Checked = xmlreader.GetValueAsBool("moviedatabase", "useonlynfoscraper", false);
+        chbDoNotUseDatabase.Checked = xmlreader.GetValueAsBool("moviedatabase", "donotusedatabase", false);
+        chbDoNotUseDatabase.Enabled = chbUseNfoScraperOnly.Checked;
 
         // FanArt setting
         string configDir;
@@ -1942,8 +1947,17 @@ namespace MediaPortal.Configuration.Sections
           _useFanArt = false;
         }
         useFanartCheckBox.Checked = _useFanArt;
-        fanartQ.Value = xmlreader.GetValueAsInt("moviedatabase", "fanartnumber", 1);
+        int faValue = xmlreader.GetValueAsInt("moviedatabase", "fanartnumber", 1);
         
+        if (faValue < 1)
+        {
+          fanartQ.Value = 1;
+        }
+        else
+        {
+          fanartQ.Value = faValue;
+        }
+
         if (_useFanArt)
         {
           fanartQ.Enabled = true;
@@ -2025,6 +2039,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("moviedatabase", "usesorttitle", chbUseSortTitle.Checked);
         // nfo scraper only
         xmlwriter.SetValueAsBool("moviedatabase", "useonlynfoscraper", chbUseNfoScraperOnly.Checked);
+        xmlwriter.SetValueAsBool("moviedatabase", "donotusedatabase", chbDoNotUseDatabase.Checked);
         
         xmlwriter.SetValueAsBool("movies", "fuzzyMatching", _isFuzzyMatching);
         // FanArt
@@ -2279,7 +2294,7 @@ namespace MediaPortal.Configuration.Sections
       _progressDialog.Total = 1;
       _progressDialog.Count = 1;
       _progressDialog.Show();
-      if (DownloadFile(_grabberIndexFile, GrabberIndexUrl) == false)
+      if (DownloadFile(_grabberIndexFile, GrabberIndexUrl, Encoding.Default) == false)
       {
         _progressDialog.CloseProgress();
         return;
@@ -2314,7 +2329,7 @@ namespace MediaPortal.Configuration.Sections
         _progressDialog.Count = i + 1;
         percent += 100 / (sectionNodes.Count - 1);
 
-        if (DownloadFile(IMDB.ScriptDirectory + @"\" + id, url) == false)
+        if (DownloadFile(IMDB.ScriptDirectory + @"\" + id, url, Encoding.Default) == false)
         {
           _progressDialog.CloseProgress();
           return;
@@ -2378,7 +2393,7 @@ namespace MediaPortal.Configuration.Sections
       _progressDialog.Total = 1;
       _progressDialog.Count = 1;
       _progressDialog.Show();
-      if (DownloadFile(parserIndexFile, parserIndexUrl) == false)
+      if (DownloadFile(parserIndexFile, parserIndexUrl, Encoding.UTF8) == false)
       {
         _progressDialog.CloseProgress();
         return;
@@ -2389,7 +2404,7 @@ namespace MediaPortal.Configuration.Sections
       _progressDialog.Total = 1;
       _progressDialog.Count = 1;
       _progressDialog.Show();
-      if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl) == false)
+      if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl, Encoding.Default) == false)
       {
         _progressDialog.CloseProgress();
         return;
@@ -2539,7 +2554,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private bool DownloadFile(string filepath, string url)
+    private bool DownloadFile(string filepath, string url, Encoding enc)
     {
       string grabberTempFile = Path.GetTempFileName();
 
@@ -2567,7 +2582,7 @@ namespace MediaPortal.Configuration.Sections
           Application.DoEvents();
           using (Stream resStream = response.GetResponseStream())
           {
-            using (TextReader tin = new StreamReader(resStream, Encoding.Default))
+            using (TextReader tin = new StreamReader(resStream, enc))
             {
               using (TextWriter tout = File.CreateText(grabberTempFile))
               {
@@ -5096,6 +5111,7 @@ namespace MediaPortal.Configuration.Sections
         mpDeleteGrabber.Enabled = true;
         mpComboBoxAvailableDatabases.Enabled = true;
         mpButtonAddGrabber.Enabled = true;
+        chbDoNotUseDatabase.Enabled = false;
       }
       else
       {
@@ -5106,6 +5122,7 @@ namespace MediaPortal.Configuration.Sections
         mpDeleteGrabber.Enabled = false;
         mpComboBoxAvailableDatabases.Enabled = false;
         mpButtonAddGrabber.Enabled = false;
+        chbDoNotUseDatabase.Enabled = true;
       }
 
       using (Settings xmlwriter = new MPSettings())
@@ -5177,7 +5194,16 @@ namespace MediaPortal.Configuration.Sections
         pBox.ImageLocation = largeThumb;
       }
     }
+
     #endregion
+
+    private void chbDoNotUseDatabase_CheckedChanged(object sender, EventArgs e)
+    {
+      using (Settings xmlwriter = new MPSettings())
+      {
+        xmlwriter.SetValueAsBool("moviedatabase", "donotusedatabase", chbDoNotUseDatabase.Checked);
+      }
+    }
     
     #endregion
   }

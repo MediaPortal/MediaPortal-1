@@ -22,7 +22,7 @@
       <posY>625</posY>
       <texture>calibrate_subtitles.png</texture>
       <colorkey>FFFF00FF</colorkey>
-      <colordiffuse>FFFFFFFF</colordiffuse>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <control>
       <description>coordinates label</description>

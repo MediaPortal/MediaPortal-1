@@ -15,15 +15,14 @@
           <description>listcontrol</description>
           <type>listcontrol</type>
           <id>50</id>
-          <posX>602</posX>
-          <posY>200</posY>
-          <width>642</width>
-          <height>500</height>
-          <onleft>2</onleft>
-          <onright>2</onright>
-          <textXOff2>535</textXOff2>
+          <width>550</width>
+          <playedColor>ffffffff</playedColor>
+          <playedColor2>ffffffff</playedColor2>
+          <textcolor>ff99f9ff</textcolor>
+          <textcolorNoFocus>ff99f9ff</textcolorNoFocus>
+          <textXOff2>550</textXOff2>
           <textYOff2>2</textYOff2>
-          <textXOff3>632</textXOff3>
+          <textXOff3>2545</textXOff3>
           <textYOff3>8</textYOff3>
           <textalign3>right</textalign3>
           <font3>font9</font3>
@@ -71,14 +70,14 @@
           <type>thumbnailpanel</type>
           <id>50</id>
           <posX>80</posX>
-          <posY>120</posY>
+          <posY>165</posY>
           <width>1200</width>
           <height>588</height>
           <scrollOffset>1</scrollOffset>
           <onleft>2</onleft>
           <onright>2</onright>
           <itemWidth>127</itemWidth>
-          <itemHeight>185</itemHeight>
+          <itemHeight>152</itemHeight>
           <textureWidth>105</textureWidth>
           <textureHeight>145</textureHeight>
           <thumbWidth>105</thumbWidth>
@@ -86,7 +85,7 @@
           <thumbPosX>0</thumbPosX>
           <thumbPosY>0</thumbPosY>
           <itemWidthBig>170</itemWidthBig>
-          <itemHeightBig>255</itemHeightBig>
+          <itemHeightBig>225</itemHeightBig>
           <thumbWidthBig>145</thumbWidthBig>
           <thumbHeightBig>205</thumbHeightBig>
           <textureWidthBig>145</textureWidthBig>
@@ -98,7 +97,7 @@
           <keepaspectratio>no</keepaspectratio>
           <hideUnfocusTexture>yes</hideUnfocusTexture>
           <renderFocusText>no</renderFocusText>
-          <renderUnfocusText>yes</renderUnfocusText>
+          <renderUnfocusText>no</renderUnfocusText>
           <showFrame>true</showFrame>
           <textureMask>Videothumbmask.png</textureMask>
           <frameNoFocus>Videothumbframe.png</frameNoFocus>
@@ -201,8 +200,8 @@
           <folderSuffix>]</folderSuffix>
           <font1>font13</font1>
           <font2>font10</font2>
-          <label1>#title</label1>
-          <label2>#genre</label2>
+          <label1>-</label1>
+          <label2>-</label2>
           <textColor>FFFFFFFF</textColor>
           <remoteColor>ffcc9900</remoteColor>
           <playedColor>ff6FAFE1</playedColor>
@@ -218,7 +217,7 @@
           <scrollbarBackground>bar_hor.png</scrollbarBackground>
           <scrollbarLeft>mouse_left_horizontal.png</scrollbarLeft>
           <scrollbarRight>mouse_right_horizontal.png</scrollbarRight>
-          <scrollbarYOff>455</scrollbarYOff>
+          <scrollbarYOff>385</scrollbarYOff>
           <showScrollbar>yes</showScrollbar>
           <cards mask="videothumbmask.png">videothumbframe.png</cards>
           <folderPrefix />
@@ -353,10 +352,10 @@
                 <posX>10</posX>
                 <posY>145</posY>
                 <width>240</width>
-                <height>100</height>
+                <height>82</height>
                 <label>#plot</label>
                 <font>font9</font>
-                <lineSpacing>2</lineSpacing>
+                <lineSpacing>2.5</lineSpacing>
                 <textcolor>ivory</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>

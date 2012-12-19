@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2015</id>
@@ -8,10 +8,11 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>black.png</texture>
-      <colordiffuse>40ffffff</colordiffuse>
+      <width>960</width>
+      <height>720</height>
+      <texture>white.png</texture>
+      <colordiffuse>201e90ff</colordiffuse>
+      <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
     </control>
     <control>
       <type>group</type>
@@ -19,38 +20,50 @@
       <control>
         <type>image</type>
         <id>0</id>
-        <posX>104</posX>
-        <width>545</width>
-        <height>276</height>
-        <posY>154</posY>
+        <posX>139</posX>
+        <width>727</width>
+        <height>345</height>
+        <posY>193</posY>
         <texture>dialog_schedule_rec.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>139</posX>
+        <width>727</width>
+        <height>345</height>
+        <posY>193</posY>
+        <texture>dialog_schedule_rec.png</texture>
+        <colordiffuse>bbffffff</colordiffuse>
       </control>
       <control>
         <description>Heading text label</description>
         <type>label</type>
         <id>4</id>
-        <posX>149</posX>
-        <posY>189</posY>
+        <posX>199</posX>
+        <posY>237</posY>
         <label>181</label>
         <font>font14</font>
         <textcolor>FFFFFFFF</textcolor>
       </control>
       <control>
-        <description>Label text </description>
+        <description>Label text</description>
         <type>label</type>
         <id>5</id>
-        <posX>216</posX>
-        <posY>332</posY>
+        <posX>288</posX>
+        <posY>416</posY>
         <label>-</label>
         <font>font12</font>
         <textcolor>FFFFFFFF</textcolor>
       </control>
       <control>
-        <description>Label text </description>
+        <description>Label text</description>
         <type>label</type>
         <id>6</id>
-        <posX>216</posX>
-        <posY>348</posY>
+        <posX>288</posX>
+        <posY>436</posY>
         <label>-</label>
         <font>font12</font>
         <textcolor>FFFFFFFF</textcolor>
@@ -59,12 +72,12 @@
         <description>Exit button</description>
         <type>button</type>
         <id>2</id>
-        <posX>579</posX>
-        <posY>185</posY>
-        <width>28</width>
-        <height>40</height>
-        <textureFocus>dialogue_shutdown_focus.png</textureFocus>
-        <textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
+        <posX>772</posX>
+        <posY>232</posY>
+        <width>37</width>
+        <height>37</height>
+        <textureFocus>top_exit_enabled.png</textureFocus>
+        <textureNoFocus>top_exit_disabled.png</textureNoFocus>
         <label>-</label>
         <onleft>3</onleft>
         <onright>3</onright>
@@ -75,21 +88,21 @@
         <description>options listcontrol</description>
         <type>listcontrol</type>
         <id>3</id>
-        <posX>149</posX>
-        <posY>260</posY>
-        <width>450</width>
-        <height>260</height>
+        <posX>199</posX>
+        <posY>325</posY>
+        <width>600</width>
+        <height>325</height>
         <onleft>2</onleft>
         <onright>2</onright>
         <onup>2</onup>
         <ondown>2</ondown>
-        <spinPosX>579</spinPosX>
-        <spinPosY>497</spinPosY>
-        <spinWidth>15</spinWidth>
-        <spinHeight>16</spinHeight>
-        <textureHeight>34</textureHeight>
+        <spinPosX>773</spinPosX>
+        <spinPosY>622</spinPosY>
+        <spinWidth>21</spinWidth>
+        <spinHeight>20</spinHeight>
+        <textureHeight>43</textureHeight>
         <font>font14</font>
-        <textYOff>2</textYOff>
+        <textYOff>3</textYOff>
       </control>
     </control>
   </controls>

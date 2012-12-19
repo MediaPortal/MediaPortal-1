@@ -7,16 +7,15 @@
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
-    <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
       <description>rectangle image</description>
       <type>image</type>
       <id>1</id>
-      <posX>120</posX>
-      <posY>120</posY>
-      <width>478</width>
-      <height>360</height>
+      <posX>161</posX>
+      <posY>150</posY>
+      <width>637</width>
+      <height>450</height>
       <texture mask="picturethumbmask.png">blue.png</texture>
       <colordiffuse>ccffffff</colordiffuse>
     </control>
@@ -29,16 +28,16 @@
         <description>Horizontal Speed label</description>
         <type>label</type>
         <id>1</id>
-        <posX>143</posX>
-        <posY>138</posY>
+        <posX>191</posX>
+        <posY>173</posY>
         <label>1442</label>
       </control>
       <control>
         <description>Horizontal Speed select</description>
         <type>spincontrol</type>
         <id>2</id>
-        <posX>443</posX>
-        <posY>142</posY>
+        <posX>591</posX>
+        <posY>178</posY>
         <align>right</align>
         <onup>17</onup>
         <ondown>4</ondown>
@@ -49,16 +48,16 @@
         <description>Vertical Speed label</description>
         <type>label</type>
         <id>1</id>
-        <posX>143</posX>
-        <posY>165</posY>
+        <posX>191</posX>
+        <posY>207</posY>
         <label>1443</label>
       </control>
       <control>
         <description>Vertical Speed select</description>
         <type>spincontrol</type>
         <id>4</id>
-        <posX>443</posX>
-        <posY>169</posY>
+        <posX>591</posX>
+        <posY>212</posY>
         <align>right</align>
         <onup>2</onup>
         <ondown>3</ondown>
@@ -66,6 +65,6 @@
         <onright>4</onright>
       </control>
       <!--List loop delay-->&gt;
-      <control><description>List loop delay label</description><type>label</type><id>1</id><posX>143</posX><posY>192</posY><label>300136</label></control><control><description>List loop delay</description><type>spincontrol</type><id>5</id><posX>443</posX><posY>196</posY><align>right</align><onup>2</onup><ondown>3</ondown><onleft>4</onleft><onright>4</onright></control><control><description>FPS label</description><type>label</type><id>1</id><posX>143</posX><posY>219</posY><label>973</label></control><control><description>FPS select</description><type>spincontrol</type><id>3</id><posX>443</posX><posY>224</posY><align>right</align><onup>4</onup><ondown>99</ondown><onleft>3</onleft><onright>3</onright></control><control><description>currentFPS count</description><type>label</type><id>1</id><posX>493</posX><posY>220</posY><label>#fps</label></control><control><description>Example label</description><type>label</type><id>1</id><posX>143</posX><posY>247</posY><width>399</width><label>675</label></control><control><description>TagLine value</description><type>fadelabel</type><id>25</id><posX>143</posX><posY>267</posY><width>299</width><label>-</label><font>font13</font><textcolor>FFB2D4F5</textcolor></control><control><description>Description1</description><type>textboxscrollup</type><id>26</id><posX>143</posX><posY>315</posY><width>356</width><height>132</height><label>-</label><font>font13</font><textcolor>FFB2D4F5</textcolor></control></control>
+      <control><description>List loop delay label</description><type>label</type><id>1</id><posX>191</posX><posY>241</posY><label>300136</label></control><control><description>List loop delay</description><type>spincontrol</type><id>5</id><posX>591</posX><posY>246</posY><align>right</align><onup>2</onup><ondown>3</ondown><onleft>4</onleft><onright>4</onright></control><control><description>FPS label</description><type>label</type><id>1</id><posX>191</posX><posY>274</posY><label>973</label></control><control><description>FPS select</description><type>spincontrol</type><id>3</id><posX>591</posX><posY>280</posY><align>right</align><onup>4</onup><ondown>99</ondown><onleft>3</onleft><onright>3</onright></control><control><description>currentFPS count</description><type>label</type><id>1</id><posX>657</posX><posY>275</posY><label>#fps</label></control><control><description>Example label</description><type>label</type><id>1</id><posX>191</posX><posY>309</posY><width>533</width><label>675</label></control><control><description>TagLine value</description><type>fadelabel</type><id>25</id><posX>191</posX><posY>334</posY><width>399</width><label>-</label><font>font13</font><textcolor>FFB2D4F5</textcolor></control><control><description>Description1</description><type>textboxscrollup</type><id>26</id><posX>191</posX><posY>394</posY><width>474</width><height>165</height><label>-</label><font>font13</font><textcolor>FFB2D4F5</textcolor></control></control>
   </controls>
 </window>

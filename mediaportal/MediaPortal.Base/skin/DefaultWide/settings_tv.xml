@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>700</id>
-  <defaultcontrol>24</defaultcontrol>
-  <allowoverlay>yes</allowoverlay>
+  <defaultcontrol>30</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
   <define>#header.label:6014</define>
   <define>#header.hover:hover_my tv.png</define>
   <controls>
     <import>common.settings.xml</import>
+    <import>common.time.xml</import>
     <control>
       <description>background</description>
       <type>image</type>
@@ -16,7 +17,7 @@
       <height>550</height>
       <width>535</width>
       <texture>backslide.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <control>
       <description>buttons</description>
@@ -32,6 +33,7 @@
         <id>30</id>
         <label>6006</label>
         <width>450</width>
+        <onup>21</onup>
       </control>
       <control>
         <description>De-interlacing</description>
@@ -117,6 +119,7 @@
         <id>33</id>
         <label>6002</label>
         <width>450</width>
+        <ondown>30</ondown>
       </control>
     </control>
   </controls>

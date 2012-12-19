@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>508</id>
@@ -9,41 +9,52 @@
       <type>image</type>
       <description>background image</description>
       <id>1</id>
-      <width>720</width>
-      <height>576</height>
+      <width>960</width>
+      <height>720</height>
+      <texture>BH Music.jpg</texture>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
+      <description>General Overlay</description>
+      <id>1</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>30</posY>
+      <width>960</width>
+      <height>720</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
       <type>image</type>
       <description>Album Art image</description>
       <id>10</id>
-      <posX>63</posX>
-      <posY>104</posY>
-      <width>88</width>
-      <height>125</height>
-      <texture flipY="true" diffuse="Thumb_Mask.png" mask="picturethumbmask.png">-</texture>
+      <posX>742</posX>
+      <posY>180</posY>
+      <width>195</width>
+      <height>195</height>
+      <texture mask="cdthumbmask.png">-</texture>
       <keepaspectratio>no</keepaspectratio>
     </control>
     <control>
       <type>image</type>
       <description>Album Art Overlay</description>
       <id>1</id>
-      <posX>63</posX>
-      <posY>104</posY>
-      <width>88</width>
-      <height>125</height>
-      <texture flipY="true" diffuse="Thumb_Mask.png" mask="picturethumbmask.png">picturethumbframe.png</texture>
+      <posX>742</posX>
+      <posY>180</posY>
+      <width>195</width>
+      <height>195</height>
+      <texture mask="cdthumbmask.png">cdthumbframe.png</texture>
       <keepaspectratio>no</keepaspectratio>
     </control>
     <control>
       <type>image</type>
       <description>Amazon Logo image</description>
       <id>30</id>
-      <posX>63</posX>
-      <posY>496</posY>
-      <width>93</width>
-      <height>44</height>
+      <posX>1584</posX>
+      <posY>620</posY>
+      <width>125</width>
+      <height>56</height>
       <texture>amazonlogo.png</texture>
       <centered>yes</centered>
       <keepaspectratio>yes</keepaspectratio>
@@ -52,19 +63,19 @@
       <type>label</type>
       <description>Album Cover Art Label</description>
       <id>11</id>
-      <posX>63</posX>
-      <posY>230</posY>
+      <posX>750</posX>
+      <posY>400</posY>
       <label>4519</label>
-      <font>font10</font>
+      <font>font12</font>
       <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <type>fadelabel</type>
       <description>Artist value</description>
       <id>12</id>
-      <posX>252</posX>
-      <posY>133</posY>
-      <width>450</width>
+      <posX>1836</posX>
+      <posY>167</posY>
+      <width>600</width>
       <label>-</label>
       <font>font16</font>
       <textcolor>ffffffff</textcolor>
@@ -73,9 +84,9 @@
       <type>fadelabel</type>
       <description>Album value</description>
       <id>13</id>
-      <posX>252</posX>
-      <posY>104</posY>
-      <width>450</width>
+      <posX>1836</posX>
+      <posY>130</posY>
+      <width>600</width>
       <label>-</label>
       <font>font16</font>
       <textcolor>ffffffff</textcolor>
@@ -84,8 +95,8 @@
       <type>label</type>
       <description>Release year value</description>
       <id>14</id>
-      <posX>247</posX>
-      <posY>160</posY>
+      <posX>1830</posX>
+      <posY>200</posY>
       <label>-</label>
       <font>font16</font>
       <textcolor>ffffffff</textcolor>
@@ -94,8 +105,10 @@
       <type>label</type>
       <description>No matches label</description>
       <id>15</id>
-      <posX>360</posX>
-      <posY>320</posY>
+      <posX>0</posX>
+      <posY>200</posY>
+      <width>960</width>
+      <align>center</align>
       <label>4516</label>
       <visible>false</visible>
       <font>font18</font>
@@ -105,57 +118,65 @@
       <type>listcontrol</type>
       <description>album view listcontrol</description>
       <id>25</id>
-      <posX>288</posX>
-      <posY>168</posY>
-      <height>400</height>
-      <onleft>20</onleft>
-      <onright>25</onright>
-      <onup>25</onup>
-      <ondown>25</ondown>
-      <textcolor>FFFFFFFF</textcolor>
-      <subtype>album</subtype>
-      <selectedColor2>FFFF6600</selectedColor2>
-      <font2>font13</font2>
-      <textXOff2>409</textXOff2>
-      <font>font13</font>
-      <textXOff>5</textXOff>
-      <itemHeight>56</itemHeight>
-      <itemWidth>39</itemWidth>
-      <textureHeight>70</textureHeight>
-      <selectedColor>FFFF6600</selectedColor>
-      <IconXOff>9</IconXOff>
+      <posX>75</posX>
+      <posY>170</posY>
+      <height>450</height>
+      <width>600</width>
+      <textXOff>7</textXOff>
+      <textYOff>2</textYOff>
+      <textXOff2>600</textXOff2>
+      <textYOff2>32</textYOff2>
+      <textXOff3>57</textXOff3>
+      <textYOff3>32</textYOff3>
+      <PinIconXOff>60</PinIconXOff>
+      <PinIconYOff>34</PinIconYOff>
+      <PinIconWidth>35</PinIconWidth>
+      <PinIconHeight>25</PinIconHeight>
+      <textureHeight>60</textureHeight>
+      <itemWidth>41</itemWidth>
+      <itemHeight>41</itemHeight>
+      <IconXOff>7</IconXOff>
       <IconYOff>7</IconYOff>
+      <keepaspectratio>yes</keepaspectratio>
+      <font>font13</font>
+      <font2>font10</font2>
+      <font3>font10</font3>
+      <textcolor>ffffffff</textcolor>
+      <textcolor2>ffffffff</textcolor2>
+      <textcolor3>ffffffff</textcolor3>
+      <selectedColor>80000000</selectedColor>
+      <selectedColor2>ffffffff</selectedColor2>
+      <spinWidth>30</spinWidth>
+      <spinHeight>40</spinHeight>
+      <spinPosX>1627</spinPosX>
+      <spinPosY>470</spinPosY>
       <spaceBetweenItems>0</spaceBetweenItems>
-      <suffix>   |   </suffix>
-      <textcolor2>FFFFFFFF</textcolor2>
-      <textYOff2>36</textYOff2>
-      <unfocusedAlpha>170</unfocusedAlpha>
     </control>
     <control>
       <type>button</type>
       <description>Skip button</description>
       <id>20</id>
-      <posX>63</posX>
-      <posY>416</posY>
+      <posX>300</posX>
+      <posY>560</posY>
       <onleft>20</onleft>
       <onright>25</onright>
       <onup>20</onup>
       <ondown>21</ondown>
       <label>4520</label>
-      <width>126</width>
+      <width>168</width>
     </control>
     <control>
       <type>button</type>
       <description>Cancel button</description>
       <id>21</id>
-      <posX>63</posX>
-      <posY>448</posY>
+      <posX>84</posX>
+      <posY>560</posY>
       <onleft>21</onleft>
       <onright>25</onright>
       <onup>20</onup>
       <ondown>21</ondown>
       <label>222</label>
-      <width>126</width>
+      <width>168</width>
     </control>
   </controls>
 </window>

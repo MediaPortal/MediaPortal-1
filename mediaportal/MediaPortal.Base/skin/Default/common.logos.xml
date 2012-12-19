@@ -1,21 +1,36 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
     <control>
+      <description>bar image</description>
+      <type>image</type>
+      <id>01</id>
+      <posX>270</posX>
+      <posY>568</posY>
+      <height>52</height>
+      <width>375</width>
+      <texture>osd_mask3.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+      <animation effect="slide" start="0,50" time="100" reversible="true">visible</animation>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
       <description>Logos group</description>
       <type>group</type>
-      <posX>39</posX>
-      <posY>524</posY>
+      <posX>277</posX>
+      <posY>575</posY>
+      <visible>control.hasfocus(1237)</visible>
+      <animation effect="slide" start="0,50" time="100" reversible="true">visible</animation>
       <layout>StackLayout(2, Horizontal, true)</layout>
       <control>
         <description>Video codec (normal osd)</description>
         <type>image</type>
         <id>0</id>
-        <posX>75</posX>
-        <posY>524</posY>
-        <width>38</width>
-        <height>29</height>
+        <posX>101</posX>
+        <posY>655</posY>
+        <width>51</width>
+        <height>47</height>
         <texture>logos\#Play.Current.VideoCodec.Texture.png</texture>
         <keepaspectratio>yes</keepaspectratio>
       </control>
@@ -23,8 +38,8 @@
         <description>Video resolution</description>
         <type>image</type>
         <id>0</id>
-        <width>38</width>
-        <height>29</height>
+        <width>51</width>
+        <height>47</height>
         <texture>logos\#Play.Current.VideoResolution.png</texture>
         <keepaspectratio>yes</keepaspectratio>
       </control>
@@ -32,8 +47,8 @@
         <description>Aspect ratio</description>
         <type>image</type>
         <id>0</id>
-        <width>38</width>
-        <height>29</height>
+        <width>51</width>
+        <height>47</height>
         <texture>logos\#Play.Current.AspectRatio.png</texture>
         <keepaspectratio>yes</keepaspectratio>
       </control>
@@ -41,10 +56,10 @@
         <description>Audio codec (normal osd)</description>
         <type>image</type>
         <id>0</id>
-        <posX>39</posX>
-        <posY>524</posY>
-        <width>38</width>
-        <height>29</height>
+        <posX>52</posX>
+        <posY>655</posY>
+        <width>51</width>
+        <height>47</height>
         <texture>logos\#Play.Current.AudioCodec.Texture.png</texture>
         <keepaspectratio>yes</keepaspectratio>
       </control>
@@ -52,8 +67,8 @@
         <description>Audio channels</description>
         <type>image</type>
         <id>0</id>
-        <width>38</width>
-        <height>29</height>
+        <width>51</width>
+        <height>47</height>
         <texture>logos\#Play.Current.AudioChannels.png</texture>
         <keepaspectratio>yes</keepaspectratio>
       </control>
@@ -61,10 +76,10 @@
         <description>Subtitles</description>
         <type>image</type>
         <id>0</id>
-        <posX>112</posX>
-        <posY>524</posY>
-        <width>38</width>
-        <height>29</height>
+        <posX>150</posX>
+        <posY>655</posY>
+        <width>51</width>
+        <height>47</height>
         <visible>string.equals(#Play.Current.HasSubtitles, True)</visible>
         <texture>logos\subtitles.png</texture>
         <keepaspectratio>yes</keepaspectratio>
@@ -73,8 +88,8 @@
         <description>Certification (MPAA) Logo</description>
         <type>image</type>
         <id>0</id>
-        <width>38</width>
-        <height>29</height>
+        <width>51</width>
+        <height>47</height>
         <texture>logos\#Play.Current.MPAARating.png</texture>
         <keepaspectratio>yes</keepaspectratio>
       </control>

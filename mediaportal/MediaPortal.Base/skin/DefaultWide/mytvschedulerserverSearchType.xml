@@ -15,13 +15,23 @@
     <import>common.window.xml</import>
 		<import>common.time.xml</import>
 		<control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>30</posY>
+      <width>1280</width>
+      <height>720</height>
+      <texture>general_overlay.png</texture>
+    </control>
+		<control>
 			<type>group</type>
 			<layout>StackLayout</layout>
 			<description>group element</description>
 			<animation effect="fade" time="250">WindowOpen</animation>
 			<animation effect="fade" time="250">WindowClose</animation>
-			<posX>71</posX>
-			<posY>121</posY>
+			<posX>50</posX>
+			<posY>170</posY>
 			<control>
 				<description>Quick Record</description>
 				<type>button</type>

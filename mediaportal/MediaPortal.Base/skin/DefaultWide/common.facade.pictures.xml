@@ -27,14 +27,14 @@
           <dimColor>90ffffff</dimColor>
           <id>50</id>
           <posX>60</posX>
-          <posY>140</posY>
+          <posY>180</posY>
           <width>1220</width>
-          <height>548</height>
+          <height>500</height>
           <scrollOffset>1</scrollOffset>
           <onleft>2</onleft>
           <onright>2</onright>
           <itemWidth>145</itemWidth>
-          <itemHeight>135</itemHeight>
+          <itemHeight>105</itemHeight>
           <textureWidth>130</textureWidth>
           <textureHeight>90</textureHeight>
           <thumbWidth>130</thumbWidth>
@@ -43,7 +43,7 @@
           <thumbPosY>0</thumbPosY>
           <keepaspectratio>yes</keepaspectratio>
           <itemWidthBig>200</itemWidthBig>
-          <itemHeightBig>180</itemHeightBig>
+          <itemHeightBig>140</itemHeightBig>
           <textureWidthBig>190</textureWidthBig>
           <textureHeightBig>135</textureHeightBig>
           <thumbWidthBig>190</thumbWidthBig>
@@ -54,7 +54,7 @@
           <zoomYPixels>50</zoomYPixels>
           <hideUnfocusTexture>yes</hideUnfocusTexture>
           <renderFocusText>no</renderFocusText>
-          <renderUnfocusText>yes</renderUnfocusText>
+          <renderUnfocusText>no</renderUnfocusText>
           <showFrame>true</showFrame>
           <textureMask>Picturethumbmask.png</textureMask>
           <frameNoFocus>Picturethumbframe.png</frameNoFocus>
@@ -74,7 +74,7 @@
           <id>50</id>
           <scrollOffset>2</scrollOffset>
           <posX>60</posX>
-          <posY>340</posY>
+          <posY>280</posY>
           <width>1200</width>
           <height>720</height>
           <onup>2</onup>
@@ -99,7 +99,7 @@
           <showFolder>no</showFolder>
           <showBackGround>no</showBackGround>
           <showInfoImage>no</showInfoImage>
-          <keepaspectratio>yes</keepaspectratio>
+          <keepaspectratio>no</keepaspectratio>
           <dimColor>80ffffff</dimColor>
           <spinPosX>-800</spinPosX>
           <scrollbarBackground>bar_hor.png</scrollbarBackground>
@@ -116,7 +116,7 @@
           <dimColor>90ffffff</dimColor>
           <id>50</id>
           <posX>0</posX>
-          <posY>260</posY>
+          <posY>190</posY>
           <width>1366</width>
           <height>768</height>
           <onleft>2</onleft>
@@ -137,7 +137,7 @@
           <backgroundHeight>100</backgroundHeight>
           <backgroundWidth>1366</backgroundWidth>
           <backgroundX>0</backgroundX>
-          <backgroundY>395</backgroundY>
+          <backgroundY>355</backgroundY>
           <backgroundDiffuse>60000000</backgroundDiffuse>
           <background>roof.png</background>
           <showBackground>yes</showBackground>

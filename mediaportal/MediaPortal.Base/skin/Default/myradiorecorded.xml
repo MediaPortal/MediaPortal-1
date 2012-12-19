@@ -8,50 +8,23 @@
   <define>#header.hover:hover_my radio.png</define>
   <controls>
     <control>
-      <type>image</type>
       <description>BG</description>
-      <width>720</width>
-      <height>576</height>
-      <id>0</id>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH Radio.jpg</texture>
+      <posX>-160</posX>
+      <posY>0</posY>
+      <width>1280</width>
+      <height>720</height>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
-      <id>500</id>
-      <type>image</type>
-      <posX>42</posX>
-      <posY>266</posY>
-      <width>137</width>
-      <height>110</height>
-      <texture>#selectedthumb</texture>
-      <visible>[facadeview.list|facadeview.album]+Control.HasFocus(50)</visible>
-      <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
-    </control>
-    <control>
-      <type>image</type>
-      <id>0</id>
-      <posX>39</posX>
-      <posY>264</posY>
-      <width>145</width>
-      <height>118</height>
-      <texture>Picture_cover.png</texture>
-      <visible>[facadeview.list|facadeview.album]+Control.HasFocus(50)+Control.HasThumb(500)</visible>
-    </control>
-    <control>
-      <type>image</type>
-      <id>0</id>
-      <posX>76</posX>
-      <posY>400</posY>
-      <width>160</width>
-      <height>157</height>
-      <texture>-</texture>
-    </control>
-    <control>
       <description>Number of Files Label</description>
       <type>label</type>
       <id>12</id>
-      <posX>259</posX>
-      <posY>545</posY>
+      <posX>346</posX>
+      <posY>682</posY>
       <label>#selectedindex/#itemcount #itemtype</label>
       <font>font10</font>
       <align>left</align>
@@ -59,131 +32,211 @@
       <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
     </control>
     <control>
-      <type>group</type>
-      <description>group element</description>
-      <id>24</id>
-      <posX>39</posX>
-      <posY>96</posY>
-      <layout>StackLayout</layout>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>30</posY>
+      <width>960</width>
+      <height>720</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>50</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>-60</buttonY>
+      <buttonwidth>79</buttonwidth>
+      <buttonheight>720</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>426</width>
+      <height>900</height>
+      <dimColor>00ffffff</dimColor>
       <control>
-        <type>menubutton</type>
-        <description>View-As button</description>
-        <id>2</id>
-        <onleft>2</onleft>
-        <onright>50</onright>
-        <onup>17</onup>
-        <ondown>3</ondown>
-        <label></label>
-        <mode>dialoglist</mode>
-        <dialogTitle>792</dialogTitle>
-        <valueTextInButton>yes</valueTextInButton>
-        <valuePrefixText>95</valuePrefixText>
+        <type>image</type>
+        <id>0</id>
+        <width>960</width>
+        <height>720</height>
+        <texture>white.png</texture>
+        <colordiffuse>201e90ff</colordiffuse>
       </control>
       <control>
-        <type>sortbutton</type>
-        <id>3</id>
-        <onleft>3</onleft>
-        <onright>50</onright>
-        <onup>2</onup>
-        <ondown>5</ondown>
-        <label>620</label>
+        <type>image</type>
+        <posX>19</posX>
+        <posY>78</posY>
+        <width>280</width>
+        <height>591</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
       </control>
       <control>
-        <type>menubutton</type>
-        <description>All,Genre,Channel button</description>
-        <id>5</id>
-        <onleft>5</onleft>
-        <onright>50</onright>
-        <onup>3</onup>
-        <ondown>6</ondown>
-        <label></label>
-        <mode>dialoglist</mode>
-        <dialogTitle>499</dialogTitle>
-        <valueTextInButton>yes</valueTextInButton>
-        <valuePrefixText>97</valuePrefixText>
+        <description>group element</description>
+        <type>group</type>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+        <posX>37</posX>
+        <posY>121</posY>
+        <layout>StackLayout</layout>
+        <visible>!Control.HasFocus(50)</visible>
+        <control>
+          <type>menubutton</type>
+          <description>View-As button</description>
+          <id>2</id>
+          <onleft>2</onleft>
+          <onright>50</onright>
+          <onup>17</onup>
+          <ondown>3</ondown>
+          <label />
+          <mode>dialoglist</mode>
+          <dialogTitle>792</dialogTitle>
+          <valueTextInButton>yes</valueTextInButton>
+          <valuePrefixText>95</valuePrefixText>
+        </control>
+        <control>
+          <type>sortbutton</type>
+          <id>3</id>
+          <onleft>3</onleft>
+          <onright>50</onright>
+          <onup>2</onup>
+          <ondown>5</ondown>
+          <label>620</label>
+        </control>
+        <control>
+          <type>menubutton</type>
+          <description>All,Genre,Channel button</description>
+          <id>5</id>
+          <onleft>5</onleft>
+          <onright>50</onright>
+          <onup>3</onup>
+          <ondown>6</ondown>
+          <label />
+          <mode>dialoglist</mode>
+          <dialogTitle>499</dialogTitle>
+          <valueTextInButton>yes</valueTextInButton>
+          <valuePrefixText>97</valuePrefixText>
+        </control>
+        <control>
+          <type>button</type>
+          <description>cleanup button</description>
+          <id>6</id>
+          <onleft>6</onleft>
+          <onright>50</onright>
+          <onup>5</onup>
+          <ondown>99</ondown>
+          <label>624</label>
+        </control>
       </control>
       <control>
-        <type>button</type>
-        <description>cleanup button</description>
-        <id>6</id>
-        <onleft>6</onleft>
-        <onright>50</onright>
-        <onup>5</onup>
-        <ondown>99</ondown>
-        <label>624</label>
+        <type>image</type>
+        <posX>346</posX>
+        <posY>475</posY>
+        <width>60</width>
+        <height>73</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <centered>yes</centered>
+        <zoom>no</zoom>
+        <texture>#Radio.Recorded.thumb</texture>
       </control>
+      <control>
+        <description>channel</description>
+        <id>0</id>
+        <type>fadelabel</type>
+        <posX>414</posX>
+        <posY>467</posY>
+        <align>left</align>
+        <width>505</width>
+        <textcolor>ff6FAFE1</textcolor>
+        <label>#Radio.Recorded.Channel</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>Current program time</description>
+        <id>14</id>
+        <type>label</type>
+        <posX>414</posX>
+        <posY>495</posY>
+        <width>210</width>
+        <label>#Radio.Recorded.Time</label>
+        <align>left</align>
+        <font>font12</font>
+        <textcolor>ff6FAFE1</textcolor>
+      </control>
+      <control>
+        <description>Current program genre</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>911</posX>
+        <posY>495</posY>
+        <width>285</width>
+        <label>#Radio.Recorded.Genre</label>
+        <align>right</align>
+        <font>font12</font>
+        <textcolor>FFFFFFFF</textcolor>
+        <visible>!string.equals(#Radio.Recorded.Genre,-)</visible>
+      </control>
+      <control>
+        <description>Current program title</description>
+        <type>fadelabel</type>
+        <id>13</id>
+        <posX>414</posX>
+        <posY>523</posY>
+        <width>498</width>
+        <label>#Radio.Recorded.Title</label>
+        <font>font12</font>
+        <textcolor>FFFFFFFF</textcolor>
+      </control>
+      <control>
+        <description>Description1</description>
+        <type>textboxscrollup</type>
+        <id>15</id>
+        <posX>346</posX>
+        <posY>560</posY>
+        <height>85</height>
+        <width>566</width>
+        <label>#Radio.Recorded.Description</label>
+        <font>font11</font>
+        <textcolor>FFFFFFFF</textcolor>
+      </control>
+    </control>
+    <import>common.facade.recordings.xml</import>
+    <control>
+      <id>1</id>
+      <type>image</type>
+      <posX>742</posX>
+      <posY>180</posY>
+      <width>161</width>
+      <height>161</height>
+      <texture mask="cdthumbmask.png">missing_coverart_radio.png</texture>
+      <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)+!control.hasthumb(500)]</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <control>
+      <id>500</id>
+      <type>image</type>
+      <posX>742</posX>
+      <posY>180</posY>
+      <width>161</width>
+      <height>161</height>
+      <texture mask="cdthumbmask.png">#selectedthumb</texture>
+      <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
     </control>
     <control>
       <type>image</type>
-      <posX>259</posX>
-      <posY>380</posY>
-      <width>45</width>
-      <height>58</height>
-      <keepaspectratio>yes</keepaspectratio>
-      <centered>yes</centered>
-      <zoom>no</zoom>
-      <texture>#Radio.Recorded.thumb</texture>
+      <id>1</id>
+      <posX>742</posX>
+      <posY>180</posY>
+      <width>161</width>
+      <height>161</height>
+      <texture>cdthumbframe.png</texture>
+      <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
     </control>
-    <control>
-      <description>channel</description>
-      <id>0</id>
-      <type>fadelabel</type>
-      <posX>310</posX>
-      <posY>373</posY>
-      <align>left</align>
-      <width>379</width>
-      <textcolor>ff6FAFE1</textcolor>
-      <label>#Radio.Recorded.Channel</label>
-      <font>font12</font>
-    </control>
-    <control>
-      <description>Current program time</description>
-      <id>14</id>
-      <type>label</type>
-      <posX>310</posX>
-      <posY>396</posY>
-      <width>157</width>
-      <label>#Radio.Recorded.Time</label>
-      <align>left</align>
-      <font>font12</font>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
-    <control>
-      <description>Current program genre</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>683</posX>
-      <posY>396</posY>
-      <width>213</width>
-      <label>#Radio.Recorded.Genre</label>
-      <align>right</align>
-      <font>font12</font>
-      <textcolor>FFFFFFFF</textcolor>
-      <visible>!string.equals(#Radio.Recorded.Genre,-)</visible>
-    </control>
-    <control>
-      <description>Current program title</description>
-      <type>fadelabel</type>
-      <id>13</id>
-      <posX>310</posX>
-      <posY>418</posY>
-      <width>373</width>
-      <label>#Radio.Recorded.Title</label>
-      <font>font12</font>
-      <textcolor>FFFFFFFF</textcolor>
-    </control>
-    <control>
-      <description>Description1</description>
-      <type>textboxscrollup</type>
-      <id>15</id>
-      <posX>259</posX>
-      <posY>448</posY>
-      <height>68</height>
-      <width>424</width>
-      <label>#Radio.Recorded.Description</label>
-      <font>font11</font>
-      <textcolor>FFFFFFFF</textcolor>
-    </control>
-    <import>common.facade.recordings.xml</import>
   </controls>
 </window>

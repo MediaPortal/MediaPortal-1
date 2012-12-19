@@ -29,6 +29,8 @@ namespace MediaPortal.DeployTool
     DownloadOnly,
     DownloadSettings,
     Upgrade,
+    SkinChoice,
+    ExtensionChoice,
     WatchTV,
     BASE_INSTALLATION_TYPE,
     BASE_INSTALLATION_TYPE_WITHOUT_TVENGINE,
@@ -142,6 +144,12 @@ namespace MediaPortal.DeployTool
             break;
           case DialogType.Finished:
             dlg = new FinishedDlg();
+            break;
+          case DialogType.SkinChoice:
+            dlg = new SkinChoice();
+            break;
+          case DialogType.ExtensionChoice:
+            dlg = new ExtensionChoice();
             break;
         }
         if (dlg != null)

@@ -8,152 +8,310 @@
   <define>#selecteditem:</define>
   <define>#selectedindex:</define>
   <define>#indexcount:</define>
+  <define>#usePlayFanart:Yes</define>
   <controls>
     <control>
       <description>background image</description>
       <type>image</type>
       <id>1</id>
-      <width>720</width>
-      <height>576</height>
+      <width>960</width>
+      <height>720</height>
+      <texture>BH Menu.jpg</texture>
     </control>
+    <import>common.music.play.fanart.BasicHome.xml</import>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
+    <control Style="BasicHomeFade">
+      <description>Buttons Background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>-20</posX>
+      <posY>592</posY>
+      <width>1012</width>
+      <height>56</height>
+      <texture>BH background.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+    </control>
     <control>
       <description>Menu</description>
       <type>menu</type>
-      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
-      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <animation effect="fade" time="300">WindowOpen</animation>
+      <animation effect="fade" time="300">WindowClose</animation>
       <id>50</id>
-      <posX>378</posX>
-      <posY>128</posY>
-      <width>281</width>
+      <posX>0</posX>
+      <posY>595</posY>
+      <width>960</width>
+      <textAlign>center</textAlign>
       <textcolor>ffffffff</textcolor>
-      <textColorNoFocus>ffa9d0f7</textColorNoFocus>
-      <dimColor>80ffffff</dimColor>
-      <buttonTextXOff>38</buttonTextXOff>
-      <buttonTextYOff>8</buttonTextYOff>
-      <buttonOffset>22</buttonOffset>
-      <buttonFont>font18</buttonFont>
-      <buttonHeight>61</buttonHeight>
-      <spaceBetweenButtons>0</spaceBetweenButtons>
+      <textColorNoFocus>ffa9a9a9</textColorNoFocus>
+      <dimColor>7A7979</dimColor>
+      <buttonTextXOff>0</buttonTextXOff>
+      <buttonTextYOff>0</buttonTextYOff>
+      <buttonOffset>0</buttonOffset>
+      <buttonFont>font16</buttonFont>
+      <buttonHeight>50</buttonHeight>
+      <buttonWidth>187</buttonWidth>
+      <spaceBetweenButtons>10</spaceBetweenButtons>
       <numberOfButtons>5</numberOfButtons>
-      <textureButtonFocus>hp_selectionbar_focus.png</textureButtonFocus>
-      <textureButtonNoFocus>-</textureButtonNoFocus>
-      <hoverX>67</hoverX>
-      <hoverY>108</hoverY>
-      <hoverWidth>236</hoverWidth>
-      <hoverHeight>336</hoverHeight>
+      <textureButtonFocus>button_focus.png</textureButtonFocus>
+      <textureButtonNoFocus />
+      <hoverX>1665</hoverX>
+      <hoverY>130</hoverY>
+      <hoverWidth>375</hoverWidth>
+      <hoverHeight>500</hoverHeight>
       <hoverKeepAspectratio>yes</hoverKeepAspectratio>
-      <scrollTime>120</scrollTime>
+      <scrollTime>250</scrollTime>
       <scrollTimeMin>50</scrollTimeMin>
-      <textureBackground>emtpy.png</textureBackground>
-      <onright>13</onright>
-      <onleft>10</onleft>
+      <textureBackground>-</textureBackground>
+      <onright>50</onright>
+      <onleft>50</onleft>
+      <onup>21</onup>
+      <ondown>50</ondown>
+      <horizontal>yes</horizontal>
+      <animation effect="fade" time="150" delay="100">windowopen</animation>
+      <animation effect="fade" time="150" delay="100">windowclose</animation>
     </control>
-    <!-- TOPBAR Buttons -->
+    <import>topbarhome.xml</import>
+    <!--     *******************************************************************************************  -->
+    <!--     *************************    NOW PLAYING OVERLAYS          ********************************  -->
+    <!--     *******************************************************************************************  -->
+    <!-- ******************************************************************************************* -->
+    <!-- ************************* INFOS ON BASIC HOME (NOW PLAYING VIDEO) ********************* -->
+    <!-- ******************************************************************************************* -->
     <control>
+      <description>video area</description>
       <type>image</type>
-      <id>1</id>
-      <texture>topbar_background.png</texture>
-      <posX>255</posX>
-      <posY>-1</posY>
-      <width>195</width>
-      <height>56</height>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>510</posY>
+      <width>1012</width>
+      <height>60</height>
+      <texture>BH background.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>Player.HasVideo</visible>
+      <texture>BH background.png</texture>
     </control>
     <control>
-      <description>group element</description>
+      <description>video preview window</description>
+      <type>videowindow</type>
+      <id>99</id>
+      <posX>420</posX>
+      <posY>480</posY>
+      <width>120</width>
+      <height>90</height>
+      <visible>player.HasVideo</visible>
+      <action>18</action>
+      <textureFocus>tv_green_border.png</textureFocus>
+    </control>
+    <control>
+      <description>NowPlaying Background TV/Video</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>416</posX>
+      <posY>475</posY>
+      <width>127</width>
+      <height>100</height>
+      <texture>LCD.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>Player.HasVideo</visible>
+    </control>
+    <control>
+      <description>scrolling info label Video</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>401</posX>
+      <posY>513</posY>
+      <width>360</width>
+      <align>right</align>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#Play.Current.Title</label>
+      <visible>Player.HasVideo</visible>
+    </control>
+    <control>
+      <description>scrolling info label Video</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>401</posX>
+      <posY>537</posY>
+      <width>412</width>
+      <align>right</align>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#Play.Current.Genre</label>
+      <visible>Player.HasVideo</visible>
+    </control>
+    <control>
+      <description>scrolling info label Video</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>555</posX>
+      <posY>513</posY>
+      <width>360</width>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#Play.Current.Year</label>
+      <visible>Player.HasVideo</visible>
+    </control>
+    <control>
+      <description>scrolling info label Video</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>555</posX>
+      <posY>537</posY>
+      <width>412</width>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#Play.Current.Director</label>
+      <visible>Player.HasVideo</visible>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     ******************   INFOS ON BASIC HOME (NOW PLAYING AUDIO) W FANART  ********************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
       <type>group</type>
-      <posX>260</posX>
-      <posY>4</posY>
-      <layout>StackLayout(2, Horizontal)</layout>
+      <description>group element</description>
+      <animation effect="slide" start="0,-20" time="100" condition="control.isvisible(9999988)" reversible="true">conditional</animation>
       <control>
-        <description>basichome button button</description>
-        <type>button</type>
-        <animation effect="zoom" start="100,100" end="110,110" time="200">focus</animation>
-        <animation effect="zoom" start="110,110" end="100,100" time="200">unfocus</animation>
-        <id>10</id>
-        <posX>398</posX>
-        <posY>80</posY>
-        <width>44</width>
-        <height>44</height>
-        <textureFocus>Basic_focus.png</textureFocus>
-        <textureNoFocus>Basic_nofocus.png</textureNoFocus>
-        <label>-</label>
-        <action>115</action>
-        <onleft>13</onleft>
-        <onright>11</onright>
-        <onup>10</onup>
-        <ondown>50</ondown>
+        <description>music area</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>-20</posX>
+        <posY>510</posY>
+        <width>1012</width>
+        <height>60</height>
+        <texture>BH background.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <visible>Player.HasAudio+!Player.HasVideo</visible>
       </control>
       <control>
-        <description>videowallpaper button</description>
-        <type>button</type>
-        <animation effect="zoom" start="100,100" end="110,110" time="200">focus</animation>
-        <animation effect="zoom" start="110,110" end="100,100" time="200">unfocus</animation>
-        <id>11</id>
-        <posX>458</posX>
-        <posY>80</posY>
-        <width>44</width>
-        <height>44</height>
-        <textureFocus>button_tvdesktop_focus.png</textureFocus>
-        <textureNoFocus>button_tvdesktop_nofocus.png</textureNoFocus>
-        <label>-</label>
-        <action>101</action>
-        <onleft>10</onleft>
-        <onright>12</onright>
-        <onup>11</onup>
-        <ondown>50</ondown>
+        <description>music logo when no thumb</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>446</posX>
+        <posY>503</posY>
+        <width>67</width>
+        <height>67</height>
+        <centered>no</centered>
+        <keepaspectratio>no</keepaspectratio>
+        <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(12345)+!control.hasthumb(77)</visible>
+        <texture mask="Picturethumbmask.png">defaultArtistBig.png</texture>
       </control>
       <control>
-        <description>Exit button</description>
-        <type>button</type>
-        <animation effect="zoom" start="100,100" end="110,110" time="200">focus</animation>
-        <animation effect="zoom" start="110,110" end="100,100" time="200">unfocus</animation>
-        <id>12</id>
-        <posX>518</posX>
-        <posY>80</posY>
-        <width>44</width>
-        <height>44</height>
-        <textureFocus>button_close_focus.png</textureFocus>
-        <textureNoFocus>button_close_nofocus.png</textureNoFocus>
-        <label>-</label>
-        <action>97</action>
-        <onleft>11</onleft>
-        <onright>13</onright>
-        <onup>12</onup>
-        <ondown>50</ondown>
+        <description>music logo</description>
+        <type>image</type>
+        <id>12345</id>
+        <posX>446</posX>
+        <posY>503</posY>
+        <width>67</width>
+        <height>67</height>
+        <centered>no</centered>
+        <keepaspectratio>no</keepaspectratio>
+        <visible>Player.HasAudio+!Player.HasVideo</visible>
+        <texture mask="Picturethumbmask.png">#Play.Current.Thumb</texture>
       </control>
       <control>
-        <description>Shutdown button</description>
-        <type>button</type>
-        <animation effect="zoom" start="100,100" end="110,110" time="200">focus</animation>
-        <animation effect="zoom" start="110,110" end="100,100" time="200">unfocus</animation>
-        <id>13</id>
-        <posX>578</posX>
-        <posY>80</posY>
-        <width>44</width>
-        <height>44</height>
-        <textureFocus>button_shutdown_focus.png</textureFocus>
-        <textureNoFocus>button_shutdown_nofocus.png</textureNoFocus>
-        <label>-</label>
-        <action>99</action>
-        <onleft>12</onleft>
-        <onright>10</onright>
-        <onup>13</onup>
-        <ondown>50</ondown>
+        <description>music logo</description>
+        <type>image</type>
+        <id>77</id>
+        <posX>446</posX>
+        <posY>503</posY>
+        <width>67</width>
+        <height>67</height>
+        <centered>no</centered>
+        <keepaspectratio>no</keepaspectratio>
+        <texture mask="Picturethumbmask.png">#Play.Current.ArtistThumb</texture>
+        <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(12345)</visible>
+      </control>
+      <control>
+        <description>CD Cover</description>
+        <type>image</type>
+        <id>790</id>
+        <posX>446</posX>
+        <posY>503</posY>
+        <width>67</width>
+        <height>67</height>
+        <centered>no</centered>
+        <visible>Player.HasAudio+!Player.HasVideo</visible>
+        <texture>picturethumbframe.png</texture>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>438</posX>
+        <posY>513</posY>
+        <width>420</width>
+        <visible>Player.HasAudio+!Player.HasVideo</visible>
+        <label>#(L(171)) #Play.Current.Artist</label>
+        <align>right</align>
+        <font>font11</font>
+        <textcolor>ivory</textcolor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>438</posX>
+        <posY>537</posY>
+        <visible>Player.HasAudio+!Player.HasVideo</visible>
+        <label>#(L(179)): #Play.Current.Title</label>
+        <width>420</width>
+        <align>right</align>
+        <font>font11</font>
+        <textcolor>ivory</textcolor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>521</posX>
+        <posY>513</posY>
+        <width>420</width>
+        <visible>Player.HasAudio+!Player.HasVideo</visible>
+        <label>#(L(170)) #Play.Current.Album</label>
+        <align>left</align>
+        <textcolor>ivory</textcolor>
+        <font>font11</font>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>521</posX>
+        <posY>537</posY>
+        <width>420</width>
+        <label>#(L(435)) #Play.Current.Track  |  #(L(436)) #Play.Current.Year  |  #currentplaytime &gt; #currentremaining</label>
+        <align>left</align>
+        <textcolor>ivory</textcolor>
+        <font>font11</font>
+        <visible>Player.HasAudio+!Player.HasVideo+string.equals(#Play.Current.Lastfm.CurrentStream,)</visible>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>521</posX>
+        <posY>537</posY>
+        <width>420</width>
+        <label>#Play.Current.Lastfm.CurrentStream  |  #currentplaytime &gt; #currentremaining</label>
+        <align>left</align>
+        <textcolor>ivory</textcolor>
+        <font>font11</font>
+        <visible>Player.HasAudio+!Player.HasVideo+!string.equals(#Play.Current.Lastfm.CurrentStream,)</visible>
       </control>
     </control>
-    <!--    *******************************************************************************************  -->
-    <!--    *************************  RSS-FEED ON BASIC HOME  **************************************  -->
-    <!--    *******************************************************************************************  -->
+    <!--     *******************************************************************************************  -->
+    <!--     *************************   RSS-FEED ON BASIC HOME   **************************************  -->
+    <!--     *******************************************************************************************  -->
     <control Style="BasicHomeFade">
       <description>RSS Feed Background</description>
       <type>image</type>
       <id>1</id>
-      <posX>45</posX>
-      <posY>504</posY>
-      <width>618</width>
-      <texture>list_sub_focus.png</texture>
+      <posX>60</posX>
+      <posY>670</posY>
+      <width>825</width>
+      <height>35</height>
+      <texture>rssbg.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
       <visible>plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)</visible>
     </control>
@@ -161,15 +319,17 @@
       <description>Feed items</description>
       <type>fadelabel</type>
       <id>1</id>
-      <posX>56</posX>
-      <posY>512</posY>
-      <width>596</width>
+      <posX>75</posX>
+      <posY>675</posY>
+      <width>795</width>
       <align>left</align>
-      <font>font10</font>
-      <textcolor>ivory</textcolor>
+      <font>font11</font>
+      <textcolor>vory</textcolor>
       <label>#infoservice.feed.titles</label>
-      <animation effect="fade" time="250">VisibleChange</animation>
-      <wrapString>: : :</wrapString>
+      <wrapString> :-: </wrapString>
+      <shadowAngle>0</shadowAngle>
+      <shadowDistance>0</shadowDistance>
+      <shadowColor />
       <visible>plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)</visible>
     </control>
   </controls>

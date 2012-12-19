@@ -126,7 +126,7 @@ namespace MediaPortal.GUI.Settings
         {
           string driveLetter = FolderInfo(item).Folder.Substring(0, 3).ToUpper();
 
-          if (Util.Utils.getDriveType(driveLetter) == 3 ||
+          if (driveLetter.StartsWith("\\\\") || Util.Utils.getDriveType(driveLetter) == 3 ||
               Util.Utils.getDriveType(driveLetter) == 4)
           {
             item.IsPlayed = false;

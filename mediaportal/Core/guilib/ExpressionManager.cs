@@ -182,24 +182,6 @@ namespace MediaPortal.GUI.Library
           {
             paramValues[i] = _parameters[i].Evaluate(options);
           }
-
-          // We may have to convert the parameters to the requested type.
-          if ("iif".Equals(_func.Name))
-          {
-            // The first parameter must be a boolean; attempt coersion if it is a string.
-            if (paramValues[0].GetType() != typeof(bool))
-            {
-              try
-              {
-                paramValues[0] = bool.Parse((string)paramValues[0]);
-              }
-              catch (Exception)
-              {
-                Log.Debug("Condition for iff() function is not a boolean; param={0}, value={1}", _parameters[0], paramValues[0]);
-              }
-            }
-          }
-
           _value = _func.Invoke(paramValues);
           IsValid = true;
         }

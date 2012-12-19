@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>3011</id>
+<defaultcontrol>8</defaultcontrol>
+<allowoverlay>no</allowoverlay>
+    <controls>
+		<control>
+            <description>group element</description>
+            <type>group</type>
+            <animation effect="fade" time="250">WindowOpen</animation>
+	<animation effect="zoom" delay="100" tween="elastic" easing="out" start="95,95" end="100,100" center="683,384" time="550">WindowOpen</animation>
+        <control>
+            <id>0</id>
+            <type>image</type>
+            <posX>409</posX>
+            <posY>164</posY>
+            <width>548</width>
+            <height>440</height>
+            <texture>context_background_cropsettings.png</texture>
+            <animation effect="Fade" time="250">WindowOpen</animation>
+            <animation effect="Fade" time="250">WindowClose</animation>
+        </control>
+        <control>
+            <id>4</id>
+            <description>Heading text label</description>
+            <type>label</type>
+            <posX>469</posX>
+            <posY>212</posY>
+            <font>Segoe Light18</font>
+            <textcolor>ff85cffe</textcolor>
+            <label>11000</label>
+            <animation effect="Fade" time="250">WindowOpen</animation>
+            <animation effect="Fade" time="250">WindowClose</animation>
+        </control>
+
+        <control>
+            <id>5</id>
+            <description>Subtitle text label</description>
+            <type>label</type>
+            <posX>469</posX>
+            <posY>249</posY>
+            <width>426</width>
+            <font>font12</font>
+            <textcolor>ffffffff</textcolor>
+            <animation effect="Fade" time="250">WindowOpen</animation>
+            <animation effect="Fade" time="250">WindowClose</animation>
+        </control>
+
+	<control>
+		<description>Crop label top</description>
+		<type>label</type>
+		<id>6</id>
+		<posX>465</posX>
+		<posY>292</posY>
+		<label>11001</label>
+	</control>
+
+	<control>
+		<description>Cropselect top</description>
+		<type>spincontrol</type>
+		<id>8</id>
+		<posX>647</posX>
+		<posY>292</posY>
+		<onup>20</onup>
+		<ondown>12</ondown>
+		<onleft>2</onleft>
+		<onright>2</onright>
+		<textcolor>FFFFFFFF</textcolor>
+		<align>right</align>
+	</control>
+
+	<control>
+		<description>Crop label bottom</description>
+		<type>label</type>
+		<id>10</id>
+		<posX>465</posX>
+		<posY>337</posY>
+		<label>11002</label>
+	</control>
+
+	<control>
+		<description>Cropselect bottom</description>
+		<type>spincontrol</type>
+		<id>12</id>
+		<posX>647</posX>
+		<posY>337</posY>
+		<onup>8</onup>
+		<ondown>16</ondown>
+		<onleft>2</onleft>
+		<onright>2</onright>
+		<textcolor>FFFFFFFF</textcolor>
+		<align>right</align>
+	</control>
+
+	<control>
+		<description>Crop label left</description>
+		<type>label</type>
+		<id>14</id>
+		<posX>465</posX>
+		<posY>389</posY>
+		<label>11003</label>
+	</control>
+
+	<control>
+		<description>Cropselect left</description>
+		<type>spincontrol</type>
+		<id>16</id>
+		<posX>647</posX>
+		<posY>389</posY>
+		<onup>12</onup>
+		<ondown>20</ondown>
+		<onleft>2</onleft>
+		<onright>2</onright>
+		<textcolor>FFFFFFFF</textcolor>
+		<align>right</align>
+	</control>
+
+	<control>
+		<description>Crop label right</description>
+		<type>label</type>
+		<id>18</id>
+		<posX>465</posX>
+		<posY>440</posY>
+		<label>11004</label>
+	</control>
+
+	<control>
+		<description>Cropselect right</description>
+		<type>spincontrol</type>
+		<id>20</id>
+		<posX>647</posX>
+		<posY>440</posY>
+		<onup>16</onup>
+		<ondown>8</ondown>
+		<onleft>2</onleft>
+		<onright>2</onright>
+		<textcolor>FFFFFFFF</textcolor>
+		<align>right</align>
+	</control>
+</control>
+
+</controls>
+</window>

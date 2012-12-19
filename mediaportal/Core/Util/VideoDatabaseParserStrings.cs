@@ -51,7 +51,7 @@ namespace MediaPortal.Util
         
         if (!File.Exists(parserIndexFile))
         {
-          if (DownloadFile(parserIndexFile, parserIndexUrl) == false)
+          if (DownloadFile(parserIndexFile, parserIndexUrl, Encoding.UTF8) == false)
           {
             string parserIndexFileBase = Config.GetFile(Config.Dir.Base, "VDBParserStrings.xml");
 
@@ -96,7 +96,7 @@ namespace MediaPortal.Util
       return result.ToArray(typeof(string)) as string[];
     }
 
-    private static bool DownloadFile(string filepath, string url)
+    private static bool DownloadFile(string filepath, string url, Encoding enc)
     {
       string parserTempFile = Path.GetTempFileName();
 
@@ -120,7 +120,7 @@ namespace MediaPortal.Util
         {
           using (Stream resStream = response.GetResponseStream())
           {
-            using (TextReader tin = new StreamReader(resStream, Encoding.Default))
+            using (TextReader tin = new StreamReader(resStream, enc))
             {
               using (TextWriter tout = File.CreateText(parserTempFile))
               {

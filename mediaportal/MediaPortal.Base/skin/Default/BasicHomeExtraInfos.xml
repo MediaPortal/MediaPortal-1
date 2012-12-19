@@ -10,6 +10,7 @@
       <type>group</type>
       <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
       <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <visible>!player.hasmedia+!skin.hassetting(#skin.no.latestmedia)</visible>
       <!--     *******************************************************************************************  -->
       <!--     *************************   RECENTLY ADDED - MYVIDEOS   ***********************************  -->
       <!--     *******************************************************************************************  -->
@@ -17,21 +18,21 @@
         <description>background for recently added files</description>
         <type>image</type>
         <id>98764</id>
-        <posX>22</posX>
-        <posY>80</posY>
-        <width>686</width>
-        <height>112</height>
-        <texture>list_sub_focus.png</texture>
-        <colordiffuse>80ffffff</colordiffuse>
+        <posX>30</posX>
+        <posY>400</posY>
+        <width>915</width>
+        <height>140</height>
+        <texture>BH background.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
         <visible>control.hasfocus(3)+string.equals(#myvideos.latest1.enabled,true)</visible>
       </control>
       <control Style="BasicHomeFade">
         <description>Updates label</description>
         <type>label</type>
         <id>0</id>
-        <posX>177</posX>
-        <posY>92</posY>
-        <width>517</width>
+        <posX>236</posX>
+        <posY>415</posY>
+        <width>690</width>
         <label>#(L(4558)):</label>
         <align>left</align>
         <font>font12</font>
@@ -42,10 +43,10 @@
         <description>divider horizontal</description>
         <type>image</type>
         <id>0</id>
-        <posX>177</posX>
-        <posY>115</posY>
-        <width>337</width>
-        <height>0</height>
+        <posX>236</posX>
+        <posY>444</posY>
+        <width>450</width>
+        <height>1</height>
         <texture>hbar1white.png</texture>
         <colordiffuse>80ffffff</colordiffuse>
         <visible>control.hasfocus(3)+string.equals(#myvideos.latest1.enabled,true)</visible>
@@ -54,9 +55,9 @@
         <description>MyVideos updates</description>
         <type>label</type>
         <id>0</id>
-        <posX>177</posX>
-        <posY>116</posY>
-        <width>517</width>
+        <posX>236</posX>
+        <posY>445</posY>
+        <width>690</width>
         <label>#myvideos.latest1.title - #myvideos.latest1.year - #myvideos.latest1.runtime - #myvideos.latest1.dateAdded - #myvideos.latest1.genre</label>
         <align>left</align>
         <font>font11</font>
@@ -67,9 +68,9 @@
         <description>MyVideos updates</description>
         <type>label</type>
         <id>0</id>
-        <posX>177</posX>
-        <posY>136</posY>
-        <width>517</width>
+        <posX>236</posX>
+        <posY>470</posY>
+        <width>690</width>
         <label>#myvideos.latest2.title - #myvideos.latest2.year - #myvideos.latest2.runtime - #myvideos.latest2.dateAdded - #myvideos.latest2.genre</label>
         <align>left</align>
         <font>font11</font>
@@ -80,9 +81,9 @@
         <description>MyVideos updates</description>
         <type>label</type>
         <id>0</id>
-        <posX>177</posX>
-        <posY>156</posY>
-        <width>517</width>
+        <posX>236</posX>
+        <posY>495</posY>
+        <width>690</width>
         <label>#myvideos.latest3.title - #myvideos.latest3.year - #myvideos.latest3.runtime - #myvideos.latest3.dateAdded - #myvideos.latest3.genre</label>
         <align>left</align>
         <font>font11</font>
@@ -93,10 +94,10 @@
         <description>Cover1</description>
         <type>image</type>
         <id>1</id>
-        <posX>33</posX>
-        <posY>102</posY>
-        <width>42</width>
-        <height>62</height>
+        <posX>45</posX>
+        <posY>415</posY>
+        <width>56</width>
+        <height>81</height>
         <texture mask="Picturethumbmask.png">#myvideos.latest1.thumb</texture>
         <visible>control.hasfocus(3)+string.equals(#myvideos.latest1.enabled,true)</visible>
       </control>
@@ -104,10 +105,10 @@
         <description>Overlay Cover 1</description>
         <type>image</type>
         <id>0</id>
-        <posX>33</posX>
-        <posY>102</posY>
-        <width>42</width>
-        <height>62</height>
+        <posX>45</posX>
+        <posY>415</posY>
+        <width>56</width>
+        <height>81</height>
         <texture>Picturethumbframe.png</texture>
         <align>left</align>
         <font>font11</font>
@@ -118,10 +119,10 @@
         <description>Cover2</description>
         <type>image</type>
         <id>1</id>
-        <posX>79</posX>
-        <posY>102</posY>
-        <width>42</width>
-        <height>62</height>
+        <posX>106</posX>
+        <posY>415</posY>
+        <width>56</width>
+        <height>81</height>
         <texture mask="Picturethumbmask.png">#myvideos.latest2.thumb</texture>
         <visible>control.hasfocus(3)+string.equals(#myvideos.latest2.enabled,true)</visible>
       </control>
@@ -129,10 +130,10 @@
         <description>Overlay Cover 2</description>
         <type>image</type>
         <id>0</id>
-        <posX>79</posX>
-        <posY>102</posY>
-        <width>42</width>
-        <height>62</height>
+        <posX>106</posX>
+        <posY>415</posY>
+        <width>56</width>
+        <height>81</height>
         <texture>Picturethumbframe.png</texture>
         <align>left</align>
         <font>font11</font>
@@ -143,10 +144,10 @@
         <description>Cover3</description>
         <type>image</type>
         <id>1</id>
-        <posX>126</posX>
-        <posY>102</posY>
-        <width>42</width>
-        <height>62</height>
+        <posX>168</posX>
+        <posY>415</posY>
+        <width>56</width>
+        <height>81</height>
         <texture mask="Picturethumbmask.png">#myvideos.latest3.thumb</texture>
         <visible>control.hasfocus(3)+string.equals(#myvideos.latest3.enabled,true)</visible>
       </control>
@@ -154,10 +155,10 @@
         <description>Overlay Cover 3</description>
         <type>image</type>
         <id>0</id>
-        <posX>126</posX>
-        <posY>102</posY>
-        <width>42</width>
-        <height>62</height>
+        <posX>168</posX>
+        <posY>415</posY>
+        <width>56</width>
+        <height>81</height>
         <texture>Picturethumbframe.png</texture>
         <align>left</align>
         <font>font11</font>
@@ -171,21 +172,21 @@
         <description>background for recently added files</description>
         <type>image</type>
         <id>98763</id>
-        <posX>22</posX>
-        <posY>80</posY>
-        <width>686</width>
-        <height>112</height>
-        <texture>list_sub_focus.png</texture>
-        <colordiffuse>80ffffff</colordiffuse>
+        <posX>30</posX>
+        <posY>400</posY>
+        <width>915</width>
+        <height>140</height>
+        <texture>BH background.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
         <visible>[control.hasfocus(4)|control.hasfocus(99)]+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
       </control>
       <control Style="BasicHomeFade">
         <description>Updates label</description>
         <type>label</type>
         <id>0</id>
-        <posX>258</posX>
-        <posY>92</posY>
-        <width>450</width>
+        <posX>345</posX>
+        <posY>415</posY>
+        <width>600</width>
         <label>#(L(4558)):</label>
         <align>left</align>
         <font>font12</font>
@@ -196,10 +197,10 @@
         <description>divider horizontal</description>
         <type>image</type>
         <id>0</id>
-        <posX>258</posX>
-        <posY>115</posY>
-        <width>337</width>
-        <height>0</height>
+        <posX>345</posX>
+        <posY>444</posY>
+        <width>450</width>
+        <height>1</height>
         <texture>hbar1white.png</texture>
         <colordiffuse>80ffffff</colordiffuse>
         <visible>[control.hasfocus(4)|control.hasfocus(99)]+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
@@ -208,9 +209,9 @@
         <description>TVRecordings updates</description>
         <type>label</type>
         <id>0</id>
-        <posX>258</posX>
-        <posY>116</posY>
-        <width>427</width>
+        <posX>345</posX>
+        <posY>445</posY>
+        <width>570</width>
         <label>#latestMediaHandler.tvrecordings.latest1.title - #latestMediaHandler.tvrecordings.latest1.genre  (#latestMediaHandler.tvrecordings.latest1.dateAdded)</label>
         <align>left</align>
         <font>font11</font>
@@ -221,9 +222,9 @@
         <description>TVRecordings updates</description>
         <type>label</type>
         <id>0</id>
-        <posX>258</posX>
-        <posY>136</posY>
-        <width>427</width>
+        <posX>345</posX>
+        <posY>470</posY>
+        <width>570</width>
         <label>#latestMediaHandler.tvrecordings.latest2.title - #latestMediaHandler.tvrecordings.latest2.genre  (#latestMediaHandler.tvrecordings.latest2.dateAdded)</label>
         <align>left</align>
         <font>font11</font>
@@ -234,9 +235,9 @@
         <description>TVRecordings updates</description>
         <type>label</type>
         <id>0</id>
-        <posX>258</posX>
-        <posY>156</posY>
-        <width>427</width>
+        <posX>345</posX>
+        <posY>495</posY>
+        <width>570</width>
         <label>#latestMediaHandler.tvrecordings.latest3.title - #latestMediaHandler.tvrecordings.latest3.genre  (#latestMediaHandler.tvrecordings.latest3.dateAdded)</label>
         <align>left</align>
         <font>font11</font>
@@ -247,10 +248,10 @@
         <description>TVRecordings Updates</description>
         <type>image</type>
         <id>0</id>
-        <posX>35</posX>
-        <posY>102</posY>
-        <width>67</width>
-        <height>64</height>
+        <posX>47</posX>
+        <posY>428</posY>
+        <width>90</width>
+        <height>80</height>
         <texture mask="picturethumbmask.png">#latestMediaHandler.tvrecordings.latest1.thumb</texture>
         <align>left</align>
         <font>font11</font>
@@ -261,10 +262,10 @@
         <description>TVRecordings Updates cover</description>
         <type>image</type>
         <id>0</id>
-        <posX>35</posX>
-        <posY>102</posY>
-        <width>67</width>
-        <height>64</height>
+        <posX>47</posX>
+        <posY>428</posY>
+        <width>90</width>
+        <height>80</height>
         <texture mask="picturethumbmask.png">Picturethumbframe.png</texture>
         <align>left</align>
         <font>font11</font>
@@ -275,10 +276,10 @@
         <description>TVRecordings Updates</description>
         <type>image</type>
         <id>0</id>
-        <posX>107</posX>
-        <posY>102</posY>
-        <width>67</width>
-        <height>64</height>
+        <posX>143</posX>
+        <posY>428</posY>
+        <width>90</width>
+        <height>80</height>
         <texture mask="picturethumbmask.png">#latestMediaHandler.tvrecordings.latest2.thumb</texture>
         <align>left</align>
         <font>font11</font>
@@ -289,10 +290,10 @@
         <description>TVRecordings Updates cover</description>
         <type>image</type>
         <id>0</id>
-        <posX>107</posX>
-        <posY>102</posY>
-        <width>67</width>
-        <height>64</height>
+        <posX>143</posX>
+        <posY>428</posY>
+        <width>90</width>
+        <height>80</height>
         <texture mask="picturethumbmask.png">Picturethumbframe.png</texture>
         <align>left</align>
         <font>font11</font>
@@ -302,10 +303,10 @@
         <description>TVRecordings Updates</description>
         <type>image</type>
         <id>0</id>
-        <posX>179</posX>
-        <posY>102</posY>
-        <width>67</width>
-        <height>64</height>
+        <posX>239</posX>
+        <posY>428</posY>
+        <width>90</width>
+        <height>80</height>
         <texture mask="picturethumbmask.png">#latestMediaHandler.tvrecordings.latest3.thumb</texture>
         <align>left</align>
         <font>font11</font>
@@ -315,10 +316,10 @@
         <description>TVRecordings Updates cover</description>
         <type>image</type>
         <id>0</id>
-        <posX>179</posX>
-        <posY>102</posY>
-        <width>67</width>
-        <height>64</height>
+        <posX>239</posX>
+        <posY>428</posY>
+        <width>90</width>
+        <height>80</height>
         <texture>Picturethumbframe.png</texture>
         <align>left</align>
         <font>font11</font>
@@ -331,21 +332,21 @@
         <description>background for recently added files</description>
         <type>image</type>
         <id>98762</id>
-        <posX>22</posX>
-        <posY>80</posY>
-        <width>686</width>
-        <height>112</height>
-        <texture>list_sub_focus.png</texture>
-        <colordiffuse>80ffffff</colordiffuse>
+        <posX>30</posX>
+        <posY>400</posY>
+        <width>915</width>
+        <height>140</height>
+        <texture>BH background.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
         <visible>control.hasfocus(5)+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.music.latest.enabled,true)</visible>
       </control>
       <control Style="BasicHomeFade">
         <description>Updates label</description>
         <type>label</type>
         <id>0</id>
-        <posX>213</posX>
-        <posY>92</posY>
-        <width>450</width>
+        <posX>285</posX>
+        <posY>415</posY>
+        <width>600</width>
         <label>1231</label>
         <align>left</align>
         <font>font12</font>
@@ -356,10 +357,10 @@
         <description>divider horizontal</description>
         <type>image</type>
         <id>0</id>
-        <posX>213</posX>
-        <posY>115</posY>
-        <width>337</width>
-        <height>0</height>
+        <posX>285</posX>
+        <posY>444</posY>
+        <width>450</width>
+        <height>1</height>
         <texture>hbar1white.png</texture>
         <colordiffuse>80ffffff</colordiffuse>
         <visible>control.hasfocus(5)+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.music.latest.enabled,true)</visible>
@@ -368,9 +369,9 @@
         <description>Music updates</description>
         <type>label</type>
         <id>0</id>
-        <posX>213</posX>
-        <posY>116</posY>
-        <width>450</width>
+        <posX>285</posX>
+        <posY>445</posY>
+        <width>600</width>
         <label>#latestMediaHandler.music.latest1.artist - #latestMediaHandler.music.latest1.album - (#latestMediaHandler.music.latest1.dateAdded)</label>
         <align>left</align>
         <font>font11</font>
@@ -381,9 +382,9 @@
         <description>Music updates</description>
         <type>label</type>
         <id>0</id>
-        <posX>213</posX>
-        <posY>136</posY>
-        <width>450</width>
+        <posX>285</posX>
+        <posY>470</posY>
+        <width>600</width>
         <label>#latestMediaHandler.music.latest2.artist - #latestMediaHandler.music.latest2.album - (#latestMediaHandler.music.latest2.dateAdded)</label>
         <align>left</align>
         <font>font11</font>
@@ -394,9 +395,9 @@
         <description>Music updates</description>
         <type>label</type>
         <id>0</id>
-        <posX>213</posX>
-        <posY>156</posY>
-        <width>450</width>
+        <posX>285</posX>
+        <posY>495</posY>
+        <width>600</width>
         <label>#latestMediaHandler.music.latest3.artist - #latestMediaHandler.music.latest3.album - (#latestMediaHandler.music.latest3.dateAdded)</label>
         <align>left</align>
         <font>font11</font>
@@ -407,10 +408,10 @@
         <description>Music Updates</description>
         <type>image</type>
         <id>0</id>
-        <posX>35</posX>
-        <posY>106</posY>
-        <width>53</width>
-        <height>53</height>
+        <posX>47</posX>
+        <posY>420</posY>
+        <width>71</width>
+        <height>71</height>
         <texture mask="Picturethumbmask.png">#latestMediaHandler.music.latest1.thumb</texture>
         <align>left</align>
         <font>font11</font>
@@ -421,10 +422,10 @@
         <description>Music Updates cover</description>
         <type>image</type>
         <id>0</id>
-        <posX>35</posX>
-        <posY>106</posY>
-        <width>53</width>
-        <height>53</height>
+        <posX>47</posX>
+        <posY>420</posY>
+        <width>71</width>
+        <height>71</height>
         <texture>Picturethumbframe.png</texture>
         <align>left</align>
         <font>font11</font>
@@ -435,10 +436,10 @@
         <description>Music Updates</description>
         <type>image</type>
         <id>0</id>
-        <posX>93</posX>
-        <posY>106</posY>
-        <width>53</width>
-        <height>53</height>
+        <posX>124</posX>
+        <posY>420</posY>
+        <width>71</width>
+        <height>71</height>
         <texture mask="Picturethumbmask.png">#latestMediaHandler.music.latest2.thumb</texture>
         <align>left</align>
         <font>font11</font>
@@ -449,10 +450,10 @@
         <description>Music Updates cover</description>
         <type>image</type>
         <id>0</id>
-        <posX>93</posX>
-        <posY>106</posY>
-        <width>53</width>
-        <height>53</height>
+        <posX>124</posX>
+        <posY>420</posY>
+        <width>71</width>
+        <height>71</height>
         <texture>Picturethumbframe.png</texture>
         <align>left</align>
         <font>font11</font>
@@ -462,10 +463,10 @@
         <description>Music Updates</description>
         <type>image</type>
         <id>0</id>
-        <posX>151</posX>
-        <posY>106</posY>
-        <width>53</width>
-        <height>53</height>
+        <posX>201</posX>
+        <posY>420</posY>
+        <width>71</width>
+        <height>71</height>
         <texture mask="Picturethumbmask.png">#latestMediaHandler.music.latest3.thumb</texture>
         <align>left</align>
         <font>font11</font>
@@ -475,10 +476,10 @@
         <description>Music Updates cover</description>
         <type>image</type>
         <id>0</id>
-        <posX>151</posX>
-        <posY>106</posY>
-        <width>53</width>
-        <height>53</height>
+        <posX>201</posX>
+        <posY>420</posY>
+        <width>71</width>
+        <height>71</height>
         <texture>Picturethumbframe.png</texture>
         <align>left</align>
         <font>font11</font>
@@ -491,21 +492,21 @@
         <description>background for recently added files</description>
         <type>image</type>
         <id>98763</id>
-        <posX>22</posX>
-        <posY>80</posY>
-        <width>686</width>
-        <height>112</height>
-        <texture>list_sub_focus.png</texture>
-        <colordiffuse>80ffffff</colordiffuse>
+        <posX>30</posX>
+        <posY>400</posY>
+        <width>915</width>
+        <height>140</height>
+        <texture>BH background.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
         <visible>control.hasfocus(2)+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.picture.latest.enabled,true)</visible>
       </control>
       <control Style="BasicHomeFade">
         <description>Updates label</description>
         <type>label</type>
         <id>0</id>
-        <posX>258</posX>
-        <posY>92</posY>
-        <width>450</width>
+        <posX>345</posX>
+        <posY>415</posY>
+        <width>600</width>
         <label>#(L(4558)):</label>
         <align>left</align>
         <font>font12</font>
@@ -516,10 +517,10 @@
         <description>divider horizontal</description>
         <type>image</type>
         <id>0</id>
-        <posX>258</posX>
-        <posY>115</posY>
-        <width>337</width>
-        <height>0</height>
+        <posX>345</posX>
+        <posY>444</posY>
+        <width>450</width>
+        <height>1</height>
         <texture>hbar1white.png</texture>
         <colordiffuse>80ffffff</colordiffuse>
         <visible>control.hasfocus(2)+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.picture.latest.enabled,true)</visible>
@@ -528,9 +529,9 @@
         <description>Pictures updates</description>
         <type>label</type>
         <id>0</id>
-        <posX>258</posX>
-        <posY>116</posY>
-        <width>427</width>
+        <posX>345</posX>
+        <posY>445</posY>
+        <width>570</width>
         <label>#latestMediaHandler.picture.latest1.title  (#latestMediaHandler.picture.latest1.dateAdded)</label>
         <align>left</align>
         <font>font11</font>
@@ -541,9 +542,9 @@
         <description>Pictures updates</description>
         <type>label</type>
         <id>0</id>
-        <posX>258</posX>
-        <posY>136</posY>
-        <width>427</width>
+        <posX>345</posX>
+        <posY>470</posY>
+        <width>570</width>
         <label>#latestMediaHandler.picture.latest2.title  (#latestMediaHandler.picture.latest2.dateAdded)</label>
         <align>left</align>
         <font>font11</font>
@@ -554,9 +555,9 @@
         <description>Pictures updates</description>
         <type>label</type>
         <id>0</id>
-        <posX>258</posX>
-        <posY>156</posY>
-        <width>427</width>
+        <posX>345</posX>
+        <posY>495</posY>
+        <width>570</width>
         <label>#latestMediaHandler.picture.latest3.title  (#latestMediaHandler.picture.latest3.dateAdded)</label>
         <align>left</align>
         <font>font11</font>
@@ -567,10 +568,10 @@
         <description>Pictures Updates</description>
         <type>image</type>
         <id>0</id>
-        <posX>35</posX>
-        <posY>102</posY>
-        <width>67</width>
-        <height>64</height>
+        <posX>47</posX>
+        <posY>428</posY>
+        <width>90</width>
+        <height>80</height>
         <texture mask="picturethumbmask.png">#latestMediaHandler.picture.latest1.thumb</texture>
         <align>left</align>
         <font>font11</font>
@@ -581,10 +582,10 @@
         <description>Pictures Updates cover</description>
         <type>image</type>
         <id>0</id>
-        <posX>35</posX>
-        <posY>102</posY>
-        <width>67</width>
-        <height>64</height>
+        <posX>47</posX>
+        <posY>428</posY>
+        <width>90</width>
+        <height>80</height>
         <texture mask="picturethumbmask.png">Picturethumbframe.png</texture>
         <align>left</align>
         <font>font11</font>
@@ -595,10 +596,10 @@
         <description>Pictures Updates</description>
         <type>image</type>
         <id>0</id>
-        <posX>107</posX>
-        <posY>102</posY>
-        <width>67</width>
-        <height>64</height>
+        <posX>143</posX>
+        <posY>428</posY>
+        <width>90</width>
+        <height>80</height>
         <texture mask="picturethumbmask.png">#latestMediaHandler.picture.latest2.thumb</texture>
         <align>left</align>
         <font>font11</font>
@@ -609,10 +610,10 @@
         <description>Pictures Updates cover</description>
         <type>image</type>
         <id>0</id>
-        <posX>107</posX>
-        <posY>102</posY>
-        <width>67</width>
-        <height>64</height>
+        <posX>143</posX>
+        <posY>428</posY>
+        <width>90</width>
+        <height>80</height>
         <texture mask="picturethumbmask.png">Picturethumbframe.png</texture>
         <align>left</align>
         <font>font11</font>
@@ -622,10 +623,10 @@
         <description>Pictures Updates</description>
         <type>image</type>
         <id>0</id>
-        <posX>179</posX>
-        <posY>102</posY>
-        <width>67</width>
-        <height>64</height>
+        <posX>239</posX>
+        <posY>428</posY>
+        <width>90</width>
+        <height>80</height>
         <texture mask="picturethumbmask.png">#latestMediaHandler.picture.latest3.thumb</texture>
         <align>left</align>
         <font>font11</font>
@@ -635,10 +636,10 @@
         <description>Pictures Updates cover</description>
         <type>image</type>
         <id>0</id>
-        <posX>179</posX>
-        <posY>102</posY>
-        <width>67</width>
-        <height>64</height>
+        <posX>239</posX>
+        <posY>428</posY>
+        <width>90</width>
+        <height>80</height>
         <texture>Picturethumbframe.png</texture>
         <align>left</align>
         <font>font11</font>
@@ -651,11 +652,11 @@
         <description>Weather image</description>
         <type>image</type>
         <id>0</id>
-        <posX>90</posX>
-        <posY>4</posY>
+        <posX>26</posX>
+        <posY>-5</posY>
         <align>right</align>
-        <width>50</width>
-        <height>50</height>
+        <width>67</width>
+        <height>90</height>
         <texture>#WorldWeather.TodayIconImage</texture>
         <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
       </control>
@@ -663,9 +664,9 @@
         <description>Location</description>
         <type>label</type>
         <id>0</id>
-        <width>168</width>
-        <posX>146</posX>
-        <posY>20</posY>
+        <width>225</width>
+        <posX>105</posX>
+        <posY>10</posY>
         <align>left</align>
         <font>font11</font>
         <textcolor>ivory</textcolor>
@@ -676,9 +677,9 @@
         <description>Condition</description>
         <type>label</type>
         <id>0</id>
-        <width>168</width>
-        <posX>146</posX>
-        <posY>38</posY>
+        <width>225</width>
+        <posX>105</posX>
+        <posY>33</posY>
         <align>left</align>
         <font>font11</font>
         <textcolor>ivory</textcolor>
@@ -689,22 +690,22 @@
         <description>Overlay for Weather image</description>
         <type>image</type>
         <id>1</id>
-        <posX>22</posX>
-        <posY>96</posY>
-        <width>686</width>
-        <height>92</height>
-        <texture>list_sub_focus.png</texture>
-        <colordiffuse>80ffffff</colordiffuse>
+        <posX>30</posX>
+        <posY>425</posY>
+        <width>915</width>
+        <height>115</height>
+        <texture>BH background.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
         <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
       </control>
       <control Style="BasicHomeFade">
         <description>Weather image</description>
         <type>image</type>
         <id>1</id>
-        <posX>36</posX>
-        <posY>112</posY>
-        <width>36</width>
-        <height>36</height>
+        <posX>48</posX>
+        <posY>440</posY>
+        <width>48</width>
+        <height>64</height>
         <texture>#WorldWeather.ForecastDay1IconImage</texture>
         <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
       </control>
@@ -712,9 +713,9 @@
         <description>Location</description>
         <type>label</type>
         <id>1</id>
-        <posX>81</posX>
-        <posY>112</posY>
-        <width>123</width>
+        <posX>108</posX>
+        <posY>440</posY>
+        <width>165</width>
         <font>font11</font>
         <textcolor>ivory</textcolor>
         <label>#WorldWeather.ForecastDay1Day</label>
@@ -724,9 +725,9 @@
         <description>Temperature</description>
         <type>label</type>
         <id>1</id>
-        <posX>81</posX>
-        <posY>132</posY>
-        <width>123</width>
+        <posX>108</posX>
+        <posY>465</posY>
+        <width>165</width>
         <font>font11</font>
         <textcolor>ivory</textcolor>
         <label>#WorldWeather.ForecastDay1Low | #WorldWeather.ForecastDay1High</label>
@@ -736,9 +737,9 @@
         <description>Condition</description>
         <type>fadelabel</type>
         <id>1</id>
-        <posX>81</posX>
-        <posY>152</posY>
-        <width>123</width>
+        <posX>108</posX>
+        <posY>490</posY>
+        <width>165</width>
         <font>font11</font>
         <textcolor>ivory</textcolor>
         <label>#WorldWeather.ForecastDay1Condition</label>
@@ -748,10 +749,10 @@
         <description>Weather image</description>
         <type>image</type>
         <id>1</id>
-        <posX>210</posX>
-        <posY>112</posY>
-        <width>36</width>
-        <height>36</height>
+        <posX>281</posX>
+        <posY>440</posY>
+        <width>48</width>
+        <height>64</height>
         <texture>#WorldWeather.ForecastDay2IconImage</texture>
         <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
       </control>
@@ -759,9 +760,9 @@
         <description>Location</description>
         <type>label</type>
         <id>1</id>
-        <posX>250</posX>
-        <posY>112</posY>
-        <width>123</width>
+        <posX>333</posX>
+        <posY>440</posY>
+        <width>165</width>
         <font>font11</font>
         <textcolor>ivory</textcolor>
         <label>#WorldWeather.ForecastDay2Day</label>
@@ -771,9 +772,9 @@
         <description>Temperature</description>
         <type>label</type>
         <id>1</id>
-        <posX>250</posX>
-        <posY>132</posY>
-        <width>123</width>
+        <posX>333</posX>
+        <posY>465</posY>
+        <width>165</width>
         <font>font11</font>
         <textcolor>ivory</textcolor>
         <label>#WorldWeather.ForecastDay2Low | #WorldWeather.ForecastDay2High</label>
@@ -783,9 +784,9 @@
         <description>Condition</description>
         <type>fadelabel</type>
         <id>1</id>
-        <posX>250</posX>
-        <posY>152</posY>
-        <width>123</width>
+        <posX>333</posX>
+        <posY>490</posY>
+        <width>165</width>
         <font>font11</font>
         <textcolor>ivory</textcolor>
         <label>#WorldWeather.ForecastDay2Condition</label>
@@ -795,10 +796,10 @@
         <description>Weather image</description>
         <type>image</type>
         <id>1</id>
-        <posX>385</posX>
-        <posY>112</posY>
-        <width>36</width>
-        <height>36</height>
+        <posX>513</posX>
+        <posY>440</posY>
+        <width>48</width>
+        <height>64</height>
         <texture>#WorldWeather.ForecastDay3IconImage</texture>
         <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
       </control>
@@ -806,9 +807,9 @@
         <description>Location</description>
         <type>label</type>
         <id>1</id>
-        <posX>424</posX>
-        <posY>112</posY>
-        <width>123</width>
+        <posX>566</posX>
+        <posY>440</posY>
+        <width>165</width>
         <font>font11</font>
         <textcolor>ivory</textcolor>
         <label>#WorldWeather.ForecastDay3Day</label>
@@ -818,9 +819,9 @@
         <description>Temperature</description>
         <type>label</type>
         <id>1</id>
-        <posX>424</posX>
-        <posY>132</posY>
-        <width>123</width>
+        <posX>566</posX>
+        <posY>465</posY>
+        <width>165</width>
         <font>font11</font>
         <textcolor>ivory</textcolor>
         <label>#WorldWeather.ForecastDay3Low | #WorldWeather.ForecastDay3High</label>
@@ -830,9 +831,9 @@
         <description>Condition</description>
         <type>fadelabel</type>
         <id>1</id>
-        <posX>424</posX>
-        <posY>152</posY>
-        <width>123</width>
+        <posX>566</posX>
+        <posY>490</posY>
+        <width>165</width>
         <font>font11</font>
         <textcolor>ivory</textcolor>
         <label>#WorldWeather.ForecastDay3Condition</label>
@@ -842,10 +843,10 @@
         <description>Weather image</description>
         <type>image</type>
         <id>1</id>
-        <posX>559</posX>
-        <posY>112</posY>
-        <width>36</width>
-        <height>36</height>
+        <posX>746</posX>
+        <posY>440</posY>
+        <width>48</width>
+        <height>64</height>
         <texture>#WorldWeather.ForecastDay4IconImage</texture>
         <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
       </control>
@@ -853,9 +854,9 @@
         <description>Location</description>
         <type>label</type>
         <id>1</id>
-        <posX>599</posX>
-        <posY>112</posY>
-        <width>123</width>
+        <posX>798</posX>
+        <posY>440</posY>
+        <width>165</width>
         <font>font11</font>
         <textcolor>ivory</textcolor>
         <label>#WorldWeather.ForecastDay4Day</label>
@@ -865,9 +866,9 @@
         <description>Temperature</description>
         <type>label</type>
         <id>1</id>
-        <posX>599</posX>
-        <posY>132</posY>
-        <width>123</width>
+        <posX>798</posX>
+        <posY>465</posY>
+        <width>165</width>
         <font>font11</font>
         <textcolor>ivory</textcolor>
         <label>#WorldWeather.ForecastDay4Low | #WorldWeather.ForecastDay4High</label>
@@ -877,42 +878,46 @@
         <description>Condition</description>
         <type>fadelabel</type>
         <id>1</id>
-        <posX>599</posX>
-        <posY>152</posY>
-        <width>123</width>
+        <posX>798</posX>
+        <posY>490</posY>
+        <width>165</width>
         <font>font11</font>
         <textcolor>ivory</textcolor>
         <label>#WorldWeather.ForecastDay4Condition</label>
         <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
       </control>
-      <!--     *******************************************************************************************  -->
-      <!--     *************************   RSS-FEED ON BASIC HOME   **************************************  -->
-      <!--     *******************************************************************************************  -->
-      <control Style="BasicHomeFade">
-        <description>RSS Feed Background</description>
-        <type>image</type>
-        <id>1</id>
-        <posX>45</posX>
-        <posY>504</posY>
-        <width>618</width>
-        <texture>list_sub_focus.png</texture>
-        <colordiffuse>80ffffff</colordiffuse>
-        <visible>plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)</visible>
-      </control>
-      <control Style="BasicHomeFade">
-        <description>Feed items</description>
-        <type>fadelabel</type>
-        <id>1</id>
-        <posX>56</posX>
-        <posY>512</posY>
-        <width>596</width>
-        <align>left</align>
-        <font>font11</font>
-        <textcolor>ivory</textcolor>
-        <label>#infoservice.feed.titles</label>
-        <wrapString>***</wrapString>
-        <visible>plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)</visible>
-      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     *************************   RSS-FEED ON BASIC HOME   **************************************  -->
+    <!--     *******************************************************************************************  -->
+    <control Style="BasicHomeFade">
+      <description>RSS Feed Background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>60</posX>
+      <posY>670</posY>
+      <width>825</width>
+      <height>35</height>
+      <texture>rssbg.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)</visible>
+    </control>
+    <control Style="BasicHomeFade">
+      <description>Feed items</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>75</posX>
+      <posY>675</posY>
+      <width>795</width>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#infoservice.feed.titles</label>
+      <wrapString> :-: </wrapString>
+      <shadowAngle>0</shadowAngle>
+      <shadowDistance>0</shadowDistance>
+      <shadowColor />
+      <visible>plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)</visible>
     </control>
   </controls>
 </window>

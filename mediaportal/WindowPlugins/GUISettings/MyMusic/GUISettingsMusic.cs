@@ -158,13 +158,13 @@ namespace MediaPortal.GUI.Settings
 
     private void OnDeleteAlbum ()
     {
-      MusicDatabaseReorg dbreorg = new MusicDatabaseReorg();
+      var dbreorg = new MusicDatabaseReorg(GetID);
       dbreorg.DeleteSingleAlbum();
     }
 
     private void OnDeleteAlbumInfo()
     {
-      MusicDatabaseReorg dbreorg = new MusicDatabaseReorg();
+      var dbreorg = new MusicDatabaseReorg(GetID);
       dbreorg.DeleteAlbumInfo();
     }
 

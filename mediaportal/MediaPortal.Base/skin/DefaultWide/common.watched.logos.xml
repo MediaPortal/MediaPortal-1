@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control>
+      <description>BG for watched count/watched percent</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>995</posX>
+      <posY>385</posY>
+      <width>65</width>
+      <height>60</height>
+      <texture>watched_BG.png</texture>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)</visible>
+    </control>
+    <control>
+      <description>Video Watched Count Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1026</posX>
+      <posY>417</posY>
+      <label>#watchedcount</label>
+      <font>font10</font>
+      <align>center</align>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)</visible>
+    </control>
+    <control>
+      <description>Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>390</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>watched_000.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)+string.equals(#watchedpercent, 0)</visible>
+    </control>
+    <control>
+      <description>Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>390</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>watched_005.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)+[string.equals(#watchedpercent, 1)|string.equals(#watchedpercent, 2)|string.equals(#watchedpercent, 3)|string.equals(#watchedpercent, 4)|string.equals(#watchedpercent, 5)|string.equals(#watchedpercent, 6)|string.equals(#watchedpercent, 7)|string.equals(#watchedpercent, 8)|string.equals(#watchedpercent, 9)]</visible>
+    </control>
+    <control>
+      <description>Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>390</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>watched_010.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)+[string.equals(#watchedpercent, 10)|string.equals(#watchedpercent, 11)|string.equals(#watchedpercent, 12)|string.equals(#watchedpercent, 13)|string.equals(#watchedpercent, 14)]</visible>
+    </control>
+    <control>
+      <description>Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>390</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>watched_015.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)+[string.equals(#watchedpercent, 15)|string.equals(#watchedpercent, 16)|string.equals(#watchedpercent, 17)|string.equals(#watchedpercent, 18)|string.equals(#watchedpercent, 19)]</visible>
+    </control>
+    <control>
+      <description>Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>390</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>watched_020.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)+[string.equals(#watchedpercent, 20)|string.equals(#watchedpercent, 21)|string.equals(#watchedpercent, 22)|string.equals(#watchedpercent, 23)|string.equals(#watchedpercent, 24)]</visible>
+    </control>
+    <control>
+      <description>Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>390</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>watched_025.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)+[string.equals(#watchedpercent, 25)|string.equals(#watchedpercent, 26)|string.equals(#watchedpercent, 27)|string.equals(#watchedpercent, 28)|string.equals(#watchedpercent, 29)]</visible>
+    </control>
+    <control>
+      <description>Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>390</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>watched_030.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)+[string.equals(#watchedpercent, 30)|string.equals(#watchedpercent, 31)|string.equals(#watchedpercent, 32)|string.equals(#watchedpercent, 33)|string.equals(#watchedpercent, 34)]</visible>
+    </control>
+    <control>
+      <description>Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>390</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>watched_035.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)+[string.equals(#watchedpercent, 35)|string.equals(#watchedpercent, 36)|string.equals(#watchedpercent, 37)|string.equals(#watchedpercent, 38)|string.equals(#watchedpercent, 39)]</visible>
+    </control>
+    <control>
+      <description>Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>390</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>watched_040.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)+[string.equals(#watchedpercent, 40)|string.equals(#watchedpercent, 41)|string.equals(#watchedpercent, 42)|string.equals(#watchedpercent, 43)|string.equals(#watchedpercent, 44)]</visible>
+    </control>
+    <control>
+      <description>Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>390</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>watched_045.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)+[string.equals(#watchedpercent, 45)|string.equals(#watchedpercent, 46)|string.equals(#watchedpercent, 47)|string.equals(#watchedpercent, 48)|string.equals(#watchedpercent, 49)]</visible>
+    </control>
+    <control>
+      <description>Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>390</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>watched_050.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)+[string.equals(#watchedpercent, 50)|string.equals(#watchedpercent, 51)|string.equals(#watchedpercent, 52)|string.equals(#watchedpercent, 53)|string.equals(#watchedpercent, 54)]</visible>
+    </control>
+    <control>
+      <description>Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>390</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>watched_055.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)+[string.equals(#watchedpercent, 55)|string.equals(#watchedpercent, 56)|string.equals(#watchedpercent, 57)|string.equals(#watchedpercent, 58)|string.equals(#watchedpercent, 59)]</visible>
+    </control>
+    <control>
+      <description>Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>390</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>watched_060.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)+[string.equals(#watchedpercent, 60)|string.equals(#watchedpercent, 61)|string.equals(#watchedpercent, 62)|string.equals(#watchedpercent, 63)|string.equals(#watchedpercent, 64)]</visible>
+    </control>
+    <control>
+      <description>Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>390</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>watched_065.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)+[string.equals(#watchedpercent, 65)|string.equals(#watchedpercent, 66)|string.equals(#watchedpercent, 67)|string.equals(#watchedpercent, 68)|string.equals(#watchedpercent, 69)]</visible>
+    </control>
+    <control>
+      <description>Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>390</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>watched_070.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)+[string.equals(#watchedpercent, 70)|string.equals(#watchedpercent, 71)|string.equals(#watchedpercent, 72)|string.equals(#watchedpercent, 73)|string.equals(#watchedpercent, 74)]</visible>
+    </control>
+    <control>
+      <description>Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>390</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>watched_075.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)+[string.equals(#watchedpercent, 75)|string.equals(#watchedpercent, 76)|string.equals(#watchedpercent, 77)|string.equals(#watchedpercent, 78)|string.equals(#watchedpercent, 79)]</visible>
+    </control>
+    <control>
+      <description>Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>390</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>watched_080.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)+[string.equals(#watchedpercent, 80)|string.equals(#watchedpercent, 81)|string.equals(#watchedpercent, 82)|string.equals(#watchedpercent, 83)|string.equals(#watchedpercent, 84)]</visible>
+    </control>
+    <control>
+      <description>Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>390</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>watched_085.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)+[string.equals(#watchedpercent, 85)|string.equals(#watchedpercent, 86)|string.equals(#watchedpercent, 87)|string.equals(#watchedpercent, 88)|string.equals(#watchedpercent, 89)]</visible>
+    </control>
+    <control>
+      <description>Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>390</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>watched_090.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)+[string.equals(#watchedpercent, 90)|string.equals(#watchedpercent, 91)|string.equals(#watchedpercent, 92)|string.equals(#watchedpercent, 93)|string.equals(#watchedpercent, 94)]</visible>
+    </control>
+    <control>
+      <description>Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>390</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>watched_095.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)+[string.equals(#watchedpercent, 95)|string.equals(#watchedpercent, 96)|string.equals(#watchedpercent, 97)|string.equals(#watchedpercent, 98)|string.equals(#watchedpercent, 99)]</visible>
+    </control>
+    <control>
+      <description>Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>390</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>watched_100.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)+string.equals(#watchedpercent, 100)</visible>
+    </control>
+  </controls>
+</window>

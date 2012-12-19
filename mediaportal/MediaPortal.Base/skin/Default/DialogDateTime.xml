@@ -8,27 +8,27 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>black.png</texture>
-      <colordiffuse>40ffffff</colordiffuse>
+      <width>960</width>
+      <height>720</height>
+      <texture>white.png</texture>
+      <colordiffuse>201e90ff</colordiffuse>
     </control>
     <control>
       <description>background image</description>
       <type>image</type>
       <id>0</id>
-      <posX>104</posX>
-      <width>545</width>
-      <height>276</height>
-      <posY>154</posY>
+      <posX>139</posX>
+      <width>727</width>
+      <height>345</height>
+      <posY>193</posY>
       <texture>dialog_schedule_rec.png</texture>
     </control>
     <control>
       <description>Channel</description>
       <type>label</type>
       <id>0</id>
-      <posX>149</posX>
-      <posY>226</posY>
+      <posX>199</posX>
+      <posY>283</posY>
       <label>602</label>
       <font>font13</font>
       <textcolor>ff6FAFE1</textcolor>
@@ -37,8 +37,8 @@
       <description>Channel Select</description>
       <type>spincontrol</type>
       <id>1</id>
-      <posX>239</posX>
-      <posY>229</posY>
+      <posX>319</posX>
+      <posY>287</posY>
       <showrange>no</showrange>
       <digits>3</digits>
       <onup>12</onup>
@@ -51,8 +51,8 @@
       <description>Start Date/Time</description>
       <type>label</type>
       <id>0</id>
-      <posX>149</posX>
-      <posY>260</posY>
+      <posX>199</posX>
+      <posY>325</posY>
       <label>633</label>
       <font>font13</font>
       <textcolor>ff6FAFE1</textcolor>
@@ -61,8 +61,8 @@
       <description>Time</description>
       <type>label</type>
       <id>0</id>
-      <posX>149</posX>
-      <posY>280</posY>
+      <posX>199</posX>
+      <posY>350</posY>
       <label>635</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -74,8 +74,8 @@
       <orientation>vertical</orientation>
       <digits>2</digits>
       <id>2</id>
-      <posX>169</posX>
-      <posY>304</posY>
+      <posX>226</posX>
+      <posY>381</posY>
       <showrange>no</showrange>
       <onup>1</onup>
       <ondown>4</ondown>
@@ -94,8 +94,8 @@
       <orientation>vertical</orientation>
       <digits>2</digits>
       <id>3</id>
-      <posX>219</posX>
-      <posY>304</posY>
+      <posX>293</posX>
+      <posY>381</posY>
       <showrange>no</showrange>
       <onup>2</onup>
       <ondown>4</ondown>
@@ -111,8 +111,8 @@
       <description>Date</description>
       <type>label</type>
       <id>0</id>
-      <posX>149</posX>
-      <posY>329</posY>
+      <posX>199</posX>
+      <posY>412</posY>
       <label>636</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -123,8 +123,8 @@
       <spintype>int</spintype>
       <orientation>vertical</orientation>
       <id>4</id>
-      <posX>169</posX>
-      <posY>360</posY>
+      <posX>226</posX>
+      <posY>450</posY>
       <showrange>no</showrange>
       <onup>2</onup>
       <ondown>7</ondown>
@@ -142,8 +142,8 @@
       <spintype>int</spintype>
       <orientation>vertical</orientation>
       <id>5</id>
-      <posX>219</posX>
-      <posY>360</posY>
+      <posX>293</posX>
+      <posY>450</posY>
       <showrange>no</showrange>
       <onup>2</onup>
       <ondown>7</ondown>
@@ -162,8 +162,8 @@
       <digits>4</digits>
       <orientation>vertical</orientation>
       <id>6</id>
-      <posX>270</posX>
-      <posY>360</posY>
+      <posX>360</posX>
+      <posY>450</posY>
       <showrange>no</showrange>
       <onup>2</onup>
       <ondown>7</ondown>
@@ -179,8 +179,8 @@
       <description>End Date/Time</description>
       <type>label</type>
       <id>0</id>
-      <posX>360</posX>
-      <posY>260</posY>
+      <posX>480</posX>
+      <posY>325</posY>
       <label>634</label>
       <font>font13</font>
       <textcolor>ff6FAFE1</textcolor>
@@ -189,8 +189,8 @@
       <description>Time</description>
       <type>label</type>
       <id>0</id>
-      <posX>360</posX>
-      <posY>280</posY>
+      <posX>480</posX>
+      <posY>350</posY>
       <label>635</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -202,8 +202,8 @@
       <orientation>vertical</orientation>
       <digits>2</digits>
       <id>7</id>
-      <posX>379</posX>
-      <posY>304</posY>
+      <posX>506</posX>
+      <posY>381</posY>
       <showrange>no</showrange>
       <onup>4</onup>
       <ondown>9</ondown>
@@ -222,8 +222,8 @@
       <orientation>vertical</orientation>
       <digits>2</digits>
       <id>8</id>
-      <posX>429</posX>
-      <posY>304</posY>
+      <posX>573</posX>
+      <posY>381</posY>
       <showrange>no</showrange>
       <onup>4</onup>
       <ondown>9</ondown>
@@ -239,8 +239,8 @@
       <description>Date</description>
       <type>label</type>
       <id>0</id>
-      <posX>360</posX>
-      <posY>329</posY>
+      <posX>480</posX>
+      <posY>412</posY>
       <label>636</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -251,8 +251,8 @@
       <spintype>int</spintype>
       <orientation>vertical</orientation>
       <id>9</id>
-      <posX>379</posX>
-      <posY>360</posY>
+      <posX>506</posX>
+      <posY>450</posY>
       <showrange>no</showrange>
       <onup>7</onup>
       <ondown>12</ondown>
@@ -270,8 +270,8 @@
       <spintype>int</spintype>
       <orientation>vertical</orientation>
       <id>10</id>
-      <posX>429</posX>
-      <posY>360</posY>
+      <posX>573</posX>
+      <posY>450</posY>
       <showrange>no</showrange>
       <onup>7</onup>
       <ondown>12</ondown>
@@ -290,8 +290,8 @@
       <digits>4</digits>
       <orientation>vertical</orientation>
       <id>11</id>
-      <posX>479</posX>
-      <posY>360</posY>
+      <posX>639</posX>
+      <posY>450</posY>
       <showrange>no</showrange>
       <onup>7</onup>
       <ondown>12</ondown>
@@ -307,12 +307,12 @@
       <description>OK button</description>
       <type>button</type>
       <id>12</id>
-      <posX>572</posX>
-      <posY>183</posY>
-      <width>41</width>
-      <height>50</height>
-      <textureFocus>dialogue_ok_focus.png</textureFocus>
-      <textureNoFocus>dialogue_ok_nofocus.png</textureNoFocus>
+      <posX>763</posX>
+      <posY>229</posY>
+      <width>22</width>
+      <height>30</height>
+      <textureFocus>top_exit_enabled.png</textureFocus>
+      <textureNoFocus>top_exit_disabled.png</textureNoFocus>
       <label>-</label>
       <onleft>10</onleft>
       <onright>10</onright>
@@ -323,8 +323,8 @@
       <description>dialog Heading</description>
       <type>label</type>
       <id>13</id>
-      <posX>149</posX>
-      <posY>189</posY>
+      <posX>199</posX>
+      <posY>237</posY>
       <label>0</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>

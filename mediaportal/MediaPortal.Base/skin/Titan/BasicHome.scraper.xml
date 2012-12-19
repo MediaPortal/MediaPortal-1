@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+  
+    <control>
+        <description>DUMMY CONTROL FOR FANART HANDLER IS SCRAPING VISIBILITY CONDITION</description>
+        <type>label</type>
+        <id>91919280</id>
+        <posX>0</posX>
+        <posY>0</posY>
+        <width>1</width>
+		<visible>no</visible>
+    </control>       
+
+    <control>
+        <description>Scraping Header</description>
+		<type>label</type>
+        <id>0</id>
+		<posX>186</posX>
+		<posY>88</posY>
+        <width>400</width>
+        <textcolor>ffffffff</textcolor>
+        <font>TitanLight12</font>
+        <label>#Titan.FanartScraping | #fanarthandler.scraper.percent.completed %</label>
+        <align>left</align>
+        <visible>control.isvisible(91919280)</visible>
+    </control> 	
+        
+  </controls>
+        
+</window>

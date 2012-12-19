@@ -7,119 +7,118 @@
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
-    <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
       <description>background</description>
       <type>image</type>
       <id>1</id>
-      <posX>33</posX>
-      <posY>80</posY>
-      <height>440</height>
-      <width>675</width>
+      <posX>45</posX>
+      <posY>100</posY>
+      <height>550</height>
+      <width>900</width>
       <texture>backslide2.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <!--Options-->
     <control>
       <description>Control label</description>
       <type>label</type>
       <id>1</id>
-      <posX>56</posX>
-      <posY>112</posY>
-      <width>225</width>
+      <posX>75</posX>
+      <posY>140</posY>
+      <width>300</width>
       <label>496</label>
     </control>
     <control>
       <description>Enable dynamic refresh rate</description>
       <type>checkbutton</type>
       <id>2</id>
-      <posX>56</posX>
-      <posY>144</posY>
+      <posX>75</posX>
+      <posY>180</posY>
       <onleft>2</onleft>
       <onright>4</onright>
       <onup>17</onup>
       <ondown>3</ondown>
       <align>right</align>
       <label>300084</label>
-      <width>281</width>
+      <width>375</width>
     </control>
     <control>
       <description>Notify</description>
       <type>checkbutton</type>
       <id>3</id>
-      <posX>56</posX>
-      <posY>180</posY>
+      <posX>75</posX>
+      <posY>225</posY>
       <onleft>3</onleft>
       <onright>5</onright>
       <onup>2</onup>
       <ondown>7</ondown>
       <align>right</align>
       <label>300085</label>
-      <width>281</width>
+      <width>375</width>
     </control>
     <control>
       <description>Use device reset</description>
       <type>checkbutton</type>
       <id>4</id>
-      <posX>393</posX>
-      <posY>144</posY>
+      <posX>525</posX>
+      <posY>180</posY>
       <onleft>2</onleft>
       <onright>4</onright>
       <ondown>5</ondown>
       <align>right</align>
       <label>300086</label>
-      <width>281</width>
+      <width>375</width>
     </control>
     <control>
       <description>Force refreshrate</description>
       <type>checkbutton</type>
       <id>5</id>
-      <posX>393</posX>
-      <posY>180</posY>
+      <posX>525</posX>
+      <posY>225</posY>
       <onleft>3</onleft>
       <onright>5</onright>
       <onup>4</onup>
       <align>right</align>
       <label>300087</label>
-      <width>281</width>
+      <width>375</width>
     </control>
     <control>
       <description>Refresh rate list</description>
       <type>listcontrol</type>
       <id>6</id>
-      <posX>174</posX>
-      <posY>232</posY>
-      <width>112</width>
-      <height>224</height>
-      <width>168</width>
+      <posX>232</posX>
+      <posY>290</posY>
+      <width>150</width>
+      <height>280</height>
+      <width>225</width>
       <onleft>7</onleft>
       <onright>6</onright>
-      <spinPosX>281</spinPosX>
-      <spinPosY>400</spinPosY>
+      <spinPosX>375</spinPosX>
+      <spinPosY>500</spinPosY>
     </control>
     <!--Values-->
     <control>
       <description>Refresh rate info label</description>
       <type>label</type>
       <id>1</id>
-      <posX>393</posX>
-      <posY>232</posY>
-      <width>281</width>
+      <posX>525</posX>
+      <posY>290</posY>
+      <width>375</width>
       <label>300088</label>
       <font>font13</font>
     </control>
     <control>
       <description>Refresh rate values Label</description>
       <type>group</type>
-      <posX>393</posX>
-      <posY>256</posY>
+      <posX>525</posX>
+      <posY>320</posY>
       <layout>StackLayout(30, Vertical, true)</layout>
       <control>
         <description>Rate Name label</description>
         <type>label</type>
         <id>1</id>
-        <width>137</width>
+        <width>183</width>
         <label>#name</label>
         <font>font13</font>
         <textcolor>ffffffff</textcolor>
@@ -128,7 +127,7 @@
         <description>FPS label</description>
         <type>fadelabel</type>
         <id>1</id>
-        <width>137</width>
+        <width>183</width>
         <label>#fps</label>
         <font>font13</font>
         <textcolor>ffffffff</textcolor>
@@ -137,7 +136,7 @@
         <description>Rate value label</description>
         <type>label</type>
         <id>1</id>
-        <width>137</width>
+        <width>183</width>
         <label>#rate</label>
         <font>font13</font>
         <textcolor>ffffffff</textcolor>
@@ -146,7 +145,7 @@
         <description>Action</description>
         <type>label</type>
         <id>1</id>
-        <width>137</width>
+        <width>183</width>
         <label>#action</label>
         <font>font13</font>
         <textcolor>ffffffff</textcolor>
@@ -158,86 +157,86 @@
       <description>Add</description>
       <type>button</type>
       <id>7</id>
-      <posX>56</posX>
-      <posY>228</posY>
+      <posX>75</posX>
+      <posY>285</posY>
       <onright>6</onright>
       <onup>3</onup>
       <ondown>8</ondown>
       <align>right</align>
       <label>300063</label>
-      <width>112</width>
+      <width>150</width>
     </control>
     <control>
       <description>Remove</description>
       <type>button</type>
       <id>8</id>
-      <posX>56</posX>
-      <posY>264</posY>
+      <posX>75</posX>
+      <posY>330</posY>
       <onright>6</onright>
       <onup>7</onup>
       <ondown>12</ondown>
       <align>right</align>
       <label>300064</label>
-      <width>112</width>
+      <width>150</width>
     </control>
     <control>
       <description>Edit</description>
       <type>button</type>
       <id>12</id>
-      <posX>56</posX>
-      <posY>300</posY>
+      <posX>75</posX>
+      <posY>375</posY>
       <onright>6</onright>
       <onup>8</onup>
       <ondown>9</ondown>
       <align>right</align>
       <label>2076</label>
-      <width>112</width>
+      <width>150</width>
     </control>
     <control>
       <description>Default</description>
       <type>button</type>
       <id>9</id>
-      <posX>56</posX>
-      <posY>336</posY>
+      <posX>75</posX>
+      <posY>420</posY>
       <onright>6</onright>
       <onup>12</onup>
       <ondown>10</ondown>
       <align>right</align>
       <label>886</label>
-      <width>112</width>
+      <width>150</width>
     </control>
     <!--Default refresh rate-->
     <control>
       <description>Enable default refresh rate</description>
       <type>checkbutton</type>
       <id>10</id>
-      <posX>56</posX>
-      <posY>464</posY>
+      <posX>75</posX>
+      <posY>580</posY>
       <onright>11</onright>
       <onup>9</onup>
       <align>right</align>
       <label>300089</label>
-      <width>281</width>
+      <width>375</width>
     </control>
     <control>
       <description>Select default refresh rate</description>
       <type>button</type>
       <id>11</id>
-      <posX>365</posX>
-      <posY>464</posY>
+      <posX>487</posX>
+      <posY>580</posY>
       <onleft>10</onleft>
       <onup>6</onup>
       <align>right</align>
       <label>424</label>
-      <width>112</width>
+      <width>150</width>
     </control>
     <control>
       <description>Def rate value label</description>
       <type>label</type>
       <id>1</id>
-      <posX>506</posX>
-      <posY>468</posY>
-      <width>137</width>
+      <posX>675</posX>
+      <posY>585</posY>
+      <width>183</width>
       <label>#defaultrate</label>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>

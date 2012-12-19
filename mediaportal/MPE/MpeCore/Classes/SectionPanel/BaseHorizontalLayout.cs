@@ -69,7 +69,7 @@ namespace MpeCore.Classes.SectionPanel
 
     private void BaseVerticalLayout_Load(object sender, EventArgs e) {}
 
-    protected void BaseHorizontalLayout_Shown(object sender, EventArgs e)
+    protected virtual void BaseHorizontalLayout_Shown(object sender, EventArgs e)
     {
       lbl_large.Text = Package.ReplaceInfo(Section.Params[Const_LABEL_BIG].Value);
       lbl_small.Text = Package.ReplaceInfo(Section.Params[Const_LABEL_SMALL].Value);

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>1024</id>
@@ -7,44 +7,54 @@
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
-    <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
       <description>background</description>
       <type>image</type>
       <id>1</id>
-      <posX>42</posX>
-      <posY>96</posY>
-      <height>416</height>
-      <width>244</width>
+      <posX>56</posX>
+      <posY>120</posY>
+      <height>520</height>
+      <width>326</width>
       <texture>backslide.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <control>
-      <description>Blu-ray regions</description>
+      <description>background</description>
       <type>image</type>
       <id>1</id>
-      <posX>309</posX>
-      <posY>128</posY>
-      <height>260</height>
-      <width>365</width>
-      <texture>Blu-ray_regions.png</texture>
+      <posX>405</posX>
+      <posY>150</posY>
+      <height>345</height>
+      <width>502</width>
+      <texture>backslide2.png</texture>
+      <colordiffuse>aaffffff</colordiffuse>
+    </control>
+    <control>
+      <description>Bluray regions</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>412</posX>
+      <posY>160</posY>
+      <height>325</height>
+      <width>487</width>
+      <texture mask="picturethumbmask.png">Blu-Ray_regions.png</texture>
       <visible>yes</visible>
     </control>
     <control>
       <description>buttons</description>
       <type>group</type>
-      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="-300,0">WindowClose</animation>
-      <posX>59</posX>
-      <posY>128</posY>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <posX>78</posX>
+      <posY>160</posY>
       <layout>StackLayout(0, Horizontal, True)</layout>
       <control>
         <description>Region</description>
         <type>button</type>
         <id>2</id>
         <label>300218</label>
-        <width>196</width>
+        <width>262</width>
         <onup>7</onup>
       </control>
       <control>
@@ -52,28 +62,28 @@
         <type>button</type>
         <id>3</id>
         <label>300219</label>
-        <width>196</width>
+        <width>262</width>
       </control>
       <control>
         <description>Video</description>
         <type>button</type>
         <id>4</id>
         <label>2134</label>
-        <width>196</width>
+        <width>262</width>
       </control>
       <control>
         <description>Audio</description>
         <type>button</type>
         <id>5</id>
         <label>2135</label>
-        <width>196</width>
+        <width>262</width>
       </control>
       <control>
         <description>Subtitles On/Off</description>
         <type>checkbutton</type>
         <id>6</id>
         <label>1196</label>
-        <width>196</width>
+        <width>262</width>
         <ondown>7</ondown>
       </control>
     </control>
@@ -81,16 +91,16 @@
       <description>Parental age limit</description>
       <type>label</type>
       <id>102</id>
-      <posX>61</posX>
-      <posY>304</posY>
+      <posX>82</posX>
+      <posY>380</posY>
       <label>300220</label>
     </control>
     <control>
       <description>Age limit value</description>
       <type>spincontrol</type>
       <id>7</id>
-      <posX>157</posX>
-      <posY>340</posY>
+      <posX>210</posX>
+      <posY>425</posY>
       <onleft>7</onleft>
       <onup>6</onup>
       <ondown>2</ondown>

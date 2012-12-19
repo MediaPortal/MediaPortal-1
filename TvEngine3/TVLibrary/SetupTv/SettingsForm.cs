@@ -189,6 +189,7 @@ namespace SetupTv
         AddSection(EpgSection);
         AddChildSection(EpgSection, new TvEpgGrabber());
         AddChildSection(EpgSection, new RadioEpgGrabber());
+        AddChildSection(EpgSection, new EpgGenreMap());
 
         AddSection(new ScanSettings());
         AddSection(new TvRecording());
@@ -740,15 +741,21 @@ namespace SetupTv
       // sectionTree
       // 
       this.sectionTree.LineColor = System.Drawing.Color.Black;
+      this.sectionTree.Size = new System.Drawing.Size(184, 464);
+      // 
+      // holderPanel
+      // 
+      this.holderPanel.Size = new System.Drawing.Size(485, 434);
       // 
       // SetupTvSettingsForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.ClientSize = new System.Drawing.Size(716, 537);
-      this.MinimumSize = new System.Drawing.Size(724, 571);
+      this.ClientSize = new System.Drawing.Size(717, 546);
+      this.MinimumSize = new System.Drawing.Size(725, 580);
       this.Name = "SetupTvSettingsForm";
       this.ResumeLayout(false);
       this.PerformLayout();
+
     }
 
     #endregion

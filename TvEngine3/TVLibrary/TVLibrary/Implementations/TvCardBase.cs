@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DirectShowLib;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations.DVB;
@@ -742,6 +743,20 @@ namespace TvLibrary.Implementations
       }
       _mapSubChannels.Clear();
       _subChannelId = 0;
+    }
+
+    /// <summary>
+    /// Gets the first sub channel.
+    /// </summary>
+    /// <returns></returns>
+    public ITvSubChannel GetFirstSubChannel()
+    {
+      ITvSubChannel subChannel = null;
+      if (_mapSubChannels.Count > 0)
+      {
+        subChannel = _mapSubChannels.FirstOrDefault().Value;
+      }
+      return subChannel;
     }
 
     /// <summary>

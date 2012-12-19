@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>801</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>background.png</texture>
+      <width>960</width>
+      <height>720</height>
+    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>30</posY>
+      <width>960</width>
+      <height>720</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <description>action menu</description>
+      <type>actiongroup</type>
+      <dimColor>00ffffff</dimColor>
+      <width>240</width>
+      <height>591</height>
+      <buttonX>0</buttonX>
+      <buttonY>-60</buttonY>
+      <buttonwidth>79</buttonwidth>
+      <buttonheight>720</buttonheight>
+      <onexit>50</onexit>
+      <defaultcontrol>2</defaultcontrol>
+      <textureFocus>Action_focus.png</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <width>960</width>
+        <height>720</height>
+        <texture>white.png</texture>
+        <colordiffuse>201e90ff</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <visible>!Control.HasFocus(50)</visible>
+        <posX>19</posX>
+        <posY>78</posY>
+        <width>280</width>
+        <height>591</height>
+        <texture>Backslide.png</texture>
+        <animation effect="Slide" reversible="false" start="-300,0" time="70">Visible</animation>
+        <animation effect="Slide" end="-300,0" reversible="false" time="70">Hidden</animation>
+        <colorDiffuse>fffffffff</colorDiffuse>
+      </control>
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <visible>!Control.HasFocus(50)</visible>
+        <posX>37</posX>
+        <posY>121</posY>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <animation effect="Slide" reversible="false" start="-300,0" time="70">Visible</animation>
+        <animation effect="Slide" end="-300,0" reversible="false" time="70">Hidden</animation>
+        <control>
+          <id>2</id>
+          <description>View-As</description>
+          <type>button</type>
+          <onright>50</onright>
+          <onup>17</onup>
+          <label>100</label>
+        </control>
+        <control>
+          <id>3</id>
+          <description>Sort</description>
+          <type>sortbutton</type>
+          <onright>50</onright>
+        </control>
+        <control>
+          <id>6</id>
+          <description>Views</description>
+          <type>button</type>
+          <onright>50</onright>
+          <label>457</label>
+        </control>
+        <control>
+          <id>5</id>
+          <description>Restart</description>
+          <type>button</type>
+          <onright>50</onright>
+          <label>#MPEI.Translation.Restart.Label</label>
+        </control>
+        <control>
+          <id>8</id>
+          <description>Update all</description>
+          <type>button</type>
+          <onright>50</onright>
+          <label>#MPEI.Translation.UpdateAll.Label</label>
+          <visible>string.contains(#mpei.updates,.::.)</visible>
+        </control>
+        <control>
+          <id>9</id>
+          <description>Check for Updates</description>
+          <type>button</type>
+          <onright>50</onright>
+          <label>#MPEI.Translation.DownloadUpdates.Label</label>
+          <ondown>2</ondown>
+        </control>
+        <!--<control>
+          <id>90</id>
+          <description>MPEIUPDATE:a6afa4d6-4fd8-4607-8878-5911db044fd7</description>
+          <type>button</type>
+          <onright>50</onright>
+          <visible>string.equals(#mpei.a6afa4d6_4fd8_4607_8878_5911db044fd7.haveupdate,true)</visible>
+          <label>#MPEI.Translation.UpdateAvailable.Label</label>
+        </control>-->
+      </control>
+    </control>
+    <control>
+      <id>0</id>
+      <type>label</type>
+      <posX>22</posX>
+      <posY>40</posY>
+      <font>font14</font>
+      <textcolor>ffffffff</textcolor>
+      <label>#MPE.View.Name</label>
+      <animation effect="Fade" time="250">WindowOpen</animation>
+      <animation effect="Fade" time="100">WindowClose</animation>
+    </control>
+    <control>
+      <id>0</id>
+      <description>Summary</description>
+      <type>textboxscrollup</type>
+      <visible>facadeview.list+Control.HasFocus(50)</visible>
+      <posX>727</posX>
+      <posY>420</posY>
+      <width>210</width>
+      <height>180</height>
+      <textcolor>ffFFFFFF</textcolor>
+      <font>font11</font>
+      <label>#MPE.Selected.Description</label>
+      <animation effect="Fade" time="250">WindowOpen</animation>
+      <animation effect="Fade" time="100">WindowClose</animation>
+    </control>
+    <control>
+      <id>0</id>
+      <description>extension image</description>
+      <type>image</type>
+      <posX>727</posX>
+      <posY>200</posY>
+      <width>195</width>
+      <height>221</height>
+      <texture>#selectedthumb</texture>
+      <overlay>yes</overlay>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <visible>facadeview.list+Control.HasFocus(50)</visible>
+      <animation effect="Fade" time="250">WindowOpen</animation>
+      <animation effect="Fade" time="100">WindowClose</animation>
+    </control>
+    <import>common.facade.music.xml</import>
+    <control>
+      <description>Image Tags</description>
+      <type>group</type>
+      <posX>727</posX>
+      <posY>180</posY>
+      <dimColor>FFffffff</dimColor>
+      <layout>StackLayout(4, Horizontal, true)</layout>
+      <animation effect="Fade" time="250">WindowOpen</animation>
+      <animation effect="Fade" time="100">WindowClose</animation>
+      <control>
+        <type>image</type>
+        <visible>string.equals(#MPE.Selected.JustAded,true)</visible>
+        <texture>status_new.png</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <visible>string.equals(#MPE.Selected.Popular,true)</visible>
+        <texture>status_popular.png</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <visible>string.equals(#MPE.Selected.DeveloperPick,true)</visible>
+        <texture>status_editorpick.png</texture>
+      </control>
+    </control>
+  </controls>
+</window>

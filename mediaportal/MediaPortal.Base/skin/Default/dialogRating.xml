@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2013</id>
@@ -8,26 +8,26 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>black.png</texture>
-      <colordiffuse>40ffffff</colordiffuse>
+      <width>960</width>
+      <height>720</height>
+      <texture>white.png</texture>
+      <colordiffuse>201e90ff</colordiffuse>
     </control>
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>176</posX>
-      <posY>196</posY>
-      <width>435</width>
-      <height>245</height>
+      <posX>235</posX>
+      <posY>245</posY>
+      <width>581</width>
+      <height>307</height>
       <texture>dialog_background.png</texture>
     </control>
     <control>
       <description>dialog Heading</description>
       <type>label</type>
       <id>2</id>
-      <posX>214</posX>
-      <posY>229</posY>
+      <posX>286</posX>
+      <posY>287</posY>
       <label>934</label>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
@@ -36,8 +36,8 @@
       <description>Rating label</description>
       <type>label</type>
       <id>3</id>
-      <posX>214</posX>
-      <posY>269</posY>
+      <posX>286</posX>
+      <posY>337</posY>
       <label>204</label>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
@@ -46,10 +46,10 @@
       <description>right button</description>
       <type>button</type>
       <id>10</id>
-      <posX>474</posX>
-      <posY>294</posY>
-      <width>25</width>
-      <height>26</height>
+      <posX>633</posX>
+      <posY>368</posY>
+      <width>34</width>
+      <height>33</height>
       <textureFocus>arrow_round_right_focus.png</textureFocus>
       <textureNoFocus>arrow_round_right_nofocus.png</textureNoFocus>
       <onleft>11</onleft>
@@ -61,10 +61,10 @@
       <description>left button</description>
       <type>button</type>
       <id>11</id>
-      <posX>234</posX>
-      <posY>294</posY>
-      <width>25</width>
-      <height>26</height>
+      <posX>312</posX>
+      <posY>368</posY>
+      <width>34</width>
+      <height>33</height>
       <textureFocus>arrow_round_left_focus.png</textureFocus>
       <textureNoFocus>arrow_round_left_nofocus.png</textureNoFocus>
       <onleft>11</onleft>
@@ -76,13 +76,13 @@
       <description>OK button</description>
       <type>button</type>
       <id>12</id>
-      <posX>542</posX>
-      <posY>221</posY>
-      <textYOff>6</textYOff>
-      <width>38</width>
-      <height>46</height>
-      <textureFocus>dialogue_ok_focus.png</textureFocus>
-      <textureNoFocus>dialogue_ok_nofocus.png</textureNoFocus>
+      <posX>723</posX>
+      <posY>277</posY>
+      <textYOff>8</textYOff>
+      <width>22</width>
+      <height>22</height>
+      <textureFocus>top_exit_enabled.png</textureFocus>
+      <textureNoFocus>top_exit_disabled.png</textureNoFocus>
       <label>-</label>
       <onleft>13</onleft>
       <onright>10</onright>
@@ -93,10 +93,10 @@
       <description>next item</description>
       <type>button</type>
       <id>13</id>
-      <posX>294</posX>
-      <posY>364</posY>
-      <width>25</width>
-      <height>26</height>
+      <posX>393</posX>
+      <posY>455</posY>
+      <width>34</width>
+      <height>33</height>
       <textureFocus>arrow_round_right_focus.png</textureFocus>
       <textureNoFocus>arrow_round_right_nofocus.png</textureNoFocus>
       <onleft>14</onleft>
@@ -108,10 +108,10 @@
       <description>Play</description>
       <type>button</type>
       <id>14</id>
-      <posX>264</posX>
-      <posY>360</posY>
-      <width>25</width>
-      <height>36</height>
+      <posX>353</posX>
+      <posY>450</posY>
+      <width>34</width>
+      <height>46</height>
       <textureFocus>osd_play_focus.png</textureFocus>
       <textureNoFocus>osd_play_nofocus.png</textureNoFocus>
       <label>-</label>
@@ -125,10 +125,10 @@
       <description>previous item</description>
       <type>button</type>
       <id>15</id>
-      <posX>234</posX>
-      <posY>364</posY>
-      <width>25</width>
-      <height>26</height>
+      <posX>312</posX>
+      <posY>455</posY>
+      <width>34</width>
+      <height>33</height>
       <textureFocus>arrow_round_left_focus.png</textureFocus>
       <textureNoFocus>arrow_round_left_nofocus.png</textureNoFocus>
       <onleft>15</onleft>
@@ -140,8 +140,8 @@
       <description>Title</description>
       <type>label</type>
       <id>4</id>
-      <posX>214</posX>
-      <posY>334</posY>
+      <posX>286</posX>
+      <posY>418</posY>
       <label>204</label>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
@@ -149,36 +149,36 @@
     <control>
       <type>image</type>
       <id>100</id>
-      <posX>274</posX>
-      <posY>296</posY>
+      <posX>366</posX>
+      <posY>370</posY>
       <texture>stargood.png</texture>
     </control>
     <control>
       <type>image</type>
       <id>101</id>
-      <posX>315</posX>
-      <posY>296</posY>
+      <posX>420</posX>
+      <posY>370</posY>
       <texture>stargood.png</texture>
     </control>
     <control>
       <type>image</type>
       <id>102</id>
-      <posX>354</posX>
-      <posY>296</posY>
+      <posX>473</posX>
+      <posY>370</posY>
       <texture>stargood.png</texture>
     </control>
     <control>
       <type>image</type>
       <id>103</id>
-      <posX>394</posX>
-      <posY>296</posY>
+      <posX>526</posX>
+      <posY>370</posY>
       <texture>stargood.png</texture>
     </control>
     <control>
       <type>image</type>
       <id>104</id>
-      <posX>434</posX>
-      <posY>296</posY>
+      <posX>579</posX>
+      <posY>370</posY>
       <texture>stargood.png</texture>
     </control>
   </controls>

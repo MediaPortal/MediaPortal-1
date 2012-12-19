@@ -370,7 +370,7 @@ public class MediaPortalApp : D3DApp, IRender
       UIntPtr res = UIntPtr.Zero;
 
       int options = Convert.ToInt32(Reg.RegistryRights.ReadKey);
-      if (OSInfo.OSInfo.OsVersionInt() >= 52)
+      if (OSInfo.OSInfo.Xp64OrLater())
       {
         options = options | Convert.ToInt32(Reg.RegWow64Options.KEY_WOW64_64KEY);
       }
@@ -1812,7 +1812,7 @@ public class MediaPortalApp : D3DApp, IRender
     using (Settings xmlreader = new MPSettings())
     {
       _useLongDateFormat = xmlreader.GetValueAsBool("home", "LongTimeFormat", false);
-      _startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
+      _startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", true);
       _useOnlyOneHome = xmlreader.GetValueAsBool("gui", "useonlyonehome", false);
       bool autosize = xmlreader.GetValueAsBool("gui", "autosize", true);
       if (autosize && !GUIGraphicsContext.Fullscreen)

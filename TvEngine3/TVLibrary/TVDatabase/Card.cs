@@ -400,6 +400,21 @@ namespace TvDatabase
     }
 
     /// <summary>
+    /// Static method to retrieve all enabled cards that are stored in the database in one call.
+    /// The List is sorted by the card's priority.
+    /// </summary>
+    public static IList<Card> ListAllEnabled()
+    {
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Card));
+      sb.AddConstraint(Operator.Equals, "enabled", true);
+      SqlStatement stmt = sb.GetStatement(true);
+      // execute the statement/query and create a collection of User instances from the result set
+      List<Card> allEnabledCards = (List<Card>)ObjectFactory.GetCollection<Card>(stmt.Execute());
+      allEnabledCards.Sort(); // sort list by IComparable implementation, which takes care about priorities		
+      return allEnabledCards;
+    }
+
+    /// <summary>
     /// Retrieves an entity given it's id.
     /// </summary>
     public static Card Retrieve(int id)
@@ -453,7 +468,7 @@ namespace TvDatabase
     /// <returns>true/false</returns>
     public bool canViewTvChannel(int channelId)
     {
-      IList<ChannelMap> _cardChannels = ReferringChannelMap();
+      IList<ChannelMap> _cardChannels = ReferringSingleChannelMap(channelId);
       foreach (ChannelMap _cmap in _cardChannels)
       {
         if (channelId == _cmap.IdChannel && !_cmap.EpgOnly)
@@ -471,7 +486,7 @@ namespace TvDatabase
     /// <returns>true/false</returns>
     public bool canTuneTvChannel(int channelId)
     {
-      IList<ChannelMap> _cardChannels = ReferringChannelMap();
+      IList<ChannelMap> _cardChannels = ReferringSingleChannelMap(channelId);
       foreach (ChannelMap _cmap in _cardChannels)
       {
         if (channelId == _cmap.IdChannel)
@@ -505,6 +520,30 @@ namespace TvDatabase
 
       // where foreigntable.foreignkey = ourprimarykey
       sb.AddConstraint(Operator.Equals, "idCard", idCard);
+
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+
+      // execute the statement/query and create a collection of User instances from the result set
+      return ObjectFactory.GetCollection<ChannelMap>(stmt.Execute());
+
+      // TODO In the end, a GentleList should be returned instead of an arraylist
+      //return new GentleList( typeof(ChannelMap), this );
+    }
+
+    /// <summary>
+    /// Get a single channel of ChannelMap referring to the current entity.
+    /// <param name="channelId">Channel id</param>
+    /// </summary>
+    public IList<ChannelMap> ReferringSingleChannelMap(int channelId)
+    {
+      //select * from 'foreigntable'
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(ChannelMap));
+
+      // where foreigntable.foreignkey = ourprimarykey
+      sb.AddConstraint(Operator.Equals, "idCard", idCard);
+      sb.AddConstraint(Operator.Equals, "idChannel", channelId);
 
       // passing true indicates that we'd like a list of elements, i.e. that no primary key
       // constraints from the type being retrieved should be added to the statement

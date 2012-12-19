@@ -298,7 +298,7 @@ namespace TvLibrary.Interfaces
     /// <param name="id">The id.</param>
     /// <returns></returns>
     ITvSubChannel GetSubChannel(int id);
-
+    ITvSubChannel GetFirstSubChannel();
 
     /// <summary>
     /// Frees the sub channel.

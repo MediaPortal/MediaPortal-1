@@ -12,10 +12,10 @@
       <description>1 Star</description>
       <type>togglebutton</type>
       <id>100</id>
-      <posX>274</posX>
-      <posY>289</posY>
-      <width>18</width>
-      <height>25</height>
+      <posX>366</posX>
+      <posY>362</posY>
+      <width>24</width>
+      <height>32</height>
       <onup>101</onup>
       <textureFocus>UserRatingStarOn.png</textureFocus>
       <textureNoFocus>UserRatingStarOn.png</textureNoFocus>
@@ -26,10 +26,10 @@
       <description>2 Star</description>
       <type>togglebutton</type>
       <id>101</id>
-      <posX>315</posX>
-      <posY>289</posY>
-      <width>18</width>
-      <height>25</height>
+      <posX>420</posX>
+      <posY>362</posY>
+      <width>24</width>
+      <height>32</height>
       <onup>102</onup>
       <textureFocus>UserRatingStarOn.png</textureFocus>
       <textureNoFocus>UserRatingStarOn.png</textureNoFocus>
@@ -40,10 +40,10 @@
       <description>3 Star</description>
       <type>togglebutton</type>
       <id>102</id>
-      <posX>354</posX>
-      <posY>289</posY>
-      <width>18</width>
-      <height>25</height>
+      <posX>473</posX>
+      <posY>362</posY>
+      <width>24</width>
+      <height>32</height>
       <onup>103</onup>
       <textureFocus>UserRatingStarOn.png</textureFocus>
       <textureNoFocus>UserRatingStarOn.png</textureNoFocus>
@@ -54,10 +54,10 @@
       <description>4 Star</description>
       <type>togglebutton</type>
       <id>103</id>
-      <posX>394</posX>
-      <posY>289</posY>
-      <width>18</width>
-      <height>25</height>
+      <posX>526</posX>
+      <posY>362</posY>
+      <width>24</width>
+      <height>32</height>
       <onup>104</onup>
       <textureFocus>UserRatingStarOn.png</textureFocus>
       <textureNoFocus>UserRatingStarOn.png</textureNoFocus>
@@ -68,10 +68,10 @@
       <description>5 Star</description>
       <type>togglebutton</type>
       <id>104</id>
-      <posX>434</posX>
-      <posY>289</posY>
-      <width>18</width>
-      <height>25</height>
+      <posX>579</posX>
+      <posY>362</posY>
+      <width>24</width>
+      <height>32</height>
       <textureFocus>UserRatingStarOn.png</textureFocus>
       <textureNoFocus>UserRatingStarOn.png</textureNoFocus>
       <AltTextureFocus>UserRatingStarOff.png</AltTextureFocus>
@@ -81,11 +81,11 @@
       <description>dialog text</description>
       <type>label</type>
       <id>7</id>
-      <posX>450</posX>
-      <posY>320</posY>
+      <posX>600</posX>
+      <posY>400</posY>
       <font>font13</font>
       <align>right</align>
-      <width>168</width>
+      <width>225</width>
       <textcolor>ffffffff</textcolor>
     </control>
   </controls>

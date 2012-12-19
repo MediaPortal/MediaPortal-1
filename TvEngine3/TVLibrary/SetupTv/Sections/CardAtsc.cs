@@ -69,10 +69,7 @@ namespace SetupTv.Sections
 
     private void Init()
     {
-      if (checkBoxQAM.Enabled != true || checkBoxQAM.Checked == false)
-      {
-        mpComboBoxFrequencies.Enabled = false;
-      }
+      checkBoxQAM_CheckedChanged(null, null);
       mpComboBoxFrequencies.Items.Clear();
       try
       {
@@ -94,6 +91,7 @@ namespace SetupTv.Sections
       UpdateStatus();
       TvBusinessLayer layer = new TvBusinessLayer();
       checkBoxQAM.Checked = (layer.GetSetting("atsc" + _cardNumber + "supportsqam", "false").Value == "true");
+      checkBoxQAM_CheckedChanged(null, null);
     }
 
     public override void OnSectionDeActivated()
@@ -351,7 +349,7 @@ namespace SetupTv.Sections
         RemoteControl.Instance.EpgGrabberEnabled = true;
         progressBar1.Value = 100;
         checkBoxQAM.Enabled = true;
-        mpComboBoxFrequencies.Enabled = true;
+        checkBoxQAM_CheckedChanged(null, null);
         mpButtonScanTv.Text = buttonText;
         _isScanning = false;
       }

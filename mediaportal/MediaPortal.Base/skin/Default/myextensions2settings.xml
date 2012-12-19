@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>803</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>background.png</texture>
+      <width>960</width>
+      <height>720</height>
+    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>30</posY>
+      <width>960</width>
+      <height>720</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>50</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>-60</buttonY>
+      <buttonwidth>79</buttonwidth>
+      <buttonheight>720</buttonheight>
+      <textureFocus>Action_focus.png</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>240</width>
+      <height>720</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <width>960</width>
+        <height>720</height>
+        <texture>white.png</texture>
+        <colordiffuse>201e90ff</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>19</posX>
+        <posY>78</posY>
+        <width>280</width>
+        <height>591</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+        <posX>37</posX>
+        <posY>121</posY>
+        <layout>StackLayout</layout>
+        <visible>!Control.HasFocus(50)</visible>
+        <control>
+          <description>Sections</description>
+          <type>button</type>
+          <id>2</id>
+          <label>#MPEI.Translation.Sections.Label</label>
+          <onleft>50</onleft>
+          <onright>50</onright>
+          <onup>17</onup>
+        </control>
+      </control>
+    </control>
+    <import>common.facade.music.xml</import>
+    <control>
+      <type>label</type>
+      <posX>727</posX>
+      <posY>180</posY>
+      <label>#MPEI.Translation.Description.Label</label>
+      <textcolor>ffa9d0f7</textcolor>
+      <font>font12</font>
+      <animation effect="Fade" time="250">WindowOpen</animation>
+      <animation effect="Fade" time="100">WindowClose</animation>
+      <visible>!string.equals(#MPE.Selection.Description,)</visible>
+    </control>
+    <control>
+      <type>textboxscrollup</type>
+      <posX>727</posX>
+      <posY>210</posY>
+      <width>210</width>
+      <height>380</height>
+      <font>font12</font>
+      <label>#MPE.Selection.Description</label>
+      <animation effect="Fade" time="250">WindowOpen</animation>
+      <animation effect="Fade" time="100">WindowClose</animation>
+    </control>
+  </controls>
+</window>

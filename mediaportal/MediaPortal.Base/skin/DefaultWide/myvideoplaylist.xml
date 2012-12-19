@@ -2,7 +2,7 @@
 <window>
   <id>28</id>
   <defaultcontrol>2</defaultcontrol>
-  <allowoverlay>[facadeview.filmstrip|facadeview.coverflow]</allowoverlay>
+  <allowoverlay>yes</allowoverlay>
   <define>#useSelectedFanart:Yes</define>
   <define>#selecteditem:</define>
   <controls>
@@ -10,9 +10,10 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <texture>background.png</texture>
+      <texture>BH Videos.jpg</texture>
       <width>1280</width>
       <height>720</height>
+      <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
@@ -63,9 +64,17 @@
       <visible>!Control.HasFocus(50)</visible>
       <control>
         <type>image</type>
+        <id>0</id>
+        <width>1280</width>
+        <height>720</height>
+        <texture>white.png</texture>
+        <colordiffuse>201e90ff</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
         <posX>26</posX>
         <posY>78</posY>
-        <width>367</width>
+        <width>320</width>
         <height>591</height>
         <texture>Backslide.png</texture>
         <colorDiffuse>fffffffff</colorDiffuse>
@@ -75,7 +84,7 @@
         <type>group</type>
         <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
         <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
-        <posX>71</posX>
+        <posX>50</posX>
         <posY>121</posY>
         <visible>!Control.HasFocus(50)</visible>
         <layout>StackLayout</layout>
@@ -425,7 +434,7 @@
       <description>Separator Line</description>
       <type>image</type>
       <id>1</id>
-      <posX>71</posX>
+      <posX>50</posX>
       <posY>460</posY>
       <width>475</width>
       <height>1</height>
@@ -450,7 +459,7 @@
       <description>Separator Line</description>
       <type>image</type>
       <id>1</id>
-      <posX>71</posX>
+      <posX>50</posX>
       <posY>642</posY>
       <width>475</width>
       <height>1</height>
@@ -462,7 +471,7 @@
     <control>
       <description>Logos group</description>
       <type>group</type>
-      <posX>71</posX>
+      <posX>50</posX>
       <posY>655</posY>
       <layout>StackLayout(0, Horizontal, true)</layout>
       <control>

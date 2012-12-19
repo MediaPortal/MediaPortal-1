@@ -1029,13 +1029,6 @@
     <String id="1247">Enable colored genres in TV EPG</String>
     <String id="1248">Border selected program in TV EPG</String>
     <String id="1249">Show genre color map in TV EPG</String>
-    <String id="1250">Documentary</String>
-    <String id="1251">Kids</String>
-    <String id="1252">Movie</String>
-    <String id="1253">Music</String>
-    <String id="1254">News</String>
-    <String id="1255">Special</String>
-    <String id="1256">Sports</String>
     <String id="1260">Set watched status</String>
     <String id="1261">No GrabberIndexFile found.</String>
     <String id="1262">Update Grabber scripts</String>
@@ -1086,6 +1079,16 @@
     <String id="1307">Update internal Grabber scripts</String>
     <String id="1308">Rename SortTitle</String>
     <String id="1309">Name-Full</String>
+    <String id="1310">Select actor</String>
+    <String id="1311">Refreshing is already active.</String>
+    <String id="1312">Exporting movies...</String>
+    <String id="1313">Creating nfo file</String>
+    <String id="1314">Working...</String>
+    <String id="1315">Creating nfo for: </String>
+    <String id="1316">Updating internal scripts...</String>
+    <String id="1317">Downloading internal scripts...</String>
+    <String id="1318">Save subtitle</String>
+    <String id="1319">Save modified subtitle file?</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
     <String id="1442">Scroll speed (horizontal)</String>
@@ -1519,10 +1522,16 @@
     <String id="6041">Two days ago</String>
     <String id="6042">Enter a skip step number of seconds</String>
     <String id="6050">Current week</String>
+    <String id="6055">Earlier this week</String>
+    <String id="6056">Last week</String>
     <String id="6060">Current month</String>
+    <String id="6062">Earlier this month</String>
+    <String id="6065">Last month</String>
     <String id="6070">Current year</String>
+    <String id="6075">Earlier this year</String>
     <String id="6080">Last year</String>
     <String id="6090">Older</String>
+    <String id="6095">Future</String>
     <String id="8000" prefix="My ">Mail</String>
     <String id="8001">Check Mailbox</String>
     <String id="8002">Auto-check off</String>
@@ -1934,7 +1943,7 @@
     <String id="101004">Virtual SMS Keyboard</String>
     <String id="101005">GUI - Thumbnails</String>
     <String id="101006">GUI - On-screen display</String>
-    <String id="101007">General - Volume</String>
+    <String id="101007">Volume</String>
     <String id="101008">General - Dynamic refresh rate</String>
     <String id="101010">Videos - Database</String>
     <String id="101011">Music- Database</String>
@@ -1950,7 +1959,7 @@
     <String id="101021">GUI</String>
     <String id="101022">GUI - General</String>
     <String id="101023">Videos - Other</String>
-    <String id="101024">BluRay</String>
+    <String id="101024">Blu-ray</String>
     <String id="102000">Select dialog</String>
     <String id="102001" prefix="My ">Music/info</String>
     <String id="102002">Dialog OK</String>
@@ -2188,7 +2197,7 @@
     <String id="300094">Restart delay in seconds</String>
     <String id="300095">Turn off monitor (when blanking screen)</String>
     <String id="300096">Turn monitor/tv on (resume from standby)</String>
-    <String id="300097">Allow S3 standby (even wakeup devices are present)</String>
+    <String id="300097">Allow S3 standby (even if wake up devices are present)</String>
     <String id="300098">Workaround to fix MediaPortal freeze on resume</String>
     <String id="300099">Restart MediaPortal on resume</String>
     <String id="300100">Show last active module on wake up</String>
@@ -2200,7 +2209,7 @@
     <String id="300106">Alternative splash screen</String>
     <String id="300107">Keep MediaPortal always on top</String>
     <String id="300108">Hide taskbar in fullscreen</String>
-    <String id="300109">Autostart MediaPortal on Win startup</String>
+    <String id="300109">Autostart MediaPortal on Windows startup</String>
     <String id="300110">Minimize to tray on startup</String>
     <String id="300111">Minimize to tray on GUI exit</String>
     <String id="300112">Master volume</String>
@@ -2268,8 +2277,8 @@
     <String id="300174">Create missing folder.jpg</String>
     <String id="300175">Dynamic content</String>
     <String id="300176">Disable Internet lookup for cover art</String>
-    <String id="300177">Disable Interent lookups for best albums tracks</String>
-    <String id="300178">Disable Interent lookups for track suggestions</String>
+    <String id="300177">Disable Internet lookups for best albums tracks</String>
+    <String id="300178">Disable Internet lookups for track suggestions</String>
     <String id="300179">Switch artists on Internet lookup</String>
     <String id="300180">VUMeter (BASS player only)</String>
     <String id="300181">Scan picture folders</String>
@@ -2296,7 +2305,7 @@
     <String id="300202">Strip title prefix</String>
     <String id="300203">Other</String>
     <String id="300204">Mark every already watched file</String>
-    <String id="300205">Keep DVD and BluRay folders together</String>
+    <String id="300205">Keep DVD and Blu-ray folders together</String>
     <String id="300206">Use comskip data to skip commercials</String>
     <String id="300207">Watched percentage (%)</String>
     <String id="300208">Audio Video Delay (ms)</String>
@@ -2308,7 +2317,7 @@
     <String id="300214">DivX/Xvid video codec</String>
     <String id="300215">Splitter source</String>
     <String id="300216">Splitter filesync</String>
-    <String id="300217">BluRay</String>
+    <String id="300217">Blu-ray</String>
     <String id="300218">Region</String>
     <String id="300219">Audio Type</String>
     <String id="300220">Parental age limit</String>
@@ -2318,5 +2327,6 @@
     <String id="300224">Video thumbs disabled globally</String>
     <String id="300225">Use "Sort title"</String>
     <String id="300226">Use only internal nfo scraper</String>
-	</Section>
+    <String id="300227">Clear Blacklisted thumbs</String>
+   </Section>
 </Language>

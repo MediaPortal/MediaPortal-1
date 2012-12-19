@@ -235,17 +235,30 @@ namespace MpeCore.Classes
 
     public static void KillAllMediaPortalProcesses()
     {
-      KillProcces("Configuration");
-      KillProcces("MediaPortal");
-      KillProcces("SetupTv");
+      KillAllMediaPortalProcesses(false);
+    }
+
+    public static void KillAllMediaPortalProcesses(bool silent)
+    {
+      KillProcces("Configuration", silent);
+      KillProcces("MediaPortal", silent);
+      KillProcces("SetupTv", silent);
     }
 
     public static void KillProcces(string name)
     {
+      KillProcces(name, false);
+    }
+
+    public static void KillProcces(string name, bool silent)
+    {
       Process pr = Process.GetProcesses().FirstOrDefault(p => p.ProcessName.Equals(name, StringComparison.InvariantCultureIgnoreCase));
       if (pr != null)
       {
-        MessageBox.Show(name + " must be closed in order to continue!", "Close " + name, MessageBoxButtons.OK, MessageBoxIcon.Hand);
+        if (!silent)
+        {
+          MessageBox.Show(name + " must be closed in order to continue!", "Close " + name, MessageBoxButtons.OK, MessageBoxIcon.Hand);
+        }
         if (!pr.HasExited)
         {
           pr.CloseMainWindow();

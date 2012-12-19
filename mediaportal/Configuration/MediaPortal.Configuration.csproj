@@ -164,6 +164,10 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\TvEngine3\TVLibrary\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
+      <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
+      <Name>TvLibrary.Interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="WinCustomControls\WinCustomControls.csproj">
       <Project>{49DFF256-09FD-4598-A3E8-855753E2A1FC}</Project>
       <Name>WinCustomControls</Name>
@@ -247,6 +251,7 @@
       <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
       <Name>Utils</Name>
     </ProjectReference>
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
@@ -255,6 +260,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="TvServerRemote.cs" />
     <Compile Include="Sections\BD.cs">
       <SubType>UserControl</SubType>
     </Compile>

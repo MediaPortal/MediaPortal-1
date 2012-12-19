@@ -1,14 +1,66 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <controls>
+    <!-- *********************** Labels for timed FF/Rew and screen resolution********************************** -->
+    <control>
+      <description>background for 10,11,12</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>290</posX>
+      <posY>604</posY>
+      <width>747</width>
+      <height>71</height>
+      <visible>!string.equals(topbar.visible,)+control.isvisible(10)|control.isvisible(11)|control.isvisible(12)</visible>
+      <texture>osd_mask3.png</texture>
+      <colordiffuse>99ffffff</colordiffuse>
+    </control>
+    <control>
+      <description>row 1 label</description>
+      <type>label</type>
+      <id>10</id>
+      <posX>0</posX>
+      <posY>639</posY>
+      <width>1280</width>
+      <label>-</label>
+      <font>font16</font>
+      <align>center</align>
+      <textcolor>ivory</textcolor>
+      <visible>no</visible>
+    </control>
+    <control>
+      <description>row 2 label</description>
+      <type>label</type>
+      <id>11</id>
+      <posX>0</posX>
+      <posY>639</posY>
+      <width>1280</width>
+      <label>-</label>
+      <font>font16</font>
+      <align>center</align>
+      <textcolor>ivory</textcolor>
+      <visible>no</visible>
+    </control>
+    <control>
+      <description>row 3 label</description>
+      <type>fadelabel</type>
+      <id>12</id>
+      <posX>0</posX>
+      <posY>639</posY>
+      <width>1280</width>
+      <label>-</label>
+      <font>font16</font>
+      <align>center</align>
+      <textcolor>ivory</textcolor>
+      <visible>no</visible>
+    </control>
     <!-- **************************** PAUSE, REWIND ETC. FOR NORMAL VIDEO OSD ********************************** -->
     <control>
       <description>Pause image</description>
       <type>image</type>
       <id>0</id>
-      <posX>1100</posX>
-      <posY>565</posY>
-      <visible>player.paused+!control.hasfocus(1237)</visible>
+      <posX>1070</posX>
+      <posY>650</posY>
+      <visible>player.paused</visible>
       <texture>video-pause.png</texture>
       <colorkey>0</colorkey>
       <colordiffuse>ivory</colordiffuse>
@@ -17,8 +69,8 @@
       <description>2x image</description>
       <type>image</type>
       <id>0</id>
-      <posX>1100</posX>
-      <posY>565</posY>
+      <posX>1070</posX>
+      <posY>650</posY>
       <visible>player.forwarding2x+!control.hasfocus(1237)</visible>
       <texture>video+2x.png</texture>
       <colorkey>0</colorkey>
@@ -28,8 +80,8 @@
       <description>4x image</description>
       <type>image</type>
       <id>0</id>
-      <posX>1100</posX>
-      <posY>565</posY>
+      <posX>1070</posX>
+      <posY>650</posY>
       <visible>player.forwarding4x+!control.hasfocus(1237)</visible>
       <texture>video+4x.png</texture>
       <colorkey>0</colorkey>
@@ -39,8 +91,8 @@
       <description>8x image</description>
       <type>image</type>
       <id>0</id>
-      <posX>1100</posX>
-      <posY>565</posY>
+      <posX>1070</posX>
+      <posY>650</posY>
       <visible>player.forwarding8x+!control.hasfocus(1237)</visible>
       <texture>video+8x.png</texture>
       <colorkey>0</colorkey>
@@ -50,8 +102,8 @@
       <description>16x image</description>
       <type>image</type>
       <id>0</id>
-      <posX>1100</posX>
-      <posY>565</posY>
+      <posX>1070</posX>
+      <posY>650</posY>
       <visible>player.forwarding16x+!control.hasfocus(1237)</visible>
       <texture>video+16x.png</texture>
       <colorkey>0</colorkey>
@@ -61,8 +113,8 @@
       <description>32x image</description>
       <type>image</type>
       <id>0</id>
-      <posX>1100</posX>
-      <posY>565</posY>
+      <posX>1070</posX>
+      <posY>650</posY>
       <visible>player.forwarding32x+!control.hasfocus(1237)</visible>
       <texture>video+32x.png</texture>
       <colorkey>0</colorkey>
@@ -72,8 +124,8 @@
       <description>- 2x image</description>
       <type>image</type>
       <id>0</id>
-      <posX>1100</posX>
-      <posY>565</posY>
+      <posX>1070</posX>
+      <posY>650</posY>
       <visible>player.rewinding2x+!control.hasfocus(1237)</visible>
       <texture>video-2x.png</texture>
       <colorkey>0</colorkey>
@@ -83,8 +135,8 @@
       <description>- 4x image</description>
       <type>image</type>
       <id>0</id>
-      <posX>1100</posX>
-      <posY>565</posY>
+      <posX>1070</posX>
+      <posY>650</posY>
       <visible>player.rewinding4x+!control.hasfocus(1237)</visible>
       <texture>video-4x.png</texture>
       <colorkey>0</colorkey>
@@ -94,8 +146,8 @@
       <description>- 8x image</description>
       <type>image</type>
       <id>0</id>
-      <posX>1100</posX>
-      <posY>565</posY>
+      <posX>1070</posX>
+      <posY>650</posY>
       <visible>player.rewinding8x+!control.hasfocus(1237)</visible>
       <texture>video-8x.png</texture>
       <colorkey>0</colorkey>
@@ -105,8 +157,8 @@
       <description>- 16x image</description>
       <type>image</type>
       <id>0</id>
-      <posX>1100</posX>
-      <posY>565</posY>
+      <posX>1070</posX>
+      <posY>650</posY>
       <visible>player.rewinding16x+!control.hasfocus(1237)</visible>
       <texture>video-16x.png</texture>
       <colorkey>0</colorkey>
@@ -116,135 +168,44 @@
       <description>- 32x image</description>
       <type>image</type>
       <id>0</id>
-      <posX>1100</posX>
-      <posY>565</posY>
+      <posX>1070</posX>
+      <posY>650</posY>
       <visible>player.rewinding32x+!control.hasfocus(1237)</visible>
       <texture>video-32x.png</texture>
       <colorkey>0</colorkey>
       <colordiffuse>ivory</colordiffuse>
     </control>
-    <!-- **************************** PAUSE, REWIND ETC. FOR EXPANDED VIDEO OSD ********************************** -->
+    <!-- **************************** Volume Display  ********************************** -->
     <control>
-      <description>Pause image</description>
       <type>image</type>
-      <id>0</id>
-      <posX>1100</posX>
-      <posY>380</posY>
-      <visible>player.paused+control.hasfocus(1237)</visible>
-      <texture>video-pause.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>ivory</colordiffuse>
+      <id>502</id>
+      <posX>25</posX>
+      <posY>14</posY>
+      <width>331</width>
+      <height>80</height>
+      <texture>volumelevel.png</texture>
+      <colordiffuse>80ffffff</colordiffuse>
+      <visible>control.isVisible(501)+!control.isVisible(500)</visible>
     </control>
     <control>
-      <description>2x image</description>
       <type>image</type>
-      <id>0</id>
-      <posX>1100</posX>
-      <posY>380</posY>
-      <visible>player.forwarding2x+control.hasfocus(1237)</visible>
-      <texture>video+2x.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>ivory</colordiffuse>
+      <id>500</id>
+      <posX>84</posX>
+      <posY>42</posY>
+      <texture>volume.states.mute.png</texture>
+      <visible>no</visible>
     </control>
     <control>
-      <description>4x image</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1100</posX>
-      <posY>380</posY>
-      <visible>player.forwarding4x+control.hasfocus(1237)</visible>
-      <texture>video+4x.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>ivory</colordiffuse>
+      <type>volumebar</type>
+      <id>501</id>
+      <posX>84</posX>
+      <posY>54</posY>
+      <align>left</align>
+      <height>35</height>
+      <imageHeight>3</imageHeight>
+      <width>270</width>
+      <texture>volume.states.png</texture>
+      <visible>no</visible>
     </control>
-    <control>
-      <description>8x image</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1100</posX>
-      <posY>380</posY>
-      <visible>player.forwarding8x+control.hasfocus(1237)</visible>
-      <texture>video+8x.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>ivory</colordiffuse>
-    </control>
-    <control>
-      <description>16x image</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1100</posX>
-      <posY>380</posY>
-      <visible>player.forwarding16x+control.hasfocus(1237)</visible>
-      <texture>video+16x.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>ivory</colordiffuse>
-    </control>
-    <control>
-      <description>32x image</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1100</posX>
-      <posY>380</posY>
-      <visible>player.forwarding32x+control.hasfocus(1237)</visible>
-      <texture>video+32x.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>ivory</colordiffuse>
-    </control>
-    <control>
-      <description>- 2x image</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1100</posX>
-      <posY>380</posY>
-      <visible>player.rewinding2x+control.hasfocus(1237)</visible>
-      <texture>video-2x.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>ivory</colordiffuse>
-    </control>
-    <control>
-      <description>- 4x image</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1100</posX>
-      <posY>380</posY>
-      <visible>player.rewinding4x+control.hasfocus(1237)</visible>
-      <texture>video-4x.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>ivory</colordiffuse>
-    </control>
-    <control>
-      <description>- 8x image</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1100</posX>
-      <posY>380</posY>
-      <visible>player.rewinding8x+control.hasfocus(1237)</visible>
-      <texture>video-8x.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>ivory</colordiffuse>
-    </control>
-    <control>
-      <description>- 16x image</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1100</posX>
-      <posY>380</posY>
-      <visible>player.rewinding16x+control.hasfocus(1237)</visible>
-      <texture>video-16x.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>ivory</colordiffuse>
-    </control>
-    <control>
-      <description>- 32x image</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1100</posX>
-      <posY>380</posY>
-      <visible>player.rewinding32x+control.hasfocus(1237)</visible>
-      <texture>video-32x.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>ivory</colordiffuse>
-    </control>
-    
   </controls>
 </window>

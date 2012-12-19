@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>7701</id>
@@ -9,30 +9,30 @@
       <description>tele-text rendering image</description>
       <type>image</type>
       <id>500</id>
-      <posX>90</posX>
-      <posY>0</posY>
-      <width>540</width>
-      <height>576</height>
+      <posX>120</posX>
+      <posY>30</posY>
+      <width>720</width>
+      <height>660</height>
       <texture>-</texture>
-      <colordiffuse>ddffffff</colordiffuse>
+      <colordiffuse>bbffffff</colordiffuse>
     </control>
     <control>
       <description>tele-text rendering image 2</description>
       <type>image</type>
       <id>501</id>
-      <posX>90</posX>
-      <posY>0</posY>
-      <width>540</width>
-      <height>576</height>
+      <posX>120</posX>
+      <posY>30</posY>
+      <width>720</width>
+      <height>660</height>
       <texture>-</texture>
-      <colordiffuse>ddffffff</colordiffuse>
+      <colordiffuse>bbffffff</colordiffuse>
     </control>
     <control>
       <description>Current channel</description>
       <type>label</type>
       <id>27</id>
-      <posX>145</posX>
-      <posY>452</posY>
+      <posX>194</posX>
+      <posY>565</posY>
       <label>-</label>
       <align>left</align>
       <font>font16</font>

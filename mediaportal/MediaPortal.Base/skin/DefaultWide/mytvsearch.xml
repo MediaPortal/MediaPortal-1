@@ -16,6 +16,16 @@
     <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>30</posY>
+      <width>1280</width>
+      <height>720</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
       <description>Number of Files Label</description>
       <type>label</type>
       <id>12</id>
@@ -28,11 +38,11 @@
       <visible>no</visible>
     </control>
     <control>
-      <type>group</type>
       <description>group element</description>
-      <layout>StackLayout</layout>
-      <posX>70</posX>
-      <posY>120</posY>
+      <type>group</type>
+      <layout>StackLayout(0, Vertical, true)</layout>
+      <posX>50</posX>
+      <posY>170</posY>
       <control>
         <description>Sort by Name/Date/Channel</description>
         <type>sortbutton</type>
@@ -87,107 +97,49 @@
       </control>
     </control>
     <control>
-      <type>group</type>
-      <description>group element</description>
-      <control>
-        <description>listcontrol</description>
-        <type>listcontrol</type>
-        <id>10</id>
-        <posX>400</posX>
-        <posY>110</posY>
-        <width>850</width>
-        <height>450</height>
-        <textXOff>10</textXOff>
-        <textXOff2>840</textXOff2>
-        <textYOff>1</textYOff>
-        <textYOff2>28</textYOff2>
-        <textXOff3>100</textXOff3>
-        <textYOff3>24</textYOff3>
-        <IconXOff>10</IconXOff>
-        <IconYOff>7</IconYOff>
-        <PinIconXOff>810</PinIconXOff>
-        <PinIconYOff>4</PinIconYOff>
-        <spinPosX>1170</spinPosX>
-        <spinPosY>470</spinPosY>
-        <itemWidth>46</itemWidth>
-        <itemHeight>46</itemHeight>
-        <spaceBetweenItems>0</spaceBetweenItems>
-        <textureHeight>60</textureHeight>
-        <keepaspectratio>no</keepaspectratio>
-        <font>font12</font>
-        <font2>font11</font2>
-        <font3>font11</font3>
-        <onleft>2</onleft>
-        <onright>2</onright>
-        <onup>2</onup>
-        <ondown>2</ondown>
-      </control>
-      <control>
-        <description>scheduler recordings listcontrol</description>
-        <type>listcontrol</type>
-        <id>11</id>
-        <posX>400</posX>
-        <posY>110</posY>
-        <width>850</width>
-        <height>450</height>
-        <textXOff>10</textXOff>
-        <textXOff2>840</textXOff2>
-        <textYOff>1</textYOff>
-        <textYOff2>28</textYOff2>
-        <textXOff3>100</textXOff3>
-        <textYOff3>24</textYOff3>
-        <IconXOff>10</IconXOff>
-        <IconYOff>7</IconYOff>
-        <PinIconXOff>810</PinIconXOff>
-        <PinIconYOff>4</PinIconYOff>
-        <spinPosX>1170</spinPosX>
-        <spinPosY>470</spinPosY>
-        <itemWidth>46</itemWidth>
-        <itemHeight>46</itemHeight>
-        <spaceBetweenItems>0</spaceBetweenItems>
-        <textureHeight>60</textureHeight>
-        <keepaspectratio>no</keepaspectratio>
-        <font>font12</font>
-        <font2>font11</font2>
-        <font3>font11</font3>
-        <onleft>2</onleft>
-        <onright>2</onright>
-        <onup>2</onup>
-        <ondown>2</ondown>
-      </control>
+      <description>listcontrol</description>
+      <type>listcontrol</type>
+      <id>10</id>
+      <posX>350</posX>
+      <height>300</height>
+    </control>
+    <control>
+      <description>scheduler recordings listcontrol</description>
+      <type>listcontrol</type>
+      <id>11</id>
+      <posX>350</posX>
+      <height>300</height>
     </control>
     <control>
       <description>Seperator</description>
       <type>image</type>
       <id>1</id>
-      <posX>400</posX>
-      <posY>505</posY>
-      <width>842</width>
+      <posX>80</posX>
+      <posY>425</posY>
+      <width>1140</width>
       <height>1</height>
       <texture>hbar1white.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
-      
-      
     </control>
     <control>
-      <type>image</type>
       <id>1</id>
-      <posX>400</posX>
-      <posY>515</posY>
-      <width>80</width>
-      <height>73</height>
-      <texture>#TV.Search.thumb</texture>
+      <type>image</type>
+      <posX>80</posX>
+      <posY>440</posY>
+      <width>60</width>
+      <height>60</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
+      <zoom>no</zoom>
+      <texture>#selectedthumb</texture>
     </control>
     <control>
       <description>Current program title</description>
       <type>fadelabel</type>
       <id>13</id>
-      <posX>490</posX>
-      <posY>510</posY>
-      <align>left</align>
-      <width>742</width>
+      <posX>160</posX>
+      <posY>440</posY>
+      <width>1060</width>
       <label>#TV.Search.Title</label>
       <font>font14</font>
       <textcolor>ivory</textcolor>
@@ -197,25 +149,24 @@
       <description>Current program time</description>
       <type>label</type>
       <id>14</id>
-      <posX>490</posX>
-      <posY>542</posY>
-      <width>742</width>
+      <posX>160</posX>
+      <posY>470</posY>
+      <width>1060</width>
       <label>#TV.Search.Time</label>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
       <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
     </control>
     <control>
       <description>Description1</description>
       <type>textboxscrollup</type>
       <id>15</id>
-      <posX>400</posX>
-      <posY>600</posY>
-      <height>95</height>
-      <width>862</width>
+      <posX>160</posX>
+      <posY>505</posY>
+      <width>1060</width>
+      <height>105</height>
       <font>font11</font>
       <label>#TV.Search.Description</label>
-      <seperator>&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;	&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;	&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;</seperator>
       <textcolor>ivory</textcolor>
       <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
     </control>
@@ -223,11 +174,11 @@
       <description>genre</description>
       <type>label</type>
       <id>17</id>
-      <posX>490</posX>
-      <posY>566</posY>
+      <posX>2490</posX>
+      <posY>440</posY>
       <width>742</width>
       <label>#TV.Search.Genre</label>
-      <font>font10</font>
+      <font>font11</font>
       <textcolor>ff6FAFE1</textcolor>
       <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
     </control>
@@ -241,8 +192,6 @@
       <align>left</align>
       <font>font13</font>
       <textcolor>ff6FAFE1</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
     </control>
   </controls>
 </window>

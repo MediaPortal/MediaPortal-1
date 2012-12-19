@@ -3,47 +3,31 @@
 <window>
   <id>501</id>
   <defaultcontrol>2</defaultcontrol>
-  <allowoverlay>[facadeview.list|facadeview.filmstrip|facadeview.coverflow]</allowoverlay>
+  <allowoverlay>yes</allowoverlay>
   <define>#useSelectedFanart:Yes</define>
   <controls>
     <control>
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <texture>background.png</texture>
-      <width>720</width>
-      <height>576</height>
+      <texture>BH Music.jpg</texture>
+      <posX>-240</posX>
+      <posY>0</posY>
+      <width>1440</width>
+      <height>720</height>
     </control>
+    <import>common.music.fanart.xml</import>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
-    <import>common.music.fanart.xml</import>
     <control>
-      <description>Overlay to darken FanArt</description>
-      <id>0</id>
-      <type>image</type>
-      <posX>28</posX>
-      <posY>120</posY>
-      <width>680</width>
-      <height>444</height>
-      <texture mask="osd_mask.png">black.png</texture>
-      <colordiffuse>aaffffff</colordiffuse>
-      <visible>control.isvisible(91919293)+facadeview.list</visible>
-      <animation effect="fade" time="70">visible</animation>
-      <animation effect="fade" time="300" delay="500">hidden</animation>
-    </control>
-    <control>
-      <description>Overlay to darken FanArt</description>
+      <description>General Overlay</description>
       <id>0</id>
       <type>image</type>
       <posX>0</posX>
-      <posY>0</posY>
-      <width>720</width>
-      <height>576</height>
-      <texture>black.png</texture>
-      <colordiffuse>80ffffff</colordiffuse>
-      <visible>control.isvisible(91919293)+!facadeview.list</visible>
-      <animation effect="fade" time="70">visible</animation>
-      <animation effect="fade" time="300" delay="500">hidden</animation>
+      <posY>30</posY>
+      <width>960</width>
+      <height>720</height>
+      <texture>general_overlay.png</texture>
     </control>
     <control>
       <type>actiongroup</type>
@@ -52,19 +36,27 @@
       <onexit>0</onexit>
       <buttonX>0</buttonX>
       <buttonY>-60</buttonY>
-      <buttonwidth>59</buttonwidth>
-      <buttonheight>576</buttonheight>
+      <buttonwidth>79</buttonwidth>
+      <buttonheight>720</buttonheight>
       <textureFocus>-</textureFocus>
       <textureNoFocus>Action_nofocus.png</textureNoFocus>
-      <width>154</width>
-      <height>576</height>
+      <width>206</width>
+      <height>720</height>
       <dimColor>00ffffff</dimColor>
       <control>
         <type>image</type>
-        <posX>14</posX>
-        <posY>62</posY>
-        <width>230</width>
-        <height>472</height>
+        <id>0</id>
+        <width>960</width>
+        <height>720</height>
+        <texture>white.png</texture>
+        <colordiffuse>201e90ff</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>19</posX>
+        <posY>78</posY>
+        <width>280</width>
+        <height>591</height>
         <texture>Backslide.png</texture>
         <colorDiffuse>fffffffff</colorDiffuse>
         <visible>!Control.HasFocus(50)</visible>
@@ -77,14 +69,14 @@
         <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
         <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
         <layout>StackLayout(0, Vertical, true)</layout>
-        <posX>39</posX>
-        <posY>96</posY>
+        <posX>37</posX>
+        <posY>121</posY>
         <visible>!Control.HasFocus(50)</visible>
         <control>
           <description>View-As</description>
           <type>menubutton</type>
           <id>2</id>
-          <label></label>
+          <label />
           <onright>50</onright>
           <onup>17</onup>
           <ondown>5</ondown>
@@ -97,7 +89,7 @@
           <description>Switch View</description>
           <type>menubutton</type>
           <id>5</id>
-          <label></label>
+          <label />
           <onright>50</onright>
           <onup>2</onup>
           <ondown>3</ondown>
@@ -202,70 +194,33 @@
     <control>
       <id>1</id>
       <type>image</type>
-      <posX>43</posX>
-      <posY>136</posY>
-      <width>146</width>
-      <height>146</height>
-      <texture mask="Picturethumbmask.png">missing_Coverart.png</texture>
+      <posX>742</posX>
+      <posY>180</posY>
+      <width>195</width>
+      <height>195</height>
+      <texture mask="cdthumbmask.png">missing_Coverart.png</texture>
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)+!control.hasthumb(500)]</visible>
       <animation effect="fade" time="70" reversible="false">visible</animation>
     </control>
     <control>
       <id>500</id>
       <type>image</type>
-      <posX>43</posX>
-      <posY>136</posY>
-      <width>146</width>
-      <height>146</height>
-      <texture mask="Picturethumbmask.png">#selectedthumb</texture>
+      <posX>742</posX>
+      <posY>180</posY>
+      <width>195</width>
+      <height>195</height>
+      <texture mask="cdthumbmask.png">#selectedthumb</texture>
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
       <animation effect="fade" time="70" reversible="false">visible</animation>
     </control>
     <control>
       <type>image</type>
       <id>1</id>
-      <posX>43</posX>
-      <posY>136</posY>
-      <width>146</width>
-      <height>146</height>
-      <texture mask="Picturethumbmask.png">Picturethumbframe.png</texture>
-      <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
-      <animation effect="fade" time="70" reversible="false">visible</animation>
-    </control>
-    <control>
-      <description>Selected item Label Title</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>43</posX>
-      <posY>353</posY>
-      <width>199</width>
-      <label>#(L(1020)):</label>
-      <font>font12</font>
-      <textcolor>ff6FAFE1</textcolor>
-      <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
-      <animation effect="fade" time="70" reversible="false">visible</animation>
-    </control>
-    <control>
-      <description>Selected item Label</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>43</posX>
-      <posY>377</posY>
-      <width>199</width>
-      <label>#selecteditem</label>
-      <font>font14</font>
-      <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
-      <animation effect="fade" time="70" reversible="false">visible</animation>
-    </control>
-    <control>
-      <description>Selected item Label</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>43</posX>
-      <posY>404</posY>
-      <width>199</width>
-      <label>#selecteditem2</label>
-      <font>font14</font>
+      <posX>742</posX>
+      <posY>180</posY>
+      <width>195</width>
+      <height>195</height>
+      <texture mask="cdthumbmask.png">cdthumbframe.png</texture>
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
       <animation effect="fade" time="70" reversible="false">visible</animation>
     </control>

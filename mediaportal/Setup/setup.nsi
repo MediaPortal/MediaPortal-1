@@ -112,6 +112,7 @@ Var MPTray_Running
 !include Library.nsh
 !include FileFunc.nsh
 !include Memento.nsh
+!include WinMessages.nsh
 
 !include "${git_InstallScripts}\include\FileAssociation.nsh"
 !include "${git_InstallScripts}\include\LanguageMacros.nsh"
@@ -121,6 +122,8 @@ Var MPTray_Running
 !include "${git_InstallScripts}\include\ProcessMacros.nsh"
 !include "${git_InstallScripts}\include\WinVerEx.nsh"
 !include "${git_InstallScripts}\include\CPUDesc.nsh"
+!include "${git_InstallScripts}\include\FontReg.nsh"
+!include "${git_InstallScripts}\include\FontName.nsh"
 
 !ifndef GIT_BUILD
 !include "${git_InstallScripts}\pages\AddRemovePage.nsh"
@@ -476,6 +479,9 @@ Section "MediaPortal core files (required)" SecCore
   ; libbluray
   SetOutPath "$MPdir.Base"
   File "${git_DirectShowFilters}\BDReader\libbluray\bluray.dll"
+  ; TvLibrary for Genre
+  File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
+  ; MediaPortal.exe
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION
@@ -503,6 +509,28 @@ Section "MediaPortal core files (required)" SecCore
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPAudioRenderer\bin\${BUILD_TYPE}\mpaudiorenderer.ax"                "$MPdir.Base\mpaudiorenderer.ax"         "$MPdir.Base"
   ${EndIf}
 
+  ; used for Default Skin Font
+  StrCpy $FONT_DIR $FONTS
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWide\MPDefaultFonts\MediaPortalDefault.ttf"
+  SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=5000
+  
+  ; used for Titan Skin
+  StrCpy $FONT_DIR $FONTS
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanSmall.ttf"
+  SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=5000  
+  
+  StrCpy $FONT_DIR $FONTS
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\Titan.ttf"
+  SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=5000    
+
+  StrCpy $FONT_DIR $FONTS
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanLight.ttf"
+  SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=5000    
+
+  StrCpy $FONT_DIR $FONTS
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanMedium.ttf"
+  SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=5000    
+  
 SectionEnd
 !macro Remove_${SecCore}
   ${LOG_TEXT} "INFO" "Uninstalling MediaPortal core files..."
@@ -597,6 +625,8 @@ SectionEnd
   Delete "$MPdir.Base\MediaFoundation.dll"
   ; MP Tray
   Delete "$MPdir.Base\MPTray.exe"
+  ; TvLibrary for Genre
+  Delete "$MPdir.Base\TvLibrary.Interfaces.dll"
   ; Plugins
   Delete "$MPdir.Base\RemotePlugins.dll"
   Delete "$MPdir.Base\HcwHelper.exe"

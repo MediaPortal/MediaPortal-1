@@ -484,44 +484,7 @@ namespace MediaPortal.Video.Database
       {
         // getting searchstring
         string strSearch = HttpUtility.UrlEncode(GetSearchString(strMovie));
-
-        // be aware of german special chars äöüß Ă¤Ă¶ĂĽĂź %E4%F6%FC%DF %c3%a4%c3%b6%c3%bc%c3%9f
-        strSearch = strSearch.Replace("%c3%a4", "%E4");
-        strSearch = strSearch.Replace("%c3%b6", "%F6");
-        strSearch = strSearch.Replace("%c3%bc", "%FC");
-        strSearch = strSearch.Replace("%c3%9f", "%DF");
-        // be aware of spanish special chars ńáéíóúÁÉÍÓÚ %E4%F6%FC%DF %c3%a4%c3%b6%c3%bc%c3%9f
-        strSearch = strSearch.Replace("%c3%b1", "%F1");
-        strSearch = strSearch.Replace("%c3%a0", "%E0");
-        strSearch = strSearch.Replace("%c3%a1", "%E1");
-        strSearch = strSearch.Replace("%c3%a8", "%E8");
-        strSearch = strSearch.Replace("%c3%a9", "%E9");
-        strSearch = strSearch.Replace("%c3%ac", "%EC");
-        strSearch = strSearch.Replace("%c3%ad", "%ED");
-        strSearch = strSearch.Replace("%c3%b2", "%F2");
-        strSearch = strSearch.Replace("%c3%b3", "%F3");
-        strSearch = strSearch.Replace("%c3%b9", "%F9");
-        strSearch = strSearch.Replace("%c3%ba", "%FA");
-        // Extra Codes
-        strSearch = strSearch.Replace("%c3%b8", "%F8"); //ø
-        strSearch = strSearch.Replace("%c3%98", "%D8"); //ø
-        strSearch = strSearch.Replace("%c3%86", "%C6"); //Æ
-        strSearch = strSearch.Replace("%c3%a6", "%E6"); //æ
-        strSearch = strSearch.Replace("%c2%bd", "%BD"); //½
-        // CRO
-        strSearch = strSearch.Replace("%c4%86", "%0106"); //Č
-        strSearch = strSearch.Replace("%c4%87", "%0107"); //č
-        strSearch = strSearch.Replace("%c4%8c", "%010C"); //Ć
-        strSearch = strSearch.Replace("%c4%8d", "%010D"); //ć
-        strSearch = strSearch.Replace("%c4%90", "%0110"); //Đ
-        strSearch = strSearch.Replace("%c4%91", "%0111"); //đ
-        strSearch = strSearch.Replace("%c5%a0", "%0160"); //Š
-        strSearch = strSearch.Replace("%c5%a1", "%0161"); //š
-        strSearch = strSearch.Replace("%c5%bc", "%017c"); //Ž
-        strSearch = strSearch.Replace("%c5%bd", "%017d"); //ž
-
         _elements.Clear();
-
         string line1 = GUILocalizeStrings.Get(984);
         string line2 = GetSearchString(strMovie).Replace("+", " ");
         string line3 = "";
@@ -621,31 +584,7 @@ namespace MediaPortal.Video.Database
     {
       // getting searchstring
       string strSearch = HttpUtility.UrlEncode(GetSearchString(strActor));
-
-      // be aware of german special chars äöüß Ă¤Ă¶ĂĽĂź %E4%F6%FC%DF %c3%a4%c3%b6%c3%bc%c3%9f
-      strSearch = strSearch.Replace("%c3%a4", "%E4");
-      strSearch = strSearch.Replace("%c3%b6", "%F6");
-      strSearch = strSearch.Replace("%c3%bc", "%FC");
-      strSearch = strSearch.Replace("%c3%9f", "%DF");
-      // be aware of spanish special chars ńáéíóúÁÉÍÓÚ %E4%F6%FC%DF %c3%a4%c3%b6%c3%bc%c3%9f
-      strSearch = strSearch.Replace("%c3%b1", "%F1");
-      strSearch = strSearch.Replace("%c3%a0", "%E0");
-      strSearch = strSearch.Replace("%c3%a1", "%E1");
-      strSearch = strSearch.Replace("%c3%a8", "%E8");
-      strSearch = strSearch.Replace("%c3%a9", "%E9");
-      strSearch = strSearch.Replace("%c3%ac", "%EC");
-      strSearch = strSearch.Replace("%c3%ad", "%ED");
-      strSearch = strSearch.Replace("%c3%b2", "%F2");
-      strSearch = strSearch.Replace("%c3%b3", "%F3");
-      strSearch = strSearch.Replace("%c3%b9", "%F9");
-      strSearch = strSearch.Replace("%c3%ba", "%FA");
-      strSearch = strSearch.Replace("%c3%b8", "%F8"); //ø
-      strSearch = strSearch.Replace("%c3%98", "%D8"); //ø
-      strSearch = strSearch.Replace("%c3%86", "%C6"); //Æ
-      strSearch = strSearch.Replace("%c3%a6", "%E6"); //æ
-
       _elements.Clear();
-
       string strURL = String.Format("http://www.imdb.com/find?s=nm&q=" + strSearch, strSearch);
       FindIMDBActor(strURL);
     }

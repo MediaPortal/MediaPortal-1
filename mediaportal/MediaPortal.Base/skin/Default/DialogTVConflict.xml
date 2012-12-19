@@ -8,122 +8,102 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>109</posX>
-      <posY>77</posY>
-      <width>499</width>
-      <height>489</height>
+      <width>960</width>
+      <height>720</height>
+      <texture>white.png</texture>
+      <colordiffuse>201e90ff</colordiffuse>
+      <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>224</posX>
+      <posY>260</posY>
+      <width>549</width>
+      <height>340</height>
       <texture>context_background.png</texture>
     </control>
     <control>
       <description>Heading text label</description>
       <type>label</type>
       <id>4</id>
-      <posX>221</posX>
-      <posY>112</posY>
+      <posX>260</posX>
+      <posY>283</posY>
+      <width>486</width>
+      <label>181</label>
+      <textcolor>red</textcolor>
       <font>font16</font>
-      <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
       <description>options listcontrol</description>
       <type>listcontrol</type>
       <id>3</id>
-      <posX>159</posX>
-      <posY>164</posY>
-      <width>399</width>
-      <height>200</height>
-      <textXOff>11</textXOff>
-      <textXOff2>388</textXOff2>
-      <textYOff2>38</textYOff2>
-      <textXOff3>53</textXOff3>
-      <textYOff3>38</textYOff3>
-      <IconYOff>4</IconYOff>
-      <itemWidth>36</itemWidth>
-      <itemHeight>52</itemHeight>
+      <posX>254</posX>
+      <posY>339</posY>
+      <width>486</width>
+      <height>212</height>
+      <textXOff>9</textXOff>
+      <textXOff2>471</textXOff2>
+      <textYOff2>47</textYOff2>
+      <textXOff3>65</textXOff3>
+      <textYOff3>47</textYOff3>
+      <IconYOff>5</IconYOff>
+      <itemWidth>48</itemWidth>
+      <itemHeight>64</itemHeight>
       <textureFocus>list_sub_focus.png</textureFocus>
-      <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
-      <spaceBetweenItems>2</spaceBetweenItems>
-      <textureHeight>64</textureHeight>
+      <textureNofocus>list_sub_nofocus.png</textureNofocus>
+      <spaceBetweenItems>3</spaceBetweenItems>
+      <textureHeight>79</textureHeight>
       <keepaspectratio>no</keepaspectratio>
       <font>font14</font>
-      <font1>font10</font1>
-      <font2>font10</font2>
-      <font3>font10</font3>
+      <font1>font12</font1>
+      <font2>font12</font2>
+      <font3>font12</font3>
       <ondown>11</ondown>
     </control>
-    <!--control>
-      <description>options listcontrol</description>
-      <type>listcontrol</type>
-      <id>3</id>
-      <posX>284</posX>
-      <posY>206</posY>
-      <width>711</width>
-      <height>250</height>
-      <textXOff>44</textXOff>
-      <textYOff>2</textYOff>
-      <textXOff2>675</textXOff2>
-      <textYOff2>32</textYOff2>
-      <textXOff3>124</textXOff3>
-      <textYOff3>32</textYOff3>
-      <IconXOff>10</IconXOff>
-      <IconYOff>10</IconYOff>
-      <spinPosX>840</spinPosX>
-      <spinPosY>410</spinPosY>
-      <itemWidth>62</itemWidth>
-      <itemHeight>43</itemHeight>
-      <textureFocus>list_sub_focus.png</textureFocus>
-      <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
-      <spaceBetweenItems>8</spaceBetweenItems>
-      <textureHeight>62</textureHeight>
-      <keepaspectratio>no</keepaspectratio>
-      <font2>font10</font2>
-      <font3>font10</font3>
-      <ondown>11</ondown>
-      
-      
-    </control-->
     <control>
-      <description>Skip new Recording</description>
-      <type>button</type>
-      <id>11</id>
-      <posX>169</posX>
-      <posY>357</posY>
-      <width>313</width>
-      <label>1110</label>
-      <onup>3</onup>
-      <ondown>12</ondown>
-    </control>
-    <control>
-      <description>Skip conflicting Recording</description>
-      <type>button</type>
-      <id>12</id>
-      <posX>169</posX>
-      <posY>397</posY>
-      <width>313</width>
-      <label>1111</label>
-      <onup>11</onup>
-      <ondown>13</ondown>
-    </control>
-    <control>
-      <description>Keep Conflict</description>
-      <type>button</type>
-      <id>13</id>
-      <posX>169</posX>
-      <posY>437</posY>
-      <width>313</width>
-      <label>1112</label>
-      <onup>12</onup>
-      <ondown>14</ondown>
-    </control>
-    <control>
-      <description>Skip conflicting Episode</description>
-      <type>button</type>
-      <id>14</id>
-      <posX>169</posX>
-      <posY>477</posY>
-      <width>313</width>
-      <label>1113</label>
-      <onup>13</onup>
-      <ondown>3</ondown>
+      <type>group</type>
+      <layout>StackLayout</layout>
+      <description>group element</description>
+      <posX>306</posX>
+      <posY>449</posY>
+      <control>
+        <description>Skip new Recording</description>
+        <type>button</type>
+        <id>11</id>
+        <width>389</width>
+        <label>1110</label>
+        <onup>3</onup>
+        <ondown>12</ondown>
+      </control>
+      <control>
+        <description>Skip conflicting Recording</description>
+        <type>button</type>
+        <id>12</id>
+        <width>389</width>
+        <label>1111</label>
+        <width>389</width>
+        <onup>11</onup>
+        <ondown>13</ondown>
+      </control>
+      <control>
+        <description>Keep Conflict</description>
+        <type>button</type>
+        <id>13</id>
+        <label>1112</label>
+        <width>389</width>
+        <onup>12</onup>
+        <ondown>14</ondown>
+      </control>
+      <control>
+        <description>Skip conflicting Episode</description>
+        <type>button</type>
+        <id>14</id>
+        <width>389</width>
+        <label>1113</label>
+        <onup>13</onup>
+        <ondown>3</ondown>
+      </control>
     </control>
   </controls>
 </window>

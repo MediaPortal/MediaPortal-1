@@ -43,9 +43,9 @@ namespace TvService
     }
     
     protected readonly TvBusinessLayer _businessLayer;
-    protected readonly IController _controller;    
+    protected readonly TVController _controller;
 
-    protected CardAllocationBase(TvBusinessLayer businessLayer, IController controller)
+    protected CardAllocationBase(TvBusinessLayer businessLayer, TVController controller)
     {      
       _businessLayer = businessLayer;
       _controller = controller;

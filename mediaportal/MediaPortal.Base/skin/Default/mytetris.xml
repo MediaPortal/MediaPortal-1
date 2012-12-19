@@ -10,8 +10,8 @@
       <type>image</type>
       <id>1</id>
       <texture>background.png</texture>
-      <width>720</width>
-      <height>576</height>
+      <width>960</width>
+      <height>720</height>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
@@ -21,8 +21,8 @@
       <!-- animations in this screen are equal for all objects, because nextblock-image got it's animation by tetris control, but it's possition is in scoreboard -->
       <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
       <animation effect="slide" time="70" end="800,0">WindowClose</animation>
-      <posX>39</posX>
-      <posY>96</posY>
+      <posX>37</posX>
+      <posY>121</posY>
       <layout>StackLayout</layout>
       <control>
         <description>New Game</description>
@@ -49,10 +49,10 @@
         <description>Scoreboard background</description>
         <type>image</type>
         <id>200</id>
-        <posX>37</posX>
-        <posY>321</posY>
-        <width>189</width>
-        <height>224</height>
+        <posX>50</posX>
+        <posY>402</posY>
+        <width>252</width>
+        <height>281</height>
         <texture>tetris\scoreboard.png</texture>
         <colordiffuse>60ffffff</colordiffuse>
       </control>
@@ -60,17 +60,17 @@
         <description>Score: label</description>
         <type>label</type>
         <id>201</id>
-        <posX>51</posX>
-        <posY>409</posY>
+        <posX>69</posX>
+        <posY>512</posY>
         <label>19005</label>
       </control>
       <control>
         <description>Score</description>
         <type>label</type>
         <id>202</id>
-        <posX>213</posX>
-        <posY>409</posY>
-        <width>162</width>
+        <posX>285</posX>
+        <posY>512</posY>
+        <width>216</width>
         <align>right</align>
         <label>#tetris_score</label>
       </control>
@@ -78,17 +78,17 @@
         <description>Level: label</description>
         <type>label</type>
         <id>203</id>
-        <posX>51</posX>
-        <posY>444</posY>
+        <posX>69</posX>
+        <posY>555</posY>
         <label>19006</label>
       </control>
       <control>
         <description>Level</description>
         <type>label</type>
         <id>204</id>
-        <posX>213</posX>
-        <posY>444</posY>
-        <width>162</width>
+        <posX>285</posX>
+        <posY>555</posY>
+        <width>216</width>
         <align>right</align>
         <label>#tetris_level</label>
       </control>
@@ -96,17 +96,17 @@
         <description>Lines: label</description>
         <type>label</type>
         <id>205</id>
-        <posX>51</posX>
-        <posY>477</posY>
+        <posX>69</posX>
+        <posY>597</posY>
         <label>19007</label>
       </control>
       <control>
         <description>Lines</description>
         <type>label</type>
         <id>206</id>
-        <posX>213</posX>
-        <posY>477</posY>
-        <width>162</width>
+        <posX>285</posX>
+        <posY>597</posY>
+        <width>216</width>
         <align>right</align>
         <label>#tetris_lines</label>
       </control>
@@ -114,17 +114,17 @@
         <description>Highscore: label</description>
         <type>label</type>
         <id>205</id>
-        <posX>51</posX>
-        <posY>512</posY>
+        <posX>69</posX>
+        <posY>640</posY>
         <label>19008</label>
       </control>
       <control>
         <description>Highscore</description>
         <type>label</type>
         <id>206</id>
-        <posX>213</posX>
-        <posY>512</posY>
-        <width>162</width>
+        <posX>285</posX>
+        <posY>640</posY>
+        <width>216</width>
         <align>right</align>
         <label>#tetris_highscore</label>
       </control>
@@ -138,10 +138,10 @@
         <description>Tetris control</description>
         <type>tetris</type>
         <id>10</id>
-        <posX>289</posX>
-        <posY>96</posY>
-        <width>394</width>
-        <height>449</height>
+        <posX>386</posX>
+        <posY>121</posY>
+        <width>526</width>
+        <height>562</height>
         <font>font16</font>
         <textcolor>ffffffff</textcolor>
         <onback>2</onback>

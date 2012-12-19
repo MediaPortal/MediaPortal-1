@@ -38,7 +38,8 @@ namespace TvService
     private readonly object _threadlock = new object();
     private Thread _setChannelStatesThread;
 
-    public ChannelStates(TvBusinessLayer businessLayer, IController controller) : base(businessLayer, controller)
+    public ChannelStates(TvBusinessLayer businessLayer, TVController controller)
+      : base(businessLayer, controller)
     {
       LogEnabled = false;
     }

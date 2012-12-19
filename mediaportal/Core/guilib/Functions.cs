@@ -26,6 +26,24 @@ namespace MediaPortal.GUI.Library
 {
   internal class GUIFunctions
   {
+    #region Internal utility
+
+    private static void MakeBoolean(string funcName, int paramIndex, ref object param)
+    {
+      // The parameter must be a boolean; attempt coersion if it is a string.
+      if (param.GetType() != typeof(bool))
+      {
+        bool value = false;
+        if (!bool.TryParse((string)param, out value))
+        {
+          Log.Error("Condition for {0}() function is not a boolean; paramIndex={1}, value={2}. Condition is being forced to 'false'.  You must correct your skin function.", funcName, paramIndex, param);
+        }
+        param = value;
+      }
+    }
+
+    #endregion
+
     #region  String functions
 
     [XMLSkinFunction("string.format")]
@@ -184,9 +202,10 @@ namespace MediaPortal.GUI.Library
     #region Conditionals
 
     [XMLSkinFunction("iif")]
-    public static object Iif(bool condition, object truePart, object falsePart)
+    public static object Iif(object condition, object truePart, object falsePart)
     {
-      return condition ? truePart : falsePart;
+      MakeBoolean("iif", 0, ref condition);
+      return (bool)condition ? truePart : falsePart;
     }
 
     [XMLSkinFunction("choose")]
@@ -319,17 +338,19 @@ namespace MediaPortal.GUI.Library
     #region Boolean logic
 
     [XMLSkinFunction("not")]
-    public static bool Not(bool condition)
+    public static bool Not(object condition)
     {
-      return !condition;
+      MakeBoolean("not", 0, ref condition);
+      return !(bool)condition;
     }
 
     [XMLSkinFunction("and")]
-    public static bool And(params bool[] conditions)
+    public static bool And(params object[] conditions)
     {
       for (int i = 0; i < conditions.Length; i++)
       {
-        if (!conditions[i])
+        MakeBoolean("and", i, ref conditions[i]);
+        if (!(bool)conditions[i])
         {
           return false;
         }
@@ -338,11 +359,12 @@ namespace MediaPortal.GUI.Library
     }
 
     [XMLSkinFunction("or")]
-    public static bool Or(params bool[] conditions)
+    public static bool Or(params object[] conditions)
     {
       for (int i = 0; i < conditions.Length; i++)
       {
-        if (conditions[i])
+        MakeBoolean("or", i, ref conditions[i]);
+        if ((bool)conditions[i])
         {
           return true;
         }

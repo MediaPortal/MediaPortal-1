@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>1006</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+	<define>#header.label:897</define>
+  <rememberLastFocusedControl>no</rememberLastFocusedControl>
+  <controls>
+	<import>common.time.settings.xml</import>
+	<import>settings.menu.xml</import>
+  <import>common.settings.xml</import>
+	
+	<control>
+		<type>label</type>
+		<id>1</id>
+		<posX>685</posX>
+		<posY>225</posY>
+		<width>500</width>
+		<label>#(L(101021))/#(L(300121))</label>
+		<textcolor>00b7ff</textcolor>
+		<font>TitanLight20</font>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+	</control>
+    <control>
+      <description>Display timeout Section label</description>
+      <type>label</type>
+      <id>1</id>
+		  <posX>686</posX>
+		  <posY>341</posY>
+      <label>300121</label>
+			<font>TitanLight12</font>
+     	<textcolor>ff00b7ff</textcolor>
+  		<animation effect="fade" time="150">WindowOpen</animation>
+  		<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+    <control Style="SettingsButtonMedium">
+      <description>DisplayTimeout button</description>
+      <type>button</type>
+      <id>2</id>
+      <label>300129</label>
+		  <posX>655</posX>
+		  <posY>386</posY>
+      <onup>17</onup>
+      <textureNoFocus>settings_button_background_medium_black.png</textureNoFocus>
+   		<animation effect="fade" time="150">WindowOpen</animation>
+  		<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+    <control>
+      <description>DisplayTimeout value label</description>
+      <type>label</type>
+      <id>1</id>
+		  <posX>1115</posX>
+		  <posY>397</posY>
+      <label>#displayTimeout</label>
+  		<animation effect="fade" time="150">WindowOpen</animation>
+  		<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+    <!--Zap-->
+    <control>
+      <description>Zap Section label</description>
+      <type>label</type>
+      <id>1</id>
+		  <posX>686</posX>
+		  <posY>471</posY>
+      <label>300130</label>
+			<font>TitanLight12</font>
+     	<textcolor>ff00b7ff</textcolor>
+  		<animation effect="fade" time="150">WindowOpen</animation>
+  		<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+    <control Style="SettingsButtonMedium">
+      <description>Zap delay button</description>
+      <type>button</type>
+      <id>3</id>
+      <label>300131</label>
+		  <posX>655</posX>
+		  <posY>517</posY>
+      <textureNoFocus>settings_button_background_medium_black.png</textureNoFocus>
+  		<animation effect="fade" time="150">WindowOpen</animation>
+  		<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+    <control>
+      <description>Zap Delay value</description>
+      <type>label</type>
+      <id>1</id>
+		  <posX>1115</posX>
+		  <posY>530</posY>
+      <label>#zapDelay</label>
+  		<animation effect="fade" time="150">WindowOpen</animation>
+  		<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+    <control Style="SettingsButtonMedium">
+      <description>ZapTimeout button</description>
+      <type>button</type>
+      <id>4</id>
+      <label>300132</label>
+		  <posX>655</posX>
+		  <posY>582</posY>
+      <ondown>2</ondown>
+      <textureNoFocus>settings_button_background_medium_black.png</textureNoFocus>
+  		<animation effect="fade" time="150">WindowOpen</animation>
+  		<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+    <control>
+      <description>ZapTimeout value label</description>
+      <type>label</type>
+      <id>1</id>
+		  <posX>1115</posX>
+		  <posY>595</posY>
+      <label>#zapTimeout</label>
+  		<animation effect="fade" time="150">WindowOpen</animation>
+  		<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+  </controls>
+</window>

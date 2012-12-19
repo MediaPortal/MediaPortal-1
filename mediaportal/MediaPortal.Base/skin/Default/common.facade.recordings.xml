@@ -15,77 +15,52 @@
           <description>listcontrol</description>
           <type>listcontrol</type>
           <id>50</id>
-          <posX>259</posX>
-          <posY>88</posY>
-          <width>424</width>
-          <height>304</height>
-          <scrollOffset>2</scrollOffset>
-          <textXOff>5</textXOff>
-          <textYOff>1</textYOff>
-          <textXOff2>421</textXOff2>
-          <textYOff2>1</textYOff2>
-          <PinIconWidth>35</PinIconWidth>
-          <PinIconHeight>25</PinIconHeight>
-          <PinIconXOff>747</PinIconXOff>
-          <PinIconYOff>6</PinIconYOff>
-          <textureHeight>32</textureHeight>
-          <itemWidth>18</itemWidth>
-          <itemHeight>25</itemHeight>
-          <IconXOff>5</IconXOff>
-          <IconYOff>3</IconYOff>
-          <keepaspectratio>yes</keepaspectratio>
-          <font>font13</font>
-          <font2>font10</font2>
-          <textcolor>ffffffff</textcolor>
-          <textcolor2>ffffffff</textcolor2>
-          <textcolor3>ffffffff</textcolor3>
-          <selectedColor>80000000</selectedColor>
-          <selectedColor2>ffffffff</selectedColor2>
-          <spinWidth>25</spinWidth>
-          <spinHeight>26</spinHeight>
-          <spinPosX>630</spinPosX>
-          <spinPosY>356</spinPosY>
-          <onleft>2</onleft>
-          <onright>2</onright>
-          <spaceBetweenItems>0</spaceBetweenItems>
-          <unfocusedAlpha>160</unfocusedAlpha>
+          <height>300</height>
+          <playedColor>ffffffff</playedColor>
+          <playedColor2>ffffffff</playedColor2>
+          <textcolor>ff99f9ff</textcolor>
+          <textcolor2>ff99f9ff</textcolor2>
+          <textcolor3>ff99f9ff</textcolor3>
+          <textcolorNoFocus>ff99f9ff</textcolorNoFocus>
         </control>
         <control>
           <description>album view listcontrol</description>
           <type>listcontrol</type>
           <subtype>album</subtype>
           <id>50</id>
-          <posX>259</posX>
-          <posY>88</posY>
-          <height>308</height>
-          <width>424</width>
-          <textXOff>5</textXOff>
-          <textYOff>1</textYOff>
-          <textXOff2>419</textXOff2>
-          <textYOff2>25</textYOff2>
-          <textXOff3>70</textXOff3>
-          <textYOff3>25</textYOff3>
-          <PinIconXOff>80</PinIconXOff>
+          <posX>75</posX>
+          <posY>170</posY>
+          <height>300</height>
+          <width>600</width>
+          <textXOff>7</textXOff>
+          <textYOff>2</textYOff>
+          <textXOff2>600</textXOff2>
+          <textYOff2>32</textYOff2>
+          <textXOff3>57</textXOff3>
+          <textYOff3>32</textYOff3>
+          <PinIconXOff>60</PinIconXOff>
           <PinIconYOff>34</PinIconYOff>
           <PinIconWidth>35</PinIconWidth>
           <PinIconHeight>25</PinIconHeight>
-          <textureHeight>52</textureHeight>
-          <itemWidth>30</itemWidth>
-          <itemHeight>44</itemHeight>
-          <IconXOff>5</IconXOff>
+          <textureHeight>60</textureHeight>
+          <itemWidth>41</itemWidth>
+          <itemHeight>55</itemHeight>
+          <IconXOff>7</IconXOff>
+          <IconYOff>2</IconYOff>
           <keepaspectratio>yes</keepaspectratio>
           <font>font13</font>
           <font2>font10</font2>
           <font3>font10</font3>
-          <textcolor>ffffffff</textcolor>
-          <textcolor2>ffffffff</textcolor2>
-          <textcolor3>ffffffff</textcolor3>
-          <selectedColor>80000000</selectedColor>
-          <selectedColor2>ffffffff</selectedColor2>
-          <spinWidth>25</spinWidth>
-          <spinHeight>26</spinHeight>
-          <spinPosX>630</spinPosX>
-          <spinPosY>356</spinPosY>
+          <playedColor>ffffffff</playedColor>
+          <playedColor2>ffffffff</playedColor2>
+          <textcolor>ff99f9ff</textcolor>
+          <textcolor2>ff99f9ff</textcolor2>
+          <textcolor3>ff99f9ff</textcolor3>
+          <textcolorNoFocus>ff99f9ff</textcolorNoFocus>
+          <spinWidth>30</spinWidth>
+          <spinHeight>40</spinHeight>
+          <spinPosX>1627</spinPosX>
+          <spinPosY>470</spinPosY>
           <spaceBetweenItems>0</spaceBetweenItems>
           <onleft>2</onleft>
           <onright>50</onright>
@@ -97,27 +72,27 @@
           <type>thumbnailpanel</type>
           <dimColor>90ffffff</dimColor>
           <id>50</id>
-          <posX>258</posX>
-          <posY>112</posY>
-          <width>478</width>
-          <height>304</height>
+          <posX>75</posX>
+          <posY>170</posY>
+          <width>900</width>
+          <height>300</height>
           <scrollOffset>1</scrollOffset>
           <onleft>2</onleft>
           <onright>2</onright>
-          <itemWidth>75</itemWidth>
-          <itemHeight>88</itemHeight>
-          <textureWidth>67</textureWidth>
-          <textureHeight>64</textureHeight>
-          <thumbWidth>67</thumbWidth>
-          <thumbHeight>64</thumbHeight>
+          <itemWidth>105</itemWidth>
+          <itemHeight>85</itemHeight>
+          <textureWidth>93</textureWidth>
+          <textureHeight>70</textureHeight>
+          <thumbWidth>93</thumbWidth>
+          <thumbHeight>70</thumbHeight>
           <thumbPosX>0</thumbPosX>
           <thumbPosY>0</thumbPosY>
-          <itemWidthBig>112</itemWidthBig>
-          <itemHeightBig>112</itemHeightBig>
-          <thumbWidthBig>101</thumbWidthBig>
-          <thumbHeightBig>96</thumbHeightBig>
-          <textureWidthBig>101</textureWidthBig>
-          <textureHeightBig>96</textureHeightBig>
+          <itemWidthBig>168</itemWidthBig>
+          <itemHeightBig>130</itemHeightBig>
+          <thumbWidthBig>150</thumbWidthBig>
+          <thumbHeightBig>113</thumbHeightBig>
+          <textureWidthBig>150</textureWidthBig>
+          <textureHeightBig>113</textureHeightBig>
           <thumbPosXBig>0</thumbPosXBig>
           <thumbPosYBig>0</thumbPosYBig>
           <zoomXPixels>30</zoomXPixels>
@@ -133,8 +108,8 @@
           <imageFolderFocus>-</imageFolderFocus>
           <keepaspectratio>no</keepaspectratio>
           <font>font10</font>
-          <spinPosX>630</spinPosX>
-          <spinPosY>364</spinPosY>
+          <spinPosX>1627</spinPosX>
+          <spinPosY>470</spinPosY>
           <dimColor>ffffffff</dimColor>
         </control>
       </control>

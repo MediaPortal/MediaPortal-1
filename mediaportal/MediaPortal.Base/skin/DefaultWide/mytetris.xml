@@ -22,7 +22,7 @@
       
       <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
       <animation effect="slide" time="70" end="800,0">WindowClose</animation>
-      <posX>71</posX>
+      <posX>50</posX>
       <posY>121</posY>
       <layout>StackLayout</layout>
       <control>

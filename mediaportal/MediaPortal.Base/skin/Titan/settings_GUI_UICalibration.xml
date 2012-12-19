@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>10</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <controls>
+    <control>
+      <description>calibration image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>settingsUICalibration.png</texture>
+    </control>
+    <control>
+      <description>rectangle image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>420</posX>
+      <posY>317</posY>
+      <texture>settings_button_large_focus.png</texture>
+    </control>
+    <control>
+      <description>coordinates label</description>
+      <type>label</type>
+      <id>2</id>
+      <posX>550</posX>
+      <posY>328</posY>
+      <label>5</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+  </controls>
+</window>

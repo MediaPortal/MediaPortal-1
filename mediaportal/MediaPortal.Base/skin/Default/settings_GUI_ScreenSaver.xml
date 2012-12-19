@@ -7,27 +7,26 @@
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
-    <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
       <description>background</description>
       <type>image</type>
       <id>1</id>
-      <posX>118</posX>
-      <posY>136</posY>
-      <height>192</height>
-      <width>438</width>
+      <posX>157</posX>
+      <posY>170</posY>
+      <height>240</height>
+      <width>585</width>
       <texture>backslide2.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <control>
       <description>Enable screen saver</description>
       <type>checkbutton</type>
       <id>2</id>
-      <width>225</width>
+      <width>300</width>
       <label>300133</label>
-      <posX>140</posX>
-      <posY>164</posY>
+      <posX>187</posX>
+      <posY>206</posY>
       <ondown>3</ondown>
       <onup>17</onup>
     </control>
@@ -35,16 +34,16 @@
       <description>Delay label</description>
       <type>label</type>
       <id>1</id>
-      <posX>140</posX>
-      <posY>204</posY>
+      <posX>187</posX>
+      <posY>256</posY>
       <label>355</label>
     </control>
     <control>
       <description>Delay</description>
       <type>spincontrol</type>
       <id>3</id>
-      <posX>506</posX>
-      <posY>208</posY>
+      <posX>675</posX>
+      <posY>261</posY>
       <align>right</align>
       <onup>2</onup>
       <ondown>4</ondown>
@@ -53,10 +52,10 @@
       <description>BurnIn</description>
       <type>checkbutton</type>
       <id>4</id>
-      <width>229</width>
+      <width>306</width>
       <label>300134</label>
-      <posX>140</posX>
-      <posY>244</posY>
+      <posX>187</posX>
+      <posY>306</posY>
       <onright>5</onright>
       <onup>3</onup>
     </control>
@@ -64,10 +63,10 @@
       <description>Reduce framerate</description>
       <type>checkbutton</type>
       <id>5</id>
-      <width>229</width>
+      <width>306</width>
       <label>300135</label>
-      <posX>140</posX>
-      <posY>276</posY>
+      <posX>187</posX>
+      <posY>346</posY>
       <ondown>2</ondown>
     </control>
   </controls>
