@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2012 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2012 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,129 +21,165 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 
+
+// ReSharper disable CheckNamespace
 namespace MediaPortal.Subtitle
+// ReSharper restore CheckNamespace
 {
+
   /// <summary>
   /// 
   /// </summary>
+  // ReSharper disable InconsistentNaming
   public class SRTSubReader : ISubtitleReader
+  // ReSharper restore InconsistentNaming
   {
-    private SubTitles m_subs = new SubTitles();
+    private readonly SubTitles _subtitles = new SubTitles();
 
-    public SRTSubReader()
-    {
-      // 
-      // TODO: Add constructor logic here
-      //
-    }
+    #pragma warning disable 1570
+    /// <summary>
+    ///  Regular expression built for C# on: Do, Dez 20, 2012, 01:03:00 
+    ///  Using Expresso Version: 3.0.4334, http://www.ultrapico.com
+    ///  
+    ///  A description of the regular expression:
+    ///  
+    ///  Match expression but don't capture it. [\d+]
+    ///      Any digit, one or more repetitions
+    ///  \s*\r\n
+    ///      Whitespace, any number of repetitions
+    ///      Carriage return
+    ///      New line
+    ///  Match expression but don't capture it. [(?<startHH>\d+)\:(?<startMM>\d+)\:(?<startSS>\d+)(?:[,.](?<startMS>\d+))?]
+    ///      (?<startHH>\d+)\:(?<startMM>\d+)\:(?<startSS>\d+)(?:[,.](?<startMS>\d+))?
+    ///          [startHH]: A named capture group. [\d+]
+    ///              Any digit, one or more repetitions
+    ///          Literal :
+    ///          [startMM]: A named capture group. [\d+]
+    ///              Any digit, one or more repetitions
+    ///          Literal :
+    ///          [startSS]: A named capture group. [\d+]
+    ///              Any digit, one or more repetitions
+    ///          Match expression but don't capture it. [[,.](?<startMS>\d+)], zero or one repetitions
+    ///              [,.](?<startMS>\d+)
+    ///                  Any character in this class: [,.]
+    ///                  [startMS]: A named capture group. [\d+]
+    ///                      Any digit, one or more repetitions
+    ///  \s*--\>\s*
+    ///      Whitespace, any number of repetitions
+    ///      --
+    ///      Literal >
+    ///      Whitespace, any number of repetitions
+    ///  Match expression but don't capture it. [(?<endHH>\d+)\:(?<endMM>\d+)\:(?<endSS>\d+)(?:[,.](?<endMS>\d+))?]
+    ///      (?<endHH>\d+)\:(?<endMM>\d+)\:(?<endSS>\d+)(?:[,.](?<endMS>\d+))?
+    ///          [endHH]: A named capture group. [\d+]
+    ///              Any digit, one or more repetitions
+    ///          Literal :
+    ///          [endMM]: A named capture group. [\d+]
+    ///              Any digit, one or more repetitions
+    ///          Literal :
+    ///          [endSS]: A named capture group. [\d+]
+    ///              Any digit, one or more repetitions
+    ///          Match expression but don't capture it. [[,.](?<endMS>\d+)], zero or one repetitions
+    ///              [,.](?<endMS>\d+)
+    ///                  Any character in this class: [,.]
+    ///                  [endMS]: A named capture group. [\d+]
+    ///                      Any digit, one or more repetitions
+    ///  \s*\r\n
+    ///      Whitespace, any number of repetitions
+    ///      Carriage return
+    ///      New line
+    ///  [text]: A named capture group. [[\s\S]*?]
+    ///      Any character in this class: [\s\S], any number of repetitions, as few as possible
+    ///  Match expression but don't capture it. [\s*\r\n|\z], one or more repetitions
+    ///      Select from 2 alternatives
+    ///          \s*\r\n
+    ///              Whitespace, any number of repetitions
+    ///              Carriage return
+    ///              New line
+    ///          End of string
+    ///  Match expression but don't capture it. [\s*\r\n|\z]
+    ///      Select from 2 alternatives
+    ///          \s*\r\n
+    ///              Whitespace, any number of repetitions
+    ///              Carriage return
+    ///              New line
+    ///          End of string
+    ///  
+    ///
+    /// </summary>
+    #pragma warning restore 1570
+    public static Regex SRTRegEx = new Regex(
+          "(?:\\d+)\\s*\\r\\n(?:(?<startHH>\\d+)\\:(?<startMM>\\d+)\\:(" +
+          "?<startSS>\\d+)(?:[,.](?<startMS>\\d+))?)\\s*--\\>\\s*(?:(?<" +
+          "endHH>\\d+)\\:(?<endMM>\\d+)\\:(?<endSS>\\d+)(?:[,.](?<endMS" +
+          ">\\d+))?)\\s*\\r\\n(?<text>[\\s\\S]*?)(?:\\s*\\r\\n|\\z)+(?:" +
+          "\\s*\\r\\n|\\z)",
+        RegexOptions.Multiline
+        | RegexOptions.ECMAScript
+        | RegexOptions.Compiled
+        );
+    
+   
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="strFileName"></param>
+    /// <returns></returns>
     public override bool SupportsFile(string strFileName)
     {
-      string strExt = Path.GetExtension(strFileName).ToLower();
-      if (strExt == ".srt")
-      {
-        return true;
-      }
-      return false;
+      string extension = Path.GetExtension(strFileName);
+      return extension != null && extension.ToLower() == ".srt";
     }
 
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="strFileName"></param>
+    /// <returns></returns>
     public override bool ReadSubtitles(string strFileName)
     {
-      try
+      _subtitles.Clear(); // isn't this redundant as it is done by the Subtitle constructor already?
+
+      using (var input = new StreamReader(strFileName, Encoding.GetEncoding(1252)))
       {
-        m_subs.Clear();
-        using (StreamReader oRead = new StreamReader(strFileName, Encoding.GetEncoding(1252)))
+        // match file against SRT format
+        MatchCollection matches = SRTRegEx.Matches(input.ReadToEnd());
+
+        // process each match
+        foreach (Match match in matches)
         {
-          while (oRead.Peek() >= 0)
-          {
-            string s = oRead.ReadLine();
-            string sText = "";
-            string StartTime = "";
-            string EndTime = "";
+          int startHH = Convert.ToInt32(match.Groups["startHH"].Value);
+          int startMM = Convert.ToInt32(match.Groups["startMM"].Value);
+          int startSS = Convert.ToInt32(match.Groups["startSS"].Value);
+          int startMS = Convert.ToInt32(match.Groups["startMS"].Value);
+          int endHH   = Convert.ToInt32(match.Groups["endHH"  ].Value);
+          int endMM   = Convert.ToInt32(match.Groups["endMM"  ].Value);
+          int endSS   = Convert.ToInt32(match.Groups["endSS"  ].Value);
+          int endMS   = Convert.ToInt32(match.Groups["endMS"  ].Value);
+          String text = match.Groups["text"   ].Value;
 
-            if (s != null && s.Trim() != "")
-            {
-              if (s.Trim().IndexOf(":") > 0)
-              {
-                StartTime = s.Trim().Substring(0, 12);
-                EndTime = s.Substring(17).Trim();
+          // convert time stamps to milliseconds
+          int startTime = startHH * 3600000 + startMM * 60000 + startSS * 1000 + startMS;
+          int endTime   = endHH   * 3600000 + endMM   * 60000 + endSS   * 1000 + endMS;
 
-                while (s.Trim() != "")
-                {
-                  s = oRead.ReadLine();
-                  if (s == null)
-                  {
-                    break;
-                  }
-                  if (s.Trim() != "")
-                  {
-                    if (sText != "")
-                    {
-                      sText += "\n\r";
-                    }
-
-                    sText += s.Replace("\\N", "\n\r").Replace("\\N", "\n\r");
-                  }
-                }
-
-
-                SubTitles.Line newLine = new SubTitles.Line();
-                newLine.StartTime = GetSamiTime(StartTime.Replace(":", "").Replace(",", ""));
-                newLine.Text = sText;
-                newLine.EndTime = GetSamiTime(EndTime.Replace(":", "").Replace(",", ""));
-                m_subs.Add(newLine);
-              }
-            }
-          }
-          if (m_subs.Count > 0)
-          {
-            return true;
-          }
-          return false;
+          var newline = new SubTitles.Line {StartTime = startTime, EndTime = endTime, Text = text};
+          _subtitles.Add(newline);
         }
       }
-      catch (Exception) {}
-
-      return false;
-    }
-
-    //*********************************************************************************************
-    private Int32 GetSamiTime(string HHMMSSmmm)
-    {
-      //Create same Time like SAMI File
-      //H = H * 60 * 60
-      //M = M * 60
-      //S = S
-      //Total = (H + M + S * 1000) + Milliseconds
-
-      Int32 H = 0;
-      Int32 M = 0;
-      Int32 S = 0;
-      Int32 Mil = 0;
-
-      if (HHMMSSmmm.Length == 7)
-      {
-        M = Convert.ToInt32(HHMMSSmmm.Substring(0, 2));
-        S = Convert.ToInt32(HHMMSSmmm.Substring(2, 2));
-        Mil = Convert.ToInt32(HHMMSSmmm.Substring(4));
-      }
-      else if (HHMMSSmmm.Length == 9)
-      {
-        H = Convert.ToInt32(HHMMSSmmm.Substring(0, 2));
-        M = Convert.ToInt32(HHMMSSmmm.Substring(2, 2));
-        S = Convert.ToInt32(HHMMSSmmm.Substring(4, 2));
-        Mil = Convert.ToInt32(HHMMSSmmm.Substring(6));
-      }
-
-      Int32 SamiTime = (((H * 3600) + (M * 60) + S) * 1000) + Mil;
-      return SamiTime;
+      return _subtitles.Count > 0;
     }
 
 
+    /// <summary>
+    /// 
+    /// </summary>
     public override SubTitles Subs
     {
-      get { return m_subs; }
+      get { return _subtitles; }
     }
   }
 }
