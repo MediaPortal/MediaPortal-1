@@ -84,7 +84,7 @@ namespace MediaPortal.Video.Database
         //
         UpgradeDatabase();
         // Clean trash from tables
-        CleanUpDatabase();
+        //CleanUpDatabase();
         // Update latest movies
         SetLatestMovieProperties();
       }
