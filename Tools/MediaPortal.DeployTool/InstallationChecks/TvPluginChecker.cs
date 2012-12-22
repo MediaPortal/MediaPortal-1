@@ -49,12 +49,12 @@ namespace MediaPortal.DeployTool.InstallationChecks
         return false;
       }
 
-      //NSIS installer need to to if it's a fresh install or an update (chefkoch)
+      //NSIS installer need to know if it's a fresh install or an update (chefkoch)
       string UpdateMode = InstallationProperties.Instance["UpdateMode"] == "yes" ? "/UpdateMode" : string.Empty;
 
       //NSIS installer doesn't want " in parameters (chefkoch)
-      //Rember that /D must be the last one         (chefkoch)
-      Process setup = Process.Start(_fileName, String.Format("/S /noServer /DeployMode {0}", UpdateMode));
+      //Remember that /D must be the last one         (chefkoch)
+      Process setup = Process.Start(_fileName, String.Format("/S /noServer /DeployMode --DeployMode {0}", UpdateMode));
 
       if (setup != null)
       {
