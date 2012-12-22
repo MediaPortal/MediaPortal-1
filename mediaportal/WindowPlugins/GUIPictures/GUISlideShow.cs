@@ -77,7 +77,7 @@ namespace MediaPortal.GUI.Pictures
 
         _loadVideoPlayback = true;
 
-        g_Player.Play(slideFilePath, g_Player.MediaType.Video);
+        g_Player.Play(slideFilePath, g_Player.MediaType.Video, null, true);
         g_Player.ShowFullScreenWindow();
 
         if (_isSlideShow)
@@ -94,37 +94,60 @@ namespace MediaPortal.GUI.Pictures
     private void pauseMusic()
     {
       pausedMusic = true;
-      pausedMusicPlaylist = playlistPlayer;
-      pausedPlayListType = playlistPlayer.CurrentPlaylistType;
+      // TODO Better handle second video playback, without this check playlist is not played anymore. 
+      if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_NONE)
+      {
+        pausedMusicPlaylist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+        pausedPlayListType = playlistPlayer.CurrentPlaylistType;
+        iSong = playlistPlayer.CurrentSong;
+      }
       isPausedMusicCDA = g_Player.IsCDA;
       pausedMusicFileName = g_Player.CurrentFile;
       pausedMusicLastPosition = g_Player.CurrentPosition;
       g_Player.Stop();
     }
 
-    private void resumePausedMusic()
+    public void resumePausedMusic()
     {
       pausedMusic = false;
       if (pausedPlayListType != PlayListType.PLAYLIST_NONE && !isPausedMusicCDA)
       {
-        playlistPlayer = pausedMusicPlaylist;
         playlistPlayer.CurrentPlaylistType = pausedPlayListType;
+        playlistPlayer.ReplacePlaylist(pausedPlayListType, pausedMusicPlaylist);
         playlistPlayer.Play(pausedMusicFileName);
+        playlistPlayer.CurrentSong = iSong;
         g_Player.SeekAbsolute(pausedMusicLastPosition);
+        g_Player.IsPicturePlaylist = true;
       }
       else
       {
-        playlistPlayer = pausedMusicPlaylist;
         playlistPlayer.CurrentPlaylistType = pausedPlayListType;
+        playlistPlayer.ReplacePlaylist(pausedPlayListType, pausedMusicPlaylist);
         playlistPlayer.Play(pausedMusicFileName);
+        g_Player.IsPicturePlaylist = true;
 
         //we need a little pause, cause the cd player is to slow
-        while (!(g_Player.CurrentPosition > 0))
+        if (!g_Player.IsPicture)
         {
-          Thread.Sleep(1);
+          int _loopCount = 0;
+          {
+            // Don't wait too long (it can lead in infinite loop)
+            while (!(g_Player.CurrentPosition > 0) && _loopCount <= 5000)
+            {
+              _loopCount++;
+              Thread.Sleep(1);
+            }
+          }
         }
         g_Player.SeekAbsolute(pausedMusicLastPosition);
       }
+    }
+
+    public void LoadPlaylistMusic()
+    {
+      playlistPlayer.CurrentPlaylistType = pausedPlayListType;
+      playlistPlayer.ReplacePlaylist(pausedPlayListType, pausedMusicPlaylist);
+      playlistPlayer.CurrentSong = iSong;
     }
 
     private void PrefetchNextSlide()
@@ -241,10 +264,11 @@ namespace MediaPortal.GUI.Pictures
     public static int _slideDirection = 0; //-1=backwards, 0=nothing, 1=forward
     private String pausedMusicFileName;
     private double pausedMusicLastPosition;
-    private bool pausedMusic;
-    private PlayListPlayer pausedMusicPlaylist;
+    public bool pausedMusic;
+    private PlayList pausedMusicPlaylist;
     private PlayListType pausedPlayListType;
     private bool isPausedMusicCDA;
+    private int iSong;
 
 
     private bool _isPictureZoomed
@@ -292,7 +316,7 @@ namespace MediaPortal.GUI.Pictures
     private int _lastSegmentIndex = -1;
     private float _renderTimer;
     public static readonly string SegmentIndicator = "#segment";
-    private PlayListPlayer playlistPlayer;
+    public PlayListPlayer playlistPlayer;
     private MusicDatabase mDB = null;
     private bool _autoShuffleMusic = false;
 
@@ -328,7 +352,6 @@ namespace MediaPortal.GUI.Pictures
 
           if (_returnedFromVideoPlayback)
           {
-            g_Player.Stop();
             GUIWindowManager.ShowPreviousWindow();
           }
           else
@@ -697,7 +720,7 @@ namespace MediaPortal.GUI.Pictures
         return;
       }
 
-      if (pausedMusic)
+      if (pausedMusic && !Util.Utils.IsVideo(GUIPictures.fileNameCheck) && GUIPictures.fileNameCheck != "..")
       {
         resumePausedMusic();
       }
@@ -770,6 +793,12 @@ namespace MediaPortal.GUI.Pictures
 
           // Get selected picture (zoomed to full screen)
           LoadCurrentSlide();
+
+          // Validate Playlist when Audio is played
+          if (Util.Utils.IsAudio(GUIPictures.fileNameCheck) && playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC)
+          {
+            LoadPlaylistMusic();
+          }
 
           if (_useKenBurns && _isSlideShow)
           {

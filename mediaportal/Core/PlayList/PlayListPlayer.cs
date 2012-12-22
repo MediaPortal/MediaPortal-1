@@ -18,6 +18,7 @@
 
 #endregion
 
+using System;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Playlists
@@ -187,8 +188,15 @@ namespace MediaPortal.Playlists
             {
               if (item.Type != PlayListItem.PlayListItemType.AudioStream)
               {
-                Reset();
-                _currentPlayList = PlayListType.PLAYLIST_NONE;
+                if (!Player.g_Player.IsPicturePlaylist)
+                {
+                  Reset();
+                  _currentPlayList = PlayListType.PLAYLIST_NONE;
+                }
+                else
+                {
+                  Player.g_Player.IsPicturePlaylist = false;
+                }
               }
             }
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS, 0, 0, 0, -1, 0, null);

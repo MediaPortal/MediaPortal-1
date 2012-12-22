@@ -34,6 +34,7 @@ using MediaPortal.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Picture.Database;
+using MediaPortal.Playlists;
 using MediaPortal.Services;
 using MediaPortal.Threading;
 using MediaPortal.Util;
@@ -315,6 +316,7 @@ namespace MediaPortal.GUI.Pictures
     private Display disp = Display.Files;
     private bool _switchRemovableDrives;
     private int CountOfNonImageItems = 0; // stores the count of items in a folder that are no images (folders etc...)
+    public static string fileNameCheck = string.Empty;
 
     #endregion
 
@@ -547,15 +549,18 @@ namespace MediaPortal.GUI.Pictures
           selectedItemIndex += SlideShow._currentSlideIndex+1;*/
         int direction = GUISlideShow.SlideDirection;
         GUISlideShow.SlideDirection = 0;
+        g_Player.IsPicture = false;
 
-        if (SlideShow._isSlideShow)
+        if (SlideShow._returnedFromVideoPlayback && !SlideShow._loadVideoPlayback)
         {
-          if (SlideShow._returnedFromVideoPlayback && !SlideShow._loadVideoPlayback)
+          if (direction == 0)
           {
-            if (direction == 0)
+            SlideShow._returnedFromVideoPlayback = false;
+            SlideShow.Reset();
+
+            if (SlideShow.pausedMusic)
             {
-              SlideShow._returnedFromVideoPlayback = false;
-              SlideShow.Reset();
+              SlideShow.resumePausedMusic();
             }
           }
         }
@@ -568,6 +573,7 @@ namespace MediaPortal.GUI.Pictures
             selectedItemIndex++;
             GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
             GUIListItem item = GetSelectedItem();
+            fileNameCheck = item.Label;
 
             // root folder need to go next when it's a Video.
             if (item.IsFolder)
@@ -588,6 +594,7 @@ namespace MediaPortal.GUI.Pictures
             selectedItemIndex--;
             GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
             GUIListItem item = GetSelectedItem();
+            fileNameCheck = item.Label;
 
             // root folder need to go previous when it's a Video.
             if (item.IsFolder)
@@ -601,6 +608,8 @@ namespace MediaPortal.GUI.Pictures
           }
         }
         GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
+        GUIListItem itemtoParse = GetSelectedItem();
+        fileNameCheck = itemtoParse.Label;
 
         //Slide Show 
         if (SlideShow._isSlideShow)
@@ -619,6 +628,16 @@ namespace MediaPortal.GUI.Pictures
             SlideShow._returnedFromVideoPlayback = false;
           }
           OnClick(selectedItemIndex);
+        }
+        if (SlideShow.pausedMusic && !Util.Utils.IsVideo(fileNameCheck) && fileNameCheck != "..")
+        {
+          SlideShow.resumePausedMusic();
+        }
+
+        // Validate Playlist when Audio is played
+        if (Util.Utils.IsAudio(g_Player.CurrentFile) && SlideShow.playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC)
+        {
+          SlideShow.LoadPlaylistMusic();
         }
       }
 

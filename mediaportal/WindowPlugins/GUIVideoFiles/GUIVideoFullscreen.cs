@@ -423,12 +423,10 @@ namespace MediaPortal.GUI.Video
         case Action.ActionType.ACTION_PREV_CHAPTER:
         case Action.ActionType.ACTION_PREV_ITEM:
           {
-            if (GUIWindowManager.GetPreviousActiveWindow() == (int)GUIWindow.Window.WINDOW_SLIDESHOW)
+            if (g_Player.IsPicture)
             {
-              {
-                GUISlideShow._slideDirection = -1;
-                g_Player.Stop();
-              }
+              GUISlideShow._slideDirection = -1;
+              g_Player.Stop();
             }
             else
             {
@@ -441,12 +439,10 @@ namespace MediaPortal.GUI.Video
         case Action.ActionType.ACTION_NEXT_CHAPTER:
         case Action.ActionType.ACTION_NEXT_ITEM:
           {
-            if (GUIWindowManager.GetPreviousActiveWindow() == (int)GUIWindow.Window.WINDOW_SLIDESHOW)
+            if (g_Player.IsPicture)
             {
-              {
-                GUISlideShow._slideDirection = 1;
-                g_Player.Stop();
-              }
+              GUISlideShow._slideDirection = 1;
+              g_Player.Stop();
             }
             else
             {
@@ -458,6 +454,12 @@ namespace MediaPortal.GUI.Video
         case Action.ActionType.ACTION_PREVIOUS_MENU:
         case Action.ActionType.ACTION_SHOW_GUI:
           {
+            // Stop Video for MyPictures when going to home
+            if (g_Player.IsPicture)
+            {
+              GUISlideShow._slideDirection = 0;
+              g_Player.Stop();
+            }
             // switch back to the menu
             if ((g_Player.IsDVD) && (g_Player.IsDVDMenu))
             {
@@ -864,7 +866,7 @@ namespace MediaPortal.GUI.Video
 
         case Action.ActionType.ACTION_STOP:
           {
-            if (GUIWindowManager.GetPreviousActiveWindow() == (int)GUIWindow.Window.WINDOW_SLIDESHOW)
+            if (g_Player.IsPicture)
             {
               GUISlideShow._slideDirection = 0;
             }
@@ -950,7 +952,7 @@ namespace MediaPortal.GUI.Video
         case Action.ActionType.ACTION_KEY_PRESSED:
           if (action.m_key != null)
           {
-            char chKey = (char)action.m_key.KeyChar;
+            char chKey = (char) action.m_key.KeyChar;
             if (chKey >= '0' && chKey <= '9') //Make sure it's only for the remote
             {
               if (g_Player.CanSeek)
@@ -965,14 +967,6 @@ namespace MediaPortal.GUI.Video
                 {
                   ChangetheTimeCode(chKey);
                 }
-              }
-            }
-            if (chKey == 'b')
-            {
-              if (GUIWindowManager.GetPreviousActiveWindow() == (int)GUIWindow.Window.WINDOW_SLIDESHOW)
-              {
-                GUISlideShow._slideDirection = 0;
-                g_Player.Stop();
               }
             }
           }
