@@ -623,23 +623,6 @@ public class MediaPortalApp : D3D, IRender
 
           Application.DoEvents(); // process message queue
 
-          // TODO: remove check as MP doesn't require wmp.ddl
-          // check if Windows MediaPlayer 11 is installed
-          /*const string wmpMainVer = "11";
-          Log.Debug("Main: Verifying Windows Media Player");
-          Version aParamVersion;
-          if (FilterChecker.CheckFileVersion(Environment.SystemDirectory + "\\wmp.dll", wmpMainVer + ".0.0000.0000", out aParamVersion))
-          {
-            Log.Info("Main: Windows Media Player version {0} installed", aParamVersion);
-          }
-          else
-          {
-            DisableSplashScreen();
-            string strLine = "Please install Windows Media Player " + wmpMainVer + "\r\n";
-            strLine = strLine + "MediaPortal cannot run without Windows Media Player " + wmpMainVer;
-            MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
-          }*/
-
           #if !DEBUG
           // Check TvPlugin version
           string mpExe    = Assembly.GetExecutingAssembly().Location;
@@ -1165,7 +1148,9 @@ public class MediaPortalApp : D3D, IRender
           int newWidth  = unchecked((short)msg.LParam.ToInt32());
           int newHeight = unchecked((short)((uint)msg.LParam.ToInt32() >> 16));
           Log.Info("Main: Resolution changed to {0}x{1}x{2} or displays added/removed", newWidth, newHeight, newDepth);
+          SavePlayerState();
           UpdatePresentParams(Windowed, true);
+          ResumePlayer();
           msg.Result = (IntPtr)1;
           break;
         
@@ -3110,22 +3095,25 @@ public class MediaPortalApp : D3D, IRender
 
     GUIGraphicsContext.ResetLastActivity();
 
+    // Disable first mouse action when mouse was hidden
     if (!ShowMouseCursor)
     {
       base.MouseClickEvent(e);
-      return;
     }
-    _lastCursorPosition = Cursor.Position;
-
-    var actionMove = new Action(Action.ActionType.ACTION_MOUSE_MOVE, e.X, e.Y);
-    GUIGraphicsContext.OnAction(actionMove);
-
-    var action = new Action(Action.ActionType.ACTION_MOUSE_DOUBLECLICK, e.X, e.Y) {MouseButton = e.Button, SoundFileName = "click.wav"};
-    if (action.SoundFileName.Length > 0 && !g_Player.Playing)
+    else
     {
-      Utils.PlaySound(action.SoundFileName, false, true);
+      _lastCursorPosition = Cursor.Position;
+
+      var actionMove = new Action(Action.ActionType.ACTION_MOUSE_MOVE, e.X, e.Y);
+      GUIGraphicsContext.OnAction(actionMove);
+
+      var action = new Action(Action.ActionType.ACTION_MOUSE_DOUBLECLICK, e.X, e.Y) {MouseButton = e.Button, SoundFileName = "click.wav"};
+      if (action.SoundFileName.Length > 0 && !g_Player.Playing)
+      {
+        Utils.PlaySound(action.SoundFileName, false, true);
+      }
+      GUIGraphicsContext.OnAction(action);
     }
-    GUIGraphicsContext.OnAction(action);
   }
 
 
@@ -3263,17 +3251,8 @@ public class MediaPortalApp : D3D, IRender
   /// </summary>
   /// <param name="sender"></param>
   /// <param name="e"></param>
-  /// TODO:
   protected override void NotifyIconRestore(Object sender, EventArgs e)
   {
-    if (Volume > 0 && (g_Player.IsVideo || g_Player.IsTV))
-    {
-      g_Player.Volume = Volume;
-      if (g_Player.Paused)
-      {
-        g_Player.Pause();
-      }
-    }
     RestoreFromTray(false);
   }
 

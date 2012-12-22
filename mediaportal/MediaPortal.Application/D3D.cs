@@ -177,6 +177,7 @@ namespace MediaPortal
     private PlayList                   _currentPlayList;          //
     private Win32API.MSG               _msgApi;                   //
     private GraphicsAdapterInfo        _adapterInfo;              //
+    private Point                      _lastCursorPosition;       // track cursor position of last move move event
     
     #endregion
 
@@ -457,12 +458,8 @@ namespace MediaPortal
     {
       Log.Info("D3D: Fullscreen / windowed mode toggled");
 
-      // Force player to stop so as not to crash during toggle
-      if (GUIGraphicsContext.Vmr9Active)
-      {
-        Log.Info("D3D: Vmr9Active - Stopping media");
-        g_Player.Stop();
-      }
+      // save player state
+      SavePlayerState();
 
       if (Windowed)
       {
@@ -528,7 +525,11 @@ namespace MediaPortal
         UpdatePresentParams(true, false);
         Log.Info("D3D: Switching fullscreen to windowed mode done");
       }
+      // reset device
       OnDeviceReset(null, null);
+
+      // resume playback
+      ResumePlayer();
     }
 
 
@@ -778,7 +779,16 @@ namespace MediaPortal
         Show();
         WindowState = FormWindowState.Normal;
         Activate();
-        ResumePlayer();
+
+        // resume player and restore volume
+        if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD)
+        {
+          g_Player.Volume = Volume;
+          if (g_Player.Paused)
+          {
+            g_Player.Pause();
+          }
+        }
 
         if (!Windowed && AutoHideTaskbar)
         {
@@ -815,14 +825,16 @@ namespace MediaPortal
         }
         Hide();
         WindowState = FormWindowState.Minimized;
-        SavePlayerState();
-
+ 
         // pause player and mute audio
-        if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD)
+        if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD || g_Player.IsDVDMenu)
         {
           Volume = g_Player.Volume;
           g_Player.Volume = 0;
-          g_Player.Pause();
+          if (!g_Player.Paused)
+          {
+            g_Player.Pause();
+          }
         }
 
         if (AutoHideTaskbar)
@@ -1194,11 +1206,9 @@ namespace MediaPortal
     /// <summary>
     /// Save player state (when form was resized)
     /// </summary>
-    private void SavePlayerState()
+    protected void SavePlayerState()
     {
-      // Is App not minimized to tray and is a player active?
-      if (WindowState != FormWindowState.Minimized && !_wasPlayingVideo &&
-          (g_Player.Playing && (g_Player.IsTV || g_Player.IsVideo || g_Player.IsDVD)))
+      if (!_wasPlayingVideo && (g_Player.Playing && (g_Player.IsTV || g_Player.IsVideo || g_Player.IsDVD)))
       {
         _wasPlayingVideo = true;
 
@@ -1227,7 +1237,7 @@ namespace MediaPortal
           _currentFile = g_Player.CurrentFile;
         }
 
-        Log.Info("D3D: Form resized - Stopping media - Current playlist: Type: {0} / Size: {1} / Current item: {2} / Filename: {3} / Position: {4}",
+        Log.Info("D3D: Stopping media - Current playlist: Type: {0} / Size: {1} / Current item: {2} / Filename: {3} / Position: {4}",
                  _currentPlayListType, _currentPlayList.Count, PlaylistPlayer.CurrentSong, _currentFile, _currentPlayerPos);
         
         g_Player.Stop();
@@ -1240,7 +1250,7 @@ namespace MediaPortal
     /// <summary>
     /// Restore player from saved state
     /// </summary>
-    private void ResumePlayer()
+    protected void ResumePlayer()
     {
       if (_wasPlayingVideo) // was any player active at all?
       {
@@ -1712,6 +1722,7 @@ namespace MediaPortal
       // suppress any errors
       catch { }
 
+      _lastCursorPosition = Cursor.Position;
       ShowLastActiveModule();
     }
 
@@ -1862,20 +1873,17 @@ namespace MediaPortal
     /// <param name="e"></param>
     protected virtual void MouseMoveEvent(MouseEventArgs e)
     {
-      // ignore first mouse move event in fullscreen mode or mouse cursor will be shown
-      if (!Windowed && FirstTimeWindowDisplayed)
+      // only re-activate mouse cursor when the position really changed between move events
+      if (e.X != _lastCursorPosition.X || e.Y != _lastCursorPosition.Y)
       {
-        Log.Debug("D3D: skipping first mouse move event in fullscreen mode");
-        FirstTimeWindowDisplayed = false;
-        return;
+        if (!_disableMouseEvents)
+        {
+          ShowMouseCursor = true;
+        }
+        MouseTimeOutTimer = DateTime.Now;
+        UpdateMouseCursor();
       }
-
-      if (!_disableMouseEvents)
-      {
-        ShowMouseCursor = true;
-      }
-      MouseTimeOutTimer = DateTime.Now;
-      UpdateMouseCursor();
+      _lastCursorPosition = Cursor.Position;
     }
 
 
