@@ -95,7 +95,7 @@
 			<control>
 				<type>image</type>
 				<id>0</id>
-				<posY>722</posY>
+				<posY>791</posY>
 				<posX>116</posX>
 				<width>369</width>
 				<height>1</height>
@@ -160,7 +160,7 @@
 				<type>label</type>
 				<id>1</id>
 				<posX>116</posX>
-				<posY>732</posY>
+				<posY>801</posY>
 				<label>1065</label>
 				<font>fontB12</font>
 				<textcolor>393939</textcolor>
@@ -285,7 +285,7 @@
 						<onright>50</onright>
 						<onleft>50</onleft>
 						<onup>20</onup>
-						<ondown>66610</ondown>
+						<ondown>7</ondown>
 					</control>
 		
           <control>
@@ -299,6 +299,23 @@
             <label>-</label>
             <visible>true</visible>
       		</control>
+		
+          <control>
+            <description>Scan new videos</description>
+            <type>button</type>
+            <id>7</id>
+            <label>102</label>
+						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+						<textureNoFocus>-</textureNoFocus>
+						<width>499</width>
+						<height>69</height>
+						<textXOff>62</textXOff>
+						<textYOff>16</textYOff>
+						<onright>50</onright>
+						<onleft>50</onleft>
+            <onup>9</onup>
+            <ondown>66610</ondown>
+          </control>
 		
 					<control>
 						<description>Video Settings</description>
@@ -346,29 +363,10 @@
 						<onleft>50</onleft>
 		        <onright>50</onright>
 						<onup>66610</onup>
-						<ondown>66611</ondown>
+						<ondown>66614</ondown>
             <visible>plugin.isenabled(OnlineVideos)</visible> 
 					</control>	
-		
-					<control>
-						<description>SubCentral</description>
-						<id>66611</id>
-						<type>button</type>
-						<width>499</width>
-						<height>69</height>
-						<textXOff>62</textXOff>
-						<textYOff>16</textYOff>
-						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
-						<textureNoFocus>-</textureNoFocus>
-						<label>287</label>
-						<hyperlink>84623</hyperlink>
-						<visible>plugin.isenabled(SubCentral)</visible>
-						<onleft>50</onleft>
-		        <onright>50</onright>
-						<onup>66613</onup>
-						<ondown>66614</ondown>    
-					</control>
-		            
+				            
 		      <control>
 		      	<description>Trakt</description>
 		        <type>button</type>
@@ -381,7 +379,7 @@
 						<textureNoFocus>-</textureNoFocus>
 		        <label>Trakt</label>
 		        <hyperlink>87258</hyperlink>
-		        <onup>66611</onup>
+		        <onup>66613</onup>
 		        <ondown>2</ondown>
 						<onleft>50</onleft>
 		        <onright>50</onright>
