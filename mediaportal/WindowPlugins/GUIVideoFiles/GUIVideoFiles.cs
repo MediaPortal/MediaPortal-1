@@ -1715,8 +1715,9 @@ namespace MediaPortal.GUI.Video
         }
       }
 
-      if (g_Player.Playing && !g_Player.IsDVD)
-        g_Player.Stop();
+      // TODO Handle STP when it comes from MyMusic otherwise Video Playlist will not work
+      //if (g_Player.Playing && !g_Player.IsDVD)
+      //  g_Player.Stop();
 
       string currentFile = g_Player.CurrentFile;
       if (Util.Utils.IsISOImage(currentFile))
