@@ -1928,28 +1928,19 @@ public class MediaPortalApp : D3D, IRender
     UpdateSplashScreenMessage(String.Format(GUILocalizeStrings.Get(69), GUIGraphicsContext.SkinName + " - " + GUIThemeManager.CurrentTheme));
     GUIControlFactory.LoadReferences(GUIGraphicsContext.GetThemedSkinFile(@"\references.xml"));
 
+    // force WM_GETMINMAXINFO message before actual resizing
+    Bounds = new Rectangle(0, 0, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+ 
     // Resize Form
     if (Windowed)
     {
-      var border = new Size(Width - ClientSize.Width, Height - ClientSize.Height);
-      if (GUIGraphicsContext.SkinSize.Width  + border.Width  <= GUIGraphicsContext.currentScreen.WorkingArea.Width &&
-          GUIGraphicsContext.SkinSize.Height + border.Height <= GUIGraphicsContext.currentScreen.WorkingArea.Height)
-      {
-        Log.Debug("Startup: Resizing form to Skin Dimensions");
-        ClientSize = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
-      }
-      else
-      {
-        Log.Debug("Startup: Resizing form to Working Area Dimensions (SkinDimensions > Working Area)");
-        double ratio = Math.Min((double)(GUIGraphicsContext.currentScreen.WorkingArea.Width  - border.Width)  / GUIGraphicsContext.SkinSize.Width,
-                                (double)(GUIGraphicsContext.currentScreen.WorkingArea.Height - border.Height) / GUIGraphicsContext.SkinSize.Height);
-        ClientSize = new Size((int)(GUIGraphicsContext.SkinSize.Width * ratio), (int)(GUIGraphicsContext.SkinSize.Height * ratio));
-        Location = new Point(0, 0);
-      }
+      Log.Debug("Startup: Resizing form to Skin Dimensions");
+      ClientSize      = CalcMaxClientArea();
       LastRect.top    = Location.Y;
       LastRect.left   = Location.X;
       LastRect.bottom = Size.Height;
       LastRect.right  = Size.Width;
+      Location = new Point(0, 0);
       UpdatePresentParams(Windowed, true);
     }
     else

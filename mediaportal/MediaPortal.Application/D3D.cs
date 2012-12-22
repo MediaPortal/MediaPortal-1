@@ -509,21 +509,8 @@ namespace MediaPortal
 
         if (_oldBounds.IsEmpty)
         {
-          var border = new Size(Width - ClientSize.Width, Height - ClientSize.Height);
-          if (GUIGraphicsContext.SkinSize.Width  + border.Width  <= GUIGraphicsContext.currentScreen.WorkingArea.Width &&
-              GUIGraphicsContext.SkinSize.Height + border.Height <= GUIGraphicsContext.currentScreen.WorkingArea.Height)
-          {
-            Log.Debug("D3D: Resizing form to Skin Dimensions");
-            ClientSize = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
-          }
-          else
-          {
-            Log.Debug("D3D: Resizing form to Working Area Dimensions (SkinDimensions > Working Area)");
-            double ratio = Math.Min((double)(GUIGraphicsContext.currentScreen.WorkingArea.Width  - border.Width)  / GUIGraphicsContext.SkinSize.Width,
-                                    (double)(GUIGraphicsContext.currentScreen.WorkingArea.Height - border.Height) / GUIGraphicsContext.SkinSize.Height);
-            ClientSize = new Size((int)(GUIGraphicsContext.SkinSize.Width * ratio), (int)(GUIGraphicsContext.SkinSize.Height * ratio));
-            Location = new Point(0, 0);
-          }
+          ClientSize = CalcMaxClientArea();
+          Location = new Point(0, 0);
         }
         else
         {
@@ -963,6 +950,7 @@ namespace MediaPortal
       _notifyIcon.DoubleClick += NotifyIconRestore;
       
       AutoScaleDimensions = new SizeF(6F, 13F);
+      AutoScaleMode = AutoScaleMode.Dpi;
       KeyPreview = true;
       Name = "D3D";
       Load             += OnLoad;
