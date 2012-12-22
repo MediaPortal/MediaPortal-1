@@ -565,79 +565,114 @@ namespace MediaPortal.GUI.Pictures
           }
         }
 
-        //forward
-        if (direction == 1)
+        if (SlideShow._showRecursive)
         {
-          if (SlideShow._returnedFromVideoPlayback)
+          if (direction == 1)
           {
-            selectedItemIndex++;
-            GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
-            GUIListItem item = GetSelectedItem();
-            fileNameCheck = item.Label;
+            SlideShow.ShowNext();
+          }
+          //Backward
+          if (direction == -1)
+          {
+            SlideShow.ShowPrevious();
+          }
 
-            // root folder need to go next when it's a Video.
-            if (item.IsFolder)
+          fileNameCheck = SlideShow._slideList[SlideShow._currentSlideIndex];
+
+          if (SlideShow._isSlideShow)
+          {
+            if (SlideShow._returnedFromVideoPlayback)
             {
-              SlideShow.ShowNext();
+              SlideShow._returnedFromVideoPlayback = false;
+            }
+            OnSlideShowRecursive(fileNameCheck);
+          }
+
+          if (SlideShow.pausedMusic && !Util.Utils.IsVideo(fileNameCheck))
+          {
+            SlideShow.resumePausedMusic();
+          }
+        }
+        else
+        {
+          //forward
+          if (direction == 1)
+          {
+            if (SlideShow._returnedFromVideoPlayback)
+            {
+              selectedItemIndex++;
+              GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
+              GUIListItem item = GetSelectedItem();
+              fileNameCheck = item.Label;
+
+              // root folder need to go next when it's a Video.
+              if (item.IsFolder)
+              {
+                SlideShow.ShowNext();
+              }
+            }
+            else
+            {
+              selectedItemIndex++;
             }
           }
-          else
+          //Backward
+          if (direction == -1)
           {
-            selectedItemIndex++;
-          }
-        }
-        //Backward
-        if (direction == -1)
-        {
-          if (SlideShow._returnedFromVideoPlayback)
-          {
-            selectedItemIndex--;
-            GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
-            GUIListItem item = GetSelectedItem();
-            fileNameCheck = item.Label;
-
-            // root folder need to go previous when it's a Video.
-            if (item.IsFolder)
+            if (SlideShow._returnedFromVideoPlayback)
             {
-              SlideShow.ShowPrevious();
+              selectedItemIndex--;
+              GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
+              GUIListItem item = GetSelectedItem();
+              fileNameCheck = item.Label;
+
+              // root folder need to go previous when it's a Video.
+              if (item.IsFolder)
+              {
+                SlideShow.ShowPrevious();
+              }
+            }
+            else
+            {
+              selectedItemIndex--;
             }
           }
-          else
-          {
-            selectedItemIndex--;
-          }
-        }
-        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
-        GUIListItem itemtoParse = GetSelectedItem();
-        fileNameCheck = itemtoParse.Label;
+          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
+          GUIListItem itemtoParse = GetSelectedItem();
+          fileNameCheck = itemtoParse.Label;
 
-        //Slide Show 
-        if (SlideShow._isSlideShow)
-        {
-          if (SlideShow._returnedFromVideoPlayback)
+          //Slide Show 
+          if (SlideShow._isSlideShow)
           {
-            SlideShow._returnedFromVideoPlayback = false;
+            if (SlideShow._returnedFromVideoPlayback)
+            {
+              SlideShow._returnedFromVideoPlayback = false;
+            }
+            OnClickSlideShow(selectedItemIndex);
           }
-          OnClickSlideShow(selectedItemIndex);
-        }
           //OnClick
-        else if (direction != 0)
-        {
-          if (SlideShow._returnedFromVideoPlayback)
+          else if (direction != 0)
           {
-            SlideShow._returnedFromVideoPlayback = false;
+            if (SlideShow._returnedFromVideoPlayback)
+            {
+              SlideShow._returnedFromVideoPlayback = false;
+            }
+            OnClickSlide(selectedItemIndex);
           }
-          OnClick(selectedItemIndex);
-        }
-        if (SlideShow.pausedMusic && !Util.Utils.IsVideo(fileNameCheck) && fileNameCheck != "..")
-        {
-          SlideShow.resumePausedMusic();
-        }
+          if (SlideShow.pausedMusic && !Util.Utils.IsVideo(fileNameCheck) && fileNameCheck != "..")
+          {
+            SlideShow.resumePausedMusic();
+          }
 
-        // Validate Playlist when Audio is played
-        if (Util.Utils.IsAudio(g_Player.CurrentFile) && SlideShow.playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC)
-        {
-          SlideShow.LoadPlaylistMusic();
+          // Validate Playlist when Audio is played
+          if (Util.Utils.IsAudio(g_Player.CurrentFile) && SlideShow.playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC)
+          {
+            SlideShow.LoadPlaylistMusic();
+          }
+          if (SlideShow._showRecursive)
+          {
+            SlideShow._showRecursive = false;
+          }
         }
       }
 
@@ -1454,6 +1489,56 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
+    protected void OnClickSlide(int itemIndex)
+    {
+      if ((itemIndex < 0) || (itemIndex > GetSelectedItemNo()))
+      {
+        itemIndex = 0;
+      }
+      int i = itemIndex;
+
+      GUIListItem item = GetItem(i);
+
+      if (item == null)
+      {
+        return;
+      }
+      if (item.IsFolder)
+      {
+        selectedItemIndex = GetSelectedItemNo();
+        OnShowPicture(item.Path);
+      }
+      else
+      {
+        if (virtualDirectory.IsRemote(item.Path))
+        {
+          if (!virtualDirectory.IsRemoteFileDownloaded(item.Path, item.FileInfo.Length))
+          {
+            if (!virtualDirectory.ShouldWeDownloadFile(item.Path))
+            {
+              return;
+            }
+            if (!virtualDirectory.DownloadRemoteFile(item.Path, item.FileInfo.Length))
+            {
+              //show message that we are unable to download the file
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING, 0, 0, 0, 0, 0, 0);
+              msg.Param1 = 916;
+              msg.Param2 = 920;
+              msg.Param3 = 0;
+              msg.Param4 = 0;
+              GUIWindowManager.SendMessage(msg);
+
+              return;
+            }
+          }
+          return;
+        }
+
+        selectedItemIndex = GetSelectedItemNo();
+        OnShowPicture(item.Path);
+      }
+    }
+
     protected override void OnClick(int itemIndex)
     {
       GUIListItem item = GetSelectedItem();
@@ -1499,15 +1584,24 @@ namespace MediaPortal.GUI.Pictures
 
     protected void OnClickSlideShow(int itemIndex)
     {
-      GUIListItem item = GetSelectedItem();
+      if ((itemIndex < 0) || (itemIndex > GetSelectedItemNo()))
+      {
+        itemIndex = 0;
+      }
+      int i = itemIndex;
+
+      GUIListItem item = GetItem(i);
+
       if (item == null)
       {
         return;
       }
       if (item.IsFolder)
       {
-        selectedItemIndex = -1;
-        LoadDirectory(item.Path);
+        i++;
+        GUIListItem itemSelect = GetItem(i);
+        selectedItemIndex = i;
+        OnSlideShow(itemSelect.Path);
       }
       else
       {
@@ -1534,7 +1628,6 @@ namespace MediaPortal.GUI.Pictures
           }
           return;
         }
-
         selectedItemIndex = GetSelectedItemNo();
         OnSlideShow(item.Path);
       }
@@ -1567,10 +1660,8 @@ namespace MediaPortal.GUI.Pictures
       }
       if (SlideShow.Count > 0)
       {
-        {
-          GUIWindowManager.ActivateWindow((int)Window.WINDOW_SLIDESHOW);
-          SlideShow.Select(strFile);
-        }
+        GUIWindowManager.ActivateWindow((int)Window.WINDOW_SLIDESHOW);
+        SlideShow.Select(strFile);
       }
     }
 
@@ -1603,6 +1694,7 @@ namespace MediaPortal.GUI.Pictures
       }
 
       SlideShow.Reset();
+      SlideShow._showRecursive = true;
       if (disp == Display.Files)
       {
         AddDir(SlideShow, currentFolder);
@@ -1618,14 +1710,34 @@ namespace MediaPortal.GUI.Pictures
       }
       if (SlideShow.Count > 0)
       {
-        SlideShow.StartSlideShow(currentFolder);
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_SLIDESHOW);
+        SlideShow.StartSlideShow();
       }
     }
 
     private void OnSlideShow()
     {
       OnClickSlideShow(0);
+    }
+
+    private void OnSlideShowRecursive(string strFile)
+    {
+      GUISlideShow SlideShow = (GUISlideShow)GUIWindowManager.GetWindow((int)Window.WINDOW_SLIDESHOW);
+      if (SlideShow == null)
+      {
+        return;
+      }
+      if (SlideShow._returnedFromVideoPlayback)
+      {
+        SlideShow._returnedFromVideoPlayback = false;
+      }
+
+      if (SlideShow.Count > 0)
+      {
+        GUIWindowManager.ActivateWindow((int)Window.WINDOW_SLIDESHOW);
+        SlideShow.SelectShowRecursive(strFile);
+        SlideShow.StartSlideShow();
+      }
     }
 
     private void OnSlideShow (string strFile)
@@ -1655,11 +1767,9 @@ namespace MediaPortal.GUI.Pictures
       }
       if (SlideShow.Count > 0)
       {
-        {
-          GUIWindowManager.ActivateWindow((int)Window.WINDOW_SLIDESHOW);
-          SlideShow.Select(strFile);
-          SlideShow.StartSlideShow();
-        }
+        GUIWindowManager.ActivateWindow((int)Window.WINDOW_SLIDESHOW);
+        SlideShow.Select(strFile);
+        SlideShow.StartSlideShow();
       }
     }
 

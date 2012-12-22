@@ -81,7 +81,9 @@ namespace MediaPortal.GUI.Pictures
         g_Player.ShowFullScreenWindow();
 
         if (_isSlideShow)
-        _slideDirection = 1;
+        {
+          _slideDirection = 1;
+        }
 
         _loadVideoPlayback = false;
         _returnedFromVideoPlayback = true;
@@ -105,6 +107,7 @@ namespace MediaPortal.GUI.Pictures
       pausedMusicFileName = g_Player.CurrentFile;
       pausedMusicLastPosition = g_Player.CurrentPosition;
       g_Player.Stop();
+      g_Player.IsPicturePlaylist = false;
     }
 
     public void resumePausedMusic()
@@ -226,7 +229,7 @@ namespace MediaPortal.GUI.Pictures
     private int _slideShowTransistionFrames = 60;
     private int _kenBurnTransistionSpeed = 40;
 
-    private List<string> _slideList = new List<string>();
+    public List<string> _slideList = new List<string>();
     private int _slideTime = 0;
     private int _counter = 0;
 
@@ -319,6 +322,7 @@ namespace MediaPortal.GUI.Pictures
     public PlayListPlayer playlistPlayer;
     private MusicDatabase mDB = null;
     private bool _autoShuffleMusic = false;
+    public bool _showRecursive = false;
 
     #endregion
 
@@ -1048,6 +1052,20 @@ namespace MediaPortal.GUI.Pictures
       _slideList.Add(filename);
     }
 
+    public void SelectShowRecursive(string strFile)
+    {
+      LoadSettings();
+      for (int i = 0; i < _slideList.Count; ++i)
+      {
+        string strSlide = _slideList[i];
+        if (strSlide == strFile)
+        {
+          _currentSlideIndex = i;
+          return;
+        }
+      }
+    }
+
     public void Select(string strFile)
     {
       LoadSettings();
@@ -1134,6 +1152,7 @@ namespace MediaPortal.GUI.Pictures
       _slideTime = 0;
       _userZoomLevel = 1.0f;
       _lastSegmentIndex = -1;
+      _showRecursive = false;
 
       if (null != _backgroundSlide)
       {
