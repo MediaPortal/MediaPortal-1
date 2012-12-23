@@ -317,6 +317,7 @@ namespace MediaPortal.GUI.Pictures
     private bool _switchRemovableDrives;
     private int CountOfNonImageItems = 0; // stores the count of items in a folder that are no images (folders etc...)
     public static string fileNameCheck = string.Empty;
+    protected PictureSort.SortMethod currentSortMethod = PictureSort.SortMethod.Name;
 
     #endregion
 
@@ -961,6 +962,12 @@ namespace MediaPortal.GUI.Pictures
           }
           break;
       }
+    }
+
+    protected virtual PictureSort.SortMethod CurrentSortMethod
+    {
+      get { return currentSortMethod; }
+      set { currentSortMethod = value; }
     }
 
     #endregion
@@ -1668,6 +1675,7 @@ namespace MediaPortal.GUI.Pictures
     private void AddDir(GUISlideShow SlideShow, string strDir)
     {
       List<GUIListItem> itemlist = virtualDirectory.GetDirectoryExt(strDir);
+      itemlist.Sort(new PictureSort(CurrentSortMethod, CurrentSortAsc));
       Filter(ref itemlist);
       foreach (GUIListItem item in itemlist)
       {
