@@ -35,7 +35,7 @@ internal class SlidePicture
   private int _height = 0;
   private int _rotation = 0;
 
-  private string _filePath;
+  public string _filePath;
   private bool _useActualSizeTexture;
 
   public Texture Texture

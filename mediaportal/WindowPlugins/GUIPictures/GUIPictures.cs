@@ -544,7 +544,7 @@ namespace MediaPortal.GUI.Pictures
       LoadDirectory(currentFolder);
       if (selectedItemIndex >= 0)
       {
-        GUISlideShow SlideShow = (GUISlideShow)GUIWindowManager.GetWindow((int)Window.WINDOW_SLIDESHOW);
+        GUISlideShow SlideShow = (GUISlideShow) GUIWindowManager.GetWindow((int) Window.WINDOW_SLIDESHOW);
         Log.Debug("GUIPictures: currentSlideIndex {0}", SlideShow._currentSlideIndex);
         /*if (SlideShow._currentSlideIndex != -1)
           selectedItemIndex += SlideShow._currentSlideIndex+1;*/
@@ -558,125 +558,48 @@ namespace MediaPortal.GUI.Pictures
           {
             SlideShow._returnedFromVideoPlayback = false;
             SlideShow.Reset();
-
-            if (SlideShow.pausedMusic)
-            {
-              SlideShow.resumePausedMusic();
-            }
           }
+        }
+
+        //forward
+        if (direction == 1)
+        {
+          selectedItemIndex++;
+        }
+        //Backward
+        if (direction == -1)
+        {
+          selectedItemIndex--;
+        }
+
+        //Slide Show 
+        if (SlideShow._isSlideShow)
+        {
+          if (SlideShow._returnedFromVideoPlayback)
+          {
+            SlideShow._returnedFromVideoPlayback = false;
+          }
+          OnClickSlideShow(selectedItemIndex);
+        }
+        //OnClick
+        else if (direction != 0)
+        {
+          if (SlideShow._returnedFromVideoPlayback)
+          {
+            SlideShow._returnedFromVideoPlayback = false;
+          }
+          OnClickSlide(selectedItemIndex);
+        }
+        if (SlideShow.pausedMusic)
+        {
+          SlideShow.resumePausedMusic();
         }
 
         if (SlideShow._showRecursive)
         {
-          if (direction == 1)
-          {
-            SlideShow.ShowNext();
-          }
-          //Backward
-          if (direction == -1)
-          {
-            SlideShow.ShowPrevious();
-          }
-
-          fileNameCheck = SlideShow._slideList[SlideShow._currentSlideIndex];
-
-          if (SlideShow._isSlideShow)
-          {
-            if (SlideShow._returnedFromVideoPlayback)
-            {
-              SlideShow._returnedFromVideoPlayback = false;
-            }
-            OnSlideShowRecursive(fileNameCheck);
-          }
-
-          if (SlideShow.pausedMusic && !Util.Utils.IsVideo(fileNameCheck))
-          {
-            SlideShow.resumePausedMusic();
-          }
-        }
-        else
-        {
-          //forward
-          if (direction == 1)
-          {
-            if (SlideShow._returnedFromVideoPlayback)
-            {
-              selectedItemIndex++;
-              GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
-              GUIListItem item = GetSelectedItem();
-              fileNameCheck = item.Label;
-
-              // root folder need to go next when it's a Video.
-              if (item.IsFolder)
-              {
-                SlideShow.ShowNext();
-              }
-            }
-            else
-            {
-              selectedItemIndex++;
-            }
-          }
-          //Backward
-          if (direction == -1)
-          {
-            if (SlideShow._returnedFromVideoPlayback)
-            {
-              selectedItemIndex--;
-              GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
-              GUIListItem item = GetSelectedItem();
-              fileNameCheck = item.Label;
-
-              // root folder need to go previous when it's a Video.
-              if (item.IsFolder)
-              {
-                SlideShow.ShowPrevious();
-              }
-            }
-            else
-            {
-              selectedItemIndex--;
-            }
-          }
-          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
-          GUIListItem itemtoParse = GetSelectedItem();
-          fileNameCheck = itemtoParse.Label;
-
-          //Slide Show 
-          if (SlideShow._isSlideShow)
-          {
-            if (SlideShow._returnedFromVideoPlayback)
-            {
-              SlideShow._returnedFromVideoPlayback = false;
-            }
-            OnClickSlideShow(selectedItemIndex);
-          }
-          //OnClick
-          else if (direction != 0)
-          {
-            if (SlideShow._returnedFromVideoPlayback)
-            {
-              SlideShow._returnedFromVideoPlayback = false;
-            }
-            OnClickSlide(selectedItemIndex);
-          }
-          if (SlideShow.pausedMusic && !Util.Utils.IsVideo(fileNameCheck) && fileNameCheck != "..")
-          {
-            SlideShow.resumePausedMusic();
-          }
-
-          // Validate Playlist when Audio is played
-          if (Util.Utils.IsAudio(g_Player.CurrentFile) && SlideShow.playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC)
-          {
-            SlideShow.LoadPlaylistMusic();
-          }
-          if (SlideShow._showRecursive)
-          {
-            SlideShow._showRecursive = false;
-          }
+          SlideShow._showRecursive = false;
         }
       }
-
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
     }
 
@@ -1672,7 +1595,7 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-    private void AddDir(GUISlideShow SlideShow, string strDir)
+    public void AddDir(GUISlideShow SlideShow, string strDir)
     {
       List<GUIListItem> itemlist = virtualDirectory.GetDirectoryExt(strDir);
       itemlist.Sort(new PictureSort(CurrentSortMethod, CurrentSortAsc));
@@ -1681,9 +1604,10 @@ namespace MediaPortal.GUI.Pictures
       {
         if (item.IsFolder)
         {
-          if (item.Label != "..")
+          if (item.Label != ".." && !SlideShow._slideFolder.Contains(item.Label))
           {
-            AddDir(SlideShow, item.Path);
+            SlideShow._slideFolder.Add(item.Path);
+            SlideShow.Add(item.Path);
           }
         }
         else if (!item.IsRemote)
@@ -1716,7 +1640,7 @@ namespace MediaPortal.GUI.Pictures
           SlideShow.Add(pic);
         }
       }
-      if (SlideShow.Count > 0)
+      if (SlideShow.Count > 0 || SlideShow._slideFolder.Count > 0)
       {
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_SLIDESHOW);
         SlideShow.StartSlideShow();

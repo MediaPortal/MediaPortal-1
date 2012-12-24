@@ -51,13 +51,44 @@ namespace MediaPortal.GUI.Pictures
       string slideFilePath = _slideList[_currentSlideIndex];
 
       _currentSlide = _slideCache.GetCurrentSlide(slideFilePath);
+
+      GUIPictures tmpGUIpictures = (GUIPictures) GUIWindowManager.GetWindow((int) Window.WINDOW_PICTURES);
+
+      if (_isSlideShow && _showRecursive)
+      {
+        // Analyse only folder and not picture/video items
+        while (_slideFolder.Count >= _slideRecursive.Count && _slideFolder.Contains(_currentSlide._filePath) &&
+               !_slideRecursive.Contains(_currentSlide._filePath))
+        {
+          GUISlideShow SlideShow = (GUISlideShow) GUIWindowManager.GetWindow((int) Window.WINDOW_SLIDESHOW);
+          if (_slideFolder.Contains(_currentSlide._filePath) && !_slideRecursive.Contains(_currentSlide._filePath))
+          {
+            tmpGUIpictures.AddDir(SlideShow, _currentSlide._filePath);
+            _slideRecursive.Add(_currentSlide._filePath);
+          }
+          if (_slideDirection == 1 && _slideRecursive.Contains(_currentSlide._filePath))
+          {
+            _slideList.Remove(_currentSlide._filePath);
+            ShowNext();
+            slideFilePath = _slideList[--_currentSlideIndex];
+          }
+          if (_slideDirection == -1 && _slideRecursive.Contains(_currentSlide._filePath))
+          {
+            _slideList.Remove(_currentSlide._filePath);
+            ShowPrevious();
+            slideFilePath = _slideList[--_currentSlideIndex];
+          }
+          _currentSlide = _slideCache.GetCurrentSlide(slideFilePath);
+        }
+      }
+
+
       GUIPropertyManager.SetProperty("#selecteditem", Util.Utils.GetFilename(slideFilePath));
 
       ResetCurrentZoom(_currentSlide);
 
       PrefetchNextSlide();
 
-      GUIPictures tmpGUIpictures = (GUIPictures)GUIWindowManager.GetWindow((int)Window.WINDOW_PICTURES);
       Log.Debug("GUISlideShow: LoadSlide - currentSlideIndex {0}", _currentSlideIndex);
       tmpGUIpictures.SetSelectedItemIndex(_currentSlideIndex);
       if (Util.Utils.IsVideo(slideFilePath))
@@ -105,6 +136,10 @@ namespace MediaPortal.GUI.Pictures
       }
       else
         _slideDirection = 0;
+
+      // Get Name of actual played slide.
+      GUIPictures.fileNameCheck = Util.Utils.GetFilename(_currentSlide._filePath);
+
       return _currentSlide;
     }
 
@@ -245,6 +280,8 @@ namespace MediaPortal.GUI.Pictures
     private int _kenBurnTransistionSpeed = 40;
 
     public List<string> _slideList = new List<string>();
+    public List<string> _slideFolder = new List<string>();
+    public List<string> _slideRecursive = new List<string>();
     private int _slideTime = 0;
     private int _counter = 0;
 
@@ -287,7 +324,6 @@ namespace MediaPortal.GUI.Pictures
     private PlayListType pausedPlayListType;
     private bool isPausedMusicCDA;
     private int iSong;
-
 
     private bool _isPictureZoomed
     {
@@ -371,7 +407,17 @@ namespace MediaPortal.GUI.Pictures
 
           if (_returnedFromVideoPlayback)
           {
-            GUIWindowManager.ShowPreviousWindow();
+            if (SlideDirection == 1)
+            {
+              ShowNext();
+            }
+            //Backward
+            if (SlideDirection == -1)
+            {
+              ShowPrevious();
+            }
+            if (SlideDirection == 0)
+              GUIWindowManager.ShowPreviousWindow();
           }
           else
           {
@@ -460,6 +506,7 @@ namespace MediaPortal.GUI.Pictures
           {
             _returnedFromVideoPlayback = false;
           }
+          SlideDirection = 0;
           ShowPreviousWindow();
           break;
 
@@ -751,7 +798,7 @@ namespace MediaPortal.GUI.Pictures
         return;
       }
 
-      if (pausedMusic && !Util.Utils.IsVideo(GUIPictures.fileNameCheck) && GUIPictures.fileNameCheck != "..")
+      if (pausedMusic && !Util.Utils.IsVideo(GUIPictures.fileNameCheck))
       {
         resumePausedMusic();
       }
@@ -1160,6 +1207,8 @@ namespace MediaPortal.GUI.Pictures
     public void Reset()
     {
       _slideList.Clear();
+      _slideFolder.Clear();
+      _slideRecursive.Clear();
       _infoVisible = false;
       _zoomInfoVisible = false;
       _isSlideShow = false;
