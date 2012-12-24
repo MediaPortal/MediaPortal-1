@@ -67,13 +67,14 @@ namespace MediaPortal.GUI.Pictures
           pauseMusic();
         }
 
-        if (g_Player.Playing && (!g_Player.IsMusic || !g_Player.IsCDA || (g_Player.IsRadio && !g_Player.IsTimeShifting)))
+        // TODO Handle when it's Radio Stream
+        /*if (g_Player.Playing && (!g_Player.IsMusic || !g_Player.IsCDA || (g_Player.IsRadio && !g_Player.IsTimeShifting)))
         {
           //we skip the video in the picture slide show
           _currentSlide = _slideCache.GetCurrentSlide(_slideList[++_currentSlideIndex]);
           _slideDirection = 0;
           return _currentSlide;
-        }
+        }*/
 
         _loadVideoPlayback = true;
 
