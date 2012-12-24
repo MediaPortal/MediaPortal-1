@@ -1797,6 +1797,7 @@ namespace SetupTv.Sections
 
     private void buttonUpdate_Click(object sender, EventArgs e)
     {
+      SaveSettings();
       scanState = ScanState.Updating;
       SetControlStates();
       listViewStatus.Items.Clear();
@@ -1813,6 +1814,7 @@ namespace SetupTv.Sections
       listViewStatus.Items.Add(new ListViewItem(itemLine));
       scanState = ScanState.Initialized;
       SetControlStates();
+      Init();
     }
 
     #region LNB selection tab
