@@ -360,8 +360,11 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ; Kill running Programs
   ${LOG_TEXT} "INFO" "Terminating processes ..."
-  ${StopService} "TVservice"
   ${KillProcess} "SetupTv.exe"
+  ${LOG_TEXT} "INFO" "Stop TVService from setuptv ..."
+  ExecWait '"$INSTDIR\SetupTv.exe" /tvservicestop'
+  ${KillProcess} "SetupTv.exe"
+  ${StopService} "TVservice"
 
   SetOverwrite on
 
@@ -492,8 +495,11 @@ ${MementoSectionEnd}
 
   ; Kill running Programs
   ${LOG_TEXT} "INFO" "Terminating processes ..."
-  ${StopService} "TVservice"
   ${KillProcess} "SetupTv.exe"
+  ${LOG_TEXT} "INFO" "Stop TVService from setuptv ..."
+  ExecWait '"$INSTDIR\SetupTv.exe" /tvservicestop'
+  ${KillProcess} "SetupTv.exe"
+  ${StopService} "TVservice"
 
   #---------------------------------------------------------------------------
   # CLEARING DATABASE if RemoveAll was selected

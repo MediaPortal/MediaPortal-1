@@ -41,7 +41,8 @@ namespace SetupTv
     Wizard,
     DbCleanup,
     DbConfig,
-    DeployMode
+    DeployMode,
+    TvserviceStop
   }
 
   /// <summary>
@@ -126,6 +127,11 @@ namespace SetupTv
           case "/debugoptions":
             debugOptions = true;
             break;
+
+          case "/tvservicestop":
+            ServiceHelper.Stop();
+            startupMode = StartupMode.TvserviceStop;
+            break;
         }
 
         if (param.StartsWith("--Deploy"))
@@ -146,6 +152,12 @@ namespace SetupTv
               break;
           }
         }
+      }
+
+      // Avoid the visual and close part of SetupTv on Tvservice stop
+      if (startupMode == StartupMode.TvserviceStop)
+      {
+        return;
       }
 
       Application.SetCompatibleTextRenderingDefault(false);
