@@ -311,7 +311,7 @@ namespace MediaPortal.GUI.Pictures
     private bool _autocreateLargeThumbs = true;
     private bool _useDayGrouping = false;
     private bool _enableVideoPlayback = false;
-    private bool _playVideosInSlideshows = false;
+    public bool _playVideosInSlideshows = false;
     //bool _hideExtensions = true;
     private Display disp = Display.Files;
     private bool _switchRemovableDrives;

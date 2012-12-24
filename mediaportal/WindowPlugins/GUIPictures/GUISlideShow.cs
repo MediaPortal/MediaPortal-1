@@ -62,11 +62,6 @@ namespace MediaPortal.GUI.Pictures
       tmpGUIpictures.SetSelectedItemIndex(_currentSlideIndex);
       if (Util.Utils.IsVideo(slideFilePath))
       {
-        if (g_Player.IsMusic || g_Player.IsCDA || (g_Player.IsRadio && !g_Player.IsTimeShifting))
-        {
-          pauseMusic();
-        }
-
         // TODO Handle when it's Radio Stream
         /*if (g_Player.Playing && (!g_Player.IsMusic || !g_Player.IsCDA || (g_Player.IsRadio && !g_Player.IsTimeShifting)))
         {
@@ -75,6 +70,25 @@ namespace MediaPortal.GUI.Pictures
           _slideDirection = 0;
           return _currentSlide;
         }*/
+
+        if (!tmpGUIpictures._playVideosInSlideshows && _isSlideShow && _slideDirection == 1)
+        {
+          ShowNext();
+          _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
+          return _currentSlide;
+        }
+
+        if (!tmpGUIpictures._playVideosInSlideshows && _isSlideShow && _slideDirection == -1)
+        {
+          ShowPrevious();
+          _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
+          return _currentSlide;
+        }
+
+        if (g_Player.IsMusic || g_Player.IsCDA || (g_Player.IsRadio && !g_Player.IsTimeShifting))
+        {
+          pauseMusic();
+        }
 
         _loadVideoPlayback = true;
 
@@ -460,8 +474,14 @@ namespace MediaPortal.GUI.Pictures
             ShowPrevious(true);
             _slideDirection = -1;
           }
+          else if (_isSlideShow)
+          {
+            _slideDirection = -1;
+          }
           else
+          {
             _slideDirection = 0;
+          }
 
           if (!_isPictureZoomed)
           {
@@ -486,8 +506,14 @@ namespace MediaPortal.GUI.Pictures
             ShowNext(true);
             _slideDirection = 1;
           }
+          else if (_isSlideShow)
+          {
+            _slideDirection = 1;
+          }
           else
+          {
             _slideDirection = 0;
+          }
 
           if (!_isPictureZoomed)
           {
