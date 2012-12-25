@@ -84,7 +84,14 @@ internal class SlidePicture
       iMaxHeight = MAX_PICTURE_HEIGHT;
     }
 
-    _texture = Picture.Load(strFilePath, _rotation, iMaxWidth, iMaxHeight, true, false, true, out _width, out _height);
+    if (!MediaPortal.Util.Utils.IsPicture(strFilePath))
+    {
+      return;
+    }
+    else
+    {
+      _texture = Picture.Load(strFilePath, _rotation, iMaxWidth, iMaxHeight, true, false, true, out _width, out _height);
+    }
   }
 
   ~SlidePicture()
