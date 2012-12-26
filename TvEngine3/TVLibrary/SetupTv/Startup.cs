@@ -174,7 +174,19 @@ namespace SetupTv
 
       if (startupMode == StartupMode.DeployMode)
       {
-        if (String.IsNullOrEmpty(DeploySql) || String.IsNullOrEmpty(DeployPwd))
+        if (DeploySql == "dbalreadyinstalled")
+        {
+          Log.Info("---- ask user for connection details ----");
+          if (dlg.ShowDialog() != DialogResult.OK || startupMode != StartupMode.DeployMode)
+            return; // close the application without restart here.
+          
+          dlg.CheckServiceName();
+          if (startupMode == StartupMode.DeployMode)
+          {
+            dlg.SaveGentleConfig();
+          }
+        }
+        else if (String.IsNullOrEmpty(DeploySql) || String.IsNullOrEmpty(DeployPwd))
         {
           dlg.LoadConnectionDetailsFromConfig(true);
         }

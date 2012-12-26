@@ -9,31 +9,49 @@
     <width>230</width>
     <font>TitanLight12</font>
     <textcolor>FF00b7ff</textcolor>
+    <shadowAngle>120</shadowAngle>
+    <shadowDistance>2</shadowDistance>
+    <shadowColor>FF000000</shadowColor>
   </style>
   <style Name="InfoLabelDetails">
     <width>240</width>
     <font>TitanLight12</font>
     <textcolor>FF00b7ff</textcolor>
+    <shadowAngle>120</shadowAngle>
+    <shadowDistance>2</shadowDistance>
+    <shadowColor>FF000000</shadowColor>
   </style>
   <style Name="InfoValue">
     <width>750</width>
     <font>TitanLight12</font>
     <textcolor>FFffffff</textcolor>
+    <shadowAngle>120</shadowAngle>
+    <shadowDistance>2</shadowDistance>
+    <shadowColor>FF000000</shadowColor>
   </style>
   <style Name="InfoValueSmall">
     <width>350</width>
     <font>TitanLight12</font>
     <textcolor>FFffffff</textcolor>
+    <shadowAngle>120</shadowAngle>
+    <shadowDistance>2</shadowDistance>
+    <shadowColor>FF000000</shadowColor>
   </style>
   <style Name="InfoValueWide">
     <width>570</width>
     <font>TitanLight12</font>
     <textcolor>FFffffff</textcolor>
+    <shadowAngle>120</shadowAngle>
+    <shadowDistance>2</shadowDistance>
+    <shadowColor>FF000000</shadowColor>
   </style>
   <style Name="InfoValueDetails">
     <width>570</width>
     <font>TitanLight12</font>
     <textcolor>FFffffff</textcolor>
+    <shadowAngle>120</shadowAngle>
+    <shadowDistance>2</shadowDistance>
+    <shadowColor>FF000000</shadowColor>
   </style>
   <style Name="smallTitle">
     <width>900</width>
