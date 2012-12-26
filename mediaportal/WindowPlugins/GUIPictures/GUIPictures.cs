@@ -35,6 +35,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Picture.Database;
 using MediaPortal.Playlists;
+using MediaPortal.Profile;
 using MediaPortal.Services;
 using MediaPortal.Threading;
 using MediaPortal.Util;
@@ -312,6 +313,7 @@ namespace MediaPortal.GUI.Pictures
     private bool _useDayGrouping = false;
     private bool _enableVideoPlayback = false;
     public bool _playVideosInSlideshows = false;
+    public bool _tempLeaveThumbsInFolder = false;
     //bool _hideExtensions = true;
     private Display disp = Display.Files;
     private bool _switchRemovableDrives;
@@ -529,6 +531,11 @@ namespace MediaPortal.GUI.Pictures
 
     protected override void OnPageLoad()
     {
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
+      {
+        _tempLeaveThumbsInFolder = xmlreader.GetValueAsBool("thumbnails", "tvrecordedsharepreview", false);
+        xmlreader.SetValueAsBool("thumbnails", "tvrecordedsharepreview", false);
+      }
       if (!KeepVirtualDirectory(PreviousWindowId))
       {
         virtualDirectory.Reset();
@@ -608,6 +615,11 @@ namespace MediaPortal.GUI.Pictures
       selectedItemIndex = GetSelectedItemNo();
       SaveSettings();
       SaveFolderSettings(currentFolder);
+      // set back tvrecordedsharepreview value
+      using (Profile.Settings xmlwriter = new Profile.MPSettings())
+      {
+        xmlwriter.SetValueAsBool("thumbnails", "tvrecordedsharepreview", _tempLeaveThumbsInFolder);
+      }
       base.OnPageDestroy(newWindowId);
     }
 
