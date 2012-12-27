@@ -139,7 +139,7 @@ namespace MediaPortal.GUI.Pictures
         _slideDirection = 0;
 
       // Get Name of actual played slide.
-      GUIPictures.fileNameCheck = Util.Utils.GetFilename(_currentSlide._filePath);
+      GUIPictures.fileNameCheck = Util.Utils.GetFileNameWithExtension(_currentSlide._filePath);
 
       return _currentSlide;
     }
@@ -794,7 +794,7 @@ namespace MediaPortal.GUI.Pictures
         return;
       }
 
-      if (pausedMusic && !Util.Utils.IsVideo(GUIPictures.fileNameCheck))
+      if (pausedMusic && Util.Utils.IsPicture(GUIPictures.fileNameCheck))
       {
         resumePausedMusic();
       }
