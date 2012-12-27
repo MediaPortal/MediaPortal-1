@@ -500,6 +500,7 @@ namespace MediaPortal.GUI.Video
       }
 
       SaveFolderSettings(_currentFolder);
+      ReleaseResources();
       base.OnPageDestroy(newWindowId);
     }
 
@@ -2158,10 +2159,10 @@ namespace MediaPortal.GUI.Video
       GUIDialogProgress progressDialog =
         (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       progressDialog.Reset();
-      progressDialog.SetHeading("Updating MovieInfo grabber scripts...");
+      progressDialog.SetHeading(GUILocalizeStrings.Get(300030));
       progressDialog.ShowProgressBar(true);
-      progressDialog.SetLine(1, "Downloading the index file...");
-      progressDialog.SetLine(2, "Downloading...");
+      progressDialog.SetLine(1, GUILocalizeStrings.Get(300031));
+      progressDialog.SetLine(2, GUILocalizeStrings.Get(300032)); //Downloading
       progressDialog.SetPercentage(50);
       progressDialog.StartModal(GUIWindowManager.ActiveWindow);
 
@@ -2173,28 +2174,28 @@ namespace MediaPortal.GUI.Video
         string internalGrabberScriptUrl = @"http://install.team-mediaportal.com/MP1/InternalGrabber/InternalActorMoviesGrabber.csscript";
 
         // VDB parser update
-        progressDialog.SetHeading("Updating VDBparser file......");
+        progressDialog.SetHeading(GUILocalizeStrings.Get(1316)); // Updating internal scripts...
         progressDialog.ShowProgressBar(true);
-        progressDialog.SetLine(1, "Downloading VDBparser file...");
-        progressDialog.SetLine(2, "Downloading...");
+        progressDialog.SetLine(1, GUILocalizeStrings.Get(1317));// Downloading internal scripts...
+        progressDialog.SetLine(2, GUILocalizeStrings.Get(300032)); //Downloading
         progressDialog.SetPercentage(75);
         progressDialog.StartModal(GUIWindowManager.ActiveWindow);
 
-        if (DownloadFile(parserIndexFile, parserIndexUrl) == false)
+        if (DownloadFile(parserIndexFile, parserIndexUrl, Encoding.UTF8) == false)
         {
           progressDialog.Close();
           return;
         }
 
         // Internal grabber script update
-        progressDialog.SetHeading("Updating InternalGrabberScript file......");
+        progressDialog.SetHeading(GUILocalizeStrings.Get(1316));
         progressDialog.ShowProgressBar(true);
-        progressDialog.SetLine(1, "Downloading InternalGrabberScript file...");
-        progressDialog.SetLine(2, "Downloading...");
+        progressDialog.SetLine(1, GUILocalizeStrings.Get(1317));
+        progressDialog.SetLine(2, GUILocalizeStrings.Get(300032));
         progressDialog.SetPercentage(100);
         progressDialog.StartModal(GUIWindowManager.ActiveWindow);
 
-        if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl) == false)
+        if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl, Encoding.Default) == false)
         {
           progressDialog.Close();
           return;
@@ -2204,7 +2205,7 @@ namespace MediaPortal.GUI.Video
         progressDialog.Close();
       }
 
-      if (DownloadFile(_grabberIndexFile, _grabberIndexUrl) == false)
+      if (DownloadFile(_grabberIndexFile, _grabberIndexUrl, Encoding.Default) == false)
       {
         progressDialog.Close();
         return;
@@ -2240,13 +2241,13 @@ namespace MediaPortal.GUI.Video
 
           string url = sectionNodes[i].Attributes["url"].Value;
           string id = Path.GetFileName(url);
-          progressDialog.SetLine(1, "Downloading grabber: " + id);
-          progressDialog.SetLine(2, "Processing grabbers...");
+          progressDialog.SetLine(1, GUILocalizeStrings.Get(300034) + id); // Downloading grabber:
+          progressDialog.SetLine(2, GUILocalizeStrings.Get(300035));
           progressDialog.SetPercentage(percent);
           percent += 100 / (sectionNodes.Count - 1);
           progressDialog.Progress();
 
-          if (DownloadFile(IMDB.ScriptDirectory + @"\" + id, url) == false)
+          if (DownloadFile(IMDB.ScriptDirectory + @"\" + id, url, Encoding.Default) == false)
           {
             progressDialog.Close();
             return;
@@ -2256,7 +2257,7 @@ namespace MediaPortal.GUI.Video
       progressDialog.Close();
     }
 
-    private static bool DownloadFile(string filepath, string url)
+    private static bool DownloadFile(string filepath, string url, Encoding enc)
     {
       string grabberTempFile = Path.GetTempFileName();
 
@@ -2285,7 +2286,7 @@ namespace MediaPortal.GUI.Video
           //Application.DoEvents();
           using (Stream resStream = response.GetResponseStream())
           {
-            using (TextReader tin = new StreamReader(resStream, Encoding.Default))
+            using (TextReader tin = new StreamReader(resStream, enc))
             {
               using (TextWriter tout = File.CreateText(grabberTempFile))
               {
@@ -3121,8 +3122,8 @@ namespace MediaPortal.GUI.Video
           }
 
           GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
-          dlgYesNo.SetHeading("Save subtitle");
-          dlgYesNo.SetLine(1, "Save modified subtitle file?");
+          dlgYesNo.SetHeading(GUILocalizeStrings.Get(1318));// Save subtitle
+          dlgYesNo.SetLine(1, GUILocalizeStrings.Get(1319)); // Save modified subtitle?
           dlgYesNo.SetDefaultToYes(true);
           dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
           shouldSave = dlgYesNo.IsConfirmed;
@@ -3941,6 +3942,14 @@ namespace MediaPortal.GUI.Video
         nfoFiles.Add(file);
       }
     }
+
+    private void ReleaseResources()
+    {
+      if (facadeLayout != null)
+      {
+        facadeLayout.Clear();
+      }
+    }
     
     #endregion
 
@@ -4339,7 +4348,7 @@ namespace MediaPortal.GUI.Video
       GUIDialogSelect pDlgSelect = (GUIDialogSelect) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_SELECT);
       // more then 1 actor found
       // ask user to select 1
-      pDlgSelect.SetHeading("Select actor:"); //select actor
+      pDlgSelect.SetHeading(GUILocalizeStrings.Get(1310)); //select actor
       pDlgSelect.Reset();
       for (int i = 0; i < fetcher.Count; ++i)
       {

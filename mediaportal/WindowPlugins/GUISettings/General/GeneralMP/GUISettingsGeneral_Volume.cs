@@ -80,20 +80,6 @@ namespace WindowPlugins.GUISettings
       {
         int volumeStyle = xmlreader.GetValueAsInt("volume", "handler", 1);
         bool isDigital = xmlreader.GetValueAsBool("volume", "digital", true);
-
-        // Force a couple of settings for Vista / Windows 7
-        if (OSInfo.OSInfo.VistaOrLater())
-        {
-          volumeStyle = 4;
-          EnableMixerButtons(false);
-        }
-
-        if (OSInfo.OSInfo.Win7OrLater())
-        {
-          isDigital = true;
-          EnableScaleButtons(false);
-        }
-
         btnClassic.Selected = volumeStyle == 0;
         btnWinXP.Selected = volumeStyle == 1;
         btnLogarithmic.Selected= volumeStyle == 2;
@@ -104,11 +90,12 @@ namespace WindowPlugins.GUISettings
 
         // When Upmixing has selected, we need to use Wave Volume
         _useMixing = xmlreader.GetValueAsBool("audioplayer", "mixing", false);
+        
         if (_useMixing)
         {
           isDigital = true;
-          EnableMixerButtons(false);
         }
+
         btnMasterVolume.Selected = !isDigital;
         btnWave.Selected = isDigital;
 

@@ -1,10 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Xml.Linq;
 using MediaPortal.Profile;
 using MediaPortal.GUI.Library;
-using MediaPortal.Configuration;
 using MediaPortal.Support;
 using System.IO;
 
@@ -55,12 +52,16 @@ namespace MediaPortal.Configuration
       RemoveEntry(settings, "plugins", "ISDN Caller-ID");
       RemoveEntry(settings, "plugins", "YAC Caller-ID");
       RemoveEntry(settings, "plugins", "MAME Devices");
+      RemoveEntry(settings, "plugins", "Last.fm Radio");
       RemoveEntry(settings, "home", "Burner");
       RemoveEntry(settings, "home", "VideoEditor");
+      RemoveEntry(settings, "home", "Last.fm Radio");
       RemoveEntry(settings, "myplugins", "Burner");
       RemoveEntry(settings, "myplugins", "VideoEditor");
+      RemoveEntry(settings, "myplugins", "Last.fm Radio");
       RemoveEntry(settings, "pluginswindows", "MediaPortal.GUI.GUIBurner.GUIBurner");
       RemoveEntry(settings, "pluginswindows", "WindowPlugins.VideoEditor.GUIVideoEditor");
+      RemoveEntry(settings, "pluginswindows", "MediaPortal.GUI.RADIOLASTFM.GUIRadioLastFM");
       RemoveEntry(settings, "musicmisc", "playnowjumpto");
 
       // Moved entries
@@ -87,6 +88,8 @@ namespace MediaPortal.Configuration
       UpdateEntryDefaultValue(settings, "pluginswindows", "MediaPortal.GUI.Weather.GUIWindowWeather", "yes", "no");
       UpdateEntryDefaultValue(settings, "plugins", "weather", "yes", "no");
 
+      ApplyDeploySettingUpgrade(settings);
+
       settings.Save();
 
       string skinbase = Config.GetFolder(Config.Dir.Skin) + "\\";
@@ -111,6 +114,82 @@ namespace MediaPortal.Configuration
         {
           Log.Info("Deleting old skin \"" + skinbase + skin + "\"...");
           Directory.Delete(skinbase + skin, true);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Checks for the existance of deploy.xml and if it exists it applies the settings to mediaportal.xml
+    /// </summary>
+    /// <param name="settings"></param>
+    internal void ApplyDeploySettingUpgrade(ISettingsProvider settings)
+    {
+
+      var deployFile = Config.GetFile(Config.Dir.Config, "deploy.xml");
+      if (!File.Exists(deployFile)) return;
+
+      try
+      {
+        var deployXml = XDocument.Load(deployFile);
+        foreach (var deployElement in deployXml.Elements("deploySettings").Elements("deploySetting"))
+        {
+          try
+          {
+            var section = (string) deployElement.Attribute("section");
+            var entry = (string) deployElement.Attribute("entry");
+            var value = (string) deployElement;
+            if (!string.IsNullOrEmpty(section) && !string.IsNullOrEmpty(entry))
+            {
+              Log.Info("Apply Deploy Setting: {0} - {1} to: {2}", section, entry, value);
+            }
+            settings.SetValue(section, entry, value);
+          }
+          catch (Exception ex)
+          {
+            Log.Error("Issue applying value from deploy.xml");
+            Log.Error(deployElement.ToString());
+            Log.Error(ex);
+          }
+        }
+        settings.Save();
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Error applying updates from deploy.xml");
+        Log.Error(ex);
+      }
+    }
+
+    /// <summary>
+    /// Checks for the existance of deploy.xml and if it exists it applies the settings to mediaportal.xml
+    /// </summary>
+    internal void ApplyDeploySetting()
+    {
+      var deployFile = Config.GetFile(Config.Dir.Config, "deploy.xml");
+      if (!File.Exists(deployFile)) return;
+
+      using(var settings = new MPSettings())
+      {
+        var deployXml = XDocument.Load(deployFile);
+        foreach (var deployElement in deployXml.Elements("deploySettings").Elements("deploySetting"))
+        {
+          try
+          {
+            var section = (string)deployElement.Attribute("section");
+            var entry = (string)deployElement.Attribute("entry");
+            var value = (string)deployElement;
+            if (!string.IsNullOrEmpty(section) && !string.IsNullOrEmpty(entry))
+            {
+              Log.Info("Apply Deploy Setting: {0} - {1} to: {2}", section, entry, value);
+            }
+            settings.SetValue(section, entry, value);
+          }
+          catch (Exception ex)
+          {
+            Log.Error("Issue applying value from deploy.xml");
+            Log.Error(deployElement.ToString());
+            Log.Error(ex);
+          }
         }
       }
     }

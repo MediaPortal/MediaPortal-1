@@ -259,7 +259,20 @@
       <onup>7</onup>
       <ondown>4</ondown>
       <onleft>8</onleft>
-      <onright>12</onright>
+      <onright>20</onright>
+    </control>
+		<control>
+      <description>Clear blacklisted thumbs button</description>
+      <type>button</type>
+      <id>20</id>
+      <posX>700</posX>
+      <posY>595</posY>
+      <width>500</width>
+      <label>300227</label>
+      <onup>12</onup>
+      <ondown>99</ondown>
+      <onleft>8</onleft>
+      <onright>20</onright>
     </control>
     <!--Videos Thumb columns rows-->
     <control>
@@ -309,7 +322,7 @@
       <onleft>7</onleft>
       <onright>12</onright>
       <onup>11</onup>
-      <ondown>99</ondown>
+      <ondown>20</ondown>
     </control>
   </controls>
 </window>

@@ -59,7 +59,7 @@ namespace MediaPortal.GUI.Settings
     [SkinControl(14)] protected GUIButtonControl btnScandatabase = null;
     [SkinControl(15)] protected GUIButtonControl btnResetdatabase= null;
     [SkinControl(16)] protected GUICheckButton btnUseSortTitle = null;
-    [SkinControl(17)] protected GUICheckButton btnUseNfoScraper = null;
+    [SkinControl(18)] protected GUICheckButton btnUseNfoScraper = null;
 
     private String _defaultShare;
     private bool _rememberLastFolder;
@@ -136,7 +136,17 @@ namespace MediaPortal.GUI.Settings
           GUIControl.DisableControl(GetID, (int)Controls.CONTROL_FANARTCOUNT);
         }
         
-        m_iCount = xmlreader.GetValueAsInt("moviedatabase", "fanartnumber", 0);
+        int faCount = xmlreader.GetValueAsInt("moviedatabase", "fanartnumber", 1);
+        
+        if (faCount < 1)
+        {
+          m_iCount = 1;
+        }
+        else
+        {
+          m_iCount = faCount;
+        }
+
         _actorsFetchSize = xmlreader.GetValueAsString("moviedatabase", "actorslistsize", "Short");
         
         // Folder names as title
@@ -165,8 +175,8 @@ namespace MediaPortal.GUI.Settings
         foreach (GUIListItem item in settingsSharesHelper.ShareListControl)
         {
           string driveLetter = FolderInfo(item).Folder.Substring(0, 3).ToUpper();
-          
-          if (Util.Utils.getDriveType(driveLetter) == 3 ||
+
+          if (driveLetter.StartsWith("\\\\") || Util.Utils.getDriveType(driveLetter) == 3 ||
               Util.Utils.getDriveType(driveLetter) == 4)
           {
             item.IsPlayed = false;
@@ -243,7 +253,6 @@ namespace MediaPortal.GUI.Settings
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
             base.OnMessage(message);
-            LoadSettings();
             GUIControl.ClearControl(GetID, (int)Controls.CONTROL_FANARTCOUNT);
             for (int i = 1; i <= 5; ++i)
             {
@@ -430,7 +439,7 @@ namespace MediaPortal.GUI.Settings
       progressDialog.SetPercentage(100);
       progressDialog.StartModal(GetID);
 
-      if (DownloadFile(_grabberIndexFile, _grabberIndexUrl) == false)
+      if (DownloadFile(_grabberIndexFile, _grabberIndexUrl, Encoding.Default) == false)
       {
         progressDialog.Close();
         return;
@@ -449,7 +458,7 @@ namespace MediaPortal.GUI.Settings
       progressDialog.SetPercentage(75);
       progressDialog.StartModal(GUIWindowManager.ActiveWindow);
 
-      if (DownloadFile(parserIndexFile, parserIndexUrl) == false)
+      if (DownloadFile(parserIndexFile, parserIndexUrl, Encoding.UTF8) == false)
       {
         progressDialog.Close();
         return;
@@ -463,7 +472,7 @@ namespace MediaPortal.GUI.Settings
       progressDialog.SetPercentage(100);
       progressDialog.StartModal(GUIWindowManager.ActiveWindow);
 
-      if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl) == false)
+      if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl, Encoding.Default) == false)
       {
         progressDialog.Close();
         return;
@@ -507,7 +516,7 @@ namespace MediaPortal.GUI.Settings
           percent += 100 / (sectionNodes.Count - 1);
           progressDialog.Progress();
 
-          if (DownloadFile(IMDB.ScriptDirectory + @"\" + id, url) == false)
+          if (DownloadFile(IMDB.ScriptDirectory + @"\" + id, url, Encoding.Default) == false)
           {
             progressDialog.Close();
             return;
@@ -517,7 +526,7 @@ namespace MediaPortal.GUI.Settings
       progressDialog.Close();
     }
 
-    private bool DownloadFile(string filepath, string url)
+    private bool DownloadFile(string filepath, string url, Encoding enc)
     {
       string grabberTempFile = Path.GetTempFileName();
 
@@ -541,7 +550,7 @@ namespace MediaPortal.GUI.Settings
         {
           using (Stream resStream = response.GetResponseStream())
           {
-            using (TextReader tin = new StreamReader(resStream, Encoding.Default))
+            using (TextReader tin = new StreamReader(resStream, enc))
             {
               using (TextWriter tout = File.CreateText(grabberTempFile))
               {

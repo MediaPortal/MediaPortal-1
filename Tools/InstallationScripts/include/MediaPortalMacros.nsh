@@ -709,8 +709,16 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
     ${LOG_TEXT} "INFO" "OSTest::IsWin7"
     StrCpy $0 "OSok"
 
+  ${ElseIf} ${IsWin8}
+    ${LOG_TEXT} "INFO" "OSTest::IsWin8"
+    StrCpy $0 "OSwarn"
+
   ${ElseIf} ${IsWin2008R2}
     ${LOG_TEXT} "INFO" "OSTest::IsWin2008R2"
+    StrCpy $0 "OSwarn"
+
+  ${ElseIf} ${IsWin2012}
+    ${LOG_TEXT} "INFO" "OSTest::IsWin2012"
     StrCpy $0 "OSwarn"
 
   ${Else}

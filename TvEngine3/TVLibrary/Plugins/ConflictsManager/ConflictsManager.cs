@@ -34,7 +34,7 @@ namespace TvEngine
 
     private TvBusinessLayer cmLayer = new TvBusinessLayer();
     private IList<Schedule> _schedules = Schedule.ListAll();
-    private IList<Card> _cards = Card.ListAll();
+    private IList<Card> _cards = Card.ListAllEnabled();
 
     private IList<Program> _conflictingPrograms;
 
@@ -252,12 +252,12 @@ namespace TvEngine
       return false;
     }
 
-    /// <summary>Assign all shedules to cards</summary>
+    /// <summary>Assign all schedules to cards</summary>
     /// <param name="Schedules">An IList containing all scheduled recordings</param>
     /// <returns>Array of List<Schedule> : one per card, index [0] contains unassigned schedules</returns>
     private List<Schedule>[] AssignSchedulesToCards(IList<Schedule> Schedules)
     {
-      IList<Card> cardsList = cmLayer.Cards;
+      IList<Card> cardsList = Card.ListAllEnabled();
       // creates an array of Schedule Lists
       // element [0] will be filled with conflicting schedules
       // element [x] will be filled with the schedules assigned to card with idcard=x

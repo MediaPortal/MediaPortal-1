@@ -773,7 +773,7 @@ Section -Post
   ;if TV Server was installed exec SetupTv with correct parameters    
   ${If} $noServer == 0
 	  ${If} $DeploySql != ""
-	  ${AndIf} $DeployPwd != ""
+	  ;${AndIf} $DeployPwd != ""
 	            StrCpy $R0 "--DeployMode --DeploySql:$DeploySql --DeployPwd:$DeployPwd"
 	  ${Else}
 	            StrCpy $R0 "--DeployMode"
@@ -897,9 +897,9 @@ Function .onInit
   ;${ReadCommandlineParameter} "noStartMenuSC"
   ${ReadCommandlineParameter} "DeployMode"
   ClearErrors
-  ${GetOptions} $R0 "/DeploySql:" $DeploySql
+  ${GetOptions} $R0 "--DeploySql:" $DeploySql
   ClearErrors
-  ${GetOptions} $R0 "/DeployPwd:" $DeployPwd
+  ${GetOptions} $R0 "--DeployPwd:" $DeployPwd
 
   ClearErrors
   ${GetOptions} $R0 "/UpdateMode" $R1

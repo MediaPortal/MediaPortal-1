@@ -72,9 +72,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="TvLibrary.Utils">
-      <HintPath>..\..\TvLibrary.Utils\bin\Release\TvLibrary.Utils.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
@@ -118,6 +115,10 @@
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
       <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TvLibrary.Utils\TvLibrary.Utils.csproj">
+      <Project>{954F9929-7FDA-4F59-88E3-FD2B9A7B6E6E}</Project>
+      <Name>TvLibrary.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\PluginBase\PluginBase.csproj">
       <Project>{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}</Project>

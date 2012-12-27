@@ -18,13 +18,12 @@
 
 #endregion
 
+using System;
 using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
-  /// <summary>
-  /// 
-  /// </summary>
+  [Obsolete("This class is depreated and has been replaced by GUICheckButton")]
   public class GUIToggleButtonControl : GUIControl
   {
     [XMLSkinElement("textureFocus")] protected string _focusedTextureName = "";
