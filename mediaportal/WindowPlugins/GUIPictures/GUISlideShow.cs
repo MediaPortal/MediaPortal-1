@@ -163,6 +163,7 @@ namespace MediaPortal.GUI.Pictures
     public void resumePausedMusic()
     {
       pausedMusic = false;
+      resumeSong = true;
       if (pausedPlayListType != PlayListType.PLAYLIST_NONE && !isPausedMusicCDA)
       {
         playlistPlayer.CurrentPlaylistType = pausedPlayListType;
@@ -320,6 +321,7 @@ namespace MediaPortal.GUI.Pictures
     private String pausedMusicFileName;
     private double pausedMusicLastPosition;
     public bool pausedMusic;
+    private bool resumeSong = false;
     private PlayList pausedMusicPlaylist;
     private PlayListType pausedPlayListType;
     private bool isPausedMusicCDA;
@@ -439,7 +441,11 @@ namespace MediaPortal.GUI.Pictures
           {
             mDB = MusicDatabase.Instance;
           }
-          ShowSong();
+          if (!resumeSong)
+          {
+            ShowSong();
+          }
+          resumeSong = false;
           break;
       }
       return base.OnMessage(message);
