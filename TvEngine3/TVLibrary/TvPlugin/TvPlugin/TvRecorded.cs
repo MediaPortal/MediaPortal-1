@@ -25,6 +25,7 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using System.Linq;
+using System.Diagnostics;
 using Gentle.Common;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -364,7 +365,19 @@ namespace TvPlugin
 
       base.OnPageLoad();
       InitViewSelections();
-      DeleteInvalidRecordings();
+
+      // launch DeleteInvalidRecordings async for instant start of GUI screen
+      new Thread(delegate()
+      {
+        try
+        {
+          DeleteInvalidRecordings();
+        }
+        catch (Exception ex)
+        {
+          Log.Debug("DeleteInvalidRecordings - error: " + ex.Message);
+        }
+      }) { Name = "DeleteInvalidRecordings", IsBackground = true, Priority = ThreadPriority.BelowNormal }.Start();
 
       if (btnCompress != null)
       {
@@ -1376,7 +1389,10 @@ namespace TvPlugin
 
     private void DeleteInvalidRecordings()
     {
+      Stopwatch watch = new Stopwatch(); watch.Reset(); watch.Start();
       RemoteControl.Instance.DeleteInvalidRecordings();
+      watch.Stop();
+      Log.Debug("DeleteInvalidRecordings() - finished after '" + watch.ElapsedMilliseconds + "' ms.");
     }
 
     private void UpdateProperties()
