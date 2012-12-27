@@ -93,6 +93,7 @@
         <onup>4</onup>
         <ondown>4</ondown>
         <label>-</label>
+        <font>font9</font>
       </control>
     </control>
   </controls>
