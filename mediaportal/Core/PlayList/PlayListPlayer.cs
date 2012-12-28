@@ -31,6 +31,7 @@ namespace MediaPortal.Playlists
       bool Playing { get; }
       void Release();
       bool Play(string strFile);
+      bool Play(string strFile, MediaPortal.Player.g_Player.MediaType type);
       bool PlayVideoStream(string strURL, string streamName);
       bool PlayAudioStream(string strURL);
       void Stop();
@@ -57,6 +58,11 @@ namespace MediaPortal.Playlists
       bool IPlayer.Play(string strFile)
       {
         return Player.g_Player.Play(strFile);
+      }
+
+      bool IPlayer.Play(string strFile, MediaPortal.Player.g_Player.MediaType type)
+      {
+        return Player.g_Player.Play(strFile, type);
       }
 
       bool IPlayer.PlayVideoStream(string strURL, string streamName)
@@ -545,7 +551,20 @@ namespace MediaPortal.Playlists
         }
         else
         {
-          playResult = g_Player.Play(item.FileName);
+          switch (_currentPlayList)
+          {
+            case PlayListType.PLAYLIST_MUSIC:
+            case PlayListType.PLAYLIST_MUSIC_TEMP:
+              playResult = g_Player.Play(item.FileName, MediaPortal.Player.g_Player.MediaType.Music);
+              break;            
+            case PlayListType.PLAYLIST_VIDEO:
+            case PlayListType.PLAYLIST_VIDEO_TEMP:
+              playResult = g_Player.Play(item.FileName, MediaPortal.Player.g_Player.MediaType.Video);
+              break;
+            default:
+              playResult = g_Player.Play(item.FileName);
+              break;
+          }
         }
         if (!playResult)
         {
