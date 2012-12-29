@@ -102,7 +102,7 @@ namespace MediaPortal.Configuration.Sections
         preferredAudioTypeComboBox.SelectedItem = xmlreader.GetValueAsString("bdplayer", "audiotype", "AC3");
         ParentalControlUpDown.Value = xmlreader.GetValueAsInt("bdplayer", "parentalcontrol", 99);
         SubsEnabled.Checked = xmlreader.GetValueAsBool("bdplayer", "subtitlesenabled", true);
-        useBDInternalMenu.Checked = xmlreader.GetValueAsBool("bdplayer", "useInternalBDMenu", false);
+        useBDInternalMenu.Checked = xmlreader.GetValueAsBool("bdplayer", "useInternalBDMenu", true);
       }
     }
 
