@@ -25,6 +25,7 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using System.Linq;
+using System.Diagnostics;
 using Gentle.Common;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -749,20 +750,27 @@ namespace TvPlugin
 
     private void LoadDirectory()
     {
+      var watch = new Stopwatch(); watch.Reset(); watch.Start();
+
       try
       {
         GUIControl.ClearControl(GetID, facadeLayout.GetID);
 
         SwitchLayout();
 
-        IEnumerable<RadioGroupMap> radiogroups = RadioGroupMap.ListAll();
-        // lookup channel ID in radio group map (smallest table that could identify a radio channel)
-        // this is what is used in current logic
-        var recordings = (from r in Recording.ListAll()
-                          where !(from rad in radiogroups select rad.IdChannel).Contains(r.IdChannel)
-                          select r).ToList();
+        // lookup radio channel ID in radio group map (smallest table that could identify a radio channel) to remove radiochannels from recording list
+        IEnumerable<int> radiogroupIDs = RadioGroupMap.ListAll().Select(radiogroup => radiogroup.IdChannel).ToList();
+        Log.Debug("LoadDirectory() - finished loading '" + radiogroupIDs.Count() + "' radiogroupIDs after '{0}' ms.", watch.ElapsedMilliseconds);
 
-        var singleRecording = false; // check if this is a single recording and therefore should be placed in a folder
+        //List<Recording> recordings = (from r in Recording.ListAll()where !(from rad in radiogroups select rad.IdChannel).Contains(r.IdChannel)select r).ToList();
+        List<Recording> recordings = Recording.ListAll().Where(rec => radiogroupIDs.All(id => rec.IdChannel != id)).ToList();
+        Log.Debug("LoadDirectory() - finished loading '" + recordings.Count + "' recordings after '{0}' ms.", watch.ElapsedMilliseconds);
+
+        // load the active recordings once to mark them later in GUI lists and groups
+        List<Recording> activerecordings = Recording.ListAllActive().ToList();
+        Log.Debug("LoadDirectory() - finished loading '" + activerecordings.Count + "' activerecordings after '{0} ms.", watch.ElapsedMilliseconds);
+
+        bool singleRecording = false; // check if this is a single recording and therefore should be placed in a folder
 
         if (_currentLabel == string.Empty)
         {
@@ -829,6 +837,7 @@ namespace TvPlugin
             i.Label2 = GetSpokenViewDate(folder.StartTime);
             i.TVTag = folder;
             i.IsFolder = !singleRecording;
+            if (activerecordings.Contains(folder)) i.PinImage = Thumbs.TvRecordingIcon;
             Utils.SetDefaultIcons(i);
             facadeLayout.Add(i);
             
@@ -878,6 +887,7 @@ namespace TvPlugin
 
             // Add new list item for this recording
             item = BuildItemFromRecording(rec);
+            if (activerecordings.Contains(rec)) item.PinImage = Thumbs.TvRecordingIcon;
             item.Label = TVUtil.GetDisplayTitle(rec);
             var ts = rec.EndTime - rec.StartTime;
 
@@ -893,13 +903,18 @@ namespace TvPlugin
       {
         Log.Error("TvRecorded: Error fetching recordings from database {0}", ex.Message);
       }
+      Log.Debug("LoadDirectory() - finished loading facade items after '[0}' ms.", watch.ElapsedMilliseconds);
 
       //set object count label
       GUIPropertyManager.SetProperty("#itemcount", Utils.GetObjectCountLabel(facadeLayout.Count - (facadeLayout.Count > 0 && facadeLayout[0].Label == ".." ? 1 : 0)));
 
       OnSort();
       UpdateProperties();
+
+      watch.Stop();
+      Log.Debug("LoadDirectory() - finished sorting facade after '{0}' ms.", watch.ElapsedMilliseconds);
     }
+
 
     public static string GetRecordingDisplayName(Recording rec)
     {
@@ -928,20 +943,18 @@ namespace TvPlugin
       string strDefaultUnseenIcon = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultVideoBig.png");
       string strDefaultSeenIcon = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultVideoSeenBig.png");
       GUIListItem item = null;
-      string strChannelName = GUILocalizeStrings.Get(2014); // unknown
-      string strGenre = GUILocalizeStrings.Get(2014); // unknown
 
       try
       {
         var refCh = aRecording.ReferencedChannel();
 
         // Re-imported channels might still be valid but their channel does not need to be present anymore...
-        strChannelName = refCh != null ? refCh.DisplayName : GUILocalizeStrings.Get(1507);
+        string strChannelName = refCh != null ? refCh.DisplayName : GUILocalizeStrings.Get(1507); // unknown
 
-        strGenre = !String.IsNullOrEmpty(aRecording.Genre) ? aRecording.Genre : GUILocalizeStrings.Get(2014);
 
         // Log.Debug("TVRecorded: BuildItemFromRecording [{0}]: {1} ({2}) on channel {3}", _currentDbView.ToString(), aRecording.Title, aRecording.Genre, strChannelName);
-        item = new GUIListItem();
+        item = new GUIListItem { TVTag = aRecording };
+
         switch (_currentDbView)
         {
           case DBView.Recordings:
@@ -951,14 +964,12 @@ namespace TvPlugin
             item.Label = strChannelName;
             break;
           case DBView.Genre:
-            item.Label = strGenre;
+            item.Label = !String.IsNullOrEmpty(aRecording.Genre) ? aRecording.Genre : GUILocalizeStrings.Get(2014); // unknown
             break;
           case DBView.History:
             item.Label = GetSpokenViewDate(aRecording.StartTime);
             break;
         }
-
-        item.TVTag = aRecording;
 
         // Set a default logo indicating the watched status
         string SmallThumb = aRecording.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
@@ -992,11 +1003,6 @@ namespace TvPlugin
         }
         item.IconImage = SmallThumb;
 
-        //Mark the recording with a "rec. symbol" if it is an active recording.
-        if (IsRecordingActual(aRecording))
-        {
-          item.PinImage = Thumbs.TvRecordingIcon;
-        }
       }
       catch (Exception singleex)
       {
@@ -1536,13 +1542,6 @@ namespace TvPlugin
         Recording rec1 = (Recording)item1.TVTag;
         Recording rec2 = (Recording)item2.TVTag;
 
-        var ch1 = rec1.ReferencedChannel();
-        var ch2 = rec2.ReferencedChannel();
-        // if there is no referenced channel (eg. recording that links to a channel that is now deleted)
-        // set channel name to unknown channel string (1507) to avoid null reference exceptions
-        var ch1Name = ch1 == null ? GUILocalizeStrings.Get(1507) : ch1.DisplayName;
-        var ch2Name = ch2 == null ? GUILocalizeStrings.Get(1507) : ch2.DisplayName;
-
         switch (_currentSortMethod)
         {
           case SortMethod.Played:
@@ -1589,28 +1588,37 @@ namespace TvPlugin
               }
             }
           case SortMethod.Channel:
-            if (m_bSortAscending)
             {
-              iComp = string.Compare(ch1Name, ch2Name, true);
-              if (iComp == 0)
+              // if there is no referenced channel (eg. recording that links to a channel that is now deleted)
+              // set channel name to unknown channel string (1507) to avoid null reference exceptions
+              Channel ch1 = rec1.ReferencedChannel();
+              Channel ch2 = rec2.ReferencedChannel();
+              string ch1Name = ch1 == null ? GUILocalizeStrings.Get(1507) : ch1.DisplayName;
+              string ch2Name = ch2 == null ? GUILocalizeStrings.Get(1507) : ch2.DisplayName;
+
+              if (m_bSortAscending)
               {
-                goto case SortMethod.Date;
+                iComp = string.Compare(ch1Name, ch2Name, true);
+                if (iComp == 0)
+                {
+                  goto case SortMethod.Date;
+                }
+                else
+                {
+                  return iComp;
+                }
               }
               else
               {
-                return iComp;
-              }
-            }
-            else
-            {
-              iComp = string.Compare(ch2Name, ch1Name, true);
-              if (iComp == 0)
-              {
-                goto case SortMethod.Date;
-              }
-              else
-              {
-                return iComp;
+                iComp = string.Compare(ch2Name, ch1Name, true);
+                if (iComp == 0)
+                {
+                  goto case SortMethod.Date;
+                }
+                else
+                {
+                  return iComp;
+                }
               }
             }
           case SortMethod.Duration:
@@ -1696,14 +1704,13 @@ namespace TvPlugin
             }
             if (rec1.IdChannel != rec2.IdChannel)
             {
-              if (m_bSortAscending)
-              {
-                return string.Compare(ch1Name, ch2Name);
-              }
-              else
-              {
-                return string.Compare(ch2Name, ch1Name);
-              }
+              // if there is no referenced channel (eg. recording that links to a channel that is now deleted)
+              // set channel name to unknown channel string (1507) to avoid null reference exceptions
+              Channel ch1 = rec1.ReferencedChannel();
+              Channel ch2 = rec2.ReferencedChannel();
+              string ch1Name = ch1 == null ? GUILocalizeStrings.Get(1507) : ch1.DisplayName;
+              string ch2Name = ch2 == null ? GUILocalizeStrings.Get(1507) : ch2.DisplayName;
+              return m_bSortAscending ? string.Compare(ch1Name, ch2Name) : string.Compare(ch2Name, ch1Name);
             }
             if (TVUtil.GetDisplayTitle(rec1) != TVUtil.GetDisplayTitle(rec2))
             {
