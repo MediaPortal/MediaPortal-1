@@ -122,7 +122,6 @@ namespace WatchDog
                           };
           process.Start();
           process.WaitForExit();
-          Application.Restart();
         }
         catch {}
       }
@@ -365,6 +364,7 @@ namespace WatchDog
       {
         Directory.CreateDirectory(_tempDir);
       }
+      CreateTemporaryConfiguration();
       setStatus("Launching MediaPortal...");
       _processMP = new Process();
       _processMP.StartInfo.WorkingDirectory = Application.StartupPath;
