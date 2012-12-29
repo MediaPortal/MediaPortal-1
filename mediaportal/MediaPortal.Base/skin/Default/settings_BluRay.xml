@@ -84,6 +84,14 @@
         <id>6</id>
         <label>1196</label>
         <width>262</width>
+        <ondown>8</ondown>
+      </control>
+      <control>
+        <description>Internal Blu_ray On/Off</description>
+        <type>checkbutton</type>
+        <id>8</id>
+        <label>1199</label>
+        <width>262</width>
         <ondown>7</ondown>
       </control>
     </control>
@@ -92,7 +100,7 @@
       <type>label</type>
       <id>102</id>
       <posX>82</posX>
-      <posY>380</posY>
+      <posY>425</posY>
       <label>300220</label>
     </control>
     <control>
@@ -100,9 +108,9 @@
       <type>spincontrol</type>
       <id>7</id>
       <posX>210</posX>
-      <posY>425</posY>
+      <posY>470</posY>
       <onleft>7</onleft>
-      <onup>6</onup>
+      <onup>8</onup>
       <ondown>2</ondown>
       <align>right</align>
       <buddycontrolid>102</buddycontrolid>

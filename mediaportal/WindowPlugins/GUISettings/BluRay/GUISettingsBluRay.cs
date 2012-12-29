@@ -41,6 +41,7 @@ namespace WindowPlugins.GUISettings.TV
     [SkinControl(4)] protected GUIButtonControl btnVideo = null;
     [SkinControl(5)] protected GUIButtonControl btnAudio = null;
     [SkinControl(6)] protected GUICheckButton btnEnableSubtitles = null;
+    [SkinControl(8)] protected GUICheckButton btnUseInternalBDMenu = null;
 
     private enum Controls
     {
@@ -48,6 +49,7 @@ namespace WindowPlugins.GUISettings.TV
     } ;
     
     private bool _subtitleSettings;
+    private bool _useInternalBDMenu;
     private int _selectedOption;
     
     private string _strVideoCodec;
@@ -113,7 +115,9 @@ namespace WindowPlugins.GUISettings.TV
         _defaultAudioType = xmlreader.GetValueAsString("bdplayer", "audiotype", "AC3");
         _defaultRegion = xmlreader.GetValueAsString("bdplayer", "regioncode", "B");
         i_ageLimit = xmlreader.GetValueAsInt("bdplayer", "parentalcontrol", 99);
+        _useInternalBDMenu = xmlreader.GetValueAsBool("bdplayer", "useInternalBDMenu", true);
         btnEnableSubtitles.Selected = _subtitleSettings;
+        btnUseInternalBDMenu.Selected = _useInternalBDMenu;
       }
     }
 
@@ -141,6 +145,7 @@ namespace WindowPlugins.GUISettings.TV
         xmlwriter.SetValue("bdplayer", "audiotype", _defaultAudioType);
         xmlwriter.SetValue("bdplayer", "regioncode", _defaultRegion);
         xmlwriter.SetValue("bdplayer", "parentalcontrol", i_ageLimit);
+        xmlwriter.SetValueAsBool("bdplayer", "useInternalBDMenu", btnUseInternalBDMenu.Selected);
       }
     }
 
