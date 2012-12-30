@@ -200,7 +200,7 @@ namespace WindowPlugins.GUISettings.TV
     {
       SaveSettings();
 
-      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(neWindowId))
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
       {
         MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
       }
