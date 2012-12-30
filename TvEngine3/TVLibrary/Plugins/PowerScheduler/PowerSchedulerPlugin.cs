@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2012 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2012 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -20,11 +20,11 @@
 
 #region Usings
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using TvControl;
+using System.Reflection;
+using PowerScheduler.Setup;
 using SetupTv;
+using TvControl;
+using TvEngine;
 
 #endregion
 
@@ -44,7 +44,7 @@ namespace TvEngine.PowerScheduler
     #region Constructor
 
     /// <summary>
-    /// Creates a new PowerSchedulerPlugin
+    /// Creates a new PowerScheduler plugin
     /// </summary>
     public PowerSchedulerPlugin() {}
 
@@ -75,7 +75,7 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     public string Author
     {
-      get { return "micheloe"; }
+        get { return "michael_t (based on PowerScheduler by micheloe)"; }
     }
 
     /// <summary>
@@ -91,7 +91,7 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     public string Name
     {
-      get { return "Power Scheduler"; }
+      get { return "PowerScheduler++"; }
     }
 
     /// <summary>
@@ -101,14 +101,7 @@ namespace TvEngine.PowerScheduler
     {
       get
       {
-        return new PowerSchedulerMasterSetup();
-        /*unreachable 
-        if (_controller.IsMaster)
-          return new PowerSchedulerMasterSetup();
-        else
-          // return new PowerSchedulerSlaveSetup();
-          return new PowerSchedulerMasterSetup();
-        */
+        return new PowerSchedulerSetup();
       }
     }
 
@@ -117,7 +110,7 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     public string Version
     {
-      get { return "0.1.0.0"; }
+      get { return Assembly.GetExecutingAssembly().GetName().Version.ToString(); }
     }
 
     #endregion
