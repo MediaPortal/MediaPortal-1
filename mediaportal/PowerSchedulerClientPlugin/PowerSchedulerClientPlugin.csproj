@@ -32,7 +32,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;CLIENT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
@@ -47,7 +47,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;CLIENT</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -141,4 +141,8 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
+  <PropertyGroup>
+    <PreBuildEvent>xcopy "..\..\TvEngine3\TVLibrary\Plugins\PowerScheduler\Setup\*" "Setup" /D /Y
+xcopy "Setup\*" "..\..\TvEngine3\TVLibrary\Plugins\PowerScheduler\Setup" /D /Y</PreBuildEvent>
+  </PropertyGroup>
 </Project>
