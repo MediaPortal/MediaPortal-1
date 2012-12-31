@@ -78,6 +78,14 @@ namespace MediaPortal.GUI.Settings
       }
 
       GUIPropertyManager.SetProperty("#currentmodule", module);
+      
+      if (!MediaPortal.Util.Utils.IsGUISettingsWindow(GUIWindowManager.GetPreviousActiveWindow()))
+      {
+        if (MediaPortal.GUI.Settings.GUISettings.IsPinLocked() && !MediaPortal.GUI.Settings.GUISettings.RequestPin())
+        {
+          GUIWindowManager.CloseCurrentWindow();
+        }
+      }
     }
 
     protected override void OnPageDestroy(int newWindowId)

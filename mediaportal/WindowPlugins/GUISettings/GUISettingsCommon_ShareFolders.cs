@@ -201,6 +201,14 @@ namespace MediaPortal.GUI.Settings
       SetProperties();
       _userNetFolder = GUILocalizeStrings.Get(145); // Network
       _folderHistory = new ArrayList();
+
+      if (!MediaPortal.Util.Utils.IsGUISettingsWindow(GUIWindowManager.GetPreviousActiveWindow()))
+      {
+        if (MediaPortal.GUI.Settings.GUISettings.IsPinLocked() && !MediaPortal.GUI.Settings.GUISettings.RequestPin())
+        {
+          GUIWindowManager.CloseCurrentWindow();
+        }
+      }
     }
 
     protected override void OnPageDestroy(int newWindowId)
